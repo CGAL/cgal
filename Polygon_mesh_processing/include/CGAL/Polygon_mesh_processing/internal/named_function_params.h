@@ -23,6 +23,9 @@
 
 #include <CGAL/boost/graph/named_function_params.h>
 
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS T, typename Tag, typename Base
+#define CGAL_PMP_NP_CLASS CGAL::pmp_bgl_named_params<T,Tag,Base>
+
 namespace CGAL{
 
   enum density_control_factor_t     { density_control_factor      };

@@ -44,6 +44,12 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#ifdef DOXYGEN_RUNNING
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_PMP_NP_CLASS NamedParameters
+#endif
+
+
 namespace CGAL {
  namespace internal{
    namespace corefinement{
@@ -504,7 +510,7 @@ template <typename PolygonMesh
 >
 typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(const PolygonMesh& pmesh,
-                     FaceComponentMap& fcm,
+                     const FaceComponentMap& fcm,
                      const NamedParameters& np)
 {
   using boost::choose_param;
@@ -540,7 +546,7 @@ connected_components(const PolygonMesh& pmesh,
 template <typename PolygonMesh, typename FaceComponentMap>
 typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(const PolygonMesh& pmesh,
-                     FaceComponentMap fcm)
+                     const FaceComponentMap& fcm)
 {
 
   return CGAL::Polygon_mesh_processing::connected_components(pmesh, fcm,
@@ -549,7 +555,7 @@ connected_components(const PolygonMesh& pmesh,
 
 /*!
  * \ingroup PkgPolygonMeshProcessing
- *  erases the small connected components and all the isolated vertices.
+ *  removes the small connected components and all the isolated vertices.
  *  Keep `nb_components_to_keep` largest connected components. 
  *  Two faces are considered in the same connected component if they share an edge that is not marked as constrained.
  *
@@ -570,7 +576,7 @@ connected_components(const PolygonMesh& pmesh,
  *    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
  * \cgalNamedParamsEnd
  *
- *  \return the number of connected components erased (ignoring isolated vertices).
+ *  \return the number of connected components removed (ignoring isolated vertices).
  */
 template <typename PolygonMesh
         , typename NamedParameters>
@@ -754,39 +760,15 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
-/*!
-* \ingroup PkgPolygonMeshProcessing
-*  keeps the connected components designated by the faces in `components_to_keep`,
-*  and erases the other connected components and all the isolated vertices.
-*  Two faces are considered in the same connected component if they share an edge that is not marked as constrained.
-*
-* Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
-* should be either available as internal property maps
-* to `pmesh` or provided as \ref namedparameters.
-*
-*
-* \tparam PolygonMesh a model of `FaceListGraph`
-* \tparam NamedParameters a sequence of \ref namedparameters
-* \tparam FaceRange a range of `boost::graph_traits<PolygonMesh>::%face_descriptor`
-*         indicating the connected components to be kept.
-*
-* \param pmesh the polygon mesh
-* \param components_to_keep a face range, including one face or more on each component to be keep
-* \param np optional \ref namedparameters described below
-*
-* \cgalNamedParamsBegin
-*    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
-* \cgalNamedParamsEnd
-*
-*/
 template <typename PolygonMesh
-        , typename FaceRange
+        , typename ComponentRange
+        , typename FaceComponentMap
         , typename NamedParameters>
-void keep_connected_components(PolygonMesh& pmesh
-                             , const FaceRange& components_to_keep
-                             , const NamedParameters& np)
+void keep_or_remove_connected_components(PolygonMesh& pmesh
+                                        , const ComponentRange& components_to_keep
+                                        , const FaceComponentMap& fcm
+                                        , bool  keep
+                                        , const NamedParameters& np)
 {
   typedef PolygonMesh PM;
   using boost::choose_param;
@@ -807,34 +789,29 @@ void keep_connected_components(PolygonMesh& pmesh
                                        pmesh,
                                        boost::face_index);
 
-  //vector_property_map
-  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
-
   //VertexIndexMap
   typedef typename GetVertexIndexMap<PM, NamedParameters>::type VertexIndexMap;
   VertexIndexMap vim = choose_const_pmap(get_param(np, boost::vertex_index),
                                          pmesh,
                                          boost::vertex_index);
 
-  connected_components(pmesh, face_cc, np);
-
   std::set<std::size_t> cc_to_keep;
-  BOOST_FOREACH(face_descriptor f, components_to_keep)
-    cc_to_keep.insert(face_cc[f]);
+  BOOST_FOREACH(std::size_t i, components_to_keep)
+    cc_to_keep.insert(i);
 
   boost::vector_property_map<bool, VertexIndexMap> keep_vertex(vim);
   BOOST_FOREACH(vertex_descriptor v, vertices(pmesh)){
     keep_vertex[v] = false;
   }
   BOOST_FOREACH(face_descriptor f, faces(pmesh)){
-    if (cc_to_keep.find(face_cc[f]) != cc_to_keep.end())
-      face_cc[f] = 1;
+    if (cc_to_keep.find(get(fcm,f)) != cc_to_keep.end())
+      put(fcm, f, keep ? 1 : 0);
     else
-      face_cc[f] = 0;
+      put(fcm, f, keep ? 0 : 1);
   }
 
   BOOST_FOREACH(face_descriptor f, faces(pmesh)){
-    if (face_cc[f] == 1){
+    if (get(fcm, f) == 1){
       BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, pmesh), pmesh)){
         vertex_descriptor v = target(h, pmesh);
         keep_vertex[v] = true;
@@ -863,20 +840,20 @@ void keep_connected_components(PolygonMesh& pmesh
         std::cerr << "null_face on both sides of " << e << " is kept\n";
 #endif
       }
-      else if ((is_border(oh, pmesh) && face_cc[fh]) ||
-        (is_border(h, pmesh) && face_cc[ofh]) ||
-        (!is_border(oh, pmesh) && !is_border(h, pmesh) && face_cc[fh] && face_cc[ofh])){
+      else if ((is_border(oh, pmesh) && get(fcm,fh)) ||
+        (is_border(h, pmesh) && get(fcm,ofh)) ||
+        (!is_border(oh, pmesh) && !is_border(h, pmesh) && get(fcm,fh) && get(fcm,ofh))){
         // do nothing
       }
-      else if (!is_border(h, pmesh) && face_cc[fh] && !is_border(oh, pmesh) && !face_cc[ofh]){
+      else if (!is_border(h, pmesh) && get(fcm,fh) && !is_border(oh, pmesh) && !get(fcm,ofh)){
         set_face(oh, boost::graph_traits<PolygonMesh>::null_face(), pmesh);
       }
-      else if (!is_border(h, pmesh) && !face_cc[fh] && !is_border(oh, pmesh) && face_cc[ofh]){
+      else if (!is_border(h, pmesh) && !get(fcm,fh) && !is_border(oh, pmesh) && get(fcm,ofh)){
         set_face(h, boost::graph_traits<PolygonMesh>::null_face(), pmesh);
       }
       else {
         // no face kept
-        assert((is_border(h, pmesh) || !face_cc[fh]) && (is_border(oh, pmesh) || !face_cc[ofh]));
+        assert((is_border(h, pmesh) || !get(fcm,fh)) && (is_border(oh, pmesh) || !get(fcm,ofh)));
         // vertices pointing to e must change their halfedge
         if (halfedge(v, pmesh) == oh){
           set_halfedge(v, prev(h, pmesh), pmesh);
@@ -912,7 +889,7 @@ void keep_connected_components(PolygonMesh& pmesh
   for (boost::tie(fb, fe) = faces(pmesh); fb != fe;){
     face_descriptor f = *fb;
     ++fb;
-    if (face_cc[f] != 1){
+    if (get(fcm,f) != 1){
       remove_face(f, pmesh);
     }
   }
@@ -926,6 +903,248 @@ void keep_connected_components(PolygonMesh& pmesh
   }
 }
 
+/*!
+* \ingroup keep_connected_components_grp
+* keeps the connected components designated by theirs ids in `components_to_keep`,
+* and removes the other connected components as well as all the isolated vertices.
+* The connected component id of a face is given by `fcm`.
+*
+* \note If the removal of the connected components makes `pmesh` a non-manifold surface,
+* then the behavior of this function is undefined.
+*
+* Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
+* should be either available as internal property maps
+* to `pmesh` or provided as \ref namedparameters.
+*
+* \tparam PolygonMesh a model of `FaceListGraph`
+* \tparam NamedParameters a sequence of \ref namedparameters
+* \tparam ComponentRange a range of ids convertible to `std::size`
+* \tparam FaceComponentMap a model of `ReadWritePropertyMap` with
+*         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
+*         `boost::face_index` as value type.
+*
+* \param components_to_keep the range of ids of connected components to keep
+* \param pmesh the polygon mesh
+* \param fcm the property map with indices of components associated to faces in `pmesh`.
+*        After calling this function, the values of `fcm` are undefined.
+* \param np optional \ref namedparameters described below
+*
+* \cgalNamedParamsBegin
+*    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
+*    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
+* \cgalNamedParamsEnd
+*
+*/
+template <typename PolygonMesh
+        , typename ComponentRange
+        , typename FaceComponentMap
+        , typename NamedParameters>
+void keep_connected_components(PolygonMesh& pmesh
+                              , const ComponentRange& components_to_keep
+                              , const FaceComponentMap& fcm
+                              , const NamedParameters& np)
+{
+  keep_or_remove_connected_components(pmesh, components_to_keep, fcm, true, np);
+}
+
+/*!
+* \ingroup remove_connected_components_grp
+* Removes in `pmesh` the connected components designated by theirs ids
+* in `components_to_remove` as well as all the isolated vertices.
+* The connected component id of a face is given by `fcm`.
+*
+* \note If the removal of the connected components makes `pmesh` a non-manifold surface,
+* then the behavior of this function is undefined.
+*
+* Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
+* should be either available as internal property maps
+* to `pmesh` or provided as \ref namedparameters.
+*
+*
+* \tparam PolygonMesh a model of `FaceListGraph`
+* \tparam NamedParameters a sequence of \ref namedparameters
+* \tparam ComponentRange a range of ids convertible to `std::size`
+* \tparam FaceComponentMap a model of `ReadWritePropertyMap` with
+*         `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
+*         `boost::face_index` as value type.
+*
+* \param components_to_remove the range of ids of connected components to remove
+* \param pmesh the polygon mesh
+* \param fcm the property map with indices of components associated to faces in `pmesh`.
+*        After calling this function, the values of `fcm` are undefined.
+* \param np optional \ref namedparameters described below
+*
+* \cgalNamedParamsBegin
+*    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
+*    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
+* \cgalNamedParamsEnd
+*
+*/
+template <typename PolygonMesh
+        , typename ComponentRange
+        , typename FaceComponentMap
+        , typename NamedParameters>
+void remove_connected_components(PolygonMesh& pmesh
+                                , const ComponentRange& components_to_remove
+                                , const FaceComponentMap& fcm
+                                , const NamedParameters& np)
+{
+  keep_or_remove_connected_components(pmesh, components_to_remove, fcm, false, np);
+}
+
+/*!
+* \ingroup remove_connected_components_grp
+*  keeps the connected components not designated by the faces in `components_to_remove`,
+*  and removes the other connected components and all the isolated vertices.
+*  Two faces are considered in the same connected component if they share an edge that is not marked as constrained.
+*
+* Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
+* should be either available as internal property maps
+* to `pmesh` or provided as \ref namedparameters.
+*
+* \note If the removal of the connected components makes `pmesh` a non-manifold surface,
+* then the behavior of this function is undefined.
+*
+* \tparam PolygonMesh a model of `FaceListGraph`
+* \tparam NamedParameters a sequence of \ref namedparameters
+* \tparam FaceRange a range of `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*         indicating the connected components to be removed.
+*
+* \param components_to_remove a face range, including one face or more on each component to be removed
+* \param pmesh the polygon mesh
+* \param np optional \ref namedparameters described below
+*
+* \cgalNamedParamsBegin
+*    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
+*    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
+*    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
+* \cgalNamedParamsEnd
+*
+*/
+template <typename PolygonMesh
+        , typename FaceRange
+        , typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+void remove_connected_components(PolygonMesh& pmesh
+                                , const FaceRange& components_to_remove
+                                , const CGAL_PMP_NP_CLASS& np)
+{
+  typedef PolygonMesh PM;
+  typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
+  using boost::choose_param;
+  using boost::get_param;
+  using boost::choose_const_pmap;
+
+  //FaceIndexMap
+  typedef typename GetFaceIndexMap<PM, CGAL_PMP_NP_CLASS>::type FaceIndexMap;
+  FaceIndexMap fim = choose_const_pmap(get_param(np, boost::face_index),
+                                       pmesh,
+                                       boost::face_index);
+
+  //vector_property_map
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
+
+  connected_components(pmesh, face_cc, np);
+
+  std::vector<std::size_t> cc_to_remove;
+  BOOST_FOREACH(face_descriptor f, components_to_remove)
+    cc_to_remove.push_back( face_cc[f] );
+
+  remove_connected_components(pmesh, cc_to_remove, face_cc, np);
+}
+
+/*!
+* \ingroup keep_connected_components_grp
+*  keeps the connected components designated by the faces in `components_to_keep`,
+*  and removes the other connected components and all the isolated vertices.
+*  Two faces are considered in the same connected component if they share an edge that is not marked as constrained.
+*
+* Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
+* should be either available as internal property maps
+* to `pmesh` or provided as \ref namedparameters.
+*
+* \note If the removal of the connected components makes `pmesh` a non-manifold surface,
+* then the behavior of this function is undefined.
+*
+* \tparam PolygonMesh a model of `FaceListGraph`
+* \tparam NamedParameters a sequence of \ref namedparameters
+* \tparam FaceRange a range of `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*         indicating the connected components to be kept.
+*
+* \param pmesh the polygon mesh
+* \param components_to_keep a face range, including one face or more on each component to be kept
+* \param np optional \ref namedparameters described below
+*
+* \cgalNamedParamsBegin
+*    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
+*    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
+*    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
+* \cgalNamedParamsEnd
+*
+*/
+template <typename PolygonMesh
+        , typename FaceRange
+        , typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+void keep_connected_components(PolygonMesh& pmesh
+                             , const FaceRange& components_to_keep
+                             , const CGAL_PMP_NP_CLASS& np)
+{
+  typedef PolygonMesh PM;
+  typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
+
+  using boost::choose_param;
+  using boost::get_param;
+  using boost::choose_const_pmap;
+
+  //FaceIndexMap
+  typedef typename GetFaceIndexMap<PM, CGAL_PMP_NP_CLASS>::type FaceIndexMap;
+  FaceIndexMap fim = choose_const_pmap(get_param(np, boost::face_index),
+                                       pmesh,
+                                       boost::face_index);
+
+  //vector_property_map
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
+
+  connected_components(pmesh, face_cc, np);
+
+  std::vector<std::size_t> cc_to_keep;
+  BOOST_FOREACH(face_descriptor f, components_to_keep)
+    cc_to_keep.push_back( face_cc[f] );
+
+  keep_connected_components(pmesh, cc_to_keep, face_cc, np);
+}
+
+// non-documented overloads so that named parameters can be omitted
+
+template <typename PolygonMesh, typename FaceRange>
+void remove_connected_components(PolygonMesh& pmesh
+                                , const FaceRange& components_to_remove)
+{
+  remove_connected_components(pmesh, components_to_remove,
+    CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
+template <typename PolygonMesh
+        , typename ComponentRange
+        , typename FaceComponentMap>
+void keep_connected_components(PolygonMesh& pmesh
+                              , const ComponentRange& components_to_keep
+                              , const FaceComponentMap& fcm)
+{
+  keep_connected_components(pmesh, components_to_keep, fcm,
+    CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
+template <typename PolygonMesh
+        , typename ComponentRange
+        , typename FaceComponentMap>
+void remove_connected_components(PolygonMesh& pmesh
+                                , const ComponentRange& components_to_remove
+                                , const FaceComponentMap& fcm )
+{
+    remove_connected_components(pmesh, components_to_remove, fcm,
+      CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
 template <typename PolygonMesh, typename FaceRange>
 void keep_connected_components(PolygonMesh& pmesh
                              , const FaceRange& components_to_keep)
@@ -933,7 +1152,6 @@ void keep_connected_components(PolygonMesh& pmesh
   keep_connected_components(pmesh, components_to_keep,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
-
 
 } // namespace Polygon_mesh_processing
 
