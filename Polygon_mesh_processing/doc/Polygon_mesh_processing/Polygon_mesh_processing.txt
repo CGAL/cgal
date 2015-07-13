@@ -396,10 +396,11 @@ Then, `CGAL::Polygon_mesh_processing::connected_components()`
 collects all the connected components, and fills a property map
 with the indices of the different connected components.
 
-The function `CGAL::Polygon_mesh_processing::keep_connected_components()`
-enables the user to keep only a selection of connected components,
-provided as a range of faces that belong to the desired connected components
-(one or more per connected component).
+The functions `CGAL::Polygon_mesh_processing::keep_connected_components()`
+and `CGAL::Polygon_mesh_processing::remove_connected_components()`
+enable the user to keep and remove only a selection of connected components,
+provided either as a range of faces that belong to the desired connected components
+or as a range of connected component ids (one or more per connected component).
 
 Finally, `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
 enables the user to keep only the largest connected components. This feature can
@@ -455,6 +456,7 @@ Function or Class                     | Pure Triangle  | Self-Intersection Free 
 `connected_components()`              |     no         |        no              |   no
 `keep_largest_connected_components()` |     no         |        no              |   no
 `keep_connected_components()`         |     no         |        no              |   no
+`remove_connected_components()`       |     no         |        no              |   no
 </center>
 ****************************************
 \section PMPHistory Implementation History
