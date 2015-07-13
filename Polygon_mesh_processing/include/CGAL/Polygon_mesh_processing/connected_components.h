@@ -352,12 +352,6 @@ mark_connected_components_v2(
 namespace Polygon_mesh_processing{
 
   namespace internal {
-    struct LessFirst {
-      typedef std::pair<std::size_t,std::size_t> T;
-      bool operator()(const T& a, const T& b) const {
-        return a.first < b.first;
-      }
-    };
     struct MoreSecond {
       typedef std::pair<std::size_t,std::size_t> T;
       bool operator()(const T& a, const T& b) const {
@@ -553,6 +547,16 @@ connected_components(const PolygonMesh& pmesh,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
+
+template <typename PolygonMesh
+        , typename ComponentRange
+        , typename FaceComponentMap
+        , typename NamedParameters>
+void keep_connected_components(PolygonMesh& pmesh
+                              , const ComponentRange& components_to_keep
+                              , const FaceComponentMap& fcm
+                              , const NamedParameters& np);
+
 /*!
  * \ingroup PkgPolygonMeshProcessing
  *  removes the small connected components and all the isolated vertices.
@@ -585,17 +589,11 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
                                             , const NamedParameters& np)
 {
   typedef PolygonMesh PM;
+  typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
+
   using boost::choose_param;
   using boost::get_param;
   using boost::choose_const_pmap;
-
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_iterator vertex_iterator;
-  typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::face_iterator face_iterator;
-  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor edge_descriptor;
-  typedef typename boost::graph_traits<PolygonMesh>::edge_iterator edge_iterator;
 
   //FaceIndexMap
   typedef typename GetFaceIndexMap<PM, NamedParameters>::type FaceIndexMap;
@@ -605,149 +603,27 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh
 
   //vector_property_map
   boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
-
-  //VertexIndexMap
-  typedef typename GetVertexIndexMap<PM, NamedParameters>::type VertexIndexMap;
-  VertexIndexMap vim = choose_const_pmap(get_param(np, boost::vertex_index),
-                                         pmesh,
-                                         boost::vertex_index);
-
   std::size_t num = connected_components(pmesh, face_cc, np);
 
-  if((num == 1)|| (nb_components_to_keep > num) ){
+  if((num == 1)|| (nb_components_to_keep > num) )
     return 0;
-  }
-  boost::vector_property_map<bool, VertexIndexMap> keep_vertex(vim); 
-  BOOST_FOREACH(vertex_descriptor v, vertices(pmesh)){
-    keep_vertex[v] = false;
-  }
-  typedef std::pair<std::size_t, std::size_t> Component;
-  std::vector<Component> component_size(num);
 
-  for(std::size_t i=0; i < num; i++){
+  std::vector< std::pair<std::size_t, std::size_t> > component_size(num);
+
+  for(std::size_t i=0; i < num; i++)
     component_size[i] = std::make_pair(i,0);
-  }
-  BOOST_FOREACH(face_descriptor f, faces(pmesh)){
-    component_size[face_cc[f]].second++;
-  }
 
-#ifdef CGAL_CC_DEBUG
-  for(int i=0; i < component_size.size(); ++i){
-    std::cerr << "component " << i << " has " << component_size[i].second << " faces\n";
-  }
-#endif
+  BOOST_FOREACH(face_descriptor f, faces(pmesh))
+    ++component_size[face_cc[f]].second;
 
-  // we have to sort the range [0, num) by component size
-  internal::MoreSecond ls;
-  std::sort(component_size.begin(), component_size.end(), ls);
-  for(std::size_t i=0; i < num; i++){
-    component_size[i].second = (i < nb_components_to_keep)?1:0;
-  }
-  internal::LessFirst lsinv;
-  std::sort(component_size.begin(), component_size.end(), lsinv);
+  // we sort the range [0, num) by component size
+  std::sort(component_size.begin(), component_size.end(), internal::MoreSecond());
+  std::vector<std::size_t> cc_to_keep;
+  for(std::size_t i=0; i<nb_components_to_keep; ++i)
+    cc_to_keep.push_back( component_size[i].first );
 
-#ifdef CGAL_CC_DEBUG
-  for(std::size_t i=0; i < num; i++){
-    std::cout << i  << " " << component_size[i].first  << " " << component_size[i].second << std::endl;
-  }
-#endif
+  keep_connected_components(pmesh, cc_to_keep, face_cc, np);
 
-  BOOST_FOREACH(face_descriptor f, faces(pmesh)){
-    face_cc[f] = component_size[face_cc[f]].second;
-#ifdef CGAL_CC_DEBUG
-    if(face_cc[f] == 1){
-      std::cerr << "keep " << f << std::endl;
-    }
-#endif
-  }
-  // Now face_cc[f] == 1 means that we want to keep the face
-
-  BOOST_FOREACH(face_descriptor f, faces(pmesh)){
-    if(face_cc[f] == 1){
-      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f,pmesh),pmesh)){
-          vertex_descriptor v = target(h,pmesh);
-          keep_vertex[v] = true;
-#ifdef CGAL_CC_DEBUG
-          std::cout << "keep vertex "<< v << std::endl;
-#endif
-        }
-    }
-  }
-
-  edge_iterator eb, ee;
-  for(boost::tie(eb,ee)= edges(pmesh);eb!= ee;){
-    edge_descriptor e = *eb;
-    ++eb;
-    vertex_descriptor v = source(e,pmesh);
-    vertex_descriptor w = target(e,pmesh);
-    halfedge_descriptor h = halfedge(e,pmesh);
-    halfedge_descriptor oh = opposite(h,pmesh);
-    if(! keep_vertex[v] && ! keep_vertex[w]){
-      // don't care about connectivity
-      // As vertices are not kept the faces and vertices will be removed later
-      remove_edge(e,pmesh);
-    } else if( keep_vertex[v] &&  keep_vertex[w]){
-      face_descriptor fh = face(h,pmesh), ofh = face(oh,pmesh);
-      if(is_border(h,pmesh) && is_border(oh,pmesh)){
-#ifdef CGAL_CC_DEBUG
-        std::cerr << "null_face on both sides of " << e << " is kept\n";
-#endif
-      } else if( (is_border(oh,pmesh) && face_cc[fh]) ||
-                 (is_border(h,pmesh) && face_cc[ofh]) ||
-                 (! is_border(oh,pmesh) && ! is_border(h,pmesh) &&face_cc[fh] && face_cc[ofh]) ){
-        // do nothing
-      } else if(! is_border(h,pmesh) && face_cc[fh] && ! is_border(oh,pmesh) &&! face_cc[ofh]){
-        set_face(oh, boost::graph_traits<PolygonMesh>::null_face(), pmesh);
-      } else if(! is_border(h,pmesh) && ! face_cc[fh]  && ! is_border(oh,pmesh) && face_cc[ofh]){
-        set_face(h, boost::graph_traits<PolygonMesh>::null_face(), pmesh);
-      } else {
-        // no face kept
-        assert( (is_border(h,pmesh) || ! face_cc[fh]) && (is_border(oh,pmesh) ||! face_cc[ofh]));
-        // vertices pointing to e must change their halfedge
-        if(halfedge(v,pmesh) == oh){
-          set_halfedge(v,prev(h,pmesh),pmesh);
-        }
-        if(halfedge(w,pmesh) == h){
-          set_halfedge(w,prev(oh,pmesh),pmesh);
-        }
-        // shortcut the next pointers as e will be removed
-        set_next(prev(h,pmesh), next(oh,pmesh),pmesh);
-        set_next(prev(oh,pmesh), next(h,pmesh),pmesh);
-        remove_edge(e,pmesh);
-      }
-    } else if( keep_vertex[v] ){
-      if(halfedge(v,pmesh) == oh){
-        set_halfedge(v,prev(h,pmesh),pmesh);
-      }
-      set_next(prev(h,pmesh), next(oh,pmesh),pmesh);
-        remove_edge(e,pmesh);
-    } else {
-      assert (keep_vertex[w]);
-      if(halfedge(w,pmesh) == h){
-        set_halfedge(w,prev(oh,pmesh),pmesh);
-      }
-      set_next(prev(oh,pmesh), next(h,pmesh),pmesh);
-        remove_edge(e,pmesh);
-    }
-  }
- 
-  face_iterator fb, fe;
-  // We now can remove all vertices and faces not marked as kept
-  for(boost::tie(fb,fe)=faces(pmesh); fb!=fe;){
-    face_descriptor f = *fb;
-    ++fb;
-    if(face_cc[f] != 1){
-      remove_face(f,pmesh);
-    }
-  }
-  vertex_iterator b,e;
-  for(boost::tie(b,e)=vertices(pmesh); b!=e;){
-    vertex_descriptor v = *b;
-    ++b;
-    if(! keep_vertex[v]){
-      remove_vertex(v,pmesh);
-    }
-  }
   return num - nb_components_to_keep;
 }
 
