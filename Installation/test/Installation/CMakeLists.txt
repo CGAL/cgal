@@ -69,6 +69,13 @@ if ( CGAL_FOUND )
     endif()  
   endif()
 
+  if ( WITH_CGAL_Qt5 )
+    find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
+    if( Qt5_FOUND )
+      create_link_to_program(CGAL_Qt5)
+    endif()
+  endif()
+
   if(WIN32) 
     add_executable(test_gmp_mpfr_dll test_gmp_mpfr_dll.cpp)
     target_link_libraries(test_gmp_mpfr_dll Version)
