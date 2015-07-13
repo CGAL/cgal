@@ -15,9 +15,9 @@
 #include <CGAL/IO/File_writer_OFF.h>
 #include <CGAL/version.h> 
 
-#include <CGAL/orient_polygon_soup.h>
-#include <CGAL/polygon_soup_to_polyhedron_3.h>
-#include <CGAL/orient_polyhedron_3.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 struct Polyhedron_to_polygon_soup_writer {
   typedef Kernel::Point_3 Point_3;
@@ -178,7 +178,8 @@ Scene_polygon_soup_item::orient()
   if (valid_polygons.size()!=soup->polygons.size())
     soup->polygons.swap(valid_polygons);
 
-  return CGAL::orient_polygon_soup(soup->points, soup->polygons);
+  return CGAL::Polygon_mesh_processing::
+    orient_polygon_soup(soup->points, soup->polygons);
 }
 
 
@@ -218,11 +219,12 @@ bool
 Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
 {
   orient();
-  CGAL::polygon_soup_to_polyhedron_3(*out_polyhedron, soup->points, soup->polygons);
+  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Polyhedron>(
+    soup->points, soup->polygons, *out_polyhedron);
 
   if(out_polyhedron->size_of_vertices() > 0) {
     // Also check whether the consistent orientation is fine
-    if(!CGAL::is_oriented(*out_polyhedron)) {
+    if(!CGAL::Polygon_mesh_processing::is_outward_oriented(*out_polyhedron)) {
       out_polyhedron->inside_out();
     }
     return true;

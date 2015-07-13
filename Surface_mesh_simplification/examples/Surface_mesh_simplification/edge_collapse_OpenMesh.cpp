@@ -80,9 +80,9 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse
             (surface_mesh
             ,stop
-             ,CGAL::halfedge_index_map  (get(CGAL::halfedge_index  ,surface_mesh)) 
-             .vertex_point_map(get(boost::vertex_point, surface_mesh))
-             .edge_is_constrained_map(constraints_map) 
+             ,CGAL::parameters::halfedge_index_map  (get(CGAL::halfedge_index  ,surface_mesh)) 
+                               .vertex_point_map(get(boost::vertex_point, surface_mesh))
+                               .edge_is_constrained_map(constraints_map) 
              );
   
   surface_mesh.garbage_collection();

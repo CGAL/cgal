@@ -24,6 +24,7 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Iterator_range.h>
+#include <CGAL/HalfedgeDS_decorator.h>
 
 #define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
 
@@ -213,19 +214,6 @@ add_edge(CGAL::Polyhedron_3<Gt,I,HDS,A>& g)
 }
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
-typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor
-add_edge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor u
-         , typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::vertex_descriptor v
-         , CGAL::Polyhedron_3<Gt,I,HDS,A>& g)
-{
-  typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor 
-    e = add_edge(g);
-  set_target(halfedge(e, g), u, g);
-  set_target(opposite(halfedge(e, g), g), v, g);
-  return e;
-}
-
-template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 void
 remove_edge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::edge_descriptor e
             , CGAL::Polyhedron_3<Gt,I,HDS,A>& g)
@@ -271,6 +259,13 @@ add_face(CGAL::Polyhedron_3<Gt,I,HDS,A>& g)
   return g.hds().faces_push_back(typename CGAL::Polyhedron_3<Gt,I,HDS,A>::HalfedgeDS::Face());
 }
 
+template<class Gt, class I, CGAL_HDS_PARAM_, class A, class InputIterator>
+typename boost::graph_traits< CGAL::Polyhedron_3<Gt, I, HDS, A> >::face_descriptor
+add_face(InputIterator begin, InputIterator end, CGAL::Polyhedron_3<Gt, I, HDS, A>& g)
+{
+  return g.hds().add_facet(begin, end);
+}
+
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 void
 remove_face(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::face_descriptor f
@@ -298,9 +293,11 @@ template<class Gt, class I, CGAL_HDS_PARAM_, class A>
 void
 set_halfedge(typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::face_descriptor f
   , typename boost::graph_traits< CGAL::Polyhedron_3<Gt,I,HDS,A> >::halfedge_descriptor h
-  , const CGAL::Polyhedron_3<Gt,I,HDS,A>&)
+  , CGAL::Polyhedron_3<Gt,I,HDS,A>& g)
 {
-  f->set_halfedge(h);
+  typedef typename CGAL::Polyhedron_3<Gt, I, HDS, A>::Halfedge_data_structure Hds;
+  CGAL::HalfedgeDS_decorator<Hds> D(g.hds());
+  D.set_face_halfedge(f, h);
 }
 
 template<class Gt, class I, CGAL_HDS_PARAM_, class A>

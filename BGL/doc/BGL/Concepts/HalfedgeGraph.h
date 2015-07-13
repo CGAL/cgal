@@ -54,5 +54,6 @@ Expression                              | Returns                               
 `target(h,g)`                           | `vertex_descriptor`                                                          | The target vertex of `h`.
 `next(h, g)`                            | `halfedge_descriptor`                                                        | The next halfedge around its face.
 `prev(h, g)`                            | `halfedge_descriptor`                                                        | The previous halfedge around its face.
+`boost::graph_traits<G>::%null_halfedge()` | `halfedge_descriptor`                                                     | Returns a special halfedge that is not equal to any other halfedge.
 */
 class HalfedgeGraph {};

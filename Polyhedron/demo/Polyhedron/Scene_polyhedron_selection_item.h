@@ -7,14 +7,22 @@
 
 #include "Scene_polyhedron_item_decorator.h"
 #include "Polyhedron_type.h"
+
+#include <CGAL/property_map.h>
 #include <CGAL/gl_render.h>
-#include <CGAL/polygon_soup_to_polyhedron_3.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <fstream>
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
+#include <boost/property_map/vector_property_map.hpp>
 
 #include <CGAL/boost/graph/selection.h>
+
+namespace PMP = CGAL::Polygon_mesh_processing;
+
 
 template<class HandleType, class SelectionItem>
 struct Selection_traits {};
@@ -254,7 +262,7 @@ public:
         it != end; ++it)
     {
       const Kernel::Vector_3 n =
-        compute_facet_normal<Polyhedron::Facet,Kernel>(**it);
+        CGAL::Polygon_mesh_processing::compute_face_normal(*it, *this->poly_item->polyhedron());
       ::glNormal3d(n.x(),n.y(),n.z());
 
       Polyhedron::Halfedge_around_facet_circulator
@@ -545,6 +553,24 @@ public:
   };
 
   template <class Handle>
+  struct Index_map
+  {
+    typedef Handle  key_type;
+    typedef std::size_t     value_type;
+    typedef value_type&    reference;
+    typedef boost::read_write_property_map_tag category;
+
+    friend value_type get(Index_map, Handle h)
+    {
+      return h->id();
+    }
+    friend void put(Index_map, Handle h, value_type i)
+    {
+      h->id() = i;
+    }
+  };
+
+  template <class Handle>
   void dilate_selection(unsigned int steps) {
 
     typedef Selection_traits<Handle, Scene_polyhedron_selection_item> Tr;
@@ -614,6 +640,29 @@ public:
     changed_with_poly_item();
   }
 
+  void keep_connected_components() {
+    if (selected_facets.empty()) { return; }
+
+    Selection_traits<Polyhedron::Face_handle, Scene_polyhedron_selection_item> trf(this);
+    trf.update_indices();
+    Selection_traits<Polyhedron::Vertex_handle, Scene_polyhedron_selection_item> trv(this);
+    trv.update_indices();
+
+    //Selection_traits<edge_descriptor, Scene_polyhedron_selection_item> tre(this);
+    //tre.update_indices();
+    //std::vector<bool> mark(polyhedron()->size_of_halfedges() / 2, false);
+    //BOOST_FOREACH(edge_descriptor e, selected_edges)
+    //  mark[tre.id(e)] = true;
+
+    PMP::keep_connected_components(*polyhedron()
+      , trf.container()
+      , PMP::parameters::face_index_map(Index_map<Polyhedron::Face_handle>())
+      .vertex_index_map(Index_map<Polyhedron::Vertex_handle>()));
+//      .edge_is_constrained_map(Is_selected_property_map<edge_descriptor>(mark)));
+
+    changed_with_poly_item();
+  }
+
   bool export_selected_facets_as_polyhedron(Polyhedron* out) {
     // Note: might be a more performance wise solution
     // assign sequential id to vertices neighbor to selected facets
@@ -645,7 +694,9 @@ public:
         polygons[counter].push_back(hb->vertex()->id() -1);
       } while(++hb != hend);
     }
-    CGAL::polygon_soup_to_polyhedron_3(*out, points, polygons);
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Polyhedron>(
+      points, polygons, *out);
+
     return out->size_of_vertices() > 0;
   }
 
@@ -722,7 +773,25 @@ protected:
     if(any_change) { Q_EMIT itemChanged(); }
   }
 
-// members
+public:
+  Is_selected_property_map<edge_descriptor>
+    selected_edges_pmap(std::vector<bool>& mark)
+  {
+    Selection_traits<edge_descriptor,
+      Scene_polyhedron_selection_item> tr(this);
+    tr.update_indices();
+
+    for (unsigned int i = 0; i < mark.size(); ++i)
+      mark[i] = false;
+
+    BOOST_FOREACH(edge_descriptor e, selected_edges)
+      mark[tr.id(e)] = true;
+
+    return Is_selected_property_map<edge_descriptor>(mark);
+  }
+
+protected:
+  // members
   std::string file_name_holder;
   Scene_polyhedron_item_k_ring_selection k_ring_selector;
   // action state
