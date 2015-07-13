@@ -3,7 +3,7 @@ message( "== CMake setup ==" )
 project(CGAL CXX C)
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 2.8.11)
 
 # option for branch build
 

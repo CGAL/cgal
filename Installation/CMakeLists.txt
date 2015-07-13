@@ -6,7 +6,7 @@
 project(CGAL CXX C)
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 2.8.11)
 
 # Tested version:
 cmake_policy(VERSION 2.8.11)

@@ -1,0 +1,9 @@
+/*!
+\example Segment_Delaunay_graph_Linf_2/sdg-count-sites-linf.cpp
+\example Segment_Delaunay_graph_Linf_2/sdg-fast-sp-linf.cpp
+\example Segment_Delaunay_graph_Linf_2/sdg-fast-sp-polygon-linf.cpp
+\example Segment_Delaunay_graph_Linf_2/sdg-filtered-traits-linf.cpp
+\example Segment_Delaunay_graph_Linf_2/sdg-info-set-linf.cpp
+\example Segment_Delaunay_graph_Linf_2/sdg-red-blue-info-linf.cpp
+\example Segment_Delaunay_graph_Linf_2/sdg-voronoi-edges-linf.cpp
+*/

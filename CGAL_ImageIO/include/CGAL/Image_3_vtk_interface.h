@@ -113,13 +113,13 @@ struct VTK_type_generator<boost::uint32_t> {
   vtk_image->SetDimensions(image.xdim(),
                            image.ydim(),
                            image.zdim());
-  vtk_image->SetWholeExtent(0, image.xdim(),
-                            0, image.ydim(),
-                            0, image.zdim());
+  vtk_image->SetExtent(0, image.xdim()-1,
+                       0, image.ydim()-1,
+                       0, image.zdim()-1);
   vtk_image->SetSpacing(image.vx(),
                         image.vy(),
                         image.vz());
-  vtk_image->SetScalarType(type);
+  vtk_image->AllocateScalars(type, 1);
   vtk_image->GetPointData()->SetScalars(data_array);
   return vtk_image;
 } // end vtk_image_sharing_same_data_pointer

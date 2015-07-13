@@ -167,9 +167,7 @@ In order to build the \cgal libraries, you need a \cpp compiler.
 In order to configure, build, and install the \cgal libraries, examples and
 demos, you need CMake, a cross-platform "makefile generator".
 If CMake is not installed already you can obtain it from <A HREF="http://www.cmake.org/">`http://www.cmake.org/`</A>.
-CMake version 2.6.3 or higher is required. On Windows, CMake 
-version 2.8.6 or higher is required, for a proper support of DLL's
-generation.
+CMake version 2.8.11 or higher is required.
 This manual explains only those features of
 CMake which are needed in order to build \cgal. Please refer to the 
 CMake documentation at <A HREF="http://www.cmake.org/">`http://www.cmake.org/`</A> for further details.
@@ -185,8 +183,7 @@ Visual \cpp solution and project file that you can use to build \cgal.
 \subsection installation_configuring_gui Configuring CGAL with the CMake GUI
 
 The simplest way to start the configuration is to run the graphical
-user interface of CMake. We recommend to use `cmake-gui`. It
-is available on many platforms as of CMake version 2.6. You must pass as 
+user interface of CMake. We recommend to use `cmake-gui`. You must pass as 
 argument the root directory of \cgal. For example:
 
 <PRE>

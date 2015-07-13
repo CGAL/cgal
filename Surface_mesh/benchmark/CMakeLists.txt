@@ -1,6 +1,6 @@
 project(Surface_mesh_performance)
 
-cmake_minimum_required(VERSION 2.6.2)
+cmake_minimum_required(VERSION 2.8.11)
 
 find_package(CGAL REQUIRED)
 include(${CGAL_USE_FILE})
