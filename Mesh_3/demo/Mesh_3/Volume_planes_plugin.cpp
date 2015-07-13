@@ -342,7 +342,7 @@ private:
 
     std::pair<Word, Word> minmax = std::make_pair(*std::min_element(begin, end), *std::max_element(begin, end));
 
-    Clamp_to_one_zero_range clamper = { minmax };
+    Clamp_to_one_zero_range<Word> clamper = { minmax };
 
     switchReaderConverter< Word >(minmax);
     
