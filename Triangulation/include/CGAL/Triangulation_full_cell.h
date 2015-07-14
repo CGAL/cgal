@@ -121,12 +121,15 @@ protected:
 
 // FUNCTIONS THAT ARE NOT MEMBER FUNCTIONS:
 
+
+inline
 std::istream &
 operator>>(std::istream & is, No_full_cell_data &)
 {
     return is;
 }
 
+inline
 std::ostream &
 operator<<(std::ostream & os, const No_full_cell_data &)
 {
