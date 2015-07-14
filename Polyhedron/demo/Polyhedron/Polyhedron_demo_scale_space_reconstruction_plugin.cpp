@@ -84,14 +84,31 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
     time.start();
     std::cout << "Scale scape surface reconstruction...";
 
-    typedef CGAL::Scale_space_surface_reconstruction_3<Kernel> Recontructor;
-    Recontructor reconstruct( dialog.neighbors(), dialog.samples() );
+    typedef CGAL::Scale_space_surface_reconstruction_3<Kernel> Reconstructor;
+    Reconstructor reconstruct( dialog.neighbors(), dialog.samples() );
     reconstruct.reconstruct_surface(
       pts_item->point_set()->begin(),
       pts_item->point_set()->end(),
       dialog.iterations()
     );
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
+
+    std::vector<Point_set::Point> pts;
+    typedef Point_set::iterator Point_iterator;
+    for(Point_iterator it = pts_item->point_set()->begin(),
+                       end = pts_item->point_set()->end(); it!=end; ++it)
+    {
+      pts.push_back (*it);
+    }
+
+    std::vector<Reconstructor::Point> pts_smoothed;
+    typedef Reconstructor::Point_iterator SS_point_iterator;
+    
+    for(SS_point_iterator it = reconstruct.points_begin(),
+	  end = reconstruct.points_end(); it!=end; ++it)
+    {
+      pts_smoothed.push_back (*it);
+    }
 
     for( unsigned int sh = 0; sh < reconstruct.number_of_shells(); ++sh ) {
         // collect the number of triples.
@@ -103,18 +120,24 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
         new_item->init_polygon_soup(pts_item->point_set()->size(),
                                     num );
 
-        typedef Point_set::iterator Point_iterator;
+	std::map<unsigned int, unsigned int> map_i2i;
 
-        for(Point_iterator it = pts_item->point_set()->begin(),
-                           end = pts_item->point_set()->end(); it!=end; ++it)
-        {
-          new_item->new_vertex(it->x(), it->y(), it->z());
-        }
-
-        for (Recontructor::Triple_iterator it=reconstruct.shell_begin( sh ),
+	unsigned int current_index = 0;
+        for (Reconstructor::Triple_iterator it=reconstruct.shell_begin( sh ),
                                            end=reconstruct.shell_end( sh );it!=end;++it)
         {
-          new_item->new_triangle( (*it)[0], (*it)[1], (*it)[2] );
+	  for (unsigned int ind = 0; ind < 3; ++ ind)
+	    if (map_i2i.insert (std::make_pair ((*it)[ind], current_index)).second)
+	      {
+		new_item->new_vertex (pts[(*it)[ind]].x (),
+				      pts[(*it)[ind]].y (),
+				      pts[(*it)[ind]].z ());
+		++ current_index;
+	      }
+
+	  new_item->new_triangle( map_i2i[(*it)[0]],
+				  map_i2i[(*it)[1]],
+				  map_i2i[(*it)[2]] );
         }
 
         new_item->finalize_polygon_soup();
@@ -131,17 +154,24 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
           new_item_smoothed->init_polygon_soup(pts_item->point_set()->size(),
                                                num );
 
-          typedef Recontructor::Point_iterator SS_point_iterator;
-          for(SS_point_iterator it = reconstruct.points_begin(),
-                                end = reconstruct.points_end(); it!=end; ++it)
-          {
-            new_item_smoothed->new_vertex(it->x(), it->y(), it->z());
-          }
+	  std::map<unsigned int, unsigned int> map_i2i_smoothed;
 
-          for (Recontructor::Triple_iterator it=reconstruct.shell_begin( sh ),
+	  unsigned int current_index_smoothed = 0;
+          for (Reconstructor::Triple_iterator it=reconstruct.shell_begin( sh ),
                                              end=reconstruct.shell_end( sh );it!=end;++it)
           {
-            new_item_smoothed->new_triangle( (*it)[0], (*it)[1], (*it)[2] );
+	    for (unsigned int ind = 0; ind < 3; ++ ind)
+	      if (map_i2i_smoothed.insert (std::make_pair ((*it)[ind], current_index_smoothed)).second)
+		{
+		  new_item_smoothed->new_vertex (pts_smoothed[(*it)[ind]].x (),
+						 pts_smoothed[(*it)[ind]].y (),
+						 pts_smoothed[(*it)[ind]].z ());
+		  ++ current_index_smoothed;
+		}
+
+	    new_item_smoothed->new_triangle( map_i2i_smoothed[(*it)[0]],
+					     map_i2i_smoothed[(*it)[1]],
+					     map_i2i_smoothed[(*it)[2]] );
           }
 
           new_item_smoothed->finalize_polygon_soup();
