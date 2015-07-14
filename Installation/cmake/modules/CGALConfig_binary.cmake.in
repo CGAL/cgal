@@ -43,7 +43,7 @@ else()
   # targets are not imported and this is disallowed by CMP0026. Just
   # set it to the target name.
   macro(CGAL_alias_library lib)
-    if(TARGET ${lib})
+    if(TARGET ${lib} AND NOT TARGET CGAL::${lib})
       add_library(CGAL::${lib} ALIAS ${lib})
       set(${lib}_LIBRARY CGAL::${lib})
     else()
