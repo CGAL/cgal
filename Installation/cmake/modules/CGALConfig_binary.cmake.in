@@ -12,7 +12,9 @@ get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
 # The else condition of this code is intentionally not present in
 # CGALConfig_install.cmake.in since it cannot happen there.
-if(NOT CGAL_BUILDING_LIBS)
+# Note also that for CMake<=2.8.11 (detected by the absence of CMP0024),
+# the else() condition is never used.
+if(NOT POLICY CMP0024 OR NOT CGAL_BUILDING_LIBS)
   include("${CGAL_CONFIG_DIR}/CGALExports.cmake")
 
   macro(CGAL_get_property_optional VAR TARGET PROPERTY)
