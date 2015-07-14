@@ -22,7 +22,7 @@
 #define CGAL_PROPERTIES_SURFACE_MESH_H
 
 #include <CGAL/assertions.h>
-#include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh/Surface_mesh.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/squared_distance_3.h>
 
