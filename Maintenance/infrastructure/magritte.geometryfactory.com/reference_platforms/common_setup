@@ -1,0 +1,2 @@
+Qt5_DIR=/Users/lrineau/Qt/5.5/clang_64/lib/cmake/Qt5
+export Qt5_DIR

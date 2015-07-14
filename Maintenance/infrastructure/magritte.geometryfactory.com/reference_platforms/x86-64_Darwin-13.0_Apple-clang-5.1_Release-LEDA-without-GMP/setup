@@ -16,3 +16,4 @@ export LEDA_DIR LEDA_LIBRARY_RELEASE
 
 CGAL_DISABLE_GMP=1
 export CGAL_DISABLE_GMP
+source /Users/cgaltester/cgal_test/reference_platforms/common_setup

@@ -8,3 +8,4 @@ export BOOST_LIBRARYDIR BOOST_INCLUDEDIR DYLD_LIBRARY_PATH
 
 CXXFLAGS="-Wall -Wextra -isystem $BOOST_INCLUDEDIR"
 export CXX CC CXXFLAGS
+source /Users/cgaltester/cgal_test/reference_platforms/common_setup
