@@ -12,7 +12,7 @@ find_package(CGAL COMPONENTS Qt5)
 
 include(${CGAL_USE_FILE})
 
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Widgets)
+find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Widgets Svg)
 
 include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/include)
 include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../include )
@@ -35,7 +35,7 @@ qt5_generate_moc( ${CMAKE_CURRENT_SOURCE_DIR}/Polyline_simplification_2.cpp Poly
 # The executable itself.
 add_executable  ( Polyline_simplification_2 ${CMAKE_CURRENT_SOURCE_DIR}/Polyline_simplification_2.cpp Polyline_simplification_2.moc ${CDT_UI_FILES} ${CDT_RESOURCE_FILES} )
 
-qt5_use_modules(Polyline_simplification_2 Xml Script OpenGL Widgets)
+qt5_use_modules(Polyline_simplification_2 Xml Script OpenGL Widgets Svg)
 # Link with Qt libraries
 target_link_libraries( Polyline_simplification_2 ${QT_LIBRARIES} )
 
