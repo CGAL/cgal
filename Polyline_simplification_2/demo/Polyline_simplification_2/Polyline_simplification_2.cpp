@@ -162,7 +162,7 @@ MainWindow::MainWindow()
   // and the input they generate is passed to the triangulation with 
   // the signal/slot mechanism    
   mPI = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &mScene, 0, true); // inputs polylines which are not closed
-  
+  this->on_actionInsertPolyline_toggled(true);
   QObject::connect(mPI, SIGNAL(generate(CGAL::Object)), this, SLOT(processInput(CGAL::Object)));
     
 
@@ -172,8 +172,8 @@ MainWindow::MainWindow()
   QObject::connect(this->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 
   // We put mutually exclusive actions in an QActionGroup
-  QActionGroup* ag = new QActionGroup(this);
-  ag->addAction(this->actionInsertPolyline);
+  //  QActionGroup* ag = new QActionGroup(this);
+  //  ag->addAction(this->actionInsertPolyline);
 
   this->actionShowTriangulation->setChecked(false);
   
