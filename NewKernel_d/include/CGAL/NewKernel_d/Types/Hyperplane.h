@@ -45,7 +45,6 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
   typedef typename Get_type<R_, Point_tag>::type	Point;
   typedef typename Get_type<R_, Vector_tag>::type	Vector;
   typedef typename Get_type<R_, FT_tag>::type FT;
-  typedef typename R_::LA::Square_matrix Matrix;
   private:
   struct One {
     typedef int result_type;
@@ -66,17 +65,18 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
   }
 
   template <class Iter>
-  result_type operator()(Iter f, Iter e)const{
+  result_type through(Iter f, Iter e)const{
     typedef typename R_::LA LA;
-    typedef typename LA::Vector Vec;
-    typedef typename LA::Construct_vector CVec;
+    // TODO: Use a static dimension when possible
+    typedef Eigen::Matrix<FT,Eigen::Dynamic,Eigen::Dynamic> Matrix;
+    typedef Eigen::Matrix<FT,Eigen::Dynamic,1> Vec;
     typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
     typename Get_functor<R_, Construct_ttag<Vector_tag> >::type cv(this->kernel());
     typename Get_functor<R_, Point_dimension_tag>::type pd(this->kernel());
 
     Point const& p0=*f;
     int d = pd(p0);
-    Matrix m(d,d);
+    Matrix m(d,d+1);
     for(int j=0;j<d;++j)
       m(0,j)=c(p0,j);
     // Write the point coordinates in lines.
@@ -87,19 +87,19 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
 	m(i,j)=c(p,j);
     }
     CGAL_assertion (i == d);
-    Vec one = typename CVec::Iterator()(d,
-	boost::make_transform_iterator(boost::counting_iterator<int>(0),One()),
-	boost::make_transform_iterator(boost::counting_iterator<int>(d),One()));
-    Vec res = typename CVec::Dimension()(d);
-    LA::solve(res, CGAL_MOVE(m), CGAL_MOVE(one));
-    return this->operator()(cv(d,LA::vector_begin(res),LA::vector_end(res)),1);
+    for(i=0;i<d;++i)
+      m(i,d)=-1;
+    Eigen::FullPivLU<Matrix> lu(m);
+    Vec res = lu.kernel().col(0);
+    return this->operator()(cv(d,LA::vector_begin(res),LA::vector_end(res)-1),res(d));
   }
   template <class Iter>
-  result_type operator()(Iter f, Iter e, Point const&p, CGAL::Oriented_side s)const{
-    result_type ret = this->operator()(f, e);
+  result_type operator()(Iter f, Iter e, Point const&p, CGAL::Oriented_side s=ON_ORIENTED_BOUNDARY)const{
+    result_type ret = through(f, e);
     if (s == ON_ORIENTED_BOUNDARY)
       return ret;
     // TODO: I doubt this does the right thing wrt filtering...
+    // FIXME: Use Oriented_side_d instead !!!
     typename Get_functor<R_, Value_at_tag>::type va(this->kernel());
     CGAL::Oriented_side o = CGAL::compare(va(ret,p),ret.translation());
     if (o == ON_ORIENTED_BOUNDARY || o == s)
