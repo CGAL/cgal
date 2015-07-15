@@ -45,7 +45,6 @@ public:
   virtual QString toolTip() const;
 
   virtual void changed();
-  virtual void selection_changed(bool);
 
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const;
@@ -93,7 +92,6 @@ private:
   std::vector<double> positions_points;
   std::vector<double> positions_selected_points;
   std::vector<double> normals;
-  std::vector<double> tex_coords;
 
   mutable QOpenGLShaderProgram *program;
 

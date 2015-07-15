@@ -65,6 +65,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
         is_selected = true;
         qFunc.initializeOpenGLFunctions();
     }
+    changed();
 }
 
 // Converts polyhedron to point set
@@ -86,6 +87,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& i
     setRenderingMode(PointsPlusNormals);
     is_selected = true;
     qFunc.initializeOpenGLFunctions();
+    changed();
 }
 
 Scene_points_with_normal_item::~Scene_points_with_normal_item()
@@ -155,7 +157,6 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
     positions_lines.resize(0);
     positions_selected_points.resize(0);
     normals.resize(0);
-    tex_coords.resize(0);
 
     //The points
     {
@@ -241,6 +242,7 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
                     positions_lines.push_back(q.x());
                     positions_lines.push_back(q.y());
                     positions_lines.push_back(q.z());
+
 
                 }
             }
@@ -372,7 +374,7 @@ Scene_points_with_normal_item::toolTip() const
             .arg(color().name());
 }
 
-bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const 
+bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const
 {
     return m==Points ||
             ( has_normals() &&
@@ -426,7 +428,6 @@ void Scene_points_with_normal_item::draw_points(Viewer_interface* viewer) const
     qFunc.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_points.size()/3));
     vaos[1]->release();
     program->release();
-
     GLfloat point_size;
     qFunc.glGetFloatv(GL_POINT_SIZE, &point_size);
     qFunc.glPointSize(4.f);
@@ -562,14 +563,6 @@ void Scene_points_with_normal_item::changed()
 
     compute_normals_and_vertices();
     are_buffers_filled = false;
-}
-void Scene_points_with_normal_item::selection_changed(bool p_is_selected)
-{
-    if(p_is_selected != is_selected)
-    {
-        is_selected = p_is_selected;
-        changed();
-    }
 }
 
 #include "Scene_points_with_normal_item.moc"
