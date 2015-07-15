@@ -130,6 +130,9 @@ bool test_LCC_2()
   if ( !check_number_of_cells_2(lcc, 6, 3, 6, 3) )
     return false;
 
+  typename LCC::Vertex_attribute_handle vh=lcc.template attribute<0>(dh1);
+  if (!lcc.template is_attribute_used<0>(vh)) return false;
+
   trace_test_begin();
   lcc.template sew<0>(dh2,dh1);
   lcc.template sew<1>(dh2,dh3);
@@ -244,6 +247,8 @@ bool test_LCC_2()
   CGAL::remove_cell<LCC,1>(lcc, dh3);
   if ( !check_number_of_cells_2(lcc, 0, 0, 0, 0) )
     return false;
+
+  if (lcc.template is_attribute_used<0>(vh)) return false;
 
   {
     trace_test_begin();

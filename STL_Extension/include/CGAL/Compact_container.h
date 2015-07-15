@@ -308,6 +308,11 @@ public:
     delete time_stamper;
   }
 
+  bool is_used(const_iterator ptr) const
+  {
+    return (type(&*ptr)==USED);
+  }
+
   bool is_used(size_type i) const
   {
     typename Self::size_type block_number, index_in_block;
@@ -855,7 +860,10 @@ void Compact_container<T, Allocator, Increment_policy, TimeStamper>::clear()
     size_type s = it->second;
     for (pointer pp = p + 1; pp != p + s - 1; ++pp) {
       if (type(pp) == USED)
+      {
         alloc.destroy(pp);
+        set_type(pp, NULL, FREE);
+      }
     }
     alloc.deallocate(p, s);
   }
@@ -1072,8 +1080,8 @@ namespace internal {
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
          "Incrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED,
-                         "Incrementing an invalid iterator.");
+      /* CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED,
+         "Incrementing an invalid iterator."); */
       increment();
       return *this;
     }
@@ -1082,9 +1090,9 @@ namespace internal {
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
          "Decrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED
+      /*CGAL_assertion_msg(DSC::type(m_ptr.p) == DSC::USED
                       || DSC::type(m_ptr.p) == DSC::START_END,
-                         "Decrementing an invalid iterator.");
+                      "Decrementing an invalid iterator.");*/
       decrement();
       return *this;
     }

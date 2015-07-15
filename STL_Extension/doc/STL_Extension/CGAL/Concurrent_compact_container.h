@@ -196,6 +196,11 @@ complexity. No exception is thrown.
 /// \name Access Member Functions 
 /// @{ 
 
+  /*!
+  returns true if the element `pos` is used (i.e.\ valid).
+  */
+  bool is_used(const_iterator pos) const;
+
   /// returns a mutable iterator referring to the first element in `ccc`.
   iterator begin();
   /// returns a constant iterator referring to the first element in `ccc`.

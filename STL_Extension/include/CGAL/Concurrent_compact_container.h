@@ -233,6 +233,11 @@ public:
     clear();
   }
 
+  bool is_used(const_iterator ptr) const
+  {
+    return (type(&*ptr)==USED);
+  }
+
   void swap(Self &c)
   {
     std::swap(m_alloc, c.m_alloc);
@@ -932,8 +937,8 @@ namespace CCC_internal {
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
    "Incrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(CCC::type(m_ptr.p) == CCC::USED,
-                         "Incrementing an invalid iterator.");
+      /* CGAL_assertion_msg(CCC::type(m_ptr.p) == CCC::USED,
+         "Incrementing an invalid iterator."); */
       increment();
       return *this;
     }
@@ -942,9 +947,9 @@ namespace CCC_internal {
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
    "Decrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(CCC::type(m_ptr.p) == CCC::USED
+      /* CGAL_assertion_msg(CCC::type(m_ptr.p) == CCC::USED
           || CCC::type(m_ptr.p) == CCC::START_END,
-                         "Decrementing an invalid iterator.");
+          "Decrementing an invalid iterator."); */
       decrement();
       return *this;
     }
