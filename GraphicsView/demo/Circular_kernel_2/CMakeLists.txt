@@ -3,7 +3,7 @@
 
 project (Circular_kernel_2)
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
@@ -14,7 +14,7 @@ include(${CGAL_USE_FILE})
 
 
 
-find_package(Qt5 COMPONENTS Xml Script OpenGL Svg)
+find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 
 include_directories (BEFORE ../../include)
 

@@ -6,7 +6,7 @@
 project(CGAL CXX C)
 
 # Minimal version of CMake:
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 2.8.11)
 
 # Tested version:
 cmake_policy(VERSION 2.8.11)
@@ -14,11 +14,6 @@ cmake_policy(VERSION 2.8.11)
 #
 # Compatibility with CMake 3.0
 #
-if(POLICY CMP0026)
-  # Allow the LOCATION target property
-  # http://www.cmake.org/cmake/help/v3.0/policy/CMP0026.html
-  cmake_policy(SET CMP0026 OLD)
-endif()
 if(POLICY CMP0042)
   # Do not enable the use of MACOSX_RPATH
   # http://www.cmake.org/cmake/help/v3.0/policy/CMP0042.html
@@ -764,7 +759,6 @@ endforeach()
 
 include_directories (${CGAL_INCLUDE_DIRS})
 
-cache_get(CGAL_LIBRARY)
 cache_get(CGAL_3RD_PARTY_PRECONFIGURED )
 
 cache_get(CGAL_3RD_PARTY_DEFINITIONS   )
@@ -820,25 +814,6 @@ if (CGAL_BRANCH_BUILD AND CGAL_REPORT_DUPLICATE_FILES )
 
 endif()
 
-#--------------------------------------------------------------------------------------------------
-#
-#                                    -= USER SIDE SETTINGS =-
-#
-#--------------------------------------------------------------------------------------------------
-
-# Set CGAL_LIBRARY_INSTALLED, CGAL_Qt3_LIBRARY_INSTALLED and so on. Those
-# variables are the path to the libraries installed by the install
-# target. Used in the generation of the installed CGALConfig.cmake
-foreach(lib ${CGAL_CONFIGURED_LIBRARIES} CGAL) # note the added fake 'CGAL'
- if(${lib}_LIBRARY)
-    get_filename_component(lib_name "${${lib}_LIBRARY}" NAME)
-    set(${lib}_LIBRARY_INSTALLED "${CMAKE_INSTALL_PREFIX}/${CGAL_INSTALL_LIB_DIR}/${lib_name}")
- else()
-    set(${lib}_LIBRARY_INSTALLED "")
-  endif()
-  hide_variable(${lib}_LIBRARY_INSTALLED)
-endforeach()
-
 create_CGALconfig_files()
 
 #--------------------------------------------------------------------------------------------------
@@ -871,7 +846,8 @@ install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake   DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
-
+install(EXPORT    CGALExports                             DESTINATION ${CGAL_INSTALL_CMAKE_DIR}
+        NAMESPACE CGAL:: )
 
 if ( GMP_IN_AUXILIARY )
   install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )

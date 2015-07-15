@@ -1,6 +1,6 @@
 project(CGAL_DEMOS)
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 2.8.11)
 
 if (CGAL_BRANCH_BUILD) 
 

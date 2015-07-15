@@ -3,7 +3,7 @@
 
 project( Boolean_operations_2_demo ) 
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
@@ -14,7 +14,7 @@ include(${CGAL_USE_FILE})
 
 set( QT_USE_QTMAIN   TRUE )
 
-find_package(Qt5 COMPONENTS Widgets Script)
+find_package(Qt5 QUIET COMPONENTS Widgets Script)
 
 include_directories (BEFORE ${CMAKE_CURRENT_SOURCE_DIR}/../../include )
 include_directories (BEFORE ${CMAKE_CURRENT_BINARY_DIR})

@@ -1,6 +1,6 @@
 project (Circular_kernel_3)
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
@@ -8,7 +8,7 @@ endif()
 find_package(CGAL COMPONENTS Qt5)
 include(${CGAL_USE_FILE})
 
-find_package(Qt5 COMPONENTS Xml Script OpenGL)
+find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL)
 
 find_package(OpenGL)
 find_package(QGLViewer)

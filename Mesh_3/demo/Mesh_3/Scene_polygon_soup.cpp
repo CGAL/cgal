@@ -270,14 +270,14 @@ void Scene_polygon_soup::initialize_buffers() const
 
         vao[0].bind();
         buffers[0].bind();
-        buffers[0].allocate(v_poly.data(), v_poly.size()*sizeof(float));
+        buffers[0].allocate(v_poly.data(), static_cast<int>(v_poly.size()*sizeof(float)));
         poly_vertexLocation[0] = rendering_program.attributeLocation("vertex");
         rendering_program.enableAttributeArray(poly_vertexLocation[0]);
         rendering_program.setAttributeBuffer(poly_vertexLocation[0],GL_FLOAT,0,3);
         buffers[0].release();
 
         buffers[1].bind();
-        buffers[1].allocate(normal.data(), normal.size()*sizeof(float));
+        buffers[1].allocate(normal.data(), static_cast<int>(normal.size()*sizeof(float)));
         normalsLocation[0] = rendering_program.attributeLocation("normal");
         rendering_program.enableAttributeArray(normalsLocation[0]);
         rendering_program.setAttributeBuffer(normalsLocation[0],GL_FLOAT,0,3);
@@ -287,7 +287,7 @@ void Scene_polygon_soup::initialize_buffers() const
 
         vao[1].bind();
         buffers[2].bind();
-        buffers[2].allocate(v_edge.data(), v_edge.size()*sizeof(float));
+        buffers[2].allocate(v_edge.data(), static_cast<int>(v_edge.size()*sizeof(float)));
         poly_vertexLocation[0] = rendering_program.attributeLocation("vertex");
         rendering_program.enableAttributeArray(poly_vertexLocation[0]);
         rendering_program.setAttributeBuffer(poly_vertexLocation[0],GL_FLOAT,0,3);
@@ -297,7 +297,7 @@ void Scene_polygon_soup::initialize_buffers() const
         for(std::size_t i=0; i<v_edge.size(); i++)
             empty_array.push_back(0.0);
         buffers[3].bind();
-        buffers[3].allocate(empty_array.data(), empty_array.size()*sizeof(float));
+        buffers[3].allocate(empty_array.data(), static_cast<int>(empty_array.size()*sizeof(float)));
         normalsLocation[0] = rendering_program.attributeLocation("normal");
         rendering_program.enableAttributeArray(normalsLocation[0]);
         rendering_program.setAttributeBuffer(normalsLocation[0],GL_FLOAT,0,3);
@@ -307,7 +307,7 @@ void Scene_polygon_soup::initialize_buffers() const
 
         vao[2].bind();
         buffers[4].bind();
-        buffers[4].allocate(v_edge.data(), v_edge.size()*sizeof(float));
+        buffers[4].allocate(v_edge.data(), static_cast<int>(v_edge.size()*sizeof(float)));
         poly_vertexLocation[0] = rendering_program.attributeLocation("vertex");
         rendering_program.enableAttributeArray(poly_vertexLocation[0]);
         rendering_program.setAttributeBuffer(poly_vertexLocation[0],GL_FLOAT,0,3);
@@ -316,7 +316,7 @@ void Scene_polygon_soup::initialize_buffers() const
         for(std::size_t i=0; i<v_edge.size(); i++)
             empty_array.push_back(0.0);
         buffers[5].bind();
-        buffers[5].allocate(empty_array.data(), empty_array.size()*sizeof(float));
+        buffers[5].allocate(empty_array.data(), static_cast<int>(empty_array.size()*sizeof(float)));
         normalsLocation[0] = rendering_program.attributeLocation("normal");
         rendering_program.enableAttributeArray(normalsLocation[0]);
         rendering_program.setAttributeBuffer(normalsLocation[0],GL_FLOAT,0,3);
@@ -412,7 +412,7 @@ Scene_polygon_soup::draw(QGLViewer * viewer) const  {
     attrib_buffers(viewer);
     rendering_program.bind();
     rendering_program.setUniformValue(colorLocation[0], color);
-    gl.glDrawArrays(GL_TRIANGLES, 0, v_poly.size()/3);
+    gl.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(v_poly.size()/3));
     rendering_program.release();
     vao[0].release();
 }
@@ -434,7 +434,7 @@ Scene_polygon_soup::draw_edges(QGLViewer * viewer) const  {
     attrib_buffers(viewer);
     rendering_program.bind();
     rendering_program.setUniformValue(colorLocation[0], color);
-    glDrawArrays(GL_LINES, 0, v_edge.size()/3);
+    glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_edge.size()/3));
     rendering_program.release();
     vao[1].release();
 
@@ -445,7 +445,7 @@ Scene_polygon_soup::draw_edges(QGLViewer * viewer) const  {
         attrib_buffers(viewer);
         rendering_program.bind();
         rendering_program.setUniformValue(colorLocation[0], color);
-        glDrawArrays(GL_LINES, 0, v_edge.size()/3);
+        glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_edge.size()/3));
         rendering_program.release();
         vao[2].release();
     }
@@ -469,7 +469,7 @@ Scene_polygon_soup::draw_points(QGLViewer * viewer) const  {
     attrib_buffers(viewer);
     rendering_program.bind();
     rendering_program.setUniformValue(colorLocation[0], color);
-    gl.glDrawArrays(GL_POINTS, 0, v_poly.size()/3);
+    gl.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(v_poly.size()/3));
     rendering_program.release();
     vao[0].release();
 

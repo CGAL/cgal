@@ -350,7 +350,7 @@ private:
     const Word* begin = (const Word*)img->data();
     const Word* end = (const Word*)img->data() + img->size();
 
-    std::pair<Word, Word> minmax = std::make_pair(*std::min_element(begin, end), *std::max_element(begin, end));
+    std::pair<const Word, const Word> minmax(*std::min_element(begin, end), *std::max_element(begin, end));
 
     Clamp_to_one_zero_range clamper = { minmax };
 

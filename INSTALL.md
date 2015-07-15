@@ -21,18 +21,18 @@ git clone https://github.com/CGAL/cgal.git /path/to/cgal.git
 cd /path/to/cgal.git
 mkdir -p build/debug
 cd build/debug
-cmake -DBUILD_TYPE=Debug ../..
+cmake -DCMAKE_BUILD_TYPE=Debug ../..
 make
 ```
 
 Here is an example of how to build the library in Release:
 ``` {.bash}
-  > git clone https://github.com/CGAL/cgal.git /path/to/cgal.git
-  > cd /path/to/cgal.git
-  > mkdir -p build/debug
-  > cd build/debug
-  > cmake -DBUILD_TYPE=Release ../..
-  > make
+git clone https://github.com/CGAL/cgal.git /path/to/cgal.git
+cd /path/to/cgal.git
+mkdir -p build/release
+cd build/release
+cmake -DCMAKE_BUILD_TYPE=Release ../..
+make
 ```
 Note that *no installation is required* to use that version of CGAL once it has been compiled.
 
@@ -45,18 +45,18 @@ of where you built the library (environment or cmake variable).
 Here is an example of how to build in debug the examples from the 3D Triangulations package:
 
 ``` {.bash}
- > cmake -DCGAL_DIR:PATH=/path/to/cgal.git/build/debug /path/to/cgal.git/Triangulation_3/examples/Triangulation_3
- > make
+ cmake -DCGAL_DIR:PATH=/path/to/cgal.git/build/debug /path/to/cgal.git/Triangulation_3/examples/Triangulation_3
+ make
 ```
 
 If you're trying to build examples or tests that does not already have a `CMakeLists.txt`, you can trigger its creation by calling the script [`cgal_create_cmake_script`](Scripts/scripts/cgal_create_cmake_script) found in `/path/to/cgal.git/Scripts/scripts/` at the root of the example/test directory. Here is an example for the examples of the 2D Triangulation package:
 
 ``` {.bash}
- > cd /path/to/cgal.git/Triangulation_2/examples/Triangulation_2
- > /path/to/cgal.git/Scripts/scripts/cgal_create_cmake_script
- > cd -
- > cmake -DCGAL_DIR:PATH=/path/to/cgal.git/build/debug /path/to/cgal.git/Triangulation_2/examples/Triangulation_2
- > make
+ cd /path/to/cgal.git/Triangulation_2/examples/Triangulation_2
+ /path/to/cgal.git/Scripts/scripts/cgal_create_cmake_script
+ cd -
+ cmake -DCGAL_DIR:PATH=/path/to/cgal.git/build/debug /path/to/cgal.git/Triangulation_2/examples/Triangulation_2
+ make
 ```
 
 Note If You Switch Between Branches

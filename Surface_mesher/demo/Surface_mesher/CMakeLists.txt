@@ -7,7 +7,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
 
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
@@ -41,7 +41,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
   include( ${CGAL_USE_FILE} )
 
-  find_package(Qt5 COMPONENTS OpenGL Xml )
+  find_package(Qt5 QUIET COMPONENTS OpenGL Xml )
   find_package(QGLViewer )
   find_package(OpenGL    )
   

@@ -344,7 +344,7 @@ void Scene_implicit_function_item::initialize_buffers() const
 
     vao[0].bind();
     buffers[0].bind();
-    buffers[0].allocate(v_cube.data(), v_cube.size()*sizeof(float));
+    buffers[0].allocate(v_cube.data(), static_cast<int>(v_cube.size()*sizeof(float)));
     vertexLocation[0] = rendering_program.attributeLocation("vertex");
     rendering_program.enableAttributeArray(vertexLocation[0]);
     rendering_program.setAttributeBuffer(vertexLocation[0],GL_FLOAT,0,3);
@@ -355,7 +355,7 @@ void Scene_implicit_function_item::initialize_buffers() const
     //cutting plane
     vao[1].bind();
     buffers[1].bind();
-    buffers[1].allocate(v_plan.data(), v_plan.size()*sizeof(float));
+    buffers[1].allocate(v_plan.data(), static_cast<int>(v_plan.size()*sizeof(float)));
     vertexLocation[1] = tex_rendering_program.attributeLocation("vertex");
     tex_rendering_program.bind();
     tex_rendering_program.setAttributeBuffer(vertexLocation[1],GL_FLOAT,0,3);
@@ -364,7 +364,7 @@ void Scene_implicit_function_item::initialize_buffers() const
     tex_rendering_program.release();
 
     buffers[2].bind();
-    buffers[2].allocate(texture_map.data(), texture_map.size()*sizeof(float));
+    buffers[2].allocate(texture_map.data(), static_cast<int>(texture_map.size()*sizeof(float)));
     tex_Location = tex_rendering_program.attributeLocation("tex_coord");
     tex_rendering_program.bind();
     tex_rendering_program.setAttributeBuffer(tex_Location,GL_FLOAT,0,2);
@@ -440,7 +440,7 @@ Scene_implicit_function_item::draw(QGLViewer* viewer) const
   rendering_program.bind();
   color.setRgbF(0.0,0.0,0.0);
   rendering_program.setUniformValue(colorLocation[0], color);
-  gl.glDrawArrays(GL_LINES, 0, v_cube.size()/3);
+  glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_cube.size()/3));
   rendering_program.release();
   vao[0].release();
 
@@ -449,7 +449,7 @@ Scene_implicit_function_item::draw(QGLViewer* viewer) const
 
   vao[1].bind();
   tex_rendering_program.bind();
-  gl.glDrawArrays(GL_TRIANGLES, 0, v_plan.size()/3);
+  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(v_plan.size()/3));
   tex_rendering_program.release();
   vao[1].release();
 

@@ -6,7 +6,7 @@ project( AABB_demo )
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
-cmake_minimum_required(VERSION 2.8.10)
+cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
@@ -18,7 +18,7 @@ find_package(CGAL COMPONENTS Qt5 )
 include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
-find_package(Qt5 COMPONENTS Xml Script OpenGL Gui Svg)
+find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Gui Svg)
 
 # Find OpenGL
 find_package(OpenGL)

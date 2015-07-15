@@ -4,12 +4,8 @@
 
 project( Installation_test )
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
-endif()
+cmake_minimum_required(VERSION 2.8.11)
+
 
 macro(create_link_to_program COMPONENT )
   
@@ -71,6 +67,13 @@ if ( CGAL_FOUND )
       include(${QT_USE_FILE})
       create_link_to_program(CGAL_Qt4)
     endif()  
+  endif()
+
+  if ( WITH_CGAL_Qt5 )
+    find_package(Qt5 QUIET COMPONENTS OpenGL Svg)
+    if( Qt5_FOUND )
+      create_link_to_program(CGAL_Qt5)
+    endif()
   endif()
 
   if(WIN32) 
