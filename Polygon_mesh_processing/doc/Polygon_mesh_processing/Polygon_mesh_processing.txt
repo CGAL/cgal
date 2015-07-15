@@ -169,7 +169,7 @@ iteratively filled, refined and faired to get a faired mesh with no hole.
 
 \cgalExample{Polygon_mesh_processing/hole_filling_example.cpp}
 
- \cgalFigureBegin{Triangulated_fork, fork.gif}
+ \cgalFigureBegin{Triangulated_fork, fork.jpg}
  Holes in the fork model are filled with triangle patches.
  \cgalFigureEnd
 
