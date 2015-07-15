@@ -11,8 +11,8 @@ Computes the Minkowski sum \f$ P \oplus Q\f$ of two given polygons
 
 This method defaults to the reduced convolution method, see below.
 
-\sa `CGAL::minkowski_sum_reduced_convolution_2()`
-\sa `CGAL::minkowski_sum_full_convolution_2()`
+\sa `CGAL::minkowski_sum_by_reduced_convolution_2()`
+\sa `CGAL::minkowski_sum_by_full_convolution_2()`
  */
 template <typename Kernel, typename Container>
 Polygon_with_holes_2<Kernel, Container>
@@ -38,8 +38,8 @@ has many holes.
 
 template <typename Kernel, typename Container>
 Polygon_with_holes_2<Kernel, Container>
-minkowski_sum_reduced_convolution_2(const PolygonType1<Kernel, Container>& P,
-                                    const PolygonType2<Kernel, Container>& Q);
+minkowski_sum_by_reduced_convolution_2(const PolygonType1<Kernel, Container>& P,
+                                       const PolygonType2<Kernel, Container>& Q);
 
 /*!
 \ingroup PkgMinkowskiSum2
@@ -57,8 +57,8 @@ and `Q` are convex or non-convex.
 */
 template <typename Kernel, typename Container>
 Polygon_with_holes_2<Kernel, Container>
-minkowski_sum_full_convolution_2(const Polygon_2<Kernel, Container>& P,
-                                 const Polygon_2<Kernel, Container>& Q);
+minkowski_sum_by_full_convolution_2(const Polygon_2<Kernel, Container>& P,
+                                    const Polygon_2<Kernel, Container>& Q);
 
 /*!
 \ingroup PkgMinkowskiSum2
