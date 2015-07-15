@@ -91,7 +91,6 @@ private:
 
   std::vector<double> positions_lines;
   std::vector<double> positions_points;
-  std::vector<double> positions_splats;
   std::vector<double> positions_selected_points;
   std::vector<double> color_lines;
   std::vector<double> color_points;
@@ -99,11 +98,7 @@ private:
   std::vector<double> normals;
   std::vector<double> tex_coords;
 
-  mutable int texture[3];
-
   mutable QOpenGLShaderProgram *program;
-  mutable GLuint textureId;
-  mutable GLint sampler_location;
 
   void initialize_buffers(Viewer_interface *viewer) const;
 
