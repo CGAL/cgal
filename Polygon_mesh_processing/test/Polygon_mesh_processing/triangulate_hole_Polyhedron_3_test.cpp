@@ -17,6 +17,8 @@
 
 #include <CGAL/assertions.h>
 
+#include <CGAL/boost/graph/Euler_operations.h>
+
 #include <cassert>
 #include <vector>
 #include <set>
@@ -320,7 +322,7 @@ void test_triangulate_refine_and_fair_hole_compile() {
   std::vector<Vertex_handle> patch_vertices;
 
   // use all param
-  read_poly_with_borders("data/elephant_quad_hole.off", poly, border_reps);
+  read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
   (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
   CGAL::Polygon_mesh_processing::parameters::weight_calculator(
@@ -328,23 +330,44 @@ void test_triangulate_refine_and_fair_hole_compile() {
     sparse_linear_solver(Default_solver()));
 
   // default solver
-  read_poly_with_borders("data/elephant_quad_hole.off", poly, border_reps);
+  read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
     (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices),
     CGAL::Polygon_mesh_processing::parameters::weight_calculator(
       CGAL::internal::Uniform_weight_fairing<Polyhedron>(poly)));
 
   // default solver and weight
-  read_poly_with_borders("data/elephant_quad_hole.off", poly, border_reps);
+  read_poly_with_borders("elephant_quad_hole.off", poly, border_reps);
   CGAL::Polygon_mesh_processing::triangulate_refine_and_fair_hole
     (poly, border_reps[0], back_inserter(patch_facets), back_inserter(patch_vertices));
 }
 
+void generate_elephant_with_hole()
+{
+  Polyhedron poly;
+  read_poly("data/elephant.off", poly);
+  int i=0;
+  BOOST_FOREACH(Facet_handle fd, faces(poly))
+    if (++i==229)
+    {
+      Halfedge_handle nh=opposite(halfedge(fd,poly), poly);
+      CGAL::Euler::remove_face(halfedge(fd, poly), poly);
+      std::ofstream output("elephant_triangle_hole.off");
+      output << poly;
+      output.close();
+      CGAL::Euler::remove_face(nh, poly);
+      output.open("elephant_quad_hole.off");
+      output << poly;
+      return;
+    }
+}
+
 int main() {
+  generate_elephant_with_hole();
 
   std::vector<std::string> input_files;
-  input_files.push_back("data/elephant_triangle_hole.off");
-  input_files.push_back("data/elephant_quad_hole.off");
+  input_files.push_back("elephant_triangle_hole.off");
+  input_files.push_back("elephant_quad_hole.off");
   input_files.push_back("data/mech-holes-shark.off");
   // std::cerr.precision(15);
   for(std::vector<std::string>::iterator it = input_files.begin(); it != input_files.end(); ++it) {
