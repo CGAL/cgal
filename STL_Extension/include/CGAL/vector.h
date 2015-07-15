@@ -196,7 +196,7 @@ protected:
         }
     }
     void deallocate() {
-        if ( &*start_)
+        if ( start_ != iterator() )
             alloc.deallocate( &*start_, end_of_storage - start_ );
     }
 
