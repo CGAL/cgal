@@ -282,18 +282,18 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       # Nothing to add for Core
 
       if (${component} STREQUAL "ImageIO")
-        find_package( OpenGL )
-        find_package( ZLIB )
+        find_package( OpenGL QUIET )
+        find_package( ZLIB QUIET )
       endif()
 
       if (${component} STREQUAL "Qt3")
-        find_package( OpenGL )
-        find_package( Qt3-patched )
+        find_package( OpenGL QUIET )
+        find_package( Qt3-patched QUIET )
       endif()
 
       if (${component} STREQUAL "Qt5")
-        find_package( OpenGL )
-        find_package( Qt5 COMPONENTS OpenGL Svg)
+        find_package( OpenGL QUIET )
+        find_package( Qt5 QUIET COMPONENTS OpenGL Svg )
       endif()
 
     else(WITH_CGAL_${component})
