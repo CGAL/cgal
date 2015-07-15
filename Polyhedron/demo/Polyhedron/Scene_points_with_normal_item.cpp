@@ -38,18 +38,19 @@ struct light_info
 };
 
 Scene_points_with_normal_item::Scene_points_with_normal_item()
-    : Scene_item(6,3),
+    : Scene_item(3,3),
       m_points(new Point_set),
       m_has_normals(false)
 {
     setRenderingMode(Points);
     is_selected = true;
     qFunc.initializeOpenGLFunctions();
+    changed();
 }
 
 // Copy constructor
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_with_normal_item& toCopy)
-    : Scene_item(6,3), // do not call superclass' copy constructor
+    : Scene_item(3,3), // do not call superclass' copy constructor
       m_points(new Point_set(*toCopy.m_points)),
       m_has_normals(toCopy.m_has_normals)
 {
@@ -436,7 +437,7 @@ void Scene_points_with_normal_item::draw_points(Viewer_interface* viewer) const
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    program->setAttributeValue("colors", this->color().lighter(120));
+    program->setAttributeValue("colors", QColor(255,0,0));
     qFunc.glDrawArrays(GL_POINTS, 0,
                        static_cast<GLsizei>(positions_selected_points.size()/3));
     vaos[2]->release();
