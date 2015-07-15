@@ -106,7 +106,7 @@ private:
 
    std::vector<float> texture_map;
    Texture *texture;
-   GLuint textureId;
+   mutable GLuint textureId;
    GLint sampler_location;
 
   mutable QOpenGLBuffer buffers[vboSize];

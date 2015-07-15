@@ -24,7 +24,6 @@ Scene_implicit_function_item(Implicit_function_interface* f)
 {
   compile_shaders();
   texture = new Texture(grid_size_,grid_size_);
-  gl.glGenTextures(1, &textureId);
   blue_color_ramp_.build_blue();
   red_color_ramp_.build_red();
   compute_min_max();
@@ -430,6 +429,7 @@ Scene_implicit_function_item::draw(QGLViewer* viewer) const
     if(!are_ogfunctions_initialized)
     {
         gl.initializeOpenGLFunctions();
+        gl.glGenTextures(1, &textureId);
         are_ogfunctions_initialized = true;
     }
     if(!are_buffers_initialized)
