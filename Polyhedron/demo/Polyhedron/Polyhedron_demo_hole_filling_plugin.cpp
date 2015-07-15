@@ -302,6 +302,8 @@ public:
   bool applicable(QAction*) const { return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())); }
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFilling; }
+
+  using Polyhedron_demo_plugin_helper::init;
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m);
 
   Scene_hole_visualizer* get_hole_visualizer(Scene_polyhedron_item* poly_item) {
