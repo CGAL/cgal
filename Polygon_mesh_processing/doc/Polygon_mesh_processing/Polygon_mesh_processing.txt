@@ -6,8 +6,8 @@ namespace CGAL {
 \cgalAutoToc
 \authors Sébastien Loriot, Jane Tournois, Ilker %O. Yaz
 
-\image html neptun_head.png
-\image latex neptun_head.png
+\image html neptun_head.jpg
+\image latex neptun_head.jpg
 <BR>
 
 \section PMPIntroduction Introduction
@@ -129,7 +129,7 @@ After hole filling, the generated patch can be refined and faired using the mesh
 `CGAL::Polygon_mesh_processing::refine()` and `CGAL::Polygon_mesh_processing::fair()`
 described in Section \ref PMPMeshing.
 
-\cgalFigureBegin{Mech_steps, mech_hole_horz.png}
+\cgalFigureBegin{Mech_steps, mech_hole_horz.jpg}
 Results of the main steps of the algorithm.
 From left to right: (a) the hole,
 (b) the hole after its triangulation,
@@ -186,7 +186,7 @@ Self intersections can be detected from a triangle mesh, by calling the predicat
 Additionally, the function `CGAL::Polygon_mesh_processing::self_intersections()`
 records all pairs of intersecting triangles.
 
-\cgalFigureBegin{SelfIntersections, selfintersections.png}
+\cgalFigureBegin{SelfIntersections, selfintersections.jpg}
 Detecting self-intersections on a triangle mesh.
 The intersecting triangles are displayed in dark grey on the right image.
 \cgalFigureEnd
@@ -366,7 +366,7 @@ where the intersection is a single point is handled.
 the polylines returned by the slicing operation for a triangle mesh
 and a set of parallel planes.
 
-\cgalFigureBegin{SlicerFig, slicer.png}
+\cgalFigureBegin{SlicerFig, slicer.jpg}
 Slicing a mesh. A triangle mesh (left) and the polylines
 computed by the mesh slicer by intersecting
 a set of parallel planes (right).
