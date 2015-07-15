@@ -244,6 +244,9 @@ namespace CGAL {
       for (std::size_t i = 0;i<parameter_space.size();i++) {
         int u = (int)((parameter_space[i].first - min[0]) / cluster_epsilon);
         int v = (int)((parameter_space[i].second - min[1]) / cluster_epsilon);
+        
+        u = (u < 0) ? 0 : (((std::size_t)u >= u_extent) ? (int)u_extent - 1 : u);
+        v = (v < 0) ? 0 : (((std::size_t)v >= v_extent) ? (int)v_extent - 1 : v);
 
         count[bitmap[v * int(u_extent) + u]]++;
       }
@@ -261,6 +264,9 @@ namespace CGAL {
       for (std::size_t i = 0;i<parameter_space.size();i++) {
         int u = (int)((parameter_space[i].first - min[0]) / cluster_epsilon);
         int v = (int)((parameter_space[i].second - min[1]) / cluster_epsilon);
+        
+        u = (u < 0) ? 0 : (((std::size_t)u >= u_extent) ? (int)u_extent - 1 : u);
+        v = (v < 0) ? 0 : (((std::size_t)v >= v_extent) ? (int)v_extent - 1 : v);
 
         if (bitmap[v * int(u_extent) + u] == largest)
           comp_indices.push_back(indices[i]);
