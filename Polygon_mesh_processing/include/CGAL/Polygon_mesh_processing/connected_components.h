@@ -659,12 +659,6 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
   typedef typename boost::graph_traits<PolygonMesh>::edge_descriptor   edge_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::edge_iterator     edge_iterator;
 
-  //FaceIndexMap
-  typedef typename GetFaceIndexMap<PM, NamedParameters>::type FaceIndexMap;
-  FaceIndexMap fim = choose_const_pmap(get_param(np, boost::face_index),
-                                       pmesh,
-                                       boost::face_index);
-
   //VertexIndexMap
   typedef typename GetVertexIndexMap<PM, NamedParameters>::type VertexIndexMap;
   VertexIndexMap vim = choose_const_pmap(get_param(np, boost::vertex_index),
