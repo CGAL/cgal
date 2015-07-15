@@ -75,20 +75,25 @@ public:
 }; // In_surface_tester
 
 
-struct Inc {
-  unsigned int * i;
-  
-  Inc(unsigned int& i)
-    : i(&i)
-  {}
+  namespace internal {
+    namespace Scale_space {
 
-  template <typename T>
-  void operator()(const T&) const
-  {
-    ++(*i);
+    struct Inc {
+      unsigned int * i;
+      
+      Inc(unsigned int& i)
+        : i(&i)
+      {}
+      
+      template <typename T>
+      void operator()(const T&) const
+      {
+        ++(*i);
+      }
+      
+    };
   }
-
-};
+}
 
 // Compute the number of neighbors of a point that lie within a fixed radius.
 template < class Gt, class FS, class Sh, class wA, class Ct >
@@ -110,13 +115,7 @@ private:
 public:
     ComputeNN(const Pointset& points, const Search_tree&  tree,
               const FT& sq_radius, CountVec& nn)
-      : _pts(points), _tree(tree), _sq_rd(
-#if 1
-                                          sqrt(sq_radius)
-#else
-sq_radius
-#endif 
-), _nn(nn) {}
+      : _pts(points), _tree(tree), _sq_rd(sqrt(sq_radius)), _nn(nn) {}
     
 #ifdef CGAL_LINKED_WITH_TBB
     void operator()( const tbb::blocked_range< std::size_t >& range ) const {
@@ -125,26 +124,10 @@ sq_radius
     }
 #endif // CGAL_LINKED_WITH_TBB
     void operator()( const std::size_t& i ) const {
-#if 1
       Sphere sp(_pts[i], _sq_rd);
 
-      Inc inc(_nn[i]);
+      internal::Scale_space::Inc inc(_nn[i]);
       _tree.search(boost::make_function_output_iterator(inc),sp);
-#endif
-#if 0
-        // Iterate over the neighbors until the first one is found that is too far.
-        Dynamic_search search( _tree, _pts[i] );
-        for( typename Dynamic_search::iterator nit = search.begin();
-             nit != search.end() && compare( _pts[i], nit->first, _sq_rd ) != LARGER;
-             ++nit )
-            ++_nn[i];
-        /*
-        if(count != _nn[i]){
-          std::string s = boost::lexical_cast<std::string>(count) + " !=  " + boost::lexical_cast<std::string>(_nn[i]) + "\n";
-          std::cerr << s;
-        }
-        */
-#endif
     }
 }; // class ComputeNN
 
@@ -178,7 +161,7 @@ public:
         // If the neighborhood is too small, the vertex is not moved.
         if( _nn[i] < 4 )
             return;
-#if 1
+
         Static_search search(_tree, _pts[i], _nn[i]);
         Approximation pca( _nn[i] );
         unsigned int column = 0;
@@ -187,18 +170,6 @@ public:
              ++nit, ++column ) {
           pca.set_point( column, boost::get<0>(nit->first), 1.0 / _nn[boost::get<1>(nit->first)] );
         }
-#else
-        // Collect the vertices within the ball and their weights.
-        Dynamic_search search( _tree, _pts[i] );
-        Approximation pca( _nn[i] );
-        unsigned int column = 0;
-        for( typename Dynamic_search::iterator nit = search.begin();
-             nit != search.end() && column < _nn[i];
-             ++nit, ++column ) {
-            pca.set_point( column, nit->first, 1.0 / _nn[ _ind.at( nit->first ) ] );
-        }
-        CGAL_assertion( column == _nn[i] );
-#endif
     
         // Compute the weighted least-squares planar approximation of the point set.
         if( !pca.compute() )
