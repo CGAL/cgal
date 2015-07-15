@@ -357,8 +357,6 @@ int main() {
     test_triangulate_hole_weight(it->c_str(), false, 0);
     std::cout << "------------------------------------------------" << std::endl;
   }
-  test_triangulate_hole_weight("data/RedCircleBox.off", true, 1);
-  test_triangulate_hole_weight("data/RedCircleBox.off", false, 0);
 
   test_triangulate_hole_should_be_no_output("data/non_manifold_vertex.off");
   test_triangulate_hole_should_be_no_output("data/two_tris_collinear.off");
