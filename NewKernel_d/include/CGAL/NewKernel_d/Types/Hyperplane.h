@@ -67,9 +67,15 @@ template <class R_> struct Construct_hyperplane : Store_kernel<R_> {
   template <class Iter>
   result_type through(Iter f, Iter e)const{
     typedef typename R_::LA LA;
-    // TODO: Use a static dimension when possible
-    typedef Eigen::Matrix<FT,Eigen::Dynamic,Eigen::Dynamic> Matrix;
-    typedef Eigen::Matrix<FT,Eigen::Dynamic,1> Vec;
+    typedef typename R_::Default_ambient_dimension D1;
+    typedef typename R_::Max_ambient_dimension D2;
+    typedef typename Increment_dimension<D1>::type D1i;
+    typedef typename Increment_dimension<D2>::type D2i;
+
+    typedef Eigen::Matrix<FT, Eigen_dimension<D1>::value, Eigen_dimension<D1i>::value,
+	      Eigen::ColMajor|Eigen::AutoAlign, Eigen_dimension<D2>::value, Eigen_dimension<D2i>::value> Matrix;
+    typedef Eigen::Matrix<FT, Eigen_dimension<D1i>::value, 1,
+	      Eigen::ColMajor|Eigen::AutoAlign, Eigen_dimension<D2i>::value, 1> Vec;
     typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
     typename Get_functor<R_, Construct_ttag<Vector_tag> >::type cv(this->kernel());
     typename Get_functor<R_, Point_dimension_tag>::type pd(this->kernel());
