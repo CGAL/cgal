@@ -16,7 +16,7 @@ typedef CGAL::Polyhedron_3<K> Polyhedron;
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/elephant-shuffled.off";
+  const char* filename = (argc > 1) ? argv[1] : "data/tet-shuffled.off";
   std::ifstream input(filename);
 
   if (!input)
@@ -41,12 +41,12 @@ int main(int argc, char* argv[])
   if (!CGAL::Polygon_mesh_processing::is_outward_oriented(mesh))
     CGAL::Polygon_mesh_processing::reverse_face_orientations(mesh);
 
-  std::ofstream out("elephant-oriented1.off");
+  std::ofstream out("tet-oriented1.off");
   out << mesh;
   out.close();
 
   CGAL::Polygon_mesh_processing::reverse_face_orientations(mesh);
-  std::ofstream out2("elephant-oriented2.off");
+  std::ofstream out2("tet-oriented2.off");
   out2 << mesh;
   out2.close();
 
