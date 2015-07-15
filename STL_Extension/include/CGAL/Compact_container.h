@@ -1129,7 +1129,7 @@ namespace internal {
   bool operator==(const CC_iterator<DSC, Const1> &rhs,
                   const CC_iterator<DSC, Const2> &lhs)
   {
-    return &*rhs == &*lhs;
+    return rhs.operator->() == lhs.operator->();
   }
 
   template < class DSC, bool Const1, bool Const2 >
@@ -1137,7 +1137,7 @@ namespace internal {
   bool operator!=(const CC_iterator<DSC, Const1> &rhs,
                   const CC_iterator<DSC, Const2> &lhs)
   {
-    return &*rhs != &*lhs;
+    return rhs.operator->() != lhs.operator->();
   }
 
   // Comparisons with NULL are part of CGAL's Handle concept...
@@ -1147,7 +1147,7 @@ namespace internal {
                   Nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
-    return &*rhs == NULL;
+    return rhs.operator->() == NULL;
   }
 
   template < class DSC, bool Const >
@@ -1156,7 +1156,7 @@ namespace internal {
                   Nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
-    return &*rhs != NULL;
+    return rhs.operator->() != NULL;
   }
 
 } // namespace internal
