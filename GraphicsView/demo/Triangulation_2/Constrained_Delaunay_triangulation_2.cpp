@@ -45,6 +45,7 @@
 
 // for viewportsBbox(QGraphicsScene*)
 #include <CGAL/Qt/utility.h>
+#include <QDebug>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2 Point_2;
@@ -267,7 +268,7 @@ MainWindow::MainWindow()
     
   QObject::connect(this, SIGNAL(changed()),
 		   dgi, SLOT(modelChanged()));
-
+qDebug()<<"setting des Pens";
   dgi->setVerticesPen(
     QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   dgi->setVoronoiPen(

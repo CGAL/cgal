@@ -45,7 +45,6 @@ Scene_points_with_normal_item::Scene_points_with_normal_item()
     setRenderingMode(Points);
     is_selected = true;
     qFunc.initializeOpenGLFunctions();
-    changed();
 }
 
 // Copy constructor
@@ -158,6 +157,9 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
     positions_lines.resize(0);
     positions_selected_points.resize(0);
     normals.resize(0);
+
+    positions_points.reserve(m_points->size() * 3);
+    positions_lines.reserve(m_points->size() * 3 * 2);
 
     //The points
     {
@@ -308,7 +310,7 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
                                               std::back_inserter(*m_points),
                                               CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())) &&
             !isEmpty();
-
+    changed();
     return ok;
 }
 
@@ -348,6 +350,7 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
             }
         }
     }
+    changed();
     return ok;
 }
 
@@ -561,7 +564,6 @@ void Scene_points_with_normal_item::set_has_normals(bool b) {
 
 void Scene_points_with_normal_item::changed()
 {
-
     compute_normals_and_vertices();
     are_buffers_filled = false;
 }
