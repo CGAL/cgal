@@ -92,9 +92,6 @@ private:
   std::vector<double> positions_lines;
   std::vector<double> positions_points;
   std::vector<double> positions_selected_points;
-  std::vector<double> color_lines;
-  std::vector<double> color_points;
-  std::vector<double> color_selected_points;
   std::vector<double> normals;
   std::vector<double> tex_coords;
 

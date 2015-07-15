@@ -111,15 +111,6 @@ void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer)
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
         buffers[0].release();
 
-
-
-        buffers[1].bind();
-        buffers[1].allocate(color_lines.data(),
-                            static_cast<int>(color_lines.size()*sizeof(double)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
-        buffers[1].release();
-
         vaos[0]->release();
         program->release();
     }
@@ -129,22 +120,12 @@ void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer)
         program->bind();
 
         vaos[1]->bind();
-        buffers[2].bind();
-        buffers[2].allocate(positions_points.data(),
+        buffers[1].bind();
+        buffers[1].allocate(positions_points.data(),
                             static_cast<int>(positions_points.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[2].release();
-
-
-
-        buffers[3].bind();
-        buffers[3].allocate(color_points.data(),
-                            static_cast<int>(color_points.size()*sizeof(double)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
-        buffers[3].release();
-
+        buffers[1].release();
         vaos[1]->release();
         program->release();
     }
@@ -154,21 +135,12 @@ void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer)
         program->bind();
 
         vaos[2]->bind();
-        buffers[4].bind();
-        buffers[4].allocate(positions_selected_points.data(),
+        buffers[2].bind();
+        buffers[2].allocate(positions_selected_points.data(),
                             static_cast<int>(positions_selected_points.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[4].release();
-
-
-
-        buffers[5].bind();
-        buffers[5].allocate(color_selected_points.data(),
-                            static_cast<int>(color_selected_points.size()*sizeof(double)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
-        buffers[5].release();
+        buffers[2].release();
 
         vaos[2]->release();
         program->release();
@@ -182,9 +154,6 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
     positions_points.resize(0);
     positions_lines.resize(0);
     positions_selected_points.resize(0);
-    color_selected_points.resize(0);
-    color_points.resize(0);
-    color_lines.resize(0);
     normals.resize(0);
     tex_coords.resize(0);
 
@@ -203,19 +172,6 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
                     positions_points.push_back(p.y());
                     positions_points.push_back(p.z());
 
-                    if(is_selected)
-                    {
-                        color_points.push_back(this->color().lighter(120).redF());
-                        color_points.push_back(this->color().lighter(120).greenF());
-                        color_points.push_back(this->color().lighter(120).blueF());
-                    }
-                    else
-                    {
-                        color_points.push_back(this->color().redF());
-                        color_points.push_back(this->color().greenF());
-                        color_points.push_back(this->color().blueF());
-                    }
-
                 }
             }
 
@@ -233,11 +189,6 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
                     positions_selected_points.push_back(p.x());
                     positions_selected_points.push_back(p.y());
                     positions_selected_points.push_back(p.z());
-
-                    color_selected_points.push_back(1.0);
-                    color_selected_points.push_back(0.0);
-                    color_selected_points.push_back(0.0);
-
                 }
             }
 
@@ -269,26 +220,6 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
                     positions_lines.push_back(q.y());
                     positions_lines.push_back(q.z());
 
-                    if(is_selected)
-                    {
-                        color_lines.push_back(this->color().lighter(120).redF());
-                        color_lines.push_back(this->color().lighter(120).greenF());
-                        color_lines.push_back(this->color().lighter(120).blueF());
-
-                        color_lines.push_back(this->color().lighter(120).redF());
-                        color_lines.push_back(this->color().lighter(120).greenF());
-                        color_lines.push_back(this->color().lighter(120).blueF());
-                    }
-                    else
-                    {
-                        color_lines.push_back(this->color().redF());
-                        color_lines.push_back(this->color().greenF());
-                        color_lines.push_back(this->color().blueF());
-
-                        color_lines.push_back(this->color().redF());
-                        color_lines.push_back(this->color().greenF());
-                        color_lines.push_back(this->color().blueF());
-                    }
                 }
             }
         }
@@ -311,13 +242,6 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
                     positions_lines.push_back(q.y());
                     positions_lines.push_back(q.z());
 
-                    color_lines.push_back(1.0);
-                    color_lines.push_back(0.0);
-                    color_lines.push_back(0.0);
-
-                    color_lines.push_back(1.0);
-                    color_lines.push_back(0.0);
-                    color_lines.push_back(0.0);
                 }
             }
         }
@@ -484,6 +408,7 @@ void Scene_points_with_normal_item::draw_edges(Viewer_interface* viewer) const
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
+    program->setAttributeValue("colors", this->color());
     qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
     vaos[0]->release();
     program->release();
@@ -497,6 +422,7 @@ void Scene_points_with_normal_item::draw_points(Viewer_interface* viewer) const
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
+    program->setAttributeValue("colors", this->color());
     qFunc.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_points.size()/3));
     vaos[1]->release();
     program->release();
@@ -509,6 +435,7 @@ void Scene_points_with_normal_item::draw_points(Viewer_interface* viewer) const
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
+    program->setAttributeValue("colors", this->color().lighter(120));
     qFunc.glDrawArrays(GL_POINTS, 0,
                        static_cast<GLsizei>(positions_selected_points.size()/3));
     vaos[2]->release();
