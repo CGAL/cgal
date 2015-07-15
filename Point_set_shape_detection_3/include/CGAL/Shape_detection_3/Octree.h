@@ -488,7 +488,6 @@ namespace CGAL {
                                               std::set<std::size_t>& indices,
                                               const std::vector<int>& shapeIndex,
                                               std::size_t requiredSamples) {
-        static CGAL::Random rand;
 
         bool upperZ, upperY, upperX;
         Cell *cur = m_root;
@@ -522,7 +521,8 @@ namespace CGAL {
           }
           if (enough >= requiredSamples) {
             do {
-              std::size_t p = rand.uniform_int<std::size_t>(0, cur->size() - 1);
+              std::size_t p = CGAL::default_random.
+                uniform_int<std::size_t>(0, cur->size() - 1);
               std::size_t j = this->index(cur->first + p);
               if (shapeIndex[j] == -1)
                 indices.insert(j);
