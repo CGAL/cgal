@@ -78,10 +78,6 @@
 
 namespace CGAL {
 
-  namespace parameters {
-
-  }
-
 namespace internal{
 
 template < class Refs, class Point, class ID, class vertex_descriptor>
