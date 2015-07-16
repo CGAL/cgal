@@ -79,7 +79,6 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_test.cpp")
   create_single_source_cgal_program("triangulate_hole_polyline_test.cpp")
   create_single_source_cgal_program("remove_degeneracies_test.cpp")
-  create_single_source_cgal_program("polyhedron_prog_inside_test.cpp")
 
 else(EIGEN3_FOUND)
     message(STATUS "NOTICE: Some examples require Eigen 3.1 (or greater) and will not be compiled.")  
