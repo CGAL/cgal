@@ -92,4 +92,5 @@ It can be made short to PM. And TriangleMesh (or TM) specifies when the paramete
 \todo document `BGL/include/CGAL/boost/graph/selection.h`
 \todo document `BGL/include/CGAL/boost/graph/split_graph_into_polylines.h`
 \todo add in BGL `clear(pmesh)` and use it in `keep_largest_connected_components(pmesh, 0);`
+\todo document BGL/include/CGAL/boost/graph/Dual.h and remove the example from dont_submit
 */
