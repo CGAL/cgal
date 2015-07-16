@@ -49,6 +49,8 @@
 #include <iostream>
 #include <cstdlib>
 
+#include <CGAL/use.h>
+
 namespace OpenNL {
 
 
@@ -436,6 +438,7 @@ protected:
     }
 
     void check_state(State s) {
+            CGAL_USE(s);
             CGAL_assertion(state_ == s) ;
     }
 

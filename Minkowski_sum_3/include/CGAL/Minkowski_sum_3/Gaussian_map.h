@@ -32,6 +32,8 @@
 #define CGAL_NEF_DEBUG 223
 #include <CGAL/Nef_2/debug.h>
 
+#include <CGAL/use.h>
+
 namespace CGAL {
 
 
@@ -169,7 +171,7 @@ class Gaussian_map :
     }
 
   public:
-      void visit(Vertex_const_handle v) {	CGAL_NEF_TRACEN( "Vertices " << v->point() );}
+      void visit(Vertex_const_handle v) { CGAL_USE(v); CGAL_NEF_TRACEN( "Vertices " << v->point() );}
       void visit(Halfedge_const_handle ) {}
       void visit(SHalfedge_const_handle ) {}
       void visit(SHalfloop_const_handle ) {}

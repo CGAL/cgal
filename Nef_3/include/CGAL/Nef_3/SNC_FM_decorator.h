@@ -32,6 +32,7 @@
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 31
 #include <CGAL/Nef_2/debug.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -135,8 +136,11 @@ Vertex_handle new_vertex(const Point& p) const
   return p.vertex(); }
 
 Halfedge_handle new_halfedge_pair_at_source(Vertex_handle v) 
-{ CGAL_NEF_TRACEN("new_edge "<<&*v<<" "<<edge_number+1);
-  return ++edge_number; }
+{ 
+  CGAL_USE(v);
+  CGAL_NEF_TRACEN("new_edge "<<&*v<<" "<<edge_number+1);
+  return ++edge_number; 
+}
 
 void supporting_segment(Halfedge_handle e, I it)
 { if ( From[it] != E() ) Support[e] = From[it]; }
@@ -215,7 +219,9 @@ int compare_xy(const Point_2& p1, const Point_2& p2) const {
 }
 
 Point_2 intersection(const Segment_2& s1, const Segment_2& s2) const
-{ CGAL_assertion(target(s1).vertex()==target(s2).vertex()); 
+{
+  CGAL_USE(s2);
+  CGAL_assertion(target(s1).vertex()==target(s2).vertex()); 
   return target(s1); }
 
 bool left_turn(const Point_3& p1, const Point_3& p2, const Point_3& p3) const
