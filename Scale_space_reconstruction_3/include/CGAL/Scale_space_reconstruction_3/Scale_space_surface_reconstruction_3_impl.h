@@ -140,7 +140,6 @@ AdvanceSS {
 public:
     typedef std::vector< Point >            Pointset;
     typedef std::vector< unsigned int >	    CountVec;
-    typedef std::map< Point, std::size_t >       PIMap;
 
 private:
     const Search_tree&  _tree;
@@ -410,7 +409,6 @@ void
 Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>::
 increase_scale( unsigned int iterations ) {
     typedef std::vector< unsigned int >		CountVec;
-    typedef std::map<Point, std::size_t>			PIMap;
 
     // This method must be called after filling the point collection.
     if( iterations == 0 || _tree.empty() ) return;
