@@ -29,7 +29,6 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
-#include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 #include <QDebug>
 
