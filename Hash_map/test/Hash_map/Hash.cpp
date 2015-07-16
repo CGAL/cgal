@@ -37,7 +37,7 @@ fct(const P& )
   U[vd] = 12;
 }
 
-void fct2(Linear_cell_complex_3& lcc)
+void fct2()
 {
   typedef Linear_cell_complex_3::Dart_handle dh;
   typedef Linear_cell_complex_3::Vertex_attribute_handle vh;
@@ -73,8 +73,7 @@ int main()
   Triangulation_2 T;
   fct(T);
 
-  Linear_cell_complex_3 L;
-  fct2(L);
+  fct2();
   
   return 0;
 }
