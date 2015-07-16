@@ -618,7 +618,6 @@ Scene::setData(const QModelIndex &index,
     }
     case VisibleColumn:
         item->setVisible(value.toBool());
-        item->changed();
     Q_EMIT dataChanged(index, index);
         return true;
     default:
