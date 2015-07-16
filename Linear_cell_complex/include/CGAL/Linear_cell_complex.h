@@ -908,7 +908,7 @@ namespace CGAL {
        *  @param alcc the linear cell complex to copy.
        *  @post *this is valid.
        */
-      Linear_cell_complex(const Self & alcc)
+      Linear_cell_complex(const Self & alcc) : Base()
       { Base::template copy<Self>(alcc); }
 
       template < class LCC2 >
