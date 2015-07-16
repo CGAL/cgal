@@ -120,6 +120,7 @@ private:
 
     mutable QOpenGLShaderProgram *program;
 
+    using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer = 0) const;
     void compute_normals_and_vertices(void);
     void compute_colors();
