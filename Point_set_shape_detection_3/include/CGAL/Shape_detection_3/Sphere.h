@@ -353,11 +353,14 @@ namespace CGAL {
       m_wrap_top = diff_top < cluster_epsilon;
 
       if (m_wrap_top || m_wrap_left || m_wrap_right) {
-        FT adjusted_cf = FT(CGAL_PI * rad)
-          / FT(floor((CGAL_PI * rad) / cluster_epsilon));
+        FT fl = FT(floor((CGAL_PI * rad) / cluster_epsilon));
 
-        if (adjusted_cf < 2 * cluster_epsilon)
-          cluster_epsilon = adjusted_cf;
+        if (fl > 0.9) {
+          FT adjusted_cf = FT(CGAL_PI * rad) / fl;
+
+          if ( (adjusted_cf < (2 * cluster_epsilon)))
+            cluster_epsilon = adjusted_cf;
+        }
 
         // center bitmap at equator
         FT required_space = ceil(

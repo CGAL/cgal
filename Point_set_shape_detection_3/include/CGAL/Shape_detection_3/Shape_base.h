@@ -444,7 +444,7 @@ namespace CGAL {
 
     // return last computed score, or -1 if no score yet
     FT inline score() const {
-      return m_score;
+      return FT(m_score);
     } 
 
     int inline subsets() const {

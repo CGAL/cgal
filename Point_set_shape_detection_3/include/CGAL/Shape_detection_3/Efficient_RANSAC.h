@@ -503,7 +503,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
                   improve_bound(p, m_num_available_points - num_invalid, 1, 500);
 
                   //evaluate the candidate
-                  if(p->max_bound() >= m_options.min_points) {
+                  if(p->max_bound() >= m_options.min_points && p->score() > 0) {
                     if (best_expected < p->expected_value())
                       best_expected = p->expected_value();
 

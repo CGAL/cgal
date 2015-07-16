@@ -246,7 +246,7 @@ namespace CGAL {
         frac = frac - trunc;
 
         if (frac < (FT) 0.5) {
-          cluster_epsilon = (max[0] - min[0]) / (trunc * 0.99999);
+          cluster_epsilon = (max[0] - min[0]) / (trunc * FT(0.99999));
         }
       }
       else m_wrap_u = false;
