@@ -344,7 +344,6 @@ private:
     // Computes bounding sphere
     typedef CGAL::Min_sphere_of_points_d_traits_3<Gt,FT> Traits;
     typedef CGAL::Min_sphere_of_spheres_d<Traits> Min_sphere;
-    typedef typename Traits::Sphere Traits_sphere;
 
     Min_sphere ms(begin(),end());
 
