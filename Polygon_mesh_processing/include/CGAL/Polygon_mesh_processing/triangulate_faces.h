@@ -21,7 +21,6 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H
 #define CGAL_POLYGON_MESH_PROCESSING_TRIANGULATE_FACES_H
 
-#include <CGAL/Modifier_base.h>
 #include <CGAL/HalfedgeDS_decorator.h>
 #include <CGAL/boost/graph/helpers.h>
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -52,7 +51,6 @@ template <class PM
           , typename VertexPointMap
           , typename Kernel>
 class Triangulate_modifier
-  : public CGAL::Modifier_base<PM>
 {
   typedef Kernel Traits;
 
