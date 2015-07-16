@@ -62,6 +62,8 @@ private:
   mutable QOpenGLShaderProgram* program;
 
   bool smooth_shading;
+
+  using Scene_item::initialize_buffers;
   void initialize_buffers(Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void);
 

@@ -94,6 +94,7 @@ private:
 
     mutable QOpenGLShaderProgram *program;
 
+    using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer)const
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);

@@ -240,7 +240,7 @@ public:
     typedef boost::unordered_set<Facet_handle, CGAL::Handle_hash_function>      Selection_set_facet;
     typedef boost::unordered_set<edge_descriptor, CGAL::Handle_hash_function>    Selection_set_edge;
 
-
+    using Scene_polyhedron_item_decorator::draw;
     virtual void draw(Viewer_interface*) const;
     virtual void draw_edges() const { }
     virtual void draw_edges(Viewer_interface*) const;
@@ -704,6 +704,7 @@ private:
     std::vector<float> positions_points;
 
     mutable QOpenGLShaderProgram *program;
+    using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer) const;
     void compute_elements();
 

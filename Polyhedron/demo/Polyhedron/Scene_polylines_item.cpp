@@ -463,7 +463,7 @@ Scene_polylines_item::compute_elements()
 
         //Convert the triangle coordinates to lines coordinates for the
         //Wiremode in the spheres
-        for(int i=0; i< (int) positions_spheres.size(); i=i)
+        for(int i=0; i< (int) positions_spheres.size();)
         {
             //draw triangles
             if(i< (360/sectors)*12)

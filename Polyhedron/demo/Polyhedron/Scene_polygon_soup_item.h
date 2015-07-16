@@ -170,6 +170,7 @@ private:
     std::vector<float> positions_lines;
     std::vector<float> normals;
 
+    using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer) const;
     void compute_normals_and_vertices(void);
     void triangulate_polygon(Polygons_iterator );
