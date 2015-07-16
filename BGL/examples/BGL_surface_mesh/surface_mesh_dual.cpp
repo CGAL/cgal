@@ -37,10 +37,11 @@ typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
 
-int main(int, char* argv[]) 
+int main(int argc, char* argv[])
 {
   Mesh primal;
-  std::ifstream in(argv[1]);
+  const char* filename = (argc > 1) ? argv[1] : "data/prim.off";
+  std::ifstream in(filename);
   in >> primal;
 
   Dual dual(primal);
