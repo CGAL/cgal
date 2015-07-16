@@ -289,6 +289,7 @@ private:
   mutable QOpenGLShaderProgram bbox_program;
 
   mutable QOpenGLBuffer *in_bu;
+  using Scene_item::initialize_buffers;
   void initialize_buffers(Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void);
   void compute_bbox(const Scene_interface::Bbox&);

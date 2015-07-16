@@ -107,6 +107,7 @@ private:
 
   GLuint vao;
   GLuint buffer[4];
+  using Scene_item::initialize_buffers;
   void initialize_buffers(Viewer_interface *viewer) const;
   void compute_vertices_and_texmap(void);
   void compute_texture(int, int);

@@ -280,24 +280,6 @@ public:
       ::glEnd();
     }
   }
-
-  // Draw oriented points with radius using OpenGL calls.
-  // Preconditions: must be used inbetween calls to GlSplat library
-  void gl_draw_splats() const
-  {
-    // TODO add support for selection
-    ::glBegin(GL_POINTS);
-    for (const_iterator it = begin(); it != end(); it++)
-    {
-      const UI_point& p = *it;
-      ::glNormal3dv(&p.normal().x());
-#ifdef CGAL_GLEW_ENABLED
-      ::glMultiTexCoord1d(GL_TEXTURE2, p.radius());
-#endif
-      ::glVertex3dv(&p.x());
-    }
-    ::glEnd();
-  }
   
   bool are_radii_uptodate() const { return m_radii_are_uptodate; }
   void set_radii_uptodate(bool /*on*/) { m_radii_are_uptodate = false; }
@@ -344,7 +326,6 @@ private:
     // Computes bounding sphere
     typedef CGAL::Min_sphere_of_points_d_traits_3<Gt,FT> Traits;
     typedef CGAL::Min_sphere_of_spheres_d<Traits> Min_sphere;
-    typedef typename Traits::Sphere Traits_sphere;
 
     Min_sphere ms(begin(),end());
 

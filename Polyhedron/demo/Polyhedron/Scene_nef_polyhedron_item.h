@@ -29,7 +29,7 @@ public:
   virtual void changed();
   virtual void selection_changed(bool);
   // Indicate if rendering mode is supported
-  virtual bool supportsRenderingMode(RenderingMode m) const { return m != Gouraud && m!=Splatting; } // CHECK THIS!
+  virtual bool supportsRenderingMode(RenderingMode m) const { return m != Gouraud; } // CHECK THIS!
   // OpenGL drawing in a display list
   void direct_draw() const;
 
@@ -85,6 +85,7 @@ private:
 
   mutable QOpenGLShaderProgram *program;
 
+  using Scene_item::initialize_buffers;
   void initialize_buffers(Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void);
 

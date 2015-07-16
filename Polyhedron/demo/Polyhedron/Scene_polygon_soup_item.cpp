@@ -188,7 +188,7 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
     }
 
     //check if the facet is external or internal
-    std::queue<typename CDT::Face_handle> face_queue;
+    std::queue<CDT::Face_handle> face_queue;
     face_queue.push(cdt.infinite_vertex()->face());
     while(! face_queue.empty() ) {
         CDT::Face_handle fh = face_queue.front();
