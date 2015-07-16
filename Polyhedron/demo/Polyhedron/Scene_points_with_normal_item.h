@@ -52,8 +52,6 @@ public:
   virtual void draw_edges(Viewer_interface* viewer) const;
   virtual void draw_points(Viewer_interface*) const;
 
-  virtual void draw_splats(Viewer_interface*) const;
-  
   // Gets wrapped point set
   Point_set*       point_set();
   const Point_set* point_set() const;

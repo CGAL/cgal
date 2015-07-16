@@ -104,9 +104,6 @@ public:
   // Points OpenGL drawing
   virtual void draw_points() const { draw(); }
   virtual void draw_points(Viewer_interface*) const { draw_points(); }
-  // Splats OpenGL drawing
-  virtual void draw_splats() const {}
-  virtual void draw_splats(Viewer_interface*) const {draw_splats();}
   virtual void selection_changed(bool);
 
   // Functions for displaying meta-data of the item
@@ -179,10 +176,6 @@ public Q_SLOTS:
 
   void setPointsPlusNormalsMode(){
     setRenderingMode(PointsPlusNormals);
-  }
-  
-  void setSplattingMode(){
-    setRenderingMode(Splatting);
   }
   
   virtual void itemAboutToBeDestroyed(Scene_item*);

@@ -28,7 +28,7 @@ public:
   virtual QString toolTip() const;
 
   // Indicate if rendering mode is supported
-  virtual bool supportsRenderingMode(RenderingMode m) const { return m != Splatting; }
+  virtual bool supportsRenderingMode(RenderingMode) const { return true; }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
    void draw() const {}
   virtual void draw(Viewer_interface*) const;
