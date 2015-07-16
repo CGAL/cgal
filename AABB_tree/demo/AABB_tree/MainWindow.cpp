@@ -27,11 +27,10 @@ MainWindow::MainWindow(QWidget* parent)
 
 	// accepts drop events
 	setAcceptDrops(true);
-
 	// setups scene
-	m_pScene = new Scene;
+        m_pScene = new Scene();
 	m_pViewer->setScene(m_pScene);
-  m_pViewer->setManipulatedFrame(m_pScene->manipulatedFrame());
+        m_pViewer->setManipulatedFrame(m_pScene->manipulatedFrame());
 
 	// connects actionQuit (Ctrl+Q) and qApp->quit()
 	connect(ui->actionQuit, SIGNAL(triggered()),
@@ -154,9 +153,11 @@ void MainWindow::setAddKeyFrameKeyboardModifiers(::Qt::KeyboardModifiers m)
 void MainWindow::on_actionInside_points_triggered()
 {
 	bool ok;
+	
 	const unsigned int nb_points = (unsigned)
-		QInputDialog::getInteger(NULL, "#Points",
+		QInputDialog::getInt(NULL, "#Points",
 		"#Points:",10000,1,100000000,9,&ok);
+
 	if(!ok)
 		return;
 
@@ -169,9 +170,11 @@ void MainWindow::on_actionInside_points_triggered()
 void MainWindow::on_actionPoints_in_interval_triggered()
 {
 	bool ok;
+	
 	const unsigned int nb_points = (unsigned)
-		QInputDialog::getInteger(NULL, "#Points",
+                QInputDialog::getInt(NULL, "#Points",
 		"#Points:",10000,1,100000000,9,&ok);
+
 	if(!ok)
 		return;
 
@@ -195,9 +198,11 @@ void MainWindow::on_actionPoints_in_interval_triggered()
 void MainWindow::on_actionBoundary_segments_triggered()
 {
 	bool ok;
+	
 	const unsigned int nb_slices = (unsigned)
-		QInputDialog::getInteger(NULL, "#Slices",
+		QInputDialog::getInt(NULL, "#Slices",
 		"Slices:",100,1,1000000,8,&ok);
+
 	if(!ok)
 		return;
 
@@ -210,9 +215,11 @@ void MainWindow::on_actionBoundary_segments_triggered()
 void MainWindow::on_actionBoundary_points_triggered()
 {
 	bool ok;
+
 	const unsigned int nb_points = (unsigned)
-		QInputDialog::getInteger(NULL, "#Points",
+		QInputDialog::getInt(NULL, "#Points",
 		"Points:",1000,1,10000000,8,&ok);
+
 	if(!ok)
 		return;
 
@@ -225,9 +232,11 @@ void MainWindow::on_actionBoundary_points_triggered()
 void MainWindow::on_actionEdge_points_triggered()
 {
 	bool ok;
+
 	const unsigned int nb_points = (unsigned)
-		QInputDialog::getInteger(NULL, "#Points",
+		QInputDialog::getInt(NULL, "#Points",
 		"Points:",1000,1,10000000,8,&ok);
+
 	if(!ok)
 		return;
 

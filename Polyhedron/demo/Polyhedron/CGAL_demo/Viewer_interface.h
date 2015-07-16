@@ -4,7 +4,7 @@
 #include <QGLViewer/qglviewer.h>
 #include <QWidget>
 #include <QPoint>
-
+#include <CGAL/Qt/CreateOpenGLContext.h>
 // forward declarations
 class QWidget;
 class Scene_draw_interface;
@@ -18,8 +18,8 @@ class VIEWER_EXPORT Viewer_interface : public QGLViewer {
   Q_OBJECT
 
 public:
-  Viewer_interface(QWidget* parent) : QGLViewer(parent) {};
-  virtual ~Viewer_interface() {};
+  Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(), parent) {}
+  virtual ~Viewer_interface() {}
 
   virtual void setScene(Scene_draw_interface* scene) = 0;
   virtual bool antiAliasing() const = 0;

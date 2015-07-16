@@ -22,17 +22,26 @@ Scene_implicit_function_item(Implicit_function_interface* f)
   , blue_color_ramp_()
   , red_color_ramp_()
 {
+  compile_shaders();
+  texture = new Texture(grid_size_,grid_size_);
   blue_color_ramp_.build_blue();
   red_color_ramp_.build_red();
   compute_min_max();
   compute_function_grid();
-  
   connect(frame_, SIGNAL(modified()), this, SLOT(compute_function_grid()));
+  are_buffers_initialized = false;
 }
 
 
 Scene_implicit_function_item::~Scene_implicit_function_item()
 {
+    for(int i=0; i<vboSize; i++)
+        buffers[i].destroy();
+    for(int i=0; i<vaoSize; i++)
+        vao[i].destroy();
+    v_cube.clear();
+    v_plan.clear();
+    texture_map.clear();
   delete frame_;
 }
 
@@ -43,15 +52,408 @@ Scene_implicit_function_item::bbox() const
   return function_->bbox();
 }
 
-void
-Scene_implicit_function_item::direct_draw() const
+
+/**************************************************
+****************SHADER FUNCTIONS******************/
+
+void Scene_implicit_function_item::compile_shaders()
 {
-  
-  draw_function_grid(red_color_ramp_, blue_color_ramp_);
-  draw_bbox();
+
+    for(int i=0; i< vboSize; i++)
+        buffers[i].create();
+    for(int i=0; i< vaoSize; i++)
+        vao[i].create();
+
+    //Vertex source code
+    const char vertex_source[] =
+    {
+        "#version 330 \n"
+        "in highp vec4 vertex;\n"
+
+        "uniform highp mat4 mvp_matrix;\n"
+        "void main(void)\n"
+        "{\n"
+        "   gl_Position =  mvp_matrix * vertex; \n"
+        "}"
+    };
+    //Fragment source code
+    const char fragment_source[] =
+    {
+        "#version 330 \n"
+        "uniform vec4 color; \n"
+        "void main(void) { \n"
+         "gl_FragColor = color; \n"
+        "} \n"
+        "\n"
+    };
+    QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
+    if(!vertex_shader->compileSourceCode(vertex_source))
+    {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+    }
+
+    QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
+    if(!fragment_shader->compileSourceCode(fragment_source))
+    {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+    }
+
+    if(!rendering_program.addShader(vertex_shader))
+    {
+        std::cerr<<"adding vertex shader FAILED"<<std::endl;
+    }
+    if(!rendering_program.addShader(fragment_shader))
+    {
+        std::cerr<<"adding fragment shader FAILED"<<std::endl;
+    }
+    if(!rendering_program.link())
+    {
+        std::cerr<<"linking Program FAILED"<<std::endl;
+    }
+
+    //Vertex source code
+    const char tex_vertex_source[] =
+    {
+         "#version 330 \n"
+        "in highp vec4 vertex;\n"
+        "in highp vec2 tex_coord; \n"
+        "uniform highp mat4 mvp_matrix;\n"
+        "uniform highp mat4 f_matrix;\n"
+        "out highp vec2 texc;\n"
+        "void main(void)\n"
+        "{\n"
+        "   gl_Position = mvp_matrix * f_matrix * vertex;\n"
+        "    texc = tex_coord;\n"
+        "}"
+    };
+    //Vertex source code
+    const char tex_fragment_source[] =
+    {
+        "#version 330 \n"
+        "uniform sampler2D texture;\n"
+        "in highp vec2 texc;\n"
+        "void main(void) { \n"
+        "gl_FragColor = texture2D(texture, texc.st);\n"
+        "} \n"
+        "\n"
+    };
+    QOpenGLShader *tex_vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
+    if(!tex_vertex_shader->compileSourceCode(tex_vertex_source))
+    {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+    }
+
+    QOpenGLShader *tex_fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
+    if(!tex_fragment_shader->compileSourceCode(tex_fragment_source))
+    {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+    }
+
+    if(!tex_rendering_program.addShader(tex_vertex_shader))
+    {
+        std::cerr<<"adding vertex shader FAILED"<<std::endl;
+    }
+    if(!tex_rendering_program.addShader(tex_fragment_shader))
+    {
+        std::cerr<<"adding fragment shader FAILED"<<std::endl;
+    }
+    if(!tex_rendering_program.link())
+    {
+        std::cerr<<"linking Program FAILED"<<std::endl;
+    }
+    tex_rendering_program.bind();
 }
 
+void Scene_implicit_function_item::compute_elements()
+{
+    v_cube.resize(0);
+    v_plan.resize(0);
+    texture_map.resize(0);
+    // The Quad
+       {
 
+
+           //A
+         v_plan.push_back(bbox().xmin);
+         v_plan.push_back(bbox().ymin);
+         v_plan.push_back(0);
+
+
+           //B
+         v_plan.push_back(bbox().xmin);
+         v_plan.push_back(bbox().ymax);
+         v_plan.push_back(0);
+
+
+           //C
+         v_plan.push_back(bbox().xmax);
+         v_plan.push_back(bbox().ymin);
+         v_plan.push_back(0);
+
+
+
+           //C
+         v_plan.push_back(bbox().xmax);
+         v_plan.push_back(bbox().ymin);
+         v_plan.push_back(0);
+
+
+           //B
+         v_plan.push_back(bbox().xmin);
+         v_plan.push_back(bbox().ymax);
+         v_plan.push_back(0);
+
+
+           //D
+         v_plan.push_back(bbox().xmax);
+         v_plan.push_back(bbox().ymax);
+         v_plan.push_back(0);
+
+
+           //UV Mapping
+           texture_map.push_back(0.0);
+           texture_map.push_back(0.0);
+
+           texture_map.push_back(0.0);
+           texture_map.push_back(1.0);
+
+           texture_map.push_back(1.0);
+           texture_map.push_back(0.0);
+
+           texture_map.push_back(1.0);
+           texture_map.push_back(0.0);
+
+           texture_map.push_back(0.0);
+           texture_map.push_back(1.0);
+
+           texture_map.push_back(1.0);
+           texture_map.push_back(1.0);
+       }
+    //The box
+    {
+
+        v_cube.push_back(bbox().xmin);
+        v_cube.push_back(bbox().ymin);
+        v_cube.push_back(bbox().zmin);
+
+        v_cube.push_back(bbox().xmin);
+        v_cube.push_back(bbox().ymin);
+        v_cube.push_back(bbox().zmax);
+
+        v_cube.push_back(bbox().xmin);
+        v_cube.push_back(bbox().ymin);
+        v_cube.push_back(bbox().zmin);
+
+        v_cube.push_back(bbox().xmin);
+        v_cube.push_back(bbox().ymax);
+        v_cube.push_back(bbox().zmin);
+
+        v_cube.push_back(bbox().xmin);
+        v_cube.push_back(bbox().ymin);
+        v_cube.push_back(bbox().zmin);
+
+        v_cube.push_back(bbox().xmax);
+        v_cube.push_back(bbox().ymin);
+        v_cube.push_back(bbox().zmin);
+
+        v_cube.push_back(bbox().xmax);
+        v_cube.push_back(bbox().ymin);
+        v_cube.push_back(bbox().zmin);
+
+        v_cube.push_back(bbox().xmax);
+        v_cube.push_back(bbox().ymax);
+        v_cube.push_back(bbox().zmin);
+
+        v_cube.push_back(bbox().xmax);
+        v_cube.push_back(bbox().ymin);
+        v_cube.push_back(bbox().zmin);
+
+        v_cube.push_back(bbox().xmax);
+        v_cube.push_back(bbox().ymin);
+        v_cube.push_back(bbox().zmax);
+
+        v_cube.push_back(bbox().xmin);
+        v_cube.push_back(bbox().ymax);
+        v_cube.push_back(bbox().zmin);
+
+        v_cube.push_back(bbox().xmin);
+        v_cube.push_back(bbox().ymax);
+        v_cube.push_back(bbox().zmax);
+
+        v_cube.push_back(bbox().xmin);
+        v_cube.push_back(bbox().ymax);
+        v_cube.push_back(bbox().zmin);
+
+        v_cube.push_back(bbox().xmax);
+        v_cube.push_back(bbox().ymax);
+        v_cube.push_back(bbox().zmin);
+
+        v_cube.push_back(bbox().xmax);
+        v_cube.push_back(bbox().ymax);
+        v_cube.push_back(bbox().zmin);
+
+        v_cube.push_back(bbox().xmax);
+        v_cube.push_back(bbox().ymax);
+        v_cube.push_back(bbox().zmax);
+
+        v_cube.push_back(bbox().xmin);
+        v_cube.push_back(bbox().ymin);
+        v_cube.push_back(bbox().zmax);
+
+        v_cube.push_back(bbox().xmin);
+        v_cube.push_back(bbox().ymax);
+        v_cube.push_back(bbox().zmax);
+
+        v_cube.push_back(bbox().xmin);
+        v_cube.push_back(bbox().ymin);
+        v_cube.push_back(bbox().zmax);
+
+        v_cube.push_back(bbox().xmax);
+        v_cube.push_back(bbox().ymin);
+        v_cube.push_back(bbox().zmax);
+
+        v_cube.push_back(bbox().xmax);
+        v_cube.push_back(bbox().ymax);
+        v_cube.push_back(bbox().zmax);
+
+        v_cube.push_back(bbox().xmin);
+        v_cube.push_back(bbox().ymax);
+        v_cube.push_back(bbox().zmax);
+
+        v_cube.push_back(bbox().xmax);
+        v_cube.push_back(bbox().ymax);
+        v_cube.push_back(bbox().zmax);
+
+        v_cube.push_back(bbox().xmax);
+        v_cube.push_back(bbox().ymin);
+        v_cube.push_back(bbox().zmax);
+
+    }
+    //The texture
+   for(int i=0; i < texture->getWidth(); i++)
+       for( int j=0 ; j < texture->getHeight() ; j++)
+       {
+          compute_texture(i,j);
+       }
+}
+
+void Scene_implicit_function_item::initialize_buffers() const
+{
+
+    rendering_program.bind();
+
+    vao[0].bind();
+    buffers[0].bind();
+    buffers[0].allocate(v_cube.data(), static_cast<int>(v_cube.size()*sizeof(float)));
+    vertexLocation[0] = rendering_program.attributeLocation("vertex");
+    rendering_program.enableAttributeArray(vertexLocation[0]);
+    rendering_program.setAttributeBuffer(vertexLocation[0],GL_FLOAT,0,3);
+    buffers[0].release();
+    vao[0].release();
+    rendering_program.release();
+    tex_rendering_program.bind();
+    //cutting plane
+    vao[1].bind();
+    buffers[1].bind();
+    buffers[1].allocate(v_plan.data(), static_cast<int>(v_plan.size()*sizeof(float)));
+    vertexLocation[1] = tex_rendering_program.attributeLocation("vertex");
+    tex_rendering_program.bind();
+    tex_rendering_program.setAttributeBuffer(vertexLocation[1],GL_FLOAT,0,3);
+    tex_rendering_program.enableAttributeArray(vertexLocation[1]);
+    buffers[1].release();
+    tex_rendering_program.release();
+
+    buffers[2].bind();
+    buffers[2].allocate(texture_map.data(), static_cast<int>(texture_map.size()*sizeof(float)));
+    tex_Location = tex_rendering_program.attributeLocation("tex_coord");
+    tex_rendering_program.bind();
+    tex_rendering_program.setAttributeBuffer(tex_Location,GL_FLOAT,0,2);
+    tex_rendering_program.enableAttributeArray(tex_Location);
+    buffers[2].release();
+    tex_rendering_program.release();
+
+    gl.glBindTexture(GL_TEXTURE_2D, textureId);
+    gl.glTexImage2D(GL_TEXTURE_2D,
+                 0,
+                 GL_RGB,
+                 texture->getWidth(),
+                 texture->getHeight(),
+                 0,
+                 GL_RGB,
+                 GL_UNSIGNED_BYTE,
+                 texture->getData());
+    gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
+    glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
+    vao[1].release();
+    tex_rendering_program.release();
+    are_buffers_initialized = true;
+}
+
+void Scene_implicit_function_item::attrib_buffers(QGLViewer* viewer) const
+{
+    QMatrix4x4 mvpMatrix;
+    QMatrix4x4 fMatrix;
+    double mat[16];
+    viewer->camera()->getModelViewProjectionMatrix(mat);
+    for(int i=0; i < 16; i++)
+    {
+        mvpMatrix.data()[i] = (float)mat[i];
+    }
+    frame_->getMatrix(mat);
+    for(int i=0; i < 16; i++)
+    {
+        fMatrix.data()[i] = (float)mat[i];
+    }
+
+    rendering_program.bind();
+    colorLocation[0] = rendering_program.uniformLocation("color");
+    mvpLocation[0] = rendering_program.uniformLocation("mvp_matrix");
+    rendering_program.setUniformValue(mvpLocation[0], mvpMatrix);;
+    rendering_program.release();
+
+    tex_rendering_program.bind();
+    colorLocation[1] = tex_rendering_program.uniformLocation("color");
+    f_Location = tex_rendering_program.uniformLocation("f_matrix");
+    mvpLocation[1] = tex_rendering_program.uniformLocation("mvp_matrix");
+    tex_rendering_program.setUniformValue(mvpLocation[1], mvpMatrix);;
+    tex_rendering_program.setUniformValue(f_Location, fMatrix);;
+    tex_rendering_program.release();
+
+}
+
+void
+Scene_implicit_function_item::draw(QGLViewer* viewer) const
+{
+    if(!are_ogfunctions_initialized)
+    {
+        gl.initializeOpenGLFunctions();
+        gl.glGenTextures(1, &textureId);
+        are_ogfunctions_initialized = true;
+    }
+    if(!are_buffers_initialized)
+        initialize_buffers();
+  QColor color;
+  vao[0].bind();
+  attrib_buffers(viewer);
+  rendering_program.bind();
+  color.setRgbF(0.0,0.0,0.0);
+  rendering_program.setUniformValue(colorLocation[0], color);
+  glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_cube.size()/3));
+  rendering_program.release();
+  vao[0].release();
+
+  gl.glActiveTexture(GL_TEXTURE0);
+  gl.glBindTexture(GL_TEXTURE_2D, textureId);
+
+  vao[1].bind();
+  tex_rendering_program.bind();
+  glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(v_plan.size()/3));
+  tex_rendering_program.release();
+  vao[1].release();
+
+}
 
 QString
 Scene_implicit_function_item::toolTip() const
@@ -79,103 +481,6 @@ Scene_implicit_function_item::supportsRenderingMode(RenderingMode m) const
   }
   
   return false;
-}
-
-void
-Scene_implicit_function_item::
-draw_bbox() const
-{
-  const Bbox& b = bbox();
-
-  ::glDisable(GL_LIGHTING);
-  ::glColor3f(0.f,0.f,0.f);
-  ::glBegin(GL_LINES);
-  
-  ::glVertex3d(b.xmin,b.ymin,b.zmin);
-  ::glVertex3d(b.xmin,b.ymin,b.zmax);
-  
-  ::glVertex3d(b.xmin,b.ymin,b.zmin);
-  ::glVertex3d(b.xmin,b.ymax,b.zmin);
-  
-  ::glVertex3d(b.xmin,b.ymin,b.zmin);
-  ::glVertex3d(b.xmax,b.ymin,b.zmin);
-  
-  ::glVertex3d(b.xmax,b.ymin,b.zmin);
-  ::glVertex3d(b.xmax,b.ymax,b.zmin);
-  
-  ::glVertex3d(b.xmax,b.ymin,b.zmin);
-  ::glVertex3d(b.xmax,b.ymin,b.zmax);
-  
-  ::glVertex3d(b.xmin,b.ymax,b.zmin);
-  ::glVertex3d(b.xmin,b.ymax,b.zmax);
-  
-  ::glVertex3d(b.xmin,b.ymax,b.zmin);
-  ::glVertex3d(b.xmax,b.ymax,b.zmin);
-  
-  ::glVertex3d(b.xmax,b.ymax,b.zmin);
-  ::glVertex3d(b.xmax,b.ymax,b.zmax);
-  
-  ::glVertex3d(b.xmin,b.ymin,b.zmax);
-  ::glVertex3d(b.xmin,b.ymax,b.zmax);
-  
-  ::glVertex3d(b.xmin,b.ymin,b.zmax);
-  ::glVertex3d(b.xmax,b.ymin,b.zmax);
-  
-  ::glVertex3d(b.xmax,b.ymax,b.zmax);
-  ::glVertex3d(b.xmin,b.ymax,b.zmax);
-  
-  ::glVertex3d(b.xmax,b.ymax,b.zmax);
-  ::glVertex3d(b.xmax,b.ymin,b.zmax);
-  
-  ::glEnd();
-}
-
-void 
-Scene_implicit_function_item::
-draw_function_grid(const Color_ramp& ramp_pos,
-                   const Color_ramp& ramp_neg) const
-{
-  ::glDisable(GL_LIGHTING);
-  ::glShadeModel(GL_SMOOTH);
-  
-  ::glBegin(GL_QUADS);
-  const int nb_quads = grid_size_ - 1;
-  for( int i=0 ; i < nb_quads ; i++ )
-  {
-    for( int j=0 ; j < nb_quads ; j++)
-    {
-      draw_grid_vertex(implicit_grid_[i][j], ramp_pos, ramp_neg);
-      draw_grid_vertex(implicit_grid_[i][j+1], ramp_pos, ramp_neg);
-      draw_grid_vertex(implicit_grid_[i+1][j+1], ramp_pos, ramp_neg);
-      draw_grid_vertex(implicit_grid_[i+1][j], ramp_pos, ramp_neg);
-    }
-  }
-  ::glEnd();
-}
-
-
-void
-Scene_implicit_function_item::
-draw_grid_vertex(const Point_value& pv,
-                 const Color_ramp& ramp_positive,
-                 const Color_ramp& ramp_negative) const
-{
-  const Point& p = pv.first;
-  double v = pv.second;
-  
-  // determines grey level
-  if ( v > 0 )
-  {
-    v = v/max_value_;
-    ::glColor3d(ramp_positive.r(v),ramp_positive.g(v),ramp_positive.b(v));
-  }
-  else
-  {
-    v = v/min_value_;
-    ::glColor3d(ramp_negative.r(v),ramp_negative.g(v),ramp_negative.b(v));
-  }
-  
-  ::glVertex3d(p.x,p.y,p.z);
 }
 
 
@@ -252,6 +557,30 @@ compute_min_max()
   }
 }
 
+void Scene_implicit_function_item::changed()
+{
+    compute_elements();
+    are_buffers_initialized = false;
+}
+
+void Scene_implicit_function_item::compute_texture(int i, int j)
+{
+
+  double v =(implicit_grid_[i][j]).second;
+       // determines grey level
+       if ( v > 0 )
+       {
+           v = v/max_value_;
+           GLdouble r = red_color_ramp_.r(v), g = red_color_ramp_.g(v), b = red_color_ramp_.b(v);
+           texture->setData(i,j,255*r,255*g,255*b);
+       }
+       else
+       {
+           v = v/min_value_;
+           GLdouble r = blue_color_ramp_.r(v), g = blue_color_ramp_.g(v), b = blue_color_ramp_.b(v);
+           texture->setData(i,j,255*r,255*g,255*b);
+       }
+}
 
 #include "Scene_implicit_function_item.moc"
 

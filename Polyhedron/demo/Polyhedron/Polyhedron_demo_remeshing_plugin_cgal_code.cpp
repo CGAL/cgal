@@ -3,9 +3,6 @@
 
 #include "Polyhedron_type.h"
 #include "Scene_item.h"
-#ifdef CGAL_GLEW_ENABLED
-# include <GL/glew.h>
-#endif
 #include <qgl.h>
 #include "Scene_polyhedron_item.h"
 #include "Scene_polygon_soup_item.h"
@@ -60,7 +57,7 @@ public:
       curvature_size_criterion(distance_bound),
       uniform_size_criterion(radius_bound),
       aspect_ratio_criterion(angle_bound)
-      
+
   {
   }
 
@@ -96,7 +93,7 @@ private:
 
   CGAL::Surface_mesher::Uniform_size_criterion<Tr> uniform_size_criterion;
   // bound on radii of surface Delaunay balls
-  
+
   CGAL::Surface_mesher::Aspect_ratio_criterion<Tr> aspect_ratio_criterion;
   // lower bound on minimum angle in degrees
 
@@ -131,11 +128,11 @@ class Mesher : public Mesher_base
   const Input_surface& surface;
   CGAL::Null_mesh_visitor visitor;
 public:
-  Mesher(QObject* parent, 
-         C2t3& c2t3, 
+  Mesher(QObject* parent,
+         C2t3& c2t3,
          const Input_surface& surface,
          const Criteria& criteria)
-    : Mesher_base(parent), 
+    : Mesher_base(parent),
       mesher(c2t3, surface, surface, criteria),
       c2t3(c2t3),
       surface(surface)
@@ -148,7 +145,7 @@ public:
                        20);
     mesher.init();
   }
-        
+
   void mesh()
   {
     int global_nbsteps = 0;
@@ -168,12 +165,12 @@ public:
       ++global_nbsteps;
       if(timer.time() > 1)
       {
-        std::cerr 
-	  << boost::format("\r             \r"
-			   "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
-	  % c2t3.triangulation().number_of_vertices()
-	  % global_nbsteps % mesher.debug_info()
-	  % (nbsteps / timer.time());
+        std::cerr
+      << boost::format("\r             \r"
+               "(%1%,%2%,%3%) (%|4$.1f| vertices/s)")
+      % c2t3.triangulation().number_of_vertices()
+      % global_nbsteps % mesher.debug_info()
+      % (nbsteps / timer.time());
         qApp->processEvents();
         nbsteps = 0;
         timer.reset();
@@ -189,11 +186,11 @@ public:
 
 // That thread takes a Mesher_base* as parent. It just launches the meshing
 // process.
-struct Meshing_thread : QThread 
+struct Meshing_thread : QThread
 {
   Mesher_base* mesher;
 
-  Meshing_thread(Mesher_base* parent) 
+  Meshing_thread(Mesher_base* parent)
     : QThread(parent), mesher(parent)
   {
   }
@@ -207,7 +204,7 @@ struct Meshing_thread : QThread
 typedef Tr::Geom_traits GT;
 typedef Tr::Geom_traits::FT FT;
 
-Scene_item* cgal_code_remesh(QWidget* parent, 
+Scene_item* cgal_code_remesh(QWidget* parent,
                              Polyhedron* pMesh,
                              const double angle,
                              const double sizing,
@@ -226,7 +223,7 @@ Scene_item* cgal_code_remesh(QWidget* parent,
 //   int tag;
 
 // public:
-//   Mesh_process(QWidget* parent, 
+//   Mesh_process(QWidget* parent,
 //                Polyhedron* pMesh,
 //                const double angle,
 //                const double sizing,
@@ -241,7 +238,7 @@ Scene_item* cgal_code_remesh(QWidget* parent,
 //   {
 //   }
 
-//   Scene_item* launch() 
+//   Scene_item* launch()
 
   if(!pMesh) return 0;
 
@@ -277,14 +274,14 @@ Scene_item* cgal_code_remesh(QWidget* parent,
 
     std::vector<Point> polyhedron_points;
     polyhedron_points.reserve(pMesh->size_of_vertices());
-    std::copy(pMesh->points_begin(), pMesh->points_end(), 
+    std::copy(pMesh->points_begin(), pMesh->points_end(),
               std::back_inserter(polyhedron_points));
 
     typedef std::vector<Point>::size_type size_type;
     size_type nb_initial_points = 10;
     nb_initial_points = (std::min)(nb_initial_points, polyhedron_points.size());
     for(size_type n = 0;
-        n < nb_initial_points || (n < 10 * nb_initial_points && 
+        n < nb_initial_points || (n < 10 * nb_initial_points &&
                                   triangulation.dimension() < 3 );
         n = triangulation.number_of_vertices())
     {
@@ -308,17 +305,17 @@ Scene_item* cgal_code_remesh(QWidget* parent,
                                             QMessageBox::Cancel,
                                             parent);
   switch(tag) {
-  case 0: 
-    mesher = new Mesher<Criteria, 
+  case 0:
+    mesher = new Mesher<Criteria,
       CGAL::Non_manifold_tag>(0, c2t3, input, facets_criteria);
         ;
     break;
   case 1:
-    mesher = new Mesher<Criteria, 
+    mesher = new Mesher<Criteria,
       CGAL::Manifold_tag>(0, c2t3, input, facets_criteria);
     break;
   default:
-    mesher = new Mesher<Criteria, 
+    mesher = new Mesher<Criteria,
       CGAL::Manifold_with_boundary_tag>(0, c2t3, input, facets_criteria);
   }
   QObject::connect(message_box, SIGNAL(buttonClicked( QAbstractButton *)),
@@ -326,7 +323,7 @@ Scene_item* cgal_code_remesh(QWidget* parent,
   message_box->show();
   qApp->processEvents();
 
-  
+
   Meshing_thread* thread = new Meshing_thread(mesher);
   mesher->moveToThread(thread);
   thread->start();

@@ -13,7 +13,7 @@
    <string>Set options</string>
   </property>
   <property name="windowIcon" >
-   <iconset resource="../../../../../Surface_mesher/demo/Surface_mesher/qt4-demo/surface_mesher.qrc" >:/icons/cgal_logo.xpm</iconset>
+   <iconset resource="../../../../../Surface_mesher/demo/Surface_mesher/qt5-demo/surface_mesher.qrc" >:/icons/cgal_logo.xpm</iconset>
   </property>
   <layout class="QVBoxLayout" >
    <item>
@@ -89,7 +89,7 @@
   </layout>
  </widget>
  <resources>
-  <include location="../../../../../Surface_mesher/demo/Surface_mesher/qt4-demo/surface_mesher.qrc" />
+  <include location="../../../../../Surface_mesher/demo/Surface_mesher/qt5-demo/surface_mesher.qrc" />
  </resources>
  <connections>
   <connection>

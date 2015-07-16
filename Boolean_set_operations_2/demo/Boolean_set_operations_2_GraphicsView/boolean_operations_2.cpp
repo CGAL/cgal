@@ -51,6 +51,7 @@ void trace( std::string s )
 #include <QDropEvent>
 #include <QSlider>
 #include <QProgressBar>
+#include <QMessageBox>
 
 #include <CGAL/basic.h>
 #include <CGAL/Cartesian_converter.h>
@@ -80,6 +81,7 @@ void trace( std::string s )
   #include <CGAL/MP_Float.h>
   #include <CGAL/Quotient.h>
 #endif
+
 
 #include <CGAL/Qt/BezierCurves.h>
 #include <CGAL/Qt/CircularPolygons.h>
@@ -1629,9 +1631,8 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Boolean_operations_2 demo");
 
-  // Import resources from libCGALQt4.
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  // Import resources from libCGALQt5.
+  CGAL_QT_INIT_RESOURCES;
   
   MainWindow mainWindow;
   mainWindow.show();

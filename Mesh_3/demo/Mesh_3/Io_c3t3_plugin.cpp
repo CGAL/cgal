@@ -5,12 +5,14 @@
 #include <CGAL_demo/Io_plugin_interface.h>
 #include <fstream>
 
+
 class Io_c3t3_plugin :
   public QObject,
   public Io_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(Io_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
   virtual QStringList nameFilters() const;
@@ -21,7 +23,6 @@ public:
   virtual bool canSave(const Scene_item*);
   virtual bool save(const Scene_item*, QFileInfo, QString);
 };
-
 
 QStringList
 Io_c3t3_plugin::nameFilters() const
@@ -63,7 +64,4 @@ Io_c3t3_plugin::save(const Scene_item* item, QFileInfo fileInfo, QString selecte
   return true;
 }
 
-
-#include <QtPlugin>
-Q_EXPORT_PLUGIN2(Io_c3t3_plugin, Io_c3t3_plugin)
 #include "Io_c3t3_plugin.moc"

@@ -14,6 +14,7 @@
 #include <QDoubleSpinBox>
 #include <QLabel>
 #include <QSettings>
+#include <QMimeData>
 
 #include <QGLViewer/vec.h>
 

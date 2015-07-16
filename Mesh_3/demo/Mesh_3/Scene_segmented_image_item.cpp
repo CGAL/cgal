@@ -1,8 +1,5 @@
 #include "config.h"
 
-#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-#  include <GL/glew.h>
-#endif
 #include "Scene_segmented_image_item.h"
 #include "Image_type.h"
 #include <QColor>
@@ -10,18 +7,6 @@
 #include <CGAL/gl.h>
 #include <CGAL/ImageIO.h>
 #include <CGAL/use.h>
-
-//#define SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-
-#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-bool gl_vbo_available() {
-  return  glewIsSupported("GL_VERSION_1_4");
-}
-#else
-bool gl_vbo_available() {
-  return false;
-}
-#endif
 
 
 
@@ -372,6 +357,7 @@ Vertex_buffer_helper::push_vertex(std::size_t i, std::size_t j, std::size_t k)
   vertices_.push_back(i*data_.vx());
   vertices_.push_back(j*data_.vy());
   vertices_.push_back(k*data_.vz());
+
 }
 
 void
@@ -404,7 +390,9 @@ Vertex_buffer_helper::push_quad(int pos1, int pos2, int pos3, int pos4)
     quads_.push_back(pos1);
     quads_.push_back(pos2);
     quads_.push_back(pos3);
-    quads_.push_back(pos4);    
+    quads_.push_back(pos1);
+    quads_.push_back(pos3);
+    quads_.push_back(pos4);
   }
 }
 
@@ -467,7 +455,6 @@ create_array(T*& destination, std::size_t& size, const std::vector<T>& source)
 } // namespace internal
 
 
-
 // -----------------------------------
 // Scene_segmented_image_item
 // -----------------------------------
@@ -475,18 +462,13 @@ Scene_segmented_image_item::Scene_segmented_image_item(Image* im,
                                                        int display_scale)
   : m_image(im)
   , m_initialized(false)
-#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
   , m_voxel_scale(display_scale)
-#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+
 {
   CGAL_USE(display_scale);
-#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-  if(gl_vbo_available()) {
-    ::glGenBuffers(3,m_vbo);
-    ::glGenBuffers(1,&m_ibo);
-  }
-#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-  
+
+  v_box = new std::vector<float>();
+  compile_shaders();
   initialize_buffers();
   setRenderingMode(Flat);
 }
@@ -494,14 +476,174 @@ Scene_segmented_image_item::Scene_segmented_image_item(Image* im,
 
 Scene_segmented_image_item::~Scene_segmented_image_item()
 {
-#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-  if(gl_vbo_available()) {
-    ::glDeleteBuffers(3,m_vbo);
-    ::glDeleteBuffers(1,&m_ibo);
-  }
-#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+    for(int i=0; i<vboSize; i++)
+        m_vbo[i].destroy();
+    for(int i=0; i<vaoSize; i++)
+        vao[i].destroy();
 }
 
+/**************************************************
+****************SHADER FUNCTIONS******************/
+
+void Scene_segmented_image_item::compile_shaders()
+{
+
+    for(int i=0; i< vboSize; i++)
+        m_vbo[i].create();
+    for(int i=0; i< vaoSize; i++)
+        vao[i].create();
+    m_ibo = new QOpenGLBuffer(QOpenGLBuffer::IndexBuffer);
+    m_ibo->create();
+    //Vertex source code
+    const char vertex_source[] =
+    {
+        "#version 330 \n"
+        "in highp vec4 vertex;\n"
+        "in highp vec3 normal;\n"
+        "in highp vec4 inColor;\n"
+
+        "uniform highp mat4 mvp_matrix;\n"
+        "uniform highp mat4 mv_matrix; \n"
+        "out highp vec4 fP; \n"
+        "out highp vec3 fN; \n"
+        "out highp vec4 color; \n"
+        "void main(void)\n"
+        "{\n"
+        "   color=inColor; \n"
+        "   fP = mv_matrix * vertex; \n"
+        "   fN = mat3(mv_matrix)* normal; \n"
+        "   gl_Position = mvp_matrix * vertex; \n"
+        "}"
+    };
+    //Fragment source code
+    const char fragment_source[] =
+    {
+        "#version 330 \n"
+        "in highp vec4 fP; \n"
+        "in highp vec3 fN; \n"
+        "in highp vec4 color; \n"
+        "uniform bool is_two_side; \n"
+        "uniform highp vec4 light_pos;  \n"
+        "uniform highp vec4 light_diff; \n"
+        "uniform highp vec4 light_spec; \n"
+        "uniform highp vec4 light_amb;  \n"
+        "uniform float spec_power ; \n"
+
+        "void main(void) { \n"
+
+        "   vec3 L = light_pos.xyz - fP.xyz; \n"
+        "   vec3 V = -fP.xyz; \n"
+
+        "   vec3 N; \n"
+        "   if(fN == vec3(0.0,0.0,0.0)) \n"
+        "       N = vec3(0.0,0.0,0.0); \n"
+        "   else \n"
+        "       N = normalize(fN); \n"
+        "   L = normalize(L); \n"
+        "   V = normalize(V); \n"
+
+        "   vec3 R = reflect(-L, N); \n"
+        "   vec4 diffuse; \n"
+        "   if(!is_two_side) \n"
+        "       diffuse = max(dot(N,L),0) * light_diff*color; \n"
+        "   else \n"
+        "       diffuse = max(abs(dot(N,L)),0) * light_diff*color; \n"
+        "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+
+         "gl_FragColor = color*light_amb + diffuse + specular; \n"
+        "} \n"
+        "\n"
+    };
+    QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
+    if(!vertex_shader->compileSourceCode(vertex_source))
+    {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+    }
+
+    QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
+    if(!fragment_shader->compileSourceCode(fragment_source))
+    {
+        std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+    }
+
+    if(!rendering_program.addShader(vertex_shader))
+    {
+        std::cerr<<"adding vertex shader FAILED"<<std::endl;
+    }
+    if(!rendering_program.addShader(fragment_shader))
+    {
+        std::cerr<<"adding fragment shader FAILED"<<std::endl;
+    }
+    if(!rendering_program.link())
+    {
+        std::cerr<<"linking Program FAILED"<<std::endl;
+    }
+}
+
+void Scene_segmented_image_item::attrib_buffers(QGLViewer* viewer) const
+{
+    QMatrix4x4 mvpMatrix;
+    QMatrix4x4 mvMatrix;
+    double mat[16];
+    viewer->camera()->getModelViewProjectionMatrix(mat);
+    for(int i=0; i < 16; i++)
+    {
+        mvpMatrix.data()[i] = (float)mat[i];
+    }
+    viewer->camera()->getModelViewMatrix(mat);
+    for(int i=0; i < 16; i++)
+    {
+        mvMatrix.data()[i] = (float)mat[i];
+    }
+    QVector4D	position(0.0f,0.0f,1.0f,1.0f );
+    GLboolean isTwoSide;
+    gl.glGetBooleanv(GL_LIGHT_MODEL_TWO_SIDE,&isTwoSide);
+    // define material
+     QVector4D	ambient;
+     QVector4D	diffuse;
+     QVector4D	specular;
+     GLfloat      shininess ;
+    // Ambient
+    ambient[0] = 0.29225f;
+    ambient[1] = 0.29225f;
+    ambient[2] = 0.29225f;
+    ambient[3] = 1.0f;
+    // Diffuse
+    diffuse[0] = 0.50754f;
+    diffuse[1] = 0.50754f;
+    diffuse[2] = 0.50754f;
+    diffuse[3] = 1.0f;
+    // Specular
+    specular[0] = 0.0f;
+    specular[1] = 0.0f;
+    specular[2] = 0.0f;
+    specular[3] = 0.0f;
+    // Shininess
+    shininess = 51.2f;
+
+
+    rendering_program.bind();
+    colorLocation[0] = rendering_program.uniformLocation("color");
+    twosideLocation = rendering_program.uniformLocation("is_two_side");
+    mvpLocation[0] = rendering_program.uniformLocation("mvp_matrix");
+    mvLocation[0] = rendering_program.uniformLocation("mv_matrix");
+    lightLocation[0] = rendering_program.uniformLocation("light_pos");
+    lightLocation[1] = rendering_program.uniformLocation("light_diff");
+    lightLocation[2] = rendering_program.uniformLocation("light_spec");
+    lightLocation[3] = rendering_program.uniformLocation("light_amb");
+    lightLocation[4] = rendering_program.uniformLocation("spec_power");
+
+    rendering_program.setUniformValue(lightLocation[0], position);
+    rendering_program.setUniformValue(twosideLocation, isTwoSide);
+    rendering_program.setUniformValue(mvpLocation[0], mvpMatrix);
+    rendering_program.setUniformValue(mvLocation[0], mvMatrix);
+    rendering_program.setUniformValue(lightLocation[1], diffuse);
+    rendering_program.setUniformValue(lightLocation[2], specular);
+    rendering_program.setUniformValue(lightLocation[3], ambient);
+    rendering_program.setUniformValue(lightLocation[4], shininess);
+
+    rendering_program.release();
+}
 
 Scene_segmented_image_item::Bbox
 Scene_segmented_image_item::bbox() const
@@ -513,17 +655,16 @@ Scene_segmented_image_item::bbox() const
               m_image->zdim() * m_image->vz());
 }
 
-
 void
-Scene_segmented_image_item::draw() const
+Scene_segmented_image_item::draw(QGLViewer* viewer) const
 {
   if(m_image)
   {
-    m_image->gl_draw_bbox(3.0f,0,0,0);
-    draw_gl();
+
+    //m_image->gl_draw_bbox(3.0f,0,0,0);
+    draw_gl(viewer);
   }
 }
-
 
 QString
 Scene_segmented_image_item::toolTip() const
@@ -566,12 +707,6 @@ Scene_segmented_image_item::supportsRenderingMode(RenderingMode m) const
 void
 Scene_segmented_image_item::initialize_buffers() 
 {
-#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-  if(!gl_vbo_available()) {
-    m_initialized = true;
-    return;
-  }
-
   internal::Image_accessor image_data_accessor (*m_image,
                                                 m_voxel_scale,
                                                 m_voxel_scale,
@@ -579,114 +714,210 @@ Scene_segmented_image_item::initialize_buffers()
   
   internal::Vertex_buffer_helper helper (image_data_accessor);
   helper.fill_buffer_data();
-  
-  // Vertex buffer
-  ::glBindBuffer(GL_ARRAY_BUFFER, m_vbo[0]);
-  ::glBufferData(GL_ARRAY_BUFFER, helper.vertex_size(), helper.vertices(), GL_STATIC_DRAW);
-  
-  ::glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
-  ::glBufferData(GL_ARRAY_BUFFER, helper.normal_size(), helper.normals(), GL_STATIC_DRAW);
-  
-  ::glBindBuffer(GL_ARRAY_BUFFER, m_vbo[2]);
-  ::glBufferData(GL_ARRAY_BUFFER, helper.color_size(), helper.colors(), GL_STATIC_DRAW);
-  
-  // Indices buffer
-  ::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-  ::glBufferData(GL_ELEMENT_ARRAY_BUFFER, helper.quad_size(), helper.quads(), GL_STATIC_DRAW);
-  
-  // Close buffers
-  ::glBindBuffer(GL_ARRAY_BUFFER, 0);
-  ::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  
-#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+
+  draw_Bbox(bbox(), v_box);
+  std::vector<float> nul_vec(0);
+  for(std::size_t i=0; i<v_box->size(); i++)
+      nul_vec.push_back(0.0);
+
+  rendering_program.bind();
+  vao[0].bind();
+  m_vbo[0].bind();
+  m_vbo[0].allocate(helper.vertices(), static_cast<int>(helper.vertex_size()));
+  poly_vertexLocation[0] = rendering_program.attributeLocation("vertex");
+  rendering_program.enableAttributeArray(poly_vertexLocation[0]);
+  rendering_program.setAttributeBuffer(poly_vertexLocation[0],GL_FLOAT,0,3);
+  m_vbo[0].release();
+
+  m_vbo[1].bind();
+  m_vbo[1].allocate(helper.normals(), static_cast<int>(helper.normal_size()));
+  normalsLocation[0] = rendering_program.attributeLocation("normal");
+  rendering_program.enableAttributeArray(normalsLocation[0]);
+  rendering_program.setAttributeBuffer(normalsLocation[0],GL_FLOAT,0,3);
+  m_vbo[1].release();
+
+  m_vbo[2].bind();
+  m_vbo[2].allocate(helper.colors(), static_cast<int>(helper.color_size()));
+  colorLocation[0] = rendering_program.attributeLocation("inColor");
+  rendering_program.enableAttributeArray(colorLocation[0]);
+  rendering_program.setAttributeBuffer(colorLocation[0],GL_FLOAT,0,3);
+  m_vbo[2].release();
+
+  m_ibo->bind();
+  m_ibo->allocate(helper.quads(), static_cast<int>(helper.quad_size()));
+  vao[0].release();
+
+  color.resize(0);
+  for(std::size_t i=0; i<helper.color_size()/sizeof(GLuint); i++)
+      color.push_back(0.0);
+
+  vao[1].bind();
+  m_vbo[3].bind();
+  m_vbo[3].allocate(v_box->data(), static_cast<int>(v_box->size()*sizeof(float)));
+  poly_vertexLocation[0] = rendering_program.attributeLocation("vertex");
+  rendering_program.enableAttributeArray(poly_vertexLocation[0]);
+  rendering_program.setAttributeBuffer(poly_vertexLocation[0],GL_FLOAT,0,3);
+  m_vbo[3].release();
+
+  m_vbo[4].bind();
+  m_vbo[3].allocate(nul_vec.data(), static_cast<int>(nul_vec.size()*sizeof(float)));
+  normalsLocation[0] = rendering_program.attributeLocation("normal");
+  rendering_program.enableAttributeArray(normalsLocation[0]);
+  rendering_program.setAttributeBuffer(normalsLocation[0],GL_FLOAT,0,3);
+  m_vbo[4].release();
+
+  m_vbo[5].bind();
+  m_vbo[5].allocate(nul_vec.data(), static_cast<int>(nul_vec.size()*sizeof(float)));
+  colorLocation[0] = rendering_program.attributeLocation("inColor");
+  rendering_program.enableAttributeArray(colorLocation[0]);
+  rendering_program.setAttributeBuffer(colorLocation[0],GL_FLOAT,0,3);
+  m_vbo[5].release();
+
+  m_ibo->bind();
+  vao[1].release();
+  rendering_program.release();
 
   m_initialized = true;
 }
 
 
 void
-Scene_segmented_image_item::draw_gl() const
+Scene_segmented_image_item::draw_gl(QGLViewer *viewer) const
 {
-#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-  if(!gl_vbo_available()) return;
+    if(!are_ogfunctions_initialized)
+    {
+        gl.initializeOpenGLFunctions();
+        are_ogfunctions_initialized = true;
+    }
+  attrib_buffers(viewer);
+  rendering_program.bind();
+  vao[0].bind();
+  gl.glDrawElements(GL_TRIANGLES, m_ibo->size()/sizeof(GLuint), GL_UNSIGNED_INT, 0);
+  vao[0].release();
 
-  ::glShadeModel(GL_SMOOTH);
-  
-  // Draw faces
-  ::glEnableClientState( GL_VERTEX_ARRAY );
-  ::glEnableClientState( GL_NORMAL_ARRAY );
-  ::glEnableClientState( GL_COLOR_ARRAY );
-  
-  // Get buffers
-  ::glBindBuffer(GL_ARRAY_BUFFER, m_vbo[0]);
-  ::glVertexPointer(3, GL_FLOAT, 0, 0);
-  
-  ::glBindBuffer(GL_ARRAY_BUFFER, m_vbo[1]);
-  ::glNormalPointer(GL_FLOAT, 0, 0);
-  
-  ::glBindBuffer(GL_ARRAY_BUFFER, m_vbo[2]);
-  ::glColorPointer(3, GL_FLOAT, 0, 0);
-  
-  // Render
-  ::glDrawElements(GL_QUADS, ibo_size(), GL_UNSIGNED_INT, 0);
-  
-  // Cleanup
-  ::glBindBuffer(GL_ARRAY_BUFFER, 0);
-  ::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-  
-  ::glDisableClientState( GL_COLOR_ARRAY );
-  ::glDisableClientState( GL_NORMAL_ARRAY );
-  ::glDisableClientState( GL_VERTEX_ARRAY );
-#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
+  vao[1].bind();
+  gl.glLineWidth(3);
+  gl.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_box->size()/3));
+  vao[1].release();
+  rendering_program.release();
 }
-
-
-void
-Scene_segmented_image_item::draw_gl_edges() const
-{
-#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-  if(!gl_vbo_available()) return;
-
-  // Ensure edges are drawn in black
-  ::glColor3f( 0.f, 0.f, 0.f );
-  
-  // Draw edges
-  ::glEnableClientState( GL_VERTEX_ARRAY );
-
-  // Get buffers
-  ::glBindBuffer(GL_ARRAY_BUFFER, m_vbo[0]);
-  ::glVertexPointer(3, GL_FLOAT, 0, 0);
-
-  ::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-
-  // Render
-  ::glDrawElements(GL_QUADS, ibo_size(), GL_UNSIGNED_INT, 0);
-
-  // Cleanup
-  ::glBindBuffer(GL_ARRAY_BUFFER, 0);
-  ::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-  ::glDisableClientState( GL_VERTEX_ARRAY ); 
-#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-}
-
 
 GLint
 Scene_segmented_image_item::ibo_size() const
 {
-#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-  if(gl_vbo_available()) {
-    GLint nb_elts = 0;
-    ::glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_ibo);
-    ::glGetBufferParameteriv(GL_ELEMENT_ARRAY_BUFFER, GL_BUFFER_SIZE, &nb_elts);
+      m_ibo->bind();
+    GLint nb_elts = m_ibo->size();
+    m_ibo->release();
 
     return nb_elts/sizeof(GLuint);
-  }
-#endif // SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
 
   return 0;
 }
 
+void Scene_segmented_image_item::changed()
+{
+    initialize_buffers();
+}
+
+void Scene_segmented_image_item::draw_Bbox(Bbox bbox, std::vector<float> *vertices)
+{
+    vertices->push_back(bbox.xmin);
+    vertices->push_back(bbox.ymin);
+    vertices->push_back(bbox.zmin);
+
+    vertices->push_back(bbox.xmin);
+    vertices->push_back(bbox.ymin);
+    vertices->push_back(bbox.zmax);
+
+    vertices->push_back(bbox.xmin);
+    vertices->push_back(bbox.ymin);
+    vertices->push_back(bbox.zmin);
+
+    vertices->push_back(bbox.xmin);
+    vertices->push_back(bbox.ymax);
+    vertices->push_back(bbox.zmin);
+
+    vertices->push_back(bbox.xmin);
+    vertices->push_back(bbox.ymin);
+    vertices->push_back(bbox.zmin);
+
+    vertices->push_back(bbox.xmax);
+    vertices->push_back(bbox.ymin);
+    vertices->push_back(bbox.zmin);
+
+    vertices->push_back(bbox.xmax);
+    vertices->push_back(bbox.ymin);
+    vertices->push_back(bbox.zmin);
+
+    vertices->push_back(bbox.xmax);
+    vertices->push_back(bbox.ymax);
+    vertices->push_back(bbox.zmin);
+
+    vertices->push_back(bbox.xmax);
+    vertices->push_back(bbox.ymin);
+    vertices->push_back(bbox.zmin);
+
+    vertices->push_back(bbox.xmax);
+    vertices->push_back(bbox.ymin);
+    vertices->push_back(bbox.zmax);
+
+    vertices->push_back(bbox.xmin);
+    vertices->push_back(bbox.ymax);
+    vertices->push_back(bbox.zmin);
+
+    vertices->push_back(bbox.xmin);
+    vertices->push_back(bbox.ymax);
+    vertices->push_back(bbox.zmax);
+
+    vertices->push_back(bbox.xmin);
+    vertices->push_back(bbox.ymax);
+    vertices->push_back(bbox.zmin);
+
+    vertices->push_back(bbox.xmax);
+    vertices->push_back(bbox.ymax);
+    vertices->push_back(bbox.zmin);
+
+    vertices->push_back(bbox.xmax);
+    vertices->push_back(bbox.ymax);
+    vertices->push_back(bbox.zmin);
+
+    vertices->push_back(bbox.xmax);
+    vertices->push_back(bbox.ymax);
+    vertices->push_back(bbox.zmax);
+
+    vertices->push_back(bbox.xmin);
+    vertices->push_back(bbox.ymin);
+    vertices->push_back(bbox.zmax);
+
+    vertices->push_back(bbox.xmin);
+    vertices->push_back(bbox.ymax);
+    vertices->push_back(bbox.zmax);
+
+    vertices->push_back(bbox.xmin);
+    vertices->push_back(bbox.ymin);
+    vertices->push_back(bbox.zmax);
+
+    vertices->push_back(bbox.xmax);
+    vertices->push_back(bbox.ymin);
+    vertices->push_back(bbox.zmax);
+
+    vertices->push_back(bbox.xmax);
+    vertices->push_back(bbox.ymax);
+    vertices->push_back(bbox.zmax);
+
+    vertices->push_back(bbox.xmin);
+    vertices->push_back(bbox.ymax);
+    vertices->push_back(bbox.zmax);
+
+    vertices->push_back(bbox.xmax);
+    vertices->push_back(bbox.ymax);
+    vertices->push_back(bbox.zmax);
+
+    vertices->push_back(bbox.xmax);
+    vertices->push_back(bbox.ymin);
+    vertices->push_back(bbox.zmax);
+
+}
 
 #include "Scene_segmented_image_item.moc"
 

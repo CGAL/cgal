@@ -38,6 +38,9 @@
 #include <QDesktopWidget>
 #include <QRegExp>
 #include <QSvgGenerator>
+#include <QtCore>
+#include <QtOpenGL>
+
 
 #include <CGAL/config.h> // needed to get CGAL_VERSION_STR
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -82,6 +85,9 @@ DemosMainWindow::DemosMainWindow(QWidget * parent, ::Qt::WindowFlags flags)
   setAcceptDrops(true);
 }
 
+DemosMainWindow::~DemosMainWindow()
+{
+}
 
 void 
 DemosMainWindow::dragEnterEvent(QDragEnterEvent *event)
@@ -179,9 +185,8 @@ void
 DemosMainWindow::setUseAntialiasing(bool checked)
 {
   view->setRenderHint(QPainter::Antialiasing, checked);
-#if QT_VERSION >= 0x040300
   view->setRenderHint(QPainter::HighQualityAntialiasing, checked);
-#endif
+
   statusBar()->showMessage(tr("Antialiasing %1activated").arg(checked?"":"de-"),
                            1000);
 }

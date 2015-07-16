@@ -103,6 +103,7 @@ class Polyhedron_demo_mean_curvature_flow_skeleton_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   QAction* actionMCFSkeleton;
   QAction* actionConvert_to_medial_skeleton;
 
@@ -117,13 +118,43 @@ public:
     dockWidget = NULL;
     ui = NULL;
 
-    actionMCFSkeleton = new QAction(tr("Mean Curvature Skeleton"), mainWindow);
+    actionMCFSkeleton = new QAction(tr("Mean Curvature Skeleton (Advanced)"), mainWindow);
     actionMCFSkeleton->setObjectName("actionMCFSkeleton");
 
     actionConvert_to_medial_skeleton = new QAction(tr("Extract Medial Skeleton"), mainWindow);
     actionConvert_to_medial_skeleton->setObjectName("actionConvert_to_medial_skeleton");
 
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
+
+    dockWidget = new QDockWidget(mw);
+    dockWidget->setVisible(false);
+    ui = new Ui::Mean_curvature_flow_skeleton_plugin();
+    ui->setupUi(dockWidget);
+    dockWidget->setFeatures(QDockWidget::DockWidgetMovable
+                          | QDockWidget::DockWidgetFloatable
+                          | QDockWidget::DockWidgetClosable);
+    dockWidget->setWindowTitle("Mean Curvature Flow Skeleton");
+    add_dock_widget(dockWidget);
+
+    connect(ui->pushButton_contract, SIGNAL(clicked()),
+            this, SLOT(on_actionContract()));
+    connect(ui->pushButton_collapse, SIGNAL(clicked()),
+            this, SLOT(on_actionCollapse()));
+    connect(ui->pushButton_split, SIGNAL(clicked()),
+            this, SLOT(on_actionSplit()));
+    connect(ui->pushButton_degeneracy, SIGNAL(clicked()),
+            this, SLOT(on_actionDegeneracy()));
+    connect(ui->pushButton_run, SIGNAL(clicked()),
+            this, SLOT(on_actionRun()));
+    connect(ui->pushButton_skeletonize, SIGNAL(clicked()),
+            this, SLOT(on_actionSkeletonize()));
+    connect(ui->pushButton_converge, SIGNAL(clicked()),
+            this, SLOT(on_actionConverge()));
+    connect(dynamic_cast<Scene*>(scene), SIGNAL(updated_bbox()),
+            this, SLOT(on_actionUpdateBBox()));
+    connect(ui->pushButton_segment, SIGNAL(clicked()),
+            this, SLOT(on_actionSegment()));
+
   }
 
   QList<QAction*> actions() const {
@@ -348,6 +379,9 @@ private:
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_triggered()
 {
+  dockWidget->show();
+  dockWidget->raise();
+
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_polyhedron_item* item =
@@ -358,36 +392,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
     Polyhedron* pMesh = item->polyhedron();
 
     if(!pMesh) return;
-
-    dockWidget = new QDockWidget(mw);
-    ui = new Ui::Mean_curvature_flow_skeleton_plugin();
-    ui->setupUi(dockWidget);
-    dockWidget->setFeatures(QDockWidget::DockWidgetMovable
-                          | QDockWidget::DockWidgetFloatable
-                          | QDockWidget::DockWidgetClosable);
-    dockWidget->setWindowTitle("Mean Curvature Flow Skeleton");
-    mw->addDockWidget(Qt::LeftDockWidgetArea, dockWidget);
-    dockWidget->show();
-    dockWidget->raise();
-
-    connect(ui->pushButton_contract, SIGNAL(clicked()),
-            this, SLOT(on_actionContract()));
-    connect(ui->pushButton_collapse, SIGNAL(clicked()),
-            this, SLOT(on_actionCollapse()));
-    connect(ui->pushButton_split, SIGNAL(clicked()),
-            this, SLOT(on_actionSplit()));
-    connect(ui->pushButton_degeneracy, SIGNAL(clicked()),
-            this, SLOT(on_actionDegeneracy()));
-    connect(ui->pushButton_run, SIGNAL(clicked()),
-            this, SLOT(on_actionRun()));
-    connect(ui->pushButton_skeletonize, SIGNAL(clicked()),
-            this, SLOT(on_actionSkeletonize()));
-    connect(ui->pushButton_converge, SIGNAL(clicked()),
-            this, SLOT(on_actionConverge()));
-    connect(dynamic_cast<Scene*>(scene), SIGNAL(updated_bbox()),
-            this, SLOT(on_actionUpdateBBox()));
-    connect(ui->pushButton_segment, SIGNAL(clicked()),
-            this, SLOT(on_actionSegment()));
 
     double diag = scene->len_diagonal();
     init_ui(diag);
@@ -503,6 +507,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
 
     skeleton_item->setName(QString("Medial skeleton curve of %1").arg(item->name()));
     scene->addItem(skeleton_item);
+    skeleton_item->changed();
 
     item->setPointsMode();
 
@@ -820,19 +825,23 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 
   skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
   scene->addItem(skeleton);
+  skeleton->changed();
 
   // set the fixed points and contracted mesh as invisible
   if (fixedPointsItemIndex >= 0)
   {
     scene->item(fixedPointsItemIndex)->setVisible(false);
+    scene->itemChanged(fixedPointsItemIndex);
   }
   scene->item(contractedItemIndex)->setVisible(false);
+  scene->itemChanged(contractedItemIndex);
   // display the original mesh in transparent mode
   item->setVisible(false);
   if (InputMeshItemIndex >= 0)
   {
     scene->item(InputMeshItemIndex)->setVisible(true);
     scene->item(InputMeshItemIndex)->setPointsMode();
+    scene->itemChanged(InputMeshItemIndex);
   }
 
   // update scene
@@ -902,7 +911,5 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionItemAboutToBe
     mcs = NULL;
   }
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_mean_curvature_flow_skeleton_plugin, Polyhedron_demo_mean_curvature_flow_skeleton_plugin)
 
 #include "Polyhedron_demo_mean_curvature_flow_skeleton_plugin.moc"

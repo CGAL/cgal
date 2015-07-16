@@ -30,6 +30,8 @@ int main(int argc, char** argv)
   app.setOrganizationDomain("inria.fr");
   app.setOrganizationName("INRIA");
   app.setApplicationName("3D Triangulation Demo");
+  //for windows
+  app.setAttribute(Qt::AA_UseDesktopOpenGL);
 
   MainWindow mw;
   mw.show();

@@ -34,6 +34,7 @@ class Polyhedron_demo_point_inside_polyhedron_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   bool applicable(QAction*) const 
@@ -204,7 +205,7 @@ public Q_SLOTS:
     // take number of points param
     bool ok;
     const int nb_points = 
-      QInputDialog::getInteger(mw, tr("Number of Points"),
+      QInputDialog::getInt(mw, tr("Number of Points"),
       tr("Number of Points:"),
       100000, // default value
       1, // min
@@ -241,7 +242,5 @@ private:
   Ui::Point_inside_polyhedron ui_widget;
 
 }; // end Polyhedron_demo_point_inside_polyhedron_plugin
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_point_inside_polyhedron_plugin, Polyhedron_demo_point_inside_polyhedron_plugin)
 
 #include "Polyhedron_demo_point_inside_polyhedron_plugin.moc"

@@ -54,8 +54,8 @@ void Plugin_helper::autoConnectActions()
       i < metaObject->methodCount();
       ++i)
   {
-    const int pos = QString(metaObject->method(i).signature()).indexOf('(');
-    methodsNames << QString(metaObject->method(i).signature()).left(pos);
+    const int pos = QString(metaObject->method(i).methodSignature()).indexOf('(');
+    methodsNames << QString(metaObject->method(i).methodSignature()).left(pos);
     methods << metaObject->method(i);
   }
 
@@ -72,24 +72,26 @@ void Plugin_helper::autoConnectActions()
         
       if(action_method.methodType() == QMetaMethod::Signal)
       {
-        const int pos = QString(action_method.signature()).indexOf('(');
-        QString methodName = QString(action_method.signature()).left(pos);
+        const int pos = QString(action_method.methodSignature()).indexOf('(');
+        QString methodName = QString(action_method.methodSignature()).left(pos);
         QString slotName = 
           QString("on_%1_%2").arg(action->objectName()).arg(methodName);
 //         qDebug() << thisObject->tr("Slot %1 (%2)...").arg(slotName).arg(i);
         int index = methodsNames.indexOf(slotName);
-        if(index>=0 && !connected.contains(slotName)) {
+  
+	if(index>=0 && !connected.contains(slotName)) 
+	{
           const bool ok = 
             QObject::connect(action, 
-                             qPrintable(QString("2%1").arg(action_method.signature())),
+                             qPrintable(QString("2%1").arg(QString(action_method.methodSignature()))),
                              thisObject,
-                             qPrintable(QString("1%1").arg(methods[index].signature())));
+                             qPrintable(QString("1%1").arg(QString(methods[index].methodSignature()))));
           if(!ok)
           {
             qDebug() << thisObject->tr("Cannot connect method %1.%2 to slot %3!")
               .arg(action->objectName())
-              .arg(action_method.signature())
-              .arg(methods[index].signature());
+              .arg(QString(action_method.methodSignature()))
+              .arg(QString(methods[index].methodSignature()));
           }
           else {
 //             qDebug("  ->Connected!");

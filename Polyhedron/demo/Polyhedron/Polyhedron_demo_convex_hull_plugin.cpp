@@ -22,6 +22,7 @@ class Polyhedron_demo_convex_hull_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   // used by Polyhedron_demo_plugin_helper
@@ -117,7 +118,5 @@ void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
     QApplication::restoreOverrideCursor();
   }
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_convex_hull_plugin, Polyhedron_demo_convex_hull_plugin)
 
 #include "Polyhedron_demo_convex_hull_plugin.moc"

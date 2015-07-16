@@ -1,11 +1,10 @@
+#include <CGAL/check_gl_error.h>
 #include "Viewer.h"
 #include <CGAL/gl.h>
-#include <CGAL/check_gl_error.h>
 #include "Scene_draw_interface.h"
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QGLViewer/manipulatedCameraFrame.h>
-
 class Viewer_impl {
 public:
   Scene_draw_interface* scene;
@@ -84,34 +83,24 @@ bool Viewer::inFastDrawing() const {
 void Viewer::draw()
 {
   d->inFastDrawing = false;
-  // ::glFogf(GL_FOG_END, 2*sceneRadius());
-  // ::glEnable(GL_FOG);
   QGLViewer::draw();
   d->draw_aux(false, this);
-  // drawLight(GL_LIGHT0);
 }
 
 void Viewer::fastDraw()
 {
   d->inFastDrawing = true;
-  // ::glFogf(GL_FOG_END, 2*sceneRadius());
-  // ::glEnable(GL_FOG);
   QGLViewer::fastDraw();
   d->draw_aux(false, this);
-  // drawLight(GL_LIGHT0);
 }
 
 void Viewer::initializeGL()
 {
   QGLViewer::initializeGL();
+  initializeOpenGLFunctions();
   setBackgroundColor(::Qt::white);
   d->scene->initializeGL();
 
-  // ::glFogf(GL_FOG_DENSITY, 0.05f);
-  // ::glHint(GL_FOG_HINT, GL_NICEST);
-  // ::glFogi(GL_FOG_MODE, GL_LINEAR);
-  // static const GLfloat fogColor[] = {0.5f, 0.5f, 0.5f, 1};
-  // ::glFogfv(GL_FOG_COLOR, fogColor);
 }
 
 #include <QMouseEvent>
@@ -139,13 +128,17 @@ void Viewer::keyPressEvent(QKeyEvent* e)
     }
     else if(e->key() == Qt::Key_M) {
       d->macro_mode = ! d->macro_mode;
+
       if(d->macro_mode) {
-        camera()->setZNearCoefficient(0.0005f);
+          camera()->setZNearCoefficient(0.0005f);
       } else {
         camera()->setZNearCoefficient(0.005f);
       }
       this->displayMessage(tr("Macro mode: %1").
                            arg(d->macro_mode ? tr("on") : tr("off")));
+
+
+
       return;
     }
   }
@@ -202,7 +195,6 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
     scene->drawWithNames(viewer);
   else
     scene->draw(viewer);
-  CGAL::check_gl_error(__FILE__, __LINE__);
 }
 
 void Viewer::drawWithNames()

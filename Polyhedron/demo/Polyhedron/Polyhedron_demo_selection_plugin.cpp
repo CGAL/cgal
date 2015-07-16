@@ -60,7 +60,7 @@ class Polyhedron_demo_selection_plugin :
 {
   Q_OBJECT
     Q_INTERFACES(Polyhedron_demo_plugin_interface)
-
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
   bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
@@ -73,7 +73,6 @@ public:
     mw = mainWindow;
     scene = scene_interface;
     messages = m;
-
     actionSelection = new QAction(tr("Selection"), mw);
     connect(actionSelection, SIGNAL(triggered()), this, SLOT(selection_action()));
 
@@ -382,6 +381,6 @@ typedef std::multimap<Scene_polyhedron_item*, Scene_polyhedron_selection_item*> 
   Selection_item_map selection_item_map;
 }; // end Polyhedron_demo_selection_plugin
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_selection_plugin, Polyhedron_demo_selection_plugin)
+//Q_EXPORT_PLUGIN2(Polyhedron_demo_selection_plugin, Polyhedron_demo_selection_plugin)
 
 #include "Polyhedron_demo_selection_plugin.moc"

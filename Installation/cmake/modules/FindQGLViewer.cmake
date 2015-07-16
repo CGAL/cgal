@@ -7,32 +7,46 @@
 #  QGLVIEWER_DEFINITIONS - Compiler switches required for using QGLViewer
 #
 
-find_path(QGLVIEWER_INCLUDE_DIR 
+# first look in user defined locations
+find_path(QGLVIEWER_INCLUDE_DIR
           NAMES QGLViewer/qglviewer.h
-          PATHS /usr/include
+          NO_DEFAULT_PATH
+          PATHS ENV QGLVIEWERROOT
                 /usr/local/include
-                ENV QGLVIEWERROOT 
          )
 
-find_library(QGLVIEWER_LIBRARY_RELEASE 
-             NAMES qglviewer-qt4 qglviewer QGLViewer QGLViewer2
-             PATHS /usr/lib
-                   /usr/local/lib
-                   ENV QGLVIEWERROOT
+find_library(QGLVIEWER_LIBRARY_RELEASE
+             NAMES qglviewer-qt5 qglviewer QGLViewer-qt5 QGLViewer QGLViewer2-qt5 QGLViewer2
+             NO_DEFAULT_PATH
+             PATHS ENV QGLVIEWERROOT
                    ENV LD_LIBRARY_PATH
                    ENV LIBRARY_PATH
+                   /usr/local/lib
              PATH_SUFFIXES QGLViewer QGLViewer/release
             )
 
 find_library(QGLVIEWER_LIBRARY_DEBUG
-             NAMES dqglviewer dQGLViewer dQGLViewer2 QGLViewerd2
-             PATHS /usr/lib
-                   /usr/local/lib
+             NAMES dqglviewer dQGLViewer-qt5 dQGLViewer dQGLViewer2-qt5 dQGLViewer2 QGLViewerd2-qt5 QGLViewerd2
+             NO_DEFAULT_PATH
+             PATHS /usr/local/lib
                    ENV QGLVIEWERROOT
                    ENV LD_LIBRARY_PATH
                    ENV LIBRARY_PATH
-             PATH_SUFFIXES QGLViewer QGLViewer/debug      
+             PATH_SUFFIXES QGLViewer QGLViewer/debug
             )
+
+#now try the standard paths
+if (NOT QGLVIEWER_INCLUDE_DIR OR NOT QGLVIEWER_LIBRARY_RELEASE OR NOT QGLVIEWER_LIBRARY_DEBUG)
+find_path(QGLVIEWER_INCLUDE_DIR
+          NAMES QGLViewer/qglviewer.h)
+
+find_library(QGLVIEWER_LIBRARY_RELEASE
+             NAMES qglviewer-qt5 qglviewer QGLViewer-qt5 QGLViewer QGLViewer2-qt5 QGLViewer2)
+
+find_library(QGLVIEWER_LIBRARY_DEBUG
+             NAMES dqglviewer dQGLViewer-qt5 dQGLViewer dQGLViewer2-qt5 dQGLViewer2 QGLViewerd2-qt5 QGLViewerd2)
+
+endif()
 
 if(QGLVIEWER_LIBRARY_RELEASE)
   if(QGLVIEWER_LIBRARY_DEBUG)

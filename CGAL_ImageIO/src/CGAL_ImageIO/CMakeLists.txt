@@ -57,7 +57,9 @@ if(OPENGL_FOUND)
   
   add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_ImageIO_3RD_PARTY_DEFINITIONS} )
   
-  target_link_libraries( CGAL_ImageIO ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_ImageIO_3RD_PARTY_LIBRARIES} )
+  # CGAL_ImageIO only depends on CGAL in DEBUG, but we still link it
+  # in both build types.
+  target_link_libraries( CGAL_ImageIO CGAL ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_ImageIO_3RD_PARTY_LIBRARIES} )
   
 message("libCGAL_ImageIO is configured")
     

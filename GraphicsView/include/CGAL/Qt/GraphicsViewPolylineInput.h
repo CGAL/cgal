@@ -22,13 +22,15 @@
 #ifndef CGAL_QT_GRAPHICS_VIEW_POLYLINE_INPUT_H
 #define CGAL_QT_GRAPHICS_VIEW_POLYLINE_INPUT_H
 
-#include <CGAL/auto_link/Qt4.h>
-#include <CGAL/export/Qt4.h>
+#include <CGAL/auto_link/Qt.h>
+#include <CGAL/export/Qt.h>
+
 #include <QPolygonF>
 #include <QPointF>
 
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
+#include <QGraphicsLineItem>
 
 class QGraphicsScene;
 class QGraphicsSceneMouseEvent;
@@ -41,7 +43,7 @@ class QObject;
 namespace CGAL {
 namespace Qt {
 
-class CGAL_QT4_EXPORT GraphicsViewPolylineInput_non_templated_base : public GraphicsViewInput
+class CGAL_QT_EXPORT GraphicsViewPolylineInput_non_templated_base : public GraphicsViewInput
 {
 public:
   void setNumberOfVertices(int n)

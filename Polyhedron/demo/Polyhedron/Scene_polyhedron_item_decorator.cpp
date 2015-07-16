@@ -3,7 +3,7 @@
 
 Scene_polyhedron_item_decorator::Scene_polyhedron_item_decorator
   (Scene_polyhedron_item* poly_item, bool delete_item)
-  : poly_item(poly_item), delete_poly_item(delete_item)
+  :Scene_item(), poly_item(poly_item), delete_poly_item(delete_item)
 { }
 
 Scene_polyhedron_item_decorator::~Scene_polyhedron_item_decorator()

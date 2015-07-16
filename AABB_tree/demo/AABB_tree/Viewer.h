@@ -3,11 +3,11 @@
 
 #include <QGLViewer/qglviewer.h>
 
+
 // forward declarations
 class QWidget;
 class Scene;
-
-class Viewer : public QGLViewer {
+class Viewer : public QGLViewer{
 
   Q_OBJECT
 

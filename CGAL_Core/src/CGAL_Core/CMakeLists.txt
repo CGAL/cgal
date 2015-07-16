@@ -10,7 +10,9 @@ link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
 
 collect_cgal_library(CGAL_Core "")
  
-target_link_libraries( CGAL_Core ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} )
+# CGAL_Core does not depend on CGAL in either DEBUG or RELEASE, but we
+# still link it.
+target_link_libraries( CGAL_Core CGAL ${CGAL_3RD_PARTY_LIBRARIES} )
 
 add_dependencies( CGAL_Core CGAL )
 

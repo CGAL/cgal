@@ -1,6 +1,9 @@
 project(LCC_performance_3)
 
-cmake_minimum_required(VERSION 2.8)
+cmake_minimum_required(VERSION 2.8.11)
+if(POLICY CMP0043)
+  cmake_policy(SET CMP0043 OLD)
+endif()
 
 find_package(CGAL REQUIRED)
 include(${CGAL_USE_FILE})

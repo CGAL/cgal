@@ -1,13 +1,14 @@
 #include "Viewer.h"
 #include "Scene.h"
 #include <QMouseEvent>
+#include <QGLFunctions>
+#include <CGAL/Qt/CreateOpenGLContext.h>
 
 Viewer::Viewer(QWidget* parent)
-  : QGLViewer(parent),
+  : QGLViewer(CGAL::Qt::createOpenGLContext(),parent),
     m_pScene(NULL),
     m_custom_mouse(false)
 {
-  setBackgroundColor(::Qt::white);
 }
 
 void Viewer::setScene(Scene* pScene)
@@ -20,14 +21,16 @@ void Viewer::draw()
   QGLViewer::draw();
   if(m_pScene != NULL)
   {
-	::glClearColor(1.0f,1.0f,1.0f,0.0f);
-	m_pScene->draw();
+      m_pScene->draw(this);
   }
+
 }
 
 void Viewer::initializeGL()
 {
   QGLViewer::initializeGL();
+  setBackgroundColor(::Qt::white);
+  m_pScene->initGL(this);
 }
 
 void Viewer::mousePressEvent(QMouseEvent* e)
@@ -59,5 +62,4 @@ void Viewer::mouseReleaseEvent(QMouseEvent* e)
   
   QGLViewer::mouseReleaseEvent(e);
 }
-
 

@@ -1,6 +1,27 @@
 project(image_to_vtk_viewer)
 
 cmake_minimum_required(VERSION 2.8.11)
+if(POLICY CMP0043)
+  cmake_policy(SET CMP0043 OLD)
+endif()
+
+
+set(PACKAGE_ROOT ../..)
+
+# Add several CGAL packages to the include and link paths,
+# if they lie in ${PACKAGE_ROOT}/.
+foreach(INC_DIR ${PACKAGE_ROOT}/include 
+		${PACKAGE_ROOT}/../CGAL_ImageIO/include )
+  if(EXISTS ${INC_DIR})
+    include_directories (BEFORE ${INC_DIR})
+  endif()
+endforeach()
+foreach(LIB_DIR ${PACKAGE_ROOT}/../CGAL_ImageIO/src/CGAL_ImageIO)
+  if (EXISTS ${LIB_DIR})
+    link_directories (${LIB_DIR})
+  endif()
+endforeach()
+
 
 find_package(CGAL REQUIRED ImageIO)
 include( ${CGAL_USE_FILE} )

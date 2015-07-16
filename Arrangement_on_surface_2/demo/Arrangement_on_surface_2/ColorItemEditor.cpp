@@ -41,6 +41,8 @@
 
 #include <QtGui>
 #include <iostream>
+#include <QColorDialog>
+
 
 #include "ColorItemEditor.h"
 

@@ -10,10 +10,6 @@ inline void CGALglcolor(QColor c, int dv = 0)
 {
   if ( 0 != dv )
   {
-    // workaround for Qt-4.2.
-#if QT_VERSION < 0x040300
-#  define darker dark
-#endif
     c = c.darker(dv);
 #undef darker
   }

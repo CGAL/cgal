@@ -4,11 +4,14 @@
 
 project (Linear_cell_complex_3_demo)
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
+# Find includes in corresponding build directories
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+# Instruct CMake to run moc automatically when needed.
+set(CMAKE_AUTOMOC ON)
+
+cmake_minimum_required(VERSION 2.8.11)
+if(POLICY CMP0043)
+  cmake_policy(SET CMP0043 OLD)
 endif()
 
 ## To add expensive tests
@@ -27,40 +30,34 @@ endif()
 add_definitions(-DCGAL_PROFILE_LCC_DEMO)
 
 ##################
-find_package(CGAL COMPONENTS Qt4)
+find_package(CGAL COMPONENTS Qt5)
 include(${CGAL_USE_FILE})
 
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT  TRUE )
-set( QT_USE_QTOPENGL  TRUE )
-find_package(Qt4)
+find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 
 find_package(OpenGL)
 find_package(QGLViewer)
 
-if ( NOT (CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND AND
+if ( NOT (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND
       OPENGL_FOUND AND QGLVIEWER_FOUND) )
 
   MESSAGE(STATUS "NOTICE: This demo requires CGAL, QGLViewer, OpenGL "
-    "and Qt4, and will not be compiled.")
+    "and Qt5, and will not be compiled.")
 
 else()
 
 add_definitions(-DQT_NO_KEYWORDS)
 
-include(${QT_USE_FILE})
 include_directories(${QGLVIEWER_INCLUDE_DIR})
 include_directories(BEFORE . ../../include/)
 
 # ui file, created wih Qt Designer
-qt4_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
+qt5_wrap_ui(uis MainWindow.ui CreateMesh.ui CreateMenger.ui
                 CreateSierpinskiCarpet.ui CreateSierpinskiTriangle.ui)
 
 # qrc files (resources files, that contain icons, at least)
-qt4_add_resources (RESOURCE_FILES ./Linear_cell_complex_3.qrc)
+qt5_add_resources (RESOURCE_FILES ./Linear_cell_complex_3.qrc)
 
-qt4_automoc(MainWindow.cpp Viewer.cpp)
 
 add_executable(Linear_cell_complex_3_demo
   Linear_cell_complex_3_demo.cpp MainWindow.cpp
@@ -68,6 +65,7 @@ add_executable(Linear_cell_complex_3_demo
   Linear_cell_complex_pqq_subdivision.cpp
   ${uis} ${RESOURCE_FILES} )
 
+qt5_use_modules(Linear_cell_complex_3_demo Xml Script OpenGL Svg)
 add_to_cached_list(CGAL_EXECUTABLE_TARGETS Linear_cell_complex_3_demo)
 
 target_link_libraries(Linear_cell_complex_3_demo ${CGAL_LIBRARIES}

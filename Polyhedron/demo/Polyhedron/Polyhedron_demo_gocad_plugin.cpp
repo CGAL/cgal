@@ -17,6 +17,7 @@ class Polyhedron_demo_gocad_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
   QString nameFilters() const;
@@ -105,6 +106,4 @@ bool Polyhedron_demo_gocad_plugin::save(const Scene_item* item, QFileInfo filein
 
 }
 
-#include <QtPlugin>
-Q_EXPORT_PLUGIN2(Polyhedron_demo_gocad_plugin, Polyhedron_demo_gocad_plugin)
 #include "Polyhedron_demo_gocad_plugin.moc"

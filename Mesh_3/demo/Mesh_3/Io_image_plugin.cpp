@@ -1,8 +1,4 @@
 #include "config.h"
-
-#ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-#  include <GL/glew.h>
-#endif
 #include "Scene_segmented_image_item.h"
 #include "Image_type.h"
 #include "ui_Image_res_dialog.h"
@@ -16,11 +12,12 @@ class Io_image_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Io_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
   Io_image_plugin() {
 #ifdef SCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE
-    glewInit();
+  //  glewInit();
 #endif
   }
 
@@ -31,6 +28,7 @@ public:
   bool canSave(const Scene_item*);
   bool save(const Scene_item*, QFileInfo, QString) { return false; }
 };
+
 
 QStringList Io_image_plugin::nameFilters() const {
   return QStringList() << "Inrimage files (*.inr *.inr.gz)"
@@ -89,6 +87,4 @@ bool Io_image_plugin::canSave(const Scene_item*)
   return false;
 }
 
-#include <QtPlugin>
-Q_EXPORT_PLUGIN2(Io_image_plugin, Io_image_plugin)
 #include "Io_image_plugin.moc"

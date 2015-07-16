@@ -8,7 +8,7 @@ ENABLE_LANGUAGE(C)
 find_package(OpenGL QUIET )
 find_package(Qt3-patched QUIET )
 # FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
-# that it can be used together with FindQt4: all its variables are prefixed
+# that it can be used together with FindQt5: all its variables are prefixed
 # by "QT3_" instead of "QT_".
 
 if( QT3_FOUND )
@@ -71,7 +71,7 @@ if( QT3_FOUND )
 
     add_dependencies( CGAL_Qt3 CGAL )
 
-    target_link_libraries( CGAL_Qt3 ${CGAL_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt3_3RD_PARTY_LIBRARIES} )
+    target_link_libraries( CGAL_Qt3 CGAL ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt3_3RD_PARTY_LIBRARIES} )
         
     add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_Qt3_3RD_PARTY_DEFINITIONS} )
     
