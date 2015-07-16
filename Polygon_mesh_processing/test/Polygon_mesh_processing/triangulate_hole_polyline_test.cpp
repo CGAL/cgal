@@ -140,7 +140,8 @@ void test_1(const char* file_name, bool use_DT) {
 
   std::vector<boost::tuple<int, int, int> > tris;
   CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
-    points, std::back_inserter(tris), use_DT);
+    points, std::back_inserter(tris),
+    CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT));
 
   check_triangles(points, tris);
   check_constructed_polyhedron(file_name, &tris, &points);
@@ -157,7 +158,8 @@ void test_2(const char* file_name, bool use_DT) {
 
   std::vector<boost::tuple<int, int, int> > tris;
   CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
-    points, extras, std::back_inserter(tris), use_DT);
+    points, extras, std::back_inserter(tris),
+    CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT));
 
   check_triangles(points, tris);
   check_constructed_polyhedron(file_name, &tris, &points);
@@ -173,7 +175,8 @@ void test_should_be_no_output(const char* file_name, bool use_DT) {
 
   std::vector<boost::tuple<int, int, int> > tris;
   CGAL::Polygon_mesh_processing::triangulate_hole_polyline(
-    points, std::back_inserter(tris), use_DT);
+    points, std::back_inserter(tris),
+    CGAL::Polygon_mesh_processing::parameters::use_delaunay_triangulation(use_DT));
 
   if(!tris.empty()) {
     std::cerr << "  Error: patch should be empty" << std::endl;
