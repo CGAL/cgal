@@ -58,7 +58,7 @@ public:
   Vertex_handle up() {return _up;}
   Vertex_handle down() {return _down;}
   void set_up(Vertex_handle u) {_up=u;}
-  void set_down(Vertex_handle d) {if (this) _down=d;}
+  void set_down(Vertex_handle d) {_down=d;}
 
 
  private:
