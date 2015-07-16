@@ -49,10 +49,10 @@ namespace CGAL {
 template <class EP, class AP, class C2E, class C2A, bool Protection = true>
 class Filtered_predicate
 {
-  EP  ep;
-  AP  ap;
   C2E c2e;
   C2A c2a;
+  EP  ep;
+  AP  ap;
 
   typedef typename AP::result_type  Ares;
 
@@ -74,12 +74,12 @@ public:
   // the exact values systematically (in the ctor), rather than lazily.
   template <class O>
   Filtered_predicate(const O &o1)
-    : ep(c2e(o1)), ap(c2a(o1))
+    : c2e(), c2a(), ep(c2e(o1)), ap(c2a(o1))
   {}
 
   template <class O1, class O2>
   Filtered_predicate(const O1 &o1, const O2 &o2)
-    : ep(c2e(o1), c2e(o2)), ap(c2a(o1), c2a(o2))
+    : c2e(), c2a(), ep(c2e(o1), c2e(o2)), ap(c2a(o1), c2a(o2))
   {}
 
   explicit Filtered_predicate(const EP&  e, const AP&  a)
