@@ -87,14 +87,6 @@ bool Scene_polyhedron_shortest_path_item::supportsRenderingMode(RenderingMode m)
   }
 }
   
-void Scene_polyhedron_shortest_path_item::draw() const
-{
-  if (supportsRenderingMode(renderingMode()))
-  {
-    draw_points();
-  }
-}
-
 void Scene_polyhedron_shortest_path_item::draw(Viewer_interface* viewer) const
 {
     if (supportsRenderingMode(renderingMode()))
@@ -103,38 +95,6 @@ void Scene_polyhedron_shortest_path_item::draw(Viewer_interface* viewer) const
     }
 }
 
-// Wireframe OpenGL drawing
-void Scene_polyhedron_shortest_path_item::draw_edges() const 
-{
-}
-
-void Scene_polyhedron_shortest_path_item::draw_edges(Viewer_interface*) const
-{ 
-  draw_edges();
-}
-  // Points OpenGL drawing
-void Scene_polyhedron_shortest_path_item::draw_points() const 
-{
-    /*glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
-
-    glDisable(GL_LIGHTING);
-
-    CGAL::GL::Point_size point_size;
-    point_size.set_point_size(5);
-    CGALglcolor(Qt::green);
-
-    ::glBegin(GL_POINTS);
-
-    for(Surface_mesh_shortest_path::Source_point_iterator it = m_shortestPaths->source_points_begin(); it != m_shortestPaths->source_points_end(); ++it)
-    {
-      const Point_3& p = m_shortestPaths->point(it->first, it->second);
-      ::glVertex3d(p.x(), p.y(), p.z());
-    }
-
-    ::glEnd();
-
-    glPopAttrib();*/
-}
 
 void Scene_polyhedron_shortest_path_item::draw_points(Viewer_interface* viewer) const
 {
@@ -142,7 +102,6 @@ void Scene_polyhedron_shortest_path_item::draw_points(Viewer_interface* viewer) 
     {
         initialize_buffers(viewer);
     }
-   //glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
    vaos[0]->bind();
@@ -151,8 +110,6 @@ void Scene_polyhedron_shortest_path_item::draw_points(Viewer_interface* viewer) 
    qFunc.glDrawArrays(GL_POINTS, 0, vertices.size()/3);
    program->release();
    vaos[0]->release();
-
-  // glPopAttrib();
 }
   
 Scene_polyhedron_shortest_path_item* Scene_polyhedron_shortest_path_item::clone() const

@@ -6,20 +6,7 @@
 #include <CGAL/gl_render.h>
 
 typedef EPIC_kernel::Point_3 Point;
-struct light_info
-{
-    //position
-    GLfloat position[4];
 
-    //ambient
-    GLfloat ambient[4];
-
-    //diffuse
-    GLfloat diffuse[4];
-
-    //specular
-    GLfloat specular[4];
-};
 
 void Scene_textured_polyhedron_item::initialize_buffers(Viewer_interface *viewer = 0) const
 {

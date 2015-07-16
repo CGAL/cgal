@@ -8,20 +8,7 @@
 
 #include <QInputDialog>
 
-struct light_info
-{
-    //position
-    GLfloat position[4];
 
-    //ambient
-    GLfloat ambient[4];
-
-    //diffuse
-    GLfloat diffuse[4];
-
-    //specular
-    GLfloat specular[4];
-};
 typedef Scene_polylines_item::K K;
 typedef K::Point_3 Point_3;
 //Fill the VBO with coordinates of the vertices composing a sphere

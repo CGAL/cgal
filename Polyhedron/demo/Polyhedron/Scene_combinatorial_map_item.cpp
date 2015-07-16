@@ -101,14 +101,6 @@ void Scene_combinatorial_map_item::compute_normals_and_vertices(void)
 
 }
 
-void Scene_combinatorial_map_item::uniform_attrib(Viewer_interface*, int) const
-{
-
-}
-void Scene_combinatorial_map_item::compute_colors()
-{
-
-}
 
 Scene_combinatorial_map_item::Scene_combinatorial_map_item(Scene_interface* scene,void* address):last_known_scene(scene),volume_to_display(0),exportSelectedVolume(NULL),address_of_A(address){m_combinatorial_map=NULL;}
 Scene_combinatorial_map_item::~Scene_combinatorial_map_item(){if (m_combinatorial_map!=NULL) delete m_combinatorial_map;}

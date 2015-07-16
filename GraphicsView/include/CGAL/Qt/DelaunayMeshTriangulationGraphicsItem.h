@@ -224,7 +224,7 @@ DelaunayMeshTriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   {
     painter->setBrush(::Qt::NoBrush);
     painter->setPen(::Qt::darkGreen);
-//    painter->setPen(this->voronoiPen());
+    //painter->setPen(this->voronoiPen());
 
     this->painterostream = PainterOstream<typename T::Geom_traits>(painter);
     typedef CGAL::Cvd_cell_2<T> Cvd_cell;

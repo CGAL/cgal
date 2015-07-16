@@ -84,8 +84,6 @@ private:
     void initialize_buffers();
     void compile_shaders(void);
     void compute_normals_and_vertices(void);
-    void uniform_attrib(Viewer_interface*, int) const;
-    void compute_colors();
 
 public Q_SLOTS:
     void set_next_volume();

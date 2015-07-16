@@ -305,20 +305,6 @@ Scene_polyhedron_item::triangulate_facet_color(Facet_iterator fit)
 #include <QAction>
 #include <CGAL/gl_render.h>
 
-struct light_info
-{
-    //position
-    QVector4D position;
-
-    //ambient
-    QVector4D ambient;
-
-    //diffuse
-    QVector4D diffuse;
-
-    //specular
-    QVector4D specular;
-};
 
 void
 Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const

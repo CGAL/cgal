@@ -10,7 +10,6 @@
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_POLYHEDRON_TRANSFORM_ITEM_EXPORT Scene_polyhedron_transform_item 
         : public Scene_item {
-    //  : public Scene_item_with_display_list {
     Q_OBJECT
     
     typedef Scene_polyhedron_item Base;

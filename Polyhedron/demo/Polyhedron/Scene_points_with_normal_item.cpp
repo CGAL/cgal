@@ -22,21 +22,6 @@
 #include <boost/array.hpp>
 
 
-struct light_info
-{
-    //position
-    GLfloat position[4];
-
-    //ambient
-    GLfloat ambient[4];
-
-    //diffuse
-    GLfloat diffuse[4];
-
-    //specular
-    GLfloat specular[4];
-};
-
 Scene_points_with_normal_item::Scene_points_with_normal_item()
     : Scene_item(3,3),
       m_points(new Point_set),
@@ -175,7 +160,6 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
                     positions_points.push_back(p.x());
                     positions_points.push_back(p.y());
                     positions_points.push_back(p.z());
-
                 }
             }
 

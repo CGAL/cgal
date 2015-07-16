@@ -1,21 +1,6 @@
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene_polyhedron_selection_item.moc"
-struct light_info
-{
-    //position
-    GLfloat position[4];
 
-    //ambient
-    GLfloat ambient[4];
-
-    //diffuse
-    GLfloat diffuse[4];
-
-    //specular
-    GLfloat specular[4];
-    GLfloat spec_power;
-
-};
 
 void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewer)const
 {

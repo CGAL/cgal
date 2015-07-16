@@ -32,22 +32,7 @@
 
 
 
-struct light_info
-{
-    //position
-    GLfloat position[4];
 
-    //ambient
-    GLfloat ambient[4];
-
-    //diffuse
-    GLfloat diffuse[4];
-
-    //specular
-    GLfloat specular[4];
-    GLfloat spec_power;
-
-};
 struct Polyhedron_to_polygon_soup_writer {
     typedef Kernel::Point_3 Point_3;
 
