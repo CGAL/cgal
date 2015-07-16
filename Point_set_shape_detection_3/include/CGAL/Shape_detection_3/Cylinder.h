@@ -238,11 +238,15 @@ namespace CGAL {
       if (diff_to_full_range < cluster_epsilon) {
         m_wrap_u = true;
         FT frac = (max[0] - min[0]) / cluster_epsilon;
+
+        if (frac < 1)
+          return;
+
         FT trunc = floor(frac);
         frac = frac - trunc;
 
         if (frac < (FT) 0.5) {
-          cluster_epsilon = (max[0] - min[0]) / (trunc - (FT) 0.01);
+          cluster_epsilon = (max[0] - min[0]) / (trunc * 0.99999);
         }
       }
       else m_wrap_u = false;
