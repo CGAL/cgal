@@ -1509,14 +1509,10 @@ public:
             {
               //get the corresponding halfedge with vertex corresponding to node_id_of_first
               Halfedge_handle hedge=it_node_2_hedge->second;
-              #ifndef NDEBUG
-              Halfedge_handle start=hedge;
-              #endif
+              CGAL_assertion_code(Halfedge_handle start=hedge;)
               while ( hedge->opposite()->vertex()!=it_node_2_hedge_two->second->vertex() ){
                 hedge=hedge->next()->opposite();
-                #ifndef NDEBUG
                 CGAL_assertion(hedge!=start);
-                #endif
               }
               std::pair<int,int> edge_pair(*it_id,node_id_of_first);
               border_halfedges.insert( std::make_pair(hedge,edge_pair) );
@@ -1572,9 +1568,7 @@ public:
       //a map to identify the vertex in the polyhedron corresponding to an intersection point
       Node_to_polyhedron_vertex_map& node_to_polyhedron_vertex=it_map->second; 
             
-      #ifndef NDEBUG
-      Vertex_handle original_vertex=hedge->opposite()->vertex();
-      #endif
+      CGAL_assertion_code(Vertex_handle original_vertex=hedge->opposite()->vertex();)
       
       //We need an edge incident to the source vertex of hedge. This is the first opposite edge created.      
       bool first=true; Halfedge_handle hedge_incident_to_src;
@@ -1589,10 +1583,8 @@ public:
         }
       }
       
-      #ifndef NDEBUG
       CGAL_assertion(hedge_incident_to_src->vertex()==original_vertex);
       CGAL_assertion(hedge_incident_to_src->face()==hedge->opposite()->face());
-      #endif
 
       //save original face and nodes for face of hedge->opposite (2)
       if ( !hedge->opposite()->is_border() ){
