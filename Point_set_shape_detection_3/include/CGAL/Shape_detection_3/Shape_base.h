@@ -499,6 +499,8 @@ namespace CGAL {
     bool is_same(const Shape_base *other) const {
       if (!other)
         return false;
+      if (other->m_indices.size() == 0)
+        return true;
 
       const std::size_t num = 9;
       int score = 0;
