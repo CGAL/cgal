@@ -2,7 +2,7 @@
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
-#include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
 #include <boost/foreach.hpp>
@@ -41,7 +41,7 @@ bool is_mesh_valid(Polyhedron& pMesh)
   // that has only one connected component
   std::size_t num_component;
   CGAL::Counting_output_iterator output_it(&num_component);
-  CGAL::internal::extract_connected_components(pMesh, output_it);
+  CGAL::internal::corefinement::extract_connected_components(pMesh, output_it);
   ++output_it;
   if (num_component != 1)
   {

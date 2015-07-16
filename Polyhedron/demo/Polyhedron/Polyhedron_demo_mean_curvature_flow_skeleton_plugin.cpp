@@ -31,7 +31,7 @@
 #include <CGAL/extract_mean_curvature_flow_skeleton.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/iterator.h>
-#include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/boost/graph/split_graph_into_polylines.h>
 #include <CGAL/mesh_segmentation.h>
 #include <CGAL/Polyhedron_copy_3.h>
@@ -192,7 +192,7 @@ public:
     // that has only one connected component
     std::size_t num_component;
     CGAL::Counting_output_iterator output_it(&num_component);
-    CGAL::internal::extract_connected_components(*pMesh, output_it);
+    CGAL::internal::corefinement::extract_connected_components(*pMesh, output_it);
     ++output_it;
     if (num_component != 1)
     {
