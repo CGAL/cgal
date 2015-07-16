@@ -40,12 +40,15 @@
 #include <CGAL/LEDA_arithmetic_kernel.h>
 #include <CGAL/Sqrt_extension.h>
 #include <CGAL/Polynomial.h>
+#include <CGAL/use.h>
 
 #include <cassert>
 
 template<class AT>
 void test_modular_gcd_utils() {
   CGAL_SNAP_ARITHMETIC_KERNEL_TYPEDEFS(AT);
+  CGAL_USE_TYPE(Rational);
+  CGAL_USE_TYPE(Field_with_sqrt);
 
   CGAL::Random my_random(4711);
   ::CGAL::set_pretty_mode(std::cout);

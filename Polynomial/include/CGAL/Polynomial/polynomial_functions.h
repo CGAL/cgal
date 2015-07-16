@@ -143,8 +143,8 @@ substitute_xy(
     
     typedef typename CGAL::Coercion_traits< CGAL::Polynomial< NT >, NTX > CT;
     typedef typename CT::Type Coercion;
-    typedef typename CGAL::Coercion_traits< NT, NTX > CTi;
-    typedef typename CT::Type Coercion_i;
+//    typedef typename CGAL::Coercion_traits< NT, NTX > CTi;
+//    typedef typename CT::Type Coercion_i;
     typedef CGAL::Polynomial_traits_d < Coercion > PT_dc;
     
     std::vector< Coercion > replacements;

@@ -638,10 +638,10 @@ void trivariate_polynomial_test() {
     typedef typename AT::Integer Integer;
     typedef typename AT::Rational Rational;
 
-    typedef CGAL::Sqrt_extension<Integer  ,Integer> int_EXT_1;
-    typedef CGAL::Sqrt_extension<int_EXT_1,Integer> int_EXT_2;
-    typedef CGAL::Sqrt_extension<Rational ,Integer> rat_EXT_1;
-    typedef CGAL::Sqrt_extension<rat_EXT_1,Integer> rat_EXT_2;
+//    typedef CGAL::Sqrt_extension<Integer  ,Integer> int_EXT_1;
+//    typedef CGAL::Sqrt_extension<int_EXT_1,Integer> int_EXT_2;
+//    typedef CGAL::Sqrt_extension<Rational ,Integer> rat_EXT_1;
+//    typedef CGAL::Sqrt_extension<rat_EXT_1,Integer> rat_EXT_2;
     {        
         // testing trivariate polynomials with integer coefficients
         typedef CGAL::Polynomial<Integer> int_POLY_1;

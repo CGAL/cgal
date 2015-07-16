@@ -1024,9 +1024,9 @@ void test_AT(){
         exact_tests<Integer>();
     }{
         typedef typename AT::Rational Rational;
-        typedef typename CGAL::Polynomial<Rational> Polynomial;
-        typedef CGAL::Euclidean_ring_tag Tag;
-        typedef CGAL::Tag_true Is_exact;
+//        typedef typename CGAL::Polynomial<Rational> Polynomial;
+//        typedef CGAL::Euclidean_ring_tag Tag;
+//        typedef CGAL::Tag_true Is_exact;
         //can't use this test for Polynomials 
         //CGAL::test_algebraic_structure<Polynomial,Tag, Is_exact>();
         basic_tests<Rational>();
