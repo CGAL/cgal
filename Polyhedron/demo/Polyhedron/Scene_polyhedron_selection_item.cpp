@@ -90,7 +90,7 @@ void Scene_polyhedron_selection_item::compute_elements()
             it != end; ++it)
         {
             const Kernel::Vector_3 n =
-                    compute_facet_normal<Polyhedron::Facet,Kernel>(**it);
+                    CGAL::Polygon_mesh_processing::compute_face_normal(*it, *this->poly_item->polyhedron());
 
             normals.push_back(n.x());
             normals.push_back(n.y());

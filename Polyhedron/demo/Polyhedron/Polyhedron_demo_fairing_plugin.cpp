@@ -122,6 +122,6 @@ private:
 
 }; // end Polyhedron_demo_fairing_plugin
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_fairing_plugin, Polyhedron_demo_fairing_plugin)
+// Q_EXPORT_PLUGIN2(Polyhedron_demo_fairing_plugin, Polyhedron_demo_fairing_plugin)
 
 #include "Polyhedron_demo_fairing_plugin.moc"

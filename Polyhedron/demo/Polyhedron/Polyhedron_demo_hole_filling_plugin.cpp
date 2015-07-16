@@ -683,6 +683,6 @@ bool Polyhedron_demo_hole_filling_plugin::fill
   return true;
 }
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_hole_filling_plugin, Polyhedron_demo_hole_filling_plugin)
+// Q_EXPORT_PLUGIN2(Polyhedron_demo_hole_filling_plugin, Polyhedron_demo_hole_filling_plugin)
 
 #include "Polyhedron_demo_hole_filling_plugin.moc"

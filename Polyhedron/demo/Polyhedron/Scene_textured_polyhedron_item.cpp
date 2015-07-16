@@ -119,7 +119,8 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
             if (cur_shading == Flat || cur_shading == FlatPlusEdges)
             {
 
-                Vector n = compute_facet_normal<Facet,Kernel>(*f);
+                Vector n = CGAL::Polygon_mesh_processing::
+                  compute_face_normal(f, static_cast<Base&>(*poly));
                 normals.push_back(n[0]);
                 normals.push_back(n[1]);
                 normals.push_back(n[2]);

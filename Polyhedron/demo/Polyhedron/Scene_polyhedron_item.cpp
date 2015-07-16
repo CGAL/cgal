@@ -15,7 +15,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
-#include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <QVariant>
 #include <list>
@@ -120,7 +120,7 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit)
 {
     //Computes the normal of the facet
     Traits::Vector_3 normal =
-            compute_facet_normal<Facet,Traits>(*fit);
+            CGAL::Polygon_mesh_processing::compute_face_normal(fit,*poly);
 
     P_traits cdt_traits(normal);
     CDT cdt(cdt_traits);
@@ -197,7 +197,7 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit)
         {
 
             typedef Kernel::Vector_3	    Vector;
-            Vector n = compute_facet_normal<Facet,Traits>(*fit);
+            Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(fit, *poly);
             normals.push_back(n.x());
             normals.push_back(n.y());
             normals.push_back(n.z());
@@ -218,7 +218,7 @@ void
 Scene_polyhedron_item::triangulate_facet_color(Facet_iterator fit)
 {
     Traits::Vector_3 normal =
-            compute_facet_normal<Facet,Traits>(*fit);
+            CGAL::Polygon_mesh_processing::compute_face_normal(fit, *poly);
 
     P_traits cdt_traits(normal);
     CDT cdt(cdt_traits);
@@ -459,7 +459,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
                 if (cur_shading == FlatPlusEdges || cur_shading == Flat )
                 {
 
-                    Vector n = compute_facet_normal<Facet,Kernel>(*f);
+                    Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(f, *poly);
                     normals.push_back(n.x());
                     normals.push_back(n.y());
                     normals.push_back(n.z());
@@ -469,7 +469,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
                 else if (cur_shading == Gouraud)
                 {
 
-                    Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*he->vertex());
+                    Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal(he->vertex(), *poly);
                     normals.push_back(n.x());
                     normals.push_back(n.y());
                     normals.push_back(n.z());
