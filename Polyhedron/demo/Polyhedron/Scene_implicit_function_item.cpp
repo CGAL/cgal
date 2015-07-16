@@ -476,7 +476,7 @@ void Scene_implicit_function_item::compute_texture(int i, int j)
     double v = (implicit_grid_[i][j]).second;
 
     if(is_nan(v)) {
-        texture->setData(i,j,0.2,0.2,0.2);
+        texture->setData(i,j,51,51,51);
     } else
         // determines grey level
         if ( v > 0 )
