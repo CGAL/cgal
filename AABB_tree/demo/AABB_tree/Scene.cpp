@@ -1310,7 +1310,7 @@ void Scene::deactivate_cutting_plane()
     disconnect(m_frame, SIGNAL(modified()), this, SLOT(cutting_plane()));
     m_view_plane = false;
 }
-void Scene::initGL(Viewer *viewer)
+void Scene::initGL(Viewer */* viewer */)
 {
     //qDebug()<<"context from scene is valid :"<<context->isValid();
     //gl = 0;
