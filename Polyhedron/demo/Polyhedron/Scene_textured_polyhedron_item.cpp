@@ -221,12 +221,6 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Textured_po
     changed();
 }
 
-// Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Scene_textured_polyhedron_item& item)
-//   : Scene_item_with_display_list(item),
-//     poly(new Textured_polyhedron(*item.poly))
-// {
-// }
-
 Scene_textured_polyhedron_item::~Scene_textured_polyhedron_item()
 {
     delete poly;
