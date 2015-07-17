@@ -440,11 +440,11 @@ fill_matrix(InputIterator begin, InputIterator end,
     for (std::size_t k=0; k <= d; k++) {
       for (std::size_t i=0; i<=k; i++) {
         M.set(line_count, k*(k+1)/2+i,
-              std::pow(x,static_cast<double>(k-i))
-              * std::pow(y,static_cast<double>(i))
+              std::pow(x,static_cast<int>(k-i))
+              * std::pow(y,static_cast<int>(i))
               /( fact(static_cast<unsigned int>(i)) *
                  fact(static_cast<unsigned int>(k-i))
-                 *std::pow(this->preconditionning,static_cast<double>(k))));
+                 *std::pow(this->preconditionning,static_cast<int>(k))));
       }
     }
     line_count++;
