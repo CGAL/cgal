@@ -2,10 +2,9 @@
 #include "Scene_edit_polyhedron_item.h"
 #include <boost/foreach.hpp>
 #include <algorithm>
-
-
+#include <QTime>
 #include <CGAL/gl_render.h>
-
+QTime sequencer;
 Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 (Scene_polyhedron_item* poly_item,
  Ui::DeformMesh* ui_widget,
@@ -18,6 +17,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
       own_poly_item(true),
       k_ring_selector(poly_item, mw, Scene_polyhedron_item_k_ring_selection::Active_handle::VERTEX, true)
 {
+    sequencer.start();
     mw->installEventFilter(this);
     // bind vertex picking
     connect(&k_ring_selector, SIGNAL(selected(const std::set<Polyhedron::Vertex_handle>&)), this,
@@ -441,6 +441,9 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
 /////////// Most relevant functions lie here ///////////
 void Scene_edit_polyhedron_item::deform()
 {
+    if(sequencer.elapsed() > 100)
+    {
+        sequencer.restart();
     if(!is_there_any_ctrl_vertices()) { return; }
 
     for(Ctrl_vertices_group_data_list::iterator it = ctrl_vertex_frame_map.begin(); it != ctrl_vertex_frame_map.end(); ++it)
@@ -448,7 +451,8 @@ void Scene_edit_polyhedron_item::deform()
     deform_mesh.deform();
 
     poly_item->changed(); // now we need to call poly_item changed to delete AABB tree
-  Q_EMIT itemChanged();
+    Q_EMIT itemChanged();
+    }
 }
 
 void Scene_edit_polyhedron_item::timerEvent(QTimerEvent* /*event*/)
@@ -503,7 +507,6 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 
     if(need_repaint) { Q_EMIT itemChanged(); }
     }
-
     return false;
 }
 
