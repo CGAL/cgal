@@ -1,4 +1,3 @@
-#include <CGAL/check_gl_error.h>
 #include "Scene_polyhedron_item.h"
 #include <CGAL/AABB_intersections.h>
 #include "Kernel_type.h"

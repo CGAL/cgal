@@ -1,4 +1,3 @@
-#include <CGAL/check_gl_error.h>
 #include "config.h"
 #include "Scene.h"
 #include "Scene_item.h"

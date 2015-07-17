@@ -13,7 +13,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/glu.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
 #include <QGLViewer/camera.h>
@@ -696,8 +695,6 @@ protected:
 
     }
   }
-protected:
-  GLUquadric* quadric; // for drawing spheres
 }; // end class Scene_edit_polyhedron_item
 
 #endif // SCENE_EDIT_POLYHEDRON_ITEM_H

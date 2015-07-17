@@ -2,7 +2,6 @@
 
 #include <CGAL/bounding_box.h>
 #include <CGAL/gl.h>
-#include <CGAL/glu.h>
 #include <QMenu>
 #include <QAction>
 
@@ -204,27 +203,14 @@ public:
 
     Scene_polylines_item_private() :
         draw_extremities(false),
-        spheres_drawn_radius(0),
-        sphere_display_list(0),
-        quadric(0)
+        spheres_drawn_radius(0)
     {}
-
-    ~Scene_polylines_item_private()
-    {
-        if(quadric != 0)
-            gluDeleteQuadric(quadric);
-        if(sphere_display_list  != 0)
-            glDeleteLists(sphere_display_list, 1);
-    }
 
     void draw_sphere(const K::Point_3&, double) const;
     void draw_spheres(const Scene_polylines_item*) const;
 
     bool draw_extremities;
     double spheres_drawn_radius;
-private:
-    mutable GLuint sphere_display_list;
-    mutable GLUquadric* quadric;
 };
 
 void

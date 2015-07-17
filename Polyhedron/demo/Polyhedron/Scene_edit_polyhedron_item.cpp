@@ -16,11 +16,9 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
       deform_mesh(*(poly_item->polyhedron()), Deform_mesh::Vertex_index_map(), Deform_mesh::Hedge_index_map(), Array_based_vertex_point_map(&positions)),
       is_rot_free(true),
       own_poly_item(true),
-      k_ring_selector(poly_item, mw, Scene_polyhedron_item_k_ring_selection::Active_handle::VERTEX, true),
-      quadric(gluNewQuadric())
+      k_ring_selector(poly_item, mw, Scene_polyhedron_item_k_ring_selection::Active_handle::VERTEX, true)
 {
     mw->installEventFilter(this);
-    gluQuadricNormals(quadric, GLU_SMOOTH);
     // bind vertex picking
     connect(&k_ring_selector, SIGNAL(selected(const std::set<Polyhedron::Vertex_handle>&)), this,
             SLOT(selected(const std::set<Polyhedron::Vertex_handle>&)));
@@ -118,7 +116,6 @@ Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
     {
         delete_ctrl_vertices_group(false);
     }
-    gluDeleteQuadric(quadric);
     if (own_poly_item) delete poly_item;
 
 }
