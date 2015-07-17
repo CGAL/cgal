@@ -371,23 +371,6 @@ public:
     void set_scene(Scene_interface* scene){ last_known_scene=scene; }
 
 private:
-
-    struct light_info
-    {
-        //position
-        GLfloat position[4];
-
-        //ambient
-        GLfloat ambient[4];
-
-        //diffuse
-        GLfloat diffuse[4];
-
-        //specular
-        GLfloat specular[4];
-        GLfloat spec_power;
-
-    };
     C3t3 c3t3_;
     qglviewer::ManipulatedFrame* frame;
     Scene_interface* last_known_scene;

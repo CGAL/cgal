@@ -5,20 +5,7 @@
 
 
 #include <CGAL/gl_render.h>
-struct light_info
-{
-    //position
-    GLfloat position[4];
 
-    //ambient
-    GLfloat ambient[4];
-
-    //diffuse
-    GLfloat diffuse[4];
-
-    //specular
-    GLfloat specular[4];
-};
 Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 (Scene_polyhedron_item* poly_item,
  Ui::DeformMesh* ui_widget,

@@ -39,20 +39,7 @@ TDS,
 Itag>             CDTbase;
 typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 
-struct light_info
-{
-    //position
-    GLfloat position[4];
 
-    //ambient
-    GLfloat ambient[4];
-
-    //diffuse
-    GLfloat diffuse[4];
-
-    //specular
-    GLfloat specular[4];
-};
 struct DPoint {
     DPoint(GLdouble x, GLdouble y, GLdouble z)
     {
