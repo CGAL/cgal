@@ -638,7 +638,9 @@ namespace CGAL {
     FT get_x(const Point_3& p) const { return m_traits.compute_x_3_object()(p); }
     FT get_y(const Point_3& p) const { return m_traits.compute_y_3_object()(p); }
     FT get_z(const Point_3& p) const { return m_traits.compute_z_3_object()(p); }
-      
+
+    Vector_3 constr_vec() const
+    { return m_traits.construct_vector_3_object()(NULL_VECTOR); }
     Vector_3 constr_vec(const Point_3& p, const Point_3& q) const
     { return m_traits.construct_vector_3_object()(p, q); }
 
