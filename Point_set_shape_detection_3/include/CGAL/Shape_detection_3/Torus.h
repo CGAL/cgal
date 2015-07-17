@@ -115,7 +115,7 @@ namespace CGAL {
     FT squared_distance(const Point_3 &p) const {
       const Vector_3 d = this->constr_vec(m_center, p);
       
-	    // height over symmetry plane
+      // height over symmetry plane
       const FT height = this->scalar_pdct(d, m_axis);
 
       // distance from axis in plane
@@ -204,8 +204,8 @@ namespace CGAL {
 
       // 1. center + axis
       FT majorRad1 = FLT_MAX, minorRad1 = FLT_MAX, dist1 = FLT_MAX;
-      Point_3 c1;
-      Vector_3 axis1;
+      Point_3 c1 = this->constr_pt();
+      Vector_3 axis1 = this->constr_vec();
       if (is_finite(x1) && is_finite(y1)) {
         c1 = this->transl(p[0], this->scale(n[0], x1));
         axis1 = this->constr_vec(this->transl(p[1], this->scale(n[1], y1)), c1);
@@ -219,8 +219,8 @@ namespace CGAL {
 
       // 2. center + axis
       FT majorRad2 = 0, minorRad2 = 0, dist2 = FLT_MAX;
-      Point_3 c2;
-      Vector_3 axis2;
+      Point_3 c2 = this->constr_pt();
+      Vector_3 axis2 = this->constr_vec();
       if (is_finite(x2) && is_finite(y2)) {
         c2 = this->transl(p[0], this->scale(n[0], x2));
         axis2 = this->constr_vec(this->transl(p[1], this->scale(n[1], y2)), c2);

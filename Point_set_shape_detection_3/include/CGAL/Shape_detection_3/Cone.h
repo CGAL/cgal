@@ -361,11 +361,12 @@ namespace CGAL {
       FT max[2]) const {
 
       // Create basis d1, d2
-      Vector_3 d1 = Vector_3((FT) 0, (FT) 0, (FT) 1);
+      Vector_3 d1 = this->constr_vec(
+        ORIGIN, this->constr_pt(FT(0), FT(0), FT(1)));
       Vector_3 d2 = this->cross_pdct(m_axis, d1);
       FT l = this->sqlen(d2);
       if (l < (FT)0.0001) {
-        d1 = Vector_3((FT) 1, (FT) 0, (FT) 0);
+        d1 = this->constr_vec(ORIGIN, this->constr_pt(FT(1), FT(0), FT(0)));
         d2 = this->cross_pdct(m_axis, d1);
         l = this->sqlen(d2);
       }

@@ -168,14 +168,15 @@ namespace CGAL {
                             FT &cluster_epsilon,
                             FT min[2],
                             FT max[2]) const {
-      Vector_3 d1 = Vector_3((FT) 0, (FT) 0, (FT) 1);
+      Vector_3 d1 = this->constr_vec(
+        ORIGIN, this->constr_pt(FT(0), FT(0), FT(1)));
       Vector_3 a = this->constr_vec(m_axis);
       a = this->scale(a, (FT)1.0 / CGAL::sqrt(this->sqlen(a)));
 
       Vector_3 d2 = this->cross_pdct(a, d1);
       FT l = this->sqlen(d2);
       if (l < (FT)0.0001) {
-        d1 = Vector_3((FT) 1, (FT) 0, (FT) 0);
+        d1 = this->constr_vec(ORIGIN, this->constr_pt(FT(1), FT(0), FT(0)));
         d2 = this->cross_pdct(this->constr_vec(m_axis), d1);
         l = this->sqlen(d2);
       }
