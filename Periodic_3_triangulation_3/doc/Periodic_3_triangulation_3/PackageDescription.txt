@@ -13,7 +13,7 @@
 /// \ingroup PkgPeriodic3Triangulation3
 /*!
 \addtogroup PkgPeriodic3Triangulation3
-\todo check generated documentation
+
 \cgalPkgDescriptionBegin{3D Periodic Triangulations,PkgPeriodic3Triangulation3Summary}
 \cgalPkgPicture{p3Delaunay3_small.jpg}
 \cgalPkgSummaryBegin
