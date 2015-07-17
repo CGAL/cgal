@@ -26,6 +26,7 @@
 #define CGAL_MATRIX___H
 
 #include <CGAL/Kernel_d/Vector__.h>
+#include <CGAL/use.h>
 #include <new>
 #include <cstddef>                 // for std::size_t, std::ptrdiff_t
 
@@ -189,6 +190,7 @@ inline void deallocate_mat_space(vector_pointer*& vi, int d)
 
 inline void check_dimensions(const Matrix_<NT_,AL_>& mat) const
 { 
+  CGAL_USE(mat);
   CGAL_assertion_msg((dm_ == mat.dm_ && dn_ == mat.dn_), 
     "Matrix::check_dimensions: incompatible matrix dimensions.") ;
 }

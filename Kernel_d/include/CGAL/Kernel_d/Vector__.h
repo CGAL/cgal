@@ -28,6 +28,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/memory.h>
 #include <CGAL/Kernel_d/debug.h>
+#include <CGAL/use.h>
 
 #include <cmath>
 #include <memory>
@@ -120,6 +121,7 @@ protected:
 inline void 
 check_dimensions(const Vector_<NT_,AL_>& vec) const
 { 
+  CGAL_USE(vec);
   CGAL_assertion_msg((d_ == vec.d_), 
     "Vector_::check_dimensions: object dimensions disagree.");
 }

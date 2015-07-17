@@ -756,7 +756,7 @@ public:
             return oi;
           }
           dir1 == SMALLER ?
-            ++i1 : (i1 != 0) ? --i1 : Polycurve_traits_2::INVALID_INDEX;
+            ++i1 : (i1 != 0) ? --i1 : (std::size_t) Polycurve_traits_2::INVALID_INDEX;
           left_res = EQUAL;
         }
       }
@@ -779,7 +779,7 @@ public:
           }
 
           dir2 == SMALLER ?
-            ++i2 : (i2 != 0) ? --i2 : Polycurve_traits_2::INVALID_INDEX;
+            ++i2 : (i2 != 0) ? --i2 : (std::size_t) Polycurve_traits_2::INVALID_INDEX;
           left_res = EQUAL;
         }
       }

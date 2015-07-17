@@ -3785,7 +3785,7 @@ namespace CGAL {
     Combinatorial_map() : Base()
     {}
 
-    Combinatorial_map(const Self & amap)
+    Combinatorial_map(const Self & amap) : Base()
     { Base::template copy<Self>(amap); }
 
     template < class CMap >

@@ -616,7 +616,7 @@ private:
   // Sets the pointer part and the type of the pointee.
   static void set_type(pointer p_element, void * pointer, Type t)
   {
-    CGAL_precondition(0 <= t && t < 4);
+    CGAL_precondition(0 <= t && (int) t < 4);
     Traits::pointer(*p_element) =
       (void *) ((clean_pointer((char *) pointer)) + (int) t);
   }

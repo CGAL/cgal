@@ -25,7 +25,7 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/Cartesian_converter.h>
-
+#include <CGAL/use.h>
 /* Definition of functors used internally to copy combinatorial maps attributes
  * (we need functors as attributes are stored in tuple, thus all the access
  *  must be done at compiling time).
@@ -346,6 +346,7 @@ struct Default_converter_cmap_attributes
   (const Map1& map1, Map2& map2, typename Map1::Dart_const_handle dh1,
    typename Map2::Dart_handle dh2) const
   {
+    CGAL_USE(dh2);
     CGAL_assertion( map1.template attribute<i>(dh1)!=Map1::null_handle );
     CGAL_assertion( map2.template attribute<i>(dh2)==Map2::null_handle );
     return internal::Create_attribute_if_same_info_cmap
@@ -363,6 +364,7 @@ struct Cast_converter_cmap_attributes
   (const Map1& map1, Map2& map2, typename Map1::Dart_const_handle dh1,
    typename Map2::Dart_handle dh2) const
   {
+    CGAL_USE(dh2);
     CGAL_assertion( map1.template attribute<i>(dh1)!=Map1::null_handle );
     CGAL_assertion( map2.template attribute<i>(dh2)==Map2::null_handle );
     typename Map2::template Attribute_handle<i>::type
