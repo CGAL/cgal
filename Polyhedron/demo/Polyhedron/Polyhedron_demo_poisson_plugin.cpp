@@ -28,6 +28,8 @@ class Polyhedron_demo_poisson_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+
   QAction* actionPoissonReconstruction;
 
 public:
@@ -115,6 +117,7 @@ void Polyhedron_demo_poisson_plugin::on_actionPoissonReconstruction_triggered()
       new_item->setColor(Qt::lightGray);
       scene->addItem(new_item);
 
+
       // Hide point set
       point_set_item->setVisible(false);
       scene->itemChanged(index);
@@ -123,7 +126,5 @@ void Polyhedron_demo_poisson_plugin::on_actionPoissonReconstruction_triggered()
     QApplication::restoreOverrideCursor();
   }
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_poisson_plugin, Polyhedron_demo_poisson_plugin)
 
 #include "Polyhedron_demo_poisson_plugin.moc"

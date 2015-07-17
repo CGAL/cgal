@@ -22,8 +22,9 @@
 #ifndef CGAL_QT_GRAPHICS_ITEM_H
 #define CGAL_QT_GRAPHICS_ITEM_H
 
-#include <CGAL/export/Qt4.h>
-#include <CGAL/auto_link/Qt4.h>
+#include <CGAL/export/Qt.h>
+#include <CGAL/auto_link/Qt.h>
+
 #include <QObject>
 #include <QGraphicsItem>
 #ifndef Q_MOC_RUN
@@ -35,12 +36,10 @@
 namespace CGAL {
 namespace Qt {
 
-class CGAL_QT4_EXPORT GraphicsItem : public QObject, public QGraphicsItem {
+class CGAL_QT_EXPORT GraphicsItem : public QObject, public QGraphicsItem {
 
   Q_OBJECT
-#if QT_VERSION >= 0x040600
-  Q_INTERFACES(QGraphicsItem)
-#endif
+
 public Q_SLOTS:
 
   virtual void modelChanged() = 0;

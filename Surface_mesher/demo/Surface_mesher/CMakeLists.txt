@@ -2,11 +2,14 @@ set ( prj Surface_mesher )
 
 project ( ${prj} )
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
+# Find includes in corresponding build directories
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+# Instruct CMake to run moc automatically when needed.
+set(CMAKE_AUTOMOC ON)
+
+cmake_minimum_required(VERSION 2.8.11)
+if(POLICY CMP0043)
+  cmake_policy(SET CMP0043 OLD)
 endif()
 
 set(PACKAGE_ROOT ${CMAKE_CURRENT_SOURCE_DIR}/../..)
@@ -18,7 +21,7 @@ foreach(INC_DIR ${PACKAGE_ROOT}/include ${PACKAGE_ROOT}/../Mesh_2/include ${PACK
     include_directories (BEFORE ${INC_DIR})
   endif()
 endforeach()
-foreach(LIB_DIR ${PACKAGE_ROOT}/../CGAL_ImageIO/src/CGAL_ImageIO ${PACKAGE_ROOT}/../GraphicsView/src/CGALQt4)
+foreach(LIB_DIR ${PACKAGE_ROOT}/../CGAL_ImageIO/src/CGAL_ImageIO ${PACKAGE_ROOT}/../GraphicsView/src/CGALQt5)
   if (EXISTS ${LIB_DIR})
     link_directories (${LIB_DIR})
   endif()
@@ -26,25 +29,24 @@ endforeach()
 
 include_directories( ./ )
 
-# QGLViwer needs Qt4 configured with QtOpenGL and QtXml support
+# QGLViwer needs Qt5 configured with QtOpenGL and QtXml support
 
 set( QT_USE_QTOPENGL TRUE )
 set( QT_USE_QTXML    TRUE )
 set( QT_USE_QTMAIN   TRUE )
 
-find_package(CGAL COMPONENTS ImageIO Qt4)
-if ( CGAL_FOUND AND CGAL_Qt4_FOUND)
+find_package(CGAL COMPONENTS ImageIO Qt5)
+if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
 
   add_definitions(-DQT_NO_KEYWORDS)
   include( ${CGAL_USE_FILE} )
 
-  find_package(Qt4 )
+  find_package(Qt5 QUIET COMPONENTS OpenGL Xml )
   find_package(QGLViewer )
   find_package(OpenGL    )
   
-  if ( QGLVIEWER_FOUND )
+  if ( QGLVIEWER_FOUND AND Qt5_FOUND)
 
-    include( ${QT_USE_FILE})
         
     include_directories( ${QGLVIEWER_INCLUDE_DIR} )
     add_definitions(${QGLVIEWER_DEFINITIONS})
@@ -79,17 +81,18 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND)
       add_definitions(-DCGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE)
     endif()
     
-    qt4_automoc( ${sources} )
 
-    qt4_generate_moc( "surface.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_surface.cpp" )
+    qt5_generate_moc( "surface.h" "${CMAKE_CURRENT_BINARY_DIR}/moc_surface.cpp" )
 
     set( sources ${sources} moc_surface.cpp)
     
-    qt4_wrap_ui( uis ui/values_list.ui ui/mainwindow.ui ui/optionsdialog.ui ui/raw_image.ui )
+    qt5_wrap_ui( uis ui/values_list.ui ui/mainwindow.ui ui/optionsdialog.ui ui/raw_image.ui )
     
-    qt4_add_resources( qrc_sources values_list.qrc surface_mesher.qrc  ) 
+    qt5_add_resources( qrc_sources values_list.qrc surface_mesher.qrc  )
 
     add_executable  ( ${prj}  ${sources} ${uis} ${qrc_sources} )
+
+    qt5_use_modules(${prj} OpenGL Xml )
     
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${prj} )
 
@@ -98,13 +101,13 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND)
     
     target_link_libraries( ${prj} ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
     
-  else( QGLVIEWER_FOUND)
+  else( QGLVIEWER_FOUND AND Qt5_FOUND)
     message(STATUS "NOTICE: This demo needs libQGLViewer, and will not be compiled.")
-  endif( QGLVIEWER_FOUND)
-else(CGAL_FOUND AND CGAL_Qt4_FOUND)
+  endif( QGLVIEWER_FOUND AND Qt5_FOUND)
+else(CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
   if(RUNNING_CGAL_AUTO_TEST)
     # Just to avoid a warning from CMake if that variable is set on the command line...
   endif()
 
-  message(STATUS "NOTICE: This demo needs Qt4, and will not be compiled.")
-endif(CGAL_FOUND AND CGAL_Qt4_FOUND)
+  message(STATUS "NOTICE: This demo needs Qt5, and will not be compiled.")
+endif(CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)

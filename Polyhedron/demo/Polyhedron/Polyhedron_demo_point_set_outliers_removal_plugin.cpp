@@ -23,6 +23,7 @@ class Polyhedron_demo_point_set_outliers_removal_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 private:
   QAction* actionOutlierRemoval;
@@ -111,7 +112,5 @@ void Polyhedron_demo_point_set_outliers_removal_plugin::on_actionOutlierRemoval_
     QApplication::restoreOverrideCursor();
   }
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_point_set_outliers_removal_plugin, Polyhedron_demo_point_set_outliers_removal_plugin)
 
 #include "Polyhedron_demo_point_set_outliers_removal_plugin.moc"

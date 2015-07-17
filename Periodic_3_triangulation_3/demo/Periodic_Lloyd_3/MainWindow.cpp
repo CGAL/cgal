@@ -89,7 +89,8 @@ void
 MainWindow::newPointSet()
 {
   bool ok;
-  int numberOfPoints = QInputDialog::getInteger(this,
+
+  int numberOfPoints = QInputDialog::getInt(this,
       "Periodic Lloyd", "Number of points: ", 100, 0, 2147483647, 1, &ok );
   
   if (ok) newPoints(numberOfPoints);
@@ -103,7 +104,7 @@ MainWindow::loadPoints()
 	".", tr("All files (*)"));
   if(fileName.isEmpty()) return;
   
-  std::ifstream ifs(fileName.toAscii().data() );
+  std::ifstream ifs(fileName.toLatin1().data() );
   scene.points.clear();
   Iso_cuboid_3 dom;
   ifs >> dom;
@@ -141,7 +142,7 @@ MainWindow::savePoints()
 	".", tr("*.pts"));
   if(fileName.isEmpty()) return;
   
-  std::ofstream ofs(fileName.toAscii().data() );
+  std::ofstream ofs(fileName.toLatin1().data() );
   ofs << scene.periodic_triangulation.domain() << '\n';
   for (std::list<Point_3>::iterator pit = scene.points.begin() ;
        pit != scene.points.end() ; ++pit) ofs << *pit << '\n';
@@ -150,6 +151,7 @@ MainWindow::savePoints()
 void MainWindow::lloydStep() {
   scene.lloyd_step();
   viewer->updateGL();
+  viewer->changed();
   }
 
 void 

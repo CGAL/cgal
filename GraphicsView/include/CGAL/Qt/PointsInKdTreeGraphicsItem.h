@@ -130,9 +130,7 @@ PointsInKdTreeGraphicsItem<KdTree>::PointsInKdTreeGraphicsItem(KdTree * p_)
   }
   updateBoundingBox();
   setZValue(3);
-#if QT_VERSION >= 0x040600
   setFlag(QGraphicsItem::ItemUsesExtendedStyleOption, true);
-#endif
 }
 
 template <typename KdTree>

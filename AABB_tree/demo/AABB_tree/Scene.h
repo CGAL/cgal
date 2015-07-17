@@ -18,7 +18,39 @@
 #include <QtCore/qglobal.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
+#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLBuffer>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLTexture>
 
+class Texture{
+private:
+     int Width;
+     int Height;
+     int size;
+    GLubyte *data;
+public:
+    Texture(int w, int h)
+    {
+        Width = w;
+        Height = h;
+        size = 3*Height*Width;
+        data = new GLubyte[Height*Width*3];
+    }
+    int getWidth() const {return Width;}
+    int getHeight() const {return Height;}
+    int getSize() const {return size;}
+    void setData(int i, int j, int r, int g, int b){
+        data[3*(Width*j+i) + 0] = r;
+        data[3*(Width*j+i) + 1] = g;
+        data[3*(Width*j+i) + 2] = b;
+    }
+
+    GLubyte* getData(){return data; }
+
+};
+class Viewer;
 class Scene : public QObject
 {
     Q_OBJECT
@@ -45,13 +77,16 @@ private:
     };
   
 public:
-    void draw(); 
+    QGLContext* context;
+    void draw(QGLViewer*);
     void update_bbox();
     Bbox bbox() { return m_bbox; }
     ManipulatedFrame* manipulatedFrame() const { return m_frame; }
+    void initGL(Viewer *viewer);
 
 private:
     // member data
+    QOpenGLFunctions_3_3_Core *gl;
     Bbox m_bbox;
     Polyhedron *m_pPolyhedron;
     std::list<Point> m_points;
@@ -77,6 +112,7 @@ private:
     Edge_tree m_edge_tree;
     
     Cut_planes_types m_cut_plane;
+    bool are_buffers_initialized;
   
 private:
     // utility functions
@@ -94,20 +130,55 @@ private:
     void build_edge_tree();
     void clear_internal_data();
     void update_grid_size();
-    
+
     template <typename Tree>
     void compute_distance_function(const Tree& tree);
     
     template <typename Tree>
     void sign_distance_function(const Tree& tree);
 
+    //Shaders elements
+
+    int poly_vertexLocation;
+    int tex_Location;
+    int points_vertexLocation;
+    int lines_vertexLocation;
+    int mvpLocation;
+    int tex_mvpLocation;
+    int fLocation;
+    int tex_fLocation;
+    int colorLocation;
+
+
+
+    std::vector<float> pos_points;
+    std::vector<float> pos_grid;
+    std::vector<float> pos_lines;
+    std::vector<float> pos_poly;
+    std::vector<float> pos_plane;
+    std::vector<float> pos_cut_segments;
+    std::vector<float> tex_map;
+    GLuint textureId;
+
+    Texture *texture;
+    GLint sampler_location;
+    QOpenGLBuffer buffers[10];
+    QOpenGLVertexArrayObject vao[10];
+    QOpenGLShaderProgram tex_rendering_program;
+    QOpenGLShaderProgram rendering_program;
+    void initialize_buffers();
+    void compute_elements(int mode);
+    void attrib_buffers(QGLViewer*);
+    void compile_shaders();
+    void compute_texture(int, int, Color_ramp, Color_ramp);
+
 public:
     // file menu
     int open(QString filename);
 
     // edit menu
-    void clear_points() { m_points.clear(); }
-    void clear_segments() { m_segments.clear(); }
+    void clear_points() { m_points.clear(); changed(); }
+    void clear_segments() { m_segments.clear(); changed(); }
     void clear_cutting_plane();
     
     // fast distance setter
@@ -174,14 +245,6 @@ public:
     void bench_closest_point_and_primitive(Facet_tree& tree,const double duration);
     void bench_distance(Facet_tree& tree,const int function,const double duration);
 
-    // drawing
-    void draw_points();
-    void draw_segments();
-    void draw_polyhedron();
-    void draw_distance_function(const Color_ramp& ramp_pos,
-                                const Color_ramp& ramp_neg) const;
-    void draw_cut_segment_plane() const;
-  
     // cutting plane activation/deactivation
     void activate_cutting_plane();
     void deactivate_cutting_plane();
@@ -189,7 +252,7 @@ public:
 public slots:
     // cutting plane
     void cutting_plane();
-  
+    void changed();
 }; // end class Scene
 
 #endif // SCENE_H

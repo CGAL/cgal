@@ -45,6 +45,8 @@ class Polyhedron_demo_advancing_front_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+
   QAction* actionAdvancingFrontReconstruction;
 
 public:
@@ -129,7 +131,5 @@ void Polyhedron_demo_advancing_front_plugin::on_actionAdvancingFrontReconstructi
   
   }
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_advancing_front_plugin, Polyhedron_demo_advancing_front_plugin)
 
 #include "Polyhedron_demo_advancing_front_plugin.moc"

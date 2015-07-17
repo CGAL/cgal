@@ -26,9 +26,8 @@ To install CGAL, you need 'cmake' and several third-party libraries.
 Some are essential for entire CGAL, some are mandatory for particular
 CGAL packages, some are only needed for demos.
 
-   * CMake (>= 2.6.3), the build system used by CGAL
+   * CMake (>= 2.8.11), the build system used by CGAL
      Required for building CGAL
-     On Windows, CMake >= 2.8.6 is required.
 
    * Boost (>= 1.48)
      Required for building CGAL and for applications using CGAL
@@ -64,8 +63,8 @@ CGAL packages, some are only needed for demos.
      - Qt3 (>= 3.3)
        ftp://ftp.qt.nokia.com/qt/source/
 
-     - Qt4 (>= 4.3)
-       http://qt.nokia.com/
+     - Qt5 (>= 5.3)
+       http://qt-project.org/
 
      - libQGLViewer
        http://www.libqglviewer.com/

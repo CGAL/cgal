@@ -51,6 +51,7 @@ QVariant ArrangementDemoPropertiesDialog::property( int index )
 
   // return user data, if it is set
   QVariant myData = item->data( Qt::UserRole );
+ /*
   if ( qVariantCanConvert< QColor >( myData ) ||
        qVariantCanConvert< DeleteCurveMode >( myData ) )
   {
@@ -60,7 +61,17 @@ QVariant ArrangementDemoPropertiesDialog::property( int index )
   {
     res = item->data( Qt::DisplayRole );
   }
+ */
 
+  if ( myData.canConvert<QColor>() ||
+       myData.canConvert<DeleteCurveMode>())
+  {
+    return myData;
+  }
+  else
+  {
+    res = item->data( Qt::DisplayRole );
+  }
   return res;
 }
 

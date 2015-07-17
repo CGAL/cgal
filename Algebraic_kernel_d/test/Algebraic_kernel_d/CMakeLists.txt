@@ -3,12 +3,8 @@
 
 project( Algebraic_kernel_d_test )
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
-endif()
+cmake_minimum_required(VERSION 2.8.11)
+
 
 # CGAL and its components
 find_package( CGAL QUIET COMPONENTS Core RS3)
@@ -26,7 +22,7 @@ include( ${CGAL_USE_FILE} )
 include( CGAL_CreateSingleSourceCGALProgram )
 
 # Boost and its components
-find_package( Boost REQUIRED )
+find_package( Boost )
 
 if ( NOT Boost_FOUND )
 

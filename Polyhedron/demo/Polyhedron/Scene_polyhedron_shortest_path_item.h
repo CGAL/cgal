@@ -100,6 +100,12 @@ private:
   void remove_nearest_point(const Face_location& ray);
   void get_as_edge_point(Face_location& inOutLocation);
   void get_as_vertex_point(Face_location& inOutLocation);
+
+  std::vector<float> vertices;
+  mutable QOpenGLShaderProgram *program;
+
+  void initialize_buffers(Viewer_interface *viewer = 0) const;
+  void compute_elements(void);
   
   
 public:

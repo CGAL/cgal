@@ -4,14 +4,8 @@
 project( Surface_mesh_segmentation )
 
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
-endif()
+cmake_minimum_required(VERSION 2.8.11)
+
 
 set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
  
@@ -36,7 +30,7 @@ include( ${CGAL_USE_FILE} )
 
 
 # Boost and its components
-find_package( Boost REQUIRED )
+find_package( Boost )
 
 if ( NOT Boost_FOUND )
 

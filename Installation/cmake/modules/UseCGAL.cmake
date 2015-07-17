@@ -42,10 +42,6 @@ if(NOT USE_CGAL_FILE_INCLUDED)
 
   include_directories( "${CMAKE_CURRENT_BINARY_DIR}" )
 
-  # need to get variable from cache while compiling CGAL, while in a demo it is set in CGALConfig.cmake
-  if ( NOT CGAL_LIBRARY )
-    cache_get(CGAL_LIBRARY)
-  endif()
   if(TARGET CGAL)
     add_to_list( CGAL_LIBRARIES CGAL )
   else()

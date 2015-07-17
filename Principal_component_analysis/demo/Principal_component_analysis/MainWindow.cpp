@@ -13,6 +13,9 @@
 
 #include "ui_MainWindow.h"
 
+#include <QMimeData> 
+
+
 MainWindow::MainWindow(QWidget* parent)
 : CGAL::Qt::DemosMainWindow(parent)
 {

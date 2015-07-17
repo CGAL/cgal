@@ -1,8 +1,8 @@
-# Copyright (c) 2009 Boudewijn Rempt <boud@valdyas.org>                                                                                          
-#                                                                                                                                                
-# Redistribution and use is allowed according to the terms of the BSD license.                                                                   
-# For details see the accompanying COPYING-CMAKE-SCRIPTS file. 
-# 
+# Copyright (c) 2009 Boudewijn Rempt <boud@valdyas.org>
+#
+# Redistribution and use is allowed according to the terms of the BSD license.
+# For details see the accompanying COPYING-CMAKE-SCRIPTS file.
+#
 # - try to find glew library and include files
 #  GLEW_INCLUDE_DIR, where to find GL/glew.h, etc.
 #  GLEW_LIBRARIES, the libraries to link against
@@ -24,7 +24,7 @@ IF (WIN32)
 
 
   ELSE(CYGWIN)
-  
+
     FIND_PATH( GLEW_INCLUDE_DIR GL/glew.h
       $ENV{GLEW_ROOT_PATH}/include
     )
@@ -51,6 +51,7 @@ ELSE (WIN32)
   ELSE (APPLE)
 
     FIND_PATH( GLEW_INCLUDE_DIR GL/glew.h
+      /usr/include
       /usr/include/GL
       /usr/openwin/share/include
       /usr/openwin/include
@@ -63,6 +64,8 @@ ELSE (WIN32)
     FIND_LIBRARY( GLEW_GLEW_LIBRARY GLEW
       /usr/openwin/lib
       /usr/X11R6/lib
+      /usr/lib
+      /usr/lib/x86_64-linux-gnu
     )
 
   ENDIF (APPLE)

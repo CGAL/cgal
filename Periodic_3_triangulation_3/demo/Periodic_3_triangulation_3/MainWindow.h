@@ -6,6 +6,9 @@
 
 #include <QProcess>
 #include <QTextStream>
+#include <QMessageBox>
+
+
 
 class MainWindow : public QMainWindow
 {

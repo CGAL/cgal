@@ -21,6 +21,7 @@ class Polyhedron_demo_transform_polyhedron_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
 
@@ -137,8 +138,5 @@ void Polyhedron_demo_transform_polyhedron_plugin::end(){
   scene->replaceItem(tr_item_index,new_item);
   delete transform_item;
 }
-  
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_transform_polyhedron_plugin, Polyhedron_demo_transform_polyhedron_plugin)
 
 #include "Polyhedron_demo_transform_polyhedron_plugin.moc"

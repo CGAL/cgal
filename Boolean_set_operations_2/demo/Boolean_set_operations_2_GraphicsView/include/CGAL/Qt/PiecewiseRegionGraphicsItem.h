@@ -80,19 +80,19 @@ protected:
 template <class R, class D, class P>
 void Piecewise_region_graphics_item<R,D,P>::update_region_bbox( Piecewise_region const& aRegion, Piecewise_graphics_item_base::Bbox_builder& aBboxBuilder )
 {
-  update_boundary_bbox( aRegion.outer_boundary(), aBboxBuilder ) ;
+  this->update_boundary_bbox( aRegion.outer_boundary(), aBboxBuilder ) ;//"This" added for qt5 version !
   
   for( Hole_const_itertator hit = aRegion.holes_begin(); hit != aRegion.holes_end(); ++ hit )
-    update_boundary_bbox(*hit,aBboxBuilder);
+    this->update_boundary_bbox(*hit,aBboxBuilder);//"This" added for qt5 version !
 }
 
 template <class R, class D, class P>
 void Piecewise_region_graphics_item<R,D,P>::draw_region( Piecewise_region const& aRegion, QPainterPath& aPath )
 {
-  draw_boundary( aRegion.outer_boundary(), aPath ) ;
+  this->draw_boundary( aRegion.outer_boundary(), aPath ) ;//This added for qt5 version !
   
   for( Hole_const_itertator hit = aRegion.holes_begin(); hit != aRegion.holes_end(); ++ hit )
-    draw_boundary(*hit,aPath);
+    this->draw_boundary(*hit,aPath);//"This" added for qt5 version !
 }
 
 

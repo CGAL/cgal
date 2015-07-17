@@ -24,6 +24,8 @@ class Polyhedron_demo_point_set_simplification_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+
   QAction* actionSimplify;
 
 public:
@@ -137,7 +139,5 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
     }
   }
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_point_set_simplification_plugin, Polyhedron_demo_point_set_simplification_plugin)
 
 #include "Polyhedron_demo_point_set_simplification_plugin.moc"

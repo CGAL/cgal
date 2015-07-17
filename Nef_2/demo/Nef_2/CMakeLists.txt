@@ -2,11 +2,9 @@
 
 project( Nef_2 ) 
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.11)
+if(POLICY CMP0043)
+  cmake_policy(SET CMP0043 OLD)
 endif()
 
 find_package(CGAL COMPONENTS Qt3 )
@@ -14,7 +12,7 @@ include( ${CGAL_USE_FILE} )
 
 find_package(Qt3-patched)
 # FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
-# that it can be used together with FindQt4: all its variables are prefixed
+# that it can be used together with Qt5: all its variables are prefixed
 # by "QT3_" instead of "QT_".
 
 if ( CGAL_FOUND AND CGAL_Qt3_FOUND AND QT3_FOUND )

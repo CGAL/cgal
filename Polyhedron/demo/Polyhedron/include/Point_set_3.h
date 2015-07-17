@@ -5,6 +5,7 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/Min_sphere_of_spheres_d.h>
+#include <CGAL/Min_sphere_of_points_d_traits_3.h>
 #include <CGAL/Min_sphere_of_spheres_d_traits_3.h>
 
 #include <UI_point_3.h>
@@ -12,11 +13,10 @@
 #include <algorithm>
 #include <deque>
 
-#ifdef CGAL_GLEW_ENABLED
-# include <GL/glew.h>
-#else
+//#ifdef CGAL_GLEW_ENABLED
+//#else
 # include <CGAL/gl.h>
-#endif
+//#endif
 
 
 /// The Point_set_3 class is array of points + normals of type
@@ -342,17 +342,12 @@ private:
     m_barycenter = CGAL::ORIGIN + v / norm;
 
     // Computes bounding sphere
-    typedef CGAL::Min_sphere_of_spheres_d_traits_3<Gt,FT> Traits;
+    typedef CGAL::Min_sphere_of_points_d_traits_3<Gt,FT> Traits;
     typedef CGAL::Min_sphere_of_spheres_d<Traits> Min_sphere;
     typedef typename Traits::Sphere Traits_sphere;
-    //
-    // Represents points by a set of spheres with 0 radius
-    std::vector<Traits_sphere> spheres;
-    for (Point_const_iterator it = begin(); it != end(); it++)
-      spheres.push_back(Traits_sphere(*it,0));
-    //
-    // Computes min sphere
-    Min_sphere ms(spheres.begin(),spheres.end());
+
+    Min_sphere ms(begin(),end());
+
     typename Min_sphere::Cartesian_const_iterator coord = ms.center_cartesian_begin();
     FT cx = *coord++;
     FT cy = *coord++;

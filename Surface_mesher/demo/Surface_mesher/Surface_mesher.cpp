@@ -8,7 +8,7 @@ int main(int argc, char** argv)
 
   application.setOrganizationDomain("geometryfactory.com");
   application.setOrganizationName("GeometryFactory");
-  application.setApplicationName("Surface mesher Qt4 demo");
+  application.setApplicationName("Surface mesher Qt5 demo");
 
   MainWindow w;
 

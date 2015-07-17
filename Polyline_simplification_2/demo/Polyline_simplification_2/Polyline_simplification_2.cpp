@@ -162,7 +162,7 @@ MainWindow::MainWindow()
   // and the input they generate is passed to the triangulation with 
   // the signal/slot mechanism    
   mPI = new CGAL::Qt::GraphicsViewPolylineInput<K>(this, &mScene, 0, true); // inputs polylines which are not closed
-  
+  this->on_actionInsertPolyline_toggled(true);
   QObject::connect(mPI, SIGNAL(generate(CGAL::Object)), this, SLOT(processInput(CGAL::Object)));
     
 
@@ -172,8 +172,8 @@ MainWindow::MainWindow()
   QObject::connect(this->actionQuit, SIGNAL(triggered()), this, SLOT(close()));
 
   // We put mutually exclusive actions in an QActionGroup
-  QActionGroup* ag = new QActionGroup(this);
-  ag->addAction(this->actionInsertPolyline);
+  //  QActionGroup* ag = new QActionGroup(this);
+  //  ag->addAction(this->actionInsertPolyline);
 
   this->actionShowTriangulation->setChecked(false);
   
@@ -247,7 +247,7 @@ MainWindow::processInput(CGAL::Object o)
 
 /* 
  *  Qt Automatic Connections
- *  http://doc.trolltech.com/4.4/designer-using-a-component.html#automatic-connections
+ *  http://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
  * 
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
@@ -544,9 +544,8 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Polyline_simplification_2 demo");
 
-  // Import resources from libCGALQt4.
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  // Import resources from libCGALQt5.
+  CGAL_QT_INIT_RESOURCES;
 	
   MainWindow mainWindow;
   mainWindow.show();

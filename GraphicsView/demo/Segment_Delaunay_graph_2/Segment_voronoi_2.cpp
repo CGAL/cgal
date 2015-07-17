@@ -17,6 +17,8 @@
 #include <QInputDialog>
 #include <QDragEnterEvent>
 #include <QDropEvent>
+#include <QMessageBox>
+#include <QGraphicsLineItem>
 
 // GraphicsView items and event filters (input classes)
 #include <CGAL/Qt/GraphicsViewPolylineInput.h>
@@ -210,7 +212,7 @@ MainWindow::processInput(CGAL::Object o)
 
 /* 
  *  Qt Automatic Connections
- *  http://doc.trolltech.com/4.4/designer-using-a-component.html#automatic-connections
+ *  http://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
  * 
  *  setupUi(this) generates connections to the slots named
  *  "on_<action_name>_<signal_name>"
@@ -375,9 +377,8 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Segment Voronoi 2 demo");
 
-  // Import resources from libCGALQt4.
-  // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE
-  CGAL_QT4_INIT_RESOURCES;
+  // Import resources from libCGAL (Qt5).
+  CGAL_QT_INIT_RESOURCES;
 
   MainWindow mainWindow;
   mainWindow.show();
