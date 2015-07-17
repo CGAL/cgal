@@ -1,4 +1,3 @@
-#include <CGAL/check_gl_error.h>
 #include "Viewer.h"
 #include <CGAL/gl.h>
 #include "Scene_draw_interface.h"

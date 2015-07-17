@@ -1,4 +1,3 @@
-#include <CGAL/check_gl_error.h>
 #include "Scene_nef_polyhedron_item.h"
 #include "Scene_polyhedron_item.h"
 #include "Nef_type.h"
