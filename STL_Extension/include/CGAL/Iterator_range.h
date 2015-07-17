@@ -58,6 +58,13 @@ namespace CGAL {
   {
     return this->second;
   }
+
+  /// returns `std::distance(begin(), end())`
+  typename std::iterator_traits<I>::difference_type
+  size() const
+  {
+    return std::distance(begin(), end());
+  }
 };
 
   template <typename T>
