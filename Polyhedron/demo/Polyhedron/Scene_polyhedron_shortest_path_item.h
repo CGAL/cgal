@@ -104,6 +104,7 @@ private:
   std::vector<float> vertices;
   mutable QOpenGLShaderProgram *program;
 
+  using Scene_polyhedron_item_decorator::initialize_buffers;
   void initialize_buffers(Viewer_interface *viewer = 0) const;
   void compute_elements(void);
   
@@ -120,13 +121,9 @@ public:
   Primitives_mode get_primitives_mode() const;
   
   virtual bool supportsRenderingMode(RenderingMode m) const;
-  virtual void draw() const;
+  using Scene_polyhedron_item_decorator::draw;
   virtual void draw(Viewer_interface*) const;
-  // Wireframe OpenGL drawing
-  virtual void draw_edges() const;
-  virtual void draw_edges(Viewer_interface*) const;
   // Points OpenGL drawing
-  virtual void draw_points() const;
   virtual void draw_points(Viewer_interface*) const;
   
   virtual Scene_polyhedron_shortest_path_item* clone() const;

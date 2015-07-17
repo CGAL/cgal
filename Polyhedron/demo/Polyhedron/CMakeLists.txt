@@ -93,6 +93,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
   qt5_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
   qt5_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
+  qt5_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
+  qt5_wrap_ui( fairingUI_FILES Fairing_widget.ui)
   qt5_wrap_ui( selectionUI_FILES Selection_widget.ui)
   qt5_wrap_ui( funcUI_FILES Function_dialog.ui )
   qt5_wrap_ui( shortestPathUI_FILES Shortest_path_widget.ui )
@@ -112,7 +114,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   qt5_generate_moc( "CGAL_demo/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
 
-  
+
   # AUXILIARY LIBRARIES
 
   # put plugins (which are shared libraries) at the same location as
@@ -164,7 +166,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_polyhedron_transform_item Scene_polyhedron_transform_item.cpp )#Scene_polyhedron_transform_item.moc)
   # special
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
-  
+
   add_item(scene_combinatorial_map_item Scene_combinatorial_map_item.cpp)# Scene_combinatorial_map_item.moc)
   # special
   target_link_libraries(scene_combinatorial_map_item scene_polyhedron_item)
@@ -179,7 +181,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
  
   add_item(scene_polyhedron_selection_item Scene_polyhedron_selection_item.cpp)# Scene_polyhedron_selection_item.moc)
   target_link_libraries(scene_polyhedron_selection_item scene_polyhedron_item_decorator scene_polyhedron_item_k_ring_selection)
- 
+
   add_item(scene_polyhedron_shortest_path_item Scene_polyhedron_shortest_path_item.cpp)
   
   target_link_libraries(scene_polyhedron_shortest_path_item scene_polyhedron_item_decorator scene_polyhedron_item scene_polylines_item)
@@ -204,7 +206,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       scene_polyhedron_item
       scene_polygon_soup_item
       scene_nef_polyhedron_item )
-      add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${lib} )
+    add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${lib} )
   endforeach()
 
   add_definitions(-DQT_STATICPLUGIN)
@@ -215,7 +217,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       MainWindow.cpp
       Polyhedron_3.cpp
       File_loader_dialog_moc.cpp
-      ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
+       ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
     qt5_use_modules(Polyhedron_3 Gui OpenGL Xml Widgets Script Svg )
     if(EIGEN3_FOUND)
@@ -342,7 +344,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     qt5_wrap_ui( normal_estimationUI_FILES Polyhedron_demo_normal_estimation_plugin.ui)
     polyhedron_demo_plugin(normal_estimation_plugin Polyhedron_demo_normal_estimation_plugin ${normal_estimationUI_FILES})
     target_link_libraries(normal_estimation_plugin scene_points_with_normal_item)
-    
+
     qt5_wrap_ui( vcm_normal_estimationUI_FILES Polyhedron_demo_vcm_normal_estimation_plugin.ui)
     polyhedron_demo_plugin(vcm_normal_estimation_plugin Polyhedron_demo_vcm_normal_estimation_plugin ${vcm_normal_estimationUI_FILES})
     target_link_libraries(vcm_normal_estimation_plugin scene_points_with_normal_item)
@@ -371,7 +373,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endif(EIGEN3_FOUND)
 
   polyhedron_demo_plugin(self_intersection_plugin Polyhedron_demo_self_intersection_plugin)
-  target_link_libraries(self_intersection_plugin scene_polyhedron_item)
+  target_link_libraries(self_intersection_plugin scene_polyhedron_item scene_polyhedron_selection_item)
 
   polyhedron_demo_plugin(polyhedron_stitching_plugin Polyhedron_demo_polyhedron_stitching_plugin)
   target_link_libraries(polyhedron_stitching_plugin scene_polyhedron_item scene_polylines_item)
@@ -392,8 +394,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(mesh_segmentation_plugin scene_polyhedron_item)
   
   polyhedron_demo_plugin(mean_curvature_flow_skeleton_plugin Polyhedron_demo_mean_curvature_flow_skeleton_plugin ${Mean_curvature_flow_skeleton_pluginUI_FILES})
-  target_link_libraries(mean_curvature_flow_skeleton_plugin
-    scene_polyhedron_item
+  target_link_libraries(mean_curvature_flow_skeleton_plugin 
+    scene_polyhedron_item 
     scene_points_with_normal_item
     scene_polylines_item
     demo_framework)
@@ -426,7 +428,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   else()
     message(STATUS "NOTICE: The polyhedron edit plugin require Eigen 3.2 (or higher) and will not be available.")
   endif()
-
+  
   polyhedron_demo_plugin(cut_plugin Polyhedron_demo_cut_plugin)
   target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
   
@@ -445,6 +447,19 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(point_set_outliers_removal_plugin Polyhedron_demo_point_set_outliers_removal_plugin ${ps_outliers_removal_UI_FILES}) 
   target_link_libraries(point_set_outliers_removal_plugin scene_points_with_normal_item)
+  
+  if(EIGEN3_FOUND AND ${EIGEN3_VERSION} VERSION_GREATER "3.1.90")
+    polyhedron_demo_plugin(hole_filling_plugin Polyhedron_demo_hole_filling_plugin ${hole_fillingUI_FILES})
+    target_link_libraries(hole_filling_plugin scene_polyhedron_item scene_polylines_item)
+
+    polyhedron_demo_plugin(hole_filling_polyline_plugin Polyhedron_demo_hole_filling_polyline_plugin)
+    target_link_libraries(hole_filling_polyline_plugin scene_polyhedron_item scene_polylines_item)
+
+    polyhedron_demo_plugin(fairing_plugin Polyhedron_demo_fairing_plugin ${fairingUI_FILES})
+    target_link_libraries(fairing_plugin scene_polyhedron_selection_item)
+  else()
+    message(STATUS "NOTICE: The hole filling and fairing plugins require Eigen 3.2 (or higher) and will not be available.")
+  endif()
 
   polyhedron_demo_plugin(selection_plugin Polyhedron_demo_selection_plugin ${selectionUI_FILES})
   target_link_libraries(selection_plugin scene_polyhedron_selection_item scene_points_with_normal_item scene_polylines_item)

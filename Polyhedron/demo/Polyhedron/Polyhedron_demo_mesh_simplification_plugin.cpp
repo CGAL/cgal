@@ -51,12 +51,12 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
   
     const int nb_edges = 
     QInputDialog::getInt(mw, tr("Stop condition"),
-    tr("Number of edges:"),
-    (int)(pMesh->size_of_halfedges () / 4), // default value: current #edges / 2 
-    3, // min = one triangle
-    (int)pMesh->size_of_halfedges(), // max #edges
-    1, // step for the spinbox
-    &ok);
+      tr("Number of edges:"),
+      (int)(pMesh->size_of_halfedges () / 4), // default value: current #edges / 2 
+      3, // min = one triangle
+      (int)pMesh->size_of_halfedges(), // max #edges
+      1, // step for the spinbox
+      &ok);
 
     // check user cancellation
     if(!ok)
@@ -70,8 +70,8 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
     namespace SMS = CGAL::Surface_mesh_simplification;
     SMS::Count_stop_predicate< Polyhedron > stop(nb_edges); // target #edges
     SMS::edge_collapse( *pMesh, stop,
-      CGAL::vertex_index_map(get(CGAL::vertex_external_index,*pMesh))
-      .halfedge_index_map(get(CGAL::halfedge_external_index,*pMesh)));
+                        CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index,*pMesh))
+                                         .halfedge_index_map(get(CGAL::halfedge_external_index,*pMesh)));
     std::cout << "ok (" << time.elapsed() << " ms, " 
       << pMesh->size_of_halfedges() / 2 << " edges)" << std::endl;
 

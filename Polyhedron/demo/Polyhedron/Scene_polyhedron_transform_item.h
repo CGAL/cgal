@@ -10,7 +10,6 @@
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_POLYHEDRON_TRANSFORM_ITEM_EXPORT Scene_polyhedron_transform_item 
         : public Scene_item {
-    //  : public Scene_item_with_display_list {
     Q_OBJECT
     
     typedef Scene_polyhedron_item Base;
@@ -39,6 +38,7 @@ private:
     qglviewer::Vec center_;
     mutable QOpenGLShaderProgram *program;
     std::vector<float> positions_lines;
+    using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer) const;
     void compute_elements();
 

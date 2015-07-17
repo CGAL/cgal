@@ -11,7 +11,7 @@
 #include "Polyhedron_demo_plugin_interface.h"
 
 #include <CGAL/Polyhedron_copy_3.h>
-#include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
@@ -108,7 +108,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
     if(item)
     {
       std::list<Polyhedron*> new_polyhedra;
-      CGAL::internal::extract_connected_components(
+      CGAL::internal::corefinement::extract_connected_components(
         *item->polyhedron(),
         boost::make_function_output_iterator(Polyhedron_appender(new_polyhedra))
       );
@@ -157,9 +157,9 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
     {
       std::list<Polyhedron*> new_polyhedra;
       Polyhedron_cc_marker marker;
-      CGAL::internal::mark_connected_components(
+      CGAL::internal::corefinement::mark_connected_components(
         *item->polyhedron(),
-        CGAL::internal::Dummy_true(),
+        CGAL::internal::corefinement::Dummy_true(),
         marker
       );
       item->changed();

@@ -366,7 +366,7 @@ with an unsigned integer, marking the discover time of the face and use a
 breadth-first-search visitor to obtain these times and update the faces
 accordingly:
 
-\cgalExample{BGL_arrangement_2/dual.cpp}
+\cgalExample{BGL_arrangement_2/arrangement_dual.cpp}
 
 \section BGLExtensions Extensions of the BGL
 

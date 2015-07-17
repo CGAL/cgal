@@ -3,7 +3,7 @@
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
-#include <CGAL/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <QObject>
 
 
@@ -167,7 +167,7 @@ void Scene_polyhedron_item::compute_elements()
 
       // If Flat shading: 1 normal per polygon
 
-        Vector n = compute_facet_normal<Facet,Kernel>(*f);
+        Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(f, polyhedron);
 
         normal_flat.push_back(n.x()); normal_flat.push_back(n.y()); normal_flat.push_back(n.z());
         normal_flat.push_back(n.x()); normal_flat.push_back(n.y()); normal_flat.push_back(n.z());
@@ -180,7 +180,7 @@ void Scene_polyhedron_item::compute_elements()
       CGAL_For_all(he,end)
       {
 
-          Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*he->vertex());
+          Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal(he->vertex(), polyhedron);
           normal_smooth.push_back(n.x()); normal_smooth.push_back(n.y()); normal_smooth.push_back(n.z());
 
         const Point& p = he->vertex()->point();

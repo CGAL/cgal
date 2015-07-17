@@ -73,6 +73,7 @@ private:
 
     std::vector<float> positions_lines;
     mutable QOpenGLShaderProgram *program;
+    using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer)const
     {
 

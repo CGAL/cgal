@@ -16,11 +16,11 @@
 
 #include <CGAL/IO/OFF_reader.h>
 #include <CGAL/IO/File_writer_OFF.h>
-#include <CGAL/version.h>
+#include <CGAL/version.h> 
 
-#include <CGAL/orient_polygon_soup.h>
-#include <CGAL/polygon_soup_to_polyhedron_3.h>
-#include <CGAL/orient_polyhedron_3.h>
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
@@ -28,67 +28,52 @@
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
 
-#include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 
 
-struct light_info
-{
-    //position
-    GLfloat position[4];
 
-    //ambient
-    GLfloat ambient[4];
-
-    //diffuse
-    GLfloat diffuse[4];
-
-    //specular
-    GLfloat specular[4];
-    GLfloat spec_power;
-
-};
 struct Polyhedron_to_polygon_soup_writer {
-    typedef Kernel::Point_3 Point_3;
+  typedef Kernel::Point_3 Point_3;
 
-    Polygon_soup* soup;
-    Polygon_soup::Polygon_3 polygon;
+  Polygon_soup* soup;
+  Polygon_soup::Polygon_3 polygon;
 
-    Polyhedron_to_polygon_soup_writer(Polygon_soup* soup) : soup(soup), polygon() {
-    }
+  Polyhedron_to_polygon_soup_writer(Polygon_soup* soup) : soup(soup), polygon() {
+  }
 
-    void write_header( std::ostream&,
-                       std::size_t /* vertices */,
-                       std::size_t /* halfedges */,
-                       std::size_t /* facets */,
-                       bool /* normals */ = false ) {
-        soup->clear();
-    }
+  void write_header( std::ostream&,
+                     std::size_t /* vertices */,
+                     std::size_t /* halfedges */,
+                     std::size_t /* facets */,
+                     bool /* normals */ = false ) {
+    soup->clear();
+  }
 
-    void write_footer() {
-    }
+  void write_footer() {
+  }
 
-    void write_vertex( const double& x, const double& y, const double& z) {
-        soup->points.push_back(Point_3(x, y, z));
-    }
+  void write_vertex( const double& x, const double& y, const double& z) {
+    soup->points.push_back(Point_3(x, y, z));
+  }
 
-    void write_normal( const double& /* x */, const double& /* y */, const double& /* z */) {
-    }
+  void write_normal( const double& /* x */, const double& /* y */, const double& /* z */) {
+  }
 
-    void write_facet_header() {
-    }
+  void write_facet_header() {
+  }
 
-    void write_facet_begin( std::size_t no) {
-        polygon.clear();
-        polygon.reserve(no);
-    }
-    void write_facet_vertex_index( std::size_t index) {
-        polygon.push_back(index);
-    }
-    void write_facet_end() {
-        soup->polygons.push_back(polygon);
-        polygon.clear();
-    }
+  void write_facet_begin( std::size_t no) {
+    polygon.clear();
+    polygon.reserve(no);
+  }
+  void write_facet_vertex_index( std::size_t index) {
+    polygon.push_back(index);
+  }
+  void write_facet_end() {
+    soup->polygons.push_back(polygon);
+    polygon.clear();
+  }
 }; // end struct Polyhedron_to_soup_writer
 
 void
@@ -203,7 +188,7 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
     }
 
     //check if the facet is external or internal
-    std::queue<typename CDT::Face_handle> face_queue;
+    std::queue<CDT::Face_handle> face_queue;
     face_queue.push(cdt.infinite_vertex()->face());
     while(! face_queue.empty() ) {
         CDT::Face_handle fh = face_queue.front();
@@ -341,8 +326,8 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
 
 Scene_polygon_soup_item::Scene_polygon_soup_item()
     : Scene_item(4,2),
-      soup(0),
-      oriented(false)
+    soup(0),
+    oriented(false)
 {
  qFunc.initializeOpenGLFunctions();
 }
@@ -350,23 +335,23 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
 {
 
-    delete soup;
+  delete soup;
 }
 
-Scene_polygon_soup_item*
+Scene_polygon_soup_item* 
 Scene_polygon_soup_item::clone() const {
-    Scene_polygon_soup_item* new_soup = new Scene_polygon_soup_item();
-    new_soup->soup = soup->clone();
-    new_soup->oriented = oriented;
-    return new_soup;
+  Scene_polygon_soup_item* new_soup = new Scene_polygon_soup_item();
+  new_soup->soup = soup->clone();
+  new_soup->oriented = oriented;
+  return new_soup;
 }
 
 
 bool
 Scene_polygon_soup_item::load(std::istream& in)
 {
-    if (!soup) soup=new Polygon_soup();
-    else soup->clear();
+  if (!soup) soup=new Polygon_soup();
+  else soup->clear();
 
     bool result = CGAL::read_OFF(in, soup->points, soup->polygons);
     Q_EMIT changed();
@@ -374,12 +359,12 @@ Scene_polygon_soup_item::load(std::istream& in)
 }
 
 void Scene_polygon_soup_item::init_polygon_soup(std::size_t nb_pts, std::size_t nb_polygons){
-    if(!soup)
-        soup = new Polygon_soup;
+  if(!soup)
+    soup = new Polygon_soup;
     soup->clear();
-    soup->points.reserve(nb_pts);
-    soup->polygons.reserve(nb_polygons);
-    oriented = false;
+  soup->points.reserve(nb_pts);
+  soup->polygons.reserve(nb_polygons);
+  oriented = false;
 }
 
 void Scene_polygon_soup_item::finalize_polygon_soup(){ soup->fill_edges(); }
@@ -388,16 +373,16 @@ void Scene_polygon_soup_item::finalize_polygon_soup(){ soup->fill_edges(); }
 #include <iostream>
 
 void Scene_polygon_soup_item::load(Scene_polyhedron_item* poly_item) {
-    if(!poly_item) return;
-    if(!poly_item->polyhedron()) return;
+  if(!poly_item) return;
+  if(!poly_item->polyhedron()) return;
 
-    if(!soup)
-        soup = new Polygon_soup;
+  if(!soup)
+    soup = new Polygon_soup;
 
-    Polyhedron_to_polygon_soup_writer writer(soup);
-    CGAL::generic_print_polyhedron(std::cerr,
-                                   *poly_item->polyhedron(),
-                                   writer);
+  Polyhedron_to_polygon_soup_writer writer(soup);
+  CGAL::generic_print_polyhedron(std::cerr,
+                                 *poly_item->polyhedron(),
+                                 writer);
   Q_EMIT changed();
 }
 
@@ -405,44 +390,44 @@ void
 Scene_polygon_soup_item::setDisplayNonManifoldEdges(const bool b)
 {
 
-    soup->display_non_manifold_edges = b;
-    changed();
+  soup->display_non_manifold_edges = b;
+  changed();
 }
 
 bool
 Scene_polygon_soup_item::displayNonManifoldEdges() const {
 
-    return soup->display_non_manifold_edges;
+  return soup->display_non_manifold_edges;
 }
 
 void Scene_polygon_soup_item::shuffle_orientations()
 {
-    for(Polygon_soup::size_type i = 0, end = soup->polygons.size();
-        i < end; ++i)
-    {
-        if(std::rand() % 2 == 0) soup->inverse_orientation(i);
-    }
-    soup->fill_edges();
-    changed();
+  for(Polygon_soup::size_type i = 0, end = soup->polygons.size();
+      i < end; ++i)
+  {
+    if(std::rand() % 2 == 0) soup->inverse_orientation(i);
+  }
+  soup->fill_edges();
+  changed();
 }
 
 void Scene_polygon_soup_item::inside_out()
 {
-    for(Polygon_soup::size_type i = 0, end = soup->polygons.size();
-        i < end; ++i)
-    {
-        soup->inverse_orientation(i);
-    }
-    soup->fill_edges();
-    changed();
+  for(Polygon_soup::size_type i = 0, end = soup->polygons.size();
+      i < end; ++i)
+  {
+    soup->inverse_orientation(i);
+  }
+  soup->fill_edges();
+  changed();
 }
 
-bool
+bool 
 Scene_polygon_soup_item::orient()
 {
 
   if(isEmpty() || this->oriented)
-      return true; // nothing to do
+    return true; // nothing to do
   oriented=true;
 
   //first skip degenerate polygons
@@ -464,81 +449,82 @@ Scene_polygon_soup_item::orient()
   if (valid_polygons.size()!=soup->polygons.size())
     soup->polygons.swap(valid_polygons);
 
-  return CGAL::orient_polygon_soup(soup->points, soup->polygons);
-
+  return CGAL::Polygon_mesh_processing::
+    orient_polygon_soup(soup->points, soup->polygons);
 }
 
 
-bool
+bool 
 Scene_polygon_soup_item::save(std::ostream& out) const
 {
 
-    typedef Polygon_soup::size_type size_type;
-    CGAL::File_writer_OFF writer;
-    writer.write_header(out,
-                        soup->points.size(),
-                        0,
-                        soup->polygons.size());
-    for(size_type i = 0, end = soup->points.size();
-        i < end; ++i)
-    {
-        const Point_3& p = soup->points[i];
-        writer.write_vertex( p.x(), p.y(), p.z() );
+  typedef Polygon_soup::size_type size_type;
+  CGAL::File_writer_OFF writer;
+  writer.write_header(out,
+                      soup->points.size(),
+                      0,
+                      soup->polygons.size());
+  for(size_type i = 0, end = soup->points.size();
+      i < end; ++i)
+  {
+    const Point_3& p = soup->points[i];
+    writer.write_vertex( p.x(), p.y(), p.z() );
+  }
+  writer.write_facet_header();
+  for(size_type i = 0, end = soup->polygons.size();
+      i < end; ++i)
+  {
+    const Polygon_soup::Polygon_3& polygon = soup->polygons[i]; 
+    const size_type size = polygon.size();
+    writer.write_facet_begin(size);
+    for(size_type j = 0; j < size; ++j) {
+      writer.write_facet_vertex_index(polygon[j]);
     }
-    writer.write_facet_header();
-    for(size_type i = 0, end = soup->polygons.size();
-        i < end; ++i)
-    {
-        const Polygon_soup::Polygon_3& polygon = soup->polygons[i];
-        const size_type size = polygon.size();
-        writer.write_facet_begin(size);
-        for(size_type j = 0; j < size; ++j) {
-            writer.write_facet_vertex_index(polygon[j]);
-        }
-        writer.write_facet_end();
-    }
-    writer.write_footer();
+    writer.write_facet_end();
+  }
+  writer.write_footer();
 
-    return (bool) out;
+  return (bool) out;
 }
 
-bool
+bool 
 Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
 {
-    orient();
-    CGAL::polygon_soup_to_polyhedron_3(*out_polyhedron, soup->points, soup->polygons);
+  orient();
+  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Polyhedron>(
+    soup->points, soup->polygons, *out_polyhedron);
 
-    if(out_polyhedron->size_of_vertices() > 0) {
-        // Also check whether the consistent orientation is fine
-        if(!CGAL::is_oriented(*out_polyhedron)) {
-            out_polyhedron->inside_out();
-        }
-        return true;
+  if(out_polyhedron->size_of_vertices() > 0) {
+    // Also check whether the consistent orientation is fine
+    if(!CGAL::Polygon_mesh_processing::is_outward_oriented(*out_polyhedron)) {
+      out_polyhedron->inside_out();
     }
-    return false;
+    return true;
+  }
+  return false;
 }
-QString
+QString 
 Scene_polygon_soup_item::toolTip() const
 {
 
-    if(!soup)
-        return QString();
+  if(!soup)
+    return QString();
 
-    return QObject::tr("<p><b>%1</b> (mode: %5, color: %6)<br />"
-                       "<i>Polygons soup</i></p>"
-                       "<p>Number of vertices: %2<br />"
-                       "Number of polygons: %3</p>")
-            .arg(this->name())
-            .arg(soup->points.size())
-            .arg(soup->polygons.size())
-            .arg(this->renderingModeName())
-            .arg(this->color().name());
+  return QObject::tr("<p><b>%1</b> (mode: %5, color: %6)<br />"
+                     "<i>Polygons soup</i></p>"
+                     "<p>Number of vertices: %2<br />"
+                     "Number of polygons: %3</p>")
+    .arg(this->name())
+    .arg(soup->points.size())
+    .arg(soup->polygons.size())
+    .arg(this->renderingModeName())
+    .arg(this->color().name());
 }
 
 void
 Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
-    {
+  {
      initialize_buffers(viewer);
     }
     if(soup == 0) return;
@@ -560,14 +546,14 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     program->release();
     vaos[0]->release();
 
-}
+  }
 
 void
 Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
      initialize_buffers(viewer);
-    }
+  }
     if(soup == 0) return;
     vaos[1]->bind();
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
@@ -585,9 +571,9 @@ Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
 void
 Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
-    {
+  {
      initialize_buffers(viewer);
-    }
+  }
     if(soup == 0) return;
 
     vaos[1]->bind();
@@ -607,7 +593,7 @@ Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
 bool
 Scene_polygon_soup_item::isEmpty() const {
 
-    return (soup == 0 || soup->points.empty());
+  return (soup == 0 || soup->points.empty());
 }
 void
 Scene_polygon_soup_item::changed()
@@ -619,18 +605,18 @@ Scene_polygon_soup_item::changed()
 Scene_polygon_soup_item::Bbox
 Scene_polygon_soup_item::bbox() const {
 
-    const Point_3& p = *(soup->points.begin());
-    CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
-    for(Polygon_soup::Points::const_iterator it = soup->points.begin();
-        it != soup->points.end();
-        ++it) {
-        bbox = bbox + it->bbox();
-    }
-    return Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
-                bbox.xmax(),bbox.ymax(),bbox.zmax());
+  const Point_3& p = *(soup->points.begin());
+  CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
+  for(Polygon_soup::Points::const_iterator it = soup->points.begin();
+      it != soup->points.end();
+      ++it) {
+    bbox = bbox + it->bbox();
+  }
+  return Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+              bbox.xmax(),bbox.ymax(),bbox.zmax());
 }
 
-void
+void 
 Scene_polygon_soup_item::new_vertex(const double& x,
                                     const double& y,
                                     const double& z)
@@ -638,20 +624,20 @@ Scene_polygon_soup_item::new_vertex(const double& x,
 
     soup->points.push_back(Point_3(x, y, z));
 }
-
-void
+                               
+void 
 Scene_polygon_soup_item::new_triangle(const std::size_t i,
                                       const std::size_t j,
                                       const std::size_t k)
 {
 
-    Polygon_soup::Polygon_3 new_polygon(3);
-    new_polygon[0] = i;
-    new_polygon[1] = j;
-    new_polygon[2] = k;
-    soup->polygons.push_back(new_polygon);
+  Polygon_soup::Polygon_3 new_polygon(3);
+  new_polygon[0] = i;
+  new_polygon[1] = j;
+  new_polygon[2] = k;
+  soup->polygons.push_back(new_polygon);
 }
-
+                               
 #include "Scene_polygon_soup_item.moc"
 
 // Local Variables:

@@ -1,0 +1,1 @@
+Weight.h is copied from surface_modeling branch, and a new weight calculator is added. Merge it accordingly.

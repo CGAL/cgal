@@ -151,7 +151,7 @@ public:
 
     // Indicate if rendering mode is supported
     bool supportsRenderingMode(RenderingMode m) const {
-        return (m != Gouraud && m!=PointsPlusNormals && m!=Splatting); // CHECK THIS!
+        return (m != Gouraud && m!=PointsPlusNormals); // CHECK THIS!
     }
 
     void draw(Viewer_interface* viewer) const {
@@ -403,6 +403,7 @@ private:
 
     mutable QOpenGLShaderProgram *program;
 
+    using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer)const
     {
         //vao containing the data for the facets

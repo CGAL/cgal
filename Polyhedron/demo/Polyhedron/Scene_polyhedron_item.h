@@ -44,7 +44,7 @@ public:
     QMenu* contextMenu();
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals && m!=Splatting); }
+    virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals); }
     // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
     void draw() const {}
     virtual void draw(Viewer_interface*) const;
@@ -120,6 +120,7 @@ private:
 
     mutable QOpenGLShaderProgram *program;
 
+    using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer = 0) const;
     void compute_normals_and_vertices(void);
     void compute_colors();

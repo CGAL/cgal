@@ -64,7 +64,7 @@
 #include <CGAL/internal/Surface_mesh_skeletonization/Detect_degeneracy.h>
 
 // Inside mesh test
-#include <CGAL/Point_inside_polyhedron_3.h>
+#include <CGAL/Side_of_triangle_mesh.h>
 
 // Compute bounding box
 #include <CGAL/Bbox_3.h>
@@ -77,10 +77,6 @@
 #endif
 
 namespace CGAL {
-
-  namespace parameters {
-
-  }
 
 namespace internal{
 
@@ -897,7 +893,7 @@ private:
 
     std::size_t nver = num_vertices(m_tmesh);
 
-    Point_inside_polyhedron_3<mTriangleMesh, Traits> test_inside(m_tmesh);
+    Side_of_triangle_mesh<mTriangleMesh, Traits> test_inside(m_tmesh);
 
     BOOST_FOREACH(vertex_descriptor vd, vertices(m_tmesh))
     {
@@ -958,7 +954,7 @@ private:
   {
     MCFSKEL_DEBUG(std::cerr << "start RHS\n";)
 
-    Point_inside_polyhedron_3<mTriangleMesh, Traits> test_inside(m_tmesh);
+    Side_of_triangle_mesh<mTriangleMesh, Traits> test_inside(m_tmesh);
 
     // assemble right columns of linear system
     int nver = static_cast<int>(num_vertices(m_tmesh));

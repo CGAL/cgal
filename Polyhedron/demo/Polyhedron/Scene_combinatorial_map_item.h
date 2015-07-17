@@ -38,7 +38,7 @@ public:
     QString toolTip() const;
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const { return (m != Gouraud && m!=PointsPlusNormals && m!=Splatting); } // CHECK THIS!
+    virtual bool supportsRenderingMode(RenderingMode m) const { return (m != Gouraud && m!=PointsPlusNormals); } // CHECK THIS!
     //Event handling
     virtual bool keyPressEvent(QKeyEvent*);
     // OpenGL drawing in a display list
@@ -84,8 +84,6 @@ private:
     void initialize_buffers();
     void compile_shaders(void);
     void compute_normals_and_vertices(void);
-    void uniform_attrib(Viewer_interface*, int) const;
-    void compute_colors();
 
 public Q_SLOTS:
     void set_next_volume();

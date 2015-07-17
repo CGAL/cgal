@@ -1,21 +1,6 @@
 #include "Scene_polyhedron_selection_item.h"
 #include "Scene_polyhedron_selection_item.moc"
-struct light_info
-{
-    //position
-    GLfloat position[4];
 
-    //ambient
-    GLfloat ambient[4];
-
-    //diffuse
-    GLfloat diffuse[4];
-
-    //specular
-    GLfloat specular[4];
-    GLfloat spec_power;
-
-};
 
 void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewer)const
 {
@@ -105,7 +90,7 @@ void Scene_polyhedron_selection_item::compute_elements()
             it != end; ++it)
         {
             const Kernel::Vector_3 n =
-                    compute_facet_normal<Polyhedron::Facet,Kernel>(**it);
+                    CGAL::Polygon_mesh_processing::compute_face_normal(*it, *this->poly_item->polyhedron());
 
             normals.push_back(n.x());
             normals.push_back(n.y());

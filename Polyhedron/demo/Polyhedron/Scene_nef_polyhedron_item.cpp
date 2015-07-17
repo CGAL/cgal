@@ -245,7 +245,7 @@ void Scene_nef_polyhedron_item::compute_normals_and_vertices(void)
 
                     }
                     //check if the facet is external or internal
-                    std::queue<typename CDT::Face_handle> face_queue;
+                    std::queue<CDT::Face_handle> face_queue;
                     face_queue.push(cdt.infinite_vertex()->face());
 
                     while(! face_queue.empty() ) {
@@ -411,67 +411,6 @@ void Scene_nef_polyhedron_item::compute_normals_and_vertices(void)
 
     } //end points
 }
-/*
-void Scene_nef_polyhedron_item::uniform_attrib(Viewer_interface* viewer, int mode) const
-{
-    light_info light;
-    GLint is_both_sides = 0;
-    GLfloat mvp_mat[16];
-    GLfloat mv_mat[16];
-
-    //fills the MVP and MV matrices.
-
-    GLdouble d_mat[16];
-    viewer->camera()->getModelViewProjectionMatrix(d_mat);
-    //Convert the GLdoubles matrices in GLfloats
-    for (int i=0; i<16; ++i){
-        mvp_mat[i] = GLfloat(d_mat[i]);
-    }
-
-    viewer->camera()->getModelViewMatrix(d_mat);
-    for (int i=0; i<16; ++i)
-        mv_mat[i] = GLfloat(d_mat[i]);
-
-    qFunc.glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
-
-
-    //Gets lighting info :
-
-    //position
-    glGetLightfv(GL_LIGHT0, GL_POSITION, light.position);
-
-    //ambient
-    glGetLightfv(GL_LIGHT0, GL_AMBIENT, light.ambient);
-
-
-    //specular
-    glGetLightfv(GL_LIGHT0, GL_SPECULAR, light.specular);
-
-    //diffuse
-    glGetLightfv(GL_LIGHT0, GL_DIFFUSE, light.diffuse);
-    if(mode ==0)
-    {
-        qFunc.glUseProgram(rendering_program_facets);
-        qFunc.glUniformMatrix4fv(location[0], 1, GL_FALSE, mvp_mat);
-        qFunc.glUniformMatrix4fv(location[1], 1, GL_FALSE, mv_mat);
-        qFunc.glUniform3fv(location[2], 1, light.position);
-        qFunc.glUniform3fv(location[3], 1, light.diffuse);
-        qFunc.glUniform3fv(location[4], 1, light.specular);
-        qFunc.glUniform3fv(location[5], 1, light.ambient);
-        qFunc.glUniform1i(location[6], is_both_sides);
-    }
-    else if(mode ==1)
-    {
-        qFunc.glUseProgram(rendering_program_lines);
-        qFunc.glUniformMatrix4fv(location[7], 1, GL_FALSE, mvp_mat);
-    }
-    else if(mode ==2)
-    {
-        qFunc.glUseProgram(rendering_program_points);
-        qFunc.glUniformMatrix4fv(location[8], 1, GL_FALSE, mvp_mat);
-    }
-}
-*/
 Scene_nef_polyhedron_item* 
 Scene_nef_polyhedron_item::clone() const {
     return new Scene_nef_polyhedron_item(*nef_poly);

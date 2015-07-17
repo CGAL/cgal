@@ -136,7 +136,7 @@ public:
     QString toolTip() const;
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=Gouraud && m!=PointsPlusNormals && m!=Splatting); } // CHECK THIS!
+    virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=Gouraud && m!=PointsPlusNormals); } // CHECK THIS!
     // OpenGL drawing in a display list
     virtual void draw() const {}
     virtual void draw(Viewer_interface*) const;
@@ -170,6 +170,7 @@ private:
     std::vector<float> positions_lines;
     std::vector<float> normals;
 
+    using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer) const;
     void compute_normals_and_vertices(void);
     void triangulate_polygon(Polygons_iterator );
