@@ -123,7 +123,7 @@ namespace CGAL {
         + this->get_z(p1) * this->get_z(m_normal));
 
       //check deviation of the 3 normal
-      Vector_3 l_v;
+      Vector_3 l_v = this->constr_vec();
       for (std::size_t i = 0;i<3;i++) {
         l_v = this->normal(indices[i]);
 

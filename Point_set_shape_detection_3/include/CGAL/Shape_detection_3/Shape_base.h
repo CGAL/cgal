@@ -127,7 +127,8 @@ namespace CGAL {
       Determines the largest cluster of inlier points. A point belongs to a cluster
       if there is a point in the cluster closer than `cluster_epsilon` distance.
      */
-    std::size_t connected_component(std::vector<std::size_t> &indices, FT cluster_epsilon) {
+    virtual std::size_t connected_component(
+      std::vector<std::size_t> &indices, FT cluster_epsilon) {
       if (indices.size() == 0)
         return 0;
 
@@ -638,7 +639,13 @@ namespace CGAL {
     FT get_x(const Point_3& p) const { return m_traits.compute_x_3_object()(p); }
     FT get_y(const Point_3& p) const { return m_traits.compute_y_3_object()(p); }
     FT get_z(const Point_3& p) const { return m_traits.compute_z_3_object()(p); }
-      
+    
+    Point_3 constr_pt() const
+    { return m_traits.construct_point_3_object()(ORIGIN); }
+    Point_3 constr_pt(FT x, FT y, FT z) const
+    { return m_traits.construct_point_3_object()(x, y, z); }
+    Vector_3 constr_vec() const
+    { return m_traits.construct_vector_3_object()(NULL_VECTOR); }
     Vector_3 constr_vec(const Point_3& p, const Point_3& q) const
     { return m_traits.construct_vector_3_object()(p, q); }
 
