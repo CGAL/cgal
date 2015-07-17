@@ -82,10 +82,6 @@ int main(int argc, char** argv) {
 
   QVTKWidget widget;
   widget.resize(256,256);
- 
-#if QT_VERSION < 0x040000
-  app.setMainWidget(&widget);
-#endif
 
 //   vtkImageData* vtk_image = CGAL::vtk_image_sharing_same_data_pointer(image);
 

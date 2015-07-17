@@ -10,7 +10,7 @@
 #include <QApplication>
 
 #include <CGAL/Monge_via_jet_fitting.h>
-#include <CGAL/internal/Operations_on_polyhedra/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 class Polyhedron_demo_jet_fitting_plugin : 
   public QObject,
@@ -18,6 +18,7 @@ class Polyhedron_demo_jet_fitting_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   // used by Polyhedron_demo_plugin_helper
@@ -56,7 +57,6 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
   Scene_polylines_item* max_curv = new Scene_polylines_item;
   max_curv->setColor(Qt::red);
   max_curv->setName(tr("%1 (max curvatures)").arg(poly_item->name()));
-    
   Scene_polylines_item* min_curv = new Scene_polylines_item;
   min_curv->setColor(Qt::green);
   min_curv->setName(tr("%1 (min curvatures)").arg(poly_item->name()));
@@ -99,7 +99,7 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
       // make monge form comply with vertex normal (to get correct
       // orientation)
       typedef Kernel::Vector_3 Vector;
-      Vector n = compute_vertex_normal<Polyhedron::Vertex,Kernel>(*v);
+      Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal(v, *pMesh);
       monge_form.comply_wrt_given_normal(n);
 
       Vector umin = min_edge_len * monge_form.minimal_principal_direction();
@@ -121,11 +121,11 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
 
   scene->addItem(max_curv);
   scene->addItem(min_curv);
+  max_curv->changed();
+  min_curv->changed();
   
   // default cursor
   QApplication::restoreOverrideCursor();
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_jet_fitting_plugin, Polyhedron_demo_jet_fitting_plugin)
 
 #include "Polyhedron_demo_jet_fitting_plugin.moc"

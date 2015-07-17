@@ -222,7 +222,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
           message (STATUS "Configured ${lib} from UseLIB-file: ${usefile}")
 
           # UseLIB-file has to set ${vlib}_SETUP to TRUE
-          # TODO EBEB what about Qt4, Qt3, zlib?
+          # TODO EBEB what about Qt5, Qt3, zlib?
 
         else()
 
@@ -282,18 +282,18 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       # Nothing to add for Core
 
       if (${component} STREQUAL "ImageIO")
-        find_package( OpenGL )
-        find_package( ZLIB )
+        find_package( OpenGL QUIET )
+        find_package( ZLIB QUIET )
       endif()
 
       if (${component} STREQUAL "Qt3")
-        find_package( OpenGL )
-        find_package( Qt3-patched )
+        find_package( OpenGL QUIET )
+        find_package( Qt3-patched QUIET )
       endif()
 
-      if (${component} STREQUAL "Qt4")
-        find_package( OpenGL )
-        find_package( Qt4 )
+      if (${component} STREQUAL "Qt5")
+        find_package( OpenGL QUIET )
+        find_package( Qt5 QUIET COMPONENTS OpenGL Svg )
       endif()
 
     else(WITH_CGAL_${component})
@@ -332,7 +332,20 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
           else()
 
             ####message( STATUS "External library ${component} has not been preconfigured")
-            find_package( ${component} )
+      if (${component} STREQUAL "ImageIO")
+        find_package( OpenGL )
+        find_package( ZLIB )
+      endif()
+
+      if (${component} STREQUAL "Qt3")
+        find_package( OpenGL )
+        find_package( Qt3-patched )
+      endif()
+      if (${component} STREQUAL "Qt5")
+                set(CGAL_${component}_FOUND TRUE)
+                find_package( OpenGL )
+                find_package (Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools)
+      endif()
             ####message( STATUS "External library ${vlib} after find")
             if (${vlib}_FOUND)
               ####message( STATUS "External library ${vlib} about to be used")
@@ -398,20 +411,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     if(NOT CGAL_MODULE_PATH_IS_SET)
       # Where to look first for cmake modules, before ${CMAKE_ROOT}/Modules/ is checked
       set(CGAL_CMAKE_MODULE_PATH ${CGAL_MODULES_DIR})
-
-      # Use FindQt4 from CMake-2.8.1 if 2.6.2 <= CMake <= 2.8.1
-      if(CMAKE_VERSION)
-        is_version_less("2.6.1" "${CMAKE_VERSION}" CMAKE_VERSION_BETWEEN_2_6_2_AND_2_8_1)
-      else()
-        # It seems CMake <= 2.6.1 does not has that CMAKE_VERSION
-        set(CMAKE_VERSION_BETWEEN_2_6_2_AND_2_8_1 FALSE)
-      endif()
-      if(CMAKE_VERSION_BETWEEN_2_6_2_AND_2_8_1)
-        is_version_less(${CMAKE_VERSION} "2.8.2" CMAKE_VERSION_BETWEEN_2_6_2_AND_2_8_1)
-        if(CMAKE_VERSION_BETWEEN_2_6_2_AND_2_8_1)
-          set(CGAL_CMAKE_MODULE_PATH ${CGAL_CMAKE_MODULE_PATH} ${CGAL_MODULES_DIR}/2.6.2-to-2.8.1)
-        endif()
-      endif()
 
       set(ORIGINAL_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} PARENT_SCOPE)
 

@@ -68,6 +68,7 @@ h1 {
 \package_listing{Snap_rounding_2}
 \package_listing{Envelope_2}
 \package_listing{Envelope_3}
+\package_listing{Visibility_2}
 
 \section PartTriangulationsAndDelaunayTriangulations Triangulations and Delaunay Triangulations
 
@@ -84,6 +85,7 @@ h1 {
 \section PartVoronoiDiagrams Voronoi Diagrams
 
 \package_listing{Segment_Delaunay_graph_2}
+\package_listing{Segment_Delaunay_graph_Linf_2}
 \package_listing{Apollonius_graph_2}
 \package_listing{Voronoi_diagram_2}
 
@@ -93,22 +95,26 @@ h1 {
 \package_listing{Surface_mesher}
 \package_listing{Surface_reconstruction_points_3}
 \package_listing{Scale_space_reconstruction_3}
+\package_listing{Advancing_front_surface_reconstruction}
 \package_listing{Skin_surface_3}
 \package_listing{Mesh_3}
 
 \section PartGeometryProcessing Geometry Processing
 
+\package_listing{Polygon_mesh_processing}
 \package_listing{Subdivision_method_3}
 \package_listing{Surface_mesh_segmentation}
 \package_listing{Surface_mesh_simplification}
 \package_listing{Surface_modeling}
 \package_listing{Surface_mesh_parameterization}
 \package_listing{Surface_mesh_shortest_path}
+\package_listing{Surface_mesh_skeletonization}
 \package_listing{Ridges_3}
 \package_listing{Jet_fitting_3}
 \package_listing{Point_set_processing_3}
 \package_listing{Point_set_shape_detection_3}
 \package_listing{Stream_lines_2}
+
 
 \section PartSearchStructures Spatial Searching and Sorting
 

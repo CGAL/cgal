@@ -511,6 +511,12 @@ size_type capacity() const;
 
 /// \name Access Member Functions 
 /// @{ 
+
+/*!
+returns true if the element `pos` is used (i.e.\ valid).
+*/
+bool is_used(const_iterator pos) const;
+
 /*!
 returns true if the element at position `i` in the container is used
 (i.e.\ valid).

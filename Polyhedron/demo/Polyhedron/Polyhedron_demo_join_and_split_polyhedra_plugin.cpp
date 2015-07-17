@@ -11,7 +11,7 @@
 #include "Polyhedron_demo_plugin_interface.h"
 
 #include <CGAL/Polyhedron_copy_3.h>
-#include <CGAL/internal/corefinement/Polyhedron_subset_extraction.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
@@ -21,6 +21,7 @@ class Polyhedron_demo_join_and_split_polyhedra_plugin:
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
   QAction* actionJoinPolyhedra, *actionSplitPolyhedra, *actionColorConnectedComponents;
   Messages_interface* msg_interface;
@@ -107,7 +108,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionSplitPolyhedra_tr
     if(item)
     {
       std::list<Polyhedron*> new_polyhedra;
-      CGAL::internal::extract_connected_components(
+      CGAL::internal::corefinement::extract_connected_components(
         *item->polyhedron(),
         boost::make_function_output_iterator(Polyhedron_appender(new_polyhedra))
       );
@@ -156,9 +157,9 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
     {
       std::list<Polyhedron*> new_polyhedra;
       Polyhedron_cc_marker marker;
-      CGAL::internal::mark_connected_components(
+      CGAL::internal::corefinement::mark_connected_components(
         *item->polyhedron(),
-        CGAL::internal::Dummy_true(),
+        CGAL::internal::corefinement::Dummy_true(),
         marker
       );
       item->changed();
@@ -166,6 +167,5 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
   }
 }
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_join_and_split_polyhedra_plugin, Polyhedron_demo_join_and_split_polyhedra_plugin)
 
 #include "Polyhedron_demo_join_and_split_polyhedra_plugin.moc"

@@ -265,7 +265,7 @@ void test2(){
   lb(tab3+0,tab3+2,bii);
   assert(v.size()==1);
   assert(lr(tab3+0,tab3+2)==1);
-  H h=ch(tab2+1,tab2+3);
+  H h=ch(tab2+1,tab2+3,tab2[0]);
   assert(fabs(va(h,x2)-1)<.0001);
   assert(fabs(va(h,x3)-1)<.0001);
   assert(fabs(va(h,x1)+1)<.0001);
@@ -274,6 +274,10 @@ void test2(){
   assert(os(h2,x1)==CGAL::ON_POSITIVE_SIDE);
   H h3=ch(tab2+1,tab2+3,x1,CGAL::ON_NEGATIVE_SIDE);
   assert(!hops(h3,x1));
+  P tab4[]={cp(-1,1),cp(1,-1),cp(-1,-1)};
+  H h4=ch(tab4+0,tab4+2,tab4[2],CGAL::ON_POSITIVE_SIDE);
+  assert(hops(h4,tab4[2]));
+  assert(os(h4,tab4[1])==CGAL::ON_ORIENTED_BOUNDARY);
   V hv=ov(h); CGAL_USE(hv);
 #if 1
   // Doesn't compile with Lazy yet.

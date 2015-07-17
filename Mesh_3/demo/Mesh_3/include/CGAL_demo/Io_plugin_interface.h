@@ -4,6 +4,7 @@
 #include <QFileInfo>
 #include <QStringList>
 
+
 class Scene_item;
 
 class Io_plugin_interface 

@@ -38,7 +38,7 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
         use_lib( ${vlib} ${${vlib}_USE_FILE})
       endif()
    
-      # TODO EBEB what about Qt3, Qt4, zlib etc?
+      # TODO EBEB what about Qt3, Qt5, zlib etc?
       set ( CGAL_USE_${vlib} TRUE )
 
 

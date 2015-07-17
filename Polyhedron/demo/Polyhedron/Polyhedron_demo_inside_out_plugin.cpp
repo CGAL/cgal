@@ -8,6 +8,7 @@
 
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Polygon_mesh_processing/orientation.h>
 
 class Polyhedron_demo_inside_out_plugin : 
   public QObject,
@@ -15,6 +16,7 @@ class Polyhedron_demo_inside_out_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   // used by Polyhedron_demo_plugin_helper
@@ -52,7 +54,7 @@ void Polyhedron_demo_inside_out_plugin::on_actionInsideOut_triggered()
       if(!pMesh) return;
   
       // inside out
-      pMesh->inside_out();
+      CGAL::Polygon_mesh_processing::reverse_face_orientations(*pMesh);
     }
     else {
       soup_item->inside_out();
@@ -65,7 +67,5 @@ void Polyhedron_demo_inside_out_plugin::on_actionInsideOut_triggered()
     QApplication::restoreOverrideCursor();
   }
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_inside_out_plugin, Polyhedron_demo_inside_out_plugin)
 
 #include "Polyhedron_demo_inside_out_plugin.moc"

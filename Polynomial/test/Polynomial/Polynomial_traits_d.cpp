@@ -10,7 +10,7 @@
 #include <CGAL/Random.h>
 #include <cmath>
 #include <CGAL/Test/_test_polynomial_traits_d.h>
-
+#include <CGAL/use.h>
 
 
 
@@ -21,7 +21,8 @@ void test_AK_1(){
   CGAL::set_pretty_mode(std::cerr);
 
   typedef typename AK::Integer Integer;
-  typedef typename AK::Rational Rational; 
+  typedef typename AK::Rational Rational;
+  CGAL_USE_TYPE(Rational);
 
 
   typedef CGAL::Polynomial<Integer> Poly;
@@ -41,7 +42,7 @@ void test_AK_2(){
 
   typedef typename AK::Integer Integer;
   typedef typename AK::Rational Rational; 
-  
+  CGAL_USE_TYPE(Integer);
 
   typedef CGAL::Polynomial<Rational> Poly;
   typedef CGAL::Polynomial_traits_d<Poly> PT; 
@@ -82,7 +83,7 @@ void test_AK_5(){
 
   typedef typename AK::Integer Integer;
   typedef typename AK::Rational Rational; 
-  
+  CGAL_USE_TYPE(Integer);
 
 
   typedef CGAL::Polynomial< CGAL::Sqrt_extension< Rational, Rational > > Poly;
@@ -105,7 +106,8 @@ void test_AK_6(){
 
   typedef typename AK::Integer Integer;
   typedef typename AK::Rational Rational; 
- 
+  CGAL_USE_TYPE(Integer);
+  CGAL_USE_TYPE(Rational);
 
   //  Enforce IEEE double precision and to nearest before 
   //  using modular arithmetic

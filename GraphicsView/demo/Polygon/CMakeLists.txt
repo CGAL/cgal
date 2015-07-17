@@ -3,27 +3,20 @@
 
 project (GraphicsView)
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.11)
+if(POLICY CMP0043)
+  cmake_policy(SET CMP0043 OLD)
 endif()
 
-find_package(CGAL COMPONENTS Qt4 Core)
+find_package(CGAL COMPONENTS Qt5 Core)
 
 include(${CGAL_USE_FILE})
 
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT  TRUE )
-set( QT_USE_QTOPENGL  TRUE )
-
-#find_package(Qt4)
+find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Svg)
 
 include_directories (BEFORE ../../include)
 
-if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
+if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
   add_definitions(-DQT_NO_KEYWORDS)
 
@@ -31,24 +24,25 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
     add_definitions(-DCGAL_USE_CORE)
   endif()
 
-  include(${QT_USE_FILE})
   #--------------------------------
   # Demo: Polygon_2
   #--------------------------------
   # UI files (Qt Designer files)
-  qt4_wrap_ui( DT_UI_FILES Polygon_2.ui )
+  qt5_wrap_ui( DT_UI_FILES Polygon_2.ui )
 
   # qrc files (resources files, that contain icons, at least)
-  qt4_add_resources ( DT_RESOURCE_FILES ./Polygon_2.qrc )
+  qt5_add_resources ( DT_RESOURCE_FILES ./Polygon_2.qrc )
 
   # use the Qt MOC preprocessor on classes that derives from QObject
-  qt4_generate_moc( Polygon_2.cpp "${CMAKE_CURRENT_BINARY_DIR}/Polygon_2.moc" )
+  qt5_generate_moc( Polygon_2.cpp "${CMAKE_CURRENT_BINARY_DIR}/Polygon_2.moc" )
 
 #  add_library( CGAL SHARED IMPORTED ) 
 #  SET_PROPERTY(TARGET CGAL PROPERTY IMPORTED_LOCATION ${CGAL_LIBRARY} )
 
   # The executable itself.
   add_executable  ( Polygon_2 Polygon_2.cpp Polygon_2.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+
+  qt5_use_modules(Polygon_2 Xml Script OpenGL Svg)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polygon_2 )
 
@@ -60,6 +54,6 @@ if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
 
 else()
 
-  message(STATUS "NOTICE: This demo requires CGAL, CGAL_Core, and Qt4, and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires CGAL, CGAL_Core, and Qt5, and will not be compiled.")
 
 endif()

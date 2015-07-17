@@ -30,6 +30,7 @@ class Polyhedron_demo_vcm_normal_estimation_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   QAction* actionVCMNormalEstimation;
 
 public:
@@ -160,7 +161,5 @@ void Polyhedron_demo_vcm_normal_estimation_plugin::on_actionVCMNormalEstimation_
   }
 #endif // !CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_vcm_normal_estimation_plugin, Polyhedron_demo_vcm_normal_estimation_plugin)
 
 #include "Polyhedron_demo_vcm_normal_estimation_plugin.moc"

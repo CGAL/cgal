@@ -4,14 +4,8 @@
 project( BGL )
 
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
-  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-    cmake_policy(VERSION 2.8.4)
-  else()
-    cmake_policy(VERSION 2.6)
-  endif()
-endif()
+cmake_minimum_required(VERSION 2.8.11)
+
 
 set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
  
@@ -36,7 +30,7 @@ include( ${CGAL_USE_FILE} )
 
 
 # Boost and its components
-find_package( Boost REQUIRED )
+find_package( Boost )
 
 if ( NOT Boost_FOUND )
   message(STATUS "This project requires the Boost library, and will not be compiled.")
@@ -75,6 +69,8 @@ create_single_source_cgal_program( "graph_concept_Triangulation_2.cpp" )
 create_single_source_cgal_program( "test_graph_geometry.cpp" )
 
 create_single_source_cgal_program( "test_helpers.cpp" )
+
+create_single_source_cgal_program( "test_cgal_bgl_named_params.cpp" )
 
 if(OpenMesh_FOUND)
   target_link_libraries( test_graph_geometry ${OPENMESH_LIBRARIES})

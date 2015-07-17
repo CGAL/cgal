@@ -23,6 +23,7 @@
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 227
 #include <CGAL/Nef_2/debug.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -75,7 +76,7 @@ class SM_walls : SM_decorator<SMap> {
   }
 
   SHalfedge_handle find_cap(SVertex_handle sv, Sphere_point sp, Sphere_circle c) {
-
+    CGAL_USE(sp);
     CGAL_NEF_TRACEN( "find_cap " << sv->source()->point() << ":" << sv->point() 
 	      << " , sp : " << sp );
     /*

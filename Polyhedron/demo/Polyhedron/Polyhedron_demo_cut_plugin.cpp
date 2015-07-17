@@ -4,7 +4,6 @@
 #include <CGAL/AABB_intersections.h>
 
 #include "Messages_interface.h"
-#include "Scene_item_with_display_list.h"
 #include "Scene_plane_item.h"
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_demo_plugin_interface.h"
@@ -26,6 +25,7 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
+#include "Scene_item.h"
 
 //typedef CGAL::Simple_cartesian<double> Epic_kernel;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
@@ -34,11 +34,19 @@ typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron>     AABB_primitive;
 typedef CGAL::AABB_traits<Epic_kernel,AABB_primitive>           AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits>                            AABB_tree;
 
-class Q_DECL_EXPORT Scene_aabb_item : public Scene_item_with_display_list
+class Q_DECL_EXPORT Scene_aabb_item : public Scene_item
 {
   Q_OBJECT
 public:
-  Scene_aabb_item(const AABB_tree& tree_) : tree(tree_) {}
+  Scene_aabb_item(const AABB_tree& tree_) : Scene_item(1,1), tree(tree_)
+  {
+      positions_lines.resize(0);
+      qFunc.initializeOpenGLFunctions();
+  }
+
+    ~Scene_aabb_item()
+    {
+    }
 
   bool isFinite() const { return true; }
   bool isEmpty() const { return tree.empty(); }
@@ -74,20 +82,74 @@ public:
   }
 
   // Wireframe OpenGL drawing in a display list
-  void direct_draw() const {
-    CGAL::AABB_drawing_traits<AABB_primitive, CGAL::AABB_node<AABB_traits> > traits;
-    tree.traversal(0, traits);
+  void changed()
+  {
+      compute_elements();
+      are_buffers_filled = false;
   }
-
 public:
   const AABB_tree& tree;
+private:
+    std::vector<float> positions_lines;
+
+    mutable QOpenGLShaderProgram *program;
+
+    using Scene_item::initialize_buffers;
+    void initialize_buffers(Viewer_interface *viewer)const
+    {
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program->bind();
+        vaos[0]->bind();
+
+        buffers[0].bind();
+        buffers[0].allocate(positions_lines.data(),
+                            static_cast<int>(positions_lines.size()*sizeof(float)));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+        buffers[0].release();
+        program->release();
+
+        vaos[0]->release();
+        are_buffers_filled = true;
+    }
+
+    void compute_elements()
+    {
+       positions_lines.clear();
+
+       CGAL::AABB_drawing_traits<AABB_primitive, CGAL::AABB_node<AABB_traits> > traits;
+       traits.v_edges = &positions_lines;
+
+       tree.traversal(0, traits);
+    }
+    void draw_edges(Viewer_interface* viewer) const
+    {
+        if(!are_buffers_filled)
+            initialize_buffers(viewer);
+        vaos[0]->bind();
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+        attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+        program->bind();
+        program->setAttributeValue("colors",this->color());
+        qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+        program->release();
+        vaos[0]->release();
+    }
 }; // end class Scene_aabb_item
 
 class Q_DECL_EXPORT Scene_edges_item : public Scene_item
 {
   Q_OBJECT
 public:
-  bool isFinite() const { return true; }
+    Scene_edges_item():Scene_item(1,1)
+    {
+        positions_lines.resize(0);
+        qFunc.initializeOpenGLFunctions();
+    }
+  ~Scene_edges_item()
+  {
+  }
+    bool isFinite() const { return true; }
   bool isEmpty() const { return edges.empty(); }
   Bbox bbox() const {
     if(isEmpty())
@@ -103,9 +165,14 @@ public:
                 bbox.ymax(),
                 bbox.zmax());
   }
+  void changed()
+  {
+      compute_elements();
+      are_buffers_filled = false;
+  }
 
   Scene_edges_item* clone() const {
-    Scene_edges_item* item = new Scene_edges_item;
+    Scene_edges_item* item = new Scene_edges_item();
     item->edges = edges;
     return item;
   }
@@ -126,22 +193,7 @@ public:
     return (m == Wireframe);
   }
 
-  // Flat/Gouraud OpenGL drawing
-  void draw() const {}
 
-  // Wireframe OpenGL drawing
-  void draw_edges() const {
-    ::glBegin(GL_LINES);
-    for(size_t i = 0, end = edges.size();
-        i < end; ++i)
-    {
-      const Epic_kernel::Point_3& a = edges[i].source();
-      const Epic_kernel::Point_3& b = edges[i].target();
-      ::glVertex3d(a.x(), a.y(), a.z());
-      ::glVertex3d(b.x(), b.y(), b.z());
-    }
-    ::glEnd();
-  }
 
   bool save(std::ostream& os) const
   {
@@ -154,6 +206,58 @@ public:
 
 public:
   std::vector<Epic_kernel::Segment_3> edges;
+
+private:
+    std::vector<float> positions_lines;
+
+  mutable QOpenGLShaderProgram *program;
+
+    using Scene_item::initialize_buffers;
+    void initialize_buffers(Viewer_interface *viewer)const
+    {
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program->bind();
+        vaos[0]->bind();
+
+        buffers[0].bind();
+        buffers[0].allocate(positions_lines.data(),
+                            static_cast<int>(positions_lines.size()*sizeof(float)));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+        buffers[0].release();
+        program->release();
+
+        vaos[0]->release();
+        are_buffers_filled = true;
+    }
+    void compute_elements()
+    {
+       positions_lines.clear();
+
+       for(size_t i = 0, end = edges.size();
+           i < end; ++i)
+       {
+         const Epic_kernel::Point_3& a = edges[i].source();
+         const Epic_kernel::Point_3& b = edges[i].target();
+         positions_lines.push_back(a.x()); positions_lines.push_back(a.y()); positions_lines.push_back(a.z());
+         positions_lines.push_back(b.x()); positions_lines.push_back(b.y()); positions_lines.push_back(b.z());
+       }
+    }
+    void draw_edges(Viewer_interface* viewer) const
+    {
+        if(!are_buffers_filled)
+            initialize_buffers(viewer);
+        vaos[0]->bind();
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+        attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+        program->bind();
+        program->setAttributeValue("colors",this->color());
+        qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+        vaos[0]->release();
+        program->release();
+
+    }
+
 }; // end class Scene_edges_item
 
 
@@ -165,6 +269,7 @@ class Polyhedron_demo_cut_plugin :
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
   Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   Polyhedron_demo_cut_plugin() : QObject(), edges_item(0) {
@@ -360,7 +465,7 @@ void Polyhedron_demo_cut_plugin::cut() {
         edges_item->edges.push_back(*inter_seg);
     }
   }
-  
+
   messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
   scene->itemChanged(edges_item);
   QApplication::restoreOverrideCursor();
@@ -369,7 +474,5 @@ void Polyhedron_demo_cut_plugin::cut() {
 void Polyhedron_demo_cut_plugin::enableAction() {
   actionCreateCutPlane->setEnabled(true);
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_cut_plugin, Polyhedron_demo_cut_plugin)
 
 #include "Polyhedron_demo_cut_plugin.moc"

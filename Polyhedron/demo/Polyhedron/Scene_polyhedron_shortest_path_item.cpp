@@ -9,20 +9,22 @@
 
 #include <CGAL/Surface_mesh_shortest_path/function_objects.h>
 
-Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item() 
-  : Scene_polyhedron_item_decorator(NULL, false)
+Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item()
+   :Scene_polyhedron_item_decorator(NULL, false)
   , m_shortestPaths(NULL)
   , m_isTreeCached(false)
   , m_shiftHeld(false)
 {
+    qFunc.initializeOpenGLFunctions();
 }
 
 Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item(Scene_polyhedron_item* polyhedronItem, Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow) 
-  : Scene_polyhedron_item_decorator(polyhedronItem, false)
+  :Scene_polyhedron_item_decorator(polyhedronItem, false)
   , m_shortestPaths(NULL)
   , m_isTreeCached(false)
   , m_shiftHeld(false)
 { 
+    qFunc.initializeOpenGLFunctions();
   initialize(polyhedronItem, sceneInterface, messages, mainWindow);
 }
   
@@ -30,7 +32,40 @@ Scene_polyhedron_shortest_path_item::~Scene_polyhedron_shortest_path_item()
 {
   deinitialize();
 }
-  
+
+void Scene_polyhedron_shortest_path_item::compute_elements()
+{
+
+    vertices.resize(0);
+
+    for(Surface_mesh_shortest_path::Source_point_iterator it = m_shortestPaths->source_points_begin(); it != m_shortestPaths->source_points_end(); ++it)
+    {
+      const Point_3& p = m_shortestPaths->point(it->first, it->second);
+      vertices.push_back(p.x());
+      vertices.push_back(p.y());
+      vertices.push_back(p.z());
+    }
+
+
+
+}
+
+void Scene_polyhedron_shortest_path_item::initialize_buffers(Viewer_interface* viewer)const
+{
+    //vao containing the data for the selected lines
+    {
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        vaos[0]->bind();
+        program->bind();
+        buffers[0].bind();
+        buffers[0].allocate(vertices.data(), vertices.size()*sizeof(float));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+        buffers[0].release();
+        vaos[0]->release();
+    }
+    are_buffers_filled = true;
+}
 bool Scene_polyhedron_shortest_path_item::supportsRenderingMode(RenderingMode m) const
 {
   switch (m)
@@ -52,55 +87,29 @@ bool Scene_polyhedron_shortest_path_item::supportsRenderingMode(RenderingMode m)
   }
 }
   
-void Scene_polyhedron_shortest_path_item::draw() const
+void Scene_polyhedron_shortest_path_item::draw(Viewer_interface* viewer) const
 {
-  if (supportsRenderingMode(renderingMode()))
-  {
-    draw_points();
-  }
+    if (supportsRenderingMode(renderingMode()))
+    {
+      draw_points(viewer);
+    }
 }
 
-void Scene_polyhedron_shortest_path_item::draw(Viewer_interface*) const
+
+void Scene_polyhedron_shortest_path_item::draw_points(Viewer_interface* viewer) const
 {
-  draw();
-}
-
-// Wireframe OpenGL drawing
-void Scene_polyhedron_shortest_path_item::draw_edges() const 
-{
-}
-
-void Scene_polyhedron_shortest_path_item::draw_edges(Viewer_interface*) const
-{ 
-  draw_edges();
-}
-  // Points OpenGL drawing
-void Scene_polyhedron_shortest_path_item::draw_points() const 
-{
-  glPushAttrib(GL_ENABLE_BIT | GL_CURRENT_BIT);
-  
-  glDisable(GL_LIGHTING);
-
-  CGAL::GL::Point_size point_size; 
-  point_size.set_point_size(5);
-  CGALglcolor(Qt::green);
-  
-  ::glBegin(GL_POINTS);
-  
-  for(Surface_mesh_shortest_path::Source_point_iterator it = m_shortestPaths->source_points_begin(); it != m_shortestPaths->source_points_end(); ++it) 
-  {
-    const Point_3& p = m_shortestPaths->point(it->first, it->second);
-    ::glVertex3d(p.x(), p.y(), p.z());
-  }
-  
-  ::glEnd();
-
-  glPopAttrib();
-}
-
-void Scene_polyhedron_shortest_path_item::draw_points(Viewer_interface*) const
-{
-  draw_points();
+    if(!are_buffers_filled)
+    {
+        initialize_buffers(viewer);
+    }
+   program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+   attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+   vaos[0]->bind();
+   program->bind();
+   program->setAttributeValue("colors", QColor(Qt::green));
+   qFunc.glDrawArrays(GL_POINTS, 0, vertices.size()/3);
+   program->release();
+   vaos[0]->release();
 }
   
 Scene_polyhedron_shortest_path_item* Scene_polyhedron_shortest_path_item::clone() const
@@ -172,7 +181,9 @@ void Scene_polyhedron_shortest_path_item::poly_item_changed()
   
 void Scene_polyhedron_shortest_path_item::changed()
 {
-  // Supposedly, this is not the correct 'changed' callback to use
+  compute_elements();
+  are_buffers_filled = false;
+
 }
 
 bool Scene_polyhedron_shortest_path_item::get_mouse_ray(QMouseEvent* mouseEvent, Ray_3& outRay)
@@ -369,7 +380,7 @@ bool Scene_polyhedron_shortest_path_item::run_point_select(const Ray_3& ray)
       }
       break;
     }
-
+    changed();
     return true;
   }
 }
@@ -477,13 +488,10 @@ void Scene_polyhedron_shortest_path_item::initialize(Scene_polyhedron_item* poly
   this->m_messages = messages;
   this->poly_item = polyhedronItem;
   this->m_sceneInterface = sceneInterface;
-  
   connect(polyhedronItem, SIGNAL(item_is_about_to_be_changed()), this, SLOT(poly_item_changed())); 
-  
   QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
   viewer->installEventFilter(this);
   m_mainWindow->installEventFilter(this);
-  
   recreate_shortest_path_object();
 }
 

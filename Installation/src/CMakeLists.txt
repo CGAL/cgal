@@ -47,14 +47,7 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
       SOVERSION "${CGAL_SONAME_VERSION}")
   endif()
 
-  if (NOT CGAL_AUTO_LINK_ENABLED )
-    get_target_property( ${LIBRARY_NAME}_LIBRARY_FULL_PATH ${LIBRARY_NAME} LOCATION  )
-  
-    set(${LIBRARY_NAME}_LIBRARY ${${LIBRARY_NAME}_LIBRARY_FULL_PATH} CACHE STRING "The ${LIBRARY_NAME} library" FORCE)
-    mark_as_advanced(${LIBRARY_NAME}_LIBRARY)
-  else(NOT CGAL_AUTO_LINK_ENABLED)
-    set(${LIBRARY_NAME}_LIBRARY)
-
+  if(CGAL_AUTO_LINK_ENABLED)
     set_target_properties( ${LIBRARY_NAME} PROPERTIES 
       OUTPUT_NAME_DEBUG          "${DEBUG_MANGLED_NAME}" 
       OUTPUT_NAME_RELEASE        "${RELEASE_MANGLED_NAME}" 
@@ -67,9 +60,9 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
       add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(TargetDir)$(TargetName).pdb\" copy /Y \"$(TargetDir)$(TargetName).pdb\" \"$(TargetDir)..\" )
       add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" copy /Y \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" \"$(SolutionDir)lib\" )
     endif()
-  endif(NOT CGAL_AUTO_LINK_ENABLED)
+  endif()
 
-  install(TARGETS ${LIBRARY_NAME}
+  install(TARGETS ${LIBRARY_NAME} EXPORT CGALExports
           RUNTIME DESTINATION ${CGAL_INSTALL_BIN_DIR}
           LIBRARY DESTINATION ${CGAL_INSTALL_LIB_DIR}
           ARCHIVE DESTINATION ${CGAL_INSTALL_LIB_DIR})
@@ -163,6 +156,27 @@ endif()
 list(REMOVE_DUPLICATES CGAL_CONFIGURED_LIBRARIES)
 list(SORT CGAL_CONFIGURED_LIBRARIES)
 cache_set(CGAL_CONFIGURED_LIBRARIES "${CGAL_CONFIGURED_LIBRARIES}")
+
+# CGAL_CONFIGURED_LIBRARIES is a virtually useless variable, because
+# we do not know if those components actually created a target.  It
+# might seem bad that we hardcode the target names here, but they have
+# always been hardcoded in the CGALConfig files, so we do not make it
+# any worse. We can also not use export(EXPORT) since that is only
+# available in newer CMake versions.
+set(CGAL_ACTUAL_CONFIGURED_LIBRARIES "")
+macro(CGAL_add_if_target TARGET)
+  if(TARGET ${TARGET})
+    list(APPEND CGAL_ACTUAL_CONFIGURED_LIBRARIES ${TARGET})
+  endif()
+endmacro()
+
+CGAL_add_if_target(CGAL)
+CGAL_add_if_target(CGAL_Core)
+CGAL_add_if_target(CGAL_ImageIO)
+CGAL_add_if_target(CGAL_Qt3)
+CGAL_add_if_target(CGAL_Qt5)
+
+export(TARGETS ${CGAL_ACTUAL_CONFIGURED_LIBRARIES} NAMESPACE CGAL:: FILE "${CMAKE_BINARY_DIR}/CGALExports.cmake")
 
 message(STATUS "Sources for CGAL component libraries '${CGAL_CONFIGURED_LIBRARIES}' detected")
 

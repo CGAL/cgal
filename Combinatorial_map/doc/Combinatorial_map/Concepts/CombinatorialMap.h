@@ -323,6 +323,10 @@ Returns the number of <I>i</I>-attributes in the combinatorial map.
 template <unsigned int i>
 size_type number_of_attributes() const;
 
+/*! Returns true if dh points to a used dart (i.e.\ valid).
+ */
+bool is_dart_used(Dart_const_handle dh) const;
+
 /*!
 Returns \f$ \beta_j\f$(\f$ \beta_i\f$(`*dh`)).
 Overloads of this member function are defined that take from one to nine integer as arguments.
@@ -500,6 +504,12 @@ A shorcut for \link CombinatorialMap::dart_of_attribute(typename Attribute_const
 */
 template<unsigned int i>
 Dart_const_handle dart(Dart_const_handle adart) const;
+
+/*! Returns true if ah points to a used i-attribute (i.e.\ valid).
+\pre 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref CombinatorialMap::dimension "dimension", and <I>i</I>-attributes are non `void`.
+ */
+template<unsigned int i>
+bool is_attribute_used(typename Attribute_const_handle<i>::type ah) const;
 
 /// @}
 

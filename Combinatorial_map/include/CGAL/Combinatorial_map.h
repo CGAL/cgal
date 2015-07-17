@@ -468,6 +468,10 @@ namespace CGAL {
       mdarts.erase(adart);
     }
 
+    /// @return true if dh points to a used dart (i.e. valid).
+    bool is_dart_used(Dart_const_handle dh) const
+    { return mdarts.is_used(dh); }
+
     /// @return a Dart_range (range through all the darts of the map).
     Dart_range& darts()             { return mdarts;}
     Dart_const_range& darts() const { return mdarts; }
@@ -1441,6 +1445,16 @@ namespace CGAL {
                   "erase_attribute<i> but i-attributes are disabled");
       CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
         (mattribute_containers).erase(h);
+    }
+
+    /// @return true if ah points to a used i-attribute (i.e. valid).
+    template<unsigned int i>
+    bool is_attribute_used(typename Attribute_const_handle< i >::type ah) const
+    {
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                                "is_attribute_used<i> but i-attributes are disabled");
+      return CGAL::cpp11::get<Helper::template Dimension_index<i>::value>
+        (mattribute_containers).is_used(ah);
     }
 
     /// @return the number of attributes.
@@ -3771,7 +3785,7 @@ namespace CGAL {
     Combinatorial_map() : Base()
     {}
 
-    Combinatorial_map(const Self & amap)
+    Combinatorial_map(const Self & amap) : Base()
     { Base::template copy<Self>(amap); }
 
     template < class CMap >

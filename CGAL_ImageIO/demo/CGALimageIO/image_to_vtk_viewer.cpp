@@ -52,10 +52,6 @@ int main(int argc, char** argv)
   QVTKWidget widget;
   widget.resize(256,256);
  
-#if QT_VERSION < 0x040000
-  app.setMainWidget(&widget);
-#endif
-
   CGAL::Image_3 image;
   if(!image.read(argv[1]))
   {
@@ -81,7 +77,7 @@ int main(int argc, char** argv)
   widget.SetRenderWindow(renWin);
 
   vtkContourFilter *skinExtractor = vtkContourFilter::New();
-    skinExtractor->SetInput(vtk_image);
+    skinExtractor->SetInputData(vtk_image);
     skinExtractor->SetValue(0, isovalue);
 //     skinExtractor->SetComputeNormals(0);
   vtkPolyDataNormals *skinNormals = vtkPolyDataNormals::New();
@@ -96,7 +92,7 @@ int main(int argc, char** argv)
   // An outline provides context around the data.
   //
   vtkOutlineFilter *outlineData = vtkOutlineFilter::New();
-    outlineData->SetInput(vtk_image);
+    outlineData->SetInputData(vtk_image);
   vtkPolyDataMapper *mapOutline = vtkPolyDataMapper::New();
     mapOutline->SetInputConnection(outlineData->GetOutputPort());
   vtkActor *outline = vtkActor::New();

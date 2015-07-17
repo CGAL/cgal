@@ -41,8 +41,7 @@ int main(int argc, char*argv[])
   {
     std::vector<Point> tmp_points(k);
     std::vector<Vector> tmp_normals(k);
-    int i=0;
-    for(int i=0; i<k; ++i){
+    for(std::size_t i=0; i<k; ++i){
       tmp_points[i] = points[indices[i]];
       tmp_normals[i] = normals[indices[i]];
     }

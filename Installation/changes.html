@@ -118,7 +118,41 @@ and <code>src/</code> directories).
   <p>Release date: September 2015 </p>
 
 <!-- Installation (and general changes) -->
+  <h3>Installation</h3>
+  <ul>
+    <li>The minimum required version of CMake is now 2.8.11. CMake versions
+    3.1, 3.2, and 3.3 are supported.</li>
+    <li>All Qt4 demos have been updated and now require Qt5 to be
+    compiled. Qt5 version 5.4 or higher is required. The support for Qt4 is
+    dropped.</li>
+    <li>The code of the 3D demos now use modern OpenGL, with shaders,
+    instead of the fixed pipeline API of OpenGL-1.</li>
+  </ul>
 <!-- New packages -->
+
+<!-- sdglinf-philaris begin-->
+  <h3>L Infinity Segment Delaunay Graphs (new package)</h3>
+  <ul>
+    <li>
+      The package provides the geometric traits for constructing the segment Delaunay graph in the max-norm (L Infinity).
+      The traits also contain methods to draw the edges of the dual of the segment Delaunay graph in the max-norm i.e.,
+      the segment Voronoi diagram in the max-norm. The algorithm and traits rely on the segment Delaunay graph algorithm
+      and traits under the Euclidean distance. The segment Voronoi diagram in the max-norm has applications in VLSI CAD.
+    </li>
+  </ul>
+<!-- sdglinf-philaris end-->
+
+  <h3>Advancing Front Surface Reconstruction (new package)</h3>
+  <ul>
+    <li>
+      This package provides a greedy algorithm for surface reconstruction from an
+      unorganized point set. Starting from a seed facet, a piecewise linear 
+      surface is grown by adding Delaunay triangles one by one. The most 
+      plausible triangles are added first, in a way that avoids the appearance 
+      of topological singularities.
+    </li>
+  </ul>
+
   <h3>Triangulated Surface Mesh Shortest Paths (new package)</h3>
   <ul>
     <li>
@@ -132,16 +166,27 @@ and <code>src/</code> directories).
     </li>
   </ul>
 
-
 <!-- gsoc2014-2d-reconstruction-ivovigan begin -->
 
 <!-- gsoc2014-2d-reconstruction-ivovigan end -->
 
 <!-- gsoc13-CurveSkeleton-new_package-xgao begin -->
 
+  <h3>Triangulated Surface Mesh Skeletonization (new package)</h3>
+  <ul>
+    <li>
+         This package provides a (1D) curve skeleton extraction algorithm for
+         a triangulated polygonal mesh without borders based on the mean curvature flow.
+         The particularity of this skeleton is that it captures the topology of the input.
+         For each skeleton vertex one can obtain its location and its corresponding vertices from the input mesh.
+         The code is generic and works with any model of the `FaceListGraph` concept.
+    </li>
+  </ul>
+
 <!-- gsoc13-CurveSkeleton-new_package-xgao end -->
 
 <!-- Point_set_shape_detection_3-cjamin begin -->
+
   <h3>3D Point-Set Shape Detection (new package)</h3>
   <ul>
     <li>
@@ -153,11 +198,30 @@ and <code>src/</code> directories).
       is possible by implementing a class derived from a base shape.
     </li>
   </ul>
+
 <!-- Point_set_shape_detection_3-cjamin end -->
 
 <!-- gsoc2013-Visibility_doc-hemmer begin -->
 
+  <h3>2D Visibility (new package)</h3>
+  <ul>
+    <li>This package provides several variants to compute the visibility
+      area of a point within polygonal regions in two dimensions.
+    </li>
+  </ul>
+
 <!-- gsoc2013-Visibility_doc-hemmer end -->
+
+  <h3>Polygon Mesh Processing (new package)</h3>
+  <ul>
+  <li>
+  This package implements a collection of methods and classes
+  for polygon mesh processing, ranging from basic operations on simplices,
+  to complex geometry processing algorithms.
+  The implementation of this package mainly follows algorithms and references
+  given in Botsch et al.'s book on polygon mesh processing.
+  </li>
+  </ul>
 
 <!-- Major and breaking changes -->
   <h3>Approximation of Ridges and Umbilics on Triangulated Surface Meshes</h3>
@@ -169,6 +233,14 @@ and <code>src/</code> directories).
 <!-- Arithmetic and Algebra -->
 <!-- Combinatorial Algorithms -->
 <!-- Geometry Kernels -->
+  <h3>dD Geometry Kernel</h3>
+  <ul>
+    <li>
+      Epick_d gains 3 new functors: <code>Construct_circumcenter_d</code>,
+      <code>Compute_squared_radius_d</code>, <code>Side_of_bounded_sphere_d</code>.
+      Those are essential for the computation of alpha-shapes.
+    </li>
+  </ul>
 <!-- Convex Hull Algorithms -->
 <!-- Polygons -->
 <!-- Cell Complexes and Polyhedra -->

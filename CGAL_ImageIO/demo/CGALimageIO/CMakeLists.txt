@@ -1,10 +1,8 @@
 project(image_to_vtk_viewer)
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
+cmake_minimum_required(VERSION 2.8.11)
+if(POLICY CMP0043)
+  cmake_policy(SET CMP0043 OLD)
 endif()
 
 
@@ -27,40 +25,30 @@ endforeach()
 
 find_package(CGAL REQUIRED ImageIO)
 include( ${CGAL_USE_FILE} )
-find_package(VTK QUIET)
-find_package(Qt4 QUIET)
+find_package(VTK QUIET NO_MODULE)
 
-if(QT_FOUND AND VTK_FOUND)
+if(VTK_FOUND)
   add_definitions(-DCGAL_USE_VTK)
-  include(${VTK_USE_FILE})
-  include(${QT_USE_FILE})
 
-  add_definitions(${QT_DEFINITIONS})
+  if(TARGET vtkRenderingQt AND TARGET vtkFiltersModeling)
+    find_package(VTK COMPONENTS vtkRenderingQt vtkFiltersModeling NO_MODULE)
+    include(${VTK_USE_FILE})
+    find_package(Qt${VTK_QT_VERSION} COMPONENTS QtGui)
+    if(NOT TARGET Qt${VTK_QT_VERSION}::QtGui)
+      message(STATUS "NOTICE: vtkRenderingQt needs Qt${VTK_QT_VERSION}, and will not be compiled.")
+      return()
+    endif()
 
-  if(VTK_USE_QVTK)
-    include_directories( ${VTK_QT_INCLUDE_DIR} )
-    include_directories( ${QT_INCLUDE_DIR} )
     add_executable( image_to_vtk_viewer image_to_vtk_viewer.cpp )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS image_to_vtk_viewer )
 
     target_link_libraries( image_to_vtk_viewer
-      QVTK
-      vtkRendering
-      vtkGraphics
-      vtkIO
-      vtkCommon
       ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
-      ${VTK_QT_QT_LIBRARY}
-      ${QT_LIBRARIES}
+      ${VTK_LIBRARIES} Qt${VTK_QT_VERSION}::QtGui
       )
-  else(VTK_USE_QVTK)
-    message(STATUS "NOTICE: This demo needs QVTK, and will not be compiled.")
-  endif(VTK_USE_QVTK)
+  else()
+    message(STATUS "NOTICE: This demo needs vtkRenderingQt and vtkFiltersModeling, and will not be compiled.")
+  endif()
 else()
-  if(NOT VTK_FOUND)
-    message(STATUS "NOTICE: This demo needs VTK, and will not be compiled.")
-  endif()
-  if(NOT QT_FOUND)
-    message(STATUS "NOTICE: This demo needs Qt4, and will not be compiled.")
-  endif()
+  message(STATUS "NOTICE: This demo needs VTK, and will not be compiled.")
 endif()

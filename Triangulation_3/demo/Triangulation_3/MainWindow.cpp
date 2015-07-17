@@ -7,7 +7,7 @@ MainWindow::MainWindow(QWidget* parent)
  : CGAL::Qt::DemosMainWindow(parent)
 {
   //  Qt Automatic Connections
-  //   http://doc.trolltech.com/4.4/designer-using-a-component.html#automatic-connections
+  //   http://doc.qt.io/qt-5/designer-using-a-ui-file.html#automatic-connections
   //  setupUi(this) automatically generates connections to the slots named
   //   "on_<action_name>_<signal_name>"
   setupUi(this);
@@ -125,7 +125,7 @@ void MainWindow::on_actionLoad_Points_triggered()
   viewer->clear();
 
   // parse fileName to get the file type
-  std::string fname = fileName.toAscii().data();
+  std::string fname = fileName.toLatin1().data();
   std::string ftype = fname.substr( fname.find_last_of('.')+1 );
 
   if ( ftype.compare("off")==0 || ftype.compare("OFF")==0 ) { // read from OFF file
@@ -158,7 +158,7 @@ void MainWindow::on_actionSave_Points_triggered()
   if( fileName.isEmpty() )  return;
 
   // parse fileName to get the file type
-  std::string fname = fileName.toAscii().data();
+  std::string fname = fileName.toLatin1().data();//toAscii()
   std::string ftype = fname.substr( fname.find_last_of('.')+1 );
 
   if ( ftype.compare("off")==0 || ftype.compare("OFF")==0 ) { // save to OFF file
@@ -173,13 +173,15 @@ void MainWindow::on_actionSave_Points_triggered()
 void MainWindow::on_actionGenerate_Points_triggered()
 {
   bool isOk;
-  int nPoints = QInputDialog::getInteger(this,
-		"3D Triangulation demo", "Number of points: ",	// caption and label
-		100,	// default value
-		4,	// min value
-		2147483647,	// max value
-        1,	// step value of arrow button
-		&isOk);	// if OK is pressed
+ 
+  int nPoints = QInputDialog::getInt(this,
+              "3D Triangulation demo", "Number of points: ",	// caption and label
+              100, // default value
+              4, // min value
+              2147483647, // max value
+              1, // step value of arrow button
+              &isOk); // if OK is pressed
+
 
   if ( isOk) {
     // erase old data
@@ -192,6 +194,9 @@ void MainWindow::on_actionGenerate_Points_triggered()
 
     // update viewer
     Q_EMIT( sceneChanged() );
+    viewer->changed();
+
+
   }// if(isOk)
 }
 

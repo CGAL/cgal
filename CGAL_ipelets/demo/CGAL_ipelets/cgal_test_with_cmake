@@ -180,6 +180,6 @@ fi
 #
 if [ -n "${NEED_CLEAN}" ]; then 
   if ! ( uname | grep -q "CYGWIN" ) ; then
-    ${MAKE_CMD} -fMakefile clean
+    ${MAKE_CMD} -fMakefile clean || true
   fi
 fi

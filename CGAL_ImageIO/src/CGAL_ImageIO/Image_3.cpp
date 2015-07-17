@@ -197,7 +197,6 @@ Image_3::read_vtk_image_data(vtkImageData* vtk_image)
   image->vx = spacing[0];
   image->vy = spacing[1];
   image->vz = spacing[2];
-  vtk_image->Update();
   image->endianness = ::_getEndianness();
   int vtk_type = vtk_image->GetScalarType();
   if(vtk_type == VTK_SIGNED_CHAR) vtk_type = VTK_CHAR;

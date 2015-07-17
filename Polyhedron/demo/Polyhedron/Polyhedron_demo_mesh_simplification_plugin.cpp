@@ -19,6 +19,7 @@ class Polyhedron_demo_mesh_simplification_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   // used by Polyhedron_demo_plugin_helper
@@ -47,8 +48,9 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
 
     // get option (#edges)
     bool ok;
+  
     const int nb_edges = 
-      QInputDialog::getInteger(mw, tr("Stop condition"),
+    QInputDialog::getInt(mw, tr("Stop condition"),
       tr("Number of edges:"),
       (int)(pMesh->size_of_halfedges () / 4), // default value: current #edges / 2 
       3, // min = one triangle
@@ -68,8 +70,8 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
     namespace SMS = CGAL::Surface_mesh_simplification;
     SMS::Count_stop_predicate< Polyhedron > stop(nb_edges); // target #edges
     SMS::edge_collapse( *pMesh, stop,
-      CGAL::vertex_index_map(get(CGAL::vertex_external_index,*pMesh))
-      .halfedge_index_map(get(CGAL::halfedge_external_index,*pMesh)));
+                        CGAL::parameters::vertex_index_map(get(CGAL::vertex_external_index,*pMesh))
+                                         .halfedge_index_map(get(CGAL::halfedge_external_index,*pMesh)));
     std::cout << "ok (" << time.elapsed() << " ms, " 
       << pMesh->size_of_halfedges() / 2 << " edges)" << std::endl;
 
@@ -78,7 +80,5 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
     QApplication::restoreOverrideCursor();
   }
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_mesh_simplification_plugin, Polyhedron_demo_mesh_simplification_plugin)
 
 #include "Polyhedron_demo_mesh_simplification_plugin.moc"

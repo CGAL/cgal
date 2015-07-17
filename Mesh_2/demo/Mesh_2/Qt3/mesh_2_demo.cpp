@@ -280,10 +280,10 @@ class Meshing_debugging_layer : public CGAL::Qt_widget_layer
 {
   Q_OBJECT
   Mesher* m;
-  bool point_on;
+  // bool point_on;
 public:
   Meshing_debugging_layer(QObject* parent = 0, const char* name = 0)
-    : Qt_widget_layer(parent, name), m(0), point_on(false)
+    : Qt_widget_layer(parent, name), m(0)/* , point_on(false) */
   {
   }
 
@@ -1448,8 +1448,8 @@ private:
   Seeds seeds;
 
   Preferences* prefs;
-  QPopupMenu *pmCriteria;
-  int menu_id;
+  // QPopupMenu *pmCriteria;
+  // int menu_id;
 
   CGAL::Qt_widget* widget;
   CGAL::Qt_widget_get_point<K>* get_point;

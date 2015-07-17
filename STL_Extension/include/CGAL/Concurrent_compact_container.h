@@ -233,6 +233,11 @@ public:
     clear();
   }
 
+  bool is_used(const_iterator ptr) const
+  {
+    return (type(&*ptr)==USED);
+  }
+
   void swap(Self &c)
   {
     std::swap(m_alloc, c.m_alloc);
@@ -611,7 +616,7 @@ private:
   // Sets the pointer part and the type of the pointee.
   static void set_type(pointer p_element, void * pointer, Type t)
   {
-    CGAL_precondition(0 <= t && t < 4);
+    CGAL_precondition(0 <= t && (int) t < 4);
     Traits::pointer(*p_element) =
       (void *) ((clean_pointer((char *) pointer)) + (int) t);
   }
@@ -932,8 +937,8 @@ namespace CCC_internal {
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
    "Incrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(CCC::type(m_ptr.p) == CCC::USED,
-                         "Incrementing an invalid iterator.");
+      /* CGAL_assertion_msg(CCC::type(m_ptr.p) == CCC::USED,
+         "Incrementing an invalid iterator."); */
       increment();
       return *this;
     }
@@ -942,9 +947,9 @@ namespace CCC_internal {
     {
       CGAL_assertion_msg(m_ptr.p != NULL,
    "Decrementing a singular iterator or an empty container iterator ?");
-      CGAL_assertion_msg(CCC::type(m_ptr.p) == CCC::USED
+      /* CGAL_assertion_msg(CCC::type(m_ptr.p) == CCC::USED
           || CCC::type(m_ptr.p) == CCC::START_END,
-                         "Decrementing an invalid iterator.");
+          "Decrementing an invalid iterator."); */
       decrement();
       return *this;
     }
@@ -987,7 +992,7 @@ namespace CCC_internal {
   bool operator==(const CCC_iterator<CCC, Const1> &rhs,
                   const CCC_iterator<CCC, Const2> &lhs)
   {
-    return &*rhs == &*lhs;
+    return rhs.operator->() == lhs.operator->();
   }
 
   template < class CCC, bool Const1, bool Const2 >
@@ -995,7 +1000,7 @@ namespace CCC_internal {
   bool operator!=(const CCC_iterator<CCC, Const1> &rhs,
                   const CCC_iterator<CCC, Const2> &lhs)
   {
-    return &*rhs != &*lhs;
+    return rhs.operator->() != lhs.operator->();
   }
 
   // Comparisons with NULL are part of CGAL's Handle concept...
@@ -1005,7 +1010,7 @@ namespace CCC_internal {
                   Nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
-    return &*rhs == NULL;
+    return rhs.operator->() == NULL;
   }
 
   template < class CCC, bool Const >
@@ -1014,7 +1019,7 @@ namespace CCC_internal {
       Nullptr_t CGAL_assertion_code(n))
   {
     CGAL_assertion( n == NULL);
-    return &*rhs != NULL;
+    return rhs.operator->() != NULL;
   }
 
 } // namespace CCC_internal

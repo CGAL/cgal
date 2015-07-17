@@ -40,6 +40,8 @@
 #define CGAL_NEF_DEBUG 43
 #include <CGAL/Nef_2/debug.h>
 
+#include <CGAL/use.h>
+
 namespace CGAL {
 
 struct int_lt {
@@ -245,10 +247,12 @@ public:
     }
 
     void visit(Vertex_handle h) { 
+      CGAL_USE(h);
       CGAL_NEF_TRACEN("visit v  "<<h->point());
     }
 
     void visit(Halfedge_handle h) { 
+      CGAL_USE(h);
       CGAL_NEF_TRACEN("visit he "<< h->source()->point());
     }
 

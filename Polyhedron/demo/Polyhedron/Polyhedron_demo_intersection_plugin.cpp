@@ -30,6 +30,7 @@ class Polyhedron_demo_intersection_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
 
@@ -209,10 +210,9 @@ void Polyhedron_demo_intersection_plugin::intersection()
   new_item->setColor(Qt::green);
   new_item->setRenderingMode(Wireframe);
   scene->addItem(new_item);
+  new_item->changed();
 
   QApplication::restoreOverrideCursor();
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_intersection_plugin, Polyhedron_demo_intersection_plugin)
 
 #include "Polyhedron_demo_intersection_plugin.moc"

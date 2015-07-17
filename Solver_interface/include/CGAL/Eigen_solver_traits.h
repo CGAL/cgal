@@ -121,13 +121,38 @@ public:
     solver().compute(*m_mat);
     return solver().info() == Eigen::Success;
   }
-	
+
   bool linear_solver(const Vector& B, Vector& X)
   {
     CGAL_precondition(m_mat!=NULL); //factor should have been called first
     X = solver().solve(B);
     return solver().info() == Eigen::Success;
   }
+
+// Solving the normal equation "At*A*X = At*B".
+// --
+  bool normal_equation_factor(const Matrix& A)
+  {
+    typename Matrix::EigenType At = A.eigen_object().transpose();
+    m_mat = &A.eigen_object();
+    solver().compute(At * A.eigen_object());
+    return solver().info() == Eigen::Success;
+  }
+
+  bool normal_equation_solver(const Vector& B, Vector& X)
+  {
+    CGAL_precondition(m_mat!=NULL); //non_symmetric_factor should have been called first
+    typename Vector::EigenType AtB = m_mat->transpose() * B.eigen_object();
+    X = solver().solve(AtB);
+    return solver().info() == Eigen::Success;
+  }
+
+  bool normal_equation_solver(const Matrix& A, const Vector& B, Vector& X)
+  {
+    if (!normal_equation_factor(A)) return false;
+    return normal_equation_solver(B, X);
+  }
+// --
 protected:
   const typename Matrix::EigenType* m_mat;
   boost::shared_ptr<EigenSolverT> m_solver_sptr;

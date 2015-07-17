@@ -1,11 +1,23 @@
 #ifndef SCENE_ITEM_H
 #define SCENE_ITEM_H
-
 #include "Scene_item_config.h"
 #include "Scene_interface.h"
 #include <QString>
 #include <QPixmap>
 #include <QFont>
+#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLBuffer>
+#include <QOpenGLShader>
+#include <QOpenGLVertexArrayObject>
+#include <vector>
+#include <QMap>
+#define PROGRAM_WITH_LIGHT 0
+#define PROGRAM_WITHOUT_LIGHT 1
+#define PROGRAM_WITH_TEXTURE 2
+#define PROGRAM_WITH_TEXTURED_EDGES 3
+#define PROGRAM_INSTANCED 4
+#define PROGRAM_INSTANCED_WIRE 5
+
 
 namespace qglviewer {
   class ManipulatedFrame;
@@ -33,26 +45,66 @@ public:
     : name_("unamed"),
       color_(defaultColor),
       visible_(true),
+      are_buffers_filled(false),
       rendering_mode(FlatPlusEdges),
-      defaultContextMenu(0)
-  {}
+      defaultContextMenu(0),
+      buffersSize(20),
+      vaosSize(10)
+  {
+
+      nbVaos = 0;
+      for(int i=0; i<vaosSize; i++)
+      {
+          addVaos(i);
+          vaos[i]->create();
+      }
+
+      for(int i=0; i<buffersSize; i++)
+      {
+          QOpenGLBuffer n_buf;
+          buffers.push_back(n_buf);
+          buffers[i].create();
+      }
+  }
+  Scene_item(int buffers_size, int vaos_size)
+    : name_("unamed"),
+      color_(defaultColor),
+      visible_(true),
+      are_buffers_filled(false),
+      rendering_mode(FlatPlusEdges),
+      defaultContextMenu(0),
+      buffersSize(buffers_size),
+      vaosSize(vaos_size)
+  {
+      nbVaos = 0;
+      for(int i=0; i<vaosSize; i++)
+      {
+          addVaos(i);
+          vaos[i]->create();
+      }
+
+      for(int i=0; i<buffersSize; i++)
+      {
+          QOpenGLBuffer n_buf;
+          buffers.push_back(n_buf);
+          buffers[i].create();
+      }
+  }
   virtual ~Scene_item();
   virtual Scene_item* clone() const = 0;
 
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const = 0;
   // Flat/Gouraud OpenGL drawing
-  virtual void draw() const = 0;
-  virtual void draw(Viewer_interface*) const { draw(); }
+  virtual void draw() const {}
+  virtual void draw(Viewer_interface*) const  { draw(); }
   // Wireframe OpenGL drawing
   virtual void draw_edges() const { draw(); }
-  virtual void draw_edges(Viewer_interface*) const { draw_edges(); }
+  virtual void draw_edges(Viewer_interface* viewer) const { draw(viewer); }
   // Points OpenGL drawing
   virtual void draw_points() const { draw(); }
   virtual void draw_points(Viewer_interface*) const { draw_points(); }
-  // Splats OpenGL drawing
-  virtual void draw_splats() const {}
-  virtual void draw_splats(Viewer_interface*) const {draw_splats();}
+  virtual void selection_changed(bool);
 
   // Functions for displaying meta-data of the item
   virtual QString toolTip() const = 0;
@@ -85,10 +137,11 @@ public Q_SLOTS:
   // Call that once you have finished changing something in the item
   // (either the properties or internal data)
   virtual void changed();
+  virtual void contextual_changed(){}
 
   // Setters for the four basic properties
-  virtual void setColor(QColor c) { color_ = c; }
-  void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
+  virtual void setColor(QColor c) { color_ = c; changed(); }
+  void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); changed(); }
   virtual void setName(QString n) { name_ = n; }
   virtual void setVisible(bool b) { visible_ = b; }
   virtual void setRenderingMode(RenderingMode m) { 
@@ -125,10 +178,6 @@ public Q_SLOTS:
     setRenderingMode(PointsPlusNormals);
   }
   
-  void setSplattingMode(){
-    setRenderingMode(Splatting);
-  }
-  
   virtual void itemAboutToBeDestroyed(Scene_item*);
 
   virtual void select(double orig_x,
@@ -147,8 +196,42 @@ protected:
   QString name_;
   QColor color_;
   bool visible_;
+  bool is_selected;
+  mutable bool are_buffers_filled;
   RenderingMode rendering_mode;
   QMenu* defaultContextMenu;
+
+  RenderingMode prev_shading;
+  RenderingMode cur_shading;
+
+  mutable QOpenGLFunctions_3_3_Core qFunc;
+  int buffersSize;
+  int vaosSize;
+  mutable std::vector<QOpenGLBuffer> buffers;
+  //not allowed to use vectors of VAO for some reason
+  //mutable QOpenGLVertexArrayObject vaos[10];
+  QMap<int,QOpenGLVertexArrayObject*> vaos;
+  int nbVaos;
+  void addVaos(int i)
+  {
+      QOpenGLVertexArrayObject* n_vao = new QOpenGLVertexArrayObject();
+      vaos[i] = n_vao;
+      nbVaos ++;
+  }
+
+
+  mutable QMap<int, QOpenGLShaderProgram*> shader_programs;
+  QOpenGLShaderProgram* getShaderProgram(int , Viewer_interface *viewer = 0) const;
+
+  int vertexLoc;
+  int normalLoc;
+  int colorLoc;
+
+  virtual void initialize_buffers(){}
+  virtual void compute_elements(){}
+  virtual void attrib_buffers(Viewer_interface*, int program_name) const;
+
+
 
 }; // end class Scene_item
 

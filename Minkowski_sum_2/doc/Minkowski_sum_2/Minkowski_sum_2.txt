@@ -155,10 +155,10 @@ The function template \link minkowski_sum_2() `minkowski_sum_2(P, Q)`\endlink
 accepts two simple polygons \f$ P\f$ and \f$ Q\f$ and computes their
 Minkowski sum \f$ S = P \oplus Q\f$ using the convolution method.
 \link minkowski_sum_2() `minkowski_sum_2(P, Q)`\endlink defaults to calling the
-function \link minkowski_sum_reduced_convolution_2() `minkowski_sum_reduced_convolution_2(P, Q)`\endlink,
+function \link minkowski_sum_by_reduced_convolution_2() `minkowski_sum_by_reduced_convolution_2(P, Q)`\endlink,
 which applies the reduced convolution aforementioned.
-Explicitly call the function \link minkowski_sum_full_convolution_2()
-`minkowski_sum_full_convolution_2(P, Q)`\endlink to apply
+Explicitly call the function \link minkowski_sum_by_full_convolution_2()
+`minkowski_sum_by_full_convolution_2(P, Q)`\endlink to apply
 the full convolution approach.
 The types of the operands are instances of the
 \link Polygon_2 `Polygon_2`\endlink class template. As the input polygons

@@ -69,18 +69,26 @@ Q_SIGNALS:
   void x(int);
 
 public:
+  PixelReader():are_glfunctions_initialized(false){}
   void setIC(const IntConverter& x) { ic = x; fc = boost::optional<DoubleConverter>(); }
   void setFC(const DoubleConverter& x) { fc = x; ic = boost::optional<IntConverter>(); }
 
 private:
   boost::optional<IntConverter> ic;
   boost::optional<DoubleConverter> fc;
+  QOpenGLFunctions_3_3_Core gl;
+  bool are_glfunctions_initialized;
 
   void getPixel(const QPoint& e) {
+      if(!are_glfunctions_initialized)
+      {
+       gl.initializeOpenGLFunctions();
+       are_glfunctions_initialized = true;
+      }
     float data[3];
     int vp[4];
-    glGetIntegerv(GL_VIEWPORT, vp);
-    glReadPixels(e.x(), vp[3] - e.y(), 1, 1, GL_RGB, GL_FLOAT, data);
+    gl.glGetIntegerv(GL_VIEWPORT, vp);
+    gl.glReadPixels(e.x(), vp[3] - e.y(), 1, 1, GL_RGB, GL_FLOAT, data);
 
     if(fc) {
       Q_EMIT x( (*fc)(data[0]) );
@@ -149,6 +157,8 @@ class Volume_plane_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+
 public:
   Volume_plane_plugin() : planeSwitch(NULL), sc(NULL), mw(NULL)
     {
@@ -340,7 +350,7 @@ private:
     const Word* begin = (const Word*)img->data();
     const Word* end = (const Word*)img->data() + img->size();
 
-    std::pair<Word, Word> minmax = std::make_pair(*std::min_element(begin, end), *std::max_element(begin, end));
+    std::pair<const Word, const Word> minmax(*std::min_element(begin, end), *std::max_element(begin, end));
 
     Clamp_to_one_zero_range clamper = { minmax };
 
@@ -377,10 +387,5 @@ private:
     DoubleConverter x = { minmax }; pxr_.setFC(x);
   }
 };
-
-
-
-
-Q_EXPORT_PLUGIN2(Volume_plane_plugin, Volume_plane_plugin)
 
 #include "Volume_planes_plugin.moc"

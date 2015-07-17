@@ -4,148 +4,195 @@
 #include "Scene_interface.h"
 #include <CGAL/gl.h>
 
+#include "Viewer_interface.h"
 #include <QAction>
 #include <QMainWindow>
 
 class Q_DECL_EXPORT Scene_bbox_item : public Scene_item
 {
-  Q_OBJECT
+    Q_OBJECT
 public:
-  Scene_bbox_item(const Scene_interface* scene_interface)
-    : scene(scene_interface)
-  {}
+    Scene_bbox_item(const Scene_interface* scene_interface)
+        :  Scene_item(1,1), scene(scene_interface)
 
-  bool isFinite() const { return true; }
-  bool isEmpty() const { return true; }
-  Bbox bbox() const { return Bbox(); }
+    {
 
-  Scene_bbox_item* clone() const {
-    return 0;
-  }
+        positions_lines.resize(0);
+        qFunc.initializeOpenGLFunctions();
+        //Generates an integer which will be used as ID for each buffer
+    }
+    ~Scene_bbox_item()
+    {
+    }
+    bool isFinite() const { return true; }
+    bool isEmpty() const { return true; }
+    Bbox bbox() const { return Bbox(); }
 
-  QString toolTip() const {
-    const Bbox& bb = scene->bbox();
-    return QString("<p><b>Scene bounding box</b></p>"
-                   "<p>x range: (%1, %2)<br />"
-                   "y range: (%3, %4)<br />"
-                   "z range: (%5, %6)</p>")
-      .arg(bb.xmin).arg(bb.xmax)
-      .arg(bb.ymin).arg(bb.ymax)
-      .arg(bb.zmin).arg(bb.zmax);
-  }
+    Scene_bbox_item* clone() const {
+        return 0;
+    }
 
-  // Indicate if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const { 
-    return (m == Wireframe); 
-  }
+    QString toolTip() const {
+        const Bbox& bb = scene->bbox();
+        return QString("<p><b>Scene bounding box</b></p>"
+                       "<p>x range: (%1, %2)<br />"
+                       "y range: (%3, %4)<br />"
+                       "z range: (%5, %6)</p>")
+                .arg(bb.xmin).arg(bb.xmax)
+                .arg(bb.ymin).arg(bb.ymax)
+                .arg(bb.zmin).arg(bb.zmax);
+    }
 
-  // Flat/Gouraud OpenGL drawing
-  void draw() const {}
+    // Indicate if rendering mode is supported
+    bool supportsRenderingMode(RenderingMode m) const {
+        return (m == Wireframe);
+    }
 
-  // Wireframe OpenGL drawing
-  void draw_edges() const {
-    const Bbox& bb = scene->bbox();
-    ::glBegin(GL_LINES);
-    gl_draw_edge(bb.xmin, bb.ymin, bb.zmin,
-                 bb.xmax, bb.ymin, bb.zmin);
-    gl_draw_edge(bb.xmin, bb.ymin, bb.zmin,
-                 bb.xmin, bb.ymax, bb.zmin);
-    gl_draw_edge(bb.xmin, bb.ymin, bb.zmin,
-                 bb.xmin, bb.ymin, bb.zmax);
-    
-    gl_draw_edge(bb.xmax, bb.ymin, bb.zmin,
-                 bb.xmax, bb.ymax, bb.zmin);
-    gl_draw_edge(bb.xmax, bb.ymin, bb.zmin,
-                 bb.xmax, bb.ymin, bb.zmax);
-    
-    gl_draw_edge(bb.xmin, bb.ymax, bb.zmin,
-                 bb.xmax, bb.ymax, bb.zmin);
-    gl_draw_edge(bb.xmin, bb.ymax, bb.zmin,
-                 bb.xmin, bb.ymax, bb.zmax);
-    
-    gl_draw_edge(bb.xmin, bb.ymin, bb.zmax,
-                 bb.xmax, bb.ymin, bb.zmax);
-    gl_draw_edge(bb.xmin, bb.ymin, bb.zmax,
-                 bb.xmin, bb.ymax, bb.zmax);
-    
-    gl_draw_edge(bb.xmax, bb.ymax, bb.zmax,
-                 bb.xmin, bb.ymax, bb.zmax);
-    gl_draw_edge(bb.xmax, bb.ymax, bb.zmax,
-                 bb.xmax, bb.ymin, bb.zmax);
-    gl_draw_edge(bb.xmax, bb.ymax, bb.zmax,
-                 bb.xmax, bb.ymax, bb.zmin);
-    ::glEnd();
-  }
+    void draw_edges(Viewer_interface* viewer) const
+    {
+        if(!are_buffers_filled)
+            initialize_buffers(viewer);
+        vaos[0]->bind();
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+        attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+        program->bind();
+        program->setAttributeValue("colors", this->color());
+        qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+        vaos[0]->release();
+        program->release();
+
+    }
+
+    void changed()
+    {
+        compute_elements();
+        are_buffers_filled = false;
+    }
 
 private:
-  static void gl_draw_edge(double px, double py, double pz,
-                           double qx, double qy, double qz)
-  {
-    ::glVertex3d(px,py,pz);
-    ::glVertex3d(qx,qy,qz);
-  }
 
-  const Scene_interface* scene;
+    std::vector<float> positions_lines;
+    mutable QOpenGLShaderProgram *program;
+    using Scene_item::initialize_buffers;
+    void initialize_buffers(Viewer_interface *viewer)const
+    {
+
+        //vao containing the data for the lines
+        {
+            program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+            program->bind();
+
+            vaos[0]->bind();
+            buffers[0].bind();
+            buffers[0].allocate(positions_lines.data(),
+                                static_cast<GLsizei>(positions_lines.size()*sizeof(float)));
+            program->enableAttributeArray("vertex");
+            program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+            buffers[0].release();
+
+            vaos[0]->release();
+            program->release();
+
+        }
+        are_buffers_filled = true;
+    }
+
+    void compute_elements()
+    {
+        positions_lines.clear();
+        const Bbox& bb = scene->bbox();
+        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
+        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
+        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
+        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
+        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
+        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
+
+        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
+        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
+        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
+        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
+
+        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
+        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
+        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
+        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
+
+        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
+
+        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
+    }
+
+    const Scene_interface* scene;
 };
 
 #include "Polyhedron_demo_plugin_interface.h"
 
 class Polyhedron_demo_trivial_plugin : 
-  public QObject,
-  public Polyhedron_demo_plugin_interface
+        public QObject,
+        public Polyhedron_demo_plugin_interface
 {
-  Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+    Q_OBJECT
+    Q_INTERFACES(Polyhedron_demo_plugin_interface)
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
-  QList<QAction*> actions() const { 
-    return QList<QAction*>() << actionBbox; 
-  }
+    void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
+    QList<QAction*> actions() const {
+        return QList<QAction*>() << actionBbox;
+    }
 
-  bool applicable(QAction*) const { 
-    return true;
-  }
+    bool applicable(QAction*) const {
+        return true;
+    }
 public Q_SLOTS:
-  void bbox();
-  void enableAction();
+
+    void bbox();
+    void enableAction();
 
 private:
-  Scene_interface* scene;
-  QAction* actionBbox;
+    Scene_interface* scene;
+    QAction* actionBbox;
+
 
 }; // end Polyhedron_demo_trivial_plugin
 
 void Polyhedron_demo_trivial_plugin::init(QMainWindow* mainWindow, Scene_interface* scene_interface)
 {
-  scene = scene_interface;
-  actionBbox = new QAction(tr("Create bbox"), mainWindow);
-  connect(actionBbox, SIGNAL(triggered()),
-          this, SLOT(bbox()));
+    scene = scene_interface;
+    actionBbox = new QAction(tr("Create bbox"), mainWindow);
+    connect(actionBbox, SIGNAL(triggered()),
+            this, SLOT(bbox()));
 }
 
 void Polyhedron_demo_trivial_plugin::bbox()
 {
-  for(int i = 0, end = scene->numberOfEntries();
-      i < end; ++i)
-  {
-    if(qobject_cast<Scene_bbox_item*>(scene->item(i)))
-       return;
-  }
-  Scene_item* item = new Scene_bbox_item(scene);
-  connect(item, SIGNAL(destroyed()),
-          this, SLOT(enableAction()));
-  item->setName("Scene bbox");
-  item->setColor(Qt::black);
-  item->setRenderingMode(Wireframe);
-  scene->addItem(item);
-  actionBbox->setEnabled(false);
+    for(int i = 0, end = scene->numberOfEntries();
+        i < end; ++i)
+    {
+        if(qobject_cast<Scene_bbox_item*>(scene->item(i)))
+            return;
+    }
+    Scene_item* item = new Scene_bbox_item(scene);
+    connect(item, SIGNAL(destroyed()),
+            this, SLOT(enableAction()));
+    item->setName("Scene bbox");
+    item->setColor(Qt::black);
+    item->setRenderingMode(Wireframe);
+    scene->addItem(item);
+    actionBbox->setEnabled(false);
 }
 
 void Polyhedron_demo_trivial_plugin::enableAction() {
-  actionBbox->setEnabled(true);
+    actionBbox->setEnabled(true);
 }
-
-Q_EXPORT_PLUGIN2(Polyhedron_demo_trivial_plugin, Polyhedron_demo_trivial_plugin)
 
 #include "Polyhedron_demo_trivial_plugin.moc"

@@ -1,15 +1,15 @@
 #include <CGAL_demo/Viewer.h>
 #include <CGAL_demo/Scene_draw_interface.h>
+#include <CGAL/Qt/CreateOpenGLContext.h>
 
 Viewer::Viewer(QWidget* parent, bool antialiasing)
-  : QGLViewer(parent),
+  : QGLViewer(CGAL::Qt::createOpenGLContext(), parent),
     scene(0),
     antialiasing(antialiasing),
     twosides(false),
     mask_(false),
     ratio_(1.)
 {
-  setBackgroundColor(::Qt::white);
   setMouseTracking(true);
 }
 
@@ -46,6 +46,8 @@ void Viewer::initializeGL()
 {
   QGLViewer::initializeGL();
   scene->initializeGL();
+  initializeOpenGLFunctions();
+   setBackgroundColor(::Qt::white);
 }
 
 void Viewer::draw_aux(bool with_names)
@@ -82,9 +84,9 @@ void Viewer::draw_aux(bool with_names)
     ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
   }
   if(with_names)
-    scene->drawWithNames();
+    scene->drawWithNames(this);
   else
-    scene->draw();
+    scene->draw(this);
 }
 
 void Viewer::drawWithNames()

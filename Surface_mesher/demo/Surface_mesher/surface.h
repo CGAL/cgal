@@ -13,7 +13,8 @@ class Surface : public QObject
 protected:
   Surface(QObject* parent)
   {
-    viewer = qFindChild<Viewer*>(parent, "viewer");
+    viewer = parent->findChild<Viewer*>("viewer");
+
     if(viewer)
       connect(this, SIGNAL(changed()), viewer, SLOT(updateGL()));
     viewer->set_surface(this);

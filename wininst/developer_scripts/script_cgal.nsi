@@ -292,7 +292,7 @@ SectionEnd
 
   ;Language strings
   LangString DESC_MAIN      ${LANG_ENGLISH} "The main components of the CGAL Library."
-  LangString DESC_SAMPLES   ${LANG_ENGLISH} "The CGAL demos and examples, for which you need Qt 4 in order to build them (and Qt 3 for some)."
+  LangString DESC_SAMPLES   ${LANG_ENGLISH} "The CGAL demos and examples, for which you need Qt 5 in order to build them (and Qt 3 for some)."
   LangString DESC_GMP_LIB   ${LANG_ENGLISH} "The precompiled GMP and MPFR libraries (needed for exact constructions)."
   LangString DESC_DOC       ${LANG_ENGLISH} "The HTML manuals."
   LangString DESC_ENVSET    ${LANG_ENGLISH} "already set"

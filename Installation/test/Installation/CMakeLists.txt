@@ -4,12 +4,8 @@
 
 project( Installation_test )
 
-cmake_minimum_required(VERSION 2.6.2)
-if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
-  cmake_policy(VERSION 2.8.4)
-else()
-  cmake_policy(VERSION 2.6)
-endif()
+cmake_minimum_required(VERSION 2.8.11)
+
 
 macro(create_link_to_program COMPONENT )
   
@@ -25,7 +21,7 @@ macro(create_link_to_program COMPONENT )
   if ( CGAL_AUTO_LINK_ENABLED )    
     target_link_libraries(link_to_${COMPONENT} ${CGAL_3RD_PARTY_LIBRARIES} ${${COMPONENT}_3RD_PARTY_LIBRARIES} )
   else()
-    target_link_libraries(link_to_${COMPONENT} ${${COMPONENT}_LIBRARY} ${CGAL_3RD_PARTY_LIBRARIES} ${${COMPONENT}_3RD_PARTY_LIBRARIES} )
+    target_link_libraries(link_to_${COMPONENT} CGAL::${COMPONENT} ${CGAL_3RD_PARTY_LIBRARIES} ${${COMPONENT}_3RD_PARTY_LIBRARIES} )
   endif()
   
 endmacro()
@@ -71,6 +67,14 @@ if ( CGAL_FOUND )
       include(${QT_USE_FILE})
       create_link_to_program(CGAL_Qt4)
     endif()  
+  endif()
+
+  if ( WITH_CGAL_Qt5 )
+    find_package(Qt5 QUIET)
+    if( Qt5_FOUND )
+      create_link_to_program(CGAL_Qt5)
+      qt5_use_modules(link_to_CGAL_Qt5)
+    endif()
   endif()
 
   if(WIN32) 

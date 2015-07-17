@@ -2,6 +2,20 @@
 #define PREFERENCE_DLG_H
 
 #include <QDialog>
+#include <QColorDialog>
+
+#include <QGridLayout>
+#include <QGroupBox> 
+
+#include <QLabel>
+#include <QLineEdit>
+
+#include <QMessageBox>
+
+#include <QPushButton>
+
+#include <QSpinBox>
+
 
 class QLabel;
 class QSpinBox;

@@ -189,12 +189,12 @@ GraphicsView/demo/Triangulation_2/Makefile
 GraphicsView/demo/Triangulation_2/Regular_triangulation_2
 GraphicsView/demo/Triangulation_2/qrc_*.cxx
 GraphicsView/demo/Triangulation_2/ui_*.h
-GraphicsView/src/CGAL_Qt4/*.dll
-GraphicsView/src/CGAL_Qt4/*.lib
-GraphicsView/src/CGAL_Qt4/*.so
-GraphicsView/src/CGAL_Qt4/Makefile
-GraphicsView/src/CGAL_Qt4/moc_*.cxx
-GraphicsView/src/CGAL_Qt4/qrc_*.cxx
+GraphicsView/src/CGAL_Qt5/*.dll
+GraphicsView/src/CGAL_Qt5/*.lib
+GraphicsView/src/CGAL_Qt5/*.so
+GraphicsView/src/CGAL_Qt5/Makefile
+GraphicsView/src/CGAL_Qt5/moc_*.cxx
+GraphicsView/src/CGAL_Qt5/qrc_*.cxx
 HalfedgeDS/test/HalfedgeDS/CMakeLists.txt
 HalfedgeDS/test/HalfedgeDS/cgal_test_with_cmake
 HalfedgeDS/test/HalfedgeDS/test_hds
@@ -826,7 +826,7 @@ Surface_mesher/demo/Surface_mesher/.*.deps
 Surface_mesher/demo/Surface_mesher/.qglviewer.xml
 Surface_mesher/demo/Surface_mesher/Makefile
 Surface_mesher/demo/Surface_mesher/Surface_mesher
-Surface_mesher/demo/Surface_mesher/Surface_mesher_Qt4_Demo
+Surface_mesher/demo/Surface_mesher/Surface_mesher_Qt5_Demo
 Surface_mesher/demo/Surface_mesher/VTK/Makefile
 Surface_mesher/demo/Surface_mesher/VTK/mesh_a_3D_image
 Surface_mesher/demo/Surface_mesher/VTK/mesh_a_VTK_3D_image
@@ -841,7 +841,7 @@ Surface_mesher/demo/Surface_mesher/out*.off
 Surface_mesher/demo/Surface_mesher/polyhedron_remesher
 Surface_mesher/demo/Surface_mesher/polyhedron_remesher_with_edges
 Surface_mesher/demo/Surface_mesher/qrc_*.c*
-Surface_mesher/demo/Surface_mesher/qt4-demo
+Surface_mesher/demo/Surface_mesher/qt5-demo
 Surface_mesher/demo/Surface_mesher/ui_*.h
 Surface_mesher/doxygen
 Surface_mesher/examples/Surface_mesher/.*.deps
@@ -921,6 +921,9 @@ Triangulation/test/Triangulation/output-pcds*
 Triangulation/test/Triangulation/pc
 Triangulation/test/Triangulation/pcds
 Triangulation/test/Triangulation/torture
+/Triangulation/examples/Triangulation/cgal_test_with_cmake
+/Triangulation/test/Triangulation/cgal_test_with_cmake
+/Triangulation/test/Triangulation/output-tds-*
 Triangulation_2/CMakeLists.txt
 Triangulation_2/cgal_test_with_cmake
 Triangulation_2/demo/Triangulation_2/Makefile
@@ -1155,3 +1158,5 @@ gmon.*
 /Stream_support/test/Stream_support/CMakeLists.txt
 /Stream_support/test/Stream_support/cgal_test_with_cmake
 /*.html
+/Snap_rounding_2/test/Snap_rounding_2/CMakeLists.txt
+/Snap_rounding_2/test/Snap_rounding_2/data/out

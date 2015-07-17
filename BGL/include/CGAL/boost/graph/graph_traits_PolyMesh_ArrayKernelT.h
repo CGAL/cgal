@@ -29,6 +29,7 @@
 #include <CGAL/boost/graph/internal/OM_iterator_from_circulator.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Iterator_range.h>
+#include <CGAL/boost/graph/helpers.h>
 
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 
@@ -58,6 +59,11 @@ public:
     } else {
       return false;
     }
+  }
+
+  bool operator<(const OMesh_edge& other) const
+  { 
+    return this->idx() < other.idx();
   }
 
   bool
@@ -349,7 +355,8 @@ halfedge(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vert
          const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 {
   // prev because OpenMesh stores out-going halfedges
-  return sm.prev_halfedge_handle(sm.halfedge_handle(v));
+  // return sm.prev_halfedge_handle(sm.halfedge_handle(v));
+  return sm.opposite_halfedge_handle(sm.halfedge_handle(v));
 }
 
 
@@ -632,9 +639,9 @@ add_face(InputIterator begin, InputIterator end, OpenMesh::PolyMesh_ArrayKernelT
 }
 
 template<typename K>
-bool is_valid(OpenMesh::PolyMesh_ArrayKernelT<K>& sm, bool verbose = false)
+bool is_valid(OpenMesh::PolyMesh_ArrayKernelT<K>& sm, bool /* verbose */ = false)
 {
-  return true;
+  return CGAL::is_valid_polygon_mesh(sm);
 }
 
 } // namespace OpenMesh

@@ -11,6 +11,8 @@ class Polyhedron_demo_polylines_io_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
+
 
 public:
   QString name() const { return "polylines_io_plugin"; }
@@ -74,6 +76,7 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
   item->setColor(Qt::black);
   item->setProperty("polylines metadata", polylines_metadata);
   std::cerr << "Number of polylines in item: " << item->polylines.size() << std::endl;
+  item->changed();
   return item;
 }
 
@@ -119,6 +122,4 @@ bool Polyhedron_demo_polylines_io_plugin::save(const Scene_item* item, QFileInfo
   return (bool) out;
 }
 
-#include <QtPlugin>
-Q_EXPORT_PLUGIN2(Polyhedron_demo_polylines_io_plugin, Polyhedron_demo_polylines_io_plugin)
 #include "Polyhedron_demo_polylines_io_plugin.moc"

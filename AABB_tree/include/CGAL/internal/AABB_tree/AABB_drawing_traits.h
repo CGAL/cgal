@@ -23,12 +23,15 @@
 
 #include <CGAL/Bbox_3.h>
 #include <CGAL/gl.h>
+#include <vector>
 
 namespace CGAL {
 
 template<typename Primitive, typename Node>
 struct AABB_drawing_traits
 {
+  std::vector<float> *v_edges;
+
   typedef CGAL::Bbox_3 Bbox;
   bool go_further() { return true; }
 
@@ -45,7 +48,7 @@ struct AABB_drawing_traits
   }
 
   // draw bbox
-  static void gl_draw(const Bbox& bb)
+  void gl_draw(const Bbox& bb)
   {
     ::glBegin(GL_LINES);
     gl_draw_edge(bb.xmin(), bb.ymin(), bb.zmin(),
@@ -79,11 +82,16 @@ struct AABB_drawing_traits
     ::glEnd();
   }
 
-  static void gl_draw_edge(double px, double py, double pz,
+  void gl_draw_edge(double px, double py, double pz,
                            double qx, double qy, double qz)
   {
-    ::glVertex3d(px,py,pz);
-    ::glVertex3d(qx,qy,qz);
+      v_edges->push_back((float)px);
+      v_edges->push_back((float)py);
+      v_edges->push_back((float)pz);
+
+      v_edges->push_back((float)qx);
+      v_edges->push_back((float)qy);
+      v_edges->push_back((float)qz);
   }
 }; // AABB_drawing_traits
 
