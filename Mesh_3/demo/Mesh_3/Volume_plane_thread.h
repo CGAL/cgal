@@ -13,11 +13,10 @@
 template<typename Word>
 struct Clamp_to_one_zero_range {
   std::pair<Word, Word> min_max;
-  Word operator()(const Word& inVal) {
+  float operator()(const Word& inVal) {
     Word inValNorm = inVal - min_max.first;
     Word aUpperNorm = min_max.second - min_max.first;
-    Word bValNorm = inValNorm / aUpperNorm;
-    return bValNorm;
+    return static_cast<float>(inValNorm) / aUpperNorm;
   }
 };
 
