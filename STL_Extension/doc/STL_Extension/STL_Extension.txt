@@ -130,6 +130,13 @@ looking up keys whose type may differ from `Type`, as long as users supply
 a comparison functor `CompareKey`, between the keys and set elements;
 and catenating and splitting sets.
 
+\section stl_hash Hashing
+
+For handles and indices of vertices, halfedges, faces, etc., we provide specializations of `boost::hash<T>` and `std::hash<T>`, so that they can be used with classes such as `boost::unordered_map`.
+
+\cgalExample{STL_Extension/unordered_map.cpp}
+
+
 \section stl_polyobject Polymorphic Object
 
 The class `Object` can store an object of whatever other type.

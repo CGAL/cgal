@@ -579,10 +579,15 @@ Section \ref ssecattributes "Cell Attributes").
 Users can customize a combinatorial map thanks to an items class (see
 Section \ref ssecitem "Combinatorial Map Items"), which defines the dart type and the
 attribute types. These types may be different for different
-dimensions, and they may also be void. The darts and attributes are
+dimensions, and they may also be void.
+
+The darts and attributes are
 accessed through <I>handles</I>. A handle is a model of the
 `Handle` concept, thus supporting the two dereference operators
 `operator*` and `operator->`.
+All handles are model of `LessThanComparable` and `Hashable`,
+that is they can be used as keys in containers such as `std::map`
+and `boost::unordered_map`.
 
 \cgalFigureBegin{figdiagram_class,Diagramme_class.png}
 UML diagram of the main classes of the package. k is the number of non void attributes.

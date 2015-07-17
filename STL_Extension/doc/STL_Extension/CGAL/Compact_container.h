@@ -834,4 +834,12 @@ static void * & pointer(T &t);
 
 
 }; /* end Compact_container_traits */
+
+/*!
+returns a hash value for the pointee of `i`. 
+\relates Compact_container
+*/ 
+  template <class T, class A>
+  std::size_t hash_value(const Compact_container<T,A>::iterator i);
+
 } /* end namespace CGAL */

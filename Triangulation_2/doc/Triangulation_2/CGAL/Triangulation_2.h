@@ -229,7 +229,10 @@ typedef Tds::difference_type difference_type;
 /// The vertices and faces of the triangulations are accessed through
 /// handles, iterators and circulators. The handles are models
 /// of the concept `Handle` which basically offers the two dereference
-/// operators and `->`. The iterators and circulators are all
+/// operators and `->`. The handles are also model of the concepts
+///  `LessThanComparable` and `Hashable`, that is they can be used as keys 
+/// in containers such as `std::map` and `boost::unordered_map`. 
+/// The iterators and circulators are all
 /// bidirectional and non-mutable. The circulators and iterators are
 /// convertible to handles with the same value type, so that whenever
 /// a handle appear in the parameter list of a function, an

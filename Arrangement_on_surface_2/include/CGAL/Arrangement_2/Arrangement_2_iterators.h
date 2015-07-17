@@ -21,6 +21,8 @@
 #ifndef CGAL_ARRANGEMENT_2_ITERATORS_H
 #define CGAL_ARRANGEMENT_2_ITERATORS_H
 
+#include <functional>
+
 /*! \file
  * Definitions of auxiliary iterator adaptors.
  */
@@ -340,6 +342,11 @@ public:
     return !(*this == it);
   }
   
+  bool operator< (const Self& it) const
+  {
+    return &(**this) < (&*it);
+  }
+
   /*! Dereferencing operators. */
   reference operator*() const
   {
@@ -495,6 +502,11 @@ public:
     return !(*this == it);
   }
   
+  bool operator< (const Self& it) const
+  {
+    return &(**this) < (&*it);
+  }
+
   /*! Dereferencing operators. */
   reference operator*() const
   {
@@ -545,4 +557,104 @@ public:
 
 } //namespace CGAL
 
+namespace std {
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash 
+#endif
+
+template < class T>
+struct hash;
+  
+template <class CIterator_, class Filter_, class MIterator_,
+          class Value_, class Diff_, class Category_>
+struct hash<CGAL::I_Filtered_const_iterator<CIterator_,
+                                            Filter_,
+                                            MIterator_,
+                                            Value_,
+                                            Diff_,
+                                            Category_> > {
+
+  typedef CGAL::I_Filtered_const_iterator<CIterator_,
+                                          Filter_,
+                                          MIterator_,
+                                          Value_,
+                                          Diff_,
+                                          Category_>  I;
+
+    std::size_t operator()(const I& i) const
+    {
+      return reinterpret_cast<std::size_t>(&*i) / sizeof(Value_);
+    }
+  };
+
+  template <class Iterator_, class Filter_,
+          class Value_, class Diff_, class Category_>
+  struct hash<CGAL::I_Filtered_iterator<Iterator_,
+                                        Filter_,
+                                        Value_,
+                                        Diff_,
+                                        Category_> > {
+  typedef CGAL::I_Filtered_iterator<Iterator_,
+                                    Filter_,
+                                    Value_,
+                                    Diff_,
+                                    Category_>  I;
+
+    std::size_t operator()(const I& i) const
+    {
+      return reinterpret_cast<std::size_t>(&*i) / sizeof(typename I::value_type);
+    }
+  };
+}
+namespace  boost {
+  template <typename T> struct hash;
+
+template <class CIterator_, class Filter_, class MIterator_,
+          class Value_, class Diff_, class Category_>
+struct hash<CGAL::I_Filtered_const_iterator<CIterator_,
+                                            Filter_,
+                                            MIterator_,
+                                            Value_,
+                                            Diff_,
+                                            Category_> > {
+
+  typedef CGAL::I_Filtered_const_iterator<CIterator_,
+                                          Filter_,
+                                          MIterator_,
+                                          Value_,
+                                          Diff_,
+                                          Category_>  I;
+
+    std::size_t operator()(const I& i) const
+    {
+      return reinterpret_cast<std::size_t>(&*i) / sizeof(Value_);
+    }
+  };
+
+  template <class Iterator_, class Filter_,
+          class Value_, class Diff_, class Category_>
+  struct hash<CGAL::I_Filtered_iterator<Iterator_,
+                                        Filter_,
+                                        Value_,
+                                        Diff_,
+                                        Category_> > {
+  typedef CGAL::I_Filtered_iterator<Iterator_,
+                                    Filter_,
+                                    Value_,
+                                    Diff_,
+                                    Category_>  I;
+
+    std::size_t operator()(const I& i) const
+    {
+      return reinterpret_cast<std::size_t>(&*i) / sizeof(typename I::value_type);
+    }
+  };
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+}
 #endif

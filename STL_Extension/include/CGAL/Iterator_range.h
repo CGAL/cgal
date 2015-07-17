@@ -22,7 +22,7 @@
 
 #include <CGAL/tuple.h>
 #include <utility>
-
+#include <boost/foreach.hpp>
 
 namespace CGAL {
 
@@ -44,6 +44,11 @@ namespace CGAL {
     Iterator_range(I b, I e)
       : Base(b,e)
     {}
+
+
+    // Iterator_range(const Iterator_range& ip)
+    //   : Base(ip)
+    // {}
 
     Iterator_range(const std::pair<I,I>& ip)
       : Base(ip)
@@ -74,29 +79,23 @@ namespace CGAL {
     return Iterator_range<T>(b,e);
   }
 
-  template<typename T>
-  inline T range_begin( Iterator_range<T> & x )
-  {
-    return x.first;
-  }
-  
-  template<typename T>
-  inline T range_end( Iterator_range<T> & x )
-  {
-    return x.second;
-  }
-  
-  template<typename T>
-  inline T range_begin(const Iterator_range<T>& x )
-  {
-    return x.first;
-  }
-  
-  template<typename T>
-  inline T range_end(const Iterator_range<T>& x )
-  {
-    return x.second;
-  }  
+
 } // namespace CGAL
 
+// At global scope...
+
+  template<typename T>
+inline boost::mpl::true_ *
+  boost_foreach_is_lightweight_proxy( CGAL::Iterator_range<T> *&, boost::foreach::tag )
+{
+    return 0;
+}
+namespace boost { namespace foreach
+{
+    template<typename T>
+    struct is_lightweight_proxy< CGAL::Iterator_range<T> >
+      : mpl::true_
+    {
+    };
+}}
 #endif // CGAL_ITERATOR_RANGE_H

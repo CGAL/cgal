@@ -33,6 +33,7 @@
 #include <functional>
 #include <algorithm>
 #include <CGAL/memory.h>
+#include <boost/functional/hash.hpp>
 
 namespace CGAL {
 
@@ -170,6 +171,24 @@ namespace internal {
       return In_place_list_iterator<T,Alloc>(const_cast<T*>(node));
     }
   };
+
+
+
+template <class T, class Alloc>
+  std::size_t hash_value(const In_place_list_iterator<T,Alloc>&  i)
+  {
+    T* ptr = &*i;
+    return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
+  }
+
+
+template <class T, class Alloc>
+  std::size_t hash_value(const In_place_list_const_iterator<T,Alloc>&  i)
+  {
+    T* ptr = &*i;
+    return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
+   }
+
 }
 
 
@@ -752,4 +771,41 @@ void In_place_list<T,managed,Alloc>::sort() {
 
 } //namespace CGAL
 
+namespace std {
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash 
+#endif
+
+  template < class T>
+  struct hash;
+
+  template < class T, class Alloc >
+  struct hash<CGAL::internal::In_place_list_iterator<T, Alloc> >
+    : public std::unary_function<CGAL::internal::In_place_list_iterator<T, Alloc>, std::size_t>  {
+
+    std::size_t operator()(const CGAL::internal::In_place_list_iterator<T, Alloc>& i) const
+    {
+      const T* ptr = &*i;
+      return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
+    }
+  };
+
+  template < class T, class Alloc >
+  struct hash<CGAL::internal::In_place_list_const_iterator<T, Alloc> >
+    : public std::unary_function<CGAL::internal::In_place_list_const_iterator<T, Alloc>, std::size_t> {
+
+    std::size_t operator()(const CGAL::internal::In_place_list_const_iterator<T, Alloc>& i) const
+    {
+      const T* ptr = &*i;
+      return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
+    }
+  };
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+}
 #endif // CGAL_IN_PLACE_LIST_H
