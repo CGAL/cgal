@@ -141,10 +141,13 @@ and <code>src/</code> directories).
   <h3>L Infinity Segment Delaunay Graphs (new package)</h3>
   <ul>
     <li>
-      The package provides the geometric traits for constructing the segment Delaunay graph in the max-norm (L Infinity).
-      The traits also contain methods to draw the edges of the dual of the segment Delaunay graph in the max-norm i.e.,
-      the segment Voronoi diagram in the max-norm. The algorithm and traits rely on the segment Delaunay graph algorithm
-      and traits under the Euclidean distance. The segment Voronoi diagram in the max-norm has applications in VLSI CAD.
+      The package provides the geometric traits for constructing the
+      segment Delaunay graph in the max-norm (L Infinity).  The traits also
+      contain methods to draw the edges of the dual of the segment Delaunay
+      graph in the max-norm i.e., the segment Voronoi diagram in the
+      max-norm. The algorithm and traits rely on the segment Delaunay graph
+      algorithm and traits under the Euclidean distance. The segment
+      Voronoi diagram in the max-norm has applications in VLSI CAD.
     </li>
   </ul>
 <!-- sdglinf-philaris end-->
@@ -152,11 +155,11 @@ and <code>src/</code> directories).
   <h3>Advancing Front Surface Reconstruction (new package)</h3>
   <ul>
     <li>
-      This package provides a greedy algorithm for surface reconstruction from an
-      unorganized point set. Starting from a seed facet, a piecewise linear 
-      surface is grown by adding Delaunay triangles one by one. The most 
-      plausible triangles are added first, in a way that avoids the appearance 
-      of topological singularities.
+      This package provides a greedy algorithm for surface reconstruction
+      from an unorganized point set. Starting from a seed facet, a
+      piecewise linear surface is grown by adding Delaunay triangles one by
+      one. The most plausible triangles are added first, in a way that
+      avoids the appearance of topological singularities.
     </li>
   </ul>
 
@@ -182,11 +185,13 @@ and <code>src/</code> directories).
   <h3>Triangulated Surface Mesh Skeletonization (new package)</h3>
   <ul>
     <li>
-         This package provides a (1D) curve skeleton extraction algorithm for
-         a triangulated polygonal mesh without borders based on the mean curvature flow.
-         The particularity of this skeleton is that it captures the topology of the input.
-         For each skeleton vertex one can obtain its location and its corresponding vertices from the input mesh.
-         The code is generic and works with any model of the `FaceListGraph` concept.
+         This package provides a (1D) curve skeleton extraction algorithm
+         for a triangulated polygonal mesh without borders based on the
+         mean curvature flow.  The particularity of this skeleton is that
+         it captures the topology of the input.  For each skeleton vertex
+         one can obtain its location and its corresponding vertices from
+         the input mesh.  The code is generic and works with any model of
+         the `FaceListGraph` concept.
     </li>
   </ul>
 
@@ -234,7 +239,9 @@ and <code>src/</code> directories).
   <h3>Approximation of Ridges and Umbilics on Triangulated Surface Meshes</h3>
 <ul>
 <li> This package now supports any model of the concept <code>FaceGraph</code>.
-<li> <b>Breaking change:</b> The package no longer support models of <code>TriangulatedSurfaceMesh</code> which are not at the same time model of the concept <code>FaceGraph</code>. 
+<li> <b>Breaking change:</b> The package no longer support models
+of <code>TriangulatedSurfaceMesh</code> which are not at the same time
+model of the concept <code>FaceGraph</code>.
 </li>
 </ul>
 <!-- Arithmetic and Algebra -->
@@ -297,12 +304,12 @@ and <code>src/</code> directories).
   <h3>2D Conforming Triangulations and Meshes</h3>
   <ul>
     <li>
-    Add an optimization method <code>CGAL::lloyd_optimize_mesh_2()</code> that implements
-    the Lloyd (or Centroidal Voronoi Tesselation) optimization algorithm
-    in a Constrained Delaunay Triangulation.
-    For optimization, the triangulation data structure on which the mesher relies
-    needs its <code>VertexBase</code> template parameter to be a model
-    of the new concept <code>DelaunayMeshVertexBase_2</code>.
+    Add an optimization method <code>CGAL::lloyd_optimize_mesh_2()</code>
+    that implements the Lloyd (or Centroidal Voronoi Tesselation)
+    optimization algorithm in a Constrained Delaunay Triangulation.  For
+    optimization, the triangulation data structure on which the mesher
+    relies needs its <code>VertexBase</code> template parameter to be a
+    model of the new concept <code>DelaunayMeshVertexBase_2</code>.
     </li>
   </ul>
 <!-- Geometry Processing -->
@@ -331,7 +338,8 @@ and <code>src/</code> directories).
 <!-- Support Library -->
   <h3>Geometric Object Generators</h3>
   <ul>
-    <li>Add new random generator of points in a 2D and 3D triangle and in a tetrahedron
+    <li>Add new random generator of points in a 2D and 3D triangle and in a
+        tetrahedron
         (<code>CGAL::Random_points_in_triangle_2</code>,
         <code>CGAL::Random_points_in_triangle_3</code>,
         <code>CGAL::Random_points_in_tetrahedron_3</code>).

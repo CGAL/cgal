@@ -1,4 +1,196 @@
 
+-------------------------------- Release 4.7 --------------------------------
+
+Release date: September 2015
+
+
+* Installation
+
+  - The minimum required version of CMake is now 2.8.11. CMake versions 3.1,
+    3.2, and 3.3 are supported.
+
+  - All Qt4 demos have been updated and now require Qt5 to be compiled. Qt5
+    version 5.4 or higher is required. The support for Qt4 is dropped.
+
+  - The code of the 3D demos now use modern OpenGL, with shaders, instead of
+    the fixed pipeline API of OpenGL-1.
+
+
+* General
+
+  - Support for unordered sets and maps of the stdlib and of boost for handle
+    and index classes.
+
+
+
+
+* L Infinity Segment Delaunay Graphs (new package)
+
+  - The package provides the geometric traits for constructing the segment
+    Delaunay graph in the max-norm (L Infinity). The traits also contain
+    methods to draw the edges of the dual of the segment Delaunay graph in the
+    max-norm i.e., the segment Voronoi diagram in the max-norm. The algorithm
+    and traits rely on the segment Delaunay graph algorithm and traits under
+    the Euclidean distance. The segment Voronoi diagram in the max-norm has
+    applications in VLSI CAD.
+
+
+* Advancing Front Surface Reconstruction (new package)
+
+  - This package provides a greedy algorithm for surface reconstruction from an
+    unorganized point set. Starting from a seed facet, a piecewise linear
+    surface is grown by adding Delaunay triangles one by one. The most
+    plausible triangles are added first, in a way that avoids the appearance of
+    topological singularities.
+
+
+* Triangulated Surface Mesh Shortest Paths (new package)
+
+  - The package provides methods for computing shortest path on triangulated
+    surface meshes. Given a set of source points on the surface, this package
+    provides a data structure that can efficiently provides the shortest path
+    from any point on the surface to the sources points. There is no
+    restriction on the genus or the number of connnected components of the
+    mesh.
+
+
+
+
+* Triangulated Surface Mesh Skeletonization (new package)
+
+  - This package provides a (1D) curve skeleton extraction algorithm for a
+    triangulated polygonal mesh without borders based on the mean curvature
+    flow. The particularity of this skeleton is that it captures the topology
+    of the input. For each skeleton vertex one can obtain its location and its
+    corresponding vertices from the input mesh. The code is generic and works
+    with any model of the `FaceListGraph` concept.
+
+
+
+
+* 3D Point-Set Shape Detection (new package)
+
+  - This package implements the efficient RANSAC method for shape detection,
+    contributed by Schnabel et al. From an unstructured point set with
+    unoriented normals, the algorithm detects a set of shapes. Five types of
+    primitive shapes are provided by this package: plane, sphere, cylinder,
+    cone and torus. Detecting other types of shapes is possible by implementing
+    a class derived from a base shape.
+
+
+
+
+* 2D Visibility (new package)
+
+  - This package provides several variants to compute the visibility area of a
+    point within polygonal regions in two dimensions.
+
+
+* Polygon Mesh Processing (new package)
+
+  - This package implements a collection of methods and classes for polygon
+    mesh processing, ranging from basic operations on simplices, to complex
+    geometry processing algorithms. The implementation of this package mainly
+    follows algorithms and references given in Botsch et al.'s book on polygon
+    mesh processing.
+
+
+* Approximation of Ridges and Umbilics on Triangulated Surface Meshes
+
+  - This package now supports any model of the concept FaceGraph.
+
+  - Breaking change: The package no longer support models of
+    TriangulatedSurfaceMesh which are not at the same time model of the concept
+    FaceGraph.
+
+
+
+
+* dD Geometry Kernel
+
+  - Epick_d gains 3 new functors: Construct_circumcenter_d,
+    Compute_squared_radius_d, Side_of_bounded_sphere_d. Those are essential for
+    the computation of alpha-shapes.
+
+
+
+
+* 2D Arrangements
+
+  - Introduced a new traits class, called
+    Arr_polycurve_traits_2<SubcurveTraits>, which handles general piece-wise
+    (polycurve) curves. The pieces do not necessarily have to be linear.
+
+  - Introduced two new concepts called ArrangementApproximateTraits_2 and
+    ArrangementConstructXMonotoneCurveTraits_2.
+
+      - The existing ArrangementLandmarkTraits_2 concept, which has two
+        requirements, now refines the two respective concepts above.
+
+      - The template parameter of the exsting
+        Arr_polyline_traits_2<SegmentTraits> template must be substituted with
+        a traits class that is a model of the
+        ArrangementConstructXMonotoneTraits_2 concept among the other when
+        Arr_polyline_traits_2 is instantiated.
+
+
+
+* 2D Minkowski Sums
+
+  - Added support for polygons with holes and optimized the construction of
+    Minkowski sums.
+
+      - Introduced an implementation of the "reduced convolution" method, a
+        variant of the method described in "2D Minkowski Sum of Polygons Using
+        Reduced Convolution" by Behar and Lien. The new method supports
+        polygons with holes and in many cases out pergorms the implementation
+        of the exsisting (full) convolution method.
+
+      - Introduced two new classes that decompose polygons into convex pieces
+        (models of the PolygonConvexDecomposition_2 concept) based on vertical
+        decomposition and constrained Delaunay triangulation, respectively.
+        These new models also support the convex decomposition of polygons with
+        holes.
+
+
+
+
+
+* 2D Conforming Triangulations and Meshes
+
+  - Add an optimization method CGAL::lloyd_optimize_mesh_2() that implements
+    the Lloyd (or Centroidal Voronoi Tesselation) optimization algorithm in a
+    Constrained Delaunay Triangulation. For optimization, the triangulation
+    data structure on which the mesher relies needs its VertexBase template
+    parameter to be a model of the new concept DelaunayMeshVertexBase_2.
+
+
+* Point Set Processing and Surface Reconstruction from Point Sets
+
+  - Add the function CGAL::compute_vcm() for computing the Voronoi Covariance
+    Measure (VCM) of a point set. The output of this function can be used with
+    the function CGAL::vcm_is_on_feature_edge() to determine whether a point is
+    on or close to a feature edge. The former function is also internally used
+    by CGAL::vcm_estimate_normals() to estimate the normals of a point set and
+    it is particularly suited to point set with noise.
+
+
+* Spatial Sorting
+
+  - Add the possibility to sort points on a sphere along a space-filling curve
+    using the functions CGAL::hilbert_sort_on_sphere and CGAL::
+    spatial_sort_on_sphere.
+
+
+
+
+* Geometric Object Generators
+
+  - Add new random generator of points in a 2D and 3D triangle and in a
+    tetrahedron (CGAL::Random_points_in_triangle_2, CGAL::
+    Random_points_in_triangle_3, CGAL::Random_points_in_tetrahedron_3).
+
+
 -------------------------------- Release 4.6.1 --------------------------------
 
 Release date: June 2015
@@ -450,6 +642,15 @@ Release date: April 2014
 * 3D Periodic Triangulations
 
   - Add a method to locate point with inexact predicates.
+
+  - Rename Periodic_3_triangulation_traits_3
+    Periodic_3_Delaunay_triangulation_traits_3.
+
+  - Rename the concept Periodic_3TriangulationTraits_3
+    Periodic_3DelaunayTriangulationTraits_3.
+
+  - Create Periodic_3_triangulation_traits_3 and the concept
+    Periodic_3TriangulationTraits_3.
 
 
 * 3D Alpha Shapes
