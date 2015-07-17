@@ -77,9 +77,8 @@ void X_plane_thread<Word>::run() {
     for(unsigned int i = 0; i < img->xdim(); ++i) {
       for(unsigned int j = 0; j < img->ydim(); ++j) {
         for(unsigned int k = 0; k < img->zdim(); ++k) {
-          float x = CGAL::IMAGEIO::static_evaluate<Word>(img->image(), i, j, k);
-          x = clamper(x);
-          buffer.push_back(x);
+          Word x = CGAL::IMAGEIO::static_evaluate<Word>(img->image(), i, j, k);
+          buffer.push_back(clamper(x));
         }
       }
     }
@@ -97,9 +96,8 @@ void Y_plane_thread<Word>::run() {
     for(unsigned int i = 0; i < img->ydim(); ++i) {
       for(unsigned int j = 0; j < img->xdim(); ++j) {
         for(unsigned int k = 0; k < img->zdim(); ++k) {
-          float x = CGAL::IMAGEIO::static_evaluate<Word>(img->image(), j, i, k);
-          x = clamper(x);
-          buffer.push_back(x);
+          Word x = CGAL::IMAGEIO::static_evaluate<Word>(img->image(), j, i, k);
+          buffer.push_back(clamper(x));
         }
       }
     }
@@ -115,9 +113,8 @@ void Z_plane_thread<Word>::run() {
   for(unsigned int i = 0; i < img->zdim(); ++i) {
     for(unsigned int j = 0; j < img->xdim(); ++j) {
       for(unsigned int k = 0; k < img->ydim(); ++k) {
-        float x = CGAL::IMAGEIO::static_evaluate<Word>(img->image(), j, k, i);
-        x = clamper(x);
-        buffer.push_back(x);
+        Word x = CGAL::IMAGEIO::static_evaluate<Word>(img->image(), j, k, i);
+        buffer.push_back(clamper(x));
       }
     }
   }
