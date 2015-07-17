@@ -10,7 +10,12 @@ Release date: September 2015
     3.2, and 3.3 are supported.
 
   - All Qt4 demos have been updated and now require Qt5 to be compiled. Qt5
-    version 5.4 or higher is required. The support for Qt4 is dropped.
+    version 5.3 or higher is required. The support for Qt4 is dropped. To
+    compile libCGAL_Qt5 and demos, you must set the cmake or environment
+    variable Qt5_DIR to point to the path to the directory containing the file
+    Qt5Config.cmake created by your Qt5 installation. If you are using the open
+    source edition it should be
+    /path-to/qt-everywhere-opensource-src-/qtbase/lib/cmake/Qt5.
 
   - The code of the 3D demos now use modern OpenGL, with shaders, instead of
     the fixed pipeline API of OpenGL-1.
@@ -20,8 +25,6 @@ Release date: September 2015
 
   - Support for unordered sets and maps of the stdlib and of boost for handle
     and index classes.
-
-
 
 
 * L Infinity Segment Delaunay Graphs (new package)
@@ -54,8 +57,6 @@ Release date: September 2015
     mesh.
 
 
-
-
 * Triangulated Surface Mesh Skeletonization (new package)
 
   - This package provides a (1D) curve skeleton extraction algorithm for a
@@ -66,8 +67,6 @@ Release date: September 2015
     with any model of the `FaceListGraph` concept.
 
 
-
-
 * 3D Point-Set Shape Detection (new package)
 
   - This package implements the efficient RANSAC method for shape detection,
@@ -76,8 +75,6 @@ Release date: September 2015
     primitive shapes are provided by this package: plane, sphere, cylinder,
     cone and torus. Detecting other types of shapes is possible by implementing
     a class derived from a base shape.
-
-
 
 
 * 2D Visibility (new package)
@@ -3500,7 +3497,7 @@ All
   - Number types:
 
       - number types are now required to provide a function: std::pair<double,
-        double> to_interval(const NT &amp;).
+        double> to_interval(const NT &).
 
       - number types are now required to provide mixed operators with "int".
 

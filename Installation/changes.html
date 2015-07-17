@@ -123,8 +123,14 @@ and <code>src/</code> directories).
     <li>The minimum required version of CMake is now 2.8.11. CMake versions
     3.1, 3.2, and 3.3 are supported.</li>
     <li>All Qt4 demos have been updated and now require Qt5 to be
-    compiled. Qt5 version 5.3 or higher is required. The support for Qt4 is
-    dropped.</li>
+    compiled. Qt5 version 5.3 or higher is required.
+    The support for Qt4 is  dropped. To compile libCGAL_Qt5 and demos,
+    you must set the cmake or environment variable <code>Qt5_DIR</code> to point to
+    the path to the directory containing the file <code>Qt5Config.cmake</code> created
+    by your Qt5 installation.
+    If you are using the open source edition it should be
+    <code>/path-to/qt-everywhere-opensource-src-<version>/qtbase/lib/cmake/Qt5</code>.</li>
+
     <li>The code of the 3D demos now use modern OpenGL, with shaders,
     instead of the fixed pipeline API of OpenGL-1.</li>
   </ul>
