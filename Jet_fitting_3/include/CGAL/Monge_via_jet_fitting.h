@@ -416,6 +416,7 @@ fill_matrix(InputIterator begin, InputIterator end,
   
   //compute and store transformed points
   std::vector<Point_3> pts_in_fitting_basis;
+  pts_in_fitting_basis.reserve(this->nb_input_pts);
   CGAL_For_all(begin,end){
     Point_3 cur_pt = transf_points(D2L_converter(*begin));
     pts_in_fitting_basis.push_back(cur_pt);
@@ -758,6 +759,11 @@ void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
 switch_to_direct_orientation(Vector_3& v1, const Vector_3& v2,
 			    const Vector_3& v3) 
 {
+#if 1
+  Vector_3 v = cross_product(v2,v3);
+  double d = v*v1;
+  if(d < 0)v1 = -v1;
+#else
   typedef typename CGAL::Linear_algebraCd<FT>::Matrix Matrix;
   Matrix M(3,3);
   for (int i=0; i<3; i++) M(i,0) = v1[i];
@@ -765,7 +771,11 @@ switch_to_direct_orientation(Vector_3& v1, const Vector_3& v2,
   for (int i=0; i<3; i++) M(i,2) = v3[i];
 
   CGAL::Sign orientation = CGAL::Linear_algebraCd<FT>::sign_of_determinant(M);
+
+  //std::cerr << "compare " << d << "  " << orientation << std::endl;
+
   if (orientation == CGAL::NEGATIVE) v1 = -v1;
+#endif
 }
 
 
