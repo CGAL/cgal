@@ -57,7 +57,6 @@ template <class R_> struct Construct_sphere : Store_kernel<R_> {
     typedef typename LA::Square_matrix Matrix;
     typedef typename LA::Vector Vec;
     typedef typename LA::Construct_vector CVec;
-    typedef typename Get_type<R_, Point_tag>::type	Point;
     typename Get_functor<R_, Compute_point_cartesian_coordinate_tag>::type c(this->kernel());
     typename Get_functor<R_, Construct_ttag<Point_tag> >::type cp(this->kernel());
     typename Get_functor<R_, Point_dimension_tag>::type pd(this->kernel());

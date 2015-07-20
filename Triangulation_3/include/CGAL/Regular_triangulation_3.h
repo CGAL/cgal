@@ -208,7 +208,7 @@ namespace CGAL {
 #endif
 
 #ifdef CGAL_TRIANGULATION_3_PROFILING
-      WallClockTimer t;
+      Wall_clock_timer t;
 #endif
 
       size_type n = number_of_vertices();
@@ -618,7 +618,7 @@ namespace CGAL {
       size_type n = number_of_vertices();
 
 #ifdef CGAL_TRIANGULATION_3_PROFILING
-      WallClockTimer t;
+      Wall_clock_timer t;
 #endif
 
       // Parallel
