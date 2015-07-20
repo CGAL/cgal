@@ -82,15 +82,15 @@ public:
 	/* No member variables in this class, so a custom constructor is not needed. */
 	// Compute_cone_boundaries_2() {};
 
-	/*! \brief The operator().  
+	/*! \brief The operator(). 
+     *
+	 * \details The direction of the first ray can be specified by the parameter `initial_direction`, 
+	 * which allows the first ray to start at any direction. The remaining rays are calculated in
+	 * counter-clockwise order.
 	 *
-	 *  The direction of the first ray can be specified by the parameter
-	 *  \p initial_direction, which allows the first ray to start at any direction. The remaining rays are calculated in
-	 *  counter-clockwise order.
-	 *
-	 *  \param[in] cone_number The number of cones
-	 *  \param[in] initial_direction The direction of the first ray
-	 *  \param[out] rays  The results, a vector of directions
+	 * \param[in] cone_number The number of cones
+	 * \param[in] initial_direction The direction of the first ray
+	 * \param[out] rays  The results, a vector of directions
 	 */
     void operator()(const unsigned int cone_number,
                     Direction_2& initial_direction,
@@ -121,9 +121,9 @@ public:
 
 
 /* 
- *  The specialised functor for computing the directions of cone boundaries exactly
- *  with a given cone number and a given initial direction. 
- */
+ The specialised functor for computing the directions of cone boundaries exactly
+ with a given cone number and a given initial direction. 
+*/
 template <>
 class Compute_cone_boundaries_2<Exact_predicates_exact_constructions_kernel_with_sqrt> {
 
@@ -141,15 +141,15 @@ public:
 	// Compute_cone_boundaries_2() {};
 
 	/* The operator().  
-	 *
-	 *  The direction of the first ray can be specified by the parameter
-	 *  initial_direction, which allows the first ray to start at any direction. The remaining rays are calculated in
-	 *  counter-clockwise order.
-	 *
-	 *  \param[in] cone_number The number of cones
-	 *  \param[in] initial_direction The direction of the first ray
-	 *  \param[out] rays  The results, a vector of directions
-	 */
+
+      The direction of the first ray can be specified by the parameter
+      initial_direction, which allows the first ray to start at any direction. 
+      The remaining rays are calculated in counter-clockwise order.
+
+      \param[in] cone_number The number of cones
+      \param[in] initial_direction The direction of the first ray
+      \param[out] rays  The results, a vector of directions
+    */
     void operator()(const unsigned int cone_number,
                     Direction_2& initial_direction,
                     std::vector< Direction_2 >& rays) {
