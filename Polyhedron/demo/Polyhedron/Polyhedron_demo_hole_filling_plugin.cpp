@@ -504,7 +504,8 @@ void Polyhedron_demo_hole_filling_plugin::on_Fill_selected_holes_button() {
   }
   print_message(tr("%1 of %2 holes are filled!").arg(filled_counter).arg(counter));
   QApplication::restoreOverrideCursor();
-};
+}
+
 // fills all holes and removes associated Scene_hole_visualizer if any
 void Polyhedron_demo_hole_filling_plugin::on_Select_all_holes_button() {
   Scene_hole_visualizer* hole_visualizer = get_selected_item<Scene_hole_visualizer>();

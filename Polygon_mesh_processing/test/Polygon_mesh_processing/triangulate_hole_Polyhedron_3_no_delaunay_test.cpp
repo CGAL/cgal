@@ -58,7 +58,7 @@ void detect_borders(Polyhedron& poly, std::vector<Halfedge_handle>& border_reps)
       Halfedge_around_facet_circulator hf_around_facet(h,poly), done(hf_around_facet);
       do {
         bool insertion_ok = border_map.insert(*hf_around_facet).second;
-        CGAL_assertion(insertion_ok);
+        assert(insertion_ok);
       } while(++hf_around_facet != done);
     }
   }
@@ -135,13 +135,13 @@ void test_triangulate_hole(const char* file_name) {
     CGAL::Polygon_mesh_processing::triangulate_hole(poly, *it, back_inserter(patch));
     if(patch.empty()) {
       std::cerr << "  Error: empty patch created." << std::endl;
-      CGAL_assertion(false);
+      assert(false);
     }
   }
 
   if(!poly.is_valid() || ! is_closed(poly)) {
     std::cerr << "  Error: patched polyhedron is not valid or closed." << std::endl;
-    CGAL_assertion(false);
+    assert(false);
   }
   
   std::cout << "  Done!" << std::endl;
