@@ -28,6 +28,8 @@
 #include <utility>
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_svd.h>
+#include <Eigen/LU>
+#include <Eigen/Core>
 #else
 #ifdef CGAL_LAPACK_ENABLED
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
@@ -498,7 +500,8 @@ compute_Monge_basis(const FT* A, Monge_form& monge_form)
 
   FT e = 1+A[1]*A[1], f = A[1]*A[2], g = 1+A[2]*A[2],
     l = A[3], m = A[4], n = A[5];
-  Matrix  weingarten(2,2,0.);
+  //Matrix  weingarten(2,2,0.);
+  Eigen::Matrix2d  weingarten;
   weingarten(0,0) = (g*l-f*m)/ (Lsqrt(norm2)*norm2);
   weingarten(0,1) = (g*m-f*n)/ (Lsqrt(norm2)*norm2);
   weingarten(1,0) = (e*m-f*l)/ (Lsqrt(norm2)*norm2);
@@ -514,16 +517,18 @@ compute_Monge_basis(const FT* A, Monge_form& monge_form)
   Z = Xv - XudotXv * Xu / (normXu*normXu);
   FT normZ = Lsqrt( Z*Z );
   Z = Z / normZ;
-  Matrix change_XuXv2YZ(2,2,0.);
+  //Matrix change_XuXv2YZ(2,2,0.);
+  Eigen::Matrix2d change_XuXv2YZ;
   change_XuXv2YZ(0,0) = 1 / normXu;
   change_XuXv2YZ(0,1) = -XudotXv / (normXu * normXu * normZ);
   change_XuXv2YZ(1,0) = 0;
   change_XuXv2YZ(1,1) = 1 / normZ;
-  FT det = 0.;
-  Matrix inv = CGAL::Linear_algebraCd<FT>::inverse ( change_XuXv2YZ, det );
+  //FT det = 0.;
+  //Matrix inv = CGAL::Linear_algebraCd<FT>::inverse ( change_XuXv2YZ, det );
   //in the new orthonormal basis (Y,Z) of the tangent plane :
-  weingarten = inv *(1/det) * weingarten * change_XuXv2YZ;
-  
+
+  //weingarten = inv *(1/det) * weingarten * change_XuXv2YZ;
+  weingarten = change_XuXv2YZ.inverse() * weingarten * change_XuXv2YZ;
   //switch to eigen_symmetric algo for diagonalization of weingarten
   FT W[3] = {weingarten(0,0), weingarten(1,0), weingarten(1,1)};
   FT eval[2];
