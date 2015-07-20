@@ -204,7 +204,7 @@ launch()
   /*mesher_->initialize();
   
 #ifdef CGAL_MESH_3_PROFILING
-  WallClockTimer t;
+  Wall_clock_timer t;
 #endif
 
   while ( ! mesher_->is_algorithm_done() && continue_ )

@@ -797,7 +797,7 @@ operator()(Visitor visitor)
   running_time_.start();
 
 #ifdef CGAL_MESH_3_PROFILING
-  WallClockTimer t;
+  Wall_clock_timer t;
 #endif
 
   // Build priority queue (we use one queue for all steps)

@@ -453,7 +453,7 @@ public: // methods
   operator()(Visitor visitor = Visitor())
   {
 #ifdef CGAL_MESH_3_PROFILING
-  WallClockTimer t;
+  Wall_clock_timer t;
 #endif
 
     Mesh_optimization_return_code ret =
@@ -964,7 +964,7 @@ pump_vertices(double sliver_criterion_limit,
               Visitor& visitor)
 {
 #ifdef CGAL_MESH_3_PROFILING
-  WallClockTimer t;
+  Wall_clock_timer t;
 #endif
 
   init(sliver_criterion_limit);
