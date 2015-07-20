@@ -76,8 +76,9 @@ private:
     std::vector<Direction_2>   rays;
 
 public:
-    /*! \brief Constructor.
-       Constructs a `Construct_yao_graph_2` object.
+    /*! 
+	  \brief    Constructor.
+      \details  Constructs a `Construct_yao_graph_2` object.
      
       \param k     Number of cones to divide space into
       \param initial_direction  A direction denoting one of the rays dividing the
@@ -106,12 +107,12 @@ public:
      */
     Construct_yao_graph_2 (const Construct_yao_graph_2& x) : cone_number(x.cone_number), rays(x.rays) {}
 
-    /*! \brief Operator to construct a Yao graph.
-      This operator implements the algorithm for adding edges to build the Yao graph.
-      The algorithm implemented is described in:
-      Giri Narasimhan and Michiel Smid, Chapter 4: Spanners based on the Yao graph, Geometric Spanner Networks,
-      Cambridge University Press, 2007.
-      This algorithm has the complexity of O(n*log(n)), which is optimal.
+    /*! 
+	  \brief Operator to construct a Yao graph.
+
+      \details This operator implements the algorithm for adding edges to build the Yao graph.
+         The algorithm implemented is an adaptation from the algorithm for constructing Theta graph. 
+		 For more details, please refer to the user manual.
      
       \param start[in] An iterator pointing to the first point (vertex).
       \param end[in]   An iterator pointing to the place that passes the last point.

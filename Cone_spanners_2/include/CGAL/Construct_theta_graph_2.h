@@ -79,7 +79,7 @@ private:
 
 public:
     /*! \brief Constructor.
-      Constructs a `Construct_theta_graph_2` object.
+      \details Constructs a `Construct_theta_graph_2` object.
      
      \param k     Number of cones to divide space into
      \param initial_direction  A direction denoting one of the rays deviding the
@@ -108,12 +108,14 @@ public:
      */
     Construct_theta_graph_2 (const Construct_theta_graph_2& x) : cone_number(x.cone_number), rays(x.rays) {}
 
-    /*! \brief Operator to construct a Theta graph.
-     This operator implements the algorithm for adding edges to build the Theta graph.
-     The algorithm implemented is described in:
-     Giri Narasimhan and Michiel Smid, Chapter 4: Spanners based on the Theta graph, Geometric Spanner Networks,
-     Cambridge University Press, 2007.
-     This algorithm has the complexity of O(n*log(n)), which is optimal.
+    /*! 
+	 \brief Operator to construct a Theta graph.
+
+     \details This operator implements the algorithm for adding edges to build the Theta graph.
+      The algorithm implemented is described in:
+        Giri Narasimhan and Michiel Smid, Chapter 4: Spanners based on the Theta graph, 
+	    Geometric Spanner Networks, Cambridge University Press, 2007.
+      This algorithm has the complexity of O(n*log(n)), which is optimal.
      
      \param start[in] An iterator pointing to the first point (vertex).
      \param end[in]   An iterator pointing to the place that passes the last point.
