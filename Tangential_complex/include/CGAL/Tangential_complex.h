@@ -415,8 +415,8 @@ public:
       m_k.compute_coordinate_d_object();
 
     std::vector<FT> sum_eigen_values(m_ambient_dim, FT(0));
-    std::size_t num_points_for_pca =
-      std::pow(BASE_VALUE_FOR_PCA, m_intrinsic_dim);
+    std::size_t num_points_for_pca = static_cast<std::size_t>(
+      std::pow(BASE_VALUE_FOR_PCA, m_intrinsic_dim));
 
     typename Points::const_iterator it_p = m_points.begin();
     typename Points::const_iterator it_p_end = m_points.end();
@@ -426,6 +426,7 @@ public:
       const Point &p = *it_p;
 
       KNS_range kns_range = m_points_ds.query_ANN(p, num_points_for_pca, false);
+
       //******************************* PCA *************************************
 
       // One row = one point
@@ -656,7 +657,7 @@ public:
       for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
       {
         // Don't export infinite cells
-        if (*it_inc_simplex->rbegin() == std::numeric_limits<std::size_t>::max())
+        if (is_infinite(*it_inc_simplex))
           continue;
 
         Indexed_simplex c = *it_inc_simplex;
@@ -704,8 +705,7 @@ public:
       for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
       {
         // Don't export infinite cells
-        if (!export_infinite_simplices && *it_inc_simplex->rbegin()
-            == std::numeric_limits<std::size_t>::max())
+        if (!export_infinite_simplices && is_infinite(*it_inc_simplex))
           continue;
 
         Indexed_simplex c = *it_inc_simplex;
@@ -785,7 +785,7 @@ private:
       Incident_simplex const& s = *it_inc_simplex;
 
       // Don't check infinite cells
-      if (*s.rbegin() == std::numeric_limits<std::size_t>::max())
+      if (is_infinite(s))
         continue;
 
       int simplex_dim = static_cast<int>(s.size());
@@ -869,6 +869,10 @@ public:
       std::vector<Simplex_and_alpha>,
       std::greater<Simplex_and_alpha> > AATC_pq;
     typedef std::vector<AATC_pq> PQueues;
+    
+#ifdef CGAL_TC_PROFILING
+    Wall_clock_timer t_pq;
+#endif
 
     // One queue per dimension, from intrinsic dim (index = 0) to 
     // ambiant dim (index = ambiant - intrinsic dim)
@@ -883,7 +887,11 @@ public:
 #ifdef CGAL_TC_VERBOSE
     std::cerr
       << "Num inconsistent simplices found when filling the priority queues: "
-      << num_inconsistent_simplices << std::endl;
+      << num_inconsistent_simplices;
+# ifdef CGAL_TC_PROFILING
+    std::cerr << " (" << t_pq.elapsed() << " s)" << std::endl;
+# endif
+    std::cerr << std::endl;
 #endif
 
     //-------------------------------------------------------------------------
@@ -893,6 +901,10 @@ public:
     // While there's elements to treat in the queues
     for(;;)
     {
+#ifdef CGAL_TC_PROFILING
+      Wall_clock_timer t_one_fix;
+#endif
+
       // Pick the simplex with the lowest dimension and the lowest alpha
       Simplex_and_alpha saa;
       bool found_saa = false;
@@ -949,11 +961,16 @@ public:
       {
         std::cerr 
           << "FAILED in solve_inconsistencies_using_alpha_TC(): "
-          << "the simplex " << saa.m_center_point_index << ", ";
+          << "simplex " << saa.m_center_point_index << ", ";
         std::copy(saa.m_simplex.begin(), saa.m_simplex.end(), 
           std::ostream_iterator<std::size_t>(std::cerr, ", ")); 
-        std::cerr << "was not added in the star #" 
-          << saa.m_center_point_index << "\n";
+        std::cerr << " not added in star #" 
+          << saa.m_center_point_index
+          << " (basis dim = " << tangent_basis.dimension()
+# ifdef CGAL_TC_PROFILING
+          << " - " << t_one_fix.elapsed() << " s"
+# endif
+          << ")\n";
 
         Indexed_simplex full_s = saa.m_simplex;
         full_s.insert(saa.m_center_point_index);
@@ -975,24 +992,27 @@ public:
           std::cerr << "WOW The simplex is NOWHERE!\n";
 
         // CJTODO TEMP
-        if (is_simplex_in_the_ambient_delaunay(full_s))
-          std::cerr << "The simplex is in the ambiant Delaunay." << std::endl;
-        else
-          std::cerr << "The simplex is NOT in the ambiant Delaunay." << std::endl;
-
-        std::cerr << "Checking simplices of the star #" 
-          << saa.m_center_point_index << std::endl;
-        Star const& star = m_stars[saa.m_center_point_index];
-        for (Star::const_iterator is = star.begin(), is_end = star.end() ;
-          is != is_end ; ++is)
-        { 
-          if (is_simplex_in_the_ambient_delaunay(*is))
+        if (m_ambient_dim <= 3)
+        {
+          if (is_simplex_in_the_ambient_delaunay(full_s))
             std::cerr << "The simplex is in the ambiant Delaunay." << std::endl;
           else
-          {
             std::cerr << "The simplex is NOT in the ambiant Delaunay." << std::endl;
-            for(auto ii : *is) // CJTODO C++11
-              perturb(ii);
+
+          std::cerr << "Checking simplices of the star #" 
+            << saa.m_center_point_index << std::endl;
+          Star const& star = m_stars[saa.m_center_point_index];
+          for (Star::const_iterator is = star.begin(), is_end = star.end() ;
+            is != is_end ; ++is)
+          { 
+            if (is_simplex_in_the_ambient_delaunay(*is))
+              std::cerr << "The simplex is in the ambiant Delaunay." << std::endl;
+            else
+            {
+              std::cerr << "The simplex is NOT in the ambiant Delaunay." << std::endl;
+              for(auto ii : *is) // CJTODO C++11
+                perturb(ii);
+            }
           }
         }
          
@@ -1018,12 +1038,17 @@ public:
       // CJTODO TEMP
       else
       {
-        std::cerr << "SUCCESS in solve_inconsistencies_using_alpha_TC(): "
-          << "the simplex " << saa.m_center_point_index << ", ";
+        std::cerr << "SUCCESS: "
+          << saa.m_center_point_index << ", ";
         std::copy(saa.m_simplex.begin(), saa.m_simplex.end(), 
           std::ostream_iterator<std::size_t>(std::cerr, ", ")); 
-        std::cerr << "was successfully added in the star #" 
-          << saa.m_center_point_index << "\n";
+        std::cerr << " added in star #" 
+          << saa.m_center_point_index 
+          << " (basis dim = " << tangent_basis.dimension()
+# ifdef CGAL_TC_PROFILING
+          << " - " << t_one_fix.elapsed() << " s"
+# endif
+          << ")\n";
         //check_if_all_simplices_are_in_the_ambient_delaunay();
       }
 #endif
@@ -1136,7 +1161,7 @@ public:
            ++it_inc_simplex)
       {
         // Skip infinite cells
-        if (*it_inc_simplex->rbegin() == std::numeric_limits<std::size_t>::max())
+        if (is_infinite(*it_inc_simplex))
           continue;
 
         Indexed_simplex c = *it_inc_simplex;
@@ -1386,6 +1411,11 @@ private:
   };
 #endif // CGAL_LINKED_WITH_TBB
 
+  bool is_infinite(Indexed_simplex const& s) const
+  {
+    return *s.rbegin() == std::numeric_limits<std::size_t>::max();
+  }
+
   void compute_tangent_triangulation(std::size_t i, bool verbose = false)
   {
     if (verbose)
@@ -1443,6 +1473,8 @@ private:
       local_tr_traits.point_weight_d_object();
     typename Tr_traits::Power_center_d power_center =
       local_tr_traits.power_center_d_object();
+    typename Tr_traits::Compute_coordinate_d coord =
+      local_tr_traits.compute_coordinate_d_object();
 
 
     //***************************************************
@@ -1488,6 +1520,12 @@ private:
          nn_it != ins_range.end() ;
          ++nn_it)
     {
+#ifdef CGAL_ALPHA_TC  
+        ++number_of_attempts_to_insert_points;
+        if (number_of_attempts_to_insert_points > MAX_NUM_INSERTED_POINTS)
+          break;
+#endif
+
       std::size_t neighbor_point_idx = nn_it->first;
 
       // ith point = p, which is already inserted
@@ -1512,6 +1550,7 @@ private:
 #ifdef CGAL_TC_VERY_VERBOSE
         ++num_attempts_to_insert_points;
 #endif
+         
 
         Tr_vertex_handle vh = local_tr.insert_if_in_star(proj_pt, center_vertex);
         //Tr_vertex_handle vh = local_tr.insert(proj_pt);
@@ -1592,7 +1631,10 @@ private:
     if (tsb.num_thickening_vectors() == 0)
       update_star__no_thickening_vectors(i);
     else
+    {
       update_star__with_thickening_vector(i);
+      //check_if_all_simplices_are_in_the_ambient_delaunay(); // CJTODO TEMP
+    }
 #else
     update_star__no_thickening_vectors(i);
 #endif
@@ -2564,7 +2606,7 @@ next_face:
       const Incident_simplex &incident_simplex = *it_inc_simplex;
 
       // Don't check infinite cells
-      if (*incident_simplex.rbegin() == std::numeric_limits<std::size_t>::max())
+      if (is_infinite(incident_simplex))
         continue;
 
       Indexed_simplex c = incident_simplex;
@@ -3185,8 +3227,7 @@ next_face:
     bool inconsistencies_found = false;
 
     // Don't check infinite simplices
-    if (*incident_simplex.rbegin()
-        == std::numeric_limits<std::size_t>::max())
+    if (is_infinite(incident_simplex))
       return false;
 
     Indexed_simplex simplex = incident_simplex;
@@ -3697,8 +3738,7 @@ next_face:
       for ( ; it_simplex != it_simplex_end ; ++it_simplex)
       {
         // Don't export infinite cells
-        if (*it_simplex->first.rbegin()
-            == std::numeric_limits<std::size_t>::max())
+        if (is_infinite(it_simplex->first))
           continue;
 
         const Indexed_simplex &c = it_simplex->first;
@@ -3876,7 +3916,7 @@ public:
       for ( ; it_tri != it_tri_end ; ++it_tri)
       {
         // Don't export infinite cells
-        if (*it_tri->rbegin() == std::numeric_limits<std::size_t>::max())
+        if (is_infinite(*it_tri))
           continue;
 
         os << 3 << " ";
@@ -3947,7 +3987,7 @@ public:
       for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
       {
         // Don't check infinite cells
-        if (*it_inc_simplex->rbegin() == std::numeric_limits<std::size_t>::max())
+        if (is_infinite(*it_inc_simplex))
           continue;
 
         Indexed_simplex c = *it_inc_simplex;

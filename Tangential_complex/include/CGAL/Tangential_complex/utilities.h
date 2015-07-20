@@ -248,6 +248,35 @@ namespace Tangential_complex_ {
       }
     }
 
+    FT alpha_minus(std::size_t i) const
+    {
+      return m_thickening_vectors[i].alpha_minus;
+    }
+    FT alpha_plus(std::size_t i) const
+    {
+      return m_thickening_vectors[i].alpha_plus;
+    }
+    
+    // Returns 0 if no thickening vectors
+    FT max_absolute_alpha() const
+    {
+      FT max = FT(0);
+      
+      for (Thickening_vectors::const_iterator 
+             it_v = m_thickening_vectors.begin(),
+             it_v_end = m_thickening_vectors.end() ;
+           it_v != it_v_end ; 
+           ++it_v)
+      {
+        if (it_v->alpha_plus > max)
+          max = it_v->alpha_plus;
+        if (-it_v->alpha_minus > max)
+          max = -it_v->alpha_minus;
+      }
+
+      return max;
+    }
+
     int dimension() const
     {
       return static_cast<int>(m_vectors.size() + m_thickening_vectors.size());
