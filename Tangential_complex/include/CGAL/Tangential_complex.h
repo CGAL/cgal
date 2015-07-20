@@ -1526,6 +1526,18 @@ private:
     // and which contains all the
     // circumspheres of the star of "center_vertex"
     boost::optional<FT> squared_star_sphere_radius_plus_margin;
+    
+#ifdef CGAL_ALPHA_TC  
+    /*FT max_absolute_alpha = tsb.max_absolute_alpha();
+    // "2*m_half_sparsity" because both points can be perturbed
+    FT max_sqdist_to_tangent_space = (max_absolute_alpha == FT(0) ?
+      FT(0) : CGAL::square(2*max_absolute_alpha + 2*m_half_sparsity));*/
+    std::size_t number_of_attempts_to_insert_points = 0;
+    const std::size_t MAX_NUM_INSERTED_POINTS = 
+      tsb.num_thickening_vectors() > 0 ?
+        static_cast<std::size_t>(std::pow(4, /*tsb.dimension()*/m_intrinsic_dim))
+        : std::numeric_limits<std::size_t>::max();
+#endif
 
     // Insert points until we find a point which is outside "star shere"
     for (INS_iterator nn_it = ins_range.begin() ;
