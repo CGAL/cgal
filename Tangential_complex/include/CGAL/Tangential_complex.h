@@ -1297,7 +1297,19 @@ public:
     Simplex_range stars_simplices;
     if (!p_complex)
     {
-      typename Tr_container::const_iterator it_tr = m_triangulations.begin();
+      Stars_container::const_iterator it_star = m_stars.begin();
+      Stars_container::const_iterator it_star_end = m_stars.end();
+      // For each star: get the finite simplices
+      for ( ; it_star != it_star_end ; ++it_star)
+      {
+        for (Star::const_iterator it_s = it_star->begin(), 
+          it_s_end = it_star->end() ; it_s != it_s_end ; ++it_s)
+        {
+          if (!is_infinite(*it_s))
+            stars_simplices.insert(*it_s);
+        }
+      }
+      /*typename Tr_container::const_iterator it_tr = m_triangulations.begin();
       typename Tr_container::const_iterator it_tr_end = m_triangulations.end();
       // For each triangulation
       for ( ; it_tr != it_tr_end ; ++it_tr)
@@ -1326,7 +1338,7 @@ public:
 
           stars_simplices.insert(simplex);
         }
-      }
+      }*/
 
       p_simplices = &stars_simplices;
     }
