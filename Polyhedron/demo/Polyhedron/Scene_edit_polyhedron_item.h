@@ -394,8 +394,6 @@ public:
 
     active_group = --ctrl_vertex_frame_map.end();
 
-    connect(new_frame, SIGNAL(modified()), this, SLOT(deform()));  // OK we are deforming via timer,
-    // but it makes demo more responsive if we also add this signal
     Q_EMIT itemChanged();
 
     print_message("A new empty group of control vertices is created.");
