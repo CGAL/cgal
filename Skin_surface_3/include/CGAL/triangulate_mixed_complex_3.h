@@ -133,6 +133,7 @@ public:
       _tmc(triangulated_mixed_complex),
       observer(observer),
       triangulation_incr_builder(triangulated_mixed_complex), 
+      r2t_converter_object(),
       construct_anchor_point_3_obj(r2t_converter_object(shrink)),
       compute_anchor_obj(regular),
       verbose(verbose)  {
@@ -256,6 +257,11 @@ private:
     Regular_triangulation_euclidean_traits_3<
     Triangulated_mixed_complex_traits> >                weighted_circumcenter_obj;
 
+  Weighted_converter_3<
+    Cartesian_converter<typename Regular_traits::Bare_point::R,
+			Triangulated_mixed_complex_traits > >
+  r2t_converter_object;
+
   Construct_anchor_point_3<
     Regular_triangulation_euclidean_traits_3<
     Triangulated_mixed_complex_traits> >                construct_anchor_point_3_obj;
@@ -265,12 +271,6 @@ private:
     Triangulated_mixed_complex_traits> >       orthoweight_obj;
   Compute_anchor_3<Regular> compute_anchor_obj;
   bool verbose;
-
-  Weighted_converter_3<
-    Cartesian_converter<typename Regular_traits::Bare_point::R, 
-			Triangulated_mixed_complex_traits > >
-  r2t_converter_object;
-    
 
   static const int edge_index[4][4];
   struct Index_c4 { Tmc_Vertex_handle V[4]; };
