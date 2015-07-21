@@ -268,7 +268,7 @@ inline std::istream &operator>>(std::basic_istream<C, Tr> &in,
   return in;
 }
 
-CORE_polynomial operator*(const CORE_polynomial::NT &a,
+inline CORE_polynomial operator*(const CORE_polynomial::NT &a,
 			  const CORE_polynomial &p){
   //CORE_polynomial::NT ac(a);
   return CORE_polynomial(CORE_polynomial::P(0, &a)*p.core_polynomial());
