@@ -260,7 +260,7 @@ protected:
   }
 };
 
-std::ostream &operator<<(std::ostream &out, const CORE_Expr_root_stack &o) {
+inline std::ostream &operator<<(std::ostream &out, const CORE_Expr_root_stack &o) {
   return o.write(out);
 }
 
