@@ -286,7 +286,7 @@ namespace CGAL {
                             FT &cluster_epsilon,
                             FT min[2],
                             FT max[2]) const {
-      Vector_3 axis;
+      Vector_3 axis = this->constr_vec();
       FT rad = radius();
       // Take average normal as axis
       for (std::size_t i = 0;i<indices.size();i++)
@@ -294,11 +294,12 @@ namespace CGAL {
       axis = this->scale(axis, FT(1) / CGAL::sqrt(this->sqlen(axis)));
 
       // create basis d1, d2
-      Vector_3 d1 = Vector_3((FT) 0, (FT) 0, (FT) 1);
+      Vector_3 d1 = this->constr_vec(
+        ORIGIN, this->constr_pt(FT(0), FT(0), FT(1)));
       Vector_3 d2 = this->cross_pdct(axis, d1);
       FT l = this->sqlen(d2);
       if (l < (FT)0.0001) {
-        d1 = Vector_3((FT) 1, (FT) 0, (FT) 0);
+        d1 = this->constr_vec(ORIGIN, this->constr_pt(FT(1), FT(0), FT(0)));
         d2 = this->cross_pdct(axis, d1);
         l = this->sqlen(d2);
       }
@@ -320,6 +321,7 @@ namespace CGAL {
       FT phi = atan2(this->scalar_pdct(vec, d2), this->scalar_pdct(vec, d1));
       FT x = FT(0), y = FT(0);
       concentric_mapping(phi, proj, rad, x, y);
+      CGAL_assertion( x==x && y==y); // check not nan's
 
       min[0] = max[0] = x;
       min[1] = max[1] = y;
@@ -334,6 +336,7 @@ namespace CGAL {
         phi = atan2(this->scalar_pdct(vec, d2), this->scalar_pdct(vec, d1));
 
         concentric_mapping(phi, proj, rad, x, y);
+        CGAL_assertion( x==x && y==y); // check not nan's
 
         min[0] = (std::min<FT>)(min[0], x);
         max[0] = (std::max<FT>)(max[0], x);

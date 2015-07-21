@@ -26,6 +26,24 @@ public:
     return sd * sd;
   }
 
+  Vector plane_normal() const {
+    return m_normal;
+  }
+
+  FT d() const {
+    return m_d;
+  }
+
+  // Returns a string with shape parameters.
+  virtual std::string info() const {
+    std::stringstream sstr;
+    sstr << "Type: plane (" << this->get_x(m_normal) << ", " 
+      << this->get_y(m_normal) << ", " << this->get_z(m_normal) << ")x - " <<
+      m_d << " = 0" << " #Pts: " << this->m_indices.size();
+
+    return sstr.str();
+  }
+
 protected:
   // Constructs shape based on minimal set of samples from the input data.    
   virtual void create_shape(const std::vector<std::size_t> &indices) {
@@ -37,6 +55,8 @@ protected:
 
     m_normal = m_normal * (1.0 / sqrt(this->sqlen(m_normal)));
     m_d = -(p1[0] * m_normal[0] + p1[1] * m_normal[1] + p1[2] * m_normal[2]);
+
+    m_point_on_primitive = p1;
 
     this->m_is_valid = true;
   }
@@ -64,16 +84,6 @@ protected:
   // Returns the number of required samples for construction.
   virtual std::size_t minimum_sample_size() const {
     return 3;
-  }
-
-  // Returns a string with shape parameters.
-  virtual std::string info() const {
-    std::stringstream sstr;
-    sstr << "Type: plane (" << this->get_x(m_normal) << ", " 
-      << this->get_y(m_normal) << ", " << this->get_z(m_normal) << ")x - " <<
-      m_d << " = 0" << " #Pts: " << this->m_indices.size();
-
-    return sstr.str();
   }
 
 private:
