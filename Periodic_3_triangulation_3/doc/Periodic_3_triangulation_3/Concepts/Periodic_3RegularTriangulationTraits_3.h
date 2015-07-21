@@ -104,10 +104,6 @@ typedef unspecified_type Power_test_3;
 /*!
 A predicate object that must provide the function operators:
 
-\cgalModifBegin 
-remark: duplication with Delaunay traits
-\cgalModifEnd
-
 `Orientation operator()(Weighted_point_3 p, Weighted_point_3 q, Weighted_point_3 r)`,
 
 which returns `COLLINEAR`, if the points are collinear; otherwise
