@@ -5988,6 +5988,104 @@ public:
     return power_test(p,q,r,s,t,o_p,o_q,o_r,o_s,o_t);
   }
 
+  Bounded_side side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
+      const Offset & offset = Offset(), bool perturb = false) const{
+    Bounded_side bs = ON_UNBOUNDED_SIDE;
+    int i=0;
+    // TODO: optimize which copies to check depending on the offsets in
+    // the cell.
+    while (bs == ON_UNBOUNDED_SIDE && i<8) {
+      bs= _side_of_power_sphere(c,p,combine_offsets(offset,int_to_off(i)),perturb);
+      i++;
+    }
+    return bs;
+  }
+
+  Vertex_handle nearest_vertex(const Weighted_point& p, Cell_handle start) const
+  {
+    if (number_of_vertices() == 0)
+      return Vertex_handle();
+
+    Locate_type lt;
+    int li, lj;
+    Cell_handle c = locate(p, lt, li, lj, start);
+    if (lt == Base::VERTEX)
+      return c->vertex(li);
+    const Conflict_tester tester(p, this);
+    Offset o = combine_offsets(Offset(), get_location_offset(tester, c));
+
+    // - start with the closest vertex from the located cell.
+    // - repeatedly take the nearest of its incident vertices if any
+    // - if not, we're done.
+    Vertex_handle nearest = nearest_vertex_in_cell(c, p, o);
+    std::vector<Vertex_handle> vs;
+    vs.reserve(32);
+    while (true)
+    {
+      Vertex_handle tmp = nearest;
+      Offset tmp_off = get_min_dist_offset(p, o, tmp);
+      adjacent_vertices(nearest, std::back_inserter(vs));
+      for (typename std::vector<Vertex_handle>::const_iterator vsit = vs.begin(); vsit != vs.end(); ++vsit)
+        tmp =
+            (compare_distance(p, tmp->point(), (*vsit)->point(), o, tmp_off, get_min_dist_offset(p, o, *vsit)) == SMALLER) ?
+                tmp : *vsit;
+      if (tmp == nearest)
+        break;
+      vs.clear();
+      nearest = tmp;
+    }
+
+    return get_original_vertex(nearest);
+  }
+
+  Offset get_min_dist_offset(const Weighted_point & p, const Offset & o, const Vertex_handle vh) const {
+    Offset mdo = get_offset(vh);
+    Offset min_off = Offset(0,0,0);
+    min_off = (compare_distance(p,vh->point(),vh->point(),
+      o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(0,0,1)))
+        == SMALLER ? min_off : Offset(0,0,1) );
+    min_off = (compare_distance(p,vh->point(),vh->point(),
+      o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(0,1,0)))
+        == SMALLER ? min_off : Offset(0,1,0) );
+    min_off = (compare_distance(p,vh->point(),vh->point(),
+      o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(0,1,1)))
+        == SMALLER ? min_off : Offset(0,1,1) );
+    min_off = (compare_distance(p,vh->point(),vh->point(),
+      o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(1,0,0)))
+        == SMALLER ? min_off : Offset(1,0,0) );
+    min_off = (compare_distance(p,vh->point(),vh->point(),
+      o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(1,0,1)))
+        == SMALLER ? min_off : Offset(1,0,1) );
+    min_off = (compare_distance(p,vh->point(),vh->point(),
+      o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(1,1,0)))
+        == SMALLER ? min_off : Offset(1,1,0) );
+    min_off = (compare_distance(p,vh->point(),vh->point(),
+      o,combine_offsets(mdo,min_off),combine_offsets(mdo,Offset(1,1,1)))
+        == SMALLER ? min_off : Offset(1,1,1) );
+    return combine_offsets(mdo,min_off);
+  }
+
+  Vertex_handle nearest_vertex_in_cell(const Cell_handle& c, const Weighted_point & p, const Offset & o) const {
+    CGAL_triangulation_precondition(number_of_vertices() != 0);
+    Vertex_handle nearest = c->vertex(0);
+    for (int i=1 ; i<4 ; i++) {
+      nearest = (compare_distance(p,nearest->point(),c->vertex(i)->point(),
+        o,get_offset(c,c->index(nearest)),get_offset(c,i)) == SMALLER) ?
+        nearest : c->vertex(i);
+    }
+    return nearest;
+  }
+
+  Comparison_result compare_distance(const Weighted_point &p, const Weighted_point &q,
+      const Weighted_point &r) const {
+      return geom_traits().compare_power_distance_3_object()(p, q, r);
+  }
+  Comparison_result compare_distance(const Weighted_point& p, const Weighted_point& q,
+      const Weighted_point& r, const Offset &o_p, const Offset &o_q,
+      const Offset &o_r) const {
+    return geom_traits().compare_power_distance_3_object()(p, q, r, o_p, o_q, o_r);
+  }
+
   Bounded_side _side_of_power_sphere(const Cell_handle& c, const Weighted_point& p,
       const Offset & offset = Offset(), bool perturb = false) const;
 
