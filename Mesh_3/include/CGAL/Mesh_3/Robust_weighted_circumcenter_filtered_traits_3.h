@@ -284,6 +284,8 @@ public:
   typedef typename Rt::Weighted_point_3               Weighted_point_3;
   typedef typename Rt::FT                             FT;
   
+  typedef FT result_type;
+
   FT operator() ( const Weighted_point_3& p,
                   const Weighted_point_3& q,
                   const Weighted_point_3& r,

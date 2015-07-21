@@ -171,8 +171,8 @@ protected:
 
     typename Gt::Compute_squared_distance_3 distance =
         Gt().compute_squared_distance_3_object();
-    typename Gt::Construct_circumcenter_3 circumcenter =
-        Gt().construct_circumcenter_3_object();
+    typename Gt::Construct_weighted_circumcenter_3 circumcenter =
+        Gt().construct_weighted_circumcenter_3_object();
 
     const Point& p1 = tr.point(f.first, (f.second+1)&3);
     const Point& p2 = tr.point(f.first, (f.second+2)&3);

@@ -27,8 +27,9 @@
 #include <CGAL/Mesh_3/Robust_weighted_circumcenter_filtered_traits_3.h>
 
 // periodic issues
-#include <CGAL/Periodic_3_triangulation_traits_3.h>
+#include <CGAL/Periodic_3_regular_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
+#include <CGAL/Periodic_3_regular_triangulation_3.h>
 
 // vertex and cell bases
 #include <CGAL/Mesh_vertex_base_3.h>
@@ -48,7 +49,7 @@ namespace CGAL {
 
 template<class Gt, class Tds>
 class Periodic_3_Delaunay_triangulation_3_Mesher_3 :
-  public Periodic_3_Delaunay_triangulation_3<Gt, Tds> {
+  public Periodic_3_regular_triangulation_3<Gt, Tds> {
 public:
 
   typedef Sequential_tag   Concurrency_tag;
@@ -63,7 +64,7 @@ public:
   {
   }
 
-  typedef Periodic_3_Delaunay_triangulation_3<Gt, Tds>  Base;
+  typedef Periodic_3_regular_triangulation_3<Gt, Tds>  Base;
   typedef typename Base::Base Base_Base;
 
   typedef Gt                     Geometric_traits;
@@ -80,14 +81,14 @@ public:
   typedef typename Base::Edge             Edge;
 
   typedef typename Base::Point            Point;
+  typedef typename Base::Bare_point       Bare_point;
+  typedef typename Base::Weighted_point   Weighted_point;
   typedef typename Base::Periodic_point   Periodic_point;
   
   //typedef typename Gt::Bare_point         Bare_point;
   //typedef typename Gt::Weighted_point_3   Weighted_point;
   typedef typename Base::Locate_type Locate_type;
     
-  typedef Point Bare_point;
-
 
   typedef typename Base::Segment          Segment;
   typedef typename Base::Periodic_segment Periodic_segment;
@@ -109,7 +110,7 @@ public:
   using Base::set_offsets;
   using Base::point;
   using Base::periodic_tetrahedron;
-  using Base::nearest_vertex;
+//  using Base::nearest_vertex;
 
   Periodic_3_Delaunay_triangulation_3_Mesher_3(
     const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
@@ -148,9 +149,9 @@ public:
   Point dual(Cell_handle c) const {
     // it returns the canonical point
     //return point(periodic_circumcenter(c));
-    
+
     // it returns the point with respect to the canonical cell c
-    return this->geom_traits().construct_circumcenter_3_object()(
+    return this->geom_traits().construct_weighted_circumcenter_3_object()(
                                                     c->vertex(0)->point(), c->vertex(1)->point(),
                                                     c->vertex(2)->point(), c->vertex(3)->point(),
                                                     get_offset(c,0), get_offset(c,1),
@@ -355,12 +356,12 @@ public:
   Bounded_side side_of_power_sphere(const Cell_handle& c, const Point& p, bool perturb = false) const
   {
     Point point = this->canonicalize_point(p);
-    return Base::side_of_sphere(c, point, Offset(), perturb);
+    return Bounded_side();//Base::side_of_power_sphere(c, point, Offset(), perturb);
   }
     
   Vertex_handle nearest_power_vertex(const Bare_point& p, Cell_handle start) const
   {
-    return nearest_vertex(p, start);
+    return Vertex_handle();//nearest_vertex(p, start);
     
     // not yet implemented
     assert(false);
@@ -414,32 +415,67 @@ namespace details {
   private:
     //TODO: avoid this trick
     class K2 : public K {};
-    typedef Periodic_3_triangulation_traits_3<K2> K3;
+    typedef Robust_weighted_circumcenter_filtered_traits_3<K2> K3;
+    typedef Periodic_3_regular_triangulation_traits_3<K3> K4;
     //typedef Robust_weighted_circumcenter_filtered_traits_3<K3> Geom_traits;
-    typedef Robust_weighted_circumcenter_filtered_traits_3<K3> K4;
     class K5 : public K4
     {
     public:
-      typedef typename K4::Point Point;
-      typedef typename K4::Weighted_point_3 Weighted_point;
-      
-      class Compare_power_distance_3
+      typedef K5 Self;
+      typedef Regular_traits_with_offsets_adaptor<Self, typename K3::In_smallest_orthogonal_sphere_3> In_smallest_orthogonal_sphere_3;
+      typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Side_of_bounded_orthogonal_sphere_3> Side_of_bounded_orthogonal_sphere_3;
+      typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Does_simplex_intersect_dual_support_3> Does_simplex_intersect_dual_support_3;
+      typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Construct_weighted_circumcenter_3> Construct_weighted_circumcenter_3;
+      typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Compute_squared_radius_smallest_orthogonal_sphere_3> Compute_squared_radius_smallest_orthogonal_sphere_3;
+      typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Compute_power_product_3> Compute_power_product_3;
+      typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Compute_critical_squared_radius_3> Compute_critical_squared_radius_3;
+      typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Compare_weighted_squared_radius_3> Compare_weighted_squared_radius_3;
+//      typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Construct_circumcenter_3> Construct_circumcenter_3;
+
+//      Construct_circumcenter_3 construct_circumcenter_3_object () const
+//      {
+//        return Construct_circumcenter_3(&_domain);
+//      }
+
+      In_smallest_orthogonal_sphere_3 in_smallest_orthogonal_sphere_3_object () const
       {
-      public:
-        // This function is written for the test "is_facet_encroached".
-        // p is a surface center, q is a point of the facet, r is the Voronoi vertex of the cell
-        Comparison_result operator()(Point p, Weighted_point q, Weighted_point r) {
-          // dt required in order to have access to the original domain (cuboid).
-          // e.g. dt.point(Point, Offset)
-          std::cout << "compare power distance" << std::endl;
-          
-          assert(false);
-          return Comparison_result();
-        }
-      };
-      
-      Compare_power_distance_3 compare_power_distance_3_object() const
-      { return Compare_power_distance_3();}
+        return In_smallest_orthogonal_sphere_3(&this->_domain);
+      }
+
+      Side_of_bounded_orthogonal_sphere_3 side_of_bounded_orthogonal_sphere_3_object () const
+      {
+        return Side_of_bounded_orthogonal_sphere_3(&this->_domain);
+      }
+
+      Does_simplex_intersect_dual_support_3 does_simplex_intersect_dual_support_3_object () const
+      {
+        return Does_simplex_intersect_dual_support_3(&this->_domain);
+      }
+
+      Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3_object () const
+      {
+        return Construct_weighted_circumcenter_3(&this->_domain);
+      }
+
+      Compute_power_product_3 compute_power_product_3_object () const
+      {
+        return Compute_power_product_3(&this->_domain);
+      }
+
+      Compute_squared_radius_smallest_orthogonal_sphere_3 compute_squared_radius_smallest_orthogonal_sphere_3_object () const
+      {
+        return Compute_squared_radius_smallest_orthogonal_sphere_3(&this->_domain);
+      }
+
+      Compute_critical_squared_radius_3 compute_critical_squared_radius_3_object () const
+      {
+        return Compute_critical_squared_radius_3(&this->_domain);
+      }
+
+      Compare_weighted_squared_radius_3 compare_weighted_squared_radius_3_object () const
+      {
+        return Compare_weighted_squared_radius_3(&this->_domain);
+      }
     };
     typedef K5 Geom_traits;
     
