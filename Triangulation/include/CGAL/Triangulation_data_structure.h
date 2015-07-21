@@ -611,7 +611,7 @@ public:
         return incident_faces(v, dim, out, cmp, true);
     }
     template< typename OutputIterator, typename Comparator = std::less<Vertex_const_handle> >
-    OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator, Comparator = Comparator(), bool = false);
+    OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator, Comparator = Comparator(), bool = false) const;
 #else
     template< typename OutputIterator, typename Comparator >
     OutputIterator incident_upper_faces(Vertex_const_handle v, const int dim, OutputIterator out, Comparator cmp = Comparator())
