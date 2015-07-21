@@ -1035,7 +1035,7 @@ add_face_to_border(typename boost::graph_traits<Graph>::halfedge_descriptor h1,
  * </UL>
  * \returns vertex `vkept` (which can be either `v0` or `v1`).
  * \pre g must be a triangulated graph
- * \pre `satisfies_link_condition(v0v1,g) == true`.
+ * \pre `does_satisfy_link_condition(v0v1,g) == true`.
  */
 template<typename Graph>
 typename boost::graph_traits<Graph>::vertex_descriptor
@@ -1349,7 +1349,7 @@ flip_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h,
  */
   template<typename Graph>
 bool
-  satisfies_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
+  does_satisfy_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
                            Graph& g)
 {
     typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
@@ -1454,7 +1454,15 @@ bool
   return true ;
 }
 
-
+#ifndef CGAL_NO_DEPRECATED_CODE
+template<typename Graph>
+bool
+  satisfies_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
+                           Graph& g)
+{
+  return does_satisfy_link_condition(e, g);
+}
+#endif
 /// @}
 
 } // CGAL

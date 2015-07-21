@@ -310,7 +310,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 
       halfedge_descriptor h = halfedge(ed, tmesh);
 
-      if (CGAL::Euler::satisfies_link_condition(ed,tmesh))
+      if (CGAL::Euler::does_satisfy_link_condition(ed,tmesh))
       {
         // remove edges that could also be set for removal
         if ( face(h, tmesh)!=GT::null_face() )
@@ -553,7 +553,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
           h=opposite(h, tmesh);
           ed=edge(h, tmesh);
 
-        } while(!CGAL::Euler::satisfies_link_condition(ed,tmesh));
+        } while(!CGAL::Euler::does_satisfy_link_condition(ed,tmesh));
 
         null_edges_to_remove.insert( ed );
         #endif
