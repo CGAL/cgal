@@ -22,9 +22,9 @@ struct Is_border {
     : g(g)
   {}
 
- template <typename Edge>
-  bool operator()(const Edge& e) const {
-   return is_border(e,g);
+ template <typename Descriptor>
+  bool operator()(const Descriptor& d) const {
+   return is_border(d,g);
   }
 };
 
@@ -115,10 +115,10 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionDetectBorders_trigger
         new_item->polylines.back().push_back( it->vertex()->point() );
       }
 #else
-      typedef boost::filtered_graph<Polyhedron,Is_border<Polyhedron> > BorderGraph;
+      typedef boost::filtered_graph<Polyhedron,Is_border<Polyhedron>, Is_border<Polyhedron> > BorderGraph;
       
       Is_border<Polyhedron> ib(*pMesh);
-      BorderGraph bg(*pMesh,ib);
+      BorderGraph bg(*pMesh,ib,ib);
       Polyline_visitor polyline_visitor(new_item); 
       CGAL::split_graph_into_polylines( bg,
                                         polyline_visitor,
