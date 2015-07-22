@@ -332,7 +332,7 @@ public:
     InputIterator beyond, ///< past-the-end iterator over the input points.
     NormalPMap normal_pmap, ///< property map: `value_type of InputIterator` -> `Vector` (the *oriented* normal of an input point).
     typename boost::enable_if<
-      boost::is_convertible<typename InputIterator::value_type, Point>
+      boost::is_convertible<typename std::iterator_traits<InputIterator>::value_type, Point>
     >::type* = 0
   )
   : m_tr(new Triangulation), m_Bary(new std::vector<boost::array<double,9> > )
