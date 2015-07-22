@@ -363,14 +363,14 @@ void Viewer::compute_elements()
             vit < m_pScene->m_vhArray.end(); ++vit) {
             if( m_curMode == SELECT && (*vit)->isSeled() )  continue;
             if( (*vit) == m_nearestNb ) continue;
-            drawVertex( (*vit)->point(), m_colorVertex, m_fSizeVertex, pos_points );
+            drawVertex( (*vit)->point(), pos_points );
         }//end-for-points
     }//end-if-points
     //Draw Delaunay Edges
     for(edges_iterator eit = m_pScene->m_dt.finite_edges_begin();
         eit != m_pScene->m_dt.finite_edges_end(); ++eit) {
         Segment_3 seg = m_pScene->m_dt.segment(*eit);
-        drawEdge( seg.vertex(0), seg.vertex(1), m_colorDEdge, m_fSizeDEdge, pos_delaunay );
+        drawEdge( seg.vertex(0), seg.vertex(1), pos_delaunay );
 
         Vector_3 v = seg.vertex(1) - seg.vertex(0);
         float length = sqrt( v.squared_length() );
@@ -401,7 +401,7 @@ void Viewer::compute_elements()
         fit != m_pScene->m_dt.finite_facets_end(); ++fit) {
         Object_3 o = m_pScene->m_dt.dual(*fit);
         if (const Segment_3 *s = CGAL::object_cast<Segment_3>(&o)) {
-            drawEdge( s->vertex(0), s->vertex(1), m_colorVEdge, m_fSizeVEdge, pos_voronoi );
+            drawEdge( s->vertex(0), s->vertex(1), pos_voronoi );
 
             Vector_3 v = s->vertex(1) - s->vertex(0);
             float length = sqrt( v.squared_length() );
@@ -429,7 +429,7 @@ void Viewer::compute_elements()
         } else if (const Ray_3 *r = CGAL::object_cast<Ray_3>(&o)) {
             drawEdge( r->point(0),  // the source of the ray
                       r->point(1),  // another point on the ray, different from the source
-                      m_colorVEdge, m_fSizeVEdge, pos_voronoi );
+                      pos_voronoi );
             Vector_3 v = r->point(1) - r->point(0);
             float length = sqrt( v.squared_length() );
             // normalize
@@ -458,36 +458,36 @@ void Viewer::compute_elements()
     // Draw facets
     for(facets_iterator fit = m_pScene->m_dt.finite_facets_begin();
         fit != m_pScene->m_dt.finite_facets_end(); ++fit) {
-        drawFacet( m_pScene->m_dt.triangle(*fit), m_colorFacet, pos_facets);
+        drawFacet( m_pScene->m_dt.triangle(*fit), pos_facets);
     }//end-for-facets
     // Draw the newly inserted point
-    drawVertex( m_newPt, ::Qt::red, m_fSizeVertex, pos_newPoint);
+    drawVertex( m_newPt, pos_newPoint);
     // Draw conflict region
     for(QList<Facet>::iterator fit = m_boundaryFacets.begin();
         fit < m_boundaryFacets.end(); ++fit) {
         if( m_pScene->m_dt.is_infinite(*fit) )  continue;
-        drawFacet( m_pScene->m_dt.triangle(*fit), QColor(215, 80, 0, 96) , pos_newFacet); //semi-transparent purple
+        drawFacet( m_pScene->m_dt.triangle(*fit), pos_newFacet); //semi-transparent purple
     }//end-for-facets
     // Highlight the selected vertices
     for(QList<int>::iterator vit=m_vidSeled.begin(); vit<m_vidSeled.end(); ++vit) {
-        drawVertex( m_pScene->m_vhArray.at(*vit)->point(), ::Qt::red, m_fSizeVertex, pos_selectedVertex );
+        drawVertex( m_pScene->m_vhArray.at(*vit)->point(), pos_selectedVertex );
     }//end-for-seledpts
     if( m_isMoving ) {
         // Highlight the moving point
-        drawVertex( m_pScene->m_vhArray.at( m_vidMoving )->point(), ::Qt::red, m_fSizeVertex, pos_movingPoint );
+        drawVertex( m_pScene->m_vhArray.at( m_vidMoving )->point(), pos_movingPoint );
     }//end-if-v
     // Draw the nearest neighbor
     if( m_nearestNb != NULL ) {
-        drawVertex( m_queryPt, ::Qt::red, m_fSizeVertex, pos_queryPoint);
-        drawVertex( m_nearestNb->point(), ::Qt::red, m_fSizeVertex, pos_nearest_neighbor);
+        drawVertex( m_queryPt, pos_queryPoint);
+        drawVertex( m_nearestNb->point(), pos_nearest_neighbor);
     }
     if( m_hasEmptyS ) {
         // Draw the query point
-        drawVertex( m_queryPt, ::Qt::red, m_fSizeVertex, pos_queryPoint );
+        drawVertex( m_queryPt, pos_queryPoint );
         // Draw the cell containing that point
         for(int i=0; i<4; ++i) {
             if( m_pScene->m_dt.is_infinite(m_cellContain, i) )  continue;
-            drawFacet( m_pScene->m_dt.triangle( m_cellContain, i ), m_colorFacet, pos_emptyFacet );
+            drawFacet( m_pScene->m_dt.triangle( m_cellContain, i ), pos_emptyFacet );
         }//end-for-facets
         // Draw the sphere
         pos_emptySphere->push_back(m_centerPt.x());
@@ -503,32 +503,32 @@ void Viewer::compute_elements()
         // draw the rest to-be-inserted vertices
         for(QList<Point_3>::iterator pit=m_incrementalPts.begin();
             pit < m_incrementalPts.end(); ++pit) {
-            drawVertex( (*pit), ::Qt::gray, m_fSizeVertex, incremental_points);
+            drawVertex( (*pit), incremental_points);
         }
 
         switch( m_curStep ) {
         case NEWPT:
 
             // Highlight the next-to-insert point
-            drawVertex( m_curIncPt, ::Qt::red, m_fSizeVertex, incremental_next_point );
+            drawVertex( m_curIncPt, incremental_next_point );
             break;
         case CELL:  // show the tetrahedron that contains the point
             // Highlight the next-to-insert vertex
-            drawVertex( m_curIncPt, ::Qt::red, m_fSizeVertex, incremental_next_point );
+            drawVertex( m_curIncPt, incremental_next_point );
             // Draw the cell containing that point
             for(int i=0; i<4; ++i) {
                 if( m_pScene->m_dt.is_infinite(m_cellContain, i) )  continue;
-                drawFacet( m_pScene->m_dt.triangle( m_cellContain, i ), m_colorFacet, incremental_facet );
+                drawFacet( m_pScene->m_dt.triangle( m_cellContain, i ), incremental_facet );
             }//end-for-facets
             break;
         case CONFLICT:  // show the conflict region
             // Highlight the next-to-insert vertex
-            drawVertex( m_curIncPt, ::Qt::red, m_fSizeVertex, incremental_next_point );
+            drawVertex( m_curIncPt, incremental_next_point );
             // Draw conflict region
             for(QList<Facet>::iterator fit = m_boundaryFacets.begin();
                 fit < m_boundaryFacets.end(); ++fit) {
                 if( m_pScene->m_dt.is_infinite(*fit) )  continue;
-                drawFacet( m_pScene->m_dt.triangle(*fit), QColor(215, 80, 0, 96), incremental_conflict ); //semi-transparent purple
+                drawFacet( m_pScene->m_dt.triangle(*fit), incremental_conflict ); //semi-transparent purple
             }//end-for-facets
             break;
         default:
@@ -1559,8 +1559,9 @@ void Viewer::draw()
         drawText( width()-200, 40, tr("Shift+Wheel: Resize trackball"), fontPrompt );
 
     }
-    if(m_selMode != NORMAL && m_showTrackball)
+    if(m_curMode != NORMAL && m_showTrackball)
     {
+
         rendering_program_spheres.bind();
         vao[11].bind();
         rendering_program_spheres.setUniformValue(colorLocation[1], m_colorTrackball);
@@ -1578,61 +1579,9 @@ void Viewer::draw()
         rendering_program_spheres.release();
     }
 
-
-
-    /*
-
-  // Draw all points during incremental mode
-  if( !m_incrementalPts.isEmpty() ) {
-    // draw the rest to-be-inserted vertices
-    for(QList<Point_3>::iterator pit=m_incrementalPts.begin();
-        pit < m_incrementalPts.end(); ++pit) {
-      drawVertex( (*pit), ::Qt::gray, m_fSizeVertex );
-    }
-
-    switch( m_curStep ) {
-    case NEWPT:
-      // Show prompt messages
-      qglColor( ::Qt::black );
-      drawText( 10, 20, tr("Highlight the next-to-insert point"), fontPrompt );
-      // Highlight the next-to-insert point
-      drawVertex( m_curIncPt, ::Qt::red, m_fSizeVertex );
-      break;
-    case CELL:  // show the tetrahedron that contains the point
-      // Show prompt messages
-      qglColor( ::Qt::black );
-      drawText( 10, 20, tr("Show the tetrahedron containing the point"), fontPrompt );
-      drawText( 10, 40, tr("(Only finite facets are drawn)"), fontPrompt );
-      // Highlight the next-to-insert vertex
-      drawVertex( m_curIncPt, ::Qt::red, m_fSizeVertex );
-      // Draw the cell containing that point
-      for(int i=0; i<4; ++i) {
-        if( m_pScene->m_dt.is_infinite(m_cellContain, i) )  continue;
-        drawFacet( m_pScene->m_dt.triangle( m_cellContain, i ), m_colorFacet );
-      }//end-for-facets
-      break;
-    case CONFLICT:  // show the conflict region
-      // Show prompt messages
-      qglColor( ::Qt::black );
-      drawText( 10, 20, tr("Show the conflict region"), fontPrompt );
-      // Highlight the next-to-insert vertex
-      drawVertex( m_curIncPt, ::Qt::red, m_fSizeVertex );
-      // Draw conflict region
-      for(QList<Facet>::iterator fit = m_boundaryFacets.begin();
-          fit < m_boundaryFacets.end(); ++fit) {
-        if( m_pScene->m_dt.is_infinite(*fit) )  continue;
-        drawFacet( m_pScene->m_dt.triangle(*fit), QColor(215, 80, 0, 96) ); //semi-transparent purple
-      }//end-for-facets
-      break;
-    default:
-      break;
-    }//end-of=switch
-  }//end-if-incpts
-
-*/
 }
 
-void Viewer::drawVertex(const Point_3& p, const QColor& clr, float r, std::vector<float> *vertices)
+void Viewer::drawVertex(const Point_3& p, std::vector<float> *vertices)
 {
 
     vertices->push_back(p.x()); vertices->push_back(p.y()); vertices->push_back(p.z());
@@ -1640,13 +1589,13 @@ void Viewer::drawVertex(const Point_3& p, const QColor& clr, float r, std::vecto
 
 }
 
-void Viewer::drawEdge(const Point_3& from, const Point_3& to, const QColor& clr, float r, std::vector<float> *vertices)
+void Viewer::drawEdge(const Point_3& from, const Point_3& to, std::vector<float> *vertices)
 {
     vertices->push_back( from.x()); vertices->push_back(from.y()); vertices->push_back(from.z());
     vertices->push_back( to.x()); vertices->push_back(to.y()); vertices->push_back(to.z());
 }
 
-void Viewer::drawFacet(const Triangle_3& t, const QColor&/*clr*/, std::vector<float> *vertices)
+void Viewer::drawFacet(const Triangle_3& t, std::vector<float> *vertices)
 {
     Point_3 p0 = t.vertex(0);
     Point_3 p1 = t.vertex(1);
@@ -2725,7 +2674,6 @@ void Viewer::draw_cylinder(float R, int prec, std::vector<float> *vertices, std:
 
 void Viewer::draw_sphere(float R, int prec, std::vector<float> *vertices, std::vector<float> *normals)
 {
-
     vertices->resize(0);
     normals->resize(0);
     int rings=180/prec, sectors=360/prec;
