@@ -642,19 +642,17 @@ void
 C3t3_rib_exporter_plugin::
 write_turn_background_light(bool turn_on, std::ofstream& out)
 {
-  switch (turn_on)
+  if (!turn_on)
   {
-    case false:
-      out << "Illuminate 1 1" << std::endl;
-      if ( ! parameters_.is_preview ) { out << "Illuminate 2 1" << std::endl; }
-      out << "Illuminate 99 0" << std::endl;
-      break;
-      
-    case true:
-      out << "Illuminate 1 0" << std::endl;
-      if ( ! parameters_.is_preview ) { out << "Illuminate 2 0" << std::endl; }
-      out << "Illuminate 99 1" << std::endl;
-      break;
+    out << "Illuminate 1 1" << std::endl;
+    if ( ! parameters_.is_preview ) { out << "Illuminate 2 1" << std::endl; }
+    out << "Illuminate 99 0" << std::endl;
+  }
+  else
+  {
+    out << "Illuminate 1 0" << std::endl;
+    if ( ! parameters_.is_preview ) { out << "Illuminate 2 0" << std::endl; }
+    out << "Illuminate 99 1" << std::endl;
   }
 }
 
