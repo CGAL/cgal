@@ -30,6 +30,8 @@
 #include <CGAL/Eigen_svd.h>
 #include <Eigen/LU>
 #include <Eigen/Core>
+#include <Eigen/Dense>
+#include <Eigen/Eigenvalues> 
 #else
 #ifdef CGAL_LAPACK_ENABLED
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
@@ -367,24 +369,51 @@ compute_PCA(InputIterator begin, InputIterator end)
   // 0
   // 1 2
   // 3 4 5
-  FT covariance[6] = {xx,xy,yy,xz,yz,zz};
-  FT eigen_values[3];
-  FT eigen_vectors[9];
+  //FT covariance[6] = {xx,xy,yy,xz,yz,zz};
+  //FT eigen_values[3];
+  //FT eigen_vectors[9];
+  
+  Eigen::Matrix3d A;
+  A(0,0) = xx;
+  A(1,0) = xy;
+  A(2,0) = yy;
+  A(1,1) = xz;
+  A(2,1) = yz;
+  A(2,2) = zz;
 
+  A(0,1) = xy;
+  A(0,2) = yy;
+  A(1,2) = yz;
+
+  typedef typename Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d>::RealVectorType V;
+  typedef typename Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d>::MatrixType M;
+  Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigensolver(A);
+  V v = eigensolver.eigenvalues();
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in descending order, 
   // eigen vectors are sorted in accordance.
-  CGAL::internal::eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
+  //CGAL::internal::eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
+  /*
   //store in m_pca_basis
   for (int i=0; i<3; i++)
     {
       m_pca_basis[i].first =  eigen_values[i];
     }
-  Vector_3 v1(eigen_vectors[0],eigen_vectors[1],eigen_vectors[2]);
+  */
+
+  m_pca_basis[0].first = v[2]; 
+  m_pca_basis[1].first = v[1]; 
+  m_pca_basis[2].first = v[0]; 
+
+  const M& m = eigensolver.eigenvectors();
+  // Vector_3 v1(eigen_vectors[0],eigen_vectors[1],eigen_vectors[2]);
+  Vector_3 v1(m(2,0), m(2,1), m(2,2));
   m_pca_basis[0].second = v1;
-  Vector_3 v2(eigen_vectors[3],eigen_vectors[4],eigen_vectors[5]);
+  //Vector_3 v2(eigen_vectors[3],eigen_vectors[4],eigen_vectors[5]);
+  Vector_3 v2(m(1,0), m(1,1), m(1,2));
   m_pca_basis[1].second = v2;
-  Vector_3 v3(eigen_vectors[6],eigen_vectors[7],eigen_vectors[8]);
+  //Vector_3 v3(eigen_vectors[6],eigen_vectors[7],eigen_vectors[8]);
+  Vector_3 v3(m(0,0), m(0,1), m(0,2));
   m_pca_basis[2].second = v3;
   switch_to_direct_orientation(m_pca_basis[0].second,
 			       m_pca_basis[1].second,
