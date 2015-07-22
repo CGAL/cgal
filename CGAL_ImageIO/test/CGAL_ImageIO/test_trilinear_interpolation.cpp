@@ -95,7 +95,7 @@ int main() {
 		image.trilinear_interpolation<Word, float, float>(d_x,
 								  d_y,
 								  d_z,
-								  0.f);
+								  Word(0));
 
 	      const float value3 = triLinInterp(image.image(),
 						d_x, 
