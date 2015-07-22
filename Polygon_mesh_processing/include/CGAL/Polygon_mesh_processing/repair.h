@@ -329,6 +329,20 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
         CGAL::Euler::collapse_edge(ed, tmesh);
       }
       else{
+        //handle the case when the edge is incident to a triangle hole
+        //we first fill the hole and try again
+        if ( is_border(ed, tmesh) )
+        {
+          halfedge_descriptor hd = halfedge(ed,tmesh);
+          if (!is_border(hd,tmesh)) hd=opposite(hd,tmesh);
+          if (is_triangle(hd, tmesh))
+          {
+            Euler::fill_hole(hd, tmesh);
+            null_edges_to_remove.insert(ed);
+            continue;
+          }
+        }
+
         //backup central point
         typename Traits::Point_3 pt = get(vpmap, source(ed, tmesh));
 

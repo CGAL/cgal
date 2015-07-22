@@ -32,6 +32,7 @@ int main()
   fix("data_degeneracies/degtri_on_border.off");
   fix("data_degeneracies/degtri_three.off");
   fix("data_degeneracies/degtri_single.off");
+  fix("data_degeneracies/trihole.off");
 
   return 0;
 }
