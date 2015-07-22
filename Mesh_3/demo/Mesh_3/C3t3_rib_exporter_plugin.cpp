@@ -714,7 +714,7 @@ write_facets(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
 
 void
 C3t3_rib_exporter_plugin::
-write_surface_cells(const C3t3& c3t3, const Plane& plane, std::ofstream& out)
+write_surface_cells(const C3t3& c3t3, const Plane& /* plane */, std::ofstream& out)
 {
   for ( C3t3::Cells_in_complex_iterator it_cell = c3t3.cells_in_complex_begin(),
        end = c3t3.cells_in_complex_end() ; it_cell != end ; ++it_cell )

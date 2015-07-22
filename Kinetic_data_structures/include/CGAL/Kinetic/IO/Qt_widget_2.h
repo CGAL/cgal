@@ -237,10 +237,10 @@ private:
   }
 
  
-  This operator=(const This &o) {
+  This operator=(const This &/* o */) {
     return *this;
   }
-  Qt_widget_2(const This &o){}
+  Qt_widget_2(const This &/* o */){}
 protected:
   std::auto_ptr<QApplication> app_;
   typename Graphical_base::Handle base_;
