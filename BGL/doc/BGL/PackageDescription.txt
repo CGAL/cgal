@@ -179,7 +179,7 @@ user might encounter.
 - `CGAL::Euler::add_vertex_and_face_to_border()` 
 - `CGAL::Euler::add_face_to_border()` 
 - `CGAL::Euler::collapse_edge()` 
-- `CGAL::Euler::satisfies_link_condition()` 
+- `CGAL::Euler::does_satisfy_link_condition()` 
 
 
 */

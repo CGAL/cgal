@@ -348,11 +348,11 @@ join_split_inverse()
 
 template <typename T> 
 void
-satisfies_link_condition()
+does_satisfy_link_condition()
 {
   Surface_fixture_7<T> f;
 
-  assert(CGAL::Euler::satisfies_link_condition(*edges(f.m).first,f.m));
+  assert(CGAL::Euler::does_satisfy_link_condition(*edges(f.m).first,f.m));
 }
 
 
@@ -374,7 +374,7 @@ test_Euler_operations()
   make_hole_test<Graph>();
   remove_center_vertex_test<Graph>();
   join_split_inverse<Graph>();
-  satisfies_link_condition<Graph>();
+  does_satisfy_link_condition<Graph>();
 }
 
 int main()

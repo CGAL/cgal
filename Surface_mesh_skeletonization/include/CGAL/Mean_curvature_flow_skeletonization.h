@@ -1377,7 +1377,7 @@ std::size_t Mean_curvature_flow_skeletonization<TriangleMesh, Traits_, VertexPoi
       // skip the edge is it became long enough
       if ( !edge_should_be_collapsed(ed) ) continue;
 
-      if ( !Euler::satisfies_link_condition(ed,m_tmesh) )
+      if ( !Euler::does_satisfy_link_condition(ed,m_tmesh) )
       {
         non_topologically_valid_collapses.insert(ed);
         continue;
