@@ -13,6 +13,7 @@
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include "Polyhedron_demo_detect_sharp_edges.h"
 
 #include <fstream>
 #include <boost/foreach.hpp>
@@ -20,6 +21,7 @@
 #include <boost/property_map/vector_property_map.hpp>
 
 #include <CGAL/boost/graph/selection.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -248,6 +250,18 @@ public:
   typedef boost::unordered_set<Facet_handle, CGAL::Handle_hash_function>      Selection_set_facet;
   typedef boost::unordered_set<edge_descriptor, CGAL::Handle_hash_function>    Selection_set_edge;
 
+  Polyhedron* polyhedron()
+  {
+    return this->poly_item->polyhedron();
+  }
+
+// drawing
+  void draw() const {
+    draw_selected_vertices();
+    draw_selected_facets();
+    draw_selected_edges();
+  }
+  void draw_edges() const { }
 
     using Scene_polyhedron_item_decorator::draw;
     virtual void draw(Viewer_interface*) const;
@@ -379,6 +393,7 @@ public:
     case Active_handle::VERTEX:
       select_all<Vertex_handle>(); break;
     case Active_handle::FACET:
+    case Active_handle::CONNECTED_COMPONENT:
       select_all<Facet_handle>(); break;
     case Active_handle::EDGE:
       selected_edges.insert(edges(*polyhedron()).first, edges(*polyhedron()).second);
@@ -401,6 +416,7 @@ public:
     case Active_handle::VERTEX:
       clear<Vertex_handle>(); break;
     case Active_handle::FACET:
+    case Active_handle::CONNECTED_COMPONENT:
       clear<Facet_handle>(); break;
     case Active_handle::EDGE:
       clear<edge_descriptor>(); break;
@@ -413,6 +429,12 @@ public:
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
     tr.container().clear();
     Q_EMIT itemChanged();
+  }
+
+  void clear_all(){
+    clear<Vertex_handle>();
+    clear<Facet_handle>();
+    clear<edge_descriptor>();
   }
 
   boost::optional<std::size_t> get_minimum_isolated_component() {
@@ -469,9 +491,10 @@ public:
           dilate_selection<Vertex_handle>(steps);
         break;
         case Active_handle::FACET:
+        case Active_handle::CONNECTED_COMPONENT:
           dilate_selection<Facet_handle>(steps);
         break;
-        default:
+        case Active_handle::EDGE:
           dilate_selection<edge_descriptor>(steps);
       }
     }
@@ -482,9 +505,10 @@ public:
           erode_selection<Vertex_handle>(-steps);
         break;
         case Active_handle::FACET:
+        case Active_handle::CONNECTED_COMPONENT:
           erode_selection<Facet_handle>(-steps);
         break;
-        default:
+        case Active_handle::EDGE:
           erode_selection<edge_descriptor>(-steps);
       }
     }
@@ -530,8 +554,8 @@ public:
   };
 
   template <class Handle>
-  void dilate_selection(unsigned int steps) {
-
+  void dilate_selection(unsigned int steps)
+  {
     typedef Selection_traits<Handle, Scene_polyhedron_selection_item> Tr;
     Tr tr(this);
 
@@ -659,6 +683,19 @@ public:
     return out->size_of_vertices() > 0;
   }
 
+  void select_sharp_edges(const double angle)
+  {
+    CGAL::detect_sharp_edges(polyhedron(), angle);
+
+    BOOST_FOREACH(edge_descriptor e, edges(*polyhedron()))
+    {
+      Polyhedron::Halfedge_handle h = halfedge(e, *polyhedron());
+      if (h->is_feature_edge())
+        selected_edges.insert(e);
+    }
+    changed_with_poly_item();
+  }
+
   void changed_with_poly_item() {
     // no need to update indices
     poly_item->changed();
@@ -717,22 +754,63 @@ protected:
     }
   }
 
-  template<class HandleType>
-  void has_been_selected(const std::set<HandleType>& selection)
+  template<typename HandleRange>
+  bool treat_selection(const HandleRange& selection)
   {
-    if(!visible()) { return; }
+    typedef typename HandleRange::value_type HandleType;
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
 
     bool any_change = false;
-    if(is_insert) {
+    if (is_insert) {
       BOOST_FOREACH(HandleType h, selection)
         any_change |= tr.container().insert(h).second;
     }
     else{
       BOOST_FOREACH(HandleType h, selection)
-        any_change |= (tr.container().erase(h)!=0);
+        any_change |= (tr.container().erase(h) != 0);
     }
-    if(any_change) { Q_EMIT itemChanged(); }
+    return any_change;
+  }
+
+  Facet_handle face(Facet_handle fh)
+  { return fh; }
+  Facet_handle face(Vertex_handle)
+  { return boost::graph_traits<Polyhedron>::null_face(); }
+  Facet_handle face(edge_descriptor)
+  { return boost::graph_traits<Polyhedron>::null_face(); }
+
+  template<class HandleType>
+  void has_been_selected(const std::set<HandleType>& selection)
+  {
+    if(!visible()) { return; }
+
+    bool any_change = false;
+
+    if (get_active_handle_type() == Active_handle::CONNECTED_COMPONENT)
+    {
+      Selection_traits<edge_descriptor,
+                       Scene_polyhedron_selection_item> tr(this);
+      tr.update_indices();
+
+      std::vector<bool> mark(tr.size(), false);
+      BOOST_FOREACH(edge_descriptor e, selected_edges)
+        mark[tr.id(e)] = true;
+
+      std::vector<Facet_handle> selected_cc;
+      CGAL::Polygon_mesh_processing::connected_component(
+        face(*selection.begin()),
+        *polyhedron(),
+        std::back_inserter(selected_cc),
+        CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
+          Is_selected_property_map<edge_descriptor>(mark)));
+
+      any_change = treat_selection(selected_cc);
+    }
+    else
+    {
+      any_change = treat_selection(selection);
+    }
+    if(any_change) { Q_EMIT changed_with_poly_item(); }
   }
 
 public:
@@ -740,7 +818,7 @@ public:
     selected_edges_pmap(std::vector<bool>& mark)
   {
     Selection_traits<edge_descriptor,
-      Scene_polyhedron_selection_item> tr(this);
+                     Scene_polyhedron_selection_item> tr(this);
     tr.update_indices();
 
     for (unsigned int i = 0; i < mark.size(); ++i)

@@ -636,10 +636,11 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     : Scene_item(10,4),
       is_Triangle(true),
       poly(new Polyhedron),
-      show_only_feature_edges_m(false),
-      facet_picking_m(false),
-      erase_next_picked_facet_m(false),
-      plugin_has_set_color_vector_m(false)
+    show_only_feature_edges_m(false),
+    show_feature_edges_m(false),
+    facet_picking_m(false),
+    erase_next_picked_facet_m(false),
+    plugin_has_set_color_vector_m(false)
 {
     cur_shading=FlatPlusEdges;
     is_selected = true;
@@ -813,12 +814,20 @@ QMenu* Scene_polyhedron_item::contextMenu()
         connect(actionShowOnlyFeatureEdges, SIGNAL(toggled(bool)),
                 this, SLOT(show_only_feature_edges(bool)));
 
-        QAction* actionPickFacets =
-                menu->addAction(tr("Facets picking"));
-        actionPickFacets->setCheckable(true);
-        actionPickFacets->setObjectName("actionPickFacets");
-        connect(actionPickFacets, SIGNAL(toggled(bool)),
-                this, SLOT(enable_facets_picking(bool)));
+    QAction* actionShowFeatureEdges =
+      menu->addAction(tr("Show feature edges"));
+    actionShowFeatureEdges->setCheckable(true);
+    actionShowFeatureEdges->setChecked(show_feature_edges_m);
+    actionShowFeatureEdges->setObjectName("actionShowFeatureEdges");
+    connect(actionShowFeatureEdges, SIGNAL(toggled(bool)),
+      this, SLOT(show_feature_edges(bool)));
+
+    QAction* actionPickFacets = 
+      menu->addAction(tr("Facets picking"));
+    actionPickFacets->setCheckable(true);
+    actionPickFacets->setObjectName("actionPickFacets");
+    connect(actionPickFacets, SIGNAL(toggled(bool)),
+            this, SLOT(enable_facets_picking(bool)));
 
         QAction* actionEraseNextFacet =
                 menu->addAction(tr("Erase next picked facet"));
@@ -839,6 +848,12 @@ QMenu* Scene_polyhedron_item::contextMenu()
 void Scene_polyhedron_item::show_only_feature_edges(bool b)
 {
     show_only_feature_edges_m = b;
+  Q_EMIT itemChanged();
+}
+
+void Scene_polyhedron_item::show_feature_edges(bool b)
+{
+  show_feature_edges_m = b;
   Q_EMIT itemChanged();
 }
 
@@ -882,6 +897,20 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     {
         vaos[1]->bind();
     }
+  }
+
+  if (show_feature_edges_m)
+    ::glColor3d(1.0, 0.0, 0.0);
+  for(he = poly->edges_begin();
+    he != poly->edges_end();
+    he++)
+  {
+    if(!he->is_feature_edge()) continue;
+    const Point& a = he->vertex()->point();
+    const Point& b = he->opposite()->vertex()->point();
+    ::glVertex3d(a.x(),a.y(),a.z());
+    ::glVertex3d(b.x(),b.y(),b.z());
+  }
     else
     {
         vaos[3]->bind();
