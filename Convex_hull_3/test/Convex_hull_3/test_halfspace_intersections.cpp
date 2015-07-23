@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_3.h>
 #include <CGAL/Convex_hull_3/dual/halfspace_intersection_with_constructions_3.h>
 #include <CGAL/point_generators_3.h>
@@ -6,13 +7,12 @@
 #include <vector>
 #include <CGAL/IO/Polyhedron_iostream.h>
 
-
-typedef CGAL::Exact_predicates_inexact_constructions_kernel   K;
-typedef K::Plane_3                                            Plane;
-typedef K::Point_3                                            Point;
-typedef CGAL::Polyhedron_3<K>                                 Polyhedron_3;
-
-int main (void) {
+template <class K>
+void test()
+{
+  typedef typename K::Plane_3                                            Plane;
+  typedef typename K::Point_3                                            Point;
+  typedef CGAL::Polyhedron_3<K>                                 Polyhedron_3;
 
   // generates supporting planes of the facets of a cube
   std::vector<Plane> planes;
@@ -68,7 +68,11 @@ int main (void) {
   assert(point_inside_convex_polyhedron(P3, Point(0,0,0)));
   assert(point_inside_convex_polyhedron(P4, Point(0,0,0)));
   assert(point_inside_convex_polyhedron(P5, Point(0,0,0)));
-
-  return 0;
 }
 
+
+int main()
+{
+  test<CGAL::Exact_predicates_inexact_constructions_kernel>();
+  test<CGAL::Exact_predicates_exact_constructions_kernel>();
+}

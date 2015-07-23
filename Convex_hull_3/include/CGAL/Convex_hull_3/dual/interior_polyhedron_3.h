@@ -104,10 +104,10 @@ class Interior_polyhedron_3 {
             InputIterator it;
             for(it = begin; it != end; ++it, j++) {
                 const Plane& plane = *it;
-                const FT aj = CGAL::to_double(plane.a());
-                const FT bj = CGAL::to_double(plane.b());
-                const FT cj = CGAL::to_double(plane.c());
-                const FT dj = CGAL::to_double(plane.d());
+                const double aj = CGAL::to_double(plane.a());
+                const double bj = CGAL::to_double(plane.b());
+                const double cj = CGAL::to_double(plane.c());
+                const double dj = CGAL::to_double(plane.d());
 
                 assert(!isinf(aj));
                 assert(!isinf(bj));
