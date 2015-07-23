@@ -116,6 +116,9 @@ typedef TriangulationDataStructure::Face Face;
 /// non-mutable. They are convertible to the
 /// corresponding handles, thus the user can pass them directly as
 /// arguments to the functions.
+/// All handles are model of `LessThanComparable` and `Hashable`,
+/// that is they can be used as keys in containers such as `std::map`
+/// and `boost::unordered_map`.
 /// @{
 
 /*!
