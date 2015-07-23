@@ -1836,6 +1836,9 @@ void test_rebind(const PT& /*traits*/){
   typedef typename PT:: template Rebind<IC,2>::Other PT_IC_2;
   typedef typename PT:: template Rebind<IC,3>::Other PT_IC_3;
   
+  CGAL_USE_TYPE(PT_IC_1);
+  CGAL_USE_TYPE(PT_IC_2);
+  CGAL_USE_TYPE(PT_IC_3);
   CGAL_assertion_code(typedef typename  PT_IC_1::Polynomial_d Poly1;)
   CGAL_assertion_code(typedef typename  PT_IC_2::Polynomial_d Poly2;)
 
