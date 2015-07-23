@@ -1,9 +1,18 @@
 #include <CGAL/Epick_d.h>
 #include <CGAL/Delaunay_triangulation.h>
+#include <CGAL/Regular_triangulation.h>
+#include <CGAL/Regular_triangulation_euclidean_traits.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_2.h>
+#include <CGAL/Regular_triangulation_filtered_traits_2.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+#include <CGAL/Regular_triangulation_filtered_traits_3.h>
+
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Regular_triangulation_2.h>
+#include <CGAL/Regular_triangulation_3.h>
 
 #include <CGAL/point_generators_2.h>
 #include <CGAL/point_generators_3.h>
@@ -13,87 +22,215 @@
 #include <vector>
 #include <string>
 
+template <typename DT_>
+struct Stats_getter;
 
-template<typename DTd, typename DT_23, typename RPI_23>
-void test(int d, int N, std::string const& DTd_static_or_dyn)
+// T2 specialization
+template <typename K>
+struct Stats_getter<CGAL::Delaunay_triangulation_2<K> >
 {
-  unsigned int seed = static_cast<unsigned int>(time(NULL));
-  std::cerr << "Delaunay triangulation of " << N << " points in dim " << d;
+  typedef CGAL::Delaunay_triangulation_2<K> DT;
 
+  Stats_getter(DT const& dt) : m_dt(dt) {}
+
+  std::size_t number_of_vertices() { return m_dt.number_of_vertices(); }
+  std::size_t number_of_finite_cells() { return m_dt.number_of_faces(); }
+
+  DT m_dt;
+};
+
+// RT2 specialization
+template <typename K>
+struct Stats_getter<CGAL::Regular_triangulation_2<K> >
+{
+  typedef CGAL::Regular_triangulation_2<K> DT;
+
+  Stats_getter(DT const& dt) : m_dt(dt) {}
+
+  std::size_t number_of_vertices() { return m_dt.number_of_vertices(); }
+  std::size_t number_of_finite_cells() { return m_dt.number_of_faces(); }
+
+  DT m_dt;
+};
+
+// T3 specialization
+template <typename K>
+struct Stats_getter<CGAL::Delaunay_triangulation_3<K> >
+{
+  typedef CGAL::Delaunay_triangulation_3<K> DT;
+
+  Stats_getter(DT const& dt) : m_dt(dt) {}
+
+  std::size_t number_of_vertices() { return m_dt.number_of_vertices(); }
+  std::size_t number_of_finite_cells() { return m_dt.number_of_finite_cells(); }
+
+  DT m_dt;
+};
+
+// RT3 specialization
+template <typename K>
+struct Stats_getter<CGAL::Regular_triangulation_3<K> >
+{
+  typedef CGAL::Regular_triangulation_3<K> DT;
+
+  Stats_getter(DT const& dt) : m_dt(dt) {}
+
+  std::size_t number_of_vertices() { return m_dt.number_of_vertices(); }
+  std::size_t number_of_finite_cells() { return m_dt.number_of_finite_cells(); }
+
+  DT m_dt;
+};
+
+
+template<typename DT_d, typename DT_23, 
+         typename Pt_d_range, typename Pt_23_range>
+void test(
+  int d, int N, Pt_d_range const& points_d, Pt_23_range const& points_23,
+  std::string const& DTd_static_or_dyn)
+{
   // Td
   {
-    typedef typename DTd::Point Point;
-    typedef CGAL::Random_points_in_cube_d<Point> Random_points_iterator;
-
-    CGAL::default_random = CGAL::Random(seed);
-    std::vector<Point> points;
-    Random_points_iterator rand_it(d, 2.0);
-    CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
-
-    DTd dt(d);
+    DT_d dt(d);
     CGAL::Timer timer;
     timer.start();
-    dt.insert(points.begin(), points.end());
+    dt.insert(points_d.begin(), points_d.end());
 
     std::cerr << "  * Td: " << timer.time() << " s." << std::endl;
-    std::size_t nbfc = dt.number_of_finite_full_cells();
-    std::size_t nbc = dt.number_of_full_cells();
     std::cerr << "    " << dt.number_of_vertices() << " vertices, "
-      << nbfc << " finite simplices and "
-      << (nbc - nbfc) << " convex hull Facets."
+      << dt.number_of_finite_full_cells() << " finite cells."
       << std::endl;
   }
 
   // T2 or T3
   {
-    typedef typename DT_23::Point Point_23;
-    CGAL::default_random = CGAL::Random(seed); // Same seed
-    std::vector<Point_23> points;
-    RPI_23 rand_it(2.0);
-    CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
-    
     CGAL::Timer timer;
     timer.start();
 
     DT_23 dt;
-    dt.insert(points.begin(), points.end());
+    dt.insert(points_23.begin(), points_23.end());
 
     std::cerr << "  * T" << d << ": " << timer.time() << " s." << std::endl;
-    /*std::size_t nbfc = dt.number_of_finite_full_cells();
-    std::size_t nbc = dt.number_of_full_cells();
-    std::cerr << "    " << dt.number_of_vertices() << " vertices, "
-      << nbfc << " finite simplices and "
-      << (nbc - nbfc) << " convex hull Facets."
-      << std::endl;*/
+    Stats_getter<DT_23> sg(dt);
+    std::cerr << "    " << sg.number_of_vertices() << " vertices, "
+      << sg.number_of_finite_cells() << " finite cells."
+      << std::endl;
   }
-
 }
 
-template< int D >
+template< int D, typename Dim_tag >
 void go(const int N)
 {
   CGAL_assertion(D == 2 || D == 3);
 
-  // Td
-  //typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > Kd;
-  typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> Kd;
-  typedef CGAL::Delaunay_triangulation<Kd> DTd;
+  // Generate points (in a common "array" format)
+  std::vector<CGAL::cpp11::array<double, D> > coords;
+  coords.reserve(N);
+  for (int i = 0; i < N; ++i)
+  {
+    CGAL::cpp11::array<double, D> pt;
+    for (int j = 0; j < D; ++j)
+      pt[j] = CGAL::default_random.get_double(-1., 1.);
+    coords.push_back(pt);
+  }
+  // Generate weights
+  std::vector<double> weights;
+  weights.reserve(N);
+  for (int i = 0; i < N; ++i)
+    weights.push_back(CGAL::default_random.get_double(-10., 10.));
+
+  // DTd
+  typedef CGAL::Epick_d<Dim_tag> Kd;
+  typedef CGAL::Delaunay_triangulation<Kd> DT_d;
+  typedef typename DT_d::Point Point_d;
+
+  std::vector<Point_d> points_d;
+  points_d.reserve(N);
+  for (int i = 0; i < N; ++i)
+    points_d.push_back(Point_d(D, coords[i].begin(), coords[i].end()));
+  
+  // RTd
+  typedef CGAL::Regular_triangulation_euclidean_traits<Kd> Traits_d;
+  typedef CGAL::Regular_triangulation<Traits_d> RT_d;
+  typedef typename RT_d::Bare_point Bare_point_d;
+  typedef typename RT_d::Point WPoint_d;
+
+  std::vector<WPoint_d> wpoints_d;
+  wpoints_d.reserve(N);
+  for (int i = 0; i < N; ++i)
+  {
+    wpoints_d.push_back(WPoint_d(
+      Bare_point_d(D, coords[i].begin(), coords[i].end()),
+      weights[i]));
+  }
 
   // T2 or T3
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K23;
   if (D == 2)
   {
+    // Delaunay
     typedef CGAL::Delaunay_triangulation_2<K23> DT_2;
     typedef typename DT_2::Point Point;
-    typedef CGAL::Random_points_in_square_2<Point> RPI_2;
-    test<DTd, DT_2, RPI_2>(D, N, "static");
+
+    std::vector<Point> points;
+    points.reserve(N);
+    for (int i = 0; i < N; ++i)
+      points.push_back(Point(coords[i][0], coords[i][1]));
+
+    std::cerr << std::endl << "DELAUNAY - dim " << D << " - " 
+      << N << " points." << std::endl;
+    test<DT_d, DT_2>(D, N, points_d, points, "static");
+
+    // Regular
+    typedef CGAL::Regular_triangulation_filtered_traits_2<K23> Traits_2;
+    typedef CGAL::Regular_triangulation_2<Traits_2> RT_2;
+    typedef typename RT_2::Bare_point Bare_point;
+    typedef typename RT_2::Point WPoint;
+
+    std::vector<WPoint> wpoints;
+    wpoints.reserve(N);
+    for (int i = 0; i < N; ++i)
+    {
+      wpoints.push_back(WPoint(
+        Bare_point(coords[i][0], coords[i][1]),
+        weights[i]));
+    }
+
+    std::cerr << std::endl << "REGULAR - dim " << D << " - "
+      << N << " points." << std::endl;
+    test<RT_d, RT_2>(D, N, wpoints_d, wpoints, "static");
   }
   else if (D == 3)
   {
     typedef CGAL::Delaunay_triangulation_3<K23> DT_3;
     typedef typename DT_3::Point Point;
-    typedef CGAL::Random_points_in_cube_3<Point> RPI_3;
-    test<DTd, DT_3, RPI_3>(D, N, "static");
+
+    std::vector<Point> points;
+    points.reserve(N);
+    for (int i = 0; i < N; ++i)
+      points.push_back(Point(coords[i][0], coords[i][1], coords[i][2]));
+
+    std::cerr << std::endl << "DELAUNAY - dim " << D << " - "
+      << N << " points." << std::endl;
+    test<DT_d, DT_3>(D, N, points_d, points, "static");
+
+    // Regular
+    typedef CGAL::Regular_triangulation_filtered_traits_3<K23> Traits_3;
+    typedef CGAL::Regular_triangulation_3<Traits_3> RT_3;
+    typedef typename RT_3::Bare_point Bare_point;
+    typedef typename RT_3::Point WPoint;
+
+    std::vector<WPoint> wpoints;
+    wpoints.reserve(N);
+    for (int i = 0; i < N; ++i)
+    {
+      wpoints.push_back(WPoint(
+        Bare_point(coords[i][0], coords[i][1], coords[i][2]),
+        weights[i]));
+    }
+
+    std::cerr << std::endl << "REGULAR - dim " << D << " - "
+      << N << " points." << std::endl;
+    test<RT_d, RT_3>(D, N, wpoints_d, wpoints, "static");
   }
 }
 
@@ -106,8 +243,18 @@ int main(int argc, char **argv)
   int N = 100000;
 #endif
   if (argc > 1) N = atoi(argv[1]);
-  go<2>(N);
-  go<3>(N);
+
+  std::cerr << "-----------------------------------------" << std::endl;
+  std::cerr << "--             STATIC                  --" << std::endl;
+  std::cerr << "-----------------------------------------" << std::endl;
+  go<2, CGAL::Dimension_tag<2> >(N);
+  go<3, CGAL::Dimension_tag<3> >(N);
+
+  std::cerr << "-----------------------------------------" << std::endl;
+  std::cerr << "--             DYNAMIC                 --" << std::endl;
+  std::cerr << "-----------------------------------------" << std::endl;
+  go<2, CGAL::Dynamic_dimension_tag>(N);
+  go<3, CGAL::Dynamic_dimension_tag>(N);
 
   return 0;
 }
