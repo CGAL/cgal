@@ -19,8 +19,10 @@
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Timer.h>
 #include <CGAL/algorithm.h>
+
 #include <vector>
 #include <string>
+#include "console_color.h"
 
 template <typename DT_>
 struct Stats_getter;
@@ -95,7 +97,8 @@ void test(
     timer.start();
     dt.insert(points_d.begin(), points_d.end());
 
-    std::cerr << "  * Td: " << timer.time() << " s." << std::endl;
+    std::cerr << "  * Td: " << yellow << timer.time() << " s" 
+      << white << std::endl;
     std::cerr << "    " << dt.number_of_vertices() << " vertices, "
       << dt.number_of_finite_full_cells() << " finite cells."
       << std::endl;
@@ -109,7 +112,8 @@ void test(
     DT_23 dt;
     dt.insert(points_23.begin(), points_23.end());
 
-    std::cerr << "  * T" << d << ": " << timer.time() << " s." << std::endl;
+    std::cerr << "  * T" << d << ": " << yellow << timer.time() << " s"
+      << white << std::endl;
     Stats_getter<DT_23> sg(dt);
     std::cerr << "    " << sg.number_of_vertices() << " vertices, "
       << sg.number_of_finite_cells() << " finite cells."
@@ -249,12 +253,14 @@ int main(int argc, char **argv)
   std::cerr << "-----------------------------------------" << std::endl;
   go<2, CGAL::Dimension_tag<2> >(N);
   go<3, CGAL::Dimension_tag<3> >(N);
+  std::cerr << std::endl;
 
   std::cerr << "-----------------------------------------" << std::endl;
   std::cerr << "--             DYNAMIC                 --" << std::endl;
   std::cerr << "-----------------------------------------" << std::endl;
   go<2, CGAL::Dynamic_dimension_tag>(N);
   go<3, CGAL::Dynamic_dimension_tag>(N);
+  std::cerr << std::endl;
 
   return 0;
 }
