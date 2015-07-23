@@ -536,7 +536,7 @@ public:
     if ( assign(s, o) ) {
       return s;
     } else {
-      bool the_assign_statement_must_always_work(false);
+      CGAL_assertion_code( bool the_assign_statement_must_always_work(false); )
       CGAL_assertion( the_assign_statement_must_always_work );
     }
     return s;
