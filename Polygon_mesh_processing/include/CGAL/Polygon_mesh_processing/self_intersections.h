@@ -357,8 +357,6 @@ OutputIterator self_intersections(const FaceRange& face_range,
  *
  * @tparam TriangleMesh a model of `FaceListGraph` that has an internal property map
  *         for `CGAL::vertex_point_t`
- * @tparam OutputIterator a model of `OutputIterator` holding objects of type
- *   `std::pair<boost::graph_traits<TriangleMesh>::%face_descriptor, boost::graph_traits<TriangleMesh>::%face_descriptor>`
  * @tparam NamedParameters a sequence of \ref namedparameters
  *
  * @param tmesh the triangulated surface mesh to be tested
