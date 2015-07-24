@@ -71,6 +71,7 @@ namespace Polygon_mesh_processing {
 *
 *@todo we suppose `faces` describe only one patch. Handle several patches.
 *@todo document `number_of_iterations`
+*@todo add possibility to provide a functor that projects to a prescribed surface
 */
 template<typename PolygonMesh
        , typename FaceRange
