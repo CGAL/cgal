@@ -1230,7 +1230,6 @@ namespace internal {
       std::vector<std::pair<face_descriptor, face_descriptor> > facets;
       PMP::does_self_intersect(
         mesh_,
-        std::back_inserter(facets),
         PMP::parameters::vertex_point_map(vpmap_));
       CGAL_assertion(facets.empty());
       std::cout << "done." << std::endl;
