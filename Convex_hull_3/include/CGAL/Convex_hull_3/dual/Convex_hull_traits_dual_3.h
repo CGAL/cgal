@@ -189,7 +189,7 @@ namespace CGAL
                 {}
 
                 // Exact traits is based on the exact kernel.
-                typedef Convex_hull_traits_dual_3<typename R_::Exact_kernel_rt>
+                typedef Convex_hull_traits_dual_3<typename R_::Exact_kernel>
                     Exact_traits;
 
                 // Filtering traits is based on the filtering kernel.
@@ -197,7 +197,7 @@ namespace CGAL
                     Filtering_traits;
 
                 // Converters
-                typedef Cartesian_converter_dual<R_, typename R_::Exact_kernel_rt>
+                typedef Cartesian_converter_dual<R_, typename R_::Exact_kernel>
                     Converter_exact_dual;
                 typedef Cartesian_converter_dual<R_, typename R_::Approximate_kernel>
                     Converter_approx_dual;
