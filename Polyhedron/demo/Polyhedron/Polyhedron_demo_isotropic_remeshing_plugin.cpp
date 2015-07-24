@@ -19,6 +19,7 @@
 #include <QApplication>
 #include <QString>
 #include <QDialog>
+#include <QtPlugin>
 
 #include <vector>
 #include <algorithm>
@@ -33,6 +34,7 @@ class Polyhedron_demo_isotropic_remeshing_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface)
@@ -236,7 +238,7 @@ private:
 
 }; // end Polyhedron_demo_isotropic_remeshing_plugin
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_isotropic_remeshing_plugin,
-                 Polyhedron_demo_isotropic_remeshing_plugin)
+//Q_EXPORT_PLUGIN2(Polyhedron_demo_isotropic_remeshing_plugin,
+//                 Polyhedron_demo_isotropic_remeshing_plugin)
 
 #include "Polyhedron_demo_isotropic_remeshing_plugin.moc"

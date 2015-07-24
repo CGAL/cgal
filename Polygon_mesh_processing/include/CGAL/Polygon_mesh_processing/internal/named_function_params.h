@@ -131,10 +131,11 @@ namespace CGAL{
       return Params(n, *this);
     }
 
-    pmp_bgl_named_params<bool, protect_constraints_t, self>
-    protect_constraints(const bool& b) const
+    template<typename Boolean>
+    pmp_bgl_named_params<Boolean, protect_constraints_t, self>
+    protect_constraints(const Boolean b) const
     {
-      typedef pmp_bgl_named_params<bool, protect_constraints_t, self> Params;
+      typedef pmp_bgl_named_params<Boolean, protect_constraints_t, self> Params;
       return Params(b, *this);
     }
 
@@ -260,10 +261,11 @@ namespace parameters{
     return Params(n);
   }
 
-  pmp_bgl_named_params<bool, protect_constraints_t>
-  protect_constraints(const bool& b)
+  template <typename Boolean>
+  pmp_bgl_named_params<Boolean, protect_constraints_t>
+  protect_constraints(const Boolean b)
   {
-    typedef pmp_bgl_named_params<bool, protect_constraints_t> Params;
+    typedef pmp_bgl_named_params<Boolean, protect_constraints_t> Params;
     return Params(b);
   }
 

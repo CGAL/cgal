@@ -3,6 +3,7 @@
 #include <QAction>
 #include <QStringList>
 #include <QInputDialog>
+#include <QtPlugin>
 
 #include "Scene_polyhedron_item.h"
 #include "Scene_polygon_soup_item.h"
@@ -18,6 +19,7 @@ class Polyhedron_demo_detect_sharp_edges_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
@@ -114,6 +116,6 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
   QApplication::restoreOverrideCursor();
 }
 
-Q_EXPORT_PLUGIN2(Polyhedron_demo_detect_sharp_edges_plugin, Polyhedron_demo_detect_sharp_edges_plugin)
+//Q_EXPORT_PLUGIN2(Polyhedron_demo_detect_sharp_edges_plugin, Polyhedron_demo_detect_sharp_edges_plugin)
 
 #include "Polyhedron_demo_detect_sharp_edges_plugin.moc"

@@ -636,11 +636,11 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     : Scene_item(10,4),
       is_Triangle(true),
       poly(new Polyhedron),
-    show_only_feature_edges_m(false),
-    show_feature_edges_m(false),
-    facet_picking_m(false),
-    erase_next_picked_facet_m(false),
-    plugin_has_set_color_vector_m(false)
+      show_only_feature_edges_m(false),
+      show_feature_edges_m(false),
+      facet_picking_m(false),
+      erase_next_picked_facet_m(false),
+      plugin_has_set_color_vector_m(false)
 {
     cur_shading=FlatPlusEdges;
     is_selected = true;
@@ -653,6 +653,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
       is_Triangle(true),
       poly(p),
       show_only_feature_edges_m(false),
+      show_feature_edges_m(false),
       facet_picking_m(false),
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
@@ -668,6 +669,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
       is_Triangle(true),
       poly(new Polyhedron(p)),
       show_only_feature_edges_m(false),
+      show_feature_edges_m(false),
       facet_picking_m(false),
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
@@ -891,14 +893,25 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
+void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const
+{
+    typedef Kernel::Point_3           Point;
+    typedef Polyhedron::Edge_iterator Edge_iterator;
 
-    if(!is_selected)
-    {
-        vaos[1]->bind();
+    ::glBegin(GL_LINES);
+    Edge_iterator he;
+    if (!show_only_feature_edges_m) {
+      for (he = poly->edges_begin();
+        he != poly->edges_end();
+        he++)
+      {
+        if (he->is_feature_edge()) continue;
+        const Point& a = he->vertex()->point();
+        const Point& b = he->opposite()->vertex()->point();
+        ::glVertex3d(a.x(), a.y(), a.z());
+        ::glVertex3d(b.x(), b.y(), b.z());
+      }
     }
-  }
-
   if (show_feature_edges_m)
     ::glColor3d(1.0, 0.0, 0.0);
   for(he = poly->edges_begin();
@@ -911,7 +924,13 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     ::glVertex3d(a.x(),a.y(),a.z());
     ::glVertex3d(b.x(),b.y(),b.z());
   }
-    else
+  ::glEnd();
+
+  if (!is_selected)
+  {
+    vaos[1]->bind();
+  }
+  else
     {
         vaos[3]->bind();
     }

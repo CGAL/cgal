@@ -256,18 +256,11 @@ public:
   }
 
 // drawing
-  void draw() const {
-    draw_selected_vertices();
-    draw_selected_facets();
-    draw_selected_edges();
-  }
-  void draw_edges() const { }
-
-    using Scene_polyhedron_item_decorator::draw;
-    virtual void draw(Viewer_interface*) const;
-    virtual void draw_edges() const { }
-    virtual void draw_edges(Viewer_interface*) const;
-    virtual void draw_points(Viewer_interface*) const;
+  using Scene_polyhedron_item_decorator::draw;
+  virtual void draw(Viewer_interface*) const;
+  virtual void draw_edges() const { }
+  virtual void draw_edges(Viewer_interface*) const;
+  virtual void draw_points(Viewer_interface*) const;
 
   bool supportsRenderingMode(RenderingMode m) const { return (m==Flat); }
 
@@ -761,13 +754,13 @@ protected:
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
 
     bool any_change = false;
-    if (is_insert) {
+    if(is_insert) {
       BOOST_FOREACH(HandleType h, selection)
         any_change |= tr.container().insert(h).second;
     }
     else{
       BOOST_FOREACH(HandleType h, selection)
-        any_change |= (tr.container().erase(h) != 0);
+        any_change |= (tr.container().erase(h)!=0);
     }
     return any_change;
   }
@@ -818,7 +811,7 @@ public:
     selected_edges_pmap(std::vector<bool>& mark)
   {
     Selection_traits<edge_descriptor,
-                     Scene_polyhedron_selection_item> tr(this);
+      Scene_polyhedron_selection_item> tr(this);
     tr.update_indices();
 
     for (unsigned int i = 0; i < mark.size(); ++i)
