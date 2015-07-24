@@ -142,17 +142,17 @@ struct Intersect_facets
       // found shared vertex: 
       CGAL_assertion(target(h,m_tmesh) == target(v,m_tmesh));
       // geometric check if the opposite segments intersect the triangles
-      Triangle t1 = triangle_functor( m_vpmap[target(h,m_tmesh)],
-                                      m_vpmap[target(next(h,m_tmesh),m_tmesh)],
-                                      m_vpmap[target(next(next(h,m_tmesh),m_tmesh),m_tmesh)]);
-      Triangle t2 = triangle_functor( m_vpmap[target(v,m_tmesh)],
-                                      m_vpmap[target(next(v,m_tmesh),m_tmesh)],
-                                      m_vpmap[target(next(next(v,m_tmesh),m_tmesh),m_tmesh)]);
+      Triangle t1 = triangle_functor( get(m_vpmap,target(h,m_tmesh)),
+                                      get(m_vpmap, target(next(h,m_tmesh),m_tmesh)),
+                                      get(m_vpmap, target(next(next(h,m_tmesh),m_tmesh),m_tmesh)));
+      Triangle t2 = triangle_functor( get(m_vpmap, target(v,m_tmesh)),
+                                      get(m_vpmap, target(next(v,m_tmesh),m_tmesh)),
+                                      get(m_vpmap, target(next(next(v,m_tmesh),m_tmesh),m_tmesh)));
       
-      Segment s1 = segment_functor( m_vpmap[target(next(h,m_tmesh),m_tmesh)],
-                                    m_vpmap[target(next(next(h,m_tmesh),m_tmesh),m_tmesh)]);
-      Segment s2 = segment_functor( m_vpmap[target(next(v,m_tmesh),m_tmesh)],
-                                    m_vpmap[target(next(next(v,m_tmesh),m_tmesh),m_tmesh)]);
+      Segment s1 = segment_functor( get(m_vpmap, target(next(h,m_tmesh),m_tmesh)),
+                                    get(m_vpmap, target(next(next(h,m_tmesh),m_tmesh),m_tmesh)));
+      Segment s2 = segment_functor( get(m_vpmap, target(next(v,m_tmesh),m_tmesh)),
+                                    get(m_vpmap, target(next(next(v,m_tmesh),m_tmesh),m_tmesh)));
       
       if(do_intersect_3_functor(t1,s2)){
         *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
@@ -163,12 +163,12 @@ struct Intersect_facets
     }
     
     // check for geometric intersection
-    Triangle t1 = triangle_functor( m_vpmap[target(h,m_tmesh)],
-                                    m_vpmap[target(next(h,m_tmesh),m_tmesh)],
-                                    m_vpmap[target(next(next(h,m_tmesh),m_tmesh),m_tmesh)]);
-    Triangle t2 = triangle_functor( m_vpmap[target(g,m_tmesh)],
-                                    m_vpmap[target(next(g,m_tmesh),m_tmesh)],
-                                    m_vpmap[target(next(next(g,m_tmesh),m_tmesh),m_tmesh)]);
+    Triangle t1 = triangle_functor( get(m_vpmap, target(h,m_tmesh)),
+                                    get(m_vpmap, target(next(h,m_tmesh),m_tmesh)),
+                                    get(m_vpmap, target(next(next(h,m_tmesh),m_tmesh),m_tmesh)));
+    Triangle t2 = triangle_functor( get(m_vpmap, target(g,m_tmesh)),
+                                    get(m_vpmap, target(next(g,m_tmesh),m_tmesh)),
+                                    get(m_vpmap, target(next(next(g,m_tmesh),m_tmesh),m_tmesh)));
     if(do_intersect_3_functor(t1, t2)){
       *m_iterator_wrapper++ = std::make_pair(b->info(), c->info());
     }
@@ -312,9 +312,9 @@ self_intersections( const FaceRange& face_range,
 
   BOOST_FOREACH(face_descriptor f, face_range)
   {
-    boxes.push_back(Box( vpmap[target(halfedge(f,tmesh),tmesh)].bbox()
-      + vpmap[target(next(halfedge(f, tmesh), tmesh), tmesh)].bbox()
-      + vpmap[target(next(next(halfedge(f, tmesh), tmesh), tmesh), tmesh)].bbox(),
+    boxes.push_back(Box( get(vpmap, target(halfedge(f,tmesh),tmesh)).bbox()
+      + get(vpmap, target(next(halfedge(f, tmesh), tmesh), tmesh)).bbox()
+      + get(vpmap, target(next(next(halfedge(f, tmesh), tmesh), tmesh), tmesh)).bbox(),
     f));
   }
   // generate box pointers
