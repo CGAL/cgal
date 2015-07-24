@@ -1032,8 +1032,8 @@ namespace internal {
           vertex_descriptor vc = target(hf, mesh_);
           vertex_descriptor va = target(next(hf, mesh_), mesh_);
           vertex_descriptor vb = target(next(next(hf, mesh_), mesh_), mesh_);
-          Vector_3 ab(vpmap_[va], vpmap_[vb]);
-          Vector_3 ac(vpmap_[va], vpmap_[vc]);
+          Vector_3 ab(get(vpmap_,va), get(vpmap_,vb));
+          Vector_3 ac(get(vpmap_,va), get(vpmap_,vc));
           if (ab * ac < 0)
           {
             halfedge_descriptor hfo = opposite(hf, mesh_);
