@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>357</width>
-    <height>491</height>
+    <width>438</width>
+    <height>732</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -170,6 +170,35 @@
           <widget class="QPushButton" name="Select_isolated_components_button">
            <property name="text">
             <string>Select Isolated Components Below Threshold</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </widget>
+    </item>
+    <item>
+     <widget class="QGroupBox" name="remeshing_groupBox">
+      <property name="contextMenuPolicy">
+       <enum>Qt::DefaultContextMenu</enum>
+      </property>
+      <property name="title">
+       <string>Remeshing</string>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+      <layout class="QHBoxLayout" name="horizontalLayout_10">
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0">
+         <item>
+          <widget class="QCheckBox" name="RemeshingCheckBox">
+           <property name="layoutDirection">
+            <enum>Qt::LeftToRight</enum>
+           </property>
+           <property name="text">
+            <string>Remesh after deformation</string>
            </property>
           </widget>
          </item>

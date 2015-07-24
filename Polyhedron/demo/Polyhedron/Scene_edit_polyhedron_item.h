@@ -8,7 +8,7 @@
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
-#include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/boost/graph/iterator.h>
 
 #include <iostream>
 #include <fstream>
@@ -19,7 +19,11 @@
 #include <QGLViewer/camera.h>
 
 #include "ui_Deform_mesh.h"
+
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Surface_mesh_deformation.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>
+
 #include <boost/function_output_iterator.hpp>
 #include <QGLBuffer>
 #include <QGLShader>
@@ -29,15 +33,15 @@
 typedef Polyhedron::Vertex_handle Vertex_handle;
 typedef boost::graph_traits<Polyhedron>::vertex_descriptor		vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
-typedef boost::graph_traits<Polyhedron>::in_edge_iterator		 in_edge_iterator;
-typedef boost::graph_traits<Polyhedron>::out_edge_iterator		out_edge_iterator;
+typedef boost::graph_traits<Polyhedron>::face_descriptor      face_descriptor;
+typedef boost::graph_traits<Polyhedron>::halfedge_descriptor  halfedge_descriptor;
 
 struct Array_based_vertex_point_map
 {
 public:
   typedef vertex_descriptor            key_type;
   typedef Polyhedron::Traits::Point_3  value_type;
-  typedef value_type&  reference;
+  typedef value_type&                  reference;
   typedef boost::read_write_property_map_tag category;
   Array_based_vertex_point_map(std::vector<double>* positions) : positions(positions) {}
   std::vector<double>* positions;
@@ -55,14 +59,25 @@ inline
 void
 put(Array_based_vertex_point_map pmap,
   Array_based_vertex_point_map::key_type key,
-  Array_based_vertex_point_map::value_type val) {
+  Array_based_vertex_point_map::value_type val)
+{
   key->point() = val; // to make things easy (ray selection after deformation, save to polyhedron after close etc),
   // I also change point() of vertex together with positions list
   // So that we do not need to pmap everywhere other than draw
+  if (key->id() == -1)
+  {
+    key->id() = pmap.positions->size() / 3;
+    pmap.positions->push_back(val.x());
+    pmap.positions->push_back(val.y());
+    pmap.positions->push_back(val.z());
+  }
+  else
+  {
   std::size_t pos = key->id() * 3;
   (*pmap.positions)[pos] = val.x();
   (*pmap.positions)[pos+1] = val.y();
   (*pmap.positions)[pos+2] = val.z();
+  }
 }
 
 typedef CGAL::Surface_mesh_deformation<Polyhedron, CGAL::Default, CGAL::Default, CGAL::ORIGINAL_ARAP
@@ -261,6 +276,8 @@ public Q_SLOTS:
               double dir_z);
 
   void deform(); // deform the mesh
+  void remesh();
+
 // members
 private:
   Ui::DeformMesh* ui_widget;
@@ -294,9 +311,7 @@ private:
   void compute_normals_and_vertices(void);
   void compute_bbox(const Scene_interface::Bbox&);
   void create_Sphere(double);
-
-
-
+  void reset_drawing_data();
 
   Deform_mesh deform_mesh;
   typedef std::list<Control_vertices_data> Ctrl_vertices_group_data_list;

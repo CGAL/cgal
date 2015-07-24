@@ -1,3 +1,5 @@
+#define CGAL_PMP_REMESHING_VERBOSE
+
 #include "opengl_tools.h"
 #include "Scene_edit_polyhedron_item.h"
 #include <boost/foreach.hpp>
@@ -55,36 +57,8 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   startTimer(0);
 
   // Required for drawing functionality
-  positions.resize(num_vertices(*polyhedron())*3);
-  normals.resize(positions.size());
-  Polyhedron::Vertex_iterator vb, ve;
-  std::size_t counter = 0;
-  for(vb=polyhedron()->vertices_begin(), ve = polyhedron()->vertices_end();vb != ve; ++vb, ++counter) {
-    positions[counter*3] = vb->point().x();
-    positions[counter*3+1] = vb->point().y();
-    positions[counter*3+2] = vb->point().z();
+  reset_drawing_data();
 
-    const Polyhedron::Traits::Vector_3& n = 
-      CGAL::Polygon_mesh_processing::compute_vertex_normal(vb, deform_mesh.halfedge_graph());
-
-    normals[counter*3] = n.x();
-    normals[counter*3+1] = n.y();
-    normals[counter*3+2] = n.z();
-  }
-  tris.resize(polyhedron()->size_of_facets()*3);
-  counter = 0;
-  for(Polyhedron::Facet_handle fb = polyhedron()->facets_begin(); fb != polyhedron()->facets_end(); ++fb, ++counter) {
-    tris[counter*3] =  static_cast<unsigned int>(fb->halfedge()->vertex()->id());
-    tris[counter*3+1] = static_cast<unsigned int>(fb->halfedge()->next()->vertex()->id());
-    tris[counter*3+2] = static_cast<unsigned int>(fb->halfedge()->prev()->vertex()->id());
-  }
-
-  edges.resize(polyhedron()->size_of_halfedges());
-  counter = 0;
-  for(Polyhedron::Edge_iterator eb = polyhedron()->edges_begin(); eb != polyhedron()->edges_end(); ++eb, ++counter) {
-    edges[counter*2] = static_cast<unsigned int>(eb->vertex()->id());
-    edges[counter*2+1] = static_cast<unsigned int>(eb->opposite()->vertex()->id());
-  }
     qFunc.initializeOpenGLFunctions();
     //Generates an integer which will be used as ID for each buffer
 
@@ -343,6 +317,52 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
     are_buffers_filled = true;
 }
 
+void Scene_edit_polyhedron_item::reset_drawing_data()
+{
+  positions.clear();
+  positions.resize(num_vertices(*polyhedron()) * 3);
+
+  normals.clear();
+  normals.resize(positions.size());
+
+  std::size_t counter = 0;
+  BOOST_FOREACH(vertex_descriptor vb, vertices(*polyhedron()))
+  {
+    positions[counter * 3] = vb->point().x();
+    positions[counter * 3 + 1] = vb->point().y();
+    positions[counter * 3 + 2] = vb->point().z();
+
+    const Polyhedron::Traits::Vector_3& n =
+      CGAL::Polygon_mesh_processing::compute_vertex_normal(vb, deform_mesh.halfedge_graph());
+    normals[counter * 3] = n.x();
+    normals[counter * 3 + 1] = n.y();
+    normals[counter * 3 + 2] = n.z();
+
+    ++counter;
+  }
+
+  tris.clear();
+  tris.resize(polyhedron()->size_of_facets() * 3);
+  counter = 0;
+  BOOST_FOREACH(face_descriptor fb, faces(*polyhedron()))
+  {
+    tris[counter * 3] = static_cast<unsigned int>(fb->halfedge()->vertex()->id());
+    tris[counter * 3 + 1] = static_cast<unsigned int>(fb->halfedge()->next()->vertex()->id());
+    tris[counter * 3 + 2] = static_cast<unsigned int>(fb->halfedge()->prev()->vertex()->id());
+    ++counter;
+  }
+
+  edges.clear();
+  edges.resize(polyhedron()->size_of_halfedges());
+  counter = 0;
+  for (Polyhedron::Edge_iterator eb = polyhedron()->edges_begin();
+       eb != polyhedron()->edges_end(); ++eb, ++counter)
+  {
+    edges[counter * 2] = static_cast<unsigned int>(eb->vertex()->id());
+    edges[counter * 2 + 1] = static_cast<unsigned int>(eb->opposite()->vertex()->id());
+  }
+}
+
 void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
 {
     ROI_points.resize(0);
@@ -467,6 +487,46 @@ void Scene_edit_polyhedron_item::deform()
   Q_EMIT itemChanged();
 }
 
+void Scene_edit_polyhedron_item::remesh()
+{
+  const Polyhedron& g = deform_mesh.halfedge_graph();
+  Array_based_vertex_point_map vpmap(&positions);
+
+  unsigned int nb_iter = 1;
+  double min_sqlen = bbox().diagonal_length();
+
+  std::set<face_descriptor> roi_facets;
+  std::set<halfedge_descriptor> roi_halfedges;
+  BOOST_FOREACH(vertex_descriptor v, deform_mesh.roi_vertices())
+  {
+    BOOST_FOREACH(face_descriptor fv, CGAL::faces_around_target(halfedge(v, g), g))
+    {
+      roi_facets.insert(fv);
+      BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(fv, g), g))
+      {
+        if (roi_halfedges.find(opposite(h, g)) != roi_halfedges.end()) //already computed
+          continue;
+        min_sqlen = (std::min)(min_sqlen,
+          CGAL::squared_distance(get(vpmap, source(h, g)), get(vpmap, target(h, g))));
+        roi_halfedges.insert(h);
+      }
+    }
+  }
+
+  double target_length = CGAL::sqrt(min_sqlen);
+
+  CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
+    *polyhedron()
+    , roi_facets
+    , target_length
+    , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+    .protect_constraints(false) //no edge_is_constrained_map
+    .vertex_point_map(vpmap)
+    );
+
+  reset_drawing_data();
+}
+
 void Scene_edit_polyhedron_item::timerEvent(QTimerEvent* /*event*/)
 { // just handle deformation - paint like selection is handled in eventFilter()
   if(state.ctrl_pressing && (state.left_button_pressing || state.right_button_pressing)) {
@@ -511,11 +571,15 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
   // check state changes between old and current state
   bool ctrl_pressed_now = state.ctrl_pressing && !old_state.ctrl_pressing;
   bool ctrl_released_now = !state.ctrl_pressing && old_state.ctrl_pressing;
-  if(ctrl_pressed_now || ctrl_released_now || event->type() == QEvent::HoverMove) 
+  if(ctrl_pressed_now || ctrl_released_now || event->type() == QEvent::HoverMove)
   {// activate a handle manipulated frame
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
     bool need_repaint = activate_closest_manipulated_frame(p.x(), p.y());
+
+    if (ctrl_released_now && ui_widget->RemeshingCheckBox->isChecked()){
+      remesh();
+    }
 
     if(need_repaint) { Q_EMIT itemChanged(); }
   }
