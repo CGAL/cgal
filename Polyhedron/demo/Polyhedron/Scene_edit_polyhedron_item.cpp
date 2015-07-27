@@ -94,6 +94,14 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
     bbox_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_shader_source);
     bbox_program.link();
 
+    ui_widget->remeshing_iterations_spinbox->setValue(1);
+
+    ui_widget->remeshing_edge_length_spinbox->setValue(length_of_axis);
+    ui_widget->remeshing_edge_length_spinbox->setDisabled(true);
+    ui_widget->remeshingEdgeLengthInput_checkBox->setChecked(false);
+    connect(ui_widget->remeshingEdgeLengthInput_checkBox, SIGNAL(toggled(bool)),
+            ui_widget->remeshing_edge_length_spinbox, SLOT(setEnabled(bool)));
+
     //the spheres :
     create_Sphere(length_of_axis/15.0);
     changed();
@@ -492,9 +500,6 @@ void Scene_edit_polyhedron_item::remesh()
   const Polyhedron& g = deform_mesh.halfedge_graph();
   Array_based_vertex_point_map vpmap(&positions);
 
-  unsigned int nb_iter = 1;
-  double min_sqlen = bbox().diagonal_length();
-
   std::set<face_descriptor> roi_facets;
   std::set<halfedge_descriptor> roi_halfedges;
   BOOST_FOREACH(vertex_descriptor v, deform_mesh.roi_vertices())
@@ -504,23 +509,34 @@ void Scene_edit_polyhedron_item::remesh()
       roi_facets.insert(fv);
       BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(fv, g), g))
       {
-        if (roi_halfedges.find(opposite(h, g)) != roi_halfedges.end()) //already computed
-          continue;
-        min_sqlen = (std::min)(min_sqlen,
-          CGAL::squared_distance(get(vpmap, source(h, g)), get(vpmap, target(h, g))));
-        roi_halfedges.insert(h);
+        if (roi_halfedges.find(opposite(h, g)) == roi_halfedges.end()) //not already computed
+          roi_halfedges.insert(h);
       }
     }
   }
 
+  bool automatic_target_length = !ui_widget->remeshingEdgeLengthInput_checkBox->isChecked();
+  double sum_len = 0.;
   std::vector<halfedge_descriptor> roi_border;
   BOOST_FOREACH(halfedge_descriptor h, roi_halfedges)
   {
     if (roi_halfedges.find(opposite(h, g)) == roi_halfedges.end())
+    {
       roi_border.push_back(opposite(h, g));
+      if (automatic_target_length)
+        sum_len += CGAL::sqrt(CGAL::squared_distance(
+                      get(vpmap, source(h, g)), get(vpmap, target(h, g))));
+    }
   }
 
-  double target_length = CGAL::sqrt(min_sqlen);
+  if (roi_border.empty())
+    automatic_target_length = false;
+
+  double target_length = automatic_target_length
+    ? sum_len / (0. + roi_border.size())
+    : ui_widget->remeshing_edge_length_spinbox->value();
+
+  unsigned int nb_iter = ui_widget->remeshing_iterations_spinbox->value();
 
   std::cout << "Remeshing...";
   CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(

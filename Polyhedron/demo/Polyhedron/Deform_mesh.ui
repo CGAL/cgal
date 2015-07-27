@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>438</width>
-    <height>732</height>
+    <width>442</width>
+    <height>762</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -191,7 +191,7 @@
       </property>
       <layout class="QHBoxLayout" name="horizontalLayout_10">
        <item>
-        <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0">
+        <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,0,0">
          <item>
           <widget class="QCheckBox" name="RemeshingCheckBox">
            <property name="layoutDirection">
@@ -201,6 +201,46 @@
             <string>Remesh after deformation</string>
            </property>
           </widget>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_6">
+           <item>
+            <widget class="QCheckBox" name="remeshingEdgeLengthInput_checkBox">
+             <property name="toolTip">
+              <string>If unchecked, automatic value is used (the average edge length at ROI boundary)</string>
+             </property>
+             <property name="layoutDirection">
+              <enum>Qt::RightToLeft</enum>
+             </property>
+             <property name="text">
+              <string>Target edge length</string>
+             </property>
+            </widget>
+           </item>
+           <item>
+            <widget class="QLabel" name="label_4">
+             <property name="layoutDirection">
+              <enum>Qt::RightToLeft</enum>
+             </property>
+             <property name="text">
+              <string>Nb. iterations</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+         <item>
+          <layout class="QVBoxLayout" name="verticalLayout_7">
+           <item>
+            <widget class="QDoubleSpinBox" name="remeshing_edge_length_spinbox"/>
+           </item>
+           <item>
+            <widget class="QSpinBox" name="remeshing_iterations_spinbox"/>
+           </item>
+          </layout>
          </item>
         </layout>
        </item>
