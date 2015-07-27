@@ -380,6 +380,28 @@ private:
 #endif
   }
 
+
+public:
+#ifndef DOXYGEN_RUNNING
+  void reinit(Halfedge_graph& g)
+  {
+    m_halfedge_graph = g;
+
+    ros_id_map.resize(num_vertices(g), (std::numeric_limits<std::size_t>::max)());
+    is_roi_map.resize(num_vertices(g), false);
+    is_ctrl_map.resize(num_vertices(g), false);
+    m_iterations = 5;
+    m_tolerance = 1e-4;
+    need_preprocess_factorization = true;
+    need_preprocess_region_of_solution = true;
+    last_preprocess_successful = false;
+    //unchanged:
+    //vertex_index_map, hedge_index_map, vertex_point_map, weight_calculator
+
+    init();
+  }
+#endif
+
 public:
 
 /// \name Preprocessing
