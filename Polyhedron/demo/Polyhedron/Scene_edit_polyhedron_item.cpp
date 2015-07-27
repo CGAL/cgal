@@ -1,4 +1,4 @@
-#define CGAL_PMP_REMESHING_VERBOSE
+//#define CGAL_PMP_REMESHING_VERBOSE
 
 #include "opengl_tools.h"
 #include "Scene_edit_polyhedron_item.h"
@@ -513,8 +513,16 @@ void Scene_edit_polyhedron_item::remesh()
     }
   }
 
+  std::vector<halfedge_descriptor> roi_border;
+  BOOST_FOREACH(halfedge_descriptor h, roi_halfedges)
+  {
+    if (roi_halfedges.find(opposite(h, g)) == roi_halfedges.end())
+      roi_border.push_back(opposite(h, g));
+  }
+
   double target_length = CGAL::sqrt(min_sqlen);
 
+  std::cout << "Remeshing...";
   CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
     *polyhedron()
     , roi_facets
@@ -523,8 +531,43 @@ void Scene_edit_polyhedron_item::remesh()
     .protect_constraints(false) //no edge_is_constrained_map
     .vertex_point_map(vpmap)
     );
+  std::cout << "done." << std::endl;
+
+  //reset ROI from its outside border roi_border
+  clear_roi();
+  delete_ctrl_vertices_group();
+
+  //std::list<halfedge_descriptor> visitor;
+  //visitor.push_back(opposite(roi_border[0], g), g);
+  //do
+  //{
+  //  halfedge_descriptor h = visitor.front();
+  //  visitor.pop_front();
+
+  //  BOOST_FOREACH(halfedge_descriptor hf, halfedges_around_face(h, g))
+  //  {
+  //    halfedge_descriptor hfopp = opposite(hf, g);
+  //    face_descriptor fopp = face(hfopp, g);
+
+  //    if (roi_border.find(hfopp) == roi_border.end()
+  //      && roi_facets.find(fopp) == roi_facets.end())
+  //    {
+  //      deform_mesh.insert_roi_vertex();//
+  //      visitor.insert(hfopp);
+  //    }
+  //  }
+  //}
+  //while (!visitor.empty());
+
+  poly_item->update_vertex_indices();
+  poly_item->update_halfedge_indices();
+  deform_mesh.reinit(*(poly_item->polyhedron())),
 
   reset_drawing_data();
+  compute_normals_and_vertices();
+
+  poly_item->changed(); // now we need to call poly_item changed to delete AABB tree 
+  Q_EMIT itemChanged();
 }
 
 void Scene_edit_polyhedron_item::timerEvent(QTimerEvent* /*event*/)
