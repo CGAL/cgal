@@ -358,9 +358,7 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
     {
         if(hgb_data->frame == viewer->manipulatedFrame())
         {
-            // draw axis
-
-            if(ui_widget->ActivatePivotingCheckBox->isChecked())
+            if(!ui_widget->ActivatePivotingCheckBox->isChecked())
             {
                 // draw bbox
                 compute_bbox(hgb_data->bbox);
