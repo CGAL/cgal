@@ -558,28 +558,6 @@ void Scene_edit_polyhedron_item::remesh()
   clear_roi();
   delete_ctrl_vertices_group();
 
-  //std::list<halfedge_descriptor> visitor;
-  //visitor.push_back(opposite(roi_border[0], g), g);
-  //do
-  //{
-  //  halfedge_descriptor h = visitor.front();
-  //  visitor.pop_front();
-
-  //  BOOST_FOREACH(halfedge_descriptor hf, halfedges_around_face(h, g))
-  //  {
-  //    halfedge_descriptor hfopp = opposite(hf, g);
-  //    face_descriptor fopp = face(hfopp, g);
-
-  //    if (roi_border.find(hfopp) == roi_border.end()
-  //      && roi_facets.find(fopp) == roi_facets.end())
-  //    {
-  //      deform_mesh->insert_roi_vertex();//
-  //      visitor.insert(hfopp);
-  //    }
-  //  }
-  //}
-  //while (!visitor.empty());
-
   poly_item->update_vertex_indices();
   poly_item->update_halfedge_indices();
   delete deform_mesh;
