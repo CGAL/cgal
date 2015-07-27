@@ -119,7 +119,7 @@ public:
 
     bool oldState = frame->blockSignals(true); // do not let it Q_EMIT modified, which will cause a deformation
                                   // but we are just adjusting the center so it does not require a deformation
-    frame->setOrientation(qglviewer::Quaternion());
+    // frame->setOrientation(qglviewer::Quaternion());
     frame->setPosition(frame_initial_center);
     frame->blockSignals(oldState);
   }
@@ -220,6 +220,7 @@ public:
   void draw_edges(Viewer_interface*) const;
   void draw_bbox(const Scene_interface::Bbox&) const;
   void draw_ROI_and_control_vertices(Viewer_interface *viewer) const;
+  void draw_frame_plane(Viewer_interface* viewer) const;
 
   // Get wrapped polyhedron
   Polyhedron*       polyhedron();
@@ -496,6 +497,7 @@ public:
   {
     is_rot_free=true;
     rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+    rot_constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
 
     // just block signals to prevent deformation
     for(Ctrl_vertices_group_data_list::iterator it = ctrl_vertex_frame_map.begin(); it != ctrl_vertex_frame_map.end(); ++it)
@@ -688,7 +690,16 @@ protected:
       min_it->frame->setConstraint(&rot_constraint);
     }
     else
-      rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+    {
+      if(!ui_widget->ActivatePivotingCheckBox->isChecked() &&
+          ui_widget->ActivateFixedPlaneCheckBox->isChecked())
+      {
+        // the constraint is local to the frame
+        rot_constraint.setTranslationConstraint(qglviewer::AxisPlaneConstraint::PLANE,qglviewer::Vec(0,0,1));
+        rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
+        min_it->frame->setConstraint(&rot_constraint);
+      }
+    }
 
     if(viewer->manipulatedFrame() == min_it->frame)
     { return false; }
@@ -711,6 +722,17 @@ protected:
 
     }
   }
+
+  double scene_diag() const {
+    const double& xdelta = bbox().xmax-bbox().xmin;
+    const double& ydelta = bbox().ymax-bbox().ymin;
+    const double& zdelta = bbox().zmax-bbox().zmin;
+    const double diag = std::sqrt(xdelta*xdelta +
+                            ydelta*ydelta +
+                            zdelta*zdelta);
+    return diag * 0.5;
+  }
+
 protected:
   GLUquadric* quadric; // for drawing spheres
 }; // end class Scene_edit_polyhedron_item

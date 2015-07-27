@@ -663,8 +663,40 @@ void Scene_edit_polyhedron_item::draw(Viewer_interface* viewer) const {
     vaos[0]->release();
     draw_edges(viewer);
     draw_ROI_and_control_vertices(viewer);
+    if(ui_widget->ActivateFixedPlaneCheckBox->isChecked())
+      draw_frame_plane(viewer);
+}
 
+void Scene_edit_polyhedron_item::draw_frame_plane(Viewer_interface* viewer) const
+{
+    for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
+    {
+        if(hgb_data->frame == viewer->manipulatedFrame())
+        {
+          const double diag = scene_diag();
+          glColor3f(0,0,0);
+          qglviewer::Vec base1(1,0,0);
+          qglviewer::Vec base2(0,1,0);
 
+          qglviewer::Quaternion orientation=hgb_data->frame->orientation();
+          base1=orientation.rotate(base1);
+          base2=orientation.rotate(base2);
+
+          qglviewer::Vec center = hgb_data->frame_initial_center;
+
+          qglviewer::Vec p1 = center - diag*base1 - diag*base2;
+          qglviewer::Vec p2 = center + diag*base1 - diag*base2;
+          qglviewer::Vec p3 = center + diag*base1 + diag*base2;
+          qglviewer::Vec p4 = center - diag*base1 + diag*base2;
+
+          glBegin(GL_LINE_LOOP);
+            glVertex3f(p1.x, p1.y, p1.z);
+            glVertex3f(p2.x, p2.y, p2.z);
+            glVertex3f(p3.x, p3.y, p3.z);
+            glVertex3f(p4.x, p4.y, p4.z);
+          glEnd();
+        }
+    }
 }
 
 void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface* viewer) const {

@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>442</width>
+    <width>582</width>
     <height>762</height>
    </rect>
   </property>
@@ -299,11 +299,22 @@
         </layout>
        </item>
        <item>
-        <widget class="QCheckBox" name="ActivatePivotingCheckBox">
-         <property name="text">
-          <string>Activate Pivoting </string>
-         </property>
-        </widget>
+        <layout class="QHBoxLayout" name="horizontalLayout_11">
+         <item>
+          <widget class="QCheckBox" name="ActivatePivotingCheckBox">
+           <property name="text">
+            <string>Activate Pivoting </string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QCheckBox" name="ActivateFixedPlaneCheckBox">
+           <property name="text">
+            <string>Activate Fixed Plane Deformation</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
        </item>
       </layout>
      </widget>
