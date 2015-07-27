@@ -356,12 +356,12 @@ public:
   Bounded_side side_of_power_sphere(const Cell_handle& c, const Point& p, bool perturb = false) const
   {
     Point point = this->canonicalize_point(p);
-    return Bounded_side();//Base::side_of_power_sphere(c, point, Offset(), perturb);
+    return Base::side_of_power_sphere(c, point, Offset(), perturb);
   }
     
   Vertex_handle nearest_power_vertex(const Bare_point& p, Cell_handle start) const
   {
-    return Vertex_handle();//nearest_vertex(p, start);
+    return Base::nearest_power_vertex(p, start);
     
     // not yet implemented
     assert(false);
