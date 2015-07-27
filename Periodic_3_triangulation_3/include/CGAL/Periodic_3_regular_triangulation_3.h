@@ -6001,7 +6001,7 @@ public:
     return bs;
   }
 
-  Vertex_handle nearest_vertex(const Weighted_point& p, Cell_handle start) const
+  Vertex_handle nearest_power_vertex(const Weighted_point& p, Cell_handle start) const
   {
     if (number_of_vertices() == 0)
       return Vertex_handle();
