@@ -194,6 +194,9 @@
         <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="0,0,0">
          <item>
           <widget class="QCheckBox" name="RemeshingCheckBox">
+           <property name="toolTip">
+            <string>Warning : after remeshing all ROI and control vertices will be unselected</string>
+           </property>
            <property name="layoutDirection">
             <enum>Qt::LeftToRight</enum>
            </property>
