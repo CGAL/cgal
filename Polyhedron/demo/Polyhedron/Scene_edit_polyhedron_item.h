@@ -313,7 +313,7 @@ private:
   void create_Sphere(double);
   void reset_drawing_data();
 
-  Deform_mesh deform_mesh;
+  Deform_mesh* deform_mesh;
   typedef std::list<Control_vertices_data> Ctrl_vertices_group_data_list;
   Ctrl_vertices_group_data_list::iterator active_group;
   Ctrl_vertices_group_data_list ctrl_vertex_frame_map; // keep list of group of control vertices with assoc data
@@ -339,7 +339,7 @@ public:
       return false; 
     } // no group of control vertices to insert
 
-    bool inserted = deform_mesh.insert_control_vertex(v);
+    bool inserted = deform_mesh->insert_control_vertex(v);
     if(inserted) {
       active_group->ctrl_vertices_group.push_back(v);
       active_group->refresh();
@@ -349,12 +349,12 @@ public:
 
   bool insert_roi_vertex(vertex_descriptor v)
   {
-    return deform_mesh.insert_roi_vertex(v);
+    return deform_mesh->insert_roi_vertex(v);
   }
   
   bool erase_control_vertex(vertex_descriptor v)
   {
-    if(deform_mesh.erase_control_vertex(v)) // API should be safe enough to do that (without checking empty group of control vertices etc.)
+    if(deform_mesh->erase_control_vertex(v)) // API should be safe enough to do that (without checking empty group of control vertices etc.)
     {
       refresh_all_group_centers(); // since we don't know which group of control vertices v is erased from, refresh all
       return true;
@@ -367,7 +367,7 @@ public:
   bool erase_roi_vertex(vertex_descriptor v)
   {
     erase_control_vertex(v); // erase control vertex
-    return deform_mesh.erase_roi_vertex(v);
+    return deform_mesh->erase_roi_vertex(v);
   }
 
   void set_all_vertices_as_roi()
@@ -386,7 +386,7 @@ public:
       delete it->frame;
     }
     ctrl_vertex_frame_map.clear();
-    deform_mesh.clear_roi_vertices();
+    deform_mesh->clear_roi_vertices();
 
     create_ctrl_vertices_group(); // create one new group of control vertices
   } 
@@ -404,7 +404,7 @@ public:
     qglviewer::ManipulatedFrame* new_frame = new qglviewer::ManipulatedFrame();
     new_frame->setRotationSensitivity(2.0f);
 
-    Control_vertices_data hgd(&deform_mesh, new_frame);
+    Control_vertices_data hgd(deform_mesh, new_frame);
     ctrl_vertex_frame_map.push_back(hgd);
     hgd.refresh();
 
@@ -431,7 +431,7 @@ public:
       {
         delete it->frame;        
         for(std::vector<vertex_descriptor>::iterator v_it = it->ctrl_vertices_group.begin(); v_it != it->ctrl_vertices_group.end(); ++v_it) {
-          deform_mesh.erase_control_vertex(*v_it);
+          deform_mesh->erase_control_vertex(*v_it);
         }
         ctrl_vertex_frame_map.erase(it);
         break;
@@ -508,8 +508,8 @@ public:
   { 
     std::ofstream out(file_name);
     // save roi
-    out << deform_mesh.roi_vertices().size() << std::endl;
-    BOOST_FOREACH(vertex_descriptor vd, deform_mesh.roi_vertices())
+    out << deform_mesh->roi_vertices().size() << std::endl;
+    BOOST_FOREACH(vertex_descriptor vd, deform_mesh->roi_vertices())
     {
       out << vd->id() << " ";
     }
@@ -535,9 +535,9 @@ public:
 
     // put vertices to vector
     std::vector<vertex_descriptor> all_vertices;
-    all_vertices.reserve(num_vertices(deform_mesh.halfedge_graph()));
+    all_vertices.reserve(num_vertices(deform_mesh->halfedge_graph()));
     vertex_iterator vb, ve;
-    for(boost::tie(vb, ve) = vertices(deform_mesh.halfedge_graph()); vb != ve; ++vb) {
+    for(boost::tie(vb, ve) = vertices(deform_mesh->halfedge_graph()); vb != ve; ++vb) {
       all_vertices.push_back(*vb);
     }
     // read roi
@@ -569,16 +569,16 @@ public:
 
   void overwrite_deform_object()
   {
-    deform_mesh.overwrite_initial_geometry();
+    deform_mesh->overwrite_initial_geometry();
 
     refresh_all_group_centers();
   }
 
   struct Is_selected {
-    Deform_mesh& dm;
-    Is_selected(Deform_mesh& dm) : dm(dm) {}
+    Deform_mesh* dm;
+    Is_selected(Deform_mesh* dm) : dm(dm) {}
     bool count(Vertex_handle vh) const {
-      return dm.is_roi_vertex(vh);
+      return dm->is_roi_vertex(vh);
     }
   };
 
@@ -600,7 +600,7 @@ public:
 
   boost::optional<std::size_t> select_isolated_components(std::size_t threshold) {
     typedef boost::function_output_iterator<Select_roi_output> Output_iterator;
-    Output_iterator out(&deform_mesh);
+    Output_iterator out(deform_mesh);
 
     Travel_isolated_components::Selection_visitor<Output_iterator> visitor(threshold, out);
     Travel_isolated_components().travel<Vertex_handle>
@@ -700,11 +700,11 @@ protected:
   bool keyPressEvent(QKeyEvent* e);
 
   void update_normals() {
-    BOOST_FOREACH(vertex_descriptor vd, deform_mesh.roi_vertices())
+    BOOST_FOREACH(vertex_descriptor vd, deform_mesh->roi_vertices())
     {
       std::size_t id = vd->id();
       const Polyhedron::Traits::Vector_3& n = 
-        CGAL::Polygon_mesh_processing::compute_vertex_normal(vd, deform_mesh.halfedge_graph());
+        CGAL::Polygon_mesh_processing::compute_vertex_normal(vd, deform_mesh->halfedge_graph());
       normals[id*3] = n.x();
       normals[id*3+1] = n.y(); 
       normals[id*3+2] = n.z(); 

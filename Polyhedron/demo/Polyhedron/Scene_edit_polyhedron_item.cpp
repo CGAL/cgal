@@ -26,9 +26,8 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   Ui::DeformMesh* ui_widget,
   QMainWindow* mw)
     :Scene_item(20,8),
-      ui_widget(ui_widget),
+    ui_widget(ui_widget),
     poly_item(poly_item),
-    deform_mesh(*(poly_item->polyhedron()), Deform_mesh::Vertex_index_map(), Deform_mesh::Hedge_index_map(), Array_based_vertex_point_map(&positions)),
     is_rot_free(true),
     own_poly_item(true),
     k_ring_selector(poly_item, mw, Scene_polyhedron_item_k_ring_selection::Active_handle::VERTEX, true),
@@ -42,6 +41,11 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 
   poly_item->set_color_vector_read_only(true); // to prevent recomputation of color vector in changed()
   poly_item->update_vertex_indices();
+
+  deform_mesh = new Deform_mesh(*(poly_item->polyhedron()),
+                                Deform_mesh::Vertex_index_map(),
+                                Deform_mesh::Hedge_index_map(),
+                                Array_based_vertex_point_map(&positions));
 
   length_of_axis = bbox().diagonal_length() / 15.0;
 
@@ -114,8 +118,9 @@ Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
     delete_ctrl_vertices_group(false);
   }
   gluDeleteQuadric(quadric);
-  if (own_poly_item) delete poly_item;
 
+  delete deform_mesh;
+  if (own_poly_item) delete poly_item;
 }
 /////////////////////////////
 /// For the Shader gestion///
@@ -341,7 +346,7 @@ void Scene_edit_polyhedron_item::reset_drawing_data()
     positions[counter * 3 + 2] = vb->point().z();
 
     const Polyhedron::Traits::Vector_3& n =
-      CGAL::Polygon_mesh_processing::compute_vertex_normal(vb, deform_mesh.halfedge_graph());
+      CGAL::Polygon_mesh_processing::compute_vertex_normal(vb, deform_mesh->halfedge_graph());
     normals[counter * 3] = n.x();
     normals[counter * 3 + 1] = n.y();
     normals[counter * 3 + 2] = n.z();
@@ -375,9 +380,9 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
 {
     ROI_points.resize(0);
     control_points.resize(0);
-    BOOST_FOREACH(vertex_descriptor vd, deform_mesh.roi_vertices())
+    BOOST_FOREACH(vertex_descriptor vd, deform_mesh->roi_vertices())
     {
-        if(!deform_mesh.is_control_vertex(vd))
+        if(!deform_mesh->is_control_vertex(vd))
         {//gl_draw_point( vd->point() );
             ROI_points.push_back(vd->point().x());
             ROI_points.push_back(vd->point().y());
@@ -489,7 +494,7 @@ void Scene_edit_polyhedron_item::deform()
 
   for(Ctrl_vertices_group_data_list::iterator it = ctrl_vertex_frame_map.begin(); it != ctrl_vertex_frame_map.end(); ++it)
   { it->set_target_positions(); }
-  deform_mesh.deform();
+  deform_mesh->deform();
 
   poly_item->changed(); // now we need to call poly_item changed to delete AABB tree 
   Q_EMIT itemChanged();
@@ -497,12 +502,12 @@ void Scene_edit_polyhedron_item::deform()
 
 void Scene_edit_polyhedron_item::remesh()
 {
-  const Polyhedron& g = deform_mesh.halfedge_graph();
+  const Polyhedron& g = deform_mesh->halfedge_graph();
   Array_based_vertex_point_map vpmap(&positions);
 
   std::set<face_descriptor> roi_facets;
   std::set<halfedge_descriptor> roi_halfedges;
-  BOOST_FOREACH(vertex_descriptor v, deform_mesh.roi_vertices())
+  BOOST_FOREACH(vertex_descriptor v, deform_mesh->roi_vertices())
   {
     BOOST_FOREACH(face_descriptor fv, CGAL::faces_around_target(halfedge(v, g), g))
     {
@@ -568,7 +573,7 @@ void Scene_edit_polyhedron_item::remesh()
   //    if (roi_border.find(hfopp) == roi_border.end()
   //      && roi_facets.find(fopp) == roi_facets.end())
   //    {
-  //      deform_mesh.insert_roi_vertex();//
+  //      deform_mesh->insert_roi_vertex();//
   //      visitor.insert(hfopp);
   //    }
   //  }
@@ -577,7 +582,11 @@ void Scene_edit_polyhedron_item::remesh()
 
   poly_item->update_vertex_indices();
   poly_item->update_halfedge_indices();
-  deform_mesh.reinit(*(poly_item->polyhedron())),
+  delete deform_mesh;
+  deform_mesh = new Deform_mesh(*(poly_item->polyhedron()),
+                                Deform_mesh::Vertex_index_map(),
+                                Deform_mesh::Hedge_index_map(),
+                                vpmap);
 
   reset_drawing_data();
   compute_normals_and_vertices();
