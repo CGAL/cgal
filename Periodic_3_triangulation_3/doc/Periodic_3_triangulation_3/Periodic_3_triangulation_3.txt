@@ -7,7 +7,7 @@ namespace CGAL {
 
 \cgalAutoToc
 
-\authors Manuel Caroli and Monique Teillaud
+\authors Manuel Caroli, Aymeric Pell&eacute; and Monique Teillaud
 
 \image html p3Delaunay3.jpg
 \image latex p3Delaunay3.jpg
@@ -445,7 +445,7 @@ In 2007, Manuel Caroli continued work on the
 algorithms \cgalCite{cgal:ct-c3pt-09} and on the package with Monique
 Teillaud.
 
-In 2015, Aymeric Pellé contributed to adding regular triangulations in
+In 2015, Aymeric Pell&eacute; contributed to adding regular triangulations in
 the package.
 
 The package follows the design of the 3D Triangulations package
