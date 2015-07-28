@@ -376,7 +376,7 @@
           <item row="2" column="0">
            <widget class="QPushButton" name="DiscardChangesPushButton">
             <property name="toolTip">
-             <string>Reset mesh to last version saved by &quot;Overwrite Initial Geometry&quot;</string>
+             <string>Reset mesh to last version saved by &quot;Overwrite Initial Geometry&quot;. Not available when Remeshing is ON.</string>
             </property>
             <property name="text">
              <string>Discard changes</string>
