@@ -577,6 +577,12 @@ public:
     refresh_all_group_centers();
   }
 
+  void reset_deform_object()
+  {
+    deform_mesh->reset();
+    refresh_all_group_centers();
+  }
+
   struct Is_selected {
     Deform_mesh* dm;
     Is_selected(Deform_mesh* dm) : dm(dm) {}
