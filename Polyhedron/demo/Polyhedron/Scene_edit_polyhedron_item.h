@@ -135,6 +135,18 @@ public:
       deform_mesh->set_target_position(*hb, Point(rotated_and_translated.x, rotated_and_translated.y, rotated_and_translated.z) );
     }
   }
+  qglviewer::Vec calculate_initial_center() const
+  {
+    qglviewer::Vec center_acc(0, 0, 0);
+    if (initial_positions.empty()) { return center_acc; }
+
+    for (std::vector<qglviewer::Vec>::const_iterator it = initial_positions.begin();
+         it != initial_positions.end(); ++it)
+    {
+      center_acc += (*it);
+    }
+    return center_acc / initial_positions.size();
+  }
 
 private:
   void reset_initial_positions()
@@ -146,17 +158,6 @@ private:
       qglviewer::Vec point((*hb)->point().x(), (*hb)->point().y(), (*hb)->point().z() );
       initial_positions.push_back(point);
     }
-  }
-  qglviewer::Vec calculate_initial_center()
-  {
-    qglviewer::Vec center_acc(0, 0, 0);
-    if(initial_positions.empty()) {return center_acc; }
-
-    for(std::vector<qglviewer::Vec>::iterator it = initial_positions.begin(); it != initial_positions.end(); ++it)
-    {
-      center_acc += (*it);
-    }
-    return center_acc / initial_positions.size();
   }
   Scene_interface::Bbox calculate_initial_bbox()
   {    
