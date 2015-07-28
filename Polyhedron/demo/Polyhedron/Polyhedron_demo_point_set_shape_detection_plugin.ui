@@ -7,13 +7,58 @@
     <x>0</x>
     <y>0</y>
     <width>444</width>
-    <height>181</height>
+    <height>205</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>Shape Detection</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <item>
+    <layout class="QHBoxLayout" name="horizontalLayout_6">
+     <item>
+      <widget class="QCheckBox" name="planeCB">
+       <property name="text">
+        <string>Plane</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="cylinderCB">
+       <property name="text">
+        <string>Cylinder</string>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="torusCB">
+       <property name="text">
+        <string>Torus</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="coneCB">
+       <property name="text">
+        <string>Cone</string>
+       </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="sphereCB">
+       <property name="text">
+        <string>Sphere</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </item>
    <item>
     <layout class="QHBoxLayout" name="horizontalLayout_2">
      <item>

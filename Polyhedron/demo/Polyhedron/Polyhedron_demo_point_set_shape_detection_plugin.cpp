@@ -3,11 +3,13 @@
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
 
+/*
 #include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/random_simplify_point_set.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
+*/
 #include <CGAL/Random.h>
 
 #include <CGAL/Shape_detection_3.h>
@@ -80,6 +82,11 @@ public:
   double normal_tolerance() const { return m_normal_tolerance_field->value(); }
   double search_probability() const { return m_probability_field->value(); }
   double gridCellSize() const { return 1.0; }
+  bool detect_plane() const { return planeCB->isChecked(); } 
+  bool detect_sphere() const { return sphereCB->isChecked(); } 
+  bool detect_cylinder() const { return cylinderCB->isChecked(); } 
+  bool detect_torus() const { return torusCB->isChecked(); } 
+  bool detect_cone() const { return coneCB->isChecked(); } 
 };
 
 void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered() {
@@ -106,7 +113,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    CGAL::Timer task_timer; task_timer.start();
+    //    CGAL::Timer task_timer; task_timer.start();
 
     typedef CGAL::Identity_property_map<Point_set::Point_with_normal> PointPMap;
     typedef CGAL::Normal_of_point_with_normal_pmap<Point_set::Geom_traits> NormalPMap;
@@ -118,11 +125,21 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     shape_detection.set_input(*points);
 
     // Shapes to be searched for are registered by using the template Shape_factory
-    shape_detection.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
-    shape_detection.add_shape_factory<CGAL::Shape_detection_3::Cylinder<Traits> >();
-    //   shape_detection.add_shape_factory< CGAL::Shape_detection_3::Torus<Traits> >();
-    //   shape_detection.add_shape_factory< CGAL::Shape_detection_3::Cone<Traits> >();
-    //   shape_detection.add_shape_factory< CGAL::Shape_detection_3::Sphere<Traits> >();
+    if(dialog.detect_plane()){
+        shape_detection.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
+      }
+    if(dialog.detect_cylinder()){
+      shape_detection.add_shape_factory<CGAL::Shape_detection_3::Cylinder<Traits> >();
+    }
+    if(dialog.detect_torus()){
+       shape_detection.add_shape_factory< CGAL::Shape_detection_3::Torus<Traits> >();
+    }
+    if(dialog.detect_cone()){
+      shape_detection.add_shape_factory< CGAL::Shape_detection_3::Cone<Traits> >();
+    }
+    if(dialog.detect_sphere()){
+      shape_detection.add_shape_factory< CGAL::Shape_detection_3::Sphere<Traits> >();
+    }
 
     // Parameterization of the shape detection using the Parameters structure.
     Shape_detection::Parameters op;
@@ -156,6 +173,13 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
         ss << item->name().toStdString() << "_cylinder_";
       else if (dynamic_cast<CGAL::Shape_detection_3::Plane<Traits> *>(shape.get()))
         ss << item->name().toStdString() << "_plane_";
+      else if (dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
+        ss << item->name().toStdString() << "_cone_";
+      else if (dynamic_cast<CGAL::Shape_detection_3::Torus<Traits> *>(shape.get()))
+        ss << item->name().toStdString() << "_torus_";
+      else if (dynamic_cast<CGAL::Shape_detection_3::Sphere<Traits> *>(shape.get()))
+        ss << item->name().toStdString() << "_sphere_";
+
 
       ss << shape->indices_of_assigned_points().size();
 
