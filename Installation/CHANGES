@@ -14,8 +14,8 @@ Release date: September 2015
     compile libCGAL_Qt5 and demos, you must set the cmake or environment
     variable Qt5_DIR to point to the path to the directory containing the file
     Qt5Config.cmake created by your Qt5 installation. If you are using the open
-    source edition it should be
-    /path-to/qt-everywhere-opensource-src-/qtbase/lib/cmake/Qt5.
+    source edition it should be /path-to/qt-everywhere-opensource-src-
+    <version>/qtbase/lib/cmake/Qt5.
 
   - The code of the 3D demos now use modern OpenGL, with shaders, instead of
     the fixed pipeline API of OpenGL-1.

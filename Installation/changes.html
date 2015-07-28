@@ -129,7 +129,7 @@ and <code>src/</code> directories).
     the path to the directory containing the file <code>Qt5Config.cmake</code> created
     by your Qt5 installation.
     If you are using the open source edition it should be
-    <code>/path-to/qt-everywhere-opensource-src-<version>/qtbase/lib/cmake/Qt5</code>.</li>
+    <code>/path-to/qt-everywhere-opensource-src-&lt;version&gt;/qtbase/lib/cmake/Qt5</code>.</li>
 
     <li>The code of the 3D demos now use modern OpenGL, with shaders,
     instead of the fixed pipeline API of OpenGL-1.</li>
@@ -3725,7 +3725,7 @@ An interval skip list is a data strucure for finding all intervals
     <li> Number types:
       <ul>
       <li> number types are now required to provide a function:
-        std::pair&lt;double, double&gt;  to_interval(const NT &amp;).
+        std::pair&lt;double, double&gt;  to_interval(const NT &).
       <li> number types are now required to provide mixed operators with "int".
       <li> CLN support removed.
       <li> faster square() for MP_Float.
