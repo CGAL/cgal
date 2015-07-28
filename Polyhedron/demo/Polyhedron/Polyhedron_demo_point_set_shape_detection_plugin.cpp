@@ -172,8 +172,11 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
       // Providing a useful name consisting of the order of detection, name of type and number of inliers
       std::stringstream ss;
-      if (dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape.get()))
-        ss << item->name().toStdString() << "_cylinder_";
+      if (dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape.get())){
+        CGAL::Shape_detection_3::Cylinder<Traits> * cyl 
+          = dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape.get());
+        ss << item->name().toStdString() << "_cylinder_" << cyl->radius() << "_";
+      }
       else if (dynamic_cast<CGAL::Shape_detection_3::Plane<Traits> *>(shape.get()))
         ss << item->name().toStdString() << "_plane_";
       else if (dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
