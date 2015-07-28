@@ -3,13 +3,6 @@
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
 
-/*
-#include <CGAL/grid_simplify_point_set.h>
-#include <CGAL/random_simplify_point_set.h>
-#include <CGAL/compute_average_spacing.h>
-#include <CGAL/Timer.h>
-#include <CGAL/Memory_sizer.h>
-*/
 #include <CGAL/Random.h>
 
 #include <CGAL/Shape_detection_3.h>
@@ -96,6 +89,10 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
   Scene_points_with_normal_item* item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
 
+  Scene_points_with_normal_item::Bbox bb = item->bbox();
+ 
+  double diam = bb.diagonal_length();
+
   if(item)
   {
     // Gets point set
@@ -112,8 +109,6 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       return;
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
-
-    //    CGAL::Timer task_timer; task_timer.start();
 
     typedef CGAL::Identity_property_map<Point_set::Point_with_normal> PointPMap;
     typedef CGAL::Normal_of_point_with_normal_pmap<Point_set::Geom_traits> NormalPMap;
@@ -157,6 +152,14 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     int index = 0;
     BOOST_FOREACH(boost::shared_ptr<Shape_detection::Shape> shape, shape_detection.shapes())
     {
+      CGAL::Shape_detection_3::Cylinder<Traits> *cyl;
+      cyl = dynamic_cast<CGAL::Shape_detection_3::Cylinder<Traits> *>(shape.get());
+      if (cyl != NULL){
+        if(cyl->radius() > diam){
+          continue;
+        }
+      }
+        
       Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
       BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
         point_item->point_set()->push_back((*points)[i]);
