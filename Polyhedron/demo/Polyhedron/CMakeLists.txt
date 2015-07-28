@@ -127,7 +127,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Viewer.cpp #Viewer_moc.cpp
     Viewer_interface_moc.cpp
     Scene_item.cpp #Scene_item.moc
-    #Scene_item_with_display_list.cpp
     Polyhedron_demo_plugin_helper.cpp)
     qt5_use_modules(demo_framework OpenGL Gui Widgets Script Xml)
 

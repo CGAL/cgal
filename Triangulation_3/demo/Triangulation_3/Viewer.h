@@ -255,11 +255,11 @@ protected:
 
 private:
   // draw a 3d effect vertex
-  void drawVertex(const Point_3& p, const QColor& clr, float r, std::vector<float> *vertices);
+  void drawVertex(const Point_3& p, std::vector<float> *vertices);
   // draw a 3d effect edge
-  void drawEdge(const Point_3& from, const Point_3& to, const QColor& clr, float r, std::vector<float> *vertices);
+  void drawEdge(const Point_3& from, const Point_3 &to, std::vector<float> *vertices);
   // draw a facet
-  void drawFacet(const Triangle_3& t, const QColor& clr, std::vector<float> *vertices);
+  void drawFacet(const Triangle_3& t, std::vector<float> *vertices);
   // test whether the give 3D point is on the sphere
   inline bool isOnSphere( const Point_3 & pt ) {
     return ( (pt.x()*pt.x() + pt.y()*pt.y() + pt.z()*pt.z()) == (m_fRadius*m_fRadius) );

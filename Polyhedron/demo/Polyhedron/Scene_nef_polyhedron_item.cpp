@@ -1,4 +1,3 @@
-#include <CGAL/check_gl_error.h>
 #include "Scene_nef_polyhedron_item.h"
 #include "Scene_polyhedron_item.h"
 #include "Nef_type.h"
@@ -39,20 +38,7 @@ TDS,
 Itag>             CDTbase;
 typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 
-struct light_info
-{
-    //position
-    GLfloat position[4];
 
-    //ambient
-    GLfloat ambient[4];
-
-    //diffuse
-    GLfloat diffuse[4];
-
-    //specular
-    GLfloat specular[4];
-};
 struct DPoint {
     DPoint(GLdouble x, GLdouble y, GLdouble z)
     {
@@ -85,12 +71,6 @@ Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(const Nef_polyhedron& p)
      is_selected = true;
      qFunc.initializeOpenGLFunctions();
 }
-
-// Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(const Scene_nef_polyhedron_item& item)
-//   : Scene_item_with_display_list(item),
-//     nef_poly(new Nef_polyhedron(*item.nef_poly))
-// {
-// }
 
 Scene_nef_polyhedron_item::~Scene_nef_polyhedron_item()
 {

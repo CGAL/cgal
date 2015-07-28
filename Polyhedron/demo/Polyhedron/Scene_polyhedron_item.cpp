@@ -1,4 +1,3 @@
-#include <CGAL/check_gl_error.h>
 #include "Scene_polyhedron_item.h"
 #include <CGAL/AABB_intersections.h>
 #include "Kernel_type.h"
@@ -1118,6 +1117,10 @@ void Scene_polyhedron_item::update_halfedge_indices()
     {
         hit->id()=id++;
     }
+}
+void Scene_polyhedron_item::invalidate_aabb_tree()
+{
+  delete_aabb_tree(this);
 }
 
 #include "Scene_polyhedron_item.moc"

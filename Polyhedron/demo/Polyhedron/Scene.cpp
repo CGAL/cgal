@@ -1,4 +1,3 @@
-#include <CGAL/check_gl_error.h>
 #include "config.h"
 #include "Scene.h"
 #include "Scene_item.h"
@@ -148,7 +147,7 @@ Scene::~Scene()
 {
     Q_FOREACH(Scene_item* item_ptr, m_entries)
     {
-        delete item_ptr;
+        item_ptr->deleteLater();
     }
     m_entries.clear();
 }

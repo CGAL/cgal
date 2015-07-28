@@ -26,7 +26,6 @@
 #include <QMainWindow>
 #include <QApplication>
 #include "Scene_item.h"
-
 //typedef CGAL::Simple_cartesian<double> Epic_kernel;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 
@@ -145,6 +144,7 @@ public:
     {
         positions_lines.resize(0);
         qFunc.initializeOpenGLFunctions();
+        top = true;
     }
   ~Scene_edges_item()
   {
@@ -206,9 +206,14 @@ public:
 
 public:
   std::vector<Epic_kernel::Segment_3> edges;
+  bool top;
 
 private:
     std::vector<float> positions_lines;
+    void timerEvent(QTimerEvent* /*event*/)
+    {
+       top = true;
+    }
 
   mutable QOpenGLShaderProgram *program;
 
@@ -418,10 +423,13 @@ void Polyhedron_demo_cut_plugin::cut() {
     edges_item = new Scene_edges_item;
     edges_item->setName("Edges of the cut");
     edges_item->setColor(Qt::red);
+    edges_item->startTimer(0);
     connect(edges_item, SIGNAL(destroyed()),
             this, SLOT(reset_edges()));
     scene->addItem(edges_item);
   }
+  if(edges_item->top)
+  {
   const qglviewer::Vec& pos = plane_item->manipulatedFrame()->position();
   const qglviewer::Vec& n =
     plane_item->manipulatedFrame()->inverseTransformOf(qglviewer::Vec(0.f, 0.f, 1.f));
@@ -468,7 +476,10 @@ void Polyhedron_demo_cut_plugin::cut() {
 
   messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
   scene->itemChanged(edges_item);
+  }
   QApplication::restoreOverrideCursor();
+
+    edges_item->top = false;
 }
 
 void Polyhedron_demo_cut_plugin::enableAction() {
