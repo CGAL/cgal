@@ -47,9 +47,9 @@ void sum_normals(const PM& pmesh,
   halfedge_descriptor end = he;
   do
   {
-    const Point& prv = vpmap[target(prev(he, pmesh), pmesh)];
-    const Point& curr = vpmap[target(he, pmesh)];
-    const Point& nxt = vpmap[target(next(he, pmesh), pmesh)];
+    const Point& prv = get(vpmap, target(prev(he, pmesh), pmesh));
+    const Point& curr = get(vpmap, target(he, pmesh));
+    const Point& nxt = get(vpmap, target(next(he, pmesh), pmesh));
     Vector n = CGAL::cross_product(nxt - curr, prv - curr);
     sum = sum + n;
 
