@@ -55,8 +55,8 @@ class SegmentDelaunayGraphGraphicsItem : public GraphicsItem
 public:
   SegmentDelaunayGraphGraphicsItem(T  * t_)
     : t(t_), painterostream(0),
-      segment_pen(::Qt::blue),
-      voronoi_pen(::Qt::blue)
+      segment_pen(::Qt::blue, 0),
+      voronoi_pen(::Qt::blue, 0)
   {
   }
   

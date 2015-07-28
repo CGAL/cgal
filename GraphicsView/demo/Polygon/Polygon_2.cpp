@@ -127,7 +127,6 @@ MainWindow::MainWindow()
   QObject::connect(this, SIGNAL(changed()),
 		   pgi, SLOT(modelChanged()));
 
-  pgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   scene.addItem(pgi);
 
   kgongi =  new CGAL::Qt::PolygonGraphicsItem<Polygon2>(&kgon);

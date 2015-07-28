@@ -115,6 +115,7 @@ PolygonGraphicsItem<P>::PolygonGraphicsItem(P * p_)
      draw_edges(true), draw_vertices(true)   
 {
   setVerticesPen(QPen(::Qt::red, 3.));
+  setEdgesPen(QPen(::Qt::black, 0));
   updateBoundingBox();
   setZValue(3);
 }

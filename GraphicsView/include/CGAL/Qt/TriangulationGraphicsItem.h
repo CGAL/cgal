@@ -134,6 +134,7 @@ TriangulationGraphicsItem<T>::TriangulationGraphicsItem(T * t_)
      visible_edges(true), visible_vertices(true)
 {
   setVerticesPen(QPen(::Qt::red, 4.));
+  setEdgesPen(QPen(::Qt::black, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
   if(t->number_of_vertices() == 0){
     this->hide();
   }
