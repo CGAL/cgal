@@ -184,7 +184,7 @@ void Scene_c3t3_item::compute_elements()
     normal.resize(0);
     color_triangles.resize(0);
 
-    draw_grid((float)complex_diag(this),v_grid);
+    draw_grid((float)complex_diag(this),&v_grid);
     if(isEmpty())
       return;
 
@@ -542,7 +542,7 @@ void Scene_c3t3_item::initialize_buffers() const
 
         vao[1].bind();
         buffers[3].bind();
-        buffers[3].allocate(v_grid->data(), static_cast<int>(v_grid->size()*sizeof(float)));
+        buffers[3].allocate(v_grid.data(), static_cast<int>(v_grid.size()*sizeof(float)));
         poly_vertexLocation[1] = rendering_program.attributeLocation("vertex");
         rendering_program.enableAttributeArray(poly_vertexLocation[1]);
         rendering_program.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
@@ -673,7 +673,7 @@ Scene_c3t3_item::draw_edges(QGLViewer* viewer) const {
     QColor color;
     color.setRgbF(this->color().redF(), this->color().greenF(), this->color().blueF());
     rendering_program_grid.setUniformValue(colorLocation[1], color);
-    gl.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_grid->size()/3));
+    gl.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_grid.size()/3));
     rendering_program_grid.release();
     vao[1].release();
 }
@@ -693,7 +693,6 @@ Scene_c3t3_item()
   , data_item_(NULL)
   , indices_()
 {
-    v_grid = new std::vector<float>();
   compile_shaders();
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
   c3t3_changed();

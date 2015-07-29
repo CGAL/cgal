@@ -120,7 +120,7 @@ private:
   std::vector<float> v_poly;
   std::vector<float> normal;
   std::vector<float> color_triangles;
-  std::vector<float> *v_grid;
+  std::vector<float> v_grid;
 
 
 
