@@ -204,7 +204,6 @@ protected:
   RenderingMode prev_shading;
   RenderingMode cur_shading;
 
-  mutable QOpenGLFunctions_3_3_Core qFunc;
   int buffersSize;
   int vaosSize;
   mutable std::vector<QOpenGLBuffer> buffers;

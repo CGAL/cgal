@@ -147,7 +147,7 @@ Scene::~Scene()
 {
     Q_FOREACH(Scene_item* item_ptr, m_entries)
     {
-        item_ptr->deleteLater();
+        delete item_ptr;
     }
     m_entries.clear();
 }

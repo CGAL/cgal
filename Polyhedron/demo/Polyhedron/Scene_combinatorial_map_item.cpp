@@ -1,6 +1,7 @@
 #include "Scene_combinatorial_map_item.h"
 #include "Scene_polyhedron_item.h"
 #include "Scene_interface.h"
+#include "Viewer_interface.h"
 
 #include <QObject>
 #include <QMenu>
@@ -8,9 +9,9 @@
 #include <QtDebug>
 #include <QKeyEvent>
 #include <CGAL/corefinement_operations.h>
-void Scene_combinatorial_map_item::initialize_buffers()
+void Scene_combinatorial_map_item::initialize_buffers(Viewer_interface *viewer)
 {
-    qFunc.glBindVertexArray(vao);
+    viewer->glBindVertexArray(vao);
     buffer[0] = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
     if(!(buffer[0].create()))
         std::cout<<"ERROR lors de la creation"<<std::endl;
@@ -19,17 +20,17 @@ void Scene_combinatorial_map_item::initialize_buffers()
     buffer[0].allocate(positions.data(),
                        static_cast<int>(positions.size()*sizeof(float)));
     /*
-    qFunc.glVertexAttribPointer(0, //number of the buffer
+    viewer->glVertexAttribPointer(0, //number of the buffer
                           4, //number of floats to be taken
                           GL_FLOAT, // type of data
                           GL_FALSE, //not normalized
                           0, //compact data (not in a struct)
                           NULL //no offset (seperated in several buffers)
                           );
-    qFunc.glEnableVertexAttribArray(0);*/
+    viewer->glEnableVertexAttribArray(0);*/
 
     // Clean-up
-    qFunc.glBindVertexArray(0);
+    viewer->glBindVertexArray(0);
 
 }
 

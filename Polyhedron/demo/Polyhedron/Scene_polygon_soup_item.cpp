@@ -329,7 +329,6 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
     soup(0),
     oriented(false)
 {
- qFunc.initializeOpenGLFunctions();
 }
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
@@ -541,7 +540,7 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     program->setAttributeValue("colors", v_colors);
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
-    qFunc.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size()/4));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size()/4));
     // Clean-up
     program->release();
     vaos[0]->release();
@@ -562,7 +561,7 @@ Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
     QColor color = this->color();
     program->setAttributeValue("colors", color);
     //draw the points
-    qFunc.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/4));
+    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/4));
     // Clean-up
     program->release();
     vaos[1]->release();
@@ -584,7 +583,7 @@ Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
 
     program->setAttributeValue("colors", color);
     //draw the edges
-    qFunc.glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( positions_lines.size()/4));
+    viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( positions_lines.size()/4));
     // Clean-up
     program->release();
     vaos[1]->release();
