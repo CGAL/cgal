@@ -324,6 +324,7 @@ check_no_intersection  (L(p(0, 0), p(10,10)), L(p(8,7), p(1, 0)));
     check_intersection<T>(Rec(p( 0,  0), p(3, 3)), T(p(    1,   1), p(  2,   1), p(1,  2)));
     check_intersection<P>(Rec(p( 0,  0), p(1, 1)), T(p(  -1,   0), p(    0,  0), p(0,  -1)));
     check_intersection<P>(Rec(p( 0,  0), p(1, 1)), T(p(    0,  0), p(  -1,   0), p(0,  -1)));
+    check_intersection<Pol>(Rec(p( 100,  100), p(200, 200)), T(p(150, 50), p(250, 170), p(50, 170)));
   }
   
   void run()

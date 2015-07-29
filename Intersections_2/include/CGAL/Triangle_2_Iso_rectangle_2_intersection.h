@@ -27,6 +27,7 @@
 #include <CGAL/Iso_rectangle_2.h>
 #include <CGAL/Segment_2_Segment_2_intersection.h>
 #include <CGAL/Intersection_traits_2.h>
+#include <CGAL/Segment_2_Iso_rectangle_2_intersection.h>
 
 #include <vector>
 #include <list>
@@ -304,10 +305,18 @@ namespace CGAL{ namespace internal {
     
     typename K::Has_on_unbounded_side_2 unbounded_side=k.has_on_unbounded_side_2_object();
     typename K::Construct_vertex_2 vertex=k.construct_vertex_2_object();
+
     for (int i=0;i<3;++i)
       if ( !unbounded_side( ir,vertex(tr,i) ) ) return true;
     for (int i=0;i<4;++i)
       if ( !unbounded_side( tr,vertex(ir,i) ) ) return true;
+
+    typename K::Construct_segment_2 segment=k.construct_segment_2_object();
+    for (int i=0;i<3;++i)
+      if ( do_intersect(
+            segment(vertex(tr,i),vertex(tr,(i+1)%3)),
+            ir, k) ) return true;
+
     return false;
   }
 
