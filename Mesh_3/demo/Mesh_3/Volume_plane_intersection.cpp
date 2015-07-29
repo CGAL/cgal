@@ -113,7 +113,7 @@ void Volume_plane_intersection::init_buffers()
 
 }
 
-void Volume_plane_intersection::attrib_buffers(QGLViewer* viewer) const
+void Volume_plane_intersection::attrib_buffers(Viewer* viewer) const
 {
     QMatrix4x4 mvpMatrix;
     double mat[16];
@@ -129,7 +129,7 @@ void Volume_plane_intersection::attrib_buffers(QGLViewer* viewer) const
     rendering_program.release();
 }
 
-void Volume_plane_intersection::draw(QGLViewer *viewer) const {
+void Volume_plane_intersection::draw(Viewer* viewer) const {
     if(!are_ogfunctions_initialized)
     {
         gl.initializeOpenGLFunctions();

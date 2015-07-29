@@ -6,8 +6,9 @@
 #include <QString>
 #include <QPixmap>
 #include <QFont>
-#include<QGLViewer/qglviewer.h>
 #include <QOpenGLFunctions_3_3_Core>
+
+#include <CGAL_demo/Viewer.h>
 
 namespace qglviewer {
   class ManipulatedFrame;
@@ -41,11 +42,11 @@ public:
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const = 0;
   // Flat/Gouraud OpenGL drawing
-  virtual void draw(QGLViewer *viewer) const = 0;
+  virtual void draw(Viewer *viewer) const = 0;
   // Wireframe OpenGL drawing
-  virtual void draw_edges(QGLViewer *viewer) const { draw(viewer); }
+  virtual void draw_edges(Viewer *viewer) const { draw(viewer); }
   // Points OpenGL drawing
-  virtual void draw_points(QGLViewer *viewer) const { draw(viewer); }
+  virtual void draw_points(Viewer *viewer) const { draw(viewer); }
 
   // Functions for displaying meta-data of the item
   virtual QString toolTip() const = 0;

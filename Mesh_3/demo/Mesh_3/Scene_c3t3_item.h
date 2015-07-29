@@ -70,8 +70,8 @@ public:
     return (m != Gouraud); // CHECK THIS!
   }
 
-  void draw(QGLViewer* viewer) const;
-  void draw_edges(QGLViewer* viewer) const;
+  void draw(Viewer* viewer) const;
+  void draw_edges(Viewer* viewer) const;
   
   // data item
   inline const Scene_item* data_item() const;
@@ -130,7 +130,7 @@ private:
   mutable QOpenGLShaderProgram rendering_program_grid;
   void initialize_buffers() const;
   void compute_elements();
-  void attrib_buffers(QGLViewer*) const;
+  void attrib_buffers(Viewer*) const;
   void compile_shaders();
   void draw_grid(float diag, std::vector<float> *positions_grid);
 };

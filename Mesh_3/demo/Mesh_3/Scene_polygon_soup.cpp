@@ -329,7 +329,7 @@ void Scene_polygon_soup::initialize_buffers() const
 
 }
 
-void Scene_polygon_soup::attrib_buffers(QGLViewer* viewer) const
+void Scene_polygon_soup::attrib_buffers(Viewer* viewer) const
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -395,7 +395,7 @@ void Scene_polygon_soup::attrib_buffers(QGLViewer* viewer) const
 }
 
 void
-Scene_polygon_soup::draw(QGLViewer * viewer) const  {
+Scene_polygon_soup::draw(Viewer* viewer) const  {
     if(!are_ogfunctions_initialized)
     {
         gl.initializeOpenGLFunctions();
@@ -418,7 +418,7 @@ Scene_polygon_soup::draw(QGLViewer * viewer) const  {
 }
 
 void
-Scene_polygon_soup::draw_edges(QGLViewer * viewer) const  {
+Scene_polygon_soup::draw_edges(Viewer* viewer) const  {
     if(!are_ogfunctions_initialized)
     {
         gl.initializeOpenGLFunctions();
@@ -452,7 +452,7 @@ Scene_polygon_soup::draw_edges(QGLViewer * viewer) const  {
 }
 
 void
-Scene_polygon_soup::draw_points(QGLViewer * viewer) const  {
+Scene_polygon_soup::draw_points(Viewer* viewer) const  {
 
     if(!are_ogfunctions_initialized)
     {

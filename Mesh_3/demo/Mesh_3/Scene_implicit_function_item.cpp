@@ -391,7 +391,7 @@ void Scene_implicit_function_item::initialize_buffers() const
     are_buffers_initialized = true;
 }
 
-void Scene_implicit_function_item::attrib_buffers(QGLViewer* viewer) const
+void Scene_implicit_function_item::attrib_buffers(Viewer* viewer) const
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 fMatrix;
@@ -424,7 +424,7 @@ void Scene_implicit_function_item::attrib_buffers(QGLViewer* viewer) const
 }
 
 void
-Scene_implicit_function_item::draw(QGLViewer* viewer) const
+Scene_implicit_function_item::draw(Viewer* viewer) const
 {
     if(!are_ogfunctions_initialized)
     {

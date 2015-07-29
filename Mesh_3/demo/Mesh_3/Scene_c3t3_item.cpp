@@ -554,7 +554,7 @@ void Scene_c3t3_item::initialize_buffers() const
 
 }
 
-void Scene_c3t3_item::attrib_buffers(QGLViewer* viewer) const
+void Scene_c3t3_item::attrib_buffers(Viewer* viewer) const
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -642,7 +642,7 @@ void Scene_c3t3_item::attrib_buffers(QGLViewer* viewer) const
 enum { DRAW = 0, DRAW_EDGES = 1 };
 
 void
-Scene_c3t3_item::draw(QGLViewer *viewer)const {
+Scene_c3t3_item::draw(Viewer* viewer)const {
     if(!are_ogfunctions_initialized)
     {
         gl.initializeOpenGLFunctions();
@@ -659,7 +659,7 @@ Scene_c3t3_item::draw(QGLViewer *viewer)const {
 }
 
 void
-Scene_c3t3_item::draw_edges(QGLViewer* viewer) const {
+Scene_c3t3_item::draw_edges(Viewer* viewer) const {
     if(!are_ogfunctions_initialized)
     {
         gl.initializeOpenGLFunctions();

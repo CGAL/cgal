@@ -9,7 +9,9 @@
 #include <QColorDialog>
 #include <QApplication>
 #include <QPointer>
-#include <QGLViewer/qglviewer.h>
+
+#include <CGAL_demo/Viewer.h>
+
 namespace {
   void CGALglcolor(QColor c)
   {
@@ -111,18 +113,18 @@ void Scene::initializeGL()
 }
 
 void 
-Scene::draw(QGLViewer* viewer)
+Scene::draw(Viewer* viewer)
 {
   draw_aux(false, viewer);
 }
 void 
-Scene::drawWithNames(QGLViewer *viewer)
+Scene::drawWithNames(Viewer *viewer)
 {
   draw_aux(true,viewer);
 }
 
 void 
-Scene::draw_aux(bool with_names, QGLViewer *viewer)
+Scene::draw_aux(bool with_names, Viewer *viewer)
 {
   // Flat/Gouraud OpenGL drawing
   for(int index = 0; index < entries.size(); ++index)

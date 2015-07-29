@@ -65,7 +65,7 @@ public:
   virtual ManipulatedFrame* manipulatedFrame() { return frame_; }
   
   // draw (overload only direct_draw() to use display list of base class)
-  virtual void draw(QGLViewer* viewer) const;
+  virtual void draw(Viewer* viewer) const;
   
   virtual QString toolTip() const;
 
@@ -115,7 +115,7 @@ private:
   mutable QOpenGLShaderProgram tex_rendering_program;
   void initialize_buffers() const;
   void compute_elements();
-  void attrib_buffers(QGLViewer*) const;
+  void attrib_buffers(Viewer*) const;
   void compile_shaders();
   void compute_texture(int, int);
 

@@ -580,7 +580,7 @@ void Scene_segmented_image_item::compile_shaders()
     }
 }
 
-void Scene_segmented_image_item::attrib_buffers(QGLViewer* viewer) const
+void Scene_segmented_image_item::attrib_buffers(Viewer* viewer) const
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -656,7 +656,7 @@ Scene_segmented_image_item::bbox() const
 }
 
 void
-Scene_segmented_image_item::draw(QGLViewer* viewer) const
+Scene_segmented_image_item::draw(Viewer* viewer) const
 {
   if(m_image)
   {
@@ -782,7 +782,7 @@ Scene_segmented_image_item::initialize_buffers()
 
 
 void
-Scene_segmented_image_item::draw_gl(QGLViewer *viewer) const
+Scene_segmented_image_item::draw_gl(Viewer* viewer) const
 {
     if(!are_ogfunctions_initialized)
     {

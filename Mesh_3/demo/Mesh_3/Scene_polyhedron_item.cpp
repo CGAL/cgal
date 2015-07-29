@@ -267,7 +267,7 @@ void Scene_polyhedron_item::initialize_buffers() const
 
 }
 
-void Scene_polyhedron_item::attrib_buffers(QGLViewer* viewer) const
+void Scene_polyhedron_item::attrib_buffers(Viewer* viewer) const
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -333,7 +333,7 @@ void Scene_polyhedron_item::attrib_buffers(QGLViewer* viewer) const
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-void Scene_polyhedron_item::draw(QGLViewer *viewer) const {
+void Scene_polyhedron_item::draw(Viewer* viewer) const {
 
     if(!are_ogfunctions_initialized)
     {
@@ -367,7 +367,7 @@ void Scene_polyhedron_item::draw(QGLViewer *viewer) const {
 
 
 }
-void Scene_polyhedron_item::draw_edges(QGLViewer *viewer) const {
+void Scene_polyhedron_item::draw_edges(Viewer* viewer) const {
     if(!are_ogfunctions_initialized)
     {
         gl.initializeOpenGLFunctions();
@@ -389,7 +389,7 @@ void Scene_polyhedron_item::draw_edges(QGLViewer *viewer) const {
     vao[2].release();
 
 }
-void Scene_polyhedron_item::draw_points(QGLViewer *viewer) const {
+void Scene_polyhedron_item::draw_points(Viewer* viewer) const {
     if(!are_ogfunctions_initialized)
     {
         gl.initializeOpenGLFunctions();

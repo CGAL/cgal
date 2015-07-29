@@ -28,9 +28,9 @@ public:
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const { return m != Gouraud; } // CHECK THIS!
   // OpenGL drawing in a display list
-  void draw(QGLViewer*) const;
-  void draw_edges(QGLViewer*) const;
-  void draw_points(QGLViewer*) const;
+  void draw(Viewer*) const;
+  void draw_edges(Viewer*) const;
+  void draw_points(Viewer*) const;
 
   bool isFinite() const { return true; }
   bool isEmpty() const;
@@ -70,7 +70,7 @@ private:
   mutable QOpenGLShaderProgram rendering_program;
   void initialize_buffers() const;
   void compute_elements();
-  void attrib_buffers(QGLViewer*) const;
+  void attrib_buffers(Viewer*) const;
   void compile_shaders();
 
 public Q_SLOTS:
