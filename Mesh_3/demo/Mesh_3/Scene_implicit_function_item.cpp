@@ -582,5 +582,4 @@ void Scene_implicit_function_item::compute_texture(int i, int j)
        }
 }
 
-#include "Scene_implicit_function_item.moc"
 

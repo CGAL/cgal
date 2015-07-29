@@ -1030,4 +1030,4 @@ void Scene_c3t3_item::contextual_changed()
     if(frame->isInMouseGrabberPool())
         c3t3_changed();
 }
-#include "Scene_c3t3_item.moc"
+

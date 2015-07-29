@@ -198,5 +198,3 @@ void Volume_plane_intersection::draw(Viewer* viewer) const {
 
   viewer->glLineWidth(1.0f);
 }
-
-#include "Volume_plane_intersection.moc"

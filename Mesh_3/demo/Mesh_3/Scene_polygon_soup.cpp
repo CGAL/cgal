@@ -724,4 +724,3 @@ void Scene_polygon_soup::changed()
     compute_elements();
     are_buffers_initialized = false;
 }
-#include "Scene_polygon_soup.moc"

@@ -466,4 +466,3 @@ void Scene_polyhedron_item::changed()
     are_buffers_initialized = false;
 }
 
-#include "Scene_polyhedron_item.moc"
