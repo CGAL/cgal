@@ -61,6 +61,10 @@
 #  error "The old remove() code has been removed.  Please report any issue you may have with the current one."
 #endif
 
+#ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
+#include <CGAL/point_generators_3.h>
+#endif
+
 namespace CGAL {
 
 // Here is the declaration of a class template with three arguments, one
@@ -264,6 +268,7 @@ public:
   }
 
 private:
+  #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
   std::vector<Vertex_handle> add_temporary_points_on_far_sphere(const size_t num_points){
       std::vector<Vertex_handle> far_sphere_vertices;
 
@@ -323,6 +328,7 @@ private:
           remove(far_sphere_vertices.begin(), far_sphere_vertices.end());
       }
   }
+  #endif
 
 public:
 
