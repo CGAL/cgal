@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>PointSetSelection</class>
+ <widget class="QDockWidget" name="PointSetSelection">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>369</width>
+    <height>239</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Point Set Selection</string>
+  </property>
+  <widget class="QWidget" name="dockWidgetContents">
+   <layout class="QVBoxLayout" name="verticalLayout_5">
+    <item>
+     <layout class="QVBoxLayout" name="verticalLayout_3">
+      <item>
+       <layout class="QHBoxLayout" name="horizontalLayout_4">
+        <item>
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Selection &amp;Tool:</string>
+          </property>
+          <property name="buddy">
+           <cstring>Selection_tool_combo_box</cstring>
+          </property>
+         </widget>
+        </item>
+        <item>
+         <widget class="QComboBox" name="Selection_tool_combo_box">
+          <item>
+           <property name="text">
+            <string>Rectangle</string>
+           </property>
+          </item>
+          <item>
+           <property name="text">
+            <string>Free form</string>
+           </property>
+          </item>
+         </widget>
+        </item>
+       </layout>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_14" stretch="0,0">
+      <property name="spacing">
+       <number>6</number>
+      </property>
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
+      <item>
+       <widget class="QLabel" name="label_4">
+        <property name="text">
+         <string>Selection &amp;Mode:</string>
+        </property>
+        <property name="buddy">
+         <cstring>Selection_mode_combo_box</cstring>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="Selection_mode_combo_box">
+        <item>
+         <property name="text">
+          <string>New Selection</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Union</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Intersection</string>
+         </property>
+        </item>
+        <item>
+         <property name="text">
+          <string>Difference</string>
+         </property>
+        </item>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
+      <item>
+       <widget class="QPushButton" name="Select_all_button">
+        <property name="text">
+         <string>Select &amp;All</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="Clear_button">
+        <property name="text">
+         <string>&amp;Clear</string>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Invert_selection_button">
+      <property name="text">
+       <string>&amp;Invert Selection</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Erase_selected_points_button">
+      <property name="text">
+       <string>&amp;Erase Selected Points</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Create_point_set_item_button">
+      <property name="text">
+       <string>Create Point Set Item from Selected Points</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <spacer name="verticalSpacer">
+      <property name="orientation">
+       <enum>Qt::Vertical</enum>
+      </property>
+      <property name="sizeHint" stdset="0">
+       <size>
+        <width>20</width>
+        <height>40</height>
+       </size>
+      </property>
+     </spacer>
+    </item>
+   </layout>
+  </widget>
+ </widget>
+ <resources/>
+ <connections/>
+</ui>

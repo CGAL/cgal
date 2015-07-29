@@ -134,6 +134,15 @@ public:
                                          std::mem_fun_ref(&UI_point::is_selected));
   }
 
+  // Invert selection
+  void invert_selection()
+  {
+    for (iterator it = begin(); it != end(); ++ it)
+      it->select(!(it->is_selected ()));
+
+    m_nb_selected_points = size() - m_nb_selected_points;
+  }
+
   /// Deletes selected points.
   void delete_selection()
   {

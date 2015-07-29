@@ -79,6 +79,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
   qt5_wrap_ui( PreferencesUI_FILES   Preferences.ui )
   qt5_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
+  qt5_wrap_ui( point_set_selectionUI_FILES Point_set_selection_widget.ui)
   qt5_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
   qt5_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
   qt5_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
@@ -429,6 +430,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   qt5_wrap_ui( ps_outliers_removal_UI_FILES Polyhedron_demo_point_set_outliers_removal_plugin.ui)
 
+  polyhedron_demo_plugin(point_set_selection_plugin Polyhedron_demo_point_set_selection_plugin ${point_set_selectionUI_FILES})
+  target_link_libraries(point_set_selection_plugin scene_points_with_normal_item)
+  
   qt5_wrap_ui(point_set_shape_detectionUI_FILES Polyhedron_demo_point_set_shape_detection_plugin.ui)
   polyhedron_demo_plugin(point_set_shape_detection_plugin Polyhedron_demo_point_set_shape_detection_plugin ${point_set_shape_detectionUI_FILES})
   target_link_libraries(point_set_shape_detection_plugin scene_polyhedron_item scene_points_with_normal_item)

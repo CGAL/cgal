@@ -72,6 +72,10 @@ public:
 public Q_SLOTS:
   // Delete selection
   virtual void deleteSelection();
+  // Invert selection
+  void invertSelection();
+  // Select all points
+  void selectAll();
   // Reset selection mark
   void resetSelection();
   //Select duplicated points
