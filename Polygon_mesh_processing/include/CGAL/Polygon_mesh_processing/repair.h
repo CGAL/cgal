@@ -294,6 +294,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 // First remove edges of length 0
   std::set<edge_descriptor> null_edges_to_remove;
 
+  // collect edges of length 0
   BOOST_FOREACH(edge_descriptor ed, edges(tmesh))
   {
     if ( traits.equal_3_object()(get(vpmap, target(ed, tmesh)), get(vpmap, source(ed, tmesh))) )
@@ -337,6 +338,17 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
           continue;
         }
       }
+
+      // When the edge does not satisfy the link condition, it means that it cannot be
+      // collapsed as is. In the following we assume that there is no topological issue
+      // with contracting the edge (no volume will disappear).
+      // We start by marking the faces that are incident to an edge endpoint.
+      // If the set of marked faces is a topologically disk, then we simply remove all the simplicies
+      // inside the disk and star the hole with the edge vertex kept.
+      // If the set of marked faces is not a topological disk, it means that one or two set of faces
+      // are connected to a vertex of the boundary. We need to mark the faces from
+      // these sets so that we get a topological disk of marked faces to apply the star hole
+      // procedure.
 
       //backup central point
       typename Traits::Point_3 pt = get(vpmap, source(ed, tmesh));
