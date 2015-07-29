@@ -153,7 +153,6 @@ void Scene_polyhedron_item::compute_elements()
     typedef Polyhedron::Traits	    Kernel;
     typedef Kernel::Point_3	    Point;
     typedef Kernel::Vector_3	    Vector;
-    typedef Polyhedron::Facet	    Facet;
     typedef Polyhedron::Facet_iterator Facet_iterator;
     typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
 
