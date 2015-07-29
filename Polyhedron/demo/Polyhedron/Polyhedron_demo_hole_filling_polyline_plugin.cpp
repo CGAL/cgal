@@ -66,7 +66,7 @@ class Polyhedron_demo_hole_filling_polyline_plugin :
 {
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
-
+  Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
   bool applicable(QAction *) const { return qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex())); }
   void print_message(QString message) { messages->information(message); }
