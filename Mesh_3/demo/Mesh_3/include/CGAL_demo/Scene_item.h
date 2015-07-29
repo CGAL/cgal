@@ -6,7 +6,6 @@
 #include <QString>
 #include <QPixmap>
 #include <QFont>
-#include <QOpenGLFunctions_3_3_Core>
 
 #include <CGAL_demo/Viewer.h>
 
@@ -34,7 +33,6 @@ public:
       visible_(true),
       rendering_mode(FlatPlusEdges)
   {
-  are_ogfunctions_initialized = false;
   }
   virtual ~Scene_item();
   virtual Scene_item* clone() const = 0;
@@ -90,8 +88,6 @@ Q_SIGNALS:
   void aboutToBeDestroyed();
 
 protected:
-  mutable QOpenGLFunctions_3_3_Core gl;
-  mutable bool are_ogfunctions_initialized;
   // The four basic properties
   QString name_;
   QColor color_;

@@ -30,6 +30,7 @@ Scene_implicit_function_item(Implicit_function_interface* f)
   compute_function_grid();
   connect(frame_, SIGNAL(modified()), this, SLOT(compute_function_grid()));
   are_buffers_initialized = false;
+  texture_initialized = false;
 }
 
 
@@ -337,7 +338,7 @@ void Scene_implicit_function_item::compute_elements()
        }
 }
 
-void Scene_implicit_function_item::initialize_buffers() const
+void Scene_implicit_function_item::initialize_buffers(Viewer* viewer) const
 {
 
     rendering_program.bind();
@@ -372,8 +373,8 @@ void Scene_implicit_function_item::initialize_buffers() const
     buffers[2].release();
     tex_rendering_program.release();
 
-    gl.glBindTexture(GL_TEXTURE_2D, textureId);
-    gl.glTexImage2D(GL_TEXTURE_2D,
+    viewer->glBindTexture(GL_TEXTURE_2D, textureId);
+    viewer->glTexImage2D(GL_TEXTURE_2D,
                  0,
                  GL_RGB,
                  texture->getWidth(),
@@ -382,7 +383,7 @@ void Scene_implicit_function_item::initialize_buffers() const
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
                  texture->getData());
-    gl.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S,GL_CLAMP_TO_EDGE );
     glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T,GL_CLAMP_TO_EDGE );
@@ -426,14 +427,13 @@ void Scene_implicit_function_item::attrib_buffers(Viewer* viewer) const
 void
 Scene_implicit_function_item::draw(Viewer* viewer) const
 {
-    if(!are_ogfunctions_initialized)
-    {
-        gl.initializeOpenGLFunctions();
-        gl.glGenTextures(1, &textureId);
-        are_ogfunctions_initialized = true;
-    }
-    if(!are_buffers_initialized)
-        initialize_buffers();
+  if(!texture_initialized)
+  {
+    viewer->glGenTextures(1, &textureId);
+    texture_initialized = true;
+  }
+  if(!are_buffers_initialized)
+    initialize_buffers(viewer);
   QColor color;
   vao[0].bind();
   attrib_buffers(viewer);
@@ -444,8 +444,8 @@ Scene_implicit_function_item::draw(Viewer* viewer) const
   rendering_program.release();
   vao[0].release();
 
-  gl.glActiveTexture(GL_TEXTURE0);
-  gl.glBindTexture(GL_TEXTURE_2D, textureId);
+  viewer->glActiveTexture(GL_TEXTURE0);
+  viewer->glBindTexture(GL_TEXTURE_2D, textureId);
 
   vao[1].bind();
   tex_rendering_program.bind();

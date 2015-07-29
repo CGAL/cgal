@@ -597,7 +597,7 @@ void Scene_segmented_image_item::attrib_buffers(Viewer* viewer) const
     }
     QVector4D	position(0.0f,0.0f,1.0f,1.0f );
     GLboolean isTwoSide;
-    gl.glGetBooleanv(GL_LIGHT_MODEL_TWO_SIDE,&isTwoSide);
+    viewer->glGetBooleanv(GL_LIGHT_MODEL_TWO_SIDE,&isTwoSide);
     // define material
      QVector4D	ambient;
      QVector4D	diffuse;
@@ -784,20 +784,15 @@ Scene_segmented_image_item::initialize_buffers()
 void
 Scene_segmented_image_item::draw_gl(Viewer* viewer) const
 {
-    if(!are_ogfunctions_initialized)
-    {
-        gl.initializeOpenGLFunctions();
-        are_ogfunctions_initialized = true;
-    }
   attrib_buffers(viewer);
   rendering_program.bind();
   vao[0].bind();
-  gl.glDrawElements(GL_TRIANGLES, m_ibo->size()/sizeof(GLuint), GL_UNSIGNED_INT, 0);
+  viewer->glDrawElements(GL_TRIANGLES, m_ibo->size()/sizeof(GLuint), GL_UNSIGNED_INT, 0);
   vao[0].release();
 
   vao[1].bind();
-  gl.glLineWidth(3);
-  gl.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_box->size()/3));
+  viewer->glLineWidth(3);
+  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_box->size()/3));
   vao[1].release();
   rendering_program.release();
 }

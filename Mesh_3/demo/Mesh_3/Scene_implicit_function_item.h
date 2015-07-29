@@ -107,13 +107,14 @@ private:
    std::vector<float> texture_map;
    Texture *texture;
    mutable GLuint textureId;
+   mutable bool texture_initialized;
    GLint sampler_location;
 
   mutable QOpenGLBuffer buffers[vboSize];
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
   mutable QOpenGLShaderProgram tex_rendering_program;
-  void initialize_buffers() const;
+  void initialize_buffers(Viewer*) const;
   void compute_elements();
   void attrib_buffers(Viewer*) const;
   void compile_shaders();
