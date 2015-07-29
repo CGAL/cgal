@@ -300,9 +300,6 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
       null_edges_to_remove.insert(ed);
   }
 
-  std::size_t nb_edges_previously_skipped = 0;
-  do{
-    std::set<edge_descriptor> edges_to_remove_skipped;
     while (!null_edges_to_remove.empty())
     {
       edge_descriptor ed = *null_edges_to_remove.begin();
@@ -317,13 +314,11 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
         {
           ++nb_deg_faces;
           null_edges_to_remove.erase(edge(prev(h, tmesh), tmesh));
-          edges_to_remove_skipped.erase(edge(prev(h, tmesh), tmesh));
         }
         if (face(opposite(h, tmesh), tmesh)!=GT::null_face())
         {
           ++nb_deg_faces;
           null_edges_to_remove.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
-          edges_to_remove_skipped.erase(edge(prev(opposite(h, tmesh), tmesh), tmesh));
         }
         //now remove the edge
         CGAL::Euler::collapse_edge(ed, tmesh);
@@ -411,7 +406,7 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 
           // we will explore in parallel the connected components and will stop
           // when all but one connected component have been entirely explored.
-          // We have one face at a time for each cc in order to not explore a
+          // We add one face at a time for each cc in order to not explore a
           // potentially very large cc.
           std::vector< std::vector<halfedge_descriptor> > stacks_per_cc(nb_cc);
           std::vector< std::set<face_descriptor> > faces_per_cc(nb_cc);
@@ -536,51 +531,8 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
           if ( traits.equal_3_object()(get(vpmap, target(hd, tmesh)), get(vpmap, source(hd, tmesh))) )
             null_edges_to_remove.insert(edge(hd, tmesh));
 
-        #if 0
-        // the following test filters in particular cases where the
-        // detection of the vertex that breaks the link condition
-        // is not correctly detected by find_larger_triangle
-        // (i.e. when the hedges detected should be used with the opposite edge)
-        if ( traits.collinear_3_object()(
-              get(vpmap, target(h, tmesh)),
-              get(vpmap, target(next(h, tmesh), tmesh)),
-              get(vpmap, target(next(opposite(h, tmesh), tmesh), tmesh)) ) )
-        {
-          // we handle this case in the next loop removing set of degenerated
-          // triangles which points are collinear
-          edges_to_remove_skipped.insert(ed);
-          continue;
-        }
-
-        do{
-          // improve the link condition on h's side
-          boost::optional< std::pair<halfedge_descriptor, halfedge_descriptor> >
-            res = internal::find_larger_triangle(h, tmesh, vpmap, traits);
-          if (res)
-            internal::remove_faces_inside_triangle(res->first, h, res->second, tmesh, null_edges_to_remove, edges_to_remove_skipped);
-
-          // improve the link condition on opposite(h)'s side
-          h=opposite(h, tmesh);
-          res = internal::find_larger_triangle(h, tmesh, vpmap, traits);
-          if (res)
-            internal::remove_faces_inside_triangle(res->first, h, res->second, tmesh, null_edges_to_remove, edges_to_remove_skipped);
-          h=opposite(h, tmesh);
-          ed=edge(h, tmesh);
-
-        } while(!CGAL::Euler::does_satisfy_link_condition(ed,tmesh));
-
-        null_edges_to_remove.insert( ed );
-        #endif
       }
     }
-
-    // check if some edges were skipped due to link condition not satisfied
-    // that could now be satisfied
-    if (edges_to_remove_skipped.empty() ||
-        edges_to_remove_skipped.size()==nb_edges_previously_skipped) break;
-    null_edges_to_remove.swap(edges_to_remove_skipped);
-    nb_edges_previously_skipped = null_edges_to_remove.size();
-  } while(true);
 
 // remove triangles made of 3 collinear points
   std::set<face_descriptor> degenerate_face_set;
