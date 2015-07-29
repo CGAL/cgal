@@ -1,3 +1,5 @@
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Bbox_2.h>
 #include <QtCore/qglobal.h>
 #include "opengl_tools.h"
 
@@ -14,7 +16,141 @@
 #include <QMainWindow>
 #include <QApplication>
 
+#include <QEvent>
+#include <QKeyEvent>
+#include <QMouseEvent>
+
 #include <map>
+#include <fstream>
+
+
+// Class for visualizing selection 
+// provides mouse selection functionality
+class Q_DECL_EXPORT Scene_point_set_selection_visualizer : public Scene_item
+{
+  Q_OBJECT
+
+ private:
+  typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+  typedef K::Point_2 Point_2;
+  typedef K::Point_3 Point_3;
+
+  bool rectangle;
+
+  std::vector<Point_2> contour_2d;
+  Scene_polylines_item* polyline;
+  CGAL::Bbox_2 domain_rectangle;
+  
+public:
+
+  Scene_point_set_selection_visualizer(bool rectangle)
+    : rectangle (rectangle)
+  {
+    polyline = new Scene_polylines_item();
+    polyline->polylines.push_back (Scene_polylines_item::Polyline());
+  }
+  ~Scene_point_set_selection_visualizer() {
+  }
+  bool isFinite() const { return true; }
+  bool isEmpty() const { return poly().empty(); }
+  Bbox bbox() const {
+    update_polyline ();
+    return polyline->bbox ();
+  }
+  Scene_point_set_selection_visualizer* clone() const {
+    return 0;
+  }
+  QString toolTip() const {
+    return tr("%1").arg(name());
+  }
+
+  bool supportsRenderingMode(RenderingMode m) const {
+    return (m == Wireframe);
+  }
+  void draw() const
+  {
+    ::glLineWidth(3.f);
+    polyline->setRbgColor(255, 0, 0); 
+
+    polyline->draw_edges();
+  }
+  void draw_edges() const {
+    ::glLineWidth(3.f);
+    polyline->setRbgColor(255, 0, 0); 
+
+    polyline->draw_edges();
+  }
+
+  Scene_polylines_item::Polyline& poly() const
+  { return polyline->polylines.front(); }
+  
+  bool update_polyline () const
+  {
+    if (!(poly().empty()) && scene_point (contour_2d.back ()) == poly().back())
+      return false;
+
+    poly().clear();
+
+    for (unsigned int i = 0; i < contour_2d.size (); ++ i)
+      poly().push_back (scene_point (contour_2d[i]));
+    
+    return true;
+  }
+
+  Point_3 scene_point (const Point_2& p) const
+  {
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    qglviewer::Camera* camera = viewer->camera();
+    qglviewer::Vec vp (p.x(), p.y(), 0.);
+    qglviewer::Vec vsp = camera->unprojectedCoordinatesOf (vp);
+    
+    return Point_3 (vsp.x, vsp.y, vsp.z);
+  }
+
+
+  
+  void sample_mouse_path()
+  {
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
+    contour_2d.push_back (Point_2 (p.x (), p.y ()));
+    if (update_polyline ())
+      Q_EMIT itemChanged();
+  }
+
+  void apply_path()
+  {
+    update_polyline ();
+    
+    if (rectangle)
+      {
+	domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());
+      }
+    else
+      {
+
+      }
+  }
+
+  bool is_selected (qglviewer::Vec& p)
+  {
+    if (rectangle)
+      {
+	return (domain_rectangle.xmin () < p.x &&
+		p.x < domain_rectangle.xmax () &&
+		domain_rectangle.ymin () < p.y &&
+		p.y < domain_rectangle.ymax ());
+      }
+    else
+      {
+
+      }
+
+  }
+
+
+}; // end class Scene_point_set_selection_visualizer
+///////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 class Polyhedron_demo_point_set_selection_plugin :
@@ -53,16 +189,127 @@ public:
     connect(ui_widget.Invert_selection_button,  SIGNAL(clicked()), this, SLOT(on_Invert_selection_button_clicked()));
     connect(ui_widget.Erase_selected_points_button,  SIGNAL(clicked()), this, SLOT(on_Erase_selected_points_button_clicked()));
     connect(ui_widget.Create_point_set_item_button, SIGNAL(clicked()), this, SLOT(on_Create_point_set_item_button_clicked()));
+
+    rectangle = true;
+    selection_mode = 0;
+    visualizer = NULL;
+    shift_pressing = false;
+    
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    viewer->installEventFilter(this);
+    mainWindow->installEventFilter(this);
+
+
   }
+
+
+protected:
+
+  bool eventFilter(QObject *, QEvent *event) {
+    if (dock_widget->isHidden() || !(dock_widget->isActiveWindow()))
+      return false;
+    
+    Scene_points_with_normal_item* point_set_item
+      = qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+    if(!point_set_item) {
+      return false; 
+    }
+    int item_id = scene->item_id (point_set_item);
+      
+    if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)  {
+      QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+      Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
+
+      shift_pressing = modifiers.testFlag(Qt::ShiftModifier);
+    }
+
+    // mouse events
+    if(shift_pressing && event->type() == QEvent::MouseButtonPress && !visualizer)
+      {
+	visualizer = new Scene_point_set_selection_visualizer(rectangle);
+	visualizer->setName(tr("Point set selection visualizer"));
+	visualizer->setRenderingMode (Wireframe);
+	visualizer->setVisible (true);
+	scene->addItem(visualizer);
+	scene->setSelectedItem(item_id);
+	visualizer->sample_mouse_path();
+      }
+    else if (event->type() == QEvent::MouseButtonRelease && visualizer)
+      {
+	visualizer->apply_path();
+	select_points();
+	scene->erase( scene->item_id(visualizer) );
+	scene->setSelectedItem(item_id);
+	visualizer = NULL;
+      }
+    else if (event->type() == QEvent::MouseMove && visualizer)
+      {
+	visualizer->sample_mouse_path();
+      }
+
+    return false;
+  }
+
+  void select_points()
+  {
+    Scene_points_with_normal_item* point_set_item = get_selected_item<Scene_points_with_normal_item>();
+    if(!point_set_item)
+      {
+	print_message("Error: no point set selected!");
+	return; 
+      }
+
+    if (selection_mode == 0) // New selection
+      {
+	for(typename Point_set::iterator it = point_set_item->point_set()->begin ();
+	    it != point_set_item->point_set()->end(); ++ it)
+	  point_set_item->point_set()->select(&*it,false);
+      }
+    
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    qglviewer::Camera* camera = viewer->camera();
+    
+    for(typename Point_set::iterator it = point_set_item->point_set()->begin ();
+	it != point_set_item->point_set()->end(); ++ it)
+      {
+	bool already_selected = it->is_selected ();
+	    
+	qglviewer::Vec vp (it->x (), it->y (), it->z ());
+	qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp);
+	    
+	bool now_selected = visualizer->is_selected (vsp);
+
+	// NEW INTERSECTION or UNION
+	//  * Select point is now_selected
+	if (selection_mode < 2 && now_selected)
+	  point_set_item->point_set()->select(&*it,true);
+	// INTERSECTION
+	//  * Unselect point if it is not now_selected
+	else if (selection_mode == 2)
+	  {
+	    if (already_selected && !now_selected)
+	      point_set_item->point_set()->select(&*it,false);
+	  }
+	// DIFFERENCE
+	//  * Unselect point if it is now_selected
+	else if (selection_mode == 3)
+	  {
+	    if (already_selected && now_selected)
+	      point_set_item->point_set()->select(&*it,false);
+	  }
+
+      }
+
+    point_set_item->changed();
+  }
+
+  
+
 
 public Q_SLOTS:
   void selection_action() { 
     dock_widget->show();
     dock_widget->raise();
-    Scene_points_with_normal_item* point_set_item
-      = qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
-    if(!point_set_item)
-      return;
   }
   
   // Select all
@@ -142,6 +389,15 @@ public Q_SLOTS:
     scene->addItem(new_item);
  }
 
+  void on_Selection_tool_combo_box_changed (int index)
+  {
+    rectangle = (index == 0);
+  }
+
+  void on_Selection_mode_combo_box_changed (int index)
+  {
+    selection_mode = index;
+  }
 
 
 private:
@@ -150,7 +406,10 @@ private:
 
   QDockWidget* dock_widget;
   Ui::PointSetSelection ui_widget;
-  Scene_points_with_normal_item* point_set_item;
+  bool rectangle;
+  int selection_mode;
+  Scene_point_set_selection_visualizer* visualizer;
+  bool shift_pressing;
 
 }; // end Polyhedron_demo_point_set_selection_plugin
 
