@@ -1,6 +1,5 @@
 #include "Scene_plane_item.h"
 
-#include "Scene_plane_item.moc"
 
 
 void Scene_plane_item::initialize_buffers(Viewer_interface *viewer) const

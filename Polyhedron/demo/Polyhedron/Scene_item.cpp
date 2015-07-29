@@ -382,5 +382,4 @@ QOpenGLShaderProgram* Scene_item::getShaderProgram(int name, Viewer_interface * 
         return 0;
     }
 }
-#include "Scene_item.moc"
 

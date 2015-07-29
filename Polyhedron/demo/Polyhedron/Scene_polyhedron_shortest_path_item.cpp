@@ -526,4 +526,3 @@ QString Scene_polyhedron_shortest_path_item::toolTip() const
   return QString();
 }
 
-#include "Scene_polyhedron_shortest_path_item.moc"

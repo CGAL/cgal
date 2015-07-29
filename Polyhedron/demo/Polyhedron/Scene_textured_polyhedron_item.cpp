@@ -353,4 +353,3 @@ Scene_textured_polyhedron_item::selection_changed(bool p_is_selected)
     else
         is_selected = p_is_selected;
 }
-#include "Scene_textured_polyhedron_item.moc"

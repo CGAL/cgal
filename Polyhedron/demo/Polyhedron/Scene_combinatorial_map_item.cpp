@@ -490,4 +490,3 @@ QString Scene_combinatorial_map_item::toolTip() const{
 }
 
 
-#include "Scene_combinatorial_map_item.moc"

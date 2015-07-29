@@ -529,4 +529,3 @@ void Scene_points_with_normal_item::changed()
     are_buffers_filled = false;
 }
 
-#include "Scene_points_with_normal_item.moc"

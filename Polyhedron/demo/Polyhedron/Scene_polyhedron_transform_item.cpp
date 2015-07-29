@@ -115,5 +115,4 @@ void Scene_polyhedron_transform_item::changed()
     compute_elements();
     are_buffers_filled = false;
 }
-#include "Scene_polyhedron_transform_item.moc"
 

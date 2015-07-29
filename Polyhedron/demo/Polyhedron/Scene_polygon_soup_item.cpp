@@ -638,7 +638,6 @@ Scene_polygon_soup_item::new_triangle(const std::size_t i,
   soup->polygons.push_back(new_polygon);
 }
                                
-#include "Scene_polygon_soup_item.moc"
 
 // Local Variables:
 // c-basic-offset: 4

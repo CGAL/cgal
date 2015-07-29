@@ -856,4 +856,3 @@ Scene_polylines_item::merge(Scene_polylines_item* other_item) {
     changed();
 }
 
-#include "Scene_polylines_item.moc"

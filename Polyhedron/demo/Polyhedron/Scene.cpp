@@ -837,5 +837,3 @@ findItems(const Scene_interface* scene_interface,
 
 } // end namespace details
                 } // end namespace scene
-
-#include "Scene.moc"

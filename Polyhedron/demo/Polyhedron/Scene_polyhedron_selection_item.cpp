@@ -1,5 +1,4 @@
 #include "Scene_polyhedron_selection_item.h"
-#include "Scene_polyhedron_selection_item.moc"
 
 
 void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewer)const

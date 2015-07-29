@@ -590,5 +590,4 @@ void Scene_implicit_function_item::contextual_changed()
     }
 }
 
-#include "Scene_implicit_function_item.moc"
 
