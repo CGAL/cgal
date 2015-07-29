@@ -156,10 +156,12 @@ In order to build the \cgal libraries, you need a \cpp compiler.
 
 | Compiler | Operating System |
 | :------- | :--------------- |
-|\sc{Gnu} `g++` 3.4 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} | Linux / MacOS X |
+|\sc{Gnu} `g++` 4.1 or later\cgalFootnote{<A HREF="http://gcc.gnu.org/">`http://gcc.gnu.org/`</A>} | Linux / MacOS X |
 |          | \sc{MS} Windows 95/98/2000/XP/NT4 | 
-| \sc{Intel} `C++` 11.0 or later\cgalFootnote{<A HREF="http://software.intel.com/en-us/intel-compilers/">`http://software.intel.com/en-us/intel-compilers/`</A>} | Linux  |
+| \sc{Intel} `C++` 15.0\cgalFootnote{<A HREF="http://software.intel.com/en-us/intel-compilers/">`http://software.intel.com/en-us/intel-compilers/`</A>} | Linux  |
 |\sc{MS} Visual `C++` 10.0, 11.0, 12.0 (\sc{Visual Studio} 2010, 2012, and 2013)\cgalFootnote{<A HREF="http://msdn.microsoft.com/en-us/vstudio/">`http://msdn.microsoft.com/en-us/vstudio/`</A>} | \sc{MS} Windows 95/98/2000/XP/NT4/Vista/7/8 |
+| `Clang` \cgalFootnote{<A HREF="http://clang.llvm.org/">`http://clang.llvm.org/`</A>} compiler version 3.5 and 3.6.2 | Linux / MacOS X |
+| Apple `Clang` compiler version 6.0 and 4.2 | MacOS X |
 
 
 \section secconfigwithcmake Configuring CGAL with CMake 
