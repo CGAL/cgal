@@ -157,10 +157,19 @@ endif()
 
 ## generate how_to_cite files
 if(PYTHONINTERP_FOUND)
-  execute_process(COMMAND ${PYTHON_EXECUTABLE}
-    ${CGAL_DOC_SCRIPT_DIR}/generate_how_to_cite.py
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_BINARY_DIR})
+  if(CGAL_BRANCH_BUILD)
+    execute_process(COMMAND ${PYTHON_EXECUTABLE}
+      ${CGAL_DOC_SCRIPT_DIR}/generate_how_to_cite.py
+      ${CMAKE_SOURCE_DIR}
+      ${CMAKE_BINARY_DIR}
+      "t")
+  else()
+    execute_process(COMMAND ${PYTHON_EXECUTABLE}
+      ${CGAL_DOC_SCRIPT_DIR}/generate_how_to_cite.py
+      ${CMAKE_SOURCE_DIR}
+      ${CMAKE_BINARY_DIR}
+      "f")
+  endif()
 
   configure_file(${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib.in ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib)
   configure_file(${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt.in ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt)
