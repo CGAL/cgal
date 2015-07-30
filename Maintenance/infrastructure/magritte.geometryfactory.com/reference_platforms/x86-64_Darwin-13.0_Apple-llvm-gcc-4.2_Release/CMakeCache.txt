@@ -932,6 +932,9 @@ WITH_CGAL_Qt3:BOOL=OFF
 //Enable CGAL component CGAL_Qt4
 WITH_CGAL_Qt4:BOOL=ON
 
+//Enable CGAL component CGAL_Qt5
+WITH_CGAL_Qt5:BOOL=OFF
+
 //Select external library Coin3D
 WITH_Coin3D:BOOL=OFF
 
