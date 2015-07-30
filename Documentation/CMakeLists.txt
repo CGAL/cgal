@@ -119,6 +119,8 @@ set(CGAL_DOC_MATHJAX_LOCATION "https://cdn.mathjax.org/mathjax/latest"
 set(CGAL_DOC_OUTPUT_DIR "${CMAKE_BINARY_DIR}/doc_output")
 file(MAKE_DIRECTORY "${CGAL_DOC_OUTPUT_DIR}")
 
+set(CGAL_DOC_RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/resources")
+
 option(CGAL_DOC_CREATE_LOGS "Write log files or print warnings and errors to cerr when building the doc." OFF)
 
 if(CGAL_DOC_CREATE_LOGS)
@@ -165,7 +167,7 @@ if(PYTHONINTERP_FOUND)
 endif()
 ##
 
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/BaseDoxyfile.in ${CGAL_DOC_DXY_DIR}/BaseDoxyfile)
+configure_file(${CGAL_DOC_RESOURCE_DIR}/BaseDoxyfile.in ${CGAL_DOC_DXY_DIR}/BaseDoxyfile)
 
 set(CGAL_DOC_DOXY_DEFAULT "${CGAL_DOC_DXY_DIR}/BaseDoxyfile")
 
@@ -210,7 +212,7 @@ add_dependencies(doc doc_post)
 
 if(PYTHONINTERP_FOUND)
   add_custom_target(doc_with_postprocessing
-    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --output ${CGAL_DOC_OUTPUT_DIR} --resources ${CMAKE_CURRENT_SOURCE_DIR}/resources
+    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --output ${CGAL_DOC_OUTPUT_DIR} --resources ${CGAL_DOC_RESOURCE_DIR}
     )
   add_dependencies(doc_with_postprocessing doc)
 
