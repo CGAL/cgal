@@ -61,7 +61,7 @@ TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEv
     return;
   }
   
-
+  QPen blackPen(::Qt::black, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin);
   dt->find_conflicts(p, faces);
   for(typename std::list<Face_handle>::iterator it = faces.begin();
       it != faces.end();
@@ -71,6 +71,7 @@ TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEv
       QColor color(::Qt::blue);
       color.setAlpha(150);
       item->setBrush(color);
+      item->setPen(blackPen);
       scene_->addItem(item);
       qfaces.push_back(item);
     }

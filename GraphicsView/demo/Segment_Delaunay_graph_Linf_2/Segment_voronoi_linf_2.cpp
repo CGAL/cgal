@@ -131,8 +131,8 @@ MainWindow::MainWindow()
   QColor segmentColor(::Qt::blue);
   QColor voronoiColor(::Qt::black);
   segmentColor.setAlpha(150);
-  sdggi->setSegmentPen(segmentColor);
-  sdggi->setVoronoiPen(voronoiColor);
+  sdggi->setSegmentPen(QPen(segmentColor,0));
+  sdggi->setVoronoiPen(QPen(voronoiColor,0));
     
   QObject::connect(this, SIGNAL(changed()),
 		   sdggi, SLOT(modelChanged()));
