@@ -138,9 +138,9 @@ set(CGAL_DOC_DXY_DIR "${CMAKE_BINARY_DIR}/doc_dxy")
 file(MAKE_DIRECTORY "${CGAL_DOC_DXY_DIR}")
 
 set(CGAL_DOC_HEADER ${CGAL_DOC_DXY_DIR}/header.html)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/header.html ${CGAL_DOC_HEADER} @ONLY)
+configure_file(${CGAL_DOC_RESOURCE_DIR}/header.html ${CGAL_DOC_HEADER} @ONLY)
 set(CGAL_DOC_HEADER_PACKAGE ${CGAL_DOC_DXY_DIR}/header_package.html)
-configure_file(${CMAKE_CURRENT_SOURCE_DIR}/header_package.html ${CGAL_DOC_HEADER_PACKAGE} @ONLY)
+configure_file(${CGAL_DOC_RESOURCE_DIR}/header_package.html ${CGAL_DOC_HEADER_PACKAGE} @ONLY)
 
 #Generate the bibtex file
 #this is needed also for BaseDoxyfile.in
