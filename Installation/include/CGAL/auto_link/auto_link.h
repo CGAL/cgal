@@ -1,19 +1,23 @@
 // This header file is a copy of "boost/config/auto_link.hpp" 
 // from boost version 1.44.0
 // but slightly modified to accomodate CGAL libraries.
-//-------------------------------------------------------------------------------------- 
-//
+
+// Before CGAL-4.7-beta1, it has been synchronized with
+// libs/config/ version boost-1.58.0-39-g15d56c9, file
+// include/boost/config/auto_link.hpp
+
 //  (C) Copyright John Maddock 2003.
 //  Use, modification and distribution are subject to the
 //  Boost Software License, Version 1.0. (See accompanying file
 //  LICENSE_1_0.txt or copy at http://www.boost.org/LICENSE_1_0.txt)
-//-------------------------------------------------------------------------------------- 
-// Copyright (C) 2007 GeometryFactory (France)
-// 
-// $URL$
-// $Id$
-// 
-// Author(s)     : Fernando Cacciola (fernando.cacciola@geometryfactory.com)
+
+ /*
+  *   LOCATION:    see http://www.boost.org for most recent version.
+  *   FILE         auto_link.hpp
+  *   VERSION      see <boost/version.hpp>
+  *   DESCRIPTION: Automatic library inclusion for Borland/Microsoft compilers.
+  */
+
 /*************************************************************************
 
 USAGE:
@@ -33,12 +37,8 @@ CGAL_AUTO_LINK_TAGGED:   Specifies that we link to libraries built with the --la
                           This is essentially the same as the default name-mangled version, but without
                           the compiler name and version, or the Boost version.  Just the build options.
 
-ALL these macros will be undef'ed at the end of the header, even though they are defined from the outside.
-That means you must always define them before including this.
-
-Further, this header has no include guards because you can reuse it several times with different
-macros (arguments) in order to link different libraries.
-Be sure to include it only once for each target library!
+These macros will be undef'ed at the end of the header, further this header
+has no include guards - so be sure to include it only once from your library!
 
 Algorithm:
 ~~~~~~~~~~
@@ -68,14 +68,14 @@ CGAL_LIB_THREAD_OPT: "-mt" for multithread builds, otherwise nothing.
 
 CGAL_LIB_RT_OPT:     A suffix that indicates the runtime library used,
                       contains one or more of the following letters after
-                      a hiphen:
+                      a hyphen:
 
                       s      static runtime (dynamic if not present).
                       g      debug/diagnostic runtime (release if not present).
                       y      Python debug/diagnostic runtime (release if not present).
                       d      debug build (release if not present).
-                      g      debug/diagnostic runtime (release if not present).
-                      p      STLPort Build.
+                      p      STLport build.
+                      n      STLport build without its IOStreams.
 
 CGAL_VERSION:        Defined in <CGAL/version.h>
 
@@ -124,78 +124,79 @@ CGAL_VERSION:        Defined in <CGAL/version.h>
 // select toolset if not defined already:
 //
 #ifndef CGAL_LIB_TOOLSET
-// Note: no compilers before 1200 are supported
-#if defined(BOOST_MSVC) && (BOOST_MSVC < 1300)
+#  if defined(BOOST_MSVC) && (BOOST_MSVC < 1200)
+    // Note: no compilers before 1200 are supported
+#  elif defined(BOOST_MSVC) && (BOOST_MSVC < 1300)
 
-#  ifdef UNDER_CE
-     // vc6:
-#    define CGAL_LIB_TOOLSET "evc4"
-#  else
-     // vc6:
-#    define CGAL_LIB_TOOLSET "vc6"
+#    ifdef UNDER_CE
+       // eVC4:
+#      define CGAL_LIB_TOOLSET "evc4"
+#    else
+       // vc6:
+#      define CGAL_LIB_TOOLSET "vc6"
+#    endif
+
+#  elif defined(BOOST_MSVC) && (BOOST_MSVC < 1310)
+
+     // vc7:
+#    define CGAL_LIB_TOOLSET "vc7"
+
+#  elif defined(BOOST_MSVC) && (BOOST_MSVC < 1400)
+
+     // vc71:
+#    define CGAL_LIB_TOOLSET "vc71"
+
+#  elif defined(BOOST_MSVC) && (BOOST_MSVC < 1500)
+
+     // vc80:
+#    define CGAL_LIB_TOOLSET "vc80"
+
+#  elif defined(BOOST_MSVC) && (BOOST_MSVC < 1600)
+
+     // vc90:
+#    define CGAL_LIB_TOOLSET "vc90"
+
+#  elif defined(BOOST_MSVC) && (BOOST_MSVC < 1700)
+
+     // vc10:
+#    define CGAL_LIB_TOOLSET "vc100"
+
+#  elif defined(BOOST_MSVC) && (BOOST_MSVC < 1800)
+
+     // vc11:
+#    define CGAL_LIB_TOOLSET "vc110"
+
+#  elif defined(BOOST_MSVC) && (BOOST_MSVC < 1900)
+
+     // vc12:
+#    define CGAL_LIB_TOOLSET "vc120"
+
+# elif defined(BOOST_MSVC)
+
+   // vc14:
+#  define CGAL_LIB_TOOLSET "vc140"
+
+#  elif defined(__BORLANDC__)
+
+     // CBuilder 6:
+#    define CGAL_LIB_TOOLSET "bcb"
+
+#  elif defined(__ICL)
+
+     // Intel C++, no version number:
+#    define CGAL_LIB_TOOLSET "iw"
+
+#  elif defined(__MWERKS__) && (__MWERKS__ <= 0x31FF )
+
+     // Metrowerks CodeWarrior 8.x
+#    define CGAL_LIB_TOOLSET "cw8"
+
+#  elif defined(__MWERKS__) && (__MWERKS__ <= 0x32FF )
+
+     // Metrowerks CodeWarrior 9.x
+#    define CGAL_LIB_TOOLSET "cw9"
+
 #  endif
-
-#elif defined(BOOST_MSVC) && (BOOST_MSVC == 1300)
-
-   // vc7:
-#  define CGAL_LIB_TOOLSET "vc7"
-
-#elif defined(BOOST_MSVC) && (BOOST_MSVC == 1310)
-
-   // vc71:
-#  define CGAL_LIB_TOOLSET "vc71"
-
-#elif defined(BOOST_MSVC) && (BOOST_MSVC == 1400)
-
-   // vc80:
-#  define CGAL_LIB_TOOLSET "vc80"
-
-#elif defined(BOOST_MSVC) && (BOOST_MSVC == 1500)
-
-   // vc90:
-#  define CGAL_LIB_TOOLSET "vc90"
-
-#elif defined(BOOST_MSVC) && (BOOST_MSVC == 1600)
-
-   // vc10:
-#  define CGAL_LIB_TOOLSET "vc100"
-
-#elif defined(BOOST_MSVC) && (BOOST_MSVC == 1700)
-
-   // vc11:
-#  define CGAL_LIB_TOOLSET "vc110"
-
-#elif defined(BOOST_MSVC) && (BOOST_MSVC == 1800)
-
-   // vc12:
-#  define CGAL_LIB_TOOLSET "vc120"
-
-#elif defined(BOOST_MSVC) && (BOOST_MSVC >= 1900)
-
-   // vc13:
-#  define CGAL_LIB_TOOLSET "vc130"
-
-#elif defined(__BORLANDC__)
-
-   // CBuilder 6:
-#  define CGAL_LIB_TOOLSET "bcb"
-
-#elif defined(__ICL)
-
-   // Intel C++, no version number:
-#  define CGAL_LIB_TOOLSET "iw"
-
-#elif defined(__MWERKS__) && (__MWERKS__ <= 0x31FF )
-
-   // Metrowerks CodeWarrior 8.x
-#  define CGAL_LIB_TOOLSET "cw8"
-
-#elif defined(__MWERKS__) && (__MWERKS__ <= 0x32FF )
-
-   // Metrowerks CodeWarrior 9.x
-#  define CGAL_LIB_TOOLSET "cw9"
-
-#endif
 #endif // CGAL_LIB_TOOLSET
 
 //
@@ -221,11 +222,11 @@ CGAL_VERSION:        Defined in <CGAL/version.h>
 #        elif defined(_DEBUG)\
                && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
 #            define CGAL_LIB_RT_OPT "-gydp"
-#            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
+#            pragma message("warning: STLport debug versions are built with /D_STLP_DEBUG=1")
 #            error "Build options aren't compatible with pre-built libraries"
 #        elif defined(_DEBUG)
 #            define CGAL_LIB_RT_OPT "-gdp"
-#            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
+#            pragma message("warning: STLport debug versions are built with /D_STLP_DEBUG=1")
 #            error "Build options aren't compatible with pre-built libraries"
 #        else
 #            define CGAL_LIB_RT_OPT "-p"
@@ -241,11 +242,11 @@ CGAL_VERSION:        Defined in <CGAL/version.h>
 #        elif defined(_DEBUG)\
                && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
 #            define CGAL_LIB_RT_OPT "-gydpn"
-#            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
+#            pragma message("warning: STLport debug versions are built with /D_STLP_DEBUG=1")
 #            error "Build options aren't compatible with pre-built libraries"
 #        elif defined(_DEBUG)
 #            define CGAL_LIB_RT_OPT "-gdpn"
-#            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
+#            pragma message("warning: STLport debug versions are built with /D_STLP_DEBUG=1")
 #            error "Build options aren't compatible with pre-built libraries"
 #        else
 #            define CGAL_LIB_RT_OPT "-pn"
@@ -275,11 +276,11 @@ CGAL_VERSION:        Defined in <CGAL/version.h>
 #        elif defined(_DEBUG)\
                && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
 #             define CGAL_LIB_RT_OPT "-sgydp"
-#            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
+#            pragma message("warning: STLport debug versions are built with /D_STLP_DEBUG=1")
 #            error "Build options aren't compatible with pre-built libraries"
 #        elif defined(_DEBUG)
 #             define CGAL_LIB_RT_OPT "-sgdp"
-#            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
+#            pragma message("warning: STLport debug versions are built with /D_STLP_DEBUG=1")
 #            error "Build options aren't compatible with pre-built libraries"
 #        else
 #            define CGAL_LIB_RT_OPT "-sp"
@@ -295,11 +296,11 @@ CGAL_VERSION:        Defined in <CGAL/version.h>
 #        elif defined(_DEBUG)\
                && defined(CGAL_DEBUG_PYTHON) && defined(CGAL_LINKING_PYTHON)
 #             define CGAL_LIB_RT_OPT "-sgydpn"
-#            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
+#            pragma message("warning: STLport debug versions are built with /D_STLP_DEBUG=1")
 #            error "Build options aren't compatible with pre-built libraries"
 #        elif defined(_DEBUG)
 #             define CGAL_LIB_RT_OPT "-sgdpn"
-#            pragma message("warning: STLPort debug versions are built with /D_STLP_DEBUG=1")
+#            pragma message("warning: STLport debug versions are built with /D_STLP_DEBUG=1")
 #            error "Build options aren't compatible with pre-built libraries"
 #        else
 #            define CGAL_LIB_RT_OPT "-spn"
@@ -332,7 +333,7 @@ CGAL_VERSION:        Defined in <CGAL/version.h>
 // sanity check:
 //
 #if defined(__STL_DEBUG) || defined(_STLP_DEBUG)
-#error "Pre-built versions of the CGAL libraries are not provided in STLPort-debug form"
+#error "Pre-built versions of the CGAL libraries are not provided in STLport-debug form"
 #endif
 
 #  ifdef _RTLDLL
