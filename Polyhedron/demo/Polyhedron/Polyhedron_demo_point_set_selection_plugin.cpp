@@ -1,6 +1,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Bbox_2.h>
+#include <CGAL/Polygon_2.h>
 #include <QtCore/qglobal.h>
+#include <QGLViewer/manipulatedCameraFrame.h>
 #include "opengl_tools.h"
 
 #include "Messages_interface.h"
@@ -34,12 +36,13 @@ class Q_DECL_EXPORT Scene_point_set_selection_visualizer : public Scene_item
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef K::Point_2 Point_2;
   typedef K::Point_3 Point_3;
-
+  typedef typename CGAL::Polygon_2<K> Polygon_2;
+  
   bool rectangle;
-
   std::vector<Point_2> contour_2d;
   Scene_polylines_item* polyline;
   CGAL::Bbox_2 domain_rectangle;
+  Polygon_2 domain_freeform;
   
 public:
 
@@ -47,6 +50,8 @@ public:
     : rectangle (rectangle)
   {
     polyline = new Scene_polylines_item();
+    polyline->setRenderingMode (Wireframe);
+    polyline->setVisible (true);
     polyline->polylines.push_back (Scene_polylines_item::Polyline());
   }
   ~Scene_point_set_selection_visualizer() {
@@ -67,18 +72,23 @@ public:
   bool supportsRenderingMode(RenderingMode m) const {
     return (m == Wireframe);
   }
-  void draw() const
+  
+  void draw() const {  }
+  void draw(Viewer_interface* viewer) const
   {
+
     ::glLineWidth(3.f);
     polyline->setRbgColor(255, 0, 0); 
 
-    polyline->draw_edges();
+    polyline->draw(viewer);
   }
-  void draw_edges() const {
+  
+  void draw_edges() const {  }
+  void draw_edges(Viewer_interface* viewer) const {
     ::glLineWidth(3.f);
     polyline->setRbgColor(255, 0, 0); 
 
-    polyline->draw_edges();
+    polyline->draw_edges(viewer);
   }
 
   Scene_polylines_item::Polyline& poly() const
@@ -86,13 +96,36 @@ public:
   
   bool update_polyline () const
   {
-    if (!(poly().empty()) && scene_point (contour_2d.back ()) == poly().back())
+    if (contour_2d.size() < 2 ||
+	(!(poly().empty()) && scene_point (contour_2d.back ()) == poly().back()))
       return false;
+    
+    if (rectangle)
+      {
+	poly().clear();
+	
+	poly().push_back (scene_point (Point_2 (domain_rectangle.xmin(),
+						domain_rectangle.ymin())));
+	poly().push_back (scene_point (Point_2 (domain_rectangle.xmax(),
+						domain_rectangle.ymin())));
+	poly().push_back (scene_point (Point_2 (domain_rectangle.xmax(),
+						domain_rectangle.ymax())));
+	poly().push_back (scene_point (Point_2 (domain_rectangle.xmin(),
+						domain_rectangle.ymax())));
+	poly().push_back (scene_point (Point_2 (domain_rectangle.xmin(),
+						domain_rectangle.ymin())));
 
-    poly().clear();
+      }
+    else
+      {
+	if (!(poly().empty()) && scene_point (contour_2d.back ()) == poly().back())
+	  return false;
 
-    for (unsigned int i = 0; i < contour_2d.size (); ++ i)
-      poly().push_back (scene_point (contour_2d[i]));
+	poly().clear();
+
+	for (unsigned int i = 0; i < contour_2d.size (); ++ i)
+	  poly().push_back (scene_point (contour_2d[i]));
+      }
     
     return true;
   }
@@ -101,7 +134,7 @@ public:
   {
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     qglviewer::Camera* camera = viewer->camera();
-    qglviewer::Vec vp (p.x(), p.y(), 0.);
+    qglviewer::Vec vp (p.x(), p.y(), 0.1);
     qglviewer::Vec vsp = camera->unprojectedCoordinatesOf (vp);
     
     return Point_3 (vsp.x, vsp.y, vsp.z);
@@ -113,39 +146,42 @@ public:
   {
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
-    contour_2d.push_back (Point_2 (p.x (), p.y ()));
+    
+    if (rectangle && contour_2d.size () == 2)
+      contour_2d[1] = Point_2 (p.x (), p.y ());
+    else
+      contour_2d.push_back (Point_2 (p.x (), p.y ()));
+
+    domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());    
     if (update_polyline ())
-      Q_EMIT itemChanged();
+      {
+	Q_EMIT itemChanged();
+	// polyline->changed();
+      }
   }
 
   void apply_path()
   {
     update_polyline ();
-    
-    if (rectangle)
-      {
-	domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());
-      }
-    else
-      {
-
-      }
+    domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());    
+    if (!rectangle)
+      domain_freeform = Polygon_2 (contour_2d.begin (), contour_2d.end ());
   }
 
   bool is_selected (qglviewer::Vec& p)
   {
-    if (rectangle)
+    if (domain_rectangle.xmin () < p.x &&
+	p.x < domain_rectangle.xmax () &&
+	domain_rectangle.ymin () < p.y &&
+	p.y < domain_rectangle.ymax ())
       {
-	return (domain_rectangle.xmin () < p.x &&
-		p.x < domain_rectangle.xmax () &&
-		domain_rectangle.ymin () < p.y &&
-		p.y < domain_rectangle.ymax ());
+	if (rectangle)
+	  return true;
+	
+	if (domain_freeform.has_on_bounded_side (Point_2 (p.x, p.y)))
+	  return true;
       }
-    else
-      {
-
-      }
-
+    return false;
   }
 
 
@@ -226,11 +262,20 @@ protected:
     // mouse events
     if(shift_pressing && event->type() == QEvent::MouseButtonPress && !visualizer)
       {
+	QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+	if (viewer->camera()->frame()->isSpinning())
+	  viewer->camera()->frame()->stopSpinning();
+	
 	visualizer = new Scene_point_set_selection_visualizer(rectangle);
 	visualizer->setName(tr("Point set selection visualizer"));
 	visualizer->setRenderingMode (Wireframe);
 	visualizer->setVisible (true);
+
+	// Hack to prevent camera for "jumping" when creating new item
+	qglviewer::Vec position = viewer->camera()->position();
 	scene->addItem(visualizer);
+	viewer->camera()->setPosition(position);
+	
 	scene->setSelectedItem(item_id);
 	visualizer->sample_mouse_path();
       }
