@@ -71,7 +71,6 @@ if ( CGAL_BRANCH_BUILD )
   message(STATUS "Installation package directory: ${CGAL_INSTALLATION_PACKAGE_DIR}")
   message(STATUS "Maintenance package directory: ${CGAL_MAINTENANCE_PACKAGE_DIR}")
   message(STATUS "Core package directory: ${CGAL_CORE_PACKAGE_DIR}")
-
 else ( CGAL_BRANCH_BUILD )
 
   # get release name
@@ -90,6 +89,7 @@ else ( CGAL_BRANCH_BUILD )
   set(CGAL_MAINTENANCE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE INTERNAL "Directory containing the Maintenance package")
   set(CGAL_CORE_PACKAGE_DIR "${CMAKE_SOURCE_DIR}" CACHE INTERNAL "Directory containing the Core package")
 
+  add_subdirectory(doc)
 endif (CGAL_BRANCH_BUILD )
 
 #message(STATUS "Packages found: ${CGAL_CONFIGURED_PACKAGES}")
