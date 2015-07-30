@@ -2249,34 +2249,34 @@ private: //--------------------------------------------------- property handling
   // dummy is necessary to make it a partial specialization (full
   // specializations are only allowed at namespace scope).
   template<typename, bool = true>
-  struct Property_selector;
+  struct Property_selector {};
 
   template<bool dummy>
-  struct Property_selector<typename Surface_mesh::Vertex_index, dummy> {
-    Surface_mesh* m_;
-    Property_selector(Surface_mesh* m) : m_(m) {}
-    Property_container<typename Surface_mesh::Vertex_index>&
+  struct Property_selector<typename CGAL::Surface_mesh<P>::Vertex_index, dummy> {
+    CGAL::Surface_mesh<P>* m_;
+    Property_selector(CGAL::Surface_mesh<P>* m) : m_(m) {}
+    Property_container<typename CGAL::Surface_mesh<P>::Vertex_index>&
     operator()() { return m_->vprops_; }
   };
   template<bool dummy>
-  struct Property_selector<typename Surface_mesh::Halfedge_index, dummy> {
-    Surface_mesh* m_;
-    Property_selector(Surface_mesh* m) : m_(m) {}
-    Property_container<typename Surface_mesh::Halfedge_index>&
+  struct Property_selector<typename CGAL::Surface_mesh<P>::Halfedge_index, dummy> {
+    CGAL::Surface_mesh<P>* m_;
+    Property_selector(CGAL::Surface_mesh<P>* m) : m_(m) {}
+    Property_container<typename CGAL::Surface_mesh<P>::Halfedge_index>&
     operator()() { return m_->hprops_; }
   };
   template<bool dummy>
-  struct Property_selector<typename Surface_mesh::Edge_index, dummy> {
-    Surface_mesh* m_;
-    Property_selector(Surface_mesh* m) : m_(m) {}
-    Property_container<typename Surface_mesh::Edge_index>&
+  struct Property_selector<typename CGAL::Surface_mesh<P>::Edge_index, dummy> {
+    CGAL::Surface_mesh<P>* m_;
+    Property_selector(CGAL::Surface_mesh<P>* m) : m_(m) {}
+    Property_container<typename CGAL::Surface_mesh<P>::Edge_index>&
     operator()() { return m_->eprops_; }
   };
   template<bool dummy>
-  struct Property_selector<typename Surface_mesh::Face_index, dummy> {
-    Surface_mesh* m_;
-    Property_selector(Surface_mesh* m) : m_(m) {}
-    Property_container<typename Surface_mesh::Face_index>&
+  struct Property_selector<typename CGAL::Surface_mesh<P>::Face_index, dummy> {
+    CGAL::Surface_mesh<P>* m_;
+    Property_selector(CGAL::Surface_mesh<P>* m) : m_(m) {}
+    Property_container<typename CGAL::Surface_mesh<P>::Face_index>&
     operator()() { return m_->fprops_; }
   };
 
