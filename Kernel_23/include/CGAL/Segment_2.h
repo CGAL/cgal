@@ -101,19 +101,19 @@ public:
   }
 
   
-  typename cpp11::result_of<typename R::Construct_min_vertex_2( Segment_2)>::type
-  min BOOST_PREVENT_MACRO_SUBSTITUTION () const;
-
-  typename cpp11::result_of<typename R::Construct_max_vertex_2( Segment_2)>::type
+  typename cpp11::result_of<typename R_::Construct_min_vertex_2(Segment_2)>::type
+  min BOOST_PREVENT_MACRO_SUBSTITUTION() const;
+  
+  typename cpp11::result_of<typename R_::Construct_max_vertex_2( Segment_2)>::type
   max BOOST_PREVENT_MACRO_SUBSTITUTION () const;
 
-  typename cpp11::result_of<typename R::Construct_vertex_2( Segment_2, int)>::type
+  typename cpp11::result_of<typename R_::Construct_vertex_2( Segment_2, int)>::type
   vertex(int i) const;
 
-  typename cpp11::result_of<typename R::Construct_vertex_2( Segment_2, int)>::type
+  typename cpp11::result_of<typename R_::Construct_vertex_2( Segment_2, int)>::type
   point(int i) const;
 
-  typename cpp11::result_of<typename R::Construct_vertex_2( Segment_2, int)>::type
+  typename cpp11::result_of<typename R_::Construct_vertex_2( Segment_2, int)>::type
   operator[](int i) const;
 
   bool        is_horizontal() const;
