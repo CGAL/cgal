@@ -1,5 +1,11 @@
 project(Documentation NONE)
 
+option(BUILD_DOC "Build the doxygen documentation" OFF)
+
+if(NOT BUILD_DOC)
+  return()
+endif()
+
 # Visual Studio users might appreciate this
 # set_property(GLOBAL PROPERTY USE_FOLDERS ON)
 
@@ -98,10 +104,6 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
     endif()
   endforeach()
 endfunction()
-
-option(BUILD_DOC "Build the doxygen documentation" OFF)
-
-if (BUILD_DOC)
 
 find_package(Doxygen)
 find_package(PythonInterp 2.6.7)
@@ -241,5 +243,3 @@ if(DOXYGEN_FOUND)
   # add_custom_target(doc) dummy to depend on all docs, require to run
   # twice or something
 endif()
-
-endif(BUILD_DOC)
