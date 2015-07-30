@@ -73,20 +73,9 @@ public:
     return (m == Wireframe);
   }
   
-  void draw() const {  }
-  void draw(Viewer_interface* viewer) const
-  {
-
-    ::glLineWidth(3.f);
-    polyline->setRbgColor(255, 0, 0); 
-
-    polyline->draw(viewer);
-  }
-  
-  void draw_edges() const {  }
   void draw_edges(Viewer_interface* viewer) const {
     ::glLineWidth(3.f);
-    polyline->setRbgColor(255, 0, 0); 
+    polyline->setRbgColor(0, 255, 0); 
 
     polyline->draw_edges(viewer);
   }
@@ -148,11 +137,13 @@ public:
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
     
     if (rectangle && contour_2d.size () == 2)
-      contour_2d[1] = Point_2 (p.x (), p.y ());
+      {
+	contour_2d[1] = Point_2 (p.x (), p.y ());
+	domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());
+      }
     else
       contour_2d.push_back (Point_2 (p.x (), p.y ()));
 
-    domain_rectangle = CGAL::bbox_2 (contour_2d.begin (), contour_2d.end ());    
     if (update_polyline ())
       {
 	Q_EMIT itemChanged();
@@ -260,25 +251,41 @@ protected:
     }
 
     // mouse events
-    if(shift_pressing && event->type() == QEvent::MouseButtonPress && !visualizer)
+    if(shift_pressing && event->type() == QEvent::MouseButtonPress)
       {
-	QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-	if (viewer->camera()->frame()->isSpinning())
-	  viewer->camera()->frame()->stopSpinning();
+	QMouseEvent *mouseEvent = static_cast<QMouseEvent*>(event);
+	// Start selection
+	if (mouseEvent->button() == Qt::LeftButton && !visualizer)
+	  {
+	    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+	    if (viewer->camera()->frame()->isSpinning())
+	      viewer->camera()->frame()->stopSpinning();
 	
-	visualizer = new Scene_point_set_selection_visualizer(rectangle);
-	visualizer->setName(tr("Point set selection visualizer"));
-	visualizer->setRenderingMode (Wireframe);
-	visualizer->setVisible (true);
+	    visualizer = new Scene_point_set_selection_visualizer(rectangle);
+	    visualizer->setName(tr("Point set selection visualizer"));
+	    visualizer->setRenderingMode (Wireframe);
+	    visualizer->setVisible (true);
 
-	// Hack to prevent camera for "jumping" when creating new item
-	qglviewer::Vec position = viewer->camera()->position();
-	scene->addItem(visualizer);
-	viewer->camera()->setPosition(position);
+	    // Hack to prevent camera for "jumping" when creating new item
+	    //	qglviewer::Vec position = viewer->camera()->position();
+	    scene->addItem(visualizer, false);
+	    //	viewer->camera()->setPosition(position);
 	
-	scene->setSelectedItem(item_id);
-	visualizer->sample_mouse_path();
+	    scene->setSelectedItem(item_id);
+	    visualizer->sample_mouse_path();
+	    return true;
+	  }
+	// Cancel selection
+	else if (mouseEvent->button() == Qt::RightButton && visualizer)
+	  {
+	    scene->erase( scene->item_id(visualizer) );
+	    scene->setSelectedItem(item_id);
+	    visualizer = NULL;
+	    return true;
+	  }
+
       }
+    // End selection
     else if (event->type() == QEvent::MouseButtonRelease && visualizer)
       {
 	visualizer->apply_path();
@@ -286,10 +293,13 @@ protected:
 	scene->erase( scene->item_id(visualizer) );
 	scene->setSelectedItem(item_id);
 	visualizer = NULL;
+	return true;
       }
+    // Update selection
     else if (event->type() == QEvent::MouseMove && visualizer)
       {
 	visualizer->sample_mouse_path();
+	return true;
       }
 
     return false;
@@ -325,18 +335,18 @@ protected:
 	bool now_selected = visualizer->is_selected (vsp);
 
 	// NEW INTERSECTION or UNION
-	//  * Select point is now_selected
+	//  * Select point if it is now selected
 	if (selection_mode < 2 && now_selected)
 	  point_set_item->point_set()->select(&*it,true);
 	// INTERSECTION
-	//  * Unselect point if it is not now_selected
+	//  * Unselect point if it was selected and is not anymore
 	else if (selection_mode == 2)
 	  {
 	    if (already_selected && !now_selected)
 	      point_set_item->point_set()->select(&*it,false);
 	  }
 	// DIFFERENCE
-	//  * Unselect point if it is now_selected
+	//  * Unselect point if it was selected and is now selected
 	else if (selection_mode == 3)
 	  {
 	    if (already_selected && now_selected)
