@@ -58,7 +58,7 @@ private:
   std::vector<float> textures_map_lines;
 
 
-  GLuint textureId;
+  mutable GLuint textureId;
   mutable QOpenGLShaderProgram* program;
 
   bool smooth_shading;

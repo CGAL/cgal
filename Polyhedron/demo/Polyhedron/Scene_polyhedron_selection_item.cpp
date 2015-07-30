@@ -1,5 +1,4 @@
 #include "Scene_polyhedron_selection_item.h"
-#include "Scene_polyhedron_selection_item.moc"
 
 
 void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewer)const
@@ -160,15 +159,15 @@ void Scene_polyhedron_selection_item::draw(Viewer_interface* viewer) const
     draw_points(viewer);
     GLfloat offset_factor;
     GLfloat offset_units;
-    qFunc.glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
-    qFunc.glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
+    viewer->glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
+    viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
     glPolygonOffset(-1.f, 1.f);
 
     vaos[0]->bind();
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
-    qFunc.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/3));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/3));
     program->release();
     vaos[0]->release();
     glPolygonOffset(offset_factor, offset_units);
@@ -180,27 +179,27 @@ void Scene_polyhedron_selection_item::draw(Viewer_interface* viewer) const
 void Scene_polyhedron_selection_item::draw_edges(Viewer_interface* viewer) const
 {
 
-    qFunc.glLineWidth(3.f);
+    viewer->glLineWidth(3.f);
     vaos[1]->bind();
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
     program->release();
     vaos[1]->release();
-    qFunc.glLineWidth(1.f);
+    viewer->glLineWidth(1.f);
 }
 
 void Scene_polyhedron_selection_item::draw_points(Viewer_interface* viewer) const
 {
-    qFunc.glPointSize(5.f);
+    viewer->glPointSize(5.f);
     vaos[2]->bind();
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    qFunc.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_points.size()/3));
+    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_points.size()/3));
     program->release();
     vaos[2]->release();
-    qFunc.glPointSize(1.f);
+    viewer->glPointSize(1.f);
 
 }

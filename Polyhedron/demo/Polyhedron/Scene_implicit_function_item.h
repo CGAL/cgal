@@ -101,7 +101,7 @@ private:
 
 
   mutable QOpenGLShaderProgram *program;
-  GLuint textureId;
+  mutable GLuint textureId;
 
 
 

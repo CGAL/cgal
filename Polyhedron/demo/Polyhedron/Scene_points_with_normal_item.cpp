@@ -29,7 +29,6 @@ Scene_points_with_normal_item::Scene_points_with_normal_item()
 {
   setRenderingMode(Points);
     is_selected = true;
-    qFunc.initializeOpenGLFunctions();
 }
 
 // Copy constructor
@@ -42,13 +41,11 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
     {
     setRenderingMode(PointsPlusNormals);
         is_selected = true;
-        qFunc.initializeOpenGLFunctions();
     }
   else
     {
     setRenderingMode(Points);
         is_selected = true;
-        qFunc.initializeOpenGLFunctions();
     }
     changed();
 }
@@ -74,7 +71,6 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& i
 
   setRenderingMode(PointsPlusNormals);
     is_selected = true;
-    qFunc.initializeOpenGLFunctions();
     changed();
 }
 
@@ -380,7 +376,7 @@ void Scene_points_with_normal_item::draw_edges(Viewer_interface* viewer) const
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors", this->color());
-    qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
     vaos[0]->release();
     program->release();
 }
@@ -394,23 +390,23 @@ void Scene_points_with_normal_item::draw_points(Viewer_interface* viewer) const
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors", this->color());
-    qFunc.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_points.size()/3));
+    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_points.size()/3));
     vaos[1]->release();
     program->release();
     GLfloat point_size;
-    qFunc.glGetFloatv(GL_POINT_SIZE, &point_size);
-    qFunc.glPointSize(4.f);
+    viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
+    viewer->glPointSize(4.f);
 
     vaos[2]->bind();
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors", QColor(255,0,0));
-    qFunc.glDrawArrays(GL_POINTS, 0,
+    viewer->glDrawArrays(GL_POINTS, 0,
                        static_cast<GLsizei>(positions_selected_points.size()/3));
     vaos[2]->release();
     program->release();
-    qFunc.glPointSize(point_size);
+    viewer->glPointSize(point_size);
 }
 // Gets wrapped point set
 Point_set* Scene_points_with_normal_item::point_set()
@@ -529,4 +525,3 @@ void Scene_points_with_normal_item::changed()
     are_buffers_filled = false;
 }
 
-#include "Scene_points_with_normal_item.moc"

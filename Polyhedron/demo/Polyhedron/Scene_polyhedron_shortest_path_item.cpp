@@ -15,7 +15,6 @@ Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item()
   , m_isTreeCached(false)
   , m_shiftHeld(false)
 {
-    qFunc.initializeOpenGLFunctions();
 }
 
 Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item(Scene_polyhedron_item* polyhedronItem, Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow) 
@@ -24,7 +23,6 @@ Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item(Scene_p
   , m_isTreeCached(false)
   , m_shiftHeld(false)
 { 
-    qFunc.initializeOpenGLFunctions();
   initialize(polyhedronItem, sceneInterface, messages, mainWindow);
 }
   
@@ -107,7 +105,7 @@ void Scene_polyhedron_shortest_path_item::draw_points(Viewer_interface* viewer) 
    vaos[0]->bind();
    program->bind();
    program->setAttributeValue("colors", QColor(Qt::green));
-   qFunc.glDrawArrays(GL_POINTS, 0, vertices.size()/3);
+   viewer->glDrawArrays(GL_POINTS, 0, vertices.size()/3);
    program->release();
    vaos[0]->release();
 }
@@ -526,4 +524,3 @@ QString Scene_polyhedron_shortest_path_item::toolTip() const
   return QString();
 }
 
-#include "Scene_polyhedron_shortest_path_item.moc"

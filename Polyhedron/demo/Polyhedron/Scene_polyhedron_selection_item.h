@@ -229,7 +229,6 @@ protected:
     facet_color = QColor(87,87,87);
     edge_color = QColor(173,35,35);
     vertex_color = QColor(255,205,243);
-        qFunc.initializeOpenGLFunctions();
   }
 
   Active_handle::Type get_active_handle_type() 

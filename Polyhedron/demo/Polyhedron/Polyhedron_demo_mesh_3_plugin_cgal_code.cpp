@@ -58,7 +58,6 @@ public:
         color_poly.resize(0);
         color_grid.resize(0);
         normals.resize(0);
-        qFunc.initializeOpenGLFunctions();
         //Generates an integer which will be used as ID for each buffer
     }
 
@@ -161,7 +160,7 @@ public:
         program = getShaderProgram(PROGRAM_WITH_LIGHT);
         attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
         program->bind();
-        qFunc.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size()/3));
+        viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size()/3));
         program->release();
         vaos[0]->release();
 
@@ -178,7 +177,7 @@ public:
         for(int i=0; i<16; i++)
             f_mat.data()[i]=frame->matrix()[i];
         program->setUniformValue("f_matrix",f_mat);
-        qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size()/3));
+        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size()/3));
         program->release();
         vaos[2]->release();
 
@@ -186,7 +185,7 @@ public:
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program->bind();
-        qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
         program->release();
         vaos[1]->release();
 
@@ -199,7 +198,7 @@ public:
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program->bind();
-        qFunc.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/3));
+        viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/3));
        vaos[1]->release();
        program->release();
 
@@ -211,7 +210,7 @@ public:
        for(int i=0; i<16; i++)
            f_mat.data()[i]=frame->matrix()[i];
        program->setUniformValue("f_matrix",f_mat);
-       qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size()/3));
+       viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size()/3));
        program->release();
        vaos[2]->release();
     }

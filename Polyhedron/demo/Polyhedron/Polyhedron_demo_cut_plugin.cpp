@@ -40,7 +40,6 @@ public:
   Scene_aabb_item(const AABB_tree& tree_) : Scene_item(1,1), tree(tree_)
   {
       positions_lines.resize(0);
-      qFunc.initializeOpenGLFunctions();
   }
 
     ~Scene_aabb_item()
@@ -130,7 +129,7 @@ private:
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program->bind();
         program->setAttributeValue("colors",this->color());
-        qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
         program->release();
         vaos[0]->release();
     }
@@ -143,7 +142,6 @@ public:
     Scene_edges_item():Scene_item(1,1)
     {
         positions_lines.resize(0);
-        qFunc.initializeOpenGLFunctions();
         top = true;
     }
   ~Scene_edges_item()
@@ -257,7 +255,7 @@ private:
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program->bind();
         program->setAttributeValue("colors",this->color());
-        qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
         vaos[0]->release();
         program->release();
 

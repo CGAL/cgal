@@ -27,15 +27,15 @@ Scene_item_with_display_list::~Scene_item_with_display_list()
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 
-void Scene_item_with_display_list::draw(QGLViewer *viewer)  {
+void Scene_item_with_display_list::draw(Viewer* viewer)  {
   draw(viewer, DRAW);
 }
 
-void Scene_item_with_display_list::draw_edges(QGLViewer *viewer)  {
+void Scene_item_with_display_list::draw_edges(Viewer* viewer)  {
   draw(viewer, DRAW_EDGES);
 }
 
-void Scene_item_with_display_list::draw(QGLViewer *viewer, int i)
+void Scene_item_with_display_list::draw(Viewer* viewer, int i)
 {
   if(!display_list_built[i])
   {

@@ -82,7 +82,6 @@ int main(int argc, char **argv)
 #ifndef USE_FORWARD_DECL
 #  include "Scene.cpp"
 #  include "Scene_item.cpp"
-#  include "Scene_moc.cpp"
 #  include "Viewer.cpp"
 #  include "Viewer_moc.cpp"
 #  include "MainWindow.cpp"

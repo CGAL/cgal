@@ -99,4 +99,3 @@ void Scene_polyhedron_item_decorator::set_polyhedron_item(Scene_polyhedron_item*
   this->poly_item = poly_item;
 }
 
-#include "Scene_polyhedron_item_decorator.moc"

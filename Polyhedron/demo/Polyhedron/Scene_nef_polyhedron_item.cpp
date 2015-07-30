@@ -53,7 +53,6 @@ Scene_nef_polyhedron_item::Scene_nef_polyhedron_item()
       nef_poly(new Nef_polyhedron)
 {
     is_selected = true;
-    qFunc.initializeOpenGLFunctions();
 }
 
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(Nef_polyhedron* const p)
@@ -61,7 +60,6 @@ Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(Nef_polyhedron* const p)
       nef_poly(p)
 {
     is_selected = true;
-    qFunc.initializeOpenGLFunctions();
 }
 
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(const Nef_polyhedron& p)
@@ -69,7 +67,6 @@ Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(const Nef_polyhedron& p)
       nef_poly(new Nef_polyhedron(p))
 {
      is_selected = true;
-     qFunc.initializeOpenGLFunctions();
 }
 
 Scene_nef_polyhedron_item::~Scene_nef_polyhedron_item()
@@ -457,23 +454,23 @@ Scene_nef_polyhedron_item::toolTip() const
 }
 
 void
-Scene_nef_polyhedron_item::direct_draw() const {
+Scene_nef_polyhedron_item::direct_draw(Viewer_interface* viewer) const {
     gl_render_nef_facets(nef_poly);
 
     GLboolean lighting;
-    qFunc.glGetBooleanv(GL_LIGHTING, &lighting);
-    qFunc.glDisable(GL_LIGHTING);
+    viewer->glGetBooleanv(GL_LIGHTING, &lighting);
+    viewer->glDisable(GL_LIGHTING);
 
     GLfloat point_size;
-    qFunc.glGetFloatv(GL_POINT_SIZE, &point_size);
-    qFunc.glPointSize(10.f);
+    viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
+    viewer->glPointSize(10.f);
 
     gl_render_nef_vertices(nef_poly);
 
     if(lighting) {
-        qFunc.glEnable(GL_LIGHTING);
+        viewer->glEnable(GL_LIGHTING);
     }
-    qFunc.glPointSize(point_size);
+    viewer->glPointSize(point_size);
 }
 void Scene_nef_polyhedron_item::draw(Viewer_interface* viewer) const
 {
@@ -485,15 +482,15 @@ void Scene_nef_polyhedron_item::draw(Viewer_interface* viewer) const
     program=getShaderProgram(PROGRAM_WITH_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
-    qFunc.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/3));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/3));
     vaos[0]->release();
     program->release();
     GLfloat point_size;
-    qFunc.glGetFloatv(GL_POINT_SIZE, &point_size);
-    qFunc.glPointSize(10.f);
+    viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
+    viewer->glPointSize(10.f);
 
     draw_points(viewer);
-    qFunc.glPointSize(point_size);
+    viewer->glPointSize(point_size);
 
 }
 void Scene_nef_polyhedron_item::draw_edges(Viewer_interface* viewer) const
@@ -505,17 +502,17 @@ void Scene_nef_polyhedron_item::draw_edges(Viewer_interface* viewer) const
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer ,PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    qFunc.glDrawArrays(GL_LINES,0,static_cast<GLsizei>(positions_lines.size()/3));
+    viewer->glDrawArrays(GL_LINES,0,static_cast<GLsizei>(positions_lines.size()/3));
     vaos[1]->release();
     program->release();
     if(renderingMode() == PointsPlusNormals)
     {
         GLfloat point_size;
-        qFunc.glGetFloatv(GL_POINT_SIZE, &point_size);
-        qFunc.glPointSize(10.f);
+        viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
+        viewer->glPointSize(10.f);
 
         draw_points(viewer);
-        qFunc.glPointSize(point_size);
+        viewer->glPointSize(point_size);
     }
 }
 void Scene_nef_polyhedron_item::draw_points(Viewer_interface* viewer) const
@@ -526,7 +523,7 @@ void Scene_nef_polyhedron_item::draw_points(Viewer_interface* viewer) const
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer ,PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    qFunc.glDrawArrays(GL_POINTS,0,static_cast<GLsizei>(positions_points.size()/3));
+    viewer->glDrawArrays(GL_POINTS,0,static_cast<GLsizei>(positions_points.size()/3));
     vaos[2]->release();
     program->release();
 
@@ -742,4 +739,3 @@ Scene_nef_polyhedron_item::selection_changed(bool p_is_selected)
     }
 
 }
-#include "Scene_nef_polyhedron_item.moc"

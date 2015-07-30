@@ -33,9 +33,9 @@ public:
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode) const { return true; }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-  virtual void draw(QGLViewer*) const ;
-  virtual void draw_edges(QGLViewer*) const ;
-  virtual void draw_points(QGLViewer*) const ;
+  virtual void draw(Viewer*) const ;
+  virtual void draw_edges(Viewer*) const ;
+  virtual void draw_points(Viewer*) const ;
 
   // Get wrapped polyhedron
   Polyhedron*       polyhedron();
@@ -74,7 +74,7 @@ private:
   mutable QOpenGLShaderProgram rendering_program;
   void initialize_buffers() const;
   void compute_elements();
-  void attrib_buffers(QGLViewer*) const;
+  void attrib_buffers(Viewer*) const;
   void compile_shaders();
 
 public Q_SLOTS:

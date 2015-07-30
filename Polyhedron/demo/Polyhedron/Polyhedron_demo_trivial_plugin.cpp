@@ -18,7 +18,6 @@ public:
     {
 
         positions_lines.resize(0);
-        qFunc.initializeOpenGLFunctions();
         //Generates an integer which will be used as ID for each buffer
     }
     ~Scene_bbox_item()
@@ -57,7 +56,7 @@ public:
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program->bind();
         program->setAttributeValue("colors", this->color());
-        qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
         vaos[0]->release();
         program->release();
 

@@ -86,6 +86,3 @@ emit_status()
 {
   Q_EMIT (status_report(f_->status(timer_period_)));
 }
-
-
-#include "Meshing_thread.moc"

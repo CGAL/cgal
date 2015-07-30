@@ -153,7 +153,6 @@ void Scene_polyhedron_item::compute_elements()
     typedef Polyhedron::Traits	    Kernel;
     typedef Kernel::Point_3	    Point;
     typedef Kernel::Vector_3	    Vector;
-    typedef Polyhedron::Facet	    Facet;
     typedef Polyhedron::Facet_iterator Facet_iterator;
     typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
 
@@ -268,7 +267,7 @@ void Scene_polyhedron_item::initialize_buffers() const
 
 }
 
-void Scene_polyhedron_item::attrib_buffers(QGLViewer* viewer) const
+void Scene_polyhedron_item::attrib_buffers(Viewer* viewer) const
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -285,7 +284,7 @@ void Scene_polyhedron_item::attrib_buffers(QGLViewer* viewer) const
     }
     QVector4D	position(0.0f,0.0f,1.0f,1.0f );
     GLboolean isTwoSide;
-    gl.glGetBooleanv(GL_LIGHT_MODEL_TWO_SIDE,&isTwoSide);
+    viewer->glGetBooleanv(GL_LIGHT_MODEL_TWO_SIDE,&isTwoSide);
     // define material
      QVector4D	ambient;
      QVector4D	diffuse;
@@ -334,18 +333,12 @@ void Scene_polyhedron_item::attrib_buffers(QGLViewer* viewer) const
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-void Scene_polyhedron_item::draw(QGLViewer *viewer) const {
-
-    if(!are_ogfunctions_initialized)
-    {
-        gl.initializeOpenGLFunctions();
-        are_ogfunctions_initialized = true;
-    }
+void Scene_polyhedron_item::draw(Viewer* viewer) const {
     if(!are_buffers_initialized)
         initialize_buffers();
     QColor color;
     GLint shading;
-    gl.glGetIntegerv(GL_SHADE_MODEL, &shading);
+    viewer->glGetIntegerv(GL_SHADE_MODEL, &shading);
     if(shading == GL_FLAT)
         vao[0].bind();
     else if(shading == GL_SMOOTH)
@@ -356,10 +349,10 @@ void Scene_polyhedron_item::draw(QGLViewer *viewer) const {
 
     rendering_program.bind();
     float current_color[4];
-    gl.glGetFloatv(GL_CURRENT_COLOR, current_color);
+    viewer->glGetFloatv(GL_CURRENT_COLOR, current_color);
     color.setRgbF(current_color[0],current_color[1],current_color[2],current_color[3]);
     rendering_program.setUniformValue(colorLocation[0], color);
-    gl.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(v_poly.size()/3));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(v_poly.size()/3));
     rendering_program.release();
     if(shading == GL_FLAT)
         vao[0].release();
@@ -368,12 +361,7 @@ void Scene_polyhedron_item::draw(QGLViewer *viewer) const {
 
 
 }
-void Scene_polyhedron_item::draw_edges(QGLViewer *viewer) const {
-    if(!are_ogfunctions_initialized)
-    {
-        gl.initializeOpenGLFunctions();
-        are_ogfunctions_initialized = true;
-    }
+void Scene_polyhedron_item::draw_edges(Viewer* viewer) const {
     if(!are_buffers_initialized)
         initialize_buffers();
     QColor color;
@@ -382,20 +370,15 @@ void Scene_polyhedron_item::draw_edges(QGLViewer *viewer) const {
     attrib_buffers(viewer);
     rendering_program.bind();
     float current_color[4];
-    gl.glGetFloatv(GL_CURRENT_COLOR, current_color);
+    viewer->glGetFloatv(GL_CURRENT_COLOR, current_color);
     color.setRgbF(current_color[0],current_color[1],current_color[2],current_color[3]);
     rendering_program.setUniformValue(colorLocation[0], color);
-    gl.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_edge.size()/3));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_edge.size()/3));
     rendering_program.release();
     vao[2].release();
 
 }
-void Scene_polyhedron_item::draw_points(QGLViewer *viewer) const {
-    if(!are_ogfunctions_initialized)
-    {
-        gl.initializeOpenGLFunctions();
-        are_ogfunctions_initialized = true;
-    }
+void Scene_polyhedron_item::draw_points(Viewer* viewer) const {
     if(!are_buffers_initialized)
         initialize_buffers();
     QColor color;
@@ -404,10 +387,10 @@ void Scene_polyhedron_item::draw_points(QGLViewer *viewer) const {
     attrib_buffers(viewer);
     rendering_program.bind();
     float current_color[4];
-    gl.glGetFloatv(GL_CURRENT_COLOR, current_color);
+    viewer->glGetFloatv(GL_CURRENT_COLOR, current_color);
     color.setRgbF(current_color[0],current_color[1],current_color[2],current_color[3]);
     rendering_program.setUniformValue(colorLocation[0], color);
-    gl.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(v_poly.size()/3));
+    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(v_poly.size()/3));
     rendering_program.release();
     vao[0].release();
 }
@@ -483,4 +466,3 @@ void Scene_polyhedron_item::changed()
     are_buffers_initialized = false;
 }
 
-#include "Scene_polyhedron_item.moc"
