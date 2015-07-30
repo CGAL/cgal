@@ -20,6 +20,13 @@ if(POLICY CMP0042)
   cmake_policy(SET CMP0042 OLD)
 endif()
 
+# Compatibility with CMake 3.1
+if(POLICY CMP0054)
+  # http://www.cmake.org/cmake/help/v3.1/policy/CMP0054.html
+  # See the discussion https://github.com/CGAL/cgal/issues/189
+  cmake_policy(SET CMP0054 OLD)
+endif()
+
 
 #--------------------------------------------------------------------------------------------------
 #
