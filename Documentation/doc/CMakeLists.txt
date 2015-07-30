@@ -198,7 +198,7 @@ add_custom_target(doc_pre)
 add_custom_target(doc_post)
 
 # hard-code that doc depends on all packages
-file(STRINGS ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/dependencies DEPENDENCIES)
+file(STRINGS ${CMAKE_CURRENT_SOURCE_DIR}/Documentation/dependencies DEPENDENCIES)
 foreach(depend ${DEPENDENCIES})
   add_dependencies(doc_pre ${depend}_internal_doxygen_run)
   add_dependencies(doc_post ${depend}_copy_doc_tags)
