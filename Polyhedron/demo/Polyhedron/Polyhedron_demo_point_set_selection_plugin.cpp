@@ -41,13 +41,14 @@ class Q_DECL_EXPORT Scene_point_set_selection_visualizer : public Scene_item
   bool rectangle;
   std::vector<Point_2> contour_2d;
   Scene_polylines_item* polyline;
+  Bbox point_set_bbox;
   CGAL::Bbox_2 domain_rectangle;
   Polygon_2 domain_freeform;
   
 public:
 
-  Scene_point_set_selection_visualizer(bool rectangle)
-    : rectangle (rectangle)
+  Scene_point_set_selection_visualizer(bool rectangle, const Bbox& point_set_bbox)
+    : rectangle (rectangle), point_set_bbox (point_set_bbox)
   {
     polyline = new Scene_polylines_item();
     polyline->setRenderingMode (Wireframe);
@@ -59,8 +60,7 @@ public:
   bool isFinite() const { return true; }
   bool isEmpty() const { return poly().empty(); }
   Bbox bbox() const {
-    update_polyline ();
-    return polyline->bbox ();
+    return point_set_bbox;
   }
   Scene_point_set_selection_visualizer* clone() const {
     return 0;
@@ -257,19 +257,19 @@ protected:
 	// Start selection
 	if (mouseEvent->button() == Qt::LeftButton && !visualizer)
 	  {
+	    QApplication::setOverrideCursor(Qt::CrossCursor);
 	    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
 	    if (viewer->camera()->frame()->isSpinning())
 	      viewer->camera()->frame()->stopSpinning();
 	
-	    visualizer = new Scene_point_set_selection_visualizer(rectangle);
+	    visualizer = new Scene_point_set_selection_visualizer(rectangle,
+								  point_set_item->bbox());
 	    visualizer->setName(tr("Point set selection visualizer"));
 	    visualizer->setRenderingMode (Wireframe);
 	    visualizer->setVisible (true);
 
 	    // Hack to prevent camera for "jumping" when creating new item
-	    //	qglviewer::Vec position = viewer->camera()->position();
-	    scene->addItem(visualizer, false);
-	    //	viewer->camera()->setPosition(position);
+	    scene->addItem(visualizer);
 	
 	    scene->setSelectedItem(item_id);
 	    visualizer->sample_mouse_path();
@@ -278,9 +278,11 @@ protected:
 	// Cancel selection
 	else if (mouseEvent->button() == Qt::RightButton && visualizer)
 	  {
+
 	    scene->erase( scene->item_id(visualizer) );
 	    scene->setSelectedItem(item_id);
 	    visualizer = NULL;
+	    QApplication::restoreOverrideCursor();
 	    return true;
 	  }
 
@@ -293,6 +295,7 @@ protected:
 	scene->erase( scene->item_id(visualizer) );
 	scene->setSelectedItem(item_id);
 	visualizer = NULL;
+	QApplication::restoreOverrideCursor();
 	return true;
       }
     // Update selection
