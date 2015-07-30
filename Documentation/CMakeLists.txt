@@ -120,6 +120,7 @@ set(CGAL_DOC_OUTPUT_DIR "${CMAKE_BINARY_DIR}/doc_output")
 file(MAKE_DIRECTORY "${CGAL_DOC_OUTPUT_DIR}")
 
 set(CGAL_DOC_RESOURCE_DIR "${CMAKE_CURRENT_SOURCE_DIR}/resources")
+set(CGAL_DOC_SCRIPT_DIR "${CMAKE_CURRENT_SOURCE_DIR}/scripts")
 
 option(CGAL_DOC_CREATE_LOGS "Write log files or print warnings and errors to cerr when building the doc." OFF)
 
@@ -211,26 +212,29 @@ add_dependencies(Documentation_copy_doc_tags doc_pre)
 add_dependencies(doc doc_post)
 
 if(PYTHONINTERP_FOUND)
+  set(CGAL_DOC_POST_PROCESSING ${CGAL_DOC_SCRIPT_DIR}/html_output_post_processing.py)
+
   add_custom_target(doc_with_postprocessing
-    ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --output ${CGAL_DOC_OUTPUT_DIR} --resources ${CGAL_DOC_RESOURCE_DIR}
+    ${PYTHON_EXECUTABLE} ${CGAL_DOC_POST_PROCESSING} --output ${CGAL_DOC_OUTPUT_DIR} --resources ${CGAL_DOC_RESOURCE_DIR}
     )
   add_dependencies(doc_with_postprocessing doc)
 
   if(CGAL_DOC_CREATE_LOGS)
+    set(CGAL_DOC_TESTSUITE ${CGAL_DOC_SCRIPT_DIR}/testsuite.py)
     add_custom_target(Documentation_test
-      ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR}
+      ${PYTHON_EXECUTABLE} ${CGAL_DOC_TESTSUITE} --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR}
       )
     add_dependencies(Documentation_test doc)
 
     add_custom_target(Documentation_test_publish
-      ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results
+      ${PYTHON_EXECUTABLE} ${CGAL_DOC_TESTSUITE} --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results
       )
     add_dependencies(Documentation_test_publish doc)
 
     set(CGAL_DOC_VERSION_H "/tmp/version.h" CACHE PATH "Path to CGAL/version.h")
 
     add_custom_target(doc_and_publish_testsuite
-      ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/testsuite.py --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results --cgal-version ${CGAL_DOC_VERSION_H} --version-to-keep 10
+      ${PYTHON_EXECUTABLE} ${CGAL_DOC_TESTSUITE} --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results --cgal-version ${CGAL_DOC_VERSION_H} --version-to-keep 10
       )
     add_dependencies(doc_and_publish_testsuite doc_with_postprocessing)
 
