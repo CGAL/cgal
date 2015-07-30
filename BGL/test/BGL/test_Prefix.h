@@ -7,8 +7,6 @@
 #include <fstream>
 
 #include <CGAL/boost/graph/properties.h>
-#include <boost/assign.hpp>
-#include <boost/mpl/list.hpp>
 
 #include <CGAL/Simple_cartesian.h>
 
