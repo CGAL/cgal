@@ -33,8 +33,6 @@ public:
   MainWindow(QWidget* parent = 0);
   ~MainWindow();
 
-  Viewer* getViewer() { return viewer; }
-        
 public Q_SLOTS:
   void updateViewerBBox();
   void open(QString filename);
