@@ -160,7 +160,7 @@ pattern_title_and_anchor = re.compile(r"\\cgalPkgDescriptionBegin{([^}]*),\s?([^
 pattern_author = re.compile(r"\\cgalPkgAuthors?{([^}]*)}")
 pattern_bib = re.compile(r"\\cgalPkgBib{([^}]*)}")
 
-f = codecs.open(SOURCE_DIR+"/doc/Documentation/packages.txt", 'r', encoding='utf-8')
+f = codecs.open(SOURCE_DIR+"/Documentation/packages.txt", 'r', encoding='utf-8')
 k=2
 for line in f:
     match = pattern.match(line)
@@ -170,9 +170,9 @@ for line in f:
       if(index > 0):
           top_level = pkg[:index]
           lower_level = pkg[index+1:]
-          filename=SOURCE_DIR+"/../" + top_level + "/doc/" + lower_level + "/PackageDescription.txt"
+          filename=SOURCE_DIR+"/../../" + top_level + "/doc/" + lower_level + "/PackageDescription.txt"
       else:
-          filename=SOURCE_DIR+"/../" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
+          filename=SOURCE_DIR+"/../../" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
       pkgdesc = codecs.open(filename, 'r', encoding='utf-8')
       authors=""
       bib=""
