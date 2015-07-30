@@ -222,13 +222,13 @@ dilate_edge_selection(
     std::set<edge_descriptor> new_selection_set;
     BOOST_FOREACH(edge_descriptor ed, current_selection)
     {
-      halfedge_descriptor hd=halfedge(ed,graph);
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_source( hd, graph))
+      halfedge_descriptor hdi=halfedge(ed,graph);
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_source( hdi, graph))
       {
         edge_descriptor ned=edge(hd, graph);
         if (!get(is_selected, ned)) new_selection_set.insert(ned);
       }
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target( hd, graph))
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target( hdi, graph))
       {
         edge_descriptor ned=edge(hd, graph);
         if (!get(is_selected, ned)) new_selection_set.insert(ned);

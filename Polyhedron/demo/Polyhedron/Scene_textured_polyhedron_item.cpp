@@ -10,6 +10,9 @@ typedef EPIC_kernel::Point_3 Point;
 
 void Scene_textured_polyhedron_item::initialize_buffers(Viewer_interface *viewer = 0) const
 {
+    if(GLuint(-1) == textureId) {
+        viewer->glGenTextures(1, &textureId);
+    }
     //vao for the facets
     {
         program = getShaderProgram(PROGRAM_WITH_TEXTURE, viewer);
@@ -62,9 +65,12 @@ void Scene_textured_polyhedron_item::initialize_buffers(Viewer_interface *viewer
         vaos[1]->release();
         program->release();
     }
-    qFunc.glActiveTexture(GL_TEXTURE0);
-    qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
-    qFunc.glTexImage2D(GL_TEXTURE_2D,
+
+    viewer->glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
+
+    viewer->glActiveTexture(GL_TEXTURE0);
+    viewer->glBindTexture(GL_TEXTURE_2D, textureId);
+    viewer->glTexImage2D(GL_TEXTURE_2D,
                  0,
                  GL_RGB,
                  texture.GetWidth(),
@@ -73,10 +79,10 @@ void Scene_textured_polyhedron_item::initialize_buffers(Viewer_interface *viewer
                  GL_RGB,
                  GL_UNSIGNED_BYTE,
                  texture.GetData());
-    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    qFunc.glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
     are_buffers_filled = true;
@@ -189,44 +195,31 @@ Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
-    : Scene_item(5,2),poly(new Textured_polyhedron)
+    : Scene_item(5,2),poly(new Textured_polyhedron), textureId(-1)
 {
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
     cur_shading=FlatPlusEdges;
     is_selected=false;
-    qFunc.initializeOpenGLFunctions();
-    qFunc.glPixelStorei(GL_UNPACK_ALIGNMENT, 1);
-    qFunc.glGenTextures(1, &textureId);
     changed();
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(Textured_polyhedron* const p)
-    : Scene_item(5,2),poly(p),smooth_shading(true)
+    : Scene_item(5,2),poly(p),textureId(-1),smooth_shading(true)
 {
     cur_shading=FlatPlusEdges;
     is_selected=false;
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
-    qFunc.initializeOpenGLFunctions();
-    qFunc.glGenTextures(1, &textureId);
     changed();
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Textured_polyhedron& p)
-    : Scene_item(5,2), poly(new Textured_polyhedron(p)),smooth_shading(true)
+    : Scene_item(5,2), poly(new Textured_polyhedron(p)),textureId(-1),smooth_shading(true)
 {
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
     cur_shading=FlatPlusEdges;
     is_selected=false;
-    qFunc.initializeOpenGLFunctions();
-    qFunc.glGenTextures(1, &textureId);
     changed();
 }
-
-// Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Scene_textured_polyhedron_item& item)
-//   : Scene_item_with_display_list(item),
-//     poly(new Textured_polyhedron(*item.poly))
-// {
-// }
 
 Scene_textured_polyhedron_item::~Scene_textured_polyhedron_item()
 {
@@ -281,12 +274,12 @@ void Scene_textured_polyhedron_item::draw(Viewer_interface* viewer) const {
         initialize_buffers(viewer);
 
     vaos[0]->bind();
-    qFunc.glActiveTexture(GL_TEXTURE0);
-    qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
+    viewer->glActiveTexture(GL_TEXTURE0);
+    viewer->glBindTexture(GL_TEXTURE_2D, textureId);
     attrib_buffers(viewer, PROGRAM_WITH_TEXTURE);
     program=getShaderProgram(PROGRAM_WITH_TEXTURE);
     program->bind();
-    qFunc.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/4));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/4));
     //Clean-up
     program->release();
     vaos[0]->release();
@@ -296,13 +289,13 @@ void Scene_textured_polyhedron_item::draw_edges(Viewer_interface* viewer) const 
         initialize_buffers(viewer);
 
     vaos[1]->bind();
-    qFunc.glActiveTexture(GL_TEXTURE0);
-    qFunc.glBindTexture(GL_TEXTURE_2D, textureId);
+    viewer->glActiveTexture(GL_TEXTURE0);
+    viewer->glBindTexture(GL_TEXTURE_2D, textureId);
     attrib_buffers(viewer, PROGRAM_WITH_TEXTURED_EDGES);
 
     program=getShaderProgram(PROGRAM_WITH_TEXTURED_EDGES);
     program->bind();
-    qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
     //Clean-up
     program->release();
     vaos[1]->release();
@@ -339,8 +332,6 @@ void
 Scene_textured_polyhedron_item::
 contextual_changed()
 {
-    GLint new_shading;
-    qFunc.glGetIntegerv(GL_SHADE_MODEL, &new_shading);
     prev_shading = cur_shading;
     cur_shading = renderingMode();
     if(prev_shading != cur_shading)
@@ -359,4 +350,3 @@ Scene_textured_polyhedron_item::selection_changed(bool p_is_selected)
     else
         is_selected = p_is_selected;
 }
-#include "Scene_textured_polyhedron_item.moc"

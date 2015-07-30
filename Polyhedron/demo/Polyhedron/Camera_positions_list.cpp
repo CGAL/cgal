@@ -135,4 +135,3 @@ void Camera_positions_list::load(QString filename) {
   }
 }
 
-#include "Camera_positions_list.moc"

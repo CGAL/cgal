@@ -32,7 +32,6 @@ public:
       frame(new ManipulatedFrame())
   {
     setNormal(0., 0., 1.);
-    qFunc.initializeOpenGLFunctions();
     //Generates an integer which will be used as ID for each buffer
     changed();
   }

@@ -18,6 +18,7 @@ class QMenu;
 class QAction;
 class Scene_interface;
 class Scene_polyhedron_item;
+class Viewer_interface;
 
 class SCENE_COMBINATORIAL_MAP_ITEM_EXPORT Scene_combinatorial_map_item
         : public Scene_item
@@ -81,7 +82,7 @@ private:
 
     GLuint vao;
     QOpenGLBuffer buffer[5];
-    void initialize_buffers();
+    void initialize_buffers(Viewer_interface*);
     void compile_shaders(void);
     void compute_normals_and_vertices(void);
 

@@ -184,7 +184,7 @@ void Scene_c3t3_item::compute_elements()
     normal.resize(0);
     color_triangles.resize(0);
 
-    draw_grid((float)complex_diag(this),v_grid);
+    draw_grid((float)complex_diag(this),&v_grid);
     if(isEmpty())
       return;
 
@@ -542,7 +542,7 @@ void Scene_c3t3_item::initialize_buffers() const
 
         vao[1].bind();
         buffers[3].bind();
-        buffers[3].allocate(v_grid->data(), static_cast<int>(v_grid->size()*sizeof(float)));
+        buffers[3].allocate(v_grid.data(), static_cast<int>(v_grid.size()*sizeof(float)));
         poly_vertexLocation[1] = rendering_program.attributeLocation("vertex");
         rendering_program.enableAttributeArray(poly_vertexLocation[1]);
         rendering_program.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
@@ -554,7 +554,7 @@ void Scene_c3t3_item::initialize_buffers() const
 
 }
 
-void Scene_c3t3_item::attrib_buffers(QGLViewer* viewer) const
+void Scene_c3t3_item::attrib_buffers(Viewer* viewer) const
 {
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
@@ -579,7 +579,7 @@ void Scene_c3t3_item::attrib_buffers(QGLViewer* viewer) const
 
     QVector4D	position(0.0f,0.0f,1.0f,1.0f );
     GLboolean isTwoSide;
-    gl.glGetBooleanv(GL_LIGHT_MODEL_TWO_SIDE,&isTwoSide);
+    viewer->glGetBooleanv(GL_LIGHT_MODEL_TWO_SIDE,&isTwoSide);
     // define material
      QVector4D	ambient;
      QVector4D	diffuse;
@@ -642,29 +642,19 @@ void Scene_c3t3_item::attrib_buffers(QGLViewer* viewer) const
 enum { DRAW = 0, DRAW_EDGES = 1 };
 
 void
-Scene_c3t3_item::draw(QGLViewer *viewer)const {
-    if(!are_ogfunctions_initialized)
-    {
-        gl.initializeOpenGLFunctions();
-        are_ogfunctions_initialized = true;
-    }
+Scene_c3t3_item::draw(Viewer* viewer)const {
     if(!are_buffers_initialized)
         initialize_buffers();
      vao[0].bind();
     attrib_buffers(viewer);
     rendering_program.bind();
-    gl.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(v_poly.size()/3));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(v_poly.size()/3));
     rendering_program.release();
     vao[0].release();
 }
 
 void
-Scene_c3t3_item::draw_edges(QGLViewer* viewer) const {
-    if(!are_ogfunctions_initialized)
-    {
-        gl.initializeOpenGLFunctions();
-        are_ogfunctions_initialized = true;
-    }
+Scene_c3t3_item::draw_edges(Viewer* viewer) const {
     if(!are_buffers_initialized)
         initialize_buffers();
     vao[1].bind();
@@ -673,7 +663,7 @@ Scene_c3t3_item::draw_edges(QGLViewer* viewer) const {
     QColor color;
     color.setRgbF(this->color().redF(), this->color().greenF(), this->color().blueF());
     rendering_program_grid.setUniformValue(colorLocation[1], color);
-    gl.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_grid->size()/3));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_grid.size()/3));
     rendering_program_grid.release();
     vao[1].release();
 }
@@ -693,7 +683,6 @@ Scene_c3t3_item()
   , data_item_(NULL)
   , indices_()
 {
-    v_grid = new std::vector<float>();
   compile_shaders();
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
   c3t3_changed();
@@ -1041,4 +1030,4 @@ void Scene_c3t3_item::contextual_changed()
     if(frame->isInMouseGrabberPool())
         c3t3_changed();
 }
-#include "Scene_c3t3_item.moc"
+

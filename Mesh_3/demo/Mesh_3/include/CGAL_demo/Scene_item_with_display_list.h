@@ -16,10 +16,10 @@ public:
 
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   virtual void direct_draw(QGLViewer*) = 0;
-  virtual void direct_draw_edges(QGLViewer* viewer) { draw(viewer); }
+  virtual void direct_draw_edges(Viewer* viewer) { draw(viewer); }
   // OpenGL drawing using a display list
-  virtual void draw(QGLViewer* viewer) ;
-  virtual void draw_edges(QGLViewer* viewer) ;
+  virtual void draw(Viewer* viewer) ;
+  virtual void draw_edges(Viewer* viewer) ;
 public Q_SLOTS:
 
   // Call that once you have finished changing something in the item
@@ -28,7 +28,7 @@ public Q_SLOTS:
 
 protected:
   enum { DRAW = 0, DRAW_EDGES = 1, NB_OF_DISPLAY_LISTS = 2};
-  void draw(QGLViewer* viewer,int) ;
+  void draw(Viewer* viewer,int) ;
   // display lists
   mutable GLuint display_list[NB_OF_DISPLAY_LISTS];
   mutable bool display_list_built[NB_OF_DISPLAY_LISTS];

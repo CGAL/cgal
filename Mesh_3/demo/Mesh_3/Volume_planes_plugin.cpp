@@ -69,26 +69,21 @@ Q_SIGNALS:
   void x(int);
 
 public:
-  PixelReader():are_glfunctions_initialized(false){}
   void setIC(const IntConverter& x) { ic = x; fc = boost::optional<DoubleConverter>(); }
   void setFC(const DoubleConverter& x) { fc = x; ic = boost::optional<IntConverter>(); }
+  void setViewer(Viewer* viewer) { this->viewer = viewer; }
 
 private:
   boost::optional<IntConverter> ic;
   boost::optional<DoubleConverter> fc;
-  QOpenGLFunctions_3_3_Core gl;
-  bool are_glfunctions_initialized;
+  Viewer* viewer;
+
 
   void getPixel(const QPoint& e) {
-      if(!are_glfunctions_initialized)
-      {
-       gl.initializeOpenGLFunctions();
-       are_glfunctions_initialized = true;
-      }
     float data[3];
     int vp[4];
-    gl.glGetIntegerv(GL_VIEWPORT, vp);
-    gl.glReadPixels(e.x(), vp[3] - e.y(), 1, 1, GL_RGB, GL_FLOAT, data);
+    viewer->glGetIntegerv(GL_VIEWPORT, vp);
+    viewer->glReadPixels(e.x(), vp[3] - e.y(), 1, 1, GL_RGB, GL_FLOAT, data);
 
     if(fc) {
       Q_EMIT x( (*fc)(data[0]) );
@@ -183,6 +178,7 @@ public:
       std::cerr << "Volume_planes_plugin cannot init mousegrabber" << std::endl;
     }
     Viewer* v = mwTmp->getViewer();
+    pxr_.setViewer(v);
     connect(v, SIGNAL(pointSelected(QPoint)), &pxr_, SLOT(update(QPoint)));
 
     createOrGetDockLayout();

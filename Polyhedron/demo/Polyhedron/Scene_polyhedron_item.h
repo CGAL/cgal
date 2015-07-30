@@ -81,6 +81,7 @@ public Q_SLOTS:
     void update_vertex_indices();
     void update_facet_indices();
     void update_halfedge_indices();
+    void invalidate_aabb_tree();
 
 Q_SIGNALS:
     void selected_vertex(void*);

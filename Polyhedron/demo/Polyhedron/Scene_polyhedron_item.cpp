@@ -1,4 +1,3 @@
-#include <CGAL/check_gl_error.h>
 #include "Scene_polyhedron_item.h"
 #include <CGAL/AABB_intersections.h>
 #include "Kernel_type.h"
@@ -704,7 +703,6 @@ init()
         colors_.resize(0);
         compute_color_map(this->color(), max + 1,
                           std::back_inserter(colors_));
-        qFunc.initializeOpenGLFunctions();
     }
 
   volume=-std::numeric_limits<double>::infinity();
@@ -867,7 +865,7 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
     attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
     program->bind();
-    qFunc.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/4));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/4));
     program->release();
     if(!is_selected)
         vaos[0]->release();
@@ -890,7 +888,7 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     //draw the edges
-    qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
     program->release();
     if(!is_selected)
         vaos[1]->release();
@@ -906,7 +904,7 @@ Scene_polyhedron_item::draw_points(Viewer_interface* viewer) const {
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     //draw the points
-    qFunc.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/4));
+    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/4));
     // Clean-up
     program->release();
     vaos[1]->release();
@@ -953,8 +951,6 @@ void
 Scene_polyhedron_item::
 contextual_changed()
 {
-    GLint new_shading;
-    qFunc.glGetIntegerv(GL_SHADE_MODEL, &new_shading);
     prev_shading = cur_shading;
     cur_shading = renderingMode();
     if(prev_shading != cur_shading)
@@ -1119,6 +1115,9 @@ void Scene_polyhedron_item::update_halfedge_indices()
         hit->id()=id++;
     }
 }
+void Scene_polyhedron_item::invalidate_aabb_tree()
+{
+  delete_aabb_tree(this);
+}
 
-#include "Scene_polyhedron_item.moc"
 

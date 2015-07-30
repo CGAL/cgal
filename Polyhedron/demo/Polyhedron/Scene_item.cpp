@@ -137,7 +137,7 @@ void Scene_item::attrib_buffers(Viewer_interface* viewer, int program_name) cons
     for (int i=0; i<16; ++i)
         mv_mat.data()[i] = GLfloat(d_mat[i]);
 
-    qFunc.glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
+    viewer->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
 
     QVector4D position(0.0f,0.0f,1.0f, 1.0f );
     QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
@@ -382,5 +382,4 @@ QOpenGLShaderProgram* Scene_item::getShaderProgram(int name, Viewer_interface * 
         return 0;
     }
 }
-#include "Scene_item.moc"
 

@@ -1,6 +1,5 @@
 #include "Scene_plane_item.h"
 
-#include "Scene_plane_item.moc"
 
 
 void Scene_plane_item::initialize_buffers(Viewer_interface *viewer) const
@@ -105,7 +104,7 @@ void Scene_plane_item::draw(Viewer_interface* viewer)const
     program->bind();
     program->setUniformValue("f_matrix", f_matrix);
     program->setAttributeValue("colors",this->color());
-    qFunc.glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_quad.size()/3));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_quad.size()/3));
     program->release();
     vaos[0]->release();
 
@@ -124,7 +123,7 @@ void Scene_plane_item::draw_edges(Viewer_interface* viewer)const
     program->bind();
     program->setUniformValue("f_matrix", f_matrix);
     program->setAttributeValue("colors",QVector3D(0,0,0));
-    qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
     program->release();
     vaos[1]->release();
 }

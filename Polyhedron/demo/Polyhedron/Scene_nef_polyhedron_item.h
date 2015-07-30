@@ -31,7 +31,7 @@ public:
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const { return m != Gouraud; } // CHECK THIS!
   // OpenGL drawing in a display list
-  void direct_draw() const;
+  void direct_draw(Viewer_interface*) const;
 
   virtual void draw(Viewer_interface*) const;
   virtual void draw_edges() const {}

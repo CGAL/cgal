@@ -16,9 +16,6 @@
 #include <iostream>
 #include <cmath>
 #include <boost/variant.hpp>
-#include<QGLViewer/qglviewer.h>
-
-
 
 class QEvent;
 class QMouseEvent;
@@ -61,8 +58,8 @@ public:
   // initializeGL() is called by Viewer::initializeGL()
   void initializeGL();
   // draw() is called by Viewer::draw()
-  void draw(QGLViewer *viewer);
-  void drawWithNames(QGLViewer *viewer);
+  void draw(Viewer *viewer);
+  void drawWithNames(Viewer *viewer);
 
   // Get scene bounding box
   Bbox bbox() const;
@@ -109,7 +106,7 @@ Q_SIGNALS:
   void selectionChanged();
 
 private:
-  void draw_aux(bool with_names, QGLViewer *viewer);
+  void draw_aux(bool with_names, Viewer *viewer);
   typedef QList<Scene_item*> Entries;
   Entries entries;
   int selected_item;

@@ -13,7 +13,6 @@
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/glu.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
 #include <QGLViewer/camera.h>
@@ -395,8 +394,6 @@ public:
 
     active_group = --ctrl_vertex_frame_map.end();
 
-    connect(new_frame, SIGNAL(modified()), this, SLOT(deform()));  // OK we are deforming via timer,
-    // but it makes demo more responsive if we also add this signal
     Q_EMIT itemChanged();
 
     print_message("A new empty group of control vertices is created.");
@@ -696,8 +693,6 @@ protected:
 
     }
   }
-protected:
-  GLUquadric* quadric; // for drawing spheres
 }; // end class Scene_edit_polyhedron_item
 
 #endif // SCENE_EDIT_POLYHEDRON_ITEM_H

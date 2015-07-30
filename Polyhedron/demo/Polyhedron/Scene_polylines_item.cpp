@@ -2,7 +2,6 @@
 
 #include <CGAL/bounding_box.h>
 #include <CGAL/gl.h>
-#include <CGAL/glu.h>
 #include <QMenu>
 #include <QAction>
 
@@ -204,27 +203,14 @@ public:
 
     Scene_polylines_item_private() :
         draw_extremities(false),
-        spheres_drawn_radius(0),
-        sphere_display_list(0),
-        quadric(0)
+        spheres_drawn_radius(0)
     {}
-
-    ~Scene_polylines_item_private()
-    {
-        if(quadric != 0)
-            gluDeleteQuadric(quadric);
-        if(sphere_display_list  != 0)
-            glDeleteLists(sphere_display_list, 1);
-    }
 
     void draw_sphere(const K::Point_3&, double) const;
     void draw_spheres(const Scene_polylines_item*) const;
 
     bool draw_extremities;
     double spheres_drawn_radius;
-private:
-    mutable GLuint sphere_display_list;
-    mutable GLUquadric* quadric;
 };
 
 void
@@ -279,8 +265,8 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
         program->setAttributeBuffer("center",GL_FLOAT,0,3);
         buffers[4].release();
 
-        qFunc.glVertexAttribDivisor(program->attributeLocation("center"), 1);
-        qFunc.glVertexAttribDivisor(program->attributeLocation("colors"), 1);
+        viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
+        viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
         vaos[1]->release();
 
         program->release();
@@ -317,7 +303,7 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
         program->setAttributeBuffer("center",GL_FLOAT,0,3);
         buffers[7].release();
 
-        qFunc.glVertexAttribDivisor(program->attributeLocation("center"), 1);
+        viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
         vaos[2]->release();
         program->release();
     }
@@ -553,7 +539,6 @@ Scene_polylines_item::Scene_polylines_item()
     ,rings(18)
     ,sectors(36)
 {
-    qFunc.initializeOpenGLFunctions();
     changed();
 
 }
@@ -649,7 +634,7 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
         program = getShaderProgram(PROGRAM_INSTANCED);
         attrib_buffers(viewer, PROGRAM_INSTANCED);
         program->bind();
-        qFunc.glDrawArraysInstanced(GL_TRIANGLES, 0,
+        viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                     static_cast<GLsizei>(positions_spheres.size()/4), nbSpheres);
         program->release();
         vaos[1]->release();
@@ -669,7 +654,7 @@ Scene_polylines_item::draw_edges(Viewer_interface* viewer) const {
     program->bind();
     QColor temp = this->color();
     program->setAttributeValue("colors", temp);
-    qFunc.glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
     program->release();
     vaos[0]->release();
     if(d->draw_extremities)
@@ -678,7 +663,7 @@ Scene_polylines_item::draw_edges(Viewer_interface* viewer) const {
         attrib_buffers(viewer, PROGRAM_INSTANCED_WIRE);
         program = getShaderProgram(PROGRAM_INSTANCED_WIRE);
         program->bind();
-        qFunc.glDrawArraysInstanced(GL_LINES, 0,
+        viewer->glDrawArraysInstanced(GL_LINES, 0,
                                     static_cast<GLsizei>(positions_wire_spheres.size()/4), nbSpheres);
         program->release();
         vaos[2]->release();
@@ -695,7 +680,7 @@ Scene_polylines_item::draw_points(Viewer_interface* viewer) const {
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    qFunc.glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/4));
+    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/4));
     // Clean-up
    vaos[0]->release();
    program->release();
@@ -870,4 +855,3 @@ Scene_polylines_item::merge(Scene_polylines_item* other_item) {
     changed();
 }
 
-#include "Scene_polylines_item.moc"

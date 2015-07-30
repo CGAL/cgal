@@ -1,4 +1,3 @@
-#include <CGAL/check_gl_error.h>
 #include "config.h"
 #include "Scene.h"
 #include "Scene_item.h"
@@ -838,5 +837,3 @@ findItems(const Scene_interface* scene_interface,
 
 } // end namespace details
                 } // end namespace scene
-
-#include "Scene.moc"
