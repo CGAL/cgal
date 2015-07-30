@@ -177,22 +177,22 @@ endif()
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/scripts/pkglist_filter ${CMAKE_BINARY_DIR}/pkglist_filter)
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/scripts/pkglist_filter.py ${CMAKE_BINARY_DIR}/pkglist_filter.py)
 
-foreach(package ${CGAL_CONFIGURED_PACKAGES_NAMES})
+if(CGAL_BRANCH_BUILD)
+  # hard-code Miscellany and Documentation. They are not recognized as packages by the
+  # build-system, because they don't have package_description subdirs.
+  set(CGAL_DOC_PACKAGES ${CGAL_CONFIGURED_PACKAGES_NAMES} "Miscellany" "Documentation")
+else()
+  subdirlist(CGAL_DOC_PACKAGES ${CMAKE_SOURCE_DIR}/doc)
+endif()
+
+foreach(package ${CGAL_DOC_PACKAGES})
   configure_doxygen_package(${package})
 endforeach()
-
-# hard-coded. this is not recognized as a package by the
-# build-system, because it doesn't have a package_description subdir.
-configure_doxygen_package("Miscellany")
 
 # Add a custom target "doc"
 add_custom_target(doc)
 add_custom_target(doc_pre)
 add_custom_target(doc_post)
-
-# do the main package manually, it isn't part of ${CGAL_CONFIGURED_PACKAGES_NAMES}
-configure_doxygen_package("Documentation")
-set_target_properties(Documentation_doc PROPERTIES FOLDER Documentation)
 
 # hard-code that doc depends on all packages
 file(STRINGS ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/dependencies DEPENDENCIES)
