@@ -8,7 +8,7 @@ INPUT = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation \
         ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt
 
 HTML_HEADER         = ${CGAL_DOC_HEADER}
-LAYOUT_FILE         = ${CMAKE_SOURCE_DIR}/Documentation/DoxygenLayout.xml
+LAYOUT_FILE         = ${CGAL_DOC_RESOURCE_DIR}/DoxygenLayout.xml
 GENERATE_TAGFILE    = ${CGAL_DOC_TAG_GEN_DIR}/Manual.tag
 EXAMPLE_PATH        = ${CMAKE_SOURCE_DIR}/Convex_hull_2/examples \
                       ${CMAKE_SOURCE_DIR}/Kernel_23/examples
