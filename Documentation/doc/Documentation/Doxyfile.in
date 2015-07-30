@@ -14,8 +14,8 @@ EXAMPLE_PATH        = ${CMAKE_SOURCE_DIR}/Convex_hull_2/examples \
                       ${CMAKE_SOURCE_DIR}/Kernel_23/examples
 FILTER_PATTERNS     = *.txt=${CMAKE_BINARY_DIR}/pkglist_filter
 
-HTML_EXTRA_FILES += ${CMAKE_SOURCE_DIR}/Documentation/hacks.js \
-                    ${CMAKE_SOURCE_DIR}/Documentation/cgal_stylesheet.css \
+HTML_EXTRA_FILES += ${CGAL_DOC_RESOURCES_DIR}/hacks.js \
+                    ${CGAL_DOC_RESOURCES_DIR}/cgal_stylesheet.css \
                     ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib \
                     ${CMAKE_BINARY_DIR}/how_to_cite.html
 
