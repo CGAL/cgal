@@ -32,10 +32,6 @@
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
 #include <boost/iterator/iterator_facade.hpp>
-#include <boost/fusion/container/map.hpp>
-#include <boost/fusion/include/map.hpp>
-#include <boost/fusion/include/at_key.hpp>
-#include <boost/tuple/tuple.hpp>
 #include <boost/foreach.hpp>
 #include <boost/property_map/property_map.hpp>
 
@@ -2249,16 +2245,40 @@ public:
 
 private: //--------------------------------------------------- property handling
 
-    /// @cond BROKEN_DOC
-    typedef boost::fusion::map<
-      boost::fusion::pair< typename Surface_mesh::Vertex_index, Property_container<Vertex_index> (Surface_mesh::*)>,
-      boost::fusion::pair< typename Surface_mesh::Halfedge_index, Property_container<Halfedge_index> (Surface_mesh::*)>,
-      boost::fusion::pair< typename Surface_mesh::Edge_index, Property_container<Edge_index> (Surface_mesh::*)>,
-      boost::fusion::pair< typename Surface_mesh::Face_index, Property_container<Face_index> (Surface_mesh::*)> >
-        map_type;
+  // Property_selector maps an index type to a property_container, the
+  // dummy is necessary to make it a partial specialization (full
+  // specializations are only allowed at namespace scope).
+  template<typename, bool = true>
+  struct Property_selector;
 
-    map_type pmap_;
-    /// @endcond
+  template<bool dummy>
+  struct Property_selector<typename Surface_mesh::Vertex_index, dummy> {
+    Surface_mesh* m_;
+    Property_selector(Surface_mesh* m) : m_(m) {}
+    Property_container<typename Surface_mesh::Vertex_index>&
+    operator()() { return m_->vprops_; }
+  };
+  template<bool dummy>
+  struct Property_selector<typename Surface_mesh::Halfedge_index, dummy> {
+    Surface_mesh* m_;
+    Property_selector(Surface_mesh* m) : m_(m) {}
+    Property_container<typename Surface_mesh::Halfedge_index>&
+    operator()() { return m_->hprops_; }
+  };
+  template<bool dummy>
+  struct Property_selector<typename Surface_mesh::Edge_index, dummy> {
+    Surface_mesh* m_;
+    Property_selector(Surface_mesh* m) : m_(m) {}
+    Property_container<typename Surface_mesh::Edge_index>&
+    operator()() { return m_->eprops_; }
+  };
+  template<bool dummy>
+  struct Property_selector<typename Surface_mesh::Face_index, dummy> {
+    Surface_mesh* m_;
+    Property_selector(Surface_mesh* m) : m_(m) {}
+    Property_container<typename Surface_mesh::Face_index>&
+    operator()() { return m_->fprops_; }
+  };
 
     public:
  
@@ -2290,9 +2310,9 @@ private: //--------------------------------------------------- property handling
 
   
     template<class I, class T>
-      std::pair<Property_map<I, T>, bool>
+    std::pair<Property_map<I, T>, bool>
     add_property_map(const std::string& name, const T t=T()) {
-        return (this->*boost::fusion::at_key<I>(pmap_)).template add<T>(name, t);
+      return Property_selector<I>(this)().template add<T>(name, t);
     }
 
  
@@ -2303,7 +2323,7 @@ private: //--------------------------------------------------- property handling
     template <class I, class T>
     std::pair<Property_map<I, T>,bool> property_map(const std::string& name) const
     {
-      return (this->*boost::fusion::at_key<I>(pmap_)).template get<T>(name);
+      return Property_selector<I>(const_cast<Surface_mesh*>(this))().template get<T>(name);
     }
 
 
@@ -2312,7 +2332,7 @@ private: //--------------------------------------------------- property handling
     template<class I, class T>
     void remove_property_map(Property_map<I, T>& p)
     {
-        (this->*boost::fusion::at_key<I>(pmap_)).remove(p);
+      (Property_selector<I>(this)()).remove(p);
     }
 
     /// @cond CGAL_DOCUMENT_INTERNALS
@@ -2325,16 +2345,16 @@ private: //--------------------------------------------------- property handling
     template<class I>
     const std::type_info& property_type(const std::string& name)
     {
-        return (this->*boost::fusion::at_key<I>(pmap_)).get_type(name);
+      return Property_selector<I>(this)().get_type(name);
     }
-  /// @endcond
+    /// @endcond
 
     /// returns a vector with all strings that describe properties with the key type `I`.
     /// @tparam I The key type of the properties.
     template<class I>
     std::vector<std::string> properties() const
     {
-        return (this->*boost::fusion::at_key<I>(pmap_)).properties();
+      return Property_selector<I>(this)().properties();
     }
 
     /// returns the property for the string "v:point".
@@ -2526,10 +2546,6 @@ private: //------------------------------------------------------- private data
 template <typename P>
 Surface_mesh<P>::
 Surface_mesh()
-  : pmap_(boost::fusion::make_pair< typename Surface_mesh::Vertex_index >(&Surface_mesh::vprops_)
-          , boost::fusion::make_pair< typename Surface_mesh::Halfedge_index >(&Surface_mesh::hprops_)
-          , boost::fusion::make_pair< typename Surface_mesh::Edge_index >(&Surface_mesh::eprops_)
-          , boost::fusion::make_pair< typename Surface_mesh::Face_index >(&Surface_mesh::fprops_))
 {
     // allocate standard properties
     // same list is used in operator=() and assign()
@@ -2555,8 +2571,6 @@ operator=(const Surface_mesh<P>& rhs)
 {
     if (this != &rhs)
     {
-        pmap_ = rhs.pmap_;
-
         // deep copy of property containers
         vprops_ = rhs.vprops_;
         hprops_ = rhs.hprops_;
