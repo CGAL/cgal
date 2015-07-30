@@ -36,7 +36,7 @@ class Q_DECL_EXPORT Scene_point_set_selection_visualizer : public Scene_item
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
   typedef K::Point_2 Point_2;
   typedef K::Point_3 Point_3;
-  typedef typename CGAL::Polygon_2<K> Polygon_2;
+  typedef CGAL::Polygon_2<K> Polygon_2;
   
   bool rectangle;
   std::vector<Point_2> contour_2d;
@@ -319,7 +319,7 @@ protected:
 
     if (selection_mode == 0) // New selection
       {
-	for(typename Point_set::iterator it = point_set_item->point_set()->begin ();
+	for(Point_set::iterator it = point_set_item->point_set()->begin ();
 	    it != point_set_item->point_set()->end(); ++ it)
 	  point_set_item->point_set()->select(&*it,false);
       }
@@ -327,7 +327,7 @@ protected:
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     qglviewer::Camera* camera = viewer->camera();
     
-    for(typename Point_set::iterator it = point_set_item->point_set()->begin ();
+    for(Point_set::iterator it = point_set_item->point_set()->begin ();
 	it != point_set_item->point_set()->end(); ++ it)
       {
 	bool already_selected = it->is_selected ();
@@ -436,7 +436,7 @@ public Q_SLOTS:
     new_item->setVisible(point_set_item->visible());
 
     typedef Point_set_3<Kernel> Point_set;
-    for(typename Point_set::iterator it = point_set_item->point_set()->begin ();
+    for(Point_set::iterator it = point_set_item->point_set()->begin ();
 	it != point_set_item->point_set()->end(); ++ it) {
       if (it->is_selected ())
 	new_item->point_set()->push_back(*it);
