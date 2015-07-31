@@ -1,9 +1,10 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 3D Minkowski Sum of Polyhedra"
+PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - 3D Minkowski Sum of Polyhedra"
 
 INPUT                      =  ${CGAL_PACKAGE_DOC_DIR} \
-                              ${CMAKE_SOURCE_DIR}/Minkowski_sum_3/include/
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/Minkowski_sum_3 \
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/minkowski_sum_3.h
 
 HIDE_UNDOC_MEMBERS         =  true
 HIDE_UNDOC_CLASSES         =  true

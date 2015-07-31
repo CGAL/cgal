@@ -2,8 +2,39 @@
 
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Point Set Processing"
 
-INPUT                      =  ${CGAL_PACKAGE_DOC_DIR} \
-                              ${CMAKE_SOURCE_DIR}/Point_set_processing_3/include
+INPUT                    = ${CGAL_PACKAGE_DOC_DIR} \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/internal/Voronoi_covariance_3 \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/internal/Rich_grid.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/IO/read_off_points.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/IO/read_xyz_points.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/IO/write_off_points.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/IO/write_xyz_points.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/bilateral_smooth_point_set.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/compute_average_spacing.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/edge_aware_upsample_point_set.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/Eigen_vcm_traits.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/grid_simplify_point_set.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/improved_jet_smooth_point_set.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/improved_laplacian_smooth_point_set.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/Index_property_map.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/jet_estimate_normals.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/jet_smooth_point_set.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/mst_orient_normals.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/pca_estimate_normals.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/pca_smooth_point_set.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/point_set_processing_assertions.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/Point_with_normal_3.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/property_map.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/radial_orient_normals.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/random_simplify_point_set.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/remove_outliers.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/remove_outliers_wrt_median_knn_sq_distance.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/Search_traits_vertex_handle_3.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/trace.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/value_type_traits.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/vcm_estimate_edges.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/vcm_estimate_normals.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/wlop_simplify_and_regularize_point_set.h
 
 EXCLUDE_PATTERNS          +=  property_map.h
 

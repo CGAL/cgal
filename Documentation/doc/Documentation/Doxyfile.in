@@ -10,7 +10,8 @@ INPUT = ${CGAL_PACKAGE_DOC_DIR} \
 HTML_HEADER         = ${CGAL_DOC_HEADER}
 LAYOUT_FILE         = ${CGAL_DOC_RESOURCE_DIR}/DoxygenLayout.xml
 GENERATE_TAGFILE    = ${CGAL_DOC_TAG_GEN_DIR}/Manual.tag
-EXAMPLE_PATH        = ${CMAKE_SOURCE_DIR}/Convex_hull_2/examples \
+# The following additions are only needed in branch build.
+EXAMPLE_PATH       += ${CMAKE_SOURCE_DIR}/Convex_hull_2/examples \
                       ${CMAKE_SOURCE_DIR}/Kernel_23/examples
 FILTER_PATTERNS     = *.txt=${CMAKE_BINARY_DIR}/pkglist_filter
 
