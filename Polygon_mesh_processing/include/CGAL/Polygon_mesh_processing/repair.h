@@ -33,6 +33,61 @@
 namespace CGAL{
 namespace Polygon_mesh_processing {
 
+namespace debug{
+  template <class TriangleMesh, class VertexPointMap>
+  std::ostream& dump_edge_neighborhood(
+    typename boost::graph_traits<TriangleMesh>::edge_descriptor ed,
+    TriangleMesh& tmesh,
+    const VertexPointMap& vpmap,
+    std::ostream& out)
+  {
+    typedef boost::graph_traits<TriangleMesh> GT;
+    typedef typename GT::halfedge_descriptor halfedge_descriptor;
+    typedef typename GT::vertex_descriptor vertex_descriptor;
+    typedef typename GT::face_descriptor face_descriptor;
+
+    halfedge_descriptor h = halfedge(ed, tmesh);
+
+    std::map<vertex_descriptor, int> vertices;
+    std::set<face_descriptor> faces;
+    int vindex=0;
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(h, tmesh))
+    {
+      if ( vertices.insert(std::make_pair(source(hd, tmesh), vindex)).second )
+        ++vindex;
+      if (!is_border(hd, tmesh))
+        faces.insert( face(hd, tmesh) );
+    }
+
+    h=opposite(h, tmesh);
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(h, tmesh))
+    {
+      if ( vertices.insert(std::make_pair(source(hd, tmesh), vindex)).second )
+        ++vindex;
+      if (!is_border(hd, tmesh))
+        faces.insert( face(hd, tmesh) );
+    }
+
+    std::vector<vertex_descriptor> ordered_vertices(vertices.size());
+    typedef std::pair<const vertex_descriptor, int> Pair_type;
+    BOOST_FOREACH(const Pair_type& p, vertices)
+      ordered_vertices[p.second]=p.first;
+
+    out << "OFF\n" << ordered_vertices.size() << " " << faces.size() << " 0\n";
+    BOOST_FOREACH(vertex_descriptor vd, ordered_vertices)
+      out << get(vpmap, vd) << "\n";
+    BOOST_FOREACH(face_descriptor fd, faces)
+    {
+      out << "3";
+      h=halfedge(fd,tmesh);
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(h, tmesh))
+        out << " " << vertices[target(hd, tmesh)];
+      out << "\n";
+    }
+    return out;
+  }
+} //end of namespace debug
+
 template <class HalfedgeGraph, class VertexPointMap, class Traits>
 struct Less_vertex_point{
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
