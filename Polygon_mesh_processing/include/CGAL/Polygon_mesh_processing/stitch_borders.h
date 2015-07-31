@@ -77,10 +77,10 @@ struct Less_for_halfedge
   const VertexPointMap& vpmap;
 };
 
-template <typename PM, typename OutputIterator, typename LessHedge>
+template <typename PM, typename OutputIterator, typename LessHedge, typename VertexPointMap>
 OutputIterator
 detect_duplicated_boundary_edges
-(PM& pmesh, OutputIterator out, LessHedge less_hedge)
+(PM& pmesh, OutputIterator out, LessHedge less_hedge, const VertexPointMap& vpmap)
 {
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   typedef std::set<halfedge_descriptor, LessHedge> Border_halfedge_set;
@@ -96,7 +96,9 @@ detect_duplicated_boundary_edges
       = border_halfedge_set.insert(he);
 
     if ( !insertion_ok )
-      *out++ = std::make_pair(*set_it, he);
+      if ( get(vpmap, source(he,pmesh))==get(vpmap, target(*set_it,pmesh)) &&
+           get(vpmap, target(he,pmesh))==get(vpmap, source(*set_it,pmesh)) )
+        *out++ = std::make_pair(*set_it, he);
   }
   return out;
 }
@@ -355,7 +357,7 @@ void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
 
   internal::detect_duplicated_boundary_edges(pmesh,
     std::back_inserter(hedge_pairs_to_stitch),
-    internal::Less_for_halfedge<PolygonMesh, VPMap>(pmesh, vpm));
+    internal::Less_for_halfedge<PolygonMesh, VPMap>(pmesh, vpm), vpm);
 
   stitch_borders(pmesh, hedge_pairs_to_stitch, np);
 }
