@@ -270,6 +270,11 @@ private:
 * then the source of `p.second` is.
 * If the target of `p.second` has not been marked for deletion,
 * then the source of `p.first` is.
+* A vertex is marked for deletion if its corresponding point has already be seen
+* with a vertex previously handled.
+*
+* \pre For each halfedge in a pair of `hedge_pairs_to_stitch`, the corresponding
+*      edge is neither degenerated nor incident to a degenerate edge.
 *
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 *        that has a property map for `boost::vertex_point_t`
