@@ -36,6 +36,11 @@
 #include <boost/range.hpp>
 #include <boost/foreach.hpp>
 
+#ifdef DOXYGEN_RUNNING
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_PMP_NP_CLASS NamedParameters
+#endif
+
 namespace CGAL{
 
 namespace Polygon_mesh_processing{
@@ -107,7 +112,7 @@ struct Naive_border_stitching_modifier
 
   typedef HalfedgePairsRange To_stitch;
 
-  Naive_border_stitching_modifier(To_stitch& to_stitch_,
+  Naive_border_stitching_modifier(const To_stitch& to_stitch_,
                                   VertexPointMap vpmap_)
     : to_stitch(to_stitch_)
     , vpmap(vpmap_)
@@ -132,7 +137,7 @@ struct Naive_border_stitching_modifier
     // we use the following map to choose one vertex per point
     std::map<Point, vertex_descriptor> vertices_kept;
 
-    BOOST_FOREACH(halfedges_pair hk, to_stitch)
+    BOOST_FOREACH(const halfedges_pair hk, to_stitch)
     {
       halfedge_descriptor h1 = hk.first;
       halfedge_descriptor h2 = hk.second;
@@ -196,7 +201,7 @@ struct Naive_border_stitching_modifier
     /// In order to avoid having to maintain a set with halfedges to stitch
     /// we do on purpose next-prev linking that might not be useful but that
     /// is harmless and still less expensive than doing queries in a set
-    BOOST_FOREACH(halfedges_pair hk, to_stitch)
+    BOOST_FOREACH(const halfedges_pair hk, to_stitch)
     {
       halfedge_descriptor h1 = hk.first;
       halfedge_descriptor h2 = hk.second;
@@ -214,7 +219,7 @@ struct Naive_border_stitching_modifier
 
     /// update HDS connectivity, removing the second halfedge
     /// of each the pair and its opposite
-    BOOST_FOREACH(halfedges_pair hk, to_stitch)
+    BOOST_FOREACH(const halfedges_pair hk, to_stitch)
     {
       halfedge_descriptor h1 = hk.first;
       halfedge_descriptor h2 = hk.second;
@@ -241,7 +246,7 @@ struct Naive_border_stitching_modifier
   }
 
 private:
-  To_stitch& to_stitch;
+  const To_stitch& to_stitch;
   VertexPointMap vpmap;
 };
 
@@ -285,7 +290,7 @@ template <typename PolygonMesh,
           typename HalfedgePairsRange,
           typename NamedParameters>
 void stitch_borders(PolygonMesh& pmesh,
-                    HalfedgePairsRange& hedge_pairs_to_stitch,
+                    const HalfedgePairsRange& hedge_pairs_to_stitch,
                     const NamedParameters& np)
 {
   using boost::choose_param;
@@ -305,7 +310,7 @@ void stitch_borders(PolygonMesh& pmesh,
 ///\cond SKIP_IN_MANUAL
 template <typename PolygonMesh, typename HalfedgePairsRange>
 void stitch_borders(PolygonMesh& pmesh,
-                    HalfedgePairsRange& hedge_pairs_to_stitch)
+                    const HalfedgePairsRange& hedge_pairs_to_stitch)
 {
   stitch_borders(pmesh, hedge_pairs_to_stitch,
     CGAL::Polygon_mesh_processing::parameters::all_default());
@@ -323,7 +328,7 @@ void stitch_borders(PolygonMesh& pmesh,
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 ///        that has a property map for `boost::vertex_point_t`
-/// @tparam a sequence of \ref namedparameters
+/// @tparam NamedParameters a sequence of \ref namedparameters
 ///
 /// @param pmesh the polygon mesh to be modified by stitching
 /// @param np optional sequence of \ref namedparameters among the ones listed below
@@ -332,8 +337,8 @@ void stitch_borders(PolygonMesh& pmesh,
 ///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
-template <typename PolygonMesh, class NamedParameters>
-void stitch_borders(PolygonMesh& pmesh, const NamedParameters& np)
+template <typename PolygonMesh, class CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+void stitch_borders(PolygonMesh& pmesh, const CGAL_PMP_NP_CLASS& np)
 {
   using boost::choose_param;
   using boost::choose_const_pmap;
@@ -343,7 +348,7 @@ void stitch_borders(PolygonMesh& pmesh, const NamedParameters& np)
     halfedge_descriptor;
   std::vector< std::pair<halfedge_descriptor, halfedge_descriptor> > hedge_pairs_to_stitch;
 
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type VPMap;
+  typedef typename GetVertexPointMap<PolygonMesh, CGAL_PMP_NP_CLASS>::const_type VPMap;
   VPMap vpm = choose_const_pmap(get_param(np, boost::vertex_point),
                                 pmesh,
                                 boost::vertex_point);
