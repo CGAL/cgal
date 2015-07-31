@@ -28,7 +28,7 @@ struct Is_border {
   }
 
   bool operator()(typename boost::graph_traits<G>::vertex_descriptor d) const {
-    return is_border(d,g) == boost::none;
+    return is_border(d,g) != boost::none;
   }
 
 };
