@@ -219,7 +219,6 @@ QMenu* Scene_combinatorial_map_item::contextMenu()
 
 bool Scene_combinatorial_map_item::keyPressEvent(QKeyEvent* e){
     if (e->key()==Qt::Key_N){
-        qDebug()<<"event";
         set_next_volume();
         return true;
     }
@@ -265,9 +264,12 @@ void Scene_combinatorial_map_item::compute_elements(void) const{
                     if ( !combinatorial_map().is_marked(vol_it,facetreated) )
                     {
                         Kernel::Vector_3 normal = compute_face_normal(vol_it);
-                        normals.push_back(normal.x());
-                        normals.push_back(normal.y());
-                        normals.push_back(normal.z());
+                        for(int i=0; i<3; i++)
+                        {
+                            normals.push_back(normal.x());
+                            normals.push_back(normal.y());
+                            normals.push_back(normal.z());
+                        }
 
                         //iterate over all darts of facets
                         for ( Combinatorial_map_3::Dart_of_orbit_const_range<1>::const_iterator
