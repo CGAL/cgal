@@ -13,7 +13,6 @@
 #include <CGAL_demo/Scene_interface.h>
 #include <CGAL_demo/Scene_item.h>
 #include <CGAL_demo/Viewer.h>
-#include "MainWindow.h"
 
 #include <QAction>
 #include <QMenu>
@@ -173,11 +172,8 @@ public:
     connect(planeSwitch, SIGNAL(triggered()), this, SLOT(selectPlanes()));
     
     // evil
-    MainWindow* mwTmp;
-    if( !(mwTmp = dynamic_cast<MainWindow*>(mw)) ) {
-      std::cerr << "Volume_planes_plugin cannot init mousegrabber" << std::endl;
-    }
-    Viewer* v = mwTmp->getViewer();
+    Viewer* v = mw->findChild<Viewer*>("viewer");
+    CGAL_assertion(v != 0);
     pxr_.setViewer(v);
     connect(v, SIGNAL(pointSelected(QPoint)), &pxr_, SLOT(update(QPoint)));
 
