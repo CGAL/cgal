@@ -265,6 +265,19 @@ void Scene_points_with_normal_item::deleteSelection()
   Q_EMIT itemChanged();
 }
 
+// Invert selection
+void Scene_points_with_normal_item::invertSelection()
+{
+    m_points->invert_selection();
+  Q_EMIT itemChanged();
+}
+
+// Select everything
+void Scene_points_with_normal_item::selectAll()
+{
+    m_points->select(m_points->begin(), m_points->end(), true);
+  Q_EMIT itemChanged();
+}
 // Reset selection mark
 void Scene_points_with_normal_item::resetSelection()
 {
