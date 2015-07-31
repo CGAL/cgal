@@ -2,7 +2,7 @@
 
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Triangulated Surface Mesh Deformation"
 
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Surface_modeling/doc/Surface_modeling/ \ 
+INPUT                      =  ${CGAL_PACKAGE_DOC_DIR} \
                               ${CMAKE_SOURCE_DIR}/Surface_modeling/include
 
 EXTRACT_ALL                =  false

@@ -2,7 +2,7 @@
 
 PROJECT_NAME               =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Point Set Shape Detection"
 
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Point_set_shape_detection_3/doc/Point_set_shape_detection_3/ \ 
+INPUT                      =  ${CGAL_PACKAGE_DOC_DIR} \
                               ${CMAKE_SOURCE_DIR}/Point_set_shape_detection_3/include/
 EXTRACT_ALL                =  NO
 HIDE_UNDOC_CLASSES         =  YES

@@ -2,7 +2,7 @@
 
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Advancing Front Surface Reconstruction"
 
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Advancing_front_surface_reconstruction/doc/Advancing_front_surface_reconstruction/ \
+INPUT                      =  ${CGAL_PACKAGE_DOC_DIR} \
                               ${CMAKE_SOURCE_DIR}/Advancing_front_surface_reconstruction/include
 
 EXTRACT_ALL                =  false

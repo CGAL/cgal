@@ -1,7 +1,7 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - CGAL and the Boost Graph Library"
-INPUT                      =  ${CMAKE_SOURCE_DIR}/BGL/doc/BGL/ \
+INPUT                      =  ${CGAL_PACKAGE_DOC_DIR} \
                               ${CMAKE_SOURCE_DIR}/BGL/include/CGAL/boost/graph/Euler_operations.h \
                               ${CMAKE_SOURCE_DIR}/BGL/include/CGAL/boost/graph/iterator.h \
                               ${CMAKE_SOURCE_DIR}/BGL/include/CGAL/boost/graph/Graph_geometry.h \
