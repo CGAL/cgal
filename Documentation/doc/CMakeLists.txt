@@ -22,6 +22,15 @@ endmacro()
 
 function(configure_doxygen_package CGAL_PACKAGE_DOC_DIR)
   get_filename_component(CGAL_PACKAGE_NAME ${CGAL_PACKAGE_DOC_DIR} NAME)
+  if(CGAL_BRANCH_BUILD)
+    # The package directory is Pkg/doc/Pkg/../../
+    get_filename_component(CGAL_PACKAGE_DIR ${CGAL_PACKAGE_DOC_DIR} DIRECTORY)
+    get_filename_component(CGAL_PACKAGE_DIR ${CGAL_PACKAGE_DIR} DIRECTORY)
+  else()
+    # The package directory is the source dir
+    set(CGAL_PACKAGE_DIR ${CMAKE_SOURCE_DIR})
+  endif()
+
   if(EXISTS ${CGAL_PACKAGE_DOC_DIR}/Doxyfile.in)
     set(CGAL_DOC_PACKAGE_DEFAULTS ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}_defaults.dxy)
     file(REMOVE ${CGAL_DOC_PACKAGE_DEFAULTS})
