@@ -313,9 +313,13 @@ void stitch_borders(PolygonMesh& pmesh,
 ///\endcond
 
 /// \ingroup stitching_grp
-/// Same as the other overload but the pairs of halfedges to be stitched are found
-/// using `less_halfedge`. Two halfedges `h1` and `h2` are set to be stitched
-/// if `less_halfedge(h1,h2)==less_halfedge(h2,h1)==true`.
+/// Same as the other overload but the pairs of halfedges to be stitched
+/// are automatically found amongst all border halfedges.
+/// Two border halfedges `h1` and `h2` are set to be stitched
+/// if the points associated to the source and target vertices of `h1` are
+/// the same as those of the target and source vertices of `h2` respectively.
+///
+/// \pre `pmesh` does not contains any degenerate border edge.
 ///
 /// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 ///        that has a property map for `boost::vertex_point_t`
@@ -326,7 +330,6 @@ void stitch_borders(PolygonMesh& pmesh,
 ///
 /// \cgalNamedParamsBegin
 ///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-///    \cgalParamBegin{less_halfedge} a comparison functor on halfedges of `pmesh` \cgalParamEnd
 /// \cgalNamedParamsEnd
 ///
 template <typename PolygonMesh, class NamedParameters>
@@ -347,8 +350,7 @@ void stitch_borders(PolygonMesh& pmesh, const NamedParameters& np)
 
   internal::detect_duplicated_boundary_edges(pmesh,
     std::back_inserter(hedge_pairs_to_stitch),
-    choose_param(get_param(np, less_halfedge),
-                 internal::Less_for_halfedge<PolygonMesh, VPMap>(pmesh, vpm)));
+    internal::Less_for_halfedge<PolygonMesh, VPMap>(pmesh, vpm));
 
   stitch_borders(pmesh, hedge_pairs_to_stitch, np);
 }
