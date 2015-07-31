@@ -4,8 +4,8 @@ PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Number
 
 
 INPUT                      =  ${CGAL_PACKAGE_DOC_DIR} \
-                              ${CMAKE_SOURCE_DIR}/Number_types/include/CGAL/Exact_integer.h \
-                              ${CMAKE_SOURCE_DIR}/Number_types/include/CGAL/Exact_rational.h
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/Exact_integer.h \
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/Exact_rational.h
 
 
 

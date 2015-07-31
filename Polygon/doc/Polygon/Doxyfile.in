@@ -1,9 +1,12 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D Polygons"
+PROJECT_NAME               =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D Polygons"
 
 INPUT                      = ${CGAL_PACKAGE_DOC_DIR} \
-                             ${CMAKE_SOURCE_DIR}/Polygon/include
+                             ${CGAL_PACKAGE_DIR}/include/CGAL/Polygon_2 \
+                             ${CGAL_PACKAGE_DIR}/include/CGAL/Polygon_2_algorithms.h \
+                             ${CGAL_PACKAGE_DIR}/include/CGAL/Polygon_2.h \
+                             ${CGAL_PACKAGE_DIR}/include/CGAL/Polygon_traits_2.h
 
 EXTRACT_ALL                =  false
 HIDE_UNDOC_MEMBERS         =  true

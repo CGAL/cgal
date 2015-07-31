@@ -2,8 +2,11 @@
 
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Triangulated Surface Mesh Deformation"
 
-INPUT                      =  ${CGAL_PACKAGE_DOC_DIR} \
-                              ${CMAKE_SOURCE_DIR}/Surface_modeling/include
+INPUT                      = ${CGAL_PACKAGE_DOC_DIR} \
+                             ${CGAL_PACKAGE_DIR}/include/CGAL/internal/Surface_modeling/ \
+                             ${CGAL_PACKAGE_DIR}/include/CGAL/Deformation_Eigen_closest_rotation_traits_3.h \
+                             ${CGAL_PACKAGE_DIR}/include/CGAL/Deformation_Eigen_polar_closest_rotation_traits_3.h \
+                             ${CGAL_PACKAGE_DIR}/include/CGAL/Surface_mesh_deformation.h
 
 EXTRACT_ALL                =  false
 HIDE_UNDOC_MEMBERS         =  true

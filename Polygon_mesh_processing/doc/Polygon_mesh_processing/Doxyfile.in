@@ -2,7 +2,10 @@
 
 PROJECT_NAME =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Polygon Mesh Processing"
 INPUT =  ${CGAL_PACKAGE_DOC_DIR} \
-         ${CMAKE_SOURCE_DIR}/Polygon_mesh_processing/include
+         ${CGAL_PACKAGE_DIR}/include/CGAL/Polygon_mesh_processing \
+         ${CGAL_PACKAGE_DIR}/include/CGAL/polygon_mesh_processing.h \
+         ${CGAL_PACKAGE_DIR}/include/CGAL/Polygon_mesh_slicer.h \
+         ${CGAL_PACKAGE_DIR}/include/CGAL/Side_of_triangle_mesh.h
 
 # custom options for this package
 EXTRACT_ALL                =  false
