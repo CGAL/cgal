@@ -198,6 +198,34 @@ package you can find a sentence similar to the following.
   checking in the optimisation code.
 </BLOCKQUOTE>
 
+\section secchecks_cgal_assume Suppress warnings using CGAL_assume.
+
+Moderns compilers, when their optimizers are activated, sometime emit
+warnings about event that may occur. For example:
+
+    warning: array subscript is above array bounds [-Warray-bounds]
+
+or:
+
+    warning: 'res' may be used uninitialized in this function [-Wmaybe-uninitialized]
+
+
+Most false positives could be remove if the compiler knew that an integer
+variable is within given bounds, or that a Boolean variable is true. If
+`CGAL_NDEBUG` is not defined, then a `CGAL_assertion` is enough to instruct
+the compiler that a given condition is fulfilled. But, usually when the
+compiler optimizers are activated, `CGAL_NDEBUG` is also defined, to speed
+up the generated binary code. In that case, `CGAL_assume` can be used.
+
+`CGAL_assume` is identical to `CGAL_assertion` when `CGAL_NDEBUG` is not
+defined. But, even if `CGAL_NDEBUG` is defined, its semantic use
+compiler-specific instructions, such as [`__assume` from
+MSVC][msvc-assume], or [`__builtin_unreachable`][builtin-unreachable]
+recognized by both clang and g++.
+
+[msvc-assume]: https://msdn.microsoft.com/en-us/library/1b3fsfxw.aspx
+[builtin-unreachable]: http://clang.llvm.org/docs/LanguageExtensions.html#builtin-unreachable
+
 \section secexception_handling Exception handling 
 
 Some parts of the library use exceptions, but there is no general specific
