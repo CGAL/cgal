@@ -111,11 +111,8 @@ protected:
   Iso_cuboid_3 _domain;
 };
 
-namespace future_release
-{
 template < typename K, typename Off = CGAL::Periodic_3_offset_3 >
 class Periodic_3_triangulation_traits_3;
-}
 
 } //namespace CGAL
 
@@ -129,7 +126,6 @@ namespace CGAL {
 template < typename K, typename Off >
 class Periodic_3_triangulation_filtered_traits_3;
 
-namespace future_release {
 template < class K, class Off>
 class Periodic_3_triangulation_traits_3
   : public Periodic_3_triangulation_traits_base_3<K, Off>
@@ -152,22 +148,6 @@ class Periodic_3_triangulation_traits_3<CGAL::Epick, Off>
   typedef CGAL::Epick Kernel;
 };
 
-}
 } //namespace CGAL
-
-#include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
-
-
-namespace CGAL
-{
-template < typename K, typename Off >
-class Periodic_3_Delaunay_triangulation_traits_3;
-
-// Periodic_3_triangulation_traits_3 should not be used as traits for Periodic_3_Delaunay_triangulation_3 anymore.
-template < class Kernel, class Off = typename CGAL::Periodic_3_offset_3 >
-class CGAL_DEPRECATED Periodic_3_triangulation_traits_3 : public Periodic_3_Delaunay_triangulation_traits_3<Kernel, Off>
-{
-};
-}
 
 #endif // CGAL_PERIODIC_3_TRIANGULATION_TRAITS_3_H
