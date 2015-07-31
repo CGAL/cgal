@@ -85,39 +85,12 @@ bool is_degenerated(
   return is_degenerated(halfedge(fd,tmesh), tmesh, vpmap, traits);
 }
 
-/// \ingroup PkgPolygonMeshProcessing
-/// removes the degenerate faces from a triangulated surface mesh.
-/// A face is considered degenerate if two of its vertices share the same location,
-/// or more generally if all its vertices are collinear.
-///
-/// @pre `CGAL::is_triangle_mesh(tmesh)`
-///
-/// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
-///        that has an internal property map for `boost::vertex_point_t`
-/// @tparam NamedParameters a sequence of \ref namedparameters
-///
-/// @param tmesh the  triangulated surface mesh to be repaired
-/// @param np optional \ref namedparameters described below
-///
-/// \cgalNamedParamsBegin
-///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap` \cgalParamEnd
-///    \cgalParamBegin{geom_traits} a geometric traits class instance.
-///       The traits class must provide the nested type `Point_3`,
-///       and the nested functors :
-///         - `Compare_distance_3` to compute the distance between 2 points
-///         - `Collinear_are_ordered_along_line_3` to check whether 3 collinear points are ordered
-///         - `Collinear_3` to check whether 3 points are collinear
-///         - `Less_xyz_3` to compare lexicographically two points
-///         - `Equal_3` to check whether 2 points are identical
-///         -  for each functor Foo, a function `Foo foo_object()`
-///   \cgalParamEnd
-/// \cgalNamedParamsEnd
-///
-/// \return number of removed degenerate faces
-///
-template <class TriangleMesh, class NamedParameters>
-std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
-                                    const NamedParameters& np)
+
+template <class EdgeRange, class TriangleMesh, class NamedParameters>
+std::size_t remove_null_edges(
+                       const EdgeRange& edge_range,
+                       TriangleMesh& tmesh,
+                       const NamedParameters& np)
 {
   CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
 
@@ -141,11 +114,9 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
 
   std::size_t nb_deg_faces = 0;
 
-// First remove edges of length 0
-  std::set<edge_descriptor> null_edges_to_remove;
-
   // collect edges of length 0
-  BOOST_FOREACH(edge_descriptor ed, edges(tmesh))
+  std::set<edge_descriptor> null_edges_to_remove;
+  BOOST_FOREACH(edge_descriptor ed, edge_range)
   {
     if ( traits.equal_3_object()(get(vpmap, target(ed, tmesh)), get(vpmap, source(ed, tmesh))) )
       null_edges_to_remove.insert(ed);
@@ -393,10 +364,80 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
         if ( traits.equal_3_object()(get(vpmap, target(hd, tmesh)), get(vpmap, source(hd, tmesh))) )
           null_edges_to_remove.insert(edge(hd, tmesh));
 
+      CGAL_assertion( is_valid(tmesh) );
     }
   }
 
-// remove triangles made of 3 collinear points
+  return nb_deg_faces;
+}
+
+template <class EdgeRange, class TriangleMesh>
+std::size_t remove_null_edges(
+                       const EdgeRange& edge_range,
+                       TriangleMesh& tmesh)
+{
+  return remove_null_edges(edge_range, tmesh,
+                           parameters::all_default());
+}
+
+/// \ingroup PkgPolygonMeshProcessing
+/// removes the degenerate faces from a triangulated surface mesh.
+/// A face is considered degenerate if two of its vertices share the same location,
+/// or more generally if all its vertices are collinear.
+///
+/// @pre `CGAL::is_triangle_mesh(tmesh)`
+///
+/// @tparam TriangleMesh a model of `FaceListGraph` and `MutableFaceGraph`
+///        that has an internal property map for `boost::vertex_point_t`
+/// @tparam NamedParameters a sequence of \ref namedparameters
+///
+/// @param tmesh the  triangulated surface mesh to be repaired
+/// @param np optional \ref namedparameters described below
+///
+/// \cgalNamedParamsBegin
+///    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`. The type of this map is model of `ReadWritePropertyMap` \cgalParamEnd
+///    \cgalParamBegin{geom_traits} a geometric traits class instance.
+///       The traits class must provide the nested type `Point_3`,
+///       and the nested functors :
+///         - `Compare_distance_3` to compute the distance between 2 points
+///         - `Collinear_are_ordered_along_line_3` to check whether 3 collinear points are ordered
+///         - `Collinear_3` to check whether 3 points are collinear
+///         - `Less_xyz_3` to compare lexicographically two points
+///         - `Equal_3` to check whether 2 points are identical
+///         -  for each functor Foo, a function `Foo foo_object()`
+///   \cgalParamEnd
+/// \cgalNamedParamsEnd
+///
+/// \return number of removed degenerate faces
+///
+template <class TriangleMesh, class NamedParameters>
+std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
+                                    const NamedParameters& np)
+{
+  CGAL_assertion(CGAL::is_triangle_mesh(tmesh));
+
+  using boost::choose_const_pmap;
+  using boost::get_param;
+  using boost::choose_param;
+
+  typedef TriangleMesh TM;
+  typedef typename boost::graph_traits<TriangleMesh> GT;
+  typedef typename GT::edge_descriptor edge_descriptor;
+  typedef typename GT::halfedge_descriptor halfedge_descriptor;
+  typedef typename GT::face_descriptor face_descriptor;
+  typedef typename GT::vertex_descriptor vertex_descriptor;
+
+  typedef typename GetVertexPointMap<TM, NamedParameters>::type VertexPointMap;
+  VertexPointMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
+                                     tmesh,
+                                     boost::vertex_point);
+  typedef typename GetGeomTraits<TM, NamedParameters>::type Traits;
+  Traits traits = choose_param(get_param(np, geom_traits), Traits());
+
+// First remove edges of length 0
+  std::size_t nb_deg_faces = remove_null_edges(edges(tmesh), tmesh, np);
+
+// Then, remove triangles made of 3 collinear points
   std::set<face_descriptor> degenerate_face_set;
   BOOST_FOREACH(face_descriptor fd, faces(tmesh))
     if ( is_degenerated(fd, tmesh, vpmap, traits) )
