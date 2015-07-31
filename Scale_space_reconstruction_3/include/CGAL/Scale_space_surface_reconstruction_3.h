@@ -24,13 +24,17 @@
 #include <vector>
 
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/iterator/zip_iterator.hpp>
+#include <boost/iterator/counting_iterator.hpp>
 
 #include <CGAL/utility.h>
 #include <CGAL/is_iterator.h>
 #include <CGAL/Default.h>
 #include <CGAL/Search_traits_3.h>
+#include <CGAL/Search_traits_adapter.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Random.h>
 
 #include <CGAL/Scale_space_reconstruction_3/Shape_construction_3.h>
@@ -42,6 +46,17 @@
 #include <boost/mpl/and.hpp>
 
 namespace CGAL {
+
+
+  struct Null_function {
+    typedef int result_type;
+    template <typename T>
+    int operator()(const T&) const
+    {
+      return 0;
+    }
+
+  }; 
 
 /// computes a triangulated surface mesh interpolating a point set.
 /** \ingroup PkgScaleSpaceReconstruction3Classes
@@ -101,15 +116,22 @@ class Scale_space_surface_reconstruction_3 {
 #endif // CGAL_EIGEN3_ENABLED
                                  >::type                Approximation;
 
+public:
+	typedef typename Gt::Point_3                        Point;          ///< defines the point type.
+typedef boost::tuple<Point,int>                           Point_and_int;
+
 private:
     // Searching for neighbors.
-    typedef Search_traits_3< Gt >                       Search_traits;
+    typedef Search_traits_3< Gt >                       Traits_base;
+typedef CGAL::Search_traits_adapter<Point_and_int,
+  CGAL::Nth_of_tuple_property_map<0, Point_and_int>,
+  Traits_base>                                              Search_traits;
     typedef Orthogonal_k_neighbor_search< Search_traits >
                                                         Static_search;
     typedef Orthogonal_incremental_neighbor_search< Search_traits >
                                                         Dynamic_search;
     typedef typename Dynamic_search::Tree               Search_tree;
-
+    typedef Fuzzy_sphere< Search_traits >               Sphere;
     typedef CGAL::Random                                Random;
 
     // Constructing the surface.
@@ -137,16 +159,19 @@ private:
 public:
 /// \name Types
 /// \{
-    typedef typename Gt::FT                             FT;             ///< defines the field number type.
-	typedef typename Gt::Point_3                        Point;          ///< defines the point type.
+     typedef typename Gt::FT                             FT;             ///< defines the field number type.
+  //	typedef typename Gt::Point_3                        Point;          ///< defines the point type.
+
 
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type                            Point_iterator;         ///< defines an iterator over the points.
     typedef const unspecified_type                      Point_const_iterator;   ///< defines a constant iterator over the points.
 #else // DOXYGEN_RUNNING
 
-    typedef typename Search_tree::iterator              Point_iterator;
-    typedef typename Search_tree::const_iterator        Point_const_iterator;
+  // typedef typename Search_tree::iterator              Point_iterator;
+  // typedef typename Search_tree::const_iterator        Point_const_iterator;
+  typedef typename std::vector<Point>::iterator                          Point_iterator;
+  typedef typename std::vector<Point>::const_iterator                          Point_const_iterator;
 #endif // DOXYGEN_RUNNING
 
     typedef CGAL::cpp11::array< unsigned int, 3 >       Triple;                 ///< defines a triple of point indices indicating a triangle of the surface.
@@ -294,7 +319,10 @@ public:
 	void insert( InputIterator begin, InputIterator end,
                      typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL ) {
 #endif // DOXYGEN_RUNNING
-		_tree.insert( begin, end );
+                Null_function zero;
+		_tree.insert(
+                             boost::make_zip_iterator(boost::make_tuple( begin, boost::make_transform_iterator(begin, zero))),
+                             boost::make_zip_iterator(boost::make_tuple( end , boost::make_transform_iterator(end, zero))));
                 _points.insert(_points.end(), begin, end);
 	}
     
@@ -313,7 +341,7 @@ public:
      *  \sa `insert(InputIterator begin, InputIterator end)`.
      */
 	void insert( const Point& p ) {
-		_tree.insert( p );
+          _tree.insert( boost::make_tuple(p,0) );
                 _points.push_back(p);
 	}
     

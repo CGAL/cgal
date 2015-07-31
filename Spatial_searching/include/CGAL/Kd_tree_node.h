@@ -120,8 +120,8 @@ namespace CGAL {
       else {
          Internal_node_const_handle node = 
           static_cast<Internal_node_const_handle>(this);
-	it=node->lower()->tree_items(it);  
-	it=node->upper()->tree_items(it); 
+	  it=node->lower()->tree_items(it);  
+	  it=node->upper()->tree_items(it); 
       }
       return it;
     }
@@ -173,7 +173,7 @@ namespace CGAL {
 	if (node->size()>0) 
 	  for (iterator i=node->begin(); i != node->end(); i++) 
 	    if (q.contains(*i)) 
-	      {*it=*i; ++it;}
+	      {*it++=*i;}
       }
       else {
          Internal_node_const_handle node = 
