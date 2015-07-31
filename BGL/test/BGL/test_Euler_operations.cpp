@@ -1,7 +1,7 @@
 
 #include "test_Prefix.h"
+#include <boost/range/distance.hpp>
 #include <CGAL/boost/graph/Euler_operations.h>
-
 
 template <typename T>
 void 
