@@ -340,7 +340,6 @@
 #include <CGAL_demo/Plugin_helper.h>
 #include <ui_Meshing_dialog.h>
 #include <Scene_polyhedron_item.h>
-#include <implicit_functions/Implicit_function_interface.h>
-#include <CGAL_demo/Scene_item_with_display_list.h>*/
+#include <implicit_functions/Implicit_function_interface.h>*/
 
 #endif //STDAFX_H
