@@ -40,7 +40,6 @@ void test(const NamedParameters& np)
   assert(   get_param(np,CGAL::fairing_continuity).v == 16 );
   assert(   get_param(np,CGAL::sparse_linear_solver).v == 17 );
   assert(   get_param(np,CGAL::weight_calculator).v == 18 );
-  assert(   get_param(np,CGAL::less_halfedge).v == 19 );
 
 //test types
   check_same_type<0>( get_param(np,boost::vertex_index) );
@@ -63,7 +62,6 @@ void test(const NamedParameters& np)
   check_same_type<16>( get_param(np,CGAL::fairing_continuity) );
   check_same_type<17>( get_param(np,CGAL::sparse_linear_solver) );
   check_same_type<18>( get_param(np,CGAL::weight_calculator) );
-  check_same_type<19>( get_param(np,CGAL::less_halfedge) );
 }
 
 int main()
@@ -90,7 +88,6 @@ int main()
                       use_delaunay_triangulation(A<15>(15)).
                       fairing_continuity(A<16>(16)).
                       sparse_linear_solver(A<17>(17)).
-                      weight_calculator(A<18>(18)).
-                      less_halfedge(A<19>(19))
+                      weight_calculator(A<18>(18))
   );
 }

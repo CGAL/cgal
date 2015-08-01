@@ -32,7 +32,6 @@ namespace CGAL{
   enum use_delaunay_triangulation_t { use_delaunay_triangulation  };
   enum fairing_continuity_t         { fairing_continuity };
   enum sparse_linear_solver_t       { sparse_linear_solver };
-  enum less_halfedge_t              { less_halfedge };
   enum geom_traits_t                { geom_traits };
 
   //internal
@@ -103,14 +102,6 @@ namespace CGAL{
     {
       typedef pmp_bgl_named_params<PointMap, boost::vertex_point_t, self> Params;
       return Params(p, *this);
-    }
-
-    template<typename Less>
-    pmp_bgl_named_params<Less, less_halfedge_t, self>
-    less_halfedge(const Less& less) const
-    {
-      typedef pmp_bgl_named_params<Less, less_halfedge_t, self> Params;
-      return Params(less, *this);
     }
 
     template<typename K>
@@ -217,14 +208,6 @@ namespace parameters{
   {
     typedef pmp_bgl_named_params<PointMap, boost::vertex_point_t> Params;
     return Params(p);
-  }
-
-  template<typename Less>
-  pmp_bgl_named_params<Less, less_halfedge_t>
-  less_halfedge(const Less& less)
-  {
-    typedef pmp_bgl_named_params<Less, less_halfedge_t> Params;
-    return Params(less);
   }
 
   template<typename K>

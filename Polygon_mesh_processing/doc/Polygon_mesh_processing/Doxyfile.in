@@ -21,10 +21,6 @@ ALIASES += "cgalNPTableEnd=</table> </dd> </dl>"
 ALIASES += "cgalNPBegin{1}=<tr><td class=\"paramname\">\1 </td><td>"
 ALIASES += "cgalNPEnd=</td></tr>"
 
-#define CGAL_PMP_NP_TEMPLATE_PARAMETERS T, typename Tag, typename Base
-#define CGAL_PMP_NP_CLASS CGAL::pmp_bgl_named_params<T,Tag,Base>
-
-
 MACRO_EXPANSION        = YES
 EXPAND_ONLY_PREDEF     = YES
 EXPAND_AS_DEFINED      = CGAL_PMP_NP_TEMPLATE_PARAMETERS \
