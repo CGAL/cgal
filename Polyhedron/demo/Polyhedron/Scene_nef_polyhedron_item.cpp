@@ -9,7 +9,6 @@
 #include <CGAL/Inverse_index.h>
 
 #include <QObject>
-#include "Scene_nef_rendering.h"
 
 #include <CGAL/minkowski_sum_3.h>
 #include <CGAL/convex_decomposition_3.h>
@@ -453,25 +452,6 @@ Scene_nef_polyhedron_item::toolTip() const
             .arg(nef_poly->number_of_volumes());
 }
 
-void
-Scene_nef_polyhedron_item::direct_draw(Viewer_interface* viewer) const {
-    gl_render_nef_facets(nef_poly);
-
-    GLboolean lighting;
-    viewer->glGetBooleanv(GL_LIGHTING, &lighting);
-    viewer->glDisable(GL_LIGHTING);
-
-    GLfloat point_size;
-    viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
-    viewer->glPointSize(10.f);
-
-    gl_render_nef_vertices(nef_poly);
-
-    if(lighting) {
-        viewer->glEnable(GL_LIGHTING);
-    }
-    viewer->glPointSize(point_size);
-}
 void Scene_nef_polyhedron_item::draw(Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)

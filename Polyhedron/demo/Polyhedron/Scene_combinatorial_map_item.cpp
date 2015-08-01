@@ -7,103 +7,11 @@
 #include <QMenu>
 #include <QAction>
 #include <QtDebug>
+#include <QDebug>
 #include <QKeyEvent>
 #include <CGAL/corefinement_operations.h>
-void Scene_combinatorial_map_item::initialize_buffers(Viewer_interface *viewer)
-{
-    viewer->glBindVertexArray(vao);
-    buffer[0] = QOpenGLBuffer(QOpenGLBuffer::VertexBuffer);
-    if(!(buffer[0].create()))
-        std::cout<<"ERROR lors de la creation"<<std::endl;
-    buffer[0].bind();
-    buffer[0].setUsagePattern(QOpenGLBuffer::StaticDraw);
-    buffer[0].allocate(positions.data(),
-                       static_cast<int>(positions.size()*sizeof(float)));
-    /*
-    viewer->glVertexAttribPointer(0, //number of the buffer
-                          4, //number of floats to be taken
-                          GL_FLOAT, // type of data
-                          GL_FALSE, //not normalized
-                          0, //compact data (not in a struct)
-                          NULL //no offset (seperated in several buffers)
-                          );
-    viewer->glEnableVertexAttribArray(0);*/
 
-    // Clean-up
-    viewer->glBindVertexArray(0);
-
-}
-
-void Scene_combinatorial_map_item::compile_shaders(void)
-{
-
-    //fill the vertex shader
-    static const char* vertex_shader_source =
-    {
-        "#version 300 es \n"
-        " \n"
-        "layout (location = 0) in vec3 positions; \n"
-
-        "out highp vec3 fColors; \n"
-        " \n"
-
-        "void main(void) \n"
-        "{ \n"
-        "   fColors = vec3(1.0,0.0,0.0); \n"
-        "   gl_Position =  mvp_matrix * vec4(positions, 1.0); \n"
-        "} \n"
-    };
-    //fill the fragment shader
-    static const char* fragment_shader_source =
-    {
-        "#version 300 es \n"
-        " \n"
-        "in highp vec3 fColors; \n"
-
-        "out highp vec4 color; \n"
-        " \n"
-        "void main(void) \n"
-        "{ \n"
-        " color = vec4(fColors, 1.0); \n"
-        "} \n"
-    };
-
-    QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
-    if(!vertex_shader->compileSourceCode(vertex_shader_source))
-        std::cout<<vertex_shader->log().toStdString()<<std::endl;
-
-    QOpenGLShader *fragment_shader = new QOpenGLShader(QOpenGLShader::Fragment);
-    if(!fragment_shader->compileSourceCode(fragment_shader_source))
-        std::cout<<fragment_shader->log().toStdString()<<std::endl;
-
-
-    rendering_program = new QOpenGLShaderProgram();
-    if(!rendering_program->addShader(vertex_shader))
-        std::cout<<rendering_program->log().toStdString()<<std::endl;
-    if(!rendering_program->addShader(fragment_shader))
-        std::cout<<rendering_program->log().toStdString()<<std::endl;
-    rendering_program->link();
-
-}
-
-void Scene_combinatorial_map_item::compute_normals_and_vertices(void)
-{
-    positions.push_back(-1.0);
-    positions.push_back(-1.0);
-    positions.push_back(0.0);
-
-    positions.push_back(0.0);
-    positions.push_back(1.0);
-    positions.push_back(0.0);
-
-    positions.push_back(1.0);
-    positions.push_back(-1.0);
-    positions.push_back(0.0);
-
-}
-
-
-Scene_combinatorial_map_item::Scene_combinatorial_map_item(Scene_interface* scene,void* address):last_known_scene(scene),volume_to_display(0),exportSelectedVolume(NULL),address_of_A(address){m_combinatorial_map=NULL;}
+Scene_combinatorial_map_item::Scene_combinatorial_map_item(Scene_interface* scene,void* address):last_known_scene(scene),volume_to_display(0),exportSelectedVolume(NULL),address_of_A(address){m_combinatorial_map=NULL; are_buffers_filled = false;;}
 Scene_combinatorial_map_item::~Scene_combinatorial_map_item(){if (m_combinatorial_map!=NULL) delete m_combinatorial_map;}
 
 Scene_combinatorial_map_item* Scene_combinatorial_map_item::clone() const{return NULL;}
@@ -140,8 +48,10 @@ Kernel::Vector_3 Scene_combinatorial_map_item::compute_face_normal(Combinatorial
 }  
 
 void Scene_combinatorial_map_item::set_next_volume(){
+    //Update des vectors faits ici
     ++volume_to_display;
     volume_to_display=volume_to_display%(combinatorial_map().attributes<3>().size()+1);
+  are_buffers_filled = false;
   Q_EMIT itemChanged();
 
     if (exportSelectedVolume!=NULL && ( volume_to_display==1 || volume_to_display==0 ) )
@@ -315,34 +225,15 @@ bool Scene_combinatorial_map_item::keyPressEvent(QKeyEvent* e){
     return false;
 }
 
-void Scene_combinatorial_map_item::direct_draw() const {
-#if 0
-    typedef Combinatorial_map_3::One_dart_per_cell_const_range<3> Volume_dart_range;
-    typedef Combinatorial_map_3::One_dart_per_incident_cell_const_range<2,3> Facet_in_volume_drange;
-    typedef Combinatorial_map_3::Dart_of_orbit_const_range<1> Dart_in_facet_range;
-    Volume_dart_range dart_per_volume_range = combinatorial_map().one_dart_per_cell<3>();
-    std::cout<<"COUCOU"<<std::endl;
-    std::size_t index = 0;
-    for (Volume_dart_range::const_iterator vit=dart_per_volume_range.begin();vit!=dart_per_volume_range.end();++vit)
+void Scene_combinatorial_map_item::compute_elements(void) const{
+
+    positions_facets.resize(0);
+    normals.resize(0);
+    positions_lines.resize(0);
+    positions_points.resize(0);
+
+    //Facets
     {
-        if (++index!=volume_to_display && volume_to_display!=0) continue;
-        Facet_in_volume_drange facet_range=combinatorial_map().one_dart_per_incident_cell<2,3>(vit);
-
-        for(Facet_in_volume_drange::const_iterator fit=facet_range.begin();fit!=facet_range.end();++fit){
-            Dart_in_facet_range vertices=combinatorial_map().darts_of_orbit<1>(fit);
-            Kernel::Vector_3 normal = compute_face_normal(fit);
-
-            ::glBegin(GL_POLYGON);
-            ::glNormal3d(normal.x(),normal.y(),normal.z());
-
-            for (Dart_in_facet_range::const_iterator pit=vertices.begin();pit!=vertices.end();++pit ){
-                const Kernel::Point_3& p= pit->attribute<0>()->point();
-                ::glVertex3d(p.x(),p.y(),p.z());
-            }
-            ::glEnd();
-        }
-    }
-#else
     std::size_t index = 0;
     int voltreated = combinatorial_map().get_new_mark();
     int facetreated = combinatorial_map().get_new_mark();
@@ -373,8 +264,12 @@ void Scene_combinatorial_map_item::direct_draw() const {
                     if ( !combinatorial_map().is_marked(vol_it,facetreated) )
                     {
                         Kernel::Vector_3 normal = compute_face_normal(vol_it);
-                        ::glBegin(GL_POLYGON);
-                        ::glNormal3d(normal.x(),normal.y(),normal.z());
+                        for(int i=0; i<3; i++)
+                        {
+                            normals.push_back(normal.x());
+                            normals.push_back(normal.y());
+                            normals.push_back(normal.z());
+                        }
 
                         //iterate over all darts of facets
                         for ( Combinatorial_map_3::Dart_of_orbit_const_range<1>::const_iterator
@@ -383,11 +278,12 @@ void Scene_combinatorial_map_item::direct_draw() const {
                               face_it!=face_end; ++face_it)
                         {
                             const Kernel::Point_3& p= face_it->attribute<0>()->point();
-                            ::glVertex3d(p.x(),p.y(),p.z());
+                            positions_facets.push_back(p.x());
+                            positions_facets.push_back(p.y());
+                            positions_facets.push_back(p.z());
                             combinatorial_map().mark(face_it,facetreated);
                             combinatorial_map().mark(face_it, voltreated);
                         }
-                        ::glEnd();
                     }
                 }
             }
@@ -403,32 +299,102 @@ void Scene_combinatorial_map_item::direct_draw() const {
 
     combinatorial_map().free_mark(facetreated);
     combinatorial_map().free_mark(voltreated);
-#endif
+    }
+
+    //edges
+    {
+
+        typedef Combinatorial_map_3::One_dart_per_cell_const_range<1> Edge_darts;
+        Edge_darts darts=combinatorial_map().one_dart_per_cell<1>();
+        for (Edge_darts::const_iterator dit=darts.begin();dit!=darts.end();++dit){
+            CGAL_assertion(!dit->is_free(1));
+            const Kernel::Point_3& a = dit->attribute<0>()->point();
+            const Kernel::Point_3& b = dit->beta(1)->attribute<0>()->point();
+            positions_lines.push_back(a.x());
+            positions_lines.push_back(a.y());
+            positions_lines.push_back(a.z());
+
+            positions_lines.push_back(b.x());
+            positions_lines.push_back(b.y());
+            positions_lines.push_back(b.z());
+
+        }
+    }
+
+    //points
+    {
+        typedef Combinatorial_map_3::Attribute_const_range<0>::type Point_range;
+        const Point_range& points=combinatorial_map().attributes<0>();
+        for(Point_range::const_iterator pit=boost::next(points.begin());pit!=points.end();++pit){
+            const Kernel::Point_3& p=pit->point();
+            positions_points.push_back(p.x());
+            positions_points.push_back(p.y());
+            positions_points.push_back(p.z());
+        }
+
+    }
+
 }
 
-void Scene_combinatorial_map_item::direct_draw_edges() const {
-    typedef Combinatorial_map_3::One_dart_per_cell_const_range<1> Edge_darts;
-    Edge_darts darts=combinatorial_map().one_dart_per_cell<1>();
-    ::glBegin(GL_LINES);
-    for (Edge_darts::const_iterator dit=darts.begin();dit!=darts.end();++dit){
-        CGAL_assertion(!dit->is_free(1));
-        const Kernel::Point_3& a = dit->attribute<0>()->point();
-        const Kernel::Point_3& b = dit->beta(1)->attribute<0>()->point();
-        ::glVertex3d(a.x(),a.y(),a.z());
-        ::glVertex3d(b.x(),b.y(),b.z());
-    }
-    ::glEnd();
-}
+void Scene_combinatorial_map_item::initialize_buffers(Viewer_interface *viewer) const
+{
+    //vao for the edges
+    {
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program->bind();
 
-void Scene_combinatorial_map_item::draw_points() const{
-    typedef Combinatorial_map_3::Attribute_const_range<0>::type Point_range;
-    const Point_range& points=combinatorial_map().attributes<0>();
-    ::glBegin(GL_POINTS);
-    for(Point_range::const_iterator pit=boost::next(points.begin());pit!=points.end();++pit){
-        const Kernel::Point_3& p=pit->point();
-        ::glVertex3d(p.x(),p.y(),p.z());
+        vaos[0]->bind();
+        buffers[0].bind();
+        buffers[0].allocate(positions_lines.data(),
+                            static_cast<int>(positions_lines.size()*sizeof(double)));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
+        buffers[0].release();
+
+        vaos[0]->release();
+        program->release();
     }
-    ::glEnd();
+    //vao for the points
+    {
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program->bind();
+
+        vaos[1]->bind();
+        buffers[1].bind();
+        buffers[1].allocate(positions_points.data(),
+                            static_cast<int>(positions_points.size()*sizeof(double)));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
+        buffers[1].release();
+        vaos[1]->release();
+        program->release();
+    }
+    //vao for the facets
+    {
+        program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+        program->bind();
+
+        vaos[2]->bind();
+        buffers[2].bind();
+        buffers[2].allocate(positions_facets.data(),
+                            static_cast<int>(positions_facets.size()*sizeof(double)));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
+        buffers[2].release();
+
+        buffers[3].bind();
+        buffers[3].allocate(normals.data(),
+                            static_cast<int>(positions_facets.size()*sizeof(double)));
+        program->enableAttributeArray("normals");
+        program->setAttributeBuffer("normals",GL_DOUBLE,0,3);
+        buffers[3].release();
+
+        vaos[2]->release();
+        program->release();
+    }
+    are_buffers_filled = true;
+
+
 }
 
 bool Scene_combinatorial_map_item::isEmpty() const {return combinatorial_map().number_of_darts()==0;}
@@ -491,3 +457,54 @@ QString Scene_combinatorial_map_item::toolTip() const{
 }
 
 
+void Scene_combinatorial_map_item::draw(Viewer_interface* viewer) const
+{
+    if(!are_buffers_filled)
+    {
+        compute_elements();
+        initialize_buffers(viewer);
+    }
+    vaos[2]->bind();
+    program=getShaderProgram(PROGRAM_WITH_LIGHT);
+    attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
+    program->bind();
+    program->setAttributeValue("colors", this->color());
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/3));
+    vaos[2]->release();
+    program->release();
+
+}
+ void Scene_combinatorial_map_item::draw_edges(Viewer_interface* viewer) const
+{
+     if(!are_buffers_filled)
+     {
+         compute_elements();
+         initialize_buffers(viewer);
+     }
+     vaos[0]->bind();
+     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+     program->bind();
+     program->setAttributeValue("colors", this->color());
+     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+     vaos[0]->release();
+     program->release();
+
+}
+ void Scene_combinatorial_map_item::draw_points(Viewer_interface* viewer) const
+{
+     if(!are_buffers_filled)
+     {
+         compute_elements();
+         initialize_buffers(viewer);
+     }
+     vaos[1]->bind();
+     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+     program->bind();
+     program->setAttributeValue("colors", this->color());
+     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_points.size()/3));
+     vaos[1]->release();
+     program->release();
+
+}

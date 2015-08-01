@@ -42,10 +42,10 @@ public:
     virtual bool supportsRenderingMode(RenderingMode m) const { return (m != Gouraud && m!=PointsPlusNormals); } // CHECK THIS!
     //Event handling
     virtual bool keyPressEvent(QKeyEvent*);
-    // OpenGL drawing in a display list
-    void direct_draw() const;
-    void direct_draw_edges() const;
-    void draw_points() const;
+    //drawing of the scene
+    virtual void draw_edges(Viewer_interface* viewer) const;
+    virtual void draw_points(Viewer_interface*) const;
+    virtual void draw(Viewer_interface*) const;
 
     bool isFinite() const { return true; }
     bool is_from_corefinement() const {return address_of_A!=NULL;}
@@ -72,19 +72,18 @@ private:
     void* address_of_A;
     template <class Predicate> void export_as_polyhedron(Predicate,const QString&) const;
 
-    std::vector<float> positions;
-    std::vector<float> normals;
-    std::vector<float> color_lines;
-    std::vector<float> color_facets;
 
-    QOpenGLShaderProgram *rendering_program;
-    GLint location[9];
+   mutable std::vector<double> positions_lines;
+   mutable std::vector<double> positions_points;
+   mutable std::vector<double> positions_facets;
+   mutable std::vector<double> normals;
 
-    GLuint vao;
-    QOpenGLBuffer buffer[5];
-    void initialize_buffers(Viewer_interface*);
-    void compile_shaders(void);
-    void compute_normals_and_vertices(void);
+    mutable QOpenGLShaderProgram *program;
+
+    using Scene_item::initialize_buffers;
+    void initialize_buffers(Viewer_interface *viewer) const;
+
+    void compute_elements(void) const;
 
 public Q_SLOTS:
     void set_next_volume();

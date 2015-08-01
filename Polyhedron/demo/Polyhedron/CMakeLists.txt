@@ -182,9 +182,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp)# Scene_polygon_soup_item.moc)
   target_link_libraries(scene_polygon_soup_item scene_polyhedron_item)
-  add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp# Scene_nef_polyhedron_item.moc
-
-    Scene_nef_rendering.cpp)
+  add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp)# Scene_nef_polyhedron_item.moc
+  
   target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)# Scene_points_with_normal_item.moc)
 

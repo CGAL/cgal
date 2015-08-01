@@ -5,7 +5,6 @@
 #include <QString>
 #include <QPixmap>
 #include <QFont>
-#include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLBuffer>
 #include <QOpenGLShader>
 #include <QOpenGLVertexArrayObject>

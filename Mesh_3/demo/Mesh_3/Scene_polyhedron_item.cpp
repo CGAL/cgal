@@ -31,12 +31,6 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     compile_shaders();
 }
 
-// Scene_polyhedron_item::Scene_polyhedron_item(const Scene_polyhedron_item& item)
-//   : Scene_item_with_display_list(item),
-//     poly(new Polyhedron(*item.poly))
-// {
-// }
-
 Scene_polyhedron_item::~Scene_polyhedron_item()
 {
   for(int i=0; i<vboSize; i++)
