@@ -69,11 +69,12 @@ public Q_SLOTS:
 
   void on_actionSavePoints_triggered();
 
-  void on_actionGenerate_triggered();
-
   void on_actionRecenter_triggered();
 
   virtual void open(QString fileName);
+
+private:
+  void generate();
 
 Q_SIGNALS:
   void changed();
@@ -137,7 +138,7 @@ MainWindow::on_actionClear_triggered()
 
 
 void
-MainWindow::on_actionGenerate_triggered()
+MainWindow::generate()
 {
   stream_lines = new Stream_lines(*regular_grid, *runge_kutta_integrator, density, ratio, sampling);
 
@@ -200,7 +201,7 @@ MainWindow::open(QString fileName)
   QApplication::restoreOverrideCursor();
   this->addToRecentFiles(fileName);
   //  actionRecenter->trigger();
-  on_actionGenerate_triggered();
+  generate();
   Q_EMIT( changed());
     
 }
