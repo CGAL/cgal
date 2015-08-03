@@ -66,4 +66,3 @@ void Viewer::set_surface(Surface* s)
   surface = s;
 }
 
-#include "viewer.moc"

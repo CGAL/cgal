@@ -224,5 +224,4 @@ void MainWindow::help() {
   }
 }
 
-#include "MainWindow.moc"
 

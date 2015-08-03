@@ -65,4 +65,3 @@ void ColorListEditor::populateList()
     }
 }
 
-#include "colorlisteditor.moc"

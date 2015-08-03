@@ -1,7 +1,6 @@
 #include <QtGui>
 #include "PreferenceDlg.h"
 
-#include "PreferenceDlg.moc" // .moc will be the output from moc preprocessor
 
 PreferenceDlg::PreferenceDlg(QWidget *parent) : QDialog(parent)
 {

@@ -109,5 +109,4 @@ MainWindow::open(QString fileName)
 }
 
 
-#include "MainWindow.moc"
 

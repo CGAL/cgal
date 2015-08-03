@@ -316,4 +316,3 @@ void Viewer::changed()
     compute_elements();
     are_buffers_initialized = false;
 }
-#include "Viewer.moc"

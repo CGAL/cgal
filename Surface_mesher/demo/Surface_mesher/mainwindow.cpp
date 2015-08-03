@@ -154,4 +154,3 @@ void MainWindow::on_action_Clone_triggered()
   other->show();
 }
 
-#include "mainwindow.moc"

@@ -14,7 +14,6 @@
 
 using namespace std;
 
-#include "Viewer.moc" // .moc will be the output from moc preprocessor
 
 void Viewer::init()
 {

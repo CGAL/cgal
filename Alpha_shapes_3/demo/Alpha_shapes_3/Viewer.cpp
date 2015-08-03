@@ -386,4 +386,3 @@ void Viewer::alphaChanged()
     initialize_buffers();
 
 }
-#include "Viewer.moc"

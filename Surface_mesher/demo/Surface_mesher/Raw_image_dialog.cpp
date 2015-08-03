@@ -26,4 +26,3 @@ unsigned int Raw_image_dialog::image_word_size() const {
     return 1;
 }
 
-#include "Raw_image_dialog.moc"

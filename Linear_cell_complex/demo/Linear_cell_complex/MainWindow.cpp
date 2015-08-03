@@ -22,7 +22,6 @@
 #include "MainWindow.h"
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <QSettings>
-#include "MainWindow.moc"
 #include <CGAL/Timer.h>
 #include <CGAL/ipower.h>
 
