@@ -1544,4 +1544,3 @@ void Volume::labellizedToogled(bool toggled)
   }
 }
 
-#include "volume.moc"

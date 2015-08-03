@@ -1,7 +1,6 @@
 #include "MainWindow.h"
 #include <string>
 
-#include "MainWindow.moc" // .moc will be the output from moc preprocessor
 
 MainWindow::MainWindow(QWidget* parent)
  : CGAL::Qt::DemosMainWindow(parent)

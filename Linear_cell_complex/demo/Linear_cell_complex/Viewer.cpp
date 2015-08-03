@@ -860,4 +860,3 @@ QString Viewer::helpString() const
   return text;
 }
 
-#include "Viewer.moc"

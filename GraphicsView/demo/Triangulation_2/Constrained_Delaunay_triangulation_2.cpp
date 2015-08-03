@@ -267,7 +267,6 @@ MainWindow::MainWindow()
     
   QObject::connect(this, SIGNAL(changed()),
 		   dgi, SLOT(modelChanged()));
-qDebug()<<"setting des Pens";
   dgi->setVerticesPen(
     QPen(Qt::red, 2, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   dgi->setVoronoiPen(
