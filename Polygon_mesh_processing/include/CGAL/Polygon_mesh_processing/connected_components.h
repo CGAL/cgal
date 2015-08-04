@@ -857,6 +857,7 @@ void remove_connected_components(PolygonMesh& pmesh
                                 , const FaceComponentMap& fcm
                                 , const NamedParameters& np)
 {
+  if (components_to_remove.empty()) return;
   keep_or_remove_connected_components(pmesh, components_to_remove, fcm, false, np);
 }
 
@@ -896,6 +897,7 @@ void remove_connected_components(PolygonMesh& pmesh
                                 , const FaceRange& components_to_remove
                                 , const CGAL_PMP_NP_CLASS& np)
 {
+  if (components_to_remove.empty()) return;
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
   using boost::choose_param;
