@@ -5,8 +5,26 @@ if(POLICY CMP0043)
 endif()
 
 find_package(Qt5 QUIET COMPONENTS OpenGL Svg QUIET)
+find_package(OpenGL QUIET)
 
-find_package(OpenGL QUIET )
+set(CGAL_Qt5_MISSING_DEPS "")
+if(NOT Qt5OpenGL_FOUND)
+  set(CGAL_Qt5_MISSING_DEPS "Qt5OpenGL")
+endif()
+if(NOT Qt5Svg_FOUND)
+  set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} Qt5Svg")
+endif()
+if(NOT Qt5_FOUND)
+  set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} Qt5")
+endif()
+if(NOT OPENGL_FOUND)
+  set(CGAL_Qt5_MISSING_DEPS "${CGAL_Qt5_MISSING_DEPS} OpenGL")
+endif()
+
+if(CGAL_Qt5_MISSING_DEPS)
+  message(STATUS "libCGAL_Qt5 is missing the dependencies: ${CGAL_Qt5_MISSING_DEPS} cannot be configured.")
+  return()
+endif()
 
 if( Qt5_FOUND )
 
