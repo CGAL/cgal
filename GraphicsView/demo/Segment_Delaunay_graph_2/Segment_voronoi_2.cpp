@@ -101,11 +101,6 @@ public Q_SLOTS:
 
   void loadEdgConstraints(QString);
 
-  void on_actionSaveConstraints_triggered();
-
-  void saveConstraints(QString);
-
-
 Q_SIGNALS:
   void changed();
 };
@@ -338,33 +333,6 @@ MainWindow::on_actionRecenter_triggered()
   this->graphicsView->setSceneRect(sdggi->boundingRect());
   this->graphicsView->fitInView(sdggi->boundingRect(), Qt::KeepAspectRatio);  
 }
-
-
-void
-MainWindow::on_actionSaveConstraints_triggered()
-{
-  QString fileName = QFileDialog::getSaveFileName(this,
-						  tr("Save Constraints"),
-						  ".",
-						  tr("Poly files (*.poly)\n"
-						     "Edge files (*.edg)"));
-  if(! fileName.isEmpty()){
-    saveConstraints(fileName);
-  }
-}
-
-
-void
-MainWindow::saveConstraints(QString /*fileName*/)
-{
-  QMessageBox::warning(this,
-                       tr("saveConstraints"),
-                       tr("Not implemented!"));
-}
-
-
-
-
 
 #include "Segment_voronoi_2.moc"
 #include <CGAL/Qt/resources.h>
