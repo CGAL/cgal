@@ -30,6 +30,7 @@ public:
   static QString dumpFrame(const qglviewer::Frame&);
 
   virtual bool inFastDrawing() const = 0;
+  GLfloat pickMatrix_[16];
 
 Q_SIGNALS:
   void selected(int);
