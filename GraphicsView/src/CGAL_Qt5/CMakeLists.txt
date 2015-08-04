@@ -14,10 +14,7 @@ if( Qt5_FOUND )
     
     include_directories (BEFORE ../../include)
     
-    get_dependency_version(OPENGL)
-    
-    get_dependency_version(QT5 QT)
-
+    message( STATUS "USING Qt5_VERSION = '${Qt5Core_VERSION_STRING}'" )
     if(COMMAND add_config_flag)
       set( CGAL_HAS_QT5 TRUE )
       add_config_flag( CGAL_HAS_QT5 )
