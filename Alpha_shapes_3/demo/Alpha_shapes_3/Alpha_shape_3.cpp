@@ -14,7 +14,9 @@ int main(int argc, char** argv)
   application.setOrganizationName("GeometryFactory");
   application.setApplicationName("Alpha Shape Reconstruction");
   //for Windows
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
   application.setAttribute(Qt::AA_UseDesktopOpenGL);
+#endif
 
   // Import resources from libCGALQt (Qt5).
   // See http://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE

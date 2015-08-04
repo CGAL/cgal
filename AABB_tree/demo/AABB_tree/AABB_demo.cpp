@@ -36,7 +36,9 @@ int main(int argc, char **argv)
   app.setOrganizationName("INRIA");
   app.setApplicationName("AABB tree demo");
   //for windows
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
   app.setAttribute(Qt::AA_UseDesktopOpenGL);
+#endif
 
   // Import resources from libCGALQt (Qt5).
   CGAL_QT_INIT_RESOURCES;

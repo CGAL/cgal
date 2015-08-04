@@ -10,7 +10,9 @@ int main(int argc, char** argv)
   application.setOrganizationName("INRIA");
   application.setApplicationName("3D Periodic Lloyd");
   //for windows
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
   application.setAttribute(Qt::AA_UseDesktopOpenGL);
+#endif
 
   // Import resources from libCGAL (QT5).
   // See http://doc.qt.io/qt-5/qdir.html#Q_INIT_RESOURCE
