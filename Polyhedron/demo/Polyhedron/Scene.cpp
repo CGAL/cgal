@@ -116,13 +116,13 @@ Scene::erase(QList<int> indices)
         max_index = (std::max)(max_index, index);
         Scene_item* item = m_entries[index];
         to_be_removed.push_back(item);
-    Q_EMIT itemAboutToBeDestroyed(item);
-        delete item;
     }
 
 
 
   Q_FOREACH(Scene_item* item, to_be_removed) {
+    Q_EMIT itemAboutToBeDestroyed(item);
+    delete item;
     m_entries.removeAll(item);
   }
 
