@@ -92,6 +92,7 @@ private:
     std::list<Point> m_points;
     std::list<Segment> m_segments;
     std::vector<Segment> m_cut_segments;
+    bool ready_to_cut;
 
     // distance functions (simple 2D arrays)
     Color_ramp m_red_ramp;
@@ -248,6 +249,10 @@ public:
     // cutting plane activation/deactivation
     void activate_cutting_plane();
     void deactivate_cutting_plane();
+
+    //timer sends a top when all the events are finished
+    void timerEvent(QTimerEvent *);
+
   
 public slots:
     // cutting plane

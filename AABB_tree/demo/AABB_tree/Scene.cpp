@@ -46,6 +46,8 @@ Scene::Scene()
     m_blue_ramp.build_blue();
     m_max_distance_function = (FT)0.0;
     texture = new Texture(m_grid_size,m_grid_size);
+    startTimer(0);
+    ready_to_cut = false;
     are_buffers_initialized = false;
 
 }
@@ -1230,23 +1232,27 @@ void Scene::cut_segment_plane()
 
 void Scene::cutting_plane()
 {
-    switch( m_cut_plane )
+    if(ready_to_cut)
     {
-    case UNSIGNED_FACETS:
-        return unsigned_distance_function();
-    case SIGNED_FACETS:
-        return signed_distance_function();
-    case UNSIGNED_EDGES:
-        return unsigned_distance_function_to_edges();
-    case CUT_SEGMENTS:
-        return cut_segment_plane();
-    case NONE: // do nothing
-        return;
-    }
+        ready_to_cut = false;
+        switch( m_cut_plane )
+        {
+        case UNSIGNED_FACETS:
+            return unsigned_distance_function();
+        case SIGNED_FACETS:
+            return signed_distance_function();
+        case UNSIGNED_EDGES:
+            return unsigned_distance_function_to_edges();
+        case CUT_SEGMENTS:
+            return cut_segment_plane();
+        case NONE: // do nothing
+            return;
+        }
 
-    // Should not be here
-    std::cerr << "Unknown cut_plane type" << std::endl;
-    CGAL_assertion(false);
+        // Should not be here
+        std::cerr << "Unknown cut_plane type" << std::endl;
+        CGAL_assertion(false);
+    }
 }
 
 void Scene::toggle_view_poyhedron()
@@ -1312,16 +1318,8 @@ void Scene::deactivate_cutting_plane()
 }
 void Scene::initGL(Viewer* /* viewer */)
 {
-    //qDebug()<<"context from scene is valid :"<<context->isValid();
-    //gl = 0;
-    //gl = viewer->context()->versionFunctions<QOpenGLFunctions_3_3_Core>();
     gl = new QOpenGLFunctions_3_3_Core();
-
-    //if (!gl) {
-    //    qFatal("Could not obtain required OpenGL context version");
-    //    exit(1);
-    //}
-    if(!gl->initializeOpenGLFunctions())
+   if(!gl->initializeOpenGLFunctions())
     {
         qFatal("ERROR : OpenGL Functions not initialized. Check your OpenGL Verison (should be >=3.3)");
         exit(1);
@@ -1329,4 +1327,11 @@ void Scene::initGL(Viewer* /* viewer */)
 
     gl->glGenTextures(1, &textureId);
     compile_shaders();
+}
+
+void Scene::timerEvent(QTimerEvent *)
+{
+    if(manipulatedFrame()->isSpinning())
+        set_fast_distance(true);
+    ready_to_cut = true;
 }

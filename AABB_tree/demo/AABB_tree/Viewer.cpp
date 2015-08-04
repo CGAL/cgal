@@ -51,7 +51,6 @@ void Viewer::mouseReleaseEvent(QMouseEvent* e)
   if ( m_custom_mouse )
   {
     m_pScene->set_fast_distance(false);
-    
     // Recompute distance function
     QApplication::setOverrideCursor(Qt::WaitCursor);
     m_pScene->cutting_plane();
