@@ -28,10 +28,7 @@
 #include <utility>
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_svd.h>
-#include <Eigen/LU>
-#include <Eigen/Core>
-#include <Eigen/Dense>
-#include <Eigen/Eigenvalues> 
+#include <CGAL/Eigen_vcm_traits.h>
 #else
 #ifdef CGAL_LAPACK_ENABLED
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
@@ -369,35 +366,25 @@ compute_PCA(InputIterator begin, InputIterator end)
   // 0
   // 1 2
   // 3 4 5
-  Eigen::Matrix3d A;
-  A(0,0) = xx;
-  A(1,0) = xy;
-  A(2,0) = xz;
-  A(1,1) = yy;
-  A(2,1) = yz;
-  A(2,2) = zz;
-
-  A(0,1) = A(1,0);
-  A(0,2) = A(2,0);
-  A(1,2) = A(2,1);
+  CGAL::cpp11::array<double, 6> cov = {xx,xy,xz,yy,yz,zz};
+  CGAL::cpp11::array<double, 3> eigenvalues = { 0. };
+  CGAL::cpp11::array<double, 9> eigenvectors = { 0. };
 
   // solve for eigenvalues and eigenvectors.
-  typedef typename Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d>::RealVectorType V;
-  typedef typename Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d>::MatrixType M;
-  Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d> eigensolver(A);
-  V v = eigensolver.eigenvalues();
+  CGAL::Eigen_vcm_traits::diagonalize_selfadjoint_covariance_matrix(cov,
+								    eigenvalues,
+								    eigenvectors);
 
   //store in m_pca_basis
-  m_pca_basis[0].first = v[2]; 
-  m_pca_basis[1].first = v[1]; 
-  m_pca_basis[2].first = v[0]; 
+  m_pca_basis[0].first = eigenvalues[2]; 
+  m_pca_basis[1].first = eigenvalues[1]; 
+  m_pca_basis[2].first = eigenvalues[0]; 
 
-  const M& m = eigensolver.eigenvectors();
-  Vector_3 v1(m(0,2), m(1,2), m(2,2));
+  Vector_3 v1(eigenvectors[6], eigenvectors[7], eigenvectors[8]);
   m_pca_basis[0].second = v1;
-  Vector_3 v2(m(0,1), m(1,1), m(2,1));
+  Vector_3 v2(eigenvectors[3], eigenvectors[4], eigenvectors[5]);
   m_pca_basis[1].second = v2;
-  Vector_3 v3(m(0,0), m(1,0), m(2,0));
+  Vector_3 v3(eigenvectors[0], eigenvectors[1], eigenvectors[2]);
   m_pca_basis[2].second = v3;
   switch_to_direct_orientation(m_pca_basis[0].second,
 			       m_pca_basis[1].second,

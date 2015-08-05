@@ -85,6 +85,38 @@ public:
     return res;
   }
 
+  static bool
+  diagonalize_selfadjoint_covariance_matrix(
+    const cpp11::array<double,6>& cov,
+    cpp11::array<double, 3>& eigenvalues,
+    cpp11::array<double, 9>& eigenvectors)
+  {
+    Eigen::Matrix3f m = construct_covariance_matrix(cov);
+
+    // Diagonalizing the matrix
+    Eigen::Vector3f eigenvalues_;
+    Eigen::Matrix3f eigenvectors_;
+    bool res = diagonalize_selfadjoint_matrix(m, eigenvectors_, eigenvalues_);
+
+    if (res)
+    {
+      eigenvalues[0]=eigenvalues_[0];
+      eigenvalues[1]=eigenvalues_[1];
+      eigenvalues[2]=eigenvalues_[2];
+      eigenvectors[0]=eigenvectors_(0,0);
+      eigenvectors[1]=eigenvectors_(1,0);
+      eigenvectors[2]=eigenvectors_(2,0);
+      eigenvectors[3]=eigenvectors_(0,1);
+      eigenvectors[4]=eigenvectors_(1,1);
+      eigenvectors[5]=eigenvectors_(2,1);
+      eigenvectors[6]=eigenvectors_(0,2);
+      eigenvectors[7]=eigenvectors_(1,2);
+      eigenvectors[8]=eigenvectors_(2,2);
+    }
+
+    return res;
+  }
+
   // Extract the eigenvector associated to the largest eigenvalue
   static bool
   extract_largest_eigenvector_of_covariance_matrix (
