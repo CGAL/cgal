@@ -669,25 +669,18 @@ file( WRITE ${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h "//\n// compiler_
 cache_get(CONFIG_CXX_FLAGS)
 
 foreach(config_test_cpp ${all_config_tests})
-    
-    # Test's name is .cpp's base name
-    get_filename_component(config_test_name ${config_test_cpp} NAME_WE)
-    
-    # Compile and run ${config_test_cpp}. Exit code is stored in ${config_test_name}.
-    if( RUNNING_CGAL_AUTO_TEST OR "${config_test_name}" MATCHES "^${config_test_name}$" OR NOT ${CONFIG_CXX_FLAGS} STREQUAL  ${CMAKE_CXX_FLAGS})
+  # Test's name is .cpp's base name
+  get_filename_component(config_test_name ${config_test_cpp} NAME_WE)
 
-      CHECK_CXX_FILE_RUNS(${config_test_cpp} ${config_test_name} ${config_test_name})
+  # Compile and run ${config_test_cpp}. Exit code is stored in ${config_test_name}.
+  CHECK_CXX_FILE_RUNS(${config_test_cpp} ${config_test_name} ${config_test_name})
+  if(${config_test_name})
+    set(${config_test_name} 0)
+  else()
+    set(${config_test_name} 1)
+  endif()
 
-      if ( ${config_test_name} )
-        cache_set ( ${config_test_name} 0 )
-      else()
-        cache_set ( ${config_test_name} 1 )
-      endif()  
-      
-    endif()
-    
-    add_config_flag( ${config_test_name} ${config_test_name} )
-    
+  add_config_flag(${config_test_name} ${config_test_name})
 endforeach()
 
 cache_set(CONFIG_CXX_FLAGS ${CMAKE_CXX_FLAGS})
