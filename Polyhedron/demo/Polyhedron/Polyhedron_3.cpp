@@ -39,7 +39,9 @@ int main(int argc, char **argv)
   app.setOrganizationName("GeometryFactory");
   app.setApplicationName("Polyhedron_3 demo");
   //for windows
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
   app.setAttribute(Qt::AA_UseDesktopOpenGL);
+#endif
 
   // Import resources from libCGAL (Qt5).
   CGAL_QT_INIT_RESOURCES;
