@@ -610,10 +610,6 @@ foreach (lib ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
     option(WITH_${lib} "Select external library ${lib}" OFF)
   endif()
 
-  if (WITH_${lib}) 
-    add_config_flag( ${CGAL_EXT_LIB_${lib}_PREFIX} )
-  endif()
-
 endforeach()
 
 #--------------------------------------------------------------------------------------------------
