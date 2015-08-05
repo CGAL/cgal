@@ -11,5 +11,4 @@ script_cgal_3_3.nsh
 script_cgal_3_3.nsi
 TextLog.nsh
 WriteEnvStr.nsh
-ReplaceInFile.nsh
 zirkel.bmp
