@@ -430,7 +430,7 @@ if( MSVC )
     
 endif()
 
-if( "${CMAKE_CXX_COMPILER_ID}" MATCHES SunPro )
+if( "\"${CMAKE_CXX_COMPILER_ID}\"" MATCHES "SunPro" )
   message( STATUS "Using SunPro compiler, using STLPort 4." )
   
   uniquely_add_flags( CGAL_CXX_FLAGS "-features=extensions;-library=stlport4;-D_GNU_SOURCE" )
@@ -950,7 +950,7 @@ if( WITH_CPACK AND EXISTS "${CMAKE_ROOT}/Modules/CPack.cmake" )
       set(CPACK_SYSTEM_NAME ${CMAKE_SYSTEM_NAME}-${CMAKE_SYSTEM_PROCESSOR})
     endif()
     
-    if(${CPACK_SYSTEM_NAME} MATCHES Windows)
+    if(${CPACK_SYSTEM_NAME} MATCHES "Windows")
       if(CMAKE_CL_64)
         set(CPACK_SYSTEM_NAME win64-${CMAKE_SYSTEM_PROCESSOR})
       else()
