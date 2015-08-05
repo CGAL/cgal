@@ -553,7 +553,8 @@ private:
                         sc != ON_ORIENTED_BOUNDARY &&
                         sb == sa && sc == sa )
                 {
-                    draw_triangle(pa, pb, pc, false);
+                    if ( (index%2 == 1) == c3t3().is_in_complex(cell)) draw_triangle(pb, pa, pc, false);
+                    else draw_triangle(pa, pb, pc, false);
                     draw_triangle_edges(pa, pb, pc);
                 }
 
@@ -585,9 +586,9 @@ private:
                         sd == ON_ORIENTED_BOUNDARY ||
                         sb != sa || sc != sa || sd != sa)
                 {
-                    draw_triangle(pa,pb,pc, true);
+                    draw_triangle(pb,pa,pc, true);
                     draw_triangle(pa,pb,pd, true);
-                    draw_triangle(pa,pc,pd, true);
+                    draw_triangle(pa,pd,pc, true);
                     draw_triangle(pb,pc,pd, true);
 
                     draw_triangle_edges(pa,pb,pc);
