@@ -523,12 +523,19 @@ compute_Monge_basis(const FT* A, Monge_form& monge_form)
   //                   =(n.Xuu, n.Xuv, n.Xuv, n.Xvv)
   //ppal curv are the opposite of the eigenvalues of Weingarten or the
   //  eigenvalues of weingarten = -Weingarten = I^{-1}II
+#ifdef CGAL_EIGEN3_ENABLED
+  typedef typename Eigen::Matrix2d Matrix;
+  Matrix  weingarten;
+  Matrix change_XuXv2YZ;
+#else
   typedef typename CGAL::Linear_algebraCd<FT>::Matrix Matrix;
+  Matrix  weingarten(2,2,0.);
+  Matrix change_XuXv2YZ(2,2,0.);
+#endif
 
   FT e = 1+A[1]*A[1], f = A[1]*A[2], g = 1+A[2]*A[2],
     l = A[3], m = A[4], n = A[5];
-  //Matrix  weingarten(2,2,0.);
-  Eigen::Matrix2d  weingarten;
+
   weingarten(0,0) = (g*l-f*m)/ (Lsqrt(norm2)*norm2);
   weingarten(0,1) = (g*m-f*n)/ (Lsqrt(norm2)*norm2);
   weingarten(1,0) = (e*m-f*l)/ (Lsqrt(norm2)*norm2);
@@ -544,18 +551,21 @@ compute_Monge_basis(const FT* A, Monge_form& monge_form)
   Z = Xv - XudotXv * Xu / (normXu*normXu);
   FT normZ = Lsqrt( Z*Z );
   Z = Z / normZ;
-  //Matrix change_XuXv2YZ(2,2,0.);
-  Eigen::Matrix2d change_XuXv2YZ;
+
   change_XuXv2YZ(0,0) = 1 / normXu;
   change_XuXv2YZ(0,1) = -XudotXv / (normXu * normXu * normZ);
   change_XuXv2YZ(1,0) = 0;
   change_XuXv2YZ(1,1) = 1 / normZ;
-  //FT det = 0.;
-  //Matrix inv = CGAL::Linear_algebraCd<FT>::inverse ( change_XuXv2YZ, det );
-  //in the new orthonormal basis (Y,Z) of the tangent plane :
-
-  //weingarten = inv *(1/det) * weingarten * change_XuXv2YZ;
+  
+#ifdef CGAL_EIGEN3_ENABLED
   weingarten = change_XuXv2YZ.inverse() * weingarten * change_XuXv2YZ;
+#else
+  FT det = 0.;
+  Matrix inv = CGAL::Linear_algebraCd<FT>::inverse ( change_XuXv2YZ, det );
+  //in the new orthonormal basis (Y,Z) of the tangent plane :
+  weingarten = inv *(1/det) * weingarten * change_XuXv2YZ;
+#endif
+  
   //switch to eigen_symmetric algo for diagonalization of weingarten
   FT W[3] = {weingarten(0,0), weingarten(1,0), weingarten(1,1)};
   FT eval[2];
@@ -791,23 +801,9 @@ void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
 switch_to_direct_orientation(Vector_3& v1, const Vector_3& v2,
 			    const Vector_3& v3) 
 {
-#if 1
   Vector_3 v = cross_product(v2,v3);
   double d = v*v1;
   if(d < 0)v1 = -v1;
-#else
-  typedef typename CGAL::Linear_algebraCd<FT>::Matrix Matrix;
-  Matrix M(3,3);
-  for (int i=0; i<3; i++) M(i,0) = v1[i];
-  for (int i=0; i<3; i++) M(i,1) = v2[i];
-  for (int i=0; i<3; i++) M(i,2) = v3[i];
-
-  CGAL::Sign orientation = CGAL::Linear_algebraCd<FT>::sign_of_determinant(M);
-
-  //std::cerr << "compare " << d << "  " << orientation << std::endl;
-
-  if (orientation == CGAL::NEGATIVE) v1 = -v1;
-#endif
 }
 
 
