@@ -360,12 +360,13 @@ compute_PCA(InputIterator begin, InputIterator end)
   xz = sumXZ - sumX * sumZ;
   yz = sumYZ - sumY * sumZ;
 
+#ifdef CGAL_EIGEN3_ENABLED
   // assemble covariance matrix as a
   // semi-definite matrix. 
   // Matrix numbering:
   // 0
-  // 1 2
-  // 3 4 5
+  // 1 3
+  // 2 4 5
   CGAL::cpp11::array<double, 6> cov = {xx,xy,xz,yy,yz,zz};
   CGAL::cpp11::array<double, 3> eigenvalues = { 0. };
   CGAL::cpp11::array<double, 9> eigenvectors = { 0. };
@@ -386,6 +387,32 @@ compute_PCA(InputIterator begin, InputIterator end)
   m_pca_basis[1].second = v2;
   Vector_3 v3(eigenvectors[0], eigenvectors[1], eigenvectors[2]);
   m_pca_basis[2].second = v3;
+#else
+  // assemble covariance matrix as a
+  // semi-definite matrix. 
+  // Matrix numbering:
+  // 0
+  // 1 2
+  // 3 4 5
+  FT covariance[6] = {xx,xy,yy,xz,yz,zz};
+  FT eigen_values[3];
+  FT eigen_vectors[9];
+
+  // solve for eigenvalues and eigenvectors.
+  // eigen values are sorted in descending order, 
+  // eigen vectors are sorted in accordance.
+  CGAL::internal::eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
+  //store in m_pca_basis
+  for (int i=0; i<3; i++)
+    m_pca_basis[i].first =  eigen_values[i];
+  Vector_3 v1(eigen_vectors[0],eigen_vectors[1],eigen_vectors[2]);
+  m_pca_basis[0].second = v1;
+  Vector_3 v2(eigen_vectors[3],eigen_vectors[4],eigen_vectors[5]);
+  m_pca_basis[1].second = v2;
+  Vector_3 v3(eigen_vectors[6],eigen_vectors[7],eigen_vectors[8]);
+  m_pca_basis[2].second = v3;
+#endif
+  
   switch_to_direct_orientation(m_pca_basis[0].second,
 			       m_pca_basis[1].second,
 			       m_pca_basis[2].second);
