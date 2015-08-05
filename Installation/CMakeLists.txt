@@ -522,14 +522,12 @@ message("== Set up flags (DONE) ==\n")
 
 message("== Detect external libraries ==")
 
-macro( add_config_flag flag )
-
-    if ( ${flag} )
-      file( APPEND ${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h "#define ${flag} 1\n\n")
+macro(add_config_flag flag)
+  if(${flag})
+      file(APPEND ${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h "#define ${flag} 1\n\n")
     else()
-      file( APPEND ${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h "//#define ${flag} 1\n\n")
+      file(APPEND ${CMAKE_BINARY_DIR}/include/CGAL/compiler_config.h "//#define ${flag} 1\n\n")
     endif()
-
 endmacro()
  
 # this is the place to tell which external libs are supporting
@@ -694,13 +692,13 @@ endforeach()
 
 cache_set(CONFIG_CXX_FLAGS ${CMAKE_CXX_FLAGS})
 
-add_config_flag( CGAL_USE_GMP )
-add_config_flag( CGAL_USE_MPFR )
-add_config_flag( CGAL_USE_GMPXX )
-add_config_flag( CGAL_USE_LEDA )
-add_config_flag( CGAL_USE_MPFI )
-add_config_flag( CGAL_USE_RS )
-add_config_flag( CGAL_USE_NTL )
+add_config_flag(CGAL_USE_GMP)
+add_config_flag(CGAL_USE_MPFR)
+add_config_flag(CGAL_USE_GMPXX)
+add_config_flag(CGAL_USE_LEDA)
+add_config_flag(CGAL_USE_MPFI)
+add_config_flag(CGAL_USE_RS)
+add_config_flag(CGAL_USE_NTL)
 
 add_config_flag( CGAL_BUILD_SHARED_LIBS )
 
