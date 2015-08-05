@@ -782,8 +782,8 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
 *
-* Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
-* should be either available as internal property maps
+* Property maps for `CGAL::vertex_index_t`
+* should be either available as internal property map
 * to `pmesh` or provided as \ref namedparameters.
 *
 * \tparam PolygonMesh a model of `FaceListGraph`
@@ -800,7 +800,6 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 * \param np optional \ref namedparameters described below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
 *    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
 * \cgalNamedParamsEnd
 *
@@ -826,8 +825,8 @@ void keep_connected_components(PolygonMesh& pmesh
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
 *
-* Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
-* should be either available as internal property maps
+* Property maps for `CGAL::vertex_index_t`
+* should be either available as internal property map
 * to `pmesh` or provided as \ref namedparameters.
 *
 *
@@ -845,7 +844,6 @@ void keep_connected_components(PolygonMesh& pmesh
 * \param np optional \ref namedparameters described below
 *
 * \cgalNamedParamsBegin
-*    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
 *    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
 * \cgalNamedParamsEnd
 *
@@ -859,6 +857,7 @@ void remove_connected_components(PolygonMesh& pmesh
                                 , const FaceComponentMap& fcm
                                 , const NamedParameters& np)
 {
+  if (components_to_remove.empty()) return;
   keep_or_remove_connected_components(pmesh, components_to_remove, fcm, false, np);
 }
 
@@ -898,6 +897,7 @@ void remove_connected_components(PolygonMesh& pmesh
                                 , const FaceRange& components_to_remove
                                 , const CGAL_PMP_NP_CLASS& np)
 {
+  if (components_to_remove.empty()) return;
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
   using boost::choose_param;

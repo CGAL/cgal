@@ -104,11 +104,57 @@ void mesh_no_id(const char* argv1)
   ofile.close();
 }
 
+void test_border_cases()
+{
+  std::cerr <<"Testing border cases\n";
+  typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;
+  typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
+
+  std::ifstream input("data/elephant.off");
+  Mesh_with_id sm;
+  input >> sm;
+
+  std::size_t i=0;
+  BOOST_FOREACH(face_descriptor f, faces(sm))
+    f->id() = i++;
+  i=0;
+  BOOST_FOREACH(vertex_descriptor v, vertices(sm))
+    v->id() = i++;
+
+  boost::vector_property_map<int,
+    boost::property_map<Mesh_with_id, boost::face_index_t>::type>
+      fccmap(get(boost::face_index,sm));
+
+  PMP::connected_components(sm, fccmap);
+  std::size_t nb_faces=num_faces(sm);
+
+  std::cerr <<" removing no faces\n";
+  PMP::remove_connected_components(sm, std::vector<std::size_t>(), fccmap);
+  assert( nb_faces == num_faces(sm) );
+
+  std::cerr <<" removing all faces\n";
+  Mesh_with_id copy = sm;
+  PMP::connected_components(sm, fccmap);
+  PMP::remove_connected_components(copy, std::vector<std::size_t>(1,0), fccmap);
+  assert(num_vertices(copy)==0);
+
+  std::cerr <<" keeping all faces\n";
+  PMP::connected_components(sm, fccmap);
+  PMP::keep_connected_components(sm, std::vector<face_descriptor>(1, *faces(sm).first));
+  assert( nb_faces == num_faces(sm) );
+
+  std::cerr <<" keeping no faces\n";
+  copy = sm;
+  PMP::connected_components(sm, fccmap);
+  PMP::keep_connected_components(copy, std::vector<face_descriptor>());
+  assert(num_vertices(copy)==0);
+}
 
 int main(int argc, char* argv[]) 
 {
   const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
   mesh_with_id(filename);
   mesh_no_id(filename);
+  test_border_cases();
   return 0;
 }
