@@ -98,7 +98,7 @@ public:
     return (m == Wireframe);
   }
   void draw() const {}
-  void draw_edges() const {
+  void draw_edges(Viewer_interface* viewer) const {
     
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
       if(it == active_hole) { ::glLineWidth(7.f); }
@@ -109,7 +109,7 @@ public:
       else 
       { it->polyline->setRbgColor(0, 0, 255); }
 
-      it->polyline->draw_edges();
+      it->polyline->draw_edges(viewer);
     }
   }
 
