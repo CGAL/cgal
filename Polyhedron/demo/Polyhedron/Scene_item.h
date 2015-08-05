@@ -140,7 +140,7 @@ public Q_SLOTS:
 
   // Setters for the four basic properties
   virtual void setColor(QColor c) { color_ = c; changed(); }
-  void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); changed(); }
+  void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
   virtual void setName(QString n) { name_ = n; }
   virtual void setVisible(bool b) { visible_ = b; }
   virtual void setRenderingMode(RenderingMode m) { 
