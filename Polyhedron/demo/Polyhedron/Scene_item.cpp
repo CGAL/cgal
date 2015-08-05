@@ -122,9 +122,14 @@ void Scene_item::select(double /*orig_x*/,
 void Scene_item::attrib_buffers(Viewer_interface* viewer, int program_name) const
 {
     GLint is_both_sides = 0;
+    //ModelViewMatrix used for the transformation of the camera.
     QMatrix4x4 mvp_mat;
+    // ModelView Matrix used for the lighting system
     QMatrix4x4 mv_mat;
+    // transformation of the manipulated frame
     QMatrix4x4 f_mat;
+    // used for the picking. Is Identity except while selecting an item.
+    QMatrix4x4 pick_mat;
     f_mat.setToIdentity();
     //fills the MVP and MV matrices.
     GLdouble d_mat[16];
@@ -136,6 +141,10 @@ void Scene_item::attrib_buffers(Viewer_interface* viewer, int program_name) cons
     viewer->camera()->getModelViewMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mv_mat.data()[i] = GLfloat(d_mat[i]);
+    for (int i=0; i<16; ++i)
+        pick_mat.data()[i] = viewer->pickMatrix_[i];
+
+    mvp_mat = pick_mat * mvp_mat;
 
     viewer->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
 

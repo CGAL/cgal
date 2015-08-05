@@ -162,7 +162,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
         CGAL::internal::corefinement::Dummy_true(),
         marker
       );
-      item->changed();
+      scene->itemChanged(item);
     }
   }
 }

@@ -123,7 +123,7 @@ void Viewer::triangulate_facet()
 
                LCC::Dart_of_orbit_range<1>::const_iterator
                  he_circ = lcc.darts_of_orbit<1>(dartIter).begin(),
-                 he_circ_end(he_circ);
+                 he_circ_end = lcc.darts_of_orbit<1>(dartIter).end();
 
                 // Iterates on the vector of facet handles
                 CDT::Vertex_handle previous, first;

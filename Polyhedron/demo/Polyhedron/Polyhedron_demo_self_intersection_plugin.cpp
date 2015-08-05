@@ -76,6 +76,7 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
       scene->addItem(selection_item);
       item->setRenderingMode(Wireframe);
       scene->itemChanged(item);
+      scene->itemChanged(selection_item);
     }
     else 
       QMessageBox::information(mw, tr("No self intersection"),
