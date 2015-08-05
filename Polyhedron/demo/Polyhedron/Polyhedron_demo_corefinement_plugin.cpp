@@ -40,7 +40,7 @@ public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    actionPolyhedronCorefinement_3 = new QAction("Polyhedra corefinement", mw);
+    actionPolyhedronCorefinement_3 = new QAction("Polyhedra corefinement (A/B)", mw);
     if(actionPolyhedronCorefinement_3) {
       connect(actionPolyhedronCorefinement_3, SIGNAL(triggered()),
               this, SLOT(corefinement()));
