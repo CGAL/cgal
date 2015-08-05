@@ -976,9 +976,12 @@ void
 Scene_polyhedron_item::setColor(QColor c)
 {
   // reset patch ids
-  BOOST_FOREACH(Polyhedron::Facet_handle fh, faces(*poly))
-    fh->set_patch_id(1);
-  colors_[1]=c;
+  if (plugin_has_set_color_vector_m)
+  {
+    BOOST_FOREACH(Polyhedron::Facet_handle fh, faces(*poly))
+      fh->set_patch_id(1);
+    colors_[1]=c;
+  }
   Scene_item::setColor(c);
 }
 
