@@ -76,7 +76,7 @@
        <item>
         <widget class="QPushButton" name="Fair_button">
          <property name="text">
-          <string>Fair</string>
+          <string>Fair a region defined by a selection of vertices</string>
          </property>
         </widget>
        </item>
@@ -116,7 +116,7 @@
        <item>
         <widget class="QPushButton" name="Refine_button">
          <property name="text">
-          <string>Refine</string>
+          <string>Refine a region defined by a selection of faces</string>
          </property>
         </widget>
        </item>
