@@ -7,8 +7,7 @@
 template <class FLOAT>
 void create_flat_sphere(double R,
                         std::vector<FLOAT>& positions_spheres,
-                        std::vector<FLOAT>& normals_spheres,
-                        bool four_pos=false)
+                        std::vector<FLOAT>& normals_spheres)
 {
   //The more small they are, the more precise the Sphere will be.
   // Must be a multiple of 360 and 180.
@@ -183,8 +182,7 @@ template <class FLOAT>
 void create_flat_and_wire_sphere(double R,
                    std::vector<FLOAT>& positions_spheres,
                    std::vector<FLOAT>& normals_spheres,
-                   std::vector<FLOAT>& positions_wire_spheres,
-                   bool four_pos=false)
+                   std::vector<FLOAT>& positions_wire_spheres)
 {
   //The more small they are, the more precise the Sphere will be.
   // Must be a multiple of 360 and 180.
