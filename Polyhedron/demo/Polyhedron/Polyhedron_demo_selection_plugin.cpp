@@ -207,6 +207,7 @@ public Q_SLOTS:
     }
     
     scene->addItem(point_item);
+    scene->itemChanged(point_item);
   }
 
   void on_Create_polyline_item_button_clicked(){
@@ -262,6 +263,7 @@ public Q_SLOTS:
                                       polyline_visitor,
                                       Is_terminal() );
     scene->addItem(polyline_item);
+    scene->itemChanged(polyline_item);
   }
 
   void on_Erase_selected_facets_button_clicked() {
@@ -293,6 +295,7 @@ public Q_SLOTS:
       poly_item->setName(QString("%1-facets").arg(selection_item->name()));
       poly_item->changed(); // for init()
       scene->addItem(poly_item);
+      scene->itemChanged(poly_item);
     }
     else {
       delete poly_item;
