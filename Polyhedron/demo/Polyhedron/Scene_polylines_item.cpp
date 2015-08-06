@@ -576,7 +576,6 @@ Scene_polylines_item::Scene_polylines_item()
     ,rings(18)
     ,sectors(36)
 {
-    setRenderingMode(Flat);
     changed();
 
 }
@@ -657,6 +656,7 @@ bool
 Scene_polylines_item::supportsRenderingMode(RenderingMode m) const {
     return (m == Wireframe ||
             m == Flat ||
+            m == FlatPlusEdges ||
             m == Points);
 }
 
@@ -692,7 +692,7 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
 // Wireframe OpenGL drawing
 void 
 Scene_polylines_item::draw_edges(Viewer_interface* viewer) const {
-
+glLineWidth(2.5f);
     if(!are_buffers_filled)
         initialize_buffers(viewer);
 

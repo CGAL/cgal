@@ -100,6 +100,7 @@ void Scene_polyhedron_shortest_path_item::draw_points(Viewer_interface* viewer) 
     {
         initialize_buffers(viewer);
     }
+   glPointSize(4.0f);
    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
    vaos[0]->bind();
@@ -108,6 +109,7 @@ void Scene_polyhedron_shortest_path_item::draw_points(Viewer_interface* viewer) 
    viewer->glDrawArrays(GL_POINTS, 0, vertices.size()/3);
    program->release();
    vaos[0]->release();
+   glPointSize(1.0f);
 }
   
 Scene_polyhedron_shortest_path_item* Scene_polyhedron_shortest_path_item::clone() const
