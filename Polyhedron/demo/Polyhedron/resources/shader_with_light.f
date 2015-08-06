@@ -1,4 +1,5 @@
-varying highp vec4 color; 
+#version 330
+varying highp vec4 color;
 varying highp vec4 fP; 
 varying highp vec3 fN; 
 uniform highp vec4 light_pos;  

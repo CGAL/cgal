@@ -1,4 +1,5 @@
-varying highp vec3 fColors; 
+#version 330
+varying highp vec3 fColors;
 varying highp vec2 f_texCoord; 
 uniform highp sampler2D s_texture; 
  
