@@ -83,6 +83,7 @@ private:
     using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer) const;
 
+    using Scene_item::compute_elements;
     void compute_elements(void) const;
 
 public Q_SLOTS:
