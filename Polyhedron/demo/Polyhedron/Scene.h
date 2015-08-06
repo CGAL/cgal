@@ -121,6 +121,20 @@ public Q_SLOTS:
     Q_EMIT selectionChanged(i);
   };
 
+  void setSelectedItem(Scene_item* item_to_select)
+  {
+    int i=0;
+    Q_FOREACH(Scene_item* item, m_entries)
+    {
+      if (item==item_to_select)
+      {
+        Q_EMIT setSelectedItem(i);
+        break;
+      }
+      ++i;
+    }
+  };
+
   void setSelectedItemsList(QList<int> l )
   {
     selected_items_list = l;
