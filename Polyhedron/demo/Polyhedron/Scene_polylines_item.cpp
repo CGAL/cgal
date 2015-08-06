@@ -59,7 +59,7 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
         buffers[1].allocate(positions_spheres.data(), 
                             static_cast<int>(positions_spheres.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
-        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[1].release();
 
         buffers[2].bind();
@@ -100,7 +100,7 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
         buffers[5].allocate(positions_wire_spheres.data(),
                             static_cast<int>(positions_wire_spheres.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
-        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[5].release();
         QColor temp = this->color();
         program->setAttributeValue("colors", temp);
@@ -380,7 +380,7 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
         attrib_buffers(viewer, PROGRAM_INSTANCED);
         program->bind();
         viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                    static_cast<GLsizei>(positions_spheres.size()/4), nbSpheres);
+                                    static_cast<GLsizei>(positions_spheres.size()/3), nbSpheres);
         program->release();
         vaos[1]->release();
     }
@@ -390,7 +390,7 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         program->bind();
-        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
+        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
         program->release();
         vaos[0]->release();
     }
@@ -419,7 +419,7 @@ glLineWidth(2.5f);
         program = getShaderProgram(PROGRAM_INSTANCED_WIRE);
         program->bind();
         viewer->glDrawArraysInstanced(GL_LINES, 0,
-                                    static_cast<GLsizei>(positions_wire_spheres.size()/4), nbSpheres);
+                                    static_cast<GLsizei>(positions_wire_spheres.size()/3), nbSpheres);
         program->release();
         vaos[2]->release();
     }

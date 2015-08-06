@@ -25,7 +25,6 @@ void create_flat_sphere(double R,
     positions_spheres.push_back(0);
     positions_spheres.push_back(0);
     positions_spheres.push_back(R);
-    if (four_pos) positions_spheres.push_back(1.0);
 
     normals_spheres.push_back(0);
     normals_spheres.push_back(0);
@@ -39,7 +38,6 @@ void create_flat_sphere(double R,
     positions_spheres.push_back(R * x[1]);
     positions_spheres.push_back(R * y[1]);
     positions_spheres.push_back(R * z[1]);
-    if (four_pos) positions_spheres.push_back(1.0);
 
     normals_spheres.push_back(x[1]);
     normals_spheres.push_back(y[1]);
@@ -54,7 +52,6 @@ void create_flat_sphere(double R,
     positions_spheres.push_back(R * x[2]);
     positions_spheres.push_back(R * y[2]);
     positions_spheres.push_back(R * z[2]);
-    if (four_pos) positions_spheres.push_back(1.0);
 
     normals_spheres.push_back(x[2]);
     normals_spheres.push_back(y[2]);
@@ -75,7 +72,6 @@ void create_flat_sphere(double R,
       positions_spheres.push_back(R * x[0]);
       positions_spheres.push_back(R * y[0]);
       positions_spheres.push_back(R * z[0]);
-      if (four_pos) positions_spheres.push_back(1.0);
 
       normals_spheres.push_back(x[0]);
       normals_spheres.push_back(y[0]);
@@ -90,7 +86,6 @@ void create_flat_sphere(double R,
       positions_spheres.push_back(R * x[1]);
       positions_spheres.push_back(R * y[1]);
       positions_spheres.push_back(R * z[1]);
-      if (four_pos) positions_spheres.push_back(1.0);
 
       normals_spheres.push_back(x[1]);
       normals_spheres.push_back(y[1]);
@@ -105,7 +100,6 @@ void create_flat_sphere(double R,
       positions_spheres.push_back(R * x[2]);
       positions_spheres.push_back(R * y[2]);
       positions_spheres.push_back(R * z[2]);
-      if (four_pos) positions_spheres.push_back(1.0);
 
 
       normals_spheres.push_back(x[2]);
@@ -120,7 +114,6 @@ void create_flat_sphere(double R,
       positions_spheres.push_back(R * x[3]);
       positions_spheres.push_back(R * y[3]);
       positions_spheres.push_back(R * z[3]);
-      if (four_pos) positions_spheres.push_back(1.0);
 
 
       normals_spheres.push_back(x[3]);
@@ -130,7 +123,6 @@ void create_flat_sphere(double R,
       positions_spheres.push_back(R * x[1]);
       positions_spheres.push_back(R * y[1]);
       positions_spheres.push_back(R * z[1]);
-      if (four_pos) positions_spheres.push_back(1.0);
 
       normals_spheres.push_back(x[1]);
       normals_spheres.push_back(y[1]);
@@ -139,7 +131,6 @@ void create_flat_sphere(double R,
       positions_spheres.push_back(R * x[2]);
       positions_spheres.push_back(R * y[2]);
       positions_spheres.push_back(R * z[2]);
-      if (four_pos) positions_spheres.push_back(1.0);
 
       normals_spheres.push_back(x[2]);
       normals_spheres.push_back(y[2]);
@@ -152,7 +143,6 @@ void create_flat_sphere(double R,
     positions_spheres.push_back(0);
     positions_spheres.push_back(0);
     positions_spheres.push_back(-R);
-    if (four_pos) positions_spheres.push_back(1.0);
 
     normals_spheres.push_back(0);
     normals_spheres.push_back(0);
@@ -167,7 +157,6 @@ void create_flat_sphere(double R,
     positions_spheres.push_back(R * x[1]);
     positions_spheres.push_back(R * y[1]);
     positions_spheres.push_back(R * z[1]);
-    if (four_pos) positions_spheres.push_back(1.0);
 
     normals_spheres.push_back(x[1]);
     normals_spheres.push_back(y[1]);
@@ -182,7 +171,6 @@ void create_flat_sphere(double R,
     positions_spheres.push_back(R * x[2]);
     positions_spheres.push_back(R * y[2]);
     positions_spheres.push_back(R * z[2]);
-    if (four_pos) positions_spheres.push_back(1.0);
 
     normals_spheres.push_back(x[2]);
     normals_spheres.push_back(y[2]);
@@ -214,7 +202,6 @@ void create_flat_and_wire_sphere(double R,
     positions_wire_spheres.push_back(0);
     positions_wire_spheres.push_back(0);
     positions_wire_spheres.push_back(R);
-    if (four_pos) positions_wire_spheres.push_back(1.0);
 
     P = rings*M_PI/180.0;
     T = t*M_PI/180.0;
@@ -225,12 +212,10 @@ void create_flat_and_wire_sphere(double R,
     positions_wire_spheres.push_back(R * x[1]);
     positions_wire_spheres.push_back(R * y[1]);
     positions_wire_spheres.push_back(R * z[1]);
-    if (four_pos) positions_wire_spheres.push_back(1.0);
 
     positions_wire_spheres.push_back(R * x[1]);
     positions_wire_spheres.push_back(R * y[1]);
     positions_wire_spheres.push_back(R * z[1]);
-    if (four_pos) positions_wire_spheres.push_back(1.0);
 
     //
     P = rings*M_PI/180.0;
@@ -241,17 +226,14 @@ void create_flat_and_wire_sphere(double R,
     positions_wire_spheres.push_back(R * x[2]);
     positions_wire_spheres.push_back(R * y[2]);
     positions_wire_spheres.push_back(R * z[2]);
-    if (four_pos) positions_wire_spheres.push_back(1.0);
 
     positions_wire_spheres.push_back(R * x[2]);
     positions_wire_spheres.push_back(R * y[2]);
     positions_wire_spheres.push_back(R * z[2]);
-    if (four_pos) positions_wire_spheres.push_back(1.0);
 
     positions_wire_spheres.push_back(0);
     positions_wire_spheres.push_back(0);
     positions_wire_spheres.push_back(R);
-    if (four_pos) positions_wire_spheres.push_back(1.0);
   }
 
   //Body of the sphere
@@ -289,45 +271,45 @@ void create_flat_and_wire_sphere(double R,
       positions_wire_spheres.push_back(R * x[0]);
       positions_wire_spheres.push_back(R * y[0]);
       positions_wire_spheres.push_back(R * z[0]);
-      if (four_pos) positions_wire_spheres.push_back(1.0);
+
 
       positions_wire_spheres.push_back(R * x[1]);
       positions_wire_spheres.push_back(R * y[1]);
       positions_wire_spheres.push_back(R * z[1]);
-      if (four_pos) positions_wire_spheres.push_back(1.0);
+
 
       positions_wire_spheres.push_back(R * x[1]);
       positions_wire_spheres.push_back(R * y[1]);
       positions_wire_spheres.push_back(R * z[1]);
-      if (four_pos) positions_wire_spheres.push_back(1.0);
+
 
 
       positions_wire_spheres.push_back(R * x[3]);
       positions_wire_spheres.push_back(R * y[3]);
       positions_wire_spheres.push_back(R * z[3]);
-      if (four_pos) positions_wire_spheres.push_back(1.0);
+
 
 
       positions_wire_spheres.push_back(R * x[3]);
       positions_wire_spheres.push_back(R * y[3]);
       positions_wire_spheres.push_back(R * z[3]);
-      if (four_pos) positions_wire_spheres.push_back(1.0);
+
+
+
+      positions_wire_spheres.push_back(R * x[2]);
+      positions_wire_spheres.push_back(R * y[2]);
+      positions_wire_spheres.push_back(R * z[2]);
 
 
       positions_wire_spheres.push_back(R * x[2]);
       positions_wire_spheres.push_back(R * y[2]);
       positions_wire_spheres.push_back(R * z[2]);
-      if (four_pos) positions_wire_spheres.push_back(1.0);
 
-      positions_wire_spheres.push_back(R * x[2]);
-      positions_wire_spheres.push_back(R * y[2]);
-      positions_wire_spheres.push_back(R * z[2]);
-      if (four_pos) positions_wire_spheres.push_back(1.0);
 
       positions_wire_spheres.push_back(R * x[0]);
       positions_wire_spheres.push_back(R * y[0]);
       positions_wire_spheres.push_back(R * z[0]);
-      if (four_pos) positions_wire_spheres.push_back(1.0);
+
     }
   //Bottom of the sphere
   for(int t=0; t<360; t+=sectors)
@@ -347,34 +329,28 @@ void create_flat_and_wire_sphere(double R,
     positions_wire_spheres.push_back(0);
     positions_wire_spheres.push_back(0);
     positions_wire_spheres.push_back(-R);
-    if (four_pos) positions_wire_spheres.push_back(1.0);
 
     positions_wire_spheres.push_back(R * x[1]);
     positions_wire_spheres.push_back(R * y[1]);
     positions_wire_spheres.push_back(R * z[1]);
-    if (four_pos) positions_wire_spheres.push_back(1.0);
 
 
     positions_wire_spheres.push_back(R * x[1]);
     positions_wire_spheres.push_back(R * y[1]);
     positions_wire_spheres.push_back(R * z[1]);
-    if (four_pos) positions_wire_spheres.push_back(1.0);
 
     positions_wire_spheres.push_back(R * x[2]);
     positions_wire_spheres.push_back(R * y[2]);
     positions_wire_spheres.push_back(R * z[2]);
-    if (four_pos) positions_wire_spheres.push_back(1.0);
 
 
     positions_wire_spheres.push_back(R * x[2]);
     positions_wire_spheres.push_back(R * y[2]);
     positions_wire_spheres.push_back(R * z[2]);
-    if (four_pos) positions_wire_spheres.push_back(1.0);
 
     positions_wire_spheres.push_back(0);
     positions_wire_spheres.push_back(0);
     positions_wire_spheres.push_back(-R);
-    if (four_pos) positions_wire_spheres.push_back(1.0);
   }
 }
 
