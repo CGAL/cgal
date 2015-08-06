@@ -283,6 +283,7 @@ Scene_polylines_item::Scene_polylines_item()
     ,d(new Scene_polylines_item_private())
     ,nbSpheres(0)
 {
+    setRenderingMode(Flat);
     changed();
 
 }
@@ -363,7 +364,7 @@ bool
 Scene_polylines_item::supportsRenderingMode(RenderingMode m) const {
     return (m == Wireframe ||
             m == Flat ||
-            m == FlatPlusEdges ||
+            m == Flat ||
             m == Points);
 }
 
@@ -386,10 +387,13 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
     }
     if(renderingMode() == Flat)
     {
+        qDebug()<<"plouf";
         vaos[0]->bind();
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         program->bind();
+        QColor temp = this->color();
+        program->setAttributeValue("colors", temp);
         viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
         program->release();
         vaos[0]->release();
