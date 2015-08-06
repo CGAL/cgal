@@ -214,7 +214,7 @@ public Q_SLOTS:
        point_item->point_set()->push_back((*begin)->point());
     }
     
-    scene->addItem(point_item);
+    scene->setSelectedItem( scene->addItem(point_item) );
     scene->itemChanged(point_item);
   }
 
@@ -270,7 +270,7 @@ public Q_SLOTS:
     CGAL::split_graph_into_polylines( edge_graph,
                                       polyline_visitor,
                                       Is_terminal() );
-    scene->addItem(polyline_item);
+    scene->setSelectedItem( scene->addItem(polyline_item) );
     scene->itemChanged(polyline_item);
   }
 
@@ -302,7 +302,7 @@ public Q_SLOTS:
     if(selection_item->export_selected_facets_as_polyhedron(poly_item->polyhedron())) {
       poly_item->setName(QString("%1-facets").arg(selection_item->name()));
       poly_item->changed(); // for init()
-      scene->addItem(poly_item);
+      scene->setSelectedItem( scene->addItem(poly_item) );
       scene->itemChanged(poly_item);
     }
     else {
