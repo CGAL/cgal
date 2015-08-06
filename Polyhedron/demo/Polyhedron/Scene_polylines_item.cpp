@@ -393,7 +393,7 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
         program->bind();
         QColor temp = this->color();
         program->setAttributeValue("colors", temp);
-        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
         program->release();
         vaos[0]->release();
     }
