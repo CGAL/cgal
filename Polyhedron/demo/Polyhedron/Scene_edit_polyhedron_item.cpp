@@ -200,15 +200,15 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
         buffers[6].release();
 
         buffers[7].bind();
-        buffers[7].allocate(color_sphere_ROI.data(),
-                            static_cast<int>(color_sphere_ROI.size()*sizeof(double)));
+        buffers[7].allocate(ROI_color.data(),
+                            static_cast<int>(ROI_color.size()*sizeof(double)));
         program->enableAttributeArray("colors");
         program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
         buffers[7].release();
 
         buffers[8].bind();
-        buffers[8].allocate(centers_ROI.data(),
-                            static_cast<int>(centers_ROI.size()*sizeof(double)));
+        buffers[8].allocate(ROI_points.data(),
+                            static_cast<int>(ROI_points.size()*sizeof(double)));
         program->enableAttributeArray("center");
         program->setAttributeBuffer("center",GL_DOUBLE,0,3);
         buffers[8].release();
@@ -278,15 +278,15 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
         buffers[14].release();
 
         buffers[15].bind();
-        buffers[15].allocate(color_sphere_control.data(),
-                             static_cast<int>(color_sphere_control.size()*sizeof(double)));
+        buffers[15].allocate(control_color.data(),
+                             static_cast<int>(control_color.size()*sizeof(double)));
         program->enableAttributeArray("colors");
         program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
         buffers[15].release();
 
         buffers[16].bind();
-        buffers[16].allocate(centers_control.data(),
-                             static_cast<int>(centers_control.size()*sizeof(double)));
+        buffers[16].allocate(control_points.data(),
+                             static_cast<int>(control_points.size()*sizeof(double)));
         program->enableAttributeArray("center");
         program->setAttributeBuffer("center",GL_DOUBLE,0,3);
         buffers[16].release();
@@ -324,7 +324,6 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
     ROI_points.resize(0);
     control_points.resize(0);
     control_color.resize(0);
-    color_sphere_control.resize(0);
     BOOST_FOREACH(vertex_descriptor vd, deform_mesh.roi_vertices())
     {
         if(!deform_mesh.is_control_vertex(vd))
@@ -334,27 +333,10 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
             ROI_points.push_back(vd->point().z());
         }
     }
-    centers_ROI.resize(ROI_points.size());
-    ROI_color.resize(ROI_points.size());
-    color_sphere_ROI.resize(ROI_points.size());
-    for(int i=0; i<(int)centers_ROI.size(); i++)
-    {
-        centers_ROI[i] = ROI_points[i];
-    }
-    for(int i=0; i<(int)ROI_color.size(); i++)
-    {
-        if(i%3==1)
-        {
-        ROI_color[i]=1.0;
-        color_sphere_ROI[i]=1.0;
+    ROI_color.assign(ROI_points.size(),0);
+    for(std::size_t i=0; i<ROI_color.size()/3; i++)
+      ROI_color[3*i+1]=1.0;
 
-        }
-        else
-        {
-        ROI_color[i]=0.0;
-        color_sphere_ROI[i]=0.0;
-        }
-    }
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
     {
@@ -379,16 +361,6 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
             control_color.push_back(0);
             control_color.push_back(b);
         }
-        centers_control.resize(control_points.size());
-        for(int i=0; i<(int)centers_control.size(); i++)
-        {
-            centers_control[i]=control_points[i];
-        }
-    }
-    color_sphere_control.resize(control_color.size());
-    for(int i=0; i<(int)color_sphere_control.size(); i++)
-    {
-        color_sphere_control[i] = control_color[i];
     }
 
     //The box color

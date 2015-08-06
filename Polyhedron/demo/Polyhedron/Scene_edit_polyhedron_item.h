@@ -270,7 +270,6 @@ private:
   std::vector<unsigned int> edges;
   std::vector<GLdouble> color_lines;
   std::vector<GLdouble> color_bbox;
-  std::vector<GLdouble> color_edges;
   std::vector<GLdouble> ROI_points;
   std::vector<GLdouble> control_points;
   std::vector<GLdouble> ROI_color;
@@ -280,10 +279,6 @@ private:
   std::vector<GLdouble> pos_axis;
   std::vector<GLdouble> pos_sphere;
   std::vector<GLdouble> normals_sphere;
-  std::vector<GLdouble> centers_control;
-  std::vector<GLdouble> centers_ROI;
-  std::vector<GLdouble> color_sphere_ROI;
-  std::vector<GLdouble> color_sphere_control;
   mutable QOpenGLShaderProgram *program;
   mutable QOpenGLShaderProgram bbox_program;
 
