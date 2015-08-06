@@ -32,7 +32,6 @@ namespace CGAL {
 template < class R_ >
 class PointC3
 {
-  typedef typename R_::FT                   FT;
   typedef typename R_::Vector_3             Vector_3;
   typedef typename R_::Point_3              Point_3;
   typedef typename R_::Aff_transformation_3 Aff_transformation_3;
@@ -43,6 +42,7 @@ class PointC3
 public:
   typedef typename Vector_3::Cartesian_const_iterator Cartesian_const_iterator;
   typedef R_                                R;
+  typedef typename R_::FT                   FT;
 
   PointC3() {}
 
