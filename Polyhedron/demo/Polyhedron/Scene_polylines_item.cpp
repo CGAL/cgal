@@ -437,6 +437,8 @@ Scene_polylines_item::draw_points(Viewer_interface* viewer) const {
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
+    QColor temp = this->color();
+    program->setAttributeValue("colors", temp);
     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/4));
     // Clean-up
    vaos[0]->release();
