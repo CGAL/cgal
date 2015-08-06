@@ -387,7 +387,6 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
     }
     if(renderingMode() == Flat)
     {
-        qDebug()<<"plouf";
         vaos[0]->bind();
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
