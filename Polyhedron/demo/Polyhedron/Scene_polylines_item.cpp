@@ -26,6 +26,10 @@ void Scene_polylines_item::create_Sphere(double R)
         positions_spheres.push_back(R);
         positions_spheres.push_back(1.0);
 
+        positions_wire_spheres.push_back(0);
+        positions_wire_spheres.push_back(0);
+        positions_wire_spheres.push_back(R);
+        positions_wire_spheres.push_back(1.0);
 
         normals_spheres.push_back(0);
         normals_spheres.push_back(0);
@@ -43,6 +47,17 @@ void Scene_polylines_item::create_Sphere(double R)
         positions_spheres.push_back(R * z[1]);
         positions_spheres.push_back(1.0);
 
+        positions_wire_spheres.push_back(R * x[1]);
+        positions_wire_spheres.push_back(R * y[1]);
+        positions_wire_spheres.push_back(R * z[1]);
+        positions_wire_spheres.push_back(1.0);
+
+        positions_wire_spheres.push_back(R * x[1]);
+        positions_wire_spheres.push_back(R * y[1]);
+        positions_wire_spheres.push_back(R * z[1]);
+        positions_wire_spheres.push_back(1.0);
+
+
         normals_spheres.push_back(x[1]);
         normals_spheres.push_back(y[1]);
         normals_spheres.push_back(z[1]);
@@ -57,6 +72,23 @@ void Scene_polylines_item::create_Sphere(double R)
         positions_spheres.push_back(R * y[2]);
         positions_spheres.push_back(R * z[2]);
         positions_spheres.push_back(1.0);
+
+        positions_wire_spheres.push_back(R * x[2]);
+        positions_wire_spheres.push_back(R * y[2]);
+        positions_wire_spheres.push_back(R * z[2]);
+        positions_wire_spheres.push_back(1.0);
+
+        positions_wire_spheres.push_back(R * x[2]);
+        positions_wire_spheres.push_back(R * y[2]);
+        positions_wire_spheres.push_back(R * z[2]);
+        positions_wire_spheres.push_back(1.0);
+
+        positions_wire_spheres.push_back(0);
+        positions_wire_spheres.push_back(0);
+        positions_wire_spheres.push_back(R);
+        positions_wire_spheres.push_back(1.0);
+
+
 
         normals_spheres.push_back(x[2]);
         normals_spheres.push_back(y[2]);
@@ -110,6 +142,7 @@ void Scene_polylines_item::create_Sphere(double R)
             positions_spheres.push_back(R * z[2]);
             positions_spheres.push_back(1.0);
 
+
             normals_spheres.push_back(x[2]);
             normals_spheres.push_back(y[2]);
             normals_spheres.push_back(z[2]);
@@ -124,11 +157,10 @@ void Scene_polylines_item::create_Sphere(double R)
             positions_spheres.push_back(R * z[3]);
             positions_spheres.push_back(1.0);
 
+
             normals_spheres.push_back(x[3]);
             normals_spheres.push_back(y[3]);
             normals_spheres.push_back(z[3]);
-
-
 
             positions_spheres.push_back(R * x[1]);
             positions_spheres.push_back(R * y[1]);
@@ -147,6 +179,50 @@ void Scene_polylines_item::create_Sphere(double R)
             normals_spheres.push_back(x[2]);
             normals_spheres.push_back(y[2]);
             normals_spheres.push_back(z[2]);
+
+            positions_wire_spheres.push_back(R * x[0]);
+            positions_wire_spheres.push_back(R * y[0]);
+            positions_wire_spheres.push_back(R * z[0]);
+            positions_wire_spheres.push_back(1.0);
+
+            positions_wire_spheres.push_back(R * x[1]);
+            positions_wire_spheres.push_back(R * y[1]);
+            positions_wire_spheres.push_back(R * z[1]);
+            positions_wire_spheres.push_back(1.0);
+
+            positions_wire_spheres.push_back(R * x[1]);
+            positions_wire_spheres.push_back(R * y[1]);
+            positions_wire_spheres.push_back(R * z[1]);
+            positions_wire_spheres.push_back(1.0);
+
+
+            positions_wire_spheres.push_back(R * x[3]);
+            positions_wire_spheres.push_back(R * y[3]);
+            positions_wire_spheres.push_back(R * z[3]);
+            positions_wire_spheres.push_back(1.0);
+
+
+            positions_wire_spheres.push_back(R * x[3]);
+            positions_wire_spheres.push_back(R * y[3]);
+            positions_wire_spheres.push_back(R * z[3]);
+            positions_wire_spheres.push_back(1.0);
+
+
+            positions_wire_spheres.push_back(R * x[2]);
+            positions_wire_spheres.push_back(R * y[2]);
+            positions_wire_spheres.push_back(R * z[2]);
+            positions_wire_spheres.push_back(1.0);
+
+            positions_wire_spheres.push_back(R * x[2]);
+            positions_wire_spheres.push_back(R * y[2]);
+            positions_wire_spheres.push_back(R * z[2]);
+            positions_wire_spheres.push_back(1.0);
+
+            positions_wire_spheres.push_back(R * x[0]);
+            positions_wire_spheres.push_back(R * y[0]);
+            positions_wire_spheres.push_back(R * z[0]);
+            positions_wire_spheres.push_back(1.0);
+
 
         }
     //Bottom of the sphere
@@ -192,6 +268,39 @@ void Scene_polylines_item::create_Sphere(double R)
         normals_spheres.push_back(x[2]);
         normals_spheres.push_back(y[2]);
         normals_spheres.push_back(z[2]);
+
+        positions_wire_spheres.push_back(0);
+        positions_wire_spheres.push_back(0);
+        positions_wire_spheres.push_back(-R);
+        positions_wire_spheres.push_back(1.0);
+
+        positions_wire_spheres.push_back(R * x[1]);
+        positions_wire_spheres.push_back(R * y[1]);
+        positions_wire_spheres.push_back(R * z[1]);
+        positions_wire_spheres.push_back(1.0);
+
+
+        positions_wire_spheres.push_back(R * x[1]);
+        positions_wire_spheres.push_back(R * y[1]);
+        positions_wire_spheres.push_back(R * z[1]);
+        positions_wire_spheres.push_back(1.0);
+
+        positions_wire_spheres.push_back(R * x[2]);
+        positions_wire_spheres.push_back(R * y[2]);
+        positions_wire_spheres.push_back(R * z[2]);
+        positions_wire_spheres.push_back(1.0);
+
+
+        positions_wire_spheres.push_back(R * x[2]);
+        positions_wire_spheres.push_back(R * y[2]);
+        positions_wire_spheres.push_back(R * z[2]);
+        positions_wire_spheres.push_back(1.0);
+
+        positions_wire_spheres.push_back(0);
+        positions_wire_spheres.push_back(0);
+        positions_wire_spheres.push_back(-R);
+        positions_wire_spheres.push_back(1.0);
+
 
     }
 }
@@ -304,6 +413,7 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
         buffers[7].release();
 
         viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
+        viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
         vaos[2]->release();
         program->release();
     }
@@ -444,88 +554,15 @@ Scene_polylines_item::compute_elements()
             color_spheres.push_back(colors[0]);
             color_spheres.push_back(colors[1]);
             color_spheres.push_back(colors[2]);
+            color_wire_spheres.push_back(colors[0]);
+            color_wire_spheres.push_back(colors[1]);
+            color_wire_spheres.push_back(colors[2]);
+            color_wire_spheres.push_back(colors[0]);
+            color_wire_spheres.push_back(colors[1]);
+            color_wire_spheres.push_back(colors[2]);
         }
         create_Sphere(d->spheres_drawn_radius);
 
-        //Convert the triangle coordinates to lines coordinates for the
-        //Wiremode in the spheres
-        for(int i=0; i< (int) positions_spheres.size();)
-        {
-            //draw triangles
-            if(i< (360/sectors)*12)
-            {
-                //AB
-                for(int j=i; j<i+8; j++)
-                {
-                    positions_wire_spheres.push_back(positions_spheres[j]);
-                }
-                //BC
-                for(int j=i+4; j<i+12; j++)
-                {
-                    positions_wire_spheres.push_back(positions_spheres[j]);
-                }
-                //CA
-                for(int j=i+8; j<i+16; j++)
-                {
-                    positions_wire_spheres.push_back(positions_spheres[j%12]);
-                }
-                i+=12;
-            }
-            //draw quads
-            else if((360/sectors) * 3 * 4 < i && i < (int)positions_spheres.size() - (360/sectors) * 3 * 4)
-            {
-                //AB
-                for(int j=i; j<i+8; j++)
-                {
-                    positions_wire_spheres.push_back(positions_spheres[j]);
-                }
-                //BD
-                for(int j=i+4; j<i+8; j++)
-                {
-                    positions_wire_spheres.push_back(positions_spheres[j]);
-                }
-                for(int j=i+12; j<i+16; j++)
-                {
-                    positions_wire_spheres.push_back(positions_spheres[j]);
-                }
-                //DC
-                for(int j=i+12; j<i+16; j++)
-                {
-                    positions_wire_spheres.push_back(positions_spheres[j]);
-                }
-                for(int j=i+8; j<i+12; j++)
-                {
-                    positions_wire_spheres.push_back(positions_spheres[j]);
-                }
-                //CA
-                for(int j=i+8; j<i+16; j++)
-                {
-                    positions_wire_spheres.push_back(positions_spheres[j%12]);
-                }
-                i+=24;
-            }
-            //draw triangles
-            else
-            {
-                //AB
-                for(int j=i; j<i+8; j++)
-                {
-                    positions_wire_spheres.push_back(positions_spheres[j]);
-                }
-                //BC
-                for(int j=i+4; j<i+12; j++)
-                {
-                    positions_wire_spheres.push_back(positions_spheres[j]);
-                }
-                //CA
-                for(int j=i+8; j<i+16; j++)
-                {
-                    positions_wire_spheres.push_back(positions_spheres[j%12]);
-                }
-                i+=12;
-            }
-
-        }
     }
 
 
@@ -539,6 +576,7 @@ Scene_polylines_item::Scene_polylines_item()
     ,rings(18)
     ,sectors(36)
 {
+    setRenderingMode(Flat);
     changed();
 
 }
@@ -618,7 +656,7 @@ Scene_polylines_item::toolTip() const {
 bool
 Scene_polylines_item::supportsRenderingMode(RenderingMode m) const {
     return (m == Wireframe ||
-            m == FlatPlusEdges ||
+            m == Flat ||
             m == Points);
 }
 
@@ -638,6 +676,16 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
                                     static_cast<GLsizei>(positions_spheres.size()/4), nbSpheres);
         program->release();
         vaos[1]->release();
+    }
+    if(renderingMode() == Flat)
+    {
+        vaos[0]->bind();
+        attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+        program->bind();
+        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
+        program->release();
+        vaos[0]->release();
     }
 }
 

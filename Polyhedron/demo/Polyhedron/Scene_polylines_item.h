@@ -98,6 +98,7 @@ private:
     std::vector<float> positions_center;
     std::vector<float> normals_spheres;
     std::vector<float> color_spheres;
+    std::vector<float> color_wire_spheres;
 
 
   mutable QOpenGLShaderProgram *program;
