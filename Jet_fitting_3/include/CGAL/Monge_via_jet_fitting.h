@@ -367,9 +367,11 @@ compute_PCA(InputIterator begin, InputIterator end)
   // 0
   // 1 3
   // 2 4 5
-  CGAL::cpp11::array<double, 6> cov = {xx,xy,xz,yy,yz,zz};
-  CGAL::cpp11::array<double, 3> eigenvalues = { 0. };
-  CGAL::cpp11::array<double, 9> eigenvectors = { 0. };
+  CGAL::cpp11::array<double, 6> cov = {{xx,xy,xz,yy,yz,zz}};
+  CGAL::cpp11::array<double, 3> eigenvalues = {{ 0., 0., 0. }};
+  CGAL::cpp11::array<double, 9> eigenvectors = {{ 0., 0., 0.,
+						  0., 0., 0.,
+						  0., 0., 0. }};
 
   // solve for eigenvalues and eigenvectors.
   CGAL::Eigen_vcm_traits::diagonalize_selfadjoint_covariance_matrix(cov,
