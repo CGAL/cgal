@@ -121,7 +121,7 @@ private:
     size_type vsize = 0, rss = 0;
 
     std::ifstream f("/proc/self/stat");
-    CGAL_assertion(f);
+    CGAL_assertion(!f.bad());
 
     f >> pid >> name >> state >> ppid >> pgrp >> session >> tty >> tpgid >> flags;
     f >> minflt >> cminflt >> majflt >> cmajflt >> utime >> stime >> cutime;
