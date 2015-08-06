@@ -111,7 +111,8 @@ public Q_SLOTS:
     if(scene->numberOfEntries() < 2) {
       Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
       if(!poly_item || selection_item_map.find(poly_item) != selection_item_map.end()) { return; }
-      scene->addItem(new Scene_polyhedron_selection_item(poly_item, mw));
+      int item_id = scene->addItem(new Scene_polyhedron_selection_item(poly_item, mw));
+      scene->setSelectedItem(item_id);
     }
   }
   // Select all
@@ -168,7 +169,8 @@ public Q_SLOTS:
     }
     // all other arrangements (putting inside selection_item_map), setting names etc,
     // other params (e.g. k_ring) will be set inside new_item_created
-    scene->addItem(new Scene_polyhedron_selection_item(poly_item, mw));
+    int item_id = scene->addItem(new Scene_polyhedron_selection_item(poly_item, mw));
+    scene->setSelectedItem(item_id);
   }
   void on_Selection_type_combo_box_changed(int index) {
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
