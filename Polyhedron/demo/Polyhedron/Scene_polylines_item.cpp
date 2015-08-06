@@ -402,7 +402,6 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
 // Wireframe OpenGL drawing
 void 
 Scene_polylines_item::draw_edges(Viewer_interface* viewer) const {
-glLineWidth(2.5f);
     if(!are_buffers_filled)
         initialize_buffers(viewer);
 
