@@ -17,6 +17,12 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <cstdlib>
 
+// Make sure squared_radius can be called through ADL without
+// triggering an access checking hard error when one of the
+// internal::squared_radius functions is instantiated. This issue only
+// shows up on clang with std=c++03 (the default).See
+// https://github.com/CGAL/cgal/issues/129
+
 int main()
 {
   try {
