@@ -28,7 +28,7 @@ public:
 void
 Scene_polylines_item::create_Sphere(double R)
 {
-  create_flat_and_wire_sphere(R, positions_spheres, normals_spheres, positions_wire_spheres, true);
+  create_flat_and_wire_sphere(R, positions_spheres, normals_spheres, positions_wire_spheres);
 }
 
 void

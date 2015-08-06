@@ -189,7 +189,7 @@ void create_flat_and_wire_sphere(double R,
   const int rings=18;
   const int sectors=38;
 
-  create_flat_sphere(R, positions_spheres, normals_spheres, four_pos);
+  create_flat_sphere(R, positions_spheres, normals_spheres);
   
   float T, P;
   float x[4],y[4],z[4];
