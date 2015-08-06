@@ -103,10 +103,6 @@ private:
 
   mutable QOpenGLShaderProgram *program;
   mutable   GLuint nbSpheres;
-    //The more small they are, the more precise the Sphere will be.
-    // Must be a multiple of 360 and 180.
-    int rings;
-    int sectors;
     typedef std::map<Point_3, int> Point_to_int_map;
     typedef Point_to_int_map::iterator iterator;
     void create_Sphere(double);
