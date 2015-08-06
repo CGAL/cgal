@@ -323,6 +323,8 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
 {
     ROI_points.resize(0);
     control_points.resize(0);
+    control_color.resize(0);
+    color_sphere_control.resize(0);
     BOOST_FOREACH(vertex_descriptor vd, deform_mesh.roi_vertices())
     {
         if(!deform_mesh.is_control_vertex(vd))
@@ -364,27 +366,18 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
                 compute_bbox(hgb_data->bbox);
             }
         }
-        // draw control vertices
-        if(hgb_data == active_group)
-        {
-            //set color to red
-            control_color.push_back(1.0);
-            control_color.push_back(0.0);
-            control_color.push_back(0.0);
-        }
-        else
-        {
-            //set color to blue
-            control_color.push_back(0.0);
-            control_color.push_back(0.0);
-            control_color.push_back(1.0);
-        }
+
+        const double r=hgb_data == active_group?1:0;
+        const double b=hgb_data == active_group?0:1;
+
         for(std::vector<vertex_descriptor>::const_iterator hb = hgb_data->ctrl_vertices_group.begin(); hb != hgb_data->ctrl_vertices_group.end(); ++hb)
         {
             control_points.push_back((*hb)->point().x());
             control_points.push_back((*hb)->point().y());
             control_points.push_back((*hb)->point().z());
-
+            control_color.push_back(r);
+            control_color.push_back(0);
+            control_color.push_back(b);
         }
         centers_control.resize(control_points.size());
         for(int i=0; i<(int)centers_control.size(); i++)
