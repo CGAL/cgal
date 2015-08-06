@@ -1230,9 +1230,9 @@ void Scene::cut_segment_plane()
     changed();
 }
 
-void Scene::cutting_plane()
+void Scene::cutting_plane(bool override)
 {
-    if(ready_to_cut)
+    if(ready_to_cut || override)
     {
         ready_to_cut = false;
         switch( m_cut_plane )

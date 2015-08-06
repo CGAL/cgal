@@ -18,6 +18,7 @@ void Viewer::setScene(Scene* pScene)
 
 void Viewer::draw()
 {
+    glEnable(GL_DEPTH_TEST);
   QGLViewer::draw();
   if(m_pScene != NULL)
   {
@@ -39,7 +40,7 @@ void Viewer::mousePressEvent(QMouseEvent* e)
   {
     m_pScene->set_fast_distance(true);
     // Refresh distance function
-    m_pScene->cutting_plane();
+    m_pScene->cutting_plane(true);
     m_custom_mouse = true;
   }
   
@@ -53,7 +54,7 @@ void Viewer::mouseReleaseEvent(QMouseEvent* e)
     m_pScene->set_fast_distance(false);
     // Recompute distance function
     QApplication::setOverrideCursor(Qt::WaitCursor);
-    m_pScene->cutting_plane();
+    m_pScene->cutting_plane(true);
     QApplication::restoreOverrideCursor();
       
     m_custom_mouse = false;
