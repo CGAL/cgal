@@ -190,6 +190,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(scene, SIGNAL(updated_bbox()),
           this, SLOT(updateViewerBBox()));
 
+  connect(scene, SIGNAL(selectionChanged(int)),
+          this, SLOT(selectSceneItem(int)));
+
   connect(sceneView->selectionModel(), 
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(updateInfo()));

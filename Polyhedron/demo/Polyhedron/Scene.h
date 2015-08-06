@@ -118,6 +118,7 @@ public Q_SLOTS:
   void setSelectedItem(int i )
   {
     selected_item = i;
+    Q_EMIT selectionChanged(i);
   };
 
   void setSelectedItemsList(QList<int> l )
@@ -136,6 +137,7 @@ Q_SIGNALS:
   void updated();
   void itemAboutToBeDestroyed(Scene_item*);
   void selectionRay(double, double, double, double, double, double);
+  void selectionChanged(int i);
 
 private Q_SLOTS:
   void setSelectionRay(double, double, double, double, double, double);
