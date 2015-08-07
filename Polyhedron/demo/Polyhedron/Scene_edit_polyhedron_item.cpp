@@ -491,7 +491,10 @@ void Scene_edit_polyhedron_item::remesh()
 
   //reset ROI from its outside border roi_border
   clear_roi();
-  delete_ctrl_vertices_group();
+  do{
+    delete_ctrl_vertices_group(false);
+  }
+  while(!ctrl_vertex_frame_map.empty());
 
   poly_item->update_vertex_indices();
   poly_item->update_halfedge_indices();
@@ -504,7 +507,9 @@ void Scene_edit_polyhedron_item::remesh()
   reset_drawing_data();
   compute_normals_and_vertices();
 
-  poly_item->changed(); // now we need to call poly_item changed to delete AABB tree 
+  poly_item->invalidate_aabb_tree(); // invalidate the AABB tree
+  create_ctrl_vertices_group();
+
   Q_EMIT itemChanged();
 }
 
