@@ -14,6 +14,7 @@ void create_flat_sphere(double R,
   // Must be a multiple of 360 and 180.
   const int rings=18;
   const int sectors=38;
+  const float to_rad = static_cast<float>(CGAL_PI / 180.0);
 
   float T, P;
   float x[4],y[4],z[4];
@@ -30,8 +31,8 @@ void create_flat_sphere(double R,
     normals_spheres.push_back(0);
     normals_spheres.push_back(1);
 
-    P = rings*CGAL_PI/180.0;
-    T = t*CGAL_PI/180.0;
+    P = rings*to_rad;
+    T = t*to_rad;
     x[1] = sin(P) * cos(T) ;
     y[1] = sin(P) * sin(T) ;
     z[1] = cos(P);
@@ -44,8 +45,8 @@ void create_flat_sphere(double R,
     normals_spheres.push_back(z[1]);
 
     //
-    P = rings*CGAL_PI/180.0;
-    T = (t+sectors)*CGAL_PI/180.0;
+    P = rings*to_rad;
+    T = (t+sectors)*to_rad;
     x[2] = sin(P) * cos(T) ;
     y[2] = sin(P) * sin(T) ;
     z[2] = cos(P);
@@ -63,8 +64,8 @@ void create_flat_sphere(double R,
     for(int t=0; t<360; t+=sectors)
     {
       //A
-      P = p*CGAL_PI/180.0;
-      T = t*CGAL_PI/180.0;
+      P = p*to_rad;
+      T = t*to_rad;
       x[0] = sin(P) * cos(T) ;
       y[0] = sin(P) * sin(T) ;
       z[0] = cos(P);
@@ -78,8 +79,8 @@ void create_flat_sphere(double R,
       normals_spheres.push_back(z[0]);
 
       //B
-      P = (p+rings)*CGAL_PI/180.0;
-      T = t*CGAL_PI/180.0;
+      P = (p+rings)*to_rad;
+      T = t*to_rad;
       x[1] = sin(P) * cos(T) ;
       y[1] = sin(P) * sin(T) ;
       z[1] = cos(P);
@@ -92,8 +93,8 @@ void create_flat_sphere(double R,
       normals_spheres.push_back(z[1]);
 
       //C
-      P = p*CGAL_PI/180.0;
-      T = (t+sectors)*CGAL_PI/180.0;
+      P = p*to_rad;
+      T = (t+sectors)*to_rad;
       x[2] = sin(P) * cos(T) ;
       y[2] = sin(P) * sin(T) ;
       z[2] = cos(P);
@@ -106,8 +107,8 @@ void create_flat_sphere(double R,
       normals_spheres.push_back(y[2]);
       normals_spheres.push_back(z[2]);
       //D
-      P = (p+rings)*CGAL_PI/180.0;
-      T = (t+sectors)*CGAL_PI/180.0;
+      P = (p+rings)*to_rad;
+      T = (t+sectors)*to_rad;
       x[3] = sin(P) * cos(T) ;
       y[3] = sin(P) * sin(T) ;
       z[3] = cos(P);
@@ -149,8 +150,8 @@ void create_flat_sphere(double R,
     normals_spheres.push_back(-1);
 
 
-    P = (180-rings)*CGAL_PI/180.0;
-    T = t*CGAL_PI/180.0;
+    P = (180-rings)*to_rad;
+    T = t*to_rad;
     x[1] = sin(P) * cos(T) ;
     y[1] = sin(P) * sin(T) ;
     z[1] = cos(P);
@@ -163,8 +164,8 @@ void create_flat_sphere(double R,
     normals_spheres.push_back(z[1]);
 
 
-    P = (180-rings)*CGAL_PI/180.0;
-    T = (t+sectors)*CGAL_PI/180.0;
+    P = (180-rings)*to_rad;
+    T = (t+sectors)*to_rad;
     x[2] = sin(P) * cos(T) ;
     y[2] = sin(P) * sin(T) ;
     z[2] = cos(P);
@@ -189,6 +190,7 @@ void create_flat_and_wire_sphere(double R,
   // Must be a multiple of 360 and 180.
   const int rings=18;
   const int sectors=38;
+  const float to_rad = static_cast<float>(CGAL_PI / 180.0);
 
   create_flat_sphere(R, positions_spheres, normals_spheres);
   
@@ -202,8 +204,8 @@ void create_flat_and_wire_sphere(double R,
     positions_wire_spheres.push_back(0);
     positions_wire_spheres.push_back(R);
 
-    P = rings*CGAL_PI/180.0;
-    T = t*CGAL_PI/180.0;
+    P = rings*to_rad;
+    T = t*to_rad;
     x[1] = sin(P) * cos(T) ;
     y[1] = sin(P) * sin(T) ;
     z[1] = cos(P);
@@ -217,8 +219,8 @@ void create_flat_and_wire_sphere(double R,
     positions_wire_spheres.push_back(R * z[1]);
 
     //
-    P = rings*CGAL_PI/180.0;
-    T = (t+sectors)*CGAL_PI/180.0;
+    P = rings*to_rad;
+    T = (t+sectors)*to_rad;
     x[2] = sin(P) * cos(T) ;
     y[2] = sin(P) * sin(T) ;
     z[2] = cos(P);
@@ -240,29 +242,29 @@ void create_flat_and_wire_sphere(double R,
     for(int t=0; t<360; t+=sectors)
     {
       //A
-      P = p*CGAL_PI/180.0;
-      T = t*CGAL_PI/180.0;
+      P = p*to_rad;
+      T = t*to_rad;
       x[0] = sin(P) * cos(T) ;
       y[0] = sin(P) * sin(T) ;
       z[0] = cos(P);
 
       //B
-      P = (p+rings)*CGAL_PI/180.0;
-      T = t*CGAL_PI/180.0;
+      P = (p+rings)*to_rad;
+      T = t*to_rad;
       x[1] = sin(P) * cos(T) ;
       y[1] = sin(P) * sin(T) ;
       z[1] = cos(P);
 
       //C
-      P = p*CGAL_PI/180.0;
-      T = (t+sectors)*CGAL_PI/180.0;
+      P = p*to_rad;
+      T = (t+sectors)*to_rad;
       x[2] = sin(P) * cos(T) ;
       y[2] = sin(P) * sin(T) ;
       z[2] = cos(P);
 
       //D
-      P = (p+rings)*CGAL_PI/180.0;
-      T = (t+sectors)*CGAL_PI/180.0;
+      P = (p+rings)*to_rad;
+      T = (t+sectors)*to_rad;
       x[3] = sin(P) * cos(T) ;
       y[3] = sin(P) * sin(T) ;
       z[3] = cos(P);
@@ -313,14 +315,14 @@ void create_flat_and_wire_sphere(double R,
   //Bottom of the sphere
   for(int t=0; t<360; t+=sectors)
   {
-    P = (180-rings)*CGAL_PI/180.0;
-    T = t*CGAL_PI/180.0;
+    P = (180-rings)*to_rad;
+    T = t*to_rad;
     x[1] = sin(P) * cos(T) ;
     y[1] = sin(P) * sin(T) ;
     z[1] = cos(P);
 
-    P = (180-rings)*CGAL_PI/180.0;
-    T = (t+sectors)*CGAL_PI/180.0;
+    P = (180-rings)*to_rad;
+    T = (t+sectors)*to_rad;
     x[2] = sin(P) * cos(T) ;
     y[2] = sin(P) * sin(T) ;
     z[2] = cos(P);
