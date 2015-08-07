@@ -229,6 +229,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
   get_base_1_2(bases); // no need to check since we call on_Update_plane_button_clicked
   Epic_kernel::Vector_3 base_1(bases[0], bases[1], bases[2]);
   Epic_kernel::Vector_3 base_2(bases[3], bases[4], bases[5]);
+  const Epic_kernel::Vector_3 normal = CGAL::cross_product(base_1, base_2);
 
   // get distance between planes
   bool to_double_ok = true;
@@ -255,7 +256,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
 
     //Epic_kernel::Plane_3 plane(n[0], n[1],  n[2], - n * new_pos);
     Epic_kernel::Point_3 new_pos_cgal(new_pos[0], new_pos[1], new_pos[2]);
-    Epic_kernel::Plane_3 plane(new_pos_cgal, new_pos_cgal + base_1, new_pos_cgal + base_2);
+    Epic_kernel::Plane_3 plane(new_pos_cgal, normal);
 
     if(!CGAL::do_intersect(cgal_bbox, plane)) { 
       if(dir == -1) { break; }
