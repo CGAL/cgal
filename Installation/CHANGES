@@ -53,8 +53,7 @@ Release date: September 2015
     surface meshes. Given a set of source points on the surface, this package
     provides a data structure that can efficiently provides the shortest path
     from any point on the surface to the sources points. There is no
-    restriction on the genus or the number of connnected components of the
-    mesh.
+    restriction on the genus or the number of connected components of the mesh.
 
 
 * Triangulated Surface Mesh Skeletonization (new package)
@@ -149,6 +148,18 @@ Release date: September 2015
         These new models also support the convex decomposition of polygons with
         holes.
 
+
+
+* 3D Periodic Triangulations
+
+  - Rename Periodic_3_triangulation_traits_3
+    Periodic_3_Delaunay_triangulation_traits_3.
+
+  - Rename the concept Periodic_3TriangulationTraits_3
+    Periodic_3DelaunayTriangulationTraits_3.
+
+  - Create Periodic_3_triangulation_traits_3 and the concept
+    Periodic_3TriangulationTraits_3.
 
 
 
@@ -492,6 +503,11 @@ Release date: October 2014
     removal of point ranges.
 
 
+* 3D Periodic Triangulations
+
+  - Add a method to locate point with inexact predicates.
+
+
 * 3D Mesh Generation
 
   - Add a new constructor for the class Labeled_mesh_domain_3 which takes an
@@ -634,20 +650,6 @@ Release date: April 2014
   - Add different overloads of the function insert_constraints that inserts a
     range of points and segments, or a range of segments. These functions uses
     the spatial sorting in order to speed up the time needed for the insertion.
-
-
-* 3D Periodic Triangulations
-
-  - Add a method to locate point with inexact predicates.
-
-  - Rename Periodic_3_triangulation_traits_3
-    Periodic_3_Delaunay_triangulation_traits_3.
-
-  - Rename the concept Periodic_3TriangulationTraits_3
-    Periodic_3DelaunayTriangulationTraits_3.
-
-  - Create Periodic_3_triangulation_traits_3 and the concept
-    Periodic_3TriangulationTraits_3.
 
 
 * 3D Alpha Shapes
