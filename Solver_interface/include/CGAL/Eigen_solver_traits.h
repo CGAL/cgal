@@ -54,6 +54,11 @@ namespace internal {
   };
 
   template <class FT,class EigenMatrix>
+  struct Get_eigen_matrix< ::Eigen::LeastSquaresConjugateGradient<EigenMatrix>,FT>{
+    typedef Eigen_sparse_matrix<FT> type;
+  };
+
+  template <class FT,class EigenMatrix>
   struct Get_eigen_matrix< ::Eigen::SimplicialCholesky<EigenMatrix>,FT>{
     typedef Eigen_sparse_symmetric_matrix<FT> type;
   };
