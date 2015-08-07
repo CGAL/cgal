@@ -1,3 +1,5 @@
+//#define CGAL_PMP_REMESHING_VERBOSE
+
 #include "opengl_tools.h"
 #include "create_sphere.h"
 #include "Scene_edit_polyhedron_item.h"
@@ -12,7 +14,6 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   : Scene_item(19,8),
     ui_widget(ui_widget),
     poly_item(poly_item),
-    deform_mesh(*(poly_item->polyhedron()), Deform_mesh::Vertex_index_map(), Deform_mesh::Hedge_index_map(), Array_based_vertex_point_map(&positions)),
     is_rot_free(true),
     own_poly_item(true),
     k_ring_selector(poly_item, mw, Scene_polyhedron_item_k_ring_selection::Active_handle::VERTEX, true)
@@ -24,6 +25,11 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 
   poly_item->set_color_vector_read_only(true); // to prevent recomputation of color vector in changed()
   poly_item->update_vertex_indices();
+
+  deform_mesh = new Deform_mesh(*(poly_item->polyhedron()),
+                                Deform_mesh::Vertex_index_map(),
+                                Deform_mesh::Hedge_index_map(),
+                                Array_based_vertex_point_map(&positions));
 
   length_of_axis = bbox().diagonal_length() / 15.0;
 
@@ -39,36 +45,8 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   startTimer(0);
 
   // Required for drawing functionality
-  positions.resize(num_vertices(*polyhedron())*3);
-  normals.resize(positions.size());
-  Polyhedron::Vertex_iterator vb, ve;
-  std::size_t counter = 0;
-  for(vb=polyhedron()->vertices_begin(), ve = polyhedron()->vertices_end();vb != ve; ++vb, ++counter) {
-    positions[counter*3] = vb->point().x();
-    positions[counter*3+1] = vb->point().y();
-    positions[counter*3+2] = vb->point().z();
+  reset_drawing_data();
 
-    const Polyhedron::Traits::Vector_3& n = 
-      CGAL::Polygon_mesh_processing::compute_vertex_normal(vb, deform_mesh.halfedge_graph());
-
-    normals[counter*3] = n.x();
-    normals[counter*3+1] = n.y();
-    normals[counter*3+2] = n.z();
-  }
-  tris.resize(polyhedron()->size_of_facets()*3);
-  counter = 0;
-  for(Polyhedron::Facet_handle fb = polyhedron()->facets_begin(); fb != polyhedron()->facets_end(); ++fb, ++counter) {
-    tris[counter*3] =  static_cast<unsigned int>(fb->halfedge()->vertex()->id());
-    tris[counter*3+1] = static_cast<unsigned int>(fb->halfedge()->next()->vertex()->id());
-    tris[counter*3+2] = static_cast<unsigned int>(fb->halfedge()->prev()->vertex()->id());
-  }
-
-  edges.resize(polyhedron()->size_of_halfedges());
-  counter = 0;
-  for(Polyhedron::Edge_iterator eb = polyhedron()->edges_begin(); eb != polyhedron()->edges_end(); ++eb, ++counter) {
-    edges[counter*2] = static_cast<unsigned int>(eb->vertex()->id());
-    edges[counter*2+1] = static_cast<unsigned int>(eb->opposite()->vertex()->id());
-  }
     //Generates an integer which will be used as ID for each buffer
 
     const char vertex_shader_source_bbox[] =
@@ -103,6 +81,14 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
     bbox_program.addShaderFromSourceCode(QOpenGLShader::Fragment,fragment_shader_source);
     bbox_program.link();
 
+    ui_widget->remeshing_iterations_spinbox->setValue(1);
+
+    ui_widget->remeshing_edge_length_spinbox->setValue(length_of_axis);
+    ui_widget->remeshing_edge_length_spinbox->setDisabled(true);
+    ui_widget->remeshingEdgeLengthInput_checkBox->setChecked(false);
+    connect(ui_widget->remeshingEdgeLengthInput_checkBox, SIGNAL(toggled(bool)),
+            ui_widget->remeshing_edge_length_spinbox, SLOT(setEnabled(bool)));
+
     //the spheres :
     create_Sphere(length_of_axis/15.0);
     changed();
@@ -115,8 +101,9 @@ Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
   {
     delete_ctrl_vertices_group(false);
   }
-  if (own_poly_item) delete poly_item;
 
+  delete deform_mesh;
+  if (own_poly_item) delete poly_item;
 }
 /////////////////////////////
 /// For the Shader gestion///
@@ -320,14 +307,60 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
     are_buffers_filled = true;
 }
 
+void Scene_edit_polyhedron_item::reset_drawing_data()
+{
+  positions.clear();
+  positions.resize(num_vertices(*polyhedron()) * 3);
+
+  normals.clear();
+  normals.resize(positions.size());
+
+  std::size_t counter = 0;
+  BOOST_FOREACH(vertex_descriptor vb, vertices(*polyhedron()))
+  {
+    positions[counter * 3] = vb->point().x();
+    positions[counter * 3 + 1] = vb->point().y();
+    positions[counter * 3 + 2] = vb->point().z();
+
+    const Polyhedron::Traits::Vector_3& n =
+      CGAL::Polygon_mesh_processing::compute_vertex_normal(vb, deform_mesh->halfedge_graph());
+    normals[counter * 3] = n.x();
+    normals[counter * 3 + 1] = n.y();
+    normals[counter * 3 + 2] = n.z();
+
+    ++counter;
+  }
+
+  tris.clear();
+  tris.resize(polyhedron()->size_of_facets() * 3);
+  counter = 0;
+  BOOST_FOREACH(face_descriptor fb, faces(*polyhedron()))
+  {
+    tris[counter * 3] = static_cast<unsigned int>(fb->halfedge()->vertex()->id());
+    tris[counter * 3 + 1] = static_cast<unsigned int>(fb->halfedge()->next()->vertex()->id());
+    tris[counter * 3 + 2] = static_cast<unsigned int>(fb->halfedge()->prev()->vertex()->id());
+    ++counter;
+  }
+
+  edges.clear();
+  edges.resize(polyhedron()->size_of_halfedges());
+  counter = 0;
+  for (Polyhedron::Edge_iterator eb = polyhedron()->edges_begin();
+       eb != polyhedron()->edges_end(); ++eb, ++counter)
+  {
+    edges[counter * 2] = static_cast<unsigned int>(eb->vertex()->id());
+    edges[counter * 2 + 1] = static_cast<unsigned int>(eb->opposite()->vertex()->id());
+  }
+}
+
 void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
 {
     ROI_points.resize(0);
     control_points.resize(0);
     control_color.resize(0);
-    BOOST_FOREACH(vertex_descriptor vd, deform_mesh.roi_vertices())
+    BOOST_FOREACH(vertex_descriptor vd, deform_mesh->roi_vertices())
     {
-        if(!deform_mesh.is_control_vertex(vd))
+        if(!deform_mesh->is_control_vertex(vd))
         {//gl_draw_point( vd->point() );
             ROI_points.push_back(vd->point().x());
             ROI_points.push_back(vd->point().y());
@@ -396,9 +429,82 @@ void Scene_edit_polyhedron_item::deform()
 
   for(Ctrl_vertices_group_data_list::iterator it = ctrl_vertex_frame_map.begin(); it != ctrl_vertex_frame_map.end(); ++it)
   { it->set_target_positions(); }
-  deform_mesh.deform();
+  deform_mesh->deform();
 
   poly_item->invalidate_aabb_tree(); // invalidate the AABB-tree of the poly_item
+  Q_EMIT itemChanged();
+}
+
+void Scene_edit_polyhedron_item::remesh()
+{
+  const Polyhedron& g = deform_mesh->halfedge_graph();
+  Array_based_vertex_point_map vpmap(&positions);
+
+  std::set<face_descriptor> roi_facets;
+  std::set<halfedge_descriptor> roi_halfedges;
+  BOOST_FOREACH(vertex_descriptor v, deform_mesh->roi_vertices())
+  {
+    BOOST_FOREACH(face_descriptor fv, CGAL::faces_around_target(halfedge(v, g), g))
+    {
+      roi_facets.insert(fv);
+      BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(fv, g), g))
+      {
+        if (roi_halfedges.find(opposite(h, g)) == roi_halfedges.end()) //not already computed
+          roi_halfedges.insert(h);
+      }
+    }
+  }
+
+  bool automatic_target_length = !ui_widget->remeshingEdgeLengthInput_checkBox->isChecked();
+  double sum_len = 0.;
+  std::vector<halfedge_descriptor> roi_border;
+  BOOST_FOREACH(halfedge_descriptor h, roi_halfedges)
+  {
+    if (roi_halfedges.find(opposite(h, g)) == roi_halfedges.end())
+    {
+      roi_border.push_back(opposite(h, g));
+      if (automatic_target_length)
+        sum_len += CGAL::sqrt(CGAL::squared_distance(
+                      get(vpmap, source(h, g)), get(vpmap, target(h, g))));
+    }
+  }
+
+  if (roi_border.empty())
+    automatic_target_length = false;
+
+  double target_length = automatic_target_length
+    ? sum_len / (0. + roi_border.size())
+    : ui_widget->remeshing_edge_length_spinbox->value();
+
+  unsigned int nb_iter = ui_widget->remeshing_iterations_spinbox->value();
+
+  std::cout << "Remeshing...";
+  CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
+    *polyhedron()
+    , roi_facets
+    , target_length
+    , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+    .protect_constraints(false) //no edge_is_constrained_map
+    .vertex_point_map(vpmap)
+    );
+  std::cout << "done." << std::endl;
+
+  //reset ROI from its outside border roi_border
+  clear_roi();
+  delete_ctrl_vertices_group();
+
+  poly_item->update_vertex_indices();
+  poly_item->update_halfedge_indices();
+  delete deform_mesh;
+  deform_mesh = new Deform_mesh(*(poly_item->polyhedron()),
+                                Deform_mesh::Vertex_index_map(),
+                                Deform_mesh::Hedge_index_map(),
+                                vpmap);
+
+  reset_drawing_data();
+  compute_normals_and_vertices();
+
+  poly_item->changed(); // now we need to call poly_item changed to delete AABB tree 
   Q_EMIT itemChanged();
 }
 
@@ -446,11 +552,15 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
   // check state changes between old and current state
   bool ctrl_pressed_now = state.ctrl_pressing && !old_state.ctrl_pressing;
   bool ctrl_released_now = !state.ctrl_pressing && old_state.ctrl_pressing;
-  if(ctrl_pressed_now || ctrl_released_now || event->type() == QEvent::HoverMove) 
+  if(ctrl_pressed_now || ctrl_released_now || event->type() == QEvent::HoverMove)
   {// activate a handle manipulated frame
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
     bool need_repaint = activate_closest_manipulated_frame(p.x(), p.y());
+
+    if (ctrl_released_now && ui_widget->RemeshingCheckBox->isChecked()){
+      remesh();
+    }
 
     if(need_repaint) { Q_EMIT itemChanged(); }
   }
@@ -489,8 +599,40 @@ void Scene_edit_polyhedron_item::draw(Viewer_interface* viewer) const {
     vaos[0]->release();
     draw_edges(viewer);
     draw_ROI_and_control_vertices(viewer);
+    if(ui_widget->ActivateFixedPlaneCheckBox->isChecked())
+      draw_frame_plane(viewer);
+}
 
+void Scene_edit_polyhedron_item::draw_frame_plane(Viewer_interface* viewer) const
+{
+    for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
+    {
+        if(hgb_data->frame == viewer->manipulatedFrame())
+        {
+          const double diag = scene_diag();
+          glColor3f(0,0,0);
+          qglviewer::Vec base1(1,0,0);
+          qglviewer::Vec base2(0,1,0);
 
+          qglviewer::Quaternion orientation=hgb_data->frame->orientation();
+          base1=orientation.rotate(base1);
+          base2=orientation.rotate(base2);
+
+          qglviewer::Vec center = hgb_data->calculate_initial_center();
+
+          qglviewer::Vec p1 = center - diag*base1 - diag*base2;
+          qglviewer::Vec p2 = center + diag*base1 - diag*base2;
+          qglviewer::Vec p3 = center + diag*base1 + diag*base2;
+          qglviewer::Vec p4 = center - diag*base1 + diag*base2;
+
+          glBegin(GL_LINE_LOOP);
+            glVertex3f(p1.x, p1.y, p1.z);
+            glVertex3f(p2.x, p2.y, p2.z);
+            glVertex3f(p3.x, p3.y, p3.z);
+            glVertex3f(p4.x, p4.y, p4.z);
+          glEnd();
+        }
+    }
 }
 
 void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface* viewer) const {

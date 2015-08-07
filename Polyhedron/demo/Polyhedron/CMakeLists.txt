@@ -77,6 +77,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
   qt5_wrap_ui( meshingUI_FILES  Meshing_dialog.ui )
   qt5_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
+  qt5_wrap_ui( isotropicRemeshingUI_FILES Polyhedron_demo_isotropic_remeshing_dialog.ui)
   qt5_wrap_ui( PreferencesUI_FILES   Preferences.ui )
   qt5_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
   qt5_wrap_ui( point_set_selectionUI_FILES Point_set_selection_widget.ui)
@@ -456,6 +457,14 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   
   polyhedron_demo_plugin(shortest_path_plugin Polyhedron_demo_shortest_path_plugin ${shortestPathUI_FILES})
   target_link_libraries(shortest_path_plugin scene_polyhedron_item scene_polylines_item scene_polyhedron_selection_item scene_polyhedron_shortest_path_item scene_basic_objects)
+  
+  polyhedron_demo_plugin(detect_sharp_edges_plugin Polyhedron_demo_detect_sharp_edges_plugin)
+  target_link_libraries(detect_sharp_edges_plugin scene_polyhedron_item)
+  
+  
+  polyhedron_demo_plugin(isotropic_remeshing_plugin Polyhedron_demo_isotropic_remeshing_plugin  ${isotropicRemeshingUI_FILES})
+  target_link_libraries(isotropic_remeshing_plugin  scene_polyhedron_item scene_polyhedron_selection_item)
+  
 #
 # Exporting
 #

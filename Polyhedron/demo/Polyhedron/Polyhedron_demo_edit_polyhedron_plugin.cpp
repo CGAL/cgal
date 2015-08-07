@@ -39,6 +39,7 @@ public Q_SLOTS:
   void on_SelectAllVerticesPushButton_clicked();
   void on_DeleteCtrlVertPushButton_clicked();  
   void on_ApplyAndClosePushButton_clicked();
+  void on_DiscardChangesPushButton_clicked();
   void on_ClearROIPushButton_clicked();
   void on_ShowROICheckBox_stateChanged(int state);
   void on_ShowAsSphereCheckBox_stateChanged(int state);  
@@ -114,6 +115,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, Scene
   connect(ui_widget.SelectAllVerticesPushButton, SIGNAL(clicked()), this, SLOT(on_SelectAllVerticesPushButton_clicked()));
   connect(ui_widget.DeleteCtrlVertPushButton, SIGNAL(clicked()), this, SLOT(on_DeleteCtrlVertPushButton_clicked()));
   connect(ui_widget.ApplyAndClosePushButton, SIGNAL(clicked()), this, SLOT(on_ApplyAndClosePushButton_clicked()));
+  connect(ui_widget.DiscardChangesPushButton, SIGNAL(clicked()), this, SLOT(on_DiscardChangesPushButton_clicked()));
   connect(ui_widget.ClearROIPushButton, SIGNAL(clicked()), this, SLOT(on_ClearROIPushButton_clicked()));
   connect(ui_widget.ShowROICheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowROICheckBox_stateChanged(int)));
   connect(ui_widget.ShowAsSphereCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowAsSphereCheckBox_stateChanged(int)));  
@@ -197,6 +199,15 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ClearROIPushButton_clicked()
 void Polyhedron_demo_edit_polyhedron_plugin::on_ApplyAndClosePushButton_clicked()
 {
   dock_widget->setVisible(false);
+}
+void Polyhedron_demo_edit_polyhedron_plugin::on_DiscardChangesPushButton_clicked()
+{
+  int item_id = scene->mainSelectionIndex();
+  Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(item_id));
+  if (!edit_item) return;                             // the selected item is not of the right type
+
+  edit_item->reset_deform_object();
+  scene->itemChanged(edit_item); //for redraw
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_ShowROICheckBox_stateChanged(int /*state*/)
 {
