@@ -43,7 +43,7 @@ struct All_polygons_in_one_file_axis_aligned_planes{
     
     while (input >> nbpt && input){
       input >> coords[0] >> coords[1] >> coords[2];
-      
+      if (nbpt==1) continue;
       if (layer_nb==-1) ++layer_nb;
       else
         if( last_elevation!= coords[constant_coordinate] ){
@@ -162,26 +162,44 @@ class Polygon_as_vector_of_Point_3_in_axis_aligned_planes{
   typename Container::const_iterator m_current_polygon_it;
   unsigned int m_current_point,m_cst_coord;
   
+  //skip points
+  typename Container::const_iterator
+  skip_point_polygons(typename Container::const_iterator it) const
+  {
+    while(it!=m_contours.end() && it->size()==1) ++it;
+    return it;
+  }
+
 public:
 
   typedef typename Kernel::Point_3 Point_3;
   typedef typename Kernel::Point_2 Point_2;
 
   void next_polygon(){
-    ++m_current_polygon_it;
+    m_current_polygon_it=skip_point_polygons(++m_current_polygon_it);
     m_current_point=0;
   }
   
   Polygon_as_vector_of_Point_3_in_axis_aligned_planes(const Container& contours,int cst_coord):
     m_contours(contours),m_current_polygon_it(contours.begin()),m_current_point(0),m_cst_coord(cst_coord)
-  {}
+  {
+    // skip points
+    m_current_polygon_it=skip_point_polygons(m_current_polygon_it);
+  }
   
   bool empty() const{
-    return m_contours.empty();
+    if (!m_contours.empty())
+    {
+      if (m_contours.begin()->size()!=1) return false;
+      typename Container::const_iterator next_poly=skip_point_polygons(m_contours.begin());
+      return next_poly==m_contours.end();
+    }
+    return true;
   }
 
   bool has_next_planar_contour() const {
-    return m_current_polygon_it != cpp11::prev( m_contours.end() );
+    typename Container::const_iterator next_polygon_it=skip_point_polygons(cpp11::next(m_current_polygon_it));
+    return next_polygon_it != m_contours.end();
   }
   
   std::size_t number_of_points() const {
@@ -190,7 +208,7 @@ public:
   
   bool has_another_component() {
     return has_next_planar_contour() && 
-           (* cpp11::next(m_current_polygon_it) )[0][m_cst_coord]==(*m_current_polygon_it)[0][m_cst_coord];
+           (* skip_point_polygons(cpp11::next(m_current_polygon_it)) )[0][m_cst_coord]==(*m_current_polygon_it)[0][m_cst_coord];
   }
   
   Point_2 get_point(){ 
