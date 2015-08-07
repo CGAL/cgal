@@ -1,9 +1,12 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Advancing Front Surface Reconstruction"
+PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - Advancing Front Surface Reconstruction"
 
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Advancing_front_surface_reconstruction/doc/Advancing_front_surface_reconstruction/ \
-                              ${CMAKE_SOURCE_DIR}/Advancing_front_surface_reconstruction/include
+INPUT                   =  ${CGAL_PACKAGE_DOC_DIR} \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/internal/AFSR \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/Advancing_front_surface_reconstruction_cell_base_3.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/Advancing_front_surface_reconstruction.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/Advancing_front_surface_reconstruction_vertex_base_3.h
 
 EXTRACT_ALL                =  false
 HIDE_UNDOC_MEMBERS         =  true

@@ -7,6 +7,10 @@ import sys
 
 def main(argv):
 #    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
+
+    # This is a dirty hack to check for a branch build, but it works.
+    is_branch_build = not os.path.isdir(os.path.join("${CMAKE_SOURCE_DIR}/", "doc/"))
+
     pattern = re.compile(r"\\package_listing{([^}]*)}")
     f = codecs.open(argv[1], 'r', encoding='utf-8')
     for line in f:
@@ -17,9 +21,16 @@ def main(argv):
             if(index > 0):
                 top_level = pkg[:index]
                 lower_level = pkg[index+1:]
-                filename="${CMAKE_SOURCE_DIR}/" + top_level + "/doc/" + lower_level + "/PackageDescription.txt"
+                if is_branch_build:
+                    filename="${CMAKE_SOURCE_DIR}/" + top_level + "/doc/" + lower_level + "/PackageDescription.txt"
+                else:
+                    filename="${CMAKE_SOURCE_DIR}/doc/" + lower_level + "/PackageDescription.txt"
             else:
-                filename="${CMAKE_SOURCE_DIR}/" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
+                if is_branch_build:
+                    filename="${CMAKE_SOURCE_DIR}/" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
+                else:
+                    filename="${CMAKE_SOURCE_DIR}/doc/" + pkg + "/PackageDescription.txt"
+
             pkgdesc = codecs.open(filename, 'r', encoding='utf-8')
             do_print=False
             for l in pkgdesc:

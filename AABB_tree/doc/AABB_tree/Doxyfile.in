@@ -1,9 +1,19 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 3D Fast Intersection and Distance Computation (AABB Tree)"
+PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - 3D Fast Intersection and Distance Computation (AABB Tree)"
 
-INPUT                      =  ${CMAKE_SOURCE_DIR}/AABB_tree/doc/AABB_tree/ \ 
-                              ${CMAKE_SOURCE_DIR}/AABB_tree/include
+INPUT                   =  ${CGAL_PACKAGE_DOC_DIR} \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/internal/AABB_tree \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/AABB_face_graph_triangle_primitive.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/AABB_halfedge_graph_segment_primitive.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/AABB_intersections.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/AABB_polyhedron_segment_primitive.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/AABB_polyhedron_triangle_primitive.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/AABB_primitive.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/AABB_segment_primitive.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/AABB_traits.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/AABB_tree.h \
+                           ${CGAL_PACKAGE_DIR}/include/CGAL/AABB_triangle_primitive.h
 
 EXTRACT_ALL                =  false
 HIDE_UNDOC_MEMBERS         =  true

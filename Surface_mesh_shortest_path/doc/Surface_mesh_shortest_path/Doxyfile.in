@@ -1,7 +1,8 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - Triangulated Surface Mesh Shortest Paths"
-INPUT        = ${CMAKE_SOURCE_DIR}/Surface_mesh_shortest_path/doc/Surface_mesh_shortest_path/ \
-               ${CMAKE_SOURCE_DIR}/Surface_mesh_shortest_path/include
+INPUT = ${CGAL_PACKAGE_DOC_DIR} \
+        ${CGAL_PACKAGE_DIR}/include/CGAL/Surface_mesh_shortest_path \
+        ${CGAL_PACKAGE_DIR}/include/CGAL/Surface_mesh_shortest_path.h
 
 INTERNAL_DOCS = NO
 EXTRACT_ALL = NO

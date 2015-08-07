@@ -1,8 +1,8 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Surface Mesh"
+PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - Surface Mesh"
 
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Surface_mesh/doc/Surface_mesh/ \ 
-                              ${CMAKE_SOURCE_DIR}/Surface_mesh/include
+INPUT = ${CGAL_PACKAGE_DOC_DIR} \ 
+        ${CGAL_PACKAGE_DIR}/include/CGAL/Surface_mesh.h \
+        ${CGAL_PACKAGE_DIR}/include/CGAL/Surface_mesh
 MULTILINE_CPP_IS_BRIEF = YES
-

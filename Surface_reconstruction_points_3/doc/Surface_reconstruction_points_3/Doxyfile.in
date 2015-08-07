@@ -1,9 +1,20 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Surface Reconstruction from Point Sets"
+PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - Surface Reconstruction from Point Sets"
 
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/ \ 
-                              ${CMAKE_SOURCE_DIR}/Surface_reconstruction_points_3/include
+INPUT                      =  ${CGAL_PACKAGE_DOC_DIR} \
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/IO/c2t3_output_surface_facets_to_medit.h \
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/IO/output_surface_facets_to_triangle_soup.h \
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/Mesh_3/Poisson_refine_cells_3.h \
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/Surface_mesher/Poisson_implicit_surface_oracle_3.h \
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/Lightweight_vector_3.h \
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/Poisson_implicit_surface_3.h \
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/Poisson_mesh_cell_criteria_3.h \
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/Poisson_reconstruction_function.h \
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/poisson_refine_triangulation.h \
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/Reconstruction_triangulation_3.h \
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/Robust_circumcenter_filtered_traits_3.h \
+                              ${CGAL_PACKAGE_DIR}/include/CGAL/surface_reconstruction_points_assertions.h
 EXTRACT_ALL                =  false
 HIDE_UNDOC_CLASSES         =  true
 WARN_IF_UNDOCUMENTED       =  false
