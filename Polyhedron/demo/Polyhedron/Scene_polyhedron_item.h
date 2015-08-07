@@ -67,6 +67,7 @@ public Q_SLOTS:
     virtual void changed();
     virtual void contextual_changed();
     virtual void selection_changed(bool);
+    virtual void setColor(QColor c);
     void show_only_feature_edges(bool);
     void enable_facets_picking(bool);
     void set_erase_next_picked_facet(bool);

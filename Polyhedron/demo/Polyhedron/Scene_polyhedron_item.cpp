@@ -973,6 +973,19 @@ Scene_polyhedron_item::selection_changed(bool p_is_selected)
 }
 
 void
+Scene_polyhedron_item::setColor(QColor c)
+{
+  // reset patch ids
+  if (plugin_has_set_color_vector_m)
+  {
+    BOOST_FOREACH(Polyhedron::Facet_handle fh, faces(*poly))
+      fh->set_patch_id(1);
+    colors_[1]=c;
+  }
+  Scene_item::setColor(c);
+}
+
+void
 Scene_polyhedron_item::select(double orig_x,
                               double orig_y,
                               double orig_z,

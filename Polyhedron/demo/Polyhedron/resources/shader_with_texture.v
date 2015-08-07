@@ -1,4 +1,5 @@
-attribute highp vec4 vertex; 
+#version 330
+attribute highp vec4 vertex;
 attribute highp vec3 normal;
 attribute highp vec3 color_facets;
 attribute highp vec2 v_texCoord; 

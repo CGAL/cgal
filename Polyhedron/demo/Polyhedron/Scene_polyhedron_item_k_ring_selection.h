@@ -36,11 +36,13 @@ public:
   Active_handle::Type    active_handle_type;
   int                    k_ring;
   Scene_polyhedron_item* poly_item;
+  bool is_active;
 
   Scene_polyhedron_item_k_ring_selection() {}
 
   Scene_polyhedron_item_k_ring_selection
     (Scene_polyhedron_item* poly_item, QMainWindow* mw, Active_handle::Type aht, int k_ring)
+      :is_active(false)
   {
     init(poly_item, mw, aht, k_ring);
   }
@@ -66,16 +68,19 @@ public Q_SLOTS:
   // slots are called by signals of polyhedron_item
   void vertex_has_been_selected(void* void_ptr) 
   {
+    is_active=true;
     if(active_handle_type != Active_handle::VERTEX) { return; }
     process_selection( static_cast<Polyhedron::Vertex*>(void_ptr)->halfedge()->vertex() );
   }
   void facet_has_been_selected(void* void_ptr)
   {
+    is_active=true;
     if(active_handle_type != Active_handle::FACET) { return; }
     process_selection( static_cast<Polyhedron::Facet*>(void_ptr)->halfedge()->facet() );
   }
   void edge_has_been_selected(void* void_ptr) 
   {
+    is_active=true;
     if(active_handle_type != Active_handle::EDGE) { return; }
     process_selection( edge(static_cast<Polyhedron::Halfedge*>(void_ptr)->opposite()->opposite(), *poly_item->polyhedron()) );
   }
@@ -84,6 +89,7 @@ Q_SIGNALS:
   void selected(const std::set<Polyhedron::Vertex_handle>&);
   void selected(const std::set<Polyhedron::Facet_handle>&);
   void selected(const std::set<edge_descriptor>&);
+  void endSelection();
 
 protected:
 
@@ -172,7 +178,13 @@ protected:
       QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
       if(mouse_event->button() == Qt::LeftButton) {
         state.left_button_pressing = event->type() == QEvent::MouseButtonPress;
-      }   
+        if (!state.left_button_pressing)
+          if (is_active)
+          {
+            Q_EMIT endSelection();
+            is_active=false;
+          }
+      }
     }
 
     // use mouse move event for paint-like selection

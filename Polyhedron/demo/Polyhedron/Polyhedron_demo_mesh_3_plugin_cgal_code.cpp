@@ -553,7 +553,8 @@ private:
                         sc != ON_ORIENTED_BOUNDARY &&
                         sb == sa && sc == sa )
                 {
-                    draw_triangle(pa, pb, pc, false);
+                    if ( (index%2 == 1) == c3t3().is_in_complex(cell)) draw_triangle(pb, pa, pc, false);
+                    else draw_triangle(pa, pb, pc, false);
                     draw_triangle_edges(pa, pb, pc);
                 }
 
@@ -585,9 +586,9 @@ private:
                         sd == ON_ORIENTED_BOUNDARY ||
                         sb != sa || sc != sa || sd != sa)
                 {
-                    draw_triangle(pa,pb,pc, true);
+                    draw_triangle(pb,pa,pc, true);
                     draw_triangle(pa,pb,pd, true);
-                    draw_triangle(pa,pc,pd, true);
+                    draw_triangle(pa,pd,pc, true);
                     draw_triangle(pb,pc,pd, true);
 
                     draw_triangle_edges(pa,pb,pc);
@@ -602,44 +603,57 @@ private:
 };
 
 Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
-                             const QString filename,
+                             QString filename,
                              const double angle,
-                             const double sizing,
+                             const double facet_sizing,
                              const double approx,
-                             const double tets_sizing)
+                             const double tet_sizing,
+                             const double tet_shape,
+                             const bool protect_features,
+                             Scene_interface* scene)
 {
   if(!pMesh) return 0;
 
   // remesh
 
   // Set mesh criteria
-  Facet_criteria facet_criteria(angle, sizing, approx); // angle, size, approximation
-  Cell_criteria cell_criteria(4, tets_sizing); // radius-edge ratio, size
-  Mesh_criteria criteria(facet_criteria, cell_criteria);
+  Edge_criteria edge_criteria(facet_sizing);
+  Facet_criteria facet_criteria(angle, facet_sizing, approx); // angle, size, approximation
+  Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
+  Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
 
   CGAL::Timer timer;
   timer.start();
   std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
   std::cerr << "  angle: " << angle << std::endl
-            << "  facets size bound: " << sizing << std::endl
+            << "  facets size bound: " << facet_sizing << std::endl
             << "  approximation bound: " << approx << std::endl
-            << "  tetrahedra size bound: " << tets_sizing << std::endl;
+            << "  tetrahedra size bound: " << tet_sizing << std::endl;
   std::cerr << "Build AABB tree...";
   // Create domain
   Mesh_domain domain(*pMesh);
+  if(protect_features) {
+      domain.detect_features();
+  }
   std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
   // Meshing
   std::cerr << "Mesh...";
-  Scene_c3t3_item* new_item =
-    new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria));
+  CGAL::parameters::internal::Features_options features =
+          protect_features ?
+              CGAL::parameters::features(domain) :
+              CGAL::parameters::no_features();
 
+  Scene_c3t3_item* new_item =
+          new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria, features));
+  new_item->set_scene(scene);
   std::cerr << "done (" << timer.time() << " ms, " << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;
 
   if(new_item->c3t3().triangulation().number_of_vertices() > 0)
   {
     std::ofstream medit_out("out.mesh");
     new_item->c3t3().output_to_medit(medit_out);
+
     const Scene_item::Bbox& bbox = new_item->bbox();
     new_item->setPosition((float)(bbox.xmin + bbox.xmax)/2.f,
                           (float)(bbox.ymin + bbox.ymax)/2.f,

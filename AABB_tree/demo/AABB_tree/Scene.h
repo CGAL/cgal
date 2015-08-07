@@ -256,7 +256,7 @@ public:
   
 public slots:
     // cutting plane
-    void cutting_plane();
+    void cutting_plane(bool override = false);
     void changed();
 }; // end class Scene
 

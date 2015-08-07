@@ -37,13 +37,16 @@ public:
     if(!scene_item) {
       // no selected SceneType - if there is only one in list return it, otherwise NULL
       int counter = 0;
+      int last_selected = 0;
       for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end && counter < 2; ++i) {
         if(SceneType* tmp = qobject_cast<SceneType*>(scene->item(i))) { 
           scene_item = tmp;
           counter++; 
+          last_selected=i;
         }
       }
       if(counter != 1) { return NULL; }
+      scene->setSelectedItem(last_selected);
     }
     return scene_item;
   }

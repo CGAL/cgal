@@ -233,6 +233,7 @@ public Q_SLOTS:
     }
 
     scene->addItem(point_item);
+    scene->itemChanged(point_item);
   }
 private:
   Messages_interface* messages;

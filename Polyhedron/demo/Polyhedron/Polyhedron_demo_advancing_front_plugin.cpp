@@ -116,7 +116,7 @@ void Polyhedron_demo_advancing_front_plugin::on_actionAdvancingFrontReconstructi
       CGAL::advancing_front_surface_reconstruction((points)->begin(), points->end(), P, filter);
 
 
-    new_item->setName(tr("%1 Advancing Front (%2 %3)")
+    new_item->setName(tr("%1 Advancing Front (%2)")
                       .arg(point_set_item->name())
                       .arg(sm_perimeter));
     new_item->setColor(Qt::lightGray);

@@ -232,7 +232,7 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-        "#version 330 \n"
+        "#version 140 \n"
         "in highp vec4 vertex;\n"
         "in highp vec3 normal;\n"
         "in highp vec4 color;\n"
@@ -254,7 +254,7 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char fragment_source[] =
     {
-        "#version 330 \n"
+        "#version 140 \n"
         "in highp vec4 fP; \n"
         "in highp vec3 fN; \n"
         "in highp vec4 fColor; \n"
@@ -310,7 +310,7 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char vertex_source_p_l[] =
     {
-        "#version 330 \n"
+        "#version 140 \n"
         "in highp vec4 vertex;\n"
         "uniform highp mat4 mvp_matrix;\n"
         "void main(void)\n"
@@ -321,7 +321,7 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char fragment_source_p_l[] =
     {
-        "#version 330 \n"
+        "#version 140 \n"
         "uniform highp vec4 color; \n"
         "void main(void) { \n"
         "gl_FragColor = color; \n"

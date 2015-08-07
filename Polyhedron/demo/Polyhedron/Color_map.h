@@ -14,8 +14,9 @@ compute_color_map(QColor base_color,
 
   qreal h = hue;
   for(unsigned i = 0; i < nb_of_colors; ++i) {
-    h += step;
+    if (h!=-1) h += step;
     if ( h > 1 ) { h -= 1; }
+
     *out++ = QColor::fromHsvF(h, 
                               base_color.saturationF(), 
                               base_color.valueF());

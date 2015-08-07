@@ -27,6 +27,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/iterator.h>
 #include <CGAL/trace.h>
+#include <CGAL/use.h>
 
 #include <vector>
 #include <stack>
@@ -61,6 +62,8 @@ private:
     CGAL_assertion(i >= 0 && i < n);
     CGAL_assertion(j >= 0 && j < n);
     CGAL_assertion(i < j); 
+    CGAL_USE(i);
+    CGAL_USE(j);
     // previous implementation was based on directly vector and i supposed to be always smaller than j.
     // this check actually can be removed and i =min(i,j) j = max(i,j) can be used for reflexive access 
     return true;
@@ -122,6 +125,8 @@ private:
     CGAL_assertion(i >= 0 && i < n);
     CGAL_assertion(j >= 0 && j < n);
     CGAL_assertion(i < j);
+    CGAL_USE(i);
+    CGAL_USE(j);
     return true;
   }
   Map table;

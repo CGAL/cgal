@@ -25,7 +25,6 @@ void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewe
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[1].release();
 
-        program->setAttributeValue("colors",facet_color);
         vaos[0]->release();
         program->release();
 
@@ -43,7 +42,6 @@ void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewe
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[2].release();
 
-        program->setAttributeValue("colors",edge_color);
         program->release();
 
         vaos[1]->release();
@@ -62,8 +60,6 @@ void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewe
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[3].release();
 
-
-        program->setAttributeValue("colors",vertex_color);
         buffers[6].release();
         program->release();
 
@@ -167,6 +163,7 @@ void Scene_polyhedron_selection_item::draw(Viewer_interface* viewer) const
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
+    program->setAttributeValue("colors",facet_color);
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/3));
     program->release();
     vaos[0]->release();
@@ -184,6 +181,7 @@ void Scene_polyhedron_selection_item::draw_edges(Viewer_interface* viewer) const
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
+    program->setAttributeValue("colors",edge_color);
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
     program->release();
     vaos[1]->release();
@@ -197,6 +195,7 @@ void Scene_polyhedron_selection_item::draw_points(Viewer_interface* viewer) cons
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
+    program->setAttributeValue("colors",vertex_color);
     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_points.size()/3));
     program->release();
     vaos[2]->release();

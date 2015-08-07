@@ -1,4 +1,5 @@
 #include "opengl_tools.h"
+#include "create_sphere.h"
 #include "Scene_edit_polyhedron_item.h"
 #include <boost/foreach.hpp>
 #include <algorithm>
@@ -200,15 +201,15 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
         buffers[6].release();
 
         buffers[7].bind();
-        buffers[7].allocate(color_sphere_ROI.data(),
-                            static_cast<int>(color_sphere_ROI.size()*sizeof(double)));
+        buffers[7].allocate(ROI_color.data(),
+                            static_cast<int>(ROI_color.size()*sizeof(double)));
         program->enableAttributeArray("colors");
         program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
         buffers[7].release();
 
         buffers[8].bind();
-        buffers[8].allocate(centers_ROI.data(),
-                            static_cast<int>(centers_ROI.size()*sizeof(double)));
+        buffers[8].allocate(ROI_points.data(),
+                            static_cast<int>(ROI_points.size()*sizeof(double)));
         program->enableAttributeArray("center");
         program->setAttributeBuffer("center",GL_DOUBLE,0,3);
         buffers[8].release();
@@ -278,15 +279,15 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
         buffers[14].release();
 
         buffers[15].bind();
-        buffers[15].allocate(color_sphere_control.data(),
-                             static_cast<int>(color_sphere_control.size()*sizeof(double)));
+        buffers[15].allocate(control_color.data(),
+                             static_cast<int>(control_color.size()*sizeof(double)));
         program->enableAttributeArray("colors");
         program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
         buffers[15].release();
 
         buffers[16].bind();
-        buffers[16].allocate(centers_control.data(),
-                             static_cast<int>(centers_control.size()*sizeof(double)));
+        buffers[16].allocate(control_points.data(),
+                             static_cast<int>(control_points.size()*sizeof(double)));
         program->enableAttributeArray("center");
         program->setAttributeBuffer("center",GL_DOUBLE,0,3);
         buffers[16].release();
@@ -323,6 +324,7 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
 {
     ROI_points.resize(0);
     control_points.resize(0);
+    control_color.resize(0);
     BOOST_FOREACH(vertex_descriptor vd, deform_mesh.roi_vertices())
     {
         if(!deform_mesh.is_control_vertex(vd))
@@ -332,27 +334,10 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
             ROI_points.push_back(vd->point().z());
         }
     }
-    centers_ROI.resize(ROI_points.size());
-    ROI_color.resize(ROI_points.size());
-    color_sphere_ROI.resize(ROI_points.size());
-    for(int i=0; i<(int)centers_ROI.size(); i++)
-    {
-        centers_ROI[i] = ROI_points[i];
-    }
-    for(int i=0; i<(int)ROI_color.size(); i++)
-    {
-        if(i%3==1)
-        {
-        ROI_color[i]=1.0;
-        color_sphere_ROI[i]=1.0;
+    ROI_color.assign(ROI_points.size(),0);
+    for(std::size_t i=0; i<ROI_color.size()/3; i++)
+      ROI_color[3*i+1]=1.0;
 
-        }
-        else
-        {
-        ROI_color[i]=0.0;
-        color_sphere_ROI[i]=0.0;
-        }
-    }
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
     {
@@ -364,38 +349,19 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
                 compute_bbox(hgb_data->bbox);
             }
         }
-        // draw control vertices
-        if(hgb_data == active_group)
-        {
-            //set color to red
-            control_color.push_back(1.0);
-            control_color.push_back(0.0);
-            control_color.push_back(0.0);
-        }
-        else
-        {
-            //set color to blue
-            control_color.push_back(0.0);
-            control_color.push_back(0.0);
-            control_color.push_back(1.0);
-        }
+
+        const double r=hgb_data == active_group?1:0;
+        const double b=hgb_data == active_group?0:1;
+
         for(std::vector<vertex_descriptor>::const_iterator hb = hgb_data->ctrl_vertices_group.begin(); hb != hgb_data->ctrl_vertices_group.end(); ++hb)
         {
             control_points.push_back((*hb)->point().x());
             control_points.push_back((*hb)->point().y());
             control_points.push_back((*hb)->point().z());
-
+            control_color.push_back(r);
+            control_color.push_back(0);
+            control_color.push_back(b);
         }
-        centers_control.resize(control_points.size());
-        for(int i=0; i<(int)centers_control.size(); i++)
-        {
-            centers_control[i]=control_points[i];
-        }
-    }
-    color_sphere_control.resize(control_color.size());
-    for(int i=0; i<(int)color_sphere_control.size(); i++)
-    {
-        color_sphere_control[i] = control_color[i];
     }
 
     //The box color
@@ -782,177 +748,7 @@ bool Scene_edit_polyhedron_item::keyPressEvent(QKeyEvent* e)
 
 void Scene_edit_polyhedron_item::create_Sphere(double R)
 {
-
-    float T, P;
-    float x[4],y[4],z[4];
-    int rings = 22, sectors = 45;
-
-
-    //Top of the sphere
-    for(int t=0; t<360; t+=sectors)
-    {
-
-        pos_sphere.push_back(0);
-        pos_sphere.push_back(0);
-        pos_sphere.push_back(R);
-
-
-        normals_sphere.push_back(0);
-        normals_sphere.push_back(0);
-        normals_sphere.push_back(1);
-
-
-
-        P = rings*M_PI/180.0;
-        T = t*M_PI/180.0;
-        x[1] = sin(P) * cos(T) ;
-        y[1] = sin(P) * sin(T) ;
-        z[1] = cos(P);
-        pos_sphere.push_back(R * x[1]);
-        pos_sphere.push_back(R * y[1]);
-        pos_sphere.push_back(R * z[1]);
-
-        normals_sphere.push_back(x[1]);
-        normals_sphere.push_back(y[1]);
-        normals_sphere.push_back(z[1]);
-
-        //
-        P = rings*M_PI/180.0;
-        T = (t+sectors)*M_PI/180.0;
-        x[2] = sin(P) * cos(T) ;
-        y[2] = sin(P) * sin(T) ;
-        z[2] = cos(P);
-        pos_sphere.push_back(R * x[2]);
-        pos_sphere.push_back(R * y[2]);
-        pos_sphere.push_back(R * z[2]);
-
-        normals_sphere.push_back(x[2]);
-        normals_sphere.push_back(y[2]);
-        normals_sphere.push_back(z[2]);
-
-    }
-
-    //Body of the sphere
-    for (int p=rings; p<180-rings; p+=rings)
-        for(int t=0; t<360; t+=sectors)
-        {
-            //A
-            P = p*M_PI/180.0;
-            T = t*M_PI/180.0;
-            x[0] = sin(P) * cos(T) ;
-            y[0] = sin(P) * sin(T) ;
-            z[0] = cos(P);
-
-            pos_sphere.push_back(R * x[0]);
-            pos_sphere.push_back(R * y[0]);
-            pos_sphere.push_back(R * z[0]);
-
-            normals_sphere.push_back(x[0]);
-            normals_sphere.push_back(y[0]);
-            normals_sphere.push_back(z[0]);
-
-            //B
-            P = (p+rings)*M_PI/180.0;
-            T = t*M_PI/180.0;
-            x[1] = sin(P) * cos(T) ;
-            y[1] = sin(P) * sin(T) ;
-            z[1] = cos(P);
-            pos_sphere.push_back(R * x[1]);
-            pos_sphere.push_back(R * y[1]);
-            pos_sphere.push_back(R * z[1]);
-
-            normals_sphere.push_back(x[1]);
-            normals_sphere.push_back(y[1]);
-            normals_sphere.push_back(z[1]);
-
-            //C
-            P = p*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
-            x[2] = sin(P) * cos(T) ;
-            y[2] = sin(P) * sin(T) ;
-            z[2] = cos(P);
-            pos_sphere.push_back(R * x[2]);
-            pos_sphere.push_back(R * y[2]);
-            pos_sphere.push_back(R * z[2]);
-
-            normals_sphere.push_back(x[2]);
-            normals_sphere.push_back(y[2]);
-            normals_sphere.push_back(z[2]);
-            //D
-            P = (p+rings)*M_PI/180.0;
-            T = (t+sectors)*M_PI/180.0;
-            x[3] = sin(P) * cos(T) ;
-            y[3] = sin(P) * sin(T) ;
-            z[3] = cos(P);
-            pos_sphere.push_back(R * x[3]);
-            pos_sphere.push_back(R * y[3]);
-            pos_sphere.push_back(R * z[3]);
-
-            normals_sphere.push_back(x[3]);
-            normals_sphere.push_back(y[3]);
-            normals_sphere.push_back(z[3]);
-
-
-
-            pos_sphere.push_back(R * x[1]);
-            pos_sphere.push_back(R * y[1]);
-            pos_sphere.push_back(R * z[1]);
-
-            normals_sphere.push_back(x[1]);
-            normals_sphere.push_back(y[1]);
-            normals_sphere.push_back(z[1]);
-
-            pos_sphere.push_back(R * x[2]);
-            pos_sphere.push_back(R * y[2]);
-            pos_sphere.push_back(R * z[2]);
-
-            normals_sphere.push_back(x[2]);
-            normals_sphere.push_back(y[2]);
-            normals_sphere.push_back(z[2]);
-
-        }
-    //Bottom of the sphere
-    for(int t=0; t<360; t+=sectors)
-    {
-
-
-        pos_sphere.push_back(0);
-        pos_sphere.push_back(0);
-        pos_sphere.push_back(-R);
-
-        normals_sphere.push_back(0);
-        normals_sphere.push_back(0);
-        normals_sphere.push_back(-1);
-
-
-        P = (180-rings)*M_PI/180.0;
-        T = t*M_PI/180.0;
-        x[1] = sin(P) * cos(T) ;
-        y[1] = sin(P) * sin(T) ;
-        z[1] = cos(P);
-        pos_sphere.push_back(R * x[1]);
-        pos_sphere.push_back(R * y[1]);
-        pos_sphere.push_back(R * z[1]);
-
-        normals_sphere.push_back(x[1]);
-        normals_sphere.push_back(y[1]);
-        normals_sphere.push_back(z[1]);
-
-
-        P = (180-rings)*M_PI/180.0;
-        T = (t+sectors)*M_PI/180.0;
-        x[2] = sin(P) * cos(T) ;
-        y[2] = sin(P) * sin(T) ;
-        z[2] = cos(P);
-        pos_sphere.push_back(R * x[2]);
-        pos_sphere.push_back(R * y[2]);
-        pos_sphere.push_back(R * z[2]);
-
-        normals_sphere.push_back(x[2]);
-        normals_sphere.push_back(y[2]);
-        normals_sphere.push_back(z[2]);
-
-    }
+  create_flat_sphere(R, pos_sphere, normals_sphere);
 }
 
 //#include "Scene_edit_polyhedron_item.moc"

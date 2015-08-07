@@ -88,6 +88,7 @@ bool Viewer::inFastDrawing() const {
 
 void Viewer::draw()
 {
+  glEnable(GL_DEPTH_TEST);
   d->inFastDrawing = false;
   QGLViewer::draw();
   d->draw_aux(false, this);

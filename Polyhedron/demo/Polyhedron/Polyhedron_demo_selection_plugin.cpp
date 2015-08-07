@@ -111,7 +111,12 @@ public Q_SLOTS:
     if(scene->numberOfEntries() < 2) {
       Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
       if(!poly_item || selection_item_map.find(poly_item) != selection_item_map.end()) { return; }
-      scene->addItem(new Scene_polyhedron_selection_item(poly_item, mw));
+      Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
+      int item_id = scene->addItem(new_item);
+      QObject* scene_ptr = dynamic_cast<QObject*>(scene);
+      if (scene_ptr)
+        connect(new_item,SIGNAL(simplicesSelected(Scene_item*)), scene_ptr, SLOT(setSelectedItem(Scene_item*)));
+      scene->setSelectedItem(item_id);
     }
   }
   // Select all
@@ -168,7 +173,12 @@ public Q_SLOTS:
     }
     // all other arrangements (putting inside selection_item_map), setting names etc,
     // other params (e.g. k_ring) will be set inside new_item_created
-    scene->addItem(new Scene_polyhedron_selection_item(poly_item, mw));
+    Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
+    int item_id = scene->addItem(new_item);
+    QObject* scene_ptr = dynamic_cast<QObject*>(scene);
+    if (scene_ptr)
+      connect(new_item,SIGNAL(simplicesSelected(Scene_item*)), scene_ptr, SLOT(setSelectedItem(Scene_item*)));
+    scene->setSelectedItem(item_id);
   }
   void on_Selection_type_combo_box_changed(int index) {
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
@@ -204,7 +214,8 @@ public Q_SLOTS:
        point_item->point_set()->push_back((*begin)->point());
     }
     
-    scene->addItem(point_item);
+    scene->setSelectedItem( scene->addItem(point_item) );
+    scene->itemChanged(point_item);
   }
 
   void on_Create_polyline_item_button_clicked(){
@@ -259,7 +270,8 @@ public Q_SLOTS:
     CGAL::split_graph_into_polylines( edge_graph,
                                       polyline_visitor,
                                       Is_terminal() );
-    scene->addItem(polyline_item);
+    scene->setSelectedItem( scene->addItem(polyline_item) );
+    scene->itemChanged(polyline_item);
   }
 
   void on_Erase_selected_facets_button_clicked() {
@@ -290,7 +302,8 @@ public Q_SLOTS:
     if(selection_item->export_selected_facets_as_polyhedron(poly_item->polyhedron())) {
       poly_item->setName(QString("%1-facets").arg(selection_item->name()));
       poly_item->changed(); // for init()
-      scene->addItem(poly_item);
+      scene->setSelectedItem( scene->addItem(poly_item) );
+      scene->itemChanged(poly_item);
     }
     else {
       delete poly_item;

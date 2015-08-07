@@ -210,8 +210,10 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
     pair->first->setName(tr("(SDF-%1-%2)").arg(number_of_rays).arg(ui_widget.Cone_angle_spin_box->value()));
     
     if(create_new_item) {
-        index = scene->addItem(pair->first);
+        scene->addItem(pair->first);
         item->setVisible(false);
+        scene->itemChanged(item);
+        scene->itemChanged(pair->first);
         scene->setSelectedItem(index);
     }
     else {
@@ -279,8 +281,10 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
     pair->first->setName(tr("(Segmentation-%1-%2)").arg(number_of_clusters).arg(smoothness));   
 
     if(create_new_item) {
-        index = scene->addItem(pair->first);
+        scene->addItem(pair->first);
         item->setVisible(false);
+        scene->itemChanged(item);
+        scene->itemChanged(pair->first);
         scene->setSelectedItem(index);
     }
     else {

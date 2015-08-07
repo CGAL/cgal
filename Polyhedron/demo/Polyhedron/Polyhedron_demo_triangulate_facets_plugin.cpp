@@ -73,7 +73,7 @@ public Q_SLOTS:
             end = pMesh->edges_end();
           eit != end; /*increment is done manually*/)
       {
-        std::cerr << (void*)&*eit << std::endl;
+        // std::cerr << (void*)&*eit << std::endl;
         Polyhedron::Edge_iterator eit_copy = eit++;
         if(!eit_copy->is_border()) {
           Polyhedron::Facet_handle fh1 = eit_copy->facet();
@@ -87,7 +87,7 @@ public Q_SLOTS:
             Kernel::Vector_3 v2 =
               CGAL::Polygon_mesh_processing::compute_face_normal(fh2, *pMesh);
             if(v1 * v2 > 0.99) {
-              std::cerr << "join\n";
+              // std::cerr << "join\n";
               // pMesh->is_valid(true);
               pMesh->join_facet(eit_copy);
             }

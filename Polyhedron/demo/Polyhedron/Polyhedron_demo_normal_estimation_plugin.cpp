@@ -52,12 +52,17 @@ public:
     return QList<QAction*>() << actionNormalEstimation << actionNormalInversion;
   }
 
-  bool applicable(QAction*) const {
+  bool applicable(QAction* action) const {
+    Scene_points_with_normal_item* item = qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+
+    if (action==actionNormalEstimation)
 #if CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN
     return false;
 #else
-    return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
+    return item;
 #endif
+    else
+      return item && item->has_normals();
   }
 
 public Q_SLOTS:
@@ -100,7 +105,7 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalInversion_triggere
     for(Point_set::iterator it = points->begin(); it != points->end(); ++it){
       it->normal() = -1 * it->normal();
     }
-    item->changed();
+    scene->itemChanged(item);
   }
 }
 

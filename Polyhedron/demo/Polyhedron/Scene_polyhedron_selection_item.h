@@ -219,6 +219,7 @@ protected:
       SLOT(selected(const std::set<Polyhedron::Facet_handle>&)));
     connect(&k_ring_selector, SIGNAL(selected(const std::set<edge_descriptor>&)), this,
       SLOT(selected(const std::set<edge_descriptor>&)));
+    connect(&k_ring_selector, SIGNAL(endSelection()), this,SLOT(endSelection()));
 
     k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
 
@@ -664,6 +665,9 @@ public:
     Q_EMIT itemChanged();
   }
 
+Q_SIGNALS:
+  void simplicesSelected(Scene_item*);
+
 public Q_SLOTS:
   void changed() {
     // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
@@ -682,6 +686,9 @@ public Q_SLOTS:
     remove_erased_handles<Vertex_handle>();
     remove_erased_handles<edge_descriptor>();
     remove_erased_handles<Facet_handle>();
+  }
+  void endSelection(){
+    Q_EMIT simplicesSelected(this);
   }
 
 protected:

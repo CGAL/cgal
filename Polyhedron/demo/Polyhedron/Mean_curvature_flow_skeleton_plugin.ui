@@ -119,32 +119,45 @@
      </layout>
     </item>
     <item>
+     <widget class="QLabel" name="label">
+      <property name="font">
+       <font>
+        <weight>75</weight>
+        <bold>true</bold>
+       </font>
+      </property>
+      <property name="text">
+       <string>Steps of an iteration:</string>
+      </property>
+     </widget>
+    </item>
+    <item>
      <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
        <widget class="QPushButton" name="pushButton_contract">
         <property name="text">
-         <string>Contract</string>
+         <string> 1 - Contract</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_collapse">
         <property name="text">
-         <string>Collapse</string>
+         <string>2 - Collapse</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_split">
         <property name="text">
-         <string>Split</string>
+         <string>3 - Split</string>
         </property>
        </widget>
       </item>
       <item>
        <widget class="QPushButton" name="pushButton_degeneracy">
         <property name="text">
-         <string>Degeneracy</string>
+         <string>4 - Degeneracy</string>
         </property>
        </widget>
       </item>

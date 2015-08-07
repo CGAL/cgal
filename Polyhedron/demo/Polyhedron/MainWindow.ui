@@ -363,7 +363,7 @@
   </action>
   <action name="actionUnion">
    <property name="text">
-    <string>&amp;Union</string>
+    <string>&amp;Union (A/B)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O, U</string>
@@ -371,7 +371,7 @@
   </action>
   <action name="actionIntersection">
    <property name="text">
-    <string>&amp;Intersection</string>
+    <string>&amp;Intersection (A/B)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O, I</string>
@@ -379,7 +379,7 @@
   </action>
   <action name="actionDifference">
    <property name="text">
-    <string>&amp;Difference</string>
+    <string>&amp;Difference (A/B)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O, D</string>
@@ -603,7 +603,7 @@
   </action>
   <action name="actionMinkowskiSum">
    <property name="text">
-    <string>&amp;Minkowski sum</string>
+    <string>&amp;Minkowski sum (A/B)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O, M</string>

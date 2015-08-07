@@ -45,7 +45,7 @@ public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    actionPolyhedronIntersection_3 = new QAction("Intersect polyhedra", mw);
+    actionPolyhedronIntersection_3 = new QAction("Intersect polyhedra (A/B)", mw);
     if(actionPolyhedronIntersection_3) {
       connect(actionPolyhedronIntersection_3, SIGNAL(triggered()),
               this, SLOT(intersection()));
