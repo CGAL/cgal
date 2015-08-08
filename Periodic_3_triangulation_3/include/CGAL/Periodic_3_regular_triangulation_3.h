@@ -6214,7 +6214,72 @@ public:
     return Base::dual_centroid(v, geom_traits().construct_weighted_circumcenter_3_object());
   }
 //@}
+
+  template <class OutputIteratorBoundaryFacets, class OutputIteratorCells>
+  std::pair<OutputIteratorBoundaryFacets, OutputIteratorCells>
+  find_conflicts(const Weighted_point &p, Cell_handle c,
+      OutputIteratorBoundaryFacets bfit, OutputIteratorCells cit) const {
+    Triple<OutputIteratorBoundaryFacets,OutputIteratorCells,Emptyset_iterator>
+    t = find_conflicts(p, c, bfit, cit, Emptyset_iterator());
+    return std::make_pair(t.first, t.second);
+  }
+
+  template <class OutputIteratorBoundaryFacets, class OutputIteratorCells,
+            class OutputIteratorInternalFacets>
+  Triple<OutputIteratorBoundaryFacets, OutputIteratorCells,
+         OutputIteratorInternalFacets>
+  find_conflicts(const Weighted_point &p, Cell_handle c,
+      OutputIteratorBoundaryFacets bfit, OutputIteratorCells cit,
+      OutputIteratorInternalFacets ifit) const;
 };
+
+template < class Gt, class Tds >
+template <class OutputIteratorBoundaryFacets, class OutputIteratorCells,
+          class OutputIteratorInternalFacets>
+Triple<OutputIteratorBoundaryFacets, OutputIteratorCells,
+       OutputIteratorInternalFacets>
+Periodic_3_regular_triangulation_3<Gt,Tds>::find_conflicts( const Weighted_point
+&p,
+    Cell_handle c, OutputIteratorBoundaryFacets bfit,
+    OutputIteratorCells cit, OutputIteratorInternalFacets ifit) const {
+  CGAL_triangulation_precondition(number_of_vertices() != 0);
+
+  std::vector<Facet> facets;
+  facets.reserve(64);
+  std::vector<Cell_handle> cells;
+  cells.reserve(32);
+
+  Conflict_tester tester(p, this);
+  Triple<typename std::back_insert_iterator<std::vector<Facet> >,
+         typename std::back_insert_iterator<std::vector<Cell_handle> >,
+         OutputIteratorInternalFacets> tit = Base::find_conflicts(c, tester,
+              make_triple(std::back_inserter(facets),
+                      std::back_inserter(cells), ifit));
+  ifit = tit.third;
+
+  // Reset the conflict flag on the boundary.
+  for(typename std::vector<Facet>::iterator fit=facets.begin();
+  fit != facets.end(); ++fit) {
+    fit->first->neighbor(fit->second)->tds_data().clear();
+    *bfit++ = *fit;
+  }
+
+  // Reset the conflict flag in the conflict cells.
+  for(typename std::vector<Cell_handle>::iterator ccit=cells.begin();
+      ccit != cells.end(); ++ccit) {
+    (*ccit)->tds_data().clear();
+    *cit++ = *ccit;
+  }
+
+  for (typename std::vector<Vertex_handle>::iterator
+   voit = this->v_offsets.begin();
+       voit != this->v_offsets.end() ; ++voit) {
+    (*voit)->clear_offset();
+  }
+  this->v_offsets.clear();
+
+  return make_triple(bfit, cit, ifit);
+}
 
 template < class Gt, class Tds >
 Bounded_side Periodic_3_regular_triangulation_3<Gt,Tds>::
