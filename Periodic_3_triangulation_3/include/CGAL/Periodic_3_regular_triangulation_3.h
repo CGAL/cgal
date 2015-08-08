@@ -6231,7 +6231,35 @@ public:
   find_conflicts(const Weighted_point &p, Cell_handle c,
       OutputIteratorBoundaryFacets bfit, OutputIteratorCells cit,
       OutputIteratorInternalFacets ifit) const;
+
+  /// Returns the vertices on the boundary of the conflict hole.
+  template <class OutputIterator>
+  OutputIterator vertices_in_conflict(const Weighted_point&p, Cell_handle c,
+      OutputIterator res) const;
 };
+
+template < class Gt, class Tds >
+template <class OutputIterator>
+OutputIterator
+Periodic_3_regular_triangulation_3<Gt,Tds>::vertices_in_conflict(
+    const Weighted_point&p, Cell_handle c, OutputIterator res) const {
+  if (number_of_vertices() == 0) return res;
+
+  // Get the facets on the boundary of the hole.
+  std::vector<Facet> facets;
+  find_conflicts(p, c, std::back_inserter(facets), Emptyset_iterator());
+
+  // Then extract uniquely the vertices.
+  std::set<Vertex_handle> vertices;
+  for (typename std::vector<Facet>::const_iterator i = facets.begin();
+       i != facets.end(); ++i) {
+    vertices.insert(i->first->vertex((i->second+1)&3));
+    vertices.insert(i->first->vertex((i->second+2)&3));
+    vertices.insert(i->first->vertex((i->second+3)&3));
+  }
+
+  return std::copy(vertices.begin(), vertices.end(), res);
+}
 
 template < class Gt, class Tds >
 template <class OutputIteratorBoundaryFacets, class OutputIteratorCells,
