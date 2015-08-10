@@ -24,19 +24,17 @@
 
 #include <CGAL/circulator.h>
 #include <CGAL/Timer.h>
-
-#ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_solver_traits.h>
-#endif
-
 #include <CGAL/OpenNL/linear_solver.h>
-
 
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Two_vertices_parameterizer_3.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Parameterization_mesh_feature_extractor.h>
 #include <iostream>
+
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_least_squares_solver.h>
+#endif
 
 #define DEBUG_TRACE
 
@@ -144,12 +142,9 @@ private:
     typedef typename Sparse_LA::Vector      Vector;
     typedef typename Sparse_LA::Matrix      Matrix;
 
-  typedef Eigen_solver_traits<Eigen::LeastSquaresConjugateGradient<Eigen_sparse_matrix<double>::EigenType> >
-                                           LeastSquaresSolver ;
-
-  typedef typename LeastSquaresSolver::Matrix LSS_Matrix;
-  typedef typename LeastSquaresSolver::Vector LSS_Vector;
-  typedef typename LeastSquaresSolver::NT     LSS_Scalar;
+    // typedef typename OpenNL::LinearSolver<Sparse_LA>
+    //                                         LeastSquaresSolver ;
+  typedef EigenLeastSquaresSolver LeastSquaresSolver;
 
 // Public operations
 public:
@@ -185,8 +180,7 @@ private:
     /// \pre Vertices must be indexed.
     /// \pre X and B must be allocated and empty.
     /// \pre At least 2 border vertices must be parameterized.
-    void initialize_system_from_mesh_border(LSS_Matrix& A,
-					    LSS_Vector& B,
+    void initialize_system_from_mesh_border(LeastSquaresSolver& solver,
                                             const Adaptor& mesh) ;
 
     /// Utility for setup_triangle_relations():
@@ -198,7 +192,7 @@ private:
     /// Create two lines in the linear system per triangle (one for u, one for v).
     ///
     /// \pre vertices must be indexed.
-  Error_code setup_triangle_relations(LSS_Matrix& A, LSS_Vector& B,
+    Error_code setup_triangle_relations(LeastSquaresSolver& solver,
                                         const Adaptor& mesh,
                                         Facet_const_handle facet) ;
 
@@ -301,39 +295,34 @@ parameterize(Adaptor& mesh)
 
     // Create sparse linear system "A*X = B" of size 2*nbVertices x 2*nbVertices
     // (in fact, we need only 2 lines per triangle x 1 column per vertex)
-    LSS_Matrix A (2 * nbVertices, 2 * nbVertices);
-    LSS_Vector B (2 * nbVertices);
-    
+    LeastSquaresSolver solver(2*nbVertices);
+    solver.set_least_squares(true) ;
+
     // Initialize the "A*X = B" linear system after
     // (at least two) border vertices parameterization
-    initialize_system_from_mesh_border(A, B, mesh);
+    initialize_system_from_mesh_border(solver, mesh);
 
     // Fill the matrix for the other vertices
+    solver.begin_system() ;
     for (Facet_iterator facetIt = mesh.mesh_facets_begin();
          facetIt != mesh.mesh_facets_end();
          facetIt++)
     {
         // Create two lines in the linear system per triangle (one for u, one for v)
-      status = setup_triangle_relations(A, B, mesh, facetIt);
+        status = setup_triangle_relations(solver, mesh, facetIt);
             if (status != Base::OK)
             return status;
     }
-
-    A.assemble_matrix();
-
+    solver.end_system() ;
 #ifdef DEBUG_TRACE
     std::cerr << "  matrix filling (" << 2*mesh.count_mesh_facets() << " x " << nbVertices << "): "
               << timer.time() << " seconds." << std::endl;
     timer.reset();
 #endif
-	
+
     // Solve the "A*X = B" linear system in the least squares sense
-    LSS_Vector X (2 * nbVertices);
-    LSS_Scalar D;
-    LeastSquaresSolver solver;
-    if (!(solver.linear_solver (A, B, X, D)))
-      status = Base::ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
-    
+    if ( ! solver.solve() )
+        status = Base::ERROR_CANNOT_SOLVE_LINEAR_SYSTEM;
 #ifdef DEBUG_TRACE
     std::cerr << "  solving linear system: "
               << timer.time() << " seconds." << std::endl;
@@ -341,7 +330,7 @@ parameterize(Adaptor& mesh)
 #endif
     if (status != Base::OK)
         return status;
-    return status;
+
     // Copy X coordinates into the (u,v) pair of each vertex
     set_mesh_uv_from_system(mesh, solver);
 #ifdef DEBUG_TRACE
@@ -414,7 +403,7 @@ check_parameterize_preconditions(Adaptor& mesh)
 template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 void LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-initialize_system_from_mesh_border(LSS_Matrix& A, LSS_Vector& B,
+initialize_system_from_mesh_border(LeastSquaresSolver& solver,
                                    const Adaptor& mesh)
 {
     for (Vertex_const_iterator it = mesh.mesh_vertices_begin();
@@ -430,13 +419,14 @@ initialize_system_from_mesh_border(LSS_Matrix& A, LSS_Vector& B,
         // Write (u,v) in X (meaningless if vertex is not parameterized)
         // Note  : 2*index     --> u
         //         2*index + 1 --> v
+        solver.variable(2*index    ).set_value(uv.x()) ;
+        solver.variable(2*index + 1).set_value(uv.y()) ;
 
         // Copy (u,v) in B if vertex is parameterized
-        if (mesh.is_vertex_parameterized(it))
-	  {
-	    B.set (2 * index,     uv.x ());
-	    B.set (2 * index + 1, uv.y ());
-	  }
+        if (mesh.is_vertex_parameterized(it)) {
+            solver.variable(2*index    ).lock() ;
+            solver.variable(2*index + 1).lock() ;
+        }
     }
 }
 
@@ -491,7 +481,7 @@ template<class Adaptor, class Border_param, class Sparse_LA>
 inline
 typename LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
 LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-setup_triangle_relations(LSS_Matrix& A, LSS_Vector& B,
+setup_triangle_relations(LeastSquaresSolver& solver,
                          const Adaptor& mesh,
                          Facet_const_handle facet)
 {
@@ -554,15 +544,24 @@ setup_triangle_relations(LSS_Matrix& A, LSS_Vector& B,
     //
     // Real part
     // Note: b = 0
-    
-    // TODO
-
+    solver.begin_row() ;
+    solver.add_coefficient(u0_id, -a+c)  ;
+    solver.add_coefficient(v0_id,  b-d)  ;
+    solver.add_coefficient(u1_id,   -c)  ;
+    solver.add_coefficient(v1_id,    d)  ;
+    solver.add_coefficient(u2_id,    a) ;
+    solver.end_row() ;
     //
     // Imaginary part
     // Note: b = 0
+    solver.begin_row() ;
+    solver.add_coefficient(u0_id, -b+d) ;
+    solver.add_coefficient(v0_id, -a+c) ;
+    solver.add_coefficient(u1_id,   -d) ;
+    solver.add_coefficient(v1_id,   -c) ;
+    solver.add_coefficient(v2_id,    a) ;
+    solver.end_row() ;
 
-    // TODO
-    
     return Base::OK;
 }
 
@@ -582,10 +581,8 @@ set_mesh_uv_from_system(Adaptor& mesh,
 
         // Note  : 2*index     --> u
         //         2*index + 1 --> v
-
-	double u, v;
-	// TODO
-
+        NT u = solver.variable(2*index    ).value() ;
+        NT v = solver.variable(2*index + 1).value() ;
 
         // Fill vertex (u,v) and mark it as "parameterized"
         mesh.set_vertex_uv(vertexIt, Point_2(u,v));
