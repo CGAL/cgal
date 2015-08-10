@@ -73,7 +73,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 
     const char vertex_shader_source_bbox[] =
     {
-
+        "#version 120 \n"
         "attribute highp vec3 vertex; \n"
         "attribute highp vec3 colors; \n"
 
@@ -92,6 +92,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
     };
     const char fragment_shader_source[]=
     {
+        "#version 120 \n"
         "varying vec3 fColors; \n"
         " \n"
         "void main(void) \n"
@@ -214,8 +215,11 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
         program->setAttributeBuffer("center",GL_DOUBLE,0,3);
         buffers[8].release();
 
-        viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
-        viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
+        if(viewer->extension_is_found)
+        {
+            viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
+            viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
+        }
         vaos[3]->release();
     }
     //vao for the BBOX
@@ -292,8 +296,11 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
         program->setAttributeBuffer("center",GL_DOUBLE,0,3);
         buffers[16].release();
 
-        viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
-        viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
+        if(viewer->extension_is_found)
+        {
+            viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
+            viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
+        }
         vaos[6]->release();
     }
     //vao for the axis
@@ -501,7 +508,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
   color.set_rgb_color(0, 1.f, 0);
   if(ui_widget->ShowROICheckBox->isChecked()) {
 
-        if(!ui_widget->ShowAsSphereCheckBox->isChecked()) {
+        if(!ui_widget->ShowAsSphereCheckBox->isChecked() || !viewer->extension_is_found) {
 
             vaos[1]->bind();
             program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
@@ -524,7 +531,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
     }
   }
 
-    if(!ui_widget->ShowAsSphereCheckBox->isChecked()) {
+    if(!ui_widget->ShowAsSphereCheckBox->isChecked() || !viewer->extension_is_found) {
         vaos[5]->bind();
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);

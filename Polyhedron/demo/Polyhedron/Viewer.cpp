@@ -105,6 +105,25 @@ void Viewer::initializeGL()
 {
   QGLViewer::initializeGL();
   initializeOpenGLFunctions();
+  glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
+  if(!glDrawArraysInstanced)
+  {
+      qDebug()<<"glDrawArraysInstancedARB : extension not found. Spheres will be displayed as points.";
+      extension_is_found = false;
+  }
+  else
+      extension_is_found = true;
+
+  glVertexAttribDivisor = (PFNGLVERTEXATTRIBDIVISORARBPROC)this->context()->getProcAddress("glVertexAttribDivisorARB");
+  if(!glDrawArraysInstanced)
+  {
+      qDebug()<<"glVertexAttribDivisorARB : extension not found. Spheres will be displayed as points.";
+      extension_is_found = false;
+  }
+  else
+      extension_is_found = true;
+
+
   setBackgroundColor(::Qt::white);
   d->scene->initializeGL();
 

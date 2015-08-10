@@ -1,4 +1,4 @@
-#version 330
+#version 120
 attribute highp vec4 vertex;
 attribute highp vec3 normals;
 attribute highp vec3 colors;

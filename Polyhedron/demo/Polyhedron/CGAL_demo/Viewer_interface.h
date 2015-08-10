@@ -4,7 +4,7 @@
 #include <QGLViewer/qglviewer.h>
 #include <QWidget>
 #include <QPoint>
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_2_1>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 // forward declarations
 class QWidget;
@@ -14,7 +14,7 @@ class QKeyEvent;
 
 #include "../Viewer_config.h" // for VIEWER_EXPORT
 
-class VIEWER_EXPORT Viewer_interface : public QGLViewer, public QOpenGLFunctions_3_3_Core {
+class VIEWER_EXPORT Viewer_interface : public QGLViewer, public QOpenGLFunctions_2_1 {
 
   Q_OBJECT
 
@@ -30,6 +30,9 @@ public:
   static QString dumpFrame(const qglviewer::Frame&);
 
   virtual bool inFastDrawing() const = 0;
+  PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
+  PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
+  bool extension_is_found;
   GLfloat pickMatrix_[16];
 
 Q_SIGNALS:
@@ -47,6 +50,7 @@ public Q_SLOTS:
   virtual QString dumpCameraCoordinates() = 0;
   virtual bool moveCameraToCoordinates(QString, 
                                        float animation_duration = 0.5f) = 0;
+
 }; // end class Viewer_interface
 
 #endif // VIEWER_INTERFACE_H
