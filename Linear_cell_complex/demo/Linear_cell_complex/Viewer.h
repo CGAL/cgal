@@ -25,11 +25,11 @@
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
 
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
-class Viewer : public QGLViewer, QOpenGLFunctions_3_3_Core
+class Viewer : public QGLViewer, QOpenGLFunctions_2_1
 {
   Q_OBJECT
 
