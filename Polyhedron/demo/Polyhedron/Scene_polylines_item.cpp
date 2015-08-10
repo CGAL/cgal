@@ -102,10 +102,17 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[5].release();
-        QColor temp = this->color();
-        program->setAttributeValue("colors", temp);
 
-        program->setAttributeValue("normals",QVector3D(0.0,0.0,0.0));
+
+        buffers[3].bind();
+        program->enableAttributeArray("colors");
+        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+        buffers[3].release();
+
+        buffers[2].bind();
+        program->enableAttributeArray("normals");
+        program->setAttributeBuffer("normals",GL_FLOAT,0,3);
+        buffers[2].release();
 
         buffers[6].bind();
         buffers[6].allocate(color_spheres.data(),
@@ -121,8 +128,10 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
         program->setAttributeBuffer("center",GL_FLOAT,0,3);
         buffers[7].release();
 
+
         viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
         viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
+
         vaos[2]->release();
         program->release();
     }
@@ -283,7 +292,7 @@ Scene_polylines_item::Scene_polylines_item()
     ,d(new Scene_polylines_item_private())
     ,nbSpheres(0)
 {
-    setRenderingMode(Flat);
+    setRenderingMode(FlatPlusEdges);
     changed();
 
 }
@@ -364,7 +373,7 @@ bool
 Scene_polylines_item::supportsRenderingMode(RenderingMode m) const {
     return (m == Wireframe ||
             m == Flat ||
-            m == Flat ||
+            m == FlatPlusEdges ||
             m == Points);
 }
 
@@ -384,18 +393,6 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
                                     static_cast<GLsizei>(positions_spheres.size()/3), nbSpheres);
         program->release();
         vaos[1]->release();
-    }
-    if(renderingMode() == Flat)
-    {
-        vaos[0]->bind();
-        attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-        program->bind();
-        QColor temp = this->color();
-        program->setAttributeValue("colors", temp);
-        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
-        program->release();
-        vaos[0]->release();
     }
 }
 
