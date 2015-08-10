@@ -91,9 +91,8 @@ void Scene::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-        // "#version 330 \n"
+        "#version 120 \n"
         "attribute highp vec4 vertex;\n"
-        //  "uniform highp mat4 ortho_matrix;\n"
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 f_matrix;\n"
         "void main(void)\n"
@@ -104,7 +103,7 @@ void Scene::compile_shaders()
     //Vertex source code
     const char fragment_source[] =
     {
-        //"#version 330 \n"
+        "#version 120 \n"
         "uniform highp vec4 color; \n"
         "void main(void) { \n"
         "gl_FragColor = color; \n"
@@ -140,7 +139,7 @@ void Scene::compile_shaders()
     //Vertex source code
     const char tex_vertex_source[] =
     {
-        // "#version 330 \n"
+        "#version 120 \n"
         "attribute highp vec4 vertex;\n"
         "attribute highp vec2 tex_coord; \n"
         "uniform highp mat4 mvp_matrix;\n"
@@ -155,7 +154,7 @@ void Scene::compile_shaders()
     //Vertex source code
     const char tex_fragment_source[] =
     {
-        //"#version 330 \n"
+        "#version 120 \n"
         "uniform sampler2D texture;\n"
         "varying highp vec2 texc;\n"
         "void main(void) { \n"
