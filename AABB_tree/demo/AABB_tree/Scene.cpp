@@ -16,7 +16,6 @@
 #include <CGAL/IO/Polyhedron_iostream.h>
 #include <CGAL/Subdivision_method_3.h>
 
-#include <QOpenGLFunctions_3_3_Core>
 #include <QOpenGLShader>
 #include <QDebug>
 #include "Viewer.h"
@@ -1318,7 +1317,7 @@ void Scene::deactivate_cutting_plane()
 }
 void Scene::initGL(Viewer * /* viewer */)
 {
-    gl = new QOpenGLFunctions_3_3_Core();
+    gl = new QOpenGLFunctions_2_1();
    if(!gl->initializeOpenGLFunctions())
     {
         qFatal("ERROR : OpenGL Functions not initialized. Check your OpenGL Verison (should be >=3.3)");
