@@ -803,9 +803,8 @@ void Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>::
 switch_to_direct_orientation(Vector_3& v1, const Vector_3& v2,
 			    const Vector_3& v3) 
 {
-  Vector_3 v = cross_product(v2,v3);
-  double d = v*v1;
-  if(d < 0)v1 = -v1;
+  if (CGAL::orientation (v1, v2, v3) == CGAL::NEGATIVE)
+    v1 = -v1;
 }
 
 
