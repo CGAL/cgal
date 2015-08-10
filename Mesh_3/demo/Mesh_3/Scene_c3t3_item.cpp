@@ -51,16 +51,16 @@ void Scene_c3t3_item::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-        "#version 330 \n"
-        "in highp vec4 vertex;\n"
-        "in highp vec3 normal;\n"
-        "in highp vec3 inColor; \n"
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
+        "attribute highp vec3 normal;\n"
+        "attribute highp vec3 inColor; \n"
 
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 mv_matrix; \n"
-        "out highp vec4 fP; \n"
-        "out highp vec3 fN; \n"
-        "out highp vec4 color; \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
+        "varying highp vec4 color; \n"
         "void main(void)\n"
         "{\n"
         "   color = vec4(inColor, 1.0); \n"
@@ -73,9 +73,9 @@ void Scene_c3t3_item::compile_shaders()
     const char fragment_source[] =
     {
         "#version 330 \n"
-        "in highp vec4 fP; \n"
-        "in highp vec3 fN; \n"
-        "in vec4 color; \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
+        "varying vec4 color; \n"
         "uniform highp vec4 light_pos;  \n"
         "uniform highp vec4 light_diff; \n"
         "uniform highp vec4 light_spec; \n"
@@ -130,8 +130,8 @@ void Scene_c3t3_item::compile_shaders()
     //Vertex source code
     const char vertex_source_grid[] =
     {
-        "#version 330 \n"
-        "in highp vec4 vertex;\n"
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
 
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 f_matrix; \n"
@@ -143,7 +143,7 @@ void Scene_c3t3_item::compile_shaders()
     //Fragment source code
     const char fragment_source_grid[] =
     {
-        "#version 330 \n"
+        "#version 120 \n"
         "uniform vec4 color; \n"
         "void main(void) { \n"
         "gl_FragColor = color; \n"
