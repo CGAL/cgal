@@ -457,6 +457,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(point_set_bilateral_smoothing_plugin Polyhedron_demo_point_set_bilateral_smoothing_plugin ${point_set_bilateral_smoothingUI_FILES})
   target_link_libraries(point_set_bilateral_smoothing_plugin scene_points_with_normal_item)
 
+      qt5_wrap_ui(point_set_upsamplingUI_FILES Polyhedron_demo_point_set_upsampling_plugin.ui)
+  polyhedron_demo_plugin(point_set_upsampling_plugin Polyhedron_demo_point_set_upsampling_plugin ${point_set_upsamplingUI_FILES})
+  target_link_libraries(point_set_upsampling_plugin scene_points_with_normal_item)
+
   qt5_wrap_ui( ps_outliers_removal_UI_FILES Polyhedron_demo_point_set_outliers_removal_plugin.ui)
 
   polyhedron_demo_plugin(point_set_outliers_removal_plugin Polyhedron_demo_point_set_outliers_removal_plugin ${ps_outliers_removal_UI_FILES}) 
