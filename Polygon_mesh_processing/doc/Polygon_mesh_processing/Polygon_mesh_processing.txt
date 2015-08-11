@@ -275,6 +275,8 @@ or in general if its three vertices are collinear.
 The function
 `CGAL::Polygon_mesh_processing::remove_degenerate_faces()`
 removes those faces and fixes the connectivity of the newly cleaned up mesh.
+It is also possible to remove isolated vertices from any polygon mesh, using the function
+`CGAL::Polygon_mesh_processing::remove_isolated_vertices()`.
 
 \subsubsection RemoveDegenerateExample Example
 
@@ -452,6 +454,7 @@ Function or Class                     | Pure Triangle  | Self-Intersection Free 
 `polygon_soup_to_polygon_mesh()`      |     no         |        no              |   no
 `orient_polygon_soup()`               |     no         |        no              |   no
 `remove_degenerate_faces()`           |     yes        |        no              |   no
+`remove_isolated_vertices()`           |     no        |        no              |   no
 `compute_face_normal()`               |     no         |        no              |   no
 `compute_face_normals()`              |     no         |        no              |   no
 `compute_vertex_normal()`             |     no         |        no              |   no

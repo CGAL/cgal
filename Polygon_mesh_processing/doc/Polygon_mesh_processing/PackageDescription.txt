@@ -70,6 +70,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 - \link reverse_face_orientations_grp `CGAL::Polygon_mesh_processing::remove_degenerate_faces()` \endlink
+- `CGAL::Polygon_mesh_processing::remove_isolated_vertices()`
 
 ## Normal Computation Functions ##
 - `CGAL::Polygon_mesh_processing::compute_face_normal()`
