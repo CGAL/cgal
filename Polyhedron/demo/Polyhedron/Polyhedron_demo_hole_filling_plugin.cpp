@@ -426,10 +426,16 @@ void Polyhedron_demo_hole_filling_plugin::item_about_to_be_destroyed(Scene_item*
   if(poly_item) {
     // erase assoc polylines item
     scene->erase( scene->item_id( get_hole_visualizer(poly_item) ) );
-  visualizers.remove(poly_item);
+    visualizers.remove(poly_item);
     // close accept-reject dialog if it is open
     if(last_active_item == poly_item) {
       on_Accept_button();
+    }
+  }
+  else {
+    Scene_hole_visualizer* visu_item = qobject_cast<Scene_hole_visualizer*>(scene_item);
+    if(visu_item) {
+        visualizers.remove(visu_item->poly_item);
     }
   }
 }
@@ -590,8 +596,8 @@ void Polyhedron_demo_hole_filling_plugin::on_Reject_button() {
 void Polyhedron_demo_hole_filling_plugin::hole_visualizer_changed() {
   Scene_hole_visualizer* hole_visualizer = qobject_cast<Scene_hole_visualizer*>(this->sender());
   if(hole_visualizer && hole_visualizer->polyline_data_list.empty()) {
-    visualizers.remove(hole_visualizer->poly_item);
     scene->erase( scene->item_id(hole_visualizer));
+    visualizers.remove(hole_visualizer->poly_item);
   }
 }
 // helper function for filling holes
