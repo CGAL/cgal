@@ -27,7 +27,7 @@ int main()
 {
   try {
     CGAL::Point_3<CGAL::Epick> a, b, c, d;
-    squared_radius(a, b, c, d);
+    CGAL::squared_radius(a, b, c, d);
   } catch(...) {}
   return EXIT_SUCCESS;
 }

@@ -756,7 +756,7 @@ void _test_intersection_construct(SK sk) {
           intersection(s1, s2, sl, std::back_inserter(intersection_1));
           intersection(s1, s3, sl, std::back_inserter(intersection_2));
           if(intersection_1.size() == 1) {
-	          assert(do_intersect(s1, s2, sl));
+            assert(CGAL::do_intersect(s1, s2, sl));
             Circle_3 circle;
             std::pair<Circular_arc_point_3, unsigned> cap;
             if(assign(circle,intersection_1[0])) {
@@ -772,7 +772,7 @@ void _test_intersection_construct(SK sk) {
             }
           }
           if(intersection_1.size() == 2) {
-	          assert(do_intersect(s1, s2, sl));
+            assert(CGAL::do_intersect(s1, s2, sl));
             std::pair<Circular_arc_point_3, unsigned> cap1, cap2;
             assert(assign(cap1,intersection_1[0]));
             assert(assign(cap2,intersection_1[1]));
@@ -785,7 +785,7 @@ void _test_intersection_construct(SK sk) {
           }
 
           if(intersection_2.size() == 1) {
-	          assert(do_intersect(s1, s3, sl));
+            assert(CGAL::do_intersect(s1, s3, sl));
             Circle_3 circle;
             std::pair<Circular_arc_point_3, unsigned> cap;
             if(assign(circle,intersection_2[0])) {
@@ -801,7 +801,7 @@ void _test_intersection_construct(SK sk) {
             }
           }
           if(intersection_2.size() == 2) {
-	          assert(do_intersect(s1, s3, sl));
+            assert(CGAL::do_intersect(s1, s3, sl));
             // This case must never happen
             std::pair<Circular_arc_point_3, unsigned> cap1, cap2;
             assert(assign(cap1,intersection_2[0]));
