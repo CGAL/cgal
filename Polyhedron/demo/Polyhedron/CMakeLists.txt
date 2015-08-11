@@ -400,8 +400,11 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(corefinement_plugin Polyhedron_demo_corefinement_plugin)
   target_link_libraries(corefinement_plugin  scene_polyhedron_item scene_combinatorial_map_item scene_polylines_item)
 
-  polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
+  polyhedron_demo_plugin(repair_polyhedron_plugin Polyhedron_demo_repair_polyhedron_plugin)
+  target_link_libraries(repair_polyhedron_plugin scene_polyhedron_item)
 
+  polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
+  
   # Edit polyhedron scene item and plugin
   if ( EIGEN3_FOUND AND "${EIGEN3_VERSION}" VERSION_GREATER "3.1.90" )
     qt5_wrap_ui( editionUI_FILES Deform_mesh.ui )
