@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>PointSetSimplificationDialog</class>
- <widget class="QDialog" name="PointSetSimplificationDialog">
+ <class>PointSetBilateralSmoothingDialog</class>
+ <widget class="QDialog" name="PointSetBilateralSmoothingDialog">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -97,7 +97,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>accepted()</signal>
-   <receiver>PointSetSimplificationDialog</receiver>
+   <receiver>PointSetBilateralSmoothingDialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -113,7 +113,7 @@
   <connection>
    <sender>buttonBox</sender>
    <signal>rejected()</signal>
-   <receiver>PointSetSimplificationDialog</receiver>
+   <receiver>PointSetBilateralSmoothingDialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">

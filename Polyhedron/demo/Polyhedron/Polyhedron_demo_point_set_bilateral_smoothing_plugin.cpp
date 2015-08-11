@@ -47,7 +47,7 @@ public Q_SLOTS:
 
 }; // end Polyhedron_demo_point_set_bilateral_smoothing_plugin
 
-class Point_set_demo_point_set_bilateral_smoothing_dialog : public QDialog, private Ui::PointSetSimplificationDialog
+class Point_set_demo_point_set_bilateral_smoothing_dialog : public QDialog, private Ui::PointSetBilateralSmoothingDialog
 {
   Q_OBJECT
   public:
