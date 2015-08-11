@@ -288,7 +288,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
             ::glPopName();
         }
     }
-
+glDepthFunc(GL_LEQUAL);
     // Wireframe OpenGL drawing
     for(int index = 0; index < m_entries.size(); ++index)
     {
@@ -353,6 +353,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
         }
     }
 
+
     // Points OpenGL drawing
     for(int index = 0; index < m_entries.size(); ++index)
     {
@@ -381,6 +382,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
             ::glPopName();
         }
     }
+    glDepthFunc(GL_LESS);
 }
 
 int 
