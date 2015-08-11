@@ -657,6 +657,9 @@ protected:
     }
     if(ctrl_vertex_frame_map.empty()) { return false; }
 
+    rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+    rot_constraint.setTranslationConstraintType(qglviewer::AxisPlaneConstraint::FREE);
+
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     qglviewer::Camera* camera = viewer->camera();
 
