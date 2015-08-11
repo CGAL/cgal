@@ -308,7 +308,6 @@ public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m);
 
   Scene_hole_visualizer* get_hole_visualizer(Scene_polyhedron_item* poly_item) {
-
       return visualizers[poly_item];
   }
 
@@ -471,6 +470,7 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
 
   if(hole_visualizer->polyline_data_list.empty()) {
     print_message("There is no hole in selected polyhedron item!");
+    visualizers.remove(poly_item);
     delete hole_visualizer;
     return;
   }
