@@ -78,7 +78,7 @@ public:
   {
     CGAL_kernel_precondition(o != COLLINEAR);
 
-    Point_3_ center = circumcenter(p, q, r);
+    Point_3_ center = CGAL::circumcenter(p, q, r);
     FT      squared_radius = squared_distance(p, center);
 
     base = Rep(center, squared_radius, o);

@@ -1057,7 +1057,7 @@ namespace CGAL {
         return *(c->lazy_circumcenter());
 
       c->set_lazy_circumcenter
-        (circumcenter(c->vertex(0)->point(),
+        (CGAL::circumcenter(c->vertex(0)->point(),
                       c->vertex(1)->point(),
                       c->vertex(2)->point(),
                       c->vertex(3)->point()));
@@ -1257,8 +1257,8 @@ namespace CGAL {
               cc = lazy_circumcenter(c);
               cn = lazy_circumcenter(n);
 #else
-              cc = circumcenter(cp0, cp1, cp2, cp3);
-              cn = circumcenter(np0, np1, np2, np3);
+              cc = CGAL::circumcenter(cp0, cp1, cp2, cp3);
+              cn = CGAL::circumcenter(np0, np1, np2, np3);
 #endif
               // computation of the distance of  cp1  to the  dual segment cc, cn...
               Vector V(cc - cn), Vc(cc - cp1), Vn(cp1 - cn);
