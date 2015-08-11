@@ -85,6 +85,21 @@ if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
 endif(EIGEN3_FOUND)
 
+# Activate concurrency?
+option(ACTIVATE_CONCURRENCY
+  "Enable concurrency"
+  ON)
+
+if( ACTIVATE_CONCURRENCY )
+  find_package( TBB )
+  if( TBB_FOUND )
+    include( ${TBB_USE_FILE} )
+    list( APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES} )
+  else()
+    message( STATUS "NOTICE: Intel TBB NOT found! The example is faster if TBB is linked." )
+  endif()
+endif()
+
 if(CGAL_Qt4_FOUND AND QT4_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(Boost_USE_MULTITHREADED      ON)
