@@ -155,6 +155,9 @@ public:
     connect(ui->pushButton_segment, SIGNAL(clicked()),
             this, SLOT(on_actionSegment()));
 
+    QObject* scene_object = dynamic_cast<QObject*>(scene);
+    connect(scene_object, SIGNAL(itemAboutToBeDestroyed(Scene_item*)),
+            this, SLOT(on_actionItemAboutToBeDestroyed(Scene_item*)));
   }
 
   QList<QAction*> actions() const {
@@ -718,10 +721,6 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
     Scene_item* temp = scene->replaceItem(fixedPointsItemIndex, fixedPointsItem, false);
     delete temp;
   }
-
-  QObject* scene_object = dynamic_cast<QObject*>(scene);
-  connect(scene_object, SIGNAL(itemAboutToBeDestroyed(Scene_item*)),
-          this, SLOT(on_actionItemAboutToBeDestroyed(Scene_item*)));
 
 //#define DRAW_NON_FIXED_POINTS
 #ifdef DRAW_NON_FIXED_POINTS
