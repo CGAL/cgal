@@ -383,6 +383,7 @@ glDepthFunc(GL_LEQUAL);
         }
     }
     glDepthFunc(GL_LESS);
+
 }
 
 int 

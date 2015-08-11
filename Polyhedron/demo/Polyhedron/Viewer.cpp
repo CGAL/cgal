@@ -202,6 +202,8 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
     scene->drawWithNames(viewer);
   else
     scene->draw(viewer);
+   ::glDisable(GL_POLYGON_OFFSET_FILL);
+  ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 }
 
 void Viewer::drawWithNames()
