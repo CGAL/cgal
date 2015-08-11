@@ -220,7 +220,7 @@ public:
   void draw_edges(Viewer_interface*) const;
   void draw_bbox(const Scene_interface::Bbox&) const;
   void draw_ROI_and_control_vertices(Viewer_interface *viewer) const;
-  void draw_frame_plane(Viewer_interface* viewer) const;
+  void draw_frame_plane(QGLViewer *viewer) const;
 
   // Get wrapped polyhedron
   Polyhedron*       polyhedron();
@@ -298,6 +298,7 @@ private:
   std::vector<GLdouble> pos_axis;
   std::vector<GLdouble> pos_sphere;
   std::vector<GLdouble> normals_sphere;
+  mutable std::vector<GLdouble> pos_frame_plane;
   mutable QOpenGLShaderProgram *program;
   mutable QOpenGLShaderProgram bbox_program;
 

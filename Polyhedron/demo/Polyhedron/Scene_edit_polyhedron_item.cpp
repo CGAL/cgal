@@ -11,7 +11,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 (Scene_polyhedron_item* poly_item,
  Ui::DeformMesh* ui_widget,
  QMainWindow* mw)
-  : Scene_item(19,8),
+  : Scene_item(20,9),
     ui_widget(ui_widget),
     poly_item(poly_item),
     is_rot_free(true),
@@ -91,6 +91,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 
     //the spheres :
     create_Sphere(length_of_axis/15.0);
+    pos_frame_plane.resize(0);
     changed();
 }
 
@@ -304,6 +305,23 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
         vaos[7]->release();
         program->release();
     }
+    //vao for the frame plane
+    {
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program->bind();
+        bbox_program.bind();
+        vaos[8]->bind();
+        buffers[19].bind();
+        buffers[19].allocate(pos_frame_plane.data(),
+                             static_cast<int>(pos_frame_plane.size()*sizeof(double)));
+        bbox_program.enableAttributeArray("vertex");
+        bbox_program.setAttributeBuffer("vertex",GL_DOUBLE,0,3);
+        buffers[19].release();
+
+        vaos[8]->release();
+        bbox_program.release();
+        program->release();
+    }
     are_buffers_filled = true;
 }
 
@@ -358,6 +376,7 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
     ROI_points.resize(0);
     control_points.resize(0);
     control_color.resize(0);
+    pos_frame_plane.resize(0);
     BOOST_FOREACH(vertex_descriptor vd, deform_mesh->roi_vertices())
     {
         if(!deform_mesh->is_control_vertex(vd))
@@ -418,6 +437,9 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
     color_lines[2] = 1.0; color_lines[5] = 1.0;
     color_lines[6] = 1.0; color_lines[9] = 1.0;
     color_lines[13] = 1.0; color_lines[16] = 1.0;
+
+    if(ui_widget->ActivateFixedPlaneCheckBox->isChecked())
+      draw_frame_plane(viewer);
 
 }
 
@@ -586,6 +608,17 @@ void Scene_edit_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     program->release();
     vaos[2]->release();
 
+
+    vaos[8]->bind();
+    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    program->bind();
+    program->setAttributeValue("colors", QColor(0,0,0));
+    viewer->glDrawArrays(GL_LINE_LOOP, 0, (GLsizei)pos_frame_plane.size()/3);
+    program->release();
+    vaos[8]->release();
+
+
   if(rendering_mode == Wireframe) {
         draw_ROI_and_control_vertices(viewer);
   }
@@ -604,18 +637,18 @@ void Scene_edit_polyhedron_item::draw(Viewer_interface* viewer) const {
     vaos[0]->release();
     draw_edges(viewer);
     draw_ROI_and_control_vertices(viewer);
-    if(ui_widget->ActivateFixedPlaneCheckBox->isChecked())
-      draw_frame_plane(viewer);
+
 }
 
-void Scene_edit_polyhedron_item::draw_frame_plane(Viewer_interface* viewer) const
+void Scene_edit_polyhedron_item::draw_frame_plane(QGLViewer* viewer) const
 {
+    pos_frame_plane.resize(15);
     for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
     {
         if(hgb_data->frame == viewer->manipulatedFrame())
         {
+
           const double diag = scene_diag();
-          glColor3f(0,0,0);
           qglviewer::Vec base1(1,0,0);
           qglviewer::Vec base2(0,1,0);
 
@@ -630,12 +663,12 @@ void Scene_edit_polyhedron_item::draw_frame_plane(Viewer_interface* viewer) cons
           qglviewer::Vec p3 = center + diag*base1 + diag*base2;
           qglviewer::Vec p4 = center - diag*base1 + diag*base2;
 
-          glBegin(GL_LINE_LOOP);
-            glVertex3f(p1.x, p1.y, p1.z);
-            glVertex3f(p2.x, p2.y, p2.z);
-            glVertex3f(p3.x, p3.y, p3.z);
-            glVertex3f(p4.x, p4.y, p4.z);
-          glEnd();
+          pos_frame_plane[0] = p1.x ; pos_frame_plane[1] = p1.y; pos_frame_plane[2] =p1.z ;
+          pos_frame_plane[3] = p2.x ; pos_frame_plane[4] = p2.y; pos_frame_plane[5] =p2.z ;
+          pos_frame_plane[6] = p3.x ; pos_frame_plane[7] = p3.y; pos_frame_plane[8] =p3.z ;
+          pos_frame_plane[9] = p4.x ; pos_frame_plane[10]= p4.y; pos_frame_plane[11] =p4.z ;
+          pos_frame_plane[12] = p1.x ; pos_frame_plane[13]= p1.y; pos_frame_plane[14] =p1.z ;
+          are_buffers_filled = false;
         }
     }
 }
