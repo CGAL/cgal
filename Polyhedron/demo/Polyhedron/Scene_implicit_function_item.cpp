@@ -457,6 +457,7 @@ Scene_implicit_function_item::supportsRenderingMode(RenderingMode m) const
 {
     switch ( m )
     {
+    case Splatting:
     case Gouraud:
         return false;
 

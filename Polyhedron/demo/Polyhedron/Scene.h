@@ -21,6 +21,7 @@
 
 class QEvent;
 class QMouseEvent;
+namespace GlSplat { class SplatRenderer; }
 
 class Viewer_interface;
 
@@ -169,6 +170,12 @@ private:
   QList<int> selected_items_list;
   int item_A;
   int item_B;
+#ifdef CGAL_GLEW_ENABLED
+  static GlSplat::SplatRenderer* ms_splatting;
+  static int ms_splattingCounter;
+public:
+  static GlSplat::SplatRenderer* splatting();
+#endif
 }; // end class Scene
 
 class SCENE_EXPORT SceneDelegate : public QItemDelegate
