@@ -79,6 +79,8 @@ The surface mesh constructed at scale \f$ s \f$ is non-self-intersecting. The in
 
 The surface mesh will not have edges incident to only one triangle or holes, loops of such edges, and the triangles are all oriented away from the point set. If the point set has <em>holes</em>, it is likely that the surface mesh will contain overlapping triangles with opposite orientation touching this hole.
 
+An additional treatment can be applied to force the output surface to be 2-manifold: small flat volumes are found before reconstructing and the surface is forced to only use one side of the volume while keeping consistency with the adjacent singular facets. Only one side of each singular facet is used. In addition, non-manifold edges and vertices are removed as a post-processing. The facets that have been discarded to make the surface 2-manifold are stored and accessible.
+
 If the object is not densely sampled or has disconnected components, the reconstructed surface may have several disconnected components. The surface is either an unordered collection of triangles, or the same collection sorted per \em shell. A shell is a collection of connected triangles that are locally oriented towards the same side of the surface.
 
 When reverted to the original scale, we cannot guarantee the surface is a valid embedding, because the triangles of this surface may pairwise intersect in their interior. It may also have boundary edges, although these will always be incident to two surface triangles oriented in opposite directions. However, when using appropriate parameter settings for the number of iterations and neighborhood size the surface will generally not self-intersect. The appropriate parameter settings depend on the geometry of the point set and generally need to be fine-tuned per data set, as described later.
@@ -104,7 +106,7 @@ There is a wide variety of possible point sets, whether synthetic or measured. T
 
 \subsection Triangulation3ssecIdeal Ideal Conditions
 
-The scale-space surface reconstruction has lenient ideal conditions. The surface should be reasonably regularly sampled and it should not contain overly concave corners. These notions affect the neighborhood parameter in opposing ways: more regular samplings may admit a smaller neighborhood parameter, which will admit smaller concavities. The point set may contain noise that is significantly smaller than the neighborhood size. Even so, when using the method to construct a mesh interpolating the original point set, any noise will deform the mesh. \cgalFigureRef{chapterScaleSpaceReconstruction3figIdeal} shows a reconstruction under ideal conditions.
+The scale-space surface reconstruction has lenient ideal conditions. The surface should be reasonably regularly sampled and it should not contain overly concave corners. These notions affect the neighborhood parameter in opposing ways: more regular sampling may admit a smaller neighborhood parameter, which will admit smaller concavities. The point set may contain noise that is significantly smaller than the neighborhood size. Even so, when using the method to construct a mesh interpolating the original point set, any noise will deform the mesh. \cgalFigureRef{chapterScaleSpaceReconstruction3figIdeal} shows a reconstruction under ideal conditions.
 
 \cgalFigureBegin{chapterScaleSpaceReconstruction3figIdeal, retinal_pts.png, retinal_surf.png}
 <b>Left:</b> In the ideal case, points are regularly distributed and concavities are limited. <b>Right:</b> reconstructed surface mesh.
@@ -236,12 +238,16 @@ This first example shows how to read a point set from a file, reconstruct the su
 
 \cgalExample{Scale_space_reconstruction_3/scale_space.cpp}
 
-The different phases of the reconstruction can also be performed individually. This may be helpful in cases where the correct parameter settings are not known in advance. In \cgalFigureRef{chapterScaleSpaceReconstruction3figSurfs}, the right figure shows the surface after incrementing the scale. After examening the reconstructed surface, we may decide that performing more iterations may better model the top-left part.
+The different phases of the reconstruction can also be performed individually. This may be helpful in cases where the correct parameter settings are not known in advance. In \cgalFigureRef{chapterScaleSpaceReconstruction3figSurfs}, the right figure shows the surface after incrementing the scale. After examining the reconstructed surface, we may decide that performing more iterations may better model the top-left part.
 
 The next example performs two reconstructions with different smoothing of the point set by further advancing the scale space. It illustrates how the code could be used in an interactive way.
 After examining the reconstructed surfaces, we may decide that performing more iterations may better the result.
 
 \cgalExample{Scale_space_reconstruction_3/scale_space_incremental.cpp}
+
+The last example shows how to force the output surface to be 2-manifold. In this case, some facets may be discarded in order to remove non-manifold simplices. They are stored on a \em garbage container in an unordered fashion. They are accessed by iterating on this container.
+
+\cgalExample{Scale_space_reconstruction_3/scale_space_manifold.cpp}
 
 
 \section ScaleSpaceReconstruction3secDesImpl Design and Implementation History

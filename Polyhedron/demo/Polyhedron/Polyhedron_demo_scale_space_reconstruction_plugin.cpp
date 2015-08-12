@@ -27,6 +27,8 @@ class Polyhedron_demo_scale_space_reconstruction_plugin_dialog : public QDialog,
     double neighbors() const { return m_neighbors->value(); }
     double iterations() const { return m_iterations->value(); }
     double samples() const { return m_samples->value(); }
+    bool generate_shells() const { return m_genShells->isChecked(); }
+    bool force_manifold() const { return m_forceManifold->isChecked(); }
     bool generate_smoothed() const { return m_genSmooth->isChecked(); }
 };
 
@@ -89,102 +91,194 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
     typedef CGAL::Scale_space_surface_reconstruction_3<Kernel> Reconstructor;
     Reconstructor reconstruct( dialog.neighbors(), dialog.samples() );
     reconstruct.reconstruct_surface(
-      pts_item->point_set()->begin(),
-      pts_item->point_set()->end(),
-      dialog.iterations()
-    );
+				    pts_item->point_set()->begin(),
+				    pts_item->point_set()->end(),
+				    dialog.iterations(),
+				    dialog.generate_shells(),
+				    dialog.force_manifold ()
+				    );
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
+
 
     std::vector<Point_set::Point> pts;
     typedef Point_set::iterator Point_iterator;
-    for(Point_iterator it = pts_item->point_set()->begin(),
-                       end = pts_item->point_set()->end(); it!=end; ++it)
-    {
-      pts.push_back (*it);
-    }
 
+    for(Point_iterator it = pts_item->point_set()->begin(),
+	  end = pts_item->point_set()->end(); it!=end; ++it)
+      {
+	pts.push_back (*it);
+      }
     std::vector<Reconstructor::Point> pts_smoothed;
     typedef Reconstructor::Point_iterator SS_point_iterator;
     
     for(SS_point_iterator it = reconstruct.points_begin(),
 	  end = reconstruct.points_end(); it!=end; ++it)
-    {
-      pts_smoothed.push_back (*it);
-    }
+      {
+	pts_smoothed.push_back (*it);
+      }
 
     for( unsigned int sh = 0; sh < reconstruct.number_of_shells(); ++sh ) {
-        // collect the number of triples.
-        std::ptrdiff_t num = std::distance( reconstruct.shell_begin( sh ),
-                                            reconstruct.shell_end( sh ) );
+      // collect the number of triples.
+      std::cerr << "\r" << sh+1 << " on " << reconstruct.number_of_shells();
+      std::ptrdiff_t num = std::distance( reconstruct.shell_begin( sh ),
+					  reconstruct.shell_end( sh ) );
 
-        //create item for the reconstruction output with input point set
-        Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
-        new_item->init_polygon_soup(pts_item->point_set()->size(),
-                                    num );
 
-	std::map<unsigned int, unsigned int> map_i2i;
+      //create item for the reconstruction output with input point set
+      Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
+      new_item->init_polygon_soup(pts_item->point_set()->size(),
+				  num );
 
-	unsigned int current_index = 0;
-        for (Reconstructor::Triple_iterator it=reconstruct.shell_begin( sh ),
-                                           end=reconstruct.shell_end( sh );it!=end;++it)
-        {
+      std::map<unsigned int, unsigned int> map_i2i;
+
+      unsigned int current_index = 0;
+      for (Reconstructor::Triple_iterator it=reconstruct.shell_begin( sh ),
+	     end=reconstruct.shell_end( sh );it!=end;++it)
+	{
 	  for (unsigned int ind = 0; ind < 3; ++ ind)
-	    if (map_i2i.insert (std::make_pair ((*it)[ind], current_index)).second)
-	      {
-		new_item->new_vertex (pts[(*it)[ind]].x (),
-				      pts[(*it)[ind]].y (),
-				      pts[(*it)[ind]].z ());
-		++ current_index;
-	      }
+	    {
+	      if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
+		{
+		  map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
+		  new_item->new_vertex (pts[(*it)[ind]].x (),
+					pts[(*it)[ind]].y (),
+					pts[(*it)[ind]].z ());
+		}
 
+	    }
 	  new_item->new_triangle( map_i2i[(*it)[0]],
 				  map_i2i[(*it)[1]],
 				  map_i2i[(*it)[2]] );
-        }
+	}
 
-        new_item->finalize_polygon_soup();
+      new_item->finalize_polygon_soup();
 
-        new_item->setName(tr("%1-shell %2 (ss reconstruction)").arg(scene->item(index)->name()).arg(sh+1));
-        new_item->setColor(Qt::magenta);
-        new_item->setRenderingMode(FlatPlusEdges);
-        scene->addItem(new_item);
+      new_item->setName(tr("%1-shell %2 (ss reconstruction)").arg(scene->item(index)->name()).arg(sh+1));
+      new_item->setColor(Qt::magenta);
+      new_item->setRenderingMode(FlatPlusEdges);
+      scene->addItem(new_item);
 
-        if ( dialog.generate_smoothed() ){
-          //create item for the reconstruction output with input point set smoothed
-          Scene_polygon_soup_item *new_item_smoothed = new Scene_polygon_soup_item();
+      if ( dialog.generate_smoothed() ){
+	//create item for the reconstruction output with input point set smoothed
+	Scene_polygon_soup_item *new_item_smoothed = new Scene_polygon_soup_item();
 
-          new_item_smoothed->init_polygon_soup(pts_item->point_set()->size(),
-                                               num );
+	new_item_smoothed->init_polygon_soup(pts_item->point_set()->size(),
+					     num );
+	  
+	std::map<unsigned int, unsigned int> map_i2i_smoothed;
 
-	  std::map<unsigned int, unsigned int> map_i2i_smoothed;
-
-	  unsigned int current_index_smoothed = 0;
-          for (Reconstructor::Triple_iterator it=reconstruct.shell_begin( sh ),
-                                             end=reconstruct.shell_end( sh );it!=end;++it)
-          {
+	unsigned int current_index_smoothed = 0;
+	for (Reconstructor::Triple_iterator it=reconstruct.shell_begin( sh ),
+	       end=reconstruct.shell_end( sh );it!=end;++it)
+	  {
 	    for (unsigned int ind = 0; ind < 3; ++ ind)
-	      if (map_i2i_smoothed.insert (std::make_pair ((*it)[ind], current_index_smoothed)).second)
-		{
-		  new_item_smoothed->new_vertex (pts_smoothed[(*it)[ind]].x (),
-						 pts_smoothed[(*it)[ind]].y (),
-						 pts_smoothed[(*it)[ind]].z ());
-		  ++ current_index_smoothed;
-		}
+	      {
+		if (map_i2i_smoothed.find ((*it)[ind]) == map_i2i_smoothed.end ())
+		  {
+		    map_i2i_smoothed.insert (std::make_pair ((*it)[ind], current_index_smoothed ++));
+		    new_item_smoothed->new_vertex (pts_smoothed[(*it)[ind]].x (),
+						   pts_smoothed[(*it)[ind]].y (),
+						   pts_smoothed[(*it)[ind]].z ());
+		  }
+
+	      }
 
 	    new_item_smoothed->new_triangle( map_i2i_smoothed[(*it)[0]],
 					     map_i2i_smoothed[(*it)[1]],
 					     map_i2i_smoothed[(*it)[2]] );
-          }
+	  }
 
-          new_item_smoothed->finalize_polygon_soup();
+	new_item_smoothed->finalize_polygon_soup();
 
-          new_item_smoothed->setName(tr("%1-shell %2 (ss smoothed reconstruction)").arg(scene->item(index)->name()).arg(sh+1));
-          new_item_smoothed->setColor(Qt::magenta);
-          new_item_smoothed->setRenderingMode(FlatPlusEdges);
-          scene->addItem(new_item_smoothed);
-        }
+	new_item_smoothed->setName(tr("%1-shell %2 (ss smoothed reconstruction)").arg(scene->item(index)->name()).arg(sh+1));
+	new_item_smoothed->setColor(Qt::magenta);
+	new_item_smoothed->setRenderingMode(FlatPlusEdges);
+	scene->addItem(new_item_smoothed);
+      }
     }
 
+    if (dialog.force_manifold ())
+      {
+	std::ptrdiff_t num = std::distance( reconstruct.garbage_begin(  ),
+					    reconstruct.garbage_end(  ) );
+
+
+	//create item for the reconstruction output with input point set
+	Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
+	new_item->init_polygon_soup(pts_item->point_set()->size(),
+				    num );
+
+	std::map<unsigned int, unsigned int> map_i2i;
+
+	unsigned int current_index = 0;
+	for (Reconstructor::Triple_iterator it=reconstruct.garbage_begin(),
+	       end=reconstruct.garbage_end();it!=end;++it)
+	  {
+	    for (unsigned int ind = 0; ind < 3; ++ ind)
+	      {
+		if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
+		  {
+		    map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
+		    new_item->new_vertex (pts[(*it)[ind]].x (),
+					  pts[(*it)[ind]].y (),
+					  pts[(*it)[ind]].z ());
+		  }
+
+	      }
+	    new_item->new_triangle( map_i2i[(*it)[0]],
+				    map_i2i[(*it)[1]],
+				    map_i2i[(*it)[2]] );
+	  }
+
+	new_item->finalize_polygon_soup();
+
+	new_item->setName(tr("%1 (ss non-manifold garbage)").arg(scene->item(index)->name()));
+	new_item->setColor(Qt::cyan);
+	new_item->setRenderingMode(FlatPlusEdges);
+	new_item->setVisible(false);
+	scene->addItem(new_item);
+
+	if ( dialog.generate_smoothed() ){
+	  //create item for the reconstruction output with input point set smoothed
+	  Scene_polygon_soup_item *new_item_smoothed = new Scene_polygon_soup_item();
+
+	  new_item_smoothed->init_polygon_soup(pts_item->point_set()->size(),
+					       num );
+	  
+	  std::map<unsigned int, unsigned int> map_i2i_smoothed;
+
+	  unsigned int current_index_smoothed = 0;
+	  for (Reconstructor::Triple_iterator it=reconstruct.garbage_begin( ),
+		 end=reconstruct.garbage_end( );it!=end;++it)
+	    {
+	      for (unsigned int ind = 0; ind < 3; ++ ind)
+		{
+		  if (map_i2i_smoothed.find ((*it)[ind]) == map_i2i_smoothed.end ())
+		    {
+		      map_i2i_smoothed.insert (std::make_pair ((*it)[ind], current_index_smoothed ++));
+		      new_item_smoothed->new_vertex (pts_smoothed[(*it)[ind]].x (),
+						     pts_smoothed[(*it)[ind]].y (),
+						     pts_smoothed[(*it)[ind]].z ());
+		    }
+
+		}
+
+	      new_item_smoothed->new_triangle( map_i2i_smoothed[(*it)[0]],
+					       map_i2i_smoothed[(*it)[1]],
+					       map_i2i_smoothed[(*it)[2]] );
+	    }
+
+	  new_item_smoothed->finalize_polygon_soup();
+
+	  new_item_smoothed->setName(tr("%1 (ss smoothed non-manifold garbage)").arg(scene->item(index)->name()));
+	  new_item_smoothed->setColor(Qt::cyan);
+	  new_item_smoothed->setRenderingMode(FlatPlusEdges);
+	  new_item_smoothed->setVisible(false);
+	  scene->addItem(new_item_smoothed);
+	}
+
+      }
+    
     // default cursor
     QApplication::restoreOverrideCursor();
   }
