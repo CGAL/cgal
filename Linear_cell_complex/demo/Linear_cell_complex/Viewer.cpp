@@ -235,7 +235,7 @@ void Viewer::compile_shaders()
         "#version 120 \n"
         "attribute highp vec4 vertex;\n"
         "attribute highp vec3 normal;\n"
-        "attribute highp vec4 color;\n"
+        "attribute highp vec3 color;\n"
 
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 mv_matrix; \n"
@@ -247,7 +247,7 @@ void Viewer::compile_shaders()
         "{\n"
         "   fP = mv_matrix * vertex; \n"
         "   fN = mat3(mv_matrix)* normal; \n"
-        "   fColor = color; \n"
+        "   fColor = vec4(color, 1.0); \n"
         "   gl_Position = mvp_matrix * vertex;\n"
         "}"
     };
