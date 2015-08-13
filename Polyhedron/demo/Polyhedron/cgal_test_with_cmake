@@ -129,11 +129,14 @@ else
       point_dialog \
       point_inside_polyhedron_plugin \
       point_set_average_spacing_plugin \
+      point_set_bilateral_smoothing_plugin \
       point_set_outliers_removal_plugin \
       point_set_selection_plugin \
       point_set_shape_detection_plugin  \
       point_set_simplification_plugin \
       point_set_smoothing_plugin \
+      point_set_upsampling_plugin \
+      point_set_wlop_simplification_and_regularization_plugin \
       poisson_plugin \
       polyhedron_slicer_plugin \
       polyhedron_stitching_plugin \
