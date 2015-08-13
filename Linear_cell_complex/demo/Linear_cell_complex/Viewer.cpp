@@ -657,15 +657,14 @@ void Viewer::attrib_buffers(QGLViewer* viewer)
 void
 Viewer::sceneChanged()
 {
-
+  compute_elements();
   this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
 						     bb.ymin(),
 						     bb.zmin()),
 				      qglviewer::Vec(bb.xmax(),
 						     bb.ymax(),
 						     bb.zmax()));
-    compute_elements();
-    are_buffers_initialized = false;
+  are_buffers_initialized = false;
   this->showEntireScene();
 }
 
