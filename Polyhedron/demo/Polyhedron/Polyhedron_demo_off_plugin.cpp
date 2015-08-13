@@ -44,8 +44,7 @@ Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
   // to detect isolated vertices
   CGAL::File_scanner_OFF scanner( in, false);
   std::size_t total_nb_of_vertices = scanner.size_of_vertices();
-  in.close();
-  in.open(fileinfo.filePath().toUtf8());
+  in.seekg(0);
 
   // Try to read .off in a polyhedron
   Scene_polyhedron_item* item = new Scene_polyhedron_item();
