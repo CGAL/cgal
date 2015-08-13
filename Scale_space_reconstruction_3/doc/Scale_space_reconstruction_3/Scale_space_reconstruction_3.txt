@@ -245,7 +245,7 @@ After examining the reconstructed surfaces, we may decide that performing more i
 
 \cgalExample{Scale_space_reconstruction_3/scale_space_incremental.cpp}
 
-The last example shows how to force the output surface to be 2-manifold. In this case, some facets may be discarded in order to remove non-manifold simplices. They are stored on a \em garbage container in an unordered fashion. They are accessed by iterating on this container.
+The last example shows how to force the output surface to be 2-manifold. In this case, some facets may be discarded in order to remove non-manifold simplices. They are stored in a \em garbage container in an unordered fashion. They are accessed by iterating on this container.
 
 \cgalExample{Scale_space_reconstruction_3/scale_space_manifold.cpp}
 
