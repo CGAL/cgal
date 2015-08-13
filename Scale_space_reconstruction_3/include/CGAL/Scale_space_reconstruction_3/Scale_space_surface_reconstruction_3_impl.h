@@ -36,14 +36,6 @@
 
 namespace CGAL {
 
-template <typename T>
-struct operator_less
-{
-  bool operator() (const T& a, const T& b) const
-  {
-    return &*a < &*b;
-  }
-};
   
 template < class Gt, class FS, class wA, class Ct >
 class
@@ -90,8 +82,8 @@ public:
 }; // In_surface_tester
 
 
-  namespace internal {
-    namespace Scale_space {
+namespace internal {
+  namespace Scale_space {
 
     struct Inc {
       unsigned int * i;
@@ -107,6 +99,16 @@ public:
       }
       
     };
+
+    template <typename T>
+    struct operator_less
+    {
+      bool operator() (const T& a, const T& b) const
+      {
+	return &*a < &*b;
+      }
+    };
+
   }
 }
 
@@ -811,7 +813,7 @@ detect_bubbles() {
 		      a = f.first->vertex( f.second );
 		      cl = _shape->classify( Facet(n, ni) );
 
-		      int n0, n1;
+		      int n0 = -1, n1 = -1;
 		      bool n0found = false;
 		      for (int j = 0; j < 4; ++ j)
 			{
@@ -1048,7 +1050,7 @@ fix_nonmanifold_vertices() {
 	    {
 	      ++ nb_nm_vertices;
 
-	      typedef std::map<UF_handle, std::vector<Facet>, operator_less<UF_handle> > Map_uf_sets;
+	      typedef std::map<UF_handle, std::vector<Facet>, internal::Scale_space::operator_less<UF_handle> > Map_uf_sets;
 	      Map_uf_sets map_h2f;
 	      for (unsigned int i = 0; i < fit->second.size (); ++ i)
 		{
