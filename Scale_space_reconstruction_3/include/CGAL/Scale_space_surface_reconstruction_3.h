@@ -681,6 +681,11 @@ public:
      *  not required allows for a quicker computation of the
      *  reconstruction.
      *
+     *  \note This function has no effect on an already reconstructed
+     *  surface. For the change of requirement (manifold or not) to be
+     *  applied, the `reconstruct_surface()` function must be called
+     *  again.
+     *
      *  \sa `garbage_begin()`
      *  \sa `garbage_end()`
      */
