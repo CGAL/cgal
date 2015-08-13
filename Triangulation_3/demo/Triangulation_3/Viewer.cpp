@@ -1193,6 +1193,7 @@ void Viewer::attrib_buffers(QGLViewer* viewer)
 
 void Viewer::draw()
 {
+    glEnable(GL_DEPTH_TEST);
     if(!are_buffers_initialized)
         initialize_buffers();
     QFont fontPrompt("Arial", 8);

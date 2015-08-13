@@ -53,6 +53,7 @@ void Viewer::initializeGL()
 void Viewer::draw_aux(bool with_names)
 {
   QGLViewer::draw();
+  glEnable(GL_DEPTH_TEST);
   if(scene == 0)
     return;
 

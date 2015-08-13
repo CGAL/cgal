@@ -27,6 +27,7 @@ Viewer::sceneChanged()
 void
 Viewer::draw()
 {
+    glEnable(GL_DEPTH_TEST);
   if(!are_buffers_initialized)
       initialize_buffers();
   QColor color;

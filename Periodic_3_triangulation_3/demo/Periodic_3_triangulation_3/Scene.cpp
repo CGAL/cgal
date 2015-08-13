@@ -780,6 +780,7 @@ void Scene::init() {
 
 // Draws the triangulation
 void Scene::draw() {
+    glEnable(GL_DEPTH_TEST);
     if(!are_buffers_initialized)
         initialize_buffers();
     gl_draw_location();

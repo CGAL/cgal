@@ -783,6 +783,7 @@ void Viewer::attrib_buffers(QGLViewer* viewer)
 
 void Viewer::draw()
 {
+    glEnable(GL_DEPTH_TEST);
     QColor color;
 
     //sphere
