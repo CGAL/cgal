@@ -24,7 +24,7 @@ endif()
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 # Include this package's headers first
-include_directories( BEFORE ./ ./include ../../include ./CGAL_demo ./GlSplat)
+include_directories( BEFORE ./ ./include ../../include ./CGAL_demo )
 
 add_subdirectory( implicit_functions )
 
@@ -100,6 +100,11 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
 
   qt5_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
+  qt5_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
+  add_library(gl_splat SHARED
+      GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
+  qt5_use_modules(gl_splat OpenGL Gui Xml)
+  target_link_libraries(gl_splat ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES})
 
   qt5_generate_moc( "CGAL_demo/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
 
@@ -186,6 +191,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   
   target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)# Scene_points_with_normal_item.moc)
+  target_link_libraries( scene_points_with_normal_item gl_splat ${GLEW_LIBRARIES} )
+  target_link_libraries( demo_framework gl_splat ${GLEW_LIBRARIES} )
 
   foreach( lib 
       demo_framework
@@ -204,7 +211,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       MainWindow.cpp
       Polyhedron_3.cpp
       File_loader_dialog_moc.cpp
-      GlSplat/GlSplat.cpp
        ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
     qt5_use_modules(Polyhedron_3 Gui OpenGL Xml Widgets Script Svg )
@@ -228,12 +234,14 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries( Polyhedron_3 ${QT_LIBRARIES} )
   target_link_libraries( Polyhedron_3 demo_framework )
   target_link_libraries( Polyhedron_3 point_dialog )
+  target_link_libraries( Polyhedron_3 gl_splat ${GLEW_LIBRARIES})
 
   # Link with CGAL
   target_link_libraries( Polyhedron_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
   # Link with libQGLViewer, OpenGL
   target_link_libraries( Polyhedron_3 ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
 
@@ -473,6 +481,12 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     scene_points_with_normal_item
     scene_implicit_function_item
     scene_polylines_item
+    NAMESPACE Polyhedron_
+    APPEND FILE polyhedron_demo_targets.cmake)
+
+  export(
+    TARGETS
+    gl_splat
     NAMESPACE Polyhedron_
     APPEND FILE polyhedron_demo_targets.cmake)
 
