@@ -30,6 +30,12 @@
 #include <iterator>
 #include <list>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>  
+#endif // CGAL_LINKED_WITH_TBB
+
 namespace CGAL {
 
 
@@ -39,7 +45,6 @@ namespace CGAL {
 /// \cond SKIP_IN_MANUAL
 
 namespace internal {
-
 
 /// Smoothes one point position using jet fitting on the k
 /// nearest neighbors and reprojection onto the jet.
@@ -102,6 +107,42 @@ jet_smooth_point(
   return monge_form.origin();
 }
 
+    namespace Jet_smooth {
+
+    template <typename Kernel, typename SvdTraits, typename Tree, typename PointPMap>
+    class Mutate_pwns {
+      typedef typename Kernel::Point_3 Point;
+      const Tree& tree;
+      const unsigned int k;
+      PointPMap& point_pmap;
+      unsigned int degree_fitting;
+      unsigned int degree_monge;
+      const std::vector<Point>& input;
+      std::vector<Point>& output;
+
+    public:
+      Mutate_pwns(Tree& tree, unsigned int k, PointPMap point_pmap, std::vector<Point>& points,
+		  unsigned int degree_fitting, unsigned int degree_monge, std::vector<Point>& output)
+	: tree(tree), k (k), point_pmap (point_pmap), degree_fitting (degree_fitting),
+	  degree_monge (degree_monge), input (points), output (output)
+      { }
+    
+      void operator()(const tbb::blocked_range<std::size_t>& r) const
+      {
+	for( std::size_t i = r.begin(); i != r.end(); ++i)
+	  output[i] = CGAL::internal::jet_smooth_point<Kernel, SvdTraits>(input[i], tree, k,
+									  degree_fitting,
+									  degree_monge);
+      }
+
+      const Point& get_output (std::size_t index) const { return output[index]; }
+
+    };
+
+  }
+  
+
+
 } /* namespace internal */
 
 /// \endcond
@@ -129,7 +170,8 @@ jet_smooth_point(
 ///         can be ommited under conditions described in the documentation of `Monge_via_jet_fitting`.
 
 // This variant requires all parameters.
-template <typename InputIterator,
+template <typename Concurrency_tag,
+	  typename InputIterator,
           typename PointPMap,
           typename Kernel,
           typename SvdTraits
@@ -161,7 +203,7 @@ jet_smooth_point_set(
   CGAL_point_set_processing_precondition(k >= 2);
   
   InputIterator it;
-  
+
   // Instanciate a KD-tree search.
   // Note: We have to convert each input iterator to Point_3.
   std::vector<Point> kd_tree_points; 
@@ -175,29 +217,55 @@ jet_smooth_point_set(
     kd_tree_points.push_back(point);
   }
   Tree tree(kd_tree_points.begin(), kd_tree_points.end());
-  
+
   // Iterates over input points and mutates them.
   // Implementation note: the cast to Point& allows to modify only the point's position.
-  for(it = first; it != beyond; it++)
-  {
+
+#ifdef CGAL_LINKED_WITH_TBB
+   if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
+   {
+     std::vector<Point> mutated_points (kd_tree_points.size ());
+     CGAL::internal::Jet_smooth::Mutate_pwns<Kernel, SvdTraits, Tree, PointPMap>
+       f (tree, k, point_pmap, kd_tree_points, degree_fitting, degree_monge,
+	  mutated_points);
+     tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
+     unsigned int i = 0;
+     for(it = first; it != beyond; ++ it, ++ i)
+       {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    const Point& p = get(point_pmap, it);
-    put(point_pmap, it ,
-        internal::jet_smooth_point<Kernel, SvdTraits>(
-          p,tree,k,degree_fitting,degree_monge) );
+	 const Point& p = get(point_pmap, it);
+	 put(point_pmap, it , mutated_points[i]);
 #else
-    const Point& p = get(point_pmap, *it);
-    put(point_pmap, *it ,
-        internal::jet_smooth_point<Kernel, SvdTraits>(
-          p,tree,k,degree_fitting,degree_monge) );
+	 const Point& p = get(point_pmap, *it);
+	 put(point_pmap, *it, mutated_points[i]);
 #endif  
-  }
+       }
+   }
+   else
+#endif
+     {
+       for(it = first; it != beyond; it++)
+	 {
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+	   const Point& p = get(point_pmap, it);
+	   put(point_pmap, it ,
+	       internal::jet_smooth_point<Kernel, SvdTraits>(
+							     p,tree,k,degree_fitting,degree_monge) );
+#else
+	   const Point& p = get(point_pmap, *it);
+	   put(point_pmap, *it ,
+	       internal::jet_smooth_point<Kernel, SvdTraits>(
+							     p,tree,k,degree_fitting,degree_monge) );
+#endif  
+	 }
+     }
 }
 
 
 #if defined(CGAL_EIGEN3_ENABLED) || defined(CGAL_LAPACK_ENABLED)
 /// @cond SKIP_IN_MANUAL
-template <typename InputIterator,
+template <typename Concurrency_tag,
+	  typename InputIterator,
           typename PointPMap,
           typename Kernel
 >
@@ -216,13 +284,14 @@ jet_smooth_point_set(
   #else
   typedef Lapack_svd SvdTraits;
   #endif
-  jet_smooth_point_set<InputIterator, PointPMap, Kernel, SvdTraits>(
+  jet_smooth_point_set<Concurrency_tag, InputIterator, PointPMap, Kernel, SvdTraits>(
     first, beyond, point_pmap, k, kernel, degree_fitting, degree_monge);
 }
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
-template <typename InputIterator,
+template <typename Concurrency_tag,
+	  typename InputIterator,
           typename PointPMap
 >
 void
@@ -236,7 +305,7 @@ jet_smooth_point_set(
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  jet_smooth_point_set(
+  jet_smooth_point_set<Concurrency_tag>(
     first,beyond,
     point_pmap,
     k,
@@ -247,7 +316,8 @@ jet_smooth_point_set(
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Identity_property_map.
-template <typename InputIterator
+template <typename Concurrency_tag,
+	  typename InputIterator
 >
 void
 jet_smooth_point_set(
