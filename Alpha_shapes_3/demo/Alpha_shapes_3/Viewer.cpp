@@ -30,8 +30,8 @@ void Viewer::compile_shaders()
     const char vertex_source[] =
     {
          "#version 120 \n"
-        "in highp vec4 vertex;\n"
-        "in highp vec3 normal;\n"
+        "attribute highp vec4 vertex;\n"
+        "attribute highp vec3 normal;\n"
 
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 mv_matrix; \n"
@@ -44,12 +44,12 @@ void Viewer::compile_shaders()
         "   gl_Position = mvp_matrix * vertex;\n"
         "}"
     };
-    //Vertex source code
+    //Fragment source code
     const char fragment_source[] =
     {
         "#version 120 \n"
-        "in highp vec4 fP; \n"
-        "in highp vec3 fN; \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
         "uniform highp vec4 color; \n"
         "uniform vec4 light_pos;  \n"
         "uniform vec4 light_diff; \n"
@@ -105,8 +105,8 @@ rendering_program.bind();
 //Vertex source code
 const char vertex_source_points[] =
 {
-     "#version 120 \n"
-    "in highp vec4 vertex;\n"
+    "#version 120 \n"
+    "attribute highp vec4 vertex;\n"
 
     "uniform highp mat4 mvp_matrix;\n"
     "void main(void)\n"

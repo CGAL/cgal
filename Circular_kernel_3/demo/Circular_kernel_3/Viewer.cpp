@@ -193,6 +193,7 @@ void Viewer::initialize_buffers()
     buffers[2].release();
     if(extension_is_found)
     {
+
         glVertexAttribDivisor(trivialCenterLocation, 1);
         glVertexAttribDivisor(normalsLocation[0], 0);
     }
@@ -240,7 +241,7 @@ void Viewer::initialize_buffers()
     vao[2].bind();
     if(extension_is_found)
     {
-        //points of the sphere
+        //points of the spheres
         buffers[6].bind();
         buffers[6].allocate(pos_sphere_inter.data(),
                             static_cast<int>(pos_sphere_inter.size()*sizeof(float)));
@@ -807,7 +808,7 @@ void Viewer::draw()
     {
         rendering_program.bind();
         rendering_program.setUniformValue(colorLocation, color);
-        glDrawArraysInstanced(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_points.size()/3), static_cast<GLsizei>(pos_points.size()/3));
+        glDrawArraysInstanced(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_sphere_inter.size()/3), static_cast<GLsizei>(pos_points.size()/3));
         rendering_program.release();
     }
     else
