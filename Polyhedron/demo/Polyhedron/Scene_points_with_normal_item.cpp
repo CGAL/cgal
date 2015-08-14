@@ -383,10 +383,8 @@ bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const
 
 void Scene_points_with_normal_item::draw_splats(Viewer_interface* viewer) const
 {
-    //Needs to be re-thinked because the GlSplat Renderer is deprecated and is a big part of the scene class.
-
    // TODO add support for selection
-/*   ::glBegin(GL_POINTS);
+   ::glBegin(GL_POINTS);
    for ( Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
    {
      const UI_point& p = *it;
@@ -398,7 +396,7 @@ void Scene_points_with_normal_item::draw_splats(Viewer_interface* viewer) const
    ::glEnd();
 
 
-*/
+
 }
 
 void Scene_points_with_normal_item::draw_edges(Viewer_interface* viewer) const

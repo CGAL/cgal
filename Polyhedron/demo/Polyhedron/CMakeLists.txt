@@ -24,7 +24,7 @@ endif()
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 # Include this package's headers first
-include_directories( BEFORE ./ ./include ../../include ./CGAL_demo )
+include_directories( BEFORE ./ ./include ../../include ./CGAL_demo ./GlSplat)
 
 add_subdirectory( implicit_functions )
 
@@ -204,6 +204,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       MainWindow.cpp
       Polyhedron_3.cpp
       File_loader_dialog_moc.cpp
+      GlSplat/GlSplat.cpp
        ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
     qt5_use_modules(Polyhedron_3 Gui OpenGL Xml Widgets Script Svg )
