@@ -15,9 +15,9 @@
 #include <QtPlugin>
 #include <QMessageBox>
 
-#include "ui_Polyhedron_demo_point_set_wlop_simplification_and_regularization_plugin.h"
+#include "ui_Polyhedron_demo_point_set_wlop_plugin.h"
 
-class Polyhedron_demo_point_set_wlop_simplification_and_regularization_plugin :
+class Polyhedron_demo_point_set_wlop_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -46,7 +46,7 @@ public:
 public Q_SLOTS:
   void on_actionSimplifyAndRegularize_triggered();
 
-}; // end Polyhedron_demo_point_set_wlop_simplification_and_regularization_plugin
+}; // end Polyhedron_demo_point_set_wlop_plugin
 
 class Point_set_demo_point_set_wlop_simplification_and_regularization_dialog : public QDialog, private Ui::WLOPRegularizationAndSimplificationDialog
 {
@@ -61,7 +61,7 @@ class Point_set_demo_point_set_wlop_simplification_and_regularization_dialog : p
     double neighborhoodRadius() const { return m_neighborhoodRadius->value(); }
 };
 
-void Polyhedron_demo_point_set_wlop_simplification_and_regularization_plugin::on_actionSimplifyAndRegularize_triggered()
+void Polyhedron_demo_point_set_wlop_plugin::on_actionSimplifyAndRegularize_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -117,4 +117,4 @@ void Polyhedron_demo_point_set_wlop_simplification_and_regularization_plugin::on
   }
 }
 
-#include "Polyhedron_demo_point_set_wlop_simplification_and_regularization_plugin.moc"
+#include "Polyhedron_demo_point_set_wlop_plugin.moc"

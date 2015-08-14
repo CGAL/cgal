@@ -136,7 +136,7 @@ else
       point_set_simplification_plugin \
       point_set_smoothing_plugin \
       point_set_upsampling_plugin \
-      point_set_wlop_simplification_and_regularization_plugin \
+      point_set_wlop_plugin \
       poisson_plugin \
       polyhedron_slicer_plugin \
       polyhedron_stitching_plugin \
