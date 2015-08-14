@@ -512,18 +512,18 @@ namespace internal {
           halfedge_and_opp_removed(he);
           halfedge_and_opp_removed(prev(he, mesh_));
 
-          //perform collapse
-          Point target_point = get(vpmap_, vb);
-
-          vertex_descriptor vkept = CGAL::Euler::collapse_edge(edge(he, mesh_), mesh_);
-          put(vpmap_, vkept, target_point);
-          ++nb_collapses;
-
           // merge halfedge_status to keep the more important on both sides
+          //do it before collapse is performed to be sure everything is valid
           merge_status(en, s_epo, s_ep);
           if (!mesh_border_case)
             merge_status(en_p, s_epo_p, s_ep_p);
 
+          //perform collapse
+          Point target_point = get(vpmap_, vb);
+          vertex_descriptor vkept = CGAL::Euler::collapse_edge(edge(he, mesh_), mesh_);
+          put(vpmap_, vkept, target_point);
+          ++nb_collapses;
+          
           fix_degenerate_faces(vkept, short_edges, sq_low);
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -995,6 +995,9 @@ namespace internal {
       Halfedge_status s_en = status(en);
       Halfedge_status s_eno = status(eno);
 
+      if (s_epo == MESH_BORDER && s_eno == MESH_BORDER)
+        return;
+
       if(s_epo == MESH_BORDER
         || s_ep == MESH_BORDER
         || s_epo == PATCH_BORDER
@@ -1025,6 +1028,8 @@ namespace internal {
         degenerate_faces.pop_back();
 
         CGAL_assertion(PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()));
+        if (face(h, mesh_) == boost::graph_traits<PM>::null_face())
+          continue;
 
         BOOST_FOREACH(halfedge_descriptor hf,
                       halfedges_around_face(h, mesh_))
