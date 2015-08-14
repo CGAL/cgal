@@ -135,8 +135,6 @@ jet_smooth_point(
 									  degree_monge);
       }
 
-      const Point& get_output (std::size_t index) const { return output[index]; }
-
     };
 
   }
