@@ -1006,8 +1006,11 @@ protected:
       const Conflict_test &tester,
       Triple<OutputIteratorBoundaryFacets, OutputIteratorCells,
       OutputIteratorInternalFacets> it) const {
-    Offset off = get_location_offset(tester, c);
-    return find_conflicts(c,off,tester,it);
+    bool b = false;
+    Offset off = get_location_offset(tester, c, b);
+    if (b)
+      return find_conflicts(c,off,tester,it);
+    return it;
   }
 
   template <class Conflict_test, class OutputIteratorBoundaryFacets,

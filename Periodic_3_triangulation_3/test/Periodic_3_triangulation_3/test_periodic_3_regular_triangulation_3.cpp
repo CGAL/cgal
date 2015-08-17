@@ -54,6 +54,7 @@ template class CGAL::Periodic_3_regular_triangulation_3<Traits>;
 typedef CGAL::Periodic_3_regular_triangulation_3<Traits> P3RT3;
 typedef P3RT3::Vertex_handle Vertex_handle;
 typedef P3RT3::Cell_handle Cell_handle;
+typedef P3RT3::Facet Facet;
 
 typedef Traits::Weighted_point Weighted_point;
 typedef Traits::Bare_point Bare_point;
@@ -860,31 +861,83 @@ void test_number_of_hidden_points ()
   assert(p3rt3.number_of_hidden_points() == 3);
 }
 
+void test_find_conflicts ()
+{
+  std::cout << "--- test_find_conflicts" << std::endl;
+
+  CGAL::Random random(7);
+  typedef CGAL::Creator_uniform_3<double,Bare_point>  Creator;
+  CGAL::Random_points_in_cube_3<Bare_point, Creator> in_cube(0.5, random);
+
+  P3RT3::Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
+  P3RT3 p3rt3(iso_cuboid);
+
+  std::vector<Weighted_point> points;
+  points.reserve(7);
+
+  while (points.size() != 800)
+  {
+    Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
+    points.push_back(p);
+  }
+  std::cout << "  generated" << std::endl;
+
+  p3rt3.insert(points.begin(), points.end(), true);
+
+  std::cout << "  Conflict region" << std::endl;
+  std::vector<Facet> bd_facets;
+  std::vector<Cell_handle> conflict_cells;
+  std::vector<Facet> int_facets;
+  Bare_point bp(-0.5,-0.5,0.5);
+  Cell_handle ch = p3rt3.locate(bp);
+  p3rt3.find_conflicts(bp, ch, std::back_inserter(bd_facets), std::back_inserter(conflict_cells),
+      std::back_inserter(int_facets));
+  for (unsigned int i = 0; i < bd_facets.size(); i++)
+  {
+    assert(
+        (p3rt3.side_of_power_sphere(bd_facets[i].first, bp) == CGAL::ON_BOUNDED_SIDE)
+            ^ (p3rt3.side_of_power_sphere(bd_facets[i].first->neighbor(bd_facets[i].second), bp)
+                == CGAL::ON_BOUNDED_SIDE));
+  }
+  for (unsigned int i = 0; i < conflict_cells.size(); i++)
+  {
+    assert(p3rt3.side_of_power_sphere(conflict_cells[i], bp) == CGAL::ON_BOUNDED_SIDE);
+  }
+  for (unsigned int i = 0; i < int_facets.size(); i++)
+  {
+    assert((p3rt3.side_of_power_sphere(int_facets[i].first, bp) == CGAL::ON_BOUNDED_SIDE));
+    assert(
+        (p3rt3.side_of_power_sphere(int_facets[i].first->neighbor(int_facets[i].second), bp)
+            == CGAL::ON_BOUNDED_SIDE));
+  }
+}
+
 int main (int argc, char** argv)
 {
   std::cout << "TESTING ..." << std::endl;
 
   CGAL::force_ieee_double_precision();
 
-  test_insert_range(800, 7);
-  test_construction_and_insert_range(800, 7);
-  test_number_of_hidden_points();
-  test_locate_geometry();
-  test_dummy_points();
-  test_construction();
-  test_insert_1();
-  test_insert_point();
-  test_insert_hidden_point();
-  test_insert_hiding_point();
-  test_insert_a_point_twice();
-  test_insert_two_points_with_the_same_position();
-  test_remove();
-  test_27_to_1_sheeted_covering();
-////    Iso_cuboid unitaire ->  0 <= weight < 0.015625
-  test_insert_rnd_as_delaunay(100, 0.);
-  test_insert_rnd_as_delaunay(100, 0.01);
-  test_insert_rnd_then_remove_all(5000, 7);
-  test_insert_rnd_then_remove_all(5000, 12);
+  test_find_conflicts();
+//  test_insert_range(800, 7);
+//  test_construction_and_insert_range(800, 7);
+//  test_number_of_hidden_points();
+//  test_locate_geometry();
+//  test_dummy_points();
+//  test_construction();
+//  test_insert_1();
+//  test_insert_point();
+//  test_insert_hidden_point();
+//  test_insert_hiding_point();
+//  test_insert_a_point_twice();
+//  test_insert_two_points_with_the_same_position();
+//  test_remove();
+//  test_27_to_1_sheeted_covering();
+//////    Iso_cuboid unitaire ->  0 <= weight < 0.015625
+//  test_insert_rnd_as_delaunay(100, 0.);
+//  test_insert_rnd_as_delaunay(100, 0.01);
+//  test_insert_rnd_then_remove_all(5000, 7);
+//  test_insert_rnd_then_remove_all(5000, 12);
 
   std::cout << "EXIT SUCCESS" << std::endl;
   return EXIT_SUCCESS;
