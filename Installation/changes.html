@@ -672,6 +672,11 @@ model of the concept <code>FaceGraph</code>.
     <li> Add an experimental parallel version of the Delaunay triangulation
       and the regular triangulation algorithms, which allows parallel
       insertion and removal of point ranges.</li>
+    <li>Add caching of circumcenters to
+      <code>Regular_triangulation_cell_base_3</code>. The cache value is
+      computed when <code>cell->circumcenter()</code>
+      or <code>rt.dual(cell)</code> functions are called.
+    </li>
   </ul>
 
   <h3>3D Periodic Triangulations</h3>
@@ -693,11 +698,6 @@ model of the concept <code>FaceGraph</code>.
       version 3.8.
     <li> Add an experimental parallel version of the 3D mesh refinement and
       mesh optimization methods.
-    </li>
-    <li>Add caching of circumcenters to
-      <code>Regular_triangulation_cell_base_3</code>. The cache value is
-      computed when <code>cell->circumcenter()</code>
-      or <code>rt.dual(cell)</code> functions are called.
     </li>
   </ul>
 
