@@ -91,19 +91,19 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/STL_Extension/doc/STL_Extension/fig \
              ${CMAKE_SOURCE_DIR}/Skin_surface_3/doc/Skin_surface_3/fig \
              ${CMAKE_SOURCE_DIR}/Snap_rounding_2/doc/Snap_rounding_2/fig \
-             ${CMAKE_SOURCE_DIR}/Arrangement_on_surface_2/doc/Sweep_line_2/fig \
+             ${CMAKE_SOURCE_DIR}/Sweep_line_2/doc/Sweep_line_2/fig \
              ${CMAKE_SOURCE_DIR}/Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig \
              ${CMAKE_SOURCE_DIR}/Boolean_set_operations_2/doc/Boolean_set_operations_2/fig \
-             ${CMAKE_SOURCE_DIR}/Triangulation_2/doc/TDS_2/fig \
+             ${CMAKE_SOURCE_DIR}/TDS_2/doc/TDS_2/fig \
              ${CMAKE_SOURCE_DIR}/Triangulation_2/doc/Triangulation_2/fig \
-             ${CMAKE_SOURCE_DIR}/Triangulation_3/doc/TDS_3/fig \
+             ${CMAKE_SOURCE_DIR}/TDS_3/doc/TDS_3/fig \
              ${CMAKE_SOURCE_DIR}/Triangulation_3/doc/Triangulation_3/fig \
              ${CMAKE_SOURCE_DIR}/Triangulation/doc/Triangulation/fig \
              ${CMAKE_SOURCE_DIR}/Ridges_3/doc/Ridges_3/fig \
              ${CMAKE_SOURCE_DIR}/Point_set_processing_3/doc/Point_set_processing_3/fig \
-             ${CMAKE_SOURCE_DIR}/Point_set_processing_3/doc/Property_map/fig \
+             ${CMAKE_SOURCE_DIR}/Property_map/doc/Property_map/fig \
              ${CMAKE_SOURCE_DIR}/Point_set_shape_detection_3/doc/Point_set_shape_detection_3/fig \
-             ${CMAKE_SOURCE_DIR}/Kinetic_data_structures/doc/Kinetic_framework/fig \
+             ${CMAKE_SOURCE_DIR}/Kinetic_framework/doc/Kinetic_framework/fig \
              ${CMAKE_SOURCE_DIR}/Periodic_2_triangulation_2/doc/Periodic_2_triangulation_2/fig \
              ${CMAKE_SOURCE_DIR}/Periodic_3_triangulation_3/doc/Periodic_3_triangulation_3/fig \
              ${CMAKE_SOURCE_DIR}/Scale_space_reconstruction_3/doc/Scale_space_reconstruction_3/fig \

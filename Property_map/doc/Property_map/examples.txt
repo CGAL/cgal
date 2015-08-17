@@ -1,0 +1,5 @@
+/*!
+\example Point_set_processing_3/remove_outliers_example.cpp
+\example Point_set_processing_3/read_write_xyz_point_set_example.cpp
+\example Point_set_processing_3/average_spacing_example.cpp
+*/

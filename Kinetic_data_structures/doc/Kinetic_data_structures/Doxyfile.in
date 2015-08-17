@@ -5,4 +5,4 @@ PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Kineti
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Kinetic_data_structures/doc/Kinetic_data_structures/
 
-IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Kinetic_data_structures/doc/Kinetic_framework/fig
+IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Kinetic_framework/doc/Kinetic_framework/fig
