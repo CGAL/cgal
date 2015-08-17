@@ -109,21 +109,20 @@ jet_smooth_point(
 
     namespace Jet_smooth {
 
-    template <typename Kernel, typename SvdTraits, typename Tree, typename PointPMap>
+      template <typename Kernel, typename SvdTraits, typename Tree>
     class Mutate_pwns {
       typedef typename Kernel::Point_3 Point;
       const Tree& tree;
       const unsigned int k;
-      PointPMap& point_pmap;
       unsigned int degree_fitting;
       unsigned int degree_monge;
       const std::vector<Point>& input;
       std::vector<Point>& output;
 
     public:
-      Mutate_pwns(Tree& tree, unsigned int k, PointPMap point_pmap, std::vector<Point>& points,
+      Mutate_pwns(Tree& tree, unsigned int k, std::vector<Point>& points,
 		  unsigned int degree_fitting, unsigned int degree_monge, std::vector<Point>& output)
-	: tree(tree), k (k), point_pmap (point_pmap), degree_fitting (degree_fitting),
+	: tree(tree), k (k), degree_fitting (degree_fitting),
 	  degree_monge (degree_monge), input (points), output (output)
       { }
     
@@ -223,8 +222,8 @@ jet_smooth_point_set(
    if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
    {
      std::vector<Point> mutated_points (kd_tree_points.size ());
-     CGAL::internal::Jet_smooth::Mutate_pwns<Kernel, SvdTraits, Tree, PointPMap>
-       f (tree, k, point_pmap, kd_tree_points, degree_fitting, degree_monge,
+     CGAL::internal::Jet_smooth::Mutate_pwns<Kernel, SvdTraits, Tree>
+       f (tree, k, kd_tree_points, degree_fitting, degree_monge,
 	  mutated_points);
      tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
      unsigned int i = 0;
