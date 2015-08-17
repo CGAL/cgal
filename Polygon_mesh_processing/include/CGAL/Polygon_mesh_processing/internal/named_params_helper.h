@@ -100,6 +100,17 @@ public:
   > ::type  type;
 };
 
+template<typename NamedParameters, typename DefaultSolver>
+class GetSolver
+{
+public:
+  typedef typename boost::lookup_named_param_def <
+    CGAL::sparse_linear_solver_t,
+    NamedParameters,
+    DefaultSolver
+  > ::type type;
+};
+
 
 
 #endif //CGAL_NAMED_PARAMETERS_HELPERS_H

@@ -29,6 +29,7 @@
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
 #endif
 
+#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 
@@ -122,6 +123,12 @@ namespace internal {
       //if no solver is provided and Eigen version < 3.2
 #endif
 
+    typedef typename GetSolver<NamedParameters, Default_solver>::type SparseLinearSolver;
+    if (boost::is_same<SparseLinearSolver, bool>::value)
+    {
+      BOOST_STATIC_ASSERT_MSG(EIGEN_VERSION_AT_LEAST(3, 2, 0),
+                              "The function `fair` requires Eigen3 version 3.2 or later.");
+    }
     typedef typename GetVertexPointMap < PolygonMesh, NamedParameters>::type VPMap;
     typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh, VPMap>
       Default_Weight_calculator;
