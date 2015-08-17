@@ -124,11 +124,17 @@ namespace internal {
 #endif
 
     typedef typename GetSolver<NamedParameters, Default_solver>::type SparseLinearSolver;
-    if (boost::is_same<SparseLinearSolver, bool>::value)
-    {
-      BOOST_STATIC_ASSERT_MSG(EIGEN_VERSION_AT_LEAST(3, 2, 0),
-                              "The function `fair` requires Eigen3 version 3.2 or later.");
-    }
+
+#if defined(CGAL_EIGEN3_ENABLED)
+    BOOST_STATIC_ASSERT_MSG(
+      (!boost::is_same<SparseLinearSolver, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
+      "The function `fair` requires Eigen3 version 3.2 or later.");
+#else
+    BOOST_STATIC_ASSERT_MSG(
+      (!boost::is_same<SparseLinearSolver, bool>::value),
+      "The function `fair` requires Eigen3 version 3.2 or later.");
+#endif
+
     typedef typename GetVertexPointMap < PolygonMesh, NamedParameters>::type VPMap;
     typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh, VPMap>
       Default_Weight_calculator;
