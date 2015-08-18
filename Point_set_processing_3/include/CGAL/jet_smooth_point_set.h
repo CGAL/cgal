@@ -226,10 +226,8 @@ jet_smooth_point_set(
      for(it = first; it != beyond; ++ it, ++ i)
        {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-	 const Point& p = get(point_pmap, it);
 	 put(point_pmap, it , mutated_points[i]);
 #else
-	 const Point& p = get(point_pmap, *it);
 	 put(point_pmap, *it, mutated_points[i]);
 #endif  
        }
