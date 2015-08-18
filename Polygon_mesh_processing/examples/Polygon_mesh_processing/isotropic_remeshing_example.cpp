@@ -7,16 +7,12 @@
 
 #include <fstream>
 #include <vector>
-#include <cstdlib>
 #include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 
 typedef boost::graph_traits<Mesh>::halfedge_descriptor  halfedge_descriptor;
-typedef boost::graph_traits<Mesh>::edge_descriptor      edge_descriptor;
-typedef boost::graph_traits<Mesh>::vertex_descriptor    vertex_descriptor;
-typedef boost::graph_traits<Mesh>::face_descriptor      face_descriptor;
 
 int main(int argc, char* argv[])
 {
