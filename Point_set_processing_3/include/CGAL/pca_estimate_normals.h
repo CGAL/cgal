@@ -56,7 +56,7 @@ template < typename Kernel,
 >
 typename Kernel::Vector_3
 pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute the normal at
-                    Tree& tree, ///< KD-tree
+                    const Tree& tree, ///< KD-tree
                     unsigned int k) ///< number of neighbors
 {
   // basic geometric types
@@ -92,6 +92,30 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
   // output normal vector (already normalized by PCA)
   return plane.orthogonal_vector();
 }
+  
+  template <typename Kernel, typename Tree>
+  class PCA_estimate_normals {
+    typedef typename Kernel::Point_3 Point;
+    typedef typename Kernel::Vector_3 Vector;
+    const Tree& tree;
+    const unsigned int k;
+    const std::vector<Point>& input;
+    std::vector<Vector>& output;
+
+  public:
+    PCA_estimate_normals(Tree& tree, unsigned int k, std::vector<Point>& points,
+			 std::vector<Vector>& output)
+      : tree(tree), k (k), input (points), output (output)
+    { }
+    
+    void operator()(const tbb::blocked_range<std::size_t>& r) const
+    {
+      for( std::size_t i = r.begin(); i != r.end(); ++i)
+	output[i] = CGAL::internal::pca_estimate_normal<Kernel,Tree>(input[i], tree, k);
+    }
+
+  };
+
 
 } /* namespace internal */
 /// \endcond
@@ -117,7 +141,8 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 ///        It can be omitted and deduced automatically from the value type of `PointPMap`.
 
 // This variant requires all parameters.
-template <typename ForwardIterator,
+template <typename Concurrency_tag,
+	  typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap,
           typename Kernel
@@ -176,31 +201,53 @@ pca_estimate_normals(
 
   // iterate over input points, compute and output normal
   // vectors (already normalized)
-  for(it = first; it != beyond; it++)
-  {
-    Vector normal = internal::pca_estimate_normal<Kernel,Tree>(      
+#ifdef CGAL_LINKED_WITH_TBB
+  if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
+    {
+      std::vector<Vector> normals (kd_tree_points.size ());
+      CGAL::internal::PCA_estimate_normals<Kernel, Tree>
+	f (tree, k, kd_tree_points, normals);
+      tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
+      unsigned int i = 0;
+      for(it = first; it != beyond; ++ it, ++ i)
+	{
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      get(point_pmap,it),
+	  put (normal_pmap, it, normals[i]);
 #else
-      get(point_pmap,*it),
+	  put (normal_pmap, *it, normals[i]);
 #endif  
-      tree,
-      k);
+	}
+    }
+  else
+#endif
+    {
+      for(it = first; it != beyond; it++)
+	{
+	  Vector normal = internal::pca_estimate_normal<Kernel,Tree>(      
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+								     get(point_pmap,it),
+#else
+								     get(point_pmap,*it),
+#endif  
+								     tree,
+								     k);
 
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    put(normal_pmap, it, normal); // normal_pmap[it] = normal
+	  put(normal_pmap, it, normal); // normal_pmap[it] = normal
 #else
-    put(normal_pmap, *it, normal); // normal_pmap[it] = normal
+	  put(normal_pmap, *it, normal); // normal_pmap[it] = normal
 #endif 
-  }
-
+	}
+    }
+   
   memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("End of pca_estimate_normals()\n");
 }
-
+  
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
-template <typename ForwardIterator,
+template <typename Concurrency_tag,
+	  typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap
 >
@@ -214,7 +261,7 @@ pca_estimate_normals(
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  pca_estimate_normals(
+  pca_estimate_normals<Concurrency_tag>(
     first,beyond,
     point_pmap,
     normal_pmap,
@@ -225,7 +272,8 @@ pca_estimate_normals(
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Identity_property_map.
-template <typename ForwardIterator,
+template <typename Concurrency_tag,
+	  typename ForwardIterator,
           typename NormalPMap
 >
 void
@@ -235,7 +283,7 @@ pca_estimate_normals(
   NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
   unsigned int k) ///< number of neighbors.
 {
-  pca_estimate_normals(
+  pca_estimate_normals<Concurrency_tag>(
     first,beyond,
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),
