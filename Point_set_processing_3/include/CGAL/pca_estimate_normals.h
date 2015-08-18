@@ -32,6 +32,12 @@
 #include <iterator>
 #include <list>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>  
+#endif // CGAL_LINKED_WITH_TBB
+
 namespace CGAL {
 
 
