@@ -423,9 +423,6 @@ void Volume_plane<T>::init() {
 
 template<typename T>
 void Volume_plane<T>::initShaders() {
-    program.create();
-
-
   QOpenGLShader *vertex = new QOpenGLShader(QOpenGLShader::Vertex);
 
   vertex->compileSourceCode(vertexShader_source);
@@ -436,7 +433,6 @@ void Volume_plane<T>::initShaders() {
   program.link();
 
 
-  program_bordures.create();
   QOpenGLShader *vertex_bordures = new QOpenGLShader(QOpenGLShader::Vertex);
 
   vertex_bordures->compileSourceCode(vertexShader_bordures_source);
