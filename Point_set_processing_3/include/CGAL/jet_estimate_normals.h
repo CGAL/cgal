@@ -107,33 +107,31 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
   return monge_form.normal_direction();
 }
 
-  namespace Jet_normals {
 
-    template <typename Kernel, typename SvdTraits, typename Tree>
-    class Estimate_normals {
-      typedef typename Kernel::Point_3 Point;
-      typedef typename Kernel::Vector_3 Vector;
-      const Tree& tree;
-      const unsigned int k;
-      const unsigned int degree_fitting;
-      const std::vector<Point>& input;
-      std::vector<Vector>& output;
+  template <typename Kernel, typename SvdTraits, typename Tree>
+  class Jet_estimate_normals {
+    typedef typename Kernel::Point_3 Point;
+    typedef typename Kernel::Vector_3 Vector;
+    const Tree& tree;
+    const unsigned int k;
+    const unsigned int degree_fitting;
+    const std::vector<Point>& input;
+    std::vector<Vector>& output;
 
-    public:
-      Estimate_normals(Tree& tree, unsigned int k, std::vector<Point>& points,
-		      unsigned int degree_fitting, std::vector<Vector>& output)
-	: tree(tree), k (k), degree_fitting (degree_fitting), input (points), output (output)
-      { }
+  public:
+    Jet_estimate_normals(Tree& tree, unsigned int k, std::vector<Point>& points,
+		     unsigned int degree_fitting, std::vector<Vector>& output)
+      : tree(tree), k (k), degree_fitting (degree_fitting), input (points), output (output)
+    { }
     
-      void operator()(const tbb::blocked_range<std::size_t>& r) const
-      {
-	for( std::size_t i = r.begin(); i != r.end(); ++i)
-	  output[i] = CGAL::internal::jet_estimate_normal<Kernel,SvdTraits>(input[i], tree, k, degree_fitting);
-      }
+    void operator()(const tbb::blocked_range<std::size_t>& r) const
+    {
+      for( std::size_t i = r.begin(); i != r.end(); ++i)
+	output[i] = CGAL::internal::jet_estimate_normal<Kernel,SvdTraits>(input[i], tree, k, degree_fitting);
+    }
 
-    };
+  };
 
-  }
 
   
 } /* namespace internal */
@@ -229,7 +227,7 @@ jet_estimate_normals(
    if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
    {
      std::vector<Vector> normals (kd_tree_points.size ());
-     CGAL::internal::Jet_normals::Estimate_normals<Kernel, SvdTraits, Tree>
+     CGAL::internal::Jet_estimate_normals<Kernel, SvdTraits, Tree>
        f (tree, k, kd_tree_points, degree_fitting, normals);
      tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
      unsigned int i = 0;
