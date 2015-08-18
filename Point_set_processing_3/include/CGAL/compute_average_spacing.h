@@ -183,7 +183,6 @@ compute_average_spacing(
   // iterate over input points, compute and output normal
   // vectors (already normalized)
   FT sum_spacings = (FT)0.0;
-  unsigned int nb_points = 0;
 
 #ifdef CGAL_LINKED_WITH_TBB
    if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
@@ -207,7 +206,6 @@ compute_average_spacing(
 									  get(point_pmap,*it),
 #endif
 									  tree,k);
-	   nb_points++;
 	 }
      }
    
