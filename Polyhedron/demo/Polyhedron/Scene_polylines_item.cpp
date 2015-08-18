@@ -318,7 +318,7 @@ Scene_polylines_item::Scene_polylines_item()
     ,d(new Scene_polylines_item_private())
     ,nbSpheres(0)
 {
-    setRenderingMode(Flat);
+    setRenderingMode(FlatPlusEdges);
     changed();
 
 }

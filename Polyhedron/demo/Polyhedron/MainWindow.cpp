@@ -959,7 +959,7 @@ QList<int> MainWindow::getSelectedSceneItemIndices() const
 
 void MainWindow::selectionChanged()
 {
-  scene->setSelectedItem(getSelectedSceneItemIndex());
+  scene->setSelectedItemIndex(getSelectedSceneItemIndex());
   scene->setSelectedItemsList(getSelectedSceneItemIndices());
   Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item != NULL && item->manipulatable()) {

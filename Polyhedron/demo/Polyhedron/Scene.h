@@ -115,6 +115,11 @@ public Q_SLOTS:
   void itemChanged(int i); 
   void itemChanged(Scene_item*);
 
+  void setSelectedItemIndex(int i)
+  {
+    selected_item = i;
+  }
+
   void setSelectedItem(int i )
   {
     selected_item = i;
