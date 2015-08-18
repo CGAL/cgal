@@ -85,6 +85,7 @@ create_single_source_cgal_program( "triangulate_polyline_example.cpp")
 create_single_source_cgal_program( "refine_fair_example.cpp")
 create_single_source_cgal_program( "mesh_slicer_example.cpp")
 create_single_source_cgal_program( "remove_degeneracies_example.cpp")
+create_single_source_cgal_program( "isotropic_remeshing_example.cpp")
 
 if(OpenMesh_FOUND)
 create_single_source_cgal_program( "compute_normals_example_OM.cpp" )
