@@ -29,6 +29,7 @@
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
 #endif
 
+#include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
 
@@ -120,6 +121,18 @@ namespace internal {
 #else
     typedef bool Default_solver;//compilation should crash
       //if no solver is provided and Eigen version < 3.2
+#endif
+
+    typedef typename GetSolver<NamedParameters, Default_solver>::type SparseLinearSolver;
+
+#if defined(CGAL_EIGEN3_ENABLED)
+    BOOST_STATIC_ASSERT_MSG(
+      (!boost::is_same<SparseLinearSolver, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
+      "The function `fair` requires Eigen3 version 3.2 or later.");
+#else
+    BOOST_STATIC_ASSERT_MSG(
+      (!boost::is_same<SparseLinearSolver, bool>::value),
+      "The function `fair` requires Eigen3 version 3.2 or later.");
 #endif
 
     typedef typename GetVertexPointMap < PolygonMesh, NamedParameters>::type VPMap;
