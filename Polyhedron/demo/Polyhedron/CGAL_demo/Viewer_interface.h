@@ -30,6 +30,8 @@ public:
   static QString dumpFrame(const qglviewer::Frame&);
 
   virtual bool inFastDrawing() const = 0;
+  typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
+  typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
   PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
   PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
   bool extension_is_found;

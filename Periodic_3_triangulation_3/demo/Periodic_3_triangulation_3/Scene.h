@@ -293,6 +293,8 @@ private:
       QOpenGLShaderProgram rendering_program;
       QOpenGLShaderProgram rendering_program_spheres;
       QOpenGLShaderProgram rendering_program_cylinders;
+      typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
+      typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
       PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
       PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
       void initialize_buffers();
