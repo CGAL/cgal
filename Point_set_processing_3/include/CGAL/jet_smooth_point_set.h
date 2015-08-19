@@ -318,7 +318,7 @@ jet_smooth_point_set(
   const unsigned int degree_fitting = 2,
   const unsigned int degree_monge = 2)
 {
-  jet_smooth_point_set(
+  jet_smooth_point_set<Concurrency_tag>(
     first,beyond,
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),
