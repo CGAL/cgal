@@ -481,19 +481,32 @@ initialize()
   //=====================================
   // Bounding box estimation
   //=====================================
-  typedef std::vector<std::pair<Point, Index> > Points_vector;
-  Points_vector random_points_on_surface;
-  r_oracle_.construct_initial_points_object()(
-    std::back_inserter(random_points_on_surface), 1000);
-  typename Points_vector::const_iterator
-    it = random_points_on_surface.begin(),
-    it_end = random_points_on_surface.end();
-  Bbox_3 estimated_bbox = it->first.bbox();
-  ++it;
-  for( ; it != it_end ; ++it)
-    estimated_bbox = estimated_bbox + it->first.bbox();
+#if defined(CGAL_LINKED_WITH_TBB) || \
+    defined(CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE)
 
-  Base::set_bbox(estimated_bbox);
+  Bbox_3 estimated_bbox;
+  CGAL_assertion_code(bool is_estimated_bbox_initialized = false);
+
+#ifndef CGAL_SEQUENTIAL_MESH_3_ADD_OUTSIDE_POINTS_ON_A_FAR_SPHERE
+  if(boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
+#endif // If that macro is defined, then estimated_bbox must be initialized
+  {
+    typedef std::vector<std::pair<Point, Index> > Points_vector;
+    Points_vector random_points_on_surface;
+    r_oracle_.construct_initial_points_object()(
+                                                std::back_inserter(random_points_on_surface), 1000);
+    typename Points_vector::const_iterator
+      it = random_points_on_surface.begin(),
+      it_end = random_points_on_surface.end();
+    estimated_bbox = it->first.bbox();
+    ++it;
+    for( ; it != it_end ; ++it)
+      estimated_bbox = estimated_bbox + it->first.bbox();
+
+    Base::set_bbox(estimated_bbox);
+    CGAL_assertion_code(is_estimated_bbox_initialized = true);
+  }
+#endif // CGAL_LINKED_WITH_TBB||"sequential use far sphere"
 
   //========================================
   // Initialization: parallel or sequential
@@ -510,6 +523,7 @@ initialize()
 
     if (r_c3t3_.number_of_far_points() == 0 && r_c3t3_.number_of_facets() == 0)
     {
+      CGAL_assertion(is_estimated_bbox_initialized);
       const Bbox_3 &bbox = estimated_bbox;
 
       // Compute radius for far sphere
@@ -573,6 +587,7 @@ initialize()
 
       // Compute radius for far sphere
       //const Bbox_3 &bbox = r_c3t3_.bbox();
+      CGAL_assertion(is_estimated_bbox_initialized);
       const Bbox_3 &bbox = estimated_bbox;
       const double xdelta = bbox.xmax()-bbox.xmin();
       const double ydelta = bbox.ymax()-bbox.ymin();
