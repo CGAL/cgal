@@ -201,7 +201,7 @@ public:
     Comparison_result operator()(const Xy_monotone_surface_3& h1,
                                  const Xy_monotone_surface_3& h2) const {
       // should happen only if the points are equal.
-      CGAL_assertion(h1 == h2);
+      CGAL_assertion(h1 == h2); CGAL_USE(h1); CGAL_USE(h2);
       return EQUAL;
     }
   };

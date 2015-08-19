@@ -2248,7 +2248,7 @@ protected:
       // big_e1 is directed at big_v, as e1 is directed at split_v -
       // these are supposed to be mapped
       CGAL_assertion(map_halfedges.is_defined(e1) &&
-                     map_halfedges[e1] == big_e1);
+                     map_halfedges[e1] == big_e1); CGAL_USE(e1);
       // should update the mapping of the second halfedge     
       map_halfedges[e2] = big_e2;
       map_halfedges[e2->twin()] = big_e2->twin();
