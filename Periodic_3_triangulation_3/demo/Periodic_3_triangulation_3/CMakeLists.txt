@@ -14,7 +14,7 @@ find_package(CGAL COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
-find_package(Qt5 QUIET COMPONENTS Xml OpenGL Help Core Sql)
+find_package(Qt5 QUIET COMPONENTS Xml OpenGL Help Core)
 
 # Find OpenGL
 find_package(OpenGL)
@@ -25,7 +25,7 @@ if(Qt5_FOUND)
   find_package(QGLViewer)
 endif(Qt5_FOUND)
 
-if (CGAL_FOUND AND CGAL_Qt5_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND TARGET Qt5::qcollectiongenerator AND TARGET Qt5::QSQLiteDriverPlugin)
+if (CGAL_FOUND AND CGAL_Qt5_FOUND AND OPENGL_FOUND AND Qt5_FOUND AND QGLVIEWER_FOUND AND TARGET Qt5::qcollectiongenerator)
 
    include_directories( ${QGLVIEWER_INCLUDE_DIR} )
 
@@ -95,10 +95,6 @@ else ()
 
   if (NOT TARGET Qt5::qcollectiongenerator)
     set(PERIODIC_TRIANGULATION_MISSING_DEPS "qcollectiongenerator, ${PERIODIC_TRIANGULATION_MISSING_DEPS}")
-  endif()
-
-  if (NOT TARGET Qt5::QSQLiteDriverPlugin)
-    set(PERIODIC_TRIANGULATION_MISSING_DEPS "SQLite driver plugin, ${PERIODIC_TRIANGULATION_MISSING_DEPS}")
   endif()
 
   message(STATUS "NOTICE: This demo requires ${PERIODIC_TRIANGULATION_MISSING_DEPS}and will not be compiled.")
