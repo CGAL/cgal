@@ -451,7 +451,7 @@ bilateral_smooth_point_set(
     pwns.push_back(Pwn(p, n));
    }
 
-   unsigned int nb_points = pwns.size();
+  std::size_t nb_points = pwns.size();
 
 #ifdef CGAL_PSP3_VERBOSE
    std::cout << "Initialization and compute max spacing: " << std::endl;

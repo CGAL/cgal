@@ -153,7 +153,7 @@ update_new_point(
   typedef typename Kernel::FT FT;
   typedef typename rich_grid_internal::Rich_point<Kernel> Rich_point;
 
-  CGAL_assertion_code( unsigned int size = rich_point_set.size() );
+  CGAL_assertion_code( unsigned int size = static_cast<unsigned int>(rich_point_set.size()) );
   CGAL_point_set_processing_precondition(father_index >= 0 &&
                                          father_index < size);
   CGAL_point_set_processing_precondition(mother_index >= 0 &&
@@ -431,7 +431,7 @@ edge_aware_upsample_point_set(
     std::cout << "current radius: " << current_radius << std::endl; 
  #endif
 
-    unsigned int current_size = rich_point_set.size();
+    std::size_t current_size = rich_point_set.size();
     std::vector<bool> is_pass_threshold(current_size, false);
 
     if (iter_time == 0)
@@ -533,7 +533,7 @@ edge_aware_upsample_point_set(
         Rich_point& base = rich_point_set[mother_index];
         Vector diff_v_base = base.pt - v.pt;
         new_v.pt = v.pt + (diff_v_base * FT(0.5));
-        new_v.index = rich_point_set.size();
+        new_v.index = static_cast<unsigned int>(rich_point_set.size());
 
         unsigned int new_point_index = new_v.index;
         rich_point_set.push_back(new_v);
@@ -570,7 +570,7 @@ edge_aware_upsample_point_set(
     }
   }
 
-  for (unsigned int i = number_of_input; i < rich_point_set.size(); ++i)
+  for (std::size_t i = number_of_input; i < rich_point_set.size(); ++i)
   {
     Rich_point& v = rich_point_set[i];
     Point point = v.pt;
