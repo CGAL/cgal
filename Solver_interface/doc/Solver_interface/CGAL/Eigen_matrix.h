@@ -2,24 +2,18 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceParameterizationAlgebra
+\ingroup PkgSolver
 
-The class `Eigen_sparse_matrix` is a C++ wrapper around \ref thirdpartyEigen "Eigen" matrix type `Eigen::SparseMatrix` 
+The class `Eigen_sparse_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix` </a>
 that represents general matrices, be they symmetric or not. 
-The version 3.1 (or greater) of \ref thirdpartyEigen "Eigen" must be available on the system. 
 
 \cgalModels `SparseLinearAlgebraTraits_d::Matrix` 
 
-Parameters 
--------------- 
-
-`T`: Number type. 
+\tparam T Number type. 
 
 \sa `CGAL::Eigen_solver_traits<T>`
 \sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
 \sa `CGAL::Eigen_vector<T>`
-\sa http://eigen.tuxfamily.org
-
 */
 template< typename T >
 class Eigen_sparse_matrix {
@@ -41,23 +35,19 @@ typedef unspecified_type EigenType;
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceParameterizationAlgebra
+\ingroup PkgSolver
 
-The class `Eigen_sparse_symmetric_matrix` is a C++ wrapper around \ref thirdpartyEigen "Eigen" matrix type `Eigen::SparseMatrix`. 
+The class `Eigen_sparse_symmetric_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" matrix type <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1SparseMatrix.html">`Eigen::SparseMatrix` </a>
 
 As the matrix is symmetric only the lower triangle part is stored. 
 
 \cgalModels `SparseLinearAlgebraTraits_d::Matrix` 
 
-Parameters 
--------------- 
-
-`T`: Number type. 
+\tparam T Number type. 
 
 \sa `CGAL::Eigen_solver_traits<T>`
-\sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
+\sa `CGAL::Eigen_sparse_matrix<T>`
 \sa `CGAL::Eigen_vector<T>`
-\sa http://eigen.tuxfamily.org
 
 */
 template< typename T >
@@ -75,4 +65,29 @@ typedef unspecified_type EigenType;
 /// @}
 
 }; /* end Eigen_sparse_symmetric_matrix */
+
+
+/*!
+\ingroup PkgSolver
+
+The class `Eigen_matrix` is a wrapper around \ref thirdpartyEigen "Eigen" 
+matrix type 
+<a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html">`Eigen::Matrix`</a>. 
+
+
+\cgalModels `SvdTraits::Matrix` 
+
+\tparam T Number type. 
+
+\sa `CGAL::Eigen_svd`
+\sa `CGAL::Eigen_vector<T>`
+
+*/
+template< typename T >
+class Eigen_matrix {
+public:
+
+};
+
+
 } /* end namespace CGAL */

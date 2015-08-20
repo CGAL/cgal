@@ -40,9 +40,8 @@ data structure.
 
 Since parameterizing meshes require efficient representation of sparse
 matrices and efficient iterative or direct linear solvers, we provide
-a unified interface to a linear solver library (\ref thirdpartyEigen "Eigen"),
-and propose a separate package devoted to OpenNL sparse
-linear solver.
+a unified interface to linear solvers  as described in Chapter 
+\ref PkgSolverSummary.
 
 Note that linear solvers commonly use double precision floating point
 numbers. Therefore, this package is intended to be used with a \cgal %Cartesian kernel with doubles.
@@ -69,8 +68,8 @@ Parameterizer_traits_3<ParameterizationMesh_3>::Error_code parameterize (Paramet
 
 The function `parameterize()` applies a default surface parameterization
 method, namely Floater Mean Value Coordinates \cgalCite{cgal:f-mvc-03}, with an
-arc-length circular border parameterization, and using OpenNL sparse
-linear solver \cgalCite{cgal:l-nmdgp-05}. The `ParameterizationMesh_3` concept defines the input meshes handled by `parameterize()`. See Section \ref secInputMeshforparameterize. The result is stored into the `(u,v)` fields of the mesh halfedges.
+arc-length circular border parameterization, and using a sparse
+linear solver from the \ref thirdpartyEigen library. The `ParameterizationMesh_3` concept defines the input meshes handled by `parameterize()`. See Section \ref secInputMeshforparameterize. The result is stored into the `(u,v)` fields of the mesh halfedges.
 The mesh must be a triangle mesh surface with one connected component.
 
 Note: `Parameterizer_traits_3<ParameterizationMesh_3>` is the (pure virtual) superclass of all surface parameterizations and defines the error codes.
@@ -155,7 +154,7 @@ and \ref secBorderParameterizationsforFreeMethods.
 \subsection Surface_mesh_parameterizationTheSparseLinearAlgebraTraitsd The SparseLinearAlgebraTraits_d Concept
 
 This package solves sparse linear systems using solvers which are models
-of `SparseLinearAlgebraTraits_d`. See Section \ref secSparseLinearAlgebra.
+of `SparseLinearAlgebraTraits_d`. See Chapter \ref PkgSolverSummary.
 
 \subsection Surface_mesh_parameterizationTheParameterizationMesh3 The ParameterizationMesh_3 and ParameterizationPatchableMesh_3 Concepts
 
@@ -419,65 +418,7 @@ Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer()
 
 \endcode
 
-\section secSparseLinearAlgebra Sparse Linear Algebra 
 
-Parameterizing triangle meshes requires both efficient representation
-of sparse matrices and efficient iterative or direct linear
-solvers. We provide links to \ref thirdpartyEigen "Eigen" library
-and include a separate package devoted to OpenNL sparse linear solver.
-
-\subsection Surface_mesh_parameterizationListofSolvers List of Solvers
-
-We provide an interface to several sparse linear solvers, as models
-of the `SparseLinearAlgebraTraits_d` concept:
-
-- An interface to sparse solvers from the `OpenNL` library \cgalCite{cgal:l-nmdgp-05} is provided through classes
-`OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` and 
-`OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>`. The OpenNL library version shipped with \cgal is a lightweight default sparse linear solver. It does not support large systems, but it is portable and
-supports exact number types.
-
-- An interface to all sparse solvers from the \ref thirdpartyEigen "Eigen" library is provided through the class
-`Eigen_solver_traits<T>`. This solver traits class can be used for an iterative or a direct,
-symmetric or general sparse solvers. The \ref thirdpartyEigen "Eigen" solver to be used must be given as template parameter.
-
-\subsection Surface_mesh_parameterizationEigenSolver Eigen Solver Example
-
-The example \ref Surface_mesh_parameterization/Eigen_parameterization.cpp "Eigen_parameterization.cpp" computes the
-default parameterization method (Floater mean value coordinates with a circular border),
-but specifically instantiates an \ref thirdpartyEigen "Eigen" solver. Specifying a specific solver
-instead of the default one (OpenNL) means using the third parameter of
-`Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`. The differences with the first
-example \ref Surface_mesh_parameterization/Simple_parameterization.cpp "Simple_parameterization.cpp" are:
-
-\code{.cpp}
-
-#include <CGAL/Eigen_solver_traits.h>
-
-...
-
-//***************************************
-// Floater Mean Value Coordinates parameterization
-// (circular border) with Eigen solver
-//***************************************
-
-// Circular border parameterizer (the default)
-typedef CGAL::Circular_border_arc_length_parameterizer_3<Parameterization_polyhedron_adaptor>
-Border_parameterizer;
-// Eigen solver
-typedef CGAL::Eigen_solver_traits<> Solver;
-
-// Floater Mean Value Coordinates parameterization
-// (circular border) with Eigen solver
-typedef CGAL::Mean_value_coordinates_parameterizer_3<Parameterization_polyhedron_adaptor,
-Border_parameterizer,
-Solver>
-Parameterizer;
-
-Parameterizer::Error_code err = CGAL::parameterize(mesh_adaptor, Parameterizer());
-
-...
-
-\endcode
 
 \section secCuttingaMesh Cutting a Mesh 
 
@@ -605,63 +546,7 @@ and is therefore non-singular (Gram theorem).
 
 </UL>
 
-\subsection Surface_mesh_parameterizationPrecision Precision
 
-Two algorithms of this package construct the sparse linear system(s)
-using trigonometric functions, and are this incompatible with exact arithmetic:
-
-<UL>
-
-<LI>Floater mean value coordinates
-
-<LI>Circular border parameterization
-
-</UL>
-
-On the other hand, linear solvers commonly use double precision floating point
-numbers. 
-
-OpenNL's BICGSTAB solver (accessible through the
-`OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` interface)
-is the only solver supported by this package which 
-computes exact results, when used with an exact arithmetic. This package is
-intended to be used mainly with a \cgal %Cartesian kernel with doubles.
-
-\subsection Surface_mesh_parameterizationOpenNLsBICGSTAB OpenNL's BICGSTAB Solver with an Exact Arithmetic
-
-The BICGSTAB conjugate gradient is in disguise a direct solver.
-In a nutshell, it computes a vector basis
-orthogonal with respect to the matrix, and the coordinates of the solution in this vector basis.
-Each iteration computes one component of the basis and one coordinate, therefore the algorithm
-converges to the solution in \f$ n\f$ iterations, where \f$ n\f$ is the dimension of the matrix. More precisely, it is shown to converge in \f$ k\f$ iteration, where \f$ k\f$ is the number of distinct eigenvalues of the matrix.
-
-\subsection Surface_mesh_parameterizationSolverswith Solvers with a Floating Point Arithmetic
-
-<I>OpenNL's BICGSTAB example:</I>
-
-When inexact numerical types are used (e.g. doubles), accumulated errors slow down convergence
-(in practice, it requires approximately \f$ 5k\f$ iterations to converge).
-The required number of iterations depends on the eigenvalues of the matrix, and these eigenvalues depend
-on the shape of the triangles. The optimum is when the triangles are equilateral (then the solver converges
-in less than 10 iterations). The worst case is obtained when the mesh has a large number of skinny triangles (near-singular Jacobian matrix of the triangle). In this case, the spectrum of the matrix
-is wide (many different eigenvalues), and the solver requires nearly \f$ 5n\f$ iterations to converge.
-
-\subsection Surface_mesh_parameterizationAlgorithmic Algorithmic Complexity
-
-In this package, we focus on piecewise linear mappings onto a planar
-domain. All surface parameterization methods are based on solving one (or two)
-sparse linear system(s).
-The algorithmic complexity is dominated by the resolution of the sparse linear system(s).
-
-<I>OpenNL's BICGSTAB example:</I>
-
-At each iteration, the operation of highest complexity is the product between the sparse-matrix and a vector.
-The sparse matrix has a fixed number of non-zero coefficients per row,
-therefore the matrix / vector product has \f$ O(n)\f$ complexity.
-Since convergence is reached after \f$ k\f$ iterations, the complexity is \f$ O(k.n)\f$
-(where \f$ k\f$ is the number of distinct eigenvalues of the matrix).
-Therefore, best case complexity is \f$ O(n)\f$ (equilateral triangles),
-and worst case complexity is \f$ O(n^2)\f$ (skinny triangles).
 
 \section Surface_mesh_parameterizationSoftware Software Design
 
@@ -801,7 +686,7 @@ The purpose of such a model is to:
 <LI>Support several kind of meshes.
 <LI>Hide the implementation of extra fields specific to the parameterization domain
 (`index`, `u`, `v`, `is_parameterized`).
-<LI>Handle in the mesh type the complexity of <I>virtually</I> cutting a mesh
+<LI>%Handle in the mesh type the complexity of <I>virtually</I> cutting a mesh
 to make it homeomorphic to a disk (instead of duplicating this
 code in each parameterization method).
 </OL>
@@ -834,15 +719,6 @@ This mainly means that:
 can be set <I>per corner</I> (which is a more general way of saying <I>per half-edge</I>).
 </UL>
 
-\subsection Surface_mesh_parameterizationSparseLinearAlgebraTraitsd SparseLinearAlgebraTraits_d Concept
-
-This package solves sparse linear systems using solvers which are models
-of `SparseLinearAlgebraTraits_d`.
-
-`SparseLinearAlgebraTraits_d` is a sub-concept of the `LinearAlgebraTraits_d` concept
-in `Kernel_d`.
-The goal is to adapt easily code written for dense matrices to sparse ones,
-and vice-versa.
 
 \subsection Surface_mesh_parameterizationCuttingaMesh_1 Cutting a Mesh
 
@@ -855,23 +731,7 @@ not intend to cover this topic at the moment.
 
 \section Surface_mesh_parameterizationExtendingthe Extending the Package and Reusing Code
 
-\subsection Surface_mesh_parameterizationReusingMesh Reusing Mesh Adaptors
 
-`ParameterizationMesh_3` defines a concept to access to a
-general polyhedral mesh.
-It is optimized for the `Surface_mesh_parameterization` package
-only in the sense that it
-defines the accessors to fields specific to the parameterization domain
-(`index`, `u`, `v`, `is_parameterized`).
-
-It may be easily generalized.
-
-\subsection Surface_mesh_parameterizationReusingSparse Reusing Sparse Linear Algebra
-
-The `SparseLinearAlgebraTraits_d` concept and the traits classes
-for \ref thirdpartyEigen "Eigen" and OpenNL are independent of the rest of the
-`Surface_mesh_parameterization` package, and may be reused by
-\cgal developers for other purposes.
 
 \subsection Surface_mesh_parameterizationAddingNewParameterization Adding New Parameterization Methods
 
@@ -899,6 +759,12 @@ Square, circular and two-points border parameterizations are good starting point
 
 Obviously, this package would benefit of having robust algorithms
 which transform arbitrary meshes into topological disks.
+
+\example Surface_mesh_parameterization/Simple_parameterization.cpp
+\example Surface_mesh_parameterization/Mesh_cutting_parameterization.cpp
+\example Surface_mesh_parameterization/Complete_parameterization_example.cpp
+\example Surface_mesh_parameterization/polyhedron_ex_parameterization.cpp
+
 
 */ 
 } /* namespace CGAL */
