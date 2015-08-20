@@ -212,8 +212,8 @@ public:
     ++circ;
     if(circ == wh){
       typename PCT::Edge e;
-      bool b = pct.is_edge(uh,wh,e.first,e.second);
-      assert(b);
+      CGAL_assertion_code( bool b = ) pct.is_edge(uh,wh,e.first,e.second);
+      CGAL_assertion(b);
       return ! pct.is_constrained(e);
     }
     while(circ != wh){
