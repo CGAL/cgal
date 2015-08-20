@@ -199,6 +199,15 @@ Release date: September 2015
     Random_points_in_triangle_3, CGAL::Random_points_in_tetrahedron_3).
 
 
+-------------------------------- Release 4.6.2 --------------------------------
+
+Release date: August 2015
+
+This release only fixes bugs. See the list of fixed bugs on Github:
+
+https://github.com/CGAL/cgal/issues?q=milestone%3A4.6.2
+
+
 -------------------------------- Release 4.6.1 --------------------------------
 
 Release date: June 2015
@@ -502,6 +511,10 @@ Release date: October 2014
     regular triangulation algorithms, which allows parallel insertion and
     removal of point ranges.
 
+  - Add caching of circumcenters to Regular_triangulation_cell_base_3. The
+    cache value is computed when cell->circumcenter() or rt.dual(cell)
+    functions are called.
+
 
 * 3D Periodic Triangulations
 
@@ -521,10 +534,6 @@ Release date: October 2014
 
   - Add an experimental parallel version of the 3D mesh refinement and mesh
     optimization methods.
-
-  - Add caching of circumcenters to Regular_triangulation_cell_base_3. The
-    cache value is computed when cell->circumcenter() or rt.dual(cell)
-    functions are called.
 
 
 * Point Set Processing and Surface Reconstruction from Point Sets
