@@ -83,7 +83,7 @@ create_single_source_cgal_program( "triangulate_polyline_example.cpp")
 create_single_source_cgal_program( "mesh_slicer_example.cpp")
 create_single_source_cgal_program( "remove_degeneracies_example.cpp")
 
-if(${EIGEN3_VERSION} VERSION_GREATER 3.2.0)
+if(NOT (${EIGEN3_VERSION} VERSION_LESS 3.2.0))
 create_single_source_cgal_program( "hole_filling_example.cpp" )
 create_single_source_cgal_program( "hole_filling_example_SM.cpp" )
 create_single_source_cgal_program( "refine_fair_example.cpp")

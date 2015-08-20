@@ -77,7 +77,7 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program("remove_degeneracies_test.cpp")
   create_single_source_cgal_program("test_pmp_bgl_named_params.cpp")
 
-if(${EIGEN3_VERSION} VERSION_GREATER 3.2.0)
+if(NOT (${EIGEN3_VERSION} VERSION_LESS 3.2.0))
   create_single_source_cgal_program("fairing_test.cpp")
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_no_delaunay_test.cpp" )
   create_single_source_cgal_program("triangulate_hole_Polyhedron_3_test.cpp")
