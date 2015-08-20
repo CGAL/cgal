@@ -465,7 +465,7 @@ EOF
 	(my $pf_short) = ($pf =~ m/_(.*)/);
 	print OUTPUT "<td><a href=\"$release_name/Installation/TestReport_$pf.gz\">$pf_short</a>";
 
-        ($platform_is_64bits{$pf}) = ($pf =~ m/(x86[-_]64)/);
+        ($platform_is_64bits{$pf}) = ! ($pf =~ m/32/);
 
         if (open (PLATFORM_INFO, "results_${pf}.info")) {
 	    $_ = <PLATFORM_INFO>; # CGAL_VERSION
@@ -482,7 +482,7 @@ EOF
 	    my $countn = $testresults[$platform_num]->{"n"};
 	    my $countr = $testresults[$platform_num]->{"r"};
 
-	    my $index = 10;
+	    my $index = 8;
 	    my @tmp;
 	    while ($index) {
 	        $index--;
@@ -499,7 +499,7 @@ EOF
 	    print OUTPUT "<td>$countw</td>\n"; 
  	    print OUTPUT "<td>$countn</td>\n"; 
  	    print OUTPUT "<td>$countr</td>\n"; 
-	    $index = 10;
+	    $index = 8;
 	    while ($index) {
 	        $index--;
 		$_ = $tmp[$index];
