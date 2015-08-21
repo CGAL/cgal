@@ -2,6 +2,6 @@
 
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - CGAL and Solvers"
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Solver_interface/doc/Solver_interface/
-EXAMPLE_PATH =
+EXAMPLE_PATH =          ${CMAKE_SOURCE_DIR}/Solver_interface/examples/Solver_interface/
 
 

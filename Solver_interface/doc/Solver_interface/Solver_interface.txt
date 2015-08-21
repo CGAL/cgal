@@ -17,7 +17,7 @@ equivalent models for other solvers, for example those found in the
 
 
 
-\section SectionSolverEigen Eigen
+\section SectionSolverEigenSparse Eigen Sparse Solvers
 
 An interface to all sparse solvers from the \ref thirdpartyEigen
 library is provided through the class
@@ -44,7 +44,25 @@ typedef CGAL::Eigen_solver_traits< Eigen::ConjugateGradient<EigenMatrix> > Itera
 //direct symmetric solver 
 typedef CGAL::Eigen_solver_traits< Eigen::SimplicialCholesky<EigenMatrix> > Direct_symmetric_solver; 
 
-\endcode 
+\endcode
+
+\section SectionSolverEigenSVD Eigen Singular Value Decomposition
+
+The class `Eigen_svd` provides an algorithm to solve in the least
+square sense a linear system with a singular value decomposition using
+\ref thirdpartyEigen. The field type is `double`.
+
+Here is a simple example that shows how to handle matrices, vectors
+and this solver:
+
+\cgalExample{Solver_interface/eigen_singular_value_decomposition.cpp}
+
+\section SectionSolverEigenVCM Variance Covariance Matrix
+
+The class `Eigen_vcm_traits<T>` provides an interface to the
+selfadjoint solver of the \ref thirdpartyEigen library.
+
+
 
 
 
