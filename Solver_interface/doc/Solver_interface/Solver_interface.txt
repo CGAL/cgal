@@ -62,6 +62,10 @@ and this solver:
 The class `Eigen_vcm_traits<T>` provides an interface to the
 selfadjoint solver of the \ref thirdpartyEigen library.
 
+This is an example of an eigendecomposition of a matrix using this
+class:
+
+\cgalExample{Solver_interface/eigen_variance_covariance_matrix.cpp}
 
 
 

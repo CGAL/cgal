@@ -1,3 +1,4 @@
 /*!
 \example Solver_interface/eigen_singular_value_decomposition.cpp
+\example Solver_interface/eigen_variance_covariance_matrix.cpp
 */
