@@ -1,5 +1,5 @@
 /*!
-\ingroup PkgPointSetProcessingConcepts
+\ingroup PkgSolverConcepts
 \cgalConcept
 Concept providing functions to extract eigenvectors and eigenvalue from
 covariance matrices represented by an array `a` as follows:
