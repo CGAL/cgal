@@ -30,15 +30,20 @@ namespace CGAL {
 
 /// A model of the concept `VCMTraits` using \ref thirdpartyEigen.
 /// \cgalModels `VCMTraits`
+
+template <typename FT>
 class Eigen_vcm_traits{
   // Construct the covariance matrix
   static Eigen::Matrix3f
-  construct_covariance_matrix (const cpp11::array<double,6>& cov) {
+  construct_covariance_matrix (const cpp11::array<FT,6>& cov) {
     Eigen::Matrix3f m;
 
-    m(0,0) = cov[0]; m(0,1) = cov[1]; m(0,2) = cov[2];
-    m(1,1) = cov[3]; m(1,2) = cov[4];
-    m(2,2) = cov[5];
+    m(0,0) = static_cast<float>(cov[0]);
+    m(0,1) = static_cast<float>(cov[1]);
+    m(0,2) = static_cast<float>(cov[2]);
+    m(1,1) = static_cast<float>(cov[3]);
+    m(1,2) = static_cast<float>(cov[4]);
+    m(2,2) = static_cast<float>(cov[5]);
 
     m(1, 0) = m(0,1); m(2, 0) = m(0, 2); m(2, 1) = m(1, 2);
 
@@ -65,8 +70,8 @@ class Eigen_vcm_traits{
 public:
   static bool
   diagonalize_selfadjoint_covariance_matrix(
-    const cpp11::array<double,6>& cov,
-    cpp11::array<double, 3>& eigenvalues)
+    const cpp11::array<FT,6>& cov,
+    cpp11::array<FT, 3>& eigenvalues)
   {
     Eigen::Matrix3f m = construct_covariance_matrix(cov);
 
@@ -77,9 +82,9 @@ public:
 
     if (res)
     {
-      eigenvalues[0]=eigenvalues_[0];
-      eigenvalues[1]=eigenvalues_[1];
-      eigenvalues[2]=eigenvalues_[2];
+      eigenvalues[0]=static_cast<FT>(eigenvalues_[0]);
+      eigenvalues[1]=static_cast<FT>(eigenvalues_[1]);
+      eigenvalues[2]=static_cast<FT>(eigenvalues_[2]);
     }
 
     return res;
@@ -87,9 +92,9 @@ public:
 
   static bool
   diagonalize_selfadjoint_covariance_matrix(
-    const cpp11::array<double,6>& cov,
-    cpp11::array<double, 3>& eigenvalues,
-    cpp11::array<double, 9>& eigenvectors)
+    const cpp11::array<FT,6>& cov,
+    cpp11::array<FT, 3>& eigenvalues,
+    cpp11::array<FT, 9>& eigenvectors)
   {
     Eigen::Matrix3f m = construct_covariance_matrix(cov);
 
@@ -100,18 +105,18 @@ public:
 
     if (res)
     {
-      eigenvalues[0]=eigenvalues_[0];
-      eigenvalues[1]=eigenvalues_[1];
-      eigenvalues[2]=eigenvalues_[2];
-      eigenvectors[0]=eigenvectors_(0,0);
-      eigenvectors[1]=eigenvectors_(1,0);
-      eigenvectors[2]=eigenvectors_(2,0);
-      eigenvectors[3]=eigenvectors_(0,1);
-      eigenvectors[4]=eigenvectors_(1,1);
-      eigenvectors[5]=eigenvectors_(2,1);
-      eigenvectors[6]=eigenvectors_(0,2);
-      eigenvectors[7]=eigenvectors_(1,2);
-      eigenvectors[8]=eigenvectors_(2,2);
+      eigenvalues[0]=static_cast<FT>(eigenvalues_[0]);
+      eigenvalues[1]=static_cast<FT>(eigenvalues_[1]);
+      eigenvalues[2]=static_cast<FT>(eigenvalues_[2]);
+      eigenvectors[0]=static_cast<FT>(eigenvectors_(0,0));
+      eigenvectors[1]=static_cast<FT>(eigenvectors_(1,0));
+      eigenvectors[2]=static_cast<FT>(eigenvectors_(2,0));
+      eigenvectors[3]=static_cast<FT>(eigenvectors_(0,1));
+      eigenvectors[4]=static_cast<FT>(eigenvectors_(1,1));
+      eigenvectors[5]=static_cast<FT>(eigenvectors_(2,1));
+      eigenvectors[6]=static_cast<FT>(eigenvectors_(0,2));
+      eigenvectors[7]=static_cast<FT>(eigenvectors_(1,2));
+      eigenvectors[8]=static_cast<FT>(eigenvectors_(2,2));
     }
 
     return res;
@@ -120,8 +125,8 @@ public:
   // Extract the eigenvector associated to the largest eigenvalue
   static bool
   extract_largest_eigenvector_of_covariance_matrix (
-    const cpp11::array<double,6>& cov,
-    cpp11::array<double,3> &normal)
+    const cpp11::array<FT,6>& cov,
+    cpp11::array<FT,3> &normal)
   {
       // Construct covariance matrix
       Eigen::Matrix3f m = construct_covariance_matrix(cov);
@@ -134,9 +139,9 @@ public:
       }
 
       // Eigenvalues are already sorted by increasing order
-      normal[0]=eigenvectors(0,0);
-      normal[1]=eigenvectors(1,0);
-      normal[2]=eigenvectors(2,0);
+      normal[0]=static_cast<FT>(eigenvectors(0,0));
+      normal[1]=static_cast<FT>(eigenvectors(1,0));
+      normal[2]=static_cast<FT>(eigenvectors(2,0));
 
       return true;
   }
