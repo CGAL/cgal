@@ -1194,6 +1194,6 @@ namespace std {
 #  pragma warning(pop)
 #endif
 
-} // namespace boost
+} // namespace std
 
 #endif // CGAL_COMPACT_CONTAINER_H
