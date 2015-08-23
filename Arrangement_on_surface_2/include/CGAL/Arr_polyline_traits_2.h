@@ -1593,7 +1593,7 @@ namespace CGAL {
               *oi++ = make_object(p);
               return oi;
             }
-            dir1 == SMALLER ? ++i1 : (i1 != 0) ? --i1 : INVALID_INDEX;
+            dir1 == SMALLER ? ++i1 : (i1 != 0) ? --i1 : std::size_t(INVALID_INDEX);
             left_res = EQUAL;
           }
         }
@@ -1615,7 +1615,7 @@ namespace CGAL {
               return oi;
             }
 
-            dir2 == SMALLER ? ++i2 : (i2 != 0) ? --i2 : INVALID_INDEX;
+            dir2 == SMALLER ? ++i2 : (i2 != 0) ? --i2 : std::size_t(INVALID_INDEX);
             left_res = EQUAL;
           }
         }
@@ -2772,7 +2772,7 @@ namespace CGAL {
         // segment that is closest to the point. Otherwise, the point is not
         // in the x-range of the polyline.
         return (is_vertical_2_object()(cv)) ?
-          ((res_to == SMALLER) ? from : to) : INVALID_INDEX;
+          ((res_to == SMALLER) ? from : to) : std::size_t(INVALID_INDEX);
 
       // Perform a binary search to locate the segment that contains q in its
       // range:
