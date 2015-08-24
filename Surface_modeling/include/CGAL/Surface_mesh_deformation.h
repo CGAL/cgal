@@ -1275,9 +1275,9 @@ private:
           double wij = hedge_weight[id(he)];
           double wji = hedge_weight[id(opposite(he, m_halfedge_graph))];
 #ifndef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SCALE
-          cr_traits.add__scalar_t_matrix_p_scalar_t_matrix__t_vector(xyz, wij, rot_mtr[vi_id], wji, rot_mtr[vj_id], pij);
+          cr_traits.add_scalar_t_matrix_p_scalar_t_matrix_t_vector(xyz, wij, rot_mtr[vi_id], wji, rot_mtr[vj_id], pij);
 #else
-        cr_traits.add__scalar_t_matrix_p_scalar_t_matrix__t_vector(xyz, wij * scales[vi_id], rot_mtr[vi_id],
+        cr_traits.add_scalar_t_matrix_p_scalar_t_matrix_t_vector(xyz, wij * scales[vi_id], rot_mtr[vi_id],
           wji * scales[vj_id], rot_mtr[vj_id], pij);
 #endif
           // corresponds xyz += (wij*rot_mtr[vi_id] + wji*rot_mtr[vj_id]) * pij

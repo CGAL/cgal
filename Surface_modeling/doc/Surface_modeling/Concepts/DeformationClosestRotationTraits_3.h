@@ -34,7 +34,7 @@ public:
   void add_scalar_t_vector_t_vector_transpose(Matrix& result, double w, const Vector& v1, const Vector& v2);
 
   /// Equivalent to `result = result + (w1*m1 + w2*m2) * v`
-  void add__scalar_t_matrix_p_scalar_t_matrix__t_vector(Vector& result, double w1, const Matrix& m1, double w2, const Matrix& m2, const Vector& v);
+  void add_scalar_t_matrix_p_scalar_t_matrix_t_vector(Vector& result, double w1, const Matrix& m1, double w2, const Matrix& m2, const Vector& v);
 
   /// Equivalent to `result = result + w1 * (m1 + m2 + m3) * v`
   void add_scalar_t_matrix_sum_t_vector(Vector& result, double w1, const Matrix& m1, const Matrix& m2, const Matrix& m3, const Vector& v);
