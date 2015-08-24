@@ -44,7 +44,7 @@ public:
   }
 
   /// Equivalent to `result += (w1*m1 + w2*m2) * v`
-  void add__scalar_t_matrix_p_scalar_t_matrix__t_vector(Vector& result, double w1, const Matrix& m1, double w2, const Matrix& m2, const Vector& v)
+  void add_scalar_t_matrix_p_scalar_t_matrix_t_vector(Vector& result, double w1, const Matrix& m1, double w2, const Matrix& m2, const Vector& v)
   {
     result += (w1*m1 + w2*m2) * v;
   }
