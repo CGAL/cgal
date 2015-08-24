@@ -27,9 +27,7 @@ specific solver to be used must be given as template
 parameter.
 
 Each \cgal package using a sparse solver specifies which type of matrix
-and solver is required.
-
-Here are few examples: 
+and solver is required:
 
 \code{.cpp} 
 
@@ -45,6 +43,11 @@ typedef CGAL::Eigen_solver_traits< Eigen::ConjugateGradient<EigenMatrix> > Itera
 typedef CGAL::Eigen_solver_traits< Eigen::SimplicialCholesky<EigenMatrix> > Direct_symmetric_solver; 
 
 \endcode
+
+Here is an example that shows how to fill the sparse matrix and call
+the solver:
+
+\cgalExample{Solver_interface/eigen_sparse_solvers.cpp}
 
 \section SectionSolverEigenSVD Eigen Singular Value Decomposition
 
