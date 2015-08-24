@@ -74,6 +74,8 @@
 // for default parameters
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
+#include <Eigen/SparseCholesky>
+// #include <Eigen/CholmodSupport>
 #endif
 
 namespace CGAL {
@@ -141,10 +143,9 @@ struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
 ///         <b>%Default:</b> If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
 ///         and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter:
 /// \code
-///     CGAL::Eigen_solver_traits<
-///         Eigen::SparseLU<
-///            CGAL::Eigen_sparse_matrix<double>::EigenType,
-///            Eigen::COLAMDOrdering<int> >  >
+///      CGAL::Eigen_solver_traits<
+///        Eigen::SimplicialLDLT< Eigen::SparseMatrix<double> >
+///      >
 /// \endcode
 ///
 /// @cond CGAL_DOCUMENT_INTERNAL
@@ -180,9 +181,9 @@ public:
     SolverTraits_,
   #if defined(CGAL_EIGEN3_ENABLED)
       CGAL::Eigen_solver_traits<
-          Eigen::SparseLU<
-            CGAL::Eigen_sparse_matrix<double>::EigenType,
-            Eigen::COLAMDOrdering<int> >  >
+        Eigen::SimplicialLDLT< Eigen::SparseMatrix<double> >
+//        Eigen::CholmodDecomposition< Eigen::SparseMatrix<double> >
+      >
   #else
     SolverTraits_ // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
