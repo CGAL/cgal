@@ -226,10 +226,6 @@ private:
 
     FT              _squared_radius;    // The squared neighborhood radius.
 
-    bool _separate_shells;
-    bool _force_manifold;
-    FT   _border_angle;
-
     // The shape must be a pointer, because the alpha of a Fixed_alpha_shape_3
     // can only be set at construction and its assignment operator is private.
     // We want to be able to set the alpha after constructing the scale-space
@@ -268,8 +264,7 @@ public:
      *  \param separate_shells determines whether to collect the surface per shell. 
      *  \param force_manifold determines if the surface is forced to be 2-manifold.
      */
-  Scale_space_surface_reconstruction_3( unsigned int neighbors, unsigned int samples,
-					bool separate_shells = true, bool force_manifold = false );
+  Scale_space_surface_reconstruction_3( unsigned int neighbors, unsigned int samples);
 
     /// constructs a surface reconstructor with a given neighborhood radius.
     /** \param sq_radius is the squared radius of the neighborhood.
@@ -300,15 +295,15 @@ private:
     Triple ordered_facet_indices( const Facet& f ) const;
 
     //  Collect the triangles of one shell of the surface.
-  void collect_shell( Cell_handle c, unsigned int li );
+  void collect_shell( Cell_handle c, unsigned int li, bool separate_shells, bool force_manifold);
 
     //  Collect the triangles of one shell of the surface.
-  void collect_shell( const Facet& f ) {
-    collect_shell( f.first, f.second );
+  void collect_shell( const Facet& f, bool separate_shells, bool force_manifold) {
+    collect_shell( f.first, f.second, separate_shells, force_manifold );
 	}
 
     //  Collect the triangles of the complete surface.
-  void collect_facets( );
+  void collect_facets( bool separate_shells, bool force_manifold );
   void collect_facets_quick( );
 
 
@@ -657,60 +652,6 @@ public:
     void set_neighborhood_sample_size( unsigned int samples ) { _samples = samples; }
 /// \}
 
-/// \name Output Options Parameters
-/// \{
-    /// determines whether to collect the surface per shell. 
-    /** If set to false, the output surface is stored in a single shell.
-     *
-     *  \note Setting this parameter to false when 2-manifoldness is
-     *  not required allows for a quicker computation of the
-     *  reconstruction.
-     *
-     *  \sa `shell_begin(std::size_t shell)`
-     *  \sa `shell_end(std::size_t shell)`
-     */
-    void set_separate_shells( bool separate_shells ) { _separate_shells = separate_shells; }
-
-    /// determines if the surface is forced to be 2-manifold.
-    /** If set to true, some facets of the reconstruction are
-     *  willingly discarded so that every facet, edge and vertex are
-     *  manifold. The discarded facets are accessible by iterating on
-     *  the garbage container.
-     *
-     *  \note Setting this parameter to false when separate shells are
-     *  not required allows for a quicker computation of the
-     *  reconstruction.
-     *
-     *  \note This function has no effect on an already reconstructed
-     *  surface. For the change of requirement (manifold or not) to be
-     *  applied, the `reconstruct_surface()` function must be called
-     *  again.
-     *
-     *  \sa `garbage_begin()`
-     *  \sa `garbage_end()`
-     */
-    void set_force_manifold( bool force_manifold ) { _force_manifold = force_manifold; }
-
-    /// sets the maximal angle between two facets such that the edge
-    /// is seen as a border.
-    /** If the output is forced to be 2-manifold, some almost flat
-     *  volume bubbles are detected. To do so, border edges must be
-     *  estimated. 
-     *
-     *  An edge adjacent to 2 regular facets is considered as a border
-     *  if it is also adjacent to a singular facet or if the angle
-     *  between the two regular facets is lower than this parameter
-     *  (set to 45° by default).
-     *
-     *  \param border_angle is the maximal angle between two facets
-     *  such that their common edge is considered as a border.
-     *
-     *  \note This parameter is only used if the output is forced to
-     *  be 2-manifold
-     *
-     */
-    void set_border_angle( FT border_angle) { _border_angle = border_angle; }
-/// \}
     
 /// \name Scale-Space Manipulation
 /// \{
@@ -839,12 +780,12 @@ private:
     
     // collects the surface mesh from the shape.
     // If the sahep does not yet exist, it is constructed.
-	void collect_surface ( );
+	void collect_surface (bool separate_shells, bool force_manifold, FT border_angle );
 
     // detects the non-manifold features of the shape
     void find_two_other_vertices(const Facet& f, Vertex_handle v,
 				 Vertex_handle& v1, Vertex_handle& v2);
-    void detect_bubbles();
+    void detect_bubbles( FT border_angle );
     void fix_nonmanifold_edges();
     void fix_nonmanifold_vertices();
     
@@ -865,16 +806,33 @@ public:
      *  If the neighborhood radius has not been set before, it is automatically
      *  estimated using `estimate_neighborhood_squared_radius()`.
      *
+     *  \param separate_shells determines whether to collect the surface per shell. 
+     *  \param force_manifold determines if the surface is forced to be 2-manifold.
+     *  \param border_angle sets the maximal angle between two facets
+     *  such that the edge is seen as a border.
+     *
+     *  If the output is forced to be 2-manifold, some almost flat
+     *  volume bubbles are detected. To do so, border edges must be
+     *  estimated.
+     *
+     *  An edge adjacent to 2 regular facets is considered as a border
+     *  if it is also adjacent to a singular facet or if the angle
+     *  between the two regular facets is lower than this parameter
+     *  (set to 45° by default).
+     *
      *  \note This method processes the point set at the current scale. The
      *  points can be set with <code>[insert(begin, end)](\ref insert)</code>.
+     *  \note `border_angle` is not used if `force_manifold` is set to false.
      *
      *  \sa `estimate_neighborhood_squared_radius()`.
      *  \sa `increase_scale(unsigned int iterations)`.
      */
-        void reconstruct_surface()
-        {
-          reconstruct_surface(0);
-        }
+    void reconstruct_surface(bool separate_shells = true,
+			     bool force_manifold = false,
+			     FT border_angle = 45)
+    {
+      reconstruct_surface(0, separate_shells, force_manifold, border_angle);
+    }
 
     /// gives the number of triangles of the surface.
     std::size_t number_of_triangles() const { return _surface.size(); }
@@ -889,7 +847,8 @@ public:
     }
 
     /// \cond internal_doc
-    void reconstruct_surface( unsigned int iterations);
+    void reconstruct_surface( unsigned int iterations, bool separate_shells = true,
+			      bool force_manifold = false, FT border_angle = 45);
     /// \endcond
 
     /// \cond internal_doc
@@ -921,10 +880,10 @@ public:
 #ifdef DOXYGEN_RUNNING
 	  void reconstruct_surface( InputIterator begin, InputIterator end,
 				    unsigned int iterations = 0, bool separate_shells = true,
-				    bool force_manifold = false);
+				    bool force_manifold = false, FT border_angle = 45);
 #else // DOXYGEN_RUNNING
 	void reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterations = 0,
-				  bool shells = true, bool force_manifold = false,
+				  bool separate_shells = true, bool force_manifold = false, FT border_angle = 45,
                                   typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL );
 #endif // DOXYGEN_RUNNING
     /// \endcond

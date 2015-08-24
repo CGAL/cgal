@@ -201,17 +201,13 @@ public:
 
 template < class Gt, class FS, class wA, class Ct >
 Scale_space_surface_reconstruction_3<Gt,FS,wA,Ct>::
-Scale_space_surface_reconstruction_3( unsigned int neighbors, unsigned int samples,
-				      bool separate_shells, bool force_manifold)
-  : _generator (0),_mean_neighbors(neighbors), _samples(samples), _squared_radius(-1),
-    _separate_shells (separate_shells), _force_manifold (force_manifold),
-    _border_angle (45.), _shape(0) {}
+Scale_space_surface_reconstruction_3( unsigned int neighbors, unsigned int samples)
+  : _generator (0),_mean_neighbors(neighbors), _samples(samples), _squared_radius(-1), _shape(0) {}
 
 template < class Gt, class FS, class wA, class Ct >
 Scale_space_surface_reconstruction_3<Gt,FS,wA,Ct>::
 Scale_space_surface_reconstruction_3( FT sq_radius )
-: _mean_neighbors(0), _samples(0), _squared_radius(sq_radius),
-  _separate_shells (true), _force_manifold (false), _border_angle (45.), _shape(0) {
+: _mean_neighbors(0), _samples(0), _squared_radius(sq_radius),_shape(0) {
     CGAL_precondition( sq_radius >= 0 );
 }
 
@@ -305,7 +301,7 @@ ordered_facet_indices( const Facet& f ) const {
 template < class Gt, class FS, class wA, class Ct >
 void
 Scale_space_surface_reconstruction_3<Gt,FS,wA,Ct>::
-collect_shell( Cell_handle c, unsigned int li ) {
+collect_shell( Cell_handle c, unsigned int li, bool separate_shells, bool force_manifold ) {
     // Collect one surface mesh from the alpha-shape in a fashion similar to ball-pivoting.
     // Invariant: the facet is regular or singular.
 
@@ -336,7 +332,7 @@ collect_shell( Cell_handle c, unsigned int li ) {
         // Output the facet as a triple of indices.
         _surface.push_back( ordered_facet_indices(f) );
         if( !processed ) {
-	  if (_separate_shells || _shells.size () == 0)
+	  if (separate_shells || _shells.size () == 0)
 	    {
 	      _shells.push_back( --_surface.end() );
 	      _index ++;
@@ -349,7 +345,7 @@ collect_shell( Cell_handle c, unsigned int li ) {
 
 	// If the surface is required to be manifold,
 	// the opposite layer should be ignored
-	if (_force_manifold)
+	if (force_manifold)
 	  mark_opposite_handled (f);
 		
         // Pivot over each of the facet's edges and continue the surface at the next regular or singular facet.
@@ -384,7 +380,7 @@ collect_shell( Cell_handle c, unsigned int li ) {
 template < class Gt, class FS, class wA, class Ct >
 void
 Scale_space_surface_reconstruction_3<Gt,FS,wA,Ct>::
-collect_facets( ) {
+collect_facets (bool separate_shells, bool force_manifold) {
 
 
   // We check each of the facets: if it is not handled and either regular or singular,
@@ -394,14 +390,14 @@ collect_facets( ) {
     case Shape::REGULAR:
       // Build a surface from the outer cell.
       if( _shape->classify(fit->first) == Shape::EXTERIOR )
-	collect_shell( *fit );
+	collect_shell( *fit, separate_shells, force_manifold );
       else
-	collect_shell( _shape->mirror_facet( *fit ) );
+	collect_shell( _shape->mirror_facet( *fit ), separate_shells, force_manifold );
       break;
     case Shape::SINGULAR:
       // Build a surface from both incident cells.
-      collect_shell( *fit );
-      collect_shell( _shape->mirror_facet( *fit ) );
+      collect_shell( *fit, separate_shells, force_manifold );
+      collect_shell( _shape->mirror_facet( *fit ), separate_shells, force_manifold );
       break;
     default:
       break;
@@ -557,7 +553,7 @@ construct_shape( InputIterator begin, InputIterator end,
 template < class Gt, class FS, class wA, class Ct >
 void
 Scale_space_surface_reconstruction_3<Gt,FS,wA,Ct>::
-collect_surface( ) {
+collect_surface (bool separate_shells, bool force_manifold, FT border_angle) {
 
     clear_surface();
     if( !has_shape() )
@@ -568,7 +564,7 @@ collect_surface( ) {
 
     // If shells are not separated and no manifold constraint is given,
     // then the quick collection of facets can be applied
-    if (!_separate_shells && !_force_manifold)
+    if (!separate_shells && !force_manifold)
       {
 	collect_facets_quick ();
 	_shells.push_back (_surface.begin ());
@@ -583,16 +579,16 @@ collect_surface( ) {
 	for( All_cells_iterator cit = _shape->all_cells_begin(); cit != _shape->all_cells_end(); ++cit )
 	  cit->info() = 0;
 
-	if (_force_manifold)
+	if (force_manifold)
 	  {
 	    // If manifold surface is wanted, small volumes (bubbles) are first detected in
 	    // order to know which layer to ignore when collecting facets
-	    detect_bubbles();
+	    detect_bubbles(border_angle);
 	  }
 
-	collect_facets ();
+	collect_facets (separate_shells, force_manifold);
 
-	if (_force_manifold)
+	if (force_manifold)
 	  {
 	    // Even when taking into account facets, some nonmanifold features might remain
 	    fix_nonmanifold_edges();
@@ -634,7 +630,7 @@ find_two_other_vertices(const Facet& f, Vertex_handle v,
 template < class Gt, class FS, class wA, class Ct >
 void
 Scale_space_surface_reconstruction_3<Gt,FS,wA,Ct>::
-detect_bubbles() {
+detect_bubbles(FT border_angle) {
 
   std::set<Cell_handle> done;
 
@@ -723,7 +719,7 @@ detect_bubbles() {
 								   c->vertex (i)->point (),
 								   c->vertex ((i + (j+2)%3 + 1)%4)->point ());
 
-		      if (-_border_angle < angle && angle < _border_angle)
+		      if (-border_angle < angle && angle < border_angle)
 			{
 			  borders.insert (vedge);
 			}
@@ -1125,13 +1121,14 @@ fix_nonmanifold_vertices() {
   template < class Gt, class FS, class wA, class Ct >
 void
 Scale_space_surface_reconstruction_3<Gt,FS,wA,Ct>::
-  reconstruct_surface( unsigned int iterations ) {
+  reconstruct_surface( unsigned int iterations, bool separate_shells,
+		       bool force_manifold, FT border_angle) {
 
     // Smooth the scale space.
     increase_scale( iterations );
 
     // Mesh the perturbed points.
-    collect_surface ();
+    collect_surface (separate_shells, force_manifold, border_angle);
 
 }
 
@@ -1141,19 +1138,14 @@ template < class InputIterator >
 void
 Scale_space_surface_reconstruction_3<Gt,FS,wA,Ct>::
 reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterations,
-		     bool separate_shells, bool force_manifold,
+		     bool separate_shells, bool force_manifold, FT border_angle,
                      typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type*) {
   
     // Compute the radius for which the mean ball would contain the required number of neighbors.
       clear();
     insert( begin, end );
 
-    _separate_shells = separate_shells;
-    _force_manifold = force_manifold;
-
-    reconstruct_surface (iterations);
-
-
+    reconstruct_surface (iterations, separate_shells, force_manifold, border_angle);
 }
 /// \endcond
 

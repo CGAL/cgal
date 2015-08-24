@@ -37,11 +37,13 @@ int main(int argc, char* argv[]) {
   Timer t;
   t.start();
   // Construct the mesh in a scale space.
-  Reconstruction reconstruct( 10, 200,
-			      false, // Do not separate shells
-			      true // Force manifold output
-			      );
-  reconstruct.reconstruct_surface( points.begin(), points.end(), 4 );
+  Reconstruction reconstruct( 10, 200 );
+  
+  reconstruct.reconstruct_surface( points.begin(), points.end(), 4,
+				   false, // Do not separate shells
+				   true // Force manifold output
+				   );
+  
   std::cerr << "Reconstruction done in " << t.time() << " sec." << std::endl;
   t.reset();
   std::ofstream out ("out.off");
