@@ -42,20 +42,16 @@ int main(int argc, char* argv[])
   {
     const Point& s = skeleton[source(e, skeleton)].point;
     const Point& t = skeleton[target(e, skeleton)].point;
-    output << s << " " << t << "\n";
+    output << "2 " << s << " " << t << "\n";
   }
   output.close();
 
   // Output skeleton points and the corresponding surface points
   output.open("correspondance.cgal");
   BOOST_FOREACH(Skeleton_vertex v, vertices(skeleton))
-  {
-    output << skeleton[v].point << ": ";
-
     BOOST_FOREACH(vertex_descriptor vd, skeleton[v].vertices)
-      output << get(CGAL::vertex_point, tmesh, vd)  << " ";
-    output << "\n";
-  }
+      output << "2 " << skeleton[v].point << " "
+                     << get(CGAL::vertex_point, tmesh, vd)  << "\n";
 
   return 0;
 }
