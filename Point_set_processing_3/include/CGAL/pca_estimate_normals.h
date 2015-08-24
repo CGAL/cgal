@@ -98,7 +98,9 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
   // output normal vector (already normalized by PCA)
   return plane.orthogonal_vector();
 }
-  
+
+
+#ifdef CGAL_LINKED_WITH_TBB
   template <typename Kernel, typename Tree>
   class PCA_estimate_normals {
     typedef typename Kernel::Point_3 Point;
@@ -121,7 +123,8 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
     }
 
   };
-
+#endif // CGAL_LINKED_WITH_TBB
+  
 
 } /* namespace internal */
 /// \endcond

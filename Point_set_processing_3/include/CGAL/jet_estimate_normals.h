@@ -107,7 +107,7 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
   return monge_form.normal_direction();
 }
 
-
+#ifdef CGAL_LINKED_WITH_TBB
   template <typename Kernel, typename SvdTraits, typename Tree>
   class Jet_estimate_normals {
     typedef typename Kernel::Point_3 Point;
@@ -131,6 +131,7 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
     }
 
   };
+#endif // CGAL_LINKED_WITH_TBB
 
 
   

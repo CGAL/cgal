@@ -107,6 +107,7 @@ jet_smooth_point(
   return monge_form.origin();
 }
 
+#ifdef CGAL_LINKED_WITH_TBB
   template <typename Kernel, typename SvdTraits, typename Tree>
   class Jet_smooth_pwns {
     typedef typename Kernel::Point_3 Point;
@@ -133,7 +134,7 @@ jet_smooth_point(
     }
 
   };
-
+#endif // CGAL_LINKED_WITH_TBB
 
 
 } /* namespace internal */
