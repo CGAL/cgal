@@ -136,8 +136,8 @@ struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
 ///   boost::property_map<TriangleMesh, CGAL::vertex_point_t>::const_type.
 /// \endcode
 ///
-/// @tparam SparseLinearAlgebraTraits_d
-///         a model of `SparseLinearAlgebraTraitsWithFactor_d`.<br>
+/// @tparam SolverTraits_
+///         a model of `NormalEquationSparseLinearAlgebraTraits_d`.<br>
 ///         <b>%Default:</b> If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
 ///         and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter:
 /// \code
@@ -154,7 +154,7 @@ struct Skel_polyhedron_items_3: CGAL::Polyhedron_items_with_id_3 {
 template <class TriangleMesh,
           class Traits_ = Default,
           class VertexPointMap_ = Default,
-          class SparseLinearAlgebraTraits_d_ = Default>
+          class SolverTraits_ = Default>
 class Mean_curvature_flow_skeletonization
 {
 // Public types
@@ -177,16 +177,16 @@ public:
 
   #ifndef DOXYGEN_RUNNING
   typedef typename Default::Get<
-    SparseLinearAlgebraTraits_d_,
+    SolverTraits_,
   #if defined(CGAL_EIGEN3_ENABLED)
       CGAL::Eigen_solver_traits<
           Eigen::SparseLU<
             CGAL::Eigen_sparse_matrix<double>::EigenType,
             Eigen::COLAMDOrdering<int> >  >
   #else
-    SparseLinearAlgebraTraits_d_ // no parameter provided, and Eigen is not enabled: so don't compile!
+    SolverTraits_ // no parameter provided, and Eigen is not enabled: so don't compile!
   #endif
-  >::type SparseLinearAlgebraTraits_d;
+  >::type SolverTraits;
   #endif
 
   /// @cond CGAL_DOCUMENT_INTERNAL
@@ -286,7 +286,7 @@ private:
   /** Storing the weights for edges. */
   std::vector<double> m_edge_weight;
   /** The sparse solver. */
-  SparseLinearAlgebraTraits_d m_solver;
+  SolverTraits m_solver;
 
   /** Assign a unique id to a new vertex. */
   int m_vertex_id_count;
@@ -617,12 +617,12 @@ public:
       nrows = nver * 2;
     }
     // Assemble linear system At * A * X = At * B
-    typename SparseLinearAlgebraTraits_d::Matrix A(nrows, nver);
+    typename SolverTraits::Matrix A(nrows, nver);
     assemble_LHS(A);
 
-    typename SparseLinearAlgebraTraits_d::Vector X(nver), Bx(nrows);
-    typename SparseLinearAlgebraTraits_d::Vector Y(nver), By(nrows);
-    typename SparseLinearAlgebraTraits_d::Vector Z(nver), Bz(nrows);
+    typename SolverTraits::Vector X(nver), Bx(nrows);
+    typename SolverTraits::Vector Y(nver), By(nrows);
+    typename SolverTraits::Vector Z(nver), Bz(nrows);
     assemble_RHS(Bx, By, Bz);
 
     MCFSKEL_DEBUG(std::cerr << "before solve\n";)
@@ -887,7 +887,7 @@ private:
   }
 
   /// Assemble the left hand side.
-  void assemble_LHS(typename SparseLinearAlgebraTraits_d::Matrix& A)
+  void assemble_LHS(typename SolverTraits::Matrix& A)
   {
     MCFSKEL_DEBUG(std::cerr << "start LHS\n";)
 
@@ -948,9 +948,9 @@ private:
   }
 
   /// Assemble the right hand side.
-  void assemble_RHS(typename SparseLinearAlgebraTraits_d::Vector& Bx,
-                    typename SparseLinearAlgebraTraits_d::Vector& By,
-                    typename SparseLinearAlgebraTraits_d::Vector& Bz)
+  void assemble_RHS(typename SolverTraits::Vector& Bx,
+                    typename SolverTraits::Vector& By,
+                    typename SolverTraits::Vector& Bz)
   {
     MCFSKEL_DEBUG(std::cerr << "start RHS\n";)
 
@@ -1356,8 +1356,8 @@ private:
 template <class TriangleMesh,
           class Traits_,
           class VertexPointMap_,
-          class SparseLinearAlgebraTraits_d_>
-std::size_t Mean_curvature_flow_skeletonization<TriangleMesh, Traits_, VertexPointMap_, SparseLinearAlgebraTraits_d_>::collapse_short_edges()
+          class SolverTraits_>
+std::size_t Mean_curvature_flow_skeletonization<TriangleMesh, Traits_, VertexPointMap_, SolverTraits_>::collapse_short_edges()
 {
   std::size_t cnt=0, prev_cnt=0;
 
