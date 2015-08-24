@@ -15,10 +15,10 @@ typedef CGAL::Periodic_3_regular_triangulation_traits_3<RT> Traits;
 typedef CGAL::Periodic_3_regular_triangulation_3<Traits>    P3RT3;
 
 typedef Traits::Iso_cuboid_3 Iso_cuboid;
+typedef Traits::Weighted_point Weighted_point;
+typedef Traits::Bare_point Bare_point;
 
 typedef P3RT3::Vertex_handle Vertex_handle;
-typedef P3RT3::Weighted_point Weighted_point;
-typedef P3RT3::Bare_point Bare_point;
 
 
 int main ()
