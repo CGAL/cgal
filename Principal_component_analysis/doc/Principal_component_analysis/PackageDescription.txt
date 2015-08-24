@@ -36,7 +36,7 @@
 \cgalClassifedRefPages
 
 ## Functions ##
-- `CGAL::barycenter()`
+- \link PkgPrincipalComponentAnalysisDbb `CGAL::barycenter()` \endlink
 - `CGAL::bounding_box()`
 - `CGAL::centroid()`
 - `CGAL::linear_least_squares_fitting_2()`
