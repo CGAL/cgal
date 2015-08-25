@@ -40,7 +40,7 @@ namespace internal {
 //  0 is worst (isotropic case, returns a line with horizontal
 //              direction by default)
 
-template < typename InputIterator, typename K >
+template < typename InputIterator, typename K, typename Vcm_traits >
 typename K::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
@@ -48,7 +48,8 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const typename K::Circle_2*,// used for indirection
                                const K&,                   // kernel
-			                         const CGAL::Dimension_tag<2>& tag)
+			       const CGAL::Dimension_tag<2>& tag,
+			       const Vcm_traits&)
 {
   // types
   typedef typename K::FT       FT;
@@ -67,11 +68,11 @@ linear_least_squares_fitting_2(InputIterator first,
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
-  // 0
-  // 1 2
+  // 0 1
+  //   2
   //Final combined covariance matrix for all circles and their combined mass
   FT mass = 0.0;
-  FT covariance[3] = {0.0,0.0,0.0};
+  CGAL::cpp11::array<FT, 3> covariance = {{ 0., 0., 0. }};
 
   // assemble 2nd order moment about the origin.  
   FT temp[4] = {0.25, 0.0,
@@ -125,11 +126,13 @@ linear_least_squares_fitting_2(InputIterator first,
   std::pair<FT,FT> eigen_values;
   std::pair<Vector,Vector> eigen_vectors;
   //  internal::eigen_symmetric_2<K>(final_cov, eigen_vectors, eigen_values);
-  FT eigen_vectors1[4];
-  FT eigen_values1[2];
-  eigen_symmetric<FT>(covariance,2, eigen_vectors1, eigen_values1);
-  eigen_values = std::make_pair(eigen_values1[0],eigen_values1[1]);
-  eigen_vectors = std::make_pair(Vector(eigen_vectors1[0],eigen_vectors1[1]),Vector(eigen_vectors1[2],eigen_vectors1[3]));
+  CGAL::cpp11::array<FT, 2> eigen_values1 = {{ 0. , 0. }};
+  CGAL::cpp11::array<FT, 4> eigen_vectors1 = {{ 0., 0., 0. }};
+  Vcm_traits::diagonalize_selfadjoint_covariance_matrix
+    (covariance, eigen_values1, eigen_vectors1);
+
+  eigen_values = std::make_pair(eigen_values1[1],eigen_values1[0]);
+  eigen_vectors = std::make_pair(Vector(eigen_vectors1[2],eigen_vectors1[3]),Vector(eigen_vectors1[0],eigen_vectors1[1]));
   // check unicity and build fitting line accordingly
   if(eigen_values.first != eigen_values.second)
   {
@@ -148,7 +151,7 @@ linear_least_squares_fitting_2(InputIterator first,
   
 } // end linear_least_squares_fitting_2 for circle set with 2D tag
 
-template < typename InputIterator, typename K >
+template < typename InputIterator, typename K, typename Vcm_traits >
 typename K::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
@@ -156,7 +159,8 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const typename K::Circle_2*,// used for indirection
                                const K&,                   // kernel
-			                         const CGAL::Dimension_tag<1>& tag)
+			       const CGAL::Dimension_tag<1>& tag,
+			       const Vcm_traits& )
 {
   // types
   typedef typename K::FT       FT;
@@ -174,11 +178,11 @@ linear_least_squares_fitting_2(InputIterator first,
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
-  // 0
-  // 1 2
+  // 0 1
+  //   2
   //Final combined covariance matrix for all circles and their combined mass
   FT mass = 0.0;
-  FT covariance[3] = {0.0,0.0,0.0};
+  CGAL::cpp11::array<FT, 3> covariance = {{ 0., 0., 0. }};
 
   // assemble 2nd order moment about the origin.  
   FT temp[4] = {1.0, 0.0,
@@ -231,11 +235,13 @@ linear_least_squares_fitting_2(InputIterator first,
   std::pair<FT,FT> eigen_values;
   std::pair<Vector,Vector> eigen_vectors;
   //  internal::eigen_symmetric_2<K>(final_cov, eigen_vectors, eigen_values);
-  FT eigen_vectors1[4];
-  FT eigen_values1[2];
-  eigen_symmetric<FT>(covariance,2, eigen_vectors1, eigen_values1);
-  eigen_values = std::make_pair(eigen_values1[0],eigen_values1[1]);
-  eigen_vectors = std::make_pair(Vector(eigen_vectors1[0],eigen_vectors1[1]),Vector(eigen_vectors1[2],eigen_vectors1[3]));
+  CGAL::cpp11::array<FT, 2> eigen_values1 = {{ 0. , 0. }};
+  CGAL::cpp11::array<FT, 4> eigen_vectors1 = {{ 0., 0., 0. }};
+  Vcm_traits::diagonalize_selfadjoint_covariance_matrix
+    (covariance, eigen_values1, eigen_vectors1);
+  
+  eigen_values = std::make_pair(eigen_values1[1],eigen_values1[0]);
+  eigen_vectors = std::make_pair(Vector(eigen_vectors1[2],eigen_vectors1[3]),Vector(eigen_vectors1[0],eigen_vectors1[1]));
   // check unicity and build fitting line accordingly
   if(eigen_values.first != eigen_values.second)
   {
