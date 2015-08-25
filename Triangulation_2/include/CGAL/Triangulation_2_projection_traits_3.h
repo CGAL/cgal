@@ -375,13 +375,13 @@ public:
   typedef typename K::Compute_area_3                Compute_area_2;
 
   Less_x_2
-  Less_x_2_object() const
+  less_x_2_object() const
   {
     return Less_x_2(this->base1());
   }
 
   Less_y_2
-  Less_y_2_object() const
+  less_y_2_object() const
   {
     return Less_y_2(this->base2());
   }
