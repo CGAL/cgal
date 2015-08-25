@@ -20,8 +20,6 @@ int main(void)
   Eigen_vector B (degree);
   Eigen_matrix A (degree);
 
-  std::set<std::pair<std::size_t, std::size_t> > done;
-  
   Eigen_vector diag (degree);
   for (std::size_t i = 0; i < nb_nonzero_coef; ++ i)
     {
