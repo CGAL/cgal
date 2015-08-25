@@ -66,7 +66,7 @@ public:
            const Point_3_ &r, const Point_3_ &s)
   {
     Orientation orient = make_certain(CGAL::orientation(p, q, r, s));
-    Point_3_ center = circumcenter(p, q, r, s);
+    Point_3_ center = CGAL::circumcenter(p, q, r, s);
     FT      squared_radius = squared_distance(p, center);
 
     base = Rep(center, squared_radius, orient);
