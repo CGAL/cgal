@@ -837,9 +837,8 @@ namespace std {
 #  pragma warning(disable:4099) // For VC10 it is class hash 
 #endif
 
-  template < class T>
-  struct hash;
-  
+#ifndef CGAL_CFG_NO_STD_HASH
+
   template < class T, class EdgeBase>
   struct hash<CGAL::detail::Edge<T,EdgeBase> > {
     std::size_t operator()(const CGAL::detail::Edge<T,EdgeBase>& e) const
@@ -857,6 +856,8 @@ namespace std {
       return hash_value(e);
     }
   };
+
+#endif // CGAL_CFG_NO_STD_HASH
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
