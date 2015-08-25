@@ -8,40 +8,43 @@ namespace CGAL {
   /// A model of the concept `VCMTraits` 
   /// \cgalModels `VCMTraits`
 
-  template <typename FT>
-  class Internal_vcm_traits{
+template <typename FT, unsigned int degree = 3>
+class Internal_vcm_traits{
 
-  public:
+ public:
     static bool
-    diagonalize_selfadjoint_covariance_matrix(const cpp11::array<FT,6>& cov,
-					      cpp11::array<FT, 3>& eigenvalues)
+    diagonalize_selfadjoint_covariance_matrix
+      (const cpp11::array<FT, (degree * (degree+1) / 2)>& cov,
+       cpp11::array<FT, degree>& eigenvalues)
     {
-      cpp11::array<FT, 9> eigenvectors;
+      cpp11::array<FT, degree * degree> eigenvectors;
       return diagonalize_selfadjoint_covariance_matrix (cov, eigenvalues, eigenvectors);
     }
 
     // Extract the eigenvector associated to the largest eigenvalue
     static bool
-    extract_largest_eigenvector_of_covariance_matrix (const cpp11::array<FT,6>& cov,
-						      cpp11::array<FT,3> &normal)
+    extract_largest_eigenvector_of_covariance_matrix
+      (const cpp11::array<FT, (degree * (degree+1) / 2)>& cov,
+       cpp11::array<FT,degree> &normal)
     {
-      cpp11::array<FT, 3> eigenvalues;
-      cpp11::array<FT, 9> eigenvectors;
+      cpp11::array<FT, degree> eigenvalues;
+      cpp11::array<FT, degree * degree> eigenvectors;
 
       diagonalize_selfadjoint_covariance_matrix (cov, eigenvalues, eigenvectors);
 
-      normal[0] = static_cast<FT> (eigenvectors(0));
-      normal[1] = static_cast<FT> (eigenvectors(1));
-      normal[2] = static_cast<FT> (eigenvectors(2));
-	
+      for (std::size_t i = 0; i < degree; ++ i)
+	normal[i] = static_cast<FT> (eigenvectors(i));
+
       return true;
     }
 
-    static bool diagonalize_selfadjoint_covariance_matrix (const cpp11::array<FT, 6>& mat,
-							   cpp11::array<FT, 3>& eigen_values,
-							   cpp11::array<FT, 9>& eigen_vectors)
+    static bool diagonalize_selfadjoint_covariance_matrix
+       (const cpp11::array<FT, (degree * (degree+1) / 2)>& mat,
+	cpp11::array<FT, degree>& eigen_values,
+	cpp11::array<FT, degree * degree>& eigen_vectors)
     {
-      const int n = 3;
+      const int n = degree;
+      
       const int MAX_ITER = 100;
       static const FT EPSILON = (FT)0.00001;
       
@@ -51,13 +54,13 @@ namespace CGAL {
       // copy matrix
       FT *a = new FT[nn];
       int ij;
-      for(ij=0; ij<nn; ij++) 
-	a[ij] = mat[ij];
-      
-      // Hack for compatibility with Eigen interface
-      a[2] = mat[3];
-      a[3] = mat[2];
-      
+
+      // This function requires lower triangular, so we switch
+      for (int i = 0; i < n; ++ i)
+	for (int j = i; j < n; ++ j)
+	  a[(n * i) + j - ((i * (i+1)) / 2)]
+	    = mat[i + (j * (j+1) / 2)];
+
       // Fortran-porting
       a--;
       

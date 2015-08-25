@@ -31,31 +31,35 @@ namespace CGAL {
 /// A model of the concept `VCMTraits` using \ref thirdpartyEigen.
 /// \cgalModels `VCMTraits`
 
-template <typename FT>
+template <typename FT, unsigned int degree = 3>
 class Eigen_vcm_traits{
+
+  typedef Eigen::Matrix<FT, degree, degree> Matrix;
+  typedef Eigen::Matrix<FT, degree, 1> Vector;
+  
   // Construct the covariance matrix
-  static Eigen::Matrix3f
-  construct_covariance_matrix (const cpp11::array<FT,6>& cov) {
-    Eigen::Matrix3f m;
+  static Matrix
+  construct_covariance_matrix
+  (const cpp11::array<FT, (degree * (degree+1) / 2)>& cov)  {
+    Matrix m;
 
-    m(0,0) = static_cast<float>(cov[0]);
-    m(0,1) = static_cast<float>(cov[1]);
-    m(0,2) = static_cast<float>(cov[2]);
-    m(1,1) = static_cast<float>(cov[3]);
-    m(1,2) = static_cast<float>(cov[4]);
-    m(2,2) = static_cast<float>(cov[5]);
-
-    m(1, 0) = m(0,1); m(2, 0) = m(0, 2); m(2, 1) = m(1, 2);
+    for (std::size_t i = 0; i < degree; ++ i)
+      for (std::size_t j = i; j < degree; ++ j)
+	{
+	  m(i,j) = static_cast<float>(cov[(degree * i) + j - ((i * (i+1)) / 2)]);
+	  if (i != j)
+	    m(j,i) = m(i,j);
+	}
 
     return m;
   }
 
   // Diagonalize a selfadjoint matrix
   static bool
-  diagonalize_selfadjoint_matrix (Eigen::Matrix3f &m,
-                                  Eigen::Matrix3f &eigenvectors,
-                                  Eigen::Vector3f &eigenvalues) {
-      Eigen::SelfAdjointEigenSolver<Eigen::Matrix3f> eigensolver(m);
+  diagonalize_selfadjoint_matrix (Matrix& m,
+				  Matrix& eigenvectors,
+                                  Vector& eigenvalues) {
+      Eigen::SelfAdjointEigenSolver<Matrix> eigensolver(m);
 
       if (eigensolver.info() != Eigen::Success) {
           return false;
@@ -70,21 +74,20 @@ class Eigen_vcm_traits{
 public:
   static bool
   diagonalize_selfadjoint_covariance_matrix(
-    const cpp11::array<FT,6>& cov,
-    cpp11::array<FT, 3>& eigenvalues)
+    const cpp11::array<FT, (degree * (degree+1) / 2)>& cov,
+    cpp11::array<FT, degree>& eigenvalues)
   {
-    Eigen::Matrix3f m = construct_covariance_matrix(cov);
+    Matrix m = construct_covariance_matrix(cov);
 
     // Diagonalizing the matrix
-    Eigen::Vector3f eigenvalues_;
-    Eigen::Matrix3f eigenvectors_;
+    Vector eigenvalues_;
+    Matrix eigenvectors_;
     bool res = diagonalize_selfadjoint_matrix(m, eigenvectors_, eigenvalues_);
 
     if (res)
     {
-      eigenvalues[0]=static_cast<FT>(eigenvalues_[0]);
-      eigenvalues[1]=static_cast<FT>(eigenvalues_[1]);
-      eigenvalues[2]=static_cast<FT>(eigenvalues_[2]);
+      for (std::size_t i = 0; i < degree; ++ i)
+	eigenvalues[i] = static_cast<FT>(eigenvalues_[i]);
     }
 
     return res;
@@ -92,31 +95,26 @@ public:
 
   static bool
   diagonalize_selfadjoint_covariance_matrix(
-    const cpp11::array<FT,6>& cov,
-    cpp11::array<FT, 3>& eigenvalues,
-    cpp11::array<FT, 9>& eigenvectors)
+    const cpp11::array<FT, (degree * (degree+1) / 2)>& cov,
+    cpp11::array<FT, degree>& eigenvalues,
+    cpp11::array<FT, degree * degree>& eigenvectors)
   {
-    Eigen::Matrix3f m = construct_covariance_matrix(cov);
+    Matrix m = construct_covariance_matrix(cov);
 
     // Diagonalizing the matrix
-    Eigen::Vector3f eigenvalues_;
-    Eigen::Matrix3f eigenvectors_;
+    Vector eigenvalues_;
+    Matrix eigenvectors_;
     bool res = diagonalize_selfadjoint_matrix(m, eigenvectors_, eigenvalues_);
 
     if (res)
     {
-      eigenvalues[0]=static_cast<FT>(eigenvalues_[0]);
-      eigenvalues[1]=static_cast<FT>(eigenvalues_[1]);
-      eigenvalues[2]=static_cast<FT>(eigenvalues_[2]);
-      eigenvectors[0]=static_cast<FT>(eigenvectors_(0,0));
-      eigenvectors[1]=static_cast<FT>(eigenvectors_(1,0));
-      eigenvectors[2]=static_cast<FT>(eigenvectors_(2,0));
-      eigenvectors[3]=static_cast<FT>(eigenvectors_(0,1));
-      eigenvectors[4]=static_cast<FT>(eigenvectors_(1,1));
-      eigenvectors[5]=static_cast<FT>(eigenvectors_(2,1));
-      eigenvectors[6]=static_cast<FT>(eigenvectors_(0,2));
-      eigenvectors[7]=static_cast<FT>(eigenvectors_(1,2));
-      eigenvectors[8]=static_cast<FT>(eigenvectors_(2,2));
+      for (std::size_t i = 0; i < degree; ++ i)
+	{
+	  eigenvalues[i] = static_cast<FT>(eigenvalues_[i]);
+
+	  for (std::size_t j = 0; j < degree; ++ j)
+	    eigenvectors[degree*i + j]=static_cast<FT>(eigenvectors_(j,i));
+	}
     }
 
     return res;
@@ -125,23 +123,22 @@ public:
   // Extract the eigenvector associated to the largest eigenvalue
   static bool
   extract_largest_eigenvector_of_covariance_matrix (
-    const cpp11::array<FT,6>& cov,
-    cpp11::array<FT,3> &normal)
+    const cpp11::array<FT, (degree * (degree+1) / 2)>& cov,
+    cpp11::array<FT,degree> &normal)
   {
       // Construct covariance matrix
-      Eigen::Matrix3f m = construct_covariance_matrix(cov);
+      Matrix m = construct_covariance_matrix(cov);
 
       // Diagonalizing the matrix
-      Eigen::Vector3f eigenvalues;
-      Eigen::Matrix3f eigenvectors;
+      Vector eigenvalues;
+      Matrix eigenvectors;
       if (! diagonalize_selfadjoint_matrix(m, eigenvectors, eigenvalues)) {
           return false;
       }
 
       // Eigenvalues are already sorted by increasing order
-      normal[0]=static_cast<FT>(eigenvectors(0,0));
-      normal[1]=static_cast<FT>(eigenvectors(1,0));
-      normal[2]=static_cast<FT>(eigenvectors(2,0));
+      for (unsigned int i = 0; i < degree; ++ i)
+	normal[i] = static_cast<FT> (eigenvectors(i,0));
 
       return true;
   }
