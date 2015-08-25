@@ -8,42 +8,42 @@ namespace CGAL {
   /// A model of the concept `VCMTraits` 
   /// \cgalModels `VCMTraits`
 
-template <typename FT, unsigned int degree = 3>
+template <typename FT, unsigned int dim = 3>
 class Internal_vcm_traits{
 
  public:
     static bool
     diagonalize_selfadjoint_covariance_matrix
-      (const cpp11::array<FT, (degree * (degree+1) / 2)>& cov,
-       cpp11::array<FT, degree>& eigenvalues)
+      (const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
+       cpp11::array<FT, dim>& eigenvalues)
     {
-      cpp11::array<FT, degree * degree> eigenvectors;
+      cpp11::array<FT, dim * dim> eigenvectors;
       return diagonalize_selfadjoint_covariance_matrix (cov, eigenvalues, eigenvectors);
     }
 
     // Extract the eigenvector associated to the largest eigenvalue
     static bool
     extract_largest_eigenvector_of_covariance_matrix
-      (const cpp11::array<FT, (degree * (degree+1) / 2)>& cov,
-       cpp11::array<FT,degree> &normal)
+      (const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
+       cpp11::array<FT,dim> &normal)
     {
-      cpp11::array<FT, degree> eigenvalues;
-      cpp11::array<FT, degree * degree> eigenvectors;
+      cpp11::array<FT, dim> eigenvalues;
+      cpp11::array<FT, dim * dim> eigenvectors;
 
       diagonalize_selfadjoint_covariance_matrix (cov, eigenvalues, eigenvectors);
 
-      for (std::size_t i = 0; i < degree; ++ i)
+      for (std::size_t i = 0; i < dim; ++ i)
 	normal[i] = static_cast<FT> (eigenvectors(i));
 
       return true;
     }
 
     static bool diagonalize_selfadjoint_covariance_matrix
-       (const cpp11::array<FT, (degree * (degree+1) / 2)>& mat,
-	cpp11::array<FT, degree>& eigen_values,
-	cpp11::array<FT, degree * degree>& eigen_vectors)
+       (const cpp11::array<FT, (dim * (dim+1) / 2)>& mat,
+	cpp11::array<FT, dim>& eigen_values,
+	cpp11::array<FT, dim * dim>& eigen_vectors)
     {
-      const int n = degree;
+      const int n = dim;
       
       const int MAX_ITER = 100;
       static const FT EPSILON = (FT)0.00001;

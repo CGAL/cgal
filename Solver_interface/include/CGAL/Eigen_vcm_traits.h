@@ -31,22 +31,22 @@ namespace CGAL {
 /// A model of the concept `VCMTraits` using \ref thirdpartyEigen.
 /// \cgalModels `VCMTraits`
 
-template <typename FT, unsigned int degree = 3>
+template <typename FT, unsigned int dim = 3>
 class Eigen_vcm_traits{
 
-  typedef Eigen::Matrix<FT, degree, degree> Matrix;
-  typedef Eigen::Matrix<FT, degree, 1> Vector;
+  typedef Eigen::Matrix<FT, dim, dim> Matrix;
+  typedef Eigen::Matrix<FT, dim, 1> Vector;
   
   // Construct the covariance matrix
   static Matrix
   construct_covariance_matrix
-  (const cpp11::array<FT, (degree * (degree+1) / 2)>& cov)  {
+  (const cpp11::array<FT, (dim * (dim+1) / 2)>& cov)  {
     Matrix m;
 
-    for (std::size_t i = 0; i < degree; ++ i)
-      for (std::size_t j = i; j < degree; ++ j)
+    for (std::size_t i = 0; i < dim; ++ i)
+      for (std::size_t j = i; j < dim; ++ j)
 	{
-	  m(i,j) = static_cast<float>(cov[(degree * i) + j - ((i * (i+1)) / 2)]);
+	  m(i,j) = static_cast<float>(cov[(dim * i) + j - ((i * (i+1)) / 2)]);
 	  if (i != j)
 	    m(j,i) = m(i,j);
 	}
@@ -74,8 +74,8 @@ class Eigen_vcm_traits{
 public:
   static bool
   diagonalize_selfadjoint_covariance_matrix(
-    const cpp11::array<FT, (degree * (degree+1) / 2)>& cov,
-    cpp11::array<FT, degree>& eigenvalues)
+    const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
+    cpp11::array<FT, dim>& eigenvalues)
   {
     Matrix m = construct_covariance_matrix(cov);
 
@@ -86,7 +86,7 @@ public:
 
     if (res)
     {
-      for (std::size_t i = 0; i < degree; ++ i)
+      for (std::size_t i = 0; i < dim; ++ i)
 	eigenvalues[i] = static_cast<FT>(eigenvalues_[i]);
     }
 
@@ -95,9 +95,9 @@ public:
 
   static bool
   diagonalize_selfadjoint_covariance_matrix(
-    const cpp11::array<FT, (degree * (degree+1) / 2)>& cov,
-    cpp11::array<FT, degree>& eigenvalues,
-    cpp11::array<FT, degree * degree>& eigenvectors)
+    const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
+    cpp11::array<FT, dim>& eigenvalues,
+    cpp11::array<FT, dim * dim>& eigenvectors)
   {
     Matrix m = construct_covariance_matrix(cov);
 
@@ -108,12 +108,12 @@ public:
 
     if (res)
     {
-      for (std::size_t i = 0; i < degree; ++ i)
+      for (std::size_t i = 0; i < dim; ++ i)
 	{
 	  eigenvalues[i] = static_cast<FT>(eigenvalues_[i]);
 
-	  for (std::size_t j = 0; j < degree; ++ j)
-	    eigenvectors[degree*i + j]=static_cast<FT>(eigenvectors_(j,i));
+	  for (std::size_t j = 0; j < dim; ++ j)
+	    eigenvectors[dim*i + j]=static_cast<FT>(eigenvectors_(j,i));
 	}
     }
 
@@ -123,8 +123,8 @@ public:
   // Extract the eigenvector associated to the largest eigenvalue
   static bool
   extract_largest_eigenvector_of_covariance_matrix (
-    const cpp11::array<FT, (degree * (degree+1) / 2)>& cov,
-    cpp11::array<FT,degree> &normal)
+    const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
+    cpp11::array<FT,dim> &normal)
   {
       // Construct covariance matrix
       Matrix m = construct_covariance_matrix(cov);
@@ -137,7 +137,7 @@ public:
       }
 
       // Eigenvalues are already sorted by increasing order
-      for (unsigned int i = 0; i < degree; ++ i)
+      for (unsigned int i = 0; i < dim; ++ i)
 	normal[i] = static_cast<FT> (eigenvectors(i,0));
 
       return true;
