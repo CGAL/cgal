@@ -3,8 +3,7 @@ namespace CGAL {
 /*!
 \ingroup PkgSolver
 
-The class `Eigen_vcm_traits` provides an interface to the diagonalization of Variance-Covariance Matrices of \ref thirdpartyEigen "Eigen".
-The version 3.1 (or greater) of \ref thirdpartyEigen "Eigen" must be available on the system. 
+The class `Internal_vcm_traits` provides an internal implementation for the diagonalization of Variance-Covariance Matrices.
 
 \cgalModels `VCMTraits`
 
@@ -13,18 +12,15 @@ The version 3.1 (or greater) of \ref thirdpartyEigen "Eigen" must be available o
 
 `dim`: dimension of the matrices and vectors
 
-\sa http://eigen.tuxfamily.org
-
 Example 
 -------------- 
-
 
 */
 
 
   
 template <typename FT, unsigned int dim = 3>
-class Eigen_vcm_traits{
+class Internal_vcm_traits{
 
 public:
   static bool
