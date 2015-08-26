@@ -22,8 +22,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/centroid.h>
-#include <CGAL/eigen_2.h>
-#include <CGAL/eigen.h>
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/PCA_util.h>
 
@@ -124,7 +122,7 @@ linear_least_squares_fitting_2(InputIterator first,
   covariance[2] += mass * (-1.0 * c.y() * c.y());
 
   // solve for eigenvalues and eigenvectors.
-  // eigen values are sorted in descending order, 
+  // eigen values are sorted in ascending order, 
   // eigen vectors are sorted in accordance.
   std::pair<FT,FT> eigen_values;
   std::pair<Vector,Vector> eigen_vectors;

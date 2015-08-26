@@ -22,8 +22,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/centroid.h>
-#include <CGAL/eigen_2.h>
-#include <CGAL/eigen.h>
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/PCA_util.h>
 
@@ -121,11 +119,10 @@ linear_least_squares_fitting_2(InputIterator first,
   covariance[2] += mass * (-1.0 * c.y() * c.y());
 
   // solve for eigenvalues and eigenvectors.
-  // eigen values are sorted in descending order, 
+  // eigen values are sorted in ascending order, 
   // eigen vectors are sorted in accordance.
   std::pair<FT,FT> eigen_values;
   std::pair<Vector,Vector> eigen_vectors;
-  //  internal::eigen_symmetric_2<K>(final_cov, eigen_vectors, eigen_values);
   CGAL::cpp11::array<FT, 2> eigen_values1 = {{ 0. , 0. }};
   CGAL::cpp11::array<FT, 4> eigen_vectors1 = {{ 0., 0., 0. }};
   Vcm_traits::diagonalize_selfadjoint_covariance_matrix
@@ -230,11 +227,10 @@ linear_least_squares_fitting_2(InputIterator first,
   covariance[2] += mass * (-1.0 * c.y() * c.y());
 
   // solve for eigenvalues and eigenvectors.
-  // eigen values are sorted in descending order, 
+  // eigen values are sorted in ascending order, 
   // eigen vectors are sorted in accordance.
   std::pair<FT,FT> eigen_values;
   std::pair<Vector,Vector> eigen_vectors;
-  //  internal::eigen_symmetric_2<K>(final_cov, eigen_vectors, eigen_values);
   CGAL::cpp11::array<FT, 2> eigen_values1 = {{ 0. , 0. }};
   CGAL::cpp11::array<FT, 4> eigen_vectors1 = {{ 0., 0., 0. }};
   Vcm_traits::diagonalize_selfadjoint_covariance_matrix
