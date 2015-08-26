@@ -13,6 +13,7 @@ matrix of dimension 3 is defined as follows:
  \end{bmatrix}\f$
 </center>
 \cgalHasModel `CGAL::Eigen_vcm_traits`
+\cgalHasModel `CGAL::Internal_vcm_traits`
 */
 template <typename FT, unsigned int dim = 3>
 class VCMTraits
