@@ -508,6 +508,15 @@ and the \ref PkgRidges_3 packages.
 
 The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org">`http://eigen.tuxfamily.org`</A>.
 
+\subsection thirdpartyLapack Lapack
+
+\sc{Lapack} is a `Fortran` library for linear algebra.
+
+In \cgal, \sc{Lapack} is an alternative to \sc{Eigen} for singular value decomposition for the \ref
+kgJet_fitting_3 and the \ref PkgRidges_3 packages.
+
+The \sc{Lapack} web site is <A HREF="http://www.netlib.org/lapack/">`http://www.netlib.org/lapack/`</A>.
+
 \subsection thirdpartylibQGLViewer libQGLViewer 
 
 libQGLViewer is a 3D widget based on \sc{Qt} 4's `QGLWidget`. In case of \sc{Qt}5 used, libQGLViewer needs to be recompiled with the proper \sc{Qt}5 version.
