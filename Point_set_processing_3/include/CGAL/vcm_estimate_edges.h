@@ -66,15 +66,20 @@ vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
 
 
 
-#ifdef CGAL_EIGEN3_ENABLED
 template <class FT>
 bool
 vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
                         double threshold)
 {
-  return vcm_is_on_feature_edge(cov, threshold, Eigen_vcm_traits());
-}
+  return vcm_is_on_feature_edge(cov, threshold,
+#ifdef CGAL_EIGEN3_ENABLED
+				CGAL::Eigen_vcm_traits<double, 3>()
+#else
+				CGAL::Internal_vcm_traits<double, 3>()
 #endif
+				);
+
+}
 
 } // namespace CGAL
 

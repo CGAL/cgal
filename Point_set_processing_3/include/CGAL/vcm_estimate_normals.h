@@ -34,6 +34,8 @@
 
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_vcm_traits.h>
+#else
+#include <CGAL/Internal_vcm_traits.h>
 #endif
 
 #include <iterator>
@@ -440,7 +442,6 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 }
 
 
-#ifdef CGAL_EIGEN3_ENABLED
 template < typename ForwardIterator,
            typename PointPMap,
            typename NormalPMap
@@ -453,7 +454,13 @@ vcm_estimate_normals (ForwardIterator first,
                       double offset_radius,
                       double convolution_radius)
 {
-  vcm_estimate_normals(first, beyond, point_pmap, normal_pmap, offset_radius, convolution_radius, Eigen_vcm_traits());
+  vcm_estimate_normals(first, beyond, point_pmap, normal_pmap, offset_radius, convolution_radius,
+#ifdef CGAL_EIGEN3_ENABLED
+		       CGAL::Eigen_vcm_traits<double, 3>()
+#else
+		       CGAL::Internal_vcm_traits<double, 3>()
+#endif
+		       );
 }
 
 template < typename ForwardIterator,
@@ -468,9 +475,16 @@ vcm_estimate_normals (ForwardIterator first,
                       double offset_radius,
                       unsigned int nb_neighbors_convolve)
 {
-  vcm_estimate_normals(first, beyond, point_pmap, normal_pmap, offset_radius, nb_neighbors_convolve, Eigen_vcm_traits());
-}
+  vcm_estimate_normals(first, beyond, point_pmap, normal_pmap, offset_radius, nb_neighbors_convolve,
+#ifdef CGAL_EIGEN3_ENABLED
+		       CGAL::Eigen_vcm_traits<double, 3>()
+#else
+		       CGAL::Internal_vcm_traits<double, 3>()
 #endif
+		       );
+
+}
+
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Identity_property_map
