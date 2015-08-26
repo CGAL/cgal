@@ -29,8 +29,9 @@ for this concept:
 depend on another library.
 
 Although both models achieve the same computation,
-`Eigen_vcm_traits<T,dim>` is faster and should thus be used if the \ref
-thirdpartyEigen library is available.
+`Eigen_vcm_traits<T,dim>` is faster and should thus be used if the
+\ref thirdpartyEigen library is available. The eigenvalues are stored
+in ascending order and eigenvectors are stored in accordance.
 
 This is an example of an eigendecomposition of a matrix using this
 class:
@@ -50,7 +51,7 @@ field type is `double`. We provide two models for this concept:
 Here is a simple example that shows how to handle matrices, vectors
 and this solver:
 
-\cgalExample{Solver_interface/*$singular_value_decomposition.cpp}
+\cgalExample{Solver_interface/singular_value_decomposition.cpp}
 
 
 
