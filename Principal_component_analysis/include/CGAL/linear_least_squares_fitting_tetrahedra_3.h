@@ -37,7 +37,8 @@ namespace internal {
 
 // fits a plane to a 3D tetrahedron set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Vcm_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -45,7 +46,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Tetrahedron_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<3>& tag)
+			       const CGAL::Dimension_tag<3>& tag,
+			       const Vcm_traits& vcm_traits)
 {
   typedef typename K::FT          FT;
   typedef typename K::Tetrahedron_3    Tetrahedron;
@@ -57,16 +59,17 @@ linear_least_squares_fitting_3(InputIterator first,
   c = centroid(first,beyond,K(),tag);
 
   // assemble covariance matrix
-  FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
+  CGAL::cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Tetrahedron*) NULL,tag);
   
   // compute fitting plane
-  return fitting_plane_3(covariance,c,plane,k);
+  return fitting_plane_3(covariance,c,plane,k,vcm_traits);
 } // end linear_least_squares_fitting_tetrahedrons_3
 
 // fits a plane to a 3D tetrahedron set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Vcm_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -74,7 +77,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Tetrahedron_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<2>& tag)
+			       const CGAL::Dimension_tag<2>& tag,
+			       const Vcm_traits& vcm_traits)
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Triangle_3 Triangle;
@@ -95,13 +99,15 @@ linear_least_squares_fitting_3(InputIterator first,
  }
 
   // compute fitting plane
-  return linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,c,(Triangle*)NULL,k,tag);
+  return linear_least_squares_fitting_3(triangles.begin(),triangles.end(),plane,c,(Triangle*)NULL,k,tag,
+					vcm_traits);
 
 } // end linear_least_squares_fitting_tetrahedrons_3
 
 // fits a plane to a 3D tetrahedron set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Vcm_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -109,7 +115,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Tetrahedron_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<1>& tag)
+			       const CGAL::Dimension_tag<1>& tag,
+			       const Vcm_traits& vcm_traits)
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Segment_3 Segment;
@@ -133,13 +140,15 @@ linear_least_squares_fitting_3(InputIterator first,
  }
 
   // compute fitting plane
-  return linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,c,(Segment*)NULL,k,tag);
+  return linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,c,(Segment*)NULL,k,tag,
+					vcm_traits);
 
 } // end linear_least_squares_fitting_tetrahedrons_3
 
 // fits a plane to a 3D tetrahedron set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Vcm_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -147,7 +156,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Tetrahedron_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<0>& tag)
+			       const CGAL::Dimension_tag<0>& tag,
+			       const Vcm_traits& vcm_traits)
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Point_3 Point;
@@ -168,13 +178,15 @@ linear_least_squares_fitting_3(InputIterator first,
  }
 
   // compute fitting plane
-  return linear_least_squares_fitting_3(points.begin(),points.end(),plane,c,(Point*)NULL,k,tag);
+  return linear_least_squares_fitting_3(points.begin(),points.end(),plane,c,(Point*)NULL,k,tag,
+					vcm_traits);
 
 } // end linear_least_squares_fitting_tetrahedrons_3
 
 // fits a line to a 3D tetrahedron set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Vcm_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -182,7 +194,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Tetrahedron_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<3>& tag)
+			       const CGAL::Dimension_tag<3>& tag,
+			       const Vcm_traits& vcm_traits)
 {
   typedef typename K::FT          FT;
   typedef typename K::Tetrahedron_3    Tetrahedron;
@@ -194,17 +207,18 @@ linear_least_squares_fitting_3(InputIterator first,
   c = centroid(first,beyond,K(),tag);
 
   // assemble covariance matrix
-  FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
+  CGAL::cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Tetrahedron*) NULL,tag);
     
   // compute fitting line
-  return fitting_line_3(covariance,c,line,k);
+  return fitting_line_3(covariance,c,line,k,vcm_traits);
   
 } // end linear_least_squares_fitting_tetrahedrons_3
 
 // fits a line to a 3D tetrahedron set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Vcm_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -212,7 +226,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Tetrahedron_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<2>& tag)
+			       const CGAL::Dimension_tag<2>& tag,
+			       const Vcm_traits& vcm_traits)
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Triangle_3 Triangle;
@@ -233,13 +248,15 @@ linear_least_squares_fitting_3(InputIterator first,
  }
 
   // compute fitting line
-  return linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,c,(Triangle*)NULL,k,tag);
+  return linear_least_squares_fitting_3(triangles.begin(),triangles.end(),line,c,(Triangle*)NULL,k,tag,
+					vcm_traits);
 
 } // end linear_least_squares_fitting_tetrahedrons_3
 
 // fits a line to a 3D tetrahedron set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Vcm_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -247,7 +264,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Tetrahedron_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<1>& tag)
+			       const CGAL::Dimension_tag<1>& tag,
+			       const Vcm_traits& vcm_traits)
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Segment_3 Segment;
@@ -270,13 +288,15 @@ linear_least_squares_fitting_3(InputIterator first,
  }
 
   // compute fitting line
-  return linear_least_squares_fitting_3(segments.begin(),segments.end(),line,c,(Segment*)NULL,k,tag);
+  return linear_least_squares_fitting_3(segments.begin(),segments.end(),line,c,(Segment*)NULL,k,tag,
+					vcm_traits);
 
 } // end linear_least_squares_fitting_tetrahedrons_3
 
 // fits a line to a 3D tetrahedron set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Vcm_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -284,7 +304,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Tetrahedron_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<0>& tag)
+			       const CGAL::Dimension_tag<0>& tag,
+			       const Vcm_traits& vcm_traits)
 {
   typedef typename K::Tetrahedron_3    Tetrahedron;
   typedef typename K::Point_3 Point;
@@ -305,7 +326,8 @@ linear_least_squares_fitting_3(InputIterator first,
  }
 
   // compute fitting line
-  return linear_least_squares_fitting_3(points.begin(),points.end(),line,c,(Point*)NULL,k,tag);
+  return linear_least_squares_fitting_3(points.begin(),points.end(),line,c,(Point*)NULL,k,tag,
+					vcm_traits);
 
 } // end linear_least_squares_fitting_tetrahedra_3
 

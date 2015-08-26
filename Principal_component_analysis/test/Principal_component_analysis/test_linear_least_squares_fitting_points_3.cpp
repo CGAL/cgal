@@ -3,6 +3,11 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/Internal_vcm_traits.h>
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_vcm_traits.h>
+#endif
+
 #include <cassert>
 
 #include <cstdlib>
@@ -43,13 +48,26 @@ void fit_point_set(std::list<Point>& points,
   std::cout << "fit 3D line...";
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,CGAL::Dimension_tag<0>());
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>());
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>(),kernel);
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>(),kernel,
+#ifdef CGAL_EIGEN3_ENABLED
+					   CGAL::Eigen_vcm_traits<typename Kernel::FT, 3>()
+#else
+					   CGAL::Internal_vcm_traits<typename Kernel::FT, 3>()
+#endif
+					   );
+
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
   std::cout << "fit 3D plane...";
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,CGAL::Dimension_tag<0>());
   quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,CGAL::Dimension_tag<0>());
-  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,CGAL::Dimension_tag<0>(),kernel);
+  quality = linear_least_squares_fitting_3(points.begin(),points.end(),plane,centroid,CGAL::Dimension_tag<0>(),kernel,
+#ifdef CGAL_EIGEN3_ENABLED
+					   CGAL::Eigen_vcm_traits<typename Kernel::FT, 3>()
+#else
+					   CGAL::Internal_vcm_traits<typename Kernel::FT, 3>()
+#endif
+					   );
   std::cout << "done (quality: " << quality << ")" << std::endl;
 }
 
