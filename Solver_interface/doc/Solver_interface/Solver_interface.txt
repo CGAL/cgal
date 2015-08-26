@@ -50,7 +50,7 @@ field type is `double`. We provide two models for this concept:
 Here is a simple example that shows how to handle matrices, vectors
 and this solver:
 
-\cgalExample{Solver_interface/singular_value_decomposition.cpp}
+\cgalExample{Solver_interface/*$singular_value_decomposition.cpp}
 
 
 
@@ -85,7 +85,7 @@ typedef CGAL::Eigen_solver_traits< Eigen::SimplicialCholesky<EigenMatrix> > Dire
 Here is an example that shows how to fill the sparse matrix and call
 the solver:
 
-\cgalExample{Solver_interface/eigen_sparse_solvers.cpp}
+\cgalExample{Solver_interface/sparse_solvers.cpp}
 
 
 
