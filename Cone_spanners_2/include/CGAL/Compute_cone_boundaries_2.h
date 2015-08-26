@@ -34,7 +34,7 @@
 #include <cstdlib>
 #include <utility>
 #include <CGAL/Polynomial.h>
-#include <CGAL/number_utils.h>
+#include <CGAL/number_type_config.h>    // defining CGAL_PI
 #include <CGAL/enum.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Aff_transformation_2.h>
@@ -71,7 +71,7 @@ class Compute_cone_boundaries_2 {
 
 public:
 	/*! Indicate the type of the \cgal kernel. */
-    typedef  Kernel_                    kernel_type;
+    typedef  Kernel_                    Kernel_type;
 
 private:
     typedef  typename Kernel_::FT                FT;
