@@ -1,8 +1,10 @@
 /*!
 \ingroup PkgSolverConcepts
 \cgalConcept
-Concept providing functions to extract eigenvectors and eigenvalue from
-covariance matrices represented by an array `a` as follows:
+
+Concept providing functions to extract eigenvectors and eigenvalue
+from covariance matrices represented by an array `a`. For example, a
+matrix of dimension 3 is defined as follows:
 <center>
 \f$ \begin{bmatrix}
   a[0] & a[1] & a[2] \\

@@ -1,12 +1,21 @@
-#include <CGAL/Simple_cartesian.h>
+#include <iostream>
+
+#ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_vcm_traits.h>
+#else
+#include <CGAL/Internal_vcm_traits.h>
+#endif
 
 
 typedef double FT;
 typedef CGAL::cpp11::array<FT, 6> Eigen_matrix;
 typedef CGAL::cpp11::array<FT, 3> Eigen_vector;
 typedef CGAL::cpp11::array<FT, 9> Eigen_three_vectors;
-typedef CGAL::Eigen_vcm_traits<FT> Vcm_traits;
+#ifdef CGAL_EIGEN3_ENABLED
+typedef CGAL::Eigen_vcm_traits<FT, 3> Vcm_traits;
+#else
+typedef CGAL::Internal_vcm_traits<FT, 3> Vcm_traits;
+#endif
 
 int main(void)
 {

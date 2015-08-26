@@ -10,14 +10,52 @@ namespace CGAL {
 
 
 Several \cgal packages have to solve linear systems with dense or sparse matrices.
-This package provides concepts and models for that purpose. The models we provide
-all use the \ref thirdpartyEigen library. It is straightforward to develop
+This package provides concepts and models for that purpose. Most of the models we provide
+ use the \ref thirdpartyEigen library. It is straightforward to develop
 equivalent models for other solvers, for example those found in the
 <a href="https://software.intel.com/en-us/intel-mkl">Intel Math Kernel Library (MKL)</a>.
 
 
+\section SectionSolverVCM Matrix Diagonalization
 
-\section SectionSolverEigenSparse Eigen Sparse Solvers
+The concept `VCMTraits<T,dim>` defines an interface for the
+diagonalization and computation of eigenvectors and eigenvalues of a
+symmetric matrix. `T` is the number type and `dim` is the dimension of
+the matrices and vector (set to 3 by default). We provide two models
+for this concept:
+
+- `Eigen_vcm_traits<T,dim>` uses the \ref thirdpartyEigen library.
+- `Internal_vcm_traits<T,dim>` is an internal implementation that does not
+depend on another library.
+
+Although both models achieve the same computation,
+`Eigen_vcm_traits<T,dim>` is faster and should thus be used if the \ref
+thirdpartyEigen library is available.
+
+This is an example of an eigendecomposition of a matrix using this
+class:
+
+\cgalExample{Solver_interface/diagonalize_matrix.cpp}
+
+
+\section SectionSolverSVD Singular Value Decomposition
+
+The concept `SvdTraits` defines an interface for solving in the least
+square sense a linear system with a singular value decomposition. The
+field type is `double`.
+
+The class `Eigen_svd` provides an implementation of `SvdTraits` using
+the \ref thirdpartyEigen library.
+
+Here is a simple example that shows how to handle matrices, vectors
+and this solver:
+
+\cgalExample{Solver_interface/eigen_singular_value_decomposition.cpp}
+
+
+
+
+\section SectionSolverSparse Sparse Solvers
 
 An interface to all sparse solvers from the \ref thirdpartyEigen
 library is provided through the class
@@ -48,27 +86,6 @@ Here is an example that shows how to fill the sparse matrix and call
 the solver:
 
 \cgalExample{Solver_interface/eigen_sparse_solvers.cpp}
-
-\section SectionSolverEigenSVD Eigen Singular Value Decomposition
-
-The class `Eigen_svd` provides an algorithm to solve in the least
-square sense a linear system with a singular value decomposition using
-\ref thirdpartyEigen. The field type is `double`.
-
-Here is a simple example that shows how to handle matrices, vectors
-and this solver:
-
-\cgalExample{Solver_interface/eigen_singular_value_decomposition.cpp}
-
-\section SectionSolverEigenVCM Variance Covariance Matrix
-
-The class `Eigen_vcm_traits<T>` provides an interface to the
-selfadjoint solver of the \ref thirdpartyEigen library.
-
-This is an example of an eigendecomposition of a matrix using this
-class:
-
-\cgalExample{Solver_interface/eigen_variance_covariance_matrix.cpp}
 
 
 

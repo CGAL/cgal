@@ -25,7 +25,7 @@ if ( CGAL_FOUND )
   include_directories (BEFORE "../include")
 
   create_single_source_cgal_program( "eigen_singular_value_decomposition.cpp" )
-  create_single_source_cgal_program( "eigen_variance_covariance_matrix.cpp" )
+  create_single_source_cgal_program( "diagonalize_matrix.cpp" )
   create_single_source_cgal_program( "eigen_sparse_solvers.cpp" )
 
 else()
