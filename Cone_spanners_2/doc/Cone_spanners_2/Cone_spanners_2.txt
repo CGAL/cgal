@@ -7,12 +7,16 @@ namespace CGAL {
 \cgalAutoToc
 \author Weisheng Si and Quincy Tse
 
+\section sec_CBS_Introduction Introduction
+
 This chapter describes the package for constructing cone-based spanners given a set of vertices on the plane. 
 Specifically, this package provides functors for constructing two kinds of cone-based spanners: 
-Yao graph and Theta. Both exact and inexact constructions are supported.
-In exact construction, the cone boundaries are calculated using roots of polynomials (requiring `CORE::Expr` or `LEDA::real`). 
-In inexact construction, the cone boundaries are calculated using an approximate \f$ \pi = 3.14159265358979323846 \f$, 
-which is still accurate enough for most applications. Moreover, this chapter describes a global function for 
+Yao graph and Theta graph. Both exact and inexact constructions are supported.
+In exact construction, the cone boundaries are calculated using roots of polynomials,
+which achieves the exactness by avoiding using \f$ \pi \f$ in the computation.
+In inexact construction, the cone boundaries are calculated using an approximate
+\f$ \pi = 3.14159265358979323846 \f$, which is still accurate enough for most applications. 
+Moreover, this chapter describes a global function for 
 generating the data and script files used by Gnuplot to plot the constructed graphs.
  
 \section sec_CBS_mydefinitions Definitions
@@ -55,13 +59,19 @@ This functor has the following definition and is a model of the `ComputeConeBoun
 The template parameter `Kernel_` determines whether the cone boundaries are computed
 exactly or inexactly. If this parameter is `Exact_predicates_exact_constructions_kernel_with_sqrt`,
 the computation will be done exactly; otherwise, inexactly.
-In exact computation, the number type such as `CORE::Expr` or `LEDA::Real`
-is used to represent the roots of polynomials and \f$ \pi \f$ is avoided in the computation,
-but the computation is slow; in inexact computation, the angle of cones is
-simply obtained by \f$ 2\pi/k \f$, where \f$ k \f$ is the number of cones and 
-\f$ \pi \f$ is approximated by a constant `3.14159265358979323846`, so the
-computation is quick. The inexact computation is done by the general functor
-definition, while the exact computation is done by a specialization of this functor.
+The exact computation is implemented based on the fact that
+when the cone angle \f$ \theta \f$ is in the form of \f$ 2\pi / n \f$, 
+where \f$ n \f$ is a positive integer, \f$ \sin(\theta) \f$ and \f$ \cos(\theta) \f$ 
+can be represented exactly by roots of polynomials, thus avoiding using \f$ \pi \f$
+in the computation. The exact computation requires the number type of either `CORE::Expr` 
+or `leda_real`.
+In inexact computation, the cone angle \f$ \theta \f$ is
+simply calculated as \f$ 2\pi/k \f$, where \f$ k \f$ is the number of cones and
+\f$ \pi \f$ takes the value of the constant `CGAL_PI=3.14159265358979323846`
+defined in <TT>CGAL/number_type_config.h</TT>. 
+Then, the \f$ \sin(\theta) \f$ and \f$ \cos(\theta) \f$ are calculated.
+While the inexact computation is done by the general functor
+definition, the exact computation is done by a specialization of this functor.
 
 <!--
 The operator() of this functor is defined as follows:
@@ -203,8 +213,8 @@ exactly given the cone number and the initial direction. This example basically 
 Note that, in this example, for any k<=28, the computation can be done successfully; for any k>28, the computation
 cannot be completed because `CORE::Expr`, which we use as the number type for the exact kernel, 
 exceeds its limit. It seems that k<=28 will suffice for most applications. Also, if inexact computation
-is used, the computation will be successful for any k>1.
-We also note here that we don't experiment with `LEDA::real`. 
+is used, the computation will be successful for any k>1, and much quicker than exact computation.
+We also note here that we don't experiment with `leda_real`. 
 
 As a final note, to compute the cone boundaries inexactly, just define the `Kernel` to be
 `CGAL::Exact_predicates_inexact_constructions_kernel` in the above example.

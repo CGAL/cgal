@@ -29,10 +29,6 @@
 #include <iostream>
 #include <cstdlib>
 #include <utility>
-#include <CGAL/Polynomial.h>
-#include <CGAL/number_utils.h>
-#include <CGAL/enum.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Compute_cone_boundaries_2.h>
 #include <CGAL/Cone_spanners_2/Less_by_direction_2.h>
 
