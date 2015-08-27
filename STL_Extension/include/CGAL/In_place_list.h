@@ -778,8 +778,7 @@ namespace std {
 #  pragma warning(disable:4099) // For VC10 it is class hash 
 #endif
 
-  template < class T>
-  struct hash;
+#ifndef CGAL_CFG_NO_STD_HASH
 
   template < class T, class Alloc >
   struct hash<CGAL::internal::In_place_list_iterator<T, Alloc> >
@@ -802,10 +801,12 @@ namespace std {
       return reinterpret_cast<std::size_t>(ptr)/ sizeof(T);
     }
   };
+#endif // CGAL_CFG_NO_STD_HASH
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
 
-}
+} // namespace std
+
 #endif // CGAL_IN_PLACE_LIST_H

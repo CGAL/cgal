@@ -226,8 +226,7 @@ namespace std {
 #  pragma warning(disable:4099) // For VC10 it is class hash 
 #endif
 
-  template < class T>
-  struct hash;
+#ifndef CGAL_CFG_NO_STD_HASH
 
   template <typename H>
   struct hash<CGAL::internal::HDS_edge<H> > {
@@ -239,10 +238,12 @@ namespace std {
     }
   };
 
+#endif // CGAL_CFG_NO_STD_HASH
+
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
 
-}
+} // namespace std
 
 #endif // CGAL_BOOST_GRAPH_GRAPH_TRAITS_HALFEDGEDS_H

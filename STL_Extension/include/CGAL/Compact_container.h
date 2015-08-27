@@ -1184,9 +1184,8 @@ namespace std {
 #  pragma warning(push)
 #  pragma warning(disable:4099) // For VC10 it is class hash 
 #endif
-  
-  template < class T>
-  struct hash;
+
+#ifndef CGAL_CFG_NO_STD_HASH
   
   template < class DSC, bool Const >
   struct hash<CGAL::internal::CC_iterator<DSC, Const> >
@@ -1197,10 +1196,12 @@ namespace std {
       return reinterpret_cast<std::size_t>(&*i) / sizeof(typename DSC::value_type);
     }
   };
+#endif // CGAL_CFG_NO_STD_HASH
+
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
 
-}
+} // namespace std
 
 #endif // CGAL_COMPACT_CONTAINER_H

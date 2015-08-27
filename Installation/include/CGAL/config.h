@@ -188,6 +188,10 @@
 #define CGAL_CXX11
 #endif
 
+#if defined(BOOST_NO_CXX11_HDR_FUNCTIONAL) || BOOST_VERSION < 105000
+#define CGAL_CFG_NO_STD_HASH 1
+#endif
+
 //----------------------------------------------------------------------//
 //  auto-link the CGAL library on platforms that support it
 //----------------------------------------------------------------------//

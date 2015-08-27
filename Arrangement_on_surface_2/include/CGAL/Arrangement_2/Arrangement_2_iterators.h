@@ -564,8 +564,7 @@ namespace std {
 #  pragma warning(disable:4099) // For VC10 it is class hash 
 #endif
 
-template < class T>
-struct hash;
+#ifndef CGAL_CFG_NO_STD_HASH
   
 template <class CIterator_, class Filter_, class MIterator_,
           class Value_, class Diff_, class Category_>
@@ -607,7 +606,15 @@ struct hash<CGAL::I_Filtered_const_iterator<CIterator_,
       return reinterpret_cast<std::size_t>(&*i) / sizeof(typename I::value_type);
     }
   };
-}
+
+#endif // CGAL_CFG_NO_STD_HASH
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+} // namespace std
+
 namespace  boost {
   template <typename T> struct hash;
 
@@ -652,9 +659,5 @@ struct hash<CGAL::I_Filtered_const_iterator<CIterator_,
     }
   };
 
-#if defined(BOOST_MSVC)
-#  pragma warning(pop)
-#endif
-
-}
+} // namespace boost
 #endif
