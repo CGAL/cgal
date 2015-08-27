@@ -506,7 +506,7 @@ struct Test {
     std::cerr << "Begin random testing...\n"
               << "  (each 'o' in the following line is 1000 tests)\n  ";
 #if __OPTIMIZE__
-    const std::size_t nb_of_tests = 1000000;
+    const std::size_t nb_of_tests = 100000;
 #else
     const std::size_t nb_of_tests = 10000;
 #endif
