@@ -227,6 +227,8 @@ Jet_fitting_3/examples/Jet_fitting_3/Single_estimation
 Jet_fitting_3/examples/Jet_fitting_3/VC
 Jet_fitting_3/test/Jet_fitting_3/Makefile
 Jet_fitting_3/test/Jet_fitting_3/blind_1pt
+/Jet_fitting_3/examples/Jet_fitting_3/cgal_test_with_cmake
+/Jet_fitting_3/examples/Jet_fitting_3/data_ellipe0.003.off.4ogl.txt
 Kernel_23/test/Kernel_23/CMakeLists.txt
 Kernel_23/test/Kernel_23/Cartesian
 Kernel_23/test/Kernel_23/Dimension
@@ -640,6 +642,22 @@ Point_set_processing_3/test/Point_set_processing_3/analysis_test
 Point_set_processing_3/test/Point_set_processing_3/normal_estimation_test
 Point_set_processing_3/test/Point_set_processing_3/remove_outliers_test
 Point_set_processing_3/test/Point_set_processing_3/smoothing_test
+/Polygon_mesh_processing/test/Polygon_mesh_processing/blobby_2cc_id.off
+/Polygon_mesh_processing/test/Polygon_mesh_processing/elephant_triangle_hole.off
+/Polygon_mesh_processing/test/Polygon_mesh_processing/faired.off
+/Polygon_mesh_processing/test/Polygon_mesh_processing/data/quad.polylines.txt.off
+/Polygon_mesh_processing/test/Polygon_mesh_processing/data/triangle.polylines.txt.off
+/Polygon_mesh_processing/test/Polygon_mesh_processing/elephant-oriented.off
+/Polygon_mesh_processing/test/Polygon_mesh_processing/elephant-shuffled.off
+/Polygon_mesh_processing/test/Polygon_mesh_processing/blobby_2cc_no_id.off
+/Polygon_mesh_processing/test/Polygon_mesh_processing/cgal_test_with_cmake
+/Polygon_mesh_processing/test/Polygon_mesh_processing/data/U.polylines.txt.off
+/Polygon_mesh_processing/test/Polygon_mesh_processing/data/hole1.txt.off
+/Polygon_mesh_processing/test/Polygon_mesh_processing/data/hole2.txt.off
+/Polygon_mesh_processing/test/Polygon_mesh_processing/data/hole3.txt.off
+/Polygon_mesh_processing/test/Polygon_mesh_processing/data/hole4.txt.off
+/Polygon_mesh_processing/test/Polygon_mesh_processing/data/planar.polylines.txt.off
+/Polygon_mesh_processing/test/Polygon_mesh_processing/elephant_quad_hole.off
 Polyhedron/demo/Polyhedron/*.cpp_parameters
 Polyhedron/demo/Polyhedron/*.dir
 Polyhedron/demo/Polyhedron/*.ii
@@ -1093,6 +1111,7 @@ Doxyfile
 *.dir
 gmon.*
 
+# Unsorted file names:
 /Point_set_processing_3/test/Point_set_processing_3/cgal_test_with_cmake
 /Point_set_processing_3/test/Point_set_processing_3/read_test
 /Nef_S2/test/Nef_S2/CMakeLists.txt
