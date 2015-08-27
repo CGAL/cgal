@@ -140,7 +140,7 @@ bool is_degenerated(
   return is_degenerated(halfedge(fd,tmesh), tmesh, vpmap, traits);
 }
 
-
+///\cond SKIP_IN_MANUAL
 template <class EdgeRange, class TriangleMesh, class NamedParameters>
 std::size_t remove_null_edges(
                        const EdgeRange& edge_range,
@@ -464,7 +464,7 @@ std::size_t remove_null_edges(
 /// \cgalNamedParamsEnd
 ///
 /// \return number of removed degenerate faces
-///
+/// \endcond
 template <class TriangleMesh, class NamedParameters>
 std::size_t remove_degenerate_faces(TriangleMesh& tmesh,
                                     const NamedParameters& np)
