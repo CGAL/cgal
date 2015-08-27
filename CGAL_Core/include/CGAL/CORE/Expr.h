@@ -40,6 +40,7 @@
 #define _CORE_EXPR_H_
 
 #include <CGAL/CORE/ExprRep.h>
+#include <CGAL/assertions.h>
 
 namespace CORE { 
 
@@ -534,7 +535,7 @@ inline Expr rootOf(const Polynomial<NT>& p, int x, int y) {
  * */
 template <class NT>
 inline Expr radical(const NT& n, int m) {
-  assert(n>=0 && m>=1);
+  CGAL_assertion(n>=0 && m>=1);
   if (n == 0 || n == 1 || m == 1)
     return Expr(n);
   Polynomial<NT> Q(m);

@@ -192,7 +192,7 @@ BiPoly<NT>::~BiPoly(){
 //Sets the input BiPoly to X^n
 template <class NT>
 void BiPoly<NT>::constructX(int n, BiPoly<NT>& P){
-  assert(n>= -1);
+  CGAL_assertion(n>= -1);
   P.deleteCoeffX();//Clear the present coeffecients
   Polynomial<NT> q(n);//Nominal degree n
   q.setCoeff(n,NT(1)); 
@@ -807,7 +807,7 @@ BiPoly<NT> & BiPoly<NT>::differentiateX() {
 
 template <class NT>
 BiPoly<NT> & BiPoly<NT>::differentiateXY(int m, int n) {//m times wrt X and n times wrt Y
-    assert(m >=0); assert(n >=0);
+    CGAL_assertion(m >=0); CGAL_assertion(n >=0);
     for(int i=1; i <=m; i++)
       (*this).differentiateX();
     for(int i=1; i <=n; i++)
@@ -1158,7 +1158,7 @@ int Curve<NT>::verticalIntersections(const BigFloat & x, BFVecInterval & vI,
     	   // This returns a NULL vI, which should be caught by caller
 	
     Polynomial<Expr> PY = this->yExprPolynomial(x); // should be replaced
-    // assert(x.isExact());
+    // CGAL_assertion(x.isExact());
     // Polynomial<BigFloat> PY = yBFPolynomial(x); // unstable still
 
     d = PY.getTrueDegree();
@@ -1205,9 +1205,9 @@ int Curve<NT>::plot( BigFloat eps, BigFloat x1,
 
   const char* filename[] = {"data/input", "data/plot", "data/plot2"};
 
-  assert(eps.isExact()); // important for plotting...
-  assert(x1.isExact());
-  assert(y1.isExact());
+  CGAL_assertion(eps.isExact()); // important for plotting...
+  CGAL_assertion(x1.isExact());
+  CGAL_assertion(y1.isExact());
 
   ofstream outFile;
   outFile.open(filename[fileNo]); // ought to check if open is successful!
@@ -1230,7 +1230,7 @@ int Curve<NT>::plot( BigFloat eps, BigFloat x1,
   outFile << "0.99 \t 0.99 \t 0.99" << std::endl;
   outFile << 0 << "\t" << y1 << std::endl;
   outFile << 0 << "\t" << y2 << std::endl;
-  // assert(eps>0)
+  // CGAL_assertion(eps>0)
   int aprec = -(eps.lMSB()).toLong(); // By definition, eps.lMSB() <= lg(eps)
 
   BigFloat xCurr = x1;

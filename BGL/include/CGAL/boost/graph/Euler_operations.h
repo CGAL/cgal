@@ -1095,7 +1095,7 @@ collapse_edge(typename boost::graph_traits<Graph>::edge_descriptor v0v1,
     remove_vertex(p,g);
     Halfedge_around_target_circulator<Graph> beg(ppt,g), end(pqb,g);
     while(beg != end){
-      assert(target(*beg,g) == p);
+      CGAL_assertion(target(*beg,g) == p);
       set_target(*beg,q,g);
       --beg;
     }
@@ -1322,7 +1322,7 @@ flip_edge(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   vertex_descriptor s2 = target(nh,g), t2 = target(noh,g);
   face_descriptor fh = face(h,g), foh = face(oh,g);
 
-  assert(fh != Traits::null_face() && foh != Traits::null_face());
+  CGAL_assertion(fh != Traits::null_face() && foh != Traits::null_face());
 
   if(halfedge(s,g) == oh){
     set_halfedge(s,nnh,g);

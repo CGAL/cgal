@@ -24,6 +24,7 @@
 #include <CGAL/Arr_rat_arc/Base_rational_arc_ds_1.h>
 #include <CGAL/Arr_rat_arc/Rational_function.h>
 #include <CGAL/Handle_with_policy.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 namespace Arr_rational_arc {
@@ -69,7 +70,7 @@ public:
 #if 1
     solve_1(_resultant,std::back_inserter(rm_vec));
 #else
-    assert(false);
+    CGAL_assertion(false);
     // don't use this code yet since g and resultant/g may still have a
     // common root
     if( CGAL::internal::may_have_common_factor(_f.denom(),_g.denom())){

@@ -32,6 +32,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/helpers.h>
 
+#include <CGAL/assertions.h>
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Union_find.h>
@@ -723,7 +724,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
       }
       else {
         // no face kept
-        assert((is_border(h, pmesh) || !get(fcm,fh)) && (is_border(oh, pmesh) || !get(fcm,ofh)));
+        CGAL_assertion((is_border(h, pmesh) || !get(fcm,fh)) && (is_border(oh, pmesh) || !get(fcm,ofh)));
         // vertices pointing to e must change their halfedge
         if (halfedge(v, pmesh) == oh){
           set_halfedge(v, prev(h, pmesh), pmesh);
@@ -745,7 +746,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
       remove_edge(e, pmesh);
     }
     else {
-      assert(keep_vertex[w]);
+      CGAL_assertion(keep_vertex[w]);
       if (halfedge(w, pmesh) == h){
         set_halfedge(w, prev(oh, pmesh), pmesh);
       }

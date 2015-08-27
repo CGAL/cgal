@@ -35,6 +35,7 @@
 
 
 #include <CGAL/basic.h>
+#include <CGAL/assertions.h>
 #include <CGAL/Cache.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Handle_with_policy.h>
@@ -904,7 +905,7 @@ private:
                 break;
             }
             default:{
-              assert(false); // !!! Never reached
+              CGAL_assertion(false); // !!! Never reached
             }
             }
         }

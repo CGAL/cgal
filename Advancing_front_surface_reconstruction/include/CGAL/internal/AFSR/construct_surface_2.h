@@ -134,7 +134,7 @@ namespace CGAL {
           tds.set_adjacency(fn, 2, inf_edge_map);
           edge_map.erase(edge_map.begin());
         }
-        CGAL_triangulation_assertion(inf_edge_map.empty());
+        CGAL_assertion(inf_edge_map.empty());
       }
       tds.reorient_faces();
       return vinf;

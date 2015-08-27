@@ -25,6 +25,7 @@
 #include <CGAL/Visibility_2/visibility_utils.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/bounding_box.h>
+#include <CGAL/assertions.h>
 #include <boost/unordered_map.hpp> 
 #include <iterator>
 
@@ -811,7 +812,7 @@ private:
     Ccb_halfedge_const_circulator curr = fh->outer_ccb();
     Ccb_halfedge_const_circulator circ = curr;
     do {
-      assert(curr->face() == fh);
+      CGAL_assertion(curr->face() == fh);
       input_neighbor_f(curr);
     } while (++curr != circ);
 
@@ -819,7 +820,7 @@ private:
     for (hi = fh->holes_begin(); hi != fh->holes_end(); ++hi) {
       Ccb_halfedge_const_circulator curr = *hi, circ = *hi;
       do {
-        assert(curr->face() == fh);
+        CGAL_assertion(curr->face() == fh);
         input_neighbor_f(curr);
       } while (++curr != circ);
     }
@@ -847,7 +848,7 @@ private:
     Ccb_halfedge_const_circulator curr = fh->outer_ccb();
     Ccb_halfedge_const_circulator circ = curr;
     do {
-      assert(curr->face() == fh);
+      CGAL_assertion(curr->face() == fh);
       input_edge(curr, good_edges);
     } while (++curr != circ);
 
@@ -855,7 +856,7 @@ private:
     for (hi = fh->holes_begin(); hi != fh->holes_end(); ++hi) {
       Ccb_halfedge_const_circulator curr = circ = *hi;
       do {
-        assert(curr->face() == fh);
+        CGAL_assertion(curr->face() == fh);
         input_edge(curr, good_edges);
       } while (++curr != circ);
     }

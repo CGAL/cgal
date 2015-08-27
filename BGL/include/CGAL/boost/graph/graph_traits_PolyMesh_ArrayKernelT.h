@@ -30,6 +30,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/boost/graph/helpers.h>
+#include <CGAL/assertions.h>
 
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 
@@ -540,7 +541,7 @@ template <typename K>
 void
 clear_vertex(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor, 
              OpenMesh::PolyMesh_ArrayKernelT<K>&) {
-  assert(false);
+  CGAL_assert(false);
 }
 
   */

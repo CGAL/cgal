@@ -1396,7 +1396,7 @@ class Intersection_of_Polyhedra_3{
         switch(type){
           case internal_IOP::COPLNR:
             #ifndef DO_NOT_HANDLE_COPLANAR_FACETS
-            assert(!"COPLNR : this point should never be reached!");
+            CGAL_assertion(!"COPLANR : this point should never be reached!");
             #else
             //nothing need to be done, cf. comments at the beginning of the file
             #endif

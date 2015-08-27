@@ -446,7 +446,7 @@ enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const
   va = *pos;
   pos = hcit->pos;
   ++pos;
-  assert(vbb == *pos);
+  CGAL_triangulation_assertion(vbb == *pos);
   while(!pos.input()){
     ++pos;
   }
@@ -549,7 +549,7 @@ swap(Constraint_id first, Constraint_id second){
       ++succ != end; 
       ++it){
     typename Sc_to_c_map::iterator scit = sc_to_c_map.find(make_edge(*it,*succ));
-    CGAL_triangulation_assertion(scit != sc_to_c_map.end());
+    CGAL_triangulation_assertaion(scit != sc_to_c_map.end());
     Context_list* hcl = scit->second;
 
     // and replace the context of the constraint

@@ -28,6 +28,7 @@
 #include <CGAL/QP_models.h>
 #include <limits>
 #include <CGAL/number_utils.h>
+#include <CGAL/assertions.h>
 
 // Description taken from http://www.qhull.org/html/qhalf.htm
 
@@ -109,10 +110,10 @@ class Interior_polyhedron_3 {
                 const double cj = CGAL::to_double(plane.c());
                 const double dj = CGAL::to_double(plane.d());
 
-                assert(!isinf(aj));
-                assert(!isinf(bj));
-                assert(!isinf(cj));
-                assert(!isinf(dj));
+                CGAL_assertion(!isinf(aj));
+                CGAL_assertion(!isinf(bj));
+                CGAL_assertion(!isinf(cj));
+                CGAL_assertion(!isinf(dj));
 
                 // plane defined the halfspace: aj * x1 + bj * x2 + cj * x3 + dj <= 0
                 // <=> - (aj * x1 + bj * x2 + cj * x3 + dj) >= 0
