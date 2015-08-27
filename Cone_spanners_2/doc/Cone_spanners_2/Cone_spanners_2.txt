@@ -21,13 +21,36 @@ generating the data and script files used by Gnuplot to plot the constructed gra
  
 \section sec_CBS_mydefinitions Definitions
 
-Given a set \f$V\f$ of vertices on the plane, the directed Yao Graph with an integer parameter \f$k (k > 1)\f$ on \f$V\f$ is obtained as follows. For each vertex \f$u \in V\f$ starting from a given direction (e.g., the direction of positive \f$y\f$-axis), draw \f$k\f$ equally-spaced rays \f$l_0\f$, \f$l_1\f$, ..., \f$l_{k-1}\f$ originating from \f$u\f$ in clockwise order (see \cgalFigureRef{f-y5} (a)). These rays divide the plane into \f$k\f$ cones of angle \f$2\pi/k\f$, denoted by \f$ c(u, 1), c(u, 2), ..., c(u, k)\f$ respectively in clockwise order. To avoid overlapping at boundaries, it is assumed here that the area of \f$ c(u, i)\f$, where \f$ i=1, \ldots, k\f$,  includes the ray \f$l_{i-1}\f$ but excludes the ray \f$l_{i\% k}\f$. In each cone of \f$u\f$, draw a directed edge from \f$u\f$ to its closest vertex by Euclidean distance in that cone. Ties are broken arbitrarily. These directed edges will form the edge set of the directed Yao graph on \f$V\f$. The undirected Yao Graph on \f$V\f$ is obtained by ignoring the directions of the edges. Note that if both edge \f$uv\f$ and \f$vu\f$ are in the directed Yao graph, only one edge \f$uv\f$ exists in the undirected Yao graph. \cgalFigureRef{f-y5} (b) gives an example of Yao graph with \f$k=5\f$.
+This section gives detailed definitions of Yao graph and Theta graph, which are followed 
+in our implementation. In particular, because this package supports constructing Yao graph 
+and Theta graph exactly, we need to be clear on which cone a cone boundary belongs to. 
+The definitions presented here clarify on this. 
+
+Given a set \f$V\f$ of vertices on the plane, the directed Yao Graph with an integer 
+parameter \f$k (k > 1)\f$ on \f$V\f$ is obtained as follows. For each vertex \f$u \in V\f$,
+starting from a given direction (e.g., the direction of positive \f$x\f$-axis), 
+draw \f$k\f$ equally-spaced rays \f$l_0\f$, \f$l_1\f$, ..., \f$l_{k-1}\f$ originating 
+from \f$u\f$ in counterclockwise order (see \cgalFigureRef{f-y5} (a)). 
+These rays divide the plane into \f$k\f$ cones of angle \f$2\pi/k\f$, 
+denoted by \f$ c(u, 0), c(u, 1), ..., c(u, k-1)\f$ respectively in counterclockwise order. 
+To avoid overlapping at boundaries, it is stipulated here that the area of \f$ c(u, i)\f$, 
+where \f$ i=0, \ldots, k-1\f$,  includes the ray \f$l_{i}\f$ but excludes the ray \f$l_{(i+1)\% k}\f$. 
+In each cone of \f$u\f$, draw a directed edge from \f$u\f$ to its closest vertex by 
+Euclidean distance in that cone. Ties are broken arbitrarily. These directed edges will form the 
+edge set of the directed Yao graph on \f$V\f$. The undirected Yao Graph on \f$V\f$ is obtained by 
+ignoring the directions of the edges. Note that if both edge \f$uv\f$ and \f$vu\f$ are in the 
+directed Yao graph, only one edge \f$uv\f$ exists in the undirected Yao graph. 
+\cgalFigureRef{f-y5} (b) gives an example of Yao graph with \f$k=5\f$.
 
 \cgalFigureBegin{f-y5, Example-Y5.jpg}
 Cones and an example of Yao Graph with \f$k=5\f$.
 \cgalFigureEnd
 
-Similar to Yao graph, the directed or undirected Theta Graph is also obtained by letting each vertex \f$u \in V\f$ select a 'closest' vertex in each of its cones to have an edge. The only difference is that 'closest' in Theta Graph means the smallest projection distance onto the bisector of that cone, not the direct Euclidean distance. For instance, in \cgalFigureRef{f-theta}, vertex \f$u\f$'s 'closest' vertex will be vertex \f$b\f$. 
+Similar to Yao graph, the directed or undirected Theta Graph is also obtained by letting each 
+vertex \f$u \in V\f$ select a 'closest' vertex in each of its cones to have an edge. 
+The only difference is that 'closest' in Theta Graph means the smallest projection distance 
+onto the bisector of that cone, not the direct Euclidean distance. For instance, 
+in \cgalFigureRef{f-theta}, vertex \f$u\f$'s 'closest' vertex will be vertex \f$b\f$. 
 
 \cgalFigureBegin{f-theta, BisectorInThetaGraph.jpg}
 The bisector in a cone of a Theta Graph.
