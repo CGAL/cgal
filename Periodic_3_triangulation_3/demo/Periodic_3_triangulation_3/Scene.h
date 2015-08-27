@@ -6,12 +6,12 @@
 #include <fstream>
 #include <QObject>
 #include <QFileDialog>
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
-class Scene : public QObject, QOpenGLFunctions_3_3_Core
+class Scene : public QObject, QOpenGLFunctions_2_1
 {
   Q_OBJECT
 
@@ -144,9 +144,9 @@ public Q_SLOTS:
     ui->viewer->update();
   }
   void toggle_wireframe(bool on) {
-    wireframe = on;
-    ( on ? glDisable(GL_LIGHTING) : glEnable(GL_LIGHTING) );
-    changed();
+        wireframe = !(!on && extension_is_found);
+        ( on ? glDisable(GL_LIGHTING) : glEnable(GL_LIGHTING) );
+        changed();
   }
   void toggle_in_plane(bool on) {
     in_plane = on;
@@ -287,11 +287,16 @@ private:
       std::vector<float> transfo4_square;
 
       bool are_buffers_initialized;
+      bool extension_is_found;
       QOpenGLBuffer buffers[24];
       QOpenGLVertexArrayObject vao[12];
       QOpenGLShaderProgram rendering_program;
       QOpenGLShaderProgram rendering_program_spheres;
       QOpenGLShaderProgram rendering_program_cylinders;
+      typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
+      typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
+      PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
+      PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
       void initialize_buffers();
       void compute_elements();
       void attrib_buffers(QGLViewer*);

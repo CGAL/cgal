@@ -27,7 +27,7 @@ inline QGLContext* createOpenGLContext()
 {
     QOpenGLContext *context = new QOpenGLContext();
     QSurfaceFormat format;
-    format.setVersion(3,3);
+    format.setVersion(2,1);
     format.setProfile(QSurfaceFormat::CompatibilityProfile);
     context->setFormat(format);
     return QGLContext::fromOpenGLContext(context);

@@ -18,7 +18,7 @@
 #include <QtCore/qglobal.h>
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
@@ -86,7 +86,7 @@ public:
 
 private:
     // member data
-    QOpenGLFunctions_3_3_Core *gl;
+    QOpenGLFunctions_2_1 *gl;
     Bbox m_bbox;
     Polyhedron *m_pPolyhedron;
     std::list<Point> m_points;

@@ -4,13 +4,13 @@
 #include <CGAL_demo/Viewer_config.h>
 #include <QGLViewer/qglviewer.h>
 #include <QPoint>
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_2_1>
 
 // forward declarations
 class QWidget;
 class Scene_draw_interface;
 
-class VIEWER_EXPORT Viewer : public QGLViewer, public QOpenGLFunctions_3_3_Core {
+class VIEWER_EXPORT Viewer : public QGLViewer, public QOpenGLFunctions_2_1 {
 
   Q_OBJECT
 

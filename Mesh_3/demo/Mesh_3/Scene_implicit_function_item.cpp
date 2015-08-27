@@ -68,8 +68,8 @@ void Scene_implicit_function_item::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-        "#version 330 \n"
-        "in highp vec4 vertex;\n"
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
 
         "uniform highp mat4 mvp_matrix;\n"
         "void main(void)\n"
@@ -80,7 +80,7 @@ void Scene_implicit_function_item::compile_shaders()
     //Fragment source code
     const char fragment_source[] =
     {
-        "#version 330 \n"
+        "#version 120 \n"
         "uniform vec4 color; \n"
         "void main(void) { \n"
          "gl_FragColor = color; \n"
@@ -115,24 +115,24 @@ void Scene_implicit_function_item::compile_shaders()
     //Vertex source code
     const char tex_vertex_source[] =
     {
-         "#version 330 \n"
-        "in highp vec4 vertex;\n"
-        "in highp vec2 tex_coord; \n"
+         "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
+        "attribute highp vec2 tex_coord; \n"
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 f_matrix;\n"
-        "out highp vec2 texc;\n"
+        "varying highp vec2 texc;\n"
         "void main(void)\n"
         "{\n"
         "   gl_Position = mvp_matrix * f_matrix * vertex;\n"
         "    texc = tex_coord;\n"
         "}"
     };
-    //Vertex source code
+    //Fragment source code
     const char tex_fragment_source[] =
     {
-        "#version 330 \n"
+        "#version 120 \n"
         "uniform sampler2D texture;\n"
-        "in highp vec2 texc;\n"
+        "varying highp vec2 texc;\n"
         "void main(void) { \n"
         "gl_FragColor = texture2D(texture, texc.st);\n"
         "} \n"

@@ -3,13 +3,13 @@
 
 #include "typedefs.h"
 #include <QGLViewer/qglviewer.h>
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
 
-class Viewer : public QGLViewer, protected QOpenGLFunctions_3_3_Core{
+class Viewer : public QGLViewer, protected QOpenGLFunctions_2_1{
   Q_OBJECT
 
   CGAL::Timer timer;

@@ -51,40 +51,63 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
     }
    //vao for the spheres
     {
-        program = getShaderProgram(PROGRAM_INSTANCED, viewer);
-        program->bind();
+        if(viewer->extension_is_found)
+        {
+            program = getShaderProgram(PROGRAM_INSTANCED, viewer);
+            program->bind();
 
-        vaos[1]->bind();
-        buffers[1].bind();
-        buffers[1].allocate(positions_spheres.data(), 
-                            static_cast<int>(positions_spheres.size()*sizeof(float)));
-        program->enableAttributeArray("vertex");
-        program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-        buffers[1].release();
+            vaos[1]->bind();
+            buffers[1].bind();
+            buffers[1].allocate(positions_spheres.data(),
+                                static_cast<int>(positions_spheres.size()*sizeof(float)));
+            program->enableAttributeArray("vertex");
+            program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+            buffers[1].release();
 
-        buffers[2].bind();
-        buffers[2].allocate(normals_spheres.data(),
-                            static_cast<int>(normals_spheres.size()*sizeof(float)));
-        program->enableAttributeArray("normals");
-        program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-        buffers[2].release();
+            buffers[2].bind();
+            buffers[2].allocate(normals_spheres.data(),
+                                static_cast<int>(normals_spheres.size()*sizeof(float)));
+            program->enableAttributeArray("normals");
+            program->setAttributeBuffer("normals",GL_FLOAT,0,3);
+            buffers[2].release();
 
-        buffers[3].bind();
-        buffers[3].allocate(color_spheres.data(),
-                            static_cast<int>(color_spheres.size()*sizeof(float)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-        buffers[3].release();
+            buffers[3].bind();
+            buffers[3].allocate(color_spheres.data(),
+                                static_cast<int>(color_spheres.size()*sizeof(float)));
+            program->enableAttributeArray("colors");
+            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+            buffers[3].release();
 
-        buffers[4].bind();
-        buffers[4].allocate(positions_center.data(),
-                            static_cast<int>(positions_center.size()*sizeof(float)));
-        program->enableAttributeArray("center");
-        program->setAttributeBuffer("center",GL_FLOAT,0,3);
-        buffers[4].release();
+            buffers[4].bind();
+            buffers[4].allocate(positions_center.data(),
+                                static_cast<int>(positions_center.size()*sizeof(float)));
+            program->enableAttributeArray("center");
+            program->setAttributeBuffer("center",GL_FLOAT,0,3);
+            buffers[4].release();
 
-        viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
-        viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
+            viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
+            viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
+        }
+        else
+        {
+            program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+            program->bind();
+
+            vaos[1]->bind();
+            buffers[1].bind();
+            buffers[1].allocate(positions_center.data(),
+                                static_cast<int>(positions_center.size()*sizeof(float)));
+            program->enableAttributeArray("vertex");
+            program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+            buffers[1].release();
+
+            buffers[2].bind();
+            buffers[2].allocate(color_spheres.data(),
+                                static_cast<int>(color_spheres.size()*sizeof(float)));
+            program->enableAttributeArray("colors");
+            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+            buffers[2].release();
+        }
         vaos[1]->release();
 
         program->release();
@@ -92,39 +115,51 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
 
 //vao for the wired spheres
     {
-        program = getShaderProgram(PROGRAM_INSTANCED_WIRE, viewer);
-        program->bind();
+        if(viewer->extension_is_found)
+        {
+            program = getShaderProgram(PROGRAM_INSTANCED_WIRE, viewer);
+            program->bind();
 
-        vaos[2]->bind();
-        buffers[5].bind();
-        buffers[5].allocate(positions_wire_spheres.data(),
-                            static_cast<int>(positions_wire_spheres.size()*sizeof(float)));
-        program->enableAttributeArray("vertex");
-        program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-        buffers[5].release();
-        QColor temp = this->color();
-        program->setAttributeValue("colors", temp);
+            vaos[2]->bind();
+            buffers[5].bind();
+            buffers[5].allocate(positions_wire_spheres.data(),
+                                static_cast<int>(positions_wire_spheres.size()*sizeof(float)));
+            program->enableAttributeArray("vertex");
+            program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+            buffers[5].release();
 
-        program->setAttributeValue("normals",QVector3D(0.0,0.0,0.0));
 
-        buffers[6].bind();
-        buffers[6].allocate(color_spheres.data(),
-                            static_cast<int>(color_spheres.size()*sizeof(float)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-        buffers[6].release();
+            buffers[3].bind();
+            program->enableAttributeArray("colors");
+            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+            buffers[3].release();
 
-        buffers[7].bind();
-        buffers[7].allocate(positions_center.data(),
-                            static_cast<int>(positions_center.size()*sizeof(float)));
-        program->enableAttributeArray("center");
-        program->setAttributeBuffer("center",GL_FLOAT,0,3);
-        buffers[7].release();
+            buffers[2].bind();
+            program->enableAttributeArray("normals");
+            program->setAttributeBuffer("normals",GL_FLOAT,0,3);
+            buffers[2].release();
 
-        viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
-        viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
-        vaos[2]->release();
-        program->release();
+            buffers[6].bind();
+            buffers[6].allocate(color_spheres.data(),
+                                static_cast<int>(color_spheres.size()*sizeof(float)));
+            program->enableAttributeArray("colors");
+            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+            buffers[6].release();
+
+            buffers[7].bind();
+            buffers[7].allocate(positions_center.data(),
+                                static_cast<int>(positions_center.size()*sizeof(float)));
+            program->enableAttributeArray("center");
+            program->setAttributeBuffer("center",GL_FLOAT,0,3);
+            buffers[7].release();
+
+
+            viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
+            viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
+
+            vaos[2]->release();
+            program->release();
+        }
     }
 
    are_buffers_filled = true;
@@ -283,7 +318,7 @@ Scene_polylines_item::Scene_polylines_item()
     ,d(new Scene_polylines_item_private())
     ,nbSpheres(0)
 {
-    setRenderingMode(Flat);
+    setRenderingMode(FlatPlusEdges);
     changed();
 
 }
@@ -363,8 +398,7 @@ Scene_polylines_item::toolTip() const {
 bool
 Scene_polylines_item::supportsRenderingMode(RenderingMode m) const {
     return (m == Wireframe ||
-            m == Flat ||
-            m == Flat ||
+            m == FlatPlusEdges ||
             m == Points);
 }
 
@@ -376,26 +410,30 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
         initialize_buffers(viewer);
     if(d->draw_extremities)
     {
-        vaos[1]->bind();
-        program = getShaderProgram(PROGRAM_INSTANCED);
-        attrib_buffers(viewer, PROGRAM_INSTANCED);
-        program->bind();
-        viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                    static_cast<GLsizei>(positions_spheres.size()/3), nbSpheres);
-        program->release();
-        vaos[1]->release();
-    }
-    if(renderingMode() == Flat)
-    {
-        vaos[0]->bind();
-        attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-        program->bind();
-        QColor temp = this->color();
-        program->setAttributeValue("colors", temp);
-        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
-        program->release();
-        vaos[0]->release();
+        if(viewer->extension_is_found)
+        {
+            vaos[1]->bind();
+            program = getShaderProgram(PROGRAM_INSTANCED);
+            attrib_buffers(viewer, PROGRAM_INSTANCED);
+            program->bind();
+            viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
+                                          static_cast<GLsizei>(positions_spheres.size()/3), nbSpheres);
+            program->release();
+            vaos[1]->release();
+        }
+        else
+        {
+            vaos[1]->bind();
+            program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+            attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+            glPointSize(8.0f);
+            glEnable(GL_POINT_SMOOTH);
+            program->bind();
+            viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_center.size()/3));
+            glDisable(GL_POINT_SMOOTH);
+            program->release();
+            vaos[1]->release();
+        }
     }
 }
 
@@ -409,21 +447,23 @@ Scene_polylines_item::draw_edges(Viewer_interface* viewer) const {
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    QColor temp = this->color();
-    program->setAttributeValue("colors", temp);
+    program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
     program->release();
     vaos[0]->release();
     if(d->draw_extremities)
     {
-        vaos[2]->bind();
-        attrib_buffers(viewer, PROGRAM_INSTANCED_WIRE);
-        program = getShaderProgram(PROGRAM_INSTANCED_WIRE);
-        program->bind();
-        viewer->glDrawArraysInstanced(GL_LINES, 0,
-                                    static_cast<GLsizei>(positions_wire_spheres.size()/3), nbSpheres);
-        program->release();
-        vaos[2]->release();
+        if(viewer->extension_is_found)
+        {
+            vaos[2]->bind();
+            attrib_buffers(viewer, PROGRAM_INSTANCED_WIRE);
+            program = getShaderProgram(PROGRAM_INSTANCED_WIRE);
+            program->bind();
+            viewer->glDrawArraysInstanced(GL_LINES, 0,
+                                          static_cast<GLsizei>(positions_wire_spheres.size()/3), nbSpheres);
+            program->release();
+            vaos[2]->release();
+        }
     }
 
 }

@@ -4,9 +4,12 @@
 #include <CGAL/Exact_spherical_kernel_3.h>
 #include <vector>
 #include <CGAL/Qt/CreateOpenGLContext.h>
+
+
 Viewer::Viewer(QWidget* parent )
   : QGLViewer(CGAL::Qt::createOpenGLContext(),parent)
 {
+    extension_is_found = false;
 }
 
 void Viewer::compile_shaders()
@@ -29,16 +32,16 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-        "#version 330 \n"
-        "in highp vec4 vertex;\n"
-        "in highp vec3 normal;\n"
-        "in highp vec4 center;\n"
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
+        "attribute highp vec3 normal;\n"
+        "attribute highp vec4 center;\n"
 
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 mv_matrix; \n"
 
-        "out highp vec4 fP; \n"
-        "out highp vec3 fN; \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
         "void main(void)\n"
         "{\n"
         "   fP = mv_matrix * vertex; \n"
@@ -49,9 +52,9 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char fragment_source[] =
     {
-        "#version 330 \n"
-        "in highp vec4 fP; \n"
-        "in highp vec3 fN; \n"
+        "#version 120 \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
         "uniform highp vec4 color; \n"
         "uniform vec4 light_pos;  \n"
         "uniform vec4 light_diff; \n"
@@ -101,6 +104,59 @@ void Viewer::compile_shaders()
         std::cerr<<"linking Program FAILED"<<std::endl;
     }
     rendering_program.bind();
+    if(!extension_is_found)
+    {
+
+
+             //Vertex source code
+             const char vertex_source_no_ext[] =
+             {
+                 "#version 120 \n"
+                 "attribute highp vec4 vertex;\n"
+                 "uniform highp mat4 mvp_matrix;\n"
+                 "void main(void)\n"
+                 "{\n"
+                 "   gl_Position = mvp_matrix * vertex;\n"
+                 "}"
+             };
+             //Vertex source code
+             const char fragment_source_no_ext[] =
+             {
+                 "#version 120 \n"
+                 "uniform highp vec4 color; \n"
+                 "void main(void) { \n"
+                 "gl_FragColor = color; \n"
+                 "} \n"
+                 "\n"
+             };
+             vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
+             if(!vertex_shader->compileSourceCode(vertex_source_no_ext))
+             {
+                 std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+             }
+
+             fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
+             if(!fragment_shader->compileSourceCode(fragment_source_no_ext))
+             {
+                 std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+             }
+
+             if(!rendering_program_no_ext.addShader(vertex_shader))
+             {
+                 std::cerr<<"adding vertex shader FAILED"<<std::endl;
+             }
+             if(!rendering_program_no_ext.addShader(fragment_shader))
+             {
+                 std::cerr<<"adding fragment shader FAILED"<<std::endl;
+             }
+             if(!rendering_program_no_ext.link())
+             {
+                 std::cerr<<"linking Program FAILED"<<std::endl;
+             }
+             rendering_program_no_ext.bind();
+    }
+
+
 
 }
 
@@ -135,8 +191,12 @@ void Viewer::initialize_buffers()
     rendering_program.enableAttributeArray(trivialCenterLocation);
     rendering_program.setAttributeBuffer(trivialCenterLocation,GL_FLOAT,0,3);
     buffers[2].release();
-    glVertexAttribDivisor(trivialCenterLocation, 1);
-    glVertexAttribDivisor(normalsLocation[0], 0);
+    if(extension_is_found)
+    {
+
+        glVertexAttribDivisor(trivialCenterLocation, 1);
+        glVertexAttribDivisor(normalsLocation[0], 0);
+    }
     vao[0].release();
 
     //The circles
@@ -168,43 +228,61 @@ void Viewer::initialize_buffers()
     rendering_program.enableAttributeArray(trivialCenterLocation);
     rendering_program.setAttributeBuffer(trivialCenterLocation,GL_FLOAT,0,3);
     buffers[5].release();
-    glVertexAttribDivisor(trivialCenterLocation, 1);
-    glVertexAttribDivisor(normalsLocation[0], 0);
+    if(extension_is_found)
+    {
+        glVertexAttribDivisor(trivialCenterLocation, 1);
+        glVertexAttribDivisor(normalsLocation[0], 0);
+    }
     rendering_program.release();
 
     vao[1].release();
 
     //The little green spheres
     vao[2].bind();
-    //points of the sphere
-    buffers[6].bind();
-    buffers[6].allocate(pos_sphere_inter.data(),
-                        static_cast<int>(pos_sphere_inter.size()*sizeof(float)));
-    vertexLocation[2] = rendering_program.attributeLocation("vertex");
-    rendering_program.bind();
-    rendering_program.enableAttributeArray(vertexLocation[2]);
-    rendering_program.setAttributeBuffer(vertexLocation[2],GL_FLOAT,0,3);
-    buffers[6].release();
-    //normals of the sphere
-    buffers[7].bind();
-    buffers[7].allocate(normals_inter.data(),
-                        static_cast<int>(normals_inter.size()*sizeof(float)));
-    normalsLocation[2] = rendering_program.attributeLocation("normal");
-    rendering_program.bind();
-    rendering_program.enableAttributeArray(normalsLocation[2]);
-    rendering_program.setAttributeBuffer(normalsLocation[2],GL_FLOAT,0,3);
-    buffers[7].release();
-    //center of the sphere
-    buffers[8].bind();
-    buffers[8].allocate(pos_points.data(),
-                        static_cast<int>(pos_points.size()*sizeof(float)));
-    centerLocation = rendering_program.attributeLocation("center");
-    rendering_program.bind();
-    rendering_program.enableAttributeArray(centerLocation);
-    rendering_program.setAttributeBuffer(centerLocation,GL_FLOAT,0,3);
-    buffers[8].release();
-    glVertexAttribDivisor(centerLocation, 1);
-    glVertexAttribDivisor(normalsLocation[1], 0);
+    if(extension_is_found)
+    {
+        //points of the spheres
+        buffers[6].bind();
+        buffers[6].allocate(pos_sphere_inter.data(),
+                            static_cast<int>(pos_sphere_inter.size()*sizeof(float)));
+        vertexLocation[2] = rendering_program.attributeLocation("vertex");
+        rendering_program.bind();
+        rendering_program.enableAttributeArray(vertexLocation[2]);
+        rendering_program.setAttributeBuffer(vertexLocation[2],GL_FLOAT,0,3);
+        buffers[6].release();
+        //normals of the sphere
+        buffers[7].bind();
+        buffers[7].allocate(normals_inter.data(),
+                            static_cast<int>(normals_inter.size()*sizeof(float)));
+        normalsLocation[2] = rendering_program.attributeLocation("normal");
+        rendering_program.bind();
+        rendering_program.enableAttributeArray(normalsLocation[2]);
+        rendering_program.setAttributeBuffer(normalsLocation[2],GL_FLOAT,0,3);
+        buffers[7].release();
+        //center of the sphere
+        buffers[8].bind();
+        buffers[8].allocate(pos_points.data(),
+                            static_cast<int>(pos_points.size()*sizeof(float)));
+        centerLocation = rendering_program.attributeLocation("center");
+        rendering_program.bind();
+        rendering_program.enableAttributeArray(centerLocation);
+        rendering_program.setAttributeBuffer(centerLocation,GL_FLOAT,0,3);
+        buffers[8].release();
+
+        glVertexAttribDivisor(centerLocation, 1);
+        glVertexAttribDivisor(normalsLocation[1], 0);
+    }
+    else
+    {
+        //points of the sphere
+        buffers[6].bind();
+        buffers[6].allocate(pos_points.data(),
+                            static_cast<int>(pos_points.size()*sizeof(float)));
+        rendering_program_no_ext.bind();
+        rendering_program_no_ext.enableAttributeArray("vertex");
+        rendering_program_no_ext.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+        buffers[6].release();
+    }
     vao[2].release();
 
 
@@ -693,13 +771,20 @@ void Viewer::attrib_buffers(QGLViewer* viewer)
     rendering_program.setUniformValue(mvpLocation, mvpMatrix);
     rendering_program.setUniformValue(mvLocation, mvMatrix);
 
-
     rendering_program.release();
+    if(!extension_is_found)
+    {
+        rendering_program_no_ext.bind();
+        rendering_program_no_ext.setUniformValue("mvp_matrix", mvpMatrix);
+        rendering_program_no_ext.release();
+    }
+
 
 }
 
 void Viewer::draw()
 {
+    glEnable(GL_DEPTH_TEST);
     QColor color;
 
     //sphere
@@ -708,18 +793,34 @@ void Viewer::draw()
     rendering_program.bind();
     color.setRgbF(1.0f, 1.0f, 1.0f);
     rendering_program.setUniformValue(colorLocation, color);
-    glDrawArraysInstanced(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_sphere.size()/3), 1);
+    if(extension_is_found)
+        glDrawArraysInstanced(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_sphere.size()/3), 1);
+    else
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_sphere.size()/3));
     rendering_program.release();
     vao[0].release();
 
     //intersection
     vao[2].bind();
     attrib_buffers(this);
-    rendering_program.bind();
     color.setRgbF(0.0f, 1.0f, 0.0f);
-    rendering_program.setUniformValue(colorLocation, color);
-    glDrawArraysInstanced(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_sphere_inter.size()/3), static_cast<GLsizei>(pos_points.size()/3));
-    rendering_program.release();
+    if(extension_is_found)
+    {
+        rendering_program.bind();
+        rendering_program.setUniformValue(colorLocation, color);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_sphere_inter.size()/3), static_cast<GLsizei>(pos_points.size()/3));
+        rendering_program.release();
+    }
+    else
+    {
+        glPointSize(4.0f);
+        rendering_program_no_ext.bind();
+        rendering_program_no_ext.setUniformValue(colorLocation, color);
+        glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
+        rendering_program_no_ext.release();
+        glPointSize(1.0f);
+    }
+
     vao[2].release();
 
     //circles
@@ -738,6 +839,24 @@ void Viewer::draw()
 
 void Viewer::init()
 {
+
+    glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
+    if(!glDrawArraysInstanced)
+    {
+        qDebug()<<"glDrawArraysInstancedARB : extension not found. Spheres will be displayed as points.";
+        extension_is_found = false;
+    }
+    else
+        extension_is_found = true;
+
+    glVertexAttribDivisor = (PFNGLVERTEXATTRIBDIVISORARBPROC)this->context()->getProcAddress("glVertexAttribDivisorARB");
+    if(!glDrawArraysInstanced)
+    {
+        qDebug()<<"glVertexAttribDivisorARB : extension not found. Spheres will be displayed as points.";
+        extension_is_found = false;
+    }
+    else
+        extension_is_found = true;
     compile_shaders();
     compute_elements();
     initialize_buffers();
@@ -747,6 +866,7 @@ void Viewer::init()
     ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     glEnable(GL_POINT_SMOOTH);
     glEnable(GL_LINE_SMOOTH);
+
 
 }
 

@@ -29,14 +29,14 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-         "#version 330 \n"
-        "in highp vec4 vertex;\n"
-        "in highp vec3 normal;\n"
+         "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
+        "attribute highp vec3 normal;\n"
 
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 mv_matrix; \n"
-        "out highp vec4 fP; \n"
-        "out highp vec3 fN; \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
         "void main(void)\n"
         "{\n"
         "   fP = mv_matrix * vertex; \n"
@@ -44,12 +44,12 @@ void Viewer::compile_shaders()
         "   gl_Position = mvp_matrix * vertex;\n"
         "}"
     };
-    //Vertex source code
+    //Fragment source code
     const char fragment_source[] =
     {
-        "#version 330 \n"
-        "in highp vec4 fP; \n"
-        "in highp vec3 fN; \n"
+        "#version 120 \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
         "uniform highp vec4 color; \n"
         "uniform vec4 light_pos;  \n"
         "uniform vec4 light_diff; \n"
@@ -105,8 +105,8 @@ rendering_program.bind();
 //Vertex source code
 const char vertex_source_points[] =
 {
-     "#version 330 \n"
-    "in highp vec4 vertex;\n"
+    "#version 120 \n"
+    "attribute highp vec4 vertex;\n"
 
     "uniform highp mat4 mvp_matrix;\n"
     "void main(void)\n"
@@ -117,7 +117,7 @@ const char vertex_source_points[] =
 //Vertex source code
 const char fragment_source_points[] =
 {
-    "#version 330 \n"
+    "#version 120 \n"
     "uniform highp vec4 color; \n"
 
     "void main(void) { \n"
@@ -325,6 +325,7 @@ void Viewer::compute_elements()
 void
 Viewer::draw()
 {
+    glEnable(GL_DEPTH_TEST);
     if(!are_buffers_initialized)
         initialize_buffers();
     QColor color;

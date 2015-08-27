@@ -1,4 +1,4 @@
-#version 330
+#version 120
 varying highp vec4 color;
 varying highp vec4 fP; 
 varying highp vec3 fN; 

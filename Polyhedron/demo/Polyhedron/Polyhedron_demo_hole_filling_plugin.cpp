@@ -35,6 +35,7 @@
 #include "Kernel_type.h"
 
 #include <boost/function_output_iterator.hpp>
+#include <QMap>
 
 // Class for visualizing holes in a polyhedron
 // provides mouse selection functionality
@@ -307,13 +308,7 @@ public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m);
 
   Scene_hole_visualizer* get_hole_visualizer(Scene_polyhedron_item* poly_item) {
-    // did not use a map to assoc Scene_polyhedron_item with Scene_hole_visualizer to prevent crowded code
-    for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i) {
-      Scene_hole_visualizer* hole_visualizer = qobject_cast<Scene_hole_visualizer*>(scene->item(i));
-      if(hole_visualizer && hole_visualizer->poly_item == poly_item) 
-      { return hole_visualizer; }
-    }
-    return NULL;
+      return visualizers[poly_item];
   }
 
 public Q_SLOTS:
@@ -353,6 +348,9 @@ private:
   QDockWidget* dock_widget;
   Ui::HoleFilling ui_widget;
 
+  //Maintains a reference between all the visualizers and their poly_item
+  // to ease the management of the visualizers
+  QMap<Scene_polyhedron_item*, Scene_hole_visualizer*> visualizers;
   // hold created facet for accept reject functionality
   std::vector<Polyhedron::Facet_handle> new_facets; 
   Scene_polyhedron_item* last_active_item; // always keep it NULL while not active-reject state
@@ -427,9 +425,16 @@ void Polyhedron_demo_hole_filling_plugin::item_about_to_be_destroyed(Scene_item*
   if(poly_item) {
     // erase assoc polylines item
     scene->erase( scene->item_id( get_hole_visualizer(poly_item) ) );
+    visualizers.remove(poly_item);
     // close accept-reject dialog if it is open
     if(last_active_item == poly_item) {
       on_Accept_button();
+    }
+  }
+  else {
+    Scene_hole_visualizer* visu_item = qobject_cast<Scene_hole_visualizer*>(scene_item);
+    if(visu_item) {
+        visualizers.remove(visu_item->poly_item);
     }
   }
 }
@@ -460,10 +465,12 @@ void Polyhedron_demo_hole_filling_plugin::on_Visualize_holes_button() {
   }
 
   Scene_hole_visualizer* hole_visualizer = new Scene_hole_visualizer(poly_item, mw);
+  visualizers[poly_item] = hole_visualizer;
   connect(hole_visualizer, SIGNAL(itemChanged()), this, SLOT(hole_visualizer_changed()));
 
   if(hole_visualizer->polyline_data_list.empty()) {
     print_message("There is no hole in selected polyhedron item!");
+    visualizers.remove(poly_item);
     delete hole_visualizer;
     return;
   }
@@ -590,6 +597,7 @@ void Polyhedron_demo_hole_filling_plugin::hole_visualizer_changed() {
   Scene_hole_visualizer* hole_visualizer = qobject_cast<Scene_hole_visualizer*>(this->sender());
   if(hole_visualizer && hole_visualizer->polyline_data_list.empty()) {
     scene->erase( scene->item_id(hole_visualizer));
+    visualizers.remove(hole_visualizer->poly_item);
   }
 }
 // helper function for filling holes

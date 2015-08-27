@@ -18,6 +18,25 @@ using namespace std;
 void Viewer::init()
 {
     initializeOpenGLFunctions();
+    glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
+    if(!glDrawArraysInstanced)
+    {
+        qDebug()<<"glDrawArraysInstancedARB : extension not found. Spheres will be displayed as points.";
+        extension_is_found = false;
+    }
+    else
+        extension_is_found = true;
+
+    glVertexAttribDivisor = (PFNGLVERTEXATTRIBDIVISORARBPROC)this->context()->getProcAddress("glVertexAttribDivisorARB");
+    if(!glDrawArraysInstanced)
+    {
+        qDebug()<<"glVertexAttribDivisorARB : extension not found. Spheres will be displayed as points.";
+        extension_is_found = false;
+    }
+    else
+        extension_is_found = true;
+//    extension_is_found = false;
+
     /* Initial timer for playing incremental construction */
     m_pTimer = new QTimer(this);
     connect(m_pTimer, SIGNAL(timeout()), this, SLOT(incremental_insert()));
@@ -162,8 +181,8 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-        "#version 330 \n"
-        "in highp vec4 vertex;\n"
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
         "uniform highp mat4 mvp_matrix;\n"
         "void main(void)\n"
         "{\n"
@@ -173,7 +192,7 @@ void Viewer::compile_shaders()
     //Fragment source code
     const char fragment_source[] =
     {
-        "#version 330 \n"
+        "#version 120 \n"
         "uniform highp vec4 color; \n"
         "void main(void) { \n"
         "gl_FragColor = color; \n"
@@ -210,15 +229,15 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char vertex_source_spheres[] =
     {
-        "#version 330 \n"
-        "in highp vec4 vertex;\n"
-        "in highp vec3 normal;\n"
-        "in highp vec4 center;\n"
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
+        "attribute highp vec3 normal;\n"
+        "attribute highp vec4 center;\n"
 
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 mv_matrix; \n"
-        "out highp vec4 fP; \n"
-        "out highp vec3 fN; \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
         "void main(void)\n"
         "{\n"
         "   fP = mv_matrix * vertex; \n"
@@ -229,9 +248,9 @@ void Viewer::compile_shaders()
     //Fragment source code
     const char fragment_source_spheres[] =
     {
-        "#version 330 \n"
-        "in highp vec4 fP; \n"
-        "in highp vec3 fN; \n"
+        "#version 120 \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
         "uniform vec4 color; \n"
         "uniform highp vec4 light_pos;  \n"
         "uniform highp vec4 light_diff; \n"
@@ -288,18 +307,18 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char vertex_source_cylinders[] =
     {
-        "#version 330 \n"
-        "in highp vec4 vertex;\n"
-        "in highp vec3 normal;\n"
-        "in highp vec4 transfo1;\n"
-        "in highp vec4 transfo2;\n"
-        "in highp vec4 transfo3;\n"
-        "in highp vec4 transfo4;\n"
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
+        "attribute highp vec3 normal;\n"
+        "attribute highp vec4 transfo1;\n"
+        "attribute highp vec4 transfo2;\n"
+        "attribute highp vec4 transfo3;\n"
+        "attribute highp vec4 transfo4;\n"
         "mat4 transfo = mat4(transfo1, transfo2, transfo3, transfo4); \n"
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 mv_matrix; \n"
-        "out highp vec4 fP; \n"
-        "out highp vec3 fN; \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
         "void main(void)\n"
         "{\n"
         "   fP = mv_matrix * vertex; \n"
@@ -714,19 +733,24 @@ void Viewer::initialize_buffers()
         rendering_program_spheres.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
         buffers[13].release();
 
-        glVertexAttribDivisor(centerLocation[0],1);
-        glVertexAttribDivisor(normalsLocation[0],0);
+        if(extension_is_found)
+        {
+            glVertexAttribDivisor(centerLocation[0],1);
+            glVertexAttribDivisor(normalsLocation[0],0);
+        }
         vao[11].release();
 
         //Empty Sphere
         vao[12].bind();
-        buffers[14].bind();
-        buffers[14].allocate(pos_emptySphere->data(), pos_emptySphere->size()*sizeof(float));
-        centerLocation[0] = rendering_program_spheres.attributeLocation("center");
-        rendering_program_spheres.enableAttributeArray(centerLocation[0]);
-        rendering_program_spheres.setAttributeBuffer(centerLocation[0],GL_FLOAT,0,3);
-        buffers[14].release();
-
+        if(extension_is_found)
+        {
+            buffers[14].bind();
+            buffers[14].allocate(pos_emptySphere->data(), pos_emptySphere->size()*sizeof(float));
+            centerLocation[0] = rendering_program_spheres.attributeLocation("center");
+            rendering_program_spheres.enableAttributeArray(centerLocation[0]);
+            rendering_program_spheres.setAttributeBuffer(centerLocation[0],GL_FLOAT,0,3);
+            buffers[14].release();
+        }
         buffers[32].bind();
         buffers[32].allocate(normals_emptySphere->data(), normals_emptySphere->size()*sizeof(float));
         normalsLocation[0] = rendering_program_spheres.attributeLocation("normal");
@@ -741,8 +765,11 @@ void Viewer::initialize_buffers()
         rendering_program_spheres.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
         buffers[16].release();
 
-        glVertexAttribDivisor(centerLocation[0],1);
-        glVertexAttribDivisor(normalsLocation[0],0);
+        if(extension_is_found)
+        {
+            glVertexAttribDivisor(centerLocation[0],1);
+            glVertexAttribDivisor(normalsLocation[0],0);
+        }
         vao[12].release();
 
         //Vertex Sphere
@@ -767,8 +794,11 @@ void Viewer::initialize_buffers()
         rendering_program_spheres.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
         buffers[17].release();
 
-        glVertexAttribDivisor(centerLocation[0],1);
-        glVertexAttribDivisor(normalsLocation[0],0);
+        if(extension_is_found)
+        {
+            glVertexAttribDivisor(centerLocation[0],1);
+            glVertexAttribDivisor(normalsLocation[0],0);
+        }
         vao[13].release();
 
         //New point Sphere
@@ -791,8 +821,11 @@ void Viewer::initialize_buffers()
         rendering_program_spheres.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
         buffers[17].release();
 
-        glVertexAttribDivisor(centerLocation[0],1);
-        glVertexAttribDivisor(normalsLocation[0],0);
+        if(extension_is_found)
+        {
+            glVertexAttribDivisor(centerLocation[0],1);
+            glVertexAttribDivisor(normalsLocation[0],0);
+        }
         vao[14].release();
 
         //Selected point Sphere
@@ -815,8 +848,11 @@ void Viewer::initialize_buffers()
         rendering_program_spheres.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
         buffers[17].release();
 
-        glVertexAttribDivisor(centerLocation[0],1);
-        glVertexAttribDivisor(normalsLocation[0],0);
+        if(extension_is_found)
+        {
+            glVertexAttribDivisor(centerLocation[0],1);
+            glVertexAttribDivisor(normalsLocation[0],0);
+        }
         vao[15].release();
 
         //Moving point Sphere
@@ -839,8 +875,11 @@ void Viewer::initialize_buffers()
         rendering_program_spheres.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
         buffers[17].release();
 
-        glVertexAttribDivisor(centerLocation[0],1);
-        glVertexAttribDivisor(normalsLocation[0],0);
+        if(extension_is_found)
+        {
+            glVertexAttribDivisor(centerLocation[0],1);
+            glVertexAttribDivisor(normalsLocation[0],0);
+        }
         vao[16].release();
 
         //Querry point Sphere
@@ -863,8 +902,11 @@ void Viewer::initialize_buffers()
         rendering_program_spheres.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
         buffers[17].release();
 
-        glVertexAttribDivisor(centerLocation[0],1);
-        glVertexAttribDivisor(normalsLocation[0],0);
+        if(extension_is_found)
+        {
+            glVertexAttribDivisor(centerLocation[0],1);
+            glVertexAttribDivisor(normalsLocation[0],0);
+        }
         vao[17].release();
 
         //Nearest neighbor Sphere
@@ -887,8 +929,11 @@ void Viewer::initialize_buffers()
         rendering_program_spheres.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
         buffers[17].release();
 
-        glVertexAttribDivisor(centerLocation[0],1);
-        glVertexAttribDivisor(normalsLocation[0],0);
+        if(extension_is_found)
+        {
+            glVertexAttribDivisor(centerLocation[0],1);
+            glVertexAttribDivisor(normalsLocation[0],0);
+        }
         vao[18].release();
 
         //incremental list
@@ -910,8 +955,11 @@ void Viewer::initialize_buffers()
         rendering_program_spheres.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
         buffers[17].release();
 
-        glVertexAttribDivisor(centerLocation[0],1);
-        glVertexAttribDivisor(normalsLocation[0],0);
+        if(extension_is_found)
+        {
+            glVertexAttribDivisor(centerLocation[0],1);
+            glVertexAttribDivisor(normalsLocation[0],0);
+        }
         vao[25].release();
 
         //incremental next point
@@ -933,8 +981,11 @@ void Viewer::initialize_buffers()
         rendering_program_spheres.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
         buffers[17].release();
 
-        glVertexAttribDivisor(centerLocation[0],1);
-        glVertexAttribDivisor(normalsLocation[0],0);
+        if(extension_is_found)
+        {
+            glVertexAttribDivisor(centerLocation[0],1);
+            glVertexAttribDivisor(normalsLocation[0],0);
+        }
         vao[26].release();
 
     }
@@ -985,12 +1036,14 @@ void Viewer::initialize_buffers()
         rendering_program_cylinders.setAttributeBuffer(centerLocation[4],GL_FLOAT,0,4);
         buffers[23].release();
 
-
-        glVertexAttribDivisor(centerLocation[1],1);
-        glVertexAttribDivisor(centerLocation[2],1);
-        glVertexAttribDivisor(centerLocation[3],1);
-        glVertexAttribDivisor(centerLocation[4],1);
-        glVertexAttribDivisor(normalsLocation[1],0);
+        if(extension_is_found)
+        {
+            glVertexAttribDivisor(centerLocation[1],1);
+            glVertexAttribDivisor(centerLocation[2],1);
+            glVertexAttribDivisor(centerLocation[3],1);
+            glVertexAttribDivisor(centerLocation[4],1);
+            glVertexAttribDivisor(normalsLocation[1],0);
+        }
 
         vao[19].release();
 
@@ -1035,13 +1088,14 @@ void Viewer::initialize_buffers()
         rendering_program_cylinders.enableAttributeArray(centerLocation[4]);
         rendering_program_cylinders.setAttributeBuffer(centerLocation[4],GL_FLOAT,0,4);
         buffers[27].release();
-
-
-        glVertexAttribDivisor(centerLocation[1],1);
-        glVertexAttribDivisor(centerLocation[2],1);
-        glVertexAttribDivisor(centerLocation[3],1);
-        glVertexAttribDivisor(centerLocation[4],1);
-        glVertexAttribDivisor(normalsLocation[1],0);
+        if(extension_is_found)
+        {
+            glVertexAttribDivisor(centerLocation[1],1);
+            glVertexAttribDivisor(centerLocation[2],1);
+            glVertexAttribDivisor(centerLocation[3],1);
+            glVertexAttribDivisor(centerLocation[4],1);
+            glVertexAttribDivisor(normalsLocation[1],0);
+        }
 
         vao[20].release();
     }
@@ -1139,11 +1193,12 @@ void Viewer::attrib_buffers(QGLViewer* viewer)
 
 void Viewer::draw()
 {
+    glEnable(GL_DEPTH_TEST);
     if(!are_buffers_initialized)
         initialize_buffers();
     QFont fontPrompt("Arial", 8);
     attrib_buffers(this);
-    if(m_isFlat)
+    if(m_isFlat || !extension_is_found)
     {
 
         if(m_showVertex)
@@ -1564,7 +1619,10 @@ void Viewer::draw()
         rendering_program_spheres.bind();
         vao[11].bind();
         rendering_program_spheres.setUniformValue(colorLocation[1], m_colorTrackball);
-        glDrawArraysInstanced(GL_TRIANGLES, 0, points_trackBall->size()/3, 1);
+        if(extension_is_found)
+            glDrawArraysInstanced(GL_TRIANGLES, 0, points_trackBall->size()/3, 1);
+        else
+            glDrawArrays(GL_TRIANGLES, 0, points_trackBall->size()/3);
         vao[11].release();
         rendering_program_spheres.release();
     }
@@ -1573,7 +1631,13 @@ void Viewer::draw()
         rendering_program_spheres.bind();
         vao[12].bind();
         rendering_program_spheres.setUniformValue(colorLocation[1], m_colorEmptySphere);
-        glDrawArraysInstanced(GL_TRIANGLES, 0, points_emptySphere->size()/3, pos_emptySphere->size()/3);
+        if(extension_is_found)
+            glDrawArraysInstanced(GL_TRIANGLES, 0, points_emptySphere->size()/3, pos_emptySphere->size()/3);
+        else if(pos_emptySphere->size()>0)
+        {
+            rendering_program_spheres.setAttributeValue("center", QVector4D(pos_emptySphere->at(0), pos_emptySphere->at(1), pos_emptySphere->at(2), 1.0));
+            glDrawArrays(GL_TRIANGLES, 0, points_emptySphere->size()/3);
+        }
         vao[12].release();
         rendering_program_spheres.release();
     }

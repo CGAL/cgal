@@ -1,14 +1,14 @@
 #include <QGLViewer/qglviewer.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel EPIC;
 
-class Viewer : public QGLViewer, QOpenGLFunctions_3_3_Core
+class Viewer : public QGLViewer, QOpenGLFunctions_2_1
 {
 public:
     Viewer(QWidget* parent = 0);
@@ -29,7 +29,7 @@ private:
   int mvLocation;
   int colorLocation;
   int lightLocation[5];
-
+  bool extension_is_found;
 
   std::vector<float> pos_points;
   std::vector<float> pos_lines;
@@ -43,6 +43,11 @@ private:
   QOpenGLBuffer buffers[9];
   QOpenGLVertexArrayObject vao[3];
   QOpenGLShaderProgram rendering_program;
+  QOpenGLShaderProgram rendering_program_no_ext;
+  typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
+  typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
+  PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
+  PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
 
   void initialize_buffers();
   void compute_elements();

@@ -54,14 +54,14 @@ void Scene_polyhedron_item::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-        "#version 330 \n"
-        "in highp vec4 vertex;\n"
-        "in highp vec3 normal;\n"
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
+        "attribute highp vec3 normal;\n"
 
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 mv_matrix; \n"
-        "out highp vec4 fP; \n"
-        "out highp vec3 fN; \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
         "void main(void)\n"
         "{\n"
         "   fP = mv_matrix * vertex; \n"
@@ -72,9 +72,9 @@ void Scene_polyhedron_item::compile_shaders()
     //Fragment source code
     const char fragment_source[] =
     {
-        "#version 330 \n"
-        "in highp vec4 fP; \n"
-        "in highp vec3 fN; \n"
+        "#version 120 \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
         "uniform vec4 color; \n"
         "uniform bool is_two_side; \n"
         "uniform highp vec4 light_pos;  \n"

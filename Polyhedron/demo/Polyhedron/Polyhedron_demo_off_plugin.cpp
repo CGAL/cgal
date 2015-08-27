@@ -5,6 +5,9 @@
 #include "Polyhedron_demo_io_plugin_interface.h"
 #include <fstream>
 
+#include <CGAL/IO/File_scanner_OFF.h>
+#include <QMessageBox>
+
 class Polyhedron_demo_off_plugin :
   public QObject,
   public Polyhedron_demo_io_plugin_interface
@@ -37,7 +40,12 @@ Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
     return NULL;
   }
-    
+
+  // to detect isolated vertices
+  CGAL::File_scanner_OFF scanner( in, false);
+  std::size_t total_nb_of_vertices = scanner.size_of_vertices();
+  in.seekg(0);
+
   // Try to read .off in a polyhedron
   Scene_polyhedron_item* item = new Scene_polyhedron_item();
   item->setName(fileinfo.baseName());
@@ -56,6 +64,14 @@ Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
     }
     return soup_item;
   }
+  else
+    if( total_nb_of_vertices!= item->polyhedron()->size_of_vertices())
+    {
+      QMessageBox::warning((QWidget*)NULL,
+                     tr("Isolated vertices found"),
+                     tr("%1 isolated vertices ignored")
+                     .arg(total_nb_of_vertices-item->polyhedron()->size_of_vertices()));
+    }
 
   return item;
 }

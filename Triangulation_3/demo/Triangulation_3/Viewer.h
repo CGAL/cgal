@@ -8,7 +8,7 @@
 #include <QSettings>
 #include "PreferenceDlg.h"
 
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
@@ -18,7 +18,7 @@ using namespace qglviewer;
 
 class MainWindow;
 
-class Viewer : public QGLViewer, QOpenGLFunctions_3_3_Core {
+class Viewer : public QGLViewer, QOpenGLFunctions_2_1 {
 
   Q_OBJECT
 
@@ -345,6 +345,8 @@ private:
       int lightLocation[5*2];
 
       bool are_buffers_initialized;
+      bool extension_is_found;
+
       std::vector<float> *pos_emptyFacet;
       std::vector<float> *pos_emptySphere;
       std::vector<float> *points_emptySphere;
@@ -385,6 +387,10 @@ private:
       QOpenGLShaderProgram rendering_program;
       QOpenGLShaderProgram rendering_program_spheres;
       QOpenGLShaderProgram rendering_program_cylinders;
+      typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
+      typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
+      PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
+      PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
       void initialize_buffers();
       void compute_elements();
       void attrib_buffers(QGLViewer*);

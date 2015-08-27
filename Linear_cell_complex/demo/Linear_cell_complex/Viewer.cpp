@@ -232,32 +232,32 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-        "#version 140 \n"
-        "in highp vec4 vertex;\n"
-        "in highp vec3 normal;\n"
-        "in highp vec4 color;\n"
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
+        "attribute highp vec3 normal;\n"
+        "attribute highp vec3 color;\n"
 
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 mv_matrix; \n"
 
-        "out highp vec4 fP; \n"
-        "out highp vec3 fN; \n"
-        "out highp vec4 fColor; \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
+        "varying highp vec4 fColor; \n"
         "void main(void)\n"
         "{\n"
         "   fP = mv_matrix * vertex; \n"
         "   fN = mat3(mv_matrix)* normal; \n"
-        "   fColor = color; \n"
+        "   fColor = vec4(color, 1.0); \n"
         "   gl_Position = mvp_matrix * vertex;\n"
         "}"
     };
     //Vertex source code
     const char fragment_source[] =
     {
-        "#version 140 \n"
-        "in highp vec4 fP; \n"
-        "in highp vec3 fN; \n"
-        "in highp vec4 fColor; \n"
+        "#version 120 \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
+        "varying highp vec4 fColor; \n"
         "uniform vec4 light_pos;  \n"
         "uniform vec4 light_diff; \n"
         "uniform vec4 light_spec; \n"
@@ -310,8 +310,8 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char vertex_source_p_l[] =
     {
-        "#version 140 \n"
-        "in highp vec4 vertex;\n"
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
         "uniform highp mat4 mvp_matrix;\n"
         "void main(void)\n"
         "{\n"
@@ -321,7 +321,7 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char fragment_source_p_l[] =
     {
-        "#version 140 \n"
+        "#version 120 \n"
         "uniform highp vec4 color; \n"
         "void main(void) { \n"
         "gl_FragColor = color; \n"
@@ -657,20 +657,20 @@ void Viewer::attrib_buffers(QGLViewer* viewer)
 void
 Viewer::sceneChanged()
 {
-
+  compute_elements();
   this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
 						     bb.ymin(),
 						     bb.zmin()),
 				      qglviewer::Vec(bb.xmax(),
 						     bb.ymax(),
 						     bb.zmax()));
-    compute_elements();
-    are_buffers_initialized = false;
+  are_buffers_initialized = false;
   this->showEntireScene();
 }
 
 void Viewer::draw()
 {
+    glEnable(GL_DEPTH_TEST);
 if(!are_buffers_initialized)
     initialize_buffers();
 

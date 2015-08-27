@@ -3,14 +3,14 @@
 
 #include "Scene.h"
 #include <QGLViewer/qglviewer.h>
-#include <QOpenGLFunctions_3_3_Core>
+#include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 
 
-class Viewer : public QGLViewer, QOpenGLFunctions_3_3_Core {
+class Viewer : public QGLViewer, QOpenGLFunctions_2_1 {
 
   typedef qglviewer::Vec Vec;
 

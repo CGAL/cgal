@@ -16,8 +16,8 @@ void Volume_plane_intersection::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-        "#version 330 \n"
-        "in highp vec4 vertex;\n"
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 f_matrix; \n"
         "void main(void)\n"
@@ -28,7 +28,7 @@ void Volume_plane_intersection::compile_shaders()
     //Fragment source code
     const char fragment_source[] =
     {
-        "#version 330 \n"
+        "#version 120 \n"
         "void main(void) { \n"
         "gl_FragColor = vec4(1.0,0.0,0.0,1.0); \n"
         "} \n"

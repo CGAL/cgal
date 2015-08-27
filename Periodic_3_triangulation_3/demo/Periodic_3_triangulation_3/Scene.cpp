@@ -34,8 +34,8 @@ void Scene::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-        "#version 330 \n"
-        "in highp vec4 vertex;\n"
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
         "uniform highp mat4 mvp_matrix;\n"
         "void main(void)\n"
         "{\n"
@@ -45,7 +45,7 @@ void Scene::compile_shaders()
     //Fragment source code
     const char fragment_source[] =
     {
-        "#version 330 \n"
+        "#version 120 \n"
         "uniform highp vec4 color; \n"
         "void main(void) { \n"
         "gl_FragColor = color; \n"
@@ -82,15 +82,15 @@ void Scene::compile_shaders()
     //Vertex source code
     const char vertex_source_spheres[] =
     {
-        "#version 330 \n"
-        "in highp vec4 vertex;\n"
-        "in highp vec3 normal;\n"
-        "in highp vec4 center;\n"
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
+        "attribute highp vec3 normal;\n"
+        "attribute highp vec4 center;\n"
 
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 mv_matrix; \n"
-        "out highp vec4 fP; \n"
-        "out highp vec3 fN; \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
         "void main(void)\n"
         "{\n"
         "   fP = mv_matrix * vertex; \n"
@@ -101,9 +101,9 @@ void Scene::compile_shaders()
     //Fragment source code
     const char fragment_source_spheres[] =
     {
-        "#version 330 \n"
-        "in highp vec4 fP; \n"
-        "in highp vec3 fN; \n"
+        "#version 120 \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
         "uniform highp vec4 light_pos;  \n"
         "uniform highp vec4 light_diff; \n"
         "uniform highp vec4 light_spec; \n"
@@ -159,18 +159,18 @@ void Scene::compile_shaders()
     //Vertex source code
     const char vertex_source_cylinders[] =
     {
-        "#version 330 \n"
-        "in highp vec4 vertex;\n"
-        "in highp vec3 normal;\n"
-        "in highp vec4 transfo1;\n"
-        "in highp vec4 transfo2;\n"
-        "in highp vec4 transfo3;\n"
-        "in highp vec4 transfo4;\n"
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
+        "attribute highp vec3 normal;\n"
+        "attribute highp vec4 transfo1;\n"
+        "attribute highp vec4 transfo2;\n"
+        "attribute highp vec4 transfo3;\n"
+        "attribute highp vec4 transfo4;\n"
         "mat4 transfo = mat4(transfo1, transfo2, transfo3, transfo4); \n"
         "uniform highp mat4 mvp_matrix;\n"
         "uniform highp mat4 mv_matrix; \n"
-        "out highp vec4 fP; \n"
-        "out highp vec3 fN; \n"
+        "varying highp vec4 fP; \n"
+        "varying highp vec3 fN; \n"
         "void main(void)\n"
         "{\n"
         "   fP = mv_matrix * vertex; \n"
@@ -488,8 +488,11 @@ void Scene::initialize_buffers()
     rendering_program_spheres.enableAttributeArray(centerLocation[0]);
     rendering_program_spheres.setAttributeBuffer(centerLocation[0],GL_FLOAT,0,3);
     buffers[0].release();
-    glVertexAttribDivisor(centerLocation[0],1);
-    glVertexAttribDivisor(normalsLocation[0],0);
+    if(extension_is_found)
+    {
+        glVertexAttribDivisor(centerLocation[0],1);
+        glVertexAttribDivisor(normalsLocation[0],0);
+    }
     vao[3].release();
     rendering_program_spheres.release();
 
@@ -538,13 +541,15 @@ void Scene::initialize_buffers()
     rendering_program_cylinders.setAttributeBuffer(centerLocation[4],GL_FLOAT,0,4);
     buffers[13].release();
 
+    if(extension_is_found)
+    {
+        glVertexAttribDivisor(centerLocation[1],1);
+        glVertexAttribDivisor(centerLocation[2],1);
+        glVertexAttribDivisor(centerLocation[3],1);
+        glVertexAttribDivisor(centerLocation[4],1);
 
-    glVertexAttribDivisor(centerLocation[1],1);
-    glVertexAttribDivisor(centerLocation[2],1);
-    glVertexAttribDivisor(centerLocation[3],1);
-    glVertexAttribDivisor(centerLocation[4],1);
-
-    glVertexAttribDivisor(normalsLocation[1],0);
+        glVertexAttribDivisor(normalsLocation[1],0);
+    }
 
     vao[8].release();
     vao[9].bind();
@@ -590,13 +595,15 @@ void Scene::initialize_buffers()
     rendering_program_cylinders.setAttributeBuffer(centerLocation[4],GL_FLOAT,0,4);
     buffers[18].release();
 
+    if(extension_is_found)
+    {
+        glVertexAttribDivisor(centerLocation[1],1);
+        glVertexAttribDivisor(centerLocation[2],1);
+        glVertexAttribDivisor(centerLocation[3],1);
+        glVertexAttribDivisor(centerLocation[4],1);
 
-    glVertexAttribDivisor(centerLocation[1],1);
-    glVertexAttribDivisor(centerLocation[2],1);
-    glVertexAttribDivisor(centerLocation[3],1);
-    glVertexAttribDivisor(centerLocation[4],1);
-
-    glVertexAttribDivisor(normalsLocation[1],0);
+        glVertexAttribDivisor(normalsLocation[1],0);
+    }
 
     vao[9].release();
 
@@ -642,14 +649,15 @@ void Scene::initialize_buffers()
     rendering_program_cylinders.setAttributeBuffer(centerLocation[4],GL_FLOAT,0,4);
     buffers[22].release();
 
+    if(extension_is_found)
+    {
+        glVertexAttribDivisor(centerLocation[1],1);
+        glVertexAttribDivisor(centerLocation[2],1);
+        glVertexAttribDivisor(centerLocation[3],1);
+        glVertexAttribDivisor(centerLocation[4],1);
 
-    glVertexAttribDivisor(centerLocation[1],1);
-    glVertexAttribDivisor(centerLocation[2],1);
-    glVertexAttribDivisor(centerLocation[3],1);
-    glVertexAttribDivisor(centerLocation[4],1);
-
-    glVertexAttribDivisor(normalsLocation[1],0);
-
+        glVertexAttribDivisor(normalsLocation[1],0);
+    }
     vao[10].release();
 
     rendering_program_cylinders.release();
@@ -727,6 +735,25 @@ void Scene::init() {
     // undo from QGLViewer internal initializeGL function
     // glDisable(GL_COLOR_MATERIAL);
     initializeOpenGLFunctions();
+    glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)ui->viewer->context()->getProcAddress("glDrawArraysInstancedARB");
+    if(!glDrawArraysInstanced)
+    {
+        qDebug()<<"glDrawArraysInstancedARB : extension not found. Wireframe mode will be forced.";
+        extension_is_found = false;
+    }
+    else
+        extension_is_found = true;
+
+    glVertexAttribDivisor = (PFNGLVERTEXATTRIBDIVISORARBPROC)ui->viewer->context()->getProcAddress("glVertexAttribDivisorARB");
+    if(!glDrawArraysInstanced)
+    {
+        qDebug()<<"glVertexAttribDivisorARB : extension not found. Wireframe mode will be forced.";
+        extension_is_found = false;
+    }
+    else
+        extension_is_found = true;
+
+    wireframe = !extension_is_found;
     // camera
     // only 2.7 gets an 'f' as VC++ warns if we don't
     ui->viewer->camera()->setPosition(Vec(0.5,0.5,2.7f));
@@ -753,6 +780,7 @@ void Scene::init() {
 
 // Draws the triangulation
 void Scene::draw() {
+    glEnable(GL_DEPTH_TEST);
     if(!are_buffers_initialized)
         initialize_buffers();
     gl_draw_location();
@@ -971,8 +999,11 @@ void Scene::update_position()
     rendering_program_spheres.enableAttributeArray(centerLocation[0]);
     rendering_program_spheres.setAttributeBuffer(centerLocation[0],GL_FLOAT,0,3);
     buffers[5].release();
-    glVertexAttribDivisor(centerLocation[0],1);
-    glVertexAttribDivisor(normalsLocation[1],0);
+    if(extension_is_found)
+    {
+        glVertexAttribDivisor(centerLocation[0],1);
+        glVertexAttribDivisor(normalsLocation[1],0);
+    }
     vao[7].release();
 
     ui->viewer->update();

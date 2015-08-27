@@ -27,6 +27,7 @@ Viewer::sceneChanged()
 void
 Viewer::draw()
 {
+    glEnable(GL_DEPTH_TEST);
   if(!are_buffers_initialized)
       initialize_buffers();
   QColor color;
@@ -265,8 +266,8 @@ void Viewer::compile_shaders()
     //Vertex source code
     const char vertex_source[] =
     {
-        "#version 330 \n"
-        "in highp vec4 vertex;\n"
+        "#version 120 \n"
+        "attribute highp vec4 vertex;\n"
         "uniform highp mat4 mvp_matrix;\n"
         "void main(void)\n"
         "{\n"
@@ -276,7 +277,7 @@ void Viewer::compile_shaders()
     //Fragment source code
     const char fragment_source[] =
     {
-        "#version 330 \n"
+        "#version 120 \n"
         "uniform highp vec4 color; \n"
         "void main(void) { \n"
         "gl_FragColor = color; \n"
