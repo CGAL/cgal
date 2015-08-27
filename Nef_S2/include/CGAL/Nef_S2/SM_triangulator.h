@@ -304,10 +304,10 @@ public:
   { return ginfo(e).forw_; }
 
   void assert_equal_marks(SVertex_handle v1, SVertex_handle v2) const 
-  { CGAL_assertion(v1->mark()==v2->mark()); }
+  { CGAL_assertion(v1->mark()==v2->mark()); CGAL_USE(v1); CGAL_USE(v2); }
 
   void assert_equal_marks(SHalfedge_handle e1, SHalfedge_handle e2) const
-  { CGAL_assertion(e1->mark()==e2->mark()); }
+  { CGAL_assertion(e1->mark()==e2->mark()); CGAL_USE(e1); CGAL_USE(e2); }
 
   Sphere_segment segment(const Explorer* , 
                          SHalfedge_const_handle e) const

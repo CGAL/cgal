@@ -43,6 +43,7 @@ namespace Boolean_set_operation_2_internal
     inline static void is_valid(const Polygon& p, const Traits& t)
     {
       CGAL_precondition(is_valid_unknown_polygon(p, t));
+      CGAL_USE(p); CGAL_USE(t);
     }
   };
 }

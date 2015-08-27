@@ -136,7 +136,7 @@ class Optimisation_ellipse_2 {
     set( const Point& p, const Point& q)
     {
         n_boundary_points = 2;
-        CGAL_optimisation_precondition(boundary_point1 == p);
+        CGAL_optimisation_precondition(boundary_point1 == p); CGAL_USE(p);
         boundary_point2 = q;
     }
     
@@ -224,6 +224,7 @@ class Optimisation_ellipse_2 {
         CGAL_optimisation_precondition(boundary_point2 == p2);
 	CGAL_optimisation_precondition(boundary_point3 == p3);
         CGAL_optimisation_precondition(boundary_point4 == p4);
+	CGAL_USE(p1); CGAL_USE(p2); CGAL_USE(p3); CGAL_USE(p4);
 	boundary_point5 = p5;
     }
 

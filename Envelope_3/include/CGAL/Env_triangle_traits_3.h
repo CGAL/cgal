@@ -1172,6 +1172,7 @@ public:
     CGAL_precondition( triangle.plane() == plane ||
                        triangle.plane() == plane.opposite());
     CGAL_precondition( k.has_on_3_object()(plane, point) );
+    CGAL_USE(plane);
 
     // if the point is inside the triangle, then the point is the intersection
     // otherwise there is no intersection
