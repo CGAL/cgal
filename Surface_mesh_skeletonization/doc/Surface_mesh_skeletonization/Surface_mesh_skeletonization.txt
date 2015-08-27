@@ -141,10 +141,10 @@ as compiling flags and was run on a Intel(R) Core(TM) i7-2820QM CPU @ 2.30GHz
 <center>
 Number of loop subdivision of <code>elephant.off</code> | Number of vertices  | Runtime in s |
 -------------------------------------------------------:| -------------------:| -----------: |
-0                                                       |   2,775             |   0.768      |
-1                                                       |  11,112             |   2.212      |
-2                                                       |  44,460             |   9.948      |
-3                                                       | 177,852             |  41.248      |
+0                                                       |   2,775             |   0.46       |
+1                                                       |  11,112             |   1.26       |
+2                                                       |  44,460             |   5.64       |
+3                                                       | 177,852             |  26.26       |
 </center>
 
 \section MCFSkelSecDesign Design and Implementation History
