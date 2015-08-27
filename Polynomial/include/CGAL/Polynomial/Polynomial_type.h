@@ -984,7 +984,7 @@ Polynomial<NT> operator + (const Polynomial<NT>& p) {
   return p;
 }
 
-template <class NT> inline
+template <class NT> 
 Polynomial<NT> operator - (const Polynomial<NT>& p) {
   CGAL_precondition(p.degree()>=0);
   Polynomial<NT> res(p.coeffs().begin(),p.coeffs().end());

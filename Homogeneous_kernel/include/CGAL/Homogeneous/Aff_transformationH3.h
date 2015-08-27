@@ -731,7 +731,6 @@ cartesian(int i, int j) const
 
 
 template < class R >
-CGAL_KERNEL_INLINE
 Aff_transformationH3<R>
 _general_transformation_composition(
     Aff_transformation_repH3<R> l,

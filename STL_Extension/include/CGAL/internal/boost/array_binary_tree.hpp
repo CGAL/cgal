@@ -51,8 +51,11 @@ public:
 
   struct children_type {
     struct iterator
-        : ::boost::iterator<std::bidirectional_iterator_tag, ArrayBinaryTreeNode,
-                       difference_type, array_binary_tree_node*, ArrayBinaryTreeNode&>
+        : ::boost::iterator<std::forward_iterator_tag,
+            //JT: the iterator type is "forward" and not "bidirectional",
+            //because it does not implement unary operator--
+            ArrayBinaryTreeNode,
+            difference_type, array_binary_tree_node*, ArrayBinaryTreeNode&>
     { // replace with iterator_adaptor implementation -JGS
 
       inline iterator() : i(0), n(0) { }

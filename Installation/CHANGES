@@ -20,6 +20,8 @@ Release date: September 2015
   - The code of the 3D demos now use modern OpenGL, with shaders, instead of
     the fixed pipeline API of OpenGL-1.
 
+  - Initial support of the Microsoft Windows Visual C++ compiler 2015 (VC14).
+
 
 * General
 

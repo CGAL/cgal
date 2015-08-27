@@ -102,7 +102,7 @@ void bench_main()
   typename IA_nt::Protector p;
 
   double d;
-  if ((((long) &d) & 7) != 0)
+  if ((((std::size_t) &d) & 7) != 0)
     std::cout << "Benchmark might not be meaningful due to bad alignment\n";
 
   std::cout.precision(20);
