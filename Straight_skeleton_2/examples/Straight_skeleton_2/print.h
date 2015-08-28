@@ -35,7 +35,6 @@ template<class K, class C>
 void print_polygon_with_holes ( CGAL::Polygon_with_holes_2<K,C> const& polywh )
 {
   typedef CGAL::Polygon_with_holes_2<K,C> PolygonWithHoles ;
-  typedef typename PolygonWithHoles::Polygon_2 Polygon_2;
   
   std::cout << "Polygon_with_holes having " << polywh.number_of_holes() << " holes" << std::endl ;
   
