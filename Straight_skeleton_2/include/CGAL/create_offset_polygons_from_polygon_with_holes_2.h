@@ -54,7 +54,7 @@ template<class FT, class OfK, class C>
 std::vector< boost::shared_ptr< Polygon_with_holes_2<OfK,C> > >
 inline
 create_exterior_skeleton_and_offset_polygons_with_holes_2 ( FT const&             aOffset
-                                                            , Polygon_2<OfK,C> const& aPoly
+                                                          , Polygon_2<OfK,C> const& aPoly
                                                           , bool                  aDontReverseOrientation = false
                                                           )
 {
