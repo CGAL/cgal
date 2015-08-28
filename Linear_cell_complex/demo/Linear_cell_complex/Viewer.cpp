@@ -21,34 +21,11 @@
 #include "Viewer.h"
 
 #include <CGAL/Linear_cell_complex_operations.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Triangulation_face_base_with_info_2.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-#include <CGAL/Constrained_triangulation_plus_2.h>
-#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
 #include <CGAL/bounding_box.h>
 #include <CGAL/Qt/CreateOpenGLContext.h>
 
 #include <QGLViewer/vec.h>
 #include <QDebug>
-
-typedef LCC::Traits Traits;
-typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits> P_traits;
-struct Face_info {
-    LCC::Dart_handle e[3];
-    bool is_external;
-};
-typedef CGAL::Triangulation_vertex_base_with_info_2<Dart_handle,
-        P_traits>        Vb;
-typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
-        P_traits>          Fb1;
-typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
-typedef CGAL::No_intersection_tag                                    Itag;
-typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
-        TDS,
-        Itag>             CDTbase;
-typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 
 Viewer::Viewer(QWidget* parent)
   : QGLViewer(CGAL::Qt::createOpenGLContext(),parent), wireframe(false),
@@ -109,34 +86,28 @@ void Viewer::triangulate_facet()
             (lcc.dart_of_attribute<3>(it)).begin(); dartIter.cont(); ++dartIter)
       {
         //Computes the normal of the facet
-        Traits::Vector_3 normal = CGAL::compute_normal_of_cell_2(lcc, dartIter);
+        Mytraits::Vector_3 normal = CGAL::compute_normal_of_cell_2(lcc, dartIter);
         normal = normal/(CGAL::sqrt(normal*normal));
         
         P_traits cdt_traits(normal);
         CDT cdt(cdt_traits); 
         
         // Iterates on the vector of facet handles
-        std::cout<<"New face: ";
         CDT::Vertex_handle previous = NULL, first = NULL;
         for (LCC::Dart_of_orbit_range<1>::const_iterator
                he_circ = lcc.darts_of_orbit<1>(dartIter).begin(),
                he_circ_end = lcc.darts_of_orbit<1>(dartIter).end();
              he_circ!=he_circ_end; ++he_circ)
         {
-          std::cout<<lcc.point(he_circ)<<" ";
           CDT::Vertex_handle vh = cdt.insert(lcc.point(he_circ));
           if(first == NULL)
           { first = vh; }
           //vh->info() = he_circ;
           if(previous!=NULL && previous != vh)
-          { cdt.insert_constraint(previous, vh);
-            std::cout<<"Constraint: "<<*previous<<" -> "<<*vh<<std::endl;}
+          { cdt.insert_constraint(previous, vh); }
           previous = vh;
         }
         cdt.insert_constraint(previous, first);
-        std::cout<<"Constraint: "<<*previous<<" -> "<<*first<<std::endl;
-        
-        std::cout<<std::endl;
         
         // sets mark is_external
         for(CDT::All_faces_iterator fit = cdt.all_faces_begin(),
@@ -169,65 +140,58 @@ void Viewer::triangulate_facet()
         for(CDT::Finite_faces_iterator ffit = cdt.finite_faces_begin(),
               ffitend = cdt.finite_faces_end(); ffit != ffitend; ++ffit)
         {
-          if(ffit->info().is_external)
+          if(!ffit->info().is_external)
           {
-            std::cout<<"external"<<std::endl;
-            continue;
+            smooth_normals.push_back(normal.x());
+            smooth_normals.push_back(normal.y());
+            smooth_normals.push_back(normal.z());
+            
+            smooth_normals.push_back(normal.x());
+            smooth_normals.push_back(normal.y());
+            smooth_normals.push_back(normal.z());
+            
+            smooth_normals.push_back(normal.x());
+            smooth_normals.push_back(normal.y());
+            smooth_normals.push_back(normal.z());
+            
+            flat_normals.push_back(normal.x());
+            flat_normals.push_back(normal.y());
+            flat_normals.push_back(normal.z());
+            
+            flat_normals.push_back(normal.x());
+            flat_normals.push_back(normal.y());
+            flat_normals.push_back(normal.z());
+            
+            flat_normals.push_back(normal.x());
+            flat_normals.push_back(normal.y());
+            flat_normals.push_back(normal.z());
+            
+            pos_facets.push_back(ffit->vertex(0)->point().x());
+            pos_facets.push_back(ffit->vertex(0)->point().y());
+            pos_facets.push_back(ffit->vertex(0)->point().z());
+            
+            pos_facets.push_back(ffit->vertex(1)->point().x());
+            pos_facets.push_back(ffit->vertex(1)->point().y());
+            pos_facets.push_back(ffit->vertex(1)->point().z());
+            
+            pos_facets.push_back(ffit->vertex(2)->point().x());
+            pos_facets.push_back(ffit->vertex(2)->point().y());
+            pos_facets.push_back(ffit->vertex(2)->point().z());
+            
+            double r = (double)lcc.info<3>(dartIter).color().r()/255.0;
+            double g = (double)lcc.info<3>(dartIter).color().g()/255.0;
+            double b = (double)lcc.info<3>(dartIter).color().b()/255.0;
+            if ( !lcc.is_free(dartIter, 3) )
+            {
+              r += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().r()/255.0;
+              g += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().g()/255.0;
+              b += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().b()/255.0;
+              r /= 2; g /= 2; b /= 2;
+            }
+            colors.push_back(r);colors.push_back(g);colors.push_back(b);
+            colors.push_back(r);colors.push_back(g);colors.push_back(b);
+            colors.push_back(r);colors.push_back(g);colors.push_back(b);
           }
-          
-          smooth_normals.push_back(normal.x());
-          smooth_normals.push_back(normal.y());
-          smooth_normals.push_back(normal.z());
-          
-          smooth_normals.push_back(normal.x());
-          smooth_normals.push_back(normal.y());
-          smooth_normals.push_back(normal.z());
-          
-          smooth_normals.push_back(normal.x());
-          smooth_normals.push_back(normal.y());
-          smooth_normals.push_back(normal.z());
-
-          flat_normals.push_back(normal.x());
-          flat_normals.push_back(normal.y());
-          flat_normals.push_back(normal.z());
-          
-          flat_normals.push_back(normal.x());
-          flat_normals.push_back(normal.y());
-          flat_normals.push_back(normal.z());
-          
-          flat_normals.push_back(normal.x());
-          flat_normals.push_back(normal.y());
-          flat_normals.push_back(normal.z());
-
-          pos_facets.push_back(ffit->vertex(0)->point().x());
-          pos_facets.push_back(ffit->vertex(0)->point().y());
-          pos_facets.push_back(ffit->vertex(0)->point().z());
-
-          pos_facets.push_back(ffit->vertex(1)->point().x());
-          pos_facets.push_back(ffit->vertex(1)->point().y());
-          pos_facets.push_back(ffit->vertex(1)->point().z());
-
-          pos_facets.push_back(ffit->vertex(2)->point().x());
-          pos_facets.push_back(ffit->vertex(2)->point().y());
-          pos_facets.push_back(ffit->vertex(2)->point().z());
-
-          std::cout<<"Triangle: "<<ffit->vertex(0)->point()<<" "
-                   <<ffit->vertex(1)->point()<<" "
-                   <<ffit->vertex(2)->point()<<std::endl;
-          
-          double r = (double)lcc.info<3>(dartIter).color().r()/255.0;
-          double g = (double)lcc.info<3>(dartIter).color().g()/255.0;
-          double b = (double)lcc.info<3>(dartIter).color().b()/255.0;
-          if ( !lcc.is_free(dartIter, 3) )
-          {
-            r += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().r()/255.0;
-            g += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().g()/255.0;
-            b += (double)lcc.info<3>(lcc.beta(dartIter,3)).color().b()/255.0;
-            r /= 2; g /= 2; b /= 2;
-          }
-          colors.push_back(r);colors.push_back(g);colors.push_back(b);
-          colors.push_back(r);colors.push_back(g);colors.push_back(b);
-          colors.push_back(r);colors.push_back(g);colors.push_back(b);
         }
       }
     }

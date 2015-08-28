@@ -27,11 +27,6 @@
 #include "MainWindow.moc"
 #include "import_moka.h"
 
-#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
-#include <CGAL/Triangulation_vertex_base_with_info_2.h>
-#include <CGAL/Triangulation_face_base_with_info_2.h>
-#include <CGAL/Constrained_Delaunay_triangulation_2.h>
-
 // Function defined in Linear_cell_complex_3_subivision.cpp
 void subdivide_lcc_3 (LCC & m);
 
@@ -1114,22 +1109,6 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
   statusBar()->showMessage
       (QString ("Visible and filled volume(s) merged"), DELAY_STATUSMSG);
 }
-
-typedef CGAL::Triangulation_2_filtered_projection_traits_3<Mytraits> P_traits;
-typedef CGAL::Triangulation_vertex_base_with_info_2<Dart_handle,P_traits> Vb;
-
-struct Face_info {
-  bool exist_edge[3];
-  bool is_external;
-};
-
-typedef CGAL::Triangulation_face_base_with_info_2<Face_info,P_traits> Fb1;
-
-typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>    Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                   TDS;
-typedef CGAL::No_intersection_tag                                     Itag;
-typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS,
-                                                   Itag>              CDT;
 
 bool is_external(CDT::Face_handle fh)
 {
@@ -2320,64 +2299,6 @@ void MainWindow::onSierpinskiCarpetUpdateAttributes(bool newValue)
 {
   sierpinskiCarpetUpdateAttributes = newValue;
 }
-
-/*void MainWindow::onSierpinskiCarpetNeverUpdateAttributes(bool newValue)
-{
-  if (afterConstructionUpdateAttributes)
-  {
-    dialogsierpinskicarpet.groupBox2->setEnabled(false);
-  }
-
-  neverUpdateAttributes = true;
-  duringConstructionUpdateAttributes = false;
-  afterConstructionUpdateAttributes = false;
-}
-
-void MainWindow::onSierpinskiCarpetDuringConstructionUpdateAttributes(bool newValue)
-{
-  if (afterConstructionUpdateAttributes)
-  {
-    dialogsierpinskicarpet.groupBox2->setEnabled(false);
-  }
-
-  neverUpdateAttributes = false;
-  duringConstructionUpdateAttributes = true;
-  afterConstructionUpdateAttributes = false;
-}
-
-void MainWindow::onSierpinskiCarpetAfterConstructionUpdateAttributes(bool newValue)
-{
-  if (!afterConstructionUpdateAttributes)
-  {
-    dialogsierpinskicarpet.groupBox2->setEnabled(true);
-  }
-
-  neverUpdateAttributes = false;
-  duringConstructionUpdateAttributes = false;
-  afterConstructionUpdateAttributes = true;
-}
-
-void MainWindow::onSierpinskiCarpetUpdateAttributesMethodStdMap(bool newValue)
-{
-  updateAttributesMethodStdMap = true;
-  updateAttributesMethodTraversal = false;
-}
-
-void MainWindow::onSierpinskiCarpetUpdateAttributesMethodTraversal(bool newValue)
-{
-  updateAttributesMethodStdMap = false;
-  updateAttributesMethodTraversal = true;
-}
-
-void MainWindow::onSierpinskiCarpetComputeGeometry(bool newValue)
-{
-  sierpinski_carpet_compute_geometry();
-
-  computeGeometry = false;
-  dialogsierpinskicarpet.computeGeometry->setEnabled(false);
-
-  Q_EMIT( sceneChanged());
-}*/
 
 void MainWindow::onSierpinskiCarpetInc()
 {
