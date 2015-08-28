@@ -41,7 +41,7 @@ namespace CGAL {
 ///
 /// \tparam VCM_traits is a model of `VCMTraits`. If Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined
 ///         then an overload using `Eigen_vcm_traits` is provided and this template parameter can be omitted.
-/// \sa CGAL::compute_vcm()`
+/// \sa `CGAL::compute_vcm()`
 ///
 template <class FT, class VCM_traits>
 bool
