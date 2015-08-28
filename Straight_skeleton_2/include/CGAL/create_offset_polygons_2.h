@@ -200,6 +200,7 @@ create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs, K const& k )
   return create_offset_polygons_2<Polygon>(aOffset, aSs, k ) ;
 }
 
+#if 0 // this is NOT documented
 #if !defined(_MSC_VER) || ( _MSC_VER >= 1500 )
 template<class FT, class Skeleton>
 std::vector< boost::shared_ptr< Polygon_2< typename Skeleton::Traits::Kernel > > > 
@@ -210,6 +211,8 @@ create_offset_polygons_2 ( FT const& aOffset, Skeleton const& aSs )
   
   return create_offset_polygons_2(aOffset, aSs, K() ) ;
 }
+#endif
+
 #endif
 
 template<class Polygon, class FT, class Skeleton>
