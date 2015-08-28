@@ -22,13 +22,15 @@
 #define VIEWER_H
 
 #include "typedefs.h"
+
+#include <vector>
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
-
 #include <QOpenGLFunctions_2_1>
 #include <QOpenGLVertexArrayObject>
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
+
 class Viewer : public QGLViewer, QOpenGLFunctions_2_1
 {
   Q_OBJECT
@@ -46,33 +48,32 @@ class Viewer : public QGLViewer, QOpenGLFunctions_2_1
   GLuint m_dlEdges;
   GLuint m_dlVertices;
   bool m_displayListCreated;
+  bool m_previous_scene_empty;
 
   typedef LCC::Dart_handle Dart_handle;
   typedef LCC::Dart_const_handle Dart_const_handle;
 
-
 public:
   Viewer(QWidget* parent);
+  
   ~Viewer()
   {
-      buffers[0].destroy();
-      buffers[1].destroy();
-      buffers[2].destroy();
-      buffers[3].destroy();
-      buffers[4].destroy();
-      buffers[5].destroy();
-      buffers[6].destroy();
-      buffers[7].destroy();
-      vao[0].destroy();
-      vao[1].destroy();
-      vao[2].destroy();
-      vao[3].destroy();
-
+    buffers[0].destroy();
+    buffers[1].destroy();
+    buffers[2].destroy();
+    buffers[3].destroy();
+    buffers[4].destroy();
+    buffers[5].destroy();
+    buffers[6].destroy();
+    buffers[7].destroy();
+    vao[0].destroy();
+    vao[1].destroy();
+    vao[2].destroy();
+    vao[3].destroy();
   }
+  
   void setScene(Scene* scene_)
-  {
-    scene = scene_;
-  }
+  { scene = scene_; }
 
 public:
   void draw();
@@ -87,9 +88,7 @@ public Q_SLOTS:
 
   void sceneChanged();
 
-
 private:
-
   bool are_buffers_initialized;
   //Shaders elements
 
@@ -101,13 +100,12 @@ private:
   int colorsLocation;
   int lightLocation[5];
 
-
   std::vector<float> pos_points;
   std::vector<float> pos_lines;
   std::vector<float> pos_facets;
   std::vector<float> smooth_normals;
   std::vector<float> flat_normals;
-  std::vector <float> colors;
+  std::vector<float> colors;
 
   QGLBuffer buffers[10];
   QOpenGLVertexArrayObject vao[10];
@@ -121,4 +119,5 @@ private:
   void triangulate_facet();
   bool is_Triangulated();
 };
+
 #endif

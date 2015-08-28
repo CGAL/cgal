@@ -24,6 +24,7 @@
 #include <CGAL/Linear_cell_complex_constructors.h>
 #include <CGAL/Linear_cell_complex_operations.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Combinatorial_map_save_load.h>
 
 #include <CGAL/IO/Color.h>
 #include <CGAL/Timer.h>
@@ -45,6 +46,11 @@ extern CGAL::Random myrandom;
 
 class Volume_info
 {
+  friend void CGAL::read_cmap_attribute_node<Volume_info>
+  (const boost::property_tree::ptree::value_type &v,Volume_info &val);
+
+  friend void CGAL::write_cmap_attribute_node<Volume_info>(boost::property_tree::ptree & node,
+                                                           const Volume_info& arg);
 public:
   Volume_info() : m_color(CGAL::Color(myrandom.get_int(0,256),
                                       myrandom.get_int(0,256),
@@ -91,22 +97,61 @@ public:
   void negate_filled()
   { set_filled(!is_filled()); }
 
-  private:
+private:
   CGAL::Color m_color;
   char        m_status;
 };
+
+namespace CGAL
+{
+
+template<>
+inline void read_cmap_attribute_node<Volume_info>
+(const boost::property_tree::ptree::value_type &v,Volume_info &val)
+{
+  try
+  {
+    val.m_status = v.second.get<int>("status");
+  }
+  catch(const std::exception &  )
+  {}
+
+  try
+  {
+    char r = v.second.get<int>("color-r");
+    char g = v.second.get<int>("color-g");
+    char b = v.second.get<int>("color-b");
+    val.m_color = CGAL::Color(r,g,b);
+  }
+  catch(const std::exception &  )
+  {}
+}
+
+// Definition of function allowing to save custon information.
+template<>
+inline void write_cmap_attribute_node<Volume_info>(boost::property_tree::ptree & node,
+                                                   const Volume_info& arg)
+{
+  boost::property_tree::ptree & nValue = node.add("v","");
+  nValue.add("status",(int)arg.m_status);
+  nValue.add("color-r",(int)arg.m_color.r());
+  nValue.add("color-g",(int)arg.m_color.g());
+  nValue.add("color-b",(int)arg.m_color.b());
+}
+
+}
 
 class Myitems
 {
 public:
   template < class Refs >
-  struct Dart_wrapper 
+  struct Dart_wrapper
   {
     typedef CGAL::Dart<3, Refs > Dart;
-    
+
     typedef CGAL::Cell_attribute_with_point< Refs > Vertex_attrib;
     typedef CGAL::Cell_attribute< Refs, Volume_info> Volume_attrib;
-    
+
     typedef CGAL::cpp11::tuple<Vertex_attrib,void,void,
                                Volume_attrib> Attributes;
   };
