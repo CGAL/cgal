@@ -450,9 +450,9 @@ public:
 
   /// \cgalAdvancedBegin
   /// Controls the velocity of movement and approximation quality:
-  /// increasing this value makes the mean curvature flow based contraction converge
+  /// decreasing this value makes the mean curvature flow based contraction converge
   /// faster, but results in a skeleton of lower quality.
-  /// This parameter corresponds to \f$ w_L/w_H \f$ in the original publication.
+  /// This parameter corresponds to \f$ w_H \f$ in the original publication.
   /// \cgalAdvancedEnd
   double quality_speed_tradeoff()
   {
@@ -470,10 +470,10 @@ public:
 
   /// \cgalAdvancedBegin
   /// Controls the smoothness of the medial approximation:
-  /// increasing this value results in a skeleton closer
-  /// to the medial axis, but slows down the speed of contraction.
+  /// increasing this value results in a (less smooth) skeleton closer
+  /// to the medial axis, as well as a lower convergence speed.
   /// It is only used if `is_medially_centered()==true`.
-  /// This parameter corresponds to \f$ w_L/w_M \f$ in the original publication.
+  /// This parameter corresponds to \f$ w_M \f$ in the original publication.
   /// \cgalAdvancedEnd
   double medially_centered_speed_tradeoff()
   {
