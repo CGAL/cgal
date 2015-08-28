@@ -579,7 +579,7 @@ Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    QColor color=QColor(0,0,0);
+    QColor color = this->color().lighter(120);
 
     program->setAttributeValue("colors", color);
     //draw the edges
