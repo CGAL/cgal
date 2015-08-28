@@ -51,7 +51,7 @@ int main()
 
   PolygonWithHolesPtrVector offset_poly_with_holes = CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2(lOffset,poly);
   
-print_polygons_with_holes(offset_poly_with_holes);
+  print_polygons_with_holes(offset_poly_with_holes);
 
   return 0;
 }
