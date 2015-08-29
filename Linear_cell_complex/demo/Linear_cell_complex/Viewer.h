@@ -90,8 +90,8 @@ public Q_SLOTS:
 
 private:
   bool are_buffers_initialized;
-  //Shaders elements
 
+  //Shaders elements
   int vertexLocation[3];
   int normalsLocation;
   int mvpLocation[2];
@@ -113,11 +113,13 @@ private:
   QOpenGLShaderProgram rendering_program_p_l;
 
   void initialize_buffers();
-  void compute_elements();
   void attrib_buffers(QGLViewer*);
   void compile_shaders();
-  void triangulate_facet();
-  bool is_Triangulated();
+  
+  void compute_elements();
+  void compute_faces(Dart_handle dh);
+  void compute_edges(Dart_handle dh);
+  void compute_vertices(Dart_handle dh, bool empty);
 };
 
 #endif
