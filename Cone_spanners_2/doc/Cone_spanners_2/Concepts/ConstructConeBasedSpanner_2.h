@@ -67,9 +67,9 @@ Construct_spanner_2(unsigned int k, Direction_2 initial_direction = Direction_2(
  *          If omitted, the type of the Iterator can be inferred from the arguments passed to the 
  *          operator().
  *
- * \param start[in] An iterator pointing to the first point (vertex).
- * \param end[in]   An iterator pointing to the place that passes the last point.
- * \param g[out]    The constructed graph object.
+ * \param[in] start An iterator pointing to the first point (vertex).
+ * \param[in] end   An iterator pointing to the place that passes the last point.
+ * \param[out] g   The constructed graph object.
  */
 template <typename PointInputIterator>
 Graph_& operator()(const PointInputIterator& start,
