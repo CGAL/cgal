@@ -2,6 +2,7 @@
 
 #include <CGAL/Cartesian.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
+#include <CGAL/Default_diagonalize_traits.h>
 
 #include <list>
 
@@ -34,28 +35,23 @@ int main(void)
   Kernel kernel;
   Point centroid;
 
-#ifdef CGAL_EIGEN3_ENABLED
-  CGAL::Eigen_diagonalize_traits<typename Kernel::FT, 3> diagonalize_traits;
-#else
-  CGAL::Internal_diagonalize_traits<typename Kernel::FT, 3> diagonalize_traits;
-#endif
 
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,centroid,CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,centroid,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,centroid,CGAL::Dimension_tag<3>(),kernel,
-				 diagonalize_traits);
+				 CGAL::Default_diagonalize_traits<FT,3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),line,centroid,CGAL::Dimension_tag<2>(),kernel,
-				 diagonalize_traits);
+				 CGAL::Default_diagonalize_traits<FT,3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,centroid,CGAL::Dimension_tag<3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,centroid,CGAL::Dimension_tag<2>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,centroid,CGAL::Dimension_tag<3>(),kernel,
-				 diagonalize_traits);
+				 CGAL::Default_diagonalize_traits<FT,3>());
   linear_least_squares_fitting_3(spheres.begin(),spheres.end(),plane,centroid,CGAL::Dimension_tag<2>(),kernel,
-				 diagonalize_traits);
+				 CGAL::Default_diagonalize_traits<FT,3>());
 
   return 0;
 }

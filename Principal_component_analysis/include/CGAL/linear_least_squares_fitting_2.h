@@ -29,12 +29,7 @@
 #include <CGAL/linear_least_squares_fitting_circles_2.h>
 #include <CGAL/linear_least_squares_fitting_rectangles_2.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/Internal_diagonalize_traits.h>
-
-#ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_diagonalize_traits.h>
-#endif
-
+#include <CGAL/Default_diagonalize_traits.h>
 #include <iterator>
 
 namespace CGAL {
@@ -77,12 +72,7 @@ linear_least_squares_fitting_2(InputIterator first,
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
   return CGAL::linear_least_squares_fitting_2
     (first,beyond,line,centroid,tag,Kernel(),
-#ifdef CGAL_EIGEN3_ENABLED
-     Eigen_diagonalize_traits<typename Kernel::FT, 2>()
-#else
-     Internal_diagonalize_traits<typename Kernel::FT, 2>()
-#endif
-     );
+     Default_diagonalize_traits<typename Kernel::FT, 2>());
 }
 
 template < typename InputIterator, 
@@ -99,12 +89,7 @@ linear_least_squares_fitting_2(InputIterator first,
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
   typename Kernel::Point_2 centroid; // unused
   return CGAL::linear_least_squares_fitting_2(first,beyond,line,centroid,tag,Kernel(),
-#ifdef CGAL_EIGEN3_ENABLED
-     Eigen_diagonalize_traits<typename Kernel::FT, 2>()
-#else
-     Internal_diagonalize_traits<typename Kernel::FT, 2>()
-#endif
-     );
+					      Default_diagonalize_traits<typename Kernel::FT, 2>());
 }
 
 

@@ -19,11 +19,7 @@
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
 
-#ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_diagonalize_traits.h>
-#else
-#include <CGAL/Internal_diagonalize_traits.h>
-#endif
+#include <CGAL/Default_diagonalize_traits.h>
 
 #include <CGAL/Approximate_min_ellipsoid_d.h>
 
@@ -161,13 +157,8 @@ namespace CGAL {
     CGAL::cpp11::array<double, 4> eigenvectors; // Note: not neces. normalized.
     CGAL::cpp11::array<double, 2> eigenvalues;  // Note: sorted ascendent.
 
-#ifdef CGAL_EIGEN3_ENABLED
-    CGAL::Eigen_diagonalize_traits<double, 2>::diagonalize_selfadjoint_covariance_matrix
+    CGAL::Default_diagonalize_traits<double, 2>::diagonalize_selfadjoint_covariance_matrix
       (matrix, eigenvalues, eigenvectors);
-#else
-    CGAL::Internal_diagonalize_traits<double, 2>::diagonalize_selfadjoint_covariance_matrix
-      (matrix, eigenvalues, eigenvectors);
-#endif
     
     // normalize eigenvectors:
     double l1=1.0/std::sqrt(eigenvectors[2]*eigenvectors[2]+
@@ -208,13 +199,9 @@ namespace CGAL {
     
     CGAL::cpp11::array<double, 9> eigenvectors; // Note: not necessarily normalized.
     CGAL::cpp11::array<double, 3> eigenvalues;  // Note: sorted ascendent.
-#ifdef CGAL_EIGEN3_ENABLED
-    CGAL::Eigen_diagonalize_traits<double, 3>::diagonalize_selfadjoint_covariance_matrix
+
+    CGAL::Default_diagonalize_traits<double, 3>::diagonalize_selfadjoint_covariance_matrix
       (matrix, eigenvalues, eigenvectors);
-#else
-    CGAL::Internal_diagonalize_traits<double, 3>::diagonalize_selfadjoint_covariance_matrix
-      (matrix, eigenvalues, eigenvectors);
-#endif
     
     // normalize eigenvectors:
     double l1 = 1.0/std::sqrt(eigenvectors[0] * eigenvectors[0]+  // x^2

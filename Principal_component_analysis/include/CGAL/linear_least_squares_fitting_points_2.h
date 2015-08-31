@@ -22,13 +22,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/centroid.h>
-
-#include <CGAL/Internal_diagonalize_traits.h>
-
-#ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_diagonalize_traits.h>
-#endif
-
 #include <iterator>
 #include <cmath>
 
