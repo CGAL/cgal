@@ -1162,7 +1162,7 @@ private:
     Subdomain operator()(const Cell_handle& ch, const bool update = true) const
     {
       if ( c3t3_.triangulation().is_infinite(ch) )
-        return false;
+        return Subdomain();
 
       // treat cell
       const Subdomain subdomain =
