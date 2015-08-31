@@ -29,10 +29,10 @@
 #include <CGAL/linear_least_squares_fitting_circles_2.h>
 #include <CGAL/linear_least_squares_fitting_rectangles_2.h>
 #include <CGAL/Dimension.h>
-#include <CGAL/Internal_vcm_traits.h>
+#include <CGAL/Internal_diagonalize_traits.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_vcm_traits.h>
+#include <CGAL/Eigen_diagonalize_traits.h>
 #endif
 
 #include <iterator>
@@ -42,7 +42,7 @@ namespace CGAL {
 template < typename InputIterator, 
            typename Kernel,
 	   typename Tag,
-	   typename Vcm_traits>
+	   typename Diagonalize_traits>
 inline
 typename Kernel::FT
 linear_least_squares_fitting_2(InputIterator first,
@@ -51,16 +51,16 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename Kernel::Point_2& centroid,
                                const Tag& tag,
 			       const Kernel& kernel,
-			       const Vcm_traits vcm_traits)
+			       const Diagonalize_traits diagonalize_traits)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   return internal::linear_least_squares_fitting_2(first, beyond, line,
 						  centroid,(Value_type*)NULL,kernel,tag,
-						  vcm_traits);
+						  diagonalize_traits);
 }
 
 // deduces the kernel from the points in container.
-// Use default Vcm_traits
+// Use default Diagonalize_traits
 template < typename InputIterator, 
            typename Line,
            typename Point,
@@ -78,9 +78,9 @@ linear_least_squares_fitting_2(InputIterator first,
   return CGAL::linear_least_squares_fitting_2
     (first,beyond,line,centroid,tag,Kernel(),
 #ifdef CGAL_EIGEN3_ENABLED
-     Eigen_vcm_traits<typename Kernel::FT, 2>()
+     Eigen_diagonalize_traits<typename Kernel::FT, 2>()
 #else
-     Internal_vcm_traits<typename Kernel::FT, 2>()
+     Internal_diagonalize_traits<typename Kernel::FT, 2>()
 #endif
      );
 }
@@ -100,9 +100,9 @@ linear_least_squares_fitting_2(InputIterator first,
   typename Kernel::Point_2 centroid; // unused
   return CGAL::linear_least_squares_fitting_2(first,beyond,line,centroid,tag,Kernel(),
 #ifdef CGAL_EIGEN3_ENABLED
-     Eigen_vcm_traits<typename Kernel::FT, 2>()
+     Eigen_diagonalize_traits<typename Kernel::FT, 2>()
 #else
-     Internal_vcm_traits<typename Kernel::FT, 2>()
+     Internal_diagonalize_traits<typename Kernel::FT, 2>()
 #endif
      );
 }

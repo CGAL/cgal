@@ -1,9 +1,9 @@
 #include <iostream>
 
 #ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_vcm_traits.h>
+#include <CGAL/Eigen_diagonalize_traits.h>
 #else
-#include <CGAL/Internal_vcm_traits.h>
+#include <CGAL/Internal_diagonalize_traits.h>
 #endif
 
 
@@ -12,9 +12,9 @@ typedef CGAL::cpp11::array<FT, 6> Eigen_matrix;
 typedef CGAL::cpp11::array<FT, 3> Eigen_vector;
 typedef CGAL::cpp11::array<FT, 9> Eigen_three_vectors;
 #ifdef CGAL_EIGEN3_ENABLED
-typedef CGAL::Eigen_vcm_traits<FT, 3> Vcm_traits;
+typedef CGAL::Eigen_diagonalize_traits<FT, 3> Diagonalize_traits;
 #else
-typedef CGAL::Internal_vcm_traits<FT, 3> Vcm_traits;
+typedef CGAL::Internal_diagonalize_traits<FT, 3> Diagonalize_traits;
 #endif
 
 int main(void)
@@ -27,9 +27,9 @@ int main(void)
   Eigen_vector eigenvalues;
   Eigen_three_vectors eigenvectors;
 
-  if (!(Vcm_traits::diagonalize_selfadjoint_covariance_matrix (covariance,
-							       eigenvalues,
-							       eigenvectors)))
+  if (!(Diagonalize_traits::diagonalize_selfadjoint_covariance_matrix (covariance,
+								       eigenvalues,
+								       eigenvectors)))
     {
       std::cerr << "Error: cannot diagonalize matrix" << std::endl;
       return -1;

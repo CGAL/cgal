@@ -20,9 +20,9 @@
 
 
 #ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_vcm_traits.h>
+#include <CGAL/Eigen_diagonalize_traits.h>
 #else
-#include <CGAL/Internal_vcm_traits.h>
+#include <CGAL/Internal_diagonalize_traits.h>
 #endif
 
 #include <CGAL/Approximate_min_ellipsoid_d.h>
@@ -162,10 +162,10 @@ namespace CGAL {
     CGAL::cpp11::array<double, 2> eigenvalues;  // Note: sorted ascendent.
 
 #ifdef CGAL_EIGEN3_ENABLED
-    CGAL::Eigen_vcm_traits<double, 2>::diagonalize_selfadjoint_covariance_matrix
+    CGAL::Eigen_diagonalize_traits<double, 2>::diagonalize_selfadjoint_covariance_matrix
       (matrix, eigenvalues, eigenvectors);
 #else
-    CGAL::Internal_vcm_traits<double, 2>::diagonalize_selfadjoint_covariance_matrix
+    CGAL::Internal_diagonalize_traits<double, 2>::diagonalize_selfadjoint_covariance_matrix
       (matrix, eigenvalues, eigenvectors);
 #endif
     
@@ -209,10 +209,10 @@ namespace CGAL {
     CGAL::cpp11::array<double, 9> eigenvectors; // Note: not necessarily normalized.
     CGAL::cpp11::array<double, 3> eigenvalues;  // Note: sorted ascendent.
 #ifdef CGAL_EIGEN3_ENABLED
-    CGAL::Eigen_vcm_traits<double, 3>::diagonalize_selfadjoint_covariance_matrix
+    CGAL::Eigen_diagonalize_traits<double, 3>::diagonalize_selfadjoint_covariance_matrix
       (matrix, eigenvalues, eigenvectors);
 #else
-    CGAL::Internal_vcm_traits<double, 3>::diagonalize_selfadjoint_covariance_matrix
+    CGAL::Internal_diagonalize_traits<double, 3>::diagonalize_selfadjoint_covariance_matrix
       (matrix, eigenvalues, eigenvectors);
 #endif
     

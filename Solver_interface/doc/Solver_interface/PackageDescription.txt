@@ -28,17 +28,19 @@
 - `SparseLinearAlgebraTraits_d`
 - `SparseLinearAlgebraTraitsWithFactor_d`
 - `SvdTraits`
-- `VCMTraits`
+- `DiagonalizeTraits`
 
 ## Classes ##
 
 - `CGAL::Eigen_solver_traits`
 - `CGAL::Eigen_svd`
-- `CGAL::Eigen_vcm_traits`
+- `CGAL::Eigen_diagonalize_traits`
 - `CGAL::Eigen_matrix`
 - `CGAL::Eigen_vector`
 - `CGAL::Eigen_sparse_matrix`
 - `CGAL::Eigen_sparse_symmetric_matrix`
+- `CGAL::Internal_diagonalize_traits`
+- `CGAL::Lapack_svd`
 
 */
 

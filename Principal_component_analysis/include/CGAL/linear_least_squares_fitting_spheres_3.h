@@ -33,7 +33,7 @@ namespace internal {
 // fits a plane to a set of 3D balls (3D)
 template < typename InputIterator, 
            typename K,
-	   typename Vcm_traits >
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -42,7 +42,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                const typename K::Sphere_3*,  // used for indirection
                                const K& k,                   // kernel
 			       const CGAL::Dimension_tag<3>& tag,
-			       const Vcm_traits& vcm_traits)
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3    Sphere;
@@ -58,14 +58,14 @@ linear_least_squares_fitting_3(InputIterator first,
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) NULL,tag);
   
   // compute fitting plane
-  return fitting_plane_3(covariance,c,plane,k,vcm_traits);
+  return fitting_plane_3(covariance,c,plane,k,diagonalize_traits);
 
 } // end linear_least_squares_fitting_spheres_3
 
 // fits a plane to a 3D sphere set
 template < typename InputIterator, 
            typename K,
-	   typename Vcm_traits >
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -74,7 +74,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                const typename K::Sphere_3*,  // used for indirection
                                const K& k,                   // kernel
 			       const CGAL::Dimension_tag<2>& tag,
-			       const Vcm_traits& vcm_traits)
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3    Sphere;
@@ -90,7 +90,7 @@ linear_least_squares_fitting_3(InputIterator first,
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) NULL,tag);
   
   // compute fitting plane
-  return fitting_plane_3(covariance,c,plane,k,vcm_traits);
+  return fitting_plane_3(covariance,c,plane,k,diagonalize_traits);
 
 } // end linear_least_squares_fitting_spheres_3
 
@@ -98,7 +98,7 @@ linear_least_squares_fitting_3(InputIterator first,
 // fits a line to a 3D ball set
 template < typename InputIterator, 
            typename K,
-	   typename Vcm_traits >
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -107,7 +107,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                const typename K::Sphere_3*,  // used for indirection
                                const K& k,                   // kernel
 			       const CGAL::Dimension_tag<3>& tag,
-			       const Vcm_traits& vcm_traits)
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3  Sphere;
@@ -124,14 +124,14 @@ linear_least_squares_fitting_3(InputIterator first,
 
 
   // compute fitting line
-  return fitting_line_3(covariance,c,line,k,vcm_traits);
+  return fitting_line_3(covariance,c,line,k,diagonalize_traits);
   
 } // end linear_least_squares_fitting_spheres_3
 
 // fits a line to a 3D sphere set
 template < typename InputIterator, 
            typename K,
-	   typename Vcm_traits >
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -140,7 +140,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                const typename K::Sphere_3*,  // used for indirection
                                const K& k,                   // kernel
 			       const CGAL::Dimension_tag<2>& tag,
-			       const Vcm_traits& vcm_traits)
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3  Sphere;
@@ -156,7 +156,7 @@ linear_least_squares_fitting_3(InputIterator first,
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) NULL,tag);
 
   // compute fitting line
-  return fitting_line_3(covariance,c,line,k,vcm_traits);
+  return fitting_line_3(covariance,c,line,k,diagonalize_traits);
 
 } // end linear_least_squares_fitting_spheres_3
 

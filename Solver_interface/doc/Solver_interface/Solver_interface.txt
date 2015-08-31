@@ -16,20 +16,20 @@ equivalent models for other solvers, for example those found in the
 <a href="https://software.intel.com/en-us/intel-mkl">Intel Math Kernel Library (MKL)</a>.
 
 
-\section SectionSolverVCM Matrix Diagonalization
+\section SectionSolverDiagonalize Matrix Diagonalization
 
-The concept `VCMTraits<T,dim>` defines an interface for the
+The concept `DiagonalizeTraits<T,dim>` defines an interface for the
 diagonalization and computation of eigenvectors and eigenvalues of a
 symmetric matrix. `T` is the number type and `dim` is the dimension of
 the matrices and vector (set to 3 by default). We provide two models
 for this concept:
 
-- `Eigen_vcm_traits<T,dim>` uses the \ref thirdpartyEigen library.
-- `Internal_vcm_traits<T,dim>` is an internal implementation that does not
+- `Eigen_diagonalize_traits<T,dim>` uses the \ref thirdpartyEigen library.
+- `Internal_diagonalize_traits<T,dim>` is an internal implementation that does not
 depend on another library.
 
 Although both models achieve the same computation,
-`Eigen_vcm_traits<T,dim>` is faster and should thus be used if the
+`Eigen_diagonalize_traits<T,dim>` is faster and should thus be used if the
 \ref thirdpartyEigen library is available. The eigenvalues are stored
 in ascending order and eigenvectors are stored in accordance.
 

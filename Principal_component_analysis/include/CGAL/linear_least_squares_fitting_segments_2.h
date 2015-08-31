@@ -38,7 +38,7 @@ namespace internal {
 //  0 is worst (isotropic case, returns a line with horizontal
 //              direction by default)
 
-template < typename InputIterator, typename K, typename Vcm_traits >
+template < typename InputIterator, typename K, typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
@@ -47,7 +47,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                const typename K::Segment_2*,// used for indirection
                                const K&,                   // kernel
 			       const CGAL::Dimension_tag<1>& tag,
-			       const Vcm_traits&)
+			       const Diagonalize_traits&)
 {
   // types
   typedef typename K::FT       FT;
@@ -116,7 +116,7 @@ linear_least_squares_fitting_2(InputIterator first,
   std::pair<Vector,Vector> eigen_vectors;
   CGAL::cpp11::array<FT, 2> eigen_values1 = {{ 0. , 0. }};
   CGAL::cpp11::array<FT, 4> eigen_vectors1 = {{ 0., 0., 0. }};
-  Vcm_traits::diagonalize_selfadjoint_covariance_matrix
+  Diagonalize_traits::diagonalize_selfadjoint_covariance_matrix
     (covariance, eigen_values1, eigen_vectors1);
 
   eigen_values = std::make_pair(eigen_values1[1],eigen_values1[0]);
@@ -138,7 +138,7 @@ linear_least_squares_fitting_2(InputIterator first,
   } 
 } // end linear_least_squares_fitting_2 for segment set with 1D tag
 
-template < typename InputIterator, typename K, typename Vcm_traits >
+template < typename InputIterator, typename K, typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
@@ -147,7 +147,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                const typename K::Segment_2*,// used for indirection
                                const K& k,                   // kernel
 			       const CGAL::Dimension_tag<0>& tag,
-			       const Vcm_traits& vcm_traits)
+			       const Diagonalize_traits& diagonalize_traits)
 {
   // types
   typedef typename K::Point_2  Point;
@@ -166,7 +166,7 @@ linear_least_squares_fitting_2(InputIterator first,
     points.push_back(s[1]);
   } 
   return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,k,(Point*)NULL,tag,
-					vcm_traits);
+					diagonalize_traits);
 
 } // end linear_least_squares_fitting_2 for segment set with 1D tag
 

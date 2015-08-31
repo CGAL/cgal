@@ -29,9 +29,9 @@
 #include <CGAL/linear_least_squares_fitting_tetrahedra_3.h>
 #include <CGAL/linear_least_squares_fitting_spheres_3.h>
 
-#include <CGAL/Internal_vcm_traits.h>
+#include <CGAL/Internal_diagonalize_traits.h>
 #ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_vcm_traits.h>
+#include <CGAL/Eigen_diagonalize_traits.h>
 #endif
 
 #include <CGAL/Dimension.h>
@@ -46,7 +46,7 @@ template < typename InputIterator,
            typename Object,
            typename Kernel,
            typename Tag,
-	   typename Vcm_traits >
+	   typename Diagonalize_traits >
 inline
 typename Kernel::FT
 linear_least_squares_fitting_3(InputIterator first,
@@ -55,16 +55,16 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename Kernel::Point_3& centroid, 
                                const Tag& tag, // dimension tag, ranges from 0 to 3
 			       const Kernel& kernel,
-			       const Vcm_traits vcm_traits)
+			       const Diagonalize_traits diagonalize_traits)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   return internal::linear_least_squares_fitting_3(first, beyond, object,
 						  centroid, (Value_type*) NULL, kernel, tag,
-						  vcm_traits);
+						  diagonalize_traits);
 }
 
 // deduces kernel from value type of input iterator
-// use default Vcm_traits
+// use default Diagonalize_traits
 template < typename InputIterator, 
            typename Object,
 	   typename Point,
@@ -81,16 +81,16 @@ linear_least_squares_fitting_3(InputIterator first,
   typedef typename Kernel_traits<Value_type>::Kernel Kernel;
   return CGAL::linear_least_squares_fitting_3(first,beyond,object,centroid,tag,Kernel(),
 #ifdef CGAL_EIGEN3_ENABLED
-					      Eigen_vcm_traits<typename Kernel::FT, 3>()
+					      Eigen_diagonalize_traits<typename Kernel::FT, 3>()
 #else
-					      Internal_vcm_traits<typename Kernel::FT, 3>()
+					      Internal_diagonalize_traits<typename Kernel::FT, 3>()
 #endif
 					      );
 
 }
 
 // deduces kernel and does not write centroid
-// use default Vcm_traits
+// use default Diagonalize_traits
 template < typename InputIterator, 
            typename Object,
            typename Tag>
@@ -106,9 +106,9 @@ linear_least_squares_fitting_3(InputIterator first,
   typename Kernel::Point_3 centroid; // not used by caller
   return CGAL::linear_least_squares_fitting_3(first,beyond,object,centroid,tag,Kernel(),
 #ifdef CGAL_EIGEN3_ENABLED
-					      Eigen_vcm_traits<typename Kernel::FT, 3>()
+					      Eigen_diagonalize_traits<typename Kernel::FT, 3>()
 #else
-					      Internal_vcm_traits<typename Kernel::FT, 3>()
+					      Internal_diagonalize_traits<typename Kernel::FT, 3>()
 #endif
 					      );
 

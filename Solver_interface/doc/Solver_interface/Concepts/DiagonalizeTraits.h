@@ -3,8 +3,9 @@
 \cgalConcept
 
 Concept providing functions to extract eigenvectors and eigenvalue
-from covariance matrices represented by an array `a`. For example, a
-matrix of dimension 3 is defined as follows:
+from covariance matrices represented by an array `a`, using symmetric
+diagonalization. For example, a matrix of dimension 3 is defined as
+follows:
 <center>
 \f$ \begin{bmatrix}
   a[0] & a[1] & a[2] \\
@@ -12,11 +13,11 @@ matrix of dimension 3 is defined as follows:
   a[2] & a[4] & a[5] \\
  \end{bmatrix}\f$
 </center>
-\cgalHasModel `CGAL::Eigen_vcm_traits`
-\cgalHasModel `CGAL::Internal_vcm_traits`
+\cgalHasModel `CGAL::Eigen_diagonalize_traits`
+\cgalHasModel `CGAL::Internal_diagonalize_traits`
 */
 template <typename FT, unsigned int dim = 3>
-class VCMTraits
+class DiagonalizeTraits
 {
 public:
   /// fill `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.

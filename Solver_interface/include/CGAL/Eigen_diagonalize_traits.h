@@ -18,8 +18,8 @@
 // Author(s) : Jocelyn Meyron and Quentin Mérigot
 //
 
-#ifndef CGAL_EIGEN_VCM_TRAITS_H
-#define CGAL_EIGEN_VCM_TRAITS_H
+#ifndef CGAL_EIGEN_DIAGONALIZE_TRAITS_H
+#define CGAL_EIGEN_DIAGONALIZE_TRAITS_H
 
 #include <Eigen/Dense>
 #include <Eigen/Eigenvalues>
@@ -28,11 +28,11 @@
 
 namespace CGAL {
 
-/// A model of the concept `VCMTraits` using \ref thirdpartyEigen.
-/// \cgalModels `VCMTraits`
+/// A model of the concept `DiagonalizeTraits` using \ref thirdpartyEigen.
+/// \cgalModels `DiagonalizeTraits`
 
 template <typename FT, unsigned int dim = 3>
-class Eigen_vcm_traits{
+class Eigen_diagonalize_traits{
 
   typedef Eigen::Matrix<FT, dim, dim> Matrix;
   typedef Eigen::Matrix<FT, dim, 1> Vector;
@@ -146,4 +146,4 @@ public:
 
 } // namespace CGAL
 
-#endif // CGAL_EIGEN_VCM_TRAITS_H
+#endif // CGAL_EIGEN_DIAGONALIZE_TRAITS_H

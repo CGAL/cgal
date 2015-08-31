@@ -3,9 +3,11 @@ namespace CGAL {
 /*!
 \ingroup PkgSolver
 
-The class `Internal_vcm_traits` provides an internal implementation for the diagonalization of Variance-Covariance Matrices.
+The class `Internal_diagonalize_traits` provides an internal
+implementation for the diagonalization of Variance-Covariance
+Matrices.
 
-\cgalModels `VCMTraits`
+\cgalModels `DiagonalizeTraits`
 
 
 `FT`: floating type
@@ -20,7 +22,7 @@ Example
 
   
 template <typename FT, unsigned int dim = 3>
-class Internal_vcm_traits{
+class Internal_diagonalize_traits{
 
 public:
   static bool

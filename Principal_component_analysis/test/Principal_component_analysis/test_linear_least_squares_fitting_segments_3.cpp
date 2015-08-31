@@ -5,9 +5,9 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Internal_vcm_traits.h>
+#include <CGAL/Internal_diagonalize_traits.h>
 #ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_vcm_traits.h>
+#include <CGAL/Eigen_diagonalize_traits.h>
 #endif
 
 #include <vector>
@@ -40,9 +40,9 @@ FT fit_set(std::list<Segment>& segments,
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<1>());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),line,centroid,CGAL::Dimension_tag<1>(),kernel,
 #ifdef CGAL_EIGEN3_ENABLED
-					   CGAL::Eigen_vcm_traits<typename Kernel::FT, 3>()
+					   CGAL::Eigen_diagonalize_traits<typename Kernel::FT, 3>()
 #else
-					   CGAL::Internal_vcm_traits<typename Kernel::FT, 3>()
+					   CGAL::Internal_diagonalize_traits<typename Kernel::FT, 3>()
 #endif
 					   );
 
@@ -51,9 +51,9 @@ FT fit_set(std::list<Segment>& segments,
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<1>());
   quality = linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,centroid,CGAL::Dimension_tag<1>(),kernel,
 #ifdef CGAL_EIGEN3_ENABLED
-					   CGAL::Eigen_vcm_traits<typename Kernel::FT, 3>()
+					   CGAL::Eigen_diagonalize_traits<typename Kernel::FT, 3>()
 #else
-					   CGAL::Internal_vcm_traits<typename Kernel::FT, 3>()
+					   CGAL::Internal_diagonalize_traits<typename Kernel::FT, 3>()
 #endif
 					   );
 

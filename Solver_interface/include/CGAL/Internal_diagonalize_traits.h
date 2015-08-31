@@ -1,15 +1,15 @@
-#ifndef CGAL_INTERNAL_VCM_TRAITS_H
-#define CGAL_INTERNAL_VCM_TRAITS_H
+#ifndef CGAL_INTERNAL_DIAGONALIZE_TRAITS_H
+#define CGAL_INTERNAL_DIAGONALIZE_TRAITS_H
 
 #include <CGAL/array.h>
 
 namespace CGAL {
 
-  /// A model of the concept `VCMTraits` 
-  /// \cgalModels `VCMTraits`
+  /// A model of the concept `DiagonalizeTraits` 
+  /// \cgalModels `DiagonalizeTraits`
 
 template <typename FT, unsigned int dim = 3>
-class Internal_vcm_traits{
+class Internal_diagonalize_traits{
 
  public:
     static bool
@@ -244,4 +244,4 @@ class Internal_vcm_traits{
 
 } // namespace CGAL
 
-#endif // CGAL_INTERNAL_VCM_TRAITS_H
+#endif // CGAL_INTERNAL_DIAGONALIZE_TRAITS_H
