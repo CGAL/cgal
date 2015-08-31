@@ -63,17 +63,17 @@ if (EIGEN3_FOUND)
 endif(EIGEN3_FOUND)
 
 # Activate concurrency?
-option(ACTIVATE_CONCURRENCY
+option(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY
   "Enable concurrency"
   ON)
 
-if( ACTIVATE_CONCURRENCY )
+if( POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY )
   find_package( TBB )
   if( TBB_FOUND )
     include( ${TBB_USE_FILE} )
     list( APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES} )
   else()
-    message( STATUS "NOTICE: Intel TBB NOT found! The example is faster if TBB is linked." )
+    message( STATUS "NOTICE: Intel TBB was not found. Bilateral smoothing and WLOP plugins are faster if TBB is linked." )
   endif()
 endif()
 
