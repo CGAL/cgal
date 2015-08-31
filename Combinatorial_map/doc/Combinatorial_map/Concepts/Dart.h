@@ -38,24 +38,24 @@ static unsigned int dimension;
 /// @{
 
 /*!
-%Dart handle type.
+%Dart handle type. Must be a model of `Handle` concept.
 */
 typedef unspecified_type Dart_handle;
 
 /*!
-%Dart const handle type.
+%Dart const handle type. Must be a model of `ConstHandle` concept.
 */
 typedef unspecified_type Dart_const_handle;
 
 /*!
-`Attribute_handle<i>::%type` is a handle to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `dimension`.
+`Attribute_handle<i>::%type` is a handle to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `dimension`. Must be a model of `Handle` concept.
 \note It can be implemented using a nested template class.
 */
 template <unsigned int i>
 using Attribute_handle = unspecified_type;
 
 /*!
-`Attribute_const_handle<i>::%type` is a const handle to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `dimension`.
+`Attribute_const_handle<i>::%type` is a const handle to `i`-attributes, with 0 \f$ \leq \f$ `i` \f$ \leq \f$ `dimension`. Must be a model of `ConstHandle` concept.
 \note It can be implemented using a nested template class.
 */
 template <unsigned int i>
@@ -161,4 +161,3 @@ Attribute_const_handle<i>::type attribute() const;
 /// @}
 
 }; /* end Dart */
-
