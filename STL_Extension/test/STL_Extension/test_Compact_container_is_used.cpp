@@ -1,17 +1,6 @@
 // test program for Compact_container.
 
-#include <CGAL/basic.h>
-#include <cassert>
-#include <cstddef>
-#include <list>
-#include <vector>
 #include <CGAL/Compact_container.h>
-#include <CGAL/Random.h>
-#include <CGAL/Testsuite/use.h>
-
-#include <CGAL/tags.h>
-#include <CGAL/use.h>
-#include <CGAL/assertions.h>
 
 class Node_1
 {
@@ -40,7 +29,8 @@ int main()
     return EXIT_FAILURE;
   }
 
-  for (int i = 0 ; i < 1000 ; ++i)
+  std::size_t nb=0;
+  for (nb = 0 ; nb < 10000 ; ++nb)
   {
     C1::iterator it=c1.emplace();
     if ( !c1.is_used(it) )
@@ -48,9 +38,14 @@ int main()
       std::cout<<"PB new emplace element is not used."<<std::endl;
       return EXIT_FAILURE;
     }
+    if ( !c1.is_used(nb) )
+    {
+      std::cout<<"PB new emplace element is not used (2)."<<std::endl;
+      return EXIT_FAILURE;
+    }
   }
 
-  std::size_t nb=0;
+  nb=0;
   for (C1::iterator it = c1.begin(), itend=c1.end(); it!=itend; ++it, ++nb)
   {
     c1.erase(it);
