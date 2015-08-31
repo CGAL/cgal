@@ -449,7 +449,7 @@ bilateral_smooth_point_set(
     CGAL_point_set_processing_precondition(n.squared_length() > 1e-10);
     
     pwns.push_back(Pwn(p, n));
-   }
+  }
 
   std::size_t nb_points = pwns.size();
 
