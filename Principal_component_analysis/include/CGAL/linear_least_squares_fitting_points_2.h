@@ -22,7 +22,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/centroid.h>
-#include <CGAL/eigen_2.h>
+
 #include <CGAL/Internal_diagonalize_traits.h>
 
 #ifdef CGAL_EIGEN3_ENABLED
