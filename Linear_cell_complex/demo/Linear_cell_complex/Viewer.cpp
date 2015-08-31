@@ -538,18 +538,18 @@ void Viewer::attrib_buffers(QGLViewer* viewer)
     mvMatrix.data()[i] = (float)mat[i];
   }
   // define material
-  QVector4D ambient(0.1f, 0.1f, 0.1f, 1.0f);
+  QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
   QVector4D diffuse( 0.9f,
                      0.9f,
                      0.9f,
-                     0.0f );
+                     0.9f );
   
   QVector4D specular( 0.0f,
                       0.0f,
                       0.0f,
-                      0.0f );
+                      1.0f );
   
-  QVector4D position( 0.0f, -10.0f, -10.0f, 0.0f  );
+  QVector4D position( 10.0f, 10.0f, 10.0f, 0.0f  );
   GLfloat shininess =  1.0f;
   
   rendering_program.bind();
@@ -669,7 +669,6 @@ void Viewer::init()
   ::glEnable(GL_LIGHTING);
 
   ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
-  // ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 
   if (flatShading)
   {
@@ -697,7 +696,6 @@ void Viewer::keyPressEvent(QKeyEvent *e)
 {
   const Qt::KeyboardModifiers modifiers = e->modifiers();
 
-  bool handled = false;
   if ((e->key()==Qt::Key_W) && (modifiers==Qt::NoButton))
   {
     wireframe = !wireframe;
@@ -705,7 +703,6 @@ void Viewer::keyPressEvent(QKeyEvent *e)
       glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
     else
       glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-    handled = true;
     updateGL();
   }
   else if ((e->key()==Qt::Key_F) && (modifiers==Qt::NoButton))
@@ -729,23 +726,19 @@ void Viewer::keyPressEvent(QKeyEvent *e)
       ::glBlendFunc(GL_ONE, GL_ZERO);
       ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
     }
-    handled = true;
     updateGL();
   }
   else if ((e->key()==Qt::Key_E) && (modifiers==Qt::NoButton))
   {
     edges = !edges;
-    handled = true;
     updateGL();
   }
   else if ((e->key()==Qt::Key_V) && (modifiers==Qt::NoButton))
   {
     vertices = !vertices;
-    handled = true;
     updateGL();
   }
-
-  if (!handled)
+  else
     QGLViewer::keyPressEvent(e);
 }
 
