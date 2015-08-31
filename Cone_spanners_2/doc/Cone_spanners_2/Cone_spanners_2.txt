@@ -110,8 +110,7 @@ parameter `rays` is used to return the computation results, which stores a vecto
 of directions for the rays from \f$l_0\f$ to \f$l_{k-1}\f$ respectively. 
 -->
 
-For the details of the constructor and the `operator()` of this functor, please refer to the 
-developer's manual. This functor is currently used by the functors 
+This functor is currently used by the functors 
 `CGAL::Construct_theta_graph_2` and `CGAL::Construct_yao_graph_2` 
 in constructing Theta and Yao graphs. This functor can also be used in other applications where the plane needs to be
 divided into equally-angled cones. For how to use this functor to compute cone boundaries in writing an application, 
@@ -132,16 +131,19 @@ this functor will call the corresponding specialization of
 `CGAL::Compute_cone_boundaries_2` to compute the cone boundaries exactly and then
 add edges in each cone. If not, this functor will call the general
 `CGAL::Compute_cone_boundaries_2` to compute the cone boundaries inexactly and then
-add edges. Since all calculations in adding edges use the predicates or construction 
-functions from CGAL, the type given in `Kernel_` essentially determines whether the
+add edges. In the stage of adding edges, since all calculations use the predicates or construction 
+functions provided by CGAL, the type given in `Kernel_` actually determines overall whether the
 Theta graph will be constructed exactly. The template parameter
 `Graph_` specifies the graph type used to store the constructed graph. 
-Our package requires it to be a model of both concepts `MutableGraph` and `VertexAndEdgeListGraph` 
+Our package requires it to be `boost::adjacency_list` 
 from the Boost Graph Library (BGL, http://www.boost.org/). 
-BGL only provides two graph classes: `boost::adjacency_list` and `boost::adjacency_matrix`, 
-of which only `adjacency_list` is such a model. So please use `adjacency_list` to be the graph type. 
-The advantage of using `adjacency_list` as the graph type is that it provides the convenience 
-to later processing of the constructed graphs, as BGL includes almost all common graph algorithms. 
+The advantage of using `boost::adjacency_list` is that it provides convenience 
+to the further processing of the constructed graphs, since BGL includes most common graph algorithms. 
+Note that BGL altogether provides two template classes for representing graphs: 
+`boost::adjacency_list` and `boost::adjacency_matrix`, with the former suitable for 
+sparse graphs and the latter suitable for dense graphs. While cone-based spanners
+are sparse graphs and the interfaces provided by `adjacency_list` and `adjaceny_matrix`
+are different, our package only supports `boost::adjacency_list`.
 
 Note that there are seven template parameters for `adjacency_list` in BGL: `OutEdgeList`, `VertexList`, 
 `Directed`, `VertexProperties`, `EdgeProperties`, `GraphProperties`, `EdgeList`, 
@@ -153,8 +155,7 @@ bundled properties, please refer to http://www.boost.org/doc/libs/1_58_0/libs/gr
 If you want more properties other than `Point_2` for vertices, you can still
 construct external properties by using property maps.
 
-For the details of the constructor and the `operator()` of this functor, please refer to the 
-developer's manual. Here we note that the construction algorithm for Theta graph is taken from 
+In constructing Theta graphs, this functor uses the algorithm from 
 Chapter 4 of the book by Narasimhan and Smid \cgalCite{cgal:ns-gsn-07}. 
 Basically, it is a sweep line algorithm and uses a 
 balanced search tree to store the vertices that have already been scanned. 

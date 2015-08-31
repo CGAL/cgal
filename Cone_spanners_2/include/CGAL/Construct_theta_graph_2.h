@@ -113,9 +113,9 @@ public:
 	    Geometric Spanner Networks, Cambridge University Press, 2007.
       This algorithm has the complexity of O(n*log(n)), which is optimal.
      
-     \param start[in] An iterator pointing to the first point (vertex).
-     \param end[in]   An iterator pointing to the place that passes the last point.
-     \param g[out]    The constructed graph object.
+     \param[in] start An iterator pointing to the first point (vertex).
+     \param[in] end   An iterator pointing to the place that passes the last point.
+     \param[out] g    The constructed graph object.
      */
     template <typename PointInputIterator>
     Graph_& operator()(const PointInputIterator& start,

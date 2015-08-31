@@ -52,9 +52,9 @@ class Construct_yao_graph_2 {
 
 public:
 	/*! Indicate the \cgal kernel type. */
-    typedef Kernel_                          kernel_type;
+    typedef Kernel_                          Kernel_type;
 	/*! Indicate the specific type of `boost::adjacency_list`. */
-    typedef Graph_                           graph_type;
+    typedef Graph_                           Graph_type;
 
 private:
     typedef typename Kernel_::Direction_2             Direction_2;
@@ -110,9 +110,9 @@ public:
          The algorithm implemented is an adaptation from the algorithm for constructing Theta graph. 
 		 For more details, please refer to the user manual.
      
-      \param start[in] An iterator pointing to the first point (vertex).
-      \param end[in]   An iterator pointing to the place that passes the last point.
-      \param g[out]    The constructed graph object.
+      \param[in] start An iterator pointing to the first point (vertex).
+      \param[in]  end  An iterator pointing to the place that passes the last point.
+      \param[out]  g   The constructed graph object.
      */
     template <typename PointInputIterator>
     Graph_& operator()(const PointInputIterator& start,
