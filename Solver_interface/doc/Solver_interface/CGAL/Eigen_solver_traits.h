@@ -7,7 +7,7 @@ namespace CGAL {
 The class `Eigen_solver_traits` provides an interface to the sparse solvers of \ref thirdpartyEigen "Eigen".
 The version 3.1 (or greater) of \ref thirdpartyEigen "Eigen" must be available on the system. 
 
-\cgalModels `SparseLinearAlgebraTraitsWithFactor_d` and `#NormalEquationSparseLinearAlgebraTraits_d`
+\cgalModels `SparseLinearAlgebraTraitsWithFactor_d` and `NormalEquationSparseLinearAlgebraTraits_d`
 
 
 `T`: a sparse solver of \ref thirdpartyEigen "Eigen". The default solver is the iterative bi-congugate gradient stabilized solver 
