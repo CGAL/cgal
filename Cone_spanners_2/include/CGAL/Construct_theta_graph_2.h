@@ -92,11 +92,12 @@ public:
         }
 
         cone_number = k;
+		rays.reserve(k);
         /* Initialize a functor, specialization will happen here depending on the kernel type to 
 		 compute the cone boundaries either exactly or inexactly */
         Compute_cone_boundaries_2<Kernel_> compute_cones;
         // compute the rays using the functor
-        compute_cones(k, initial_direction, rays);
+        compute_cones(k, initial_direction, rays.begin());
     }
 
     /*! \brief Copy constructor.
