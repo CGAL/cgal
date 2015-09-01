@@ -32,9 +32,10 @@
 
 #include <iostream>
 #include <cstdlib>
+#include <vector>
 #include <utility>
 #include <CGAL/Polynomial.h>
-#include <CGAL/number_type_config.h>    // defining CGAL_PI
+#include <CGAL/number_type_config.h>    // CGAL_PI is defined there
 #include <CGAL/enum.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
 #include <CGAL/Aff_transformation_2.h>
@@ -74,7 +75,6 @@ public:
     typedef  Kernel_                    Kernel_type;
 
 private:
-    typedef  typename Kernel_::FT                FT;
     typedef  typename Kernel_::Direction_2       Direction_2;
 	typedef  typename Kernel_::Aff_transformation_2    Transformation;
 
@@ -85,37 +85,38 @@ public:
 	/*! \brief The operator(). 
      *
 	 * \details The direction of the first ray can be specified by the parameter `initial_direction`, 
-	 * which allows the first ray to start at any direction. The remaining rays are calculated in
-	 * counter-clockwise order.
+	 * which allows the first ray to start at any direction. 
+	 * This operator first places the `initial_direction` at the 
+	 * position pointed by `result`. Then, it calculates the remaining directions (cone boundaries)
+	 * and output them to `result` in the counterclockwise order.
+	 * Finally, the past-the-end iterator for the resulting directions is returned. 
 	 *
-	 * \param[in] cone_number The number of cones
-	 * \param[in] initial_direction The direction of the first ray
-	 * \param[out] rays  The results, a vector of directions
+	 * \param cone_number The number of cones
+	 * \param initial_direction The direction of the first ray
+	 * \param result  The output iterator
 	 */
-    void operator()(const unsigned int cone_number,
-                    Direction_2& initial_direction,
-                    std::vector<Direction_2>& rays)  {
+	template<class DirectionOutputIterator>
+    DirectionOutputIterator operator()(const unsigned int cone_number,
+                    const Direction_2& initial_direction,
+                    DirectionOutputIterator result)  {
         if (cone_number<2) {
             std::cout << "The number of cones should be larger than 1!" << std::endl;
             std::exit(1);
         }
 
-        if (rays.size() > 0) {
-            std::cout << "Initially, the vector rays must contain no elements!" << std::endl;
-            std::exit(1);
-        }
-
-        rays.push_back(initial_direction);
+        *result++ = initial_direction;
 
         const double cone_angle = 2*CGAL_PI/cone_number;
         double sin_value, cos_value;
         for (unsigned int i = 1; i < cone_number; i++) {
             sin_value = std::sin(i*cone_angle);
             cos_value = std::cos(i*cone_angle);
-            Direction_2 ray_i = Transformation(cos_value, -sin_value, sin_value, cos_value)(initial_direction);
-            rays.push_back(ray_i);
+            Direction_2 ray = Transformation(cos_value, -sin_value, sin_value, cos_value)(initial_direction);
+            *result++ = ray;
         }
-    }
+
+		return result;
+    } // end of operator
 
 };
 
@@ -129,10 +130,13 @@ class Compute_cone_boundaries_2<Exact_predicates_exact_constructions_kernel_with
 
 public:
 	/* Indicate the type of the cgal kernel. */
-    typedef  Exact_predicates_exact_constructions_kernel_with_sqrt                kernel_type;
+    typedef  Exact_predicates_exact_constructions_kernel_with_sqrt                Kernel_type;
 
 private:
-    typedef  typename Exact_predicates_exact_constructions_kernel_with_sqrt::FT            FT;
+    //typedef  typename Kernel_type::FT            FT;
+    //typedef  typename Kernel_type::Direction_2   Direction_2;
+	//typedef  typename Kernel_type::Aff_transformation_2   Transformation;
+    typedef  typename Exact_predicates_exact_constructions_kernel_with_sqrt::FT       FT;
     typedef  typename Exact_predicates_exact_constructions_kernel_with_sqrt::Direction_2   Direction_2;
 	typedef  typename Exact_predicates_exact_constructions_kernel_with_sqrt::Aff_transformation_2   Transformation;
 
@@ -144,23 +148,19 @@ public:
 
       The direction of the first ray can be specified by the parameter
       initial_direction, which allows the first ray to start at any direction. 
-      The remaining rays are calculated in counter-clockwise order.
+      The remaining directions are calculated in counter-clockwise order.
 
-      \param[in] cone_number The number of cones
-      \param[in] initial_direction The direction of the first ray
-      \param[out] rays  The results, a vector of directions
+      \param cone_number The number of cones
+      \param initial_direction The direction of the first ray
+      \param result  The output iterator
     */
-    void operator()(const unsigned int cone_number,
-                    Direction_2& initial_direction,
-                    std::vector< Direction_2 >& rays) {
+	template<typename DirectionOutputIterator>
+    DirectionOutputIterator operator()(const unsigned int cone_number,
+                    const Direction_2& initial_direction,
+                    DirectionOutputIterator result)  {
 
         if (cone_number<2) {
             std::cout << "The number of cones should be larger than 1!" << std::endl;
-            std::exit(1);
-        }
-
-        if (rays.size() > 0) {
-            std::cout << "Initially, the vector rays must contain no elements!" << std::endl;
             std::exit(1);
         }
 
@@ -179,34 +179,47 @@ public:
         a = b - 1;
 
         unsigned int m, i;
-        if (cone_number % 2 == 0)
+		bool is_even;
+        if (cone_number % 2 == 0) {
+			is_even = true;
             m = cone_number/2;       // for even number of cones
-        else
+		}
+        else {
             m= cone_number/2 + 1;    // for odd number of cones
+			is_even = false;
+		}
 
         FT cos_value, sin_value;
-        Direction_2 ray_i;
+		// for storing the intermediate result
+        Direction_2 ray;
+		// For saving the first half number of rays when cone_number is even
+		std::vector<Direction_2> ray_store; 
+
         // add the first half number of rays in counter clockwise order
         for (i = 1; i <= m; i++) {
             cos_value = - root_of(i, a.begin(), a.end());
             sin_value = sqrt(FT(1) - cos_value*cos_value);
-            ray_i = Transformation(cos_value, -sin_value, sin_value, cos_value)(initial_direction);
-            rays.push_back(ray_i);
+            ray = Transformation(cos_value, -sin_value, sin_value, cos_value)(initial_direction);
+            *result++ = ray;
+			if (is_even)
+               ray_store.push_back(ray);
         }
 
         // add the remaining half number of rays in ccw order
-        if (cone_number % 2 == 0) {
+        if (is_even) {
             for (i = 0; i < m; i++) {
-                rays.push_back(-rays[i]);
+				*result++ = -ray_store[i];
             }
         } else {
             for (i = 0; i < m-1; i++) {
                 cos_value = - root_of(m-i, a.begin(), a.end());
                 sin_value = - sqrt(FT(1) - cos_value*cos_value);
-                ray_i = Transformation(cos_value, -sin_value, sin_value, cos_value)(initial_direction);
-                rays.push_back(ray_i);
+                ray = Transformation(cos_value, -sin_value, sin_value, cos_value)(initial_direction);
+                *result++ = ray;
             }
         }
+
+		return result;
 
     };      // end of operator()
 };      // end of functor specialization: Compute_cone_..._2
