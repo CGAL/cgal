@@ -1,3 +1,7 @@
+#include "GlSplat/GlSplat.h"
+
+
+
 #include "config.h"
 #include "Scene.h"
 #include "Scene_item.h"
@@ -23,6 +27,15 @@ void CGALglcolor(QColor c)
 }
 }
 
+
+GlSplat::SplatRenderer* Scene::ms_splatting = 0;
+int Scene::ms_splattingCounter = 0;
+GlSplat::SplatRenderer* Scene::splatting()
+{
+    assert(ms_splatting!=0 && "A Scene object must be created before requesting the splatting object");
+    return ms_splatting;
+}
+
 Scene::Scene(QObject* parent)
     : QAbstractListModel(parent),
       selected_item(-1),
@@ -34,8 +47,13 @@ Scene::Scene(QObject* parent)
                                       double, double, double)),
             this, SLOT(setSelectionRay(double, double, double,
                                        double, double, double)));
-}
 
+    if(ms_splatting==0)
+        ms_splatting  = new GlSplat::SplatRenderer();
+    ms_splattingCounter++;
+
+
+}
 Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
@@ -150,6 +168,9 @@ Scene::~Scene()
         delete item_ptr;
     }
     m_entries.clear();
+
+    if((--ms_splattingCounter)==0)
+        delete ms_splatting;
 }
 
 Scene_item*
@@ -193,6 +214,8 @@ Scene::duplicate(Item_id index)
 
 void Scene::initializeGL()
 {
+    ms_splatting->init();
+
     //Setting the light options
 
     // Create light components
@@ -245,6 +268,8 @@ Scene::drawWithNames(Viewer_interface* viewer)
 void 
 Scene::draw_aux(bool with_names, Viewer_interface* viewer)
 {
+    if(!ms_splatting->viewer_is_set);
+        ms_splatting->setViewer(viewer);
     // Flat/Gouraud OpenGL drawing
     for(int index = 0; index < m_entries.size(); ++index)
     {
@@ -383,8 +408,46 @@ glDepthFunc(GL_LEQUAL);
         }
     }
     glDepthFunc(GL_LESS);
+    // Splatting
+    if(!with_names && ms_splatting->isSupported())
+    {
 
+        ms_splatting->beginVisibilityPass();
+        for(int index = 0; index < m_entries.size(); ++index)
+        {
+            Scene_item& item = *m_entries[index];
+            if(item.visible() && item.renderingMode() == Splatting)
+            {
+
+                if(viewer)
+                {
+                    item.draw_splats(viewer);
+                }
+                else
+                    item.draw_splats();
+            }
+
+        }
+       ms_splatting->beginAttributePass();
+         for(int index = 0; index < m_entries.size(); ++index)
+        {  Scene_item& item = *m_entries[index];
+            if(item.visible() && item.renderingMode() == Splatting)
+            {
+
+                CGALglcolor(item.color());
+                if(viewer)
+                    item.draw_splats(viewer);
+                else
+                    item.draw_splats();
+            }
+        }
+        ms_splatting->finalize();
+
+    }
 }
+
+// workaround for Qt-4.2 (see above)
+#undef lighter
 
 int 
 Scene::rowCount(const QModelIndex & parent) const
@@ -543,7 +606,9 @@ Scene::setData(const QModelIndex &index,
     {
         RenderingMode rendering_mode = static_cast<RenderingMode>(value.toInt());
         // Find next supported rendering mode
-        while ( ! item->supportsRenderingMode(rendering_mode) )
+        while ( ! item->supportsRenderingMode(rendering_mode)
+      //          || (rendering_mode==Splatting && !Scene::splatting()->isSupported())
+                )
         {
             rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );
         }
