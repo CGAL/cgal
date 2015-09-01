@@ -7,13 +7,18 @@ namespace CGAL {
 \cgalAutoToc
 \authors %CGAL Editorial Board
 
+Several \cgal packages have to solve linear systems with dense or
+sparse matrices. This package provides concepts and models for that
+purpose.
 
+We generally provide models using the \ref thirdpartyEigen
+library. Wrappers for the Eigen classes `Eigen_matrix` and
+`Eigen_vector` are also provided when needed.
 
-Several \cgal packages have to solve linear systems with dense or sparse matrices.
-This package provides concepts and models for that purpose. Most of the models we provide
- use the \ref thirdpartyEigen library. It is straightforward to develop
-equivalent models for other solvers, for example those found in the
-<a href="https://software.intel.com/en-us/intel-mkl">Intel Math Kernel Library (MKL)</a>.
+It is straightforward to develop equivalent models for
+other solvers, for example those found in the <a
+href="https://software.intel.com/en-us/intel-mkl">Intel Math Kernel
+Library (MKL)</a>.
 
 
 \section SectionSolverDiagonalize Matrix Diagonalization
@@ -35,6 +40,7 @@ in ascending order and eigenvectors are stored in accordance.
 
 This is an example of an eigendecomposition of a matrix using this
 class:
+
 
 \cgalExample{Solver_interface/diagonalize_matrix.cpp}
 
@@ -58,12 +64,11 @@ and this solver:
 
 \section SectionSolverSparse Sparse Solvers
 
-An interface to all sparse solvers from the \ref thirdpartyEigen
-library is provided through the class
-`Eigen_solver_traits<T>`. This solver traits class can be used for an
-iterative or a direct, symmetric or general sparse solvers. The 
-specific solver to be used must be given as template
-parameter.
+An interface to the sparse solvers from the \ref thirdpartyEigen
+library is provided through the class `Eigen_solver_traits<T>`. This
+solver traits class can be used for an iterative or a direct,
+symmetric or general sparse solvers. The specific solver to be used
+must be given as template parameter.
 
 Each \cgal package using a sparse solver specifies which type of matrix
 and solver is required:

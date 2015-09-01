@@ -1,10 +1,10 @@
-#include <CGAL/Simple_cartesian.h>
-
+// If Eigen is available, use it, otherwise switch to Lapack
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_matrix.h>
 #include <CGAL/Eigen_vector.h>
 #include <CGAL/Eigen_svd.h>
 typedef CGAL::Eigen_svd Svd;
+
 #else
 #ifdef CGAL_LAPACK_ENABLED
 #include <CGAL/Lapack_svd.h>

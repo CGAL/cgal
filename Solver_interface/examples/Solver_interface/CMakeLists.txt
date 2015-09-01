@@ -14,19 +14,28 @@ if ( CGAL_FOUND )
 
   include( CGAL_CreateSingleSourceCGALProgram )
 
+  include_directories (BEFORE "../include")
+  
+  # Use Eigen or BLAS and LAPACK (optional)
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
   if (NOT EIGEN3_FOUND)
-    message(STATUS "This program requires the Eigen library, and will not be compiled.")
+    find_package(LAPACK)
+    if(LAPACK_FOUND)
+      include( ${LAPACK_USE_FILE} )
+    endif(LAPACK_FOUND)
   else()
     include( ${EIGEN3_USE_FILE} )
   endif()
 
-  
-  include_directories (BEFORE "../include")
+  if(EIGEN3_FOUND OR LAPACK_FOUND)
+    create_single_source_cgal_program( "singular_value_decomposition.cpp" )
+  endif()
 
-  create_single_source_cgal_program( "singular_value_decomposition.cpp" )
+  if(EIGEN3_FOUND)
+    create_single_source_cgal_program( "sparse_solvers.cpp" )
+  endif()
+
   create_single_source_cgal_program( "diagonalize_matrix.cpp" )
-  create_single_source_cgal_program( "sparse_solvers.cpp" )
 
 else()
   

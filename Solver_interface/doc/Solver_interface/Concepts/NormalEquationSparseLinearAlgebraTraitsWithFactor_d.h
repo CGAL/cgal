@@ -1,6 +1,7 @@
 
 /*!
-\ingroup PkgMeanCurvatureSkeleton3Concepts
+\ingroup PkgSolverConcepts
+
 \cgalConcept
 
 
