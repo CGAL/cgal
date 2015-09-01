@@ -52,7 +52,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename Kernel::Point_3& centroid, 
                                const Tag& tag, // dimension tag, ranges from 0 to 3
 			       const Kernel& kernel,
-			       const Diagonalize_traits diagonalize_traits)
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   return internal::linear_least_squares_fitting_3(first, beyond, object,

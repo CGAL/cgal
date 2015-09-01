@@ -64,6 +64,14 @@ The class `K` is the kernel in which the
 value type of `InputIterator` is defined. It can be omitted and deduced
 automatically from the value type.
 
+The class `Diagonalize_traits` is a model of `DiagonalizeTraits`. It
+can be omitted: if Eigen 3 (or greater) is available and
+`CGAL_EIGEN3_ENABLED` is defined then an overload using
+`Eigen_diagonalize_traits` is provided. Otherwise, the internal
+implementation `Internal_diagonalize_traits` is used.
+
+
+
 \cgalHeading{Requirements}
 
 <OL> 
@@ -84,7 +92,8 @@ InputIterator beyond,
 typename K::Line_3& line,
 typename K::Point_3& centroid, 
 const Tag& tag,
-const K& k);
+const K& k,
+const Diagonalize_traits& diagonalize_traits);
 
 /*!
 \brief computes the best fitting 3D plane of a 3D object set in the
@@ -99,6 +108,12 @@ The class `K` is the kernel in which the value type
 of `InputIterator` is defined. It can be omitted and deduced
 automatically from the value type. The tag `tag` identifies the
 dimension to be considered from the objects (see above).
+
+The class `Diagonalize_traits` is a model of `DiagonalizeTraits`. It
+can be omitted: if Eigen 3 (or greater) is available and
+`CGAL_EIGEN3_ENABLED` is defined then an overload using
+`Eigen_diagonalize_traits` is provided. Otherwise, the internal
+implementation `Internal_diagonalize_traits` is used.
 
 \cgalHeading{Requirements}
 
@@ -119,7 +134,8 @@ InputIterator beyond,
 typename K::Plane_3& plane,
 typename K::Point_3& centroid, 
 const Tag& tag,
-const K& k);
+const K& k,
+const Diagonalize_traits& diagonalize_traits);
 
 /// @}
 
