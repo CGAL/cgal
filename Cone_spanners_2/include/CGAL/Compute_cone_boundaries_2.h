@@ -136,9 +136,9 @@ private:
     //typedef  typename Kernel_type::FT            FT;
     //typedef  typename Kernel_type::Direction_2   Direction_2;
 	//typedef  typename Kernel_type::Aff_transformation_2   Transformation;
-    typedef  typename Exact_predicates_exact_constructions_kernel_with_sqrt::FT       FT;
-    typedef  typename Exact_predicates_exact_constructions_kernel_with_sqrt::Direction_2   Direction_2;
-	typedef  typename Exact_predicates_exact_constructions_kernel_with_sqrt::Aff_transformation_2   Transformation;
+    typedef  Exact_predicates_exact_constructions_kernel_with_sqrt::FT       FT;
+    typedef  Exact_predicates_exact_constructions_kernel_with_sqrt::Direction_2   Direction_2;
+	typedef  Exact_predicates_exact_constructions_kernel_with_sqrt::Aff_transformation_2   Transformation;
 
 public:
 	/* No member variables in this class, so a Constructor is not needed. */

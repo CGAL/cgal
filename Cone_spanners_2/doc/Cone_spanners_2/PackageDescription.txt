@@ -41,6 +41,7 @@ a global function to generate the data and script files used by Gnuplot to plot 
 \cgalClassifedRefPages
 
 ## Concepts ##
+- `ConeBasedSpannerTraits`
 - `ComputeConeBoundaries_2`
 - `ConstructConeBasedSpanner_2`
 
