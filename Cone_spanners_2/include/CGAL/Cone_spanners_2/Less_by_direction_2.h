@@ -60,7 +60,7 @@ public:
     typedef typename Graph_::vertex_descriptor second_argument_type;
     typedef bool     result_type;
 
-    // typedef for Diretion_2 and Line_2
+    // typedef for Direction_2 and Line_2
     typedef typename Kernel_::Direction_2 Direction_2;
     typedef typename Kernel_::Line_2 Line_2;
     typedef typename Kernel_::Point_2 Point_2;
