@@ -32,8 +32,10 @@ public:
   virtual bool inFastDrawing() const = 0;
   typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
   typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
+  typedef void (APIENTRYP PFNGLFRAMEBUFFERTEXTURE2DEXTPROC) (GLuint target, GLuint attachment, GLuint textarget, GLuint texture, GLint level);
   PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
   PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
+  PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2D;
   bool extension_is_found;
   GLfloat pickMatrix_[16];
 
