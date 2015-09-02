@@ -135,6 +135,7 @@ namespace internal {
           Triangle_3(get(vpmap, v1), get(vpmap, v2), get(vpmap, v3)));
       }
       tree_ptr_ = new AABB_tree(input_triangles_.begin(), input_triangles_.end());
+      tree_ptr_->accelerate_distance_queries();
     }
 
     ~Incremental_remesher()
