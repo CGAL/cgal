@@ -166,10 +166,11 @@ private:
     typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
     Polygon_soup* soup;
     bool oriented;
-    std::vector<float> positions_poly;
-    std::vector<float> positions_lines;
-    std::vector<float> normals;
-
+    mutable std::vector<float> positions_poly;
+    mutable std::vector<float> positions_lines;
+    mutable std::vector<float> normals;
+    mutable int nb_polys;
+    mutable int nb_lines;
     using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer) const;
     void compute_normals_and_vertices(void);

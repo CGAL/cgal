@@ -77,6 +77,9 @@ private:
    mutable std::vector<double> positions_points;
    mutable std::vector<double> positions_facets;
    mutable std::vector<double> normals;
+   mutable int nb_lines;
+   mutable int nb_points;
+   mutable int nb_facets;
 
     mutable QOpenGLShaderProgram *program;
 

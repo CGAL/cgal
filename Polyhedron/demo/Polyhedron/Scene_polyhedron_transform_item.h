@@ -37,7 +37,8 @@ private:
     const Polyhedron* poly;
     qglviewer::Vec center_;
     mutable QOpenGLShaderProgram *program;
-    std::vector<float> positions_lines;
+    mutable std::vector<float> positions_lines;
+    mutable int nb_lines;
     using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer) const;
     void compute_elements();

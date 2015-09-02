@@ -112,14 +112,15 @@ private:
     bool plugin_has_set_color_vector_m;
 
 
-    std::vector<float> positions_lines;
-    std::vector<float> positions_facets;
-    std::vector<float> normals;
-    std::vector<float> color_lines;
-    std::vector<float> color_facets;
-    std::vector<float> color_lines_selected;
-    std::vector<float> color_facets_selected;
-
+    mutable std::vector<float> positions_lines;
+    mutable std::vector<float> positions_facets;
+    mutable std::vector<float> normals;
+    mutable std::vector<float> color_lines;
+    mutable std::vector<float> color_facets;
+    mutable std::vector<float> color_lines_selected;
+    mutable std::vector<float> color_facets_selected;
+    mutable int nb_facets;
+    mutable int nb_lines;
     mutable QOpenGLShaderProgram *program;
 
     using Scene_item::initialize_buffers;

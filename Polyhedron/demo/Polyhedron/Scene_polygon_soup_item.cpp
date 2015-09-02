@@ -103,6 +103,12 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
 
         program->release();
         vaos[0]->release();
+        nb_polys = positions_poly.size();
+        positions_poly.resize(0);
+        std::vector<float>(positions_poly).swap(positions_poly);
+
+        normals.resize(0);
+        std::vector<float>(normals).swap(normals);
 
     }
     //vao containing the data for the edges
@@ -119,8 +125,11 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
         buffers[3].release();
 
         program->release();
-
         vaos[1]->release();
+
+        nb_lines = positions_lines.size();
+        positions_lines.resize(0);
+        std::vector<float>(positions_lines).swap(positions_lines);
 
     }
     are_buffers_filled = true;
@@ -329,6 +338,8 @@ Scene_polygon_soup_item::Scene_polygon_soup_item()
     soup(0),
     oriented(false)
 {
+    nb_polys = 0;
+    nb_lines = 0;
 }
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
@@ -540,7 +551,7 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     program->setAttributeValue("colors", v_colors);
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size()/4));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_polys/4));
     // Clean-up
     program->release();
     vaos[0]->release();
@@ -561,7 +572,7 @@ Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
     QColor color = this->color();
     program->setAttributeValue("colors", color);
     //draw the points
-    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/4));
+    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_lines/4));
     // Clean-up
     program->release();
     vaos[1]->release();
@@ -583,7 +594,7 @@ Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
 
     program->setAttributeValue("colors", color);
     //draw the edges
-    viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( positions_lines.size()/4));
+    viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( nb_lines/4));
     // Clean-up
     program->release();
     vaos[1]->release();

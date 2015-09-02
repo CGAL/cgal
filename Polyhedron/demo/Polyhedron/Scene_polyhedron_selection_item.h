@@ -184,12 +184,18 @@ public:
         {
             buffers[i].create();
         }
+        nb_facets = 0;
+        nb_points = 0;
+        nb_lines = 0;
     }
 
   Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
     : Scene_polyhedron_item_decorator(NULL, false)
     {
         nbVaos = 0;
+        nb_facets = 0;
+        nb_points = 0;
+        nb_lines = 0;
         for(int i=0; i<3; i++)
         {
             addVaos(i);
@@ -775,12 +781,14 @@ public:
 
 private:
 
-    std::vector<float> positions_facets;
-    std::vector<float> normals;
-    std::vector<float> positions_lines;
-    std::vector<float> positions_points;
-
-    mutable QOpenGLShaderProgram *program;
+    mutable std::vector<float> positions_facets;
+    mutable std::vector<float> normals;
+    mutable std::vector<float> positions_lines;
+    mutable std::vector<float> positions_points;
+  mutable int nb_facets;
+  mutable int nb_points;
+  mutable int nb_lines;
+  mutable QOpenGLShaderProgram *program;
     using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer) const;
     void compute_elements();

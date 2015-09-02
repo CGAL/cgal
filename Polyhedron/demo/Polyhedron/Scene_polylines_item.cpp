@@ -34,7 +34,7 @@ Scene_polylines_item::create_Sphere(double R)
 void
 Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
 {
-//vao for the lines
+   //vao for the lines
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
@@ -87,6 +87,20 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
 
             viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
             viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
+
+            nb_lines = positions_lines.size();
+            positions_lines.resize(0);
+            std::vector<float>(positions_lines).swap(positions_lines);
+            nb_spheres = positions_spheres.size();
+            positions_spheres.resize(0);
+            std::vector<float>(positions_spheres).swap(positions_spheres);
+            normals_spheres.resize(0);
+            std::vector<float>(normals_spheres).swap(normals_spheres);
+            color_spheres.resize(0);
+            std::vector<float>(color_spheres).swap(color_spheres);
+            nb_centers = positions_center.size();
+            positions_center.resize(0);
+            std::vector<float>(positions_center).swap(positions_center);
         }
         else
         {
@@ -319,6 +333,10 @@ Scene_polylines_item::Scene_polylines_item()
     ,nbSpheres(0)
 {
     setRenderingMode(Flat);
+    nb_spheres = 0;
+    nb_wire = 0;
+    nb_centers = 0;
+    nb_lines = 0;
     changed();
 
 }
@@ -417,7 +435,7 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
             attrib_buffers(viewer, PROGRAM_INSTANCED);
             program->bind();
             viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                          static_cast<GLsizei>(positions_spheres.size()/3), nbSpheres);
+                                          static_cast<GLsizei>(nb_spheres/3), nbSpheres);
             program->release();
             vaos[1]->release();
         }
@@ -429,7 +447,7 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
             glPointSize(8.0f);
             glEnable(GL_POINT_SMOOTH);
             program->bind();
-            viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_center.size()/3));
+            viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_centers/3));
             glDisable(GL_POINT_SMOOTH);
             program->release();
             vaos[1]->release();
@@ -448,7 +466,7 @@ Scene_polylines_item::draw_edges(Viewer_interface* viewer) const {
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors", this->color());
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/4));
     program->release();
     vaos[0]->release();
     if(d->draw_extremities)
@@ -460,7 +478,7 @@ Scene_polylines_item::draw_edges(Viewer_interface* viewer) const {
             program = getShaderProgram(PROGRAM_INSTANCED_WIRE);
             program->bind();
             viewer->glDrawArraysInstanced(GL_LINES, 0,
-                                          static_cast<GLsizei>(positions_wire_spheres.size()/3), nbSpheres);
+                                          static_cast<GLsizei>(nb_wire/3), nbSpheres);
             program->release();
             vaos[2]->release();
         }
@@ -479,7 +497,7 @@ Scene_polylines_item::draw_points(Viewer_interface* viewer) const {
     program->bind();
     QColor temp = this->color();
     program->setAttributeValue("colors", temp);
-    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/4));
+    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_lines/4));
     // Clean-up
    vaos[0]->release();
    program->release();
