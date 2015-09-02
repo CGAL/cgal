@@ -13,9 +13,8 @@ available on the system.
 \cgalModels `DiagonalizeTraits`
 
 
-`FT`: floating type
-
-`dim`: dimension of the matrices and vectors
+\tparam FT Number type
+\tparam dim Dimension of the matrices and vectors
 
 \sa http://eigen.tuxfamily.org
 

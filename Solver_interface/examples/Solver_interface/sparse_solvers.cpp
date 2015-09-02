@@ -1,6 +1,3 @@
-#include <set>
-
-#include <CGAL/Simple_cartesian.h>
 #include <CGAL/Eigen_solver_traits.h>
 #include <CGAL/Eigen_matrix.h>
 
@@ -21,6 +18,8 @@ int main(void)
   Eigen_matrix A (degree);
 
   Eigen_vector diag (degree);
+
+  // Randomly make some coefficients of the matrix non-zero
   for (std::size_t i = 0; i < nb_nonzero_coef; ++ i)
     {
       std::size_t x = rand () % degree;
@@ -38,7 +37,8 @@ int main(void)
 
   for (std::size_t i = 0; i < degree; ++ i)
     A.add_coef (i, i, diag.vector()[i]);
-  
+
+  // Create sparse matrix
   A.assemble_matrix();
   
   Eigen_vector X (degree);
