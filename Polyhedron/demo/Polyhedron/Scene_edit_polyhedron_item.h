@@ -265,22 +265,29 @@ private:
   Ui::DeformMesh* ui_widget;
   Scene_polyhedron_item* poly_item;
   // For drawing
-  std::vector<GLdouble> positions;
-  std::vector<unsigned int> tris;
-  std::vector<unsigned int> edges;
-  std::vector<GLdouble> color_lines;
-  std::vector<GLdouble> color_bbox;
-  std::vector<GLdouble> ROI_points;
-  std::vector<GLdouble> control_points;
-  std::vector<GLdouble> ROI_color;
-  std::vector<GLdouble> control_color;
-  std::vector<GLdouble> normals;
-  std::vector<GLdouble> pos_bbox;
-  std::vector<GLdouble> pos_axis;
-  std::vector<GLdouble> pos_sphere;
-  std::vector<GLdouble> normals_sphere;
+  mutable std::vector<GLdouble> positions;
+  mutable std::vector<unsigned int> tris;
+  mutable std::vector<unsigned int> edges;
+  mutable std::vector<GLdouble> color_lines;
+  mutable std::vector<GLdouble> color_bbox;
+  mutable std::vector<GLdouble> ROI_points;
+  mutable std::vector<GLdouble> control_points;
+  mutable std::vector<GLdouble> ROI_color;
+  mutable std::vector<GLdouble> control_color;
+  mutable std::vector<GLdouble> normals;
+  mutable std::vector<GLdouble> pos_bbox;
+  mutable std::vector<GLdouble> pos_axis;
+  mutable std::vector<GLdouble> pos_sphere;
+  mutable std::vector<GLdouble> normals_sphere;
   mutable QOpenGLShaderProgram *program;
   mutable QOpenGLShaderProgram bbox_program;
+  mutable int nb_ROI;
+  mutable int nb_sphere;
+  mutable int nb_control;
+  mutable int nb_axis;
+  mutable int nb_bbox;
+
+
 
   mutable QOpenGLBuffer *in_bu;
   using Scene_item::initialize_buffers;
