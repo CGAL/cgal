@@ -20,6 +20,7 @@
 #include <boost/bimap/set_of.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/range.hpp>
+#include <boost/unordered_map.hpp>
 
 #include <map>
 #include <list>
@@ -980,8 +981,9 @@ namespace internal {
 
     Halfedge_status status(const halfedge_descriptor& h) const
     {
-      typename std::map < halfedge_descriptor, Halfedge_status >::const_iterator
-        it = halfedge_status_map_.find(h);
+      typename boost::unordered_map <
+        halfedge_descriptor, Halfedge_status >::const_iterator
+          it = halfedge_status_map_.find(h);
       CGAL_assertion(it != halfedge_status_map_.end());
       return it->second;
     }
@@ -1218,8 +1220,9 @@ namespace internal {
       unsigned int nb_patch = 0;
       unsigned int nb_patch_border = 0;
 
-      typedef typename std::map<halfedge_descriptor, Halfedge_status>::value_type
-        HD_pair;
+      typedef typename boost::unordered_map <
+        halfedge_descriptor, Halfedge_status>::value_type
+          HD_pair;
       BOOST_FOREACH(const HD_pair& hs, halfedge_status_map_)
       {
         if(is_on_patch(hs.first))              nb_patch++;
@@ -1299,7 +1302,7 @@ namespace internal {
     const AABB_tree* tree_ptr_;
     bool own_tree_;
     Triangle_list input_triangles_;
-    std::map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
+    boost::unordered_map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
     bool protect_constraints_;
 
   };//end class Incremental_remesher
