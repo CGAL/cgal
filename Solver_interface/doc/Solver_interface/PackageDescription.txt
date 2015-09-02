@@ -25,10 +25,11 @@
 
 ## Concepts ##
 
+- `DiagonalizeTraits`
 - `SparseLinearAlgebraTraits_d`
 - `SparseLinearAlgebraTraitsWithFactor_d`
 - `SvdTraits`
-- `DiagonalizeTraits`
+
 
 ## Classes ##
 

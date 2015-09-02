@@ -71,7 +71,6 @@ can be omitted: if Eigen 3 (or greater) is available and
 implementation `Internal_diagonalize_traits` is used.
 
 
-
 \cgalHeading{Requirements}
 
 <OL> 

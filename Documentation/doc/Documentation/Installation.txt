@@ -513,7 +513,7 @@ The \sc{Eigen} web site is <A HREF="http://eigen.tuxfamily.org">`http://eigen.tu
 \sc{Lapack} is a `Fortran` library for linear algebra.
 
 In \cgal, \sc{Lapack} is an alternative to \sc{Eigen} for singular value decomposition for the \ref
-kgJet_fitting_3 and the \ref PkgRidges_3 packages.
+PkgJet_fitting_3 and the \ref PkgRidges_3 packages.
 
 The \sc{Lapack} web site is <A HREF="http://www.netlib.org/lapack/">`http://www.netlib.org/lapack/`</A>.
 
