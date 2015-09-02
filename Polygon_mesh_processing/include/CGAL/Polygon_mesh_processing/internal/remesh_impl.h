@@ -29,6 +29,7 @@
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#define CGAL_DUMP_REMESHING_STEPS
 #endif
 
 #ifdef CGAL_PMP_REMESHING_VERY_VERBOSE
