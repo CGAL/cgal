@@ -882,6 +882,38 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh)
 }
 /// \endcond
 
+
+/// \ingroup PkgPolygonMeshProcessing
+/// removes the isolated vertices from any polygon mesh.
+/// A vertex is considered isolated if it is not incident to any simplex
+/// of higher dimension.
+///
+/// @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+///
+/// @param pmesh the polygon mesh to be repaired
+///
+/// @return number of removed isolated vertices
+///
+template <class PolygonMesh>
+std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  std::vector<vertex_descriptor> to_be_removed;
+  
+  BOOST_FOREACH(vertex_descriptor v, vertices(pmesh))
+  {
+    if (CGAL::halfedges_around_target(v, pmesh).first
+      == CGAL::halfedges_around_target(v, pmesh).second)
+      to_be_removed.push_back(v);
+  }
+  std::size_t nb_removed = to_be_removed.size();
+  BOOST_FOREACH(vertex_descriptor v, to_be_removed)
+  {
+    remove_vertex(v, pmesh);
+  }
+  return nb_removed;
+}
+
 } } // end of CGAL::Polygon_mesh_processing
 
 #endif // CGAL_POLYGON_MESH_PROCESSING_REPAIR_H
