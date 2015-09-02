@@ -190,6 +190,9 @@ public:
 
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
+  // Warning: these functions are not correct since they do not restore hidden 
+  // vertices
+
   Full_cell_handle remove(Vertex_handle);
   Full_cell_handle remove(const Weighted_point & p, Full_cell_handle hint = Full_cell_handle())
   {
@@ -217,7 +220,7 @@ public:
   // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - INSERTIONS
 
   template< typename ForwardIterator >
-  size_type insert(ForwardIterator start, ForwardIterator end)
+  std::ptrdiff_t insert(ForwardIterator start, ForwardIterator end)
   {
     size_type n = number_of_vertices();
     typedef std::vector<Weighted_point> WP_vec;
@@ -469,6 +472,9 @@ private:
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - REMOVALS
 
+
+// Warning: this function is not correct since it does not restore hidden 
+// vertices
 template< typename RTTraits, typename TDS >
 typename Regular_triangulation<RTTraits, TDS>::Full_cell_handle
 Regular_triangulation<RTTraits, TDS>
