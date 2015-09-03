@@ -18,8 +18,6 @@
 #ifndef CGAL_SCALE_SPACE_RECONSTRUCTION_3_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_IMPL_H
 #define CGAL_SCALE_SPACE_RECONSTRUCTION_3_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_IMPL_H
 
-#include <CGAL/Default_diagonalize_traits.h>
-
 //#include <omp.h>
 #ifdef CGAL_LINKED_WITH_TBB
 #include "tbb/blocked_range.h"
@@ -204,7 +202,7 @@ public:
 
         // Compute the weighted least-squares planar approximation of the point set.
 	CGAL::cpp11::array<FT, 3> vnorm = {{ 0., 0., 0. }};
-	CGAL::Default_diagonalize_traits<double,3>::extract_largest_eigenvector_of_covariance_matrix
+	wA::extract_smallest_eigenvector_of_covariance_matrix
 	  (covariance, vnorm);
 
         // The vertex is moved by projecting it onto the plane
