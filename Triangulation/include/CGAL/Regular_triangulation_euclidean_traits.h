@@ -36,16 +36,12 @@ class Regular_triangulation_euclidean_traits
 {
 public:
   typedef K                                                 Base;
-  typedef Regular_triangulation_euclidean_traits<K, Weight> Self;
 
   // Types from K
-
-  typedef K                                         Kernel;
   typedef typename K::Dimension                     Dimension;
   typedef typename K::FT                            FT;
   typedef typename K::Point_d                       Bare_point;
   typedef typename K::Weighted_point_d              Weighted_point;
-  typedef Weighted_point                            Weighted_point_d;
   typedef Weighted_point                            Point_d;
 
   typedef typename K::Construct_weighted_point_d    Construct_weighted_point_d;
@@ -53,6 +49,7 @@ public:
   typedef typename K::In_flat_power_test_d          In_flat_power_test_d;
   typedef typename K::Flat_orientation_d            Flat_orientation_d;
   typedef typename K::Point_drop_weight_d           Point_drop_weight_d;
+  typedef typename K::Point_weight_d                Point_weight_d;
   
   //=============================================================================
   // Custom types
@@ -142,7 +139,7 @@ public:
 
     template <typename ForwardIterator> 
     result_type operator()(ForwardIterator start, ForwardIterator end, 
-                           const Weighted_point_d & p) const
+                           const Weighted_point & p) const
     {
       Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
       return m_kernel.contained_in_affine_hull_d_object() (
@@ -166,7 +163,7 @@ public:
       : m_kernel(kernel) {}
 
     result_type operator()(
-      const Weighted_point_d & p, const Weighted_point_d & q) const
+      const Weighted_point & p, const Weighted_point & q) const
     {
       Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
       return m_kernel.compare_lexicographically_d_object()(pdw(p), pdw(q));
@@ -186,7 +183,7 @@ public:
       : m_kernel(kernel) {}
 
     result_type operator()(
-      const Weighted_point_d & p, const int i) const
+      const Weighted_point & p, const int i) const
     {
       Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
       m_kernel.compute_coordinate_d_object()(pdw(p), i);
@@ -207,7 +204,7 @@ public:
       : m_kernel(kernel) {}
 
     result_type operator()(
-      const Weighted_point_d & p) const
+      const Weighted_point & p) const
     {
       Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
       return m_kernel.point_dimension_d_object()(pdw(p));
