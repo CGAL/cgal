@@ -62,6 +62,20 @@ if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
 endif(EIGEN3_FOUND)
 
+# Activate concurrency?
+option(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY
+  "Enable concurrency"
+  ON)
+
+if( POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY )
+  find_package( TBB )
+  if( TBB_FOUND )
+    include( ${TBB_USE_FILE} )
+    list( APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES} )
+  else()
+    message( STATUS "NOTICE: Intel TBB was not found. Bilateral smoothing and WLOP plugins are faster if TBB is linked." )
+  endif()
+endif()
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
@@ -434,6 +448,20 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_wrap_ui(point_set_shape_detectionUI_FILES Polyhedron_demo_point_set_shape_detection_plugin.ui)
   polyhedron_demo_plugin(point_set_shape_detection_plugin Polyhedron_demo_point_set_shape_detection_plugin ${point_set_shape_detectionUI_FILES})
   target_link_libraries(point_set_shape_detection_plugin scene_polyhedron_item scene_points_with_normal_item)
+
+  qt5_wrap_ui(point_set_wlopFILES Polyhedron_demo_point_set_wlop_plugin.ui)
+  polyhedron_demo_plugin(point_set_wlop_plugin Polyhedron_demo_point_set_wlop_plugin ${point_set_wlopFILES})
+  target_link_libraries(point_set_wlop_plugin scene_points_with_normal_item)
+
+  qt5_wrap_ui(point_set_bilateral_smoothingUI_FILES Polyhedron_demo_point_set_bilateral_smoothing_plugin.ui)
+  polyhedron_demo_plugin(point_set_bilateral_smoothing_plugin Polyhedron_demo_point_set_bilateral_smoothing_plugin ${point_set_bilateral_smoothingUI_FILES})
+  target_link_libraries(point_set_bilateral_smoothing_plugin scene_points_with_normal_item)
+
+  qt5_wrap_ui(point_set_upsamplingUI_FILES Polyhedron_demo_point_set_upsampling_plugin.ui)
+  polyhedron_demo_plugin(point_set_upsampling_plugin Polyhedron_demo_point_set_upsampling_plugin ${point_set_upsamplingUI_FILES})
+  target_link_libraries(point_set_upsampling_plugin scene_points_with_normal_item)
+
+  qt5_wrap_ui( ps_outliers_removal_UI_FILES Polyhedron_demo_point_set_outliers_removal_plugin.ui)
 
   polyhedron_demo_plugin(point_set_outliers_removal_plugin Polyhedron_demo_point_set_outliers_removal_plugin ${ps_outliers_removal_UI_FILES}) 
   target_link_libraries(point_set_outliers_removal_plugin scene_points_with_normal_item)
