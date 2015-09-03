@@ -59,7 +59,8 @@ Polyhedron_demo_stl_plugin::load(QFileInfo fileinfo) {
   try{
     // Try building a polyhedron
     Polyhedron P;
-    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, P);
+    if (CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(triangles))
+      CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, triangles, P);
     
     if(! P.is_valid() || P.empty()){
       std::cerr << "Error: Invalid polyhedron" << std::endl;

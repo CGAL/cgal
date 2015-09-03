@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Laurent Rineau and Ilker O. Yaz
 
@@ -90,6 +90,42 @@ public:
   }
 };
 }//end namespace internal
+
+
+  /// \cond SKIP_IN_MANUAL
+  /**
+  * \ingroup PkgPolygonMeshProcessing
+  * returns `true` if the soup of polygons defines a valid polygon mesh
+  * that can be handled by `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`.
+  *
+  * @tparam Polygon a `std::vector<std::size_t>` containing the indices
+  *         of the points of the polygon face
+  *
+  * @param polygons each element in the vector describes a polygon using the index of the vertices
+  *
+  */
+  template<class Polygon>
+  bool is_polygon_soup_a_polygon_mesh(const std::vector<Polygon>& polygons)
+  {
+    typedef typename std::iterator_traits<
+              typename Polygon::iterator >::value_type                   V_ID;
+
+    std::set< std::pair<V_ID, V_ID> > edge_set;
+    BOOST_FOREACH(const Polygon& polygon, polygons)
+    {
+      std::size_t nb_edges = polygon.size();
+      if (nb_edges<3) return false;
+      V_ID prev=polygon.back();
+      BOOST_FOREACH(V_ID id, polygon)
+        if (! edge_set.insert(std::pair<V_ID, V_ID>(prev,id)).second )
+          return false;
+        else
+          prev=id;
+    }
+
+    return true;
+  }
+  /// \endcond
 
   /**
   * \ingroup PkgPolygonMeshProcessing
