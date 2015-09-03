@@ -31,47 +31,18 @@
 #include <QGLBuffer>
 #include <QOpenGLShaderProgram>
 
-class Viewer : public QGLViewer, QOpenGLFunctions_2_1
+class Viewer : public QGLViewer, public QOpenGLFunctions_2_1
 {
   Q_OBJECT
-
-  CGAL::Timer timer;
-  Scene* scene;
-  bool wireframe;
-  bool flatShading;
-  bool edges;
-  bool vertices;
-  CGAL::Bbox_3 bb;
-
-  GLuint m_dlFaces;
-  GLuint m_dlFacesFlat;
-  GLuint m_dlEdges;
-  GLuint m_dlVertices;
-  bool m_displayListCreated;
-  bool m_previous_scene_empty;
 
   typedef LCC::Dart_handle Dart_handle;
   typedef LCC::Dart_const_handle Dart_const_handle;
 
 public:
   Viewer(QWidget* parent);
-  
-  ~Viewer()
-  {
-    buffers[0].destroy();
-    buffers[1].destroy();
-    buffers[2].destroy();
-    buffers[3].destroy();
-    buffers[4].destroy();
-    buffers[5].destroy();
-    buffers[6].destroy();
-    buffers[7].destroy();
-    vao[0].destroy();
-    vao[1].destroy();
-    vao[2].destroy();
-    vao[3].destroy();
-  }
-  
+
+  ~Viewer();
+
   void setScene(Scene* scene_)
   { scene = scene_; }
 
@@ -89,6 +60,23 @@ public Q_SLOTS:
   void sceneChanged();
 
 private:
+  void initialize_buffers();
+  void attrib_buffers(QGLViewer*);
+  void compile_shaders();
+
+  void compute_elements();
+  void compute_faces(Dart_handle dh);
+  void compute_edges(Dart_handle dh);
+  void compute_vertices(Dart_handle dh, bool empty);
+
+private:
+  Scene* scene;
+  bool wireframe;
+  bool flatShading;
+  bool edges;
+  bool vertices;
+  CGAL::Bbox_3 bb;
+  bool m_previous_scene_empty;
   bool are_buffers_initialized;
 
   //Shaders elements
@@ -111,15 +99,6 @@ private:
   QOpenGLVertexArrayObject vao[10];
   QOpenGLShaderProgram rendering_program;
   QOpenGLShaderProgram rendering_program_p_l;
-
-  void initialize_buffers();
-  void attrib_buffers(QGLViewer*);
-  void compile_shaders();
-  
-  void compute_elements();
-  void compute_faces(Dart_handle dh);
-  void compute_edges(Dart_handle dh);
-  void compute_vertices(Dart_handle dh, bool empty);
 };
 
 #endif
