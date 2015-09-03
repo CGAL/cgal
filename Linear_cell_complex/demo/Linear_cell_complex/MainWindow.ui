@@ -33,15 +33,19 @@
      <x>0</x>
      <y>0</y>
      <width>635</width>
-     <height>22</height>
+     <height>25</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>&amp;File</string>
     </property>
+    <addaction name="actionLoad"/>
+    <addaction name="actionSave"/>
+    <addaction name="separator"/>
     <addaction name="actionImportOFF"/>
     <addaction name="actionAddOFF"/>
+    <addaction name="actionImportMoka"/>
     <addaction name="separator"/>
     <addaction name="actionImport3DTDS"/>
     <addaction name="actionCompute_Voronoi_3D"/>
@@ -54,11 +58,14 @@
     <property name="title">
      <string>&amp;Operations</string>
     </property>
+    <addaction name="actionInsert_center_vertices"/>
     <addaction name="actionTriangulate_all_facets"/>
-    <addaction name="actionSew3_same_facets"/>
-    <addaction name="actionUnsew3_all"/>
+    <addaction name="actionMerge_coplanar_faces"/>
     <addaction name="actionMerge_all_volumes"/>
     <addaction name="actionRemove_filled_volumes"/>
+    <addaction name="separator"/>
+    <addaction name="actionSew3_same_facets"/>
+    <addaction name="actionUnsew3_all"/>
     <addaction name="separator"/>
     <addaction name="actionSubdivide"/>
     <addaction name="actionSubdivide_pqq"/>
@@ -219,6 +226,31 @@
   <action name="actionCreate_Sierpinski_Triangle">
    <property name="text">
     <string>Create Sierpinski Triangle</string>
+   </property>
+  </action>
+  <action name="actionLoad">
+   <property name="text">
+    <string>&amp;Load</string>
+   </property>
+  </action>
+  <action name="actionSave">
+   <property name="text">
+    <string>&amp;Save</string>
+   </property>
+  </action>
+  <action name="actionImportMoka">
+   <property name="text">
+    <string>Import Moka</string>
+   </property>
+  </action>
+  <action name="actionMerge_coplanar_faces">
+   <property name="text">
+    <string>Merge coplanar faces</string>
+   </property>
+  </action>
+  <action name="actionInsert_center_vertices">
+   <property name="text">
+    <string>Insert center vertices in faces</string>
    </property>
   </action>
  </widget>
