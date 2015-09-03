@@ -30,7 +30,7 @@ omitted.
 
 \pre first != beyond. 
 */
-template < typename InputIterator, typename K, typename Tag > 
+template < typename InputIterator, typename K, typename Tag, typename Diagonalize_traits > 
 typename K::FT 
 linear_least_squares_fitting_2(InputIterator first,
 InputIterator beyond,

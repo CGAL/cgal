@@ -84,7 +84,7 @@ implementation `Internal_diagonalize_traits` is used.
 
 
 */
-template < typename InputIterator, typename K, typename Tag > 
+template < typename InputIterator, typename K, typename Tag, typename Diagonalize_traits > 
 typename K::FT 
 linear_least_squares_fitting_3(InputIterator first,
 InputIterator beyond,
@@ -126,7 +126,7 @@ implementation `Internal_diagonalize_traits` is used.
 </OL> 
 
 */
-template < typename InputIterator, typename K, typename Tag > 
+template < typename InputIterator, typename K, typename Tag, typename Diagonalize_traits > 
 typename K::FT 
 linear_least_squares_fitting_3(InputIterator first,
 InputIterator beyond,
