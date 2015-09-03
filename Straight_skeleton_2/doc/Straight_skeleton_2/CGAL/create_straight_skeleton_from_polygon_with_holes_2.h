@@ -9,9 +9,9 @@ returns a new `Straight_skeleton_2<K>` in the interior of the 2D polygon with ho
 \sa `Straight_skeleton_builder_2<Gt,Ss>` 
 
 */
-template<class K>
+  template<class K, class C>
 boost::shared_ptr< Straight_skeleton_2<K> >
-create_interior_straight_skeleton_2 ( Polygon_with_holes<K> poly_with_holes
+  create_interior_straight_skeleton_2 ( Polygon_with_holes<K,C> poly_with_holes
                                     , K const&  k = Exact_predicates_inexact_constructions_kernel
                                     ) ;
 } /* namespace CGAL */

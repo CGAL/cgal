@@ -26,7 +26,7 @@
 
 namespace CGAL {
 
-template<class FT, class OfK, class C, class SsK>
+template<class FT, class OfK, class SsK, class C>
 std::vector< boost::shared_ptr< Polygon_2<OfK,C> > >
 inline
 create_interior_skeleton_and_offset_polygons_2 ( FT const& aOffset, Polygon_with_holes_2<OfK,C> const& aPoly, SsK const& ssk )
@@ -65,7 +65,7 @@ create_exterior_skeleton_and_offset_polygons_with_holes_2 ( FT const&           
                                   );
 }
 
-template<class OfK, class C, class SsK, class FT>
+  template<class FT, class OfK, class SsK, class C>
 std::vector< boost::shared_ptr< Polygon_with_holes_2<OfK,C> > >
 inline
 create_interior_skeleton_and_offset_polygons_with_holes_2 ( FT const& aOffset, Polygon_with_holes_2<OfK,C> const& aPoly, SsK const& ssk )
@@ -74,7 +74,7 @@ create_interior_skeleton_and_offset_polygons_with_holes_2 ( FT const& aOffset, P
 }
 
 
-template<class OfK, class C, class FT>
+  template<class FT, class OfK, class C>
 std::vector< boost::shared_ptr< Polygon_with_holes_2<OfK,C> > >
 inline
 create_interior_skeleton_and_offset_polygons_with_holes_2 ( FT const& aOffset, Polygon_with_holes_2<OfK,C> const& aPoly )
