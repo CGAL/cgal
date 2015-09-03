@@ -118,6 +118,7 @@ class Scale_space_surface_reconstruction_3 {
 
 public:
 	typedef typename Gt::Point_3                        Point;          ///< defines the point type.
+  typedef typename Gt::Vector_3                       Vector;          ///< defines the vector type.
 typedef boost::tuple<Point,int>                           Point_and_int;
 
 private:

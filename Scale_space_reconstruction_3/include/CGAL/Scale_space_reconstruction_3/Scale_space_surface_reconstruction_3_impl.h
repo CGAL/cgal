@@ -18,6 +18,8 @@
 #ifndef CGAL_SCALE_SPACE_RECONSTRUCTION_3_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_IMPL_H
 #define CGAL_SCALE_SPACE_RECONSTRUCTION_3_SCALE_SPACE_SURFACE_RECONSTRUCTION_3_IMPL_H
 
+#include <CGAL/Default_diagonalize_traits.h>
+
 //#include <omp.h>
 #ifdef CGAL_LINKED_WITH_TBB
 #include "tbb/blocked_range.h"
@@ -162,21 +164,55 @@ public:
             return;
 
         Static_search search(_tree, _pts[i], _nn[i]);
-        Approximation pca( _nn[i] );
+
+	Point barycenter (0., 0., 0.);
+	FT weight_sum = 0.;
         unsigned int column = 0;
+	// Compute total weight
         for( typename Static_search::iterator nit = search.begin();
              nit != search.end() && column < _nn[i];
-             ++nit, ++column ) {
-          pca.set_point( column, boost::get<0>(nit->first), 1.0 / _nn[boost::get<1>(nit->first)] );
-        }
-    
+             ++nit, ++column )
+	  weight_sum += (1.0 / _nn[boost::get<1>(nit->first)]);
+
+	column = 0;
+	// Compute barycenter
+        for( typename Static_search::iterator nit = search.begin();
+             nit != search.end() && column < _nn[i];
+             ++nit, ++column )
+	  {
+	    Vector v (CGAL::ORIGIN, boost::get<0>(nit->first));
+	    barycenter = barycenter + ((1.0 / _nn[boost::get<1>(nit->first)]) / weight_sum) * v;
+	  }
+	
+	CGAL::cpp11::array<double, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
+	column = 0;
+	// Compute covariance matrix of Weighted PCA
+        for( typename Static_search::iterator nit = search.begin();
+             nit != search.end() && column < _nn[i];
+             ++nit, ++column )
+	  {
+	    Vector v (barycenter, boost::get<0>(nit->first));
+	    double w = (1.0 / _nn[boost::get<1>(nit->first)]);
+	    v = w*v;
+	    covariance[0] += w * v.x () * v.x ();
+	    covariance[1] += w * v.x () * v.y ();
+	    covariance[2] += w * v.x () * v.z ();
+	    covariance[3] += w * v.y () * v.y ();
+	    covariance[4] += w * v.y () * v.z ();
+	    covariance[5] += w * v.z () * v.z ();
+	  }
+
         // Compute the weighted least-squares planar approximation of the point set.
-        if( !pca.compute() )
-            return;
+	CGAL::cpp11::array<FT, 3> vnorm = {{ 0., 0., 0. }};
+	CGAL::Default_diagonalize_traits<double,3>::extract_largest_eigenvector_of_covariance_matrix
+	  (covariance, vnorm);
 
         // The vertex is moved by projecting it onto the plane
         // through the barycenter and orthogonal to the Eigen vector with smallest Eigen value.
-        _pts[i] = pca.fit( _pts[i] );
+	Vector norm (vnorm[0], vnorm[1], vnorm[2]);
+	Vector b2p (barycenter, _pts[i]);
+
+	_pts[i] = barycenter + b2p - ((norm * b2p) * norm);
     }
 }; // class AdvanceSS
 
