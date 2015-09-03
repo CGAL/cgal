@@ -42,13 +42,13 @@ public:
     return Base::diagonalize_selfadjoint_covariance_matrix (cov, eigenvalues, eigenvectors);
   }
 
-  // Extract the eigenvector associated to the largest eigenvalue
+  // Extract the eigenvector associated to the smallest eigenvalue
   static bool
-  extract_largest_eigenvector_of_covariance_matrix (
+  extract_smallest_eigenvector_of_covariance_matrix (
     const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
     cpp11::array<FT,dim> &normal)
   {
-    return Base::extract_largest_eigenvector_of_covariance_matrix (cov, normal);
+    return Base::extract_smallest_eigenvector_of_covariance_matrix (cov, normal);
   }
 };
 
