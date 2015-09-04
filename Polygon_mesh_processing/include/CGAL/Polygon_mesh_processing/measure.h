@@ -129,44 +129,44 @@ namespace Polygon_mesh_processing {
   * \ingroup measure_grp
   * computes the area of a face of a given polygon mesh.
   *
-  * @tparam PolygonMesh a model of `HalfedgeGraph` that has an internal property map
+  * @tparam TriangleMesh a model of `HalfedgeGraph` that has an internal property map
   *         for `boost::vertex_point_t`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
   * @param f the face of which the area is computed
-  * @param pmesh the polygon mesh to which `f` belongs
+  * @param tmesh the triangulated surface mesh to which `f` belongs
   * @param np optional sequence of \ref namedparameters among the ones listed below
   *
   * \cgalNamedParamsBegin
   *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
   * \cgalNamedParamsEnd
   */
-  template<typename PolygonMesh,
+  template<typename TriangleMesh,
            typename NamedParameters>
-  double area(typename boost::graph_traits<PolygonMesh>::face_descriptor f
-            , const PolygonMesh& pmesh
+  double area(typename boost::graph_traits<TriangleMesh>::face_descriptor f
+            , const TriangleMesh& tmesh
             , const NamedParameters& np)
   {
     using boost::choose_const_pmap;
     using boost::get_param;
 
-    typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
+    typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
     vpm = choose_const_pmap(get_param(np, CGAL::vertex_point),
-                            pmesh,
+                            tmesh,
                             CGAL::vertex_point);
 
-    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-    halfedge_descriptor hd = halfedge(f, pmesh);
-    halfedge_descriptor nhd = next(hd, pmesh);
+    typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
+    halfedge_descriptor hd = halfedge(f, tmesh);
+    halfedge_descriptor nhd = next(hd, tmesh);
 
-    return CGAL::sqrt(CGAL::squared_area(get(vpm, source(hd, pmesh)),
-                                         get(vpm, target(hd, pmesh)),
-                                         get(vpm, target(nhd, pmesh))));
+    return CGAL::sqrt(CGAL::squared_area(get(vpm, source(hd, tmesh)),
+                                         get(vpm, target(hd, tmesh)),
+                                         get(vpm, target(nhd, tmesh))));
   }
 
-  template<typename PolygonMesh>
-  double area(typename boost::graph_traits<PolygonMesh>::face_descriptor f
-            , const PolygonMesh& pmesh)
+  template<typename TriangleMesh>
+  double area(typename boost::graph_traits<TriangleMesh>::face_descriptor f
+    , const TriangleMesh& pmesh)
   {
     return area(f, pmesh,
       CGAL::Polygon_mesh_processing::parameters::all_default());
@@ -179,12 +179,12 @@ namespace Polygon_mesh_processing {
   * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`.
           Its iterator type is `InputIterator`.
-  * @tparam PolygonMesh a model of `HalfedgeGraph` that has an internal property map
+  * @tparam TriangleMesh a model of `HalfedgeGraph` that has an internal property map
   *         for `boost::vertex_point_t`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
-  * @param face_range the face range of which the area is computed
-  * @param pmesh the polygon mesh to which the faces of `face_range` belong
+  * @param face_range the range of faces of which the area is computed
+  * @param tmesh the triangulated surface mesh to which the faces of `face_range` belong
   * @param np optional sequence of \ref namedparameters among the ones listed below
   *
   * \cgalNamedParamsBegin
@@ -192,25 +192,25 @@ namespace Polygon_mesh_processing {
   * \cgalNamedParamsEnd
   */
   template<typename FaceRange,
-           typename PolygonMesh,
+           typename TriangleMesh,
            typename NamedParameters>
   double area(FaceRange face_range
-            , const PolygonMesh& pmesh
+            , const TriangleMesh& tmesh
             , const NamedParameters& np)
   {
-    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
+    typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
     double result = 0.;
     BOOST_FOREACH(face_descriptor f, face_range)
     {
-      result += area(f, pmesh, np);
+      result += area(f, tmesh, np);
     }
     return result;
   }
 
-  template<typename PolygonMesh, typename FaceRange>
-  double area(FaceRange face_range, const PolygonMesh& pmesh)
+  template<typename FaceRange, typename TriangleMesh>
+  double area(FaceRange face_range, const TriangleMesh& tmesh)
   {
-    return area(face_range, pmesh,
+    return area(face_range, tmesh,
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
