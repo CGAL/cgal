@@ -4154,6 +4154,11 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   DOuter_ccb* oc2 = (ic2 == NULL) ? he2->outer_ccb() : NULL;
   DFace* f2 = (oc2 != NULL) ? oc2->face() : ic2->face();
 
+  // f1 is the face to be kept. If f2 has more holes it is more
+  // efficient to kept f2
+  if (f1!=f2 && f1->number_of_holes() < f2->number_of_holes())
+      return _remove_edge(he2, remove_source, remove_target);
+
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
 #if 0
   std::cout << "before swap" << std::endl;
