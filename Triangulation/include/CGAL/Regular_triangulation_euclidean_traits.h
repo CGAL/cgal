@@ -42,10 +42,10 @@ public:
   // Required by RegularTriangulationTraits
   typedef typename K::Point_d                       Bare_point;
   typedef typename K::Weighted_point_d              Weighted_point;
-  typedef typename K::Power_test_d                  Power_test_d;
-  typedef typename K::In_flat_power_test_d          In_flat_power_test_d;
   typedef typename K::Point_drop_weight_d           Point_drop_weight_d;
   typedef typename K::Point_weight_d                Point_weight_d;
+  typedef typename K::Power_test_d                  Power_test_d;
+  typedef typename K::In_flat_power_test_d          In_flat_power_test_d;
 
   //===========================================================================
   // Custom types
