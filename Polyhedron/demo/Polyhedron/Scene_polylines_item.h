@@ -103,8 +103,8 @@ private:
     mutable int nb_wire;
     mutable int nb_centers;
     mutable int nb_lines;
-  mutable QOpenGLShaderProgram *program;
-  mutable   GLuint nbSpheres;
+    mutable QOpenGLShaderProgram *program;
+    mutable   GLuint nbSpheres;
     typedef std::map<Point_3, int> Point_to_int_map;
     typedef Point_to_int_map::iterator iterator;
     void create_Sphere(double);
