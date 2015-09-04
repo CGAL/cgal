@@ -268,7 +268,7 @@ Scene::drawWithNames(Viewer_interface* viewer)
 void 
 Scene::draw_aux(bool with_names, Viewer_interface* viewer)
 {
-    if(!ms_splatting->viewer_is_set);
+    if(!ms_splatting->viewer_is_set)
         ms_splatting->setViewer(viewer);
     // Flat/Gouraud OpenGL drawing
     for(int index = 0; index < m_entries.size(); ++index)
