@@ -120,9 +120,9 @@ public:
     return res;
   }
 
-  // Extract the eigenvector associated to the smallest eigenvalue
+  // Extract the eigenvector associated to the largest eigenvalue
   static bool
-  extract_smallest_eigenvector_of_covariance_matrix (
+  extract_largest_eigenvector_of_covariance_matrix (
     const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
     cpp11::array<FT,dim> &normal)
   {

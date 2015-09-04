@@ -343,7 +343,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
     int i = 0;
     for (ForwardIterator it = first; it != beyond; ++it) {
         cpp11::array<double, 3> enormal = {{ 0,0,0 }};
-        VCM_traits::extract_smallest_eigenvector_of_covariance_matrix
+        VCM_traits::extract_largest_eigenvector_of_covariance_matrix
           (cov[i], enormal);
 
         typename Kernel::Vector_3 normal(enormal[0],
