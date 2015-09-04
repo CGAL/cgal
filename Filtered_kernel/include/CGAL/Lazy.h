@@ -34,7 +34,7 @@
 #include <vector>
 #include <CGAL/Default.h>
 
-#ifdef CGAL_HAS_THREADS
+#if defined(CGAL_HAS_THREADS) && ! defined(BOOST_MSVC)
 #  include <boost/thread/tss.hpp>
 #endif
 
@@ -788,11 +788,20 @@ private:
   static const Self & zero()
   {
 #ifdef CGAL_HAS_THREADS
+#if BOOST_MSVC
+    __declspec( thread ) static Self* z = NULL;
+    if(z == NULL){
+      z = new Self(new Lazy_rep_0<AT, ET, E2A>());
+    }
+    return *z;
+#else
     static boost::thread_specific_ptr<Self> z;
+
     if (z.get() == NULL) {
         z.reset(new Self(new Lazy_rep_0<AT, ET, E2A>()));
     }
     return * z.get();
+#endif
 #else
     static const Self z = new Lazy_rep_0<AT, ET, E2A>();
     return z;
