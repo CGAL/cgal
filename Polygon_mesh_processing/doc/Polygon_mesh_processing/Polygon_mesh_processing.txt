@@ -420,6 +420,12 @@ the propagation of a connected component index to cross it.
 \cgalExample{Polygon_mesh_processing/connected_components_example.cpp}
 
 ****************************************
+\section PMPMeasure Geometric Measure functions
+
+@todo write this section
+
+
+****************************************
 \section PMPAll Requirements Summary
 
 The table below recapitulates the basic requirements of each function of this package.
