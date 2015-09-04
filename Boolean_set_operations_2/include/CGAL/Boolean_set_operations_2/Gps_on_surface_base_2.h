@@ -621,10 +621,27 @@ public:
   template <typename InputIterator>
   void join(InputIterator begin, InputIterator end, unsigned int k = 5)
   {
+    #if CGAL_JOIN_CREATE_AN_ARRANGEMENT
+    typename std::iterator_traits<InputIterator>::value_type pgn;
+    this->join(begin, end, pgn, k);
+
+    std::vector< X_monotone_curve_2 > edges_to_keep;
+    Edge_iterator eit, eit_end;
+    for(eit=m_arr->edges_begin(), eit_end=m_arr->edges_end();
+        eit!=eit_end; ++eit)
+    {
+      if (eit->face()->contained() != eit->twin()->face()->contained())
+        edges_to_keep.push_back(eit->curve());
+    }
+    m_arr->clear();
+    ::CGAL::insert_non_intersecting_curves(*m_arr, edges_to_keep.begin(), edges_to_keep.end());
+    this->_reset_faces();
+    #else
     typename std::iterator_traits<InputIterator>::value_type pgn;
     this->join(begin, end, pgn, k);
     this->remove_redundant_edges();
     this->_reset_faces();
+    #endif
   }
 
   // join range of simple polygons
