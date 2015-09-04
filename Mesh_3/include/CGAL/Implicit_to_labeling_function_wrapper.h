@@ -33,7 +33,7 @@
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
-#  pragma warning(disable:4180) // qualifier applied to function type has no meaning; ignored
+#  pragma warning(disable:4180 4800) // qualifier applied to function type has no meaning; ignored
 #endif
 
 #include <boost/dynamic_bitset.hpp>
