@@ -308,18 +308,6 @@ QString Viewer::dumpCameraCoordinates()
   }
 }
 
-/**
- * @brief Viewer::pickMatrix
- * Source code of gluPickMatrix slightly modified : instead of multiplying the current matrix by this value,
- * sets the viewer's pickMatrix_ so that the drawing area is only around the cursor. This is because since CGAL 4.7,
- * the drawing sustem changed to use shaders, and these need this value. pickMatrix_ is passed to the shaders in
- * Scene_item::attrib_buffers(Viewer_interface* viewer, int program_name).
- * @param x
- * @param y
- * @param width
- * @param height
- * @param viewport
- */
 
 void Viewer::pickMatrix(GLdouble x, GLdouble y, GLdouble width, GLdouble height,
 GLint viewport[4])
@@ -366,7 +354,7 @@ void Viewer::beginSelection(const QPoint &point)
 void Viewer::endSelection(const QPoint& point)
 {
   QGLViewer::endSelection(point);
-   //set dthe pick matrix to Identity
+   //set the pick matrix to Identity
     for(int i=0; i<16; i++)
         pickMatrix_[i]=0;
     pickMatrix_[0]=1;

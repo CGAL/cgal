@@ -26,7 +26,7 @@ class QMenu;
 class QKeyEvent;
 class Viewer_interface;
 
-// This class represents an object in the OpenGL scene
+//! This class represents an object in the OpenGL scene
 class SCENE_ITEM_EXPORT Scene_item : public QObject {
   Q_OBJECT
   Q_PROPERTY(QColor color READ color WRITE setColor)
@@ -37,9 +37,13 @@ class SCENE_ITEM_EXPORT Scene_item : public QObject {
 public:
   typedef Scene_interface::Bbox Bbox;
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
-
+  //! The default color of a scene_item.
   static const QColor defaultColor; // defined in Scene_item.cpp
 
+  //!The default Constructor.
+  /*!
+   * Initializes the number of VBOs to 20 and VAOs to 10 and creates them.
+   */
   Scene_item()
     : name_("unamed"),
       color_(defaultColor),
@@ -65,6 +69,10 @@ public:
           buffers[i].create();
       }
   }
+  //!The Constructor.
+  /*!
+   * Initializes the number of VBOs and VAOs and creates them.
+   */
   Scene_item(int buffers_size, int vaos_size)
     : name_("unamed"),
       color_(defaultColor),
@@ -89,53 +97,95 @@ public:
           buffers[i].create();
       }
   }
+  //!The destructor. It is virtual as the item is virtual.
   virtual ~Scene_item();
+  //! Creates a new item as a copy of the sender. Must be overloaded.
   virtual Scene_item* clone() const = 0;
 
-  // Indicate if rendering mode is supported
+  //! Indicates if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const = 0;
-  // Flat/Gouraud OpenGL drawing
+  //! Deprecated. Does nothing.
   virtual void draw() const {}
+  /*! \brief The drawing function.
+   * Draws the facets of the item in the viewer using OpenGL functions. The data
+   * for the drawing is gathered in compute_elements(), and is sent
+   * to buffers in initialize_buffers().
+   * @see compute_elements()
+   * @see initialize_buffers()
+   */
   virtual void draw(Viewer_interface*) const  { draw(); }
-  // Wireframe OpenGL drawing
+  //! Deprecated. Does nothing.
   virtual void draw_edges() const { draw(); }
+  /*! \brief The drawing function.
+   * Draws the edges and lines of the item in the viewer using OpenGL functions. The data
+   * for the drawing is gathered in compute_elements(), and is sent
+   * to buffers in initialize_buffers().
+   * @see compute_elements()
+   * @see initialize_buffers()
+   */
   virtual void draw_edges(Viewer_interface* viewer) const { draw(viewer); }
-  // Points OpenGL drawing
+  //! Deprecated. Does nothing.
   virtual void draw_points() const { draw(); }
+  /*! \brief The drawing function.
+   * Draws the points of the item in the viewer using OpenGL functions. The data
+   * for the drawing is gathered in compute_elements(), and is sent
+   * to buffers in initialize_buffers().
+   * @see compute_elements()
+   * @see initialize_buffers()
+   */
   virtual void draw_points(Viewer_interface*) const { draw_points(); }
+
+  //! Specifies which data must be updated when selection has changed.
+  //! Must be overloaded.
   virtual void selection_changed(bool);
 
   // Functions for displaying meta-data of the item
+  //! @returns a QString containing meta-data about the item.
+  //!//! Must be overloaded.
   virtual QString toolTip() const = 0;
+  //! @returns a QPixmap containing graphical meta-data about the item.
   virtual QPixmap graphicalToolTip() const { return QPixmap(); }
+  //! @returns a QFont containing the font used for the data of the item.
   virtual QFont font() const { return QFont(); }
 
   // Functions that help the Scene to compute its bbox
+  //! If isFinite() returns false, the BBox is not computed.
   virtual bool isFinite() const { return true; }
+  //! Specifies if the item is empty or null.
   virtual bool isEmpty() const { return true; }
+  //!@returns the item's bounding box.
   virtual Bbox bbox() const { return Bbox(); }
 
   // Function about manipulation
+  //! Decides if the item can have a ManipulatedFrame.
   virtual bool manipulatable() const { return false; }
+  //!@returns the manipulatedFrame of the item.
   virtual ManipulatedFrame* manipulatedFrame() { return 0; }
 
   // Getters for the four basic properties
+  //! @returns the current color of the item.
   virtual QColor color() const { return color_; }
+  //! @returns the current name of the item.
   virtual QString name() const { return name_; }
+  //! @returns the current visibility of the item.
   virtual bool visible() const { return visible_; }
+  //! @returns the current rendering mode of the item.
   virtual RenderingMode renderingMode() const { return rendering_mode; }
-  virtual QString renderingModeName() const; // Rendering mode as a human
-                                             // readable string
+  //! @returns the current rendering mode of the item as a human readable string.
+  virtual QString renderingModeName() const;
 
-  // Context menu
+  //! Context menu
   virtual QMenu* contextMenu();
 
-  // Event handling
+  //!Handles key press events.
   virtual bool keyPressEvent(QKeyEvent*){return false;}
 public Q_SLOTS:
   // Call that once you have finished changing something in the item
   // (either the properties or internal data)
+  //!Specifies what to do when the item has changed. Typically calls
+  //! compute_elements() and initialize_buffers(). Must be overloaded.
   virtual void changed();
+  //!When changed() is not enough.
   virtual void contextual_changed(){}
 
   // Setters for the four basic properties

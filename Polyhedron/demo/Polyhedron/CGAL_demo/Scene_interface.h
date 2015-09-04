@@ -19,7 +19,9 @@ enum RenderingMode { Points = 0,
                      LastRenderingMode = Gouraud,
                      NumberOfRenderingMode = LastRenderingMode+1 };
 
-// Interface of Scene class exported to plugins
+/*!
+ * This is the class given to the plugins to interact with the scene.
+ * */
 class Scene_interface {
 public:
   struct Bbox {
@@ -75,14 +77,15 @@ public:
   virtual Item_id addItem(Scene_item* item) = 0;
   virtual Scene_item* replaceItem(Item_id, Scene_item*, bool emit_item_about_to_be_destroyed = false) = 0;
 
-  virtual Item_id erase(Item_id) = 0;
-  // Returns the index of the item just before the one that is erased,
-  // or just after. Returns -1 if the list is empty.
 
-  virtual Item_id duplicate(Item_id) = 0;
-  // Returns the index of the new item
-  // If no new item has been created (because the item type is note
-  // clonable), returns -1.
+  /*! Returns the index of the item just before the one that is erased,
+   or just after. Returns -1 if the list is empty.*/
+  virtual Item_id erase(Item_id) = 0;
+
+  /*! Returns the index of the new item
+   If no new item has been created (because the item type is note
+   clonable), returns -1.*/
+    virtual Item_id duplicate(Item_id) = 0;
 
   // Accessors (getters)
   virtual int numberOfEntries() const = 0;
@@ -93,16 +96,16 @@ public:
   virtual Item_id selectionAindex() const = 0;
   virtual Item_id selectionBindex() const = 0;
 
-  // Get scene bounding box
+  /*! Get scene bounding box*/
   virtual Bbox bbox() const = 0;
   virtual double len_diagonal() const = 0;
 
 public:
-  // Notify the scene that an item was modified
+  /*! Notify the scene that an item was modified*/
   virtual void itemChanged(Item_id i) = 0; 
   virtual void itemChanged(Scene_item*) = 0;
 
-  // Select an item
+  /*! Select an item*/
   virtual void setSelectedItem(Item_id) = 0;
   
 }; // end interface Scene_interface
