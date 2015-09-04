@@ -381,7 +381,7 @@ bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const
               ( m==PointsPlusNormals || m==Splatting ) );
 }
 
-void Scene_points_with_normal_item::draw_splats(Viewer_interface* viewer) const
+void Scene_points_with_normal_item::draw_splats(Viewer_interface*) const
 {
    // TODO add support for selection
    ::glBegin(GL_POINTS);
