@@ -15,6 +15,7 @@
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <QVariant>
 #include <list>
@@ -724,15 +725,7 @@ init()
     }
 
     // compute the surface area
-    area=0;
-    Q_FOREACH(Polyhedron::Face_handle fh, faces(*poly))
-    {
-      area+=std::sqrt( CGAL::squared_area(
-              fh->halfedge()->vertex()->point(),
-              fh->halfedge()->next()->vertex()->point(),
-              fh->halfedge()->prev()->vertex()->point() )
-            );
-    }
+    area = CGAL::Polygon_mesh_processing::area(*poly);
   }
 }
 
