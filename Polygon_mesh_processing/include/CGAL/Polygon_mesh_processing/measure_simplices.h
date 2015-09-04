@@ -18,34 +18,72 @@
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_POLYGON_MESH_PROCESSING_DIMENSIONS_H
-#define CGAL_POLYGON_MESH_PROCESSING_DIMENSIONS_H
+#ifndef CGAL_POLYGON_MESH_PROCESSING_MEASURE_SIMPLICES_H
+#define CGAL_POLYGON_MESH_PROCESSING_MEASURE_SIMPLICES_H
 
 #include <CGAL/boost/graph/iterator.h>
-#include <CGAL/property_map.h>
+#include <CGAL/boost/graph/helpers.h>
+#include <CGAL/boost/graph/properties.h>
+#include <boost/graph/graph_traits.hpp>
+
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
 
+  template<typename PolygonMesh,
+           typename NamedParameters>
+  double length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
+              , const PolygonMesh& pmesh
+              , const NamedParameters& np)
+  {
+    using boost::choose_const_pmap;
+    using boost::get_param;
+
+    typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
+    vpm = choose_const_pmap(get_param(np, CGAL::vertex_point),
+                            pmesh,
+                            CGAL::vertex_point);
+
+    return CGAL::sqrt(CGAL::squared_distance(get(vpm, source(h, pmesh)),
+                                             get(vpm, target(h, pmesh))));
+  }
+
   template<typename PolygonMesh>
-  double
-  border_length(
-    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd
+  double length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
     , const PolygonMesh& pmesh)
   {
-    double result = 0;
-    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-    typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type VPM;
-    VPM vpm = get (CGAL::vertex_point, pmesh);
-    BOOST_FOREACH(halfedge_descriptor haf, halfedges_around_face(hd,pmesh)){
-      result += sqrt(CGAL::squared_distance(get(vpm, source(haf,pmesh)),
-                                            get(vpm, target(haf,pmesh))));
+    return length(h, pmesh,
+      CGAL::Polygon_mesh_processing::parameters::all_default());
+  }
+
+  template<typename PolygonMesh,
+           typename NamedParameters>
+  double
+  border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
+              , const PolygonMesh& pmesh
+              , const NamedParameters& np)
+  {
+    double result = 0.;
+    BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor haf,
+                  halfedges_around_face(h, pmesh))
+    {
+      result += length(haf, pmesh, np);
     }
     return result;
   }
 
 
+  template<typename PolygonMesh>
+  double
+  border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
+              , const PolygonMesh& pmesh)
+  {
+    return border_length(h, pmesh,
+      CGAL::Polygon_mesh_processing::parameters::all_default());
+  }
 
   template<typename PolygonMesh, typename FaceRange>
   double area(FaceRange fr, const PolygonMesh& pmesh)
@@ -72,4 +110,4 @@ namespace Polygon_mesh_processing {
 }
 }
 
-#endif // CGAL_POLYGON_MESH_PROCESSING_DIMENSIONS_H
+#endif // CGAL_POLYGON_MESH_PROCESSING_MEASURE_SIMPLICES_H
