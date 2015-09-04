@@ -84,33 +84,59 @@ namespace Polygon_mesh_processing {
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
-  template<typename PolygonMesh>
+
+  template<typename PolygonMesh,
+           typename NamedParameters>
   double area(typename boost::graph_traits<PolygonMesh>::face_descriptor f
-            , const PolygonMesh& pmesh)
+            , const PolygonMesh& pmesh
+            , const NamedParameters& np)
   {
+    using boost::choose_const_pmap;
+    using boost::get_param;
+
+    typename GetVertexPointMap<PolygonMesh, NamedParameters>::const_type
+    vpm = choose_const_pmap(get_param(np, CGAL::vertex_point),
+                            pmesh,
+                            CGAL::vertex_point);
+
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
     halfedge_descriptor hd = halfedge(f, pmesh);
     halfedge_descriptor nhd = next(hd, pmesh);
-
-    typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type VPM;
-    VPM vpm = get(CGAL::vertex_point, pmesh);
 
     return CGAL::sqrt(CGAL::squared_area(get(vpm, source(hd, pmesh)),
                                          get(vpm, target(hd, pmesh)),
                                          get(vpm, target(nhd, pmesh))));
   }
 
+  template<typename PolygonMesh>
+  double area(typename boost::graph_traits<PolygonMesh>::face_descriptor f
+            , const PolygonMesh& pmesh)
+  {
+    return area(f, pmesh,
+      CGAL::Polygon_mesh_processing::parameters::all_default());
+  }
 
-  template<typename PolygonMesh, typename FaceRange>
-  double area(FaceRange fr, const PolygonMesh& pmesh)
+  template<typename FaceRange,
+           typename PolygonMesh,
+           typename NamedParameters>
+  double area(FaceRange face_range
+            , const PolygonMesh& pmesh
+            , const NamedParameters& np)
   {
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
     double result = 0.;
-    BOOST_FOREACH(face_descriptor f, fr)
+    BOOST_FOREACH(face_descriptor f, face_range)
     {
-      result += area(f, pmesh);
+      result += area(f, pmesh, np);
     }
     return result;
+  }
+
+  template<typename PolygonMesh, typename FaceRange>
+  double area(FaceRange face_range, const PolygonMesh& pmesh)
+  {
+    return area(face_range, pmesh,
+      CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
 }
