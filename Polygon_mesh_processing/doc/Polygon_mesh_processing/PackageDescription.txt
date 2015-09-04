@@ -8,6 +8,7 @@
 /// \defgroup keep_connected_components_grp CGAL::keep_connected_components()
 /// \ingroup PkgPolygonMeshProcessing
 /// \defgroup remove_connected_components_grp CGAL::remove_connected_components()
+/// \defgroup measure_grp Geometric Measure functions
 /// \ingroup PkgPolygonMeshProcessing
 
 /*!
@@ -83,6 +84,12 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::keep_connected_components()` \endlink
 - \link remove_connected_components_grp `CGAL::Polygon_mesh_processing::remove_connected_components()` \endlink
+
+## Geometric Measure functions
+- \link measure_grp `CGAL::Polygon_mesh_processing::area()` \endlink
+- \link measure_grp `CGAL::Polygon_mesh_processing::length()` \endlink
+- \link measure_grp `CGAL::Polygon_mesh_processing::border_length()` \endlink
+
 
 ## Miscellaneous ##
 - `CGAL::Polygon_mesh_slicer`

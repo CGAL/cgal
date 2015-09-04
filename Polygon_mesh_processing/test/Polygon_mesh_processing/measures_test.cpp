@@ -7,7 +7,7 @@
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
 
-#include <CGAL/Polygon_mesh_processing/dimensions.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <iostream>
 #include <fstream>
