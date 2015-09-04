@@ -30,8 +30,9 @@ namespace Polygon_mesh_processing {
 
   template<typename PolygonMesh>
   double
-  border_length(PolygonMesh& pmesh,
-                typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd)
+  border_length(
+    typename boost::graph_traits<PolygonMesh>::halfedge_descriptor hd
+    , const PolygonMesh& pmesh)
   {
     double result = 0;
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -47,9 +48,7 @@ namespace Polygon_mesh_processing {
 
 
   template<typename PolygonMesh, typename FaceRange>
-  double
-  area(PolygonMesh& pmesh,
-       FaceRange fr)
+  double area(FaceRange fr, const PolygonMesh& pmesh)
   {
     double result = 0;
     typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
