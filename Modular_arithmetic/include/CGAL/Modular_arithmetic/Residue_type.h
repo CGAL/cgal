@@ -22,15 +22,16 @@
 #define CGAL_RESIDUE_TYPE_H
 
 #include <CGAL/basic.h>
+#include <CGAL/tss.h>
 
 #include <cfloat>
+
 #include <boost/operators.hpp>
 
-#ifdef CGAL_HAS_THREADS
-#  include <boost/thread/tss.hpp>
-#endif
 
 namespace CGAL {
+
+  struct TT {int i;};
 
 class Residue;
     
@@ -63,6 +64,14 @@ private:
   CGAL_EXPORT static const double  CST_CUT; 
   
 #ifdef CGAL_HAS_THREADS
+#ifdef BOOST_MSVC
+  CGAL_EXPORT CGAL_THREAD_LOCAL static int prime_int;
+  CGAL_EXPORT CGAL_THREAD_LOCAL static double prime;
+  CGAL_EXPORT CGAL_THREAD_LOCAL static double prime_inv;
+  static int get_prime_int(){ return prime_int;}
+  static double get_prime()    { return prime;}
+  static double get_prime_inv(){ return prime_inv;}
+#else
   CGAL_EXPORT static boost::thread_specific_ptr<int>    prime_int_;
   CGAL_EXPORT static boost::thread_specific_ptr<double> prime_;
   CGAL_EXPORT static boost::thread_specific_ptr<double> prime_inv_;
@@ -93,10 +102,12 @@ private:
       init_class_for_thread();
     return *prime_inv_.get();
   }
+#endif // ifdef BOOST_MSVC
+
 #else
-  CGAL_EXPORT  static int prime_int;
-  CGAL_EXPORT  static double prime;
-  CGAL_EXPORT  static double prime_inv;
+  CGAL_EXPORT static int prime_int;
+  CGAL_EXPORT static double prime;
+  CGAL_EXPORT static double prime_inv;
   static int get_prime_int(){ return prime_int;}
   static double get_prime()    { return prime;}
   static double get_prime_inv(){ return prime_inv;}  
@@ -196,9 +207,15 @@ public:
     set_current_prime(int p){   
       int old_prime = get_prime_int();  
 #ifdef CGAL_HAS_THREADS
+#ifdef BOOST_MSVC
+      prime_int = p;
+      prime = double(p);
+      prime_inv = 1.0 / prime;
+#else
       *prime_int_.get() = p;
       *prime_.get() = double(p);
       *prime_inv_.get() = 1.0/double(p);
+#endif
 #else
       prime_int = p;
       prime = double(p);

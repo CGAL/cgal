@@ -31,7 +31,7 @@
 #ifndef CGAL_TRIANGULATION_2_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
 #include <CGAL/Spatial_sort_traits_adapter_2.h>
 #include <CGAL/internal/info_check.h>
-
+#include <CGAL/tss.h>
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/mpl/and.hpp>
 
@@ -1053,7 +1053,23 @@ remove_and_give_new_faces(Vertex_handle v, OutputItFaces fit)
         afi++) *fit++ = afi;
   }
   else {
-    #ifdef CGAL_HAS_THREADS  
+    #ifdef CGAL_HAS_THREADS
+  #ifdef BOOST_MSVC
+    CGAL_THREAD_LOCAL static int maxd = 30;
+
+    CGAL_THREAD_LOCAL static std::vector<Face_handle>*  f_ptr;
+    CGAL_THREAD_LOCAL static std::vector<int>*  i_ptr;
+    CGAL_THREAD_LOCAL static std::vector<Vertex_handle>*  w_ptr;
+    if (f_ptr == NULL) {
+      f_ptr = new std::vector<Face_handle>(maxd);
+      i_ptr = new std::vector<int>(maxd);
+      w_ptr = new std::vector<Vertex_handle>(maxd);
+    }
+    std::vector<Face_handle>& f=*f_ptr;
+    std::vector<int>& i=*i_ptr;
+    std::vector<Vertex_handle>& w=*w_ptr;
+    #else
+  
     static boost::thread_specific_ptr< int > maxd_ptr;
     static boost::thread_specific_ptr< std::vector<Face_handle> > f_ptr;
     static boost::thread_specific_ptr< std::vector<int> > i_ptr;
@@ -1068,6 +1084,7 @@ remove_and_give_new_faces(Vertex_handle v, OutputItFaces fit)
     std::vector<Face_handle>& f=*f_ptr;
     std::vector<int>& i=*i_ptr;
     std::vector<Vertex_handle>& w=*w_ptr;
+#endif
     #else
     static int maxd=30;
     static std::vector<Face_handle> f(maxd);
@@ -1098,6 +1115,22 @@ remove(Vertex_handle v)
   if ( this->dimension() <= 1) { Triangulation::remove(v); return; }
 
   #ifdef CGAL_HAS_THREADS  
+  #ifdef BOOST_MSVC
+    CGAL_THREAD_LOCAL static int maxd = 30;
+
+    CGAL_THREAD_LOCAL static std::vector<Face_handle>*  f_ptr;
+    CGAL_THREAD_LOCAL static std::vector<int>*  i_ptr;
+    CGAL_THREAD_LOCAL static std::vector<Vertex_handle>*  w_ptr;
+    if (f_ptr == NULL) {
+      f_ptr = new std::vector<Face_handle>(maxd);
+      i_ptr = new std::vector<int>(maxd);
+      w_ptr = new std::vector<Vertex_handle>(maxd);
+    }
+    std::vector<Face_handle>& f=*f_ptr;
+    std::vector<int>& i=*i_ptr;
+    std::vector<Vertex_handle>& w=*w_ptr;
+    #else
+
   static boost::thread_specific_ptr< int > maxd_ptr;
   static boost::thread_specific_ptr< std::vector<Face_handle> > f_ptr;
   static boost::thread_specific_ptr< std::vector<int> > i_ptr;
@@ -1112,6 +1145,7 @@ remove(Vertex_handle v)
   std::vector<Face_handle>& f=*f_ptr;
   std::vector<int>& i=*i_ptr;
   std::vector<Vertex_handle>& w=*w_ptr;
+#endif
   #else
   static int maxd=30;
   static std::vector<Face_handle> f(maxd);
@@ -2261,6 +2295,22 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
   {
     int d;
     #ifdef CGAL_HAS_THREADS  
+  #ifdef BOOST_MSVC
+    CGAL_THREAD_LOCAL static int maxd = 30;
+
+    CGAL_THREAD_LOCAL static std::vector<Face_handle>*  f_ptr;
+    CGAL_THREAD_LOCAL static std::vector<int>*  i_ptr;
+    CGAL_THREAD_LOCAL static std::vector<Vertex_handle>*  w_ptr;
+    if (f_ptr == NULL) {
+      f_ptr = new std::vector<Face_handle>(maxd);
+      i_ptr = new std::vector<int>(maxd);
+      w_ptr = new std::vector<Vertex_handle>(maxd);
+    }
+    std::vector<Face_handle>& f=*f_ptr;
+    std::vector<int>& i=*i_ptr;
+    std::vector<Vertex_handle>& w=*w_ptr;
+    #else
+
     static boost::thread_specific_ptr< int > maxd_ptr;
     static boost::thread_specific_ptr< std::vector<Face_handle> > f_ptr;
     static boost::thread_specific_ptr< std::vector<int> > i_ptr;
@@ -2275,6 +2325,7 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
     std::vector<Face_handle>& f=*f_ptr;
     std::vector<int>& i=*i_ptr;
     std::vector<Vertex_handle>& w=*w_ptr;
+#endif
     #else
     static int maxd=30;
     static std::vector<Face_handle> f(maxd);
@@ -2495,6 +2546,22 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
 
   {
     #ifdef CGAL_HAS_THREADS  
+  #ifdef BOOST_MSVC
+    CGAL_THREAD_LOCAL static int maxd = 30;
+
+    CGAL_THREAD_LOCAL static std::vector<Face_handle>*  f_ptr;
+    CGAL_THREAD_LOCAL static std::vector<int>*  i_ptr;
+    CGAL_THREAD_LOCAL static std::vector<Vertex_handle>*  w_ptr;
+    if (f_ptr == NULL) {
+      f_ptr = new std::vector<Face_handle>(maxd);
+      i_ptr = new std::vector<int>(maxd);
+      w_ptr = new std::vector<Vertex_handle>(maxd);
+    }
+    std::vector<Face_handle>& f=*f_ptr;
+    std::vector<int>& i=*i_ptr;
+    std::vector<Vertex_handle>& w=*w_ptr;
+    #else
+
     static boost::thread_specific_ptr< int > maxd_ptr;
     static boost::thread_specific_ptr< std::vector<Face_handle> > f_ptr;
     static boost::thread_specific_ptr< std::vector<int> > i_ptr;
@@ -2509,6 +2576,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
     std::vector<Face_handle>& f=*f_ptr;
     std::vector<int>& i=*i_ptr;
     std::vector<Vertex_handle>& w=*w_ptr;
+#endif
     #else
     static int maxd=30;
     static std::vector<Face_handle> f(maxd);

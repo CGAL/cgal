@@ -26,9 +26,8 @@
 #include <mpfi.h>
 #include <boost/operators.hpp>
 #include <CGAL/Uncertain.h>
-#ifdef CGAL_HAS_THREADS
-#  include <boost/thread/tss.hpp>
-#endif
+#include <CGAL/tss.h>
+
 #include <limits>
 #include <algorithm>
 
@@ -81,7 +80,11 @@ Uncertain<bool> operator==(const Gmpfi&,const Gmpq&);
 // the default precision is a variable local to each thread in multithreaded
 // environments, or a global variable otherwise
 #ifdef CGAL_HAS_THREADS
+#ifdef BOOST_MSVC
+        static CGAL_THREAD_LOCAL Gmpfi_default_precision_;
+#else
         static boost::thread_specific_ptr<mp_prec_t> Gmpfi_default_precision_;
+#endif
 #else
         static mp_prec_t Gmpfi_default_precision=CGAL_GMPFI_DEFAULT_PRECISION;
 #endif
@@ -403,18 +406,28 @@ CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
 #ifdef CGAL_HAS_THREADS
 inline
 void Gmpfi::init_precision_for_thread(){
+#ifdef BOOST_MSVC
+        Gmpfi_default_precision_ = new mp_prec_t(CGAL_GMPFI_DEFAULT_PRECISION);
+#else
         CGAL_precondition(Gmpfi_default_precision_.get()==NULL);
         Gmpfi_default_precision_.reset(
                 new mp_prec_t(CGAL_GMPFI_DEFAULT_PRECISION));
+#endif
 }
 #endif
 
 inline
 Gmpfi::Precision_type Gmpfi::get_default_precision(){
 #ifdef CGAL_HAS_THREADS
+#ifdef BOOST_MSVC
+        if(Gmpfi_default_precision_==NULL)
+                Gmpfi::init_precision_for_thread();
+        return *Gmpfi_default_precision_;
+#else
         if(Gmpfi_default_precision_.get()==NULL)
                 Gmpfi::init_precision_for_thread();
         return *Gmpfi_default_precision_.get();
+#endif
 #else
         return Gmpfi_default_precision;
 #endif
@@ -425,7 +438,11 @@ Gmpfi::Precision_type Gmpfi::set_default_precision(Gmpfi::Precision_type prec){
         Gmpfi::Precision_type old_prec=Gmpfi::get_default_precision();
         CGAL_assertion(prec>=MPFR_PREC_MIN&&prec<=MPFR_PREC_MAX);
 #ifdef CGAL_HAS_THREADS
+#ifdef BOOST_MSVC
+        *Gmpfi_default_precision_ = prec;
+#else
         *Gmpfi_default_precision_.get()=prec;
+#endif
 #else
         Gmpfi_default_precision=prec;
 #endif

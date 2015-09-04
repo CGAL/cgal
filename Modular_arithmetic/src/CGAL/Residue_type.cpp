@@ -22,13 +22,19 @@
 
 namespace CGAL{
 #ifdef CGAL_HAS_THREADS
+#ifdef BOOST_MSVC
+CGAL_THREAD_LOCAL int Residue::prime_int = 67111067;
+CGAL_THREAD_LOCAL double Residue::prime = 67111067.0;
+CGAL_THREAD_LOCAL double Residue::prime_inv = 1490067204.5640400859667452463541;
+#else 
 boost::thread_specific_ptr<int>    Residue::prime_int_;
 boost::thread_specific_ptr<double> Residue::prime_;
 boost::thread_specific_ptr<double> Residue::prime_inv_;
+#endif
 #else
 int Residue::prime_int = 67111067;
 double Residue::prime = 67111067.0;
-double Residue::prime_inv =1/67111067.0;
+double Residue::prime_inv = 1/67111067.0;
 
 #endif
 

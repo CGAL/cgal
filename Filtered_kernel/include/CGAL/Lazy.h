@@ -33,10 +33,7 @@
 #include <CGAL/Bbox_3.h>
 #include <vector>
 #include <CGAL/Default.h>
-
-#if defined(CGAL_HAS_THREADS) && ! defined(BOOST_MSVC)
-#  include <boost/thread/tss.hpp>
-#endif
+#include<CGAL/tss.h>
 
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>
@@ -789,7 +786,7 @@ private:
   {
 #ifdef CGAL_HAS_THREADS
 #if BOOST_MSVC
-    __declspec( thread ) static Self* z = NULL;
+    CGAL_THREAD_LOCAL static Self* z = NULL;
     if(z == NULL){
       z = new Self(new Lazy_rep_0<AT, ET, E2A>());
     }
