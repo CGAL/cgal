@@ -21,10 +21,6 @@
 #define CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_H
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
-#include <CGAL/Weighted_point.h>
-#include <CGAL/representation_tags.h>
-#include <CGAL/Kernel_traits.h>
 
 #include <boost/iterator/transform_iterator.hpp>
 
@@ -35,7 +31,7 @@ class Regular_triangulation_euclidean_traits
   : public K
 {
 public:
-  typedef K                                                 Base;
+  typedef K                                         Base;
 
   // Types from K
   typedef typename K::Dimension                     Dimension;
