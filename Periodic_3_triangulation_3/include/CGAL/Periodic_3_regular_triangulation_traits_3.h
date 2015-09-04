@@ -193,22 +193,9 @@ template<typename K, typename Off>
 class Periodic_3_regular_triangulation_filtered_traits_3;
 
 template<class K, class Off>
-class Periodic_3_regular_triangulation_traits_3: public Periodic_3_regular_triangulation_traits_base_3<K, Off>
+class Periodic_3_regular_triangulation_traits_3: public Periodic_3_regular_triangulation_filtered_traits_3<K, Off>
 {
 };
-
-//template<typename CK, typename Off>
-//class Periodic_3_regular_triangulation_traits_3<Filtered_kernel<CK>, Off> : public Periodic_3_regular_triangulation_filtered_traits_3<Filtered_kernel<CK>, Off>
-//{
-//public:
-//	typedef Filtered_kernel<CK> Kernel;
-//};
-//
-//template<class Off>
-//class Periodic_3_regular_triangulation_traits_3<CGAL::Epick, Off> : public Periodic_3_regular_triangulation_filtered_traits_3<CGAL::Epick, Off>
-//{
-//	typedef CGAL::Epick Kernel;
-//};
 
 } //namespace CGAL
 

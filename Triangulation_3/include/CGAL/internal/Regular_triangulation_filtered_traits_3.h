@@ -87,6 +87,7 @@ template < typename K>
 class Regular_triangulation_filtered_traits_base_3
   : public Regular_triangulation_euclidean_traits_base_3<K>
 {
+public:
   // Exact traits is based on the exact kernel.
   typedef Regular_triangulation_euclidean_traits_3<typename K::Exact_kernel>
                                                    Exact_traits;
@@ -94,6 +95,7 @@ class Regular_triangulation_filtered_traits_base_3
   typedef Regular_triangulation_euclidean_traits_3<typename K::Approximate_kernel>
                                                    Filtering_traits;
 
+private:
   typedef typename K::C2E C2E;
   typedef typename K::C2F C2F;
 
