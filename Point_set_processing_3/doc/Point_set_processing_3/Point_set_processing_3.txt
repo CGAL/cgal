@@ -30,7 +30,7 @@ points or points with normals (alignment is not covered in \cgal);
 -# Smoothing to reduce noise in the input data; 
 -# Normal estimation and orientation when the normals are not already provided
 by the acquisition device; and
--# Surface reconstruction. Chapter \ref Chapter_Surface_Reconstruction_from_Point_Sets "Surface Reconstruction from Point Sets"
+-# Surface reconstruction. Chapter \ref Chapter_Poisson_Surface_Reconstruction "Poisson Surface Reconstruction"
 deals with surface reconstruction from point sets with normal attributes.
 
 \cgalFigureBegin{Point_set_processing_3figpipeline,pipeline.jpg}

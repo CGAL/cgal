@@ -120,7 +120,7 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Subdivision_method_3/doc/Subdivision_method_3/fig \
              ${CMAKE_SOURCE_DIR}/Surface_mesh_parameterization/doc/Surface_mesh_parameterization/fig \
              ${CMAKE_SOURCE_DIR}/Surface_mesh/doc/Surface_mesh/fig \
-             ${CMAKE_SOURCE_DIR}/Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig \
+             ${CMAKE_SOURCE_DIR}/Poisson_surface_reconstruction_3/doc/Poisson_surface_reconstruction_3/fig \
              ${CMAKE_SOURCE_DIR}/Stream_lines_2/doc/Stream_lines_2/fig \
              ${CMAKE_SOURCE_DIR}/Stream_support/doc/Stream_support/fig \
              ${CMAKE_SOURCE_DIR}/Surface_modeling/doc/Surface_modeling/fig \
