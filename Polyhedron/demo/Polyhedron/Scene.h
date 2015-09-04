@@ -46,7 +46,7 @@ public:
   //!Adds item to the items list, gives it an ID and
   //!updates the bounding box if needed.
   int addItem(Scene_item* item);
-  //!Sets item as the item at index and calles item->changed().
+  //!Sets item as the item at index and calls item->changed().
   //!If emit_item_about_to_be_destroyed is set to true, emits
   //!an itemAboutToBeDestroyed signal.
   Scene_item* replaceItem(int index, Scene_item* item, bool emit_item_about_to_be_destroyed = false);
@@ -63,6 +63,7 @@ public:
    * the list is empty.
    */
   int erase(QList<int>);
+
   /*! Duplicate a scene item.
    * @returns the ID of the new item (-1 on error).
    */
@@ -115,7 +116,7 @@ public:
    */
   bool keyPressEvent(QKeyEvent* e);
 
-  //! Gets the scene bounding box
+  //!@returns the scene bounding box
   Bbox bbox() const;
   //!@returns the length of the bounding box's diagonal.
   double len_diagonal() const

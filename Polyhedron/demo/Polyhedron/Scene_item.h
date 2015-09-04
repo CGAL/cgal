@@ -55,7 +55,6 @@ public:
       vaosSize(10)
   {
 
-      nbVaos = 0;
       for(int i=0; i<vaosSize; i++)
       {
           addVaos(i);
@@ -83,7 +82,6 @@ public:
       buffersSize(buffers_size),
       vaosSize(vaos_size)
   {
-      nbVaos = 0;
       for(int i=0; i<vaosSize; i++)
       {
           addVaos(i);
@@ -141,7 +139,7 @@ public:
 
   // Functions for displaying meta-data of the item
   //! @returns a QString containing meta-data about the item.
-  //!//! Must be overloaded.
+  //! Must be overloaded.
   virtual QString toolTip() const = 0;
   //! @returns a QPixmap containing graphical meta-data about the item.
   virtual QPixmap graphicalToolTip() const { return QPixmap(); }
@@ -170,6 +168,7 @@ public:
   //! @returns the current visibility of the item.
   virtual bool visible() const { return visible_; }
   //! @returns the current rendering mode of the item.
+  //!@see RenderingMode
   virtual RenderingMode renderingMode() const { return rendering_mode; }
   //! @returns the current rendering mode of the item as a human readable string.
   virtual QString renderingModeName() const;
@@ -189,46 +188,50 @@ public Q_SLOTS:
   virtual void contextual_changed(){}
 
   // Setters for the four basic properties
+  //!Setter for the color of the item. Calls changed() so the new color is applied.
   virtual void setColor(QColor c) { color_ = c; changed(); }
+  //!Setter for the RGB color of the item. Calls setColor(QColor).
+  //!@see setColor(QColor c)
   void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
+  //!Setter for the name of the item.
   virtual void setName(QString n) { name_ = n; }
+  //!Setter for the visibility of the item.
   virtual void setVisible(bool b) { visible_ = b; }
+  //!Setter for the rendering mode of the item.
+  //!@see RenderingMode
   virtual void setRenderingMode(RenderingMode m) { 
     if (supportsRenderingMode(m))
       rendering_mode = m; 
   }
+  //!Set the RenderingMode to Points.
   void setPointsMode() {
     setRenderingMode(Points);
   }
-
+  //!Set the RenderingMode to Wireframe.
   void setWireframeMode() {
     setRenderingMode(Wireframe);
   }
-  void setWireframe() {
-    setRenderingMode(Wireframe);
-  }
 
-  void setFlat() {
-    setRenderingMode(Flat);
-  }
+  //!Set the RenderingMode to Flat.
   void setFlatMode() {
     setRenderingMode(Flat);
   }
-
+  //!Set the RenderingMode to FlatPlusEdges.
   void setFlatPlusEdgesMode() {
     setRenderingMode(FlatPlusEdges);
   }
-
+  //!Set the RenderingMode to Gouraud.
   void setGouraudMode() {
     setRenderingMode(Gouraud);
   }
-
+  //!Set the RenderingMode to PointsPlusNormals.
   void setPointsPlusNormalsMode(){
     setRenderingMode(PointsPlusNormals);
   }
-  
+  //!Emits an aboutToBeDestroyed() signal.
   virtual void itemAboutToBeDestroyed(Scene_item*);
 
+  //!Selects a point through raycasting.
   virtual void select(double orig_x,
                       double orig_y,
                       double orig_z,
@@ -242,41 +245,87 @@ Q_SIGNALS:
 
 protected:
   // The four basic properties
+  //!The name of the item.
   QString name_;
+  //!The color of the item.
   QColor color_;
+  //!The visibility of the item.
   bool visible_;
+  //!Specifies if the item is currently selected.
   bool is_selected;
+  /*! Decides if the draw function must call initialize_buffers() or not. It is set
+   * to true in the end of initialize_buffers() and to false in changed(). The need of
+   * this boolean comes from the need of a context from the OpenGLFunctions used in
+   * initialize_buffers().
+   * @see initialize_buffers()
+   * @see changed()
+   */
   mutable bool are_buffers_filled;
+  //!The rendering mode of the item.
+  //!@see RenderingMode
   RenderingMode rendering_mode;
+  //!The default context menu.
   QMenu* defaultContextMenu;
-
+  /*! Contains the previous RenderingMode.
+   * This is used to determine if changed should be called or not
+   * in certain cases.
+   * @see changed()
+   * @see contextual_changed()*/
   RenderingMode prev_shading;
+  /*! \todo replace it by RenderingMode().
+   * \brief
+   *  Contains the current RenderingMode.
+   * This is used to determine if changed should be called or not
+   * in certain cases.
+   * @see changed()
+   * @see contextual_changed()*/
   RenderingMode cur_shading;
-
+  //!Contains the size of the vector of VBOs
   int buffersSize;
+  //!Contains the size of the map of VAOs
   int vaosSize;
+  //!Contains the VBOs
   mutable std::vector<QOpenGLBuffer> buffers;
-  //not allowed to use vectors of VAO for some reason
-  //mutable QOpenGLVertexArrayObject vaos[10];
+  /*! Contains the VAOs.
+   * This is a map because vectors cannot be used for VAOs.*/
   QMap<int,QOpenGLVertexArrayObject*> vaos;
-  int nbVaos;
+  //!Adds a VAO to the Map.
   void addVaos(int i)
   {
       QOpenGLVertexArrayObject* n_vao = new QOpenGLVertexArrayObject();
       vaos[i] = n_vao;
-      nbVaos ++;
   }
 
-
+  //! Contains all the programs for the item rendering.
   mutable QMap<int, QOpenGLShaderProgram*> shader_programs;
-  QOpenGLShaderProgram* getShaderProgram(int , Viewer_interface *viewer = 0) const;
-
+  /*! Returns a program according to name.
+   * If the program does not exist yet, it is created and stored in #shader_programs.
+   * name cans be :
+   * - PROGRAM_WITH_LIGHT : used for the facets
+   * - PROGRAM_WITHOUT_LIGHT : used for the points and lines
+   * - PROGRAM_WITH_TEXTURE : used for textured facets
+   * - PROGRAM_WITH_TEXTURED_EDGES : use dfor textured edges
+   * - PROGRAM_INSTANCED : used for items that have to be rendered numerous times(spheres)
+   * - PROGRAM_INSTANCED_WIRE : used for the wireframe mode of PROGRAM_INSTANCED
+   * @returns a pointer to the corresponding program.*/
+  QOpenGLShaderProgram* getShaderProgram(int name , Viewer_interface *viewer = 0) const;
+  //! Used pass data to the shader.
   int vertexLoc;
+  //! Used pass data to the shader.
   int normalLoc;
+  //! Used pass data to the shader.
   int colorLoc;
-
+  /*! Fills the VBOs with data. Must be called after each call to #compute_elements().
+   * @see compute_elements()
+   */
   virtual void initialize_buffers(){}
+  /*! Collects all the data for the shaders. Must be called in #changed().
+   * @see changed().
+   */
   virtual void compute_elements(){}
+  /*! Passes all the uniform data to the shaders.
+   * According to program_name, this data may change.
+   */
   virtual void attrib_buffers(Viewer_interface*, int program_name) const;
 
 
