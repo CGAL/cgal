@@ -34,7 +34,7 @@
 #include <boost/container/deque.hpp>
 
 #ifdef CGAL_HAS_THREADS
-#include <boost/thread/mutex.hpp>
+#include <CGAL/mutex.h>
 #endif
 
 namespace CGAL {
@@ -99,7 +99,7 @@ private:
 
 
   #ifdef CGAL_HAS_THREADS
-  mutable boost::mutex building_mutex;//mutex used to protect const calls inducing build()
+  mutable CGAL_MUTEX building_mutex;//mutex used to protect const calls inducing build()
   #endif
   bool built_;
 
@@ -283,7 +283,7 @@ private:
   void const_build() const {
     #ifdef CGAL_HAS_THREADS
     //this ensure that build() will be called once
-    boost::mutex::scoped_lock scoped_lock(building_mutex);
+    CGAL_SCOPED_LOCK(building_mutex);
     if(!is_built())
     #endif
       const_cast<Self*>(this)->build(); //THIS IS NOT THREADSAFE

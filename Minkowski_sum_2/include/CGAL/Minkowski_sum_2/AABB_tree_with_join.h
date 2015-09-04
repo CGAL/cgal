@@ -31,7 +31,7 @@
 #include <boost/optional.hpp>
 
 #ifdef CGAL_HAS_THREADS
-#include <boost/thread/mutex.hpp>
+#include <CGAL/mutex.h>
 #endif
 
 /// \file AABB_tree.h
@@ -506,7 +506,7 @@ public:
     {
       #ifdef CGAL_HAS_THREADS
       //this ensures that this is done once at a time
-      boost::mutex::scoped_lock scoped_lock(kd_tree_mutex);
+      CGAL_SCOPED_LOCK(kd_tree_mutex);
       #endif
       clear_search_tree();
       return accelerate_distance_queries_impl(first,beyond);
@@ -623,8 +623,8 @@ public:
 		// single root node
 		Node* m_p_root_node;
     #ifdef CGAL_HAS_THREADS
-    mutable boost::mutex internal_tree_mutex;//mutex used to protect const calls inducing build()
-    mutable boost::mutex kd_tree_mutex;//mutex used to protect calls to accelerate_distance_queries
+    mutable CGAL_MUTEX internal_tree_mutex;//mutex used to protect const calls inducing build()
+    mutable CGAL_MUTEX kd_tree_mutex;//mutex used to protect calls to accelerate_distance_queries
     #endif
   
     const Node* root_node() const {
@@ -632,7 +632,7 @@ public:
       if(m_need_build){
         #ifdef CGAL_HAS_THREADS
         //this ensures that build() will be called once
-        boost::mutex::scoped_lock scoped_lock(internal_tree_mutex);
+        CGAL_SCOPED_LOCK(internal_tree_mutex);
         if(m_need_build)
         #endif
           const_cast< AABB_tree_with_join<AABBTraits>* >(this)->build(); 
@@ -1070,7 +1070,7 @@ public:
 		if(m_primitives.empty()) return true;
     #ifdef CGAL_HAS_THREADS
     //this ensures that this function will be done once
-    boost::mutex::scoped_lock scoped_lock(kd_tree_mutex);
+    CGAL_SCOPED_LOCK(kd_tree_mutex);
     #endif
 
     //we only redo computation only if needed 
