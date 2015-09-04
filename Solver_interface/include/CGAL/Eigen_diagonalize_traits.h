@@ -136,9 +136,9 @@ public:
           return false;
       }
 
-      // Eigenvalues are already sorted by increasing order
+      // Eigenvalues are sorted by increasing order
       for (unsigned int i = 0; i < dim; ++ i)
-	normal[i] = static_cast<FT> (eigenvectors(i,0));
+	normal[i] = static_cast<FT> (eigenvectors(i,dim-1));
 
       return true;
   }

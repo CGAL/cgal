@@ -33,7 +33,7 @@ class Internal_diagonalize_traits{
       diagonalize_selfadjoint_covariance_matrix (cov, eigenvalues, eigenvectors);
 
       for (std::size_t i = 0; i < dim; ++ i)
-	normal[i] = static_cast<FT> (eigenvectors(i));
+	normal[i] = static_cast<FT> (eigenvectors[(dim*(dim-1))+i]);
 
       return true;
     }
