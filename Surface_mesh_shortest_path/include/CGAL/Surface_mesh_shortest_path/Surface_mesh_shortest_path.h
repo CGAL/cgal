@@ -1568,7 +1568,7 @@ private:
 
           LineLineIntersectResult cgalIntersection = intersect_2(construct_line_2(entrySegment), construct_line_2(rayToLocation));
 
-          CGAL_assertion(cgalIntersection);
+          CGAL_assertion(bool(cgalIntersection));
 
           Point_2* result = boost::get<Point_2, Point_2, Line_2>(&*cgalIntersection);
 

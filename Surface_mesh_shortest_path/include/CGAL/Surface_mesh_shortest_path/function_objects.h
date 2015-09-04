@@ -455,7 +455,7 @@ public:
 
     LineLineIntersectResult intersectResult1(m_intersect_2(s1Line, l1));
 
-    CGAL_assertion(intersectResult1);
+    CGAL_assertion(bool(intersectResult1));
 
     Point_2 p1;
 
@@ -477,7 +477,7 @@ public:
 
     LineLineIntersectResult intersectResult2 = m_intersect_2(s2Line, l2);
 
-    CGAL_assertion(intersectResult2);
+    CGAL_assertion(bool(intersectResult2));
 
     FT t2;
     Point_2 p2;
