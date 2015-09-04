@@ -7,23 +7,23 @@ void print_point ( CGAL::Point_2<K> const& p )
   std::cout << "(" << p.x() << "," << p.y() << ")" ;
 }
 
-template<class K>
-void print_polygon ( CGAL::Polygon_2<K> const& poly )
+template<class K, class C>
+void print_polygon ( CGAL::Polygon_2<K,C> const& poly )
 {
-  typedef CGAL::Polygon_2<K> Polygon ;
+  typedef CGAL::Polygon_2<K,C> Polygon ;
   
   std::cout << "Polygon with " << poly.size() << " vertices" << std::endl ;
   
   for( typename Polygon::Vertex_const_iterator vi = poly.vertices_begin() ; vi != poly.vertices_end() ; ++ vi )
   {
     print_point(*vi); std::cout << std::endl ;
-  }  
+  }
 }
 
-template<class K>
-void print_polygons ( std::vector< boost::shared_ptr< CGAL::Polygon_2<K> > > const& polies )
+template<class K, class C>
+void print_polygons ( std::vector< boost::shared_ptr< CGAL::Polygon_2<K,C> > > const& polies )
 {
-  typedef std::vector< boost::shared_ptr< CGAL::Polygon_2<K> > > PolygonVector ;
+  typedef std::vector< boost::shared_ptr< CGAL::Polygon_2<K,C> > > PolygonVector ;
   
   std::cout << "Polygon list with " << polies.size() << " polygons" << std::endl ;
   
@@ -31,10 +31,10 @@ void print_polygons ( std::vector< boost::shared_ptr< CGAL::Polygon_2<K> > > con
     print_polygon(**pi);
 }
 
-template<class K>
-void print_polygon_with_holes ( CGAL::Polygon_with_holes_2<K> const& polywh )
+template<class K, class C>
+void print_polygon_with_holes ( CGAL::Polygon_with_holes_2<K,C> const& polywh )
 {
-  typedef CGAL::Polygon_with_holes_2<K> PolygonWithHoles ;
+  typedef CGAL::Polygon_with_holes_2<K,C> PolygonWithHoles ;
   
   std::cout << "Polygon_with_holes having " << polywh.number_of_holes() << " holes" << std::endl ;
   
@@ -44,16 +44,18 @@ void print_polygon_with_holes ( CGAL::Polygon_with_holes_2<K> const& polywh )
     print_polygon(*hi);
 }
 
-template<class K>
-void print_polygons_with_holes ( std::vector< boost::shared_ptr< CGAL::Polygon_with_holes_2<K> > > const& polies )
+template<class K, class C>
+void print_polygons_with_holes ( std::vector< boost::shared_ptr< CGAL::Polygon_with_holes_2<K,C> > > const& polies )
 {
-  typedef std::vector< boost::shared_ptr< CGAL::Polygon_with_holes_2<K> > > PolygonWithHolesVector ;
-  
+
+  typedef std::vector< boost::shared_ptr< CGAL::Polygon_with_holes_2<K,C> > > PolygonWithHolesVector ;
+
   std::cout << "Polygon_with_holes list with " << polies.size() << " element" << std::endl ;
-  
+
   for( typename PolygonWithHolesVector::const_iterator pi = polies.begin() ; pi != polies.end() ; ++ pi )
     print_polygon_with_holes(**pi);
 }
+
 
 template<class K>
 void print_straight_skeleton( CGAL::Straight_skeleton_2<K> const& ss )
@@ -80,3 +82,4 @@ void print_straight_skeleton( CGAL::Straight_skeleton_2<K> const& ss )
     std::cout << " " << ( i->is_bisector() ? "bisector" : "contour" ) << std::endl;
   }
 }
+

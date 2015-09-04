@@ -4,12 +4,12 @@
 namespace CGAL
 {
 
-template<class K>
-Bbox_2 bbox_2 ( Polygon_with_holes_2<K> const& aPolyWH )
+template<class K, class C>
+Bbox_2 bbox_2 ( Polygon_with_holes_2<K,C> const& aPolyWH )
 {
   Bbox_2 rBbox = bbox_2(aPolyWH.outer_boundary().vertices_begin(), aPolyWH.outer_boundary().vertices_end());
   
-  for ( typename Polygon_with_holes_2<K>::Hole_const_iterator hit = aPolyWH.holes_begin()
+  for ( typename Polygon_with_holes_2<K,C>::Hole_const_iterator hit = aPolyWH.holes_begin()
       ; hit != aPolyWH.holes_end() 
       ; ++ hit 
       )
@@ -20,10 +20,10 @@ Bbox_2 bbox_2 ( Polygon_with_holes_2<K> const& aPolyWH )
 
 }
 
-template<class K>
-void dump_to_eps( CGAL::Polygon_2<K> const& aPoly, char const* aType, double aScale, std::ostream& rOut )
+template<class K, class C>
+void dump_to_eps( CGAL::Polygon_2<K,C> const& aPoly, char const* aType, double aScale, std::ostream& rOut )
 {
-  typedef typename CGAL::Polygon_2<K>::const_iterator vertex_const_iterator ;
+  typedef typename CGAL::Polygon_2<K,C>::const_iterator vertex_const_iterator ;
     
   vertex_const_iterator begin = aPoly.vertices_begin() ;
   vertex_const_iterator end   = aPoly.vertices_end  () ;
@@ -45,12 +45,12 @@ void dump_to_eps( CGAL::Polygon_2<K> const& aPoly, char const* aType, double aSc
   }
 }
 
-template<class K>
-void dump_to_eps( CGAL::Polygon_with_holes_2<K> const& aPWH, char const* aType, double aScale, std::ostream& rOut )
+template<class K, class C>
+void dump_to_eps( CGAL::Polygon_with_holes_2<K,C> const& aPWH, char const* aType, double aScale, std::ostream& rOut )
 {
   dump_to_eps(aPWH.outer_boundary(), aType, aScale, rOut ) ;
       
-  for ( typename CGAL::Polygon_with_holes_2<K>::Hole_const_iterator hit = aPWH.holes_begin()
+  for ( typename CGAL::Polygon_with_holes_2<K,C>::Hole_const_iterator hit = aPWH.holes_begin()
       ; hit != aPWH.holes_end()
       ; ++ hit
       )
@@ -82,13 +82,13 @@ void dump_to_eps( CGAL::Straight_skeleton_2<K> const& aSkeleton, char const* aTy
   }
 }
 
-template<class K>
-void dump_to_eps ( CGAL::Polygon_with_holes_2<K> const&                                     aInput
-                 , std::vector< boost::shared_ptr< CGAL::Polygon_with_holes_2<K> > > const& aOutput
+template<class K, class C>
+void dump_to_eps ( CGAL::Polygon_with_holes_2<K,C> const&                                     aInput
+                 , std::vector< boost::shared_ptr< CGAL::Polygon_with_holes_2<K,C> > > const& aOutput
                  , std::ostream&                                                            rOut
                  ) 
 {
-  typedef std::vector< boost::shared_ptr< CGAL::Polygon_with_holes_2<K> > > PolyWH_vector ;
+  typedef std::vector< boost::shared_ptr< CGAL::Polygon_with_holes_2<K,C> > > PolyWH_vector ;
     
   CGAL::Bbox_2 lBbox = CGAL::bbox_2(aInput);
   
@@ -129,8 +129,8 @@ void dump_to_eps ( CGAL::Polygon_with_holes_2<K> const&                         
   
 }
 
-template<class K>
-void dump_to_eps ( CGAL::Polygon_with_holes_2<K> const& aInput
+template<class K, class C>
+void dump_to_eps ( CGAL::Polygon_with_holes_2<K,C> const& aInput
                  , CGAL::Straight_skeleton_2<K>  const& aSkeleton
                  , std::ostream&                        rOut
                  ) 
