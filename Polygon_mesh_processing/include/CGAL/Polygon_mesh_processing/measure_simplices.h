@@ -75,7 +75,6 @@ namespace Polygon_mesh_processing {
     return result;
   }
 
-
   template<typename PolygonMesh>
   double
   border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
@@ -85,24 +84,31 @@ namespace Polygon_mesh_processing {
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
+  template<typename PolygonMesh>
+  double area(typename boost::graph_traits<PolygonMesh>::face_descriptor f
+            , const PolygonMesh& pmesh)
+  {
+    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+    halfedge_descriptor hd = halfedge(f, pmesh);
+    halfedge_descriptor nhd = next(hd, pmesh);
+
+    typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type VPM;
+    VPM vpm = get(CGAL::vertex_point, pmesh);
+
+    return CGAL::sqrt(CGAL::squared_area(get(vpm, source(hd, pmesh)),
+                                         get(vpm, target(hd, pmesh)),
+                                         get(vpm, target(nhd, pmesh))));
+  }
+
+
   template<typename PolygonMesh, typename FaceRange>
   double area(FaceRange fr, const PolygonMesh& pmesh)
   {
-    double result = 0;
-    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
-    typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
-
-    typedef typename boost::property_map<PolygonMesh, boost::vertex_point_t>::const_type VPM;
-    VPM vpm = get (CGAL::vertex_point, pmesh);
-    
-    BOOST_FOREACH(face_descriptor f, fr){
-      halfedge_descriptor hd = halfedge(f, pmesh);
-      halfedge_descriptor nhd = next(hd,pmesh);
-      
-      result += sqrt(CGAL::squared_area(get(vpm, source(hd,pmesh)),
-                                        get(vpm, target(hd,pmesh)),
-                                        get(vpm, target(nhd,pmesh))));
+    double result = 0.;
+    BOOST_FOREACH(face_descriptor f, fr)
+    {
+      result += area(f, pmesh);
     }
     return result;
   }
