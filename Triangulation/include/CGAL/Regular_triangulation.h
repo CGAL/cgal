@@ -52,12 +52,10 @@ class Regular_triangulation
   typedef Regular_triangulation<RTTraits, TDS_>   Self;
   
   typedef typename RTTraits::Orientation_d                 Orientation_d;
-  typedef typename RTTraits::Construct_weighted_point_d    Construct_weighted_point_d;
   typedef typename RTTraits::Power_test_d                  Power_test_d;
   typedef typename RTTraits::In_flat_power_test_d          In_flat_power_test_d;
   typedef typename RTTraits::Flat_orientation_d            Flat_orientation_d;
   typedef typename RTTraits::Construct_flat_orientation_d  Construct_flat_orientation_d;
-  typedef typename RTTraits::In_flat_orientation_d         In_flat_orientation_d;
 
 public: // PUBLIC NESTED TYPES
 

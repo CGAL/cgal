@@ -33,24 +33,25 @@ class Regular_triangulation_euclidean_traits
 public:
   typedef K                                         Base;
 
-  // Types from K
+  // Required by TriangulationTraits
   typedef typename K::Dimension                     Dimension;
   typedef typename K::FT                            FT;
+  typedef typename K::Flat_orientation_d            Flat_orientation_d;
+  typedef typename K::Weighted_point_d              Point_d;
+
+  // Required by RegularTriangulationTraits
   typedef typename K::Point_d                       Bare_point;
   typedef typename K::Weighted_point_d              Weighted_point;
-  typedef Weighted_point                            Point_d;
-
-  typedef typename K::Construct_weighted_point_d    Construct_weighted_point_d;
   typedef typename K::Power_test_d                  Power_test_d;
   typedef typename K::In_flat_power_test_d          In_flat_power_test_d;
-  typedef typename K::Flat_orientation_d            Flat_orientation_d;
   typedef typename K::Point_drop_weight_d           Point_drop_weight_d;
   typedef typename K::Point_weight_d                Point_weight_d;
-  
-  //=============================================================================
+
+  //===========================================================================
   // Custom types
-  //=============================================================================
+  //===========================================================================
   
+  // Required by TriangulationTraits
   class Orientation_d
   {
     const K &m_kernel;
@@ -72,8 +73,9 @@ public:
     }
   };
 
-  //=============================================================================
+  //===========================================================================
 
+  // Required by TriangulationTraits
   class Construct_flat_orientation_d
   {
     const K &m_kernel;
@@ -96,8 +98,9 @@ public:
   };
 
 
-  //=============================================================================
+  //===========================================================================
 
+  // Required by TriangulationTraits
   class In_flat_orientation_d
   {
     const K &m_kernel;
@@ -121,8 +124,9 @@ public:
     }
   };
 
-  //=============================================================================
-
+  //===========================================================================
+  
+  // Required by TriangulationTraits
   class Contained_in_affine_hull_d
   {
     const K &m_kernel;
@@ -146,8 +150,9 @@ public:
     }
   };
 
-  //=============================================================================
+  //===========================================================================
 
+  // Required by TriangulationTraits
   class Compare_lexicographically_d
   {
     const K &m_kernel;
@@ -166,8 +171,9 @@ public:
     }
   };
   
-  //=============================================================================
+  //===========================================================================
 
+  // Only for Triangulation_off_ostream.h (undocumented)
   class Compute_coordinate_d
   {
     const K &m_kernel;
@@ -187,8 +193,9 @@ public:
     }
   };
 
-  //=============================================================================
+  //===========================================================================
 
+  // Only for Triangulation_off_ostream.h (undocumented)
   class Point_dimension_d
   {
     const K &m_kernel;
@@ -207,9 +214,9 @@ public:
     }
   };
   
-  //=============================================================================
+  //===========================================================================
   // Object creation
-  //=============================================================================
+  //===========================================================================
 
   Contained_in_affine_hull_d contained_in_affine_hull_d_object() const
   { 
