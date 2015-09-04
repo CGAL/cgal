@@ -173,7 +173,7 @@ public:
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& vf, const std::vector<std::vector<Sign> >& vps)
   : funcs(vf), bmasks(vps.size(), Bmask(funcs.size() * 2, false))
   {
-    CGAL_assertion(funcs.size());
+    CGAL_assertion(funcs.size() != 0);
 
     std::size_t mask_index = 0;
     for (std::vector<std::vector<Sign> >::const_iterator mask_iter = vps.begin(), mask_end_iter = vps.end();
@@ -202,7 +202,7 @@ public:
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& vf)
   : funcs(vf)
   {
-    CGAL_assertion(funcs.size());
+    CGAL_assertion(funcs.size() != 0);
 
     bmasks.reserve((1 << funcs.size()) - 1);
     bmasks.push_back(Bmask(std::string("10")));
@@ -228,7 +228,7 @@ public:
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& vf, const std::vector<std::string>& vps)
   : funcs(vf), bmasks(vps.size(), Bmask(funcs.size() * 2, false))
   {
-    CGAL_assertion(funcs.size());
+    CGAL_assertion(funcs.size() != 0);
 
     std::size_t mask_index = 0;
     for (std::vector<std::string>::const_iterator mask_iter = vps.begin(), mask_end_iter = vps.end();
