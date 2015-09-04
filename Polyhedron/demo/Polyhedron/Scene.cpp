@@ -274,33 +274,31 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
     for(int index = 0; index < m_entries.size(); ++index)
     {
         if(with_names) {
-            ::glPushName(index);
+            viewer->glPushName(index);
         }
         Scene_item& item = *m_entries[index];
         if(item.visible())
         {
             if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
             {
-                ::glEnable(GL_LIGHTING);
-                ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-                ::glPointSize(2.f);
-                ::glLineWidth(1.0f);
+                viewer->glEnable(GL_LIGHTING);
+                viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+                viewer->glPointSize(2.f);
+                viewer->glLineWidth(1.0f);
                 if(index == selected_item)
                 {
                     item.selection_changed(true);
-                    CGALglcolor(item.color().lighter(120));
                 }
                 else
 
                 {
                     item.selection_changed(false);
-                    CGALglcolor(item.color());
                 }
 
                 if(item.renderingMode() == Gouraud)
-                    ::glShadeModel(GL_SMOOTH);
+                    viewer->glShadeModel(GL_SMOOTH);
                 else
-                    ::glShadeModel(GL_FLAT);
+                    viewer->glShadeModel(GL_FLAT);
 
                 item.contextual_changed();
                 if(viewer)
@@ -310,7 +308,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
             }
         }
         if(with_names) {
-            ::glPopName();
+            viewer->glPopName();
         }
     }
 glDepthFunc(GL_LEQUAL);
@@ -318,25 +316,23 @@ glDepthFunc(GL_LEQUAL);
     for(int index = 0; index < m_entries.size(); ++index)
     {
         if(with_names) {
-            ::glPushName(index);
+            viewer->glPushName(index);
         }
         Scene_item& item = *m_entries[index];
         if(item.visible())
         {
             if(item.renderingMode() == FlatPlusEdges || item.renderingMode() == Wireframe)
             {
-                ::glDisable(GL_LIGHTING);
-                ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-                ::glPointSize(2.f);
-                ::glLineWidth(1.0f);
+                viewer->glDisable(GL_LIGHTING);
+                viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+                viewer->glPointSize(2.f);
+                viewer->glLineWidth(1.0f);
                 if(index == selected_item)
                 {
-                    CGALglcolor(Qt::black);
                       item.selection_changed(true);
                 }
                 else
                 {
-                    CGALglcolor(item.color().lighter(50));
                       item.selection_changed(false);
                 }
 
@@ -349,21 +345,19 @@ glDepthFunc(GL_LEQUAL);
             }
             else{
                 if( item.renderingMode() == PointsPlusNormals ){
-                    ::glDisable(GL_LIGHTING);
-                    ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-                    ::glPointSize(2.f);
-                    ::glLineWidth(1.0f);
+                    viewer->glDisable(GL_LIGHTING);
+                    viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+                    viewer->glPointSize(2.f);
+                    viewer->glLineWidth(1.0f);
                     if(index == selected_item)
                     {
 
                         item.selection_changed(true);
-                        CGALglcolor(item.color().lighter(120));
                     }
                     else
                     {
 
                         item.selection_changed(false);
-                        CGALglcolor(item.color());
                     }
                     if(viewer)
                         item.draw_edges(viewer);
@@ -374,7 +368,7 @@ glDepthFunc(GL_LEQUAL);
         }
          item.contextual_changed();
         if(with_names) {
-            ::glPopName();
+            viewer->glPopName();
         }
     }
 
@@ -383,18 +377,17 @@ glDepthFunc(GL_LEQUAL);
     for(int index = 0; index < m_entries.size(); ++index)
     {
         if(with_names) {
-            ::glPushName(index);
+            viewer->glPushName(index);
         }
         Scene_item& item = *m_entries[index];
         if(item.visible())
         {
             if(item.renderingMode() == Points  || item.renderingMode() == PointsPlusNormals)
             {
-                ::glDisable(GL_LIGHTING);
-                ::glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
-                ::glPointSize(2.f);
-                ::glLineWidth(1.0f);
-                CGALglcolor(item.color());
+                viewer->glDisable(GL_LIGHTING);
+                viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
+                viewer->glPointSize(2.f);
+                viewer->glLineWidth(1.0f);
 
                 if(viewer)
                     item.draw_points(viewer);
@@ -404,7 +397,7 @@ glDepthFunc(GL_LEQUAL);
         }
          item.contextual_changed();
         if(with_names) {
-            ::glPopName();
+            viewer->glPopName();
         }
     }
     glDepthFunc(GL_LESS);
@@ -433,8 +426,7 @@ glDepthFunc(GL_LEQUAL);
         {  Scene_item& item = *m_entries[index];
             if(item.visible() && item.renderingMode() == Splatting)
             {
-
-                CGALglcolor(item.color());
+                viewer->glColor4d(item.color().redF(), item.color().greenF(), item.color().blueF(), item.color().alphaF());
                 if(viewer)
                     item.draw_splats(viewer);
                 else
