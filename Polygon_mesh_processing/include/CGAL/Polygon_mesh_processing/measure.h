@@ -29,6 +29,11 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#ifdef DOXYGEN_RUNNING
+#define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
+#define CGAL_PMP_NP_CLASS NamedParameters
+#endif
+
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -127,7 +132,8 @@ namespace Polygon_mesh_processing {
 
   /**
   * \ingroup measure_grp
-  * computes the area of a face of a given polygon mesh.
+  * computes the area of a face of a given
+  * triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `HalfedgeGraph` that has an internal property map
   *         for `boost::vertex_point_t`
@@ -142,15 +148,15 @@ namespace Polygon_mesh_processing {
   * \cgalNamedParamsEnd
   */
   template<typename TriangleMesh,
-           typename NamedParameters>
+           typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
   double area(typename boost::graph_traits<TriangleMesh>::face_descriptor f
             , const TriangleMesh& tmesh
-            , const NamedParameters& np)
+            , const CGAL_PMP_NP_CLASS& np)
   {
     using boost::choose_const_pmap;
     using boost::get_param;
 
-    typename GetVertexPointMap<TriangleMesh, NamedParameters>::const_type
+    typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
     vpm = choose_const_pmap(get_param(np, CGAL::vertex_point),
                             tmesh,
                             CGAL::vertex_point);
@@ -166,15 +172,16 @@ namespace Polygon_mesh_processing {
 
   template<typename TriangleMesh>
   double area(typename boost::graph_traits<TriangleMesh>::face_descriptor f
-    , const TriangleMesh& pmesh)
+    , const TriangleMesh& tmesh)
   {
-    return area(f, pmesh,
+    return area(f, tmesh,
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
   /**
   * \ingroup measure_grp
-  * computes the area of a range of faces of a given polygon mesh.
+  * computes the area of a range of faces of a given
+  * triangulated surface mesh.
   *
   * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`.
@@ -193,10 +200,10 @@ namespace Polygon_mesh_processing {
   */
   template<typename FaceRange,
            typename TriangleMesh,
-           typename NamedParameters>
+           typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
   double area(FaceRange face_range
             , const TriangleMesh& tmesh
-            , const NamedParameters& np)
+            , const CGAL_PMP_NP_CLASS& np)
   {
     typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
     double result = 0.;
@@ -212,6 +219,35 @@ namespace Polygon_mesh_processing {
   {
     return area(face_range, tmesh,
       CGAL::Polygon_mesh_processing::parameters::all_default());
+  }
+
+  /**
+  * \ingroup measure_grp
+  * computes the surface area of a triangulated surface mesh.
+  *
+  * @tparam TriangleMesh a model of `HalfedgeGraph` that has an internal property map
+  *         for `boost::vertex_point_t`
+  * @tparam NamedParameters a sequence of \ref namedparameters
+  *
+  * @param tmesh the triangulated surface mesh to which the faces of `face_range` belong
+  * @param np optional sequence of \ref namedparameters among the ones listed below
+  *
+  * \cgalNamedParamsBegin
+  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+  * \cgalNamedParamsEnd
+  */
+  template<typename TriangleMesh
+         , typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+  double area(const TriangleMesh& tmesh
+            , const CGAL_PMP_NP_CLASS& np)
+  {
+    return area(faces(tmesh), tmesh, np);
+  }
+
+  template<typename TriangleMesh>
+  double area(const TriangleMesh& tmesh)
+  {
+    return area(faces(tmesh), tmesh);
   }
 
 }

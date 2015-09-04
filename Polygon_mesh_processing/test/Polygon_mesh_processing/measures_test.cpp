@@ -49,6 +49,9 @@ void test(const Mesh& pmesh)
       continue;
     else
     {
+      double face_area = PMP::area(face(h, pmesh), pmesh);
+      std::cout << "face area = " << face_area << std::endl;
+ 
       patch.push_back(face(h, pmesh));
       patch.push_back(face(opposite(h, pmesh), pmesh));
       patch.push_back(face(opposite(next(h, pmesh), pmesh), pmesh));
@@ -59,6 +62,8 @@ void test(const Mesh& pmesh)
   double patch_area = PMP::area(patch, pmesh);
   std::cout << "patch area = " << patch_area << std::endl;
 
+  double mesh_area = PMP::area(pmesh);
+  std::cout << "mesh area = " << mesh_area << std::endl;
 }
 
 void test_polyhedron(const char* filename)
