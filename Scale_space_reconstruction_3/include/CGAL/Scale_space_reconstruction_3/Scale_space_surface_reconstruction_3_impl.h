@@ -182,7 +182,7 @@ public:
 	    barycenter = barycenter + ((1.0 / _nn[boost::get<1>(nit->first)]) / weight_sum) * v;
 	  }
 	
-	CGAL::cpp11::array<double, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
+	CGAL::cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
 	column = 0;
 	// Compute covariance matrix of Weighted PCA
         for( typename Static_search::iterator nit = search.begin();
@@ -190,7 +190,7 @@ public:
              ++nit, ++column )
 	  {
 	    Vector v (barycenter, boost::get<0>(nit->first));
-	    double w = (1.0 / _nn[boost::get<1>(nit->first)]);
+	    FT w = (1.0 / _nn[boost::get<1>(nit->first)]);
 	    v = w*v;
 	    covariance[0] += w * v.x () * v.x ();
 	    covariance[1] += w * v.x () * v.y ();
@@ -201,13 +201,16 @@ public:
 	  }
 
         // Compute the weighted least-squares planar approximation of the point set.
-	CGAL::cpp11::array<FT, 3> vnorm = {{ 0., 0., 0. }};
-	wA::extract_smallest_eigenvector_of_covariance_matrix
-	  (covariance, vnorm);
+	CGAL::cpp11::array<FT, 9> eigenvectors = {{ 0., 0., 0.,
+						    0., 0., 0.,
+						    0., 0., 0. }};
+	CGAL::cpp11::array<FT, 3> eigenvalues = {{ 0., 0., 0. }};
+	wA::diagonalize_selfadjoint_covariance_matrix
+	  (covariance, eigenvalues, eigenvectors);
 
         // The vertex is moved by projecting it onto the plane
         // through the barycenter and orthogonal to the Eigen vector with smallest Eigen value.
-	Vector norm (vnorm[0], vnorm[1], vnorm[2]);
+	Vector norm (eigenvectors[0], eigenvectors[1], eigenvectors[2]);
 	Vector b2p (barycenter, _pts[i]);
 
 	_pts[i] = barycenter + b2p - ((norm * b2p) * norm);
