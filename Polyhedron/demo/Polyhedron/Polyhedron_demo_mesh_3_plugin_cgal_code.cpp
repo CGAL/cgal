@@ -40,7 +40,8 @@ typedef Tr::Point Point_3;
 #include <QtCore/qglobal.h>
 #include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
-#include <QGLViewer/qglviewer.h>
+//#include <QGLViewer/qglviewer.h>
+#include "Viewer_interface.h"
 
 
 class Q_DECL_EXPORT Scene_c3t3_item : public Scene_item
