@@ -103,6 +103,7 @@ public:
     using Base::index_of_covertex;
     //using Base::index_of_second_covertex;
     using Base::infinite_vertex;
+    using Base::rotate_rotor;
     using Base::insert_in_hole;
     using Base::insert_outside_convex_hull_1;
     using Base::is_infinite;
