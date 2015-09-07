@@ -129,6 +129,8 @@ public:
         /// fill non-manifold edges container
         soup->fill_edges();
         oriented = false;
+
+        Q_EMIT changed();
     }
 
     bool save(std::ostream& out) const;
