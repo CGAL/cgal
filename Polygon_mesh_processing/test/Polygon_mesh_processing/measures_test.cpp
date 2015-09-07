@@ -83,7 +83,7 @@ void test_polyhedron(const char* filename)
   test(poly);
 }
 
-void test_surface_mesh(const char* filename)
+void test_closed_surface_mesh(const char* filename)
 {
   Surface_mesh sm;
   std::ifstream input(filename);
@@ -97,14 +97,20 @@ void test_surface_mesh(const char* filename)
   }
 
   test(sm);
+
+  double vol = PMP::volume(sm);
+  std::cout << "volume = " << vol << std::endl;
 }
 
 int main(int argc, char* argv[])
 {
-  const char* filename = (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
+  const char* filename_polyhedron =
+    (argc > 1) ? argv[1] : "data/mech-holes-shark.off";
+  test_polyhedron(filename_polyhedron);
 
-  test_polyhedron(filename);
-  test_surface_mesh(filename);
+  const char* filename_surface_mesh =
+    (argc > 1) ? argv[1] : "data/elephant.off";
+  test_closed_surface_mesh(filename_surface_mesh);
 
   std::cerr << "All done." << std::endl;
   return 0;

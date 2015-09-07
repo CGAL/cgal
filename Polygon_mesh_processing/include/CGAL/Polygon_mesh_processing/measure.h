@@ -229,7 +229,7 @@ namespace Polygon_mesh_processing {
   *         for `boost::vertex_point_t`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
-  * @param tmesh the triangulated surface mesh to which the faces of `face_range` belong
+  * @param tmesh the triangulated surface mesh
   * @param np optional sequence of \ref namedparameters among the ones listed below
   *
   * \cgalNamedParamsBegin
@@ -248,6 +248,62 @@ namespace Polygon_mesh_processing {
   double area(const TriangleMesh& tmesh)
   {
     return area(faces(tmesh), tmesh);
+  }
+
+  /**
+  * \ingroup measure_grp
+  * computes the volume of the domain bounded by
+  * a closed triangulated surface mesh.
+  *
+  * @tparam TriangleMesh a model of `HalfedgeGraph` that has an internal property map
+  *         for `boost::vertex_point_t`
+  * @tparam NamedParameters a sequence of \ref namedparameters
+  *
+  * @param tmesh the closed triangulated surface mesh bounding the volume
+  * @param np optional sequence of \ref namedparameters among the ones listed below
+  *
+  * @pre `tmesh` is closed
+  *
+  * \cgalNamedParamsBegin
+  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+  * \cgalNamedParamsEnd
+  */
+  template<typename TriangleMesh
+         , typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
+  double volume(const TriangleMesh& tmesh
+              , const CGAL_PMP_NP_CLASS& np)
+  {
+    CGAL_assertion(is_pure_triangle(tmesh));
+    CGAL_assertion(is_closed(tmesh));
+
+    using boost::choose_const_pmap;
+    using boost::get_param;
+
+    typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
+      vpm = choose_const_pmap(get_param(np, CGAL::vertex_point),
+                              tmesh,
+                              CGAL::vertex_point);
+    typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::Point_3
+      origin(0, 0, 0);
+
+    typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+
+    double volume = 0.;
+    BOOST_FOREACH(face_descriptor f, faces(tmesh))
+    {
+      volume += CGAL::volume(origin,
+        get(vpm, target(halfedge(f, tmesh), tmesh)),
+        get(vpm, target(next(halfedge(f, tmesh), tmesh), tmesh)),
+        get(vpm, target(prev(halfedge(f, tmesh), tmesh), tmesh)));
+    }
+    return volume;
+  }
+
+  template<typename TriangleMesh>
+  double volume(const TriangleMesh& tmesh)
+  {
+    return volume(tmesh,
+      CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
 }
