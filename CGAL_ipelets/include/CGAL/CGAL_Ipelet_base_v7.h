@@ -850,7 +850,7 @@ public:
         switch (ints.size()){
           case 1:
             ok=CGAL::assign(tmp_pt,ints[0]);
-            CGAL_assertion(ok); CGAL_use(ok);
+            CGAL_assertion(ok); CGAL_USE(ok);
             points.push_back(tmp_pt);
             index=points.size()-1;
             indices[i]=index;
@@ -859,12 +859,12 @@ public:
           case 2:
             int right_ind=i<2?0:1;
             ok=CGAL::assign(tmp_pt,ints[right_ind]);
-            CGAL_assertion(ok); CGAL_use(ok);
+            CGAL_assertion(ok); CGAL_USE(ok);
             points.push_back(tmp_pt);
             index=points.size()-1;
             indices[i]=index;
             ok=CGAL::assign(tmp_pt,ints[(right_ind+1)%2]);
-            CGAL_assertion(ok); CGAL_use(ok);
+            CGAL_assertion(ok); CGAL_USE(ok);
             points.push_back(tmp_pt);
             index=points.size()-1;
             indices[(i+1)%4+4]=index;      
