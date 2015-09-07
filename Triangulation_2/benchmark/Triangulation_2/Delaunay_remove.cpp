@@ -3,6 +3,8 @@
 #include <CGAL/Timer.h>
 #include <CGAL/point_generators_2.h>
 
+#include <CGAL/Orthogonal_k_neighbor_search.h>
+#include <CGAL/Search_traits_2.h>
 
 #include <iostream>
 #include <fstream>
@@ -11,9 +13,10 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  K;
 typedef CGAL::Delaunay_triangulation_2<K> Delaunay;
+typedef Delaunay::Finite_vertices_iterator FVI;
+typedef Delaunay::Vertex_handle Vertex_handle;
 typedef K::Point_2                                     Point;
 typedef CGAL::Creator_uniform_2<double,Point>  Creator;
-
 
 
 int main(int argc, char **argv)
@@ -34,10 +37,14 @@ int main(int argc, char **argv)
   double res=0;
   for (int r=0;r<rep;++r){
     Delaunay delaunay=original;
+    std::vector<Vertex_handle> vertices;
+    for(FVI fvi = delaunay.finite_vertices_begin(); fvi != delaunay.finite_vertices_end();++fvi){
+      vertices.push_back(fvi);
+    }
     CGAL::Timer t;
     t.start();
-    for (int k=0;k<n;++k)
-      delaunay.remove(delaunay.finite_vertices_begin());
+    for (int k=0; k<vertices.size(); ++k)
+      delaunay.remove(vertices[k]);
     t.stop();
     res+=t.time();
     if (delaunay.number_of_vertices()!=0){
