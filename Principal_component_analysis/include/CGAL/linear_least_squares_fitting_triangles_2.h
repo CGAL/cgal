@@ -124,21 +124,17 @@ linear_least_squares_fitting_2(InputIterator first,
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in ascending order, 
   // eigen vectors are sorted in accordance.
-  std::pair<FT,FT> eigen_values;
-  std::pair<Vector,Vector> eigen_vectors;
-  CGAL::cpp11::array<FT, 2> eigen_values1 = {{ 0. , 0. }};
-  CGAL::cpp11::array<FT, 4> eigen_vectors1 = {{ 0., 0., 0. }};
+  CGAL::cpp11::array<FT, 2> eigen_values = {{ 0. , 0. }};
+  CGAL::cpp11::array<FT, 4> eigen_vectors = {{ 0., 0., 0. }};
   Diagonalize_traits::diagonalize_selfadjoint_covariance_matrix
-    (covariance, eigen_values1, eigen_vectors1);
+    (covariance, eigen_values, eigen_vectors);
 
-  eigen_values = std::make_pair(eigen_values1[1],eigen_values1[0]);
-  eigen_vectors = std::make_pair(Vector(eigen_vectors1[2],eigen_vectors1[3]),Vector(eigen_vectors1[0],eigen_vectors1[1]));
   // check unicity and build fitting line accordingly
-  if(eigen_values.first != eigen_values.second)
+  if(eigen_values[0] != eigen_values[1])
   {
     // regular case
-    line = Line(c, eigen_vectors.first);
-    return (FT)1.0 - eigen_values.second / eigen_values.first;
+    line = Line(c, Vector(eigen_vectors[2],eigen_vectors[3]));
+    return (FT)1.0 - eigen_values[0] / eigen_values[1];
   } 
   else
   {
