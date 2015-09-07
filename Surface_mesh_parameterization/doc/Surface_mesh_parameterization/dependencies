@@ -8,3 +8,6 @@ Polyhedron
 Kernel_d
 Surface_modeling
 Surface_mesh_skeletonization
+Solver_interface
+Convex_hull_2
+

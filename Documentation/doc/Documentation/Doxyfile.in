@@ -91,6 +91,7 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/STL_Extension/doc/STL_Extension/fig \
              ${CMAKE_SOURCE_DIR}/Skin_surface_3/doc/Skin_surface_3/fig \
              ${CMAKE_SOURCE_DIR}/Snap_rounding_2/doc/Snap_rounding_2/fig \
+             ${CMAKE_SOURCE_DIR}/Solver_interface/doc/Solver_interface/fig \
              ${CMAKE_SOURCE_DIR}/Arrangement_on_surface_2/doc/Sweep_line_2/fig \
              ${CMAKE_SOURCE_DIR}/Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig \
              ${CMAKE_SOURCE_DIR}/Boolean_set_operations_2/doc/Boolean_set_operations_2/fig \

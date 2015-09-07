@@ -62,24 +62,24 @@ if ( CGAL_FOUND )
     list(APPEND CGAL_3RD_PARTY_LIBRARIES ${Boost_PROGRAM_OPTIONS_LIBRARY})
  endif()
 
-  # Executables that do *not* require Eigen
+ 
+  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
+ 
+  if (EIGEN3_FOUND)
+    # Executables that require Eigen 3.1
+    include( ${EIGEN3_USE_FILE} ) 
   create_single_source_cgal_program( "Authalic_parameterization.cpp" )
   create_single_source_cgal_program( "Mesh_cutting_parameterization.cpp" )
   create_single_source_cgal_program( "Simple_parameterization.cpp" )
   create_single_source_cgal_program( "Square_border_parameterization.cpp" )
 
-  find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
- 
-  if (EIGEN3_FOUND)
-    # Executables that require Eigen 3.1
-    include( ${EIGEN3_USE_FILE} )
     create_single_source_cgal_program( "Complete_parameterization_example.cpp" )
-    create_single_source_cgal_program( "Eigen_parameterization.cpp" )
+
+  create_single_source_cgal_program( "polyhedron_ex_parameterization.cpp" )
+
   else(EIGEN3_FOUND)
     message(STATUS "NOTICE: Some examples require Eigen 3.1 (or greater) and will not be compiled.")  
   endif(EIGEN3_FOUND)
-
-  create_single_source_cgal_program( "polyhedron_ex_parameterization.cpp" )
 
 else()
 

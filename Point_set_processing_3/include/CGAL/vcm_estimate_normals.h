@@ -32,9 +32,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Fuzzy_sphere.h>
 
-#ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Eigen_vcm_traits.h>
-#endif
+#include <CGAL/Default_diagonalize_traits.h>
 
 #include <iterator>
 #include <vector>
@@ -368,9 +366,11 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
-/// \tparam VCM_traits is a model of `VCMTraits`. If Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined
-///         then an overload using `Eigen_vcm_traits` is provided and this template parameter can be omitted.
-
+/// \tparam VCM_traits is a model of `DiagonalizeTraits`. It can be
+/// omitted: if Eigen 3 (or greater) is available and
+/// `CGAL_EIGEN3_ENABLED` is defined then an overload using
+/// `Eigen_diagonalize_traits` is provided. Otherwise, the internal
+/// implementation `Internal_diagonalize_traits` is used.
 // This variant deduces the kernel from the point property map
 // and uses a radius for the convolution.
 template < typename ForwardIterator,
@@ -409,8 +409,11 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
-/// \tparam VCM_traits is a model of `VCMTraits`. If Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined
-///         then an overload using `Eigen_vcm_traits` is provided and this template parameter can be omitted.
+/// \tparam VCM_traits is a model of `DiagonalizeTraits`. It can be
+/// omitted: if Eigen 3 (or greater) is available and
+/// `CGAL_EIGEN3_ENABLED` is defined then an overload using
+/// `Eigen_diagonalize_traits` is provided. Otherwise, the internal
+/// implementation `Internal_diagonalize_traits` is used.
 
 // This variant deduces the kernel from the point property map
 // and uses a number of neighbors for the convolution.
@@ -440,7 +443,6 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 }
 
 
-#ifdef CGAL_EIGEN3_ENABLED
 template < typename ForwardIterator,
            typename PointPMap,
            typename NormalPMap
@@ -453,7 +455,8 @@ vcm_estimate_normals (ForwardIterator first,
                       double offset_radius,
                       double convolution_radius)
 {
-  vcm_estimate_normals(first, beyond, point_pmap, normal_pmap, offset_radius, convolution_radius, Eigen_vcm_traits());
+  vcm_estimate_normals(first, beyond, point_pmap, normal_pmap, offset_radius, convolution_radius,
+		       CGAL::Default_diagonalize_traits<double, 3>());
 }
 
 template < typename ForwardIterator,
@@ -468,9 +471,11 @@ vcm_estimate_normals (ForwardIterator first,
                       double offset_radius,
                       unsigned int nb_neighbors_convolve)
 {
-  vcm_estimate_normals(first, beyond, point_pmap, normal_pmap, offset_radius, nb_neighbors_convolve, Eigen_vcm_traits());
+  vcm_estimate_normals(first, beyond, point_pmap, normal_pmap, offset_radius, nb_neighbors_convolve,
+		       CGAL::Default_diagonalize_traits<double, 3>());
+
 }
-#endif
+
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Identity_property_map

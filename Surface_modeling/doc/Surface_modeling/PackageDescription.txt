@@ -31,7 +31,6 @@ under positional constraints of some of its vertices, without requiring any addi
 ## Concepts ##
 - `DeformationClosestRotationTraits_3`
 - `RawPoint_3`
-- `SparseLinearAlgebraTraitsWithFactor_d`
 - `SurfaceModelingWeights`
 
 ## Algebraic Traits ##

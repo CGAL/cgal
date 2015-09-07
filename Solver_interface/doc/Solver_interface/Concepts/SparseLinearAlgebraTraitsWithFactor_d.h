@@ -1,6 +1,6 @@
 
 /*!
-\ingroup PkgSurfaceModelingConcepts
+\ingroup PkgSolverConcepts
 \cgalConcept
 
 @brief Concept describing the set of requirements for a direct sparse linear system solver with factorization.
@@ -31,16 +31,16 @@ SparseLinearAlgebraTraitsWithFactor_d();
 /// @{
 
 /*!
-Factorize the sparse matrix A.
-This factorization is used in SparseLinearAlgebraTraitsWithFactor_d::linear_solver to solve the system for different right-hand side vectors.
+  Factorize the sparse matrix `A`.
+This factorization is used in `SparseLinearAlgebraTraitsWithFactor_d::linear_solver()` to solve the system for different right-hand side vectors.
 See `::SparseLinearAlgebraTraits_d::linear_solver()` for the description of `D`.
-@return true if the factorization is successful
+@return `true` if the factorization is successful
 */
 bool factor(const Matrix& A, NT& D);
 
 /*!
-Solve the sparse linear system \f$ A \times X = B\f$, with \f$ A \f$ being the matrix provided in SparseLinearAlgebraTraitsWithFactor_d::factor.
-@return true if the solver is successful
+Solve the sparse linear system \f$ A \times X = B\f$, with \f$ A \f$ being the matrix provided in `SparseLinearAlgebraTraitsWithFactor_d::factor()`.
+@return `true` if the solver is successful
 */
 bool linear_solver(const Vector& B, Vector& X);
 

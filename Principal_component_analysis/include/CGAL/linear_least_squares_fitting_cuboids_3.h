@@ -22,7 +22,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/centroid.h>
-#include <CGAL/eigen.h>
 #include <CGAL/PCA_util.h>
 #include <CGAL/linear_least_squares_fitting_points_3.h>
 #include <CGAL/linear_least_squares_fitting_segments_3.h>
@@ -36,7 +35,8 @@ namespace internal {
 
 // fits a plane to a 3D cuboid set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -44,7 +44,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<3>& tag)
+			       const CGAL::Dimension_tag<3>& tag,
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::FT FT;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
@@ -56,18 +57,19 @@ linear_least_squares_fitting_3(InputIterator first,
   c = centroid(first,beyond,k,tag);
 
   // assemble covariance matrix
-  FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
+  CGAL::cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Iso_cuboid*) NULL,tag);
 
   // compute fitting plane
-  return fitting_plane_3(covariance,c,plane,k);
+  return fitting_plane_3(covariance,c,plane,k,diagonalize_traits);
 
 
 } // end linear_least_squares_fitting_cuboids_3
 
 // fits a plane to a 3D cuboid set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -75,7 +77,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<2>& tag)
+			       const CGAL::Dimension_tag<2>& tag,
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::FT FT;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
@@ -87,18 +90,19 @@ linear_least_squares_fitting_3(InputIterator first,
   c = centroid(first,beyond,k,tag);
 
   // assemble covariance matrix
-  FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
+  CGAL::cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Iso_cuboid*) NULL,tag);
 
   // compute fitting plane
-  return fitting_plane_3(covariance,c,plane,k);
+  return fitting_plane_3(covariance,c,plane,k,diagonalize_traits);
 
 
 } // end linear_least_squares_fitting_cuboids_3
 
 // fits a plane to a 3D cuboid set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -106,7 +110,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<1>& tag)
+			       const CGAL::Dimension_tag<1>& tag,
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::Segment_3 Segment;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
@@ -135,13 +140,15 @@ linear_least_squares_fitting_3(InputIterator first,
   }
 
   // compute fitting plane
-  return linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,c,(Segment*)NULL,k,tag);
+  return linear_least_squares_fitting_3(segments.begin(),segments.end(),plane,c,(Segment*)NULL,k,tag,
+					diagonalize_traits);
 
 } // end linear_least_squares_fitting_cuboids_3
 
 // fits a plane to a 3D cuboid set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -149,7 +156,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<0>& tag)
+			       const CGAL::Dimension_tag<0>& tag,
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::Point_3 Point;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
@@ -174,13 +182,15 @@ linear_least_squares_fitting_3(InputIterator first,
   }
 
   // compute fitting plane
-  return linear_least_squares_fitting_3(points.begin(),points.end(),plane,c,(Point*)NULL,k,tag);
+  return linear_least_squares_fitting_3(points.begin(),points.end(),plane,c,(Point*)NULL,k,tag,
+					diagonalize_traits);
 
 } // end linear_least_squares_fitting_cuboids_3
 
 // fits a line to a 3D cuboid set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -188,7 +198,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<3>& tag)
+			       const CGAL::Dimension_tag<3>& tag,
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::FT FT;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
@@ -200,17 +211,18 @@ linear_least_squares_fitting_3(InputIterator first,
   c = centroid(first,beyond,k,tag);
 
   // assemble covariance matrix
-  FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
+  CGAL::cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Iso_cuboid*) NULL,tag);
   
   // compute fitting line
-  return fitting_line_3(covariance,c,line,k);
+  return fitting_line_3(covariance,c,line,k,diagonalize_traits);
   
 } // end linear_least_squares_fitting_cuboids_3
 
 // fits a line to a 3D cuboid set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -218,7 +230,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<2>& tag)
+			       const CGAL::Dimension_tag<2>& tag,
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::FT FT;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
@@ -230,18 +243,19 @@ linear_least_squares_fitting_3(InputIterator first,
   c = centroid(first,beyond,k,tag);
 
   // assemble covariance matrix
-  FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
+  CGAL::cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Iso_cuboid*) NULL,tag);
   
   // compute fitting line
-  return fitting_line_3(covariance,c,line,k);
+  return fitting_line_3(covariance,c,line,k,diagonalize_traits);
 
 
 } // end linear_least_squares_fitting_cuboids_3
 
 // fits a line to a 3D cuboid set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -249,7 +263,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<1>& tag)
+			       const CGAL::Dimension_tag<1>& tag,
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::Segment_3 Segment;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
@@ -278,13 +293,15 @@ linear_least_squares_fitting_3(InputIterator first,
   }
 
   // compute fitting line
-  return linear_least_squares_fitting_3(segments.begin(),segments.end(),line,c,(Segment*)NULL,k,tag);
+  return linear_least_squares_fitting_3(segments.begin(),segments.end(),line,c,(Segment*)NULL,k,tag,
+					diagonalize_traits);
 
 } // end linear_least_squares_fitting_cuboids_3
 
 // fits a line to a 3D cuboid set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -292,7 +309,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Iso_cuboid_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<0>& tag)
+			       const CGAL::Dimension_tag<0>& tag,
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::Point_3 Point;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
@@ -317,7 +335,8 @@ linear_least_squares_fitting_3(InputIterator first,
   }
 
   // compute fitting line
-  return linear_least_squares_fitting_3(points.begin(),points.end(),line,c,(Point*)NULL,k,tag);
+  return linear_least_squares_fitting_3(points.begin(),points.end(),line,c,(Point*)NULL,k,tag,
+					diagonalize_traits);
 
 } // end linear_least_squares_fitting_cuboids_3
 

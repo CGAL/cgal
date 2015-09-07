@@ -24,7 +24,8 @@
 
 #include <CGAL/circulator.h>
 #include <CGAL/Timer.h>
-#include <CGAL/OpenNL/linear_solver.h>
+#include <CGAL/Eigen_solver_traits.h>
+
 
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Circular_border_parameterizer_3.h>
@@ -80,8 +81,8 @@ template
     class BorderParameterizer_3         ///< Strategy to parameterize the surface border
                 = Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
     class SparseLinearAlgebraTraits_d   ///< Traits class to solve a sparse linear system
-                = OpenNL::DefaultLinearSolverTraits<typename ParameterizationMesh_3::NT>
->
+                = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType, Eigen::IncompleteLUT< double > > > >
+
 class Fixed_border_parameterizer_3
     : public Parameterizer_traits_3<ParameterizationMesh_3>
 {

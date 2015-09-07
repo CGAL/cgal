@@ -12,7 +12,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{Solvers as \ref thirdpartyEigen.}
+\cgalPkgDependsOn{\ref PkgSolverSummary} 
 \cgalPkgBib{cgal:sal-pptsm2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
@@ -31,7 +31,6 @@
 - `BorderParameterizer_3`
 - `ParameterizationMesh_3`
 - `ParameterizationPatchableMesh_3`
-- `SparseLinearAlgebraTraits_d`
 - `PolyhedronTraitsWithKernel_3`
 
 ## Surface Parameterization Methods ##
@@ -55,7 +54,7 @@ This \cgal package implements several parameterization methods:
 - `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 - `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 - `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-- `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+- `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3>`
 - `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 ## Border Parameterization Methods ##
@@ -122,16 +121,6 @@ The package provides an interface with `CGAL::Polyhedron_3<Traits>`:
 
 A `(u,v)` pair is computed for each inner vertex (i.e.\ its halfedges share the same `(u,v)` pair), while a `(u,v)` pair is computed for each border halfedge. The user must iterate over the mesh halfedges to get the result. 
 
-## Sparse Linear Algebra ##
-
-Since parameterizing meshes requires
-efficient representation of sparse matrices and efficient iterative or
-direct linear solvers, we provide an interface to several
-sparse linear solvers:
- - <span class="textsc">Eigen</span> 3.1 (or greater) is the library recommended by %CGAL solving sparse systems.
- - OpenNL (authored by Bruno LÃ©vy) is shipped with %CGAL is the default solver.
-  - `OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package  
-  - `OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package  
 
 ## Helper Classes ##
 
@@ -250,18 +239,6 @@ The package provides an interface with `CGAL::Polyhedron_3<Traits>`:
 
 
 
-/*! \defgroup PkgSurfaceParameterizationAlgebra Sparse Linear Algebra
- \ingroup PkgSurfaceParameterization
-
-Since parameterizing meshes requires
-efficient representation of sparse matrices and efficient iterative or
-direct linear solvers, we provide an interface to several
-sparse linear solvers:
- - <span class="textsc">Eigen</span> 3.1 (or greater) is the library recommended by %CGAL solving sparse systems.
- - OpenNL (authored by Bruno Lévy) is shipped with %CGAL is the default solver.
-  - `OpenNL::DefaultLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package  
-  - `OpenNL::SymmetricLinearSolverTraits<COEFFTYPE, MATRIX, VECTOR, SOLVER>` in OpenNL package  
-*/
 
 /*!
 \defgroup PkgSurfaceParameterizationHelper Helper Class

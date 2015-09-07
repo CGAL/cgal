@@ -22,7 +22,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/centroid.h>
-#include <CGAL/eigen.h>
 #include <CGAL/PCA_util.h>
 
 #include <iterator>
@@ -33,7 +32,8 @@ namespace internal {
 
 // fits a plane to a set of 3D balls (3D)
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -41,7 +41,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Sphere_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<3>& tag)
+			       const CGAL::Dimension_tag<3>& tag,
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3    Sphere;
@@ -53,17 +54,18 @@ linear_least_squares_fitting_3(InputIterator first,
   c = centroid(first,beyond,K(),tag);
 
   // assemble covariance matrix
-  FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
+  CGAL::cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) NULL,tag);
   
   // compute fitting plane
-  return fitting_plane_3(covariance,c,plane,k);
+  return fitting_plane_3(covariance,c,plane,k,diagonalize_traits);
 
 } // end linear_least_squares_fitting_spheres_3
 
 // fits a plane to a 3D sphere set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -71,7 +73,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Sphere_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<2>& tag)
+			       const CGAL::Dimension_tag<2>& tag,
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3    Sphere;
@@ -83,18 +86,19 @@ linear_least_squares_fitting_3(InputIterator first,
   c = centroid(first,beyond,K(),tag);
 
   // assemble covariance matrix
-  FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
+  CGAL::cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) NULL,tag);
   
   // compute fitting plane
-  return fitting_plane_3(covariance,c,plane,k);
+  return fitting_plane_3(covariance,c,plane,k,diagonalize_traits);
 
 } // end linear_least_squares_fitting_spheres_3
 
 
 // fits a line to a 3D ball set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -102,7 +106,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Sphere_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<3>& tag)
+			       const CGAL::Dimension_tag<3>& tag,
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3  Sphere;
@@ -114,18 +119,19 @@ linear_least_squares_fitting_3(InputIterator first,
   c = centroid(first,beyond,K(),tag);
   
   // assemble covariance matrix
-  FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
+  CGAL::cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) NULL,tag);
 
 
   // compute fitting line
-  return fitting_line_3(covariance,c,line,k);
+  return fitting_line_3(covariance,c,line,k,diagonalize_traits);
   
 } // end linear_least_squares_fitting_spheres_3
 
 // fits a line to a 3D sphere set
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename Diagonalize_traits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -133,7 +139,8 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename K::Point_3& c,       // centroid
                                const typename K::Sphere_3*,  // used for indirection
                                const K& k,                   // kernel
-			                         const CGAL::Dimension_tag<2>& tag)
+			       const CGAL::Dimension_tag<2>& tag,
+			       const Diagonalize_traits& diagonalize_traits)
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3  Sphere;
@@ -145,11 +152,11 @@ linear_least_squares_fitting_3(InputIterator first,
   c = centroid(first,beyond,K(),tag);
   
   // assemble covariance matrix
-  FT covariance[6] = {0.0,0.0,0.0,0.0,0.0,0.0};
+  CGAL::cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
   assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Sphere*) NULL,tag);
 
   // compute fitting line
-  return fitting_line_3(covariance,c,line,k);
+  return fitting_line_3(covariance,c,line,k,diagonalize_traits);
 
 } // end linear_least_squares_fitting_spheres_3
 
