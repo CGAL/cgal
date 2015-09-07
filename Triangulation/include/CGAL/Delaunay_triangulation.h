@@ -75,6 +75,8 @@ public: // PUBLIC NESTED TYPES
     typedef typename Base::Full_cell_iterator       Full_cell_iterator;
     typedef typename Base::Full_cell_const_handle   Full_cell_const_handle;
     typedef typename Base::Full_cell_const_iterator Full_cell_const_iterator;
+    typedef typename Base::Finite_full_cell_const_iterator
+                                                    Finite_full_cell_const_iterator;
 
     typedef typename Base::size_type                size_type;
     typedef typename Base::difference_type          difference_type;
