@@ -117,6 +117,8 @@ public:
     using Base::full_cell;
     using Base::full_cells_begin;
     using Base::full_cells_end;
+    using Base::finite_full_cells_begin;
+    using Base::finite_full_cells_end;
     using Base::vertices_begin;
     using Base::vertices_end;
     // using Base::
