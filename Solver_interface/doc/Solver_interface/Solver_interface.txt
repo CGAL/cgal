@@ -49,10 +49,8 @@ class:
 
 The concept `SvdTraits` defines an interface for solving in the least
 square sense a linear system with a singular value decomposition. The
-field type is `double`. We provide two models for this concept:
-
-- `Eigen_svd` uses the \ref thirdpartyEigen library.
-- `Lapack_svd` uses the \ref thirdpartyLapack library.
+field type is `double`. We provide the model `Eigen_svd` that uses the
+\ref thirdpartyEigen library.
 
 Here is a simple example that shows how to handle matrices, vectors
 and this solver:
