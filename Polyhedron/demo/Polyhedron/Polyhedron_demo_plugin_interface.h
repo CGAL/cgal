@@ -22,7 +22,7 @@ public:
   }
 
   //! Checks the current state of the `Scene` or `MainWindow` and decides
-  //! if the plugin can function, given that state.  It's actions are
+  //! if the plugin can function, given that state.  Its actions are
   //! visible in contextmenus, if this returns true, not visible
   //! otherwise.  
   //!

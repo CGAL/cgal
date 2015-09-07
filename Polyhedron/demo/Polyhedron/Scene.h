@@ -46,7 +46,8 @@ public:
   //!Adds item to the items list, gives it an ID and
   //!updates the bounding box if needed.
   int addItem(Scene_item* item);
-  //!Sets item as the item at index and calls item->changed().
+  //!Sets item as the item at index and calls @ref Scene_item#changed().
+
   //!If emit_item_about_to_be_destroyed is set to true, emits
   //!an itemAboutToBeDestroyed signal.
   Scene_item* replaceItem(int index, Scene_item* item, bool emit_item_about_to_be_destroyed = false);
@@ -152,15 +153,15 @@ public:
 public Q_SLOTS:
   /*! This is an overloaded function.
    * Notifies the scene that the sender item was modified.
-   * Called by the items. Calls item->changed();
+   * Called by the items. Calls @ref Scene_item#changed().
    * This function is called by the items.*/
   void itemChanged();
   /*! Notifies the scene that the item at index i was modified.
-   * Called by the items. Calls item->changed();
+   * Called by the items. Calls @ref Scene_item#changed().
    * This function is called by the items.*/
   void itemChanged(int i); 
   /*! Notifies the scene that the item was modified.
-   *  Calls item->changed();
+   *  Calls @ref Scene_item#changed().
    * This function is called by the items.*/
   void itemChanged(Scene_item*);
   //! Sets the selected item to the target index.
