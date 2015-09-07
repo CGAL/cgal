@@ -3,9 +3,6 @@
 #include <CGAL/Timer.h>
 #include <CGAL/point_generators_2.h>
 
-#include <CGAL/Orthogonal_k_neighbor_search.h>
-#include <CGAL/Search_traits_2.h>
-
 #include <iostream>
 #include <fstream>
 #include <string>
