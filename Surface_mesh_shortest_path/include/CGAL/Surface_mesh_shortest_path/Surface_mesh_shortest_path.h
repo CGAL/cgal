@@ -34,6 +34,7 @@
 #include <boost/type_traits/is_same.hpp>
 #include <iterator>
 
+#include <CGAL/assertions.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/Default.h>
 
@@ -608,7 +609,7 @@ private:
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
     typename Traits::Construct_triangle_3_along_segment_2_flattening ft3as2(m_traits.construct_triangle_3_along_segment_2_flattening_object());
 
-    assert(cone->m_pendingLeftSubtree != NULL);
+    CGAL_assertion(cone->m_pendingLeftSubtree != NULL);
 
     cone->m_pendingLeftSubtree = NULL;
 
@@ -635,7 +636,7 @@ private:
     typename Traits::Construct_vertex_2 cv2(m_traits.construct_vertex_2_object());
     typename Traits::Construct_triangle_3_along_segment_2_flattening ft3as2(m_traits.construct_triangle_3_along_segment_2_flattening_object());
 
-    assert(cone->m_pendingRightSubtree != NULL);
+    CGAL_assertion(cone->m_pendingRightSubtree != NULL);
 
     cone->m_pendingRightSubtree = NULL;
 
@@ -693,7 +694,7 @@ private:
         }
         break;
       default:
-        assert(false && "Invalid face location");
+        CGAL_assertion(false && "Invalid face location");
         // Perhaps hit an assertion that the type must not be external or invalid?
     }
   }
@@ -1567,11 +1568,11 @@ private:
 
           LineLineIntersectResult cgalIntersection = intersect_2(construct_line_2(entrySegment), construct_line_2(rayToLocation));
 
-          assert(cgalIntersection);
+          CGAL_assertion(bool(cgalIntersection));
 
           Point_2* result = boost::get<Point_2, Point_2, Line_2>(&*cgalIntersection);
 
-          assert(result && "Error, did not get point intersection on path walk to source");
+          CGAL_assertion(result && "Error, did not get point intersection on path walk to source");
 
           FT t0 = parametric_distance_along_segment_2(construct_source_2(entrySegment), construct_target_2(entrySegment), *result);
 
@@ -1616,7 +1617,7 @@ private:
           current = current->parent();
           break;
         default:
-          assert(false && "Unhandled node type found in tree");
+          CGAL_assertion(false && "Unhandled node type found in tree");
       }
     }
   }
@@ -1771,7 +1772,7 @@ private:
         break;
 
       default:
-        assert(false && "Invalid face location");
+        CGAL_assertion(false && "Invalid face location");
         return std::pair<Node_distance_pair, Barycentric_coordinate>();
     }
   }
@@ -2044,7 +2045,7 @@ public:
       std::cout << "Final node count: " << m_currentNodeCount << std::endl;
     }
     return;
-    assert(m_currentNodeCount == 0);
+    CGAL_assertion(m_currentNodeCount == 0);
 #endif
   }
 

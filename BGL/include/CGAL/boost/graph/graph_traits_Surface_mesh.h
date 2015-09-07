@@ -29,7 +29,7 @@
 #include <CGAL/boost/graph/iterator.h>
 
 #include <CGAL/Surface_mesh.h>
-
+#include <CGAL/assertions.h>
 
 
 namespace boost {
@@ -445,7 +445,7 @@ template <typename P>
 void
 clear_vertex(typename boost::graph_traits<CGAL::Surface_mesh<P> >::vertex_descriptor, 
              CGAL::Surface_mesh<P>&) {
-  assert(false);
+  CGAL_assertion(false);
 }
 
   */

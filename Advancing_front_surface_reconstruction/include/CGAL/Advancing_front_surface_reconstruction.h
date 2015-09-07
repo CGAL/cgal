@@ -148,7 +148,7 @@ namespace CGAL {
       if(first_vertex != S.triangulation_3().finite_vertices_end()) {
         pos = first_vertex;
         pos->set_post_mark(mark);
-        assert(pos->is_on_border());
+        CGAL_assertion(pos->is_on_border());
 
       } else {
         pos = NULL;
@@ -469,7 +469,7 @@ namespace CGAL {
     inline void set_interior_edge(Vertex_handle w, Vertex_handle v)
     {
       if(w->m_ie_last == ie_sentinel){ // empty set
-	assert(w->m_ie_first == w->m_ie_last);
+	CGAL_assertion(w->m_ie_first == w->m_ie_last);
 	w->m_ie_last = interior_edges.insert(w->m_ie_last, v);
 	w->m_ie_first = w->m_ie_last;
       } else {
@@ -477,7 +477,7 @@ namespace CGAL {
 	e++;
 #ifdef DEBUG
 	typename std::list<Vertex_handle>::iterator r = std::find(w->m_ie_first, e, v);
-	assert(r == e);
+	CGAL_assertion(r == e);
 #endif
 	w->m_ie_last = interior_edges.insert(e, v);
       }
@@ -487,7 +487,7 @@ namespace CGAL {
     inline void remove_interior_edge(Vertex_handle w, Vertex_handle v)
     {
       if(w->m_ie_first == ie_sentinel){
-	assert(w->m_ie_last == w->m_ie_first);
+	CGAL_assertion(w->m_ie_last == w->m_ie_first);
       } else if(w->m_ie_first == w->m_ie_last){ // there is only one element
 	if(*(w->m_ie_first) == v){
 	  interior_edges.erase(w->m_ie_first);
@@ -516,7 +516,7 @@ namespace CGAL {
     inline void set_incidence_request(Vertex_handle w, const Incidence_request_elt& ir)
     {
       if(w->m_ir_last == sentinel ){
-	assert(w->m_ir_first == w->m_ir_last);
+	CGAL_assertion(w->m_ir_first == w->m_ir_last);
 	w->m_ir_last = incidence_requests.insert(w->m_ir_last, ir);
 	w->m_ir_first = w->m_ir_last;
       } else {
@@ -529,7 +529,7 @@ namespace CGAL {
     inline bool is_incidence_requested(Vertex_handle w) const
     {
       if(w->m_ir_last == sentinel ){
-	assert(w->m_ir_first == sentinel );
+	CGAL_assertion(w->m_ir_first == sentinel );
       }
       return (w->m_ir_last != sentinel );
     }
@@ -542,7 +542,7 @@ namespace CGAL {
     inline Incidence_request_iterator incidence_request_end(Vertex_handle w)
     {
       if(w->m_ir_last != sentinel ){
-	assert(w->m_ir_first != sentinel );
+	CGAL_assertion(w->m_ir_first != sentinel );
 	Incidence_request_iterator it(w->m_ir_last);
 	it++;
 	return it;
@@ -553,7 +553,7 @@ namespace CGAL {
     inline void erase_incidence_request(Vertex_handle w)
     {
       if(w->m_ir_last != sentinel ){
-	assert(w->m_ir_first != sentinel );
+	CGAL_assertion(w->m_ir_first != sentinel );
 	w->m_ir_last++;
 	incidence_requests.erase(w->m_ir_first, w->m_ir_last);
 	w->m_ir_first = sentinel ;
@@ -570,7 +570,7 @@ namespace CGAL {
 	}
 
       if(w->m_ir_first != sentinel ){
-	assert(w->m_ir_last != sentinel );
+	CGAL_assertion(w->m_ir_last != sentinel );
 	typename std::list< Incidence_request_elt >::iterator b(w->m_ir_first), e(w->m_ir_last);
 	e++;
 	incidence_requests.erase(b, e);
@@ -627,14 +627,14 @@ namespace CGAL {
 	  w->delete_border();
 	}
       if(w->m_ir_first != sentinel ){
-	assert(w->m_ir_last != sentinel );
+	CGAL_assertion(w->m_ir_last != sentinel );
 	typename std::list< Incidence_request_elt >::iterator b(w->m_ir_first), e(w->m_ir_last);
 	e++;
 	incidence_requests.erase(b, e);
       }
 
       if(w->m_ie_first != ie_sentinel){
-	assert(w->m_ie_last != ie_sentinel);
+	CGAL_assertion(w->m_ie_last != ie_sentinel);
 	typename std::list<Vertex_handle>::iterator b(w->m_ie_first), e(w->m_ie_last);
 	e++;
 	interior_edges.erase(b, e);
@@ -2186,7 +2186,7 @@ namespace CGAL {
         {
           _facet_number--;
 
-          assert(c->is_selected_facet(index));
+          CGAL_assertion(c->is_selected_facet(index));
           unselect_facet(c, index);
 
           Facet f32 =

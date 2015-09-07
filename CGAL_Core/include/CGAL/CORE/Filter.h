@@ -39,6 +39,7 @@
 #define _CORE_FILTER_H_
 
 #include <CGAL/config.h>
+#include <CGAL/assertions.h>
 #include <CGAL/CORE/Real.h>
 #include <cmath>
 
@@ -111,7 +112,7 @@ public:
       before call this function.) */
   int sign() const {
 #ifdef CORE_DEBUG
-    assert(isOK());
+    CGAL_assertion(isOK());
 #endif
     if (fpVal == 0.0)
       return 0;

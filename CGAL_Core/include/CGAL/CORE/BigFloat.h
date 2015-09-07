@@ -36,6 +36,7 @@
 #define _CORE_BIGFLOAT_H_
 
 #include <CGAL/CORE/BigFloatRep.h>
+#include <CGAL/assertions.h>
 
 namespace CORE { 
 
@@ -246,7 +247,7 @@ public:
   /** \note This is only the sign of the mantissa, it can be taken to be
       the sign of the BigFloat only if !(isZeroIn()). */
   int sign() const {
-    assert((err() == 0 && m() == 0) || !(isZeroIn()));
+    CGAL_assertion((err() == 0 && m() == 0) || !(isZeroIn()));
     return rep->signM();
   }
   /// check whether contains zero
@@ -553,7 +554,7 @@ inline bool isDivisible(double x, double y) {
 // normalizing it then we get zero.
 inline BigFloat div_exact(const BigFloat& x, const BigFloat& y) {
   BigInt z;
-  assert (isDivisible(x,y));
+  CGAL_assertion (isDivisible(x,y));
   unsigned long bin_x = getBinExpo(x.m());
   unsigned long bin_y = getBinExpo(y.m());
 

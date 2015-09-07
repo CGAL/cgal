@@ -173,7 +173,7 @@ public:
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& vf, const std::vector<std::vector<Sign> >& vps)
   : funcs(vf), bmasks(vps.size(), Bmask(funcs.size() * 2, false))
   {
-    assert(funcs.size());
+    CGAL_assertion(funcs.size() != 0);
 
     std::size_t mask_index = 0;
     for (std::vector<std::vector<Sign> >::const_iterator mask_iter = vps.begin(), mask_end_iter = vps.end();
@@ -181,14 +181,14 @@ public:
          ++mask_iter)
     {
       const std::vector<Sign>& mask = *mask_iter;
-      assert(funcs.size() == mask.size());
+      CGAL_assertion(funcs.size() == mask.size());
       Bmask& bmask = bmasks[mask_index++];
 
       typename Bmask::size_type bit_index = 0;
       for (std::vector<Sign>::const_iterator iter = mask.begin(), endIter = mask.end(); iter != endIter; ++iter)
       {
         std::string::value_type character = *iter;
-        assert(character == POSITIVE || character == NEGATIVE);
+        CGAL_assertion(character == POSITIVE || character == NEGATIVE);
 
         bmask[bit_index] = (character == POSITIVE);
         ++bit_index;
@@ -202,7 +202,7 @@ public:
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& vf)
   : funcs(vf)
   {
-    assert(funcs.size());
+    CGAL_assertion(funcs.size() != 0);
 
     bmasks.reserve((1 << funcs.size()) - 1);
     bmasks.push_back(Bmask(std::string("10")));
@@ -228,7 +228,7 @@ public:
   Implicit_multi_domain_to_labeling_function_wrapper (const Function_vector& vf, const std::vector<std::string>& vps)
   : funcs(vf), bmasks(vps.size(), Bmask(funcs.size() * 2, false))
   {
-    assert(funcs.size());
+    CGAL_assertion(funcs.size() != 0);
 
     std::size_t mask_index = 0;
     for (std::vector<std::string>::const_iterator mask_iter = vps.begin(), mask_end_iter = vps.end();
@@ -236,14 +236,14 @@ public:
          ++mask_iter)
     {
       const std::string& mask_str = *mask_iter;
-      assert(funcs.size() == mask_str.length());
+      CGAL_assertion(funcs.size() == mask_str.length());
       Bmask& bmask = bmasks[mask_index++];
 
       typename Bmask::size_type bit_index = 0;
       for (std::string::const_iterator iter = mask_str.begin(), endIter = mask_str.end(); iter != endIter; ++iter)
       {
         std::string::value_type character = *iter;
-        assert(character == '+' || character == '-');
+        CGAL_assertion(character == '+' || character == '-');
 
         bmask[bit_index] = (character == '+');
         ++bit_index;

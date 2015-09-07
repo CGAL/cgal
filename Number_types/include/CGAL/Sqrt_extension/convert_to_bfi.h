@@ -27,6 +27,7 @@
 #include <CGAL/convert_to_bfi.h>
 #include <CGAL/Coercion_traits.h>
 #include <CGAL/Sqrt_extension/Sqrt_extension_type.h>
+#include <CGAL/assertions.h>
 
 
 // Disbale SQRT_EXTENSION_TO_BFI_CACHE by default
@@ -92,8 +93,8 @@ convert_to_bfi(const CGAL::Sqrt_extension<NT,ROOT,ACDE_TAG,FP_TAG>& x) {
   }else{
     result_ = convert_to_bfi(x.a0());
   }
-  assert(lower(result) == lower(result_));
-  assert(upper(result) == upper(result_));
+  CGAL_assertion(lower(result) == lower(result_));
+  CGAL_assertion(upper(result) == upper(result_));
 #endif
   return result; 
 }

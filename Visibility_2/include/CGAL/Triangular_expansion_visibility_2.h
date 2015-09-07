@@ -27,6 +27,7 @@
 #include <boost/iterator/transform_iterator.hpp>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Arr_observer.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -216,7 +217,7 @@ public:
 
     out_arr.clear();
     needles.clear();
-    assert(!face->is_unbounded());
+    CGAL_assertion(!face->is_unbounded());
 
 
     std::vector<Point_2> raw_output;
@@ -268,7 +269,7 @@ public:
         init_cdt();
     }
 
-    assert(!he->face()->is_unbounded());
+    CGAL_assertion(!he->face()->is_unbounded());
     out_arr.clear();
     needles.clear();
 
@@ -276,7 +277,7 @@ public:
     typename CDT::Locate_type location;
     int index;
     typename CDT::Face_handle fh = p_cdt->locate(q,location,index);
-    assert(location == CDT::EDGE || location == CDT::VERTEX);
+    CGAL_assertion(location == CDT::EDGE || location == CDT::VERTEX);
     //the following code tries to figure out which triangle one should start in.
 
 
@@ -292,8 +293,8 @@ public:
         index = nfh->index(fh);
         fh = nfh;
       }
-      assert(fh->vertex(p_cdt->cw(index))->point() == he->target()->point());
-      assert(!p_cdt->is_infinite(fh->vertex(index)));
+      CGAL_assertion(fh->vertex(p_cdt->cw(index))->point() == he->target()->point());
+      CGAL_assertion(!p_cdt->is_infinite(fh->vertex(index)));
 
 
       // output the edge the query lies on
@@ -326,10 +327,10 @@ public:
       //std::cout << "query on vertex" << std::endl;
 
       //bool query_point_on_vertex_is_not_working_yet = false;
-      //assert(query_point_on_vertex_is_not_working_yet);
+      //CGAL_assertion(query_point_on_vertex_is_not_working_yet);
 
-      assert(q  ==  he->target()->point());
-      assert(fh->vertex(index)->point() ==  he->target()->point());
+      CGAL_assertion(q  ==  he->target()->point());
+      CGAL_assertion(fh->vertex(index)->point() ==  he->target()->point());
 
       // push points that are seen anyway
       // raw_output.push_back(he->source()->point()); inserted last
@@ -347,15 +348,15 @@ public:
         int nindex = nfh->index(fh);
         index = p_cdt->ccw(nindex);
         fh = nfh;
-        assert(he->target()->point() == fh->vertex(index)->point());
+        CGAL_assertion(he->target()->point() == fh->vertex(index)->point());
       }
 
 
-      assert(he->next()->source()->point() == fh->vertex(index)->point());
-      assert(he->next()->target()->point() ==
+      CGAL_assertion(he->next()->source()->point() == fh->vertex(index)->point());
+      CGAL_assertion(he->next()->target()->point() ==
              fh->vertex(p_cdt->ccw(index))->point());
-      assert(!p_cdt->is_infinite(fh));
-      assert(p_cdt->is_constrained(get_edge(fh,p_cdt->cw(index))));
+      CGAL_assertion(!p_cdt->is_infinite(fh));
+      CGAL_assertion(p_cdt->is_constrained(get_edge(fh,p_cdt->cw(index))));
 
       while(he->source()->point() != fh->vertex(p_cdt->ccw(index))->point()){
 
@@ -376,7 +377,7 @@ public:
         int nindex = nfh->index(fh);
         index = p_cdt->ccw(nindex);
         fh = nfh;
-        assert(fh->vertex(index)->point() ==  he->target()->point());
+        CGAL_assertion(fh->vertex(index)->point() ==  he->target()->point());
       }
     }
     return output(raw_output,out_arr);
@@ -397,7 +398,7 @@ private:
 
     Ray_2 ray(q,b);
     Segment_2 seg(s,t);
-    assert(typename K::Do_intersect_2()(ray,seg));
+    CGAL_assertion(typename K::Do_intersect_2()(ray,seg));
     CGAL::Object obj = typename K::Intersect_2()(ray,seg); 
     Point_2 result =  object_cast<Point_2>(obj);
     return result; 
@@ -411,11 +412,11 @@ private:
   const {
 
     // the expanded edge should not be constrained 
-    assert(!p_cdt->is_constrained(get_edge(fh,index)));
-    assert(!p_cdt->is_infinite(fh));
+    CGAL_assertion(!p_cdt->is_constrained(get_edge(fh,index)));
+    CGAL_assertion(!p_cdt->is_infinite(fh));
     // go into the new face  
     const typename CDT::Face_handle nfh(fh->neighbor(index)); 
-    assert(!p_cdt->is_infinite(nfh));
+    CGAL_assertion(!p_cdt->is_infinite(nfh));
 
     // get indices of neighbors 
     int nindex = nfh->index(fh); // index of new vertex and old face 
@@ -426,9 +427,9 @@ private:
     const typename CDT::Vertex_handle nvh(nfh->vertex(nindex));
     const typename CDT::Vertex_handle rvh(nfh->vertex(p_cdt->cw (nindex)));
     const typename CDT::Vertex_handle lvh(nfh->vertex(p_cdt->ccw(nindex)));
-    assert(!p_cdt->is_infinite(nvh));
-    assert(!p_cdt->is_infinite(lvh));
-    assert(!p_cdt->is_infinite(rvh));
+    CGAL_assertion(!p_cdt->is_infinite(nvh));
+    CGAL_assertion(!p_cdt->is_infinite(lvh));
+    CGAL_assertion(!p_cdt->is_infinite(rvh));
     
     // get edges seen from entering edge 
     typename CDT::Edge re = get_edge(nfh,p_cdt->ccw(nindex));
@@ -476,7 +477,7 @@ private:
       }      
       break;
     default:
-      assert(orient == CGAL::COLLINEAR);
+      CGAL_assertion(orient == CGAL::COLLINEAR);
       // looking on nvh, so it must be reported 
       // if it wasn't already (triangles rotate around vh)    
       if(vh != nvh){
@@ -505,12 +506,12 @@ private:
   const {
 
     // the expanded edge should not be constrained 
-    assert(!p_cdt->is_constrained(get_edge(fh,index)));
-    assert(!p_cdt->is_infinite(fh));
+    CGAL_assertion(!p_cdt->is_constrained(get_edge(fh,index)));
+    CGAL_assertion(!p_cdt->is_infinite(fh));
     
     // go into the new face  
     const typename CDT::Face_handle nfh(fh->neighbor(index)); 
-    assert(!p_cdt->is_infinite(nfh));
+    CGAL_assertion(!p_cdt->is_infinite(nfh));
 
     // get indices of neighbors 
     int nindex = nfh->index(fh); // index of new vertex and old face 
@@ -521,9 +522,9 @@ private:
     const typename CDT::Vertex_handle nvh(nfh->vertex(nindex));
     const typename CDT::Vertex_handle rvh(nfh->vertex(p_cdt->cw (nindex)));
     const typename CDT::Vertex_handle lvh(nfh->vertex(p_cdt->ccw(nindex)));
-    assert(!p_cdt->is_infinite(nvh));
-    assert(!p_cdt->is_infinite(lvh));
-    assert(!p_cdt->is_infinite(rvh));
+    CGAL_assertion(!p_cdt->is_infinite(nvh));
+    CGAL_assertion(!p_cdt->is_infinite(lvh));
+    CGAL_assertion(!p_cdt->is_infinite(rvh));
     
     // get edges seen from entering edge 
     typename CDT::Edge re = get_edge(nfh,p_cdt->ccw(nindex));
@@ -535,9 +536,9 @@ private:
     CGAL::Orientation ro = orientation(q,right,nvh->point());
     CGAL::Orientation lo = orientation(q,left ,nvh->point());
     
-    assert(typename K::Orientation_2()(q,left ,lvh->point())
+    CGAL_assertion(typename K::Orientation_2()(q,left ,lvh->point())
            != CGAL::CLOCKWISE);
-    assert(typename K::Orientation_2()(q,right,rvh->point())
+    CGAL_assertion(typename K::Orientation_2()(q,right,rvh->point())
            != CGAL::COUNTERCLOCKWISE);
 
     //std::cout << (ro == CGAL::COUNTERCLOCKWISE) << " " <<
@@ -588,7 +589,7 @@ private:
       *oit++ = nvh->point(); 
     }
     if(!Regularization_category::value){
-      assert(!(ro == CGAL::COLLINEAR && lo == CGAL::COLLINEAR));
+      CGAL_assertion(!(ro == CGAL::COLLINEAR && lo == CGAL::COLLINEAR));
       // we have to check whether a needle starts here. 
       if(p_cdt->is_constrained(le) && !p_cdt->is_constrained(re)
               && ro == CGAL::COLLINEAR)
@@ -676,7 +677,7 @@ private:
               );
     }
 
-    assert(out_arr.number_of_faces() == 2);
+    CGAL_assertion(out_arr.number_of_faces() == 2);
 
     if(out_arr.faces_begin()->is_unbounded())
       return ++out_arr.faces_begin();

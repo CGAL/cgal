@@ -26,6 +26,7 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/Origin.h>
 #include <CGAL/convex_hull_3.h>
+#include <CGAL/assertions.h>
 
 // For interior_polyhedron_3
 #include <CGAL/Convex_hull_3/dual/interior_polyhedron_3.h>
@@ -87,7 +88,7 @@ namespace CGAL
                 for (Vertex_const_iterator it = _primal.vertices_begin();
                      it != _primal.vertices_end(); ++it)
                 {
-                    assert (it->is_bivalent() == false);
+                    CGAL_assertion (it->is_bivalent() == false);
 
                     typename Polyhedron::Halfedge_around_vertex_const_circulator
                         h0 = it->vertex_begin(), hf = h0;

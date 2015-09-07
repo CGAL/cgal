@@ -553,13 +553,13 @@ public:
       Comparison_result operator() (const Vertical_segment & cv1,
                                     const Non_vertical_x_curve_2 & cv2) const
       {
-        assert(false);
+        CGAL_assertion(false);
         return CGAL::SMALLER;
       }
       Comparison_result operator() (const Non_vertical_x_curve_2& cv1,
                                     const Vertical_segment  & cv2) const
       {
-        assert(false);
+        CGAL_assertion(false);
         return CGAL::LARGER;
       }
       Comparison_result operator() (const Vertical_segment & cv1,

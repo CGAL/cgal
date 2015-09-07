@@ -60,6 +60,7 @@
 #include <CGAL/CORE/BigFloat.h>
 #include <CGAL/CORE/Promote.h>
 #include <vector>
+#include <CGAL/assertions.h>
 
 namespace CORE { 
 using namespace std;
@@ -412,7 +413,7 @@ template < class NT >
 CORE_INLINE
 const NT& Polynomial<NT>::getCoeff(int i) const {
   //if (i > degree) return NULL;
-  assert(i <= degree);
+  CGAL_assertion(i <= degree);
   return coeff[i];
 }
 // set functions

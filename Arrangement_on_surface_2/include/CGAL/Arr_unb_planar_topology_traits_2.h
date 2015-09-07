@@ -34,6 +34,7 @@
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_batched_pl_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_unb_planar_vert_decomp_helper.h>
 #include <CGAL/Arr_topology_traits/Arr_inc_insertion_zone_visitor.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -507,7 +508,7 @@ public:
   */
   const Face* reference_face() const
   {
-    assert(v_tr->halfedge()->direction() == ARR_LEFT_TO_RIGHT);
+    CGAL_assertion(v_tr->halfedge()->direction() == ARR_LEFT_TO_RIGHT);
     return v_tr->halfedge()->outer_ccb()->face();
   }
 
@@ -519,7 +520,7 @@ public:
   */
   Face* reference_face()
   {
-    assert(v_tr->halfedge()->direction() == ARR_LEFT_TO_RIGHT);
+    CGAL_assertion(v_tr->halfedge()->direction() == ARR_LEFT_TO_RIGHT);
     return v_tr->halfedge()->outer_ccb()->face();
   }
 

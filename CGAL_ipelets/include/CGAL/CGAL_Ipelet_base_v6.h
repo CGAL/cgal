@@ -37,6 +37,7 @@ typedef unsigned int uint;
 #include <CGAL/tuple.h>
 #include<CGAL/Exact_circular_kernel_2.h>
 #include <CGAL/Cartesian_converter.h>
+#include <CGAL/assertions.h>
 
 #include <boost/utility.hpp>
 
@@ -538,10 +539,10 @@ public:
       ++next_s; if (next_s==map_theta.end()) next_s=map_theta.begin();
       do{
         if (current->second.first==OTRG) return;
-        assert(current->second.first==SRC);
+        CGAL_assertion(current->second.first==SRC);
         draw_in_ipe(Circular_arc_2(circle,*(current->second.second),*(next_s->second.second),CGAL::COUNTERCLOCKWISE));
         if (next_s->second.first==OTRG) return;
-        assert(next_s->second.first==TRG);
+        CGAL_assertion(next_s->second.first==TRG);
         ++next_s; if (next_s==map_theta.end()) next_s=map_theta.begin();
         current=next_s;
         ++next_s; if (next_s==map_theta.end()) next_s=map_theta.begin();
@@ -843,7 +844,7 @@ public:
         switch (ints.size()){
           case 1:
             ok=CGAL::assign(tmp_pt,ints[0]);
-            assert(ok);
+            CGAL_assertion(ok);
             points.push_back(tmp_pt);
             index=points.size()-1;
             indices[i]=index;
@@ -852,12 +853,12 @@ public:
           case 2:
             int right_ind=i<2?0:1;
             ok=CGAL::assign(tmp_pt,ints[right_ind]);
-            assert(ok);
+            CGAL_assertion(ok);
             points.push_back(tmp_pt);
             index=points.size()-1;
             indices[i]=index;
             ok=CGAL::assign(tmp_pt,ints[(right_ind+1)%2]);
-            assert(ok);
+            CGAL_assertion(ok);
             points.push_back(tmp_pt);
             index=points.size()-1;
             indices[(i+1)%4+4]=index;      
@@ -900,7 +901,7 @@ public:
           *out++=build_arc(exact_circle,points[ indices[pair[1]] ].first,points[ indices[pair[0]] ].first);
         return;
       }
-      assert (rem_pt==0);
+      CGAL_assertion (rem_pt==0);
     }
   };
   
