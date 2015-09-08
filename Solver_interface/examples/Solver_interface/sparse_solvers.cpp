@@ -2,7 +2,7 @@
 #include <CGAL/Eigen_matrix.h>
 
 
-typedef CGAL::Eigen_solver_traits<Eigen::ConjugateGradient<CGAL::Eigen_sparse_matrix<double>::EigenType> > Eigen_solver;
+typedef CGAL::Eigen_solver_traits<> Eigen_solver;
 typedef Eigen_solver::NT FT;
 typedef Eigen_solver::Matrix Eigen_matrix;
 typedef Eigen_solver::Vector Eigen_vector;
@@ -14,7 +14,7 @@ int main(void)
   std::size_t degree = 3000;
   std::size_t nb_nonzero_coef = 100;
   
-  Eigen_vector B (degree);
+  Eigen_vector B (degree); // Zero vector
   Eigen_matrix A (degree);
 
   Eigen_vector diag (degree);
@@ -24,19 +24,12 @@ int main(void)
     {
       std::size_t x = rand () % degree;
       std::size_t y = rand () % degree;
-      if (x == y)
-	continue;
 
-      FT value = rand () / static_cast<FT> (RAND_MAX);
+      FT value = rand () / (FT)RAND_MAX;
 	
       A.add_coef (x, y, value);
-      diag.set (x, diag.vector()[x] - value);
-      
-      B.set (x, 1.);
+      A.add_coef (y, x, value);
     }
-
-  for (std::size_t i = 0; i < degree; ++ i)
-    A.add_coef (i, i, diag.vector()[i]);
 
   // Create sparse matrix
   A.assemble_matrix();
@@ -50,13 +43,7 @@ int main(void)
       std::cerr << "Error: linear solver failed" << std::endl;
       return -1;
     }
-  
-  // Print extract of result
-  std::cout << "Vector X (non-zero coefficients) = [ ";
-  for (std::size_t i = 0; i < degree; ++ i)
-    if (X.vector()[i] != 0.)
-      std::cout << X.vector()[i] << " ";
-  std::cout << "]" << std::endl;
-  
+
+  std::cerr << "Linear solve succeeded" << std::endl;
   return 0;
 }
