@@ -584,8 +584,11 @@ wlop_simplify_and_regularize_point_set(
     
 
     typename std::vector<Point>::iterator update_iter = update_sample_points.begin();
+#ifndef CGAL_LINKED_WITH_TBB
+  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
+			     "Parallel_tag is enabled but TBB is unavailable.");
+#else
     //parallel
-#ifdef CGAL_LINKED_WITH_TBB
     if (boost::is_convertible<Concurrency_tag, Parallel_tag>::value)
     {
       tbb::blocked_range<size_t> block(0, number_of_sample);

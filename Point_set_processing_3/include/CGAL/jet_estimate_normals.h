@@ -226,7 +226,10 @@ jet_estimate_normals(
 
   // iterate over input points, compute and output normal
   // vectors (already normalized)
-#ifdef CGAL_LINKED_WITH_TBB
+#ifndef CGAL_LINKED_WITH_TBB
+  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
+			     "Parallel_tag is enabled but TBB is unavailable.");
+#else
    if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
    {
      std::vector<Vector> normals (kd_tree_points.size ());

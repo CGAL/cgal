@@ -25,6 +25,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 
 #include <iterator>
 #include <list>
@@ -190,7 +191,10 @@ compute_average_spacing(
   // vectors (already normalized)
   FT sum_spacings = (FT)0.0;
 
-#ifdef CGAL_LINKED_WITH_TBB
+#ifndef CGAL_LINKED_WITH_TBB
+  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
+			     "Parallel_tag is enabled but TBB is unavailable.");
+#else
    if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
    {
      std::vector<FT> spacings (kd_tree_points.size ());

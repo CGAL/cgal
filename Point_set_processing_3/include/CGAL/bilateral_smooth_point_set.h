@@ -499,7 +499,10 @@ bilateral_smooth_point_set(
    std::vector<Pwns,CGAL_PSP3_DEFAULT_ALLOCATOR<Pwns> > pwns_neighbors;
    pwns_neighbors.resize(nb_points);
  
-#ifdef CGAL_LINKED_WITH_TBB
+#ifndef CGAL_LINKED_WITH_TBB
+  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
+			     "Parallel_tag is enabled but TBB is unavailable.");
+#else
    if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
    {
      Compute_pwns_neighbors<Kernel, Tree> f(k, tree, pwns, pwns_neighbors);

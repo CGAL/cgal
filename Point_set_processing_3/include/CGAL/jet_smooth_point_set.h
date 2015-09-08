@@ -218,7 +218,10 @@ jet_smooth_point_set(
   // Iterates over input points and mutates them.
   // Implementation note: the cast to Point& allows to modify only the point's position.
 
-#ifdef CGAL_LINKED_WITH_TBB
+#ifndef CGAL_LINKED_WITH_TBB
+  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
+			     "Parallel_tag is enabled but TBB is unavailable.");
+#else
    if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
    {
      std::vector<Point> mutated_points (kd_tree_points.size ());
