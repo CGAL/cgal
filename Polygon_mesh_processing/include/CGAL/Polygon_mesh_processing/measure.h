@@ -145,11 +145,12 @@ namespace Polygon_mesh_processing {
   *
   * \cgalNamedParamsBegin
   *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+  *  \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
   * \cgalNamedParamsEnd
   */
   template<typename TriangleMesh,
            typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-  double area(typename boost::graph_traits<TriangleMesh>::face_descriptor f
+  double face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f
             , const TriangleMesh& tmesh
             , const CGAL_PMP_NP_CLASS& np)
   {
@@ -165,16 +166,18 @@ namespace Polygon_mesh_processing {
     halfedge_descriptor hd = halfedge(f, tmesh);
     halfedge_descriptor nhd = next(hd, tmesh);
 
-    return CGAL::sqrt(CGAL::squared_area(get(vpm, source(hd, tmesh)),
-                                         get(vpm, target(hd, tmesh)),
-                                         get(vpm, target(nhd, tmesh))));
+    typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type traits;
+
+    return traits.compute_area_3_object()(get(vpm, source(hd, tmesh)),
+                                          get(vpm, target(hd, tmesh)),
+                                          get(vpm, target(nhd, tmesh)));
   }
 
   template<typename TriangleMesh>
-  double area(typename boost::graph_traits<TriangleMesh>::face_descriptor f
-    , const TriangleMesh& tmesh)
+  double face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f
+            , const TriangleMesh& tmesh)
   {
-    return area(f, tmesh,
+    return face_area(f, tmesh,
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
@@ -196,6 +199,7 @@ namespace Polygon_mesh_processing {
   *
   * \cgalNamedParamsBegin
   *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+  *  \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
   * \cgalNamedParamsEnd
   */
   template<typename FaceRange,
@@ -209,7 +213,7 @@ namespace Polygon_mesh_processing {
     double result = 0.;
     BOOST_FOREACH(face_descriptor f, face_range)
     {
-      result += area(f, tmesh, np);
+      result += face_area(f, tmesh, np);
     }
     return result;
   }
@@ -234,6 +238,7 @@ namespace Polygon_mesh_processing {
   *
   * \cgalNamedParamsBegin
   *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+  *  \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
   * \cgalNamedParamsEnd
   */
   template<typename TriangleMesh
@@ -265,7 +270,8 @@ namespace Polygon_mesh_processing {
   * @pre `tmesh` is closed
   *
   * \cgalNamedParamsBegin
-  *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+  *  \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+  *  \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
   * \cgalNamedParamsEnd
   */
   template<typename TriangleMesh
