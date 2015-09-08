@@ -464,12 +464,55 @@ void MainWindow::loadPlugins()
   }
 
   // sort the operations menu by name
-  QList<QAction*> actions = ui->menuOperations->actions();
-  qSort(actions.begin(), actions.end(), actionsByName);
-  ui->menuOperations->clear();
-  ui->menuOperations->addActions(actions);
-}
+  QList<QAction*> actions;
+  QList<QMenu*> menus;
+  Q_FOREACH(QMenu* menu, ui->menuOperations->findChildren<QMenu*>()) {
+      menus.append(menu);
+  }
+  Q_FOREACH(QMenu* menu, menus) {
+      if(menu)
+      {
+          actions = menu->actions();
+          Q_FOREACH(QAction* a, actions)
+          {
+              QString subMenuName = a->property("subMenuName").toString();
+              if(!subMenuName.isNull())
+              {
 
+                  QMenu* subMenu = new QMenu(subMenuName, this);
+                  subMenu->addMenu(menu);
+                  continue;
+              }
+          }
+      }
+  }
+  actions = ui->menuOperations->actions();
+  Q_FOREACH(QAction* a, actions)
+  {
+      QString menuName = a->property("subMenuName").toString();
+      if (!menuName.isNull())
+      {
+          QMenu* menu = 0;
+          Q_FOREACH(QAction* action, findChildren<QAction*>()) {
+              if(!action->menu()) continue;
+              QString menuText = action->menu()->title();
+              if(menuText != menuName) continue;
+              menu = action->menu();
+          }
+          if(menu == 0)
+              menu = new QMenu(menuName, this);
+
+
+          menu->addAction(a);
+          ui->menuOperations->addMenu(menu);
+          ui->menuOperations->removeAction(a);
+      }
+      QList<QAction*> actions = ui->menuOperations->actions();
+      qSort(actions.begin(), actions.end(), actionsByName);
+      ui->menuOperations->clear();
+      ui->menuOperations->addActions(actions);
+  }
+}
 
 bool MainWindow::hasPlugin(const QString& pluginName) const
 {

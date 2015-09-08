@@ -62,15 +62,18 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
   messages = m;
   actionOrient = new QAction(tr("&Orient polygon soup"), mainWindow);
   actionOrient->setObjectName("actionOrient");
+  actionOrient->setProperty("subMenuName", "Action on normals");
   connect(actionOrient, SIGNAL(triggered()),
           this, SLOT(orient()));
 
   actionShuffle = new QAction(tr("&Shuffle polygon soup"), mainWindow);
+  actionShuffle->setProperty("subMenuName", "Action on normals");
   connect(actionShuffle, SIGNAL(triggered()),
           this, SLOT(shuffle()));
 
   actionDisplayNonManifoldEdges = new QAction(tr("Display non manifold edges"),
                                               mainWindow);
+  actionDisplayNonManifoldEdges->setProperty("subMenuName", "Detection");
   connect(actionDisplayNonManifoldEdges, SIGNAL(triggered()),
           this, SLOT(displayNonManifoldEdges()));
 }

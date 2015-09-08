@@ -23,7 +23,17 @@ public:
   QStringList actionsNames() const {
     return QStringList() << "actionInsideOut";
   }
+  void init(QMainWindow* mainWindow,
+            Scene_interface* scene_interface,
+            Messages_interface* m)
+  {
+      mw = mainWindow;
+      scene = scene_interface;
+      actions_map["actionInsideOut"] = getActionFromMainWindow(mw, "actionInsideOut");
+      actions_map["actionInsideOut"]->setProperty("subMenuName", "Action on normals");
+      autoConnectActions();
 
+  }
   bool applicable(QAction*) const { 
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
     return qobject_cast<Scene_polyhedron_item*>(scene->item(index)) 

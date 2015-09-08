@@ -151,6 +151,7 @@ protected Q_SLOTS:
 
   void on_actionRecenterScene_triggered();
 protected:
+  QList<QAction*> createSubMenus(QList<QAction*>);
   void loadPlugins();
   bool initPlugin(QObject*);
   bool initIOPlugin(QObject*);

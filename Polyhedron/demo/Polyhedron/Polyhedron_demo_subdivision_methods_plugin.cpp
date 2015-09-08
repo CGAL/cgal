@@ -1,5 +1,6 @@
 #include <QTime>
 #include <QApplication>
+#include <QAction>
 
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
@@ -21,6 +22,25 @@ public:
     return QStringList() << "actionLoop"
                          << "actionCatmullClark"
                          << "actionSqrt3";
+  }
+
+  void init(QMainWindow* mainWindow,
+            Scene_interface* scene_interface,
+            Messages_interface* m)
+  {
+      mw = mainWindow;
+      scene = scene_interface;
+      actions_map["actionLoop"] = getActionFromMainWindow(mw, "actionLoop");
+      actions_map["actionLoop"]->setProperty("subMenuName", "Action on mesh");
+
+      actions_map["actionCatmullClark"] = getActionFromMainWindow(mw, "actionCatmullClark");
+      actions_map["actionCatmullClark"]->setProperty("subMenuName", "Action on mesh");
+
+      actions_map["actionSqrt3"] = getActionFromMainWindow(mw, "actionSqrt3");
+      actions_map["actionSqrt3"]->setProperty("subMenuName", "Action on mesh");
+
+      autoConnectActions();
+
   }
 
   bool applicable(QAction*) const { 
