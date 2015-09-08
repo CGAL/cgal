@@ -167,7 +167,6 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
         // Draw *selected* points
         if (m_points->nb_selected_points() > 0)
         {
-            ::glPointSize(4.f);    // selected => bigger
             for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
             {
                 const UI_point& p = *it;
@@ -381,19 +380,19 @@ bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const
               ( m==PointsPlusNormals || m==Splatting ) );
 }
 
-void Scene_points_with_normal_item::draw_splats(Viewer_interface*) const
+void Scene_points_with_normal_item::draw_splats(Viewer_interface* viewer) const
 {
    // TODO add support for selection
-   ::glBegin(GL_POINTS);
+   viewer->glBegin(GL_POINTS);
    for ( Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
    {
      const UI_point& p = *it;
-     ::glNormal3dv(&p.normal().x());
-     ::glMultiTexCoord1d(GL_TEXTURE2, p.radius());
-     ::glVertex3dv(&p.x());
+     viewer->glNormal3dv(&p.normal().x());
+     viewer->glMultiTexCoord1d(GL_TEXTURE2, p.radius());
+     viewer->glVertex3dv(&p.x());
 
    }
-   ::glEnd();
+   viewer->glEnd();
 
 
 

@@ -102,8 +102,8 @@ public:
   void draw_edges(Viewer_interface* viewer) const {
     
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
-      if(it == active_hole) { ::glLineWidth(7.f); }
-      else                  { ::glLineWidth(3.f); }
+      if(it == active_hole) { viewer->glLineWidth(7.f); }
+      else                  { viewer->glLineWidth(3.f); }
 
       if(selected_holes.find(it) != selected_holes.end()) 
       { it->polyline->setRbgColor(255, 0, 0); }

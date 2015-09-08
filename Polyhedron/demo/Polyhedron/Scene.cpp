@@ -20,12 +20,6 @@
 #include <QAbstractProxyModel>
 
 
-namespace {
-void CGALglcolor(QColor c)
-{
-    ::glColor4d(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
-}
-}
 
 
 GlSplat::SplatRenderer* Scene::ms_splatting = 0;

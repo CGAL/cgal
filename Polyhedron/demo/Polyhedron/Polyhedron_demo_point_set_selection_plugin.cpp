@@ -74,7 +74,7 @@ public:
   }
   
   void draw_edges(Viewer_interface* viewer) const {
-    ::glLineWidth(3.f);
+    viewer->glLineWidth(3.f);
     polyline->setRbgColor(0, 255, 0); 
 
     polyline->draw_edges(viewer);

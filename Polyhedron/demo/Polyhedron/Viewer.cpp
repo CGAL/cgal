@@ -190,39 +190,39 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
   if(scene == 0)
     return;
 
-  ::glLineWidth(1.0f);
-  ::glPointSize(2.f);
-  ::glEnable(GL_POLYGON_OFFSET_FILL);
-  ::glPolygonOffset(1.0f,1.0f);
-  ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  viewer->glLineWidth(1.0f);
+  viewer->glPointSize(2.f);
+  viewer->glEnable(GL_POLYGON_OFFSET_FILL);
+  viewer->glPolygonOffset(1.0f,1.0f);
+  viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 
-  ::glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
+  viewer->glLightModeli(GL_LIGHT_MODEL_LOCAL_VIEWER, GL_TRUE);
 
   if(twosides)
-    ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
+    viewer->glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
   else
-    ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
+    viewer->glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 
   if(antialiasing)
   {
-    ::glEnable(GL_BLEND);
-    ::glEnable(GL_LINE_SMOOTH);
-    ::glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-    ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    viewer->glEnable(GL_BLEND);
+    viewer->glEnable(GL_LINE_SMOOTH);
+    viewer->glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
+    viewer->glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
   }
   else
   {
-    ::glDisable(GL_BLEND);
-    ::glDisable(GL_LINE_SMOOTH);
-    ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-    ::glBlendFunc(GL_ONE, GL_ZERO);
+    viewer->glDisable(GL_BLEND);
+    viewer->glDisable(GL_LINE_SMOOTH);
+    viewer->glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+    viewer->glBlendFunc(GL_ONE, GL_ZERO);
   }
   if(with_names)
     scene->drawWithNames(viewer);
   else
     scene->draw(viewer);
-   ::glDisable(GL_POLYGON_OFFSET_FILL);
-  ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+  viewer->glDisable(GL_POLYGON_OFFSET_FILL);
+  viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
 }
 
 void Viewer::drawWithNames()
