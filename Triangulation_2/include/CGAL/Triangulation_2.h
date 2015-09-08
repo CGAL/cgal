@@ -1925,12 +1925,10 @@ fill_hole_delaunay(std::list<Edge> & first_hole, OutputItFaces fit)
   Face_handle  f, ff, fn;
   int i, ii, in;
   Hole_list hole_list;
-  Hole hole;
-      
   hole_list.push_front(first_hole);
 
   while(!hole_list.empty()) {
-    Hole hole = hole_list.front();
+    Hole& hole = hole_list.front();
     typename Hole::iterator hit = hole.begin();
 
     if (hole.size() == 3) {
