@@ -893,6 +893,8 @@ else
   MAKE_CMD='make'
 fi
 
+if [ -z "$IS_CYGWIN" ]; then
+
 # Acquire lock
 lockfile -r 1 "$LOCK_FILE";
 if [ ${?} != 0 ]; then
@@ -914,6 +916,8 @@ fi
 chmod u+w "$LOCK_FILE"
 # Put the PID of current process in the lock file
 echo $$ > "$LOCK_FILE"
+
+fi
 
 # that line makes the script remove the lock file in case of unwanted exit
 trap "rm -f \"$LOCK_FILE\"" EXIT HUP INT TERM
