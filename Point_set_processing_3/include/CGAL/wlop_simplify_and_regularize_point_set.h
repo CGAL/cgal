@@ -499,7 +499,7 @@ wlop_simplify_and_regularize_point_set(
   if (radius < 0)
   {
     const unsigned int nb_neighbors = 6; // 1 ring
-    FT average_spacing = CGAL::compute_average_spacing(
+    FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
                                first, beyond,
                                point_pmap,
                                nb_neighbors);
