@@ -1129,6 +1129,11 @@ public:
   typedef unspecified_type Polylines_tag; 
 
 /*!
+  tag for calling point constructor.
+*/
+  typedef unspecified_type Points_tag;
+
+/*!
   construction selection. 
 */ 
   enum Boundary { EXCLUDED, INCLUDED }; 
@@ -1198,7 +1203,27 @@ public:
 */ 
   template <class Forward_iterator> 
   Nef_polyhedron_3(Forward_iterator it, Forward_iterator end, 
-                   Polylines_tag); 
+                   Polylines_tag);
+
+/*!
+  creates a Nef polyhedron that consists only of points.
+  The iterator range [it, end) defines a range of points.
+*/
+  template <class Forward_iterator>
+  Nef_polyhedron_3(Forward_iterator it, Forward_iterator end,
+                   Points_tag);
+
+/*!
+  creates a Nef polyhedron that consists of point p.
+*/
+  explicit
+  Nef_polyhedron_3(const Point_3& p);
+
+/*!
+  creates a Nef polyhedron that consists of segment s.
+*/
+  explicit
+  Nef_polyhedron_3(const Segment_3& s);
 
 /// @} 
 
