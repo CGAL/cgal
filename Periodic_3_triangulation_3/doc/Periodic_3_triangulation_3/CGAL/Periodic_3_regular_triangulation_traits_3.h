@@ -17,9 +17,11 @@ class `Periodic_3_regular_triangulation_3<Periodic_3RegularTriangulationTraits_3
 \cgalModels Periodic_3RegularTriangulationTraits_3
 
 This template class is specialized for 
-`CGAL::Filtered_kernel`, so that it automatically provides 
+`CGAL::Regular_triangulation_euclidean_traits_3<CGAL::Filtered_kernel>`, 
+so that it automatically provides 
 filtered predicates. This holds implicitly for 
-`CGAL::Exact_predicates_inexact_constructions_kernel`, as it is an 
+`CGAL::Regular_triangulation_euclidean_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel>`, 
+as it is an 
 instantiation of `CGAL::Filtered_kernel`. 
 
 */
