@@ -18,6 +18,14 @@
 
 #include "ui_Polyhedron_demo_point_set_simplification_plugin.h"
 
+// Concurrency
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
+
 class Polyhedron_demo_point_set_simplification_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -103,7 +111,7 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
       std::cerr << "Point cloud simplification by clustering (cell size = " << dialog.gridCellSize() <<" * average spacing)...\n";
 
       // Computes average spacing
-      double average_spacing = CGAL::compute_average_spacing(
+      double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
                                       points->begin(), points->end(),
                                       6 /* knn = 1 ring */);
 
