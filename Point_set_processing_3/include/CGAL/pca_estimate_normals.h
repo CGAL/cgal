@@ -142,6 +142,9 @@ pca_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 ///
 /// \pre `k >= 2`
 ///
+/// @tparam Concurrency_tag enables sequential versus parallel algorithm.
+///                         Possible values are `Sequential_tag`
+///                         and `Parallel_tag`.
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
 ///        It can be omitted if the value type of  `ForwardIterator` is convertible to `Point_3<Kernel>`.

@@ -155,6 +155,9 @@ jet_smooth_point(
 ///
 /// \pre `k >= 2`
 ///
+/// @tparam Concurrency_tag enables sequential versus parallel algorithm.
+///                         Possible values are `Sequential_tag`
+///                         and `Parallel_tag`.
 /// @tparam InputIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadWritePropertyMap` with value type `Point_3<Kernel>`.
 ///        It can be omitted if  the value type of `InputIterator` is convertible to `Point_3<Kernel>`.

@@ -285,6 +285,10 @@ update_new_point(
 /// in point-based rendering, hole filling, and sparse surface reconstruction. 
 /// Normals of points are required as input. For more details, please refer to \cgalCite{ear-2013}.
 /// 
+/// @tparam Concurrency_tag enables sequential versus parallel
+///                         versions of `compute_average_spacing()` (called internally).
+///                         Possible values are `Sequential_tag`
+///                         and `Parallel_tag`.
 /// @tparam OutputIterator Type of the output iterator. 
 ///         The type of the objects put in it is 
 ///         `std::pair<Kernel::Point_3, Kernel::Vector_3>`.
