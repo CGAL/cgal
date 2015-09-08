@@ -45,7 +45,6 @@ namespace CGAL {
 namespace internal {
 
 
-#ifdef CGAL_LINKED_WITH_TBB
 /// Computes average spacing of one query point from K nearest neighbors.
 ///
 /// \pre `k >= 2`.
@@ -91,6 +90,8 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
   return sum_distances / (FT)i;
 }
 
+
+#ifdef CGAL_LINKED_WITH_TBB
   template <typename Kernel, typename Tree>
   class Compute_average_spacings {
     typedef typename Kernel::Point_3 Point;
