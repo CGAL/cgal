@@ -1185,7 +1185,7 @@ public:
 /*!
   creates a Nef polyhedron consisting of a single polygon 
   spanned by the list of points in the iterator range 
-  `[begin,end)`. If the points do not on a common 
+  `[begin,end)`. If the points do not lie on a common
   supporting plane, the constructor tries to triangulate 
   the polygon into multiple facets.If the construction does 
   not succeed, the empty set is created. 
@@ -1193,8 +1193,10 @@ public:
   Nef_polyhedron_3(Input_iterator begin, Input_iterator end); 
 
 /*!
-  The iterator range [it, end) defines a set point 
-  ranges, each of which defines a polyline. 
+  creates a Nef polyhedron consisting of polylines.
+  The iterator range [it, end) defines a range of polylines.
+  Each polyline is defined as a range of points, first and
+  past-the-end iterators being provided as a `std::pair` of iterators.
 */ 
   template <class Forward_iterator> 
   Nef_polyhedron_3(Forward_iterator it, Forward_iterator end, 
