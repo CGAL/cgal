@@ -28,6 +28,8 @@
  * given point.
  */
 
+#include <CGAL/Polygon_mesh_processing/measure.h>
+
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 #include <cmath>
@@ -36,29 +38,14 @@ namespace CGAL {
 namespace internal {
 
 template<class TriangleMesh, class TriangleMeshPointPMap, class Traits>
-double get_surface_area(TriangleMesh& hg, TriangleMeshPointPMap& hg_point_pmap, const Traits& traits)
+double get_surface_area(TriangleMesh& hg,
+                        TriangleMeshPointPMap& hg_point_pmap,
+                        const Traits& traits)
 {
-  typedef typename Traits::Point_3                                       Point;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor  vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor    face_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-
-  double total_area = 0;
-  BOOST_FOREACH(face_descriptor fd, faces(hg))
-  {
-    halfedge_descriptor hd = halfedge(fd, hg);
-
-    vertex_descriptor v1 = target(hd, hg);
-    hd = next(hd, hg);
-    vertex_descriptor v2 = target(hd, hg);
-    hd = next(hd, hg);
-    vertex_descriptor v3 = target(hd, hg);
-    Point p1 = get(hg_point_pmap, v1);
-    Point p2 = get(hg_point_pmap, v2);
-    Point p3 = get(hg_point_pmap, v3);
-    total_area += traits.compute_area_3_object()(p1, p2, p3);
-  }
-  return total_area;
+  namespace PMP = CGAL::Polygon_mesh_processing;
+  return PMP::area(hg
+    , PMP::parameters::vertex_point_map(hg_point_pmap)
+    .geom_traits(traits));
 }
 
 } //namespace internal
