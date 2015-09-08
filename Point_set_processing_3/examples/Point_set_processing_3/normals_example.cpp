@@ -16,6 +16,13 @@ typedef Kernel::Vector_3 Vector;
 // Point with normal vector stored in a std::pair.
 typedef std::pair<Point, Vector> PointVectorPair;
 
+// Concurrency
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
 int main(int argc, char*argv[])
 {
   const char* fname = (argc>1)?argv[1]:"data/sphere_1k.xyz";
@@ -35,7 +42,7 @@ int main(int argc, char*argv[])
     // Note: pca_estimate_normals() requires an iterator over points
     // as well as property maps to access each point's position and normal.
     const int nb_neighbors = 18; // K-nearest neighbors = 3 rings
-    CGAL::pca_estimate_normals(points.begin(), points.end(),
+    CGAL::pca_estimate_normals<Concurrency_tag>(points.begin(), points.end(),
                                CGAL::First_of_pair_property_map<PointVectorPair>(),
                                CGAL::Second_of_pair_property_map<PointVectorPair>(),
                                nb_neighbors);
@@ -44,7 +51,7 @@ int main(int argc, char*argv[])
     // Note: mst_orient_normals() requires an iterator over points
     // as well as property maps to access each point's position and normal.
     std::list<PointVectorPair>::iterator unoriented_points_begin =
-        CGAL::mst_orient_normals(points.begin(), points.end(),
+      CGAL::mst_orient_normals(points.begin(), points.end(),
                                  CGAL::First_of_pair_property_map<PointVectorPair>(),
                                  CGAL::Second_of_pair_property_map<PointVectorPair>(),
                                  nb_neighbors);
