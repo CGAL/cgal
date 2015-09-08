@@ -17,6 +17,13 @@
 
 #include "ui_Polyhedron_demo_point_set_upsampling_plugin.h"
 
+// Concurrency
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+ 
 class Polyhedron_demo_point_set_upsampling_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -103,12 +110,12 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
       CGAL::Timer task_timer; task_timer.start();
 
       // Computes average spacing
-      double average_spacing = CGAL::compute_average_spacing(
+      double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
                                       points->begin(), points->end(),
                                       6 /* knn = 1 ring */);
 
       std::vector<std::pair<Point_set::Point, Point_set::Vector> > new_points;
-      CGAL::edge_aware_upsample_point_set(points->begin(), 
+      CGAL::edge_aware_upsample_point_set<Concurrency_tag>(points->begin(), 
 					  points->end(), 
 					  std::back_inserter(new_points),
 					  CGAL::make_identity_property_map(Point_set::value_type()),

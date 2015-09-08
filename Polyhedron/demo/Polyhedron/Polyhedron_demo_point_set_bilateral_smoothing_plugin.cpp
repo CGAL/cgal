@@ -16,6 +16,14 @@
 
 #include "ui_Polyhedron_demo_point_set_bilateral_smoothing_plugin.h"
 
+// Concurrency
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
+
 class Polyhedron_demo_point_set_bilateral_smoothing_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -91,7 +99,7 @@ void Polyhedron_demo_point_set_bilateral_smoothing_plugin::on_actionBilateralSmo
     for (unsigned int i = 0; i < dialog.iterations (); ++i)
       {
 	/* double error = */
-	CGAL::bilateral_smooth_point_set <CGAL::Parallel_tag>
+	CGAL::bilateral_smooth_point_set<Concurrency_tag>
 	  (points->begin(), 
 	   points->end(),
 	   CGAL::make_identity_property_map(Point_set::value_type()),
