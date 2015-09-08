@@ -82,7 +82,8 @@ public:
                    the plane.  (default: positive x-axis)
      */
     Construct_yao_graph_2 (unsigned int k,
-                           Direction_2 initial_direction = Direction_2(1,0) )
+                           Direction_2 initial_direction = Direction_2(1,0) 
+						  ): cone_number(k), rays(std::vector<Direction_2>(k))
 
     {
         if (k<2) {
@@ -90,8 +91,6 @@ public:
             std::exit(1);
         }
 
-        cone_number = k;
-		rays.reserve(k);
         /* Initialize a functor, specialization will happen here depending on the kernel type to
          compute the cone boundaries either exactly or inexactly */
         Compute_cone_boundaries_2<Geom_traits> compute_cones;
