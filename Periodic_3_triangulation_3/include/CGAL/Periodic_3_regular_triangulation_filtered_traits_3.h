@@ -40,14 +40,14 @@ template < typename K, typename Off >
 class Periodic_3_regular_triangulation_filtered_traits_base_3
   : public Periodic_3_regular_triangulation_traits_base_3<K, Off>
 {
-  typedef Periodic_3_regular_triangulation_traits_base_3<K, Off> Base;
+  typedef Periodic_3_regular_triangulation_traits_3<K, Off> Base;
 
   // Exact traits is based on the exact kernel.
-  typedef Periodic_3_regular_triangulation_traits_base_3<typename K::Exact_traits,
+  typedef Periodic_3_regular_triangulation_traits_3<typename K::Exact_traits,
                                             Off>
                                                    Exact_traits;
   // Filtering traits is based on the filtering kernel.
-  typedef Periodic_3_regular_triangulation_traits_base_3<typename K::Filtering_traits,
+  typedef Periodic_3_regular_triangulation_traits_3<typename K::Filtering_traits,
                                             Off>
                                                    Filtering_traits;
 private:
