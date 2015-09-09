@@ -1,6 +1,6 @@
-// Triangulated Surface Mesh Shortest Paths
+// Triangulated Surface Mesh Geodesic Shortest Paths
 
-/// \defgroup PkgSurfaceMeshShortestPath Triangulated Surface Mesh Shortest Paths Reference
+/// \defgroup PkgSurfaceMeshShortestPath Triangulated Surface Mesh Geodesic Shortest Paths Reference
 
 /// \defgroup PkgSurfaceMeshShortestPathConcepts Concepts
 /// \ingroup PkgSurfaceMeshShortestPath
@@ -19,12 +19,11 @@
 \cgalPkgPicture{shortestpathspackage-ico.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Stephen Kiazyk, Sébastien Loriot, Éric Colin de Verdière}
-\cgalPkgDesc{The package provides methods for computing shortest path on triangulated surface meshes.  The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan} .  The input of this package can be any model of the `FaceListGraph` concept. }
+\cgalPkgDesc{The package provides methods for computing geodesic shortest path on triangulated surface meshes.  The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan} .  The input of this package can be any model of the `FaceListGraph` concept. }
 \cgalPkgManuals{Chapter_Surface_mesh_shortest_path,PkgSurfaceMeshShortestPath}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
-\cgalPkgDependsOn{\ref PkgBGLSummary and \ref PkgAABB_treeSummary for some convenience functions}
 \cgalPkgBib{cgal:klcdv-tsmsp}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
