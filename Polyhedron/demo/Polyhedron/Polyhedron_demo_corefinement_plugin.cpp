@@ -41,6 +41,7 @@ public:
     this->scene = scene_interface;
     this->mw = mainWindow;
     actionPolyhedronCorefinement_3 = new QAction("Polyhedra corefinement (A/B)", mw);
+    actionPolyhedronCorefinement_3->setProperty("subMenuName", "Operation on multiple polyhedra");
     if(actionPolyhedronCorefinement_3) {
       connect(actionPolyhedronCorefinement_3, SIGNAL(triggered()),
               this, SLOT(corefinement()));

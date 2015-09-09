@@ -119,9 +119,12 @@ public:
     ui = NULL;
 
     actionMCFSkeleton = new QAction(tr("Mean Curvature Skeleton (Advanced)"), mainWindow);
+    actionMCFSkeleton->setProperty("subMenuName", "Object creation");
     actionMCFSkeleton->setObjectName("actionMCFSkeleton");
 
     actionConvert_to_medial_skeleton = new QAction(tr("Extract Medial Skeleton"), mainWindow);
+    actionConvert_to_medial_skeleton->setProperty("subMenuName", "Object creation");
+
     actionConvert_to_medial_skeleton->setObjectName("actionConvert_to_medial_skeleton");
 
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);

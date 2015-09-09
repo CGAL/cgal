@@ -32,7 +32,7 @@ public:
       mw = mainWindow;
       scene = scene_interface;
       actions_map["actionEstimateCurvature"] = getActionFromMainWindow(mw, "actionEstimateCurvature");
-      actions_map["actionEstimateCurvature"]->setProperty("subMenuName", "Add Object");
+      actions_map["actionEstimateCurvature"]->setProperty("subMenuName", "Object creation");
       autoConnectActions();
 
   }

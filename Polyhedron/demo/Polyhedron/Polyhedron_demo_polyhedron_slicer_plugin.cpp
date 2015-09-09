@@ -97,6 +97,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::init(QMainWindow* mainWindow,
   plane_item = NULL;
 
   actionSlicerWidget = new QAction(tr("Polyhedron Slicer"), mw);
+  actionSlicerWidget->setProperty("subMenuName", "Operations with plane");
   connect(actionSlicerWidget, SIGNAL(triggered()), this, SLOT(slicer_widget_action()));
 
   dock_widget = new QDockWidget("Polyhedron Slicer", mw);

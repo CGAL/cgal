@@ -79,6 +79,7 @@ public:
     this->m_messages = messages;
 
     dock_widget = new QDockWidget("Shortest path", mw);
+
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
@@ -88,6 +89,7 @@ public:
     connect(ui_widget.Primitives_type_combo_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_Primitives_type_combo_box_changed(int)));
 
     actionMakeShortestPaths = new QAction("Make Shortest Path", this->mw);
+    actionMakeShortestPaths->setProperty("subMenuName", "Object creation");
 
     connect(actionMakeShortestPaths, SIGNAL(triggered()), this, SLOT(on_actionMakeShortestPaths_triggered()));
 

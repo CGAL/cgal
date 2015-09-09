@@ -54,6 +54,7 @@ public:
     actionStitchBorders= new QAction(tr("Stitch polyhedron duplicated boundaries"), mainWindow);
     actionDetectBorders->setObjectName("actionDetectBorders");
     actionStitchBorders->setObjectName("actionStitchBorders");
+    actionDetectBorders->setProperty("subMenuName", "Detection operations");
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 

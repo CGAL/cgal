@@ -31,7 +31,7 @@ public:
         mw = mainWindow;
         scene = scene_interface;
         actions_map["actionConvexHull"] = getActionFromMainWindow(mw, "actionConvexHull");
-        actions_map["actionConvexHull"]->setProperty("subMenuName", "Add Object");
+        actions_map["actionConvexHull"]->setProperty("subMenuName", "Object creation");
         autoConnectActions();
 
     }

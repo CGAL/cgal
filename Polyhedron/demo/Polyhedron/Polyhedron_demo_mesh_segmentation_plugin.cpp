@@ -68,6 +68,7 @@ public:
         this->scene = scene_interface;
         this->mw = mainWindow;
         actionSegmentation = new QAction("Mesh Segmentation", mw);
+        actionSegmentation->setProperty("subMenuName", "Color alteration");
         connect(actionSegmentation, SIGNAL(triggered()),this, SLOT(on_actionSegmentation_triggered()));
 
         // adding slot for itemAboutToBeDestroyed signal, aim is removing item from item-functor map.

@@ -1,5 +1,6 @@
 #include <QTime>
 #include <QApplication>
+#include <QMainWindow>
 #include <QAction>
 
 #include "Polyhedron_demo_plugin_helper.h"
@@ -30,16 +31,24 @@ public:
   {
       mw = mainWindow;
       scene = scene_interface;
-      actions_map["actionLoop"] = getActionFromMainWindow(mw, "actionLoop");
-      actions_map["actionLoop"]->setProperty("subMenuName", "Action on mesh");
+      actions_map["actionLoop"] = new QAction("Loop", mw);
+      actions_map["actionLoop"]->setProperty("subMenuName", "Action on mesh/Subdivisions");
 
-      actions_map["actionCatmullClark"] = getActionFromMainWindow(mw, "actionCatmullClark");
-      actions_map["actionCatmullClark"]->setProperty("subMenuName", "Action on mesh");
+      actions_map["actionCatmullClark"] = new QAction("Catmull Clark", mw);
+      actions_map["actionCatmullClark"]->setProperty("subMenuName", "Action on mesh/Subdivisions");
 
-      actions_map["actionSqrt3"] = getActionFromMainWindow(mw, "actionSqrt3");
-      actions_map["actionSqrt3"]->setProperty("subMenuName", "Action on mesh");
+      actions_map["actionSqrt3"] = new QAction("Sqrt3", mw);
+      actions_map["actionSqrt3"]->setProperty("subMenuName", "Action on mesh/Subdivisions");
 
-      autoConnectActions();
+      //autoConnectActions();
+      connect(actions_map["actionLoop"], SIGNAL(triggered()),
+              this, SLOT(on_actionLoop_triggered()));
+
+      connect(actions_map["actionCatmullClark"], SIGNAL(triggered()),
+              this, SLOT(on_actionCatmullClark_triggered()));
+
+      connect(actions_map["actionSqrt3"], SIGNAL(triggered()),
+              this, SLOT(on_actionSqrt3_triggered()));
 
   }
 
