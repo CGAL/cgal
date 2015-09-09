@@ -22,7 +22,7 @@ side is the bounded interior of the sphere.
 \pre `A` contains \f$ d+1\f$ points in \f$ d\f$-space.
 \cgalRequires The value type of `ForwardIterator` is `Kernel_d::Point_d`. 
 */ 
-template <class ForwardIterator> Bounded_side 
+template <class ForwardIterator> Oriented_side 
 operator()( ForwardIterator first, ForwardIterator last, const 
 Kernel_d::Point_d& p); 
 
