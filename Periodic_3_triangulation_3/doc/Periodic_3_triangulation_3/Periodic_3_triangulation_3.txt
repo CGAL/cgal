@@ -429,6 +429,54 @@ exact.
 
 \cgalExample{Periodic_3_triangulation_3/geometric_access.cpp}
 
+\subsection Periodic_3_triangulation_3PeriodicRegularTriangulations Periodic Regular Triangulations 
+
+\cgalModifBegin 
+
+The following four examples illustrate various features of 3D periodic
+regular triangulations. 
+
+\cgalModifEnd
+
+\cgalModifBegin 
+
+The first example shows the incremental construction of a 3D regular triangulation,
+and the removal of a vertex. It uses the default parameter of the
+`Periodic_3_regular_triangulation_3`  class for the triangulation data structure. 
+
+\cgalModifEnd
+
+\cgalExample{Periodic_3_triangulation_3/p3rt3_insert_remove.cpp}
+
+\cgalModifBegin 
+
+The second example shows the incremental construction of a 3D regular
+triangulation. 
+It uses a more appropriate triangulation data structure, which saves some memory resources.
+
+\cgalModifEnd
+
+\cgalExample{Periodic_3_triangulation_3/p3rt3_insert_only}
+
+\cgalModifBegin 
+
+The third example shows that points can be hidden during the incremental construction
+of a 3D regular triangulation.
+
+\cgalModifEnd
+
+\cgalExample{p3rt3_hidden_points.cpp}
+
+\cgalModifBegin 
+
+Finally, the following example shows how points whose weight does not
+satisfy the precondition are handled during the incremental construction
+of a 3D regular triangulation.
+
+\cgalModifEnd
+
+\cgalExample{p3rt3_insert_point_with_bad_weight.cpp} 
+
 \subsection Periodic_3_triangulation_3PeriodicAlphaShapes Periodic Alpha Shapes
 
 It is possible to use the class `Periodic_3_Delaunay_triangulation_3`
