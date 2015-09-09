@@ -12,9 +12,9 @@ This package proposes data structures and algorithms to compute
 triangulations of points in any dimensions.
 The `Triangulation_data_structure` handles the
 combinatorial aspect of triangulations while the geometric classes
-`Triangulation` and `Delaunay_triangulation` allows to
-compute and maintain triangulations and Delaunay triangulations of 
-sets of points.
+`Triangulation`, `Delaunay_triangulation` and `Regular_triangulation` allow to
+compute and maintain triangulations, Delaunay triangulations and
+regular triangulations of sets of points.
 
 # Introduction #
 
@@ -80,6 +80,12 @@ In a Delaunay triangulation, each face has the so-called
 <I>Delaunay</I> or <I>empty-ball</I> property: there exists a
 circumscribing ball whose interior does not contain 
 any vertex of the triangulation.
+
+The class `CGAL::Regular_triangulation<RegularTriangulationTraits, TriangulationDataStructure>` 
+builds the regular triangulation 
+-- also known as weighted Delaunay triangulation -- of a set of points. 
+A detailed description of such a triangulation is available in section
+\ref TriangulationSecRT.
 
 ## Further Definitions ##
 
@@ -387,7 +393,7 @@ visits <I>only</I> the infinite full cells but stores handles to them into the
 
 The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` derives from
 `CGAL::Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
-and represent Delaunay triangulations.
+and represents Delaunay triangulations.
 
 A <I>circumscribing ball</I> of a simplex is a ball
 having all vertices of the simplex on its boundary.
@@ -439,6 +445,61 @@ retaining an efficient update of the Delaunay triangulation.
 
 \cgalExample{delaunay_triangulation.cpp}
 
+\section TriangulationSecRT Regular Triangulations
+
+The class `CGAL::Regular_triangulation<RegularTriangulationTraits, TriangulationDataStructure>` derives from
+`CGAL::Triangulation<RegularTriangulationTraits, TriangulationDataStructure>`
+and represents regular triangulations.
+
+A regular triangulation is similar to Delaunay triangulations, but 
+with weighted points.
+
+Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^D\f$. Let
+\f$ {p}^{(w)}=(p,w_p), p\in\mathbb{R}^D, w_p\in\mathbb{R}\f$ and
+\f$ {z}^{(w)}=(z,w_z), z\in\mathbb{R}^D, w_z\in\mathbb{R}\f$ 
+be two weighted points.
+A weighted point
+\f$ {p}^{(w)}=(p,w_p)\f$ can also be seen as a sphere of center \f$ p\f$ and
+radius \f$ \sqrt{w_p}\f$.
+The <I>power product</I> (or <I>power distance</I> )
+between \f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$ is
+defined as
+\f[ \Pi({p}^{(w)},{z}^{(w)}) = {\|{p-z}\|^2-w_p-w_z} \f]
+where \f$ \|{p-z}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ z\f$.
+\f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$
+are said to be <I>orthogonal</I> if \f$ \Pi{({p}^{(w)}-{z}^{(w)})}
+= 0\f$.
+
+\f$D + 1\f$ weighted points have a unique common orthogonal weighted point 
+called the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be
+<I>regular</I> if \f$ \forall {p}^{(w)}\in{S}^{(w)},
+\Pi{({p}^{(w)}-{z}^{(w)})}\geq 0\f$.
+
+A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres
+of all simplices are regular.
+
+Note that the removal of points is not supported yet.
+
+## Implementation ##
+
+The class `CGAL::Regular_triangulation<RegularTriangulationTraits, TriangulationDataStructure>` derives from
+`CGAL::Triangulation<RegularTriangulationTraits, TriangulationDataStructure>`. It thus stores a model of
+the concept `TriangulationDataStructure` which is instantiated with a vertex
+type that stores a weighted point and allows its retrieval.
+
+The template parameter `RegularTriangulationTraits` must be a model of the concept
+`RegularTriangulationTraits` which provides the `Bare_point`and `Weighted_point` 
+types as well as various geometric predicates used by the 
+`Regular_triangulation` class.
+The concept `RegularTriangulationTraits` refines the concept
+`TriangulationTraits`.
+
+## Example ##
+
+This simple example shows how to create a regular triangulation.
+
+\cgalExample{regular_triangulation.cpp}
+
 # Complexity and Performances #
 
 The current implementation locates points by walking in the
@@ -477,7 +538,8 @@ This package is heavily inspired by the works of
 Monique Teillaud and Sylvain Pion (`Triangulation_3`)
 and Mariette Yvinec (`Triangulation_2`).
 The first version was written by Samuel Hornus. The final version is a joint 
-work by Samuel Hornus, Olivier Devillers and Clément Jamin.
+work by Samuel Hornus, Olivier Devillers and Clément Jamin. In 2015, Clément
+Jamin added the regular triangulations.
 
 Starting with the version 2.3 of \cgal, a package written by Susan Hert and Michael Seel
 was the first able to deal with triangulation and convex hulls in arbitrary
