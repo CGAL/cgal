@@ -14,7 +14,7 @@ under positional constraints of some of its vertices, without requiring any addi
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.5}
-\cgalPkgDependsOn{Sparse symmetric solver such as those from \ref thirdpartyEigen}
+\cgalPkgDependsOn{\ref PkgSolverSummary and \ref thirdpartyEigen}
 \cgalPkgBib{cgal:lsxy-tsmd}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{Edit plugin of the Polyhedron demo,polyhedron_3.zip}

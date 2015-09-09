@@ -18,7 +18,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
-\cgalPkgDependsOn{Sparse symmetric solver such as those from \ref thirdpartyEigen}
+\cgalPkgDependsOn{ \ref PkgSolverSummary}
 \cgalPkgBib{cgal:glt-tsms}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgDemo{See Polyhedral Surface,polyhedron_3.zip}
