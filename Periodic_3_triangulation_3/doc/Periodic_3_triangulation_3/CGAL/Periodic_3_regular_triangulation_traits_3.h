@@ -21,7 +21,7 @@ This template class is specialized for
 so that it automatically provides 
 filtered predicates. This holds implicitly for 
 `CGAL::Regular_triangulation_euclidean_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel>`, 
-as it is an 
+as `CGAL::Exact_predicates_inexact_constructions_kernel` is an
 instantiation of `CGAL::Filtered_kernel`. 
 
 */
