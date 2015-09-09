@@ -28,6 +28,7 @@
 #include <utility>
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_svd.h>
+#include <CGAL/Eigen_vcm_traits.h>
 #else
 #ifdef CGAL_LAPACK_ENABLED
 #include <CGAL/Lapack/Linear_algebra_lapack.h>
@@ -359,6 +360,36 @@ compute_PCA(InputIterator begin, InputIterator end)
   xz = sumXZ - sumX * sumZ;
   yz = sumYZ - sumY * sumZ;
 
+#ifdef CGAL_EIGEN3_ENABLED
+  // assemble covariance matrix as a
+  // semi-definite matrix. 
+  // Matrix numbering:
+  // 0
+  // 1 3
+  // 2 4 5
+  CGAL::cpp11::array<double, 6> cov = {{xx,xy,xz,yy,yz,zz}};
+  CGAL::cpp11::array<double, 3> eigenvalues = {{ 0., 0., 0. }};
+  CGAL::cpp11::array<double, 9> eigenvectors = {{ 0., 0., 0.,
+						  0., 0., 0.,
+						  0., 0., 0. }};
+
+  // solve for eigenvalues and eigenvectors.
+  CGAL::Eigen_vcm_traits::diagonalize_selfadjoint_covariance_matrix(cov,
+								    eigenvalues,
+								    eigenvectors);
+
+  //store in m_pca_basis
+  m_pca_basis[0].first = eigenvalues[2]; 
+  m_pca_basis[1].first = eigenvalues[1]; 
+  m_pca_basis[2].first = eigenvalues[0]; 
+
+  Vector_3 v1(eigenvectors[6], eigenvectors[7], eigenvectors[8]);
+  m_pca_basis[0].second = v1;
+  Vector_3 v2(eigenvectors[3], eigenvectors[4], eigenvectors[5]);
+  m_pca_basis[1].second = v2;
+  Vector_3 v3(eigenvectors[0], eigenvectors[1], eigenvectors[2]);
+  m_pca_basis[2].second = v3;
+#else
   // assemble covariance matrix as a
   // semi-definite matrix. 
   // Matrix numbering:
@@ -375,15 +406,15 @@ compute_PCA(InputIterator begin, InputIterator end)
   CGAL::internal::eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
   //store in m_pca_basis
   for (int i=0; i<3; i++)
-    {
-      m_pca_basis[i].first =  eigen_values[i];
-    }
+    m_pca_basis[i].first =  eigen_values[i];
   Vector_3 v1(eigen_vectors[0],eigen_vectors[1],eigen_vectors[2]);
   m_pca_basis[0].second = v1;
   Vector_3 v2(eigen_vectors[3],eigen_vectors[4],eigen_vectors[5]);
   m_pca_basis[1].second = v2;
   Vector_3 v3(eigen_vectors[6],eigen_vectors[7],eigen_vectors[8]);
   m_pca_basis[2].second = v3;
+#endif
+  
   switch_to_direct_orientation(m_pca_basis[0].second,
 			       m_pca_basis[1].second,
 			       m_pca_basis[2].second);
@@ -494,11 +525,19 @@ compute_Monge_basis(const FT* A, Monge_form& monge_form)
   //                   =(n.Xuu, n.Xuv, n.Xuv, n.Xvv)
   //ppal curv are the opposite of the eigenvalues of Weingarten or the
   //  eigenvalues of weingarten = -Weingarten = I^{-1}II
+#ifdef CGAL_EIGEN3_ENABLED
+  typedef typename Eigen::Matrix2d Matrix;
+  Matrix  weingarten;
+  Matrix change_XuXv2YZ;
+#else
   typedef typename CGAL::Linear_algebraCd<FT>::Matrix Matrix;
+  Matrix  weingarten(2,2,0.);
+  Matrix change_XuXv2YZ(2,2,0.);
+#endif
 
   FT e = 1+A[1]*A[1], f = A[1]*A[2], g = 1+A[2]*A[2],
     l = A[3], m = A[4], n = A[5];
-  Matrix  weingarten(2,2,0.);
+
   weingarten(0,0) = (g*l-f*m)/ (Lsqrt(norm2)*norm2);
   weingarten(0,1) = (g*m-f*n)/ (Lsqrt(norm2)*norm2);
   weingarten(1,0) = (e*m-f*l)/ (Lsqrt(norm2)*norm2);
@@ -514,15 +553,20 @@ compute_Monge_basis(const FT* A, Monge_form& monge_form)
   Z = Xv - XudotXv * Xu / (normXu*normXu);
   FT normZ = Lsqrt( Z*Z );
   Z = Z / normZ;
-  Matrix change_XuXv2YZ(2,2,0.);
+
   change_XuXv2YZ(0,0) = 1 / normXu;
   change_XuXv2YZ(0,1) = -XudotXv / (normXu * normXu * normZ);
   change_XuXv2YZ(1,0) = 0;
   change_XuXv2YZ(1,1) = 1 / normZ;
+  
+#ifdef CGAL_EIGEN3_ENABLED
+  weingarten = change_XuXv2YZ.inverse() * weingarten * change_XuXv2YZ;
+#else
   FT det = 0.;
   Matrix inv = CGAL::Linear_algebraCd<FT>::inverse ( change_XuXv2YZ, det );
   //in the new orthonormal basis (Y,Z) of the tangent plane :
   weingarten = inv *(1/det) * weingarten * change_XuXv2YZ;
+#endif
   
   //switch to eigen_symmetric algo for diagonalization of weingarten
   FT W[3] = {weingarten(0,0), weingarten(1,0), weingarten(1,1)};

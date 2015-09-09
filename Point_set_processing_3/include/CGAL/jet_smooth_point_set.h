@@ -271,6 +271,7 @@ jet_smooth_point_set(
 /// @endcond
 #endif
 
+
 } //namespace CGAL
 
 #endif // CGAL_JET_SMOOTH_POINT_SET_H
