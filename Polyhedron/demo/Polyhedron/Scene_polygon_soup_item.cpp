@@ -343,24 +343,25 @@ Scene_polygon_soup_item::compute_normals_and_vertices() const{
             positions_lines.push_back(pb.z());
             positions_lines.push_back(1.0);
         }
-        //Non manifold edges
-        BOOST_FOREACH(const Polygon_soup::Edge& edge,
-                        soup->non_manifold_edges)
-          {
-
-            const Point_3& a = soup->points[edge[0]];
-            const Point_3& b = soup->points[edge[1]];
-            positions_nm_lines.push_back(a.x());
-            positions_nm_lines.push_back(a.y());
-            positions_nm_lines.push_back(a.z());
-            positions_nm_lines.push_back(1.0);
-
-            positions_nm_lines.push_back(b.x());
-            positions_nm_lines.push_back(b.y());
-            positions_nm_lines.push_back(b.z());
-            positions_nm_lines.push_back(1.0);
-          }
     }
+
+    //Non manifold edges
+    BOOST_FOREACH(const Polygon_soup::Edge& edge,
+                    soup->non_manifold_edges)
+      {
+
+        const Point_3& a = soup->points[edge[0]];
+        const Point_3& b = soup->points[edge[1]];
+        positions_nm_lines.push_back(a.x());
+        positions_nm_lines.push_back(a.y());
+        positions_nm_lines.push_back(a.z());
+        positions_nm_lines.push_back(1.0);
+
+        positions_nm_lines.push_back(b.x());
+        positions_nm_lines.push_back(b.y());
+        positions_nm_lines.push_back(b.z());
+        positions_nm_lines.push_back(1.0);
+      }
 
 }
 
