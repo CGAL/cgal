@@ -161,7 +161,6 @@ void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
   if(item)
   {
     item->setDisplayNonManifoldEdges(!item->displayNonManifoldEdges());
-    item->changed();
     scene->itemChanged(item);
   }
 }
