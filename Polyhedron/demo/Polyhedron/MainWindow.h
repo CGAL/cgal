@@ -164,7 +164,7 @@ protected:
 
 private:
   QString strippedName(const QString &fullFileName);
-
+  void setMenus(QString, QString, QAction *a);
   /// plugin black-list
   QSet<QString> plugin_blacklist;
 

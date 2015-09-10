@@ -415,6 +415,75 @@ bool actionsByName(QAction* x, QAction* y) {
 }
 }
 
+//Recursively creates all subMenus containing an action.
+void MainWindow::setMenus(QString name, QString parentName, QAction* a )
+{
+
+        bool hasSub = false;
+        QString menuName, subMenuName;
+        if (!name.isNull())
+        {
+            //Get the menu and submenu names
+            for(int i=0; i<name.size(); i++)
+            {
+                if(name.at(i)=='/')
+                    hasSub = true;
+            }
+
+            if(!hasSub)
+                menuName= name;
+            else
+            {
+                int i=0;
+                for(i; name.at(i)!='/'; i++)
+                    menuName.append(name.at(i));
+                i++;
+                for(i; i<name.size(); i++)
+                    subMenuName.append(name.at(i));
+                setMenus(subMenuName, menuName, a);
+            }
+
+            //Create the menu and sub menu
+            QMenu* menu = 0;
+            QMenu* parentMenu = 0;
+            //If the menu already exists, don't create a new one.
+            Q_FOREACH(QAction* action, findChildren<QAction*>()) {
+                if(!action->menu()) continue;
+                QString menuText = action->menu()->title();
+                //If the menu title does not correspond to the name of the menu or submenu we want,
+                //go to the next one.
+                if(menuText != menuName) continue;
+                menu = action->menu();
+            }
+
+            bool hasAction = false;
+            if(menu == 0)
+                menu = new QMenu(menuName, this);
+            else //checks the action is not already in the menu
+                if(a->property("added").toBool())
+                    hasAction = true;
+            if(!hasAction)
+                menu->addAction(a);
+            a->setProperty("added", true);
+            //If the parent menu already exists, don't create a new one.
+            Q_FOREACH(QAction* action, findChildren<QAction*>()) {
+                if(!action->menu()) continue;
+                QString menuText = action->menu()->title();
+                //If the menu title does not correspond to the name of the menu or submenu we want,
+                //go to the next one.
+                if(menuText != parentName) continue;
+                parentMenu = action->menu();
+            }
+
+            if(parentMenu == 0)
+                parentMenu = new QMenu(parentName, this);
+            parentMenu->addMenu(menu);
+            ui->menuOperations->removeAction(a);
+    }
+}
+
+
+
 void MainWindow::loadPlugins()
 {
   Q_FOREACH(QObject *obj, QPluginLoader::staticInstances())
@@ -470,9 +539,16 @@ void MainWindow::loadPlugins()
   }
 
 //Creates sub-Menus for operations.
-  //!TODO : Make it recursive to allow sub-menus of sub-menus
-  QList<QAction*> actions;
- /* QList<QMenu*> menus;
+  //!TODO : Make it recursive to allow sub-menus of sub-menus.
+  //!The argument should be the menuPath and it should recurse until hasSub stays false.
+   QList<QAction*> as = ui->menuOperations->actions();
+  Q_FOREACH(QAction* a, as)
+{
+              QString menuPath = a->property("subMenuName").toString();
+              setMenus(menuPath, ui->menuOperations->title(), a);
+
+              //QList<QAction*> actions;
+              /* QList<QMenu*> menus;
   Q_FOREACH(QMenu* menu, ui->menuOperations->findChildren<QMenu*>()) {
       menus.append(menu);
   }
@@ -493,8 +569,8 @@ void MainWindow::loadPlugins()
           }
       }
   }*/
-  actions = ui->menuOperations->actions();
-  Q_FOREACH(QAction* a, actions)
+              // actions = ui->menuOperations->actions();
+              /*Q_FOREACH(QAction* a, actions)
   {
       QString menuPath = a->property("subMenuName").toString();
       bool hasSub = false;
@@ -522,10 +598,12 @@ void MainWindow::loadPlugins()
           //Create the menu and sub menu
           QMenu* menu = 0;
           QMenu* subMenu = 0;
-          //if the menu already exists, don't create a new one.
+          //If the menu already exists, don't create a new one.
           Q_FOREACH(QAction* action, findChildren<QAction*>()) {
               if(!action->menu()) continue;
               QString menuText = action->menu()->title();
+              //If the menu title does not correspond to the name of the menu or submenu we want,
+              //go to the next one.
               if(menuText != menuName && menuText != subMenuName) continue;
               menu = action->menu();
               if(hasSub)
@@ -558,14 +636,14 @@ void MainWindow::loadPlugins()
           ui->menuOperations->addMenu(menu);
           ui->menuOperations->removeAction(a);
       }
-  }
-  // sort the operations menu by name
-      actions = ui->menuOperations->actions();
-      qSort(actions.begin(), actions.end(), actionsByName);
-      ui->menuOperations->clear();
-      ui->menuOperations->addActions(actions);
-
-}
+  }*/
+              // sort the operations menu by name
+              as = ui->menuOperations->actions();
+              qSort(as.begin(), as.end(), actionsByName);
+              ui->menuOperations->clear();
+              ui->menuOperations->addActions(as);
+          }
+      }
 
 bool MainWindow::hasPlugin(const QString& pluginName) const
 {
