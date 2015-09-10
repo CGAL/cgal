@@ -27,7 +27,7 @@ public:
   // QMenu* contextMenu();
   
   // Indicate if rendering mode is supported
-  bool supportsRenderingMode(RenderingMode m) const { return m!=PointsPlusNormals; }
+  bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals && m!=Splatting); }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   // dispatch to poly_item direct_draw and direct_draw_edges
   void draw() const;

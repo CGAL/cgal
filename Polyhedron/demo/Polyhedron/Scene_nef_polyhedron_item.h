@@ -29,7 +29,9 @@ public:
   virtual void changed();
   virtual void selection_changed(bool);
   // Indicate if rendering mode is supported
-  virtual bool supportsRenderingMode(RenderingMode m) const { return m != Gouraud; } // CHECK THIS!
+  virtual bool supportsRenderingMode(RenderingMode m) const { return m != Gouraud && m!=Splatting; } // CHECK THIS!
+  // OpenGL drawing in a display list
+  void direct_draw() const;
 
   virtual void draw(Viewer_interface*) const;
   virtual void draw_edges() const {}

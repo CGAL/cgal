@@ -457,6 +457,7 @@ Scene_implicit_function_item::supportsRenderingMode(RenderingMode m) const
 {
     switch ( m )
     {
+    case Splatting:
     case Gouraud:
         return false;
 
@@ -505,7 +506,7 @@ compute_function_grid() const
     typedef K::Point_3                      Point_3;
 
     // Get transformation
-    const ::GLdouble* m = frame_->matrix();
+    const GLdouble* m = frame_->matrix();
 
     // OpenGL matrices are row-major matrices
     Aff_transformation t (m[0], m[4], m[8], m[12],

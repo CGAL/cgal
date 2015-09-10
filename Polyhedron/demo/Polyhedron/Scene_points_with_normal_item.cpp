@@ -167,7 +167,6 @@ void Scene_points_with_normal_item::compute_normals_and_vertices(void)
         // Draw *selected* points
         if (m_points->nb_selected_points() > 0)
         {
-            ::glPointSize(4.f);    // selected => bigger
             for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
             {
                 const UI_point& p = *it;
@@ -376,8 +375,27 @@ Scene_points_with_normal_item::toolTip() const
 
 bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const 
 {
-  return m==Points ||
-            ( has_normals() && m==PointsPlusNormals );
+    return m==Points ||
+            ( has_normals() &&
+              ( m==PointsPlusNormals || m==Splatting ) );
+}
+
+void Scene_points_with_normal_item::draw_splats(Viewer_interface* viewer) const
+{
+   // TODO add support for selection
+   viewer->glBegin(GL_POINTS);
+   for ( Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
+   {
+     const UI_point& p = *it;
+     viewer->glNormal3dv(&p.normal().x());
+     viewer->glMultiTexCoord1d(GL_TEXTURE2, p.radius());
+     viewer->glVertex3dv(&p.x());
+
+   }
+   viewer->glEnd();
+
+
+
 }
 
 void Scene_points_with_normal_item::draw_edges(Viewer_interface* viewer) const
@@ -519,6 +537,10 @@ QMenu* Scene_points_with_normal_item::contextMenu()
 void Scene_points_with_normal_item::setRenderingMode(RenderingMode m)
 {
     Scene_item::setRenderingMode(m);
+    if (rendering_mode==Splatting && (!m_points->are_radii_uptodate()))
+    {
+        computes_local_spacing(6); // default value = small
+    }
 }
 
 bool Scene_points_with_normal_item::has_normals() const { return m_has_normals; }
