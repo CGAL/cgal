@@ -15,7 +15,10 @@ struct Polygon_soup
 {
     typedef Kernel::Point_3 Point_3;
     typedef std::vector<Point_3> Points;
+    //vector containing 3 indices of points in Points
     typedef std::vector<std::size_t> Polygon_3;
+    //vector containing a pair of indices of points in Points and a set of indices of Polygons
+    //containing the edge.
     typedef std::map<std::pair<std::size_t, std::size_t>, std::set<std::size_t> > Edges_map;
     typedef boost::array<std::size_t, 2> Edge;
     typedef std::vector<Polygon_3> Polygons;
@@ -71,9 +74,8 @@ struct Polygon_soup
                 const std::size_t& i0 = polygons[i][j];
                 const std::size_t& i1 = polygons[i][ j+1 < size ? j+1: 0];
 
-                if( (i0 < i1) &&
-                        (edges[std::make_pair(i0, i1)].size() +
-                         edges[std::make_pair(i1, i0)].size() > 2) )
+                if(edges[std::make_pair(i0, i1)].size() +
+                         edges[std::make_pair(i1, i0)].size() > 2)
                 {
                     Edge edge;
                     edge[0] = i0;
@@ -170,6 +172,8 @@ private:
     bool oriented;
     std::vector<float> positions_poly;
     std::vector<float> positions_lines;
+    mutable std::vector<float> positions_nm_lines;
+    mutable int nb_nm_edges;
     std::vector<float> normals;
 
     using Scene_item::initialize_buffers;

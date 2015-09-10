@@ -117,11 +117,26 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[3].release();
-
         program->release();
 
         vaos[1]->release();
 
+    }
+    //vao containing the data for the non manifold edges
+    {
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program->bind();
+        vaos[2]->bind();
+        buffers[4].bind();
+        buffers[4].allocate(positions_nm_lines.data(),
+                            static_cast<int>(positions_nm_lines.size()*sizeof(float)));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        buffers[4].release();
+        vaos[2]->release();
+        nb_nm_edges = positions_nm_lines.size();
+        positions_nm_lines.resize(0);
+        std::vector<float> (positions_nm_lines).swap(positions_nm_lines);
     }
     are_buffers_filled = true;
 }
@@ -258,7 +273,6 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
 void
 Scene_polygon_soup_item::compute_normals_and_vertices(){
     //get the vertices and normals
-
     typedef Polygon_soup::Polygons::size_type size_type;
     positions_poly.resize(0);
     positions_lines.resize(0);
@@ -319,16 +333,36 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
             positions_lines.push_back(pb.z());
             positions_lines.push_back(1.0);
         }
+        //Non manifold edges
+        positions_nm_lines.resize(0);
+        soup->fill_edges();
+        BOOST_FOREACH(const Polygon_soup::Edge& edge,
+                        soup->non_manifold_edges)
+          {
+
+            const Point_3& a = soup->points[edge[0]];
+            const Point_3& b = soup->points[edge[1]];
+            positions_nm_lines.push_back(a.x());
+            positions_nm_lines.push_back(a.y());
+            positions_nm_lines.push_back(a.z());
+            positions_nm_lines.push_back(1.0);
+
+            positions_nm_lines.push_back(b.x());
+            positions_nm_lines.push_back(b.y());
+            positions_nm_lines.push_back(b.z());
+            positions_nm_lines.push_back(1.0);
+          }
     }
 
 }
 
 
 Scene_polygon_soup_item::Scene_polygon_soup_item()
-    : Scene_item(4,2),
+    : Scene_item(5,3),
     soup(0),
     oriented(false)
 {
+    nb_nm_edges = 0;
 }
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
@@ -544,7 +578,6 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     // Clean-up
     program->release();
     vaos[0]->release();
-
   }
 
 void
@@ -574,7 +607,6 @@ Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
      initialize_buffers(viewer);
   }
     if(soup == 0) return;
-
     vaos[1]->bind();
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
@@ -587,6 +619,22 @@ Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
     // Clean-up
     program->release();
     vaos[1]->release();
+    if(displayNonManifoldEdges())
+    {
+        vaos[2]->bind();
+        attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+        program->bind();
+        QColor c = QColor(255,0,0,255);
+
+        program->setAttributeValue("colors", c);
+        //draw the edges
+        viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( nb_nm_edges/4));
+        // Clean-up
+        program->release();
+        vaos[2]->release();
+    }
+
 }
 
 bool
