@@ -456,7 +456,7 @@ It uses a more appropriate triangulation data structure, which saves some memory
 
 \cgalModifEnd
 
-\cgalExample{Periodic_3_triangulation_3/p3rt3_insert_only}
+\cgalExample{Periodic_3_triangulation_3/p3rt3_insert_only.cpp}
 
 \cgalModifBegin 
 
