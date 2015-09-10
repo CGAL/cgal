@@ -19,19 +19,26 @@ A plugin usually defines an object that inherits from Scene_item or uses some of
 Creating a simple Plugin
 ============
 A basic plugin will inherit from Polyhedron_demo_plugin_interface. It can also inherits from the Polyhedron_demo_plugin_helper instead, for a more detailed model of plugin.
-Its name must be of the form Polyhedron_demo_xxxx_yyyy_plugin. 
-In the CMakeList.txt file, in the section Plugins, add the following lines :
+Its name must be of the form Polyhedron_demo_xxxx_yyyy_plugin. \n
+<b>In the CMakeList.txt file, in the section Plugins, add the following lines :</b>
 
     polyhedron_demo_plugin(xxxx_yyyy_plugin Polyhedron_demo_xxxx_yyyy_plugin)
     target_link_libraries(xxxx_yyyy_plugin scene_polyhedron_item) 
   
   [init]: @ref Polyhedron_demo_plugin_helper#init(QMainWindow *, Scene_interface *)
-  The class must contain the following lines :
-    Q_OBJECT
-    Q_INTERFACES(Polyhedron_demo_plugin_interface)
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
-In the function [init], get a reference to the Scene  and to the MainWindow. Then, create and link the actions of the plugin.
-Create a list of QActions containing the actions of the plugin.
+  The class must contain the following lines :\n
+  
+    Q_OBJECT\n
+    Q_INTERFACES(Polyhedron_demo_plugin_interface)\n
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")\n
+    
+In the function [init], get a reference to the Scene  and to the MainWindow. Then, create and link the actions of the plugin.\n
+Create a list of QActions containing the actions of the plugin.\n
+Add the following line:
+
+    actionName->setProperty("submenuName", "Name_you_want_for_your_submenu");
+    
+to place your action in a submenu in the Operation Menu.\n
 If the plugin implements a new Scene_item, please notice that a Scene_itam have a number of functions that will need a reference to the Viewer through the Viewer_interface type.
 
 A plugin must always contain
@@ -175,6 +182,7 @@ public :
       this->mw = mainWindow;
       //creates and link the actions
       actionDrawTriangle= new QAction("Draw Triangle", mw);
+      actionDrawTriangle->setProperty("subMenuName", "Object creation");
       if(actionDrawTriangle) {
         connect(actionDrawTriangle, SIGNAL(triggered()),
                 this, SLOT(draw_triangle()));
