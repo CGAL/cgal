@@ -25,6 +25,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{2.1}
+\cgalPkgDependsOn{\ref PkgTDS3Summary} 
 \cgalPkgBib{cgal:pt-t3}
 \cgalPkgLicense{\ref licensesGPL "GPL" }
 \cgalPkgDemo{3D Triangulations,triangulation_3.zip}

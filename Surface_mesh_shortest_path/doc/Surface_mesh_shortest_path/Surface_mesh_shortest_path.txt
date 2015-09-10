@@ -7,7 +7,7 @@ namespace CGAL {
 \cgalAutoToc
 \author Stephen Kiazyk, Sébastien Loriot, and Éric Colin de Verdière
 
-This package provides an algorithm to compute shortest paths on a triangulated surface mesh.
+This package provides an algorithm to compute geodesic shortest paths on a triangulated surface mesh.
 
 \cgalFigureBegin{Shortest_path_main,shortest_paths_overview.png}
 Shortest paths on a terrain using one source point represented by a green square.
@@ -21,7 +21,7 @@ Using a 2-dimensional approximation would fail to capture anything interesting a
 The algorithm implemented in this package builds a data structure to efficiently answer queries of the following form:
 Given a triangulated surface mesh \f$\cal{M}\f$, a set of source points \f$S\f$ on \f$\cal{M}\f$, and a target point \f$t\f$ also on \f$\cal{M}\f$, find a shortest path \f$\lambda\f$ between \f$t\f$ and any element in \f$ S \f$, where \f$\lambda\f$ is constrained to the surface of \f$\cal{M}\f$.
 
-The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, a fast and practical algorithm for exact computation of shortest paths. It is an extension of earlier results by Chen and Han \cgalCite{ch-spp-96} and Mitchell, Mount, and Papadimitriou \cgalCite{mmp-dgp-87} .
+The algorithm used is based on a paper by Xin and Wang \cgalCite{XinWang2009improvingchenandhan}, a fast and practical algorithm for exact computation of geodesic shortest paths. It is an extension of earlier results by Chen and Han \cgalCite{ch-spp-96} and Mitchell, Mount, and Papadimitriou \cgalCite{mmp-dgp-87} .
 
 \section Surface_mesh_shortest_pathHowToUse  User Interface Description
 

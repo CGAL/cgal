@@ -3,6 +3,9 @@
 /// \defgroup PkgVisibility_2Concepts Concepts
 /// \ingroup PkgVisibility_2
 
+/// \defgroup PkgVisibility_2Classes Classes
+/// \ingroup PkgVisibility_2
+
 /*!
 \addtogroup PkgVisibility_2
 \cgalPkgDescriptionBegin{2D Visibility Computation,PkgVisibility_2Summary}
@@ -15,6 +18,8 @@ the visibility area of a point within polygonal regions in two dimensions.}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{4.7}
+\cgalPkgDependsOn{\ref PkgArrangement2Summary}
+\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
 \cgalPkgBib{hhb-visibility-2}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
