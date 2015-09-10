@@ -88,7 +88,7 @@ typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 
 //Make sure all the facets are triangles
 void
-Scene_polyhedron_item::is_Triangulated()
+Scene_polyhedron_item::is_Triangulated() const
 {
     typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
     Facet_iterator f = poly->facets_begin();
@@ -115,7 +115,7 @@ Scene_polyhedron_item::is_Triangulated()
     }
 }
 void
-Scene_polyhedron_item::triangulate_facet(Facet_iterator fit)
+Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
 {
     //Computes the normal of the facet
     Traits::Vector_3 normal =
@@ -214,7 +214,7 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit)
 }
 
 void
-Scene_polyhedron_item::triangulate_facet_color(Facet_iterator fit)
+Scene_polyhedron_item::triangulate_facet_color(Facet_iterator fit) const
 {
     Traits::Vector_3 normal =
             CGAL::Polygon_mesh_processing::compute_face_normal(fit, *poly);
@@ -439,7 +439,7 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
 }
 
 void
-Scene_polyhedron_item::compute_normals_and_vertices(void)
+Scene_polyhedron_item::compute_normals_and_vertices(void) const
 {
     positions_facets.resize(0);
     positions_lines.resize(0);
@@ -552,7 +552,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void)
 }
 
 void
-Scene_polyhedron_item::compute_colors()
+Scene_polyhedron_item::compute_colors() const
 {
     color_lines.resize(0);
     color_facets.resize(0);
@@ -877,7 +877,11 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 
 void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
+    {
+        is_Triangulated();
+        compute_normals_and_vertices();
         initialize_buffers(viewer);
+    }
 
 
     if(!is_selected)
@@ -899,6 +903,12 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
+    if(!are_buffers_filled)
+    {
+        is_Triangulated();
+        compute_normals_and_vertices();
+        initialize_buffers(viewer);
+    }
 
     if(!is_selected)
     {
@@ -922,6 +932,12 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
 
 void
 Scene_polyhedron_item::draw_points(Viewer_interface* viewer) const {
+    if(!are_buffers_filled)
+    {
+        is_Triangulated();
+        compute_normals_and_vertices();
+        initialize_buffers(viewer);
+    }
 
     vaos[1]->bind();
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
@@ -966,8 +982,6 @@ changed()
     delete_aabb_tree(this);
     init();
     Base::changed();
-    is_Triangulated();
-    compute_normals_and_vertices();
     are_buffers_filled = false;
 
 }

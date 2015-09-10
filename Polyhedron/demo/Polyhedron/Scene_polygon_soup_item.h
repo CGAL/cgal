@@ -129,7 +129,7 @@ public:
             soup->polygons[i].assign(polygons[i].begin(), polygons[i].end());
 
         /// fill non-manifold edges container
-        soup->fill_edges();
+        //soup->fill_edges();
         oriented = false;
 
         Q_EMIT changed();
@@ -155,7 +155,6 @@ public:
     void new_triangle(const std::size_t, const std::size_t, const std::size_t);
 
     void init_polygon_soup(std::size_t nb_pts, std::size_t nb_polygons);
-    void finalize_polygon_soup();
 
 public Q_SLOTS:
     void shuffle_orientations();
@@ -179,8 +178,8 @@ private:
     mutable int nb_lines;
     using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer) const;
-    void compute_normals_and_vertices(void);
-    void triangulate_polygon(Polygons_iterator );
+    void compute_normals_and_vertices(void) const;
+    void triangulate_polygon(Polygons_iterator ) const;
     mutable QOpenGLShaderProgram *program;
 
 }; // end class Scene_polygon_soup_item

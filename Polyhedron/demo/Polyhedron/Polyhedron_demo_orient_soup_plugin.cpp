@@ -131,7 +131,7 @@ void Polyhedron_demo_orient_soup_plugin::shuffle()
 
   if(item) {
     item->shuffle_orientations();
-    scene->itemChanged(item);
+    //scene->itemChanged(item);
   }
   else {
     Scene_polyhedron_item* poly_item = 

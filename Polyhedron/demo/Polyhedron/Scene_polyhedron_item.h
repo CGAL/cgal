@@ -35,7 +35,7 @@ public:
     // IO
     bool load(std::istream& in);
     bool save(std::ostream& out) const;
-    bool is_Triangle;
+    mutable bool is_Triangle;
 
     // Function for displaying meta-data of the item
     virtual QString toolTip() const;
@@ -125,11 +125,11 @@ private:
 
     using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer = 0) const;
-    void compute_normals_and_vertices(void);
-    void compute_colors();
-    void triangulate_facet(Facet_iterator );
-    void triangulate_facet_color(Facet_iterator );
-    void is_Triangulated();
+    void compute_normals_and_vertices(void) const;
+    void compute_colors() const;
+    void triangulate_facet(Facet_iterator ) const;
+    void triangulate_facet_color(Facet_iterator ) const;
+    void is_Triangulated() const;
     double volume, area;
 
 }; // end class Scene_polyhedron_item
