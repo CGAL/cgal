@@ -20,7 +20,7 @@ It must be an instance of `CGAL::Arrangement_2`, where its `CGAL::Arrangement_2:
 `CGAL::Arr_segment_traits_2`, or of `CGAL::Arr_non_caching_segment_traits_2`. 
 
 \tparam RegularizationCategory indicates whether the output should be regularized. It can be
-specified by one of the following: `CGAL::Tag_true` or `CGAL::Tag_false`, where `CGAL::Tag_false` is the default value.
+specified by one of the following: `#Tag_true` or `#Tag_false`, where `#Tag_false` is the default value.
 
 
 \cgalModels `Visibility_2` 
@@ -52,12 +52,12 @@ public:
   /*! 
     See \ref Visibility_2::Supports_general_polygon_category.
   */
-  typedef ::Tag_false Supports_general_polygon_category; 
+  typedef Tag_false Supports_general_polygon_category; 
 
   /*! 
     See \ref Visibility_2::Supports_simple_polygon_category.
   */
-  typedef ::Tag_true Supports_simple_polygon_category; 
+  typedef Tag_true Supports_simple_polygon_category; 
 /// @}
 
 

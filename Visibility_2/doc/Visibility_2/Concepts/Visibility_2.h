@@ -42,12 +42,12 @@ public:
 /// \name Tags 
 /// @{
   /*! 
-    identifies whether the regularized visibility area is computed (either \ref `CGAL::Tag_true` or \ref `CGAL::Tag_false`). 
+    identifies whether the regularized visibility area is computed (either `#Tag_true` or `#Tag_false`). 
   */
   typedef unspecified_type Regularization_category;
   
   /*! 
-    identifies whether general polygons (with holes) are supported (either \ref `CGAL::Tag_true` or \ref `CGAL::Tag_false`). 
+    identifies whether general polygons (with holes) are supported (either `#Tag_true` or `#Tag_false`). 
     A general polygon is represented by a face \f$ f \f$ with no 
     isolated vertex and any edge of \f$ f \f$ separates \f$ f \f$ from another face.
     Note that this allows \f$ f \f$ to touch a vertex from several sides. 
@@ -55,7 +55,7 @@ public:
   typedef unspecified_type Supports_general_polygon_category; 
 
   /*! 
-    identifies whether simple polygons are supported (either \ref` CGAL::Tag_true` or \ref `CGAL::Tag_false`). 
+    identifies whether simple polygons are supported (either `#Tag_true` or `#Tag_false`). 
 
     A simple polygon is represented by a face \f$ f \f$ with no holes, 
     no isolated vertex and any edge of \f$ f \f$ separates \f$ f \f$ from another face.
