@@ -41,6 +41,8 @@ public:
 	typedef typename Base::Periodic_triangle      Periodic_triangle;
 	typedef typename Base::Periodic_tetrahedron   Periodic_tetrahedron;
 
+  typedef typename Base::Periodic_tetrahedron_iterator  Periodic_tetrahedron_iterator;
+
 	typedef typename Base::Cell_handle            Cell_handle;
 	typedef typename Base::Vertex_handle          Vertex_handle;
 
@@ -205,13 +207,8 @@ public:
     }
   }
 
-  FT squared_orthoball_radius (Cell_handle cell)
+  FT squared_orthoball_radius (const Periodic_point& p0, const Periodic_point& p1, const Periodic_point& p2, const Periodic_point& p3) const
   {
-    Periodic_point p0 = periodic_point(cell, 0);
-    Periodic_point p1 = periodic_point(cell, 1);
-    Periodic_point p2 = periodic_point(cell, 2);
-    Periodic_point p3 = periodic_point(cell, 3);
-
     typename Geometric_traits::Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3
                                           = geom_traits().construct_weighted_circumcenter_3_object();
 
@@ -222,6 +219,16 @@ public:
     FT ao_2 = squared_distance(static_cast<const Bare_point&>(pt), weighted_circumcenter);
     FT io_2 = ao_2 - pt.weight();
     return io_2;
+  }
+
+  FT squared_orthoball_radius (Cell_handle cell)
+  {
+    Periodic_point p0 = periodic_point(cell, 0);
+    Periodic_point p1 = periodic_point(cell, 1);
+    Periodic_point p2 = periodic_point(cell, 2);
+    Periodic_point p3 = periodic_point(cell, 3);
+
+    return squared_orthoball_radius(p0, p1, p2, p3);
   }
 
   template <class CellIt>
@@ -6236,6 +6243,33 @@ public:
   template <class OutputIterator>
   OutputIterator vertices_in_conflict(const Weighted_point&p, Cell_handle c,
       OutputIterator res) const;
+
+  inline bool
+  is_extensible_triangulation_in_1_sheet_h1() const {
+    return is_extensible_triangulation_in_1_sheet_h2();
+  }
+
+  inline bool
+  is_extensible_triangulation_in_1_sheet_h2() const
+  {
+    typedef typename Geometric_traits::Construct_weighted_circumcenter_3 Construct_weighted_circumcenter_3;
+    typedef typename Geometric_traits::FT FT;
+
+    FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
+    Construct_weighted_circumcenter_3 construct_weighted_circumcenter = geom_traits().construct_weighted_circumcenter_3_object();
+
+    for (Periodic_tetrahedron_iterator tit = this->periodic_tetrahedra_begin(Base::UNIQUE);
+         tit != this->periodic_tetrahedra_end(Base::UNIQUE);
+         ++tit)
+    {
+      Bare_point cc = construct_weighted_circumcenter(tit->at(0).first, tit->at(1).first, tit->at(2).first, tit->at(3).first,
+                                        tit->at(0).second, tit->at(1).second, tit->at(2).second, tit->at(3).second);
+
+      if (squared_orthoball_radius(tit->at(0), tit->at(1), tit->at(2), tit->at(3)) >= threshold)
+        return false;
+    }
+    return true;
+  }
 };
 
 template < class Gt, class Tds >
