@@ -108,11 +108,6 @@ CGAL_CLANG_PUSH_AND_IGNORE_UNUSED_LOCAL_TYPEDEF
      // int to bool performance
 #endif
 
-#if defined(__GNUC__) && defined(__GNUC_MINOR__) \
-    && (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 \
-    && __cplusplus >= 201103L
-#define CGAL_CAN_USE_CXX11_THREAD_LOCAL
-#endif
 
 /*
 #ifdef CGAL_MPZF_NO_USE_CACHE
