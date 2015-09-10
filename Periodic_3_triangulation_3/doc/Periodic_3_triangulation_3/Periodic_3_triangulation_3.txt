@@ -153,8 +153,6 @@ implementation computes a uniquely defined triangulation even in these cases
 This implementation is fully dynamic: it supports both insertions of
 points and vertex removal.
 
-\cgalModifBegin 
-
 \section Periodic_3_triangulation_3regular Regular Triangulation
 
 The class `Periodic_3_regular_triangulation_3` implements regular
@@ -171,8 +169,6 @@ regular triangulation even in degenerate cases \cgalCite{cgal:dt-pvrdr-06}.
 
 The implementation is fully dynamic: it supports both insertions of
 points and vertex removal.
-
-\cgalModifEnd
 
 \section Periodic_3_triangulation_3Triangulation Triangulation Hierarchy
 
@@ -198,7 +194,6 @@ the conflicting region of a given point, dual functions etc.
 `Periodic_3_regular_triangulation_3` does the same for regular
 triangulations. 
 
-\cgalModifEnd
 
 `Periodic_3_triangulation_3` contains all the functionality
 that is common to triangulations in general, such as location of a
@@ -261,7 +256,6 @@ and a model of the concept `Periodic_3Offset_3`.
 The second parameter `Periodic_3Offset_3` defaults to
 `Periodic_3_offset_3`.
 
-\cgalModifBegin 
 
 \subsubsection P3Triangulation3secTraitsP3regularT3 Traits for Periodic Regular Triangulations 
 
@@ -282,7 +276,6 @@ and a model of the concept `Periodic_3Offset_3`.
 The second parameter `Periodic_3Offset_3` defaults to
 `Periodic_3_offset_3`.
 
-\cgalModifEnd
 
 \subsubsection P3Triangulation3secTraitsK Compatible Kernels
 
@@ -290,9 +283,7 @@ The kernels `Cartesian`, `Homogeneous`,
 `Simple_cartesian`, `Simple_homogeneous` and
 `Filtered_kernel` can all be used as models for template parameters
 `TriangulationTraits_3`, `DelaunayTriangulationTraits_3`.
-\cgalModifBegin 
 The traits class `Regular_triangulation_euclidean_traits_3` can be used for the template parameter `RegularTriangulationTraits_3`. 
-\cgalModifEnd 
 The periodic triangulation classes provide exact
 predicates and exact constructions if these respective template parameters
 do.  They provide 
@@ -431,49 +422,29 @@ exact.
 
 \subsection Periodic_3_triangulation_3PeriodicRegularTriangulations Periodic Regular Triangulations 
 
-\cgalModifBegin 
-
 The following four examples illustrate various features of 3D periodic
 regular triangulations. 
-
-\cgalModifEnd
-
-\cgalModifBegin 
 
 The first example shows the incremental construction of a 3D regular triangulation,
 and the removal of a vertex. It uses the default parameter of the
 `Periodic_3_regular_triangulation_3`  class for the triangulation data structure. 
 
-\cgalModifEnd
-
 \cgalExample{Periodic_3_triangulation_3/p3rt3_insert_remove.cpp}
-
-\cgalModifBegin 
 
 The second example shows the incremental construction of a 3D regular
 triangulation. 
 It uses a more appropriate triangulation data structure, which saves some memory resources.
 
-\cgalModifEnd
-
 \cgalExample{Periodic_3_triangulation_3/p3rt3_insert_only.cpp}
-
-\cgalModifBegin 
 
 The third example shows that points can be hidden during the incremental construction
 of a 3D regular triangulation.
 
-\cgalModifEnd
-
 \cgalExample{p3rt3_hidden_points.cpp}
-
-\cgalModifBegin 
 
 Finally, the following example shows how points whose weight does not
 satisfy the precondition are handled during the incremental construction
 of a 3D regular triangulation.
-
-\cgalModifEnd
 
 \cgalExample{p3rt3_insert_point_with_bad_weight.cpp} 
 

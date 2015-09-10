@@ -3,10 +3,6 @@
 \ingroup PkgPeriodic3Triangulation3Concepts
 \cgalConcept
 
-\cgalModifBegin 
-This is a new concept
-\cgalModifEnd 
-
 \cgalRefines `RegularTriangulationCellBase_3` 
 \cgalRefines `Periodic_3TriangulationDSCellBase_3`
 

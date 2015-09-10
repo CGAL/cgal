@@ -4,10 +4,6 @@ namespace CGAL {
 /*!
 \ingroup PkgPeriodic3Triangulation3TraitsClasses
 
-\cgalModifBegin 
-This class is new
-\cgalModifEnd
-
 The class `Periodic_3_regular_triangulation_traits_3` is designed as a default traits class for the
 class `Periodic_3_regular_triangulation_3<Periodic_3RegularTriangulationTraits_3,TriangulationDataStructure_3>`.
 

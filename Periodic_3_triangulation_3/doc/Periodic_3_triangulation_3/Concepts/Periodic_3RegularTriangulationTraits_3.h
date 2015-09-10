@@ -3,10 +3,6 @@
 \ingroup PkgPeriodic3Triangulation3Concepts
 \cgalConcept
 
-\cgalModifBegin 
-This is a new concept
-\cgalModifEnd
-
 The concept `Periodic_3RegularTriangulationTraits_3` is the first template parameter of the class 
 `Periodic_3_regular_triangulation_3`.
 It refines the concept

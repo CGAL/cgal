@@ -4,10 +4,6 @@ namespace CGAL {
 /*!
 \ingroup PkgPeriodic3Triangulation3MainClasses
 
-\cgalModifBegin 
-This class is new
-\cgalModifEnd
-
 The class `Periodic_3_regular_triangulation_3` represents a 
 weighted Delaunay triangulation in three-dimensional periodic space. 
 
