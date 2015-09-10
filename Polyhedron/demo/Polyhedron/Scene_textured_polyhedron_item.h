@@ -51,12 +51,13 @@ public:
 private:
   Textured_polyhedron* poly;
   Texture texture;
-  std::vector<float> positions_lines;
-  std::vector<float> positions_facets;
-  std::vector<float> normals;
-  std::vector<float> textures_map_facets;
-  std::vector<float> textures_map_lines;
-
+  mutable std::vector<float> positions_lines;
+  mutable std::vector<float> positions_facets;
+  mutable std::vector<float> normals;
+  mutable std::vector<float> textures_map_facets;
+  mutable std::vector<float> textures_map_lines;
+  mutable int nb_facets;
+  mutable int nb_lines;
 
   mutable GLuint textureId;
   mutable QOpenGLShaderProgram* program;

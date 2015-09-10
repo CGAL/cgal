@@ -65,6 +65,20 @@ void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewe
 
         vaos[2]->release();
     }
+    nb_facets = positions_facets.size();
+    positions_facets.resize(0);
+    std::vector<float>(positions_facets).swap(positions_facets);
+
+    normals.resize(0);
+    std::vector<float>(normals).swap(normals);
+
+    nb_lines = positions_lines.size();
+    positions_lines.resize(0);
+    std::vector<float>(positions_lines).swap(positions_lines);
+
+    nb_points = positions_points.size();
+    positions_points.resize(0);
+    std::vector<float>(positions_points).swap(positions_points);
 
     are_buffers_filled = true;
 }
@@ -164,7 +178,7 @@ void Scene_polyhedron_selection_item::draw(Viewer_interface* viewer) const
     attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
     program->setAttributeValue("colors",facet_color);
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/3));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/3));
     program->release();
     vaos[0]->release();
     glPolygonOffset(offset_factor, offset_units);
@@ -182,7 +196,7 @@ void Scene_polyhedron_selection_item::draw_edges(Viewer_interface* viewer) const
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors",edge_color);
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
     program->release();
     vaos[1]->release();
     viewer->glLineWidth(1.f);
@@ -196,7 +210,7 @@ void Scene_polyhedron_selection_item::draw_points(Viewer_interface* viewer) cons
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors",vertex_color);
-    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_points.size()/3));
+    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_points/3));
     program->release();
     vaos[2]->release();
     viewer->glPointSize(1.f);

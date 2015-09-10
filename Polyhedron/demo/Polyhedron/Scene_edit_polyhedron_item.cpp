@@ -17,6 +17,11 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
     own_poly_item(true),
     k_ring_selector(poly_item, mw, Scene_polyhedron_item_k_ring_selection::Active_handle::VERTEX, true)
 {
+  nb_ROI = 0;
+  nb_sphere = 0;
+  nb_control = 0;
+  nb_axis = 0;
+  nb_bbox = 0;
   mw->installEventFilter(this);
   // bind vertex picking
   connect(&k_ring_selector, SIGNAL(selected(const std::set<Polyhedron::Vertex_handle>&)), this,
@@ -163,9 +168,9 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
         program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
         buffers[3].release();
         vaos[1]->release();
+
         program->release();
     }
-
 
    //vao for the edges
     {
@@ -221,6 +226,11 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
             viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
         }
         vaos[3]->release();
+        ROI_color.resize(0);
+        std::vector<double>(ROI_color).swap(ROI_color);
+        nb_ROI = ROI_points.size();
+        ROI_points.resize(0);
+        std::vector<double>(ROI_points).swap(ROI_points);
     }
     //vao for the BBOX
     {
@@ -240,6 +250,11 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
         bbox_program.setAttributeBuffer("colors",GL_DOUBLE,0,3);
         buffers[10].release();
         vaos[4]->release();
+        nb_bbox = pos_bbox.size();
+        pos_bbox.resize(0);
+        std::vector<double>(pos_bbox).swap(pos_bbox);
+        color_bbox.resize(0);
+        std::vector<double>(color_bbox).swap(color_bbox);
         bbox_program.release();
     }
     //vao for the control points
@@ -302,6 +317,16 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
             viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
         }
         vaos[6]->release();
+        nb_sphere = pos_sphere.size();
+        pos_sphere.resize(0);
+        std::vector<double>(pos_sphere).swap(pos_sphere);
+        normals_sphere.resize(0);
+        std::vector<double>(normals_sphere).swap(normals_sphere);
+        control_color.resize(0);
+        std::vector<double>(control_color).swap(control_color);
+        nb_control = control_points.size();
+        control_points.resize(0);
+        std::vector<double>(control_points).swap(control_points);
     }
     //vao for the axis
     {
@@ -323,6 +348,11 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
         buffers[18].release();
         vaos[7]->release();
         program->release();
+        nb_axis = pos_axis.size();
+        pos_axis.resize(0);
+        std::vector<double>(pos_axis).swap(pos_axis);
+        color_lines.resize(0);
+        std::vector<double>(color_lines).swap(color_lines);
     }
     are_buffers_filled = true;
 }
@@ -514,7 +544,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
             program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
             attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
             program->bind();
-            viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(ROI_points.size()/3));
+            viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_ROI/3));
             program->release();
             vaos[1]->release();
         }
@@ -524,8 +554,8 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
             attrib_buffers(viewer,PROGRAM_INSTANCED);
             program->bind();
             viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                        static_cast<GLsizei>(pos_sphere.size()/3),
-                                        static_cast<GLsizei>(ROI_points.size()/3));
+                                        static_cast<GLsizei>(nb_sphere/3),
+                                        static_cast<GLsizei>(nb_ROI/3));
             program->release();
             vaos[3]->release();
     }
@@ -536,7 +566,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
         program->bind();
-        viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(control_points.size()/3));
+        viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_control/3));
         program->release();
         vaos[5]->release();
     }
@@ -546,8 +576,8 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
         attrib_buffers(viewer,PROGRAM_INSTANCED);
         program->bind();
         viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                    static_cast<GLsizei>(pos_sphere.size()/3),
-                                    static_cast<GLsizei>(control_points.size()/3));
+                                    static_cast<GLsizei>(nb_sphere/3),
+                                    static_cast<GLsizei>(nb_control/3));
         program->release();
         vaos[6]->release();
     }
@@ -568,7 +598,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
             attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
             program->bind();
             program->setUniformValue("f_matrix", f_mat);
-            viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_axis.size()/3));
+            viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_axis/3));
             program->release();
             vaos[7]->release();
 
@@ -607,7 +637,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
                 bbox_program.setUniformValue("translation", vec);
                 bbox_program.setUniformValue("translation_2", vec2);
                 bbox_program.setUniformValue("mvp_matrix", mvp_mat);
-                viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_bbox.size()/3));
+                viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_bbox/3));
                 bbox_program.release();
                 vaos[4]->release();
     }

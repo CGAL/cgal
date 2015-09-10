@@ -29,6 +29,9 @@ Scene_points_with_normal_item::Scene_points_with_normal_item()
 {
   setRenderingMode(Points);
     is_selected = true;
+    nb_points = 0;
+    nb_selected_points = 0;
+    nb_lines = 0;
 }
 
 // Copy constructor
@@ -47,6 +50,9 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
     setRenderingMode(Points);
         is_selected = true;
     }
+    nb_points = 0;
+    nb_selected_points = 0;
+    nb_lines = 0;
     changed();
 }
 
@@ -71,6 +77,9 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& i
 
   setRenderingMode(PointsPlusNormals);
     is_selected = true;
+    nb_points = 0;
+    nb_selected_points = 0;
+    nb_lines = 0;
     changed();
 }
 
@@ -98,6 +107,9 @@ void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer)
         buffers[0].release();
 
         vaos[0]->release();
+        nb_lines = positions_lines.size();
+        positions_lines.resize(0);
+        std::vector<double>(positions_lines).swap(positions_lines);
         program->release();
     }
     //vao for the points
@@ -113,6 +125,9 @@ void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer)
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
         buffers[1].release();
         vaos[1]->release();
+        nb_points = positions_points.size();
+        positions_points.resize(0);
+        std::vector<double>(positions_points).swap(positions_points);
         program->release();
     }
     //vao for the selected points
@@ -129,6 +144,9 @@ void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer)
         buffers[2].release();
 
         vaos[2]->release();
+        nb_selected_points = positions_selected_points.size();
+        positions_selected_points.resize(0);
+        std::vector<double>(positions_selected_points).swap(positions_selected_points);
         program->release();
     }
     are_buffers_filled = true;
@@ -407,7 +425,7 @@ void Scene_points_with_normal_item::draw_edges(Viewer_interface* viewer) const
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors", this->color());
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
     vaos[0]->release();
     program->release();
 }
@@ -421,7 +439,7 @@ void Scene_points_with_normal_item::draw_points(Viewer_interface* viewer) const
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors", this->color());
-    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_points.size()/3));
+    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_points/3));
     vaos[1]->release();
     program->release();
     GLfloat point_size;
@@ -434,7 +452,7 @@ void Scene_points_with_normal_item::draw_points(Viewer_interface* viewer) const
     program->bind();
     program->setAttributeValue("colors", QColor(255,0,0));
     viewer->glDrawArrays(GL_POINTS, 0,
-                       static_cast<GLsizei>(positions_selected_points.size()/3));
+                       static_cast<GLsizei>(nb_selected_points/3));
     vaos[2]->release();
     program->release();
     viewer->glPointSize(point_size);

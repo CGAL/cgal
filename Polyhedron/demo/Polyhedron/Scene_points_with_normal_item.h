@@ -92,10 +92,13 @@ private:
   QAction* actionSelectDuplicatedPoints;
 
 
-  std::vector<double> positions_lines;
-  std::vector<double> positions_points;
-  std::vector<double> positions_selected_points;
-  std::vector<double> normals;
+  mutable std::vector<double> positions_lines;
+  mutable std::vector<double> positions_points;
+  mutable std::vector<double> positions_selected_points;
+  mutable std::vector<double> normals;
+  mutable int nb_points;
+  mutable int nb_selected_points;
+  mutable int nb_lines;
 
   mutable QOpenGLShaderProgram *program;
 

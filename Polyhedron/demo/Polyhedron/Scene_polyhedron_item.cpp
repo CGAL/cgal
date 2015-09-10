@@ -417,6 +417,24 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
 
         vaos[3]->release();
     }
+    nb_lines = positions_lines.size();
+    positions_lines.resize(0);
+    std::vector<float>(positions_lines).swap(positions_lines);
+    nb_facets = positions_facets.size();
+    positions_facets.resize(0);
+    std::vector<float>(positions_facets).swap(positions_facets);
+
+
+    color_lines_selected.resize(0);
+    std::vector<float>(color_lines_selected).swap(color_lines_selected);
+    color_facets_selected.resize(0);
+    std::vector<float>(color_facets_selected).swap(color_facets_selected);
+    color_lines.resize(0);
+    std::vector<float>(color_lines).swap(color_lines);
+    color_facets.resize(0);
+    std::vector<float>(color_facets).swap(color_facets);
+    normals.resize(0);
+    std::vector<float>(normals).swap(normals);
     are_buffers_filled = true;
 }
 
@@ -642,6 +660,8 @@ Scene_polyhedron_item::Scene_polyhedron_item()
 {
     cur_shading=FlatPlusEdges;
     is_selected = true;
+    nb_facets = 0;
+    nb_lines = 0;
     init();
 
 }
@@ -657,6 +677,8 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
 {
     cur_shading=FlatPlusEdges;
     is_selected = true;
+    nb_facets = 0;
+    nb_lines = 0;
     init();
     changed();
 }
@@ -673,6 +695,8 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     cur_shading=FlatPlusEdges;
     is_selected=true;
     init();
+    nb_facets = 0;
+    nb_lines = 0;
     changed();
 }
 
@@ -865,7 +889,7 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
     attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
     program->bind();
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/4));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/4));
     program->release();
     if(!is_selected)
         vaos[0]->release();
@@ -888,7 +912,7 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     //draw the edges
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/4));
     program->release();
     if(!is_selected)
         vaos[1]->release();
@@ -904,7 +928,7 @@ Scene_polyhedron_item::draw_points(Viewer_interface* viewer) const {
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     //draw the points
-    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/4));
+    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_lines/4));
     // Clean-up
     program->release();
     vaos[1]->release();
@@ -967,7 +991,7 @@ Scene_polyhedron_item::selection_changed(bool p_is_selected)
     if(p_is_selected != is_selected)
     {
         is_selected = p_is_selected;
-         are_buffers_filled = false;
+         //are_buffers_filled = false;
     }
 
 }
