@@ -43,7 +43,7 @@ void test(const Mesh& pmesh)
       break;
     }
   }
-  double border_l = PMP::border_length(border_he, pmesh);
+  double border_l = PMP::face_border_length(border_he, pmesh);
   std::cout << "length of hole border = " << border_l << std::endl;
 
   std::list<face_descriptor> patch;

@@ -58,7 +58,7 @@ namespace Polygon_mesh_processing {
   */
   template<typename PolygonMesh,
            typename NamedParameters>
-  double length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
+  double edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
               , const PolygonMesh& pmesh
               , const NamedParameters& np)
   {
@@ -75,10 +75,10 @@ namespace Polygon_mesh_processing {
   }
 
   template<typename PolygonMesh>
-  double length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
+  double edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
     , const PolygonMesh& pmesh)
   {
-    return length(h, pmesh,
+    return edge_length(h, pmesh,
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
@@ -104,8 +104,8 @@ namespace Polygon_mesh_processing {
   */
   template<typename PolygonMesh,
            typename NamedParameters>
-  double
-  border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
+  double face_border_length(
+              typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
               , const PolygonMesh& pmesh
               , const NamedParameters& np)
   {
@@ -115,17 +115,17 @@ namespace Polygon_mesh_processing {
     BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor haf,
                   halfedges_around_face(h, pmesh))
     {
-      result += length(haf, pmesh, np);
+      result += edge_length(haf, pmesh, np);
     }
     return result;
   }
 
   template<typename PolygonMesh>
-  double
-  border_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
+  double face_border_length(
+              typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
               , const PolygonMesh& pmesh)
   {
-    return border_length(h, pmesh,
+    return face_border_length(h, pmesh,
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
