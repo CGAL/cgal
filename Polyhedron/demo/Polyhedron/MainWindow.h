@@ -152,6 +152,12 @@ protected Q_SLOTS:
   void on_actionRecenterScene_triggered();
 protected:
   QList<QAction*> createSubMenus(QList<QAction*>);
+  /*! For each objects in the sceneView, loads the associated plugins.
+   * Gets the property "submenuName" of all the actions and creates submenus.
+   * Sorts the Operations menu by name.
+   * @see initPlugin(QObject*);
+   * @see initIOPlugin(QObject*);
+   */
   void loadPlugins();
   bool initPlugin(QObject*);
   bool initIOPlugin(QObject*);
