@@ -37,33 +37,6 @@ namespace CGAL {
 
 
   template <typename InputIterator,
-	    typename OutputIterator1,
-	    typename OutputIterator2,
-	    typename K>
-  void point_set_split_plane_3 (InputIterator first,
-				InputIterator beyond,
-				typename K::Plane_3& plane,
-				OutputIterator1 points_on_positive_side,
-				OutputIterator2 points_on_negative_side,
-				bool strictly_negative = true)
-  {
-    for (InputIterator it = first; it != beyond; ++ it)
-      if (plane.has_on_positive_side (*it))
-	*points_on_positive_side++ = *it;
-      else if (plane.has_on_negative_side (*it))
-	*points_on_negative_side++ = *it;
-      else
-	{
-	  if (strictly_negative)
-	    *points_on_positive_side++ = *it;
-	  else
-	    *points_on_negative_side++ = *it;
-	}
-  }
-
-
-
-  template <typename InputIterator,
 	    typename PointPMap,
 	    typename OutputIterator,
 	    typename DiagonalizeTraits,
@@ -107,14 +80,14 @@ namespace CGAL {
 
     while (!(clusters_queue.empty ()))
       {
-	cluster current_cluster = clusters_queue.front ();
-	clusters_queue.pop ();
+	cluster& current_cluster = clusters_queue.front ();
 
 	// If the cluster only has 1 element, we add it to the list of
 	// output points
 	if (current_cluster.first.size () == 1)
 	  {
 	    *(out ++) = current_cluster.second;
+	    clusters_queue.pop ();
 	    continue;
 	  }
 
@@ -163,17 +136,15 @@ namespace CGAL {
 	    //  * Passes through the centroid of the set
 	    Plane plane (current_cluster.second, normal);
 
-	    // Split the point sets along this plane
-	    typedef typename std::list<Point>::iterator Iterator;
-	    point_set_split_plane_3<Iterator,
-				    std::back_insert_iterator<std::list<Point> >,
-				    std::back_insert_iterator<std::list<Point> >,
-				    Kernel>
-	      (current_cluster.first.begin (),
-	       current_cluster.first.end (),
-	       plane,
-	       std::back_inserter (positive_side),
-	       std::back_inserter (negative_side), true);
+	    typename std::list<Point>::iterator it = current_cluster.first.begin ();
+	    while (it != current_cluster.first.end ())
+	      {
+		typename std::list<Point>::iterator current = it ++;
+
+		std::list<Point>& side = (plane.has_on_positive_side (*current)
+					  ? positive_side : negative_side);
+		side.splice (side.end (), current_cluster.first, current);
+	      }
 
 	    // Compute the centroids
 	    Point centroid_positive
@@ -194,6 +165,8 @@ namespace CGAL {
 	      	- positive_side.size () * centroid_positive.z ())
 	       / negative_side.size ());
 
+	    clusters_queue.pop ();
+
 	    // If the sets are non-empty, add the clusters to the queue
 	    if (positive_side.size () != 0)
 	      clusters_queue.push (cluster (positive_side, centroid_positive));
@@ -203,7 +176,10 @@ namespace CGAL {
 	// If the size/variance are small enough, add the centroid as
 	// and output point
 	else
-	  *(out ++) = current_cluster.second;
+	  {
+	    *(out ++) = current_cluster.second;
+	    clusters_queue.pop ();
+	  }
       }
 
   }
