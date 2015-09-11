@@ -24,105 +24,18 @@
 #include <cmath>
 #include <queue>
 
+#include <CGAL/property_map.h>
 #include <CGAL/basic.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Object.h>
 #include <CGAL/centroid.h>
-#include <CGAL/eigen.h>
 #include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/Default_diagonalize_traits.h>
 
-
-// For testing purposes, both CGAL linear algebra and Eigen library
-// are used. You can switch from one to the other by commenting the
-// following "define" line.
-#define USE_EIGEN_LIB
-
-#ifdef USE_EIGEN_LIB
-#include <eigen3/Eigen/Dense>
-#endif
-
-#undef min
-#undef max
 
 namespace CGAL {
 
 
-
-  // TODO: * move to PCA
-  //       * adapt to the Eigen library?
-
-  /***************************************************************************/
-  template <typename InputIterator, typename K>
-  typename K::FT* covariance_matrix_3 (InputIterator first,
-				       InputIterator beyond,
-				       typename K::Point_3 centroid)
-  /***************************************************************************/
-  {
-    typedef typename K::FT FT;
-    FT *out = new FT[6];
-
-    for (int i = 0; i < 6; ++ i)
-      out[i] = (FT)(0.0);
-
-    for (InputIterator it = first; it != beyond; ++ it)
-      {
-	const Point& p = *it;
-	Vector d = p - centroid;
-	out[0] += d.x () * d.x ();
-	out[1] += d.x () * d.y ();
-	out[2] += d.y () * d.y ();
-	out[3] += d.x () * d.z ();
-	out[4] += d.y () * d.z ();
-	out[5] += d.z () * d.z ();
-      }
-
-    return out;
-  }
-
-
-
-
-  /***************************************************************************/
-  template <typename InputIterator, typename K>
-  typename K::FT* covariance_matrix_3 (InputIterator first,
-				       InputIterator beyond)
-  /***************************************************************************/
-  {
-    return covariance_matrix_3<InputIterator, K>
-      (first, beyond, centroid (first, beyond));
-  }
-
-
-
-
-  /***************************************************************************/
-  template <typename InputIterator,
-	    typename OutputIterator1,
-	    typename OutputIterator2,
-	    typename OutputIterator3,
-	    typename K>
-  void point_set_split_plane_3 (InputIterator first,
-				InputIterator beyond,
-				typename K::Plane_3& plane,
-				OutputIterator1 points_on_positive_side,
-				OutputIterator2 points_on_negative_side,
-				OutputIterator3 points_on_plane)
-  /***************************************************************************/
-  {
-    for (InputIterator it = first; it != beyond; ++ it)
-      if (plane.has_on_positive_side (*it))
-	*points_on_positive_side++ = *it;
-      else if (plane.has_on_negative_side (*it))
-	*points_on_negative_side++ = *it;
-      else
-	*points_on_plane++ = *it;
-  }
-
-
-  // TODO: move to separate file with exposed API?
-  // we may need this kind of functions for future interactive editing of point sets.
-
-  /***************************************************************************/
   template <typename InputIterator,
 	    typename OutputIterator1,
 	    typename OutputIterator2,
@@ -132,8 +45,7 @@ namespace CGAL {
 				typename K::Plane_3& plane,
 				OutputIterator1 points_on_positive_side,
 				OutputIterator2 points_on_negative_side,
-				bool strictly_negative = true) // design to discuss
-  /***************************************************************************/
+				bool strictly_negative = true)
   {
     for (InputIterator it = first; it != beyond; ++ it)
       if (plane.has_on_positive_side (*it))
@@ -151,42 +63,49 @@ namespace CGAL {
 
 
 
-  /***************************************************************************/
-  template <typename InputIterator, typename K>
-  InputIterator hierarchical_clustering (InputIterator first,
-					 InputIterator beyond,
-					 const unsigned int& size,
-					 const typename K::FT& var_max)
-  /***************************************************************************/
+  template <typename InputIterator,
+	    typename PointPMap,
+	    typename OutputIterator,
+	    typename DiagonalizeTraits,
+	    typename Kernel>
+  void hierarchical_clustering (InputIterator begin,
+				InputIterator end,
+				PointPMap point_pmap,
+				OutputIterator out,
+				const unsigned int size,
+				const double var_max,
+				const DiagonalizeTraits&,
+				const Kernel&)
   {
-    typedef typename K::FT       FT;
-    typedef typename K::Plane_3  Plane;
-    typedef typename K::Point_3  Point;
-    typedef typename K::Vector_3 Vector;
+    typedef typename Kernel::Plane_3  Plane;
+    typedef typename Kernel::Point_3  Point;
+    typedef typename Kernel::Vector_3 Vector;
 
     // We define a cluster as a point set + its centroid (useful for
     // faster computations of centroids - to be implemented)
     typedef std::pair< std::list<Point>, Point > cluster;
 
-    CGAL_precondition (first != beyond);
+    CGAL_precondition (begin != end);
     CGAL_point_set_processing_precondition
       (var_max >= (FT)0.0 && var_max <= (FT)(1./3.));
 
     // The first cluster is the whole input point set 
     std::list<Point> first_cluster;
-
-    // FIXME: use std::copy instead
-    for (InputIterator it = first; it != beyond; ++ it)
-      first_cluster.push_back (*it);
+    for(InputIterator it = begin; it != end; it++)
+      {
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+	Point point = get(point_pmap, it);
+#else
+	Point point = get(point_pmap, *it);
+#endif
+	first_cluster.push_back (point);
+      }
 
     // Initialize a queue of clusters
     std::queue<cluster> clusters_queue;
-    clusters_queue.push (cluster (first_cluster, centroid (first, beyond)));
+    clusters_queue.push (cluster (first_cluster, centroid (begin, end)));
 
-    // The algorithm must return a set of points
-    std::list<Point> points_to_keep;
-
-    while ( !clusters_queue.empty () )
+    while (!(clusters_queue.empty ()))
       {
 	cluster current_cluster = clusters_queue.front ();
 	clusters_queue.pop ();
@@ -195,80 +114,43 @@ namespace CGAL {
 	// output points
 	if (current_cluster.first.size () == 1)
 	  {
-	    points_to_keep.push_back (current_cluster.second);
+	    *(out ++) = current_cluster.second;
 	    continue;
 	  }
 
-#ifndef USE_EIGEN_LIB
-
 	// Compute the covariance matrix of the set
-	FT* covariance
-	  = covariance_matrix_3<typename std::list<Point>::iterator, K>
-	  (current_cluster.first.begin (), // Beginning of the list
-	   current_cluster.first.end(),    // End of the list
-	   current_cluster.second);        // Centroid
-
-	// Linear algebra = get eigenvalues and eigenvectors for
-	// PCA-like analysis
-	FT eigen_vectors[9];
-	FT eigen_values[3];
-	CGAL::internal::eigen_symmetric<FT>
-	  (covariance, 3, eigen_vectors, eigen_values);
-
-	// Variation of the set defined as lambda_2 / (lambda_0 + lambda_1 + lambda_2)
-	FT var = (FT)(0.0);
-	for (int i = 0; i < 3; ++ i)
-	  var += eigen_values[i];
-	var = eigen_values[2] / var;
-
-	// Compute the normal to the eigenvector with highest eigenvalue
-	Vector normal (eigen_vectors[0], eigen_vectors[1], eigen_vectors[2]);
-
-#else
-
-	// Compute the covariance matrix of the set
-	Eigen::Matrix3d covariance;
-	for (int i = 0; i < 3; ++ i)
-	  for (int j = 0; j < 3; j ++)
-	    covariance (i, j) = 0.;
+	cpp11::array<double, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
 
 	for (typename std::list<Point>::iterator it = current_cluster.first.begin ();
 	     it != current_cluster.first.end (); ++ it)
 	  {
 	    const Point& p = *it;
 	    Vector d = p - current_cluster.second;
-	    covariance (0, 0) += d.x () * d.x ();
-	    covariance (1, 0) += d.x () * d.y ();
-	    covariance (1, 1) += d.y () * d.y ();
-	    covariance (2, 0) += d.x () * d.z ();
-	    covariance (2, 1) += d.y () * d.z ();
-	    covariance (2, 2) += d.z () * d.z ();
+	    covariance[0] += d.x () * d.x ();
+	    covariance[1] += d.x () * d.y ();
+	    covariance[2] += d.x () * d.z ();
+	    covariance[3] += d.y () * d.y ();
+	    covariance[4] += d.y () * d.z ();
+	    covariance[5] += d.z () * d.z ();
 	  }
 
-	covariance (0, 1) = covariance (1, 0);
-	covariance (0, 2) = covariance (2, 0);
-	covariance (1, 2) = covariance (2, 1);
-
+	cpp11::array<double, 3> eigenvalues = {{ 0., 0., 0. }};
+	cpp11::array<double, 9> eigenvectors = {{ 0., 0., 0.,
+						  0., 0., 0.,
+						  0., 0., 0. }};
 	// Linear algebra = get eigenvalues and eigenvectors for
 	// PCA-like analysis
-	Eigen::SelfAdjointEigenSolver<Eigen::Matrix3d>
-	  eigensolver (covariance);
-	if (eigensolver.info () != Eigen::Success)
-	  std::abort ();
-	Eigen::Vector3d eigen_values = eigensolver.eigenvalues ();
-	Eigen::Vector3d eigen_vector = eigensolver.eigenvectors ().col (2);
+	DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
+	  (covariance, eigenvalues, eigenvectors);
 
-	// Variation of the set defined as lambda_2 / (lambda_0 + lambda_1 + lambda_2)
-	FT var = (FT)(0.0);
+	// Variation of the set defined as lambda_min / (lambda_0 + lambda_1 + lambda_2)
+	double var = 0.;
 	for (int i = 0; i < 3; ++ i)
-	  var += eigen_values[i];
-	var = eigen_values (0) / var;
+	  var += eigenvalues[i];
+	var = eigenvalues[0] / var;
 
-	// Compute the normal to the eigenvector with highest eigenvalue
-	Vector normal (eigen_vector(0), eigen_vector(1), eigen_vector(2));
-
-#endif
-
+	// Eigenvector with smallest eigenvalue
+	Vector normal (eigenvectors[0], eigenvectors[1], eigenvectors[2]);
 
 	// Split the set if size OR variance of the cluster is too large
 	if (current_cluster.first.size () > size || var > var_max)
@@ -284,9 +166,9 @@ namespace CGAL {
 	    // Split the point sets along this plane
 	    typedef typename std::list<Point>::iterator Iterator;
 	    point_set_split_plane_3<Iterator,
-	      std::back_insert_iterator<std::list<Point> >,
-	      std::back_insert_iterator<std::list<Point> >,
-	      K>
+				    std::back_insert_iterator<std::list<Point> >,
+				    std::back_insert_iterator<std::list<Point> >,
+				    Kernel>
 	      (current_cluster.first.begin (),
 	       current_cluster.first.end (),
 	       plane,
@@ -321,14 +203,46 @@ namespace CGAL {
 	// If the size/variance are small enough, add the centroid as
 	// and output point
 	else
-	  points_to_keep.push_back (current_cluster.second);
+	  *(out ++) = current_cluster.second;
       }
 
-    // The output of the function is to the first point to be removed
-    InputIterator first_point_to_remove =
-      std::copy (points_to_keep.begin (), points_to_keep.end (), first);
+  }
 
-    return first_point_to_remove;
+  
+  // This variant deduces the kernel from the iterator type.
+  template <typename InputIterator,
+	    typename PointPMap,
+	    typename OutputIterator>
+  void hierarchical_clustering (InputIterator begin,
+				InputIterator end,
+				PointPMap point_pmap,
+				OutputIterator out,
+				const unsigned int size = 10,
+				const double var_max = 0.333)
+  {
+    typedef typename boost::property_traits<PointPMap>::value_type Point;
+    typedef typename Kernel_traits<Point>::Kernel Kernel;
+    hierarchical_clustering (begin, end, point_pmap, out, size, var_max,
+			     Default_diagonalize_traits<double, 3> (), Kernel());
+  }
+
+  // This variant creates a default point property map = Identity_property_map.
+  template <typename InputIterator,
+	    typename OutputIterator>
+  void hierarchical_clustering (InputIterator begin,
+				InputIterator end,
+				OutputIterator out,
+				const unsigned int size = 10,
+				const double var_max = 0.333)
+  {
+    hierarchical_clustering
+      (begin, end,
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+       make_dereference_property_map(first),
+#else
+       make_identity_property_map (typename std::iterator_traits<InputIterator>::value_type()),
+#endif
+       out, size, var_max);
   }
 
 } // namespace CGAL
