@@ -154,6 +154,12 @@ Function `wlop_simplify_and_regularize_point_set()` not only simplifies,
 but also regularizes downsampled points. This is an implementation of
 the Weighted Locally Optimal Projection (WLOP) algorithm \cgalCite{wlop-2009}.
 
+Function `hierarchical_clustering()` is not strictly speaking a
+simplification algorithm as its output is not a subset of the input
+point set. However, it provides an adaptative simplified
+representation of the point set through local clusters: the size of
+the clusters is either directly selected by the user or it
+automatically adapts to the local variation of the point set.
 
 \subsection Point_set_processing_3Example_3 Grid Simplification Example
 
@@ -198,6 +204,12 @@ for more details. We provide below a speed-up chart generated using the parallel
 \cgalFigureBegin{Point_set_processing_3figWLOP_parallel_performance, parallel_WLOP_performance.jpg}
 Parallel WLOP speed-up, compared to the sequential version of the algorithm. 
 \cgalFigureEnd
+
+\subsection Point_set_processing_3Example_9 Hierarchical Clustering Example
+
+\todo Document me
+
+\cgalExample{Point_set_processing_3/hierarchical_clustering_example.cpp}
 
 \section Point_set_processing_3Smoothing Smoothing
 

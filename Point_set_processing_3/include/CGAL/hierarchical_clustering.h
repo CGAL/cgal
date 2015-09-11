@@ -44,8 +44,8 @@ namespace CGAL {
 /// This method does not change the input point set: the output is not
 /// a subset of the input and is stored in a different container.
 ///
-/// \pre `1/3 > var_max > 0`
-/// \pre 'size > 0`
+/// \pre `0 < var_max < 1/3`
+/// \pre `size > 0`
 ///
 /// @tparam InputIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
