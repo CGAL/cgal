@@ -64,7 +64,7 @@ private:
   CGAL_EXPORT static const double  CST_CUT; 
   
 #ifdef CGAL_HAS_THREADS
-#ifdef BOOST_MSVC
+#ifndef CGAL_USE_BOOST_THREAD
   CGAL_EXPORT CGAL_THREAD_LOCAL static int prime_int;
   CGAL_EXPORT CGAL_THREAD_LOCAL static double prime;
   CGAL_EXPORT CGAL_THREAD_LOCAL static double prime_inv;
@@ -207,7 +207,7 @@ public:
     set_current_prime(int p){   
       int old_prime = get_prime_int();  
 #ifdef CGAL_HAS_THREADS
-#ifdef BOOST_MSVC
+#ifndef CGAL_USE_BOOST_THREAD
       prime_int = p;
       prime = double(p);
       prime_inv = 1.0 / prime;

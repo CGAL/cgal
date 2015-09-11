@@ -784,25 +784,11 @@ private:
   // which is in particular heavily used for pruning DAGs.
   static const Self & zero()
   {
-#ifdef CGAL_HAS_THREADS
-#if BOOST_MSVC
-    CGAL_THREAD_LOCAL static Self* z = NULL;
-    if(z == NULL){
-      z = new Self(new Lazy_rep_0<AT, ET, E2A>());
-    }
-    return *z;
-#else
-    static boost::thread_specific_ptr<Self> z;
-
-    if (z.get() == NULL) {
-        z.reset(new Self(new Lazy_rep_0<AT, ET, E2A>()));
-    }
-    return * z.get();
-#endif
-#else
-    static const Self z = new Lazy_rep_0<AT, ET, E2A>();
+    Lazy_rep_0<AT, ET, E2A>* ptr = new Lazy_rep_0<AT, ET, E2A>();
+    CGAL_THREAD_LOCAL_DECLARE(Self,z);
+    CGAL_THREAD_LOCAL_INITIALIZE(Self,z, ptr);
+    CGAL_THREAD_LOCAL_GET(Self,z);
     return z;
-#endif
   }
 
   Self_rep * ptr() const { return (Self_rep*) PTR; }

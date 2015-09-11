@@ -22,7 +22,7 @@
 
 namespace CGAL{
 #ifdef CGAL_HAS_THREADS
-#ifdef BOOST_MSVC
+#ifndef CGAL_USE_BOOST_THREAD
 CGAL_THREAD_LOCAL int Residue::prime_int = 67111067;
 CGAL_THREAD_LOCAL double Residue::prime = 67111067.0;
 CGAL_THREAD_LOCAL double Residue::prime_inv = 1490067204.5640400859667452463541;
