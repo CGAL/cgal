@@ -170,7 +170,7 @@ TDS,
 Itag>             CDTbase;
 typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 void
-Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
+Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit) const
 {
     //Computes the normal of the facet
     const Point_3& pa = soup->points[pit->at(0)];
@@ -227,7 +227,6 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
         }
     }
 
-
     //iterates on the internal faces to add the vertices to the positions
     //and the normals to the appropriate vectors
     int count =0;
@@ -280,12 +279,14 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
     }
 }
 void
-Scene_polygon_soup_item::compute_normals_and_vertices(){
+Scene_polygon_soup_item::compute_normals_and_vertices() const{
     //get the vertices and normals
     typedef Polygon_soup::Polygons::size_type size_type;
     positions_poly.resize(0);
     positions_lines.resize(0);
     normals.resize(0);
+    positions_nm_lines.resize(0);
+    soup->fill_edges();
     for(Polygons_iterator it = soup->polygons.begin();
         it != soup->polygons.end(); ++it)
     {
@@ -342,26 +343,25 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
             positions_lines.push_back(pb.z());
             positions_lines.push_back(1.0);
         }
-        //Non manifold edges
-        positions_nm_lines.resize(0);
-        soup->fill_edges();
-        BOOST_FOREACH(const Polygon_soup::Edge& edge,
-                        soup->non_manifold_edges)
-          {
-
-            const Point_3& a = soup->points[edge[0]];
-            const Point_3& b = soup->points[edge[1]];
-            positions_nm_lines.push_back(a.x());
-            positions_nm_lines.push_back(a.y());
-            positions_nm_lines.push_back(a.z());
-            positions_nm_lines.push_back(1.0);
-
-            positions_nm_lines.push_back(b.x());
-            positions_nm_lines.push_back(b.y());
-            positions_nm_lines.push_back(b.z());
-            positions_nm_lines.push_back(1.0);
-          }
     }
+
+    //Non manifold edges
+    BOOST_FOREACH(const Polygon_soup::Edge& edge,
+                    soup->non_manifold_edges)
+      {
+
+        const Point_3& a = soup->points[edge[0]];
+        const Point_3& b = soup->points[edge[1]];
+        positions_nm_lines.push_back(a.x());
+        positions_nm_lines.push_back(a.y());
+        positions_nm_lines.push_back(a.z());
+        positions_nm_lines.push_back(1.0);
+
+        positions_nm_lines.push_back(b.x());
+        positions_nm_lines.push_back(b.y());
+        positions_nm_lines.push_back(b.z());
+        positions_nm_lines.push_back(1.0);
+      }
 
 }
 
@@ -411,7 +411,7 @@ void Scene_polygon_soup_item::init_polygon_soup(std::size_t nb_pts, std::size_t 
   oriented = false;
 }
 
-void Scene_polygon_soup_item::finalize_polygon_soup(){ soup->fill_edges(); }
+
 
 #include <CGAL/IO/generic_print_polyhedron.h>
 #include <iostream>
@@ -435,7 +435,6 @@ Scene_polygon_soup_item::setDisplayNonManifoldEdges(const bool b)
 {
 
   soup->display_non_manifold_edges = b;
-  changed();
 }
 
 bool
@@ -451,8 +450,7 @@ void Scene_polygon_soup_item::shuffle_orientations()
   {
     if(std::rand() % 2 == 0) soup->inverse_orientation(i);
   }
-  soup->fill_edges();
-  changed();
+
 }
 
 void Scene_polygon_soup_item::inside_out()
@@ -462,7 +460,6 @@ void Scene_polygon_soup_item::inside_out()
   {
     soup->inverse_orientation(i);
   }
-  soup->fill_edges();
   changed();
 }
 
@@ -568,7 +565,8 @@ Scene_polygon_soup_item::toolTip() const
 void
 Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
-  {
+    {
+     compute_normals_and_vertices();
      initialize_buffers(viewer);
     }
     if(soup == 0) return;
@@ -595,8 +593,9 @@ void
 Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-     initialize_buffers(viewer);
-  }
+      compute_normals_and_vertices();
+      initialize_buffers(viewer);
+    }
     if(soup == 0) return;
     vaos[1]->bind();
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
@@ -615,6 +614,7 @@ void
 Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
   {
+     compute_normals_and_vertices();
      initialize_buffers(viewer);
   }
     if(soup == 0) return;
@@ -656,7 +656,6 @@ Scene_polygon_soup_item::isEmpty() const {
 void
 Scene_polygon_soup_item::changed()
 {
-    compute_normals_and_vertices();
     are_buffers_filled = false;
 }
 
