@@ -35,6 +35,33 @@
 namespace CGAL {
 
 
+  /// \ingroup PkgPointSetProcessing
+  
+/// Recursively split the point set in smaller clusters until the
+/// clusters have less than `size` elements or until their variation
+/// factor is below `var_max`.
+///
+/// This method does not change the input point set: the output is not
+/// a subset of the input and is stored in a different container.
+///
+/// \pre `1/3 > var_max > 0`
+/// \pre 'size > 0`
+///
+/// @tparam InputIterator iterator over input points.
+/// @tparam PointPMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
+///        It can be omitted if the value type of `InputIterator` is convertible to `Point_3<Kernel>`.
+/// @tparam OuputIterator back inserter on a container with value type `Point_3<Kernel>`.
+/// @tparam DiagonalizeTraits is a model of `DiagonalizeTraits`. It
+///        can be omitted: if Eigen 3 (or greater) is available and
+///        `CGAL_EIGEN3_ENABLED` is defined then an overload using
+///        `Eigen_diagonalize_traits` is provided. Otherwise, the internal
+///        implementation `Internal_diagonalize_traits` is used.
+/// @tparam Kernel Geometric traits class.
+///        It can be omitted and deduced automatically from the value type of `PointPMap`.
+///
+
+// This variant requires all parameters.
+
   template <typename InputIterator,
 	    typename PointPMap,
 	    typename OutputIterator,
@@ -196,8 +223,10 @@ namespace CGAL {
 	  }
       }
   }
+/// @endcond
 
-  
+
+/// @cond SKIP_IN_MANUAL
   // This variant deduces the kernel from the iterator type.
   template <typename InputIterator,
 	    typename PointPMap,
@@ -216,7 +245,9 @@ namespace CGAL {
     hierarchical_clustering (begin, end, point_pmap, out, size, var_max,
 			     diagonalize_traits, Kernel());
   }
+/// @endcond
 
+/// @cond SKIP_IN_MANUAL  
   // This variant uses default diagonalize traits
   template <typename InputIterator,
 	    typename PointPMap,
@@ -233,7 +264,9 @@ namespace CGAL {
     hierarchical_clustering (begin, end, point_pmap, out, size, var_max,
 			     Default_diagonalize_traits<double, 3> (), Kernel());
   }
+/// @endcond  
 
+/// @cond SKIP_IN_MANUAL
   // This variant creates a default point property map = Identity_property_map.
   template <typename InputIterator,
 	    typename OutputIterator>
@@ -252,6 +285,7 @@ namespace CGAL {
 #endif
        out, size, var_max);
   }
+/// @endcond  
 
 } // namespace CGAL
 
