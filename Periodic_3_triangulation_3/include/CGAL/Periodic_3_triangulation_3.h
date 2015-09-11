@@ -1,4 +1,4 @@
-// Copyright (c) 1999-2003,2006-2009   INRIA Sophia-Antipolis (France).
+// Copyright (c) 1999-2003,2006-2009,2014-2015   INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -20,6 +20,8 @@
 //                 Sylvain Pion <Sylvain.Pion@sophia.inria.fr>
 //                 Nico Kruithof <Nico.Kruithof@sophia.inria.fr>
 //                 Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
+//                 Aymeric Pelle <Aymeric.Pelle@sophia.inria.fr>
+
 
 #ifndef CGAL_PERIODIC_3_TRIANGULATION_3_H
 #define CGAL_PERIODIC_3_TRIANGULATION_3_H

@@ -1,4 +1,4 @@
-// Copyright (c) 2009   INRIA Sophia-Antipolis (France).
+// Copyright (c) 1999-2004,2006-2009,2013-2015   INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -14,9 +14,10 @@
 //
 // $URL$
 // $Id$
-// 
 //
-// Author(s)     : Manuel Caroli <Manuel.Caroli@sophia.inria.fr>
+//
+// Author(s)     : Monique Teillaud <Monique.Teillaud@inria.fr>
+//                 Aymeric Pelle <Aymeric.Pelle@sophia.inria.fr>
 
 #ifndef CGAL_PERIODIC_3_REGULAR_TRIANGULATION_REMOVE_TRAITS_3_H
 #define CGAL_PERIODIC_3_REGULAR_TRIANGULATION_REMOVE_TRAITS_3_H
