@@ -115,7 +115,7 @@ all features but the unbounded face of `out_arr` represent the visibility region
 
 \tparam VisibilityArrangement_2 is the type of the output arrangement representing the visibility polygon.
 It must be an instance of `CGAL::Arrangement_2`, where its `CGAL::Arrangement_2::Traits_2` 
-must be mutual convertible to `Visibility_2::Traits_2`. 
+must be mutual convertible to `VisibilityArrangement_2::Traits_2`. 
 
 \param q is the query point
 \param f is the face of the arrangement in which the visibility region is computed
@@ -139,7 +139,7 @@ all features but the unbounded face of `out_arr` represent the visibility region
 
 \tparam VisibilityArrangement_2 is the type of the output arrangement representing the visibility polygon.
 It must be an instance of `CGAL::Arrangement_2`, where its `CGAL::Arrangement_2::Traits_2` 
-must be mutual convertible to `Visibility_2::Traits_2`.
+must be mutual convertible to `VisibilityArrangement_2::Traits_2`.
 \param q is the query point
 \param e the halfedge on which `q` is located
 \param out_arr is the output arrangement
