@@ -3,13 +3,19 @@
 
 #include <CGAL/config.h>
 
-#ifdef CGAL_HAS_THREADS
-#ifdef BOOST_MSVC
-#include <thread>
-#define CGAL_THREAD_LOCAL  __declspec( thread )
-#else
-# include <boost/thread/tss.hpp>
-#define CGAL_THREAD_LOCAL thread_local 
+#if defined( CGAL_HAS_THREADS )
+  #ifdef  CGAL_CAN_USE_CXX11_THREAD_LOCAL
+    #include <thread>
+    #define CGAL_THREAD_LOCAL thread_local
+  #else
+    #ifdef BOOST_MSVC
+      #include <thread>
+      #define CGAL_THREAD_LOCAL  __declspec( thread )
+    #else
+      #include <boost/thread/tss.hpp>
+      #define CGAL_THREAD_LOCAL thread_local
+    #endif
+  #endif
 #endif
-#endif
-#endif // CGAL_MUTEX_H
+
+#endif // CGAL_TSS_H
