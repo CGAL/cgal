@@ -71,7 +71,6 @@ Scene::addItem(Scene_item* item)
 Scene_item*
 Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_to_be_destroyed)
 {
-    item->invalidate_buffers();
     if(index < 0 || index >= m_entries.size())
         return 0;
 
@@ -580,13 +579,11 @@ Scene::setData(const QModelIndex &index,
     {
     case NameColumn:
         item->setName(value.toString());
-        item->invalidate_buffers();
     Q_EMIT dataChanged(index, index);
         return true;
         break;
     case ColorColumn:
         item->setColor(value.value<QColor>());
-        item->invalidate_buffers();
     Q_EMIT dataChanged(index, index);
         return true;
         break;
@@ -601,7 +598,6 @@ Scene::setData(const QModelIndex &index,
             rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );
         }
         item->setRenderingMode(rendering_mode);
-        //item->invalidate_buffers();
     Q_EMIT dataChanged(index, index);
         return true;
         break;
