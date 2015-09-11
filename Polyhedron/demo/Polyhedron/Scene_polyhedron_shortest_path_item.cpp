@@ -177,6 +177,8 @@ void Scene_polyhedron_shortest_path_item::ensure_shortest_paths_tree()
 void Scene_polyhedron_shortest_path_item::poly_item_changed()
 {
   recreate_shortest_path_object();
+  invalidate_buffers();
+  Q_EMIT itemChanged();
 }
   
 void Scene_polyhedron_shortest_path_item::invalidate_buffers()

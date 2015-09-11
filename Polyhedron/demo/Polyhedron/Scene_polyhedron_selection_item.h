@@ -604,6 +604,7 @@ public:
       polyhedron()->erase_facet((*fb)->halfedge());
     }
     selected_facets.clear();
+    invalidate_buffers();
     changed_with_poly_item();
   }
 
@@ -670,6 +671,7 @@ public:
   void changed_with_poly_item() {
     // no need to update indices
     poly_item->invalidate_buffers();
+    Q_EMIT poly_item->itemChanged();
     Q_EMIT itemChanged();
   }
 

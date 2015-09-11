@@ -652,7 +652,6 @@ void Scene::itemChanged(Item_id i)
     if(i < 0 || i >= m_entries.size())
         return;
 
-    m_entries[i]->invalidate_buffers();
   Q_EMIT dataChanged(this->createIndex(i, 0),
                      this->createIndex(i, LastColumn));
 }

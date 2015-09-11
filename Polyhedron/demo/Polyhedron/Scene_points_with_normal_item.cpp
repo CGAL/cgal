@@ -93,6 +93,7 @@ Scene_points_with_normal_item::~Scene_points_with_normal_item()
 
 void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer) const
 {
+    compute_normals_and_vertices();
     //vao for the edges
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
@@ -150,10 +151,9 @@ void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer)
         program->release();
     }
     are_buffers_filled = true;
-
-
 }
-void Scene_points_with_normal_item::compute_normals_and_vertices(void)
+
+void Scene_points_with_normal_item::compute_normals_and_vertices() const
 {
     positions_points.resize(0);
     positions_lines.resize(0);
@@ -579,7 +579,6 @@ void Scene_points_with_normal_item::set_has_normals(bool b) {
 
 void Scene_points_with_normal_item::invalidate_buffers()
 {
-    compute_normals_and_vertices();
     are_buffers_filled = false;
 }
 
