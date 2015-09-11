@@ -22,7 +22,7 @@
 #define HIERARCHICAL_CLUSTERING_H
 
 #include <cmath>
-#include <queue>
+#include <stack>
 
 #include <CGAL/property_map.h>
 #include <CGAL/basic.h>
@@ -74,20 +74,20 @@ namespace CGAL {
 	first_cluster.push_back (point);
       }
 
-    // Initialize a queue of clusters
-    std::queue<cluster> clusters_queue;
-    clusters_queue.push (cluster (first_cluster, centroid (begin, end)));
+    // Initialize a stack of clusters
+    std::stack<cluster> clusters_stack;
+    clusters_stack.push (cluster (first_cluster, centroid (begin, end)));
 
-    while (!(clusters_queue.empty ()))
+    while (!(clusters_stack.empty ()))
       {
-	cluster& current_cluster = clusters_queue.front ();
+	cluster& current_cluster = clusters_stack.top ();
 
 	// If the cluster only has 1 element, we add it to the list of
 	// output points
 	if (current_cluster.first.size () == 1)
 	  {
 	    *(out ++) = current_cluster.second;
-	    clusters_queue.pop ();
+	    clusters_stack.pop ();
 	    continue;
 	  }
 
@@ -165,20 +165,20 @@ namespace CGAL {
 	      	- positive_side.size () * centroid_positive.z ())
 	       / negative_side.size ());
 
-	    clusters_queue.pop ();
+	    clusters_stack.pop ();
 
-	    // If the sets are non-empty, add the clusters to the queue
+	    // If the sets are non-empty, add the clusters to the stack
 	    if (positive_side.size () != 0)
-	      clusters_queue.push (cluster (positive_side, centroid_positive));
+	      clusters_stack.push (cluster (positive_side, centroid_positive));
 	    if (negative_side.size () != 0)
-	      clusters_queue.push (cluster (negative_side, centroid_negative));
+	      clusters_stack.push (cluster (negative_side, centroid_negative));
 	  }
 	// If the size/variance are small enough, add the centroid as
 	// and output point
 	else
 	  {
 	    *(out ++) = current_cluster.second;
-	    clusters_queue.pop ();
+	    clusters_stack.pop ();
 	  }
       }
 
