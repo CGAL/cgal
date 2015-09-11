@@ -192,23 +192,35 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
         positions_facets.push_back(ffit->vertex(2)->point().z());
         positions_facets.push_back(1.0);
 
-        if (cur_shading == Flat || cur_shading == FlatPlusEdges || cur_shading == Gouraud)
-        {
+      //  if (cur_shading == Flat || cur_shading == FlatPlusEdges || cur_shading == Gouraud)
+      //  {
 
             typedef Kernel::Vector_3	    Vector;
             Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(fit, *poly);
-            normals.push_back(n.x());
-            normals.push_back(n.y());
-            normals.push_back(n.z());
+            normals_flat.push_back(n.x());
+            normals_flat.push_back(n.y());
+            normals_flat.push_back(n.z());
 
-            normals.push_back(n.x());
-            normals.push_back(n.y());
-            normals.push_back(n.z());
+            normals_flat.push_back(n.x());
+            normals_flat.push_back(n.y());
+            normals_flat.push_back(n.z());
 
-            normals.push_back(n.x());
-            normals.push_back(n.y());
-            normals.push_back(n.z());
-        }
+            normals_flat.push_back(n.x());
+            normals_flat.push_back(n.y());
+            normals_flat.push_back(n.z());
+
+            normals_gouraud.push_back(n.x());
+            normals_gouraud.push_back(n.y());
+            normals_gouraud.push_back(n.z());
+
+            normals_gouraud.push_back(n.x());
+            normals_gouraud.push_back(n.y());
+            normals_gouraud.push_back(n.z());
+
+            normals_gouraud.push_back(n.x());
+            normals_gouraud.push_back(n.y());
+            normals_gouraud.push_back(n.z());
+      //  }
 
     }
 }
@@ -312,6 +324,7 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
     {
         program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
         program->bind();
+        //flat
         vaos[0]->bind();
         buffers[0].bind();
         buffers[0].allocate(positions_facets.data(),
@@ -323,8 +336,8 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
 
 
         buffers[1].bind();
-        buffers[1].allocate(normals.data(),
-                            static_cast<int>(normals.size()*sizeof(float)));
+        buffers[1].allocate(normals_flat.data(),
+                            static_cast<int>(normals_flat.size()*sizeof(float)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[1].release();
@@ -336,6 +349,27 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         program->setAttributeBuffer("colors",GL_FLOAT,0,3);
         buffers[2].release();
         vaos[0]->release();
+
+        //gouraud
+        vaos[4]->bind();
+        buffers[0].bind();
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        buffers[0].release();
+
+        buffers[10].bind();
+        buffers[10].allocate(normals_gouraud.data(),
+                            static_cast<int>(normals_gouraud.size()*sizeof(float)));
+        program->enableAttributeArray("normals");
+        program->setAttributeBuffer("normals",GL_FLOAT,0,3);
+        buffers[10].release();
+
+        buffers[2].bind();
+        program->enableAttributeArray("colors");
+        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+        buffers[2].release();
+        vaos[4]->release();
+
         program->release();
 
     }
@@ -365,11 +399,12 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
     }
     //vao containing the data for the selected facets
     {
+
         program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
         program->bind();
+
+        //flat
         vaos[2]->bind();
-
-
         buffers[5].bind();
         buffers[5].allocate(positions_facets.data(),
                             static_cast<int>(positions_facets.size()*sizeof(float)));
@@ -378,8 +413,8 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         buffers[5].release();
 
         buffers[6].bind();
-        buffers[6].allocate(normals.data(),
-                            static_cast<int>(normals.size()*sizeof(float)));
+        buffers[6].allocate(normals_flat.data(),
+                            static_cast<int>(normals_flat.size()*sizeof(float)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[6].release();
@@ -391,9 +426,28 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         program->enableAttributeArray("colors");
         program->setAttributeBuffer("colors",GL_FLOAT,0,3);
         buffers[7].release();
-        program->release();
-
         vaos[2]->release();
+
+        //gouraud
+        vaos[5]->bind();
+        buffers[5].bind();
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        buffers[5].release();
+
+        buffers[10].bind();
+        program->enableAttributeArray("normals");
+        program->setAttributeBuffer("normals",GL_FLOAT,0,3);
+        buffers[10].release();
+
+
+        buffers[7].bind();
+        program->enableAttributeArray("colors");
+        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+        buffers[7].release();
+        vaos[5]->release();
+
+        program->release();
     }
     //vao containing the data for the selected lines
     {
@@ -433,8 +487,10 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
     std::vector<float>(color_lines).swap(color_lines);
     color_facets.resize(0);
     std::vector<float>(color_facets).swap(color_facets);
-    normals.resize(0);
-    std::vector<float>(normals).swap(normals);
+    normals_flat.resize(0);
+    std::vector<float>(normals_flat).swap(normals_flat);
+    normals_gouraud.resize(0);
+    std::vector<float>(normals_gouraud).swap(normals_gouraud);
     are_buffers_filled = true;
 }
 
@@ -443,7 +499,8 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
 {
     positions_facets.resize(0);
     positions_lines.resize(0);
-    normals.resize(0);
+    normals_flat.resize(0);
+    normals_gouraud.resize(0);
 
 
     //Facets
@@ -471,25 +528,25 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
             CGAL_For_all(he,end)
             {
 
-                // If Flat shading:1 normal per polygon added once per vertex
-                if (cur_shading == FlatPlusEdges || cur_shading == Flat )
-                {
+               // // If Flat shading:1 normal per polygon added once per vertex
+               // if (cur_shading == FlatPlusEdges || cur_shading == Flat )
+               // {
 
                     Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(f, *poly);
-                    normals.push_back(n.x());
-                    normals.push_back(n.y());
-                    normals.push_back(n.z());
-                }
+                    normals_flat.push_back(n.x());
+                    normals_flat.push_back(n.y());
+                    normals_flat.push_back(n.z());
+                //}
 
-                // If Gouraud shading: 1 normal per vertex
-                else if (cur_shading == Gouraud)
-                {
+                //// If Gouraud shading: 1 normal per vertex
+                //else if (cur_shading == Gouraud)
+                //{
 
-                    Vector n = CGAL::Polygon_mesh_processing::compute_vertex_normal(he->vertex(), *poly);
-                    normals.push_back(n.x());
-                    normals.push_back(n.y());
-                    normals.push_back(n.z());
-                }
+                    n = CGAL::Polygon_mesh_processing::compute_vertex_normal(he->vertex(), *poly);
+                    normals_gouraud.push_back(n.x());
+                    normals_gouraud.push_back(n.y());
+                    normals_gouraud.push_back(n.z());
+                //}
 
                 //position
                 const Point& p = he->vertex()->point();
@@ -650,7 +707,7 @@ Scene_polyhedron_item::compute_colors() const
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item()
-    : Scene_item(10,4),
+    : Scene_item(11,6),
       is_Triangle(true),
       poly(new Polyhedron),
       show_only_feature_edges_m(false),
@@ -667,7 +724,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
-    : Scene_item(10,4),
+    : Scene_item(11,6),
       is_Triangle(true),
       poly(p),
       show_only_feature_edges_m(false),
@@ -684,7 +741,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
-    : Scene_item(10,4),
+    : Scene_item(11,6),
       is_Triangle(true),
       poly(new Polyhedron(p)),
       show_only_feature_edges_m(false),
@@ -884,8 +941,16 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
     }
 
 
-    if(!is_selected)
+    if(!is_selected && renderingMode() == Flat)
         vaos[0]->bind();
+    else if(!is_selected && renderingMode() == Gouraud)
+    {
+        vaos[4]->bind();
+    }
+    else if (is_selected && renderingMode() == Gouraud)
+    {
+        vaos[5]->bind();
+    }
     else
     {
         vaos[2]->bind();
@@ -895,8 +960,12 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
     program->bind();
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/4));
     program->release();
-    if(!is_selected)
+    if(!is_selected && renderingMode() == Flat)
         vaos[0]->release();
+    else if(!is_selected && renderingMode() == Gouraud)
+        vaos[4]->release();
+    else if (is_selected && renderingMode() == Gouraud)
+        vaos[5]->release();
     else
         vaos[2]->release();
 }
@@ -978,6 +1047,7 @@ void
 Scene_polyhedron_item::
 invalidate_buffers()
 {
+    qDebug()<<"inv buffers";
   Q_EMIT item_is_about_to_be_changed();
     delete_aabb_tree(this);
     init();
@@ -998,7 +1068,7 @@ contextual_changed()
         if(cur_shading == Flat || cur_shading == FlatPlusEdges ||cur_shading == Gouraud)
         {
             //Change the normals
-            invalidate_buffers();
+           // invalidate_buffers();
         }
 
 }

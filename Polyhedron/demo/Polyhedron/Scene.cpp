@@ -599,7 +599,7 @@ Scene::setData(const QModelIndex &index,
             rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );
         }
         item->setRenderingMode(rendering_mode);
-        item->invalidate_buffers();
+        //item->invalidate_buffers();
     Q_EMIT dataChanged(index, index);
         return true;
         break;

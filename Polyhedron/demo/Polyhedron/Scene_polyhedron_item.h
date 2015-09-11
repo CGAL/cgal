@@ -114,7 +114,8 @@ private:
 
     mutable std::vector<float> positions_lines;
     mutable std::vector<float> positions_facets;
-    mutable std::vector<float> normals;
+    mutable std::vector<float> normals_flat;
+    mutable std::vector<float> normals_gouraud;
     mutable std::vector<float> color_lines;
     mutable std::vector<float> color_facets;
     mutable std::vector<float> color_lines_selected;
