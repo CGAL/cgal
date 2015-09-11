@@ -131,12 +131,14 @@ user might encounter.
 - `CGAL::is_bivalent_mesh()`
 - `CGAL::is_trivalent()`
 - `CGAL::is_trivalent_mesh()`
+- `CGAL::is_isolated_triangle()`
 - `CGAL::is_closed()`
 
 - `CGAL::is_triangle()`
 - `CGAL::is_triangle_mesh()`
 - `CGAL::is_quad()`
 - `CGAL::is_quad_mesh()`
+- `CGAL::is_isolated_quad()`
 
 - `CGAL::is_tetrahedron()`
 - `CGAL::is_hexahedron()`
@@ -150,10 +152,16 @@ user might encounter.
 - `CGAL::Halfedge_around_target_iterator`
 - `CGAL::Halfedge_around_face_iterator`
 - `CGAL::Vertex_around_target_iterator`
+- `CGAL::Vertex_around_face_iterator`
+- `CGAL::Face_around_face_iterator`
 - `CGAL::Face_around_target_iterator`
-- `CGAL::halfedges_around_source`
-- `CGAL::halfedges_around_target`
-- `CGAL::halfedges_around_face`
+- `CGAL::halfedges_around_source()`
+- `CGAL::halfedges_around_target()`
+- `CGAL::halfedges_around_face()`
+- `CGAL::faces_around_face()`
+- `CGAL::faces_around_target()`
+- `CGAL::vertices_around_face()`
+- `CGAL::vertices_around_target()`
 
 ## Circulators ##
 - `CGAL::Halfedge_around_source_circulator`
@@ -161,26 +169,29 @@ user might encounter.
 - `CGAL::Halfedge_around_face_circulator`
 - `CGAL::Vertex_around_target_circulator`
 - `CGAL::Face_around_target_circulator`
+- `CGAL::Face_around_face_circulator`
 
 ## Euler Operations ##
 
-- `CGAL::Euler::join_vertex()`
-- `CGAL::Euler::split_vertex()`
-- `CGAL::Euler::split_edge()`
-- `CGAL::Euler::join_face()`
-- `CGAL::Euler::split_face()`
-- `CGAL::Euler::join_loop()`
-- `CGAL::Euler::split_loop()`
-- `CGAL::Euler::remove_face()`
-- `CGAL::Euler::make_hole()`
-- `CGAL::Euler::fill_hole()`
 - `CGAL::Euler::add_center_vertex()`
+- `CGAL::Euler::add_edge()`
+- `CGAL::Euler::add_face()`
+- `CGAL::Euler::add_face_to_border()`
+- `CGAL::Euler::add_vertex_and_face_to_border()`
+- `CGAL::Euler::collapse_edge()`
+- `CGAL::Euler::does_satisfy_link_condition()`
+- `CGAL::Euler::fill_hole()`
+- `CGAL::Euler::flip_edge()`
+- `CGAL::Euler::join_face()`
+- `CGAL::Euler::join_loop()`
+- `CGAL::Euler::join_vertex()`
+- `CGAL::Euler::make_hole()`
 - `CGAL::Euler::remove_center_vertex()`
-- `CGAL::Euler::add_vertex_and_face_to_border()` 
-- `CGAL::Euler::add_face_to_border()` 
-- `CGAL::Euler::collapse_edge()` 
-- `CGAL::Euler::does_satisfy_link_condition()` 
-
+- `CGAL::Euler::remove_face()`
+- `CGAL::Euler::split_edge()`
+- `CGAL::Euler::split_face()`
+- `CGAL::Euler::split_loop()`
+- `CGAL::Euler::split_vertex()`
 
 */
 

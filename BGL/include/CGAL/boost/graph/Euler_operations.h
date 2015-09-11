@@ -1455,6 +1455,7 @@ bool
 }
 
 #ifndef CGAL_NO_DEPRECATED_CODE
+/// \cond SKIP_IN_MANUAL
 template<typename Graph>
 bool
   satisfies_link_condition(typename boost::graph_traits<Graph>::edge_descriptor e,
@@ -1462,6 +1463,7 @@ bool
 {
   return does_satisfy_link_condition(e, g);
 }
+/// \endcond
 #endif
 /// @}
 
