@@ -164,7 +164,6 @@ namespace CGAL {
 		nonempty->second = centroid (nonempty->first.begin (), nonempty->first.end ());
 
 		clusters_stack.erase (empty);
-		clusters_stack.pop_back ();
 	      }
 	    else
 	      {
@@ -185,8 +184,8 @@ namespace CGAL {
 						- positive_side->first.size () * positive_side->second.z ())
 					       / negative_side->first.size ());
 
-		clusters_stack.pop_back ();
 	      }
+	    clusters_stack.pop_back ();
 	  }
 	// If the size/variance are small enough, add the centroid as
 	// and output point
@@ -200,6 +199,25 @@ namespace CGAL {
 
   
   // This variant deduces the kernel from the iterator type.
+  template <typename InputIterator,
+	    typename PointPMap,
+	    typename OutputIterator,
+	    typename DiagonalizeTraits>
+  void hierarchical_clustering (InputIterator begin,
+				InputIterator end,
+				PointPMap point_pmap,
+				OutputIterator out,
+				const unsigned int size,
+				const double var_max,
+				const DiagonalizeTraits& diagonalize_traits)
+  {
+    typedef typename boost::property_traits<PointPMap>::value_type Point;
+    typedef typename Kernel_traits<Point>::Kernel Kernel;
+    hierarchical_clustering (begin, end, point_pmap, out, size, var_max,
+			     diagonalize_traits, Kernel());
+  }
+
+  // This variant uses default diagonalize traits
   template <typename InputIterator,
 	    typename PointPMap,
 	    typename OutputIterator>
