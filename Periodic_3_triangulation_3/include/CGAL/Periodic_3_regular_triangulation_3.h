@@ -347,7 +347,6 @@ public:
 
   bool can_be_converted_to_1_sheet () const
   {
-    std::size_t ccc = cells_with_too_big_orthoball.size();
     return cells_with_too_big_orthoball.empty();
   }
 
