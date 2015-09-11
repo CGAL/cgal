@@ -1053,40 +1053,9 @@ remove_and_give_new_faces(Vertex_handle v, OutputItFaces fit)
         afi++) *fit++ = afi;
   }
   else {
-#   ifdef CGAL_HAS_THREADS
-#     ifdef CGAL_USE_BOOST_THREAD 
-        static boost::thread_specific_ptr< int > maxd_ptr;
-        CGAL_THREAD_LOCAL_DECLARE_PTR(std::vector<Face_handle> >, f_ptr);
-        CGAL_THREAD_LOCAL_DECLARE_PTR(std::vector<int> >, i_ptr);
-        CGAL_THREAD_LOCAL_DECLARE_PTR(std::vector<Vertex_handle> >, w_ptr);
-        if (CGAL_THREAD_LOCAL_IS_UNINITIALIZED(f_ptr)) {
-          maxd_ptr.reset(new int(30));
-          CGAL_THREAD_LOCAL_SET(f_ptr, new std::vector<Face_handle>(*maxd_ptr));
-          CGAL_THREAD_LOCAL_SET(i_ptr, new std::vector<int>(*maxd_ptr));
-          CGAL_THREAD_LOCAL_SET(w_ptr, new std::vector<Vertex_handle>(*maxd_ptr));
-        }
-        int& maxd=*maxd_ptr;
-#     else
-        CGAL_THREAD_LOCAL static int maxd = 30;
 
-        CGAL_THREAD_LOCAL_DECLARE_PTR(std::vector<Face_handle> >, f_ptr);
-        CGAL_THREAD_LOCAL_DECLARE_PTR(std::vector<int> >, i_ptr);
-        CGAL_THREAD_LOCAL_DECLARE_PTR(std::vector<Vertex_handle> >, w_ptr);
-        if (CGAL_THREAD_LOCAL_IS_UNINITIALIZED(f_ptr)) {
-          CGAL_THREAD_LOCAL_SET(f_ptr, new std::vector<Face_handle>(*maxd_ptr));
-          CGAL_THREAD_LOCAL_SET(i_ptr, new std::vector<int>(*maxd_ptr));
-          CGAL_THREAD_LOCAL_SET(w_ptr, new std::vector<Vertex_handle>(*maxd_ptr));
-        } 
-#     endif
-      std::vector<Face_handle>& f=*f_ptr;
-      std::vector<int>& i=*i_ptr;
-      std::vector<Vertex_handle>& w=*w_ptr; 
-#   else
-      static int maxd=30;
-      static std::vector<Face_handle> f(maxd);
-      static std::vector<int> i(maxd);
-      static std::vector<Vertex_handle> w(maxd);
-#   endif
+#include "Delaunay_triangulation_2_tls.h.h"
+
     int d;
     remove_degree_init(v,f,w,i,d,maxd);
     remove_degree_triangulate(v,f,w,i,d);
@@ -1110,44 +1079,8 @@ remove(Vertex_handle v)
 
   if ( this->dimension() <= 1) { Triangulation::remove(v); return; }
 
-  #ifdef CGAL_HAS_THREADS  
-  #ifndef CGAL_USE_BOOST_THREAD
-    CGAL_THREAD_LOCAL static int maxd = 30;
+#include "Delaunay_triangulation_2_tls.h.h"
 
-    CGAL_THREAD_LOCAL static std::vector<Face_handle>*  f_ptr;
-    CGAL_THREAD_LOCAL static std::vector<int>*  i_ptr;
-    CGAL_THREAD_LOCAL static std::vector<Vertex_handle>*  w_ptr;
-    if (f_ptr == NULL) {
-      f_ptr = new std::vector<Face_handle>(maxd);
-      i_ptr = new std::vector<int>(maxd);
-      w_ptr = new std::vector<Vertex_handle>(maxd);
-    }
-    std::vector<Face_handle>& f=*f_ptr;
-    std::vector<int>& i=*i_ptr;
-    std::vector<Vertex_handle>& w=*w_ptr;
-    #else
-
-  static boost::thread_specific_ptr< int > maxd_ptr;
-  static boost::thread_specific_ptr< std::vector<Face_handle> > f_ptr;
-  static boost::thread_specific_ptr< std::vector<int> > i_ptr;
-  static boost::thread_specific_ptr< std::vector<Vertex_handle> > w_ptr;
-  if (maxd_ptr.get() == NULL) {
-    maxd_ptr.reset(new int(30));
-    f_ptr.reset(new std::vector<Face_handle>(*maxd_ptr));
-    i_ptr.reset(new std::vector<int>(*maxd_ptr));
-    w_ptr.reset(new std::vector<Vertex_handle>(*maxd_ptr));
-  }
-  int& maxd=*maxd_ptr;
-  std::vector<Face_handle>& f=*f_ptr;
-  std::vector<int>& i=*i_ptr;
-  std::vector<Vertex_handle>& w=*w_ptr;
-#endif
-  #else
-  static int maxd=30;
-  static std::vector<Face_handle> f(maxd);
-  static std::vector<int> i(maxd);
-  static std::vector<Vertex_handle> w(maxd);
-  #endif
   remove_degree_init(v,f,w,i,d,maxd);
   if (d == 0) return; //  dim is going down
   remove_degree_triangulate(v,f,w,i,d);
@@ -2290,44 +2223,8 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
 
   {
     int d;
-    #ifdef CGAL_HAS_THREADS  
-  #ifndef CGAL_USE_BOOST_THREAD
-    CGAL_THREAD_LOCAL static int maxd = 30;
+#include "Delaunay_triangulation_2_tls.h.h"
 
-    CGAL_THREAD_LOCAL static std::vector<Face_handle>*  f_ptr;
-    CGAL_THREAD_LOCAL static std::vector<int>*  i_ptr;
-    CGAL_THREAD_LOCAL static std::vector<Vertex_handle>*  w_ptr;
-    if (f_ptr == NULL) {
-      f_ptr = new std::vector<Face_handle>(maxd);
-      i_ptr = new std::vector<int>(maxd);
-      w_ptr = new std::vector<Vertex_handle>(maxd);
-    }
-    std::vector<Face_handle>& f=*f_ptr;
-    std::vector<int>& i=*i_ptr;
-    std::vector<Vertex_handle>& w=*w_ptr;
-    #else
-
-    static boost::thread_specific_ptr< int > maxd_ptr;
-    static boost::thread_specific_ptr< std::vector<Face_handle> > f_ptr;
-    static boost::thread_specific_ptr< std::vector<int> > i_ptr;
-    static boost::thread_specific_ptr< std::vector<Vertex_handle> > w_ptr;
-    if (maxd_ptr.get() == NULL) {
-      maxd_ptr.reset(new int(30));
-      f_ptr.reset(new std::vector<Face_handle>(*maxd_ptr));
-      i_ptr.reset(new std::vector<int>(*maxd_ptr));
-      w_ptr.reset(new std::vector<Vertex_handle>(*maxd_ptr));
-    }
-    int& maxd=*maxd_ptr;
-    std::vector<Face_handle>& f=*f_ptr;
-    std::vector<int>& i=*i_ptr;
-    std::vector<Vertex_handle>& w=*w_ptr;
-#endif
-    #else
-    static int maxd=30;
-    static std::vector<Face_handle> f(maxd);
-    static std::vector<int> i(maxd);
-    static std::vector<Vertex_handle> w(maxd);
-    #endif
     remove_degree_init(v,f,w,i,d,maxd);
     remove_degree_triangulate(v,f,w,i,d);
   }
@@ -2541,44 +2438,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
 
 
   {
-    #ifdef CGAL_HAS_THREADS  
-  #ifndef CGAL_USE_BOOST_THREAD
-    CGAL_THREAD_LOCAL static int maxd = 30;
-
-    CGAL_THREAD_LOCAL static std::vector<Face_handle>*  f_ptr;
-    CGAL_THREAD_LOCAL static std::vector<int>*  i_ptr;
-    CGAL_THREAD_LOCAL static std::vector<Vertex_handle>*  w_ptr;
-    if (f_ptr == NULL) {
-      f_ptr = new std::vector<Face_handle>(maxd);
-      i_ptr = new std::vector<int>(maxd);
-      w_ptr = new std::vector<Vertex_handle>(maxd);
-    }
-    std::vector<Face_handle>& f=*f_ptr;
-    std::vector<int>& i=*i_ptr;
-    std::vector<Vertex_handle>& w=*w_ptr;
-    #else
-
-    static boost::thread_specific_ptr< int > maxd_ptr;
-    static boost::thread_specific_ptr< std::vector<Face_handle> > f_ptr;
-    static boost::thread_specific_ptr< std::vector<int> > i_ptr;
-    static boost::thread_specific_ptr< std::vector<Vertex_handle> > w_ptr;
-    if (maxd_ptr.get() == NULL) {
-      maxd_ptr.reset(new int(30));
-      f_ptr.reset(new std::vector<Face_handle>(*maxd_ptr));
-      i_ptr.reset(new std::vector<int>(*maxd_ptr));
-      w_ptr.reset(new std::vector<Vertex_handle>(*maxd_ptr));
-    }
-    int& maxd=*maxd_ptr;
-    std::vector<Face_handle>& f=*f_ptr;
-    std::vector<int>& i=*i_ptr;
-    std::vector<Vertex_handle>& w=*w_ptr;
-#endif
-    #else
-    static int maxd=30;
-    static std::vector<Face_handle> f(maxd);
-    static std::vector<int> i(maxd);
-    static std::vector<Vertex_handle> w(maxd);
-    #endif
+#include "Delaunay_triangulation_2_tls.h.h"
     int d;
     remove_degree_init(v,f,w,i,d,maxd);
     remove_degree_triangulate(v,f,w,i,d);

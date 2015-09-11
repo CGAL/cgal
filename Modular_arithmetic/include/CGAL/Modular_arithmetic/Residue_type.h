@@ -63,55 +63,51 @@ public:
 private:
   CGAL_EXPORT static const double  CST_CUT; 
   
-#ifdef CGAL_HAS_THREADS
-#ifndef CGAL_USE_BOOST_THREAD
-  CGAL_EXPORT CGAL_THREAD_LOCAL static int prime_int;
-  CGAL_EXPORT CGAL_THREAD_LOCAL static double prime;
-  CGAL_EXPORT CGAL_THREAD_LOCAL static double prime_inv;
+
+  CGAL_EXPORT CGAL_THREAD_LOCAL_DECLARE_POD2(int, prime_int);
+  CGAL_EXPORT CGAL_THREAD_LOCAL_DECLARE_POD2(double, prime);
+  CGAL_EXPORT CGAL_THREAD_LOCAL_DECLARE_POD2(double, prime_inv);
+
+#if (! defined(CGAL_USE_BOOST_THREAD)) || (! defined(CGAL_HAS_THREADS)) 
+
   static int get_prime_int(){ return prime_int;}
   static double get_prime()    { return prime;}
   static double get_prime_inv(){ return prime_inv;}
-#else
-  CGAL_EXPORT static boost::thread_specific_ptr<int>    prime_int_;
-  CGAL_EXPORT static boost::thread_specific_ptr<double> prime_;
-  CGAL_EXPORT static boost::thread_specific_ptr<double> prime_inv_;
-  
+#endif
+
+#ifdef CGAL_USE_BOOST_THREAD  
   static void init_class_for_thread(){
-    CGAL_precondition(prime_int_.get() == NULL); 
-    CGAL_precondition(prime_.get()     == NULL); 
-    CGAL_precondition(prime_inv_.get() == NULL); 
-    prime_int_.reset(new int(67111067));
-    prime_.reset(new double(67111067.0));
-    prime_inv_.reset(new double(1.0/67111067.0));
+    CGAL_precondition(CGAL_THREAD_LOCAL_IS_UNINITIALIZED_POD(prime_int)); 
+    CGAL_precondition(CGAL_THREAD_LOCAL_IS_UNINITIALIZED_POD(prime)); 
+    CGAL_precondition(CGAL_THREAD_LOCAL_IS_UNINITIALIZED_POD(prime_inv)); 
+    CGAL_THREAD_LOCAL_SET_POD(int,prime_int, 67111067);
+    CGAL_THREAD_LOCAL_SET_POD(double,prime, 67111067.0);
+    CGAL_THREAD_LOCAL_SET_POD(double,prime_inv, 1.0/67111067.0);
   }
   
   static inline int get_prime_int(){
-    if (prime_int_.get() == NULL)
+    if (CGAL_THREAD_LOCAL_IS_UNINITIALIZED_POD(prime_int))
       init_class_for_thread();
-    return *prime_int_.get();
+    CGAL_THREAD_LOCAL_GET_POD(int,prime_int);
+    return prime_int;
   }
   
   static inline double get_prime(){
-    if (prime_.get() == NULL)
+    if (CGAL_THREAD_LOCAL_IS_UNINITIALIZED_POD(prime_int))
       init_class_for_thread();
-    return *prime_.get();
+    CGAL_THREAD_LOCAL_GET_POD(double,prime);
+    return prime;
   }
   
   static inline double get_prime_inv(){
-    if (prime_inv_.get() == NULL)
+    if (CGAL_THREAD_LOCAL_IS_UNINITIALIZED_POD(prime_int))
       init_class_for_thread();
-    return *prime_inv_.get();
+    CGAL_THREAD_LOCAL_GET_POD(double,prime_inv);
+    return prime_inv;
   }
-#endif // ifdef BOOST_MSVC
+#endif // ifdef CGAL_USE_BOOST_THREAD
 
-#else
-  CGAL_EXPORT static int prime_int;
-  CGAL_EXPORT static double prime;
-  CGAL_EXPORT static double prime_inv;
-  static int get_prime_int(){ return prime_int;}
-  static double get_prime()    { return prime;}
-  static double get_prime_inv(){ return prime_inv;}  
-#endif
+
 
     /* Quick integer rounding, valid if a<2^51. for double */ 
     static inline 
@@ -206,21 +202,10 @@ public:
     static int 
     set_current_prime(int p){   
       int old_prime = get_prime_int();  
-#ifdef CGAL_HAS_THREADS
-#ifndef CGAL_USE_BOOST_THREAD
-      prime_int = p;
-      prime = double(p);
-      prime_inv = 1.0 / prime;
-#else
-      *prime_int_.get() = p;
-      *prime_.get() = double(p);
-      *prime_inv_.get() = 1.0/double(p);
-#endif
-#else
-      prime_int = p;
-      prime = double(p);
-      prime_inv = 1.0 / prime;
-#endif
+      CGAL_THREAD_LOCAL_ASSIGN_POD(prime_int,p);  
+      CGAL_THREAD_LOCAL_ASSIGN_POD(prime,double(p));  
+      CGAL_THREAD_LOCAL_ASSIGN_POD(prime_inv, 1.0 / double(p));
+
       return old_prime; 
     }
  

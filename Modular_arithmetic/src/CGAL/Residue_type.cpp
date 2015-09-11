@@ -27,9 +27,9 @@ CGAL_THREAD_LOCAL int Residue::prime_int = 67111067;
 CGAL_THREAD_LOCAL double Residue::prime = 67111067.0;
 CGAL_THREAD_LOCAL double Residue::prime_inv = 1490067204.5640400859667452463541;
 #else 
-boost::thread_specific_ptr<int>    Residue::prime_int_;
-boost::thread_specific_ptr<double> Residue::prime_;
-boost::thread_specific_ptr<double> Residue::prime_inv_;
+boost::thread_specific_ptr<int>    Residue::prime_int_ptr;
+boost::thread_specific_ptr<double> Residue::prime_ptr;
+boost::thread_specific_ptr<double> Residue::prime_inv_ptr;
 #endif
 #else
 int Residue::prime_int = 67111067;
