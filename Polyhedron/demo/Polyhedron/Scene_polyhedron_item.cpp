@@ -1042,7 +1042,6 @@ invalidate_buffers()
   Q_EMIT item_is_about_to_be_changed();
     delete_aabb_tree(this);
     init();
-    Base::changed();
     Base::invalidate_buffers();
     is_Triangulated();
     compute_normals_and_vertices();
