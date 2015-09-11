@@ -84,7 +84,8 @@ public Q_SLOTS:
     void smooth(){
         for (Polylines_container::iterator pit=polylines.begin(),pit_end=polylines.end();pit!=pit_end;++pit)
             smooth(*pit);
-    Q_EMIT itemChanged();
+      invalidate_buffers();
+      Q_EMIT itemChanged();
     }
 public:
     Polylines_container polylines;

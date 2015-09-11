@@ -155,6 +155,7 @@ void Polyhedron_demo_vcm_normal_estimation_plugin::on_actionVCMNormalEstimation_
                                     << std::endl;
 
     // Updates scene
+    item->invalidate_buffers();
     scene->itemChanged(index);
 
     QApplication::restoreOverrideCursor();

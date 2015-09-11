@@ -156,6 +156,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchBorders_trigger
     {
       Polyhedron* pMesh = item->polyhedron();
       CGAL::Polygon_mesh_processing::stitch_borders(*pMesh);
+      item->invalidate_buffers();
       scene->itemChanged(item);
     }
   }

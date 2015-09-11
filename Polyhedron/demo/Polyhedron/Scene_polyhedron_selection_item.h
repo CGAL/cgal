@@ -398,6 +398,7 @@ public:
     for(typename Tr::Iterator it = tr.iterator_begin() ; it != tr.iterator_end(); ++it) {
       tr.container().insert(*it);
     }
+    invalidate_buffers();
     Q_EMIT itemChanged();
   }
 
@@ -418,6 +419,7 @@ public:
 
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
     tr.container().clear();
+    invalidate_buffers();
     Q_EMIT itemChanged();
   }
 
@@ -463,7 +465,7 @@ public:
     Travel_isolated_components().travel<HandleType>
       (tr.iterator_begin(), tr.iterator_end(), tr.size(), tr.container(), visitor);
 
-    if(visitor.any_inserted) { Q_EMIT itemChanged(); }
+    if(visitor.any_inserted) { invalidate_buffers(); Q_EMIT itemChanged(); }
     return visitor.minimum_visitor.minimum;
   }
 
@@ -561,7 +563,7 @@ public:
         any_change |= tr.container().insert(*it).second;
       }
     }
-    if(any_change) { Q_EMIT itemChanged(); }
+    if(any_change) { invalidate_buffers(); Q_EMIT itemChanged(); }
   }
 
   template <class Handle>
@@ -590,7 +592,7 @@ public:
         any_change |= (tr.container().erase(*it)!=0);
       }
     }
-    if(any_change) { Q_EMIT itemChanged(); }
+    if(any_change) { invalidate_buffers(); Q_EMIT itemChanged(); }
   }
 
   void erase_selected_facets() {
@@ -745,7 +747,7 @@ protected:
       BOOST_FOREACH(HandleType h, selection)
         any_change |= (tr.container().erase(h)!=0);
     }
-    if(any_change) { Q_EMIT itemChanged(); }
+    if(any_change) { invalidate_buffers(); Q_EMIT itemChanged(); }
   }
 
 public:

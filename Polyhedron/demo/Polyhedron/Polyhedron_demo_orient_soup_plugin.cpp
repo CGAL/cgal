@@ -111,6 +111,7 @@ void Polyhedron_demo_orient_soup_plugin::orient()
         scene->replaceItem(index, poly_item);
         delete item;
       } else {
+        item->invalidate_buffers();
         scene->itemChanged(item);
       }
 

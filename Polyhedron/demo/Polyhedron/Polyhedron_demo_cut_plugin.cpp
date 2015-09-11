@@ -473,6 +473,7 @@ void Polyhedron_demo_cut_plugin::cut() {
   }
 
   messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
+  edges_item->invalidate_buffers();
   scene->itemChanged(edges_item);
   }
   QApplication::restoreOverrideCursor();

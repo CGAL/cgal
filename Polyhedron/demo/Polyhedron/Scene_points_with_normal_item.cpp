@@ -279,6 +279,7 @@ void Scene_points_with_normal_item::deleteSelection()
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
+  invalidate_buffers();
   Q_EMIT itemChanged();
 }
 
@@ -286,6 +287,7 @@ void Scene_points_with_normal_item::deleteSelection()
 void Scene_points_with_normal_item::invertSelection()
 {
     m_points->invert_selection();
+  invalidate_buffers();
   Q_EMIT itemChanged();
 }
 
@@ -293,6 +295,7 @@ void Scene_points_with_normal_item::invertSelection()
 void Scene_points_with_normal_item::selectAll()
 {
     m_points->select(m_points->begin(), m_points->end(), true);
+  invalidate_buffers();
   Q_EMIT itemChanged();
 }
 // Reset selection mark
@@ -300,6 +303,7 @@ void Scene_points_with_normal_item::resetSelection()
 {
   // Un-select all points
   m_points->select(m_points->begin(), m_points->end(), false);
+  invalidate_buffers();
   Q_EMIT itemChanged();
 }
   //Select duplicated points
@@ -309,6 +313,7 @@ void Scene_points_with_normal_item::selectDuplicates()
   for (Point_set::Point_iterator ptit=m_points->begin(); ptit!=m_points->end();++ptit )
     if ( !unique_points.insert(*ptit).second )
       m_points->select(&(*ptit));
+  invalidate_buffers();
   Q_EMIT itemChanged();
 }
 

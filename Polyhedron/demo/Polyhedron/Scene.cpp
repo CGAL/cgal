@@ -657,9 +657,8 @@ void Scene::itemChanged(Item_id i)
                      this->createIndex(i, LastColumn));
 }
 
-void Scene::itemChanged(Scene_item* item)
+void Scene::itemChanged(Scene_item* /* item */)
 {
-    item->invalidate_buffers();
   Q_EMIT dataChanged(this->createIndex(0, 0),
                      this->createIndex(m_entries.size() - 1, LastColumn));
 }

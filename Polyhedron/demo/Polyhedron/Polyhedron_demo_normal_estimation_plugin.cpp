@@ -105,6 +105,7 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalInversion_triggere
     for(Point_set::iterator it = points->begin(); it != points->end(); ++it){
       it->normal() = -1 * it->normal();
     }
+    item->invalidate_buffers();
     scene->itemChanged(item);
   }
 }
@@ -206,6 +207,7 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalEstimation_trigger
     points->select(first_unoriented_point, points->end(), true);
 
     // Updates scene
+    item->invalidate_buffers();
     scene->itemChanged(index);
 
     QApplication::restoreOverrideCursor();

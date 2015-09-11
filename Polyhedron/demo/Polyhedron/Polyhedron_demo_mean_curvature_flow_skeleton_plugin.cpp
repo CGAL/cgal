@@ -332,6 +332,7 @@ public:
   {
     CGAL::Polyhedron_copy_3<Mean_curvature_skeleton::Meso_skeleton, Polyhedron::HalfedgeDS> modifier(mcs->meso_skeleton());
     meso_skeleton->delegate(modifier);
+    scene->item(contractedItemIndex)->invalidate_buffers();
     scene->itemChanged(contractedItemIndex);
   }
 
@@ -661,6 +662,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
   }
   // update scene
   update_meso_skeleton();
+  scene->item(fixedPointsItemIndex)->invalidate_buffers();
   scene->itemChanged(fixedPointsItemIndex);
   scene->setSelectedItem(index);
   QApplication::restoreOverrideCursor();
@@ -895,6 +897,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
     delete temp;
   }
 
+  scene->item(fixedPointsItemIndex)->invalidate_buffers();
   scene->itemChanged(fixedPointsItemIndex);
   update_meso_skeleton();
   scene->setSelectedItem(index);

@@ -102,13 +102,9 @@ QMenu* Scene_item::contextMenu()
     return defaultContextMenu;
 }
 
-void Scene_item::invalidate_buffers() {
-  // Q_EMIT itemChanged();
-}
+void Scene_item::invalidate_buffers() {}
 
-void Scene_item::selection_changed(bool) {
-    // emit itemChanged();
-}
+void Scene_item::selection_changed(bool) {}
 
 
 void Scene_item::select(double /*orig_x*/,
