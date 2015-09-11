@@ -82,9 +82,9 @@ private:
   mutable std::vector<double> color_lines;
   mutable std::vector<double> color_facets;
   mutable std::vector<double> color_points;
-  mutable int nb_points;
-  mutable int nb_lines;
-  mutable int nb_facets;
+  mutable std::size_t nb_points;
+  mutable std::size_t nb_lines;
+  mutable std::size_t nb_facets;
 
   mutable QOpenGLShaderProgram *program;
 

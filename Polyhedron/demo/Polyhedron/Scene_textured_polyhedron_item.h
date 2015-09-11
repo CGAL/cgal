@@ -56,8 +56,8 @@ private:
   mutable std::vector<float> normals;
   mutable std::vector<float> textures_map_facets;
   mutable std::vector<float> textures_map_lines;
-  mutable int nb_facets;
-  mutable int nb_lines;
+  mutable std::size_t nb_facets;
+  mutable std::size_t nb_lines;
 
   mutable GLuint textureId;
   mutable QOpenGLShaderProgram* program;

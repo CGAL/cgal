@@ -99,10 +99,10 @@ private:
     mutable std::vector<float> normals_spheres;
     mutable std::vector<float> color_spheres;
     mutable std::vector<float> color_wire_spheres;
-    mutable int nb_spheres;
-    mutable int nb_wire;
-    mutable int nb_centers;
-    mutable int nb_lines;
+    mutable std::size_t nb_spheres;
+    mutable std::size_t nb_wire;
+    mutable std::size_t nb_centers;
+    mutable std::size_t nb_lines;
     mutable QOpenGLShaderProgram *program;
     mutable   GLuint nbSpheres;
     typedef std::map<Point_3, int> Point_to_int_map;
