@@ -32,7 +32,6 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Default_diagonalize_traits.h>
 
-
 namespace CGAL {
 
 
@@ -78,6 +77,7 @@ namespace CGAL {
     std::stack<cluster> clusters_stack;
     clusters_stack.push (cluster (first_cluster, centroid (begin, end)));
 
+    
     while (!(clusters_stack.empty ()))
       {
 	cluster& current_cluster = clusters_stack.top ();
@@ -115,7 +115,7 @@ namespace CGAL {
 	// PCA-like analysis
 	DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
 	  (covariance, eigenvalues, eigenvectors);
-
+	
 	// Variation of the set defined as lambda_min / (lambda_0 + lambda_1 + lambda_2)
 	double var = 0.;
 	for (int i = 0; i < 3; ++ i)
@@ -146,32 +146,44 @@ namespace CGAL {
 		side.splice (side.end (), current_cluster.first, current);
 	      }
 
-	    // Compute the centroids
-	    Point centroid_positive
-	      = centroid (positive_side.begin (), positive_side.end ());
+	    if (positive_side.empty () || negative_side.empty ())
+	      {
+		std::list<Point>& side = (positive_side.empty () ?
+					  negative_side : positive_side);
+		Point c = centroid (side.begin (), side.end ());
+		
+		clusters_stack.pop ();
+		clusters_stack.push (cluster (side, c));
+	      }
+	    else
+	      {
+		// Compute the centroids
+		Point centroid_positive =  centroid (positive_side.begin (), positive_side.end ());
 
-	    // The second centroid can be computed with the first and
-	    // the previous ones :
-	    // centroid_neg = (n_total * centroid - n_pos * centroid_pos)
-	    //                 / n_neg;
-	    Point centroid_negative
-	      ((current_cluster.first.size () * current_cluster.second.x ()
-	      	- positive_side.size () * centroid_positive.x ())
-	       / negative_side.size (),
-	       (current_cluster.first.size () * current_cluster.second.y ()
-	      	- positive_side.size () * centroid_positive.y ())
-	       / negative_side.size (),
-	       (current_cluster.first.size () * current_cluster.second.z ()
-	      	- positive_side.size () * centroid_positive.z ())
-	       / negative_side.size ());
+		// The second centroid can be computed with the first and
+		// the previous ones :
+		// centroid_neg = (n_total * centroid - n_pos * centroid_pos)
+		//                 / n_neg;
 
-	    clusters_stack.pop ();
 
-	    // If the sets are non-empty, add the clusters to the stack
-	    if (positive_side.size () != 0)
-	      clusters_stack.push (cluster (positive_side, centroid_positive));
-	    if (negative_side.size () != 0)
-	      clusters_stack.push (cluster (negative_side, centroid_negative));
+		Point centroid_negative ((current_cluster.first.size () * current_cluster.second.x ()
+					  - positive_side.size () * centroid_positive.x ())
+					 / negative_side.size (),
+					 (current_cluster.first.size () * current_cluster.second.y ()
+					  - positive_side.size () * centroid_positive.y ())
+					 / negative_side.size (),
+					 (current_cluster.first.size () * current_cluster.second.z ()
+					  - positive_side.size () * centroid_positive.z ())
+					 / negative_side.size ());
+
+		clusters_stack.pop ();
+
+		// If the sets are non-empty, add the clusters to the stack
+		if (positive_side.size () != 0)
+		  clusters_stack.push (cluster (positive_side, centroid_positive));
+		if (negative_side.size () != 0)
+		  clusters_stack.push (cluster (negative_side, centroid_negative));
+	      }
 	  }
 	// If the size/variance are small enough, add the centroid as
 	// and output point
