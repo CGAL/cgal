@@ -57,12 +57,15 @@ namespace CGAL {
     // faster computations of centroids - to be implemented)
     typedef std::pair< std::list<Point>, Point > cluster;
 
+    std::list<cluster> clusters_stack;
+    typedef typename std::list<cluster>::iterator cluster_iterator;
+
     CGAL_precondition (begin != end);
     CGAL_point_set_processing_precondition
-      (var_max >= (FT)0.0 && var_max <= (FT)(1./3.));
+      (var_max >= 0.0 && var_max <= 1./3.);
 
-    // The first cluster is the whole input point set 
-    std::list<Point> first_cluster;
+    // The first cluster is the whole input point set
+    clusters_stack.push_front (cluster (std::list<Point>(), Point (0., 0., 0.)));
     for(InputIterator it = begin; it != end; it++)
       {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
@@ -70,24 +73,21 @@ namespace CGAL {
 #else
 	Point point = get(point_pmap, *it);
 #endif
-	first_cluster.push_back (point);
+	clusters_stack.front ().first.push_back (point);
       }
-
-    // Initialize a stack of clusters
-    std::stack<cluster> clusters_stack;
-    clusters_stack.push (cluster (first_cluster, centroid (begin, end)));
-
+    clusters_stack.front ().second = centroid (clusters_stack.front ().first.begin (),
+					       clusters_stack.front ().first.end ());
     
     while (!(clusters_stack.empty ()))
       {
-	cluster& current_cluster = clusters_stack.top ();
+	cluster& current_cluster = clusters_stack.back ();
 
 	// If the cluster only has 1 element, we add it to the list of
 	// output points
 	if (current_cluster.first.size () == 1)
 	  {
 	    *(out ++) = current_cluster.second;
-	    clusters_stack.pop ();
+	    clusters_stack.pop_back ();
 	    continue;
 	  }
 
@@ -122,67 +122,70 @@ namespace CGAL {
 	  var += eigenvalues[i];
 	var = eigenvalues[0] / var;
 
-	// Eigenvector with smallest eigenvalue
-	Vector normal (eigenvectors[0], eigenvectors[1], eigenvectors[2]);
-
 	// Split the set if size OR variance of the cluster is too large
 	if (current_cluster.first.size () > size || var > var_max)
 	  {
-	    std::list<Point> positive_side;
-	    std::list<Point> negative_side;
-
+	    clusters_stack.push_front (cluster (std::list<Point>(), Point (0., 0., 0.)));
+	    cluster_iterator positive_side = clusters_stack.begin ();
+	    clusters_stack.push_front (cluster (std::list<Point>(), Point (0., 0., 0.)));
+	    cluster_iterator negative_side = clusters_stack.begin ();
+	    
 	    // Compute the plane which splits the point set into 2 point sets:
 	    //  * Normal to the eigenvector with highest eigenvalue
 	    //  * Passes through the centroid of the set
-	    Plane plane (current_cluster.second, normal);
+	    Plane plane (current_cluster.second, Vector (eigenvectors[6], eigenvectors[7], eigenvectors[8]));
 
+	    std::size_t current_cluster_size = 0;
 	    typename std::list<Point>::iterator it = current_cluster.first.begin ();
 	    while (it != current_cluster.first.end ())
 	      {
 		typename std::list<Point>::iterator current = it ++;
 
 		std::list<Point>& side = (plane.has_on_positive_side (*current)
-					  ? positive_side : negative_side);
+					  ? positive_side->first : negative_side->first);
 		side.splice (side.end (), current_cluster.first, current);
+		++ current_cluster_size;
 	      }
 
-	    if (positive_side.empty () || negative_side.empty ())
+	    if (positive_side->first.empty () || negative_side->first.empty ())
 	      {
-		std::list<Point>& side = (positive_side.empty () ?
-					  negative_side : positive_side);
-		Point c = centroid (side.begin (), side.end ());
-		
-		clusters_stack.pop ();
-		clusters_stack.push (cluster (side, c));
+		cluster_iterator empty, nonempty;
+		if (positive_side->first.empty ())
+		  {
+		    empty = positive_side;
+		    nonempty = negative_side;
+		  }
+		else
+		  {
+		    empty = negative_side;
+		    nonempty = positive_side;
+		  }
+
+		nonempty->second = centroid (nonempty->first.begin (), nonempty->first.end ());
+
+		clusters_stack.erase (empty);
+		clusters_stack.pop_back ();
 	      }
 	    else
 	      {
 		// Compute the centroids
-		Point centroid_positive =  centroid (positive_side.begin (), positive_side.end ());
+		positive_side->second = centroid (positive_side->first.begin (), positive_side->first.end ());
 
 		// The second centroid can be computed with the first and
 		// the previous ones :
 		// centroid_neg = (n_total * centroid - n_pos * centroid_pos)
 		//                 / n_neg;
+		negative_side->second = Point ((current_cluster_size * current_cluster.second.x ()
+						- positive_side->first.size () * positive_side->second.x ())
+					       / negative_side->first.size (),
+					       (current_cluster_size * current_cluster.second.y ()
+						- positive_side->first.size () * positive_side->second.y ())
+					       / negative_side->first.size (),
+					       (current_cluster_size * current_cluster.second.z ()
+						- positive_side->first.size () * positive_side->second.z ())
+					       / negative_side->first.size ());
 
-
-		Point centroid_negative ((current_cluster.first.size () * current_cluster.second.x ()
-					  - positive_side.size () * centroid_positive.x ())
-					 / negative_side.size (),
-					 (current_cluster.first.size () * current_cluster.second.y ()
-					  - positive_side.size () * centroid_positive.y ())
-					 / negative_side.size (),
-					 (current_cluster.first.size () * current_cluster.second.z ()
-					  - positive_side.size () * centroid_positive.z ())
-					 / negative_side.size ());
-
-		clusters_stack.pop ();
-
-		// If the sets are non-empty, add the clusters to the stack
-		if (positive_side.size () != 0)
-		  clusters_stack.push (cluster (positive_side, centroid_positive));
-		if (negative_side.size () != 0)
-		  clusters_stack.push (cluster (negative_side, centroid_negative));
+		clusters_stack.pop_back ();
 	      }
 	  }
 	// If the size/variance are small enough, add the centroid as
@@ -190,10 +193,9 @@ namespace CGAL {
 	else
 	  {
 	    *(out ++) = current_cluster.second;
-	    clusters_stack.pop ();
+	    clusters_stack.pop_back ();
 	  }
       }
-
   }
 
   
@@ -205,8 +207,8 @@ namespace CGAL {
 				InputIterator end,
 				PointPMap point_pmap,
 				OutputIterator out,
-				const unsigned int size = 10,
-				const double var_max = 0.333)
+				const unsigned int size,
+				const double var_max)
   {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
