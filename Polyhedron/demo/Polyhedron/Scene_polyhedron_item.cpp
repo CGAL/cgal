@@ -192,35 +192,32 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
         positions_facets.push_back(ffit->vertex(2)->point().z());
         positions_facets.push_back(1.0);
 
-      //  if (cur_shading == Flat || cur_shading == FlatPlusEdges || cur_shading == Gouraud)
-      //  {
 
-            typedef Kernel::Vector_3	    Vector;
-            Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(fit, *poly);
-            normals_flat.push_back(n.x());
-            normals_flat.push_back(n.y());
-            normals_flat.push_back(n.z());
+        typedef Kernel::Vector_3	    Vector;
+        Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(fit, *poly);
+        normals_flat.push_back(n.x());
+        normals_flat.push_back(n.y());
+        normals_flat.push_back(n.z());
 
-            normals_flat.push_back(n.x());
-            normals_flat.push_back(n.y());
-            normals_flat.push_back(n.z());
+        normals_flat.push_back(n.x());
+        normals_flat.push_back(n.y());
+        normals_flat.push_back(n.z());
 
-            normals_flat.push_back(n.x());
-            normals_flat.push_back(n.y());
-            normals_flat.push_back(n.z());
+        normals_flat.push_back(n.x());
+        normals_flat.push_back(n.y());
+        normals_flat.push_back(n.z());
 
-            normals_gouraud.push_back(n.x());
-            normals_gouraud.push_back(n.y());
-            normals_gouraud.push_back(n.z());
+        normals_gouraud.push_back(n.x());
+        normals_gouraud.push_back(n.y());
+        normals_gouraud.push_back(n.z());
 
-            normals_gouraud.push_back(n.x());
-            normals_gouraud.push_back(n.y());
-            normals_gouraud.push_back(n.z());
+        normals_gouraud.push_back(n.x());
+        normals_gouraud.push_back(n.y());
+        normals_gouraud.push_back(n.z());
 
-            normals_gouraud.push_back(n.x());
-            normals_gouraud.push_back(n.y());
-            normals_gouraud.push_back(n.z());
-      //  }
+        normals_gouraud.push_back(n.x());
+        normals_gouraud.push_back(n.y());
+        normals_gouraud.push_back(n.z());
 
     }
 }
@@ -528,25 +525,20 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
             CGAL_For_all(he,end)
             {
 
-               // // If Flat shading:1 normal per polygon added once per vertex
-               // if (cur_shading == FlatPlusEdges || cur_shading == Flat )
-               // {
+                // // If Flat shading:1 normal per polygon added once per vertex
 
-                    Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(f, *poly);
-                    normals_flat.push_back(n.x());
-                    normals_flat.push_back(n.y());
-                    normals_flat.push_back(n.z());
-                //}
+                Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(f, *poly);
+                normals_flat.push_back(n.x());
+                normals_flat.push_back(n.y());
+                normals_flat.push_back(n.z());
+
 
                 //// If Gouraud shading: 1 normal per vertex
-                //else if (cur_shading == Gouraud)
-                //{
 
-                    n = CGAL::Polygon_mesh_processing::compute_vertex_normal(he->vertex(), *poly);
-                    normals_gouraud.push_back(n.x());
-                    normals_gouraud.push_back(n.y());
-                    normals_gouraud.push_back(n.z());
-                //}
+                n = CGAL::Polygon_mesh_processing::compute_vertex_normal(he->vertex(), *poly);
+                normals_gouraud.push_back(n.x());
+                normals_gouraud.push_back(n.y());
+                normals_gouraud.push_back(n.z());
 
                 //position
                 const Point& p = he->vertex()->point();
@@ -1047,7 +1039,6 @@ void
 Scene_polyhedron_item::
 invalidate_buffers()
 {
-    qDebug()<<"inv buffers";
   Q_EMIT item_is_about_to_be_changed();
     delete_aabb_tree(this);
     init();

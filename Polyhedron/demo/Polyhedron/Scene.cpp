@@ -56,6 +56,8 @@ Scene::addItem(Scene_item* item)
     m_entries.push_back(item);
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
+    connect(item, SIGNAL(renderingModeChanged()),
+            this, SLOT(callDraw()));
     if(bbox_before + item->bbox() != bbox_before)
 { Q_EMIT updated_bbox(); }
     QAbstractListModel::beginResetModel();

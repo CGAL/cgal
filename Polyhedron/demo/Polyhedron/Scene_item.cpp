@@ -97,8 +97,6 @@ QMenu* Scene_item::contextMenu()
                                               .arg(mName),
                                               this,
                                               slotName(RenderingMode(mode)));
-        QObject::connect(action, SIGNAL(triggered()),
-                         this, SIGNAL(itemChanged()));
     }
     // defaultContextMenu->addAction(modeMenu->menuAction());
     return defaultContextMenu;
