@@ -337,7 +337,7 @@ Scene_polylines_item::Scene_polylines_item()
     nb_wire = 0;
     nb_centers = 0;
     nb_lines = 0;
-    changed();
+    invalidate_buffers();
 
 }
 
@@ -529,7 +529,7 @@ QMenu* Scene_polylines_item::contextMenu()
     return menu;
 }
 
-void Scene_polylines_item::changed()
+void Scene_polylines_item::invalidate_buffers()
 {
     compute_elements();
     are_buffers_filled = false;
@@ -567,7 +567,7 @@ void Scene_polylines_item::change_corner_radii(double r) {
     if(r >= 0) {
         d->spheres_drawn_radius = r;
         d->draw_extremities = (r > 0);
-        this->changed();
+        this->invalidate_buffers();
     Q_EMIT itemChanged();
     }
 }
@@ -669,6 +669,6 @@ Scene_polylines_item::merge(Scene_polylines_item* other_item) {
         metadata.append(other_metadata_variant.toStringList());
         setProperty("polylines metadata", metadata);
     }
-    changed();
+    invalidate_buffers();
 }
 

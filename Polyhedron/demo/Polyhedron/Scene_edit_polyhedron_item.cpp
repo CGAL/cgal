@@ -27,7 +27,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   connect(&k_ring_selector, SIGNAL(selected(const std::set<Polyhedron::Vertex_handle>&)), this,
           SLOT(selected(const std::set<Polyhedron::Vertex_handle>&)));
 
-  poly_item->set_color_vector_read_only(true); // to prevent recomputation of color vector in changed()
+  poly_item->set_color_vector_read_only(true); // to prevent recomputation of color vector in invalidate_buffers()
   poly_item->update_vertex_indices();
 
   length_of_axis = bbox().diagonal_length() / 15.0;
@@ -111,7 +111,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 
     //the spheres :
     create_Sphere(length_of_axis/15.0);
-    changed();
+    invalidate_buffers();
 }
 
 Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
@@ -682,7 +682,7 @@ void Scene_edit_polyhedron_item::compute_bbox(const Scene_interface::Bbox& bb){
     
 }
 
-void Scene_edit_polyhedron_item::changed()
+void Scene_edit_polyhedron_item::invalidate_buffers()
 {
     compute_normals_and_vertices();
     update_normals();

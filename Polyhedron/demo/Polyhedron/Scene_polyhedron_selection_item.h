@@ -207,7 +207,7 @@ public:
             buffers[i].create();
         }
         init(poly_item, mw);
-        changed();
+        invalidate_buffers();
     }
 
    ~Scene_polyhedron_selection_item()
@@ -667,7 +667,7 @@ public:
 
   void changed_with_poly_item() {
     // no need to update indices
-    poly_item->changed();
+    poly_item->invalidate_buffers();
     Q_EMIT itemChanged();
   }
 
@@ -675,9 +675,10 @@ Q_SIGNALS:
   void simplicesSelected(Scene_item*);
 
 public Q_SLOTS:
-  void changed() {
+  void invalidate_buffers() {
+
     // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
-      //  poly_item->changed();
+      //  poly_item->invalidate_buffers();
         compute_elements();
         are_buffers_filled = false;
   }

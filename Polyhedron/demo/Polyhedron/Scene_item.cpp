@@ -104,7 +104,7 @@ QMenu* Scene_item::contextMenu()
     return defaultContextMenu;
 }
 
-void Scene_item::changed() {
+void Scene_item::invalidate_buffers() {
   // Q_EMIT itemChanged();
 }
 

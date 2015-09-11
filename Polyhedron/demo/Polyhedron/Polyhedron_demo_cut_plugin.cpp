@@ -80,7 +80,7 @@ public:
   }
 
   // Wireframe OpenGL drawing in a display list
-  void changed()
+  void invalidate_buffers()
   {
       compute_elements();
       are_buffers_filled = false;
@@ -163,7 +163,7 @@ public:
                 bbox.ymax(),
                 bbox.zmax());
   }
-  void changed()
+  void invalidate_buffers()
   {
       compute_elements();
       are_buffers_filled = false;

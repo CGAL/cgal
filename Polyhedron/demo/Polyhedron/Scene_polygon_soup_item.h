@@ -132,7 +132,7 @@ public:
         //soup->fill_edges();
         oriented = false;
 
-        Q_EMIT changed();
+        Q_EMIT invalidate_buffers();
     }
 
     bool save(std::ostream& out) const;
@@ -146,7 +146,7 @@ public:
     virtual void draw(Viewer_interface*) const;
     virtual void draw_points(Viewer_interface*) const;
     virtual void draw_edges(Viewer_interface* viewer) const;
-    void changed();
+    void invalidate_buffers();
     bool isFinite() const { return true; }
     bool isEmpty() const;
     Bbox bbox() const;

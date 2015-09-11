@@ -210,7 +210,7 @@ void Polyhedron_demo_intersection_plugin::intersection()
   new_item->setColor(Qt::green);
   new_item->setRenderingMode(Wireframe);
   scene->addItem(new_item);
-  new_item->changed();
+  new_item->invalidate_buffers();
 
   QApplication::restoreOverrideCursor();
 }

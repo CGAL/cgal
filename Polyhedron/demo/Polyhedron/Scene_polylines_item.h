@@ -74,7 +74,7 @@ public:
     }
 
 public Q_SLOTS:
-    virtual void changed();
+    virtual void invalidate_buffers();
     void change_corner_radii(double);
     void change_corner_radii();
     void split_at_sharp_angles();

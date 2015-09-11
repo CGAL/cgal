@@ -398,7 +398,7 @@ Scene_polygon_soup_item::load(std::istream& in)
   else soup->clear();
 
     bool result = CGAL::read_OFF(in, soup->points, soup->polygons);
-    Q_EMIT changed();
+    Q_EMIT invalidate_buffers();
     return result;
 }
 
@@ -427,7 +427,7 @@ void Scene_polygon_soup_item::load(Scene_polyhedron_item* poly_item) {
   CGAL::generic_print_polyhedron(std::cerr,
                                  *poly_item->polyhedron(),
                                  writer);
-  Q_EMIT changed();
+  Q_EMIT invalidate_buffers();
 }
 
 void
@@ -450,7 +450,7 @@ void Scene_polygon_soup_item::shuffle_orientations()
   {
     if(std::rand() % 2 == 0) soup->inverse_orientation(i);
   }
-
+  invalidate_buffers();
 }
 
 void Scene_polygon_soup_item::inside_out()
@@ -460,7 +460,7 @@ void Scene_polygon_soup_item::inside_out()
   {
     soup->inverse_orientation(i);
   }
-  changed();
+  invalidate_buffers();
 }
 
 bool 
@@ -654,7 +654,7 @@ Scene_polygon_soup_item::isEmpty() const {
   return (soup == 0 || soup->points.empty());
 }
 void
-Scene_polygon_soup_item::changed()
+Scene_polygon_soup_item::invalidate_buffers()
 {
     are_buffers_filled = false;
 }

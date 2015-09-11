@@ -680,7 +680,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     nb_facets = 0;
     nb_lines = 0;
     init();
-    changed();
+    invalidate_buffers();
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
@@ -697,7 +697,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     init();
     nb_facets = 0;
     nb_lines = 0;
-    changed();
+    invalidate_buffers();
 }
 
 Scene_polyhedron_item::~Scene_polyhedron_item()
@@ -775,7 +775,7 @@ Scene_polyhedron_item::load(std::istream& in)
 
     if ( in && !isEmpty() )
     {
-        changed();
+        invalidate_buffers();
         return true;
     }
     return false;
@@ -976,12 +976,15 @@ Scene_polyhedron_item::bbox() const {
 
 void
 Scene_polyhedron_item::
-changed()
+invalidate_buffers()
 {
   Q_EMIT item_is_about_to_be_changed();
     delete_aabb_tree(this);
     init();
     Base::changed();
+    Base::invalidate_buffers();
+    is_Triangulated();
+    compute_normals_and_vertices();
     are_buffers_filled = false;
 
 }
@@ -995,7 +998,7 @@ contextual_changed()
         if(cur_shading == Flat || cur_shading == FlatPlusEdges ||cur_shading == Gouraud)
         {
             //Change the normals
-            changed();
+            invalidate_buffers();
         }
 
 }
@@ -1129,7 +1132,7 @@ Scene_polyhedron_item::select(double orig_x,
                         polyhedron()->erase_facet(selected_fh->halfedge());
                         polyhedron()->normalize_border();
                         //set_erase_next_picked_facet(false);
-                        changed();
+                        invalidate_buffers();
             Q_EMIT itemChanged();
                     }
                 }

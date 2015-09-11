@@ -231,7 +231,7 @@ protected:
 
 
 public Q_SLOTS:
-  void changed();
+  void invalidate_buffers();
   void selected(const std::set<Polyhedron::Vertex_handle>& m)
   {
     bool any_changes = false;

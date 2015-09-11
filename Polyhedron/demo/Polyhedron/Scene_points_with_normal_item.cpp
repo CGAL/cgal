@@ -53,7 +53,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
     nb_points = 0;
     nb_selected_points = 0;
     nb_lines = 0;
-    changed();
+    invalidate_buffers();
 }
 
 // Converts polyhedron to point set
@@ -80,7 +80,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& i
     nb_points = 0;
     nb_selected_points = 0;
     nb_lines = 0;
-    changed();
+    invalidate_buffers();
 }
 
 Scene_points_with_normal_item::~Scene_points_with_normal_item()
@@ -323,7 +323,7 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
                                               std::back_inserter(*m_points),
                                               CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())) &&
             !isEmpty();
-    changed();
+  invalidate_buffers();
   return ok;
 }
 
@@ -363,7 +363,7 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
       }
     }
   }
-    changed();
+  invalidate_buffers();
   return ok;
 }
 
@@ -572,7 +572,7 @@ void Scene_points_with_normal_item::set_has_normals(bool b) {
   }
 }
 
-void Scene_points_with_normal_item::changed()
+void Scene_points_with_normal_item::invalidate_buffers()
 {
     compute_normals_and_vertices();
     are_buffers_filled = false;

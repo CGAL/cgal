@@ -114,7 +114,7 @@ Scene_polyhedron_transform_item::bbox() const {
 }
 
 
-void Scene_polyhedron_transform_item::changed()
+void Scene_polyhedron_transform_item::invalidate_buffers()
 {
     compute_elements();
     are_buffers_filled = false;
