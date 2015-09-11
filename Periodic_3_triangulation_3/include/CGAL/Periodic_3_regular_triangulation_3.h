@@ -173,7 +173,65 @@ public:
   Periodic_3_regular_triangulation_3 (const Periodic_3_regular_triangulation_3& tr)
   : Base(tr)
   {
+    if (is_1_cover()) {
+      tds() = tr.tds();
+    } else {
+      this->copy_multiple_covering(tr);
+    }
+    CGAL_triangulation_expensive_postcondition(*this == tr);
     CGAL_triangulation_expensive_postcondition( is_valid() );
+  }
+
+  void copy_multiple_covering(const Periodic_3_regular_triangulation_3& tr) {
+    // Write the respective offsets in the vertices to make them
+    // automatically copy with the tds.
+    for (Vertex_iterator vit = tr.vertices_begin() ;
+         vit != tr.vertices_end() ; ++vit) {
+      vit->set_offset(tr.get_offset(vit));
+    }
+    // copy the tds
+    tds() = tr.tds();
+    // make a list of all vertices that belong to the original
+    // domain and initialize the basic structure of
+    // virtual_vertices_reverse
+    std::list<Vertex_handle> vlist;
+    for (Vertex_iterator vit = vertices_begin() ;
+         vit != vertices_end() ; ++vit) {
+      if (vit->offset() == Offset()) {
+        vlist.push_back(vit);
+        this->virtual_vertices_reverse.insert(
+      std::make_pair(vit,std::vector<Vertex_handle>(26)));
+        CGAL_triangulation_assertion(this->virtual_vertices_reverse.find(vit)
+      ->second.size() == 26);
+      }
+    }
+    // Iterate over all vertices that are not in the original domain
+    // and construct the respective entries to virtual_vertices and
+    // virtual_vertices_reverse
+    for (Vertex_iterator vit2 = vertices_begin() ;
+         vit2 != vertices_end() ; ++vit2) {
+      if (vit2->offset() != Offset()) {
+        //TODO: use some binding, maybe boost instead of the Finder.
+        typename std::list<Vertex_handle>::iterator vlist_it
+    = std::find_if(vlist.begin(), vlist.end(),
+             typename Base::Finder(this,vit2->point()));
+        Offset off = vit2->offset();
+        this->virtual_vertices.insert(std::make_pair(vit2,
+                 std::make_pair(*vlist_it,off)));
+        this->virtual_vertices_reverse.find(*vlist_it)
+    ->second[9*off[0]+3*off[1]+off[2]-1]=vit2;
+        CGAL_triangulation_assertion(get_offset(vit2) == off);
+      }
+    }
+    // Cleanup vertex offsets
+    for (Vertex_iterator vit = vertices_begin() ;
+         vit != vertices_end() ; ++vit)
+      vit->clear_offset();
+    for (Vertex_iterator vit = tr.vertices_begin() ;
+         vit != tr.vertices_end() ; ++vit)
+      vit->clear_offset();
+
+    insert_too_long_edges(tr.cells_begin(), tr.cells_end());
   }
 
   template < typename InputIterator >
@@ -184,6 +242,17 @@ public:
     : Base(domain, gt)
   {
     insert(first, last, is_large_point_set);
+  }
+
+  Periodic_3_regular_triangulation_3 operator= (Periodic_3_regular_triangulation_3 tr)
+  {
+    tr.swap(*this);
+    return *this;
+  }
+
+  void swap(Periodic_3_regular_triangulation_3&tr) {
+    std::swap(cells_with_too_big_orthoball,tr.cells_with_too_big_orthoball);
+    Base::swap(tr);
   }
 
   void create_initial_triangulation()
@@ -244,8 +313,21 @@ public:
     }
   }
 
+  void insert_too_long_edges(Cell_iterator begin, Cell_iterator end)
+  {
+    FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
+    for (; begin != end; ++begin)
+    {
+      if (squared_orthoball_radius(begin) >= threshold)
+      {
+        cells_with_too_big_orthoball.insert(begin);
+      }
+    }
+  }
+
   bool can_be_converted_to_1_sheet () const
   {
+    std::size_t ccc = cells_with_too_big_orthoball.size();
     return cells_with_too_big_orthoball.empty();
   }
 
@@ -6246,6 +6328,8 @@ public:
 
   inline bool
   is_extensible_triangulation_in_1_sheet_h1() const {
+    if (!is_1_cover())
+      return can_be_converted_to_1_sheet();
     return is_extensible_triangulation_in_1_sheet_h2();
   }
 
@@ -6677,6 +6761,24 @@ struct Periodic_3_regular_triangulation_3<GT,Tds>::Vertex_remover
   std::vector<Weighted_point> hidden;
 };
 #endif //CGAL_CFG_OUTOFLINE_TEMPLATE_MEMBER_DEFINITION_BUG
+
+template < class GT, class TDS >
+std::istream &
+operator>> (std::istream& is, Periodic_3_regular_triangulation_3<GT,TDS> &tr)
+{
+  typedef Periodic_3_regular_triangulation_3<GT,TDS>   P3RT3;
+  typedef typename P3RT3::Base                          Base;
+  typedef typename P3RT3::Vertex_iterator               Vertex_iterator;
+  typedef typename GT::FT FT;
+  typedef typename P3RT3::Vertex_handle                 Vertex_handle;
+
+  is >> static_cast<Base&>(tr);
+
+  tr.insert_too_long_edges(tr.cells_begin(), tr.cells_end());
+
+  CGAL_triangulation_expensive_assertion( tr.is_valid() );
+  return is;
+}
 }// namespace CGAL
 
 #endif
