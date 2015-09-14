@@ -65,4 +65,5 @@ endif(NOT EIGEN3_FOUND)
 include( CGAL_CreateSingleSourceCGALProgram )
 
 create_single_source_cgal_program( "solver_benchmark.cpp" )
+create_single_source_cgal_program( "mcf_scale_invariance.cpp" )
 
