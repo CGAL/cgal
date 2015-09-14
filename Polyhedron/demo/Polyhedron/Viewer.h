@@ -3,6 +3,10 @@
 
 #include "Viewer_config.h"
 #include <CGAL_demo/Viewer_interface.h>
+#include <QOpenGLBuffer>
+#include <QOpenGLVertexArrayObject>
+#include <QOpenGLShaderProgram>
+
 
 #include <QGLViewer/qglviewer.h>
 #include <QPoint>
@@ -25,6 +29,7 @@ public:
 
   // overload several QGLViewer virtual functions
   void draw();
+  void drawVisualHints();
   void fastDraw();
   void initializeGL();
   void drawWithNames();
@@ -47,10 +52,25 @@ public Q_SLOTS:
                                float animation_duration = 0.5f);
 
 protected:
+  struct AxisData
+  {
+      std::vector<float> *vertices;
+      std::vector<float> *normals;
+      std::vector<float> *colors;
+  };
+  QOpenGLBuffer buffers[3];
+  QOpenGLVertexArrayObject vao[1];
+  QOpenGLShaderProgram rendering_program;
+  std::vector<float> v_Axis;
+  std::vector<float> n_Axis;
+  std::vector<float> c_Axis;
+
   void mousePressEvent(QMouseEvent*);
   void keyPressEvent(QKeyEvent*);
   void pickMatrix(GLdouble x, GLdouble y, GLdouble width, GLdouble height,
                   GLint viewport[4]);
+  void makeArrow(float R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
+
 
 protected:
   Viewer_impl* d;

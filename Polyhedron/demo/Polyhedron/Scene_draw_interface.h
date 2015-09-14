@@ -13,6 +13,7 @@ public:
   virtual void drawWithNames() = 0;
   virtual void drawWithNames(Viewer_interface*) { drawWithNames(); }
   virtual bool keyPressEvent(QKeyEvent* e) = 0;
+  virtual float get_bbox_length() const = 0;
 };
 
 #endif // SCENE_DRAW_INTERFACE_H;

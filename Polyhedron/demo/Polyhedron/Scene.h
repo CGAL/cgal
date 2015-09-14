@@ -88,6 +88,7 @@ public:
 
   // Get scene bounding box
   Bbox bbox() const;
+  float get_bbox_length() const;
   double len_diagonal() const
   {
     Bbox box = bbox();

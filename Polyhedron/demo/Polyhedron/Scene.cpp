@@ -801,6 +801,12 @@ Scene::Bbox Scene::bbox() const
     return bbox;
 }
 
+float Scene::get_bbox_length() const
+{
+    return bbox().height();
+}
+
+
 #include "Scene_find_items.h"
 
 namespace scene { namespace details {
