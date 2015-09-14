@@ -76,7 +76,6 @@ namespace CGAL {
 				const DiagonalizeTraits&,
 				const Kernel&)
   {
-    typedef typename Kernel::Plane_3  Plane;
     typedef typename Kernel::Point_3  Point;
     typedef typename Kernel::Vector_3 Vector;
 
