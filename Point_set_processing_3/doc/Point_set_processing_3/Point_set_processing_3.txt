@@ -215,6 +215,12 @@ The following example reads a point set and produces a set of clusters.
 The hierarchical clustering algorithm recursively split the point set
 in two until each cluster's size is less than the parameter `size`.
 
+\cgalFigureBegin{Point_set_processing_3figHierarchical_clustering_size, hierarchical_clustering_size.jpg}
+Input point set and hierarchical clustering with different `size`
+parameter: \f$10\f$, \f$100\f$ and \f$1000\f$. In the 3 cases, `var_max`\f$=1/3\f$.
+\cgalFigureEnd
+
+
 \subsubsection Point_set_processing_3Hierarchical_clustering_parameter_var_max Parameter: var_max
 In addition to the size parameter, a variation parameter allows to
 increase simplification in monotoneous regions. For each cluster, a
@@ -228,6 +234,10 @@ This function goes from \f$0\f$ if the cluster is coplanar to
 parameter has no effect and the clustering is regular on the whole
 point set.
 
+\cgalFigureBegin{Point_set_processing_3figHierarchical_clustering_var_max, hierarchical_clustering_var_max.jpg}
+Input point set and hierarchical clustering with different `var_max`
+parameter: \f$0.00001\f$, \f$0.001\f$ and \f$0.1\f$. In the 3 cases, `size`\f$=1000\f$.
+\cgalFigureEnd
 
 
 \section Point_set_processing_3Smoothing Smoothing
