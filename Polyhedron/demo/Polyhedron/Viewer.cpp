@@ -140,7 +140,10 @@ void Viewer::initializeGL()
       "attribute highp vec3 normal;\n"
       "attribute highp vec4 colors;\n"
       "uniform highp mat4 mvp_matrix;\n"
+      "uniform highp mat4 ortho_mat;\n"
       "uniform highp mat4 mv_matrix; \n"
+      "uniform highp float width; \n"
+      "uniform highp float height; \n"
       "varying highp vec4 fP; \n"
       "varying highp vec3 fN; \n"
       "varying highp vec4 color; \n"
@@ -150,8 +153,9 @@ void Viewer::initializeGL()
       "   fP = mv_matrix * vertex; \n"
       "   fN = mat3(mv_matrix)* normal; \n"
       "   vec4 temp = vec4(mvp_matrix * vertex); \n"
+      "   vec4 ort = ortho_mat * vec4(width, height, 0,0); \n"
 
-      "   gl_Position = temp; \n"//vec4(temp.x+0.5, temp.y+0.5, temp.z, 1.0); \n"
+      "   gl_Position = ort +  vec4(temp.x-ort.x/10, width/height*temp.y-width/height*ort.y/10, temp.z, 1.0); \n"
       "} \n"
       "\n"
   };
@@ -212,41 +216,6 @@ void Viewer::initializeGL()
       //std::cerr<<"linking Program FAILED"<<std::endl;
       qDebug() << rendering_program.log();
   }
-
-  AxisData data;
-  v_Axis.resize(0);
-  n_Axis.resize(0);
-  c_Axis.resize(0);
-  data.vertices = &v_Axis;
-  data.normals = &n_Axis;
-  data.colors = &c_Axis;
-  makeArrow(0.03,15, qglviewer::Vec(0,0,0),qglviewer::Vec(d->scene->get_bbox_length()/3.0,0,0),qglviewer::Vec(1,0,0), data);
-  makeArrow(0.03,15, qglviewer::Vec(0,0,0),qglviewer::Vec(0,d->scene->get_bbox_length()/3.0,0),qglviewer::Vec(0,1,0), data);
-  makeArrow(0.03,15, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,d->scene->get_bbox_length()/3.0),qglviewer::Vec(0,0,1), data);
-
-  vao[0].bind();
-  buffers[0].bind();
-  buffers[0].allocate(v_Axis.data(), v_Axis.size() * sizeof(float));
-  rendering_program.bind();
-  rendering_program.enableAttributeArray("vertex");
-  rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
-  buffers[0].release();
-
-  buffers[1].bind();
-  buffers[1].allocate(n_Axis.data(), n_Axis.size() * sizeof(float));
-  rendering_program.enableAttributeArray("normal");
-  rendering_program.setAttributeBuffer("normal",GL_FLOAT,0,3);
-  buffers[1].release();
-
-  buffers[2].bind();
-  buffers[2].allocate(c_Axis.data(), c_Axis.size() * sizeof(float));
-  rendering_program.enableAttributeArray("colors");
-  rendering_program.setAttributeBuffer("colors",GL_FLOAT,0,3);
-  buffers[2].release();
-
-  rendering_program.release();
-  vao[0].release();
-
 }
 
 #include <QMouseEvent>
@@ -675,7 +644,7 @@ void Viewer::drawVisualHints()
     QMatrix4x4 mvpMatrix;
     QMatrix4x4 mvMatrix;
     double mat[16];
-    camera()->getModelViewProjectionMatrix(mat);
+    camera()->frame()->rotation().getMatrix(mat);
     for(int i=0; i < 16; i++)
     {
         mvpMatrix.data()[i] = (float)mat[i];
@@ -709,6 +678,7 @@ void Viewer::drawVisualHints()
     specular[3] = 0.0f;
     // Shininess
     shininess = 51.2f;
+
     rendering_program.bind();
     rendering_program.setUniformValue("light_pos", position);
     rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
@@ -724,5 +694,68 @@ void Viewer::drawVisualHints()
     glDrawArrays(GL_TRIANGLES, 0, v_Axis.size() / 3);
     rendering_program.release();
     vao[0].release();
+
+}
+
+void Viewer::resizeGL(int w, int h)
+{
+    QGLViewer::resizeGL(w,h);
+    qglviewer::Vec dim = qglviewer::Vec(w,h, 0) ;
+    GLdouble ortho[16];
+    QMatrix4x4 orthoMatrix;
+    ortho[0]  = 1.0/width(); ortho[1]  = 0; ortho[2]  = 0; ortho[3]  = -0.0;
+    ortho[4]  = 0; ortho[5]  = 1.0/height(); ortho[6]  = 0; ortho[7]  = -0.0;
+    ortho[8]  = 0; ortho[9]  = 0; ortho[10] = 2.0/(camera()->zNear()-camera()->zFar()); ortho[11] = -(camera()->zNear()+camera()->zFar())/(-camera()->zNear()+camera()->zFar());
+    ortho[12] = 0; ortho[13] = 0; ortho[14] = 0; ortho[15] = 1;
+    for(int i=0; i < 16; i++)
+    {
+        orthoMatrix.data()[i] = (float)ortho[i];
+    }
+    int max = w;
+    if (h>w)
+        max = h;
+    QVector4D length(max,max,max, 1.0);
+    length = orthoMatrix * length;
+    AxisData data;
+    v_Axis.resize(0);
+    n_Axis.resize(0);
+    c_Axis.resize(0);
+    data.vertices = &v_Axis;
+    data.normals = &n_Axis;
+    data.colors = &c_Axis;
+    makeArrow(0.05,30, qglviewer::Vec(0,0,0),qglviewer::Vec(length.x()/10.0,0,0),qglviewer::Vec(1,0,0), data);
+    makeArrow(0.05,30, qglviewer::Vec(0,0,0),qglviewer::Vec(0,length.x()/10.0,0),qglviewer::Vec(0,1,0), data);
+    makeArrow(0.05,30, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,length.x()/10.0),qglviewer::Vec(0,0,1), data);
+
+
+    vao[0].bind();
+    buffers[0].bind();
+    buffers[0].allocate(v_Axis.data(), v_Axis.size() * sizeof(float));
+    rendering_program.enableAttributeArray("vertex");
+    rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+    buffers[0].release();
+
+    buffers[1].bind();
+    buffers[1].allocate(n_Axis.data(), n_Axis.size() * sizeof(float));
+    rendering_program.enableAttributeArray("normal");
+    rendering_program.setAttributeBuffer("normal",GL_FLOAT,0,3);
+    buffers[1].release();
+
+    buffers[2].bind();
+    buffers[2].allocate(c_Axis.data(), c_Axis.size() * sizeof(float));
+    rendering_program.enableAttributeArray("colors");
+    rendering_program.setAttributeBuffer("colors",GL_FLOAT,0,3);
+    buffers[2].release();
+
+    rendering_program.release();
+    vao[0].release();
+
+
+
+    rendering_program.bind();
+    rendering_program.setUniformValue("width", (float)dim.x);
+    rendering_program.setUniformValue("height", (float)dim.y);
+    rendering_program.setUniformValue("ortho_mat", orthoMatrix);
+    rendering_program.release();
 
 }
