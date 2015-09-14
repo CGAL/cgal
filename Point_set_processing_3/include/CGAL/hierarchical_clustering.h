@@ -31,6 +31,7 @@
 #include <CGAL/centroid.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Default_diagonalize_traits.h>
+#include <CGAL/PCA_util.h>
 
 namespace CGAL {
 
@@ -76,6 +77,7 @@ namespace CGAL {
 				const DiagonalizeTraits&,
 				const Kernel&)
   {
+    typedef typename Kernel::FT FT;
     typedef typename Kernel::Point_3  Point;
     typedef typename Kernel::Vector_3 Vector;
 
@@ -118,25 +120,30 @@ namespace CGAL {
 	  }
 
 	// Compute the covariance matrix of the set
-	cpp11::array<double, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
+	cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
 
-	for (typename std::list<Point>::iterator it = current_cluster->first.begin ();
-	     it != current_cluster->first.end (); ++ it)
-	  {
-	    const Point& p = *it;
-	    Vector d = p - current_cluster->second;
-	    covariance[0] += d.x () * d.x ();
-	    covariance[1] += d.x () * d.y ();
-	    covariance[2] += d.x () * d.z ();
-	    covariance[3] += d.y () * d.y ();
-	    covariance[4] += d.y () * d.z ();
-	    covariance[5] += d.z () * d.z ();
-	  }
+	internal::assemble_covariance_matrix_3 (current_cluster->first.begin (),
+						current_cluster->first.end (),
+						covariance,
+						current_cluster->second, Kernel(),
+						(Point*)NULL, CGAL::Dimension_tag<0>());
+	// for (typename std::list<Point>::iterator it = current_cluster->first.begin ();
+	//      it != current_cluster->first.end (); ++ it)
+	//   {
+	//     const Point& p = *it;
+	//     Vector d = p - current_cluster->second;
+	//     covariance[0] += d.x () * d.x ();
+	//     covariance[1] += d.x () * d.y ();
+	//     covariance[2] += d.x () * d.z ();
+	//     covariance[3] += d.y () * d.y ();
+	//     covariance[4] += d.y () * d.z ();
+	//     covariance[5] += d.z () * d.z ();
+	//   }
 
-	cpp11::array<double, 3> eigenvalues = {{ 0., 0., 0. }};
-	cpp11::array<double, 9> eigenvectors = {{ 0., 0., 0.,
-						  0., 0., 0.,
-						  0., 0., 0. }};
+	cpp11::array<FT, 3> eigenvalues = {{ 0., 0., 0. }};
+	cpp11::array<FT, 9> eigenvectors = {{ 0., 0., 0.,
+					      0., 0., 0.,
+					      0., 0., 0. }};
 	// Linear algebra = get eigenvalues and eigenvectors for
 	// PCA-like analysis
 	DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
