@@ -25,7 +25,7 @@ An arithmetic field type.
 typedef unspecified_type FT;
 
 /*!
-The weighted point type.
+The weighted point type. Must be the same type as `TriangulationTraits::Point_d`.
 */
 typedef unspecified_type Weighted_point;
 
