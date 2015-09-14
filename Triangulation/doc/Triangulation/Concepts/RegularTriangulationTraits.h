@@ -35,15 +35,15 @@ The un-weighted point type.
 typedef unspecified_type Bare_point;
 
 /*!
-A predicate object that must provide the templated operator
-`template Bare_point operator()(const Weighted_point & wp)`, returning
+A predicate object that must provide the operator
+`Bare_point operator()(const Weighted_point & wp)`, returning
 `wp` without its weight.
 */
 typedef unspecified_type Point_drop_weight_d;
 
 /*!
-A predicate object that must provide the templated operator
-`template FT operator()(const Weighted_point & wp)`, returning
+A predicate object that must provide the operator
+`FT operator()(const Weighted_point & wp)`, returning
 the weight of `wp`.
 */
 typedef unspecified_type Point_weight_d;
