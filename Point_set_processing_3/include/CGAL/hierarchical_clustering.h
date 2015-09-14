@@ -88,8 +88,8 @@ namespace CGAL {
     typedef typename std::list<cluster>::iterator cluster_iterator;
 
     CGAL_precondition (begin != end);
-    CGAL_point_set_processing_precondition
-      (var_max >= 0.0 && var_max <= 1./3.);
+    CGAL_point_set_processing_precondition (size > 0);
+    CGAL_point_set_processing_precondition (var_max > 0.0);
 
     // The first cluster is the whole input point set
     clusters_stack.push_front (cluster (std::list<Point>(), Point (0., 0., 0.)));
