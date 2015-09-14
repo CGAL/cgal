@@ -107,25 +107,25 @@ namespace CGAL {
     
     while (!(clusters_stack.empty ()))
       {
-	cluster& current_cluster = clusters_stack.back ();
+	cluster_iterator current_cluster = clusters_stack.begin ();
 
 	// If the cluster only has 1 element, we add it to the list of
 	// output points
-	if (current_cluster.first.size () == 1)
+	if (current_cluster->first.size () == 1)
 	  {
-	    *(out ++) = current_cluster.second;
-	    clusters_stack.pop_back ();
+	    *(out ++) = current_cluster->second;
+	    clusters_stack.pop_front ();
 	    continue;
 	  }
 
 	// Compute the covariance matrix of the set
 	cpp11::array<double, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
 
-	for (typename std::list<Point>::iterator it = current_cluster.first.begin ();
-	     it != current_cluster.first.end (); ++ it)
+	for (typename std::list<Point>::iterator it = current_cluster->first.begin ();
+	     it != current_cluster->first.end (); ++ it)
 	  {
 	    const Point& p = *it;
-	    Vector d = p - current_cluster.second;
+	    Vector d = p - current_cluster->second;
 	    covariance[0] += d.x () * d.x ();
 	    covariance[1] += d.x () * d.y ();
 	    covariance[2] += d.x () * d.z ();
@@ -150,12 +150,11 @@ namespace CGAL {
 	var = eigenvalues[0] / var;
 
 	// Split the set if size OR variance of the cluster is too large
-	if (current_cluster.first.size () > size || var > var_max)
+	if (current_cluster->first.size () > size || var > var_max)
 	  {
 	    clusters_stack.push_front (cluster (std::list<Point>(), Point (0., 0., 0.)));
-	    cluster_iterator positive_side = clusters_stack.begin ();
-	    clusters_stack.push_front (cluster (std::list<Point>(), Point (0., 0., 0.)));
 	    cluster_iterator negative_side = clusters_stack.begin ();
+	    // positive_side is built directly from current_cluster
 	    
 	    // The plane which splits the point set into 2 point sets:
 	    //  * Normal to the eigenvector with highest eigenvalue
@@ -163,30 +162,32 @@ namespace CGAL {
 	    Vector v (eigenvectors[6], eigenvectors[7], eigenvectors[8]);
 
 	    std::size_t current_cluster_size = 0;
-	    typename std::list<Point>::iterator it = current_cluster.first.begin ();
-	    while (it != current_cluster.first.end ())
+	    typename std::list<Point>::iterator it = current_cluster->first.begin ();
+	    while (it != current_cluster->first.end ())
 	      {
 		typename std::list<Point>::iterator current = it ++;
 
-		// Test if point is on one side or the other of the plane
-		std::list<Point>& side = (Vector (current_cluster.second, *current) * v > 0
-					  ? positive_side->first : negative_side->first);
-		side.splice (side.end (), current_cluster.first, current);
+		// Test if point is on negative side of plane and
+		// transfer it to the negative_side cluster if it is
+		if (Vector (current_cluster->second, *current) * v < 0)
+		  negative_side->first.splice (negative_side->first.end (),
+					       current_cluster->first, current);
 		++ current_cluster_size;
 	      }
 
-	    if (positive_side->first.empty () || negative_side->first.empty ())
+	    // If one of the clusters is empty, only keep the non-empty one
+	    if (current_cluster->first.empty () || negative_side->first.empty ())
 	      {
 		cluster_iterator empty, nonempty;
-		if (positive_side->first.empty ())
+		if (current_cluster->first.empty ())
 		  {
-		    empty = positive_side;
+		    empty = current_cluster;
 		    nonempty = negative_side;
 		  }
 		else
 		  {
 		    empty = negative_side;
-		    nonempty = positive_side;
+		    nonempty = current_cluster;
 		  }
 
 		nonempty->second = centroid (nonempty->first.begin (), nonempty->first.end ());
@@ -195,32 +196,33 @@ namespace CGAL {
 	      }
 	    else
 	      {
-		// Compute the centroids
-		positive_side->second = centroid (positive_side->first.begin (), positive_side->first.end ());
+		// Save old centroid for faster computation
+		Point old_centroid = current_cluster->second;
+		
+		// Compute the first centroid
+		current_cluster->second = centroid (current_cluster->first.begin (), current_cluster->first.end ());
 
 		// The second centroid can be computed with the first and
-		// the previous ones :
-		// centroid_neg = (n_total * centroid - n_pos * centroid_pos)
+		// the old ones :
+		// centroid_neg = (n_total * old_centroid - n_pos * first_centroid)
 		//                 / n_neg;
-		negative_side->second = Point ((current_cluster_size * current_cluster.second.x ()
-						- positive_side->first.size () * positive_side->second.x ())
+		negative_side->second = Point ((current_cluster_size * old_centroid.x ()
+						- current_cluster->first.size () * current_cluster->second.x ())
 					       / negative_side->first.size (),
-					       (current_cluster_size * current_cluster.second.y ()
-						- positive_side->first.size () * positive_side->second.y ())
+					       (current_cluster_size * old_centroid.y ()
+						- current_cluster->first.size () * current_cluster->second.y ())
 					       / negative_side->first.size (),
-					       (current_cluster_size * current_cluster.second.z ()
-						- positive_side->first.size () * positive_side->second.z ())
+					       (current_cluster_size * old_centroid.z ()
+						- current_cluster->first.size () * current_cluster->second.z ())
 					       / negative_side->first.size ());
-
 	      }
-	    clusters_stack.pop_back ();
 	  }
 	// If the size/variance are small enough, add the centroid as
 	// and output point
 	else
 	  {
-	    *(out ++) = current_cluster.second;
-	    clusters_stack.pop_back ();
+	    *(out ++) = current_cluster->second;
+	    clusters_stack.pop_front ();
 	  }
       }
   }
