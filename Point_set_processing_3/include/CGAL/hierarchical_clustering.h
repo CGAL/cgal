@@ -157,10 +157,10 @@ namespace CGAL {
 	    clusters_stack.push_front (cluster (std::list<Point>(), Point (0., 0., 0.)));
 	    cluster_iterator negative_side = clusters_stack.begin ();
 	    
-	    // Compute the plane which splits the point set into 2 point sets:
+	    // The plane which splits the point set into 2 point sets:
 	    //  * Normal to the eigenvector with highest eigenvalue
 	    //  * Passes through the centroid of the set
-	    Plane plane (current_cluster.second, Vector (eigenvectors[6], eigenvectors[7], eigenvectors[8]));
+	    Vector v (eigenvectors[6], eigenvectors[7], eigenvectors[8]);
 
 	    std::size_t current_cluster_size = 0;
 	    typename std::list<Point>::iterator it = current_cluster.first.begin ();
@@ -168,7 +168,8 @@ namespace CGAL {
 	      {
 		typename std::list<Point>::iterator current = it ++;
 
-		std::list<Point>& side = (plane.has_on_positive_side (*current)
+		// Test if point is on one side or the other of the plane
+		std::list<Point>& side = (Vector (current_cluster.second, *current) * v > 0
 					  ? positive_side->first : negative_side->first);
 		side.splice (side.end (), current_cluster.first, current);
 		++ current_cluster_size;
