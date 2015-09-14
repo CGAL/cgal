@@ -130,6 +130,7 @@ else
       point_inside_polyhedron_plugin \
       point_set_average_spacing_plugin \
       point_set_bilateral_smoothing_plugin \
+      point_set_hierarchical_clustering_plugin \
       point_set_outliers_removal_plugin \
       point_set_selection_plugin \
       point_set_shape_detection_plugin  \
