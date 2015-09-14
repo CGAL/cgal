@@ -21,22 +21,11 @@
 #include <CGAL/Residue.h>
 
 namespace CGAL{
-#ifdef CGAL_HAS_THREADS
-#ifndef CGAL_USE_BOOST_THREAD
-CGAL_THREAD_LOCAL int Residue::prime_int = 67111067;
-CGAL_THREAD_LOCAL double Residue::prime = 67111067.0;
-CGAL_THREAD_LOCAL double Residue::prime_inv = 1490067204.5640400859667452463541;
-#else 
-boost::thread_specific_ptr<int>    Residue::prime_int_ptr;
-boost::thread_specific_ptr<double> Residue::prime_ptr;
-boost::thread_specific_ptr<double> Residue::prime_inv_ptr;
-#endif
-#else
-int Residue::prime_int = 67111067;
-double Residue::prime = 67111067.0;
-double Residue::prime_inv = 1/67111067.0;
 
-#endif
+  CGAL_THREAD_LOCAL_DECLARE_POD(int, Residue::prime_int, 67111067);
+  CGAL_THREAD_LOCAL_DECLARE_POD(double, Residue::prime, 67111067.0);
+  CGAL_THREAD_LOCAL_DECLARE_POD(double, Residue::prime_inv, 1490067204.5640400859667452463541);
+
 
 const double Residue::CST_CUT = std::ldexp( 3., 51 );
 

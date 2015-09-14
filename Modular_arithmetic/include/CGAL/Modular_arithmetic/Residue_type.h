@@ -64,9 +64,9 @@ private:
   CGAL_EXPORT static const double  CST_CUT; 
   
 
-  CGAL_EXPORT CGAL_THREAD_LOCAL_DECLARE_POD2(int, prime_int);
-  CGAL_EXPORT CGAL_THREAD_LOCAL_DECLARE_POD2(double, prime);
-  CGAL_EXPORT CGAL_THREAD_LOCAL_DECLARE_POD2(double, prime_inv);
+  CGAL_EXPORT static CGAL_THREAD_LOCAL_DECLARE_POD2(int, prime_int);
+  CGAL_EXPORT static CGAL_THREAD_LOCAL_DECLARE_POD2(double, prime);
+  CGAL_EXPORT static CGAL_THREAD_LOCAL_DECLARE_POD2(double, prime_inv);
 
 #if (! defined(CGAL_USE_BOOST_THREAD)) || (! defined(CGAL_HAS_THREADS)) 
 

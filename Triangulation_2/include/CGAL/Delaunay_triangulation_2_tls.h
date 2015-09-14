@@ -1,6 +1,6 @@
 
 
-    CGAL_THREAD_LOCAL_DECLARE_POD(int, maxd,30); 
+    static CGAL_THREAD_LOCAL_DECLARE_POD(int, maxd,30); 
     if (CGAL_THREAD_LOCAL_IS_UNINITIALIZED_POD(maxd)) {
       CGAL_THREAD_LOCAL_SET_POD(int, maxd,30);
     }
@@ -8,9 +8,9 @@
 
 
 #   ifdef CGAL_HAS_THREADS
-        CGAL_THREAD_LOCAL_DECLARE(std::vector<Face_handle> , f);
-        CGAL_THREAD_LOCAL_DECLARE(std::vector<int> , i);
-        CGAL_THREAD_LOCAL_DECLARE(std::vector<Vertex_handle> , w);
+        static CGAL_THREAD_LOCAL_DECLARE(std::vector<Face_handle> , f);
+        static CGAL_THREAD_LOCAL_DECLARE(std::vector<int> , i);
+        static CGAL_THREAD_LOCAL_DECLARE(std::vector<Vertex_handle> , w);
         if (CGAL_THREAD_LOCAL_IS_UNINITIALIZED(f)) {
           CGAL_THREAD_LOCAL_SET(f, new std::vector<Face_handle>(maxd));
           CGAL_THREAD_LOCAL_SET(i, new std::vector<int>(maxd));
