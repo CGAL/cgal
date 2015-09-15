@@ -69,6 +69,8 @@ bool is_degenerated(
   const VertexPointMap& vpmap,
   const Traits& traits)
 {
+  if (is_border(hd, tmesh) && !is_triangle(hd, tmesh))
+    return false;
   const typename Traits::Point_3& p1 = get(vpmap, target( hd, tmesh) );
   const typename Traits::Point_3& p2 = get(vpmap, target(next(hd, tmesh), tmesh) );
   const typename Traits::Point_3& p3 = get(vpmap, source( hd, tmesh) );
