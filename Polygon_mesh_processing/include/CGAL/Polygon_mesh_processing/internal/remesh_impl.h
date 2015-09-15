@@ -152,12 +152,6 @@ namespace internal {
                             , const EdgeIsConstrainedMap& ecmap)
     {
       tag_halfedges_status(face_range, ecmap);
-
-#ifdef CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
-      BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
-        debug_normals(v);
-#endif
-
     }
 
     // split edges of edge_range that have their length > high
@@ -369,10 +363,6 @@ namespace internal {
       debug_status_map();
       debug_self_intersections();
 #endif
-#ifdef CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
-      BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
-        debug_normals(v);
-#endif
 
 #ifdef CGAL_DUMP_REMESHING_STEPS
       dump("1-edge_split.off");
@@ -534,7 +524,6 @@ namespace internal {
           CGAL_assertion(nbb == halfedge_status_map_.size());
           debug_status_map();
           CGAL_assertion(!incident_to_degenerate(halfedge(vkept, mesh_)));
-          debug_normals(vkept);
 #endif
 
           //insert new/remaining short edges
@@ -549,10 +538,6 @@ namespace internal {
         }//end if(collapse_ok)
       }
 
-#ifdef CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
-      BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
-        debug_normals(v);
-#endif
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << " done (" << nb_collapses << " collapses)." << std::endl;
 #endif
@@ -1263,11 +1248,9 @@ namespace internal {
     }
 #endif
 
-    void debug_normals(const vertex_descriptor& v) const
-    {
-      CGAL_assertion(check_normals(v));
-    }
-
+    //warning : when v is on a sharp edge (angle <= 90 deg)
+    // which is not constrained (it's not mandatory)
+    //this test will return false, though normals are correct
     bool check_normals(const vertex_descriptor& v) const
     {
       if (!is_on_patch(v))
