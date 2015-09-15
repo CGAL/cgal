@@ -10,7 +10,7 @@ typedef Eigen_solver::Vector Eigen_vector;
 
 int main(void)
 {
-  srand (time (NULL));
+  srand (static_cast<unsigned int>(time (NULL)));
   std::size_t degree = 3000;
   std::size_t nb_nonzero_coef = 100;
   
@@ -22,8 +22,8 @@ int main(void)
   // Randomly make some coefficients of the matrix non-zero
   for (std::size_t i = 0; i < nb_nonzero_coef; ++ i)
     {
-      std::size_t x = rand () % degree;
-      std::size_t y = rand () % degree;
+      int x = rand () % degree;
+      int y = rand () % degree;
 
       FT value = rand () / (FT)RAND_MAX;
 	
