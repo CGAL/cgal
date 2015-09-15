@@ -44,29 +44,28 @@ namespace CGAL {
     typename K::Point_3
     hsps_centroid(InputIterator begin, 
 		 InputIterator end,
-		 PointPMap point_pmap,	     
+		 PointPMap& point_pmap,	     
 		 const K&)
     {
-      typedef typename K::Vector_3 Vector;
       typedef typename K::Point_3 Point;
       typedef typename K::FT FT;
 
       CGAL_precondition(begin != end);
 
-      Vector v = NULL_VECTOR;
+      FT x = (FT)0., y = (FT)0., z = (FT)0.;
       unsigned int nb_pts = 0;
       while(begin != end) 
 	{
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-	  Point point = get(point_pmap, begin);
+	  const Point& point = get(point_pmap, begin);
 #else
-	  Point point = get(point_pmap, *begin);
+	  const Point& point = get(point_pmap, *begin);
 #endif
-	  v = v + (point - ORIGIN);
+	  x += point.x ();  y += point.y ();  z += point.z ();
 	  ++ nb_pts;
 	  ++ begin;
 	}
-      return ORIGIN + v / (FT)nb_pts;
+      return Point (x/nb_pts, y/nb_pts, z/nb_pts);
     }
 
     template < typename Input_type,
@@ -76,8 +75,8 @@ namespace CGAL {
     hsc_terminate_cluster (std::list<Input_type>& cluster,
 			   std::list<Input_type>& points_to_keep,
 			   std::list<Input_type>& points_to_remove,
-			   PointPMap point_pmap,
-			   typename K::Point_3 centroid,
+			   PointPMap& point_pmap,
+			   const typename K::Point_3& centroid,
 			   const K&)
     {
       typedef typename std::list<Input_type>::iterator Iterator;
@@ -90,9 +89,9 @@ namespace CGAL {
       for (Iterator it = cluster.begin (); it != cluster.end (); ++ it)
 	{
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-	  Point point = get(point_pmap, it);
+	  const Point& point = get(point_pmap, it);
 #else
-	  Point point = get(point_pmap, *it);
+	  const Point& point = get(point_pmap, *it);
 #endif
 	  FT dist = CGAL::squared_distance (point, centroid);
 	  if (dist < dist_min)
@@ -171,8 +170,7 @@ namespace CGAL {
 
     // The first cluster is the whole input point set
     clusters_stack.push_front (cluster (std::list<Input_type>(), Point (0., 0., 0.)));
-    for(ForwardIterator it = begin; it != end; it++)
-      clusters_stack.front ().first.push_back (*it);
+    std::copy (begin, end, std::back_inserter (clusters_stack.front ().first));
     
     clusters_stack.front ().second = internal::hsps_centroid (clusters_stack.front ().first.begin (),
 							     clusters_stack.front ().first.end (),
@@ -202,9 +200,9 @@ namespace CGAL {
 	     it != current_cluster->first.end (); ++ it)
 	  {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-	    Point point = get(point_pmap, it);
+	    const Point& point = get(point_pmap, it);
 #else
-	    Point point = get(point_pmap, *it);
+	    const Point& point = get(point_pmap, *it);
 #endif
 	    Vector d = point - current_cluster->second;
 	    covariance[0] += d.x () * d.x ();
@@ -225,10 +223,7 @@ namespace CGAL {
 	  (covariance, eigenvalues, eigenvectors);
 	
 	// Variation of the set defined as lambda_min / (lambda_0 + lambda_1 + lambda_2)
-	double var = 0.;
-	for (int i = 0; i < 3; ++ i)
-	  var += eigenvalues[i];
-	var = eigenvalues[0] / var;
+	double var = eigenvalues[0] / (eigenvalues[0] + eigenvalues[1] + eigenvalues[2]);
 
 	// Split the set if size OR variance of the cluster is too large
 	if (current_cluster->first.size () > size || var > var_max)
