@@ -1,7 +1,7 @@
 #include <limits>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/hierarchical_clustering.h>
+#include <CGAL/hierarchy_simplify_point_set.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/Timer.h>
@@ -18,32 +18,26 @@ typedef Kernel::FT FT;
 void test (std::vector<Point>& input,
 	   int result1 = 1, int result2 = 1, int result3 = 1, int result4 = 1)
 {
-  std::vector<Point> output;
-  
-  CGAL::hierarchical_clustering (input.begin (), input.end (),
-				 std::back_inserter (output));
-  if (result1 > 0 && output.size () != static_cast<std::size_t>(result1))
+  typename std::vector<Point>::iterator it = 
+    CGAL::hierarchy_simplify_point_set (input.begin (), input.end ());
+  if (result1 > 0 && std::distance (input.begin (), it) != (result1))
     exit (EXIT_FAILURE);
-  output.clear ();
-    
-  CGAL::hierarchical_clustering (input.begin (), input.end (),
-				 std::back_inserter (output), 100);
-  if (result2 > 0 && output.size () != static_cast<std::size_t>(result2))
-    exit (EXIT_FAILURE);
-  output.clear ();
-  
-  CGAL::hierarchical_clustering (input.begin (), input.end (),
-				 std::back_inserter (output), 1000, 0.1);
-  if (result3 > 0 && output.size () != static_cast<std::size_t>(result3))
-    exit (EXIT_FAILURE);
-  output.clear ();
 
-  CGAL::hierarchical_clustering (input.begin (), input.end (),
-				 CGAL::Identity_property_map<Point>(),
-				 std::back_inserter (output),
-				 std::numeric_limits<unsigned int>::max(),
-				 0.0001);
-  if (result4 > 0 && output.size () != static_cast<std::size_t>(result4))
+  it = CGAL::hierarchy_simplify_point_set (input.begin (), input.end (), 100);
+  if (result2 > 0 && std::distance (input.begin (), it) != (result2))
+    exit (EXIT_FAILURE);
+
+
+  it = CGAL::hierarchy_simplify_point_set (input.begin (), input.end (), 1000, 0.1);
+  if (result3 > 0 && std::distance (input.begin (), it) != (result3))
+    exit (EXIT_FAILURE);
+
+
+  it = CGAL::hierarchy_simplify_point_set (input.begin (), input.end (),
+					   CGAL::Identity_property_map<Point>(),
+					   std::numeric_limits<unsigned int>::max(),
+					   0.0001);
+  if (result4 > 0 && std::distance (input.begin (), it) != (result4))
     exit (EXIT_FAILURE);
 
   input.clear ();

@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/hierarchical_clustering.h>
+#include <CGAL/hierarchy_simplify_point_set.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <CGAL/IO/write_xyz_points.h>
 #include <CGAL/Timer.h>
@@ -28,19 +28,19 @@ int main(int argc, char*argv[])
   std::cout << "Read " << points.size () << " point(s)" << std::endl;
 
   CGAL::Timer task_timer; task_timer.start();
-  
-  std::vector<Point> output; // Algorithm generates a new set of points
-  CGAL::hierarchical_clustering (points.begin (), points.end (),
-				 std::back_inserter (output), 100);
+
+  // simplification by clustering using erase-remove idiom
+  points.erase (CGAL::hierarchy_simplify_point_set (points.begin (), points.end (), 100),
+		points.end ());
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
   
-  std::cout << output.size () << " point(s) generated in "
+  std::cout << points.size () << " point(s) kept, computed in "
 	    << task_timer.time() << " seconds, "
 	    << (memory>>20) << " Mib allocated." << std::endl;
 
   std::ofstream f ("out.xyz");
-  CGAL::write_xyz_points (f, output.begin (), output.end ());
+  CGAL::write_xyz_points (f, points.begin (), points.end ());
   
   return EXIT_SUCCESS;
 }

@@ -18,8 +18,8 @@
 // Author(s) : Simon Giraudot, Pierre Alliez
 
 
-#ifndef HIERARCHICAL_CLUSTERING_H
-#define HIERARCHICAL_CLUSTERING_H
+#ifndef HIERARCHY_SIMPLIFY_POINT_SET_H
+#define HIERARCHY_SIMPLIFY_POINT_SET_H
 
 #include <cmath>
 #include <stack>
@@ -42,7 +42,7 @@ namespace CGAL {
 	       typename PointPMap,
 	       typename K >
     typename K::Point_3
-    hcs_centroid(InputIterator begin, 
+    hsps_centroid(InputIterator begin, 
 		 InputIterator end,
 		 PointPMap point_pmap,	     
 		 const K&)
@@ -116,10 +116,11 @@ namespace CGAL {
   
   /// Recursively split the point set in smaller clusters until the
   /// clusters have less than `size` elements or until their variation
-  /// factor is below `var_max`.
+  /// factor is below `var_max`. 
   ///
-  /// This method does not change the input point set: the output is not
-  /// a subset of the input and is stored in a different container.
+  /// This method modifies the order of input points so as to pack all remaining points first,
+  /// and returns an iterator over the first point to remove (see erase-remove idiom).
+  /// For this reason it should not be called on sorted containers.
   ///
   /// \pre `0 < var_max < 1/3`
   /// \pre `size > 0`
@@ -135,6 +136,8 @@ namespace CGAL {
   /// @tparam Kernel Geometric traits class.
   ///        It can be omitted and deduced automatically from the value type of `PointPMap`.
   ///
+  /// @return iterator over the first point to remove.
+
 
   // This variant requires all parameters.
 
@@ -142,13 +145,13 @@ namespace CGAL {
 	    typename PointPMap,
 	    typename DiagonalizeTraits,
 	    typename Kernel>
-  ForwardIterator hierarchical_clustering (ForwardIterator begin,
-					   ForwardIterator end,
-					   PointPMap point_pmap,
-					   const unsigned int size,
-					   const double var_max,
-					   const DiagonalizeTraits&,
-					   const Kernel&)
+  ForwardIterator hierarchy_simplify_point_set (ForwardIterator begin,
+						ForwardIterator end,
+						PointPMap point_pmap,
+						const unsigned int size,
+						const double var_max,
+						const DiagonalizeTraits&,
+						const Kernel&)
   {
     typedef typename std::iterator_traits<ForwardIterator>::value_type Input_type;
     typedef typename Kernel::FT FT;
@@ -171,7 +174,7 @@ namespace CGAL {
     for(ForwardIterator it = begin; it != end; it++)
       clusters_stack.front ().first.push_back (*it);
     
-    clusters_stack.front ().second = internal::hcs_centroid (clusters_stack.front ().first.begin (),
+    clusters_stack.front ().second = internal::hsps_centroid (clusters_stack.front ().first.begin (),
 							     clusters_stack.front ().first.end (),
 							     point_pmap, Kernel());
 
@@ -268,7 +271,7 @@ namespace CGAL {
 		    nonempty = current_cluster;
 		  }
 
-		nonempty->second = internal::hcs_centroid (nonempty->first.begin (), nonempty->first.end (),
+		nonempty->second = internal::hsps_centroid (nonempty->first.begin (), nonempty->first.end (),
 							   point_pmap, Kernel());
 
 		clusters_stack.erase (empty);
@@ -279,7 +282,7 @@ namespace CGAL {
 		Point old_centroid = current_cluster->second;
 		
 		// Compute the first centroid
-		current_cluster->second = internal::hcs_centroid (current_cluster->first.begin (),
+		current_cluster->second = internal::hsps_centroid (current_cluster->first.begin (),
 								  current_cluster->first.end (),
 								  point_pmap, Kernel());
 
@@ -326,17 +329,17 @@ namespace CGAL {
   template <typename ForwardIterator,
 	    typename PointPMap,
 	    typename DiagonalizeTraits>
-  ForwardIterator hierarchical_clustering (ForwardIterator begin,
-					   ForwardIterator end,
-					   PointPMap point_pmap,
-					   const unsigned int size,
-					   const double var_max,
-					   const DiagonalizeTraits& diagonalize_traits)
+  ForwardIterator hierarchy_simplify_point_set (ForwardIterator begin,
+						ForwardIterator end,
+						PointPMap point_pmap,
+						const unsigned int size,
+						const double var_max,
+						const DiagonalizeTraits& diagonalize_traits)
   {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
-    return hierarchical_clustering (begin, end, point_pmap, size, var_max,
-				    diagonalize_traits, Kernel());
+    return hierarchy_simplify_point_set (begin, end, point_pmap, size, var_max,
+					 diagonalize_traits, Kernel());
   }
   /// @endcond
 
@@ -344,28 +347,28 @@ namespace CGAL {
   // This variant uses default diagonalize traits
   template <typename ForwardIterator,
 	    typename PointPMap >
-  ForwardIterator hierarchical_clustering (ForwardIterator begin,
-					   ForwardIterator end,
-					   PointPMap point_pmap,
-					   const unsigned int size,
-					   const double var_max)
+  ForwardIterator hierarchy_simplify_point_set (ForwardIterator begin,
+						ForwardIterator end,
+						PointPMap point_pmap,
+						const unsigned int size,
+						const double var_max)
   {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
-    return hierarchical_clustering (begin, end, point_pmap, size, var_max,
-				    Default_diagonalize_traits<double, 3> (), Kernel());
+    return hierarchy_simplify_point_set (begin, end, point_pmap, size, var_max,
+					 Default_diagonalize_traits<double, 3> (), Kernel());
   }
   /// @endcond  
 
   /// @cond SKIP_IN_MANUAL
   // This variant creates a default point property map = Identity_property_map.
   template <typename ForwardIterator >
-  ForwardIterator hierarchical_clustering (ForwardIterator begin,
-					   ForwardIterator end,
-					   const unsigned int size = 10,
-					   const double var_max = 0.333)
+  ForwardIterator hierarchy_simplify_point_set (ForwardIterator begin,
+						ForwardIterator end,
+						const unsigned int size = 10,
+						const double var_max = 0.333)
   {
-    return hierarchical_clustering
+    return hierarchy_simplify_point_set
       (begin, end,
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
        make_dereference_property_map(first),
@@ -378,4 +381,4 @@ namespace CGAL {
 
 } // namespace CGAL
 
-#endif // HIERARCHICAL_CLUSTERING_H
+#endif // HIERARCHY_SIMPLIFY_POINT_SET_H
