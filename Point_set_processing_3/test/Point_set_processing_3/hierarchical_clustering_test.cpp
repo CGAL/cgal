@@ -1,3 +1,5 @@
+#include <limits>
+
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/hierarchical_clustering.h>
 #include <CGAL/IO/read_xyz_points.h>
