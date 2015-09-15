@@ -6787,9 +6787,6 @@ operator>> (std::istream& is, Periodic_3_regular_triangulation_3<GT,TDS> &tr)
 {
   typedef Periodic_3_regular_triangulation_3<GT,TDS>   P3RT3;
   typedef typename P3RT3::Base                          Base;
-  typedef typename P3RT3::Vertex_iterator               Vertex_iterator;
-  typedef typename GT::FT FT;
-  typedef typename P3RT3::Vertex_handle                 Vertex_handle;
 
   is >> static_cast<Base&>(tr);
 
