@@ -833,8 +833,8 @@ public:
     //////    Iso_cuboid unitaire ->  0 <= weight < 0.015625
     test_insert_rnd_as_delaunay(100, 0.);
     test_insert_rnd_as_delaunay(100, 0.01);
-    test_insert_rnd_then_remove_all(5000, 7);
-    test_insert_rnd_then_remove_all(5000, 12);
+    test_insert_rnd_then_remove_all(800, 7);
+    test_insert_rnd_then_remove_all(800, 12);
   }
 };
 
