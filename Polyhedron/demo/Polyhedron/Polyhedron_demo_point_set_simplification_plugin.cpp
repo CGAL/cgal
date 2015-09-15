@@ -56,6 +56,7 @@ public:
 public Q_SLOTS:
   void on_actionSimplify_triggered();
 
+
 }; // end Polyhedron_demo_point_set_simplification_plugin
 
 class Point_set_demo_point_set_simplification_dialog : public QDialog, private Ui::PointSetSimplificationDialog
@@ -80,6 +81,31 @@ class Point_set_demo_point_set_simplification_dialog : public QDialog, private U
   double gridCellSize() const { return m_gridCellSize->value(); }
   unsigned int maximumClusterSize() const { return m_maximumClusterSize->value(); }
   double maximumSurfaceVariation() const { return m_maximumSurfaceVariation->value(); }
+
+public Q_SLOTS:
+  
+  void on_Random_toggled (bool toggled)
+  {
+    m_randomSimplificationPercentage->setEnabled (toggled);
+    m_gridCellSize->setEnabled (!toggled);
+    m_maximumClusterSize->setEnabled (!toggled);
+    m_maximumSurfaceVariation->setEnabled (!toggled);
+  }
+  void on_Grid_toggled (bool toggled)
+  {
+    m_randomSimplificationPercentage->setEnabled (!toggled);
+    m_gridCellSize->setEnabled (toggled);
+    m_maximumClusterSize->setEnabled (!toggled);
+    m_maximumSurfaceVariation->setEnabled (!toggled);
+  }
+  void on_Hierarchy_toggled (bool toggled)
+  {
+    m_randomSimplificationPercentage->setEnabled (!toggled);
+    m_gridCellSize->setEnabled (!toggled);
+    m_maximumClusterSize->setEnabled (toggled);
+    m_maximumSurfaceVariation->setEnabled (toggled);
+  }
+
 };
 
 void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggered()

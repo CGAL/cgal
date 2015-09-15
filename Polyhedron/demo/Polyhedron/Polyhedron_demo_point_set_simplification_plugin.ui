@@ -79,6 +79,9 @@
    </item>
    <item row="5" column="1">
     <widget class="QDoubleSpinBox" name="m_gridCellSize">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="suffix">
       <string> * average spacing</string>
      </property>
@@ -115,6 +118,9 @@
    </item>
    <item row="7" column="1">
     <widget class="QSpinBox" name="m_maximumClusterSize">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="minimum">
       <number>1</number>
      </property>
@@ -135,6 +141,9 @@
    </item>
    <item row="8" column="1">
     <widget class="QDoubleSpinBox" name="m_maximumSurfaceVariation">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
      <property name="suffix">
       <string/>
      </property>
