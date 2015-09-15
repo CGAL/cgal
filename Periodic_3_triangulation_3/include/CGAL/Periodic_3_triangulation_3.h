@@ -265,6 +265,8 @@ public:
   {
   }
   
+  virtual ~Periodic_3_triangulation_3 () {}
+
   /** @name Assignment */ //@{
   Periodic_3_triangulation_3 & operator=(Periodic_3_triangulation_3& tr) {
     swap(tr);
