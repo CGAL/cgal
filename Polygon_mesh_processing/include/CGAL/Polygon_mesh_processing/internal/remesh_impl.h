@@ -516,7 +516,7 @@ namespace internal {
           vertex_descriptor vkept = CGAL::Euler::collapse_edge(edge(he, mesh_), mesh_);
           put(vpmap_, vkept, target_point);
           ++nb_collapses;
-          
+
           fix_degenerate_faces(vkept, short_edges, sq_low);
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -1012,6 +1012,8 @@ namespace internal {
       BOOST_FOREACH(halfedge_descriptor h,
                     halfedges_around_target(halfedge(v, mesh_), mesh_))
       {
+        if (is_border(h, mesh_))
+          continue;
         if (PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()))
           degenerate_faces.push_back(h);
       }
@@ -1064,9 +1066,11 @@ namespace internal {
                 short_edges.insert(typename Bimap::value_type(hf, sqlen));
             }
 
-            if (PMP::is_degenerated(hf, mesh_, vpmap_, GeomTraits()))
+            if (!is_border(hf, mesh_)
+              && PMP::is_degenerated(hf, mesh_, vpmap_, GeomTraits()))
               degenerate_faces.push_back(hf);
-            if (PMP::is_degenerated(hfo, mesh_, vpmap_, GeomTraits()))
+            if (!is_border(hfo, mesh_)
+              && PMP::is_degenerated(hfo, mesh_, vpmap_, GeomTraits()))
               degenerate_faces.push_back(hfo);
 
             break;
@@ -1083,6 +1087,8 @@ namespace internal {
       BOOST_FOREACH(halfedge_descriptor h,
                     halfedges_around_target(he, mesh_))
       {
+        if (is_border(h, mesh_))
+          continue;
         if (PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()))
           return true;
       }
