@@ -138,7 +138,7 @@ functions in this component.)
 \section Point_set_processing_3Simplification Simplification
 
 
-Three simplification functions are devised to reduce an input point set.
+Four simplification functions are devised to reduce an input point set.
 
 Function `random_simplify_point_set()` randomly deletes a
 user-specified fraction of points from the input point set. This
@@ -150,11 +150,11 @@ points sharing the same cell of the grid by picking as representant
 one arbitrarily chosen point. This algorithm is slower than
 `random_simplify_point_set()`.
 
-Function `hierarchy_simplify_point_set()` provides an adaptative
-simplification of the point set through local
-clusters\cgalCite{cgal:pgk-esops-02}. The size of the clusters is
-either directly selected by the user or it automatically adapts to the
-local variation of the point set .
+Function `hierarchy_simplify_point_set()` provides an adaptive
+simplification of the point set through local clusters
+\cgalCite{cgal:pgk-esops-02}. The size of the clusters is either
+directly selected by the user or it automatically adapts to the local
+variation of the point set.
 
 Function `wlop_simplify_and_regularize_point_set()` not only simplifies, 
 but also regularizes downsampled points. This is an implementation of
