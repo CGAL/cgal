@@ -251,25 +251,26 @@ namespace CGAL {
 		++ current_cluster_size;
 	      }
 
-	    // If one of the clusters is empty, only keep the non-empty one
+	    // If one of the clusters is empty, stop to avoid infinite
+	    // loop and keep the non-empty one
 	    if (current_cluster->first.empty () || negative_side->first.empty ())
 	      {
-		cluster_iterator empty, nonempty;
-		if (current_cluster->first.empty ())
-		  {
-		    empty = current_cluster;
-		    nonempty = negative_side;
-		  }
-		else
-		  {
-		    empty = negative_side;
-		    nonempty = current_cluster;
-		  }
+		cluster_iterator nonempty = (current_cluster->first.empty ()
+					     ? negative_side : current_cluster);
 
-		nonempty->second = internal::hsps_centroid (nonempty->first.begin (), nonempty->first.end (),
-							   point_pmap, Kernel());
-
-		clusters_stack.erase (empty);
+		// Compute the centroid
+		nonempty->second = internal::hsps_centroid (nonempty->first.begin (),
+							    nonempty->first.end (),
+							    point_pmap, Kernel());
+		
+		internal::hsc_terminate_cluster (nonempty->first,
+						 points_to_keep,
+						 points_to_remove,
+						 point_pmap,
+						 nonempty->second,
+						 Kernel ());
+		clusters_stack.pop_front ();
+		clusters_stack.pop_front ();
 	      }
 	    else
 	      {
@@ -278,8 +279,8 @@ namespace CGAL {
 		
 		// Compute the first centroid
 		current_cluster->second = internal::hsps_centroid (current_cluster->first.begin (),
-								  current_cluster->first.end (),
-								  point_pmap, Kernel());
+								   current_cluster->first.end (),
+								   point_pmap, Kernel());
 
 		// The second centroid can be computed with the first and
 		// the old ones :

@@ -16,10 +16,14 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::FT FT;
 
 void test (std::vector<Point>& input,
-	   int result1 = 1, int result2 = 1, int result3 = 1, int result4 = 1)
+	   int result0 = 1, int result1 = 1, int result2 = 1, int result3 = 1, int result4 = 1)
 {
   typename std::vector<Point>::iterator it = 
-    CGAL::hierarchy_simplify_point_set (input.begin (), input.end ());
+    CGAL::hierarchy_simplify_point_set (input.begin (), input.end (), 1);
+  if (result0 > 0 && std::distance (input.begin (), it) != (result0))
+    exit (EXIT_FAILURE);
+
+  it = CGAL::hierarchy_simplify_point_set (input.begin (), input.end ());
   if (result1 > 0 && std::distance (input.begin (), it) != (result1))
     exit (EXIT_FAILURE);
 
@@ -61,25 +65,25 @@ int main(void)
   // Test 2 points
   input.push_back (Point (0., 0., 0.));
   input.push_back (Point (1., 0., 0.));
-  test (input);
+  test (input, 2);
 
   // Test line
   for (std::size_t i = 0; i < 1000; ++ i)
     input.push_back (Point (0., 0., i));
-  test (input, 128, 16, 1, 1);
+  test (input, input.size (), 128, 16, 1, 1);
   
   // Test plane
   for (std::size_t i = 0; i < 128; ++ i)
     for (std::size_t j = 0; j < 128; ++ j)
       input.push_back (Point (0., j, i));
-  test (input, 2048, 256, 32, 1);
+  test (input, input.size (), 2048, 256, 32, 1);
   
   // Test random
   for (std::size_t i = 0; i < 10000; ++ i)
     input.push_back (Point (rand() / (FT)RAND_MAX,
-			    rand() / (FT)RAND_MAX,
-			    rand() / (FT)RAND_MAX));
-  test (input, -1, -1, -1, -1);
+  			    rand() / (FT)RAND_MAX,
+  			    rand() / (FT)RAND_MAX));
+  test (input, input.size (), -1, -1, -1, -1);
   
   return EXIT_SUCCESS;
 }
