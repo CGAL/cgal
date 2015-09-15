@@ -500,6 +500,7 @@ namespace internal {
           }
 
           //before collapse
+          bool mesh_border_case     = is_on_border(opposite(he, mesh_));
           halfedge_descriptor ep_p  = prev(opposite(he, mesh_), mesh_);
           halfedge_descriptor epo_p = opposite(ep_p, mesh_);
           halfedge_descriptor en    = next(he, mesh_);
@@ -509,17 +510,16 @@ namespace internal {
           Halfedge_status s_ep      = status(prev(he, mesh_));
           Halfedge_status s_epo     = status(opposite(prev(he, mesh_), mesh_));
 
-          bool mesh_border_case = is_on_border(opposite(he, mesh_));
-          if (!mesh_border_case)
-            halfedge_and_opp_removed(prev(opposite(he, mesh_), mesh_));
-          halfedge_and_opp_removed(he);
-          halfedge_and_opp_removed(prev(he, mesh_));
-
           // merge halfedge_status to keep the more important on both sides
           //do it before collapse is performed to be sure everything is valid
           merge_status(en, s_epo, s_ep);
           if (!mesh_border_case)
             merge_status(en_p, s_epo_p, s_ep_p);
+
+          if (!mesh_border_case)
+            halfedge_and_opp_removed(prev(opposite(he, mesh_), mesh_));
+          halfedge_and_opp_removed(he);
+          halfedge_and_opp_removed(prev(he, mesh_));
 
           //perform collapse
           Point target_point = get(vpmap_, vb);
@@ -866,12 +866,16 @@ namespace internal {
       halfedge_descriptor he = halfedge(e, mesh_);
       halfedge_descriptor hopp = opposite(he, mesh_);
 
-      if (is_on_patch(he)) //hopp is also on patch
-        return true;
+      if (!is_on_patch(he)) //hopp is also on patch
+        return false;
+      else if (is_on_patch_border(next(he, mesh_)) && is_on_patch_border(prev(he, mesh_)))
+        return false;//too many cases to be handled
+      else if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
+        return false;//too many cases to be handled
       else if (is_on_patch_border(he) || is_on_patch_border(hopp))
         return !protect_constraints_;//allowed only when no protection
       else
-        return false;
+        return true;
     }
 
     bool collapse_does_not_invert_face(const halfedge_descriptor& h) const
