@@ -92,11 +92,10 @@ QMenu* Scene_item::contextMenu()
     {
         if(!supportsRenderingMode(RenderingMode(mode))) continue;
         QString mName = modeName(RenderingMode(mode));
-        QAction* action =
-                defaultContextMenu->addAction(tr("Set %1 mode")
-                                              .arg(mName),
-                                              this,
-                                              slotName(RenderingMode(mode)));
+        defaultContextMenu->addAction(tr("Set %1 mode")
+                                      .arg(mName),
+                                      this,
+                                      slotName(RenderingMode(mode)));
     }
     // defaultContextMenu->addAction(modeMenu->menuAction());
     return defaultContextMenu;
