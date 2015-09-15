@@ -5,7 +5,6 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
-
 #include <vector>
 #include <fstream>
 
@@ -30,7 +29,9 @@ int main(int argc, char*argv[])
   CGAL::Timer task_timer; task_timer.start();
 
   // simplification by clustering using erase-remove idiom
-  points.erase (CGAL::hierarchy_simplify_point_set (points.begin (), points.end (), 100),
+  points.erase (CGAL::hierarchy_simplify_point_set (points.begin (), points.end (),
+						    100, // Max cluster size
+						    0.01), // Max surface variation
 		points.end ());
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();

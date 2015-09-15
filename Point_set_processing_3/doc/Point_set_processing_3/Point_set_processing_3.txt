@@ -150,17 +150,16 @@ points sharing the same cell of the grid by picking as representant
 one arbitrarily chosen point. This algorithm is slower than
 `random_simplify_point_set()`.
 
+Function `hierarchy_simplify_point_set()` provides an adaptative
+simplification of the point set through local
+clusters\cgalCite{cgal:pgk-esops-02}. The size of the clusters is
+either directly selected by the user or it automatically adapts to the
+local variation of the point set .
+
 Function `wlop_simplify_and_regularize_point_set()` not only simplifies, 
 but also regularizes downsampled points. This is an implementation of
 the Weighted Locally Optimal Projection (WLOP) algorithm \cgalCite{wlop-2009}.
 
-Function `hierarchical_clustering()` is not strictly speaking a
-simplification algorithm as its output is not a subset of the input
-point set. However, it provides an adaptative simplified
-representation of the point set through local clusters: the size of
-the clusters is either directly selected by the user or it
-automatically adapts to the local variation of the point set
-\cgalCite{cgal:pgk-esops-02}.
 
 \subsection Point_set_processing_3Example_3 Grid Simplification Example
 
@@ -170,6 +169,40 @@ The following example reads a point set and simplifies it by clustering.
 \cgalFigureBegin{Point_set_processing_3figgrid_simplification,grid_simplification.jpg}
 Point set simplification through grid-based clustering. Removed points are depicted in red. Notice how low-density areas (in green) are not simplified.
 \cgalFigureEnd
+
+\subsection Point_set_processing_3Example_9 Hierarchy Simplification Example
+The following example reads a point set and produces a set of clusters.
+
+\cgalExample{Point_set_processing_3/hierarchy_simplification_example.cpp}
+
+\subsubsection Point_set_processing_3Hierarchy_simplification_parameter_size Parameter: size
+The hierarchy simplification algorithm recursively split the point set
+in two until each cluster's size is less than the parameter `size`.
+
+\cgalFigureBegin{Point_set_processing_3figHierarchy_simplification_size, hierarchical_clustering_size.jpg}
+Input point set and hierarchy simplification with different `size`
+parameter: \f$10\f$, \f$100\f$ and \f$1000\f$. In the 3 cases,
+`var_max`\f$=1/3\f$.  \cgalFigureEnd
+
+
+\subsubsection Point_set_processing_3Hierarchy_simplification_parameter_var_max Parameter: var_max
+In addition to the size parameter, a variation parameter allows to
+increase simplification in monotoneous regions. For each cluster, a
+surface variation measure is computed using the sorted eigenvalues of
+the covariance matrix: \f[ \sigma(p) = \frac{\lambda_0}{\lambda_0 +
+    \lambda_1 + \lambda_2}. \f]
+
+This function goes from \f$0\f$ if the cluster is coplanar to
+\f$1/3\f$ if it is fully isotropic. If a cluster's variation is above
+`var_max`, it is splitted. If `var_max` is equal to \f$1/3\f$, this
+parameter has no effect and the clustering is regular on the whole
+point set.
+
+\cgalFigureBegin{Point_set_processing_3figHierarchical_clustering_var_max, hierarchical_clustering_var_max.jpg}
+Input point set and hierarchy simplification with different `var_max`
+parameter: \f$0.00001\f$, \f$0.001\f$ and \f$0.1\f$. In the 3 cases,
+`size`\f$=1000\f$.  \cgalFigureEnd
+
 
 \subsection Point_set_processing_3Example_4 WLOP Simplification Example
 The following example reads a point set, simplifies and regularizes it by WLOP.
@@ -204,39 +237,6 @@ for more details. We provide below a speed-up chart generated using the parallel
 
 \cgalFigureBegin{Point_set_processing_3figWLOP_parallel_performance, parallel_WLOP_performance.jpg}
 Parallel WLOP speed-up, compared to the sequential version of the algorithm. 
-\cgalFigureEnd
-
-\subsection Point_set_processing_3Example_9 Hierarchical Clustering Example
-The following example reads a point set and produces a set of clusters.
-
-\cgalExample{Point_set_processing_3/hierarchical_clustering_example.cpp}
-
-\subsubsection Point_set_processing_3Hierarchical_clustering_parameter_size Parameter: size
-The hierarchical clustering algorithm recursively split the point set
-in two until each cluster's size is less than the parameter `size`.
-
-\cgalFigureBegin{Point_set_processing_3figHierarchical_clustering_size, hierarchical_clustering_size.jpg}
-Input point set and hierarchical clustering with different `size`
-parameter: \f$10\f$, \f$100\f$ and \f$1000\f$. In the 3 cases, `var_max`\f$=1/3\f$.
-\cgalFigureEnd
-
-
-\subsubsection Point_set_processing_3Hierarchical_clustering_parameter_var_max Parameter: var_max
-In addition to the size parameter, a variation parameter allows to
-increase simplification in monotoneous regions. For each cluster, a
-surface variation measure is computed using the sorted eigenvalues of
-the covariance matrix: \f[ \sigma(p) = \frac{\lambda_0}{\lambda_0 +
-    \lambda_1 + \lambda_2}. \f]
-
-This function goes from \f$0\f$ if the cluster is coplanar to
-\f$1/3\f$ if it is fully isotropic. If a cluster's variation is above
-`var_max`, it is splitted. If `var_max` is equal to \f$1/3\f$, this
-parameter has no effect and the clustering is regular on the whole
-point set.
-
-\cgalFigureBegin{Point_set_processing_3figHierarchical_clustering_var_max, hierarchical_clustering_var_max.jpg}
-Input point set and hierarchical clustering with different `var_max`
-parameter: \f$0.00001\f$, \f$0.001\f$ and \f$0.1\f$. In the 3 cases, `size`\f$=1000\f$.
 \cgalFigureEnd
 
 
