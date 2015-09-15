@@ -3801,7 +3801,6 @@ operator>> (std::istream& is, Periodic_3_triangulation_3<GT,TDS> &tr)
   CGAL_triangulation_precondition(is.good());
 
   typedef Periodic_3_triangulation_3<GT,TDS>       Triangulation;
-  typedef typename GT::FT FT;
   typedef typename Triangulation::size_type             size_type;
   typedef typename Triangulation::Vertex_handle         Vertex_handle;
   typedef typename Triangulation::Cell_handle           Cell_handle;
