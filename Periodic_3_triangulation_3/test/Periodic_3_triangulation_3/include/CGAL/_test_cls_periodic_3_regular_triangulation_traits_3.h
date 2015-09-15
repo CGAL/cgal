@@ -30,12 +30,12 @@ void _test_for_given_domain (const Traits & traits, typename Traits::Weighted_po
 {
   typedef typename Traits::Weighted_point Weighted_point;
   typedef typename Traits::Bare_point Bare_point;
-  typedef typename Traits::Vector_3 Vector;
+  CGAL_USE_TYPE(typename Traits::Vector_3);
   typedef typename Traits::Periodic_3_offset_3 Offset;
   CGAL_USE_TYPE(typename Traits::Iso_cuboid_3);
-  typedef typename Traits::Segment_3 Segment;
-  typedef typename Traits::Triangle_3 Triangle;
-  typedef typename Traits::Tetrahedron_3 Tetrahedron;
+  CGAL_USE_TYPE(typename Traits::Segment_3);
+  CGAL_USE_TYPE(typename Traits::Triangle_3);
+  CGAL_USE_TYPE(typename Traits::Tetrahedron_3);
 
   CGAL_USE_TYPE(typename Traits::Comparison_result);
   CGAL_USE_TYPE(typename Traits::Orientation);
@@ -44,13 +44,13 @@ void _test_for_given_domain (const Traits & traits, typename Traits::Weighted_po
 
   typedef typename Traits::Compare_power_distance_3 Compare_power_distance_3;
 
-  typedef typename Traits::Compare_xyz_3 Compare_xyz_3;
-  typedef typename Traits::Orientation_3 Orientation_3;
-  typedef typename Traits::Coplanar_orientation_3 Coplanar_orientation_3;
+  CGAL_USE_TYPE(typename Traits::Compare_xyz_3);
+  CGAL_USE_TYPE(typename Traits::Orientation_3);
+  CGAL_USE_TYPE(typename Traits::Coplanar_orientation_3);
 
-  typedef typename Traits::Construct_segment_3 Construct_segment_3;
-  typedef typename Traits::Construct_triangle_3 Construct_triangle_3;
-  typedef typename Traits::Construct_tetrahedron_3 Construct_tetrahedron_3;
+  CGAL_USE_TYPE(typename Traits::Construct_segment_3);
+  CGAL_USE_TYPE(typename Traits::Construct_triangle_3);
+  CGAL_USE_TYPE(typename Traits::Construct_tetrahedron_3);
 
   typedef typename Traits::Construct_weighted_circumcenter_3 Construct_weighted_circumcenter_3;
 
