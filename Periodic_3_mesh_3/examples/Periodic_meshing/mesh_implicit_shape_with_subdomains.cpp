@@ -26,7 +26,7 @@ typedef CGAL::Implicit_to_labeled_subdomains_function_wrapper<Function, K> Funct
 typedef CGAL::Periodic_implicit_mesh_domain_3<Function,K, Function_wrapper> Periodic_mesh_domain;
 
 // Triangulation
-typedef CGAL::Mesh_3_periodic_triangulation_3_generator<Periodic_mesh_domain>::type Mesh_3_periodic_triangulation_3;
+typedef CGAL::Mesh_periodic_3_triangulation_3<Periodic_mesh_domain>::type Mesh_3_periodic_triangulation_3;
 typedef Mesh_3_periodic_triangulation_3 Tr;
 
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;

@@ -21,7 +21,7 @@ typedef FT (Function)(const Point&);
 typedef CGAL::Periodic_implicit_mesh_domain_3<Function,K> Periodic_mesh_domain;
 
 // Triangulation
-typedef CGAL::Mesh_3_periodic_triangulation_3_generator<Periodic_mesh_domain>::type Mesh_3_periodic_triangulation_3;
+typedef CGAL::Mesh_periodic_3_triangulation_3<Periodic_mesh_domain>::type Mesh_3_periodic_triangulation_3;
 typedef Mesh_3_periodic_triangulation_3 Tr;
 
 typedef Tr::Iso_cuboid Iso_cuboid;

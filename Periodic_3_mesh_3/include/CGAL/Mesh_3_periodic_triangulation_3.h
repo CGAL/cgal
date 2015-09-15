@@ -487,7 +487,7 @@ namespace details {
 }  // end namespace details
 
 template<class MD, class K=typename Kernel_traits<MD>::Kernel>
-struct Mesh_3_periodic_triangulation_3_generator
+struct Mesh_periodic_3_triangulation_3
 {
 private:
   // traits
