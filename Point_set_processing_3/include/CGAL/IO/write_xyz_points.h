@@ -46,7 +46,7 @@ namespace CGAL {
 ///
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value type = `Point_3<Kernel>`.
-///        It can be omitted if the value type of `ForwardIterator value_type is convertible to `Point_3<Kernel>`.
+///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
 /// @tparam NormalPMap is a model of `ReadablePropertyMap` with a value type  `Vector_3<Kernel>`.
 /// @tparam Kernel Geometric traits class.
 ///        It can be omitted and deduced automatically from the value type of `PointPMap`.
