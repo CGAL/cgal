@@ -114,6 +114,54 @@ and <code>src/</code> directories).
 </table>
 
 <HR>
+<h2 id="release4.8">Release 4.8 </h2>
+<div>
+  <p>Release date:  </p>
+
+<!-- Installation (and general changes) -->
+<!-- New packages -->
+<!-- Major and breaking changes -->
+<!-- Arithmetic and Algebra -->
+<!-- Combinatorial Algorithms -->
+<!-- Geometry Kernels -->
+<!-- Convex Hull Algorithms -->
+<!-- Polygons -->
+<!-- Cell Complexes and Polyhedra -->
+<!-- Arrangements -->
+<!-- Triangulations and Delaunay Triangulations -->
+<!-- Voronoi Diagrams -->
+<!-- Mesh Generation -->
+<!-- Geometry Processing -->
+<!-- Spatial Searching and Sorting -->
+<!-- Geometric Optimization -->
+  <h3>Principal Component Analysis</h3>
+  <ul>
+    <li>
+      Add a template parameter <code>DiagonalizeTraits</code> for
+      functions <code>CGAL::linear_least_squares_fitting_2()</code>
+      and <code>CGAL::linear_least_squares_fitting_3()</code>. This
+      allows to either choose the legacy internal diagonalization code
+      from CGAL or the Eigen implementation (or any class that is a
+      model of <code>DiagonalizeTraits</code>). Variants of the
+      function that automatically deduce the kernel also automatically
+      select the diagonalizer, so the API is mostly preserved.
+    </li>
+  </ul>
+<!-- Interpolation -->
+<!-- Kinetic Data Structures -->
+<!-- Support Library -->
+  <h3>CGAL and Solvers</h3>
+  <ul>
+    <li>
+      This package now includes all CGAL concepts for solvers with
+      models using the third party Eigen library.
+    </li>
+  </ul>
+<!-- Visualization -->
+
+<!-- end of the div for 4.8 -->
+</div>
+
 <h2 id="release4.7">Release 4.7 </h2>
 <div>
   <p>Release date: September 2015 </p>
