@@ -65,7 +65,7 @@ and this solver:
 We define 3 concepts for sparse linear algebra:
 
 - `SparseLinearAlgebraTraits_d`
-- `SparseLinearAlgebraTraitsWithFactor_d`
+- `SparseLinearAlgebraWithFactorTraits_d`
 - `NormalEquationSparseLinearAlgebraTraits_d`
 
 An interface to the sparse solvers from the \ref thirdpartyEigen

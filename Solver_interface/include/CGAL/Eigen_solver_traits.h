@@ -71,7 +71,7 @@ namespace internal {
 /// The default solver is the iterative bi-congugate gradient stabilized solver
 /// <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1BiCGSTAB.html">Eigen::BiCGSTAB</a> for double.
 ///
-/// \cgalModels `SparseLinearAlgebraTraitsWithFactor_d`.
+/// \cgalModels `SparseLinearAlgebraWithFactorTraits_d`.
 
 template<class EigenSolverT = Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> >
 class Eigen_solver_traits

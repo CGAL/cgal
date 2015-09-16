@@ -73,5 +73,5 @@ bool normal_equation_solver(const Matrix& A, const Vector& B, Vector& X);
 
 /// @}
 
-}; /* end SparseLinearAlgebraTraitsWithFactor_d */
+}; /* end NormalEquationSparseLinearAlgebraTraits_d */
 

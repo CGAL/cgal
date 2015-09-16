@@ -27,7 +27,7 @@
 
 - `DiagonalizeTraits`
 - `SparseLinearAlgebraTraits_d`
-- `SparseLinearAlgebraTraitsWithFactor_d`
+- `SparseLinearAlgebraWithFactorTraits_d`
 - `SvdTraits`
 
 
