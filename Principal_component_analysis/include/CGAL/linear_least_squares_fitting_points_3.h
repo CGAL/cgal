@@ -35,7 +35,7 @@ namespace internal {
 //  0 is worst (isotropic case, returns a plane with default direction)
 template < typename InputIterator, 
            typename K,
-	   typename Diagonalize_traits >
+	   typename DiagonalizeTraits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -44,7 +44,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                const typename K::Point_3*, // used for indirection
                                const K& k,                 // kernel
 			       const CGAL::Dimension_tag<0>& tag,
-			       const Diagonalize_traits& diagonalize_traits)
+			       const DiagonalizeTraits& diagonalize_traits)
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
@@ -69,7 +69,7 @@ linear_least_squares_fitting_3(InputIterator first,
 //  0 is worst (isotropic case, returns a line along x axis)
 template < typename InputIterator, 
            typename K,
-	   typename Diagonalize_traits >
+	   typename DiagonalizeTraits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -78,7 +78,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                const typename K::Point_3*, // used for indirection
                                const K& k,                // kernel
 			       const CGAL::Dimension_tag<0>& tag,
-			       const Diagonalize_traits& diagonalize_traits)
+			       const DiagonalizeTraits& diagonalize_traits)
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;

@@ -34,7 +34,7 @@ namespace internal {
 // fits a plane to a 3D triangle set
 template < typename InputIterator, 
            typename K,
-	   typename Diagonalize_traits >
+	   typename DiagonalizeTraits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -43,7 +43,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                const typename K::Triangle_3*,  // used for indirection
                                const K& k,                   // kernel
 			       const CGAL::Dimension_tag<2>& tag,
-			       const Diagonalize_traits& diagonalize_traits)
+			       const DiagonalizeTraits& diagonalize_traits)
 {
   typedef typename K::FT          FT;
   typedef typename K::Triangle_3  Triangle;
@@ -66,7 +66,7 @@ linear_least_squares_fitting_3(InputIterator first,
 // fits a plane to a 3D triangle set
 template < typename InputIterator, 
            typename K,
-	   typename Diagonalize_traits >
+	   typename DiagonalizeTraits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -75,7 +75,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                const typename K::Triangle_3*,  // used for indirection
                                const K& k,                   // kernel
 			       const CGAL::Dimension_tag<1>& tag,
-			       const Diagonalize_traits& diagonalize_traits)
+			       const DiagonalizeTraits& diagonalize_traits)
 {
   typedef typename K::Triangle_3  Triangle;
   typedef typename K::Segment_3  Segment;
@@ -103,7 +103,7 @@ linear_least_squares_fitting_3(InputIterator first,
 // fits a plane to a 3D triangle set
 template < typename InputIterator, 
            typename K,
-	   typename Diagonalize_traits >
+	   typename DiagonalizeTraits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -112,7 +112,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                const typename K::Triangle_3*,  // used for indirection
                                const K& k,                   // kernel
 			       const CGAL::Dimension_tag<0>& tag,
-			       const Diagonalize_traits& diagonalize_traits)
+			       const DiagonalizeTraits& diagonalize_traits)
 {
   typedef typename K::Triangle_3  Triangle;
   typedef typename K::Point_3  Point;
@@ -139,7 +139,7 @@ linear_least_squares_fitting_3(InputIterator first,
 // fits a line to a 3D triangle set
 template < typename InputIterator, 
            typename K,
-	   typename Diagonalize_traits >
+	   typename DiagonalizeTraits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -148,7 +148,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                const typename K::Triangle_3*,  // used for indirection
                                const K& k,                   // kernel
 			       const CGAL::Dimension_tag<2>& tag,
-			       const Diagonalize_traits& diagonalize_traits)
+			       const DiagonalizeTraits& diagonalize_traits)
 {
   typedef typename K::FT          FT;
   typedef typename K::Triangle_3  Triangle;
@@ -171,7 +171,7 @@ linear_least_squares_fitting_3(InputIterator first,
 // fits a line to a 3D triangle set
 template < typename InputIterator, 
            typename K,
-	   typename Diagonalize_traits >
+	   typename DiagonalizeTraits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -180,7 +180,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                const typename K::Triangle_3*,  // used for indirection
                                const K& k,                   // kernel
 			       const CGAL::Dimension_tag<1>& tag,
-			       const Diagonalize_traits& diagonalize_traits)
+			       const DiagonalizeTraits& diagonalize_traits)
 {
   typedef typename K::Triangle_3  Triangle;
   typedef typename K::Segment_3  Segment;
@@ -208,7 +208,7 @@ linear_least_squares_fitting_3(InputIterator first,
 // fits a line to a 3D triangle set
 template < typename InputIterator, 
            typename K,
-	   typename Diagonalize_traits >
+	   typename DiagonalizeTraits >
 typename K::FT
 linear_least_squares_fitting_3(InputIterator first,
                                InputIterator beyond, 
@@ -217,7 +217,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                const typename K::Triangle_3*,  // used for indirection
                                const K& k,                   // kernel
                                const CGAL::Dimension_tag<0>& tag,
-			       const Diagonalize_traits& diagonalize_traits)
+			       const DiagonalizeTraits& diagonalize_traits)
 {
   typedef typename K::Triangle_3  Triangle;
   typedef typename K::Point_3  Point;

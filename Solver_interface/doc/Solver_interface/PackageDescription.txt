@@ -40,7 +40,7 @@
 - `CGAL::Eigen_vector`
 - `CGAL::Eigen_sparse_matrix`
 - `CGAL::Eigen_sparse_symmetric_matrix`
-- `CGAL::Internal_diagonalize_traits`
+- `CGAL::Diagonalize_traits`
 
 */
 

@@ -37,7 +37,7 @@ namespace CGAL {
 template < typename InputIterator, 
            typename Kernel,
 	   typename Tag,
-	   typename Diagonalize_traits>
+	   typename DiagonalizeTraits>
 inline
 typename Kernel::FT
 linear_least_squares_fitting_2(InputIterator first,
@@ -46,7 +46,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename Kernel::Point_2& centroid,
                                const Tag& tag,
 			       const Kernel& kernel,
-			       const Diagonalize_traits& diagonalize_traits)
+			       const DiagonalizeTraits& diagonalize_traits)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   return internal::linear_least_squares_fitting_2(first, beyond, line,
@@ -55,7 +55,7 @@ linear_least_squares_fitting_2(InputIterator first,
 }
 
 // deduces the kernel from the points in container.
-// Use default Diagonalize_traits
+// Use default DiagonalizeTraits
 template < typename InputIterator, 
            typename Line,
            typename Point,

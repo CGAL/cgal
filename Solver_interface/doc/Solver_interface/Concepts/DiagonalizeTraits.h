@@ -13,9 +13,15 @@ follows:
   a[2] & a[4] & a[5] \\
  \end{bmatrix}\f$
 </center>
+
+\tparam FT Number type
+\tparam dim Dimension of the matrices and vectors
+
 \cgalHasModel `CGAL::Eigen_diagonalize_traits`
-\cgalHasModel `CGAL::Internal_diagonalize_traits`
+\cgalHasModel `CGAL::Diagonalize_traits`
+
 */
+
 template <typename FT, unsigned int dim = 3>
 class DiagonalizeTraits
 {

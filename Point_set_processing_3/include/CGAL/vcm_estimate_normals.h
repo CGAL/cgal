@@ -288,7 +288,7 @@ compute_vcm (ForwardIterator first,
 /// this number of neighbors.
 
 // This variant requires all of the parameters.
-template < typename VCM_traits,
+template < typename VCMTraits,
            typename ForwardIterator,
            typename PointPMap,
            typename NormalPMap,
@@ -343,7 +343,7 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
     int i = 0;
     for (ForwardIterator it = first; it != beyond; ++it) {
         cpp11::array<double, 3> enormal = {{ 0,0,0 }};
-        VCM_traits::extract_largest_eigenvector_of_covariance_matrix
+        VCMTraits::extract_largest_eigenvector_of_covariance_matrix
           (cov[i], enormal);
 
         typename Kernel::Vector_3 normal(enormal[0],
@@ -366,17 +366,17 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
-/// \tparam VCM_traits is a model of `DiagonalizeTraits`. It can be
+/// \tparam VCMTraits is a model of `DiagonalizeTraits`. It can be
 /// omitted: if Eigen 3 (or greater) is available and
 /// `CGAL_EIGEN3_ENABLED` is defined then an overload using
 /// `Eigen_diagonalize_traits` is provided. Otherwise, the internal
-/// implementation `Internal_diagonalize_traits` is used.
+/// implementation `Diagonalize_traits` is used.
 // This variant deduces the kernel from the point property map
 // and uses a radius for the convolution.
 template < typename ForwardIterator,
            typename PointPMap,
            typename NormalPMap,
-           typename VCM_traits
+           typename VCMTraits
 >
 void
 vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input point.
@@ -385,16 +385,16 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
                       double offset_radius, ///< offset radius.
                       double convolution_radius, ///< convolution radius.
-                      VCM_traits
+                      VCMTraits
 )
 {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
 
-    vcm_estimate_normals<VCM_traits>(first, beyond,
-                                     point_pmap, normal_pmap,
-                                     offset_radius, convolution_radius,
-                                     Kernel());
+    vcm_estimate_normals<VCMTraits>(first, beyond,
+				    point_pmap, normal_pmap,
+				    offset_radius, convolution_radius,
+				    Kernel());
 }
 
 
@@ -409,18 +409,18 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
 /// @tparam ForwardIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with a value_type = `Kernel::Point_3`.
 /// @tparam NormalPMap is a model of `WritablePropertyMap` with a value_type = `Kernel::Vector_3`.
-/// \tparam VCM_traits is a model of `DiagonalizeTraits`. It can be
+/// \tparam VCMTraits is a model of `DiagonalizeTraits`. It can be
 /// omitted: if Eigen 3 (or greater) is available and
 /// `CGAL_EIGEN3_ENABLED` is defined then an overload using
 /// `Eigen_diagonalize_traits` is provided. Otherwise, the internal
-/// implementation `Internal_diagonalize_traits` is used.
+/// implementation `Diagonalize_traits` is used.
 
 // This variant deduces the kernel from the point property map
 // and uses a number of neighbors for the convolution.
 template < typename ForwardIterator,
            typename PointPMap,
            typename NormalPMap,
-           typename VCM_traits
+           typename VCMTraits
 >
 void
 vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input point.
@@ -429,17 +429,17 @@ vcm_estimate_normals (ForwardIterator first, ///< iterator over the first input 
                       NormalPMap normal_pmap, ///< property map: value_type of ForwardIterator -> Vector_3.
                       double offset_radius, ///< offset radius.
                       unsigned int k, ///< number of neighbor points used for the convolution.
-                      VCM_traits
+                      VCMTraits
 )
 {
     typedef typename boost::property_traits<PointPMap>::value_type Point;
     typedef typename Kernel_traits<Point>::Kernel Kernel;
 
-    vcm_estimate_normals<VCM_traits>(first, beyond,
-                                     point_pmap, normal_pmap,
-                                     offset_radius, 0,
-                                     Kernel(),
-                                     k);
+    vcm_estimate_normals<VCMTraits>(first, beyond,
+				    point_pmap, normal_pmap,
+				    offset_radius, 0,
+				    Kernel(),
+				    k);
 }
 
 

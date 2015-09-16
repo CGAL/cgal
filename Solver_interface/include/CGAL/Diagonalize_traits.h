@@ -1,5 +1,5 @@
-#ifndef CGAL_INTERNAL_DIAGONALIZE_TRAITS_H
-#define CGAL_INTERNAL_DIAGONALIZE_TRAITS_H
+#ifndef CGAL_DIAGONALIZE_TRAITS_H
+#define CGAL_DIAGONALIZE_TRAITS_H
 
 #include <CGAL/array.h>
 
@@ -9,7 +9,7 @@ namespace CGAL {
   /// \cgalModels `DiagonalizeTraits`
 
 template <typename FT, unsigned int dim = 3>
-class Internal_diagonalize_traits{
+class Diagonalize_traits{
 
  public:
     static bool
@@ -244,4 +244,4 @@ class Internal_diagonalize_traits{
 
 } // namespace CGAL
 
-#endif // CGAL_INTERNAL_DIAGONALIZE_TRAITS_H
+#endif // CGAL_DIAGONALIZE_TRAITS_H

@@ -101,7 +101,7 @@ namespace CGAL {
  *  weighted point set. It can be omitted: if Eigen 3 (or greater) is
  *  available and `CGAL_EIGEN3_ENABLED` is defined then an overload
  *  using `Eigen_diagonalize_traits` is provided. Otherwise, the
- *  internal implementation `Internal_diagonalize_traits` is used.
+ *  internal implementation `Diagonalize_traits` is used.
  *  \tparam Ct indicates whether to use concurrent processing. It must be
  *  either `Sequential_tag` or `Parallel_tag` (the default value).
  */

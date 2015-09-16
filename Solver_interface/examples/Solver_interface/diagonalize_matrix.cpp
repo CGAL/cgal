@@ -3,7 +3,7 @@
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_diagonalize_traits.h>
 #else
-#include <CGAL/Internal_diagonalize_traits.h>
+#include <CGAL/Diagonalize_traits.h>
 #endif
 
 typedef double FT;
@@ -15,7 +15,7 @@ typedef CGAL::cpp11::array<FT, 9> Eigen_three_vectors;
 #ifdef CGAL_EIGEN3_ENABLED
 typedef CGAL::Eigen_diagonalize_traits<FT, 3> Diagonalize_traits;
 #else
-typedef CGAL::Internal_diagonalize_traits<FT, 3> Diagonalize_traits;
+typedef CGAL::Diagonalize_traits<FT, 3> Diagonalize_traits;
 #endif
 
 int main(void)

@@ -36,7 +36,7 @@ namespace internal {
 //              direction by default).
 template < typename InputIterator, 
            typename K,
-	   typename Diagonalize_traits>
+	   typename DiagonalizeTraits>
 typename K::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
@@ -45,7 +45,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                const typename K::Point_2*,// used for indirection
                                const K&,                   // kernel
 			       const CGAL::Dimension_tag<0>& tag,
-			       const Diagonalize_traits&)
+			       const DiagonalizeTraits&)
 {
   // types
   typedef typename K::FT       FT;
@@ -84,7 +84,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // eigen vectors are sorted in accordance.
   CGAL::cpp11::array<FT, 2> eigen_values = {{ 0. , 0. }};
   CGAL::cpp11::array<FT, 4> eigen_vectors = {{ 0., 0., 0. }};
-  Diagonalize_traits::diagonalize_selfadjoint_covariance_matrix
+  DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
     (covariance, eigen_values, eigen_vectors);
 
   // check unicity and build fitting line accordingly

@@ -43,7 +43,7 @@ template < typename InputIterator,
            typename Object,
            typename Kernel,
            typename Tag,
-	   typename Diagonalize_traits >
+	   typename DiagonalizeTraits >
 inline
 typename Kernel::FT
 linear_least_squares_fitting_3(InputIterator first,
@@ -52,7 +52,7 @@ linear_least_squares_fitting_3(InputIterator first,
                                typename Kernel::Point_3& centroid, 
                                const Tag& tag, // dimension tag, ranges from 0 to 3
 			       const Kernel& kernel,
-			       const Diagonalize_traits& diagonalize_traits)
+			       const DiagonalizeTraits& diagonalize_traits)
 {
   typedef typename std::iterator_traits<InputIterator>::value_type Value_type;
   return internal::linear_least_squares_fitting_3(first, beyond, object,
@@ -61,7 +61,7 @@ linear_least_squares_fitting_3(InputIterator first,
 }
 
 // deduces kernel from value type of input iterator
-// use default Diagonalize_traits
+// use default DiagonalizeTraits
 template < typename InputIterator, 
            typename Object,
 	   typename Point,
@@ -82,7 +82,7 @@ linear_least_squares_fitting_3(InputIterator first,
 }
 
 // deduces kernel and does not write centroid
-// use default Diagonalize_traits
+// use default DiagonalizeTraits
 template < typename InputIterator, 
            typename Object,
            typename Tag>

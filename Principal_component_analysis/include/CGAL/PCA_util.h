@@ -670,13 +670,13 @@ assemble_covariance_matrix_3(InputIterator first,
 // compute the eigen values and vectors of the covariance 
 // matrix and deduces the best linear fitting plane.
 // returns fitting quality
-template < typename K, typename Diagonalize_traits >
+template < typename K, typename DiagonalizeTraits >
 typename K::FT
 fitting_plane_3(CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance matrix
                 const typename K::Point_3& c,       // centroid
                 typename K::Plane_3& plane,         // best fit plane
                 const K&,                           // kernel
-		const Diagonalize_traits& )                 // Diagonalize traits
+		const DiagonalizeTraits& )                 // Diagonalize traits
 {
   typedef typename K::FT       FT;
   typedef typename K::Plane_3  Plane;
@@ -689,7 +689,7 @@ fitting_plane_3(CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance
   CGAL::cpp11::array<FT, 9> eigen_vectors = {{ 0., 0., 0.,
 					       0., 0., 0.,
 					       0., 0., 0. }};
-  Diagonalize_traits::diagonalize_selfadjoint_covariance_matrix
+  DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
     (covariance, eigen_values, eigen_vectors);
 
   // degenerate case 
@@ -715,13 +715,13 @@ fitting_plane_3(CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance
 // matrix and deduces the best linear fitting line
 // (this is an internal function)
 // returns fitting quality
-template < typename K, typename Diagonalize_traits >
+template < typename K, typename DiagonalizeTraits >
 typename K::FT
 fitting_line_3(CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance matrix
                const typename K::Point_3& c,       // centroid
                typename K::Line_3& line,           // best fit line
 	       const K&,                           // kernel
-	       const Diagonalize_traits& )                 // Diagonalize traits
+	       const DiagonalizeTraits& )                 // Diagonalize traits
 {
   typedef typename K::FT       FT;
   typedef typename K::Line_3   Line;
@@ -734,7 +734,7 @@ fitting_line_3(CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance 
   CGAL::cpp11::array<FT, 9> eigen_vectors = {{ 0., 0., 0.,
 					       0., 0., 0.,
 					       0., 0., 0. }};
-  Diagonalize_traits::diagonalize_selfadjoint_covariance_matrix
+  DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
     (covariance, eigen_values, eigen_vectors);
 
     // isotropic case (infinite number of directions)

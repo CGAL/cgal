@@ -64,11 +64,11 @@ The class `K` is the kernel in which the
 value type of `InputIterator` is defined. It can be omitted and deduced
 automatically from the value type.
 
-The class `Diagonalize_traits` is a model of `DiagonalizeTraits`. It
+The class `DiagonalizeTraits` is a model of `DiagonalizeTraits`. It
 can be omitted: if Eigen 3 (or greater) is available and
 `CGAL_EIGEN3_ENABLED` is defined then an overload using
 `Eigen_diagonalize_traits` is provided. Otherwise, the internal
-implementation `Internal_diagonalize_traits` is used.
+implementation `Diagonalize_traits` is used.
 
 
 \cgalHeading{Requirements}
@@ -84,7 +84,7 @@ implementation `Internal_diagonalize_traits` is used.
 
 
 */
-template < typename InputIterator, typename K, typename Tag, typename Diagonalize_traits > 
+template < typename InputIterator, typename K, typename Tag, typename DiagonalizeTraits > 
 typename K::FT 
 linear_least_squares_fitting_3(InputIterator first,
 InputIterator beyond,
@@ -92,7 +92,7 @@ typename K::Line_3& line,
 typename K::Point_3& centroid, 
 const Tag& tag,
 const K& k,
-const Diagonalize_traits& diagonalize_traits);
+const DiagonalizeTraits& diagonalize_traits);
 
 /*!
 \brief computes the best fitting 3D plane of a 3D object set in the
@@ -108,11 +108,11 @@ of `InputIterator` is defined. It can be omitted and deduced
 automatically from the value type. The tag `tag` identifies the
 dimension to be considered from the objects (see above).
 
-The class `Diagonalize_traits` is a model of `DiagonalizeTraits`. It
+The class `DiagonalizeTraits` is a model of `DiagonalizeTraits`. It
 can be omitted: if Eigen 3 (or greater) is available and
 `CGAL_EIGEN3_ENABLED` is defined then an overload using
 `Eigen_diagonalize_traits` is provided. Otherwise, the internal
-implementation `Internal_diagonalize_traits` is used.
+implementation `Diagonalize_traits` is used.
 
 \cgalHeading{Requirements}
 
@@ -126,7 +126,7 @@ implementation `Internal_diagonalize_traits` is used.
 </OL> 
 
 */
-template < typename InputIterator, typename K, typename Tag, typename Diagonalize_traits > 
+template < typename InputIterator, typename K, typename Tag, typename DiagonalizeTraits > 
 typename K::FT 
 linear_least_squares_fitting_3(InputIterator first,
 InputIterator beyond,
@@ -134,7 +134,7 @@ typename K::Plane_3& plane,
 typename K::Point_3& centroid, 
 const Tag& tag,
 const K& k,
-const Diagonalize_traits& diagonalize_traits);
+const DiagonalizeTraits& diagonalize_traits);
 
 /// @}
 

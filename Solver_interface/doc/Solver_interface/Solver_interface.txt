@@ -30,7 +30,7 @@ the matrices and vector (set to 3 by default). We provide two models
 for this concept:
 
 - `Eigen_diagonalize_traits<T,dim>` uses the \ref thirdpartyEigen library.
-- `Internal_diagonalize_traits<T,dim>` is an internal implementation that does not
+- `Diagonalize_traits<T,dim>` is an internal implementation that does not
 depend on another library.
 
 Although both models achieve the same computation,

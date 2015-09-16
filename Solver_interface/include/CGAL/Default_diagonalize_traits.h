@@ -4,7 +4,7 @@
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_diagonalize_traits.h>
 #else
-#include <CGAL/Internal_diagonalize_traits.h>
+#include <CGAL/Diagonalize_traits.h>
 #endif
 
 
@@ -13,7 +13,7 @@ namespace CGAL {
 
   // Wrapper class designed to automatically use
   // Eigen_diagonalize_traits if Eigen is available and otherwise use
-  // the fallback Internal_diagonalize_traits class.
+  // the fallback Diagonalize_traits class.
   
 template <typename FT, unsigned int dim = 3>
 class Default_diagonalize_traits{
@@ -21,7 +21,7 @@ class Default_diagonalize_traits{
 #ifdef CGAL_EIGEN3_ENABLED
   typedef Eigen_diagonalize_traits<FT, dim> Base;
 #else
-  typedef Internal_diagonalize_traits<FT, dim> Base;
+  typedef Diagonalize_traits<FT, dim> Base;
 #endif
 
 public:

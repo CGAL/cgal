@@ -39,7 +39,7 @@ namespace internal {
 //              direction by default)
 
 template < typename InputIterator,
-           typename Kernel, typename Diagonalize_traits >
+           typename Kernel, typename DiagonalizeTraits >
 typename Kernel::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
@@ -48,7 +48,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                const typename Kernel::Triangle_2*,// used for indirection
                                const Kernel&,                   // kernel
 			       const CGAL::Dimension_tag<2>& tag,
-			       const Diagonalize_traits&)
+			       const DiagonalizeTraits&)
 {
   // types
   typedef typename Kernel::FT       FT;
@@ -126,7 +126,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // eigen vectors are sorted in accordance.
   CGAL::cpp11::array<FT, 2> eigen_values = {{ 0. , 0. }};
   CGAL::cpp11::array<FT, 4> eigen_vectors = {{ 0., 0., 0. }};
-  Diagonalize_traits::diagonalize_selfadjoint_covariance_matrix
+  DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
     (covariance, eigen_values, eigen_vectors);
 
   // check unicity and build fitting line accordingly
@@ -148,7 +148,7 @@ linear_least_squares_fitting_2(InputIterator first,
 
 template < typename InputIterator,
            typename Kernel,
-	   typename Diagonalize_traits >
+	   typename DiagonalizeTraits >
 typename Kernel::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
@@ -157,7 +157,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                const typename Kernel::Triangle_2*,// used for indirection
                                const Kernel&,                   // kernel
 			       const CGAL::Dimension_tag<1>& tag,
-			       const Diagonalize_traits& diagonalize_traits)
+			       const DiagonalizeTraits& diagonalize_traits)
 {
   // types
   typedef typename Kernel::Triangle_2 Triangle;
@@ -184,7 +184,7 @@ linear_least_squares_fitting_2(InputIterator first,
 
 template < typename InputIterator,
            typename Kernel,
-	   typename Diagonalize_traits >
+	   typename DiagonalizeTraits >
 typename Kernel::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
@@ -193,7 +193,7 @@ linear_least_squares_fitting_2(InputIterator first,
                                const typename Kernel::Triangle_2*,// used for indirection
                                const Kernel&,                   // kernel
 			       const CGAL::Dimension_tag<0>& tag,
-			       const Diagonalize_traits& diagonalize_traits)
+			       const DiagonalizeTraits& diagonalize_traits)
 {
   // types
 

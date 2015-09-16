@@ -39,21 +39,21 @@ namespace CGAL {
 /// which however would result in selecting more points on sharper regions.
 /// More details are provided in \cgalCite{cgal:mog-vbcfe-11}.
 ///
-/// \tparam VCM_traits is a model of `DiagonalizeTraits`. It can be
+/// \tparam VCMTraits is a model of `DiagonalizeTraits`. It can be
 /// omitted: if Eigen 3 (or greater) is available and
 /// `CGAL_EIGEN3_ENABLED` is defined then an overload using
 /// `Eigen_diagonalize_traits` is provided. Otherwise, the internal
-/// implementation `Internal_diagonalize_traits` is used.
+/// implementation `Diagonalize_traits` is used.
 /// \sa CGAL::compute_vcm()`
 ///
-template <class FT, class VCM_traits>
+template <class FT, class VCMTraits>
 bool
 vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
                         double threshold,
-                        VCM_traits)
+                        VCMTraits)
 {
     cpp11::array<double,3> eigenvalues;
-    if (!VCM_traits::
+    if (!VCMTraits::
           diagonalize_selfadjoint_covariance_matrix(cov, eigenvalues) )
     {
         return false;
