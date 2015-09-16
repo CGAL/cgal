@@ -1,7 +1,6 @@
 // Copyright (c) 2014  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
 // All rights reserved.
 //
-
 // This file is part of CGAL (www.cgal.org).
 // You can redistribute it and/or modify it under the terms of the GNU
 // General Public License as published by the Free Software Foundation,
@@ -16,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan
+// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
 #ifndef RECONSTRUCTION_TRIANGULATION_2_H
 #define RECONSTRUCTION_TRIANGULATION_2_H

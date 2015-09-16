@@ -1,7 +1,6 @@
 // Copyright (c) 2014  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
 // All rights reserved.
 //
-
 // This file is part of CGAL (www.cgal.org).
 // You can redistribute it and/or modify it under the terms of the GNU
 // General Public License as published by the Free Software Foundation,
@@ -16,10 +15,12 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Fernando de Goes, Pierre Alliez
+// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
 #ifndef COST_H_
 #define COST_H_
+
+#include <algorithm>
 
 template <class FT>
 class Cost
@@ -32,24 +33,22 @@ private:
 
 public:
   Cost()
-{
-    m_norm = 0.0;
-    m_tang = 0.0;
-    m_max_norm = 0.0;
-    m_max_tang = 0.0;
-}
+  : m_norm(0.0),
+    m_tang(0.0),
+    m_max_norm(0.0),
+    m_max_tang(0.0)
+  {}
 
   Cost(const FT norm, const FT tang)
-  {
-    m_norm = norm;
-    m_tang = tang;
-    m_max_norm = norm;
-    m_max_tang = tang;
-  }
+  : m_norm(norm),
+    m_tang(tang),
+    m_max_norm(norm),
+    m_max_tang(tang)
+  {}
 
-  ~Cost() { }
+  ~Cost() {}
 
-  Cost& operator = (const Cost& cost)
+  Cost& operator= (const Cost& cost)
   {
     m_norm = cost.norm();
     m_tang = cost.tang();
@@ -103,4 +102,4 @@ public:
   }
 };
 
-#endif
+#endif // COST_H_

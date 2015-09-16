@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Fernando de Goes, Pierre Alliez
+// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
 #ifndef SAMPLE_H
 #define SAMPLE_H

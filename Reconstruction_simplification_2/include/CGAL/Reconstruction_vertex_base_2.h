@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Fernando de Goes, Pierre Alliez
+// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
 #ifndef RECONSTRUCTION_VERTEX_BASE_2_H_
 #define RECONSTRUCTION_VERTEX_BASE_2_H_
@@ -95,7 +95,7 @@ public:
     m_relevance = 0;
   }
 
-  virtual ~Reconstruction_vertex_base_2() { }
+  ~Reconstruction_vertex_base_2() { }
 
   int  id() const { return m_id; }
   int& id() { return m_id; }

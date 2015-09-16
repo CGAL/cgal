@@ -1,7 +1,6 @@
 // Copyright (c) 2014  INRIA Sophia-Antipolis (France), INRIA Lorraine LORIA.
 // All rights reserved.
 //
-
 // This file is part of CGAL (www.cgal.org).
 // You can redistribute it and/or modify it under the terms of the GNU
 // General Public License as published by the Free Software Foundation,
@@ -16,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Fernando de Goes, Pierre Alliez
+// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
 #ifndef RECONSTRUCTION_FACE_BASE_2_H_
 #define RECONSTRUCTION_FACE_BASE_2_H_
@@ -28,7 +27,6 @@
 #include <vector>
 
 /// \cond SKIP_IN_MANUAL
-
 
 
 /// The Reconstruction_face_base_2 class is the default
@@ -43,14 +41,13 @@ template < class Kernel, class Fb = Triangulation_face_base_2<Kernel> >
 class Reconstruction_face_base_2 : public Fb
 {
 public:
-
-
   typedef Fb Base;
   typedef typename Base::Vertex_handle Vertex_handle;
   typedef typename Base::Face_handle   Face_handle;
 
   template < typename TDS2 >
-  struct Rebind_TDS {
+  struct Rebind_TDS 
+  {
     typedef typename Base::template Rebind_TDS<TDS2>::Other Fb2;
     typedef Reconstruction_face_base_2<Kernel,Fb2> Other;
   };
@@ -72,59 +69,48 @@ private:
 
 public:
   Reconstruction_face_base_2()
-: Base()
-{
-    init();
-}
-
-  Reconstruction_face_base_2(Vertex_handle v1,
-      Vertex_handle v2,
-      Vertex_handle v3)
-  : Base(v1,v2,v3)
   {
     init();
   }
 
-  Reconstruction_face_base_2(Vertex_handle v1,
-      Vertex_handle v2,
-      Vertex_handle v3,
-      Face_handle f1,
-      Face_handle f2,
-      Face_handle f3)
-  : Base(v1,v2,v3,f1,f2,f3)
+  Reconstruction_face_base_2(
+    Vertex_handle v1, Vertex_handle v2, Vertex_handle v3)
+  : Base(v1, v2, v3)
+  {
+    init();
+  }
+
+  Reconstruction_face_base_2(
+    Vertex_handle v1, Vertex_handle v2, Vertex_handle v3,
+    Face_handle f1, Face_handle f2, Face_handle f3)
+  : Base(v1, v2, v3, f1, f2, f3)
   {
     init();
   }
 
   Reconstruction_face_base_2(Face_handle f)
-  : Base(f)
-  {
-    m_samples[0] = f->samples(0);
-    m_samples[1] = f->samples(1);
-    m_samples[2] = f->samples(2);
+  : Base(f),
+    m_samples[0](f->samples(0)),
+    m_samples[1](f->samples(1)),
+    m_samples[2](f->samples(2)),
+    m_mass[0](f->mass(0)),
+    m_mass[1](f->mass(1)),
+    m_mass[2](f->mass(2)),
+    m_cost0[0](f->vertex_cost(0)),
+    m_cost0[1](f->vertex_cost(1)),
+    m_cost0[2](f->vertex_cost(2)),
+    m_cost1[0](f->edge_cost(0)),
+    m_cost1[1](f->edge_cost(1)),
+    m_cost1[2](f->edge_cost(2)),
+    m_plan[0](f->plan(0)),
+    m_plan[1](f->plan(1)),
+    m_plan[2](f->plan(2)),
+    m_relevance[0](f->relevance(0)),
+    m_relevance[1](f->relevance(1)),
+    m_relevance[2](f->relevance(2))
+  {}
 
-    m_mass[0] = f->mass(0);
-    m_mass[1] = f->mass(1);
-    m_mass[2] = f->mass(2);
-
-    m_cost0[0] = f->vertex_cost(0);
-    m_cost0[1] = f->vertex_cost(1);
-    m_cost0[2] = f->vertex_cost(2);
-
-    m_cost1[0] = f->edge_cost(0);
-    m_cost1[1] = f->edge_cost(1);
-    m_cost1[2] = f->edge_cost(2);
-
-    m_plan[0] = f->plan(0);
-    m_plan[1] = f->plan(1);
-    m_plan[2] = f->plan(2);
-
-    m_relevance[0] = f->relevance(0);
-    m_relevance[1] = f->relevance(1);
-    m_relevance[2] = f->relevance(2);
-  }
-
-  virtual ~Reconstruction_face_base_2()
+  ~Reconstruction_face_base_2()
   {
     clean_all_samples();
   }
@@ -171,14 +157,17 @@ public:
 
   const Cost_& cost(int edge) const
   {
-    if (plan(edge) == 0) return vertex_cost(edge);
+    if (plan(edge) == 0) 
+      return vertex_cost(edge);
     return edge_cost(edge);
   }
 
   bool ghost(int edge) const
   {
-    if (mass(edge) == 0.0) return true;
-    if (plan(edge) == 0) return true;
+    if (mass(edge) == 0.0)
+      return true;
+    if (plan(edge) == 0)
+      return true;
     return false;
   }
 
@@ -228,6 +217,7 @@ struct less_Face_handle
     if (a1 > b1) return false;
 
     if (a2 < b2) return true;
+
     return false;
   }
 };
@@ -255,6 +245,7 @@ struct less_Edge
     if (a0 < b0) return true;
     if (a0 > b0) return false;
     if (a1 < b1) return true;
+
     return false;
   }
 
@@ -262,8 +253,6 @@ struct less_Edge
   /// \endcond
 
 };
-
-
 
 } //end namespace
 

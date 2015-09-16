@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan
+// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
 #ifndef RECONSTRUCTION_SIMPLIFICATION_2_H_
 #define RECONSTRUCTION_SIMPLIFICATION_2_H_
