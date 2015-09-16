@@ -70,7 +70,9 @@ typedef unspecified_type In_flat_side_of_oriented_sphere_d;
 /// @{
 
 /*!
-The default constructor.
+The default constructor (optional).
+This is not required if an instance of the traits will be provided
+to the constructor of `CGAL::Delaunay_triangulation`.
 */
 DelaunayTriangulationTraits();
 

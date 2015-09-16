@@ -101,7 +101,9 @@ typedef unspecified_type In_flat_power_test_d;
 /// @{
 
 /*!
-The default constructor.
+The default constructor (optional). 
+This is not required if an instance of the traits will be provided
+to the constructor of `CGAL::Regular_triangulation`.
 */
 RegularTriangulationTraits();
 

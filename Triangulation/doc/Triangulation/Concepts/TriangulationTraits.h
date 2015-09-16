@@ -137,7 +137,9 @@ typedef unspecified_type Compare_lexicographically_d;
 /// @{
 
 /*! 
-The default constructor. 
+The default constructor (optional).
+This is not required if an instance of the traits will be provided
+to the constructor of `CGAL::Triangulation`.
 */ 
 TriangulationTraits(); 
 
