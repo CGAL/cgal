@@ -65,7 +65,6 @@ public:
 
 public Q_SLOTS:
     virtual void invalidate_buffers();
-    virtual void contextual_changed();
     virtual void selection_changed(bool);
     virtual void setColor(QColor c);
     void show_only_feature_edges(bool);

@@ -1044,31 +1044,16 @@ invalidate_buffers()
     init();
     Base::invalidate_buffers();
     is_Triangulated();
-    compute_normals_and_vertices();
     are_buffers_filled = false;
 
 }
-void
-Scene_polyhedron_item::
-contextual_changed()
-{
-    prev_shading = cur_shading;
-    cur_shading = renderingMode();
-    if(prev_shading != cur_shading)
-        if(cur_shading == Flat || cur_shading == FlatPlusEdges ||cur_shading == Gouraud)
-        {
-            //Change the normals
-           // invalidate_buffers();
-        }
 
-}
 void
 Scene_polyhedron_item::selection_changed(bool p_is_selected)
 {
     if(p_is_selected != is_selected)
     {
         is_selected = p_is_selected;
-         //are_buffers_filled = false;
     }
 
 }
