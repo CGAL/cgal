@@ -24,7 +24,6 @@
 #include <QSettings>
 #include <CGAL/Timer.h>
 #include <CGAL/ipower.h>
-#include "MainWindow.moc"
 #include "import_moka.h"
 
 // Function defined in Linear_cell_complex_3_subivision.cpp
