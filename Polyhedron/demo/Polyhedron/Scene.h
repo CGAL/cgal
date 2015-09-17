@@ -158,6 +158,7 @@ Q_SIGNALS:
   void itemAboutToBeDestroyed(Scene_item*);
   void selectionRay(double, double, double, double, double, double);
   void selectionChanged(int i);
+  void requestBasicPositions();
 
 private Q_SLOTS:
   void setSelectionRay(double, double, double, double, double, double);

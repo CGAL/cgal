@@ -51,13 +51,13 @@ Scene::Scene(QObject* parent)
 Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
-
     Bbox bbox_before = bbox();
     m_entries.push_back(item);
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
     if(bbox_before + item->bbox() != bbox_before)
 { Q_EMIT updated_bbox(); }
+    Q_EMIT requestBasicPositions();
     QAbstractListModel::beginResetModel();
     Q_EMIT updated();
     QAbstractListModel::endResetModel();

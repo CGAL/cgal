@@ -17,7 +17,9 @@ public:
 
 public Q_SLOTS:
   void load(QString filename);
+  void setBasicPositions(Viewer_interface*);
 protected Q_SLOTS:
+
   void on_plusButton_pressed();
   void on_minusButton_pressed();
   void on_upButton_pressed();
@@ -25,7 +27,7 @@ protected Q_SLOTS:
   void on_openButton_pressed();
   void on_saveButton_pressed();
   void on_clearButton_pressed();
-
+  void insertItem(QString text, QString data);
   void activatedRow(QModelIndex index);
 
 protected:
