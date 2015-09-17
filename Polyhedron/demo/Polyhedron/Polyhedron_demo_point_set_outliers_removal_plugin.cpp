@@ -107,6 +107,7 @@ void Polyhedron_demo_point_set_outliers_removal_plugin::on_actionOutlierRemoval_
     points->select(first_point_to_remove, points->end(), true);
 
     // Updates scene
+    item->invalidate_buffers();
     scene->itemChanged(index);
 
     QApplication::restoreOverrideCursor();

@@ -44,7 +44,7 @@ public:
   bool isEmpty() const;
   Bbox bbox() const;
 
-  virtual void changed();
+  virtual void invalidate_buffers();
   virtual void contextual_changed();
   virtual void selection_changed(bool);
 

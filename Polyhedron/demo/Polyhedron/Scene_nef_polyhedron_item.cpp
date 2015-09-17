@@ -436,7 +436,7 @@ Scene_nef_polyhedron_item::load_from_off(std::istream& in)
     //   Polyhedron poly;
     //   in >> poly;
     //   *nef_poly = Nef_polyhedron(poly);
-    changed();
+    invalidate_buffers();
     return (bool) in;
 }
 
@@ -451,7 +451,7 @@ bool
 Scene_nef_polyhedron_item::load(std::istream& in)
 {
     in >> *nef_poly;
-    changed();
+    invalidate_buffers();
     return (bool) in;
 }
 
@@ -725,17 +725,17 @@ convex_decomposition(std::list< Scene_polyhedron_item*>& convex_parts)
             from_exact(P, *poly);
             Scene_polyhedron_item *spoly = new Scene_polyhedron_item(poly);
             convex_parts.push_back(spoly);
-            spoly->changed();
+            spoly->invalidate_buffers();
         }
     }
 }
 
 void
 Scene_nef_polyhedron_item::
-changed()
+invalidate_buffers()
 {
     //  init();
-    Base::changed();
+    Base::invalidate_buffers();
     compute_normals_and_vertices();
     are_buffers_filled = false;
 }
@@ -746,7 +746,7 @@ Scene_nef_polyhedron_item::selection_changed(bool p_is_selected)
     if(p_is_selected != is_selected)
     {
         is_selected = p_is_selected;
-        changed();
+        invalidate_buffers();
     }
 
 }

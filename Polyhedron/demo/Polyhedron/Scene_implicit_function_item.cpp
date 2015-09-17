@@ -367,7 +367,7 @@ Scene_implicit_function_item(Implicit_function_interface* f)
     frame_->setOrientation(1., 0, 0, 0);
     connect(frame_, SIGNAL(modified()), this, SLOT(plane_was_moved()));
 
-    changed();
+    invalidate_buffers();
 }
 
 
@@ -537,7 +537,7 @@ compute_function_grid() const
     }
 
     // Update
-    const_cast<Scene_implicit_function_item*>(this)->changed();
+    const_cast<Scene_implicit_function_item*>(this)->invalidate_buffers();
 
 }
 
@@ -575,9 +575,9 @@ compute_min_max()
 }
 
 void
-Scene_implicit_function_item::changed()
+Scene_implicit_function_item::invalidate_buffers()
 {
-    Scene_item::changed();
+    Scene_item::invalidate_buffers();
     compute_vertices_and_texmap();
     are_buffers_filled = false;
 }

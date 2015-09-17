@@ -70,7 +70,7 @@ public:
 
   virtual QString toolTip() const;
   virtual void contextual_changed();
-  virtual void changed();
+  virtual void invalidate_buffers();
 public Q_SLOTS:
   void plane_was_moved() { need_update_ = true; }
   void compute_function_grid() const;

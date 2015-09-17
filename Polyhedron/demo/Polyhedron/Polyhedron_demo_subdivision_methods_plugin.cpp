@@ -48,6 +48,7 @@ void Polyhedron_demo_subdivision_methods_plugin::on_actionLoop_triggered()
   CGAL::Subdivision_method_3::Loop_subdivision(*poly, 1);
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
   QApplication::restoreOverrideCursor();
+  item->invalidate_buffers();
   scene->itemChanged(item);
 }
 
@@ -68,6 +69,7 @@ void Polyhedron_demo_subdivision_methods_plugin::on_actionCatmullClark_triggered
   CGAL::Subdivision_method_3::CatmullClark_subdivision(*poly, 1);
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
   QApplication::restoreOverrideCursor();
+  item->invalidate_buffers();
   scene->itemChanged(item);
 }
 
@@ -88,6 +90,7 @@ void Polyhedron_demo_subdivision_methods_plugin::on_actionSqrt3_triggered()
   CGAL::Subdivision_method_3::Sqrt3_subdivision(*poly, 1);
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
   QApplication::restoreOverrideCursor();
+  item->invalidate_buffers();
   scene->itemChanged(item);
 }
 

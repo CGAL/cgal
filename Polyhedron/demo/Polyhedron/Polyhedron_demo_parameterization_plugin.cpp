@@ -130,6 +130,8 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
   new_item->setColor(Qt::white);
   new_item->setRenderingMode(poly_item->renderingMode());
 
+  poly_item->setVisible(false);
+  scene->itemChanged(index);
   scene->addItem(new_item);
 
   QApplication::restoreOverrideCursor();

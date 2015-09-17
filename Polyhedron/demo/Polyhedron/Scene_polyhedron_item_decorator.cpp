@@ -63,10 +63,10 @@ Scene_polyhedron_item_decorator::bbox() const {
 
 void
 Scene_polyhedron_item_decorator::
-changed()
+invalidate_buffers()
 {
-  poly_item->changed();
-  Scene_item::changed();
+  poly_item->invalidate_buffers();
+  Scene_item::invalidate_buffers();
 }
 
 void 

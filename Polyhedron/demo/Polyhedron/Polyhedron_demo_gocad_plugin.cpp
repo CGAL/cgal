@@ -73,7 +73,7 @@ Polyhedron_demo_gocad_plugin::load(QFileInfo fileinfo) {
   if(qcolor.isValid()) 
   {  
     item->setColor(qcolor);
-    item->changed();
+    item->invalidate_buffers();
   }
   
 

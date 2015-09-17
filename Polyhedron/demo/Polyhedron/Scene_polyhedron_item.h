@@ -64,7 +64,7 @@ public:
     void set_color_vector_read_only(bool on_off) {plugin_has_set_color_vector_m=on_off;}
 
 public Q_SLOTS:
-    virtual void changed();
+    virtual void invalidate_buffers();
     virtual void contextual_changed();
     virtual void selection_changed(bool);
     virtual void setColor(QColor c);
@@ -89,7 +89,7 @@ Q_SIGNALS:
     void selected_facet(void*);
     void selected_edge(void*);
     void selected_halfedge(void*);
-    void item_is_about_to_be_changed(); // emitted in changed()
+    void item_is_about_to_be_changed(); // emitted in invalidate_buffers()
 
 private:
     // Initialization
@@ -114,7 +114,8 @@ private:
 
     mutable std::vector<float> positions_lines;
     mutable std::vector<float> positions_facets;
-    mutable std::vector<float> normals;
+    mutable std::vector<float> normals_flat;
+    mutable std::vector<float> normals_gouraud;
     mutable std::vector<float> color_lines;
     mutable std::vector<float> color_facets;
     mutable std::vector<float> color_lines_selected;

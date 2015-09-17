@@ -207,7 +207,7 @@ public:
             buffers[i].create();
         }
         init(poly_item, mw);
-        changed();
+        invalidate_buffers();
     }
 
    ~Scene_polyhedron_selection_item()
@@ -398,6 +398,7 @@ public:
     for(typename Tr::Iterator it = tr.iterator_begin() ; it != tr.iterator_end(); ++it) {
       tr.container().insert(*it);
     }
+    invalidate_buffers();
     Q_EMIT itemChanged();
   }
 
@@ -418,6 +419,7 @@ public:
 
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
     tr.container().clear();
+    invalidate_buffers();
     Q_EMIT itemChanged();
   }
 
@@ -463,7 +465,7 @@ public:
     Travel_isolated_components().travel<HandleType>
       (tr.iterator_begin(), tr.iterator_end(), tr.size(), tr.container(), visitor);
 
-    if(visitor.any_inserted) { Q_EMIT itemChanged(); }
+    if(visitor.any_inserted) { invalidate_buffers(); Q_EMIT itemChanged(); }
     return visitor.minimum_visitor.minimum;
   }
 
@@ -561,7 +563,7 @@ public:
         any_change |= tr.container().insert(*it).second;
       }
     }
-    if(any_change) { Q_EMIT itemChanged(); }
+    if(any_change) { invalidate_buffers(); Q_EMIT itemChanged(); }
   }
 
   template <class Handle>
@@ -590,7 +592,7 @@ public:
         any_change |= (tr.container().erase(*it)!=0);
       }
     }
-    if(any_change) { Q_EMIT itemChanged(); }
+    if(any_change) { invalidate_buffers(); Q_EMIT itemChanged(); }
   }
 
   void erase_selected_facets() {
@@ -602,6 +604,7 @@ public:
       polyhedron()->erase_facet((*fb)->halfedge());
     }
     selected_facets.clear();
+    invalidate_buffers();
     changed_with_poly_item();
   }
 
@@ -667,7 +670,8 @@ public:
 
   void changed_with_poly_item() {
     // no need to update indices
-    poly_item->changed();
+    poly_item->invalidate_buffers();
+    Q_EMIT poly_item->itemChanged();
     Q_EMIT itemChanged();
   }
 
@@ -675,9 +679,10 @@ Q_SIGNALS:
   void simplicesSelected(Scene_item*);
 
 public Q_SLOTS:
-  void changed() {
+  void invalidate_buffers() {
+
     // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
-      //  poly_item->changed();
+      //  poly_item->invalidate_buffers();
         compute_elements();
         are_buffers_filled = false;
   }
@@ -744,7 +749,7 @@ protected:
       BOOST_FOREACH(HandleType h, selection)
         any_change |= (tr.container().erase(h)!=0);
     }
-    if(any_change) { Q_EMIT itemChanged(); }
+    if(any_change) { invalidate_buffers(); Q_EMIT itemChanged(); }
   }
 
 public:

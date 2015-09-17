@@ -301,7 +301,7 @@ public Q_SLOTS:
     Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
     if(selection_item->export_selected_facets_as_polyhedron(poly_item->polyhedron())) {
       poly_item->setName(QString("%1-facets").arg(selection_item->name()));
-      poly_item->changed(); // for init()
+      poly_item->invalidate_buffers(); // for init()
       scene->setSelectedItem( scene->addItem(poly_item) );
       scene->itemChanged(poly_item);
     }

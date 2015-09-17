@@ -44,7 +44,7 @@ public:
   // Function for displaying meta-data of the item
   virtual QString toolTip() const;
 
-  virtual void changed();
+  virtual void invalidate_buffers();
 
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const;
@@ -105,7 +105,7 @@ private:
   using Scene_item::initialize_buffers;
   void initialize_buffers(Viewer_interface *viewer) const;
 
-  void compute_normals_and_vertices(void);
+  void compute_normals_and_vertices() const;
 
 
 }; // end class Scene_points_with_normal_item

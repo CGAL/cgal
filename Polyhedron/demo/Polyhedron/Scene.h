@@ -14,6 +14,7 @@
 #include <QItemDelegate>
 #include <QPixmap>
 #include <QItemSelection>
+#include <QGLViewer/qglviewer.h>
 
 #include <iostream>
 #include <cmath>
@@ -161,6 +162,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
   void setSelectionRay(double, double, double, double, double, double);
+  void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}
 
 private:
   void draw_aux(bool with_names, Viewer_interface*);

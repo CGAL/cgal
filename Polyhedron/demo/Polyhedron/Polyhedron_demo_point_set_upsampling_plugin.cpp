@@ -128,6 +128,7 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
 		<< std::endl;
 
       // Updates scene
+      item->invalidate_buffers();
       scene->itemChanged(index);
 
       QApplication::restoreOverrideCursor();

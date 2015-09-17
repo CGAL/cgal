@@ -332,6 +332,7 @@ public:
   {
     CGAL::Polyhedron_copy_3<Mean_curvature_skeleton::Meso_skeleton, Polyhedron::HalfedgeDS> modifier(mcs->meso_skeleton());
     meso_skeleton->delegate(modifier);
+    scene->item(contractedItemIndex)->invalidate_buffers();
     scene->itemChanged(contractedItemIndex);
   }
 
@@ -510,7 +511,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
 
     skeleton_item->setName(QString("Medial skeleton curve of %1").arg(item->name()));
     scene->addItem(skeleton_item);
-    skeleton_item->changed();
+    skeleton_item->invalidate_buffers();
 
     item->setPointsMode();
 
@@ -661,6 +662,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
   }
   // update scene
   update_meso_skeleton();
+  scene->item(fixedPointsItemIndex)->invalidate_buffers();
   scene->itemChanged(fixedPointsItemIndex);
   scene->setSelectedItem(index);
   QApplication::restoreOverrideCursor();
@@ -824,7 +826,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 
   skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
   scene->addItem(skeleton);
-  skeleton->changed();
+  skeleton->invalidate_buffers();
 
   // set the fixed points and contracted mesh as invisible
   if (fixedPointsItemIndex >= 0)
@@ -895,6 +897,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
     delete temp;
   }
 
+  scene->item(fixedPointsItemIndex)->invalidate_buffers();
   scene->itemChanged(fixedPointsItemIndex);
   update_meso_skeleton();
   scene->setSelectedItem(index);

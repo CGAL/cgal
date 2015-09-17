@@ -92,25 +92,18 @@ QMenu* Scene_item::contextMenu()
     {
         if(!supportsRenderingMode(RenderingMode(mode))) continue;
         QString mName = modeName(RenderingMode(mode));
-        QAction* action =
-                defaultContextMenu->addAction(tr("Set %1 mode")
-                                              .arg(mName),
-                                              this,
-                                              slotName(RenderingMode(mode)));
-        QObject::connect(action, SIGNAL(triggered()),
-                         this, SIGNAL(itemChanged()));
+        defaultContextMenu->addAction(tr("Set %1 mode")
+                                      .arg(mName),
+                                      this,
+                                      slotName(RenderingMode(mode)));
     }
     // defaultContextMenu->addAction(modeMenu->menuAction());
     return defaultContextMenu;
 }
 
-void Scene_item::changed() {
-  // Q_EMIT itemChanged();
-}
+void Scene_item::invalidate_buffers() {}
 
-void Scene_item::selection_changed(bool) {
-    // emit itemChanged();
-}
+void Scene_item::selection_changed(bool) {}
 
 
 void Scene_item::select(double /*orig_x*/,
