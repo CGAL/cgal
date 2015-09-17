@@ -64,7 +64,7 @@ protected:
   std::vector<float> v_Axis;
   std::vector<float> n_Axis;
   std::vector<float> c_Axis;
-
+  bool axis_are_displayed;
   void mousePressEvent(QMouseEvent*);
   void keyPressEvent(QKeyEvent*);
   void pickMatrix(GLdouble x, GLdouble y, GLdouble width, GLdouble height,

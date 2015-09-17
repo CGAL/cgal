@@ -27,11 +27,14 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->twosides = false;
   d->macro_mode = false;
   setShortcut(EXIT_VIEWER, 0);
+  setShortcut(DRAW_AXIS, 0);
   setKeyDescription(Qt::Key_T,
                     tr("Turn the camera by 180 degrees"));
   setKeyDescription(Qt::Key_M,
                     tr("Toggle macro mode: useful to view details very near from the camera, "
                        "but decrease the z-buffer precision"));
+  setKeyDescription(Qt::Key_A,
+                      tr("Toggle the axis system visibility."));
 #if QGLVIEWER_VERSION >= 0x020501
   //modify mouse bindings that have been updated
   setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL, true, Qt::RightButton);
@@ -55,6 +58,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   pickMatrix_[5]=1;
   pickMatrix_[10]=1;
   pickMatrix_[15]=1;
+  axis_are_displayed = true;
 }
 
 Viewer::~Viewer()
@@ -256,6 +260,10 @@ void Viewer::keyPressEvent(QKeyEvent* e)
 
       return;
     }
+    else if(e->key() == Qt::Key_A) {
+          axis_are_displayed = !axis_are_displayed;
+          updateGL();
+        }
   }
   //forward the event to the scene (item handling of the event)
   if (! d->scene->keyPressEvent(e) )
@@ -640,60 +648,62 @@ void Viewer::makeArrow(float R, int prec, qglviewer::Vec from, qglviewer::Vec to
 void Viewer::drawVisualHints()
 {
     QGLViewer::drawVisualHints();
-
-    QMatrix4x4 mvpMatrix;
-    QMatrix4x4 mvMatrix;
-    double mat[16];
-    camera()->frame()->rotation().getMatrix(mat);
-    for(int i=0; i < 16; i++)
+    if(axis_are_displayed)
     {
-        mvpMatrix.data()[i] = (float)mat[i];
+        QMatrix4x4 mvpMatrix;
+        QMatrix4x4 mvMatrix;
+        double mat[16];
+        camera()->frame()->rotation().getMatrix(mat);
+        for(int i=0; i < 16; i++)
+        {
+            mvpMatrix.data()[i] = (float)mat[i];
+        }
+        camera()->getModelViewMatrix(mat);
+        for(int i=0; i < 16; i++)
+        {
+            mvMatrix.data()[i] = (float)mat[i];
+        }
+
+        QVector4D	position(0.0f,0.0f,1.0f,1.0f );
+        // define material
+        QVector4D	ambient;
+        QVector4D	diffuse;
+        QVector4D	specular;
+        GLfloat      shininess ;
+        // Ambient
+        ambient[0] = 0.29225f;
+        ambient[1] = 0.29225f;
+        ambient[2] = 0.29225f;
+        ambient[3] = 1.0f;
+        // Diffuse
+        diffuse[0] = 0.50754f;
+        diffuse[1] = 0.50754f;
+        diffuse[2] = 0.50754f;
+        diffuse[3] = 1.0f;
+        // Specular
+        specular[0] = 0.0f;
+        specular[1] = 0.0f;
+        specular[2] = 0.0f;
+        specular[3] = 0.0f;
+        // Shininess
+        shininess = 51.2f;
+
+        rendering_program.bind();
+        rendering_program.setUniformValue("light_pos", position);
+        rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
+        rendering_program.setUniformValue("mv_matrix", mvMatrix);
+        rendering_program.setUniformValue("light_diff", diffuse);
+        rendering_program.setUniformValue("light_spec", specular);
+        rendering_program.setUniformValue("light_amb", ambient);
+        rendering_program.setUniformValue("spec_power", shininess);
+        rendering_program.release();
+
+        vao[0].bind();
+        rendering_program.bind();
+        glDrawArrays(GL_TRIANGLES, 0, v_Axis.size() / 3);
+        rendering_program.release();
+        vao[0].release();
     }
-    camera()->getModelViewMatrix(mat);
-    for(int i=0; i < 16; i++)
-    {
-        mvMatrix.data()[i] = (float)mat[i];
-    }
-
-    QVector4D	position(0.0f,0.0f,1.0f,1.0f );
-    // define material
-    QVector4D	ambient;
-    QVector4D	diffuse;
-    QVector4D	specular;
-    GLfloat      shininess ;
-    // Ambient
-    ambient[0] = 0.29225f;
-    ambient[1] = 0.29225f;
-    ambient[2] = 0.29225f;
-    ambient[3] = 1.0f;
-    // Diffuse
-    diffuse[0] = 0.50754f;
-    diffuse[1] = 0.50754f;
-    diffuse[2] = 0.50754f;
-    diffuse[3] = 1.0f;
-    // Specular
-    specular[0] = 0.0f;
-    specular[1] = 0.0f;
-    specular[2] = 0.0f;
-    specular[3] = 0.0f;
-    // Shininess
-    shininess = 51.2f;
-
-    rendering_program.bind();
-    rendering_program.setUniformValue("light_pos", position);
-    rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
-    rendering_program.setUniformValue("mv_matrix", mvMatrix);
-    rendering_program.setUniformValue("light_diff", diffuse);
-    rendering_program.setUniformValue("light_spec", specular);
-    rendering_program.setUniformValue("light_amb", ambient);
-    rendering_program.setUniformValue("spec_power", shininess);
-    rendering_program.release();
-
-    vao[0].bind();
-    rendering_program.bind();
-    glDrawArrays(GL_TRIANGLES, 0, v_Axis.size() / 3);
-    rendering_program.release();
-    vao[0].release();
 
 }
 
