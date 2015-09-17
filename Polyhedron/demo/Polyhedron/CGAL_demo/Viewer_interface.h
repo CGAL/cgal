@@ -42,7 +42,6 @@ public:
 Q_SIGNALS:
   void selected(int);
   void requestContextMenu(QPoint global_pos);
-  void requestBasicPositions(Viewer_interface* viewer);
   void selectedPoint(double, double, double);
   void selectionRay(double, double, double, double, double, double);
 

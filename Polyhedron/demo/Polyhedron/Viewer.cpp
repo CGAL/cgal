@@ -91,7 +91,6 @@ void Viewer::draw()
 {
   glEnable(GL_DEPTH_TEST);
   d->inFastDrawing = false;
-  testRadius();
   QGLViewer::draw();
   d->draw_aux(false, this);
 }
@@ -99,7 +98,6 @@ void Viewer::draw()
 void Viewer::fastDraw()
 {
   d->inFastDrawing = true;
-  testRadius();
   QGLViewer::fastDraw();
   d->draw_aux(false, this);
 }
@@ -376,13 +374,4 @@ void Viewer::endSelection(const QPoint& point)
     pickMatrix_[5]=1;
     pickMatrix_[10]=1;
     pickMatrix_[15]=1;
-}
-
-void Viewer::testRadius()
-{
-    if(prev_radius != sceneRadius())
-    {
-        Q_EMIT Viewer_interface::requestBasicPositions(this);
-        prev_radius = sceneRadius();
-    }
 }

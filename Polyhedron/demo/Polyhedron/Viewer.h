@@ -54,7 +54,6 @@ protected:
 protected:
   Viewer_impl* d;
   double prev_radius;
-  void testRadius();
 }; // end class Viewer
 
 #endif // VIEWER_H

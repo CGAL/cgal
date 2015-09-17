@@ -57,7 +57,6 @@ Scene::addItem(Scene_item* item)
             this, SLOT(itemChanged()));
     if(bbox_before + item->bbox() != bbox_before)
 { Q_EMIT updated_bbox(); }
-    Q_EMIT requestBasicPositions();
     QAbstractListModel::beginResetModel();
     Q_EMIT updated();
     QAbstractListModel::endResetModel();

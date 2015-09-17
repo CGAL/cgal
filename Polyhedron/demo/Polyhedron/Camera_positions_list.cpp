@@ -27,8 +27,6 @@ Camera_positions_list::Camera_positions_list(QWidget* parent)
 void Camera_positions_list::setViewer(Viewer_interface* viewer)
 {
   m_viewer = viewer;
-  connect(viewer, SIGNAL(requestBasicPositions(Viewer_interface*)),
-            this, SLOT(setBasicPositions(Viewer_interface*)));
 }
 
 void Camera_positions_list::on_plusButton_pressed()
@@ -137,117 +135,100 @@ void Camera_positions_list::load(QString filename) {
   }
 }
 
-void Camera_positions_list::setBasicPositions(Viewer_interface* viewer)
+void Camera_positions_list::on_frontButton_pressed()
 {
+    qglviewer::Vec posFront = qglviewer::Vec(0,0,m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)));
+    qglviewer::Quaternion dirFront;
+    dirFront.setAxisAngle(qglviewer::Vec(0,1,0),0);
+    QString frontCoord = QString("%1 %2 %3 %4 %5 %6 %7")
+            .arg(posFront[0])
+            .arg(posFront[1])
+            .arg(posFront[2])
+            .arg(dirFront[0])
+            .arg(dirFront[1])
+            .arg(dirFront[2])
+            .arg(dirFront[3]);
 
-    for(int index =0; index < m_model->rowCount(); index++)
-    {
-        QModelIndex model_index = m_model->index(index,0);
-        if(m_model->data(model_index) == "Left"   ||
-           m_model->data(model_index) == "Right"  ||
-           m_model->data(model_index) == "Bottom" ||
-           m_model->data(model_index) == "Top"    ||
-           m_model->data(model_index) == "Back"   ||
-           m_model->data(model_index) == "Front"  )
-        {
-                m_model->removeRows(model_index.row(),1);
-                index--;
-        }
-    }
-  qglviewer::Vec posFront = qglviewer::Vec(0,0,viewer->sceneRadius()/(sin (viewer->camera()->fieldOfView()/2)));
-  qglviewer::Quaternion dirFront;
-  dirFront.setAxisAngle(qglviewer::Vec(0,1,0),0);
-  QString frontCoord = QString("%1 %2 %3 %4 %5 %6 %7")
-          .arg(posFront[0])
-          .arg(posFront[1])
-          .arg(posFront[2])
-          .arg(dirFront[0])
-          .arg(dirFront[1])
-          .arg(dirFront[2])
-          .arg(dirFront[3]);
-
-  qglviewer::Vec posBack = posFront;
-  posBack.z *= -1;
-  qglviewer::Quaternion dirBack = dirFront;
-  dirBack.setAxisAngle(qglviewer::Vec(0,1,0),M_PI);
-
-  QString backCoord = QString("%1 %2 %3 %4 %5 %6 %7")
-          .arg(posBack[0])
-          .arg(posBack[1])
-          .arg(posBack[2])
-          .arg(dirBack[0])
-          .arg(dirBack[1])
-          .arg(dirBack[2])
-          .arg(dirBack[3]);
-
-  qglviewer::Vec posTop = posFront;
-  posTop.y = posTop.z;
-  posTop.z *= 0;
-  qglviewer::Quaternion dirTop = dirFront;
-  dirTop.setAxisAngle(qglviewer::Vec(1,0,0),-M_PI_2);
-  QString topCoord = QString("%1 %2 %3 %4 %5 %6 %7")
-          .arg(posTop[0])
-          .arg(posTop[1])
-          .arg(posTop[2])
-          .arg(dirTop[0])
-          .arg(dirTop[1])
-          .arg(dirTop[2])
-          .arg(dirTop[3]);
-  qglviewer::Vec posBot = posTop;
-  posBot.y *= -1;
-  qglviewer::Quaternion dirBot = dirFront;
-  dirBot.setAxisAngle(qglviewer::Vec(1,0,0),M_PI_2);
-  QString botCoord = QString("%1 %2 %3 %4 %5 %6 %7")
-          .arg(posBot[0])
-          .arg(posBot[1])
-          .arg(posBot[2])
-          .arg(dirBot[0])
-          .arg(dirBot[1])
-          .arg(dirBot[2])
-          .arg(dirBot[3]);
-
-
-  qglviewer::Vec posRight = posFront;
-  posRight.x = posFront.z;
-  posRight.z *= 0;
-  qglviewer::Quaternion dirRight = dirFront;
-  dirRight.setAxisAngle(qglviewer::Vec(0,1,0),M_PI_2);
-  QString rightCoord = QString("%1 %2 %3 %4 %5 %6 %7")
-          .arg(posRight[0])
-          .arg(posRight[1])
-          .arg(posRight[2])
-          .arg(dirRight[0])
-          .arg(dirRight[1])
-          .arg(dirRight[2])
-          .arg(dirRight[3]);
-
-  qglviewer::Vec posLeft = posRight;
-  posLeft.x *= -1;
-  qglviewer::Quaternion dirLeft = dirFront;
-  dirLeft.setAxisAngle(qglviewer::Vec(0,1,0),-M_PI_2);
-  QString leftCoord = QString("%1 %2 %3 %4 %5 %6 %7")
-          .arg(posLeft[0])
-          .arg(posLeft[1])
-          .arg(posLeft[2])
-          .arg(dirLeft[0])
-          .arg(dirLeft[1])
-          .arg(dirLeft[2])
-          .arg(dirLeft[3]);
-  insertItem(tr("Left"),leftCoord);
-  insertItem(tr("Right"),rightCoord);
-  insertItem(tr("Bottom"),botCoord);
-  insertItem(tr("Top"),topCoord);
-  insertItem(tr("Back"),backCoord);
-  insertItem(tr("Front"), frontCoord);
-
+   m_viewer->moveCameraToCoordinates(frontCoord, 0.5f);
 }
 
-void Camera_positions_list::insertItem(QString text, QString data)
+void Camera_positions_list::on_backButton_pressed()
 {
-    QStandardItem* item = new QStandardItem(text);
-
-    item->setData(data, Qt::UserRole);
-    m_model->insertRow(0, item);
+    qglviewer::Vec posBack = qglviewer::Vec(0,0,-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)));
+    qglviewer::Quaternion dirBack;
+    dirBack.setAxisAngle(qglviewer::Vec(0,1,0),M_PI);
+    QString backCoord = QString("%1 %2 %3 %4 %5 %6 %7")
+            .arg(posBack[0])
+            .arg(posBack[1])
+            .arg(posBack[2])
+            .arg(dirBack[0])
+            .arg(dirBack[1])
+            .arg(dirBack[2])
+            .arg(dirBack[3]);
+    m_viewer->moveCameraToCoordinates(backCoord, 0.5f);
 }
 
+void Camera_positions_list::on_topButton_pressed()
+{
+    qglviewer::Vec posTop = qglviewer::Vec(0,m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0);
+    qglviewer::Quaternion dirTop;
+    dirTop.setAxisAngle(qglviewer::Vec(1,0,0),-M_PI_2);
+    QString topCoord = QString("%1 %2 %3 %4 %5 %6 %7")
+            .arg(posTop[0])
+            .arg(posTop[1])
+            .arg(posTop[2])
+            .arg(dirTop[0])
+            .arg(dirTop[1])
+            .arg(dirTop[2])
+            .arg(dirTop[3]);
+     m_viewer->moveCameraToCoordinates(topCoord, 0.5f);
+}
 
+void Camera_positions_list::on_botButton_pressed()
+{
+    qglviewer::Vec posBot = qglviewer::Vec(0,-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0);;
+    qglviewer::Quaternion dirBot;
+    dirBot.setAxisAngle(qglviewer::Vec(1,0,0),M_PI_2);
+    QString botCoord = QString("%1 %2 %3 %4 %5 %6 %7")
+            .arg(posBot[0])
+            .arg(posBot[1])
+            .arg(posBot[2])
+            .arg(dirBot[0])
+            .arg(dirBot[1])
+            .arg(dirBot[2])
+            .arg(dirBot[3]);
+     m_viewer->moveCameraToCoordinates(botCoord, 0.5f);
+}
+
+void Camera_positions_list::on_leftButton_pressed()
+{
+    qglviewer::Vec posLeft = qglviewer::Vec(-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0, 0);;
+    qglviewer::Quaternion dirLeft;
+    dirLeft.setAxisAngle(qglviewer::Vec(0,1,0),-M_PI_2);
+    QString leftCoord = QString("%1 %2 %3 %4 %5 %6 %7")
+            .arg(posLeft[0])
+            .arg(posLeft[1])
+            .arg(posLeft[2])
+            .arg(dirLeft[0])
+            .arg(dirLeft[1])
+            .arg(dirLeft[2])
+            .arg(dirLeft[3]);
+    m_viewer->moveCameraToCoordinates(leftCoord, 0.5f);
+}
+
+void Camera_positions_list::on_rightButton_pressed()
+{
+    qglviewer::Vec posRight = qglviewer::Vec(m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0,0);
+    qglviewer::Quaternion dirRight;
+    dirRight.setAxisAngle(qglviewer::Vec(0,1,0),M_PI_2);
+    QString rightCoord = QString("%1 %2 %3 %4 %5 %6 %7")
+            .arg(posRight[0])
+            .arg(posRight[1])
+            .arg(posRight[2])
+            .arg(dirRight[0])
+            .arg(dirRight[1])
+            .arg(dirRight[2])
+            .arg(dirRight[3]);
+    m_viewer->moveCameraToCoordinates(rightCoord, 0.5f);
+
+}

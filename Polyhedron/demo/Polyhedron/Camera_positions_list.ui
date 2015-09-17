@@ -71,6 +71,10 @@
         <property name="text">
          <string>&amp;Up</string>
         </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/up.png</normaloff>:/cgal/icons/resources/up.png</iconset>
+        </property>
         <property name="shortcut">
          <string>Ctrl+U</string>
         </property>
@@ -80,6 +84,10 @@
        <widget class="QToolButton" name="downButton">
         <property name="text">
          <string>&amp;Down</string>
+        </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/down.png</normaloff>:/cgal/icons/resources/down.png</iconset>
         </property>
         <property name="shortcut">
          <string>Ctrl+D</string>
@@ -108,12 +116,20 @@
         <property name="text">
          <string>PushButton</string>
         </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/front.png</normaloff>:/cgal/icons/resources/front.png</iconset>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QToolButton" name="backButton">
         <property name="text">
          <string>PushButton</string>
+        </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/back.png</normaloff>:/cgal/icons/resources/back.png</iconset>
         </property>
        </widget>
       </item>
@@ -122,12 +138,20 @@
         <property name="text">
          <string>PushButton</string>
         </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/top.png</normaloff>:/cgal/icons/resources/top.png</iconset>
+        </property>
        </widget>
       </item>
       <item>
        <widget class="QToolButton" name="botButton">
         <property name="text">
          <string>PushButton</string>
+        </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/bot.png</normaloff>:/cgal/icons/resources/bot.png</iconset>
         </property>
        </widget>
       </item>
@@ -136,6 +160,10 @@
         <property name="text">
          <string>PushButton</string>
         </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/left.png</normaloff>:/cgal/icons/resources/left.png</iconset>
+        </property>
        </widget>
       </item>
       <item>
@@ -143,7 +171,24 @@
         <property name="text">
          <string>PushButton</string>
         </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/right.png</normaloff>:/cgal/icons/resources/right.png</iconset>
+        </property>
        </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
       </item>
      </layout>
     </item>
