@@ -1,7 +1,6 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <QAction>
-#include "Polyhedron_demo_plugin_interface.h"
 #include "Messages_interface.h"
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Scene_polyhedron_item.h"

@@ -19,17 +19,18 @@ class SCENE_ITEM_EXPORT Polyhedron_demo_plugin_helper
   : public Polyhedron_demo_plugin_interface
 {
 public:
-  // get action object from its name
+  //! get action object from its name
   static QAction* getActionFromMainWindow(QMainWindow*, QString action_name);
   
-  // Init plugin
+  //! Init plugin
   virtual void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
   
-  // Get list of actions supported by this plugin
+  //! Get list of actions supported by this plugin
   virtual QStringList actionsNames() const;
+  //!List of the actions of the plugin
   virtual QList<QAction*> actions() const;
 
-  // To get a selected item with the type of SceneType
+  //! To get a selected item with the type of SceneType
   template<class SceneType>
   SceneType* get_selected_item() const {
     int item_id = scene->mainSelectionIndex();
@@ -51,14 +52,18 @@ public:
     return scene_item;
   }
 
+  //!To add a dock widget to the interface
   void add_dock_widget(QDockWidget* dock);
 
-  // Auto-connect actions to slots. Called by init().
+  //! Auto-connects actions to slots. Called by init().
   void autoConnectActions();
   
 protected:
+  //!The list of actions
   QMap<QString, QAction*> actions_map;
+  //!The reference to the scene
   Scene_interface* scene;
+  //!The reference to the main window
   QMainWindow* mw;
 };
 

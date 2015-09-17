@@ -869,6 +869,7 @@ Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_
   return item;
 }
 
+
 void MainWindow::setFocusToQuickSearch()
 {
   ui->searchEdit->setFocus(Qt::ShortcutFocusReason);

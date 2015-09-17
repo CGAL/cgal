@@ -14,19 +14,22 @@ class Polyhedron_demo_plugin_interface
 {
 public:
   virtual ~Polyhedron_demo_plugin_interface() {}
+  //!Initializes the plugin.
   virtual void init(QMainWindow*, Scene_interface*) {}
+  //!Initializes the plugin.
   virtual void init(QMainWindow* mw, Scene_interface* sc, Messages_interface*) {
     init(mw, sc);
   }
 
   //! Checks the current state of the `Scene` or `MainWindow` and decides
-  //! if the plugin can function, given that state.  It's actions are
+  //! if the plugin can function, given that state.  Its actions are
   //! visible in contextmenus, if this returns true, not visible
   //! otherwise.  
   //!
   //! @returns \c true, if the plugin is applicable, \c false
   //! otherwise
   virtual bool applicable(QAction*) const = 0;
+  //!The list of the actions of the plugin.
   virtual QList<QAction*> actions() const = 0;
 };
 

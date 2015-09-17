@@ -173,7 +173,6 @@ public:
   Scene_polyhedron_selection_item() 
     : Scene_polyhedron_item_decorator(NULL, false)
     {
-        nbVaos = 0;
         for(int i=0; i<3; i++)
         {
             addVaos(i);
@@ -196,6 +195,7 @@ public:
         nb_facets = 0;
         nb_points = 0;
         nb_lines = 0;
+
         for(int i=0; i<3; i++)
         {
             addVaos(i);
