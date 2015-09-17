@@ -785,9 +785,9 @@ private:
   mutable std::vector<float> normals;
   mutable std::vector<float> positions_lines;
   mutable std::vector<float> positions_points;
-  mutable int nb_facets;
-  mutable int nb_points;
-  mutable int nb_lines;
+  mutable std::size_t nb_facets;
+  mutable std::size_t nb_points;
+  mutable std::size_t nb_lines;
   mutable QOpenGLShaderProgram *program;
   using Scene_item::initialize_buffers;
   void initialize_buffers(Viewer_interface *viewer) const;

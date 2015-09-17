@@ -96,9 +96,9 @@ private:
   mutable std::vector<double> positions_points;
   mutable std::vector<double> positions_selected_points;
   mutable std::vector<double> normals;
-  mutable int nb_points;
-  mutable int nb_selected_points;
-  mutable int nb_lines;
+  mutable std::size_t nb_points;
+  mutable std::size_t nb_selected_points;
+  mutable std::size_t nb_lines;
 
   mutable QOpenGLShaderProgram *program;
 

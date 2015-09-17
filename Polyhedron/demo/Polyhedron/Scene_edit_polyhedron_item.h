@@ -281,11 +281,11 @@ private:
   mutable std::vector<GLdouble> normals_sphere;
   mutable QOpenGLShaderProgram *program;
   mutable QOpenGLShaderProgram bbox_program;
-  mutable int nb_ROI;
-  mutable int nb_sphere;
-  mutable int nb_control;
-  mutable int nb_axis;
-  mutable int nb_bbox;
+  mutable std::size_t nb_ROI;
+  mutable std::size_t nb_sphere;
+  mutable std::size_t nb_control;
+  mutable std::size_t nb_axis;
+  mutable std::size_t nb_bbox;
 
 
 

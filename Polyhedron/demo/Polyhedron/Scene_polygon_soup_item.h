@@ -173,9 +173,9 @@ private:
     mutable std::vector<float> positions_lines;
     mutable std::vector<float> normals;
     mutable std::vector<float> positions_nm_lines;
-    mutable int nb_nm_edges;
-    mutable int nb_polys;
-    mutable int nb_lines;
+    mutable std::size_t nb_nm_edges;
+    mutable std::size_t nb_polys;
+    mutable std::size_t nb_lines;
     using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer) const;
     void compute_normals_and_vertices(void) const;
