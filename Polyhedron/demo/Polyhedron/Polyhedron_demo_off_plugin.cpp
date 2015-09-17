@@ -67,10 +67,11 @@ Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
   else
     if( total_nb_of_vertices!= item->polyhedron()->size_of_vertices())
     {
+      item->setNbIsolatedvertices(total_nb_of_vertices - item->polyhedron()->size_of_vertices());
       QMessageBox::warning((QWidget*)NULL,
                      tr("Isolated vertices found"),
                      tr("%1 isolated vertices ignored")
-                     .arg(total_nb_of_vertices-item->polyhedron()->size_of_vertices()));
+                     .arg(item->getNbIsolatedvertices()));
     }
 
   return item;

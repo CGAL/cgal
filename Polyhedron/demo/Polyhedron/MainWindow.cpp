@@ -1058,6 +1058,14 @@ void MainWindow::updateInfo() {
   if(item) {
     QString item_text = item->toolTip();
     QString item_filename = item->property("source filename").toString();
+    item_text += QString("Bounding box: min (%1,%2,%3), max(%4,%5,%6)")
+            .arg(item->bbox().xmin)
+            .arg(item->bbox().ymin)
+            .arg(item->bbox().zmin)
+            .arg(item->bbox().xmax)
+            .arg(item->bbox().ymax)
+            .arg(item->bbox().zmax);
+    item_text += QString("<br />Number of isolated vertices : %1<br />").arg(item->getNbIsolatedvertices());
     if(!item_filename.isEmpty()) {
       item_text += QString("<br /><i>File: %1").arg(item_filename);
     }

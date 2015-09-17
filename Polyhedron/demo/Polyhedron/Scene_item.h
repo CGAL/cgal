@@ -64,6 +64,7 @@ public:
           buffers.push_back(n_buf);
           buffers[i].create();
       }
+      nb_isolated_vertices = 0;
   }
   Scene_item(int buffers_size, int vaos_size)
     : name_("unamed"),
@@ -88,7 +89,10 @@ public:
           buffers.push_back(n_buf);
           buffers[i].create();
       }
+      nb_isolated_vertices = 0;
   }
+  void setNbIsolatedvertices(int nb) { nb_isolated_vertices = nb;}
+  int getNbIsolatedvertices() {return nb_isolated_vertices;}
   virtual ~Scene_item();
   virtual Scene_item* clone() const = 0;
 
@@ -203,6 +207,7 @@ protected:
   QColor color_;
   bool visible_;
   bool is_selected;
+  int nb_isolated_vertices;
   mutable bool are_buffers_filled;
   RenderingMode rendering_mode;
   QMenu* defaultContextMenu;
