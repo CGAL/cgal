@@ -733,9 +733,9 @@ void Viewer::resizeGL(int w, int h)
     data.vertices = &v_Axis;
     data.normals = &n_Axis;
     data.colors = &c_Axis;
-    makeArrow(0.05,30, qglviewer::Vec(0,0,0),qglviewer::Vec(length.x()/10.0,0,0),qglviewer::Vec(1,0,0), data);
-    makeArrow(0.05,30, qglviewer::Vec(0,0,0),qglviewer::Vec(0,length.x()/10.0,0),qglviewer::Vec(0,1,0), data);
-    makeArrow(0.05,30, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,length.x()/10.0),qglviewer::Vec(0,0,1), data);
+    makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(length.x()/10.0,0,0),qglviewer::Vec(1,0,0), data);
+    makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,length.x()/10.0,0),qglviewer::Vec(0,1,0), data);
+    makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,-length.x()/10.0),qglviewer::Vec(0,0,1), data);
 
 
     vao[0].bind();
