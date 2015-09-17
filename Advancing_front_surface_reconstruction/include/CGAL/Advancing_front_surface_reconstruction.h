@@ -746,7 +746,7 @@ namespace CGAL {
     void run(double radius_ratio_bound=5, double beta= 0.52)
     {
       K = radius_ratio_bound;
-      COS_BETA = acos(beta);
+      COS_BETA = cos(beta);
       if(T.dimension() < 3){
         return;
       }
