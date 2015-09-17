@@ -607,7 +607,7 @@ remove_face(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::f
   sm.request_face_status();
   sm.request_vertex_status();
   sm.request_halfedge_status();
-  set_halfedge(f, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfedge_descriptor(), sm);
+  
   set_halfedge(f, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfedge_descriptor(), sm);
   sm.status(f).set_deleted(true);
 }
