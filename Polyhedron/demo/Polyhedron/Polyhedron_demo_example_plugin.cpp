@@ -59,7 +59,6 @@ public :
       m_text += QString("<br />Number of isolated vertices : 0<br />");
 
       return str;
-        return
     }
 
     void draw(Viewer_interface* viewer) const
