@@ -1,28 +1,41 @@
-Subject: CGAL 4.7 Beta 1 Released, Computational Geometry Algorithms Library
+Subject: CGAL 4.7 Beta 2 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body: 
 
-The CGAL Open Source Project is pleased to announce the release 4.7 Beta 1
+The CGAL Open Source Project is pleased to announce the release 4.7 Beta 2
 of CGAL, the Computational Geometry Algorithms Library.
 
-CGAL version 4.7 Beta 1 is a public testing release. It should provide
+CGAL version 4.7 Beta 2 is a public testing release. It should provide
 a solid ground to report bugs that need to be tackled before the
-release of the final version of CGAL 4.7 in September.
+release of the final version of CGAL 4.7 in October.
+
+That is the second "beta" release for CGAL-4.7. The reason is that the
+switches from Qt4 to Qt5, and from OpenGL 1 to modern OpenGL with shaders,
+were not as smooth as we hopped. A lot of bugs have been fixed in the Qt5
+demos since CGAL-4.7-beta1.
+
+You can find the detailed description of all changes here on Github:
+
+  https://github.com/CGAL/cgal/issues?q=milestone%3A4.7-beta2
 
 
-Besides fixes to existing packages, the following has changed since
-CGAL 4.6:
+As a reminder, you can find below the major changes since CGAL 4.6:
 
   o Installation
 
-    - The minimum required version of CMake is now 2.8.11. CMake versions 3.1,
-      3.2, and 3.3 are supported.
+    - The minimum required version of CMake is now 2.8.11. CMake versions
+      3.1, 3.2, and 3.3 are supported.
 
     - All Qt4 demos have been updated and now require Qt5 to be
       compiled. Qt5 version 5.3 or higher is required. The support for Qt4
       is dropped. The code of the 3D demos now use modern OpenGL, with
       shaders, instead of the fixed pipeline API of OpenGL-1.
 
+    - The Microsoft Windows Visual C++ compiler 2015 (VC14) is now
+      supported.  However, since this compiler is not officially supported
+      by Intel TBB 4.4 and Qt 5.5 (the latest versions available at the
+      time of this release), the parallelism features of CGAL and Qt5 demos
+      will not work.
 
   o Advancing Front Surface Reconstruction (new package)
 
