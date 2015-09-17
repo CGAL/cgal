@@ -33,7 +33,33 @@ public :
         return (m == Flat);
     }
 
-    QString toolTip() const {
+    QString toolTip() const {    
+      QString str =
+             QObject::tr( "<p>Number of vertices: %3<br />"
+                           "Number of edges: %3<br />"
+                         "Number of facets: %1")
+                .arg(this->name())
+                .arg(poly->size_of_vertices())
+                .arg(poly->size_of_halfedges()/2)
+                .arg(poly->size_of_facets())
+                .arg(this->renderingModeName())
+                .arg(this->color().name());
+      if (volume!=-std::numeric_limits<double>::infinity())
+        str+=QObject::tr("<br />Volume: %1").arg(volume);
+      if (area!=-std::numeric_limits<double>::infinity())
+        str+=QObject::tr("<br />Area: %1").arg(area);
+      str+="</p>";
+      item_text += QString("Bounding box: min (%1,%2,%3), max(%4,%5,%6)")
+           .arg(item->bbox().xmin)
+           .arg(item->bbox().ymin)
+           .arg(item->bbox().zmin)
+           .arg(item->bbox().xmax)
+           .arg(item->bbox().ymax)
+           .arg(item->bbox().zmax);
+      m_text += QString("<br />Number of isolated vertices : 0<br />");
+
+      return str;
+        return
     }
 
     void draw(Viewer_interface* viewer) const

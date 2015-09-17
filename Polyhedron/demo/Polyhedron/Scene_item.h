@@ -140,6 +140,8 @@ public:
   // Functions for displaying meta-data of the item
   //! @returns a QString containing meta-data about the item.
   //! Must be overloaded.
+  //! Data is :Number of vertices, Number of edges, Number of facets,
+  //! Volume, Area, Bounding box limits and Number of isolated points.
   virtual QString toolTip() const = 0;
   //! @returns a QPixmap containing graphical meta-data about the item.
   virtual QPixmap graphicalToolTip() const { return QPixmap(); }
