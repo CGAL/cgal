@@ -222,6 +222,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(viewer, SIGNAL(requestContextMenu(QPoint)),
           this, SLOT(contextMenuRequested(QPoint)));
 
+  connect(viewer, SIGNAL(requestOperationsContextMenu(QPoint)),
+            this, SLOT(contextOperationsMenuRequested(QPoint)));
+
   // The contextMenuPolicy of infoLabel is now the default one, so that one
   // can easily copy-paste its text.
   // connect(ui->infoLabel, SIGNAL(customContextMenuRequested(const QPoint & )),
@@ -1437,4 +1440,16 @@ void MainWindow::on_actionRecenterScene_triggered()
 {
   updateViewerBBox();
   viewer->camera()->interpolateToFitScene();
+}
+
+void MainWindow::contextOperationsMenuRequested(const QPoint& global_pos)
+{
+  showOperationsContextMenu(global_pos);
+}
+
+void MainWindow::showOperationsContextMenu(const QPoint& global_pos)
+{
+  QMenu* menu = ui->menuOperations;
+  if(menu)
+    menu->exec(global_pos);
 }

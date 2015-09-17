@@ -137,6 +137,10 @@ void Viewer::mousePressEvent(QMouseEvent* event)
      event->modifiers().testFlag(Qt::ShiftModifier)) 
   {
     select(event->pos());
+    if(! event->modifiers().testFlag(Qt::ControlModifier))
+        requestContextMenu(event->globalPos());
+    else
+        requestOperationsContextMenu(event->globalPos());
     requestContextMenu(event->globalPos());
     event->accept();
   }
