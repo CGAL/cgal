@@ -59,7 +59,7 @@
 <td width="28%">
 
 <table CELLSPACING=0>
-<tr><td><a href="#release4.7">4.7</a>&nbsp;<td> (September 2015)
+<tr><td><a href="#release4.7">4.7</a>&nbsp;<td> (October 2015)
 <tr><td><a href="#release4.6.2">4.6.2</a>&nbsp;<td> (August 2015)
 <tr><td><a href="#release4.6.1">4.6.1</a>&nbsp;<td> (June 2015)
 <tr><td><a href="#release4.6">4.6</a>&nbsp;<td> (April 2015)
@@ -114,40 +114,67 @@ and <code>src/</code> directories).
 </table>
 
 <HR>
-<h2 id="release4.7">Release 4.7 </h2>
+<!-- to remove once 4.7 is published
+
+<h2 id="release4.8">Release 4.8 </h2>
 <div>
   <p>Release date: September 2015 </p>
 
+to remove once 4.7 is published: -->
+
 <!-- Installation (and general changes) -->
+<!-- New packages -->
+<!-- Major and breaking changes -->
+<!-- Arithmetic and Algebra -->
+<!-- Combinatorial Algorithms -->
+<!-- Geometry Kernels -->
+<!-- Convex Hull Algorithms -->
+<!-- Polygons -->
+<!-- Cell Complexes and Polyhedra -->
+<!-- Arrangements -->
+<!-- Triangulations and Delaunay Triangulations -->
+<!-- Voronoi Diagrams -->
+<!-- Mesh Generation -->
+<!-- Geometry Processing -->
+<!-- Spatial Searching and Sorting -->
+<!-- Geometric Optimization -->
+<!-- Interpolation -->
+<!-- Support Library -->
+
+<!-- end of the div for 4.8 -->
+
+<!-- to remove once 4.7 is published
+
+</div>
+
+to remove once 4.7 is published: -->
+
+<h2 id="release4.7">Release 4.7 </h2>
+<div>
+  <p>Release date: October 2015 </p>
+
   <h3>Installation</h3>
   <ul>
     <li>The minimum required version of CMake is now 2.8.11. CMake versions
-    3.1, 3.2, and 3.3 are supported.</li>
+      3.1, 3.2, and 3.3 are supported.</li>
     <li>All Qt4 demos have been updated and now require Qt5 to be
-    compiled. Qt5 version 5.3 or higher is required.
-    The support for Qt4 is  dropped. To compile libCGAL_Qt5 and demos,
-    you must set the cmake or environment variable <code>Qt5_DIR</code> to point to
-    the path to the directory containing the file <code>Qt5Config.cmake</code> created
-    by your Qt5 installation.
-    If you are using the open source edition it should be
+      compiled. Qt5 version 5.3 or higher is required.  The support for Qt4
+      is dropped. To compile libCGAL_Qt5 and demos, you must set the cmake
+      or environment variable <code>Qt5_DIR</code> to point to the path to
+      the directory containing the file <code>Qt5Config.cmake</code>
+      created by your Qt5 installation.  If you are using the open source
+      edition it should be
     <code>/path-to/qt-everywhere-opensource-src-&lt;version&gt;/qtbase/lib/cmake/Qt5</code>.
     </li>
     <li>The code of the 3D demos now use modern OpenGL, with shaders,
     instead of the fixed pipeline API of OpenGL-1.</li>
-    <li>Initial support of the Microsoft Windows Visual C++ compiler 2015
-    (VC14). However, since this compiler is not officially supported by
-    Intel TBB 4.4 and QT 5.5 (the latest versions available at the time of this
-    release), the parallelism features of CGAL and Qt5 demos will not work.
+    <li>The Microsoft Windows Visual C++ compiler 2015 (VC14) is now
+      supported.  However, since this compiler is not officially supported
+      by Intel TBB 4.4 and Qt 5.5 (the latest versions available at the
+      time of this release), the parallelism features of CGAL and Qt5 demos
+      will not work.
     </li>
   </ul>
-
-  <h3>General</h3>
-  <ul>
-    <li>Support for unordered sets and maps of the stdlib and of boost for
-      handle and index classes.
-    </li>
-  </ul>
-<!-- New packages -->
 
   <h3>L Infinity Segment Delaunay Graphs (new package)</h3>
   <ul>
@@ -189,25 +216,25 @@ and <code>src/</code> directories).
   <h3>Triangulated Surface Mesh Skeletonization (new package)</h3>
   <ul>
     <li>
-         This package provides a (1D) curve skeleton extraction algorithm
-         for a triangulated polygonal mesh without borders based on the
-         mean curvature flow.  The particularity of this skeleton is that
-         it captures the topology of the input.  For each skeleton vertex
-         one can obtain its location and its corresponding vertices from
-         the input mesh.  The code is generic and works with any model of
-         the `FaceListGraph` concept.
+      This package provides a (1D) curve skeleton extraction algorithm for
+      a triangulated polygonal mesh without borders based on the mean
+      curvature flow.  The particularity of this skeleton is that it
+      captures the topology of the input.  For each skeleton vertex one can
+      obtain its location and its corresponding vertices from the input
+      mesh.  The code is generic and works with any model of the
+      `FaceListGraph` concept.
     </li>
   </ul>
 
   <h3>3D Point-Set Shape Detection (new package)</h3>
   <ul>
     <li>
-      This package implements the efficient RANSAC method for shape detection,
-      contributed by Schnabel et al. From an unstructured point set with
-      unoriented normals, the algorithm detects a set of shapes. Five
-      types of primitive shapes are provided by this package: plane,
-      sphere, cylinder, cone and torus. Detecting other types of shapes
-      is possible by implementing a class derived from a base shape.
+      This package implements the efficient RANSAC method for shape
+      detection, contributed by Schnabel et al. From an unstructured point
+      set with unoriented normals, the algorithm detects a set of
+      shapes. Five types of primitive shapes are provided by this package:
+      plane, sphere, cylinder, cone and torus. Detecting other types of
+      shapes is possible by implementing a class derived from a base shape.
     </li>
   </ul>
 
@@ -220,126 +247,134 @@ and <code>src/</code> directories).
 
   <h3>Polygon Mesh Processing (new package)</h3>
   <ul>
-  <li>
-  This package implements a collection of methods and classes
-  for polygon mesh processing, ranging from basic operations on simplices,
-  to complex geometry processing algorithms.
-  The implementation of this package mainly follows algorithms and references
-  given in Botsch et al.'s book on polygon mesh processing.
-  </li>
+    <li> This package implements a collection of methods and classes for
+      polygon mesh processing, ranging from basic operations on simplices,
+      to complex geometry processing algorithms.  The implementation of
+      this package mainly follows algorithms and references given in Botsch
+      et al.'s book on polygon mesh processing.
+    </li>
   </ul>
 
-<!-- Major and breaking changes -->
+
+  <h3>General</h3>
+  <ul>
+    <li>Support for unordered sets and maps of the stdlib and of boost for
+      handle and index classes.
+    </li>
+  </ul>
+
   <h3>Approximation of Ridges and Umbilics on Triangulated Surface Meshes</h3>
-<ul>
-<li> This package now supports any model of the concept <code>FaceGraph</code>.
-<li> <b>Breaking change:</b> The package no longer support models
-of <code>TriangulatedSurfaceMesh</code> which are not at the same time
-model of the concept <code>FaceGraph</code>.
-</li>
-</ul>
-<!-- Arithmetic and Algebra -->
-<!-- Combinatorial Algorithms -->
-<!-- Geometry Kernels -->
+  <ul>
+    <li> This package now supports any model of the
+      concept <code>FaceGraph</code>.
+    <li> <b>Breaking change:</b> The package no longer support models
+      of <code>TriangulatedSurfaceMesh</code> which are not at the same
+      time model of the concept <code>FaceGraph</code>.
+    </li>
+  </ul>
+
   <h3>dD Geometry Kernel</h3>
   <ul>
     <li>
       Epick_d gains 3 new functors: <code>Construct_circumcenter_d</code>,
-      <code>Compute_squared_radius_d</code>, <code>Side_of_bounded_sphere_d</code>.
+      <code>Compute_squared_radius_d</code>,
+      <code>Side_of_bounded_sphere_d</code>.
       Those are essential for the computation of alpha-shapes.
     </li>
   </ul>
-<!-- Convex Hull Algorithms -->
-<!-- Polygons -->
-<!-- Cell Complexes and Polyhedra -->
-<!-- Arrangements -->
+
   <h3>2D Arrangements</h3>
   <ul>
     <li>Introduced a new traits class, called
-      <code>Arr_polycurve_traits_2&lt;SubcurveTraits&gt;</code>, which handles
-      general piece-wise (polycurve) curves. The pieces do not necessarily
-      have to be linear.</li>
+      <code>Arr_polycurve_traits_2&lt;SubcurveTraits&gt;</code>, which
+      handles general piece-wise (polycurve) curves. The pieces do not
+      necessarily have to be linear.</li>
     <li>Introduced two new concepts called
       <code>ArrangementApproximateTraits_2</code> and
       <code>ArrangementConstructXMonotoneCurveTraits_2</code>.
       <ul>
 	<li>The existing <code>ArrangementLandmarkTraits_2</code> concept,
-	  which has two requirements, now refines the two respective concepts
-	  above.</li>
+	  which has two requirements, now refines the two respective
+	  concepts above.</li>
 	<li>The template parameter of the exsting
-	  <code>Arr_polyline_traits_2&lt;SegmentTraits&gt;</code> template must
-	  be substituted with a traits class that is a model of
-	  the <code>ArrangementConstructXMonotoneTraits_2</code> concept among
-	  the other when <code>Arr_polyline_traits_2</code> is
-	  instantiated.</li>
-      </ul></li>
+	  <code>Arr_polyline_traits_2&lt;SegmentTraits&gt;</code> template
+	  must be substituted with a traits class that is a model of
+	  the <code>ArrangementConstructXMonotoneTraits_2</code> concept
+	  among the other when <code>Arr_polyline_traits_2</code> is
+	  instantiated.
+        </li>
+      </ul>
+    </li>
   </ul>
+
   <h3>2D Minkowski Sums</h3>
   <ul>
-    <li>Added support for polygons with holes and optimized the construction
-      of Minkowski sums.
-    <ul>
-      <li>Introduced an implementation of the "reduced convolution" method, a
-	variant of the method described in "2D Minkowski Sum of Polygons Using
-	Reduced Convolution" by Behar and Lien. The new method supports polygons
-	with holes and in many cases out pergorms the implementation of the
-	exsisting (full) convolution method.</li>
-      <li>Introduced two new classes that decompose polygons into convex pieces
-	(models of the <code>PolygonConvexDecomposition_2</code> concept) based
-	on vertical decomposition and constrained Delaunay triangulation,
-	respectively. These new models also support the convex decomposition of
-	polygons with holes.</li>
-    </ul></li>
+    <li>Added support for polygons with holes and optimized the
+      construction of Minkowski sums.
+      <ul>
+        <li>Introduced an implementation of the "reduced convolution"
+	  method, a variant of the method described in "2D Minkowski Sum of
+	  Polygons Using Reduced Convolution" by Behar and Lien. The new
+	  method supports polygons with holes and in many cases out
+	  pergorms the implementation of the exsisting (full) convolution
+	  method.</li>
+        <li>Introduced two new classes that decompose polygons into convex
+	  pieces (models of the <code>PolygonConvexDecomposition_2</code>
+	  concept) based on vertical decomposition and constrained Delaunay
+	  triangulation, respectively. These new models also support the
+	  convex decomposition of polygons with holes.
+        </li>
+      </ul>
+    </li>
   </ul>
 
-<!-- Triangulations and Delaunay Triangulations -->
   <h3>3D Periodic Triangulations</h3>
   <ul>
-    <li>Rename Periodic_3_triangulation_traits_3 Periodic_3_Delaunay_triangulation_traits_3.
+    <li>Rename <code>Periodic_3_triangulation_traits_3</code> to
+      <code>Periodic_3_Delaunay_triangulation_traits_3</code>.
     </li>
-    <li>Rename the concept Periodic_3TriangulationTraits_3 Periodic_3DelaunayTriangulationTraits_3.
+    <li>Rename the concept <code>Periodic_3TriangulationTraits_3</code> to
+          <code>Periodic_3DelaunayTriangulationTraits_3</code>.
     </li>
-    <li>Create Periodic_3_triangulation_traits_3 and the concept Periodic_3TriangulationTraits_3. 
+    <li>Create <code>Periodic_3_triangulation_traits_3</code> and the
+      concept <code>Periodic_3TriangulationTraits_3</code>.
     </li>
   </ul>
 
-<!-- Voronoi Diagrams -->
-<!-- Mesh Generation -->
   <h3>2D Conforming Triangulations and Meshes</h3>
   <ul>
     <li>
-    Add an optimization method <code>CGAL::lloyd_optimize_mesh_2()</code>
-    that implements the Lloyd (or Centroidal Voronoi Tesselation)
-    optimization algorithm in a Constrained Delaunay Triangulation.  For
-    optimization, the triangulation data structure on which the mesher
-    relies needs its <code>VertexBase</code> template parameter to be a
-    model of the new concept <code>DelaunayMeshVertexBase_2</code>.
+      Add an optimization method <code>CGAL::lloyd_optimize_mesh_2()</code>
+      that implements the Lloyd (or Centroidal Voronoi Tesselation)
+      optimization algorithm in a Constrained Delaunay Triangulation.  For
+      optimization, the triangulation data structure on which the mesher
+      relies needs its <code>VertexBase</code> template parameter to be a
+      model of the new concept <code>DelaunayMeshVertexBase_2</code>.
     </li>
   </ul>
-<!-- Geometry Processing -->
+
   <h3>Point Set Processing and Surface Reconstruction from Point Sets</h3>
   <ul>
     <li>
-    Add the function <code>CGAL::compute_vcm()</code> for computing the
-    Voronoi Covariance Measure (VCM) of a point set. The output of this function
-    can be used with the function <code>CGAL::vcm_is_on_feature_edge()</code>
-    to determine whether a point is on or close to a feature edge. The former
-    function is also internally used by <code>CGAL::vcm_estimate_normals()</code>
-    to estimate the normals of a point set and it is particularly suited to point
-    set with noise.
+      Add the function <code>CGAL::compute_vcm()</code> for computing the
+      Voronoi Covariance Measure (VCM) of a point set. The output of this
+      function can be used with the
+      function <code>CGAL::vcm_is_on_feature_edge()</code> to determine
+      whether a point is on or close to a feature edge. The former function
+      is also internally used by <code>CGAL::vcm_estimate_normals()</code>
+      to estimate the normals of a point set and it is particularly suited
+      to point set with noise.
     </li>
   </ul>
-<!-- Spatial Searching and Sorting -->
+
   <h3>Spatial Sorting</h3>
   <ul>
-        <li>Add the possibility to sort points on a sphere along
-            a space-filling curve using the functions
-            <code>CGAL::hilbert_sort_on_sphere</code> and
-            <code>CGAL::spatial_sort_on_sphere</code>.</li>
+    <li>Add the possibility to sort points on a sphere along
+      a space-filling curve using the functions
+      <code>CGAL::hilbert_sort_on_sphere</code> and
+      <code>CGAL::spatial_sort_on_sphere</code>.</li>
   </ul>
-<!-- Geometric Optimization -->
-<!-- Interpolation -->
-<!-- Support Library -->
+
   <h3>Geometric Object Generators</h3>
   <ul>
     <li>Add new random generator of points in a 2D and 3D triangle and in a
@@ -349,7 +384,6 @@ model of the concept <code>FaceGraph</code>.
         <code>CGAL::Random_points_in_tetrahedron_3</code>).
     </li>
   </ul>
-
 
 <!-- end of the div for 4.7 -->
 </div>
