@@ -74,7 +74,7 @@ template
                                       ///< Strategy to parameterize the surface border.
                                       ///< The minimum is to parameterize two vertices.
     class SparseLinearAlgebraTraits_d
-#ifdef CGAL_EIGEN3_ENABLED
+#if defined(CGAL_EIGEN3_ENABLED) || defined(DOXYGEN_RUNNING)
   = Eigen_solver_traits<Eigen::SimplicialLDLT<Eigen_sparse_symmetric_matrix<double>::EigenType> >
 #else
   = OpenNL::SymmetricLinearSolverTraits<typename ParameterizationMesh_3::NT>
