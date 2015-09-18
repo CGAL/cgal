@@ -34,7 +34,7 @@ bool Shader::loadSources(const char* vsrc, const char* fsrc)
     bool allIsOk = true;
     mProgramID = viewer->glCreateProgram();
 
-    std::string defineStr = "";
+    std::string defineStr = "#extension GL_ARB_texture_rectangle : enable\n";
     for(DefineMap::iterator it = mDefines.begin() ; it!=mDefines.end() ; ++it)
     {
       defineStr += "#define " + it->first + " " + it->second + "\n";
