@@ -57,12 +57,6 @@ if(Qt5_FOUND)
 
 endif(Qt5_FOUND)
 
-find_package(OpenMP)
-if (OPENMP_FOUND)
-  set (CMAKE_C_FLAGS "${CMAKE_C_FLAGS} ${OpenMP_C_FLAGS}")
-  set (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${OpenMP_CXX_FLAGS}")
-endif()
-  
 find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
 if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
