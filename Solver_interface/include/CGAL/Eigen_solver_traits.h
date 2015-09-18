@@ -49,8 +49,18 @@ namespace internal {
   };
   
   template <class FT,class EigenMatrix>
-  struct Get_eigen_matrix< ::Eigen::ConjugateGradient<EigenMatrix>,FT>{
+  struct Get_eigen_matrix< ::Eigen::ConjugateGradient<EigenMatrix, ::Eigen::Lower|::Eigen::Upper>,FT>{
     typedef Eigen_sparse_symmetric_matrix<FT> type;
+  };
+
+  template <class FT,class EigenMatrix>
+  struct Get_eigen_matrix< ::Eigen::SimplicialLDLT<EigenMatrix>,FT>{
+    typedef Eigen_sparse_symmetric_matrix<FT> type;
+  };
+
+  template <class FT,class EigenMatrix>
+  struct Get_eigen_matrix< ::Eigen::LeastSquaresConjugateGradient<EigenMatrix>,FT>{
+    typedef Eigen_sparse_matrix<FT> type;
   };
 
   template <class FT,class EigenMatrix>
@@ -89,6 +99,7 @@ public:
 
    Eigen_solver_traits():m_mat(NULL), m_solver_sptr(new EigenSolverT)
    {
+
    }
    
    EigenSolverT& solver() { return *m_solver_sptr; }
@@ -110,6 +121,13 @@ public:
          
       X = m_solver_sptr->solve(B);
 
+      if (m_solver_sptr->info() == Eigen::NumericalIssue)
+	std::cerr << "Numerical Issue" << std::endl;
+      if (m_solver_sptr->info() == Eigen::NoConvergence)
+	std::cerr << "No Convergence" << std::endl;
+      if (m_solver_sptr->info() == Eigen::InvalidInput)
+	std::cerr << "Invalid Input" << std::endl;
+      
       return m_solver_sptr->info() == Eigen::Success;
    }
 

@@ -32,6 +32,12 @@
 #include <CGAL/Parameterization_mesh_feature_extractor.h>
 #include <iostream>
 
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/internal/Eigen_least_squares_solver.h>
+#endif
+
+#define DEBUG_TRACE
+
 /// \file LSCM_parameterizer_3.h
 
 namespace CGAL {
@@ -136,8 +142,7 @@ private:
     typedef typename Sparse_LA::Vector      Vector;
     typedef typename Sparse_LA::Matrix      Matrix;
 
-    typedef typename OpenNL::LinearSolver<Sparse_LA>
-                                            LeastSquaresSolver ;
+    typedef CGAL::internal::Eigen_least_squares_solver LeastSquaresSolver;
 
 // Public operations
 public:
@@ -289,7 +294,6 @@ parameterize(Adaptor& mesh)
     // Create sparse linear system "A*X = B" of size 2*nbVertices x 2*nbVertices
     // (in fact, we need only 2 lines per triangle x 1 column per vertex)
     LeastSquaresSolver solver(2*nbVertices);
-    solver.set_least_squares(true) ;
 
     // Initialize the "A*X = B" linear system after
     // (at least two) border vertices parameterization
@@ -412,13 +416,13 @@ initialize_system_from_mesh_border(LeastSquaresSolver& solver,
         // Write (u,v) in X (meaningless if vertex is not parameterized)
         // Note  : 2*index     --> u
         //         2*index + 1 --> v
-        solver.variable(2*index    ).set_value(uv.x()) ;
-        solver.variable(2*index + 1).set_value(uv.y()) ;
+        solver.set_value (2*index, uv.x());
+        solver.set_value (2*index + 1, uv.y());
 
         // Copy (u,v) in B if vertex is parameterized
         if (mesh.is_vertex_parameterized(it)) {
-            solver.variable(2*index    ).lock() ;
-            solver.variable(2*index + 1).lock() ;
+	  solver.lock (2*index);
+	  solver.lock (2*index + 1);
         }
     }
 }
@@ -574,8 +578,8 @@ set_mesh_uv_from_system(Adaptor& mesh,
 
         // Note  : 2*index     --> u
         //         2*index + 1 --> v
-        NT u = solver.variable(2*index    ).value() ;
-        NT v = solver.variable(2*index + 1).value() ;
+        NT u = solver.value (2*index);
+        NT v = solver.value (2*index + 1);
 
         // Fill vertex (u,v) and mark it as "parameterized"
         mesh.set_vertex_uv(vertexIt, Point_2(u,v));
