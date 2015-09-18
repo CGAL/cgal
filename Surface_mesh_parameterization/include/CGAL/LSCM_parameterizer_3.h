@@ -26,17 +26,15 @@
 #include <CGAL/Timer.h>
 #include <CGAL/OpenNL/linear_solver.h>
 
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_solver_traits.h>
+#endif
+
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Two_vertices_parameterizer_3.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Parameterization_mesh_feature_extractor.h>
 #include <iostream>
-
-#ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/internal/Eigen_least_squares_solver.h>
-#endif
-
-#define DEBUG_TRACE
 
 /// \file LSCM_parameterizer_3.h
 
@@ -76,7 +74,11 @@ template
                                       ///< Strategy to parameterize the surface border.
                                       ///< The minimum is to parameterize two vertices.
     class SparseLinearAlgebraTraits_d
-                = OpenNL::SymmetricLinearSolverTraits<typename ParameterizationMesh_3::NT>
+#ifdef CGAL_EIGEN3_ENABLED
+  = Eigen_solver_traits<Eigen::SimplicialLDLT<Eigen_sparse_symmetric_matrix<double>::EigenType> >
+#else
+  = OpenNL::SymmetricLinearSolverTraits<typename ParameterizationMesh_3::NT>
+#endif
                                       ///< Traits class to solve a sparse linear system.
                                       ///< We may use a symmetric definite positive solver because LSCM
                                       ///< solves the system in the least squares sense.
@@ -142,7 +144,8 @@ private:
     typedef typename Sparse_LA::Vector      Vector;
     typedef typename Sparse_LA::Matrix      Matrix;
 
-    typedef CGAL::internal::Eigen_least_squares_solver LeastSquaresSolver;
+    typedef typename OpenNL::LinearSolver<Sparse_LA>
+                                            LeastSquaresSolver ;
 
 // Public operations
 public:
@@ -294,6 +297,7 @@ parameterize(Adaptor& mesh)
     // Create sparse linear system "A*X = B" of size 2*nbVertices x 2*nbVertices
     // (in fact, we need only 2 lines per triangle x 1 column per vertex)
     LeastSquaresSolver solver(2*nbVertices);
+    solver.set_least_squares(true) ;
 
     // Initialize the "A*X = B" linear system after
     // (at least two) border vertices parameterization
@@ -416,13 +420,13 @@ initialize_system_from_mesh_border(LeastSquaresSolver& solver,
         // Write (u,v) in X (meaningless if vertex is not parameterized)
         // Note  : 2*index     --> u
         //         2*index + 1 --> v
-        solver.set_value (2*index, uv.x());
-        solver.set_value (2*index + 1, uv.y());
+        solver.variable(2*index    ).set_value(uv.x()) ;
+        solver.variable(2*index + 1).set_value(uv.y()) ;
 
         // Copy (u,v) in B if vertex is parameterized
         if (mesh.is_vertex_parameterized(it)) {
-	  solver.lock (2*index);
-	  solver.lock (2*index + 1);
+            solver.variable(2*index    ).lock() ;
+            solver.variable(2*index + 1).lock() ;
         }
     }
 }
@@ -578,8 +582,8 @@ set_mesh_uv_from_system(Adaptor& mesh,
 
         // Note  : 2*index     --> u
         //         2*index + 1 --> v
-        NT u = solver.value (2*index);
-        NT v = solver.value (2*index + 1);
+        NT u = solver.variable(2*index    ).value() ;
+        NT v = solver.variable(2*index + 1).value() ;
 
         // Fill vertex (u,v) and mark it as "parameterized"
         mesh.set_vertex_uv(vertexIt, Point_2(u,v));

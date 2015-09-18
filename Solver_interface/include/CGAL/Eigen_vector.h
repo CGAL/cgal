@@ -86,10 +86,6 @@ public:
   void set(std::size_t i,NT value) {
     this->operator[](static_cast<int>(i))=value;
    }
-
-  NT get(std::size_t i) const {
-    return this->operator[](static_cast<int>(i));
-  }
    
    NT* vector() {return this->data();}
    
