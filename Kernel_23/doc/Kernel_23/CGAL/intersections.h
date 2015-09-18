@@ -334,7 +334,7 @@ As explained in the boost manual pages for <A HREF="http://www.boost.org/libs/va
 
 \cgalExample{Kernel_23/intersection_get.cpp}
 
-The second example uses`boost::apply_visitor`.
+The second example uses `boost::apply_visitor`.
 
 \cgalExample{Kernel_23/intersection_visitor.cpp}
 
