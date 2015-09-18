@@ -339,14 +339,16 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[1].release();
 
-        buffers[2].bind();
-        buffers[2].allocate(color_facets.data(),
-                            static_cast<int>(color_facets.size()*sizeof(float)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-        buffers[2].release();
+        if(!is_monochrome)
+        {
+            buffers[2].bind();
+            buffers[2].allocate(color_facets.data(),
+                                static_cast<int>(color_facets.size()*sizeof(float)));
+            program->enableAttributeArray("colors");
+            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+            buffers[2].release();
+        }
         vaos[0]->release();
-
         //gouraud
         vaos[4]->bind();
         buffers[0].bind();
@@ -360,11 +362,17 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[10].release();
-
-        buffers[2].bind();
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-        buffers[2].release();
+        if(!is_monochrome)
+        {
+            buffers[2].bind();
+            program->enableAttributeArray("colors");
+            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+            buffers[2].release();
+        }
+        else
+        {
+            program->disableAttributeArray("colors");
+        }
         vaos[4]->release();
 
         program->release();
@@ -386,9 +394,16 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         buffers[4].bind();
         buffers[4].allocate(color_lines.data(),
                             static_cast<int>(color_lines.size()*sizeof(float)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-        buffers[4].release();
+       if(!is_monochrome)
+       {
+           program->enableAttributeArray("colors");
+           program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+           buffers[4].release();
+       }
+       else
+       {
+           program->disableAttributeArray("colors");
+       }
         program->release();
 
         vaos[1]->release();
@@ -416,13 +431,19 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[6].release();
 
-
-        buffers[7].bind();
-        buffers[7].allocate(color_facets_selected.data(),
-                            static_cast<int>(color_facets_selected.size()*sizeof(float)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-        buffers[7].release();
+        if(!is_monochrome)
+        {
+            buffers[7].bind();
+            buffers[7].allocate(color_facets_selected.data(),
+                                static_cast<int>(color_facets_selected.size()*sizeof(float)));
+            program->enableAttributeArray("colors");
+            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+            buffers[7].release();
+        }
+        else
+        {
+            program->disableAttributeArray("colors");
+        }
         vaos[2]->release();
 
         //gouraud
@@ -437,11 +458,17 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[10].release();
 
-
-        buffers[7].bind();
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-        buffers[7].release();
+        if(!is_monochrome)
+        {
+            buffers[7].bind();
+            program->enableAttributeArray("colors");
+            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+            buffers[7].release();
+        }
+        else
+        {
+            program->disableAttributeArray("colors");
+        }
         vaos[5]->release();
 
         program->release();
@@ -461,9 +488,12 @@ Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
         buffers[9].bind();
         buffers[9].allocate(color_lines_selected.data(),
                             static_cast<int>(color_lines_selected.size()*sizeof(float)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-        buffers[9].release();
+        if(!is_monochrome)
+        {
+            program->enableAttributeArray("colors");
+            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
+            buffers[9].release();
+        }
         program->release();
 
         vaos[3]->release();
@@ -707,6 +737,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
 {
+   // setItemIsMulticolor(true);
     cur_shading=FlatPlusEdges;
     is_selected = true;
     nb_facets = 0;
@@ -724,6 +755,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
 {
+   // setItemIsMulticolor(true);
     cur_shading=FlatPlusEdges;
     is_selected = true;
     nb_facets = 0;
@@ -741,6 +773,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
 {
+    //setItemIsMulticolor(true);
     cur_shading=FlatPlusEdges;
     is_selected=true;
     init();
@@ -950,6 +983,13 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
     attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
     program->bind();
+    if(is_monochrome)
+    {
+        if(is_selected)
+            program->setAttributeValue("colors", this->color().lighter(120));
+        else
+            program->setAttributeValue("colors", this->color());
+    }
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/4));
     program->release();
     if(!is_selected && renderingMode() == Flat)
@@ -983,6 +1023,13 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     //draw the edges
+    if(is_monochrome)
+    {
+        if(is_selected)
+            program->setAttributeValue("colors", QColor(0,0,0));
+        else
+            program->setAttributeValue("colors", this->color().lighter(50));
+    }
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/4));
     program->release();
     if(!is_selected)

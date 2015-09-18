@@ -318,10 +318,10 @@ void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0)
         }
         vaos[6]->release();
         nb_sphere = pos_sphere.size();
-        pos_sphere.resize(0);
-        std::vector<double>(pos_sphere).swap(pos_sphere);
-        normals_sphere.resize(0);
-        std::vector<double>(normals_sphere).swap(normals_sphere);
+        //pos_sphere.resize(0);
+        //std::vector<double>(pos_sphere).swap(pos_sphere);
+       // normals_sphere.resize(0);
+       // std::vector<double>(normals_sphere).swap(normals_sphere);
         control_color.resize(0);
         std::vector<double>(control_color).swap(control_color);
         nb_control = control_points.size();
@@ -545,6 +545,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
             program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
             attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
             program->bind();
+            program->setAttributeValue("colors", QColor(0,255,0));
             viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_ROI/3));
             program->release();
             vaos[1]->release();
@@ -554,6 +555,8 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
             program = getShaderProgram(PROGRAM_INSTANCED);
             attrib_buffers(viewer,PROGRAM_INSTANCED);
             program->bind();
+
+            program->setAttributeValue("colors", QColor(0,255,0));
             viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                         static_cast<GLsizei>(nb_sphere/3),
                                         static_cast<GLsizei>(nb_ROI/3));
@@ -567,6 +570,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
         program->bind();
+        program->setAttributeValue("colors", QColor(255,0,0));
         viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_control/3));
         program->release();
         vaos[5]->release();
@@ -576,6 +580,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
         program = getShaderProgram(PROGRAM_INSTANCED);
         attrib_buffers(viewer,PROGRAM_INSTANCED);
         program->bind();
+        program->setAttributeValue("colors", QColor(255,0,0));
         viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                     static_cast<GLsizei>(nb_sphere/3),
                                     static_cast<GLsizei>(nb_control/3));
@@ -638,6 +643,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
                 bbox_program.setUniformValue("translation", vec);
                 bbox_program.setUniformValue("translation_2", vec2);
                 bbox_program.setUniformValue("mvp_matrix", mvp_mat);
+                program->setAttributeValue("colors", QColor(255,0,0));
                 viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_bbox/3));
                 bbox_program.release();
                 vaos[4]->release();

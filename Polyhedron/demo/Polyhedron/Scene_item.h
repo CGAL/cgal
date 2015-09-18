@@ -50,7 +50,7 @@ public:
       buffersSize(20),
       vaosSize(10)
   {
-
+      is_monochrome = true;
       nbVaos = 0;
       for(int i=0; i<vaosSize; i++)
       {
@@ -75,6 +75,7 @@ public:
       buffersSize(buffers_size),
       vaosSize(vaos_size)
   {
+      is_monochrome = true;
       nbVaos = 0;
       for(int i=0; i<vaosSize; i++)
       {
@@ -142,7 +143,14 @@ public Q_SLOTS:
   virtual void contextual_changed(){}
 
   // Setters for the four basic properties
-  virtual void setColor(QColor c) { color_ = c; invalidate_buffers(); }
+  virtual void setColor(QColor c) {
+    color_ = c;
+    if(!is_monochrome)
+    {
+        setItemIsMulticolor(false);
+        invalidate_buffers();
+    }
+  }
   void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
   virtual void setName(QString n) { name_ = n; }
   virtual void setVisible(bool b) { visible_ = b; }
@@ -184,6 +192,13 @@ public Q_SLOTS:
   void setSplattingMode(){
     setRenderingMode(Splatting);
   }
+
+  //! If b is true, the item will use buffers to render the color.
+  //! If b is false, it will use a uniform value. For example, when
+  //! using the mesh segmentation plugin, the item must be multicolor.
+  void setItemIsMulticolor(bool b){
+    is_monochrome = !b;
+  }
   
   virtual void itemAboutToBeDestroyed(Scene_item*);
 
@@ -205,6 +220,9 @@ protected:
   QColor color_;
   bool visible_;
   bool is_selected;
+  //! Specifies if the item is monochrome and uses uniform attribute for its color
+  //! or is multicolor and uses buffers.
+  bool is_monochrome;
   mutable bool are_buffers_filled;
   RenderingMode rendering_mode;
   QMenu* defaultContextMenu;
