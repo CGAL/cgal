@@ -1,11 +1,10 @@
-#include <CGAL/Simple_cartesian.h>
-#include <CGAL/intersections.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/iterator.h>
 #include <CGAL/point_generators_2.h>
 
 #include <boost/bind.hpp>
 
-typedef CGAL::Simple_cartesian<double> K;
+typedef CGAL::Exact_predicates_exact_constructions_kernel K;
 typedef K::Point_2                     Point;
 typedef K::Segment_2                   Segment;
 
@@ -49,7 +48,7 @@ int main()
   std::vector<Segment> segments;
 
   typedef CGAL::Dispatch_output_iterator<
-    CGAL::cpp11::tuple<Point,Segment>, CGAL::cpp0x::tuple< std::back_insert_iterator<std::vector<Point> >,
+    CGAL::cpp11::tuple<Point,Segment>, CGAL::cpp11::tuple< std::back_insert_iterator<std::vector<Point> >,
                                                std::back_insert_iterator<std::vector<Segment> > > >
     Dispatcher;
 

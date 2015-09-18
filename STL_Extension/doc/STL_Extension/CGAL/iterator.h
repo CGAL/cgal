@@ -109,7 +109,7 @@ The class `Dispatch_or_drop_output_iterator` defines an
 dispatches among those based on the type of the value type which is
 put in it. Besides defining assignment for all parameters of `V`
 and for a tuple of type `V`,  it is also defined for the types `boost::variant<T...>` and
-`boost::optional<boost::variant<T...>>`, where `T...`
+`boost::optional<boost::variant<T...> >`, where `T...`
 must be a subset of the parameters of `V`. Should the
 `boost::optional` be empty, it will be discarded.
 
@@ -195,12 +195,12 @@ The class `Dispatch_output_iterator` defines an
 dispatches among those based on the type of the value type which is
 put in it. Other types are also accepted, and the object is 
 discarded in this case. Besides defining assignment for all
-parameters of V and for a tuple of type `V`, it is also defined for the types
-`boost::variant<T...` and
-`boost::optional<boost::variant<T...>`, where `T...`
+parameters of `V` and for a tuple of type `V`, it is also defined for the types
+`boost::variant<T...>` and
+`boost::optional<boost::variant<T...> >`, where `T...`
 can be a list of arbitrary types.
 
-  It also inherits from `O, which makes it easy to treat like a
+  It also inherits from `O`, which makes it easy to treat like a
   tuple.
 
 \cgalHeading{Parameters}
