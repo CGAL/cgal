@@ -6,8 +6,14 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 #include <OpenMesh/Core/IO/MeshIO.hh>
+
+#if 1
 #include <OpenMesh/Core/Mesh/PolyMesh_ArrayKernelT.hh>
 #include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
+#else
+#include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
+#include <CGAL/boost/graph/graph_traits_TriMesh_ArrayKernelT.h>
+#endif
 
 #include <CGAL/boost/graph/convert_surface_mesh.h>
 
@@ -22,8 +28,11 @@ typedef Kernel::Vector_3                                     Vector;
 typedef Kernel::Point_3                                      Point;
 typedef CGAL::Polyhedron_3<Kernel>                           Source;
 
+#if 1
 typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> Target;
-
+#else
+typedef OpenMesh::TriMesh_ArrayKernelT</* MyTraits*/> Target;
+#endif
 typedef boost::graph_traits<Source>::vertex_descriptor sm_vertex_descriptor;
 typedef boost::graph_traits<Target>::vertex_descriptor tm_vertex_descriptor;
 
