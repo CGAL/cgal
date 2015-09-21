@@ -11,7 +11,7 @@
 #include <UI_point_3.h>
 
 #include <algorithm>
-#include <deque>
+#include <vector>
 
 //#ifdef CGAL_GLEW_ENABLED
 //#else
@@ -34,13 +34,13 @@
 /// @param Gt       Geometric traits class.
 
 template <class Gt>
-class Point_set_3 : public std::deque<UI_point_3<Gt> >
+class Point_set_3 : public std::vector<UI_point_3<Gt> >
 {
 // Private types
 private:
 
   // Base class
-  typedef std::deque<UI_point_3<Gt> > Base;
+  typedef std::vector<UI_point_3<Gt> > Base;
 
 // Public types
 public:
@@ -79,8 +79,6 @@ private:
   mutable Point m_barycenter; // point set's barycenter
   mutable FT m_diameter_standard_deviation; // point set's standard deviation
 
-  std::size_t m_nb_selected_points; // number of selected points
-
   iterator m_first_selected; // handle selection
 
   bool m_radii_are_uptodate;
@@ -91,7 +89,6 @@ public:
   /// Default constructor.
   Point_set_3()
   {
-    m_nb_selected_points = 0;
     m_first_selected = end();
     m_bounding_box_is_valid = false;
     m_radii_are_uptodate = false;
@@ -111,43 +108,37 @@ public:
   void set_first_selected(iterator it)
   {
     m_first_selected = it;
-    m_nb_selected_points = std::distance (m_first_selected, end());
   }
 
   // Test if point is selected
-  bool is_selected(iterator it)
+  bool is_selected(const_iterator it) const
   {
-    return std::distance (it, end()) <= std::distance (m_first_selected, end());
+    return static_cast<std::size_t>(std::distance (it, end())) <= nb_selected_points();
   }
 
   /// Gets the number of selected points.
-  std::size_t nb_selected_points() const { return m_nb_selected_points; }
+  std::size_t nb_selected_points() const
+  {
+    return std::distance (first_selected(), end());
+  }
 
   /// Mark a point as selected/not selected.
   void select(iterator it, bool selected = true)
   {
     bool currently = is_selected (it);
     if (currently && !selected)
-      {
-	std::swap (*it, *(m_first_selected ++));
-	m_nb_selected_points --;
-      }
+      std::swap (*it, *(m_first_selected ++));
     else if (!currently && selected)
-      {
-	std::swap (*it, *(-- m_first_selected));
-	m_nb_selected_points ++;
-      }
+      std::swap (*it, *(-- m_first_selected));
   }
 
   void select_all()
   {
     m_first_selected = begin();
-    m_nb_selected_points = size();
   }
   void unselect_all()
   {
     m_first_selected = end();
-    m_nb_selected_points = 0;
   }
 
 
@@ -157,11 +148,10 @@ public:
     iterator sel = end() - 1;
     iterator unsel = begin();
 
+    std::size_t nb_selected = nb_selected_points();
     while (sel != m_first_selected-1 && unsel != m_first_selected)
       std::swap (*(sel --), *(unsel ++));
-    m_first_selected = begin() + m_nb_selected_points;
-
-    m_nb_selected_points = size() - m_nb_selected_points;	
+    m_first_selected = begin() + nb_selected;
   }
 
   /// Deletes selected points.
@@ -173,7 +163,6 @@ public:
     // after erase(), use Scott Meyer's "swap trick" to trim excess capacity
     Point_set_3(*this).swap(*this);
     m_first_selected = end();
-    m_nb_selected_points = 0;
     invalidate_bounds();
   }
 
