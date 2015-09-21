@@ -76,11 +76,12 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& i
   }
 
   setRenderingMode(PointsPlusNormals);
-    is_selected = true;
-    nb_points = 0;
-    nb_selected_points = 0;
-    nb_lines = 0;
-    invalidate_buffers();
+  is_selected = true;
+  nb_points = 0;
+  nb_selected_points = 0;
+  nb_lines = 0;
+  invalidate_buffers();
+  m_points->unselect_all();
 }
 
 Scene_points_with_normal_item::~Scene_points_with_normal_item()
