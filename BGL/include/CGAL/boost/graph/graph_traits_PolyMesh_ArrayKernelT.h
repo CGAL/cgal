@@ -612,7 +612,7 @@ remove_face(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::f
   sm.status(f).set_deleted(true);
 }
 
-
+#if 0 // conflits with function in Euler_operations.h
 template<typename K>
 std::pair<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::edge_descriptor,
           bool>
@@ -622,6 +622,7 @@ add_edge(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vert
   
   return sm.new_edge(v1, v2);
 }
+#endif
 
 template<typename K>
 typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::face_descriptor
