@@ -163,7 +163,9 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       Scene_points_with_normal_item *point_item = new Scene_points_with_normal_item;
       BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
         point_item->point_set()->push_back((*points)[i]);
-
+      
+      point_item->point_set()->unselect_all ();
+      
       unsigned char r, g, b;
       r = static_cast<unsigned char>(64 + rand.get_int(0, 192));
       g = static_cast<unsigned char>(64 + rand.get_int(0, 192));

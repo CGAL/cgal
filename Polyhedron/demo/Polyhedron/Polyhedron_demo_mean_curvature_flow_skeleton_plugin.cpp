@@ -651,9 +651,9 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
   for (size_t i = 0; i < fixedPoints.size(); ++i)
   {
     UI_point_3<Kernel> point(fixedPoints[i].x(), fixedPoints[i].y(), fixedPoints[i].z());
-    ps->select(&point);
     ps->push_back(point);
   }
+  ps->select_all ();
 
   if (fixedPointsItemIndex == -1)
   {
@@ -714,10 +714,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
   for (size_t i = 0; i < fixedPoints.size(); ++i)
   {
     UI_point_3<Kernel> point(fixedPoints[i].x(), fixedPoints[i].y(), fixedPoints[i].z());
-    ps->select(&point);
     ps->push_back(point);
   }
-
+  ps->select_all();
+  
   if (fixedPointsItemIndex == -1)
   {
     fixedPointsItemIndex = scene->addItem(fixedPointsItem);
@@ -888,9 +888,10 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
   for (size_t i = 0; i < fixedPoints.size(); ++i)
   {
     UI_point_3<Kernel> point(fixedPoints[i].x(), fixedPoints[i].y(), fixedPoints[i].z());
-    ps->select(&point);
     ps->push_back(point);
   }
+  ps->select_all();
+  
   if (fixedPointsItemIndex == -1)
   {
     fixedPointsItemIndex = scene->addItem(fixedPointsItem);

@@ -210,8 +210,7 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalEstimation_trigger
                                     << std::endl;
 
     // Selects points with an unoriented normal
-    points->select(points->begin(), points->end(), false);
-    points->select(first_unoriented_point, points->end(), true);
+    points->set_first_selected (first_unoriented_point);
 
     // Updates scene
     item->invalidate_buffers();
