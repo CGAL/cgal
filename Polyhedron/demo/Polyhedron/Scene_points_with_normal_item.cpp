@@ -166,37 +166,22 @@ void Scene_points_with_normal_item::compute_normals_and_vertices() const
     //The points
     {
         // The *non-selected* points
-        if (m_points->nb_selected_points()< m_points->size())
-        {
-
-            for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
-            {
-                const UI_point& p = *it;
-                if ( ! p.is_selected() )
-                {
-                    positions_points.push_back(p.x());
-                    positions_points.push_back(p.y());
-                    positions_points.push_back(p.z());
-                }
-            }
-
-        }
+      for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->first_selected(); it++)
+	{
+	  const UI_point& p = *it;
+	  positions_points.push_back(p.x());
+	  positions_points.push_back(p.y());
+	  positions_points.push_back(p.z());
+	}
 
         // Draw *selected* points
-        if (m_points->nb_selected_points() > 0)
-        {
-            for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
-            {
-                const UI_point& p = *it;
-                if (p.is_selected())
-                {
-                    positions_selected_points.push_back(p.x());
-                    positions_selected_points.push_back(p.y());
-                    positions_selected_points.push_back(p.z());
-                }
-            }
-
-        }
+      for (Point_set_3<Kernel>::const_iterator it = m_points->first_selected(); it != m_points->end(); it++)
+	{
+	  const UI_point& p = *it;
+	  positions_selected_points.push_back(p.x());
+	  positions_selected_points.push_back(p.y());
+	  positions_selected_points.push_back(p.z());
+	}
     }
 
     //The lines
@@ -206,50 +191,34 @@ void Scene_points_with_normal_item::compute_normals_and_vertices() const
         float normal_length = (float)std::sqrt(region_of_interest.squared_radius() / 1000.);
 
         // Stock normals of *non-selected* points
-        if (m_points->nb_selected_points() < m_points->size())
-        {
-            // Stock normals
-            for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
-            {
-                const UI_point& p = *it;
-                const Point_set_3<Kernel>::Vector& n = p.normal();
-                if (!p.is_selected())
-                {
-                    Point_set_3<Kernel>::Point q = p + normal_length * n;
-                    positions_lines.push_back(p.x());
-                    positions_lines.push_back(p.y());
-                    positions_lines.push_back(p.z());
+	for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->first_selected(); it++)
+	  {
+	    const UI_point& p = *it;
+	    const Point_set_3<Kernel>::Vector& n = p.normal();
+	    Point_set_3<Kernel>::Point q = p + normal_length * n;
+	    positions_lines.push_back(p.x());
+	    positions_lines.push_back(p.y());
+	    positions_lines.push_back(p.z());
 
-                    positions_lines.push_back(q.x());
-                    positions_lines.push_back(q.y());
-                    positions_lines.push_back(q.z());
-
-                }
-            }
-        }
+	    positions_lines.push_back(q.x());
+	    positions_lines.push_back(q.y());
+	    positions_lines.push_back(q.z());
+	  }
 
         // Stock normals of *selected* points
-        if (m_points->nb_selected_points() > 0)
-        {
-            for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
-            {
-                const UI_point& p = *it;
-                const Point_set_3<Kernel>::Vector& n = p.normal();
-                if (p.is_selected())
-                {
-                    Point_set_3<Kernel>::Point q = p + normal_length * n;
-                    positions_lines.push_back(p.x());
-                    positions_lines.push_back(p.y());
-                    positions_lines.push_back(p.z());
+	for (Point_set_3<Kernel>::const_iterator it = m_points->first_selected(); it != m_points->end(); it++)
+	  {
+	    const UI_point& p = *it;
+	    const Point_set_3<Kernel>::Vector& n = p.normal();
+	    Point_set_3<Kernel>::Point q = p + normal_length * n;
+	    positions_lines.push_back(p.x());
+	    positions_lines.push_back(p.y());
+	    positions_lines.push_back(p.z());
 
-                    positions_lines.push_back(q.x());
-                    positions_lines.push_back(q.y());
-                    positions_lines.push_back(q.z());
-
-
-                }
-            }
-        }
+	    positions_lines.push_back(q.x());
+	    positions_lines.push_back(q.y());
+	    positions_lines.push_back(q.z());
+	  }
     }
 }
 
@@ -286,7 +255,7 @@ void Scene_points_with_normal_item::deleteSelection()
 // Invert selection
 void Scene_points_with_normal_item::invertSelection()
 {
-    m_points->invert_selection();
+  m_points->invert_selection();
   invalidate_buffers();
   Q_EMIT itemChanged();
 }
@@ -294,7 +263,7 @@ void Scene_points_with_normal_item::invertSelection()
 // Select everything
 void Scene_points_with_normal_item::selectAll()
 {
-    m_points->select(m_points->begin(), m_points->end(), true);
+  m_points->select_all();
   invalidate_buffers();
   Q_EMIT itemChanged();
 }
@@ -302,7 +271,7 @@ void Scene_points_with_normal_item::selectAll()
 void Scene_points_with_normal_item::resetSelection()
 {
   // Un-select all points
-  m_points->select(m_points->begin(), m_points->end(), false);
+  m_points->unselect_all();
   invalidate_buffers();
   Q_EMIT itemChanged();
 }
@@ -310,9 +279,9 @@ void Scene_points_with_normal_item::resetSelection()
 void Scene_points_with_normal_item::selectDuplicates()
 {
   std::set<Kernel::Point_3> unique_points;
-  for (Point_set::Point_iterator ptit=m_points->begin(); ptit!=m_points->end();++ptit )
+  for (Point_set::iterator ptit=m_points->begin(); ptit!=m_points->end();++ptit )
     if ( !unique_points.insert(*ptit).second )
-      m_points->select(&(*ptit));
+      m_points->select(ptit);
   invalidate_buffers();
   Q_EMIT itemChanged();
 }
@@ -328,6 +297,7 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
                                               std::back_inserter(*m_points),
                                               CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())) &&
             !isEmpty();
+  m_points->unselect_all();
   invalidate_buffers();
   return ok;
 }
@@ -368,6 +338,7 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
       }
     }
   }
+  m_points->unselect_all();
   invalidate_buffers();
   return ok;
 }
