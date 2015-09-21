@@ -139,19 +139,6 @@ public:
       }
   }
 
-  /// Mark a range of points as selected/not selected.
-  ///
-  /// @param first Iterator over first point to select/unselect.
-  /// @param beyond Past-the-end iterator.
-  void select(iterator first, iterator beyond,
-              bool selected = true)
-  {
-    for (iterator it = first; it != beyond; it++)
-      select (it, selected);
-
-    m_nb_selected_points = std::distance (m_first_selected, end());
-  }
-
   void select_all()
   {
     m_first_selected = begin();
@@ -167,10 +154,14 @@ public:
   // Invert selection
   void invert_selection()
   {
-    for (iterator it = begin(); it != end(); ++ it)
-      select (it, !(is_selected (it)));
+    iterator sel = end() - 1;
+    iterator unsel = begin();
 
-    m_nb_selected_points = size() - m_nb_selected_points;
+    while (sel != m_first_selected-1 && unsel != m_first_selected)
+      std::swap (*(sel --), *(unsel ++));
+    m_first_selected = begin() + m_nb_selected_points;
+
+    m_nb_selected_points = size() - m_nb_selected_points;	
   }
 
   /// Deletes selected points.
