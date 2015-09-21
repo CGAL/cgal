@@ -317,46 +317,77 @@ protected:
       }
 
     if (selection_mode == 0) // New selection
-      {
-	for(Point_set::iterator it = point_set_item->point_set()->begin ();
-	    it != point_set_item->point_set()->end(); ++ it)
-	  point_set_item->point_set()->select(&*it,false);
-      }
+      point_set_item->point_set()->unselect_all();
     
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     qglviewer::Camera* camera = viewer->camera();
+
+    std::vector<UI_point_3<Kernel> > unselected, selected;
     
     for(Point_set::iterator it = point_set_item->point_set()->begin ();
 	it != point_set_item->point_set()->end(); ++ it)
       {
-	bool already_selected = it->is_selected ();
+	bool already_selected = point_set_item->point_set()->is_selected (it);
 	    
 	qglviewer::Vec vp (it->x (), it->y (), it->z ());
 	qglviewer::Vec vsp = camera->projectedCoordinatesOf (vp);
 	    
 	bool now_selected = visualizer->is_selected (vsp);
 
-	// NEW INTERSECTION or UNION
-	//  * Select point if it is now selected
-	if (selection_mode < 2 && now_selected)
-	  point_set_item->point_set()->select(&*it,true);
+	// NEW INTERSECTION
+	if (selection_mode == 0)
+	  {
+	    if (now_selected)
+	      selected.push_back (*it);
+	    else
+	      unselected.push_back (*it);
+	  }
+	// UNION
+	else if (selection_mode == 1)
+	  {
+	    if (already_selected || now_selected)
+	      selected.push_back (*it);
+	    else
+	      unselected.push_back (*it);
+	  }
 	// INTERSECTION
 	//  * Unselect point if it was selected and is not anymore
 	else if (selection_mode == 2)
 	  {
-	    if (already_selected && !now_selected)
-	      point_set_item->point_set()->select(&*it,false);
+	    if (already_selected && now_selected)
+	      selected.push_back (*it);
+	    else
+	      unselected.push_back (*it);
 	  }
 	// DIFFERENCE
 	//  * Unselect point if it was selected and is now selected
 	else if (selection_mode == 3)
 	  {
-	    if (already_selected && now_selected)
-	      point_set_item->point_set()->select(&*it,false);
+	    if (already_selected && !now_selected)
+	      selected.push_back (*it);
+	    else
+	      unselected.push_back (*it);
 	  }
 
       }
 
+    point_set_item->point_set()->clear();
+    
+    std::copy (unselected.begin (), unselected.end (),
+	       std::back_inserter (*(point_set_item->point_set())));
+    std::size_t size = unselected.size();
+
+    if (selected.empty ())
+      {
+	point_set_item->point_set()->unselect_all();
+      }
+    else
+      {
+	std::copy (selected.begin (), selected.end (),
+		   std::back_inserter (*(point_set_item->point_set())));
+	point_set_item->point_set()->set_first_selected
+	  (point_set_item->point_set()->begin() + size);
+      } 
     point_set_item->invalidate_buffers();
   }
 
@@ -437,7 +468,7 @@ public Q_SLOTS:
     typedef Point_set_3<Kernel> Point_set;
     for(Point_set::iterator it = point_set_item->point_set()->begin ();
 	it != point_set_item->point_set()->end(); ++ it) {
-      if (it->is_selected ())
+      if (point_set_item->point_set()->is_selected (it))
 	new_item->point_set()->push_back(*it);
     }
     new_item->resetSelection();
