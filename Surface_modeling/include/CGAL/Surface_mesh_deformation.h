@@ -85,7 +85,7 @@ struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
  /// @tparam WC a model of SurfaceModelingWeights, with `WC::Halfedge_graph` being `HG`.
  ///         If `TAG` is `ORIGINAL_ARAP`, the weights must be positive to guarantee a correct energy minimization.
  ///         The default is the cotangent weighting scheme. In case `TAG` is `ORIGINAL_ARAP`, negative weights are clamped to zero.
- /// @tparam ST a model of SparseLinearAlgebraTraitsWithFactor_d. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
+ /// @tparam ST a model of SparseLinearAlgebraWithFactorTraits_d. If \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available
  /// and `CGAL_EIGEN3_ENABLED` is defined, then an overload of `Eigen_solver_traits` is provided as default parameter.\n
   /// \code
  ///     CGAL::Eigen_solver_traits<

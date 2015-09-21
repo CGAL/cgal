@@ -1,0 +1,49 @@
+/// \defgroup PkgSolver CGAL and Solvers Reference
+
+/// \defgroup PkgSolverConcepts Concepts
+/// \ingroup PkgSolver
+///
+
+
+/*!
+\addtogroup PkgSolver
+\cgalPkgDescriptionBegin{CGAL and Solvers,PkgSolverSummary}
+\cgalPkgPicture{solver.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{CGAL Editorial Board}
+\cgalPkgDesc{This package provides concepts and models for solving linear systems with dense or sparse matrices.}
+\cgalPkgManuals{Chapter_CGAL_and_Solvers,PkgSolver}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{3.7}
+\cgalPkgBib{cgal:eb-solver}
+\cgalPkgLicense{\ref licensesLGPL "LGPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+\cgalClassifedRefPages
+
+## Concepts ##
+
+- `DiagonalizeTraits`
+- `SparseLinearAlgebraTraits_d`
+- `SparseLinearAlgebraWithFactorTraits_d`
+- `SvdTraits`
+
+
+## Classes ##
+
+- `CGAL::Eigen_solver_traits`
+- `CGAL::Eigen_svd`
+- `CGAL::Eigen_diagonalize_traits`
+- `CGAL::Eigen_matrix`
+- `CGAL::Eigen_vector`
+- `CGAL::Eigen_sparse_matrix`
+- `CGAL::Eigen_sparse_symmetric_matrix`
+- `CGAL::Diagonalize_traits`
+
+*/
+
+
+
+

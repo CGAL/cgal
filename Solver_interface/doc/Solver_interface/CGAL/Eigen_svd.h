@@ -2,11 +2,11 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgJet_fitting_3
+\ingroup PkgSolver
 
 The class `Eigen_svd` provides an algorithm to solve in the least 
 square sense a linear system with a singular value decomposition using 
-\ref thirdpartyEigen. The field type is `double`. 
+\ref thirdpartyEigen. 
 
 \cgalModels `SvdTraits`
 
@@ -15,7 +15,11 @@ square sense a linear system with a singular value decomposition using
 class Eigen_svd {
 public:
 
-/// @}
+  typedef double FT;
+
+  typedef Eigen_vector<FT> Vector;
+
+  typedef Eigen_matrix<FT> Matrix;
 
 }; /* end Eigen_svd */
 } /* end namespace CGAL */

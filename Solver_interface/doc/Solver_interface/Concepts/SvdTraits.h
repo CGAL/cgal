@@ -1,23 +1,11 @@
 /*!
-  \ingroup PkgJet_fitting_3Concepts
+  \ingroup PkgSolverConcepts
   \cgalConcept
 
-  The concept `SvdTraits` describes the set of requirements to be 
-  fulfilled by any class used to instantiate the third template 
-  parameter of the class 
-  `CGAL::Monge_via_jet_fitting<DataKernel,LocalKernel,SvdTraits>`. 
-
-  It describes the linear algebra types and algorithms needed by the 
-  class `CGAL::Monge_via_jet_fitting`. 
-
-  \cgalHeading{Requirements}
-
-  The scalar type, `SvdTraits::FT`, must be the same as that of 
-  the `LocalKernel` concept : `LocalKernel::FT`. 
+  The concept `SvdTraits` describes the linear algebra types and algorithms needed 
+  to solve in the least square sense a linear system with a singular value decomposition
 
   \cgalHasModel `CGAL::Eigen_svd`
-
-  \sa `LocalKernel` 
 
 */
 class SvdTraits {
@@ -39,7 +27,7 @@ public:
   /*!
     The matrix type,  model of the concept `SvdTraits::Matrix`. 
   */ 
-  typedef unspecified_type matrix;
+  typedef unspecified_type Matrix;
   
   /// @} 
 
@@ -60,9 +48,10 @@ public:
 }; /* end SvdTraits */
 
 /*!
-\ingroup PkgJet_fitting_3Concepts
 \cgalConcept
-Concept of vector type used by the concept SvdTraits.
+Concept of vector type used by the concept `SvdTraits`.
+
+\cgalHasModel `CGAL::Eigen_vector<T>`
 */
 class SvdTraits::Vector {
 public:
@@ -76,12 +65,12 @@ public:
   size_t size(); 
 
   /*!
-    return the \f$ i^{th}\f$ entry, \f$ i\f$ from \f$ 0\f$ to \f$ size()-1\f$. 
+    return the `i`th entry, `i` from `0` to `size()-1`. 
   */ 
   FT operator()(size_t i); 
 
   /*!
-    set the \f$ i^{th}\f$ entry to `value`. 
+    set the `i`'th entry to `value`. 
   */ 
   void set(size_t i, const FT value); 
 
@@ -93,9 +82,10 @@ public:
 
 
 /*!
-\ingroup PkgJet_fitting_3Concepts
 \cgalConcept
-Concept of matrix type used by the concept SvdTraits.
+Concept of matrix type used by the concept `SvdTraits`.
+
+\cgalHasModel `CGAL::Eigen_matrix<T>`
 */
 class SvdTraits::Matrix {
 public:
@@ -115,13 +105,13 @@ public:
   size_t number_of_columns(); 
 
   /*!
-    return the entry at row \f$ i\f$ and column \f$ j\f$, \f$ i\f$ from \f$ 0\f$ to `number_of_rows - 1`, 
-    \f$ j\f$ from \f$ 0\f$ to `number_of_columns - 1`. 
+    return the entry at row `i` and column `j`, `i` from `0` to `number_of_rows - 1`, 
+    `j` from `0` to `number_of_columns - 1`. 
   */ 
   FT operator()(size_t i, size_t j); 
 
   /*!
-    set the entry at row \f$ i\f$ and column \f$ j\f$ to \f$ value\f$. 
+    set the entry at row `i` and column `j` to `value`. 
   */ 
   void set(size_t i, size_t j, const FT value); 
 };
