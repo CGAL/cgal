@@ -2,7 +2,7 @@
 \ingroup PkgSolverConcepts
 \cgalConcept
 
-Concept providing functions to extract eigenvectors and eigenvalue
+Concept providing functions to extract eigenvectors and eigenvalues
 from covariance matrices represented by an array `a`, using symmetric
 diagonalization. For example, a matrix of dimension 3 is defined as
 follows:

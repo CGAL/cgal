@@ -38,7 +38,7 @@ Although both models achieve the same computation,
 \ref thirdpartyEigen library is available. The eigenvalues are stored
 in ascending order and eigenvectors are stored in accordance.
 
-This is an example of an eigendecomposition of a matrix using this
+This is an example of an eigen decomposition of a matrix using this
 class:
 
 
