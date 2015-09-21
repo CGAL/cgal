@@ -13,7 +13,7 @@ The tag `tag` identifies the dimension to be considered from the objects. For po
 
 The class `K` is the kernel in which the value type of the  `InputIterator` is defined. It can be omitted and deduced automatically from the value type. 
 
-The class `DiagonalizeTraits` is a model of `DiagonalizeTraits`. It can be omitted: if Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined then an overload using `Eigen_diagonalize_traits` is provided. Otherwise, the internal implementation `Diagonalize_traits` is used.
+The class `DiagonalizeTraits_` is a model of `DiagonalizeTraits`. It can be omitted: if Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined then an overload using `Eigen_diagonalize_traits` is provided. Otherwise, the internal implementation `Diagonalize_traits` is used.
 
 \cgalHeading{Requirements}
 
@@ -30,7 +30,7 @@ omitted.
 
 \pre first != beyond. 
 */
-template < typename InputIterator, typename K, typename Tag, typename DiagonalizeTraits > 
+template < typename InputIterator, typename K, typename Tag, typename DiagonalizeTraits_ > 
 typename K::FT 
 linear_least_squares_fitting_2(InputIterator first,
 InputIterator beyond,
@@ -38,7 +38,7 @@ typename K::Line_2 & line,
 typename K::Point_2 & centroid, 
 const Tag & tag,
 const K & k,
-const DiagonalizeTraits& diagonalize_traits);
+const DiagonalizeTraits_& diagonalize_traits);
 
 } /* namespace CGAL */
 
