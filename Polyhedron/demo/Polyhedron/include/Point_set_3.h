@@ -83,6 +83,14 @@ private:
 
   bool m_radii_are_uptodate;
 
+  // Assignment operator not implemented and declared private to make
+  // sure nobody uses the default one without knowing it
+  Point_set_3& operator= (const Point_set_3& other)
+  {
+    return *this;
+  }
+
+  
 // Public methods
 public:
 
@@ -94,7 +102,18 @@ public:
     m_radii_are_uptodate = false;
   }
 
-  // Default copy constructor and operator =() are fine.
+  // copy constructor 
+  Point_set_3 (const Point_set_3& p) : Base (p)
+  {
+    m_bounding_box_is_valid = p.m_bounding_box_is_valid;
+    m_bounding_box = p.m_bounding_box;
+    m_barycenter = p.m_barycenter;
+    m_diameter_standard_deviation = p.m_diameter_standard_deviation;
+
+    m_first_selected = end() - p.nb_selected_points();
+    
+    m_radii_are_uptodate = m_radii_are_uptodate;
+  }
 
   // Repeat base class' public methods used below
   /// @cond SKIP_IN_MANUAL
