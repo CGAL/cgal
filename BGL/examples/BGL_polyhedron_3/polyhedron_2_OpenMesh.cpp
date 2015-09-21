@@ -39,8 +39,24 @@ typedef boost::graph_traits<Target>::vertex_descriptor tm_vertex_descriptor;
 typedef boost::graph_traits<Source>::halfedge_descriptor sm_halfedge_descriptor;
 typedef boost::graph_traits<Target>::halfedge_descriptor tm_halfedge_descriptor;
 
-boost::unordered_map<sm_vertex_descriptor, tm_vertex_descriptor> v2v;
-boost::unordered_map<sm_halfedge_descriptor, tm_halfedge_descriptor> h2h;
+namespace OpenMesh {
+
+inline  std::size_t hash_value(const VertexHandle&  i)
+  {
+    return i.idx();
+  }
+
+inline  std::size_t hash_value(const HalfedgeHandle&  i)
+  {
+    return i.idx();
+  }
+
+inline  std::size_t hash_value(const FaceHandle&  i)
+  {
+    return i.idx();
+  }
+
+}
 
 int main(int, char* argv[])
 {
@@ -49,9 +65,23 @@ int main(int, char* argv[])
   std::ifstream in(argv[1]);
   in >> S;
 
-  convert_surface_mesh(S,T,v2v,h2h);
+  {
+    boost::unordered_map<sm_vertex_descriptor, tm_vertex_descriptor> v2v;
+    boost::unordered_map<sm_halfedge_descriptor, tm_halfedge_descriptor> h2h;
+    
+    convert_surface_mesh(S,T,v2v,h2h);
+    OpenMesh::IO::write_mesh(T, "om.off");
+  }
 
-  OpenMesh::IO::write_mesh(T, "om.off");
+ {
+    boost::unordered_map<tm_vertex_descriptor, sm_vertex_descriptor> v2v;
+    boost::unordered_map<tm_halfedge_descriptor, sm_halfedge_descriptor> h2h;
+    
+    convert_surface_mesh(T,S,v2v,h2h);
+    std::ofstream out("reverse.off");
+    out << S << std::endl;
+  }
 
+  
   return 0;
 }

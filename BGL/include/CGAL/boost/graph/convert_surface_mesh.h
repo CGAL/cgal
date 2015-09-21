@@ -22,7 +22,7 @@ namespace CGAL {
   typedef boost::graph_traits<TargetMesh>::halfedge_descriptor tm_halfedge_descriptor;
 
   typedef typename boost::property_map<SourceMesh, vertex_point_t>::const_type sm_PMap;
-  typedef typename boost::property_map<TargetMesh, vertex_point_t>::const_type tm_PMap;
+  typedef typename boost::property_map<TargetMesh, vertex_point_t>::type tm_PMap;
 
   sm_PMap sm_pmap = get(vertex_point, sm);
   tm_PMap tm_pmap = get(vertex_point, tm);

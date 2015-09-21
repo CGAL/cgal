@@ -355,6 +355,9 @@ typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfedge_desc
 halfedge(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor v,
          const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 {
+  if(sm.halfedge_handle(v) == boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::null_halfedge()){
+    return boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::null_halfedge();
+  }
   // prev because OpenMesh stores out-going halfedges
   // return sm.prev_halfedge_handle(sm.halfedge_handle(v));
   return sm.opposite_halfedge_handle(sm.halfedge_handle(v));
