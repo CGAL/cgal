@@ -191,23 +191,7 @@ void Scene_points_with_normal_item::compute_normals_and_vertices() const
         Kernel::Sphere_3 region_of_interest = m_points->region_of_interest();
         float normal_length = (float)std::sqrt(region_of_interest.squared_radius() / 1000.);
 
-        // Stock normals of *non-selected* points
-	for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->first_selected(); it++)
-	  {
-	    const UI_point& p = *it;
-	    const Point_set_3<Kernel>::Vector& n = p.normal();
-	    Point_set_3<Kernel>::Point q = p + normal_length * n;
-	    positions_lines.push_back(p.x());
-	    positions_lines.push_back(p.y());
-	    positions_lines.push_back(p.z());
-
-	    positions_lines.push_back(q.x());
-	    positions_lines.push_back(q.y());
-	    positions_lines.push_back(q.z());
-	  }
-
-        // Stock normals of *selected* points
-	for (Point_set_3<Kernel>::const_iterator it = m_points->first_selected(); it != m_points->end(); it++)
+	for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
 	  {
 	    const UI_point& p = *it;
 	    const Point_set_3<Kernel>::Vector& n = p.normal();
