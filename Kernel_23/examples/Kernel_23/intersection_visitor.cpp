@@ -9,13 +9,15 @@ typedef K::Intersect_2 Intersect_2;
 
 struct Intersection_visitor {
   typedef void result_type;
+
   void operator()(const Point_2& p) const
   {
-    // handle point
+    std::cout << p << std::endl;
   }
+
   void operator()(const Segment_2& s) const
   {
-    // handle segment
+    std::cout << s << std::endl;
   }
 };
 
@@ -29,10 +31,11 @@ int main()
   // without C++11
   CGAL::cpp11::result_of<Intersect_2(Segment_2, Line_2)>::type
     result = intersection(seg, lin);
-  if (result) { boost::apply_visitor(Intersection_visitor(), *result); }
-  else {
+  if (result) { 
+    boost::apply_visitor(Intersection_visitor(), *result); 
+  } else {
     // no intersection
   }
-
+  
   return 0;
 }

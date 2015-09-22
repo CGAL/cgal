@@ -15,10 +15,10 @@ int main()
     result = intersection(seg, lin);
   if (result) {
     if (const Segment_2* s = boost::get<Segment_2>(&*result)) {
-      // handle segment
+      std::cout << *s << std::endl;
     } else {
       const Point_2* p = boost::get<Point_2 >(&*result);
-      // handle point
+      std::cout << *s << std::endl;
     }
   }
   return 0;
