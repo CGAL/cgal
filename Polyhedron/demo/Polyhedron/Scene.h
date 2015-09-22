@@ -168,6 +168,7 @@ private Q_SLOTS:
       for(int i=0; i<5; i++)
       {
           list<<new QStandardItem();
+          list.at(i)->setEditable(false);
       }
      for(int i=0; i<rowCount(); i++)
      {
@@ -202,7 +203,7 @@ public:
   {
   }
 
-  bool editorEvent(QEvent *event, QStandardItemModel *model,
+  bool editorEvent(QEvent *event, QAbstractItemModel *model,
                    const QStyleOptionViewItem &option,
                    const QModelIndex &index);
   void paint(QPainter *painter, const QStyleOptionViewItem &option,

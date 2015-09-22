@@ -665,11 +665,10 @@ void Scene::itemChanged(Scene_item* /* item */)
                      this->createIndex(m_entries.size() - 1, LastColumn));
 }
 
-bool SceneDelegate::editorEvent(QEvent *event, QStandardItemModel *model,
+bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
                                 const QStyleOptionViewItem &option,
                                 const QModelIndex &index)
 {
-    qDebug()<<"editor event";
     QAbstractProxyModel* proxyModel = dynamic_cast<QAbstractProxyModel*>(model);
     Q_ASSERT(proxyModel);
     Scene *scene = dynamic_cast<Scene*>(proxyModel->sourceModel());
