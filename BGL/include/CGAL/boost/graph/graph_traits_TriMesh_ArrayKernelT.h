@@ -26,6 +26,7 @@
 #include <boost/iterator/transform_iterator.hpp>
 
 #include <CGAL/boost/graph/properties_TriMesh_ArrayKernelT.h>
+#include <CGAL/boost/graph/graph_traits_PolyMesh_ArrayKernelT.h>
 #include <CGAL/boost/graph/internal/OM_iterator_from_circulator.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/Iterator_range.h>
@@ -40,76 +41,6 @@
 #  pragma warning(push)
 #  pragma warning(disable:4267)
 #endif
-namespace CGAL { namespace internal {
-
-
-template<typename Halfedge_handle>
-class OMesh_edge {
-public:
-  OMesh_edge() : halfedge_() {}
-  explicit OMesh_edge(const Halfedge_handle& h) : halfedge_(h) {}
-  Halfedge_handle halfedge() const { return halfedge_; }
-  bool is_valid() const { return halfedge_.is_valid(); }
-
-  bool
-  operator==(const OMesh_edge& other) {
-    if(halfedge_ == other.halfedge_) {
-      return true;
-    } else if(halfedge_ != Halfedge_handle()) {
-      return opposite() == other.halfedge_;
-    } else {
-      return false;
-    }
-  }
-
-  bool operator<(const OMesh_edge& other) const
-  { 
-    return this->idx() < other.idx();
-  }
-
-  bool
-  operator!=(const OMesh_edge& other) { return !(*this == other); }
-
-  Halfedge_handle
-  opposite() const { return Halfedge_handle((halfedge_.idx() & 1) ? halfedge_.idx()-1 : halfedge_.idx()+1); }
-
-  OMesh_edge
-  opposite_edge() const { return OMesh_edge(Halfedge_handle((halfedge_.idx() & 1) ? halfedge_.idx()-1 : halfedge_.idx()+1)); }
-
-  unsigned int idx() const { return halfedge_.idx() / 2; }
-private:
-  Halfedge_handle halfedge_;
-};
-
-template <typename Halfedge_handle, typename OMeshEdge>
-struct Convert_omesh_edge
-{
-  typedef OMesh_edge<Halfedge_handle> result_type;
-  result_type operator()(const OMeshEdge& h) const { 
-    return result_type(Halfedge_handle(h.idx() * 2)); 
-  }
-};
-
-template <typename Halfedge_handle>
-struct Construct_omesh_edge
-{
-  typedef OMesh_edge<Halfedge_handle> result_type;
-  template <typename T>
-  result_type operator()(const T& h) const { return result_type(h); }
-};
-
-template <typename Halfedge_handle>
-struct Construct_omesh_edge_opposite
-{
-  typedef OMesh_edge<Halfedge_handle> result_type;
-  template <typename T>
-  result_type operator()(const T& h) const { return result_type(h).opposite_edge(); }
-};
-
-
-} // internal
-} // CGAL
-
 
 namespace boost {
 

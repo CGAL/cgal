@@ -24,172 +24,10 @@
 #include <CGAL/assertions.h>
 #include <OpenMesh/Core/Mesh/TriMesh_ArrayKernelT.hh>
 #include <CGAL/boost/graph/properties.h>
+#include <CGAL/boost/graph/properties_PolyMesh_ArrayKernelT.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <boost/mpl/if.hpp>
 
-namespace CGAL {
-
-template <typename Mesh, typename Descriptor, typename Value>
-class OM_pmap {
-public:
-  typedef typename boost::mpl::if_<boost::is_same<Descriptor, typename boost::graph_traits<Mesh>::vertex_descriptor>,
-                                   OpenMesh::VPropHandleT<Value>,
-                                   typename boost::mpl::if_<boost::is_same<Descriptor, typename boost::graph_traits<Mesh>::face_descriptor>,
-                                                            OpenMesh::FPropHandleT<Value>,
-                                                            typename boost::mpl::if_<boost::is_same<Descriptor, typename boost::graph_traits<Mesh>::halfedge_descriptor>,
-                                                                                     OpenMesh::HPropHandleT<Value>,
-                                                                                     OpenMesh::EPropHandleT<Value> >::type>::type>::type H;
-  
-  typedef boost::read_write_property_map_tag category;
-  
-  typedef Descriptor key_type;
-  typedef Value value_type;
-  
-  typedef value_type& reference;
-  
-  OM_pmap(Mesh& m)
-    : mesh(m)
-  {}
-  
-  OM_pmap(Mesh& m, H h)
-    : mesh(m), h(h)
-  {}
-  
-  inline friend reference get(const OM_pmap<Mesh,Descriptor,Value>& pm, key_type k)
-  {
-    return pm.mesh.property(pm.h,k);
-  }
-
-  inline friend void put(const OM_pmap<Mesh,Descriptor,Value>& pm, key_type k, const value_type& v)
-  {
-    pm.mesh.property(pm.h,k) = v;
-  }
-
-  reference operator[](key_type k)
-  {
-    return mesh.property(h,k);
-  }
-
-  H handle() const
-  {
-    return h;
-  }
-
-  H& handle()
-  {
-    return h;
-  }
-
-  Mesh& mesh;
-  H h;
-};
-
-
-template <typename K>
-class OM_edge_weight_pmap 
-  : public boost::put_get_helper<typename OpenMesh::TriMesh_ArrayKernelT<K>::Scalar , OM_edge_weight_pmap<K> >
-{
-public:
-  typedef boost::readable_property_map_tag                         category;
-  typedef typename OpenMesh::TriMesh_ArrayKernelT<K>::Scalar      value_type;
-  typedef value_type                                               reference;
-  typedef typename boost::graph_traits<OpenMesh::TriMesh_ArrayKernelT<K> >::edge_descriptor key_type;
-
-  OM_edge_weight_pmap(const OpenMesh::TriMesh_ArrayKernelT<K>& sm)
-    : sm_(sm)
-    {}
-
-  value_type operator[](const key_type& e) const
-  {
-    return sm_.calc_edge_length(e.halfedge());
-  }
-
-private:
-  const OpenMesh::TriMesh_ArrayKernelT<K>& sm_;
-};
-
-template <typename K, typename VEF>
-class OM_index_pmap : public boost::put_get_helper<unsigned int, OM_index_pmap<K,VEF> >
-{
-public:
-  typedef boost::readable_property_map_tag category;
-  typedef unsigned int                      value_type;
-  typedef unsigned int                      reference;
-  typedef VEF                              key_type;
-
-  value_type operator[](const key_type& vd) const
-  {
-    return vd.idx();
-  }
-};
-
-
-  template<typename K, typename P>
-class OM_point_pmap //: public boost::put_get_helper<bool, OM_point_pmap<K> >
-{
-public:
-  typedef boost::read_write_property_map_tag category;
-#if defined(CGAL_USE_OM_POINTS)
-  typedef typename OpenMesh::TriMesh_ArrayKernelT<K>::Point             value_type;
-  typedef const typename OpenMesh::TriMesh_ArrayKernelT<K>::Point&      reference;
-#else
-  typedef P value_type;
-  typedef P reference;
-#endif
-  typedef typename boost::graph_traits< OpenMesh::TriMesh_ArrayKernelT<K> >::vertex_descriptor key_type;
-    
-  OM_point_pmap()
-    : sm_(NULL)
-  {}
-
-  OM_point_pmap(const OpenMesh::TriMesh_ArrayKernelT<K>& sm)
-    : sm_(&sm)
-    {}
-    
-  OM_point_pmap(const OM_point_pmap& pm)
-    : sm_(pm.sm_)
-    {}
-
-  value_type operator[](key_type v)
-  {
-#if defined(CGAL_USE_OM_POINTS)
-    return sm_->point(v);
-#else
-    CGAL_assertion(sm_!=NULL);
-    typename OpenMesh::TriMesh_ArrayKernelT<K>::Point const& omp = sm_->point(v);
-    return value_type(omp[0], omp[1], omp[2]);
-#endif
-  }
-
-  inline friend reference get(const OM_point_pmap<K,P>& pm, key_type v)
-  {
-    CGAL_precondition(pm.sm_!=NULL);
-#if defined(CGAL_USE_OM_POINTS)
-    return pm.sm_->point(v);
-#else
-    CGAL_assertion(pm.sm_!=NULL);
-    typename OpenMesh::TriMesh_ArrayKernelT<K>::Point const& omp = pm.sm_->point(v);
-    return value_type(omp[0], omp[1], omp[2]);
-#endif
-  }
-
-  inline friend void put(const OM_point_pmap<K,P>& pm, key_type v, const value_type& p)
-  {
-    CGAL_precondition(pm.sm_!=NULL);
-#if defined(CGAL_USE_OM_POINTS)
-    const_cast<OpenMesh::TriMesh_ArrayKernelT<K>&>(*pm.sm_).set_point(v,p);
-#else
-    const_cast<OpenMesh::TriMesh_ArrayKernelT<K>&>(*pm.sm_).set_point
-      (v, typename OpenMesh::TriMesh_ArrayKernelT<K>::Point((float)p[0], (float)p[1], (float)p[2]));
-#endif
-  }
-
-  private:
-  const OpenMesh::TriMesh_ArrayKernelT<K>* sm_;
-};
-
-
-} // CGAL
 
 // overloads and specializations in the boost namespace
 namespace boost {
@@ -197,13 +35,12 @@ namespace boost {
 //
 // edge_weight
 //
-
-
 template <typename K>
 struct property_map<OpenMesh::TriMesh_ArrayKernelT<K>, boost::edge_weight_t >
 {
-  typedef CGAL::OM_edge_weight_pmap<K> type;
-  typedef CGAL::OM_edge_weight_pmap<K> const_type;
+  typedef OpenMesh::TriMesh_ArrayKernelT<K> Mesh;
+  typedef CGAL::OM_edge_weight_pmap<Mesh> type;
+  typedef CGAL::OM_edge_weight_pmap<Mesh> const_type;
 };
 
 
@@ -211,7 +48,6 @@ struct property_map<OpenMesh::TriMesh_ArrayKernelT<K>, boost::edge_weight_t >
 //
 // vertex_index
 //
-
 template <typename K>
 struct property_map<OpenMesh::TriMesh_ArrayKernelT<K>, boost::vertex_index_t >
 {
