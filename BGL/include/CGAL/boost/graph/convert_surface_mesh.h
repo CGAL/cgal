@@ -30,7 +30,7 @@ namespace CGAL {
 
   BOOST_FOREACH(sm_vertex_descriptor svd, vertices(sm)){
     tm_vertex_descriptor tvd = add_vertex(tm);
-    v2v[svd] = tvd;
+    v2v.insert(std::make_pair(svd, tvd));
     put(tm_pmap, tvd, get(sm_pmap, svd));
   }
 
@@ -38,7 +38,7 @@ namespace CGAL {
   BOOST_FOREACH(sm_face_descriptor sfd, faces(sm)){
     std::vector<tm_vertex_descriptor> tv;
     BOOST_FOREACH(sm_vertex_descriptor svd, vertices_around_face(halfedge(sfd,sm),sm)){
-      tv.push_back(v2v[svd]);
+      tv.push_back(v2v.at(svd));
     }
     f2f[sfd] = Euler::add_face(tv,tm);
   }
@@ -46,12 +46,12 @@ namespace CGAL {
   BOOST_FOREACH(sm_face_descriptor sfd, faces(sm)){
     sm_halfedge_descriptor shd = halfedge(sfd,sm), done(shd);
     tm_halfedge_descriptor thd = halfedge(f2f[sfd],tm);
-    tm_vertex_descriptor tvd = v2v[target(shd,sm)];
+    tm_vertex_descriptor tvd = v2v.at(target(shd,sm));
     while(target(thd,tm) != tvd){
       thd = next(thd,tm);
     }
     do {
-      h2h[shd] =  thd;
+      h2h.insert(std::make_pair(shd, thd));
       shd = next(shd,sm);
       thd = next(thd,tm);
     }while(shd != done);
