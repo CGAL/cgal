@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_CGAL_and_Solvers
 \anchor chapterSolvers
 \cgalAutoToc
-\authors %CGAL Editorial Board
+\authors Simon Giraudot, Pierre Alliez, Frédéric Cazals, Bruno Lévy, Marc Pouget, and Laurent Saboret
 
 Several \cgal packages have to solve linear systems with dense or
 sparse matrices. This package provides concepts and models for that
@@ -97,8 +97,18 @@ the solver:
 
 \cgalExample{Solver_interface/sparse_solvers.cpp}
 
+\section SolversHistory Implementation History
+This package is the result of the increasing needs for linear solvers in \cgal.
+The first packages that introduced the solver concepts were \ref PkgSurfaceParameterization,
+\ref PkgSurfaceReconstructionFromPointSets and \ref PkgJet_fitting_3.
+At that time, these packages were relying on \sc{Taucs}, \sc{LAPACK}, \sc{BLAS} and \sc{OpenNL}. Gaël Guennebaud
+then introduced new models using the \ref thirdpartyEigen library that became the
+only supported models by \cgal.
+Later on the packages \ref PkgMeanCurvatureSkeleton3Summary and \ref PkgSurfaceModelingSummary
+extended the existing concepts.
 
-
+Simon Giraudot was responsible for gathering all concepts and classes, and also wrote this user manual
+with the help of Andreas Fabri.
 
 */ 
 } /* namespace CGAL */

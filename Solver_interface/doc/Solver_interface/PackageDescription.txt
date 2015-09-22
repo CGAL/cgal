@@ -10,12 +10,13 @@
 \cgalPkgDescriptionBegin{CGAL and Solvers,PkgSolverSummary}
 \cgalPkgPicture{solver.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{CGAL Editorial Board}
+\cgalPkgAuthors{Simon Giraudot, Pierre Alliez, Frédéric Cazals, Bruno Lévy, Marc Pouget, and Laurent Saboret}
+
 \cgalPkgDesc{This package provides concepts and models for solving linear systems with dense or sparse matrices.}
 \cgalPkgManuals{Chapter_CGAL_and_Solvers,PkgSolver}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{3.7}
+\cgalPkgSince{4.8}
 \cgalPkgBib{cgal:eb-solver}
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgShortInfoEnd
