@@ -5,7 +5,7 @@ namespace CGAL {
 \anchor Chapter_CGAL_and_Solvers
 \anchor chapterSolvers
 \cgalAutoToc
-\authors Simon Giraudot, Pierre Alliez, Frédéric Cazals, Bruno Lévy, Marc Pouget, and Laurent Saboret
+\authors Simon Giraudot, Pierre Alliez, Frédéric Cazals, Gaël Guennebaud, Bruno Lévy, Marc Pouget, and Laurent Saboret
 
 Several \cgal packages have to solve linear systems with dense or
 sparse matrices. This package provides concepts and models for that
