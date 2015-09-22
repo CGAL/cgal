@@ -31,7 +31,7 @@ GlSplat::SplatRenderer* Scene::splatting()
 }
 
 Scene::Scene(QObject* parent)
-    : QAbstractListModel(parent),
+    : QStandardItemModel(parent),
       selected_item(-1),
       item_A(-1),
       item_B(-1)
@@ -60,9 +60,9 @@ Scene::addItem(Scene_item* item)
             this, SLOT(callDraw()));
     if(bbox_before + item->bbox() != bbox_before)
 { Q_EMIT updated_bbox(); }
-    QAbstractListModel::beginResetModel();
+    QStandardItemModel::beginResetModel();
     Q_EMIT updated();
-    QAbstractListModel::endResetModel();
+    QStandardItemModel::endResetModel();
     Item_id id = m_entries.size() - 1;
   Q_EMIT newItem(id);
     return id;
@@ -89,7 +89,7 @@ Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_
     }
   Q_EMIT updated();
     itemChanged(index);
-    // QAbstractListModel::reset();
+    // QStandardItemModel::reset();
     return item;
 }
 
@@ -106,9 +106,9 @@ Scene::erase(int index)
 
   selected_item = -1;
 
-  QAbstractListModel::beginResetModel();
+  QStandardItemModel::beginResetModel();
   Q_EMIT updated();
-  QAbstractListModel::endResetModel();
+  QStandardItemModel::endResetModel();
 
     if(--index >= 0)
         return index;
@@ -140,9 +140,9 @@ Scene::erase(QList<int> indices)
   }
 
   selected_item = -1;
-  QAbstractListModel::beginResetModel();
+  QStandardItemModel::beginResetModel();
   Q_EMIT updated();
-  QAbstractListModel::endResetModel();
+  QStandardItemModel::endResetModel();
  
   int index = max_index + 1 - indices.size();
   if(index >= m_entries.size()) {
@@ -458,7 +458,9 @@ QVariant
 Scene::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
+    {
         return QVariant();
+    }
 
     if(index.row() < 0 || index.row() >= m_entries.size())
         return QVariant();
@@ -548,17 +550,17 @@ Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
             }
         }
     }
-    return QAbstractListModel::headerData(section, orientation, role);
+    return QStandardItemModel::headerData(section, orientation, role);
 }
 
 Qt::ItemFlags 
 Scene::flags ( const QModelIndex & index ) const
 {
     if (index.isValid() && index.column() == NameColumn) {
-        return QAbstractListModel::flags(index) | ::Qt::ItemIsEditable;
+        return QStandardItemModel::flags(index) | ::Qt::ItemIsEditable;
     }
     else {
-        return QAbstractListModel::flags(index);
+        return QStandardItemModel::flags(index);
     }
 }
 
@@ -612,6 +614,7 @@ Scene::setData(const QModelIndex &index,
     return false;
 }
 
+
 Scene::Item_id Scene::mainSelectionIndex() const {
     return selected_item;
 }
@@ -662,10 +665,11 @@ void Scene::itemChanged(Scene_item* /* item */)
                      this->createIndex(m_entries.size() - 1, LastColumn));
 }
 
-bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
+bool SceneDelegate::editorEvent(QEvent *event, QStandardItemModel *model,
                                 const QStyleOptionViewItem &option,
                                 const QModelIndex &index)
 {
+    qDebug()<<"editor event";
     QAbstractProxyModel* proxyModel = dynamic_cast<QAbstractProxyModel*>(model);
     Q_ASSERT(proxyModel);
     Scene *scene = dynamic_cast<Scene*>(proxyModel->sourceModel());

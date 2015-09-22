@@ -7,7 +7,7 @@
 #include "Scene_draw_interface.h"
 
 #include <QtOpenGL/qgl.h>
-#include <QAbstractListModel>
+#include <QStandardItemModel>
 #include <QString>
 #include <QColor>
 #include <QList>
@@ -15,11 +15,11 @@
 #include <QPixmap>
 #include <QItemSelection>
 #include <QGLViewer/qglviewer.h>
-
+#include <QDebug>
 #include <iostream>
 #include <cmath>
 #include <boost/variant.hpp>
-
+#include "Scene_item.h"
 class QEvent;
 class QMouseEvent;
 namespace GlSplat { class SplatRenderer; }
@@ -27,7 +27,7 @@ namespace GlSplat { class SplatRenderer; }
 class Viewer_interface;
 
 class SCENE_EXPORT Scene  :
-  public QAbstractListModel, public Scene_interface, public Scene_draw_interface
+  public QStandardItemModel, public Scene_interface, public Scene_draw_interface
 {
   Q_OBJECT
   Q_PROPERTY(int numberOfEntries READ numberOfEntries)
@@ -99,13 +99,14 @@ public:
     return std::sqrt(dx*dx + dy*dy + dz*dz);
   }
 
-  // QAbstractItemModel functions
+  // QStandardItemModel functions
   int rowCount ( const QModelIndex & parent = QModelIndex() ) const;
   int columnCount ( const QModelIndex & parent = QModelIndex() ) const;
   QVariant data ( const QModelIndex & index, int role = ::Qt::DisplayRole ) const;
   QVariant headerData ( int section, ::Qt::Orientation orientation, int role = ::Qt::DisplayRole ) const;
   ::Qt::ItemFlags flags ( const QModelIndex & index ) const;
   bool setData(const QModelIndex &index, const QVariant &value, int role);
+
 
   // auxiliary public function for QMainWindow
   QItemSelection createSelection(int i);
@@ -161,6 +162,18 @@ Q_SIGNALS:
   void selectionChanged(int i);
 
 private Q_SLOTS:
+  void test_rows()
+  {
+      QList<QStandardItem*> list;
+      for(int i=0; i<5; i++)
+      {
+          list<<new QStandardItem();
+      }
+     for(int i=0; i<rowCount(); i++)
+     {
+            invisibleRootItem()->appendRow(list);
+     }
+  }
   void setSelectionRay(double, double, double, double, double, double);
   void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}
 
@@ -189,7 +202,7 @@ public:
   {
   }
 
-  bool editorEvent(QEvent *event, QAbstractItemModel *model,
+  bool editorEvent(QEvent *event, QStandardItemModel *model,
                    const QStyleOptionViewItem &option,
                    const QModelIndex &index);
   void paint(QPainter *painter, const QStyleOptionViewItem &option,
