@@ -191,7 +191,7 @@ Kernel::FT area() const;
 /*!
 returns a bounding box containing `r`. 
 */ 
-Bbox bbox() const; 
+Bbox_2 bbox() const;
 
 /*!
 returns the iso-oriented rectangle obtained by applying `t` on 
