@@ -23,7 +23,7 @@
 /// \cond SKIP_IN_MANUAL
 
 /// @file surface_reconstruction_points_assertions.h
-/// Define checking macros for the Surface_reconstruction_points_3 package
+/// Define checking macros for the Poisson_surface_reconstruction_3 package
 
 // Note that this header file is intentionnaly not protected with a
 // macro (as <cassert>). Calling it a second time with another value
