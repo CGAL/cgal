@@ -108,6 +108,7 @@ def gen_bib_entry(title, authors, bib, anchor):
 
 def gen_txt_entry(title, authors, bib, anchor,k):
   title_r=title.replace("Kernel","%Kernel").replace("Interval","%Interval").replace("Matrix","%Matrix").replace("Kinetic","%Kinetic").replace("CGAL","%CGAL").replace("Range","%Range")
+  authors=authors.replace("CGAL","%CGAL")
   res="<tr valign=\"top\">\n\
 <td align=\"right\" class=\"bibtexnumber\">\n\
 [<a name=\""+bib+"-${CGAL_RELEASE_YEAR_ID}\">"+str(k)+"</a>]\n\

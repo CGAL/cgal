@@ -20,20 +20,15 @@
 \cgalPkgSince{4.6}
 \cgalPkgBib{cgal:ssr3}
 \cgalPkgLicense{\ref licensesGPL "GPL" }
-\cgalPkgDependsOn{\ref PkgAlphaShapes3Summary, \ref PkgSpatialSearchingDSummary, eigenvector solver such as \ref thirdpartyEigen 3.1.2 (or greater)}
+\cgalPkgDependsOn{\ref PkgAlphaShapes3Summary, \ref PkgSpatialSearchingDSummary, \ref PkgSolverSummary}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 
 \cgalClassifedRefPages
 
-## Concepts ##
-
-- `WeightedApproximation_3`
-
 ## Classes ##
 
 - `CGAL::Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>`
-- `CGAL::Weighted_PCA_approximation_3<Kernel>`
 
 */
 

@@ -93,7 +93,6 @@ int main(int argc, char * argv[])
     std::cerr << "PARAMETERIZATION" << std::endl;
     std::cerr << "  Floater parameterization" << std::endl;
     std::cerr << "  Circle border" << std::endl;
-    std::cerr << "  OpenNL solver" << std::endl;
     std::cerr << "  Very simple cut if model is not a topological disk" << std::endl;
 
     //***************************************

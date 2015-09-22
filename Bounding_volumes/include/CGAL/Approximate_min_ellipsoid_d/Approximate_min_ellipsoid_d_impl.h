@@ -18,8 +18,8 @@
 //
 // Author(s)     : Kaspar Fischer <fischerk@inf.ethz.ch>
 
-#include <CGAL/eigen_2.h>
-#include <CGAL/eigen.h>
+
+#include <CGAL/Default_diagonalize_traits.h>
 
 #include <CGAL/Approximate_min_ellipsoid_d.h>
 
@@ -150,34 +150,32 @@ namespace CGAL {
   {
     CGAL_APPEL_ASSERT(d==2);
 
-    typedef Simple_cartesian<double> K;
-    typedef Vector_2<K> Vector_2;
-
     // write matrix M' as [ a, b; b, c ]:
-    const double matrix[3] = { E->matrix(0, 0),   // a
-			       E->matrix(0, 1),   // b
-			       E->matrix(1, 1) }; // c
-    
-    std::pair<Vector_2, Vector_2> eigenvectors; // Note: not neces. normalized.
-    std::pair<double, double>     eigenvalues;  // Note: sorted descendent.
-    internal::eigen_symmetric_2<K>(matrix, eigenvectors, eigenvalues);
+    const CGAL::cpp11::array<double, 3> matrix = {{ E->matrix(0, 0),    // a
+						    E->matrix(0, 1),    // b
+						    E->matrix(1, 1) }}; // c
+    CGAL::cpp11::array<double, 4> eigenvectors; // Note: not neces. normalized.
+    CGAL::cpp11::array<double, 2> eigenvalues;  // Note: sorted ascendent.
+
+    CGAL::Default_diagonalize_traits<double, 2>::diagonalize_selfadjoint_covariance_matrix
+      (matrix, eigenvalues, eigenvectors);
     
     // normalize eigenvectors:
-    double l1=1.0/std::sqrt(eigenvectors.first.x()*eigenvectors.first.x()+
-			    eigenvectors.first.y()*eigenvectors.first.y());
-    double l2=1.0/std::sqrt(eigenvectors.second.x()*eigenvectors.second.x()+
-			    eigenvectors.second.y()*eigenvectors.second.y());
+    double l1=1.0/std::sqrt(eigenvectors[2]*eigenvectors[2]+
+			    eigenvectors[3]*eigenvectors[3]);
+    double l2=1.0/std::sqrt(eigenvectors[0]*eigenvectors[0]+
+			    eigenvectors[1]*eigenvectors[1]);
     
     // store axes lengths:
-    lengths_.push_back(std::sqrt(factor/eigenvalues.first));
-    lengths_.push_back(std::sqrt(factor/eigenvalues.second));
+    lengths_.push_back(std::sqrt(factor/eigenvalues[1]));
+    lengths_.push_back(std::sqrt(factor/eigenvalues[0]));
     
     // store directions:
     directions_.resize(2);
-    directions_[0].push_back(eigenvectors.first.x()*l1);
-    directions_[0].push_back(eigenvectors.first.y()*l1);
-    directions_[1].push_back(eigenvectors.second.x()*l2);
-    directions_[1].push_back(eigenvectors.second.y()*l2);
+    directions_[0].push_back(eigenvectors[2]*l1);
+    directions_[0].push_back(eigenvectors[3]*l1);
+    directions_[1].push_back(eigenvectors[0]*l2);
+    directions_[1].push_back(eigenvectors[1]*l2);
   }
   
   template<class Traits>
@@ -192,16 +190,18 @@ namespace CGAL {
     //   M' = [ b d e ]
     //        [ c e f ]
     //
-    const double matrix[6] = { E->matrix(0, 0),   // a
-			       E->matrix(0, 1),   // b
-			       E->matrix(1, 1),   // d
-			       E->matrix(0, 2),   // c
-			       E->matrix(1, 2),   // e
-			       E->matrix(2, 2) }; // f
+    const CGAL::cpp11::array<double, 6> matrix = {{ E->matrix(0, 0),   // a
+                                                    E->matrix(0, 1),   // b
+                                                    E->matrix(0, 2),   // c
+                                                    E->matrix(1, 1),   // d
+                                                    E->matrix(1, 2),   // e
+                                                    E->matrix(2, 2) }}; // f
     
-    double eigenvectors[3 * 3]; // Note: not necessarily normalized.
-    double eigenvalues[3];      // Note: sorted descendent.
-    internal::eigen_symmetric<double>(matrix, 3, eigenvectors, eigenvalues);
+    CGAL::cpp11::array<double, 9> eigenvectors; // Note: not necessarily normalized.
+    CGAL::cpp11::array<double, 3> eigenvalues;  // Note: sorted ascendent.
+
+    CGAL::Default_diagonalize_traits<double, 3>::diagonalize_selfadjoint_covariance_matrix
+      (matrix, eigenvalues, eigenvectors);
     
     // normalize eigenvectors:
     double l1 = 1.0/std::sqrt(eigenvectors[0] * eigenvectors[0]+  // x^2
@@ -220,15 +220,15 @@ namespace CGAL {
     
     // store directions:
     directions_.resize(3);
-    directions_[0].push_back(eigenvectors[0]*l1);
-    directions_[0].push_back(eigenvectors[1]*l1);
-    directions_[0].push_back(eigenvectors[2]*l1);
+    directions_[0].push_back(eigenvectors[6]*l3);
+    directions_[0].push_back(eigenvectors[7]*l3);
+    directions_[0].push_back(eigenvectors[8]*l3);
     directions_[1].push_back(eigenvectors[3]*l2);
     directions_[1].push_back(eigenvectors[4]*l2);
     directions_[1].push_back(eigenvectors[5]*l2);
-    directions_[2].push_back(eigenvectors[6]*l3);
-    directions_[2].push_back(eigenvectors[7]*l3);
-    directions_[2].push_back(eigenvectors[8]*l3);
+    directions_[2].push_back(eigenvectors[0]*l1);
+    directions_[2].push_back(eigenvectors[1]*l1);
+    directions_[2].push_back(eigenvectors[2]*l1);
   }
 
   template<class Traits>
