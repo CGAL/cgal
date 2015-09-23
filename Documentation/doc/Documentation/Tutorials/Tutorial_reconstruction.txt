@@ -183,6 +183,48 @@ These functions directly modify the container:
 
 \subsection TutorialsReconstruction_preprocessing_normal Normal Estimation
 
+\ref Chapter_Poisson_Surface_Reconstruction "Poisson Surface
+Reconstruction" requires points with oriented normal vectors. To apply
+the algorithm to a raw point cloud, normals must be estimated first
+with one of these two functions:
+
+- `pca_estimate_normals()`
+- `jet_estimate_normals()`
+
+PCA is faster but jet is more accurate in the presence of high
+curvatures. These function only estimates the _direction_ of the
+normals, not their orientation (the orientation of the vectors might
+not be locally consistent). To properly orient the normals, the
+function `mst_orient_normals()` can be used. Notice that it can also
+be used directly on input normals if their orientation is not
+consistent.
+
+\code{.cpp}
+  // Point with normal vector stored in a std::pair.
+  typedef std::pair<Point, Vector> PointVectorPair;
+
+  // Use a container with normals
+  std::vector<PointVectorPair> points_with_normals;
+  for (std::vector<Point>::iterator it = points.begin (); it != points.end (); ++ i)
+    points_with_normals.push_back (std::make_pair (*it, Vector (0., 0., 0.)));
+
+  CGAL::jet_estimate_normals(points_with_normals.begin(), points_with_normals.end(),
+			     CGAL::First_of_pair_property_map<PointVectorPair>(),
+			     CGAL::Second_of_pair_property_map<PointVectorPair>(),
+			     24); // Use 24 neighbors
+
+  // Orientation of normals, returns iterator to first unoriented point
+  // (can be deleted
+  std::vector<PointVectorPair>::iterator unoriented_points_begin =
+    CGAL::mst_orient_normals(points_with_normals.begin(), points_with_normals.end(),
+			     CGAL::First_of_pair_property_map<PointVectorPair>(),
+			     CGAL::Second_of_pair_property_map<PointVectorPair>(),
+			     24); // Use 24 neighbors
+
+  points_with_normals.erase (unoriented_points_begin, points_with_normals.end ());
+\endcode
+
+
 \section TutorialsReconstruction_reconstruction Reconstruction
 
 \section TutorialsReconstruction_postprocessing Postprocessing
