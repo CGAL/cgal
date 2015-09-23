@@ -158,7 +158,7 @@ void Viewer::initializeGL()
       "   fN = mat3(mv_matrix)* normal; \n"
       "   vec4 temp = vec4(mvp_matrix * vertex); \n"
       "   vec4 ort = ortho_mat * vec4(width, height, 0,0); \n"
-      "   vfloat ratio = width/height; \n"
+      "   float ratio = width/height; \n"
       "   if(ratio>1) \n"
       "     gl_Position = ort +  vec4(temp.x-ort.x/10, ratio*temp.y-ratio*ort.y/10, temp.z, 1.0); \n"
       "   if(ratio <1) \n"
