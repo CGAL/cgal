@@ -16,7 +16,6 @@
 !include "Sections.nsh"
 !include "LogicLib.nsh"
 !include "Locate.nsh"
-!include "StrRep.nsh"
 !include "WriteEnvStr.nsh"
 !include "EnvVarUpdate.nsh"
 !include "x64.nsh"
