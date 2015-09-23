@@ -355,6 +355,23 @@ public:
     return it;
   }
 
+
+  template <class FuzzyQueryItem>
+  std::pair<Point_d,bool>
+  search_any_point(const FuzzyQueryItem& q) const
+  {
+    if(! pts.empty()){
+
+      if(! is_built()){
+	const_build();
+      }
+      Kd_tree_rectangle<FT,D> b(*bbox);
+      return tree_root->search_any_point(q,b);
+    }
+    return std::make_pair(Point_d(),false) ;
+  }
+
+
   ~Kd_tree() {
     if(is_built()){
       delete bbox;

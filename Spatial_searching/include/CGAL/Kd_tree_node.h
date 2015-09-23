@@ -126,6 +126,31 @@ namespace CGAL {
       return it;
     }
 
+
+    std::pair<Point_d,bool>
+    any_tree_item() const {
+      std::pair<Point_d,bool> result(Point_d(), false);
+      if (is_leaf()) {
+         Leaf_node_const_handle node =
+          static_cast<Leaf_node_const_handle>(this);
+	 if (node->size()>0){
+           return std::make_pair(*(node->begin()), true);
+         } else {
+           return result;
+         }
+	}
+      else {
+         Internal_node_const_handle node =
+          static_cast<Internal_node_const_handle>(this);
+	  result = node->lower()->any_tree_item();
+          if(! result.second){
+            result = node->upper()->any_tree_item();
+          }
+      }
+      return result;
+    }
+
+
      void 
     indent(int d) const
     {
@@ -196,7 +221,61 @@ namespace CGAL {
       };
       return it;				
     }
+
+
+    template <class FuzzyQueryItem>
+    std::pair<Point_d,bool>
+    search_any_point(const FuzzyQueryItem& q,
+                     Kd_tree_rectangle<FT,D>& b) const
+    {
+      std::pair<Point_d,bool> result(Point_d(),false);
+      if (is_leaf()) { 
+        Leaf_node_const_handle node = 
+          static_cast<Leaf_node_const_handle>(this);
+	if (node->size()>0) 
+	  for (iterator i=node->begin(); i != node->end(); i++) 
+	    if (q.contains(*i)) 
+	      { result = std::make_pair(*i,true);}
+      }
+      else {
+         Internal_node_const_handle node = 
+          static_cast<Internal_node_const_handle>(this);
+	// after splitting b denotes the lower part of b
+	Kd_tree_rectangle<FT,D> b_upper(b);
+	b.split(b_upper, node->cutting_dimension(),
+		node->cutting_value());
+                             
+	if (q.outer_range_contains(b)){ 	
+          result = node->lower()->any_tree_item();
+          if(result.second){
+            return result;
+          }
+	}else{
+	  if (q.inner_range_intersects(b)){ 
+	    result = node->lower()->search_any_point(q,b);
+            if(result.second){
+              return result;
+            }
+          }
+        }
+	if  (q.outer_range_contains(b_upper)){     
+	  result = node->upper()->any_tree_item();
+          if(result.second){
+            return result;
+          }
+	}else{
+	  if (q.inner_range_intersects(b_upper)) 
+	    result = node->upper()->search_any_point(q,b_upper);
+          if(result.second){
+            return result;
+          }
+        }
+      }
+      return result;				
+    }
+
   };
+
 
   template < class TreeTraits, class Splitter, class UseExtendedNode > 
   class Kd_tree_leaf_node : public Kd_tree_node< TreeTraits, Splitter, UseExtendedNode >{
