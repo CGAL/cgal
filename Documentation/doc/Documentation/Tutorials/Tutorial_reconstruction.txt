@@ -14,7 +14,7 @@ reconstruction in the most relevant way.
 \cgal \cgalReleaseNumber offers three different algorithms for surface
 reconstruction:
 
-- \ref PkgSurfaceReconstructionFromPointSets
+- \ref PkgPoissonSurfaceReconstruction
 - \ref PkgAdvancingFrontSurfaceReconstruction
 - \ref PkgScaleSpaceReconstruction3
 
