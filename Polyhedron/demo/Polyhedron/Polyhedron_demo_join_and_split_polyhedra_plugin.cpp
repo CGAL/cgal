@@ -7,28 +7,28 @@
 #include "Scene_polylines_item.h"
 #include "Messages_interface.h"
 
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 
 #include <CGAL/Polyhedron_copy_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 #include <boost/foreach.hpp>
 #include <boost/function_output_iterator.hpp>
-
+using namespace CGAL::Three;
 class Polyhedron_demo_join_and_split_polyhedra_plugin:
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   QAction* actionJoinPolyhedra, *actionSplitPolyhedra, *actionColorConnectedComponents;
   Messages_interface* msg_interface;
 public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionJoinPolyhedra << actionSplitPolyhedra << actionColorConnectedComponents; }
   using Polyhedron_demo_plugin_helper::init;
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m)
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m)
   {
     msg_interface = m;
     actionJoinPolyhedra= new QAction(tr("Join selected polyhedra"), mainWindow);
@@ -58,7 +58,7 @@ public Q_SLOTS:
 
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_triggered()
 {
-  Scene_interface::Item_id mainSelectionIndex = -1;
+  CGAL::Three::Scene_interface::Item_id mainSelectionIndex = -1;
   Scene_polyhedron_item* mainSelectionItem = NULL;
 
 

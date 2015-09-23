@@ -120,7 +120,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_use_modules(gl_splat OpenGL Gui Xml)
   target_link_libraries(gl_splat ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES})
 
-  qt5_generate_moc( "CGAL_demo/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
+  qt5_generate_moc( "../../../Three/include/CGAL/Three/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
 
 
   # AUXILIARY LIBRARIES

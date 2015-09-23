@@ -245,7 +245,7 @@ Scene::draw()
     draw_aux(false, 0);
 }
 void
-Scene::draw(Viewer_interface* viewer)
+Scene::draw(CGAL::Three::Viewer_interface* viewer)
 {
     draw_aux(false, viewer);
 }
@@ -255,13 +255,13 @@ Scene::drawWithNames()
     draw_aux(true, 0);
 }
 void
-Scene::drawWithNames(Viewer_interface* viewer)
+Scene::drawWithNames(CGAL::Three::Viewer_interface* viewer)
 {
     draw_aux(true, viewer);
 }
 
 void 
-Scene::draw_aux(bool with_names, Viewer_interface* viewer)
+Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 {
     if(!ms_splatting->viewer_is_set)
         ms_splatting->setViewer(viewer);
@@ -854,7 +854,7 @@ namespace scene { namespace details {
 
 Q_DECL_EXPORT
 Scene_item* 
-findItem(const Scene_interface* scene_interface,
+findItem(const CGAL::Three::Scene_interface* scene_interface,
          const QMetaObject& metaobj,
          QString name, Scene_item_name_fn_ptr fn) {
     const Scene* scene = dynamic_cast<const Scene*>(scene_interface);
@@ -868,7 +868,7 @@ findItem(const Scene_interface* scene_interface,
 
 Q_DECL_EXPORT
 QList<Scene_item*> 
-findItems(const Scene_interface* scene_interface, 
+findItems(const CGAL::Three::Scene_interface* scene_interface,
           const QMetaObject&,
           QString name, Scene_item_name_fn_ptr fn)
 {

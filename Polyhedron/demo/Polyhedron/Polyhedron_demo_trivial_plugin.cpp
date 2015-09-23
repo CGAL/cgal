@@ -1,10 +1,10 @@
 #include <QtCore/qglobal.h>
 
 #include "Scene_item.h"
-#include "Scene_interface.h"
+#include <CGAL/Three/Scene_interface.h>
 #include <CGAL/gl.h>
 
-#include "Viewer_interface.h"
+#include <CGAL/Three/Viewer_interface.h>
 #include <QAction>
 #include <QMainWindow>
 
@@ -12,7 +12,7 @@ class Q_DECL_EXPORT Scene_bbox_item : public Scene_item
 {
     Q_OBJECT
 public:
-    Scene_bbox_item(const Scene_interface* scene_interface)
+    Scene_bbox_item(const CGAL::Three::Scene_interface* scene_interface)
         :  Scene_item(1,1), scene(scene_interface)
 
     {
@@ -47,7 +47,7 @@ public:
         return (m == Wireframe);
     }
 
-    void draw_edges(Viewer_interface* viewer) const
+    void draw_edges(CGAL::Three::Viewer_interface* viewer) const
     {
         if(!are_buffers_filled)
             initialize_buffers(viewer);
@@ -73,7 +73,7 @@ private:
     std::vector<float> positions_lines;
     mutable QOpenGLShaderProgram *program;
     using Scene_item::initialize_buffers;
-    void initialize_buffers(Viewer_interface *viewer)const
+    void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
     {
 
         //vao containing the data for the lines
@@ -130,21 +130,21 @@ private:
         positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
     }
 
-    const Scene_interface* scene;
+    const CGAL::Three::Scene_interface* scene;
 };
 
-#include "Polyhedron_demo_plugin_interface.h"
-
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+using namespace CGAL::Three;
 class Polyhedron_demo_trivial_plugin : 
         public QObject,
         public Polyhedron_demo_plugin_interface
 {
     Q_OBJECT
-    Q_INTERFACES(Polyhedron_demo_plugin_interface)
+    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-    void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
+    void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface);
     QList<QAction*> actions() const {
         return QList<QAction*>() << actionBbox;
     }
@@ -158,13 +158,13 @@ public Q_SLOTS:
     void enableAction();
 
 private:
-    Scene_interface* scene;
+    CGAL::Three::Scene_interface* scene;
     QAction* actionBbox;
 
 
 }; // end Polyhedron_demo_trivial_plugin
 
-void Polyhedron_demo_trivial_plugin::init(QMainWindow* mainWindow, Scene_interface* scene_interface)
+void Polyhedron_demo_trivial_plugin::init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface)
 {
     scene = scene_interface;
     actionBbox = new QAction(tr("Create bbox"), mainWindow);

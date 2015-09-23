@@ -2,18 +2,18 @@
 #include <QMainWindow>
 #include <QAction>
 #include "Messages_interface.h"
-#include "Polyhedron_demo_plugin_helper.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
 
 #include <CGAL/Polygon_mesh_processing/triangulate_faces.h>
-
+using namespace CGAL::Three;
 class Polyhedron_demo_triangulate_facets_plugin : 
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
@@ -22,7 +22,7 @@ public:
   using Polyhedron_demo_plugin_helper::init;
 
   void init(QMainWindow* mainWindow,
-            Scene_interface* scene_interface,
+            CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* m) {
     this->scene = scene_interface;
     this->mw = mainWindow;
@@ -45,7 +45,7 @@ public:
   }
 
   bool applicable(QAction*) const { 
-    Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())  {
+    Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())  {
       Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
       if(!item) return false;
     }
@@ -55,7 +55,7 @@ public:
 
 public Q_SLOTS:
   void untriangulate() {
-    const Scene_interface::Item_id index = scene->mainSelectionIndex();
+    const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
     Scene_polyhedron_item* item = 
       qobject_cast<Scene_polyhedron_item*>(scene->item(index));
@@ -103,7 +103,7 @@ public Q_SLOTS:
   }
 
   void triangulate() {
-    Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())  {
+    Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())  {
 
     Scene_polyhedron_item* item = 
       qobject_cast<Scene_polyhedron_item*>(scene->item(index));

@@ -9,8 +9,8 @@
 #include <CGAL/bounding_box.h>
 #include "Scene_polyhedron_item.h"
 #include "Polyhedron_type.h"
-#include "Polyhedron_demo_plugin_interface.h"
-#include "Polyhedron_demo_plugin_helper.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 
 #include "Scene_polylines_item.h"
 
@@ -23,13 +23,13 @@
 #include <QApplication>
 #include <QTime>
 #include <QMessageBox>
-
+using namespace CGAL::Three;
 class Polyhedron_demo_intersection_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
@@ -42,7 +42,7 @@ public:
     return QList<QAction*>() << actionPolyhedronIntersection_3;
   }
 
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     this->scene = scene_interface;
     this->mw = mainWindow;
     actionPolyhedronIntersection_3 = new QAction("Intersect polyhedra (A/B)", mw);

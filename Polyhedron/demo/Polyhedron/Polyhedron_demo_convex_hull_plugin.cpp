@@ -10,18 +10,18 @@
 #include "Scene_polyhedron_selection_item.h"
 #include "Polyhedron_type.h"
 
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/convex_hull_3.h>
 #include <boost/iterator/transform_iterator.hpp>
-
+using namespace CGAL::Three;
 class Polyhedron_demo_convex_hull_plugin : 
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
@@ -52,7 +52,7 @@ struct Get_point {
 
 void Polyhedron_demo_convex_hull_plugin::on_actionConvexHull_triggered()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
   Scene_polyhedron_item* poly_item = 
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));

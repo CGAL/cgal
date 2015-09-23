@@ -1,8 +1,8 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_nef_polyhedron_item.h"
 
-#include "Polyhedron_demo_plugin_interface.h"
-#include "Polyhedron_demo_plugin_helper.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 
 #include <QString>
 #include <QAction>
@@ -11,13 +11,13 @@
 #include <QApplication>
 #include <QTime>
 #include <QMessageBox>
-
+using namespace CGAL::Three;
 class Polyhedron_demo_nef_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
@@ -79,7 +79,7 @@ public Q_SLOTS:
 void
 Polyhedron_demo_nef_plugin::on_actionToNef_triggered()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
   Scene_polyhedron_item* item = 
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
@@ -108,7 +108,7 @@ Polyhedron_demo_nef_plugin::on_actionToNef_triggered()
 void
 Polyhedron_demo_nef_plugin::on_actionConvexDecomposition_triggered()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
   Scene_polyhedron_item* pitem = 
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
@@ -152,7 +152,7 @@ Polyhedron_demo_nef_plugin::on_actionConvexDecomposition_triggered()
 void
 Polyhedron_demo_nef_plugin::on_actionToPoly_triggered()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
   Scene_nef_polyhedron_item* item = 
     qobject_cast<Scene_nef_polyhedron_item*>(scene->item(index));

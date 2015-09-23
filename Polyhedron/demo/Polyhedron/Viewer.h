@@ -2,20 +2,24 @@
 #define VIEWER_H
 
 #include "Viewer_config.h"
-#include <CGAL_demo/Viewer_interface.h>
+#include <CGAL/Three/Viewer_interface.h>
 
 #include <QGLViewer/qglviewer.h>
 #include <QPoint>
 
 // forward declarations
 class QWidget;
+namespace CGAL{
+namespace Three{
 class Scene_draw_interface;
+}
+}
 class QMouseEvent;
 class QKeyEvent;
 
 class Viewer_impl;
 
-class VIEWER_EXPORT Viewer : public Viewer_interface {
+class VIEWER_EXPORT Viewer : public CGAL::Three::Viewer_interface {
 
   Q_OBJECT
 
@@ -42,7 +46,7 @@ public:
   //! Sets the pick matrix to Identity once the picking is done.
   void endSelection(const QPoint &point);
   //! Sets the scene for the viewer.
-  void setScene(Scene_draw_interface* scene);
+  void setScene(CGAL::Three::Scene_draw_interface* scene);
   //! @returns the antialiasing state.
   bool antiAliasing() const;
   //! @returns the fastDrawing state.
@@ -71,7 +75,7 @@ protected:
   * Source code of gluPickMatrix slightly modified : instead of multiplying the current matrix by this value,
   * sets the viewer's pickMatrix_ so that the drawing area is only around the cursor. This is because since CGAL 4.7,
   * the drawing system changed to use shaders, and these need this value. pickMatrix_ is passed to the shaders in
-  * Scene_item::attrib_buffers(Viewer_interface* viewer, int program_name).*/
+  * Scene_item::attrib_buffers(CGAL::Three::Viewer_interface* viewer, int program_name).*/
   void pickMatrix(GLdouble x, GLdouble y, GLdouble width, GLdouble height,
                   GLint viewport[4]);
 

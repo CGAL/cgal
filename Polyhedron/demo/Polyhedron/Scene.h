@@ -3,8 +3,8 @@
 #include "config.h"
 #include "Scene_config.h"
 
-#include "Scene_interface.h"
-#include "Scene_draw_interface.h"
+#include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Three/Scene_draw_interface.h>
 
 #include <QtOpenGL/qgl.h>
 #include <QAbstractListModel>
@@ -23,11 +23,10 @@
 class QEvent;
 class QMouseEvent;
 namespace GlSplat { class SplatRenderer; }
-
-class Viewer_interface;
+namespace CGAL { namespace Three{ class Viewer_interface; }}
 
 class SCENE_EXPORT Scene  :
-  public QAbstractListModel, public Scene_interface, public Scene_draw_interface
+  public QAbstractListModel, public CGAL::Three::Scene_interface, public CGAL::Three::Scene_draw_interface
 {
   Q_OBJECT
   Q_PROPERTY(int numberOfEntries READ numberOfEntries)
@@ -110,10 +109,10 @@ public:
   void drawWithNames();
   /*! Is called by Viewer::draw(Viewer_interface*). Calls draw_aux(false, viewer).
    * @see draw_aux(bool with_names, Viewer_interface).*/
-  void draw(Viewer_interface*);
+  void draw(CGAL::Three::Viewer_interface*);
   /*! Is called by Viewer::drawWithNames(Viewer_interface*). Calls draw_aux(true, viewer).
    * @see draw_aux(bool with_names, Viewer_interface).*/
-  void drawWithNames(Viewer_interface*);
+  void drawWithNames(CGAL::Three::Viewer_interface*);
   /*! Manages the key events.
    * @returns true if the keyEvent executed well.
    */
@@ -223,7 +222,7 @@ private:
   /*! Calls the drawing functions of each visible item according
    * to its current renderingMode. If with_names is true, uses
    * the OpenGL mode GL_WITH_NAMES, essentially used for the picking.*/
-  void draw_aux(bool with_names, Viewer_interface*);
+  void draw_aux(bool with_names, CGAL::Three::Viewer_interface*);
   //! List of Scene_items.
   typedef QList<Scene_item*> Entries;
   //!List containing all the scene_items.

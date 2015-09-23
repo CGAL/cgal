@@ -1,7 +1,7 @@
 #include "config.h"
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "ui_Remeshing_dialog.h"
 
 #include <QObject>
@@ -21,17 +21,17 @@ Scene_item* cgal_code_remesh(QWidget* parent,
                              const double sizing,
                              const double approx,
                              int tag);
-
+using namespace CGAL::Three;
 class Polyhedron_demo_remeshing_plugin : 
   public QObject,
   protected Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     this->scene = scene_interface;
     this->mw = mainWindow;
     actionRemeshing = this->getActionFromMainWindow(mw, "actionRemeshing");
@@ -57,7 +57,7 @@ private:
 
 void Polyhedron_demo_remeshing_plugin::remesh()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));

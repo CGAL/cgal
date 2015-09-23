@@ -8,12 +8,13 @@
 #include <CGAL/Qt/CreateOpenGLContext.h>
 // forward declarations
 class QWidget;
-class Scene_draw_interface;
 class QMouseEvent;
 class QKeyEvent;
 
 #include "../Viewer_config.h" // for VIEWER_EXPORT
-
+namespace CGAL{
+namespace Three{
+class Scene_draw_interface;
 class VIEWER_EXPORT Viewer_interface : public QGLViewer, public QOpenGLFunctions_2_1 {
 
   Q_OBJECT
@@ -23,7 +24,7 @@ public:
   virtual ~Viewer_interface() {}
 
   //! Sets the scene for the viewer.
-  virtual void setScene(Scene_draw_interface* scene) = 0;
+  virtual void setScene(CGAL::Three::Scene_draw_interface* scene) = 0;
   //! @returns the antialiasing state.
   virtual bool antiAliasing() const = 0;
 
@@ -78,5 +79,6 @@ public Q_SLOTS:
                                        float animation_duration = 0.5f) = 0;
 
 }; // end class Viewer_interface
-
+}
+}
 #endif // VIEWER_INTERFACE_H

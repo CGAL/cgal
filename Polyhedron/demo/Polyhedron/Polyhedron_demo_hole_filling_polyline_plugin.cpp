@@ -3,9 +3,9 @@
 #include "Messages_interface.h"
 #include "Scene_polyhedron_item.h"
 #include "Scene_polylines_item.h"
-#include "Scene_interface.h"
+#include <CGAL/Three/Scene_interface.h>
 
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "Polyhedron_type.h"
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
@@ -59,19 +59,19 @@ private:
   std::vector<CGAL::Triple<int, int, int> >* triangles;
   Scene_polylines_item::Polyline* polyline;
 };
-
+using namespace CGAL::Three;
 class Polyhedron_demo_hole_filling_polyline_plugin :
   public QObject,
   public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
   bool applicable(QAction *) const { return qobject_cast<Scene_polylines_item*>(scene->item(scene->mainSelectionIndex())); }
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFillingPolyline; }
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m){
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m){
     mw = mainWindow;
     scene = scene_interface;
     messages = m;
@@ -154,7 +154,7 @@ public Q_SLOTS:
 
 private:
   QMainWindow* mw;
-  Scene_interface* scene;
+  CGAL::Three::Scene_interface* scene;
   Messages_interface* messages;
   QAction* actionHoleFillingPolyline;
 

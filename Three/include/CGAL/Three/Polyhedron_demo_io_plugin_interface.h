@@ -5,7 +5,8 @@
 #include <QStringList>
 
 class Scene_item;
-
+namespace CGAL{
+namespace Three {
 class Polyhedron_demo_io_plugin_interface 
 {
 public:
@@ -27,8 +28,9 @@ public:
   //!contained in fileinfo. Returns false if error.
   virtual bool save(const Scene_item*, QFileInfo fileinfo) = 0;
 };
-
-Q_DECLARE_INTERFACE(Polyhedron_demo_io_plugin_interface,
+}
+}
+Q_DECLARE_INTERFACE(CGAL::Three::Polyhedron_demo_io_plugin_interface,
                     "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 #endif // POLYHEDRON_DEMO_IO_PLUGIN_INTERFACE_H

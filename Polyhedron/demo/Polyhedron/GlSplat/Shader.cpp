@@ -133,7 +133,7 @@ void Shader::printInfoLog(GLuint objectID)
     }
 }
 
-void Shader::setViewer(Viewer_interface *v)
+void Shader::setViewer(CGAL::Three::Viewer_interface *v)
 {
     viewer = v;
 }

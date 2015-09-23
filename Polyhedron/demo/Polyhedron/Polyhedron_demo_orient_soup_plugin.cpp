@@ -8,24 +8,24 @@
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
 
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "Messages_interface.h"
-
+using namespace CGAL::Three;
 class Polyhedron_demo_orient_soup_plugin : 
   public QObject,
   public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
   void init(QMainWindow* mainWindow,
-            Scene_interface* scene_interface,
+            CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* m);
 
   bool applicable(QAction* action) const {
-    Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices()) {
+    Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices()) {
       if(qobject_cast<Scene_polygon_soup_item*>(scene->item(index)))
         return true;
       else
@@ -44,7 +44,7 @@ public Q_SLOTS:
   void displayNonManifoldEdges();
 
 private:
-  Scene_interface* scene;
+  CGAL::Three::Scene_interface* scene;
   Messages_interface* messages;
   QMainWindow* mw;
   QAction* actionOrient;
@@ -54,7 +54,7 @@ private:
 }; // end Polyhedron_demo_orient_soup_plugin
 
 void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
-                                              Scene_interface* scene_interface,
+                                              CGAL::Three::Scene_interface* scene_interface,
                                               Messages_interface* m)
 {
   scene = scene_interface;
@@ -83,7 +83,7 @@ QList<QAction*> Polyhedron_demo_orient_soup_plugin::actions() const {
 
 void Polyhedron_demo_orient_soup_plugin::orient()
 {
-  Q_FOREACH(Scene_interface::Item_id index, scene->selectionIndices())
+  Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
   {
     Scene_polygon_soup_item* item = 
       qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
@@ -125,7 +125,7 @@ void Polyhedron_demo_orient_soup_plugin::orient()
 
 void Polyhedron_demo_orient_soup_plugin::shuffle()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
   Scene_polygon_soup_item* item = 
     qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
@@ -154,7 +154,7 @@ void Polyhedron_demo_orient_soup_plugin::shuffle()
 
 void Polyhedron_demo_orient_soup_plugin::displayNonManifoldEdges()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
   Scene_polygon_soup_item* item = 
     qobject_cast<Scene_polygon_soup_item*>(scene->item(index));

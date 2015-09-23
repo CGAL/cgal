@@ -12,9 +12,10 @@ struct QMetaObject;
 class QMainWindow;
 class QDockWidget;
 
-#include "Polyhedron_demo_plugin_interface.h"
-#include "Scene_interface.h"
-
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Scene_interface.h>
+namespace CGAL {
+namespace Three {
 class SCENE_ITEM_EXPORT Polyhedron_demo_plugin_helper
   : public Polyhedron_demo_plugin_interface
 {
@@ -23,7 +24,7 @@ public:
   static QAction* getActionFromMainWindow(QMainWindow*, QString action_name);
   
   //! Init plugin
-  virtual void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
+  virtual void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface);
   
   //! Get list of actions supported by this plugin
   virtual QStringList actionsNames() const;
@@ -39,7 +40,7 @@ public:
       // no selected SceneType - if there is only one in list return it, otherwise NULL
       int counter = 0;
       int last_selected = 0;
-      for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end && counter < 2; ++i) {
+      for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end && counter < 2; ++i) {
         if(SceneType* tmp = qobject_cast<SceneType*>(scene->item(i))) { 
           scene_item = tmp;
           counter++; 
@@ -62,9 +63,10 @@ protected:
   //!The list of actions
   QMap<QString, QAction*> actions_map;
   //!The reference to the scene
-  Scene_interface* scene;
+  CGAL::Three::Scene_interface* scene;
   //!The reference to the main window
   QMainWindow* mw;
 };
-
+}
+}
 #endif // POLYHEDRON_DEMO_OPERATION_HELPER_H

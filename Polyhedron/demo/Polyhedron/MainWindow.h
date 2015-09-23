@@ -18,8 +18,13 @@ class Scene;
 class Viewer;
 class QTreeView;
 class QMenu;
+namespace CGAL {
+namespace Three{
 class Polyhedron_demo_io_plugin_interface;
 class Polyhedron_demo_plugin_interface;
+}
+}
+
 class Scene_item;
 class QSortFilterProxyModel;
 
@@ -55,12 +60,12 @@ public:
   /*! Find an IO plugin.
    * throws std::invalid_argument if no loader with that argument can be found
    @returns the IO plugin associated with `loader_name`*/
-  Polyhedron_demo_io_plugin_interface* find_loader(const QString& loader_name) const;
+  CGAL::Three::Polyhedron_demo_io_plugin_interface* find_loader(const QString& loader_name) const;
   
   /*! \brief Load an item with a given loader.
    * throws `std::logic_error` if loading does not succeed or
    * `std::invalid_argument` if `fileinfo` specifies an invalid file*/
-  Scene_item* load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_interface*);
+  Scene_item* load_item(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface*);
 
 public Q_SLOTS:
   void updateViewerBBox();
@@ -327,10 +332,10 @@ private:
   QSortFilterProxyModel* proxyModel;
   QTreeView* sceneView;
   Ui::MainWindow* ui;
-  QVector<Polyhedron_demo_io_plugin_interface*> io_plugins;
+  QVector<CGAL::Three::Polyhedron_demo_io_plugin_interface*> io_plugins;
   QMap<QString,QString> default_plugin_selection;
   // typedef to make Q_FOREACH work
-  typedef QPair<Polyhedron_demo_plugin_interface*, QString> PluginNamePair;
+  typedef QPair<CGAL::Three::Polyhedron_demo_plugin_interface*, QString> PluginNamePair;
   QVector<PluginNamePair > plugins;
 #ifdef QT_SCRIPT_LIB
   QScriptEngine* script_engine;

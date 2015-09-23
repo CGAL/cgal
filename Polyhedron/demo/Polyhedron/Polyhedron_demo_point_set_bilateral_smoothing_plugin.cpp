@@ -1,7 +1,7 @@
 #include "config.h"
 #include "Scene_points_with_normal_item.h"
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/bilateral_smooth_point_set.h>
 #include <CGAL/Timer.h>
@@ -15,19 +15,19 @@
 #include <QMessageBox>
 
 #include "ui_Polyhedron_demo_point_set_bilateral_smoothing_plugin.h"
-
+using namespace CGAL::Three;
 class Polyhedron_demo_point_set_bilateral_smoothing_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   
   QAction* actionBilateralSmoothing;
 
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     actionBilateralSmoothing = new QAction(tr("Point set bilateral smoothing"), mainWindow);
     actionBilateralSmoothing->setObjectName("actionBilateralSmoothing");
 
@@ -63,7 +63,7 @@ class Point_set_demo_point_set_bilateral_smoothing_dialog : public QDialog, priv
 
 void Polyhedron_demo_point_set_bilateral_smoothing_plugin::on_actionBilateralSmoothing_triggered()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));

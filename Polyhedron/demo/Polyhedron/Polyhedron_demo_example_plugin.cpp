@@ -3,7 +3,8 @@
 #include <QAction>
 
 #include "Scene_item.h"
-#include "Viewer_interface.h"
+#include <CGAL/Three/Viewer_interface.h>
+
 class Q_DECL_EXPORT Scene_triangle_item : public Scene_item
 {
 
@@ -35,33 +36,31 @@ public :
 
     QString toolTip() const {    
       QString str =
-             QObject::tr( "<p>Number of vertices: %3<br />"
-                           "Number of edges: %3<br />"
-                         "Number of facets: %1")
+             QObject::tr( "<p>Number of vertices: %1<br />"
+                           "Number of edges: %2<br />"
+                         "Number of facets: %3")
                 .arg(this->name())
-                .arg(poly->size_of_vertices())
-                .arg(poly->size_of_halfedges()/2)
-                .arg(poly->size_of_facets())
+                .arg(3)
+                .arg(3)
+                .arg(1)
                 .arg(this->renderingModeName())
                 .arg(this->color().name());
-      if (volume!=-std::numeric_limits<double>::infinity())
-        str+=QObject::tr("<br />Volume: %1").arg(volume);
-      if (area!=-std::numeric_limits<double>::infinity())
-        str+=QObject::tr("<br />Area: %1").arg(area);
+        str+=QObject::tr("<br />Volume: %1").arg(0);
+        str+=QObject::tr("<br />Area: %1").arg(0.5);
       str+="</p>";
-      item_text += QString("Bounding box: min (%1,%2,%3), max(%4,%5,%6)")
-           .arg(item->bbox().xmin)
-           .arg(item->bbox().ymin)
-           .arg(item->bbox().zmin)
-           .arg(item->bbox().xmax)
-           .arg(item->bbox().ymax)
-           .arg(item->bbox().zmax);
-      m_text += QString("<br />Number of isolated vertices : 0<br />");
+      str += QString("Bounding box: min (%1,%2,%3), max(%4,%5,%6)")
+           .arg(bbox().xmin)
+           .arg(bbox().ymin)
+           .arg(bbox().zmin)
+           .arg(bbox().xmax)
+           .arg(bbox().ymax)
+           .arg(bbox().zmax);
+      str += QString("<br />Number of isolated vertices : 0<br />");
 
       return str;
     }
 
-    void draw(Viewer_interface* viewer) const
+    void draw(CGAL::Three::Viewer_interface* viewer) const
     {
         if(!are_buffers_filled)
             initialize_buffers(viewer);
@@ -87,7 +86,7 @@ private:
     std::vector<float> vertices;
     mutable QOpenGLShaderProgram *program;
     using Scene_item::initialize_buffers;
-    void initialize_buffers(Viewer_interface *viewer)const
+    void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
     {
 
         //vao containing the data for the lines
@@ -120,14 +119,15 @@ private:
 
 }; //end of class Scene_triangle_item
 
-#include "Polyhedron_demo_plugin_helper.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+using namespace CGAL::Three;
 class Polyhedron_demo_example_plugin :
         public QObject,
         public Polyhedron_demo_plugin_helper
 {
     //Configures CMake to use MOC correctly
     Q_OBJECT
-    Q_INTERFACES(Polyhedron_demo_plugin_interface)
+    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 
@@ -137,7 +137,7 @@ public :
     using Polyhedron_demo_plugin_helper::init;
 
     void init(QMainWindow* mainWindow,
-              Scene_interface* scene_interface) {
+              CGAL::Three::Scene_interface* scene_interface) {
       //get the references
       this->scene = scene_interface;
       this->mw = mainWindow;

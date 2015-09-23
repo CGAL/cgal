@@ -184,7 +184,7 @@ private:
 
 }; //end of class Scene_triangle_item
 
-#include "Polyhedron_demo_plugin_helper.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 class Polyhedron_demo_example_plugin :
         public QObject,
         public Polyhedron_demo_plugin_helper

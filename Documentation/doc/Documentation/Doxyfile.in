@@ -94,6 +94,7 @@ IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation/fig \
              ${CMAKE_SOURCE_DIR}/Arrangement_on_surface_2/doc/Sweep_line_2/fig \
              ${CMAKE_SOURCE_DIR}/Arrangement_on_surface_2/doc/Arrangement_on_surface_2/fig \
              ${CMAKE_SOURCE_DIR}/Boolean_set_operations_2/doc/Boolean_set_operations_2/fig \
+             ${CMAKE_SOURCE_DIR}/Three/doc/Three/fig \
              ${CMAKE_SOURCE_DIR}/Triangulation_2/doc/TDS_2/fig \
              ${CMAKE_SOURCE_DIR}/Triangulation_2/doc/Triangulation_2/fig \
              ${CMAKE_SOURCE_DIR}/Triangulation_3/doc/TDS_3/fig \

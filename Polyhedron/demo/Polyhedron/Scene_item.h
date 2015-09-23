@@ -1,7 +1,7 @@
 #ifndef SCENE_ITEM_H
 #define SCENE_ITEM_H
 #include "Scene_item_config.h"
-#include "Scene_interface.h"
+#include <CGAL/Three/Scene_interface.h>
 #include <QString>
 #include <QPixmap>
 #include <QFont>
@@ -16,15 +16,17 @@
 #define PROGRAM_WITH_TEXTURED_EDGES 3
 #define PROGRAM_INSTANCED 4
 #define PROGRAM_INSTANCED_WIRE 5
-
-
+namespace CGAL {
+namespace Three {
+  class Viewer_interface;
+}
+}
 namespace qglviewer {
   class ManipulatedFrame;
 }
 
 class QMenu;
 class QKeyEvent;
-class Viewer_interface;
 
 //! This class represents an object in the OpenGL scene
 class SCENE_ITEM_EXPORT Scene_item : public QObject {
@@ -35,7 +37,7 @@ class SCENE_ITEM_EXPORT Scene_item : public QObject {
   Q_ENUMS(RenderingMode)
   Q_PROPERTY(RenderingMode renderingMode READ renderingMode WRITE setRenderingMode)
 public:
-  typedef Scene_interface::Bbox Bbox;
+  typedef CGAL::Three::Scene_interface::Bbox Bbox;
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
   //! The default color of a scene_item.
   static const QColor defaultColor; // defined in Scene_item.cpp
@@ -111,7 +113,7 @@ public:
    * @see compute_elements()
    * @see initialize_buffers()
    */
-  virtual void draw(Viewer_interface*) const  { draw(); }
+  virtual void draw(CGAL::Three::Viewer_interface*) const  { draw(); }
   //! Deprecated. Does nothing.
   virtual void draw_edges() const { draw(); }
   /*! \brief The drawing function.
@@ -121,7 +123,7 @@ public:
    * @see compute_elements()
    * @see initialize_buffers()
    */
-  virtual void draw_edges(Viewer_interface* viewer) const { draw(viewer); }
+  virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const { draw(viewer); }
   //! Deprecated. Does nothing.
   virtual void draw_points() const { draw(); }
   /*! \brief The drawing function.
@@ -131,12 +133,12 @@ public:
    * @see compute_elements()
    * @see initialize_buffers()
    */
-  virtual void draw_points(Viewer_interface*) const { draw_points(); }
+  virtual void draw_points(CGAL::Three::Viewer_interface*) const { draw_points(); }
 
   //! Draws the splats of the item in the viewer using GLSplat functions.
   virtual void draw_splats() const {}
   //! Draws the splats of the item in the viewer using GLSplat functions.
-  virtual void draw_splats(Viewer_interface*) const {draw_splats();}
+  virtual void draw_splats(CGAL::Three::Viewer_interface*) const {draw_splats();}
 
   //! Specifies which data must be updated when selection has changed.
   //! Must be overloaded.
@@ -323,7 +325,7 @@ protected:
    * - PROGRAM_INSTANCED : used for items that have to be rendered numerous times(spheres)
    * - PROGRAM_INSTANCED_WIRE : used for the wireframe mode of PROGRAM_INSTANCED
    * @returns a pointer to the corresponding program.*/
-  QOpenGLShaderProgram* getShaderProgram(int name , Viewer_interface *viewer = 0) const;
+  QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;
   //! Used pass data to the shader.
   int vertexLoc;
   //! Used pass data to the shader.
@@ -341,7 +343,7 @@ protected:
   /*! Passes all the uniform data to the shaders.
    * According to program_name, this data may change.
    */
-  virtual void attrib_buffers(Viewer_interface*, int program_name) const;
+  virtual void attrib_buffers(CGAL::Three::Viewer_interface*, int program_name) const;
 
 
 

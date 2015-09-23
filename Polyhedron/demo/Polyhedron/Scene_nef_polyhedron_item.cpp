@@ -82,7 +82,7 @@ Scene_nef_polyhedron_item::~Scene_nef_polyhedron_item()
     delete nef_poly;
 }
 
-void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) const
+void Scene_nef_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
 {
     //vao for the facets
     {
@@ -483,7 +483,7 @@ Scene_nef_polyhedron_item::toolTip() const
             .arg(nef_poly->number_of_volumes());
 }
 
-void Scene_nef_polyhedron_item::draw(Viewer_interface* viewer) const
+void Scene_nef_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
         initialize_buffers(viewer);
@@ -504,7 +504,7 @@ void Scene_nef_polyhedron_item::draw(Viewer_interface* viewer) const
     viewer->glPointSize(point_size);
 
 }
-void Scene_nef_polyhedron_item::draw_edges(Viewer_interface* viewer) const
+void Scene_nef_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
         initialize_buffers(viewer);
@@ -526,7 +526,7 @@ void Scene_nef_polyhedron_item::draw_edges(Viewer_interface* viewer) const
         viewer->glPointSize(point_size);
     }
 }
-void Scene_nef_polyhedron_item::draw_points(Viewer_interface* viewer) const
+void Scene_nef_polyhedron_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
         initialize_buffers(viewer);

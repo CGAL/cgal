@@ -191,7 +191,6 @@ public:
   Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
     : Scene_polyhedron_item_decorator(NULL, false)
     {
-        nbVaos = 0;
         nb_facets = 0;
         nb_points = 0;
         nb_lines = 0;
@@ -256,10 +255,10 @@ public:
 
 
     using Scene_polyhedron_item_decorator::draw;
-    virtual void draw(Viewer_interface*) const;
+    virtual void draw(CGAL::Three::Viewer_interface*) const;
     virtual void draw_edges() const { }
-    virtual void draw_edges(Viewer_interface*) const;
-    virtual void draw_points(Viewer_interface*) const;
+    virtual void draw_edges(CGAL::Three::Viewer_interface*) const;
+    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
 
   bool supportsRenderingMode(RenderingMode m) const { return (m==Flat); }
 
@@ -795,7 +794,7 @@ private:
   mutable std::size_t nb_lines;
   mutable QOpenGLShaderProgram *program;
   using Scene_item::initialize_buffers;
-  void initialize_buffers(Viewer_interface *viewer) const;
+  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_elements();
 
 };

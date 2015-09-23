@@ -3,8 +3,8 @@
 #include "Scene_plane_item.h"
 #include "Polyhedron_type.h"
 
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/centroid.h>
 #include <CGAL/bounding_box.h>
@@ -23,13 +23,13 @@ typedef Kernel::Vector_3 Vector;
 typedef Kernel::Point_3 Point;
 typedef Kernel::FT FT;
 
-
+using namespace CGAL::Three;
 class Polyhedron_demo_pca_plugin : 
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
@@ -52,7 +52,7 @@ public Q_SLOTS:
 
 void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
   Scene_polyhedron_item* item = 
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
@@ -126,7 +126,7 @@ void Polyhedron_demo_pca_plugin::on_actionFitPlane_triggered()
 
 void Polyhedron_demo_pca_plugin::on_actionFitLine_triggered()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
   Scene_polyhedron_item* item = 
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));

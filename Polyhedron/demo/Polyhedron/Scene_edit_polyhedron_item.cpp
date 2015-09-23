@@ -126,7 +126,7 @@ Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
 }
 /////////////////////////////
 /// For the Shader gestion///
-void Scene_edit_polyhedron_item::initialize_buffers(Viewer_interface *viewer =0) const
+void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer =0) const
 {
     //vao for the facets
     {
@@ -497,7 +497,7 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 }
 
 #include "opengl_tools.h"
-void Scene_edit_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
+void Scene_edit_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
         initialize_buffers(viewer);
     vaos[2]->bind();
@@ -513,7 +513,7 @@ void Scene_edit_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
         draw_ROI_and_control_vertices(viewer);
   }
 }
-void Scene_edit_polyhedron_item::draw(Viewer_interface* viewer) const {
+void Scene_edit_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
         initialize_buffers(viewer);
     vaos[0]->bind();
@@ -531,7 +531,7 @@ void Scene_edit_polyhedron_item::draw(Viewer_interface* viewer) const {
 
 }
 
-void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface* viewer) const {
+void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface* viewer) const {
 
   CGAL::GL::Color color;
   CGAL::GL::Point_size point_size; point_size.set_point_size(5);
@@ -648,7 +648,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(Viewer_interface*
   } 
 
 
-void Scene_edit_polyhedron_item::compute_bbox(const Scene_interface::Bbox& bb){
+void Scene_edit_polyhedron_item::compute_bbox(const CGAL::Three::Scene_interface::Bbox& bb){
     pos_bbox.resize(24*3);
 
     pos_bbox[0]=bb.xmin; pos_bbox[1]=bb.ymin; pos_bbox[2]=bb.zmin;

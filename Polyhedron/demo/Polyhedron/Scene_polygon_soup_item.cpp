@@ -77,7 +77,7 @@ struct Polyhedron_to_polygon_soup_writer {
 }; // end struct Polyhedron_to_soup_writer
 
 void
-Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
+Scene_polygon_soup_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer) const
 {
     //vao containing the data for the facets
     {
@@ -563,7 +563,7 @@ Scene_polygon_soup_item::toolTip() const
 }
 
 void
-Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
+Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
      compute_normals_and_vertices();
@@ -590,7 +590,7 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
   }
 
 void
-Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
+Scene_polygon_soup_item::draw_points(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
       compute_normals_and_vertices();
@@ -611,7 +611,7 @@ Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
 }
 
 void
-Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
+Scene_polygon_soup_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
   {
      compute_normals_and_vertices();

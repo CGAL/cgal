@@ -1,13 +1,13 @@
 #include "Viewer.h"
 #include <CGAL/gl.h>
-#include "Scene_draw_interface.h"
+#include <CGAL/Three/Scene_draw_interface.h>
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QGLViewer/manipulatedCameraFrame.h>
 #include <QDebug>
 class Viewer_impl {
 public:
-  Scene_draw_interface* scene;
+  CGAL::Three::Scene_draw_interface* scene;
   bool antialiasing;
   bool twosides;
   bool macro_mode;
@@ -15,9 +15,8 @@ public:
 
   void draw_aux(bool with_names, Viewer*);
 };
-
 Viewer::Viewer(QWidget* parent, bool antialiasing)
-  : Viewer_interface(parent)
+  : CGAL::Three::Viewer_interface(parent)
 {
   d = new Viewer_impl;
   d->scene = 0;
@@ -60,7 +59,7 @@ Viewer::~Viewer()
   delete d;
 }
 
-void Viewer::setScene(Scene_draw_interface* scene)
+void Viewer::setScene(CGAL::Three::Scene_draw_interface* scene)
 {
   d->scene = scene;
 }
@@ -246,7 +245,7 @@ void Viewer::postSelection(const QPoint& pixel)
                       dir.x, dir.y, dir.z);
   }
 }
-bool Viewer_interface::readFrame(QString s, qglviewer::Frame& frame)
+bool CGAL::Three::Viewer_interface::readFrame(QString s, qglviewer::Frame& frame)
 {
   QStringList list = s.split(" ", QString::SkipEmptyParts);
   if(list.size() != 7)
@@ -275,7 +274,7 @@ bool Viewer_interface::readFrame(QString s, qglviewer::Frame& frame)
   return true;
 }
 
-QString Viewer_interface::dumpFrame(const qglviewer::Frame& frame) {
+QString CGAL::Three::Viewer_interface::dumpFrame(const qglviewer::Frame& frame) {
   const qglviewer::Vec pos = frame.position();
   const qglviewer::Quaternion q = frame.orientation();
 

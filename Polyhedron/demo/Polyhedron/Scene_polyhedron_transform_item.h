@@ -15,10 +15,10 @@ class SCENE_POLYHEDRON_TRANSFORM_ITEM_EXPORT Scene_polyhedron_transform_item
     typedef Scene_polyhedron_item Base;
     
 public: 
-    Scene_polyhedron_transform_item(const qglviewer::Vec& pos,const Scene_polyhedron_item* poly_item,const Scene_interface* scene_interface);
+    Scene_polyhedron_transform_item(const qglviewer::Vec& pos,const Scene_polyhedron_item* poly_item,const CGAL::Three::Scene_interface* scene_interface);
     Scene_item* clone() const{return NULL;}
     QString toolTip() const;
-    void draw_edges(Viewer_interface*) const;
+    void draw_edges(CGAL::Three::Viewer_interface*) const;
     Bbox bbox() const;
     ~Scene_polyhedron_transform_item() {delete frame; Q_EMIT killed();}
     bool manipulatable() const { return manipulable; }
@@ -40,7 +40,7 @@ private:
     mutable std::vector<float> positions_lines;
     mutable std::size_t nb_lines;
     using Scene_item::initialize_buffers;
-    void initialize_buffers(Viewer_interface *viewer) const;
+    void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
     void compute_elements();
 
 Q_SIGNALS:

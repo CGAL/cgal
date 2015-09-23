@@ -41,7 +41,7 @@ typedef Tr::Point Point_3;
 #include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
 //#include <QGLViewer/qglviewer.h>
-#include "Viewer_interface.h"
+#include <CGAL/Three/Viewer_interface.h>
 
 
 class Q_DECL_EXPORT Scene_c3t3_item : public Scene_item
@@ -154,7 +154,7 @@ public:
         return (m != Gouraud && m!=PointsPlusNormals && m!=Splatting); // CHECK THIS!
     }
 
-    void draw(Viewer_interface* viewer) const {
+    void draw(CGAL::Three::Viewer_interface* viewer) const {
         if(!are_buffers_filled)
             initialize_buffers(viewer);
         vaos[0]->bind();
@@ -167,7 +167,7 @@ public:
 
 
     }
-    void draw_edges(Viewer_interface* viewer) const {
+    void draw_edges(CGAL::Three::Viewer_interface* viewer) const {
         if(!are_buffers_filled)
             initialize_buffers(viewer);
         vaos[2]->bind();
@@ -191,7 +191,7 @@ public:
         vaos[1]->release();
 
     }
-    void draw_points(Viewer_interface * viewer) const
+    void draw_points(CGAL::Three::Viewer_interface * viewer) const
     {
         if(!are_buffers_filled)
             initialize_buffers(viewer);
@@ -368,12 +368,12 @@ public:
         return menu;
     }
 
-    void set_scene(Scene_interface* scene){ last_known_scene=scene; }
+    void set_scene(CGAL::Three::Scene_interface* scene){ last_known_scene=scene; }
 
 private:
     C3t3 c3t3_;
     qglviewer::ManipulatedFrame* frame;
-    Scene_interface* last_known_scene;
+    CGAL::Three::Scene_interface* last_known_scene;
 
 
     std::vector<float> positions_lines;
@@ -387,7 +387,7 @@ private:
     mutable QOpenGLShaderProgram *program;
 
     using Scene_item::initialize_buffers;
-    void initialize_buffers(Viewer_interface *viewer)const
+    void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
     {
         //vao containing the data for the facets
         {
@@ -611,7 +611,7 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
                              const double tet_sizing,
                              const double tet_shape,
                              const bool protect_features,
-                             Scene_interface* scene)
+                             CGAL::Three::Scene_interface* scene)
 {
   if(!pMesh) return 0;
 

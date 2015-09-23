@@ -33,6 +33,8 @@ enum RenderingMode { Points = 0,
 /*!
  * This is the class given to the plugins to interact with the scene.
  * */
+namespace CGAL {
+namespace Three{
 class Scene_interface {
 public:
     //!Contains the coordinates for the two extremities of the diagonal of a bounding box.
@@ -155,6 +157,7 @@ public:
   virtual void setSelectedItem(Item_id) = 0;
   
 }; // end interface Scene_interface
-
+}
+}
 
 #endif // SCENE_INTERFACE_H

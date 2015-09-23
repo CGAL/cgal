@@ -1,7 +1,7 @@
 #include "config.h"
 #include "Scene_points_with_normal_item.h"
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/vcm_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
@@ -23,18 +23,18 @@
 #  define CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN 1
 #endif
 #endif
-
+using namespace CGAL::Three;
 class Polyhedron_demo_vcm_normal_estimation_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   QAction* actionVCMNormalEstimation;
 
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
 
     actionVCMNormalEstimation = new QAction(tr("VCM normal estimation"), mainWindow);
     actionVCMNormalEstimation->setObjectName("actionVCMNormalEstimation");
@@ -77,7 +77,7 @@ class Point_set_demo_normal_estimation_dialog : public QDialog, private Ui::VCMN
 void Polyhedron_demo_vcm_normal_estimation_plugin::on_actionVCMNormalEstimation_triggered()
 {
 #if !CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));

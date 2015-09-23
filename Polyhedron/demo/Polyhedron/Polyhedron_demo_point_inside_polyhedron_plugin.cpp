@@ -4,9 +4,9 @@
 #include "Messages_interface.h"
 #include "Scene_polyhedron_item.h"
 #include "Scene_points_with_normal_item.h"
-#include "Scene_interface.h"
+#include <CGAL/Three/Scene_interface.h>
 
-#include "Polyhedron_demo_plugin_helper.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "Polyhedron_type.h"
 
 #include <CGAL/Timer.h>
@@ -25,7 +25,7 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 #include <boost/optional/optional.hpp>
-
+using namespace CGAL::Three;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 
 class Polyhedron_demo_point_inside_polyhedron_plugin :
@@ -33,7 +33,7 @@ class Polyhedron_demo_point_inside_polyhedron_plugin :
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
@@ -42,7 +42,7 @@ public:
     bool poly_item_exists = false;
     bool point_item_exists = false;
 
-    for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); 
+    for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries();
       i < end && (!poly_item_exists || !point_item_exists); ++i)
     {
       poly_item_exists |= qobject_cast<Scene_polyhedron_item*>(scene->item(i)) != NULL;
@@ -56,7 +56,7 @@ public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionPointInsidePolyhedron; }
 
   using Polyhedron_demo_plugin_helper::init;
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m)
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m)
   {
     mw = mainWindow;
     scene = scene_interface;
@@ -107,7 +107,7 @@ public Q_SLOTS:
     std::vector<Point_inside*> inside_testers;// to put all polyhedra to query object
         // it does not support copy-construction so let's use pointers
     std::vector<Point_set*> point_sets;
-    Q_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
+    Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
       if (poly_item)
         inside_testers.push_back(new Point_inside(*(poly_item->polyhedron())));
@@ -166,7 +166,7 @@ public Q_SLOTS:
       delete inside_testers[i];
 
     // for repaint
-    Q_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
+    Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_points_with_normal_item* point_item = qobject_cast<Scene_points_with_normal_item*>(scene->item(id));
       if(point_item) { 
         point_item->invalidate_buffers();
@@ -178,15 +178,15 @@ public Q_SLOTS:
   void on_Sample_random_points_from_bbox() {
     
     // calculate bbox of selected polyhedron items
-    boost::optional<Scene_interface::Bbox> bbox
-      = boost::make_optional(false, Scene_interface::Bbox());
+    boost::optional<CGAL::Three::Scene_interface::Bbox> bbox
+      = boost::make_optional(false, CGAL::Three::Scene_interface::Bbox());
     // Workaround a bug in g++-4.8.3:
     //   http://stackoverflow.com/a/21755207/1728537
     // Using boost::make_optional to copy-initialize 'bbox' hides the
     //   warning about '*bbox' not being initialized.
     // -- Laurent Rineau, 2014/10/30
 
-    Q_FOREACH(Scene_interface::Item_id id, scene->selectionIndices()) {
+    Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(id));
       if(poly_item) {
         if(!bbox) {

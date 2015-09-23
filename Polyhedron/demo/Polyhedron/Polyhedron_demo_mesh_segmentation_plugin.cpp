@@ -1,5 +1,5 @@
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include "ui_Mesh_segmentation_widget.h"
 #include "Scene_polyhedron_item.h"
@@ -42,13 +42,13 @@ public:
 private:
     std::vector<ValueType>* internal_vector;
 };
-    
+using namespace CGAL::Three;
 class Polyhedron_demo_mesh_segmentation_plugin : 
     public QObject,
     public Polyhedron_demo_plugin_helper
 {
     Q_OBJECT
-    Q_INTERFACES(Polyhedron_demo_plugin_interface)
+    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 private:
@@ -64,7 +64,7 @@ public:
         qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
     }    
     
-    void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
+    void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
         this->scene = scene_interface;
         this->mw = mainWindow;
         actionSegmentation = new QAction("Mesh Segmentation", mw);
@@ -174,7 +174,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_actionSegmentation_triggered()
 
 void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
 {
-    Scene_interface::Item_id index = scene->mainSelectionIndex();
+    CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
     Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
     if(!item) { return; }
     QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -226,7 +226,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
 
 void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
 {    
-    Scene_interface::Item_id index = scene->mainSelectionIndex();
+    CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
     Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
     if(!item) { return; }
     

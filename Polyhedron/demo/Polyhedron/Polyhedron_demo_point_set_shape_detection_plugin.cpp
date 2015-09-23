@@ -1,7 +1,7 @@
 #include "config.h"
 #include "Scene_points_with_normal_item.h"
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/Random.h>
 
@@ -24,18 +24,18 @@ typedef Epic_kernel::Point_3 Point;
 //typedef std::vector<Point_with_normal> Point_list;
 //typedef CGAL::Identity_property_map<Point_with_normal> PointPMap;
 //typedef CGAL::Normal_of_point_with_normal_pmap<Epic_kernel> NormalPMap;
-
+using namespace CGAL::Three;
 class Polyhedron_demo_point_set_shape_detection_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-    Q_INTERFACES(Polyhedron_demo_plugin_interface)
+    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
     QAction* actionDetect;
 
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     actionDetect = new QAction(tr("Point set shape detection"), mainWindow);
     actionDetect->setObjectName("actionDetect");
 
@@ -84,7 +84,7 @@ public:
 
 void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered() {
   CGAL::Random rand(time(0));
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));

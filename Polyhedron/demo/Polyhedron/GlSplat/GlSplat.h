@@ -140,10 +140,10 @@ public:
     */
   void setRadiusScale(float v);
 
-  void setViewer(Viewer_interface *v);
+  void setViewer(CGAL::Three::Viewer_interface *v);
 
 private :
-  Viewer_interface *viewer;
+  CGAL::Three::Viewer_interface *viewer;
 };
 
 

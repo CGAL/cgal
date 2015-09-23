@@ -9,7 +9,8 @@ class QAction;
 class QMainWindow;
 class Scene_interface;
 class Messages_interface;
-
+namespace CGAL {
+namespace Three {
 class Polyhedron_demo_plugin_interface 
 {
 public:
@@ -32,8 +33,9 @@ public:
   //!The list of the actions of the plugin.
   virtual QList<QAction*> actions() const = 0;
 };
-
-Q_DECLARE_INTERFACE(Polyhedron_demo_plugin_interface,
+}
+}
+Q_DECLARE_INTERFACE(CGAL::Three::Polyhedron_demo_plugin_interface,
                     "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 #endif // POLYHEDRON_DEMO_PLUGIN_INTERFACE_H
