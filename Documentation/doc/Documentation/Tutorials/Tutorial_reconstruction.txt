@@ -1,0 +1,96 @@
+/*!
+
+\page tuto_reconstruction Reconstruction
+
+\author Simon Giraudot
+
+Surface reconstruction from point clouds is a wide research topic in
+geometry processing. It can be achieved in many different ways
+depending on the input properties and the output requirements. This
+tutorials explains how the different algorithms of \cgal to perform
+reconstruction in the most relevant way.
+
+\section TutorialsReconstruction_algorithms Which algorithm should I use?
+
+\cgal \cgalReleaseNumber offers three different algorithms for surface
+reconstruction:
+
+- \ref PkgSurfaceReconstructionFromPointSets
+- \ref PkgAdvancingFrontSurfaceReconstruction
+- \ref PkgScaleSpaceReconstruction3
+
+\todo Tabular with input/output properties and corresponding method 
+
+\section TutorialsReconstruction_input Reading Input
+
+The reconstruction algorithms on \cgal take a range of iterators on a
+container as input and use property maps to access the points (and the
+normals if they are needed). Points are typically stored in plain text
+format (denoted as 'xyz' format), each point separated by a newline
+character and each coordinate separated by a white space. \cgal
+provides functions to read such a format:
+
+- `read_xyz_points()`
+- `read_xyz_points_and_normals()`
+
+Point may also be stored in an 'off' container, for which we also
+provide function:
+
+- `read_off_points()`
+- `read_off_points_and_normals()`
+
+Using these functions is pretty straightforward, as can be seen on the
+following example:
+
+\code{.cpp}
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/IO/read_xyz_points.h>
+
+#include <vector>
+#include <fstream>
+
+// types
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
+typedef Kernel::Point_3 Point;
+
+int main(int argc, char*argv[])
+{
+  std::vector<Point> points;
+
+  char* filename = "my_file.xyz";
+  std::ifstream stream(filename);
+  
+  if (!stream ||
+      !CGAL::read_xyz_points(stream, std::back_inserter(points)))
+  {
+    std::cerr << "Error: cannot read file " << filename << std::endl;
+    return -1;
+  }
+  
+  std::cout << "Read " << points.size () << " point(s)" << std::endl;
+
+  return 0;
+}
+\endcode
+
+
+\section TutorialsReconstruction_preprocessing Preprocessing
+
+Because reconstruction algorithms have some specific requirements that
+point clouds do not always meet, some preprocessing might be necessary
+to get the best results.
+
+\subsection TutorialsReconstruction_preprocessing_simplification Simplification
+
+\subsection TutorialsReconstruction_preprocessing_smoothing Smoothing
+
+
+
+\section TutorialsReconstruction_reconstruction Reconstruction
+
+\section TutorialsReconstruction_postprocessing Postprocessing
+
+\section TutorialsReconstruction_output Writing Output
+
+
+*/
