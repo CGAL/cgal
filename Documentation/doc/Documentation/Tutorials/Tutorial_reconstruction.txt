@@ -1,6 +1,6 @@
 /*!
 
-\page tuto_reconstruction Reconstruction
+\page tuto_reconstruction Surface Reconstruction
 
 \author Simon Giraudot
 
@@ -28,7 +28,7 @@ method is more suited for your work:
 
 <center>
 |                                          | Poisson | Advancing front  | Scale space      |
-|------------------------------------------|---------|------------------|------------------|
+|------------------------------------------|:-------:|:----------------:|:----------------:|
 | Are normals required?                    | Yes     | No               | No               |
 | Is noise handled?                        | Yes     | By preprocessing | Yes              |
 | Is variable sampling handled?            | Yes     | Yes              | By preprocessing |
@@ -38,8 +38,6 @@ method is more suited for your work:
 | Is the output always manifold?           | Yes     | Yes              | Optional         |
 | Is the output always orientable?         | Yes     | Yes              | No               |
 </center>
-
-
 
 
 \section TutorialsReconstruction_input Reading Input
@@ -102,6 +100,18 @@ point clouds do not always meet, some preprocessing might be necessary
 to get the best results.
 
 \subsection TutorialsReconstruction_preprocessing_simplification Simplification
+
+Some laser scanners generate points with widely variable
+sampling. Typically, lines of scan are very densely sampled but the
+gap between two lines of scan is much larger. This type of input point
+cloud might generate badly shaped output for algorithms which, in
+general, only accept small variations of sampling density.
+
+\cgal provides several simplification algorithms. In addition to
+reducing the size of the input and therefore decreasing computation
+time, some of them can help making the input more uniform.
+
+
 
 \subsection TutorialsReconstruction_preprocessing_smoothing Smoothing
 
