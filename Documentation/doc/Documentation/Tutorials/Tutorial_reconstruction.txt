@@ -5,8 +5,7 @@
 \author Simon Giraudot
 
 Surface reconstruction from point clouds is a wide research topic in
-geometry processing. It can be achieved in many different ways
-depending on the input properties and the output requirements. This
+geometry processing and can be achieved in many different ways. This
 tutorials explains how the different algorithms of \cgal to perform
 reconstruction in the most relevant way.
 
@@ -19,7 +18,29 @@ reconstruction:
 - \ref PkgAdvancingFrontSurfaceReconstruction
 - \ref PkgScaleSpaceReconstruction3
 
-\todo Tabular with input/output properties and corresponding method 
+Choosing one or the other of these methods is strongly dependent on
+the input properties and the output requirement. For example, Poisson
+always generates closed shapes (surrounding a volume) and requires
+normals but does not interpolate input points (the output surface does
+not pass exactly through the input points). The following table lists
+different properties of the input and output to help you choose which
+method is more suited for your work:
+
+<center>
+|                                          | Poisson | Advancing front  | Scale space      |
+|------------------------------------------|---------|------------------|------------------|
+| Are normals required?                    | Yes     | No               | No               |
+| Is noise handled?                        | Yes     | By preprocessing | Yes              |
+| Is variable sampling handled?            | Yes     | Yes              | By preprocessing |
+| Are input points exactly on the surface? | No      | Yes              | Yes              |
+| Is the output always closed?             | Yes     | No               | No               |
+| Is the output always smooth?             | Yes     | No               | No               |
+| Is the output always manifold?           | Yes     | Yes              | Optional         |
+| Is the output always orientable?         | Yes     | Yes              | No               |
+</center>
+
+
+
 
 \section TutorialsReconstruction_input Reading Input
 
