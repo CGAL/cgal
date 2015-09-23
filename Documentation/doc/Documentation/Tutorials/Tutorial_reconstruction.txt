@@ -1,6 +1,7 @@
 /*!
 
 \page tuto_reconstruction Surface Reconstruction
+\cgalAutoToc
 
 \author Simon Giraudot
 
@@ -14,9 +15,9 @@ reconstruction in the most relevant way.
 \cgal \cgalReleaseNumber offers three different algorithms for surface
 reconstruction:
 
-- \ref PkgPoissonSurfaceReconstruction
-- \ref PkgAdvancingFrontSurfaceReconstruction
-- \ref PkgScaleSpaceReconstruction3
+- \ref Chapter_Poisson_Surface_Reconstruction "Poisson Surface Reconstruction"
+- \ref Chapter_Advancing_Front_Surface_Reconstruction "Advancing Front Surface Reconstruction"
+- \ref Chapter_Scale_space_reconstruction "Scale Space Surface Reconstruction"
 
 Choosing one or the other of these methods is strongly dependent on
 the input properties and the output requirement. For example, Poisson
@@ -87,9 +88,6 @@ int main(int argc, char*argv[])
   }
   
   std::cout << "Read " << points.size () << " point(s)" << std::endl;
-
-  return 0;
-}
 \endcode
 
 
@@ -98,6 +96,36 @@ int main(int argc, char*argv[])
 Because reconstruction algorithms have some specific requirements that
 point clouds do not always meet, some preprocessing might be necessary
 to get the best results.
+
+Note that this _preprocessing_ step is optional: if your input point
+cloud is already well shaped, reconstruction may be directly applied
+to it.
+
+\subsection TutorialsReconstruction_preprocessing_outliers Outlier removal
+
+Some acquisition techniques generate points that are far away from the
+surface have no relevance for reconstruction. They are usually refered
+to as 'outliers'. Using the \cgal reconstruction algorithms on
+outlier-ridden point clouds produce overly distorted output, it is
+therefore strongly advised to filter these outliers _before_
+performing reconstruction.
+
+\code{.cpp}
+  // Identify outliers
+  std::vector<Point>::iterator it
+   = CGAL::remove_outliers (points.begin(), points.end(),
+                            24, // Number of neighbors considered for evaluation
+                            5.0); // Percentage of points to remove
+
+  // Outlier removal function changes the order of the point container
+  // and returns an iterator to the first point considered as outlier.
+  // These points can either be ignored or removed.
+  std::cout << std::distance (points.begin (), it)
+	    << " point(s) are inliers." << std::endl;
+
+  points.erase (it, points.end());
+\endcode
+
 
 \subsection TutorialsReconstruction_preprocessing_simplification Simplification
 
@@ -109,13 +137,51 @@ general, only accept small variations of sampling density.
 
 \cgal provides several simplification algorithms. In addition to
 reducing the size of the input and therefore decreasing computation
-time, some of them can help making the input more uniform.
+time, some of them can help making the input more uniform. This is the
+case of the function `grid_simplify_point_set()` which defines a grid
+of a user-specified size and only keeps one point per cell.
 
+\code{.cpp}
+  // Compute average spacing using neighborhood of 6 points
+  double spacing = CGAL::average_spacing (points.begin (), points.end (), 6);
+
+  // Simplify using a grid of size 2 * average spacing
+  std::vector<Point>::iterator it
+    = CGAL::grid_simplify_point_set (points.begin (), points.end (), 2. * spacing);
+
+  // Simplification functions change the order of the point container
+  // and return an iterator to the first point that is not part of the
+  // simplified point set. These points can either be ignored or removed.
+  std::cout << std::distance (points.begin (), it)
+	    << " point(s) remaining after simplification." << std::endl;
+
+  points.erase (it, points.end());
+\endcode
 
 
 \subsection TutorialsReconstruction_preprocessing_smoothing Smoothing
 
+Although reconstructions via 'Poisson' or 'Scale space' handle noise
+internally, one may want to get tighter control over the smoothing
+step. For example, a slightly noisy point cloud can benefit from some
+reliable smoothing algorithms and be reconstructed via 'Advancing
+front' which provides interesting output properties (oriented mesh
+with boundaries).
 
+Two functions are provided to smooth a noisy point cloud with a good
+approximation (i.e. without degrading curvature, for example):
+
+- `jet_smooth_point_set()`
+- `bilateral_smooth_point_set()`
+
+These functions directly modify the container:
+
+\code{.cpp}
+  // Jet smoothing takes advantage of a larger neighborhood
+  CGAL::jet_smooth_point_set (points.begin(), points.end(), 24);
+\endcode
+
+\subsection TutorialsReconstruction_preprocessing_normal Normal Estimation
 
 \section TutorialsReconstruction_reconstruction Reconstruction
 
