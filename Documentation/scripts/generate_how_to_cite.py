@@ -166,13 +166,7 @@ for line in f:
     match = pattern.match(line)
     if(match):
       pkg = match.group(1)
-      index = pkg.find("/")
-      if(index > 0):
-          top_level = pkg[:index]
-          lower_level = pkg[index+1:]
-          filename=SOURCE_DIR+"/../" + top_level + "/doc/" + lower_level + "/PackageDescription.txt"
-      else:
-          filename=SOURCE_DIR+"/../" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
+      filename=SOURCE_DIR+"/../" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
       pkgdesc = codecs.open(filename, 'r', encoding='utf-8')
       authors=""
       bib=""
