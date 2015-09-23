@@ -478,7 +478,7 @@ called the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be
 A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres
 of all simplices are regular.
 
-Note that the removal of points is not supported yet.
+\warning The removal of points is not supported yet.
 
 ## Implementation ##
 
@@ -488,7 +488,7 @@ the concept `TriangulationDataStructure` which is instantiated with a vertex
 type that stores a weighted point and allows its retrieval.
 
 The template parameter `RegularTriangulationTraits` must be a model of the concept
-`RegularTriangulationTraits` which provides the `Bare_point`and `Weighted_point` 
+`RegularTriangulationTraits` which provides the `Bare_point`and `%Weighted_point` 
 types as well as various geometric predicates used by the 
 `Regular_triangulation` class.
 The concept `RegularTriangulationTraits` refines the concept

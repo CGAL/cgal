@@ -11,7 +11,7 @@ The dimension \f$ D\f$ can be specified at compile-time or
 run-time. It should be kept reasonably small -- see the performance 
 section in the user manual for what reasonable means.
 
-Note that the removal of points is not supported yet.
+\warning The removal of points is not supported yet.
 
 A regular triangulation is defined as follows.
 
