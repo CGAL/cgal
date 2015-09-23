@@ -7,6 +7,7 @@
 
 #include <CGAL/IO/File_scanner_OFF.h>
 #include <QMessageBox>
+#include <QApplication>
 
 class Polyhedron_demo_off_plugin :
   public QObject,
@@ -67,6 +68,7 @@ Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
   else
     if( total_nb_of_vertices!= item->polyhedron()->size_of_vertices())
     {
+      QApplication::restoreOverrideCursor();
       QMessageBox::warning((QWidget*)NULL,
                      tr("Isolated vertices found"),
                      tr("%1 isolated vertices ignored")
