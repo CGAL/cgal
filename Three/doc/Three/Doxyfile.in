@@ -3,3 +3,4 @@ PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - Three"
 INPUT        = ${CMAKE_SOURCE_DIR}/Three/doc/Three/ \
                ${CMAKE_SOURCE_DIR}/Three/include \
                ${CMAKE_SOURCE_DIR}/Polyhedron/demo/Polyhedron
+EXAMPLE_PATH = ${CMAKE_SOURCE_DIR}/Polyhedron/demo/Polyhedron
