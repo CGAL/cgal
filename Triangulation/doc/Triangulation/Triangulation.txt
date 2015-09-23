@@ -504,10 +504,7 @@ This simple example shows how to create a regular triangulation.
 
 The current implementation locates points by walking in the
 triangulation, and sorts the points with spatial sort to insert a
-set of points. Thus the theoretical complexity are
-\f$ O(n\log n)\f$ for inserting \f$ n\f$ random points and \f$ O(n^{\frac{1}{d}})\f$
-for inserting one point in a triangulation of \f$ n\f$ random points.
-In the worst case, the expected complexity is 
+set of points. In the worst case, the expected complexity is 
 \f$ O(n^{\lceil\frac{d}{2}\rceil}+n\log n)\f$.
 
 We provide below (Figure \cgalFigureRef{Triangulationfigbenchmarks}) the
