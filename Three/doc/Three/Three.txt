@@ -51,13 +51,13 @@ A plugin must always contain
 #include "Polyhedron_demo_xxxx_yyyy_plugin.moc"
 ~~~~~~~~~~~~~
 
-\section index List of useful classes :
+\section usefulItems List of useful classes :
 - MainWindow
-- Viewer_interface
-- Scene_interface
+- CGAL::Three::Viewer_interface
+- CGAL::Three::Scene_interface
 - Scene_item
-- Polyhedron_demo_plugin_helper
-- Polyhedron_demo_plugin_interface
+- CGAL::Three::Polyhedron_demo_plugin_helper
+- CGAL::Three::Polyhedron_demo_plugin_interface
 
 
 \section example Example : 

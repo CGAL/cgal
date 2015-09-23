@@ -1,6 +1,4 @@
-// PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
-
-/// \defgroup PkgPACKAGE PRETTY PACKAGE NAME Reference
+/// \defgroup PkgPACKAGE Three
 /// \defgroup PkgPACKAGEConcepts Concepts
 /// \ingroup PkgPACKAGE
 
@@ -21,9 +19,8 @@
 \cgalPkgPicture{pkg-small.png}
 
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{PACKAGE AUTHOR}
-\cgalPkgDesc{PACKAGE DESCRIPTION.
-The package provides ... }
+\cgalPkgAuthors{Laurent Rineau, Sebastien Loriot, Andreas Fabri, Maxime Gimeno}
+\cgalPkgDesc{This package provides base classes for building a plugin. }
 \cgalPkgManuals{Chapter_PACKAGE_NAME,PkgPACKAGE}
 \cgalPkgSummaryEnd
 
@@ -32,8 +29,6 @@ The package provides ... }
 \cgalPkgDependsOn{\ref PkgDEPENDENCY}
 \cgalPkgBib{cgal:x-x}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{DEMO 1,demo1.zip}
-\cgalPkgDemo{DEMO 2,demo2.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
