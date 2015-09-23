@@ -1,0 +1,72 @@
+/// \defgroup PkgTDS3 3D Triangulation Data Structure Reference
+
+/// \defgroup PkgTDS3Concepts Concepts
+/// \ingroup PkgTDS3
+
+/// \defgroup PkgTDS3Classes Classes
+/// \ingroup PkgTDS3
+
+/*!
+\addtogroup PkgTDS3
+\todo check generated documentation
+\cgalPkgDescriptionBegin{3D Triangulation Data Structure,PkgTDS3Summary}
+\cgalPkgPicture{tds3_small.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthors{Clément Jamin, Sylvain Pion and Monique Teillaud}
+\cgalPkgDesc{This package provides a data structure to store a three-dimensional triangulation that has the topology of a three-dimensional sphere.  The package acts as a container for the vertices  and cells of the triangulation  and provides basic  combinatorial operations on the triangulation.}
+\cgalPkgManuals{Chapter_3D_Triangulation_Data_Structure,PkgTDS3}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{2.1}
+\cgalPkgBib{cgal:pt-tds3}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+The triangulation data structure is able to represent a
+triangulation of a topological sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$, for 
+\f$ d \in \{-1,0,1,2,3\}\f$. (See  \ref TDS3secintro.)
+
+The vertex class of a 3D-triangulation data structure must define
+a number of types and operations. 
+The requirements that are of geometric nature are required only when
+the triangulation data structure is used as a layer for the geometric
+triangulation classes. (See Section  \ref TDS3secdesign.)
+
+The cell class of a triangulation data structure stores
+four handles to its four vertices and four handles to its four
+neighbors. The vertices are indexed 0, 1, 2, and 3 in a consistent order.
+The neighbor indexed \f$ i\f$ lies opposite to vertex `i`.
+
+In degenerate dimensions, cells are used to store faces of maximal
+dimension: in dimension 2, each cell represents only one
+facet of index 3, and 3 edges \f$ (0,1)\f$, \f$ (1,2)\f$ and \f$ (2,0)\f$; in
+dimension 1, each cell represents one edge \f$ (0,1)\f$. (See 
+Section  \ref TDS3secintro.)
+
+\cgalClassifedRefPages
+
+## Concepts ##
+
+- `TriangulationDataStructure_3`
+- `TriangulationDataStructure_3::Cell`
+- `TriangulationDataStructure_3::Vertex`
+- `TriangulationDSCellBase_3`
+- `TriangulationDSVertexBase_3`
+
+## Classes ##
+
+- `CGAL::Triangulation_data_structure_3<TriangulationDSVertexBase_3,TriangulationDSCellBase_3,Vertex_container_strategy,Cell_container_strategy,Concurrency_tag>` is a model for the concept of the 3D-triangulation data structure `TriangulationDataStructure_3`. It is templated by base classes for vertices and cells.
+
+\cgal provides base vertex classes and base cell classes:
+
+- `CGAL::Triangulation_ds_cell_base_3<TDS>`
+- `CGAL::Triangulation_ds_vertex_base_3<TDS>`
+
+## Helper Classes ##
+
+- `CGAL::Triangulation_utils_3` defines operations on the indices of vertices and neighbors within
+a cell of a triangulation.
+
+*/
+

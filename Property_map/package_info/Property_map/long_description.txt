@@ -1,0 +1,6 @@
+Point Set Processing
+
+Pierre Alliez, Laurent Saboret, Nader Salman
+
+This CGAL package implements methods to analyze and process unorganized point sets. The input is an unorganized point set, possibly with attributes. This point set can be analyzed to measure its average spacing. We can furthermore process the point set with functions devoted to simplification, outlier removal, smoothing, normal estimation and normal orientation.
+

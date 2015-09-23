@@ -1,0 +1,341 @@
+\namespace CGAL {
+/*!
+
+\mainpage User Manual 
+\anchor Chapter_3D_Triangulation_Data_Structure
+\anchor chapterTDS3
+
+\cgalAutoToc
+\authors Clément Jamin, Sylvain Pion and Monique Teillaud
+
+A geometric triangulation has two aspects: the combinatorial structure, which
+gives the incidence and adjacency relations between faces, and the
+geometric information related to the position of vertices.
+
+\cgal provides 3D geometric triangulations in which these
+two aspects are clearly separated.
+As described in Chapter \ref chapterTriangulation3 "3D Triangulations", a geometric
+triangulation of a set of points in \f$ \mathbb{R}^d\f$, \f$ d\leq 3\f$ is a partition of the
+whole space \f$ \mathbb{R}^d\f$ into cells having \f$ d+1\f$ vertices. Some of them
+are infinite, they are obtained by linking an additional vertex at
+infinity to each facet of the convex hull of the points (see
+Section \ref Triangulation3secintro). 
+The underlying combinatorial graph of such a triangulation
+without boundary of \f$ \mathbb{R}^d\f$ can be seen as a triangulation of the
+topological sphere \f$ S^d\f$ in \f$ \mathbb{R}^{d+1}\f$.
+
+This chapter deals with 3D-triangulation data structures, meant to
+maintain the combinatorial information for 3D-geometric
+triangulations. The reader interested in geometric triangulations of
+\f$ \mathbb{R}^3\f$ is advised to read Chapter \ref chapterTriangulation3 "3D Triangulations".
+
+\section TDS3secintro Representation 
+
+In \cgal, a 3D triangulation data structure is a
+container of cells (\f$ 3\f$-faces) and vertices (\f$ 0\f$-faces).
+
+Following the standard vocabulary of simplicial complexes, an \f$ i\f$-face
+\f$ f_i\f$ and a \f$ j\f$-face \f$ f_j\f$ \f$ (0 \leq j < i \leq 3)\f$ are said to be
+<I>incident</I> in the triangulation if \f$ f_j\f$ is a (sub)face of \f$ f_i\f$, and
+two \f$ i\f$-faces \f$ (0 \leq i \leq 3)\f$ are said to be <I>adjacent</I> if
+they share a commun incident (sub)face.
+
+Each cell gives access to its four incident vertices and to its four
+adjacent cells. Each vertex gives direct access to one of its incident
+cells, which is sufficient to retrieve all the incident cells when
+needed.
+
+The four vertices of a cell are indexed with 0, 1, 2 and 3. The
+neighbors of a cell are also indexed with 0, 1, 2, 3 
+in such a way that the neighbor indexed by \f$ i\f$ is opposite to the vertex
+with the same index (see \cgalFigureRef{TDS3figrepres}).
+
+\cgalFigureBegin{TDS3figrepres,repres.png}
+Representation.
+\cgalFigureEnd
+
+Edges (\f$ 1\f$-faces) and facets (\f$ 2\f$-faces) are not explicitly
+represented: a facet is given by a cell and an index (the facet
+`i` of a cell `c` is the facet of `c` that is opposite to
+the vertex of index `i`) and an edge is given by a cell and two
+indices (the edge `(i,j)` of a cell `c` is the edge
+whose endpoints are the vertices of indices `i` and `j` of
+`c`).
+
+<b>Degenerate Dimensions</b>
+
+As \cgal explicitly deals with all degenerate cases, a
+3D-triangulation data structure in \cgal can handle the cases when
+the dimension of the triangulation is lower than 3.
+
+Thus, a 3D-triangulation data structure can store a triangulation of a
+topological sphere \f$ S^d\f$ of \f$ \mathbb{R}^{d+1}\f$, for any \f$ d \in \{-1,0,1,2,3\}\f$.
+
+Let us give, for each dimension, the example corresponding to the
+triangulation data structure having a minimal number of vertices, i.e.\ a 
+simplex. These examples are illustrated by presenting their usual
+geometric embedding. 
+<UL>
+<LI><I>dimension 3.</I> The triangulation data structure consists of
+the boundary of a 4-dimensional simplex, which has 5 vertices. A
+geometric embedding consists in choosing one of these vertices to be
+infinite, thus four of the five 3-cells become infinite: the geometric
+triangulation has one finite tetrahedron remaining, each of its facets
+being incident to an infinite cell. See \cgalFigureRef{TDS3figtoposimplex4}.
+
+\cgalFigureBegin{TDS3figtoposimplex4,topo-simplex4.png}
+4D simplex and a 3D geometric embedding.
+\cgalFigureEnd
+
+<LI><I>dimension 2.</I> We have 4 vertices forming one 3-dimensional
+simplex, i.e.\ the boundary of a tetrahedron. The geometric embedding in
+the plane results from choosing one of these vertices to be infinite,
+then the geometric triangulation has one finite triangle whose edges are
+incident to the infinite triangles. See \cgalFigureRef{TDS3figtoposimplex3}.
+
+\cgalFigureBegin{TDS3figtoposimplex3,topo-simplex3.png}
+3D simplex and a 2D geometric embedding.
+\cgalFigureEnd
+
+<LI><I>dimension 1.</I> A 2-dimensional simplex (a triangle) has 3
+vertices. The geometric embedding is an edge whose vertices are linked
+to an infinite point. See \cgalFigureRef{TDS3figtoposimplex2}.
+
+\cgalFigureBegin{TDS3figtoposimplex2,topo-simplex2.png}
+2D simplex and a 1D geometric embedding.
+\cgalFigureEnd
+
+</UL>
+
+The last three cases are defined uniquely:
+<UL>
+<LI><I>dimension 0.</I> A 0-dimensional triangulation is
+combinatorially equivalent to the boundary of a 1-dimensional simplex
+(an edge), which consists of 2 vertices. One of them becomes infinite
+in the geometric embedding, and there is only one finite vertex
+remaining. The two vertices are adjacent.
+<LI><I>dimension -1.</I> This dimension is a convention to represent a 
+0-dimensional simplex, that is a sole vertex, which will be
+geometrically embedded as an "empty" triangulation, having only one
+infinite vertex.
+<LI><I>dimension -2.</I> This is also a convention. The
+triangulation data structure has no vertex. There is no associated
+geometric triangulation.
+</UL>
+
+Note that the notion of infinite vertex has no meaning for the
+triangulation data structure. The infinite vertex of the geometric
+embedding is a vertex that cannot be distinguished from the other
+vertices in the combinatorial triangulation.
+
+The same cell class is used in all cases: triangular faces in
+2D can be considered as degenerate cells, having only three vertices
+(resp. neighbors) numbered \f$ (0,1,2)\f$;
+edges in 1D have only two vertices (resp. neighbors) numbered \f$ 0\f$ and \f$ 1\f$.
+
+The implicit representation of facets (resp. edges) still holds
+for degenerate (\f$ < 3\f$) dimensions : in dimension 2, each cell has only one
+facet of index 3, and 3 edges \f$ (0,1)\f$, \f$ (1,2)\f$ and \f$ (2,0)\f$; in
+dimension 1, each cell has one edge \f$ (0,1)\f$.
+
+<b>Validity</b>
+
+A 3D combinatorial triangulation is said to be `locally valid` 
+iff the following is true:
+
+<B>(a)</B> When a cell \f$ c\f$ has a neighbor pointer to another cell \f$ c'\f$,
+then reciprocally this cell \f$ c'\f$ has a neighbor pointer to \f$ c\f$, and
+\f$ c\f$ and \f$ c'\f$ have three vertices in common. These cells are called
+adjacent. 
+
+<B>(b)</B> The cells have a coherent orientation: if two cells \f$ c_1\f$
+and \f$ c_2\f$ are adjacent and share a facet with vertices \f$ u,v,w\f$, then
+the vertices of \f$ c_1\f$ are numbered \f$ (v_0^1 = u, v_1^1 = v, v_2^1 = w,
+v_3^1)\f$, and the vertices of \f$ c_2\f$ are numbered \f$ (v_0^2 = v, v_1^2 = u,
+v_2^2 = w, v_3^2)\f$, up to positive permutations of \f$ (0,1,2,3)\f$. In
+other words, if we embed the triangulation in \f$ \mathbb{R}^3\f$, then the fourth
+vertices \f$ v_3^1\f$ and \f$ v_3^2\f$ of \f$ c_1\f$ and \f$ c_2\f$ see the common facet
+in opposite orientations. See \cgalFigureRef{TDS3figcomborient}.
+
+The set \f$ \sigma\f$\f$ _4\f$ of permutations of
+\f$ (0,1,2,3)\f$ has cardinality 24, and the set of positive permutations
+\f$ A_4\f$ has cardinality 12. Thus, for a given orientation, there
+are up to 12 different orderings of the four vertices of a cell. Note
+that cyclic permutations are negative and so do not preserve the
+orientation of a cell.
+
+\cgalFigureBegin{TDS3figcomborient,comborient.png}
+Coherent orientations of two cells (3-dimensional case).
+\cgalFigureEnd
+
+The method `Triangulation_data_structure_3::is_valid()` method checks
+the local validity of a given triangulation data structure.
+
+\section TDS3secdesign Software Design 
+
+The 3D-triangulation data structure class of \cgal,
+`Triangulation_data_structure_3`, is designed to be used as a combinatorial
+layer upon which a geometric layer can be built \cgalCite{k-ddsps-98}. This
+geometric layer is typically one of the 3D-triangulation classes of \cgal:
+`Triangulation_3`, `Delaunay_triangulation_3` and
+`Regular_triangulation_3`. This relation is described in more details in
+Chapter \ref chapterTriangulation3 "3D Triangulations", where the
+Section \ref Triangulation3secdesign explains other important parts of the
+design related to the geometry.
+
+We focus here on the design of the triangulation data structure (TDS)
+itself, which the \cgalFigureRef{TDS3figlayers} illustrates.
+
+\cgalFigureBegin{TDS3figlayers,design_tds.png}
+Triangulation Data Structure software design.
+\cgalFigureEnd
+
+\subsection TDS_3FlexibilityoftheDesign Flexibility of the Design
+
+In order for the user to be able to add his own data in the vertices and cells,
+the design of the TDS is split into two layers:
+
+<UL>
+<LI> In the bottom layer, the (vertex and cell) base classes store
+elementary incidence and adjacency (and possibly geometric or other)
+information. These classes are parameterized by the TDS which provides the
+handle types. (They can also be parameterized by a geometric traits class or
+anything else.) A vertex stores a `Cell_handle`, and a cell stores four
+`Vertex_handle`s and four `Cell_handle`s.
+
+<LI> The middle layer is the TDS, which is purely combinatorial. It
+provides operations such as insertion of a new vertex in a given cell, on a \f$ 1\f$
+or \f$ 2\f$-face. It also allows one, if the dimension of the triangulation is
+smaller than \f$ 3\f$, to insert a vertex so that the dimension of the triangulation
+is increased by one. The TDS is responsible for the combinatorial integrity of
+the eventual geometric triangulation built on top of it (the upper layer,
+see Chapter \ref chapterTriangulation3 "3D Triangulations").
+</UL>
+
+The user has several ways to add his own data in the vertex and cell base classes used by the TDS. He can either:
+<UL>
+<LI> use the classes `Triangulation_vertex_base_with_info_3`
+and `Triangulation_cell_base_with_info_3`, which allow to add one data member
+of a user provided type, and give access to it.
+<LI> derive his own classes from the default base classes
+`Triangulation_ds_vertex_base_3`, and `Triangulation_ds_cell_base_3` (or
+the geometric versions typically used by the geometric layer,
+`Triangulation_vertex_base_3`, and `Triangulation_cell_base_3`).
+<LI> write his own base classes following the requirements given by the
+concepts `TriangulationCellBase_3` and `TriangulationVertexBase_3`.
+</UL>
+
+\subsection tds3cyclic Cyclic Dependency 
+
+Since adjacency relations are stored in the vertices and cells, it means that
+the vertex and cell base classes have to be able to store handles (an entity
+akin to pointers) to their neighbors in the TDS. This in turns means that the
+vertex and cell base classes have to know the types of these handles, which are
+provided by the TDS. So in a sense, the base classes are parameterized by the
+TDS, and the TDS is parameterized by the vertex and cell base classes !
+This is a cycle which cannot be resolved easily.
+
+The solution that we have chosen is similar to the mechanism used by the
+standard class `std::allocator`: the vertex and cell base classes are
+initially given a fake or dummy TDS template parameter, whose unique purpose
+is to provide the types that can be used by the vertex and cell base classes
+(such as handles). Then, inside the TDS itself, these base classes are
+<I>rebound</I> to the real TDS type, that is we obtain the same vertex
+and cell base classes, but parameterized with the real TDS instead of the dummy
+one. Rebinding is performed by a nested template class of the vertex and cell
+base classes (see code below), which provides a type which is the rebound
+vertex or cell base class\cgalFootnote{It is logically equivalent to a mechanism that does not exist yet in the C++ language: <I>template typedef</I> or <I>template aliasing</I>}.
+
+Here is how it works, schematically:
+
+\code{.cpp}
+
+template < class Vb, class Cb >
+class TDS
+{
+typedef TDS<Vb, Cb> Self;
+
+// Rebind the vertex and cell base to the actual TDS (Self).
+typedef typename Vb::template Rebind_TDS<Self>::Other VertexBase;
+typedef typename Cb::template Rebind_TDS<Self>::Other CellBase;
+
+// ... further internal machinery leads to the final public types:
+public:
+typedef ... Vertex;
+typedef ... Cell;
+typedef ... Vertex_handle;
+typedef ... Cell_handle;
+};
+
+template < class TDS = ... > // The default is some internal type faking a TDS
+class Triangulation_ds_vertex_base_3
+{
+public:
+template < class TDS2 >
+struct Rebind_TDS {
+typedef Triangulation_ds_vertex_base_3<TDS2> Other;
+};
+...
+};
+
+\endcode
+
+When derivation is used for the vertex or cell base classes, which is the
+case at the geometric level with `Triangulation_vertex_base_3`, then
+it gets slightly more involved because its base class has to be rebound as
+well:
+
+\code{.cpp}
+
+template < class GT, class Vb = Triangulation_ds_vertex_base_3<> >
+class Triangulation_vertex_base_3 : public Vb
+{
+public:
+template < class TDS2 >
+struct Rebind_TDS {
+typedef typename Vb::template Rebind_TDS<TDS2>::Other Vb2;
+typedef Triangulation_vertex_base_3<GT, Vb2> Other;
+};
+...
+};
+
+\endcode
+
+\subsection tds3parallel Parallel Operations
+
+The third template parameter of `Triangulation_data_structure_3` is 
+`Concurrency_tag`. It enables the use of a concurrent
+container (`Concurrent_compact_container`) to store vertices and cells. 
+If it is `Parallel_tag`, then `create_vertex`, `create_cell`, `delete_vertex` 
+and `delete_cell` can be called concurrently.
+
+\section TDS3secexamples Examples 
+
+\subsection TDS_3IncrementalConstruction Incremental Construction
+
+The following example shows how to construct a 3D triangulation data
+structure by inserting vertices.
+
+\cgalExample{TDS_3/tds.cpp}
+
+\subsection TDS_3CrossLinkingBetweena2Danda3DDataStructures Cross-Linking Between a 2D and a 3D Data Structures
+
+This example program illustrates how to setup a 2D and a 3D triangulation data
+structures whose vertices respectively store vertex handles of the other one.
+
+\cgalExample{TDS_3/linking_2d_and_3d.cpp}
+
+\section TDS_3Design Design and Implementation History
+
+Monique Teillaud introduced the triangulation of the topological
+sphere \f$ S^d\f$ in \f$ \mathbb{R}^{d+1}\f$ to manage the underlying graph of geometric
+triangulations and handle degenerate dimensions \cgalCite{t-tdtc-99}.
+
+Sylvain Pion improved the software in several ways, in particular
+regarding the memory management.
+
+In 2013, Clément Jamin added the ability to create/delete vertices and cells
+in parallel. This feature is used by the parallel triangulation.
+*/ 
+} /* namespace CGAL */
+

@@ -1,0 +1,5 @@
+/*!
+\example Property_map/remove_outliers_example.cpp
+\example Property_map/read_write_xyz_point_set_example.cpp
+\example Property_map/average_spacing_example.cpp
+*/
