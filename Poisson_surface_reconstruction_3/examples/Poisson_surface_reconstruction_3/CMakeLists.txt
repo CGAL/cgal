@@ -1,6 +1,6 @@
 # This is the CMake script for compiling this folder.
 
-project( Surface_reconstruction_points_3_example )
+project( Poisson_surface_reconstruction_3_example )
 
 cmake_minimum_required(VERSION 2.8.11)
 

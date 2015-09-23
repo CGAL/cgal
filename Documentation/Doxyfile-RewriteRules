@@ -842,7 +842,7 @@ EXAMPLE_RECURSIVE      = YES
 IMAGE_PATH             = ../Generator/doc/Generator/fig \
 	../Straight_skeleton_2/doc/Straight_skeleton_2/fig \
 	../Polynomial/doc/Polynomial/fig \
-	../Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/fig \
+	../Poisson_surface_reconstruction_3/doc/Poisson_surface_reconstruction_3/fig \
 	../GraphicsView/doc/GraphicsView/fig \
 	../Minkowski_sum_3/doc/Minkowski_sum_3/fig \
 	../Triangulation_3/doc/Triangulation_3/fig \
@@ -1806,7 +1806,7 @@ SKIP_FUNCTION_MACROS   = YES
 TAGFILES               = ./tags/Generator.tag=../../CGAL.CGAL.Geometric-Object-Generators/html \
 	./tags/Straight_skeleton_2.tag=../../CGAL.CGAL.2D-Straight-Skeleton-and-Polygon-Offsetting/html \
 	./tags/Polynomial.tag=../../CGAL.CGAL.Polynomial/html \
-	./tags/Surface_reconstruction_points_3.tag=../../CGAL.CGAL.Surface-Reconstruction-from-Point-Sets/html \
+	./tags/Poisson_surface_reconstruction_3.tag=../../CGAL.CGAL.Poisson-Surface-Reconstruction/html \
 	./tags/GraphicsView.tag=../../CGAL.CGAL.CGAL-and-the-Qt-Graphics-View-Framework/html \
 	./tags/Minkowski_sum_3.tag=../../CGAL.CGAL.3D-Minkowski-Sum-of-Polyhedra/html \
 	./tags/Triangulation_3.tag=../../CGAL.CGAL.3D-Triangulations/html \

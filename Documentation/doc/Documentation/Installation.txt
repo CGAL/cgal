@@ -501,7 +501,7 @@ to speed up operations of the Polynomial package, such as GCDs. It is recommende
 \sc{Eigen} is a `C++` template library for linear algebra. \sc{Eigen} supports all
 matrix sizes, various matrix decomposition methods and sparse linear solvers.
 
-In \cgal, \sc{Eigen} provides sparse linear solvers in the \ref PkgSurfaceReconstructionFromPointSets
+In \cgal, \sc{Eigen} provides sparse linear solvers in the \ref PkgPoissonSurfaceReconstruction
 and the \ref PkgSurfaceParameterization packages. 
 
 In addition, \sc{Eigen} also provides singular value decomposition for the \ref PkgJet_fitting_3

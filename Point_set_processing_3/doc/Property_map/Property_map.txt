@@ -26,7 +26,7 @@ Property maps in the Boost manuals: <A HREF="http://www.boost.org/libs/property_
 Some algorithms in \cgal take as input parameters iterator ranges and property maps to access information attached to elements of the sequence.
 
 For example, the algorithms of chapters \ref Chapter_Point_Set_Processing "Point Set Processing" and 
-\ref Chapter_Surface_Reconstruction_from_Point_Sets "Surface Reconstruction from Point Sets" 
+\ref Chapter_Poisson_Surface_Reconstruction "Poisson Surface Reconstruction" 
 take as input parameters iterator ranges and property
 maps to access each point's position and normal.  Position and normal
 might be represented in various ways, e.g., as a class derived from
