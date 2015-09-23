@@ -3,6 +3,7 @@
 #include <CGAL/algorithm.h>
 #include <CGAL/linear_least_squares_fitting_2.h>
 #include <CGAL/point_generators_2.h>
+#include <CGAL/Default_diagonalize_traits.h>
 
 #include <vector>
 #include <cassert>
@@ -31,7 +32,9 @@ void test_2D()
   FT quality;
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,CGAL::Dimension_tag<0>());
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>());
-  quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>(),k);
+  quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>(),k,
+					   CGAL::Default_diagonalize_traits<FT,2>());
+  
   std::cout << "done (quality: " << quality << ")" << std::endl;
 
   if(!line.is_horizontal())
@@ -71,7 +74,8 @@ void test_2D_point_set(const unsigned int nb_points)
   FT quality;
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,CGAL::Dimension_tag<0>());
   quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>());
-  quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>(),k);
+  quality = linear_least_squares_fitting_2(points.begin(),points.end(),line,centroid,CGAL::Dimension_tag<0>(),k,
+					   CGAL::Default_diagonalize_traits<FT,2>());
 
   std::cout << "done (quality: " << quality << ")" << std::endl;
 

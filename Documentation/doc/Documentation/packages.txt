@@ -150,6 +150,7 @@ h1 {
 
 \package_listing{STL_Extension}
 \package_listing{BGL}
+\package_listing{Solver_interface}
 \package_listing{Point_set_processing_3/Property_map}
 \package_listing{Circulator}
 \package_listing{Generator}

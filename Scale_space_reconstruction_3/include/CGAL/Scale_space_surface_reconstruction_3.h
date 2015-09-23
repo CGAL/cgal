@@ -36,12 +36,9 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Random.h>
+#include <CGAL/Default_diagonalize_traits.h>
 
 #include <CGAL/Scale_space_reconstruction_3/Shape_construction_3.h>
-
-#ifdef CGAL_EIGEN3_ENABLED
-#include <CGAL/Scale_space_reconstruction_3/Weighted_PCA_approximation_3.h>
-#endif // CGAL_EIGEN3_ENABLED
 
 #include <boost/mpl/and.hpp>
 
@@ -99,25 +96,22 @@ namespace CGAL {
  *  only has an impact on the run-time.
  *  \tparam Sh determines whether to collect the surface per shell. It
  *  must be a `Boolean_tag` type. The default value is `Tag_true`.
- *  \tparam wA must be a model of `WeightedPCAProjection_3` and determines how
- *  to approximate a weighted point set. If \ref thirdpartyEigen 3.1.2 (or
- *  greater) is available and CGAL_EIGEN3_ENABLED is defined, then
- *  `Weighted_PCA_approximation_3<DelaunayTriangulationTraits_3>` is used by default.
+ *  \tparam wA must be a model of `DiagonalizeTraits` and determines
+ *  how to diagonalize a weighted covariance matrix to approximate a
+ *  weighted point set. It can be omitted: if Eigen 3 (or greater) is
+ *  available and `CGAL_EIGEN3_ENABLED` is defined then an overload
+ *  using `Eigen_diagonalize_traits` is provided. Otherwise, the
+ *  internal implementation `Diagonalize_traits` is used.
  *  \tparam Ct indicates whether to use concurrent processing. It must be
  *  either `Sequential_tag` or `Parallel_tag` (the default value).
  */
-template < class Gt, class FS = Tag_true, class Sh = Tag_true, class wA = Default, class Ct = Parallel_tag >
+template < class Gt, class FS = Tag_true, class Sh = Tag_true,
+	   class wA = Default_diagonalize_traits<typename Gt::FT, 3>, class Ct = Parallel_tag >
 class Scale_space_surface_reconstruction_3 {
-    typedef typename Default::Get< wA,
-#ifdef CGAL_EIGEN3_ENABLED
-                                   Weighted_PCA_approximation_3<Gt>
-#else // CGAL_EIGEN3_ENABLED
-                                   void
-#endif // CGAL_EIGEN3_ENABLED
-                                 >::type                Approximation;
 
 public:
 	typedef typename Gt::Point_3                        Point;          ///< defines the point type.
+  typedef typename Gt::Vector_3                       Vector;          ///< defines the vector type.
 typedef boost::tuple<Point,int>                           Point_and_int;
 
 private:
