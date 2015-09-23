@@ -9,8 +9,9 @@ typedef K::Intersect_2 Intersect_2;
 
 int main()
 {
-  Segment_2 seg(Point_2(0,0), Point_2(1,1));
-  Line_2 lin(1,0,0);
+  Segment_2 seg(Point_2(0,0), Point_2(2,2));
+  Line_2 lin(1,-1,0);
+
   CGAL::cpp11::result_of<Intersect_2(Segment_2, Line_2)>::type
     result = intersection(seg, lin);
   if (result) {
@@ -18,7 +19,7 @@ int main()
       std::cout << *s << std::endl;
     } else {
       const Point_2* p = boost::get<Point_2 >(&*result);
-      std::cout << *s << std::endl;
+      std::cout << *p << std::endl;
     }
   }
   return 0;

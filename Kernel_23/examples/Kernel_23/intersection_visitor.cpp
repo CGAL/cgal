@@ -24,7 +24,7 @@ struct Intersection_visitor {
 int main()
 {
   Segment_2 seg(Point_2(0,0), Point_2(1,1));
-  Line_2 lin(1,0,0);
+  Line_2 lin(1,-1,0);
 
   // with C++11 support
   // auto result = intersection(seg, lin);
