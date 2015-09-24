@@ -36,6 +36,7 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Random.h>
+#include <CGAL/Union_find.h>
 
 #include <CGAL/Scale_space_reconstruction_3/Shape_construction_3.h>
 
@@ -56,7 +57,9 @@ namespace CGAL {
       return 0;
     }
 
-  }; 
+  };
+
+  
 
 /// computes a triangulated surface mesh interpolating a point set.
 /** \ingroup PkgScaleSpaceReconstruction3Classes
@@ -97,8 +100,6 @@ namespace CGAL {
  *  for a fixed neighborhood radius. It must be a `Boolean_tag` type. The default value is
  *  `Tag_true`. Note that the value of this parameter does not change the result but
  *  only has an impact on the run-time.
- *  \tparam Sh determines whether to collect the surface per shell. It
- *  must be a `Boolean_tag` type. The default value is `Tag_true`.
  *  \tparam wA must be a model of `WeightedPCAProjection_3` and determines how
  *  to approximate a weighted point set. If \ref thirdpartyEigen 3.1.2 (or
  *  greater) is available and CGAL_EIGEN3_ENABLED is defined, then
@@ -106,7 +107,7 @@ namespace CGAL {
  *  \tparam Ct indicates whether to use concurrent processing. It must be
  *  either `Sequential_tag` or `Parallel_tag` (the default value).
  */
-template < class Gt, class FS = Tag_true, class Sh = Tag_true, class wA = Default, class Ct = Parallel_tag >
+template < class Gt, class FS = Tag_true, class wA = Default, class Ct = Parallel_tag >
 class Scale_space_surface_reconstruction_3 {
     typedef typename Default::Get< wA,
 #ifdef CGAL_EIGEN3_ENABLED
@@ -143,25 +144,37 @@ typedef CGAL::Search_traits_adapter<Point_and_int,
     typedef typename Shape::Vertex_handle               Vertex_handle;
     typedef typename Shape::Cell_handle                 Cell_handle;
     typedef typename Shape::Facet                       Facet;
+    typedef typename Shape::Edge                        Edge;
+    typedef std::pair<Vertex_handle, Vertex_handle>     VEdge;
+
+  
     
     typedef typename Shape::Vertex_iterator             Vertex_iterator;
     typedef typename Shape::Cell_iterator               Cell_iterator;
     typedef typename Shape::Facet_iterator              Facet_iterator;
     typedef typename Shape::Edge_iterator               Edge_iterator;
 
+    typedef typename Shape::Finite_cells_iterator      Finite_cells_iterator;
     typedef typename Shape::Finite_facets_iterator      Finite_facets_iterator;
-    typedef typename Shape::Finite_facets_iterator      Finite_vertices_iterator;
+    typedef typename Shape::Finite_edges_iterator       Finite_edges_iterator;
+    typedef typename Shape::Finite_vertices_iterator    Finite_vertices_iterator;
 
+    typedef typename Shape::Facet_circulator            Facet_circulator;
+  
     typedef typename Shape::All_cells_iterator          All_cells_iterator;
 
     typedef typename Shape::Classification_type         Classification_type;
-    
+
+     typedef std::map<Facet, unsigned int> Map_facet_to_shell;
+    typedef typename CGAL::cpp11::array<std::set<Facet>, 2 >   Bubble;
+  
 public:
 /// \name Types
 /// \{
-     typedef typename Gt::FT                             FT;             ///< defines the field number type.
-  //	typedef typename Gt::Point_3                        Point;          ///< defines the point type.
-
+    typedef typename Gt::FT                             FT;             ///< defines the field number type.
+  	typedef typename Gt::Vector_3                        Vector;          ///< defines the vector type.
+  typedef typename Gt::Plane_3                        Plane;          ///< defines the plane type.
+  typedef typename Gt::Triangle_3                        Triangle;          ///< defines the triangle type.
 
 #ifdef DOXYGEN_RUNNING
     typedef unspecified_type                            Point_iterator;         ///< defines an iterator over the points.
@@ -226,6 +239,17 @@ private:
     // The shells can be accessed through iterators to the surface.
     TripleIterSet   _shells;
 
+    // If the surface is forced to be manifold, removed facets are stored
+    Tripleset _garbage;
+
+    // Map TDS facets to shells
+   Map_facet_to_shell _map_f2s;
+  //    std::map<Facet, unsigned int> _map_f2s;
+    unsigned int _index;
+
+  std::vector<Bubble> _bubbles;
+  std::map<Facet, unsigned int> _map_f2b;
+  
     typedef std::vector<Point> Pointset;
     Pointset _points;
 
@@ -237,8 +261,10 @@ public:
      *  contain on average.
      *  \param samples is the number of points sampled to estimate the
      *  neighborhood radius.
+     *  \param separate_shells determines whether to collect the surface per shell. 
+     *  \param force_manifold determines if the surface is forced to be 2-manifold.
      */
-	Scale_space_surface_reconstruction_3( unsigned int neighbors, unsigned int samples );
+  Scale_space_surface_reconstruction_3( unsigned int neighbors, unsigned int samples);
 
     /// constructs a surface reconstructor with a given neighborhood radius.
     /** \param sq_radius is the squared radius of the neighborhood.
@@ -254,13 +280,14 @@ private:
     void deinit_shape() { if( _shape != 0 ) { delete _shape; _shape = 0; } }
 
     void clear_tree() { _tree.clear(); }
-	void clear_surface() { _shells.clear(); _surface.clear(); deinit_shape(); }
+  void clear_surface() { _shells.clear(); _surface.clear(); _garbage.clear(); deinit_shape(); }
     
     // SURFACE COLLECTION
 	// Once a facet is added to the surface, it is marked as handled.
 	bool is_handled( Cell_handle c, unsigned int li ) const;
 	inline bool is_handled( const Facet& f ) const { return is_handled( f.first, f.second ); }
 	void mark_handled( Cell_handle c, unsigned int li );
+        void mark_opposite_handled( Facet f );
 	inline void mark_handled( Facet f ) { mark_handled( f.first, f.second ); }
     
     // Get the indices of the points of the facet ordered to point
@@ -268,21 +295,17 @@ private:
     Triple ordered_facet_indices( const Facet& f ) const;
 
     //  Collect the triangles of one shell of the surface.
-	void collect_shell( Cell_handle c, unsigned int li );
+  void collect_shell( Cell_handle c, unsigned int li, bool separate_shells, bool force_manifold);
 
     //  Collect the triangles of one shell of the surface.
-	void collect_shell( const Facet& f ) {
-		collect_shell( f.first, f.second );
+  void collect_shell( const Facet& f, bool separate_shells, bool force_manifold) {
+    collect_shell( f.first, f.second, separate_shells, force_manifold );
 	}
 
     //  Collect the triangles of the complete surface.
-	void collect_facets( Tag_true );
-	void collect_facets( Tag_false );
-    void collect_facets() { 
-        if( !has_neighborhood_squared_radius() )
-            estimate_neighborhood_squared_radius();
-        collect_facets( Sh() );
-    }
+  void collect_facets( bool separate_shells, bool force_manifold );
+  void collect_facets_quick( );
+
 
 private:
     //  Get the shape of the scale space.
@@ -357,6 +380,10 @@ public:
     void clear() {
 		clear_tree();
         clear_surface();
+	_map_f2s.clear ();
+	_bubbles.clear ();
+	_map_f2b.clear ();
+	
         _squared_radius = -1;
     }
 
@@ -625,6 +652,7 @@ public:
     void set_neighborhood_sample_size( unsigned int samples ) { _samples = samples; }
 /// \}
 
+    
 /// \name Scale-Space Manipulation
 /// \{
     /// increases the scale by a number of iterations.
@@ -752,8 +780,15 @@ private:
     
     // collects the surface mesh from the shape.
     // If the sahep does not yet exist, it is constructed.
-    void collect_surface();
+	void collect_surface (bool separate_shells, bool force_manifold, FT border_angle );
 
+    // detects the non-manifold features of the shape
+    void find_two_other_vertices(const Facet& f, Vertex_handle v,
+				 Vertex_handle& v1, Vertex_handle& v2);
+    void detect_bubbles( FT border_angle );
+    void fix_nonmanifold_edges();
+    void fix_nonmanifold_vertices();
+    
 /// \}
 
 public:
@@ -771,16 +806,33 @@ public:
      *  If the neighborhood radius has not been set before, it is automatically
      *  estimated using `estimate_neighborhood_squared_radius()`.
      *
+     *  \param separate_shells determines whether to collect the surface per shell. 
+     *  \param force_manifold determines if the surface is forced to be 2-manifold.
+     *  \param border_angle sets the maximal angle between two facets
+     *  such that the edge is seen as a border.
+     *
+     *  If the output is forced to be 2-manifold, some almost flat
+     *  volume bubbles are detected. To do so, border edges must be
+     *  estimated.
+     *
+     *  An edge adjacent to 2 regular facets is considered as a border
+     *  if it is also adjacent to a singular facet or if the angle
+     *  between the two regular facets is lower than this parameter
+     *  (set to 45° by default).
+     *
      *  \note This method processes the point set at the current scale. The
      *  points can be set with <code>[insert(begin, end)](\ref insert)</code>.
+     *  \note `border_angle` is not used if `force_manifold` is set to false.
      *
      *  \sa `estimate_neighborhood_squared_radius()`.
      *  \sa `increase_scale(unsigned int iterations)`.
      */
-        void reconstruct_surface()
-        {
-          reconstruct_surface(0);
-        }
+    void reconstruct_surface(bool separate_shells = true,
+			     bool force_manifold = false,
+			     FT border_angle = 45)
+    {
+      reconstruct_surface(0, separate_shells, force_manifold, border_angle);
+    }
 
     /// gives the number of triangles of the surface.
     std::size_t number_of_triangles() const { return _surface.size(); }
@@ -791,12 +843,12 @@ public:
 
     /// gives the number of shells of the surface.
     std::size_t number_of_shells() const {
-        CGAL_assertion( Sh::value == true );
         return _shells.size();
     }
 
     /// \cond internal_doc
-        void reconstruct_surface( unsigned int iterations);
+    void reconstruct_surface( unsigned int iterations, bool separate_shells = true,
+			      bool force_manifold = false, FT border_angle = 45);
     /// \endcond
 
     /// \cond internal_doc
@@ -816,6 +868,8 @@ public:
      *  \param end is a past-the-end iterator for the point collection.
      *  \param iterations is the number of scale increase iterations to apply.
      *  If `iterations` is 0, the point set at the current scale is used.
+     *  \param separate_shells determines whether to collect the surface per shell. 
+     *  \param force_manifold determines if the surface is forced to be 2-manifold.
      *  
      *  \sa `reconstruct_surface(unsigned int iterations)`.
      *  \sa `insert(InputIterator begin, InputIterator end)`.
@@ -824,9 +878,12 @@ public:
      */
 	template < class InputIterator >
 #ifdef DOXYGEN_RUNNING
-	void reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterations = 0 );
+	  void reconstruct_surface( InputIterator begin, InputIterator end,
+				    unsigned int iterations = 0, bool separate_shells = true,
+				    bool force_manifold = false, FT border_angle = 45);
 #else // DOXYGEN_RUNNING
 	void reconstruct_surface( InputIterator begin, InputIterator end, unsigned int iterations = 0,
+				  bool separate_shells = true, bool force_manifold = false, FT border_angle = 45,
                                   typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL );
 #endif // DOXYGEN_RUNNING
     /// \endcond
@@ -895,6 +952,20 @@ public:
      *  \warning Changes to a shell may invalidate the topology of the surface.
      */
     Triple_iterator shell_end( std::size_t shell );
+
+    /// gives an iterator to the first triple of the garbage facets
+    /// that may be discarded if 2-manifold output is required.
+    Triple_const_iterator garbage_begin() const { return _garbage.begin(); }
+    /// gives an iterator to the first triple of the garbage facets
+    /// that may be discarded if 2-manifold output is required.
+    Triple_iterator garbage_begin() { return _garbage.begin(); }
+    
+    /// gives a past-the-end iterator of the triples of the garbage facets
+    /// that may be discarded if 2-manifold output is required.
+    Triple_const_iterator garbage_end() const { return _garbage.end(); }
+    /// gives a past-the-end iterator of the triples of the garbage facets
+    /// that may be discarded if 2-manifold output is required.
+    Triple_iterator garbage_end() { return _garbage.end(); }
 
 /// \}
 }; // class Scale_space_surface_reconstruction_3
