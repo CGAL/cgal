@@ -65,7 +65,7 @@ int main(void)
       return EXIT_FAILURE;
 
     // Computes average spacing
-    FT average_spacing = CGAL::compute_average_spacing(points.begin(), points.end(),
+    FT average_spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>(points.begin(), points.end(),
                                                        6 /* knn = 1 ring */);
 
     // Gets one point inside the implicit surface

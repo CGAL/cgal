@@ -10,6 +10,13 @@
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point;
 
+// Concurrency
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
 int main(int argc, char** argv)
 {
   const char* input_filename = (argc>1)?argv[1]:"data/sphere_20k.xyz";
@@ -33,7 +40,7 @@ int main(int argc, char** argv)
   const double neighbor_radius = 0.5;   // neighbors size.
 
   CGAL::wlop_simplify_and_regularize_point_set
-                          <CGAL::Parallel_tag> // parallel version
+                          <Concurrency_tag>
                           (points.begin(), 
                            points.end(),
                            std::back_inserter(output),

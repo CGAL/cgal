@@ -16,6 +16,13 @@ typedef Kernel::Vector_3 Vector;
 // Point with normal vector stored in a std::pair.
 typedef std::pair<Point, Vector> PointVectorPair;
 
+// Concurrency
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
 
 int main(int argc, char*argv[])
 {
@@ -45,7 +52,7 @@ int main(int argc, char*argv[])
   for (int i = 0; i < iter_number; ++i)
   {
     /* double error = */
-    CGAL::bilateral_smooth_point_set <CGAL::Parallel_tag>(
+    CGAL::bilateral_smooth_point_set <Concurrency_tag>(
           points.begin(), 
           points.end(),
           CGAL::First_of_pair_property_map<PointVectorPair>(),

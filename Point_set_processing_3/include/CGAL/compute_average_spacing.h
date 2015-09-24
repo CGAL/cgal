@@ -25,9 +25,16 @@
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
+#include <CGAL/assertions.h>
 
 #include <iterator>
 #include <list>
+
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>  
+#endif // CGAL_LINKED_WITH_TBB
 
 namespace CGAL {
 
@@ -51,7 +58,7 @@ template < typename Kernel,
            typename Tree >
 typename Kernel::FT
 compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point whose spacing we want to compute
-                        Tree& tree,                            ///< KD-tree
+                        const Tree& tree,                      ///< KD-tree
                         unsigned int k)                        ///< number of neighbors
 {
   // basic geometric types
@@ -84,6 +91,32 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
   return sum_distances / (FT)i;
 }
 
+
+#ifdef CGAL_LINKED_WITH_TBB
+  template <typename Kernel, typename Tree>
+  class Compute_average_spacings {
+    typedef typename Kernel::Point_3 Point;
+    typedef typename Kernel::FT FT;
+    const Tree& tree;
+    const unsigned int k;
+    const std::vector<Point>& input;
+    std::vector<FT>& output;
+
+  public:
+    Compute_average_spacings(Tree& tree, unsigned int k, std::vector<Point>& points,
+			     std::vector<FT>& output)
+      : tree(tree), k (k), input (points), output (output)
+    { }
+    
+    void operator()(const tbb::blocked_range<std::size_t>& r) const
+    {
+      for( std::size_t i = r.begin(); i != r.end(); ++i)
+	output[i] = CGAL::internal::compute_average_spacing<Kernel,Tree>(input[i], tree, k);
+    }
+
+  };
+#endif // CGAL_LINKED_WITH_TBB
+
 } /* namespace internal */
 /// \endcond
 
@@ -98,6 +131,9 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 ///
 /// \pre `k >= 2.`
 ///
+/// @tparam Concurrency_tag enables sequential versus parallel algorithm.
+///                         Possible values are `Sequential_tag`
+///                         and `Parallel_tag`.
 /// @tparam InputIterator iterator over input points.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with value type `Point_3<Kernel>`.
 ///        It can be omitted if the value type of `InputIterator`  is convertible to `Point_3<Kernel>`.
@@ -107,7 +143,8 @@ compute_average_spacing(const typename Kernel::Point_3& query, ///< 3D point who
 /// @return average spacing (scalar).
 
 // This variant requires the kernel.
-template <typename InputIterator,
+template <typename Concurrency_tag,
+	  typename InputIterator,
           typename PointPMap,
           typename Kernel
 >
@@ -153,27 +190,43 @@ compute_average_spacing(
   // iterate over input points, compute and output normal
   // vectors (already normalized)
   FT sum_spacings = (FT)0.0;
-  unsigned int nb_points = 0;
-  for(InputIterator it = first; it != beyond; it++)
-  {
-    sum_spacings += internal::compute_average_spacing<Kernel,Tree>(
-      
-  #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      get(point_pmap,it),
-  #else
-      get(point_pmap,*it),
-  #endif
-      tree,k);
-    nb_points++;
-  }
 
+#ifndef CGAL_LINKED_WITH_TBB
+  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
+			     "Parallel_tag is enabled but TBB is unavailable.");
+#else
+   if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
+   {
+     std::vector<FT> spacings (kd_tree_points.size ());
+     CGAL::internal::Compute_average_spacings<Kernel, Tree>
+       f (tree, k, kd_tree_points, spacings);
+     tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
+     for (unsigned int i = 0; i < spacings.size (); ++ i)
+       sum_spacings += spacings[i];
+   }
+   else
+#endif
+     {
+       for(InputIterator it = first; it != beyond; it++)
+	 {
+	   sum_spacings += internal::compute_average_spacing<Kernel,Tree>(
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+									  get(point_pmap,it),
+#else
+									  get(point_pmap,*it),
+#endif
+									  tree,k);
+	 }
+     }
+   
   // return average spacing
-  return sum_spacings / (FT)nb_points;
+   return sum_spacings / (FT)(kd_tree_points.size ());
 }
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the iterator type.
-template <typename InputIterator,
+template <typename Concurrency_tag,
+	  typename InputIterator,
           typename PointPMap
 >
 typename Kernel_traits<typename boost::property_traits<PointPMap>::value_type>::Kernel::FT
@@ -185,7 +238,7 @@ compute_average_spacing(
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return compute_average_spacing(
+  return compute_average_spacing<Concurrency_tag>(
     first,beyond,
     point_pmap,
     k,
@@ -195,14 +248,14 @@ compute_average_spacing(
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Identity_property_map.
-template < typename InputIterator >
+template < typename Concurrency_tag, typename InputIterator >
 typename Kernel_traits<typename std::iterator_traits<InputIterator>::value_type>::Kernel::FT
 compute_average_spacing(
   InputIterator first,    ///< iterator over the first input point.
   InputIterator beyond,   ///< past-the-end iterator over the input points.
   unsigned int k) ///< number of neighbors.
 {
-  return compute_average_spacing(
+  return compute_average_spacing<Concurrency_tag>(
     first,beyond,
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),

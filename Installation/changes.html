@@ -115,6 +115,7 @@ and <code>src/</code> directories).
 
 <HR>
 <h2 id="release4.8">Release 4.8 </h2>
+
 <div>
   <p>Release date:  </p>
 
@@ -131,8 +132,17 @@ and <code>src/</code> directories).
 <!-- Triangulations and Delaunay Triangulations -->
 <!-- Voronoi Diagrams -->
 <!-- Mesh Generation -->
-<!-- Surface Reconstruction -->
 <!-- Geometry Processing -->
+  <h3>Point Set Processing</h3>
+  <ul>
+    <li> <b>Breaking change:</b> new template
+    parameter <code>Concurrency_tag</code> for the
+    functions <code>compute_average_spacing()</code>, <code>edge_aware_upsample_point_set()</code>,
+    <code>jet_estimate_normals()</code>, <code>jet_smooth_point_set()</code>,
+    and <code>pca_estimate_normals()</code>.</li>
+    <li> <code>CGAL::Parallel_tag</code> can no longer be used in
+    Point Set Processing algorithms if TBB is not available.</li>
+  </ul>
 <!-- Spatial Searching and Sorting -->
 <!-- Geometric Optimization -->
 <!-- Interpolation -->
@@ -141,6 +151,7 @@ and <code>src/</code> directories).
 <!-- Visualization -->
 
 <!-- end of the div for 4.8 -->
+
 </div>
 
 <h2 id="release4.7">Release 4.7 </h2>
