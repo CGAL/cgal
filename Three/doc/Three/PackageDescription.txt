@@ -1,13 +1,4 @@
 /// \defgroup PkgPACKAGE Three
-/// \defgroup PkgPACKAGEConcepts Concepts
-/// \ingroup PkgPACKAGE
-
-/// \defgroup PkgPACKAGEAlgorithmClasses Algorithm Classes
-/// \ingroup PkgPACKAGE
-
-/// \defgroup PkgPACKAGETraitsClasses Traits Classes
-/// \ingroup PkgPACKAGE
-
 /// \defgroup PkgPACKAGEMiscellaneous Miscellaneous
 /// \ingroup PkgPACKAGE
 
@@ -25,9 +16,7 @@
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
-\cgalPkgSince{X.X}
-\cgalPkgDependsOn{\ref PkgDEPENDENCY}
-\cgalPkgBib{cgal:x-x}
+\cgalPkgSince{4.8}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
 \cgalPkgShortInfoEnd
 

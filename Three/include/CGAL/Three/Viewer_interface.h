@@ -10,11 +10,12 @@
 class QWidget;
 class QMouseEvent;
 class QKeyEvent;
-
+//! \file Viewer_interface.h
 #include "../Viewer_config.h" // for VIEWER_EXPORT
 namespace CGAL{
 namespace Three{
 class Scene_draw_interface;
+//! Base class to interact with the viewer from the plugins, the items and the scene.
 class VIEWER_EXPORT Viewer_interface : public QGLViewer, public QOpenGLFunctions_2_1 {
 
   Q_OBJECT

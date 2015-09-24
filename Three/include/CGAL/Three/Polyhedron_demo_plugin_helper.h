@@ -1,3 +1,4 @@
+//! \file Polyhedron_demo_plugin_helper.h 
 #ifndef POLYHEDRON_DEMO_OPERATION_HELPER_H
 #define POLYHEDRON_DEMO_OPERATION_HELPER_H
 
@@ -16,6 +17,9 @@ class QDockWidget;
 #include <CGAL/Three/Scene_interface.h>
 namespace CGAL {
 namespace Three {
+  /*!
+   * This class provides a base for creating a new plugin.
+   */
 class SCENE_ITEM_EXPORT Polyhedron_demo_plugin_helper
   : public Polyhedron_demo_plugin_interface
 {

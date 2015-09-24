@@ -1,6 +1,11 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - Three"
 INPUT        = ${CMAKE_SOURCE_DIR}/Three/doc/Three/ \
-               ${CMAKE_SOURCE_DIR}/Three/include \
-               ${CMAKE_SOURCE_DIR}/Polyhedron/demo/Polyhedron
-EXAMPLE_PATH = ${CMAKE_SOURCE_DIR}/Polyhedron/demo/Polyhedron
+               ${CMAKE_SOURCE_DIR}/Three/include/CGAL/Three/ \
+               ${CMAKE_SOURCE_DIR}/Polyhedron/demo/Polyhedron/Scene.h \
+               ${CMAKE_SOURCE_DIR}/Polyhedron/demo/Polyhedron/Viewer.h \
+EXAMPLE_PATH = ${CMAKE_SOURCE_DIR}/Polyhedron/demo/Polyhedron/ \
+
+EXTRACT_ALL                =  false
+HIDE_UNDOC_MEMBERS         =  true
+HIDE_UNDOC_CLASSES         =  true

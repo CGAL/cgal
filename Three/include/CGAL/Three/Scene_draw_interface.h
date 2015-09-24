@@ -8,7 +8,7 @@ namespace Three {
   class Viewer_interface;
 
 
-
+//! Base class to interact with the scene from the viewer.
 class Scene_draw_interface {
 public:
   virtual ~Scene_draw_interface(){}

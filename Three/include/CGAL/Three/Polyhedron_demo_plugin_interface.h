@@ -1,3 +1,4 @@
+   //! \file Polyhedron_demo_plugin_interface.h 
 #ifndef POLYHEDRON_DEMO_PLUGIN_INTERFACE_H
 #define POLYHEDRON_DEMO_PLUGIN_INTERFACE_H
 
@@ -11,9 +12,13 @@ class Scene_interface;
 class Messages_interface;
 namespace CGAL {
 namespace Three {
+  /*!
+   * This class gives some virtual functions to help making a plugin
+   */
 class Polyhedron_demo_plugin_interface 
 {
 public:
+  //! Destructor
   virtual ~Polyhedron_demo_plugin_interface() {}
   //!Initializes the plugin.
   virtual void init(QMainWindow*, Scene_interface*) {}

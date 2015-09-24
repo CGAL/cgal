@@ -1,3 +1,5 @@
+//! \file Viewer.h
+
 #ifndef VIEWER_H
 #define VIEWER_H
 
@@ -18,7 +20,7 @@ class QMouseEvent;
 class QKeyEvent;
 
 class Viewer_impl;
-
+//!The viewer class. Deals with all the openGL rendering and the mouse/keyboard events.
 class VIEWER_EXPORT Viewer : public CGAL::Three::Viewer_interface {
 
   Q_OBJECT

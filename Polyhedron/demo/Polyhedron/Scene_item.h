@@ -1,6 +1,6 @@
 #ifndef SCENE_ITEM_H
 #define SCENE_ITEM_H
-#include "Scene_item_config.h"
+#include <CGAL/Three/Scene_item_config.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <QString>
 #include <QPixmap>

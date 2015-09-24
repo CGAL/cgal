@@ -1,3 +1,4 @@
+//! \file Scene.h
 #ifndef SCENE_H
 #define SCENE_H
 #include "config.h"
@@ -241,7 +242,10 @@ public:
   static GlSplat::SplatRenderer* splatting();
 
 }; // end class Scene
-
+/*!
+ * \brief The SceneDelegate class
+ * Handles the columns of the sceneView
+ */
 class SCENE_EXPORT SceneDelegate : public QItemDelegate
 {
 public:
@@ -251,10 +255,11 @@ public:
       checkOffPixmap(":/cgal/icons/check-off.png")
   {
   }
-
+//! Handles the clicks on the sceneView
   bool editorEvent(QEvent *event, QAbstractItemModel *model,
                    const QStyleOptionViewItem &option,
                    const QModelIndex &index);
+  //! Draws the content of the sceneView
   void paint(QPainter *painter, const QStyleOptionViewItem &option,
              const QModelIndex &index) const;
 

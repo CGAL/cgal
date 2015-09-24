@@ -30,11 +30,12 @@ enum RenderingMode { Points = 0,
                      LastRenderingMode = Gouraud,
                      NumberOfRenderingMode = LastRenderingMode+1 };
 
+
+namespace CGAL {
+namespace Three{
 /*!
  * This is the class given to the plugins to interact with the scene.
  * */
-namespace CGAL {
-namespace Three{
 class Scene_interface {
 public:
     //!Contains the coordinates for the two extremities of the diagonal of a bounding box.
