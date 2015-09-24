@@ -82,7 +82,6 @@ namespace CGAL {
     typedef std::pair<Point_d,FT> Point_with_transformed_distance;
     typedef std::pair<Cell*,FT> Cell_with_distance;
 
-    class iterator;
 
     typedef std::vector<Cell_with_distance*> Cell_with_distance_vector;
     typedef std::vector<Point_with_transformed_distance*> Point_with_distance_vector;
@@ -96,6 +95,9 @@ namespace CGAL {
     bool m_search_nearest;    
 
   public:
+
+    class iterator;
+    typedef iterator const_iterator;
 
     // constructor
     Incremental_neighbor_search(const Tree& tree, const Query_item& q,
