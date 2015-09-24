@@ -55,8 +55,9 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
                                 Kernel::FT sm_angle, // Min triangle angle (degrees).
                                 Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing.
                                 Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
-                                const QString& solver_name,
-                                bool use_two_passes) // solver name
+                                const QString& solver_name, // solver name
+                                bool use_two_passes,
+				bool do_not_fill_holes)
 {
     CGAL::Timer task_timer; task_timer.start();
 
@@ -204,18 +205,40 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     // Computes distance from each input point to reconstructed mesh
     double max_distance = DBL_MIN;
     double avg_distance = 0;
+
+    std::set<Polyhedron::Face_handle> faces_to_keep;
+    
     for (Point_set::const_iterator p=points.begin(); p!=points.end(); p++)
     {
-      double distance = std::sqrt(tree.squared_distance(*p));
-
+      AABB_traits::Point_and_primitive_id pap = tree.closest_point_and_primitive (*p);
+      double distance = std::sqrt(CGAL::squared_distance (pap.first, *p));
+      
       max_distance = (std::max)(max_distance, distance);
       avg_distance += distance;
+
+      Polyhedron::Face_handle f = pap.second;
+      faces_to_keep.insert (f);  
     }
     avg_distance /= double(points.size());
 
     std::cerr << "Reconstruction error:\n"
               << "  max = " << max_distance << " = " << max_distance/average_spacing << " * average spacing\n"
               << "  avg = " << avg_distance << " = " << avg_distance/average_spacing << " * average spacing\n";
+
+    if (do_not_fill_holes)
+      {
+	Polyhedron::Facet_iterator it = output_mesh->facets_begin ();
+	while (it != output_mesh->facets_end ())
+	  {
+	    Polyhedron::Facet_iterator current = it ++;
+
+	    if (faces_to_keep.find (current) == faces_to_keep.end ())
+	      output_mesh->erase_facet (current->halfedge ());
+
+	  }
+
+      }
+    
 
     return output_mesh;
 }
