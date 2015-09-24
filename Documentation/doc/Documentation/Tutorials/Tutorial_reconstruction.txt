@@ -43,6 +43,19 @@ method is more suited for your work:
 More information on these different methods can be found on their
 respective manual pages and on section \ref TutorialsReconstruction_reconstruction.
 
+\section TutorialsReconstruction_overview Pipeline Overview
+
+This tutorial aims at providing a more comprehensive view of the
+possibilities offered by \cgal for treating point clouds for surface
+reconstruction purposes. The following diagram shows an overview of
+typical reconstruction steps using \cgal tools.
+
+
+\image html reconstruction.png "Pipeline Overview" 
+
+We now review some of these steps in more details.
+
+
 \section TutorialsReconstruction_input Reading Input
 
 The reconstruction algorithms on \cgal take a range of iterators on a
