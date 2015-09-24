@@ -439,7 +439,7 @@ namespace CGAL {
 
   public:
     class iterator;
-    typedef iterator const_interator;
+    typedef iterator const_iterator;
 
     // constructor
     Orthogonal_incremental_neighbor_search(const Tree& tree,  
