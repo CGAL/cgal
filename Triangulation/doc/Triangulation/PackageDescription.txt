@@ -13,7 +13,7 @@
 \cgalPkgDescriptionBegin{dD Triangulations,PkgTriangulationsSummary}
 \cgalPkgPicture{detail.png}
 \cgalPkgSummaryBegin
-\cgalPkgAuthors{Samuel Hornus, Olivier Devillers and Clément Jamin}
+\cgalPkgAuthors{Olivier Devillers, Samuel Hornus, and Clément Jamin}
 \cgalPkgDesc{This package provides classes for manipulating 
 triangulations (pure simplicial complexes) in Euclidean spaces whose dimension 
 can be specified at compile-time or at run-time. Specifically, it provides a 

@@ -6,7 +6,7 @@ namespace CGAL {
 \anchor Chapter_Triangulations
 
 \cgalAutoToc
-\authors Samuel Hornus, Olivier Devillers and Clément Jamin.
+\authors Olivier Devillers, Samuel Hornus, and Clément Jamin.
 
 This package proposes data structures and algorithms to compute
 triangulations of points in any dimensions.
