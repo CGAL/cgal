@@ -13,6 +13,7 @@ typedef CGAL::Surface_mesh<Point>          Surface_mesh;
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/P.off";
+  const char* outfilename = (argc > 2) ? argv[2] : "P_tri.off";
   std::ifstream input(filename);
 
   Surface_mesh mesh;
@@ -24,7 +25,7 @@ int main(int argc, char* argv[])
 
   CGAL::Polygon_mesh_processing::triangulate_faces(mesh);
 
-  std::ofstream cube_off("P_tri.off");
+  std::ofstream cube_off(outfilename);
   cube_off << mesh;
   cube_off.close();
 

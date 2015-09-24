@@ -16,6 +16,7 @@ typedef OpenMesh::PolyMesh_ArrayKernelT< > Mesh;
 int main(int argc, char* argv[])
 {
   const char* filename = (argc > 1) ? argv[1] : "data/cube_quad.off";
+  const char* outfilename = (argc > 2) ? argv[2] : "cube_tri.off";
   std::ifstream input(filename);
 
   Mesh mesh;
@@ -25,7 +26,8 @@ int main(int argc, char* argv[])
      CGAL::Polygon_mesh_processing::parameters::vertex_point_map(get(CGAL::vertex_point, mesh)).
                                                    geom_traits(Kernel()));
 
-  OpenMesh::IO::write_mesh(mesh,"cube_tri.off");
+  mesh.garbage_collection();
+  OpenMesh::IO::write_mesh(mesh,outfilename);
 
   return 0;
 }
