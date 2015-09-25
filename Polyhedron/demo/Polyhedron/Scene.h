@@ -11,6 +11,7 @@
 #include <QString>
 #include <QColor>
 #include <QList>
+#include <QMap>
 #include <QItemDelegate>
 #include <QPixmap>
 #include <QItemSelection>
@@ -35,6 +36,7 @@ class SCENE_EXPORT Scene  :
   friend class SceneDelegate;
 
 public:
+  QMap<QModelIndex, int> index_map;
   enum Columns { NameColumn = 0, 
                  ColorColumn, 
                  RenderingModeColumn, 
@@ -120,6 +122,7 @@ public Q_SLOTS:
 
   void setSelectedItemIndex(int i)
   {
+    //qDebug()<<"selected item = "<<i;
     selected_item = i;
   }
 
@@ -146,6 +149,7 @@ public Q_SLOTS:
   void setSelectedItemsList(QList<int> l )
   {
     selected_items_list = l;
+    qDebug()<<l;
   };
 
   // Accessors (setters)
@@ -164,27 +168,13 @@ Q_SIGNALS:
 private Q_SLOTS:
   void test_rows()
   {
-     // int currentRowCount = rowCount();
-      //invisibleRootItem()->removeRow(0);
-      //for(int i=0; i<currentRowCount; i++)
-      //{
-      QList<QStandardItem*> list;
-      for(int i=0; i<5; i++)
-      {
-          list<<new QStandardItem();
-          list.at(i)->setEditable(false);
-      }
-
-      viewItem->appendRow(list);
-      viewItem = list.at(0);
-      //}
-     // viewItem = invisibleRootItem();
   }
   void setSelectionRay(double, double, double, double, double, double);
   void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}
 
 private:
   void draw_aux(bool with_names, Viewer_interface*);
+  //Temp member, used only for dev purpose for now.
   QStandardItem* viewItem;
   typedef QList<Scene_item*> Entries;
   Entries m_entries;
@@ -198,7 +188,7 @@ public:
   static GlSplat::SplatRenderer* splatting();
 
 }; // end class Scene
-
+class QAbstractProxyModel;
 class SCENE_EXPORT SceneDelegate : public QItemDelegate
 {
 public:
@@ -214,11 +204,26 @@ public:
                    const QModelIndex &index);
   void paint(QPainter *painter, const QStyleOptionViewItem &option,
              const QModelIndex &index) const;
+  void setProxy(QAbstractProxyModel* p_proxy){
+      proxy = p_proxy;
+  }
+  void setScene(Scene* p_scene){
+      scene = p_scene;
+  }
 
 private:
   QPixmap checkOnPixmap;
   QPixmap checkOffPixmap;
+  QAbstractProxyModel *proxy;
+  Scene *scene;
   mutable int size;
 }; // end class SceneDelegate
 
 #endif // SCENE_H
+
+
+/*TO DO
+virer viewItem
+arranger les choses pour remettre index_map en private.
+virer test_rows
+  */

@@ -60,7 +60,21 @@ Scene::addItem(Scene_item* item)
             this, SLOT(callDraw()));
     if(bbox_before + item->bbox() != bbox_before)
 { Q_EMIT updated_bbox(); }
+
     QStandardItemModel::beginResetModel();
+    QList<QStandardItem*> list;
+    for(int i=0; i<5; i++)
+    {
+        list<<new QStandardItem();
+        list.at(i)->setEditable(false);
+    }
+    viewItem->appendRow(list);
+    for(int i=0; i<5; i++){
+        index_map[list.at(i)->index()] = m_entries.size() -1;
+    }
+    viewItem = list.at(0);
+
+
     Q_EMIT updated();
     QStandardItemModel::endResetModel();
     Item_id id = m_entries.size() - 1;
@@ -143,7 +157,7 @@ Scene::erase(QList<int> indices)
   QStandardItemModel::beginResetModel();
   Q_EMIT updated();
   QStandardItemModel::endResetModel();
- 
+
   int index = max_index + 1 - indices.size();
   if(index >= m_entries.size()) {
     index = m_entries.size() - 1;
@@ -174,7 +188,7 @@ Scene::item(Item_id index) const
     return m_entries.value(index); // QList::value checks bounds
 }
 
-Scene::Item_id 
+Scene::Item_id
 Scene::item_id(Scene_item* scene_item) const
 {
     return m_entries.indexOf(scene_item);
@@ -227,7 +241,7 @@ void Scene::initializeGL()
 
 }
 
-bool 
+bool
 Scene::keyPressEvent(QKeyEvent* e){
     bool res=false;
     for (QList<int>::iterator it=selected_items_list.begin(),endit=selected_items_list.end();
@@ -239,7 +253,7 @@ Scene::keyPressEvent(QKeyEvent* e){
     return res;
 }
 
-void 
+void
 Scene::draw()
 {
     draw_aux(false, 0);
@@ -249,7 +263,7 @@ Scene::draw(Viewer_interface* viewer)
 {
     draw_aux(false, viewer);
 }
-void 
+void
 Scene::drawWithNames()
 {
     draw_aux(true, 0);
@@ -260,7 +274,7 @@ Scene::drawWithNames(Viewer_interface* viewer)
     draw_aux(true, viewer);
 }
 
-void 
+void
 Scene::draw_aux(bool with_names, Viewer_interface* viewer)
 {
     if(!ms_splatting->viewer_is_set)
@@ -442,8 +456,10 @@ Scene::rowCount(const QModelIndex & parent) const
         return m_entries.size();
     else
         for(int i =0; i< m_entries.size(); i++)
+        {
             if(!parent.child(i,0).isValid())
-                return i+1;
+                return i;
+        }
 }
 
 /*
@@ -456,7 +472,7 @@ Scene::columnCount(const QModelIndex & parent) const
         return NumberOfColumns;
 }
 */
-QVariant 
+QVariant
 Scene::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
@@ -464,33 +480,33 @@ Scene::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    if(index.row() < 0 || index.row() >= m_entries.size())
+    int id = index_map[index];\
+    if(id < 0 || id >= m_entries.size())
         return QVariant();
-
     if(role == ::Qt::ToolTipRole)
     {
-        return m_entries[index.row()]->toolTip();
+        return m_entries[id]->toolTip();
     }
     switch(index.column())
     {
     case ColorColumn:
         if(role == ::Qt::DisplayRole || role == ::Qt::EditRole)
-            return m_entries.value(index.row())->color();
+            return m_entries.value(id)->color();
         else if(role == ::Qt::DecorationRole)
-            return m_entries.value(index.row())->color();
+            return m_entries.value(id)->color();
         break;
     case NameColumn:
         if(role == ::Qt::DisplayRole || role == ::Qt::EditRole)
-            return m_entries.value(index.row())->name();
+            return m_entries.value(id)->name();
         if(role == ::Qt::FontRole)
-            return m_entries.value(index.row())->font();
+            return m_entries.value(id)->font();
         break;
     case RenderingModeColumn:
         if(role == ::Qt::DisplayRole) {
-            return m_entries.value(index.row())->renderingModeName();
+            return m_entries.value(id)->renderingModeName();
         }
         else if(role == ::Qt::EditRole) {
-            return static_cast<int>(m_entries.value(index.row())->renderingMode());
+            return static_cast<int>(m_entries.value(id)->renderingMode());
         }
         else if(role == ::Qt::TextAlignmentRole) {
             return ::Qt::AlignCenter;
@@ -498,9 +514,9 @@ Scene::data(const QModelIndex &index, int role) const
         break;
     case ABColumn:
         if(role == ::Qt::DisplayRole) {
-            if(index.row() == item_A)
+            if(id == item_A)
                 return "A";
-            if(index.row() == item_B)
+            if(id == item_B)
                 return "B";
         }
         else if(role == ::Qt::TextAlignmentRole) {
@@ -509,7 +525,7 @@ Scene::data(const QModelIndex &index, int role) const
         break;
     case VisibleColumn:
         if(role == ::Qt::DisplayRole || role == ::Qt::EditRole)
-            return m_entries.value(index.row())->visible();
+            return m_entries.value(id)->visible();
         break;
     default:
         return QVariant();
@@ -517,7 +533,7 @@ Scene::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant 
+QVariant
 Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
 {
     if(orientation == ::Qt::Horizontal)  {
@@ -555,7 +571,7 @@ Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
     return QStandardItemModel::headerData(section, orientation, role);
 }
 
-Qt::ItemFlags 
+Qt::ItemFlags
 Scene::flags ( const QModelIndex & index ) const
 {
     if (index.isValid() && index.column() == NameColumn) {
@@ -566,18 +582,20 @@ Scene::flags ( const QModelIndex & index ) const
     }
 }
 
-bool 
-Scene::setData(const QModelIndex &index, 
+bool
+Scene::setData(const QModelIndex &index,
                const QVariant &value,
                int role)
 {
+
     if( role != ::Qt::EditRole || !index.isValid() )
         return false;
 
-    if(index.row() < 0 || index.row() >= m_entries.size())
+    int id = index_map[index];
+    if(id < 0 || id >= m_entries.size())
         return false;
 
-    Scene_item* item = m_entries[index.row()];
+    Scene_item* item = m_entries[id];
     if(!item) return false;
     switch(index.column())
     {
@@ -635,14 +653,14 @@ int Scene::selectionBindex() const {
 
 QItemSelection Scene::createSelection(int i)
 {
-    return QItemSelection(this->createIndex(i, 0),
-                          this->createIndex(i, LastColumn));
+    return QItemSelection(index_map.keys(i).at(0),
+                          index_map.keys(i).at(4));
 }
 
 QItemSelection Scene::createSelectionAll()
 {
-    return QItemSelection(this->createIndex(0, 0),
-                          this->createIndex(m_entries.size() - 1 , LastColumn));
+    return QItemSelection(index_map.keys(0).at(0),
+                          index_map.keys(m_entries.size() - 1).at(4));
 }
 
 void Scene::itemChanged()
@@ -675,6 +693,7 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
     Q_ASSERT(proxyModel);
     Scene *scene = dynamic_cast<Scene*>(proxyModel->sourceModel());
     Q_ASSERT(scene);
+    int id = scene->index_map[proxyModel->mapToSource(index)];
     switch(index.column()) {
     case Scene::VisibleColumn:
         if (event->type() == QEvent::MouseButtonPress) {
@@ -683,7 +702,7 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
                 int x = mouseEvent->pos().x() - option.rect.x();
                 if(x >= (option.rect.width() - size)/2 &&
                         x <= (option.rect.width() + size)/2) {
-                    model->setData(index, ! model->data(index).toBool() );
+                    model->setData(index, !model->data(index).toBool());
                 }
             }
             return false; //so that the selection can change
@@ -726,19 +745,19 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
         break;
     case Scene::ABColumn:
         if (event->type() == QEvent::MouseButtonPress) {
-            if(index.row() == scene->item_B) {
-                scene->item_A = index.row();
+            if(id == scene->item_B) {
+                scene->item_A = id;
                 scene->item_B = -1;
             }
-            else if(index.row() == scene->item_A) {
-                scene->item_B = index.row();
+            else if(id == scene->item_A) {
+                scene->item_B = id;
                 scene->item_A = -1;
             }
             else if(scene->item_A == -1) {
-                scene->item_A = index.row();
+                scene->item_A = id;
             }
             else {
-                scene->item_B = index.row();
+                scene->item_B = id;
             }
             scene->dataChanged(scene->createIndex(0, Scene::ABColumn),
                                scene->createIndex(scene->rowCount() - 1, Scene::ABColumn));
@@ -753,31 +772,35 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 void SceneDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                           const QModelIndex &index) const
 {
+    QModelIndex test = proxy->mapToSource(index);
     if (index.column() != Scene::VisibleColumn) {
         QItemDelegate::paint(painter, option, index);
     } else {
         const QAbstractItemModel *model = index.model();
+
         QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ?
                     (option.state & QStyle::State_Active) ? QPalette::Normal : QPalette::Inactive : QPalette::Disabled;
 
         if (option.state & QStyle::State_Selected)
             painter->fillRect(option.rect, option.palette.color(cg, QPalette::Highlight));
-
         bool checked = model->data(index, ::Qt::DisplayRole).toBool();
         int width = option.rect.width();
         int height = option.rect.height();
         size = (std::min)(width, height);
         int x = option.rect.x() + (option.rect.width() / 2) - (size / 2);;
         int y = option.rect.y() + (option.rect.height() / 2) - (size / 2);
-        if(checked) {
-            painter->drawPixmap(x, y, checkOnPixmap.scaled(QSize(size, size),
-                                                           ::Qt::KeepAspectRatio,
-                                                           ::Qt::SmoothTransformation));
-        }
-        else {
-            painter->drawPixmap(x, y, checkOffPixmap.scaled(QSize(size, size),
-                                                            ::Qt::KeepAspectRatio,
-                                                            ::Qt::SmoothTransformation));
+        if(test.row()>=0 && test.row()<scene->m_entries.size()){
+
+            if(checked) {
+                painter->drawPixmap(x, y, checkOnPixmap.scaled(QSize(size, size),
+                                                               ::Qt::KeepAspectRatio,
+                                                               ::Qt::SmoothTransformation));
+            }
+            else {
+                painter->drawPixmap(x, y, checkOffPixmap.scaled(QSize(size, size),
+                                                                ::Qt::KeepAspectRatio,
+                                                                ::Qt::SmoothTransformation));
+            }
         }
         drawFocus(painter, option, option.rect); // since we draw the grid ourselves
     }
@@ -858,7 +881,7 @@ Scene::Bbox Scene::bbox() const
 namespace scene { namespace details {
 
 Q_DECL_EXPORT
-Scene_item* 
+Scene_item*
 findItem(const Scene_interface* scene_interface,
          const QMetaObject& metaobj,
          QString name, Scene_item_name_fn_ptr fn) {
@@ -872,8 +895,8 @@ findItem(const Scene_interface* scene_interface,
 }
 
 Q_DECL_EXPORT
-QList<Scene_item*> 
-findItems(const Scene_interface* scene_interface, 
+QList<Scene_item*>
+findItems(const Scene_interface* scene_interface,
           const QMetaObject&,
           QString name, Scene_item_name_fn_ptr fn)
 {

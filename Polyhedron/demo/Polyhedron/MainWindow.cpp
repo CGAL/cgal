@@ -148,13 +148,16 @@ MainWindow::MainWindow(QWidget* parent)
 
   proxyModel = new QSortFilterProxyModel(this);
   proxyModel->setSourceModel(scene);
+  SceneDelegate *delegate = new SceneDelegate(this);
+  delegate->setProxy(proxyModel);
+  delegate->setScene(scene);
 
   connect(ui->searchEdit, SIGNAL(textChanged(QString)),
           proxyModel, SLOT(setFilterFixedString(QString)));
   sceneView->setModel(proxyModel);
 
   // setup the sceneview: delegation and columns sizing...
-  sceneView->setItemDelegate(new SceneDelegate(this));
+  sceneView->setItemDelegate(delegate);
 
  /* sceneView->header()->setStretchLastSection(false);
   sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
@@ -940,21 +943,25 @@ void MainWindow::selectAll()
 
 int MainWindow::getSelectedSceneItemIndex() const
 {
-  QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
-  if(selectedRows.size() != 1)
+  QModelIndexList selectedRows = sceneView->selectionModel()->selectedIndexes();
+
+  if(selectedRows.size() != 5)
     return -1;
   else {
     QModelIndex i = proxyModel->mapToSource(selectedRows.first());
-    return i.row();
+    return scene->index_map[i];
   }
 }
 
 QList<int> MainWindow::getSelectedSceneItemIndices() const
 {
-  QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
+
+  QModelIndexList selectedIndices = sceneView->selectionModel()->selectedIndexes();
   QList<int> result;
-  Q_FOREACH(QModelIndex index, selectedRows) {
-    result << proxyModel->mapToSource(index).row();
+  Q_FOREACH(QModelIndex index, selectedIndices) {
+      int temp = scene->index_map[proxyModel->mapToSource(index)];;
+      if(!result.contains(temp))
+          result<<temp;
   }
   return result;
 }
