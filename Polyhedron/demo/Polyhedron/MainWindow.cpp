@@ -156,7 +156,7 @@ MainWindow::MainWindow(QWidget* parent)
   // setup the sceneview: delegation and columns sizing...
   sceneView->setItemDelegate(new SceneDelegate(this));
 
-  sceneView->header()->setStretchLastSection(false);
+ /* sceneView->header()->setStretchLastSection(false);
   sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   sceneView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
@@ -167,7 +167,7 @@ MainWindow::MainWindow(QWidget* parent)
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
   sceneView->resizeColumnToContents(Scene::ABColumn);
   sceneView->resizeColumnToContents(Scene::VisibleColumn);
-
+*/
   // setup connections
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateInfo()));

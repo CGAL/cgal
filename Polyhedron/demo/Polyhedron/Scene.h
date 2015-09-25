@@ -101,7 +101,7 @@ public:
 
   // QStandardItemModel functions
   int rowCount ( const QModelIndex & parent = QModelIndex() ) const;
-  int columnCount ( const QModelIndex & parent = QModelIndex() ) const;
+  //int columnCount ( const QModelIndex & parent = QModelIndex() ) const;
   QVariant data ( const QModelIndex & index, int role = ::Qt::DisplayRole ) const;
   QVariant headerData ( int section, ::Qt::Orientation orientation, int role = ::Qt::DisplayRole ) const;
   ::Qt::ItemFlags flags ( const QModelIndex & index ) const;
@@ -164,22 +164,28 @@ Q_SIGNALS:
 private Q_SLOTS:
   void test_rows()
   {
+     // int currentRowCount = rowCount();
+      //invisibleRootItem()->removeRow(0);
+      //for(int i=0; i<currentRowCount; i++)
+      //{
       QList<QStandardItem*> list;
       for(int i=0; i<5; i++)
       {
           list<<new QStandardItem();
           list.at(i)->setEditable(false);
       }
-     for(int i=0; i<rowCount(); i++)
-     {
-            invisibleRootItem()->appendRow(list);
-     }
+
+      viewItem->appendRow(list);
+      viewItem = list.at(0);
+      //}
+     // viewItem = invisibleRootItem();
   }
   void setSelectionRay(double, double, double, double, double, double);
   void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}
 
 private:
   void draw_aux(bool with_names, Viewer_interface*);
+  QStandardItem* viewItem;
   typedef QList<Scene_item*> Entries;
   Entries m_entries;
   int selected_item;

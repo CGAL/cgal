@@ -45,7 +45,7 @@ Scene::Scene(QObject* parent)
     if(ms_splatting==0)
         ms_splatting  = new GlSplat::SplatRenderer();
     ms_splattingCounter++;
-
+    viewItem = invisibleRootItem();
 
 }
 Scene::Item_id
@@ -435,17 +435,19 @@ glDepthFunc(GL_LEQUAL);
 
 // workaround for Qt-4.2 (see above)
 #undef lighter
-
-int 
+int
 Scene::rowCount(const QModelIndex & parent) const
 {
-    if (parent.isValid())
-        return 0;
-    else
+    if (!parent.isValid())
         return m_entries.size();
+    else
+        for(int i =0; i< m_entries.size(); i++)
+            if(!parent.child(i,0).isValid())
+                return i+1;
 }
 
-int 
+/*
+int
 Scene::columnCount(const QModelIndex & parent) const
 {
     if (parent.isValid())
@@ -453,7 +455,7 @@ Scene::columnCount(const QModelIndex & parent) const
     else
         return NumberOfColumns;
 }
-
+*/
 QVariant 
 Scene::data(const QModelIndex &index, int role) const
 {
