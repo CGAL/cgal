@@ -1,9 +1,0 @@
-@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
-
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Kinetic Framework"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Kinetic_data_structures/doc/Kinetic_framework/
-
-
-

@@ -44,14 +44,14 @@ It presumes knowledge of kinetic data structures and this framework.
 \subsection Kinetic_data_structuresHowdoIstoreextrainformation How do I store extra information allow with, for example, a kinetic Point_2?
 
 See the example
-\ref Kinetic_framework/defining_a_simulation_traits.cpp to see how
+\ref Kinetic_data_structures/defining_a_simulation_traits.cpp to see how
 to define a new `SimulationTraits` class where the
 `Active-Objects-Table` contains extra data along with the point.
 
 \subsection Kinetic_data_structuresWhereisthebestplace Where is the best place to look if I want to write my own kinetic data structure?
 
 We provide two simple kinetic data structures, first most trivial is
-\ref Kinetic_framework/trivial_kds.cpp and a slightly more
+\ref Kinetic_data_structures/trivial_kds.cpp and a slightly more
 complicated one is:
 
 Defined in `CGAL/Kinetic/Sort.h`
