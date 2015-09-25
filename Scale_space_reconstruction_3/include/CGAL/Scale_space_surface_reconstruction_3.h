@@ -261,8 +261,6 @@ public:
      *  contain on average.
      *  \param samples is the number of points sampled to estimate the
      *  neighborhood radius.
-     *  \param separate_shells determines whether to collect the surface per shell. 
-     *  \param force_manifold determines if the surface is forced to be 2-manifold.
      */
   Scale_space_surface_reconstruction_3( unsigned int neighbors, unsigned int samples);
 
