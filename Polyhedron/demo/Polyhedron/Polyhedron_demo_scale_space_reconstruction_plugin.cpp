@@ -151,8 +151,6 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
 				  map_i2i[(*it)[2]] );
 	}
 
-      new_item->finalize_polygon_soup();
-
       new_item->setName(tr("%1-shell %2 (ss reconstruction)").arg(scene->item(index)->name()).arg(sh+1));
       new_item->setColor(Qt::magenta);
       new_item->setRenderingMode(FlatPlusEdges);
@@ -188,21 +186,12 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
 					     map_i2i_smoothed[(*it)[2]] );
 	  }
 
-<<<<<<< HEAD
-          new_item_smoothed->setName(tr("%1-shell %2 (ss smoothed reconstruction)").arg(scene->item(index)->name()).arg(sh+1));
-          new_item_smoothed->setColor(Qt::magenta);
-          new_item_smoothed->setRenderingMode(FlatPlusEdges);
-          scene->addItem(new_item_smoothed);
-        }
-=======
-	new_item_smoothed->finalize_polygon_soup();
-
 	new_item_smoothed->setName(tr("%1-shell %2 (ss smoothed reconstruction)").arg(scene->item(index)->name()).arg(sh+1));
 	new_item_smoothed->setColor(Qt::magenta);
 	new_item_smoothed->setRenderingMode(FlatPlusEdges);
 	scene->addItem(new_item_smoothed);
       }
->>>>>>> Scale_space_reconstruction_3-handle_non_manifold-sgiraudot-old
+
     }
 
     if (dialog.force_manifold ())
@@ -237,8 +226,6 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
 				    map_i2i[(*it)[1]],
 				    map_i2i[(*it)[2]] );
 	  }
-
-	new_item->finalize_polygon_soup();
 
 	new_item->setName(tr("%1 (ss non-manifold garbage)").arg(scene->item(index)->name()));
 	new_item->setColor(Qt::cyan);
@@ -275,8 +262,6 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
 					       map_i2i_smoothed[(*it)[1]],
 					       map_i2i_smoothed[(*it)[2]] );
 	    }
-
-	  new_item_smoothed->finalize_polygon_soup();
 
 	  new_item_smoothed->setName(tr("%1 (ss smoothed non-manifold garbage)").arg(scene->item(index)->name()));
 	  new_item_smoothed->setColor(Qt::cyan);
