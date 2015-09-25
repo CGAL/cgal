@@ -299,7 +299,22 @@ be used:
 
 \subsection TutorialsReconstruction_reconstruction_advancing Advancing Front
 
-\todo Tutorial
+Advancing front is a Delaunay-based approach that generates triples of
+point indices that describe the triangular facets of the
+reconstruction. Its main asset is to generate oriented manifold
+surfaces with boundaries: contrary to Poisson, it does not require
+normals and is not bound to reconstruct closed shapes. However, it
+requires preprocessing if the point is noisy.
+
+Here is an example on how to call this function:
+
+\code{.cpp}
+typedef CGAL::cpp11::array<std::size_t,3> Facet; // Triple of indices
+std::vector<Facet> facets;
+CGAL::advancing_front_surface_reconstruction(points.begin(),
+                                             points.end(),
+                                             std::back_inserter(facets));
+\endcode
 
 \subsection TutorialsReconstruction_reconstruction_scale_space Scale Space
 
@@ -318,9 +333,19 @@ user's expectations on the output mesh.
 
 The mesh (postprocessed or not) can easily be saved in the OFF format:
 
-\todo examples
+\code{.cpp}
+\\ Poisson
+std::ofstream f ("out.off");
+CGAL::output_facet_to_off(f, c2t3);
+\endcode
 
+\code{.cpp}
+\\ Advancing Front
+\endcode
 
+\code{.cpp}
+\\ Advancing Front
+\endcode
 
 \section TutorialsReconstruction_recap Recap and Full Code Example
 
