@@ -9,4 +9,5 @@ Property_map
 Bounding_volumes
 Principal_component_analysis
 Jet_fitting_3
+Solver_interface
 

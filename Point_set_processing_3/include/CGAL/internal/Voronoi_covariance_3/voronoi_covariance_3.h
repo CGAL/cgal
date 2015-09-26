@@ -79,8 +79,8 @@ namespace CGAL {
 
                         template <class Point>
                             inline void operator () (const Point &a,
-                                                     const Point &c,
-                                                     const Point &b)
+                                                     const Point &b,
+                                                     const Point &c)
                             {
                                 internal::covariance_matrix_tetrahedron (a[0], a[1], a[2],
                                                                          b[0], b[1], b[2],
@@ -109,8 +109,8 @@ namespace CGAL {
 
                         template <class Point>
                             inline void operator () (const Point &a,
-                                                     const Point &c,
-                                                     const Point &b)
+                                                     const Point &b,
+                                                     const Point &c)
                             {
                                 const double  vol = CGAL::volume(a, b, c, Point(CGAL::ORIGIN));
                                 //std::cerr << "vol = " << vol << "\n";
@@ -168,12 +168,10 @@ namespace CGAL {
                         typename Polyhedron::Halfedge_around_facet_circulator
                             h0 = it->facet_begin(), hf = h0--, hs = cpp11::next(hf);
 
-                        while(1)
+                        while(hs != h0)
                         {
                             f (h0->vertex()->point(), hf->vertex()->point(),
                                hs->vertex()->point());
-                            if (hs == h0)
-                                break;
                             ++hs; ++hf;
                         }
                     }
