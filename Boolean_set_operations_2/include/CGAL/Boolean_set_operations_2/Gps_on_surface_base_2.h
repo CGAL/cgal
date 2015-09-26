@@ -1182,18 +1182,19 @@ protected:
 
         if (h->is_flooding_on_inner_ccb())
         {
-          CGAL_assertion(!inner_ccbs_to_remove.empty());
-          typename Aos_2::Dcel::Inner_ccb* inner_ccb = inner_ccbs_to_remove.back();
-          inner_ccbs_to_remove.pop_back();
+          typename Aos_2::Dcel::Inner_ccb* inner_ccb = inner_ccbs_to_remove.empty()?
+            arr->_dcel().new_inner_ccb():inner_ccbs_to_remove.back();
+          if ( !inner_ccbs_to_remove.empty() ) inner_ccbs_to_remove.pop_back();
+
           Halfedge_handle hstart=h;
           do{
             get_base(h)->set_inner_ccb(inner_ccb);
             h->set_new_ccb_assigned();
             h=h->next();
           }while(hstart!=h);
+          f->add_inner_ccb(inner_ccb,get_base(h));
           inner_ccb->set_halfedge(get_base(h));
           inner_ccb->set_face(get_base(f));
-          f->add_inner_ccb(inner_ccb,get_base(h));
         }
         else{
           CGAL_assertion(!outer_ccbs_to_remove.empty());
@@ -1205,9 +1206,9 @@ protected:
             h->set_new_ccb_assigned();
             h=h->next();
           }while(hstart!=h);
+          f->add_outer_ccb(outer_ccb,get_base(h));
           outer_ccb->set_halfedge(get_base(h));
           outer_ccb->set_face(get_base(f));
-          f->add_outer_ccb(outer_ccb,get_base(h));
         }
       }
     }
