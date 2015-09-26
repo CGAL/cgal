@@ -127,23 +127,21 @@ namespace CGAL {
     }
 
 
-    std::pair<Point_d,bool>
+    boost::optional<Point_d>
     any_tree_item() const {
-      std::pair<Point_d,bool> result(Point_d(), false);
+      boost::optional<Point_d> result = boost::none;
       if (is_leaf()) {
          Leaf_node_const_handle node =
           static_cast<Leaf_node_const_handle>(this);
 	 if (node->size()>0){
-           return std::make_pair(*(node->begin()), true);
-         } else {
-           return result;
+           return boost::make_optional(*(node->begin()));
          }
 	}
       else {
          Internal_node_const_handle node =
           static_cast<Internal_node_const_handle>(this);
 	  result = node->lower()->any_tree_item();
-          if(! result.second){
+          if(! result){
             result = node->upper()->any_tree_item();
           }
       }
@@ -224,18 +222,18 @@ namespace CGAL {
 
 
     template <class FuzzyQueryItem>
-    std::pair<Point_d,bool>
+    boost::optional<Point_d>
     search_any_point(const FuzzyQueryItem& q,
                      Kd_tree_rectangle<FT,D>& b) const
     {
-      std::pair<Point_d,bool> result(Point_d(),false);
+      boost::optional<Point_d> result = boost::none;
       if (is_leaf()) { 
         Leaf_node_const_handle node = 
           static_cast<Leaf_node_const_handle>(this);
 	if (node->size()>0) 
 	  for (iterator i=node->begin(); i != node->end(); i++) 
 	    if (q.contains(*i)) 
-	      { result = std::make_pair(*i,true);}
+	      { result = boost::make_optional(*i);}
       }
       else {
          Internal_node_const_handle node = 
@@ -247,28 +245,19 @@ namespace CGAL {
                              
 	if (q.outer_range_contains(b)){ 	
           result = node->lower()->any_tree_item();
-          if(result.second){
-            return result;
-          }
 	}else{
 	  if (q.inner_range_intersects(b)){ 
 	    result = node->lower()->search_any_point(q,b);
-            if(result.second){
-              return result;
-            }
           }
+        }
+        if(result){
+          return result;
         }
 	if  (q.outer_range_contains(b_upper)){     
 	  result = node->upper()->any_tree_item();
-          if(result.second){
-            return result;
-          }
 	}else{
 	  if (q.inner_range_intersects(b_upper)) 
 	    result = node->upper()->search_any_point(q,b_upper);
-          if(result.second){
-            return result;
-          }
         }
       }
       return result;				

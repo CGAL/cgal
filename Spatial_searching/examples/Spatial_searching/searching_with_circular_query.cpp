@@ -30,9 +30,9 @@ int main() {
   Point center(0.2, 0.2);
   Fuzzy_circle exact_range(center, 0.2);
 
-  std::pair<Point,bool> any = tree.search_any_point(exact_range);
-  if(any.second){
-    std::cout << any.first << " is in the query circle\n";
+  boost::optional<Point> any = tree.search_any_point(exact_range);
+  if(any){
+    std::cout << *any << " is in the query circle\n";
   }else{
     std::cout << "Empty query circle\n";
   }
