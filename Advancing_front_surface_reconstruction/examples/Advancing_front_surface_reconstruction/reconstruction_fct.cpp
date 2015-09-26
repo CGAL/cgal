@@ -4,6 +4,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 #include <CGAL/tuple.h>
+#include <boost/lexical_cast.hpp>
 
 typedef CGAL::Simple_cartesian<double> K;
 typedef K::Point_3  Point_3;
@@ -49,6 +50,7 @@ struct Perimeter {
 int main(int argc, char* argv[])
 {
   std::ifstream in((argc>1)?argv[1]:"data/half.xyz");
+  double per = (argc>2)?boost::lexical_cast<double>(argv[2]):0;
   std::vector<Point_3> points;
   std::vector<Facet> facets;
 
@@ -56,7 +58,7 @@ int main(int argc, char* argv[])
             std::istream_iterator<Point_3>(),
             std::back_inserter(points));
 
-  Perimeter perimeter(0);
+  Perimeter perimeter(per);
   CGAL::advancing_front_surface_reconstruction(points.begin(),
                                                points.end(),
                                                std::back_inserter(facets),
