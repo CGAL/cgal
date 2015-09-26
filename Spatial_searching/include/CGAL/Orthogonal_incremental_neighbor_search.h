@@ -434,11 +434,12 @@ namespace CGAL {
 
 
 
-    class iterator;
 
     
 
   public:
+    class iterator;
+    typedef iterator const_iterator;
 
     // constructor
     Orthogonal_incremental_neighbor_search(const Tree& tree,  
@@ -448,13 +449,13 @@ namespace CGAL {
     {}
 
     iterator 
-    begin() 
+    begin() const
     {
       return iterator(m_tree,m_query,m_dist,m_Eps,m_search_nearest);
     }
 
     iterator 
-    end() 
+    end() const
     {
       return iterator();
     }
