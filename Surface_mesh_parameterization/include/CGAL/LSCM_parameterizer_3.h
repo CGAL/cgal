@@ -72,9 +72,7 @@ template
 <
     class ParameterizationMesh_3,     ///< 3D surface mesh.
     class BorderParameterizer_3
-  = Two_vertices_parameterizer_3<ParameterizationMesh_3>
-#ifndef DOXYGEN_RUNNING
- ,
+  = Two_vertices_parameterizer_3<ParameterizationMesh_3>,
                                       ///< Strategy to parameterize the surface border.
                                       ///< The minimum is to parameterize two vertices.
     class SparseLinearAlgebraTraits_d
