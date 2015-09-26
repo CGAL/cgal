@@ -1167,8 +1167,14 @@ protected:
       if ( master!=it)
       {
         // update the unbounded pointer of the face to be kept
-        if (get_base(*it)->is_unbounded()) get_base(*master)->set_unbounded(true);
-        faces_to_remove.push_back(*it);
+        if (get_base(*it)->is_unbounded())
+        {
+          // force to keep the unbounded face
+          (*master)->uf_handle=it;
+          faces_to_remove.push_back(*master);
+        }
+        else
+          faces_to_remove.push_back(*it);
       }
 
       //collect for reuse/removal all inner and outer ccbs
@@ -1194,8 +1200,9 @@ protected:
 
       if (f->uf_handle!=NULL)
       {
-        // we use the master of the set as face
-        f = *uf_faces.find(f->uf_handle);
+        // we use the master of the set as face, but we force to keep the unbounded face,
+        // thus this hack
+        f = *((*uf_faces.find(f->uf_handle))->uf_handle);
 
         if (h->is_flooding_on_inner_ccb())
         {
