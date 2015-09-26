@@ -990,6 +990,8 @@ protected:
     typedef Union_find<typename Aos_2::Dcel::Face_iterator> UF_faces;
     UF_faces uf_faces;
     std::vector< Halfedge_handle > edges_to_remove;
+    bool all_edges_are_redundant=true;
+
     for (Edge_iterator itr = arr->edges_begin(); itr != arr->edges_end(); ++itr)
     {
       Halfedge_handle he = itr;
@@ -1005,6 +1007,21 @@ protected:
         uf_faces.unify_sets(f1->uf_handle, f2->uf_handle);
         edges_to_remove.push_back( he );
       }
+      else
+        all_edges_are_redundant=false;
+    }
+
+    // the code in this function assumes there is only one unbounded face
+    // (in the if below and in the part to keep the unbounded face even if
+    //  not the master of its set)
+    CGAL_assertion(std::distance(arr->unbounded_faces_begin(),
+                                 arr->unbounded_faces_end()) == 1);
+
+    if (all_edges_are_redundant){
+      bool is_contained=arr->unbounded_faces_begin()->contained();
+      arr->clear();
+      arr->unbounded_faces_begin()->set_contained(is_contained);
+      return;
     }
 
     // nothing needs to be done
