@@ -34,16 +34,13 @@ option( POLYHEDRON_QTSCRIPT_DEBUGGER
   "Activate the use of Qt Script Debugger in Polyhedron_3 demo" OFF)
 
 # Find Qt5 itself
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT  TRUE )
-set( QT_USE_QTOPENGL  TRUE )
-if( POLYHEDRON_QTSCRIPT_DEBUGGER)
-  set( QT_USE_QTSCRIPTTOOLS  TRUE )
-endif()
 find_package(CGAL COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
-find_package(Qt5 QUIET COMPONENTS OpenGL Script Svg Xml ScriptTools)
+
+find_package(Qt5
+             QUIET
+             COMPONENTS            OpenGL Script Svg Xml
+             OPTIONAL_COMPONENTS   ScriptTools)
 
 # Find OpenGL
 find_package(OpenGL)
@@ -52,7 +49,6 @@ find_package(OpenGL)
 if(Qt5_FOUND)
 
   add_definitions(-DQT_NO_KEYWORDS)
-  include_directories( ${QT_INCLUDE_DIR}/QtScriptTools )
   find_package(QGLViewer )
 
 endif(Qt5_FOUND)
@@ -118,7 +114,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(gl_splat SHARED
       GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
   qt5_use_modules(gl_splat OpenGL Gui Xml)
-  target_link_libraries(gl_splat ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES})
 
   qt5_generate_moc( "CGAL_demo/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
 
@@ -140,7 +135,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   target_link_libraries(demo_framework
     ${QGLVIEWER_LIBRARIES}
-    ${QT_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY}
     )
@@ -153,19 +147,17 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     demo_framework
     ${CGAL_LIBRARIES}
     ${QGLVIEWER_LIBRARIES}
-    ${QT_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY}
     )
   qt5_use_modules(scene_basic_objects OpenGL Gui Xml Script Widgets)
   add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES})
   qt5_use_modules(point_dialog OpenGL Gui Xml Script Widgets)
-  target_link_libraries(point_dialog ${QT_LIBRARIES})
 
   macro(add_item item_name)
     add_library(${item_name} SHARED ${ARGN})
     qt5_use_modules(${item_name} OpenGL Gui Xml Script Widgets)
-    target_link_libraries(${item_name} demo_framework ${QT_LIBRARIES} ${CGAL_LIBRARIES} ${Boost_LIBRARIES})
+    target_link_libraries(${item_name} demo_framework ${CGAL_LIBRARIES} ${Boost_LIBRARIES})
   endmacro(add_item)
 
   add_item(scene_c2t3_item Scene_c2t3_item.cpp)# Scene_c2t3_item.moc)
@@ -205,8 +197,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   
   target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)# Scene_points_with_normal_item.moc)
-  target_link_libraries( scene_points_with_normal_item gl_splat ${GLEW_LIBRARIES} )
-  target_link_libraries( demo_framework gl_splat ${GLEW_LIBRARIES} )
+  target_link_libraries( scene_points_with_normal_item gl_splat)
+  target_link_libraries( demo_framework gl_splat)
 
   foreach( lib 
       demo_framework
@@ -240,15 +232,16 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 #  endif(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
 
 
-  # Link with Qt libraries
   if( POLYHEDRON_QTSCRIPT_DEBUGGER )
-    add_definitions( -DQT_SCRIPTTOOLS_LIB )
-    target_link_libraries( Polyhedron_3 QtScriptTools )
+    if(TARGET Qt5::ScriptTools)
+      qt5_use_modules(Polyhedron_3 ScriptTools)
+    else()
+      message(STATUS "POLYHEDRON_QTSCRIPT_DEBUGGER is set to TRUE but the Qt5 ScriptTools library was not found.")
+    endif()
   endif()
-  target_link_libraries( Polyhedron_3 ${QT_LIBRARIES} )
   target_link_libraries( Polyhedron_3 demo_framework )
   target_link_libraries( Polyhedron_3 point_dialog )
-  target_link_libraries( Polyhedron_3 gl_splat ${GLEW_LIBRARIES})
+  target_link_libraries( Polyhedron_3 gl_splat)
 
   # Link with CGAL
   target_link_libraries( Polyhedron_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
@@ -336,8 +329,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(pca_plugin scene_polyhedron_item scene_basic_objects)
 
   qt5_wrap_ui( advancing_frontUI_FILES Polyhedron_demo_advancing_front_plugin.ui)
-    polyhedron_demo_plugin(advancing_front_plugin Polyhedron_demo_advancing_front_plugin ${advancing_frontUI_FILES})
-    target_link_libraries(advancing_front_plugin scene_polygon_soup_item scene_points_with_normal_item)
+  polyhedron_demo_plugin(advancing_front_plugin Polyhedron_demo_advancing_front_plugin ${advancing_frontUI_FILES})
+  target_link_libraries(advancing_front_plugin scene_polygon_soup_item scene_points_with_normal_item)
 
   if(EIGEN3_FOUND)
     qt5_wrap_ui( scale_spaceUI_FILES Polyhedron_demo_scale_space_reconstruction_plugin.ui)
