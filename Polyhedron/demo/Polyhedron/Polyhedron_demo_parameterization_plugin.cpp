@@ -12,6 +12,7 @@
 #include <CGAL/Parameterization_polyhedron_adaptor_3.h>
 #include <CGAL/parameterize.h>
 #include <CGAL/Discrete_conformal_map_parameterizer_3.h>
+#include <CGAL/LSCM_parameterizer_3.h>
 #include <CGAL/Two_vertices_parameterizer_3.h>
 
 #include <CGAL/Textured_polyhedron_builder.h>
@@ -35,7 +36,8 @@ public:
   // used by Polyhedron_demo_plugin_helper
   QStringList actionsNames() const {
     return QStringList() << "actionMVC"
-                         << "actionDCP";
+                         << "actionDCP"
+                         << "actionLSC";
   }
 
   bool applicable(QAction*) const { 
@@ -45,9 +47,10 @@ public:
 public Q_SLOTS:
   void on_actionMVC_triggered();
   void on_actionDCP_triggered();
+  void on_actionLSC_triggered();
 
 protected:
-  enum Parameterization_method { PARAM_MVC, PARAM_DCP };
+  enum Parameterization_method { PARAM_MVC, PARAM_DCP, PARAM_LSC };
   void parameterize(Parameterization_method method);
 }; // end Polyhedron_demo_parameterization_plugin
 
@@ -89,6 +92,13 @@ void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterizatio
     {
       std::cout << "Parameterize (DCP)...";
       typedef CGAL::Discrete_conformal_map_parameterizer_3<Adaptor> Parameterizer;
+      Parameterizer::Error_code err = CGAL::parameterize(adaptor,Parameterizer());
+      success = err == Parameterizer::OK;
+    }  
+  case PARAM_LSC:
+    {
+      std::cout << "Parameterize (LSC)...";
+      typedef CGAL::LSCM_parameterizer_3<Adaptor> Parameterizer;
       Parameterizer::Error_code err = CGAL::parameterize(adaptor,Parameterizer());
       success = err == Parameterizer::OK;
     }
@@ -146,6 +156,12 @@ void Polyhedron_demo_parameterization_plugin::on_actionDCP_triggered()
 {
   std::cerr << "DCP...";
   parameterize(PARAM_DCP);
+}
+
+void Polyhedron_demo_parameterization_plugin::on_actionLSC_triggered()
+{
+  std::cerr << "LSC...";
+  parameterize(PARAM_LSC);
 }
 
 #include "Polyhedron_demo_parameterization_plugin.moc"

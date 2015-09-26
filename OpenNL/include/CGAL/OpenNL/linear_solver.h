@@ -269,7 +269,7 @@ public:
             }
         }
         unsigned int n = index ;
-        A_ = new Matrix(n) ;
+        A_ = new Matrix(static_cast<int>(n)) ;
         x_ = new Vector(n) ;
         b_ = new Vector(n) ;
         for(unsigned int i=0; i<n; i++) {

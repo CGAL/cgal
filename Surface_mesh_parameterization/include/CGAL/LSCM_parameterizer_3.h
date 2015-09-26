@@ -26,6 +26,10 @@
 #include <CGAL/Timer.h>
 #include <CGAL/OpenNL/linear_solver.h>
 
+#ifdef CGAL_EIGEN3_ENABLED
+#include <CGAL/Eigen_solver_traits.h>
+#endif
+
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Two_vertices_parameterizer_3.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
@@ -70,7 +74,11 @@ template
                                       ///< Strategy to parameterize the surface border.
                                       ///< The minimum is to parameterize two vertices.
     class SparseLinearAlgebraTraits_d
-                = OpenNL::SymmetricLinearSolverTraits<typename ParameterizationMesh_3::NT>
+#if defined(CGAL_EIGEN3_ENABLED) || defined(DOXYGEN_RUNNING)
+  = Eigen_solver_traits<Eigen::SimplicialLDLT<Eigen_sparse_symmetric_matrix<double>::EigenType> >
+#else
+  = OpenNL::SymmetricLinearSolverTraits<typename ParameterizationMesh_3::NT>
+#endif
                                       ///< Traits class to solve a sparse linear system.
                                       ///< We may use a symmetric definite positive solver because LSCM
                                       ///< solves the system in the least squares sense.

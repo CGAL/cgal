@@ -95,6 +95,7 @@
      </property>
      <addaction name="actionMVC"/>
      <addaction name="actionDCP"/>
+     <addaction name="actionLSC"/>
     </widget>
     <widget class="QMenu" name="menuPCA">
      <property name="title">
@@ -650,6 +651,11 @@
   <action name="actionPreferences">
    <property name="text">
     <string>&amp;Preferences</string>
+   </property>
+  </action>
+  <action name="actionLSC">
+   <property name="text">
+    <string>Least square conformal maps</string>
    </property>
   </action>
  </widget>
