@@ -1036,6 +1036,14 @@ protected:
         stack_for_flooding.pop_front();
         if (h->is_flooding_visited()) continue;
         do{
+          if( h->is_on_outer_ccb() ){
+            for( typename Aos_2::Inner_ccb_iterator ccb_it=h->face()->inner_ccbs_begin(),
+                                                    ccb_end=h->face()->inner_ccbs_end();
+                                                    ccb_it!=ccb_end; ++ccb_it)
+            if ( !(*ccb_it)->is_flooding_visited() )
+              stack_for_flooding.push_back(*ccb_it);
+          }
+
           if ( is_redundant(h) ){
             if (!h->twin()->is_flooding_visited())
               stack_for_flooding.push_back(h->twin());
@@ -1048,16 +1056,23 @@ protected:
           h=h->next();
         }while(h!=hstart);
       }
-      BOOST_FOREACH(Halfedge_handle h, outer_ccb)
+      std::size_t nb_hedges=outer_ccb.size();
+      for (std::size_t i=0; i< nb_hedges; ++i)
+      {
+        Halfedge_handle h=outer_ccb[i];
         if( !h->is_flooding_visited() ){
           Halfedge_handle hstart=h;
           do{
             CGAL_assertion( !h->is_flooding_visited() );
             if ( !is_redundant(h) )
               h->set_flooding_on_outer_ccb();
-            /// \todo check if we need to cross redundant edges
             else
               h->set_flooding_visited();
+            if (!h->twin()->is_flooding_visited()){
+              outer_ccb.push_back(h->twin());
+              ++nb_hedges;
+            }
+
             h=h->next();
           } while(hstart!=h);
           // now collect inner ccbs of the face for the next round
@@ -1066,8 +1081,8 @@ protected:
                                                   ccb_it!=ccb_end; ++ccb_it)
             stack_for_flooding.push_back(*ccb_it);
         }
+      }
     }while(!stack_for_flooding.empty());
-
 
     // update the next/prev relationship around vertices kept incident
     // to at least one edge to remove. We link non redundant halfedges together.
