@@ -4154,11 +4154,6 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   DOuter_ccb* oc2 = (ic2 == NULL) ? he2->outer_ccb() : NULL;
   DFace* f2 = (oc2 != NULL) ? oc2->face() : ic2->face();
 
-  // f1 is the face to be kept. If f2 has more holes it is more
-  // efficient to kept f2
-  if (f1!=f2 && f1->number_of_holes() < f2->number_of_holes())
-      return _remove_edge(he2, remove_source, remove_target);
-
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
 #if 0
   std::cout << "before swap" << std::endl;
@@ -4181,10 +4176,19 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   std::pair< CGAL::Sign, CGAL::Sign > signs1(ZERO, ZERO);
   std::pair< CGAL::Sign, CGAL::Sign > signs2(ZERO, ZERO);
 
-  // If the removal of he1 (and its twin halfedge) form an "antenna", there
-  // is neither a need to compute signs and nor swapping of the halfedges
-  if ((he1->next() != he2) && (he2->next() != he1)) {
+  bool swap_he1_he2 = false;
+  if (f1 != f2) {
+    // If f1 != f2, the removal of he1 (and its twin halfedge) will cause
+    // the two incident faces to merge. Thus, swapping is not needed. However,
+    // it is more efficient to retain the face that has a larger number of
+    // inner ccbs.
 
+    // f1 is the face to be kept by default. If f2 has more holes it is more
+    // efficient to kept f2
+    if (f1->number_of_inner_ccbs() < f2->number_of_inner_ccbs())
+      swap_he1_he2 = true;
+  }
+  else {
     // If f1 == f2 (same_face-case), then we consider two loops that occur when
     // he1 and he2 get removed; if f1 != f2, then he1 and he2 seperates the two
     // faces that will be merged upon their removal---here both he1 and he2
@@ -4192,10 +4196,10 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     // determine whether end of loop should be he1->opposite() and
     // he2->opposite(), respectively.
 
-    // If f1 != f2, the removal of he1 (and its twin halfedge) will cause
-    // the two incident faces to merge. Thus, swapping is not needed.
-    bool swap_he1_he2 = false;
-    if (f1 == f2) {
+    // If the removal of he1 (and its twin halfedge) form an "antenna", there
+    // is neither a need to compute signs and nor swapping of the halfedges
+    if ((he1->next() != he2) && (he2->next() != he1)) {
+
       // In this case one of the following can happen: (a) a new hole will be
       // created by the removal of the edge (case 3.2.1 of the removal
       // procedure), or (b) an outer CCB will be split into two (case 3.2.2).
