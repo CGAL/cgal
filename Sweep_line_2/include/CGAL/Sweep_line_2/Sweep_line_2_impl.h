@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Efi Fogel       <efif@post.tau.ac.il>
@@ -38,7 +38,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_init_structures()
 {
   // Initailize the structures maintained by the base sweep-line class.
   Base::_init_structures();
-  
+
   // Resize the hash to be O(2*n), where n is the number of input curves.
   m_curves_pair_set.resize(2 * this->m_num_of_subCurves);
 }
@@ -52,10 +52,10 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_complete_sweep()
 {
   // Complete the sweep process using base sweep-line class.
   Base::_complete_sweep();
-  
+
   // Clean the set of curve pairs for which we have computed intersections.
   m_curves_pair_set.clear();
-  
+
   // Free all overlapping subcurves we have created.
   Subcurve_iterator   itr;
   for (itr = m_overlap_subCurves.begin(); itr != m_overlap_subCurves.end();
@@ -64,7 +64,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_complete_sweep()
     this->m_subCurveAlloc.destroy(*itr);
     this->m_subCurveAlloc.deallocate(*itr, 1);
   }
-  
+
   m_overlap_subCurves.clear();
 }
 
@@ -76,17 +76,17 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
 void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
 {
   CGAL_PRINT("Handling left curve" << std::endl);
-  
+
   this->m_is_event_on_above = false;
-  
+
   if (! this->m_currentEvent->has_left_curves()) {
     // In case the current event has no left subcurves incident to it, we have
     // to locate a place for it in the status line.
     CGAL_PRINT(" - handling special case " << std::endl);
     this->_handle_event_without_left_curves();
-    
+
     Status_line_iterator sl_pos = this->m_status_line_insert_hint;
-    
+
     if (this->m_is_event_on_above) {
       // The current event point starts at the interior of a subcurve that
       // already exists in the status line (this may also indicate an overlap).
@@ -103,8 +103,8 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
         // intersection.
         CGAL_assertion(this->m_currentEvent->is_action());
         this->m_currentEvent->set_weak_intersection();
-      }  
-      
+      }
+
       // Obtain the subcurve that contains the current event, and add it to
       // the left curves incident to the event.
       Subcurve* sc = static_cast<Subcurve*>(*(this->m_status_line_insert_hint));
@@ -117,13 +117,13 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
       // If necessary, add the subcurves as a right incident curve as well.
       // We also check for overlaps.
       bool is_overlap = _add_curve_to_right(this->m_currentEvent, sc);
-      
+
       this->m_traits->split_2_object()(last_curve,
-                                       this->m_currentEvent->point(), 
+                                       this->m_currentEvent->point(),
                                        sub_cv1, sub_cv2);
-      
-      ++(this->m_status_line_insert_hint); 
-      
+
+      ++(this->m_status_line_insert_hint);
+
       if (is_overlap) {
         // Handle overlaps.
         this->m_visitor->before_handle_event(this->m_currentEvent);
@@ -138,9 +138,9 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
       return;
     }
   }
-    
+
   CGAL_PRINT("left curves before sorting: " << std::endl);
-  CGAL_SL_DEBUG(if (this->m_currentEvent->left_curves_begin() != 
+  CGAL_SL_DEBUG(if (this->m_currentEvent->left_curves_begin() !=
                     this->m_currentEvent->left_curves_end() )
                 {
                   this->m_currentEvent->Print();
@@ -148,24 +148,24 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
   _fix_overlap_subcurves();
   this->_sort_left_curves();
   this->m_visitor->before_handle_event(this->m_currentEvent);
-  
+
   CGAL_PRINT("left curves after sorting: " << std::endl);
-  CGAL_SL_DEBUG(if (this->m_currentEvent->left_curves_begin() != 
+  CGAL_SL_DEBUG(if (this->m_currentEvent->left_curves_begin() !=
                     this->m_currentEvent->left_curves_end() )
                 {
                   this->m_currentEvent->Print();
                 });
-  
+
   // Check if the curve should be removed for good.
-  bool remove_for_good = false; 
-  
-  Event_subcurve_iterator left_iter = 
+  bool remove_for_good = false;
+
+  Event_subcurve_iterator left_iter =
     this->m_currentEvent->left_curves_begin();
 
   while (left_iter != this->m_currentEvent->left_curves_end()) {
-    Subcurve* leftCurve = *left_iter; 
-    
-    if ((Event*)leftCurve->right_event() == this->m_currentEvent) {  
+    Subcurve* leftCurve = *left_iter;
+
+    if ((Event*)leftCurve->right_event() == this->m_currentEvent) {
       // we are done with that subcurve (current event point is his right
       // end point) so we remove it from the status line for good.
       remove_for_good = true;
@@ -174,21 +174,21 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_left_curves()
     else {
       // curren event splits the subcurve.
       const X_monotone_curve_2& lastCurve = leftCurve->last_curve();
-      
+
       this->m_traits->split_2_object()(lastCurve, this->m_currentEvent->point(),
                                        sub_cv1, sub_cv2);
       this->m_visitor->add_subcurve(sub_cv1, leftCurve);
       leftCurve->set_last_curve(sub_cv2);
     }
     ++left_iter;
-    
-    //remove curve from the status line (also checks intersection 
+
+    //remove curve from the status line (also checks intersection
     //between the neighbouring curves,only if the curve is removed for good)
-    _remove_curve_from_status_line(leftCurve, remove_for_good);    
+    _remove_curve_from_status_line(leftCurve, remove_for_good);
   }
   CGAL_PRINT("Handling left curve END" << std::endl);
 }
-  
+
 //-----------------------------------------------------------------------------
 // Handle the subcurves to the right of the current event point.
 //
@@ -199,18 +199,18 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
   CGAL_PRINT("Handling right curves (");
   CGAL_SL_DEBUG(this->PrintEvent(this->m_currentEvent));
   CGAL_PRINT(")\n");
-  
+
   if (! this->m_currentEvent->has_right_curves()) return;
-  
+
   // Loop over the curves to the right of the status line and handle them:
-  // - If we are at the beginning of the curve, we insert it to the status 
+  // - If we are at the beginning of the curve, we insert it to the status
   //   line, then we look if it intersects any of its neighbors.
   // - If we are at an intersection point between two curves, we add them
   //   to the status line and attempt to intersect them with their neighbors
-  // - We also check to see if the two intersect again to the right of the 
+  // - We also check to see if the two intersect again to the right of the
   //   point.
-  
-  Event_subcurve_iterator currentOne = 
+
+  Event_subcurve_iterator currentOne =
     this->m_currentEvent->right_curves_begin();
   Event_subcurve_iterator rightCurveEnd =
     this->m_currentEvent->right_curves_end();
@@ -221,14 +221,14 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
     this->m_statusLine.insert_before(this->m_status_line_insert_hint, 
                                      *currentOne);
   ((Subcurve*)(*currentOne))->set_hint(slIter);
-  
+
   CGAL_SL_DEBUG(this->PrintStatusLine());
-  if (slIter != this->m_statusLine.begin()) { 
+  if (slIter != this->m_statusLine.begin()) {
     //  get the previous curve in the y-str
     Status_line_iterator prev = slIter; --prev;
     _intersect(static_cast<Subcurve*>(*prev), static_cast<Subcurve*>(*slIter));
   }
-  
+
   Event_subcurve_iterator prevOne = currentOne;
   ++currentOne;
   while (currentOne != rightCurveEnd) {
@@ -236,9 +236,9 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
     slIter = this->m_statusLine.insert_before
       (this->m_status_line_insert_hint, *currentOne);
     ((Subcurve*)(*currentOne))->set_hint(slIter);
-    
+
     CGAL_SL_DEBUG(this->PrintStatusLine());
-    
+
     // If the two curves used to be neighbours before, we do not need to
     // intersect them again.
     if (!this->m_currentEvent->are_left_neighbours
@@ -249,11 +249,11 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_handle_right_curves()
 
     prevOne = currentOne;
     ++currentOne;
-  }        
-      
+  }
+
   CGAL_SL_DEBUG(this->PrintStatusLine());
-  
-  //the next Subcurve at the status line 
+
+  //the next Subcurve at the status line
   ++slIter;
   if (slIter != this->m_statusLine.end())
     _intersect(static_cast<Subcurve*>(*prevOne),
@@ -278,7 +278,7 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
       *iter = curve;
       return false;
     }
-    
+
     if ((curve)->has_common_leaf(*iter)) {
       std::list<Base_subcurve*>  list_of_sc;
       curve->distinct_nodes(*iter, std::back_inserter(list_of_sc));
@@ -289,12 +289,12 @@ _add_curve_to_right(Event* event, Subcurve* curve, bool overlap_exist)
       return true;
     }
   }
-  std::pair<bool, Event_subcurve_iterator> pair_res = 
+  std::pair<bool, Event_subcurve_iterator> pair_res =
     event->add_curve_to_right(curve, this->m_traits);
 
-    
+
   if (! pair_res.first) return false;   // no overlap occurs
-  
+
   _handle_overlap(event, curve, pair_res.second, overlap_exist);
 
   // Inidicate that an overlap has occured:
@@ -313,9 +313,9 @@ _remove_curve_from_status_line(Subcurve* leftCurve, bool remove_for_good)
   CGAL_SL_DEBUG(this->PrintStatusLine());
   CGAL_SL_DEBUG(leftCurve->Print());
 
-  Status_line_iterator sliter = leftCurve->hint(); 
-  this->m_status_line_insert_hint = sliter; 
-  ++(this->m_status_line_insert_hint); 
+  Status_line_iterator sliter = leftCurve->hint();
+  this->m_status_line_insert_hint = sliter;
+  ++(this->m_status_line_insert_hint);
 
   if (! remove_for_good) {
     // the subcurve is not removed for good, so we dont need to intersect
@@ -327,7 +327,7 @@ _remove_curve_from_status_line(Subcurve* leftCurve, bool remove_for_good)
 
   // the subcurve will be removed for good from the stauts line, we need
   // to check for intersection between his two neighbours (below and above him)
-  // but we need to make sure that its not the first or last subcurve 
+  // but we need to make sure that its not the first or last subcurve
   // at the status line.
   CGAL_assertion(sliter != this->m_statusLine.end());
   Status_line_iterator lastOne = this->m_statusLine.end();
@@ -336,14 +336,14 @@ _remove_curve_from_status_line(Subcurve* leftCurve, bool remove_for_good)
   if (sliter != this->m_statusLine.begin() && sliter != lastOne) {
     Status_line_iterator prev = sliter; --prev;
     Status_line_iterator next = sliter; ++next;
-    
-    // intersect *next with  *prev 
+
+    // intersect *next with  *prev
     _intersect(static_cast<Subcurve*>(*prev),
                static_cast<Subcurve*>(*next));
   }
   this->m_statusLine.erase(sliter);
   CGAL_PRINT("remove_curve_from_status_line Done\n")
-} 
+}
 
 //-----------------------------------------------------------------------------
 // Compute intersections between the two given curves.
@@ -362,7 +362,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
   CGAL_PRINT("\n");
 
   CGAL_assertion(c1 != c2);
-  
+
   // look up for (c1,c2) in the table and insert if doesnt exist
   Curve_pair cv_pair(c1,c2);
   if (! (m_curves_pair_set.insert(cv_pair)).second )
@@ -370,7 +370,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
 
   float load_factor = static_cast<float>(m_curves_pair_set.size()) /
     m_curves_pair_set.bucket_count();
-  // after lot of benchemarks, keeping load_factor<=6 is optimal
+  // after lot of benchmarks, keeping load_factor<=6 is optimal
   if (load_factor > 6.0f)
     m_curves_pair_set.resize(m_curves_pair_set.size() * 6);
 
@@ -383,9 +383,9 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
     CGAL_PRINT("no intersection...\n");
     return; // no intersection at all
   }
-  
+
   // The two subCurves may start at the same point, in that case we ignore the
-  // first intersection point (if we got to that stage, they cannot  overlap).
+  // first intersection point (if we got to that stage, they cannot overlap).
 
   const Arr_parameter_space ps_x1 =
     this->m_traits->parameter_space_in_x_2_object()(c1->last_curve(),
@@ -401,7 +401,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
                                                     ARR_MIN_END);
 
   if ((ps_x1 == ps_x2) && (ps_y1 == ps_y2) &&
-      ((ps_x1 != ARR_INTERIOR) || (ps_y1 != ARR_INTERIOR)) && 
+      ((ps_x1 != ARR_INTERIOR) || (ps_y1 != ARR_INTERIOR)) &&
       this->m_traits->is_closed_2_object()(c1->last_curve(), ARR_MIN_END) &&
       this->m_traits->is_closed_2_object()(c2->last_curve(), ARR_MIN_END))
   {
@@ -473,8 +473,12 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
   if (vi != vi_end) {
     xp_point = object_cast<std::pair<Point_2, Multiplicity> >(&(*vi));
     if (xp_point != NULL) {
-      // Skip the intersection point if it is not larger than the current
-      // event.
+      // Skip the intersection point if it is not larger than the current event.
+      // To correctly do so, we have to set the ps_x and ps_y for xp_point->first
+      // in the comparison functor to ARR_INTERIOR (a non-boundary intersection
+      // must be be interior!)
+      this->m_queueEventLess.set_parameter_space_in_x(ARR_INTERIOR);
+      this->m_queueEventLess.set_parameter_space_in_y(ARR_INTERIOR);
       if (this->m_queueEventLess(xp_point->first, this->m_currentEvent) !=
           LARGER)
       {
@@ -503,11 +507,11 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_intersect(Subcurve* c1,
       // TODO EBEB: This code does not work with overlaps that reach the boundary
       Point_2 left_xp = this->m_traits->construct_min_vertex_2_object()(*icv);
       xp = this->m_traits->construct_max_vertex_2_object()(*icv);
-      
+
       sub_cv1 = *icv;
       _create_intersection_point(xp, 0 , c1 , c2);
       _create_intersection_point(left_xp, 0 , c1 ,c2, true);
-    } 
+    }
   }
 }
 
@@ -522,17 +526,18 @@ _create_intersection_point(const Point_2& xp,
                            Subcurve*& c1, Subcurve*& c2,
                            bool is_overlap)
 {
-  // insert the event and check if an event at this point already exists.   
-  const std::pair<Event*, bool>& pair_res = 
+  // insert the event and check if an event at this point already exists.
+  const std::pair<Event*, bool>& pair_res =
     this->_push_event(xp, Base_event::DEFAULT, ARR_INTERIOR, ARR_INTERIOR);
-    
+
+
   Event* e = pair_res.first;
-  if (pair_res.second) {                                   
+  if (pair_res.second) {
     CGAL_PRINT("A new event is created .. (" << xp << std::endl);
-    // a new event is creatd , which inidicates 
-    // that the intersection point cannot be one 
+    // a new event is created , which indicates
+    // that the intersection point cannot be one
     //of the end-points of two curves
-    
+
     e->set_intersection();
     
     this->m_visitor ->update_event(e, c1, c2, true); 
@@ -563,7 +568,7 @@ _create_intersection_point(const Point_2& xp,
         e->add_curve_pair_to_right(c1, c2);
       }
     }
-  } 
+  }
   else   // the event already exists, so we need to update it accordingly
   {
     CGAL_PRINT("Event already exists, updating.. (" << xp << std::endl);
@@ -612,14 +617,14 @@ template <typename Tr, typename Vis, typename Subcv, typename Evnt,
 void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_fix_overlap_subcurves()
 {
   CGAL_assertion(this->m_currentEvent->has_left_curves());
-  
-  Event_subcurve_iterator leftCurveIter = 
+
+  Event_subcurve_iterator leftCurveIter =
     this->m_currentEvent->left_curves_begin();
 
   //special treatment for Subcuves that store overlaps
   while (leftCurveIter != this->m_currentEvent->left_curves_end()) {
     Subcurve* leftCurve = *leftCurveIter;
-  
+
     // we check if the subcurve store overlap and current event is its
     // right end point.
     if ((Event*)leftCurve->right_event() == this->m_currentEvent) {
@@ -630,7 +635,7 @@ void Sweep_line_2<Tr, Vis, Subcv, Evnt, Alloc>::_fix_overlap_subcurves()
         _fix_finished_overlap_subcurve(orig_sc_1);
         _fix_finished_overlap_subcurve(orig_sc_2);
       }
-    }     
+    }
     ++leftCurveIter;
   }
 }
@@ -654,12 +659,12 @@ _handle_overlap(Event* event,
 {
   // An overlap occurs:
   CGAL_PRINT("Overlap detected at right insertion...\n");
-  
+
   X_monotone_curve_2 overlap_cv;
   if (overlap_exist) overlap_cv = sub_cv1;
   else {
     // compute the overlap.
-    std::vector<Object>  obj_vec; 
+    std::vector<Object>  obj_vec;
     vector_inserter vit(obj_vec);
     this->m_traits->intersect_2_object()(curve->last_curve(),
                                          (*iter)->last_curve(),
@@ -704,7 +709,7 @@ _handle_overlap(Event* event,
     this->m_traits->parameter_space_in_x_2_object()(overlap_cv, ARR_MIN_END);
   Arr_parameter_space  ps_y_l =
     this->m_traits->parameter_space_in_y_2_object()(overlap_cv, ARR_MIN_END);
-  
+
   CGAL_assertion(ps_x_l != ARR_RIGHT_BOUNDARY);
   if ((ps_x_l == ARR_INTERIOR) && (ps_y_l == ARR_INTERIOR)) {
     // The left end of the overlapping subcurve is regular point, so in case
@@ -752,29 +757,29 @@ _handle_overlap(Event* event,
   // Set the two events' attribute to overlap.
   event -> set_overlap();
   //right_end -> set_overlap();
-  
+
   // Remove curve, *iter from the left curves of end_overlap event
   right_end->remove_curve_from_left(curve);
   right_end->remove_curve_from_left(*iter);
-  
+
   // Add overlap_sc to the left curves
   right_end->add_curve_to_left(overlap_sc);
   
   // sets the two originating subcurves of overlap_sc
   overlap_sc -> set_originating_subcurve1(*iter);
-  overlap_sc -> set_originating_subcurve2(curve);  
+  overlap_sc -> set_originating_subcurve2(curve);
 
   // If one of the originating subcurves (or both), does not end
   // at the right end of the overlap, add them to the right subcurves
   // of the event associated with the right end of the overlap.
   if ((Event*)curve->right_event() != right_end)
     _add_curve_to_right(right_end, curve);
-  
+
   if ((Event*)(*iter)->right_event() != right_end)
     _add_curve_to_right(right_end, (*iter));
 
   this->m_visitor->found_overlap(curve, *iter, overlap_sc);
-  
+
   // Replace current sub-curve (*iter) with the new sub-curve
   (*iter) = overlap_sc;
 }
@@ -782,7 +787,7 @@ _handle_overlap(Event* event,
 //-----------------------------------------------------------------------------
 // Fix a subcurve that represents an overlap.
 // sc - some originating subcurve of a aubcurve that stores an overlap
-// notice thah this function is recursive since an originating subcurve of 
+// notice thah this function is recursive since an originating subcurve of
 // an overlap can be itself a subcurve that stores overlap and so on.
 template <typename Tr, typename Vis, typename Subcv, typename Evnt,
           typename Alloc>
@@ -798,7 +803,7 @@ _fix_finished_overlap_subcurve(Subcurve* sc)
                                      this->m_currentEvent->point(),
                                      sub_cv1, sub_cv2);
     sc->set_last_curve(sub_cv2);
-    
+
     this->m_currentEvent->set_weak_intersection();
     this->m_visitor ->update_event(this->m_currentEvent,(Subcurve*)sc);
     return;
@@ -808,7 +813,7 @@ _fix_finished_overlap_subcurve(Subcurve* sc)
     // sc does not store an overlap, we are done
     return;
 
-  // sc is a subcurve that stores overlap, we have to continue with the 
+  // sc is a subcurve that stores overlap, we have to continue with the
   // recursion and deal with his two originating subcurves recursively.
   Subcurve* orig_sc_1 = (Subcurve*)sc->originating_subcurve1();
   Subcurve* orig_sc_2 = (Subcurve*)sc->originating_subcurve2();

@@ -1,4 +1,0 @@
-compare_x_near_limit 16 20 MIN_END SMALLER
-compare_x_near_limit 18 22 MIN_END SMALLER
-compare_x_near_limit 20 16 MIN_END LARGER
-compare_x_near_limit 20 20 MIN_END EQUAL
