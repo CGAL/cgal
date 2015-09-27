@@ -1149,12 +1149,12 @@ protected:
       }
 
       //collect for reuse/removal all inner and outer ccbs
-      BOOST_FOREACH(void* ptr, _face(*it)->outer_ccbs)
+      BOOST_FOREACH(void* ptr, _face(*it)->_outer_ccbs())
         outer_ccbs_to_remove.push_back( static_cast<typename Aos_2::Dcel::Halfedge*>(ptr)->outer_ccb() );
-      BOOST_FOREACH(void* ptr, _face(*it)->inner_ccbs)
+      BOOST_FOREACH(void* ptr, _face(*it)->_inner_ccbs())
         inner_ccbs_to_remove.push_back( static_cast<typename Aos_2::Dcel::Halfedge*>(ptr)->inner_ccb() );
-      _face(*it)->outer_ccbs.clear();
-      _face(*it)->inner_ccbs.clear();
+      _face(*it)->_outer_ccbs().clear();
+      _face(*it)->_inner_ccbs().clear();
     }
 
     // accessor for  low-level arrangement fonctionalities

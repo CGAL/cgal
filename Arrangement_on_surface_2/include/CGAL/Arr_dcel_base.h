@@ -279,10 +279,8 @@ protected:
   };
 
   int                          flags;      // Face flags.
-public:
   Outer_ccbs_container         outer_ccbs; // The outer CCBs of the faces.
   Inner_ccbs_container         inner_ccbs; // The inner CCBs of the face.
-protected:
   Isolated_vertices_container  iso_verts;  // The isolated vertices inside
                                            // the face.
 
