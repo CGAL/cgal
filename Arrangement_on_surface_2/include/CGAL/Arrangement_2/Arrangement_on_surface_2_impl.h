@@ -4333,17 +4333,16 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
                        Are_all_sides_oblivious_category()));
       }
     }
-
-    // swapping?
-    if (swap_he1_he2) {
-      // swap all entries
-      std::swap(he1, he2);
-      std::swap(ic1, ic2);
-      std::swap(oc1, oc2);
-      std::swap(f1 , f2);
-      // not needed below here std::swap(local_mins1, local_mins2);
-      std::swap(signs1, signs2);
-    }
+  }
+  // swapping?
+  if (swap_he1_he2) {
+    // swap all entries
+    std::swap(he1, he2);
+    std::swap(ic1, ic2);
+    std::swap(oc1, oc2);
+    std::swap(f1 , f2);
+    // not needed below here std::swap(local_mins1, local_mins2);
+    std::swap(signs1, signs2);
   }
 
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE
