@@ -1158,6 +1158,9 @@ protected:
       get_base(*it)->inner_ccbs.clear();
     }
 
+    // accessor for  low-level arrangement fonctionalities
+    CGAL::Arr_accessor<Aos_2> accessor(*arr);
+
     // update halfedge ccb pointers
     for (Halfedge_iterator itr = arr->halfedges_begin(); itr != arr->halfedges_end(); ++itr)
     {
@@ -1179,7 +1182,7 @@ protected:
         if (h->is_flooding_on_inner_ccb())
         {
           typename Aos_2::Dcel::Inner_ccb* inner_ccb = inner_ccbs_to_remove.empty()?
-            arr->_dcel().new_inner_ccb():inner_ccbs_to_remove.back();
+            accessor.new_inner_ccb():inner_ccbs_to_remove.back();
           if ( !inner_ccbs_to_remove.empty() ) inner_ccbs_to_remove.pop_back();
 
           Halfedge_handle hstart=h;
@@ -1210,20 +1213,11 @@ protected:
     }
 
     //remove no longer used edges, vertices and faces
-    BOOST_FOREACH(typename Aos_2::Dcel::Vertex_iterator v, vertices_to_remove)
-      arr->_dcel().delete_vertex( get_base(v) );
-
-    BOOST_FOREACH(Halfedge_handle e, edges_to_remove)
-      arr->_dcel().delete_edge( get_base(e) );
-
-    BOOST_FOREACH(Face_handle f, faces_to_remove)
-      arr->_dcel().delete_face( get_base(f) );
-
-    BOOST_FOREACH(typename Aos_2::Dcel::Outer_ccb* ccb, outer_ccbs_to_remove)
-      arr->_dcel().delete_outer_ccb(ccb);
-
-    BOOST_FOREACH(typename Aos_2::Dcel::Inner_ccb* ccb, inner_ccbs_to_remove)
-      arr->_dcel().delete_inner_ccb(ccb);
+    accessor.delete_vertices( vertices_to_remove );
+    accessor.delete_edges( edges_to_remove );
+    accessor.delete_faces( faces_to_remove );
+    accessor.delete_outer_ccbs( outer_ccbs_to_remove );
+    accessor.delete_inner_ccbs( inner_ccbs_to_remove );
   }
 
 
