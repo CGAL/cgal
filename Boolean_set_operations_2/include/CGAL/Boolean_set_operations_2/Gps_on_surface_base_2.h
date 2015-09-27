@@ -936,19 +936,19 @@ protected:
   }
 
   typename Aos_2::Dcel::Halfedge*
-  get_base(Halfedge_handle h)
+  _halfedge(Halfedge_handle h)
   {
     return static_cast<typename Aos_2::Dcel::Halfedge*>(&(*h));
   }
 
   typename Aos_2::Dcel::Vertex*
-  get_base(Vertex_handle v)
+  _vertex(Vertex_handle v)
   {
     return static_cast<typename Aos_2::Dcel::Vertex*>(&(*v));
   }
 
   typename Aos_2::Dcel::Face*
-  get_base(Face_handle f)
+  _face(Face_handle f)
   {
     return static_cast<typename Aos_2::Dcel::Face*>(&(*f));
   }
@@ -1107,12 +1107,12 @@ protected:
       non_redundant_edges.push_back(non_redundant_edges.front());
 
       //update vertex halfedge
-      get_base(vi)->set_halfedge(get_base(non_redundant_edges.back()));
+      _vertex(vi)->set_halfedge(_halfedge(non_redundant_edges.back()));
       for (std::size_t i=0; i<nb_edges; ++i)
       {
         Halfedge_handle h1 = non_redundant_edges[i], h2=non_redundant_edges[i+1];
         if ( h1->next()->twin()!=h2)
-          get_base(h1)->set_next(get_base(h2->twin()));
+          _halfedge(h1)->set_next(_halfedge(h2->twin()));
       }
     }
 
@@ -1135,13 +1135,12 @@ protected:
                                     it_end=uf_faces.end(); it!=it_end; ++it)
     {
       typename UF_faces::handle master=uf_faces.find(it);
-      //remove faces that are not the master of their set
+      //remove faces that are not the master of their set (but the unbounded face)
       if ( master!=it)
       {
-        // update the unbounded pointer of the face to be kept
-        if (get_base(*it)->is_unbounded())
+        // force to keep the unbounded face
+        if (_face(*it)->is_unbounded())
         {
-          // force to keep the unbounded face
           (*master)->uf_handle=it;
           faces_to_remove.push_back(*master);
         }
@@ -1150,12 +1149,12 @@ protected:
       }
 
       //collect for reuse/removal all inner and outer ccbs
-      BOOST_FOREACH(void* ptr, get_base(*it)->outer_ccbs)
+      BOOST_FOREACH(void* ptr, _face(*it)->outer_ccbs)
         outer_ccbs_to_remove.push_back( static_cast<typename Aos_2::Dcel::Halfedge*>(ptr)->outer_ccb() );
-      BOOST_FOREACH(void* ptr, get_base(*it)->inner_ccbs)
+      BOOST_FOREACH(void* ptr, _face(*it)->inner_ccbs)
         inner_ccbs_to_remove.push_back( static_cast<typename Aos_2::Dcel::Halfedge*>(ptr)->inner_ccb() );
-      get_base(*it)->outer_ccbs.clear();
-      get_base(*it)->inner_ccbs.clear();
+      _face(*it)->outer_ccbs.clear();
+      _face(*it)->inner_ccbs.clear();
     }
 
     // accessor for  low-level arrangement fonctionalities
@@ -1187,13 +1186,13 @@ protected:
 
           Halfedge_handle hstart=h;
           do{
-            get_base(h)->set_inner_ccb(inner_ccb);
+            _halfedge(h)->set_inner_ccb(inner_ccb);
             h->set_new_ccb_assigned();
             h=h->next();
           }while(hstart!=h);
-          f->add_inner_ccb(inner_ccb,get_base(h));
-          inner_ccb->set_halfedge(get_base(h));
-          inner_ccb->set_face(get_base(f));
+          f->add_inner_ccb(inner_ccb,_halfedge(h));
+          inner_ccb->set_halfedge(_halfedge(h));
+          inner_ccb->set_face(_face(f));
         }
         else{
           CGAL_assertion(!outer_ccbs_to_remove.empty());
@@ -1201,13 +1200,13 @@ protected:
           outer_ccbs_to_remove.pop_back();
           Halfedge_handle hstart=h;
           do{
-            get_base(h)->set_outer_ccb(outer_ccb);
+            _halfedge(h)->set_outer_ccb(outer_ccb);
             h->set_new_ccb_assigned();
             h=h->next();
           }while(hstart!=h);
-          f->add_outer_ccb(outer_ccb,get_base(h));
-          outer_ccb->set_halfedge(get_base(h));
-          outer_ccb->set_face(get_base(f));
+          f->add_outer_ccb(outer_ccb,_halfedge(h));
+          outer_ccb->set_halfedge(_halfedge(h));
+          outer_ccb->set_face(_face(f));
         }
       }
     }
