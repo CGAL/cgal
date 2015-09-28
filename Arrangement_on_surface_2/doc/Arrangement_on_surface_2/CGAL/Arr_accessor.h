@@ -156,8 +156,7 @@ bool is_on_inner_boundary (Halfedge_const_handle he) const;
 
 /*!
 creates a new vertex an associates it with the point `p`. 
-It is the user's responsibility that there is no existing vertex already 
-associated with `p`. 
+\pre There is no existing vertex already associated with `p`. 
 */ 
 Vertex_handle create_vertex (const Point_2& p); 
 
@@ -167,7 +166,7 @@ inserts the curve `c` as a new hole (inner component) of the face
 `res` is the comparison result between these two end-vertices. 
 The function returns a handle for one of the new halfedges 
 corresponding to the inserted curve, directed from `v1` to `v2`. 
-\pre It is the user's responsibility that `v1` and `v2` are associated with `c`'s endpoints, that they lie of `f`'s interior and that and that they have no incident edges. 
+\pre `v1` and `v2` are associated with `c`'s endpoints, that they lie of `f`'s interior and that and that they have no incident edges. 
 */ 
 Halfedge_handle insert_in_face_interior_ex (const X_monotone_curve_2& c, 
 Face_handle f, 
@@ -185,7 +184,7 @@ an isolated vertex `v`,
 where `res` is the comparison result between `pred->target()` and `v`. 
 The function returns a handle for one of the new halfedges directed from 
 `pred->target()` to `v`. 
-\pre It is the user's responsibility that `pred->target()` and `v` are associated with `c`'s endpoints and that and that `v` has no incident edges. 
+\pre `pred->target()` and `v` are associated with `c`'s endpoints and that and that `v` has no incident edges. 
 */ 
 Halfedge_handle insert_from_vertex_ex (const X_monotone_curve_2& c, 
 Halfedge_handle pred, 
@@ -203,7 +202,7 @@ target vertices) and returns a handle for the halfedge directed from
 `pred1->target()` to `pred2->target()`. 
 The output flag `new_face` indicates whether a new face has been created 
 following the insertion of the new curve. 
-\pre It is the user's responsibility that `pred1->target()` and `pred2->target()` are associated with `c`'s endpoints and that if a new face is created, then `is_inside_new_face (pred1, pred2, c)` is `true`. 
+\pre `pred1->target()` and `pred2->target()` are associated with `c`'s endpoints and that if a new face is created, then `is_inside_new_face (pred1, pred2, c)` is `true`. 
 */ 
 Halfedge_handle insert_at_vertices_ex (const X_monotone_curve_2& c, 
 Halfedge_handle pred1, 
@@ -213,14 +212,14 @@ bool& new_face);
 
 /*!
 inserts `v` as an isolated vertex inside `f`. 
-\pre It is the user's responsibility that `v->point()` is contained in the interior of the given face. 
+\pre `v->point()` is contained in the interior of the given face. 
 */ 
 void insert_isolated_vertex (Face_handle f, Vertex_handle v); 
 
 /*!
 moves the given hole from the interior of the face `f1` inside the 
 face `f2`. 
-\pre It is the user's responsibility that `hole` is currently contained in `f1` and should be moved to `f2`. 
+\pre `hole` is currently contained in `f1` and should be moved to `f2`. 
 */ 
 void move_hole (Face_handle f1, Face_handle f2, 
 Ccb_halfedge_circulator hole); 
@@ -228,7 +227,7 @@ Ccb_halfedge_circulator hole);
 /*!
 moves the given isolated vertex from the interior of the face `f1` 
 inside the face `f2`. 
-\pre It is the user's responsibility that `v` is indeed an isolated vertex currently contained in `f1` and should be moved to `f2`. 
+\pre `v` is indeed an isolated vertex currently contained in `f1` and should be moved to `f2`. 
 */ 
 bool move_isolated_vertex (Face_handle f1, Face_handle f2, 
 Vertex_handle v); 
@@ -258,7 +257,8 @@ void relocate_isolated_vertices_in_new_face (Halfedge_handle he);
 modifies the point associated with the vertex `v` (the point may be 
 geometrically different than the one currently associated with `v`). 
 The function returns a handle to the modified vertex (same as `v`). 
-\pre It is the user's responsibility that no other arrangement vertex is already associated with `p`. 
+\pre No other arrangement vertex is already associated with `p`. 
+\pre The topology of the arrangement does not change after the vertex point is modified.
 */ 
 Vertex_handle modify_vertex_ex (Vertex_handle v, 
 const Point_2& p); 
@@ -268,7 +268,7 @@ modifies the \f$ x\f$-monotone curve associated with the edge `e` (the
 curve `c` may be geometrically different than the one currently 
 associated with `e`). 
 The function returns a handle to the modified edge (same as `e`). 
-\pre It is the user's responsibility that the interior of `c` is disjoint from all existing arrangement vertices and edges. 
+\pre The interior of `c` is disjoint from all existing arrangement vertices and edges. 
 */ 
 Halfedge_handle modify_edge_ex (Halfedge_handle e, 
 const X_monotone_curve_2& c); 
@@ -279,7 +279,7 @@ x-monotone curves `c1` and `c2` with the resulting edges, such that
 `c1` connects `he->source()` with `p` and `c2` connects 
 `p` with `he->target()`. The function return a handle to the split 
 halfedge directed from `he->source()` to the split point `p`. 
-\pre It is the user's responsibility that the endpoints of `c1` and `c2` correspond to `p` and to `he`'s end-vertices, as indicated above. 
+\pre The endpoints of `c1` and `c2` correspond to `p` and to `he`'s end-vertices, as indicated above. 
 */ 
 Halfedge_handle split_edge_ex (Halfedge_handle he, 
 const Point_2& p, 
@@ -292,7 +292,7 @@ x-monotone curves `c1` and `c2` with the resulting edges, such that
 `c1` connects `he->source()` with `v` and `c2` connects 
 `v` with `he->target()`. The function return a handle to the split 
 halfedge directed from `he->source()` to `v`. 
-\pre It is the user's responsibility that the endpoints of `c1` and `c2` correspond to `v` and to `he`'s end-vertices, as indicated above. It is also assumed that `v` has no incident edges. 
+\pre The endpoints of `c1` and `c2` correspond to `v` and to `he`'s end-vertices, as indicated above. It is also assumed that `v` has no incident edges. 
 */ 
 Halfedge_handle split_edge_ex (Halfedge_handle he, 
 Vertex_handle v, 
