@@ -516,10 +516,10 @@ public:
   typedef Inner_ccb                    Hole;
 
 private:
-  typedef Cast_function_object<void*, Halfedge*>        _Ccb_to_halfedge_cast;
-  // typedef Cast_function_object<const void*,
-  //                              const Halfedge*>  _Const_ccb_to_halfedge_cast;
-  typedef _Ccb_to_halfedge_cast _Const_ccb_to_halfedge_cast;
+  typedef Cast_function_object<void*, Halfedge*> _Ccb_to_halfedge_cast;
+  // typedef Cast_function_object<const void*, const Halfedge*>
+  //                                             _Const_ccb_to_halfedge_cast;
+  typedef _Ccb_to_halfedge_cast                  _Const_ccb_to_halfedge_cast;
 
 public:
 
@@ -667,6 +667,26 @@ public:
   /*! Erase an isloated vertex from the face. */
   void erase_isolated_vertex(Isolated_vertex *iv)
   { this->iso_verts.erase(iv->iterator().current_iterator()); }
+
+  /*! Move all isolated vertices from the face to another. */
+  Isolated_vertex_iterator splice_isolated_vertices(Arr_face& other)
+  {
+    const bool was_empty = this->iso_verts.empty();
+    typename Base::Isolated_vertices_container::iterator previous =
+      this->iso_verts.end();
+    if (!was_empty) --previous;
+    this->iso_verts.splice(this->iso_verts.end(), other.iso_verts);
+    if (was_empty) previous = this->iso_verts.begin();
+    else ++previous;
+    for (typename Base::Isolated_vertices_container::iterator it = previous;
+         it != this->iso_verts.end(); ++it)
+    {
+      Isolated_vertex* iv = static_cast<Vertex*>(*it)->isolated_vertex();
+      iv->set_iterator(it);
+      iv->set_face(this);
+    }
+    return previous;
+  }
 };
 
 /*! \class

@@ -1908,6 +1908,13 @@ protected:
   void _move_isolated_vertex(DFace* from_face, DFace* to_face, DVertex* v);
 
   /*!
+   * Move all isolated vertices from one face to another.
+   * \param from_face The face currently containing the isolated vertices.
+   * \param to_face The face into which we should move the isolated vertices.
+   */
+  void _move_all_isolated_vertices(DFace* from_face, DFace* to_face);
+
+  /*!
    * Create a new vertex and associate it with the given point.
    * \param p The point.
    * \return A pointer to the newly created vertex.

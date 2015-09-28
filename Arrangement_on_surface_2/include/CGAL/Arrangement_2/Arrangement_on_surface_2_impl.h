@@ -2096,6 +2096,33 @@ _move_isolated_vertex(DFace* from_face, DFace* to_face, DVertex* v)
 }
 
 //-----------------------------------------------------------------------------
+// Move all isolated vertices from one face to another.
+//
+template <typename GeomTraits, typename TopTraits>
+void Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_move_all_isolated_vertices(DFace* from_face, DFace* to_face)
+{
+  // Comment EFEF 2015-09-28: The following loop and the loop at the end of this
+  // function should be replaced with a pair of notifiers, respectively,
+  // function_notify_before_move_all_isolated_vertices();
+  // function_notify_after_move_all_isolated_vertices();
+  DIso_vertex_iter iv_it = from_face->isolated_vertices_begin();
+  while (iv_it != from_face->isolated_vertices_end()) {
+    DVertex* v = &(*iv_it++);
+    Vertex_handle vh(v);
+    _notify_before_move_isolated_vertex(Face_handle(from_face),
+                                        Face_handle(to_face),
+                                        vh);
+  }
+  iv_it = to_face->splice_isolated_vertices(*from_face);
+  while (iv_it != to_face->isolated_vertices_end()) {
+    DVertex* v = &(*iv_it++);
+    Vertex_handle vh(v);
+    _notify_after_move_isolated_vertex(vh);
+  }
+}
+
+//-----------------------------------------------------------------------------
 // Create a new vertex and associate it with the given point.
 //
 template <typename GeomTraits, typename TopTraits>
@@ -4874,16 +4901,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     if (oc1->halfedge() == he1)
       oc1->set_halfedge(prev1);
 
-    // Move the isolated vertices inside f2 to f1.
-    DIso_vertex_iter iv_it = f2->isolated_vertices_begin();
-    DIso_vertex_iter iv_to_move;
-    while (iv_it != f2->isolated_vertices_end()) {
-      // We increment the isolated vertices itrator before moving the vertex,
-      // because this operation invalidates the iterator.
-      iv_to_move  = iv_it;
-      ++iv_it;
-      _move_isolated_vertex(f2, f1, &(*iv_to_move));
-    }
+    _move_all_isolated_vertices(f2, f1); // move all iso vertices from f2 to f1
 
     // If he1 or he2 are the incident halfedges to their target vertices,
     // we replace them by the appropriate predecessors.
@@ -4987,17 +5005,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     curr->set_inner_ccb(ic1);
 
   _move_all_inner_ccb(f2, f1);          // move the inner CCBs from f2 to f1
-
-  // Move the isolated vertices inside f2 to f1.
-  DIso_vertex_iter iv_it = f2->isolated_vertices_begin();
-  DIso_vertex_iter iv_to_move;
-  while (iv_it != f2->isolated_vertices_end()) {
-    // We increment the isolated vertices itrator before moving the vertex,
-    // because this operation invalidates the iterator.
-    iv_to_move  = iv_it;
-    ++iv_it;
-    _move_isolated_vertex(f2, f1, &(*iv_to_move));
-  }
+  _move_all_isolated_vertices(f2, f1);  // move all iso vertices from f2 to f1
 
   // Notice that f2 will be merged with f1, but its boundary will still be
   // a hole inside this face. In case he1 is a represantative of this hole,
