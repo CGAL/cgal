@@ -15,19 +15,22 @@
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="3" column="0">
-    <widget class="QCheckBox" name="m_genSmooth">
+    <widget class="QCheckBox" name="m_genShells">
      <property name="text">
-      <string>Also generate the smoothed version</string>
+      <string>Generate separate shells</string>
      </property>
      <property name="checked">
       <bool>true</bool>
      </property>
     </widget>
    </item>
-   <item row="2" column="0">
-    <widget class="QLabel" name="label_3">
+   <item row="5" column="0">
+    <widget class="QCheckBox" name="m_genSmooth">
      <property name="text">
-      <string>Iterations</string>
+      <string>Also generate the smoothed version</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
      </property>
     </widget>
    </item>
@@ -38,14 +41,7 @@
      </property>
     </widget>
    </item>
-   <item row="0" column="0">
-    <widget class="QLabel" name="label">
-     <property name="text">
-      <string>Average neighborhood size</string>
-     </property>
-    </widget>
-   </item>
-   <item row="4" column="2">
+   <item row="6" column="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="standardButtons">
       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
@@ -85,6 +81,27 @@
      </property>
      <property name="value">
       <number>30</number>
+     </property>
+    </widget>
+   </item>
+   <item row="0" column="0">
+    <widget class="QLabel" name="label">
+     <property name="text">
+      <string>Average neighborhood size</string>
+     </property>
+    </widget>
+   </item>
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Iterations</string>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QCheckBox" name="m_forceManifold">
+     <property name="text">
+      <string>Force manifold output</string>
      </property>
     </widget>
    </item>
