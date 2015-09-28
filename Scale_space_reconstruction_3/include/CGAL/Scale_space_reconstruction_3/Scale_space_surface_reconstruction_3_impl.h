@@ -970,7 +970,6 @@ fix_nonmanifold_vertices() {
     {
       Triple_iterator begin = _shells[i];
       Triple_iterator end = (i+1 == _shells.size ()) ? _surface.end () : _shells[i+1];
-      Triple_iterator before = begin;
       
       Tripleset tmp;
       tmp.splice (tmp.end(), _surface, begin, end);
@@ -978,9 +977,6 @@ fix_nonmanifold_vertices() {
       tmp.sort();
       _shells[i] = tmp.begin ();      
       _surface.splice(end, tmp, tmp.begin(), tmp.end());
-      ++ before;
-
-
     }
 
   unsigned int nb_facets_removed = 0;
