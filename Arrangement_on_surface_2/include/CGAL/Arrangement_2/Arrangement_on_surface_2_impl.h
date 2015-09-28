@@ -2006,6 +2006,32 @@ _move_inner_ccb(DFace* from_face, DFace* to_face, DHalfedge* he)
 }
 
 //-----------------------------------------------------------------------------
+// Move all inner CCBs (holes) from one face to another.
+//
+template <typename GeomTraits, typename TopTraits>
+void Arrangement_on_surface_2<GeomTraits, TopTraits>::
+_move_all_inner_ccb(DFace* from_face, DFace* to_face)
+{
+  // Comment EFEF 2015-09-28: The following loop and the loop at the end of this
+  // function should be replaced with a pair of notifiers, respectively,
+  // function_notify_before_move_all_inner_ccb();
+  // function_notify_after_move_all_inner_ccb();
+  DInner_ccb_iter ic_it = from_face->inner_ccbs_begin();
+  while (ic_it != from_face->inner_ccbs_end()) {
+    DHalfedge* he = *ic_it++;
+    Ccb_halfedge_circulator circ = (Halfedge_handle(he))->ccb();
+    _notify_before_move_inner_ccb(Face_handle(from_face), Face_handle(to_face),
+                                  circ);
+  }
+  ic_it = to_face->splice_inner_ccbs(*from_face);
+  while (ic_it != to_face->inner_ccbs_end()) {
+    DHalfedge* he = *ic_it++;
+    Ccb_halfedge_circulator circ = (Halfedge_handle(he))->ccb();
+    _notify_after_move_inner_ccb(circ);
+  }
+}
+
+//-----------------------------------------------------------------------------
 // Insert the given vertex as an isolated vertex inside the given face.
 //
 template <typename GeomTraits, typename TopTraits>
@@ -4841,18 +4867,7 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
         curr->set_outer_ccb(oc1);
     }
 
-    // Move the holes inside f2 to f1.
-    DInner_ccb_iter ic_it = f2->inner_ccbs_begin();
-    DInner_ccb_iter ic_to_move;
-
-    while (ic_it != f2->inner_ccbs_end()) {
-      // We increment the holes itrator before moving the hole, because
-      // this operation invalidates the iterator.
-      ic_to_move  = ic_it;
-      ++ic_it;
-
-      _move_inner_ccb(f2, f1, *ic_to_move);
-    }
+    _move_all_inner_ccb(f2, f1);        // move all inner CCBs from f2 to f1
 
     // In case he1, which is about to be deleted, is a representative
     // halfedge of outer component of f1, we replace it by its predecessor.
@@ -4862,13 +4877,11 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     // Move the isolated vertices inside f2 to f1.
     DIso_vertex_iter iv_it = f2->isolated_vertices_begin();
     DIso_vertex_iter iv_to_move;
-
     while (iv_it != f2->isolated_vertices_end()) {
       // We increment the isolated vertices itrator before moving the vertex,
       // because this operation invalidates the iterator.
       iv_to_move  = iv_it;
       ++iv_it;
-
       _move_isolated_vertex(f2, f1, &(*iv_to_move));
     }
 
@@ -4973,29 +4986,16 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   for (curr = he2->next(); curr != he2; curr = curr->next())
     curr->set_inner_ccb(ic1);
 
-  // Move the inner CCBs inside f2 to f1.
-  DInner_ccb_iter ic_it = f2->inner_ccbs_begin();
-  DInner_ccb_iter ic_to_move;
-
-  while (ic_it != f2->inner_ccbs_end()) {
-    // We increment the holes itrator before moving the hole, because
-    // this operation invalidates the iterator.
-    ic_to_move  = ic_it;
-    ++ic_it;
-
-    _move_inner_ccb(f2, f1, *ic_to_move);
-  }
+  _move_all_inner_ccb(f2, f1);          // move the inner CCBs from f2 to f1
 
   // Move the isolated vertices inside f2 to f1.
   DIso_vertex_iter iv_it = f2->isolated_vertices_begin();
   DIso_vertex_iter iv_to_move;
-
   while (iv_it != f2->isolated_vertices_end()) {
     // We increment the isolated vertices itrator before moving the vertex,
     // because this operation invalidates the iterator.
     iv_to_move  = iv_it;
     ++iv_it;
-
     _move_isolated_vertex(f2, f1, &(*iv_to_move));
   }
 

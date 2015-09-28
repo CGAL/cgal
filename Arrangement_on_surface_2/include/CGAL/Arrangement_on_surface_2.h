@@ -1886,6 +1886,13 @@ protected:
   void _move_inner_ccb(DFace* from_face, DFace* to_face, DHalfedge* he);
 
   /*!
+   * Move all inner CCBs (holes) from one face to another.
+   * \param from_face The face currently containing the components.
+   * \param to_face The face into which we should move the components.
+   */
+  void _move_all_inner_ccb(DFace* from_face, DFace* to_face);
+
+  /*!
    * Insert the given vertex as an isolated vertex inside the given face.
    * \param f The face that should contain the isolated vertex.
    * \param v The isolated vertex.

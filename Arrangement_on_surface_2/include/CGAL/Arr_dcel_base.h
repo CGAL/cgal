@@ -596,6 +596,26 @@ public:
   void erase_inner_ccb(Inner_ccb* ic)
   { this->inner_ccbs.erase(ic->iterator().current_iterator()); }
 
+  /*! Move all inner CCBs (holes) from the face to another. */
+  Inner_ccb_iterator splice_inner_ccbs(Arr_face& other)
+  {
+    const bool was_empty = this->inner_ccbs.empty();
+    typename Base::Inner_ccbs_container::iterator previous =
+      this->inner_ccbs.end();
+    if (!was_empty) --previous;
+    this->inner_ccbs.splice(this->inner_ccbs.end(), other.inner_ccbs);
+    if (was_empty) previous = this->inner_ccbs.begin();
+    else ++previous;
+    for (typename Base::Inner_ccbs_container::iterator it = previous;
+         it != this->inner_ccbs.end(); ++it)
+    {
+      Inner_ccb* ccb = static_cast<Halfedge*>(*it)->inner_ccb();
+      ccb->set_iterator(it);
+      ccb->set_face(this);
+    }
+    return previous;
+  }
+
   // Backward compatibility:
   size_t number_of_holes() const { return number_of_inner_ccbs(); }
   Hole_iterator holes_begin() { return inner_ccbs_begin(); }
