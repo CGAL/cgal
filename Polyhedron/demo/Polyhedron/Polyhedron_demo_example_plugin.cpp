@@ -1,3 +1,4 @@
+//! \file Polyhedron_demo_example_plugin.cpp
 #include <QApplication>
 #include <QMainWindow>
 #include <QAction>
