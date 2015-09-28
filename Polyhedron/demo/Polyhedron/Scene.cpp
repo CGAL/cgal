@@ -51,7 +51,6 @@ Scene::Scene(QObject* parent)
 Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
-
     Bbox bbox_before = bbox();
     m_entries.push_back(item);
     connect(item, SIGNAL(itemChanged()),
@@ -60,7 +59,6 @@ Scene::addItem(Scene_item* item)
             this, SLOT(callDraw()));
     if(bbox_before + item->bbox() != bbox_before)
 { Q_EMIT updated_bbox(); }
-
     QStandardItemModel::beginResetModel();
     QList<QStandardItem*> list;
     for(int i=0; i<5; i++)
@@ -73,7 +71,6 @@ Scene::addItem(Scene_item* item)
         index_map[list.at(i)->index()] = m_entries.size() -1;
     }
     viewItem = list.at(0);
-
 
     Q_EMIT updated();
     QStandardItemModel::endResetModel();
@@ -114,6 +111,7 @@ Scene::erase(int index)
         return -1;
 
     Scene_item* item = m_entries[index];
+
   Q_EMIT itemAboutToBeDestroyed(item);
     delete item;
     m_entries.removeAt(index);
@@ -123,28 +121,31 @@ Scene::erase(int index)
   QStandardItemModel::beginResetModel();
   Q_EMIT updated();
   QStandardItemModel::endResetModel();
-
     if(--index >= 0)
         return index;
     if(!m_entries.isEmpty())
         return 0;
     return -1;
+
 }
 
 int
 Scene::erase(QList<int> indices)
 {
+    clear();
+    index_map.clear();
     QList<Scene_item*> to_be_removed;
-
+    viewItem = invisibleRootItem();
     int max_index = -1;
     Q_FOREACH(int index, indices) {
         if(index < 0 || index >= m_entries.size())
             continue;
+
         max_index = (std::max)(max_index, index);
+
         Scene_item* item = m_entries[index];
         to_be_removed.push_back(item);
     }
-
 
 
   Q_FOREACH(Scene_item* item, to_be_removed) {
@@ -152,8 +153,20 @@ Scene::erase(QList<int> indices)
     delete item;
     m_entries.removeAll(item);
   }
-
   selected_item = -1;
+  for(int j =0; j<m_entries.size(); j++)
+  {
+          QList<QStandardItem*> list;
+          for(int i=0; i<5; i++)
+          {
+              list<<new QStandardItem();
+              list.at(i)->setEditable(false);
+          }
+          viewItem->appendRow(list);
+          for(int i=0; i<5; i++){
+              index_map[list.at(i)->index()] = j;
+          }
+  }
   QStandardItemModel::beginResetModel();
   Q_EMIT updated();
   QStandardItemModel::endResetModel();

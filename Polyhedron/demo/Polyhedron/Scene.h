@@ -122,7 +122,6 @@ public Q_SLOTS:
 
   void setSelectedItemIndex(int i)
   {
-    //qDebug()<<"selected item = "<<i;
     selected_item = i;
   }
 
@@ -149,7 +148,6 @@ public Q_SLOTS:
   void setSelectedItemsList(QList<int> l )
   {
     selected_items_list = l;
-    qDebug()<<l;
   };
 
   // Accessors (setters)

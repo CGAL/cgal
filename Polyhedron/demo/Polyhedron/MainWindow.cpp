@@ -889,6 +889,7 @@ void MainWindow::selectSceneItem(int i)
   else {
     QItemSelection s =
       proxyModel->mapSelectionFromSource(scene->createSelection(i));
+
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);
   }
@@ -944,7 +945,6 @@ void MainWindow::selectAll()
 int MainWindow::getSelectedSceneItemIndex() const
 {
   QModelIndexList selectedRows = sceneView->selectionModel()->selectedIndexes();
-
   if(selectedRows.size() != 5)
     return -1;
   else {
@@ -1290,6 +1290,7 @@ bool MainWindow::on_actionErase_triggered()
 {
   int next_index = scene->erase(scene->selectionIndices());
   selectSceneItem(next_index);
+  qDebug()<<"Remaining values : "<<scene->index_map.values();
   return next_index >= 0;
 }
 
