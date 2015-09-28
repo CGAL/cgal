@@ -1057,7 +1057,7 @@ fix_nonmanifold_vertices() {
 		}
 
 	      typename Map_uf_sets::iterator largest = map_h2f.end ();
-	      unsigned int nb_largest = 0;
+	      std::size_t nb_largest = 0;
 	      for (typename Map_uf_sets::iterator ufit = map_h2f.begin (); ufit != map_h2f.end (); ++ ufit)
 		{
 		  std::size_t size = ufit->second.size ();
