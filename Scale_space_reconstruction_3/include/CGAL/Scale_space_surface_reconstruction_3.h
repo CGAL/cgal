@@ -23,10 +23,6 @@
 #include <map>
 #include <vector>
 
-#include <boost/iterator/transform_iterator.hpp>
-#include <boost/iterator/zip_iterator.hpp>
-#include <boost/iterator/counting_iterator.hpp>
-
 #include <CGAL/utility.h>
 #include <CGAL/is_iterator.h>
 #include <CGAL/Default.h>
@@ -47,18 +43,6 @@
 #include <boost/mpl/and.hpp>
 
 namespace CGAL {
-
-
-  struct Null_function {
-    typedef int result_type;
-    template <typename T>
-    int operator()(const T&) const
-    {
-      return 0;
-    }
-
-  };
-
   
 
 /// computes a triangulated surface mesh interpolating a point set.
@@ -119,13 +103,13 @@ class Scale_space_surface_reconstruction_3 {
 
 public:
 	typedef typename Gt::Point_3                        Point;          ///< defines the point type.
-typedef boost::tuple<Point,int>                           Point_and_int;
+  typedef boost::tuple<Point, std::size_t>                           Point_and_size_t;
 
 private:
     // Searching for neighbors.
     typedef Search_traits_3< Gt >                       Traits_base;
-typedef CGAL::Search_traits_adapter<Point_and_int,
-  CGAL::Nth_of_tuple_property_map<0, Point_and_int>,
+typedef CGAL::Search_traits_adapter<Point_and_size_t,
+  CGAL::Nth_of_tuple_property_map<0, Point_and_size_t>,
   Traits_base>                                              Search_traits;
     typedef Orthogonal_k_neighbor_search< Search_traits >
                                                         Static_search;
@@ -340,11 +324,12 @@ public:
 	void insert( InputIterator begin, InputIterator end,
                      typename boost::enable_if< CGAL::is_iterator<InputIterator> >::type* = NULL ) {
 #endif // DOXYGEN_RUNNING
-                Null_function zero;
-		_tree.insert(
-                             boost::make_zip_iterator(boost::make_tuple( begin, boost::make_transform_iterator(begin, zero))),
-                             boost::make_zip_iterator(boost::make_tuple( end , boost::make_transform_iterator(end, zero))));
-                _points.insert(_points.end(), begin, end);
+         	_tree.reserve (std::distance(begin,end) + _points.size());
+		
+		_points.insert(_points.end(), begin, end);
+		
+                while(begin!=end)
+                  _tree.insert( boost::make_tuple(*(begin ++),0) );
 	}
     
     /// inserts a point into the scale-space at the current scale.

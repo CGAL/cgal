@@ -498,9 +498,11 @@ increase_scale( unsigned int iterations ) {
 
     for( unsigned int iter = 0; iter < iterations; ++iter ) {
 
-      _tree.clear();
-        _tree.insert(boost::make_zip_iterator(boost::make_tuple( _points.begin(), boost::counting_iterator<int>(0))),
-                     boost::make_zip_iterator(boost::make_tuple( _points.end() , boost::counting_iterator<int>(static_cast<int>(_points.size())))) );
+        _tree.clear();
+	_tree.reserve (_points.size());
+
+	for (std::size_t i = 0; i < _points.size (); ++ i)
+	  _tree.insert (boost::make_tuple(_points[i], i));
 
         if( !_tree.is_built() )
             _tree.build();
