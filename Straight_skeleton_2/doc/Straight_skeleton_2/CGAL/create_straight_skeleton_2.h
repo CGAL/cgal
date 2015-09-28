@@ -80,23 +80,23 @@ the straight skeleton `s`.
 <OL> 
 <LI>`K` is any \cgal kernel. 
 <LI>`FT` is any number type implicitly convertible to `K::FT`. 
-<LI>`Straight_skeleton` is `Straight_skeleton_2<K2>`. 
+<LI>`StraightSkeleton` is `Straight_skeleton_2<K2>`. 
 If `K != K2` the straight skeleton is converted to `Straight_skeleton_2<K>`. 
 <LI>`Polygon` is a model of `VertexContainer_2`. 
 If this first template parameter is omitted, `Polygon_2` is used. 
 </OL> 
 
-\sa `create_interior_skeleton_2` 
-\sa `create_exterior_skeleton_2` 
+\sa `create_interior_straight_skeleton_2` 
+\sa `create_exterior_straight_skeleton_2` 
 \sa `create_interior_skeleton_and_offset_polygons_2` 
 \sa `create_exterior_skeleton_and_offset_polygons_2` 
 
 
 */
-template<class Polygon, class FT, class Straight_skeleton, class K>
+template<class Polygon, class FT, class StraightSkeleton, class K>
 std::vector< boost::shared_ptr<Polygon> >
 create_offset_polygons_2 ( FT offset
-, Straight_skeleton const& s,
+, StraightSkeleton const& s,
 , K const& k = Exact_predicates_inexact_constructions_kernel
 ) ;
 
