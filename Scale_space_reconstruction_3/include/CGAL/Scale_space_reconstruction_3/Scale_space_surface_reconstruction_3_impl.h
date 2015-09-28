@@ -257,7 +257,7 @@ mark_opposite_handled( Facet f )  {
 	? f
 	: _shape->mirror_facet (f);
 
-      typename std::map<Facet, unsigned int>::iterator
+      typename std::map<Facet, std::size_t>::iterator
 	search = _map_f2b.find (fac);
 
       if (search == _map_f2b.end ())
@@ -1062,7 +1062,7 @@ fix_nonmanifold_vertices() {
 	      unsigned int nb_largest = 0;
 	      for (typename Map_uf_sets::iterator ufit = map_h2f.begin (); ufit != map_h2f.end (); ++ ufit)
 		{
-		  unsigned int size = ufit->second.size ();
+		  std::size_t size = ufit->second.size ();
 		  if (size > nb_largest)
 		    {
 		      nb_largest = size;

@@ -248,7 +248,7 @@ private:
     unsigned int _index;
 
   std::vector<Bubble> _bubbles;
-  std::map<Facet, unsigned int> _map_f2b;
+  std::map<Facet, std::size_t> _map_f2b;
   
     typedef std::vector<Point> Pointset;
     Pointset _points;
