@@ -18,7 +18,7 @@ typedef Kernel::FT FT;
 void test (std::vector<Point>& input,
 	   int result0 = 1, int result1 = 1, int result2 = 1, int result3 = 1, int result4 = 1)
 {
-  typename std::vector<Point>::iterator it = 
+  std::vector<Point>::iterator it = 
     CGAL::hierarchy_simplify_point_set (input.begin (), input.end (), 1);
   if (result0 > 0 && std::distance (input.begin (), it) != (result0))
     exit (EXIT_FAILURE);
@@ -39,7 +39,7 @@ void test (std::vector<Point>& input,
 
   it = CGAL::hierarchy_simplify_point_set (input.begin (), input.end (),
 					   CGAL::Identity_property_map<Point>(),
-					   std::numeric_limits<unsigned int>::max(),
+					   (std::numeric_limits<unsigned int>::max)(),
 					   0.0001);
   if (result4 > 0 && std::distance (input.begin (), it) != (result4))
     exit (EXIT_FAILURE);
