@@ -40,6 +40,14 @@ typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 
+// Concurrency
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
+
 
 // Poisson reconstruction method:
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
@@ -123,7 +131,7 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
     std::cerr << "Surface meshing...\n";
 
     // Computes average spacing
-    Kernel::FT average_spacing = CGAL::compute_average_spacing(points.begin(), points.end(),
+    Kernel::FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points.begin(), points.end(),
                                                        6 /* knn = 1 ring */);
 
     // Gets one point inside the implicit surface

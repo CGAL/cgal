@@ -22,7 +22,6 @@
 #include <fstream>
 #include <cassert>
 
-
 // ----------------------------------------------------------------------------
 // Types
 // ----------------------------------------------------------------------------
@@ -33,6 +32,13 @@ typedef CGAL::Simple_cartesian<float> Kernel;
 // Simple geometric types
 typedef Kernel::FT FT;
 typedef Kernel::Point_3 Point;
+
+// Concurrency
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
 
 
 // ----------------------------------------------------------------------------
@@ -46,7 +52,7 @@ void test_average_spacing(std::deque<Point>& points, // input point set
   std::cerr << "Computes average spacing to k nearest neighbors (k="<< nb_neighbors << ")... ";
   CGAL::Timer task_timer; task_timer.start();
 
-  FT average_spacing = CGAL::compute_average_spacing(points.begin(), points.end(), nb_neighbors);
+  FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points.begin(), points.end(), nb_neighbors);
   std::cout << average_spacing << std::endl;
 
   long memory = CGAL::Memory_sizer().virtual_size();

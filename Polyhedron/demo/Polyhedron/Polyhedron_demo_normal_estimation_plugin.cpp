@@ -25,6 +25,13 @@
 #endif
 #endif
 
+// Concurrency
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
 class Polyhedron_demo_normal_estimation_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -145,7 +152,7 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalEstimation_trigger
       std::cerr << "Estimates normal direction by PCA (k=" << dialog.directionNbNeighbors() <<")...\n";
 
       // Estimates normals direction.
-      CGAL::pca_estimate_normals(points->begin(), points->end(),
+      CGAL::pca_estimate_normals<Concurrency_tag>(points->begin(), points->end(),
                                 CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
                                 dialog.directionNbNeighbors());
 
@@ -163,7 +170,7 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalEstimation_trigger
       std::cerr << "Estimates normal direction by Jet Fitting (k=" << dialog.directionNbNeighbors() <<")...\n";
 
       // Estimates normals direction.
-      CGAL::jet_estimate_normals(points->begin(), points->end(),
+      CGAL::jet_estimate_normals<Concurrency_tag>(points->begin(), points->end(),
                                 CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
                                 dialog.directionNbNeighbors());
 
