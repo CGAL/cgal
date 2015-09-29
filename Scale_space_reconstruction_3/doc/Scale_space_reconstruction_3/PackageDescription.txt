@@ -32,7 +32,7 @@
 
 ## Classes ##
 
-- `CGAL::Scale_space_surface_reconstruction_3<Gt,FS,Sh,wA,Ct>`
+- `CGAL::Scale_space_surface_reconstruction_3<Gt,FS,wA,Ct>`
 - `CGAL::Weighted_PCA_approximation_3<Kernel>`
 
 */
