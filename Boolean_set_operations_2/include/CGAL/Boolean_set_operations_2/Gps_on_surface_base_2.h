@@ -36,6 +36,7 @@
 #include <CGAL/Boolean_set_operations_2/Gps_merge.h>
 #include <CGAL/Boolean_set_operations_2/Gps_polygon_simplifier.h>
 #include <CGAL/Boolean_set_operations_2/Ccb_curve_iterator.h>
+#include <CGAL/Union_find.h>
 
 #include <boost/foreach.hpp>
 
