@@ -43,6 +43,7 @@ public:
             Scene_interface* scene_interface,
             Messages_interface* m)
   {
+      Q_UNUSED(m);
       mw = mainWindow;
       scene = scene_interface;
       actions_map["actionMVC"] = new QAction("MVC", mw);

@@ -45,6 +45,7 @@ public:
             Scene_interface* scene_interface,
             Messages_interface* m)
   {
+      Q_UNUSED (m)
       mw = mainWindow;
       scene = scene_interface;
       actions_map["actionFitPlane"] = new QAction("Fit Plane", mw);
