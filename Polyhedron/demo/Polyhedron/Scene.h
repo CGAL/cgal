@@ -2,10 +2,8 @@
 #define SCENE_H
 #include "config.h"
 #include "Scene_config.h"
-
 #include "Scene_interface.h"
 #include "Scene_draw_interface.h"
-
 #include <QtOpenGL/qgl.h>
 #include <QStandardItemModel>
 #include <QString>
@@ -21,6 +19,7 @@
 #include <cmath>
 #include <boost/variant.hpp>
 #include "Scene_item.h"
+#include "Scene_group_item.h"
 class QEvent;
 class QMouseEvent;
 namespace GlSplat { class SplatRenderer; }
@@ -108,8 +107,8 @@ public:
   QVariant headerData ( int section, ::Qt::Orientation orientation, int role = ::Qt::DisplayRole ) const;
   ::Qt::ItemFlags flags ( const QModelIndex & index ) const;
   bool setData(const QModelIndex &index, const QVariant &value, int role);
-
-
+  QList<Scene_group_item*> group_entries() const ;
+  QList<Scene_item*> item_entries() const ;
   // auxiliary public function for QMainWindow
   QItemSelection createSelection(int i);
   QItemSelection createSelectionAll();
@@ -176,6 +175,7 @@ private:
   QStandardItem* viewItem;
   typedef QList<Scene_item*> Entries;
   Entries m_entries;
+  QList<Scene_group_item*> m_group_entries;
   int selected_item;
   QList<int> selected_items_list;
   int item_A;

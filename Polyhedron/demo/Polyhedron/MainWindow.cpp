@@ -159,9 +159,9 @@ MainWindow::MainWindow(QWidget* parent)
   // setup the sceneview: delegation and columns sizing...
   sceneView->setItemDelegate(delegate);
 
- /* sceneView->header()->setStretchLastSection(false);
-  sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-  sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+ //sceneView->header()->setStretchLastSection(false);
+  /* sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+   sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   sceneView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
   sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
@@ -1290,7 +1290,6 @@ bool MainWindow::on_actionErase_triggered()
 {
   int next_index = scene->erase(scene->selectionIndices());
   selectSceneItem(next_index);
-  qDebug()<<"Remaining values : "<<scene->index_map.values();
   return next_index >= 0;
 }
 

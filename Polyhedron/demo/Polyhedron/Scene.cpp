@@ -4,7 +4,6 @@
 
 #include "config.h"
 #include "Scene.h"
-#include "Scene_item.h"
 
 #include <QObject>
 #include <QMetaObject>
@@ -888,7 +887,15 @@ Scene::Bbox Scene::bbox() const
     }
     return bbox;
 }
+QList<Scene_group_item*> Scene::group_entries() const
+{
+    return m_group_entries;
+}
 
+QList<Scene_item*> Scene::item_entries() const
+{
+    return m_entries;
+}
 #include "Scene_find_items.h"
 
 namespace scene { namespace details {
