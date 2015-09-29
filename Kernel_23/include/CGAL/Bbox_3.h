@@ -212,7 +212,12 @@ inline
 std::istream&
 operator>>(std::istream &is, Bbox_3& b)
 {
-  double xmin, ymin, zmin, xmax, ymax, zmax;
+    double xmin = std::numeric_limits<double>::min();
+    double ymin = std::numeric_limits<double>::min();
+    double zmin = std::numeric_limits<double>::min();
+    double xmax = std::numeric_limits<double>::max();
+    double ymax = std::numeric_limits<double>::max();
+    double zmax = std::numeric_limits<double>::max();
 
   switch(is.iword(IO::mode))
   {
