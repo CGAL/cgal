@@ -7,4 +7,4 @@ Surface_mesh_parameterization
 Surface_mesh_skeletonization
 Surface_modeling
 Jet_fitting_3
-Surface_reconstruction_points_3
+Poisson_surface_reconstruction_3
