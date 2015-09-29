@@ -56,7 +56,7 @@ void test_wlop_simplify_and_regularize(
 
   // Make room for sample points
   std::vector<Point> points_sampled;
-  points_sampled.resize(points.size() * (retain_percentage / 100.));
+  points_sampled.resize(static_cast<std::size_t>(points.size() * (retain_percentage / 100.)));
 
   output.clear();
   // Run algorithm 
