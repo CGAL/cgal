@@ -434,12 +434,12 @@ void MainWindow::setMenus(QString name, QString parentName, QAction* a )
                 menuName= name;
             else
             {
-                int i=0;
-                for(i; name.at(i)!='/'; i++)
+                int i;
+                for(i = 0; name.at(i)!='/'; i++)
                     menuName.append(name.at(i));
                 i++;
-                for(i; i<name.size(); i++)
-                    subMenuName.append(name.at(i));
+                for(int j = i; j<name.size(); j++)
+                    subMenuName.append(name.at(j));
                 setMenus(subMenuName, menuName, a);
             }
 
