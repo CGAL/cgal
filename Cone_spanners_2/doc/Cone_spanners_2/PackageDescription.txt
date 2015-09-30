@@ -19,12 +19,14 @@
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Weisheng Si and Quincy Tse}
-\cgalPkgDesc{This package provides functors for constructing two kinds of cone-based spanners (Yao graph and Theta graph) 
-given a set of vertices on the plane. Both exact and inexact constructions are implemented. In exact construction, 
-the cone boundaries are calculated using roots of polynomials (requiring `CORE::Expr` or `LEDA::real`). 
-In inexact construction, the cone boundaries are calculated using an approximate Pi (3.14159265358979323846), 
-which is still accurate enough for most applications. Moreover, for visualization purpose, this package provides 
-a global function to generate the data and script files used by Gnuplot to plot the constructed graphs. }
+\cgalPkgDesc{This package provides functors for constructing two kinds of cone-based spanners: 
+Yao graph and Theta graph, given a set of vertices on the plane. Both exact and inexact constructions are 
+supported. In exact construction, the cone boundaries are calculated using the roots of polynomials, 
+thus avoiding the use of \f$ \pi \f$, which cannot be represented exactly. 
+In inexact construction, the cone boundaries are calculated using the approximate \f$ \pi \f$
+value defined in \cgal, which is still accurate enough for most applications. 
+Moreover, for visualization purpose, this package provides a global function to 
+generate the data and script files used by Gnuplot to plot the constructed graphs. }
 \cgalPkgManuals{Chapter_ConeBasedSpanners,PkgConeBasedSpanners}
 \cgalPkgSummaryEnd
 

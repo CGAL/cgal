@@ -1,8 +1,9 @@
 /** @file theta_io.cpp
  * An example application that constructs a Theta graph exactly with an input vertex list,
  * and then generates the Gnuplot files for plotting the Theta graph.
+ *
+ * Authors: Weisheng Si and Quincy Tse, University of Western Sydney 
  */
-// authors: Weisheng Si and Quincy Tse, University of Western Sydney
 #include <cstdlib>
 #include <iostream>
 #include <fstream>

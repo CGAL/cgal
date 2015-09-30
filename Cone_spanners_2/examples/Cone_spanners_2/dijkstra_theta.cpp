@@ -1,8 +1,9 @@
 /** @file dijkstra_theta.cpp
  * An example application that constructs Theta graph first and then calculates 
  * the shortest paths on this graph by calling the Dijkstra's algorithm from BGL.
+ *
+ * Authors: Weisheng Si and Quincy Tse, University of Western Sydney 
  */
-// Authors: Weisheng Si and Quincy Tse, University of Western Sydney
 #include <cstdlib>
 #include <iostream>
 #include <fstream>
@@ -23,9 +24,9 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel   Kernel;
 typedef Kernel::Point_2                   Point_2;
 typedef Kernel::Direction_2               Direction_2;
 
-/** define the struct for edge property */
+/* define the struct for edge property */
 struct Edge_property {
-	/** record the Euclidean length of the edge */
+	/* record the Euclidean length of the edge */
 	double euclidean_length;
 };
 
@@ -72,7 +73,7 @@ int main(int argc, char ** argv) {
 	property_map<Graph, vertex_index_t>::type indexmap = get(vertex_index, g);
 	std::cout << "The index of source vertex is: " << get(indexmap, v0) << std::endl;
 
-	// calculating edge length in Euclidean metric and store them in the edge property
+	// calculating edge length in Euclidean distance and store them in the edge property
 	graph_traits<Graph>::edge_iterator ei, ei_end;  
 	for (boost::tie(ei, ei_end) = edges(g); ei != ei_end; ++ei) {
 		graph_traits<Graph>::edge_descriptor e = *ei;
