@@ -57,7 +57,7 @@ namespace MetaReconstruction
       }
   }
   
-  unsigned int scale_of_anisotropy (const Point_set& points)
+  unsigned int scale_of_anisotropy (const Point_set& points, double& size)
   {
     Tree tree(points.begin(), points.end());
     
@@ -111,6 +111,15 @@ namespace MetaReconstruction
     for (std::size_t i = 0; i < chosen.size(); ++ i)
       mean += chosen[i];
     mean /= chosen.size();
+    unsigned int aniso_scale = static_cast<unsigned int>(mean);
+
+    size = 0.;
+    for (std::size_t i = 0; i < subset.size (); ++ i)
+      {
+    	Neighbor_search search(tree, subset[i], aniso_scale);
+	size += std::sqrt ((-- search.end())->second);
+      }
+    size /= subset.size();
     
     return mean;
   }
@@ -171,9 +180,8 @@ namespace MetaReconstruction
     return chosen[chosen.size() / 2];
   }
 
-  void simplify_point_set (Point_set& points, unsigned int scale)
+  void simplify_point_set (Point_set& points, double size)
   {
-    double size = CGAL::compute_average_spacing (points.begin (), points.end (), scale);
     points.erase (CGAL::grid_simplify_point_set (points.begin (), points.end (), size),
 		  points.end ());
   }
@@ -258,16 +266,19 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 		<< (dialog.interpolate() ? " * Output shape passes through input points"
 		    : " * Output shape approximates input points") << std::endl;
 
+      Scene_points_with_normal_item* new_item = NULL;
       if (!(dialog.interpolate()))
 	{
-	  points = new Point_set();
+	  new_item = new Scene_points_with_normal_item();
+	  points = new_item->point_set();
 	  std::copy (pts_item->point_set()->begin(), pts_item->point_set()->end(),
 		     std::back_inserter (*points));
 	}
 
       std::cerr << "Analysing isotropy of point set... ";
       time.start();
-      unsigned int aniso_scale = MetaReconstruction::scale_of_anisotropy (*points);
+      double aniso_size;
+      unsigned int aniso_scale = MetaReconstruction::scale_of_anisotropy (*points, aniso_size);
       std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 
       bool isotropic = (aniso_scale == 6);
@@ -277,7 +288,7 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 	  std::cerr << "Correcting anisotropy of point set... ";
 	  time.restart();
 	  std::size_t prev_size = points->size ();
-	  MetaReconstruction::simplify_point_set (*points, aniso_scale);
+	  MetaReconstruction::simplify_point_set (*points, aniso_size);
 	  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	  std::cerr << " -> " << prev_size - points->size() << " point(s) removed ("
 		    << 100. * (prev_size - points->size()) / (double)(prev_size)
@@ -339,8 +350,19 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 	    }
 	}
 
-      if (!(dialog.interpolate()) && (noisy || isotropic))
-	delete points;
+      if (!(dialog.interpolate()) && (noisy || !isotropic))
+	{
+	  new_item->setName(QString("%1 (preprocessed)").arg(pts_item->name()));
+	  new_item->set_has_normals (pts_item->has_normals());
+	  new_item->setColor(pts_item->color());
+	  new_item->setRenderingMode(pts_item->renderingMode());
+	  new_item->setVisible(pts_item->visible());
+	  new_item->resetSelection();
+	  new_item->invalidate_buffers();
+
+	  scene->addItem(new_item);
+
+	}
 
       // default cursor
       QApplication::restoreOverrideCursor();
