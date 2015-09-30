@@ -6,6 +6,7 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QTextStream>
+#include <QDebug>
 
 #include "Viewer_interface.h"
 
@@ -46,17 +47,23 @@ void Camera_positions_list::addItem(QString text, QString data)
 void Camera_positions_list::on_upButton_pressed()
 {
   int row = m_listView->selectionModel()->currentIndex().row();
+  if(row!=0)
+  {
   m_model->insertRow(row-1, m_model->takeRow(row));
   m_listView->selectionModel()->setCurrentIndex(m_model->index(row-1, 0),
                                                 QItemSelectionModel::Clear);
+  }
 }
 
 void Camera_positions_list::on_downButton_pressed()
 {
   int row = m_listView->selectionModel()->currentIndex().row();
+  if(row!= m_listView->model()->rowCount()-1)
+  {
   m_model->insertRow(row+1, m_model->takeRow(row));
   m_listView->selectionModel()->setCurrentIndex(m_model->index(row+1, 0),
                                                 QItemSelectionModel::Clear);
+  }
 }
 
 void Camera_positions_list::on_minusButton_pressed()
