@@ -89,7 +89,7 @@ public:
 	 * This operator first places the `initial_direction` at the 
 	 * position pointed by `result`. Then, it calculates the remaining directions (cone boundaries)
 	 * and output them to `result` in the counterclockwise order.
-	 * Finally, the past-the-end iterator for the resulting directions is returned. 
+	 * Finally, the pass-the-end iterator for the resulting directions is returned. 
 	 *
 	 * \param cone_number The number of cones
 	 * \param initial_direction The direction of the first ray
@@ -130,15 +130,12 @@ class Compute_cone_boundaries_2<Exact_predicates_exact_constructions_kernel_with
 
 public:
 	/* Indicate the type of the cgal kernel. */
-    typedef  Exact_predicates_exact_constructions_kernel_with_sqrt                Kernel_type;
+    typedef  Exact_predicates_exact_constructions_kernel_with_sqrt  Kernel_type;
 
 private:
-    //typedef  typename Kernel_type::FT            FT;
-    //typedef  typename Kernel_type::Direction_2   Direction_2;
-	//typedef  typename Kernel_type::Aff_transformation_2   Transformation;
-    typedef  Exact_predicates_exact_constructions_kernel_with_sqrt::FT       FT;
-    typedef  Exact_predicates_exact_constructions_kernel_with_sqrt::Direction_2   Direction_2;
-	typedef  Exact_predicates_exact_constructions_kernel_with_sqrt::Aff_transformation_2   Transformation;
+    typedef  typename Kernel_type::FT            FT;
+    typedef  typename Kernel_type::Direction_2   Direction_2;
+	typedef  typename Kernel_type::Aff_transformation_2   Transformation;
 
 public:
 	/* No member variables in this class, so a Constructor is not needed. */

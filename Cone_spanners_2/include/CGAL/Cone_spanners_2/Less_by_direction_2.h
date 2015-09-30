@@ -43,7 +43,7 @@ namespace CGAL {
  *
  *  The ties are broken according to the direction of ccw90(D). 
  *  The way of breaking ties in this functor is intended to prevent the overlapping of cone boundaries.
- *  Resultantly, a vertex on the cw boundary will be considered to be inside this cone, 
+ *  As a result, a vertex on the cw boundary will be considered to be inside this cone, 
  *  while a vertex on the ccw boundary will not.
  *
  *  This function object is implemented using the function `CGAL::compare_signed_distance_to_line_2()`,

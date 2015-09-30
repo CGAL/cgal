@@ -56,8 +56,8 @@ public:
 	/*! Indicate the specific type of `boost::adjacency_list`. */
     typedef Graph_                           Graph_type;
 
-    typedef typename Geom_traits::Direction_2             Direction_2;
 private:
+    typedef typename Geom_traits::Direction_2             Direction_2;
     typedef typename Geom_traits::Point_2                 Point_2;
     typedef typename Geom_traits::Line_2                  Line_2;
     typedef Less_by_direction_2<Geom_traits, Graph_>      Less_by_direction;
@@ -98,10 +98,11 @@ public:
         compute_cones(k, initial_direction, rays.begin());
     }
 
-    /*! \brief Copy constructor.
+    /* \brief Copy constructor. Not needed.
        \param x  another Construct_yao_graph_2 object to copy from.
-     */
+
     Construct_yao_graph_2 (const Construct_yao_graph_2& x) : cone_number(x.cone_number), rays(x.rays) {}
+    */
 
     /*! 
 	  \brief Operator to construct a Yao graph.
@@ -142,12 +143,17 @@ public:
         return cone_number;
     }
 
-    /*! \brief returns the vector of the directions of the rays dividing the plane.
-     
-       \return a vector of Direction_2
-     */
-    const std::vector<Direction_2>& directions() const {
-        return rays;
+    /*! \brief outputs the directions in the vector rays to the iterator `result`.
+	       
+        \return the pass-the-end iterator of the vector `rays`.
+    */
+    template<class DirectionOutputIterator>
+    DirectionOutputIterator directions(DirectionOutputIterator result) {
+    typename std::vector<Direction_2>::iterator it;
+    for (it=rays.begin(); it!=rays.end(); it++) {
+            *result++ = *it;
+       }
+       return result;
     }
 
 protected:

@@ -2,9 +2,10 @@
 \ingroup PkgConeBasedSpannersConcepts
 \cgalConcept
 
-All convex hull and extreme point algorithms provided in \cgal are 
-parameterized with a traits class `Traits`, which defines the 
-primitives (objects and predicates) that the cone based spanner algorithms use. 
+The functors provided in this package for constructing
+cone-based spanners are parameterized with a traits class `Traits`, which defines the 
+primitives (predicates and construction objects) that the construction
+algorithms for those cone-based spanners use. 
 
 \cgalHasModel any model of a \cgal %kernel.
 
@@ -21,39 +22,82 @@ The point type.
 */ 
 typedef unspecified_type Point_2; 
 
+/*!
+The line type. 
+*/ 
+typedef unspecified_type Line_2; 
 
 /*!
-Predicate object type that must provide 
-`bool operator()(Point_2 p, Point_2 q, 
-Point_2 r,Point_2 s)`, which returns `true` iff 
-the signed distance from \f$ r\f$ to the line \f$ l_{pq}\f$ through \f$ p\f$ and \f$ q\f$ 
-is smaller than the distance from \f$ s\f$ to \f$ l_{pq}\f$. It is used to 
-compute the point right of a line with maximum unsigned distance to 
-the line. The predicate must provide a total order compatible 
-with convexity, <I>i.e.</I>, for any line segment \f$ s\f$ one of the 
-endpoints 
-of \f$ s\f$ is the smallest point among the points on \f$ s\f$, with respect to 
-the order given by `Less_signed_distance_to_line_2`. 
+The direction type. 
 */ 
-typedef unspecified_type Less_signed_distance_to_line_2; 
+typedef unspecified_type Direction_2; 
 
+/*!
+The affine transformation type. 
+*/ 
+typedef unspecified_type Aff_transformation_2; 
+
+/*!
+The polynomial type. When the cone angle \f$ \theta \f$ is in the form of 
+\f$ 2\pi / n \f$, where \f$ n \f$ is a positive integer, \f$ \sin(\theta) \f$ 
+and \f$ \cos(\theta) \f$ can be represented exactly by roots of polynomials.
+*/ 
+typedef unspecified_type Polynomial; 
 
 /// @} 
 
 
-
-/// \name Operations 
-/// The following member functions to create instances of the above predicate 
-/// object types must exist. 
+/// \name Functions 
+/// The following functions are needed to construct cone-based spanners.
 /// @{
 
+/*!
+  This function should return the k-th real root of an univariate polynomial, which is defined 
+  by the iterator range. It is needed in calculating cone boundaries exactly.
+  It is not needed if the cone bounaries are calculated inexactly, which uses
+  sin() and cos() instead.
+*/ 
+NT CGAL::root_of(int k, InputIterator begin, InputIterator end); 
 
 /*!
-
+  This function should return the square root of the argument `x`. 
+  It is defined if the argument type is a model of the `FieldWithSqrt` concept.
+  It is needed in calculating cone boundaries exactly.
 */ 
-Less_signed_distance_to_line_2 less_signed_distance_to_line_2_object(); 
+NT CGAL::sqrt(const NT &  x); 
 
+/*!
+  This function should compute the sine value of arg (measured in radians). 
+  It is needed in calculating cone boundaries inexactly.
+*/ 
+long double sin( long double arg );
 
+/*!
+  This function should compute the cosine value of arg (measured in radians). 
+  It is needed in calculating cone boundaries inexactly.
+*/ 
+long double cos( long double arg );
+
+/*!
+  This function should return the bisector of the two lines l1 and l2. 
+  And the bisector should have the direction of the vector which is the sum of 
+  the normalized directions of the two lines. 
+  This function requires that Kernel::RT supports the sqrt() operation. 
+  It is needed in constructing Theta graphs, not in constructing Yao graphs.
+*/ 
+CGAL::Line_2<Kernel> CGAL::bisector(const CGAL::Line_2<Kernel> &  l1,  
+		  const CGAL::Line_2<Kernel> &  l2);
+
+/*!
+  This function should return CGAL::LARGER iff the signed distance of p and l 
+  is larger than the signed distance of q and l, CGAL::SMALLER, iff it is smaller, 
+  and CGAL::EQUAL iff both are equal. 
+  It is needed in sorting the points on the plane based on a certain direction.
+*/ 
+Comparison_result  CGAL::compare_signed_distance_to_line(
+		               const CGAL::Line_2<Kernel> &l, 
+					   const CGAL::Point_2<Kernel> &p, 
+					   const CGAL::Point_2<Kernel> &q);
 /// @}
 
 }; /* end ConeBasedSpannerTraits */
