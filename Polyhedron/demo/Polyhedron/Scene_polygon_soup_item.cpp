@@ -551,7 +551,7 @@ Scene_polygon_soup_item::toolTip() const
   if(!soup)
     return QString();
 
-  return QObject::tr("<p><b>%1</b> (mode: %5, color: %6)<br />"
+  QString str = QObject::tr("<p><b>%1</b> (mode: %5, color: %6)<br />"
                      "<i>Polygons soup</i></p>"
                      "<p>Number of vertices: %2<br />"
                      "Number of polygons: %3</p>")
@@ -560,6 +560,8 @@ Scene_polygon_soup_item::toolTip() const
     .arg(soup->polygons.size())
     .arg(this->renderingModeName())
     .arg(this->color().name());
+    str += QString("<br />Number of isolated vertices : %1<br />").arg(getNbIsolatedvertices());
+    return str;
 }
 
 void

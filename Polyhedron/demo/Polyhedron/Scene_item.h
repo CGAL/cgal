@@ -92,7 +92,7 @@ public:
       nb_isolated_vertices = 0;
   }
   void setNbIsolatedvertices(int nb) { nb_isolated_vertices = nb;}
-  int getNbIsolatedvertices() {return nb_isolated_vertices;}
+  int getNbIsolatedvertices() const {return nb_isolated_vertices;}
   virtual ~Scene_item();
   virtual Scene_item* clone() const = 0;
 
