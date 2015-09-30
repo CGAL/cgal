@@ -120,10 +120,6 @@ VERSION_FILE="version_number"
 HTML_DIR="/u/agrion/geometrica/CGAL/Members/Releases"
 URL="http://cgal.inria.fr/CGAL/Members/Releases"
 
-# CGAL manual tool
-# Needed by the making of the public release
-CGAL_MANUAL=cgal_manual
-
 # SVN repository
 SVNCGAL="svn+ssh://scm.gforge.inria.fr/svn/cgal"
 
@@ -302,14 +298,6 @@ if [ -n "$DO_PUBLIC" ]; then
 
     echo -n $public_release_version > VERSION 2>&1
     cd ..
-
-    ## That was for the LaTeX installation documentation:
-    # cp -a ${SOURCES_DIR}/Installation/doc_tex .
-    # cp -a ${SOURCES_DIR}/Manual/doc_tex/Manual doc_tex
-    # pushd doc_tex
-    # "${CGAL_MANUAL}" -v -html installation_manual
-    # popd
-    # cp -a doc_html/* ${public_release_name}/doc_html
 
     rm -f "${public_release_name}".tar*
     tar -cf "${public_release_name}.tar" "${public_release_name}"
