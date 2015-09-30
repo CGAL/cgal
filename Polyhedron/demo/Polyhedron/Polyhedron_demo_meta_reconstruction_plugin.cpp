@@ -14,6 +14,40 @@
 
 #include "ui_Polyhedron_demo_meta_reconstruction_plugin.h"
 
+namespace MetaReconstruction
+{
+  
+  unsigned int scale_of_anisotropy (const Point_set& points)
+  {
+    unsigned int scale = 6;
+
+    for (; scale < 400; scale = static_cast<unsigned int>(scale * 1.5))
+      {
+	
+
+      }
+
+    
+    return 6;
+  }
+
+  
+  unsigned int scale_of_noise (const Point_set& points, unsigned int scale_min = 6)
+  {
+
+    return 6;
+  }
+
+  void simplify_point_set (const Point_set& points, unsigned int scale)
+  {
+
+  }
+
+  void smooth_point_set (const Point_set& points, unsigned int scale)
+  {
+
+  }
+}
 
 class Polyhedron_demo_meta_reconstruction_plugin_dialog : public QDialog, private Ui::MetaReconstructionOptionsDialog
 {
@@ -72,6 +106,9 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 
   if(pts_item)
     {
+      // Gets point set
+      Point_set* points = pts_item->point_set();
+
       //generate the dialog box to set the options
       Polyhedron_demo_meta_reconstruction_plugin_dialog dialog;
       if(!dialog.exec())
@@ -90,30 +127,36 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
       std::cout << "Analysis of input point set:" << std::endl;
       time.start();
 
-      // TODO: analyse if point set is noisy
-      bool noisy = false;
-      
       // TODO: analyse if point set is isotropic
-      bool isotropic = false;
+      unsigned int aniso_scale = MetaReconstruction::scale_of_anisotropy (*points);
+      bool isotropic = (aniso_scale > 6);
 
-
+      // TODO: analyse if point set is noisy
+      unsigned int noise_scale = MetaReconstruction::scale_of_noise (*points, aniso_scale);
+      bool noisy = (noise_scale > 6);
+      
       std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
+      
       if (!(dialog.interpolate()) && (noisy || isotropic))
 	{
+	  points = new Point_set();
+	  std::copy (pts_item->point_set()->begin(), pts_item->point_set()->end(),
+		     std::back_inserter (*points));
+	  
 	  std::cout << "Preprocessing:" << std::endl;
 	  time.restart();
 
-
-	  if (noisy)
-	    {
-	      // TODO: smooth point set
-	    }
 	  if (isotropic)
 	    {
 	      // TODO: simplify point set
+	      MetaReconstruction::simplify_point_set (*points, aniso_scale);
 	    }
-
+	  if (noisy)
+	    {
+	      // TODO: smooth point set
+	      MetaReconstruction::smooth_point_set (*points, noise_scale);
+	    }
 
 	  std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 	}
@@ -159,6 +202,8 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 	    }
 	}
 
+      if (!(dialog.interpolate()) && (noisy || isotropic))
+	delete points;
 
       // default cursor
       QApplication::restoreOverrideCursor();
