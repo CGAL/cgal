@@ -16,6 +16,7 @@
 #include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/grid_simplify_point_set.h>
+#include <CGAL/jet_smooth_point_set.h>
 
 #include "Scene_polygon_soup_item.h"
 #include "Scene_points_with_normal_item.h"
@@ -188,7 +189,7 @@ namespace MetaReconstruction
 
   void smooth_point_set (Point_set& points, unsigned int scale)
   {
-
+    CGAL::jet_smooth_point_set(points.begin(), points.end(), scale);
   }
 }
 
@@ -270,6 +271,14 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
       if (!(dialog.interpolate()))
 	{
 	  new_item = new Scene_points_with_normal_item();
+	  new_item->setName(QString("%1 (preprocessed)").arg(pts_item->name()));
+	  new_item->set_has_normals (pts_item->has_normals());
+	  new_item->setColor(pts_item->color());
+	  new_item->setRenderingMode(pts_item->renderingMode());
+	  new_item->setVisible(pts_item->visible());
+	  new_item->resetSelection();
+	  new_item->invalidate_buffers();
+
 	  points = new_item->point_set();
 	  std::copy (pts_item->point_set()->begin(), pts_item->point_set()->end(),
 		     std::back_inserter (*points));
@@ -342,6 +351,15 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 	    }
 	  else
 	    {
+	      if (!(new_item->has_normals()))
+		{
+		  std::cerr << "Estimation of normal vectors... ";
+		  time.restart();
+		  // TODO
+
+		  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+		}
+	      
 	      std::cerr << "Poisson reconstruction... ";
 	      time.restart();
 	      // TODO
@@ -350,18 +368,12 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 	    }
 	}
 
-      if (!(dialog.interpolate()) && (noisy || !isotropic))
+      if (!(dialog.interpolate()))
 	{
-	  new_item->setName(QString("%1 (preprocessed)").arg(pts_item->name()));
-	  new_item->set_has_normals (pts_item->has_normals());
-	  new_item->setColor(pts_item->color());
-	  new_item->setRenderingMode(pts_item->renderingMode());
-	  new_item->setVisible(pts_item->visible());
-	  new_item->resetSelection();
-	  new_item->invalidate_buffers();
-
-	  scene->addItem(new_item);
-
+	  if (noisy || !isotropic)
+	    scene->addItem(new_item);
+	  else
+	    delete new_item;
 	}
 
       // default cursor
