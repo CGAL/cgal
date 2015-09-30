@@ -14,6 +14,8 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Default_diagonalize_traits.h>
+#include <CGAL/compute_average_spacing.h>
+#include <CGAL/grid_simplify_point_set.h>
 
 #include "Scene_polygon_soup_item.h"
 #include "Scene_points_with_normal_item.h"
@@ -35,82 +37,27 @@ namespace MetaReconstruction
   typedef typename Neighbor_search::iterator Search_iterator;
 
   template <typename OutputIterator>
-  void generate_scales (const unsigned int scale_min, double factor,
-			OutputIterator out)
+  void generate_scales (OutputIterator out,
+			const unsigned int scale_min = 6,
+			const double factor = 1.15,
+			unsigned int nb_scales = 30)
   {
-    for (unsigned int scale = scale_min; scale < 400;
-	 scale = static_cast<unsigned int>(scale * factor))
-      *(out ++) = scale;
+    unsigned int prev = -1;
+    
+    for (unsigned int i = 0; i < nb_scales; ++ i)
+      {
+	unsigned int current = static_cast<unsigned int>(scale_min * std::pow (factor, i));
+	if (current != prev)
+	  {
+	    *(out ++) = current;
+	    prev = current;
+	  }
+	else
+	  ++ nb_scales;
+      }
   }
   
   unsigned int scale_of_anisotropy (const Point_set& points)
-  {
-    // Tree tree(points.begin(), points.end());
-    
-    // double ratio_kept = (points.size() < 1000)
-    //   ? 1. : 1000. / (points.size());
-    
-    // std::vector<Point> subset;
-    // for (std::size_t i = 0; i < points.size (); ++ i)
-    //   if (rand() / (double)RAND_MAX < ratio_kept)
-    // 	subset.push_back (points[i]);
-    
-    // std::vector<unsigned int> scales;
-    // generate_scales (6, 1.5, std::back_inserter (scales));
-
-    // std::vector<double> scores (scales.size(), 0.);
-
-    // Point ideal (0.0, 0.5, 0.5);
-    
-    // for (std::size_t i = 0; i < subset.size (); ++ i)
-    //   {
-    // 	Neighbor_search search(tree, subset[i],scales.back());
-    // 	std::vector<Point> neighbors;
-
-    // 	unsigned int nb = 0;
-    // 	std::size_t index = 0;
-    // 	for (Search_iterator search_iterator = search.begin();
-    // 	     search_iterator != search.end (); ++ search_iterator, ++ nb)
-    // 	  {
-    // 	    neighbors.push_back (search_iterator->first);
-
-    // 	    if (nb + 1 == scales[index])
-    // 	      {
-    // 		Point centroid = CGAL::centroid (neighbors.begin (), neighbors.end ());
-    // 		CGAL::cpp11::array<double, 6> covariance  = {{ 0., 0., 0., 0., 0., 0. }};
-    // 		CGAL::internal::assemble_covariance_matrix_3 (neighbors.begin (),
-    // 							      neighbors.end (),
-    // 							      covariance,
-    // 							      centroid,
-    // 							      Kernel(),
-    // 							      NULL,
-    // 							      CGAL::Dimension_tag<0>());
-    // 		CGAL::cpp11::array<double, 3> eigenvalues = {{ 0., 0., 0. }};
-    // 		CGAL::Default_diagonalize_traits<double, 3>::diagonalize_selfadjoint_covariance_matrix
-    // 		  (covariance, eigenvalues);
-
-    // 		Vector v (eigenvalues[0], eigenvalues[1], eigenvalues[2]);
-    // 		v = v / (eigenvalues[0] + eigenvalues[1] + eigenvalues[2]);
-    // 		scores[index] += CGAL::squared_distance (ideal, CGAL::ORIGIN + v);
-								
-		
-    // 		++ index;
-    // 		if (index == scales.size ())
-    // 		  break;
-    // 	      }
-    // 	  }
-    //   }
-
-    // std::ofstream f ("test.plot");
-    // for (std::size_t i = 0; i < scores.size(); ++ i)
-    //   f << scales[i] << " " << scores[i] / subset.size() << std::endl;
-    // f.close();
-    
-    return 6;
-  }
-
-  
-  unsigned int scale_of_noise (const Point_set& points, unsigned int scale_min = 6)
   {
     Tree tree(points.begin(), points.end());
     
@@ -123,7 +70,66 @@ namespace MetaReconstruction
     	subset.push_back (points[i]);
     
     std::vector<unsigned int> scales;
-    generate_scales (6, 1.5, std::back_inserter (scales));
+    generate_scales (std::back_inserter (scales));
+
+    std::vector<unsigned int> chosen;
+
+    for (std::size_t i = 0; i < subset.size (); ++ i)
+      {
+    	Neighbor_search search(tree, subset[i],scales.back());
+	double current = 0.;
+    	unsigned int nb = 0;
+    	std::size_t index = 0;
+	double maximum = 0.;
+	unsigned int c = 0;
+	
+    	for (Search_iterator search_iterator = search.begin();
+    	     search_iterator != search.end (); ++ search_iterator, ++ nb)
+    	  {
+	    current += search_iterator->second;
+
+    	    if (nb + 1 == scales[index])
+    	      {
+		double score = std::sqrt (current / scales[index])
+		  / std::pow (scales[index], 0.75); // NB ^ (3/4)
+
+		if (score > maximum)
+		  {
+		    maximum = score;
+		    c = scales[index];
+		  }
+
+    		++ index;
+    		if (index == scales.size ())
+    		  break;
+    	      }
+    	  }
+	chosen.push_back (c);
+      }
+
+    double mean = 0.;
+    for (std::size_t i = 0; i < chosen.size(); ++ i)
+      mean += chosen[i];
+    mean /= chosen.size();
+    
+    return mean;
+  }
+
+  
+  unsigned int scale_of_noise (const Point_set& points)
+  {
+    Tree tree(points.begin(), points.end());
+    
+    double ratio_kept = (points.size() < 1000)
+      ? 1. : 1000. / (points.size());
+    
+    std::vector<Point> subset;
+    for (std::size_t i = 0; i < points.size (); ++ i)
+      if (rand() / (double)RAND_MAX < ratio_kept)
+    	subset.push_back (points[i]);
+    
+    std::vector<unsigned int> scales;
+    generate_scales (std::back_inserter (scales));
 
     std::vector<unsigned int> chosen;
 
@@ -161,17 +167,18 @@ namespace MetaReconstruction
       }
 
     std::sort (chosen.begin (), chosen.end());
-    std::cerr << "Scale = " << chosen[chosen.size () / 2] << std::endl;
     
     return chosen[chosen.size() / 2];
   }
 
-  void simplify_point_set (const Point_set& points, unsigned int scale)
+  void simplify_point_set (Point_set& points, unsigned int scale)
   {
-
+    double size = CGAL::compute_average_spacing (points.begin (), points.end (), scale);
+    points.erase (CGAL::grid_simplify_point_set (points.begin (), points.end (), size),
+		  points.end ());
   }
 
-  void smooth_point_set (const Point_set& points, unsigned int scale)
+  void smooth_point_set (Point_set& points, unsigned int scale)
   {
 
   }
@@ -251,62 +258,64 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 		<< (dialog.interpolate() ? " * Output shape passes through input points"
 		    : " * Output shape approximates input points") << std::endl;
 
-
-      std::cout << "Analysis of input point set:" << std::endl;
-      time.start();
-
-      // TODO: analyse if point set is isotropic
-      unsigned int aniso_scale = MetaReconstruction::scale_of_anisotropy (*points);
-      bool isotropic = (aniso_scale > 6);
-
-      // TODO: analyse if point set is noisy
-      unsigned int noise_scale = MetaReconstruction::scale_of_noise (*points, aniso_scale);
-      bool noisy = (noise_scale > 6);
-      
-      std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
-
-      
-      if (!(dialog.interpolate()) && (noisy || isotropic))
+      if (!(dialog.interpolate()))
 	{
 	  points = new Point_set();
 	  std::copy (pts_item->point_set()->begin(), pts_item->point_set()->end(),
 		     std::back_inserter (*points));
-	  
-	  std::cout << "Preprocessing:" << std::endl;
-	  time.restart();
-
-	  if (isotropic)
-	    {
-	      // TODO: simplify point set
-	      MetaReconstruction::simplify_point_set (*points, aniso_scale);
-	    }
-	  if (noisy)
-	    {
-	      // TODO: smooth point set
-	      MetaReconstruction::smooth_point_set (*points, noise_scale);
-	    }
-
-	  std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 	}
+
+      std::cerr << "Analysing isotropy of point set... ";
+      time.start();
+      unsigned int aniso_scale = MetaReconstruction::scale_of_anisotropy (*points);
+      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+
+      bool isotropic = (aniso_scale == 6);
+      std::cerr << (isotropic ? " -> Point set is isotropic" : " -> Point set is anisotropic") << std::endl;
+      if (!(dialog.interpolate()) && !isotropic)
+	{
+	  std::cerr << "Correcting anisotropy of point set... ";
+	  time.restart();
+	  std::size_t prev_size = points->size ();
+	  MetaReconstruction::simplify_point_set (*points, aniso_scale);
+	  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+	  std::cerr << " -> " << prev_size - points->size() << " point(s) removed ("
+		    << 100. * (prev_size - points->size()) / (double)(prev_size)
+		    << "%)" << std::endl;
+	}
+
+      std::cerr << "Analysing noise of point set... ";
+      time.restart();
+      unsigned int noise_scale = MetaReconstruction::scale_of_noise (*points);
+      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+      bool noisy = (noise_scale > 6);
+      std::cerr << (noisy ? " -> Point set is noisy" : " -> Point set is noise-free") << std::endl;
       
+      if (!(dialog.interpolate()) && noisy)
+	{
+	  std::cerr << "Denoising point set... ";
+	  time.restart();
+	  MetaReconstruction::smooth_point_set (*points, noise_scale);
+	  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+	}
 
       if (dialog.interpolate())
 	{
 	  if (noisy)
 	    { 
-	      std::cout << "Scale space reconstruction:" << std::endl;
+	      std::cerr << "Scale space reconstruction... ";
 	      time.restart();
 	      // TODO
 
-	      std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
+	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
 	  else
 	    {
-	      std::cout << "Advancing front reconstruction:" << std::endl;
+	      std::cerr << "Advancing front reconstruction... ";
 	      time.restart();
 	      // TODO
 
-	      std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
+	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
 
 	}
@@ -314,19 +323,19 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 	{
 	  if (dialog.boundaries())
 	    {
-	      std::cout << "Scale space reconstruction:" << std::endl;
+	      std::cerr << "Scale space reconstruction... ";
 	      time.restart();
 	      // TODO
 
-	      std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
+	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
 	  else
 	    {
-	      std::cout << "Poisson reconstruction:" << std::endl;
+	      std::cerr << "Poisson reconstruction... ";
 	      time.restart();
 	      // TODO
 
-	      std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
+	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
 	}
 
