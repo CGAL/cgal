@@ -2,22 +2,21 @@
 namespace CGAL {
 
 /*!
-\ingroup PkgSurfaceParameterizationAlgebra
+\ingroup PkgSolver
 
-The class `Eigen_vector` is a C++ wrapper around \ref thirdpartyEigen "Eigen" vector, which is a simple array of numbers. 
-The version 3.1 (or greater) of \ref thirdpartyEigen "Eigen" must be available on the system. 
+The class `Eigen_vector` is a wrapper around \ref thirdpartyEigen "Eigen" vector
+type <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1Matrix.html"> </a>, 
+which is a simple array of numbers. 
 
+\cgalModels `SvdTraits::Vector` 
 \cgalModels `SparseLinearAlgebraTraits_d::Vector`. 
 
-Parameters 
--------------- 
 
-`T`: Number type. 
+\tparam T  Number type. 
 
 \sa `CGAL::Eigen_solver_traits<T>`
 \sa `CGAL::Eigen_sparse_matrix<T>`
 \sa `CGAL::Eigen_sparse_symmetric_matrix<T>`
-\sa http://eigen.tuxfamily.org
 
 */
 template< typename T >

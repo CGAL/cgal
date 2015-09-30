@@ -407,10 +407,9 @@ int main(int argc, char * argv[])
         err = CGAL::parameterize(
             mesh_patch,
             CGAL::Discrete_authalic_parameterizer_3<
-                Mesh_patch_polyhedron,
-                CGAL::Square_border_arc_length_parameterizer_3<Mesh_patch_polyhedron>,
-                CGAL::Eigen_solver_traits<>
-            >());
+	    Mesh_patch_polyhedron,
+	    CGAL::Square_border_arc_length_parameterizer_3<Mesh_patch_polyhedron> >()
+				 );
         switch(err) {
         case Parameterizer::OK: // Success
             break;

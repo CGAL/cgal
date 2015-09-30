@@ -6,7 +6,7 @@ Circulator
 Stream_support
 Polyhedron
 BGL
-Surface_mesh_parameterization
+Solver_interface
 Surface_mesh
 Surface_modeling
 AABB_tree

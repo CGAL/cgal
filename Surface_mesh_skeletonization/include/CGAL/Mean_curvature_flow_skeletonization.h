@@ -74,7 +74,6 @@
 // for default parameters
 #if defined(CGAL_EIGEN3_ENABLED)
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
-#include <Eigen/SparseCholesky>
 // #include <Eigen/CholmodSupport>
 #endif
 

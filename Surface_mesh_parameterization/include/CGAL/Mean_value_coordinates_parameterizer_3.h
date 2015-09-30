@@ -24,6 +24,7 @@
 
 #include <CGAL/Fixed_border_parameterizer_3.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
+#include <CGAL/Eigen_solver_traits.h>
 
 /// \file Mean_value_coordinates_parameterizer_3.h
 
@@ -56,7 +57,7 @@ namespace CGAL {
 /// \sa `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 /// \sa `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3>`
 
 template
 <
@@ -64,8 +65,9 @@ template
     class BorderParameterizer_3       ///< Strategy to parameterize the surface border
                 = Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
     class SparseLinearAlgebraTraits_d ///< Traits class to solve a sparse linear system
-                = OpenNL::DefaultLinearSolverTraits<typename ParameterizationMesh_3::NT>
+                = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType, Eigen::IncompleteLUT< double > > >
 >
+
 class Mean_value_coordinates_parameterizer_3
     : public Fixed_border_parameterizer_3<ParameterizationMesh_3,
                                         BorderParameterizer_3,

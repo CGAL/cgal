@@ -39,18 +39,21 @@ namespace CGAL {
 /// which however would result in selecting more points on sharper regions.
 /// More details are provided in \cgalCite{cgal:mog-vbcfe-11}.
 ///
-/// \tparam VCM_traits is a model of `VCMTraits`. If Eigen 3 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined
-///         then an overload using `Eigen_vcm_traits` is provided and this template parameter can be omitted.
-/// \sa `CGAL::compute_vcm()`
+/// \tparam VCMTraits is a model of `DiagonalizeTraits`. It can be
+/// omitted: if Eigen 3 (or greater) is available and
+/// `CGAL_EIGEN3_ENABLED` is defined then an overload using
+/// `Eigen_diagonalize_traits` is provided. Otherwise, the internal
+/// implementation `Diagonalize_traits` is used.
+/// \sa CGAL::compute_vcm()`
 ///
-template <class FT, class VCM_traits>
+template <class FT, class VCMTraits>
 bool
 vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
                         double threshold,
-                        VCM_traits)
+                        VCMTraits)
 {
     cpp11::array<double,3> eigenvalues;
-    if (!VCM_traits::
+    if (!VCMTraits::
           diagonalize_selfadjoint_covariance_matrix(cov, eigenvalues) )
     {
         return false;
@@ -66,15 +69,15 @@ vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
 
 
 
-#ifdef CGAL_EIGEN3_ENABLED
 template <class FT>
 bool
 vcm_is_on_feature_edge (cpp11::array<FT,6> &cov,
                         double threshold)
 {
-  return vcm_is_on_feature_edge(cov, threshold, Eigen_vcm_traits());
+  return vcm_is_on_feature_edge(cov, threshold,
+				CGAL::Default_diagonalize_traits<double, 3>());
+
 }
-#endif
 
 } // namespace CGAL
 

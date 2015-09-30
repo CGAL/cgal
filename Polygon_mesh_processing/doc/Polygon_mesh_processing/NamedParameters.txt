@@ -91,7 +91,7 @@ Here is the list of the named parameters available in this package:
 
 \cgalNPBegin{sparse_linear_solver} \anchor PMP_sparse_linear_solver
  is the solver used for fairing of polygon meshes.\n
-\b Type: a class model of `SparseLinearAlgebraTraitsWithFactor_d`.\n
+\b Type: a class model of `SparseLinearAlgebraWithFactorTraits_d`.\n
 \b Default: if \ref thirdpartyEigen "Eigen" 3.2 (or greater) is available and `CGAL_EIGEN3_ENABLED` is defined, then the following overload of `Eigen_solver_traits` is provided as default value\n
 \code
 CGAL::Eigen_solver_traits<
