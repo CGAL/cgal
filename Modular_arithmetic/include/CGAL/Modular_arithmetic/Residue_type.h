@@ -216,6 +216,8 @@ private:
     /* a^-1, using Bezout (extended Euclidian algorithm). */
     static inline 
     double RES_inv (double ri1){
+        CGAL_precondition (ri1 != 0.0);
+
         double bi = 0.0;
         double bi1 = 1.0;
         double ri = get_prime();
@@ -288,7 +290,12 @@ public:
 
     //! constructor of Residue, from long 
     Residue(long n){
-        x_= RES_reduce((double)n);
+        x_= RES_soft_reduce (static_cast< double > (n % get_prime_int()));
+    }
+   
+    //! constructor of Residue, from long long
+    Residue (long long n) {
+        x_= RES_soft_reduce (static_cast< double > (n % get_prime_int()));
     }
    
     //! Access operator for x, \c const 
