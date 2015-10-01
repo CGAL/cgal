@@ -28,7 +28,7 @@
 
 !include "script_cgal.nsh"
 
-!define CGAL_SRC  "CGAL-4.7"
+!define CGAL_SRC  "CGAL-4.8"
 !define FTP_SRC   "https://cgal.geometryfactory.com/CGAL/precompiled_libs/"
 
 ;--------------------------------
@@ -44,7 +44,7 @@
   OutFile "${CGAL_SRC}-Setup.exe"
   !endif
 
-  ;Default installation folder: C:\Program Files\CGAL-4.7
+  ;Default installation folder: C:\Program Files\CGAL-4.8
   ; See also .onInit
   Installdir ""
 
@@ -54,12 +54,12 @@
   
   BrandingText "The CGAL Project and GeometryFactory - Installer created with NSIS."
 
-  VIProductVersion "4.7.0.0"
+  VIProductVersion "4.8.0.0"
   VIAddVersionKey "ProductName"     "CGAL Windows Installer"
   VIAddVersionKey "CompanyName"     "The CGAL Project and GeometryFactory"
   VIAddVersionKey "LegalCopyright"  "© The CGAL Project and GeometryFactory"
   VIAddVersionKey "FileDescription" "Windows Installer for CGAL"
-  VIAddVersionKey "FileVersion"     "4.7"
+  VIAddVersionKey "FileVersion"     "4.8"
   
 ;--------------------------------
 ; Variables
@@ -180,7 +180,7 @@ Section "!Main CGAL" MAIN_Idx
   ; Write uninstall informations
   ;   http://nsis.sourceforge.net/Add_uninstall_information_to_Add/Remove_Programs
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${CGAL_SRC}" \
-                   "DisplayName" "${CGAL_SRC} -- Computational Geometry Algorithms Library, version 4.7"
+                   "DisplayName" "${CGAL_SRC} -- Computational Geometry Algorithms Library, version 4.8"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${CGAL_SRC}" \
                    "UninstallString" "$\"$INSTDIR\Uninstall.exe$\""
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${CGAL_SRC}" \
@@ -199,7 +199,7 @@ Section "!Main CGAL" MAIN_Idx
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${CGAL_SRC}" \
                    "URLInfoAbout" "http://www.cgal.org/"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${CGAL_SRC}" \
-                   "DisplayedVersion" "4.7.0"
+                   "DisplayedVersion" "4.8.0"
   WriteRegStr HKLM "Software\Microsoft\Windows\CurrentVersion\Uninstall\${CGAL_SRC}" \
                    "CGALUninstallRegLoc" "$RegLoc"
 
@@ -233,7 +233,7 @@ SectionEnd
 
 Section /o "HTML Manuals" DOC_Idx
   !ifndef FetchLocal
-    !insertmacro DownloadFileFrom "https://cgal.geometryfactory.com/" "CGAL/4.7/Manual/" "cgal_manual.zip"  "$INSTDIR\doc_html"
+    !insertmacro DownloadFileFrom "https://cgal.geometryfactory.com/" "CGAL/4.8/Manual/" "cgal_manual.zip"  "$INSTDIR\doc_html"
   !endif  
 SectionEnd
 
