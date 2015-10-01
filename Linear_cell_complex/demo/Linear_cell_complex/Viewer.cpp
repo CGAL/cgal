@@ -338,24 +338,52 @@ void Viewer::compute_faces(Dart_handle dh)
         { cdt.insert_constraint(previous, vh); }
         previous = vh;
       }
-      cdt.insert_constraint(previous, first);
+      if (previous!=NULL)
+        cdt.insert_constraint(previous, first);
 
       // sets mark is_external
       for(CDT::All_faces_iterator fit = cdt.all_faces_begin(),
             fitend = cdt.all_faces_end(); fit!=fitend; ++fit)
       {
-        fit->info().is_external = false;
+        fit->info().is_external = true;
+        fit->info().is_process = false;
       }
       //check if the facet is external or internal
       std::queue<CDT::Face_handle> face_queue;
+      CDT::Face_handle face_internal = NULL;
       face_queue.push(cdt.infinite_vertex()->face());
       while(! face_queue.empty() )
       {
         CDT::Face_handle fh = face_queue.front();
         face_queue.pop();
-        if(!fh->info().is_external)
+        if(!fh->info().is_process)
         {
-          fh->info().is_external = true;
+          fh->info().is_process = true;
+          for(int i = 0; i <3; ++i)
+          {
+            if(!cdt.is_constrained(std::make_pair(fh, i)))
+            {
+              face_queue.push(fh->neighbor(i));
+            }
+            else if (face_internal==NULL)
+            {
+              face_internal = fh->neighbor(i);
+            }
+          }
+        }
+      }
+
+      if ( face_internal!=NULL )
+        face_queue.push(face_internal);
+
+      while(! face_queue.empty() )
+      {
+        CDT::Face_handle fh = face_queue.front();
+        face_queue.pop();
+        if(!fh->info().is_process)
+        {
+          fh->info().is_process = true;
+          fh->info().is_external = false;
           for(int i = 0; i <3; ++i)
           {
             if(!cdt.is_constrained(std::make_pair(fh, i)))

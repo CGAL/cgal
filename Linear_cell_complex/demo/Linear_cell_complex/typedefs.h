@@ -181,6 +181,7 @@ typedef CGAL::Triangulation_vertex_base_with_info_2<Dart_handle,P_traits> Vb;
 struct Face_info {
   bool exist_edge[3];
   bool is_external;
+  bool is_process;
 };
 
 typedef CGAL::Triangulation_face_base_with_info_2<Face_info,P_traits> Fb1;
