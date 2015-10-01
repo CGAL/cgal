@@ -8,6 +8,7 @@
 #include <QMainWindow>
 #include <QInputDialog>
 #include <QTime>
+#include <QAction>
 
 #include <CGAL/Surface_mesh_simplification/HalfedgeGraph_Polyhedron_3.h>
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
@@ -27,6 +28,16 @@ public:
     return QStringList() << "actionSimplify";
   }
 
+  void init(QMainWindow* mainWindow,
+            Scene_interface* scene_interface)
+  {
+      mw = mainWindow;
+      scene = scene_interface;
+      actions_map["actionSimplify"] = getActionFromMainWindow(mw, "actionSimplify");
+      actions_map["actionSimplify"]->setProperty("subMenuName", "Action on mesh");
+      autoConnectActions();
+
+  }
   bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }

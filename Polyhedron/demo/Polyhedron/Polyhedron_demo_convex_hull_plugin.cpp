@@ -23,8 +23,18 @@ class Polyhedron_demo_convex_hull_plugin :
   Q_OBJECT
   Q_INTERFACES(Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
-
 public:
+    void init(QMainWindow* mainWindow,
+              Scene_interface* scene_interface)
+    {
+        mw = mainWindow;
+        scene = scene_interface;
+        actions_map["actionConvexHull"] = getActionFromMainWindow(mw, "actionConvexHull");
+        actions_map["actionConvexHull"]->setProperty("subMenuName", "Object creation");
+        autoConnectActions();
+
+    }
+
   // used by Polyhedron_demo_plugin_helper
   QStringList actionsNames() const {
     return QStringList() << "actionConvexHull";

@@ -29,11 +29,13 @@ public:
     this->mw = mainWindow;
     this->messages = m;
     actionTriangulateFacets = new QAction("Triangulate facets", mw);
+    actionTriangulateFacets->setProperty("subMenuName","Action on mesh");
     if(actionTriangulateFacets) {
       connect(actionTriangulateFacets, SIGNAL(triggered()),
               this, SLOT(triangulate())); 
     }
     actionUnTriangulateFacets = new QAction("Untriangulate facets", mw);
+    actionUnTriangulateFacets->setProperty("subMenuName","Action on mesh");
     if(actionUnTriangulateFacets) {
       connect(actionUnTriangulateFacets, SIGNAL(triggered()),
               this, SLOT(untriangulate())); 

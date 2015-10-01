@@ -31,6 +31,24 @@ public:
                          << "actionMinkowskiSum";
   }
 
+  void init(QMainWindow* mainWindow,
+            Scene_interface* scene_interface)
+  {
+      mw = mainWindow;
+      scene = scene_interface;
+      actions_map["actionConvexDecomposition"] = getActionFromMainWindow(mw, "actionConvexDecomposition");
+      actions_map["actionConvexDecomposition"]->setProperty("subMenuName", "Object creation");
+
+      actions_map["actionToNef"] = getActionFromMainWindow(mw, "actionToNef");
+      actions_map["actionToPoly"] = getActionFromMainWindow(mw, "actionToPoly");
+      actions_map["actionUnion"] = getActionFromMainWindow(mw, "actionUnion");
+      actions_map["actionIntersection"] = getActionFromMainWindow(mw, "actionIntersection");
+      actions_map["actionDifference"] = getActionFromMainWindow(mw, "actionDifference");
+      actions_map["actionMinkowskiSum"] = getActionFromMainWindow(mw, "actionMinkowskiSum");
+      autoConnectActions();
+
+  }
+
   bool applicable(QAction*) const {
     const int indexA = scene->selectionAindex();
     const int indexB = scene->selectionBindex();

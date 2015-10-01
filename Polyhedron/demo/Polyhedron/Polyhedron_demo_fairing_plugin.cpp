@@ -47,6 +47,8 @@ public:
     scene = scene_interface;
     messages = m;
     actionFairing = new QAction(tr("Fairing"), mw);
+    actionFairing->setProperty("subMenuName", "Action on mesh");
+
     connect(actionFairing, SIGNAL(triggered()), this, SLOT(fairing_action()));
 
     dock_widget = new QDockWidget("Fairing", mw);

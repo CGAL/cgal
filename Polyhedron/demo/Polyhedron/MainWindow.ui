@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>21</height>
+     <height>20</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -69,14 +69,6 @@
     <property name="title">
      <string>&amp;Operations</string>
     </property>
-    <widget class="QMenu" name="menuSubdivision">
-     <property name="title">
-      <string>&amp;Subdivision</string>
-     </property>
-     <addaction name="actionLoop"/>
-     <addaction name="actionCatmullClark"/>
-     <addaction name="actionSqrt3"/>
-    </widget>
     <widget class="QMenu" name="menu_Boolean_operations">
      <property name="title">
       <string>&amp;Boolean operations</string>
@@ -89,32 +81,15 @@
      <addaction name="separator"/>
      <addaction name="actionMinkowskiSum"/>
     </widget>
-    <widget class="QMenu" name="menuParameterization">
-     <property name="title">
-      <string>Parameterization</string>
-     </property>
-     <addaction name="actionMVC"/>
-     <addaction name="actionDCP"/>
-     <addaction name="actionLSC"/>
-    </widget>
-    <widget class="QMenu" name="menuPCA">
-     <property name="title">
-      <string>PCA</string>
-     </property>
-     <addaction name="actionFitLine"/>
-     <addaction name="actionFitPlane"/>
-    </widget>
-    <addaction name="menuPCA"/>
+
     <addaction name="actionEstimateCurvature"/>
     <addaction name="actionSelfIntersection"/>
     <addaction name="actionConvexHull"/>
     <addaction name="actionKernel"/>
-    <addaction name="menuSubdivision"/>
     <addaction name="actionSimplify"/>
     <addaction name="actionRemeshing"/>
     <addaction name="actionConvexDecomposition"/>
     <addaction name="menu_Boolean_operations"/>
-    <addaction name="menuParameterization"/>
     <addaction name="actionInsideOut"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -296,8 +271,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>534</width>
-            <height>174</height>
+            <width>541</width>
+            <height>175</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">

@@ -1,4 +1,6 @@
 #include <QApplication>
+#include <QAction>
+#include <QMainWindow>
 #include "Scene_polyhedron_item.h"
 #include "Scene_plane_item.h"
 #include "Polyhedron_type.h"
@@ -38,6 +40,25 @@ public:
     return QStringList() << "actionFitPlane"
                          << "actionFitLine";
   }
+
+  void init(QMainWindow* mainWindow,
+            Scene_interface* scene_interface)
+  {
+      mw = mainWindow;
+      scene = scene_interface;
+      actions_map["actionFitPlane"] = new QAction("Fit Plane", mw);
+      actions_map["actionFitPlane"]->setProperty("subMenuName", "Object creation/PCA");
+
+      actions_map["actionFitLine"] = new QAction("Fit Line", mw);
+      actions_map["actionFitLine"]->setProperty("subMenuName", "Object creation/PCA");
+
+      connect(actions_map["actionFitPlane"], SIGNAL(triggered()),
+              this, SLOT(on_actionFitPlane_triggered()));
+      connect(actions_map["actionFitLine"], SIGNAL(triggered()),
+              this, SLOT(on_actionFitLine_triggered()));
+
+  }
+
 
   bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));

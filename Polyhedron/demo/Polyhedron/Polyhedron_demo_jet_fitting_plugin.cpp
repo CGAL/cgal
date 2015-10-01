@@ -25,6 +25,16 @@ public:
   QStringList actionsNames() const {
     return QStringList() << "actionEstimateCurvature";
   }
+  void init(QMainWindow* mainWindow,
+            Scene_interface* scene_interface)
+  {
+      mw = mainWindow;
+      scene = scene_interface;
+      actions_map["actionEstimateCurvature"] = getActionFromMainWindow(mw, "actionEstimateCurvature");
+      actions_map["actionEstimateCurvature"]->setProperty("subMenuName", "Object creation");
+      autoConnectActions();
+
+  }
 
   bool applicable(QAction*) const { 
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));

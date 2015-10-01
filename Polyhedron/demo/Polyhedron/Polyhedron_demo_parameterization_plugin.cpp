@@ -1,5 +1,6 @@
 #include <QApplication>
 #include <QAction>
+#include <QMainWindow>
 #include <QStringList>
 
 #include "Scene_polyhedron_item.h"
@@ -38,6 +39,24 @@ public:
     return QStringList() << "actionMVC"
                          << "actionDCP"
                          << "actionLSC";
+  }
+
+  void init(QMainWindow* mainWindow,
+            Scene_interface* scene_interface)
+  {
+      mw = mainWindow;
+      scene = scene_interface;
+      actions_map["actionMVC"] = new QAction("MVC", mw);
+      actions_map["actionMVC"]->setProperty("subMenuName", "Color alteration/Parametrization");
+
+      actions_map["actionDCP"] = new QAction ("DCP", mw);
+      actions_map["actionDCP"]->setProperty("subMenuName", "Color alteration/Parametrization");
+
+      connect(actions_map["actionMVC"], SIGNAL(triggered()),
+              this, SLOT(on_actionMVC_triggered()));
+      connect(actions_map["actionDCP"], SIGNAL(triggered()),
+              this, SLOT(on_actionDCP_triggered()));
+
   }
 
   bool applicable(QAction*) const { 
