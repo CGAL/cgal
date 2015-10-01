@@ -33,10 +33,7 @@
 #include <CGAL/Bbox_3.h>
 #include <vector>
 #include <CGAL/Default.h>
-
-#ifdef CGAL_HAS_THREADS
-#  include <boost/thread/tss.hpp>
-#endif
+#include<CGAL/tss.h>
 
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>
@@ -787,16 +784,15 @@ private:
   // which is in particular heavily used for pruning DAGs.
   static const Self & zero()
   {
-#ifdef CGAL_HAS_THREADS
-    static boost::thread_specific_ptr<Self> z;
-    if (z.get() == NULL) {
-        z.reset(new Self(new Lazy_rep_0<AT, ET, E2A>()));
-    }
-    return * z.get();
+    Lazy_rep_0<AT, ET, E2A>* ptr = new Lazy_rep_0<AT, ET, E2A>();
+#if 1
+    static CGAL_THREAD_LOCAL_VARIABLE(Self,z,ptr);
 #else
-    static const Self z = new Lazy_rep_0<AT, ET, E2A>();
-    return z;
+    static CGAL_THREAD_LOCAL_DECLARE(Self,z);
+    CGAL_THREAD_LOCAL_INITIALIZE(Self,z, ptr);
+    CGAL_THREAD_LOCAL_GET(Self,z);
 #endif
+    return z;
   }
 
   Self_rep * ptr() const { return (Self_rep*) PTR; }
