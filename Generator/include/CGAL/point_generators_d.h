@@ -35,7 +35,7 @@ class Random_points_in_ball_d : public Random_generator_base<P>{
 public:
     typedef Random_points_in_ball_d<P> This;
  Random_points_in_ball_d( int dim, double a = 1, 
-			       Random& rnd = default_random)
+			       Random& rnd = get_default_random())
         // g is an input iterator creating points of type `P' uniformly
         // distributed in the open sphere with radius r, i.e. |`*g'| < r .
    : Random_generator_base<P>( a, rnd), dimension(dim) { generate_point(); }
@@ -84,7 +84,7 @@ class Random_points_on_sphere_d : public Random_generator_base<P>{
 public:
     typedef Random_points_on_sphere_d<P> This;
  Random_points_on_sphere_d( int dim, double a = 1, 
-			       Random& rnd = default_random)
+			       Random& rnd = get_default_random())
         // g is an input iterator creating points of type `P' uniformly
         // distributed on the sphere with radius r, i.e. |`*g'| == r .
    : Random_generator_base<P>( a, rnd), dimension(dim) { generate_point(); }
@@ -129,7 +129,7 @@ class Random_points_in_cube_d : public Random_generator_base<P>{
 public:
     typedef Random_points_in_cube_d<P> This;
  Random_points_in_cube_d( int dim, double a = 1, 
-			       Random& rnd = default_random)
+			       Random& rnd = get_default_random())
    : Random_generator_base<P>( a, rnd), dimension(dim) { generate_point(); }
     This& operator++()    {
         generate_point();

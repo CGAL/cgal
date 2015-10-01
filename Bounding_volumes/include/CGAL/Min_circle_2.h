@@ -58,7 +58,7 @@ class Min_circle_2 {
     Min_circle_2( InputIterator first,
                   InputIterator last,
                   bool          randomize = false,
-                  Random&       random    = default_random,
+                  Random&       random    = get_default_random(),
                   const Traits& traits    = Traits());
     
     Min_circle_2( const Traits& traits = Traits());
@@ -302,7 +302,7 @@ class Min_circle_2 {
                                               = false
     #endif
                                                      ,
-                      Random&       random    = default_random,
+                      Random&       random    = get_default_random(),
                       const Traits& traits    = Traits())
             : tco( traits)
         {

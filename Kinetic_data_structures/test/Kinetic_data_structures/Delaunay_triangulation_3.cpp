@@ -111,6 +111,6 @@ int main(int argc, char *argv[])
   //std::cout << "Insert " << queue_insertions__ << " and front " << queue_front_insertions__ << std::endl;
   //std::cout << "Sturm created " << sturm_created__ << " and shrink " << sturm_refined__ << std::endl;
   
-  if (CGAL::Kinetic::internal::audit_failures__ != 0 ) return EXIT_FAILURE;
+  if (CGAL::Kinetic::internal::get_static_audit_failures() != 0 ) return EXIT_FAILURE;
   else return EXIT_SUCCESS;
 }

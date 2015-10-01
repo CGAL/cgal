@@ -184,7 +184,7 @@ inline
 std::ostream&
 operator<<(std::ostream &os, const Bbox_3& b)
 {
-  switch(os.iword(IO::mode))
+  switch(get_mode(os))
   {
     case IO::ASCII :
         return os << b.xmin() << ' ' << b.ymin() << ' ' << b.zmin()
@@ -214,7 +214,7 @@ operator>>(std::istream &is, Bbox_3& b)
 {
   double xmin, ymin, zmin, xmax, ymax, zmax;
 
-  switch(is.iword(IO::mode))
+  switch(get_mode(is))
   {
     case IO::ASCII :
       is >> iformat(xmin) >> iformat(ymin) >> iformat(zmin)

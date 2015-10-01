@@ -59,7 +59,25 @@ private:
       output_maple_=true;
     }
   };
+  
+#ifdef CGAL_HEADER_ONLY
+  
+  static State& get_static_state()
+  {
+    static State state_;
+    return state_;
+  }
+
+#else // CGAL_HEADER_ONLY
+
   CGAL_EXPORT static State state_;
+  static State& get_static_state()
+  { 
+    return state_; 
+  }
+
+#endif // CGAL_HEADER_ONLY
+
 public:
   // The different types of logs supported
   /*  MAPLE is a log which should be able to be fed directly in to
@@ -67,42 +85,42 @@ public:
       when evaluated.
   */
 
-  static Level level() {return state_.level_;}
-  static void set_level(Level l) {state_.level_=l;}
+  static Level level() {return get_static_state().level_;}
+  static void set_level(Level l) {get_static_state().level_=l;}
  
 
   static std::ostream &stream(Level l) {
     if (is_output(l)) {
-      if (state_.target_== COUT) {
+      if (get_static_state().target_== COUT) {
 	return std::cout;
       }
       else {
-	return state_.fstream_;
+	return get_static_state().fstream_;
       }
     }
     else {
-      return state_.null_;
+      return get_static_state().null_;
     }
   }
 
   static bool is_output(Level l) {
     return l <= level();
   }
-  static Target target() {return state_.target_;}
-  static CGAL_SET(Target, target, state_.target_=k);
-  static CGAL_SET(std::string, filename, state_.fstream_.open(k.c_str()));
+  static Target target() {return get_static_state().target_;}
+  static CGAL_SET(Target, target, get_static_state().target_=k);
+  static CGAL_SET(std::string, filename, get_static_state().fstream_.open(k.c_str()));
 
-  static bool is_output_maple(){return state_.output_maple_;}
+  static bool is_output_maple(){return get_static_state().output_maple_;}
   
   static void set_output_maple(bool b) {
-    state_.output_maple_=b;
+    get_static_state().output_maple_=b;
   }
   std::ofstream &maple_stream() {
-    if (!state_.maple_is_open_) {
-      state_.maple_is_open_=true;
-      state_.maple_.open("maple.log");
+    if (!get_static_state().maple_is_open_) {
+      get_static_state().maple_is_open_=true;
+      get_static_state().maple_.open("maple.log");
     }
-    return state_.maple_;
+    return get_static_state().maple_;
   }
 private:
   Log() {
@@ -163,6 +181,8 @@ struct Set_log_state{
 #  pragma warning(pop)
 #endif
 
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Tools/Log_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif
-
-

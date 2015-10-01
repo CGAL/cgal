@@ -101,6 +101,8 @@ extern void Convert_r32_to_u16( r32 *theBuf,
 
 
 
-
+#ifdef CGAL_HEADER_ONLY
+#include "convert_impl.h"
+#endif // CGAL_HEADER_ONLY
 
 #endif

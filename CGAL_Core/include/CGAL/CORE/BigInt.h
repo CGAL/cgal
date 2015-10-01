@@ -559,4 +559,9 @@ inline BigInt randomize(const BigInt& a) {
 //@}
 
 } //namespace CORE
+
+#ifdef CGAL_HEADER_ONLY
+//#include <CGAL/CORE/CoreIO_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // _CORE_BIGINT_H_

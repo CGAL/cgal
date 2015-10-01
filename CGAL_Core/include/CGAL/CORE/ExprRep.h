@@ -45,7 +45,7 @@
 
 namespace CORE { 
 
-#ifdef CORE_DEBUG_BOUND
+#if defined(CORE_DEBUG_BOUND) && !defined(CGAL_HEADER_ONLY)
 // These counters are incremented each time each bound is recognized as equal
 // to the best one in computeBound().
 extern unsigned int BFMSS_counter;
@@ -189,8 +189,8 @@ public:
   /// \name Helper Functions
   //@{
   /// Get the approximate value
-  CGAL_CORE_EXPORT const Real & getAppValue(const extLong& relPrec = defRelPrec,
-                                            const extLong& absPrec = defAbsPrec);
+  CGAL_CORE_EXPORT const Real & getAppValue(const extLong& relPrec = get_static_defRelPrec(),
+                                            const extLong& absPrec = get_static_defAbsPrec());
   /// Get the sign.
   int getSign();
   int getExactSign();
@@ -389,8 +389,8 @@ public:
   BigFloat BigFloatValue();
   /// represent as a string in decimal value
   // toString() Joaquin Grech 31/5/2003
-  std::string toString(long prec=defOutputDigits, bool sci=false) {
-    return (getAppValue(defRelPrec, defAbsPrec)).toString(prec,sci);
+  std::string toString(long prec=get_static_defOutputDigits(), bool sci=false) {
+    return (getAppValue(get_static_defRelPrec(), get_static_defAbsPrec())).toString(prec,sci);
   }
   //@}
 
@@ -677,7 +677,7 @@ protected:
     tc() = ceilLg(ss.seq[0].getTailCoeff());
 
     // no rational reduction
-    if (rationalReduceFlag)
+    if (get_static_rationalReduceFlag())
       ratFlag() = -1;
 
     flagsComputed() = true;
@@ -838,7 +838,12 @@ protected:
 /// \brief "functor" class used as parameter to AddSubRep<>
 struct Add {
   /// name
+#ifndef CGAL_HEADER_ONLY
   CGAL_CORE_EXPORT static const char* name;
+#endif
+  static const char* get_name() {
+    return "+";
+  }
 
   /// unary operator
   template <class T>
@@ -857,7 +862,12 @@ struct Add {
 /// \brief "functor" class used as parameter to AddSubRep<>
 struct Sub {
   /// name
+#ifndef CGAL_HEADER_ONLY
   CGAL_CORE_EXPORT static const char* name;
+#endif
+  static const char* get_name() {
+    return "-";
+  }
 
   /// unary operator
   template <class T>
@@ -895,7 +905,7 @@ protected:
    void computeApproxValue(const extLong&, const extLong&);
   /// return operator in string
   const std::string op() const {
-    return Operator::name;
+    return Operator::get_name();
   }
 private:
   static Operator Op;
@@ -925,7 +935,7 @@ void AddSubRep<Operator>::computeExactFlags() {
     reduceTo(second);
     sign() = Op(ss);
     appValue() = Op(appValue());
-    if (rationalReduceFlag && ratFlag() > 0)
+    if (get_static_rationalReduceFlag() && ratFlag() > 0)
       *(ratValue()) = Op(*(ratValue()));
     return;
   } else if (ss == 0) { // second operand is zero
@@ -933,7 +943,7 @@ void AddSubRep<Operator>::computeExactFlags() {
     return;
   }
   // rational node
-  if (rationalReduceFlag) {
+  if (get_static_rationalReduceFlag()) {
     if (first->ratFlag() > 0 && second->ratFlag() > 0) {
       BigRat val=Op(*(first->ratValue()), *(second->ratValue()));
       reduceToBigRat(val);
@@ -1046,7 +1056,7 @@ void AddSubRep<Operator>::computeExactFlags() {
       if (lowBound <= EXTLONG_ZERO)
         lowBound = EXTLONG_ONE;
 
-      if (!progressiveEvalFlag) {
+      if (!get_static_progressiveEvalFlag()) {
         // convert the absolute error requirement "lowBound" to
         // a relative error requirement "ur", s.t.
         //    |x|*2^(-ur) <= 2^(-lowBound).
@@ -1085,7 +1095,7 @@ void AddSubRep<Operator>::computeExactFlags() {
 	//     larger than lowBound AND the defaultInitialProgressivePrec,
 	//     so that we do at least one iteration of the for-loop. So:
 	// i is the variable for iteration.
-        extLong i = core_min(defInitialProgressivePrec, lowBound.asLong());
+        extLong i = core_min(get_static_defInitialProgressivePrec(), lowBound.asLong());
         extLong ua = lowBound.asLong() + EXTLONG_ONE;
         //   NOTE: ua is allowed to be CORE_INFTY
 	
@@ -1096,7 +1106,7 @@ void AddSubRep<Operator>::computeExactFlags() {
         lMSB() = CORE_negInfty;
         sign() = 0;
 
-        EscapePrecFlag = 0;	// reset the Escape Flag
+        get_static_EscapePrecFlag() = 0;	// reset the Escape Flag
 
         // Now we try to determine the real lMSB and sign,
         // in case it is not really zero:
@@ -1151,22 +1161,22 @@ void AddSubRep<Operator>::computeExactFlags() {
             break; // assert -- this must happen in the loop if nonzero!
           }
           //8/9/01, Chee: implement escape precision here:
-          if (i> EscapePrec) {
-            EscapePrecFlag = -i.asLong();//negative means EscapePrec is used
+          if (i> get_static_EscapePrec()) {
+            get_static_EscapePrecFlag() = -i.asLong();//negative means EscapePrec is used
 	    core_error("Escape precision triggered at",
             		 __FILE__, __LINE__, false);
-            if (EscapePrecWarning)
+            if (get_static_EscapePrecWarning())
               std::cout<< "Escape Precision triggered at "
-		      << EscapePrec << " bits" << std::endl;
+		      << get_static_EscapePrec() << " bits" << std::endl;
 #ifdef CORE_DEBUG
-            std::cout << "EscapePrecFlags=" << EscapePrecFlag << std::endl;
+            std::cout << "EscapePrecFlags=" << get_static_EscapePrecFlag() << std::endl;
             std::cout << "ua =" << ua  << ",lowBound=" << lowBound << std::endl;
 #endif
             break;
           }// if
         }// for (long i=1...)
 
-#ifdef CORE_DEBUG_BOUND
+#if defined(CORE_DEBUG_BOUND) && !defined(CGAL_HEADER_ONLY)
         rootBoundHitCounter++;
 #endif
 

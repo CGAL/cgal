@@ -39,7 +39,7 @@ int main(int argc, char* argv[])
     typedef LA::Matrix Matrix;
     typedef LA::Vector Vector;
     bool IOTEST = true;
-    { 
+    {
       int vec_dim;
       if (argc == 2) vec_dim = std::atoi(argv[1]);
       else           vec_dim = VEC_DIM;
@@ -48,7 +48,7 @@ int main(int argc, char* argv[])
       Vector v0(vec_dim), v1(vec_dim), v2(vec_dim);
       int F[] = { 1,2,3,4,5 };
       Vector v11(F,F+2), v12(F,F+3), v13(F,F+4), v14(F,F+5),
-                 v15(v13.begin(),v13.end()), 
+                 v15(v13.begin(),v13.end()),
                  v16(vec_dim,NT(1));
       CGAL_TEST(v13==v15){}
       CGAL_TEST(v0==v1){}
@@ -64,7 +64,7 @@ int main(int argc, char* argv[])
       v1 -= v2;
       v1 = -v1;
       CGAL_TEST((v1*v1 == NT(vec_dim*vec_dim*vec_dim))){}
-      /* squared length of (v1 + v2) = v1*v1 
+      /* squared length of (v1 + v2) = v1*v1
          should be equal to dim*dim*dim */
       NT res1 = (v1*v1 - v2*v2);
       NT res2 = ((v1-v2)*(v1+v2));
@@ -78,7 +78,7 @@ int main(int argc, char* argv[])
       if (IOTEST) CGAL_IO_TEST(v1,v2,CGAL::IO::ASCII);
     }
 
-    { 
+    {
       int mat_dim;
       if (argc == 2) mat_dim = std::atoi(argv[1]);
       else           mat_dim = MAT_DIM;
@@ -86,16 +86,16 @@ int main(int argc, char* argv[])
       /* some construction and access ops */
       Matrix::Identity ID;
       Matrix A(mat_dim,mat_dim), B(mat_dim),
-             I(mat_dim,ID), One(mat_dim,mat_dim,NT(2)); 
+             I(mat_dim,ID), One(mat_dim,mat_dim,NT(2));
       CGAL_TEST(A==B){}
       CGAL_TEST(One*I==One){}
       std::vector<Vector> F(mat_dim);
 
-      int i,j; 
+      int i,j;
       for (i = 0; i < mat_dim; i++) {
         Vector v(mat_dim);
-        for (j = 0; j < mat_dim; j++) { 
-          A(i,j) = i; 
+        for (j = 0; j < mat_dim; j++) {
+          A(i,j) = i;
           B(i,j) = j;
           v[j] = j;
         }
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
              (0,1,2,3...)
              (0,1,2,3...)
              ...
-         C = A = D = E; 
+         C = A = D = E;
       */
 
       Matrix::iterator it;
@@ -130,15 +130,15 @@ int main(int argc, char* argv[])
       CGAL_TEST(A.row(1)*B.column(1)==NT(mat_dim)){}
 
       /* some basic arithmetic testing */
-      C = A; C += A; 
-      C -= NT(3)*A; 
-      C = -C; 
+      C = A; C += A;
+      C -= NT(3)*A;
+      C = -C;
       CGAL_TEST(C==A){}
 
       /* row sum test: */
-      Vector ones(mat_dim), row_sum_vec(mat_dim); 
+      Vector ones(mat_dim), row_sum_vec(mat_dim);
       for (i = 0; i < mat_dim; i++) {
-        ones[i] = 1; 
+        ones[i] = 1;
         row_sum_vec[i] = i*mat_dim;
       }
       CGAL_TEST(A*ones==row_sum_vec){}
@@ -147,16 +147,16 @@ int main(int argc, char* argv[])
       /* matrix operations + ,* and |transpose|, |rank| */
       CGAL_TEST(C==LA::transpose(C)){}
       C = C-B;
-      CGAL_TEST(C==A){}  
+      CGAL_TEST(C==A){}
       C = I+A;
       CGAL_TEST(LA::rank(C)==mat_dim){}
-      
+
       /* matrix operations 2* , |determinant| */
       C = NT(2) * I;
       C = C * NT(2);
-      Matrix L,U; 
-      Vector c; 
-      std::vector<int> q; 
+      Matrix L,U;
+      Vector c;
+      std::vector<int> q;
       NT det = LA::determinant(C, L, U, q, c); // det must be 2^{2*mat_dim}
       NT pot = 1; for (i=0; i<mat_dim; ++i) pot *= NT(4);
       CGAL_TEST(det == pot){}
@@ -165,19 +165,19 @@ int main(int argc, char* argv[])
       CGAL_TEST(CGAL_NTS sign(det) == LA::sign_of_determinant(C)){}
       if (IOTEST) CGAL_IO_TEST(A,C,CGAL::IO::ASCII);
       /* a random linear solver task: */
-      Vector b(mat_dim),x(mat_dim),e; 
-      NT denom; 
-      for (i = 0; i < mat_dim; i++) { 
-        for (j = 0; j < mat_dim; j++) 
-          C(i,j) = CGAL::default_random.get_int(-mat_dim,mat_dim); 
-        b[i] = CGAL::default_random.get_int(-mat_dim,mat_dim); 
+      Vector b(mat_dim),x(mat_dim),e;
+      NT denom;
+      for (i = 0; i < mat_dim; i++) {
+        for (j = 0; j < mat_dim; j++)
+          C(i,j) = CGAL::get_default_random().get_int(-mat_dim,mat_dim);
+        b[i] = CGAL::get_default_random().get_int(-mat_dim,mat_dim);
       }
 
       for (double f = 1.0; f > 0.0; f-=0.1) {
         Matrix E = C;
         for (i = 0; i< mat_dim; ++i)
           for (j = 0; j < mat_dim; ++j)
-            if ( CGAL::default_random.get_double() > f ) E(i,j)=0;
+            if ( CGAL::get_default_random().get_double() > f ) E(i,j)=0;
 
         if (LA::linear_solver(E, b, x, denom, A, e)) {
           CGAL_TEST(E*x == b*denom){}
@@ -212,10 +212,10 @@ int main(int argc, char* argv[])
 
       if (mat_dim > 1) { // ueberbestimmt:
         Matrix N(mat_dim,mat_dim-1);
-        for (i = 0; i < mat_dim; i++) { 
-          for (j = 0; j < mat_dim-1; j++) 
-            N(i,j) = CGAL::default_random.get_int(-mat_dim,mat_dim); 
-          b[i] = CGAL::default_random.get_int(-mat_dim,mat_dim); 
+        for (i = 0; i < mat_dim; i++) {
+          for (j = 0; j < mat_dim-1; j++)
+            N(i,j) = CGAL::get_default_random().get_int(-mat_dim,mat_dim);
+          b[i] = CGAL::get_default_random().get_int(-mat_dim,mat_dim);
         }
         if (LA::linear_solver(N,b,x,denom,e)) {
           CGAL_TEST(N*x == b*denom){}
@@ -235,7 +235,7 @@ int main(int argc, char* argv[])
     typedef LA::Matrix Matrix;
     typedef LA::Vector Vector;
     bool IOTEST = false;
-    { 
+    {
       int vec_dim;
       if (argc == 2) vec_dim = std::atoi(argv[1]);
       else           vec_dim = VEC_DIM;
@@ -245,7 +245,7 @@ int main(int argc, char* argv[])
       Vector v0(vec_dim), v1(vec_dim), v2(vec_dim);
       int F[] = { 1,2,3,4,5 };
       Vector v11(F,F+2), v12(F,F+3), v13(F,F+4), v14(F,F+5),
-                 v15(v13.begin(),v13.end()), 
+                 v15(v13.begin(),v13.end()),
                  v16(vec_dim,NT(1));
       CGAL_TEST(v13==v15){}
       CGAL_TEST(v0==v1){}
@@ -261,7 +261,7 @@ int main(int argc, char* argv[])
       v1 -= v2;
       v1 = -v1;
       CGAL_TEST((v1*v1 == NT(vec_dim*vec_dim*vec_dim))){}
-      /* squared length of (v1 + v2) = v1*v1 
+      /* squared length of (v1 + v2) = v1*v1
          should be equal to dim*dim*dim */
       NT res1 = (v1*v1 - v2*v2);
       NT res2 = ((v1-v2)*(v1+v2));
@@ -276,7 +276,7 @@ int main(int argc, char* argv[])
       if (IOTEST) CGAL_IO_TEST(v1,v2,CGAL::IO::ASCII);
     }
 
-    { 
+    {
       int mat_dim;
       if (argc == 2) mat_dim = std::atoi(argv[1]);
       else           mat_dim = MAT_DIM;
@@ -284,16 +284,16 @@ int main(int argc, char* argv[])
       /* some construction and access ops */
       Matrix::Identity ID;
       Matrix A(mat_dim,mat_dim), B(mat_dim),
-             I(mat_dim,ID), One(mat_dim,mat_dim,NT(2)); 
+             I(mat_dim,ID), One(mat_dim,mat_dim,NT(2));
       CGAL_TEST(A==B){}
       CGAL_TEST(One*I==One){}
       std::vector<Vector> F(mat_dim);
 
-      int i,j; 
+      int i,j;
       for (i = 0; i < mat_dim; i++) {
         Vector v(mat_dim);
-        for (j = 0; j < mat_dim; j++) { 
-          A(i,j) = i; 
+        for (j = 0; j < mat_dim; j++) {
+          A(i,j) = i;
           B(i,j) = j;
           v[j] = j;
         }
@@ -313,7 +313,7 @@ int main(int argc, char* argv[])
              (0,1,2,3...)
              (0,1,2,3...)
              ...
-         C = A = D = E; 
+         C = A = D = E;
       */
 
       Matrix::iterator it;
@@ -328,15 +328,15 @@ int main(int argc, char* argv[])
       CGAL_TEST(A.row(1)*B.column(1)==NT(mat_dim)){}
 
       /* some basic arithmetic testing */
-      C = A; C += A; 
-      C -= NT(3)*A; 
-      C = -C; 
+      C = A; C += A;
+      C -= NT(3)*A;
+      C = -C;
       CGAL_TEST(C==A){}
 
       /* row sum test: */
-      Vector ones(mat_dim), row_sum_vec(mat_dim); 
+      Vector ones(mat_dim), row_sum_vec(mat_dim);
       for (i = 0; i < mat_dim; i++) {
-        ones[i] = 1; 
+        ones[i] = 1;
         row_sum_vec[i] = i*mat_dim;
       }
       CGAL_TEST(A*ones==row_sum_vec){}
@@ -345,16 +345,16 @@ int main(int argc, char* argv[])
       /* matrix operations + ,* and |transpose|, |rank| */
       CGAL_TEST(C==LA::transpose(C)){}
       C = C-B;
-      CGAL_TEST(C==A){}  
+      CGAL_TEST(C==A){}
       C = I+A;
       CGAL_TEST(LA::rank(C)==mat_dim){}
-      
+
       /* matrix operations 2* , |determinant| */
       C = NT(2) * I;
       C = C * NT(2);
-      Matrix L,U; 
-      Vector c; 
-      std::vector<int> q; 
+      Matrix L,U;
+      Vector c;
+      std::vector<int> q;
       NT det = LA::determinant(C, L, U, q, c); // det must be 2^{2*mat_dim}
       NT pot = 1; for (i=0; i<mat_dim; ++i) pot *= NT(4);
       CGAL_TEST(det == pot){}
@@ -364,19 +364,19 @@ int main(int argc, char* argv[])
       if (IOTEST) CGAL_IO_TEST(A,C,CGAL::IO::ASCII);
       // add binary test later: if (IOTEST) CGAL_IO_TEST(A,C,CGAL::IO::BINARY);
       /* a random linear solver task: */
-      Vector b(mat_dim),x(mat_dim),e; 
-      NT denom; 
-      for (i = 0; i < mat_dim; i++) { 
-        for (j = 0; j < mat_dim; j++) 
-          C(i,j) = CGAL::default_random.get_int(-mat_dim,mat_dim); 
-        b[i] = CGAL::default_random.get_int(-mat_dim,mat_dim); 
+      Vector b(mat_dim),x(mat_dim),e;
+      NT denom;
+      for (i = 0; i < mat_dim; i++) {
+        for (j = 0; j < mat_dim; j++)
+          C(i,j) = CGAL::get_default_random().get_int(-mat_dim,mat_dim);
+        b[i] = CGAL::get_default_random().get_int(-mat_dim,mat_dim);
       }
 
       for (double f = 1.0; f > 0.0; f-=0.1) {
         Matrix E = C;
         for (i = 0; i< mat_dim; ++i)
           for (j = 0; j < mat_dim; ++j)
-            if ( CGAL::default_random.get_double() > f ) E(i,j)=0;
+            if ( CGAL::get_default_random().get_double() > f ) E(i,j)=0;
 
         if (LA::linear_solver(E, b, x, denom, A, e)) {
           CGAL_TEST(E*x == b*denom){}
@@ -409,10 +409,10 @@ int main(int argc, char* argv[])
 
       if (mat_dim > 1) { // ueberbestimmt:
         Matrix N(mat_dim,mat_dim-1);
-        for (i = 0; i < mat_dim; i++) { 
-          for (j = 0; j < mat_dim-1; j++) 
-            N(i,j) = CGAL::default_random.get_int(-mat_dim,mat_dim); 
-          b[i] = CGAL::default_random.get_int(-mat_dim,mat_dim); 
+        for (i = 0; i < mat_dim; i++) {
+          for (j = 0; j < mat_dim-1; j++)
+            N(i,j) = CGAL::get_default_random().get_int(-mat_dim,mat_dim);
+          b[i] = CGAL::get_default_random().get_int(-mat_dim,mat_dim);
         }
         if (LA::linear_solver(N,b,x,denom,e)) {
           CGAL_TEST(N*x == b*denom){}

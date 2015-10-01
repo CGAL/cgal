@@ -36,6 +36,7 @@ class QGraphicsScene;
 class QGraphicsSceneMouseEvent;
 class QGraphicsItem;
 class QGraphicsPathItem;
+class QGraphicsLineItem;
 class QKeyEvent;
 class QEvent;
 class QObject;
@@ -108,5 +109,9 @@ protected:
 
 } // namespace Qt
 } // namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Qt/GraphicsViewPolylineInput_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_QT_GRAPHICS_VIEW_POLYLINE_INPUT_H

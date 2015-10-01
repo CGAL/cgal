@@ -60,6 +60,10 @@ int readMultipleImage(FILE *fp, RGB ***argbs, char ***xorMasks,
 		      char ***andMasks, CGAL_UINT32 **widths, CGAL_UINT32 **heights,
 		      int *imageCount);
 
+#ifdef CGAL_HEADER_ONLY
+#include "bmpread_impl.h"
+#endif // CGAL_HEADER_ONLY
+
 #endif
 
 /*

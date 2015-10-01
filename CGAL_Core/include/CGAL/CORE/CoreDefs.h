@@ -40,6 +40,26 @@
 
 #include <CGAL/CORE/extLong.h>
 
+#ifdef CGAL_HEADER_ONLY
+  
+  #define CGAL_GLOBAL_STATE_VAR(TYPE, NAME, VALUE)  \
+    inline TYPE & get_static_##NAME()               \
+    {                                               \
+      static TYPE NAME = VALUE;                     \
+      return NAME;                                  \
+    }
+  
+#else // CGAL_HEADER_ONLY
+
+  #define CGAL_GLOBAL_STATE_VAR(TYPE, NAME, VALUE)  \
+    CGAL_EXPORT extern TYPE NAME;                   \
+    inline TYPE& get_static_##NAME()                \
+    {                                               \
+      return NAME;                                  \
+    }
+
+#endif // CGAL_HEADER_ONLY
+
 namespace CORE { 
 
 //////////////////////////////////////////////////////////////
@@ -60,34 +80,34 @@ namespace CORE {
 /** The normal behavior is to abort when an invalid expression
  * is constructed.  This flag can be used to turn off this abort.
  * In any case, an error message will be printed */
-CGAL_CORE_EXPORT extern bool AbortFlag;
+CGAL_GLOBAL_STATE_VAR(bool, AbortFlag, true)
 
 /// Invalid Flag -- initiallly value is non-negative
 /** If the Abort Flag is false, then the Invalid flag will be set to
  *  a negative value whenever an invalid expression is constructed.
  *  It is the user's responsibility to check this flag and to make
  *  it non-negative again. */
-CGAL_CORE_EXPORT extern int InvalidFlag;
+CGAL_GLOBAL_STATE_VAR(int, InvalidFlag, 0)
 
 /// Escape Precision in bits
-CGAL_CORE_EXPORT extern extLong EscapePrec;
+CGAL_GLOBAL_STATE_VAR(extLong, EscapePrec, CORE_posInfty)
 
 /// current ur when EscapePrec triggered
 /** this flag becomes negative when default EscapePrec is applied */
-CGAL_CORE_EXPORT extern long EscapePrecFlag;
+CGAL_GLOBAL_STATE_VAR(long, EscapePrecFlag, 0)
 
 /// Escape Precision Warning Flag
 /** this flag is true by default, and will cause a warning to be printed
     when EscapePrec is reached */
-CGAL_CORE_EXPORT extern bool EscapePrecWarning;
+CGAL_GLOBAL_STATE_VAR(bool, EscapePrecWarning, true)
 
 // These following two values determine the precision of computing
 // approximations in Expr.
 
 /// default Relative Precision in bits
-CGAL_CORE_EXPORT extern extLong defRelPrec;
+CGAL_GLOBAL_STATE_VAR(extLong, defRelPrec, 60)
 /// default Absolute Precision in bits
-CGAL_CORE_EXPORT extern extLong defAbsPrec;
+CGAL_GLOBAL_STATE_VAR(extLong, defAbsPrec, CORE_posInfty)
 
 /// default # of decimal digits for conversion from a BF to string.
 /** This value cannot be CORE_INFTY.
@@ -97,42 +117,41 @@ CGAL_CORE_EXPORT extern extLong defAbsPrec;
 	"controls the printout precision of std::cout for BigFloat"
     Perhaps, we should merge defOutputDigits and defBigFloatOutputDigits?
     */
-CGAL_CORE_EXPORT extern long defBigFloatOutputDigits;
+CGAL_GLOBAL_STATE_VAR(long, defBigFloatOutputDigits, 10)
 
 /// default input precision in digits for converting a string to a Real or Expr
 /** This value can be CORE_INFTY */
-CGAL_CORE_EXPORT extern extLong defInputDigits;
+CGAL_GLOBAL_STATE_VAR(extLong, defInputDigits, CORE_posInfty)
 
 /// controls the printout precision of std::cout for Real and Expr
 /** This value cannot be CORE_INFTY
     See also defBigFloatOutputDigits. 
     (it really should be an int, as in std::cout.setprecision(int)). */
-CGAL_CORE_EXPORT extern long defOutputDigits;
+CGAL_GLOBAL_STATE_VAR(long, defOutputDigits, get_static_defBigFloatOutputDigits())
 
 /// default input precision in digits for converting a string to a BigFloat
 /** This value cannot be CORE_INFTY. */
-CGAL_CORE_EXPORT extern long defBigFloatInputDigits;
+CGAL_GLOBAL_STATE_VAR(long, defBigFloatInputDigits, 16)
 
 /// default BigFloat Division Relative Precision
-CGAL_CORE_EXPORT extern extLong defBFdivRelPrec;
-
+CGAL_GLOBAL_STATE_VAR(extLong, defBFdivRelPrec, 54)
 /// default BigFloat Sqrt Absolute Precision
-CGAL_CORE_EXPORT extern extLong defBFsqrtAbsPrec;
+CGAL_GLOBAL_STATE_VAR(extLong, defBFsqrtAbsPrec, 54)
 
 //////////////////////////////////////////////////////////////
 // Mode parameters: incremental, progressive, filters
 //////////////////////////////////////////////////////////////
 
 /// floating point filter flag
-CGAL_CORE_EXPORT extern bool fpFilterFlag;
+CGAL_GLOBAL_STATE_VAR(bool, fpFilterFlag, true)
 /// if true, evaluation of expressions would be incremental
-CGAL_CORE_EXPORT extern bool incrementalEvalFlag;
+CGAL_GLOBAL_STATE_VAR(bool, incrementalEvalFlag, true)
 /// progressive evaluation flag
-CGAL_CORE_EXPORT extern bool progressiveEvalFlag;
+CGAL_GLOBAL_STATE_VAR(bool, progressiveEvalFlag, true)
 /// rational reduction flag
-CGAL_CORE_EXPORT extern bool rationalReduceFlag;
+CGAL_GLOBAL_STATE_VAR(bool, rationalReduceFlag, false)
 /// default initial (bit) precision for AddSub Progressive Evaluation
-CGAL_CORE_EXPORT extern long defInitialProgressivePrec;
+CGAL_GLOBAL_STATE_VAR(long, defInitialProgressivePrec, 64)
 
 //////////////////////////////////////////////////////////////
 // methods for setting global precision parameters
@@ -144,87 +163,87 @@ CGAL_CORE_EXPORT extern long defInitialProgressivePrec;
 /** It determines the precision to which an Expr evaluates its
     (exact, implicit) constant value. */
 inline void setDefaultPrecision(const extLong &r, const extLong &a) {
-  defRelPrec = r;
-  defAbsPrec = a;
+  get_static_defRelPrec() = r;
+  get_static_defAbsPrec() = a;
 }
 
 /// set default relative precision
 inline extLong setDefaultRelPrecision(const extLong &r) {
-  extLong old = defRelPrec;
-  defRelPrec = r;
+  extLong old = get_static_defRelPrec();
+  get_static_defRelPrec() = r;
   return old;
 }
 
 /// set default absolute precision
 inline extLong setDefaultAbsPrecision(const extLong &a) {
-  extLong old = defAbsPrec;
-  defAbsPrec = a;
+  extLong old = get_static_defAbsPrec();
+  get_static_defAbsPrec() = a;
   return old;
 }
 
 /// set default input digits (for Expr, Real)
 /** it controls the absolute error */
 inline extLong setDefaultInputDigits(const extLong &d) {
-  extLong old = defInputDigits;
-  defInputDigits = d;
+  extLong old = get_static_defInputDigits();
+  get_static_defInputDigits() = d;
   return old;
 }
 
 /// set default output digits (for Expr, Real)
-inline long setDefaultOutputDigits(long d = defOutputDigits,
+inline long setDefaultOutputDigits(long d = get_static_defOutputDigits(),
                                    std::ostream& o = std::cout) {
-  long old = defOutputDigits;
-  defOutputDigits = d;
+  long old = get_static_defOutputDigits();
+  get_static_defOutputDigits() = d;
   o.precision(d);
   return old;
 }
 
 /// set default input digits for BigFloat
 inline long setDefaultBFInputDigits(long d) {
-  long old = defBigFloatInputDigits;
-  defBigFloatInputDigits = d;
+  long old = get_static_defBigFloatInputDigits();
+  get_static_defBigFloatInputDigits() = d;
   return old;
 }
 
 /// set default output digits for BigFloat
 inline long setDefaultBFOutputDigits(long d) {
-  long old = defBigFloatOutputDigits;
-  defBigFloatOutputDigits = d;
+  long old = get_static_defBigFloatOutputDigits();
+  get_static_defBigFloatOutputDigits() = d;
   return old;
 }
 
 /// turn floating-point filter on/off
 inline bool setFpFilterFlag(bool f) {
-  bool oldf = fpFilterFlag;
-  fpFilterFlag = f;
+  bool oldf = get_static_fpFilterFlag();
+  get_static_fpFilterFlag() = f;
   return oldf;
 }
 
 /// turn incremental evaluation flag on/off
 inline bool setIncrementalEvalFlag(bool f) {
-  bool oldf = incrementalEvalFlag;
-  incrementalEvalFlag = f;
+  bool oldf = get_static_incrementalEvalFlag();
+  get_static_incrementalEvalFlag() = f;
   return oldf;
 }
 
 /// turn progressive evaluation flag on/off
 inline bool setProgressiveEvalFlag(bool f) {
-  bool oldf = progressiveEvalFlag;
-  progressiveEvalFlag = f;
+  bool oldf = get_static_progressiveEvalFlag();
+  get_static_progressiveEvalFlag() = f;
   return oldf;
 }
 
 /// set initial bit precision for progressive evaluation:
 inline long setDefInitialProgressivePrec(long n) {
-  long oldn = defInitialProgressivePrec;
-  defInitialProgressivePrec = n;
+  long oldn = get_static_defInitialProgressivePrec();
+  get_static_defInitialProgressivePrec() = n;
   return oldn;
 }
 
 /// turn rational reduction flag on/off
 inline bool setRationalReduceFlag(bool f) {
-  bool oldf = rationalReduceFlag;
-  rationalReduceFlag = f;
+  bool oldf = get_static_rationalReduceFlag();
+  get_static_rationalReduceFlag() = f;
   return oldf;
 }
 
@@ -235,9 +254,9 @@ inline bool setRationalReduceFlag(bool f) {
     e.g., overriding the default std::cout precision (most systems 
     initializes this value to 6) to our own */
 inline void CORE_init(long d) {
-  defAbsPrec = CORE_posInfty;
-  defOutputDigits = d;
-  std::setprecision(defOutputDigits);
+  get_static_defAbsPrec() = CORE_posInfty;
+  get_static_defOutputDigits() = d;
+  std::setprecision(get_static_defOutputDigits());
 }
 
 /// change to scientific output format
@@ -251,4 +270,9 @@ inline void setPositionalFormat(std::ostream& o = std::cout) {
 }
 
 } //namespace CORE
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/CORE/CoreDefs_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // _CORE_COREDEFS_H_

@@ -31,5 +31,8 @@ int testGifHeader(char *magic,const char *name);
 /** creates an return the file format structure associated with the Gif file format */
 PTRIMAGE_FORMAT createGifFormat();
 
+#ifdef CGAL_HEADER_ONLY
+#include "gif_impl.h"
+#endif // CGAL_HEADER_ONLY
 
 #endif

@@ -124,5 +124,10 @@ inline std::istream& skip_comment_OFF( std::istream& in) {
 }
 
 } //namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/IO/File_header_extended_OFF_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_IO_FILE_HEADER_EXTENDED_OFF_H //
 // EOF //

@@ -56,5 +56,10 @@ public:
 };
 
 } //namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/IO/File_writer_wavefront_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_IO_FILE_WRITER_WAVEFRONT_H //
 // EOF //

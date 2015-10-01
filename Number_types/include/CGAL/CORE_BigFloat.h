@@ -251,7 +251,7 @@ namespace internal{
 
 CORE::BigFloat 
 inline 
-round(const CORE::BigFloat& x, long rel_prec = CORE::defRelPrec.toLong() ){
+round(const CORE::BigFloat& x, long rel_prec = CORE::get_static_defRelPrec().toLong() ){
     CGAL_postcondition(rel_prec >= 0);   
 
     // since there is not rel prec defined if Zero_in(x)
@@ -344,9 +344,9 @@ public:
         typedef long  result_type;  
      
         long operator() ( long prec ) const {    
-            long result =  ::CORE::defRelPrec.toLong();
-            ::CORE::defRelPrec = prec; 
-            ::CORE::defBFdivRelPrec = prec;
+            long result =  ::CORE::get_static_defRelPrec().toLong();
+            ::CORE::get_static_defRelPrec() = prec; 
+            ::CORE::get_static_defBFdivRelPrec() = prec;
             return result; 
         }
     };
@@ -356,7 +356,7 @@ public:
         typedef long  result_type;  
      
         long operator() () const {
-            return  ::CORE::defRelPrec.toLong(); 
+            return  ::CORE::get_static_defRelPrec().toLong(); 
         }
     };
 };
@@ -378,17 +378,19 @@ template <> class Algebraic_structure_traits< CORE::BigFloat >
       : public std::unary_function< Type, Type > {
       public:
         Type operator()( const Type& x ) const {
-            // What I want is a sqrt computed with ::CORE::defRelPrec bits.
+            // What I want is a sqrt computed with 
+            // ::CORE::get_static_defRelPrec() bits.
             // And not ::CORE::defBFsqrtAbsPrec as CORE does. 
             
-            CGAL_precondition(::CORE::defRelPrec.toLong() > 0);
+            CGAL_precondition(::CORE::get_static_defRelPrec().toLong() > 0);
             CGAL_precondition(x > 0);
             
-            Type a = CGAL::internal::round(x, ::CORE::defRelPrec.toLong()*2);
+            Type a = CGAL::internal::round(
+              x, ::CORE::get_static_defRelPrec().toLong()*2);
             CGAL_postcondition(a > 0); 
 
-            Type tmp1 = 
-                CORE::BigFloat(a.m(),0,0).sqrt(::CORE::defRelPrec.toLong());
+            Type tmp1 = CORE::BigFloat(
+                a.m(),0,0).sqrt(::CORE::get_static_defRelPrec().toLong());
             Type err  =  
                 Type(0,long(std::sqrt(double(a.err()))),0) 
                 * CORE::BigFloat::exp2(a.exp()*7);

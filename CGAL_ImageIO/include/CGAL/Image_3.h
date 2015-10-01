@@ -490,10 +490,12 @@ Image_3::labellized_trilinear_interpolation(const Coord_type& x,
 
 } // end namespace CGAL
 
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Image_3_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
-
  
 #endif // CGAL_IMAGE_3_H

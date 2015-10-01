@@ -18,30 +18,17 @@
 //
 // Author(s)     : Daniel Russel <drussel@alumni.princeton.edu>
 
-#include <boost/config.hpp>
+#ifndef CGAL_HEADER_ONLY
 
-#if defined(BOOST_MSVC)
-#  pragma warning(disable:4251)
-#endif
-
-#include <CGAL/Tools/Log.h>
 #include <CGAL/Kinetic/internal/debug_counters.h>
-#include <iostream>
-namespace CGAL {
-Log::State Log::state_;
-} //namespace CGAL
-namespace CGAL { namespace Kinetic { namespace internal {
+#include <CGAL/Kinetic/internal/debug_counters_impl.h>
+#include <CGAL/Tools/Log.h>
+#include <CGAL/Tools/Log_impl.h>
 
+namespace CGAL { namespace Kinetic { namespace internal {
   unsigned int function_degeneracies__=0;
   unsigned int zero_certificates__=0;
   unsigned int io_errors__=0;
   unsigned int audit_failures__=0;
-
-  void write_debug_counters(std::ostream &out) {
-    out << "Degeneracies " << function_degeneracies__ << std::endl;
-    out << "Zero functions " << zero_certificates__ << std::endl;
-    if (io_errors__ != 0) out << "I/O errors " << io_errors__ << std::endl;
-    if (audit_failures__ != 0) out << "Audit failures " << audit_failures__ << std::endl;
-  }
-
 } } } //namespace CGAL::Kinetic::internal
+#endif

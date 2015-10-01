@@ -96,4 +96,8 @@ inline bool do_intersect(
 
 } //namespace CGAL
 
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Bbox_2_Line_2_intersection_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif

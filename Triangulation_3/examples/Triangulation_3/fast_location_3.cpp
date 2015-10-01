@@ -27,9 +27,9 @@ int main()
   // performing nearest vertex queries to a series of random points,
   // which is a case where the Fast_location policy is beneficial.
   for (int i=0; i<10000; ++i)
-    T.nearest_vertex(Point(CGAL::default_random.get_double(0, 20),
-			   CGAL::default_random.get_double(0, 20),
-			   CGAL::default_random.get_double(0, 20)));
+    T.nearest_vertex(Point(CGAL::get_default_random().get_double(0, 20),
+			   CGAL::get_default_random().get_double(0, 20),
+			   CGAL::get_default_random().get_double(0, 20)));
 
   return 0;
 }

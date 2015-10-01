@@ -22,25 +22,9 @@
 //
 // Author(s)     : Andreas Fabri, Hervé Brönnimann
 
+#ifndef CGAL_HEADER_ONLY
+
 #include <CGAL/IO/Color.h>
+#include <CGAL/IO/Color_impl.h>
 
-
-namespace CGAL {
-
-const Color BLACK  = Color(0, 0, 0);
-const Color WHITE  = Color(255, 255, 255);
-const Color GRAY   = Color(100,100,100);
-
-const Color GREEN  = Color(0, 255, 0);
-
-const Color DEEPBLUE   = Color(10, 0, 100);
-const Color BLUE   = Color(0, 0, 255);
-const Color VIOLET = Color(255, 0, 255);
-const Color PURPLE = Color(100, 0, 70);
-
-const Color RED    = Color(255, 0, 0);
-const Color ORANGE = Color(235, 150, 0);
-const Color YELLOW = Color(255, 255, 0);
-
-} //namespace CGAL
-
+#endif // CGAL_HEADER_ONLY

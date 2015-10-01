@@ -24,7 +24,7 @@ typedef CGAL::Delaunay_triangulation_3<K> Delaunay3d;
 
 int my_rand()
 {
-  return int(CGAL::default_random.get_double()*(1<<31));
+  return int(CGAL::get_default_random().get_double()*(1<<31));
 }
 
 int main()

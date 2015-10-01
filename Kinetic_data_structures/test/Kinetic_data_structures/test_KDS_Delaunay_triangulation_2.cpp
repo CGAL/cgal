@@ -87,6 +87,6 @@ int main(int, char *[])
     std::cout << "No errors for " << std::distance(kdel.visitor().events_begin(), kdel.visitor().events_end()) << " events.\n";
   }
   
-  if (CGAL::Kinetic::internal::audit_failures__ != 0 ) return EXIT_FAILURE;
+  if (CGAL::Kinetic::internal::get_static_audit_failures() != 0 ) return EXIT_FAILURE;
   else return EXIT_SUCCESS;
 }

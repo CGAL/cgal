@@ -153,7 +153,7 @@ public:
   ~Time_accumulator() { timer.stop(); accumulator += timer.time(); }
 };
 
-#define drand48 CGAL::default_random.get_double
+#define drand48 CGAL::get_default_random().get_double
 
 Point rnd_point()
 {

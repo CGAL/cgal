@@ -749,7 +749,7 @@ std::ostream&  operator<<(std::ostream& os, const Matrix_<NT_,AL_>& M)
 
     int d = M.row_dimension();
     int k = M.column_dimension();
-    switch (os.iword(CGAL::IO::mode)) {
+    switch (get_mode(os)) {
     case CGAL::IO::BINARY:
         CGAL::write( os, d);
         CGAL::write( os, k);
@@ -793,7 +793,7 @@ std::istream&  operator>>(std::istream& is, Matrix_<NT_,AL_>& M)
              x_d2,0 ... x_d2,d1-1 */
 
   int cdim, rdim, i;
-  switch(is.iword(CGAL::IO::mode)) {
+  switch(get_mode(is)) {
     case CGAL::IO::BINARY : 
       CGAL::read(is,rdim);
       CGAL::read(is,cdim);

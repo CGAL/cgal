@@ -280,5 +280,9 @@ extern void Reech2DNearest4x4_r32 ( void* theBuf, /* buffer to be resampled */
 extern void Reech4x4_verbose ( );
 extern void Reech4x4_noverbose ( );
 
+#ifdef CGAL_HEADER_ONLY
+#include "reech4x4_impl.h"
+#endif // CGAL_HEADER_ONLY
+
 
 #endif

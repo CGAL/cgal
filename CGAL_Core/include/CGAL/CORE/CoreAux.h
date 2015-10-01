@@ -181,4 +181,9 @@ inline void core_debug(std::string msg){
 
 
 } //namespace CORE
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/CORE/CoreAux_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // _CORE_COREAUX_H_

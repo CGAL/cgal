@@ -218,7 +218,7 @@ int main(int argc, char **argv)
   
   
   int loops = (argc < 2) ? 2000 : std::atoi(argv[1]);
-  int seed  = (argc < 3) ? CGAL::default_random.get_int(0, 1<<30)
+  int seed  = (argc < 3) ? CGAL::get_default_random().get_int(0, 1<<30)
                          : std::atoi(argv[2]);
 
   std::cout << "Initializing random generator with seed = " << seed

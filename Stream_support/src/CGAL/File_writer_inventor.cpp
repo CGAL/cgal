@@ -22,43 +22,11 @@
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
+#ifndef CGAL_HEADER_ONLY
+
 #include <CGAL/IO/File_writer_inventor.h>
+#include <CGAL/IO/File_writer_inventor_impl.h>
 
-namespace CGAL {
+#endif // CGAL_HEADER_ONLY
 
-void
-File_writer_inventor::
-write_header( std::ostream& o,
-              std::size_t   vertices,
-              std::size_t   halfedges,
-              std::size_t   facets){
-    m_out    = &o;
-    m_facets = facets;
-    out() << "# " << vertices  << " vertices\n";
-    out() << "# " << halfedges << " halfedges\n";
-    out() << "# " << facets    << " facets\n\n";
-    out() << "Separator {\n"
-             "    Coordinate3 {\n"
-             "        point   [" << std::endl;
-}
-
-void
-File_writer_inventor::
-write_facet_header() const {
-    out() << "        ] #point\n"
-             "    } #Coordinate3\n"
-             "    # " << m_facets << " facets\n"
-             "    IndexedFaceSet {\n"
-             "        coordIndex [\n";
-}
-
-void
-File_writer_inventor::
-write_footer() const {
-    out() << "        ] #coordIndex\n"
-             "    } #IndexedFaceSet\n"
-             "} #Separator" << std::endl;
-}
-
-} //namespace CGAL
 // EOF //

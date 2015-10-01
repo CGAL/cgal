@@ -5,6 +5,10 @@ project(CGAL CXX C)
 # Minimal version of CMake:
 cmake_minimum_required(VERSION 2.8.11)
 
+# add_definitions(-DCGAL_HEADER_ONLY)
+# message("CGAL WITH HEADER ONLY")
+# message("CGAL with libraries")
+
 # option for branch build
 
 option( CGAL_BRANCH_BUILD "Create CGAL from branch" ON)

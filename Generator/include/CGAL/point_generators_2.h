@@ -38,7 +38,7 @@ class Random_points_in_disc_2 : public Random_generator_base<P>{
     void generate_point();
 public:
     typedef Random_points_in_disc_2<P,Creator> This;
-    Random_points_in_disc_2( double r = 1, Random& rnd = default_random)
+    Random_points_in_disc_2( double r = 1, Random& rnd = CGAL::get_default_random())
         // g is an input iterator creating points of type `P' uniformly
         // distributed in the open disc with radius r, i.e. |`*g'| < r .
         // Two random numbers are needed from `rnd' for each point.
@@ -73,7 +73,7 @@ class Random_points_on_circle_2 : public Random_generator_base<P> {
     void generate_point();
 public:
     typedef Random_points_on_circle_2<P,Creator> This;
-    Random_points_on_circle_2( double r = 1, Random& rnd = default_random)
+    Random_points_on_circle_2( double r = 1, Random& rnd = CGAL::get_default_random())
         // g is an input iterator creating points of type `P' uniformly
         // distributed on the circle with radius r, i.e. |`*g'| == r . A
         // single random number is needed from `rnd' for each point.
@@ -107,7 +107,7 @@ class Random_points_in_square_2 : public Random_generator_base<P> {
     void generate_point();
 public:
     typedef Random_points_in_square_2<P,Creator> This;
-    Random_points_in_square_2( double a = 1, Random& rnd = default_random)
+    Random_points_in_square_2( double a = 1, Random& rnd = CGAL::get_default_random())
         // g is an input iterator creating points of type `P' uniformly
         // distributed in the half-open square with side length a,
         // centered around the origin, i.e. \forall p = `*g': -\frac{a}{2}
@@ -143,7 +143,7 @@ class Random_points_on_square_2 : public Random_generator_base<P> {
     void generate_point();
 public:
     typedef Random_points_on_square_2<P,Creator> This;
-    Random_points_on_square_2( double a = 1, Random& rnd = default_random)
+    Random_points_on_square_2( double a = 1, Random& rnd = CGAL::get_default_random())
         // g is an input iterator creating points of type `P' uniformly
         // distributed on the boundary of the square with side length a,
         // centered around the origin, i.e. \forall p = `*g': one
@@ -196,7 +196,7 @@ class Random_points_in_iso_rectangle_2 : public Random_generator_base<P> {
     void generate_point();
 public:
     typedef Random_points_in_iso_rectangle_2<P,Creator> This;
-    Random_points_in_iso_rectangle_2( const P&p, const P& q, Random& rnd = default_random)
+    Random_points_in_iso_rectangle_2( const P&p, const P& q, Random& rnd = CGAL::get_default_random())
       : Random_generator_base<P>( 1.0 , rnd)
   {
     left = (std::min)(to_double(p.x()), to_double(q.x()));
@@ -240,7 +240,7 @@ public:
     typedef Random_points_on_segment_2<P,Creator> This;
     Random_points_on_segment_2( const P& p = P( -1, 0),
                                 const P& q = P(  1, 0),
-                                Random& rnd = default_random)
+                                Random& rnd = CGAL::get_default_random())
         // g is an input iterator creating points of type `P' uniformly
         // distributed on the segment from p to q except q, i.e. `*g' ==
         // \lambda p + (1-\lambda)\, q where 0 <= \lambda < 1 . A single
@@ -425,7 +425,7 @@ void perturb_points_2( ForwardIterator first,
                        double xeps,
                        double yeps)
 {
-    perturb_points_2( first, last, xeps, yeps, default_random);
+    perturb_points_2( first, last, xeps, yeps, CGAL::get_default_random());
 }
 
 template <class ForwardIterator>
@@ -433,7 +433,7 @@ void perturb_points_2( ForwardIterator first,
                        ForwardIterator last,
                        double xeps)
 {
-    perturb_points_2( first, last, xeps, xeps, default_random);
+    perturb_points_2( first, last, xeps, xeps, CGAL::get_default_random());
 }
 template <class RandomAccessIterator, class OutputIterator, class Creator>
 OutputIterator random_collinear_points_2(
@@ -491,7 +491,7 @@ OutputIterator random_collinear_points_2(
                        OutputIterator first2)
 {
     return  random_collinear_points_2( first, last, n, first2,
-                                       default_random);
+                                       CGAL::get_default_random());
 }
 
 template < class P, class Creator = 

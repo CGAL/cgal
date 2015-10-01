@@ -55,5 +55,10 @@ public:
 };
 
 } //namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/IO/File_writer_VRML_2_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_IO_FILE_WRITER_VRML_2_H //
 // EOF //

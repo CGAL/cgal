@@ -103,7 +103,7 @@ public:
   }
   /// check whether the sign (!) of the filtered value is OK
   bool isOK() const {
-    return (fpFilterFlag  && // To disable filter
+    return (get_static_fpFilterFlag()  && // To disable filter
             CGAL_CORE_finite(fpVal) && // Test for infinite and NaNs
             (core_abs(fpVal) >= maxAbs*ind*CORE_EPS));
   }
