@@ -156,6 +156,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
       qobject_cast<Scene_polyhedron_item*>(scene->item(index));
     if(item)
     {
+        item->setItemIsMulticolor(true);
       std::list<Polyhedron*> new_polyhedra;
       Polyhedron_cc_marker marker;
       CGAL::internal::corefinement::mark_connected_components(

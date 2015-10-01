@@ -315,6 +315,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_sdf(
      SDFPropertyMap sdf_values,  
      std::vector<QColor>& color_vector)
 {
+    item->setItemIsMulticolor(true);
     Polyhedron* polyhedron = item->polyhedron();
     color_vector.clear();
     std::size_t patch_id = 0;
@@ -339,6 +340,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::colorize_segmentation(
      SegmentPropertyMap segment_ids,
      std::vector<QColor>& color_vector)
 {
+    item->setItemIsMulticolor(true);
     Polyhedron* polyhedron = item->polyhedron();
     color_vector.clear();
     std::size_t max_segment = 0;
