@@ -127,9 +127,9 @@ depending on the arguments.
 
 The following tables give the possible values for `Type1` and `Type2`.
 
-\cgalHeading{2D intersections}
+\cgalHeading{2D Intersections}
 
-The return type can be obtained through `cpp11::result_of<Kernel::Intersect_2(A, B)>::%type`.
+The return type can be obtained through `CGAL::cpp11::result_of<Kernel::Intersect_2(A, B)>::%type`.
 It is equivalent to `boost::optional< boost::variant< T... > >`, the last column in the table providing the template parameter pack.
 
 <DIV ALIGN="CENTER">
@@ -217,9 +217,9 @@ It is equivalent to `boost::optional< boost::variant< T... > >`, the last column
 </TABLE>
 </DIV>
 
-\cgalHeading{3D intersections}
+\cgalHeading{3D Intersections}
 
-The return type can be obtained through `cpp11::result_of<Kernel::Intersect_3(A, B)>::%type`.
+The return type can be obtained through `CGAL::cpp11::result_of<Kernel::Intersect_3(A, B)>::%type`.
 It is equivalent to `boost::optional< boost::variant< T... > >`, the last column in the table providing the template parameter pack.
 
 <DIV ALIGN="CENTER">
@@ -316,57 +316,30 @@ p    <TD>Point_3, or Segment_3</TD>
 </TABLE>
 </DIV>
 
-\cgalHeading{Example}
+\cgalHeading{Examples}
 
-The following example demonstrates the most common use of
-`intersection` routines with the 2D and 3D Linear %Kernel.
+The following examples demonstrate the most common use of
+`intersection()` functions with the 2D and 3D Linear %Kernel.
 
-\code
-#include <CGAL/intersections.h>
+In the first two examples we intersect a segment and a line.
+The result type can be obtained with `CGAL::cpp11::result_of`. It looks simpler
+if you use a C++ compiler which supports `auto`,
+but you must anyways know that the result type is a `boost::optional<boost::variant<..> >`, in order to unpack the point or segment.
 
-template <typename R>
-struct Intersection_visitor {
-  typedef void result_type;
-  void operator()(const Point_2<R>& p) const
-  {
-    // handle point
-  }
-  void operator()(const Segment_2<R>& s) const
-  {
-    // handle segment
-  }
-};
+<A HREF="http://www.boost.org/libs/optional/">`boost::optional`</A> comes in
+as there might be no intersection. <A HREF="http://www.boost.org/libs/variant/">`boost::variant`</A> comes in
+as, if there is an intersection, it is either a point or a segment.
 
-template <typename R>
-void foo (const Segment_2<R>& seg, const Line_2<R>& lin)
-{
-  // with C++11 support
-  // auto result = intersection(seg, lin);
+As explained in the boost manual pages for <A HREF="http://www.boost.org/libs/variant/">`boost::variant`</A>, there are two ways to access the variants. The first examples uses `boost::get`.
 
-  // without C++11
-  cpp11::result_of<R::Intersect_2(Segment_2<R>, Line_2<R>)>::type
-    result = intersection(seg, lin);
+\cgalExample{Kernel_23/intersection_get.cpp}
 
-  if (result) { boost::apply_visitor(Intersection_visitor(), *result); }
-  else {
-    // no intersection
-  }
+The second example uses `boost::apply_visitor`.
 
-  // alternatively:
-  if (result) {
-    if (const Segment_2<R>* s = boost::get<Segment_2>(&*result)) {
-      // handle segment
-    } else {
-      const Point_2<R>* p = boost::get<Point_2<R> >(&*result);
-      // handle point
-    }
-  }
-}
-\endcode
+\cgalExample{Kernel_23/intersection_visitor.cpp}
 
-
-Another example showing the use of the intersection function as a
-plain function call and with `Dispatch_output_iterator` combined with
+A third example shows the use of the intersection function as a
+plain function call and with `Dispatch_output_iterator`, combined with
 a standard library algorithm.
 
 \cgalExample{Kernel_23/intersections.cpp}

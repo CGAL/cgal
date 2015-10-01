@@ -7,6 +7,8 @@
 \example Kernel_23/MyKernel.cpp
 \example Filtered_kernel/Filtered_predicate.cpp
 \example Kernel_23/cartesian_converter.cpp
+\example Kernel_23/intersection_get.cpp
+\example Kernel_23/intersection_visitor.cpp
 \example Kernel_23/intersections.cpp
 \example Kernel_23/points_and_segment.cpp
 \example Kernel_23/surprising.cpp
