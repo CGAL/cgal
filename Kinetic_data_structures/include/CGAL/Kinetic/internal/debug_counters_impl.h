@@ -23,6 +23,12 @@
 #endif
 #include <iostream>
 
+#ifdef CGAL_HEADER_ONLY
+#define CGAL_INLINE_FUNCTION inline
+#else
+#define CGAL_INLINE_FUNCTION
+#endif
+
 namespace CGAL { namespace Kinetic { namespace internal {
 
   CGAL_INLINE_FUNCTION

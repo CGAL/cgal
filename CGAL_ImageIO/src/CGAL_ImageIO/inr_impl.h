@@ -29,6 +29,7 @@
 
 #include <string>
 #include <sstream>
+#include <string.h>
 
 /* Magic header for inrimages v4 */
 #define INR4_MAGIC "#INRIMAGE-4#{"

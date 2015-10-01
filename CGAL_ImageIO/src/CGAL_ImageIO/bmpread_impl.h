@@ -35,12 +35,6 @@
 #define CGAL_INLINE_FUNCTION
 #endif
 
-#include <stdio.h>
-#include <stdlib.h>
-#include <string.h>
-#include "bmptypes.h"
-#include "bmpendian.h"
-
 /*****************************************************************************
  *
  * Mid-level functions.

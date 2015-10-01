@@ -177,6 +177,7 @@ operator<<(std::ostream &os, const Bbox_2 &b)
         write(os, b.xmax());
         write(os, b.ymax());
         break;
+    case IO::PRETTY :
     default:
         os << "Bbox_2(" << b.xmin() << ", " << b.ymin() << ", "
                         << b.xmax() << ", " << b.ymax() << ")";
@@ -200,6 +201,8 @@ operator>>(std::istream &is, Bbox_2 &b)
         read(is, ymin);
         read(is, xmax);
         read(is, ymax);
+        break;
+    case IO::PRETTY :
         break;
     }
     if (is)
