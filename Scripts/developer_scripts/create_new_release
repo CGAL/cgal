@@ -333,6 +333,7 @@ if [ -n "$DO_PUBLIC" ]; then
   container_id=`docker ps -q -l`
   docker start -a ${container_id}
   docker cp ${container_id}:/nsis_release/${public_release_name}-Setup.exe "${HTML_DIR}/${release_name}-public/"
+  docker rm ${container_id}
 fi
 
 # Remove local directory and tarball
