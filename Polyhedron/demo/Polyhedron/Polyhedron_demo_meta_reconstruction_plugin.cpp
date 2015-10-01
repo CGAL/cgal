@@ -17,6 +17,7 @@
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/jet_smooth_point_set.h>
+#include <CGAL/Scale_space_surface_reconstruction_3.h>
 
 #include "Scene_polygon_soup_item.h"
 #include "Scene_points_with_normal_item.h"
@@ -37,6 +38,8 @@ namespace MetaReconstruction
   typedef typename Neighbor_search::Tree Tree;
   typedef typename Neighbor_search::iterator Search_iterator;
 
+  typedef CGAL::Scale_space_surface_reconstruction_3<Kernel> ScaleSpace;
+  
   template <typename OutputIterator>
   void generate_scales (OutputIterator out,
 			const unsigned int scale_min = 6,
@@ -126,7 +129,7 @@ namespace MetaReconstruction
   }
 
   
-  unsigned int scale_of_noise (const Point_set& points)
+  unsigned int scale_of_noise (const Point_set& points, double& size)
   {
     Tree tree(points.begin(), points.end());
     
@@ -142,7 +145,7 @@ namespace MetaReconstruction
     generate_scales (std::back_inserter (scales));
 
     std::vector<unsigned int> chosen;
-
+    
     for (std::size_t i = 0; i < subset.size (); ++ i)
       {
     	Neighbor_search search(tree, subset[i],scales.back());
@@ -177,8 +180,18 @@ namespace MetaReconstruction
       }
 
     std::sort (chosen.begin (), chosen.end());
+
+    unsigned int noise_scale = chosen[chosen.size() / 2];
+    size = 0.;
+    for (std::size_t i = 0; i < subset.size (); ++ i)
+      {
+    	Neighbor_search search(tree, subset[i], noise_scale);
+	size += std::sqrt ((-- search.end())->second);
+      }
+    size /= subset.size();
+
     
-    return chosen[chosen.size() / 2];
+    return noise_scale;
   }
 
   void simplify_point_set (Point_set& points, double size)
@@ -190,6 +203,35 @@ namespace MetaReconstruction
   void smooth_point_set (Point_set& points, unsigned int scale)
   {
     CGAL::jet_smooth_point_set(points.begin(), points.end(), scale);
+  }
+
+  void scale_space (const Point_set& points, Scene_polygon_soup_item* new_item,
+		    unsigned int scale, bool interpolate = true)
+  {
+    ScaleSpace reconstruct (scale, 300);
+    reconstruct.reconstruct_surface(points.begin (), points.end (), 4, false, true);
+
+    new_item->init_polygon_soup(points.size(), reconstruct.number_of_triangles ());
+
+    std::map<unsigned int, unsigned int> map_i2i;
+    unsigned int current_index = 0;
+    
+    for (ScaleSpace::Triple_iterator it = reconstruct.surface_begin ();
+	 it != reconstruct.surface_end (); ++ it)
+      {
+	for (unsigned int ind = 0; ind < 3; ++ ind)
+	  {
+	    if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
+	      {
+		map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
+		Point p = (interpolate ? points[(*it)[ind]].position() : *(reconstruct.points_begin() + (*it)[ind]));
+		new_item->new_vertex (p.x (), p.y (), p.z ());
+	      }
+	  }
+	new_item->new_triangle( map_i2i[(*it)[0]],
+				map_i2i[(*it)[1]],
+				map_i2i[(*it)[2]] );
+      }
   }
 }
 
@@ -306,7 +348,8 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 
       std::cerr << "Analysing noise of point set... ";
       time.restart();
-      unsigned int noise_scale = MetaReconstruction::scale_of_noise (*points);
+      double noise_size;
+      unsigned int noise_scale = MetaReconstruction::scale_of_noise (*points, noise_size);
       std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
       bool noisy = (noise_scale > 6);
       std::cerr << (noisy ? " -> Point set is noisy" : " -> Point set is noise-free") << std::endl;
@@ -325,7 +368,14 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 	    { 
 	      std::cerr << "Scale space reconstruction... ";
 	      time.restart();
-	      // TODO
+
+	      Scene_polygon_soup_item* reco_item = new Scene_polygon_soup_item();
+	      MetaReconstruction::scale_space (*points, reco_item, (std::max)(noise_scale, aniso_scale));
+	      
+	      reco_item->setName(tr("%1 (scale space interpolant)").arg(scene->item(index)->name()));
+	      reco_item->setColor(Qt::magenta);
+	      reco_item->setRenderingMode(FlatPlusEdges);
+	      scene->addItem(reco_item);
 
 	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
@@ -345,7 +395,14 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 	    {
 	      std::cerr << "Scale space reconstruction... ";
 	      time.restart();
-	      // TODO
+
+	      Scene_polygon_soup_item* reco_item = new Scene_polygon_soup_item();
+	      MetaReconstruction::scale_space (*points, reco_item, noise_scale, false);
+
+	      reco_item->setName(tr("%1 (scale space smoothed)").arg(scene->item(index)->name()));
+	      reco_item->setColor(Qt::magenta);
+	      reco_item->setRenderingMode(FlatPlusEdges);
+	      scene->addItem(reco_item);
 
 	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
