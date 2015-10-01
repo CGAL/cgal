@@ -24,12 +24,16 @@ public:
     QVariant data(const QModelIndex &index, int role) const;
     int rowCount(const QModelIndex &parent) const
     {
+        Q_UNUSED (parent);
         return data_pool->group_entries().size();
     }
     QList<Scene_group_item*> groups() const
     {
         return data_pool->group_entries();
     }
+
+    Qt::ItemFlags flags (const QModelIndex &index) const;
+    bool setData(const QModelIndex &index, const QVariant &value, int role);
 
 private:
     Scene* data_pool;
@@ -74,8 +78,7 @@ public :
     // To silent a warning -Woverloaded-virtual
     // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
     using Polyhedron_demo_plugin_helper::init;
-    void init(QMainWindow* mainWindow,
-              Scene_interface* scene_interface);
+    void init(QMainWindow* mw, Scene_interface* sc, Messages_interface*);
 
     bool applicable(QAction*) const
     {
@@ -88,16 +91,31 @@ public :
     ItemsModel *items_model;
     void add_to_group() {
         Q_FOREACH(Scene_item* item, selected_items)
-            selected_group->addChild(item);
+        {
+            if(selected_group->getChildren().contains(item))
+                 print_message("Item is already in group.");
+            else if(selected_group == item)
+                 print_message("A group cannot contain itself.");
+            else
+            {
+                selected_group->addChild(item);
+                item->has_group = true;
+            }
+
+        }
+        selected_items.clear();
     }
     QList<Scene_item*> selected_items;
     Scene_group_item* selected_group;
+    Scene* trueScene;
 public Q_SLOTS:
     void GroupChoice();
 
 
 private:
     QAction* actionAddToGroup;
+    void print_message(QString message) { messages->information(message); }
+    Messages_interface* messages;
 
 }; //end of class Polyhedron_demo_group_plugin
 
@@ -111,7 +129,5 @@ public Q_SLOTS:
     void selected_scene_items();
 private :
     Polyhedron_demo_group_plugin  * m_plugin;
-
-
 };
 #endif

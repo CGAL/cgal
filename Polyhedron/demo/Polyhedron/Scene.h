@@ -112,9 +112,11 @@ public:
   // auxiliary public function for QMainWindow
   QItemSelection createSelection(int i);
   QItemSelection createSelectionAll();
+  void setGroupName(QString name);
 
 public Q_SLOTS:
   // Notify the scene that an item was modified
+  void group_added();
   void itemChanged(); // slots called by items themself
   void itemChanged(int i); 
   void itemChanged(Scene_item*);

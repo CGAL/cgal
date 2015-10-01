@@ -46,6 +46,8 @@ Scene::Scene(QObject* parent)
     ms_splattingCounter++;
     viewItem = invisibleRootItem();
 
+    m_group_entries.append(new Scene_group_item("new group"));
+
 }
 Scene::Item_id
 Scene::addItem(Scene_item* item)
@@ -69,7 +71,6 @@ Scene::addItem(Scene_item* item)
     for(int i=0; i<5; i++){
         index_map[list.at(i)->index()] = m_entries.size() -1;
     }
-    viewItem = list.at(0);
 
     Q_EMIT updated();
     QStandardItemModel::endResetModel();
@@ -466,12 +467,13 @@ Scene::rowCount(const QModelIndex & parent) const
 {
     if (!parent.isValid())
         return m_entries.size();
-    else
-        for(int i =0; i< m_entries.size(); i++)
-        {
-            if(!parent.child(i,0).isValid())
-                return i;
-        }
+
+    for(int i =0; i< m_entries.size(); i++)
+    {
+        if(!parent.child(i,0).isValid())
+            return i;
+    }
+    return 0;
 }
 
 /*
@@ -895,6 +897,63 @@ QList<Scene_group_item*> Scene::group_entries() const
 QList<Scene_item*> Scene::item_entries() const
 {
     return m_entries;
+}
+
+void Scene::group_added()
+{
+//insures that the groupview and data always has a "new group" in first position.
+    if(m_group_entries.first()->name() != "new group")
+    {
+      addItem(m_group_entries.first());
+      m_group_entries.prepend(new Scene_group_item("new group"));
+    }
+//makes the hierarchy in the tree
+    //clears the model
+    clear();
+    index_map.clear();
+    viewItem = invisibleRootItem();
+    //fills the model
+    Q_FOREACH(Scene_item* item, m_entries)
+    {
+      if(!item->has_group)
+      {
+        QList<QStandardItem*> list;
+        for(int i=0; i<5; i++)
+        {
+            list<<new QStandardItem();
+            list.at(i)->setEditable(false);
+        }
+        viewItem->appendRow(list);
+        for(int i=0; i<5; i++){
+            index_map[list.at(i)->index()] = m_entries.indexOf(item);
+        }
+        Scene_group_item* group =
+          qobject_cast<Scene_group_item*>(item);
+        if(group)
+        {
+          viewItem = list.first();
+          Q_FOREACH(Scene_item*child, group->getChildren())
+          {
+              QList<QStandardItem*> children;
+              for(int i=0; i<5; i++)
+              {
+                  children<<new QStandardItem();
+                  children.at(i)->setEditable(false);
+              }
+              viewItem->appendRow(children);
+              for(int i=0; i<5; i++){
+                  index_map[children.at(i)->index()] = m_entries.indexOf(child);
+              }
+          }
+          viewItem = invisibleRootItem();
+        }
+      }
+
+    }
+}
+void Scene::setGroupName(QString name)
+{
+ m_group_entries[0]->setName(name);
 }
 #include "Scene_find_items.h"
 

@@ -1,9 +1,12 @@
 #include "Scene_group_item.h"
+#include <QDebug>
 
 
-Scene_group_item::Scene_group_item()
+Scene_group_item::Scene_group_item(QString name)
     :  Scene_item(0,0)
-{}
+{
+    this->name_ = name;
+}
 
 bool Scene_group_item::isFinite() const
 {
@@ -64,9 +67,6 @@ QString Scene_group_item::toolTip() const {
 }
 
 void Scene_group_item::addChild(Scene_item* new_item)
-{
-    if(!children.contains(new_item))
+{  
         children.append(new_item);
-    else
-        print_message("Item is already in group.");
 }
