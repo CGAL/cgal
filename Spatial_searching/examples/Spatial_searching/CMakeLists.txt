@@ -70,6 +70,8 @@ create_single_source_cgal_program( "searching_surface_mesh_vertices.cpp" )
 
 create_single_source_cgal_program( "searching_polyhedron_vertices.cpp" )
 
+create_single_source_cgal_program( "searching_polyhedron_vertices_with_fuzzy_sphere.cpp")
+
 create_single_source_cgal_program( "user_defined_point_and_distance.cpp" )
 
 create_single_source_cgal_program( "using_fair_splitting_rule.cpp" )
