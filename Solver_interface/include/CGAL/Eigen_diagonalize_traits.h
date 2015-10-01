@@ -34,14 +34,22 @@ namespace CGAL {
 template <typename FT, unsigned int dim = 3>
 class Eigen_diagonalize_traits{
 
-  typedef Eigen::Matrix<FT, dim, dim> Matrix;
-  typedef Eigen::Matrix<FT, dim, 1> Vector;
+public:
+
+  typedef cpp11::array<FT, dim> Vector;
+  typedef cpp11::array<FT, dim*dim> Matrix;
+  typedef cpp11::array<FT, (dim * (dim+1) / 2)> Covariance_matrix;
+  
+private:
+
+  typedef Eigen::Matrix<FT, dim, dim> EigenMatrix;
+  typedef Eigen::Matrix<FT, dim, 1> EigenVector;
   
   // Construct the covariance matrix
-  static Matrix
+  static EigenMatrix
   construct_covariance_matrix
-  (const cpp11::array<FT, (dim * (dim+1) / 2)>& cov)  {
-    Matrix m;
+  (const Covariance_matrix& cov)  {
+    EigenMatrix m;
 
     for (std::size_t i = 0; i < dim; ++ i)
       for (std::size_t j = i; j < dim; ++ j)
@@ -56,10 +64,10 @@ class Eigen_diagonalize_traits{
 
   // Diagonalize a selfadjoint matrix
   static bool
-  diagonalize_selfadjoint_matrix (Matrix& m,
-				  Matrix& eigenvectors,
-                                  Vector& eigenvalues) {
-      Eigen::SelfAdjointEigenSolver<Matrix> eigensolver(m);
+  diagonalize_selfadjoint_matrix (EigenMatrix& m,
+				  EigenMatrix& eigenvectors,
+                                  EigenVector& eigenvalues) {
+      Eigen::SelfAdjointEigenSolver<EigenMatrix> eigensolver(m);
 
       if (eigensolver.info() != Eigen::Success) {
           return false;
@@ -72,16 +80,17 @@ class Eigen_diagonalize_traits{
   }
 
 public:
+
   static bool
   diagonalize_selfadjoint_covariance_matrix(
-    const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
-    cpp11::array<FT, dim>& eigenvalues)
+    const Covariance_matrix& cov,
+    Vector& eigenvalues)
   {
-    Matrix m = construct_covariance_matrix(cov);
+    EigenMatrix m = construct_covariance_matrix(cov);
 
     // Diagonalizing the matrix
-    Vector eigenvalues_;
-    Matrix eigenvectors_;
+    EigenVector eigenvalues_;
+    EigenMatrix eigenvectors_;
     bool res = diagonalize_selfadjoint_matrix(m, eigenvectors_, eigenvalues_);
 
     if (res)
@@ -95,15 +104,15 @@ public:
 
   static bool
   diagonalize_selfadjoint_covariance_matrix(
-    const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
-    cpp11::array<FT, dim>& eigenvalues,
-    cpp11::array<FT, dim * dim>& eigenvectors)
+    const Covariance_matrix& cov,
+    Vector& eigenvalues,
+    Matrix& eigenvectors)
   {
-    Matrix m = construct_covariance_matrix(cov);
+    EigenMatrix m = construct_covariance_matrix(cov);
 
     // Diagonalizing the matrix
-    Vector eigenvalues_;
-    Matrix eigenvectors_;
+    EigenVector eigenvalues_;
+    EigenMatrix eigenvectors_;
     bool res = diagonalize_selfadjoint_matrix(m, eigenvectors_, eigenvalues_);
 
     if (res)
@@ -123,15 +132,15 @@ public:
   // Extract the eigenvector associated to the largest eigenvalue
   static bool
   extract_largest_eigenvector_of_covariance_matrix (
-    const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
-    cpp11::array<FT,dim> &normal)
+    const Covariance_matrix& cov,
+    Vector& normal)
   {
       // Construct covariance matrix
-      Matrix m = construct_covariance_matrix(cov);
+      EigenMatrix m = construct_covariance_matrix(cov);
 
       // Diagonalizing the matrix
-      Vector eigenvalues;
-      Matrix eigenvectors;
+      EigenVector eigenvalues;
+      EigenMatrix eigenvectors;
       if (! diagonalize_selfadjoint_matrix(m, eigenvectors, eigenvalues)) {
           return false;
       }

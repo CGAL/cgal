@@ -25,19 +25,24 @@ class Default_diagonalize_traits{
 #endif
 
 public:
+
+  typedef cpp11::array<FT, dim> Vector;
+  typedef cpp11::array<FT, dim*dim> Matrix;
+  typedef cpp11::array<FT, (dim * (dim+1) / 2)> Covariance_matrix;
+  
   static bool
   diagonalize_selfadjoint_covariance_matrix(
-    const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
-    cpp11::array<FT, dim>& eigenvalues)
+    const Covariance_matrix& cov,
+    Vector& eigenvalues)
   {
     return Base::diagonalize_selfadjoint_covariance_matrix (cov, eigenvalues);
   }
 
   static bool
   diagonalize_selfadjoint_covariance_matrix(
-    const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
-    cpp11::array<FT, dim>& eigenvalues,
-    cpp11::array<FT, dim * dim>& eigenvectors)
+    const Covariance_matrix& cov,
+    Vector& eigenvalues,
+    Matrix& eigenvectors)
   {
     return Base::diagonalize_selfadjoint_covariance_matrix (cov, eigenvalues, eigenvectors);
   }
@@ -45,8 +50,8 @@ public:
   // Extract the eigenvector associated to the largest eigenvalue
   static bool
   extract_largest_eigenvector_of_covariance_matrix (
-    const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
-    cpp11::array<FT,dim> &normal)
+    const Covariance_matrix& cov,
+    Vector& normal)
   {
     return Base::extract_largest_eigenvector_of_covariance_matrix (cov, normal);
   }

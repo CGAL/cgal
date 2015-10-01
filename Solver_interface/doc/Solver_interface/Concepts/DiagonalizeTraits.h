@@ -26,13 +26,18 @@ template <typename FT, unsigned int dim = 3>
 class DiagonalizeTraits
 {
 public:
+
+  typedef cpp11::array<FT, dim> Vector;
+  typedef cpp11::array<FT, dim*dim> Matrix;
+  typedef cpp11::array<FT, (dim * (dim+1) / 2)> Covariance_matrix;
+
   /// fill `eigenvalues` with the eigenvalues of the covariance matrix represented by `cov`.
   /// Eigenvalues are sorted by increasing order.
   /// \return `true` if the operation was successful and `false` otherwise.
   static bool
   diagonalize_selfadjoint_covariance_matrix(
-    const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
-    cpp11::array<FT, dim>& eigenvalues);
+    const Covariance_matrix& cov,
+    Vector& eigenvalues);
 
   /// fill `eigenvalues` with the eigenvalues and `eigenvectors` with
   /// the eigenvectors of the covariance matrix represented by `cov`.
@@ -41,9 +46,9 @@ public:
   /// otherwise.
   static bool
   diagonalize_selfadjoint_covariance_matrix(
-    const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
-    cpp11::array<FT, dim>& eigenvalues,
-    cpp11::array<FT, dim * dim>& eigenvectors);
+    const Covariance_matrix& cov,
+    Vector& eigenvalues,
+    Matrix& eigenvectors);
 
 
   /// Extract the eigenvector associated to the largest eigenvalue
@@ -51,7 +56,7 @@ public:
   /// \return `true` if the operation was successful and `false` otherwise.
   static bool
   extract_largest_eigenvector_of_covariance_matrix (
-    const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
-    cpp11::array<FT,dim> &normal);
+    const Covariance_matrix& cov,
+    Vector& normal);
 };
 

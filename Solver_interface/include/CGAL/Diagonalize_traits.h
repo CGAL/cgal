@@ -11,24 +11,29 @@ namespace CGAL {
 template <typename FT, unsigned int dim = 3>
 class Diagonalize_traits{
 
- public:
+public:
+  
+    typedef cpp11::array<FT, dim> Vector;
+    typedef cpp11::array<FT, dim*dim> Matrix;
+    typedef cpp11::array<FT, (dim * (dim+1) / 2)> Covariance_matrix;
+
     static bool
     diagonalize_selfadjoint_covariance_matrix
-      (const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
-       cpp11::array<FT, dim>& eigenvalues)
+      (const Covariance_matrix& cov,
+       Vector& eigenvalues)
     {
-      cpp11::array<FT, dim * dim> eigenvectors;
+      Matrix eigenvectors;
       return diagonalize_selfadjoint_covariance_matrix (cov, eigenvalues, eigenvectors);
     }
 
     // Extract the eigenvector associated to the largest eigenvalue
     static bool
     extract_largest_eigenvector_of_covariance_matrix
-      (const cpp11::array<FT, (dim * (dim+1) / 2)>& cov,
-       cpp11::array<FT,dim> &normal)
+      (const Covariance_matrix& cov,
+       Vector& normal)
     {
-      cpp11::array<FT, dim> eigenvalues;
-      cpp11::array<FT, dim * dim> eigenvectors;
+      Vector eigenvalues;
+      Matrix eigenvectors;
 
       diagonalize_selfadjoint_covariance_matrix (cov, eigenvalues, eigenvectors);
 
@@ -39,9 +44,9 @@ class Diagonalize_traits{
     }
 
     static bool diagonalize_selfadjoint_covariance_matrix
-       (const cpp11::array<FT, (dim * (dim+1) / 2)>& mat,
-	cpp11::array<FT, dim>& eigen_values,
-	cpp11::array<FT, dim * dim>& eigen_vectors)
+       (const Covariance_matrix& mat,
+	Vector& eigen_values,
+	Matrix& eigen_vectors)
     {
       const int n = dim;
       
