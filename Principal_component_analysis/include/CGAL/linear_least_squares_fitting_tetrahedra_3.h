@@ -48,7 +48,6 @@ linear_least_squares_fitting_3(InputIterator first,
 			       const CGAL::Dimension_tag<3>& tag,
 			       const DiagonalizeTraits& diagonalize_traits)
 {
-  typedef typename K::FT          FT;
   typedef typename K::Tetrahedron_3    Tetrahedron;
 
   // precondition: at least one element in the container.
@@ -58,8 +57,8 @@ linear_least_squares_fitting_3(InputIterator first,
   c = centroid(first,beyond,K(),tag);
 
   // assemble covariance matrix
-  CGAL::cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
-  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Tetrahedron*) NULL,tag);
+  typename DiagonalizeTraits::Covariance_matrix covariance = {{ 0., 0., 0., 0., 0., 0. }};
+  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Tetrahedron*) NULL,tag, diagonalize_traits);
   
   // compute fitting plane
   return fitting_plane_3(covariance,c,plane,k,diagonalize_traits);
@@ -196,7 +195,6 @@ linear_least_squares_fitting_3(InputIterator first,
 			       const CGAL::Dimension_tag<3>& tag,
 			       const DiagonalizeTraits& diagonalize_traits)
 {
-  typedef typename K::FT          FT;
   typedef typename K::Tetrahedron_3    Tetrahedron;
 
   // precondition: at least one element in the container.
@@ -206,8 +204,8 @@ linear_least_squares_fitting_3(InputIterator first,
   c = centroid(first,beyond,K(),tag);
 
   // assemble covariance matrix
-  CGAL::cpp11::array<FT, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
-  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Tetrahedron*) NULL,tag);
+  typename DiagonalizeTraits::Covariance_matrix covariance = {{ 0., 0., 0., 0., 0., 0. }};
+  assemble_covariance_matrix_3(first,beyond,covariance,c,k,(Tetrahedron*) NULL,tag, diagonalize_traits);
     
   // compute fitting line
   return fitting_line_3(covariance,c,line,k,diagonalize_traits);

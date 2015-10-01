@@ -68,7 +68,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // 1 2
   //Final combined covariance matrix for all segments and their combined mass
   FT mass = 0.0;
-  CGAL::cpp11::array<FT, 3> covariance = {{ 0., 0., 0. }};
+  typename DiagonalizeTraits::Covariance_matrix covariance = {{ 0., 0., 0. }};
 
   // assemble 2nd order moment about the origin.  
   FT temp[4] = {1.0, 0.5, 0.5, 1.0};
@@ -112,8 +112,8 @@ linear_least_squares_fitting_2(InputIterator first,
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in ascending order, 
   // eigen vectors are sorted in accordance.
-  CGAL::cpp11::array<FT, 2> eigen_values = {{ 0. , 0. }};
-  CGAL::cpp11::array<FT, 4> eigen_vectors = {{ 0., 0., 0. }};
+  typename DiagonalizeTraits::Vector eigen_values = {{ 0. , 0. }};
+  typename DiagonalizeTraits::Matrix eigen_vectors = {{ 0., 0., 0. }};
   DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
     (covariance, eigen_values, eigen_vectors);
 

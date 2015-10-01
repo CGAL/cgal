@@ -47,15 +47,17 @@ init_matrix(const int n,
 
 // assemble covariance matrix from a point set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
-                             CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance matrix
+                             typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Point_3*,   // used for indirection
-                             const CGAL::Dimension_tag<0>&)
+                             const CGAL::Dimension_tag<0>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
@@ -84,15 +86,17 @@ assemble_covariance_matrix_3(InputIterator first,
 
 // assemble covariance matrix from a triangle set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond,
-			     CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance matrix
+			     typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K&,                    // kernel
                              const typename K::Triangle_3*,// used for indirection
-                             const CGAL::Dimension_tag<2>&)
+                             const CGAL::Dimension_tag<2>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Triangle_3  Triangle;
@@ -161,15 +165,17 @@ assemble_covariance_matrix_3(InputIterator first,
 
 // assemble covariance matrix from a cuboid set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond,
-			     CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance matrix
+			     typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Iso_cuboid_3*,// used for indirection
-                             const CGAL::Dimension_tag<3>&)
+                             const CGAL::Dimension_tag<3>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Iso_cuboid_3    Iso_cuboid;
@@ -246,15 +252,17 @@ assemble_covariance_matrix_3(InputIterator first,
 
 // assemble covariance matrix from a cuboid set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
-			     CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance matrix
+			     typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Iso_cuboid_3*,// used for indirection
-                             const CGAL::Dimension_tag<2>&)
+                             const CGAL::Dimension_tag<2>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT FT;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
@@ -339,15 +347,17 @@ assemble_covariance_matrix_3(InputIterator first,
 
 // assemble covariance matrix from a sphere set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
-			     CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance matrix
+			     typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K&,                     // kernel
                              const typename K::Sphere_3*,  // used for indirection
-                             const CGAL::Dimension_tag<3>&)
+                             const CGAL::Dimension_tag<3>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3  Sphere;
@@ -421,15 +431,17 @@ assemble_covariance_matrix_3(InputIterator first,
 }
 // assemble covariance matrix from a sphere set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
-			     CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance matrix
+			     typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K&,                     // kernel
                              const typename K::Sphere_3*,  // used for indirection
-                             const CGAL::Dimension_tag<2>&)
+                             const CGAL::Dimension_tag<2>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3  Sphere;
@@ -505,15 +517,17 @@ assemble_covariance_matrix_3(InputIterator first,
 
 // assemble covariance matrix from a tetrahedron set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
-			     CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance matrix
+			     typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Tetrahedron_3*,// used for indirection
-                             const CGAL::Dimension_tag<3>&)
+                             const CGAL::Dimension_tag<3>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Tetrahedron_3  Tetrahedron;
@@ -590,15 +604,17 @@ assemble_covariance_matrix_3(InputIterator first,
 
 // assemble covariance matrix from a segment set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
-			     CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance matrix
+			     typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Segment_3*,// used for indirection
-                             const CGAL::Dimension_tag<1>&)
+                             const CGAL::Dimension_tag<1>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Segment_3  Segment;
@@ -672,7 +688,7 @@ assemble_covariance_matrix_3(InputIterator first,
 // returns fitting quality
 template < typename K, typename DiagonalizeTraits >
 typename K::FT
-fitting_plane_3(CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance matrix
+fitting_plane_3(typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                 const typename K::Point_3& c,       // centroid
                 typename K::Plane_3& plane,         // best fit plane
                 const K&,                           // kernel
@@ -685,10 +701,10 @@ fitting_plane_3(CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in ascending order, 
   // eigen vectors are sorted in accordance.
-  CGAL::cpp11::array<FT, 3> eigen_values = {{ 0. , 0., 0. }};
-  CGAL::cpp11::array<FT, 9> eigen_vectors = {{ 0., 0., 0.,
-					       0., 0., 0.,
-					       0., 0., 0. }};
+  typename DiagonalizeTraits::Vector eigen_values = {{ 0. , 0., 0. }};
+  typename DiagonalizeTraits::Matrix eigen_vectors = {{ 0., 0., 0.,
+							0., 0., 0.,
+							0., 0., 0. }};
   DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
     (covariance, eigen_values, eigen_vectors);
 
@@ -717,7 +733,7 @@ fitting_plane_3(CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance
 // returns fitting quality
 template < typename K, typename DiagonalizeTraits >
 typename K::FT
-fitting_line_3(CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance matrix
+fitting_line_3(typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                const typename K::Point_3& c,       // centroid
                typename K::Line_3& line,           // best fit line
 	       const K&,                           // kernel
@@ -730,10 +746,10 @@ fitting_line_3(CGAL::cpp11::array<typename K::FT, 6>& covariance, // covariance 
   // solve for eigenvalues and eigenvectors.
   // eigen values are sorted in ascending order, 
   // eigen vectors are sorted in accordance.
-  CGAL::cpp11::array<FT, 3> eigen_values = {{ 0. , 0., 0. }};
-  CGAL::cpp11::array<FT, 9> eigen_vectors = {{ 0., 0., 0.,
-					       0., 0., 0.,
-					       0., 0., 0. }};
+  typename DiagonalizeTraits::Vector eigen_values = {{ 0. , 0., 0. }};
+  typename DiagonalizeTraits::Matrix eigen_vectors = {{ 0., 0., 0.,
+							0., 0., 0.,
+							0., 0., 0. }};
   DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
     (covariance, eigen_values, eigen_vectors);
 
