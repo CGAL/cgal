@@ -4,7 +4,7 @@ if ( NOT CGAL_Boost_Setup )
   # In the documentation, we say we require Boost-1.48, but technically we
   # require 1.39. Some packages may require more recent versions, though.
  
-  if ( MSVC )
+  if ( ${MSVC_VERSION} GREATER 1800)
     find_package( Boost 1.39 REQUIRED )
   else()
     find_package( Boost 1.39 REQUIRED thread system )

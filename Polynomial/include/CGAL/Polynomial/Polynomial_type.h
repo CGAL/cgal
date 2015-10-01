@@ -266,27 +266,7 @@ protected:
 private:
     static Self& get_default_instance(){
       CGAL_THREAD_LOCAL_VARIABLE(Self, x, Self(0));
-      return x;
-#if 0
-      #ifdef CGAL_HAS_THREADS
-        #if BOOST_MSVC
-          CGAL_THREAD_LOCAL static Self* safe_x_ptr = NULL;
-          if(safe_x_ptr == NULL){
-            safe_x_ptr = new Self(0);
-          }
-          return *safe_x_ptr;
-        #else
-          static boost::thread_specific_ptr< Self > safe_x_ptr;
-          if (safe_x_ptr.get() == NULL){
-              safe_x_ptr.reset(new Self(0));
-          }
-          return *safe_x_ptr.get();
-        #endif
-      #else
-        static Self x = Self(0);
-        return x;
-      #endif 
-#endif       
+      return x;      
     }
 public:
 
