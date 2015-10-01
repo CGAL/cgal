@@ -18,8 +18,10 @@
 #include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/jet_smooth_point_set.h>
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
+#include <CGAL/Advancing_front_surface_reconstruction.h>
 
 #include "Scene_polygon_soup_item.h"
+#include "Scene_polyhedron_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Polyhedron_type.h"
 
@@ -27,6 +29,29 @@
 #include "Polyhedron_demo_plugin_interface.h"
 
 #include "ui_Polyhedron_demo_meta_reconstruction_plugin.h"
+
+struct Perimeter {
+
+  double bound;
+
+  Perimeter(double bound)
+    : bound(bound)
+  {}
+
+  bool operator()(const Kernel::Point_3& p, const Kernel::Point_3& q, const Kernel::Point_3& r) const
+  {
+    if(bound == 0){
+      return false;
+    }
+    double d  = sqrt(squared_distance(p,q));
+    if(d>bound) return true;
+    d += sqrt(squared_distance(p,r)) ;
+    if(d>bound) return true;
+    d+= sqrt(squared_distance(q,r));
+    return d>bound;
+  }
+};
+
 
 namespace MetaReconstruction
 {
@@ -233,6 +258,17 @@ namespace MetaReconstruction
 				map_i2i[(*it)[2]] );
       }
   }
+
+  void advancing_front (const Point_set& points, Scene_polyhedron_item* new_item, double size)
+  {
+    Polyhedron& P = * const_cast<Polyhedron*>(new_item->polyhedron());
+    Perimeter filter(size);
+
+    CGAL::advancing_front_surface_reconstruction (points.begin (), points.end (), P, filter);
+						  
+
+
+  }
 }
 
 class Polyhedron_demo_meta_reconstruction_plugin_dialog : public QDialog, private Ui::MetaReconstructionOptionsDialog
@@ -383,7 +419,14 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 	    {
 	      std::cerr << "Advancing front reconstruction... ";
 	      time.restart();
-	      // TODO
+
+	      Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(Polyhedron());
+	      MetaReconstruction::advancing_front (*points, reco_item, (std::max)(noise_size, aniso_size));
+	      
+	      reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
+	      reco_item->setColor(Qt::magenta);
+	      reco_item->setRenderingMode(FlatPlusEdges);
+	      scene->addItem(reco_item);
 
 	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
