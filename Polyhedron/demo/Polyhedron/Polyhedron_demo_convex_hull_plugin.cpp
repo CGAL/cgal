@@ -25,10 +25,8 @@ class Polyhedron_demo_convex_hull_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
     void init(QMainWindow* mainWindow,
-              Scene_interface* scene_interface,
-              Messages_interface* m)
+              Scene_interface* scene_interface)
     {
-        Q_UNUSED(m);
         mw = mainWindow;
         scene = scene_interface;
         actions_map["actionConvexHull"] = getActionFromMainWindow(mw, "actionConvexHull");

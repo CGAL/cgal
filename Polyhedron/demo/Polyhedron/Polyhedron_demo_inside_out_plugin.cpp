@@ -23,11 +23,10 @@ public:
   QStringList actionsNames() const {
     return QStringList() << "actionInsideOut";
   }
+
   void init(QMainWindow* mainWindow,
-            Scene_interface* scene_interface,
-            Messages_interface* m)
+            Scene_interface* scene_interface)
   {
-      Q_UNUSED(m);
       mw = mainWindow;
       scene = scene_interface;
       actions_map["actionInsideOut"] = getActionFromMainWindow(mw, "actionInsideOut");
