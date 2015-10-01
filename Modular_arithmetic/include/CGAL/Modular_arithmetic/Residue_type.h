@@ -70,15 +70,7 @@ private:
   static const double& get_static_CST_CUT()
   { return Residue::CST_CUT; }
 #endif // CGAL_HEADER_ONLY
-  
-  static boost::thread_specific_ptr<int>& get_static_prime_int_()
-  { return Residue::prime_int_; }
-  static boost::thread_specific_ptr<double>& get_static_prime_()
-  { return Residue::prime_; }
-  static boost::thread_specific_ptr<double>& get_static_prime_inv_()
-  { return Residue::prime_inv_; }
-#endif // CGAL_HEADER_ONLY
-  
+
   static int& prime_int_internal()
   {
     static CGAL_THREAD_LOCAL_VARIABLE(int, prime_int, 67111067);
