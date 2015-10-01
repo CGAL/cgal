@@ -61,51 +61,40 @@ public:
   typedef Residue NT;
   
 private:
-  CGAL_EXPORT static const double  CST_CUT; 
-  
+  CGAL_EXPORT static const double  CST_CUT;   
 
-  CGAL_EXPORT static CGAL_THREAD_LOCAL_DECLARE_POD2(int, prime_int);
-  CGAL_EXPORT static CGAL_THREAD_LOCAL_DECLARE_POD2(double, prime);
-  CGAL_EXPORT static CGAL_THREAD_LOCAL_DECLARE_POD2(double, prime_inv);
 
-#if (! defined(CGAL_USE_BOOST_THREAD)) || (! defined(CGAL_HAS_THREADS)) 
-
-  static int get_prime_int(){ return prime_int;}
-  static double get_prime()    { return prime;}
-  static double get_prime_inv(){ return prime_inv;}
-#endif
-
-#ifdef CGAL_USE_BOOST_THREAD  
-  static void init_class_for_thread(){
-    CGAL_precondition(CGAL_THREAD_LOCAL_IS_UNINITIALIZED_POD(prime_int)); 
-    CGAL_precondition(CGAL_THREAD_LOCAL_IS_UNINITIALIZED_POD(prime)); 
-    CGAL_precondition(CGAL_THREAD_LOCAL_IS_UNINITIALIZED_POD(prime_inv)); 
-    CGAL_THREAD_LOCAL_SET_POD(int,prime_int, 67111067);
-    CGAL_THREAD_LOCAL_SET_POD(double,prime, 67111067.0);
-    CGAL_THREAD_LOCAL_SET_POD(double,prime_inv, 1.0/67111067.0);
-  }
-  
-  static inline int get_prime_int(){
-    if (CGAL_THREAD_LOCAL_IS_UNINITIALIZED_POD(prime_int))
-      init_class_for_thread();
-    CGAL_THREAD_LOCAL_GET_POD(int,prime_int);
+  static int& prime_int_internal()
+  {
+    static CGAL_THREAD_LOCAL_VARIABLE(int, prime_int, 67111067);
     return prime_int;
   }
+
+  static inline int get_prime_int(){
+    return prime_int_internal();
+  }
+
   
-  static inline double get_prime(){
-    if (CGAL_THREAD_LOCAL_IS_UNINITIALIZED_POD(prime_int))
-      init_class_for_thread();
-    CGAL_THREAD_LOCAL_GET_POD(double,prime);
+  static double& prime_internal()
+  {
+    static CGAL_THREAD_LOCAL_VARIABLE(double, prime, 67111067.0);
     return prime;
   }
+
+  static inline double get_prime(){
+    return prime_internal();
+  }
   
-  static inline double get_prime_inv(){
-    if (CGAL_THREAD_LOCAL_IS_UNINITIALIZED_POD(prime_int))
-      init_class_for_thread();
-    CGAL_THREAD_LOCAL_GET_POD(double,prime_inv);
+  static double& prime_inv_internal()
+  {
+    static CGAL_THREAD_LOCAL_VARIABLE(double, prime_inv, 1490067204.5640400859667452463541);
     return prime_inv;
   }
-#endif // ifdef CGAL_USE_BOOST_THREAD
+
+  static inline double get_prime_inv(){
+    return prime_inv_internal();
+  }
+
 
 
 
@@ -202,9 +191,9 @@ public:
     static int 
     set_current_prime(int p){   
       int old_prime = get_prime_int();  
-      CGAL_THREAD_LOCAL_ASSIGN_POD(prime_int,p);  
-      CGAL_THREAD_LOCAL_ASSIGN_POD(prime,double(p));  
-      CGAL_THREAD_LOCAL_ASSIGN_POD(prime_inv, 1.0 / double(p));
+      prime_int_internal() = p;  
+      prime_internal() = double(p);  
+      prime_inv_internal() =  1.0 / double(p);
 
       return old_prime; 
     }

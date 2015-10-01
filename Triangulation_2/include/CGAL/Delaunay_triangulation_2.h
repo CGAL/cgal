@@ -1054,7 +1054,7 @@ remove_and_give_new_faces(Vertex_handle v, OutputItFaces fit)
   }
   else {
 
-#include "Delaunay_triangulation_2_tls.h.h"
+#include "Delaunay_triangulation_2_tls.h"
 
     int d;
     remove_degree_init(v,f,w,i,d,maxd);
@@ -1079,7 +1079,7 @@ remove(Vertex_handle v)
 
   if ( this->dimension() <= 1) { Triangulation::remove(v); return; }
 
-#include "Delaunay_triangulation_2_tls.h.h"
+#include "Delaunay_triangulation_2_tls.h"
 
   remove_degree_init(v,f,w,i,d,maxd);
   if (d == 0) return; //  dim is going down
@@ -2223,7 +2223,7 @@ move_if_no_collision(Vertex_handle v, const Point &p) {
 
   {
     int d;
-#include "Delaunay_triangulation_2_tls.h.h"
+#include "Delaunay_triangulation_2_tls.h"
 
     remove_degree_init(v,f,w,i,d,maxd);
     remove_degree_triangulate(v,f,w,i,d);
@@ -2438,7 +2438,7 @@ move_if_no_collision_and_give_new_faces(Vertex_handle v,
 
 
   {
-#include "Delaunay_triangulation_2_tls.h.h"
+#include "Delaunay_triangulation_2_tls.h"
     int d;
     remove_degree_init(v,f,w,i,d,maxd);
     remove_degree_triangulate(v,f,w,i,d);

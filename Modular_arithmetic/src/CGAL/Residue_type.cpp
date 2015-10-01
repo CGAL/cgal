@@ -22,10 +22,6 @@
 
 namespace CGAL{
 
-  CGAL_THREAD_LOCAL_DECLARE_POD(int, Residue::prime_int, 67111067);
-  CGAL_THREAD_LOCAL_DECLARE_POD(double, Residue::prime, 67111067.0);
-  CGAL_THREAD_LOCAL_DECLARE_POD(double, Residue::prime_inv, 1490067204.5640400859667452463541);
-
 
 const double Residue::CST_CUT = std::ldexp( 3., 51 );
 

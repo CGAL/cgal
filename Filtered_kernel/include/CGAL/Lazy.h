@@ -785,9 +785,13 @@ private:
   static const Self & zero()
   {
     Lazy_rep_0<AT, ET, E2A>* ptr = new Lazy_rep_0<AT, ET, E2A>();
+#if 1
+    static CGAL_THREAD_LOCAL_VARIABLE(Self,z,ptr);
+#else
     static CGAL_THREAD_LOCAL_DECLARE(Self,z);
     CGAL_THREAD_LOCAL_INITIALIZE(Self,z, ptr);
     CGAL_THREAD_LOCAL_GET(Self,z);
+#endif
     return z;
   }
 
