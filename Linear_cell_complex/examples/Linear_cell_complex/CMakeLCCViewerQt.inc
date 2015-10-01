@@ -21,7 +21,7 @@ include_directories( ${QGLVIEWER_INCLUDE_DIR} )
 add_definitions(${QGLVIEWER_DEFINITIONS})
 
 set (MAP_VIEWER_LIBRARIES ${QT_LIBRARIES} ${QGLVIEWER_LIBRARIES}
-                          ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+                          ${OPENGL_gl_LIBRARY}) # ${OPENGL_glu_LIBRARY}
 
 set(MAP_VIEWER_MODULES Xml OpenGL)
 
@@ -30,3 +30,4 @@ message(STATUS "Libraries for lcc_viewer found. You need to link them "
                "in your executable by using "
                "TARGET_LINK_LIBRARIES( myexec \${MAP_VIEWER_LIBRARIES})")
 
+set(LCC_VIEWER true)

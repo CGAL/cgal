@@ -129,11 +129,6 @@ public:
   {
     setWindowTitle("3D lcc viewer");
     resize(500, 450);
-
-    QGLFormat newFormat = this->format();
-    newFormat.setSampleBuffers(true);
-    newFormat.setSamples(16);
-    this->setFormat(newFormat);
   }
 
 protected :
@@ -200,6 +195,8 @@ protected :
 
   void drawAllVertices()
   {
+    bool empty;
+
     //    ::glDepthRange(0.0, 1.0-0.005);
     ::glPointSize(7.0);
     ::glBegin(GL_POINTS);
@@ -212,6 +209,14 @@ protected :
     {
       Local_point p = geomutils.get_point(lcc, v);
       glVertex3f(p.x(), p.y(), p.z());
+
+      if (empty)
+        bb = p.bbox();
+      else
+      {
+        bb = bb +  p.bbox();
+        empty = false;
+      }
     }
 
     ::glEnd();
@@ -313,7 +318,7 @@ protected :
       ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     }
 
-    CGAL::Bbox_3 bb = bbox(lcc);
+    initDraw();
 
     this->camera()->setSceneBoundingBox(qglviewer::Vec(bb.xmin(),
                                                        bb.ymin(),
@@ -323,7 +328,6 @@ protected :
                                                        bb.zmax()));
 
     this->showEntireScene();
-    initDraw();
   }
 
   void keyPressEvent(QKeyEvent *e)
@@ -426,13 +430,14 @@ private:
   GLuint m_dlEdges;
   GLuint m_dlVertices;
   bool m_displayListCreated;
+
+  CGAL::Bbox_3 bb;
 };
 
 template<class LCC>
 void display_lcc(LCC& alcc)
 {
   int argc=1;
-  typedef char* s;
 
   const char* argv[2]={"lccviewer","\0"};
   QApplication app(argc,const_cast<char**>(argv));
