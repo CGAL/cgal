@@ -893,33 +893,33 @@ void reverse_orientation_connected_component(Dart_handle adart);
 
 /*!
 Reserves a new mark. Returns its
-index. Returns -1 if there is no more available free mark.
+index. If there is no more available free mark, throw the exception Exception_no_more_available_mark.
 */
-int get_new_mark() const;
+size_type get_new_mark() const;
 
 /*!
 Returns true iff `m` is a reserved mark of the combinatorial map.
 \pre 0\f$ \leq\f$<I>m</I>\f$ <\f$\ref  CombinatorialMap::NB_MARKS "NB_MARKS".
 */
-bool is_reserved(int m) const;
+bool is_reserved(size_type m) const;
 
 /*!
 Returns true iff `*dh` is marked for `m`.
 \pre \ref CombinatorialMap::is_reserved "is_reserved(m)" and `*dh`\f$ \in\f$`darts()`.
 */
-bool is_marked(Dart_const_handle dh, int m) const;
+bool is_marked(Dart_const_handle dh, size_type m) const;
 
 /*!
 Marks `*dh` for `m`.
 \pre \ref CombinatorialMap::is_reserved "is_reserved(m)" and `*dh`\f$ \in\f$`darts()`.
 */
-void mark(Dart_const_handle dh, int m) const;
+void mark(Dart_const_handle dh, size_type m) const;
 
 /*!
 Unmarks `*dh` for the mark `m`.
 \pre \ref CombinatorialMap::is_reserved "is_reserved(m)" and `*dh`\f$ \in\f$`darts()`.
 */
-void unmark(Dart_const_handle dh, int m) const;
+void unmark(Dart_const_handle dh, size_type m) const;
 
 /*!
 Inverse the mark `m` for all the darts of the combinatorial map.
@@ -927,31 +927,31 @@ All the marked darts become unmarked and all the unmarked darts
 become marked.
 \pre \ref CombinatorialMap::is_reserved "is_reserved(m)".
 */
-void negate_mark(int m) const;
+void negate_mark(size_type m) const;
 
 /*!
 Unmarks all the darts of the combinatorial map for `m`.
 \pre \ref CombinatorialMap::is_reserved "is_reserved(m)".
 */
-void unmark_all(int m) const;
+void unmark_all(size_type m) const;
 
 /*!
 Returns the number of marked darts for `m`.
 \pre \ref CombinatorialMap::is_reserved "is_reserved(m)".
 */
-size_type number_of_marked_darts(int m) const;
+size_type number_of_marked_darts(size_type m) const;
 
 /*!
 Return the number of unmarked darts for `m`.
 \pre \ref CombinatorialMap::is_reserved "is_reserved(m)".
 */
-size_type number_of_unmarked_darts(int m) const;
+size_type number_of_unmarked_darts(size_type m) const;
 
 /*!
 Frees mark `m`.
 \pre \ref CombinatorialMap::is_reserved "is_reserved(m)".
 */
-void free_mark(int m) const;
+void free_mark(size_type m) const;
 
 /// @}
 }; /* end CombinatorialMap */

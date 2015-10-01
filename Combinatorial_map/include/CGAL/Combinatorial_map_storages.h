@@ -144,21 +144,21 @@ namespace CGAL {
       return ADart->get_marks();
     }
     /// Return the mark value of dart a given mark number.
-    bool get_dart_mark(Dart_const_handle ADart, int amark) const
+    bool get_dart_mark(Dart_const_handle ADart, size_type amark) const
     {
       CGAL_assertion( ADart!=NULL );
       return ADart->get_mark(amark);
     }
 
     /// Set the mark of a given mark number to a given value.
-    void set_dart_mark(Dart_const_handle ADart, int amark, bool avalue) const
+    void set_dart_mark(Dart_const_handle ADart, size_type amark, bool avalue) const
     {
       CGAL_assertion( ADart!=NULL );
       ADart->set_mark(amark, avalue);
     }
 
     /// Flip the mark of a given mark number to a given value.
-    void flip_dart_mark(Dart_const_handle ADart, int amark) const
+    void flip_dart_mark(Dart_const_handle ADart, size_type amark) const
     {
       CGAL_assertion( ADart!=NULL );
       ADart->flip_mark(amark);

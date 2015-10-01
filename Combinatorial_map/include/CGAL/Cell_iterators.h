@@ -105,8 +105,8 @@ namespace CGAL {
         unmark_treated_darts();
       this->mmap->free_mark(mcell_mark_number);
       this->mmap->free_mark(this->mmark_number);
-      this->mcell_mark_number = -1; // To avoid basic class to try to unmark darts.
-      this->mmark_number = -1; // To avoid basic class to try to unmark darts.
+      this->mcell_mark_number = Map::INVALID_MARK; // To avoid basic class to try to unmark darts.
+      this->mmark_number = Map::INVALID_MARK; // To avoid basic class to try to unmark darts.
     }
 
     /// Copy constructor.
@@ -163,7 +163,7 @@ namespace CGAL {
 
   private:
     /// A mark used to mark treated cells.
-    int mcell_mark_number;
+    typename Map::size_type mcell_mark_number;
   };
   //****************************************************************************
   /* Class CMap_cell_iterator<Map,Ite,i,dim,Tag_false>: to iterate onto the
@@ -217,7 +217,7 @@ namespace CGAL {
       if (this->mmap->get_number_of_times_mark_reserved(mmark_number)==1)
         unmark_treated_darts();
       this->mmap->free_mark(mmark_number);
-      this->mmark_number = -1; // To avoid basic class to try to unmark darts.
+      this->mmark_number = Map::INVALID_MARK; // To avoid basic class to try to unmark darts.
     }
 
     /// Copy constructor.
@@ -268,7 +268,7 @@ namespace CGAL {
 
   private:
     /// A mark used to mark treated cells.
-    int mmark_number;
+    typename Map::size_type mmark_number;
   };
   //****************************************************************************
   /* Class CMap_cell_iterator<Map,CMap_dart_iterator_basic_of_all<Map>,
@@ -333,7 +333,7 @@ namespace CGAL {
       if (this->mmap->get_number_of_times_mark_reserved(mmark_number)==1)
         unmark_treated_darts();
       this->mmap->free_mark(mmark_number);
-      this->mmark_number = -1; // To avoid basic class to try to unmark darts.
+      this->mmark_number = Map::INVALID_MARK; // To avoid basic class to try to unmark darts.
     }
 
     /// Copy constructor.
@@ -384,7 +384,7 @@ namespace CGAL {
 
   private:
     /// A mark used to mark treated cells.
-    int mmark_number;
+    typename Map::size_type mmark_number;
   };
   //****************************************************************************
   /* Class CMap_one_dart_per_incident_cell_iterator<Map,i,j,dim>: to iterate

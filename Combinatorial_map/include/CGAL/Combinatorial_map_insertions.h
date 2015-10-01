@@ -43,11 +43,11 @@ insert_cell_0_in_cell_1( CMap& amap, typename CMap::Dart_handle adart,
                          bool update_attributes=true )
 {
   typename CMap::Dart_handle d1, d2;
-  int mark=amap.get_new_mark();
+  typename CMap::size_type  mark=amap.get_new_mark();
 
   // 1) We store all the darts of the edge.
   std::deque<typename CMap::Dart_handle> vect;
-  int m=amap.get_new_mark();
+  typename CMap::size_type m=amap.get_new_mark();
   {
     for ( typename CMap::template Dart_of_cell_basic_range<1>::iterator
           it=amap.template darts_of_cell_basic<1>(adart, m).begin();
@@ -144,7 +144,7 @@ insert_cell_0_in_cell_2( CMap& amap, typename CMap::Dart_handle adart,
     first = amap.template beta<0>(first);
 
   // Mark used to mark darts already treated.
-  int treated = amap.get_new_mark();
+  typename CMap::size_type treated = amap.get_new_mark();
 
   // Stack of marked darts
   std::deque<typename CMap::Dart_handle> tounmark;
@@ -296,7 +296,7 @@ insert_dangling_cell_1_in_cell_2( CMap& amap,
                                   Attribute_handle<0>::type ah=CMap::null_handle,
                                   bool update_attributes=true )
 {
-  int mark1 = amap.get_new_mark();
+  typename CMap::size_type mark1 = amap.get_new_mark();
   std::deque<typename CMap::Dart_handle> to_unmark;
   {
     for ( CMap_dart_iterator_basic_of_cell<CMap,0> it(amap,adart1,mark1);
@@ -311,7 +311,7 @@ insert_dangling_cell_1_in_cell_2( CMap& amap,
   typename CMap::Dart_handle d2 = amap.null_handle;
   unsigned int s1 = 0;
 
-  int treated=amap.get_new_mark();
+  typename CMap::size_type treated=amap.get_new_mark();
 
   CGAL::CMap_dart_iterator_basic_of_involution<CMap,1>
       it1(amap, adart1, treated);
@@ -426,13 +426,13 @@ insert_cell_1_in_cell_2(CMap& amap,
 
   CGAL_assertion(is_insertable_cell_1_in_cell_2<CMap>(amap, adart1, adart2));
 
-  int m1=amap.get_new_mark();
+  typename CMap::size_type m1=amap.get_new_mark();
   CGAL::CMap_dart_iterator_basic_of_involution<CMap,1> it1(amap, adart1, m1);
 
-  int m2=amap.get_new_mark();
+  typename CMap::size_type m2=amap.get_new_mark();
   CGAL::CMap_dart_iterator_basic_of_involution<CMap,1> it2(amap, adart2, m2);
 
-  int mark1=amap.get_new_mark();
+  typename CMap::size_type mark1=amap.get_new_mark();
   std::deque<typename CMap::Dart_handle> to_unmark;
   {
     for ( CGAL::CMap_dart_iterator_basic_of_cell<CMap,0> it(amap,adart1,mark1);
@@ -447,7 +447,7 @@ insert_cell_1_in_cell_2(CMap& amap,
   typename CMap::Dart_handle d2=amap.null_handle;
   unsigned int s1=0;
 
-  int treated=amap.get_new_mark();
+  typename CMap::size_type treated=amap.get_new_mark();
 
   for ( ; it1.cont(); ++it1, ++it2)
   {

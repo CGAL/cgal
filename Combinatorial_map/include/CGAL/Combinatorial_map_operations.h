@@ -99,8 +99,8 @@ namespace CGAL
       typename CMap::Dart_handle d1, d2;
       typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
-      int mark = amap.get_new_mark();
-      int mark_modified_darts = amap.get_new_mark();
+      typename CMap::size_type mark = amap.get_new_mark();
+      typename CMap::size_type mark_modified_darts = amap.get_new_mark();
 
       std::deque<typename CMap::Dart_handle> to_erase;
 
@@ -280,7 +280,7 @@ namespace CGAL
   {
     static size_t run(CMap& amap, typename CMap::Dart_handle adart, bool update_attributes)
     {
-      int mark = amap.get_new_mark();
+      typename CMap::size_type mark = amap.get_new_mark();
       std::deque<typename CMap::Dart_handle> to_erase;
       size_t res = 0;
 
@@ -355,8 +355,7 @@ namespace CGAL
       typename CMap::Dart_handle d1, d2;
       typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
-      int mark = amap.get_new_mark();
-//      int mark_modified_darts = amap.get_new_mark();
+      typename CMap::size_type mark = amap.get_new_mark();
 
       // First we store and mark all the darts of the 0-cell to remove.
       std::deque<typename CMap::Dart_handle> to_erase;
@@ -544,8 +543,8 @@ namespace CGAL
       typename CMap::Dart_handle d1, d2;
       typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
-      int mark = amap.get_new_mark();
-      int mark_modified_darts = amap.get_new_mark();
+      typename CMap::size_type mark = amap.get_new_mark();
+      typename CMap::size_type mark_modified_darts = amap.get_new_mark();
 
       const int imuinv = CGAL_BETAINV(i-1);
 
@@ -699,8 +698,7 @@ namespace CGAL
       typename CMap::Dart_handle d1, d2;
       typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
-      int mark = amap.get_new_mark();
-//      int mark_modified_darts = amap.get_new_mark();
+      typename CMap::size_type mark = amap.get_new_mark();
 
       // First we store and mark all the darts of the 1-cell to contract.
       std::deque<typename CMap::Dart_handle> to_erase;

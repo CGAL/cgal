@@ -7,17 +7,25 @@
 typedef CGAL::Combinatorial_map<3> CMap_3;
 typedef CMap_3::Dart_handle Dart_handle;
 
+typedef CMap_3::size_type size_type;
+
+typedef CMap_3::Exception_no_more_available_mark Exception_no_more_available_mark;
+
 int main()
 {
   CMap_3 cm;
-  
+
   // 1) Reserve a mark.
-  int mark = cm.get_new_mark();
-  if ( mark==-1 )
-    {
-      std::cerr<<"No more free mark, exit."<<std::endl;
-      exit(-1);
-    }
+  size_type mark;
+  try
+  {
+    mark = cm.get_new_mark();
+  }
+  catch (Exception_no_more_available_mark e)
+  {
+    std::cerr<<"No more free mark, exit."<<std::endl;
+    exit(-1);
+  }
   
   // 2) Create two tetrahedra.
   Dart_handle dh1 = CGAL::make_combinatorial_tetrahedron(cm);  
@@ -40,10 +48,10 @@ int main()
   unsigned int res=0;
   for (CMap_3::Dart_range::iterator it(cm.darts().begin()),
 	 itend(cm.darts().end()); it!=itend; ++it)
-    {
-      if ( cm.is_marked(it, mark) )
-	++res;
-    }
+  {
+    if ( cm.is_marked(it, mark) )
+      ++res;
+  }
   
   std::cout<<"Number of darts from the first tetrahedron: "<<res<<std::endl;
   cm.free_mark(mark);
