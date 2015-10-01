@@ -417,7 +417,7 @@ inline void CGALRS_dyadic_div_2exp(CGALRS_dyadic_ptr rop,
         CGAL_assertion(!round);
 }
 
-// miscelaneous functions
+// miscellaneous functions
 #define CGALRS_dyadic_midpoint(R,D,E) \
  ( CGALRS_dyadic_ll_add(R,D,E,1) , mpfr_div_2ui(R,R,1,GMP_RNDN) )
 #define CGALRS_dyadic_swap(D,E)         mpfr_swap(D,E)
