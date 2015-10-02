@@ -69,4 +69,44 @@ QString Scene_group_item::toolTip() const {
 void Scene_group_item::addChild(Scene_item* new_item)
 {  
         children.append(new_item);
+        add_group_number(new_item);
+
 }
+
+void Scene_group_item::add_group_number(Scene_item * new_item)
+{
+
+    Scene_group_item* group =
+            qobject_cast<Scene_group_item*>(new_item);
+    if(group)
+      Q_FOREACH(Scene_item* child, group->getChildren())
+          add_group_number(child);
+    new_item->has_group++;
+}
+void Scene_group_item::setColor(QColor c)
+{
+  Q_FOREACH(Scene_item* child, children)
+  {
+    child->setColor(c);
+  }
+}
+
+void Scene_group_item::setRenderingMode(RenderingMode m)
+{
+  Scene_item::setRenderingMode(m);
+  Q_FOREACH(Scene_item* child, children)
+  {
+    child->setRenderingMode(m);
+    Q_EMIT child->renderingModeChanged();
+  }
+}
+
+void Scene_group_item::setVisible(bool b)
+{
+  Scene_item::setVisible(b);
+  Q_FOREACH(Scene_item* child, children)
+  {
+    child->setVisible(b);
+  }
+}
+

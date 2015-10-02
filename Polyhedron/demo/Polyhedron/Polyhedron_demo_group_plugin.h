@@ -93,17 +93,20 @@ public :
         Q_FOREACH(Scene_item* item, selected_items)
         {
             if(selected_group->getChildren().contains(item))
-                 print_message("Item is already in group.");
+                 selected_group->removeChild(item);
             else if(selected_group == item)
                  print_message("A group cannot contain itself.");
+            else if(item->has_group !=0)
+                 print_message("An item can have only one group.");
             else
             {
                 selected_group->addChild(item);
-                item->has_group = true;
             }
 
         }
         selected_items.clear();
+        if(!trueScene->item_entries().contains(selected_group))
+            scene->addItem(selected_group);
     }
     QList<Scene_item*> selected_items;
     Scene_group_item* selected_group;

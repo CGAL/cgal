@@ -152,6 +152,7 @@ MainWindow::MainWindow(QWidget* parent)
   delegate->setProxy(proxyModel);
   delegate->setScene(scene);
 
+
   connect(ui->searchEdit, SIGNAL(textChanged(QString)),
           proxyModel, SLOT(setFilterFixedString(QString)));
   sceneView->setModel(proxyModel);
@@ -1004,7 +1005,7 @@ void MainWindow::contextMenuRequested(const QPoint& global_pos) {
 void MainWindow::showSceneContextMenu(int selectedItemIndex,
                                       const QPoint& global_pos)
 {
-  Scene_item* item = scene->item(selectedItemIndex);
+  Scene_item* item = scene->item(scene->index_map.value(scene->index(selectedItemIndex,0)));//scene->item(selectedItemIndex);
   if(!item) return;
 
   const char* prop_name = "Menu modified by MainWindow.";

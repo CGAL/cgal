@@ -101,8 +101,7 @@ public:
   }
 
   // QStandardItemModel functions
-  int rowCount ( const QModelIndex & parent = QModelIndex() ) const;
-  //int columnCount ( const QModelIndex & parent = QModelIndex() ) const;
+
   QVariant data ( const QModelIndex & index, int role = ::Qt::DisplayRole ) const;
   QVariant headerData ( int section, ::Qt::Orientation orientation, int role = ::Qt::DisplayRole ) const;
   ::Qt::ItemFlags flags ( const QModelIndex & index ) const;
@@ -115,8 +114,10 @@ public:
   void setGroupName(QString name);
 
 public Q_SLOTS:
-  // Notify the scene that an item was modified
+  //!insures that the groupview and data always has a "new group" in first position.
+  void check_first_group();
   void group_added();
+  // Notify the scene that an item was modified
   void itemChanged(); // slots called by items themself
   void itemChanged(int i); 
   void itemChanged(Scene_item*);
@@ -173,6 +174,7 @@ private Q_SLOTS:
 
 private:
   void draw_aux(bool with_names, Viewer_interface*);
+  void organize_items(Scene_item* item, QStandardItem *root, int loop);
   //Temp member, used only for dev purpose for now.
   QStandardItem* viewItem;
   typedef QList<Scene_item*> Entries;
@@ -184,6 +186,7 @@ private:
   int item_B;
   static GlSplat::SplatRenderer* ms_splatting;
   static int ms_splattingCounter;
+
 public:
   static GlSplat::SplatRenderer* splatting();
 

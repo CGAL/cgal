@@ -111,11 +111,21 @@ Scene::erase(int index)
         return -1;
 
     Scene_item* item = m_entries[index];
+    Q_FOREACH(Scene_group_item* group, m_group_entries)
+    {
+        if(group->getChildren().contains(item))
+            group->removeChild(item);
+        if (group->getChildren().isEmpty())
+        {
+            m_group_entries.removeOne(group);
+            m_entries.removeOne(group);
+            check_first_group();
+        }
+    }
 
   Q_EMIT itemAboutToBeDestroyed(item);
     delete item;
     m_entries.removeAt(index);
-
   selected_item = -1;
 
   QStandardItemModel::beginResetModel();
@@ -147,8 +157,31 @@ Scene::erase(QList<int> indices)
         to_be_removed.push_back(item);
     }
 
-
   Q_FOREACH(Scene_item* item, to_be_removed) {
+      Scene_group_item* group =
+              qobject_cast<Scene_group_item*>(item);
+      if(group)
+      {
+          QList<int> to_erase;
+          Q_FOREACH(Scene_item* child, group->getChildren())
+              to_erase<<m_entries.indexOf(child);
+          erase(to_erase);
+      }
+      Q_FOREACH(Scene_group_item* group, m_group_entries)
+      {
+          if(group->getChildren().contains(item))
+          {
+              group->removeChild(item);
+              if (group->getChildren().isEmpty())
+              {
+                  m_group_entries.removeOne(group);
+                  m_entries.removeOne(group);
+                  check_first_group();
+              }
+          }
+
+      }
+
     Q_EMIT itemAboutToBeDestroyed(item);
     delete item;
     m_entries.removeAll(item);
@@ -462,30 +495,6 @@ glDepthFunc(GL_LEQUAL);
 
 // workaround for Qt-4.2 (see above)
 #undef lighter
-int
-Scene::rowCount(const QModelIndex & parent) const
-{
-    if (!parent.isValid())
-        return m_entries.size();
-
-    for(int i =0; i< m_entries.size(); i++)
-    {
-        if(!parent.child(i,0).isValid())
-            return i;
-    }
-    return 0;
-}
-
-/*
-int
-Scene::columnCount(const QModelIndex & parent) const
-{
-    if (parent.isValid())
-        return 0;
-    else
-        return NumberOfColumns;
-}
-*/
 QVariant
 Scene::data(const QModelIndex &index, int role) const
 {
@@ -606,8 +615,9 @@ Scene::setData(const QModelIndex &index,
         return false;
 
     int id = index_map[index];
-    if(id < 0 || id >= m_entries.size())
+    if(id < 0 || id >= m_entries.size()){
         return false;
+    }
 
     Scene_item* item = m_entries[id];
     if(!item) return false;
@@ -615,6 +625,7 @@ Scene::setData(const QModelIndex &index,
     {
     case NameColumn:
         item->setName(value.toString());
+        check_first_group();
     Q_EMIT dataChanged(index, index);
         return true;
         break;
@@ -634,13 +645,14 @@ Scene::setData(const QModelIndex &index,
             rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );
         }
         item->setRenderingMode(rendering_mode);
-    Q_EMIT dataChanged(index, index);
+        QModelIndex nindex = createIndex(m_entries.size()-1,RenderingModeColumn+1);
+    Q_EMIT dataChanged(index, nindex);
         return true;
         break;
     }
     case VisibleColumn:
         item->setVisible(value.toBool());
-    Q_EMIT dataChanged(index, index);
+    Q_EMIT dataChanged(index, createIndex(m_entries.size()-1,VisibleColumn+1));
         return true;
     default:
         return false;
@@ -899,14 +911,27 @@ QList<Scene_item*> Scene::item_entries() const
     return m_entries;
 }
 
-void Scene::group_added()
+void Scene::check_first_group()
 {
-//insures that the groupview and data always has a "new group" in first position.
-    if(m_group_entries.first()->name() != "new group")
+
+
+    if(m_group_entries.isEmpty() || m_group_entries.first()->name() != "new group")
     {
-      addItem(m_group_entries.first());
       m_group_entries.prepend(new Scene_group_item("new group"));
     }
+}
+void Scene::group_added()
+{
+    Q_FOREACH(Scene_group_item *group, m_group_entries)
+    {
+        if (group->getChildren().isEmpty())
+        {
+            m_group_entries.removeOne(group);
+            m_entries.removeOne(group);
+        }
+    }
+    check_first_group();
+
 //makes the hierarchy in the tree
     //clears the model
     clear();
@@ -915,40 +940,7 @@ void Scene::group_added()
     //fills the model
     Q_FOREACH(Scene_item* item, m_entries)
     {
-      if(!item->has_group)
-      {
-        QList<QStandardItem*> list;
-        for(int i=0; i<5; i++)
-        {
-            list<<new QStandardItem();
-            list.at(i)->setEditable(false);
-        }
-        viewItem->appendRow(list);
-        for(int i=0; i<5; i++){
-            index_map[list.at(i)->index()] = m_entries.indexOf(item);
-        }
-        Scene_group_item* group =
-          qobject_cast<Scene_group_item*>(item);
-        if(group)
-        {
-          viewItem = list.first();
-          Q_FOREACH(Scene_item*child, group->getChildren())
-          {
-              QList<QStandardItem*> children;
-              for(int i=0; i<5; i++)
-              {
-                  children<<new QStandardItem();
-                  children.at(i)->setEditable(false);
-              }
-              viewItem->appendRow(children);
-              for(int i=0; i<5; i++){
-                  index_map[children.at(i)->index()] = m_entries.indexOf(child);
-              }
-          }
-          viewItem = invisibleRootItem();
-        }
-      }
-
+    organize_items(item, viewItem, 0);
     }
 }
 void Scene::setGroupName(QString name)
@@ -957,6 +949,31 @@ void Scene::setGroupName(QString name)
 }
 #include "Scene_find_items.h"
 
+void Scene::organize_items(Scene_item* item, QStandardItem* root, int loop)
+{
+    if(item->has_group <= loop)
+    {
+        QList<QStandardItem*> list;
+        for(int i=0; i<5; i++)
+        {
+            list<<new QStandardItem();
+            list.at(i)->setEditable(false);
+        }
+        root->appendRow(list);
+        for(int i=0; i<5; i++){
+            index_map[list.at(i)->index()] = m_entries.indexOf(item);
+        }
+        Scene_group_item* group =
+                qobject_cast<Scene_group_item*>(item);
+        if(group)
+        {
+            Q_FOREACH(Scene_item*child, group->getChildren())
+            {
+                organize_items(child, list.first(), loop+1);
+            }
+        }
+    }
+}
 namespace scene { namespace details {
 
 Q_DECL_EXPORT
