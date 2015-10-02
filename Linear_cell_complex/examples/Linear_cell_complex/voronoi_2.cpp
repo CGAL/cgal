@@ -5,14 +5,9 @@
 #include <iostream>
 #include <fstream>
 
-/* If you want to use a viewer, you can use one of the following file
- * depending if you use vtk or qglviewer. */
+/* If you want to use a viewer, you can use qglviewer. */
 #ifdef CGAL_LCC_USE_QT
 #include "linear_cell_complex_3_viewer_qt.h"
-#else 
-#ifdef CGAL_LCC_USE_VTK
-#include "linear_cell_complex_3_viewer_vtk.h"
-#endif
 #endif
 
 /* // If you want to use exact constructions.

@@ -27,10 +27,15 @@
 #include <QGLViewer/qglviewer.h>
 #include <GL/gl.h>
 #include <CGAL/Linear_cell_complex.h>
-#include <CGAL/Cartesian.h>
 #include <CGAL/Cartesian_converter.h>
 
-typedef CGAL::Cartesian<double> Local_kernel;
+#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
+
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
 typedef typename Local_kernel::Point_3  Local_point;
 typedef typename Local_kernel::Vector_3 Local_vector;
 
@@ -116,6 +121,24 @@ class SimpleLCCViewerQt : public QGLViewer
 {
   typedef typename LCC::Dart_handle Dart_handle;
 
+  struct Face_info
+  {
+    bool exist_edge[3];
+    bool is_external;
+    bool is_process;
+  };
+
+  typedef CGAL::Triangulation_2_filtered_projection_traits_3<CGAL::Exact_predicates_inexact_constructions_kernel> P_traits;
+  typedef CGAL::Triangulation_vertex_base_with_info_2<Local_vector,P_traits> Vb;
+  
+  typedef CGAL::Triangulation_face_base_with_info_2<Face_info,P_traits> Fb1;
+  
+  typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>    Fb;
+  typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                   TDS;
+  typedef CGAL::No_intersection_tag                                     Itag;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS,
+                                                   Itag>              CDT;
+  
 public:
 
   // Constructor/Destructor
@@ -132,39 +155,170 @@ public:
   }
 
 protected :
+  void drawTriangleFace(Dart_handle dh, bool flat)
+  {
+    CGAL_assertion((lcc.template beta<1,1,1>(dh)==dh));
+    if(flat)
+    {
+      Local_vector normal = geomutils.get_facet_normal(lcc,dh);
+      ::glNormal3d(normal.x(), normal.y(), normal.z());
+    }
+    
+    for (typename LCC::template Dart_of_orbit_range<1>::const_iterator
+           orbitIter = lcc.template darts_of_orbit<1>(dh).begin();
+         orbitIter.cont(); ++orbitIter)
+    {
+      if(!flat)
+      {
+        // If Gouraud shading: 1 normal per vertex
+        Local_vector n = geomutils.get_vertex_normal(lcc,orbitIter);
+        ::glNormal3d(n.x(),n.y(),n.z());
+      }
+
+      Local_point p = geomutils.get_point(lcc, orbitIter);
+      ::glVertex3d(p.x(),p.y(),p.z());
+    }
+    
+  }
+  
+  void drawNonTriangleFace(Dart_handle dh, bool flat)
+  {
+    CGAL_assertion((lcc.template beta<1,1,1>(dh)!=dh));
+    Local_vector normal = geomutils.get_facet_normal(lcc,dh);
+
+    P_traits cdt_traits(normal);
+    CDT cdt(cdt_traits);
+    
+    // Iterates on the vector of facet handles
+    typename CDT::Vertex_handle previous = NULL, first = NULL;
+    for (typename LCC::template Dart_of_orbit_range<1>::const_iterator
+           he_circ = lcc.template darts_of_orbit<1>(dh).begin(),
+           he_circ_end = lcc.template darts_of_orbit<1>(dh).end();
+         he_circ!=he_circ_end; ++he_circ)
+    {
+      typename CDT::Vertex_handle vh = cdt.insert(geomutils.get_point(lcc, he_circ));
+      if(first == NULL)
+      { first = vh; }
+      vh->info() = geomutils.get_vertex_normal(lcc, he_circ);
+      if(previous!=NULL && previous != vh)
+      { cdt.insert_constraint(previous, vh); }
+      previous = vh;
+    }
+    if (previous!=NULL)
+      cdt.insert_constraint(previous, first);
+    
+    // sets mark is_external
+    for(typename CDT::All_faces_iterator fit = cdt.all_faces_begin(),
+          fitend = cdt.all_faces_end(); fit!=fitend; ++fit)
+    {
+      fit->info().is_external = true;
+      fit->info().is_process = false;
+    }
+    //check if the facet is external or internal
+    std::queue<typename CDT::Face_handle> face_queue;
+    typename CDT::Face_handle face_internal = NULL;
+    face_queue.push(cdt.infinite_vertex()->face());
+    while(! face_queue.empty() )
+    {
+      typename CDT::Face_handle fh = face_queue.front();
+      face_queue.pop();
+      if(!fh->info().is_process)
+      {
+        fh->info().is_process = true;
+        for(int i = 0; i <3; ++i)
+        {
+          if(!cdt.is_constrained(std::make_pair(fh, i)))
+          {
+            face_queue.push(fh->neighbor(i));
+          }
+          else if (face_internal==NULL)
+          {
+            face_internal = fh->neighbor(i);
+          }
+        }
+      }
+    }
+
+    if ( face_internal!=NULL )
+      face_queue.push(face_internal);
+    
+    while(! face_queue.empty() )
+    {
+      typename CDT::Face_handle fh = face_queue.front();
+      face_queue.pop();
+      if(!fh->info().is_process)
+      {
+        fh->info().is_process = true;
+        fh->info().is_external = false;
+        for(int i = 0; i <3; ++i)
+        {
+          if(!cdt.is_constrained(std::make_pair(fh, i)))
+          {
+            face_queue.push(fh->neighbor(i));
+          }
+        }
+      }
+    }
+
+    //iterates on the internal faces to draw the corresponding triangles
+    for(typename CDT::Finite_faces_iterator ffit = cdt.finite_faces_begin(),
+          ffitend = cdt.finite_faces_end(); ffit != ffitend; ++ffit)
+    {
+      if(!ffit->info().is_external)
+      {
+        if(flat)
+        {
+          ::glNormal3d(normal.x(), normal.y(), normal.z());
+        }
+        else
+        {
+          ::glNormal3d(ffit->vertex(0)->info().x(),
+                       ffit->vertex(0)->info().y(),
+                       ffit->vertex(0)->info().z());
+        }
+        
+        ::glVertex3d(ffit->vertex(0)->point().x(),
+                     ffit->vertex(0)->point().y(),
+                     ffit->vertex(0)->point().z());
+
+        if(!flat)
+        {
+          ::glNormal3d(ffit->vertex(1)->info().x(),
+                       ffit->vertex(1)->info().y(),
+                       ffit->vertex(1)->info().z());
+        }
+        ::glVertex3d(ffit->vertex(1)->point().x(),
+                     ffit->vertex(1)->point().y(),
+                     ffit->vertex(1)->point().z());
+
+        if(!flat)
+        {
+          ::glNormal3d(ffit->vertex(2)->info().x(),
+                       ffit->vertex(2)->info().y(),
+                       ffit->vertex(2)->info().z());
+        }
+        ::glVertex3d(ffit->vertex(2)->point().x(),
+                     ffit->vertex(2)->point().y(),
+                     ffit->vertex(2)->point().z());
+      }
+    }
+  }
+  
   void drawAllFaces(bool flat)
   {
+    ::glColor3f(1.0f, .7f, .7f);
+    ::glBegin(GL_TRIANGLES);
     for(typename LCC::template One_dart_per_cell_range<2>::iterator
           dartIter=lcc.template one_dart_per_cell<2>().begin();
         dartIter.cont(); ++dartIter)
     {
-      Dart_handle& dart = dartIter;
-      ::glBegin(GL_POLYGON);
-      ::glColor3f(1.0f, .7f, .7f);
-
-      if(flat)
-      {
-        Local_vector normal = geomutils.get_facet_normal(lcc,dart);
-        ::glNormal3d(normal.x(), normal.y(), normal.z());
-      }
-
-      for (typename LCC::template Dart_of_orbit_range<1>::const_iterator
-             orbitIter = lcc.template darts_of_orbit<1>(dart).begin();
-           orbitIter.cont(); ++orbitIter)
-      {
-        if(!flat)
-        {
-          // If Gouraud shading: 1 normal per vertex
-          Local_vector n = geomutils.get_vertex_normal(lcc,orbitIter);
-          ::glNormal3d(n.x(),n.y(),n.z());
-        }
-
-        Local_point p = geomutils.get_point(lcc, orbitIter);
-        ::glVertex3d(p.x(),p.y(),p.z());
-      }
-
-      ::glEnd();
+      if (lcc.template beta<1,1,1>(dartIter)!=dartIter)
+        drawNonTriangleFace(dartIter, flat);
+      else
+        drawTriangleFace(dartIter, flat);
+      
     }
+    ::glEnd();    
   }
 
   void drawAllEdges()

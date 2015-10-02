@@ -11,8 +11,8 @@ endif()
 # If you want to visualize a linear cell complex, you can use the following viewer
 # based on qt. Just uncomment the following two lines, plus the lines qt5_use_modules below
 
-#find_package(CGAL COMPONENTS Qt5)
-#include("CMakeLCCViewerQt.inc")
+# find_package(CGAL COMPONENTS Qt5)
+# include("CMakeLCCViewerQt.inc")
 
 # If you don't want to visualize, use the following line (otherwise comment it)
 find_package(CGAL QUIET COMPONENTS Core)
@@ -39,13 +39,6 @@ if ( CGAL_FOUND )
 
   create_single_source_cgal_program("plane_graph_to_lcc_2.cpp")
   create_single_source_cgal_program("linear_cell_complex_3_attributes_management.cpp")
-
-  add_executable(linear_cell_complex_3_triangulation
-                          linear_cell_complex_3_triangulation.cpp)
-  target_link_libraries(linear_cell_complex_3_triangulation ${CGAL_LIBRARIES}
-                                   ${CGAL_3RD_PARTY_LIBRARIES}
-                                   ${MAP_VIEWER_LIBRARIES})
-  # qt5_use_modules(linear_cell_complex_3_triangulation ${MAP_VIEWER_MODULES})
 
   add_executable(voronoi_2 voronoi_2.cpp)
   target_link_libraries(voronoi_2 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES}
