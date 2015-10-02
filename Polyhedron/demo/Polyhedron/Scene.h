@@ -2,24 +2,24 @@
 #define SCENE_H
 #include "config.h"
 #include "Scene_config.h"
-
 #include "Scene_interface.h"
 #include "Scene_draw_interface.h"
-
 #include <QtOpenGL/qgl.h>
-#include <QAbstractListModel>
+#include <QStandardItemModel>
 #include <QString>
 #include <QColor>
 #include <QList>
+#include <QMap>
 #include <QItemDelegate>
 #include <QPixmap>
 #include <QItemSelection>
 #include <QGLViewer/qglviewer.h>
-
+#include <QDebug>
 #include <iostream>
 #include <cmath>
 #include <boost/variant.hpp>
-
+#include "Scene_item.h"
+#include "Scene_group_item.h"
 class QEvent;
 class QMouseEvent;
 namespace GlSplat { class SplatRenderer; }
@@ -27,7 +27,7 @@ namespace GlSplat { class SplatRenderer; }
 class Viewer_interface;
 
 class SCENE_EXPORT Scene  :
-  public QAbstractListModel, public Scene_interface, public Scene_draw_interface
+  public QStandardItemModel, public Scene_interface, public Scene_draw_interface
 {
   Q_OBJECT
   Q_PROPERTY(int numberOfEntries READ numberOfEntries)
@@ -35,6 +35,7 @@ class SCENE_EXPORT Scene  :
   friend class SceneDelegate;
 
 public:
+  QMap<QModelIndex, int> index_map;
   enum Columns { NameColumn = 0, 
                  ColorColumn, 
                  RenderingModeColumn, 
@@ -99,19 +100,23 @@ public:
     return std::sqrt(dx*dx + dy*dy + dz*dz);
   }
 
-  // QAbstractItemModel functions
-  int rowCount ( const QModelIndex & parent = QModelIndex() ) const;
-  int columnCount ( const QModelIndex & parent = QModelIndex() ) const;
+  // QStandardItemModel functions
+
   QVariant data ( const QModelIndex & index, int role = ::Qt::DisplayRole ) const;
   QVariant headerData ( int section, ::Qt::Orientation orientation, int role = ::Qt::DisplayRole ) const;
   ::Qt::ItemFlags flags ( const QModelIndex & index ) const;
   bool setData(const QModelIndex &index, const QVariant &value, int role);
-
+  QList<Scene_group_item*> group_entries() const ;
+  QList<Scene_item*> item_entries() const ;
   // auxiliary public function for QMainWindow
   QItemSelection createSelection(int i);
   QItemSelection createSelectionAll();
+  void setGroupName(QString name);
 
 public Q_SLOTS:
+  //!insures that the groupview and data always has a "new group" in first position.
+  void check_first_group();
+  void group_added();
   // Notify the scene that an item was modified
   void itemChanged(); // slots called by items themself
   void itemChanged(int i); 
@@ -161,24 +166,32 @@ Q_SIGNALS:
   void selectionChanged(int i);
 
 private Q_SLOTS:
+  void test_rows()
+  {
+  }
   void setSelectionRay(double, double, double, double, double, double);
   void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}
 
 private:
   void draw_aux(bool with_names, Viewer_interface*);
+  void organize_items(Scene_item* item, QStandardItem *root, int loop);
+  //Temp member, used only for dev purpose for now.
+  QStandardItem* viewItem;
   typedef QList<Scene_item*> Entries;
   Entries m_entries;
+  QList<Scene_group_item*> m_group_entries;
   int selected_item;
   QList<int> selected_items_list;
   int item_A;
   int item_B;
   static GlSplat::SplatRenderer* ms_splatting;
   static int ms_splattingCounter;
+
 public:
   static GlSplat::SplatRenderer* splatting();
 
 }; // end class Scene
-
+class QAbstractProxyModel;
 class SCENE_EXPORT SceneDelegate : public QItemDelegate
 {
 public:
@@ -194,11 +207,26 @@ public:
                    const QModelIndex &index);
   void paint(QPainter *painter, const QStyleOptionViewItem &option,
              const QModelIndex &index) const;
+  void setProxy(QAbstractProxyModel* p_proxy){
+      proxy = p_proxy;
+  }
+  void setScene(Scene* p_scene){
+      scene = p_scene;
+  }
 
 private:
   QPixmap checkOnPixmap;
   QPixmap checkOffPixmap;
+  QAbstractProxyModel *proxy;
+  Scene *scene;
   mutable int size;
 }; // end class SceneDelegate
 
 #endif // SCENE_H
+
+
+/*TO DO
+virer viewItem
+arranger les choses pour remettre index_map en private.
+virer test_rows
+  */

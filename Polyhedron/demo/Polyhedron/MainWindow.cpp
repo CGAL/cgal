@@ -148,17 +148,21 @@ MainWindow::MainWindow(QWidget* parent)
 
   proxyModel = new QSortFilterProxyModel(this);
   proxyModel->setSourceModel(scene);
+  SceneDelegate *delegate = new SceneDelegate(this);
+  delegate->setProxy(proxyModel);
+  delegate->setScene(scene);
+
 
   connect(ui->searchEdit, SIGNAL(textChanged(QString)),
           proxyModel, SLOT(setFilterFixedString(QString)));
   sceneView->setModel(proxyModel);
 
   // setup the sceneview: delegation and columns sizing...
-  sceneView->setItemDelegate(new SceneDelegate(this));
+  sceneView->setItemDelegate(delegate);
 
-  sceneView->header()->setStretchLastSection(false);
-  sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-  sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+ //sceneView->header()->setStretchLastSection(false);
+  /* sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+   sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   sceneView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
   sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
@@ -167,7 +171,7 @@ MainWindow::MainWindow(QWidget* parent)
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
   sceneView->resizeColumnToContents(Scene::ABColumn);
   sceneView->resizeColumnToContents(Scene::VisibleColumn);
-
+*/
   // setup connections
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateInfo()));
@@ -227,6 +231,8 @@ MainWindow::MainWindow(QWidget* parent)
   // connect(ui->infoLabel, SIGNAL(customContextMenuRequested(const QPoint & )),
   //         this, SLOT(showSceneContextMenu(const QPoint &)));
 
+  connect(scene, SIGNAL(updated()),
+          scene, SLOT(test_rows()));
   connect(ui->actionRecenterScene, SIGNAL(triggered()),
           viewer, SLOT(update()));
 
@@ -1058,6 +1064,7 @@ void MainWindow::selectSceneItem(int i)
   else {
     QItemSelection s =
       proxyModel->mapSelectionFromSource(scene->createSelection(i));
+
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);
   }
@@ -1112,21 +1119,24 @@ void MainWindow::selectAll()
 
 int MainWindow::getSelectedSceneItemIndex() const
 {
-  QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
-  if(selectedRows.size() != 1)
+  QModelIndexList selectedRows = sceneView->selectionModel()->selectedIndexes();
+  if(selectedRows.size() != 5)
     return -1;
   else {
     QModelIndex i = proxyModel->mapToSource(selectedRows.first());
-    return i.row();
+    return scene->index_map[i];
   }
 }
 
 QList<int> MainWindow::getSelectedSceneItemIndices() const
 {
-  QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
+
+  QModelIndexList selectedIndices = sceneView->selectionModel()->selectedIndexes();
   QList<int> result;
-  Q_FOREACH(QModelIndex index, selectedRows) {
-    result << proxyModel->mapToSource(index).row();
+  Q_FOREACH(QModelIndex index, selectedIndices) {
+      int temp = scene->index_map[proxyModel->mapToSource(index)];;
+      if(!result.contains(temp))
+          result<<temp;
   }
   return result;
 }
@@ -1169,7 +1179,7 @@ void MainWindow::contextMenuRequested(const QPoint& global_pos) {
 void MainWindow::showSceneContextMenu(int selectedItemIndex,
                                       const QPoint& global_pos)
 {
-  Scene_item* item = scene->item(selectedItemIndex);
+  Scene_item* item = scene->item(scene->index_map.value(scene->index(selectedItemIndex,0)));//scene->item(selectedItemIndex);
   if(!item) return;
 
   const char* prop_name = "Menu modified by MainWindow.";

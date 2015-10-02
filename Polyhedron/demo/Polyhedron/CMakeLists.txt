@@ -130,6 +130,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Viewer.cpp #Viewer_moc.cpp
     Viewer_interface_moc.cpp
     Scene_item.cpp #Scene_item.moc
+    Scene_group_item.cpp
     Polyhedron_demo_plugin_helper.cpp)
     qt5_use_modules(demo_framework OpenGL Gui Widgets Script Xml)
 
@@ -205,7 +206,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       scene_basic_objects
       scene_polyhedron_item
       scene_polygon_soup_item
-      scene_nef_polyhedron_item )
+      scene_nef_polyhedron_item)
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${lib} )
   endforeach()
 
@@ -486,6 +487,13 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   
   polyhedron_demo_plugin(shortest_path_plugin Polyhedron_demo_shortest_path_plugin ${shortestPathUI_FILES})
   target_link_libraries(shortest_path_plugin scene_polyhedron_item scene_polylines_item scene_polyhedron_selection_item scene_polyhedron_shortest_path_item scene_basic_objects)
+
+ add_item(scene_group_item Scene_group_item.cpp)
+
+  qt5_wrap_ui( groupUI_FILES Polyhedron_demo_group_plugin.ui)
+  polyhedron_demo_plugin(group_plugin Polyhedron_demo_group_plugin ${groupUI_FILES})
+  target_link_libraries(group_plugin scene_group_item)
+
 #
 # Exporting
 #

@@ -8,7 +8,6 @@
 #include <cmath>
 
 class Scene_item;
-
 // OpenGL rendering mode
 enum RenderingMode { Points = 0,
                      PointsPlusNormals,
@@ -71,7 +70,7 @@ public:
 
   typedef int Item_id;
 
-  virtual ~Scene_interface() {};
+  virtual ~Scene_interface() {}
 
   virtual Item_id addItem(Scene_item* item) = 0;
   virtual Scene_item* replaceItem(Item_id, Scene_item*, bool emit_item_about_to_be_destroyed = false) = 0;

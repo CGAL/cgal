@@ -64,6 +64,7 @@ public:
           buffers.push_back(n_buf);
           buffers[i].create();
       }
+      has_group = 0;
   }
   Scene_item(int buffers_size, int vaos_size)
     : name_("unamed"),
@@ -89,6 +90,7 @@ public:
           buffers.push_back(n_buf);
           buffers[i].create();
       }
+      has_group = 0;
   }
   virtual ~Scene_item();
   virtual Scene_item* clone() const = 0;
@@ -136,6 +138,7 @@ public:
 
   // Event handling
   virtual bool keyPressEvent(QKeyEvent*){return false;}
+  int has_group;
 public Q_SLOTS:
   // Call that once you have finished changing something in the item
   // (either the properties or internal data)
