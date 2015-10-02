@@ -1,5 +1,10 @@
 #include "config.h"
 
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4244 ) // conversion with loss of data
+#endif
+
 #include <CGAL/Image_3.h>
 
 #include "Volume_plane.h"
