@@ -5,9 +5,9 @@
 
 #if defined( CGAL_HAS_THREADS )
 #  ifdef  CGAL_CAN_USE_CXX11_THREAD_LOCAL
-#    pragma message ( "Use keyword thread_local" )
+//#    pragma message ( "Use keyword thread_local" )
 #  else
-#    pragma message ("Use thread_local from boost")
+//#    pragma message ("Use thread_local from boost")
 #    define CGAL_USE_BOOST_THREAD
 #    include <boost/thread/tss.hpp>
 #  endif
