@@ -5,13 +5,14 @@
 #include <QString>
 #include <QList>
 #include <QtPlugin>
+#include <QDebug>
 
 class QAction;
 class QMainWindow;
-class Scene_interface;
 class Messages_interface;
 namespace CGAL {
 namespace Three {
+class Scene_interface;
   /*!
    * This class gives some virtual functions to help making a plugin
    */
@@ -21,9 +22,9 @@ public:
   //! Destructor
   virtual ~Polyhedron_demo_plugin_interface() {}
   //!Initializes the plugin.
-  virtual void init(QMainWindow*, Scene_interface*) {}
+  virtual void init(QMainWindow*, CGAL::Three::Scene_interface*) {}
   //!Initializes the plugin.
-  virtual void init(QMainWindow* mw, Scene_interface* sc, Messages_interface*) {
+  virtual void init(QMainWindow* mw, CGAL::Three::Scene_interface* sc, Messages_interface*) {
     init(mw, sc);
   }
 

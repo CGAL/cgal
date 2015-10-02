@@ -27,7 +27,7 @@ Polyhedron_demo_plugin_helper::
 init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
   mw = mainWindow;
   scene = scene_interface;
-  Q_FOREACH(QString actionName, actionsNames())
+  Q_FOREACH(QString actionName,actionsNames())
   {
     actions_map[actionName] = getActionFromMainWindow(mw, actionName);
   }

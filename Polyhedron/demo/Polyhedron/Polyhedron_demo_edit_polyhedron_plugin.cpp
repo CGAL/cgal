@@ -84,7 +84,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
 {
   mw = mainWindow;
   scene = scene_interface;
-
   actionDeformation = new QAction("Surface Mesh Deformation", mw);
 
   actionDeformation->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
@@ -99,7 +98,6 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
     std::cerr << "ERROR " << __FILE__ << ":" << __LINE__ << " :"
               << " cannot convert scene_interface to scene!\n"; 
   }
-
   ////////////////// Construct widget /////////////////////////////
   // First time, construct docking window
   dock_widget = new QDockWidget("Mesh Deformation", mw);

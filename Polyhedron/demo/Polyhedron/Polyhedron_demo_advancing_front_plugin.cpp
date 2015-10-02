@@ -51,10 +51,8 @@ class Polyhedron_demo_advancing_front_plugin :
 
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
-
     actionAdvancingFrontReconstruction = new QAction(tr("Advancing Front reconstruction"), mainWindow);
     actionAdvancingFrontReconstruction->setObjectName("actionAdvancingFrontReconstruction");
-    
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 

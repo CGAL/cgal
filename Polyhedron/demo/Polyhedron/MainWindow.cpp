@@ -416,7 +416,6 @@ void MainWindow::loadPlugins()
     initPlugin(obj);
     initIOPlugin(obj);
   }
-
   QList<QDir> plugins_directories;
   plugins_directories << qApp->applicationDirPath();
   QString env_path = qgetenv("POLYHEDRON_DEMO_PLUGINS_PATH");
@@ -462,7 +461,6 @@ void MainWindow::loadPlugins()
       }
     }
   }
-
   // sort the operations menu by name
   QList<QAction*> actions = ui->menuOperations->actions();
   qSort(actions.begin(), actions.end(), actionsByName);
