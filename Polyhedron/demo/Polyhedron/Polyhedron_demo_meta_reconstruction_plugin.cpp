@@ -17,6 +17,8 @@
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/jet_smooth_point_set.h>
+#include <CGAL/jet_estimate_normals.h>
+#include <CGAL/mst_orient_normals.h>
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 
@@ -30,11 +32,22 @@
 
 #include "ui_Polyhedron_demo_meta_reconstruction_plugin.h"
 
-struct Perimeter {
+// Poisson reconstruction method:
+// Reconstructs a surface mesh from a point set and returns it as a polyhedron.
+Polyhedron* poisson_reconstruct(const Point_set& points,
+                                Kernel::FT sm_angle, // Min triangle angle (degrees). 
+                                Kernel::FT sm_radius, // Max triangle size w.r.t. point set average spacing. 
+                                Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
+                                const QString& solver, // solver name
+                                bool use_two_passes,
+				bool do_not_fill_holes);
+
+
+struct Radius {
 
   double bound;
 
-  Perimeter(double bound)
+  Radius(double bound)
     : bound(bound)
   {}
 
@@ -45,9 +58,9 @@ struct Perimeter {
     }
     double d  = sqrt(squared_distance(p,q));
     if(d>bound) return true;
-    d += sqrt(squared_distance(p,r)) ;
+    d = sqrt(squared_distance(p,r)) ;
     if(d>bound) return true;
-    d+= sqrt(squared_distance(q,r));
+    d = sqrt(squared_distance(q,r));
     return d>bound;
   }
 };
@@ -150,7 +163,7 @@ namespace MetaReconstruction
       }
     size /= subset.size();
     
-    return mean;
+    return aniso_scale;
   }
 
   
@@ -233,7 +246,7 @@ namespace MetaReconstruction
   void scale_space (const Point_set& points, Scene_polygon_soup_item* new_item,
 		    unsigned int scale, bool interpolate = true)
   {
-    ScaleSpace reconstruct (scale, 300);
+    ScaleSpace reconstruct (3 * scale, 300);
     reconstruct.reconstruct_surface(points.begin (), points.end (), 4, false, true);
 
     new_item->init_polygon_soup(points.size(), reconstruct.number_of_triangles ());
@@ -262,13 +275,24 @@ namespace MetaReconstruction
   void advancing_front (const Point_set& points, Scene_polyhedron_item* new_item, double size)
   {
     Polyhedron& P = * const_cast<Polyhedron*>(new_item->polyhedron());
-    Perimeter filter(size);
+    Radius filter(10 * size);
 
     CGAL::advancing_front_surface_reconstruction (points.begin (), points.end (), P, filter);
 						  
-
-
   }
+
+  void compute_normals (Point_set& points, unsigned int neighbors)
+  {
+    CGAL::jet_estimate_normals(points.begin(), points.end(),
+			       CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
+			       2 * neighbors);
+    
+    points.erase (CGAL::mst_orient_normals (points.begin(), points.end(),
+					    CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
+					    2 * neighbors),
+		  points.end ());
+  }
+  
 }
 
 class Polyhedron_demo_meta_reconstruction_plugin_dialog : public QDialog, private Ui::MetaReconstructionOptionsDialog
@@ -368,6 +392,8 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
       unsigned int aniso_scale = MetaReconstruction::scale_of_anisotropy (*points, aniso_size);
       std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 
+      std::cerr << " -> Scale / size = " << aniso_scale << " / " << aniso_size << std::endl;
+      
       bool isotropic = (aniso_scale == 6);
       std::cerr << (isotropic ? " -> Point set is isotropic" : " -> Point set is anisotropic") << std::endl;
       if (!(dialog.interpolate()) && !isotropic)
@@ -387,6 +413,9 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
       double noise_size;
       unsigned int noise_scale = MetaReconstruction::scale_of_noise (*points, noise_size);
       std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
+      
+      std::cerr << " -> Scale / size = " << noise_scale << " / " << noise_size << std::endl;
+      
       bool noisy = (noise_scale > 6);
       std::cerr << (noisy ? " -> Point set is noisy" : " -> Point set is noise-free") << std::endl;
       
@@ -451,18 +480,35 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 	    }
 	  else
 	    {
-	      if (!(new_item->has_normals()))
+	      if (!(pts_item->has_normals()))
 		{
 		  std::cerr << "Estimation of normal vectors... ";
 		  time.restart();
-		  // TODO
 
+		  MetaReconstruction::compute_normals (*points, noise_scale);
+		  
+		  new_item->set_has_normals (true);
+		  new_item->setRenderingMode(PointsPlusNormals);
+		  
 		  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 		}
 	      
 	      std::cerr << "Poisson reconstruction... ";
 	      time.restart();
-	      // TODO
+
+	      Polyhedron* pRemesh = poisson_reconstruct(*points, 20,
+							100 * (std::max)(noise_size, aniso_size),
+							0.25 * (std::max)(noise_size, aniso_size),
+							QString ("Eigen - built-in CG"), false, false);
+	      if(pRemesh)
+
+		{
+		  // Add polyhedron to scene
+		  Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(pRemesh);
+		  reco_item->setName(tr("%1 (poisson)").arg(pts_item->name()));
+		  reco_item->setColor(Qt::lightGray);
+		  scene->addItem(reco_item);
+		}
 
 	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
