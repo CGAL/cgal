@@ -5,4 +5,3 @@ demo/Kinetic_data_structures/Delaunay_triangulation_3.cpp
 gui_3.cpp
 demo/Kinetic_data_structures/regular_triangulation_3.cpp
 SoQt_examiner_viewer.cpp
-examples/Polynomial_kernel
