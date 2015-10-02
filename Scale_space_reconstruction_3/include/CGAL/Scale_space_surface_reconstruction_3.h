@@ -90,12 +90,13 @@ namespace CGAL {
  *  \tparam Ct indicates whether to use concurrent processing. It must be
  *  either `Sequential_tag` or `Parallel_tag` (the default value).
  */
-template < class Gt, class FS = Tag_true, class wA = Default, class Ct = Parallel_tag >
+template < class Gt, class FS = Tag_true,
+	   class wA = CGAL::Default_diagonalize_traits<typename Gt::FT, 3>, class Ct = Parallel_tag >
 class Scale_space_surface_reconstruction_3 {
 
 public:
-	typedef typename Gt::Point_3                        Point;          ///< defines the point type.
-  typedef boost::tuple<Point, std::size_t>                           Point_and_size_t;
+    typedef typename Gt::Point_3                        Point;          ///< defines the point type.
+    typedef boost::tuple<Point, std::size_t>                           Point_and_size_t;
 
 private:
     // Searching for neighbors.
