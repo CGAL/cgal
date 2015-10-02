@@ -1149,7 +1149,7 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
           itend(lcc.darts_of_orbit<1>(d1).end()); it!=itend; ++it)
    {
      vh = cdt.insert(lcc.point(it));
-     vh->info()=it;
+     vh->info().dh=it;
      if( first==NULL )
      {
        first=vh;
@@ -1261,7 +1261,7 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
        const CDT::Vertex_handle vc = fh->vertex(index);
        
        Dart_handle dd1 = NULL;
-       for (LCC::Dart_of_cell_range<0, 2>::iterator it(lcc.darts_of_cell<0, 2>(va->info()).begin());
+       for (LCC::Dart_of_cell_range<0, 2>::iterator it(lcc.darts_of_cell<0, 2>(va->info().dh).begin());
             dd1==NULL && it.cont(); ++it)
        {
          if (lcc.point(lcc.beta<1>(it))==vc->point())
@@ -1269,7 +1269,7 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
        }
        
        Dart_handle dd2 = NULL;
-       for (LCC::Dart_of_cell_range<0, 2>::iterator it(lcc.darts_of_cell<0, 2>(vb->info()).begin());
+       for (LCC::Dart_of_cell_range<0, 2>::iterator it(lcc.darts_of_cell<0, 2>(vb->info().dh).begin());
             dd2==NULL && it.cont(); ++it)
        {
          if (lcc.point(lcc.beta<0>(it))==vc->point())
@@ -1279,7 +1279,7 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
        //       assert(((lcc.beta<0,0>(dd1)==dd2) || lcc.beta<1,1>(dd1)==dd2));
        
        Dart_handle ndart=CGAL::insert_cell_1_in_cell_2(lcc, dd1, dd2);
-       va->info()=lcc.beta<2>(ndart);
+       va->info().dh=lcc.beta<2>(ndart);
 
        fh->info().exist_edge[index]=true;
        opposite_fh->info().exist_edge[cdt.mirror_index(fh,index)]=true;

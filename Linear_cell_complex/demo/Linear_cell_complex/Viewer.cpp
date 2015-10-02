@@ -333,7 +333,7 @@ void Viewer::compute_faces(Dart_handle dh)
         CDT::Vertex_handle vh = cdt.insert(lcc.point(he_circ));
         if(first == NULL)
         { first = vh; }
-        //vh->info() = he_circ;
+        vh->info().v = CGAL::compute_normal_of_cell_0<LCC>(lcc, he_circ);
         if(previous!=NULL && previous != vh)
         { cdt.insert_constraint(previous, vh); }
         previous = vh;
@@ -401,18 +401,6 @@ void Viewer::compute_faces(Dart_handle dh)
       {
         if(!ffit->info().is_external)
         {
-          smooth_normals.push_back(normal.x());
-          smooth_normals.push_back(normal.y());
-          smooth_normals.push_back(normal.z());
-
-          smooth_normals.push_back(normal.x());
-          smooth_normals.push_back(normal.y());
-          smooth_normals.push_back(normal.z());
-
-          smooth_normals.push_back(normal.x());
-          smooth_normals.push_back(normal.y());
-          smooth_normals.push_back(normal.z());
-
           flat_normals.push_back(normal.x());
           flat_normals.push_back(normal.y());
           flat_normals.push_back(normal.z());
@@ -424,6 +412,18 @@ void Viewer::compute_faces(Dart_handle dh)
           flat_normals.push_back(normal.x());
           flat_normals.push_back(normal.y());
           flat_normals.push_back(normal.z());
+
+          smooth_normals.push_back(ffit->vertex(0)->info().v.x());
+          smooth_normals.push_back(ffit->vertex(0)->info().v.y());
+          smooth_normals.push_back(ffit->vertex(0)->info().v.z());
+
+          smooth_normals.push_back(ffit->vertex(1)->info().v.x());
+          smooth_normals.push_back(ffit->vertex(1)->info().v.y());
+          smooth_normals.push_back(ffit->vertex(1)->info().v.z());
+
+          smooth_normals.push_back(ffit->vertex(2)->info().v.x());
+          smooth_normals.push_back(ffit->vertex(2)->info().v.y());
+          smooth_normals.push_back(ffit->vertex(2)->info().v.z());
 
           pos_facets.push_back(ffit->vertex(0)->point().x());
           pos_facets.push_back(ffit->vertex(0)->point().y());
