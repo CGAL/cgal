@@ -1255,11 +1255,30 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
        CGAL_assertion( !fh->info().exist_edge[index] );
        CGAL_assertion( !opposite_fh->info().
                        exist_edge[cdt.mirror_index(fh,index)] );
+       // triangle is (vc, vb, va)
        const CDT::Vertex_handle va = fh->vertex(cdt. cw(index));
        const CDT::Vertex_handle vb = fh->vertex(cdt.ccw(index));
-
-       Dart_handle ndart=
-         CGAL::insert_cell_1_in_cell_2(lcc,va->info(),vb->info());
+       const CDT::Vertex_handle vc = fh->vertex(index);
+       
+       Dart_handle dd1 = NULL;
+       for (LCC::Dart_of_cell_range<0, 2>::iterator it(lcc.darts_of_cell<0, 2>(va->info()).begin());
+            dd1==NULL && it.cont(); ++it)
+       {
+         if (lcc.point(lcc.beta<1>(it))==vc->point())
+           dd1=it;
+       }
+       
+       Dart_handle dd2 = NULL;
+       for (LCC::Dart_of_cell_range<0, 2>::iterator it(lcc.darts_of_cell<0, 2>(vb->info()).begin());
+            dd2==NULL && it.cont(); ++it)
+       {
+         if (lcc.point(lcc.beta<0>(it))==vc->point())
+           dd2=it;
+       }
+       
+       //       assert(((lcc.beta<0,0>(dd1)==dd2) || lcc.beta<1,1>(dd1)==dd2));
+       
+       Dart_handle ndart=CGAL::insert_cell_1_in_cell_2(lcc, dd1, dd2);
        va->info()=lcc.beta<2>(ndart);
 
        fh->info().exist_edge[index]=true;
