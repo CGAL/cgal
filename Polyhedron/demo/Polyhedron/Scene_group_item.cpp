@@ -1,3 +1,4 @@
+
 #include "Scene_group_item.h"
 #include <QDebug>
 
