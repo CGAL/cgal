@@ -15,7 +15,7 @@ You need to extend this template with auxiliary data only if you intend to
 obtain the underlying arrangement of the general polygon set and process it
 further.
 
-\cgalModels `GpsDcelFace`
+\cgalModels `GeneralPolygonSetDcelFace`
 
 \sa `Arr_face_base`
 */

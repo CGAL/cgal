@@ -14,7 +14,7 @@ You need to extend this template with auxiliary data only if you intend to
 obtain the underlying arrangement of the general polygon set and process it
 further.
 
-\cgalModels `GpsDcelHalfedge`
+\cgalModels `GeneralPolygonSetDcelHalfedge`
 
 \sa `Arr_halfedge_base<X_monotone_curve_2>`
 */
