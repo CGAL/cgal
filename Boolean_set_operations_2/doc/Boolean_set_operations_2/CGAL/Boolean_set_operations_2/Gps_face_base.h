@@ -20,7 +20,7 @@ further.
 \sa `Arr_face_base`
 */
 
-template <typename Traits>
+template <typename Point_2, typename X_monotone_curve_2>
 class Gps_face_base : public Arr_face_base {};
 
 } /* end namespace CGAL */
