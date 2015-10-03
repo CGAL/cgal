@@ -29,7 +29,8 @@ template <typename Traits>
 class Gps_default_dcel :
   public Arr_dcel_base<Arr_vertex_base<typename Traits::Point_2>,
                        Gps_halfedge_base<typename Traits::X_monotone_curve_2>,
-                       Gps_face_base<Traits> >
+                       Gps_face_base<typename Traits::Point_2,
+                                     typename Traits::X_monotone_curve_2> >
 {
 public:
 
