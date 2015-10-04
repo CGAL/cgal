@@ -203,4 +203,18 @@ Iso_rectangle_2<Kernel> transform(const Aff_transformation_2<Kernel> &t) const;
 /// @}
 
 }; /* end Iso_rectangle_2 */
+
+/// \ingroup do_overlap_grp
+/// @{
+
+/*!
+returns `true` iff `ir1` and `ir2` overlap, i.e., iff their
+intersection is non-empty.
+
+\relates Bbox_2
+*/
+do_overlap(const Iso_rectangle_2<Kernel> &ir1, const Iso_rectangle_2<Kernel> &ir2)
+
+/// @}
+
 } /* end namespace CGAL */

@@ -225,6 +225,18 @@ public:
   }
 };
 
+template < class R >
+inline
+bool
+do_overlap(const Iso_rectangle_2<R> &ir1, const Iso_rectangle_2<R> &ir2)
+{
+    // check for emptiness ??
+    if (ir1.xmax() < ir2.xmin() || ir2.xmax() < ir1.xmin())
+        return false;
+    if (ir1.ymax() < ir2.ymin() || ir2.ymax() < ir1.ymin())
+        return false;
+    return true;
+}
 
 template < class R >
 std::ostream &
