@@ -201,6 +201,7 @@ public:
       b_t[0] -= pbb.xmin();
       b_t[1] -= pbb.ymin();
       b_t[2] -= pbb.zmin();
+      // AF: Isn't there the risk that all values become zero??
       int o1 [3] = { a_t[0] / dimension[0], a_t[1] / dimension[1], a_t[2] / dimension[2] };
       int o2 [3] = { b_t[0] / dimension[0], b_t[1] / dimension[1], b_t[2] / dimension[2] };
 

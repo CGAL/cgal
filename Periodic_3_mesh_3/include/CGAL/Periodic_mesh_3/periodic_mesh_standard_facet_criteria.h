@@ -427,7 +427,7 @@ protected:
   {
     // periodic case
     // facets on the boundary are not always on surface
-#warning !
+    //#warning !
     return Badness();
     
     typedef typename Tr::Vertex_handle Vertex_handle;

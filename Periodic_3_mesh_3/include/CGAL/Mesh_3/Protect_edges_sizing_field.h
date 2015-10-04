@@ -379,7 +379,7 @@ insert_point(const Bare_point& p, const Weight& w, int dim, const Index& index)
   
   // If point insertion created an hidden ball, fail
   CGAL_assertion ( Vertex_handle() != v );
-#warning uncomment
+  //#warning uncomment
   //CGAL_assertion ( c3t3_.triangulation().number_of_vertices() == (nb_vertices_before+1) );
 
 #ifdef PROTECTION_DEBUG
@@ -414,7 +414,7 @@ smart_insert_point(const Bare_point& p, Weight w, int dim, const Index& index)
     Cell_handle ch = tr.locate(p);
     Vertex_handle nearest_vh = tr.nearest_power_vertex(p, ch);
     FT sq_d = sq_distance(p, nearest_vh->point().point());
-#warning uncomment
+    //#warning uncomment
     // CGAL_assertion( sq_d > 0 );
     
     while ( nearest_vh->point().weight() > sq_d )

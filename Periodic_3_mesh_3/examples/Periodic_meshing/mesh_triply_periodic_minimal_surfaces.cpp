@@ -51,7 +51,7 @@ typedef CGAL::Mesh_criteria_3<Tr, Edge_criteria, Periodic_facet_criteria, Period
 using namespace CGAL::parameters;
 
 
-const FT PI = M_PI;
+const FT PI = CGAL_PI;
 
 
 FT schwarz_p(const Point& p) {

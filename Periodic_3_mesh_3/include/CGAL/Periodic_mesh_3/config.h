@@ -3,7 +3,7 @@
 
 // Avoid optimisations of Mesh_3
 #define CGAL_NO_STRUCTURAL_FILTERING
-#warning "Structural filtering is disabled because this feature isn't compatible with some periodic traits!"
+//#warning "Structural filtering is disabled because this feature isn't compatible with some periodic traits!"
 /*
  * It's a temporary solution.
  * We avoid the structural filtering optimization, because it isn't

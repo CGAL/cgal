@@ -326,7 +326,7 @@ void
 Mesh_domain_holder_with_corners_3<MD_>::
 add_corner(const Point_3& point)
 {
-#warning modify corner_index!
+  //#warning modify corner_index!
   const Corner_index corner_index = 0;
   
   corners_.insert(std::make_pair(point, corner_index));

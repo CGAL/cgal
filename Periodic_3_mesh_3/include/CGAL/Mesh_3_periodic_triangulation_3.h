@@ -223,7 +223,7 @@ public:
 
       const Point canonic_p = canonicalize_point(p);
       
-#warning rewrite these lines
+      //#warning rewrite these lines
       Locate_type lt;
       int li, lj;
       locate( p, lt, li, lj, Cell_handle());
@@ -414,14 +414,17 @@ namespace details {
   {
   private:
     //TODO: avoid this trick
-    class K2 : public K {};
-    typedef Robust_weighted_circumcenter_filtered_traits_3<K2> K3;
+    //class K2 : public K {};
+
+    typedef Robust_weighted_circumcenter_filtered_traits_3<K> K3;
+    //typedef Regular_triangulation_euclidean_traits_3<K> K3;
     typedef Periodic_3_regular_triangulation_traits_3<K3> K4;
     //typedef Robust_weighted_circumcenter_filtered_traits_3<K3> Geom_traits;
     class K5 : public K4
     {
     public:
       typedef K5 Self;
+      typedef typename  K4::Weighted_point_3 Weighted_point_3;
       typedef Regular_traits_with_offsets_adaptor<Self, typename K3::In_smallest_orthogonal_sphere_3> In_smallest_orthogonal_sphere_3;
       typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Side_of_bounded_orthogonal_sphere_3> Side_of_bounded_orthogonal_sphere_3;
       typedef Regular_traits_with_offsets_adaptor<Self, typename K3::Does_simplex_intersect_dual_support_3> Does_simplex_intersect_dual_support_3;
@@ -584,10 +587,9 @@ Stream &write_complex_to_medit(Stream &out, C3t3 &c3t3, unsigned occurence_count
   typedef typename C3t3::Cell_iterator Cell_iterator;
   
   Triangulation& t = c3t3.triangulation();
-  int number_of_facets = c3t3.number_of_facets();
-  int number_of_cells = c3t3.number_of_cells();
+  int number_of_facets = static_cast<int>(c3t3.number_of_facets());
+  int number_of_cells = static_cast<int>(c3t3.number_of_cells());
   int number_of_vertices = 3 * number_of_facets + 4 * number_of_cells;
-  
   out << std::setprecision(20);
   out << "MeshVersionFormatted 1\nDimension 3\nVertices"
   << "\n" << number_of_vertices * occurence_count
@@ -595,7 +597,7 @@ Stream &write_complex_to_medit(Stream &out, C3t3 &c3t3, unsigned occurence_count
   
   Iso_cuboid cb = t.domain();
   
-  for( int j = 0; j < occurence_count; j++ ) {
+  for(unsigned j = 0; j < occurence_count; j++ ) {
     for (Facet_iterator it =c3t3.facets_begin(); it!=c3t3.facets_end(); it++) {
       Triangle tri = t.triangle(canonicalize<Tr>(t.periodic_triangle(*it)));
       for(int i = 0; i < 3; i++) {
@@ -607,7 +609,7 @@ Stream &write_complex_to_medit(Stream &out, C3t3 &c3t3, unsigned occurence_count
     }
   }
   
-  for( int j = 0; j < occurence_count; j++ ) {
+  for(unsigned j = 0; j < occurence_count; j++ ) {
     for (Cell_iterator it = c3t3.cells_begin(); it !=c3t3.cells_end(); it++) {
       Tetrahedron tet = t.tetrahedron(canonicalize_tetrahedron<Tr>(t.periodic_tetrahedron( it )));
       for(int i = 0; i < 4; i++) {
@@ -624,7 +626,7 @@ Stream &write_complex_to_medit(Stream &out, C3t3 &c3t3, unsigned occurence_count
   << number_of_facets * occurence_count
   << std::endl;
   const int number_of_vertices_on_facets = number_of_facets * 3;
-  for( int j = 0; j < occurence_count; j++ ) {
+  for(unsigned j = 0; j < occurence_count; j++ ) {
     
     for( int i = 0; i < number_of_facets; i++) {
       out << i * 3 + j * number_of_vertices_on_facets + first_vertex  << " " 
@@ -639,7 +641,7 @@ Stream &write_complex_to_medit(Stream &out, C3t3 &c3t3, unsigned occurence_count
   << number_of_cells * occurence_count
   << std::endl;
   const int number_of_vertices_on_cells = number_of_cells * 4;
-  for( int j = 0; j < occurence_count; j++ ) {
+  for(unsigned j = 0; j < occurence_count; j++ ) {
     
     Cell_iterator it = c3t3.cells_begin();
     

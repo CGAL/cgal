@@ -389,6 +389,8 @@ template<class K_>
 struct Robust_weighted_circumcenter_filtered_traits_3
 : public CGAL::Regular_triangulation_euclidean_traits_3<K_>
 {
+   typedef  typename CGAL::Regular_triangulation_euclidean_traits_3<K_>::Weighted_point_3 Weighted_point_3;
+
   typedef CGAL::Robust_filtered_construct_weighted_circumcenter_3<K_>
     Construct_weighted_circumcenter_3;
   
