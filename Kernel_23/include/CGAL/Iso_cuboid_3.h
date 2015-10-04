@@ -234,6 +234,19 @@ public:
 
 };
 
+template < class R >
+inline
+bool
+do_overlap(const Iso_cuboid_3<R>& ic1, const Iso_cuboid_3<R>& ic2)
+{
+    if(ic1.xmax() < ic2.xmin() || ic2.xmax() < ic1.xmin())
+        return false;
+    if(ic1.ymax() < ic2.ymin() || ic2.ymax() < ic1.ymin())
+        return false;
+    if(ic1.zmax() < ic2.zmin() || ic2.zmax() < ic1.zmin())
+        return false;
+    return true;
+}
 
 template < class R >
 std::ostream &

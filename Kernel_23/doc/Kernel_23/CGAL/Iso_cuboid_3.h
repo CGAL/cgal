@@ -225,4 +225,18 @@ Iso_cuboid_3<Kernel> transform(const Aff_transformation_3<Kernel> &t) const;
 /// @}
 
 }; /* end Iso_cuboid_3 */
+
+/// \ingroup do_overlap_grp
+/// @{
+
+/*!
+returns `true` iff `ic1` and `ic2` overlap, i.e., iff their
+intersection is non-empty.
+
+\relates Bbox_3
+*/
+do_overlap(const Iso_cuboid_3<Kernel>& ic1, const Iso_cuboid_3<Kernel>& ic2);
+
+/// @}
+
 } /* end namespace CGAL */
