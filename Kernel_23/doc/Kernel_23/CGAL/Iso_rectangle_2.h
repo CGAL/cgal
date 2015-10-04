@@ -213,7 +213,8 @@ intersection is non-empty.
 
 \relates Bbox_2
 */
-do_overlap(const Iso_rectangle_2<Kernel> &ir1, const Iso_rectangle_2<Kernel> &ir2)
+template< typename Kernel >
+do_overlap(const Iso_rectangle_2<Kernel> &ir1, const Iso_rectangle_2<Kernel> &ir2);
 
 /// @}
 

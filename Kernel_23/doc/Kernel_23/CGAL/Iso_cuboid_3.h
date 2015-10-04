@@ -235,6 +235,7 @@ intersection is non-empty.
 
 \relates Bbox_3
 */
+template< typename Kernel >
 do_overlap(const Iso_cuboid_3<Kernel>& ic1, const Iso_cuboid_3<Kernel>& ic2);
 
 /// @}
