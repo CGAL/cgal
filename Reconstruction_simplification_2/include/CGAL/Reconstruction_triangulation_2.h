@@ -369,7 +369,7 @@ public:
       vertex->set_sample(NULL);
   }
 
-  void collect_all_samples(Sample_vector& samples) {
+  void collect_all_samples(Sample_vector& samples) const {
     for (Finite_edges_iterator ei = Base::finite_edges_begin();
         ei != Base::finite_edges_end(); ++ei) {
       Edge edge = *ei;
@@ -461,8 +461,8 @@ public:
     select_plan(edge);
   }
 
-  void compute_mass(const Edge& edge) {
-    FT mass = 0.0;
+  void compute_mass(const Edge& edge) const {
+    FT mass = 0;
 
     typename Sample_vector::const_iterator it;
     const Sample_vector& samples0 = edge.first->samples(edge.second);
@@ -482,7 +482,7 @@ public:
     set_mass(twin, mass);
   }
 
-  void select_plan(const Edge& edge) {
+  void select_plan(const Edge& edge) const {
     // transport plan:
     // 0 - to vertex
     // 1 - to edge
@@ -497,7 +497,7 @@ public:
     set_plan(twin, plan);
   }
 
-  void compute_edge_cost(const Edge& edge) {
+  void compute_edge_cost(const Edge& edge) const {
     SQueue squeue;
     FT M = get_mass(edge);
     FT L = get_length(edge);
@@ -509,7 +509,7 @@ public:
     set_edge_cost(twin, cost);
   }
 
-  void sort_samples_from_edge(const Edge& edge, SQueue& squeue) {
+  void sort_samples_from_edge(const Edge& edge, SQueue& squeue) const {
     typename Sample_vector::const_iterator it;
     const Sample_vector& samples0 = edge.first->samples(edge.second);
     for (it = samples0.begin(); it != samples0.end(); ++it) {
@@ -525,14 +525,15 @@ public:
     }
   }
 
-  Cost_ compute_cost_from_squeue(SQueue& squeue, const FT M, const FT L) {
+  Cost_ compute_cost_from_squeue(SQueue& squeue, const FT M, const FT L) const
+  {
     if (squeue.empty())
       return Cost_();
-    if (M == 0.0)
+    if (M == FT(0))
       return Cost_();
 
     Cost_ sum;
-    FT start = 0.0;
+    FT start = 0;
     FT coef = L / M;
     while (!squeue.empty()) {
       PSample psample = squeue.top();
@@ -541,7 +542,7 @@ public:
       FT mass = psample.sample()->mass();
       FT coord = psample.priority() * L;
       FT bin = mass * coef;
-      FT center = start + 0.5 * bin;
+      FT center = start + FT(0.5) * bin;
       FT pos = coord - center;
 
       FT norm2 = psample.sample()->distance2();
@@ -555,7 +556,7 @@ public:
     return sum;
   }
 
-  void compute_vertex_cost(const Edge& edge) {
+  void compute_vertex_cost(const Edge& edge) const {
     Edge twin = twin_edge(edge);
     const Point& ps = source_vertex(edge)->point();
     const Point& pt = target_vertex(edge)->point();
@@ -608,7 +609,7 @@ public:
     Face_handle face = Base::locate(point);
 
     if (face == Face_handle() || Base::is_infinite(face)) {
-      std::cout << "free bird" << std::endl;
+      //std::cout << "free bird" << std::endl;
       return false;
     }
 
@@ -636,7 +637,7 @@ public:
     }
 
     if (nearest_face == Face_handle()) {
-      std::cout << "free bird" << std::endl;
+      //std::cout << "free bird" << std::endl;
       return false;
     }
 
@@ -692,18 +693,18 @@ public:
     return nearest;
   }
 
-  void assign_sample_to_vertex(Sample_* sample, Vertex_handle vertex) {
-    if (vertex->sample()) {
+  void assign_sample_to_vertex(Sample_* sample, Vertex_handle vertex) const {
+    /*if (vertex->sample()) {
       std::cout << "assign to vertex: vertex already has sample"
           << std::endl;
-    }
+    }*/
 
-    sample->distance2() = 0.0;
-    sample->coordinate() = 0.0;
+    sample->distance2() = FT(0);
+    sample->coordinate() = FT(0);
     vertex->set_sample(sample);
   }
 
-  void assign_sample_to_edge(Sample_* sample, const Edge& edge) {
+  void assign_sample_to_edge(Sample_* sample, const Edge& edge) const {
     Segment segment = get_segment(edge);
     const Point& query = sample->point();
     sample->distance2() = compute_distance2(query, segment);
@@ -714,12 +715,13 @@ public:
   FT compute_distance2(const Point& query, const Segment& segment) const {
     Line line = segment.supporting_line();
     if (line.has_on(query))
-      return 0.0;
+      return FT(0);
 
     Point proj = line.projection(query);
     return CGAL::squared_distance(query, proj);
   }
 
+  // CJTODO use traits functors
   FT compute_coordinate(const Point& q, const Segment& segment) const {
     const Point& p0 = segment.source();
     const Point& p1 = segment.target();
@@ -744,12 +746,13 @@ public:
   FT compute_signed_distance(const Point& pa, const Point& pb,
       const Point& pt) const {
     if (pt == pa)
-      return 0.0;
+      return FT(0);
     if (pt == pb)
-      return 0.0;
+      return FT(0);
     if (pa == pb)
-      return std::sqrt(CGAL::squared_distance(pa, pt));
+      return std::sqrt(CGAL::squared_distance(pa, pt)); // CJTODO use traits functors
 
+    // CJTODO use traits functors
     Vector vab = pb - pa;
     vab = vab / sqrt(vab * vab);
     Vector vab90(-vab.y(), vab.x());
@@ -771,9 +774,10 @@ public:
   FT compute_signed_distance_from_intersection(const Point& pa,
       const Point& pb, const Point& pt, const Point& ps) const {
     FT Dabt = compute_signed_distance(pa, pb, pt);
-    if (Dabt == 0.0)
-      return 0.0;
+    if (Dabt == FT(0))
+      return FT(0);
 
+    // CJTODO use traits functors
     Line lab(pa, pb - pa);
     Line lts(pt, ps - pt);
 
@@ -783,7 +787,7 @@ public:
     if (iq)
       Dqt = std::sqrt(CGAL::squared_distance(*iq, pt));
 
-    if (Dabt < 0.0)
+    if (Dabt < FT(0))
       Dqt = -Dqt;
     return Dqt;
   }
@@ -835,19 +839,11 @@ public:
     Vertex_handle vf = opposite_vertex(edge);
     Vertex_handle vb = opposite_vertex(twin);
 
-    if (!is_triangle_ccw(vs, vb, vf))
-      return false;
-    if (!is_triangle_ccw(vt, vf, vb))
-      return false;
-    return true;
+    return is_triangle_ccw(vs, vb, vf) && is_triangle_ccw(vt, vf, vb);
   }
 
   bool is_collapsible(const Edge& edge) const {
-    if (!check_link_test(edge))
-      return false;
-    if (!check_kernel_test(edge))
-      return false;
-    return true;
+    return check_link_test(edge) && check_kernel_test(edge);
   }
 
   bool check_link_test(const Edge& edge) const {
@@ -939,7 +935,7 @@ public:
 
   // (a,b,c) + (c,b,a) + (a,c,i) + (c,a,j) ->
   // (a,c,i) + (c,a,j)
-  void collapse_cyclic_edge(const Edge& bc, int verbose = 1) {
+  void collapse_cyclic_edge(const Edge& bc, int verbose = 0) {
     if (verbose > 0)
       std::cout << "collapse_cyclic_edge ... ";
 
@@ -967,14 +963,12 @@ public:
       std::cout << "done" << std::endl;
   }
 
-  //TODO IV remove --------
-  void print_edge(Rec_edge_2 edge) {
+  void print_edge(Rec_edge_2 edge) const {
     int i = ((edge).edge()).second;
     Point a = ((edge).edge()).first->vertex((i+1)%3)->point();
     Point b = ((edge).edge()).first->vertex((i+2)%3)->point();
     std::cout <<"( " << (edge).priority()  <<  ") ( " << a << " , " << b << " )" << std::endl;
   }
-  //--------
 
   template <class Iterator> // value_type = Edge
   bool make_collapsible(Edge& edge, Iterator begin, Iterator end, int verbose = 0)
@@ -989,11 +983,10 @@ public:
       Vertex_handle a = source_vertex(ab);
       Vertex_handle b = target_vertex(ab);
       FT D = signed_distance_from_intersection(a, b, target, source);
-      if (D < 0.0) {
+      if (D < FT(0)) {
         multi_ind.insert(Rec_edge_2(ab, D));
       }
     }
-
 
     int nb_flips = 0;
     while (!multi_ind.empty())
@@ -1049,7 +1042,7 @@ public:
         (multi_ind.template get<0>()).erase(Rec_edge_2(ab));
 
         Edge ac = flip(sb, edge, verbose);
-        if (Dac < 0.0) {
+        if (Dac < FT(0)) {
           multi_ind.insert(Rec_edge_2(ac, Dac));
         }
       }
@@ -1057,14 +1050,14 @@ public:
       {
         (multi_ind.template get<0>()).erase(Rec_edge_2(cd));
         Edge bd = flip(sc, edge, verbose);
-        if (Dbd < 0.0) {
+        if (Dbd < FT(0)) {
           multi_ind.insert(Rec_edge_2(bd, Dbd));
         }
       }
       nb_flips++;
     }
 
-    if (verbose > 1)
+    if (verbose > 0)
       std::cerr  << "Nb flips: "  << nb_flips << std::endl;
 
     return true;
