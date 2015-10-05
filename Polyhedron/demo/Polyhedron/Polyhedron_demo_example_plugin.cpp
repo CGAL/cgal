@@ -5,18 +5,59 @@
 
 #include "Scene_item.h"
 #include <CGAL/Three/Viewer_interface.h>
+#include "ui_Polyhedron_demo_example_plugin.h"
+#include "ui_dock_example.h"
 
+//! The dialog class to get the coordinates of the triangle
+class Polyhedron_demo_example_plugin_dialog : public QDialog, private Ui::Polyhedron_demo_example_plugin_dialog
+{
+  Q_OBJECT
+  public:
+    Polyhedron_demo_example_plugin_dialog(QWidget* /*parent*/ = 0)
+    {
+      setupUi(this);
+
+    }
+
+    double getAx() const { return doubleSpinBox_Ax->value(); }
+    double getAy() const { return doubleSpinBox_Ay->value(); }
+    double getAz() const { return doubleSpinBox_Az->value(); }
+
+    double getBx() const { return doubleSpinBox_Bx->value(); }
+    double getBy() const { return doubleSpinBox_By->value(); }
+    double getBz() const { return doubleSpinBox_Bz->value(); }
+
+    double getCx() const { return doubleSpinBox_Cx->value(); }
+    double getCy() const { return doubleSpinBox_Cy->value(); }
+    double getCz() const { return doubleSpinBox_Cz->value(); }
+};
+
+//! The special Scene_item only for triangles
 class Q_DECL_EXPORT Scene_triangle_item : public Scene_item
 {
 
     Q_OBJECT
 public :
+    Scene_triangle_item(double ax,double ay, double az,
+                        double bx,double by, double bz,
+                        double cx,double cy, double cz)
+        :  Scene_item(1,1)
+    {
+        vertices.resize(9);
+        vertices[0] = ax; vertices[1] = ay; vertices[2] = az;
+        vertices[3] = bx; vertices[4] = by; vertices[5] = bz;
+        vertices[6] = cx; vertices[7] = cy; vertices[8] = cz;
+        changed();
+
+    }
     Scene_triangle_item()
         :  Scene_item(1,1)
     {
 
-        vertices.resize(0);
-        changed();
+        Scene_triangle_item(
+                    0,0,0,
+                    0.5,1,0,
+                    1,0,0);
 
     }
     ~Scene_triangle_item()
@@ -78,7 +119,6 @@ public :
 
     void changed()
     {
-        compute_elements();
         are_buffers_filled = false;
     }
 
@@ -110,17 +150,10 @@ private:
         are_buffers_filled = true;
     }
 
-    void compute_elements()
-    {
-        vertices.resize(9);
-        vertices[0] = 0.0; vertices[1] = 0.0; vertices[2] = 0.0;
-        vertices[3] = 0.5; vertices[4] = 1.0; vertices[5] = 0.0;
-        vertices[6] = 1.0; vertices[7] = 0.0; vertices[8] = 0.0;
-    }
-
 }; //end of class Scene_triangle_item
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+//!The actual plugin
 using namespace CGAL::Three;
 class Polyhedron_demo_example_plugin :
         public QObject,
@@ -136,7 +169,7 @@ public :
     // To silent a warning -Woverloaded-virtual
     // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
     using Polyhedron_demo_plugin_helper::init;
-
+    //! Adds an action to the menu and configures the widget
     void init(QMainWindow* mainWindow,
               CGAL::Three::Scene_interface* scene_interface) {
       //get the references
@@ -146,8 +179,15 @@ public :
       actionDrawTriangle= new QAction("Draw Triangle", mw);
       if(actionDrawTriangle) {
         connect(actionDrawTriangle, SIGNAL(triggered()),
-                this, SLOT(draw_triangle()));
+                this, SLOT(populate_dialog()));
       }
+
+      //Dock widget initialization
+      dock_widget = new QDockWidget("Triangle Creation", mw);
+      dock_widget->setVisible(false); // do not show at the beginning
+
+      ui_widget.setupUi(dock_widget);
+      mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
     }
 
     bool applicable(QAction*) const
@@ -160,15 +200,46 @@ public :
 
   public Q_SLOTS:
 
+  void populate_dialog()
+  {
+      dialog = new Polyhedron_demo_example_plugin_dialog();
+      if(!dialog->exec())
+        return;
+      ax = dialog->getAx();
+      ay = dialog->getAy();
+      az = dialog->getAz();
+      bx = dialog->getBx();
+      by = dialog->getBy();
+      bz = dialog->getBz();
+      cx = dialog->getCx();
+      cy = dialog->getCy();
+      cz = dialog->getCz();
+      draw_triangle();
+  }
+
   void draw_triangle() {
-    triangle = new Scene_triangle_item();
+
+    triangle = new Scene_triangle_item(ax, ay, az,
+                                       bx, by, bz,
+                                       cx, cy, cz);
     scene->addItem(triangle);
   }
 
 private:
   Scene_item* triangle;
   QAction* actionDrawTriangle;
+  Polyhedron_demo_example_plugin_dialog *dialog;
+  double ax;
+  double ay;
+  double az;
+  double bx;
+  double by;
+  double bz;
+  double cx;
+  double cy;
+  double cz;
+Ui::Dock_example ui_widget;
+QDockWidget* dock_widget;
 
 }; //end of class Polyhedron_demo_example_plugin
-
 #include "Polyhedron_demo_example_plugin.moc"
