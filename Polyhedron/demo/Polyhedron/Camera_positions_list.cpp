@@ -7,7 +7,7 @@
 #include <QFile>
 #include <QTextStream>
 #include <QDebug>
-
+#include <CGAL/number_type_config.h>
 #include "Viewer_interface.h"
 
 #include <cassert>
@@ -163,7 +163,7 @@ void Camera_positions_list::on_backButton_pressed()
 {
     qglviewer::Vec posBack = qglviewer::Vec(0,0,-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)));
     qglviewer::Quaternion dirBack;
-    dirBack.setAxisAngle(qglviewer::Vec(0,1,0),M_PI);
+    dirBack.setAxisAngle(qglviewer::Vec(0,1,0),CGAL_PI);
     QString backCoord = QString("%1 %2 %3 %4 %5 %6 %7")
             .arg(posBack[0])
             .arg(posBack[1])
@@ -179,7 +179,7 @@ void Camera_positions_list::on_topButton_pressed()
 {
     qglviewer::Vec posTop = qglviewer::Vec(0,m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0);
     qglviewer::Quaternion dirTop;
-    dirTop.setAxisAngle(qglviewer::Vec(1,0,0),-M_PI_2);
+    dirTop.setAxisAngle(qglviewer::Vec(1,0,0), -CGAL_PI/2);
     QString topCoord = QString("%1 %2 %3 %4 %5 %6 %7")
             .arg(posTop[0])
             .arg(posTop[1])
@@ -195,7 +195,7 @@ void Camera_positions_list::on_botButton_pressed()
 {
     qglviewer::Vec posBot = qglviewer::Vec(0,-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0);;
     qglviewer::Quaternion dirBot;
-    dirBot.setAxisAngle(qglviewer::Vec(1,0,0),M_PI_2);
+    dirBot.setAxisAngle(qglviewer::Vec(1,0,0),CGAL_PI/2);
     QString botCoord = QString("%1 %2 %3 %4 %5 %6 %7")
             .arg(posBot[0])
             .arg(posBot[1])
@@ -211,7 +211,7 @@ void Camera_positions_list::on_leftButton_pressed()
 {
     qglviewer::Vec posLeft = qglviewer::Vec(-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0, 0);;
     qglviewer::Quaternion dirLeft;
-    dirLeft.setAxisAngle(qglviewer::Vec(0,1,0),-M_PI_2);
+    dirLeft.setAxisAngle(qglviewer::Vec(0,1,0),-CGAL_PI/2);
     QString leftCoord = QString("%1 %2 %3 %4 %5 %6 %7")
             .arg(posLeft[0])
             .arg(posLeft[1])
@@ -227,7 +227,7 @@ void Camera_positions_list::on_rightButton_pressed()
 {
     qglviewer::Vec posRight = qglviewer::Vec(m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0,0);
     qglviewer::Quaternion dirRight;
-    dirRight.setAxisAngle(qglviewer::Vec(0,1,0),M_PI_2);
+    dirRight.setAxisAngle(qglviewer::Vec(0,1,0),CGAL_PI/2);
     QString rightCoord = QString("%1 %2 %3 %4 %5 %6 %7")
             .arg(posRight[0])
             .arg(posRight[1])
