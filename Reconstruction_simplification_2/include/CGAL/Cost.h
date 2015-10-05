@@ -33,10 +33,10 @@ private:
 
 public:
   Cost()
-  : m_norm(0.0),
-    m_tang(0.0),
-    m_max_norm(0.0),
-    m_max_tang(0.0)
+  : m_norm(0),
+    m_tang(0),
+    m_max_norm(0),
+    m_max_tang(0)
   {}
 
   Cost(const FT norm, const FT tang)
@@ -65,19 +65,19 @@ public:
 
   const FT max_tang() const { return m_max_tang; }
 
-  FT finalize(const FT alpha = 0.5) const
+  FT finalize(const FT alpha = FT(0.5)) const
   {
-    return 2.0 * (alpha * m_norm + (1.0 - alpha) * m_tang);
+    return FT(2) * (alpha * m_norm + (FT(1) - alpha) * m_tang);
   }
 
   void divide(const FT ratio)
   {
-    assert(ratio != 0.0);
+    CGAL_assertion(ratio != FT(0));
     m_norm /= ratio;
     m_tang /= ratio;
   }
 
-  void add(const Cost& cost, const FT mass = 1.0)
+  void add(const Cost& cost, const FT mass = FT(1))
   {
     m_norm += mass * cost.norm();
     m_tang += mass * cost.tang();
@@ -85,8 +85,8 @@ public:
 
   void reset_max()
   {
-    m_max_norm = 0.0;
-    m_max_tang = 0.0;
+    m_max_norm = FT(0);
+    m_max_tang = FT(0);
   }
 
   void update_max(const Cost& cost)

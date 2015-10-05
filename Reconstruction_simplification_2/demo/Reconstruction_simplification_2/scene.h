@@ -439,7 +439,7 @@ public:
       vertex_count++;
       std::cout  <<  *it << std::endl;
     }
-    assert(vertex_count == 18);
+    CGAL_assertion(vertex_count == 18);
 
     int edge_count = 0;
     for (std::vector<Segment>::iterator it = edges.begin();
