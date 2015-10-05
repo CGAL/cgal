@@ -33,8 +33,8 @@ protected:
 public:
   Reconstruction_edge_2() 
   : m_edge(Face_handle(), 0),
-    m_before_cost(0.0),
-    m_after_cost(0.0)
+    m_before_cost(0),
+    m_after_cost(0)
   {}
 
   Reconstruction_edge_2(const Reconstruction_edge_2& pedge) 
@@ -53,20 +53,20 @@ public:
     get_vertices();
   }
 
-  Reconstruction_edge_2(const Edge& edge, const FT priority = 0.0)
+  Reconstruction_edge_2(const Edge& edge, const FT priority = FT(0))
   : m_edge(edge),
-    m_before_cost(0.0),
+    m_before_cost(0),
     m_after_cost(priority)
   {
-      get_vertices(); 
+    get_vertices(); 
   }
 
   Reconstruction_edge_2(Vertex_handle source, Vertex_handle target)
   : m_edge(Face_handle(), 0),
     m_source(source),
     m_target(target),
-    m_before_cost(0.0),
-    m_after_cost(0.0)
+    m_before_cost(0),
+    m_after_cost(0)
   {}
 
   Reconstruction_edge_2& operator= (const Reconstruction_edge_2& pedge)
@@ -83,7 +83,7 @@ public:
   bool operator== (const Reconstruction_edge_2& pedge) const
   {
     return (m_source->id() == pedge.source()->id()
-        && m_target->id() == pedge.target()->id());
+      && m_target->id() == pedge.target()->id());
   }
 
   bool operator< (const Reconstruction_edge_2& pedge) const 

@@ -29,9 +29,9 @@
 /// - Each vertex stores a Sample as well as the corresponding relocated point.
 ///
 namespace CGAL {
-/// @param Kernel   Geometric traits class
-/// @param Vb   Vertex base class, model of TriangulationVertexBase_2.
-template < class Kernel, class Vb = Triangulation_vertex_base_2<Kernel> >
+/// @param Traits_  Geometric traits class
+/// @param Vb       Vertex base class, model of TriangulationVertexBase_2.
+template < class Traits_, class Vb = Triangulation_vertex_base_2<Traits_> >
 class Reconstruction_vertex_base_2 : public Vb
 {
 
@@ -39,60 +39,60 @@ class Reconstruction_vertex_base_2 : public Vb
 
 public:
   typedef Vb Base;
-  typedef typename Kernel::FT FT;
-  typedef Sample<Kernel> Sample_;
-  typedef typename Kernel::Point_2 Point;
-  typedef typename Base::Face_handle Face_handle;
+  typedef typename Traits_::FT        FT;
+  typedef Sample<Traits_>             Sample_;
+  typedef typename Traits_::Point_2   Point;
+  typedef typename Base::Face_handle  Face_handle;
 
   template < typename TDS2 >
   struct Rebind_TDS {
     typedef typename Base::template Rebind_TDS<TDS2>::Other Vb2;
-    typedef Reconstruction_vertex_base_2<Kernel,Vb2> Other;
+    typedef Reconstruction_vertex_base_2<Traits_,Vb2> Other;
   };
 
 private:
-  int   m_id;
-  bool  m_pinned;
-  Sample_* m_sample;
-  Point m_relocated;
-  FT m_relevance;
+  int       m_id;
+  bool      m_pinned;
+  Sample_*  m_sample;
+  Point     m_relocated;
+  FT        m_relevance;
 
 
 public:
   Reconstruction_vertex_base_2()
-: Base()
+  : Base(),
+    m_id(-1),
+    m_pinned(false),
+    m_sample(NULL),
+    m_relevance(0)
 {
-    m_id = -1;
-    m_pinned = false;
-    m_sample = NULL;
-    m_relevance = 0;
 }
 
   Reconstruction_vertex_base_2(const Point & p)
-  : Base(p)
+  : Base(p),
+    m_id(-1),
+    m_pinned(false),
+    m_sample(NULL),
+    m_relevance(0)
   {
-    m_id = -1;
-    m_pinned = false;
-    m_sample = NULL;
-    m_relevance = 0;
   }
 
   Reconstruction_vertex_base_2(Face_handle f)
-  : Base(f)
+  : Base(f),
+    m_id(-1),
+    m_pinned(false),
+    m_sample(NULL),
+    m_relevance(0)
   {
-    m_id = -1;
-    m_pinned = false;
-    m_sample = NULL;
-    m_relevance = 0;
   }
 
   Reconstruction_vertex_base_2(const Point & p, Face_handle f)
-  : Base(p, f)
+  : Base(p, f),
+    m_id(-1),
+    m_pinned(false),
+    m_sample(NULL),
+    m_relevance(0)
   {
-    m_id = -1;
-    m_pinned = false;
-    m_sample = NULL;
-    m_relevance = 0;
   }
 
   ~Reconstruction_vertex_base_2() { }
@@ -103,16 +103,16 @@ public:
   bool  pinned() const { return m_pinned; }
   bool& pinned() { return m_pinned; }
 
-  FT get_relevance() const { return m_relevance; }
+  FT relevance() const { return m_relevance; }
   void set_relevance(FT relevance) { m_relevance = relevance; }
 
-  Sample_* get_sample() const { return m_sample; }
+  Sample_* sample() const { return m_sample; }
   void set_sample(Sample_* sample) { m_sample = sample; }
 
   const Point& relocated() const { return m_relocated; }
   Point& relocated() { return m_relocated; }
 
-  bool  has_sample_assigned() const { return get_sample() != NULL; }
+  bool  has_sample_assigned() const { return sample() != NULL; }
 };
 //---------------STRUCT LESS VERTEX_HANDLE---------------------
 template <class T>

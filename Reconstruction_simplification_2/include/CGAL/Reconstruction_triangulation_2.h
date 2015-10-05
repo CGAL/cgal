@@ -59,33 +59,33 @@ namespace CGAL {
 ///  provides the reconstruction simplex as well as the transportation plan.
 /// - Each vertex stores a normal vector.
 /// - A vertex a Sample which got assigned to it by the transportation plan,
-///   well as the corresponding relocated Point (of type Kernel::Point_2).
+///   well as the corresponding relocated Point (of type Traits_::Point_2).
 /// - In order to solve a linear system over the triangulation, a vertex may be constrained
 ///   or not (i.e. may contribute to the right or left member of the linear system),
 ///   and has a unique index.
 /// The vertex class must derive from Reconstruction_vertex_base_3.
 ///
-///  @param Kernel   The underlying Kernel
-///  @param Tds      Model of TriangulationDataStructure_2.
+///  @param Traits_   The traits class
+///  @param Tds       Model of TriangulationDataStructure_2.
 ///  The vertex class must derive from Reconstruction_vertex_base_2.
 ///  The face   class must derive from Reconstruction_face_base_2.
-template<class Kernel,
+template<class Traits_,
 class Tds_ = Triangulation_data_structure_2<
-Reconstruction_vertex_base_2<Kernel>,
-Reconstruction_face_base_2<Kernel> > >
-class Reconstruction_triangulation_2: public Delaunay_triangulation_2<Kernel,
+Reconstruction_vertex_base_2<Traits_>,
+Reconstruction_face_base_2<Traits_> > >
+class Reconstruction_triangulation_2: public Delaunay_triangulation_2<Traits_,
 Tds_> {
 public:
 
-  typedef Delaunay_triangulation_2<Kernel, Tds_> Base;
+  typedef Delaunay_triangulation_2<Traits_, Tds_> Base;
 
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_2 Point;
-  typedef typename Kernel::Vector_2 Vector;
-  typedef typename Kernel::Ray_2 Ray;
-  typedef typename Kernel::Line_2 Line;
-  typedef typename Kernel::Segment_2 Segment;
-  typedef typename Kernel::Triangle_2 Triangle;
+  typedef typename Traits_::FT FT;
+  typedef typename Traits_::Point_2 Point;
+  typedef typename Traits_::Vector_2 Vector;
+  typedef typename Traits_::Ray_2 Ray;
+  typedef typename Traits_::Line_2 Line;
+  typedef typename Traits_::Segment_2 Segment;
+  typedef typename Traits_::Triangle_2 Triangle;
 
   typedef typename Base::Vertex Vertex;
   typedef typename Base::Vertex_handle Vertex_handle;
@@ -119,7 +119,7 @@ public:
   typedef typename Point_vector::const_iterator Point_vector_const_iterator;
 
   typedef Cost<FT> Cost_;
-  typedef Sample<Kernel> Sample_;
+  typedef Sample<Traits_> Sample_;
   typedef std::vector<Sample_*> Sample_vector;
   typedef typename Sample_vector::const_iterator Sample_vector_const_iterator;
 
@@ -364,7 +364,7 @@ public:
       if (cleanup)
         face->clean_all_samples();
     }
-    Sample_* sample = vertex->get_sample();
+    Sample_* sample = vertex->sample();
     if (sample)
       samples.push_back(sample);
     if (cleanup)
@@ -382,7 +382,7 @@ public:
     for (Finite_vertices_iterator vi = Base::finite_vertices_begin();
         vi != Base::finite_vertices_end(); ++vi) {
       Vertex_handle v = vi;
-      Sample_* sample = v->get_sample();
+      Sample_* sample = v->sample();
       if (sample)
         samples.push_back(sample);
     }
@@ -695,7 +695,7 @@ public:
   }
 
   void assign_sample_to_vertex(Sample_* sample, Vertex_handle vertex) {
-    if (vertex->get_sample()) {
+    if (vertex->sample()) {
       std::cout << "assign to vertex: vertex already has sample"
           << std::endl;
     }

@@ -35,27 +35,27 @@
 /// - Each vertex stores a CSample as well as the corresponding relocated point
 ///
 namespace CGAL {
-/// @param Kernel   Geometric traits class
-/// @param Vb   Vertex base class, model of TriangulationFaceBase_2.
-template < class Kernel, class Fb = Triangulation_face_base_2<Kernel> >
+/// @param Traits_  Traits class
+/// @param Vb       Vertex base class, model of TriangulationFaceBase_2.
+template < class Traits_, class Fb = Triangulation_face_base_2<Traits_> >
 class Reconstruction_face_base_2 : public Fb
 {
 public:
-  typedef Fb Base;
-  typedef typename Base::Vertex_handle Vertex_handle;
-  typedef typename Base::Face_handle   Face_handle;
+  typedef Fb                            Base;
+  typedef typename Base::Vertex_handle  Vertex_handle;
+  typedef typename Base::Face_handle    Face_handle;
 
   template < typename TDS2 >
   struct Rebind_TDS 
   {
-    typedef typename Base::template Rebind_TDS<TDS2>::Other Fb2;
-    typedef Reconstruction_face_base_2<Kernel,Fb2> Other;
+    typedef typename Base::template Rebind_TDS<TDS2>::Other   Fb2;
+    typedef Reconstruction_face_base_2<Traits_,Fb2>           Other;
   };
 
-  typedef typename Kernel::FT FT;
-  typedef Cost<FT> Cost_;
-  typedef Sample<Kernel> Sample_;
-  typedef std::vector<Sample_*> Sample_vector;
+  typedef typename Traits_::FT    FT;
+  typedef Cost<FT>                Cost_;
+  typedef Sample<Traits_>         Sample_;
+  typedef std::vector<Sample_*>   Sample_vector;
 
 private:
   Sample_vector m_samples[3];
@@ -63,7 +63,7 @@ private:
 
   Cost_ m_cost0[3];
   Cost_ m_cost1[3];
-  int  m_plan[3];
+  int   m_plan[3];
 
   FT m_relevance[3];
 
@@ -117,9 +117,9 @@ public:
 
   void init()
   {
-    m_mass[0] = 0.0;
-    m_mass[1] = 0.0;
-    m_mass[2] = 0.0;
+    m_mass[0] = FT(0);
+    m_mass[1] = FT(0);
+    m_mass[2] = FT(0);
 
     m_cost0[0] = Cost_();
     m_cost0[1] = Cost_();
@@ -164,7 +164,7 @@ public:
 
   bool ghost(int edge) const
   {
-    if (mass(edge) == 0.0)
+    if (mass(edge) == FT(0))
       return true;
     if (plan(edge) == 0)
       return true;

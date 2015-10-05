@@ -800,7 +800,7 @@ public:
 
   void draw_one_circle(const Point& center) {
     unsigned int N = 10;
-    const double r = std::sqrt(m_pwsrec->get_norm_tol());
+    const double r = std::sqrt(m_pwsrec->norm_tol());
     const double x = center.x();
     const double y = center.y();
     ::glBegin (GL_POLYGON);

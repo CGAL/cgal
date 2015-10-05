@@ -24,12 +24,12 @@
 /// \cond SKIP_IN_MANUAL
 
 namespace CGAL {
-template <class Kernel>
+template <class Traits_>
 class Sample
 {
 public:
-  typedef typename Kernel::FT FT;
-  typedef typename Kernel::Point_2 Point;
+  typedef typename Traits_::FT FT;
+  typedef typename Traits_::Point_2 Point;
 
 private:
   Point m_point;
@@ -43,28 +43,24 @@ private:
 
 public:
   Sample(const Point& point,
-      const FT mass = 1.0)
-{
-    m_mass  = mass;
-    m_point = point;
-
-    m_dist2_to_edge = 0.0;
-    m_coordinate    = 0.0;
-
-    m_backup_dist2 = 0.0;
-    m_backup_coord = 0.0;
-}
+      const FT mass = FT(1))
+  : m_mass(mass),
+    m_point(point),
+    m_dist2_to_edge(0),
+    m_coordinate(0),
+    m_backup_dist2(0),
+    m_backup_coord(0)
+  {
+  }
 
   Sample(const Sample& sample)
+  : m_mass(sample.mass()),
+    m_point(sample.point()),
+    m_dist2_to_edge(0),
+    m_coordinate(0),
+    m_backup_dist2(0),
+    m_backup_coord(0)
   {
-    m_mass  = sample.mass();
-    m_point = sample.point();
-
-    m_dist2_to_edge = 0.0;
-    m_coordinate    = 0.0;
-
-    m_backup_dist2 = 0.0;
-    m_backup_coord = 0.0;
   }
 
   ~Sample() { }
@@ -94,22 +90,22 @@ public:
   }
 };
 
-template <class	Sample>
+template <class	Sample_>
 class Sample_with_priority
 {
 public:
-  typedef typename Sample::FT FT;
+  typedef typename Sample_::FT FT;
 
 private:
-  Sample* m_sample;
+  Sample_* m_sample;
   FT m_priority;
 
 public:
-  Sample_with_priority(Sample* sample, const FT priority = 0.0)
-{
+  Sample_with_priority(Sample_* sample, const FT priority = FT(0))
+  {
     m_sample   = sample;
     m_priority = priority;
-}
+  }
 
   Sample_with_priority(const Sample_with_priority& psample)
   {
@@ -126,7 +122,7 @@ public:
     return *this;
   }
 
-  Sample* sample() const { return m_sample; }
+  Sample_* sample() const { return m_sample; }
 
   const FT priority() const { return m_priority; }
 };

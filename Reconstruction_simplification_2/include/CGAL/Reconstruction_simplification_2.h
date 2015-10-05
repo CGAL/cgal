@@ -24,6 +24,7 @@
 #include <CGAL/Reconstruction_edge_2.h>
 
 #include <CGAL/property_map.h>
+#include <CGAL/Real_timer.h>
 
 #include <iterator>
 #include <iostream>
@@ -68,10 +69,7 @@ The former simplifies the triangulation until n points remain, while the latter
 stops after `steps` edge collapse operators have been performed.
 Furthermore, we can relocate the vertices by calling `relocate_points()`.
 
-\todo `Gt` must at least be a model of `DelaunayTriangulationTraits_2`.
-@@Pierre: If more functionalty is needed we should introduce a `ReconstructionSimplificationTraits_2`.
-
-\tparam Gt a model of the concept `Kernel`.
+\tparam Gt a model of the concept `ReconstructionSimplificationTraits_2`.
 
 \tparam PointMap a model of `ReadablePropertyMap` with value type `Gt::Point_2`
 
@@ -166,16 +164,16 @@ protected:
   int m_verbose;
   std::size_t m_mchoice;  // # Edges
   bool m_use_flip;
-  double m_alpha; // [0, 1]
-  double m_norm_tol; // [0,BBOX]
-  double m_tang_tol; // [0,BBOX]
-  double m_ghost; // ghost vs solid
+  FT m_alpha; // [0, 1]
+  FT m_norm_tol; // [0,BBOX]
+  FT m_tang_tol; // [0,BBOX]
+  FT m_ghost; // ghost vs solid
   unsigned int m_relocation; // # relocations
 
   // bbox
-  double m_bbox_x;
-  double m_bbox_y;
-  double m_bbox_size;
+  FT m_bbox_x;
+  FT m_bbox_y;
+  FT m_bbox_size;
 
   PointMap point_pmap;
   MassMap  mass_pmap;
@@ -219,7 +217,7 @@ public:
         m_relocation(relocation),
         point_pmap(point_map),
         mass_pmap(mass_map)
-        {
+  {
     m_alpha = 0.5;
     m_norm_tol = 1.0;
     m_tang_tol = 1.0;
@@ -231,7 +229,7 @@ public:
 
     m_ignore = 0;
     initialize(input_range.begin(), input_range.end());
-        }
+  }
 
 
 
@@ -264,7 +262,7 @@ public:
 
 
   /// \cond SKIP_IN_MANUAL
-  void set_alpha(const double alpha) {
+  void set_alpha(const FT alpha) {
     m_alpha = alpha;
   }
   /// \endcond
@@ -280,22 +278,22 @@ public:
 
 
   /// \cond SKIP_IN_MANUAL
-  void set_norm_tol(const double norm_tol) {
+  void set_norm_tol(const FT norm_tol) {
     m_norm_tol = norm_tol;
   }
 
 
-  double get_norm_tol() const {
+  FT norm_tol() const {
     return m_norm_tol;
   }
 
 
-  void set_tang_tol(const double tang_tol) {
+  void set_tang_tol(const FT tang_tol) {
     m_tang_tol = tang_tol;
   }
 
 
-  double get_tang_tol() const {
+  FT get_tang_tol() const {
     return m_tang_tol;
   }
   /// \endcond
@@ -332,14 +330,14 @@ public:
         Setting a large relevance value is used to get robustness to a
         large amount of outliers.
    */
-  void set_relevance(const double relevance) {
+  void set_relevance(const FT relevance) {
     m_ghost = relevance;
     m_dt.ghost_factor() = m_ghost;
   }
 
 
   /// \cond SKIP_IN_MANUAL
-  double get_ghost() {
+  FT get_ghost() {
     return m_ghost;
   }
 
@@ -420,10 +418,10 @@ public:
 
 
   template <class Vector>
-  Vector random_vec(const double scale)
+  Vector random_vec(const FT scale)
   {
-    double dx = -scale + (double(rand()) / double(RAND_MAX)) * 2* scale;
-    double dy = -scale + (double(rand()) / double(RAND_MAX)) * 2* scale;
+    FT dx = -scale + (FT(rand()) / FT(RAND_MAX)) * 2* scale;
+    FT dy = -scale + (FT(rand()) / FT(RAND_MAX)) * 2* scale;
     return Vector(dx, dy);
   }
 
@@ -448,10 +446,11 @@ public:
 
 
   // INIT //
-  void insert_loose_bbox(const double x, const double y, const double size) {
-    double timer = clock();
+  void insert_loose_bbox(const FT x, const FT y, const FT size) {
+    CGAL::Real_timer timer;
     std::cerr << "insert loose bbox" << "...";
 
+    timer.start();
     int nb = static_cast<int>(m_dt.number_of_vertices());
     insert_point(Point(x - size, y - size), true, nb++);
     insert_point(Point(x - size, y + size), true, nb++);
@@ -459,15 +458,15 @@ public:
     insert_point(Point(x + size, y - size), true, nb++);
 
     std::cerr << "done" << " (" << nb << " vertices, "
-        << time_duration(timer) << " s)"
-        << std::endl;
+      << timer.time() << " s)" << std::endl;
   }
 
   template<class Iterator>  // value_type = Point*
   void init(Iterator begin, Iterator beyond) {
-    double timer = clock();
+    CGAL::Real_timer timer;
     std::cerr << "init" << "...";
 
+    timer.start();
     int nb = static_cast<int>(m_dt.number_of_vertices());
     m_dt.infinite_vertex()->pinned() = true;
     for (Iterator it = begin; it != beyond; it++) {
@@ -480,7 +479,7 @@ public:
     }
 
     std::cerr << "done" << " (" << nb << " vertices, "
-        << time_duration(timer) << " s)"
+        << timer.time() << " s)"
         << std::endl;
   }
 
@@ -500,13 +499,14 @@ public:
 
   template<class Iterator>  // value_type = Sample_*
   void assign_samples(Iterator begin, Iterator end) {
-    double timer = clock();
+    CGAL::Real_timer timer;
     std::cerr << "assign samples" << "...";
 
+    timer.start();
     m_dt.assign_samples(begin, end);
     m_dt.reset_all_costs();
 
-    std::cerr << "done" << " (" << time_duration(timer) << " s)" << std::endl;
+    std::cerr << "done" << " (" << timer.time() << " s)" << std::endl;
   }
 
   void reassign_samples() {
@@ -970,7 +970,7 @@ public:
     v1->id() = v0->id();
     v1->set_point(v0->point());
     v1->pinned() = v0->pinned();
-    v1->set_sample(v0->get_sample());
+    v1->set_sample(v0->sample());
     return v1;
   }
 
@@ -1135,7 +1135,7 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   Vector compute_gradient(Vertex_handle vertex) {
-    Vector grad(0.0, 0.0);
+    Vector grad(FT(0), FT(0));
     Edge_circulator ecirc = m_dt.incident_edges(vertex);
     Edge_circulator eend = ecirc;
     CGAL_For_all(ecirc, eend)
@@ -1153,8 +1153,8 @@ public:
   }
 
   Point compute_relocation(Vertex_handle vertex) {
-    FT coef = 0.0;
-    Vector rhs(0.0, 0.0);
+    FT coef = FT(0);
+    Vector rhs(FT(0), FT(0));
 
     Edge_circulator ecirc = m_dt.incident_edges(vertex);
     Edge_circulator eend = ecirc;
@@ -1171,14 +1171,14 @@ public:
     }
     compute_relocation_for_vertex(vertex, coef, rhs);
 
-    if (coef == 0.0)
+    if (coef == FT(0))
       return vertex->point();
     return CGAL::ORIGIN + (rhs / coef);
   }
 
   void compute_relocation_for_vertex(Vertex_handle vertex, FT& coef,
       Vector& rhs) {
-    Sample_* sample = vertex->get_sample();
+    Sample_* sample = vertex->sample();
     if (sample) {
       const FT m = sample->mass();
       const Point& ps = sample->point();
@@ -1196,7 +1196,7 @@ public:
     m_dt.collect_samples_from_edge(edge, samples);
     m_dt.collect_samples_from_edge(twin, samples);
 
-    Vector grad(0.0, 0.0);
+    Vector grad(FT(0), FT(0));
     Sample_vector_const_iterator it;
     for (it = samples.begin(); it != samples.end(); ++it) {
       Sample_* sample = *it;
@@ -1244,8 +1244,8 @@ public:
     SQueue queue;
     m_dt.sort_samples_from_edge(edge, queue);
 
-    //FT start = 0.0;
-    Vector grad(0.0, 0.0);
+    //FT start = FT(0);
+    Vector grad(FT(0), FT(0));
     while (!queue.empty()) {
       PSample psample = queue.top();
       queue.pop();
@@ -1279,7 +1279,7 @@ public:
     SQueue queue;
     m_dt.sort_samples_from_edge(edge, queue);
 
-    //FT start = 0.0;
+    //FT start = FT(0);
     while (!queue.empty()) {
       PSample psample = queue.top();
       queue.pop();
@@ -1389,9 +1389,10 @@ public:
             \param np The number of points which will be present in the output.
    */
   void run_until(std::size_t np) {
-    double timer = clock();
+    CGAL::Real_timer timer;
     std::cerr << "reconstruct until " << np << " V";
 
+    timer.start();
     std::size_t N = np + 4;
     std::size_t performed = 0;
     while (m_dt.number_of_vertices() > N) {
@@ -1403,7 +1404,7 @@ public:
 
     std::cerr << " done" << " (" << performed
         << " iters, " << m_dt.number_of_vertices() - 4 << " V "
-        << time_duration(timer) << " s)"
+        << timer.time() << " s)"
         << std::endl;
   }
 
@@ -1414,9 +1415,10 @@ public:
             \param steps The number of edge collapse operators to be performed.
    */
   void run(const unsigned steps) {
-    double timer = clock();
+    CGAL::Real_timer timer;
     std::cerr << "reconstruct " << steps;
 
+    timer.start();
     unsigned performed = 0;
     for (unsigned i = 0; i < steps; ++i) {
       bool ok = decimate();
@@ -1427,7 +1429,7 @@ public:
 
     std::cerr << " done" << " (" << performed << "/"
         << steps << " iters, " << m_dt.number_of_vertices() - 4
-        << " V, " << time_duration(timer) << " s)"
+        << " V, " << timer.time() << " s)"
         << std::endl;
   }
 
@@ -1440,9 +1442,10 @@ public:
     input points is improved. 
    */
   void relocate_all_points() {
-    double timer = clock();
+    CGAL::Real_timer timer;
     std::cerr << "relocate all points" << "...";
 
+    timer.start();
     m_mindex.clear(); // pqueue must be recomputed
 
     for (Finite_vertices_iterator v = m_dt.finite_vertices_begin();
@@ -1476,7 +1479,7 @@ public:
       }
     }
 
-    std::cerr << "done" << " (" << time_duration(timer) << " s)" << std::endl;
+    std::cerr << "done" << " (" << timer.time() << " s)" << std::endl;
   }
 
   /// @}
