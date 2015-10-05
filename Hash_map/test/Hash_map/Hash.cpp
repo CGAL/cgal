@@ -5,6 +5,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Triangulation_2.h>
+#include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Linear_cell_complex.h>
 #include <CGAL/boost/graph/graph_traits_Arrangement_2.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
@@ -20,6 +21,14 @@ typedef CGAL::Arrangement_2<Arrangement_traits_2> Arrangement_2;
 typedef CGAL::Polyhedron_3<Kernel> Polyhedron;
 typedef CGAL::Surface_mesh<Kernel::Point_3> Surface_mesh;
 typedef CGAL::Triangulation_2<Kernel> Triangulation_2;
+#ifdef CGAL_LINKED_WITH_TBB  
+typedef CGAL::Triangulation_data_structure_3< 
+    CGAL::Triangulation_vertex_base_3<Kernel>, 
+    CGAL::Triangulation_cell_base_3<Kernel>, 
+    CGAL::Parallel_tag>                          Tds;
+typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Triangulation_3;
+#endif
+
 typedef CGAL::Linear_cell_complex<3, 3> Linear_cell_complex_3;
 
 
@@ -59,6 +68,20 @@ void fct2()
   }
 }
 
+template <typename P>
+void
+fct3(const P& )
+{
+  typedef typename P::Vertex_handle vertex_descriptor;
+
+  std::map<vertex_descriptor,int> M;
+  vertex_descriptor vd;
+  M.find(vd);
+
+  boost::unordered_map<vertex_descriptor, int> U;
+  U[vd] = 12;
+}
+
 int main()
 {
   Arrangement_2 A;
@@ -75,6 +98,10 @@ int main()
 
   fct2();
   
+#ifdef CGAL_LINKED_WITH_TBB
+  Triangulation_3 T3;
+fct3(T3);
+#endif
   return 0;
 }
 
