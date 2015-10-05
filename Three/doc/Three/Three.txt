@@ -22,14 +22,16 @@ There are several levels in this demo.
 A plugin usually defines an object that inherits from Scene_item or uses some of them to demonstrate a CGAL feature, so it might have to deal with the above elements.
 
 \section examplePlugin Creating a simple Plugin
-
+\subsection examplePluginItself The plugin itself
 A basic plugin will inherit from Polyhedron_demo_plugin_interface. It can also inherits from the Polyhedron_demo_plugin_helper instead, for a more detailed model of plugin.
 Its name must be of the form Polyhedron_demo_xxxx_yyyy_plugin. \n
 <b>In the CMakeList.txt file, in the section Plugins, add the following lines :</b>
 
     polyhedron_demo_plugin(xxxx_yyyy_plugin Polyhedron_demo_xxxx_yyyy_plugin)
+    
+<b>If your plugin interacts with scene items, then you have to add the following line too :</b>
     target_link_libraries(xxxx_yyyy_plugin scene_polyhedron_item) 
-  
+      
   [init]: @ref Polyhedron_demo_plugin_helper#init(QMainWindow *, Scene_interface *)
   The class must contain the following lines :\n
   
@@ -44,7 +46,35 @@ Add the following line:
     actionName->setProperty("submenuName", "Name_you_want_for_your_submenu");
     
 to place your action in a submenu in the Operation Menu.\n
-If the plugin implements a new Scene_item, please notice that a Scene_itam have a number of functions that will need a reference to the Viewer through the Viewer_interface type.
+If the plugin implements a new Scene_item, please notice that a Scene_item has a number of functions that will need a reference to the Viewer through the Viewer_interface type.
+
+\subsection examplePluginDialog Adding a dialog
+
+This section describes how to add a dialog on the use of an action.
+
+For a minimalist dialog, intended to get a single parameter for instancem you can create a QInputDialog :
+
+    const unsigned int parameter =
+      QInputDialog::getInt((QWidget*)mw,
+                           tr("Title"), // dialog title
+                           tr("Parameter's value:"), // field label
+                           10, // default value = fast
+                           0, // min
+                           100, // max
+                           1, // step
+                           &ok);
+    if(!ok) return;
+    
+    
+
+For a more elaborate interface, you will have to use the designer tool of QtCreator. Create a new Qt Designer form (file->New file or Project->Qt), name it Polyhedron_demo_your_plugin_name_plugin_dialog 
+
+
+
+
+\subsection examplePluginDockWidget Adding a dock widget
+
+
 
 A plugin must always contain
 ~~~~~~~~~~~~~{.cpp}
