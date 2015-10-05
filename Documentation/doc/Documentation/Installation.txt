@@ -514,15 +514,6 @@ In \cgal some 3D demos are based on libQGLViewer.
 
 It can be downloaded from <A HREF="http://www.libqglviewer.com/">`http://www.libqglviewer.com/`</A>.
 
-\subsection thirdpartyCoin Coin3D 
-
-\sc{Coin3D} is an implementation of Open Inventor.
-
-In \cgal, \sc{Coin3D} is used in the demo
-of the \ref PkgKds package.
-
-You can download it from <A HREF="http://www.coin3d.org/">`http://www.coin3d.org/`</A>.
-
 \subsection thirdpartyESBTL ESBTL
 
 The \sc{Esbtl} (Easy Structural Biology Template Library) is a library that allows

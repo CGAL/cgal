@@ -68,9 +68,8 @@
 - `CGAL::Kinetic::Enclosing_box_3<Traits>`
 - `CGAL::Kinetic::Insert_event<ActiveObjectsTable>`
 - `CGAL::Kinetic::Erase_event<ActiveObjectsTable>`
-- `CGAL::Kinetic::Qt_moving_points_2<Traits, QtWidget_2>`
-- `CGAL::Kinetic::Qt_triangulation_2<KineticTriangulation_2, QtWidget_2, QtMovingPoints_2>`
-- `CGAL::Kinetic::Qt_widget_2<Simulator> `
+
+
 
 */
 
