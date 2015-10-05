@@ -961,6 +961,7 @@ protected:
     // of redundant edges. Then only the master of the set will be kept.
     // Here we also collect edges that needs to be removed.
     typedef Union_find<typename Aos_2::Dcel::Face_iterator> UF_faces;
+    std::vector<typename UF_faces::handle> face_handles;
     UF_faces uf_faces;
     std::vector< Halfedge_handle > edges_to_remove;
     bool all_edges_are_redundant=true;
@@ -974,10 +975,16 @@ protected:
       {
         typename Aos_2::Dcel::Face_iterator f1=he->face().current_iterator(),
                                             f2=he->twin()->face().current_iterator();
-        if (f1->uf_handle==NULL) f1->uf_handle=uf_faces.make_set( f1 );
-        if (f2->uf_handle==NULL) f2->uf_handle=uf_faces.make_set( f2 );
+        if (f1->id_not_set()){
+          f1->set_id(face_handles.size());
+          face_handles.push_back( uf_faces.make_set( f1 ) );
+        }
+        if (f2->id_not_set()){
+          f2->set_id(face_handles.size());
+          face_handles.push_back( uf_faces.make_set( f2 ) );
+        }
 
-        uf_faces.unify_sets(f1->uf_handle, f2->uf_handle);
+        uf_faces.unify_sets(face_handles[f1->id()], face_handles[f2->id()]);
         edges_to_remove.push_back( he );
       }
       else
@@ -1142,7 +1149,7 @@ protected:
         // force to keep the unbounded face
         if (_face(*it)->is_unbounded())
         {
-          (*master)->uf_handle=it;
+          face_handles[(*master)->id()]=it;
           faces_to_remove.push_back(*master);
         }
         else
@@ -1173,11 +1180,13 @@ protected:
 
       typename Aos_2::Dcel::Face_iterator f=h->face().current_iterator();
 
-      if (f->uf_handle!=NULL)
+      if (!f->id_not_set())
       {
         // we use the master of the set as face, but we force to keep the unbounded face,
         // thus this hack
-        f = *((*uf_faces.find(f->uf_handle))->uf_handle);
+        f = *(face_handles[
+                (*uf_faces.find(face_handles[f->id()]))->id()
+              ]);
 
         if (h->is_flooding_on_inner_ccb())
         {
@@ -1218,6 +1227,13 @@ protected:
     accessor.delete_faces( faces_to_remove );
     accessor.delete_outer_ccbs( outer_ccbs_to_remove );
     accessor.delete_inner_ccbs( inner_ccbs_to_remove );
+
+    for (typename Aos_2::Face_iterator fit=arr->faces_begin(),
+                                       end=arr->faces_end();
+                                       fit!=end; ++fit)
+    {
+      fit->reset_id(); // reset the id that will be no longer used for this face
+    }
   }
 
 
