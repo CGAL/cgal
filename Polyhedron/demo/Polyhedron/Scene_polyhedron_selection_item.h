@@ -780,6 +780,7 @@ protected:
         any_change |= (tr.container().erase(h)!=0);
     }
     if(any_change) { invalidate_buffers(); Q_EMIT itemChanged(); }
+    return any_change;
   }
 
   Facet_handle face(Facet_handle fh)

@@ -221,7 +221,8 @@ public Q_SLOTS:
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect));
         }
-        poly_item->changed();
+        poly_item->invalidate_buffers();
+        Q_EMIT poly_item->itemChanged();
       }
       else{
         std::cout << "Can't remesh that type of thing" << std::endl;
