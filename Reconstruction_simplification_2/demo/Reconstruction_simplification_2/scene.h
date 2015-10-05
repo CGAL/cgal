@@ -50,13 +50,10 @@ public:
   typedef R_s_2::Finite_vertices_iterator Finite_vertices_iterator;
 
   typedef R_s_2::Edge Edge;
-  typedef R_s_2::Edge_iterator Edge_iterator;
   typedef R_s_2::Edge_circulator Edge_circulator;
   typedef R_s_2::Finite_edges_iterator Finite_edges_iterator;
 
-  typedef R_s_2::Face Face;
   typedef R_s_2::Face_handle Face_handle;
-  typedef R_s_2::Face_iterator Face_iterator;
   typedef R_s_2::Face_circulator Face_circulator;
   typedef R_s_2::Finite_faces_iterator Finite_faces_iterator;
 
@@ -71,9 +68,6 @@ public:
   typedef R_s_2::Sample_ Sample_;
   typedef R_s_2::Sample_vector Sample_vector;
   typedef R_s_2::Sample_vector_const_iterator Sample_vector_const_iterator;
-
-  typedef R_s_2::Point_vector Point_vector;
-  typedef R_s_2::Point_vector_const_iterator Point_vector_const_iterator;
 
   typedef R_s_2::PSample PSample;
   typedef R_s_2::SQueue SQueue;

@@ -20,20 +20,6 @@
 #ifndef RECONSTRUCTION_TRIANGULATION_2_H
 #define RECONSTRUCTION_TRIANGULATION_2_H
 
-// STL
-#include <map>
-#include <set>
-#include <vector>
-#include <queue>
-#include <iostream>
-#include <limits>
-
-// CGAL
-#include <CGAL/basic.h>
-#include <CGAL/Random.h>
-#include <CGAL/intersections.h>
-#include <CGAL/Delaunay_triangulation_2.h>
-
 // local
 #include <CGAL/Sample.h>
 #include <CGAL/Reconstruction_edge_2.h>
@@ -41,6 +27,11 @@
 #include <CGAL/Reconstruction_vertex_base_2.h>
 #include <CGAL/Reconstruction_face_base_2.h>
 
+// CGAL
+#include <CGAL/basic.h>
+#include <CGAL/Random.h>
+#include <CGAL/intersections.h>
+#include <CGAL/Delaunay_triangulation_2.h>
 
 // boost
 #include <boost/multi_index/mem_fun.hpp>
@@ -48,6 +39,14 @@
 #include <boost/multi_index/ordered_index.hpp>
 #include <boost/multi_index/identity.hpp>
 #include <boost/multi_index/member.hpp>
+
+// STL
+#include <map>
+#include <set>
+#include <vector>
+#include <queue>
+#include <iostream>
+#include <limits>
 
 #define EPS   1e-15
 
@@ -69,12 +68,14 @@ namespace CGAL {
 ///  @param Tds       Model of TriangulationDataStructure_2.
 ///  The vertex class must derive from Reconstruction_vertex_base_2.
 ///  The face   class must derive from Reconstruction_face_base_2.
-template<class Traits_,
-class Tds_ = Triangulation_data_structure_2<
-Reconstruction_vertex_base_2<Traits_>,
-Reconstruction_face_base_2<Traits_> > >
-class Reconstruction_triangulation_2: public Delaunay_triangulation_2<Traits_,
-Tds_> {
+template<
+  class Traits_,
+  class Tds_ = Triangulation_data_structure_2<
+  Reconstruction_vertex_base_2<Traits_>,
+  Reconstruction_face_base_2<Traits_> > >
+class Reconstruction_triangulation_2
+  : public Delaunay_triangulation_2<Traits_, Tds_> 
+{
 public:
 
   typedef Delaunay_triangulation_2<Traits_, Tds_> Base;
@@ -82,7 +83,6 @@ public:
   typedef typename Traits_::FT FT;
   typedef typename Traits_::Point_2 Point;
   typedef typename Traits_::Vector_2 Vector;
-  typedef typename Traits_::Ray_2 Ray;
   typedef typename Traits_::Line_2 Line;
   typedef typename Traits_::Segment_2 Segment;
   typedef typename Traits_::Triangle_2 Triangle;
@@ -94,29 +94,23 @@ public:
   typedef typename Base::Finite_vertices_iterator Finite_vertices_iterator;
 
   typedef typename Base::Edge Edge;
-  typedef typename Base::Edge_iterator Edge_iterator;
   typedef typename Base::Edge_circulator Edge_circulator;
   typedef typename Base::Finite_edges_iterator Finite_edges_iterator;
 
-  typedef typename Base::Face Face;
   typedef typename Base::Face_handle Face_handle;
-  typedef typename Base::Face_iterator Face_iterator;
   typedef typename Base::Face_circulator Face_circulator;
   typedef typename Base::Finite_faces_iterator Finite_faces_iterator;
 
   typedef std::map<Vertex_handle, Vertex_handle,
       less_Vertex_handle<Vertex_handle> > Vertex_handle_map;
-  typedef std::map<Face_handle, Face_handle, less_Face_handle<Face_handle> >
-  Face_handle_map;
+  typedef std::map<Face_handle, Face_handle, 
+                   less_Face_handle<Face_handle> > Face_handle_map;
 
-  typedef std::set<Vertex_handle, less_Vertex_handle<Vertex_handle> >
-  Vertex_handle_set;
+  typedef std::set<Vertex_handle, 
+                   less_Vertex_handle<Vertex_handle> > Vertex_handle_set;
   typedef std::set<Edge, less_Edge<Edge> > Edge_set;
 
   typedef std::vector<Edge> Edge_vector;
-
-  typedef std::vector<Point> Point_vector;
-  typedef typename Point_vector::const_iterator Point_vector_const_iterator;
 
   typedef Cost<FT> Cost_;
   typedef Sample<Traits_> Sample_;
@@ -127,8 +121,8 @@ public:
   typedef std::priority_queue<PSample, std::vector<PSample>,
       greater_priority<PSample> > SQueue;
 
-  typedef Reconstruction_edge_2<FT, Edge, Vertex_handle, Face_handle>
-  Rec_edge_2;
+  typedef Reconstruction_edge_2<FT, Edge, 
+                                Vertex_handle, Face_handle> Rec_edge_2;
 
   typedef boost::multi_index_container<
       Rec_edge_2,
@@ -147,8 +141,9 @@ public:
 
 
 public:
-  Reconstruction_triangulation_2() {
-    m_factor = 1.0;
+  Reconstruction_triangulation_2()
+  : m_factor(1.)
+  {
   }
 
   ~Reconstruction_triangulation_2() {
@@ -158,11 +153,11 @@ public:
     return m_factor;
   }
 
-  const double& ghost_factor() const {
+  double ghost_factor() const {
     return m_factor;
   }
 
-  Edge random_finite_edge() {
+  Edge random_finite_edge() const {
     static CGAL::Random rng;
     std::size_t nbf = Base::number_of_faces();
     int offset = rng.get_int(0, static_cast<int>(nbf - 1));
@@ -278,7 +273,7 @@ public:
     return edge.first->plan(edge.second);
   }
 
-  void set_plan(const Edge& edge, int simplex) {
+  void set_plan(const Edge& edge, int simplex) const {
     edge.first->plan(edge.second) = simplex;
   }
 
@@ -286,7 +281,7 @@ public:
     return edge.first->mass(edge.second);
   }
 
-  void set_mass(const Edge& edge, const FT mass) {
+  void set_mass(const Edge& edge, const FT mass) const {
     edge.first->mass(edge.second) = mass;
   }
 
@@ -294,11 +289,11 @@ public:
     return edge.first->cost(edge.second);
   }
 
-  void set_vertex_cost(const Edge& edge, const Cost_& cost) {
+  void set_vertex_cost(const Edge& edge, const Cost_& cost) const {
     edge.first->vertex_cost(edge.second) = cost;
   }
 
-  void set_edge_cost(const Edge& edge, const Cost_& cost) {
+  void set_edge_cost(const Edge& edge, const Cost_& cost) const {
     edge.first->edge_cost(edge.second) = cost;
   }
 
@@ -312,14 +307,14 @@ public:
     FT vvalue = edge.first->vertex_cost(edge.second).finalize();
     FT evalue = edge.first->edge_cost(edge.second).finalize();
     if (evalue == vvalue)
-      return 1.0 / m_factor;
+      return FT(1) / m_factor;
     return vvalue / (m_factor * evalue);
   }
 
   FT get_edge_relevance(const Edge& edge) const {
     FT M = get_mass(edge);
-    if (M == 0.0)
-      return 0.0;
+    if (M == FT(0))
+      return FT(0);
 
     FT L = get_length(edge);
     FT cost = get_cost(edge).finalize();
@@ -335,16 +330,19 @@ public:
   unsigned int nb_samples(const Edge& edge) const {
     Edge twin = twin_edge(edge);
     return edge.first->samples(edge.second).size()
-        + twin.first->samples(twin.second).size();
+      + twin.first->samples(twin.second).size();
   }
 
-  void collect_samples_from_edge(const Edge& edge, Sample_vector& samples) {
+  void collect_samples_from_edge(
+    const Edge& edge, Sample_vector& samples) const 
+  {
     const Sample_vector& edge_samples = edge.first->samples(edge.second);
     samples.insert(samples.end(), edge_samples.begin(), edge_samples.end());
   }
 
-  void collect_samples_from_vertex(Vertex_handle vertex, Sample_vector& samples,
-      bool cleanup) {
+  void collect_samples_from_vertex(
+    Vertex_handle vertex, Sample_vector& samples, bool cleanup) const 
+  {
     Face_circulator fcirc = Base::incident_faces(vertex);
     Face_circulator fend = fcirc;
     CGAL_For_all(fcirc, fend)

@@ -119,13 +119,10 @@ public:
       Finite_vertices_iterator;
 
   typedef typename Triangulation::Edge Edge;
-  typedef typename Triangulation::Edge_iterator Edge_iterator;
   typedef typename Triangulation::Edge_circulator Edge_circulator;
   typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
 
-  typedef typename Triangulation::Face Face;
   typedef typename Triangulation::Face_handle Face_handle;
-  typedef typename Triangulation::Face_iterator Face_iterator;
   typedef typename Triangulation::Face_circulator Face_circulator;
   typedef typename Triangulation::Finite_faces_iterator Finite_faces_iterator;
 
@@ -143,10 +140,6 @@ public:
   typedef typename Triangulation::Sample_vector Sample_vector;
   typedef typename Triangulation::Sample_vector_const_iterator
       Sample_vector_const_iterator;
-
-  typedef typename Triangulation::Point_vector Point_vector;
-  typedef typename Triangulation::Point_vector_const_iterator
-      Point_vector_const_iterator;
 
   typedef typename Triangulation::PSample PSample;
   typedef typename Triangulation::SQueue SQueue;
