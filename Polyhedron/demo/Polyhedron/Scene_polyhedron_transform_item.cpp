@@ -13,6 +13,7 @@ Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer
 {
     frame->setPosition(pos);
     nb_lines = 0;
+    invalidate_buffers();
 }
 
 void Scene_polyhedron_transform_item::initialize_buffers(Viewer_interface *viewer =0) const
@@ -30,8 +31,6 @@ void Scene_polyhedron_transform_item::initialize_buffers(Viewer_interface *viewe
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[0].release();
 
-        QColor color = this->color();
-        program->setAttributeValue("colors",color);
         vaos[0]->release();
         program->release();
     }
@@ -64,7 +63,6 @@ void Scene_polyhedron_transform_item::compute_elements()
         positions_lines.push_back(b.z()-center_.z);
 
     }
-
 }
 
 void Scene_polyhedron_transform_item::draw_edges(Viewer_interface* viewer) const
@@ -79,6 +77,8 @@ void Scene_polyhedron_transform_item::draw_edges(Viewer_interface* viewer) const
     for (int i=0; i<16; ++i){
         f_matrix.data()[i] = (float)frame->matrix()[i];
     }
+    QColor color = this->color();
+    program->setAttributeValue("colors",color);
     program->setUniformValue("f_matrix", f_matrix);
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
     vaos[0]->release();

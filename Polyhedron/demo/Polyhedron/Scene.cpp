@@ -138,6 +138,23 @@ Scene::erase(int index)
     return -1;
 
 }
+void Scene::check_empty_group(Scene_item* item)
+{
+    Q_FOREACH(Scene_group_item* group, m_group_entries)
+    {
+        if(group->getChildren().contains(item))
+        {
+            group->removeChild(item);
+            if (group->getChildren().isEmpty())
+            {
+                check_empty_group(group);
+                m_group_entries.removeOne(group);
+                m_entries.removeOne(group);
+            }
+        }
+    }
+       check_first_group();
+}
 
 int
 Scene::erase(QList<int> indices)
@@ -157,48 +174,26 @@ Scene::erase(QList<int> indices)
         to_be_removed.push_back(item);
     }
 
-  Q_FOREACH(Scene_item* item, to_be_removed) {
+    Q_FOREACH(Scene_item* item, to_be_removed) {
       Scene_group_item* group =
               qobject_cast<Scene_group_item*>(item);
-      if(group)
-      {
-          QList<int> to_erase;
-          Q_FOREACH(Scene_item* child, group->getChildren())
-              to_erase<<m_entries.indexOf(child);
-          erase(to_erase);
-      }
-      Q_FOREACH(Scene_group_item* group, m_group_entries)
-      {
-          if(group->getChildren().contains(item))
-          {
-              group->removeChild(item);
-              if (group->getChildren().isEmpty())
-              {
-                  m_group_entries.removeOne(group);
-                  m_entries.removeOne(group);
-                  check_first_group();
-              }
-          }
-
-      }
+    if(group)
+    {
+        QList<int> to_erase;
+        Q_FOREACH(Scene_item* child, group->getChildren())
+            to_erase<<m_entries.indexOf(child);
+        erase(to_erase);
+    }
+    check_empty_group(item);
 
     Q_EMIT itemAboutToBeDestroyed(item);
     delete item;
     m_entries.removeAll(item);
   }
   selected_item = -1;
-  for(int j =0; j<m_entries.size(); j++)
+  Q_FOREACH(Scene_item* item, m_entries)
   {
-          QList<QStandardItem*> list;
-          for(int i=0; i<5; i++)
-          {
-              list<<new QStandardItem();
-              list.at(i)->setEditable(false);
-          }
-          viewItem->appendRow(list);
-          for(int i=0; i<5; i++){
-              index_map[list.at(i)->index()] = j;
-          }
+    organize_items(item, viewItem, 0);
   }
   QStandardItemModel::beginResetModel();
   Q_EMIT updated();
@@ -340,7 +335,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
                 viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
                 viewer->glPointSize(2.f);
                 viewer->glLineWidth(1.0f);
-                if(index == selected_item)
+                if(index == selected_item || selected_items_list.contains(index))
                 {
                     item.selection_changed(true);
                 }
@@ -382,7 +377,7 @@ glDepthFunc(GL_LEQUAL);
                 viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
                 viewer->glPointSize(2.f);
                 viewer->glLineWidth(1.0f);
-                if(index == selected_item)
+                if(index == selected_item || selected_items_list.contains(index))
                 {
                       item.selection_changed(true);
                 }
@@ -404,7 +399,7 @@ glDepthFunc(GL_LEQUAL);
                     viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
                     viewer->glPointSize(2.f);
                     viewer->glLineWidth(1.0f);
-                    if(index == selected_item)
+                    if(index == selected_item || selected_items_list.contains(index))
                     {
 
                         item.selection_changed(true);

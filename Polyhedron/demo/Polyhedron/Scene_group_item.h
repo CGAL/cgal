@@ -66,10 +66,15 @@ public :
 
     QList<Scene_item*> getChildren() const {return children;}
 
-    void removeChild( Scene_item* child)
+    void removeChild( Scene_item* item)
     {
-        child->has_group--;
-        children.removeOne(child);
+      Scene_group_item* group =
+              qobject_cast<Scene_group_item*>(item);
+      if(group)
+        Q_FOREACH(Scene_item* child, group->getChildren())
+            removeChild(child);
+      item->has_group--;
+      children.removeOne(item);
     }
 
 Q_SIGNALS:

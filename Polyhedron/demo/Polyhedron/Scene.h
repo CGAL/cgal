@@ -116,6 +116,7 @@ public:
 public Q_SLOTS:
   //!insures that the groupview and data always has a "new group" in first position.
   void check_first_group();
+  void check_empty_group(Scene_item* item);
   void group_added();
   // Notify the scene that an item was modified
   void itemChanged(); // slots called by items themself
@@ -131,7 +132,7 @@ public Q_SLOTS:
   {
     selected_item = i;
     Q_EMIT selectionChanged(i);
-  };
+  }
 
   void setSelectedItem(Scene_item* item_to_select)
   {
@@ -145,12 +146,26 @@ public Q_SLOTS:
       }
       ++i;
     }
-  };
+  }
 
-  void setSelectedItemsList(QList<int> l )
+  QList<int> setSelectedItemsList(QList<int> l )
   {
+    Q_FOREACH(int i,l)
+    {
+       Scene_group_item* group =
+               qobject_cast<Scene_group_item*>(item(i));
+       if(group)
+       {
+         QList<int> list;
+         Q_FOREACH(Scene_item* child, group->getChildren())
+           list<<m_entries.indexOf(child);
+         l << setSelectedItemsList(list);
+       }
+
+    }
     selected_items_list = l;
-  };
+    return l;
+  }
 
   // Accessors (setters)
   void setItemVisible(int, bool b);

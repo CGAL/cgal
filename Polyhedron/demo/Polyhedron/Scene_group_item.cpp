@@ -86,6 +86,7 @@ void Scene_group_item::add_group_number(Scene_item * new_item)
 }
 void Scene_group_item::setColor(QColor c)
 {
+  Scene_item::setColor(c);
   Q_FOREACH(Scene_item* child, children)
   {
     child->setColor(c);
