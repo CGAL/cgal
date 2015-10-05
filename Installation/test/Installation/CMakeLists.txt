@@ -56,11 +56,7 @@ if ( CGAL_FOUND )
   if ( WITH_CGAL_ImageIO )
     create_link_to_program(CGAL_ImageIO)
   endif()
-  
-  if ( WITH_CGAL_Qt3 )
-    create_link_to_program(CGAL_Qt3)
-  endif()
-  
+
   if ( WITH_CGAL_Qt4 )
     find_package(Qt4 QUIET)
     if( QT4_FOUND )

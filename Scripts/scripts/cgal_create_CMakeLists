@@ -42,7 +42,6 @@
 #NTL
 
 #Core (implies GMP+GMPXX)
-#Qt3 (implies QT3)
 #Qt4 (implies QT4)
 #ImageIO
 
@@ -53,7 +52,6 @@
 
 create_cmake_script_with_options()
 {
-  qt3='n'
   qt4='n'
 
   # parse options file
@@ -125,9 +123,8 @@ fi
   if [ ! -z "$CGAL_COMPONENTS" ]; then
     # ensure capitalization
 
-    # CGAL: Core, Qt3, Qt4, PDB, ImageIO
+    # CGAL: Core, Qt4, PDB, ImageIO
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[c|C][o|O][r|R][e|E]/Core}
-    CGAL_COMPONENTS=${CGAL_COMPONENTS//[q|Q][t|T]3/Qt3}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[q|Q][t|T]4/Qt4}
     CGAL_COMPONENTS=${CGAL_COMPONENTS//[i|I][m|M][a|A][g|G][e|E][i|I][o|O]/ImageIO}
   
@@ -166,9 +163,6 @@ fi
       COMPONENT=`echo $cgal_component | tr '[:upper:]' '[:lower:]'`
 
       # for qtmoc
-      if [ "$COMPONENT" = "qt3" ]; then
-        qt3='y'
-      fi
       if [ "$COMPONENT" = "qt4" ]; then
         qt4='y'
       fi
@@ -266,34 +260,7 @@ EOF
     #-------------------------------------------------------------------------
   fi
 
-  # Qt3 or Qt4
-  if [ "$qt3" = "y" ]; then
-
-    #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-    cat << 'EOF'
-
-# Qt3
-# FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
-# that it can be used together with FindQt4: all its variables are prefixed
-# by "QT3_" instead of "QT_".
-find_package(Qt3-patched QUIET )
-
-if ( NOT QT3_FOUND )
-
-  message(STATUS "This project requires the Qt3 library, and will not be compiled.")
-  return()  
-
-endif()
-
-if ( CGAL_Qt3_FOUND )
-  
-  include( Qt3Macros-patched )
-
-endif()
-EOF
-    #-------------------------------------------------------------------------
-  fi # qt3
-
+  # Qt4
   if [ "$qt4" = "y" ]; then
 
     #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -368,47 +335,6 @@ EOF
     fi
     # add a new line
     echo
-
-    # Qt3
-    if [ "$qt3" = "y" ]; then
-      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-      cat << 'EOF'
-if ( CGAL_Qt3_FOUND AND QT3_FOUND )
-
-EOF
-      #-----------------------------------------------------------------------
-
-      for file in `ls *.cc *.cp *.cxx *.cpp *.CPP *.c++ *.C 2> /dev/null | sort` ; do
-        # Create an executable for each cpp that  contains a function "main()"
-        BASE=`basename $file .cc`
-        BASE=`basename $BASE .cp`
-        BASE=`basename $BASE .cxx`
-        BASE=`basename $BASE .cpp`
-        BASE=`basename $BASE .CPP`
-        BASE=`basename $BASE .c++`
-        BASE=`basename $BASE .C`
-        egrep '\bmain[ \t]*\(' $file >/dev/null 2>&1
-        if [ $? -eq 0 ]; then
-          echo "qt3_automoc( ${file} )"
-        fi
-      done
-
-      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-      cat << 'EOF'
-
-  # Make sure the compiler can find generated .moc files
-  include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR} )
-  
-  include_directories( ${QT3_INCLUDE_DIR} )
-
-  list(APPEND CGAL_3RD_PARTY_LIBRARIES ${QT3_LIBRARIES} )
-
-endif()
-
-EOF
-      #-----------------------------------------------------------------------
-
-    fi # qt3
 
     # Qt4
     if [ "$qt4" = "y" ]; then
@@ -486,31 +412,6 @@ EOF
       all="$all $file"
     done
 
-    # Qt3
-    if [ "$qt3" = "y" ]; then
-      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-      cat << 'EOF'
-
-if ( CGAL_Qt3_FOUND AND QT3_FOUND )
-
-EOF
-      #-----------------------------------------------------------------------
-
-      echo "qt3_automoc( ${all} )"
-
-      #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
-      cat << 'EOF'
-
-  # Make sure the compiler can find generated .moc files
-  include_directories( BEFORE ${CMAKE_CURRENT_BINARY_DIR} )
- 
-  include_directories( ${QT3_INCLUDE_DIR} )
-
-endif()
-EOF
-      #-----------------------------------------------------------------------
-    fi # qt3
-
     # Qt4
     if [ "$qt4" = "y" ]; then
       #vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv
@@ -586,9 +487,6 @@ EOF
     echo
     echo "# Link the executable to CGAL and third-party libraries"
     LIBS=""
-    if [ "$qt3" = "y" ]; then
-      LIBS="\${QT3_LIBRARIES}"
-    fi
     if [ "$qt4" = "y" ]; then
       LIBS="\${QT_LIBRARIES}" 
     fi
@@ -611,7 +509,7 @@ usage()
   echo "Usage: `basename $0` [-s source] [-c cgal-component1:cgal-component2:...] [-b boost-component1:boost-component2:...] [-p] [-o options_file='`pwd`/cgal_cmake_options:$HOME/.cgal_cmake_options_rc'] [-v] [-h]" >&2
   echo >&2
   echo "  -s source If this parameter is given the script will create one single executable for 'source' with all source files; otherwise it creates one executable for each main'ed source." >&2
-  echo "  cgal_componentX - must be a valid cgal component, examples are 'Core','ImageIO','Qt3','Qt4' ('benchmark', 'symbolic')." >&2
+  echo "  cgal_componentX - must be a valid cgal component, examples are 'Core','ImageIO','Qt4' ('benchmark', 'symbolic')." >&2
   echo "  boost_componentX - must be a valid boost component, like 'filesystem', 'program_options'." >&2
   echo "  -p use all of CGAL's preconfigured libraries" >&2
   echo "  -o options_file - file with PACKAGE, DIRECTORY, CGAL_COMPONENT, and BOOST_COMPONENT directives" >&2
