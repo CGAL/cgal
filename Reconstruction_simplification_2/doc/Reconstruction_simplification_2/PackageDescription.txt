@@ -1,5 +1,8 @@
 /// \defgroup PkgReconstructionSimplification2 2D Reconstruction Simplification Reference
 
+/// \defgroup PkgReconstructionSimplification2Concepts Concepts
+/// \ingroup PkgReconstructionSimplification2
+
 /// \defgroup PkgReconstructionSimplification2Classes Classes
 /// \ingroup PkgReconstructionSimplification2
 
