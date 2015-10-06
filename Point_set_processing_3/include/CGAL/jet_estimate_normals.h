@@ -31,6 +31,12 @@
 #include <iterator>
 #include <list>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include <tbb/parallel_for.h>
+#include <tbb/blocked_range.h>
+#include <tbb/scalable_allocator.h>  
+#endif // CGAL_LINKED_WITH_TBB
+
 namespace CGAL {
 
 
@@ -101,6 +107,34 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
   return monge_form.normal_direction();
 }
 
+#ifdef CGAL_LINKED_WITH_TBB
+  template <typename Kernel, typename SvdTraits, typename Tree>
+  class Jet_estimate_normals {
+    typedef typename Kernel::Point_3 Point;
+    typedef typename Kernel::Vector_3 Vector;
+    const Tree& tree;
+    const unsigned int k;
+    const unsigned int degree_fitting;
+    const std::vector<Point>& input;
+    std::vector<Vector>& output;
+
+  public:
+    Jet_estimate_normals(Tree& tree, unsigned int k, std::vector<Point>& points,
+		     unsigned int degree_fitting, std::vector<Vector>& output)
+      : tree(tree), k (k), degree_fitting (degree_fitting), input (points), output (output)
+    { }
+    
+    void operator()(const tbb::blocked_range<std::size_t>& r) const
+    {
+      for( std::size_t i = r.begin(); i != r.end(); ++i)
+	output[i] = CGAL::internal::jet_estimate_normal<Kernel,SvdTraits>(input[i], tree, k, degree_fitting);
+    }
+
+  };
+#endif // CGAL_LINKED_WITH_TBB
+
+
+  
 } /* namespace internal */
 /// \endcond
 
@@ -117,7 +151,9 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 ///
 /// \pre `k >= 2`
 ///
-///
+/// @tparam Concurrency_tag enables sequential versus parallel algorithm.
+///                         Possible values are `Sequential_tag`
+///                         and `Parallel_tag`.
 /// @tparam ForwardIterator iterator model of the concept of the same name over input points and able to store output normals.
 /// @tparam PointPMap is a model of `ReadablePropertyMap` with  value type `Point_3<Kernel>`.
 ///        It can be omitted if the value type of `ForwardIterator` is convertible to `Point_3<Kernel>`.
@@ -128,7 +164,8 @@ jet_estimate_normal(const typename Kernel::Point_3& query, ///< point to compute
 ///         can be ommited under conditions described in the documentation of `Monge_via_jet_fitting`.
 
 // This variant requires all parameters.
-template <typename ForwardIterator,
+template <typename Concurrency_tag,
+	  typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap,
           typename Kernel,
@@ -189,23 +226,48 @@ jet_estimate_normals(
 
   // iterate over input points, compute and output normal
   // vectors (already normalized)
-  for(it = first; it != beyond; it++)
-  {
-    Vector normal = internal::jet_estimate_normal<Kernel,SvdTraits,Tree>(
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      get(point_pmap,it), 
+#ifndef CGAL_LINKED_WITH_TBB
+  CGAL_static_assertion_msg (!(boost::is_convertible<Concurrency_tag, Parallel_tag>::value),
+			     "Parallel_tag is enabled but TBB is unavailable.");
 #else
-      get(point_pmap,*it), 
+   if (boost::is_convertible<Concurrency_tag,Parallel_tag>::value)
+   {
+     std::vector<Vector> normals (kd_tree_points.size ());
+     CGAL::internal::Jet_estimate_normals<Kernel, SvdTraits, Tree>
+       f (tree, k, kd_tree_points, degree_fitting, normals);
+     tbb::parallel_for(tbb::blocked_range<size_t>(0, kd_tree_points.size ()), f);
+     unsigned int i = 0;
+     for(it = first; it != beyond; ++ it, ++ i)
+       {
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+	 put (normal_pmap, it, normals[i]);
+#else
+	 put (normal_pmap, *it, normals[i]);
+#endif  
+       }
+   }
+   else
+#endif
+     {
+       for(it = first; it != beyond; it++)
+	 {
+	   Vector normal = internal::jet_estimate_normal<Kernel,SvdTraits,Tree>(
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+										get(point_pmap,it), 
+#else
+										get(point_pmap,*it), 
 #endif      
-      tree, k, degree_fitting);
+										tree, k, degree_fitting);
 
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    put(normal_pmap, it, normal); // normal_pmap[it] = normal
+	   put(normal_pmap, it, normal); // normal_pmap[it] = normal
 #else
-    put(normal_pmap, *it, normal); // normal_pmap[it] = normal
+	   put(normal_pmap, *it, normal); // normal_pmap[it] = normal
 #endif 
     
-  }
+	 }
+     }
+
 
   memory = CGAL::Memory_sizer().virtual_size(); CGAL_TRACE("  %ld Mb allocated\n", memory>>20);
   CGAL_TRACE("End of jet_estimate_normals()\n");
@@ -213,7 +275,8 @@ jet_estimate_normals(
 
 #if defined(CGAL_EIGEN3_ENABLED) || defined(CGAL_LAPACK_ENABLED)
 /// @cond SKIP_IN_MANUAL
-template <typename ForwardIterator,
+template <typename Concurrency_tag,
+	  typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap,
           typename Kernel
@@ -233,13 +296,14 @@ jet_estimate_normals(
   #else
   typedef Lapack_svd SvdTraits;
   #endif
-  jet_estimate_normals<ForwardIterator,PointPMap,NormalPMap,Kernel,SvdTraits>(
+  jet_estimate_normals<Concurrency_tag,ForwardIterator,PointPMap,NormalPMap,Kernel,SvdTraits>(
     first, beyond, point_pmap, normal_pmap, k,  kernel, degree_fitting);
 }
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
-template <typename ForwardIterator,
+template <typename Concurrency_tag,
+	  typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap
 >
@@ -254,7 +318,7 @@ jet_estimate_normals(
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  jet_estimate_normals(
+  jet_estimate_normals<Concurrency_tag>(
     first,beyond,
     point_pmap, 
     normal_pmap,
@@ -266,7 +330,8 @@ jet_estimate_normals(
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Identity_property_map.
-template <typename ForwardIterator,
+template <typename Concurrency_tag,
+	  typename ForwardIterator,
           typename NormalPMap
 >
 void
@@ -277,7 +342,7 @@ jet_estimate_normals(
   unsigned int k, ///< number of neighbors.
   unsigned int degree_fitting = 2)
 {
-  jet_estimate_normals(
+  jet_estimate_normals<Concurrency_tag>(
     first,beyond,
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
     make_dereference_property_map(first),

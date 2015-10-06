@@ -285,6 +285,10 @@ update_new_point(
 /// in point-based rendering, hole filling, and sparse surface reconstruction. 
 /// Normals of points are required as input. For more details, please refer to \cgalCite{ear-2013}.
 /// 
+/// @tparam Concurrency_tag enables sequential versus parallel
+///                         versions of `compute_average_spacing()` (called internally).
+///                         Possible values are `Sequential_tag`
+///                         and `Parallel_tag`.
 /// @tparam OutputIterator Type of the output iterator. 
 ///         The type of the objects put in it is 
 ///         `std::pair<Kernel::Point_3, Kernel::Vector_3>`.
@@ -304,7 +308,8 @@ update_new_point(
 ///
 
 // This variant requires all parameters.
-template <typename OutputIterator,
+template <typename Concurrency_tag,
+	  typename OutputIterator,
           typename ForwardIterator, 
           typename PointPMap, 
           typename NormalPMap,
@@ -361,7 +366,7 @@ edge_aware_upsample_point_set(
 
 
   const unsigned int nb_neighbors = 6; // 1 ring
-  FT average_spacing = CGAL::compute_average_spacing(
+  FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
                    first, beyond,
                    point_pmap,
                    nb_neighbors);
@@ -584,7 +589,8 @@ edge_aware_upsample_point_set(
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
-template <typename OutputIterator,
+template <typename Concurrency_tag,
+	  typename OutputIterator,
           typename ForwardIterator,
           typename PointPMap,
           typename NormalPMap>
@@ -603,7 +609,7 @@ edge_aware_upsample_point_set(
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return edge_aware_upsample_point_set(
+  return edge_aware_upsample_point_set<Concurrency_tag>(
     first, beyond,
     output,
     point_pmap,
@@ -618,7 +624,8 @@ edge_aware_upsample_point_set(
 
 
 /// @cond SKIP_IN_MANUAL
-template <typename OutputIterator,
+template <typename Concurrency_tag,
+	  typename OutputIterator,
           typename ForwardIterator,
           typename NormalPMap>
 OutputIterator
@@ -635,7 +642,7 @@ edge_aware_upsample_point_set(
 {
   // just deduce value_type of OutputIterator
   return edge_aware_upsample_point_set
-    <typename value_type_traits<OutputIterator>::type>(
+    <Concurrency_tag, typename value_type_traits<OutputIterator>::type>(
     first, beyond,
     output,
     normal_pmap,

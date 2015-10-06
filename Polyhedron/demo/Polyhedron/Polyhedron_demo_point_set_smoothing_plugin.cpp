@@ -12,6 +12,14 @@
 
 #include <CGAL/jet_smooth_point_set.h>
 
+// Concurrency
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
+
 class Polyhedron_demo_point_set_smoothing_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -71,7 +79,7 @@ void Polyhedron_demo_point_set_smoothing_plugin::on_actionJetSmoothing_triggered
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    CGAL::jet_smooth_point_set(points->begin(), points->end(), nb_neighbors);
+    CGAL::jet_smooth_point_set<Concurrency_tag>(points->begin(), points->end(), nb_neighbors);
 
     points->invalidate_bounds();
 

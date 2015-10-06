@@ -143,6 +143,24 @@ and <code>src/</code> directories).
     instead of OpenNL as a model
     of <code>SparseLinearAlgebraTraits_d</code>.</li>
   </ul>
+  <h3>Point Set Processing</h3>
+  <ul>
+    <li> <b>Breaking change:</b> new template
+    parameter <code>Concurrency_tag</code> for the
+    functions <code>compute_average_spacing()</code>, <code>edge_aware_upsample_point_set()</code>,
+    <code>jet_estimate_normals()</code>, <code>jet_smooth_point_set()</code>,
+    and <code>pca_estimate_normals()</code>.
+    To update your code simply add as first template parameter <code>CGAL::Sequential_tag</code>
+    or <code>CGAL::Parallel_tag</code> when calling one of these functions.</li>
+    <li> <code>CGAL::Parallel_tag</code> can no longer be used in
+    Point Set Processing algorithms if TBB is not available.</li>
+  </ul>
+  <h3>Surface Mesh Parameterization</h3>
+  <ul>
+    <li><code>LSCM_parameterizer_3</code> now uses by default Eigen
+    instead of OpenNL as a model
+    of <code>SparseLinearAlgebraTraits_d</code>.</li>
+  </ul>
 <!-- Spatial Searching and Sorting -->
 <!-- Geometric Optimization -->
 <!-- Interpolation -->

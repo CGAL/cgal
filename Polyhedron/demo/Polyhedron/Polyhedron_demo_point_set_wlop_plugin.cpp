@@ -17,6 +17,13 @@
 
 #include "ui_Polyhedron_demo_point_set_wlop_plugin.h"
 
+// Concurrency
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
 class Polyhedron_demo_point_set_wlop_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -89,7 +96,7 @@ void Polyhedron_demo_point_set_wlop_plugin::on_actionSimplifyAndRegularize_trigg
 	      << dialog.neighborhoodRadius() <<" * average spacing)...\n";
 
     // Computes average spacing
-    double average_spacing = CGAL::compute_average_spacing(points->begin(), points->end(),
+    double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points->begin(), points->end(),
 							   6 /* knn = 1 ring */);
 
     Scene_points_with_normal_item* new_item
@@ -98,7 +105,7 @@ void Polyhedron_demo_point_set_wlop_plugin::on_actionSimplifyAndRegularize_trigg
     new_item->setVisible(true);
     scene->addItem(new_item);
       
-    CGAL::wlop_simplify_and_regularize_point_set<CGAL::Parallel_tag> // parallel version
+    CGAL::wlop_simplify_and_regularize_point_set<Concurrency_tag>
       (points->begin(),
        points->end(),
        std::back_inserter(*(new_item->point_set ())),

@@ -37,6 +37,14 @@ typedef Kernel::Vector_3 Vector;
 // Point with normal vector stored in a std::pair.
 typedef std::pair<Point, Vector> PointVectorPair;
 
+// Concurrency
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
+
 // ----------------------------------------------------------------------------
 // Tests
 // ----------------------------------------------------------------------------
@@ -55,7 +63,7 @@ void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input poi
             << points.size() * times_of_output_points << ")...\n";
 
    //Run algorithm 
-   CGAL::edge_aware_upsample_point_set(
+  CGAL::edge_aware_upsample_point_set<Concurrency_tag>(
             points.begin(), 
             points.end(), 
             std::back_inserter(points),

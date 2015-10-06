@@ -47,6 +47,13 @@ typedef Kernel::Vector_3 Vector;
 typedef CGAL::Point_with_normal_3<Kernel> Point_with_normal; // position + normal vector
 typedef std::vector<Point_with_normal> PointList;
 
+// Concurrency
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
 
 // ----------------------------------------------------------------------------
 // Tests
@@ -126,7 +133,7 @@ bool run_pca_estimate_normals(PointList& points, // input points + output normal
   std::cerr << "Estimates Normals Direction by PCA (k="
             << nb_neighbors_pca_normals << ")...\n";
 
-  CGAL::pca_estimate_normals(points.begin(), points.end(),
+  CGAL::pca_estimate_normals<Concurrency_tag>(points.begin(), points.end(),
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
 #else
@@ -154,7 +161,7 @@ bool run_jet_estimate_normals(PointList& points, // input points + output normal
   std::cerr << "Estimates Normals Direction by Jet Fitting (k="
             << nb_neighbors_jet_fitting_normals << ")...\n";
 
-  CGAL::jet_estimate_normals(points.begin(), points.end(),
+  CGAL::jet_estimate_normals<Concurrency_tag>(points.begin(), points.end(),
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
                              CGAL::make_normal_of_point_with_normal_pmap(points.begin()),
 #else

@@ -15,6 +15,14 @@ typedef Kernel::Point_3 Point;
 // define the Red Green Blue color of the point.
 typedef boost::tuple<int, Point, int, int, int> IndexedPointWithColorTuple;
 
+// Concurrency
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
+
 int main(int argc, char*argv[])
 {
     const char* fname = (argc>1)?argv[1]:"data/sphere_20k.xyz";
@@ -48,7 +56,7 @@ int main(int argc, char*argv[])
 
     // Computes average spacing.
     const unsigned int nb_neighbors = 6; // 1 ring
-    FT average_spacing = CGAL::compute_average_spacing(
+    FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
                             points.begin(), points.end(),
                             CGAL::Nth_of_tuple_property_map<1,IndexedPointWithColorTuple>(),
                             nb_neighbors);
