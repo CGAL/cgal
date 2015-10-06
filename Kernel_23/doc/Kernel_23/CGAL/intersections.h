@@ -74,8 +74,11 @@ Also, `Type1` and `Type2` can be respectively of types
 
 - `Triangle_3<Kernel>` and `Tetrahedron_3<Kernel>`
 - `Plane_3<Kernel>` and `Sphere_3<Kernel>` (or the contrary)
-- `Sphere_3<Kernel>` and `Sphere_3<Kernel>`.
-
+- `Sphere_3<Kernel>` and `Sphere_3<Kernel>`
+- `Line_3<Kernel>` and `Iso_cuboid_3<Kernel>`
+- `Ray_3<Kernel>` and `Iso_cuboid_3<Kernel>`
+- `Segment_3<Kernel>` and `Iso_cuboid_3<Kernel>`
+- `Iso_cuboid_3<Kernel>` and `Iso_cuboid_3<Kernel>`.
 */
 bool do_intersect(Type1<Kernel> obj1, Type2<Kernel> obj2);
 /// @}
