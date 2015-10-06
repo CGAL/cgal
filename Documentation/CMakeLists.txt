@@ -106,6 +106,11 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
 endfunction()
 
 find_package(Doxygen)
+if(NOT DOXYGEN_FOUND)
+  message(STATUS "Doxygen not found. Not building documentation.")
+  return()
+endif()
+
 find_package(PythonInterp 2.6.7)
 
 if(DOXYGEN_FOUND)
