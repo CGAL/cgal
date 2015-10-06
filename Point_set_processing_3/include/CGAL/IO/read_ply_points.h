@@ -48,7 +48,171 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
                                  NormalPMap normal_pmap, ///< property map: value_type of OutputIterator -> Vector_3.
                                  const Kernel& /*kernel*/) ///< geometric traits.
 {
+  // value_type_traits is a workaround as back_insert_iterator's value_type is void
+  // typedef typename value_type_traits<OutputIterator>::type Enriched_point;
+  typedef OutputIteratorValueType Enriched_point;
 
+  typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Vector_3 Vector;
+
+  if(!stream)
+  {
+    std::cerr << "Error: cannot open file" << std::endl;
+    return false;
+  }
+
+  // scan points
+  std::size_t pointsCount = 0,  // number of items in file
+    pointsRead = 0, // current number of points read
+    lineNumber = 0; // current line number
+  enum Format { ASCII, BINARY_LITTLE_ENDIAN, BINARY_BIG_ENDIAN };
+  Format format;
+    
+  std::string line;
+  std::istringstream iss;
+
+  bool in_header = true;
+  
+  while (getline (stream,line))
+  {
+    iss.clear();
+    iss.str (line);
+    ++ lineNumber;
+
+    if (in_header)
+      {
+        // Reads file signature on first line
+        if (lineNumber == 1)
+          {
+            std::string signature;
+            if (!(iss >> signature) || (signature != "ply"))
+              {
+                // if wrong file format
+                std::cerr << "Incorrect file format line " << lineNumber << " of file" << std::endl;
+                return false;
+              }
+          }
+
+        // Reads format on 2nd line
+        else if (lineNumber == 2)
+          {
+            std::string tag, format_string, version;
+            if ( !(iss >> tag >> format_string >> version) )
+              {
+                std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+                return false;
+              }
+            if (format_string == "ascii") format = ASCII;
+            else if (format_string == "binary_little_endian") format = BINARY_LITTLE_ENDIAN;
+            else if (format_string == "binary_big_endian") format = BINARY_BIG_ENDIAN;
+            else
+              {
+                std::cerr << "Unknown file format \"" << format_string << "\" line " << lineNumber << std::endl;
+                return false;
+              }
+          }
+
+        // Comments and vertex properties
+        else
+          {
+            std::string keyword;
+            if (!(iss >> keyword))
+              {
+                std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+                return false;
+              }
+
+            // ignore comments and properties (if not in element
+            // vertex - cf below - properties are useless in our case)
+            if (keyword == "comment" || keyword == "property")
+              continue;
+
+            if (keyword == "end_header")
+              {
+                in_header = false;
+                continue;
+              }
+            
+            if (keyword == "element")
+              {
+                std::string type;
+                std::size_t number;
+                if (!(iss >> type >> number))
+                  {
+                    std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+                    return false;
+                  }
+                
+                if (type == "face")
+                  continue;
+
+                if (type == "vertex")
+                  pointsCount = number;
+                else
+                  {
+                    std::cerr << "Unknown element \"" << type << "\" line " << lineNumber << std::endl;
+                    return false;
+                  }
+
+                while (getline (stream,line))
+                  {
+                    iss.clear();
+                    iss.str (line);
+                    ++ lineNumber;
+                    std::string property, ftype, name;
+                    if ( !(iss >> property >> ftype >> name) || property != "property")
+                      {
+                        std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+                        return false;
+                      }
+                    
+                  }
+              }
+            
+          }
+      }
+
+
+    // Reads 3D points on next lines
+    else if (pointsRead < pointsCount)
+    {
+      break;
+//       // Reads position + normal...
+//       double x,y,z;
+//       double nx,ny,nz;
+//       if (iss >> iformat(x) >> iformat(y) >> iformat(z))
+//       {
+//         Point point(x,y,z);
+//         Vector normal = CGAL::NULL_VECTOR;
+//         // ... + normal...
+//         if (iss >> iformat(nx))
+//         {
+//           // In case we could read one number, we expect that there are two more
+//           if(iss  >> iformat(ny) >> iformat(nz)){
+//             normal = Vector(nx,ny,nz);
+//           } else {
+//             std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+//             return false;
+//           }
+//         }
+//         Enriched_point pwn;
+// #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+//         put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
+//         put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
+// #else
+//         put(point_pmap,  pwn, point);  // point_pmap[&pwn] = point
+//         put(normal_pmap, pwn, normal); // normal_pmap[&pwn] = normal
+// #endif
+//         *output++ = pwn;
+//         pointsRead++;
+//       }
+      // ...or skip comment line
+    }
+    // Skip remaining lines
+  }
+
+
+  
   return true;
 }
 
