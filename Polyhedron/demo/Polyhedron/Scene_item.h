@@ -64,6 +64,7 @@ public:
           buffers.push_back(n_buf);
           buffers[i].create();
       }
+      nb_isolated_vertices = 0;
   }
   Scene_item(int buffers_size, int vaos_size)
     : name_("unamed"),
@@ -89,7 +90,10 @@ public:
           buffers.push_back(n_buf);
           buffers[i].create();
       }
+      nb_isolated_vertices = 0;
   }
+  void setNbIsolatedvertices(std::size_t nb) { nb_isolated_vertices = nb;}
+  std::size_t getNbIsolatedvertices() const {return nb_isolated_vertices;}
   virtual ~Scene_item();
   virtual Scene_item* clone() const = 0;
 
@@ -223,6 +227,7 @@ protected:
   //! Specifies if the item is monochrome and uses uniform attribute for its color
   //! or is multicolor and uses buffers.
   bool is_monochrome;
+  std::size_t nb_isolated_vertices;
   mutable bool are_buffers_filled;
   RenderingMode rendering_mode;
   QMenu* defaultContextMenu;

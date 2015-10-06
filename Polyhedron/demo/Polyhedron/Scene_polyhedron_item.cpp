@@ -889,6 +889,7 @@ Scene_polyhedron_item::toolTip() const
             .arg(poly->size_of_facets())
             .arg(this->renderingModeName())
             .arg(this->color().name());
+  str += QString("<br />Number of isolated vertices : %1<br />").arg(getNbIsolatedvertices());
   if (volume!=-std::numeric_limits<double>::infinity())
     str+=QObject::tr("<br />Volume: %1").arg(volume);
   if (area!=-std::numeric_limits<double>::infinity())
