@@ -15,7 +15,7 @@
 // You should have received a copy of the GNU Lesser General Public
 // License along with GlSplat. If not, see <http://www.gnu.org/licenses/>.
 
-#extension GL_ARB_texture_rectangle : enable
+//#extension GL_ARB_texture_rectangle : enable
 
 #ifndef ES_DEPTH_INTERPOLATION
   #define ES_DEPTH_INTERPOLATION 0
