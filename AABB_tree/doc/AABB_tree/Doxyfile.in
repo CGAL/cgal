@@ -2,7 +2,7 @@
 
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 3D Fast Intersection and Distance Computation (AABB Tree)"
 
-INPUT                      =  ${CMAKE_SOURCE_DIR}/AABB_tree/doc/AABB_tree/ \ 
+INPUT                      =  ${CGAL_PACKAGE_DOC_DIR} \
                               ${CMAKE_SOURCE_DIR}/AABB_tree/include
 
 EXTRACT_ALL                =  false

@@ -2,7 +2,7 @@
 
 PROJECT_NAME               =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D Generalized Barycentric Coordinates"
 
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Barycentric_coordinates_2/doc/Barycentric_coordinates_2/ \ 
+INPUT                      =  ${CGAL_PACKAGE_DOC_DIR} \
                               ${CMAKE_SOURCE_DIR}/Barycentric_coordinates_2/include
 
 EXTRACT_ALL                =  false

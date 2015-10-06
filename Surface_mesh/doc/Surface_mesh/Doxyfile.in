@@ -2,7 +2,7 @@
 
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Surface Mesh"
 
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Surface_mesh/doc/Surface_mesh/ \ 
-                              ${CMAKE_SOURCE_DIR}/Surface_mesh/include
+INPUT = ${CGAL_PACKAGE_DOC_DIR} \ 
+        ${CMAKE_SOURCE_DIR}/Surface_mesh/include
 MULTILINE_CPP_IS_BRIEF = YES
 

@@ -3,7 +3,7 @@
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - 2D Polyline Simplification"
 
 
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Polyline_simplification_2/doc/Polyline_simplification_2/ \
+INPUT                      =  ${CGAL_PACKAGE_DOC_DIR} \
                               ${CMAKE_SOURCE_DIR}/Polyline_simplification_2/include
 
 

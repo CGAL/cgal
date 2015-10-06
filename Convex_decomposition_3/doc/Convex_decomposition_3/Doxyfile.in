@@ -3,7 +3,7 @@
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Convex Decomposition of Polyhedra"
 
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Convex_decomposition_3/include \ 
-                              ${CMAKE_SOURCE_DIR}/Convex_decomposition_3/doc/Convex_decomposition_3/
+                              ${CGAL_PACKAGE_DOC_DIR}
 
 EXTRACT_ALL                =  false
 HIDE_UNDOC_CLASSES         =  true

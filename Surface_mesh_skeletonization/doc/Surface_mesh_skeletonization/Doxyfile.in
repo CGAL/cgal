@@ -1,7 +1,7 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
  
 PROJECT_NAME =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Triangulated Surface Mesh Skeletonization"
-INPUT =  ${CMAKE_SOURCE_DIR}/Surface_mesh_skeletonization/doc/Surface_mesh_skeletonization/ \ 
+INPUT =  ${CGAL_PACKAGE_DOC_DIR} \
          ${CMAKE_SOURCE_DIR}/Surface_mesh_skeletonization/include
 
 EXTRACT_ALL                =  false

@@ -2,7 +2,7 @@
 
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Surface Reconstruction from Point Sets"
 
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Surface_reconstruction_points_3/doc/Surface_reconstruction_points_3/ \ 
+INPUT                      =  ${CGAL_PACKAGE_DOC_DIR} \
                               ${CMAKE_SOURCE_DIR}/Surface_reconstruction_points_3/include
 EXTRACT_ALL                =  false
 HIDE_UNDOC_CLASSES         =  true
