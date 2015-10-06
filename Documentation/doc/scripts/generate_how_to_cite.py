@@ -152,7 +152,12 @@ def protect_accentuated_letters(authors):
 
 SOURCE_DIR=argv[1]
 BUILD_DIR=argv[2]
+BRANCH_BUILD=argv[3]
 
+if BRANCH_BUILD == 't':
+  BRANCH_BUILD = True
+else:
+  BRANCH_BUILD = False
 
 pattern = re.compile(r"\\package_listing{([^}]*)}")
 
@@ -160,7 +165,11 @@ pattern_title_and_anchor = re.compile(r"\\cgalPkgDescriptionBegin{([^}]*),\s?([^
 pattern_author = re.compile(r"\\cgalPkgAuthors?{([^}]*)}")
 pattern_bib = re.compile(r"\\cgalPkgBib{([^}]*)}")
 
-f = codecs.open(SOURCE_DIR+"/Documentation/packages.txt", 'r', encoding='utf-8')
+if BRANCH_BUILD:
+  f = codecs.open(SOURCE_DIR+"/Documentation/doc/Documentation/packages.txt", 'r', encoding='utf-8')
+else:
+  f = codecs.open(SOURCE_DIR+"/doc/Documentation/packages.txt", 'r', encoding='utf-8')
+
 k=2
 for line in f:
     match = pattern.match(line)
@@ -170,9 +179,16 @@ for line in f:
       if(index > 0):
           top_level = pkg[:index]
           lower_level = pkg[index+1:]
-          filename=SOURCE_DIR+"/../../" + top_level + "/doc/" + lower_level + "/PackageDescription.txt"
+          if BRANCH_BUILD:
+            filename=SOURCE_DIR+ "/" + top_level + "/doc/" + lower_level + "/PackageDescription.txt"
+          else:
+            filename=SOURCE_DIR+"/doc/" + lower_level + "/PackageDescription.txt"
       else:
-          filename=SOURCE_DIR+"/../../" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
+          if BRANCH_BUILD:
+            filename=SOURCE_DIR+ "/" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
+          else:
+            filename=SOURCE_DIR+"/doc/" + pkg + "/PackageDescription.txt"
+
       pkgdesc = codecs.open(filename, 'r', encoding='utf-8')
       authors=""
       bib=""
