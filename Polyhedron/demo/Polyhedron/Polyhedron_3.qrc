@@ -12,6 +12,14 @@
         <file alias="plus">resources/plus.png</file>
         <file alias="check-off.png">resources/check-off.png</file>
         <file alias="minus">resources/minus.png</file>
+        <file>resources/back.png</file>
+        <file>resources/front.png</file>
+        <file>resources/top.png</file>
+        <file>resources/bot.png</file>
+        <file>resources/left.png</file>
+        <file>resources/right.png</file>
+        <file>resources/up.png</file>
+        <file>resources/down.png</file>
     </qresource>
     <qresource prefix="/cgal/Polyhedron_3">
         <file alias="about.html">resources/about.html</file>

@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>400</width>
-    <height>300</height>
+    <width>612</width>
+    <height>507</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -71,6 +71,10 @@
         <property name="text">
          <string>&amp;Up</string>
         </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/up.png</normaloff>:/cgal/icons/resources/up.png</iconset>
+        </property>
         <property name="shortcut">
          <string>Ctrl+U</string>
         </property>
@@ -81,6 +85,10 @@
         <property name="text">
          <string>&amp;Down</string>
         </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/down.png</normaloff>:/cgal/icons/resources/down.png</iconset>
+        </property>
         <property name="shortcut">
          <string>Ctrl+D</string>
         </property>
@@ -88,6 +96,89 @@
       </item>
       <item>
        <spacer name="horizontalSpacer">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_2">
+      <item>
+       <widget class="QToolButton" name="frontButton">
+        <property name="text">
+         <string>PushButton</string>
+        </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/front.png</normaloff>:/cgal/icons/resources/front.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="backButton">
+        <property name="text">
+         <string>PushButton</string>
+        </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/back.png</normaloff>:/cgal/icons/resources/back.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="topButton">
+        <property name="text">
+         <string>PushButton</string>
+        </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/top.png</normaloff>:/cgal/icons/resources/top.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="botButton">
+        <property name="text">
+         <string>PushButton</string>
+        </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/bot.png</normaloff>:/cgal/icons/resources/bot.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="leftButton">
+        <property name="text">
+         <string>PushButton</string>
+        </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/left.png</normaloff>:/cgal/icons/resources/left.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QToolButton" name="rightButton">
+        <property name="text">
+         <string>PushButton</string>
+        </property>
+        <property name="icon">
+         <iconset resource="Polyhedron_3.qrc">
+          <normaloff>:/cgal/icons/resources/right.png</normaloff>:/cgal/icons/resources/right.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_2">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>

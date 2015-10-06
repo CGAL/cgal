@@ -41,7 +41,6 @@ public Q_SLOTS:
   void setTwoSides(bool b);
 
   void turnCameraBy180Degres();
-
   QString dumpCameraCoordinates();
   bool moveCameraToCoordinates(QString, 
                                float animation_duration = 0.5f);
@@ -54,6 +53,7 @@ protected:
 
 protected:
   Viewer_impl* d;
+  double prev_radius;
 }; // end class Viewer
 
 #endif // VIEWER_H

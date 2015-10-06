@@ -6,7 +6,8 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QTextStream>
-
+#include <QDebug>
+#include <CGAL/number_type_config.h>
 #include "Viewer_interface.h"
 
 #include <cassert>
@@ -46,17 +47,23 @@ void Camera_positions_list::addItem(QString text, QString data)
 void Camera_positions_list::on_upButton_pressed()
 {
   int row = m_listView->selectionModel()->currentIndex().row();
+  if(row!=0)
+  {
   m_model->insertRow(row-1, m_model->takeRow(row));
   m_listView->selectionModel()->setCurrentIndex(m_model->index(row-1, 0),
                                                 QItemSelectionModel::Clear);
+  }
 }
 
 void Camera_positions_list::on_downButton_pressed()
 {
   int row = m_listView->selectionModel()->currentIndex().row();
+  if(row!= m_listView->model()->rowCount()-1)
+  {
   m_model->insertRow(row+1, m_model->takeRow(row));
   m_listView->selectionModel()->setCurrentIndex(m_model->index(row+1, 0),
                                                 QItemSelectionModel::Clear);
+  }
 }
 
 void Camera_positions_list::on_minusButton_pressed()
@@ -135,3 +142,100 @@ void Camera_positions_list::load(QString filename) {
   }
 }
 
+void Camera_positions_list::on_frontButton_pressed()
+{
+    qglviewer::Vec posFront = qglviewer::Vec(0,0,m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)));
+    qglviewer::Quaternion dirFront;
+    dirFront.setAxisAngle(qglviewer::Vec(0,1,0),0);
+    QString frontCoord = QString("%1 %2 %3 %4 %5 %6 %7")
+            .arg(posFront[0])
+            .arg(posFront[1])
+            .arg(posFront[2])
+            .arg(dirFront[0])
+            .arg(dirFront[1])
+            .arg(dirFront[2])
+            .arg(dirFront[3]);
+
+   m_viewer->moveCameraToCoordinates(frontCoord, 0.5f);
+}
+
+void Camera_positions_list::on_backButton_pressed()
+{
+    qglviewer::Vec posBack = qglviewer::Vec(0,0,-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)));
+    qglviewer::Quaternion dirBack;
+    dirBack.setAxisAngle(qglviewer::Vec(0,1,0),CGAL_PI);
+    QString backCoord = QString("%1 %2 %3 %4 %5 %6 %7")
+            .arg(posBack[0])
+            .arg(posBack[1])
+            .arg(posBack[2])
+            .arg(dirBack[0])
+            .arg(dirBack[1])
+            .arg(dirBack[2])
+            .arg(dirBack[3]);
+    m_viewer->moveCameraToCoordinates(backCoord, 0.5f);
+}
+
+void Camera_positions_list::on_topButton_pressed()
+{
+    qglviewer::Vec posTop = qglviewer::Vec(0,m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0);
+    qglviewer::Quaternion dirTop;
+    dirTop.setAxisAngle(qglviewer::Vec(1,0,0), -CGAL_PI/2);
+    QString topCoord = QString("%1 %2 %3 %4 %5 %6 %7")
+            .arg(posTop[0])
+            .arg(posTop[1])
+            .arg(posTop[2])
+            .arg(dirTop[0])
+            .arg(dirTop[1])
+            .arg(dirTop[2])
+            .arg(dirTop[3]);
+     m_viewer->moveCameraToCoordinates(topCoord, 0.5f);
+}
+
+void Camera_positions_list::on_botButton_pressed()
+{
+    qglviewer::Vec posBot = qglviewer::Vec(0,-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0);;
+    qglviewer::Quaternion dirBot;
+    dirBot.setAxisAngle(qglviewer::Vec(1,0,0),CGAL_PI/2);
+    QString botCoord = QString("%1 %2 %3 %4 %5 %6 %7")
+            .arg(posBot[0])
+            .arg(posBot[1])
+            .arg(posBot[2])
+            .arg(dirBot[0])
+            .arg(dirBot[1])
+            .arg(dirBot[2])
+            .arg(dirBot[3]);
+     m_viewer->moveCameraToCoordinates(botCoord, 0.5f);
+}
+
+void Camera_positions_list::on_leftButton_pressed()
+{
+    qglviewer::Vec posLeft = qglviewer::Vec(-m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0, 0);;
+    qglviewer::Quaternion dirLeft;
+    dirLeft.setAxisAngle(qglviewer::Vec(0,1,0),-CGAL_PI/2);
+    QString leftCoord = QString("%1 %2 %3 %4 %5 %6 %7")
+            .arg(posLeft[0])
+            .arg(posLeft[1])
+            .arg(posLeft[2])
+            .arg(dirLeft[0])
+            .arg(dirLeft[1])
+            .arg(dirLeft[2])
+            .arg(dirLeft[3]);
+    m_viewer->moveCameraToCoordinates(leftCoord, 0.5f);
+}
+
+void Camera_positions_list::on_rightButton_pressed()
+{
+    qglviewer::Vec posRight = qglviewer::Vec(m_viewer->sceneRadius()/(sin (m_viewer->camera()->fieldOfView()/2)), 0,0);
+    qglviewer::Quaternion dirRight;
+    dirRight.setAxisAngle(qglviewer::Vec(0,1,0),CGAL_PI/2);
+    QString rightCoord = QString("%1 %2 %3 %4 %5 %6 %7")
+            .arg(posRight[0])
+            .arg(posRight[1])
+            .arg(posRight[2])
+            .arg(dirRight[0])
+            .arg(dirRight[1])
+            .arg(dirRight[2])
+            .arg(dirRight[3]);
+    m_viewer->moveCameraToCoordinates(rightCoord, 0.5f);
+
+}

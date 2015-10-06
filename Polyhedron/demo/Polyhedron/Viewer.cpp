@@ -53,6 +53,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   pickMatrix_[5]=1;
   pickMatrix_[10]=1;
   pickMatrix_[15]=1;
+  prev_radius = sceneRadius();
 }
 
 Viewer::~Viewer()
