@@ -124,6 +124,8 @@ public:
   typedef Reconstruction_edge_2<FT, Edge, 
                                 Vertex_handle, Face_handle> Rec_edge_2;
 
+  using Base::geom_traits;
+
   typedef boost::multi_index_container<
       Rec_edge_2,
       boost::multi_index::indexed_by<
@@ -141,8 +143,8 @@ public:
 
 
 public:
-  Reconstruction_triangulation_2()
-  : m_factor(1.)
+  Reconstruction_triangulation_2(Traits_ traits = Traits_())
+  : Base(traits), m_factor(1.)
   {
   }
 
@@ -217,14 +219,15 @@ public:
   Segment get_segment(const Edge& edge) const {
     const Point& ps = source_vertex(edge)->point();
     const Point& pt = target_vertex(edge)->point();
-    return Segment(ps, pt);
+    return geom_traits().construct_segment_2_object()(ps, pt);
   }
 
   Triangle get_triangle(Face_handle face) const {
     Vertex_handle v0 = face->vertex(0);
     Vertex_handle v1 = face->vertex(1);
     Vertex_handle v2 = face->vertex(2);
-    return Triangle(v0->point(), v1->point(), v2->point());
+    return geom_traits().construct_triangle_2_object()(
+      v0->point(), v1->point(), v2->point());
   }
 
   // GET LINK //
@@ -572,8 +575,8 @@ public:
       FT mass = sample->mass();
       const Point& query = sample->point();
 
-      FT Ds = CGAL::squared_distance(query, ps);
-      FT Dt = CGAL::squared_distance(query, pt);
+      FT Ds = geom_traits().compute_squared_distance_2_object()(query, ps);
+      FT Dt = geom_traits().compute_squared_distance_2_object()(query, pt);
       FT dist2 = ((std::min))(Ds, Dt);
 
       FT norm2 = sample->distance2();
@@ -663,8 +666,8 @@ public:
     return true;
   }
 
-  Vertex_handle find_nearest_vertex(const Point& point,
-      Face_handle face) const {
+  Vertex_handle find_nearest_vertex(const Point& point, Face_handle face) const
+  {
     for (int i = 0; i < 3; ++i) {
       Vertex_handle vi = face->vertex(i);
       const Point& pi = vi->point();
@@ -713,21 +716,22 @@ public:
   }
 
   FT compute_distance2(const Point& query, const Segment& segment) const {
-    Line line = segment.supporting_line();
-    if (line.has_on(query))
+    Line line = geom_traits().construct_line_2_object()(segment);
+    if (geom_traits().has_on_2_object()(line, query))
       return FT(0);
 
-    Point proj = line.projection(query);
-    return CGAL::squared_distance(query, proj);
+    Point proj = geom_traits().construct_projected_point_2_object()(line, query);
+    return geom_traits().compute_squared_distance_2_object()(query, proj);
   }
 
-  // CJTODO use traits functors
   FT compute_coordinate(const Point& q, const Segment& segment) const {
     const Point& p0 = segment.source();
     const Point& p1 = segment.target();
-    Vector p0p1 = p1 - p0;
-    Vector p0q = q - p0;
-    FT t = (p0q * p0p1) / (p0p1 * p0p1);
+    Vector p0p1 = geom_traits().construct_vector_2_object()(p0, p1);
+    Vector p0q  = geom_traits().construct_vector_2_object()(p0, q);
+    
+    FT t = geom_traits().compute_scalar_product_2_object()(p0q, p0p1)
+         / geom_traits().compute_scalar_product_2_object()(p0p1, p0p1);
     return t; // [0,1]
   }
 
@@ -743,21 +747,24 @@ public:
   }
 
   // signed distance from line(a,b) to point t
-  FT compute_signed_distance(const Point& pa, const Point& pb,
-      const Point& pt) const {
+  FT compute_signed_distance(
+    const Point& pa, const Point& pb, const Point& pt) const
+  {
     if (pt == pa)
       return FT(0);
     if (pt == pb)
       return FT(0);
     if (pa == pb)
-      return std::sqrt(CGAL::squared_distance(pa, pt)); // CJTODO use traits functors
+      return std::sqrt(geom_traits().compute_squared_distance_2_object()(pa, pt));
 
-    // CJTODO use traits functors
-    Vector vab = pb - pa;
-    vab = vab / sqrt(vab * vab);
-    Vector vab90(-vab.y(), vab.x());
-    Vector vat = pt - pa;
-    return (vat * vab90);
+    Vector vab = geom_traits().construct_vector_2_object()(pa, pb);
+    // Normalize vab
+    vab = geom_traits().construct_scaled_vector_2_object()(
+      vab,
+      FT(1) / CGAL::sqrt(geom_traits().compute_squared_length_2_object()(vab)));
+    Vector vab90 = geom_traits().construct_vector_2_object()(-vab.y(), vab.x());
+    Vector vat = geom_traits().construct_vector_2_object()(pa, pt);
+    return geom_traits().compute_scalar_product_2_object()(vat, vab90);
   }
 
   // signed distance from t to the intersection of line(a,b) and line(t,s)
@@ -771,37 +778,40 @@ public:
   }
 
   // signed distance from t to the intersection of line(a,b) and line(t,s)
-  FT compute_signed_distance_from_intersection(const Point& pa,
-      const Point& pb, const Point& pt, const Point& ps) const {
+  FT compute_signed_distance_from_intersection(
+    const Point& pa, const Point& pb, const Point& pt, const Point& ps) const
+  {
     FT Dabt = compute_signed_distance(pa, pb, pt);
     if (Dabt == FT(0))
       return FT(0);
 
-    // CJTODO use traits functors
-    Line lab(pa, pb - pa);
-    Line lts(pt, ps - pt);
+    Line lab = geom_traits().construct_line_2_object()(
+      pa, geom_traits().construct_vector_2_object()(pa, pb));
+    Line lts = geom_traits().construct_line_2_object()(
+      pt, geom_traits().construct_vector_2_object()(pt, ps));
 
     FT Dqt = (std::numeric_limits<FT>::max)();
     CGAL::Object result = CGAL::intersection(lab, lts);
     const Point* iq = CGAL::object_cast<Point>(&result);
     if (iq)
-      Dqt = std::sqrt(CGAL::squared_distance(*iq, pt));
+      Dqt = std::sqrt(geom_traits().compute_squared_distance_2_object()(*iq, pt));
 
     if (Dabt < FT(0))
       Dqt = -Dqt;
     return Dqt;
   }
 
-  bool is_triangle_ccw(Vertex_handle a, Vertex_handle b,
-      Vertex_handle c) const {
+  bool is_triangle_ccw(Vertex_handle a, Vertex_handle b, Vertex_handle c) const
+  {
     const Point& pa = a->point();
     const Point& pb = b->point();
     const Point& pc = c->point();
     return compute_triangle_ccw(pa, pb, pc);
   }
 
-  bool compute_triangle_ccw(const Point& pa, const Point& pb,
-      const Point& pc) const {
+  bool compute_triangle_ccw(
+    const Point& pa, const Point& pb, const Point& pc) const
+  {
     FT dist = compute_signed_distance(pa, pb, pc);
     return (dist > -EPS);
   }
