@@ -76,10 +76,12 @@ Furthermore, we can relocate the vertices by calling `relocate_points()`.
 \tparam MassMap a model of `ReadablePropertyMap` with value type `Gt::FT`
 
  */
-template<class Gt,
-class PointMap = boost::typed_identity_property_map <typename Gt::Point_2>,
-class MassMap  = boost::static_property_map <typename Gt::FT> >
-class Reconstruction_simplification_2 {
+template<
+  class Gt,
+  class PointMap = boost::typed_identity_property_map <typename Gt::Point_2>,
+  class MassMap  = boost::static_property_map <typename Gt::FT> >
+class Reconstruction_simplification_2
+{
 public:
 
   /// \name Types
@@ -111,42 +113,42 @@ public:
   typedef Reconstruction_triangulation_2<Gt> Triangulation;
 
 
-  typedef typename Triangulation::Vertex Vertex;
-  typedef typename Triangulation::Vertex_handle Vertex_handle;
-  typedef typename Triangulation::Vertex_iterator Vertex_iterator;
-  typedef typename Triangulation::Vertex_circulator Vertex_circulator;
+  typedef typename Triangulation::Vertex                Vertex;
+  typedef typename Triangulation::Vertex_handle         Vertex_handle;
+  typedef typename Triangulation::Vertex_iterator       Vertex_iterator;
+  typedef typename Triangulation::Vertex_circulator     Vertex_circulator;
   typedef typename Triangulation::Finite_vertices_iterator
-      Finite_vertices_iterator;
+                                                        Finite_vertices_iterator;
 
-  typedef typename Triangulation::Edge Edge;
-  typedef typename Triangulation::Edge_circulator Edge_circulator;
+  typedef typename Triangulation::Edge                  Edge;
+  typedef typename Triangulation::Edge_circulator       Edge_circulator;
   typedef typename Triangulation::Finite_edges_iterator Finite_edges_iterator;
 
-  typedef typename Triangulation::Face_handle Face_handle;
-  typedef typename Triangulation::Face_circulator Face_circulator;
+  typedef typename Triangulation::Face_handle           Face_handle;
+  typedef typename Triangulation::Face_circulator       Face_circulator;
   typedef typename Triangulation::Finite_faces_iterator Finite_faces_iterator;
 
-  typedef typename Triangulation::Vertex_handle_map Vertex_handle_map;
-  typedef typename Triangulation::Face_handle_map Face_handle_map;
+  typedef typename Triangulation::Vertex_handle_map     Vertex_handle_map;
+  typedef typename Triangulation::Face_handle_map       Face_handle_map;
 
-  typedef typename Triangulation::Vertex_handle_set Vertex_handle_set;
-  typedef typename Triangulation::Edge_set Edge_set;
+  typedef typename Triangulation::Vertex_handle_set     Vertex_handle_set;
+  typedef typename Triangulation::Edge_set              Edge_set;
 
-  typedef typename Triangulation::Edge_vector Edge_vector;
-  typedef std::list<Edge> Edge_list;
+  typedef typename Triangulation::Edge_vector           Edge_vector;
+  typedef std::list<Edge>                               Edge_list;
 
-  typedef typename Triangulation::Cost_ Cost_;
-  typedef typename Triangulation::Sample_ Sample_;
-  typedef typename Triangulation::Sample_vector Sample_vector;
+  typedef typename Triangulation::Cost_                 Cost_;
+  typedef typename Triangulation::Sample_               Sample_;
+  typedef typename Triangulation::Sample_vector         Sample_vector;
   typedef typename Triangulation::Sample_vector_const_iterator
-      Sample_vector_const_iterator;
+                                                        Sample_vector_const_iterator;
 
-  typedef typename Triangulation::PSample PSample;
-  typedef typename Triangulation::SQueue SQueue;
+  typedef typename Triangulation::PSample               PSample;
+  typedef typename Triangulation::SQueue                SQueue;
 
-  typedef typename Triangulation::Rec_edge_2 Rec_edge_2;
+  typedef typename Triangulation::Rec_edge_2            Rec_edge_2;
 
-  typedef typename Triangulation::MultiIndex MultiIndex;
+  typedef typename Triangulation::MultiIndex            MultiIndex;
 
   /// @}
 
@@ -179,52 +181,53 @@ public:
   /// @{
 
   /*!
-             The constructor of the reconstruction simplification class
-             for a given range of point-mass pairs.
-             which already builds an initial simplicial complex.
+  Constructor of the reconstruction simplification class. 
+  It builds an initial simplicial complex 
+  for a given range of point-mass pairs.
 
-         \tparam InputRange is a model of `Range` with forward iterators, 
-               providing input points and point masses through the following two property maps.
+  \tparam InputRange is a model of `Range` with forward iterators, 
+          providing input points and point masses through the 
+          `PointMap` and `MassMap` property maps.
 
-         \param input_range range of input data.
-         \param point_map A `ReadablePropertyMap` used to access the input points.
-
-         \param mass_map A `ReadablePropertyMap` used to access the input points' masses.
-             \param sample_size If `sample_size != 0`, the size of the random sample which replaces the exhaustive priority queue.
-             \param use_flip If `true` the edge flipping procedure is used to ensure that every edge can be made collapsible.
-             \param relocation The number of point relocations that are performed between two edge collapses.
-             \param verbose controls how much console output is produced by the algorithm. The values are 0, 1, or > 1.
-
+  \param input_range  Range of input data.
+  \param point_map    A `ReadablePropertyMap` used to access the input points.
+  \param mass_map     A `ReadablePropertyMap` used to access the input 
+                      points' masses.
+  \param sample_size  If `sample_size != 0`, the size of the random sample 
+                      which replaces the exhaustive priority queue.
+  \param use_flip     If `true` the edge flipping procedure is used to ensure 
+                      that every edge can be made collapsible.
+  \param relocation   The number of point relocations that are performed 
+                      between two edge collapses.
+  \param verbose      Controls how much console output is produced by 
+                      the algorithm. The values are 0, 1, or > 1.
    */
   template <class InputRange>
-  Reconstruction_simplification_2(const InputRange& input_range,
-      PointMap point_map = PointMap(),
-      MassMap  mass_map = MassMap(1),
-      std::size_t sample_size = 0,
-      bool use_flip = true,
-      unsigned int relocation = 0,
-      int verbose = 0)
-      : m_verbose(verbose),
-        m_mchoice(sample_size),
-        m_use_flip(use_flip),
-        m_relocation(relocation),
-        point_pmap(point_map),
-        mass_pmap(mass_map)
+  Reconstruction_simplification_2(
+    const InputRange& input_range,
+    PointMap point_map = PointMap(),
+    MassMap  mass_map = MassMap(1),
+    std::size_t sample_size = 0,
+    bool use_flip = true,
+    unsigned int relocation = 0,
+    int verbose = 0)
+  : m_ignore(0), 
+    m_verbose(verbose),
+    m_mchoice(sample_size),
+    m_use_flip(use_flip),
+    m_alpha(0.5),
+    m_norm_tol(1.0),
+    m_tang_tol(1.0),
+    m_ghost(1.0),
+    m_relocation(relocation),
+    m_bbox_x(0.0),
+    m_bbox_y(0.0),
+    m_bbox_size(1.0),
+    point_pmap(point_map),
+    mass_pmap(mass_map)
   {
-    m_alpha = 0.5;
-    m_norm_tol = 1.0;
-    m_tang_tol = 1.0;
-    m_ghost = 1.0;
-
-    m_bbox_x = 0.0;
-    m_bbox_y = 0.0;
-    m_bbox_size = 1.0;
-
-    m_ignore = 0;
     initialize(input_range.begin(), input_range.end());
   }
-
-
 
   /// @}
 
@@ -286,7 +289,7 @@ public:
   }
 
 
-  FT get_tang_tol() const {
+  FT tang_tol() const {
     return m_tang_tol;
   }
   /// \endcond
@@ -301,27 +304,27 @@ public:
   }
 
   /// \cond SKIP_IN_MANUAL
-  unsigned int get_relocation() const {
+  unsigned int relocation() const {
     return m_relocation;
   }
   /// \endcond
 
 
   /*!
-        \param relevance The relevance threshold used for filtering the edges.
-        An edge is relevant from the approximation point of view
-        if it is long, covers a large mass (or equivalently the
-        number of points when all masses are equal), and has a
-        small transport cost. This notion is defined as
-        m(e) x |e|^2 / cost(e), where m(e) denotes the mass of the edge,
-        |e| denotes its length and cost(e) its transport cost.
-        As the cost is defined by mass time squared distance the
-        relevance is unitless.
+  \param relevance The relevance threshold used for filtering the edges.
+  An edge is relevant from the approximation point of view
+  if it is long, covers a large mass (or equivalently the
+  number of points when all masses are equal), and has a
+  small transport cost. This notion is defined as
+  m(e) x |e|^2 / cost(e), where m(e) denotes the mass of the edge,
+  |e| denotes its length and cost(e) its transport cost.
+  As the cost is defined by mass time squared distance the
+  relevance is unitless.
 
-        The default value is 0, so that all edges receiving some mass
-        are considered relevant.
-        Setting a large relevance value is used to get robustness to a
-        large amount of outliers.
+  The default value is 0, so that all edges receiving some mass
+  are considered relevant.
+  Setting a large relevance value is used to get robustness to a
+  large amount of outliers.
    */
   void set_relevance(const FT relevance) {
     m_ghost = relevance;
@@ -330,7 +333,7 @@ public:
 
 
   /// \cond SKIP_IN_MANUAL
-  FT get_ghost() {
+  FT ghost() {
     return m_ghost;
   }
 
@@ -348,20 +351,18 @@ public:
   }
 
   void initialize_parameters() {
-
-
     m_verbose = 0;
     m_mchoice = 0;
     m_use_flip = true;
-    m_alpha = 0.5;
-    m_norm_tol = 1.0;
-    m_tang_tol = 1.0;
-    m_ghost = 1.0;
+    m_alpha = FT(0.5);
+    m_norm_tol = FT(1);
+    m_tang_tol = FT(1);
+    m_ghost = FT(1);
     m_relocation = 0;
 
-    m_bbox_x = 0.0;
-    m_bbox_y = 0.0;
-    m_bbox_size = 1.0;
+    m_bbox_x = FT(0);
+    m_bbox_y = FT(0);
+    m_bbox_size = FT(1);
 
     m_ignore = 0;
   }
@@ -369,16 +370,16 @@ public:
   //Function if one wants to create a Reconstruction_simplification_2
   //without yet specifying the input in the constructor.
   template <class InputIterator>
-  void initialize(InputIterator start_itr,
-      InputIterator beyond_itr,
-      PointMap point_map,
-      MassMap  mass_map) {
-
+  void initialize(
+    InputIterator start_itr,
+    InputIterator beyond_itr,
+    PointMap point_map,
+    MassMap  mass_map) 
+  {
     point_pmap = point_map;
     mass_pmap  = mass_map;
 
     initialize(start_itr, beyond_itr);
-
   }
 
 
@@ -386,19 +387,17 @@ public:
   void initialize(InputIterator start, InputIterator beyond) {
 
     clear();
-
     insert_loose_bbox(m_bbox_x, m_bbox_y, 2 * m_bbox_size);
-
     init(start, beyond);
 
     std::vector<Sample_*> m_samples;
     for (InputIterator it = start; it != beyond; it++) {
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
       Point point = get(point_pmap, it);
-      FT    mass = get( mass_pmap, it);
+      FT    mass  = get( mass_pmap, it);
 #else
       Point point = get(point_pmap, *it);
-      FT    mass = get( mass_pmap, *it);
+      FT    mass  = get( mass_pmap, *it);
 #endif
       Sample_* s = new Sample_(point, mass);
       m_samples.push_back(s);
@@ -407,15 +406,12 @@ public:
   }
 
 
-
-
-
   template <class Vector>
-  Vector random_vec(const FT scale)
+  Vector random_vec(const FT scale) const
   {
     FT dx = -scale + (FT(rand()) / FT(RAND_MAX)) * 2* scale;
     FT dy = -scale + (FT(rand()) / FT(RAND_MAX)) * 2* scale;
-    return Vector(dx, dy);
+    return Vector(dx, dy); // CJTODO use traits functors
   }
 
   void clear() {
@@ -432,11 +428,6 @@ public:
     m_mindex.clear();
   }
 
-  double time_duration(const double init) {
-    return (clock() - init) / CLOCKS_PER_SEC;
-  }
-
-
 
   // INIT //
   void insert_loose_bbox(const FT x, const FT y, const FT size) {
@@ -445,7 +436,7 @@ public:
 
     timer.start();
     int nb = static_cast<int>(m_dt.number_of_vertices());
-    insert_point(Point(x - size, y - size), true, nb++);
+    insert_point(Point(x - size, y - size), true, nb++); // CJTODO use traits functors
     insert_point(Point(x - size, y + size), true, nb++);
     insert_point(Point(x + size, y + size), true, nb++);
     insert_point(Point(x + size, y - size), true, nb++);
@@ -472,12 +463,13 @@ public:
     }
 
     std::cerr << "done" << " (" << nb << " vertices, "
-        << timer.time() << " s)"
-        << std::endl;
+      << timer.time() << " s)"
+      << std::endl;
   }
 
-  Vertex_handle insert_point(const Point& point, const bool pinned,
-      const int id) {
+  Vertex_handle insert_point(
+    const Point& point, const bool pinned, const int id) 
+  {
     Vertex_handle v = m_dt.insert(point);
     v->pinned() = pinned;
     v->id() = id;
@@ -541,8 +533,7 @@ public:
       remove_stencil_from_pqueue(hull.begin(), hull.end());
 
     if (m_use_flip)
-      ok = m_dt.make_collapsible(edge, hull.begin(), hull.end(),
-          m_verbose);
+      ok = m_dt.make_collapsible(edge, hull.begin(), hull.end(), m_verbose);
 
     // debug test
     ok = m_dt.check_kernel_test(edge);
@@ -579,7 +570,7 @@ public:
 
     if (m_verbose > 1) {
       std::cerr << "simulate collapse " << "("
-          << s->id() << "->" << t->id() << ") ... " << std::endl;
+        << s->id() << "->" << t->id() << ") ... " << std::endl;
     }
 
     Triangulation copy;
@@ -593,7 +584,7 @@ public:
           copy_hull.end(), m_verbose);
       if (!ok) {
         std::cerr << "simulation: failed (make collapsible)"
-            << std::endl;
+          << std::endl;
         return false;
       }
     }
@@ -623,7 +614,7 @@ public:
   }
 
   template<class Iterator> // value_type = Sample_*
-  void backup_samples(Iterator begin, Iterator end) {
+  void backup_samples(Iterator begin, Iterator end) const {
     for (Iterator it = begin; it != end; ++it) {
       Sample_* sample = *it;
       sample->backup();
@@ -631,7 +622,7 @@ public:
   }
 
   template<class Iterator> // value_type = Sample_*
-  void restore_samples(Iterator begin, Iterator end) {
+  void restore_samples(Iterator begin, Iterator end) const {
     for (Iterator it = begin; it != end; ++it) {
       Sample_* sample = *it;
       sample->restore();
@@ -673,11 +664,7 @@ public:
   }
 
   bool is_within_tol(const Cost_& cost) const {
-    if (cost.max_norm() > m_norm_tol)
-      return false;
-    if (cost.max_tang() > m_tang_tol)
-      return false;
-    return true;
+    return cost.max_norm() <= m_norm_tol && cost.max_tang() <= m_tang_tol;
   }
 
   // COST //
@@ -699,8 +686,10 @@ public:
   }
 
   template<class Iterator> // value_type = Edge
-  void collect_cost_stencil(const Triangulation& mesh, Iterator begin,
-      Iterator end, Edge_vector& edges) {
+  void collect_cost_stencil(
+    const Triangulation& mesh, Iterator begin, Iterator end, 
+    Edge_vector& edges) const
+  {
     Edge_set done;
     Edge_list fifo;
     for (Iterator it = begin; it != end; ++it) {
@@ -770,7 +759,6 @@ public:
       Edge edge = *ei;
       push_to_mindex(edge, mindex);
 
-
       edge = m_dt.twin_edge(edge);
       push_to_mindex(edge, mindex);
     }
@@ -837,7 +825,8 @@ public:
   }
 
   template<class Iterator> // value_type = Edge
-      void remove_stencil_from_pqueue(Iterator begin, Iterator end) {
+  void remove_stencil_from_pqueue(Iterator begin, Iterator end) 
+  {
     if (m_mindex.empty())
       return;
 
@@ -864,8 +853,10 @@ public:
   }
 
   template<class Iterator> // value_type = Edge
-  void collect_pqueue_stencil(const Triangulation& mesh, Iterator begin,
-      Iterator end, Edge_vector& edges) {
+  void collect_pqueue_stencil(
+    const Triangulation& mesh, Iterator begin, Iterator end, 
+    Edge_vector& edges) const
+  {
     Vertex_handle_set vertex_set;
     for (Iterator it = begin; it != end; ++it) {
       Edge edge = *it;
@@ -959,7 +950,7 @@ public:
     return copy_edge;
   }
 
-  Vertex_handle copy_vertex(Vertex_handle v0, Vertex_handle v1) {
+  Vertex_handle copy_vertex(Vertex_handle v0, Vertex_handle v1) const {
     v1->id() = v0->id();
     v1->set_point(v0->point());
     v1->pinned() = v0->pinned();
@@ -967,8 +958,9 @@ public:
     return v1;
   }
 
-  Face_handle copy_face(Face_handle f0, Face_handle f1,
-      Vertex_handle_map& vmap) {
+  Face_handle copy_face(
+    Face_handle f0, Face_handle f1, Vertex_handle_map& vmap) const 
+  {
     for (unsigned i = 0; i < 3; ++i) {
       Vertex_handle v0i = f0->vertex(i);
       Vertex_handle v1i = vmap[v0i];
@@ -978,8 +970,10 @@ public:
     return f1;
   }
 
-  void copy_neighbors(Face_handle f, Vertex_handle v, Vertex_handle_map& vmap,
-      Face_handle_map& fmap) {
+  void copy_neighbors(
+    Face_handle f, Vertex_handle v, Vertex_handle_map& vmap,
+    Face_handle_map& fmap) const
+  {
     int i = f->index(v);
     Face_handle cf = fmap[f];
     Vertex_handle cv = vmap[v];
@@ -998,7 +992,7 @@ public:
     }
   }
 
-  void close_copy_mesh(Vertex_handle vertex, Triangulation& copy) {
+  void close_copy_mesh(Vertex_handle vertex, Triangulation& copy) const {
     std::vector<Face_handle> outer_faces;
 
     Face_circulator fcirc = copy.incident_faces(vertex);
@@ -1035,8 +1029,10 @@ public:
       copy.infinite_vertex()->set_face(outer_faces[0]);
   }
 
-  void copy_samples(Vertex_handle vertex, Vertex_handle copy_vertex,
-      Face_handle_map& fmap, Triangulation& copy) {
+  void copy_samples(
+    Vertex_handle vertex, Vertex_handle copy_vertex,
+    Face_handle_map& fmap, Triangulation& copy) const
+  {
     Face_circulator fcirc = m_dt.incident_faces(vertex);
     Face_circulator fend = fcirc;
     CGAL_For_all(fcirc, fend)
@@ -1056,8 +1052,9 @@ public:
     copy_vertex->set_sample(NULL);
   }
 
-  Edge get_copy_edge(const Edge& edge, Vertex_handle_map& vmap,
-      Face_handle_map& fmap) {
+  Edge get_copy_edge(
+    const Edge& edge, Vertex_handle_map& vmap, Face_handle_map& fmap) const 
+  {
     Face_handle f = edge.first;
     Vertex_handle v = f->vertex(edge.second);
 
@@ -1127,8 +1124,8 @@ public:
 
 
   /// \cond SKIP_IN_MANUAL
-  Vector compute_gradient(Vertex_handle vertex) {
-    Vector grad(FT(0), FT(0));
+  Vector compute_gradient(Vertex_handle vertex) const {
+    Vector grad(FT(0), FT(0)); // CJTODO use traits functors
     Edge_circulator ecirc = m_dt.incident_edges(vertex);
     Edge_circulator eend = ecirc;
     CGAL_For_all(ecirc, eend)
@@ -1137,6 +1134,7 @@ public:
       if (m_dt.source_vertex(edge) != vertex)
         edge = m_dt.twin_edge(edge);
 
+      // CJTODO use traits functors
       if (m_dt.get_plan(edge) == 0)
         grad = grad + compute_gradient_for_plan0(edge);
       else
@@ -1145,9 +1143,9 @@ public:
     return grad;
   }
 
-  Point compute_relocation(Vertex_handle vertex) {
+  Point compute_relocation(Vertex_handle vertex) const {
     FT coef = FT(0);
-    Vector rhs(FT(0), FT(0));
+    Vector rhs(FT(0), FT(0)); // CJTODO use traits functors
 
     Edge_circulator ecirc = m_dt.incident_edges(vertex);
     Edge_circulator eend = ecirc;
@@ -1166,21 +1164,22 @@ public:
 
     if (coef == FT(0))
       return vertex->point();
-    return CGAL::ORIGIN + (rhs / coef);
+    return CGAL::ORIGIN + (rhs / coef); // CJTODO use traits functors
   }
 
-  void compute_relocation_for_vertex(Vertex_handle vertex, FT& coef,
-      Vector& rhs) {
+  void compute_relocation_for_vertex(
+    Vertex_handle vertex, FT& coef, Vector& rhs) const
+  {
     Sample_* sample = vertex->sample();
     if (sample) {
       const FT m = sample->mass();
       const Point& ps = sample->point();
-      rhs = rhs + m * (ps - CGAL::ORIGIN);
+      rhs = rhs + m * (ps - CGAL::ORIGIN); // CJTODO use traits functors
       coef += m;
     }
   }
 
-  Vector compute_gradient_for_plan0(const Edge& edge) {
+  Vector compute_gradient_for_plan0(const Edge& edge) const {
     Edge twin = m_dt.twin_edge(edge);
     const Point& pa = m_dt.source_vertex(edge)->point();
     const Point& pb = m_dt.target_vertex(edge)->point();
@@ -1189,22 +1188,24 @@ public:
     m_dt.collect_samples_from_edge(edge, samples);
     m_dt.collect_samples_from_edge(twin, samples);
 
-    Vector grad(FT(0), FT(0));
+    Vector grad(FT(0), FT(0)); // CJTODO use traits functors
     Sample_vector_const_iterator it;
     for (it = samples.begin(); it != samples.end(); ++it) {
       Sample_* sample = *it;
       const FT m = sample->mass();
       const Point& ps = sample->point();
 
-      FT Da = CGAL::squared_distance(ps, pa);
+      FT Da = CGAL::squared_distance(ps, pa); // CJTODO use traits functors
       FT Db = CGAL::squared_distance(ps, pb);
       if (Da < Db)
-        grad = grad + m * (pa - ps);
+        grad = grad + m * (pa - ps); // CJTODO use traits functors
     }
     return grad;
   }
 
-  void compute_relocation_for_plan0(const Edge& edge, FT& coef, Vector& rhs) {
+  void compute_relocation_for_plan0(
+    const Edge& edge, FT& coef, Vector& rhs) const 
+  {
     Edge twin = m_dt.twin_edge(edge);
     const Point& pa = m_dt.source_vertex(edge)->point();
     const Point& pb = m_dt.target_vertex(edge)->point();
@@ -1219,17 +1220,17 @@ public:
       const FT m = sample->mass();
       const Point& ps = sample->point();
 
-      FT Da = CGAL::squared_distance(ps, pa);
+      FT Da = CGAL::squared_distance(ps, pa); // CJTODO use traits functors
       FT Db = CGAL::squared_distance(ps, pb);
 
       if (Da < Db) {
-        rhs = rhs + m * (ps - CGAL::ORIGIN);
+        rhs = rhs + m * (ps - CGAL::ORIGIN); // CJTODO use traits functors
         coef += m;
       }
     }
   }
 
-  Vector compute_gradient_for_plan1(const Edge& edge) {
+  Vector compute_gradient_for_plan1(const Edge& edge) const {
     //FT M = m_dt.get_mass(edge);
     const Point& pa = m_dt.source_vertex(edge)->point();
     const Point& pb = m_dt.target_vertex(edge)->point();
@@ -1238,7 +1239,7 @@ public:
     m_dt.sort_samples_from_edge(edge, queue);
 
     //FT start = FT(0);
-    Vector grad(FT(0), FT(0));
+    Vector grad(FT(0), FT(0)); // CJTODO use traits functors
     while (!queue.empty()) {
       PSample psample = queue.top();
       queue.pop();
@@ -1249,23 +1250,25 @@ public:
       // normal + tangnetial
       const FT coord = psample.priority();
       Point pf = CGAL::ORIGIN + (1.0 - coord) * (pa - CGAL::ORIGIN)
-                        + coord * (pb - CGAL::ORIGIN);
-      grad = grad + m * (1.0 - coord) * (pf - ps);
+                        + coord * (pb - CGAL::ORIGIN); // CJTODO use traits functors
+      grad = grad + m * (1.0 - coord) * (pf - ps); // CJTODO use traits functors
 
       /*
-             // only normal
-             FT bin = m/M;
-             FT center = start + 0.5*bin;
-             Point pc = CGAL::ORIGIN + (1.0-center)*(pa - CGAL::ORIGIN) + center*(pb - CGAL::ORIGIN);
-             start += bin;
-             grad = grad + m*(bin*bin/12.0)*(pa - pb);
-             grad = grad + m*(1.0-center)*(pc - pf);
-       */
+      // only normal
+      FT bin = m/M;
+      FT center = start + 0.5*bin;
+      Point pc = CGAL::ORIGIN + (1.0-center)*(pa - CGAL::ORIGIN) + center*(pb - CGAL::ORIGIN);
+      start += bin;
+      grad = grad + m*(bin*bin/12.0)*(pa - pb);
+      grad = grad + m*(1.0-center)*(pc - pf);
+      */
     }
     return grad;
   }
 
-  void compute_relocation_for_plan1(const Edge& edge, FT& coef, Vector& rhs) {
+  void compute_relocation_for_plan1(
+    const Edge& edge, FT& coef, Vector& rhs) const 
+  {
     //FT M = m_dt.get_mass(edge);
     const Point& pb = m_dt.target_vertex(edge)->point();
 
@@ -1289,20 +1292,30 @@ public:
           rhs
           + m * one_minus_coord
           * ((ps - CGAL::ORIGIN)
-              - coord * (pb - CGAL::ORIGIN));
+              - coord * (pb - CGAL::ORIGIN)); // CJTODO use traits functors
 
       /*
-             // only normal
-             FT bin = m/M;
-             FT center = start + 0.5*bin;
-             FT one_minus_center = 1.0 - center;
-             start += bin;
+      // only normal
+      FT bin = m/M;
+      FT center = start + 0.5*bin;
+      Point pc = CGAL::ORIGIN + (1.0-center)*(pa - CGAL::ORIGIN) + center*(pb - CGAL::ORIGIN);
+      start += bin;
+      grad = grad + m*(bin*bin/12.0)*(pa - pb);
+      grad = grad + m*(1.0-center)*(pc - pf);
+       */
 
-             coef += m*bin*bin/12.0;
-             rhs = rhs + m*(bin*bin/12.0)*(pb - CGAL::ORIGIN);
+      /*
+      // only normal
+      FT bin = m/M;
+      FT center = start + 0.5*bin;
+      FT one_minus_center = 1.0 - center;
+      start += bin;
 
-             coef += m*one_minus_center*(coord - center);
-             rhs = rhs + m*one_minus_center*(coord - center)*(pb - CGAL::ORIGIN);
+      coef += m*bin*bin/12.0;
+      rhs = rhs + m*(bin*bin/12.0)*(pb - CGAL::ORIGIN);
+
+      coef += m*one_minus_center*(coord - center);
+      rhs = rhs + m*one_minus_center*(coord - center)*(pb - CGAL::ORIGIN);
        */
     }
   }
@@ -1315,8 +1328,10 @@ public:
         ei != m_dt.finite_edges_end(); ++ei)
     {
       Edge edge = *ei;
-      if (m_dt.is_ghost(edge)) nb_ghost++;
-      else nb_solid++;
+      if (m_dt.is_ghost(edge))
+        nb_ghost++;
+      else
+        nb_solid++;
     }
 
     std::cerr << "STATS" << std::endl;
@@ -1328,26 +1343,25 @@ public:
   }
 
 
-
-
   /*!
-        Returns the number of vertices present in the reconstructed triangulation.
+    Returns the number of vertices present in the reconstructed triangulation.
    */
-  std::size_t number_of_vertices() {
+  std::size_t number_of_vertices() const {
     return m_dt.number_of_vertices() - 4;
 
   }
 
   /*!
-        Returns the number of (solid) edges present in the reconstructed triangulation.
+    Returns the number of (solid) edges present in the reconstructed triangulation.
    */
-  int number_of_edges() {
+  int number_of_edges() const {
     int nb_solid = 0;
     for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
-        ei != m_dt.finite_edges_end(); ++ei)
+         ei != m_dt.finite_edges_end(); ++ei)
     {
       Edge edge = *ei;
-      if (m_dt.is_ghost(edge)) continue;
+      if (m_dt.is_ghost(edge))
+        continue;
       nb_solid++;
     }
     return nb_solid;
@@ -1355,14 +1369,17 @@ public:
 
 
   /*!
-        Returns the cost of the (solid) edges present in the reconstructed triangulation.
+    Returns the cost of the (solid) edges present in the 
+    reconstructed triangulation.
    */
-  FT total_edge_cost() {
+  FT total_edge_cost() const {
     FT total_cost = 0;
     for (Finite_edges_iterator ei = m_dt.finite_edges_begin();
-        ei != m_dt.finite_edges_end(); ++ei) {
+         ei != m_dt.finite_edges_end(); ++ei) 
+    {
       Edge edge = *ei;
-      if (m_dt.is_ghost(edge)) continue;
+      if (m_dt.is_ghost(edge))
+        continue;
 
       total_cost += m_dt.get_cost(edge).finalize();
     }
@@ -1376,10 +1393,9 @@ public:
   /// You can freely mix calls of the following functions. 
   /// @{
   /*!
-            Computes a shape consisting of `np`  points, reconstructing the input
-            points.
-
-            \param np The number of points which will be present in the output.
+    Computes a shape consisting of `np` points, reconstructing the input
+    points.
+    \param np The number of points which will be present in the output.
    */
   void run_until(std::size_t np) {
     CGAL::Real_timer timer;
@@ -1402,10 +1418,9 @@ public:
   }
 
   /*!
-            Computes a shape, reconstructing the input, by performing `steps`
-            edge collapse operators on the output simplex.
-
-            \param steps The number of edge collapse operators to be performed.
+    Computes a shape, reconstructing the input, by performing `steps`
+    edge collapse operators on the output simplex.
+    \param steps The number of edge collapse operators to be performed.
    */
   void run(const unsigned steps) {
     CGAL::Real_timer timer;
@@ -1490,15 +1505,19 @@ public:
         \param isolated_points The output iterator for the indices of isolated points
         \param segments The output iterator for the pairs of segment indices
    */
-  template <typename PointOutputIterator,
-  typename IndexOutputIterator,
-  typename IndexPairOutputIterator>
-  CGAL::cpp11::tuple<PointOutputIterator, 
-  IndexOutputIterator,
-  IndexPairOutputIterator>
-  indexed_output(PointOutputIterator points,
-      IndexOutputIterator isolated_points,
-      IndexPairOutputIterator segments) {
+  template <
+    typename PointOutputIterator,
+    typename IndexOutputIterator,
+    typename IndexPairOutputIterator>
+  CGAL::cpp11::tuple<
+    PointOutputIterator, 
+    IndexOutputIterator,
+    IndexPairOutputIterator>
+  indexed_output(
+    PointOutputIterator points,
+    IndexOutputIterator isolated_points,
+    IndexPairOutputIterator segments) const
+  {
 
     typedef typename Gt::Segment_2 Segment;
     std::vector<Point> isolated_points_;
@@ -1562,18 +1581,15 @@ public:
     \details It takes two output iterators, one for storing the
     isolated points and one for storing the edges of the reconstructed shape.
 
-
     \tparam PointOutputIterator The output iterator type for storing the isolated points
-
     \tparam SegmentOutputIterator The output iterator type for storing the edges as segments.
    */
   template<class PointOutputIterator, class SegmentOutputIterator>
-  void list_output (PointOutputIterator v_it, SegmentOutputIterator e_it) {
-
+  void list_output (PointOutputIterator v_it, SegmentOutputIterator e_it) const
+  {
     for (Vertex_iterator vi = m_dt.vertices_begin();
-        vi != m_dt.vertices_end(); ++vi)
+         vi != m_dt.vertices_end(); ++vi)
     {
-
       bool incident_edges_have_sample = false;
       typename Triangulation::Edge_circulator start = m_dt.incident_edges(vi);
       typename Triangulation::Edge_circulator cur   = start;
@@ -1609,21 +1625,17 @@ public:
       *e_it = s;
       e_it++;
     }
-
-
   }
   /// \endcond
 
 
-
   /// \cond SKIP_IN_MANUAL
-  void extract_tds_output(Triangulation& rt2) {
+  void extract_tds_output(Triangulation& rt2) const {
     rt2 = m_dt;
     //mark vertices
     for (Vertex_iterator vi = rt2.vertices_begin();
         vi != rt2.vertices_end(); ++vi)
     {
-
       bool incident_edges_have_sample = false;
       typename Triangulation::Edge_circulator start = rt2.incident_edges(vi);
       typename Triangulation::Edge_circulator cur = start;
@@ -1641,7 +1653,6 @@ public:
           (*vi).set_relevance(1);
       }
     }
-
 
     // mark edges
     for (Finite_edges_iterator ei = rt2.finite_edges_begin(); ei != rt2.finite_edges_end(); ++ei)
