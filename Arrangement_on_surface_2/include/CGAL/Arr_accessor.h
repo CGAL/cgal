@@ -871,9 +871,9 @@ public:
                                               end=range.end();
                                               it!=end; ++it)
     {
-      CGAL_assertion(! p_arr->_vertex(*it)->has_null_point());
-      p_arr->_delete_point( p_arr->_vertex(*it)->point() );
-      p_arr->_dcel().delete_vertex( p_arr->_vertex(*it) );
+      CGAL_assertion(! (*it)->has_null_point());
+      p_arr->_delete_point( (*it)->point() );
+      p_arr->_dcel().delete_vertex( *it );
     }
   }
 
@@ -887,9 +887,9 @@ public:
                                             end=range.end();
                                             it!=end; ++it)
     {
-      CGAL_assertion(! p_arr->_halfedge(*it)->has_null_curve());
-      p_arr->_delete_curve( p_arr->_halfedge(*it)->curve() );
-      p_arr->_dcel().delete_edge( p_arr->_halfedge(*it) );
+      CGAL_assertion(! (*it)->has_null_curve());
+      p_arr->_delete_curve( (*it)->curve() );
+      p_arr->_dcel().delete_edge( *it );
     }
   }
 
@@ -903,7 +903,7 @@ public:
                                             end=range.end();
                                             it!=end; ++it)
     {
-      p_arr->_dcel().delete_face( p_arr->_face(*it) );
+      p_arr->_dcel().delete_face( *it );
     }
   }
 

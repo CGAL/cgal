@@ -939,19 +939,7 @@ protected:
   typename Aos_2::Dcel::Halfedge*
   _halfedge(Halfedge_handle h)
   {
-    return static_cast<typename Aos_2::Dcel::Halfedge*>(&(*h));
-  }
-
-  typename Aos_2::Dcel::Vertex*
-  _vertex(Vertex_handle v)
-  {
-    return static_cast<typename Aos_2::Dcel::Vertex*>(&(*v));
-  }
-
-  typename Aos_2::Dcel::Face*
-  _face(Face_handle f)
-  {
-    return static_cast<typename Aos_2::Dcel::Face*>(&(*f));
+    return &(*h);
   }
 
   void _remove_redundant_edges(Aos_2* arr)
@@ -969,10 +957,10 @@ protected:
     // algorithm to group faces in set that will be merged by the removal
     // of redundant edges. Then only the master of the set will be kept.
     // Here we also collect edges that needs to be removed.
-    typedef Union_find<typename Aos_2::Dcel::Face_iterator> UF_faces;
+    typedef Union_find<typename Aos_2::Dcel::Face*> UF_faces;
     std::vector<typename UF_faces::handle> face_handles;
     UF_faces uf_faces;
-    std::vector< Halfedge_handle > edges_to_remove;
+    std::vector< typename Aos_2::Dcel::Halfedge* > edges_to_remove;
     bool all_edges_are_redundant=true;
 
     for (Edge_iterator itr = arr->edges_begin(); itr != arr->edges_end(); ++itr)
@@ -984,8 +972,9 @@ protected:
       // put in the same set faces that will be merged when removing redundant edges
       if ( is_redundant(he) )
       {
-        typename Aos_2::Dcel::Face_iterator f1=he->face().current_iterator(),
-                                            f2=he->twin()->face().current_iterator();
+
+        typename Aos_2::Dcel::Face* f1=&(*he->face()),
+                                  * f2=&(*he->twin()->face());
         if (f1->id_not_set()){
           f1->set_id(face_handles.size());
           face_handles.push_back( uf_faces.make_set( f1 ) );
@@ -996,7 +985,7 @@ protected:
         }
 
         uf_faces.unify_sets(face_handles[f1->id()], face_handles[f2->id()]);
-        edges_to_remove.push_back( he );
+        edges_to_remove.push_back( _halfedge(he) );
       }
       else
         all_edges_are_redundant=false;
@@ -1095,9 +1084,10 @@ protected:
     // update the next/prev relationship around vertices kept incident
     // to at least one edge to remove. We link non redundant halfedges together.
     //We also collect vertices to remove at the same time.
-    std::vector< typename Aos_2::Dcel::Vertex_iterator > vertices_to_remove;
+    std::vector< typename Aos_2::Dcel::Vertex* > vertices_to_remove;
     for(Vertex_iterator vi=arr->vertices_begin(), vi_end=arr->vertices_end(); vi!=vi_end; ++vi)
     {
+      typename Aos_2::Dcel::Vertex* v_ptr=&(*vi);
       Halfedge_handle h_start=vi->incident_halfedges(), h=h_start;
 
       std::vector<Halfedge_handle> non_redundant_edges;
@@ -1114,7 +1104,7 @@ protected:
       // if only redundant edges are incident to the vertex, then the
       // vertex will be removed and nothing needs to be done.
       if (non_redundant_edges.empty()){
-        vertices_to_remove.push_back(vi.current_iterator());
+        vertices_to_remove.push_back(v_ptr);
         continue;
       }
       //if the vertex neighbor is already correct, then continue
@@ -1126,7 +1116,7 @@ protected:
       non_redundant_edges.push_back(non_redundant_edges.front());
 
       //update vertex halfedge
-      _vertex(vi)->set_halfedge(_halfedge(non_redundant_edges.back()));
+      v_ptr->set_halfedge(_halfedge(non_redundant_edges.back()));
       for (std::size_t i=0; i<nb_edges; ++i)
       {
         Halfedge_handle h1 = non_redundant_edges[i], h2=non_redundant_edges[i+1];
@@ -1147,7 +1137,7 @@ protected:
     }
 
     //collect faces to remove and update unbounded face flag
-    std::vector< Face_handle> faces_to_remove;
+    std::vector< typename Aos_2::Dcel::Face*> faces_to_remove;
     std::vector< typename Aos_2::Dcel::Outer_ccb* > outer_ccbs_to_remove;
     std::vector< typename Aos_2::Dcel::Inner_ccb* > inner_ccbs_to_remove;
     for(typename UF_faces::iterator it=uf_faces.begin(),
@@ -1158,7 +1148,7 @@ protected:
       if ( master!=it)
       {
         // force to keep the unbounded face
-        if (_face(*it)->is_unbounded())
+        if ((*it)->is_unbounded())
         {
           face_handles[(*master)->id()]=it;
           faces_to_remove.push_back(*master);
@@ -1168,12 +1158,12 @@ protected:
       }
 
       //collect for reuse/removal all inner and outer ccbs
-      BOOST_FOREACH(void* ptr, _face(*it)->_outer_ccbs())
+      BOOST_FOREACH(void* ptr, (*it)->_outer_ccbs())
         outer_ccbs_to_remove.push_back( static_cast<typename Aos_2::Dcel::Halfedge*>(ptr)->outer_ccb() );
-      BOOST_FOREACH(void* ptr, _face(*it)->_inner_ccbs())
+      BOOST_FOREACH(void* ptr, (*it)->_inner_ccbs())
         inner_ccbs_to_remove.push_back( static_cast<typename Aos_2::Dcel::Halfedge*>(ptr)->inner_ccb() );
-      _face(*it)->_outer_ccbs().clear();
-      _face(*it)->_inner_ccbs().clear();
+      (*it)->_outer_ccbs().clear();
+      (*it)->_inner_ccbs().clear();
     }
 
     // accessor for  low-level arrangement fonctionalities
@@ -1189,7 +1179,7 @@ protected:
 
       CGAL_assertion( h->flag()==ON_INNER_CCB || h->flag()==ON_OUTER_CCB );
 
-      typename Aos_2::Dcel::Face_iterator f=h->face().current_iterator();
+      typename Aos_2::Dcel::Face* f=&(*h->face());
 
       if (!f->id_not_set())
       {
@@ -1213,7 +1203,7 @@ protected:
           }while(hstart!=h);
           f->add_inner_ccb(inner_ccb,_halfedge(h));
           inner_ccb->set_halfedge(_halfedge(h));
-          inner_ccb->set_face(_face(f));
+          inner_ccb->set_face(f);
         }
         else{
           CGAL_assertion(!outer_ccbs_to_remove.empty());
@@ -1227,7 +1217,7 @@ protected:
           }while(hstart!=h);
           f->add_outer_ccb(outer_ccb,_halfedge(h));
           outer_ccb->set_halfedge(_halfedge(h));
-          outer_ccb->set_face(_face(f));
+          outer_ccb->set_face(f);
         }
       }
     }
