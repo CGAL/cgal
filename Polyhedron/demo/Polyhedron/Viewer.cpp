@@ -5,6 +5,8 @@
 #include <QKeyEvent>
 #include <QGLViewer/manipulatedCameraFrame.h>
 #include <QDebug>
+#include <QOpenGLShader>
+#include <cmath>
 class Viewer_impl {
 public:
   Scene_draw_interface* scene;
@@ -25,11 +27,14 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->twosides = false;
   d->macro_mode = false;
   setShortcut(EXIT_VIEWER, 0);
+  setShortcut(DRAW_AXIS, 0);
   setKeyDescription(Qt::Key_T,
                     tr("Turn the camera by 180 degrees"));
   setKeyDescription(Qt::Key_M,
                     tr("Toggle macro mode: useful to view details very near from the camera, "
                        "but decrease the z-buffer precision"));
+  setKeyDescription(Qt::Key_A,
+                      tr("Toggle the axis system visibility."));
 #if QGLVIEWER_VERSION >= 0x020501
   //modify mouse bindings that have been updated
   setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL, true, Qt::RightButton);
@@ -54,6 +59,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   pickMatrix_[10]=1;
   pickMatrix_[15]=1;
   prev_radius = sceneRadius();
+  axis_are_displayed = true;
 }
 
 Viewer::~Viewer()
@@ -126,8 +132,99 @@ void Viewer::initializeGL()
 
 
   setBackgroundColor(::Qt::white);
+  vao[0].create();
+  for(int i=0; i<3; i++)
+    buffers[i].create();
   d->scene->initializeGL();
 
+  //Vertex source code
+  const char vertex_source[] =
+  {
+      "#version 120 \n"
+      "attribute highp vec4 vertex;\n"
+      "attribute highp vec3 normal;\n"
+      "attribute highp vec4 colors;\n"
+      "uniform highp mat4 mvp_matrix;\n"
+      "uniform highp mat4 ortho_mat;\n"
+      "uniform highp mat4 mv_matrix; \n"
+      "uniform highp float width; \n"
+      "uniform highp float height; \n"
+      "varying highp vec4 fP; \n"
+      "varying highp vec3 fN; \n"
+      "varying highp vec4 color; \n"
+      "void main(void)\n"
+      "{\n"
+      "   color = colors; \n"
+      "   fP = mv_matrix * vertex; \n"
+      "   fN = mat3(mv_matrix)* normal; \n"
+      "   vec4 temp = vec4(mvp_matrix * vertex); \n"
+      "   vec4 ort = ortho_mat * vec4(width, height, 0,0); \n"
+      "   float ratio = width/height; \n"
+      "   if(ratio>=1) \n"
+      "     gl_Position = ort +  vec4(temp.x-ort.x/10, ratio*temp.y-ratio*ort.y/10, temp.z, 1.0); \n"
+      "   else \n"
+      "     gl_Position = ort +  vec4(temp.x-1/ratio*ort.x/10, width/height*temp.y-ort.y/10, temp.z, 1.0); \n"
+
+      "} \n"
+      "\n"
+  };
+  //Fragment source code
+  const char fragment_source[] =
+  {
+      "#version 120 \n"
+      "varying highp vec4 color; \n"
+      "varying highp vec4 fP; \n"
+      "varying highp vec3 fN; \n"
+      "uniform highp vec4 light_pos;  \n"
+      "uniform highp vec4 light_diff; \n"
+      "uniform highp vec4 light_spec; \n"
+      "uniform highp vec4 light_amb;  \n"
+      "uniform highp float spec_power ; \n"
+
+      "void main(void) { \n"
+
+      "   vec3 L = light_pos.xyz - fP.xyz; \n"
+      "   vec3 V = -fP.xyz; \n"
+      "   vec3 N; \n"
+      "   if(fN == vec3(0.0,0.0,0.0)) \n"
+      "       N = vec3(0.0,0.0,0.0); \n"
+      "   else \n"
+      "       N = normalize(fN); \n"
+      "   L = normalize(L); \n"
+      "   V = normalize(V); \n"
+      "   vec3 R = reflect(-L, N); \n"
+      "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
+      "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
+
+      "gl_FragColor = color*light_amb + diffuse + specular; \n"
+      "} \n"
+      "\n"
+  };
+  QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
+  if(!vertex_shader->compileSourceCode(vertex_source))
+  {
+      std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+  }
+
+  QOpenGLShader *fragment_shader= new QOpenGLShader(QOpenGLShader::Fragment);
+  if(!fragment_shader->compileSourceCode(fragment_source))
+  {
+      std::cerr<<"Compiling fragmentsource FAILED"<<std::endl;
+  }
+
+  if(!rendering_program.addShader(vertex_shader))
+  {
+      std::cerr<<"adding vertex shader FAILED"<<std::endl;
+  }
+  if(!rendering_program.addShader(fragment_shader))
+  {
+      std::cerr<<"adding fragment shader FAILED"<<std::endl;
+  }
+  if(!rendering_program.link())
+  {
+      //std::cerr<<"linking Program FAILED"<<std::endl;
+      qDebug() << rendering_program.log();
+  }
 }
 
 #include <QMouseEvent>
@@ -168,6 +265,10 @@ void Viewer::keyPressEvent(QKeyEvent* e)
 
       return;
     }
+    else if(e->key() == Qt::Key_A) {
+          axis_are_displayed = !axis_are_displayed;
+          updateGL();
+        }
   }
   //forward the event to the scene (item handling of the event)
   if (! d->scene->keyPressEvent(e) )
@@ -374,4 +475,302 @@ void Viewer::endSelection(const QPoint& point)
     pickMatrix_[5]=1;
     pickMatrix_[10]=1;
     pickMatrix_[15]=1;
+}
+
+void Viewer::makeArrow(float R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data)
+{
+    qglviewer::Vec temp = to-from;
+    QVector3D dir = QVector3D(temp.x, temp.y, temp.z);
+    QMatrix4x4 mat;
+    mat.setToIdentity();
+    mat.translate(from.x, from.y, from.z);
+    mat.scale(dir.length());
+    dir.normalize();
+    float angle = 0.0;
+    if(std::sqrt((dir.x()*dir.x()+dir.y()*dir.y())) > 1)
+        angle = 90.0f;
+    else
+        angle =acos(dir.y()/std::sqrt(dir.x()*dir.x()+dir.y()*dir.y()+dir.z()*dir.z()))*180.0/M_PI;
+
+    QVector3D axis;
+    axis = QVector3D(dir.z(), 0, -dir.x());
+    mat.rotate(angle, axis);
+
+    //Head
+    for(int d = 0; d<360; d+= 360/prec)
+    {
+        double D = d*M_PI/180.0;
+        double a =std::atan(R/0.33);
+        QVector4D p(0,1.0,0, 1.0);
+        QVector4D n(R*2.0*sin(D), sin(a), R*2.0*cos(D), 1.0);
+        QVector4D pR = mat*p;
+        QVector4D nR = mat*n;
+
+        //point A1
+        data.vertices->push_back(pR.x());
+        data.vertices->push_back(pR.y());
+        data.vertices->push_back(pR.z());
+        data.normals->push_back(nR.x());
+        data.normals->push_back(nR.y());
+        data.normals->push_back(nR.z());
+        data.colors->push_back(color.x);
+        data.colors->push_back(color.y);
+        data.colors->push_back(color.z);
+
+        //point B1
+        p = QVector4D(R*2.0* sin(D),0.66,R *2.0* cos(D), 1.0);
+        n = QVector4D(sin(D), sin(a), cos(D), 1.0);
+        pR = mat*p;
+        nR = mat*n;
+        data.vertices->push_back(pR.x());
+        data.vertices->push_back(pR.y());
+        data.vertices->push_back(pR.z());
+        data.normals->push_back(nR.x());
+        data.normals->push_back(nR.y());
+        data.normals->push_back(nR.z());
+        data.colors->push_back(color.x);
+        data.colors->push_back(color.y);
+        data.colors->push_back(color.z);
+        //point C1
+        D = (d+360/prec)*M_PI/180.0;
+        p = QVector4D(R*2.0* sin(D),0.66,R *2.0* cos(D), 1.0);
+        n = QVector4D(sin(D), sin(a), cos(D), 1.0);
+        pR = mat*p;
+        nR = mat*n;
+
+        data.vertices->push_back(pR.x());
+        data.vertices->push_back(pR.y());
+        data.vertices->push_back(pR.z());
+        data.normals->push_back(nR.x());
+        data.normals->push_back(nR.y());
+        data.normals->push_back(nR.z());
+        data.colors->push_back(color.x);
+        data.colors->push_back(color.y);
+        data.colors->push_back(color.z);
+
+    }
+
+    //cylinder
+    //body of the cylinder
+    for(int d = 0; d<360; d+= 360/prec)
+    {
+        //point A1
+        float D = d*M_PI/180.0;
+        QVector4D p(R*sin(D),0.66,R*cos(D), 1.0);
+        QVector4D n(sin(D), 0, cos(D), 1.0);
+        QVector4D pR = mat*p;
+        QVector4D nR = mat*n;
+
+        data.vertices->push_back(pR.x());
+        data.vertices->push_back(pR.y());
+        data.vertices->push_back(pR.z());
+        data.normals->push_back(nR.x());
+        data.normals->push_back(nR.y());
+        data.normals->push_back(nR.z());
+        data.colors->push_back(color.x);
+        data.colors->push_back(color.y);
+        data.colors->push_back(color.z);
+        //point B1
+        p = QVector4D(R * sin(D),0,R*cos(D), 1.0);
+        n = QVector4D(sin(D), 0, cos(D), 1.0);
+        pR = mat*p;
+        nR = mat*n;
+
+
+        data.vertices->push_back(pR.x());
+        data.vertices->push_back(pR.y());
+        data.vertices->push_back(pR.z());
+        data.normals->push_back(nR.x());
+        data.normals->push_back(nR.y());
+        data.normals->push_back(nR.z());
+        data.colors->push_back(color.x);
+        data.colors->push_back(color.y);
+        data.colors->push_back(color.z);
+          //point C1
+        D = (d+360/prec)*M_PI/180.0;
+        p = QVector4D(R * sin(D),0,R*cos(D), 1.0);
+        n = QVector4D(sin(D), 0, cos(D), 1.0);
+        pR = mat*p;
+        nR = mat*n;
+        data.vertices->push_back(pR.x());
+        data.vertices->push_back(pR.y());
+        data.vertices->push_back(pR.z());
+        data.normals->push_back(nR.x());
+        data.normals->push_back(nR.y());
+        data.normals->push_back(nR.z());
+        data.colors->push_back(color.x);
+        data.colors->push_back(color.y);
+        data.colors->push_back(color.z);
+        //point A2
+        D = (d+360/prec)*M_PI/180.0;
+
+        p = QVector4D(R * sin(D),0,R*cos(D), 1.0);
+        n = QVector4D(sin(D), 0, cos(D), 1.0);
+        pR = mat*p;
+        nR = mat*n;
+        data.vertices->push_back(pR.x());
+        data.vertices->push_back(pR.y());
+        data.vertices->push_back(pR.z());
+        data.normals->push_back(nR.x());
+        data.normals->push_back(nR.y());
+        data.normals->push_back(nR.z());
+        data.colors->push_back(color.x);
+        data.colors->push_back(color.y);
+        data.colors->push_back(color.z);
+        //point B2
+        p = QVector4D(R * sin(D),0.66,R*cos(D), 1.0);
+        n = QVector4D(sin(D), 0, cos(D), 1.0);
+        pR = mat*p;
+        nR = mat*n;
+        data.vertices->push_back(pR.x());
+        data.vertices->push_back(pR.y());
+        data.vertices->push_back(pR.z());
+        data.normals->push_back(nR.x());
+        data.normals->push_back(nR.y());
+        data.normals->push_back(nR.z());
+        data.colors->push_back(color.x);
+        data.colors->push_back(color.y);
+        data.colors->push_back(color.z);
+        //point C2
+        D = d*M_PI/180.0;
+        p = QVector4D(R * sin(D),0.66,R*cos(D), 1.0);
+        n = QVector4D(sin(D), 0, cos(D), 1.0);
+        pR = mat*p;
+        nR = mat*n;
+        data.vertices->push_back(pR.x());
+        data.vertices->push_back(pR.y());
+        data.vertices->push_back(pR.z());
+        data.normals->push_back(nR.x());
+        data.normals->push_back(nR.y());
+        data.normals->push_back(nR.z());
+        data.colors->push_back(color.x);
+        data.colors->push_back(color.y);
+        data.colors->push_back(color.z);
+
+    }
+}
+
+void Viewer::drawVisualHints()
+{
+    QGLViewer::drawVisualHints();
+    if(axis_are_displayed)
+    {
+        QMatrix4x4 mvpMatrix;
+        QMatrix4x4 mvMatrix;
+        double mat[16];
+        camera()->frame()->rotation().getMatrix(mat);
+        for(int i=0; i < 16; i++)
+        {
+            mvpMatrix.data()[i] = (float)mat[i];
+        }
+        camera()->getModelViewMatrix(mat);
+        for(int i=0; i < 16; i++)
+        {
+            mvMatrix.data()[i] = (float)mat[i];
+        }
+
+        QVector4D	position(0.0f,0.0f,1.0f,1.0f );
+        // define material
+        QVector4D	ambient;
+        QVector4D	diffuse;
+        QVector4D	specular;
+        GLfloat      shininess ;
+        // Ambient
+        ambient[0] = 0.29225f;
+        ambient[1] = 0.29225f;
+        ambient[2] = 0.29225f;
+        ambient[3] = 1.0f;
+        // Diffuse
+        diffuse[0] = 0.50754f;
+        diffuse[1] = 0.50754f;
+        diffuse[2] = 0.50754f;
+        diffuse[3] = 1.0f;
+        // Specular
+        specular[0] = 0.0f;
+        specular[1] = 0.0f;
+        specular[2] = 0.0f;
+        specular[3] = 0.0f;
+        // Shininess
+        shininess = 51.2f;
+
+        rendering_program.bind();
+        rendering_program.setUniformValue("light_pos", position);
+        rendering_program.setUniformValue("mvp_matrix", mvpMatrix);
+        rendering_program.setUniformValue("mv_matrix", mvMatrix);
+        rendering_program.setUniformValue("light_diff", diffuse);
+        rendering_program.setUniformValue("light_spec", specular);
+        rendering_program.setUniformValue("light_amb", ambient);
+        rendering_program.setUniformValue("spec_power", shininess);
+        rendering_program.release();
+
+        vao[0].bind();
+        rendering_program.bind();
+        glDrawArrays(GL_TRIANGLES, 0, v_Axis.size() / 3);
+        rendering_program.release();
+        vao[0].release();
+    }
+
+}
+
+void Viewer::resizeGL(int w, int h)
+{
+    QGLViewer::resizeGL(w,h);
+    qglviewer::Vec dim = qglviewer::Vec(w,h, 0) ;
+    GLdouble ortho[16];
+    QMatrix4x4 orthoMatrix;
+    ortho[0]  = 1.0/width(); ortho[1]  = 0; ortho[2]  = 0; ortho[3]  = -0.0;
+    ortho[4]  = 0; ortho[5]  = 1.0/height(); ortho[6]  = 0; ortho[7]  = -0.0;
+    ortho[8]  = 0; ortho[9]  = 0; ortho[10] = 2.0/(camera()->zNear()-camera()->zFar()); ortho[11] = -(camera()->zNear()+camera()->zFar())/(-camera()->zNear()+camera()->zFar());
+    ortho[12] = 0; ortho[13] = 0; ortho[14] = 0; ortho[15] = 1;
+    for(int i=0; i < 16; i++)
+    {
+        orthoMatrix.data()[i] = (float)ortho[i];
+    }
+    int max = w;
+    if (h>w)
+        max = h;
+    QVector4D length(max,max,max, 1.0);
+    length = orthoMatrix * length;
+    AxisData data;
+    v_Axis.resize(0);
+    n_Axis.resize(0);
+    c_Axis.resize(0);
+    data.vertices = &v_Axis;
+    data.normals = &n_Axis;
+    data.colors = &c_Axis;
+    makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(length.x()/10.0,0,0),qglviewer::Vec(1,0,0), data);
+    makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,length.x()/10.0,0),qglviewer::Vec(0,1,0), data);
+    makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,-length.x()/10.0),qglviewer::Vec(0,0,1), data);
+
+
+    vao[0].bind();
+    buffers[0].bind();
+    buffers[0].allocate(v_Axis.data(), v_Axis.size() * sizeof(float));
+    rendering_program.enableAttributeArray("vertex");
+    rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
+    buffers[0].release();
+
+    buffers[1].bind();
+    buffers[1].allocate(n_Axis.data(), n_Axis.size() * sizeof(float));
+    rendering_program.enableAttributeArray("normal");
+    rendering_program.setAttributeBuffer("normal",GL_FLOAT,0,3);
+    buffers[1].release();
+
+    buffers[2].bind();
+    buffers[2].allocate(c_Axis.data(), c_Axis.size() * sizeof(float));
+    rendering_program.enableAttributeArray("colors");
+    rendering_program.setAttributeBuffer("colors",GL_FLOAT,0,3);
+    buffers[2].release();
+
+    rendering_program.release();
+    vao[0].release();
+
+
+
+    rendering_program.bind();
+    rendering_program.setUniformValue("width", (float)dim.x);
+    rendering_program.setUniformValue("height", (float)dim.y);
+    rendering_program.setUniformValue("ortho_mat", orthoMatrix);
+    rendering_program.release();
+
 }
