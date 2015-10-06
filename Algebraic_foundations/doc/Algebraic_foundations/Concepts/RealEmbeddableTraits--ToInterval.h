@@ -22,9 +22,9 @@ public:
 /// @{
 
 /*!
-Is `std::pair<double,double>`. 
+The result type.
 */ 
-typedef unspecified_type result_type; 
+typedef std::pair<double,double> result_type;
 
 /*!
 Is `RealEmbeddableTraits::Type`. 
