@@ -413,6 +413,7 @@ void Scene_nef_polyhedron_item::draw(Viewer_interface* viewer) const
         program->setAttributeValue("colors", this->color().lighter(120));
     else
         program->setAttributeValue("colors", this->color());
+    program->setUniformValue("is_two_side", 1);
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/3));
     vaos[0]->release();
     program->release();
