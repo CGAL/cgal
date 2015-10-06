@@ -203,6 +203,16 @@ find_package(PythonInterp 2.6.7)
     subdirlist(CGAL_DOC_PACKAGES ${CMAKE_SOURCE_DIR}/doc)
   endif()
 
+  # Setup CGAL_DOC_ALL_IMAGE_PATHS, which is needed in
+  # Documentation/Doxyfile.in to have images of all packages.
+
+  set(CGAL_DOC_ALL_IMAGE_PATHS "\\")
+  foreach(package_dir ${CGAL_DOC_PACKAGES})
+    if(EXISTS ${package_dir}/fig)
+      set(CGAL_DOC_ALL_IMAGE_PATHS "${CGAL_DOC_ALL_IMAGE_PATHS}\n${package_dir}/fig \\")
+    endif()
+  endforeach()
+
   foreach(package ${CGAL_DOC_PACKAGES})
     configure_doxygen_package(${package})
   endforeach()
