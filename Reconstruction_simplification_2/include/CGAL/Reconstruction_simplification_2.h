@@ -102,6 +102,7 @@ public:
    */
   typedef typename Gt::Vector_2 Vector;
 
+  typedef typename Gt::Segment_2 Segment;
 
   typedef typename std::pair<Point, FT> PointMassPair;
   typedef typename std::vector<PointMassPair> PointMassList;
@@ -111,7 +112,6 @@ public:
     The Output simplex.
    */
   typedef Reconstruction_triangulation_2<Gt> Triangulation;
-
 
   typedef typename Triangulation::Vertex                Vertex;
   typedef typename Triangulation::Vertex_handle         Vertex_handle;
@@ -154,6 +154,7 @@ public:
 
 protected:
   Triangulation m_dt;
+  Gt const& m_traits;
   MultiIndex m_mindex;
   int m_ignore;
   int m_verbose;
@@ -201,6 +202,7 @@ public:
                       between two edge collapses.
   \param verbose      Controls how much console output is produced by 
                       the algorithm. The values are 0, 1, or > 1.
+  \param traits       The traits class.
    */
   template <class InputRange>
   Reconstruction_simplification_2(
@@ -210,8 +212,11 @@ public:
     std::size_t sample_size = 0,
     bool use_flip = true,
     unsigned int relocation = 0,
-    int verbose = 0)
-  : m_ignore(0), 
+    int verbose = 0,
+    Gt traits = Gt())
+  : m_dt(traits),
+    m_traits(m_dt.geom_traits()),
+    m_ignore(0), 
     m_verbose(verbose),
     m_mchoice(sample_size),
     m_use_flip(use_flip),
@@ -341,7 +346,9 @@ public:
 
   /// \cond SKIP_IN_MANUAL
 
-  Reconstruction_simplification_2() {
+  Reconstruction_simplification_2()
+  : m_traits(m_dt.geom_traits())
+  {
     initialize_parameters();
   }
 
@@ -411,7 +418,7 @@ public:
   {
     FT dx = -scale + (FT(rand()) / FT(RAND_MAX)) * 2* scale;
     FT dy = -scale + (FT(rand()) / FT(RAND_MAX)) * 2* scale;
-    return Vector(dx, dy); // CJTODO use traits functors
+    return m_traits.construct_vector_2_object()(dx, dy);
   }
 
   void clear() {
@@ -436,10 +443,10 @@ public:
 
     timer.start();
     int nb = static_cast<int>(m_dt.number_of_vertices());
-    insert_point(Point(x - size, y - size), true, nb++); // CJTODO use traits functors
-    insert_point(Point(x - size, y + size), true, nb++);
-    insert_point(Point(x + size, y + size), true, nb++);
-    insert_point(Point(x + size, y - size), true, nb++);
+    insert_point(m_traits.construct_point_2_object()(x - size, y - size), true, nb++);
+    insert_point(m_traits.construct_point_2_object()(x - size, y + size), true, nb++);
+    insert_point(m_traits.construct_point_2_object()(x + size, y + size), true, nb++);
+    insert_point(m_traits.construct_point_2_object()(x + size, y - size), true, nb++);
 
     std::cerr << "done" << " (" << nb << " vertices, "
       << timer.time() << " s)" << std::endl;
@@ -1125,7 +1132,7 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   Vector compute_gradient(Vertex_handle vertex) const {
-    Vector grad(FT(0), FT(0)); // CJTODO use traits functors
+    Vector grad = m_traits.construct_vector_2_object()(FT(0), FT(0));
     Edge_circulator ecirc = m_dt.incident_edges(vertex);
     Edge_circulator eend = ecirc;
     CGAL_For_all(ecirc, eend)
@@ -1134,18 +1141,19 @@ public:
       if (m_dt.source_vertex(edge) != vertex)
         edge = m_dt.twin_edge(edge);
 
-      // CJTODO use traits functors
       if (m_dt.get_plan(edge) == 0)
-        grad = grad + compute_gradient_for_plan0(edge);
+        grad = m_traits.construct_sum_of_vectors_2_object()(
+          grad, compute_gradient_for_plan0(edge));
       else
-        grad = grad + compute_gradient_for_plan1(edge);
+        grad = m_traits.construct_sum_of_vectors_2_object()(
+          grad, compute_gradient_for_plan1(edge));
     }
     return grad;
   }
 
   Point compute_relocation(Vertex_handle vertex) const {
     FT coef = FT(0);
-    Vector rhs(FT(0), FT(0)); // CJTODO use traits functors
+    Vector rhs = m_traits.construct_vector_2_object()(FT(0), FT(0));
 
     Edge_circulator ecirc = m_dt.incident_edges(vertex);
     Edge_circulator eend = ecirc;
@@ -1164,7 +1172,10 @@ public:
 
     if (coef == FT(0))
       return vertex->point();
-    return CGAL::ORIGIN + (rhs / coef); // CJTODO use traits functors
+
+    return m_traits.construct_translated_point_2_object()(
+      CGAL::ORIGIN,
+      m_traits.construct_scaled_vector_2_object()(rhs, FT(1) / coef));
   }
 
   void compute_relocation_for_vertex(
@@ -1174,7 +1185,9 @@ public:
     if (sample) {
       const FT m = sample->mass();
       const Point& ps = sample->point();
-      rhs = rhs + m * (ps - CGAL::ORIGIN); // CJTODO use traits functors
+      rhs = m_traits.construct_sum_of_vectors_2_object()(rhs, 
+        m_traits.construct_scaled_vector_2_object()(
+          m_traits.construct_vector_2_object()(CGAL::ORIGIN, ps), m));
       coef += m;
     }
   }
@@ -1188,17 +1201,20 @@ public:
     m_dt.collect_samples_from_edge(edge, samples);
     m_dt.collect_samples_from_edge(twin, samples);
 
-    Vector grad(FT(0), FT(0)); // CJTODO use traits functors
+    Vector grad = m_traits.construct_vector_2_object()(FT(0), FT(0));
     Sample_vector_const_iterator it;
     for (it = samples.begin(); it != samples.end(); ++it) {
       Sample_* sample = *it;
       const FT m = sample->mass();
       const Point& ps = sample->point();
 
-      FT Da = CGAL::squared_distance(ps, pa); // CJTODO use traits functors
-      FT Db = CGAL::squared_distance(ps, pb);
+      FT Da = m_traits.compute_squared_distance_2_object()(ps, pa);
+      FT Db = m_traits.compute_squared_distance_2_object()(ps, pb);
       if (Da < Db)
-        grad = grad + m * (pa - ps); // CJTODO use traits functors
+        grad = m_traits.construct_sum_of_vectors_2_object()(
+          grad,
+          m_traits.construct_scaled_vector_2_object()(
+            m_traits.construct_vector_2_object()(ps, pa), m));
     }
     return grad;
   }
@@ -1220,11 +1236,13 @@ public:
       const FT m = sample->mass();
       const Point& ps = sample->point();
 
-      FT Da = CGAL::squared_distance(ps, pa); // CJTODO use traits functors
-      FT Db = CGAL::squared_distance(ps, pb);
+      FT Da = m_traits.compute_squared_distance_2_object()(ps, pa);
+      FT Db = m_traits.compute_squared_distance_2_object()(ps, pb);
 
       if (Da < Db) {
-        rhs = rhs + m * (ps - CGAL::ORIGIN); // CJTODO use traits functors
+        rhs = m_traits.construct_sum_of_vectors_2_object()(rhs, 
+          m_traits.construct_scaled_vector_2_object()(
+            m_traits.construct_vector_2_object()(CGAL::ORIGIN, ps), m));
         coef += m;
       }
     }
@@ -1239,7 +1257,7 @@ public:
     m_dt.sort_samples_from_edge(edge, queue);
 
     //FT start = FT(0);
-    Vector grad(FT(0), FT(0)); // CJTODO use traits functors
+    Vector grad = m_traits.construct_vector_2_object()(FT(0), FT(0));
     while (!queue.empty()) {
       PSample psample = queue.top();
       queue.pop();
@@ -1249,9 +1267,19 @@ public:
 
       // normal + tangnetial
       const FT coord = psample.priority();
-      Point pf = CGAL::ORIGIN + (1.0 - coord) * (pa - CGAL::ORIGIN)
-                        + coord * (pb - CGAL::ORIGIN); // CJTODO use traits functors
-      grad = grad + m * (1.0 - coord) * (pf - ps); // CJTODO use traits functors
+      Point pf = m_traits.construct_translated_point_2_object()(
+        CGAL::ORIGIN,
+        m_traits.construct_sum_of_vectors_2_object()(
+          m_traits.construct_scaled_vector_2_object()(
+            m_traits.construct_vector_2_object()(CGAL::ORIGIN, pa), 
+            1.0 - coord),
+          m_traits.construct_scaled_vector_2_object()(
+            m_traits.construct_vector_2_object()(CGAL::ORIGIN, pb), 
+            coord)));
+      grad = m_traits.construct_sum_of_vectors_2_object()(
+        grad,
+        m_traits.construct_scaled_vector_2_object()(
+          m_traits.construct_vector_2_object()(ps, pf), m * (1.0 - coord)));
 
       /*
       // only normal
@@ -1288,11 +1316,14 @@ public:
 
       // normal + tangential
       coef += m * one_minus_coord * one_minus_coord;
-      rhs =
-          rhs
-          + m * one_minus_coord
-          * ((ps - CGAL::ORIGIN)
-              - coord * (pb - CGAL::ORIGIN)); // CJTODO use traits functors
+      rhs = m_traits.construct_sum_of_vectors_2_object()(
+        rhs,
+        m_traits.construct_scaled_vector_2_object()(
+          m_traits.construct_sum_of_vectors_2_object()(
+            m_traits.construct_vector_2_object()(CGAL::ORIGIN, ps),
+            m_traits.construct_scaled_vector_2_object()(
+              m_traits.construct_vector_2_object()(CGAL::ORIGIN, pb), -coord)),
+          m * one_minus_coord));
 
       /*
       // only normal
@@ -1518,8 +1549,6 @@ public:
     IndexOutputIterator isolated_points,
     IndexPairOutputIterator segments) const
   {
-
-    typedef typename Gt::Segment_2 Segment;
     std::vector<Point> isolated_points_;
     std::vector<Segment> edges;
 
@@ -1621,7 +1650,8 @@ public:
       Vertex_handle source = edge.first->vertex( (index+1)%3 );
       Vertex_handle target = edge.first->vertex( (index+2)%3 );
 
-      typename Gt::Segment_2  s(source->point(), target->point());
+      Segment s = m_traits.construct_segment_2_object()(
+        source->point(), target->point());
       *e_it = s;
       e_it++;
     }
