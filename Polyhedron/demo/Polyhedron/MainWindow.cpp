@@ -1197,8 +1197,12 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
       menu->setProperty(prop_name, true);
     }
   }
+  QMenu *finalMenu = new QMenu();
+  finalMenu->addMenu(menu);
+  finalMenu->addMenu(ui->menuOperations);
+
   if(menu)
-    menu->exec(global_pos);
+    finalMenu->exec(global_pos);
 }
 
 void MainWindow::showSceneContextMenu(const QPoint& p) {
@@ -1612,3 +1616,5 @@ void MainWindow::on_actionRecenterScene_triggered()
   updateViewerBBox();
   viewer->camera()->interpolateToFitScene();
 }
+
+

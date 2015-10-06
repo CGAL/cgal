@@ -39,7 +39,6 @@ public:
 public Q_SLOTS:
   void setAntiAliasing(bool b);
   void setTwoSides(bool b);
-
   void turnCameraBy180Degres();
   QString dumpCameraCoordinates();
   bool moveCameraToCoordinates(QString, 

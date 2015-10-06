@@ -102,7 +102,6 @@ public Q_SLOTS:
 
 protected Q_SLOTS:
   void selectionChanged();
-
   void contextMenuRequested(const QPoint& global_pos);
   void showSceneContextMenu(int selectedItemIndex,
                             const QPoint& global_pos);
