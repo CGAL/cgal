@@ -107,13 +107,13 @@ public:
       m_info &= ~VISITED;
   }
 
-  typename Arr_face_base::Outer_ccbs_container&
+  Arr_face_base::Outer_ccbs_container&
   _outer_ccbs()
   {
     return this->outer_ccbs;
   }
 
-  typename Arr_face_base::Inner_ccbs_container&
+  Arr_face_base::Inner_ccbs_container&
   _inner_ccbs()
   {
     return this->inner_ccbs;
