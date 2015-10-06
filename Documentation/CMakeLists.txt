@@ -113,7 +113,6 @@ endif()
 
 find_package(PythonInterp 2.6.7)
 
-if(DOXYGEN_FOUND)
   # set up the directories and variables
   set(CGAL_DOC_MATHJAX_LOCATION "https://cdn.mathjax.org/mathjax/latest"
       CACHE STRING "The location of MathJax to be used for the documentation.")
@@ -247,4 +246,3 @@ if(DOXYGEN_FOUND)
   
   # add_custom_target(doc) dummy to depend on all docs, require to run
   # twice or something
-endif()
