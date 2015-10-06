@@ -35,23 +35,22 @@ namespace CGAL {
 template <class X_monotone_curve_2>
 class Gps_halfedge_base : public Arr_halfedge_base<X_monotone_curve_2>
 {
-  int flooding_flag;
+  int _flag;
 public:
 
   typedef Arr_halfedge_base<X_monotone_curve_2> Base;
   Gps_halfedge_base()
     : Base()
-    , flooding_flag(-1)
+    , _flag(-1)
   {}
 
-  bool is_flooding_visited() const { return flooding_flag!=-1; }
-  bool is_flooding_on_inner_ccb() const { return flooding_flag==0; }
-  bool is_flooding_on_outer_ccb() const { return flooding_flag==1; }
-  void set_flooding_on_inner_ccb() {flooding_flag=0;}
-  void set_flooding_on_outer_ccb() {flooding_flag=1;}
-  void set_flooding_visited() {flooding_flag=2;}
-  void set_new_ccb_assigned() {flooding_flag=3;}
-  bool is_new_ccb_assigned() { return flooding_flag==3;}
+  int flag() const {
+    return _flag;
+  }
+
+  void set_flag(int i) {
+    _flag=i;
+  }
 };
 
 class Gps_face_base : public Arr_face_base

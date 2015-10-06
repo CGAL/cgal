@@ -956,6 +956,15 @@ protected:
 
   void _remove_redundant_edges(Aos_2* arr)
   {
+    // const integer for handling the status of halfedges
+    // during the flooding algorithm to tag halfedges as
+    // on an inner or outer ccb in the final arrangement
+    static const int ON_INNER_CCB=0;
+    static const int ON_OUTER_CCB=1;
+    static const int NOT_VISITED=-1;
+    static const int VISITED=2;
+    static const int NEW_CCB_ASSIGNED=3;
+
     // Consider the faces incident to a redundant edge and use a union-find
     // algorithm to group faces in set that will be merged by the removal
     // of redundant edges. Then only the master of the set will be kept.
@@ -969,6 +978,8 @@ protected:
     for (Edge_iterator itr = arr->edges_begin(); itr != arr->edges_end(); ++itr)
     {
       Halfedge_handle he = itr;
+      he->set_flag(NOT_VISITED);
+      he->twin()->set_flag(NOT_VISITED);
 
       // put in the same set faces that will be merged when removing redundant edges
       if ( is_redundant(he) )
@@ -1031,23 +1042,23 @@ protected:
       {
         Halfedge_handle hstart=stack_for_flooding.front(), h=hstart;
         stack_for_flooding.pop_front();
-        if (h->is_flooding_visited()) continue;
+        if (h->flag()!=NOT_VISITED) continue;
         do{
           if( h->is_on_outer_ccb() ){
             for( typename Aos_2::Inner_ccb_iterator ccb_it=h->face()->inner_ccbs_begin(),
                                                     ccb_end=h->face()->inner_ccbs_end();
                                                     ccb_it!=ccb_end; ++ccb_it)
-            if ( !(*ccb_it)->is_flooding_visited() )
+            if ( (*ccb_it)->flag()==NOT_VISITED )
               stack_for_flooding.push_back(*ccb_it);
           }
 
           if ( is_redundant(h) ){
-            if (!h->twin()->is_flooding_visited())
+            if (h->twin()->flag()==NOT_VISITED)
               stack_for_flooding.push_back(h->twin());
-            h->set_flooding_visited();
+            h->set_flag(VISITED);
           }
           else{
-            h->set_flooding_on_inner_ccb();
+            h->set_flag(ON_INNER_CCB);
             outer_ccb.push_back(h->twin());
           }
           h=h->next();
@@ -1057,15 +1068,15 @@ protected:
       for (std::size_t i=0; i< nb_hedges; ++i)
       {
         Halfedge_handle h=outer_ccb[i];
-        if( !h->is_flooding_visited() ){
+        if( h->flag()==NOT_VISITED ){
           Halfedge_handle hstart=h;
           do{
-            CGAL_assertion( !h->is_flooding_visited() );
+            CGAL_assertion( h->flag()==NOT_VISITED );
             if ( !is_redundant(h) )
-              h->set_flooding_on_outer_ccb();
+              h->set_flag(ON_OUTER_CCB);
             else
-              h->set_flooding_visited();
-            if (!h->twin()->is_flooding_visited()){
+              h->set_flag(VISITED);
+            if (h->twin()->flag()==NOT_VISITED){
               outer_ccb.push_back(h->twin());
               ++nb_hedges;
             }
@@ -1130,8 +1141,8 @@ protected:
       Halfedge_handle h = itr;
       if (is_redundant(itr))
       {
-        h->set_new_ccb_assigned();
-        h->twin()->set_new_ccb_assigned();
+        h->set_flag(NEW_CCB_ASSIGNED);
+        h->twin()->set_flag(NEW_CCB_ASSIGNED);
       }
     }
 
@@ -1174,9 +1185,9 @@ protected:
       Halfedge_handle h = itr;
 
       // either a redundant edge or an edge of an already handled ccb
-      if ( h->is_new_ccb_assigned() ) continue;
+      if ( h->flag()==NEW_CCB_ASSIGNED ) continue;
 
-      CGAL_assertion( h->is_flooding_on_inner_ccb() || h->is_flooding_on_outer_ccb() );
+      CGAL_assertion( h->flag()==ON_INNER_CCB || h->flag()==ON_OUTER_CCB );
 
       typename Aos_2::Dcel::Face_iterator f=h->face().current_iterator();
 
@@ -1188,7 +1199,7 @@ protected:
                 (*uf_faces.find(face_handles[f->id()]))->id()
               ]);
 
-        if (h->is_flooding_on_inner_ccb())
+        if (h->flag()==ON_INNER_CCB)
         {
           typename Aos_2::Dcel::Inner_ccb* inner_ccb = inner_ccbs_to_remove.empty()?
             accessor.new_inner_ccb():inner_ccbs_to_remove.back();
@@ -1197,7 +1208,7 @@ protected:
           Halfedge_handle hstart=h;
           do{
             _halfedge(h)->set_inner_ccb(inner_ccb);
-            h->set_new_ccb_assigned();
+            h->set_flag(NEW_CCB_ASSIGNED);
             h=h->next();
           }while(hstart!=h);
           f->add_inner_ccb(inner_ccb,_halfedge(h));
@@ -1211,7 +1222,7 @@ protected:
           Halfedge_handle hstart=h;
           do{
             _halfedge(h)->set_outer_ccb(outer_ccb);
-            h->set_new_ccb_assigned();
+            h->set_flag(NEW_CCB_ASSIGNED);
             h=h->next();
           }while(hstart!=h);
           f->add_outer_ccb(outer_ccb,_halfedge(h));
