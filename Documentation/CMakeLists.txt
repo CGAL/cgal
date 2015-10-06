@@ -159,7 +159,7 @@ find_package(PythonInterp 2.6.7)
   ## generate how_to_cite files
   if(PYTHONINTERP_FOUND)
     execute_process(COMMAND ${PYTHON_EXECUTABLE}
-                            ${CMAKE_CURRENT_SOURCE_DIR}/scripts/generate_how_to_cite.py
+                            ${CGAL_DOC_SCRIPT_DIR}/generate_how_to_cite.py
                             ${CMAKE_CURRENT_SOURCE_DIR}
                             ${CMAKE_BINARY_DIR})
 
