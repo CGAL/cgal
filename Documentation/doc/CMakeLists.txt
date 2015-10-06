@@ -20,89 +20,85 @@ macro(subdirlist result curdir)
   set(${result} ${dirlist})
 endmacro()
 
-function(configure_doxygen_package CGAL_PACKAGE_NAME)
-  set(CGAL_PACKAGE_DIR ${CMAKE_SOURCE_DIR}/${CGAL_PACKAGE_NAME})
-  subdirlist(SUBPACKAGES ${CGAL_PACKAGE_DIR}/doc)
-  foreach(package ${SUBPACKAGES})
-    set(CGAL_PACKAGE_NAME ${package}) # variable used for configuration
-    if(EXISTS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/Doxyfile.in)
-      set(CGAL_DOC_PACKAGE_DEFAULTS ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}_defaults.dxy)
-      file(REMOVE ${CGAL_DOC_PACKAGE_DEFAULTS})
-      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "@INCLUDE = ${CGAL_DOC_DOXY_DEFAULT}\n")
-      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "OUTPUT_DIRECTORY = ${CGAL_DOC_OUTPUT_DIR}/${CGAL_PACKAGE_NAME}\n")
-      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "HTML_OUTPUT = .\n")
+function(configure_doxygen_package CGAL_PACKAGE_DOC_DIR)
+  get_filename_component(CGAL_PACKAGE_NAME ${CGAL_PACKAGE_DOC_DIR} NAME)
+  if(EXISTS ${CGAL_PACKAGE_DOC_DIR}/Doxyfile.in)
+    set(CGAL_DOC_PACKAGE_DEFAULTS ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}_defaults.dxy)
+    file(REMOVE ${CGAL_DOC_PACKAGE_DEFAULTS})
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "@INCLUDE = ${CGAL_DOC_DOXY_DEFAULT}\n")
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "OUTPUT_DIRECTORY = ${CGAL_DOC_OUTPUT_DIR}/${CGAL_PACKAGE_NAME}\n")
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "HTML_OUTPUT = .\n")
 
-      if(CGAL_DOC_CREATE_LOGS)
-        file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "WARN_LOGFILE = ${CGAL_DOC_LOG_DIR}/${CGAL_PACKAGE_NAME}.log\n")
-      endif()
-
-      if (CGAL_DOC_RELEASE)
-        file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "GENERATE_TODOLIST = NO\n")
-        file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "GENERATE_BUGLIST = NO\n")
-      endif()
-
-      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "IMAGE_PATH = ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/fig\n")
-      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "EXAMPLE_PATH = ${CGAL_PACKAGE_DIR}/examples\n")
-      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "GENERATE_TAGFILE = ${CGAL_DOC_TAG_GEN_DIR}/${CGAL_PACKAGE_NAME}.tag\n")
-      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_PATH = ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/\n")
-      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_PATH += ${CGAL_PACKAGE_DIR}/include/\n")
-      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_INC_PATH = ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/\n")
-      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_INC_PATH += ${CGAL_PACKAGE_DIR}/include/\n")
-      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "ALIASES += \"cgalPkgDescriptionBegin{2}=\\details \"\n")
-      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "ALIASES += \"cgalPkgManuals{2}=<BR>\"\n")
-      
-      # figure out the dependencies
-      if(EXISTS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/dependencies)
-        file(STRINGS ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/dependencies DEPENDENCIES)
-      else()
-        set(DEPENDENCIES "")
-      endif()
-      
-      foreach(depend ${DEPENDENCIES})
-        file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} 
-          "TAGFILES += ${CGAL_DOC_TAG_DIR}/${depend}.tag=../${depend}\n")
-      endforeach()
-      
-      configure_file(${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/Doxyfile.in 
-        ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
-      
-      # TODO we also want to run html_post_process per package as a custom_command with POST_BUILD
-      # target that build the doc and put the tag file in the generation directory CGAL_DOC_TAG_GEN_DIR
-      add_custom_target(${CGAL_PACKAGE_NAME}_internal_doxygen_run
-        ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
-
-      set_target_properties(${CGAL_PACKAGE_NAME}_internal_doxygen_run PROPERTIES FOLDER Documentation/Packages)
-
-      #target moving the tag file into the read directory CGAL_DOC_TAG_DIR
-      if ( "${CGAL_PACKAGE_NAME}" STREQUAL "Documentation" )
-        set(CGAL_PACKAGE_TAGFILE "Manual.tag")
-      else()
-        set(CGAL_PACKAGE_TAGFILE "${CGAL_PACKAGE_NAME}.tag")
-      endif()
-      add_custom_target(${CGAL_PACKAGE_NAME}_copy_doc_tags
-                        ${CMAKE_COMMAND} -E copy
-                          "${CGAL_DOC_TAG_GEN_DIR}/${CGAL_PACKAGE_TAGFILE}"
-                          "${CGAL_DOC_TAG_DIR}/${CGAL_PACKAGE_TAGFILE}"
-      )
-
-      #add the doc target doing both the doc generation and then the tag file copy
-      add_custom_target(${CGAL_PACKAGE_NAME}_doc
-        ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy
-        COMMAND
-        ${CMAKE_COMMAND} -E copy
-                          "${CGAL_DOC_TAG_GEN_DIR}/${CGAL_PACKAGE_TAGFILE}"
-                          "${CGAL_DOC_TAG_DIR}/${CGAL_PACKAGE_TAGFILE}"
-      )
-
-      #     ${depend}_doc)
-      # don't do this for now
-      # foreach(depend ${DEPENDENCIES})
-      #   add_dependencies(${CGAL_PACKAGE_NAME}_doc
-      #     ${depend}_doc)
-      # endforeach()
-      
+    if(CGAL_DOC_CREATE_LOGS)
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "WARN_LOGFILE = ${CGAL_DOC_LOG_DIR}/${CGAL_PACKAGE_NAME}.log\n")
     endif()
-  endforeach()
+
+    if (CGAL_DOC_RELEASE)
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "GENERATE_TODOLIST = NO\n")
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "GENERATE_BUGLIST = NO\n")
+    endif()
+
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "IMAGE_PATH = ${CGAL_PACKAGE_DOC_DIR}/fig\n")
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "EXAMPLE_PATH = ${CGAL_PACKAGE_DIR}/examples\n")
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "GENERATE_TAGFILE = ${CGAL_DOC_TAG_GEN_DIR}/${CGAL_PACKAGE_NAME}.tag\n")
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_PATH = ${CGAL_PACKAGE_DOC_DIR}/\n")
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_PATH += ${CGAL_PACKAGE_DIR}/include/\n")
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_INC_PATH = ${CGAL_PACKAGE_DOC_DIR}/\n")
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_INC_PATH += ${CGAL_PACKAGE_DIR}/include/\n")
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "ALIASES += \"cgalPkgDescriptionBegin{2}=\\details \"\n")
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "ALIASES += \"cgalPkgManuals{2}=<BR>\"\n")
+
+    # figure out the dependencies
+    if(EXISTS ${CGAL_PACKAGE_DOC_DIR}/dependencies)
+      file(STRINGS ${CGAL_PACKAGE_DOC_DIR}/dependencies DEPENDENCIES)
+    else()
+      set(DEPENDENCIES "")
+    endif()
+
+    foreach(depend ${DEPENDENCIES})
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} 
+        "TAGFILES += ${CGAL_DOC_TAG_DIR}/${depend}.tag=../${depend}\n")
+    endforeach()
+
+    configure_file(${CGAL_PACKAGE_DOC_DIR}/Doxyfile.in 
+      ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
+
+    # TODO we also want to run html_post_process per package as a custom_command with POST_BUILD
+    # target that build the doc and put the tag file in the generation directory CGAL_DOC_TAG_GEN_DIR
+    add_custom_target(${CGAL_PACKAGE_NAME}_internal_doxygen_run
+      ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
+
+    set_target_properties(${CGAL_PACKAGE_NAME}_internal_doxygen_run PROPERTIES FOLDER Documentation/Packages)
+
+    #target moving the tag file into the read directory CGAL_DOC_TAG_DIR
+    if ( "${CGAL_PACKAGE_NAME}" STREQUAL "Documentation" )
+      set(CGAL_PACKAGE_TAGFILE "Manual.tag")
+    else()
+      set(CGAL_PACKAGE_TAGFILE "${CGAL_PACKAGE_NAME}.tag")
+    endif()
+    add_custom_target(${CGAL_PACKAGE_NAME}_copy_doc_tags
+      ${CMAKE_COMMAND} -E copy
+      "${CGAL_DOC_TAG_GEN_DIR}/${CGAL_PACKAGE_TAGFILE}"
+      "${CGAL_DOC_TAG_DIR}/${CGAL_PACKAGE_TAGFILE}"
+      )
+
+    #add the doc target doing both the doc generation and then the tag file copy
+    add_custom_target(${CGAL_PACKAGE_NAME}_doc
+      ${DOXYGEN_EXECUTABLE} ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy
+      COMMAND
+      ${CMAKE_COMMAND} -E copy
+      "${CGAL_DOC_TAG_GEN_DIR}/${CGAL_PACKAGE_TAGFILE}"
+      "${CGAL_DOC_TAG_DIR}/${CGAL_PACKAGE_TAGFILE}"
+      )
+
+    #     ${depend}_doc)
+    # don't do this for now
+    # foreach(depend ${DEPENDENCIES})
+    #   add_dependencies(${CGAL_PACKAGE_NAME}_doc
+    #     ${depend}_doc)
+    # endforeach()
+
+  endif()
 endfunction()
 
 find_package(Doxygen)
