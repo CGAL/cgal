@@ -498,8 +498,8 @@ void Viewer::makeArrow(float R, int prec, qglviewer::Vec from, qglviewer::Vec to
     //Head
     for(int d = 0; d<360; d+= 360/prec)
     {
-        float D = d*M_PI/180.0;
-        float a =std::atan(R/0.33);
+        double D = d*M_PI/180.0;
+        double a =std::atan(R/0.33);
         QVector4D p(0,1.0,0, 1.0);
         QVector4D n(R*2.0*sin(D), sin(a), R*2.0*cos(D), 1.0);
         QVector4D pR = mat*p;
