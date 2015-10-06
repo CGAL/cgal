@@ -1,4 +1,5 @@
 #include "config.h"
+#include <CGAL/config.h>
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
