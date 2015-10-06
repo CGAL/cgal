@@ -24,9 +24,9 @@ public:
 /// @{
 
 /*!
-Is `double`. 
+The result type. 
 */ 
-typedef unspecified_type result_type; 
+typedef double result_type;
 
 /*!
 Is `RealEmbeddableTraits::Type`. 
