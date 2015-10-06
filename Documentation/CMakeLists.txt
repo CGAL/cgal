@@ -143,16 +143,9 @@ find_package(PythonInterp 2.6.7)
 
   #Generate the bibtex file
   #this is needed also for BaseDoxyfile.in
-  if ( ${CMAKE_VERSION} VERSION_GREATER "2.8.10")
-    string(TIMESTAMP CGAL_BUILD_YEAR4 "%Y")
-    string(TIMESTAMP CGAL_BUILD_YEAR2 "%y")
-    string(TIMESTAMP CGAL_BUILD_MONTH "%m")
-  else()
-    MESSAGE(WARNING "You're using an old version of CMake, date in bibtex files will be incorrect")
-    set(CGAL_BUILD_YEAR4 "2000")
-    set(CGAL_BUILD_YEAR2 "00")
-    set(CGAL_BUILD_MONTH "1")
-  endif()
+  string(TIMESTAMP CGAL_BUILD_YEAR4 "%Y")
+  string(TIMESTAMP CGAL_BUILD_YEAR2 "%y")
+  string(TIMESTAMP CGAL_BUILD_MONTH "%m")
 
   if (${CGAL_BUILD_MONTH} GREATER 6)
     SET(CGAL_RELEASE_YEAR_ID "${CGAL_BUILD_YEAR2}b")
