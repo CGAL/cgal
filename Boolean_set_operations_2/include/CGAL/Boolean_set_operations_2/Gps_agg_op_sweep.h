@@ -115,8 +115,9 @@ public:
     this->m_visitor->before_sweep();
     // Allocate all of the Subcurve objects as one block.
     this->m_num_of_subCurves = static_cast<unsigned int>(std::distance (curves_begin, curves_end));
-    this->m_subCurves = 
-      this->m_subCurveAlloc.allocate (this->m_num_of_subCurves);
+    if (this->m_num_of_subCurves > 0)
+      this->m_subCurves =
+        this->m_subCurveAlloc.allocate (this->m_num_of_subCurves);
 
     this->m_curves_pair_set.resize (2 * this->m_num_of_subCurves);
 
