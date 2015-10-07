@@ -19,6 +19,128 @@
 
 namespace CGAL {
 
+
+// PLY types:
+// name        type        number of bytes
+// ---------------------------------------
+// char       character                 1
+// uchar      unsigned character        1
+// short      short integer             2
+// ushort     unsigned short integer    2
+// int        integer                   4
+// uint       unsigned integer          4
+// float      single-precision float    4
+// double     double-precision float    8
+
+namespace internal {
+
+  class Ply_read_number
+  {
+  protected:
+    std::string m_name;
+    std::size_t m_format;
+    
+  public:
+    Ply_read_number (std::string name, std::size_t format)
+      : m_name (name), m_format (format) { }
+    virtual ~Ply_read_number() { }
+
+    const std::string& name () const { return m_name; }
+
+    virtual double operator() (std::istream& stream) const = 0;
+
+    template <typename Type>
+    Type read (std::istream& stream) const
+    {
+      if (m_format == 0) // Ascii
+        {
+          Type t;
+          stream >> t;
+          return t;
+        }
+      else // Binary (2 = little endian)
+        {
+          std::size_t size = sizeof (Type);
+          unsigned int buffer[size];
+
+          stream.read(reinterpret_cast<char*>(buffer), size);
+      
+          if (m_format == 2) // Big endian
+            {
+              for (std::size_t i = 0; i < size / 2; ++ i)
+                {
+                  unsigned char tmp = buffer[i];
+                  buffer[i] = buffer[size - i];
+                  buffer[size - i] = tmp;
+                }
+            }
+          return reinterpret_cast<Type&> (buffer);
+        }
+      return Type();
+    }
+  };
+
+  class Ply_read_char : public Ply_read_number
+  {
+  public:
+    Ply_read_char (std::string name, std::size_t format) : Ply_read_number (name, format) { }
+    double operator() (std::istream& stream) const
+    { return static_cast<double> (this->read<char> (stream)); }
+  };
+  class Ply_read_uchar : public Ply_read_number
+  {
+  public:
+    Ply_read_uchar (std::string name, std::size_t format) : Ply_read_number (name, format) { }
+    double operator() (std::istream& stream) const
+    { return static_cast<double> (this->read<unsigned char> (stream)); }
+  };
+  class Ply_read_short : public Ply_read_number
+  {
+  public:
+    Ply_read_short (std::string name, std::size_t format) : Ply_read_number (name, format) { }
+    double operator() (std::istream& stream) const
+    { return static_cast<double> (this->read<short> (stream)); }
+  };
+  class Ply_read_ushort : public Ply_read_number
+  {
+  public:
+    Ply_read_ushort (std::string name, std::size_t format) : Ply_read_number (name, format) { }
+    double operator() (std::istream& stream) const
+    { return static_cast<double> (this->read<unsigned short> (stream)); }
+  };
+  class Ply_read_int : public Ply_read_number
+  {
+  public:
+    Ply_read_int (std::string name, std::size_t format) : Ply_read_number (name, format) { }
+    double operator() (std::istream& stream) const
+    { return static_cast<double> (this->read<int> (stream)); }
+  };
+  class Ply_read_uint : public Ply_read_number
+  {
+  public:
+    Ply_read_uint (std::string name, std::size_t format) : Ply_read_number (name, format) { }
+    double operator() (std::istream& stream) const
+    { return static_cast<double> (this->read<unsigned int> (stream)); }
+  };
+  class Ply_read_float : public Ply_read_number
+  {
+  public:
+    Ply_read_float (std::string name, std::size_t format) : Ply_read_number (name, format) { }
+    double operator() (std::istream& stream) const
+    { return static_cast<double> (this->read<float> (stream)); }
+  };
+  class Ply_read_double : public Ply_read_number
+  {
+  public:
+    Ply_read_double (std::string name, std::size_t format) : Ply_read_number (name, format) { }
+    double operator() (std::istream& stream) const
+    { return this->read<float> (stream); }
+  };
+
+
+
+} //namespace CGAL
+  
 //===================================================================================
 /// \ingroup PkgPointSetProcessing
 /// Reads points (positions + normals, if available) from a .ply stream.
@@ -54,6 +176,7 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
 
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
+  typedef typename Kernel::FT FT;
 
   if(!stream)
   {
@@ -65,13 +188,15 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
   std::size_t pointsCount = 0,  // number of items in file
     pointsRead = 0, // current number of points read
     lineNumber = 0; // current line number
-  enum Format { ASCII, BINARY_LITTLE_ENDIAN, BINARY_BIG_ENDIAN };
+  enum Format { ASCII = 0, BINARY_LITTLE_ENDIAN = 1, BINARY_BIG_ENDIAN = 2};
   Format format;
     
   std::string line;
   std::istringstream iss;
 
-  bool in_header = true;
+  // Check the order of the properties of the point set
+  bool reading_properties = false;
+  std::vector<internal::Ply_read_number*> readers;
   
   while (getline (stream,line))
   {
@@ -79,139 +204,145 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
     iss.str (line);
     ++ lineNumber;
 
-    if (in_header)
+    // Reads file signature on first line
+    if (lineNumber == 1)
       {
-        // Reads file signature on first line
-        if (lineNumber == 1)
+        std::string signature;
+        if (!(iss >> signature) || (signature != "ply"))
           {
-            std::string signature;
-            if (!(iss >> signature) || (signature != "ply"))
-              {
-                // if wrong file format
-                std::cerr << "Incorrect file format line " << lineNumber << " of file" << std::endl;
-                return false;
-              }
-          }
-
-        // Reads format on 2nd line
-        else if (lineNumber == 2)
-          {
-            std::string tag, format_string, version;
-            if ( !(iss >> tag >> format_string >> version) )
-              {
-                std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-                return false;
-              }
-            if (format_string == "ascii") format = ASCII;
-            else if (format_string == "binary_little_endian") format = BINARY_LITTLE_ENDIAN;
-            else if (format_string == "binary_big_endian") format = BINARY_BIG_ENDIAN;
-            else
-              {
-                std::cerr << "Unknown file format \"" << format_string << "\" line " << lineNumber << std::endl;
-                return false;
-              }
-          }
-
-        // Comments and vertex properties
-        else
-          {
-            std::string keyword;
-            if (!(iss >> keyword))
-              {
-                std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-                return false;
-              }
-
-            // ignore comments and properties (if not in element
-            // vertex - cf below - properties are useless in our case)
-            if (keyword == "comment" || keyword == "property")
-              continue;
-
-            if (keyword == "end_header")
-              {
-                in_header = false;
-                continue;
-              }
-            
-            if (keyword == "element")
-              {
-                std::string type;
-                std::size_t number;
-                if (!(iss >> type >> number))
-                  {
-                    std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-                    return false;
-                  }
-                
-                if (type == "face")
-                  continue;
-
-                if (type == "vertex")
-                  pointsCount = number;
-                else
-                  {
-                    std::cerr << "Unknown element \"" << type << "\" line " << lineNumber << std::endl;
-                    return false;
-                  }
-
-                while (getline (stream,line))
-                  {
-                    iss.clear();
-                    iss.str (line);
-                    ++ lineNumber;
-                    std::string property, ftype, name;
-                    if ( !(iss >> property >> ftype >> name) || property != "property")
-                      {
-                        std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-                        return false;
-                      }
-                    
-                  }
-              }
-            
+            // if wrong file format
+            std::cerr << "Incorrect file format line " << lineNumber << " of file" << std::endl;
+            return false;
           }
       }
 
+    // Reads format on 2nd line
+    else if (lineNumber == 2)
+      {
+        std::string tag, format_string, version;
+        if ( !(iss >> tag >> format_string >> version) )
+          {
+            std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+            return false;
+          }
+        if (format_string == "ascii") format = ASCII;
+        else if (format_string == "binary_little_endian") format = BINARY_LITTLE_ENDIAN;
+        else if (format_string == "binary_big_endian") format = BINARY_BIG_ENDIAN;
+        else
+          {
+            std::cerr << "Unknown file format \"" << format_string << "\" line " << lineNumber << std::endl;
+            return false;
+          }
+      }
 
-    // Reads 3D points on next lines
-    else if (pointsRead < pointsCount)
+    // Comments and vertex properties
+    else
+      {
+        std::string keyword;
+        if (!(iss >> keyword))
+          {
+            std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+            return false;
+          }
+
+        if (keyword == "property")
+          {
+            if (!reading_properties)
+              continue;
+
+            std::string type, name;
+            if (!(iss >> type >> name))
+              {
+                std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+                return false;
+              }
+
+            if (type == "char")
+              readers.push_back (new internal::Ply_read_char (name, format));
+            else if (type == "uchar")
+              readers.push_back (new internal::Ply_read_uchar (name, format));
+            else if (type == "short")
+              readers.push_back (new internal::Ply_read_short (name, format));
+            else if (type == "ushort")
+              readers.push_back (new internal::Ply_read_ushort (name, format));
+            else if (type == "int")
+              readers.push_back (new internal::Ply_read_int (name, format));
+            else if (type == "uint")
+              readers.push_back (new internal::Ply_read_uint (name, format));
+            else if (type == "float")
+              readers.push_back (new internal::Ply_read_float (name, format));
+            else if (type == "double")
+              readers.push_back (new internal::Ply_read_double (name, format));
+                
+            continue;
+          }
+        else
+          reading_properties = false;
+            
+        // ignore comments and properties (if not in element
+        // vertex - cf below - properties are useless in our case)
+        if (keyword == "comment" || keyword == "property")
+          continue;
+
+        if (keyword == "end_header")
+          break;
+            
+        if (keyword == "element")
+          {
+            std::string type;
+            std::size_t number;
+            if (!(iss >> type >> number))
+              {
+                std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+                return false;
+              }
+                
+            if (type == "vertex")
+              {
+                pointsCount = number;
+                reading_properties = true;
+              }
+            else
+              continue;
+          }
+            
+      }
+  }
+  
+  while (!(stream.eof()) && pointsRead < pointsCount)
     {
-      break;
-//       // Reads position + normal...
-//       double x,y,z;
-//       double nx,ny,nz;
-//       if (iss >> iformat(x) >> iformat(y) >> iformat(z))
-//       {
-//         Point point(x,y,z);
-//         Vector normal = CGAL::NULL_VECTOR;
-//         // ... + normal...
-//         if (iss >> iformat(nx))
-//         {
-//           // In case we could read one number, we expect that there are two more
-//           if(iss  >> iformat(ny) >> iformat(nz)){
-//             normal = Vector(nx,ny,nz);
-//           } else {
-//             std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-//             return false;
-//           }
-//         }
-//         Enriched_point pwn;
-// #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-//         put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
-//         put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
-// #else
-//         put(point_pmap,  pwn, point);  // point_pmap[&pwn] = point
-//         put(normal_pmap, pwn, normal); // normal_pmap[&pwn] = normal
-// #endif
-//         *output++ = pwn;
-//         pointsRead++;
-//       }
-      // ...or skip comment line
+
+      FT x, y, z, nx, ny, nz;
+      for (std::size_t i = 0; i < readers.size (); ++ i)
+        {
+          FT value = (*readers[i])(stream);
+
+          if (readers[i]->name () == "x") x = value;
+          else if (readers[i]->name () == "y") y = value;
+          else if (readers[i]->name () == "z") z = value;
+          else if (readers[i]->name () == "nx") nx = value;
+          else if (readers[i]->name () == "ny") ny = value;
+          else if (readers[i]->name () == "nz") nz = value;
+        }
+      Point point(x,y,z);
+      Vector normal(nx,ny,nz);
+      
+      Enriched_point pwn;
+      
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+      put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
+      put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
+#else
+      put(point_pmap,  pwn, point);  // point_pmap[&pwn] = point
+      put(normal_pmap, pwn, normal); // normal_pmap[&pwn] = normal
+#endif
+      *output++ = pwn;
+      pointsRead++;
     }
     // Skip remaining lines
-  }
 
-
+  for (std::size_t i = 0; i < readers.size (); ++ i)
+    delete readers[i];
   
   return true;
 }

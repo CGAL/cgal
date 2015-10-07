@@ -90,7 +90,10 @@ int main()
   assert(pv_pairs[2] == std::make_pair(Point_3(4,5,6), Vector_3(0,0,0)));
   assert(pv_pairs[3] == std::make_pair(Point_3(7,8,9), Vector_3(0,0,0)));
 
+  pv_pairs.clear ();
   assert(read_ply("data/read_test/simple.ply", pv_pairs));
+  pv_pairs.clear ();
+  assert(read_ply("data/read_test/simple_ascii.ply", pv_pairs));
 
   return 0;
 }  
