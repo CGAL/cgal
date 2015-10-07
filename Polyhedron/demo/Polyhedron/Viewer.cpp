@@ -477,7 +477,7 @@ void Viewer::endSelection(const QPoint& point)
     pickMatrix_[15]=1;
 }
 
-void Viewer::makeArrow(float R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data)
+void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data)
 {
     qglviewer::Vec temp = to-from;
     QVector3D dir = QVector3D(temp.x, temp.y, temp.z);
@@ -555,7 +555,7 @@ void Viewer::makeArrow(float R, int prec, qglviewer::Vec from, qglviewer::Vec to
     for(int d = 0; d<360; d+= 360/prec)
     {
         //point A1
-        float D = d*M_PI/180.0;
+        double D = d*M_PI/180.0;
         QVector4D p(R*sin(D),0.66,R*cos(D), 1.0);
         QVector4D n(sin(D), 0, cos(D), 1.0);
         QVector4D pR = mat*p;
@@ -751,13 +751,13 @@ void Viewer::resizeGL(int w, int h)
     buffers[0].release();
 
     buffers[1].bind();
-    buffers[1].allocate(n_Axis.data(), n_Axis.size() * sizeof(float));
+    buffers[1].allocate(n_Axis.data(), static_cast<int>(n_Axis.size() * sizeof(float)));
     rendering_program.enableAttributeArray("normal");
     rendering_program.setAttributeBuffer("normal",GL_FLOAT,0,3);
     buffers[1].release();
 
     buffers[2].bind();
-    buffers[2].allocate(c_Axis.data(), c_Axis.size() * sizeof(float));
+    buffers[2].allocate(c_Axis.data(), static_cast<int>(c_Axis.size() * sizeof(float)));
     rendering_program.enableAttributeArray("colors");
     rendering_program.setAttributeBuffer("colors",GL_FLOAT,0,3);
     buffers[2].release();
