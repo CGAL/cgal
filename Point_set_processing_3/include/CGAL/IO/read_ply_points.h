@@ -60,21 +60,26 @@ namespace internal {
         }
       else // Binary (2 = little endian)
         {
+          union
+          {
+            unsigned char uChar[sizeof (Type)];
+            Type type;
+          } buffer;
+          
           std::size_t size = sizeof (Type);
-          unsigned int buffer[size];
 
-          stream.read(reinterpret_cast<char*>(buffer), size);
+          stream.read(reinterpret_cast<char*>(buffer.uChar), size);
       
           if (m_format == 2) // Big endian
             {
               for (std::size_t i = 0; i < size / 2; ++ i)
                 {
-                  unsigned char tmp = buffer[i];
-                  buffer[i] = buffer[size - i];
-                  buffer[size - i] = tmp;
+                  unsigned char tmp = buffer.uChar[i];
+                  buffer.uChar[i] = buffer.uChar[size - 1 - i];
+                  buffer.uChar[size - 1 - i] = tmp;
                 }
             }
-          return reinterpret_cast<Type&> (buffer);
+          return buffer.type;
         }
       return Type();
     }
@@ -189,7 +194,7 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
     pointsRead = 0, // current number of points read
     lineNumber = 0; // current line number
   enum Format { ASCII = 0, BINARY_LITTLE_ENDIAN = 1, BINARY_BIG_ENDIAN = 2};
-  Format format;
+  Format format = ASCII;
     
   std::string line;
   std::istringstream iss;
@@ -313,7 +318,7 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
   while (!(stream.eof()) && pointsRead < pointsCount)
     {
 
-      FT x, y, z, nx, ny, nz;
+      FT x = 0., y = 0., z = 0., nx = 0., ny = 0., nz = 0.;
       for (std::size_t i = 0; i < readers.size (); ++ i)
         {
           FT value = (*readers[i])(stream);
