@@ -69,9 +69,9 @@ namespace internal {
 /// is a generic traits class for solving asymmetric or symmetric positive definite (SPD)
 /// sparse linear systems using one of the Eigen solvers.
 /// The default solver is the iterative bi-congugate gradient stabilized solver
-/// Eigen::BiCGSTAB for double.
+/// <a href="http://eigen.tuxfamily.org/dox/classEigen_1_1BiCGSTAB.html">Eigen::BiCGSTAB</a> for double.
 ///
-/// \cgalModels `SparseLinearAlgebraTraitsWithFactor_d`.
+/// \cgalModels `SparseLinearAlgebraWithFactorTraits_d`.
 
 template<class EigenSolverT = Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> >
 class Eigen_solver_traits
@@ -79,6 +79,7 @@ class Eigen_solver_traits
   typedef typename EigenSolverT::Scalar Scalar;
 // Public types
 public:
+   typedef EigenSolverT Solver;
    typedef Scalar                                                       NT;
    typedef typename internal::Get_eigen_matrix<EigenSolverT,NT>::type   Matrix;
    typedef Eigen_vector<Scalar>                                         Vector;
@@ -159,7 +160,7 @@ protected:
 
 };
 
-//specilization of the solver for BiCGSTAB as for surface parameterization, the 
+//specialization of the solver for BiCGSTAB as for surface parameterization, the 
 //intializer should be a vector of one's (this was the case in 3.1-alpha but not in the official 3.1).
 template<>
 class Eigen_solver_traits< Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType> >
@@ -168,6 +169,7 @@ class Eigen_solver_traits< Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenTyp
   typedef EigenSolverT::Scalar Scalar;
 // Public types
 public:
+   typedef EigenSolverT Solver;
    typedef Scalar                                                       NT;
    typedef internal::Get_eigen_matrix<EigenSolverT,NT>::type   Matrix;
    typedef Eigen_vector<Scalar>                                         Vector;

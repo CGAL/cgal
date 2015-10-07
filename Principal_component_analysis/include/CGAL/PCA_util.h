@@ -20,7 +20,6 @@
 #ifndef CGAL_LINEAR_LEAST_SQUARES_FITTING_UTIL_H
 #define CGAL_LINEAR_LEAST_SQUARES_FITTING_UTIL_H
 
-#include <CGAL/eigen.h>
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/Dimension.h>
 
@@ -48,24 +47,26 @@ init_matrix(const int n,
 
 // assemble covariance matrix from a point set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
-                             typename K::FT covariance[6], // covariance matrix
+                             typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Point_3*,   // used for indirection
-                             const CGAL::Dimension_tag<0>&)
+                             const CGAL::Dimension_tag<0>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT       FT;
   typedef typename K::Point_3  Point;
   typedef typename K::Vector_3 Vector;
 
   // Matrix numbering:
-  // 0          
-  // 1 2
-  // 3 4 5          
+  // 0 1 2
+  //   3 4
+  //     5          
   covariance[0] = covariance[1] = covariance[2] = 
   covariance[3] = covariance[4] = covariance[5] = (FT)0.0;
   for(InputIterator it = first;
@@ -76,8 +77,8 @@ assemble_covariance_matrix_3(InputIterator first,
     Vector d = p - c;
     covariance[0] += d.x() * d.x();
     covariance[1] += d.x() * d.y();
-    covariance[2] += d.y() * d.y();
-    covariance[3] += d.x() * d.z();
+    covariance[2] += d.x() * d.z();
+    covariance[3] += d.y() * d.y();
     covariance[4] += d.y() * d.z();
     covariance[5] += d.z() * d.z();
   }
@@ -85,15 +86,17 @@ assemble_covariance_matrix_3(InputIterator first,
 
 // assemble covariance matrix from a triangle set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
-                             InputIterator beyond, 
-                             typename K::FT covariance[6], // covariance matrix
+                             InputIterator beyond,
+			     typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K&,                    // kernel
                              const typename K::Triangle_3*,// used for indirection
-                             const CGAL::Dimension_tag<2>&)
+                             const CGAL::Dimension_tag<2>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Triangle_3  Triangle;
@@ -102,9 +105,9 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
-  // 0
-  // 1 2 
-  // 3 4 5
+  // 0 1 2
+  //   3 4
+  //     5          
   //Final combined covariance matrix for all triangles and their combined mass
   FT mass = 0.0;
 
@@ -141,8 +144,8 @@ assemble_covariance_matrix_3(InputIterator first,
     // and add to covariance matrix
     covariance[0] += transformation[0][0];
     covariance[1] += transformation[1][0];
-    covariance[2] += transformation[1][1];
-    covariance[3] += transformation[2][0];
+    covariance[2] += transformation[2][0];
+    covariance[3] += transformation[1][1];
     covariance[4] += transformation[2][1];
     covariance[5] += transformation[2][2];
 
@@ -153,8 +156,8 @@ assemble_covariance_matrix_3(InputIterator first,
   // the center of mass to get the covariance.
   covariance[0] += mass * (-1.0 * c.x() * c.x());
   covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.y() * c.y());
-  covariance[3] += mass * (-1.0 * c.z() * c.x());
+  covariance[2] += mass * (-1.0 * c.z() * c.x());
+  covariance[3] += mass * (-1.0 * c.y() * c.y());
   covariance[4] += mass * (-1.0 * c.z() * c.y());
   covariance[5] += mass * (-1.0 * c.z() * c.z());
 
@@ -162,15 +165,17 @@ assemble_covariance_matrix_3(InputIterator first,
 
 // assemble covariance matrix from a cuboid set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
-                             InputIterator beyond, 
-                             typename K::FT covariance[6], // covariance matrix
+                             InputIterator beyond,
+			     typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Iso_cuboid_3*,// used for indirection
-                             const CGAL::Dimension_tag<3>&)
+                             const CGAL::Dimension_tag<3>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Iso_cuboid_3    Iso_cuboid;
@@ -179,9 +184,9 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
-  // 0
-  // 1 2 
-  // 3 4 5
+  // 0 1 2
+  //   3 4
+  //     5          
   // final combined covariance matrix for all cuboids and their combined mass
   FT mass = (FT)0.0;
 
@@ -227,8 +232,8 @@ assemble_covariance_matrix_3(InputIterator first,
     // and add to covariance matrix
     covariance[0] += transformation[0][0] + volume * (2*x0*xav0 + x0*x0);
     covariance[1] += transformation[1][0] + volume * (xav0*y0 + yav0*x0 + x0*y0);
-    covariance[2] += transformation[1][1] + volume * (2*y0*yav0 + y0*y0);
-    covariance[3] += transformation[2][0] + volume * (x0*zav0 + xav0*z0 + x0*z0);
+    covariance[2] += transformation[2][0] + volume * (x0*zav0 + xav0*z0 + x0*z0);
+    covariance[3] += transformation[1][1] + volume * (2*y0*yav0 + y0*y0);
     covariance[4] += transformation[2][1] + volume * (yav0*z0 + y0*zav0 + z0*y0);
     covariance[5] += transformation[2][2] + volume * (2*zav0*z0 + z0*z0);
 
@@ -239,23 +244,25 @@ assemble_covariance_matrix_3(InputIterator first,
   // the center of mass to get the covariance.
   covariance[0] += mass * (- c.x() * c.x());
   covariance[1] += mass * (- c.x() * c.y());
-  covariance[2] += mass * (- c.y() * c.y());
-  covariance[3] += mass * (- c.z() * c.x());
+  covariance[2] += mass * (- c.z() * c.x());
+  covariance[3] += mass * (- c.y() * c.y());
   covariance[4] += mass * (- c.z() * c.y());
   covariance[5] += mass * (- c.z() * c.z());
 }
 
 // assemble covariance matrix from a cuboid set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
-                             typename K::FT covariance[6], // covariance matrix
+			     typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Iso_cuboid_3*,// used for indirection
-                             const CGAL::Dimension_tag<2>&)
+                             const CGAL::Dimension_tag<2>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT FT;
   typedef typename K::Iso_cuboid_3 Iso_cuboid;
@@ -264,9 +271,9 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
-  // 0
-  // 1 2 
-  // 3 4 5
+  // 0 1 2
+  //   3 4
+  //     5          
   //Final combined covariance matrix for all cuboids and their combined mass
   FT mass = (FT)0.0;
 
@@ -319,8 +326,8 @@ assemble_covariance_matrix_3(InputIterator first,
     // and add to covariance matrix
     covariance[0] += transformation[0][0] + area * (2*x0*xav0 + x0*x0);
     covariance[1] += transformation[1][0] + area * (xav0*y0 + yav0*x0 + x0*y0);
-    covariance[2] += transformation[1][1] + area * (2*y0*yav0 + y0*y0);
-    covariance[3] += transformation[2][0] + area * (x0*zav0 + xav0*z0 + x0*z0);
+    covariance[2] += transformation[2][0] + area * (x0*zav0 + xav0*z0 + x0*z0);
+    covariance[3] += transformation[1][1] + area * (2*y0*yav0 + y0*y0);
     covariance[4] += transformation[2][1] + area * (yav0*z0 + y0*zav0 + z0*y0);
     covariance[5] += transformation[2][2] + area * (2*zav0*z0 + z0*z0);
 
@@ -331,8 +338,8 @@ assemble_covariance_matrix_3(InputIterator first,
   // the center of mass to get the covariance.
   covariance[0] += mass * (-1.0 * c.x() * c.x());
   covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.y() * c.y());
-  covariance[3] += mass * (-1.0 * c.z() * c.x());
+  covariance[2] += mass * (-1.0 * c.z() * c.x());
+  covariance[3] += mass * (-1.0 * c.y() * c.y());
   covariance[4] += mass * (-1.0 * c.z() * c.y());
   covariance[5] += mass * (-1.0 * c.z() * c.z());
 
@@ -340,15 +347,17 @@ assemble_covariance_matrix_3(InputIterator first,
 
 // assemble covariance matrix from a sphere set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
-                             typename K::FT covariance[6], // covariance matrix
+			     typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K&,                     // kernel
                              const typename K::Sphere_3*,  // used for indirection
-                             const CGAL::Dimension_tag<3>&)
+                             const CGAL::Dimension_tag<3>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3  Sphere;
@@ -357,9 +366,9 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
-  // 0
-  // 1 2 
-  // 3 4 5
+  // 0 1 2
+  //   3 4
+  //     5          
   //Final combined covariance matrix for all spheres and their combined mass
   FT mass = 0.0;
 
@@ -402,8 +411,8 @@ assemble_covariance_matrix_3(InputIterator first,
     // and add to covariance matrix
     covariance[0] += transformation[0][0] + volume * x0*x0;
     covariance[1] += transformation[1][0] + volume * x0*y0;
-    covariance[2] += transformation[1][1] + volume * y0*y0;
-    covariance[3] += transformation[2][0] + volume * x0*z0;
+    covariance[2] += transformation[2][0] + volume * x0*z0;
+    covariance[3] += transformation[1][1] + volume * y0*y0;
     covariance[4] += transformation[2][1] + volume * z0*y0;
     covariance[5] += transformation[2][2] + volume * z0*z0;
 
@@ -414,23 +423,25 @@ assemble_covariance_matrix_3(InputIterator first,
   // the center of mass to get the covariance.
   covariance[0] += mass * (-1.0 * c.x() * c.x());
   covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.y() * c.y());
-  covariance[3] += mass * (-1.0 * c.z() * c.x());
+  covariance[2] += mass * (-1.0 * c.z() * c.x());
+  covariance[3] += mass * (-1.0 * c.y() * c.y());
   covariance[4] += mass * (-1.0 * c.z() * c.y());
   covariance[5] += mass * (-1.0 * c.z() * c.z());
 
 }
 // assemble covariance matrix from a sphere set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
-                             typename K::FT covariance[6], // covariance matrix
+			     typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K&,                     // kernel
                              const typename K::Sphere_3*,  // used for indirection
-                             const CGAL::Dimension_tag<2>&)
+                             const CGAL::Dimension_tag<2>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Sphere_3  Sphere;
@@ -439,9 +450,9 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
-  // 0
-  // 1 2 
-  // 3 4 5
+  // 0 1 2
+  //   3 4
+  //     5          
   //Final combined covariance matrix for all spheres and their combined mass
   FT mass = 0.0;
 
@@ -485,8 +496,8 @@ assemble_covariance_matrix_3(InputIterator first,
     // and add to covariance matrix
     covariance[0] += transformation[0][0] + area * x0*x0;
     covariance[1] += transformation[1][0] + area * x0*y0;
-    covariance[2] += transformation[1][1] + area * y0*y0;
-    covariance[3] += transformation[2][0] + area * x0*z0;
+    covariance[2] += transformation[2][0] + area * x0*z0;
+    covariance[3] += transformation[1][1] + area * y0*y0;
     covariance[4] += transformation[2][1] + area * z0*y0;
     covariance[5] += transformation[2][2] + area * z0*z0;
 
@@ -497,8 +508,8 @@ assemble_covariance_matrix_3(InputIterator first,
   // the center of mass to get the covariance.
   covariance[0] += mass * (-1.0 * c.x() * c.x());
   covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.y() * c.y());
-  covariance[3] += mass * (-1.0 * c.z() * c.x());
+  covariance[2] += mass * (-1.0 * c.z() * c.x());
+  covariance[3] += mass * (-1.0 * c.y() * c.y());
   covariance[4] += mass * (-1.0 * c.z() * c.y());
   covariance[5] += mass * (-1.0 * c.z() * c.z());
 
@@ -506,15 +517,17 @@ assemble_covariance_matrix_3(InputIterator first,
 
 // assemble covariance matrix from a tetrahedron set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
-                             typename K::FT covariance[6], // covariance matrix
+			     typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Tetrahedron_3*,// used for indirection
-                             const CGAL::Dimension_tag<3>&)
+                             const CGAL::Dimension_tag<3>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Tetrahedron_3  Tetrahedron;
@@ -523,9 +536,9 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
-  // 0
-  // 1 2 
-  // 3 4 5
+  // 0 1 2
+  //   3 4
+  //     5          
   //Final combined covariance matrix for all tetrahedrons and their combined mass
   FT mass = 0.0;
 
@@ -571,8 +584,8 @@ assemble_covariance_matrix_3(InputIterator first,
     // and add to covariance matrix
     covariance[0] += transformation[0][0] + volume * (2*x0*xav0 + x0*x0);
     covariance[1] += transformation[1][0] + volume * (xav0*y0 + yav0*x0 + x0*y0);
-    covariance[2] += transformation[1][1] + volume * (2*y0*yav0 + y0*y0);
-    covariance[3] += transformation[2][0] + volume * (x0*zav0 + xav0*z0 + x0*z0);
+    covariance[2] += transformation[2][0] + volume * (x0*zav0 + xav0*z0 + x0*z0);
+    covariance[3] += transformation[1][1] + volume * (2*y0*yav0 + y0*y0);
     covariance[4] += transformation[2][1] + volume * (yav0*z0 + y0*zav0 + z0*y0);
     covariance[5] += transformation[2][2] + volume * (2*zav0*z0 + z0*z0);
 
@@ -583,23 +596,25 @@ assemble_covariance_matrix_3(InputIterator first,
   // the center of mass to get the covariance.
   covariance[0] += mass * (-1.0 * c.x() * c.x());
   covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.y() * c.y());
-  covariance[3] += mass * (-1.0 * c.z() * c.x());
+  covariance[2] += mass * (-1.0 * c.z() * c.x());
+  covariance[3] += mass * (-1.0 * c.y() * c.y());
   covariance[4] += mass * (-1.0 * c.z() * c.y());
   covariance[5] += mass * (-1.0 * c.z() * c.z());
 }
 
 // assemble covariance matrix from a segment set 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 void
 assemble_covariance_matrix_3(InputIterator first,
                              InputIterator beyond, 
-                             typename K::FT covariance[6], // covariance matrix
+			     typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                              const typename K::Point_3& c, // centroid
                              const K& ,                    // kernel
                              const typename K::Segment_3*,// used for indirection
-                             const CGAL::Dimension_tag<1>&)
+                             const CGAL::Dimension_tag<1>&,
+			     const DiagonalizeTraits&)
 {
   typedef typename K::FT          FT;
   typedef typename K::Segment_3  Segment;
@@ -608,9 +623,9 @@ assemble_covariance_matrix_3(InputIterator first,
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
-  // 0
-  // 1 2 
-  // 3 4 5
+  // 0 1 2
+  //   3 4
+  //     5          
   //Final combined covariance matrix for all segments and their combined mass
   FT mass = 0.0;
 
@@ -648,8 +663,8 @@ assemble_covariance_matrix_3(InputIterator first,
     // and add to covariance matrix
     covariance[0] += transformation[0][0];
     covariance[1] += transformation[1][0];
-    covariance[2] += transformation[1][1];
-    covariance[3] += transformation[2][0];
+    covariance[2] += transformation[2][0];
+    covariance[3] += transformation[1][1];
     covariance[4] += transformation[2][1];
     covariance[5] += transformation[2][2];
 
@@ -660,8 +675,8 @@ assemble_covariance_matrix_3(InputIterator first,
   // the center of mass to get the covariance.
   covariance[0] += mass * (-1.0 * c.x() * c.x());
   covariance[1] += mass * (-1.0 * c.x() * c.y());
-  covariance[2] += mass * (-1.0 * c.y() * c.y());
-  covariance[3] += mass * (-1.0 * c.z() * c.x());
+  covariance[2] += mass * (-1.0 * c.z() * c.x());
+  covariance[3] += mass * (-1.0 * c.y() * c.y());
   covariance[4] += mass * (-1.0 * c.z() * c.y());
   covariance[5] += mass * (-1.0 * c.z() * c.z());
 
@@ -671,23 +686,27 @@ assemble_covariance_matrix_3(InputIterator first,
 // compute the eigen values and vectors of the covariance 
 // matrix and deduces the best linear fitting plane.
 // returns fitting quality
-template < typename K >
+template < typename K, typename DiagonalizeTraits >
 typename K::FT
-fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
+fitting_plane_3(typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                 const typename K::Point_3& c,       // centroid
                 typename K::Plane_3& plane,         // best fit plane
-                const K& )                          // kernel
+                const K&,                           // kernel
+		const DiagonalizeTraits& )                 // Diagonalize traits
 {
   typedef typename K::FT       FT;
   typedef typename K::Plane_3  Plane;
   typedef typename K::Vector_3 Vector;
 
   // solve for eigenvalues and eigenvectors.
-  // eigen values are sorted in descending order, 
+  // eigen values are sorted in ascending order, 
   // eigen vectors are sorted in accordance.
-  FT eigen_values[3];
-  FT eigen_vectors[9];
-  eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
+  typename DiagonalizeTraits::Vector eigen_values = {{ 0. , 0., 0. }};
+  typename DiagonalizeTraits::Matrix eigen_vectors = {{ 0., 0., 0.,
+							0., 0., 0.,
+							0., 0., 0. }};
+  DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
+    (covariance, eigen_values, eigen_vectors);
 
   // degenerate case 
   if(eigen_values[0] == eigen_values[1] && 
@@ -700,11 +719,11 @@ fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
   } 
   else // regular and line case
   {
-    Vector normal(eigen_vectors[6],
-                  eigen_vectors[7],
-                  eigen_vectors[8]);
+    Vector normal(eigen_vectors[0],
+                  eigen_vectors[1],
+                  eigen_vectors[2]);
     plane = Plane(c,normal);
-    return FT(1) - eigen_values[2] / eigen_values[1];
+    return FT(1) - eigen_values[0] / eigen_values[1];
   } // end regular case
 }
 
@@ -712,23 +731,27 @@ fitting_plane_3(const typename K::FT covariance[6], // covariance matrix
 // matrix and deduces the best linear fitting line
 // (this is an internal function)
 // returns fitting quality
-template < typename K >
+template < typename K, typename DiagonalizeTraits >
 typename K::FT
-fitting_line_3(const typename K::FT covariance[6], // covariance matrix
+fitting_line_3(typename DiagonalizeTraits::Covariance_matrix& covariance, // covariance matrix
                const typename K::Point_3& c,       // centroid
                typename K::Line_3& line,           // best fit line
-               const K&)                           // kernel
+	       const K&,                           // kernel
+	       const DiagonalizeTraits& )                 // Diagonalize traits
 {
   typedef typename K::FT       FT;
   typedef typename K::Line_3   Line;
   typedef typename K::Vector_3 Vector;
 
   // solve for eigenvalues and eigenvectors.
-  // eigen values are sorted in descending order, 
+  // eigen values are sorted in ascending order, 
   // eigen vectors are sorted in accordance.
-  FT eigen_values[3];
-  FT eigen_vectors[9];
-  eigen_symmetric<FT>(covariance,3,eigen_vectors,eigen_values);
+  typename DiagonalizeTraits::Vector eigen_values = {{ 0. , 0., 0. }};
+  typename DiagonalizeTraits::Matrix eigen_vectors = {{ 0., 0., 0.,
+							0., 0., 0.,
+							0., 0., 0. }};
+  DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
+    (covariance, eigen_values, eigen_vectors);
 
     // isotropic case (infinite number of directions)
   if(eigen_values[0] == eigen_values[1] && 
@@ -742,9 +765,9 @@ fitting_line_3(const typename K::FT covariance[6], // covariance matrix
   else
   {
     // regular case
-    Vector direction(eigen_vectors[0],eigen_vectors[1],eigen_vectors[2]);
+    Vector direction(eigen_vectors[6],eigen_vectors[7],eigen_vectors[8]);
     line = Line(c,direction);
-    return (FT)1.0 - eigen_values[1] / eigen_values[0];
+    return (FT)1.0 - eigen_values[1] / eigen_values[2];
   } 
 }
 

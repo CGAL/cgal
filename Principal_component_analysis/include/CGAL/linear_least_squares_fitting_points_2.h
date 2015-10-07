@@ -22,8 +22,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/centroid.h>
-#include <CGAL/eigen_2.h>
-
 #include <iterator>
 #include <cmath>
 
@@ -37,7 +35,8 @@ namespace internal {
 //  0 is worst (isotropic case, returns a line with horizontal
 //              direction by default).
 template < typename InputIterator, 
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits>
 typename K::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
@@ -45,7 +44,8 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const typename K::Point_2*,// used for indirection
                                const K&,                   // kernel
-			                         const CGAL::Dimension_tag<0>& tag)
+			       const CGAL::Dimension_tag<0>& tag,
+			       const DiagonalizeTraits&)
 {
   // types
   typedef typename K::FT       FT;
@@ -63,9 +63,11 @@ linear_least_squares_fitting_2(InputIterator first,
 
   // assemble covariance matrix as a semi-definite matrix. 
   // Matrix numbering:
-  // 0
-  // 1 2
-  FT covariance[3] = {0,0,0};
+  // 0 1
+  //   2
+
+  typename DiagonalizeTraits::Covariance_matrix covariance = {{ 0., 0., 0. }};
+
   for(InputIterator it = first;
       it != beyond;
       it++)
@@ -78,18 +80,19 @@ linear_least_squares_fitting_2(InputIterator first,
   }
 
   // solve for eigenvalues and eigenvectors.
-  // eigen values are sorted in descending order, 
+  // eigen values are sorted in ascending order, 
   // eigen vectors are sorted in accordance.
-  std::pair<FT,FT> eigen_values;
-  std::pair<Vector,Vector> eigen_vectors;
-  internal::eigen_symmetric_2<K>(covariance, eigen_vectors, eigen_values);
+  typename DiagonalizeTraits::Vector eigen_values = {{ 0. , 0. }};
+  typename DiagonalizeTraits::Matrix eigen_vectors = {{ 0., 0., 0. }};
+  DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
+    (covariance, eigen_values, eigen_vectors);
 
   // check unicity and build fitting line accordingly
-  if(eigen_values.first != eigen_values.second)
+  if(eigen_values[0] != eigen_values[1])
   {
     // regular case
-    line = Line(c, eigen_vectors.first);
-    return (FT)1.0 - eigen_values.second / eigen_values.first;
+    line = Line(c, Vector (eigen_vectors[2], eigen_vectors[3]));
+    return (FT)1.0 - eigen_values[0] / eigen_values[1];
   } 
   else
   {

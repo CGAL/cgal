@@ -13,7 +13,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.3}
-\cgalPkgDependsOn{Solvers from \ref thirdpartyEigen.} 
+\cgalPkgDependsOn{\ref PkgSolverSummary} 
 \cgalPkgBib{cgal:pc-eldp}
 \cgalPkgLicense{\ref licensesGPL  "GPL"}
 \cgalPkgDemo{Operations on Polyhedra,polyhedron_3.zip}
@@ -25,12 +25,12 @@
 ## Concepts ##
 - `DataKernel`
 - `LocalKernel`
-- `SvdTraits`
+
 
 ## Classes ##
 - \link CGAL::Monge_via_jet_fitting::Monge_form `CGAL::Monge_via_jet_fitting< DataKernel, LocalKernel, SvdTraits>::Monge_form` \endlink
 - `CGAL::Monge_via_jet_fitting<DataKernel, LocalKernel, SvdTraits>`
-- `CGAL::Eigen_svd`
+
 
 ## Global Functions ##
 The insert operator (operator<< ) is overloaded for the class \link CGAL::Monge_via_jet_fitting::Monge_form `Monge_form` \endlink. 

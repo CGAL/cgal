@@ -22,8 +22,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/centroid.h>
-#include <CGAL/eigen_2.h>
-#include <CGAL/eigen.h>
 #include <CGAL/Linear_algebraCd.h>
 #include <CGAL/PCA_util.h>
 
@@ -40,7 +38,7 @@ namespace internal {
 //  0 is worst (isotropic case, returns a line with horizontal
 //              direction by default)
 
-template < typename InputIterator, typename K >
+template < typename InputIterator, typename K, typename DiagonalizeTraits >
 typename K::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
@@ -48,7 +46,8 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const typename K::Iso_rectangle_2*,// used for indirection
                                const K&,                   // kernel
-			                         const CGAL::Dimension_tag<2>& tag)
+			       const CGAL::Dimension_tag<2>& tag,
+			       const DiagonalizeTraits&)
 {
   // types
   typedef typename K::FT       FT;
@@ -70,7 +69,7 @@ linear_least_squares_fitting_2(InputIterator first,
   // 1 2
   //Final combined covariance matrix for all rectangles and their combined mass
   FT mass = 0.0;
-  FT covariance[3] = {0.0,0.0,0.0};
+  typename DiagonalizeTraits::Covariance_matrix covariance = {{ 0., 0., 0. }};
 
   // assemble 2nd order moment about the origin.  
   FT temp[4] = {1/3.0, 0.25,
@@ -123,22 +122,19 @@ linear_least_squares_fitting_2(InputIterator first,
   covariance[2] += mass * (-1.0 * c.y() * c.y());
 
   // solve for eigenvalues and eigenvectors.
-  // eigen values are sorted in descending order, 
+  // eigen values are sorted in ascending order, 
   // eigen vectors are sorted in accordance.
-  std::pair<FT,FT> eigen_values;
-  std::pair<Vector,Vector> eigen_vectors;
-  FT eigen_vectors1[4];
-  FT eigen_values1[2];
-  eigen_symmetric<FT>(covariance,2, eigen_vectors1, eigen_values1);
-  eigen_values = std::make_pair(eigen_values1[0],eigen_values1[1]);
-  eigen_vectors = std::make_pair(Vector(eigen_vectors1[0],eigen_vectors1[1]),Vector(eigen_vectors1[2],eigen_vectors1[3]));
+  typename DiagonalizeTraits::Vector eigen_values = {{ 0. , 0. }};
+  typename DiagonalizeTraits::Matrix eigen_vectors = {{ 0., 0., 0. }};
+  DiagonalizeTraits::diagonalize_selfadjoint_covariance_matrix
+    (covariance, eigen_values, eigen_vectors);
 
   // check unicity and build fitting line accordingly
-  if(eigen_values.first != eigen_values.second)
+  if(eigen_values[0] != eigen_values[1])
   {
     // regular case
-    line = Line(c, eigen_vectors.first);
-    return (FT)1.0 - eigen_values.second / eigen_values.first;
+    line = Line(c, Vector(eigen_vectors[2],eigen_vectors[3]));
+    return (FT)1.0 - eigen_values[0] / eigen_values[1];
   } 
   else
   {
@@ -150,7 +146,7 @@ linear_least_squares_fitting_2(InputIterator first,
   } 
 } // end linear_least_squares_fitting_2 for rectangle set with 2D tag
 
-template < typename InputIterator, typename K >
+template < typename InputIterator, typename K, typename DiagonalizeTraits >
 typename K::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
@@ -158,7 +154,8 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const typename K::Iso_rectangle_2*,// used for indirection
                                const K&,                   // kernel
-			                         const CGAL::Dimension_tag<1>& tag)
+			       const CGAL::Dimension_tag<1>& tag,
+			       const DiagonalizeTraits& diagonalize_traits)
 {
   // types
   typedef typename K::Iso_rectangle_2 Iso_rectangle;
@@ -179,13 +176,15 @@ linear_least_squares_fitting_2(InputIterator first,
     segments.push_back(Segment_2(t[3],t[0]));      
   }    
 
-  return linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,K(),tag);
+  return linear_least_squares_fitting_2(segments.begin(),segments.end(),line,c,K(),tag,
+					diagonalize_traits);
 
 } // end linear_least_squares_fitting_2 for rectangle set with 1D tag
 
 
 template < typename InputIterator,
-           typename K >
+           typename K,
+	   typename DiagonalizeTraits >
 typename K::FT
 linear_least_squares_fitting_2(InputIterator first,
                                InputIterator beyond, 
@@ -193,7 +192,8 @@ linear_least_squares_fitting_2(InputIterator first,
                                typename K::Point_2& c,     // centroid
                                const typename K::Iso_rectangle_2*,// used for indirection
                                const K&,                   // kernel
-			                         const CGAL::Dimension_tag<0>& tag)
+			       const CGAL::Dimension_tag<0>& tag,
+			       const DiagonalizeTraits& diagonalize_traits)
 {
   // types
   typedef typename K::Iso_rectangle_2 Iso_rectangle;
@@ -214,7 +214,8 @@ linear_least_squares_fitting_2(InputIterator first,
     points.push_back(Point_2(t[3]));      
   }    
 
-  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,K(),tag);
+  return linear_least_squares_fitting_2(points.begin(),points.end(),line,c,K(),tag,
+					diagonalize_traits);
 
 } // end linear_least_squares_fitting_2 for rectangle set with 0D tag
 
