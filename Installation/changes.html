@@ -166,7 +166,7 @@ to remove once 4.7 is published: -->
       edition it should be
     <code>/path-to/qt-everywhere-opensource-src-&lt;version&gt;/qtbase/lib/cmake/Qt5</code>.
     </li>
-    <li>The code of the 3D demos now use modern OpenGL, with shaders,
+    <li>The code of the 3D demos now uses modern OpenGL, with shaders,
     instead of the fixed pipeline API of OpenGL-1.</li>
     <li>The Microsoft Windows Visual C++ compiler 2015 (VC14) is now
       supported.  However, since this compiler is not officially supported
@@ -267,9 +267,9 @@ to remove once 4.7 is published: -->
   <ul>
     <li> This package now supports any model of the
       concept <code>FaceGraph</code>.
-    <li> <b>Breaking change:</b> The package no longer support models
+    <li> <b>Breaking change:</b> The package no longer supports models
       of <code>TriangulatedSurfaceMesh</code> which are not at the same
-      time model of the concept <code>FaceGraph</code>.
+      time models of the concept <code>FaceGraph</code>.
     </li>
   </ul>
 
@@ -296,7 +296,7 @@ to remove once 4.7 is published: -->
 	<li>The existing <code>ArrangementLandmarkTraits_2</code> concept,
 	  which has two requirements, now refines the two respective
 	  concepts above.</li>
-	<li>The template parameter of the exsting
+	<li>The template parameter of the existing
 	  <code>Arr_polyline_traits_2&lt;SegmentTraits&gt;</code> template
 	  must be substituted with a traits class that is a model of
 	  the <code>ArrangementConstructXMonotoneTraits_2</code> concept
@@ -363,7 +363,7 @@ to remove once 4.7 is published: -->
       whether a point is on or close to a feature edge. The former function
       is also internally used by <code>CGAL::vcm_estimate_normals()</code>
       to estimate the normals of a point set and it is particularly suited
-      to point set with noise.
+      to point sets with noise.
     </li>
   </ul>
 
