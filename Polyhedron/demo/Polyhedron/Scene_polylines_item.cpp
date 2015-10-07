@@ -26,7 +26,7 @@ public:
 };
 
 void
-Scene_polylines_item::create_Sphere(double R)
+Scene_polylines_item::create_Sphere(double R) const
 {
   create_flat_and_wire_sphere(R, positions_spheres, normals_spheres, positions_wire_spheres);
 }
@@ -180,7 +180,7 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
 
 }
 void
-Scene_polylines_item::compute_elements()
+Scene_polylines_item::compute_elements() const
 {
     positions_spheres.resize(0);
     positions_wire_spheres.resize(0);
@@ -322,8 +322,6 @@ Scene_polylines_item::compute_elements()
         create_Sphere(d->spheres_drawn_radius);
 
     }
-
-
 }
 
 
@@ -425,7 +423,10 @@ void
 Scene_polylines_item::draw(Viewer_interface* viewer) const {
 
     if(!are_buffers_filled)
+    {
+        compute_elements();
         initialize_buffers(viewer);
+    }
     if(d->draw_extremities)
     {
         if(viewer->extension_is_found)
@@ -459,7 +460,10 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
 void 
 Scene_polylines_item::draw_edges(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
+    {
+        compute_elements();
         initialize_buffers(viewer);
+    }
 
     vaos[0]->bind();
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
@@ -489,7 +493,10 @@ Scene_polylines_item::draw_edges(Viewer_interface* viewer) const {
 void 
 Scene_polylines_item::draw_points(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
+    {
+        compute_elements();
         initialize_buffers(viewer);
+    }
 
     vaos[0]->bind();
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
@@ -531,7 +538,6 @@ QMenu* Scene_polylines_item::contextMenu()
 
 void Scene_polylines_item::invalidate_buffers()
 {
-    compute_elements();
     are_buffers_filled = false;
 
 
