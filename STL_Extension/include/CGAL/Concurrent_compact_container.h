@@ -1022,9 +1022,39 @@ namespace CCC_internal {
     return rhs.operator->() != NULL;
   }
 
+  template <class CCC, bool Const>
+  std::size_t hash_value(const CCC_iterator<CCC, Const>&  i)
+  {
+    return reinterpret_cast<std::size_t>(&*i) / sizeof(typename CCC::value_type);
+  }
 } // namespace CCC_internal
 
 } //namespace CGAL
+namespace std {
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4099) // For VC10 it is class hash 
+#endif
+
+#ifndef CGAL_CFG_NO_STD_HASH
+  
+  template < class CCC, bool Const >
+  struct hash<CGAL::CCC_internal::CCC_iterator<CCC, Const> >
+    : public std::unary_function<CGAL::CCC_internal::CCC_iterator<CCC, Const>, std::size_t> {
+
+    std::size_t operator()(const CGAL::CCC_internal::CCC_iterator<CCC, Const>& i) const
+    {
+      return reinterpret_cast<std::size_t>(&*i) / sizeof(typename CCC::value_type);
+    }
+  };
+#endif // CGAL_CFG_NO_STD_HASH
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+} // namespace std
 
 #endif // CGAL_CONCURRENT_COMPACT_CONTAINER_H
 
