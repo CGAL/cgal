@@ -116,9 +116,10 @@ MP_Float operator%(const MP_Float &a, const MP_Float &b);
 class MP_Float
 {
 public:
-  typedef short      limb;
-  typedef int        limb2;
-  typedef double     exponent_type;
+  typedef short          limb;
+  typedef unsigned short unsigned_limb;
+  typedef int            limb2;
+  typedef double         exponent_type;
 
   typedef std::vector<limb>  V;
   typedef V::const_iterator  const_iterator;
@@ -159,7 +160,8 @@ public:
   void split(limb2 l, limb & high, limb & low)
   {
     const unsigned int sizeof_limb=8*sizeof(limb);
-    const limb2 mask= ~( static_cast<limb2>(-1) << sizeof_limb ); //0000ffff
+    const limb2 mask = 0x0000ffff;
+   
     //Note: For Integer type, if the destination type is signed, the value is unchanged 
     //if it can be represented in the destination type)
     low=static_cast<limb>(l & mask); //extract low bits from l 
@@ -186,6 +188,7 @@ public:
   MP_Float()
       : exp(0)
   {
+    CGAL_assertion(sizeof(limb2)==4); // so that the above 0x0000ffff is correct
     CGAL_assertion(sizeof(limb2) == 2*sizeof(limb));
     CGAL_assertion(v.empty());
     // Creates zero.
