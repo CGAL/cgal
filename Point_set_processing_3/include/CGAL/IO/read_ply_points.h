@@ -49,26 +49,50 @@ namespace internal {
 
     virtual double operator() (std::istream& stream) const = 0;
 
+
+    // The two following functions prevent the stream to only extract
+    // ONE character (= what the types char imply) by requiring
+    // explicitely an integer object when reading the stream
+    void read_ascii (std::istream& stream, char& c) const
+    {
+      short s;
+      stream >> s;
+      c = static_cast<char>(s);
+    }
+    void read_ascii (std::istream& stream, unsigned char& c) const
+    {
+      unsigned short s;
+      stream >> s;
+      c = static_cast<unsigned char>(s);
+    }
+
+    // Default template when Type is not a char type
+    template <typename Type>
+    void read_ascii (std::istream& stream, Type& t) const
+    {
+      stream >> t;
+    }
+    
     template <typename Type>
     Type read (std::istream& stream) const
     {
       if (m_format == 0) // Ascii
         {
           Type t;
-          stream >> t;
+          read_ascii (stream, t);
           return t;
         }
       else // Binary (2 = little endian)
         {
           union
           {
-            unsigned char uChar[sizeof (Type)];
+            char uChar[sizeof (Type)];
             Type type;
           } buffer;
           
           std::size_t size = sizeof (Type);
 
-          stream.read(reinterpret_cast<char*>(buffer.uChar), size);
+          stream.read(buffer.uChar, size);
       
           if (m_format == 2) // Big endian
             {
