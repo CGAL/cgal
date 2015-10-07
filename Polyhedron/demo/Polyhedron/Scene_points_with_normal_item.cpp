@@ -3,6 +3,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <CGAL/IO/read_ply_points.h>
+#include <CGAL/IO/write_ply_points.h>
 #include <CGAL/IO/read_off_points.h>
 #include <CGAL/IO/write_off_points.h>
 #include <CGAL/IO/read_xyz_points.h>
@@ -344,6 +345,17 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
     }
   invalidate_buffers();
   return ok;
+}
+
+// Write point set to .PLY file
+bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream) const
+{
+  Q_ASSERT(m_points != NULL);
+
+  return stream &&
+         CGAL::write_ply_points_and_normals(stream,
+                                            m_points->begin(), m_points->end(),
+                                            CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()));
 }
 
 // Loads point set from .OFF file
