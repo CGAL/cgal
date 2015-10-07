@@ -48,7 +48,7 @@ struct DPoint {
     GLdouble coords[3];
 };
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item()
-    : Scene_item(7,3),
+    : Scene_item(4,3),
       nef_poly(new Nef_polyhedron)
 {
     is_selected = true;
@@ -58,7 +58,7 @@ Scene_nef_polyhedron_item::Scene_nef_polyhedron_item()
 }
 
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(Nef_polyhedron* const p)
-    : Scene_item(7,3),
+    : Scene_item(4,3),
       nef_poly(p)
 {
     is_selected = true;
@@ -68,7 +68,7 @@ Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(Nef_polyhedron* const p)
 }
 
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(const Nef_polyhedron& p)
-    : Scene_item(7,3),
+    : Scene_item(4,3),
       nef_poly(new Nef_polyhedron(p))
 {
      is_selected = true;
@@ -106,13 +106,6 @@ void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) con
         program->setAttributeBuffer("normals",GL_DOUBLE,0,3);
         buffers[1].release();
 
-        buffers[2].bind();
-        buffers[2].allocate(color_facets.data(),
-                            static_cast<int>(color_facets.size()*sizeof(double)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
-        buffers[2].release();
-        vaos[0]->release();
         nb_facets = positions_facets.size();
         positions_facets.resize(0);
         std::vector<double>(positions_facets).swap(positions_facets);
@@ -120,8 +113,6 @@ void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) con
         normals.resize(0);
         std::vector<double>(normals).swap(normals);
 
-        color_facets.resize(0);
-        std::vector<double>(color_facets).swap(color_facets);
         program->release();
 
     }
@@ -131,28 +122,17 @@ void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) con
         program->bind();
 
         vaos[1]->bind();
-        buffers[3].bind();
-        buffers[3].allocate(positions_lines.data(),
+        buffers[2].bind();
+        buffers[2].allocate(positions_lines.data(),
                             static_cast<int>(positions_lines.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[3].release();
+        buffers[2].release();
 
-
-
-        buffers[4].bind();
-        buffers[4].allocate(color_lines.data(),
-                            static_cast<int>(color_lines.size()*sizeof(double)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
-        buffers[4].release();
 
         nb_lines = positions_lines.size();
         positions_lines.resize(0);
         std::vector<double>(positions_lines).swap(positions_lines);
-
-        color_lines.resize(0);
-        std::vector<double>(color_lines).swap(color_lines);
         vaos[1]->release();
         program->release();
     }
@@ -162,30 +142,18 @@ void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) con
         program->bind();
 
         vaos[2]->bind();
-        buffers[5].bind();
-        buffers[5].allocate(positions_points.data(),
+        buffers[3].bind();
+        buffers[3].allocate(positions_points.data(),
                             static_cast<int>(positions_points.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[5].release();
-
-
-
-        buffers[6].bind();
-        buffers[6].allocate(color_points.data(),
-                            static_cast<int>(color_points.size()*sizeof(double)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
-        buffers[6].release();
+        buffers[3].release();
 
         vaos[2]->release();
 
         nb_points = positions_points.size();
         positions_points.resize(0);
         std::vector<double>(positions_points).swap(positions_points);
-
-        color_points.resize(0);
-        std::vector<double>(color_points).swap(color_points);
         program->release();
     }
     are_buffers_filled = true;
@@ -195,9 +163,6 @@ void Scene_nef_polyhedron_item::compute_normals_and_vertices(void)
      int count = 0;
     positions_facets.resize(0);
     positions_points.resize(0);
-    color_lines.resize(0);
-    color_facets.resize(0);
-    color_points.resize(0);
     normals.resize(0);
     positions_lines.resize(0);
     //The Facets
@@ -314,36 +279,6 @@ void Scene_nef_polyhedron_item::compute_normals_and_vertices(void)
                         normals.push_back(normal[1]);
                         normals.push_back(normal[2]);
 
-                        if(is_selected)
-                        {
-                            color_facets.push_back(this->color().lighter(120).redF());
-                            color_facets.push_back(this->color().lighter(120).greenF());
-                            color_facets.push_back(this->color().lighter(120).blueF());
-
-                            color_facets.push_back(this->color().lighter(120).redF());
-                            color_facets.push_back(this->color().lighter(120).greenF());
-                            color_facets.push_back(this->color().lighter(120).blueF());
-
-                            color_facets.push_back(this->color().lighter(120).redF());
-                            color_facets.push_back(this->color().lighter(120).greenF());
-                            color_facets.push_back(this->color().lighter(120).blueF());
-                        }
-                        else
-                        {
-                            color_facets.push_back(this->color().redF());
-                            color_facets.push_back(this->color().greenF());
-                            color_facets.push_back(this->color().blueF());
-
-                            color_facets.push_back(this->color().redF());
-                            color_facets.push_back(this->color().greenF());
-                            color_facets.push_back(this->color().blueF());
-
-                            color_facets.push_back(this->color().redF());
-                            color_facets.push_back(this->color().greenF());
-                            color_facets.push_back(this->color().blueF());
-
-                        }
-
                     }
                 }
             }
@@ -372,26 +307,7 @@ void Scene_nef_polyhedron_item::compute_normals_and_vertices(void)
             positions_lines.push_back(CGAL::to_double(b.y()));
             positions_lines.push_back(CGAL::to_double(b.z()));
 
-            if(is_selected)
-            {
-                color_lines.push_back(this->color().lighter(50).redF());
-                color_lines.push_back(this->color().lighter(50).greenF());
-                color_lines.push_back(this->color().lighter(50).blueF());
 
-                color_lines.push_back(this->color().lighter(50).redF());
-                color_lines.push_back(this->color().lighter(50).greenF());
-                color_lines.push_back(this->color().lighter(50).blueF());
-            }
-            else
-            {
-                color_lines.push_back(0.0);
-                color_lines.push_back(0.0);
-                color_lines.push_back(0.0);
-
-                color_lines.push_back(0.0);
-                color_lines.push_back(0.0);
-                color_lines.push_back(0.0);
-            }
         }
     }
     //The points
@@ -493,6 +409,11 @@ void Scene_nef_polyhedron_item::draw(Viewer_interface* viewer) const
     program=getShaderProgram(PROGRAM_WITH_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
+    if(is_selected)
+        program->setAttributeValue("colors", this->color().lighter(120));
+    else
+        program->setAttributeValue("colors", this->color());
+    program->setUniformValue("is_two_side", 1);
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/3));
     vaos[0]->release();
     program->release();
@@ -513,6 +434,10 @@ void Scene_nef_polyhedron_item::draw_edges(Viewer_interface* viewer) const
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer ,PROGRAM_WITHOUT_LIGHT);
     program->bind();
+    if(is_selected)
+        program->setAttributeValue("colors", QColor(Qt::black));
+    else
+        program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_LINES,0,static_cast<GLsizei>(nb_lines/3));
     vaos[1]->release();
     program->release();
@@ -534,6 +459,7 @@ void Scene_nef_polyhedron_item::draw_points(Viewer_interface* viewer) const
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer ,PROGRAM_WITHOUT_LIGHT);
     program->bind();
+    program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_POINTS,0,static_cast<GLsizei>(nb_points/3));
     vaos[2]->release();
     program->release();
@@ -744,9 +670,6 @@ Scene_nef_polyhedron_item::selection_changed(bool p_is_selected)
 {
 
     if(p_is_selected != is_selected)
-    {
         is_selected = p_is_selected;
-        invalidate_buffers();
-    }
 
 }
