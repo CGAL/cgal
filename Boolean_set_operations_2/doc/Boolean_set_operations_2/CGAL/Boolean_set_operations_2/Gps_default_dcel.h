@@ -74,18 +74,5 @@ class Gps_default_dcel :
                        Gps_halfedge_base<typename Traits::X_monotone_curve_2>,
                        Gps_face_base<typename Traits::Point_2,
                                      typename Traits::X_monotone_curve_2> >
-{
-public:
-
-/// \name Types
-/// @{
-
-/*!
-allows the rebinding of the <span class="textsc">Dcel</span> with a different traits class `T`.
-*/
-typedef unspecified_type template <class T> rebind;
-
-/// @}
-
-};
+{};
 } /* end namespace CGAL */
