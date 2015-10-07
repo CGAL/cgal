@@ -329,6 +329,19 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
                                               std::back_inserter(*m_points),
                                               CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())) &&
             !isEmpty();
+  if (ok)
+    {
+      for (Point_set::iterator it=m_points->begin(),
+             end=m_points->end();it!=end; ++it)
+        {
+          if (it->normal() != CGAL::NULL_VECTOR)
+            {
+              m_has_normals=true;
+              setRenderingMode(PointsPlusNormals);
+              break;
+            }
+        }
+    }
   invalidate_buffers();
   return ok;
 }
