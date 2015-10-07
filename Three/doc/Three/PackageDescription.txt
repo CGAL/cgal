@@ -13,6 +13,7 @@
 \cgalPkgAuthors{Laurent Rineau, Sebastien Loriot, Andreas Fabri, Maxime Gimeno}
 \cgalPkgDesc{This package provides base classes for building a plugin. }
 \cgalPkgManuals{Chapter_PACKAGE_NAME,PkgPACKAGE}
+\cgalPkgBib{cgal:rlfg-pd}
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
