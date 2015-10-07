@@ -185,9 +185,9 @@ for line in f:
         if match:
           bib=match.group(1)
           continue
-      assert(len(bib)>0)
-      assert(len(authors)>0)
-      assert(len(anchor)>0)
+      assert len(bib)>0, "Did you forget a \cgalPkgBib{} in %r?" % filename
+      assert len(authors)>0, "Did you forget a \cgalPkgAuthors{} in %r?" % filename
+      assert len(anchor)>0, "Did you forget the anchor in \cgalPkgDescriptionBegin{} in %r?" % filename
       result_txt+=gen_txt_entry(title, authors, bib, anchor,k)
       # convert title and author to bibtex format
       title=protect_upper_case(title)
