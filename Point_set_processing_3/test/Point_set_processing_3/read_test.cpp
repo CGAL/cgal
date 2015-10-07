@@ -94,6 +94,8 @@ int main()
   assert(read_ply("data/read_test/simple.ply", pv_pairs));
   pv_pairs.clear ();
   assert(read_ply("data/read_test/simple_ascii.ply", pv_pairs));
+  pv_pairs.clear ();
+  assert(read_ply("data/read_test/simple_with_flag.ply", pv_pairs));
 
   return 0;
 }  
