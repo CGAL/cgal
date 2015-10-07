@@ -98,13 +98,14 @@ the solver:
 \cgalExample{Solver_interface/sparse_solvers.cpp}
 
 \section SolversHistory Implementation History
-This package is the result of the increasing needs for linear solvers in \cgal.
-The first packages that introduced the solver concepts were \ref PkgSurfaceParameterization,
-\ref PkgSurfaceReconstructionFromPointSets and \ref PkgJet_fitting_3.
-At that time, these packages were relying on \sc{Taucs}, \sc{LAPACK}, \sc{BLAS} and \sc{OpenNL}. Gaël Guennebaud
-then introduced new models using the \ref thirdpartyEigen library that became the
-only supported models by \cgal.
-Later on the packages \ref PkgMeanCurvatureSkeleton3Summary and \ref PkgSurfaceModelingSummary
+This package is the result of the increasing needs for linear solvers
+in \cgal.  The first packages that introduced the solver concepts were
+\ref PkgSurfaceParameterization, \ref PkgPoissonSurfaceReconstruction
+and \ref PkgJet_fitting_3.  At that time, these packages were relying
+on \sc{Taucs}, \sc{LAPACK}, \sc{BLAS} and \sc{OpenNL}. Gaël Guennebaud
+then introduced new models using the \ref thirdpartyEigen library that
+became the only supported models by \cgal.  Later on the packages \ref
+PkgMeanCurvatureSkeleton3Summary and \ref PkgSurfaceModelingSummary
 extended the existing concepts.
 
 Simon Giraudot was responsible for gathering all concepts and classes, and also wrote this user manual
