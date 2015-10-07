@@ -48,6 +48,10 @@ Add the following line:
 to place your action in a submenu in the Operation Menu.\n
 If the plugin implements a new Scene_item, please notice that a Scene_item has a number of functions that will need a reference to the Viewer through the Viewer_interface type.
 
+A plugin must always contain
+~~~~~~~~~~~~~{.cpp}
+#include "Polyhedron_demo_xxxx_yyyy_plugin.moc"
+~~~~~~~~~~~~~
 \subsection examplePluginDialog Adding a dialog
 
 This section describes how to add a dialog on the use of an action.
@@ -105,12 +109,8 @@ and initialize them in the init fucntion :
       mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 ~~~~~~~~~~~~~
 
-
-
-A plugin must always contain
-~~~~~~~~~~~~~{.cpp}
-#include "Polyhedron_demo_xxxx_yyyy_plugin.moc"
-~~~~~~~~~~~~~
+Use signal/slots to connect the dock widget to the plugin, and connect them in the init() function, and use the functions show()/hide() to make your 
+dock widget visible or not.
 
 \section usefulItems List of useful classes :
 - MainWindow

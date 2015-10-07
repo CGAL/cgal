@@ -188,6 +188,7 @@ public :
 
       ui_widget.setupUi(dock_widget);
       mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+      connect(ui_widget.buttonBox, SIGNAL(accepted()), this, SLOT(on_dock_OK_clicked()));
     }
 
     bool applicable(QAction*) const
@@ -202,6 +203,9 @@ public :
 
   void populate_dialog()
   {
+      // dock widget should be constructed in init()
+      if(dock_widget->isVisible()) { dock_widget->hide(); }
+      else                         { dock_widget->show(); }
       dialog = new Polyhedron_demo_example_plugin_dialog();
       if(!dialog->exec())
         return;
@@ -223,6 +227,22 @@ public :
                                        bx, by, bz,
                                        cx, cy, cz);
     scene->addItem(triangle);
+  }
+
+  void on_dock_OK_clicked()
+  {
+      ax = ui_widget.doubleSpinBox_Ax->value();
+      ay = ui_widget.doubleSpinBox_Ay->value();
+      az = ui_widget.doubleSpinBox_Az->value();
+
+      bx = ui_widget.doubleSpinBox_Bx->value();
+      by = ui_widget.doubleSpinBox_By->value();
+      bz = ui_widget.doubleSpinBox_Bz->value();
+
+      cx = ui_widget.doubleSpinBox_Cx->value();
+      cy = ui_widget.doubleSpinBox_Cy->value();
+      cz = ui_widget.doubleSpinBox_Cz->value();
+      draw_triangle();
   }
 
 private:
