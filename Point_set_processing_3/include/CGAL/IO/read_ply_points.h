@@ -284,6 +284,7 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
         if (keyword == "comment" || keyword == "property")
           continue;
 
+        // When end_header is reached, stop loop and begin reading points
         if (keyword == "end_header")
           break;
             
@@ -316,7 +317,6 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
       for (std::size_t i = 0; i < readers.size (); ++ i)
         {
           FT value = (*readers[i])(stream);
-
           if (readers[i]->name () == "x") x = value;
           else if (readers[i]->name () == "y") y = value;
           else if (readers[i]->name () == "z") z = value;

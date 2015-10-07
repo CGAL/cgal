@@ -2,6 +2,7 @@
 #include "Polyhedron_type.h"
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
+#include <CGAL/IO/read_ply_points.h>
 #include <CGAL/IO/read_off_points.h>
 #include <CGAL/IO/write_off_points.h>
 #include <CGAL/IO/read_xyz_points.h>
@@ -315,6 +316,21 @@ void Scene_points_with_normal_item::selectDuplicates()
       m_points->select(&(*ptit));
   invalidate_buffers();
   Q_EMIT itemChanged();
+}
+
+// Loads point set from .PLY file
+bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
+{
+  Q_ASSERT(m_points != NULL);
+
+  m_points->clear();
+  bool ok = stream &&
+            CGAL::read_ply_points_and_normals(stream,
+                                              std::back_inserter(*m_points),
+                                              CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())) &&
+            !isEmpty();
+  invalidate_buffers();
+  return ok;
 }
 
 // Loads point set from .OFF file

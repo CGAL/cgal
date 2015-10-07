@@ -126,6 +126,7 @@ else
       orient_soup_plugin \
       parameterization_plugin \
       pca_plugin \
+      ply_to_xyz_plugin \
       point_dialog \
       point_inside_polyhedron_plugin \
       point_set_average_spacing_plugin \
