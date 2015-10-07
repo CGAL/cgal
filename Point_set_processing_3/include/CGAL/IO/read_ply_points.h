@@ -262,21 +262,21 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
                 return false;
               }
 
-            if (type == "char")
+            if (     type == "char"   || type == "int8")
               readers.push_back (new internal::Ply_read_char (name, format));
-            else if (type == "uchar")
+            else if (type == "uchar"  || type == "uint8")
               readers.push_back (new internal::Ply_read_uchar (name, format));
-            else if (type == "short")
+            else if (type == "short"  || type == "int16")
               readers.push_back (new internal::Ply_read_short (name, format));
-            else if (type == "ushort")
+            else if (type == "ushort" || type == "uint16")
               readers.push_back (new internal::Ply_read_ushort (name, format));
-            else if (type == "int")
+            else if (type == "int"    || type == "int32")
               readers.push_back (new internal::Ply_read_int (name, format));
-            else if (type == "uint")
+            else if (type == "uint"   || type == "uint32")
               readers.push_back (new internal::Ply_read_uint (name, format));
-            else if (type == "float")
+            else if (type == "float"  || type == "float32")
               readers.push_back (new internal::Ply_read_float (name, format));
-            else if (type == "double")
+            else if (type == "double" || type == "float64")
               readers.push_back (new internal::Ply_read_double (name, format));
                 
             continue;
