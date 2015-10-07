@@ -24,6 +24,9 @@
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Search_traits_adapter.h>
 
+#include <boost/type_traits.hpp>
+#include <boost/utility/enable_if.hpp>
+
 namespace CGAL {
 
   namespace internal{
@@ -150,8 +153,12 @@ namespace CGAL {
     Fuzzy_sphere(const SearchTraits& traits_=SearchTraits()):Base(traits_){};
     Fuzzy_sphere(const typename Base_traits::Point_d& center, FT radius, FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits()) : 
       Base(center,radius,epsilon,traits_) {}
-    Fuzzy_sphere(const typename SearchTraits::Point_d& center, FT radius, FT epsilon=FT(0),const SearchTraits& traits_=SearchTraits()) : 
-      Base(get(traits_.point_property_map(),center),radius,epsilon,traits_) {}
+    Fuzzy_sphere(const typename SearchTraits::Point_d& center, FT radius, FT epsilon=FT(0),
+                 const SearchTraits& traits_=SearchTraits(),
+                 typename boost::disable_if<
+                  boost::is_same<typename Base_traits::Point_d,
+                                 typename SearchTraits::Point_d> >::type* = 0)
+      : Base(get(traits_.point_property_map(),center),radius,epsilon,traits_) {}
   };
   
 } // namespace CGAL
