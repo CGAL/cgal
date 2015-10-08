@@ -172,8 +172,9 @@ namespace internal {
   
 //===================================================================================
 /// \ingroup PkgPointSetProcessing
-/// Reads points (positions + normals, if available) from a .ply stream.
-/// Faces are ignored.
+/// Reads points (positions + normals, if available) from a .ply
+/// stream (ASCII or binary).
+/// Potential additional point properties and faces are ignored.
 ///
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.
@@ -477,9 +478,8 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
 
 //===================================================================================
 /// \ingroup PkgPointSetProcessing
-/// Reads points (position only) from a .ply stream.
-/// If the position is followed by the nx ny nz normal, then the normal will be ignored.
-/// Faces are ignored.
+/// Reads points (position only) from a .ply stream (ASCII or binary).
+/// Potential additional point properties (including normals) and faces are ignored.
 ///
 /// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
 ///         It is default to `value_type_traits<OutputIterator>::%type` and can be omitted when the default is fine.

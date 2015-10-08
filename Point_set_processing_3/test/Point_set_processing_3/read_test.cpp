@@ -92,10 +92,21 @@ int main()
 
   pv_pairs.clear ();
   assert(read_ply("data/read_test/simple.ply", pv_pairs));
+  assert(pv_pairs[0] == std::make_pair(Point_3(1,1,1), Vector_3(2,2,2)));
+  assert(pv_pairs[1] == std::make_pair(Point_3(3,3,3), Vector_3(4,4,4)));
+  assert(pv_pairs[2] == std::make_pair(Point_3(5,5,5), Vector_3(6,6,6)));
+
   pv_pairs.clear ();
   assert(read_ply("data/read_test/simple_ascii.ply", pv_pairs));
+  assert(pv_pairs[0] == std::make_pair(Point_3(1,1,1), Vector_3(2,2,2)));
+  assert(pv_pairs[1] == std::make_pair(Point_3(3,3,3), Vector_3(4,4,4)));
+  assert(pv_pairs[2] == std::make_pair(Point_3(5,5,5), Vector_3(6,6,6)));
+
   pv_pairs.clear ();
   assert(read_ply("data/read_test/simple_with_flag.ply", pv_pairs));
+  assert(pv_pairs[0] == std::make_pair(Point_3(1,1,1), Vector_3(2,2,2)));
+  assert(pv_pairs[1] == std::make_pair(Point_3(3,3,3), Vector_3(4,4,4)));
+  assert(pv_pairs[2] == std::make_pair(Point_3(5,5,5), Vector_3(6,6,6)));
 
   return 0;
 }  
