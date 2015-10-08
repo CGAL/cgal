@@ -521,7 +521,6 @@ public:
 
 
   bool do_collapse(Edge edge) {
-    bool ok;
     Vertex_handle s = m_dt.source_vertex(edge);
     Vertex_handle t = m_dt.target_vertex(edge);
 
@@ -540,10 +539,10 @@ public:
       remove_stencil_from_pqueue(hull.begin(), hull.end());
 
     if (m_use_flip)
-      ok = m_dt.make_collapsible(edge, hull.begin(), hull.end(), m_verbose);
+      m_dt.make_collapsible(edge, hull.begin(), hull.end(), m_verbose);
 
     // debug test
-    ok = m_dt.check_kernel_test(edge);
+    bool ok = m_dt.check_kernel_test(edge);
     if (!ok) {
       std::cerr << "do_collapse: kernel test failed: " << std::endl;
       return false;
