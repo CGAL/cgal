@@ -240,7 +240,7 @@
 // Big endian or little endian machine.
 // ====================================
 
-#if (BOOST_VERSION > 105400)
+#if (BOOST_VERSION >= 105500)
 #  include <boost/predef.h>
 #  if defined(BOOST_ENDIAN_BIG_BYTE)
 #    define CGAL_BIG_ENDIAN
@@ -268,9 +268,7 @@
    || defined(__x86_64) || defined(__x86_64__) \
    || defined(__ia64) || defined(__ia64__) \
    || defined(_M_IX86) || defined(_M_IA64) \
-   || defined(_M_ALPHA) || defined(_WIN64) \
-   || defined(__aarch64__) || defined(__arm__) \
-   || defined(__arm) || defined(_M_ARM)
+   || defined(_M_ALPHA) || defined(_WIN64)
 #  define CGAL_LITTLE_ENDIAN
 #else
 #  error Unknown endianness
