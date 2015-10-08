@@ -31,7 +31,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
-#include <set>
+#include <map>
 #include <vector>
 #include <utility>
 #include <boost/range.hpp>
@@ -84,22 +84,31 @@ detect_duplicated_boundary_edges
 (PM& pmesh, OutputIterator out, LessHedge less_hedge, const VertexPointMap& vpmap)
 {
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-  typedef std::set<halfedge_descriptor, LessHedge> Border_halfedge_set;
-
-  Border_halfedge_set border_halfedge_set(less_hedge);
+  typedef std::map<halfedge_descriptor, int, LessHedge> Border_halfedge_map;
+  Border_halfedge_map border_halfedge_map(less_hedge);
   BOOST_FOREACH(halfedge_descriptor he, halfedges(pmesh))
   {
     if ( !CGAL::is_border(he, pmesh) )
       continue;
-    typename Border_halfedge_set::iterator set_it;
+    typename Border_halfedge_map::iterator set_it;
     bool insertion_ok;
     CGAL::cpp11::tie(set_it, insertion_ok)
-      = border_halfedge_set.insert(he);
+      = border_halfedge_map.insert(std::make_pair(he,1));
 
-    if ( !insertion_ok )
-      if ( get(vpmap, source(he,pmesh))==get(vpmap, target(*set_it,pmesh)) &&
-           get(vpmap, target(he,pmesh))==get(vpmap, source(*set_it,pmesh)) )
-        *out++ = std::make_pair(*set_it, he);
+    if ( !insertion_ok ){ // we found already a halfedge with the points
+      ++set_it->second;
+      if(set_it->second == 2){
+        if ( get(vpmap, source(he,pmesh))==get(vpmap, target(set_it->first,pmesh)) &&
+             get(vpmap, target(he,pmesh))==get(vpmap, source(set_it->first,pmesh)) )
+          *out++ = std::make_pair(set_it->first, he);
+      } else {
+        CGAL_assertion_code(std::stringstream sstr;)
+        CGAL_assertion_code(sstr<<"Non-manifold edge found during stitching: ";)
+        CGAL_assertion_code(sstr<< get(vpmap, source(he,pmesh)) << " "; )
+        CGAL_assertion_code(sstr<< get(vpmap, target(he,pmesh)) << "\n"; )
+        CGAL_warning_msg(false, sstr.str().c_str());
+      }
+    }
   }
   return out;
 }
