@@ -944,7 +944,8 @@ QMenu* Scene_polyhedron_item::contextMenu()
 void Scene_polyhedron_item::show_only_feature_edges(bool b)
 {
     show_only_feature_edges_m = b;
-  Q_EMIT itemChanged();
+    invalidate_buffers();
+    Q_EMIT itemChanged();
 }
 
 void Scene_polyhedron_item::enable_facets_picking(bool b)
