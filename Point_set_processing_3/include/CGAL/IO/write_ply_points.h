@@ -1,22 +1,3 @@
-// Copyright (c) 2007-09  INRIA Sophia-Antipolis (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-//
-// Author(s) : Pierre Alliez and Laurent Saboret
-
 #ifndef CGAL_WRITE_PLY_POINTS_H
 #define CGAL_WRITE_PLY_POINTS_H
 
@@ -52,11 +33,10 @@ namespace CGAL {
 /// @return true on success.
 
 // This variant requires all parameters.
-template <typename ForwardIterator,
-          typename PointPMap,
-          typename NormalPMap,
-          typename Kernel
->
+template < typename ForwardIterator,
+           typename PointPMap,
+           typename NormalPMap,
+           typename Kernel >
 bool
 write_ply_points_and_normals(
   std::ostream& stream, ///< output stream.
@@ -110,10 +90,9 @@ write_ply_points_and_normals(
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
-template <typename ForwardIterator,
-          typename PointPMap,
-          typename NormalPMap
->
+template < typename ForwardIterator,
+           typename PointPMap,
+           typename NormalPMap >
 bool
 write_ply_points_and_normals(
   std::ostream& stream, ///< output stream.
@@ -172,10 +151,9 @@ write_ply_points_and_normals(
 /// @return true on success.
 
 // This variant requires all parameters.
-template <typename ForwardIterator,
-          typename PointPMap,
-          typename Kernel
->
+template < typename ForwardIterator,
+           typename PointPMap,
+           typename Kernel >
 bool
 write_ply_points(
   std::ostream& stream, ///< output stream.
@@ -221,9 +199,8 @@ write_ply_points(
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the point property map.
-template <typename ForwardIterator,
-          typename PointPMap
->
+template < typename ForwardIterator,
+           typename PointPMap >
 bool
 write_ply_points(
   std::ostream& stream, ///< output stream.
@@ -243,8 +220,7 @@ write_ply_points(
 
 /// @cond SKIP_IN_MANUAL
 // This variant creates a default point property map = Identity_property_map.
-template <typename ForwardIterator
->
+template < typename ForwardIterator >
 bool
 write_ply_points(
   std::ostream& stream, ///< output stream.
