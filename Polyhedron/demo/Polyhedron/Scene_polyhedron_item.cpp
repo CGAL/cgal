@@ -1091,8 +1091,6 @@ invalidate_buffers()
     delete_aabb_tree(this);
     init();
     Base::invalidate_buffers();
-    is_Triangulated();
-    compute_normals_and_vertices();
     are_buffers_filled = false;
 
 }

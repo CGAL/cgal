@@ -102,7 +102,7 @@ void Scene_textured_polyhedron_item::initialize_buffers(Viewer_interface *viewer
 }
 
 void
-Scene_textured_polyhedron_item::compute_normals_and_vertices(void)
+Scene_textured_polyhedron_item::compute_normals_and_vertices(void) const
 {
     positions_facets.resize(0);
     positions_lines.resize(0);
@@ -290,7 +290,10 @@ Scene_textured_polyhedron_item::toolTip() const
 void Scene_textured_polyhedron_item::draw(Viewer_interface* viewer) const {
 
     if(!are_buffers_filled)
+    {
+        compute_normals_and_vertices();
         initialize_buffers(viewer);
+    }
 
     vaos[0]->bind();
     viewer->glActiveTexture(GL_TEXTURE0);
@@ -345,8 +348,8 @@ Scene_textured_polyhedron_item::bbox() const {
 void
 Scene_textured_polyhedron_item::invalidate_buffers()
 {
-    compute_normals_and_vertices();
-    are_buffers_filled = false;}
+    are_buffers_filled = false;
+}
 void
 Scene_textured_polyhedron_item::
 contextual_changed()
