@@ -4,7 +4,13 @@ namespace CGAL {
 /*!
 \ingroup PkgProfilingTools
 
-The class `Timer` is a timer class for measuring user process time. 
+The class `Timer` is a timer class for measuring user process time.
+
+\warning When used to profile a multithreaded algorithm, this timer
+will add up the process time of each thread, which may be unexpected.
+To compute the wall-clock time of an algorithm, please consider using
+`CGAL::Real_timer`.
+
 A timer `t` of type `Timer` is an object with a state. It is 
 either *running* or it is *stopped*. The state is controlled 
 with `Timer::start()` and `Timer::stop()`. The timer counts the 
@@ -13,7 +19,7 @@ where it is in the running state. The time information is given in seconds.
 The timer counts also the number of intervals it was running, i.e.\ it 
 counts the number of calls of the `Timer::start()` member function since the 
 last reset. If the reset occures while the timer is running it counts as the 
-first interval. 
+first interval.
 
 \cgalHeading{Implementation}
 
