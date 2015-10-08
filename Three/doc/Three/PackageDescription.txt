@@ -1,19 +1,21 @@
-/// \defgroup PkgPACKAGE Three
-/// \defgroup PkgPACKAGEMiscellaneous Miscellaneous
-/// \ingroup PkgPACKAGE
+/// \defgroup PkgThree Three
+/// \defgroup PkgThreeMiscellaneous Miscellaneous
+/// \ingroup PkgThree
 
 /*!
 \addtogroup PkgPACKAGE
 \todo check generated documentation
 
-\cgalPkgDescriptionBegin{PACKAGE NAME,PkgPACKAGESummary}
+\cgalPkgDescriptionBegin{Three,PkgThreeSummary}
 \cgalPkgPicture{pkg-small.png}
 
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Laurent Rineau, Sebastien Loriot, Andreas Fabri, Maxime Gimeno}
 \cgalPkgDesc{This package provides base classes for building a plugin. }
-\cgalPkgManuals{Chapter_PACKAGE_NAME,PkgPACKAGE}
+
+\cgalPkgManuals{Chapter_Three,PkgThree}
 \cgalPkgBib{cgal:rlfg-pd}
+
 \cgalPkgSummaryEnd
 
 \cgalPkgShortInfoBegin
