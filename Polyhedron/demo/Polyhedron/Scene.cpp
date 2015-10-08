@@ -17,7 +17,7 @@
 #include <QPointer>
 #include <QList>
 #include <QAbstractProxyModel>
-
+#include <QMimeData>
 
 
 
@@ -655,6 +655,46 @@ Scene::setData(const QModelIndex &index,
     return false;
 }
 
+bool Scene::dropMimeData(const QMimeData *data,
+                         Qt::DropAction action,
+                         int row,
+                         int column,
+                         const QModelIndex &parent)
+{
+    //gets the moving item
+    Scene_item* item = this->item(mainSelectionIndex());
+    //Gets the group at the drop position
+    Scene_group_item* group =
+            qobject_cast<Scene_group_item*>(this->item(index_map[parent]));
+    //if the drop item is not a group_item, then the drop action
+    //must be ignored
+    if(!group)
+    {
+        //unless the drop zone is empty, which means the item should be removed from all groups.
+        if(!parent.isValid())
+        {
+          while(item->has_group!=0)
+          {
+            Q_FOREACH(Scene_group_item* group_item, m_group_entries)
+              if(group_item->getChildren().contains(item))
+              {
+                  group_item->removeChild(item);
+                  break;
+              }
+          }
+
+        group_added();
+        return true;
+        }
+        return false;
+    }
+    changeGroup(item, group);
+    //group->addChild(item(mainSelectionIndex()));
+    group_added();
+    return true;
+
+
+}
 
 Scene::Item_id Scene::mainSelectionIndex() const {
     return selected_item;
@@ -937,6 +977,23 @@ void Scene::group_added()
     {
     organize_items(item, viewItem, 0);
     }
+}
+//TO DO gerer les has_group
+void Scene::changeGroup(Scene_item *item, Scene_group_item *target_group)
+{
+    //remove item from the containing group if any
+ if(item->has_group!=0)
+  Q_FOREACH(Scene_group_item* group, m_group_entries)
+  {
+    if(group->getChildren().contains(item))
+    {
+      group->removeChild(item);
+      break;
+    }
+  }
+ //add the item to the target group
+ target_group->addChild(item);
+ item->has_group = target_group->has_group +1;
 }
 void Scene::setGroupName(QString name)
 {

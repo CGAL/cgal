@@ -964,7 +964,7 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
         compute_normals_and_vertices();
         initialize_buffers(viewer);
     }
-
+qDebug()<<"draw";
 
     if(!is_selected && renderingMode() == Flat)
         vaos[0]->bind();

@@ -96,11 +96,10 @@ public :
                  selected_group->removeChild(item);
             else if(selected_group == item)
                  print_message("A group cannot contain itself.");
-            else if(item->has_group !=0)
-                 print_message("An item can have only one group.");
             else
             {
-                selected_group->addChild(item);
+                //selected_group->addChild(item);
+                trueScene->changeGroup(item, selected_group);
             }
 
         }

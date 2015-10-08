@@ -81,7 +81,6 @@
      <addaction name="separator"/>
      <addaction name="actionMinkowskiSum"/>
     </widget>
-
     <addaction name="actionEstimateCurvature"/>
     <addaction name="actionSelfIntersection"/>
     <addaction name="actionConvexHull"/>
@@ -199,6 +198,9 @@
         <widget class="QTreeView" name="sceneView">
          <property name="editTriggers">
           <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
+         </property>
+         <property name="dragDropMode">
+          <enum>QAbstractItemView::InternalMove</enum>
          </property>
          <property name="alternatingRowColors">
           <bool>true</bool>

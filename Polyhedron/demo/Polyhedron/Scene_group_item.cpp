@@ -69,8 +69,11 @@ QString Scene_group_item::toolTip() const {
 
 void Scene_group_item::addChild(Scene_item* new_item)
 {  
+    if(!children.contains(new_item))
+    {
         children.append(new_item);
         add_group_number(new_item);
+    }
 
 }
 

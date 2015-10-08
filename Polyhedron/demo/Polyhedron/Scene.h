@@ -48,6 +48,7 @@ public:
   ~Scene();
 
   int addItem(Scene_item* item);
+  void changeGroup(Scene_item* item, Scene_group_item* target_group);
   Scene_item* replaceItem(int index, Scene_item* item, bool emit_item_about_to_be_destroyed = false);
 
   Q_INVOKABLE int erase(int);  
@@ -101,7 +102,7 @@ public:
   }
 
   // QStandardItemModel functions
-
+  bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
   QVariant data ( const QModelIndex & index, int role = ::Qt::DisplayRole ) const;
   QVariant headerData ( int section, ::Qt::Orientation orientation, int role = ::Qt::DisplayRole ) const;
   ::Qt::ItemFlags flags ( const QModelIndex & index ) const;
@@ -204,6 +205,7 @@ private:
 
 public:
   static GlSplat::SplatRenderer* splatting();
+
 
 }; // end class Scene
 class QAbstractProxyModel;
