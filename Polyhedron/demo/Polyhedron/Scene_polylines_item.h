@@ -108,10 +108,10 @@ private:
     mutable   GLuint nbSpheres;
     typedef std::map<Point_3, int> Point_to_int_map;
     typedef Point_to_int_map::iterator iterator;
-    void create_Sphere(double);
+    void create_Sphere(double) const;
     using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer) const;
-    void compute_elements();
+    void compute_elements() const;
 
 
 }; // end class Scene_polylines_item
