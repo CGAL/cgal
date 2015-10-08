@@ -79,7 +79,6 @@
 //#include <boost/parameter/parameters.hpp>
 //#include <boost/parameter/preprocessor.hpp>
 //#include <boost/parameter/value_type.hpp>
-#include <boost/pending/cstddef.hpp>
 #include <boost/preprocessor/arithmetic/dec.hpp>
 #include <boost/preprocessor/arithmetic/inc.hpp>
 #include <boost/preprocessor/arithmetic/sub.hpp>
