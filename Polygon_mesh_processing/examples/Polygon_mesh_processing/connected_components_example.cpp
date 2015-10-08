@@ -117,6 +117,11 @@ int main(int argc, char* argv[])
               << " is made of " << cc.second << " faces" << std::endl;
   }
 
+  std::cerr << "- We keep only components which have at least 4 faces" << std::endl; 
+  PMP::keep_large_connected_components(mesh,
+      4,
+      PMP::parameters::edge_is_constrained_map(Constraint<Mesh>(mesh, bound)));
+
   std::cerr << "- We keep the two largest components" << std::endl; 
   PMP::keep_largest_connected_components(mesh,
       2,

@@ -1,6 +1,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/boost/graph/helpers.h>
 #include <iostream>
 #include <fstream>
 
@@ -44,6 +45,7 @@ struct Constraint : public boost::put_get_helper<bool,Constraint<G> >{
 
 int main(int argc, char* argv[])
 {
+
   typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
   const double bound = std::cos(0.7* CGAL_PI);
   const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
@@ -119,6 +121,16 @@ int main(int argc, char* argv[])
   assert( num_edges(sm)==num_edges(copy1) && num_edges(copy1)==num_edges(copy2) );
   assert( num_faces(sm)==num_faces(copy1) && num_faces(copy1)==num_faces(copy2) );
 
-// std::cout << "mesh:\n" << sm << std::endl;
+  {
+    Mesh m;
+    Point p(0,0,0), q(1,0,0), r(0,1,0), s(0,0,1);
+    CGAL::make_tetrahedron(p,q,r,s,m);
+    CGAL::make_triangle(p,q,r,m);
+    CGAL::make_tetrahedron(p,q,r,s,m);
+    PMP::keep_large_connected_components(m, 4);
+    m.collect_garbage();
+    assert( num_vertices(m) == 8);
+  }
+
   return 0;
 }
