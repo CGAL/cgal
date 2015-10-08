@@ -64,13 +64,36 @@ namespace internal {
 
     virtual double operator() (std::istream& stream) const = 0;
 
+    // The two following functions prevent the stream to only extract
+    // ONE character (= what the types char imply) by requiring
+    // explicitely an integer object when reading the stream
+    void read_ascii (std::istream& stream, boost::int8_t& c) const
+    {
+      short s;
+      stream >> s;
+      c = static_cast<char>(s);
+    }
+    void read_ascii (std::istream& stream, boost::uint8_t& c) const
+    {
+      unsigned short s;
+      stream >> s;
+      c = static_cast<unsigned char>(s);
+    }
+
+    // Default template when Type is not a char type
+    template <typename Type>
+    void read_ascii (std::istream& stream, Type& t) const
+    {
+      stream >> t;
+    }
+    
     template <typename Type>
     Type read (std::istream& stream) const
     {
       if (m_format == 0) // Ascii
         {
           Type t;
-          stream >> t;
+          read_ascii (stream, t);
           return t;
         }
       else // Binary (2 = little endian)
@@ -347,7 +370,6 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
         }
       Point point(x,y,z);
       Vector normal(nx,ny,nz);
-      
       Enriched_point pwn;
       
 #ifdef CGAL_USE_PROPERTY_MAPS_API_V1
