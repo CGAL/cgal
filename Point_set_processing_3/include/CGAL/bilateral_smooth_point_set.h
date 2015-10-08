@@ -31,7 +31,7 @@
 #include <algorithm>
 #include <cmath>
 #include <ctime>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/Memory_sizer.h>
 
 #include <boost/version.hpp>
@@ -469,7 +469,7 @@ bilateral_smooth_point_set(
    Tree tree(treeElements.begin(), treeElements.end());
    // Guess spacing
 #ifdef CGAL_PSP3_VERBOSE
-   CGAL::Timer task_timer;
+   CGAL::Real_timer task_timer;
    task_timer.start();
 #endif
    FT guess_neighbor_radius = 0.0; 

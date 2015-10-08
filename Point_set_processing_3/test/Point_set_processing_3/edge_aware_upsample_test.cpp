@@ -9,7 +9,7 @@
 
 // CGAL
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/Memory_sizer.h>
 
 // This package
@@ -57,7 +57,7 @@ void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input poi
                               unsigned int times_of_output_points)
 
 {
-  CGAL::Timer task_timer; task_timer.start();
+  CGAL::Real_timer task_timer; task_timer.start();
   std::cerr << "Running edge aware up-sample, (sharpness_sigma: "
             << sharpness_sigma << "%, number_of_output_points="
             << points.size() * times_of_output_points << ")...\n";

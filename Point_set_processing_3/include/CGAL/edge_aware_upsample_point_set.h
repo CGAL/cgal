@@ -23,7 +23,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/internal/Rich_grid.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/compute_average_spacing.h>
 
@@ -379,7 +379,7 @@ edge_aware_upsample_point_set(
 #endif
   }
   
-  Timer task_timer;
+  Real_timer task_timer;
 
   // copy rich point set
   std::vector<Rich_point> rich_point_set(number_of_input);
