@@ -83,7 +83,7 @@ namespace CGAL {
       typedef typename K::FT FT;
       typedef typename K::Point_3 Point;
 
-      FT dist_min = std::numeric_limits<FT>::max();
+      FT dist_min = (std::numeric_limits<FT>::max)();
 
       typename std::list<Input_type>::iterator point_min;
       for (Iterator it = cluster.begin (); it != cluster.end (); ++ it)
