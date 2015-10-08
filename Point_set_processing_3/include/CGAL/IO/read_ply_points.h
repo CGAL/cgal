@@ -6,6 +6,7 @@
 #include <CGAL/point_set_processing_assertions.h>
 
 #include <boost/version.hpp>
+#include <boost/cstdint.hpp>
 #if BOOST_VERSION >= 104000
 #include <boost/property_map/property_map.hpp>
 #else
@@ -49,37 +50,13 @@ namespace internal {
 
     virtual double operator() (std::istream& stream) const = 0;
 
-
-    // The two following functions prevent the stream to only extract
-    // ONE character (= what the types char imply) by requiring
-    // explicitely an integer object when reading the stream
-    void read_ascii (std::istream& stream, char& c) const
-    {
-      short s;
-      stream >> s;
-      c = static_cast<char>(s);
-    }
-    void read_ascii (std::istream& stream, unsigned char& c) const
-    {
-      unsigned short s;
-      stream >> s;
-      c = static_cast<unsigned char>(s);
-    }
-
-    // Default template when Type is not a char type
-    template <typename Type>
-    void read_ascii (std::istream& stream, Type& t) const
-    {
-      stream >> t;
-    }
-    
     template <typename Type>
     Type read (std::istream& stream) const
     {
       if (m_format == 0) // Ascii
         {
           Type t;
-          read_ascii (stream, t);
+          stream >> t;
           return t;
         }
       else // Binary (2 = little endian)
@@ -114,42 +91,42 @@ namespace internal {
   public:
     Ply_read_char (std::string name, std::size_t format) : Ply_read_number (name, format) { }
     double operator() (std::istream& stream) const
-    { return static_cast<double> (this->read<char> (stream)); }
+    { return static_cast<double> (this->read<boost::int8_t> (stream)); }
   };
   class Ply_read_uchar : public Ply_read_number
   {
   public:
     Ply_read_uchar (std::string name, std::size_t format) : Ply_read_number (name, format) { }
     double operator() (std::istream& stream) const
-    { return static_cast<double> (this->read<unsigned char> (stream)); }
+    { return static_cast<double> (this->read<boost::uint8_t> (stream)); }
   };
   class Ply_read_short : public Ply_read_number
   {
   public:
     Ply_read_short (std::string name, std::size_t format) : Ply_read_number (name, format) { }
     double operator() (std::istream& stream) const
-    { return static_cast<double> (this->read<short> (stream)); }
+    { return static_cast<double> (this->read<boost::int16_t> (stream)); }
   };
   class Ply_read_ushort : public Ply_read_number
   {
   public:
     Ply_read_ushort (std::string name, std::size_t format) : Ply_read_number (name, format) { }
     double operator() (std::istream& stream) const
-    { return static_cast<double> (this->read<unsigned short> (stream)); }
+    { return static_cast<double> (this->read<boost::uint16_t> (stream)); }
   };
   class Ply_read_int : public Ply_read_number
   {
   public:
     Ply_read_int (std::string name, std::size_t format) : Ply_read_number (name, format) { }
     double operator() (std::istream& stream) const
-    { return static_cast<double> (this->read<int> (stream)); }
+    { return static_cast<double> (this->read<boost::int32_t> (stream)); }
   };
   class Ply_read_uint : public Ply_read_number
   {
   public:
     Ply_read_uint (std::string name, std::size_t format) : Ply_read_number (name, format) { }
     double operator() (std::istream& stream) const
-    { return static_cast<double> (this->read<unsigned int> (stream)); }
+    { return static_cast<double> (this->read<boost::uint32_t> (stream)); }
   };
   class Ply_read_float : public Ply_read_number
   {
