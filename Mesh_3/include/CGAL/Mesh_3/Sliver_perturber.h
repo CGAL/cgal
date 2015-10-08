@@ -43,7 +43,7 @@
 #include <CGAL/Mesh_3/vertex_perturbation.h>
 #include <CGAL/Mesh_3/C3T3_helpers.h>
 #include <CGAL/Mesh_optimization_return_code.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/Mesh_3/Null_perturber_visitor.h>
 #include <CGAL/Mesh_3/sliver_criteria.h>
 #include <CGAL/Has_timestamp.h>
@@ -747,7 +747,7 @@ private:
 
   // Timer
   double time_limit_;
-  CGAL::Timer running_time_;
+  CGAL::Real_timer running_time_;
 };
 
 
@@ -927,7 +927,7 @@ Sliver_perturber<C3T3,Md,Sc,V_>::
 perturb(const FT& sliver_bound, PQueue& pqueue, Visitor& visitor) const
 {
 #ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
-  CGAL::Timer timer;
+  CGAL::Real_timer timer;
   timer.start();
   std::streamsize prec = std::cerr.precision(4);
   std::cerr << "Perturb sliver vertices (bound: " << sliver_bound
@@ -1113,7 +1113,7 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
   CGAL_precondition(pqueue.empty());
 
 #ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
-  CGAL::Timer timer;
+  CGAL::Real_timer timer;
   timer.start();
   std::cerr << "Build pqueue...";
 #endif
@@ -1178,7 +1178,7 @@ build_priority_queue(const FT& sliver_bound, PQueue& pqueue) const
   CGAL_precondition(pqueue.empty());
 
 #ifdef CGAL_MESH_3_PERTURBER_HIGH_VERBOSITY
-  CGAL::Timer timer;
+  CGAL::Real_timer timer;
   timer.start();
   std::cerr << "Build pqueue...";
 #endif

@@ -37,7 +37,7 @@ provided that the names of the parameters are used
 - <b>`parameters::time_limit`</b>
 is used to set up, in seconds, 
 a CPU time limit after which the optimization process is stopped. This time is 
-measured using `Timer`. 
+measured using `Real_timer`. 
 The default value is 0 and means that there is no time limit. 
 
 - <b>`parameters::sliver_bound`</b>

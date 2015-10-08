@@ -28,7 +28,7 @@ provided that the names of the parameters are used
 \cgalHeading{Named Parameters}
 - <b>`parameters::time_limit`</b> is used to set up, in seconds, 
 a CPU time limit after which the optimization process is stopped. This time is 
-measured using the `Timer` class. 
+measured using the `Real_timer` class. 
 The default value is 0 and means that there is no time limit. 
 
 - <b>`parameters::sliver_bound`</b> is designed to give, in degree, a targeted 
