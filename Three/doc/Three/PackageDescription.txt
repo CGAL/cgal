@@ -1,9 +1,8 @@
 /// \defgroup PkgThree Three
-/// \defgroup PkgThreeMiscellaneous Miscellaneous
 /// \ingroup PkgThree
 
 /*!
-\addtogroup PkgPACKAGE
+\addtogroup PkgThree
 \todo check generated documentation
 
 \cgalPkgDescriptionBegin{Three,PkgThreeSummary}
