@@ -36,6 +36,8 @@ public:
   QMenu* contextMenu();
 
   // IO
+  bool read_ply_point_set(std::istream& in);
+  bool write_ply_point_set(std::ostream& out) const;
   bool read_off_point_set(std::istream& in);
   bool write_off_point_set(std::ostream& out) const;
   bool read_xyz_point_set(std::istream& in);
