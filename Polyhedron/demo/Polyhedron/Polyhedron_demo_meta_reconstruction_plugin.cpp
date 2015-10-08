@@ -240,7 +240,8 @@ namespace MetaReconstruction
 
   void smooth_point_set (Point_set& points, unsigned int scale)
   {
-    CGAL::jet_smooth_point_set(points.begin(), points.end(), scale);
+    CGAL::jet_smooth_point_set<CGAL::Parallel_tag>(points.begin(), points.end(),
+                                                   scale);
   }
 
   void scale_space (const Point_set& points, Scene_polygon_soup_item* new_item,
@@ -283,9 +284,9 @@ namespace MetaReconstruction
 
   void compute_normals (Point_set& points, unsigned int neighbors)
   {
-    CGAL::jet_estimate_normals(points.begin(), points.end(),
-			       CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
-			       2 * neighbors);
+    CGAL::jet_estimate_normals<CGAL::Parallel_tag>(points.begin(), points.end(),
+                                                   CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
+                                                   2 * neighbors);
     
     points.erase (CGAL::mst_orient_normals (points.begin(), points.end(),
 					    CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
@@ -424,6 +425,7 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 	  std::cerr << "Denoising point set... ";
 	  time.restart();
 	  MetaReconstruction::smooth_point_set (*points, noise_scale);
+          new_item->set_has_normals (false);
 	  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	}
 
@@ -480,7 +482,7 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 	    }
 	  else
 	    {
-	      if (!(pts_item->has_normals()))
+	      if (!(new_item->has_normals()))
 		{
 		  std::cerr << "Estimation of normal vectors... ";
 		  time.restart();
