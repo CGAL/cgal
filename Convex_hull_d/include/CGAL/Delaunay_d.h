@@ -993,8 +993,8 @@ std::list< typename Delaunay_d<R,Lifted_R>::Vertex_handle >
 Delaunay_d<R,Lifted_R>::
 range_search(const std::vector<Point_d>& A) const
 { 
-  typename R::Affinely_independent_d affinely_independent =
-    kernel().affinely_independent_d_object();
+  CGAL_assertion_code( typename R::Affinely_independent_d affinely_independent =
+                       kernel().affinely_independent_d_object());
   CGAL_assertion_msg( affinely_independent(A.begin(),A.end()),
     "Delaunay_d::range_search: simplex must be affinely independent.");
   typename R::Construct_sphere_d sphere_through =
