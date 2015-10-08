@@ -7,11 +7,6 @@
 
 #include <boost/version.hpp>
 #include <boost/cstdint.hpp>
-#if BOOST_VERSION >= 104000
-#include <boost/property_map/property_map.hpp>
-#else
-#include <boost/property_map.hpp>
-#endif
 
 #include <iostream>
 #include <sstream>
