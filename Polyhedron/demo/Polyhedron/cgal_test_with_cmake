@@ -117,7 +117,6 @@ else
       mesh_3_plugin \
       mesh_segmentation_plugin \
       mesh_simplification_plugin \
-      meta_reconstruction_plugin \
       nef_io_plugin \
       nef_plugin \
       normal_estimation_plugin \
@@ -138,13 +137,11 @@ else
       point_set_smoothing_plugin \
       point_set_upsampling_plugin \
       point_set_wlop_plugin \
-      poisson_plugin \
       polyhedron_slicer_plugin \
       polyhedron_stitching_plugin \
       polylines_io_plugin \
       remeshing_plugin \
       scene_basic_objects \
-      scale_space_reconstruction_plugin \
       scene_c2t3_item \
       scene_combinatorial_map_item \
       scene_edit_polyhedron_item \
@@ -166,6 +163,7 @@ else
       shortest_path_plugin \
       stl_plugin \
       subdivision_methods_plugin \
+      surface_reconstruction_plugin \
       transform_polyhedron_plugin \
       triangulate_facets_plugin \
       trivial_plugin \

@@ -328,25 +328,13 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(pca_plugin Polyhedron_demo_pca_plugin)
   target_link_libraries(pca_plugin scene_polyhedron_item scene_basic_objects)
 
-  qt5_wrap_ui( advancing_frontUI_FILES Polyhedron_demo_advancing_front_plugin.ui)
-  polyhedron_demo_plugin(advancing_front_plugin Polyhedron_demo_advancing_front_plugin ${advancing_frontUI_FILES})
-  target_link_libraries(advancing_front_plugin scene_polygon_soup_item scene_points_with_normal_item)
-
   if(EIGEN3_FOUND)
-    qt5_wrap_ui( scale_spaceUI_FILES Polyhedron_demo_scale_space_reconstruction_plugin.ui)
-    polyhedron_demo_plugin(scale_space_reconstruction_plugin Polyhedron_demo_scale_space_reconstruction_plugin ${scale_spaceUI_FILES})
-    target_link_libraries(scale_space_reconstruction_plugin scene_polygon_soup_item scene_polyhedron_item scene_points_with_normal_item)
-    
-    qt5_wrap_ui( metaUI_FILES Polyhedron_demo_meta_reconstruction_plugin.ui)
-    polyhedron_demo_plugin(meta_reconstruction_plugin Polyhedron_demo_meta_reconstruction_plugin Polyhedron_demo_poisson_plugin_impl.cpp  ${metaUI_FILES})
-    target_link_libraries(meta_reconstruction_plugin scene_polygon_soup_item scene_polyhedron_item scene_points_with_normal_item)
+    qt5_wrap_ui( surfaceUI_FILES Polyhedron_demo_surface_reconstruction_plugin.ui)
+    polyhedron_demo_plugin(surface_reconstruction_plugin Polyhedron_demo_surface_reconstruction_plugin Polyhedron_demo_surface_reconstruction_plugin_impl.cpp  ${surfaceUI_FILES})
+    target_link_libraries(surface_reconstruction_plugin scene_polygon_soup_item scene_polyhedron_item scene_points_with_normal_item)
 
     polyhedron_demo_plugin(parameterization_plugin Polyhedron_demo_parameterization_plugin)
     target_link_libraries(parameterization_plugin scene_polyhedron_item scene_textured_polyhedron_item )
-
-    qt5_wrap_ui( poissonUI_FILES Polyhedron_demo_poisson_plugin.ui)
-    polyhedron_demo_plugin(poisson_plugin Polyhedron_demo_poisson_plugin Polyhedron_demo_poisson_plugin_impl.cpp ${poissonUI_FILES})
-    target_link_libraries(poisson_plugin scene_polyhedron_item scene_points_with_normal_item)
 
     qt5_wrap_ui( normal_estimationUI_FILES Polyhedron_demo_normal_estimation_plugin.ui)
     polyhedron_demo_plugin(normal_estimation_plugin Polyhedron_demo_normal_estimation_plugin ${normal_estimationUI_FILES})

@@ -30,7 +30,7 @@
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
 
-#include "ui_Polyhedron_demo_meta_reconstruction_plugin.h"
+#include "ui_Polyhedron_demo_surface_reconstruction_plugin.h"
 
 // Poisson reconstruction method:
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
@@ -66,7 +66,7 @@ struct Radius {
 };
 
 
-namespace MetaReconstruction
+namespace SurfaceReconstruction
 {
   typedef Kernel::Point_3 Point;
   typedef Kernel::Vector_3 Vector;
@@ -296,11 +296,11 @@ namespace MetaReconstruction
   
 }
 
-class Polyhedron_demo_meta_reconstruction_plugin_dialog : public QDialog, private Ui::SurfaceReconstructionDialog
+class Polyhedron_demo_surface_reconstruction_plugin_dialog : public QDialog, private Ui::SurfaceReconstructionDialog
 {
   Q_OBJECT
 public:
-  Polyhedron_demo_meta_reconstruction_plugin_dialog(QWidget* /*parent*/ = 0)
+  Polyhedron_demo_surface_reconstruction_plugin_dialog(QWidget* /*parent*/ = 0)
   {
     setupUi(this);
     
@@ -337,7 +337,7 @@ public:
 
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
 
-class Polyhedron_demo_meta_reconstruction_plugin :
+class Polyhedron_demo_surface_reconstruction_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -350,16 +350,16 @@ class Polyhedron_demo_meta_reconstruction_plugin :
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
 
-    actionScaleSpaceReconstruction = new QAction(tr("Meta surface reconstruction"), mainWindow);
-    actionScaleSpaceReconstruction->setObjectName("actionMetaReconstruction");
+    actionScaleSpaceReconstruction = new QAction(tr("Surface surface reconstruction"), mainWindow);
+    actionScaleSpaceReconstruction->setObjectName("actionSurfaceReconstruction");
 
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 
-  void automatic_reconstruction (const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog);
-  void advancing_front_reconstruction (const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog);
-  void scale_space_reconstruction (const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog);
-  void poisson_reconstruction (const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog);
+  void automatic_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);
+  void advancing_front_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);
+  void scale_space_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);
+  void poisson_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);
   
   //! Applicate for Point_sets with normals.
   bool applicable(QAction*) const {
@@ -371,11 +371,11 @@ public:
   }
 
 public Q_SLOTS:
-  void on_actionMetaReconstruction_triggered();
-}; // end class Polyhedron_meta_reconstruction_plugin
+  void on_actionSurfaceReconstruction_triggered();
+}; // end class Polyhedron_surface_reconstruction_plugin
 
 
-void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_triggered()
+void Polyhedron_demo_surface_reconstruction_plugin::on_actionSurfaceReconstruction_triggered()
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -385,7 +385,7 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
   if(pts_item)
     {
       //generate the dialog box to set the options
-      Polyhedron_demo_meta_reconstruction_plugin_dialog dialog;
+      Polyhedron_demo_surface_reconstruction_plugin_dialog dialog;
       if(!dialog.exec())
 	return;
 
@@ -413,8 +413,8 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
     }
 }
 
-void Polyhedron_demo_meta_reconstruction_plugin::automatic_reconstruction
-(const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog)
+void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
+(const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog)
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -455,7 +455,7 @@ void Polyhedron_demo_meta_reconstruction_plugin::automatic_reconstruction
       std::cerr << "Analysing isotropy of point set... ";
       time.start();
       double aniso_size;
-      unsigned int aniso_scale = MetaReconstruction::scale_of_anisotropy (*points, aniso_size);
+      unsigned int aniso_scale = SurfaceReconstruction::scale_of_anisotropy (*points, aniso_size);
       std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 
       std::cerr << " -> Scale / size = " << aniso_scale << " / " << aniso_size << std::endl;
@@ -467,7 +467,7 @@ void Polyhedron_demo_meta_reconstruction_plugin::automatic_reconstruction
 	  std::cerr << "Correcting anisotropy of point set... ";
 	  time.restart();
 	  std::size_t prev_size = points->size ();
-	  MetaReconstruction::simplify_point_set (*points, aniso_size);
+	  SurfaceReconstruction::simplify_point_set (*points, aniso_size);
 	  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	  std::cerr << " -> " << prev_size - points->size() << " point(s) removed ("
 		    << 100. * (prev_size - points->size()) / (double)(prev_size)
@@ -477,7 +477,7 @@ void Polyhedron_demo_meta_reconstruction_plugin::automatic_reconstruction
       std::cerr << "Analysing noise of point set... ";
       time.restart();
       double noise_size;
-      unsigned int noise_scale = MetaReconstruction::scale_of_noise (*points, noise_size);
+      unsigned int noise_scale = SurfaceReconstruction::scale_of_noise (*points, noise_size);
       std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
       
       std::cerr << " -> Scale / size = " << noise_scale << " / " << noise_size << std::endl;
@@ -489,7 +489,7 @@ void Polyhedron_demo_meta_reconstruction_plugin::automatic_reconstruction
 	{
 	  std::cerr << "Denoising point set... ";
 	  time.restart();
-	  MetaReconstruction::smooth_point_set (*points, noise_scale);
+	  SurfaceReconstruction::smooth_point_set (*points, noise_scale);
           new_item->set_has_normals (false);
 	  std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	}
@@ -502,7 +502,7 @@ void Polyhedron_demo_meta_reconstruction_plugin::automatic_reconstruction
 	      time.restart();
 
 	      Scene_polygon_soup_item* reco_item = new Scene_polygon_soup_item();
-	      MetaReconstruction::scale_space (*points, reco_item, (std::max)(noise_scale, aniso_scale));
+	      SurfaceReconstruction::scale_space (*points, reco_item, (std::max)(noise_scale, aniso_scale));
 	      
 	      reco_item->setName(tr("%1 (scale space interpolant)").arg(scene->item(index)->name()));
 	      reco_item->setColor(Qt::magenta);
@@ -517,7 +517,7 @@ void Polyhedron_demo_meta_reconstruction_plugin::automatic_reconstruction
 	      time.restart();
 
 	      Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(Polyhedron());
-	      MetaReconstruction::advancing_front (*points, reco_item, (std::max)(noise_size, aniso_size));
+	      SurfaceReconstruction::advancing_front (*points, reco_item, (std::max)(noise_size, aniso_size));
 	      
 	      reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
 	      reco_item->setColor(Qt::magenta);
@@ -536,7 +536,7 @@ void Polyhedron_demo_meta_reconstruction_plugin::automatic_reconstruction
 	      time.restart();
 
 	      Scene_polygon_soup_item* reco_item = new Scene_polygon_soup_item();
-	      MetaReconstruction::scale_space (*points, reco_item, noise_scale, false);
+	      SurfaceReconstruction::scale_space (*points, reco_item, noise_scale, false);
 
 	      reco_item->setName(tr("%1 (scale space smoothed)").arg(scene->item(index)->name()));
 	      reco_item->setColor(Qt::magenta);
@@ -552,7 +552,7 @@ void Polyhedron_demo_meta_reconstruction_plugin::automatic_reconstruction
 		  std::cerr << "Estimation of normal vectors... ";
 		  time.restart();
 
-		  MetaReconstruction::compute_normals (*points, noise_scale);
+		  SurfaceReconstruction::compute_normals (*points, noise_scale);
 		  
 		  new_item->set_has_normals (true);
 		  new_item->setRenderingMode(PointsPlusNormals);
@@ -595,8 +595,8 @@ void Polyhedron_demo_meta_reconstruction_plugin::automatic_reconstruction
 }
 
 
-void Polyhedron_demo_meta_reconstruction_plugin::advancing_front_reconstruction
-(const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog)
+void Polyhedron_demo_surface_reconstruction_plugin::advancing_front_reconstruction
+(const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog)
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -614,7 +614,7 @@ void Polyhedron_demo_meta_reconstruction_plugin::advancing_front_reconstruction
       std::cerr << "Advancing front reconstruction... ";
 
       Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(Polyhedron());
-      MetaReconstruction::advancing_front (*points, reco_item, dialog.longest_edge ());
+      SurfaceReconstruction::advancing_front (*points, reco_item, dialog.longest_edge ());
 	      
       reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
       reco_item->setColor(Qt::magenta);
@@ -626,8 +626,8 @@ void Polyhedron_demo_meta_reconstruction_plugin::advancing_front_reconstruction
 }
 
 
-void Polyhedron_demo_meta_reconstruction_plugin::scale_space_reconstruction
-(const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog)
+void Polyhedron_demo_surface_reconstruction_plugin::scale_space_reconstruction
+(const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog)
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -829,8 +829,8 @@ void Polyhedron_demo_meta_reconstruction_plugin::scale_space_reconstruction
 }
 
 
-void Polyhedron_demo_meta_reconstruction_plugin::poisson_reconstruction
-(const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog)
+void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
+(const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog)
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -856,7 +856,7 @@ void Polyhedron_demo_meta_reconstruction_plugin::poisson_reconstruction
         {
           std::cerr << "Estimation of normal vectors... ";
 
-          MetaReconstruction::compute_normals (*points, 12);
+          SurfaceReconstruction::compute_normals (*points, 12);
 		  
           point_set_item->set_has_normals (true);
           point_set_item->setRenderingMode(PointsPlusNormals);
@@ -890,4 +890,4 @@ void Polyhedron_demo_meta_reconstruction_plugin::poisson_reconstruction
 }
 
 
-#include "Polyhedron_demo_meta_reconstruction_plugin.moc"
+#include "Polyhedron_demo_surface_reconstruction_plugin.moc"
