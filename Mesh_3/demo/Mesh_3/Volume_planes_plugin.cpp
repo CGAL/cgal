@@ -1,10 +1,10 @@
-#include "config.h"
-#include <CGAL/config.h>
+#include <boost/config.hpp>
 
 #if defined(BOOST_MSVC)
-#  pragma warning(push)
-#  pragma warning(disable:4244 ) // conversion with loss of data
+#  pragma warning(disable:4244) // conversion with loss of data
 #endif
+
+#include "config.h"
 
 #include <CGAL/Image_3.h>
 
