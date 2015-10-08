@@ -26,7 +26,7 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_points_with_normal_item.h"
 #include "Polyhedron_type.h"
-
+ 
 #include "Polyhedron_demo_plugin_helper.h"
 #include "Polyhedron_demo_plugin_interface.h"
 
@@ -296,17 +296,43 @@ namespace MetaReconstruction
   
 }
 
-class Polyhedron_demo_meta_reconstruction_plugin_dialog : public QDialog, private Ui::MetaReconstructionOptionsDialog
+class Polyhedron_demo_meta_reconstruction_plugin_dialog : public QDialog, private Ui::SurfaceReconstructionDialog
 {
   Q_OBJECT
 public:
   Polyhedron_demo_meta_reconstruction_plugin_dialog(QWidget* /*parent*/ = 0)
   {
     setupUi(this);
+    
+#ifdef CGAL_EIGEN3_ENABLED
+    m_inputSolver->addItem("Eigen - built-in simplicial LDLt");
+    m_inputSolver->addItem("Eigen - built-in CG");
+#endif
   }
 
-  bool boundaries() const { return m_boundaries->isChecked(); }
-  bool interpolate() const { return m_interpolate->isChecked(); }
+  unsigned int method () const
+  {
+    if (buttonAuto->isChecked ())       return 0;
+    if (buttonAdvancing->isChecked ())  return 1;
+    if (buttonScaleSpace->isChecked ()) return 2;
+    if (buttonPoisson->isChecked ())    return 3;
+    return -1;
+  }
+  bool boundaries () const { return m_boundaries->isChecked (); }
+  bool interpolate () const { return m_interpolate->isChecked (); }
+  double longest_edge () const { return m_longestEdge->value (); }
+  unsigned int neighbors () const { return m_neighbors->value (); }
+  unsigned int samples () const { return m_samples->value (); }
+  unsigned int iterations () const { return m_iterations->value (); }
+  bool separate_shells () const { return m_genShells->isChecked (); }
+  bool force_manifold () const { return m_forceManifold->isChecked (); }
+  bool generate_smoothed () const { return m_genSmooth->isChecked (); }
+  double angle () const { return m_inputAngle->value (); }
+  double radius () const { return m_inputRadius->value (); }
+  double distance () const { return m_inputDistance->value (); }
+  bool two_passes () const { return m_inputTwoPasses->isChecked (); }
+  bool do_not_fill_holes () const { return m_doNotFillHoles->isChecked (); }
+  QString solver () const { return m_inputSolver->currentText (); }
 };
 
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
@@ -330,6 +356,11 @@ public:
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 
+  void automatic_reconstruction (const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog);
+  void advancing_front_reconstruction (const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog);
+  void scale_space_reconstruction (const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog);
+  void poisson_reconstruction (const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog);
+  
   //! Applicate for Point_sets with normals.
   bool applicable(QAction*) const {
     return qobject_cast<Scene_points_with_normal_item*>(scene->item(scene->mainSelectionIndex()));
@@ -353,13 +384,47 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 
   if(pts_item)
     {
-      // Gets point set
-      Point_set* points = pts_item->point_set();
-
       //generate the dialog box to set the options
       Polyhedron_demo_meta_reconstruction_plugin_dialog dialog;
       if(!dialog.exec())
 	return;
+
+      unsigned int method = dialog.method ();
+      switch (method)
+        {
+        case 0:
+          automatic_reconstruction (dialog);
+          break;
+        case 1:
+          advancing_front_reconstruction (dialog);
+          break;
+        case 2:
+          scale_space_reconstruction (dialog);
+          break;
+        case 3:
+          poisson_reconstruction (dialog);
+          break;
+        default:
+          std::cerr << "Error: unkown method." << std::endl;
+          return;
+        }
+      
+
+    }
+}
+
+void Polyhedron_demo_meta_reconstruction_plugin::automatic_reconstruction
+(const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog)
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+
+  Scene_points_with_normal_item* pts_item =
+    qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
+
+  if(pts_item)
+    {
+      // Gets point set
+      Point_set* points = pts_item->point_set();
 
       // wait cursor
       QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -528,5 +593,301 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
       QApplication::restoreOverrideCursor();
     }
 }
+
+
+void Polyhedron_demo_meta_reconstruction_plugin::advancing_front_reconstruction
+(const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog)
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+
+  Scene_points_with_normal_item* pts_item =
+    qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
+
+  if(pts_item)
+    {
+      // Gets point set
+      Point_set* points = pts_item->point_set();
+
+      // wait cursor
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+
+      std::cerr << "Advancing front reconstruction... ";
+
+      Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(Polyhedron());
+      MetaReconstruction::advancing_front (*points, reco_item, dialog.longest_edge ());
+	      
+      reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
+      reco_item->setColor(Qt::magenta);
+      reco_item->setRenderingMode(FlatPlusEdges);
+      scene->addItem(reco_item);
+
+      QApplication::restoreOverrideCursor();
+    }
+}
+
+
+void Polyhedron_demo_meta_reconstruction_plugin::scale_space_reconstruction
+(const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog)
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+
+  Scene_points_with_normal_item* pts_item =
+    qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
+
+  if(pts_item)
+    {
+      // wait cursor
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+
+      std::cout << "Scale scape surface reconstruction...";
+
+      typedef CGAL::Scale_space_surface_reconstruction_3<Kernel> Reconstructor;
+      Reconstructor reconstruct( dialog.neighbors(), dialog.samples() );
+      reconstruct.reconstruct_surface(
+                                      pts_item->point_set()->begin(),
+                                      pts_item->point_set()->end(),
+                                      dialog.iterations(),
+                                      dialog.separate_shells(),
+                                      dialog.force_manifold ()
+                                      );
+
+
+      std::vector<Point_set::Point> pts;
+      typedef Point_set::iterator Point_iterator;
+
+      for(Point_iterator it = pts_item->point_set()->begin(),
+            end = pts_item->point_set()->end(); it!=end; ++it)
+        {
+          pts.push_back (*it);
+        }
+      std::vector<Reconstructor::Point> pts_smoothed;
+      typedef Reconstructor::Point_iterator SS_point_iterator;
+    
+      for(SS_point_iterator it = reconstruct.points_begin(),
+            end = reconstruct.points_end(); it!=end; ++it)
+        {
+          pts_smoothed.push_back (*it);
+        }
+
+      for( unsigned int sh = 0; sh < reconstruct.number_of_shells(); ++sh ) {
+        // collect the number of triples.
+        std::cerr << "\r" << sh+1 << " on " << reconstruct.number_of_shells();
+        std::ptrdiff_t num = std::distance( reconstruct.shell_begin( sh ),
+                                            reconstruct.shell_end( sh ) );
+
+
+        //create item for the reconstruction output with input point set
+        Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
+        new_item->init_polygon_soup(pts_item->point_set()->size(),
+                                    num );
+
+        std::map<unsigned int, unsigned int> map_i2i;
+
+        unsigned int current_index = 0;
+        for (Reconstructor::Triple_iterator it=reconstruct.shell_begin( sh ),
+               end=reconstruct.shell_end( sh );it!=end;++it)
+          {
+            for (unsigned int ind = 0; ind < 3; ++ ind)
+              {
+                if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
+                  {
+                    map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
+                    new_item->new_vertex (pts[(*it)[ind]].x (),
+                                          pts[(*it)[ind]].y (),
+                                          pts[(*it)[ind]].z ());
+                  }
+
+              }
+            new_item->new_triangle( map_i2i[(*it)[0]],
+                                    map_i2i[(*it)[1]],
+                                    map_i2i[(*it)[2]] );
+          }
+
+        new_item->setName(tr("%1-shell %2 (ss reconstruction)").arg(scene->item(index)->name()).arg(sh+1));
+        new_item->setColor(Qt::magenta);
+        new_item->setRenderingMode(FlatPlusEdges);
+        scene->addItem(new_item);
+
+        if ( dialog.generate_smoothed() ){
+          //create item for the reconstruction output with input point set smoothed
+          Scene_polygon_soup_item *new_item_smoothed = new Scene_polygon_soup_item();
+
+          new_item_smoothed->init_polygon_soup(pts_item->point_set()->size(),
+                                               num );
+	  
+          std::map<unsigned int, unsigned int> map_i2i_smoothed;
+
+          unsigned int current_index_smoothed = 0;
+          for (Reconstructor::Triple_iterator it=reconstruct.shell_begin( sh ),
+                 end=reconstruct.shell_end( sh );it!=end;++it)
+            {
+              for (unsigned int ind = 0; ind < 3; ++ ind)
+                {
+                  if (map_i2i_smoothed.find ((*it)[ind]) == map_i2i_smoothed.end ())
+                    {
+                      map_i2i_smoothed.insert (std::make_pair ((*it)[ind], current_index_smoothed ++));
+                      new_item_smoothed->new_vertex (pts_smoothed[(*it)[ind]].x (),
+                                                     pts_smoothed[(*it)[ind]].y (),
+                                                     pts_smoothed[(*it)[ind]].z ());
+                    }
+
+                }
+
+              new_item_smoothed->new_triangle( map_i2i_smoothed[(*it)[0]],
+                                               map_i2i_smoothed[(*it)[1]],
+                                               map_i2i_smoothed[(*it)[2]] );
+            }
+
+          new_item_smoothed->setName(tr("%1-shell %2 (ss smoothed reconstruction)").arg(scene->item(index)->name()).arg(sh+1));
+          new_item_smoothed->setColor(Qt::magenta);
+          new_item_smoothed->setRenderingMode(FlatPlusEdges);
+          scene->addItem(new_item_smoothed);
+        }
+
+      }
+
+      if (dialog.force_manifold ())
+        {
+          std::ptrdiff_t num = std::distance( reconstruct.garbage_begin(  ),
+                                              reconstruct.garbage_end(  ) );
+
+
+          //create item for the reconstruction output with input point set
+          Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
+          new_item->init_polygon_soup(pts_item->point_set()->size(),
+                                      num );
+
+          std::map<unsigned int, unsigned int> map_i2i;
+
+          unsigned int current_index = 0;
+          for (Reconstructor::Triple_iterator it=reconstruct.garbage_begin(),
+                 end=reconstruct.garbage_end();it!=end;++it)
+            {
+              for (unsigned int ind = 0; ind < 3; ++ ind)
+                {
+                  if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
+                    {
+                      map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
+                      new_item->new_vertex (pts[(*it)[ind]].x (),
+                                            pts[(*it)[ind]].y (),
+                                            pts[(*it)[ind]].z ());
+                    }
+
+                }
+              new_item->new_triangle( map_i2i[(*it)[0]],
+                                      map_i2i[(*it)[1]],
+                                      map_i2i[(*it)[2]] );
+            }
+
+          new_item->setName(tr("%1 (ss non-manifold garbage)").arg(scene->item(index)->name()));
+          new_item->setColor(Qt::cyan);
+          new_item->setRenderingMode(FlatPlusEdges);
+          new_item->setVisible(false);
+          scene->addItem(new_item);
+
+          if ( dialog.generate_smoothed() ){
+            //create item for the reconstruction output with input point set smoothed
+            Scene_polygon_soup_item *new_item_smoothed = new Scene_polygon_soup_item();
+
+            new_item_smoothed->init_polygon_soup(pts_item->point_set()->size(),
+                                                 num );
+	  
+            std::map<unsigned int, unsigned int> map_i2i_smoothed;
+
+            unsigned int current_index_smoothed = 0;
+            for (Reconstructor::Triple_iterator it=reconstruct.garbage_begin( ),
+                   end=reconstruct.garbage_end( );it!=end;++it)
+              {
+                for (unsigned int ind = 0; ind < 3; ++ ind)
+                  {
+                    if (map_i2i_smoothed.find ((*it)[ind]) == map_i2i_smoothed.end ())
+                      {
+                        map_i2i_smoothed.insert (std::make_pair ((*it)[ind], current_index_smoothed ++));
+                        new_item_smoothed->new_vertex (pts_smoothed[(*it)[ind]].x (),
+                                                       pts_smoothed[(*it)[ind]].y (),
+                                                       pts_smoothed[(*it)[ind]].z ());
+                      }
+
+                  }
+
+                new_item_smoothed->new_triangle( map_i2i_smoothed[(*it)[0]],
+                                                 map_i2i_smoothed[(*it)[1]],
+                                                 map_i2i_smoothed[(*it)[2]] );
+              }
+
+            new_item_smoothed->setName(tr("%1 (ss smoothed non-manifold garbage)").arg(scene->item(index)->name()));
+            new_item_smoothed->setColor(Qt::cyan);
+            new_item_smoothed->setRenderingMode(FlatPlusEdges);
+            new_item_smoothed->setVisible(false);
+            scene->addItem(new_item_smoothed);
+          }
+
+        }
+
+      QApplication::restoreOverrideCursor();
+    }
+}
+
+
+void Polyhedron_demo_meta_reconstruction_plugin::poisson_reconstruction
+(const Polyhedron_demo_meta_reconstruction_plugin_dialog& dialog)
+{
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+
+  Scene_points_with_normal_item* point_set_item =
+    qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
+
+  if(point_set_item)
+    {
+      // Gets point set
+      Point_set* points = point_set_item->point_set();
+      if(!points) return;
+
+      const double sm_angle     = dialog.angle ();
+      const double sm_radius    = dialog.radius ();
+      const double sm_distance  = dialog.distance ();
+      const QString sm_solver   = dialog.solver();
+      bool use_two_passes = dialog.two_passes();
+      bool do_not_fill_holes = dialog.do_not_fill_holes();
+
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+
+      if (!(point_set_item->has_normals()))
+        {
+          std::cerr << "Estimation of normal vectors... ";
+
+          MetaReconstruction::compute_normals (*points, 12);
+		  
+          point_set_item->set_has_normals (true);
+          point_set_item->setRenderingMode(PointsPlusNormals);
+
+        }
+
+
+      // Reconstruct point set as a polyhedron
+      Polyhedron* pRemesh = poisson_reconstruct(*points, sm_angle, sm_radius, sm_distance, sm_solver, use_two_passes,
+                                                do_not_fill_holes);
+      if(pRemesh)
+        {
+          // Add polyhedron to scene
+          Scene_polyhedron_item* new_item = new Scene_polyhedron_item(pRemesh);
+          new_item->setName(tr("%1 Poisson (%2 %3 %4)")
+                            .arg(point_set_item->name())
+                            .arg(sm_angle)
+                            .arg(sm_radius)
+                            .arg(sm_distance));
+          new_item->setColor(Qt::lightGray);
+          scene->addItem(new_item);
+
+
+          // Hide point set
+          point_set_item->setVisible(false);
+          scene->itemChanged(index);
+        }
+
+      QApplication::restoreOverrideCursor();
+    }
+}
+
 
 #include "Polyhedron_demo_meta_reconstruction_plugin.moc"
