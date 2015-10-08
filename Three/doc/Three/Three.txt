@@ -68,7 +68,7 @@ For a minimalist dialog, intended to get a single parameter for instancem you ca
                            1, // step
                            &ok);
     if(!ok) return;
-    ~~~~~~~~~~~~~
+~~~~~~~~~~~~~
     
 
 For a more elaborate interface, you will have to use the designer tool of QtCreator. Create a new Qt Designer form (file->New file or Project->Qt->), and select among the template/form choices. 
@@ -78,8 +78,9 @@ Name it Polyhedron_demo_your_plugin_name_plugin_dialog.ui (you may have to renam
     target_link_libraries(example_plugin scene_polyhedron_item)
 Edit the ui file with the editor, then add the following line to your plugin file:
 ~~~~~~~~~~~~~{.cpp}
-    #include "ui_Polyhedron_demo_your_plugin_name_plugin.h"
+#include "ui_Polyhedron_demo_your_plugin_name_plugin.h"
 ~~~~~~~~~~~~~
+
 You can then add a new class inheriting from QDialog and your own dialog, accessible with "Ui::". Add the macro Q_OBJECT and the line 
     setupUi(this) 
 in your constructor. You can populate the dialog in the action, using dialog.show() or dialog.exec().
@@ -91,9 +92,9 @@ Just like with the Dialog, create a new Qt Designer form (file->New file or Proj
     polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES})
     target_link_libraries(example_plugin scene_polyhedron_item)
 Edit the ui file with the editor, then add the following line to your plugin file:
-    ~~~~~~~~~~~~~{.cpp}
+~~~~~~~~~~~~~{.cpp}
     #include "ui_dock_example.h"
-    ~~~~~~~~~~~~~
+ ~~~~~~~~~~~~~
  Add a DockQWidget* and a Ui::your_dock_widget as private members of your plugin :
  ~~~~~~~~~~~~~{.cpp}
     private:
