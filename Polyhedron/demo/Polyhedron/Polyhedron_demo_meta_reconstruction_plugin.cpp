@@ -246,7 +246,7 @@ namespace MetaReconstruction
   void scale_space (const Point_set& points, Scene_polygon_soup_item* new_item,
 		    unsigned int scale, bool interpolate = true)
   {
-    ScaleSpace reconstruct (3 * scale, 300);
+    ScaleSpace reconstruct (scale, 300);
     reconstruct.reconstruct_surface(points.begin (), points.end (), 4, false, true);
 
     new_item->init_polygon_soup(points.size(), reconstruct.number_of_triangles ());
@@ -498,7 +498,7 @@ void Polyhedron_demo_meta_reconstruction_plugin::on_actionMetaReconstruction_tri
 
 	      Polyhedron* pRemesh = poisson_reconstruct(*points, 20,
 							100 * (std::max)(noise_size, aniso_size),
-							0.25 * (std::max)(noise_size, aniso_size),
+							(std::max)(noise_size, aniso_size),
 							QString ("Eigen - built-in CG"), false, false);
 	      if(pRemesh)
 
