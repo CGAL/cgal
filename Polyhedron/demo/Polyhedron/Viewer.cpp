@@ -291,7 +291,6 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
 {
   if(scene == 0)
     return;
-
   viewer->glLineWidth(1.0f);
   viewer->glPointSize(2.f);
   viewer->glEnable(GL_POLYGON_OFFSET_FILL);
