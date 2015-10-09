@@ -27,9 +27,6 @@ find_package(VTK 6.0 COMPONENTS
   vtkGUISupportQt
   vtkIOImage
   vtkInteractionImage
-
-#  vtkCommon
-#  vtkGraphics
   )
 include(${VTK_USE_FILE})
 
