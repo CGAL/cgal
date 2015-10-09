@@ -127,8 +127,7 @@ void Polyhedron_demo_statistics_plugin::statistics_on_polyhedron(Polyhedron* pol
   ui.label_maxangle->setText(QString::number(maxi));
   ui.label_averageangle->setText(QString::number(ave));
 
-  int x = dlg.exec();
-//  if (i == QDialog::Rejected) { return; }
+  dlg.exec();
 }
 
 void Polyhedron_demo_statistics_plugin::angles(Polyhedron* poly,
