@@ -242,9 +242,9 @@
 
 #if (BOOST_VERSION >= 105500)
 #  include <boost/predef.h>
-#  if defined(BOOST_ENDIAN_BIG_BYTE)
+#  if BOOST_ENDIAN_BIG_BYTE
 #    define CGAL_BIG_ENDIAN
-#  elif defined(BOOST_ENDIAN_LITTLE_BYTE)
+#  elif BOOST_ENDIAN_LITTLE_BYTE
 #    define CGAL_LITTLE_ENDIAN
 #  else
 #    error Unknown endianness
