@@ -158,13 +158,9 @@ void Viewer::initializeGL()
       "   fP = mv_matrix * vertex; \n"
       "   fN = mat3(mv_matrix)* normal; \n"
       "   vec4 temp = vec4(mvp_matrix * vertex); \n"
-      "   vec4 ort = ortho_mat * vec4(width, height, 0,0); \n"
+      "   vec4 ort = ortho_mat * vec4(width-150, height-150, 0,0); \n"
       "   float ratio = width/height; \n"
-      "   if(ratio>=1) \n"
-      "     gl_Position = ort +  vec4(temp.x-ort.x/10, ratio*temp.y-ratio*ort.y/10, temp.z, 1.0); \n"
-      "   else \n"
-      "     gl_Position = ort +  vec4(temp.x-1/ratio*ort.x/10, width/height*temp.y-ort.y/10, temp.z, 1.0); \n"
-
+      "   gl_Position =  ort +vec4(temp.x, temp.y, temp.z, 1.0); \n"
       "} \n"
       "\n"
   };
@@ -658,7 +654,12 @@ void Viewer::drawVisualHints()
         QMatrix4x4 mvpMatrix;
         QMatrix4x4 mvMatrix;
         double mat[16];
-        camera()->frame()->rotation().getMatrix(mat);
+        //camera()->frame()->rotation().getMatrix(mat);
+        camera()->getModelViewProjectionMatrix(mat);
+        //nullifies the translation
+        mat[12]=0;
+        mat[13]=0;
+        mat[14]=0;
         for(int i=0; i < 16; i++)
         {
             mvpMatrix.data()[i] = (float)mat[i];
@@ -726,10 +727,8 @@ void Viewer::resizeGL(int w, int h)
     {
         orthoMatrix.data()[i] = (float)ortho[i];
     }
-    int max = w;
-    if (h>w)
-        max = h;
-    QVector4D length(max,max,max, 1.0);
+
+    QVector4D length(60,60,60, 1.0);
     length = orthoMatrix * length;
     AxisData data;
     v_Axis.resize(0);
@@ -738,9 +737,10 @@ void Viewer::resizeGL(int w, int h)
     data.vertices = &v_Axis;
     data.normals = &n_Axis;
     data.colors = &c_Axis;
-    makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(length.x()/10.0,0,0),qglviewer::Vec(1,0,0), data);
-    makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,length.x()/10.0,0),qglviewer::Vec(0,1,0), data);
-    makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,-length.x()/10.0),qglviewer::Vec(0,0,1), data);
+    double l = length.x()*w/h;
+    makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(l,0,0),qglviewer::Vec(1,0,0), data);
+    makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,l,0),qglviewer::Vec(0,1,0), data);
+    makeArrow(0.06,10, qglviewer::Vec(0,0,0),qglviewer::Vec(0,0,l),qglviewer::Vec(0,0,1), data);
 
 
     vao[0].bind();
