@@ -886,7 +886,7 @@ protected:
 	CGAL_assertion(redundant_points_.find(pk) != redundant_points_.end());
 	Event_key k= redundant_points_.find(pk)->second;
 
-	Cell_handle ech= get_cell_handle(pk);
+	CGAL_assertion_code(Cell_handle ech= get_cell_handle(pk));
 	CGAL_assertion(ch== ech);
       }
     }
