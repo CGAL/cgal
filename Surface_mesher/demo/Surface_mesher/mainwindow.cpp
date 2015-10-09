@@ -136,6 +136,29 @@ void MainWindow::on_action_Open_triggered()
   }
 }
 
+void MainWindow::on_action_OpenDirectory_triggered()
+{
+  QSettings settings;
+  QString start_dir = settings.value("Open directory",
+                                     QDir::current().dirName()).toString();
+  QString dir =
+    QFileDialog::getExistingDirectory(this,
+                                      tr("Open directory"),
+                                      start_dir,
+                                      QFileDialog::ShowDirsOnly
+                                      | QFileDialog::DontResolveSymlinks);
+
+  if (!dir.isEmpty()) {
+    QFileInfo fileinfo(dir);
+    if (fileinfo.isDir() && fileinfo.isReadable())
+    {
+      settings.setValue("Open directory",
+        fileinfo.absoluteDir().absolutePath());
+      surface_open(dir);
+    }
+  }
+}
+
 void MainWindow::on_action_Quit_triggered()
 {
   this->writeState();
