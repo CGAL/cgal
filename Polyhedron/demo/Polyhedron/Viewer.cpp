@@ -187,7 +187,6 @@ void Viewer::turnCameraBy180Degres() {
 
 void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
 {
-    qDebug()<<"draw";
   if(scene == 0)
     return;
 

@@ -661,33 +661,35 @@ bool Scene::dropMimeData(const QMimeData *data,
                          int column,
                          const QModelIndex &parent)
 {
-    //gets the moving item
-    Scene_item* item = this->item(mainSelectionIndex());
+    //gets the moving items
+    QList<Scene_item*> items;
+    Q_FOREACH(int i, selected_items_list)
+        items << item(i);
     //Gets the group at the drop position
     Scene_group_item* group =
             qobject_cast<Scene_group_item*>(this->item(index_map[parent]));
-    //if the drop item is not a group_item, then the drop action
-    //must be ignored
+    //if the drop item is not a group_item, then the drop action must be ignored
     if(!group)
     {
         //unless the drop zone is empty, which means the item should be removed from all groups.
         if(!parent.isValid())
         {
-          while(item->has_group!=0)
-          {
-            Q_FOREACH(Scene_group_item* group_item, m_group_entries)
-              if(group_item->getChildren().contains(item))
-              {
+          Q_FOREACH(Scene_item* item, items)
+            while(item->has_group!=0)
+            {
+              Q_FOREACH(Scene_group_item* group_item, m_group_entries)
+                if(group_item->getChildren().contains(item))
+                {
                   group_item->removeChild(item);
                   break;
-              }
-          }
-
+                }
+            }
         group_added();
         return true;
         }
         return false;
     }
+      Q_FOREACH(Scene_item* item, items)
     changeGroup(item, group);
     //group->addChild(item(mainSelectionIndex()));
     group_added();
