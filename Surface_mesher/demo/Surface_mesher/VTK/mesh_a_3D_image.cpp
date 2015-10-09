@@ -15,7 +15,7 @@
 
 #ifdef CGAL_USE_VTK
 
-#include <qapplication.h>
+#include <QApplication>
 #include <iostream>
 #include <cstdlib>
 #include <sstream>
@@ -98,11 +98,11 @@ int main(int argc, char** argv) {
   vtkPolyDataNormals *skinNormals = vtkPolyDataNormals::New();
 //     skinNormals->SetInputConnection(skinExtractor->GetOutputPort());
   vtkPolyData* polydata = CGAL::output_c2t3_to_vtk_polydata(c2t3);
-  skinNormals->SetInput(polydata);
+  skinNormals->SetInputData(polydata);
     skinNormals->SetFeatureAngle(60.0);
   vtkPolyDataMapper *skinMapper = vtkPolyDataMapper::New();
 //     skinMapper->SetInputConnection(skinExtractor->GetOutputPort());
-  skinMapper->SetInput(polydata);
+  skinMapper->SetInputData(polydata);
     skinMapper->ScalarVisibilityOff();
   vtkActor *skin = vtkActor::New();
     skin->SetMapper(skinMapper);
