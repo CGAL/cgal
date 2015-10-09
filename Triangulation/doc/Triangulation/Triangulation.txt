@@ -283,8 +283,7 @@ full cells adjacent to `c` are automatically subdivided to match the
 subdivision of the full cell `c`. The barycentric subdivision of `c` is
 obtained by enumerating all the faces of `c` in order of decreasing
 dimension, from the dimension of `c` to dimension 1, and inserting a new
-vertex in each face. For the enumeration, we use a combination enumerator,
-which is not documented, but provided in \cgal.
+vertex in each face.
 
 \cgalFigureBegin{triangulationfigbarycentric,barycentric-subdivision.png}
 Barycentric subdivision in dimension \f$ d=2\f$.
@@ -416,7 +415,10 @@ in the conflict zone are removed, leaving a hole that contains `p`. That
 hole is ``star shaped'' around `p` and thus is re-triangulated using
 `p` as a center vertex.
 
-Delaunay triangulations also support vertex removal.
+Delaunay triangulations support insertion of points, removal of vertices,
+and localization of a query point inside the triangulation.
+Note that inserting a set of points at once is much faster
+than inserting the points one by one.
 
 ## Implementation ##
 
@@ -451,7 +453,7 @@ The class `CGAL::Regular_triangulation<RegularTriangulationTraits, Triangulation
 `CGAL::Triangulation<RegularTriangulationTraits, TriangulationDataStructure>`
 and represents regular triangulations.
 
-A regular triangulation is similar to Delaunay triangulations, but 
+Regular triangulations are similar to Delaunay triangulations, but 
 with weighted points.
 
 Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^D\f$. Let
@@ -478,7 +480,12 @@ called the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be
 A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres
 of all simplices are regular.
 
-\warning The removal of points is not supported yet.
+Regular triangulations support insertion of points, 
+and localization of a query point inside the triangulation.
+Note that inserting a set of points at once is much faster
+than inserting the points one by one.
+\warning The removal of vertices is not supported yet.
+
 
 ## Implementation ##
 
@@ -505,7 +512,9 @@ This simple example shows how to create a regular triangulation.
 The current implementation locates points by walking in the
 triangulation, and sorts the points with spatial sort to insert a
 set of points. In the worst case, the expected complexity is 
-\f$ O(n^{\lceil\frac{d}{2}\rceil}+n\log n)\f$.
+\f$ O(n^{\lceil\frac{d}{2}\rceil}+n\log n)\f$. When the algorithm is 
+run on \f$ n \f$ random points, the cost of inserting one point is 
+\f$ O(n^{1/d}) \f$.
 
 We provide below (Figure \cgalFigureRef{Triangulationfigbenchmarks}) the
 performance of the Delaunay triangulation on randomly distributed points. 
