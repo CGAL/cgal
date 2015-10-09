@@ -28,7 +28,10 @@ find_package(VTK 6.0 COMPONENTS
   vtkIOImage
   vtkInteractionImage
   )
-include(${VTK_USE_FILE})
+if(VTK_FOUND)
+  add_definitions(-DCGAL_USE_VTK)
+  include(${VTK_USE_FILE})
+endif(VTK_FOUND)
 
 if("${VTK_QT_VERSION}" STREQUAL "")
   message(FATAL_ERROR "VTK was not built with Qt")
