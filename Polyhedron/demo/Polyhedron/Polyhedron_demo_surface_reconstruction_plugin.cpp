@@ -244,35 +244,127 @@ namespace SurfaceReconstruction
                                                    scale);
   }
 
-  void scale_space (const Point_set& points, Scene_polygon_soup_item* new_item,
-		    unsigned int scale, bool interpolate = true)
+  template <typename ItemsInserter>
+  void scale_space (const Point_set& points, ItemsInserter items,
+		    unsigned int scale, bool generate_smooth = false,
+                    bool separate_shells = false, bool force_manifold = true,
+                    unsigned int samples = 300, unsigned int iterations = 4)
   {
-    ScaleSpace reconstruct (scale, 300);
-    reconstruct.reconstruct_surface(points.begin (), points.end (), 4, false, true);
+    ScaleSpace reconstruct (scale, samples);
+    reconstruct.reconstruct_surface(points.begin (), points.end (), iterations,
+                                    separate_shells, force_manifold);
 
-    new_item->init_polygon_soup(points.size(), reconstruct.number_of_triangles ());
-
-    std::map<unsigned int, unsigned int> map_i2i;
-    unsigned int current_index = 0;
-    
-    for (ScaleSpace::Triple_iterator it = reconstruct.surface_begin ();
-	 it != reconstruct.surface_end (); ++ it)
+    for( unsigned int sh = 0; sh < reconstruct.number_of_shells(); ++sh )
       {
-	for (unsigned int ind = 0; ind < 3; ++ ind)
-	  {
-	    if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
-	      {
-		map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
-		Point p = (interpolate ? points[(*it)[ind]].position() : *(reconstruct.points_begin() + (*it)[ind]));
-		new_item->new_vertex (p.x (), p.y (), p.z ());
-	      }
-	  }
-	new_item->new_triangle( map_i2i[(*it)[0]],
-				map_i2i[(*it)[1]],
-				map_i2i[(*it)[2]] );
+        Scene_polygon_soup_item* new_item
+          = new Scene_polygon_soup_item ();
+        new_item->setColor(Qt::magenta);
+        new_item->setRenderingMode(FlatPlusEdges);
+        new_item->init_polygon_soup(points.size(), reconstruct.number_of_triangles ());
+
+        Scene_polygon_soup_item* smooth_item = NULL;
+        if (generate_smooth)
+          {
+            smooth_item = new Scene_polygon_soup_item ();
+            smooth_item->setColor(Qt::magenta);
+            smooth_item->setRenderingMode(FlatPlusEdges);
+            smooth_item->init_polygon_soup(points.size(), reconstruct.number_of_triangles ());
+          }
+
+        std::map<unsigned int, unsigned int> map_i2i;
+        unsigned int current_index = 0;
+    
+        for (ScaleSpace::Triple_iterator it = reconstruct.shell_begin (sh);
+             it != reconstruct.shell_end (sh); ++ it)
+          {
+            for (unsigned int ind = 0; ind < 3; ++ ind)
+              {
+                if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
+                  {
+                    map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
+                    Point p = points[(*it)[ind]].position();
+                    new_item->new_vertex (p.x (), p.y (), p.z ());
+                    
+                    if (generate_smooth)
+                      {
+                        p = *(reconstruct.points_begin() + (*it)[ind]);
+                        smooth_item->new_vertex (p.x (), p.y (), p.z ());
+                      }
+                  }
+              }
+            new_item->new_triangle( map_i2i[(*it)[0]],
+                                    map_i2i[(*it)[1]],
+                                    map_i2i[(*it)[2]] );
+            if (generate_smooth)
+              smooth_item->new_triangle( map_i2i[(*it)[0]],
+                                         map_i2i[(*it)[1]],
+                                         map_i2i[(*it)[2]] );
+              
+          }
+
+        *(items ++) = new_item;
+        if (generate_smooth)
+          *(items ++) = smooth_item;
+      }
+
+    if (force_manifold)
+      {
+        std::ptrdiff_t num = std::distance( reconstruct.garbage_begin(  ),
+                                            reconstruct.garbage_end(  ) );
+
+        Scene_polygon_soup_item* new_item
+          = new Scene_polygon_soup_item ();
+        new_item->setColor(Qt::blue);
+        new_item->setRenderingMode(FlatPlusEdges);
+        new_item->init_polygon_soup(points.size(), num);
+
+        Scene_polygon_soup_item* smooth_item = NULL;
+        if (generate_smooth)
+          {
+            smooth_item = new Scene_polygon_soup_item ();
+            smooth_item->setColor(Qt::blue);
+            smooth_item->setRenderingMode(FlatPlusEdges);
+            smooth_item->init_polygon_soup(points.size(), num);
+          }
+
+        std::map<unsigned int, unsigned int> map_i2i;
+
+        unsigned int current_index = 0;
+        for (ScaleSpace::Triple_iterator it=reconstruct.garbage_begin(),
+               end=reconstruct.garbage_end();it!=end;++it)
+          {
+            for (unsigned int ind = 0; ind < 3; ++ ind)
+              {
+                if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
+                  {
+                    map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
+                    Point p = points[(*it)[ind]].position();
+                    new_item->new_vertex (p.x (), p.y (), p.z ());
+                    
+                    if (generate_smooth)
+                      {
+                        p = *(reconstruct.points_begin() + (*it)[ind]);
+                        smooth_item->new_vertex (p.x (), p.y (), p.z ());
+                      }
+                  }
+
+              }
+            new_item->new_triangle( map_i2i[(*it)[0]],
+                                    map_i2i[(*it)[1]],
+                                    map_i2i[(*it)[2]] );
+            if (generate_smooth)
+              smooth_item->new_triangle( map_i2i[(*it)[0]],
+                                         map_i2i[(*it)[1]],
+                                         map_i2i[(*it)[2]] );
+          }
+
+        *(items ++) = new_item;
+        if (generate_smooth)
+          *(items ++) = smooth_item;
+
       }
   }
-
+  
   void advancing_front (const Point_set& points, Scene_polyhedron_item* new_item, double size)
   {
     Polyhedron& P = * const_cast<Polyhedron*>(new_item->polyhedron());
@@ -305,8 +397,8 @@ public:
     setupUi(this);
     
 #ifdef CGAL_EIGEN3_ENABLED
-    m_inputSolver->addItem("Eigen - built-in simplicial LDLt");
     m_inputSolver->addItem("Eigen - built-in CG");
+    m_inputSolver->addItem("Eigen - built-in simplicial LDLt");
 #endif
   }
 
@@ -501,13 +593,16 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	      std::cerr << "Scale space reconstruction... ";
 	      time.restart();
 
-	      Scene_polygon_soup_item* reco_item = new Scene_polygon_soup_item();
-	      SurfaceReconstruction::scale_space (*points, reco_item, (std::max)(noise_scale, aniso_scale));
+              std::vector<Scene_polygon_soup_item*> reco_items;
+
+	      SurfaceReconstruction::scale_space (*points, std::back_inserter (reco_items),
+                                                  (std::max)(noise_scale, aniso_scale));
 	      
-	      reco_item->setName(tr("%1 (scale space interpolant)").arg(scene->item(index)->name()));
-	      reco_item->setColor(Qt::magenta);
-	      reco_item->setRenderingMode(FlatPlusEdges);
-	      scene->addItem(reco_item);
+              for (std::size_t i = 0; i < reco_items.size (); ++ i)
+                {
+                  reco_items[i]->setName(tr("%1 (scale space)").arg(scene->item(index)->name()));
+                  scene->addItem (reco_items[i]);
+                }
 
 	      std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
 	    }
@@ -532,13 +627,13 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	{
 	  if (dialog.boundaries())
 	    {
-	      std::cerr << "Scale space reconstruction... ";
+	      std::cerr << "Advancing front reconstruction... ";
 	      time.restart();
 
-	      Scene_polygon_soup_item* reco_item = new Scene_polygon_soup_item();
-	      SurfaceReconstruction::scale_space (*points, reco_item, noise_scale, false);
-
-	      reco_item->setName(tr("%1 (scale space smoothed)").arg(scene->item(index)->name()));
+	      Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(Polyhedron());
+	      SurfaceReconstruction::advancing_front (*points, reco_item, (std::max)(noise_size, aniso_size));
+	      
+	      reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
 	      reco_item->setColor(Qt::magenta);
 	      reco_item->setRenderingMode(FlatPlusEdges);
 	      scene->addItem(reco_item);
@@ -636,192 +731,46 @@ void Polyhedron_demo_surface_reconstruction_plugin::scale_space_reconstruction
 
   if(pts_item)
     {
+      // Gets point set
+      Point_set* points = pts_item->point_set();
+
       // wait cursor
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
       std::cout << "Scale scape surface reconstruction...";
+      
+      std::vector<Scene_polygon_soup_item*> reco_items;
 
-      typedef CGAL::Scale_space_surface_reconstruction_3<Kernel> Reconstructor;
-      Reconstructor reconstruct( dialog.neighbors(), dialog.samples() );
-      reconstruct.reconstruct_surface(
-                                      pts_item->point_set()->begin(),
-                                      pts_item->point_set()->end(),
-                                      dialog.iterations(),
-                                      dialog.separate_shells(),
-                                      dialog.force_manifold ()
-                                      );
+      SurfaceReconstruction::scale_space (*points, std::back_inserter (reco_items),
+                                          dialog.neighbors (),
+                                          dialog.generate_smoothed (),
+                                          dialog.separate_shells (),
+                                          dialog.force_manifold (),
+                                          dialog.samples (),
+                                          dialog.iterations ());
 
-
-      std::vector<Point_set::Point> pts;
-      typedef Point_set::iterator Point_iterator;
-
-      for(Point_iterator it = pts_item->point_set()->begin(),
-            end = pts_item->point_set()->end(); it!=end; ++it)
+      for (std::size_t i = 0; i < reco_items.size (); ++ i)
         {
-          pts.push_back (*it);
-        }
-      std::vector<Reconstructor::Point> pts_smoothed;
-      typedef Reconstructor::Point_iterator SS_point_iterator;
-    
-      for(SS_point_iterator it = reconstruct.points_begin(),
-            end = reconstruct.points_end(); it!=end; ++it)
-        {
-          pts_smoothed.push_back (*it);
-        }
-
-      for( unsigned int sh = 0; sh < reconstruct.number_of_shells(); ++sh ) {
-        // collect the number of triples.
-        std::cerr << "\r" << sh+1 << " on " << reconstruct.number_of_shells();
-        std::ptrdiff_t num = std::distance( reconstruct.shell_begin( sh ),
-                                            reconstruct.shell_end( sh ) );
-
-
-        //create item for the reconstruction output with input point set
-        Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
-        new_item->init_polygon_soup(pts_item->point_set()->size(),
-                                    num );
-
-        std::map<unsigned int, unsigned int> map_i2i;
-
-        unsigned int current_index = 0;
-        for (Reconstructor::Triple_iterator it=reconstruct.shell_begin( sh ),
-               end=reconstruct.shell_end( sh );it!=end;++it)
-          {
-            for (unsigned int ind = 0; ind < 3; ++ ind)
-              {
-                if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
-                  {
-                    map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
-                    new_item->new_vertex (pts[(*it)[ind]].x (),
-                                          pts[(*it)[ind]].y (),
-                                          pts[(*it)[ind]].z ());
-                  }
-
-              }
-            new_item->new_triangle( map_i2i[(*it)[0]],
-                                    map_i2i[(*it)[1]],
-                                    map_i2i[(*it)[2]] );
-          }
-
-        new_item->setName(tr("%1-shell %2 (ss reconstruction)").arg(scene->item(index)->name()).arg(sh+1));
-        new_item->setColor(Qt::magenta);
-        new_item->setRenderingMode(FlatPlusEdges);
-        scene->addItem(new_item);
-
-        if ( dialog.generate_smoothed() ){
-          //create item for the reconstruction output with input point set smoothed
-          Scene_polygon_soup_item *new_item_smoothed = new Scene_polygon_soup_item();
-
-          new_item_smoothed->init_polygon_soup(pts_item->point_set()->size(),
-                                               num );
-	  
-          std::map<unsigned int, unsigned int> map_i2i_smoothed;
-
-          unsigned int current_index_smoothed = 0;
-          for (Reconstructor::Triple_iterator it=reconstruct.shell_begin( sh ),
-                 end=reconstruct.shell_end( sh );it!=end;++it)
+          if (dialog.force_manifold () && i > reco_items.size () - 3)
             {
-              for (unsigned int ind = 0; ind < 3; ++ ind)
-                {
-                  if (map_i2i_smoothed.find ((*it)[ind]) == map_i2i_smoothed.end ())
-                    {
-                      map_i2i_smoothed.insert (std::make_pair ((*it)[ind], current_index_smoothed ++));
-                      new_item_smoothed->new_vertex (pts_smoothed[(*it)[ind]].x (),
-                                                     pts_smoothed[(*it)[ind]].y (),
-                                                     pts_smoothed[(*it)[ind]].z ());
-                    }
-
-                }
-
-              new_item_smoothed->new_triangle( map_i2i_smoothed[(*it)[0]],
-                                               map_i2i_smoothed[(*it)[1]],
-                                               map_i2i_smoothed[(*it)[2]] );
+              if (dialog.generate_smoothed () && i % 2)
+                reco_items[i]->setName(tr("%1 (scale space smooth garbage)").arg(scene->item(index)->name()));
+              else
+                reco_items[i]->setName(tr("%1 (scale space garbage)").arg(scene->item(index)->name()));
             }
-
-          new_item_smoothed->setName(tr("%1-shell %2 (ss smoothed reconstruction)").arg(scene->item(index)->name()).arg(sh+1));
-          new_item_smoothed->setColor(Qt::magenta);
-          new_item_smoothed->setRenderingMode(FlatPlusEdges);
-          scene->addItem(new_item_smoothed);
-        }
-
-      }
-
-      if (dialog.force_manifold ())
-        {
-          std::ptrdiff_t num = std::distance( reconstruct.garbage_begin(  ),
-                                              reconstruct.garbage_end(  ) );
-
-
-          //create item for the reconstruction output with input point set
-          Scene_polygon_soup_item* new_item = new Scene_polygon_soup_item();
-          new_item->init_polygon_soup(pts_item->point_set()->size(),
-                                      num );
-
-          std::map<unsigned int, unsigned int> map_i2i;
-
-          unsigned int current_index = 0;
-          for (Reconstructor::Triple_iterator it=reconstruct.garbage_begin(),
-                 end=reconstruct.garbage_end();it!=end;++it)
+          else
             {
-              for (unsigned int ind = 0; ind < 3; ++ ind)
+              if (dialog.generate_smoothed ())
                 {
-                  if (map_i2i.find ((*it)[ind]) == map_i2i.end ())
-                    {
-                      map_i2i.insert (std::make_pair ((*it)[ind], current_index ++));
-                      new_item->new_vertex (pts[(*it)[ind]].x (),
-                                            pts[(*it)[ind]].y (),
-                                            pts[(*it)[ind]].z ());
-                    }
-
+                  if (i % 2)
+                    reco_items[i]->setName(tr("%1 (scale space smooth shell %2)").arg(scene->item(index)->name()).arg((i+1)/2));
+                  else
+                    reco_items[i]->setName(tr("%1 (scale space shell %2)").arg(scene->item(index)->name()).arg(((i+1)/2)+1));
                 }
-              new_item->new_triangle( map_i2i[(*it)[0]],
-                                      map_i2i[(*it)[1]],
-                                      map_i2i[(*it)[2]] );
+              else
+                reco_items[i]->setName(tr("%1 (scale space shell %2)").arg(scene->item(index)->name()).arg(i+1));
             }
-
-          new_item->setName(tr("%1 (ss non-manifold garbage)").arg(scene->item(index)->name()));
-          new_item->setColor(Qt::cyan);
-          new_item->setRenderingMode(FlatPlusEdges);
-          new_item->setVisible(false);
-          scene->addItem(new_item);
-
-          if ( dialog.generate_smoothed() ){
-            //create item for the reconstruction output with input point set smoothed
-            Scene_polygon_soup_item *new_item_smoothed = new Scene_polygon_soup_item();
-
-            new_item_smoothed->init_polygon_soup(pts_item->point_set()->size(),
-                                                 num );
-	  
-            std::map<unsigned int, unsigned int> map_i2i_smoothed;
-
-            unsigned int current_index_smoothed = 0;
-            for (Reconstructor::Triple_iterator it=reconstruct.garbage_begin( ),
-                   end=reconstruct.garbage_end( );it!=end;++it)
-              {
-                for (unsigned int ind = 0; ind < 3; ++ ind)
-                  {
-                    if (map_i2i_smoothed.find ((*it)[ind]) == map_i2i_smoothed.end ())
-                      {
-                        map_i2i_smoothed.insert (std::make_pair ((*it)[ind], current_index_smoothed ++));
-                        new_item_smoothed->new_vertex (pts_smoothed[(*it)[ind]].x (),
-                                                       pts_smoothed[(*it)[ind]].y (),
-                                                       pts_smoothed[(*it)[ind]].z ());
-                      }
-
-                  }
-
-                new_item_smoothed->new_triangle( map_i2i_smoothed[(*it)[0]],
-                                                 map_i2i_smoothed[(*it)[1]],
-                                                 map_i2i_smoothed[(*it)[2]] );
-              }
-
-            new_item_smoothed->setName(tr("%1 (ss smoothed non-manifold garbage)").arg(scene->item(index)->name()));
-            new_item_smoothed->setColor(Qt::cyan);
-            new_item_smoothed->setRenderingMode(FlatPlusEdges);
-            new_item_smoothed->setVisible(false);
-            scene->addItem(new_item_smoothed);
-          }
-
+          scene->addItem (reco_items[i]);
         }
 
       QApplication::restoreOverrideCursor();
