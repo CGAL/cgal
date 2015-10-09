@@ -57,7 +57,9 @@ Scene::addItem(Scene_item* item)
             this, SLOT(itemChanged()));
     connect(item, SIGNAL(renderingModeChanged()),
             this, SLOT(callDraw()));
-    if(bbox_before + item->bbox() != bbox_before)
+    if(bbox_before + item->bbox() != bbox_before
+            && item->isFinite()
+            && !item->isEmpty())
     {
         Q_EMIT updated_bbox();
     }
@@ -836,7 +838,7 @@ Scene::Bbox Scene::bbox() const
     Bbox bbox;
     Q_FOREACH(Scene_item* item, m_entries)
     {
-        if(item->isFinite() && !item->isEmpty()) {
+        if(item->isFinite() && !item->isEmpty() && item->visible()) {
             if(bbox_initialized) {
                 bbox = bbox + item->bbox();
             }
