@@ -42,7 +42,7 @@ public:
 
   bool isFinite() const { return false; }
   bool isEmpty() const { return false; }
-  Bbox bbox() const { return Bbox(); }
+  Bbox bbox() const { return scene->bbox(); }
 
   bool manipulatable() const {
     return manipulable;

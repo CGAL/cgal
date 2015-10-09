@@ -58,12 +58,14 @@ Scene::addItem(Scene_item* item)
     connect(item, SIGNAL(renderingModeChanged()),
             this, SLOT(callDraw()));
     if(bbox_before + item->bbox() != bbox_before)
-{ Q_EMIT updated_bbox(); }
+    {
+        Q_EMIT updated_bbox();
+    }
     QAbstractListModel::beginResetModel();
     Q_EMIT updated();
     QAbstractListModel::endResetModel();
     Item_id id = m_entries.size() - 1;
-  Q_EMIT newItem(id);
+    Q_EMIT newItem(id);
     return id;
 }
 

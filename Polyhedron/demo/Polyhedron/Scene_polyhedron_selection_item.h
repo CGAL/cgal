@@ -301,7 +301,7 @@ public:
         }
     }
 
-    if(!item_bbox) { return Bbox(); }
+    if(!item_bbox) { return this->poly_item->bbox(); }
     return Bbox(item_bbox->xmin(),item_bbox->ymin(),item_bbox->zmin(),
                 item_bbox->xmax(),item_bbox->ymax(),item_bbox->zmax());
   }
