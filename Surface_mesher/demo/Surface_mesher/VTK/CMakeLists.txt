@@ -1,3 +1,5 @@
+ cmake_minimum_required(VERSION 2.8.11)
+
 PROJECT( mesh_a_3D_image )
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
