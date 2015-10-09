@@ -70,7 +70,7 @@ public:
 
 private:
 
-    std::vector<float> positions_lines;
+    mutable std::vector<float> positions_lines;
     mutable QOpenGLShaderProgram *program;
     using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer)const
@@ -96,7 +96,7 @@ private:
         are_buffers_filled = true;
     }
 
-    void compute_elements()
+    void compute_elements() const
     {
         positions_lines.clear();
         const Bbox& bb = scene->bbox();

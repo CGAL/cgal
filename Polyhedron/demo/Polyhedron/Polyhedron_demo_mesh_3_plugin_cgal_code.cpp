@@ -217,7 +217,7 @@ public:
 private:
     void draw_triangle(const Kernel::Point_3& pa,
                        const Kernel::Point_3& pb,
-                       const Kernel::Point_3& pc, bool is_cut) {
+                       const Kernel::Point_3& pc, bool is_cut) const {
 
 #undef darker
         Kernel::Vector_3 n = cross_product(pb - pa, pc - pa);
@@ -264,7 +264,7 @@ else
 
     void draw_triangle_edges(const Kernel::Point_3& pa,
                        const Kernel::Point_3& pb,
-                       const Kernel::Point_3& pc) {
+                       const Kernel::Point_3& pc)const {
 
 #undef darker
         Kernel::Vector_3 n = cross_product(pb - pa, pc - pa);
@@ -375,13 +375,13 @@ private:
     Scene_interface* last_known_scene;
 
 
-    std::vector<float> positions_lines;
-    std::vector<float> positions_grid;
-    std::vector<float> positions_poly;
-    std::vector<float> normals;
-    std::vector<float> color_lines;
-    std::vector<float> color_poly;
-    std::vector<float> color_grid;
+    mutable std::vector<float> positions_lines;
+    mutable std::vector<float> positions_grid;
+    mutable std::vector<float> positions_poly;
+    mutable std::vector<float> normals;
+    mutable std::vector<float> color_lines;
+    mutable std::vector<float> color_poly;
+    mutable std::vector<float> color_grid;
 
     mutable QOpenGLShaderProgram *program;
 
@@ -467,7 +467,7 @@ private:
         }
         are_buffers_filled = true;
     }
-    void compute_elements()
+    void compute_elements() const
     {
         positions_lines.clear();
         positions_poly.clear();

@@ -42,7 +42,7 @@ void Scene_polyhedron_transform_item::initialize_buffers(Viewer_interface *viewe
     are_buffers_filled = true;
 }
 
-void Scene_polyhedron_transform_item::compute_elements()
+void Scene_polyhedron_transform_item::compute_elements() const
 {
      positions_lines.resize(0);
     typedef Kernel::Point_3		Point;

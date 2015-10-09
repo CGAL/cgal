@@ -26,7 +26,7 @@ public:
 };
 
 void
-Scene_polylines_item::create_Sphere(double R)
+Scene_polylines_item::create_Sphere(double R) const
 {
   create_flat_and_wire_sphere(R, positions_spheres, normals_spheres, positions_wire_spheres);
 }
@@ -180,7 +180,7 @@ Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
 
 }
 void
-Scene_polylines_item::compute_elements()
+Scene_polylines_item::compute_elements() const
 {
     positions_spheres.resize(0);
     positions_wire_spheres.resize(0);
