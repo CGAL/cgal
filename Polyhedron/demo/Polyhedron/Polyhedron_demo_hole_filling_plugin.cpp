@@ -7,7 +7,7 @@
 #include "Scene_polylines_item.h"
 #include "Scene.h"
 
-#include "Polyhedron_demo_plugin_helper.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "ui_Hole_filling_widget.h"
 #include "Polyhedron_type.h"
 
@@ -99,7 +99,7 @@ public:
     return (m == Wireframe);
   }
   void draw() const {}
-  void draw_edges(Viewer_interface* viewer) const {
+  void draw_edges(CGAL::Three::Viewer_interface* viewer) const {
     
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
       if(it == active_hole) { viewer->glLineWidth(7.f); }
@@ -291,13 +291,13 @@ public Q_SLOTS:
 
 }; // end class Scene_hole_visualizer
 ///////////////////////////////////////////////////////////////////////////////////////////////////
-
+using namespace CGAL::Three;
 class Polyhedron_demo_hole_filling_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
   bool applicable(QAction*) const { return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex())); }
@@ -305,7 +305,7 @@ public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionHoleFilling; }
 
   using Polyhedron_demo_plugin_helper::init;
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m);
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m);
 
   Scene_hole_visualizer* get_hole_visualizer(Scene_polyhedron_item* poly_item) {
       return visualizers[poly_item];
@@ -386,7 +386,7 @@ private:
 }; // end Polyhedron_demo_hole_filling_plugin
 
 void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
-                                      Scene_interface* scene_interface,
+                                      CGAL::Three::Scene_interface* scene_interface,
                                       Messages_interface* m)
 {
   last_active_item = NULL;
@@ -443,7 +443,7 @@ void Polyhedron_demo_hole_filling_plugin::item_about_to_be_destroyed(Scene_item*
 // removes Scene_hole_visualizer items
 void Polyhedron_demo_hole_filling_plugin::dock_widget_closed() {
   // remove all Scene_hole_visualizer items
-  for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries();
+  for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries();
     i < end; ++i)
   {
     Scene_hole_visualizer* hole_visualizer = qobject_cast<Scene_hole_visualizer*>(scene->item(i));

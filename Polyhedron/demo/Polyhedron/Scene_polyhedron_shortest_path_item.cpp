@@ -17,7 +17,7 @@ Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item()
 {
 }
 
-Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item(Scene_polyhedron_item* polyhedronItem, Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow) 
+Scene_polyhedron_shortest_path_item::Scene_polyhedron_shortest_path_item(Scene_polyhedron_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow)
   :Scene_polyhedron_item_decorator(polyhedronItem, false)
   , m_shortestPaths(NULL)
   , m_isTreeCached(false)
@@ -48,7 +48,7 @@ void Scene_polyhedron_shortest_path_item::compute_elements()
 
 }
 
-void Scene_polyhedron_shortest_path_item::initialize_buffers(Viewer_interface* viewer)const
+void Scene_polyhedron_shortest_path_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)const
 {
     //vao containing the data for the selected lines
     {
@@ -85,7 +85,7 @@ bool Scene_polyhedron_shortest_path_item::supportsRenderingMode(RenderingMode m)
   }
 }
   
-void Scene_polyhedron_shortest_path_item::draw(Viewer_interface* viewer) const
+void Scene_polyhedron_shortest_path_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
     if (supportsRenderingMode(renderingMode()))
     {
@@ -94,7 +94,7 @@ void Scene_polyhedron_shortest_path_item::draw(Viewer_interface* viewer) const
 }
 
 
-void Scene_polyhedron_shortest_path_item::draw_points(Viewer_interface* viewer) const
+void Scene_polyhedron_shortest_path_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
     {
@@ -424,7 +424,7 @@ bool Scene_polyhedron_shortest_path_item::load(const std::string& file_name)
   return true;
 }
 
-bool Scene_polyhedron_shortest_path_item::deferred_load(Scene_polyhedron_item* polyhedronItem, Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow)
+bool Scene_polyhedron_shortest_path_item::deferred_load(Scene_polyhedron_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow)
 {
   initialize(polyhedronItem, sceneInterface, messages, mainWindow);
   
@@ -484,7 +484,7 @@ bool Scene_polyhedron_shortest_path_item::save(const std::string& file_name) con
   return true;
 }
 
-void Scene_polyhedron_shortest_path_item::initialize(Scene_polyhedron_item* polyhedronItem, Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow)
+void Scene_polyhedron_shortest_path_item::initialize(Scene_polyhedron_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow)
 {
   this->m_mainWindow = mainWindow;
   this->m_messages = messages;

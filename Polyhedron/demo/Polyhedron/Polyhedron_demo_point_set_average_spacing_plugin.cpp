@@ -1,7 +1,7 @@
 #include "config.h"
 #include "Scene_points_with_normal_item.h"
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Timer.h>
@@ -14,7 +14,6 @@
 #include <QtPlugin>
 #include <QInputDialog>
 #include <QMessageBox>
-
 // Concurrency
 #ifdef CGAL_LINKED_WITH_TBB
 typedef CGAL::Parallel_tag Concurrency_tag;
@@ -22,20 +21,20 @@ typedef CGAL::Parallel_tag Concurrency_tag;
 typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
 
-
+using namespace CGAL::Three;
 class Polyhedron_demo_point_set_average_spacing_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 private:
   QAction* actionAverageSpacing;
   
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     actionAverageSpacing = new QAction(tr("Point set average spacing"), mainWindow);
     actionAverageSpacing->setObjectName("actionAverageSpacing");
 
@@ -58,7 +57,7 @@ public Q_SLOTS:
 
 void Polyhedron_demo_point_set_average_spacing_plugin::on_actionAverageSpacing_triggered()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));

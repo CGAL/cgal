@@ -315,7 +315,7 @@ Scene_polyhedron_item::triangulate_facet_color(Facet_iterator fit) const
 
 
 void
-Scene_polyhedron_item::initialize_buffers(Viewer_interface* viewer) const
+Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer) const
 {
     //vao containing the data for the unselected facets
     {
@@ -959,7 +959,7 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
     erase_next_picked_facet_m = b;
 }
 
-void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
+void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
         is_Triangulated();
@@ -1005,7 +1005,7 @@ void Scene_polyhedron_item::draw(Viewer_interface* viewer) const {
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
+void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
         is_Triangulated();
@@ -1041,7 +1041,7 @@ void Scene_polyhedron_item::draw_edges(Viewer_interface* viewer) const {
 }
 
 void
-Scene_polyhedron_item::draw_points(Viewer_interface* viewer) const {
+Scene_polyhedron_item::draw_points(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
         is_Triangulated();
@@ -1093,31 +1093,16 @@ invalidate_buffers()
     init();
     Base::invalidate_buffers();
     is_Triangulated();
-    compute_normals_and_vertices();
     are_buffers_filled = false;
 
 }
-void
-Scene_polyhedron_item::
-contextual_changed()
-{
-    prev_shading = cur_shading;
-    cur_shading = renderingMode();
-    if(prev_shading != cur_shading)
-        if(cur_shading == Flat || cur_shading == FlatPlusEdges ||cur_shading == Gouraud)
-        {
-            //Change the normals
-           // invalidate_buffers();
-        }
 
-}
 void
 Scene_polyhedron_item::selection_changed(bool p_is_selected)
 {
     if(p_is_selected != is_selected)
     {
         is_selected = p_is_selected;
-         //are_buffers_filled = false;
     }
 
 }

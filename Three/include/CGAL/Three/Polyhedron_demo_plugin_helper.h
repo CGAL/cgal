@@ -1,3 +1,4 @@
+//! \file Polyhedron_demo_plugin_helper.h 
 #ifndef POLYHEDRON_DEMO_OPERATION_HELPER_H
 #define POLYHEDRON_DEMO_OPERATION_HELPER_H
 
@@ -12,24 +13,29 @@ struct QMetaObject;
 class QMainWindow;
 class QDockWidget;
 
-#include "Polyhedron_demo_plugin_interface.h"
-#include "Scene_interface.h"
-
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Scene_interface.h>
+namespace CGAL {
+namespace Three {
+  /*!
+   * This class provides a base for creating a new plugin.
+   */
 class SCENE_ITEM_EXPORT Polyhedron_demo_plugin_helper
   : public Polyhedron_demo_plugin_interface
 {
 public:
-  // get action object from its name
+  //! get action object from its name
   static QAction* getActionFromMainWindow(QMainWindow*, QString action_name);
   
-  // Init plugin
-  virtual void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
+  //! Init plugin
+  virtual void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface);
   
-  // Get list of actions supported by this plugin
+  //! Get list of actions supported by this plugin
   virtual QStringList actionsNames() const;
+  //!List of the actions of the plugin
   virtual QList<QAction*> actions() const;
 
-  // To get a selected item with the type of SceneType
+  //! To get a selected item with the type of SceneType
   template<class SceneType>
   SceneType* get_selected_item() const {
     int item_id = scene->mainSelectionIndex();
@@ -38,7 +44,7 @@ public:
       // no selected SceneType - if there is only one in list return it, otherwise NULL
       int counter = 0;
       int last_selected = 0;
-      for(Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end && counter < 2; ++i) {
+      for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end && counter < 2; ++i) {
         if(SceneType* tmp = qobject_cast<SceneType*>(scene->item(i))) { 
           scene_item = tmp;
           counter++; 
@@ -51,15 +57,20 @@ public:
     return scene_item;
   }
 
+  //!To add a dock widget to the interface
   void add_dock_widget(QDockWidget* dock);
 
-  // Auto-connect actions to slots. Called by init().
+  //! Auto-connects actions to slots. Called by init().
   void autoConnectActions();
   
 protected:
+  //!The list of actions
   QMap<QString, QAction*> actions_map;
-  Scene_interface* scene;
+  //!The reference to the scene
+  CGAL::Three::Scene_interface* scene;
+  //!The reference to the main window
   QMainWindow* mw;
 };
-
+}
+}
 #endif // POLYHEDRON_DEMO_OPERATION_HELPER_H

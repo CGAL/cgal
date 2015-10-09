@@ -2,8 +2,8 @@
 #include <GL/glew.h> // tmp hack to make sure gl.his included before glew.h
 #endif
 
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "ui_Mean_curvature_flow_skeleton_plugin.h"
 #include "Scene_polyhedron_item.h"
 #include "Scene_points_with_normal_item.h"
@@ -96,13 +96,13 @@ struct Facet_with_id_pmap
 private:
     std::vector<ValueType>& internal_vector;
 };
-
+using namespace CGAL::Three;
 class Polyhedron_demo_mean_curvature_flow_skeleton_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   QAction* actionMCFSkeleton;
   QAction* actionConvert_to_medial_skeleton;
@@ -113,7 +113,7 @@ public:
     return QStringList() << "actionMCFSkeleton" << "actionConvert_to_medial_skeleton";
   }
 
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     mcs = NULL;
     dockWidget = NULL;
     ui = NULL;
@@ -389,7 +389,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionMCFSkeleton_t
   dockWidget->show();
   dockWidget->raise();
 
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
@@ -484,7 +484,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSegment()
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_medial_skeleton_triggered()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_polyhedron_item* item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
@@ -525,7 +525,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   if (!check_item_index(index))
   {
     return;
@@ -555,7 +555,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionContract()
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   if (!check_item_index(index))
   {
     return;
@@ -586,7 +586,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionCollapse()
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   if (!check_item_index(index))
   {
     return;
@@ -617,7 +617,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSplit()
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   if (!check_item_index(index))
   {
     return;
@@ -674,7 +674,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionDegeneracy()
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   if (!check_item_index(index))
   {
     return;
@@ -699,7 +699,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 
   std::cout << "ok (" << time.elapsed() << " ms, " << ")" << std::endl;
 
-  Scene_interface::Item_id contracted_item_index = scene->mainSelectionIndex();
+  CGAL::Three::Scene_interface::Item_id contracted_item_index = scene->mainSelectionIndex();
   Scene_polyhedron_item* contracted_item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(contracted_item_index));
 
@@ -794,7 +794,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionRun()
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   if (!check_item_index(index))
   {
     return;
@@ -855,7 +855,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
 
 void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   if (!check_item_index(index))
   {
     return;

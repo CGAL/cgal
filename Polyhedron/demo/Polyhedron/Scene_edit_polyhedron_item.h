@@ -78,7 +78,7 @@ public:
   std::vector<vertex_descriptor> ctrl_vertices_group;
   qglviewer::ManipulatedFrame* frame;  // manframe assoc with a group of control vertices
   qglviewer::Vec frame_initial_center; // initial center of frame
-  Scene_interface::Bbox bbox;          // bbox of control vertices inside group  
+  CGAL::Three::Scene_interface::Bbox bbox;          // bbox of control vertices inside group
   qglviewer::Vec rot_direction;        // vector for constraint rotation
 private:
   std::vector<qglviewer::Vec> initial_positions;
@@ -142,17 +142,17 @@ private:
     }
     return center_acc / initial_positions.size();
   }
-  Scene_interface::Bbox calculate_initial_bbox()
+  CGAL::Three::Scene_interface::Bbox calculate_initial_bbox()
   {    
-    if(initial_positions.empty()) {return Scene_interface::Bbox(0,0,0,0,0,0); }
+    if(initial_positions.empty()) {return CGAL::Three::Scene_interface::Bbox(0,0,0,0,0,0); }
 
     const qglviewer::Vec& p_i = *(initial_positions.begin());
-    Scene_interface::Bbox bbox(p_i.x, p_i.y, p_i.z, p_i.x, p_i.y, p_i.z);
+    CGAL::Three::Scene_interface::Bbox bbox(p_i.x, p_i.y, p_i.z, p_i.x, p_i.y, p_i.z);
 
     for(std::vector<qglviewer::Vec>::iterator it = initial_positions.begin(); it != initial_positions.end(); ++it)
     {
       const qglviewer::Vec& p_i = (*it);
-      Scene_interface::Bbox bbox_it(p_i.x, p_i.y, p_i.z, p_i.x, p_i.y, p_i.z);
+      CGAL::Three::Scene_interface::Bbox bbox_it(p_i.x, p_i.y, p_i.z, p_i.x, p_i.y, p_i.z);
       bbox = bbox + bbox_it;
     }
     return bbox;
@@ -200,10 +200,10 @@ public:
   }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   void draw() const{}
-  void draw(Viewer_interface*) const;
-  void draw_edges(Viewer_interface*) const;
-  void draw_bbox(const Scene_interface::Bbox&) const;
-  void draw_ROI_and_control_vertices(Viewer_interface *viewer) const;
+  void draw(CGAL::Three::Viewer_interface*) const;
+  void draw_edges(CGAL::Three::Viewer_interface*) const;
+  void draw_bbox(const CGAL::Three::Scene_interface::Bbox&) const;
+  void draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface *viewer) const;
 
   // Get wrapped polyhedron
   Polyhedron*       polyhedron();
@@ -291,9 +291,9 @@ private:
 
   mutable QOpenGLBuffer *in_bu;
   using Scene_item::initialize_buffers;
-  void initialize_buffers(Viewer_interface *viewer) const;
+  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void);
-  void compute_bbox(const Scene_interface::Bbox&);
+  void compute_bbox(const CGAL::Three::Scene_interface::Bbox&);
   void create_Sphere(double);
 
 

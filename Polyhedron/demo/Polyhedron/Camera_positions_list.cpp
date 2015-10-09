@@ -6,9 +6,9 @@
 #include <QFileDialog>
 #include <QFile>
 #include <QTextStream>
-#include <QDebug>
 #include <CGAL/number_type_config.h>
-#include "Viewer_interface.h"
+#include <CGAL/Three/Viewer_interface.h>
+
 
 #include <cassert>
 
@@ -25,7 +25,7 @@ Camera_positions_list::Camera_positions_list(QWidget* parent)
           this, SLOT(activatedRow(QModelIndex)));
 }
 
-void Camera_positions_list::setViewer(Viewer_interface* viewer)
+void Camera_positions_list::setViewer(CGAL::Three::Viewer_interface* viewer)
 {
   m_viewer = viewer;
 }

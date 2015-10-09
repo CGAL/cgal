@@ -6,8 +6,8 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_polylines_item.h"
 
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
 
@@ -34,13 +34,13 @@ struct Is_border {
 };
 
 
-
+using namespace CGAL::Three;
 class Polyhedron_demo_polyhedron_stitching_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
   QAction* actionDetectBorders;
@@ -48,7 +48,7 @@ class Polyhedron_demo_polyhedron_stitching_plugin :
 public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionDetectBorders << actionStitchBorders; }
   using Polyhedron_demo_plugin_helper::init;
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* /* m */)
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* /* m */)
   {
     actionDetectBorders= new QAction(tr("Detect polyhedron boundaries"), mainWindow);
     actionStitchBorders= new QAction(tr("Stitch polyhedron duplicated boundaries"), mainWindow);

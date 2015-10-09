@@ -3,7 +3,7 @@
 
 #include "Messages_interface.h"
 #include "Scene_polyhedron_selection_item.h"
-#include "Polyhedron_demo_plugin_helper.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "ui_Fairing_widget.h"
 #include "Polyhedron_type.h"
 
@@ -25,13 +25,13 @@
 #include <algorithm>
 #include <queue>
 
-
+using namespace CGAL::Three;
 class Polyhedron_demo_fairing_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
   bool applicable(QAction*) const { 
@@ -42,7 +42,7 @@ public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionFairing; }
 
   using Polyhedron_demo_plugin_helper::init;
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
     mw = mainWindow;
     scene = scene_interface;
     messages = m;

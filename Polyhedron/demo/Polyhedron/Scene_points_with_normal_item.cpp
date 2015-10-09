@@ -9,7 +9,7 @@
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
 
-#include "Viewer_interface.h"
+#include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Search_traits_3.h>
 
@@ -91,7 +91,7 @@ Scene_points_with_normal_item::~Scene_points_with_normal_item()
 
 
 
-void Scene_points_with_normal_item::initialize_buffers(Viewer_interface *viewer) const
+void Scene_points_with_normal_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
 {
     compute_normals_and_vertices();
     //vao for the edges
@@ -403,7 +403,7 @@ bool Scene_points_with_normal_item::supportsRenderingMode(RenderingMode m) const
               ( m==PointsPlusNormals || m==Splatting ) );
 }
 
-void Scene_points_with_normal_item::draw_splats(Viewer_interface* viewer) const
+void Scene_points_with_normal_item::draw_splats(CGAL::Three::Viewer_interface* viewer) const
 {
    // TODO add support for selection
    viewer->glBegin(GL_POINTS);
@@ -421,7 +421,7 @@ void Scene_points_with_normal_item::draw_splats(Viewer_interface* viewer) const
 
 }
 
-void Scene_points_with_normal_item::draw_edges(Viewer_interface* viewer) const
+void Scene_points_with_normal_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
         initialize_buffers(viewer);
@@ -434,7 +434,7 @@ void Scene_points_with_normal_item::draw_edges(Viewer_interface* viewer) const
     vaos[0]->release();
     program->release();
 }
-void Scene_points_with_normal_item::draw_points(Viewer_interface* viewer) const
+void Scene_points_with_normal_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
         initialize_buffers(viewer);

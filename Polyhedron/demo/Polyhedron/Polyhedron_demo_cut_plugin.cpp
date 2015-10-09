@@ -6,8 +6,8 @@
 #include "Messages_interface.h"
 #include "Scene_plane_item.h"
 #include "Scene_polyhedron_item.h"
-#include "Polyhedron_demo_plugin_interface.h"
-#include "Polyhedron_demo_io_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/gl.h>
 
 #include <CGAL/AABB_tree.h>
@@ -93,7 +93,7 @@ private:
     mutable QOpenGLShaderProgram *program;
 
     using Scene_item::initialize_buffers;
-    void initialize_buffers(Viewer_interface *viewer)const
+    void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
@@ -120,7 +120,7 @@ private:
 
        tree.traversal(0, traits);
     }
-    void draw_edges(Viewer_interface* viewer) const
+    void draw_edges(CGAL::Three::Viewer_interface* viewer) const
     {
         if(!are_buffers_filled)
             initialize_buffers(viewer);
@@ -216,7 +216,7 @@ private:
   mutable QOpenGLShaderProgram *program;
 
     using Scene_item::initialize_buffers;
-    void initialize_buffers(Viewer_interface *viewer)const
+    void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
@@ -246,7 +246,7 @@ private:
          positions_lines.push_back(b.x()); positions_lines.push_back(b.y()); positions_lines.push_back(b.z());
        }
     }
-    void draw_edges(Viewer_interface* viewer) const
+    void draw_edges(CGAL::Three::Viewer_interface* viewer) const
     {
         if(!are_buffers_filled)
             initialize_buffers(viewer);
@@ -263,15 +263,15 @@ private:
 
 }; // end class Scene_edges_item
 
-
+using namespace CGAL::Three;
 class Polyhedron_demo_cut_plugin :
   public QObject,
   public Polyhedron_demo_plugin_interface,
   public Polyhedron_demo_io_plugin_interface 
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
-  Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
@@ -336,7 +336,7 @@ public:
 
 
 
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface,
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* m);
   QList<QAction*> actions() const;
 
@@ -349,7 +349,7 @@ public Q_SLOTS:
   }
 
 private:
-  Scene_interface* scene;
+  CGAL::Three::Scene_interface* scene;
   Messages_interface* messages;
   Scene_plane_item* plane_item;
   Scene_edges_item* edges_item;
@@ -371,7 +371,7 @@ Polyhedron_demo_cut_plugin::~Polyhedron_demo_cut_plugin()
 
 
 void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
-                                      Scene_interface* scene_interface,
+                                      CGAL::Three::Scene_interface* scene_interface,
                                       Messages_interface* m)
 {
   scene = scene_interface;
@@ -388,7 +388,7 @@ QList<QAction*> Polyhedron_demo_cut_plugin::actions() const {
 
 void Polyhedron_demo_cut_plugin::createCutPlane() {
   plane_item = new Scene_plane_item(scene);
-  const Scene_interface::Bbox& bbox = scene->bbox();
+  const CGAL::Three::Scene_interface::Bbox& bbox = scene->bbox();
   plane_item->setPosition((bbox.xmin+bbox.xmax)/2.f,
                           (bbox.ymin+bbox.ymax)/2.f,
                           (bbox.zmin+bbox.zmax)/2.f);

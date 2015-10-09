@@ -1,9 +1,9 @@
 #include "Scene_item.h"
-#include "Scene_interface.h"
+#include <CGAL/Three/Scene_interface.h>
 #include <QMenu>
 #include <iostream>
 #include <QDebug>
-#include "Viewer_interface.h"
+#include <CGAL/Three/Viewer_interface.h>
 const QColor Scene_item::defaultColor = QColor(100, 100, 255);
 
 Scene_item::~Scene_item() {
@@ -116,7 +116,7 @@ void Scene_item::select(double /*orig_x*/,
 }
 
 // set-up the uniform attributes of the shader programs.
-void Scene_item::attrib_buffers(Viewer_interface* viewer, int program_name) const
+void Scene_item::attrib_buffers(CGAL::Three::Viewer_interface* viewer, int program_name) const
 {
     GLint is_both_sides = 0;
     //ModelViewMatrix used for the transformation of the camera.
@@ -248,7 +248,7 @@ void Scene_item::attrib_buffers(Viewer_interface* viewer, int program_name) cons
 }
 
 
-QOpenGLShaderProgram* Scene_item::getShaderProgram(int name, Viewer_interface * viewer) const
+QOpenGLShaderProgram* Scene_item::getShaderProgram(int name, CGAL::Three::Viewer_interface * viewer) const
 {
     switch(name)
     {

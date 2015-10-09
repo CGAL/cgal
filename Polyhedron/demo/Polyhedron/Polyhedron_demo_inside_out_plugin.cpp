@@ -6,16 +6,16 @@
 #include "Scene_polygon_soup_item.h"
 #include "Polyhedron_type.h"
 
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
-
+using namespace CGAL::Three;
 class Polyhedron_demo_inside_out_plugin : 
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
@@ -35,7 +35,7 @@ public:
 
   }
   bool applicable(QAction*) const { 
-    const Scene_interface::Item_id index = scene->mainSelectionIndex();
+    const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
     return qobject_cast<Scene_polyhedron_item*>(scene->item(index)) 
       || qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
   }
@@ -47,7 +47,7 @@ public Q_SLOTS:
 
 void Polyhedron_demo_inside_out_plugin::on_actionInsideOut_triggered()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
   Scene_polyhedron_item* poly_item = 
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));

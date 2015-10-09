@@ -7,7 +7,7 @@
 #include "Scene_polylines_item.h"
 #include "Scene.h"
 
-#include "Polyhedron_demo_plugin_helper.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "ui_Polyhedron_slicer_widget.h"
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
@@ -26,13 +26,13 @@
 #include <algorithm>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
-
+using namespace CGAL::Three;
 class Polyhedron_demo_polyhedron_slicer_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
@@ -40,7 +40,7 @@ public:
   void print_message(QString message) { messages->information(message);}
 
   using Polyhedron_demo_plugin_helper::init;
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m);
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m);
   QList<QAction*> actions() const;
   bool get_base_1_2(double bases[6]) {
     bool oks[6];
@@ -88,7 +88,7 @@ private:
 }; // end Polyhedron_demo_polyhedron_slicer_plugin
 
 void Polyhedron_demo_polyhedron_slicer_plugin::init(QMainWindow* mainWindow,
-                                      Scene_interface* scene_interface,
+                                      CGAL::Three::Scene_interface* scene_interface,
                                       Messages_interface* m)
 {
   mw = mainWindow;
@@ -123,7 +123,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::slicer_widget_action(){
   CGAL_assertion(plane_item == NULL);
 
   plane_item = new Scene_plane_item(scene);
-  const Scene_interface::Bbox& bbox = scene->bbox();
+  const CGAL::Three::Scene_interface::Bbox& bbox = scene->bbox();
   plane_item->setPosition((bbox.xmin + bbox.xmax)/2.f,
     (bbox.ymin+bbox.ymax)/2.f,
     (bbox.zmin+bbox.zmax)/2.f);
@@ -241,7 +241,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
   }
 
   // construct a bbox for selected polyhedron
-  const Scene_interface::Bbox& bbox = item->bbox();
+  const CGAL::Three::Scene_interface::Bbox& bbox = item->bbox();
   CGAL::Bbox_3 cgal_bbox(bbox.xmin, bbox.ymin, bbox.zmin,
     bbox.xmax, bbox.ymax, bbox.zmax);
   Polyhedron* poly = item->polyhedron();
@@ -323,7 +323,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::item_about_to_be_destroyed(Scene_
 
 void Polyhedron_demo_polyhedron_slicer_plugin::dock_widget_closed() {
   CGAL_assertion(plane_item != NULL);
-  Scene_interface::Item_id id = scene->item_id(plane_item);
+  CGAL::Three::Scene_interface::Item_id id = scene->item_id(plane_item);
   plane_item = NULL;
   scene->erase(id);
 }

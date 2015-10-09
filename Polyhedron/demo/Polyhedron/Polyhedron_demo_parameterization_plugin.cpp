@@ -20,17 +20,17 @@
 
 #include <iostream>
 
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 typedef Kernel::FT FT;
-
+using namespace CGAL::Three;
 class Polyhedron_demo_parameterization_plugin : 
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
@@ -78,7 +78,7 @@ protected:
 void Polyhedron_demo_parameterization_plugin::parameterize(const Parameterization_method method)
 {
   // get active polyhedron
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   Scene_polyhedron_item* poly_item = 
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   if(!poly_item)

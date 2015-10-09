@@ -9,8 +9,8 @@
 #include "Scene_points_with_normal_item.h"
 #include "Polyhedron_type.h"
 
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include "ui_Polyhedron_demo_scale_space_reconstruction_plugin.h"
 
@@ -33,7 +33,7 @@ class Polyhedron_demo_scale_space_reconstruction_plugin_dialog : public QDialog,
 };
 
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
-
+using namespace CGAL::Three;
 class Polyhedron_demo_scale_space_reconstruction_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
@@ -41,11 +41,11 @@ class Polyhedron_demo_scale_space_reconstruction_plugin :
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   QAction* actionScaleSpaceReconstruction;
 
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
 
     actionScaleSpaceReconstruction = new QAction(tr("Scale-space surface reconstruction"), mainWindow);
     actionScaleSpaceReconstruction->setObjectName("actionScaleSpaceReconstruction");
@@ -69,7 +69,7 @@ public Q_SLOTS:
 
 void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceReconstruction_triggered()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* pts_item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));

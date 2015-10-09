@@ -1,7 +1,7 @@
 #include "Scene_combinatorial_map_item.h"
 #include "Scene_polyhedron_item.h"
-#include "Scene_interface.h"
-#include "Viewer_interface.h"
+#include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Three/Viewer_interface.h>
 
 #include <QObject>
 #include <QMenu>
@@ -11,7 +11,7 @@
 #include <QKeyEvent>
 #include <CGAL/corefinement_operations.h>
 
-Scene_combinatorial_map_item::Scene_combinatorial_map_item(Scene_interface* scene,void* address):last_known_scene(scene),volume_to_display(0),exportSelectedVolume(NULL),address_of_A(address){m_combinatorial_map=NULL; are_buffers_filled = false; nb_points = 0; nb_lines =0; nb_facets =0;}
+Scene_combinatorial_map_item::Scene_combinatorial_map_item(CGAL::Three::Scene_interface* scene,void* address):last_known_scene(scene),volume_to_display(0),exportSelectedVolume(NULL),address_of_A(address){m_combinatorial_map=NULL; are_buffers_filled = false; nb_points = 0; nb_lines =0; nb_facets =0;}
 Scene_combinatorial_map_item::~Scene_combinatorial_map_item(){if (m_combinatorial_map!=NULL) delete m_combinatorial_map;}
 
 Scene_combinatorial_map_item* Scene_combinatorial_map_item::clone() const{return NULL;}
@@ -337,7 +337,7 @@ void Scene_combinatorial_map_item::compute_elements(void) const{
 
 }
 
-void Scene_combinatorial_map_item::initialize_buffers(Viewer_interface *viewer) const
+void Scene_combinatorial_map_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
 {
     //vao for the edges
     {
@@ -467,7 +467,7 @@ QString Scene_combinatorial_map_item::toolTip() const{
 }
 
 
-void Scene_combinatorial_map_item::draw(Viewer_interface* viewer) const
+void Scene_combinatorial_map_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
     {
@@ -484,7 +484,7 @@ void Scene_combinatorial_map_item::draw(Viewer_interface* viewer) const
     program->release();
 
 }
- void Scene_combinatorial_map_item::draw_edges(Viewer_interface* viewer) const
+ void Scene_combinatorial_map_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
 {
      if(!are_buffers_filled)
      {
@@ -501,7 +501,7 @@ void Scene_combinatorial_map_item::draw(Viewer_interface* viewer) const
      program->release();
 
 }
- void Scene_combinatorial_map_item::draw_points(Viewer_interface* viewer) const
+ void Scene_combinatorial_map_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
 {
      if(!are_buffers_filled)
      {

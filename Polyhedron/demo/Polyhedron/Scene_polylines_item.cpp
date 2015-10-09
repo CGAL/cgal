@@ -32,7 +32,7 @@ Scene_polylines_item::create_Sphere(double R) const
 }
 
 void
-Scene_polylines_item::initialize_buffers(Viewer_interface *viewer = 0) const
+Scene_polylines_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const
 {
    //vao for the lines
     {
@@ -350,7 +350,7 @@ Scene_polylines_item::isEmpty() const {
     return polylines.empty();
 }
 
-Scene_interface::Bbox 
+CGAL::Three::Scene_interface::Bbox
 Scene_polylines_item::bbox() const {
     if(isEmpty())
         return Bbox();
@@ -420,7 +420,7 @@ Scene_polylines_item::supportsRenderingMode(RenderingMode m) const {
 
 // Shaded OpenGL drawing: only draw spheres
 void
-Scene_polylines_item::draw(Viewer_interface* viewer) const {
+Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
     if(!are_buffers_filled)
     {
@@ -458,7 +458,7 @@ Scene_polylines_item::draw(Viewer_interface* viewer) const {
 
 // Wireframe OpenGL drawing
 void 
-Scene_polylines_item::draw_edges(Viewer_interface* viewer) const {
+Scene_polylines_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
         compute_elements();
@@ -491,7 +491,7 @@ Scene_polylines_item::draw_edges(Viewer_interface* viewer) const {
 }
 
 void 
-Scene_polylines_item::draw_points(Viewer_interface* viewer) const {
+Scene_polylines_item::draw_points(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
         compute_elements();
@@ -547,7 +547,7 @@ void Scene_polylines_item::change_corner_radii() {
     bool ok = true;
     double proposed_radius = d->spheres_drawn_radius;
     if(proposed_radius == 0) {
-        Scene_interface::Bbox b = bbox();
+        CGAL::Three::Scene_interface::Bbox b = bbox();
         proposed_radius = (std::max)(b.xmax - b.xmin,
                                      proposed_radius);
         proposed_radius = (std::max)(b.ymax - b.ymin,

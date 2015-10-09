@@ -47,10 +47,10 @@ public:
     virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals && m!=Splatting); }
     // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
     void draw() const {}
-    virtual void draw(Viewer_interface*) const;
+    virtual void draw(CGAL::Three::Viewer_interface*) const;
     virtual void draw_edges() const {}
-    virtual void draw_edges(Viewer_interface* viewer) const;
-    virtual void draw_points(Viewer_interface*) const;
+    virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
+    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
 
     // Get wrapped polyhedron
     Polyhedron*       polyhedron();
@@ -65,7 +65,6 @@ public:
 
 public Q_SLOTS:
     virtual void invalidate_buffers();
-    virtual void contextual_changed();
     virtual void selection_changed(bool);
     virtual void setColor(QColor c);
     void show_only_feature_edges(bool);
@@ -125,7 +124,7 @@ private:
     mutable QOpenGLShaderProgram *program;
 
     using Scene_item::initialize_buffers;
-    void initialize_buffers(Viewer_interface *viewer = 0) const;
+    void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;
     void compute_normals_and_vertices(void) const;
     void compute_colors() const;
     void triangulate_facet(Facet_iterator ) const;
