@@ -26,17 +26,26 @@ public:
 
 /// \name Types 
 /// @{
-
+/*!
+Point class.
+*/
+typedef Traits::Point_d Point_d;
 /// @} 
 
 /// \name Operations 
 /// @{
 
 /*!
-Reports the points from the subtree of the node, that are approximately contained by q. 
+Reports the points from the subtree of the node, that are approximately contained by `q`. 
 */ 
 template <class OutputIterator, class FuzzyQueryItem> 
 OutputIterator search(OutputIterator it, FuzzyQueryItem q) const; 
+
+/*!
+Reports any point from the subtree of the node, that is approximately contained by `q`. 
+*/ 
+template <class FuzzyQueryItem> 
+boost::optional<Point_d> search_any_point(OutputIterator it, FuzzyQueryItem q) const; 
 
 /*!
 Reports all the points contained by the subtree of the node. 

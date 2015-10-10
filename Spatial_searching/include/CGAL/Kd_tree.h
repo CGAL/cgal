@@ -32,6 +32,7 @@
 
 #include <deque>
 #include <boost/container/deque.hpp>
+#include <boost/optional.hpp>
 
 #ifdef CGAL_HAS_THREADS
 #include <boost/thread/mutex.hpp>
@@ -354,6 +355,23 @@ public:
     }
     return it;
   }
+
+
+  template <class FuzzyQueryItem>
+  boost::optional<Point_d>
+  search_any_point(const FuzzyQueryItem& q) const
+  {
+    if(! pts.empty()){
+
+      if(! is_built()){
+	const_build();
+      }
+      Kd_tree_rectangle<FT,D> b(*bbox);
+      return tree_root->search_any_point(q,b);
+    }
+    return boost::none;
+  }
+
 
   ~Kd_tree() {
     if(is_built()){

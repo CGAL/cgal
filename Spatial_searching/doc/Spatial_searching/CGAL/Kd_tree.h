@@ -120,6 +120,14 @@ Returns the number of points for which memory has been pre-allocated.
 size_t capacity();
 
 /*!
+Reports any point that is approximately contained by `q`.
+The types `FuzzyQueryItem::Point_d` and `Point_d` must be equivalent.
+To use this function `Traits` must be a model of the concept `RangeSearchTraits`.
+*/
+template <class FuzzyQueryItem>
+boost::optional<Point_d> search_any_point(FuzzyQueryItem q) const;
+
+/*!
 Reports the points that are approximately contained by `q`.
 The types `FuzzyQueryItem::Point_d` and `Point_d` must be equivalent.
 To use this function `Traits` must be a model of the concept `RangeSearchTraits`.

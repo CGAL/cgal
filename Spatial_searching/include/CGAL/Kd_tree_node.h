@@ -126,6 +126,29 @@ namespace CGAL {
       return it;
     }
 
+
+    boost::optional<Point_d>
+    any_tree_item() const {
+      boost::optional<Point_d> result = boost::none;
+      if (is_leaf()) {
+         Leaf_node_const_handle node =
+          static_cast<Leaf_node_const_handle>(this);
+	 if (node->size()>0){
+           return boost::make_optional(*(node->begin()));
+         }
+	}
+      else {
+         Internal_node_const_handle node =
+          static_cast<Internal_node_const_handle>(this);
+	  result = node->lower()->any_tree_item();
+          if(! result){
+            result = node->upper()->any_tree_item();
+          }
+      }
+      return result;
+    }
+
+
      void 
     indent(int d) const
     {
@@ -196,7 +219,52 @@ namespace CGAL {
       };
       return it;				
     }
+
+
+    template <class FuzzyQueryItem>
+    boost::optional<Point_d>
+    search_any_point(const FuzzyQueryItem& q,
+                     Kd_tree_rectangle<FT,D>& b) const
+    {
+      boost::optional<Point_d> result = boost::none;
+      if (is_leaf()) { 
+        Leaf_node_const_handle node = 
+          static_cast<Leaf_node_const_handle>(this);
+	if (node->size()>0) 
+	  for (iterator i=node->begin(); i != node->end(); i++) 
+	    if (q.contains(*i)) 
+	      { result = boost::make_optional(*i);}
+      }
+      else {
+         Internal_node_const_handle node = 
+          static_cast<Internal_node_const_handle>(this);
+	// after splitting b denotes the lower part of b
+	Kd_tree_rectangle<FT,D> b_upper(b);
+	b.split(b_upper, node->cutting_dimension(),
+		node->cutting_value());
+                             
+	if (q.outer_range_contains(b)){ 	
+          result = node->lower()->any_tree_item();
+	}else{
+	  if (q.inner_range_intersects(b)){ 
+	    result = node->lower()->search_any_point(q,b);
+          }
+        }
+        if(result){
+          return result;
+        }
+	if  (q.outer_range_contains(b_upper)){     
+	  result = node->upper()->any_tree_item();
+	}else{
+	  if (q.inner_range_intersects(b_upper)) 
+	    result = node->upper()->search_any_point(q,b_upper);
+        }
+      }
+      return result;				
+    }
+
   };
+
 
   template < class TreeTraits, class Splitter, class UseExtendedNode > 
   class Kd_tree_leaf_node : public Kd_tree_node< TreeTraits, Splitter, UseExtendedNode >{
