@@ -57,9 +57,10 @@ Scene::addItem(Scene_item* item)
             this, SLOT(itemChanged()));
     connect(item, SIGNAL(renderingModeChanged()),
             this, SLOT(callDraw()));
-    if(bbox_before + item->bbox() != bbox_before
-            && item->isFinite()
-            && !item->isEmpty())
+    if(item->isFinite()
+            && !item->isEmpty()
+            && bbox_before + item->bbox() != bbox_before
+            )
     {
         Q_EMIT updated_bbox();
     }
