@@ -10,21 +10,21 @@
 #include <QThread>
 #include <vector>
 
+template<typename Word>
 struct Clamp_to_one_zero_range {
-  std::pair<float, float> min_max;
-  float operator()(const float& inVal) {
-    float inValNorm = inVal - min_max.first;
-    float aUpperNorm = min_max.second - min_max.first;
-    float bValNorm = inValNorm / aUpperNorm;
-    return bValNorm;
+  std::pair<Word, Word> min_max;
+  float operator()(const Word& inVal) {
+    Word inValNorm = inVal - min_max.first;
+    Word aUpperNorm = min_max.second - min_max.first;
+    return static_cast<float>(inValNorm) / aUpperNorm;
   }
 };
 
 class Volume_plane_thread : public QThread {
 Q_OBJECT  
 public:
-  Volume_plane_thread(const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
-    : img(img), clamper(clamp), item(NULL), name(name) { }
+  Volume_plane_thread(const CGAL::Image_3* img, const QString& name)
+    : img(img), item(NULL), name(name) { }
 
   Volume_plane_interface* getItem() {
     return item;
@@ -35,7 +35,6 @@ Q_SIGNALS:
 
 protected:
   const CGAL::Image_3* img;
-  Clamp_to_one_zero_range clamper;
   Volume_plane_interface* item;
   std::vector<float> buffer;
   QString name;
@@ -43,27 +42,30 @@ protected:
 
 template<typename Word>
 class X_plane_thread : public Volume_plane_thread {
+  Clamp_to_one_zero_range<Word> clamper;
 public:
-  X_plane_thread(const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
-    : Volume_plane_thread(img, clamp, name) { }
+  X_plane_thread(const CGAL::Image_3* img, const Clamp_to_one_zero_range<Word>& clamp, const QString& name)
+    : Volume_plane_thread(img, name), clamper(clamp) { }
 protected:
   void run();
 };
 
 template<typename Word>
 class Y_plane_thread : public Volume_plane_thread {
+  Clamp_to_one_zero_range<Word> clamper;
 public:
-  Y_plane_thread(const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
-    : Volume_plane_thread(img, clamp, name) { }
+  Y_plane_thread(const CGAL::Image_3* img, const Clamp_to_one_zero_range<Word>& clamp, const QString& name)
+    : Volume_plane_thread(img, name), clamper(clamp) { }
 protected:
   void run();
 };
 
 template<typename Word>
 class Z_plane_thread : public Volume_plane_thread {
+  Clamp_to_one_zero_range<Word> clamper;
 public:
-  Z_plane_thread(const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
-    : Volume_plane_thread(img, clamp, name) { }
+  Z_plane_thread(const CGAL::Image_3* img, const Clamp_to_one_zero_range<Word>& clamp, const QString& name)
+    : Volume_plane_thread(img, name), clamper(clamp) { }
 protected:
   void run();
 };
@@ -74,9 +76,8 @@ void X_plane_thread<Word>::run() {
     for(unsigned int i = 0; i < img->xdim(); ++i) {
       for(unsigned int j = 0; j < img->ydim(); ++j) {
         for(unsigned int k = 0; k < img->zdim(); ++k) {
-          float x = CGAL::IMAGEIO::static_evaluate<Word>(img->image(), i, j, k);
-          x = clamper(x);
-          buffer.push_back(x);
+          Word x = CGAL::IMAGEIO::static_evaluate<Word>(img->image(), i, j, k);
+          buffer.push_back(clamper(x));
         }
       }
     }
@@ -94,9 +95,8 @@ void Y_plane_thread<Word>::run() {
     for(unsigned int i = 0; i < img->ydim(); ++i) {
       for(unsigned int j = 0; j < img->xdim(); ++j) {
         for(unsigned int k = 0; k < img->zdim(); ++k) {
-          float x = CGAL::IMAGEIO::static_evaluate<Word>(img->image(), j, i, k);
-          x = clamper(x);
-          buffer.push_back(x);
+          Word x = CGAL::IMAGEIO::static_evaluate<Word>(img->image(), j, i, k);
+          buffer.push_back(clamper(x));
         }
       }
     }
@@ -112,9 +112,8 @@ void Z_plane_thread<Word>::run() {
   for(unsigned int i = 0; i < img->zdim(); ++i) {
     for(unsigned int j = 0; j < img->xdim(); ++j) {
       for(unsigned int k = 0; k < img->ydim(); ++k) {
-        float x = CGAL::IMAGEIO::static_evaluate<Word>(img->image(), j, k, i);
-        x = clamper(x);
-        buffer.push_back(x);
+        Word x = CGAL::IMAGEIO::static_evaluate<Word>(img->image(), j, k, i);
+        buffer.push_back(clamper(x));
       }
     }
   }
