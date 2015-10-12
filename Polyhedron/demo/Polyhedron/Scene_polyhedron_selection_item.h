@@ -268,11 +268,14 @@ public:
   }
   void selection_changed(bool b)
   {
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-      if(b)
-          viewer->setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, Viewer::NO_CLICK_ACTION);
+      QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
+      Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(v);
+      if(!viewer)
+          return;
+      if(!b)
+        viewer->setBindingSelect();
       else
-          viewer->setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, Viewer::SELECT);
+        viewer->setNoBinding();
   }
   Bbox bbox() const 
   {

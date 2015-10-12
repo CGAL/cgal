@@ -38,6 +38,24 @@ public:
   PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2D;
   bool extension_is_found;
   GLfloat pickMatrix_[16];
+  //!Sets the binding for SHIFT+LEFT CLICK to SELECT (initially used in Scene_polyhedron_selection_item.h)
+  void setBindingSelect()
+  {
+#if QGLVIEWER_VERSION >= 0x020501
+    setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, SELECT);
+#else
+    setMouseBinding(Qt::SHIFT + Qt::LeftButton, SELECT);
+#endif
+  }
+  //!Sets the binding for SHIFT+LEFT CLICK to NO_CLICK_ACTION (initially used in Scene_polyhedron_selection_item.h)
+  void setNoBinding()
+  {
+#if QGLVIEWER_VERSION >= 0x020501
+    setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, NO_CLICK_ACTION);
+#else
+    ssetMouseBinding(Qt::SHIFT + Qt::LeftButton, NO_CLICK_ACTION);
+#endif
+  }
 
 Q_SIGNALS:
   void selected(int);
