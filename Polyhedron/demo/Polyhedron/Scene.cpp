@@ -57,13 +57,18 @@ Scene::addItem(Scene_item* item)
             this, SLOT(itemChanged()));
     connect(item, SIGNAL(renderingModeChanged()),
             this, SLOT(callDraw()));
-    if(bbox_before + item->bbox() != bbox_before)
-{ Q_EMIT updated_bbox(); }
+    if(item->isFinite()
+            && !item->isEmpty()
+            && bbox_before + item->bbox() != bbox_before
+            )
+    {
+        Q_EMIT updated_bbox();
+    }
     QAbstractListModel::beginResetModel();
     Q_EMIT updated();
     QAbstractListModel::endResetModel();
     Item_id id = m_entries.size() - 1;
-  Q_EMIT newItem(id);
+    Q_EMIT newItem(id);
     return id;
 }
 
@@ -834,7 +839,7 @@ Scene::Bbox Scene::bbox() const
     Bbox bbox;
     Q_FOREACH(Scene_item* item, m_entries)
     {
-        if(item->isFinite() && !item->isEmpty()) {
+        if(item->isFinite() && !item->isEmpty() && item->visible()) {
             if(bbox_initialized) {
                 bbox = bbox + item->bbox();
             }

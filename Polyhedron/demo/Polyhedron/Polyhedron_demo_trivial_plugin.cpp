@@ -25,7 +25,7 @@ public:
     }
     bool isFinite() const { return true; }
     bool isEmpty() const { return true; }
-    Bbox bbox() const { return Bbox(); }
+    Bbox bbox() const { return scene->bbox(); }
 
     Scene_bbox_item* clone() const {
         return 0;
