@@ -189,10 +189,10 @@ inline
 std::istream&
 operator>>(std::istream &is, Bbox_2 &b)
 {
-    double xmin = std::numeric_limits<double>::min();
-    double ymin = std::numeric_limits<double>::min();
-    double xmax = std::numeric_limits<double>::max();
-    double ymax = std::numeric_limits<double>::max();
+    double xmin = (std::numeric_limits<double>::min)();
+    double ymin = (std::numeric_limits<double>::min)();
+    double xmax = (std::numeric_limits<double>::max)();
+    double ymax = (std::numeric_limits<double>::max)();
     
     switch(is.iword(IO::mode)) {
     case IO::ASCII :
