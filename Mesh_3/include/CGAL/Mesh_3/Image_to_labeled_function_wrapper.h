@@ -90,11 +90,12 @@ public:
               value_outside)));
       } else {
         return static_cast<return_type>(transform(
-          r_im_.template trilinear_interpolation<Image_word_type, double>(
+          static_cast<typename Transform::argument_type>(
+            r_im_.template trilinear_interpolation<Image_word_type, double>(
               CGAL::to_double(p.x()),
               CGAL::to_double(p.y()),
               CGAL::to_double(p.z()),
-              value_outside)));
+              value_outside))));
       }
     }
     else
