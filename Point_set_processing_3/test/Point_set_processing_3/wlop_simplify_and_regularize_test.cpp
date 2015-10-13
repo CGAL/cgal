@@ -9,7 +9,7 @@
 
 // CGAL
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/Memory_sizer.h>
 #include <CGAL/tags.h>
 
@@ -49,7 +49,7 @@ void test_wlop_simplify_and_regularize(
                               bool need_compute_density)
 
 {
-  CGAL::Timer task_timer; task_timer.start();
+  CGAL::Real_timer task_timer; task_timer.start();
   std::cerr << "Running WLOP simplify and regularize, (retain_percentage: "
             << retain_percentage << "%, neighbor_radius="
             << neighbor_radius << ")...\n";

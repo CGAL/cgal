@@ -1,7 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/point_generators_3.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 #include <iostream>
 #include <fstream>
@@ -9,7 +9,6 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3          Point;
-typedef CGAL::Timer Timer;
 
 const int NUM_INSERTED_POINTS = 10000;
 
@@ -27,7 +26,7 @@ int main()
   // Sequential Delaunay T3
   typedef CGAL::Delaunay_triangulation_3<K> SequentialTriangulation;
 
-  Timer t;
+  CGAL::Real_timer t;
   t.start();
   SequentialTriangulation S(V.begin(), V.end());
   t.stop();

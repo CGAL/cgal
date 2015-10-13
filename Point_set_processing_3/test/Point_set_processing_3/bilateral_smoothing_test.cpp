@@ -10,7 +10,7 @@
 
 // CGAL
 #include <CGAL/Simple_cartesian.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/Memory_sizer.h>
 
 // This package
@@ -47,7 +47,7 @@ void test_bilateral_smoothing(std::deque<PointVectorPair>& points,// input point
                              unsigned int nb_neighbors, // number of neighbors
                              double sharpness_sigma)
 {
-  CGAL::Timer task_timer; task_timer.start();
+  CGAL::Real_timer task_timer; task_timer.start();
   
   for (int i = 0; i < 3; i++)
   {

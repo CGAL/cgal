@@ -37,7 +37,7 @@
 #include <CGAL/Regular_triangulation_3.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Random.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 #include <CGAL/Memory_sizer.h>
 
 #include <iostream>
@@ -147,7 +147,7 @@ std::ifstream input_file;
 class Time_accumulator
 {
   double &accumulator;
-  Timer timer;
+  Real_timer timer;
 public:
   Time_accumulator(double &acc) : accumulator(acc) { timer.reset(); timer.start(); }
   ~Time_accumulator() { timer.stop(); accumulator += timer.time(); }

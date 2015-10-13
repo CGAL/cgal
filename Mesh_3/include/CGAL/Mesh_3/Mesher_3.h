@@ -42,7 +42,7 @@
 #endif
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
-#include <CGAL/Timer.h>
+#include <CGAL/Real_timer.h>
 
 #ifdef CGAL_MESH_3_PROFILING
   #include <CGAL/Mesh_3/Profiling_tools.h>
@@ -306,7 +306,7 @@ template<class C3T3, class MC, class MD>
 double
 Mesher_3<C3T3,MC,MD>::refine_mesh(std::string dump_after_refine_surface_prefix)
 {
-  CGAL::Timer timer;
+  CGAL::Real_timer timer;
   timer.start();
   double elapsed_time = 0.;
 
