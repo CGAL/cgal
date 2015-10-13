@@ -183,7 +183,7 @@ public:
 	    typename Target_word_type,
 	    typename Coord_type,
 	    class Image_transform>
-  Target_word_type 
+  typename Image_transform::result_type
   trilinear_interpolation(const Coord_type&x, 
 			  const Coord_type&y, 
 			  const Coord_type&z,
@@ -196,7 +196,7 @@ public:
   template <typename Image_word_type,
 	    typename Target_word_type,
 	    typename Coord_type>
-  Target_word_type 
+  Image_word_type 
   trilinear_interpolation(const Coord_type&x, 
 			  const Coord_type&y, 
 			  const Coord_type&z,
@@ -224,7 +224,7 @@ template <typename Image_word_type,
 	  typename Target_word_type,
 	  typename Coord_type,
 	  class Image_transform>
-Target_word_type 
+typename Image_transform::result_type
 Image_3::trilinear_interpolation(const Coord_type& x, 
 				 const Coord_type& y, 
 				 const Coord_type& z,
