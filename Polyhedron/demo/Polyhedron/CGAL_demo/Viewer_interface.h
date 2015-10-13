@@ -53,7 +53,7 @@ public:
 #if QGLVIEWER_VERSION >= 0x020501
     setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, NO_CLICK_ACTION);
 #else
-    ssetMouseBinding(Qt::SHIFT + Qt::LeftButton, NO_CLICK_ACTION);
+    setMouseBinding(Qt::SHIFT + Qt::LeftButton, NO_CLICK_ACTION);
 #endif
   }
 
