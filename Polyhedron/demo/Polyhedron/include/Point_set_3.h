@@ -112,7 +112,7 @@ public:
 
     m_first_selected = end() - p.nb_selected_points();
     
-    m_radii_are_uptodate = m_radii_are_uptodate;
+    m_radii_are_uptodate = p.m_radii_are_uptodate;
   }
 
   // Repeat base class' public methods used below
