@@ -41,9 +41,9 @@ int main(int argc, char ** argv) {
         return 1;
     }
 
-    // construct the functor, with no parameters needed for the constructor
+    // construct the functor
 	CGAL::Compute_cone_boundaries_2<Kernel> cones;
-	// create the vector rays to store the results; it should contain no elements initially.
+	// create the vector rays to store the results 
 	std::vector<Direction_2> rays(k);
 	// compute the cone boundaries and store them in rays
 	cones(k, initial_direction, rays.begin());

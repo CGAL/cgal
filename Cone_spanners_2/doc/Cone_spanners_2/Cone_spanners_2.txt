@@ -229,7 +229,7 @@ exactly given the cone number and the initial direction. This example basically 
    member variables but member types and functions, its constructor needs no arguments.
 3. Initialize a vector of `CGAL::Direction_2` named `rays` to store the computed results.
 4. Use `cones` to compute the cone boundaries by passing the cone number, the initial direction
-   and `rays` to it.
+   and the beginning iterator of `rays` to it.
 5. Output the computed results.
 
 \cgalExample{Cone_spanners_2/compute_cones.cpp}
@@ -264,10 +264,10 @@ constructing Yao graphs exactly or inexactly is the same as that of constructing
 Theta graphs, just replacing the functor `CGAL::Construct_theta_graph_2` by the functor
 `CGAL::Construct_yao_graph_2`.
 
-Also note that, for Theta graph, the `Kernel` defined must support the `CGAL::sqrt()` operation. 
+Note that, for Theta graph, the `Kernel` defined must support the `CGAL::sqrt()` operation. 
 This is required by the `CGAL::bisector()` function, which is used to calculate the angle 
 bisector of a cone. For instance, the compiler will complain if 
-`CGAL::Exact_predicates_exact_constructions_kernel` (not supporting `CGAL::bisector()`) 
+`CGAL::Exact_predicates_exact_constructions_kernel` (not supporting `CGAL::sqrt()`) 
 is defined as the kernel, but `CGAL::Exact_predicates_inexact_constructions_kernel` will be fine 
 since it supports `CGAL::sqrt()`. For Yao graph, there is no such restriction, since its construction 
 does not need `CGAL::sqrt()`. 
@@ -290,6 +290,47 @@ The following two files will be generated for Gnuplot:
 \cgalFigureBegin{f-t4, t4n20.jpg}
 A directed Theta graph of 20 vertices with \f$k=4\f$.
 \cgalFigureEnd
+
+\subsection CBS_diff_exact Exact construction can make a difference
+
+This subsection gives an example vertex set on which the exact construction provided 
+in this package can produce the correct Theta graph while the inexact construction cannot.
+
+This vertex set, given in the file `examples/data/n9.cin`, consists of 9 vertices 
+with the following \f$(x, y)\f$-coordinates:
+\code{.txt}
+0.000000  0.000000
+0.000000  1.000000
+0.000000  2.000000
+1.000000  0.000000
+1.000000  1.000000
+1.000000  2.000000
+2.000000  0.000000
+2.000000  1.000000
+2.000000  2.000000
+\endcode
+
+If we construct the directed Theta graph on this vertex set with \f$k=4\f$ and its cone boundaries
+on the \f$x\f$ and \f$y\f$ axis, the exact construction will produce the Theta graph shown in 
+\cgalFigureRef{f-t4n9exact}. Based on our definition on Theta graph presented in the 
+Section \ref sec_CBS_mydefinitions, we can verify that the Theta graph in \cgalFigureRef{f-t4n9exact} 
+is correctly constructed.
+  
+\cgalFigureBegin{f-t4n9exact, t4n9exact.jpg}
+The correct Theta graph produced by the exact construction.
+\cgalFigureEnd
+
+On the other hand, the inexact construction will produce the Theta graph
+depicted in \cgalFigureRef{f-t4n9inexact}. We can see that this Theta graph is not constructed
+correctly, since the inexact construction will make wrong decisions on whether
+those vetices on the cone boundaries belong to a certain cone.
+  
+\cgalFigureBegin{f-t4n9inexact, t4n9inexact.jpg}
+The incorrect Theta graph produced by the inexact construction.
+\cgalFigureEnd
+
+This example demonstrates that the exact construction capability can be very
+valuable if it is a strict requirement that graphs be constructed correctly.
 
 \subsection CBS_using_BGL Using algorithms from BGL
 
