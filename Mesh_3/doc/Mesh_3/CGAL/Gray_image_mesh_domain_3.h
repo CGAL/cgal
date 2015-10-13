@@ -53,8 +53,13 @@ public:
 /// @{
 
 /*!
-Construction from an image. 
-The parameter `error_bound` is relative to the size of the image. 
+Construction from an image.
+@param image the input image
+@param iso_value the isovalue, inside `image`,
+       of the surface describing the boundary of the object to be meshed
+@param value_outside the value attached to voxels outside of the domain
+       to be meshed
+@param error_bound is relative to the size of the image. 
 */ 
   Gray_image_mesh_domain_3(
       const Image& image,
