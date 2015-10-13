@@ -3,6 +3,8 @@
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Timer.h>
 #include <CGAL/algorithm.h>
+#include <CGAL/Memory_sizer.h>
+
 #include <vector>
 #include <string>
 #include <fstream>
@@ -24,6 +26,7 @@ void test(const int d, const std::string & type, const int N)
 
     typedef CGAL::Random_points_in_cube_d<Point> Random_points_iterator;
     CGAL::Timer cost;  // timer
+    std::size_t mem_before = CGAL::Memory_sizer().virtual_size();
 
     DT dt(d);
     assert(dt.empty());
@@ -33,12 +36,15 @@ void test(const int d, const std::string & type, const int N)
     Random_points_iterator rand_it(d, 2.0, rng);
     CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
     cost.reset();cost.start();
-    std::cout << "  Delaunay triangulation of "<<N<<" points in dim "<<d<< std::flush;
+    std::cout << "Delaunay triangulation of " << N << 
+      " points in dim " << d << ":" << std::endl;
     dt.insert(points.begin(), points.end());
-    std::cout << " done in "<<cost.time()<<" seconds." << std::endl;
+    std::cout << "  Done in " << cost.time() << " seconds." << std::endl;
+    std::cout << "  Memory consumption: " << 
+      ((CGAL::Memory_sizer().virtual_size() - mem_before) >> 10) << " KB.\n";
     std::size_t nbfc= dt.number_of_finite_full_cells();
     std::size_t nbc= dt.number_of_full_cells();
-    std::cout << dt.number_of_vertices() << " vertices, " 
+    std::cout << "  " << dt.number_of_vertices() << " vertices, " 
               << nbfc << " finite simplices and " 
               << (nbc-nbfc) << " convex hull Facets."
               << std::endl;
@@ -64,6 +70,13 @@ int main(int argc, char **argv)
     go<6>(N);
     go<7>(N);
     go<8>(N);
+    if (N <= 100)
+    {
+      go<9>(N);
+      go<10>(N);
+      go<11>(N);
+      go<12>(N);
+    }
 
     return 0;
 }
