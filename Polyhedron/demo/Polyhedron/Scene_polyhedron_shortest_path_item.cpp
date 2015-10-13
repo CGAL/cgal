@@ -31,7 +31,7 @@ Scene_polyhedron_shortest_path_item::~Scene_polyhedron_shortest_path_item()
   deinitialize();
 }
 
-void Scene_polyhedron_shortest_path_item::compute_elements()
+void Scene_polyhedron_shortest_path_item::compute_elements() const
 {
 
     vertices.resize(0);
