@@ -120,16 +120,6 @@ VERSION_FILE="version_number"
 HTML_DIR="/u/agrion/geometrica/CGAL/Members/Releases"
 URL="http://cgal.inria.fr/CGAL/Members/Releases"
 
-# Wine: run Windows application under Linux.
-# Uncomment the lines with WINE and MAKENSIS to make the Windows installer
-#WINE=wine
-# The NSIS tool
-#MAKENSIS=makensis.exe
-
-# CGAL manual tool
-# Needed by the making of the public release
-CGAL_MANUAL=cgal_manual
-
 # SVN repository
 SVNCGAL="svn+ssh://scm.gforge.inria.fr/svn/cgal"
 
@@ -309,14 +299,6 @@ if [ -n "$DO_PUBLIC" ]; then
     echo -n $public_release_version > VERSION 2>&1
     cd ..
 
-    ## That was for the LaTeX installation documentation:
-    # cp -a ${SOURCES_DIR}/Installation/doc_tex .
-    # cp -a ${SOURCES_DIR}/Manual/doc_tex/Manual doc_tex
-    # pushd doc_tex
-    # "${CGAL_MANUAL}" -v -html installation_manual
-    # popd
-    # cp -a doc_html/* ${public_release_name}/doc_html
-
     rm -f "${public_release_name}".tar*
     tar -cf "${public_release_name}.tar" "${public_release_name}"
     mkdir "${HTML_DIR}/${release_name}-public"
@@ -344,17 +326,14 @@ fi
 
 if [ -n "$DO_PUBLIC" ]; then
   # Build the Windows installer
-  rm -rf "${public_release_name}-NSIS"
-  mkdir ${public_release_name}-NSIS
-  mv ${public_release_name} ${public_release_name}-NSIS
-  cp ${SOURCES_DIR}/wininst/developer_scripts/* ${public_release_name}-NSIS
-  sed -i -e "/define *CGAL_SRC/,+20 s/CGAL-${MAJOR_NUMBER}.${MINOR_NUMBER}/${public_release_name}/g" ${public_release_name}-NSIS/script_cgal.nsi
-  pushd ${public_release_name}-NSIS
-  if [ -n "${WINE}" -a -n "${MAKENSIS}" ]; then 
-    "${WINE}" "${MAKENSIS}" "script_cgal.nsi"
-    mv *.exe "${HTML_DIR}/${release_name}-public/"
-  fi
-  popd
+  docker pull cgal/cgal-nsis-dockerfile
+  docker create -v `realpath ${public_release_name}`:/mnt/cgal_release:ro,z \
+                -v ${SOURCES_DIR}:/mnt/cgal_sources:ro,z                    \
+                cgal/cgal-nsis-dockerfile
+  container_id=`docker ps -q -l`
+  docker start -a ${container_id}
+  docker cp ${container_id}:/nsis_release/${public_release_name}-Setup.exe "${HTML_DIR}/${release_name}-public/"
+  docker rm ${container_id}
 fi
 
 # Remove local directory and tarball
