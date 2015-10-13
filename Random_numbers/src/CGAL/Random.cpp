@@ -22,67 +22,15 @@
 //
 // Author(s)     : Sven Schönherr <sven@inf.ethz.ch>
 
+#ifndef CGAL_HEADER_ONLY
+
 #include <CGAL/Random.h>
-#include <ctime>
-#include <sstream>
+#include <CGAL/Random_impl.h>
 
 namespace CGAL {
 
-// Class implementation (continued)
-// ================================
-
-// constructors
-Random::
-Random( )
-    :  val(0)
-{
-    // get system's time
-    std::time_t s;
-    std::time( &s);
-    seed = (unsigned int)s;
-
-    // initialize random numbers generator
-    rng.seed(static_cast<boost::int32_t>(seed));
-    random_value = get_int(0, 1<<15);
-}
-
-Random::
-Random( unsigned int  seed)
-    : val(0), seed(seed)
-{
-    // initialize random numbers generator
-    rng.seed(static_cast<boost::int32_t>(seed));
-    random_value = get_int(0, 1<<15);
-}
-
-// seed
-unsigned int
-Random::get_seed () const
-{ 
-  return seed; 
-}
-
-// state
-void 
-Random::save_state( Random::State& state) const
-{
-  std::ostringstream os;
-  os << rng;
-  state = Random::State(os.str(),random_value, val, seed);
-}
-
-void 
-Random::restore_state( const Random::State& state)
-{
-  std::istringstream is(state.rng);
-  is >> rng;
-  random_value = state.random_value;
-  val = state.val;
-  seed = state.seed;
-}
-
-// Global variables
-// ================
 Random  default_random;
 
 } //namespace CGAL
+
+#endif

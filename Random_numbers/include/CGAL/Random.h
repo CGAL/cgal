@@ -43,7 +43,6 @@
 #include <boost/random/uniform_01.hpp>
 #include <boost/random/variate_generator.hpp>
 
-
 namespace CGAL {
 
 class Random {
@@ -229,12 +228,27 @@ public:
     boost::rand48 rng;
 };
 
+#ifndef CGAL_HEADER_ONLY
 // Global variables
 // ================
 CGAL_EXPORT extern  Random  default_random;
+#endif // CGAL_HEADER_ONLY
+
+#ifdef CGAL_HEADER_ONLY
+inline Random& get_default_random()
+{
+  static Random default_random;
+  return default_random;
+}
+#else // CGAL_HEADER_ONLY
+inline Random& get_default_random()
+{ return default_random; }
+#endif // CGAL_HEADER_ONLY
 
 } //namespace CGAL
 
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Random_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_RANDOM_H
-
-

@@ -30,4 +30,8 @@ CGAL_QT_EXPORT void CGAL_Qt_init_resources();
 // The do{}while(0) trick is used to make that macro value a regular
 // statement and not a compound statement.
 
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Qt/resources_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_QT_RESOURCES_H

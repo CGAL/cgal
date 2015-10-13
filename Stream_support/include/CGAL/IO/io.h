@@ -40,7 +40,17 @@ namespace CGAL {
 
 class IO {
 public:
-    CGAL_EXPORT static int mode;
+#ifndef CGAL_HEADER_ONLY
+  CGAL_EXPORT static int mode;
+  static int& get_static_mode()
+  { return IO::mode; }
+#else // CGAL_HEADER_ONLY
+  static int& get_static_mode()
+  {
+    static int mode = std::ios::xalloc();
+    return mode;
+  }
+#endif // CGAL_HEADER_ONLY
     enum Mode {ASCII = 0, PRETTY, BINARY};
 };
 
@@ -91,7 +101,6 @@ public:
     //! perform the input, calls \c operator\>\> by default.
     std::istream& operator()( std::istream& in) const { return (in >> t); }
 };
-
 
 #if CGAL_FORCE_IFORMAT_DOUBLE || \
   ( ( _MSC_VER > 1600 ) && (! defined( CGAL_NO_IFORMAT_DOUBLE )) )
@@ -226,7 +235,6 @@ bool
 is_binary(std::ios& i);
 
 
-
 template < class T >
 inline
 void
@@ -302,7 +310,7 @@ read(std::istream& is, T& t)
 inline
 std::ostream& operator<<( std::ostream& out, const Color& col)
 {
-    switch(out.iword(IO::mode)) {
+    switch(get_mode(out)) {
     case IO::ASCII :
         return out << static_cast<int>(col.red())   << ' '
 		   << static_cast<int>(col.green()) << ' '
@@ -323,7 +331,7 @@ inline
 std::istream &operator>>(std::istream &is, Color& col)
 {
     int r = 0, g = 0, b = 0;
-    switch(is.iword(IO::mode)) {
+    switch(get_mode(is)) {
     case IO::ASCII :
         is >> r >> g >> b;
         break;
@@ -351,8 +359,11 @@ void swallow(std::istream &is, char d);
 CGAL_EXPORT
 void swallow(std::istream &is, const std::string& s );
 
-
-
 } //namespace CGAL
+
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/IO/io_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_IO_H

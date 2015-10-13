@@ -45,7 +45,7 @@ class HDRS{
       CGAL_expensive_precondition(solver_.empty() || solver_.top() >= lb);
       if (uf.degree() == -1) {
 	CGAL_LOG(Log::SOME, "Zero function found at time " << lb << std::endl);	
-	++ internal::zero_certificates__;
+	++ internal::get_static_zero_certificates();
       }
 #ifndef NDEBUG
       if (!SLOPPY && k.sign_at_object()(uf, lb) == CGAL::NEGATIVE) {
@@ -61,7 +61,7 @@ class HDRS{
 	CGAL_LOG(Log::LOTS, "Degeneracy at " << solver_.top() << std::endl);
 	CGAL::Sign sn = k.sign_after_object()(uf, lb);
 	if (sn == CGAL::NEGATIVE) {
-	  ++internal::function_degeneracies__;
+	  ++internal::get_static_function_degeneracies();
 	  CGAL_LOG(Log::LOTS, "Extra root at lower bound of " << lb << std::endl);
 	} else {
 	  CGAL_LOG(Log::LOTS, "Popping extra root at lower bound of " << lb << std::endl);

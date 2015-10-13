@@ -235,7 +235,7 @@ template < class R >
 std::ostream &
 operator<<(std::ostream &os, const Plane_3<R> &p)
 {
-    switch(os.iword(IO::mode)) {
+    switch(get_mode(os)) {
     case IO::ASCII :
         return os << p.a() << ' ' << p.b() <<  ' ' << p.c() << ' ' << p.d();
     case IO::BINARY :
@@ -256,7 +256,7 @@ std::istream &
 operator>>(std::istream &is, Plane_3<R> &p)
 {
     typename R::RT a, b, c, d;
-    switch(is.iword(IO::mode)) {
+    switch(get_mode(is)) {
     case IO::ASCII :
         is >> iformat(a) >> iformat(b) >> iformat(c) >> iformat(d);
         break;

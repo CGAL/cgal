@@ -116,5 +116,10 @@ CGAL_EXPORT std::ostream& operator<<( std::ostream& out, const File_header_OFF& 
 CGAL_EXPORT std::istream& operator>>( std::istream& in, File_header_OFF& h);
 
 } //namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/IO/File_header_OFF_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_IO_FILE_HEADER_OFF_H //
 // EOF //

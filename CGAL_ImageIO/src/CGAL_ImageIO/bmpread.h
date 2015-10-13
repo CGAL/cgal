@@ -32,6 +32,12 @@
 #ifndef __READBMP_H_INCLUDED__
 #define __READBMP_H_INCLUDED__
 
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "bmptypes.h"
+#include "bmpendian.h"
+
 /*
  * Mid-level functions
  */
@@ -59,6 +65,10 @@ int readSingleImageColorICOPTR(FILE *fp, RGB **argb, char **xorMask,
 int readMultipleImage(FILE *fp, RGB ***argbs, char ***xorMasks,
 		      char ***andMasks, CGAL_UINT32 **widths, CGAL_UINT32 **heights,
 		      int *imageCount);
+
+#ifdef CGAL_HEADER_ONLY
+#include "bmpread_impl.h"
+#endif // CGAL_HEADER_ONLY
 
 #endif
 

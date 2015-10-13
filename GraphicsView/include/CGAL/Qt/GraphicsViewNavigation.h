@@ -70,4 +70,8 @@ private:
 } // namespace Qt
 } // namespace CGAL
 
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Qt/GraphicsViewNavigation_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_QT_GRAPHICS_VIEW_NAVIGATION_H

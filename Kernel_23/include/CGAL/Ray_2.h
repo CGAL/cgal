@@ -207,7 +207,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Ray_2<R>& r, const Cartesian_tag&) 
 {
-    switch(os.iword(IO::mode)) {
+    switch(get_mode(os)) {
     case IO::ASCII :
         return os << r.source() << ' ' << r.second_point();
     case IO::BINARY :
@@ -221,7 +221,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Ray_2<R>& r, const Homogeneous_tag&)
 {
-  switch(os.iword(IO::mode))
+  switch(get_mode(os))
   {
     case IO::ASCII :
         return os << r.source() << ' ' << r.second_point();

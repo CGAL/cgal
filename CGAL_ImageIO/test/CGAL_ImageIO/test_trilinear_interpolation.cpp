@@ -124,7 +124,7 @@ int main() {
   {
     // fill the 2x2x2 image
     for(int i = 0; i < 8; ++i) {
-      data[i] = CGAL::default_random.get_int(0,255);
+      data[i] = CGAL::get_default_random().get_int(0,255);
     }
 
     // test the difference between the two implementations

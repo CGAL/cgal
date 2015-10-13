@@ -313,7 +313,7 @@ CGAL_expensive_assertion_code(if ( storage_[i].second == storage_.back().second)
       iss >> d;
       if (!iss) {
 	CGAL_ERROR("ERROR reading object from line " << buf);
-	++internal::io_errors__;
+	++internal::get_static_io_errors();
       } else {
 	//CGAL_LOG(Log::LOTS, "Read " << d << std::endl);
 	insert(d);

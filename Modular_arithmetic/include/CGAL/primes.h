@@ -63,4 +63,8 @@ int get_next_lower_prime(int current_prime){
 }
 }
 
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/primes_impl.h>
+#endif // CGAL_HEADER_ONLY
+
 #endif // CGAL_PRIMES_H

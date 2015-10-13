@@ -206,7 +206,8 @@ public:
   /// Polynomial evaluation where the coefficients are approximated first
   /// Returns a BigFloat with error that contains the value
   BigFloat evalApprox(const BigFloat& f, 
-    const extLong& r=defRelPrec, const extLong& a=defAbsPrec) const;
+    const extLong& r=get_static_defRelPrec(), 
+    const extLong& a=get_static_defAbsPrec()) const;
   /// Polynomial evaluation at a BigFloat value.
   /// The returned BigFloat (with error) has the exact sign.  
   /// In particular, if the value is 0, we return 0.

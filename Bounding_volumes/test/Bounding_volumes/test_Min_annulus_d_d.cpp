@@ -75,7 +75,7 @@ void process ()
     double hom = 2.0;
     for ( i = 0; i < 100; ++i) {
       for (j=0; j<d; ++j) 
-	coords[ j] = CGAL::default_random( 0x100000);
+	coords[ j] = CGAL::get_default_random()( 0x100000);
       coords[d] = hom;
       points.push_back
 	(typename K::Point_d(d, coords.begin(), coords.end()));

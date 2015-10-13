@@ -6,9 +6,9 @@
 
 #include "config.h"
 
+#include "Volume_plane.h"
 #include <CGAL/Image_3.h>
 
-#include "Volume_plane.h"
 #include "Volume_plane_thread.h"
 #include "Volume_plane_intersection.h"
 

@@ -717,7 +717,7 @@ protected:
 #ifndef NDEBUG
 	if (CGAL::compare(tc, tp) == CGAL::SMALLER) {
 	  std::cout << "ERROR: Out of order " << tc << std::endl << tp << std::endl << std::endl;
-	  ++internal::audit_failures__;
+	  ++internal::get_static_audit_failures();
 	}
 #endif
 	//CGAL_assertion(tc >= tp);

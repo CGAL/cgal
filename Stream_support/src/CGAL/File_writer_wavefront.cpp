@@ -22,29 +22,11 @@
 //
 // Author(s)     : Lutz Kettner  <kettner@mpi-sb.mpg.de>
 
-#include <CGAL/basic.h>
-#include <iostream>
+#ifndef CGAL_HEADER_ONLY
+
 #include <CGAL/IO/File_writer_wavefront.h>
+#include <CGAL/IO/File_writer_wavefront_impl.h>
 
-namespace CGAL {
+#endif // CGAL_HEADER_ONLY
 
-void
-File_writer_wavefront::
-write_header( std::ostream& o,
-              std::size_t   vertices,
-              std::size_t   halfedges,
-              std::size_t   facets){
-    m_out    = &o;
-    m_facets = facets;
-    // Print header.
-    out() << "# file written from a CGAL tool in Wavefront obj format\n";
-    out() << "# " << vertices  << " vertices\n";
-    out() << "# " << halfedges << " halfedges\n";
-    out() << "# " << facets    << " facets\n\n";
-
-    out() << "\n# " << vertices << " vertices\n";
-    out() << "# ------------------------------------------\n\n";
-}
-
-} //namespace CGAL
 // EOF //

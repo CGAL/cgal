@@ -228,7 +228,7 @@ template <class R >
 std::ostream&
 insert(std::ostream& os, const Circle_2<R>& c)
 {
-    switch(os.iword(IO::mode)) {
+    switch(get_mode(os)) {
     case IO::ASCII :
         os << c.center() << ' ' << c.squared_radius() << ' '
            << static_cast<int>(c.orientation());
@@ -271,7 +271,7 @@ extract(std::istream& is, Circle_2<R>& c)
     typename R::Point_2 center;
     typename R::FT squared_radius;
     int o;
-    switch(is.iword(IO::mode)) {
+    switch(get_mode(is)) {
     case IO::ASCII :
         is >> center >> iformat(squared_radius) >> o;
         break;

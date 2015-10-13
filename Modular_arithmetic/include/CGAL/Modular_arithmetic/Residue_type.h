@@ -60,46 +60,106 @@ public:
   typedef Residue NT;
   
 private:
+#ifdef CGAL_HEADER_ONLY
+  static const double& get_static_CST_CUT()
+  {
+    static const double CST_CUT = std::ldexp( 3., 51 );
+    return CST_CUT;
+  }
+#else // CGAL_HEADER_ONLY
   CGAL_EXPORT static const double  CST_CUT; 
+  static const double& get_static_CST_CUT()
+  { return Residue::CST_CUT; }
+#endif // CGAL_HEADER_ONLY
   
 #ifdef CGAL_HAS_THREADS
+#ifdef CGAL_HEADER_ONLY
+  static boost::thread_specific_ptr<int>& get_static_prime_int_()
+  {
+    static boost::thread_specific_ptr<int> prime_int_;
+    return prime_int_;
+  }
+  static boost::thread_specific_ptr<double>& get_static_prime_()
+  {
+    static boost::thread_specific_ptr<double> prime_;
+    return prime_;
+  }
+  static boost::thread_specific_ptr<double>& get_static_prime_inv_()
+  {
+    static boost::thread_specific_ptr<double> prime_inv_;
+    return prime_inv_;
+  }
+#else // CGAL_HEADER_ONLY
   CGAL_EXPORT static boost::thread_specific_ptr<int>    prime_int_;
   CGAL_EXPORT static boost::thread_specific_ptr<double> prime_;
   CGAL_EXPORT static boost::thread_specific_ptr<double> prime_inv_;
+  static boost::thread_specific_ptr<int>& get_static_prime_int_()
+  { return Residue::prime_int_; }
+  static boost::thread_specific_ptr<double>& get_static_prime_()
+  { return Residue::prime_; }
+  static boost::thread_specific_ptr<double>& get_static_prime_inv_()
+  { return Residue::prime_inv_; }
+#endif // CGAL_HEADER_ONLY
   
   static void init_class_for_thread(){
-    CGAL_precondition(prime_int_.get() == NULL); 
-    CGAL_precondition(prime_.get()     == NULL); 
-    CGAL_precondition(prime_inv_.get() == NULL); 
-    prime_int_.reset(new int(67111067));
-    prime_.reset(new double(67111067.0));
-    prime_inv_.reset(new double(1.0/67111067.0));
+    CGAL_precondition(get_static_prime_int_().get() == NULL);
+    CGAL_precondition(get_static_prime_().get()     == NULL);
+    CGAL_precondition(get_static_prime_inv_().get() == NULL);
+    get_static_prime_int_().reset(new int(67111067));
+    get_static_prime_().reset(new double(67111067.0));
+    get_static_prime_inv_().reset(new double(1.0/67111067.0));
   }
   
   static inline int get_prime_int(){
-    if (prime_int_.get() == NULL)
+    if (get_static_prime_int_().get() == NULL)
       init_class_for_thread();
-    return *prime_int_.get();
+    return *get_static_prime_int_().get();
   }
   
   static inline double get_prime(){
-    if (prime_.get() == NULL)
+    if (get_static_prime_().get() == NULL)
       init_class_for_thread();
-    return *prime_.get();
+    return *get_static_prime_().get();
   }
   
   static inline double get_prime_inv(){
-    if (prime_inv_.get() == NULL)
+    if (get_static_prime_inv_().get() == NULL)
       init_class_for_thread();
-    return *prime_inv_.get();
+    return *get_static_prime_inv_().get();
   }
-#else
+#else // CGAL_HAS_THREADS
+
+#ifdef CGAL_HEADER_ONLY
+  static int& get_static_prime_int()
+  {
+    static int prime_int = 67111067;
+    return prime_int;
+  }
+  static double& get_static_prime()
+  {
+    static double prime = 67111067.0;
+    return prime;
+  }
+  static double& get_static_prime_inv()
+  {
+    static double prime_inv = 1/67111067.0;
+    return prime_inv;
+  }
+
+#else //
   CGAL_EXPORT  static int prime_int;
   CGAL_EXPORT  static double prime;
   CGAL_EXPORT  static double prime_inv;
-  static int get_prime_int(){ return prime_int;}
-  static double get_prime()    { return prime;}
-  static double get_prime_inv(){ return prime_inv;}  
+  static int& get_static_prime_int()
+  { return Residue::prime_int; }
+  static double& get_static_prime()
+  { return Residue::prime; }
+  static double& get_static_prime_inv()
+  { return Residue::prime_inv; }
+#endif // CGAL_HEADER_ONLY
+  static int get_prime_int(){ return get_static_prime_int();}
+  static double get_prime()    { return get_static_prime();}
+  static double get_prime_inv(){ return get_static_prime_inv();}
 #endif
 
     /* Quick integer rounding, valid if a<2^51. for double */ 
@@ -108,7 +168,7 @@ private:
       // call CGAL::Protect_FPU_rounding<true> pfr(CGAL_FE_TONEAREST)
       // before using modular arithmetic 
       CGAL_assertion(FPU_get_cw() == CGAL_FE_TONEAREST);
-      return ( (a + CST_CUT)  - CST_CUT);      
+      return ( (a + get_static_CST_CUT())  - get_static_CST_CUT());
     }
 
     /* Big modular reduction (e.g. after multiplication) */
@@ -196,13 +256,13 @@ public:
     set_current_prime(int p){   
       int old_prime = get_prime_int();  
 #ifdef CGAL_HAS_THREADS
-      *prime_int_.get() = p;
-      *prime_.get() = double(p);
-      *prime_inv_.get() = 1.0/double(p);
+      *get_static_prime_int_().get() = p;
+      *get_static_prime_().get() = double(p);
+      *get_static_prime_inv_().get() = 1.0/double(p);
 #else
-      prime_int = p;
-      prime = double(p);
-      prime_inv = 1.0 / prime;
+      get_static_prime_int() = p;
+      get_static_prime() = double(p);
+      get_static_prime_inv() = 1.0 / prime;
 #endif
       return old_prime; 
     }
@@ -229,10 +289,10 @@ public:
     }
 
     //! constructor of Residue, from long 
-    Residue (long n) {
+    Residue(long n){
         x_= RES_soft_reduce (static_cast< double > (n % get_prime_int()));
     }
-
+   
     //! constructor of Residue, from long long
     Residue (long long n) {
         x_= RES_soft_reduce (static_cast< double > (n % get_prime_int()));

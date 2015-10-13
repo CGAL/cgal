@@ -75,6 +75,8 @@ inline bool do_intersect_ray_2(
 }
 } //namespace CGAL
 
-
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/Ray_2_Bbox_2_intersection_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif

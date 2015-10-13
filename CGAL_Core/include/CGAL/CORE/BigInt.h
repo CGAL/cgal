@@ -559,4 +559,5 @@ inline BigInt randomize(const BigInt& a) {
 //@}
 
 } //namespace CORE
+
 #endif // _CORE_BIGINT_H_

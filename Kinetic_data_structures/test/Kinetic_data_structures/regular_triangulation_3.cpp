@@ -258,7 +258,7 @@ int main(int argc, char *argv[])
 
    
     CGAL::Kinetic::internal::write_debug_counters(std::cout);
-    if (CGAL::Kinetic::internal::audit_failures__ != 0) return EXIT_FAILURE;
+    if (CGAL::Kinetic::internal::get_static_audit_failures() != 0) return EXIT_FAILURE;
     else return EXIT_SUCCESS;
   }
 }

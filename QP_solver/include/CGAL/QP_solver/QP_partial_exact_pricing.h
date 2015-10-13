@@ -55,7 +55,7 @@ class QP_partial_exact_pricing : public QP__partial_base<Q,ET,Tags> {
 
     // creation
     QP_partial_exact_pricing( bool     randomize = false,
-			       Random&  random    = default_random);
+			       Random&  random    = get_default_random());
 
     // operations
     int  pricing(int& direction );

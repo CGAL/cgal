@@ -57,7 +57,7 @@ OutputIterator random_selection( RandomAccessIterator first,
                                  Size n,
                                  OutputIterator result)
 {
-    return random_selection( first, last, n, result, default_random);
+    return random_selection( first, last, n, result, get_default_random());
 }
 
 } //namespace CGAL    

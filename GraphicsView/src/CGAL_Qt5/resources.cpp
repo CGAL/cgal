@@ -18,13 +18,9 @@
 //
 // Author(s)     : Laurent Rineau <Laurent.Rineau@geometryfactory.com>
 
-#include <QDir>
-#include <CGAL/Qt/resources.h>
+#ifndef CGAL_HEADER_ONLY
 
-// cannot use namespaces because of the Q_INIT_RESOURCE macro
-void CGAL_Qt_init_resources() {
-  Q_INIT_RESOURCE(File);
-  Q_INIT_RESOURCE(Triangulation_2); 
-  Q_INIT_RESOURCE(Input);
-  Q_INIT_RESOURCE(CGAL);
-}
+#include <CGAL/Qt/resources.h>
+#include <CGAL/Qt/resources_impl.h>
+
+#endif // CGAL_HEADER_ONLY

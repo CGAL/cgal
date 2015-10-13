@@ -73,8 +73,8 @@ void process ()
     for ( int i = 0; i < 100; ++i) {
       points.push_back
 	(typename K::Point_2
-	 (CGAL::default_random( 0x100000),
-	  CGAL::default_random( 0x100000),
+	 (CGAL::get_default_random()( 0x100000),
+	  CGAL::get_default_random()( 0x100000),
 	  hom));
     }
     
