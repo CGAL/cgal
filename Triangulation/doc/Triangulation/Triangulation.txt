@@ -516,26 +516,45 @@ set of points. In the worst case, the expected complexity is
 run on \f$ n \f$ random points, the cost of inserting one point is 
 \f$ O(n^{1/d}) \f$.
 
-We provide below (Figure \cgalFigureRef{Triangulationfigbenchmarks}) the
+We provide below (Figure \cgalFigureRef{Triangulationfigbenchmarks100} 
+and \cgalFigureRef{Triangulationfigbenchmarks1000}) the
 performance of the Delaunay triangulation on randomly distributed points. 
 The machine used is a PC running 
 Windows 7 64-bits with an Intel Xeon CPU clocked at 2.80 GHz with 32GB of RAM.
-The program has been compiled with Microsoft Visual C++ 2012 in Release mode.
+The program has been compiled with Microsoft Visual C++ 2013 in Release mode.
 
-\cgalFigureAnchor{Triangulationfigbenchmarks}
-
+\cgalFigureAnchor{Triangulationfigbenchmarks100}
 <CENTER>
-<TABLE CELLSPACING=15>
+<TABLE CELLSPACING=15 align=center>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=13><HR></td></tr>
+<tr><th ALIGN=RIGHT NOWRAP>Dimension</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th></tr>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=13><HR></td></tr>
+<tr align=center><td align=right>Time (s)</td><td>0.003</td><td>0.007</td><td>0.03</td><td>0.14</td><td>0.56</td><td>2.7</td><td>11.3</td><td>45</td><td>185</td><td>686</td><td>2390</td></tr>
+<tr align=center><td align=right>Memory (MB)</td><td>< 1</td><td>< 1</td><td>< 1</td><td>1</td><td>3</td><td>13</td><td>53</td><td>182</td><td>662</td><td>2187</td><td>7156</td></tr>
+<tr align=center><td align=right>Number of maximal simplices</td><td>184</td><td>487</td><td>1,548</td><td>5,548</td><td>19,598</td><td>67,102</td><td>230,375</td><td>715,984</td><td>2,570,623</td><td>7,293,293</td><td>21,235,615</td></tr>
+<tr align=center><td align=right>Number of convex hull facets</td><td>14</td><td>66</td><td>308</td><td>1,164</td><td>4,410</td><td>16,974</td><td>57,589</td><td>238,406</td><td>670,545</td><td>2,574,326</td><td>8,603,589</td></tr></td><td>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=13><HR></td></tr>
+</TABLE>
+</CENTER>
+\cgalFigureCaptionBegin{Triangulationfigbenchmarks100}
+Performance of the insertion of 100 points in a Delaunay triangulation.
+\cgalFigureCaptionEnd
+
+\cgalFigureAnchor{Triangulationfigbenchmarks1000}
+<CENTER>
+<TABLE CELLSPACING=15 align=center>
 <tr><td ALIGN=LEFT NOWRAP COLSPAN=9><HR></td></tr>
 <tr><th ALIGN=RIGHT NOWRAP>Dimension</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr>
 <tr><td ALIGN=LEFT NOWRAP COLSPAN=9><HR></td></tr>
-<tr><td>Inserting 100 points</td><td>0.003</td><td>0.007</td><td>0.03</td><td>0.14</td><td>0.56</td><td>2.7</td><td>11.3</td></tr>
-<tr><td>Inserting 1000 points</td><td>0.015</td><td>0.056</td><td>0.52</td><td>3.5</td><td>26.2</td><td>185</td><td>1385</td></tr>
+<tr align=center><td align=right>Time (s)</td><td>0.01</td><td>0.05</td><td>0.5</td><td>3.4</td><td>24</td><td>183</td><td>1365</td></tr>
+<tr align=center><td align=right>Memory (MB)</td><td>< 1</td><td>< 1</td><td>2.7</td><td>14</td><td>81</td><td>483</td><td>2827</td></tr>
+<tr align=center><td align=right>Number of maximal simplices</td><td>1,979</td><td>6,315</td><td>25,845</td><td>122,116</td><td>596,927</td><td>3,133,318</td><td>16,403,337</td></tr>
+<tr align=center><td align=right>Number of convex hull facets</td><td>19</td><td>138</td><td>963</td><td>6,184</td><td>41,135</td><td>241,540</td><td>1,406,797</td></tr></td><td>
 <tr><td ALIGN=LEFT NOWRAP COLSPAN=9><HR></td></tr>
 </TABLE>
 </CENTER>
-\cgalFigureCaptionBegin{Triangulationfigbenchmarks}
-Running times in seconds for algorithms on Delaunay triangulations.
+\cgalFigureCaptionBegin{Triangulationfigbenchmarks1000}
+Performance of the insertion of 1000 points in a Delaunay triangulation.
 \cgalFigureCaptionEnd
 
 # Design and Implementation History #
