@@ -11,10 +11,19 @@
 #include <cstdlib>
 #include <algorithm>
 
+//#define USE_DYNAMIC_KERNEL
 
-template<typename DT>
-void test(const int d, const std::string & type, const int N)
+// Return the number of Bytes used
+template<int D>
+std::size_t compute_triangulation(std::size_t N)
 {
+#ifdef USE_DYNAMIC_KERNEL
+    typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> K;
+#else
+    typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > K;
+#endif
+    typedef CGAL::Delaunay_triangulation<K> DT;
+
     typedef typename DT::Vertex Vertex;
     typedef typename DT::Vertex_handle Vertex_handle;
     typedef typename DT::Full_cell Full_cell;
@@ -30,7 +39,7 @@ void test(const int d, const std::string & type, const int N)
     // Generate points
     std::vector<Point> points;
     CGAL::Random rng;
-    Random_points_iterator rand_it(d, 2.0, rng);
+    Random_points_iterator rand_it(D, 2.0, rng);
     CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
 
     std::size_t mem_before = CGAL::Memory_sizer().virtual_size();
@@ -38,49 +47,54 @@ void test(const int d, const std::string & type, const int N)
     cost.start();
 
     std::cout << "Delaunay triangulation of " << N <<
-      " points in dim " << d << ":" << std::endl;
+      " points in dim " << D << ":" << std::endl;
 
-    DT dt(d);
+    DT dt(D);
     dt.insert(points.begin(), points.end());
 
+    std::size_t mem = CGAL::Memory_sizer().virtual_size() - mem_before;
     std::cout << "  Done in " << cost.time() << " seconds." << std::endl;
-    std::cout << "  Memory consumption: " << 
-      ((CGAL::Memory_sizer().virtual_size() - mem_before) >> 10) << " KB.\n";
+    std::cout << "  Memory consumption: " << (mem >> 10) << " KB.\n";
     std::size_t nbfc= dt.number_of_finite_full_cells();
     std::size_t nbc= dt.number_of_full_cells();
     std::cout << "  " << dt.number_of_vertices() << " vertices, " 
               << nbfc << " finite simplices and " 
               << (nbc-nbfc) << " convex hull Facets."
               << std::endl;
+
+    return mem;
 }
 
-template< int D >
-void go(const int N)
+// Will compute triangulations of i*num_points_steps points, 
+// with i in [1, 2...], stopping after the last computation that takes
+// more memory than mem_threshold_in_bytes
+template<int D>
+void go(
+  std::size_t num_points_increment, 
+  std::size_t mem_threshold_in_MB = (3 << 10)) // 3 GB
 {
-    typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > K;
-    //typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> K;
-    typedef CGAL::Delaunay_triangulation<K> Triangulation;
-    test<Triangulation>(D, "static", N);
+  std::size_t mem = 0;
+  for (std::size_t i = 1 ; mem < (mem_threshold_in_MB << 20) ; ++i)
+  {
+    mem = compute_triangulation<D>(i*num_points_increment);
+  }
 }
 
 int main(int argc, char **argv)
 {
     srand(static_cast<unsigned int>(time(NULL)));
-    int N = 100; if( argc > 1 ) N = atoi(argv[1]);
-    go<2>(N);
-    go<3>(N);
-    go<4>(N);
-    go<5>(N);
-    go<6>(N);
-    go<7>(N);
-    go<8>(N);
-    if (N <= 100)
-    {
-      go<9>(N);
-      go<10>(N);
-      go<11>(N);
-      go<12>(N);
-    }
+    //int N = 100; if( argc > 1 ) N = atoi(argv[1]);
+    go<2>(100000);
+    go<3>(10000);
+    go<4>(1000);
+    go<5>(1000);
+    go<6>(1000);
+    go<7>(1000);
+    go<8>(1000);
+    go<9>(100);
+    go<10>(100);
+    go<11>(50);
+    go<12>(50);
 
     return 0;
 }
