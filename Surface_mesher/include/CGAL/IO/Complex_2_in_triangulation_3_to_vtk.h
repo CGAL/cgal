@@ -56,7 +56,6 @@ vtkPolyData* output_c2t3_to_vtk_polydata(const C2T3& c2t3,
   {
     typedef typename Triangulation::Point Point;
     const Point& p = vit->point();
-    double pts[3];
     vtk_points->InsertNextPoint(CGAL::to_double(p.x()),
                                 CGAL::to_double(p.y()),
                                 CGAL::to_double(p.z()));

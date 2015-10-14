@@ -1,3 +1,5 @@
+ cmake_minimum_required(VERSION 2.8.11)
+
 PROJECT( mesh_a_3D_image )
 
 set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
@@ -17,67 +19,60 @@ foreach(LIB_DIR ${PACKAGE_ROOT}/../CGAL_ImageIO/src/CGAL_ImageIO)
   endif()
 endforeach()
 
-
-FIND_PACKAGE(CGAL REQUIRED ImageIO)
-IF(CGAL_FOUND)
-  include( ${CGAL_USE_FILE} )
-ENDIF(CGAL_FOUND)
-
-FIND_PACKAGE(VTK)
-ADD_DEFINITIONS(-DCGAL_USE_VTK)
-IF(NOT VTK_DIR)
-  MESSAGE(FATAL_ERROR "Please set VTK_DIR.")
-ENDIF(NOT VTK_DIR)
-INCLUDE(${VTK_USE_FILE})
-
-SET(QT_QMAKE_EXECUTABLE ${VTK_QT_QMAKE_EXECUTABLE} CACHE FILEPATH "")
-SET(QT_MOC_EXECUTABLE ${VTK_QT_MOC_EXECUTABLE} CACHE FILEPATH "")
-SET(QT_UIC_EXECUTABLE ${VTK_QT_UIC_EXECUTABLE} CACHE FILEPATH "")
-SET(DESIRED_QT_VERSION ${VTK_DESIRED_QT_VERSION} CACHE FILEPATH "")
-FIND_PACKAGE(Qt)
-IF(QT_USE_FILE)
-  INCLUDE(${QT_USE_FILE})
-ELSE(QT_USE_FILE)
-  SET(QT_LIBRARIES   ${QT_QT_LIBRARY})
-ENDIF(QT_USE_FILE)
-
-SET (SRCS
-  mesh_a_3D_image.cpp
-)
-
-SET (SRCS_VTK
-  mesh_a_VTK_3D_image.cpp
-)
-
-# Use the include path and library for Qt that is used by VTK.
-INCLUDE_DIRECTORIES( ${QT_INCLUDE_DIR} ${QT_QTGUI_INCLUDE_DIR}
-                     ${QT_QTCORE_INCLUDE_DIR})
-
-ADD_EXECUTABLE( mesh_a_3D_image MACOSX_BUNDLE ${SRCS})
-
-TARGET_LINK_LIBRARIES( mesh_a_3D_image
-  QVTK
-  ${QT_LIBRARIES}
-  vtkRendering
-  vtkGraphics
-  vtkIO
-  vtkCommon
-)
-
-SET (SRCS_VTK
-  mesh_a_VTK_3D_image.cpp
-)
-
-ADD_EXECUTABLE( mesh_a_VTK_3D_image MACOSX_BUNDLE ${SRCS_VTK})
-
-TARGET_LINK_LIBRARIES( mesh_a_VTK_3D_image
-  QVTK
-  ${QT_LIBRARIES}
-  vtkRendering
-  vtkGraphics
-  vtkIO
-  vtkCommon
-)
+set( QT_USE_QTOPENGL TRUE )
 
 
+find_package(VTK 6.0 COMPONENTS
+  vtkRenderingOpenGL
+  vtkGUISupportQt
+  vtkIOImage
+  vtkInteractionImage
+  )
+if(VTK_FOUND)
+  add_definitions(-DCGAL_USE_VTK)
+  include(${VTK_USE_FILE})
+endif(VTK_FOUND)
+
+if("${VTK_QT_VERSION}" STREQUAL "")
+  message(FATAL_ERROR "VTK was not built with Qt")
+endif()
+
+if(VTK_QT_VERSION VERSION_GREATER "4")
+  find_package(Qt5 COMPONENTS Core REQUIRED QUIET)
+
+  find_package(CGAL REQUIRED ImageIO Qt5)
+  IF(CGAL_FOUND AND CGAL_ImageIO_FOUND AND CGAL_Qt5_FOUND)
+
+    add_definitions(-DQT_NO_KEYWORDS)
+    include( ${CGAL_USE_FILE} )
+
+    find_package(Qt5 QUIET COMPONENTS OpenGL Xml )
+    find_package(OpenGL)
+
+    SET (SRCS  mesh_a_3D_image.cpp)
+    ADD_EXECUTABLE( mesh_a_3D_image MACOSX_BUNDLE ${SRCS})
+    qt5_use_modules(mesh_a_3D_image Core Gui Widgets)
+    TARGET_LINK_LIBRARIES( mesh_a_3D_image
+      ${VTK_LIBRARIES}
+      ${QT_LIBRARIES}
+      vtkRenderingOpenGL
+      vtkGUISupportQt
+      vtkInteractionImage
+      )
+
+    SET (SRCS_VTK  mesh_a_VTK_3D_image.cpp)
+    ADD_EXECUTABLE( mesh_a_VTK_3D_image MACOSX_BUNDLE ${SRCS_VTK})
+    qt5_use_modules(mesh_a_VTK_3D_image Core Gui Widgets)
+    TARGET_LINK_LIBRARIES( mesh_a_VTK_3D_image
+      ${VTK_LIBRARIES}
+      ${QT_LIBRARIES}
+      vtkRenderingOpenGL
+      vtkGUISupportQt
+      vtkIOImage
+      vtkInteractionImage
+      )
+
+  ENDIF(CGAL_FOUND AND CGAL_ImageIO_FOUND AND CGAL_Qt5_FOUND)
+
+endif() #VTK_QT_VERSION VERSION_GREATER
 
