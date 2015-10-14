@@ -31,7 +31,7 @@ int readIrisImage( const char *name, _image *im );
 int testIrisHeader(char *magic,const char *name);
 
 #ifdef CGAL_HEADER_ONLY
-#include <CGAL/iris_impl.h>
+#include "iris_impl.h"
 #endif // CGAL_HEADER_ONLY
 
 #endif
