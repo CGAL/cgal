@@ -1,4 +1,3 @@
-
 -------------------------------- Release 4.7 --------------------------------
 
 Release date: October 2015
@@ -17,7 +16,7 @@ Release date: October 2015
     source edition it should be /path-to/qt-everywhere-opensource-src-
     <version>/qtbase/lib/cmake/Qt5.
 
-  - The code of the 3D demos now use modern OpenGL, with shaders, instead of
+  - The code of the 3D demos now uses modern OpenGL, with shaders, instead of
     the fixed pipeline API of OpenGL-1.
 
   - The Microsoft Windows Visual C++ compiler 2015 (VC14) is now supported.
@@ -100,9 +99,9 @@ Release date: October 2015
 
   - This package now supports any model of the concept FaceGraph.
 
-  - Breaking change: The package no longer support models of
-    TriangulatedSurfaceMesh which are not at the same time model of the concept
-    FaceGraph.
+  - Breaking change: The package no longer supports models of
+    TriangulatedSurfaceMesh which are not at the same time models of the
+    concept FaceGraph.
 
 
 * dD Geometry Kernel
@@ -124,7 +123,7 @@ Release date: October 2015
       - The existing ArrangementLandmarkTraits_2 concept, which has two
         requirements, now refines the two respective concepts above.
 
-      - The template parameter of the exsting
+      - The template parameter of the existing
         Arr_polyline_traits_2<SegmentTraits> template must be substituted with
         a traits class that is a model of the
         ArrangementConstructXMonotoneTraits_2 concept among the other when
@@ -179,7 +178,7 @@ Release date: October 2015
     the function CGAL::vcm_is_on_feature_edge() to determine whether a point is
     on or close to a feature edge. The former function is also internally used
     by CGAL::vcm_estimate_normals() to estimate the normals of a point set and
-    it is particularly suited to point set with noise.
+    it is particularly suited to point sets with noise.
 
 
 * Spatial Sorting
