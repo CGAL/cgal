@@ -20,6 +20,15 @@
 namespace CGAL{
 namespace Test{
 
+/// Force the double (non-extended) precision, even when the x87 Intel FPU
+/// is used.
+///
+/// Applied to another number type, does nothing.
+///@{
+template <typename T> T ftd(const T x) { return x; }
+double ftd(const double x) { return CGAL_IA_FORCE_TO_DOUBLE(x); }
+///@}
+
 template <class T, class RootOf1, class RootOf2>
 void test_root_of_traits(){
     // pure type checking  
@@ -47,53 +56,53 @@ void test_root_of_traits(){
 
 
     {
-      Root_of_2 r  = make_root_of_2(T(0),T(-1),T(2)); //-sqrt(2)
-      Root_of_2 rl = make_root_of_2(T(1),T(0),T(-2),true); //-sqrt(2);
-      Root_of_2 rr = make_root_of_2(T(1),T(0),T(-2),false); //+sqrt(2)
+      Root_of_2 r  = ftd(make_root_of_2(T(0),T(-1),T(2))); //-sqrt(2)
+      Root_of_2 rl = ftd(make_root_of_2(T(1),T(0),T(-2),true)); //-sqrt(2);
+      Root_of_2 rr = ftd(make_root_of_2(T(1),T(0),T(-2),false)); //+sqrt(2)
       assert(r == rl);
       assert(rl != rr);
       
-      assert( r * Root_of_1(2) == make_root_of_2(T(0),T(-2),T(2)));
-      assert( r * T(2) == make_root_of_2(T(0),T(-2),T(2)));
+      assert( ftd(r * Root_of_1(2)) == ftd(make_root_of_2(T(0),T(-2),T(2))));
+      assert( ftd(r * T(2)) == ftd(make_root_of_2(T(0),T(-2),T(2))));
     }{
-      Root_of_2 r  = CGAL::make_root_of_2(T(0),T(-1),T(2)); //-sqrt(2)
-      Root_of_2 rl = CGAL::make_root_of_2(T(1),T(0),T(-2),true); //-sqrt(2);
-      Root_of_2 rr = CGAL::make_root_of_2(T(1),T(0),T(-2),false); //+sqrt(2)
+      Root_of_2 r  = ftd(CGAL::make_root_of_2(T(0),T(-1),T(2))); //-sqrt(2)
+      Root_of_2 rl = ftd(CGAL::make_root_of_2(T(1),T(0),T(-2),true)); //-sqrt(2);
+      Root_of_2 rr = ftd(CGAL::make_root_of_2(T(1),T(0),T(-2),false)); //+sqrt(2)
       assert(r == rl);
       assert(rl != rr);
       
-      assert( r * Root_of_1(2) == CGAL::make_root_of_2(T(0),T(-2),T(2)));
-      assert( r * T(2) == CGAL::make_root_of_2(T(0),T(-2),T(2)));
+      assert( ftd(r * Root_of_1(2)) == ftd(CGAL::make_root_of_2(T(0),T(-2),T(2))));
+      assert( ftd(r * T(2)) == ftd(CGAL::make_root_of_2(T(0),T(-2),T(2))));
     }
 
    
     {
-      Root_of_2 r  = make_sqrt(T(2)); //sqrt(2)
-      Root_of_2 rr = make_root_of_2(T(1),T(0),T(-2),false); //+sqrt(2)
+      Root_of_2 r  = ftd(make_sqrt(T(2))); //sqrt(2)
+      Root_of_2 rr = ftd(make_root_of_2(T(1),T(0),T(-2),false)); //+sqrt(2)
       assert(r == rr);
     }{
-      Root_of_2 r  = CGAL::make_sqrt(T(2)); //sqrt(2)
-      Root_of_2 rr = CGAL::make_root_of_2(T(1),T(0),T(-2),false); //+sqrt(2)
+      Root_of_2 r  = ftd(CGAL::make_sqrt(T(2))); //sqrt(2)
+      Root_of_2 rr = ftd(CGAL::make_root_of_2(T(1),T(0),T(-2),false)); //+sqrt(2)
       assert(r == rr);
     }
 
     {
-      Root_of_2 r  = inverse(CGAL::make_sqrt(T(2))); 
-      Root_of_2 rr = 1/CGAL::make_sqrt(T(2));
+      Root_of_2 r  = ftd(inverse(ftd(CGAL::make_sqrt(T(2)))));
+      Root_of_2 rr = ftd(1/ftd(CGAL::make_sqrt(T(2))));
       assert(r == rr);
     }{
-        Root_of_2 r  = CGAL::inverse(CGAL::make_sqrt(T(2)));
-        Root_of_2 rr = 1/CGAL::make_sqrt(T(2)); 
+        Root_of_2 r  = ftd(CGAL::inverse(ftd(CGAL::make_sqrt(T(2)))));
+        Root_of_2 rr = ftd(1/ftd(CGAL::make_sqrt(T(2))));
         assert(r == rr);
     }
 
     {
-      Root_of_2 r  = square(CGAL::make_sqrt(T(2)));
-      Root_of_2 rr = CGAL::make_sqrt(T(2))*CGAL::make_sqrt(T(2));
+      Root_of_2 r  = ftd(square(ftd(CGAL::make_sqrt(T(2)))));
+      Root_of_2 rr = ftd(ftd(CGAL::make_sqrt(T(2)))*ftd(CGAL::make_sqrt(T(2))));
       assert(r == rr);
     }{
-      Root_of_2 r  = CGAL::square(CGAL::make_sqrt(T(2)));
-      Root_of_2 rr = CGAL::make_sqrt(T(2))*CGAL::make_sqrt(T(2));
+      Root_of_2 r  = ftd(CGAL::square(ftd(CGAL::make_sqrt(T(2)))));
+      Root_of_2 rr = ftd(ftd(CGAL::make_sqrt(T(2)))*ftd(CGAL::make_sqrt(T(2))));
       assert(r == rr);
     }
 
