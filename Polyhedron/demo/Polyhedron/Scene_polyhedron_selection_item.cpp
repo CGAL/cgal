@@ -83,7 +83,7 @@ void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewe
     are_buffers_filled = true;
 }
 
-void Scene_polyhedron_selection_item::compute_elements()
+void Scene_polyhedron_selection_item::compute_elements()const
 {
     positions_facets.clear();
     positions_lines.clear();
@@ -164,7 +164,10 @@ void Scene_polyhedron_selection_item::draw(Viewer_interface* viewer) const
 {
 
     if(!are_buffers_filled)
+    {
+        compute_elements();
         initialize_buffers(viewer);
+    }
 
     draw_points(viewer);
     GLfloat offset_factor;
@@ -189,6 +192,11 @@ void Scene_polyhedron_selection_item::draw(Viewer_interface* viewer) const
 
 void Scene_polyhedron_selection_item::draw_edges(Viewer_interface* viewer) const
 {
+    if(!are_buffers_filled)
+    {
+        compute_elements();
+        initialize_buffers(viewer);
+    }
 
     viewer->glLineWidth(3.f);
     vaos[1]->bind();
@@ -204,6 +212,11 @@ void Scene_polyhedron_selection_item::draw_edges(Viewer_interface* viewer) const
 
 void Scene_polyhedron_selection_item::draw_points(Viewer_interface* viewer) const
 {
+    if(!are_buffers_filled)
+    {
+        compute_elements();
+        initialize_buffers(viewer);
+    }
     viewer->glPointSize(5.f);
     vaos[2]->bind();
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);

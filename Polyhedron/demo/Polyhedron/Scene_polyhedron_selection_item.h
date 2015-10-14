@@ -683,7 +683,6 @@ public Q_SLOTS:
 
     // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
       //  poly_item->invalidate_buffers();
-        compute_elements();
         are_buffers_filled = false;
   }
   // slots are called by signals of polyhedron_k_ring_selector
@@ -796,7 +795,7 @@ private:
   mutable QOpenGLShaderProgram *program;
   using Scene_item::initialize_buffers;
   void initialize_buffers(Viewer_interface *viewer) const;
-  void compute_elements();
+  void compute_elements() const;
 
 };
 

@@ -258,7 +258,7 @@ protected:
   int colorLoc;
 
   virtual void initialize_buffers(){}
-  virtual void compute_elements(){}
+  virtual void compute_elements() const{}
   virtual void attrib_buffers(Viewer_interface*, int program_name) const;
 
 

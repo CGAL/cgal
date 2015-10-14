@@ -41,7 +41,7 @@ private:
     mutable std::size_t nb_lines;
     using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer) const;
-    void compute_elements();
+    void compute_elements() const;
 
 Q_SIGNALS:
     void stop();

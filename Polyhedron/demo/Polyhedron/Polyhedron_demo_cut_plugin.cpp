@@ -88,7 +88,7 @@ public:
 public:
   const AABB_tree& tree;
 private:
-    std::vector<float> positions_lines;
+   mutable  std::vector<float> positions_lines;
 
     mutable QOpenGLShaderProgram *program;
 
@@ -111,7 +111,7 @@ private:
         are_buffers_filled = true;
     }
 
-    void compute_elements()
+    void compute_elements() const
     {
        positions_lines.clear();
 
@@ -207,7 +207,7 @@ public:
   bool top;
 
 private:
-    std::vector<float> positions_lines;
+    mutable std::vector<float> positions_lines;
     void timerEvent(QTimerEvent* /*event*/)
     {
        top = true;
@@ -233,7 +233,7 @@ private:
         vaos[0]->release();
         are_buffers_filled = true;
     }
-    void compute_elements()
+    void compute_elements() const
     {
        positions_lines.clear();
 

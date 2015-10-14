@@ -66,7 +66,7 @@ private:
 
   using Scene_item::initialize_buffers;
   void initialize_buffers(Viewer_interface *viewer) const;
-  void compute_normals_and_vertices(void);
+  void compute_normals_and_vertices(void) const;
 
 
 }; // end class Scene_textured_polyhedron_item
