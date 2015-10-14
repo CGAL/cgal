@@ -412,8 +412,7 @@ segment Delaunay graphs:
 <LI>The user can define his/her kernel using as number type, a
 number type of the form `Filtered_exact<CT,ET>`. Then this
 kernel can be entered as the first template parameter in the
-`Segment_Delaunay_graph_2<K,MTag>` or
-`Segment_Delaunay_graph_without_intersections_2<K,MTag>` class.
+`Segment_Delaunay_graph_2<K,MTag>`.
 <LI>The user can define up to three different kernels `CK`,
 `FK` and `EK` (default values are provided for most
 parameters). The first kernel `CK` is used only for
@@ -431,23 +430,18 @@ Our experience so far has shown that for all reasonable and valid
 values of the template parameters, the second method for arithmetic
 filtering is more efficient among the two.
 
-Let's consider once more the classes
-`Segment_Delaunay_graph_2<K,MTag>` and 
-`Segment_Delaunay_graph_without_intersections_2<K,MTag>`.
+Let's consider once more the class
+`Segment_Delaunay_graph_2<K,MTag>.
 The template parameter `MTag` provides another degree of freedom
 to the user, who can indicate the type of arithmetic operations to
-be used in the evaluation of the predicates. More specifically, in
-both classes, `MTag` can be `Field_with_sqrt_tag`, in
+be used in the evaluation of the predicates. More specifically,
+`MTag` can be `Field_with_sqrt_tag`, in
 which case the predicates will be evaluated using all four basic
 arithmetic operations plus square roots; this requires, of course,
 that the number type used in the kernel `K` supports these
-operations exactly. The second choices are `Field_tag` for
-the `Segment_Delaunay_graph_2<K,MTag>` class, and
-`Euclidean_ring_tag` for the
-`Segment_Delaunay_graph_without_intersections_2<K,MTag>`
-class. In the first case we indicate that we want the predicates to be
-computed using only the four basic arithmetic operations, whereas in
-the second case we evaluate the predicates using only ring operations.
+operations exactly. Alternatively `MTag` can be `Field_tag`
+This indicates that we want the predicates to be
+computed using only the four basic arithmetic operations.
 Again, for the predicates to be evaluated correctly, the number type
 used in the kernel `K` must support the corresponding operations
 exactly.
@@ -465,9 +459,7 @@ used the possible values for `CM`, `FM` and `EM` are
 `Field_with_sqrt_tag` and `Field_tag`, whereas if the 
 `Segment_Delaunay_graph_filtered_traits_without_intersections_2<CK,CM,EK,EM,FK,FM>`
 class is used, the possible values are `Field_with_sqrt_tag` and
-`Euclidean_ring_tag`. The semantics are the same as in the case of the 
-`Segment_Delaunay_graph_2<K,MTag>` and 
-`Segment_Delaunay_graph_without_intersections_2<K,MTag>` classes.
+`Euclidean_ring_tag`. 
 
 \section secsdg2hierarchy The Segment Delaunay Graph Hierarchy 
 
