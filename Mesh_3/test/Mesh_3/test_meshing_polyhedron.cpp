@@ -56,8 +56,8 @@ struct Polyhedron_tester : public Tester<K>
     input.close();
 
     std::cout << "\tSeed is\t"
-      << CGAL::default_random.get_seed() << std::endl;
-    Mesh_domain domain(polyhedron, &CGAL::default_random);
+      << CGAL::get_default_random().get_seed() << std::endl;
+    Mesh_domain domain(polyhedron, &CGAL::get_default_random());
 
     // Set mesh criteria
     Facet_criteria facet_criteria(30, 0.2, 0.02);

@@ -47,8 +47,8 @@ int main(int argc, char** argv)
 		     Point(0, 0, 1));
 
     std::cout << "\tSeed is\t"
-      << CGAL::default_random.get_seed() << std::endl;
-  Mesh_domain domain(p, &CGAL::default_random);
+      << CGAL::get_default_random().get_seed() << std::endl;
+  Mesh_domain domain(p, &CGAL::get_default_random());
 
   typedef std::vector<K::Point_3> Polyline;
   typedef std::vector<Polyline> Polylines;

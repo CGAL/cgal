@@ -23,7 +23,7 @@ int main()
   Vector a;
   const int n = 5;
   for (int i = 0; i < n; ++i)
-    a.push_back(CGAL::default_random(100));
+    a.push_back(CGAL::get_default_random()(100));
   std::sort(a.begin(), a.end());
   std::cout << "a = ( ";
   std::copy(a.begin(), a.end(), std::ostream_iterator<int>(std::cout," "));

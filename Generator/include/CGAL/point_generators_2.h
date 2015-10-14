@@ -504,15 +504,15 @@ public:
 	typedef Random_points_in_triangle_2<P> This;
 	typedef typename Kernel_traits<P>::Kernel::Triangle_2 Triangle_2;
 	Random_points_in_triangle_2() {}
-	Random_points_in_triangle_2( const This& x,Random& rnd = default_random)
+	Random_points_in_triangle_2( const This& x,Random& rnd = get_default_random())
 	: Random_generator_base<P>( 1, rnd ),_p(x._p),_q(x._q),_r(x._r) {
 		generate_point();
 	}
-	Random_points_in_triangle_2( const P& p, const P& q, const P& r, Random& rnd = default_random)
+	Random_points_in_triangle_2( const P& p, const P& q, const P& r, Random& rnd = get_default_random())
 	: Random_generator_base<P>( 1, rnd ),_p(p),_q(q),_r(r) {
 		generate_point();
 	}
-	Random_points_in_triangle_2( const Triangle_2& triangle,Random& rnd = default_random)
+	Random_points_in_triangle_2( const Triangle_2& triangle,Random& rnd = get_default_random())
 	: Random_generator_base<P>( 1,
 			rnd),_p(triangle[0]),_q(triangle[1]),_r(triangle[2]) {
 		generate_point();

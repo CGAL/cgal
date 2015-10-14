@@ -22,6 +22,6 @@ template <class RandomAccessIterator, class Size,
 class OutputIterator, class Random>
 OutputIterator random_selection( RandomAccessIterator first,
 RandomAccessIterator last, 
-Size n, OutputIterator result, Random& rnd = default_random);
+Size n, OutputIterator result, Random& rnd = get_default_random());
 
 } /* namespace CGAL */

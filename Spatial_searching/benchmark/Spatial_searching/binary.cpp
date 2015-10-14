@@ -55,9 +55,9 @@ int main(int argc, char* argv[])
   double dz = bb.zmax() - bb.zmin();
 
   for(int i=0; i < N; i++){
-    double  rx  = CGAL::default_random.get_double();
-    double  ry  = CGAL::default_random.get_double();
-    double  rz  = CGAL::default_random.get_double();
+    double  rx  = CGAL::get_default_random().get_double();
+    double  ry  = CGAL::get_default_random().get_double();
+    double  rz  = CGAL::get_default_random().get_double();
     bbox << Point_3(bb.xmin() + dx * rx , bb.ymin() + dy * ry , bb.zmin() + dz * rz);
     /*bbox << bb.xmin() + dx * rx << " ";
     bbox << bb.ymin() + dy * ry << " ";

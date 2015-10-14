@@ -60,7 +60,7 @@ using std::atoi;
 using std::exit;
 using CGAL::Cartesian_matrix;
 using CGAL::Random;
-using CGAL::default_random;
+using CGAL::get_default_random;
 using CGAL::sorted_matrix_search;
 using CGAL::sorted_matrix_search_traits_adaptor;
 
@@ -108,7 +108,7 @@ main( int argc, char* argv[])
     #endif
   
     // generate random seed
-    random_seed = default_random.get_int( 0, (1 << 30));
+    random_seed = get_default_random().get_int( 0, (1 << 30));
   }
   else
     random_seed = atoi(argv[4]);

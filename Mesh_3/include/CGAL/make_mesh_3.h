@@ -416,7 +416,7 @@ void make_mesh_3_impl(C3T3& c3t3,
                         mesh_options = parameters::internal::Mesh_3_options())
 {
 #ifdef CGAL_MESH_3_INITIAL_POINTS_NO_RANDOM_SHOOTING
-  CGAL::default_random = CGAL::Random(0);
+  CGAL::get_default_random() = CGAL::Random(0);
 #endif
 
   // Initialize c3t3

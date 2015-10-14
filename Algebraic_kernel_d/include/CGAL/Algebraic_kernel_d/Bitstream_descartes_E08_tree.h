@@ -988,7 +988,7 @@ Bitstream_descartes_E08_tree<BitstreamDescartesE08TreeTraits>
             // next try heuristic alpha with small denom (failures don't count)
             log_alpha_den = 4;
             alpha_den_4 = 1L << (log_alpha_den - 2);
-            alpha_num = CGAL::default_random.get_int(  // TODO .get_long
+            alpha_num = CGAL::get_default_random().get_int(  // TODO .get_long
                     alpha_den_4, 3*alpha_den_4 + 1
             );
             ++(this->ptr()->subdiv_tries_);
@@ -999,7 +999,7 @@ Bitstream_descartes_E08_tree<BitstreamDescartesE08TreeTraits>
             log_alpha_den = 4 + this->ptr()->ceil_log_degree_;
             alpha_den_4 = 1L << (log_alpha_den - 2);
             do {
-                alpha_num = CGAL::default_random.get_int(  // TODO .get_long
+                alpha_num = CGAL::get_default_random().get_int(  // TODO .get_long
                         alpha_den_4, 3*alpha_den_4 + 1
                 );
                 ++(this->ptr()->subdiv_tries_);
