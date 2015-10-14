@@ -1,104 +1,166 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>PointSetSimplificationDialog</class>
- <widget class="QDialog" name="PointSetSimplificationDialog" >
-  <property name="geometry" >
+ <widget class="QDialog" name="PointSetSimplificationDialog">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>403</width>
-    <height>153</height>
+    <width>450</width>
+    <height>251</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="windowTitle">
    <string>Simplification</string>
   </property>
-  <layout class="QGridLayout" >
-   <item row="0" column="0" >
-    <widget class="QLabel" name="label" >
-     <property name="text" >
-      <string>Method:</string>
+  <layout class="QGridLayout">
+   <item row="7" column="0">
+    <widget class="QLabel" name="label_4">
+     <property name="text">
+      <string>Maximum cluster size</string>
      </property>
     </widget>
    </item>
-   <item row="0" column="1" >
-    <widget class="QComboBox" name="m_simplificationMethod" >
-     <item>
-      <property name="text" >
-       <string>Random</string>
-      </property>
-     </item>
-     <item>
-      <property name="text" >
-       <string>Grid Clustering</string>
-      </property>
-     </item>
-    </widget>
-   </item>
-   <item row="1" column="0" >
-    <widget class="QLabel" name="label_2" >
-     <property name="text" >
-      <string>Points to Remove Randomly</string>
+   <item row="9" column="0" colspan="2">
+    <widget class="QDialogButtonBox" name="buttonBox">
+     <property name="orientation">
+      <enum>Qt::Horizontal</enum>
+     </property>
+     <property name="standardButtons">
+      <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
      </property>
     </widget>
    </item>
-   <item row="1" column="1" >
-    <widget class="QDoubleSpinBox" name="m_randomSimplificationPercentage" >
-     <property name="suffix" >
+   <item row="2" column="0">
+    <widget class="QRadioButton" name="Random">
+     <property name="text">
+      <string>Random</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="4" column="0">
+    <widget class="QRadioButton" name="Grid">
+     <property name="text">
+      <string>Grid</string>
+     </property>
+    </widget>
+   </item>
+   <item row="3" column="1">
+    <widget class="QDoubleSpinBox" name="m_randomSimplificationPercentage">
+     <property name="suffix">
       <string> %</string>
      </property>
-     <property name="decimals" >
+     <property name="decimals">
       <number>2</number>
      </property>
-     <property name="minimum" >
+     <property name="minimum">
       <double>0.100000000000000</double>
      </property>
-     <property name="maximum" >
+     <property name="maximum">
       <double>100.000000000000000</double>
      </property>
-     <property name="singleStep" >
+     <property name="singleStep">
       <double>0.100000000000000</double>
      </property>
-     <property name="value" >
+     <property name="value">
       <double>50.000000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="2" column="0" >
-    <widget class="QLabel" name="label_3" >
-     <property name="text" >
-      <string>Grid Cell Size</string>
+   <item row="6" column="0">
+    <widget class="QRadioButton" name="Hierarchy">
+     <property name="text">
+      <string>Hierarchy</string>
      </property>
     </widget>
    </item>
-   <item row="2" column="1" >
-    <widget class="QDoubleSpinBox" name="m_gridCellSize" >
-     <property name="suffix" >
+   <item row="5" column="1">
+    <widget class="QDoubleSpinBox" name="m_gridCellSize">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="suffix">
       <string> * average spacing</string>
      </property>
-     <property name="decimals" >
+     <property name="decimals">
       <number>2</number>
      </property>
-     <property name="minimum" >
+     <property name="minimum">
       <double>0.100000000000000</double>
      </property>
-     <property name="maximum" >
+     <property name="maximum">
       <double>10.000000000000000</double>
      </property>
-     <property name="singleStep" >
+     <property name="singleStep">
       <double>0.100000000000000</double>
      </property>
-     <property name="value" >
+     <property name="value">
       <double>1.000000000000000</double>
      </property>
     </widget>
    </item>
-   <item row="3" column="0" colspan="2" >
-    <widget class="QDialogButtonBox" name="buttonBox" >
-     <property name="orientation" >
-      <enum>Qt::Horizontal</enum>
+   <item row="3" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="text">
+      <string>Points to Remove Randomly</string>
      </property>
-     <property name="standardButtons" >
-      <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
+    </widget>
+   </item>
+   <item row="5" column="0">
+    <widget class="QLabel" name="label_3">
+     <property name="text">
+      <string>Grid Cell Size</string>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="1">
+    <widget class="QSpinBox" name="m_maximumClusterSize">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="minimum">
+      <number>1</number>
+     </property>
+     <property name="maximum">
+      <number>2147483647</number>
+     </property>
+     <property name="value">
+      <number>10</number>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="0">
+    <widget class="QLabel" name="label_5">
+     <property name="text">
+      <string>Maximum surface variation</string>
+     </property>
+    </widget>
+   </item>
+   <item row="8" column="1">
+    <widget class="QDoubleSpinBox" name="m_maximumSurfaceVariation">
+     <property name="enabled">
+      <bool>false</bool>
+     </property>
+     <property name="suffix">
+      <string/>
+     </property>
+     <property name="decimals">
+      <number>5</number>
+     </property>
+     <property name="minimum">
+      <double>0.000010000000000</double>
+     </property>
+     <property name="maximum">
+      <double>0.333330000000000</double>
+     </property>
+     <property name="singleStep">
+      <double>0.012340000000000</double>
+     </property>
+     <property name="value">
+      <double>0.333330000000000</double>
      </property>
     </widget>
    </item>
@@ -112,11 +174,11 @@
    <receiver>PointSetSimplificationDialog</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>248</x>
      <y>254</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>157</x>
      <y>274</y>
     </hint>
@@ -128,11 +190,11 @@
    <receiver>PointSetSimplificationDialog</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>316</x>
      <y>260</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
     </hint>

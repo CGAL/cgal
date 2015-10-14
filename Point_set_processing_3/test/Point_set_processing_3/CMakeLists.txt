@@ -71,6 +71,7 @@ if ( CGAL_FOUND )
   if(EIGEN3_FOUND OR LAPACK_FOUND)
     # Executables that require Eigen or BLAS and LAPACK
     create_single_source_cgal_program( "normal_estimation_test.cpp" )
+    create_single_source_cgal_program( "hierarchy_simplification_test.cpp" )
     create_single_source_cgal_program( "smoothing_test.cpp" )
     create_single_source_cgal_program( "vcm_plane_test.cpp" )
     create_single_source_cgal_program( "vcm_all_test.cpp" )

@@ -4,6 +4,7 @@
 \example Point_set_processing_3/remove_outliers_example.cpp
 \example Point_set_processing_3/grid_simplification_example.cpp
 \example Point_set_processing_3/grid_simplify_indices.cpp
+\example Point_set_processing_3/hierarchy_simplification_example.cpp	
 \example Point_set_processing_3/jet_smoothing_example.cpp
 \example Point_set_processing_3/normals_example.cpp
 \example Point_set_processing_3/wlop_simplify_and_regularize_point_set_example.cpp

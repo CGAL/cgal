@@ -5,6 +5,7 @@
 
 #include <CGAL/grid_simplify_point_set.h>
 #include <CGAL/random_simplify_point_set.h>
+#include <CGAL/hierarchy_simplify_point_set.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
@@ -55,6 +56,7 @@ public:
 public Q_SLOTS:
   void on_actionSimplify_triggered();
 
+
 }; // end Polyhedron_demo_point_set_simplification_plugin
 
 class Point_set_demo_point_set_simplification_dialog : public QDialog, private Ui::PointSetSimplificationDialog
@@ -66,9 +68,44 @@ class Point_set_demo_point_set_simplification_dialog : public QDialog, private U
       setupUi(this);
     }
 
-    QString simplificationMethod() const { return m_simplificationMethod->currentText(); }
-    double randomSimplificationPercentage() const { return m_randomSimplificationPercentage->value(); }
-    double gridCellSize() const { return m_gridCellSize->value(); }
+  unsigned int simplificationMethod() const
+  {
+    if (Random->isChecked())
+      return 0;
+    else if (Grid->isChecked())
+      return 1;
+    else
+      return 2;
+  }
+  double randomSimplificationPercentage() const { return m_randomSimplificationPercentage->value(); }
+  double gridCellSize() const { return m_gridCellSize->value(); }
+  unsigned int maximumClusterSize() const { return m_maximumClusterSize->value(); }
+  double maximumSurfaceVariation() const { return m_maximumSurfaceVariation->value(); }
+
+public Q_SLOTS:
+  
+  void on_Random_toggled (bool toggled)
+  {
+    m_randomSimplificationPercentage->setEnabled (toggled);
+    m_gridCellSize->setEnabled (!toggled);
+    m_maximumClusterSize->setEnabled (!toggled);
+    m_maximumSurfaceVariation->setEnabled (!toggled);
+  }
+  void on_Grid_toggled (bool toggled)
+  {
+    m_randomSimplificationPercentage->setEnabled (!toggled);
+    m_gridCellSize->setEnabled (toggled);
+    m_maximumClusterSize->setEnabled (!toggled);
+    m_maximumSurfaceVariation->setEnabled (!toggled);
+  }
+  void on_Hierarchy_toggled (bool toggled)
+  {
+    m_randomSimplificationPercentage->setEnabled (!toggled);
+    m_gridCellSize->setEnabled (!toggled);
+    m_maximumClusterSize->setEnabled (toggled);
+    m_maximumSurfaceVariation->setEnabled (toggled);
+  }
+
 };
 
 void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggered()
@@ -97,18 +134,19 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
     // First point to delete
     Point_set::iterator first_point_to_remove = points->end();
 
-    if (dialog.simplificationMethod() == "Random")
+    unsigned int method = dialog.simplificationMethod ();
+    if (method == 0)
     {
-      std::cerr << "Random point cloud simplification (" << dialog.randomSimplificationPercentage() <<"%)...\n";
+      std::cerr << "Point set random simplification (" << dialog.randomSimplificationPercentage() <<"%)...\n";
 
       // Computes points to remove by random simplification
       first_point_to_remove =
         CGAL::random_simplify_point_set(points->begin(), points->end(),
                                         dialog.randomSimplificationPercentage());
     }
-    else if (dialog.simplificationMethod() == "Grid Clustering")
+    else if (method == 1)
     {
-      std::cerr << "Point cloud simplification by clustering (cell size = " << dialog.gridCellSize() <<" * average spacing)...\n";
+      std::cerr << "Point set grid simplification (cell size = " << dialog.gridCellSize() <<" * average spacing)...\n";
 
       // Computes average spacing
       double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
@@ -119,6 +157,17 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
       first_point_to_remove =
         CGAL::grid_simplify_point_set(points->begin(), points->end(),
                                       dialog.gridCellSize()*average_spacing);
+    }
+    else
+    {
+      std::cerr << "Point set hierarchy simplification (cluster size = " << dialog.maximumClusterSize()
+		<< ", maximum variation = " << dialog.maximumSurfaceVariation() << ")...\n";
+
+      // Computes points to remove by Grid Clustering
+      first_point_to_remove =
+        CGAL::hierarchy_simplify_point_set(points->begin(), points->end(),
+					   dialog.maximumClusterSize(),
+					   dialog.maximumSurfaceVariation());
     }
 
     std::size_t nb_points_to_remove = std::distance(first_point_to_remove, points->end());
