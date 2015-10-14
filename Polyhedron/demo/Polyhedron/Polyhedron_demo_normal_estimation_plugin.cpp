@@ -1,7 +1,7 @@
 #include "config.h"
 #include "Scene_points_with_normal_item.h"
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/pca_estimate_normals.h>
 #include <CGAL/jet_estimate_normals.h>
@@ -31,20 +31,21 @@ typedef CGAL::Parallel_tag Concurrency_tag;
 #else
 typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
+using namespace CGAL::Three;
 
 class Polyhedron_demo_normal_estimation_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
   QAction* actionNormalEstimation;
   QAction* actionNormalInversion;
 
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
 
     actionNormalEstimation = new QAction(tr("Normal estimation of point set"), mainWindow);
     actionNormalEstimation->setObjectName("actionNormalEstimation");
@@ -97,7 +98,7 @@ class Point_set_demo_normal_estimation_dialog : public QDialog, private Ui::Norm
 
 void Polyhedron_demo_normal_estimation_plugin::on_actionNormalInversion_triggered()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
@@ -120,7 +121,7 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalInversion_triggere
 void Polyhedron_demo_normal_estimation_plugin::on_actionNormalEstimation_triggered()
 {
 #if !CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));

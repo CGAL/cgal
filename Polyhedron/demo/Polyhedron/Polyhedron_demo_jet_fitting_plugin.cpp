@@ -1,5 +1,5 @@
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "Polyhedron_type.h"
 #include "Scene_polyhedron_item.h"
 #include "Scene_polylines_item.h"
@@ -11,13 +11,13 @@
 
 #include <CGAL/Monge_via_jet_fitting.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-
-class Polyhedron_demo_jet_fitting_plugin : 
+using namespace CGAL::Three;
+class Polyhedron_demo_jet_fitting_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
@@ -47,7 +47,7 @@ public Q_SLOTS:
 void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
 {
   // get active polyhedron
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   Scene_polyhedron_item* poly_item = 
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
   if(!poly_item)

@@ -523,7 +523,7 @@ void SplatRenderer::setRadiusScale(float v)
   mParams.radiusScale = v;
 }
 
-void SplatRenderer::setViewer(Viewer_interface *v)
+void SplatRenderer::setViewer(CGAL::Three::Viewer_interface *v)
 {
   viewer = v;
   for(int i=0; i<3; i++)

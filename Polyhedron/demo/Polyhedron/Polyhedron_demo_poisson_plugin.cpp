@@ -1,7 +1,7 @@
 #include "config.h"
 #include "Scene_points_with_normal_item.h"
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "Scene_polyhedron_item.h"
 
 #include <QObject>
@@ -21,19 +21,19 @@ Polyhedron* poisson_reconstruct(const Point_set& points,
                                 Kernel::FT sm_distance, // Approximation error w.r.t. point set average spacing.
                                 const QString& solver, // solver name
                                 bool use_two_passes);
-
+using namespace CGAL::Three;
 class Polyhedron_demo_poisson_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
   QAction* actionPoissonReconstruction;
 
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
 
     actionPoissonReconstruction = new QAction(tr("Poisson reconstruction"), mainWindow);
     actionPoissonReconstruction->setObjectName("actionPoissonReconstruction");
@@ -80,7 +80,7 @@ class Polyhedron_demo_poisson_plugin_dialog : public QDialog, private Ui::Poisso
 
 void Polyhedron_demo_poisson_plugin::on_actionPoissonReconstruction_triggered()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* point_set_item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));

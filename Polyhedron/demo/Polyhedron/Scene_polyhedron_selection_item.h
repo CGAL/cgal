@@ -173,7 +173,6 @@ public:
   Scene_polyhedron_selection_item() 
     : Scene_polyhedron_item_decorator(NULL, false)
     {
-        nbVaos = 0;
         for(int i=0; i<3; i++)
         {
             addVaos(i);
@@ -192,10 +191,10 @@ public:
   Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
     : Scene_polyhedron_item_decorator(NULL, false)
     {
-        nbVaos = 0;
         nb_facets = 0;
         nb_points = 0;
         nb_lines = 0;
+
         for(int i=0; i<3; i++)
         {
             addVaos(i);
@@ -256,10 +255,10 @@ public:
 
 
     using Scene_polyhedron_item_decorator::draw;
-    virtual void draw(Viewer_interface*) const;
+    virtual void draw(CGAL::Three::Viewer_interface*) const;
     virtual void draw_edges() const { }
-    virtual void draw_edges(Viewer_interface*) const;
-    virtual void draw_points(Viewer_interface*) const;
+    virtual void draw_edges(CGAL::Three::Viewer_interface*) const;
+    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
 
   bool supportsRenderingMode(RenderingMode m) const { return (m==Flat); }
 
@@ -269,7 +268,7 @@ public:
   void selection_changed(bool b)
   {
       QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
-      Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(v);
+      CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
       if(!viewer)
           return;
       if(!b)
@@ -805,7 +804,7 @@ private:
   mutable std::size_t nb_lines;
   mutable QOpenGLShaderProgram *program;
   using Scene_item::initialize_buffers;
-  void initialize_buffers(Viewer_interface *viewer) const;
+  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_elements() const;
 
 };

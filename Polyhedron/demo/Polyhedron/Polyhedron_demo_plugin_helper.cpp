@@ -1,4 +1,4 @@
-#include "Polyhedron_demo_plugin_helper.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <QMainWindow>
 #include <QAction>
 #include <QMetaObject>
@@ -7,8 +7,10 @@
 #include <QVector>
 #include <QSet>
 #include <QDockWidget>
+
 #include "MainWindow.h"
 
+using namespace CGAL::Three;
 QAction*
 Polyhedron_demo_plugin_helper::
 getActionFromMainWindow(QMainWindow* mw,
@@ -28,7 +30,7 @@ Polyhedron_demo_plugin_helper::
 init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
   mw = mainWindow;
   scene = scene_interface;
-  Q_FOREACH(QString actionName, actionsNames())
+  Q_FOREACH(QString actionName,actionsNames())
   {
     actions_map[actionName] = getActionFromMainWindow(mw, actionName);
   }
@@ -115,12 +117,12 @@ void Polyhedron_demo_plugin_helper::autoConnectActions()
 
 void Polyhedron_demo_plugin_helper::add_dock_widget(QDockWidget* dock_widget) 
 {
-  mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+  mw->addDockWidget(::Qt::LeftDockWidgetArea, dock_widget);
 
   QList<QDockWidget*> dockWidgets = mw->findChildren<QDockWidget*>();
   int counter = 0;
   Q_FOREACH(QDockWidget* dock, dockWidgets) {
-    if( mw->dockWidgetArea(dock) != Qt::LeftDockWidgetArea ||
+    if( mw->dockWidgetArea(dock) != ::Qt::LeftDockWidgetArea ||
         dock == dock_widget ) 
     { continue; }
 

@@ -1,0 +1,131 @@
+namespace CGAL {
+/*!
+
+\mainpage User Manual
+\anchor Chapter_Three
+\anchor chapterThree
+\cgalAutoToc
+\author Laurent Rineau, Sebastien Loriot, Andreas Fabri, Maxime Gimeno
+
+\section intro Understanding the Polyhedron demo
+
+These pages are not documenting the whole Polyhedron demo but only the API that can be useful to create and add a new plugin.
+
+There are several levels in this demo. 
+
+- The MainWindow, which contains the UI elements. 
+
+- Among these elements is the Viewer, which is the drawable surface that handles all the drawing and all the keyboard and mouse events. 
+
+- The Viewer has a reference to the Scene, which contains the Scene_item list, which is a list of the drawn elements. 
+
+A plugin usually defines an object that inherits from Scene_item or uses some of them to demonstrate a CGAL feature, so it might have to deal with the above elements.
+
+\section examplePlugin Creating a simple Plugin
+\subsection examplePluginItself The plugin itself
+A basic plugin will inherit from Polyhedron_demo_plugin_interface. It can also inherits from the Polyhedron_demo_plugin_helper instead, for a more detailed model of plugin.
+Its name must be of the form Polyhedron_demo_xxxx_yyyy_plugin. \n
+<b>In the CMakeList.txt file, in the section Plugins, add the following lines :</b>
+
+    polyhedron_demo_plugin(xxxx_yyyy_plugin Polyhedron_demo_xxxx_yyyy_plugin)
+    
+<b>If your plugin interacts with scene items, then you have to add the following line too :</b>
+    target_link_libraries(xxxx_yyyy_plugin scene_polyhedron_item) 
+      
+  [init]: @ref Polyhedron_demo_plugin_helper#init(QMainWindow *, Scene_interface *)
+  The class must contain the following lines :\n
+  
+    Q_OBJECT\n
+    Q_INTERFACES(Polyhedron_demo_plugin_interface)\n
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")\n
+    
+In the function [init], get a reference to the Scene  and to the MainWindow. Then, create and link the actions of the plugin.\n
+Create a list of QActions containing the actions of the plugin.\n
+Add the following line:
+~~~~~~~~~~~~~{.cpp}
+    actionName->setProperty("submenuName", "Name_you_want_for_your_submenu");
+    ~~~~~~~~~~~~~
+to place your action in a submenu in the Operation Menu.\n
+If the plugin implements a new Scene_item, please notice that a Scene_item has a number of functions that will need a reference to the Viewer through the Viewer_interface type.
+
+A plugin must always contain
+~~~~~~~~~~~~~{.cpp}
+#include "Polyhedron_demo_xxxx_yyyy_plugin.moc"
+~~~~~~~~~~~~~
+\subsection examplePluginDialog Adding a dialog
+
+This section describes how to add a dialog on the use of an action.
+
+For a minimalist dialog, intended to get a single parameter for instancem you can create a QInputDialog :
+~~~~~~~~~~~~~{.cpp}
+    const unsigned int parameter =
+      QInputDialog::getInt((QWidget*)mw,
+                           tr("Title"), // dialog title
+                           tr("Parameter's value:"), // field label
+                           10, // default value = fast
+                           0, // min
+                           100, // max
+                           1, // step
+                           &ok);
+    if(!ok) return;
+~~~~~~~~~~~~~
+    
+
+For a more elaborate interface, you will have to use the designer tool of QtCreator. Create a new Qt Designer form (file->New file or Project->Qt->), and select among the template/form choices. 
+Name it Polyhedron_demo_your_plugin_name_plugin_dialog.ui (you may have to rename it once it is created as QtCreator tends to forget the capital letters), and add it to the project in the CMakeList :
+    qt5_wrap_ui( exampleUI_FILES Polyhedron_demo_example_plugin.ui )
+    polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES})
+    target_link_libraries(example_plugin scene_polyhedron_item)
+Edit the ui file with the editor, then add the following line to your plugin file:
+~~~~~~~~~~~~~{.cpp}
+#include "ui_Polyhedron_demo_your_plugin_name_plugin.h"
+~~~~~~~~~~~~~
+
+You can then add a new class inheriting from QDialog and your own dialog, accessible with "Ui::". Add the macro Q_OBJECT and the line 
+    setupUi(this) 
+in your constructor. You can populate the dialog in the action, using dialog.show() or dialog.exec().
+
+\subsection examplePluginDockWidget Adding a dock widget
+This section describes how to add a Dock Widget to the application.
+Just like with the Dialog, create a new Qt Designer form (file->New file or Project->Qt->Qt Designer Form), choose QDockWidget in Widgets, and add it to the project in the CMakeList :
+    qt5_wrap_ui( exampleUI_FILES dock_example.ui )
+    polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES})
+    target_link_libraries(example_plugin scene_polyhedron_item)
+Edit the ui file with the editor, then add the following line to your plugin file:
+~~~~~~~~~~~~~{.cpp}
+    #include "ui_dock_example.h"
+ ~~~~~~~~~~~~~
+ Add a DockQWidget* and a Ui::your_dock_widget as private members of your plugin :
+ ~~~~~~~~~~~~~{.cpp}
+    private:
+    Ui::Dock_example ui_widget;
+    QDockWidget* dock_widget;
+~~~~~~~~~~~~~
+and initialize them in the init fucntion :
+~~~~~~~~~~~~~{.cpp}
+  dock_widget = new QDockWidget("Mesh Deformation", mw);
+      dock_widget->setVisible(false); // do not show at the beginning
+
+      ui_widget.setupUi(dock_widget);
+      mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+~~~~~~~~~~~~~
+
+Use signal/slots to connect the dock widget to the plugin, and connect them in the init() function, and use the functions show()/hide() to make your 
+dock widget visible or not.
+
+\section usefulItems List of useful classes :
+- MainWindow
+- CGAL::Three::Viewer_interface
+- CGAL::Three::Scene_interface
+- Scene_item
+- CGAL::Three::Polyhedron_demo_plugin_helper
+- CGAL::Three::Polyhedron_demo_plugin_interface
+
+
+\section example Example : 
+
+The following code will create a plugin that adds an action to the MainWindow. This action is called "Draw Triangle" and adds a triangle to the scene.
+\cgalExample{Polyhedron/Polyhedron_demo_example_plugin.cpp}
+
+*/
+} /* namespace CGAL */
