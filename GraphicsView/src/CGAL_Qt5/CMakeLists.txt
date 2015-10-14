@@ -75,11 +75,11 @@ include_directories( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt5_3RD_PARTY_
 
 link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
 
-collect_cgal_library( CGAL_Qt5 "${additional_files}")
-
-qt5_use_modules(CGAL_Qt5 OpenGL Svg)
-
 if(NOT ENABLE_HEADER_ONLY)
+   collect_cgal_library( CGAL_Qt5 "${additional_files}")
+
+   qt5_use_modules(CGAL_Qt5 OpenGL Svg)
+
    add_dependencies( CGAL_Qt5 CGAL )
 
    # CGAL_Qt5 only depends on CGAL in DEBUG, but we still link it in
