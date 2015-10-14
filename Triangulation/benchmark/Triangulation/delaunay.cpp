@@ -26,19 +26,23 @@ void test(const int d, const std::string & type, const int N)
 
     typedef CGAL::Random_points_in_cube_d<Point> Random_points_iterator;
     CGAL::Timer cost;  // timer
-    std::size_t mem_before = CGAL::Memory_sizer().virtual_size();
 
-    DT dt(d);
-    assert(dt.empty());
-
+    // Generate points
     std::vector<Point> points;
     CGAL::Random rng;
     Random_points_iterator rand_it(d, 2.0, rng);
     CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
-    cost.reset();cost.start();
-    std::cout << "Delaunay triangulation of " << N << 
+
+    std::size_t mem_before = CGAL::Memory_sizer().virtual_size();
+    cost.reset();
+    cost.start();
+
+    std::cout << "Delaunay triangulation of " << N <<
       " points in dim " << d << ":" << std::endl;
+
+    DT dt(d);
     dt.insert(points.begin(), points.end());
+
     std::cout << "  Done in " << cost.time() << " seconds." << std::endl;
     std::cout << "  Memory consumption: " << 
       ((CGAL::Memory_sizer().virtual_size() - mem_before) >> 10) << " KB.\n";
