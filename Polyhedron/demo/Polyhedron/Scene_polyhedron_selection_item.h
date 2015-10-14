@@ -266,6 +266,17 @@ public:
   bool isEmpty() const {
     return selected_vertices.empty() && selected_edges.empty() && selected_facets.empty();
   }
+  void selection_changed(bool b)
+  {
+      QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
+      Viewer_interface* viewer = dynamic_cast<Viewer_interface*>(v);
+      if(!viewer)
+          return;
+      if(!b)
+        viewer->setBindingSelect();
+      else
+        viewer->setNoBinding();
+  }
   Bbox bbox() const 
   {
     // Workaround a bug in g++-4.8.3:
