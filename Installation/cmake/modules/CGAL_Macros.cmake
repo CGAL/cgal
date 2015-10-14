@@ -456,6 +456,7 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
      endforeach()
 
+     file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set(ENABLE_HEADER_ONLY \"${ENABLE_HEADER_ONLY}\" CACHE BOOL \"Enable cgal header only\" FORCE)\n")
   endmacro()
 
   macro ( fetch_env_var VAR )
