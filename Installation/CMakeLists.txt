@@ -27,7 +27,17 @@ if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
 
+#--------------------------------------------------------------------------------------------------
+#
+#                                    -= HEADER ONLY =-
+#
+#--------------------------------------------------------------------------------------------------
+option(ENABLE_HEADER_ONLY "Enable the header only version of CGAL" OFF )
 
+if (ENABLE_HEADER_ONLY)
+  add_definitions(-DCGAL_HEADER_ONLY)
+endif (ENABLE_HEADER_ONLY)
+ 
 #--------------------------------------------------------------------------------------------------
 #
 #                                    -= PACKAGE SETUP =-
