@@ -48,10 +48,10 @@ if(OPENGL_FOUND)
 
   collect_cgal_library( CGAL_ImageIO "")
 
+  add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_ImageIO_3RD_PARTY_DEFINITIONS} )
+
   if (NOT ENABLE_HEADER_ONLY)
       add_dependencies( CGAL_ImageIO CGAL )
-
-      add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_ImageIO_3RD_PARTY_DEFINITIONS} )
 
       # CGAL_ImageIO only depends on CGAL in DEBUG, but we still link it
       # in both build types.
