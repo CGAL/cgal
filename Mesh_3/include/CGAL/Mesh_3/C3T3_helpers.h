@@ -3026,6 +3026,9 @@ move_point_topo_change(const Vertex_handle& old_vertex,
                                 std::back_inserter(insertion_conflict_boundary),
                                 std::inserter(removal_conflict_cells, removal_conflict_cells.end()),
                                 could_lock_zone);
+  if (insertion_conflict_cells.empty())
+    return old_vertex;//new_position coincides with an existing vertex (not old_vertex)
+                      //and old_vertex should not be removed of the nb_vertices will change
   reset_circumcenter_cache(removal_conflict_cells);
   reset_sliver_cache(removal_conflict_cells);
   reset_circumcenter_cache(insertion_conflict_cells);
