@@ -122,8 +122,8 @@ to output |H| to |os|.}*/
   vn(Base::number_of_vertices()), 
   en(Base::number_of_halfedges()), 
   fn(Base::number_of_faces())
-{ verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
-             out.iword(CGAL::IO::mode) != CGAL::IO::BINARY);
+{ verbose = (get_mode(out) != CGAL::IO::ASCII &&
+             get_mode(out) != CGAL::IO::BINARY);
 }
 
 
@@ -135,8 +135,8 @@ PM_io_parser(std::ostream& os, const PMDEC& D)
   vn(Base::number_of_vertices()), 
   en(Base::number_of_halfedges()), 
   fn(Base::number_of_faces())
-{ verbose = (out.iword(CGAL::IO::mode) != CGAL::IO::ASCII &&
-             out.iword(CGAL::IO::mode) != CGAL::IO::BINARY);
+{ verbose = (get_mode(out) != CGAL::IO::ASCII &&
+             get_mode(out) != CGAL::IO::BINARY);
 }
 
 
