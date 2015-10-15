@@ -37,16 +37,18 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
   endif()
 
   if (NOT ENABLE_HEADER_ONLY)
-    add_library (${LIBRARY_NAME}
-      ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp 
-      ${rc_file}
-      ${ADDITIONAL_FILES})
-    if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
-      set_target_properties(${LIBRARY_NAME} PROPERTIES 
-        VERSION "${CGAL_SOVERSION}" 
-        SOVERSION "${CGAL_SONAME_VERSION}")
-    endif()
-  endif()
+     add_library (${LIBRARY_NAME}
+       ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp
+       ${rc_file}
+       ${ADDITIONAL_FILES})
+   #  add_library (${LIBRARY_NAME} ${CGAL_LIBRARY_SOURCE_FILES} ${rc_file} ${ADDITIONAL_FILES}) # builing not creating temporary all_files.cpp
+     if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
+       set_target_properties(${LIBRARY_NAME} PROPERTIES
+         VERSION "${CGAL_SOVERSION}"
+         SOVERSION "${CGAL_SONAME_VERSION}")
+     endif()
+
+   endif()
 
   if(CGAL_AUTO_LINK_ENABLED)
     if (NOT ENABLE_HEADER_ONLY)
@@ -192,7 +194,9 @@ CGAL_add_if_target(CGAL_Core)
 CGAL_add_if_target(CGAL_ImageIO)
 CGAL_add_if_target(CGAL_Qt5)
 
-export(TARGETS ${CGAL_ACTUAL_CONFIGURED_LIBRARIES} NAMESPACE CGAL:: FILE "${CMAKE_BINARY_DIR}/CGALExports.cmake")
+if (NOT ENABLE_HEADER_ONLY)
+  export(TARGETS ${CGAL_ACTUAL_CONFIGURED_LIBRARIES} NAMESPACE CGAL:: FILE "${CMAKE_BINARY_DIR}/CGALExports.cmake")
+endif()
 
 message(STATUS "Sources for CGAL component libraries '${CGAL_CONFIGURED_LIBRARIES}' detected")
 

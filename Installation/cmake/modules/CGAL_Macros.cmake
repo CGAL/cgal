@@ -472,6 +472,15 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     endif()
   endmacro()
 
+  macro ( cgal_include_moc_files )
+    #    set(mocfiles "")
+    #   set(RESOURCE_FILES "")
+    if ( ENABLE_HEADER_ONLY )
+      foreach(qtmoc_file ${CGAL_QT5_QTMOCCMAKE_FILES})
+        include(${qtmoc_file})
+      endforeach()
+    endif()
+  endmacro()  
 
 ## All the following macros are probably unused. -- Laurent Rineau, 2011/07/21
 

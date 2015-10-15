@@ -13,17 +13,9 @@ endif()
 
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
-# Find CGAL and CGAL Qt5
 
-# TODO modifier le find_package(CGAL COMPONENTS Qt5) pour qu'il marche en header only
-if(ENABLE_HEADER_ONLY)
-  find_package(CGAL)
-else()
-  find_package(CGAL COMPONENTS Qt5)
-  if(NOT CGAL_Qt5_FOUND)
-    message(STATUS "NOTICE: This demo requires the CGAL Qt5 library and will not be compiled.")
-  endif()
-endif()
+# Find CGAL and CGAL Qt5
+find_package(CGAL COMPONENTS Qt5)
 
 include( ${CGAL_USE_FILE} )
 
@@ -38,17 +30,11 @@ if(Qt5_FOUND)
   find_package(QGLViewer )
 endif(Qt5_FOUND)
 
-if(CGAL_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
-# TODO FAIRE UNE MACRO, ou mieux dans le find cgal avec module qt5 ?
-  set(mocfiles "")
-  set(RESOURCE_FILES "")
-  foreach(qtmoc_file ${CGAL_QT5_QTMOCCMAKE_FILES})
-    include(${qtmoc_file})
-  endforeach()
-#end TODP
+  cgal_include_moc_files()
 
   qt5_wrap_ui( UI_FILES MainWindow.ui )
 
@@ -83,12 +69,16 @@ if(CGAL_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS AABB_demo )
 
 
-else (CGAL_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(AABB_MISSING_DEPS "")
 
   if(NOT CGAL_FOUND)
     set(AABB_MISSING_DEPS "the CGAL library, ${AABB_MISSING_DEPS}")
+  endif()
+
+  if(NOT CGAL_Qt5_FOUND)
+    message(AABB_MISSING_DEPS "CGAL_Qt5, ${AABB_MISSING_DEPS}")
   endif()
 
   if(NOT Qt5_FOUND)
@@ -101,8 +91,8 @@ else (CGAL_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   if(NOT QGLVIEWER_FOUND)
     set(AABB_MISSING_DEPS "QGLViewer, ${AABB_MISSING_DEPS}")
-  endif()
+  endif()  
 
   message(STATUS "NOTICE: This demo requires ${AABB_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+endif (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
