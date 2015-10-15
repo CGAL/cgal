@@ -14,13 +14,13 @@ endif()
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
 
+# Find Qt5 itself
+find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Gui Svg)
+
 # Find CGAL and CGAL Qt5
 find_package(CGAL COMPONENTS Qt5)
 
 include( ${CGAL_USE_FILE} )
-
-# Find Qt5 itself
-find_package(Qt5 QUIET COMPONENTS Xml Script OpenGL Gui Svg)
 
 # Find OpenGL
 find_package(OpenGL)
@@ -34,7 +34,7 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FO
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
-  cgal_include_moc_files()
+#  cgal_include_moc_files()
 
   qt5_wrap_ui( UI_FILES MainWindow.ui )
 
