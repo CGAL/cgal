@@ -119,7 +119,8 @@ public:
       }
 
       const word_type* data = static_cast<const word_type*>(r_im_.data());
-      return data[ pz*dimy*dimx + py*dimx + px ];
+      return static_cast<return_type>(transform(
+                data[pz*dimy*dimx + py*dimx + px]));
     }
   }
 
