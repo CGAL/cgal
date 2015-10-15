@@ -80,13 +80,19 @@ a property map.
 We provide functions to read and write sets of points or sets of
 points with normals from the following ASCII file formats: XYZ (three
 point coordinates `x y z` per line or three point coordinates and
-three normal vector coordinates `x y z nx ny nz` per line), and OFF
-(%Object File Format) \cgalCite{cgal:p-gmgv16-96}.
+three normal vector coordinates `x y z nx ny nz` per line), OFF
+(%Object File Format) \cgalCite{cgal:p-gmgv16-96} and PLY (Polygon
+File Format).
 
 - `read_xyz_points()` 
-- `read_off_points()` 
+- `read_off_points()`
+- `read_ply_points()` 
 - `write_off_points()` 
-- `write_xyz_points()` 
+- `write_xyz_points()`
+- `write_ply_points()`
+
+Note that `read_ply_points()` also accepts binary PLY format in
+addition of ASCII.
 
 \subsection Point_set_processing_3Example Example
 

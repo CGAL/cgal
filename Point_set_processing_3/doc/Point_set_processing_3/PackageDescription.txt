@@ -25,6 +25,7 @@
 ## Functions ##
 
 - `CGAL::read_off_points()`
+- `CGAL::read_ply_points()`
 - `CGAL::read_xyz_points()`
 - `CGAL::compute_average_spacing()`
 - `CGAL::remove_outliers()`
@@ -42,6 +43,7 @@
 - `CGAL::vcm_estimate_normals()`
 - `CGAL::vcm_is_on_feature_edge()`
 - `CGAL::write_off_points()`
+- `CGAL::write_ply_points()`
 - `CGAL::write_xyz_points()`
 */
 
