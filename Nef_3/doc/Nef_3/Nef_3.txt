@@ -68,8 +68,7 @@ to a global data structure with edges, facets, and volumes. We offer a
 rich interface to investigate these data structures, their different
 elements and their connectivity. We provide affine (rigid)
 transformations and a point location query operation. We have a custom
-file format for storing and reading Nef polyhedra from files. We offer
-a simple OpenGL-based visualizer for debugging and illustrations.
+file format for storing and reading Nef polyhedra from files.
 
 \section Nef_3Definition Definition
 
@@ -563,37 +562,6 @@ the `Object_handle` can represent a `Vertex_const_handle`, a
 
 \cgalExample{Nef_3/nef_3_point_location.cpp}
 
-\section Nef_3Visualization Visualization
-
-With the `Qt_widget_OpenGL` class an interface to OpenGL
-visualization via Qt is offered. The class knows how to handle
-mouse movements and clicks and how to move and scale the 
-3D object displayed in the widget. `Qt_widget_OpenGL` is
-a basis for writing Qt widgets displaying 3D objects. 
-A user can derive a new class from `Qt_widget_OpenGL` 
-which implements the drawing method and configures the context menus.
-
-\subsection Nef_3Visualizinga3DNefpolyhedron Visualizing a 3D Nef polyhedron
-
-`Qt_widget_Nef_3` implements the drawing methods for displaying 
-instances of
-`Nef_polyhedron_3`. The following example shows how to set up 
-an QApplication with a main widget of type `Qt_widget_Nef_3` and
-how to start the viewer.
-
-\image html visualization_SNC.png
-\image latex visualization_SNC.png
-
-\cgalExample{Nef_3/visualization_SNC.cpp}
-
-\subsection Nef_3VisualizingaSphereMap Visualizing a Sphere Map
-
-`Qt_widget_Nef_S2` is a widget implemented on the basis of 
-`Qt_widget_OpenGL`. It can be used to visualize the sphere map 
-of a vertex in a `Nef_polyhedron_3` using the interface between
-`Nef_polyhedron_S2` and `Nef_polyhedron_3`.
-
-\cgalExample{Nef_3/visualization_SM.cpp}
 
 */ 
 } /* namespace CGAL */

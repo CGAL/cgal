@@ -31,7 +31,6 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{Two dimensional visualization depends on \sc{Qt} 3, three dimensional visualization depends on \ref thirdpartyCoin.}
 \cgalPkgBib{cgal:r-kdsf}
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgShortInfoEnd
