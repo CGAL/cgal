@@ -1,9 +1,8 @@
 # moc files that are compiled directly as cpp files
-qt5_wrap_cpp(mocfiles ../../include/CGAL/Qt/GraphicsViewNavigation.h
-                      ../../include/CGAL/Qt/DemosMainWindow.h
-                      ../../include/CGAL/Qt/GraphicsItem.h
-                      ../../include/CGAL/Qt/GraphicsViewInput.h)
+qt5_wrap_cpp(mocfiles ${CMAKE_CURRENT_LIST_DIR}/../../include/CGAL/Qt/GraphicsViewNavigation.h
+                      ${CMAKE_CURRENT_LIST_DIR}/../../include/CGAL/Qt/DemosMainWindow.h
+                      ${CMAKE_CURRENT_LIST_DIR}/../../include/CGAL/Qt/GraphicsItem.h
+                      ${CMAKE_CURRENT_LIST_DIR}/../../include/CGAL/Qt/GraphicsViewInput.h)
 
 # qrc files (resources files, that contain icons, at least)
-qt5_add_resources ( RESOURCE_FILES ../../demo/resources/CGAL.qrc ../../demo/icons/Input.qrc ../../demo/icons/File.qrc ../../demo/icons/Triangulation_2.qrc)
-
+qt5_add_resources ( RESOURCE_FILES ${CMAKE_CURRENT_LIST_DIR}/../../demo/resources/CGAL.qrc ${CMAKE_CURRENT_LIST_DIR}/../../demo/icons/Input.qrc ${CMAKE_CURRENT_LIST_DIR}/../../demo/icons/File.qrc ${CMAKE_CURRENT_LIST_DIR}/../../demo/icons/Triangulation_2.qrc)

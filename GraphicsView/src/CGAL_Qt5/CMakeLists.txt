@@ -50,6 +50,7 @@ cache_set(CGAL_Qt5_3RD_PARTY_DEFINITIONS  ${QT_DEFINITIONS} ${OPENGL_DEFINITIONS
 
 set(mocfiles "")
 set(RESOURCE_FILES "")
+set(QTMOCCMAKE_FILES "")
 
 foreach (package ${CGAL_CONFIGURED_PACKAGES} )
   file(GLOB PACKAGE_QTMOC_FILES "${package}/src/CGAL_Qt5/*.qtmoc.cmake")
@@ -58,6 +59,7 @@ foreach (package ${CGAL_CONFIGURED_PACKAGES} )
     include(${package_qtmoc_file}) 
     #        message(STATUS QTMOC------------FILE: ${package_qtmoc_file})      
   endforeach()
+  list(APPEND QTMOCCMAKE_FILES ${PACKAGE_QTMOC_FILES})
 endforeach()
 
 foreach(mocfile ${mocfiles})
@@ -75,9 +77,11 @@ include_directories( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt5_3RD_PARTY_
 
 link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
 
-if(NOT ENABLE_HEADER_ONLY)
-   collect_cgal_library( CGAL_Qt5 "${additional_files}")
+collect_cgal_library( CGAL_Qt5 "${additional_files}")
 
+if(ENABLE_HEADER_ONLY)
+   set(CGAL_QT5_QTMOCCMAKE_FILES ${QTMOCCMAKE_FILES} CACHE INTERNAL "CGAL qt5 qtmoc cmake files")
+else()
    qt5_use_modules(CGAL_Qt5 OpenGL Svg)
 
    add_dependencies( CGAL_Qt5 CGAL )
