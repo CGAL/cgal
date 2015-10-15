@@ -4,8 +4,7 @@
 
 The functors provided in this package for constructing
 cone-based spanners are parameterized with a traits class `Traits`, which defines the 
-primitives (predicates and construction objects) that the construction
-algorithms for those cone-based spanners use. 
+primitives (predicates and construction objects) required by the functors.
 
 \cgalHasModel any model of a \cgal %kernel.
 
