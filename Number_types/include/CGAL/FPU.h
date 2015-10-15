@@ -26,6 +26,7 @@
 #define CGAL_FPU_H
 
 #include <CGAL/assertions.h>
+#include <CGAL/use.h>
 
 #ifndef __INTEL_COMPILER
 #include <cmath> // for HUGE_VAL
@@ -128,6 +129,13 @@ const double infinity = HUGE_VAL;
 #endif
 
 } // namespace internal
+
+#ifdef CGAL_HEADER_ONLY
+// Defined in test_FPU_rounding_mode_impl.h
+struct Check_FPU_rounding_mode_is_restored;
+inline const Check_FPU_rounding_mode_is_restored&
+get_static_check_fpu_rounding_mode_is_restored();
+#endif
 
 // Inline function to stop compiler optimizations that shouldn't happen with
 // pragma fenv on.
@@ -414,6 +422,17 @@ inline
 void
 FPU_set_cw (FPU_CW_t cw)
 {
+#ifndef CGAL_NDEBUG
+#ifdef CGAL_HEADER_ONLY
+  // Call the get_static_check_fpu_rounding_mode_is_restored()
+  // function called so that the test located in the destructor
+  // of Check_FPU_rounding_mode_is_restored is run
+  const Check_FPU_rounding_mode_is_restored & tmp = 
+    get_static_check_fpu_rounding_mode_is_restored();
+  CGAL_USE(tmp);
+#endif
+#endif
+
   CGAL_IA_SETFPCW(cw);
 }
 
@@ -507,5 +526,9 @@ inline void force_ieee_double_precision()
 }
 
 } //namespace CGAL
+
+#ifdef CGAL_HEADER_ONLY
+#include <CGAL/test_FPU_rounding_mode_impl.h>
+#endif // CGAL_HEADER_ONLY
 
 #endif // CGAL_FPU_H
