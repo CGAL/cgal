@@ -28,6 +28,7 @@
 #define CGAL_INTERNAL_MESH_3_CHECK_WEIGHTS_H
 
 #include <CGAL/tags.h>
+#include <CGAL/Mesh_3/Has_features.h>
 #include <boost/type_traits/is_same.hpp>
 
 namespace CGAL {
@@ -40,7 +41,7 @@ bool has_non_protecting_weights(const Triangulation& tr,
                                 const MeshDomain&)
 {
   bool with_features =
-    boost::is_same<typename MeshDomain::Has_features, CGAL::Tag_true>::value;
+    boost::is_same<Has_features<MeshDomain>, CGAL::Tag_true>::value;
 
   for (typename Triangulation::Finite_vertices_iterator
         vv = tr.finite_vertices_begin();
