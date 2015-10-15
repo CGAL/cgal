@@ -457,6 +457,9 @@ make_triangle(const P& p0, const P& p1, const P& p2, Graph& g)
   h0 = opposite(h0,g);
   h1 = opposite(h1,g);
   h2 = opposite(h2,g);
+  set_next(h0, h2, g);
+  set_next(h2, h1, g);
+  set_next(h1, h0, g);
   set_target(h0, v0, g);
   set_target(h1, v1, g);
   set_target(h2, v2, g);
@@ -517,6 +520,10 @@ make_quad(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
   h1 = opposite(h1,g);
   h2 = opposite(h2,g);
   h3 = opposite(h3,g);
+  set_next(h0, h3, g);
+  set_next(h3, h2, g);
+  set_next(h2, h1, g);
+  set_next(h1, h0, g);
   set_target(h0, v0, g);
   set_target(h1, v1, g);
   set_target(h2, v2, g);
