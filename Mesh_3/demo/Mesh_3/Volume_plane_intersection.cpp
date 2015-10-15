@@ -82,7 +82,7 @@ void Volume_plane_intersection::init_buffers()
 
         vao[0].bind();
         buffers[0].bind();
-        buffers[0].allocate(a_vertex.data(), a_vertex.size()*sizeof(float));
+        buffers[0].allocate(a_vertex.data(), static_cast<int>(a_vertex.size()*sizeof(float)));
         vertexLocation[0] = rendering_program.attributeLocation("vertex");
         rendering_program.enableAttributeArray(vertexLocation[0]);
         rendering_program.setAttributeBuffer(vertexLocation[0],GL_FLOAT,0,3);
@@ -91,7 +91,7 @@ void Volume_plane_intersection::init_buffers()
 
         vao[1].bind();
         buffers[1].bind();
-        buffers[1].allocate(b_vertex.data(), b_vertex.size()*sizeof(float));
+        buffers[1].allocate(b_vertex.data(), static_cast<int>(b_vertex.size()*sizeof(float)));
         vertexLocation[0] = rendering_program.attributeLocation("vertex");
         rendering_program.enableAttributeArray(vertexLocation[0]);
         rendering_program.setAttributeBuffer(vertexLocation[0],GL_FLOAT,0,3);
@@ -100,7 +100,7 @@ void Volume_plane_intersection::init_buffers()
 
         vao[2].bind();
         buffers[2].bind();
-        buffers[2].allocate(c_vertex.data(), c_vertex.size()*sizeof(float));
+        buffers[2].allocate(c_vertex.data(), static_cast<int>(c_vertex.size()*sizeof(float)));
         vertexLocation[0] = rendering_program.attributeLocation("vertex");
         rendering_program.enableAttributeArray(vertexLocation[0]);
         rendering_program.setAttributeBuffer(vertexLocation[0],GL_FLOAT,0,3);

@@ -1,9 +1,9 @@
-#include <boost/config.hpp>
 
-#if defined(BOOST_MSVC)
+#ifdef _MSC_VER
 #  pragma warning(disable:4244) // conversion with loss of data
 #endif
 
+#include <CGAL/config.h>
 #include "config.h"
 
 #include "Volume_plane.h"
