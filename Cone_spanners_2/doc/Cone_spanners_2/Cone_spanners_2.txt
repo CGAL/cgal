@@ -10,14 +10,16 @@ namespace CGAL {
 \section sec_CBS_Introduction Introduction
 
 This chapter describes the package for constructing cone-based spanners given a set of vertices on the plane. 
-Specifically, this package provides functors for constructing two kinds of cone-based spanners: 
+Currently, this package includes the functors for constructing two kinds of cone-based spanners: 
 Yao graph and Theta graph. Both exact and inexact constructions are supported.
 In exact construction, the cone boundaries are calculated using roots of polynomials,
 which achieves the exactness by avoiding using \f$ \pi \f$ in the computation.
-In inexact construction, the cone boundaries are calculated using the approximate
-\f$ \pi \f$ value defined in \cgal, which is still accurate enough for most applications. 
-Moreover, this chapter describes a global function for 
-generating the data and script files used by Gnuplot to plot the constructed graphs.
+In inexact construction, the cone boundaries are calculated using an approximate
+\f$ \pi \f$ value, which uses the constant `CGAL_PI` defined in \cgal and is still accurate 
+enough for most applications. 
+Moreover, for visualization purpose, this chapter describes a global function 
+that, given a constructed graph as input, can generate the data and script files used by Gnuplot
+to plot that graph.
  
 \section sec_CBS_mydefinitions Definitions
 
@@ -329,7 +331,8 @@ those vetices on the cone boundaries belong to a certain cone.
 The incorrect Theta graph produced by the inexact construction.
 \cgalFigureEnd
 
-This example demonstrates that the exact construction capability can be very
+This example demonstrates that the exact construction capability 
+provided by this package can be very
 valuable if it is a strict requirement that graphs be constructed correctly.
 
 \subsection CBS_using_BGL Using algorithms from BGL
