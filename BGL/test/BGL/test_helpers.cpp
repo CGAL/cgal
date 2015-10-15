@@ -42,19 +42,23 @@ int main()
   Mesh m;
   halfedge_descriptor hd;
   hd = CGAL::make_triangle(a,b,c,m);
-  assert(CGAL::is_triangle(hd,m));
+  assert(CGAL::is_isolated_triangle(hd,m));
+  assert(CGAL::is_valid(m));
   m.clear();
   hd = CGAL::make_quad(a,b,c,d,m);
-  assert(CGAL::is_quad(hd,m));
+  assert(CGAL::is_isolated_quad(hd,m));
+  assert(CGAL::is_valid(m));
   assert(CGAL::is_quad_mesh(m));
   m.clear();
   hd = CGAL::make_tetrahedron(a,b,c,d,m);
   assert(CGAL::is_tetrahedron(hd,m));
   assert(CGAL::is_triangle_mesh(m));
+  assert(CGAL::is_valid(m));
   m.clear();
   hd = CGAL::make_hexahedron(a,b,c,d,aa,bb,cc,dd,m);
   assert(CGAL::is_hexahedron(hd,m));
   assert(CGAL::is_quad_mesh(m));
+  assert(CGAL::is_valid(m));
 
   std::cerr << "done" << std::endl; 
   return 0;
