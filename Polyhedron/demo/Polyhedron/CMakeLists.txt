@@ -115,7 +115,18 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
   qt5_use_modules(gl_splat OpenGL Gui Xml)
 
-  qt5_generate_moc( "../../../Three/include/CGAL/Three/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
+  if(EXISTS "../../../Three/include/CGAL/Three/Viewer_interface.h")
+    # Position in the Git layout
+    qt5_generate_moc( "../../../Three/include/CGAL/Three/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
+  elseif(EXISTS "../../include/CGAL/Three/Viewer_interface.h")
+    # Position in the tarball layout
+    qt5_generate_moc( "../../../Three/include/CGAL/Three/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
+  elseif(EXISTS "../../../../../include/CGAL/Three/Viewer_interface.h")
+    # Position in the testsuite layout
+    qt5_generate_moc( "../../../../../include/CGAL/Three/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
+  else()
+    message(FATAL_ERROR "Cannot find <CGAL/Three/Viewer_interface.h>")
+  endif()
 
 
   # AUXILIARY LIBRARIES
