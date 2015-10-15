@@ -107,9 +107,16 @@ protected:
   * Scene_item::attrib_buffers(CGAL::Three::Viewer_interface* viewer, int program_name).*/
   void pickMatrix(GLdouble x, GLdouble y, GLdouble width, GLdouble height,
                   GLint viewport[4]);
-  //!Creates an rrow of radius \param R, precision \param prec (the lower the better), from the point \param from to the
-  //!point \param to, of the color \param color, filling the data of \param data. This AxisData will then hold all the data
-  //!of this arrow.
+  /*!
+   * \brief makeArrow creates an arrow and stores it in a struct of vectors.
+   * \param R the radius of the arrow.
+   * \param prec the precision of the quadric. The lower this value is, the higher precision you get.
+   * It can be any int between 1 and 360.
+   * \param from the starting point of the arrow.
+   * \param to the destination point of the arrow (the pointed extremity).
+   * \param color the RGB color of the arrow.
+   * \param data the struct of std::vector that will contain the results.
+   */
 
   void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
   void resizeGL(int w, int h);

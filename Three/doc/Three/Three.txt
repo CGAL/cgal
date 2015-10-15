@@ -30,9 +30,10 @@ Its name must be of the form Polyhedron_demo_xxxx_yyyy_plugin. \n
     polyhedron_demo_plugin(xxxx_yyyy_plugin Polyhedron_demo_xxxx_yyyy_plugin)
     
 <b>If your plugin interacts with scene items, then you have to add the following line too :</b>
+    
     target_link_libraries(xxxx_yyyy_plugin scene_polyhedron_item) 
       
-  [init]: @ref Polyhedron_demo_plugin_helper#init(QMainWindow *, Scene_interface *)
+  [init]: @ref CGAL::Three::Polyhedron_demo_plugin_helper#init(QMainWindow *, Scene_interface *)
   The class must contain the following lines :\n
   
     Q_OBJECT\n
