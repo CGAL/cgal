@@ -191,7 +191,7 @@ std::ostream
 {
   typename General_polygon_2<Traits>::Curve_const_iterator i;
 
-  switch(os.iword(IO::mode)) {
+  switch(get_mode(os)) {
     case IO::ASCII :
       os << p.size() << ' ';
       for (i = p.curves_begin(); i != p.curves_end(); ++i) {

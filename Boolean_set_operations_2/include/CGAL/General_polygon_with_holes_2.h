@@ -143,7 +143,7 @@ std::ostream
 {
   typename General_polygon_with_holes_2<Polygon_>::Hole_const_iterator hit;
 
-  switch(os.iword(IO::mode)) {
+  switch(get_mode(os)) {
     case IO::ASCII :
       os << p.outer_boundary() << ' ' << p.number_of_holes()<< ' ';
       for (hit = p.holes_begin(); hit != p.holes_end(); ++hit) {
