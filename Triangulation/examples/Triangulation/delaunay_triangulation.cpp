@@ -22,7 +22,7 @@ int main(int argc, char **argv)
 
   // Instanciate a random point generator
   typedef CGAL::Random_points_in_cube_d<T::Point> Random_points_iterator;
-  Random_points_iterator rand_it(D, 1.0, CGAL::default_random);
+  Random_points_iterator rand_it(D, 1.0, CGAL::get_default_random());
   // Generate N random points
   std::vector<T::Point> points;
   CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
