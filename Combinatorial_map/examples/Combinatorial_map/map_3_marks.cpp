@@ -21,7 +21,7 @@ int main()
   {
     mark = cm.get_new_mark();
   }
-  catch (Exception_no_more_available_mark e)
+  catch (Exception_no_more_available_mark)
   {
     std::cerr<<"No more free mark, exit."<<std::endl;
     exit(-1);

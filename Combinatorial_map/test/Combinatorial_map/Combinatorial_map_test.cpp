@@ -146,7 +146,7 @@ bool test_get_new_mark()
     {
       marks[i] = map.get_new_mark();
     }
-    catch (Map1::Exception_no_more_available_mark e)
+    catch (Map1::Exception_no_more_available_mark)
     {
       std::cerr<<"No more free mark, exit."<<std::endl;
       return false;
@@ -161,9 +161,9 @@ bool test_get_new_mark()
   {
     mark = map.get_new_mark();
   }
-  catch (Map1::Exception_no_more_available_mark e)
+  catch (Map1::Exception_no_more_available_mark)
   {
-    std::cerr<<"The creation of an additional mark throw an exception: OK"<<std::endl;
+    std::cout<<"The creation of an additional mark throw an exception: OK"<<std::endl;
     res = true;
   }
 
