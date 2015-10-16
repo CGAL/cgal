@@ -32,6 +32,7 @@
 #include <CGAL/Mesh_3/Mesh_sizing_field.h>
 #include <CGAL/Mesh_optimization_return_code.h>
 #include <CGAL/Mesh_3/parameters_defaults.h>
+#include <CGAL/internal/Mesh_3/check_weights.h>
 
 namespace CGAL {
   
@@ -66,6 +67,9 @@ odt_optimize_mesh_3_impl(C3T3& c3t3,
                          const double freeze_ratio,
                          const bool do_freeze )
 {
+  CGAL_precondition(
+    !internal::Mesh_3::has_non_protecting_weights(c3t3.triangulation(), domain));
+
   typedef typename C3T3::Triangulation  Tr;
   
   typedef Mesh_3::Mesh_sizing_field<Tr>             Sizing;
