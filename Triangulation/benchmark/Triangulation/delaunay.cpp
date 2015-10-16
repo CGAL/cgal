@@ -23,63 +23,63 @@ template<int D>
 std::size_t compute_triangulation(std::size_t N)
 {
 #ifdef USE_DYNAMIC_KERNEL
-    typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> K;
+  typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> K;
 #else
-    typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > K;
+  typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > K;
 #endif
-    typedef CGAL::Delaunay_triangulation<K> DT;
+  typedef CGAL::Delaunay_triangulation<K> DT;
 
-    typedef typename DT::Vertex Vertex;
-    typedef typename DT::Vertex_handle Vertex_handle;
-    typedef typename DT::Full_cell Full_cell;
-    typedef typename DT::Full_cell_handle Full_cell_handle;
-    typedef typename DT::Facet Facet;
-    typedef typename DT::Point Point;
-    typedef typename DT::Geom_traits::RT RT;
-    typedef typename DT::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
+  typedef typename DT::Vertex Vertex;
+  typedef typename DT::Vertex_handle Vertex_handle;
+  typedef typename DT::Full_cell Full_cell;
+  typedef typename DT::Full_cell_handle Full_cell_handle;
+  typedef typename DT::Facet Facet;
+  typedef typename DT::Point Point;
+  typedef typename DT::Geom_traits::RT RT;
+  typedef typename DT::Finite_full_cell_const_iterator Finite_full_cell_const_iterator;
 
-    typedef CGAL::Random_points_in_cube_d<Point> Random_points_iterator;
-    CGAL::Timer cost;  // timer
+  typedef CGAL::Random_points_in_cube_d<Point> Random_points_iterator;
+  CGAL::Timer cost;  // timer
 
-    // Generate points
-    std::vector<Point> points;
-    CGAL::Random rng;
-    Random_points_iterator rand_it(D, 2.0, rng);
-    CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
+  // Generate points
+  std::vector<Point> points;
+  CGAL::Random rng;
+  Random_points_iterator rand_it(D, 2.0, rng);
+  CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
 
-    std::size_t mem_before = CGAL::Memory_sizer().virtual_size();
-    cost.reset();
-    cost.start();
+  std::size_t mem_before = CGAL::Memory_sizer().virtual_size();
+  cost.reset();
+  cost.start();
 
-    std::cout << "Delaunay triangulation of " << N <<
-      " points in dim " << D << ":" << std::endl;
+  std::cout << "Delaunay triangulation of " << N <<
+    " points in dim " << D << ":" << std::endl;
 
-    DT dt(D);
-    dt.insert(points.begin(), points.end());
+  DT dt(D);
+  dt.insert(points.begin(), points.end());
 
-    std::size_t mem = CGAL::Memory_sizer().virtual_size() - mem_before;
-    double timing = cost.time();
-    std::cout << "  Done in " << timing << " seconds." << std::endl;
-    std::cout << "  Memory consumption: " << (mem >> 10) << " KB.\n";
-    std::size_t nbfc= dt.number_of_finite_full_cells();
-    std::size_t nbc= dt.number_of_full_cells();
-    std::cout << "  " << dt.number_of_vertices() << " vertices, " 
-              << nbfc << " finite simplices and " 
-              << (nbc-nbfc) << " convex hull Facets."
-              << std::endl;
+  std::size_t mem = CGAL::Memory_sizer().virtual_size() - mem_before;
+  double timing = cost.time();
+  std::cout << "  Done in " << timing << " seconds." << std::endl;
+  std::cout << "  Memory consumption: " << (mem >> 10) << " KB.\n";
+  std::size_t nbfc= dt.number_of_finite_full_cells();
+  std::size_t nbc= dt.number_of_full_cells();
+  std::cout << "  " << dt.number_of_vertices() << " vertices, " 
+            << nbfc << " finite simplices and " 
+            << (nbc-nbfc) << " convex hull Facets."
+            << std::endl;
 
 #ifdef OUTPUT_STATS_IN_CSV
-    csv_file 
-      << D << ";"
-      << N << ";"
-      << timing << ";"
-      << mem << ";"
-      << nbfc << "\n"
-      << std::flush;
+  csv_file 
+    << D << ";"
+    << N << ";"
+    << timing << ";"
+    << mem << ";"
+    << nbfc << "\n"
+    << std::flush;
 #endif
 
 
-    return mem;
+  return mem;
 }
 
 // Will compute triangulations of i*num_points_steps points, 
@@ -99,19 +99,19 @@ void go(
 
 int main(int argc, char **argv)
 {
-    srand(static_cast<unsigned int>(time(NULL)));
-    //int N = 100; if( argc > 1 ) N = atoi(argv[1]);
-    go<2>(10000000); // 1e7
-    go<3>(1000000); // 1e6
-    go<4>(500000); // 1e5
-    go<5>(10000); // 1e4
-    go<6>(1000);
-    go<7>(1000);
-    go<8>(1000);
-    go<9>(100);
-    go<10>(100);
-    go<11>(50);
-    go<12>(50);
+  srand(static_cast<unsigned int>(time(NULL)));
+  //int N = 100; if( argc > 1 ) N = atoi(argv[1]);
+  //go<2>(10000000); // 1e7
+  //go<3>(1000000); // 1e6
+  //go<4>(500000); // 1e5
+  go<5>(50000); // 1e4
+  go<6>(10000);
+  go<7>(1000);
+  go<8>(1000);
+  go<9>(100);
+  go<10>(100);
+  go<11>(50);
+  go<12>(50);
 
-    return 0;
+  return 0;
 }
