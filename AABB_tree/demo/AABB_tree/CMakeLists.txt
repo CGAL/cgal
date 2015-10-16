@@ -49,13 +49,13 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FO
   qt5_generate_moc( "Scene.h" "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp" )
   add_file_dependencies( Scene_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Scene.h" )
 
-  qt5_add_resources ( RESOURCE_FILES AABB_demo.qrc )
+  qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES AABB_demo.qrc )
 
   add_file_dependencies( AABB_demo.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
                                        "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp"
                                        "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp" )
 
-  add_executable  ( AABB_demo AABB_demo.cpp ${UI_FILES} ${RESOURCE_FILES} ${mocfiles})
+  add_executable  ( AABB_demo AABB_demo.cpp ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
   qt5_use_modules(AABB_demo Gui OpenGL Xml Script Svg )
   # Link with Qt libraries
   target_link_libraries( AABB_demo ${QT_LIBRARIES} )
