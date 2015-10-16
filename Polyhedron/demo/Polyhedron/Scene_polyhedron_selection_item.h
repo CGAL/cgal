@@ -399,6 +399,10 @@ public:
       select_all<Facet_handle>(); break;
     case Active_handle::EDGE:
       selected_edges.insert(edges(*polyhedron()).first, edges(*polyhedron()).second);
+      invalidate_buffers();
+      QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
+      v->update();
+
     }
   }
   // select all of vertex, facet or edge (use Vertex_handle, Facet_handle, edge_descriptor as template argument)

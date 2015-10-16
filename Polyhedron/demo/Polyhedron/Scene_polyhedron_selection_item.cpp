@@ -73,8 +73,8 @@ void Scene_polyhedron_selection_item::initialize_buffers(Viewer_interface *viewe
     std::vector<float>(normals).swap(normals);
 
     nb_lines = positions_lines.size();
-    positions_lines.resize(0);
-    std::vector<float>(positions_lines).swap(positions_lines);
+   // positions_lines.resize(0);
+   // std::vector<float>(positions_lines).swap(positions_lines);
 
     nb_points = positions_points.size();
     positions_points.resize(0);
