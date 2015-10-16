@@ -21,7 +21,7 @@
 #include "Kernel_type.h"
 #include "Polyhedron_type.h"
 #include "Scene_polyhedron_item.h"
-#include "Polyhedron_demo_io_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 
 #include <QApplication>
 #include <QMessageBox>
@@ -105,10 +105,10 @@ namespace CGAL{
 
 class Polyhedron_demo_vtk_plugin :
   public QObject,
-  public Polyhedron_demo_io_plugin_interface
+  public CGAL::Three::Polyhedron_demo_io_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
