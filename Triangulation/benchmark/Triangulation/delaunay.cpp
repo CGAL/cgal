@@ -12,6 +12,11 @@
 #include <algorithm>
 
 //#define USE_DYNAMIC_KERNEL
+#define OUTPUT_STATS_IN_CSV
+
+#ifdef OUTPUT_STATS_IN_CSV
+static std::ofstream csv_file("stats.csv");
+#endif
 
 // Return the number of Bytes used
 template<int D>
@@ -53,7 +58,8 @@ std::size_t compute_triangulation(std::size_t N)
     dt.insert(points.begin(), points.end());
 
     std::size_t mem = CGAL::Memory_sizer().virtual_size() - mem_before;
-    std::cout << "  Done in " << cost.time() << " seconds." << std::endl;
+    double timing = cost.time();
+    std::cout << "  Done in " << timing << " seconds." << std::endl;
     std::cout << "  Memory consumption: " << (mem >> 10) << " KB.\n";
     std::size_t nbfc= dt.number_of_finite_full_cells();
     std::size_t nbc= dt.number_of_full_cells();
@@ -61,6 +67,17 @@ std::size_t compute_triangulation(std::size_t N)
               << nbfc << " finite simplices and " 
               << (nbc-nbfc) << " convex hull Facets."
               << std::endl;
+
+#ifdef OUTPUT_STATS_IN_CSV
+    csv_file 
+      << D << ";"
+      << N << ";"
+      << timing << ";"
+      << mem << ";"
+      << nbfc << "\n"
+      << std::flush;
+#endif
+
 
     return mem;
 }
@@ -84,10 +101,10 @@ int main(int argc, char **argv)
 {
     srand(static_cast<unsigned int>(time(NULL)));
     //int N = 100; if( argc > 1 ) N = atoi(argv[1]);
-    go<2>(1e7);
-    go<3>(1e6);
-    go<4>(1e5);
-    go<5>(1e4);
+    go<2>(10000000); // 1e7
+    go<3>(1000000); // 1e6
+    go<4>(500000); // 1e5
+    go<5>(10000); // 1e4
     go<6>(1000);
     go<7>(1000);
     go<8>(1000);
