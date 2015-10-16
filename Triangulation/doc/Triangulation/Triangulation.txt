@@ -6,15 +6,15 @@ namespace CGAL {
 \anchor Chapter_Triangulations
 
 \cgalAutoToc
-\authors Samuel Hornus, Olivier Devillers and Clément Jamin.
+\authors Olivier Devillers, Samuel Hornus, and Clément Jamin.
 
 This package proposes data structures and algorithms to compute
 triangulations of points in any dimensions.
 The `Triangulation_data_structure` handles the
 combinatorial aspect of triangulations while the geometric classes
-`Triangulation` and `Delaunay_triangulation` allows to
-compute and maintain triangulations and Delaunay triangulations of 
-sets of points.
+`Triangulation`, `Delaunay_triangulation` and `Regular_triangulation` allow to
+compute and maintain triangulations, Delaunay triangulations and
+regular triangulations of sets of points.
 
 # Introduction #
 
@@ -80,6 +80,12 @@ In a Delaunay triangulation, each face has the so-called
 <I>Delaunay</I> or <I>empty-ball</I> property: there exists a
 circumscribing ball whose interior does not contain 
 any vertex of the triangulation.
+
+The class `CGAL::Regular_triangulation<RegularTriangulationTraits, TriangulationDataStructure>` 
+builds the regular triangulation 
+-- also known as weighted Delaunay triangulation -- of a set of points. 
+A detailed description of such a triangulation is available in section
+\ref TriangulationSecRT.
 
 ## Further Definitions ##
 
@@ -277,8 +283,7 @@ full cells adjacent to `c` are automatically subdivided to match the
 subdivision of the full cell `c`. The barycentric subdivision of `c` is
 obtained by enumerating all the faces of `c` in order of decreasing
 dimension, from the dimension of `c` to dimension 1, and inserting a new
-vertex in each face. For the enumeration, we use a combination enumerator,
-which is not documented, but provided in \cgal.
+vertex in each face.
 
 \cgalFigureBegin{triangulationfigbarycentric,barycentric-subdivision.png}
 Barycentric subdivision in dimension \f$ d=2\f$.
@@ -387,7 +392,7 @@ visits <I>only</I> the infinite full cells but stores handles to them into the
 
 The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` derives from
 `CGAL::Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
-and represent Delaunay triangulations.
+and represents Delaunay triangulations.
 
 A <I>circumscribing ball</I> of a simplex is a ball
 having all vertices of the simplex on its boundary.
@@ -410,7 +415,10 @@ in the conflict zone are removed, leaving a hole that contains `p`. That
 hole is ``star shaped'' around `p` and thus is re-triangulated using
 `p` as a center vertex.
 
-Delaunay triangulations also support vertex removal.
+Delaunay triangulations support insertion of points, removal of vertices,
+and localization of a query point inside the triangulation.
+Note that inserting a set of points at once is much faster
+than inserting the points one by one.
 
 ## Implementation ##
 
@@ -439,36 +447,114 @@ retaining an efficient update of the Delaunay triangulation.
 
 \cgalExample{delaunay_triangulation.cpp}
 
+\section TriangulationSecRT Regular Triangulations
+
+The class `CGAL::Regular_triangulation<RegularTriangulationTraits, TriangulationDataStructure>` derives from
+`CGAL::Triangulation<RegularTriangulationTraits, TriangulationDataStructure>`
+and represents regular triangulations.
+
+Regular triangulations are similar to Delaunay triangulations, but 
+with weighted points.
+
+Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^D\f$. Let
+\f$ {p}^{(w)}=(p,w_p), p\in\mathbb{R}^D, w_p\in\mathbb{R}\f$ and
+\f$ {z}^{(w)}=(z,w_z), z\in\mathbb{R}^D, w_z\in\mathbb{R}\f$ 
+be two weighted points.
+A weighted point
+\f$ {p}^{(w)}=(p,w_p)\f$ can also be seen as a sphere of center \f$ p\f$ and
+radius \f$ \sqrt{w_p}\f$.
+The <I>power product</I> (or <I>power distance</I> )
+between \f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$ is
+defined as
+\f[ \Pi({p}^{(w)},{z}^{(w)}) = {\|{p-z}\|^2-w_p-w_z} \f]
+where \f$ \|{p-z}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ z\f$.
+\f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$
+are said to be <I>orthogonal</I> if \f$ \Pi{({p}^{(w)}-{z}^{(w)})}
+= 0\f$.
+
+\f$D + 1\f$ weighted points have a unique common orthogonal weighted point 
+called the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be
+<I>regular</I> if \f$ \forall {p}^{(w)}\in{S}^{(w)},
+\Pi{({p}^{(w)}-{z}^{(w)})}\geq 0\f$.
+
+A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres
+of all simplices are regular.
+
+Regular triangulations support insertion of points, 
+and localization of a query point inside the triangulation.
+Note that inserting a set of points at once is much faster
+than inserting the points one by one.
+\warning The removal of vertices is not supported yet.
+
+
+## Implementation ##
+
+The class `CGAL::Regular_triangulation<RegularTriangulationTraits, TriangulationDataStructure>` derives from
+`CGAL::Triangulation<RegularTriangulationTraits, TriangulationDataStructure>`. It thus stores a model of
+the concept `TriangulationDataStructure` which is instantiated with a vertex
+type that stores a weighted point and allows its retrieval.
+
+The template parameter `RegularTriangulationTraits` must be a model of the concept
+`RegularTriangulationTraits` which provides the `Bare_point`and `%Weighted_point` 
+types as well as various geometric predicates used by the 
+`Regular_triangulation` class.
+The concept `RegularTriangulationTraits` refines the concept
+`TriangulationTraits`.
+
+## Example ##
+
+This simple example shows how to create a regular triangulation.
+
+\cgalExample{regular_triangulation.cpp}
+
 # Complexity and Performances #
 
 The current implementation locates points by walking in the
 triangulation, and sorts the points with spatial sort to insert a
-set of points. Thus the theoretical complexity are
-\f$ O(n\log n)\f$ for inserting \f$ n\f$ random points and \f$ O(n^{\frac{1}{d}})\f$
-for inserting one point in a triangulation of \f$ n\f$ random points.
-In the worst case, the expected complexity is 
-\f$ O(n^{\lceil\frac{d}{2}\rceil}+n\log n)\f$.
+set of points. In the worst case, the expected complexity is 
+\f$ O(n^{\lceil\frac{d}{2}\rceil}+n\log n)\f$. When the algorithm is 
+run on \f$ n \f$ random points, the cost of inserting one point is 
+\f$ O(n^{1/d}) \f$.
 
-We provide below (Figure \cgalFigureRef{Triangulationfigbenchmarks}) the
+We provide below (Figure \cgalFigureRef{Triangulationfigbenchmarks100} 
+and \cgalFigureRef{Triangulationfigbenchmarks1000}) the
 performance of the Delaunay triangulation on randomly distributed points. 
 The machine used is a PC running 
 Windows 7 64-bits with an Intel Xeon CPU clocked at 2.80 GHz with 32GB of RAM.
-The program has been compiled with Microsoft Visual C++ 2012 in Release mode.
+The program has been compiled with Microsoft Visual C++ 2013 in Release mode.
 
-\cgalFigureAnchor{Triangulationfigbenchmarks}
-
+\cgalFigureAnchor{Triangulationfigbenchmarks100}
 <CENTER>
-<TABLE CELLSPACING=15>
+<TABLE CELLSPACING=15 align=center>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=13><HR></td></tr>
+<tr><th ALIGN=RIGHT NOWRAP>Dimension</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th><th>9</th><th>10</th><th>11</th><th>12</th></tr>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=13><HR></td></tr>
+<tr align=center><td align=right>Time (s)</td><td>0.003</td><td>0.007</td><td>0.03</td><td>0.14</td><td>0.56</td><td>2.7</td><td>11.3</td><td>45</td><td>185</td><td>686</td><td>2390</td></tr>
+<tr align=center><td align=right>Memory (MB)</td><td>< 1</td><td>< 1</td><td>< 1</td><td>1</td><td>3</td><td>13</td><td>53</td><td>182</td><td>662</td><td>2187</td><td>7156</td></tr>
+<tr align=center><td align=right>Number of maximal simplices</td><td>184</td><td>487</td><td>1,548</td><td>5,548</td><td>19,598</td><td>67,102</td><td>230,375</td><td>715,984</td><td>2,570,623</td><td>7,293,293</td><td>21,235,615</td></tr>
+<tr align=center><td align=right>Number of convex hull facets</td><td>14</td><td>66</td><td>308</td><td>1,164</td><td>4,410</td><td>16,974</td><td>57,589</td><td>238,406</td><td>670,545</td><td>2,574,326</td><td>8,603,589</td></tr></td><td>
+<tr><td ALIGN=LEFT NOWRAP COLSPAN=13><HR></td></tr>
+</TABLE>
+</CENTER>
+\cgalFigureCaptionBegin{Triangulationfigbenchmarks100}
+Performance of the insertion of 100 points in a Delaunay triangulation.
+\cgalFigureCaptionEnd
+
+\cgalFigureAnchor{Triangulationfigbenchmarks1000}
+<CENTER>
+<TABLE CELLSPACING=15 align=center>
 <tr><td ALIGN=LEFT NOWRAP COLSPAN=9><HR></td></tr>
 <tr><th ALIGN=RIGHT NOWRAP>Dimension</th><th>2</th><th>3</th><th>4</th><th>5</th><th>6</th><th>7</th><th>8</th></tr>
 <tr><td ALIGN=LEFT NOWRAP COLSPAN=9><HR></td></tr>
-<tr><td>Inserting 100 points</td><td>0.003</td><td>0.007</td><td>0.03</td><td>0.14</td><td>0.56</td><td>2.7</td><td>11.3</td></tr>
-<tr><td>Inserting 1000 points</td><td>0.015</td><td>0.056</td><td>0.52</td><td>3.5</td><td>26.2</td><td>185</td><td>1385</td></tr>
+<tr align=center><td align=right>Time (s)</td><td>0.01</td><td>0.05</td><td>0.5</td><td>3.4</td><td>24</td><td>183</td><td>1365</td></tr>
+<tr align=center><td align=right>Memory (MB)</td><td>< 1</td><td>< 1</td><td>2.7</td><td>14</td><td>81</td><td>483</td><td>2827</td></tr>
+<tr align=center><td align=right>Number of maximal simplices</td><td>1,979</td><td>6,315</td><td>25,845</td><td>122,116</td><td>596,927</td><td>3,133,318</td><td>16,403,337</td></tr>
+<tr align=center><td align=right>Number of convex hull facets</td><td>19</td><td>138</td><td>963</td><td>6,184</td><td>41,135</td><td>241,540</td><td>1,406,797</td></tr></td><td>
 <tr><td ALIGN=LEFT NOWRAP COLSPAN=9><HR></td></tr>
 </TABLE>
 </CENTER>
-\cgalFigureCaptionBegin{Triangulationfigbenchmarks}
-Running times in seconds for algorithms on Delaunay triangulations.
+\cgalFigureCaptionBegin{Triangulationfigbenchmarks1000}
+Performance of the insertion of 1000 points in a Delaunay triangulation.
 \cgalFigureCaptionEnd
 
 # Design and Implementation History #
@@ -477,7 +563,8 @@ This package is heavily inspired by the works of
 Monique Teillaud and Sylvain Pion (`Triangulation_3`)
 and Mariette Yvinec (`Triangulation_2`).
 The first version was written by Samuel Hornus. The final version is a joint 
-work by Samuel Hornus, Olivier Devillers and Clément Jamin.
+work by Samuel Hornus, Olivier Devillers and Clément Jamin. In 2015, Clément
+Jamin added the regular triangulations.
 
 Starting with the version 2.3 of \cgal, a package written by Susan Hert and Michael Seel
 was the first able to deal with triangulation and convex hulls in arbitrary
