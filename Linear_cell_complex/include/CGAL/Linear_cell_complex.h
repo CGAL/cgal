@@ -419,7 +419,7 @@ namespace CGAL {
       unsigned int res = 0;
 
       std::map<Point, std::vector<Dart_handle> > one_dart_per_facet;
-      size_type mymark;
+      size_type mymark = get_new_mark();
 
       // First we fill the std::map by one dart per facet, and by using
       // the minimal point as index.
