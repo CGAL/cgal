@@ -456,10 +456,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
 
      endforeach()
 
-     file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set(ENABLE_HEADER_ONLY \"${ENABLE_HEADER_ONLY}\" CACHE BOOL \"Enable cgal header only\" FORCE)\n")
-
-     file( APPEND ${CMAKE_BINARY_DIR}/CGALConfig.cmake "set(CGAL_QT5_QTMOCCMAKE_FILES \"${CGAL_QT5_QTMOCCMAKE_FILES}\" CACHE INTERNAL \"CGAL qt5 qtmoc cmake files\" FORCE)\n")
-
   endmacro()
 
   macro ( fetch_env_var VAR )
@@ -471,16 +467,6 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
       endif()
     endif()
   endmacro()
-
-  macro ( cgal_include_moc_files )
-    #    set(mocfiles "")
-    #   set(RESOURCE_FILES "")
-    if ( ENABLE_HEADER_ONLY )
-      foreach(qtmoc_file ${CGAL_QT5_QTMOCCMAKE_FILES})
-        include(${qtmoc_file})
-      endforeach()
-    endif()
-  endmacro()  
 
 ## All the following macros are probably unused. -- Laurent Rineau, 2011/07/21
 
