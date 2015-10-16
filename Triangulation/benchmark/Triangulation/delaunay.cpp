@@ -84,10 +84,10 @@ int main(int argc, char **argv)
 {
     srand(static_cast<unsigned int>(time(NULL)));
     //int N = 100; if( argc > 1 ) N = atoi(argv[1]);
-    go<2>(100000);
-    go<3>(10000);
-    go<4>(1000);
-    go<5>(1000);
+    go<2>(1e7);
+    go<3>(1e6);
+    go<4>(1e5);
+    go<5>(1e4);
     go<6>(1000);
     go<7>(1000);
     go<8>(1000);
