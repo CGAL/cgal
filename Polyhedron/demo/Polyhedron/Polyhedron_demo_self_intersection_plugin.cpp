@@ -8,8 +8,8 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_polyhedron_selection_item.h"
 
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/intersections.h>
 #include <CGAL/Bbox_3.h>
@@ -19,13 +19,13 @@
 #include <CGAL/Make_triangle_soup.h>
 
 typedef Kernel::Triangle_3 Triangle;
-
+using namespace CGAL::Three;
 class Polyhedron_demo_self_intersection_plugin : 
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
@@ -56,7 +56,7 @@ public Q_SLOTS:
 
 void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_triggered()
 {
-  Scene_interface::Item_id index = scene->mainSelectionIndex();
+  CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
   
   Scene_polyhedron_item* item = 
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));

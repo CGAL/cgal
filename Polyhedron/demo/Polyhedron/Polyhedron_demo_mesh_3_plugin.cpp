@@ -1,7 +1,7 @@
 #include "config.h"
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <QObject>
 #include <QAction>
@@ -23,18 +23,18 @@ Scene_item* cgal_code_mesh_3(const Polyhedron*,
                              const double tets_sizing,
                              const double tet_shape,
                              const bool protect_features,
-                             Scene_interface* scene);
-
+                             CGAL::Three::Scene_interface* scene);
+using namespace CGAL::Three;
 class Polyhedron_demo_mesh_3_plugin :
   public QObject,
   protected Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     this->scene = scene_interface;
     this->mw = mainWindow;
     actionMesh_3 = new QAction("Create a tetrahedral mesh", mw);
@@ -77,7 +77,7 @@ get_approximate(double d, int precision, int& decimals)
 
 void Polyhedron_demo_mesh_3_plugin::mesh_3()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_polyhedron_item* item =
   qobject_cast<Scene_polyhedron_item*>(scene->item(index));
@@ -116,7 +116,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
           ui.tetShape,   SLOT(setEnabled(bool)));
 
   // Set default parameters
-  Scene_interface::Bbox bbox = item->bbox();
+  CGAL::Three::Scene_interface::Bbox bbox = item->bbox();
   ui.objectName->setText(item->name());
   ui.objectNameSize->setText(tr("Object bbox size (w,h,d):  <b>%1</b>,  <b>%2</b>,  <b>%3</b>")
                              .arg(bbox.width(),0,'g',3)

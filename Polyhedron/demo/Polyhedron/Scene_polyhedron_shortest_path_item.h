@@ -3,7 +3,7 @@
 
 #include "Scene_polyhedron_shortest_path_item_config.h"
 #include "Scene_polyhedron_item_decorator.h"
-#include "Scene_interface.h"
+#include <CGAL/Three/Scene_interface.h>
 #include "Messages_interface.h"
 
 #include "Polyhedron_type.h"
@@ -38,7 +38,7 @@ class SCENE_POLYHEDRON_SHORTEST_PATH_ITEM_EXPORT Scene_polyhedron_shortest_path_
   friend class Polyhedron_demo_shortest_path_plugin;
   
 public:
-  typedef Scene_interface::Bbox Bbox;
+  typedef CGAL::Three::Scene_interface::Bbox Bbox;
   
   typedef boost::property_map<Polyhedron, CGAL::vertex_point_t>::type VertexPointMap;
   
@@ -76,7 +76,7 @@ public:
 private:
   Messages_interface* m_messages;
   QMainWindow* m_mainWindow;
-  Scene_interface* m_sceneInterface;
+  CGAL::Three::Scene_interface* m_sceneInterface;
   Surface_mesh_shortest_path* m_shortestPaths;
   AABB_face_graph_tree m_aabbTree;
   
@@ -105,14 +105,14 @@ private:
   mutable QOpenGLShaderProgram *program;
 
   using Scene_polyhedron_item_decorator::initialize_buffers;
-  void initialize_buffers(Viewer_interface *viewer = 0) const;
+  void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;
   void compute_elements(void) const;
   
   
 public:
 
   Scene_polyhedron_shortest_path_item();
-  Scene_polyhedron_shortest_path_item(Scene_polyhedron_item* polyhedronItem, Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow);
+  Scene_polyhedron_shortest_path_item(Scene_polyhedron_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow);
   ~Scene_polyhedron_shortest_path_item();
   
   void set_selection_mode(Selection_mode mode);
@@ -122,18 +122,18 @@ public:
   
   virtual bool supportsRenderingMode(RenderingMode m) const;
   using Scene_polyhedron_item_decorator::draw;
-  virtual void draw(Viewer_interface*) const;
+  virtual void draw(CGAL::Three::Viewer_interface*) const;
   // Points OpenGL drawing
-  virtual void draw_points(Viewer_interface*) const;
+  virtual void draw_points(CGAL::Three::Viewer_interface*) const;
   
   virtual Scene_polyhedron_shortest_path_item* clone() const;
   
-  bool deferred_load(Scene_polyhedron_item* polyhedronItem, Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow);
+  bool deferred_load(Scene_polyhedron_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow);
   virtual bool load(const std::string& file_name);
   virtual bool save(const std::string& file_name) const;
   
 protected:
-  void initialize(Scene_polyhedron_item* polyhedronItem, Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow);
+  void initialize(Scene_polyhedron_item* polyhedronItem, CGAL::Three::Scene_interface* sceneInterface, Messages_interface* messages, QMainWindow* mainWindow);
   void deinitialize();
   
   virtual bool isFinite() const;

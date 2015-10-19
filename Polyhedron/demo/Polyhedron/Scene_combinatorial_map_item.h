@@ -16,7 +16,9 @@ typedef CGAL::Combinatorial_map<3,Items> Combinatorial_map_3;
 
 class QMenu;
 class QAction;
+namespace CGAL { namespace Three{
 class Scene_interface;
+}}
 class Scene_polyhedron_item;
 class Viewer_interface;
 
@@ -25,7 +27,7 @@ class SCENE_COMBINATORIAL_MAP_ITEM_EXPORT Scene_combinatorial_map_item
 {
     Q_OBJECT
 public:  
-    Scene_combinatorial_map_item(Scene_interface*,void* ad_A=NULL);
+    Scene_combinatorial_map_item(CGAL::Three::Scene_interface*,void* ad_A=NULL);
     ~Scene_combinatorial_map_item();
 
     Scene_combinatorial_map_item* clone() const;
@@ -43,9 +45,9 @@ public:
     //Event handling
     virtual bool keyPressEvent(QKeyEvent*);
     //drawing of the scene
-    virtual void draw_edges(Viewer_interface* viewer) const;
-    virtual void draw_points(Viewer_interface*) const;
-    virtual void draw(Viewer_interface*) const;
+    virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
+    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
+    virtual void draw(CGAL::Three::Viewer_interface*) const;
 
     bool isFinite() const { return true; }
     bool is_from_corefinement() const {return address_of_A!=NULL;}
@@ -66,7 +68,7 @@ public:
 
 private:
     Kernel::Vector_3 compute_face_normal(Combinatorial_map_3::Dart_const_handle adart) const;
-    Scene_interface* last_known_scene;
+    CGAL::Three::Scene_interface* last_known_scene;
     std::size_t volume_to_display;
     QAction* exportSelectedVolume;
     void* address_of_A;
@@ -84,7 +86,7 @@ private:
     mutable QOpenGLShaderProgram *program;
 
     using Scene_item::initialize_buffers;
-    void initialize_buffers(Viewer_interface *viewer) const;
+    void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
 
     using Scene_item::compute_elements;
     void compute_elements(void) const;

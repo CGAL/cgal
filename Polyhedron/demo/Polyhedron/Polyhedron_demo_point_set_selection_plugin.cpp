@@ -9,8 +9,8 @@
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
 
-#include "Scene_interface.h"
-#include "Polyhedron_demo_plugin_helper.h"
+#include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "ui_Point_set_selection_widget.h"
 #include "Point_set_3.h"
 
@@ -73,7 +73,7 @@ public:
     return (m == Wireframe);
   }
   
-  void draw_edges(Viewer_interface* viewer) const {
+  void draw_edges(CGAL::Three::Viewer_interface* viewer) const {
     viewer->glLineWidth(3.f);
     polyline->setRbgColor(0, 255, 0); 
 
@@ -178,13 +178,13 @@ public:
 }; // end class Scene_point_set_selection_visualizer
 ///////////////////////////////////////////////////////////////////////////////////////////////////
 
-
+using namespace CGAL::Three;
 class Polyhedron_demo_point_set_selection_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-    Q_INTERFACES(Polyhedron_demo_plugin_interface)
+    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
   bool applicable(QAction*) const { 
@@ -193,7 +193,7 @@ public:
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionPointSetSelection; }
   using Polyhedron_demo_plugin_helper::init;
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
     mw = mainWindow;
     scene = scene_interface;
     messages = m;

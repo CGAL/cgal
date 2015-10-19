@@ -7,8 +7,8 @@
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polylines_item.h"
 
-#include "Scene_interface.h"
-#include "Polyhedron_demo_plugin_helper.h"
+#include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include "ui_Selection_widget.h"
 
 #include <QAction>
@@ -53,13 +53,13 @@ struct Polyline_visitor
   }
   void end_polyline(){}
 };
-
+using namespace CGAL::Three;
 class Polyhedron_demo_selection_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-    Q_INTERFACES(Polyhedron_demo_plugin_interface)
+    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
   bool applicable(QAction*) const { 
@@ -69,7 +69,7 @@ public:
   void print_message(QString message) { messages->information(message); }
   QList<QAction*> actions() const { return QList<QAction*>() << actionSelection; }
   using Polyhedron_demo_plugin_helper::init;
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface, Messages_interface* m) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m) {
     mw = mainWindow;
     scene = scene_interface;
     messages = m;

@@ -143,9 +143,9 @@ public:
     virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=Gouraud && m!=PointsPlusNormals && m!=Splatting); } // CHECK THIS!
     // OpenGL drawing in a display list
     virtual void draw() const {}
-    virtual void draw(Viewer_interface*) const;
-    virtual void draw_points(Viewer_interface*) const;
-    virtual void draw_edges(Viewer_interface* viewer) const;
+    virtual void draw(CGAL::Three::Viewer_interface*) const;
+    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
+    virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
     void invalidate_buffers();
     bool isFinite() const { return true; }
     bool isEmpty() const;
@@ -177,7 +177,7 @@ private:
     mutable std::size_t nb_polys;
     mutable std::size_t nb_lines;
     using Scene_item::initialize_buffers;
-    void initialize_buffers(Viewer_interface *viewer) const;
+    void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
     void compute_normals_and_vertices(void) const;
     void triangulate_polygon(Polygons_iterator ) const;
     mutable QOpenGLShaderProgram *program;

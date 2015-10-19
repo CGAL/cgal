@@ -1,13 +1,13 @@
 #include "Scene_polyhedron_selection_item.h"
-#include "Polyhedron_demo_io_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <fstream>
-
+using namespace CGAL::Three;
 class Polyhedron_demo_selection_io_plugin :
         public QObject,
         public Polyhedron_demo_io_plugin_interface
 {
     Q_OBJECT
-    Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
+    Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
     QString name() const { return "selection_io_plugin"; }

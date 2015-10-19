@@ -2,7 +2,7 @@
 #include "Kernel_type.h"
 #include "Polyhedron_type.h"
 
-Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer::Vec& pos,const Scene_polyhedron_item* poly_item_,const Scene_interface*):
+Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer::Vec& pos,const Scene_polyhedron_item* poly_item_,const CGAL::Three::Scene_interface*):
     Scene_item(1,1),
     poly_item(poly_item_),
     manipulable(false),
@@ -15,7 +15,7 @@ Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer
     nb_lines = 0;
 }
 
-void Scene_polyhedron_transform_item::initialize_buffers(Viewer_interface *viewer =0) const
+void Scene_polyhedron_transform_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer =0) const
 {
     //vao for the edges
     {
@@ -67,7 +67,7 @@ void Scene_polyhedron_transform_item::compute_elements() const
 
 }
 
-void Scene_polyhedron_transform_item::draw_edges(Viewer_interface* viewer) const
+void Scene_polyhedron_transform_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
         initialize_buffers(viewer);

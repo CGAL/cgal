@@ -27,12 +27,12 @@
 
 #include <QObject>
 #include <QString>
-#include <CGAL_demo/Scene_interface.h>
+#include <CGAL/Three/Scene_interface.h>
 
 class Implicit_function_interface 
 {
 public:
-  typedef Scene_interface::Bbox Bbox;
+  typedef CGAL::Three::Scene_interface::Bbox Bbox;
   
   virtual ~Implicit_function_interface() {}
   

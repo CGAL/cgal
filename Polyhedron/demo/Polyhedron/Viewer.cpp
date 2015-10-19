@@ -1,6 +1,6 @@
 #include "Viewer.h"
 #include <CGAL/gl.h>
-#include "Scene_draw_interface.h"
+#include <CGAL/Three/Scene_draw_interface.h>
 #include <QMouseEvent>
 #include <QKeyEvent>
 #include <QGLViewer/manipulatedCameraFrame.h>
@@ -9,7 +9,7 @@
 #include <cmath>
 class Viewer_impl {
 public:
-  Scene_draw_interface* scene;
+  CGAL::Three::Scene_draw_interface* scene;
   bool antialiasing;
   bool twosides;
   bool macro_mode;
@@ -17,9 +17,8 @@ public:
 
   void draw_aux(bool with_names, Viewer*);
 };
-
 Viewer::Viewer(QWidget* parent, bool antialiasing)
-  : Viewer_interface(parent)
+  : CGAL::Three::Viewer_interface(parent)
 {
   d = new Viewer_impl;
   d->scene = 0;
@@ -67,7 +66,7 @@ Viewer::~Viewer()
   delete d;
 }
 
-void Viewer::setScene(Scene_draw_interface* scene)
+void Viewer::setScene(CGAL::Three::Scene_draw_interface* scene)
 {
   d->scene = scene;
 }
@@ -343,7 +342,7 @@ void Viewer::postSelection(const QPoint& pixel)
                       dir.x, dir.y, dir.z);
   }
 }
-bool Viewer_interface::readFrame(QString s, qglviewer::Frame& frame)
+bool CGAL::Three::Viewer_interface::readFrame(QString s, qglviewer::Frame& frame)
 {
   QStringList list = s.split(" ", QString::SkipEmptyParts);
   if(list.size() != 7)
@@ -372,7 +371,7 @@ bool Viewer_interface::readFrame(QString s, qglviewer::Frame& frame)
   return true;
 }
 
-QString Viewer_interface::dumpFrame(const qglviewer::Frame& frame) {
+QString CGAL::Three::Viewer_interface::dumpFrame(const qglviewer::Frame& frame) {
   const qglviewer::Vec pos = frame.position();
   const qglviewer::Quaternion q = frame.orientation();
 
@@ -405,18 +404,6 @@ QString Viewer::dumpCameraCoordinates()
   }
 }
 
-/**
- * @brief Viewer::pickMatrix
- * Source code of gluPickMatrix slightly modified : instead of multiplying the current matrix by this value,
- * sets the viewer's pickMatrix_ so that the drawing area is only around the cursor. This is because since CGAL 4.7,
- * the drawing sustem changed to use shaders, and these need this value. pickMatrix_ is passed to the shaders in
- * Scene_item::attrib_buffers(Viewer_interface* viewer, int program_name).
- * @param x
- * @param y
- * @param width
- * @param height
- * @param viewport
- */
 
 void Viewer::pickMatrix(GLdouble x, GLdouble y, GLdouble width, GLdouble height,
 GLint viewport[4])
@@ -463,7 +450,7 @@ void Viewer::beginSelection(const QPoint &point)
 void Viewer::endSelection(const QPoint& point)
 {
   QGLViewer::endSelection(point);
-   //set dthe pick matrix to Identity
+   //set the pick matrix to Identity
     for(int i=0; i<16; i++)
         pickMatrix_[i]=0;
     pickMatrix_[0]=1;

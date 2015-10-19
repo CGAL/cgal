@@ -115,7 +115,19 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
   qt5_use_modules(gl_splat OpenGL Gui Xml)
 
-  qt5_generate_moc( "CGAL_demo/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
+  find_path(CGAL_THREE_VIEWER_INTERFACE_H_PATH
+    NAME CGAL/Three/Viewer_interface.h
+    PATHS ${CGAL_INCLUDE_DIRS}
+    NO_DEFAULT_PATH
+    DOC "Path to CGAL/Three/Viewer_interface.h")
+  hide_variable(CGAL_THREE_VIEWER_INTERFACE_H_PATH)
+
+  if(CGAL_THREE_VIEWER_INTERFACE_H_PATH)
+    qt5_generate_moc( "${CGAL_THREE_VIEWER_INTERFACE_H_PATH}/CGAL/Three/Viewer_interface.h"
+      "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
+  else()
+    message(FATAL_ERROR "Cannot find <CGAL/Three/Viewer_interface.h>")
+  endif()
 
 
   # AUXILIARY LIBRARIES
@@ -486,6 +498,11 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   
   polyhedron_demo_plugin(shortest_path_plugin Polyhedron_demo_shortest_path_plugin ${shortestPathUI_FILES})
   target_link_libraries(shortest_path_plugin scene_polyhedron_item scene_polylines_item scene_polyhedron_selection_item scene_polyhedron_shortest_path_item scene_basic_objects)
+
+  qt5_wrap_ui( exampleUI_FILES Polyhedron_demo_example_plugin.ui dock_example.ui)
+  qt5_wrap_ui( example_dockUI_FILES dock_example.ui)
+  polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES} ${example_dockUI_FILES})
+  target_link_libraries(example_plugin scene_polyhedron_item)
 #
 # Exporting
 #
