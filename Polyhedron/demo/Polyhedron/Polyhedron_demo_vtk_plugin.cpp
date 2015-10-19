@@ -115,7 +115,7 @@ public:
   typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 
-  QString nameFilters() const { return "VTK files (*.vtk, *.vtp)"; }
+  QString nameFilters() const { return "VTK PolyData files (*.vtk, *.vtp)"; }
   QString name() const { return "vtk_plugin"; }
 
   bool canSave(const Scene_item*) { return false; } //todo
