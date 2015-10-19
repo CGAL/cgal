@@ -24,7 +24,11 @@
 #endif
 
 #ifdef __APPLE__
-#  include <OpenGL/gl.h>
+#  if TARGET_OS_IPHONE
+#    include <OpenGLES/ES2/gl.h>
+#  else
+#    include <OpenGL/gl.h>
+#  endif
 #else
 #  include <GL/gl.h>
 #endif
