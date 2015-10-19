@@ -68,7 +68,6 @@ public:
 
     void invalidate_buffers()
     {
-        compute_elements();
         are_buffers_filled = false;
     }
 
@@ -155,7 +154,10 @@ public:
 
     void draw(Viewer_interface* viewer) const {
         if(!are_buffers_filled)
+        {
+            compute_elements();
             initialize_buffers(viewer);
+        }
         vaos[0]->bind();
         program = getShaderProgram(PROGRAM_WITH_LIGHT);
         attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
@@ -168,7 +170,10 @@ public:
     }
     void draw_edges(Viewer_interface* viewer) const {
         if(!are_buffers_filled)
+        {
+            compute_elements();
             initialize_buffers(viewer);
+        }
         vaos[2]->bind();
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
@@ -193,7 +198,10 @@ public:
     void draw_points(Viewer_interface * viewer) const
     {
         if(!are_buffers_filled)
+        {
+            compute_elements();
             initialize_buffers(viewer);
+        }
         vaos[1]->bind();
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
@@ -503,9 +511,9 @@ private:
                 positions_grid.push_back(0.0);
             }
             float colors[3];
-            colors[0] = this->color().redF();
-            colors[1] = this->color().greenF();
-            colors[2] = this->color().blueF();
+            colors[0] = 0;
+            colors[1] = 0;
+            colors[2] = 0;
 
             for(int i=0; i< 132; i++)
             {
@@ -513,8 +521,7 @@ private:
             }
         }
 
-        //The facets
-        {
+
             if(isEmpty())
                 return;
 
@@ -526,7 +533,8 @@ private:
             clip_plane[3] = -plane.d();
 
 
-
+            //The facets
+            {
             for(C3t3::Facet_iterator
                 fit = c3t3().facets_begin(),
                 end = c3t3().facets_end();
