@@ -479,12 +479,13 @@ void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec t
     mat.rotate(angle, axis);
 
     //Head
+    const float Rf = static_cast<float>(R);
     for(int d = 0; d<360; d+= 360/prec)
     {
-        double D = d*M_PI/180.0;
-        double a =std::atan(R/0.33);
-        QVector4D p(0,1.0,0, 1.0);
-        QVector4D n(R*2.0*sin(D), sin(a), R*2.0*cos(D), 1.0);
+        float D = (float) (d * M_PI / 180.);
+        float a = (float) std::atan(Rf / 0.33);
+        QVector4D p(0., 1., 0, 1.);
+        QVector4D n(Rf*2.*sin(D), sin(a), Rf*2.*cos(D), 1.);
         QVector4D pR = mat*p;
         QVector4D nR = mat*n;
 
@@ -495,13 +496,13 @@ void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec t
         data.normals->push_back(nR.x());
         data.normals->push_back(nR.y());
         data.normals->push_back(nR.z());
-        data.colors->push_back(color.x);
-        data.colors->push_back(color.y);
-        data.colors->push_back(color.z);
+        data.colors->push_back((float)color.x);
+        data.colors->push_back((float)color.y);
+        data.colors->push_back((float)color.z);
 
         //point B1
-        p = QVector4D(R*2.0* sin(D),0.66,R *2.0* cos(D), 1.0);
-        n = QVector4D(sin(D), sin(a), cos(D), 1.0);
+        p = QVector4D(Rf*2.*sin(D), 0.66f, Rf*2.* cos(D), 1.f);
+        n = QVector4D(sin(D), sin(a), cos(D), 1.);
         pR = mat*p;
         nR = mat*n;
         data.vertices->push_back(pR.x());
@@ -510,12 +511,12 @@ void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec t
         data.normals->push_back(nR.x());
         data.normals->push_back(nR.y());
         data.normals->push_back(nR.z());
-        data.colors->push_back(color.x);
-        data.colors->push_back(color.y);
-        data.colors->push_back(color.z);
+        data.colors->push_back((float)color.x);
+        data.colors->push_back((float)color.y);
+        data.colors->push_back((float)color.z);
         //point C1
         D = (d+360/prec)*M_PI/180.0;
-        p = QVector4D(R*2.0* sin(D),0.66,R *2.0* cos(D), 1.0);
+        p = QVector4D(Rf*2.* sin(D), 0.66f, Rf *2.* cos(D), 1.f);
         n = QVector4D(sin(D), sin(a), cos(D), 1.0);
         pR = mat*p;
         nR = mat*n;
@@ -526,9 +527,9 @@ void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec t
         data.normals->push_back(nR.x());
         data.normals->push_back(nR.y());
         data.normals->push_back(nR.z());
-        data.colors->push_back(color.x);
-        data.colors->push_back(color.y);
-        data.colors->push_back(color.z);
+        data.colors->push_back((float)color.x);
+        data.colors->push_back((float)color.y);
+        data.colors->push_back((float)color.z);
 
     }
 
@@ -538,8 +539,8 @@ void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec t
     {
         //point A1
         double D = d*M_PI/180.0;
-        QVector4D p(R*sin(D),0.66,R*cos(D), 1.0);
-        QVector4D n(sin(D), 0, cos(D), 1.0);
+        QVector4D p(Rf*sin(D), 0.66f, Rf*cos(D), 1.f);
+        QVector4D n(sin(D), 0.f, cos(D), 1.f);
         QVector4D pR = mat*p;
         QVector4D nR = mat*n;
 
@@ -553,7 +554,7 @@ void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec t
         data.colors->push_back(color.y);
         data.colors->push_back(color.z);
         //point B1
-        p = QVector4D(R * sin(D),0,R*cos(D), 1.0);
+        p = QVector4D(Rf * sin(D),0,Rf*cos(D), 1.0);
         n = QVector4D(sin(D), 0, cos(D), 1.0);
         pR = mat*p;
         nR = mat*n;
@@ -570,7 +571,7 @@ void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec t
         data.colors->push_back(color.z);
           //point C1
         D = (d+360/prec)*M_PI/180.0;
-        p = QVector4D(R * sin(D),0,R*cos(D), 1.0);
+        p = QVector4D(Rf * sin(D),0,Rf*cos(D), 1.0);
         n = QVector4D(sin(D), 0, cos(D), 1.0);
         pR = mat*p;
         nR = mat*n;
@@ -586,7 +587,7 @@ void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec t
         //point A2
         D = (d+360/prec)*M_PI/180.0;
 
-        p = QVector4D(R * sin(D),0,R*cos(D), 1.0);
+        p = QVector4D(Rf * sin(D),0,Rf*cos(D), 1.0);
         n = QVector4D(sin(D), 0, cos(D), 1.0);
         pR = mat*p;
         nR = mat*n;
@@ -596,11 +597,11 @@ void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec t
         data.normals->push_back(nR.x());
         data.normals->push_back(nR.y());
         data.normals->push_back(nR.z());
-        data.colors->push_back(color.x);
-        data.colors->push_back(color.y);
-        data.colors->push_back(color.z);
+        data.colors->push_back((float)color.x);
+        data.colors->push_back((float)color.y);
+        data.colors->push_back((float)color.z);
         //point B2
-        p = QVector4D(R * sin(D),0.66,R*cos(D), 1.0);
+        p = QVector4D(Rf * sin(D), 0.66f, Rf*cos(D), 1.f);
         n = QVector4D(sin(D), 0, cos(D), 1.0);
         pR = mat*p;
         nR = mat*n;
@@ -610,13 +611,13 @@ void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec t
         data.normals->push_back(nR.x());
         data.normals->push_back(nR.y());
         data.normals->push_back(nR.z());
-        data.colors->push_back(color.x);
-        data.colors->push_back(color.y);
-        data.colors->push_back(color.z);
+        data.colors->push_back((float)color.x);
+        data.colors->push_back((float)color.y);
+        data.colors->push_back((float)color.z);
         //point C2
         D = d*M_PI/180.0;
-        p = QVector4D(R * sin(D),0.66,R*cos(D), 1.0);
-        n = QVector4D(sin(D), 0, cos(D), 1.0);
+        p = QVector4D(Rf * sin(D), 0.66f, Rf*cos(D), 1.f);
+        n = QVector4D(sin(D), 0.f, cos(D), 1.f);
         pR = mat*p;
         nR = mat*n;
         data.vertices->push_back(pR.x());
@@ -692,7 +693,7 @@ void Viewer::drawVisualHints()
 
         vao[0].bind();
         rendering_program.bind();
-        glDrawArrays(GL_TRIANGLES, 0, v_Axis.size() / 3);
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(v_Axis.size() / 3));
         rendering_program.release();
         vao[0].release();
     }
@@ -731,7 +732,7 @@ void Viewer::resizeGL(int w, int h)
 
     vao[0].bind();
     buffers[0].bind();
-    buffers[0].allocate(v_Axis.data(), v_Axis.size() * sizeof(float));
+    buffers[0].allocate(v_Axis.data(), static_cast<int>(v_Axis.size()) * sizeof(float));
     rendering_program.enableAttributeArray("vertex");
     rendering_program.setAttributeBuffer("vertex",GL_FLOAT,0,3);
     buffers[0].release();
