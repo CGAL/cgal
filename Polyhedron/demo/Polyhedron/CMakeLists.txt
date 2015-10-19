@@ -101,6 +101,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_wrap_ui( selectionUI_FILES Selection_widget.ui)
   qt5_wrap_ui( funcUI_FILES Function_dialog.ui )
   qt5_wrap_ui( shortestPathUI_FILES Shortest_path_widget.ui )
+  qt5_wrap_ui( statisticsPolyhedronUI_FILES Polyhedron_demo_statistics_on_polyhedron_dialog.ui)
 
   qt5_generate_moc( "MainWindow.h" "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp" )
   qt5_generate_moc( "File_loader_dialog.h" "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp" )
@@ -169,7 +170,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endmacro(add_item)
 
   add_item(scene_c2t3_item Scene_c2t3_item.cpp)# Scene_c2t3_item.moc)
-  add_item(scene_polyhedron_item Scene_polyhedron_item.cpp)# Scene_polyhedron_item.moc)
+  add_item(scene_polyhedron_item Scene_polyhedron_item.cpp ${statisticsPolyhedronUI_FILES})# Scene_polyhedron_item.moc)
   add_item(scene_polyhedron_transform_item Scene_polyhedron_transform_item.cpp )#Scene_polyhedron_transform_item.moc)
   # special
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
@@ -338,10 +339,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_wrap_ui( advancing_frontUI_FILES Polyhedron_demo_advancing_front_plugin.ui)
     polyhedron_demo_plugin(advancing_front_plugin Polyhedron_demo_advancing_front_plugin ${advancing_frontUI_FILES})
     target_link_libraries(advancing_front_plugin scene_polygon_soup_item scene_points_with_normal_item)
-
-  qt5_wrap_ui( statisticsUI_FILES Polyhedron_demo_statistics_on_polyhedron_plugin.ui)
-  polyhedron_demo_plugin(statistics_plugin Polyhedron_demo_statistics_plugin ${statisticsUI_FILES})
-  target_link_libraries(statistics_plugin scene_polyhedron_item scene_polygon_soup_item)
 
   if(EIGEN3_FOUND)
     qt5_wrap_ui( scale_spaceUI_FILES Polyhedron_demo_scale_space_reconstruction_plugin.ui)

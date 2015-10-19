@@ -17,6 +17,8 @@
 
 #include <QColor>
 
+#include "ui_Polyhedron_demo_statistics_on_polyhedron_dialog.h"
+
 class QMenu;
 
 // This class represents a polyhedron in the OpenGL scene
@@ -83,6 +85,7 @@ public Q_SLOTS:
     void update_facet_indices();
     void update_halfedge_indices();
     void invalidate_aabb_tree();
+    void statistics_on_polyhedron();
 
 Q_SIGNALS:
     void selected_vertex(void*);
