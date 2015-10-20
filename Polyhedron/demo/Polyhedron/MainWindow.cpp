@@ -1107,12 +1107,9 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
       menu->setProperty(prop_name, true);
     }
   }
-  QMenu *finalMenu = new QMenu();
-  finalMenu->addMenu(menu);
-  finalMenu->addMenu(ui->menuOperations);
-
+  menu->addMenu(ui->menuOperations);
   if(menu)
-    finalMenu->exec(global_pos);
+    menu->exec(global_pos);
 }
 
 void MainWindow::showSceneContextMenu(const QPoint& p) {
