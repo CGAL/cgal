@@ -119,7 +119,7 @@ int main(int argc, char* argv[])
   CGAL::Timer t;
   t.start();
 
-  PMP::incremental_triangle_based_remeshing(m,
+  PMP::isotropic_remeshing(m,
     patch,
     target_edge_length,
     PMP::parameters::number_of_iterations(nb_iter)

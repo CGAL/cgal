@@ -50,7 +50,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::fair()`
 - `CGAL::Polygon_mesh_processing::refine()`
 - `CGAL::Polygon_mesh_processing::triangulate_faces()`
-- \link remeshing_grp `CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing()` \endlink
+- \link remeshing_grp `CGAL::Polygon_mesh_processing::isotropic_remeshing()` \endlink
 - \link remeshing_grp `CGAL::Polygon_mesh_processing::split_long_edges()` \endlink
 
 ## Hole Filling Functions ##
@@ -92,7 +92,7 @@ and provides a list of the parameters that are used in this package.
 
 ## Miscellaneous ##
 - `CGAL::Polygon_mesh_slicer`
-- `CGAL::Polygon_mesh_processing::get_border()`
+#- `CGAL::Polygon_mesh_processing::get_border()`
 
 \todo make template parameter names uniform in other packages using BGL. Here we chose PolygonMesh as template parameter.
 It can be made short to PM. And TriangleMesh (or TM) specifies when the parameter should be a triangle mesh.

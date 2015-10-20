@@ -42,7 +42,7 @@ int main(int argc, char* argv[])
   CGAL::Timer t;
   t.start();
 
-  PMP::incremental_triangle_based_remeshing(mesh,
+  PMP::isotropic_remeshing(mesh,
       faces(mesh),
       target_edge_length,
       PMP::parameters::number_of_iterations(nb_iter)

@@ -83,10 +83,10 @@ namespace Polygon_mesh_processing {
 template<typename TriangleMesh
        , typename FaceRange
        , typename NamedParameters>
-void incremental_triangle_based_remeshing(TriangleMesh& tmesh
-                                        , const FaceRange& faces
-                                        , const double& target_edge_length
-                                        , const NamedParameters& np)
+void isotropic_remeshing(TriangleMesh& tmesh
+                       , const FaceRange& faces
+                       , const double& target_edge_length
+                       , const NamedParameters& np)
 {
   typedef TriangleMesh TM;
   using boost::choose_pmap;
