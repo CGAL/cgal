@@ -18,10 +18,10 @@ public:
   QString name() const { return "polylines_io_plugin"; }
   QString nameFilters() const { return "Polylines files (*.polylines.txt *.cgal)"; }
   bool canLoad() const;
-  Scene_item* load(QFileInfo fileinfo);
+  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
 
-  bool canSave(const Scene_item*);
-  bool save(const Scene_item*, QFileInfo fileinfo);
+  bool canSave(const CGAL::Three::Scene_item*);
+  bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
 };
 
 bool Polyhedron_demo_polylines_io_plugin::canLoad() const {
@@ -29,7 +29,7 @@ bool Polyhedron_demo_polylines_io_plugin::canLoad() const {
 }
 
 
-Scene_item* 
+CGAL::Three::Scene_item*
 Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
 
   // Open file
@@ -80,12 +80,12 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
   return item;
 }
 
-bool Polyhedron_demo_polylines_io_plugin::canSave(const Scene_item* item)
+bool Polyhedron_demo_polylines_io_plugin::canSave(const CGAL::Three::Scene_item* item)
 {
   return qobject_cast<const Scene_polylines_item*>(item) != 0;
 }
 
-bool Polyhedron_demo_polylines_io_plugin::save(const Scene_item* item, QFileInfo fileinfo)
+bool Polyhedron_demo_polylines_io_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
 {
   const Scene_polylines_item* poly_item = 
     qobject_cast<const Scene_polylines_item*>(item);

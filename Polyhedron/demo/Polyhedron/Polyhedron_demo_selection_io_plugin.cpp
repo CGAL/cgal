@@ -14,7 +14,7 @@ public:
     QString nameFilters() const { return "Selection files (*.selection.txt)"; }
 
     bool canLoad() const { return true; }
-    Scene_item* load(QFileInfo fileinfo) {
+    CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
         if(fileinfo.suffix().toLower() != "txt") return 0;
         // There will be no actual loading at this step.
         // Polyhedron_demo_selection_plugin will trigger load when item in new_item_created
@@ -26,10 +26,10 @@ public:
         return item;
     }
 
-    bool canSave(const Scene_item* scene_item) {
+    bool canSave(const CGAL::Three::Scene_item* scene_item) {
         return qobject_cast<const Scene_polyhedron_selection_item*>(scene_item);
     }
-    bool save(const Scene_item* scene_item, QFileInfo fileinfo) {
+    bool save(const CGAL::Three::Scene_item* scene_item, QFileInfo fileinfo) {
         const Scene_polyhedron_selection_item* item = qobject_cast<const Scene_polyhedron_selection_item*>(scene_item);
         if(item == NULL) { return false; }
 

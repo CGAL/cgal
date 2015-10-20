@@ -15,7 +15,7 @@
 #include "ui_Meshing_dialog.h"
 
 // declare the CGAL function
-Scene_item* cgal_code_mesh_3(const Polyhedron*,
+CGAL::Three::Scene_item* cgal_code_mesh_3(const Polyhedron*,
                              QString filename,
                              const double angle,
                              const double sizing,
@@ -161,7 +161,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  Scene_item* result_item = cgal_code_mesh_3(pMesh,
+  CGAL::Three::Scene_item* result_item = cgal_code_mesh_3(pMesh,
                                              item->name(),
                                              angle,
                                              facet_sizing,

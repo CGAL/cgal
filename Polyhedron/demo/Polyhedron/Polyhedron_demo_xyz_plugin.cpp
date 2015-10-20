@@ -20,10 +20,10 @@ public:
 
   QString nameFilters() const { return "XYZ as Point Set (*.xyz);;Point Set with Normal (*.pwn)"; }
   bool canLoad() const;
-  Scene_item* load(QFileInfo fileinfo);
+  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
 
-  bool canSave(const Scene_item*);
-  bool save(const Scene_item*, QFileInfo fileinfo);
+  bool canSave(const CGAL::Three::Scene_item*);
+  bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
 };
 
 bool Polyhedron_demo_xyz_plugin::canLoad() const {
@@ -31,7 +31,7 @@ bool Polyhedron_demo_xyz_plugin::canLoad() const {
 }
 
 
-Scene_item*
+CGAL::Three::Scene_item*
 Polyhedron_demo_xyz_plugin::load(QFileInfo fileinfo)
 {
   // Open file
@@ -51,13 +51,13 @@ Polyhedron_demo_xyz_plugin::load(QFileInfo fileinfo)
   return point_set_item;
 }
 
-bool Polyhedron_demo_xyz_plugin::canSave(const Scene_item* item)
+bool Polyhedron_demo_xyz_plugin::canSave(const CGAL::Three::Scene_item* item)
 {
   // This plugin supports point sets
   return qobject_cast<const Scene_points_with_normal_item*>(item);
 }
 
-bool Polyhedron_demo_xyz_plugin::save(const Scene_item* item, QFileInfo fileinfo)
+bool Polyhedron_demo_xyz_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
 {
   // Check extension (quietly)
   std::string extension = fileinfo.suffix().toUtf8().data();

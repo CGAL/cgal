@@ -23,10 +23,10 @@ public:
   QString nameFilters() const;
   QString name() const { return "stl_plugin"; }
   bool canLoad() const;
-  Scene_item* load(QFileInfo fileinfo);
+  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
 
-  bool canSave(const Scene_item*);
-  bool save(const Scene_item*, QFileInfo fileinfo);
+  bool canSave(const CGAL::Three::Scene_item*);
+  bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
 };
 
 QString Polyhedron_demo_stl_plugin::nameFilters() const {
@@ -38,7 +38,7 @@ bool Polyhedron_demo_stl_plugin::canLoad() const {
 }
 
 
-Scene_item* 
+CGAL::Three::Scene_item*
 Polyhedron_demo_stl_plugin::load(QFileInfo fileinfo) {
 
   // Open file
@@ -79,12 +79,12 @@ Polyhedron_demo_stl_plugin::load(QFileInfo fileinfo) {
   return item;
 }
 
-bool Polyhedron_demo_stl_plugin::canSave(const Scene_item*)
+bool Polyhedron_demo_stl_plugin::canSave(const CGAL::Three::Scene_item*)
 {
   return false;
 }
 
-bool Polyhedron_demo_stl_plugin::save(const Scene_item*, QFileInfo)
+bool Polyhedron_demo_stl_plugin::save(const CGAL::Three::Scene_item*, QFileInfo)
 {
   return false;
 }

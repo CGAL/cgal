@@ -1,7 +1,7 @@
 #include "config.h"
 #include "MainWindow.h"
 #include "Scene.h"
-#include "Scene_item.h"
+#include <CGAL/Three/Scene_item.h>
 #include <CGAL/Qt/debug.h>
 
 #include <QtDebug>
@@ -54,18 +54,18 @@
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptEngine>
 #  include <QScriptValue>
-
+using namespace CGAL::Three;
 QScriptValue 
 myScene_itemToScriptValue(QScriptEngine *engine, 
-                          Scene_item* const &in)
+                          CGAL::Three::Scene_item* const &in)
 { 
   return engine->newQObject(in); 
 }
 
 void myScene_itemFromScriptValue(const QScriptValue &object, 
-                                 Scene_item* &out)
+                                 CGAL::Three::Scene_item* &out)
 {
-  out = qobject_cast<Scene_item*>(object.toQObject()); 
+  out = qobject_cast<CGAL::Three::Scene_item*>(object.toQObject());
 }
 #endif // QT_SCRIPT_LIB
 
@@ -265,7 +265,7 @@ MainWindow::MainWindow(QWidget* parent)
 #ifdef QT_SCRIPT_LIB
   std::cerr << "Enable scripts.\n";
   script_engine = new QScriptEngine(this);
-  qScriptRegisterMetaType<Scene_item*>(script_engine,
+  qScriptRegisterMetaType<CGAL::Three::Scene_item*>(script_engine,
                                        myScene_itemToScriptValue,
                                        myScene_itemFromScriptValue);
 #  ifdef QT_SCRIPTTOOLS_LIB
@@ -758,7 +758,7 @@ void MainWindow::reload_item() {
               << "the reload action has not item attached\n";
     return;
   }
-  Scene_item* item = qobject_cast<Scene_item*>(item_object);
+  CGAL::Three::Scene_item* item = qobject_cast<CGAL::Three::Scene_item*>(item_object);
   if(!item) {
     std::cerr << "Cannot reload item: "
               << "the reload action has a QObject* pointer attached\n"
@@ -776,7 +776,7 @@ void MainWindow::reload_item() {
   CGAL::Three::Polyhedron_demo_io_plugin_interface* fileloader = find_loader(loader_name);
   QFileInfo fileinfo(filename);
 
-  Scene_item* new_item = load_item(fileinfo, fileloader);
+  CGAL::Three::Scene_item* new_item = load_item(fileinfo, fileloader);
 
   new_item->setName(item->name());
   new_item->setColor(item->color());
@@ -910,7 +910,7 @@ void MainWindow::open(QString filename)
   settings.setValue("OFF open directory",
                     fileinfo.absoluteDir().absolutePath());
 
-  Scene_item* scene_item = load_item(fileinfo, find_loader(load_pair.first));
+  CGAL::Three::Scene_item* scene_item = load_item(fileinfo, find_loader(load_pair.first));
   if(scene_item != 0) {
     this->addToRecentFiles(fileinfo.absoluteFilePath());
   }
@@ -919,7 +919,7 @@ void MainWindow::open(QString filename)
 
 bool MainWindow::open(QString filename, QString loader_name) {
   QFileInfo fileinfo(filename); 
-  Scene_item* item;
+  CGAL::Three::Scene_item* item;
   try {
     item = load_item(fileinfo, find_loader(loader_name));
   }
@@ -932,8 +932,8 @@ bool MainWindow::open(QString filename, QString loader_name) {
 }
 
 
-Scene_item* MainWindow::load_item(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface* loader) {
-  Scene_item* item = NULL;
+CGAL::Three::Scene_item* MainWindow::load_item(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface* loader) {
+  CGAL::Three::Scene_item* item = NULL;
   if(!fileinfo.isFile() || !fileinfo.isReadable()) {
     throw std::invalid_argument(QString("File %1 is not a readable file.")
                                 .arg(fileinfo.absoluteFilePath()).toStdString());
@@ -1045,14 +1045,14 @@ void MainWindow::selectionChanged()
 {
   scene->setSelectedItemIndex(getSelectedSceneItemIndex());
   scene->setSelectedItemsList(getSelectedSceneItemIndices());
-  Scene_item* item = scene->item(getSelectedSceneItemIndex());
+  CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item != NULL && item->manipulatable()) {
     viewer->setManipulatedFrame(item->manipulatedFrame());
   } else {
     viewer->setManipulatedFrame(0);
   }
   if(viewer->manipulatedFrame() == 0) {
-    Q_FOREACH(Scene_item* item, scene->entries()) {
+    Q_FOREACH(CGAL::Three::Scene_item* item, scene->entries()) {
       if(item->manipulatable() && item->manipulatedFrame() != 0) {
         if(viewer->manipulatedFrame() != 0) {
           // there are at least two possible frames
@@ -1079,7 +1079,7 @@ void MainWindow::contextMenuRequested(const QPoint& global_pos) {
 void MainWindow::showSceneContextMenu(int selectedItemIndex,
                                       const QPoint& global_pos)
 {
-  Scene_item* item = scene->item(selectedItemIndex);
+  CGAL::Three::Scene_item* item = scene->item(selectedItemIndex);
   if(!item) return;
 
   const char* prop_name = "Menu modified by MainWindow.";
@@ -1133,7 +1133,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
   showSceneContextMenu(index, sender->mapToGlobal(p));
 }
 
-void MainWindow::removeManipulatedFrame(Scene_item* item)
+void MainWindow::removeManipulatedFrame(CGAL::Three::Scene_item* item)
 {
   if(item->manipulatable() &&
      item->manipulatedFrame() == viewer->manipulatedFrame()) {
@@ -1142,7 +1142,7 @@ void MainWindow::removeManipulatedFrame(Scene_item* item)
 }
 
 void MainWindow::updateInfo() {
-  Scene_item* item = scene->item(getSelectedSceneItemIndex());
+  CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item) {
     QString item_text = item->toolTip();
     QString item_filename = item->property("source filename").toString();
@@ -1165,7 +1165,7 @@ void MainWindow::updateInfo() {
 }
 
 void MainWindow::updateDisplayInfo() {
-  Scene_item* item = scene->item(getSelectedSceneItemIndex());
+  CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item)
     ui->displayLabel->setPixmap(item->graphicalToolTip());
   else 
@@ -1297,7 +1297,7 @@ void MainWindow::on_actionLoad_triggered()
   }
 
   Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
-    Scene_item* item = NULL;
+    CGAL::Three::Scene_item* item = NULL;
     if(selectedPlugin) {
       QFileInfo info(filename);
       item = load_item(info, selectedPlugin);
@@ -1324,7 +1324,7 @@ void MainWindow::on_actionSaveAs_triggered()
       return;
     index = getSelectedSceneItemIndex();
   }
-  Scene_item* item = scene->item(index);
+  CGAL::Three::Scene_item* item = scene->item(index);
 
   if(!item)
     return;
@@ -1356,7 +1356,7 @@ void MainWindow::on_actionSaveAs_triggered()
   save(filename, item);
 }
 
-void MainWindow::save(QString filename, Scene_item* item) {
+void MainWindow::save(QString filename, CGAL::Three::Scene_item* item) {
   QFileInfo fileinfo(filename);
 
   Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
@@ -1398,7 +1398,7 @@ void MainWindow::on_actionShowHide_triggered()
   Q_FOREACH(QModelIndex index, sceneView->selectionModel()->selectedRows())
   {
     int i = proxyModel->mapToSource(index).row();
-    Scene_item* item = scene->item(i);
+    CGAL::Three::Scene_item* item = scene->item(i);
     item->setVisible(!item->visible());
     scene->itemChanged(i);
   }

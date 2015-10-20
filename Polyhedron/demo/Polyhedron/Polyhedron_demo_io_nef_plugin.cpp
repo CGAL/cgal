@@ -15,10 +15,10 @@ public:
   QString nameFilters() const;
   QString name() const { return "io_nef_plugin"; }
   bool canLoad() const;
-  Scene_item* load(QFileInfo fileinfo);
+  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
 
-  bool canSave(const Scene_item*);
-  bool save(const Scene_item*, QFileInfo fileinfo);
+  bool canSave(const CGAL::Three::Scene_item*);
+  bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
 };
 
 QString Polyhedron_demo_io_nef_plugin::nameFilters() const {
@@ -30,7 +30,7 @@ bool Polyhedron_demo_io_nef_plugin::canLoad() const {
 }
 
 
-Scene_item* 
+CGAL::Three::Scene_item*
 Polyhedron_demo_io_nef_plugin::load(QFileInfo fileinfo) {
   //do not try file with extension different from nef3
   if (fileinfo.suffix() != "nef3") return 0;
@@ -54,13 +54,13 @@ Polyhedron_demo_io_nef_plugin::load(QFileInfo fileinfo) {
   return item;
 }
 
-bool Polyhedron_demo_io_nef_plugin::canSave(const Scene_item* item)
+bool Polyhedron_demo_io_nef_plugin::canSave(const CGAL::Three::Scene_item* item)
 {
   // This plugin supports polyhedrons and polygon soups
   return qobject_cast<const Scene_nef_polyhedron_item*>(item);
 }
 
-bool Polyhedron_demo_io_nef_plugin::save(const Scene_item* item, QFileInfo fileinfo)
+bool Polyhedron_demo_io_nef_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
 {
   // This plugin supports polyhedrons and polygon soups
   const Scene_nef_polyhedron_item* nef_item = 

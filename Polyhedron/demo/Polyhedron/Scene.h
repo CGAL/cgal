@@ -24,7 +24,8 @@
 class QEvent;
 class QMouseEvent;
 namespace GlSplat { class SplatRenderer; }
-namespace CGAL { namespace Three{ class Viewer_interface; }}
+namespace CGAL { namespace Three{ class Viewer_interface;}}
+
 
 class SCENE_EXPORT Scene  :
   public QAbstractListModel, public CGAL::Three::Scene_interface, public CGAL::Three::Scene_draw_interface
@@ -47,12 +48,12 @@ public:
 
   //!Adds item to the items list, gives it an ID and
   //!updates the bounding box if needed.
-  int addItem(Scene_item* item);
+  int addItem(CGAL::Three::Scene_item* item);
   //!Sets item as the item at index and calls @ref Scene_item#changed().
 
   //!If emit_item_about_to_be_destroyed is set to true, emits
   //!an itemAboutToBeDestroyed signal.
-  Scene_item* replaceItem(int index, Scene_item* item, bool emit_item_about_to_be_destroyed = false);
+  CGAL::Three::Scene_item* replaceItem(int index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false);
   /*! Deletes the item with the target index.
    * @returns  the index of the polyhedra just before the
    * one that is erased, or just after. -1 if
@@ -76,19 +77,19 @@ public:
   //! @returns the number of items.
   int numberOfEntries() const;
   //! @returns the list of items.
-  const QList<Scene_item*>& entries() const { return m_entries; }
+  const QList<CGAL::Three::Scene_item*>& entries() const { return m_entries; }
   //! @returns the item at the target index.
-  Q_INVOKABLE Scene_item* item(int) const ;
+  Q_INVOKABLE CGAL::Three::Scene_item* item(int) const ;
   //! @returns the id of the target item.
-  Item_id item_id(Scene_item*) const;
+  Item_id item_id(CGAL::Three::Scene_item*) const;
   
   //! \todo Replace Index based selection functionality with those
   //! functions.
   ///@{
-  Scene_item* selectedItem() const;
-  QList<Scene_item*> selectedItems() const;
-  QList<Scene_item*> selectionA() const;
-  QList<Scene_item*> selectionB() const;
+  CGAL::Three::Scene_item* selectedItem() const;
+  QList<CGAL::Three::Scene_item*> selectedItems() const;
+  QList<CGAL::Three::Scene_item*> selectionA() const;
+  QList<CGAL::Three::Scene_item*> selectionB() const;
   ///@}
 
   //!@returns the currently selected item's index.
@@ -166,7 +167,7 @@ public Q_SLOTS:
   /*! Notifies the scene that the item was modified.
    *  Calls @ref Scene_item#changed().
    * This function is called by the items.*/
-  void itemChanged(Scene_item*);
+  void itemChanged(CGAL::Three::Scene_item*);
   //! Sets the selected item to the target index.
   void setSelectedItemIndex(int i)
   {
@@ -179,10 +180,10 @@ public Q_SLOTS:
     Q_EMIT selectionChanged(i);
   };
   //! Sets the target item as selected and emits setSelectedItem for its index.
-  void setSelectedItem(Scene_item* item_to_select)
+  void setSelectedItem(CGAL::Three::Scene_item* item_to_select)
   {
     int i=0;
-    Q_FOREACH(Scene_item* item, m_entries)
+    Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
     {
       if (item==item_to_select)
       {
@@ -211,7 +212,7 @@ Q_SIGNALS:
   void newItem(int);
   void updated_bbox();
   void updated();
-  void itemAboutToBeDestroyed(Scene_item*);
+  void itemAboutToBeDestroyed(CGAL::Three::Scene_item*);
   void selectionRay(double, double, double, double, double, double);
   void selectionChanged(int i);
 
@@ -226,7 +227,7 @@ private:
    * the OpenGL mode GL_WITH_NAMES, essentially used for the picking.*/
   void draw_aux(bool with_names, CGAL::Three::Viewer_interface*);
   //! List of Scene_items.
-  typedef QList<Scene_item*> Entries;
+  typedef QList<CGAL::Three::Scene_item*> Entries;
   //!List containing all the scene_items.
   Entries m_entries;
   //! Index of the currently selected item.

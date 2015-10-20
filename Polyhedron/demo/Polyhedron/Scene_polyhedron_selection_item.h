@@ -803,7 +803,7 @@ private:
   mutable std::size_t nb_points;
   mutable std::size_t nb_lines;
   mutable QOpenGLShaderProgram *program;
-  using Scene_item::initialize_buffers;
+  using CGAL::Three::Scene_item::initialize_buffers;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_elements() const;
 

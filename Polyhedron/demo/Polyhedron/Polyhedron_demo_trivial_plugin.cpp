@@ -1,6 +1,6 @@
 #include <QtCore/qglobal.h>
 
-#include "Scene_item.h"
+#include  <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/gl.h>
 
@@ -8,7 +8,7 @@
 #include <QAction>
 #include <QMainWindow>
 
-class Q_DECL_EXPORT Scene_bbox_item : public Scene_item
+class Q_DECL_EXPORT Scene_bbox_item : public CGAL::Three::Scene_item
 {
     Q_OBJECT
 public:
@@ -72,7 +72,7 @@ private:
 
     mutable std::vector<float> positions_lines;
     mutable QOpenGLShaderProgram *program;
-    using Scene_item::initialize_buffers;
+    using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
     {
 

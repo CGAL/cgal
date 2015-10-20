@@ -9,7 +9,7 @@
 
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_POLYHEDRON_TRANSFORM_ITEM_EXPORT Scene_polyhedron_transform_item 
-        : public Scene_item {
+        : public CGAL::Three::Scene_item {
     Q_OBJECT
     
     typedef Scene_polyhedron_item Base;
@@ -39,7 +39,7 @@ private:
     mutable QOpenGLShaderProgram *program;
     mutable std::vector<float> positions_lines;
     mutable std::size_t nb_lines;
-    using Scene_item::initialize_buffers;
+    using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
     void compute_elements() const;
 

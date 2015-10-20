@@ -22,10 +22,10 @@ public:
   QString name() const { return "off_plugin"; }
   QString nameFilters() const { return "OFF files (*.off)"; }
   bool canLoad() const;
-  Scene_item* load(QFileInfo fileinfo);
+  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
   
-  bool canSave(const Scene_item*);
-  bool save(const Scene_item*, QFileInfo fileinfo);
+  bool canSave(const CGAL::Three::Scene_item*);
+  bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
 };
 
 bool Polyhedron_demo_off_plugin::canLoad() const {
@@ -33,7 +33,7 @@ bool Polyhedron_demo_off_plugin::canLoad() const {
 }
 
 
-Scene_item* 
+CGAL::Three::Scene_item*
 Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
   if(fileinfo.suffix().toLower() != "off") return 0;
   // Open file
@@ -80,14 +80,14 @@ Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
   return item;
 }
 
-bool Polyhedron_demo_off_plugin::canSave(const Scene_item* item)
+bool Polyhedron_demo_off_plugin::canSave(const CGAL::Three::Scene_item* item)
 {
   // This plugin supports polyhedrons and polygon soups
   return qobject_cast<const Scene_polyhedron_item*>(item) ||
     qobject_cast<const Scene_polygon_soup_item*>(item);
 }
 
-bool Polyhedron_demo_off_plugin::save(const Scene_item* item, QFileInfo fileinfo)
+bool Polyhedron_demo_off_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
 {
   // This plugin supports polyhedrons and polygon soups
   const Scene_polyhedron_item* poly_item = 

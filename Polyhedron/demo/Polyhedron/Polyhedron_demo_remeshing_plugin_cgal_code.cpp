@@ -2,7 +2,7 @@
 #include <CGAL/AABB_tree.h>
 
 #include "Polyhedron_type.h"
-#include "Scene_item.h"
+#include  <CGAL/Three/Scene_item.h>
 #include <qgl.h>
 #include "Scene_polyhedron_item.h"
 #include "Scene_polygon_soup_item.h"
@@ -202,7 +202,7 @@ struct Meshing_thread : QThread
 typedef Tr::Geom_traits GT;
 typedef Tr::Geom_traits::FT FT;
 
-Scene_item* cgal_code_remesh(QWidget* parent,
+CGAL::Three::Scene_item* cgal_code_remesh(QWidget* parent,
                              Polyhedron* pMesh,
                              const double angle,
                              const double sizing,

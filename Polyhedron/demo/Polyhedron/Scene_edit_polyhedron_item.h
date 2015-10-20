@@ -174,7 +174,7 @@ struct Mouse_keyboard_state_deformation
 
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_EDIT_POLYHEDRON_ITEM_EXPORT Scene_edit_polyhedron_item 
-  : public Scene_item {
+  : public CGAL::Three::Scene_item {
   Q_OBJECT
 public:  
   /// Create an Scene_edit_polyhedron_item from a Scene_polyhedron_item.
@@ -290,7 +290,7 @@ private:
 
 
   mutable QOpenGLBuffer *in_bu;
-  using Scene_item::initialize_buffers;
+  using CGAL::Three::Scene_item::initialize_buffers;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void);
   void compute_bbox(const CGAL::Three::Scene_interface::Bbox&);

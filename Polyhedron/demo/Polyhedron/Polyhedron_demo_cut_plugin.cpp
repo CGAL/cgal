@@ -25,7 +25,7 @@
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
-#include "Scene_item.h"
+#include  <CGAL/Three/Scene_item.h>
 //typedef CGAL::Simple_cartesian<double> Epic_kernel;
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 
@@ -33,11 +33,11 @@ typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron>     AABB_primitive;
 typedef CGAL::AABB_traits<Epic_kernel,AABB_primitive>           AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits>                            AABB_tree;
 
-class Q_DECL_EXPORT Scene_aabb_item : public Scene_item
+class Q_DECL_EXPORT Scene_aabb_item : public CGAL::Three::Scene_item
 {
   Q_OBJECT
 public:
-  Scene_aabb_item(const AABB_tree& tree_) : Scene_item(1,1), tree(tree_)
+  Scene_aabb_item(const AABB_tree& tree_) : CGAL::Three::Scene_item(1,1), tree(tree_)
   {
       positions_lines.resize(0);
   }
@@ -92,7 +92,7 @@ private:
 
     mutable QOpenGLShaderProgram *program;
 
-    using Scene_item::initialize_buffers;
+    using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
@@ -135,11 +135,11 @@ private:
     }
 }; // end class Scene_aabb_item
 
-class Q_DECL_EXPORT Scene_edges_item : public Scene_item
+class Q_DECL_EXPORT Scene_edges_item : public CGAL::Three::Scene_item
 {
   Q_OBJECT
 public:
-    Scene_edges_item():Scene_item(1,1)
+    Scene_edges_item():CGAL::Three::Scene_item(1,1)
     {
         positions_lines.resize(0);
         top = true;
@@ -215,7 +215,7 @@ private:
 
   mutable QOpenGLShaderProgram *program;
 
-    using Scene_item::initialize_buffers;
+    using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
@@ -307,12 +307,12 @@ public:
     return false;
   }
 
-  virtual Scene_item* load(QFileInfo /* fileinfo */)
+  virtual CGAL::Three::Scene_item* load(QFileInfo /* fileinfo */)
   {
     return 0;
   }
 
-  virtual bool canSave(const Scene_item* item)
+  virtual bool canSave(const CGAL::Three::Scene_item* item)
   {
     // This plugin supports edges items
     bool b = qobject_cast<const Scene_edges_item*>(item) != 0;
@@ -320,7 +320,7 @@ public:
   }
 
 
-  virtual bool save(const Scene_item* item, QFileInfo fileinfo)
+  virtual bool save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
   {  // This plugin supports edges items
     const Scene_edges_item* edges_item = 
       qobject_cast<const Scene_edges_item*>(item);
@@ -407,7 +407,7 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
   // Hide polyhedrons and call cut() (avoid that nothing shows up until user
   // decides to move the plane item)
   for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
-    Scene_item* item = scene->item(i);
+    CGAL::Three::Scene_item* item = scene->item(i);
     Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
     if ( NULL != poly_item )
       poly_item->setVisible(false);
@@ -438,7 +438,7 @@ void Polyhedron_demo_cut_plugin::cut() {
   QTime time;
   time.start();
   for(int i = 0, end = scene->numberOfEntries(); i < end; ++i) {
-    Scene_item* item = scene->item(i);
+    CGAL::Three::Scene_item* item = scene->item(i);
     Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(item);
     if(!poly_item) continue;
     Trees::iterator it = trees.find(poly_item);

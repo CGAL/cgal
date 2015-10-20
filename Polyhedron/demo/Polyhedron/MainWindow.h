@@ -22,10 +22,10 @@ namespace CGAL {
 namespace Three{
 class Polyhedron_demo_io_plugin_interface;
 class Polyhedron_demo_plugin_interface;
+class Scene_item;
 }
 }
 
-class Scene_item;
 class QSortFilterProxyModel;
 
 namespace Ui {
@@ -65,7 +65,7 @@ public:
   /*! \brief Load an item with a given loader.
    * throws `std::logic_error` if loading does not succeed or
    * `std::invalid_argument` if `fileinfo` specifies an invalid file*/
-  Scene_item* load_item(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface*);
+  CGAL::Three::Scene_item* load_item(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface*);
 
 public Q_SLOTS:
   void updateViewerBBox();
@@ -231,7 +231,7 @@ protected Q_SLOTS:
   //!Prints graphical information about the currently selected item if able.
   void updateDisplayInfo();
   //!Sets the current manipulated frame to 0.
-  void removeManipulatedFrame(Scene_item*);
+  void removeManipulatedFrame(CGAL::Three::Scene_item*);
 
   // settings
   //!Closes the main window.
@@ -270,7 +270,7 @@ protected Q_SLOTS:
   //!Opens a dialog to save selected item if able.
   void on_actionSaveAs_triggered(); 
   //!Calls the function save of the current plugin if able.
-  void save(QString filename, Scene_item* item);
+  void save(QString filename, CGAL::Three::Scene_item* item);
   //!Calls the function saveSnapShot of the viewer.
   void on_actionSaveSnapshot_triggered();
   //!Opens a Dialog to choose a color and make it the background color.

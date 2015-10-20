@@ -129,6 +129,20 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     message(FATAL_ERROR "Cannot find <CGAL/Three/Viewer_interface.h>")
   endif()
 
+  find_path(CGAL_THREE_SCENE_ITEM_H_PATH
+    NAME CGAL/Three/Scene_item.h
+    PATHS ${CGAL_INCLUDE_DIRS}
+    NO_DEFAULT_PATH
+    DOC "Path to CGAL/Three/Scene_item.h")
+  hide_variable(CGAL_THREE_SCENE_ITEM_H_PATH)
+
+  if(CGAL_THREE_SCENE_ITEM_H_PATH)
+    qt5_generate_moc( "${CGAL_THREE_SCENE_ITEM_H_PATH}/CGAL/Three/Scene_item.h"
+      "${CMAKE_CURRENT_BINARY_DIR}/Scene_item_moc.cpp" )
+  else()
+    message(FATAL_ERROR "Cannot find <CGAL/Three/Viewer_interface.h>")
+  endif()
+
 
   # AUXILIARY LIBRARIES
 
@@ -141,6 +155,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene.cpp
     Viewer.cpp #Viewer_moc.cpp
     Viewer_interface_moc.cpp
+    Scene_item_moc.cpp
     Scene_item.cpp #Scene_item.moc
     Polyhedron_demo_plugin_helper.cpp)
     qt5_use_modules(demo_framework OpenGL Gui Widgets Script Xml)
@@ -499,10 +514,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(shortest_path_plugin Polyhedron_demo_shortest_path_plugin ${shortestPathUI_FILES})
   target_link_libraries(shortest_path_plugin scene_polyhedron_item scene_polylines_item scene_polyhedron_selection_item scene_polyhedron_shortest_path_item scene_basic_objects)
 
-  qt5_wrap_ui( exampleUI_FILES Polyhedron_demo_example_plugin.ui dock_example.ui)
-  qt5_wrap_ui( example_dockUI_FILES dock_example.ui)
-  polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES} ${example_dockUI_FILES})
-  target_link_libraries(example_plugin scene_polyhedron_item)
+  add_executable(example_plugin IMPORTED)
+  set_property(TARGET example_plugin PROPERTY IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/../../../Example_plugin/example_plugin.cmake")
 #
 # Exporting
 #
@@ -528,6 +541,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     APPEND FILE polyhedron_demo_targets.cmake)
 
   configure_file(CGAL_polyhedron_demoConfig.cmake.in  CGAL_polyhedron_demoConfig.cmake)
+#TO DO script the activation of all the plugins.
 
 else (CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 

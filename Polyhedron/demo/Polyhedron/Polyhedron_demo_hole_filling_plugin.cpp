@@ -39,7 +39,7 @@
 
 // Class for visualizing holes in a polyhedron
 // provides mouse selection functionality
-class Q_DECL_EXPORT Scene_hole_visualizer : public Scene_item
+class Q_DECL_EXPORT Scene_hole_visualizer : public CGAL::Three::Scene_item
 {
   Q_OBJECT
 public:

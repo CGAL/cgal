@@ -26,9 +26,9 @@
 #include <QList>
 #include <algorithm>
 #include <cmath>
-
+namespace CGAL{namespace Three{
 class Scene_item;
-
+    }}
 // OpenGL rendering mode
 /** \file Scene_interface.h
  * Contains the class Scene_interface and the enum RenderingMode.
@@ -119,12 +119,12 @@ public:
   virtual ~Scene_interface() {};
   //!Adds an item to the list of items. Must be overloaded.
   //!@returns the index of the new item.
-  virtual Item_id addItem(Scene_item* item) = 0;
+  virtual Item_id addItem(CGAL::Three::Scene_item* item) = 0;
   //!Sets an item as the one at the specified index .
   //!If emit_item_about_to_be_destroyed is set to true, emits
   //!an itemAboutToBeDestroyed signal. Must be overloaded.
   //!@returns a pointer to the old item.
-  virtual Scene_item* replaceItem(Item_id, Scene_item*, bool emit_item_about_to_be_destroyed = false) = 0;
+  virtual Scene_item* replaceItem(Item_id, CGAL::Three::Scene_item*, bool emit_item_about_to_be_destroyed = false) = 0;
 
 
   /*! Erases an item in the list. Must be overloaded.
@@ -144,10 +144,10 @@ public:
   virtual int numberOfEntries() const = 0;
   //!Must be overloaded.
   //! @returns the item at the target index.
-  virtual Scene_item* item(Item_id) const = 0;
+  virtual CGAL::Three::Scene_item* item(Item_id) const = 0;
   //!Must be overloaded.
   //! @returns the id of the target item.
-  virtual Item_id item_id(Scene_item*) const = 0;
+  virtual Item_id item_id(CGAL::Three::Scene_item*) const = 0;
   //!Must be overloaded.
   //!@returns the currently selected item's index.
   virtual Item_id mainSelectionIndex() const = 0;
@@ -172,7 +172,7 @@ public:
   /*! Notifies the scene that an item was modified. Must be overloaded.*/
   virtual void itemChanged(Item_id i) = 0; 
   /*! Notifies the scene that an item was modified. Must be overloaded.*/
-  virtual void itemChanged(Scene_item*) = 0;
+  virtual void itemChanged(CGAL::Three::Scene_item*) = 0;
 
   /*! Selects an item. Must be overloaded.*/
   virtual void setSelectedItem(Item_id) = 0;

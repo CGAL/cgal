@@ -16,17 +16,17 @@ public:
   QString name() const { return "off_to_nef_plugin"; }
   QString nameFilters() const { return "OFF files, into nef (*.off)"; }
   bool canLoad() const;
-  Scene_item* load(QFileInfo fileinfo);
+  CGAL::Three::Scene_item* load(QFileInfo fileinfo);
 
-  bool canSave(const Scene_item*);
-  bool save(const Scene_item*, QFileInfo fileinfo);
+  bool canSave(const CGAL::Three::Scene_item*);
+  bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
 };
 
 bool Polyhedron_demo_off_to_nef_plugin::canLoad() const {
   return true;
 }
 
-Scene_item* 
+CGAL::Three::Scene_item*
 Polyhedron_demo_off_to_nef_plugin::load(QFileInfo fileinfo) {
   std::ifstream in(fileinfo.filePath().toUtf8());
 
@@ -44,12 +44,12 @@ Polyhedron_demo_off_to_nef_plugin::load(QFileInfo fileinfo) {
   return item;
 }
 
-bool Polyhedron_demo_off_to_nef_plugin::canSave(const Scene_item*)
+bool Polyhedron_demo_off_to_nef_plugin::canSave(const CGAL::Three::Scene_item*)
 {
   return false;
 }
 
-bool Polyhedron_demo_off_to_nef_plugin::save(const Scene_item*, QFileInfo)
+bool Polyhedron_demo_off_to_nef_plugin::save(const CGAL::Three::Scene_item*, QFileInfo)
 {
   return false;
 }

@@ -9,7 +9,7 @@
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
 #include "Polyhedron_type.h"
-#include "Scene_item.h"
+#include  <CGAL/Three/Scene_item.h>
 typedef CGAL::internal_IOP::Item_with_points_and_volume_info<Kernel,Polyhedron> Items;
 typedef CGAL::Combinatorial_map<3,Items> Combinatorial_map_3;
 //=========
@@ -23,7 +23,7 @@ class Scene_polyhedron_item;
 class Viewer_interface;
 
 class SCENE_COMBINATORIAL_MAP_ITEM_EXPORT Scene_combinatorial_map_item
-        : public Scene_item
+        : public CGAL::Three::Scene_item
 {
     Q_OBJECT
 public:  
@@ -85,10 +85,10 @@ private:
 
     mutable QOpenGLShaderProgram *program;
 
-    using Scene_item::initialize_buffers;
+    using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
 
-    using Scene_item::compute_elements;
+    using CGAL::Three::Scene_item::compute_elements;
     void compute_elements(void) const;
 
 public Q_SLOTS:

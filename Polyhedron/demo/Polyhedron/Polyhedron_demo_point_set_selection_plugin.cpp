@@ -28,7 +28,7 @@
 
 // Class for visualizing selection 
 // provides mouse selection functionality
-class Q_DECL_EXPORT Scene_point_set_selection_visualizer : public Scene_item
+class Q_DECL_EXPORT Scene_point_set_selection_visualizer : public CGAL::Three::Scene_item
 {
   Q_OBJECT
 

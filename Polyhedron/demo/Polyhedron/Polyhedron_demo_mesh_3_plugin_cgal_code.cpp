@@ -36,7 +36,7 @@ typedef Mesh_criteria::Cell_criteria Cell_criteria;
 
 typedef Tr::Point Point_3;
 
-#include "Scene_item.h"
+#include  <CGAL/Three/Scene_item.h>
 #include <QtCore/qglobal.h>
 #include <CGAL/gl.h>
 #include <QGLViewer/manipulatedFrame.h>
@@ -44,14 +44,14 @@ typedef Tr::Point Point_3;
 #include <CGAL/Three/Viewer_interface.h>
 
 
-class Q_DECL_EXPORT Scene_c3t3_item : public Scene_item
+class Q_DECL_EXPORT Scene_c3t3_item : public CGAL::Three::Scene_item
 {
     Q_OBJECT
 public:
     typedef qglviewer::ManipulatedFrame ManipulatedFrame;
 
     Scene_c3t3_item(const C3t3& c3t3)
-        : Scene_item(7,3), c3t3_(c3t3), frame(new ManipulatedFrame()), last_known_scene(NULL)
+        : CGAL::Three::Scene_item(7,3), c3t3_(c3t3), frame(new ManipulatedFrame()), last_known_scene(NULL)
     {
         positions_lines.resize(0);
         positions_poly.resize(0);
@@ -351,7 +351,7 @@ public:
     {
         const char* prop_name = "Menu modified by Scene_c3t3_item.";
 
-        QMenu* menu = Scene_item::contextMenu();
+        QMenu* menu = CGAL::Three::Scene_item::contextMenu();
 
         // Use dynamic properties:
         // http://doc.qt.io/qt-5/qobject.html#property
@@ -386,7 +386,7 @@ private:
 
     mutable QOpenGLShaderProgram *program;
 
-    using Scene_item::initialize_buffers;
+    using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
     {
         //vao containing the data for the facets
@@ -603,7 +603,7 @@ private:
 
 };
 
-Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
+CGAL::Three::Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
                              QString filename,
                              const double angle,
                              const double facet_sizing,
@@ -655,7 +655,7 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
     std::ofstream medit_out("out.mesh");
     new_item->c3t3().output_to_medit(medit_out);
 
-    const Scene_item::Bbox& bbox = new_item->bbox();
+    const CGAL::Three::Scene_item::Bbox& bbox = new_item->bbox();
     new_item->setPosition((float)(bbox.xmin + bbox.xmax)/2.f,
                           (float)(bbox.ymin + bbox.ymax)/2.f,
                           (float)(bbox.zmin + bbox.zmax)/2.f);

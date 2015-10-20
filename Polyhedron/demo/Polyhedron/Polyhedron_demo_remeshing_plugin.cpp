@@ -15,7 +15,7 @@
 #include <QStringList>
 
 // declare the CGAL function
-Scene_item* cgal_code_remesh(QWidget* parent,
+CGAL::Three::Scene_item* cgal_code_remesh(QWidget* parent,
                              Polyhedron*,
                              const double angle,
                              const double sizing,
@@ -112,7 +112,7 @@ void Polyhedron_demo_remeshing_plugin::remesh()
               << "\n  tag=" << tag_index
               << std::boolalpha
               << std::endl;
-    Scene_item* new_item = cgal_code_remesh(mw,
+    CGAL::Three::Scene_item* new_item = cgal_code_remesh(mw,
                                             pMesh,
                                             angle,
                                             sizing,
