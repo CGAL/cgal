@@ -96,7 +96,8 @@ maximizes the minimum angle of all the angles of the triangles in the triangulat
 \subsubsection Remeshing
 - `CGAL::Polygon_mesh_processing::isotropic_remeshing()`
 \todo user manual remeshing
-* implements section 6.5.3 "Incremental remeshing" from the PMP book \cgalCite{botsch2010PMP}.
+described in \cgalCite{botsch2004remeshing}, and in PMP book \cgalCite{botsch2010PMP}.
+
 
 - `CGAL::Polygon_mesh_processing::split_long_edges()`
 
