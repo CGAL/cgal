@@ -49,7 +49,6 @@ namespace Polygon_mesh_processing {
   * @param out the output iterator that collects halfedges that form the border
   *            of `faces`, seen from inside the surface patch
   *
-  * @todo code : what shall we do for more than one connected components
   * @todo add get_border to the user manual
   */
   template<typename PolygonMesh
@@ -61,7 +60,7 @@ namespace Polygon_mesh_processing {
   {
     typedef PolygonMesh PM;
     typedef typename boost::graph_traits<PM>::edge_descriptor     edge_descriptor;
-    typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;    
+    typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PM>::face_descriptor     face_descriptor;
 
     //collect halfedges that appear only once
