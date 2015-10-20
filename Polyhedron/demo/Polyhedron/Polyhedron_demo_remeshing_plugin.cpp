@@ -35,7 +35,7 @@ public:
     this->scene = scene_interface;
     this->mw = mainWindow;
     actionRemeshing = this->getActionFromMainWindow(mw, "actionRemeshing");
-    actionRemeshing->setProperty("subMenuName", "Action on mesh");
+    actionRemeshing->setProperty("subMenuName", "3D Surface Mesh Generation");
     if(actionRemeshing) {
       connect(actionRemeshing, SIGNAL(triggered()),
               this, SLOT(remesh()));

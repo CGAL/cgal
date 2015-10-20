@@ -63,7 +63,7 @@ public:
     messages = m;
 
     actionPointInsidePolyhedron = new QAction(tr("Point Inside Polyhedron"), mw);
-    actionPointInsidePolyhedron->setProperty("subMenuName", "Object creation");
+    actionPointInsidePolyhedron->setProperty("subMenuName", "Polygon Mesh Processing");
     connect(actionPointInsidePolyhedron, SIGNAL(triggered()), this, SLOT(point_inside_polyhedron_action()));
 
     dock_widget = new QDockWidget("Point Inside Polyhedron", mw);

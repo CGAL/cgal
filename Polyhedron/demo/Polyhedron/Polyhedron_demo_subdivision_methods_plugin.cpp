@@ -31,13 +31,13 @@ public:
       mw = mainWindow;
       scene = scene_interface;
       actions_map["actionLoop"] = new QAction("Loop", mw);
-      actions_map["actionLoop"]->setProperty("subMenuName", "Action on mesh/Subdivisions");
+      actions_map["actionLoop"]->setProperty("subMenuName", "3D Surface Subdivision Methods");
 
       actions_map["actionCatmullClark"] = new QAction("Catmull Clark", mw);
-      actions_map["actionCatmullClark"]->setProperty("subMenuName", "Action on mesh/Subdivisions");
+      actions_map["actionCatmullClark"]->setProperty("subMenuName", "3D Surface Subdivision Methods");
 
       actions_map["actionSqrt3"] = new QAction("Sqrt3", mw);
-      actions_map["actionSqrt3"]->setProperty("subMenuName", "Action on mesh/Subdivisions");
+      actions_map["actionSqrt3"]->setProperty("subMenuName", "3D Surface Subdivision Methods");
 
       //autoConnectActions();
       connect(actions_map["actionLoop"], SIGNAL(triggered()),

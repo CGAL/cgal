@@ -85,7 +85,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
   mw = mainWindow;
   scene = scene_interface;
   actionDeformation = new QAction("Surface Mesh Deformation", mw);
-  actionDeformation->setProperty("subMenuName", "Action on mesh");
+  actionDeformation->setProperty("subMenuName", "Triangulated Surface Mesh Deformation");
 
   actionDeformation->setShortcut(QKeySequence(Qt::CTRL + Qt::Key_E));
   connect(actionDeformation, SIGNAL(triggered()), this, SLOT(on_actionDeformation_triggered()));

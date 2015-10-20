@@ -40,7 +40,7 @@ public:
       mw = mainWindow;
       scene = scene_interface;
       actions_map["actionSelfIntersection"] = getActionFromMainWindow(mw, "actionSelfIntersection");
-      actions_map["actionSelfIntersection"]->setProperty("subMenuName", "Detection operations");
+      actions_map["actionSelfIntersection"]->setProperty("subMenuName", "Polygon Mesh Processing");
       autoConnectActions();
 
   }

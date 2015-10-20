@@ -47,10 +47,10 @@ public:
       mw = mainWindow;
       scene = scene_interface;
       actions_map["actionFitPlane"] = new QAction("Fit Plane", mw);
-      actions_map["actionFitPlane"]->setProperty("subMenuName", "Object creation/PCA");
+      actions_map["actionFitPlane"]->setProperty("subMenuName", "Principal Component Analysis");
 
       actions_map["actionFitLine"] = new QAction("Fit Line", mw);
-      actions_map["actionFitLine"]->setProperty("subMenuName", "Object creation/PCA");
+      actions_map["actionFitLine"]->setProperty("subMenuName", "Principal Component Analysis");
 
       connect(actions_map["actionFitPlane"], SIGNAL(triggered()),
               this, SLOT(on_actionFitPlane_triggered()));
