@@ -1,29 +1,95 @@
-Subject: CGAL 4.6.3 Released, Computational Geometry Algorithms Library
-From: Laurent Rineau <laurent.rineau@cgal.org>
+Subject: CGAL 4.7 Released, Computational Geometry Algorithms Library
 Content-Type: text/plain; charset="utf-8"
 Body: 
 
-The CGAL Open Source Project is pleased to announce the release 4.6.3
+The CGAL Open Source Project is pleased to announce the release 4.7
 of CGAL, the Computational Geometry Algorithms Library.
 
-Version 4.6.3 is a bug-fix release for version 4.6. The list of fixed bugs
-can be seen Github:
+Besides fixes to existing packages, the following has changed since
+CGAL 4.6:
+
+  o Installation
+
+    - The minimum required version of CMake is now 2.8.11. CMake versions
+      3.1, 3.2, and 3.3 are supported.
+
+    - All Qt4 demos have been updated and now require Qt5 to be
+      compiled. Qt5 version 5.3 or higher is required. The support for Qt4
+      is dropped. The code of the 3D demos now use modern OpenGL, with
+      shaders, instead of the fixed pipeline API of OpenGL-1.
+
+    - The Microsoft Windows Visual C++ compiler 2015 (VC14) is now
+      supported.  However, since this compiler is not officially supported
+      by Intel TBB 4.4 and Qt 5.5 (the latest versions available at the
+      time of this release), the parallelism features of CGAL and Qt5 demos
+      will not work.
+
+  o Advancing Front Surface Reconstruction (new package)
+
+    This package provides a greedy algorithm for surface reconstruction
+    from an unorganized point set. Starting from a seed facet, a piecewise
+    linear surface is grown by adding Delaunay triangles one by one. The
+    most plausible triangles are added first, in a way that avoids the
+    appearance of topological singularities.
 
 
-  - fixed in CGAL-4.6.3:
+  o Triangulated Surface Mesh Shortest Paths (new package)
 
-       https://github.com/CGAL/cgal/issues?q=milestone%3A4.6.3
+    The package provides methods for computing shortest path on
+    triangulated surface meshes. Given a set of source points on the
+    surface, this package provides a data structure that can efficiently
+    provides the shortest path from any point on the surface to the sources
+    points. There is no restriction on the genus or the number of
+    connnected components of the mesh.
 
 
-  - fixed earlier in CGAL-4.6.2:
+  o Triangulated Surface Mesh Skeletonization (new package)
 
-       https://github.com/CGAL/cgal/issues?q=milestone%3A4.6.2
+    This package provides a (1D) curve skeleton extraction algorithm for a
+    triangulated polygonal mesh without borders based on the mean curvature
+    flow. The particularity of this skeleton is that it captures the
+    topology of the input. For each skeleton vertex one can obtain its
+    location and its corresponding vertices from the input mesh. The code
+    is generic and works with any model of the `FaceListGraph` concept.
 
 
-  - fixed earlier in CGAL-4.6.1:
+  o Polygon Mesh Processing (new package)
 
-       https://github.com/CGAL/cgal/issues?q=milestone%3A4.6.1
+    This package implements a collection of methods and classes for polygon
+    mesh processing, ranging from basic operations on simplices, to complex
+    geometry processing algorithms. The implementation of this package
+    mainly follows algorithms and references given in Botsch et al.'s book
+    on polygon mesh processing.
 
+
+  o 3D Point-Set Shape Detection (new package)
+
+    This package implements the efficient RANSAC method for shape
+    detection, contributed by Schnabel et al. From an unstructured point
+    set with unoriented normals, the algorithm detects a set of
+    shapes. Five types of primitive shapes are provided by this package:
+    plane, sphere, cylinder, cone and torus. Detecting other types of
+    shapes is possible by implementing a class derived from a base shape.
+
+
+  o L Infinity Segment Delaunay Graphs (new package)
+
+    The package provides the geometric traits for constructing the segment
+    Delaunay graph in the max-norm (L Infinity). The traits also contain
+    methods to draw the edges of the dual of the segment Delaunay graph in
+    the max-norm i.e., the segment Voronoi diagram in the max-norm. The
+    algorithm and traits rely on the segment Delaunay graph algorithm and
+    traits under the Euclidean distance. The segment Voronoi diagram in the
+    max-norm has applications in VLSI CAD.
+
+
+  o 2D Visibility (new package)
+
+    This package provides several variants to compute the visibility area
+    of a point within polygonal regions in two dimensions.
+
+
+See http://www.cgal.org/releases.html for a complete list of changes.
 
 
 The CGAL project is a collaborative effort to develop a robust,
