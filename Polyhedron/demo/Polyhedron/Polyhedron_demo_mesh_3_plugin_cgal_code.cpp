@@ -50,13 +50,10 @@ public:
     typedef qglviewer::ManipulatedFrame ManipulatedFrame;
 
     Scene_c3t3_item(const C3t3& c3t3)
-        : Scene_item(7,3), c3t3_(c3t3), frame(new ManipulatedFrame()), last_known_scene(NULL)
+        : Scene_item(4,3), c3t3_(c3t3), frame(new ManipulatedFrame()), last_known_scene(NULL)
     {
         positions_lines.resize(0);
         positions_poly.resize(0);
-        color_lines.resize(0);
-        color_poly.resize(0);
-        color_grid.resize(0);
         normals.resize(0);
         //Generates an integer which will be used as ID for each buffer
     }
@@ -162,6 +159,7 @@ public:
         program = getShaderProgram(PROGRAM_WITH_LIGHT);
         attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
         program->bind();
+        program->setAttributeValue("colors", this->color());
         viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size()/3));
         program->release();
         vaos[0]->release();
@@ -178,6 +176,7 @@ public:
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program->bind();
+        program->setAttributeValue("colors", QColor(Qt::black));
         QMatrix4x4 f_mat;
         for(int i=0; i<16; i++)
             f_mat.data()[i]=frame->matrix()[i];
@@ -190,6 +189,7 @@ public:
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program->bind();
+        program->setAttributeValue("colors", QColor(Qt::black));
         viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
         program->release();
         vaos[1]->release();
@@ -206,6 +206,7 @@ public:
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program->bind();
+        program->setAttributeValue("colors", this->color());
         viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/3));
        vaos[1]->release();
        program->release();
@@ -214,6 +215,7 @@ public:
        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
        attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
        program->bind();
+       program->setAttributeValue("colors", this->color());
        QMatrix4x4 f_mat;
        for(int i=0; i<16; i++)
            f_mat.data()[i]=frame->matrix()[i];
@@ -231,25 +233,7 @@ private:
         Kernel::Vector_3 n = cross_product(pb - pa, pc - pa);
         n = n / CGAL::sqrt(n*n);
 
-if(!is_cut)
-{
-    for(int i=0; i<3; i++)
-    {
 
-        color_poly.push_back(this->color().redF());
-        color_poly.push_back(this->color().greenF());
-        color_poly.push_back(this->color().blueF());
-    }
-}
-else
-{
-    for(int i=0; i<3; i++)
-    {
-      color_poly.push_back(this->color().darker(150).redF());
-      color_poly.push_back(this->color().darker(150).greenF());
-      color_poly.push_back(this->color().darker(150).blueF());
-    }
-}
         for(int i=0; i<3; i++)
         {
             normals.push_back(n.x());
@@ -277,12 +261,6 @@ else
 #undef darker
         Kernel::Vector_3 n = cross_product(pb - pa, pc - pa);
         n = n / CGAL::sqrt(n*n);
-        for(int i=0; i<6; i++)
-        {
-            color_lines.push_back(0.0);
-            color_lines.push_back(0.0);
-            color_lines.push_back(0.0);
-        }
         positions_lines.push_back(pa.x());
         positions_lines.push_back(pa.y());
         positions_lines.push_back(pa.z());
@@ -387,9 +365,7 @@ private:
     mutable std::vector<float> positions_grid;
     mutable std::vector<float> positions_poly;
     mutable std::vector<float> normals;
-    mutable std::vector<float> color_lines;
-    mutable std::vector<float> color_poly;
-    mutable std::vector<float> color_grid;
+
 
     mutable QOpenGLShaderProgram *program;
 
@@ -416,12 +392,6 @@ private:
             program->setAttributeBuffer("normals",GL_FLOAT,0,3);
             buffers[1].release();
 
-            buffers[2].bind();
-            buffers[2].allocate(color_poly.data(),
-                                static_cast<int>(color_poly.size()*sizeof(float)));
-            program->enableAttributeArray("colors");
-            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-            buffers[2].release();
             vaos[0]->release();
             program->release();
 
@@ -433,19 +403,13 @@ private:
             program->bind();
 
             vaos[1]->bind();
-            buffers[3].bind();
-            buffers[3].allocate(positions_lines.data(),
+            buffers[2].bind();
+            buffers[2].allocate(positions_lines.data(),
                                 static_cast<int>(positions_lines.size()*sizeof(float)));
             program->enableAttributeArray("vertex");
             program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-            buffers[3].release();
+            buffers[2].release();
 
-            buffers[4].bind();
-            buffers[4].allocate(color_lines.data(),
-                                static_cast<int>(color_lines.size()*sizeof(float)));
-            program->enableAttributeArray("colors");
-            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-            buffers[4].release();
             vaos[1]->release();
             program->release();
 
@@ -457,19 +421,12 @@ private:
             program->bind();
 
             vaos[2]->bind();
-            buffers[5].bind();
-            buffers[5].allocate(positions_grid.data(),
+            buffers[3].bind();
+            buffers[3].allocate(positions_grid.data(),
                                 static_cast<int>(positions_grid.size()*sizeof(float)));
             program->enableAttributeArray("vertex");
             program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-            buffers[5].release();
-
-            buffers[6].bind();
-            buffers[6].allocate(color_grid.data(),
-                                static_cast<int>(color_grid.size()*sizeof(float)));
-            program->enableAttributeArray("colors");
-            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-            buffers[6].release();
+            buffers[3].release();
             vaos[2]->release();
             program->release();
         }
@@ -479,10 +436,7 @@ private:
     {
         positions_lines.clear();
         positions_poly.clear();
-        color_lines.clear();
-        color_grid.clear();
-        color_poly.clear();
-        normals.clear();
+       normals.clear();
 
         //The grid
         {
@@ -515,10 +469,6 @@ private:
             colors[1] = 0;
             colors[2] = 0;
 
-            for(int i=0; i< 132; i++)
-            {
-                color_grid.push_back(colors[i%3]);
-            }
         }
 
 
