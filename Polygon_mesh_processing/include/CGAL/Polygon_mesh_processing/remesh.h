@@ -190,7 +190,7 @@ void incremental_triangle_based_remeshing(TriangleMesh& tmesh
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 *
-* @sa `incremental_triangle_based_remeshing()`
+* @sa `isotropic_remeshing()`
 *
 */
 template<typename TriangleMesh
