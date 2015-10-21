@@ -15,15 +15,25 @@
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
-#include <QVariant>
+#include <CGAL/statistics_helpers.h>
+
 #include <list>
 #include <queue>
 #include <iostream>
-#include <QDebug>
-
-
 #include <limits>
+
+#include <QVariant>
+#include <QDebug>
+#include <QDialog>
+
+#include <boost/foreach.hpp>
+
+
+namespace PMP = CGAL::Polygon_mesh_processing;
+
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
@@ -932,6 +942,12 @@ QMenu* Scene_polyhedron_item::contextMenu()
         connect(actionEraseNextFacet, SIGNAL(toggled(bool)),
                 this, SLOT(set_erase_next_picked_facet(bool)));
 
+        QAction* actionStatistics =
+                menu->addAction(tr("Statistics..."));
+        actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
+        connect(actionStatistics, SIGNAL(triggered()),
+                this, SLOT(statistics_on_polyhedron()));
+
         menu->setProperty(prop_name, true);
     }
     QAction* action = menu->findChild<QAction*>("actionPickFacets");
@@ -1267,4 +1283,35 @@ void Scene_polyhedron_item::invalidate_aabb_tree()
   delete_aabb_tree(this);
 }
 
+void Scene_polyhedron_item::statistics_on_polyhedron()
+{
+  QDialog dlg;
+  Ui::Polyhedron_demo_statistics_on_polyhedron_dialog ui;
+  ui.setupUi(&dlg);
+  connect(ui.okButtonBox, SIGNAL(accepted()), &dlg, SLOT(accept()));
+
+  ui.label_nbvertices->setText(QString::number(poly->size_of_vertices()));
+  ui.label_nbfacets->setText(QString::number(poly->size_of_facets()));
+  ui.label_nbborderedges->setText(QString::number(poly->size_of_border_edges()));
+
+  typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+  int i = 0;
+  BOOST_FOREACH(face_descriptor f, faces(*poly)){
+    f->id() = i++;
+  }
+
+  boost::vector_property_map<int,
+    boost::property_map<Polyhedron, boost::face_index_t>::type>
+    fccmap(get(boost::face_index, *poly));
+  ui.label_nbconnectedcomponents->setText(
+    QString::number(PMP::connected_components(*poly, fccmap)));
+
+  double mini, maxi, ave;
+  angles(poly, mini, maxi, ave);
+  ui.label_minangle->setText(QString::number(mini));
+  ui.label_maxangle->setText(QString::number(maxi));
+  ui.label_averageangle->setText(QString::number(ave));
+
+  dlg.exec();
+}
 
