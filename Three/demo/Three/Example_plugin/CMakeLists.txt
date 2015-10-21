@@ -14,9 +14,10 @@ if(POLICY CMP0042)
   # http://www.cmake.org/cmake/help/v3.0/policy/CMP0042.html
   cmake_policy(SET CMP0042 OLD)
 endif()
-# Find Qt5 itself
+#Find CGAL
 find_package(CGAL COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
+# Find Qt5 itself
 find_package(Qt5
              QUIET
              COMPONENTS            OpenGL Script Svg Xml
@@ -32,7 +33,7 @@ include( ${CGAL_POLYHEDRON_DEMO_USE_FILE} )
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
            
-  include( ${CMAKE_CURRENT_SOURCE_DIR}/../Polyhedron/demo/Polyhedron/polyhedron_demo_macros.cmake )
+  #include( ${CMAKE_CURRENT_SOURCE_DIR}/../../Polyhedron/demo/Polyhedron/polyhedron_demo_macros.cmake )
   qt5_wrap_ui( exampleUI_FILES Polyhedron_demo_example_plugin.ui dock_example.ui)
   qt5_wrap_ui( example_dockUI_FILES dock_example.ui)
   polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES} ${example_dockUI_FILES})

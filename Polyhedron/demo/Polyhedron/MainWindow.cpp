@@ -495,7 +495,9 @@ void MainWindow::loadPlugins()
   plugins_directories<<qApp->applicationDirPath();
   Q_FOREACH( QString name, QDir(qApp->applicationDirPath()).entryList())
   {
-      if(name.contains("_plugin"))
+      //checks if the path leads to a directory and if this
+      //directory is a plugin directory
+      if(QDir(name).exists()&& name.contains("_plugin") )
         plugins_directories<<name;
   }
   QString env_path = qgetenv("POLYHEDRON_DEMO_PLUGINS_PATH");
@@ -1584,6 +1586,7 @@ void MainWindow::on_actionLoad_plugin_triggered()
 //!TODO : Make it recursive to allow sub-menus of sub-menus.
 //!The argument should be the menuPath and it should recurse until hasSub stays false.
  QList<QAction*> as = ui->menuOperations->actions();
+
 Q_FOREACH(QAction* a, as)
 {
             QString menuPath = a->property("subMenuName").toString();

@@ -39,5 +39,7 @@ include (CGAL_Macros)
     endif()
     # Link with CGAL
     target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
-    add_dependencies( ${plugin_name} Polyhedron_3 )
+    if(TARGET Polyhedron_3)
+      add_dependencies( ${plugin_name} Polyhedron_3 )
+    endif()
   endmacro(polyhedron_demo_plugin)
