@@ -181,6 +181,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
       result_item->setRenderingMode(item->renderingMode());
       item->setVisible(false);
       scene->itemChanged(index);
+      result_item->invalidate_buffers();
       scene->addItem(result_item);
   }
   QApplication::restoreOverrideCursor();
