@@ -464,11 +464,6 @@ private:
                 positions_grid.push_back(-(float)complex_diag() + v * y);
                 positions_grid.push_back(0.0);
             }
-            float colors[3];
-            colors[0] = 0;
-            colors[1] = 0;
-            colors[2] = 0;
-
         }
 
 
