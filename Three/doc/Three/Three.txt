@@ -24,18 +24,25 @@ A plugin usually defines an object that inherits from Scene_item or uses some of
 \section examplePlugin Creating a simple Plugin
 \subsection examplePluginItself The plugin itself
 A basic plugin will inherit from Polyhedron_demo_plugin_interface. It can also inherits from the Polyhedron_demo_plugin_helper instead, for a more detailed model of plugin.
+It must be created in a folder named Xxxx_yyyy_plugin containing all the files created for it, and a CMakeLists.txt file. This file contains the following line :
 Its name must be of the form Polyhedron_demo_xxxx_yyyy_plugin. \n
 <b>In the CMakeList.txt file, in the section Plugins, add the following lines :</b>
 
-    polyhedron_demo_plugin(xxxx_yyyy_plugin Polyhedron_demo_xxxx_yyyy_plugin)
+    include( polyhedron_demo_macros )
+    #if the plugin has a UI file
+    qt5_wrap_ui( xxxx_yyyyUI_FILES Polyhedron_demo_xxxx_yyyy_plugin.ui)
+    polyhedron_demo_plugin(xxx_yyyy_plugin Polyhedron_demo_xxx_yyyy_plugin ${xxx_yyyyUI_FILES})
+    #if the plugin uses external libraries like scene_items
+    target_link_libraries(xxx_yyyy_plugin scene_polygon_xxxx_yyyy_item scene_xxxx_zzzz_item)
     
-<b>If your plugin interacts with scene items, then you have to add the following line too :</b>
-    
-    target_link_libraries(xxxx_yyyy_plugin scene_polyhedron_item) 
-      
+And in the main CMakeLists.txt, you must add the following line:
+
+    add_subdirectory(Xxxx_yyyy_plugin)
+
+
   [init]: @ref CGAL::Three::Polyhedron_demo_plugin_helper#init(QMainWindow *, Scene_interface *)
   The class must contain the following lines :\n
-  
+    
     Q_OBJECT\n
     Q_INTERFACES(Polyhedron_demo_plugin_interface)\n
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")\n

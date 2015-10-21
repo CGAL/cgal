@@ -1,4 +1,3 @@
-message(STATUS "Now CMAKE_MODULE_PATH is: ${CMAKE_MODULE_PATH}")
  include( polyhedron_demo_macros )
  
  qt5_wrap_ui( advancing_frontUI_FILES Polyhedron_demo_advancing_front_plugin.ui)
