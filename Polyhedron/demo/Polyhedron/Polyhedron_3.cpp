@@ -3,12 +3,21 @@
 #include <QMessageBox>
 #include <CGAL/Qt/resources.h>
 #include <stdexcept>
+/*!
+ * \brief The Polyhedron_demo class : defines the main function
+ */
 
 class Polyhedron_demo : public QApplication
 {
 public:
+  /*!
+   * Constructor : calls the constructor of QApplication.
+   */
   Polyhedron_demo(int& argc, char **argv) : QApplication(argc, argv) {}
 
+  /*!
+   * Catches unhandled exceptions from all the widgets.
+   */
   bool notify(QObject* receiver, QEvent* event)
   {
     try {
@@ -32,6 +41,10 @@ public:
   }
 };
 
+/*!
+ * \brief Defines the entry point of the demo.
+ * Creates the application and sets a main window.
+ */
 int main(int argc, char **argv)
 {
   Polyhedron_demo app(argc, argv);

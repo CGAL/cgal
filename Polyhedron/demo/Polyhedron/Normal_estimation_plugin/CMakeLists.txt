@@ -1,0 +1,5 @@
+include( polyhedron_demo_macros )
+
+qt5_wrap_ui( normal_estimationUI_FILES Polyhedron_demo_normal_estimation_plugin.ui)
+polyhedron_demo_plugin(normal_estimation_plugin Polyhedron_demo_normal_estimation_plugin ${normal_estimationUI_FILES})
+target_link_libraries(normal_estimation_plugin scene_points_with_normal_item)

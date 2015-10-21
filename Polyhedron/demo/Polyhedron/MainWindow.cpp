@@ -1,7 +1,7 @@
 #include "config.h"
 #include "MainWindow.h"
 #include "Scene.h"
-#include "Scene_item.h"
+#include <CGAL/Three/Scene_item.h>
 #include <CGAL/Qt/debug.h>
 
 #include <QtDebug>
@@ -39,8 +39,8 @@
 #  endif
 #endif
 
-#include "Polyhedron_demo_plugin_interface.h"
-#include "Polyhedron_demo_io_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 
 #include "ui_MainWindow.h"
 #include "ui_Preferences.h"
@@ -54,18 +54,18 @@
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptEngine>
 #  include <QScriptValue>
-
+using namespace CGAL::Three;
 QScriptValue 
 myScene_itemToScriptValue(QScriptEngine *engine, 
-                          Scene_item* const &in)
+                          CGAL::Three::Scene_item* const &in)
 { 
   return engine->newQObject(in); 
 }
 
 void myScene_itemFromScriptValue(const QScriptValue &object, 
-                                 Scene_item* &out)
+                                 CGAL::Three::Scene_item* &out)
 {
-  out = qobject_cast<Scene_item*>(object.toQObject()); 
+  out = qobject_cast<CGAL::Three::Scene_item*>(object.toQObject());
 }
 #endif // QT_SCRIPT_LIB
 
@@ -265,7 +265,7 @@ MainWindow::MainWindow(QWidget* parent)
 #ifdef QT_SCRIPT_LIB
   std::cerr << "Enable scripts.\n";
   script_engine = new QScriptEngine(this);
-  qScriptRegisterMetaType<Scene_item*>(script_engine,
+  qScriptRegisterMetaType<CGAL::Three::Scene_item*>(script_engine,
                                        myScene_itemToScriptValue,
                                        myScene_itemFromScriptValue);
 #  ifdef QT_SCRIPTTOOLS_LIB
@@ -491,9 +491,13 @@ void MainWindow::loadPlugins()
     initPlugin(obj);
     initIOPlugin(obj);
   }
-
   QList<QDir> plugins_directories;
-  plugins_directories << qApp->applicationDirPath();
+  plugins_directories<<qApp->applicationDirPath();
+  Q_FOREACH( QString name, QDir(qApp->applicationDirPath()).entryList())
+  {
+      if(name.contains("_plugin"))
+        plugins_directories<<name;
+  }
   QString env_path = qgetenv("POLYHEDRON_DEMO_PLUGINS_PATH");
   if(!env_path.isEmpty()) {
     Q_FOREACH (QString pluginsDir, 
@@ -538,6 +542,7 @@ void MainWindow::loadPlugins()
     }
   }
 
+
 //Creates sub-Menus for operations.
   //!TODO : Make it recursive to allow sub-menus of sub-menus.
   //!The argument should be the menuPath and it should recurse until hasSub stays false.
@@ -546,97 +551,6 @@ void MainWindow::loadPlugins()
 {
               QString menuPath = a->property("subMenuName").toString();
               setMenus(menuPath, ui->menuOperations->title(), a);
-
-              //QList<QAction*> actions;
-              /* QList<QMenu*> menus;
-  Q_FOREACH(QMenu* menu, ui->menuOperations->findChildren<QMenu*>()) {
-      menus.append(menu);
-  }
-  Q_FOREACH(QMenu* menu, menus) {
-      if(menu)
-      {
-          actions = menu->actions();
-          Q_FOREACH(QAction* a, actions)
-          {
-              QString subMenuName = a->property("subMenuName").toString();
-              if(!subMenuName.isNull())
-              {
-
-                  QMenu* subMenu = new QMenu(subMenuName, this);
-                  subMenu->addMenu(menu);
-                  continue;
-              }
-          }
-      }
-  }*/
-              // actions = ui->menuOperations->actions();
-              /*Q_FOREACH(QAction* a, actions)
-  {
-      QString menuPath = a->property("subMenuName").toString();
-      bool hasSub = false;
-      QString menuName, subMenuName;
-      if (!menuPath.isNull())
-      {
-          //Get the menu and submenu names
-          for(int i=0; i<menuPath.size(); i++)
-          {
-              if(menuPath.at(i)=='/')
-                  hasSub = true;
-          }
-
-          if(hasSub)
-          {
-              int i=0;
-              for(i; menuPath.at(i)!='/'; i++)
-                  menuName.append(menuPath.at(i));
-              i++;
-              for(i; i<menuPath.size(); i++)
-                  subMenuName.append(menuPath.at(i));
-          }
-          else
-              menuName= menuPath;
-          //Create the menu and sub menu
-          QMenu* menu = 0;
-          QMenu* subMenu = 0;
-          //If the menu already exists, don't create a new one.
-          Q_FOREACH(QAction* action, findChildren<QAction*>()) {
-              if(!action->menu()) continue;
-              QString menuText = action->menu()->title();
-              //If the menu title does not correspond to the name of the menu or submenu we want,
-              //go to the next one.
-              if(menuText != menuName && menuText != subMenuName) continue;
-              menu = action->menu();
-              if(hasSub)
-              {
-                  if(menuText != subMenuName) continue;
-                  subMenu = action->menu();
-                  //find the parent menu of the submenu
-                  Q_FOREACH(QMenu* parentmenu, findChildren<QMenu*>())
-                  {
-                      if(parentmenu->title() != menuName) continue;
-                      menu = parentmenu;
-                  }
-              }
-          }
-
-          if(menu == 0)
-          {
-              menu = new QMenu(menuName, this);
-          }
-          if(hasSub)
-          {
-              if(subMenu == 0)
-                  subMenu = new QMenu(subMenuName, this);
-              subMenu->addAction(a);
-              menu->addMenu(subMenu);
-          }
-          else
-              menu->addAction(a);
-
-          ui->menuOperations->addMenu(menu);
-          ui->menuOperations->removeAction(a);
-      }
-  }*/
               // sort the operations menu by name
               as = ui->menuOperations->actions();
               qSort(as.begin(), as.end(), actionsByName);
@@ -656,8 +570,8 @@ bool MainWindow::hasPlugin(const QString& pluginName) const
 bool MainWindow::initPlugin(QObject* obj)
 {
   QObjectList childs = this->children();
-  Polyhedron_demo_plugin_interface* plugin =
-    qobject_cast<Polyhedron_demo_plugin_interface*>(obj);
+  CGAL::Three::Polyhedron_demo_plugin_interface* plugin =
+    qobject_cast<CGAL::Three::Polyhedron_demo_plugin_interface*>(obj);
   if(plugin) {
     // Call plugin's init() method
     obj->setParent(this);
@@ -686,8 +600,8 @@ bool MainWindow::initPlugin(QObject* obj)
 
 bool MainWindow::initIOPlugin(QObject* obj)
 {
-  Polyhedron_demo_io_plugin_interface* plugin =
-    qobject_cast<Polyhedron_demo_io_plugin_interface*>(obj);
+  CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin =
+    qobject_cast<CGAL::Three::Polyhedron_demo_io_plugin_interface*>(obj);
   if(plugin) {
     io_plugins << plugin;
     return true;
@@ -849,7 +763,7 @@ void MainWindow::reload_item() {
               << "the reload action has not item attached\n";
     return;
   }
-  Scene_item* item = qobject_cast<Scene_item*>(item_object);
+  CGAL::Three::Scene_item* item = qobject_cast<CGAL::Three::Scene_item*>(item_object);
   if(!item) {
     std::cerr << "Cannot reload item: "
               << "the reload action has a QObject* pointer attached\n"
@@ -864,10 +778,10 @@ void MainWindow::reload_item() {
     return;
   }
 
-  Polyhedron_demo_io_plugin_interface* fileloader = find_loader(loader_name);
+  CGAL::Three::Polyhedron_demo_io_plugin_interface* fileloader = find_loader(loader_name);
   QFileInfo fileinfo(filename);
 
-  Scene_item* new_item = load_item(fileinfo, fileloader);
+  CGAL::Three::Scene_item* new_item = load_item(fileinfo, fileloader);
 
   new_item->setName(item->name());
   new_item->setColor(item->color());
@@ -878,8 +792,8 @@ void MainWindow::reload_item() {
   item->deleteLater();
 }
 
-Polyhedron_demo_io_plugin_interface* MainWindow::find_loader(const QString& loader_name) const {
-  Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, 
+CGAL::Three::Polyhedron_demo_io_plugin_interface* MainWindow::find_loader(const QString& loader_name) const {
+  Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin,
             io_plugins) {
     if(io_plugin->name() == loader_name) {
       return io_plugin;
@@ -965,7 +879,7 @@ void MainWindow::open(QString filename)
   {
     // collect all io_plugins and offer them to load if the file extension match one name filter
     // also collect all available plugin in case of a no extension match
-    Q_FOREACH(Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
+    Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
       if ( !io_plugin->canLoad() ) continue;
       all_items << io_plugin->name();
       if ( file_matches_filter(io_plugin->nameFilters(), filename) )
@@ -1001,7 +915,7 @@ void MainWindow::open(QString filename)
   settings.setValue("OFF open directory",
                     fileinfo.absoluteDir().absolutePath());
 
-  Scene_item* scene_item = load_item(fileinfo, find_loader(load_pair.first));
+  CGAL::Three::Scene_item* scene_item = load_item(fileinfo, find_loader(load_pair.first));
   if(scene_item != 0) {
     this->addToRecentFiles(fileinfo.absoluteFilePath());
   }
@@ -1010,7 +924,7 @@ void MainWindow::open(QString filename)
 
 bool MainWindow::open(QString filename, QString loader_name) {
   QFileInfo fileinfo(filename); 
-  Scene_item* item;
+  CGAL::Three::Scene_item* item;
   try {
     item = load_item(fileinfo, find_loader(loader_name));
   }
@@ -1023,8 +937,8 @@ bool MainWindow::open(QString filename, QString loader_name) {
 }
 
 
-Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_interface* loader) {
-  Scene_item* item = NULL;
+CGAL::Three::Scene_item* MainWindow::load_item(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface* loader) {
+  CGAL::Three::Scene_item* item = NULL;
   if(!fileinfo.isFile() || !fileinfo.isReadable()) {
     throw std::invalid_argument(QString("File %1 is not a readable file.")
                                 .arg(fileinfo.absoluteFilePath()).toStdString());
@@ -1042,6 +956,7 @@ Scene_item* MainWindow::load_item(QFileInfo fileinfo, Polyhedron_demo_io_plugin_
   item->setProperty("loader_name", loader->name());
   return item;
 }
+
 
 void MainWindow::setFocusToQuickSearch()
 {
@@ -1135,14 +1050,14 @@ void MainWindow::selectionChanged()
 {
   scene->setSelectedItemIndex(getSelectedSceneItemIndex());
   scene->setSelectedItemsList(getSelectedSceneItemIndices());
-  Scene_item* item = scene->item(getSelectedSceneItemIndex());
+  CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item != NULL && item->manipulatable()) {
     viewer->setManipulatedFrame(item->manipulatedFrame());
   } else {
     viewer->setManipulatedFrame(0);
   }
   if(viewer->manipulatedFrame() == 0) {
-    Q_FOREACH(Scene_item* item, scene->entries()) {
+    Q_FOREACH(CGAL::Three::Scene_item* item, scene->entries()) {
       if(item->manipulatable() && item->manipulatedFrame() != 0) {
         if(viewer->manipulatedFrame() != 0) {
           // there are at least two possible frames
@@ -1169,7 +1084,7 @@ void MainWindow::contextMenuRequested(const QPoint& global_pos) {
 void MainWindow::showSceneContextMenu(int selectedItemIndex,
                                       const QPoint& global_pos)
 {
-  Scene_item* item = scene->item(selectedItemIndex);
+  CGAL::Three::Scene_item* item = scene->item(selectedItemIndex);
   if(!item) return;
 
   const char* prop_name = "Menu modified by MainWindow.";
@@ -1223,7 +1138,7 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
   showSceneContextMenu(index, sender->mapToGlobal(p));
 }
 
-void MainWindow::removeManipulatedFrame(Scene_item* item)
+void MainWindow::removeManipulatedFrame(CGAL::Three::Scene_item* item)
 {
   if(item->manipulatable() &&
      item->manipulatedFrame() == viewer->manipulatedFrame()) {
@@ -1232,7 +1147,7 @@ void MainWindow::removeManipulatedFrame(Scene_item* item)
 }
 
 void MainWindow::updateInfo() {
-  Scene_item* item = scene->item(getSelectedSceneItemIndex());
+  CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item) {
     QString item_text = item->toolTip();
     QString item_filename = item->property("source filename").toString();
@@ -1255,7 +1170,7 @@ void MainWindow::updateInfo() {
 }
 
 void MainWindow::updateDisplayInfo() {
-  Scene_item* item = scene->item(getSelectedSceneItemIndex());
+  CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item)
     ui->displayLabel->setPixmap(item->graphicalToolTip());
   else 
@@ -1349,10 +1264,10 @@ void MainWindow::on_actionLoad_triggered()
 
   QStringList extensions;
 
-  typedef QMap<QString, Polyhedron_demo_io_plugin_interface*> FilterPluginMap;
+  typedef QMap<QString, CGAL::Three::Polyhedron_demo_io_plugin_interface*> FilterPluginMap;
   FilterPluginMap filterPluginMap;
   
-  Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
+  Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
     QStringList split_filters = plugin->nameFilters().split(";;");
     Q_FOREACH(const QString& filter, split_filters) {
       FilterPluginMap::iterator it = filterPluginMap.find(filter);
@@ -1380,14 +1295,14 @@ void MainWindow::on_actionLoad_triggered()
   FilterPluginMap::iterator it = 
     filterPluginMap.find(dialog.selectedNameFilter());
   
-  Polyhedron_demo_io_plugin_interface* selectedPlugin = NULL;
+  CGAL::Three::Polyhedron_demo_io_plugin_interface* selectedPlugin = NULL;
 
   if(it != filterPluginMap.end()) {
     selectedPlugin = it.value();
   }
 
   Q_FOREACH(const QString& filename, dialog.selectedFiles()) {
-    Scene_item* item = NULL;
+    CGAL::Three::Scene_item* item = NULL;
     if(selectedPlugin) {
       QFileInfo info(filename);
       item = load_item(info, selectedPlugin);
@@ -1414,14 +1329,14 @@ void MainWindow::on_actionSaveAs_triggered()
       return;
     index = getSelectedSceneItemIndex();
   }
-  Scene_item* item = scene->item(index);
+  CGAL::Three::Scene_item* item = scene->item(index);
 
   if(!item)
     return;
 
-  QVector<Polyhedron_demo_io_plugin_interface*> canSavePlugins;
+  QVector<CGAL::Three::Polyhedron_demo_io_plugin_interface*> canSavePlugins;
   QStringList filters;
-  Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
+  Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
     if(plugin->canSave(item)) {
       canSavePlugins << plugin;
       filters += plugin->nameFilters();
@@ -1446,10 +1361,10 @@ void MainWindow::on_actionSaveAs_triggered()
   save(filename, item);
 }
 
-void MainWindow::save(QString filename, Scene_item* item) {
+void MainWindow::save(QString filename, CGAL::Three::Scene_item* item) {
   QFileInfo fileinfo(filename);
 
-  Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
+  Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
     if(  plugin->canSave(item) &&
         file_matches_filter(plugin->nameFilters(),filename) )
     {
@@ -1488,7 +1403,7 @@ void MainWindow::on_actionShowHide_triggered()
   Q_FOREACH(QModelIndex index, sceneView->selectionModel()->selectedRows())
   {
     int i = proxyModel->mapToSource(index).row();
-    Scene_item* item = scene->item(i);
+    CGAL::Three::Scene_item* item = scene->item(i);
     item->setVisible(!item->visible());
     scene->itemChanged(i);
   }
@@ -1530,7 +1445,7 @@ void MainWindow::on_actionPreferences_triggered()
   }
   
   //add io-plugins
-  Q_FOREACH(Polyhedron_demo_io_plugin_interface* plugin, io_plugins)
+  Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins)
   {
     QStandardItem* item =  new QStandardItem(plugin->name());
     item->setCheckable(true);

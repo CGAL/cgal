@@ -1,0 +1,3 @@
+include( polyhedron_demo_macros )
+ polyhedron_demo_plugin(corefinement_plugin Polyhedron_demo_corefinement_plugin)
+ target_link_libraries(corefinement_plugin  scene_polyhedron_item scene_combinatorial_map_item scene_polylines_item)

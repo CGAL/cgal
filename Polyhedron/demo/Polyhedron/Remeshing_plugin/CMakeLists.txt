@@ -1,0 +1,5 @@
+include( polyhedron_demo_macros )
+
+qt5_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
+polyhedron_demo_plugin(remeshing_plugin Polyhedron_demo_remeshing_plugin Polyhedron_demo_remeshing_plugin_cgal_code.cpp Mesher_base.cpp ${remeshingUI_FILES})
+target_link_libraries(remeshing_plugin scene_polyhedron_item scene_polygon_soup_item scene_c2t3_item)

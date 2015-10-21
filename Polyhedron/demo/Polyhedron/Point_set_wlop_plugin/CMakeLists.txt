@@ -1,0 +1,5 @@
+include( polyhedron_demo_macros )
+
+qt5_wrap_ui(point_set_wlopFILES Polyhedron_demo_point_set_wlop_plugin.ui)
+polyhedron_demo_plugin(point_set_wlop_plugin Polyhedron_demo_point_set_wlop_plugin ${point_set_wlopFILES})
+target_link_libraries(point_set_wlop_plugin scene_points_with_normal_item)

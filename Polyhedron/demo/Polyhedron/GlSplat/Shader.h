@@ -19,7 +19,7 @@
 #include <string>
 #include <map>
 #include <QOpenGLFunctions_3_3_Core>
-#include "Viewer_interface.h"
+#include <CGAL/Three/Viewer_interface.h>
 
 namespace GlSplat {
 
@@ -49,7 +49,7 @@ public:
     ~Shader()
     {
     }
-    void setViewer(Viewer_interface *);
+    void setViewer(CGAL::Three::Viewer_interface *);
     /** add a \#define
     */
     void define(const char* name, const char* value);
@@ -124,7 +124,7 @@ public:
     inline void setUniform(const char* name, float a, float b, float c, float d)
     { viewer->glUniform4f(viewer->glGetUniformLocation(mProgramID, name), a, b, c, d); }
 
-     Viewer_interface *viewer;
+     CGAL::Three::Viewer_interface *viewer;
 protected:
 
     bool mIsValid;

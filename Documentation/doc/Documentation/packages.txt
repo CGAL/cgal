@@ -162,5 +162,6 @@ h1 {
 \package_listing{Geomview}
 \package_listing{GraphicsView}
 \package_listing{CGAL_ipelets}
+\package_listing{Three}
 
 */

@@ -1,0 +1,3 @@
+include( polyhedron_demo_macros )
+
+polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)

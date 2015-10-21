@@ -1,0 +1,4 @@
+include( polyhedron_demo_macros )
+
+polyhedron_demo_plugin(triangulate_facets_plugin Polyhedron_demo_triangulate_facets_plugin)
+target_link_libraries(triangulate_facets_plugin scene_polyhedron_item)

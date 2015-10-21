@@ -1,0 +1,5 @@
+include( polyhedron_demo_macros )
+
+qt5_wrap_ui( vcm_normal_estimationUI_FILES Polyhedron_demo_vcm_normal_estimation_plugin.ui)
+polyhedron_demo_plugin(vcm_normal_estimation_plugin Polyhedron_demo_vcm_normal_estimation_plugin ${vcm_normal_estimationUI_FILES})
+target_link_libraries(vcm_normal_estimation_plugin scene_points_with_normal_item)

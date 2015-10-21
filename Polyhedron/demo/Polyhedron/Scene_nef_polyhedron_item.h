@@ -1,6 +1,6 @@
 #ifndef SCENE_NEF_POLYHEDRON_ITEM_H
 #define SCENE_NEF_POLYHEDRON_ITEM_H
-#include "Scene_item.h"
+#include  <CGAL/Three/Scene_item.h>
 #include "Scene_nef_polyhedron_item_config.h"
 #include "Nef_type_fwd.h"
 #include <iostream>
@@ -8,7 +8,7 @@
 class Scene_polyhedron_item;
 
 class SCENE_NEF_POLYHEDRON_ITEM_EXPORT Scene_nef_polyhedron_item
- : public Scene_item
+ : public CGAL::Three::Scene_item
 {
   Q_OBJECT
 public:
@@ -33,10 +33,10 @@ public:
   // OpenGL drawing in a display list
   void direct_draw() const;
 
-  virtual void draw(Viewer_interface*) const;
+  virtual void draw(CGAL::Three::Viewer_interface*) const;
   virtual void draw_edges() const {}
-  virtual void draw_edges(Viewer_interface* viewer) const;
-  virtual void draw_points(Viewer_interface*) const;
+  virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
+  virtual void draw_points(CGAL::Three::Viewer_interface*) const;
   // Wireframe OpenGL drawing
 
   bool isFinite() const { return true; }
@@ -88,8 +88,8 @@ private:
 
   mutable QOpenGLShaderProgram *program;
 
-  using Scene_item::initialize_buffers;
-  void initialize_buffers(Viewer_interface *viewer) const;
+  using CGAL::Three::Scene_item::initialize_buffers;
+  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void);
 
   void triangulate_facet();

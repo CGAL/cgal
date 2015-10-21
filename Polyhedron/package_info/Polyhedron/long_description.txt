@@ -1,4 +1,4 @@
-Polyhedron Package
+Three Package
 ---------------------------------------------------------------------
 
 -  CGAL/Polyhedron_3.h

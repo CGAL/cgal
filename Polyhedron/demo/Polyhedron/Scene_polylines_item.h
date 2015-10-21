@@ -1,9 +1,9 @@
 #ifndef SCENE_POLYLINES_ITEM_H
 #define SCENE_POLYLINES_ITEM_H
 #include "Scene_polylines_item_config.h"
-#include "Viewer_interface.h"
+#include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include "Scene_item.h"
+#include  <CGAL/Three/Scene_item.h>
 
 #include <QString>
 #include <QMenu>
@@ -13,7 +13,7 @@
 
 class Scene_polylines_item_private;
 
-class SCENE_POLYLINES_ITEM_EXPORT Scene_polylines_item : public Scene_item
+class SCENE_POLYLINES_ITEM_EXPORT Scene_polylines_item : public CGAL::Three::Scene_item
 {
     Q_OBJECT
 public:
@@ -42,14 +42,14 @@ public:
 
     // Flat/Gouraud OpenGL drawing
     void draw() const {}
-    void draw(Viewer_interface*) const;
+    void draw(CGAL::Three::Viewer_interface*) const;
 
     // Wireframe OpenGL drawing
     void draw_edges() const{}
-    void draw_edges(Viewer_interface*) const;
+    void draw_edges(CGAL::Three::Viewer_interface*) const;
 
     void draw_points() const{}
-    void draw_points(Viewer_interface*) const;
+    void draw_points(CGAL::Three::Viewer_interface*) const;
 
 
     void smooth(std::vector<Point_3>& polyline){
@@ -109,11 +109,11 @@ private:
     typedef std::map<Point_3, int> Point_to_int_map;
     typedef Point_to_int_map::iterator iterator;
     void create_Sphere(double) const;
-    using Scene_item::initialize_buffers;
-    void initialize_buffers(Viewer_interface *viewer) const;
-
-    using Scene_item::compute_elements;
+    using CGAL::Three::Scene_item::initialize_buffers;
+    void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
+    using CGAL::Three::Scene_item::compute_elements;
     void compute_elements() const;
+
 
 
 }; // end class Scene_polylines_item

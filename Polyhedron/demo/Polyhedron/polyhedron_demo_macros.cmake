@@ -1,4 +1,5 @@
 include(AddFileDependencies)
+include (CGAL_Macros)
 
   macro(polyhedron_demo_plugin plugin_name plugin_implementation_base_name)
     list_split(option ARGN_TAIL ${ARGN} )

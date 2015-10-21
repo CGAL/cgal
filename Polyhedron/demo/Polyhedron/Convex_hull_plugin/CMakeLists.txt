@@ -1,0 +1,4 @@
+include( polyhedron_demo_macros )
+
+polyhedron_demo_plugin(convex_hull_plugin Polyhedron_demo_convex_hull_plugin)
+target_link_libraries(convex_hull_plugin scene_polyhedron_item scene_points_with_normal_item scene_polylines_item scene_polyhedron_selection_item)

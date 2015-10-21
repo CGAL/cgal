@@ -6,7 +6,7 @@
 #include <QGLViewer/manipulatedFrame.h>
 
 #include "Color_ramp.h"
-#include <Viewer_interface.h>
+#include <CGAL/Three/Viewer_interface.h>
 
 #include <CGAL/double.h>
 
@@ -16,7 +16,7 @@ bool is_nan(double d)
     return !CGAL::Is_valid<double>()( d );
 }
 
-void Scene_implicit_function_item::initialize_buffers(Viewer_interface *viewer = 0) const
+void Scene_implicit_function_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const
 {
     if(GLuint(-1) == textureId) {
         viewer->glGenTextures(1, &textureId);
@@ -341,7 +341,7 @@ void Scene_implicit_function_item::compute_vertices_and_texmap(void)
 
 Scene_implicit_function_item::
 Scene_implicit_function_item(Implicit_function_interface* f)
-    :Scene_item(4,3)
+    :CGAL::Three::Scene_item(4,3)
     , function_(f)
     , frame_(new ManipulatedFrame())
     , need_update_(true)
@@ -386,7 +386,7 @@ Scene_implicit_function_item::bbox() const
 }
 
 void
-Scene_implicit_function_item::draw(Viewer_interface* viewer) const
+Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
         initialize_buffers(viewer);
@@ -420,7 +420,7 @@ Scene_implicit_function_item::draw(Viewer_interface* viewer) const
 }
 
 void
-Scene_implicit_function_item::draw_edges(Viewer_interface* viewer) const
+Scene_implicit_function_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
         initialize_buffers(viewer);
