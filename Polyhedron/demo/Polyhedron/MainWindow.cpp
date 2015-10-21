@@ -1436,7 +1436,7 @@ void MainWindow::on_actionPreferences_triggered()
     item->setCheckState(Qt::Checked);
     iStandardModel->appendRow(item);
   }
-  
+
   //add operations plugins
   Q_FOREACH(PluginNamePair pair,plugins){
     QStandardItem* item =  new QStandardItem(pair.second);
@@ -1542,3 +1542,57 @@ void MainWindow::on_actionRecenterScene_triggered()
 }
 
 
+void MainWindow::on_actionLoad_plugin_triggered()
+{
+    //pop a dialog of path selection, get the path and add it to plugins_directory
+
+    QString filters("Library files (*.dll *.DLL *.so *.a *.sl *.dylib *.bundle);;"
+                    "Any files (*)");
+
+    QStringList paths = QFileDialog::getOpenFileNames(
+                this,
+                tr("Select the directory containing your plugins:"),
+                ".",filters);
+    Q_FOREACH(QString fileName, paths)
+    {
+      if(fileName.contains("plugin") && QLibrary::isLibrary(fileName)) {
+        //set plugin name
+        QString name = fileName;
+        name.remove(QRegExp("^lib"));
+        name.remove(QRegExp("\\..*"));
+        QDebug qdebug = qDebug();
+        qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
+        QPluginLoader loader;
+        loader.setFileName(fileName);
+        QObject *obj = loader.instance();
+        if(obj) {
+          obj->setObjectName(name);
+          bool init1 = initPlugin(obj);
+          bool init2 = initIOPlugin(obj);
+          if (!init1 && !init2)
+              qdebug << "not for this program";
+          else
+              qdebug << "success";
+        }
+        else {
+          qdebug << "error: " << qPrintable(loader.errorString());
+        }
+      }
+    }
+
+//Creates sub-Menus for operations.
+//!TODO : Make it recursive to allow sub-menus of sub-menus.
+//!The argument should be the menuPath and it should recurse until hasSub stays false.
+ QList<QAction*> as = ui->menuOperations->actions();
+Q_FOREACH(QAction* a, as)
+{
+            QString menuPath = a->property("subMenuName").toString();
+            setMenus(menuPath, ui->menuOperations->title(), a);
+            // sort the operations menu by name
+            as = ui->menuOperations->actions();
+            qSort(as.begin(), as.end(), actionsByName);
+            ui->menuOperations->clear();
+            ui->menuOperations->addActions(as);
+        }
+
+}
