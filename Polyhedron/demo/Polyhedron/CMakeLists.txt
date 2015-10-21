@@ -500,10 +500,26 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(shortest_path_plugin Polyhedron_demo_shortest_path_plugin ${shortestPathUI_FILES})
   target_link_libraries(shortest_path_plugin scene_polyhedron_item scene_polylines_item scene_polyhedron_selection_item scene_polyhedron_shortest_path_item scene_basic_objects)
 
+
   qt5_wrap_ui( exampleUI_FILES Polyhedron_demo_example_plugin.ui dock_example.ui)
   qt5_wrap_ui( example_dockUI_FILES dock_example.ui)
   polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES} ${example_dockUI_FILES})
   target_link_libraries(example_plugin scene_polyhedron_item)
+
+  find_package(VTK QUIET COMPONENTS
+                         vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML)
+  if (VTK_FOUND)
+    include(${VTK_USE_FILE})
+    if(VTK_LIBRARIES)
+      polyhedron_demo_plugin(vtk_plugin Polyhedron_demo_vtk_plugin)
+      target_link_libraries(vtk_plugin scene_polyhedron_item
+                                        vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML)
+    else()
+      message(STATUS "NOTICE : the vtk IO plugin needs VTK libraries and will not be compiled.")
+    endif()
+  else()
+    message(STATUS "NOTICE : the vtk IO plugin needs VTK and will not be compiled.")
+  endif()
 #
 # Exporting
 #
