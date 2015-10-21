@@ -227,7 +227,7 @@ public:
 private:
     void draw_triangle(const Kernel::Point_3& pa,
                        const Kernel::Point_3& pb,
-                       const Kernel::Point_3& pc, bool is_cut) const {
+                       const Kernel::Point_3& pc, bool /* is_cut */) const {
 
 #undef darker
         Kernel::Vector_3 n = cross_product(pb - pa, pc - pa);
