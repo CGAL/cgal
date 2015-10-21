@@ -18,7 +18,6 @@ using namespace boost::accumulators;
 template<typename Polyhedron>
 void angles(Polyhedron* poly, double& mini, double& maxi, double& ave)
 {
-  typedef typename boost::graph_traits<Polyhedron>::face_descriptor     face_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
 
   double rad_to_deg = 180. / CGAL_PI;
