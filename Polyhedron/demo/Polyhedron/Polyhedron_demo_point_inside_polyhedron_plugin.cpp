@@ -126,7 +126,7 @@ public Q_SLOTS:
     // deselect all points
     for(std::vector<Point_set*>::iterator point_set_it = point_sets.begin(); 
       point_set_it != point_sets.end(); ++point_set_it) {
-      (*point_set_it)->select((*point_set_it)->begin(), (*point_set_it)->end(), false);
+      (*point_set_it)->unselect_all();
     }
 
     CGAL::Timer timer; timer.start();
@@ -152,7 +152,7 @@ public Q_SLOTS:
             (on_boundary && res == CGAL::ON_BOUNDARY)     ||
             (outside     && res == CGAL::ON_UNBOUNDED_SIDE) )
         {
-          point_set->select(&*point_it); ++nb_selected;
+          point_set->select(point_it); ++nb_selected;
           break;//loop on i
         }
         }

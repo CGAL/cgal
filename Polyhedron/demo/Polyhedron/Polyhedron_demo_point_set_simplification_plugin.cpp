@@ -179,8 +179,7 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
                                     << std::endl;
 
     // Selects points to delete
-    points->select(points->begin(), first_point_to_remove, false);
-    points->select(first_point_to_remove, points->end(), true);
+    points->set_first_selected(first_point_to_remove);
 
     // Updates scene
     item->invalidate_buffers();

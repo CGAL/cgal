@@ -15,7 +15,6 @@
 /// - a position,
 /// - a normal,
 /// - a radius,
-/// - a selection flag.
 ///
 /// @heading Parameters:
 /// @param Gt   Geometric traits class.
@@ -52,35 +51,30 @@ public:
     UI_point_3(const CGAL::Origin& o = CGAL::ORIGIN)
     : Base(o)
     {
-      m_is_selected = false;
       m_radius = FT(0);
     }
     UI_point_3(FT x, FT y, FT z,
                const Vector_3& normal = CGAL::NULL_VECTOR)
     : Base(x,y,z,normal)
     {
-      m_is_selected = false;
       m_radius = FT(0);
     }
     UI_point_3(RT hx, RT hy, RT hz, RT hw,
                const Vector_3& normal = CGAL::NULL_VECTOR)
     : Base(hx,hy,hz,hw,normal)
     {
-      m_is_selected = false;
       m_radius = FT(0);
     }
     UI_point_3(const Point_3& point,
                const Vector_3& normal = CGAL::NULL_VECTOR)
     : Base(point, normal)
     {
-      m_is_selected = false;
       m_radius = FT(0);
     }
     template <class K>
     UI_point_3(const CGAL::Point_with_normal_3<K>& pwn)
     : Base(pwn)
     {
-      m_is_selected = false;
       m_radius = FT(0);
     }
 
@@ -88,30 +82,23 @@ public:
     UI_point_3(const UI_point_3& upt)
     : Base(upt)
     {
-      m_is_selected = upt.m_is_selected;
       m_radius = upt.m_radius;
     }
     template<class K>
     UI_point_3(const UI_point_3<K>& upt)
     : Base(upt)
     {
-      m_is_selected = upt.is_selected();
       m_radius = upt.radius();
     }
     /// Operator =()
     UI_point_3& operator=(const UI_point_3& upt)
     {
       Base::operator=(upt);
-      m_is_selected = upt.m_is_selected;
       m_radius = upt.m_radius;
       return *this;
     }
 
     // Inherited operators ==() and !=() are fine.
-
-    /// Selection flag.
-    bool is_selected() const { return m_is_selected; }
-    void select(bool is_selected=true) { m_is_selected = is_selected; }
 
     /// Gets/sets radius.
     FT radius() const { return m_radius; }
@@ -119,9 +106,6 @@ public:
 
 // Data
 private:
-
-    // Selection flag.
-    bool m_is_selected;
 
     /// radius.
     FT m_radius;
