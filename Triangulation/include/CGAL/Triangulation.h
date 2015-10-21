@@ -630,7 +630,12 @@ public:
         return tds().new_full_cell();
     }
 
-    Vertex_handle  new_vertex(const Point & p) 
+    Vertex_handle new_vertex()
+    {
+      return tds().new_vertex();
+    }
+
+    Vertex_handle new_vertex(const Point & p) 
     {
         return tds().new_vertex(p);
     }
