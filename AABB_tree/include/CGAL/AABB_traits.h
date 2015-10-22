@@ -300,6 +300,20 @@ public:
 
   Intersection intersection_object() const {return Intersection(*this);}
 
+  class Intersection_distance {
+    const AABB_traits<GeomTraits,AABBPrimitive>& m_traits;
+  public:
+    Intersection_distane(const AABB_traits<GeomTraits,AABBPrimitive>& traits)
+      : m_traits(traits) {}
+
+    template<typename Ray>
+    boost::optional<AABB_traits::FT> operator()(const Ray& ray, const Bounding_box& bbox) {
+      return boost::none;
+    }
+  };
+
+  Intersection_distance intersection_distance_object const { return Intersection_distance(*this); }
+
   // This should go down to the GeomTraits, i.e. the kernel
   class Closest_point {
       typedef typename AT::Point_3 Point;
