@@ -1,22 +1,19 @@
 #include "Scene_points_with_normal_item.h"
-#include "Polyhedron_type.h"
-#include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
-
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include "Polyhedron_demo_io_plugin_interface.h"
 
 #include <fstream>
-using namespace CGAL::Three;
-class Polyhedron_demo_off_to_xyz_plugin :
+
+class Polyhedron_demo_ply_to_xyz_plugin :
   public QObject,
   public Polyhedron_demo_io_plugin_interface
 {
   Q_OBJECT
-  Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
+  Q_INTERFACES(Polyhedron_demo_io_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
-  QString name() const { return "off_to_xyz_plugin"; }
-  QString nameFilters() const { return "OFF files as Point set (*.off)"; }
+  QString name() const { return "ply_to_xyz_plugin"; }
+  QString nameFilters() const { return "PLY files as Point set (*.ply)"; }
   bool canLoad() const;
   Scene_item* load(QFileInfo fileinfo);
 
@@ -24,49 +21,40 @@ public:
   bool save(const Scene_item*, QFileInfo fileinfo);
 };
 
-bool Polyhedron_demo_off_to_xyz_plugin::canLoad() const {
+bool Polyhedron_demo_ply_to_xyz_plugin::canLoad() const {
   return true;
 }
 
 Scene_item* 
-Polyhedron_demo_off_to_xyz_plugin::load(QFileInfo fileinfo) {
+Polyhedron_demo_ply_to_xyz_plugin::load(QFileInfo fileinfo) {
   std::ifstream in(fileinfo.filePath().toUtf8());
 
   if(!in)
     std::cerr << "Error!\n";
 
   Scene_points_with_normal_item* item;
-
-  Polyhedron p;
-  in >> p;
-  if (in && !p.empty())
-    item = new Scene_points_with_normal_item(p);
-  else{
-    in.close();
-    in.open(fileinfo.filePath().toUtf8());
-    item = new Scene_points_with_normal_item();
-    if(!item->read_off_point_set(in))
+  item = new Scene_points_with_normal_item();
+  if(!item->read_ply_point_set(in))
     {
       delete item;
       return 0;
     }
-  }
 
   item->setName(fileinfo.baseName());
   return item;
 }
 
-bool Polyhedron_demo_off_to_xyz_plugin::canSave(const Scene_item* item)
+bool Polyhedron_demo_ply_to_xyz_plugin::canSave(const Scene_item* item)
 {
   // This plugin supports point sets
   return qobject_cast<const Scene_points_with_normal_item*>(item);
 }
 
-bool Polyhedron_demo_off_to_xyz_plugin::save(const Scene_item* item, QFileInfo fileinfo)
+bool Polyhedron_demo_ply_to_xyz_plugin::save(const Scene_item* item, QFileInfo fileinfo)
 {
   // Check extension (quietly)
   std::string extension = fileinfo.suffix().toUtf8().data();
-  if (extension != "off" && extension != "OFF")
+  if (extension != "ply" && extension != "PLY")
     return false;
 
   // This plugin supports point sets
@@ -77,8 +65,8 @@ bool Polyhedron_demo_off_to_xyz_plugin::save(const Scene_item* item, QFileInfo f
 
   // Save point set as .xyz
   std::ofstream out(fileinfo.filePath().toUtf8().data());
-  return point_set_item->write_off_point_set(out);
+  return point_set_item->write_ply_point_set(out);
 }
 
 
-#include "Polyhedron_demo_off_to_xyz_plugin.moc"
+#include "Polyhedron_demo_ply_to_xyz_plugin.moc"
