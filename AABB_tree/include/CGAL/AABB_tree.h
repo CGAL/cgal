@@ -392,6 +392,12 @@ public:
     #endif
     any_intersection(const Query& query) const;
 
+    // Return the intersection closest to the source point of the ray
+    // query. Type `Ray` must be a type for which `do_intersect`
+    // predicates and intersections are defined.
+    //
+    // `AABBTraits` must be a model of `AABBRayIntersectionTraits` to
+    // call this member function.
     template<typename Ray>
     boost::optional< typename Intersection_and_primitive_id<Query>::Type >
     ray_intersection(const Ray& query) const;
