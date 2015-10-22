@@ -637,6 +637,84 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
     CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
+/*!
+ * \ingroup PkgPolygonMeshProcessing
+ *  removes connected components with less than a given number of faces.
+ *  Two faces are considered in the same connected component if they share an edge that is not marked as constrained.
+ *
+ * Property maps for `CGAL::face_index_t` and `CGAL::vertex_index_t`
+ * should be either available as internal property maps 
+ * to `pmesh` or provided as \ref namedparameters.
+ *
+ * \tparam PolygonMesh a model of `FaceListGraph`
+ * \tparam NamedParameters a sequence of \ref namedparameters
+ *
+ * \param pmesh the polygon mesh
+ * \param threshold_components_to_keep the number of faces a component must have so that it is kept
+ * \param np optional \ref namedparameters described below
+ *
+ * \cgalNamedParamsBegin
+ *    \cgalParamBegin{edge_is_constrained_map} a property map containing the constrained-or-not status of each edge of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{face_index_map} a property map containing the index of each face of `pmesh` \cgalParamEnd
+ *    \cgalParamBegin{vertex_index_map} a property map containing the index of each vertex of `pmesh` \cgalParamEnd
+ * \cgalNamedParamsEnd
+ *
+ *  \return the number of connected components removed (ignoring isolated vertices).
+ */
+template <typename PolygonMesh
+        , typename NamedParameters>
+std::size_t keep_large_connected_components(PolygonMesh& pmesh
+                                            , std::size_t threshold_components_to_keep
+                                            , const NamedParameters& np)
+{
+  typedef PolygonMesh PM;
+  typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
+
+  using boost::choose_param;
+  using boost::get_param;
+  using boost::choose_const_pmap;
+
+  //FaceIndexMap
+  typedef typename GetFaceIndexMap<PM, NamedParameters>::type FaceIndexMap;
+  FaceIndexMap fim = choose_const_pmap(get_param(np, boost::face_index),
+                                       pmesh,
+                                       boost::face_index);
+
+  //vector_property_map
+  boost::vector_property_map<std::size_t, FaceIndexMap> face_cc(fim);
+  std::size_t num = connected_components(pmesh, face_cc, np);
+  std::vector< std::pair<std::size_t, std::size_t> > component_size(num);
+
+  for(std::size_t i=0; i < num; i++)
+    component_size[i] = std::make_pair(i,0);
+
+  BOOST_FOREACH(face_descriptor f, faces(pmesh))
+    ++component_size[face_cc[f]].second;
+
+
+  std::vector<std::size_t> cc_to_keep;
+  for(std::size_t i=0; i<num; ++i){
+    if(component_size[i].second >= threshold_components_to_keep){
+      cc_to_keep.push_back( component_size[i].first );
+    }
+  }
+
+  keep_connected_components(pmesh, cc_to_keep, face_cc, np);
+
+  return num - cc_to_keep.size();
+}
+
+
+template <typename PolygonMesh>
+std::size_t keep_large_connected_components(PolygonMesh& pmesh,
+                                            std::size_t threshold_components_to_keep)
+{
+  return keep_large_connected_components(pmesh,
+    threshold_components_to_keep,
+    CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
+
 template <typename PolygonMesh
         , typename ComponentRange
         , typename FaceComponentMap
