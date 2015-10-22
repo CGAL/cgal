@@ -111,7 +111,6 @@ void SplatRenderer::init(QGLWidget *qglw)
   if(qglw)
     qglw->makeCurrent();
 
-  //glewInit();
   const char* rs = (const char*)glGetString(GL_RENDERER);
   QString rendererString("");
   if(rs)
@@ -136,20 +135,11 @@ void SplatRenderer::init(QGLWidget *qglw)
     mIsSupported = false;
     return;
   }
-  //if (GLEW_ARB_texture_float)
   mSupportedMask |= FLOAT_BUFFER_BIT;
-  //else
-  //  std::cout << "SplatRenderer: warning floating point textures are not supported.\n";
 
- // if (GLEW_ARB_draw_buffers && (!mBuggedAtiBlending))
   mSupportedMask |= DEFERRED_SHADING_BIT;
-  //else
-  //  std::cout << "SplatRenderer: warning deferred shading is not supported.\n";
 
-  //if (GLEW_ARB_shadow)
   mSupportedMask |= OUTPUT_DEPTH_BIT;
-  //else
-  //  std::cerr << "SplatRenderer: warning copy of the depth buffer is not supported.\n";
 
   mFlags = mFlags & mSupportedMask;
 
