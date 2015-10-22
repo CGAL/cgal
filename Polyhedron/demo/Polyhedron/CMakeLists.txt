@@ -509,7 +509,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES} ${example_dockUI_FILES})
   target_link_libraries(example_plugin scene_polyhedron_item)
 
-  find_package(VTK QUIET COMPONENTS
+  find_package(VTK QUIET 6.0 COMPONENTS
                          vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML)
   if (VTK_FOUND)
     include(${VTK_USE_FILE})
@@ -521,7 +521,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       message(STATUS "NOTICE : the vtk IO plugin needs VTK libraries and will not be compiled.")
     endif()
   else()
-    message(STATUS "NOTICE : the vtk IO plugin needs VTK and will not be compiled.")
+    message(STATUS "NOTICE : the vtk IO plugin needs VTK 6.0 or greater and will not be compiled.")
   endif()
 #
 # Exporting

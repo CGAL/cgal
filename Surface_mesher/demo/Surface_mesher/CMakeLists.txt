@@ -97,7 +97,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${prj} )
     
     
-    find_package(VTK 6.0 COMPONENTS
+    find_package(VTK QUIET 6.0 COMPONENTS
       vtkImagingCore
       )
     if(VTK_FOUND)
