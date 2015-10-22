@@ -31,6 +31,9 @@ public:
     pq.push(Node_ptr_with_ft(root_node(), 0, m_primitives.size()));
 
     while(!pq.empty() && pq.top().value < t) {
+      Node_ptr_with_ft current = pq.top();
+      pq.pop();
+
       switch(current.nb_primitives) { // almost copy-paste from BVH_node::traversal
       case 2: // Left & right child both leaves
       {
@@ -42,7 +45,15 @@ public:
       }
       default: // Children both inner nodes
       {
+        const Node* child = &(current.node->left_child());
+        boost::optional<FT> dist = intersection_distance_object(query, child->bbox());
+        if(dist)
+          pq.push(Node_ptr_with_ft(child, *dist, current.nb_primitives/2));
 
+        child = &(current.node->right_child());
+        dist = intersection_distance_object(query, child->bbox());
+        if(dist)
+          pq.push(Node_ptr_with_ft(child, *dist, current.nb_primitives - current.nb_primitives/2));
       }
       }
     }
