@@ -250,7 +250,7 @@ namespace CGAL {
 
     ///@}
 
-private:
+	private:
     #if !defined(CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES) && !defined(CGAL_CFG_NO_CPP0X_RVALUE_REFERENCE)
     template <typename ... T>
     void set_primitive_data_impl(CGAL::Boolean_tag<false>,T ... ){}
@@ -363,7 +363,6 @@ public:
     /// in the traits class `AABBTraits`.
 		template <typename Query>
 		boost::optional<Primitive_id> any_intersected_primitive(const Query& query) const;
-    
     ///@}
 
     /// \name Intersections
@@ -392,6 +391,10 @@ public:
     boost::optional< typename Intersection_and_primitive_id<Query>::Type >
     #endif
     any_intersection(const Query& query) const;
+
+    template<typename Ray>
+    boost::optional< typename Intersection_and_primitive_id<Query>::Type >
+    ray_intersection(const Ray& query) const;
 
     ///@}
 
@@ -1229,6 +1232,9 @@ public:
 	}
 
 } // end namespace CGAL
+
+#include <CGAL/internal/AABB_tree/AABB_ray_intersection.h>
+
 
 #endif // CGAL_AABB_TREE_H
 
