@@ -359,7 +359,7 @@ protected:
   /*! Collects all the data for the shaders. Must be called in #invalidate_buffers().
    * @see invalidate_buffers().
    */
-  virtual void compute_elements(){}
+  void compute_elements(){}
   /*! Passes all the uniform data to the shaders.
    * According to program_name, this data may change.
    */
