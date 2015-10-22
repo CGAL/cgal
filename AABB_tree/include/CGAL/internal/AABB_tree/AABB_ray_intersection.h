@@ -54,6 +54,8 @@ public:
         dist = intersection_distance_object(query, child->bbox());
         if(dist)
           pq.push(Node_ptr_with_ft(child, *dist, current.nb_primitives - current.nb_primitives/2));
+
+        break;
       }
       }
     }
