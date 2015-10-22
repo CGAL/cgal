@@ -509,16 +509,20 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES} ${example_dockUI_FILES})
   target_link_libraries(example_plugin scene_polyhedron_item)
 
-  find_package(VTK QUIET 6.0 COMPONENTS
+  find_package(VTK QUIET COMPONENTS
                          vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML)
   if (VTK_FOUND)
     include(${VTK_USE_FILE})
-    if(VTK_LIBRARIES)
-      polyhedron_demo_plugin(vtk_plugin Polyhedron_demo_vtk_plugin)
-      target_link_libraries(vtk_plugin scene_polyhedron_item
-                                        vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML)
+    if ("${VTK_VERSION_MAJOR}" GREATER "5")
+      if(VTK_LIBRARIES)
+        polyhedron_demo_plugin(vtk_plugin Polyhedron_demo_vtk_plugin)
+        target_link_libraries(vtk_plugin scene_polyhedron_item
+                                          vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML)
+      else()
+        message(STATUS "NOTICE : the vtk IO plugin needs VTK libraries and will not be compiled.")
+      endif()
     else()
-      message(STATUS "NOTICE : the vtk IO plugin needs VTK libraries and will not be compiled.")
+      message(STATUS "NOTICE : the vtk IO plugin needs VTK 6.0 or greater and will not be compiled (incorrect version found).")
     endif()
   else()
     message(STATUS "NOTICE : the vtk IO plugin needs VTK 6.0 or greater and will not be compiled.")

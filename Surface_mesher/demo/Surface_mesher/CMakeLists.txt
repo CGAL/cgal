@@ -97,12 +97,15 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${prj} )
     
     
-    find_package(VTK QUIET 6.0 COMPONENTS
-      vtkImagingCore
-      )
+    find_package(VTK QUIET COMPONENTS vtkImagingCore)
     if(VTK_FOUND)
-        add_definitions(-DCGAL_USE_VTK)
-	set(VTK_LIBS vtkImagingCore)
+        include(${VTK_USE_FILE})
+        if ("${VTK_VERSION_MAJOR}" GREATER "5")
+          add_definitions(-DCGAL_USE_VTK)
+          set(VTK_LIBS vtkImagingCore)
+        else()
+          set(VTK_LIBS "")
+        endif()
     else()
         set(VTK_LIBS "")
     endif()
