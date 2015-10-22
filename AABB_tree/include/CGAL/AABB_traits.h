@@ -308,7 +308,28 @@ public:
 
     template<typename Ray>
     boost::optional<AABB_traits::FT> operator()(const Ray& ray, const Bounding_box& bbox) {
-      return boost::none;
+      FT t_near = -DBL_MAX; // std::numeric_limits<FT>::lowest(); C++1903
+      FT t_far = DBL_MAX;
+
+      for(int i = 0; i < 3; i++) {
+        if(ray.direction().delta(i) == 0) {
+          if((ray.source()[i] < box.min(i)) || (ray.source()[i] > box.max(i))) {
+            return boost::none;
+          }
+        } else {
+          FT t1 = (box.min(i) - ray.source()[i]) / ray.direction().delta(i);
+          FT t2 = (box.max(i) - ray.source()[i]) / ray.direction().delta(i);
+
+          t_near = std::max(t_near, std::min(t1, t2));
+          t_far = std::min(t_far, std::max(t1, t2));
+        }
+      }
+
+      if(t_far > t_near && t_far > 0) {
+        return t_near;
+      } else {
+        return boost::none;
+      }
     }
   };
 
