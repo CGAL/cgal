@@ -126,12 +126,25 @@ and <code>src/</code> directories).
 <!-- Geometry Kernels -->
 <!-- Convex Hull Algorithms -->
 <!-- Polygons -->
+  <h3>2D Regularized Boolean Set-Operations</h3>
+  <ul>
+    <li>Improve the performance of operations in some settings.
+        <b>Breaking change</b>: This improvement requires changes of the face and halfedge type of the underlying arrangement Dcel.
+        See the concepts `GeneralPolygonSetDcelHalfedge` and  `GeneralPolygonSetDcelFace` for more details.
+        If you use a different simplex types, inheriting your simplices from `CGAL::Gps_face_base` and `CGAL::Gps_halfedge_base`
+        is sufficient to accommodate for the update.
+    </li>
+  </ul>
 <!-- Cell Complexes and Polyhedra -->
   <h3>3D Boolean Operations on Nef Polyhedra</h3>
   <ul>
     <li>Add 3 new constructors: from a point range, from a point, and from a segment.</li>
   </ul>
 <!-- Arrangements -->
+  <h3>2D Arrangements</h3>
+  <ul>
+    <li>Speed up the edge removal in case the incident faces contains many holes.</li>
+  <ul>
 <!-- Triangulations and Delaunay Triangulations -->
 <!-- Voronoi Diagrams -->
 <!-- Mesh Generation -->
