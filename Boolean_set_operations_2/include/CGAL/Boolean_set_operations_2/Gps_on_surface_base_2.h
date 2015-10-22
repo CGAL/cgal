@@ -36,6 +36,9 @@
 #include <CGAL/Boolean_set_operations_2/Gps_merge.h>
 #include <CGAL/Boolean_set_operations_2/Gps_polygon_simplifier.h>
 #include <CGAL/Boolean_set_operations_2/Ccb_curve_iterator.h>
+#include <CGAL/Union_find.h>
+
+#include <boost/foreach.hpp>
 
 /*!
   \file   Gps_on_surface_base_2.h
@@ -928,22 +931,312 @@ public:
 
 protected:
 
+  bool is_redundant(Halfedge_handle he)
+  {
+    return he->face()->contained() == he->twin()->face()->contained();
+  }
+
+  typename Aos_2::Dcel::Halfedge*
+  _halfedge(Halfedge_handle h)
+  {
+    return &(*h);
+  }
+
   void _remove_redundant_edges(Aos_2* arr)
   {
-    for (Edge_iterator itr = arr->edges_begin(); itr != arr->edges_end(); )
+    // const integer for handling the status of halfedges
+    // during the flooding algorithm to tag halfedges as
+    // on an inner or outer ccb in the final arrangement
+    static const int ON_INNER_CCB=0;
+    static const int ON_OUTER_CCB=1;
+    static const int NOT_VISITED=-1;
+    static const int VISITED=2;
+    static const int NEW_CCB_ASSIGNED=3;
+
+    // Consider the faces incident to a redundant edge and use a union-find
+    // algorithm to group faces in set that will be merged by the removal
+    // of redundant edges. Then only the master of the set will be kept.
+    // Here we also collect edges that needs to be removed.
+    typedef Union_find<typename Aos_2::Dcel::Face*> UF_faces;
+    std::vector<typename UF_faces::handle> face_handles;
+    UF_faces uf_faces;
+    std::vector< typename Aos_2::Dcel::Halfedge* > edges_to_remove;
+    bool all_edges_are_redundant=true;
+
+    for (Edge_iterator itr = arr->edges_begin(); itr != arr->edges_end(); ++itr)
     {
       Halfedge_handle he = itr;
-      if (he->face()->contained() == he->twin()->face()->contained())
+      he->set_flag(NOT_VISITED);
+      he->twin()->set_flag(NOT_VISITED);
+
+      // put in the same set faces that will be merged when removing redundant edges
+      if ( is_redundant(he) )
       {
-        Edge_iterator next = itr;
-        ++next;
-        arr->remove_edge(he);
-        itr = next;
+
+        typename Aos_2::Dcel::Face* f1=&(*he->face()),
+                                  * f2=&(*he->twin()->face());
+        if (f1->id_not_set()){
+          f1->set_id(face_handles.size());
+          face_handles.push_back( uf_faces.make_set( f1 ) );
+        }
+        if (f2->id_not_set()){
+          f2->set_id(face_handles.size());
+          face_handles.push_back( uf_faces.make_set( f2 ) );
+        }
+
+        uf_faces.unify_sets(face_handles[f1->id()], face_handles[f2->id()]);
+        edges_to_remove.push_back( _halfedge(he) );
       }
       else
-        ++itr;
+        all_edges_are_redundant=false;
+    }
+
+    // the code in this function assumes there is only one unbounded face
+    // (in the if below and in the part to keep the unbounded face even if
+    //  not the master of its set)
+    CGAL_assertion(std::distance(arr->unbounded_faces_begin(),
+                                 arr->unbounded_faces_end()) == 1);
+
+    if (all_edges_are_redundant){
+      bool is_contained=arr->unbounded_faces_begin()->contained();
+      arr->clear();
+      arr->unbounded_faces_begin()->set_contained(is_contained);
+      return;
+    }
+
+    // nothing needs to be done
+    if (edges_to_remove.empty() ) return;
+
+  //identify if a halfedge will be on an outer or an inner ccb.
+    // To do so, we use a flooding algorithm.
+    // We start from the outbounded face and collect all halfedges
+    // from its inner ccb that are not redundant. If a halfedge is redundant we
+    // use the opposite ccb to continue the flooding.
+    // All the collected halfedges are tag as being in a inner ccb.
+    // We tag their twin halfedges as being in a outer cbb. We continue the flooding
+    // as before using the inner cbb of the faces of the twin halfedges. And so on...
+    std::list<Halfedge_handle> stack_for_flooding;
+    for (typename Aos_2::Unbounded_face_iterator fit=arr->unbounded_faces_begin(),
+                                                 fit_end=arr->unbounded_faces_end();
+                                                 fit!=fit_end; ++fit)
+      for( typename Aos_2::Inner_ccb_iterator ccb_it=fit->inner_ccbs_begin(),
+                                              ccb_end=fit->inner_ccbs_end();
+                                              ccb_it!=ccb_end; ++ccb_it)
+        stack_for_flooding.push_back(*ccb_it);
+
+    do
+    {
+      std::vector<Halfedge_handle> outer_ccb;
+      while( !stack_for_flooding.empty() )
+      {
+        Halfedge_handle hstart=stack_for_flooding.front(), h=hstart;
+        stack_for_flooding.pop_front();
+        if (h->flag()!=NOT_VISITED) continue;
+        do{
+          if( h->is_on_outer_ccb() ){
+            for( typename Aos_2::Inner_ccb_iterator ccb_it=h->face()->inner_ccbs_begin(),
+                                                    ccb_end=h->face()->inner_ccbs_end();
+                                                    ccb_it!=ccb_end; ++ccb_it)
+            if ( (*ccb_it)->flag()==NOT_VISITED )
+              stack_for_flooding.push_back(*ccb_it);
+          }
+
+          if ( is_redundant(h) ){
+            if (h->twin()->flag()==NOT_VISITED)
+              stack_for_flooding.push_back(h->twin());
+            h->set_flag(VISITED);
+          }
+          else{
+            h->set_flag(ON_INNER_CCB);
+            outer_ccb.push_back(h->twin());
+          }
+          h=h->next();
+        }while(h!=hstart);
+      }
+      std::size_t nb_hedges=outer_ccb.size();
+      for (std::size_t i=0; i< nb_hedges; ++i)
+      {
+        Halfedge_handle h=outer_ccb[i];
+        if( h->flag()==NOT_VISITED ){
+          Halfedge_handle hstart=h;
+          do{
+            CGAL_assertion( h->flag()==NOT_VISITED );
+            if ( !is_redundant(h) )
+              h->set_flag(ON_OUTER_CCB);
+            else
+              h->set_flag(VISITED);
+            if (h->twin()->flag()==NOT_VISITED){
+              outer_ccb.push_back(h->twin());
+              ++nb_hedges;
+            }
+
+            h=h->next();
+          } while(hstart!=h);
+          // now collect inner ccbs of the face for the next round
+          for( typename Aos_2::Inner_ccb_iterator ccb_it=h->face()->inner_ccbs_begin(),
+                                                  ccb_end=h->face()->inner_ccbs_end();
+                                                  ccb_it!=ccb_end; ++ccb_it)
+            stack_for_flooding.push_back(*ccb_it);
+        }
+      }
+    }while(!stack_for_flooding.empty());
+
+    // update the next/prev relationship around vertices kept incident
+    // to at least one edge to remove. We link non redundant halfedges together.
+    //We also collect vertices to remove at the same time.
+    std::vector< typename Aos_2::Dcel::Vertex* > vertices_to_remove;
+    for(Vertex_iterator vi=arr->vertices_begin(), vi_end=arr->vertices_end(); vi!=vi_end; ++vi)
+    {
+      typename Aos_2::Dcel::Vertex* v_ptr=&(*vi);
+      Halfedge_handle h_start=vi->incident_halfedges(), h=h_start;
+
+      std::vector<Halfedge_handle> non_redundant_edges;
+      bool found_no_redundant=true;
+      do{
+        if( !is_redundant(h) )
+          non_redundant_edges.push_back(h);
+        else{
+          found_no_redundant=false;
+        }
+        h=h->next()->twin();
+      }while(h!=h_start);
+
+      // if only redundant edges are incident to the vertex, then the
+      // vertex will be removed and nothing needs to be done.
+      if (non_redundant_edges.empty()){
+        vertices_to_remove.push_back(v_ptr);
+        continue;
+      }
+      //if the vertex neighbor is already correct, then continue
+      if (found_no_redundant) continue;
+
+      std::size_t nb_edges=non_redundant_edges.size();
+      CGAL_assertion( nb_edges >= 2);
+
+      non_redundant_edges.push_back(non_redundant_edges.front());
+
+      //update vertex halfedge
+      v_ptr->set_halfedge(_halfedge(non_redundant_edges.back()));
+      for (std::size_t i=0; i<nb_edges; ++i)
+      {
+        Halfedge_handle h1 = non_redundant_edges[i], h2=non_redundant_edges[i+1];
+        if ( h1->next()->twin()!=h2)
+          _halfedge(h1)->set_next(_halfedge(h2->twin()));
+      }
+    }
+
+    // mark redundant edges as we will reuse ccb, thus breaking the function is_redundant()
+    for (Edge_iterator itr = arr->edges_begin(); itr != arr->edges_end(); ++itr)
+    {
+      Halfedge_handle h = itr;
+      if (is_redundant(itr))
+      {
+        h->set_flag(NEW_CCB_ASSIGNED);
+        h->twin()->set_flag(NEW_CCB_ASSIGNED);
+      }
+    }
+
+    //collect faces to remove and update unbounded face flag
+    std::vector< typename Aos_2::Dcel::Face*> faces_to_remove;
+    std::vector< typename Aos_2::Dcel::Outer_ccb* > outer_ccbs_to_remove;
+    std::vector< typename Aos_2::Dcel::Inner_ccb* > inner_ccbs_to_remove;
+    for(typename UF_faces::iterator it=uf_faces.begin(),
+                                    it_end=uf_faces.end(); it!=it_end; ++it)
+    {
+      typename UF_faces::handle master=uf_faces.find(it);
+      //remove faces that are not the master of their set (but the unbounded face)
+      if ( master!=it)
+      {
+        // force to keep the unbounded face
+        if ((*it)->is_unbounded())
+        {
+          face_handles[(*master)->id()]=it;
+          faces_to_remove.push_back(*master);
+        }
+        else
+          faces_to_remove.push_back(*it);
+      }
+
+      //collect for reuse/removal all inner and outer ccbs
+      BOOST_FOREACH(void* ptr, (*it)->_outer_ccbs())
+        outer_ccbs_to_remove.push_back( static_cast<typename Aos_2::Dcel::Halfedge*>(ptr)->outer_ccb() );
+      BOOST_FOREACH(void* ptr, (*it)->_inner_ccbs())
+        inner_ccbs_to_remove.push_back( static_cast<typename Aos_2::Dcel::Halfedge*>(ptr)->inner_ccb() );
+      (*it)->_outer_ccbs().clear();
+      (*it)->_inner_ccbs().clear();
+    }
+
+    // accessor for  low-level arrangement fonctionalities
+    CGAL::Arr_accessor<Aos_2> accessor(*arr);
+
+    // update halfedge ccb pointers
+    for (Halfedge_iterator itr = arr->halfedges_begin(); itr != arr->halfedges_end(); ++itr)
+    {
+      Halfedge_handle h = itr;
+
+      // either a redundant edge or an edge of an already handled ccb
+      if ( h->flag()==NEW_CCB_ASSIGNED ) continue;
+
+      CGAL_assertion( h->flag()==ON_INNER_CCB || h->flag()==ON_OUTER_CCB );
+
+      typename Aos_2::Dcel::Face* f=&(*h->face());
+
+      if (!f->id_not_set())
+      {
+        // we use the master of the set as face, but we force to keep the unbounded face,
+        // thus this hack
+        f = *(face_handles[
+                (*uf_faces.find(face_handles[f->id()]))->id()
+              ]);
+
+        if (h->flag()==ON_INNER_CCB)
+        {
+          typename Aos_2::Dcel::Inner_ccb* inner_ccb = inner_ccbs_to_remove.empty()?
+            accessor.new_inner_ccb():inner_ccbs_to_remove.back();
+          if ( !inner_ccbs_to_remove.empty() ) inner_ccbs_to_remove.pop_back();
+
+          Halfedge_handle hstart=h;
+          do{
+            _halfedge(h)->set_inner_ccb(inner_ccb);
+            h->set_flag(NEW_CCB_ASSIGNED);
+            h=h->next();
+          }while(hstart!=h);
+          f->add_inner_ccb(inner_ccb,_halfedge(h));
+          inner_ccb->set_halfedge(_halfedge(h));
+          inner_ccb->set_face(f);
+        }
+        else{
+          CGAL_assertion(!outer_ccbs_to_remove.empty());
+          typename Aos_2::Dcel::Outer_ccb* outer_ccb = outer_ccbs_to_remove.back();
+          outer_ccbs_to_remove.pop_back();
+          Halfedge_handle hstart=h;
+          do{
+            _halfedge(h)->set_outer_ccb(outer_ccb);
+            h->set_flag(NEW_CCB_ASSIGNED);
+            h=h->next();
+          }while(hstart!=h);
+          f->add_outer_ccb(outer_ccb,_halfedge(h));
+          outer_ccb->set_halfedge(_halfedge(h));
+          outer_ccb->set_face(f);
+        }
+      }
+    }
+
+    //remove no longer used edges, vertices and faces
+    accessor.delete_vertices( vertices_to_remove );
+    accessor.delete_edges( edges_to_remove );
+    accessor.delete_faces( faces_to_remove );
+    accessor.delete_outer_ccbs( outer_ccbs_to_remove );
+    accessor.delete_inner_ccbs( inner_ccbs_to_remove );
+
+    for (typename Aos_2::Face_iterator fit=arr->faces_begin(),
+                                       end=arr->faces_end();
+                                       fit!=end; ++fit)
+    {
+      fit->reset_id(); // reset the id that will be no longer used for this face
     }
   }
+
 
   class Less_vertex_handle
   {

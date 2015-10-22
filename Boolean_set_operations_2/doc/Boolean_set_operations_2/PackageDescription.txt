@@ -42,6 +42,7 @@ containment predicates.
 - `GeneralPolygonSetTraits_2`
 - `GeneralPolygonSetDcel`
 - `GeneralPolygonSetDcelFace`
+- `GeneralPolygonSetDcelHalfedge`
 
 ## Classes ##
 - `CGAL::Polygon_with_holes_2<Kernel,Container>`
@@ -68,4 +69,3 @@ containment predicates.
 
 
 */
-

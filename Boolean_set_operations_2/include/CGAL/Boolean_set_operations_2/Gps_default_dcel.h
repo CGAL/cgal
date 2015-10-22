@@ -32,23 +32,44 @@
 
 namespace CGAL {
 
+template <class X_monotone_curve_2>
+class Gps_halfedge_base : public Arr_halfedge_base<X_monotone_curve_2>
+{
+  int _flag;
+public:
+
+  typedef Arr_halfedge_base<X_monotone_curve_2> Base;
+  Gps_halfedge_base()
+    : Base()
+    , _flag(-1)
+  {}
+
+  int flag() const {
+    return _flag;
+  }
+
+  void set_flag(int i) {
+    _flag=i;
+  }
+};
+
 class Gps_face_base : public Arr_face_base
 {
 protected:
   mutable char m_info;
-  
   enum
   {
     CONTAINED = 1,
     VISITED   = 2
   };
-
+  std::size_t _id;
 
 public:
   //Constructor
   Gps_face_base() :
     Arr_face_base(),
-    m_info(0)
+    m_info(0),
+    _id(-1)
   {}
 
    /*! Assign from another face. */
@@ -86,14 +107,41 @@ public:
       m_info &= ~VISITED;
   }
 
-};
+  Arr_face_base::Outer_ccbs_container&
+  _outer_ccbs()
+  {
+    return this->outer_ccbs;
+  }
 
+  Arr_face_base::Inner_ccbs_container&
+  _inner_ccbs()
+  {
+    return this->inner_ccbs;
+  }
+
+  std::size_t id() const {
+    return _id;
+  }
+
+  bool id_not_set() const {
+    return _id==std::size_t(-1);
+  }
+
+  void set_id(std::size_t i) {
+    _id=i;
+  }
+
+  void reset_id()
+  {
+    _id=std::size_t(-1);
+  }
+};
 
 template <class Traits_>
 class Gps_default_dcel :
   public Arr_dcel_base<Arr_vertex_base<typename Traits_::Point_2>,
-                       Arr_halfedge_base<typename Traits_::X_monotone_curve_2>,
-                       Gps_face_base>
+                       Gps_halfedge_base<typename Traits_::X_monotone_curve_2>,
+                       Gps_face_base >
 {
 public:
   /*! Default constructor. */

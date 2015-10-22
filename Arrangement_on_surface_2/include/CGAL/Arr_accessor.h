@@ -862,6 +862,80 @@ public:
   { return (p_arr->_dcel().new_isolated_vertex()); }
 
   /*!
+   * Remove a range of vertices
+   */
+  template <typename VertexRange>
+  void delete_vertices(const VertexRange& range)
+  {
+    for(typename VertexRange::const_iterator  it=range.begin(),
+                                              end=range.end();
+                                              it!=end; ++it)
+    {
+      CGAL_assertion(! (*it)->has_null_point());
+      p_arr->_delete_point( (*it)->point() );
+      p_arr->_dcel().delete_vertex( *it );
+    }
+  }
+
+  /*!
+   * Remove a range of edges
+   */
+  template <typename EdgeRange>
+  void delete_edges(const EdgeRange& range)
+  {
+    for(typename EdgeRange::const_iterator  it=range.begin(),
+                                            end=range.end();
+                                            it!=end; ++it)
+    {
+      CGAL_assertion(! (*it)->has_null_curve());
+      p_arr->_delete_curve( (*it)->curve() );
+      p_arr->_dcel().delete_edge( *it );
+    }
+  }
+
+  /*!
+   * Remove a range of faces
+   */
+  template <typename FaceRange>
+  void delete_faces(const FaceRange& range)
+  {
+    for(typename FaceRange::const_iterator  it=range.begin(),
+                                            end=range.end();
+                                            it!=end; ++it)
+    {
+      p_arr->_dcel().delete_face( *it );
+    }
+  }
+
+  /*!
+   * Remove a range of outer ccbs
+   */
+  template <typename CcbRange>
+  void delete_outer_ccbs(const CcbRange& range)
+  {
+    for(typename CcbRange::const_iterator  it=range.begin(),
+                                           end=range.end();
+                                           it!=end; ++it)
+    {
+      p_arr->_dcel().delete_outer_ccb( *it );
+    }
+  }
+
+  /*!
+   * Remove a range of inner ccbs
+   */
+  template <typename CcbRange>
+  void delete_inner_ccbs(const CcbRange& range)
+  {
+    for(typename CcbRange::const_iterator  it=range.begin(),
+                                           end=range.end();
+                                           it!=end; ++it)
+    {
+      p_arr->_dcel().delete_inner_ccb( *it );
+    }
+  }
+
+  /*!
    * Update the topology traits after the DCEL has been updated.
    */
   void dcel_updated() { p_arr->topology_traits()->dcel_updated(); }

@@ -4229,10 +4229,19 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
   std::pair< CGAL::Sign, CGAL::Sign > signs1(ZERO, ZERO);
   std::pair< CGAL::Sign, CGAL::Sign > signs2(ZERO, ZERO);
 
-  // If the removal of he1 (and its twin halfedge) form an "antenna", there
-  // is neither a need to compute signs and nor swapping of the halfedges
-  if ((he1->next() != he2) && (he2->next() != he1)) {
+  bool swap_he1_he2 = false;
+  if (f1 != f2) {
+    // If f1 != f2, the removal of he1 (and its twin halfedge) will cause
+    // the two incident faces to merge. Thus, swapping is not needed. However,
+    // it is more efficient to retain the face that has a larger number of
+    // inner ccbs.
 
+    // f1 is the face to be kept by default. If f2 has more holes it is more
+    // efficient to kept f2
+    if (f1->number_of_inner_ccbs() < f2->number_of_inner_ccbs())
+      swap_he1_he2 = true;
+  }
+  else {
     // If f1 == f2 (same_face-case), then we consider two loops that occur when
     // he1 and he2 get removed; if f1 != f2, then he1 and he2 seperates the two
     // faces that will be merged upon their removal---here both he1 and he2
@@ -4240,10 +4249,10 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
     // determine whether end of loop should be he1->opposite() and
     // he2->opposite(), respectively.
 
-    // If f1 != f2, the removal of he1 (and its twin halfedge) will cause
-    // the two incident faces to merge. Thus, swapping is not needed.
-    bool swap_he1_he2 = false;
-    if (f1 == f2) {
+    // If the removal of he1 (and its twin halfedge) form an "antenna", there
+    // is neither a need to compute signs and nor swapping of the halfedges
+    if ((he1->next() != he2) && (he2->next() != he1)) {
+
       // In this case one of the following can happen: (a) a new hole will be
       // created by the removal of the edge (case 3.2.1 of the removal
       // procedure), or (b) an outer CCB will be split into two (case 3.2.2).
@@ -4377,17 +4386,16 @@ _remove_edge(DHalfedge* e, bool remove_source, bool remove_target)
                        Are_all_sides_oblivious_category()));
       }
     }
-
-    // swapping?
-    if (swap_he1_he2) {
-      // swap all entries
-      std::swap(he1, he2);
-      std::swap(ic1, ic2);
-      std::swap(oc1, oc2);
-      std::swap(f1 , f2);
-      // not needed below here std::swap(local_mins1, local_mins2);
-      std::swap(signs1, signs2);
-    }
+  }
+  // swapping?
+  if (swap_he1_he2) {
+    // swap all entries
+    std::swap(he1, he2);
+    std::swap(ic1, ic2);
+    std::swap(oc1, oc2);
+    std::swap(f1 , f2);
+    // not needed below here std::swap(local_mins1, local_mins2);
+    std::swap(signs1, signs2);
   }
 
 #if CGAL_ARRANGEMENT_ON_SURFACE_INSERT_VERBOSE

@@ -1514,10 +1514,8 @@ protected:
 
   /// \name Converting handles to pointers (for the arrangement accessor).
   //@{
-
   /*! Access the DCEL (non-const version). */
   inline Dcel& _dcel() { return (m_topol_traits.dcel()); }
-
   /*! Access the DCEL (const version). */
   inline const Dcel& _dcel() const
   { return (m_topol_traits.dcel()); }
