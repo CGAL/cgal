@@ -320,8 +320,8 @@ public:
           FT t1 = (box.min(i) - ray.source()[i]) / ray.direction().delta(i);
           FT t2 = (box.max(i) - ray.source()[i]) / ray.direction().delta(i);
 
-          t_near = std::max(t_near, std::min(t1, t2));
-          t_far = std::min(t_far, std::max(t1, t2));
+          t_near = (std::max)(t_near, (std::min)(t1, t2));
+          t_far = (std::min)(t_far, (std::max)(t1, t2));
         }
       }
 
