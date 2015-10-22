@@ -116,6 +116,7 @@ Polyhedron_demo_nef_plugin::on_actionToNef_triggered()
     new_nef_item->setRenderingMode(item->renderingMode());
     item->setVisible(false);
     scene->itemChanged(index);
+    new_nef_item->invalidate_buffers();
     scene->addItem(new_nef_item);
     std::cerr << "ok (" << time.elapsed() << " ms)" << std::endl;
     QApplication::restoreOverrideCursor();

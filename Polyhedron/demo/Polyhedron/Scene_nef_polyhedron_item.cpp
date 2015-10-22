@@ -158,7 +158,7 @@ void Scene_nef_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface
     }
     are_buffers_filled = true;
 }
-void Scene_nef_polyhedron_item::compute_normals_and_vertices(void)
+void Scene_nef_polyhedron_item::compute_normals_and_vertices(void) const
 {
      int count = 0;
     positions_facets.resize(0);
@@ -402,7 +402,10 @@ Scene_nef_polyhedron_item::toolTip() const
 void Scene_nef_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
+    {
+        compute_normals_and_vertices();
         initialize_buffers(viewer);
+    }
     vaos[0]->bind();
 
     // tells the GPU to use the program just created
@@ -428,7 +431,10 @@ void Scene_nef_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) cons
 void Scene_nef_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
+    {
+        compute_normals_and_vertices();
         initialize_buffers(viewer);
+    }
 
     vaos[1]->bind();
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
@@ -454,7 +460,10 @@ void Scene_nef_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer
 void Scene_nef_polyhedron_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
+    {
+        compute_normals_and_vertices();
         initialize_buffers(viewer);
+    }
     vaos[2]->bind();
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer ,PROGRAM_WITHOUT_LIGHT);
@@ -660,9 +669,7 @@ void
 Scene_nef_polyhedron_item::
 invalidate_buffers()
 {
-    //  init();
     Base::invalidate_buffers();
-    compute_normals_and_vertices();
     are_buffers_filled = false;
 }
 void
