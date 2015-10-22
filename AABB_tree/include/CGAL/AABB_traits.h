@@ -267,24 +267,24 @@ public:
 
   Do_intersect do_intersect_object() const {return Do_intersect(*this);}
 
-class Intersection {
-  const AABB_traits<GeomTraits,AABBPrimitive>& m_traits;
-public:
-  Intersection(const AABB_traits<GeomTraits,AABBPrimitive>& traits)
-    :m_traits(traits) {}
+  class Intersection {
+    const AABB_traits<GeomTraits,AABBPrimitive>& m_traits;
+  public:
+    Intersection(const AABB_traits<GeomTraits,AABBPrimitive>& traits)
+      :m_traits(traits) {}
     #if CGAL_INTERSECTION_VERSION < 2
-template<typename Query>
-boost::optional<typename AT::Object_and_primitive_id>
-operator()(const Query& query, const typename AT::Primitive& primitive) const
-{
-  typedef boost::optional<Object_and_primitive_id> Intersection;
+    template<typename Query>
+    boost::optional<typename AT::Object_and_primitive_id>
+    operator()(const Query& query, const typename AT::Primitive& primitive) const
+    {
+      typedef boost::optional<Object_and_primitive_id> Intersection;
 
-  CGAL::Object object = GeomTraits().intersect_3_object()(internal::Primitive_helper<AT>::get_datum(primitive,m_traits),query);
-  if ( object.empty() )
-    return Intersection();
-  else
-    return Intersection(Object_and_primitive_id(object,primitive.id()));
-}
+      CGAL::Object object = GeomTraits().intersect_3_object()(internal::Primitive_helper<AT>::get_datum(primitive,m_traits),query);
+      if ( object.empty() )
+        return Intersection();
+      else
+        return Intersection(Object_and_primitive_id(object,primitive.id()));
+    }
     #else
     template<typename Query>
     boost::optional< typename Intersection_and_primitive_id<Query>::Type >
@@ -292,13 +292,13 @@ operator()(const Query& query, const typename AT::Primitive& primitive) const
       typename cpp11::result_of<typename GeomTraits::Intersect_3(Query, typename Primitive::Datum) >::type
         inter_res = GeomTraits().intersect_3_object()(internal::Primitive_helper<AT>::get_datum(primitive,m_traits),query);
       if (!inter_res)
-          return boost::optional<typename Intersection_and_primitive_id<Query>::Type>();
+        return boost::optional<typename Intersection_and_primitive_id<Query>::Type>();
       return boost::make_optional( std::make_pair(*inter_res, primitive.id()) );
     }
     #endif
-};
+  };
 
-Intersection intersection_object() const {return Intersection(*this);}
+  Intersection intersection_object() const {return Intersection(*this);}
 
   // This should go down to the GeomTraits, i.e. the kernel
   class Closest_point {
