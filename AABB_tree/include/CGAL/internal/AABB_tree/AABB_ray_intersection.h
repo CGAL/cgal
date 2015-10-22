@@ -8,7 +8,7 @@ class AABB_ray_intersection {
   AABB_ray_intersection(const AABBTree& tree) : tree_(tree) {}
 public:
   template<typename Ray>
-  boost::optional< typename typename AABBtree<AABBTraits>::template Intersection_and_primitive_id<Query>::Type >
+  boost::optional< typename typename AABBtree::template Intersection_and_primitive_id<Query>::Type >
   ray_intersection(const Ray& query) const {
     // We hit the root, now continue on the children. Keep track of
     // nb_primitives through a variable in each Node on the stack. In
@@ -23,6 +23,8 @@ public:
       intersection_obj = traits().intersection_object();
     typename AABB_traits::Intersection_distance
       intersection_distance_obj = traits().intersection_distance_object();
+    boost::optional< typename AABBTree::template Intersection_and_primitive_id<Ray>::Type >
+      intersection;
 
     // this is not the right way to do it, but using
     // numeric_limits<FT>::{max,infinity} will not work with Epeck.
@@ -37,11 +39,45 @@ public:
       switch(current.nb_primitives) { // almost copy-paste from BVH_node::traversal
       case 2: // Left & right child both leaves
       {
+        //left child
+        intersection = intersection_obj(query, current.node->left_data());
+        if(intersection) {
+          FT ray_distance = as_ray_parameter(query, *intersection);
+          if(ray_distance < t) {
+            t = ray_distance;
+            p = intersection;
+          }
+        }
 
+        // right child
+        intersection = intersection_obj(query, current.node->right_data());
+        if(intersection) {
+          FT ray_distance = as_ray_parameter(query, *intersection);
+          if(ray_distance < t) {
+            t = ray_distance;
+            p = intersection;
+          }
+        }
       }
       case 3: // Left child leaf, right child inner node
       {
+        //left child
+        intersection = intersection_obj(query, current.node->left_data());
+        if(intersection) {
+          FT ray_distance = as_ray_parameter(query, *intersection);
+          if(ray_distance < t) {
+            t = ray_distance;
+            p = intersection;
+          }
+        }
 
+        // right child
+        const Node* child = &(current.node->right_child());
+        boost::optional< FT > dist = intersection_distance_object(query, child->bbox());
+        if(dist)
+          pq.push(Node_ptr_with_ft(child, *dist, 2));
+
+        break;
       }
       default: // Children both inner nodes
       {
@@ -78,6 +114,11 @@ private:
     bool operator>(const Node_ptr_with_ft& other) const { return value > other.value; }
   };
 
+  template<typename Ray>
+  FT as_ray_parameter(const Ray& ray,
+                      const typename AABBTree::template Intersection_and_primitive_id<Ray>::Type& intersection) {
+    return 0;
+  }
 };
 
 template<typename AABBTraits>
