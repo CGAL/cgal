@@ -971,7 +971,7 @@ public:
   Polyhedron_3(const Traits& traits = Traits()); 
 
   /*!
-    Cosntructor  of a polyhedron with storage reserved 
+    Constructor  of a polyhedron with storage reserved
     for `v` vertices, `h` halfedges, and `f` facets. The 
     reservation sizes are a hint for optimizing storage 
     allocation. 
