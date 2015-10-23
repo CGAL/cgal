@@ -28,6 +28,7 @@
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
 #include <CGAL/convex_hull_3.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 namespace CGAL{
 namespace corefinement{
@@ -188,6 +189,119 @@ Polyhedron* clip_polyhedron(const Polyhedron& P, const Plane_3& p)
   }
   Polyhedron copy(P);
   return clip_polyhedron(copy, clipping_polyhedron);
+}
+
+namespace internal{
+
+template<class Polyhedron>
+struct Edge_is_marked4coref{
+  std::set<typename Polyhedron::Halfedge_handle>& marked_halfedges;
+  typedef bool value_type;
+  typedef value_type reference;
+  typedef std::pair<typename Polyhedron::Halfedge_handle,Polyhedron*> key_type;
+  typedef boost::read_write_property_map_tag category;
+
+  Edge_is_marked4coref(std::set<typename Polyhedron::Halfedge_handle>& mh)
+  : marked_halfedges(mh)
+  {}
+
+  friend reference get(Edge_is_marked4coref& map,const key_type& key) {
+    return map.marked_halfedges.count(key.first);
+  }
+  friend void put(Edge_is_marked4coref& map,key_type key,value_type v) {
+    if (v) map.marked_halfedges.insert(key.first);
+    else  map.marked_halfedges.erase(key.first);
+  }
+};
+
+template<class Polyhedron>
+struct Edge_is_marked{
+  const std::set<typename Polyhedron::Halfedge_handle>* marked_halfedges;
+  typedef bool value_type;
+  typedef value_type reference;
+  typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
+  typedef boost::readable_property_map_tag category;
+
+  Edge_is_marked(){}
+  Edge_is_marked(const std::set<typename Polyhedron::Halfedge_handle>& mh)
+  : marked_halfedges(&mh)
+  {}
+
+  friend reference get(const Edge_is_marked& map,const key_type& key) {
+    return map.marked_halfedges->count(key.halfedge());
+  }
+};
+
+} //end of internal namespace
+
+template <class Polyhedron, class Plane_3>
+void inplace_clip_open_polyhedron(Polyhedron& P, const Plane_3& p)
+{
+  CGAL::Bbox_3 bbox = CGAL::bbox_3(P.points_begin(), P.points_end());
+  //extend the bbox a bit to avoid border cases
+  double xd=(bbox.xmax()-bbox.xmin())/100;
+  double yd=(bbox.ymax()-bbox.ymin())/100;
+  double zd=(bbox.zmax()-bbox.zmin())/100;
+  bbox=CGAL::Bbox_3(bbox.xmin()-xd, bbox.ymin()-yd, bbox.zmin()-zd,
+                    bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
+  Polyhedron clipping_polyhedron=clip_to_bbox<Polyhedron>(bbox, p);
+
+  if (clipping_polyhedron.empty()) //no intersection, result is all or nothing
+  {
+    if (p.oriented_side(*P.points_begin())==ON_POSITIVE_SIDE)
+      P.clear();
+    return;
+  }
+
+  // set for marking edges of P intersected by the clipping plane
+  std::set<typename Polyhedron::Halfedge_handle> marked_halfedges;
+  internal::Edge_is_marked4coref<Polyhedron> cr_edge_is_marked(marked_halfedges);
+  typedef typename Polyhedron::Traits::Kernel K;
+  typedef CGAL::Node_visitor_refine_polyhedra<
+            Polyhedron,K,internal::Edge_is_marked4coref<Polyhedron> >
+                  Split_visitor;
+    Split_visitor visitor(NULL, true, cr_edge_is_marked);
+    CGAL::Intersection_of_Polyhedra_3<Polyhedron,K,Split_visitor>
+      polyline_intersections(visitor);
+    CGAL::Emptyset_iterator emptyset_iterator;
+    // corefinement P and clipping_polyhedron
+    polyline_intersections(P,clipping_polyhedron,emptyset_iterator);
+
+    // extract connected components bounded by marked edges
+    internal::Edge_is_marked<Polyhedron> edge_is_marked(marked_halfedges);
+    namespace PMP=Polygon_mesh_processing;
+    std::map<typename Polyhedron::Face_handle, std::size_t> face_ccs;
+    std::size_t nb_cc=PMP::connected_components(P,
+      boost::make_assoc_property_map(face_ccs),
+      PMP::parameters::edge_is_constrained_map(edge_is_marked)
+        .face_index_map(get(boost::face_external_index,P))
+    );
+
+    // collect one face per cc that is on the positive side of the plane
+    std::vector<bool> cc_handled(nb_cc, false);
+    std::vector<std::size_t> ccs_to_remove;
+    BOOST_FOREACH(typename Polyhedron::Face_handle f, faces(P))
+    {
+      std::size_t cc_id=face_ccs[f];
+      if (cc_handled[cc_id]) continue;
+      cc_handled[cc_id]=true;
+      typename Polyhedron::Halfedge_handle h=f->halfedge();
+      for(int i=0;i<3;++i)
+        if (p.oriented_side(h->vertex()->point())==ON_POSITIVE_SIDE)
+        {
+          ccs_to_remove.push_back(cc_id);
+          break;
+        }
+
+      if (--nb_cc==0) break;
+    }
+
+  //now remove the faces on the positive side
+  PMP::remove_connected_components(P,
+    ccs_to_remove,
+    boost::make_assoc_property_map(face_ccs),
+    PMP::parameters::vertex_index_map(get(boost::vertex_external_index,P))
+  );
 }
 
 } } // CGAL::corefinement

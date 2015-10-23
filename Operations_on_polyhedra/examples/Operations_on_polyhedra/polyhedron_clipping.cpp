@@ -56,5 +56,12 @@ int main(int argc, char** argv)
   delete P_clipped;
 }
 
+// clip with a plane but do not close the polyhedron
+{
+  CGAL::corefinement::inplace_clip_open_polyhedron(P, Kernel::Plane_3(1,1,0,0));
+  std::ofstream output("open_clipped.off");
+  output << P;
+}
+
   return 0;
 }
