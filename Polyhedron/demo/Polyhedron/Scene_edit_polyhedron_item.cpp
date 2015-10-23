@@ -116,7 +116,6 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 
 Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
 {
-    setVisible(false);
   while(is_there_any_ctrl_vertices_group())
   {
     delete_ctrl_vertices_group(false);
@@ -700,6 +699,7 @@ Scene_polyhedron_item* Scene_edit_polyhedron_item::to_polyhedron_item() {
   Scene_polyhedron_item* poly_item_tmp = poly_item;
   poly_item->set_color_vector_read_only(false);
   own_poly_item=false;
+  poly_item_tmp->invalidate_buffers();
   return poly_item_tmp;
 }
 
