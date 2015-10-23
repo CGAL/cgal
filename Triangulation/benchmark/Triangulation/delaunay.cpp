@@ -101,17 +101,17 @@ int main(int argc, char **argv)
 {
   srand(static_cast<unsigned int>(time(NULL)));
   //int N = 100; if( argc > 1 ) N = atoi(argv[1]);
-  go<2>(10000000); // 1e7
+  go<2>(5000000); // 1e7
   go<3>(1000000); // 1e6
-  go<4>(500000); // 1e5
+  go<4>(300000); // 1e5
   go<5>(50000); // 1e4
-  go<6>(10000);
+  go<6>(5000);
   go<7>(1000);
-  go<8>(1000);
+  go<8>(300);
   go<9>(100);
-  go<10>(100);
-  go<11>(50);
-  go<12>(50);
+  go<10>(30);
+  go<11>(20);
+  go<12>(15);
 
   return 0;
 }
