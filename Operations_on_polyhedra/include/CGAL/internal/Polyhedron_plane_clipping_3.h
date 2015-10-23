@@ -162,7 +162,7 @@ Polyhedron* clip_polyhedron(Polyhedron& P, Polyhedron& clipping_polyhedron)
   Corefinement coref;
   CGAL::Emptyset_iterator emptyset_iterator;
   coref(P, clipping_polyhedron, emptyset_iterator,
-        &result, Corefinement::P_minus_Q_tag);
+        &result, Corefinement::Intersection_tag);
 
   return result.first;
 }
