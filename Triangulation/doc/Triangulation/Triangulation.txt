@@ -402,8 +402,11 @@ circumscribing ball whose interior does not contain
 any vertex of the triangulation.
 
 In case of degeneracies (co-spherical points) the triangulation is not
-uniquely defined. Note however that the \cgal implementation computes a unique
-triangulation even in these cases.
+uniquely defined. Note however that the \cgal implementation computes 
+one of the possible Delaunay triangulations. 
+The computed triangulation is uniquely defined for a given insertion
+order of the points (which is always the same if inserted using
+`CGAL::Delaunay_triangulation::insert(ForwardIterator s, ForwardIterator e)`).
 
 When a new point `p` is inserted into a Delaunay triangulation, the
 full cells whose circumscribing ball contains `p` are said to
