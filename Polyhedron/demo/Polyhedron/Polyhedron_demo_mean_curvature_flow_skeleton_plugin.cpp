@@ -1,7 +1,3 @@
-#ifdef CGAL_GLEW_ENABLED
-#include <GL/glew.h> // tmp hack to make sure gl.his included before glew.h
-#endif
-
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "ui_Mean_curvature_flow_skeleton_plugin.h"

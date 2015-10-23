@@ -7,17 +7,10 @@
 #include <CGAL/Min_sphere_of_spheres_d.h>
 #include <CGAL/Min_sphere_of_points_d_traits_3.h>
 #include <CGAL/Min_sphere_of_spheres_d_traits_3.h>
-
 #include <UI_point_3.h>
-
 #include <algorithm>
 #include <vector>
-
-//#ifdef CGAL_GLEW_ENABLED
-//#else
 # include <CGAL/gl.h>
-//#endif
-
 
 /// The Point_set_3 class is array of points + normals of type
 /// Point_with_normal_3<Gt> (in fact
@@ -242,79 +235,9 @@ public:
     m_bounding_box_is_valid = false;
   }
 
-  // Draw points using OpenGL calls.
-  // Preconditions: OpenGL point size and color must be set.
-  void gl_draw_vertices() const
-  {
-    // Draw *non-selected* points
-    ::glBegin(GL_POINTS);
-    for (const_iterator it = begin(); it != m_first_selected; it++)
-      {
-        const UI_point& p = *it;
-	::glVertex3dv(&p.x());
-      }
-    ::glEnd();
 
-    // Draw *selected* points
-    ::glPointSize(4.f);    // selected => bigger
-    ::glColor3ub(255,0,0); // selected => red
-    ::glBegin(GL_POINTS);
-    for (const_iterator it = m_first_selected; it != end(); it++)
-      {
-        const UI_point& p = *it;
-	::glVertex3dv(&p.x());
-      }
-    ::glEnd();
-  }
 
-  // Draw normals using OpenGL calls.
-  // Preconditions: OpenGL line width and color must be set.
-  void gl_draw_normals(float scale = 1.0) const // scale applied to normal length
-  {
-    // Draw normals of *non-selected* points
-    // Draw normals
-    ::glBegin(GL_LINES);
-    for (const_iterator it = begin(); it != m_first_selected; it++)
-      {
-        const UI_point& p = *it;
-        const Vector& n = p.normal();
-	Point q = p + scale * n;
-	::glVertex3d(p.x(),p.y(),p.z());
-	::glVertex3d(q.x(),q.y(),q.z());
-      }
-    ::glEnd();
 
-    // Draw normals of *selected* points
-    ::glColor3ub(255,0,0); // selected => red
-    ::glBegin(GL_LINES);
-    for (const_iterator it = m_first_selected; it != end(); it++)
-      {
-        const UI_point& p = *it;
-        const Vector& n = p.normal();
-	Point q = p + scale * n;
-	::glVertex3d(p.x(),p.y(),p.z());
-	::glVertex3d(q.x(),q.y(),q.z());
-      }
-    ::glEnd();
-  }
-
-  // Draw oriented points with radius using OpenGL calls.
-  // Preconditions: must be used inbetween calls to GlSplat library
-  void gl_draw_splats() const
-  {
-    // TODO add support for selection
-    ::glBegin(GL_POINTS);
-    for (const_iterator it = begin(); it != end(); it++)
-    {
-      const UI_point& p = *it;
-      ::glNormal3dv(&p.normal().x());
-#ifdef CGAL_GLEW_ENABLED
-      ::glMultiTexCoord1d(GL_TEXTURE2, p.radius());
-#endif
-      ::glVertex3dv(&p.x());
-    }
-    ::glEnd();
-  }
   
   bool are_radii_uptodate() const { return m_radii_are_uptodate; }
   void set_radii_uptodate(bool /*on*/) { m_radii_are_uptodate = false; }

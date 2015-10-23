@@ -88,19 +88,6 @@ Scene_polylines_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer =
             viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
             viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
 
-            nb_lines = positions_lines.size();
-            positions_lines.resize(0);
-            std::vector<float>(positions_lines).swap(positions_lines);
-            nb_spheres = positions_spheres.size();
-            positions_spheres.resize(0);
-            std::vector<float>(positions_spheres).swap(positions_spheres);
-            normals_spheres.resize(0);
-            std::vector<float>(normals_spheres).swap(normals_spheres);
-            color_spheres.resize(0);
-            std::vector<float>(color_spheres).swap(color_spheres);
-            nb_centers = positions_center.size();
-            positions_center.resize(0);
-            std::vector<float>(positions_center).swap(positions_center);
         }
         else
         {
@@ -173,6 +160,23 @@ Scene_polylines_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer =
 
             vaos[2]->release();
             program->release();
+
+            nb_lines = positions_lines.size();
+            positions_lines.resize(0);
+            std::vector<float>(positions_lines).swap(positions_lines);
+            nb_spheres = positions_spheres.size();
+            positions_spheres.resize(0);
+            std::vector<float>(positions_spheres).swap(positions_spheres);
+            normals_spheres.resize(0);
+            std::vector<float>(normals_spheres).swap(normals_spheres);
+            color_spheres.resize(0);
+            std::vector<float>(color_spheres).swap(color_spheres);
+            nb_centers = positions_center.size();
+            positions_center.resize(0);
+            std::vector<float>(positions_center).swap(positions_center);
+            nb_wire = positions_wire_spheres.size();
+            positions_wire_spheres.resize(0);
+            std::vector<float>(positions_wire_spheres).swap(positions_wire_spheres);
         }
     }
 

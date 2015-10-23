@@ -13,7 +13,7 @@ void create_flat_sphere(double R,
   //The more small they are, the more precise the Sphere will be.
   // Must be a multiple of 360 and 180.
   const int rings=18;
-  const int sectors=38;
+  const int sectors=36;
   const float to_rad = static_cast<float>(CGAL_PI / 180.0);
 
   float T, P;
@@ -189,7 +189,7 @@ void create_flat_and_wire_sphere(double R,
   //The more small they are, the more precise the Sphere will be.
   // Must be a multiple of 360 and 180.
   const int rings=18;
-  const int sectors=38;
+  const int sectors=36;
   const float to_rad = static_cast<float>(CGAL_PI / 180.0);
 
   create_flat_sphere(R, positions_spheres, normals_spheres);

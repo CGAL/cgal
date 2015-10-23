@@ -90,7 +90,7 @@ private:
 
   using Scene_item::initialize_buffers;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
-  void compute_normals_and_vertices(void);
+  void compute_normals_and_vertices(void) const;
 
   void triangulate_facet();
   void triangulate_facet_color();
