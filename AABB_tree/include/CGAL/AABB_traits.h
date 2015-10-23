@@ -25,6 +25,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/AABB_intersections.h>
 #include <CGAL/internal/AABB_tree/Has_nested_type_Shared_data.h>
+#include <CGAL/internal/AABB_tree/Is_ray_intersection_geomtraits.h>
 #include <CGAL/internal/AABB_tree/Primitive_helper.h>
 
 #include <boost/optional.hpp>
@@ -91,6 +92,51 @@ struct AABB_traits_base<Primitive,true>{
   const typename Primitive::Shared_data& shared_data() const {return m_primitive_data;}
 };
 
+// AABB_traits_base_2 brings in the Intersection_distance predicate,
+// if GeomTraits is a model RayIntersectionGeomTraits.
+template <typename GeomTraits, bool ray_intersection_geom_traits=Is_ray_intersection_geomtraits<GeomTraits>::value>
+struct AABB_traits_base_2;
+
+template <typename GeomTraits>
+struct AABB_traits_base_2<GeomTraits,false>{};
+
+template <typename GeomTraits>
+struct AABB_traits_base_2<GeomTraits,true>{
+  typedef typename GeomTraits::Ray_3 Ray_3;
+  typedef typename GeomTraits::FT    FT;
+  // defining Bounding_box here is a hack. Otherwise we would need to
+  // use CRTP to get access to the derived class, which would bloat
+  // the code even more.
+  typedef typename CGAL::Bbox_3      Bounding_box;
+
+  struct Intersection_distance {
+    boost::optional<FT> operator()(const Ray_3& ray, const Bounding_box& bbox) {
+      FT t_near = -DBL_MAX; // std::numeric_limits<FT>::lowest(); C++1903
+      FT t_far = DBL_MAX;
+
+      for(int i = 0; i < 3; i++) {
+        if(ray.direction().delta(i) == 0) {
+          if((ray.source()[i] < box.min(i)) || (ray.source()[i] > box.max(i))) {
+            return boost::none;
+          }
+        } else {
+          FT t1 = (box.min(i) - ray.source()[i]) / ray.direction().delta(i);
+          FT t2 = (box.max(i) - ray.source()[i]) / ray.direction().delta(i);
+
+          t_near = (std::max)(t_near, (std::min)(t1, t2));
+          t_far = (std::min)(t_far, (std::max)(t1, t2));
+        }
+      }
+
+      if(t_far > t_near && t_far > 0) {
+        return t_near;
+      } else {
+        return boost::none;
+      }
+    }
+  };
+
+  Intersection_distance intersection_distance_object const { return Intersection_distance(); }
 } } //end of namespace internal::AABB_tree
 
 /// \addtogroup PkgAABB_tree
@@ -114,7 +160,8 @@ struct AABB_traits_base<Primitive,true>{
 /// \sa `AABBPrimitiveWithSharedData`
 template<typename GeomTraits, typename AABBPrimitive>
 class AABB_traits:
-  public internal::AABB_tree::AABB_traits_base<AABBPrimitive>
+  public internal::AABB_tree::AABB_traits_base<AABBPrimitive>,
+  public internal::AABB_tree::AABB_traits_base_2<GeomTraits>
 {
   typedef typename CGAL::Object Object;
 public:
@@ -300,40 +347,6 @@ public:
 
   Intersection intersection_object() const {return Intersection(*this);}
 
-  class Intersection_distance {
-    const AABB_traits<GeomTraits,AABBPrimitive>& m_traits;
-  public:
-    Intersection_distane(const AABB_traits<GeomTraits,AABBPrimitive>& traits)
-      : m_traits(traits) {}
-
-    template<typename Ray>
-    boost::optional<AABB_traits::FT> operator()(const Ray& ray, const Bounding_box& bbox) {
-      FT t_near = -DBL_MAX; // std::numeric_limits<FT>::lowest(); C++1903
-      FT t_far = DBL_MAX;
-
-      for(int i = 0; i < 3; i++) {
-        if(ray.direction().delta(i) == 0) {
-          if((ray.source()[i] < box.min(i)) || (ray.source()[i] > box.max(i))) {
-            return boost::none;
-          }
-        } else {
-          FT t1 = (box.min(i) - ray.source()[i]) / ray.direction().delta(i);
-          FT t2 = (box.max(i) - ray.source()[i]) / ray.direction().delta(i);
-
-          t_near = (std::max)(t_near, (std::min)(t1, t2));
-          t_far = (std::min)(t_far, (std::max)(t1, t2));
-        }
-      }
-
-      if(t_far > t_near && t_far > 0) {
-        return t_near;
-      } else {
-        return boost::none;
-      }
-    }
-  };
-
-  Intersection_distance intersection_distance_object const { return Intersection_distance(*this); }
 
   // This should go down to the GeomTraits, i.e. the kernel
   class Closest_point {
