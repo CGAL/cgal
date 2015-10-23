@@ -28,7 +28,6 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgKdsFrameworkSummary. Two dimensional visualization depends on \sc{Qt} 3, three dimensional visualization depends on \ref thirdpartyCoin.}
 \cgalPkgBib{cgal:r-kds}
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgShortInfoEnd
@@ -68,9 +67,8 @@
 - `CGAL::Kinetic::Enclosing_box_3<Traits>`
 - `CGAL::Kinetic::Insert_event<ActiveObjectsTable>`
 - `CGAL::Kinetic::Erase_event<ActiveObjectsTable>`
-- `CGAL::Kinetic::Qt_moving_points_2<Traits, QtWidget_2>`
-- `CGAL::Kinetic::Qt_triangulation_2<KineticTriangulation_2, QtWidget_2, QtMovingPoints_2>`
-- `CGAL::Kinetic::Qt_widget_2<Simulator> `
+
+
 
 */
 

@@ -279,9 +279,7 @@ parse_flags_and_third_party_choices
 
 parse_lib_building_results "libCGAL"        "CGAL"    
 parse_lib_building_results "libCGALCore"    "CGAL_Core"    
-parse_lib_building_results "libCGALimageIO" "CGAL_ImageIO" 
-parse_lib_building_results "libCGALQt"      "CGAL_Qt3"
-parse_lib_building_results "libCGALQt4"     "CGAL_Qt4"
+parse_lib_building_results "libCGALimageIO" "CGAL_ImageIO"
 parse_lib_building_results "libCGALQt5"     "CGAL_Qt5"
 
 for DIR in $TEST_DIRECTORIES ; do

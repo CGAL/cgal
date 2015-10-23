@@ -30,7 +30,8 @@
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_default_overlay_traits.h>
 #include <CGAL/Qt/DemosMainWindow.h>
-#include <CGAL/IO/pixmaps/hand.xpm>
+
+extern const char * hand_xpm[];
 
 #include <Qt>
 

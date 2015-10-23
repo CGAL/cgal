@@ -30,7 +30,6 @@ message(STATUS "Create CMakeLists.txt")
 set(PROJECT CGAL) #`basename $PWD` # TODO set value based on dir/source dir
 set(SINGLE_SOURCE "Polygon_2")
 list(INSERT CGAL_COMPONENTS 0 Qt4 CoRe gmP MPFR Rs rs3 MPFI) # TODO default value
-set(WITH_QT3 FALSE)
 set(WITH_QT4 FALSE)
 set(WITH_ALL_PRECONFIGURED_LIBS FALSE)
 list(INSERT BOOST_COMPONENTS 0 thread) # TODO default value
@@ -96,12 +95,10 @@ foreach( component ${CGAL_COMPONENTS})
   #string(REGEX REPLACE "()" "" rewrote_component ${component})
   #set(component ${rewrote_component})
 
-  # CGAL: Core, Qt3, Qt4, PDB, ImageIO
+  # CGAL: Core, Qt4, PDB, ImageIO
   string(REGEX REPLACE "([c|C][o|O][r|R][e|E])" "Core" rewrote_component ${component})
   set(component ${rewrote_component})
   string(REGEX REPLACE "([i|I][m|M][a|A][g|G][e|E][i|I][o|O])" "ImageIO" rewrote_component ${component})
-  set(component ${rewrote_component})
-  string(REGEX REPLACE "([q|Q][t|T]3)" "Qt3" rewrote_component ${component})
   set(component ${rewrote_component})
   string(REGEX REPLACE "([q|Q][t|T]4)" "Qt4" rewrote_component ${component})
   set(component ${rewrote_component})
@@ -146,10 +143,7 @@ foreach( component ${CGAL_COMPONENTS})
 
   list(APPEND CGAL_REWROTE_COMPONENTS ${component})
 
-  # detect qt3, qt4
-  if ( ${component} STREQUAL "Qt3" )
-     set(WITH_QT3 TRUE)
-  endif()
+  # detect qt4
   if ( ${component} STREQUAL "Qt4" )
     set(WITH_QT4 TRUE)
   endif()
@@ -228,31 +222,6 @@ if ( EXISTS ../include )
 include_directories( BEFORE ../include )\n\n")
 endif()
 
-
-if (WITH_QT3)
-  file(APPEND CMakeLists.txt 
-"# Qt3
-# FindQt3-patched.cmake is FindQt3.cmake patched by CGAL developers, so
-# that it can be used together with FindQt4: all its variables are prefixed
-# by \"QT3_\" instead of \"QT_\".
-find_package(Qt3-patched QUIET )
-
-if ( NOT QT3_FOUND )
-
-  message(STATUS \"This project requires the Qt3 library, and will not be compiled.\")
-  return()  
-
-endif()
-
-if ( CGAL_Qt3_FOUND )
-  
-  include( Qt3Macros-patched )
-
-endif()
-
-")
-endif()
-
 if (WITH_QT4) 
 file(APPEND CMakeLists.txt
 "# Qt4
@@ -308,39 +277,6 @@ if (WITH_QT4)
 else()
   file(APPEND CMakeLists.txt "include( CGAL_CreateSingleSourceCGALProgram )\n\n")
 endif()
-
-
-  if (WITH_QT3) 
-
-    file(APPEND CMakeLists.txt 
-"if ( CGAL_Qt3_FOUND AND QT3_FOUND )
-
-")
-
-    # TODO all globs in ${SOURCE_DIR}
-    # TODO check if globs are non-empty
-    file(GLOB SOURCE_FILES *.C *.cpp) # TODO sort?
-    foreach( file ${SOURCE_FILES} )
-      file(STRINGS ${file} filecontent)
-      string(REGEX MATCH "(^main|[^a-zA-Z0-9_]main) *[(]" result ${filecontent})
-      if (result)
-        file(APPEND CMakeLists.txt "  qt3_automoc( ${file} )\n")
-      endif()
-    endforeach()
- 
-    file(APPEND CMakeLists.txt 
-"# Make sure the compiler can find generated .moc files
-  include_directories( BEFORE \${CMAKE_CURRENT_BINARY_DIR} )
-  
-  include_directories( \${QT3_INCLUDE_DIR} )
-
-  link_libraries( \${QT3_LIBRARIES} )
-
-endif()
-
-")
-
-  endif(WITH_QT3)
 
   if (WITH_QT4) 
 
@@ -400,24 +336,6 @@ else()
   file(APPEND CMakeLists.txt "\n\n# Creating entries for target: ${SINGLE_SOURCE}\n\n")
 
   file(GLOB ALL_SOURCES *.C *.cpp) # TODO sort sources?
-
-  if (WITH_QT3) 
-
-    file(APPEND CMakeLists.txt
-"if ( CGAL_Qt3_FOUND AND QT3_FOUND )
-
-  qt3_automoc( \${ALL_SOURCES} )
-
-  # Make sure the compiler can find generated .moc files
-  include_directories( BEFORE \${CMAKE_CURRENT_BINARY_DIR} )
- 
-  include_directories( \${QT3_INCLUDE_DIR} )
-
-endif()
-
-")
-
-  endif(WITH_QT3)
 
   if(WITH_QT4)
 
@@ -490,9 +408,6 @@ add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${SINGLE_SOURCE} )
 
   set(LIBS "")
 
-  if (WITH_QT3)
-    set(LIBS "\${QT3_LIBRARIES}")
-  endif(WITH_QT3)
   if (WITH_QT4)
     set(LIBS "\${QT_LIBRARIES}")
   endif(WITH_QT4)

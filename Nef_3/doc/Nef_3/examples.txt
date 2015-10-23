@@ -17,6 +17,4 @@
 \example Nef_3/shell_exploration.cpp
 \example Nef_3/topological_operations.cpp
 \example Nef_3/transformation.cpp
-\example Nef_3/visualization_SM.cpp
-\example Nef_3/visualization_SNC.cpp
 */

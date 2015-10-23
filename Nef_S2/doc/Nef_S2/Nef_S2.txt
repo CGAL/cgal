@@ -141,13 +141,6 @@ indicates whether the cast was successful or not.
 
 \cgalExample{Nef_S2/nef_s2_point_location.cpp}
 
-\subsection Nef_S2Visualization Visualization
-
-`Nef_polyhedron_S2` provides an interface for OpenGL visualization via a
-Qt widget. The usage is shown in the following example:
-
-\cgalExample{Nef_S2/nef_S2.cpp}
-
 */ 
 } /* namespace CGAL */
 
