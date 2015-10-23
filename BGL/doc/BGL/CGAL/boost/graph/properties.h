@@ -1,55 +1,39 @@
-namespace CGAL {
-
-/*!
-\ingroup PkgBGLEnums
-
-The constant `vertex_is_border` is a 
-<A HREF="http://www.boost.org/libs/graph/doc/PropertyTag.html">property tag</A> which refers to the property
-of a vertex of being a border vertex.
-
-`vertex_is_border` is an 
-<A HREF="http://www.boost.org/libs/graph/doc/using_property_maps.html">interior property</A>, that is, a
-<A HREF="http://www.boost.org/libs/property_map/doc/property_map.html">property map</A> 
-for `vertex_is_border` can be extracted from any  model of 
-a `HalfedgeGraph` using the <span class="textsc">Bgl</span>
-<A HREF="http://www.boost.org/libs/graph/doc/PropertyGraph.html">PropertyGraph</A> interface:
-`boost::get(vertex_is_border,graph)`
-
-The Boolean flag that indicates if the vertex is a border can be directly accessed via:
-`boost::get(vertex_is_border,graph,edge)`
-*/
-enum vertex_is_border_t { vertex_is_border };
-
-/*!
-\ingroup PkgBGLEnums
-The constant `vertex_point` is a <A HREF="http://www.boost.org/libs/graph/doc/PropertyTag.html">property tag</A> which refers to the  geometric embedding property of a  vertex of a `HalfedgeGraph`.
-
-A `vertex_point` is an 
-<A HREF="http://www.boost.org/libs/graph/doc/using_property_maps.html">interior property</A>, 
-that is, a
-<A HREF="http://www.boost.org/libs/property_map/doc/property_map.html">property map</A> 
-for a `vertex_point` can be extracted from any model of a `HalfedgeGraph`
-using the <span class="textsc">Bgl</span>
-<A HREF="http://www.boost.org/libs/graph/doc/PropertyGraph.html">PropertyGraph</A> interface:
-`boost::get(vertex_point,graph)`
-
-A point of a vertex can be directly accessed via:
-- `boost::get(vertex_point,graph,vertex)`
-- `boost::put(vertex_point,graph,vertex,newpoint)`
-*/
-enum vertex_point_t { vertex_point };
-
-}
-
+/// Boost Namespace
 namespace boost {
 
-/*!
-\ingroup PkgBGLEnums
-The constant `edge_index` is a 
-<A HREF="http://www.boost.org/libs/graph/doc/PropertyTag.html">property tag</A> which identifies the <I>index</I> property
-of an edge of a \sc{Bgl} 
-<A HREF="http://www.boost.org/libs/graph/doc/Graph.html">Graph</A>.
+/// \ingroup PkgBGLProperties
+/// @{
 
-*/
-enum edge_index_t { edge_index };
+/// The constant `edge_index` is a property tag which identifies the <i>index</i> property of an edge of a \sc{Bgl}
+/// <a href="http://www.boost.org/libs/graph/doc/Graph.html"><code>Graph</code></a>.
+/// \cgalModels <a href="http://www.boost.org/libs/graph/doc/PropertyTag.html"><code>PropertyTag</code></a>
+enum edge_index_t { edge_index};
+
+/// The constant `vertex_index` is a property tag which identifies the <i>index</i> property of a vertex of a \sc{Bgl}
+/// <a href="http://www.boost.org/libs/graph/doc/Graph.html"><code>Graph</code></a>.
+/// \cgalModels <a href="http://www.boost.org/libs/graph/doc/PropertyTag.html"><code>PropertyTag</code></a>
+enum vertex_index_t { vertex_index };
+
+/// The constant `halfedge_index` is a property tag which identifies the <i>index</i> property of a halfedge of a `HalfedgeGraph`.
+///
+/// This is a property tag introduced by \cgal.
+/// \cgalModels <a href="http://www.boost.org/libs/graph/doc/PropertyTag.html"><code>PropertyTag</code></a>
+enum halfedge_index_t { halfedge_index };
+
+/// The constant `face_index` is a property tag which identifies the <i>index</i> property of a face of a `FaceGraph`.
+///
+/// This is a property tag introduced by \cgal.
+/// \cgalModels <a href="http://www.boost.org/libs/graph/doc/PropertyTag.html"><code>PropertyTag</code></a>
+enum face_index_t { face_index };
+
+
+/// The constant `vertex_point` is a property tag which refers to the  geometric embedding property of
+/// a vertex of a `HalfedgeGraph`.
+///
+/// This is a property tag introduced by \cgal.
+/// \cgalModels <a href="http://www.boost.org/libs/graph/doc/PropertyTag.html"><code>PropertyTag</code></a>
+enum vertex_point_t { vertex_point };
+
+
+/// @}
 }
