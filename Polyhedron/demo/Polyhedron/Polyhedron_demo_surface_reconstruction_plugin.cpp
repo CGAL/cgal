@@ -7,6 +7,13 @@
 
 #include <fstream>
 
+#include "Scene_polygon_soup_item.h"
+#include "Scene_polyhedron_item.h"
+#include "Scene_points_with_normal_item.h"
+#include "Polyhedron_type.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+
 #include <CGAL/array.h>
 #include <CGAL/centroid.h>
 #include <CGAL/PCA_util.h>
@@ -21,14 +28,6 @@
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
-
-#include "Scene_polygon_soup_item.h"
-#include "Scene_polyhedron_item.h"
-#include "Scene_points_with_normal_item.h"
-#include "Polyhedron_type.h"
- 
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
 
 #include "ui_Polyhedron_demo_surface_reconstruction_plugin.h"
 
@@ -388,6 +387,8 @@ namespace SurfaceReconstruction
   
 }
 
+
+
 class Polyhedron_demo_surface_reconstruction_plugin_dialog : public QDialog, private Ui::SurfaceReconstructionDialog
 {
   Q_OBJECT
@@ -431,21 +432,21 @@ public:
 
 class Polyhedron_demo_surface_reconstruction_plugin :
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  public CGAL::Three::Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   QAction* actionScaleSpaceReconstruction;
 
 public:
-  void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
 
     actionScaleSpaceReconstruction = new QAction(tr("Surface surface reconstruction"), mainWindow);
     actionScaleSpaceReconstruction->setObjectName("actionSurfaceReconstruction");
 
-    Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
+    CGAL::Three::Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 
   void automatic_reconstruction (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog);
@@ -469,7 +470,7 @@ public Q_SLOTS:
 
 void Polyhedron_demo_surface_reconstruction_plugin::on_actionSurfaceReconstruction_triggered()
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* pts_item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
@@ -508,7 +509,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::on_actionSurfaceReconstructi
 void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog)
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* pts_item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
@@ -693,7 +694,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 void Polyhedron_demo_surface_reconstruction_plugin::advancing_front_reconstruction
 (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog)
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* pts_item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
@@ -724,7 +725,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::advancing_front_reconstructi
 void Polyhedron_demo_surface_reconstruction_plugin::scale_space_reconstruction
 (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog)
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* pts_item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
@@ -781,7 +782,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::scale_space_reconstruction
 void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
 (const Polyhedron_demo_surface_reconstruction_plugin_dialog& dialog)
 {
-  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
   Scene_points_with_normal_item* point_set_item =
     qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
