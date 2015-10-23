@@ -226,7 +226,7 @@ void MainWindow::on_actionClamp_mass_triggered()
 void MainWindow::on_actionCircle_triggered()
 {
   bool ok;
-  int density = QInputDialog::getInteger(
+  int density = QInputDialog::getInt(
       this, tr("Density"), tr("Density:"), 300, 10, 10000, 1, &ok);
   if (!ok) return;
 
@@ -249,7 +249,7 @@ void MainWindow::on_actionCircle_triggered()
 void MainWindow::on_actionHalf_circle_triggered()
 {
   bool ok;
-  unsigned int density = QInputDialog::getInteger(
+  unsigned int density = QInputDialog::getInt(
       this, tr("Density"), tr("Density:"), 150, 10, 10000, 1, &ok);
   if (!ok) return;
 
@@ -261,11 +261,11 @@ void MainWindow::on_actionSpiral_triggered()
 {
   bool ok;
 
-  int loops = QInputDialog::getInteger(
+  int loops = QInputDialog::getInt(
       this, tr("Loops"), tr("Number:"), 3, 1, 10000, 1, &ok);
   if (!ok) return;
 
-  int density = QInputDialog::getInteger(
+  int density = QInputDialog::getInt(
       this, tr("Density"), tr("Density:"), 10, 1, 10000, 1, &ok);
   if (!ok) return;
 
@@ -277,7 +277,7 @@ void MainWindow::on_actionSpiral_triggered()
 void MainWindow::on_actionLine_triggered()
 {
   bool ok;
-  unsigned int density = QInputDialog::getInteger(
+  unsigned int density = QInputDialog::getInt(
       this, tr("Density"), tr("Density:"), 50, 1, 10000, 1, &ok);
   if (!ok) return;
 
@@ -288,7 +288,7 @@ void MainWindow::on_actionLine_triggered()
 void MainWindow::on_actionBox_triggered()
 {
   bool ok;
-  int density = QInputDialog::getInteger(
+  int density = QInputDialog::getInt(
       this, tr("Density"), tr("Density:"), 100, 1, 10000, 1, &ok);
   if (!ok) return;
 
@@ -315,7 +315,7 @@ void MainWindow::on_actionBox_triggered()
 void MainWindow::on_actionBoxes_triggered()
 {
   bool ok;
-  unsigned int density = QInputDialog::getInteger(
+  unsigned int density = QInputDialog::getInt(
       this, tr("Density"), tr("Density:"), 10, 1, 10000, 1, &ok);
   if (!ok) return;
 
@@ -327,7 +327,7 @@ void MainWindow::on_actionParallel_lines_triggered()
 {
   bool ok;
 
-  int lines = QInputDialog::getInteger(
+  int lines = QInputDialog::getInt(
       this, tr("Lines"), tr("Number:"), 3, 1, 10000, 1, &ok);
   if(!ok) return;
 
@@ -335,7 +335,7 @@ void MainWindow::on_actionParallel_lines_triggered()
       this, tr("Space"), tr("Space:"), 0.2, 0.1, 10, 1, &ok);
   if (!ok) return;
 
-  int density = QInputDialog::getInteger(
+  int density = QInputDialog::getInt(
       this, tr("Density"), tr("Density:"), 10, 1, 10000, 1, &ok);
   if(!ok) return;
 
@@ -346,7 +346,7 @@ void MainWindow::on_actionParallel_lines_triggered()
 void MainWindow::on_actionBox_with_boundaries_triggered()
 {
   bool ok;
-  unsigned int density = QInputDialog::getInteger(
+  unsigned int density = QInputDialog::getInt(
       this, tr("Density"), tr("Density:"), 10, 1, 10000, 1, &ok);
   if (!ok) return;
 
@@ -357,7 +357,7 @@ void MainWindow::on_actionBox_with_boundaries_triggered()
 void MainWindow::on_actionBox_with_missing_corners_triggered()
 {
   bool ok;
-  unsigned int density = QInputDialog::getInteger(
+  unsigned int density = QInputDialog::getInt(
       this, tr("Density"), tr("Density:"), 10, 1, 10000, 1, &ok);
   if (!ok) return;
 
@@ -368,11 +368,11 @@ void MainWindow::on_actionBox_with_missing_corners_triggered()
 void MainWindow::on_actionStar_triggered()
 {
   bool ok;
-  int nb_branches = QInputDialog::getInteger(
+  int nb_branches = QInputDialog::getInt(
       this, tr("Branches"), tr("Branches:"), 20, 2, 10000, 1, &ok);
   if(!ok) return;
 
-  int density = QInputDialog::getInteger(
+  int density = QInputDialog::getInt(
       this, tr("Density"), tr("Density:"), 100, 10, 10000, 1, &ok);
   if(!ok) return;
 
@@ -384,7 +384,7 @@ void MainWindow::on_actionStar_triggered()
 void MainWindow::on_actionStair_triggered()
 {
   bool ok;
-  unsigned int density = QInputDialog::getInteger(
+  unsigned int density = QInputDialog::getInt(
       this, tr("Density"), tr("Density:"), 30, 2, 10000, 1, &ok);
   if (!ok) return;
 
@@ -396,7 +396,7 @@ void MainWindow::on_actionStair_triggered()
 void MainWindow::on_actionSkyline_triggered()
 {
   bool ok;
-  unsigned int density = QInputDialog::getInteger(
+  unsigned int density = QInputDialog::getInt(
       this, tr("Density"), tr("Density:"), 10, 1, 10000, 1, &ok);
   if (!ok) return;
 
@@ -408,7 +408,7 @@ void MainWindow::on_actionSkyline_triggered()
 void MainWindow::on_actionIncreasingly_sharp_angles_triggered()
 {
   bool ok;
-  unsigned int density = QInputDialog::getInteger(
+  unsigned int density = QInputDialog::getInt(
       this, tr("Density"), tr("Density:"), 100, 1, 10000, 1, &ok);
   if (!ok) return;
 
@@ -453,7 +453,7 @@ void MainWindow::on_actionAdd_outliers_triggered()
 {
   bool ok;
   unsigned int nb = (unsigned)
-        QInputDialog::getInteger(
+        QInputDialog::getInt(
             this, tr("Outliers"), tr("How many:"), 10, 1, 100000, 1, &ok);
   if (!ok) return;
 
@@ -472,7 +472,7 @@ void MainWindow::on_actionSubdivide_triggered()
 void MainWindow::on_actionDecimate_triggered()
 {
   bool ok;
-  int percent = QInputDialog::getInteger(
+  int percent = QInputDialog::getInt(
       this, tr("Decimate"), tr("Percentage:"), 50, 1, 100, 1, &ok);
   if (!ok) return;
 
@@ -486,7 +486,7 @@ void MainWindow::on_actionDecimate_triggered()
 void MainWindow::on_actionKeep_one_point_out_of_n_triggered()
 {
   bool ok;
-  int n = QInputDialog::getInteger(
+  int n = QInputDialog::getInt(
       this, tr("Keep one point out of"), tr("n:"), 2, 2, 1000, 1, &ok);
   if (!ok) return;
 
@@ -555,7 +555,7 @@ void MainWindow::on_actionReconstruction_1000_steps_triggered()
 void MainWindow::on_actionReconstruction_until_triggered()
 {
   bool ok;
-  int nb_points = QInputDialog::getInteger(
+  int nb_points = QInputDialog::getInt(
       this, tr("Number of Points"), tr("Nb:"), 4, 1, 1000000, 1, &ok);
   if (!ok) return;
 
