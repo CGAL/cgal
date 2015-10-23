@@ -1,0 +1,5 @@
+/*!
+\example Reconstruction_simplification_2/rs2_simplest_example.cpp
+\example Reconstruction_simplification_2/rs2_output_example.cpp
+\example Reconstruction_simplification_2/rs2_mass_example.cpp
+*/
