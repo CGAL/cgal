@@ -40,6 +40,14 @@ method is more suited for your work:
 | Is the output always orientable?         | Yes     | Yes              | No               |
 </center>
 
+\cgalFigureBegin{TutorialsReconstructionFigComparisons, compare_reconstructions.png}
+
+__Comparison of reconstruction methods applied to the same input (full shape and close-up).__
+
+From left to right: original point cloud; poisson; advancing front; scale space.
+
+\cgalFigureEnd
+
 More information on these different methods can be found on their
 respective manual pages and on section \ref TutorialsReconstruction_reconstruction.
 
