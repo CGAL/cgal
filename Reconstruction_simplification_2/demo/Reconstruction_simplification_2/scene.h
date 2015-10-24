@@ -83,6 +83,8 @@ private:
 
   Reconstruction_simplification_kerneled_2* m_pwsrec;
   int m_ignore;
+  bool m_init_done;
+  double m_percentage;
 
   // bbox
   double m_bbox_x;
@@ -95,6 +97,8 @@ public:
     m_min_mass = 0.0;
     m_max_mass = 0.0;
     m_ignore = 0;
+    m_init_done = false;
+    m_percentage = 100.;
     m_bbox_x = 0.0;
     m_bbox_y = 0.0;
     m_bbox_size = 1.0;
@@ -118,6 +122,10 @@ public:
 
   void set_nb_edges_to_ignore(int nb) {
     m_ignore = nb;
+  }
+
+  void set_percentage(double percentage) {
+    m_percentage = percentage;
   }
 
   void invert_mass() {
@@ -180,6 +188,7 @@ public:
   void add_sample(const Point& point, const FT mass = 1.0) {
     m_samples.push_back(Sample_(point, mass));
     m_max_mass = (std::max)(m_max_mass, mass);
+    m_init_done = false;
   }
 
   void add_outliers(const unsigned int nb) {
@@ -188,6 +197,7 @@ public:
       Point outlier = CGAL::ORIGIN + random_vec<Vector>(1.3);
       m_samples.push_back(outlier);
     }
+    m_init_done = false;
     std::cerr << "done" << std::endl;
   }
 
@@ -303,7 +313,6 @@ public:
     CGAL_USE(qw);
     std::cerr << "Invalid file (try .xy, .txt, .gtn, .dat)" << std::endl;
 #endif
-
   }
 
   void load_xy_file(const QString& fileName) {
@@ -600,6 +609,8 @@ public:
     m_pwsrec->initialize(point_mass_list.begin(), point_mass_list.end(),
         point_pmap, mass_pmap);
 
+    m_init_done = true;
+
     return true;
   }
 
@@ -654,11 +665,15 @@ public:
 
   void reconstruct_until(const unsigned int nv) {
     std::cout << "reconstruct_until" << std::endl;
+    if (!m_init_done)
+      init_reconstruction(m_percentage);
     m_pwsrec->run_until(nv);
   }
 
   void reconstruct(const unsigned int steps) {
     std::cout << "reconstruct" << std::endl;
+    if (!m_init_done)
+      init_reconstruction(m_percentage);
     m_pwsrec->run(steps);
   }
 
@@ -682,7 +697,7 @@ public:
     }
 
     if (view_edges)
-      m_pwsrec->draw_edges(0.5f * line_thickness, 0.4f, 0.4f, 0.4f);
+      m_pwsrec->draw_edges(0.5f * line_thickness, 0.9f, 0.9f, 0.9f);
 
     if (view_edge_cost)
       m_pwsrec->draw_costs(line_thickness, view_ghost_edges);

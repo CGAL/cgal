@@ -155,6 +155,7 @@ void MainWindow::update()
 {
   m_scene->set_min_mass(min_mass());
   m_scene->set_nb_edges_to_ignore(ignore_edges());
+  m_scene->set_percentage(percentage());
   viewer->repaint();
 }
 
@@ -505,15 +506,6 @@ void MainWindow::set_scene_options()
   m_scene->set_options(m_verbose, m_mchoice, m_use_flip,
       alpha(), norm_tol(), tang_tol(),
       m_relocation, m_ghost);
-}
-
-void MainWindow::on_actionReconstruction_init_triggered()
-{
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  set_scene_options();
-  m_scene->init_reconstruction(percentage());
-  QApplication::restoreOverrideCursor();
-  update();
 }
 
 void MainWindow::on_actionReconstruction_one_step_triggered()

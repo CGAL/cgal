@@ -116,7 +116,6 @@ public:
   // reconstruction
   void on_actionSet_MChoice_toggled();
   void on_actionSet_options_triggered();
-  void on_actionReconstruction_init_triggered();
   void on_actionReconstruction_one_step_triggered();
   void on_actionReconstruction_10_steps_triggered();
   void on_actionReconstruction_100_steps_triggered();

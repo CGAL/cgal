@@ -141,7 +141,6 @@
     </property>
     <addaction name="actionSet_MChoice"/>
     <addaction name="separator"/>
-    <addaction name="actionReconstruction_init"/>
     <addaction name="actionReconstruction_one_step"/>
     <addaction name="actionReconstruction_10_steps"/>
     <addaction name="actionReconstruction_100_steps"/>
@@ -297,14 +296,6 @@
     <string>Line...</string>
    </property>
   </action>
-  <action name="actionReconstruction_init">
-   <property name="text">
-    <string>Init</string>
-   </property>
-   <property name="shortcut">
-    <string>I</string>
-   </property>
-  </action>
   <action name="actionReconstruction_one_step">
    <property name="text">
     <string>Run 1 step</string>
@@ -361,7 +352,7 @@
     <string>View edges of the triangulation</string>
    </property>
    <property name="shortcut">
-    <string>E</string>
+    <string>T</string>
    </property>
   </action>
   <action name="actionRecenter">
