@@ -9,22 +9,18 @@ GlViewer::GlViewer(QWidget *pParent)
 {
   m_scene = NULL;
 
-  m_view_points = true;
-  m_view_vertices      = true;
-  m_view_edges         = false;
-  m_view_ghost_edges   = false;
-  m_view_edge_cost     = false;
-  m_view_edge_priority = false;
-  m_view_bins        = false;
-  m_view_foot_points = false;
-  m_view_relocation  = false;
-  m_view_tolerance   = false;
-  m_view_incolors       = false;
+  m_view_points         = true;
+  m_view_vertices       = true;
+  m_view_edges          = false;
+  m_view_ghost_edges    = false;
+  m_view_edge_cost      = false;
+  m_view_edge_priority  = false;
+  m_view_bins           = false;
+  m_view_foot_points    = false;
+  m_view_relocation     = false;
+  m_view_tolerance      = false;
   m_view_edge_relevance = true;
-
-  m_insert_points      = false;
-  m_activate_simulation = 0;
-  m_simulation_stage    = 0;
+  m_insert_points       = false;
 
   m_line_thickness = 2.0;
   m_point_size = 2.0;
@@ -75,17 +71,10 @@ void GlViewer::paintGL()
       m_view_foot_points,
       m_view_relocation,
       m_view_tolerance,
-      m_view_incolors,
       m_view_edge_relevance,
       float(m_point_size),
       float(m_vertex_size),
       float(m_line_thickness));
-
-  if (m_activate_simulation == 2)
-    m_scene->render_simulation(m_mouse_pick,
-        m_simulation_stage,
-        float(2*m_vertex_size),
-        float(m_line_thickness));
 
   glPopMatrix();
 }
@@ -105,7 +94,6 @@ void GlViewer::mousePressEvent(QMouseEvent *event)
 
   if (event->button() == Qt::LeftButton)
   {
-    if (m_activate_simulation != 0) m_activate_simulation = 1;
     setCursor(QCursor(Qt::PointingHandCursor));
     sample_mouse_path(m_mouse_click);
   }
@@ -161,12 +149,6 @@ void GlViewer::sample_mouse_path(const QPoint& point)
 
   if (m_insert_points)
     m_scene->add_sample(Point(x, y));
-
-  if (m_activate_simulation == 1)
-  {
-    m_activate_simulation = 2;
-    m_mouse_pick = Point(x, y);
-  }
 }
 
 void GlViewer::move_camera(const QPoint& p0, const QPoint& p1)

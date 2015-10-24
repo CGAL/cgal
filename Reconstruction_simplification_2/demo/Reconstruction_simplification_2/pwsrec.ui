@@ -139,23 +139,16 @@
     <property name="title">
      <string>Algorithms</string>
     </property>
-    <widget class="QMenu" name="menuReconstruction">
-     <property name="title">
-      <string>Decimate</string>
-     </property>
-     <addaction name="actionReconstruction_one_step"/>
-     <addaction name="actionReconstruction_10_steps"/>
-     <addaction name="actionReconstruction_100_steps"/>
-     <addaction name="actionReconstruction_1000_steps"/>
-     <addaction name="actionReconstruction_until"/>
-    </widget>
     <addaction name="actionSet_MChoice"/>
     <addaction name="separator"/>
     <addaction name="actionReconstruction_init"/>
-    <addaction name="menuReconstruction"/>
+    <addaction name="actionReconstruction_one_step"/>
+    <addaction name="actionReconstruction_10_steps"/>
+    <addaction name="actionReconstruction_100_steps"/>
+    <addaction name="actionReconstruction_1000_steps"/>
+    <addaction name="actionReconstruction_until"/>
     <addaction name="actionRelocate_vertices"/>
     <addaction name="separator"/>
-    <addaction name="actionPrint_Stats"/>
     <addaction name="actionSet_options"/>
    </widget>
    <widget class="QMenu" name="menuView">
@@ -169,7 +162,6 @@
     <addaction name="separator"/>
     <addaction name="actionView_ghost"/>
     <addaction name="actionView_relevance"/>
-    <addaction name="actionView_incolors"/>
     <addaction name="separator"/>
     <addaction name="actionView_edge_cost"/>
     <addaction name="actionView_edge_priority"/>
@@ -178,9 +170,6 @@
     <addaction name="actionView_foot_points"/>
     <addaction name="actionView_relocation"/>
     <addaction name="actionView_tolerance"/>
-    <addaction name="separator"/>
-    <addaction name="actionActivate_simulation"/>
-    <addaction name="actionView_simulation"/>
     <addaction name="separator"/>
     <addaction name="actionRecenter"/>
    </widget>
@@ -208,7 +197,6 @@
    <addaction name="actionSnapshot"/>
    <addaction name="separator"/>
    <addaction name="actionInsertPoint"/>
-   <addaction name="actionActivate_simulation"/>
    <addaction name="separator"/>
    <addaction name="actionRecenter"/>
   </widget>
@@ -319,7 +307,7 @@
   </action>
   <action name="actionReconstruction_one_step">
    <property name="text">
-    <string>1 step</string>
+    <string>Run 1 step</string>
    </property>
    <property name="shortcut">
     <string>R</string>
@@ -367,10 +355,10 @@
     <bool>false</bool>
    </property>
    <property name="text">
-    <string>Edges</string>
+    <string>Triangulation</string>
    </property>
    <property name="statusTip">
-    <string>View edges</string>
+    <string>View edges of the triangulation</string>
    </property>
    <property name="shortcut">
     <string>E</string>
@@ -430,7 +418,7 @@
   </action>
   <action name="actionReconstruction_10_steps">
    <property name="text">
-    <string>10 steps</string>
+    <string>Run 10 steps</string>
    </property>
    <property name="shortcut">
     <string>1</string>
@@ -438,7 +426,7 @@
   </action>
   <action name="actionReconstruction_100_steps">
    <property name="text">
-    <string>100 steps</string>
+    <string>Run 100 steps</string>
    </property>
    <property name="shortcut">
     <string>2</string>
@@ -446,7 +434,7 @@
   </action>
   <action name="actionReconstruction_1000_steps">
    <property name="text">
-    <string>1000 steps</string>
+    <string>Run 1000 steps</string>
    </property>
    <property name="shortcut">
     <string>3</string>
@@ -513,7 +501,7 @@
   </action>
   <action name="actionReconstruction_until">
    <property name="text">
-    <string>until</string>
+    <string>Run until...</string>
    </property>
    <property name="shortcut">
     <string>U</string>
@@ -530,26 +518,6 @@
    </property>
    <property name="shortcut">
     <string>N</string>
-   </property>
-  </action>
-  <action name="actionActivate_simulation">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="icon">
-    <iconset resource="pwsrec.qrc">
-     <normaloff>:/icons/vertex.png</normaloff>:/icons/vertex.png</iconset>
-   </property>
-   <property name="text">
-    <string>Simulation</string>
-   </property>
-  </action>
-  <action name="actionView_simulation">
-   <property name="text">
-    <string>Simulation stage</string>
-   </property>
-   <property name="shortcut">
-    <string>A</string>
    </property>
   </action>
   <action name="actionRelocate_vertices">
@@ -618,17 +586,6 @@
     <string>Shift+T</string>
    </property>
   </action>
-  <action name="actionView_incolors">
-   <property name="checkable">
-    <bool>true</bool>
-   </property>
-   <property name="checked">
-    <bool>false</bool>
-   </property>
-   <property name="text">
-    <string>In colors</string>
-   </property>
-  </action>
   <action name="actionClamp_mass">
    <property name="text">
     <string>Clamp mass</string>
@@ -643,14 +600,6 @@
    </property>
    <property name="shortcut">
     <string>Shift+B</string>
-   </property>
-  </action>
-  <action name="actionPrint_Stats">
-   <property name="text">
-    <string>Print Stats</string>
-   </property>
-   <property name="shortcut">
-    <string>Shift+S</string>
    </property>
   </action>
   <action name="actionSubdivide">

@@ -86,8 +86,7 @@ public:
   void draw_one_cost(const Edge& edge, const FT min_value, const FT max_value,
       const bool view_ghost);
 
-  void draw_relevance(const float line_width, const int nb,
-      const bool incolors);
+  void draw_relevance(const float line_width, const int nb);
 
   void draw_bins(const float thickness);
 
@@ -117,9 +116,6 @@ public:
       const Edge& edge);
 
   void draw_collapsible_edge(const float point_size, const float line_width,
-      const Point& query);
-
-  void draw_simulation(const float point_size, const float line_width,
       const Point& query);
 
   void draw_cost_stencil(const float point_size, const float line_width,

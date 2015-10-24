@@ -329,7 +329,7 @@ void R_s_k_2::draw_one_cost(const Edge& edge,
                                           draw_edge(edge);
 }
 
-void R_s_k_2::draw_relevance(const float line_width, const int nb, const bool incolors)
+void R_s_k_2::draw_relevance(const float line_width, const int nb)
 {
   MultiIndex mindex;
   FT min_value = (std::numeric_limits<FT>::max)();
@@ -357,7 +357,6 @@ void R_s_k_2::draw_relevance(const float line_width, const int nb, const bool in
 
     PEdge pedge = *(mindex.get<1>()).begin();
     (mindex.get<0>()).erase(pedge);
-    if (incolors) draw_edge(pedge.edge());
   }
 
   ::glColor3d(0.0, 0.5, 0.0);
@@ -365,13 +364,6 @@ void R_s_k_2::draw_relevance(const float line_width, const int nb, const bool in
   {
     PEdge pedge = *(mindex.get<1>()).begin();
     (mindex.get<0>()).erase(pedge);
-    if (incolors)
-    {
-      FT value = pedge.priority();
-      value = (value - min_value) / (max_value - min_value);
-      value = 0.7*(1.0 - value);
-      ::glColor3d(value, value, value);
-    }
     draw_edge(pedge.edge());
   }
 }
@@ -609,45 +601,6 @@ void R_s_k_2::draw_collapsible_edge(const float point_size,
     draw_mesh_one_ring(point_size, line_width, copy, copy_edge);
   else
     draw_mesh_blocking_edges(point_size, line_width, copy, copy_edge);
-}
-
-void R_s_k_2::draw_simulation(const float point_size,
-    const float line_width,
-    const Point& query)
-{
-  Edge edge;
-  bool ok = locate_edge(query, edge);
-  if (!ok) return;
-
-  Triangulation copy;
-  Edge copy_edge = copy_star(edge, copy);
-  Vertex_handle copy_src = copy.source_vertex(copy_edge);
-  Vertex_handle copy_dst = copy.target_vertex(copy_edge);
-
-  Edge_vector copy_hull;
-  copy.get_edges_from_star_minus_link(copy_src, copy_hull, true);
-  ok = copy.make_collapsible(copy_edge, copy_hull.begin(), copy_hull.end(), m_verbose);
-
-  if (!ok)
-  {
-    draw_mesh_blocking_edges(point_size, line_width, copy, copy_edge);
-    return;
-  }
-
-  copy.collapse(copy_edge, m_verbose);
-
-  draw_bg_faces(copy, 1.0f, 0.7f, 0.7f, 0.5f);
-  draw_vertex_faces(copy_dst, copy, 0.7f, 0.7f, 1.0f, 1.0f);
-
-  ::glLineWidth(line_width);
-  draw_bg_edges(copy, 0.7f, 0.3f, 0.7f, 1.f, 0.f, 0.f);
-  draw_vertex_edges(copy_dst, copy, 0.f, 0.8f, 0.f, 0.f, 0.8f, 0.8f);
-
-  ::glPointSize(0.5*point_size);
-  draw_bg_vertices(copy, 0.f, 0.f, 0.f);
-  ::glPointSize(point_size);
-  ::glColor3f(1., 1., 0.);
-  draw_point(copy_dst->point());
 }
 
 void R_s_k_2::draw_cost_stencil(const float point_size,

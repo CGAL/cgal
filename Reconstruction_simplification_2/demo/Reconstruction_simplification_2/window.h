@@ -123,7 +123,6 @@ public:
   void on_actionReconstruction_1000_steps_triggered();
   void on_actionReconstruction_until_triggered();
   void on_actionRelocate_vertices_triggered();
-  void on_actionPrint_Stats_triggered();
 
   // view
   void on_actionView_points_toggled();
@@ -132,16 +131,12 @@ public:
   void on_actionView_ghost_toggled();
   void on_actionView_edge_cost_toggled();
   void on_actionView_edge_priority_toggled();
-  void on_actionView_incolors_toggled();
   void on_actionView_relevance_toggled();
 
   void on_actionView_bins_toggled();
   void on_actionView_foot_points_toggled();
   void on_actionView_relocation_toggled();
   void on_actionView_tolerance_toggled();
-
-  void on_actionActivate_simulation_toggled();
-  void on_actionView_simulation_triggered();
 
   signals:
   void openRecentFile(QString filename);

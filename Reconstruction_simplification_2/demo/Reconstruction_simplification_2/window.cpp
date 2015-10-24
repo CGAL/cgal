@@ -574,11 +574,6 @@ void MainWindow::on_actionRelocate_vertices_triggered()
   update();
 }
 
-void MainWindow::on_actionPrint_Stats_triggered()
-{
-  m_scene->print_stats();
-}
-
 //////////
 // VIEW //
 //////////
@@ -643,27 +638,9 @@ void MainWindow::on_actionView_tolerance_toggled()
   update();
 }
 
-void MainWindow::on_actionView_incolors_toggled()
-{
-  viewer->toggle_view_incolors();
-  update();
-}
-
 void MainWindow::on_actionView_relevance_toggled()
 {
   viewer->toggle_view_edge_relevance();
-  update();
-}
-
-void MainWindow::on_actionActivate_simulation_toggled()
-{
-  viewer->toggle_activate_simulation();
-  update();
-}
-
-void MainWindow::on_actionView_simulation_triggered()
-{
-  viewer->toggle_simulation_stage();
   update();
 }
 

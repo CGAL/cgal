@@ -667,21 +667,16 @@ public:
     m_pwsrec->relocate_all_points();
   }
 
-  void print_stats() {
-    std::cout << "print_stats" << std::endl;
-    m_pwsrec->print_stats();
-  }
-
   // RENDER //
 
   void render(const bool view_points, const bool view_vertices,
-      const bool view_edges, const bool view_ghost_edges,
-      const bool view_edge_cost, const bool view_edge_priority,
-      const bool view_bins, const bool view_foot_points,
-      const bool view_relocation, const bool view_tolerance,
-      const bool view_incolors, const bool view_edge_relevance,
-      const float point_size, const float vertex_size,
-      const float line_thickness) {
+    const bool view_edges, const bool view_ghost_edges,
+    const bool view_edge_cost, const bool view_edge_priority,
+    const bool view_bins, const bool view_foot_points,
+    const bool view_relocation, const bool view_tolerance,
+    const bool view_edge_relevance, const float point_size, 
+    const float vertex_size, const float line_thickness) 
+  {
     if (m_pwsrec == NULL) {
       return;
     }
@@ -696,7 +691,7 @@ public:
       m_pwsrec->draw_pedges(line_thickness);
 
     if (view_edge_relevance)
-      m_pwsrec->draw_relevance(line_thickness, m_ignore, view_incolors);
+      m_pwsrec->draw_relevance(line_thickness, m_ignore);
 
     if (view_relocation)
       m_pwsrec->draw_relocation();
@@ -715,38 +710,6 @@ public:
 
     if (view_points)
       draw_samples(point_size);
-  }
-
-  void render_simulation(const Point& point, int option,
-      const float vertex_size, const float line_width) {
-
-    std::cout << "render_simulation" << std::endl;
-
-    switch (option) {
-    case 0:
-      m_pwsrec->draw_one_ring(vertex_size, line_width, point);
-      break;
-    case 1:
-      m_pwsrec->draw_blocking_edges(vertex_size, line_width, point);
-      break;
-    case 2:
-      m_pwsrec->draw_collapsible_edge(vertex_size, line_width, point);
-      break;
-    case 3:
-      m_pwsrec->draw_simulation(vertex_size, line_width, point);
-      break;
-    case 4:
-      m_pwsrec->draw_remove_queue_stencil(vertex_size, line_width, point);
-      break;
-    case 5:
-      m_pwsrec->draw_cost_stencil(vertex_size, line_width, point);
-      break;
-    case 6:
-      m_pwsrec->draw_push_queue_stencil(vertex_size, line_width, point);
-      break;
-    default:
-      break;
-    }
   }
 
   void draw_samples(const float point_size) {

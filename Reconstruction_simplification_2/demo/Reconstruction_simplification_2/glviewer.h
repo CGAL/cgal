@@ -26,13 +26,10 @@ private:
     bool m_view_foot_points;
     bool m_view_relocation;
     bool m_view_tolerance;
-    bool m_view_incolors;
     bool m_view_edge_relevance;
 
     // interactive modes
     bool m_insert_points;
-    int  m_activate_simulation;
-    int  m_simulation_stage;
     
     // rendering options
     double m_line_thickness;
@@ -92,23 +89,13 @@ public:
     void toggle_view_relocation() { m_view_relocation = !m_view_relocation; }
     
     void toggle_view_tolerance() { m_view_tolerance = !m_view_tolerance; } 
-    
-    void toggle_view_incolors() { m_view_incolors = !m_view_incolors; }
 
     void toggle_view_edge_relevance() {
     	m_view_edge_relevance = !m_view_edge_relevance;
     }
     
     void toggle_insert_points() { m_insert_points = !m_insert_points; }
-    
-    void toggle_activate_simulation() {
-    	m_activate_simulation = (m_activate_simulation == 0);
-    }
-    
-    void toggle_simulation_stage() {
-    	m_simulation_stage = (m_simulation_stage+1)%7;
-    }
-
+   
 protected:
     // GL
     void paintGL();
