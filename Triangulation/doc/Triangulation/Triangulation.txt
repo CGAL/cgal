@@ -519,8 +519,9 @@ set of points. In the worst case, the expected complexity is
 run on \f$ n \f$ random points, the cost of inserting one point is 
 \f$ O(n^{1/d}) \f$.
 
-We provide below (Figure \cgalFigureRef{Triangulationfigbenchmarks100} 
-and \cgalFigureRef{Triangulationfigbenchmarks1000}) the
+We provide below (Figure \cgalFigureRef{Triangulationfigbenchmarks100}, 
+\cgalFigureRef{Triangulationfigbenchmarks1000} and 
+\cgalFigureRef{triangulationfigbenchmarkchart}) the
 performance of the Delaunay triangulation on randomly distributed points. 
 The machine used is a PC running 
 Windows 7 64-bits with an Intel Xeon CPU clocked at 2.80 GHz with 32GB of RAM.
@@ -559,6 +560,10 @@ Performance of the insertion of 100 points in a Delaunay triangulation.
 \cgalFigureCaptionBegin{Triangulationfigbenchmarks1000}
 Performance of the insertion of 1000 points in a Delaunay triangulation.
 \cgalFigureCaptionEnd
+
+\cgalFigureBegin{triangulationfigbenchmarkchart,benchmark_DTd.png}
+Running time wrt. number of maximal simplices, for dimensions for 2 to 12.
+\cgalFigureEnd
 
 # Design and Implementation History #
 
