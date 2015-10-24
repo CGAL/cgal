@@ -39,7 +39,7 @@ public:
   ~MainWindow();
 
   // Parameters
-  void set_scene_parameters();
+  void set_scene_options();
 
   double percentage() const { return m_percent / 100.0; }
 
@@ -115,7 +115,7 @@ public:
 
   // reconstruction
   void on_actionSet_MChoice_toggled();
-  void on_actionSet_parameters_triggered();
+  void on_actionSet_options_triggered();
   void on_actionReconstruction_init_triggered();
   void on_actionReconstruction_one_step_triggered();
   void on_actionReconstruction_10_steps_triggered();

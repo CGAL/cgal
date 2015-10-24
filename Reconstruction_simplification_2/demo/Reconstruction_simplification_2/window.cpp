@@ -500,9 +500,9 @@ void MainWindow::on_actionKeep_one_point_out_of_n_triggered()
 // RECONSTRUCTION //
 ////////////////////
 
-void MainWindow::set_scene_parameters()
+void MainWindow::set_scene_options()
 {
-  m_scene->set_parameters(m_verbose, m_mchoice, m_use_flip,
+  m_scene->set_options(m_verbose, m_mchoice, m_use_flip,
       alpha(), norm_tol(), tang_tol(),
       m_relocation, m_ghost);
 }
@@ -510,7 +510,7 @@ void MainWindow::set_scene_parameters()
 void MainWindow::on_actionReconstruction_init_triggered()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  set_scene_parameters();
+  set_scene_options();
   m_scene->init_reconstruction(percentage());
   QApplication::restoreOverrideCursor();
   update();
@@ -519,7 +519,7 @@ void MainWindow::on_actionReconstruction_init_triggered()
 void MainWindow::on_actionReconstruction_one_step_triggered()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  set_scene_parameters();
+  set_scene_options();
   m_scene->reconstruct(1);
   QApplication::restoreOverrideCursor();
   update();
@@ -528,7 +528,7 @@ void MainWindow::on_actionReconstruction_one_step_triggered()
 void MainWindow::on_actionReconstruction_10_steps_triggered()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  set_scene_parameters();
+  set_scene_options();
   m_scene->reconstruct(10);
   QApplication::restoreOverrideCursor();
   update();
@@ -537,7 +537,7 @@ void MainWindow::on_actionReconstruction_10_steps_triggered()
 void MainWindow::on_actionReconstruction_100_steps_triggered()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  set_scene_parameters();
+  set_scene_options();
   m_scene->reconstruct(100);
   QApplication::restoreOverrideCursor();
   update();
@@ -546,7 +546,7 @@ void MainWindow::on_actionReconstruction_100_steps_triggered()
 void MainWindow::on_actionReconstruction_1000_steps_triggered()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  set_scene_parameters();
+  set_scene_options();
   m_scene->reconstruct(1000);
   QApplication::restoreOverrideCursor();
   update();
@@ -560,7 +560,7 @@ void MainWindow::on_actionReconstruction_until_triggered()
   if (!ok) return;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  set_scene_parameters();
+  set_scene_options();
   m_scene->reconstruct_until(nb_points);
   QApplication::restoreOverrideCursor();
   update();
@@ -667,7 +667,7 @@ void MainWindow::on_actionView_simulation_triggered()
   update();
 }
 
-void MainWindow::on_actionSet_parameters_triggered()
+void MainWindow::on_actionSet_options_triggered()
 {
   Dialog_options dlg;
   dlg.set_all_ranges();
@@ -696,7 +696,7 @@ void MainWindow::on_actionSet_parameters_triggered()
     m_ghost    = dlg.get_ghost();
     m_use_flip = dlg.get_use_flip();
 
-    set_scene_parameters();
+    set_scene_options();
     viewer->line_thickness() = dlg.get_line_thickness();
     viewer->point_size()  = dlg.get_point_size();
     viewer->vertex_size() = dlg.get_vertex_size();
@@ -710,5 +710,5 @@ void MainWindow::on_actionSet_MChoice_toggled()
     m_mchoice = 10;
   else
     m_mchoice = 0;
-  set_scene_parameters();
+  set_scene_options();
 }

@@ -149,7 +149,6 @@
      <addaction name="actionReconstruction_1000_steps"/>
      <addaction name="actionReconstruction_until"/>
     </widget>
-    <addaction name="actionSet_parameters"/>
     <addaction name="actionSet_MChoice"/>
     <addaction name="separator"/>
     <addaction name="actionReconstruction_init"/>
@@ -157,6 +156,7 @@
     <addaction name="actionRelocate_vertices"/>
     <addaction name="separator"/>
     <addaction name="actionPrint_Stats"/>
+    <addaction name="actionSet_options"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">
@@ -262,10 +262,10 @@
      <normaloff>:/icons/fileOpen.png</normaloff>:/icons/fileOpen.png</iconset>
    </property>
    <property name="text">
-    <string>Load Points</string>
+    <string>Load point set</string>
    </property>
    <property name="statusTip">
-    <string>Load Points</string>
+    <string>Load point set</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O</string>
@@ -277,10 +277,10 @@
      <normaloff>:/icons/fileSave.png</normaloff>:/icons/fileSave.png</iconset>
    </property>
    <property name="text">
-    <string>Save</string>
+    <string>Save point set</string>
    </property>
    <property name="statusTip">
-    <string>Save Points</string>
+    <string>Save point set</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+S</string>
@@ -497,14 +497,6 @@
     <string>Spiral...</string>
    </property>
   </action>
-  <action name="actionSet_parameters">
-   <property name="text">
-    <string>Parameters</string>
-   </property>
-   <property name="shortcut">
-    <string>Ctrl+P</string>
-   </property>
-  </action>
   <action name="actionView_edge_cost">
    <property name="checkable">
     <bool>true</bool>
@@ -691,6 +683,14 @@
    <property name="shortcut">
     <string>M</string>
    </property>
+  </action>
+  <action name="actionSet_options">
+    <property name="text">
+      <string>Options</string>
+    </property>
+    <property name="shortcut">
+      <string>Ctrl+P</string>
+    </property>
   </action>
  </widget>
  <customwidgets>

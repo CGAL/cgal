@@ -560,7 +560,7 @@ public:
 
   // RECONSTRUCTION //
 
-  void set_parameters(const int verbose, const int mchoice,
+  void set_options(const int verbose, const int mchoice,
       const bool use_flip, const double alpha, const double norm_tol,
       const double tang_tol, const unsigned int relocation,
       const double ghost) {
