@@ -35,7 +35,7 @@ namespace Polygon_mesh_processing {
   * defined as a face range. The border is "seen from inside" the patch,
   * i.e. the collected halfedges are
   * the ones that belong to the input faces.
-
+  *
   * @tparam PolygonMesh model of `HalfedgeGraph`
   * @tparam FaceRange range of
        `boost::graph_traits<PolygonMesh>::%face_descriptor`, model of `Range`.
@@ -43,7 +43,8 @@ namespace Polygon_mesh_processing {
   * @tparam HalfedgeOutputIterator model of `OutputIterator`
      holding `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
      for patch border
-
+  *
+  * @param pmesh the polygon mesh to be scanned
   * @param faces the range of faces defining the patch
   *              around which the border is collected
   * @param out the output iterator that collects halfedges that form the border
