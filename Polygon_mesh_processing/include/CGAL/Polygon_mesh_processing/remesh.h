@@ -151,11 +151,11 @@ void isotropic_remeshing(TriangleMesh& tmesh
 
 template<typename TriangleMesh
        , typename FaceRange>
-void incremental_triangle_based_remeshing(TriangleMesh& tmesh
+void isotropic_remeshing(TriangleMesh& tmesh
   , const FaceRange& faces
   , const double& target_edge_length)
 {
-  incremental_triangle_based_remeshing(tmesh,
+  isotropic_remeshing(tmesh,
     faces,
     target_edge_length,
     parameters::all_default());
