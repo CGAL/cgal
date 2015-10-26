@@ -16,7 +16,7 @@ combinatorial aspect of triangulations while the geometric classes
 compute and maintain triangulations, Delaunay triangulations and
 regular triangulations of sets of points.
 
-# Introduction #
+\section TriangulationSecIntro Introduction
 
 ## Some Definitions ##
 
@@ -106,7 +106,7 @@ If the maximal dimension of a simplex in the triangulation is
 Two faces \f$ \sigma\f$ and \f$ \sigma'\f$ are <I>incident</I> if and only if
 \f$ \sigma'\f$ is a proper sub-face of \f$ \sigma\f$ or <I>vice versa</I>.
 
-# %Triangulation Data Structure #
+\section TriangulationSecTDS Triangulation Data Structure
 
 In this section, we describe the concept `TriangulationDataStructure` for
 which \cgal provides one model class:
@@ -126,7 +126,7 @@ us denote the maximal dimension with \f$ D \f$ and the current dimension with \f
 The inequalities \f$ -2 \leq d \leq D\f$ and \f$ 0 \le D\f$ always hold.
 The special meaning of negative values for \f$d\f$ is explained below.
 
-### The Set of Faces ###
+## The Set of Faces ##
 
 The set of faces of a `TriangulationDataStructure` with 
 current dimension \f$ d \f$ forms a triangulation of the 
@@ -291,7 +291,7 @@ Barycentric subdivision in dimension \f$ d=2\f$.
 
 \cgalExample{barycentric_subdivision.cpp}
 
-# Triangulations #
+\section TriangulationSecTriangulations Triangulations
 
 The class `CGAL::Triangulation<TriangulationTraits, TriangulationDataStructure>` 
 maintains a triangulation embedded in Euclidean space. The triangulation 
@@ -388,7 +388,7 @@ One important difference between the two examples above is that the first uses
 visits <I>only</I> the infinite full cells but stores handles to them into the
 <I>potentially big</I> array <tt>infinite_full_cells</tt>.
 
-# Delaunay Triangulations #
+\section TriangulationSecDT Delaunay Triangulations
 
 The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` derives from
 `CGAL::Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`
@@ -510,7 +510,7 @@ This simple example shows how to create a regular triangulation.
 
 \cgalExample{regular_triangulation.cpp}
 
-# Complexity and Performances #
+\section TriangulationSecPerf Complexity and Performances
 
 The current implementation locates points by walking in the
 triangulation, and sorts the points with spatial sort to insert a
@@ -565,7 +565,7 @@ Performance of the insertion of 1000 points in a Delaunay triangulation.
 Running time wrt. number of maximal simplices, for dimensions for 2 to 12.
 \cgalFigureEnd
 
-# Design and Implementation History #
+\section TriangulationSecDesign Design and Implementation History
 
 This package is heavily inspired by the works of
 Monique Teillaud and Sylvain Pion (`Triangulation_3`)
