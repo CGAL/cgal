@@ -508,6 +508,15 @@ void MainWindow::set_scene_options()
       m_relocation, m_ghost);
 }
 
+void MainWindow::on_actionReconstruction_reinit_triggered()
+{
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  set_scene_options();
+  m_scene->init_reconstruction(percentage());
+  QApplication::restoreOverrideCursor();
+  update();
+}
+
 void MainWindow::on_actionReconstruction_one_step_triggered()
 {
   QApplication::setOverrideCursor(Qt::WaitCursor);

@@ -147,6 +147,7 @@
     <addaction name="actionReconstruction_1000_steps"/>
     <addaction name="actionReconstruction_until"/>
     <addaction name="actionRelocate_vertices"/>
+    <addaction name="actionReconstruction_reinit"/>
     <addaction name="separator"/>
     <addaction name="actionSet_options"/>
    </widget>
@@ -296,6 +297,14 @@
     <string>Line...</string>
    </property>
   </action>
+  <action name="actionReconstruction_reinit">
+   <property name="text">
+    <string>Re-init</string>
+   </property>
+   <property name="shortcut">
+    <string>I</string>
+   </property>
+  </action>
   <action name="actionReconstruction_one_step">
    <property name="text">
     <string>Run 1 step</string>
@@ -318,7 +327,7 @@
     <string>View foot points</string>
    </property>
    <property name="shortcut">
-    <string>T</string>
+    <string>F</string>
    </property>
   </action>
   <action name="actionView_points">
