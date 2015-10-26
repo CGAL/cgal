@@ -658,6 +658,7 @@ void MainWindow::on_actionSet_options_triggered()
   dlg.set_relocation(m_relocation);
   dlg.set_relevance(m_ghost);
   dlg.set_use_flip(m_use_flip);
+  dlg.set_multiple_choice_checkbox(m_mchoice != 0);
   dlg.set_line_thickness(viewer->line_thickness());
   dlg.set_point_size(viewer->point_size());
   dlg.set_vertex_size(viewer->vertex_size());
@@ -680,13 +681,4 @@ void MainWindow::on_actionSet_options_triggered()
     viewer->vertex_size() = dlg.get_vertex_size();
     update();
   }
-}
-
-void MainWindow::on_actionSet_MChoice_toggled()
-{
-  if (m_mchoice == 0)
-    m_mchoice = 10;
-  else
-    m_mchoice = 0;
-  set_scene_options();
 }

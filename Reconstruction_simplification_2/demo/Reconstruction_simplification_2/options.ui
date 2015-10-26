@@ -1,68 +1,74 @@
-<ui version="4.0" >
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
  <class>Dialog_options</class>
- <widget class="QDialog" name="Dialog_options" >
-  <property name="geometry" >
+ <widget class="QDialog" name="Dialog_options">
+  <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>409</width>
-    <height>379</height>
+    <width>354</width>
+    <height>415</height>
    </rect>
   </property>
-  <property name="windowTitle" >
+  <property name="minimumSize">
+   <size>
+    <width>0</width>
+    <height>0</height>
+   </size>
+  </property>
+  <property name="windowTitle">
    <string>Options</string>
   </property>
-  <widget class="QDialogButtonBox" name="buttonBox" >
-   <property name="geometry" >
-    <rect>
-     <x>40</x>
-     <y>330</y>
-     <width>341</width>
-     <height>32</height>
-    </rect>
-   </property>
-   <property name="orientation" >
-    <enum>Qt::Horizontal</enum>
-   </property>
-   <property name="standardButtons" >
-    <set>QDialogButtonBox::Cancel|QDialogButtonBox::NoButton|QDialogButtonBox::Ok</set>
-   </property>
-  </widget>
-  <widget class="QCheckBox" name="use_flip_checkbox" >
-   <property name="geometry" >
-    <rect>
-     <x>220</x>
-     <y>20</y>
-     <width>159</width>
-     <height>21</height>
-    </rect>
-   </property>
-   <property name="text" >
-    <string>use flip</string>
-   </property>
-  </widget>
-  <widget class="QWidget" name="layoutWidget" >
-   <property name="geometry" >
+  <widget class="QWidget" name="layoutWidget">
+   <property name="geometry">
     <rect>
      <x>20</x>
      <y>20</y>
-     <width>188</width>
-     <height>304</height>
+     <width>311</width>
+     <height>385</height>
     </rect>
    </property>
-   <layout class="QVBoxLayout" >
+   <layout class="QVBoxLayout">
     <item>
-     <layout class="QHBoxLayout" >
+     <widget class="QCheckBox" name="use_flip_checkbox">
+      <property name="text">
+       <string>Use Flip</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout">
       <item>
-       <widget class="QLabel" name="verbose_label" >
-        <property name="text" >
+       <widget class="QCheckBox" name="multiple_choice_checkbox">
+        <property name="text">
+         <string>Multiple Choice, with number of samples: </string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QSpinBox" name="mchoice_spinbox">
+        <property name="maximum">
+         <number>100</number>
+        </property>
+        <property name="value">
+         <number>100</number>
+        </property>
+       </widget>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout">
+      <item>
+       <widget class="QLabel" name="verbose_label">
+        <property name="text">
          <string>Verbose</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="verbose_spinbox" >
-        <property name="maximum" >
+       <widget class="QSpinBox" name="verbose_spinbox">
+        <property name="maximum">
          <number>2</number>
         </property>
        </widget>
@@ -70,41 +76,20 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" >
+     <layout class="QHBoxLayout">
       <item>
-       <widget class="QLabel" name="mchoice_label" >
-        <property name="text" >
-         <string>Multiply Choice #</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QSpinBox" name="mchoice_spinbox" >
-        <property name="maximum" >
-         <number>100</number>
-        </property>
-        <property name="value" >
-         <number>100</number>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" >
-      <item>
-       <widget class="QLabel" name="percent_label" >
-        <property name="text" >
+       <widget class="QLabel" name="percent_label">
+        <property name="text">
          <string>Init with %</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="percent_spinbox" >
-        <property name="maximum" >
+       <widget class="QSpinBox" name="percent_spinbox">
+        <property name="maximum">
          <number>100</number>
         </property>
-        <property name="value" >
+        <property name="value">
          <number>100</number>
         </property>
        </widget>
@@ -112,26 +97,26 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" >
+     <layout class="QHBoxLayout">
       <item>
-       <widget class="QLabel" name="norm_tol_label" >
-        <property name="text" >
-         <string>Normal Tol</string>
+       <widget class="QLabel" name="norm_tol_label">
+        <property name="text">
+         <string>Normal Tol.</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="norm_tol_spinbox" >
-        <property name="decimals" >
+       <widget class="QDoubleSpinBox" name="norm_tol_spinbox">
+        <property name="decimals">
          <number>3</number>
         </property>
-        <property name="maximum" >
+        <property name="maximum">
          <double>100.000000000000000</double>
         </property>
-        <property name="singleStep" >
+        <property name="singleStep">
          <double>0.050000000000000</double>
         </property>
-        <property name="value" >
+        <property name="value">
          <double>100.000000000000000</double>
         </property>
        </widget>
@@ -139,26 +124,26 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" >
+     <layout class="QHBoxLayout">
       <item>
-       <widget class="QLabel" name="tang_tol_label" >
-        <property name="text" >
-         <string>Tangential Tol</string>
+       <widget class="QLabel" name="tang_tol_label">
+        <property name="text">
+         <string>Tangential Tol.</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="tang_tol_spinbox" >
-        <property name="decimals" >
+       <widget class="QDoubleSpinBox" name="tang_tol_spinbox">
+        <property name="decimals">
          <number>3</number>
         </property>
-        <property name="maximum" >
+        <property name="maximum">
          <double>100.000000000000000</double>
         </property>
-        <property name="singleStep" >
+        <property name="singleStep">
          <double>0.050000000000000</double>
         </property>
-        <property name="value" >
+        <property name="value">
          <double>100.000000000000000</double>
         </property>
        </widget>
@@ -166,26 +151,26 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" >
+     <layout class="QHBoxLayout">
       <item>
-       <widget class="QLabel" name="alpha_label" >
-        <property name="text" >
+       <widget class="QLabel" name="alpha_label">
+        <property name="text">
          <string>Alpha</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="alpha_spinbox" >
-        <property name="decimals" >
+       <widget class="QDoubleSpinBox" name="alpha_spinbox">
+        <property name="decimals">
          <number>3</number>
         </property>
-        <property name="maximum" >
+        <property name="maximum">
          <double>100.000000000000000</double>
         </property>
-        <property name="singleStep" >
+        <property name="singleStep">
          <double>0.050000000000000</double>
         </property>
-        <property name="value" >
+        <property name="value">
          <double>100.000000000000000</double>
         </property>
        </widget>
@@ -193,102 +178,108 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" >
+     <layout class="QHBoxLayout">
       <item>
-       <widget class="QLabel" name="relocation_label" >
-        <property name="text" >
+       <widget class="QLabel" name="relocation_label">
+        <property name="text">
          <string>Relocation</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QSpinBox" name="relocation_spinbox" />
+       <widget class="QSpinBox" name="relocation_spinbox"/>
       </item>
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" >
+     <layout class="QHBoxLayout">
       <item>
-       <widget class="QLabel" name="ghost_vs_solid_label" >
-        <property name="text" >
+       <widget class="QLabel" name="ghost_vs_solid_label">
+        <property name="text">
          <string>Ghost vs solid</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="ghost_spinbox" >
-        <property name="decimals" >
+       <widget class="QDoubleSpinBox" name="ghost_spinbox">
+        <property name="decimals">
          <number>3</number>
         </property>
-        <property name="maximum" >
+        <property name="maximum">
          <double>100.000000000000000</double>
         </property>
-        <property name="singleStep" >
+        <property name="singleStep">
          <double>0.050000000000000</double>
         </property>
-        <property name="value" >
+        <property name="value">
          <double>100.000000000000000</double>
         </property>
        </widget>
       </item>
      </layout>
     </item>
-   </layout>
-  </widget>
-  <widget class="QWidget" name="" >
-   <property name="geometry" >
-    <rect>
-     <x>220</x>
-     <y>210</y>
-     <width>174</width>
-     <height>109</height>
-    </rect>
-   </property>
-   <layout class="QVBoxLayout" >
     <item>
-     <layout class="QHBoxLayout" >
+     <layout class="QHBoxLayout">
       <item>
-       <widget class="QLabel" name="thickness" >
-        <property name="text" >
+       <widget class="QLabel" name="thickness">
+        <property name="text">
          <string>Line thickness</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="thickness_spinbox" />
+       <widget class="QDoubleSpinBox" name="thickness_spinbox"/>
       </item>
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" >
+     <layout class="QHBoxLayout">
       <item>
-       <widget class="QLabel" name="point_size" >
-        <property name="text" >
+       <widget class="QLabel" name="point_size">
+        <property name="text">
          <string>Point size</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="point_size_spinbox" />
+       <widget class="QDoubleSpinBox" name="point_size_spinbox"/>
       </item>
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" >
+     <layout class="QHBoxLayout">
       <item>
-       <widget class="QLabel" name="vertex_size" >
-        <property name="text" >
+       <widget class="QLabel" name="vertex_size">
+        <property name="text">
          <string>Vertex size</string>
         </property>
        </widget>
       </item>
       <item>
-       <widget class="QDoubleSpinBox" name="vertex_size_spinbox" />
+       <widget class="QDoubleSpinBox" name="vertex_size_spinbox"/>
       </item>
      </layout>
     </item>
+    <item>
+     <widget class="QDialogButtonBox" name="buttonBox">
+      <property name="minimumSize">
+       <size>
+        <width>252</width>
+        <height>0</height>
+       </size>
+      </property>
+      <property name="orientation">
+       <enum>Qt::Horizontal</enum>
+      </property>
+      <property name="standardButtons">
+       <set>QDialogButtonBox::Cancel|QDialogButtonBox::Ok</set>
+      </property>
+     </widget>
+    </item>
    </layout>
   </widget>
+  <zorder>layoutWidget</zorder>
+  <zorder>use_flip_checkbox</zorder>
  </widget>
  <resources/>
  <connections>
@@ -298,11 +289,11 @@
    <receiver>Dialog_options</receiver>
    <slot>accept()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>248</x>
      <y>254</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>157</x>
      <y>274</y>
     </hint>
@@ -314,11 +305,11 @@
    <receiver>Dialog_options</receiver>
    <slot>reject()</slot>
    <hints>
-    <hint type="sourcelabel" >
+    <hint type="sourcelabel">
      <x>316</x>
      <y>260</y>
     </hint>
-    <hint type="destinationlabel" >
+    <hint type="destinationlabel">
      <x>286</x>
      <y>274</y>
     </hint>

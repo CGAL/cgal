@@ -114,7 +114,6 @@ public:
   void on_actionWidely_variable_sampling_triggered();
 
   // reconstruction
-  void on_actionSet_MChoice_toggled();
   void on_actionSet_options_triggered();
   void on_actionReconstruction_one_step_triggered();
   void on_actionReconstruction_10_steps_triggered();

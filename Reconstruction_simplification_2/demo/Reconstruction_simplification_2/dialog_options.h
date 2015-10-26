@@ -7,6 +7,20 @@ class Dialog_options : public QDialog, private Ui::Dialog_options
 {
     Q_OBJECT
 
+public Q_SLOTS:
+    void on_multiple_choice_checkbox_toggled(bool checked)
+    {
+      if (checked && get_mchoice() == 0)
+        set_random_sample_size(10);
+      else if (checked == false)
+        set_random_sample_size(0);
+    }
+
+    void on_mchoice_spinbox_valueChanged(int new_v)
+    {
+      set_multiple_choice_checkbox(new_v != 0);
+    }
+
 public:
     Dialog_options(QWidget * = 0)
     {
@@ -55,7 +69,13 @@ public:
     void set_use_flip(const bool flip) {
     	return use_flip_checkbox->setChecked(flip);
     }
-    
+
+    bool get_multiple_choice_checkbox() const { 
+      return multiple_choice_checkbox->isChecked(); }
+    void set_multiple_choice_checkbox(const bool mc) {
+      return multiple_choice_checkbox->setChecked(mc);
+    }
+
     double get_line_thickness() const { return thickness_spinbox->value(); }
     void set_line_thickness(const double t) { thickness_spinbox->setValue(t); }
 
@@ -63,7 +83,7 @@ public:
     void set_point_size(const double t) { point_size_spinbox->setValue(t); }
 
     double get_vertex_size() const { return vertex_size_spinbox->value(); }
-    void set_vertex_size(const double t) { vertex_size_spinbox->setValue(t); }    
+    void set_vertex_size(const double t) { vertex_size_spinbox->setValue(t); }
 };
 
 #endif

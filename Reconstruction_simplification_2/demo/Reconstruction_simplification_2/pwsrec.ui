@@ -85,7 +85,7 @@
      <x>0</x>
      <y>0</y>
      <width>680</width>
-     <height>22</height>
+     <height>21</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -139,8 +139,6 @@
     <property name="title">
      <string>Algorithms</string>
     </property>
-    <addaction name="actionSet_MChoice"/>
-    <addaction name="separator"/>
     <addaction name="actionReconstruction_one_step"/>
     <addaction name="actionReconstruction_10_steps"/>
     <addaction name="actionReconstruction_100_steps"/>
@@ -634,12 +632,12 @@
    </property>
   </action>
   <action name="actionSet_options">
-    <property name="text">
-      <string>Options</string>
-    </property>
-    <property name="shortcut">
-      <string>Ctrl+P</string>
-    </property>
+   <property name="text">
+    <string>Options</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
+   </property>
   </action>
  </widget>
  <customwidgets>
