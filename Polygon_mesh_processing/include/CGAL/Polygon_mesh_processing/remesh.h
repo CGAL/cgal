@@ -32,11 +32,10 @@ namespace Polygon_mesh_processing {
 
 /*!
 * \ingroup remeshing_grp
-* @brief remeshes a triangulated region of a triangulated surface mesh.
+* @brief remeshes a triangulated region of a polygon mesh.
 * This operation sequentially performs edge splits, edge collapses,
 * edge flips, Laplacian smoothing and projection to the initial surface
 * to generate a smooth mesh with a prescribed edge length.
-* The output is a new triangle mesh of the range of faces given to be remeshed.
 *
 * @tparam TriangleMesh model of `MutableFaceGraph` that 
 *         has an internal property map for `CGAL::vertex_point_t`.
@@ -56,14 +55,13 @@ namespace Polygon_mesh_processing {
 *  \cgalParamBegin{number_of_iterations} the number of iterations for the
 *    sequence of atomic operations performed (listed in the above description)
 *  \cgalParamEnd
-*  \cgalParamBegin{geom_traits} a geometric traits class instance
+*  \cgalParamBegin{geom_traits} a geometric traits class instance, model of `Kernel`
 *  \cgalParamEnd
 *  \cgalParamBegin{edge_is_constrained_map} a property map containing the
 *    constrained-or-not status of each edge of pmesh. A constrained edge can be splitted
 *    or collapsed, but not flipped, nor its endpoints moved by smoothing.
-*    However this parameter is provided or not, the boundary of `faces`
-*    (edges not sharing two faces
-*    in the range) is considered constrained
+*    Note that patch boundary edges (i.e. incident to only one face in the range)
+*    are always considered as constrained edges.
 *  \cgalParamEnd
 *  \cgalParamBegin{protect_constraints} If `true`, the edges set as constrained
 *     in `edge_is_constrained_map` (or by default the boundary edges)
@@ -166,11 +164,10 @@ void isotropic_remeshing(TriangleMesh& tmesh
 * @brief splits the edges listed in `edges` into sub-edges
 * that are not longer than the given threshold `max_length`.
 *
-* Note this function is particularly useful before calling
-* `incremental_triangle_based_remeshing()` with the protection of constraints activated.
-* It prevents the remeshing algorithm to fall in the case where it does
-* not terminate because of one or more constrained edges that are more than
-* twice longer than the target edge length.
+* Note this function is useful to split constrained edges before
+* calling `isotropic_remeshing()` with protection of constraints
+* activated (to match the constrained edge length required by the
+* remeshing algorithm to be guaranteed to terminate)
 *
 * @tparam TriangleMesh model of `MutableFaceGraph` that
 *         has an internal property map for `CGAL::vertex_point_t`.
