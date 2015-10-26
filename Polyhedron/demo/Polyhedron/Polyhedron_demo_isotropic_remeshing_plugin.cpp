@@ -175,14 +175,14 @@ public Q_SLOTS:
           false);
 
         if (selection_item->selected_edges.empty())
-          CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
+          CGAL::Polygon_mesh_processing::isotropic_remeshing(
           *selection_item->polyhedron()
           , selection_item->selected_facets
           , target_length
           , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
           .protect_constraints(protect));
         else
-        CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
+          CGAL::Polygon_mesh_processing::isotropic_remeshing(
          *selection_item->polyhedron()
          , selection_item->selected_facets
          , target_length
@@ -217,7 +217,7 @@ public Q_SLOTS:
         }
         else
         {
-        CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
+        CGAL::Polygon_mesh_processing::isotropic_remeshing(
          *poly_item->polyhedron()
          , faces(*poly_item->polyhedron())
          , target_length
