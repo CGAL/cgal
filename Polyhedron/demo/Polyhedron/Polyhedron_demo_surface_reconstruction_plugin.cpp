@@ -31,6 +31,14 @@
 
 #include "ui_Polyhedron_demo_surface_reconstruction_plugin.h"
 
+// Concurrency
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Parallel_tag Concurrency_tag;
+#else
+typedef CGAL::Sequential_tag Concurrency_tag;
+#endif
+
+
 // Poisson reconstruction method:
 // Reconstructs a surface mesh from a point set and returns it as a polyhedron.
 Polyhedron* poisson_reconstruct(const Point_set& points,
@@ -72,8 +80,8 @@ namespace SurfaceReconstruction
   // types for K nearest neighbors search
   typedef CGAL::Search_traits_3<Kernel> Tree_traits;
   typedef CGAL::Orthogonal_k_neighbor_search<Tree_traits> Neighbor_search;
-  typedef typename Neighbor_search::Tree Tree;
-  typedef typename Neighbor_search::iterator Search_iterator;
+  typedef Neighbor_search::Tree Tree;
+  typedef Neighbor_search::iterator Search_iterator;
 
   typedef CGAL::Scale_space_surface_reconstruction_3<Kernel> ScaleSpace;
   
@@ -239,8 +247,8 @@ namespace SurfaceReconstruction
 
   void smooth_point_set (Point_set& points, unsigned int scale)
   {
-    CGAL::jet_smooth_point_set<CGAL::Parallel_tag>(points.begin(), points.end(),
-                                                   scale);
+    CGAL::jet_smooth_point_set<Concurrency_tag>(points.begin(), points.end(),
+                                                scale);
   }
 
   template <typename ItemsInserter>
@@ -375,9 +383,9 @@ namespace SurfaceReconstruction
 
   void compute_normals (Point_set& points, unsigned int neighbors)
   {
-    CGAL::jet_estimate_normals<CGAL::Parallel_tag>(points.begin(), points.end(),
-                                                   CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
-                                                   2 * neighbors);
+    CGAL::jet_estimate_normals<Concurrency_tag>(points.begin(), points.end(),
+                                                CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
+                                                2 * neighbors);
     
     points.erase (CGAL::mst_orient_normals (points.begin(), points.end(),
 					    CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
