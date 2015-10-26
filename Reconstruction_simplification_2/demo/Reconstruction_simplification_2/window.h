@@ -61,7 +61,7 @@ public:
     return discard_spinbox->value();
   }
 
-  protected slots:
+  protected Q_SLOTS:
   // drag and drop
   void dropEvent(QDropEvent *event);
   void closeEvent(QCloseEvent *event);
@@ -78,7 +78,7 @@ public:
   void open(const QString& file);
   void save(const QString& file);
 
-  public slots:
+  public Q_SLOTS:
   // render
   void update();
   void on_actionRecenter_triggered();
@@ -137,7 +137,7 @@ public:
   void on_actionView_relocation_toggled();
   void on_actionView_tolerance_toggled();
 
-  signals:
+  Q_SIGNALS:
   void openRecentFile(QString filename);
 };
 

@@ -92,7 +92,7 @@ void MainWindow::openRecentFile_aux()
 {
   QAction* action = qobject_cast<QAction*>(sender());
   if (action)
-    emit openRecentFile(action->data().toString());
+    Q_EMIT openRecentFile(action->data().toString());
 }
 
 void MainWindow::updateRecentFileActions()

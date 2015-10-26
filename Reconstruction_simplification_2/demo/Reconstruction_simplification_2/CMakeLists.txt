@@ -24,7 +24,7 @@ find_package(Qt5 COMPONENTS OpenGL)
 
 # Find QGLViewer
 if(Qt5_FOUND)
-  #add_definitions(-DQT_NO_KEYWORDS)
+  add_definitions(-DQT_NO_KEYWORDS)
   find_package(QGLViewer)
 endif(Qt5_FOUND)
 
