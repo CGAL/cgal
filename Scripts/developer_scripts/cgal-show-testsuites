@@ -1,0 +1,20 @@
+#! /bin/sh
+
+# Set CGAL_GIT_DIR in your environment, if the following default value is
+# not correct.
+: ${CGAL_GIT_DIR:=$HOME/Git/cgal/.git}
+
+{
+git "--git-dir=$CGAL_GIT_DIR" fetch cgal-dev
+
+for d in $(seq 0 6); do
+    echo
+    echo -n "## $(date +'%A' -d "now+$d day") night"
+    git "--git-dir=$CGAL_GIT_DIR" log --format='%Cblue%d%Creset %h' --color=always -n1 cgal-dev/testsuite-$(date +'%A' -d "now+$d day")
+    git "--git-dir=$CGAL_GIT_DIR" log --format='%Cred%h%Creset %C(bold blue)<%an>%Creset %Cgreen(%cr)%Creset (parents: %C(yellow)%p%Creset)%n  %s' --first-parent --decorate cgal/master..cgal-dev/testsuite-$(date +'%A' -d "now+$d day")
+done
+
+echo
+echo '## cgal-dev/integration'
+git "--git-dir=$CGAL_GIT_DIR" log --format='%Cred%h%Creset %C(bold blue)<%an>%Creset %Cgreen(%cr)%Creset (parents: %C(yellow)%p%Creset)%n  %s' --first-parent --decorate cgal/master..cgal-dev/integration
+} |& less -S --raw +G -X
