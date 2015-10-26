@@ -537,7 +537,7 @@ void Scene_edit_polyhedron_item::remesh()
   unsigned int nb_iter = ui_widget->remeshing_iterations_spinbox->value();
 
   std::cout << "Remeshing...";
-  CGAL::Polygon_mesh_processing::incremental_triangle_based_remeshing(
+  CGAL::Polygon_mesh_processing::isotropic_remeshing(
     *polyhedron()
     , roi_facets
     , target_length
