@@ -206,7 +206,7 @@ struct Edge_is_marked4coref{
   {}
 
   friend reference get(Edge_is_marked4coref& map,const key_type& key) {
-    return map.marked_halfedges.count(key.first);
+    return map.marked_halfedges.count(key.first)!=0;
   }
   friend void put(Edge_is_marked4coref& map,key_type key,value_type v) {
     if (v) map.marked_halfedges.insert(key.first);
@@ -228,7 +228,7 @@ struct Edge_is_marked{
   {}
 
   friend reference get(const Edge_is_marked& map,const key_type& key) {
-    return map.marked_halfedges->count(key.halfedge());
+    return map.marked_halfedges->count(key.halfedge())!=0;
   }
 };
 
