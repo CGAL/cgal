@@ -47,7 +47,10 @@ namespace Polygon_mesh_processing {
 * @param faces the range of faces defining one patch to be remeshed
 * @param target_edge_length the edge length that is targetted in the remeshed patch
 * @param np optional sequence of \ref namedparameters among the ones listed below
-
+*
+* @pre if constraints protection is activated, the constrained edges should
+* not be longer than 4/3*`target_edge_length`
+*
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
 *    to the vertices of `tmesh`. Instance of a class model of `ReadWritePropertyMap`.
@@ -107,16 +110,25 @@ void isotropic_remeshing(TriangleMesh& tmesh
     = choose_param(get_param(np, edge_is_constrained),
                    internal::Border_constraint_pmap<TM, FaceRange>(tmesh, faces));
 
+  double low = 4. / 5. * target_edge_length;
+  double high = 4. / 3. * target_edge_length;
+
   bool protect = choose_param(get_param(np, protect_constraints), false);
+  if(protect)
+  {
+    std::string msg("Isotropic remeshing : protect_constraints cannot be set to");
+    msg.append(" true with constraints larger than 4/3 * target_edge_length.");
+    msg.append(" Remeshing aborted.");
+    CGAL_precondition_msg(
+      internal::constraints_are_short_enough(tmesh, ecmap, vpmap, high),
+      msg.c_str());
+  }
 
   typename internal::Incremental_remesher<TM, VPMap, GT>
     remesher(tmesh, vpmap, protect);
   remesher.init_faces_remeshing(faces, ecmap);
 
   unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
-
-  double low = 4. / 5. * target_edge_length;
-  double high = 4. / 3. * target_edge_length;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   std::cout << std::endl;

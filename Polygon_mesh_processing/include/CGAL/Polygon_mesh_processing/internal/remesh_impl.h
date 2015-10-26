@@ -88,6 +88,32 @@ namespace internal {
 
   };
 
+  template<typename PM,
+           typename EdgeConstraintMap,
+           typename VertexPointMap>
+  bool constraints_are_short_enough(const PM& pmesh,
+                                    EdgeConstraintMap ecmap,
+                                    VertexPointMap vpmap,
+                                    const double& high)
+  {
+    double sqh = high*high;
+    typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
+    typedef typename boost::graph_traits<PM>::edge_descriptor     edge_descriptor;
+    BOOST_FOREACH(edge_descriptor e, edges(pmesh))
+    {
+      if (get(ecmap, e))
+      {
+        halfedge_descriptor h = halfedge(e, pmesh);
+        if (sqh < CGAL::squared_distance(get(vpmap, source(h, pmesh)),
+                                         get(vpmap, target(h, pmesh))))
+        {
+          return false;
+        }
+      }
+    }
+    return true;
+  }
+
   template<typename PolygonMesh
          , typename VertexPointMap
          , typename GeomTraits

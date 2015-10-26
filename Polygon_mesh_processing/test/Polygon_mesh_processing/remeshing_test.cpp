@@ -64,6 +64,36 @@ void collect_patch(const char* file,
   in.close();
 }
 
+void test_precondition(const char* filename,
+                       const char* bad_selection_file)
+{
+  Mesh m;
+  std::ifstream input(filename);
+  if (!input || !(input >> m)){
+    std::cerr << "Error: can not read file.\n";
+    return;
+  }
+  std::set<face_descriptor> patch;
+  collect_patch(bad_selection_file, m, patch);
+
+  std::cout << "Start remeshing of " << bad_selection_file
+    << " (" << patch.size() << " faces)..." << std::endl;
+
+#ifndef CGAL_NDEBUG //o.w. CGAL_precondition not tested
+  bool exception_caught = false;
+  try
+  {
+    PMP::isotropic_remeshing(m, patch, 0.079,
+      PMP::parameters::protect_constraints(true));
+  }
+  catch (const std::exception &)
+  {
+    exception_caught = true;
+  }
+  CGAL_assertion(exception_caught);
+#endif
+}
+
 int main(int argc, char* argv[])
 {
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -132,6 +162,10 @@ int main(int argc, char* argv[])
   std::ofstream out("remeshed.off");
   out << m;
   out.close();
+
+  //this test should make the precondition fail
+  test_precondition("data/joint_refined.off",
+    "data/joint-patch-toolargeconstraints.selection.txt");
 
   return 0;
 }
