@@ -454,14 +454,14 @@ public:
 
   void save(const QString& filename) {
     std::cout << "SAVE-------------" << std::endl;
-    debug_print();
+    //debug_print();
 
-    if (filename.contains(".edges", Qt::CaseInsensitive)) {
+    /*if (filename.contains(".edges", Qt::CaseInsensitive)) {
       std::ofstream ofs(qPrintable(filename));
       m_pwsrec->save_edges(ofs, m_ignore);
       ofs.close();
       return;
-    }
+    }*/
 
     Sample_vector samples;
     for (std::vector<Sample_>::iterator it = m_samples.begin();
@@ -477,7 +477,9 @@ public:
       return;
     }
 
-    if (filename.contains(".poff", Qt::CaseInsensitive)) {
+    std::cerr << "Error: not an XY file." << std::endl;
+
+    /*if (filename.contains(".poff", Qt::CaseInsensitive)) {
       save_poff(filename, samples);
       return;
     }
@@ -490,7 +492,7 @@ public:
     if (filename.contains(".pwn", Qt::CaseInsensitive)) {
       save_pwn(filename, samples);
       return;
-    }
+    }*/
   }
 
   void save_pwn(const QString& filename, const Sample_vector& samples) {

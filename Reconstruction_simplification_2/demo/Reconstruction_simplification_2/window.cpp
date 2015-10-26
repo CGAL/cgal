@@ -176,7 +176,7 @@ void MainWindow::on_actionLoadPoints_triggered()
 void MainWindow::on_actionSave_triggered()
 {
   QString filename =
-      QFileDialog::getSaveFileName(this, tr("Save point set"), ".");
+    QFileDialog::getSaveFileName(this, tr("Save point set"), ".", tr("*.xy"));
   if (filename.isEmpty()) return;
   save(filename);
 }
