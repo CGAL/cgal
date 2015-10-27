@@ -399,7 +399,7 @@ public:
     // `AABBTraits` must be a model of `AABBRayIntersectionTraits` to
     // call this member function.
     template<typename Ray>
-    boost::optional< typename Intersection_and_primitive_id<Query>::Type >
+    boost::optional< typename Intersection_and_primitive_id<Ray>::Type >
     ray_intersection(const Ray& query) const;
 
     ///@}

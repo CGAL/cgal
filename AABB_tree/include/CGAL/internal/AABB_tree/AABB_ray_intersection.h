@@ -22,6 +22,10 @@
 #ifndef CGAL_AABB_RAY_INTERSECTION_H
 #define CGAL_AABB_RAY_INTERSECTION_H
 
+#include <queue>
+#include <functional>
+#include <boost/optional.hpp>
+
 namespace CGAL {
 
 template<typename AABBTree>
@@ -29,7 +33,7 @@ class AABB_ray_intersection {
   AABB_ray_intersection(const AABBTree& tree) : tree_(tree) {}
 public:
   template<typename Ray>
-  boost::optional< typename typename AABBtree::template Intersection_and_primitive_id<Query>::Type >
+  boost::optional< typename AABBTree::template Intersection_and_primitive_id<Ray>::Type >
   ray_intersection(const Ray& query) const {
     // We hit the root, now continue on the children. Keep track of
     // nb_primitives through a variable in each Node on the stack. In
@@ -39,11 +43,11 @@ public:
     typedef std::priority_queue< Node_ptr_with_ft, std::vector<Node_ptr_with_ft>, Node_ptr_comparison > Heap_type;
 
     Heap_type pq = Heap_type(Node_ptr_comparison(std::greater<Node_ptr_with_ft>()));
-    boost::optional< typename Intersection_and_primitive_id<Ray>::Type > p;
+    boost::optional< typename AABBTree::template Intersection_and_primitive_id<Ray>::Type > p;
     typename AABB_traits::Intersection
-      intersection_obj = traits().intersection_object();
+      intersection_obj = tree_.traits().intersection_object();
     typename AABB_traits::Intersection_distance
-      intersection_distance_obj = traits().intersection_distance_object();
+      intersection_distance_obj = tree_.traits().intersection_distance_object();
     boost::optional< typename AABBTree::template Intersection_and_primitive_id<Ray>::Type >
       intersection;
 
@@ -51,7 +55,7 @@ public:
     // numeric_limits<FT>::{max,infinity} will not work with Epeck.
     FT t = std::numeric_limits<double>::max();
     // Start with the root node.
-    pq.push(Node_ptr_with_ft(root_node(), 0, m_primitives.size()));
+    pq.push(Node_ptr_with_ft(tree_.root_node(), 0, tree_.size()));
 
     while(!pq.empty() && pq.top().value < t) {
       Node_ptr_with_ft current = pq.top();
@@ -121,12 +125,13 @@ public:
   }
 private:
   const AABBTree& tree_;
+  typedef typename AABBTree::AABB_traits AABB_traits;
   typedef typename AABBTree::FT FT;
   typedef typename AABBTree::Node Node;
   typedef typename AABBTree::FT size_type;
 
   struct Node_ptr_with_ft {
-    Node_ptr_with_ft(const Node* node, const AABBTree::FT& value, size_type nb_primitives)
+    Node_ptr_with_ft(const Node* node, const FT& value, size_type nb_primitives)
       : node(const_cast<Node*>(node)), value(value), nb_primitives(nb_primitives) {}
     Node* node;
     FT value;
@@ -144,7 +149,7 @@ private:
 
 template<typename AABBTraits>
 template<typename Ray>
-boost::optional< typename typename AABB_tree<AABBTraits>::template Intersection_and_primitive_id<Query>::Type >
+boost::optional< typename AABB_tree<AABBTraits>::template Intersection_and_primitive_id<Ray>::Type >
 AABB_tree<AABBTraits>::ray_intersection(const Ray& query) const {
   switch(size()) // copy-paste from AABB_tree::traversal
   {
@@ -154,7 +159,7 @@ AABB_tree<AABBTraits>::ray_intersection(const Ray& query) const {
     /// TODO
     break;
   default: // Tree has >= 2 nodes
-    if(traits().do_intersect_object()(query, root_node()->bvolume())) {
+    if(traits().do_intersect_object()(query, root_node()->bbox())) {
       // TODO
     } else {
       break;
