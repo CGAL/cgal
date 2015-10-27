@@ -1000,7 +1000,7 @@ template <class T, class Compare, class Data>
 void 
 Polyline_constraint_hierarchy_2<T,Compare,Data>::
 add_Steiner(T va, T vb, T vc){
-  Context_list* hcl;
+  Context_list* hcl=NULL;
   if(!get_contexts(va,vb,hcl)) CGAL_triangulation_assertion(false);
 
   Context_list* hcl2 = new  Context_list;
