@@ -12,6 +12,13 @@ typedef CGAL::Regular_triangulation_3<Traits, Tds>                     Regular;
 typedef Traits::Weighted_point                                         Weighted_point;
 typedef Traits::Bare_point                                             Point;
 
+#ifdef CGAL_LINKED_WITH_TBB
+typedef CGAL::Spatial_lock_grid_3<CGAL::Tag_priority_blocking>         Lock_ds;
+typedef CGAL::Triangulation_data_structure_3<Vb, 
+  CGAL::Regular_triangulation_cell_base_3<Traits>, CGAL::Parallel_tag> Tds_parallel;
+typedef CGAL::Regular_triangulation_3<Traits, Tds_parallel, Lock_ds>   RT_parallel;
+#endif
+
 template <bool is_const>
 void test_iterator_on_pair(){
   typedef std::vector< std::pair<Weighted_point,unsigned> > Container;
@@ -34,7 +41,20 @@ void test_iterator_on_pair(){
   // check that the info was correctly set.
   Regular::Finite_vertices_iterator vit;
   for (vit = R.finite_vertices_begin(); vit != R.finite_vertices_end(); ++vit)
-    assert( points[ vit->info() ].first == vit->point() );
+    assert(points[vit->info()].first == vit->point());
+
+#ifdef CGAL_LINKED_WITH_TBB
+  {
+  RT_parallel R(static_cast<Cast_type&>(points).begin(), static_cast<Cast_type&>(points).end());
+
+  assert(R.number_of_vertices() == 6);
+
+  // check that the info was correctly set.
+  RT_parallel::Finite_vertices_iterator vit;
+  for (vit = R.finite_vertices_begin(); vit != R.finite_vertices_end(); ++vit)
+    assert(points[vit->info()].first == vit->point());
+  }
+#endif
 }
 
 void toto(int){}
