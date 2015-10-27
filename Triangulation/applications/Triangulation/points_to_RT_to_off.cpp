@@ -1,13 +1,11 @@
 #include <CGAL/Epick_d.h>
-#include <CGAL/Regular_triangulation_euclidean_traits.h>
 #include <CGAL/Regular_triangulation.h>
 #include <CGAL/IO/Triangulation_off_ostream.h>
 
 #include <fstream>
 
 typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> K;
-typedef CGAL::Regular_triangulation_euclidean_traits<K>  Traits;
-typedef CGAL::Regular_triangulation<Traits> RT;
+typedef CGAL::Regular_triangulation<K> RT;
 
 void test(int dim)
 {

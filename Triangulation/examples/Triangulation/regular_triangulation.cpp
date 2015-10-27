@@ -1,7 +1,6 @@
 #include <CGAL/Epick_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Regular_triangulation.h>
-#include <CGAL/Regular_triangulation_euclidean_traits.h>
 #include <CGAL/assertions.h>
 
 #include <iostream>
@@ -11,10 +10,9 @@
 const int D = 5;    // Dimension
 const int N = 100;  // Number of points
 typedef CGAL::Epick_d< CGAL::Dimension_tag<D> >         K;
-typedef CGAL::Regular_triangulation_euclidean_traits<K> Traits;
-typedef Traits::Bare_point                              Bare_point;
-typedef Traits::Weighted_point                          Weighted_point;
-typedef CGAL::Regular_triangulation<Traits>             T;
+typedef CGAL::Regular_triangulation<K>                  T;
+typedef T::Bare_point                                   Bare_point;
+typedef T::Weighted_point                               Weighted_point;
 
 int main()
 {

@@ -1,7 +1,6 @@
 #include <CGAL/Epick_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Regular_triangulation.h>
-#include <CGAL/Regular_triangulation_euclidean_traits.h>
 #include <CGAL/algorithm.h>
 
 #include <tilted_grid.h>
@@ -110,8 +109,7 @@ void go(const int N)
 {
   //typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag> FK;
   typedef CGAL::Epick_d<CGAL::Dimension_tag<D> > FK;
-  typedef CGAL::Regular_triangulation_euclidean_traits<FK> Traits;
-  typedef CGAL::Regular_triangulation<Traits> Triangulation;
+  typedef CGAL::Regular_triangulation<FK> Triangulation;
   //test<Triangulation>(D, "dynamic", N);
   test<Triangulation>(D, "static", N);
 }

@@ -45,8 +45,7 @@ Parameters
 \tparam RegularTriangulationTraits is the geometric traits class that provides the
 geometric types and predicates needed by regular triangulations. 
 `RegularTriangulationTraits` must be a model of the concept 
-`RegularTriangulationTraits`. CGAL provides the class 
-`Regular_triangulation_euclidean_traits` for this purpose.
+`RegularTriangulationTraits`.
 
 \tparam TriangulationDataStructure must be a model of the concept
 `TriangulationDataStructure`. This model is used to store 

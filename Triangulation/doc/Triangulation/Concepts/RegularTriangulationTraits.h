@@ -25,18 +25,13 @@ An arithmetic field type.
 typedef unspecified_type FT;
 
 /*!
-The weighted point type. Must be the same type as `TriangulationTraits::Point_d`.
+The weighted point type.
 */
 typedef unspecified_type Weighted_point;
 
 /*!
-The un-weighted point type.
-*/
-typedef unspecified_type Bare_point;
-
-/*!
 A predicate object that must provide the operator
-`Bare_point operator()(const Weighted_point & wp)`, returning
+`Point_d operator()(const Weighted_point & wp)`, returning
 `wp` without its weight.
 */
 typedef unspecified_type Point_drop_weight_d;

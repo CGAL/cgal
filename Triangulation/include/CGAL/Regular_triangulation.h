@@ -24,33 +24,37 @@
 #include <CGAL/Dimension.h>
 #include <CGAL/Default.h>
 #include <CGAL/spatial_sort.h>
-#include <CGAL/Spatial_sort_traits_adapter_d.h>
+#include <CGAL/Regular_triangulation_euclidean_traits.h>
 
 #include <boost/property_map/function_property_map.hpp>
 
 namespace CGAL {
 
-template< typename RTTraits, typename TDS_ = Default >
+template< typename Traits_, typename TDS_ = Default >
 class Regular_triangulation
 : public Triangulation<
-    RTTraits,
-    typename Default::Get<TDS_, Triangulation_data_structure<
-                          typename RTTraits::Dimension,
-                          Triangulation_vertex<RTTraits>,
-                          Triangulation_full_cell<RTTraits> >
-                         >::type >
+    CGAL::Regular_triangulation_euclidean_traits<Traits_>,
+    typename Default::Get<
+      TDS_, 
+      Triangulation_data_structure<
+        typename CGAL::Regular_triangulation_euclidean_traits<Traits_>::Dimension,
+        Triangulation_vertex<CGAL::Regular_triangulation_euclidean_traits<Traits_> >,
+        Triangulation_full_cell<CGAL::Regular_triangulation_euclidean_traits<Traits_> >
+      >
+    >::type>
 {
-  typedef typename RTTraits::Dimension            Maximal_dimension_;
+  typedef CGAL::Regular_triangulation_euclidean_traits<Traits_> RTTraits;
+  typedef typename RTTraits::Dimension                     Maximal_dimension_;
   typedef typename Default::Get<
     TDS_, 
     Triangulation_data_structure<
-    Maximal_dimension_,
-    Triangulation_vertex<RTTraits>,
-    Triangulation_full_cell<RTTraits> 
-    > >::type                                     TDS;
-  typedef Triangulation<RTTraits, TDS>            Base;
-  typedef Regular_triangulation<RTTraits, TDS_>   Self;
-  
+      Maximal_dimension_,
+      Triangulation_vertex<RTTraits>,
+      Triangulation_full_cell<RTTraits> 
+    > >::type                                              TDS;
+  typedef Triangulation<RTTraits, TDS>                     Base;
+  typedef Regular_triangulation<Traits_, TDS_>             Self;
+                                                           
   typedef typename RTTraits::Orientation_d                 Orientation_d;
   typedef typename RTTraits::Power_test_d                  Power_test_d;
   typedef typename RTTraits::In_flat_power_test_d          In_flat_power_test_d;
@@ -465,9 +469,9 @@ private:
 
 // Warning: this function is not correct since it does not restore hidden 
 // vertices
-template< typename RTTraits, typename TDS >
-typename Regular_triangulation<RTTraits, TDS>::Full_cell_handle
-Regular_triangulation<RTTraits, TDS>
+template< typename Traits, typename TDS >
+typename Regular_triangulation<Traits, TDS>::Full_cell_handle
+Regular_triangulation<Traits, TDS>
 ::remove( Vertex_handle v )
 {
   CGAL_precondition( ! is_infinite(v) );
@@ -522,12 +526,12 @@ Regular_triangulation<RTTraits, TDS>
   typedef Triangulation_vertex<Geom_traits, Vertex_handle> Dark_vertex_base;
   typedef Triangulation_full_cell<
     Geom_traits,
-    internal::Triangulation::Dark_full_cell_data<Self> >   Dark_full_cell_base;
+    internal::Triangulation::Dark_full_cell_data<TDS> >    Dark_full_cell_base;
   typedef Triangulation_data_structure<Maximal_dimension, 
                                        Dark_vertex_base, 
                                        Dark_full_cell_base
                                       >                    Dark_tds;
-  typedef Regular_triangulation<RTTraits, Dark_tds>        Dark_triangulation;
+  typedef Regular_triangulation<Traits, Dark_tds>               Dark_triangulation;
   typedef typename Dark_triangulation::Face                Dark_face;
   typedef typename Dark_triangulation::Facet               Dark_facet;
   typedef typename Dark_triangulation::Vertex_handle       Dark_v_handle;
@@ -762,9 +766,9 @@ Regular_triangulation<RTTraits, TDS>
   return ret_s;
 }
 
-template< typename RTTraits, typename TDS >
+template< typename Traits, typename TDS >
 void
-Regular_triangulation<RTTraits, TDS>
+Regular_triangulation<Traits, TDS>
 ::remove_decrease_dimension(Vertex_handle v)
 {
   CGAL_precondition( current_dimension() >= 0 );
@@ -785,9 +789,9 @@ Regular_triangulation<RTTraits, TDS>
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - INSERTIONS
 
-template< typename RTTraits, typename TDS >
-typename Regular_triangulation<RTTraits, TDS>::Vertex_handle
-Regular_triangulation<RTTraits, TDS>
+template< typename Traits, typename TDS >
+typename Regular_triangulation<Traits, TDS>::Vertex_handle
+Regular_triangulation<Traits, TDS>
 ::insert(const Weighted_point & p, const Locate_type lt, const Face & f, const Facet & ft, const Full_cell_handle s)
 {
   switch( lt )
@@ -821,9 +825,9 @@ Regular_triangulation<RTTraits, TDS>
   }
 }
 
-template< typename RTTraits, typename TDS >
-typename Regular_triangulation<RTTraits, TDS>::Vertex_handle
-Regular_triangulation<RTTraits, TDS>
+template< typename Traits, typename TDS >
+typename Regular_triangulation<Traits, TDS>::Vertex_handle
+Regular_triangulation<Traits, TDS>
 ::insert_outside_affine_hull(const Weighted_point & p)
 {
   // we don't use Base::insert_outside_affine_hull(...) because here, we
@@ -870,9 +874,9 @@ Regular_triangulation<RTTraits, TDS>
   return v;
 }
 
-template< typename RTTraits, typename TDS >
-typename Regular_triangulation<RTTraits, TDS>::Vertex_handle
-Regular_triangulation<RTTraits, TDS>
+template< typename Traits, typename TDS >
+typename Regular_triangulation<Traits, TDS>::Vertex_handle
+Regular_triangulation<Traits, TDS>
 ::insert_if_in_star(const Weighted_point & p, 
                     const Vertex_handle star_center,
                     const Locate_type lt, const Face & f, const Facet & ft, 
@@ -910,9 +914,9 @@ Regular_triangulation<RTTraits, TDS>
   return Vertex_handle();
 }
 
-template< typename RTTraits, typename TDS >
-typename Regular_triangulation<RTTraits, TDS>::Vertex_handle
-Regular_triangulation<RTTraits, TDS>
+template< typename Traits, typename TDS >
+typename Regular_triangulation<Traits, TDS>::Vertex_handle
+Regular_triangulation<Traits, TDS>
 ::insert_in_conflicting_cell(const Weighted_point & p, 
                              const Full_cell_handle s,
                              const Vertex_handle only_if_this_vertex_is_in_the_cz)
@@ -960,10 +964,10 @@ Regular_triangulation<RTTraits, TDS>
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - GATHERING CONFLICTING SIMPLICES
 
 // NOT DOCUMENTED
-template< typename RTTraits, typename TDS >
+template< typename Traits, typename TDS >
 template< typename OrientationPred >
 Oriented_side
-Regular_triangulation<RTTraits, TDS>
+Regular_triangulation<Traits, TDS>
 ::perturbed_power_test(const Weighted_point & p, Full_cell_const_handle s,
     const OrientationPred & ori) const
 {
@@ -1018,9 +1022,9 @@ Regular_triangulation<RTTraits, TDS>
   return ON_NEGATIVE_SIDE;
 }
 
-template< typename RTTraits, typename TDS >
+template< typename Traits, typename TDS >
 bool
-Regular_triangulation<RTTraits, TDS>
+Regular_triangulation<Traits, TDS>
 ::is_in_conflict(const Weighted_point & p, Full_cell_const_handle s) const
 {
   CGAL_precondition( 1 <= current_dimension() );
@@ -1041,10 +1045,10 @@ Regular_triangulation<RTTraits, TDS>
   }
 }
 
-template< typename RTTraits, typename TDS >
+template< typename Traits, typename TDS >
 template< typename OutputIterator >
-typename Regular_triangulation<RTTraits, TDS>::Facet
-Regular_triangulation<RTTraits, TDS>
+typename Regular_triangulation<Traits, TDS>::Facet
+Regular_triangulation<Traits, TDS>
 ::compute_conflict_zone(const Weighted_point & p, const Full_cell_handle s, OutputIterator out) const
 {
   CGAL_precondition( 1 <= current_dimension() );
@@ -1069,9 +1073,9 @@ Regular_triangulation<RTTraits, TDS>
 
 // - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - VALIDITY
 
-template< typename RTTraits, typename TDS >
+template< typename Traits, typename TDS >
 bool
-Regular_triangulation<RTTraits, TDS>
+Regular_triangulation<Traits, TDS>
 ::is_valid(bool verbose, int level) const
 { 
   if (!Base::is_valid(verbose, level))

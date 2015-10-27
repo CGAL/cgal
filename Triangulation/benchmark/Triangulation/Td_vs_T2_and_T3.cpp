@@ -4,7 +4,6 @@
 #include <CGAL/Epick_d.h>
 #include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/Regular_triangulation.h>
-#include <CGAL/Regular_triangulation_euclidean_traits.h>
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
@@ -156,8 +155,7 @@ void go(const int N)
     points_d.push_back(Point_d(D, coords[i].begin(), coords[i].end()));
   
   // RTd
-  typedef CGAL::Regular_triangulation_euclidean_traits<Kd> Traits_d;
-  typedef CGAL::Regular_triangulation<Traits_d> RT_d;
+  typedef CGAL::Regular_triangulation<Kd> RT_d;
   typedef typename RT_d::Bare_point Bare_point_d;
   typedef typename RT_d::Point WPoint_d;
 
