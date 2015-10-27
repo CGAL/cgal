@@ -269,7 +269,9 @@ public:
 
 private:
   #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
-  std::vector<Vertex_handle> add_temporary_points_on_far_sphere(const size_t num_points){
+  std::vector<Vertex_handle> 
+  add_temporary_points_on_far_sphere(const size_t num_points)
+  {
       std::vector<Vertex_handle> far_sphere_vertices;
 
       const size_t MIN_NUM_POINTS_FOR_FAR_SPHERE_POINTS = 1000000;
@@ -322,8 +324,11 @@ private:
       return far_sphere_vertices;
   }
 
-  void remove_temporary_points_on_far_sphere(const std::vector<Vertex_handle> & far_sphere_vertices){
-      if(!far_sphere_vertices.empty()){
+  void remove_temporary_points_on_far_sphere(
+    const std::vector<Vertex_handle> & far_sphere_vertices)
+  {
+      if(!far_sphere_vertices.empty())
+      {
           // Remove the temporary vertices on far sphere
           remove(far_sphere_vertices.begin(), far_sphere_vertices.end());
       }
@@ -366,7 +371,8 @@ public:
       Vertex_handle hint;
       
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
-      std::vector<Vertex_handle> far_sphere_vertices = add_temporary_points_on_far_sphere(num_points);
+      std::vector<Vertex_handle> far_sphere_vertices =
+        add_temporary_points_on_far_sphere(num_points);
 #endif // CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
       
       size_t i = 0;
@@ -445,7 +451,8 @@ private:
         Vertex_handle hint;
 
 #ifdef CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
-        std::vector<Vertex_handle> far_sphere_vertices = add_temporary_points_on_far_sphere(num_points);
+        std::vector<Vertex_handle> far_sphere_vertices =
+          add_temporary_points_on_far_sphere(num_points);
 #endif // CGAL_CONCURRENT_TRIANGULATION_3_ADD_TEMPORARY_POINTS_ON_FAR_SPHERE
 
         size_t i = 0;
@@ -985,9 +992,9 @@ protected:
   template <typename DT>
   class Insert_point_with_info
   {
-    typedef typename DT::Point                                          Point;
-    typedef typename DT::Triangulation_data_structure::Vertex::Info     Info;
-    typedef typename DT::Vertex_handle                                  Vertex_handle;
+    typedef typename DT::Point                                  Point;
+    typedef typename DT::Vertex_handle                          Vertex_handle;
+    typedef typename DT::Triangulation_data_structure::Vertex::Info Info;
 
     DT                                                  & m_dt;
     const std::vector<Point>                            & m_points;
@@ -1002,7 +1009,14 @@ protected:
                  const std::vector<Info> & infos,
                  const std::vector<std::ptrdiff_t> & indices,
                  tbb::enumerable_thread_specific<Vertex_handle> & tls_hint)
-    : m_dt(dt), m_points(points), m_infos(infos), m_indices(indices), m_tls_hint(tls_hint)
+    : m_dt(dt), m_points(points), m_infos(infos), m_indices(indices), 
+      m_tls_hint(tls_hint)
+    {}
+
+    // Constructor
+    Insert_point_with_info(const Insert_point_with_info &ip)
+      : m_dt(ip.m_dt), m_points(ip.m_points), m_infos(ip.m_infos),
+      m_indices(ip.m_indices), m_tls_hint(ip.m_tls_hint)
     {}
 
     // operator()
@@ -1018,13 +1032,14 @@ protected:
       {
         bool success = false;
         std::ptrdiff_t i_point = m_indices[i_idx];
+        const Weighted_point &p = m_points[i_point];
         while(!success)
         {
-          if (m_dt.try_lock_vertex(hint) && m_dt.try_lock_point(m_points[i_point]))
+          if (m_dt.try_lock_vertex(hint) && m_dt.try_lock_point(p))
           {
             bool could_lock_zone;
             Vertex_handle new_hint = m_dt.insert(
-              m_points[i_point], hint, &could_lock_zone);
+              p, hint, &could_lock_zone);
 
             m_dt.unlock_all_elements();
 
