@@ -30,8 +30,9 @@ namespace CGAL {
 
 template<typename AABBTree>
 class AABB_ray_intersection {
-  AABB_ray_intersection(const AABBTree& tree) : tree_(tree) {}
 public:
+  AABB_ray_intersection(const AABBTree& tree) : tree_(tree) {}
+
   template<typename Ray>
   boost::optional< typename AABBTree::template Intersection_and_primitive_id<Ray>::Type >
   ray_intersection(const Ray& query) const {
@@ -98,7 +99,7 @@ public:
 
         // right child
         const Node* child = &(current.node->right_child());
-        boost::optional< FT > dist = intersection_distance_object(query, child->bbox());
+        boost::optional< FT > dist = intersection_distance_obj(query, child->bbox());
         if(dist)
           pq.push(Node_ptr_with_ft(child, *dist, 2));
 
@@ -107,12 +108,12 @@ public:
       default: // Children both inner nodes
       {
         const Node* child = &(current.node->left_child());
-        boost::optional<FT> dist = intersection_distance_object(query, child->bbox());
+        boost::optional<FT> dist = intersection_distance_obj(query, child->bbox());
         if(dist)
           pq.push(Node_ptr_with_ft(child, *dist, current.nb_primitives/2));
 
         child = &(current.node->right_child());
-        dist = intersection_distance_object(query, child->bbox());
+        dist = intersection_distance_obj(query, child->bbox());
         if(dist)
           pq.push(Node_ptr_with_ft(child, *dist, current.nb_primitives - current.nb_primitives/2));
 
@@ -128,7 +129,7 @@ private:
   typedef typename AABBTree::AABB_traits AABB_traits;
   typedef typename AABBTree::FT FT;
   typedef typename AABBTree::Node Node;
-  typedef typename AABBTree::FT size_type;
+  typedef typename AABBTree::size_type size_type;
 
   struct Node_ptr_with_ft {
     Node_ptr_with_ft(const Node* node, const FT& value, size_type nb_primitives)
@@ -160,8 +161,10 @@ AABB_tree<AABBTraits>::ray_intersection(const Ray& query) const {
     break;
   default: // Tree has >= 2 nodes
     if(traits().do_intersect_object()(query, root_node()->bbox())) {
-      // TODO
+      AABB_ray_intersection< AABB_tree<AABBTraits> > ri(*this);
+      return ri.ray_intersection(query);
     } else {
+      // but we don't hit the root
       break;
     }
   }

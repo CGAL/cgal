@@ -116,12 +116,12 @@ struct AABB_traits_base_2<GeomTraits,true>{
 
       for(int i = 0; i < 3; i++) {
         if(ray.direction().delta(i) == 0) {
-          if((ray.source()[i] < box.min(i)) || (ray.source()[i] > box.max(i))) {
+          if((ray.source()[i] < bbox.min(i)) || (ray.source()[i] > bbox.max(i))) {
             return boost::none;
           }
         } else {
-          FT t1 = (box.min(i) - ray.source()[i]) / ray.direction().delta(i);
-          FT t2 = (box.max(i) - ray.source()[i]) / ray.direction().delta(i);
+          FT t1 = (bbox.min(i) - ray.source()[i]) / ray.direction().delta(i);
+          FT t2 = (bbox.max(i) - ray.source()[i]) / ray.direction().delta(i);
 
           t_near = (std::max)(t_near, (std::min)(t1, t2));
           t_far = (std::min)(t_far, (std::max)(t1, t2));
@@ -136,7 +136,9 @@ struct AABB_traits_base_2<GeomTraits,true>{
     }
   };
 
-  Intersection_distance intersection_distance_object const { return Intersection_distance(); }
+  Intersection_distance intersection_distance_object() const { return Intersection_distance(); }
+};
+
 } } //end of namespace internal::AABB_tree
 
 /// \addtogroup PkgAABB_tree

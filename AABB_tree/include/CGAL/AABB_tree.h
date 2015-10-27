@@ -537,6 +537,10 @@ public:
     ///@}
 
 	private:
+		template<typename AABBTree>
+		friend
+		class AABB_ray_intersection;
+
     // clear nodes
     void clear_nodes()
     {
