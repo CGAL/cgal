@@ -127,6 +127,7 @@ public:
 private:
   const AABBTree& tree_;
   typedef typename AABBTree::AABB_traits AABB_traits;
+  typedef typename AABBTree::Point Point;
   typedef typename AABBTree::FT FT;
   typedef typename AABBTree::Node Node;
   typedef typename AABBTree::size_type size_type;
@@ -143,8 +144,16 @@ private:
 
   template<typename Ray>
   FT as_ray_parameter(const Ray& ray,
-                      const typename AABBTree::template Intersection_and_primitive_id<Ray>::Type& intersection) {
-    return 0;
+                      const typename AABBTree::template Intersection_and_primitive_id<Ray>::Type& intersection)
+    const {
+    // TODO replace with non-hacky solution
+    if(const Point* point = boost::get<const Point>(&(intersection.first))) {
+      typename AABB_traits::Geom_traits::Vector_3 distance_ray(*point, ray.source());
+      return distance_ray.squared_length();
+    } else {
+      std::cout << "not handled" << std::endl;
+      return 0;
+    }
   }
 };
 

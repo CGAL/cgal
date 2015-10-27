@@ -167,6 +167,8 @@ class AABB_traits:
 {
   typedef typename CGAL::Object Object;
 public:
+  typedef GeomTraits Geom_traits;
+
   typedef AABB_traits<GeomTraits, AABBPrimitive> AT;
   // AABBTraits concept types
   typedef typename GeomTraits::FT FT;
