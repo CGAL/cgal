@@ -163,11 +163,10 @@ boost::optional< typename AABB_tree<AABBTraits>::template Intersection_and_primi
 AABB_tree<AABBTraits>::ray_intersection(const Ray& query) const {
   switch(size()) // copy-paste from AABB_tree::traversal
   {
-  case 0: // Tree empty
+  case 0: // Tree empty, nothing to intersect
     break;
-  case 1: // Tree has 1 node
-    /// TODO
-    break;
+  case 1: // Tree has 1 node, intersect directly
+    return traits().intersection_object()(query, singleton_data());
   default: // Tree has >= 2 nodes
     if(traits().do_intersect_object()(query, root_node()->bbox())) {
       AABB_ray_intersection< AABB_tree<AABBTraits> > ri(*this);
