@@ -45,7 +45,14 @@ void test_iterator_on_pair(){
 
 #ifdef CGAL_LINKED_WITH_TBB
   {
-  RT_parallel R(static_cast<Cast_type&>(points).begin(), static_cast<Cast_type&>(points).end());
+  // Construct the locking data-structure, using the bounding-box of the points
+  typename RT_parallel::Lock_data_structure locking_ds(
+    CGAL::Bbox_3(-1., 0., 0., 2, 2, 2), 50);
+  // Contruct the triangulation in parallel
+  RT_parallel R(
+    static_cast<Cast_type&>(points).begin(), 
+    static_cast<Cast_type&>(points).end(),
+    &locking_ds);
 
   assert(R.number_of_vertices() == 6);
 
@@ -88,6 +95,26 @@ void test_zip_iterator(){
   Regular::Finite_vertices_iterator vit;
   for (vit = R.finite_vertices_begin(); vit != R.finite_vertices_end(); ++vit)
     assert( points[ vit->info() ] == vit->point() );
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  {
+  // Construct the locking data-structure, using the bounding-box of the points
+  typename RT_parallel::Lock_data_structure locking_ds(
+    CGAL::Bbox_3(-1., 0., 0., 2, 2, 2), 50);
+  // Contruct the triangulation in parallel
+  RT_parallel R(
+    boost::make_zip_iterator(boost::make_tuple(static_cast<Cast_type&>(points).begin(), indices.begin())),
+    boost::make_zip_iterator(boost::make_tuple(static_cast<Cast_type&>(points).end(), indices.end())),
+    &locking_ds);
+
+  assert(R.number_of_vertices() == 6);
+
+  // check that the info was correctly set.
+  RT_parallel::Finite_vertices_iterator vit;
+  for (vit = R.finite_vertices_begin(); vit != R.finite_vertices_end(); ++vit)
+    assert(points[vit->info()] == vit->point());
+  }
+#endif
 }
 
 struct Auto_count : public std::unary_function<const Weighted_point&,std::pair<Weighted_point,unsigned> >{
@@ -120,6 +147,26 @@ void test_transform_iterator(){
   Regular::Finite_vertices_iterator vit;
   for (vit = R.finite_vertices_begin(); vit != R.finite_vertices_end(); ++vit)
     assert( points[ vit->info() ] == vit->point() );  
+  
+#ifdef CGAL_LINKED_WITH_TBB
+  {
+  // Construct the locking data-structure, using the bounding-box of the points
+  typename RT_parallel::Lock_data_structure locking_ds(
+    CGAL::Bbox_3(-1., 0., 0., 2, 2, 2), 50);
+  // Contruct the triangulation in parallel
+  RT_parallel R(
+    boost::make_transform_iterator(static_cast<Cast_type&>(points).begin(), Auto_count()),
+    boost::make_transform_iterator(static_cast<Cast_type&>(points).end(), Auto_count()),
+    &locking_ds);
+
+  assert(R.number_of_vertices() == 6);
+
+  // check that the info was correctly set.
+  RT_parallel::Finite_vertices_iterator vit;
+  for (vit = R.finite_vertices_begin(); vit != R.finite_vertices_end(); ++vit)
+    assert(points[vit->info()] == vit->point());
+  }
+#endif
 }
 
 int main()
