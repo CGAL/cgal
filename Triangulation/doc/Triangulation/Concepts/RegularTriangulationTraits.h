@@ -27,7 +27,7 @@ typedef unspecified_type FT;
 /*!
 The weighted point type.
 */
-typedef unspecified_type Weighted_point;
+typedef unspecified_type Weighted_point_d;
 
 /*!
 A predicate object that must provide the operator
