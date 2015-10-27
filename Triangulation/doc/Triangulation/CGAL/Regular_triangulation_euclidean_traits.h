@@ -2,7 +2,7 @@
 namespace CGAL {
 
   /*!
-  \ingroup PkgTriangulationsTriangulationClasses
+  \ingroup PkgTriangulationsTraitsClasses
 
   The class `Regular_triangulation_euclidean_traits` is designed as a traits 
   class for the class
