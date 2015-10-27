@@ -4,6 +4,8 @@
 #endif
 
 #include "config.h"
+#include "config_mesh_3.h"
+
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
