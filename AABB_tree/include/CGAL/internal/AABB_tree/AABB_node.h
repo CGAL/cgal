@@ -97,6 +97,8 @@ private:
   const Primitive& right_data() const
                      { return *static_cast<Primitive*>(m_p_right_child); }
 
+public:
+
   Node& left_child() { return *static_cast<Node*>(m_p_left_child); }
   Node& right_child() { return *static_cast<Node*>(m_p_right_child); }
   Primitive& left_data() { return *static_cast<Primitive*>(m_p_left_child); }
