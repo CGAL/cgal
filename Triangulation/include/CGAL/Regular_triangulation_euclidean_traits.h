@@ -50,7 +50,28 @@ public:
   //===========================================================================
   // Custom types
   //===========================================================================
-  
+
+  // Required by SpatialSortingTraits_d
+  class Less_coordinate_d
+  {
+    const K &m_kernel;
+
+  public:
+    typedef bool result_type;
+
+    Less_coordinate_d(const K &kernel)
+      : m_kernel(kernel) {}
+
+    result_type operator()(
+      Weighted_point const& p, Weighted_point const& q, int i) const
+    {
+      Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
+      return m_kernel.less_coordinate_d_object() (pdw(p), pdw(q), i);
+    }
+  };
+
+  //===========================================================================
+
   // Required by TriangulationTraits
   class Orientation_d
   {
@@ -195,7 +216,8 @@ public:
 
   //===========================================================================
 
-  // Only for Triangulation_off_ostream.h (undocumented)
+  // To satisfy SpatialSortingTraits_d
+  // and also for Triangulation_off_ostream.h (undocumented)
   class Point_dimension_d
   {
     const K &m_kernel;
@@ -218,6 +240,10 @@ public:
   // Object creation
   //===========================================================================
 
+  Less_coordinate_d less_coordinate_d_object() const
+  {
+    return Less_coordinate_d(*this);
+  }
   Contained_in_affine_hull_d contained_in_affine_hull_d_object() const
   { 
     return Contained_in_affine_hull_d(*this); 

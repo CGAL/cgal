@@ -223,16 +223,8 @@ public:
     size_type n = number_of_vertices();
     typedef std::vector<Weighted_point> WP_vec;
     WP_vec points(start, end);
-    
-    typedef boost::function_property_map<
-      typename Geom_traits::Point_drop_weight_d,
-      Weighted_point,
-      Bare_point> Drop_weight_pmap;
-    typedef CGAL::Spatial_sort_traits_adapter_d<
-      typename Geom_traits::Base, Drop_weight_pmap> Search_traits_d;
-    Search_traits_d st_d(boost::make_function_property_map<Weighted_point>(
-      geom_traits().point_drop_weight_d_object()));
-    spatial_sort(points.begin(), points.end(), st_d);
+
+    spatial_sort(points.begin(), points.end(), geom_traits());
 
     Full_cell_handle hint;
     for(typename WP_vec::const_iterator p = points.begin(); p != points.end(); ++p )
