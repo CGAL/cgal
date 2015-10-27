@@ -106,6 +106,7 @@ The latter two concepts are also abbreviated respectively as `TrVertex` and `TrF
 - `CGAL::Regular_triangulation<RegularTriangulationTraits, TriangulationDataStructure>`
 - `CGAL::Triangulation_vertex<TriangulationTraits, Data, TriangulationDSVertex>`
 - `CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>`
+- `CGAL::Regular_triangulation_euclidean_traits<K, Weight>`
 
 ## Enums ##
 
