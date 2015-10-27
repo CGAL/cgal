@@ -61,7 +61,7 @@ The operator returns:
 
 - `ON_POSITIVE_SIDE` if `p` lies inside this oriented sphere. 
 
-\pre If `Dimension`=`CGAL::``Dimension_tag<D>`, 
+\pre If `Dimension`=`CGAL::Dimension_tag<D>`, 
 then `std::distance(start,end)=D+1`.
 The points in range
 `[start,end)` must be affinely independent, i.e., the simplex must

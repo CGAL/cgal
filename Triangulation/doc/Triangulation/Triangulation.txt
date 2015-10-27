@@ -222,11 +222,11 @@ the user needs custom types (see the reference manual page for this class
 template). The first template parameter, `Dimensionality`, must be
 one of the following:
 <UL>
-<LI>CGAL::`Dimension_tag<D>` for some integer \f$ D \f$. This
+<LI>`CGAL::Dimension_tag<D>` for some integer \f$ D \f$. This
 indicates that the triangulation can store full cells of dimension at most
 \f$ D \f$. The maximum dimension \f$ D \f$ is known by the compiler, which
 triggers some optimizations.
-<LI>CGAL::`Dynamic_dimension_tag`. In this case, the maximum
+<LI>`CGAL::Dynamic_dimension_tag`. In this case, the maximum
 dimension of the full cells must be passed as an integer argument to an instance
 constructor (see `TriangulationDataStructure`).
 </UL>
