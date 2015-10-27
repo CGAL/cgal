@@ -2,8 +2,10 @@
 #define CGAL_DEMO_MESH_3_C3T3_TYPE_H
 
 #include "Polyhedron_type.h"
-#if 0
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Image_type.h"
+#endif
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 #include "implicit_functions/Implicit_function_interface.h"
 #endif
 
@@ -17,7 +19,7 @@
 
 #include <CGAL/tags.h>
 
-#if 0
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 template <typename K>
 struct Wrapper
 {
@@ -43,7 +45,7 @@ typedef CGAL::Polyhedral_mesh_domain_with_features_3<
 // until now, in `Image_mesh_domain`, and `Function_mesh_domain`.
 // Patch_id is pair<int,int>
 
-#if 0
+#if CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 typedef CGAL::Labeled_image_mesh_domain_3<Image,Kernel>                 Image_mesh_domain;
 typedef Wrapper<Kernel>                                                 Function_wrapper;
 typedef CGAL::Labeled_mesh_domain_3<Function_wrapper, Kernel>           Function_mesh_domain;

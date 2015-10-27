@@ -6,6 +6,7 @@
 
 #include <QVector>
 #include <QColor>
+#include <QPixmap>
 #include <QMenu>
 #include <set>
 
@@ -33,33 +34,24 @@ using namespace CGAL::Three;
 public:
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
 
-  Scene_c3t3_item(const C3t3& c3t3)
-    : Scene_item(4, 3), c3t3_(c3t3), frame(new ManipulatedFrame()), last_known_scene(NULL)
-  {
-    positions_lines.resize(0);
-    positions_poly.resize(0);
-    normals.resize(0);
-    //Generates an integer which will be used as ID for each buffer
-  }
-
-  ~Scene_c3t3_item()
-  {
-    delete frame;
-  }
+  Scene_c3t3_item();
+  Scene_c3t3_item(const C3t3& c3t3);
+  ~Scene_c3t3_item();
 
   void invalidate_buffers()
   {
     are_buffers_filled = false;
   }
 
+  void c3t3_changed();
+
   void contextual_changed()
   {
     if (frame->isManipulated() || frame->isSpinning())
       invalidate_buffers();
   }
-  const C3t3& c3t3() const {
-    return c3t3_;
-  }
+  const C3t3& c3t3() const;
+  C3t3& c3t3();
 
   bool manipulatable() const {
     return true;
@@ -108,6 +100,12 @@ public:
   Scene_c3t3_item* clone() const {
     return 0;
   }
+
+  // data item
+  inline const Scene_item* data_item() const;
+  inline void set_data_item(const Scene_item* data_item);
+
+
 
   QString toolTip() const {
     int number_of_tets = 0;
@@ -284,6 +282,8 @@ private:
     return diag * 0.7;
   }
 
+  void compute_color_map(const QColor& c);
+
   public Q_SLOTS:
   void export_facets_in_complex()
   {
@@ -314,6 +314,16 @@ private:
     }
   }
 
+  inline void data_item_destroyed();
+
+  //ici
+  virtual QPixmap graphicalToolTip() const;
+  inline void update_histogram();
+
+private:
+  void build_histogram();
+  QColor get_histogram_color(const double v) const;
+
 public:
 
   QMenu* contextMenu()
@@ -339,11 +349,18 @@ public:
 
   void set_scene(CGAL::Three::Scene_interface* scene){ last_known_scene = scene; }
 
+protected:
+  Scene_c3t3_item_priv* d;
+
 private:
-  C3t3 c3t3_;
   qglviewer::ManipulatedFrame* frame;
   CGAL::Three::Scene_interface* last_known_scene;
 
+  const Scene_item* data_item_;
+  QPixmap histogram_;
+
+  typedef std::set<int> Indices;
+  Indices indices_;
 
   mutable std::vector<float> positions_lines;
   mutable std::vector<float> positions_grid;
@@ -538,6 +555,9 @@ private:
   }
 
 };
+
+
+
 
 
 
