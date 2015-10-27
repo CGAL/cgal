@@ -89,7 +89,7 @@ public:
     connect(ui_widget.Primitives_type_combo_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_Primitives_type_combo_box_changed(int)));
 
     actionMakeShortestPaths = new QAction("Make Shortest Path", this->mw);
-    actionMakeShortestPaths->setProperty("subMenuName", "Object creation");
+    actionMakeShortestPaths->setProperty("subMenuName", "Triangulated Surface Mesh Shortest Paths");
 
     connect(actionMakeShortestPaths, SIGNAL(triggered()), this, SLOT(on_actionMakeShortestPaths_triggered()));
 

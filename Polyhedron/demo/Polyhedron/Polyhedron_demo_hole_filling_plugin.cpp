@@ -396,7 +396,7 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   messages = m;
 
   actionHoleFilling = new QAction(tr("Hole Filling"), mw);
-  actionHoleFilling->setProperty("subMenuName", "Action on mesh");
+  actionHoleFilling->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionHoleFilling, SIGNAL(triggered()), this, SLOT(hole_filling_action()));
 
   dock_widget = new QDockWidget("Hole Filling", mw);

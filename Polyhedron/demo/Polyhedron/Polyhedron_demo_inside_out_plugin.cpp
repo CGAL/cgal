@@ -30,7 +30,7 @@ public:
       mw = mainWindow;
       scene = scene_interface;
       actions_map["actionInsideOut"] = getActionFromMainWindow(mw, "actionInsideOut");
-      actions_map["actionInsideOut"]->setProperty("subMenuName", "Action on normals");
+      actions_map["actionInsideOut"]->setProperty("subMenuName", "Polygon Mesh Processing");
       autoConnectActions();
 
   }

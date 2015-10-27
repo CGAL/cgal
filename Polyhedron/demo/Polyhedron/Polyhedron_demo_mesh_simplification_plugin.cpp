@@ -34,7 +34,8 @@ public:
       mw = mainWindow;
       scene = scene_interface;
       actions_map["actionSimplify"] = getActionFromMainWindow(mw, "actionSimplify");
-      actions_map["actionSimplify"]->setProperty("subMenuName", "Action on mesh");
+      actions_map["actionSimplify"]->setProperty("subMenuName",
+                                                 "Triangulated Surface Mesh Simplification");
       autoConnectActions();
 
   }

@@ -168,7 +168,7 @@ void Polyhedron_demo_trivial_plugin::init(QMainWindow* mainWindow, CGAL::Three::
 {
     scene = scene_interface;
     actionBbox = new QAction(tr("Create bbox"), mainWindow);
-    actionBbox->setProperty("subMenuName", "Object creation");
+    //actionBbox->setProperty("subMenuName", "Object creation");
     connect(actionBbox, SIGNAL(triggered()),
             this, SLOT(bbox()));
 }

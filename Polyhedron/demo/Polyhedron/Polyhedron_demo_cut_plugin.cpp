@@ -377,7 +377,7 @@ void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
   scene = scene_interface;
   messages = m;
   actionCreateCutPlane = new QAction(tr("Create cutting plane"), mainWindow);
-  actionCreateCutPlane->setProperty("subMenuName","Operations with plane");
+  actionCreateCutPlane->setProperty("subMenuName","3D Fast Intersection and Distance Computation");
   connect(actionCreateCutPlane, SIGNAL(triggered()),
           this, SLOT(createCutPlane()));
 }

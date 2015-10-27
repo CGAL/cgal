@@ -47,7 +47,7 @@ public:
     scene = scene_interface;
     messages = m;
     actionFairing = new QAction(tr("Fairing"), mw);
-    actionFairing->setProperty("subMenuName", "Action on mesh");
+    actionFairing->setProperty("subMenuName", "Polygon Mesh Processing");
 
     connect(actionFairing, SIGNAL(triggered()), this, SLOT(fairing_action()));
 

@@ -32,13 +32,15 @@ public:
   {
     msg_interface = m;
     actionJoinPolyhedra= new QAction(tr("Join selected polyhedra"), mainWindow);
-    actionJoinPolyhedra->setProperty("subMenuName", "Operation on multiple polyhedra");
+    actionJoinPolyhedra->setProperty("subMenuName", "Operations on polyhedra");
     actionJoinPolyhedra->setObjectName("actionJoinPolyhedra");
+
     actionSplitPolyhedra= new QAction(tr("Split selected polyhedra"), mainWindow);
-    actionSplitPolyhedra->setProperty("subMenuName", "Operation on multiple polyhedra");
+    actionSplitPolyhedra->setProperty("subMenuName", "Operations on polyhedra");
     actionSplitPolyhedra->setObjectName("actionSplitPolyhedra");
+
     actionColorConnectedComponents = new QAction(tr("Color each connected component of selected polyhedra"), mainWindow);
-    actionColorConnectedComponents ->setProperty("subMenuName", "Color alteration");
+    actionColorConnectedComponents ->setProperty("subMenuName", "Polygon Mesh Processing");
     actionColorConnectedComponents->setObjectName("actionColorConnectedComponents");
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }

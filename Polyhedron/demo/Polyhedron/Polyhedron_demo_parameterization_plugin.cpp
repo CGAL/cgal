@@ -47,16 +47,23 @@ public:
       mw = mainWindow;
       scene = scene_interface;
       actions_map["actionMVC"] = new QAction("MVC", mw);
-      actions_map["actionMVC"]->setProperty("subMenuName", "Color alteration/Parametrization");
+      actions_map["actionMVC"]->setProperty("subMenuName",
+        "Planar Parameterization of Triangulated Surface Meshes");
 
       actions_map["actionDCP"] = new QAction ("DCP", mw);
-      actions_map["actionDCP"]->setProperty("subMenuName", "Color alteration/Parametrization");
+      actions_map["actionDCP"]->setProperty("subMenuName",
+        "Planar Parameterization of Triangulated Surface Meshes");
+
+      actions_map["actionLSC"] = new QAction("LSC", mw);
+      actions_map["actionLSC"]->setProperty("subMenuName",
+        "Planar Parameterization of Triangulated Surface Meshes");
 
       connect(actions_map["actionMVC"], SIGNAL(triggered()),
               this, SLOT(on_actionMVC_triggered()));
       connect(actions_map["actionDCP"], SIGNAL(triggered()),
               this, SLOT(on_actionDCP_triggered()));
-
+      connect(actions_map["actionLSC"], SIGNAL(triggered()),
+              this, SLOT(on_actionLSC_triggered()));
   }
 
   bool applicable(QAction*) const { 
