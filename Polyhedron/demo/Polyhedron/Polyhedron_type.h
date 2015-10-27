@@ -40,7 +40,7 @@ public:
     return nb_of_feature_edges != 0;
   }
 
-  void add_incident_patch(const Patch_id i) {
+  void add_incident_patch(const Patch_id& i) {
     indices.insert(i);
   }
 
@@ -120,13 +120,13 @@ public:
   typedef Patch_id_ Patch_id;
   
   Polyhedron_demo_face() 
-    : patch_id_(1), mID(-1) {}
+    : patch_id_(), mID(-1) {}
   
-  int patch_id() const {
+  const Patch_id& patch_id() const {
     return patch_id_;
   }
   
-  void set_patch_id(const int i) {
+  void set_patch_id(const Patch_id& i) {
     patch_id_ = i;
   }
   
@@ -181,6 +181,8 @@ public:
 #include "Polyhedron_type_fwd.h"
 
 // surface mesh
-typedef CGAL::Polyhedron_3<Kernel, Polyhedron_demo_items<int> > Polyhedron;
+typedef Polyhedron_demo_items<Patch_id>              Polyhedron_items;
+typedef CGAL::Polyhedron_3<Kernel, Polyhedron_items> Polyhedron;
+
 
 #endif // POLYHEDRON_TYPE_H

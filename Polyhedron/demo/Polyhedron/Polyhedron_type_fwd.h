@@ -53,8 +53,10 @@ namespace polyhedron_type_fwd_h {
 #endif // USE_FORWARD_DECL
 
 // surface mesh
+typedef int Patch_id;
+
 typedef CGAL::Polyhedron_3<polyhedron_type_fwd_h::Kernel,
-                           Polyhedron_demo_items<int>,
+                           Polyhedron_demo_items<Patch_id>,
                            // CGAL::Polyhedron_items_3,
                            CGAL::HalfedgeDS_default,
                            std::allocator<int> > Polyhedron;
