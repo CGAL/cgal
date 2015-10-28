@@ -40,17 +40,17 @@ public:
     // nb_primitives through a variable in each Node on the stack. In
     // BVH_node::traversal this is done through the function parameter
     // nb_primitives in the recursion.
-    typedef std::greater< Node_ptr_with_ft> Node_ptr_comparison;
-    typedef std::priority_queue< Node_ptr_with_ft, std::vector<Node_ptr_with_ft>, Node_ptr_comparison > Heap_type;
+    typedef std::priority_queue< Node_ptr_with_ft, std::vector<Node_ptr_with_ft>,
+                                 std::greater<Node_ptr_with_ft> > Heap_type;
 
-    Heap_type pq = Heap_type(Node_ptr_comparison(std::greater<Node_ptr_with_ft>()));
-    boost::optional< typename AABBTree::template Intersection_and_primitive_id<Ray>::Type > p;
     typename AABB_traits::Intersection
       intersection_obj = tree_.traits().intersection_object();
     typename AABB_traits::Intersection_distance
       intersection_distance_obj = tree_.traits().intersection_distance_object();
+    Heap_type pq;
     boost::optional< typename AABBTree::template Intersection_and_primitive_id<Ray>::Type >
-      intersection;
+      intersection, /* the temporary for calculating the result */
+      p; /* the current best intersection */
 
     // this is not the right way to do it, but using
     // numeric_limits<FT>::{max,infinity} will not work with Epeck.
