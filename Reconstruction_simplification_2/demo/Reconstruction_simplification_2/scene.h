@@ -426,15 +426,12 @@ public:
   }
 
 
-  void debug_print() {
-
-
+  void debug_print() 
+  {
     std::vector<Point> isolated_points;
     std::vector<Segment> edges;
 
     m_pwsrec->list_output (std::back_inserter(isolated_points), std::back_inserter(edges));
-
-
 
     int vertex_count = 0;
     for (std::vector<Point>::iterator it = isolated_points.begin();
@@ -452,7 +449,8 @@ public:
     }
   }
 
-  void save(const QString& filename) {
+  void save(const QString& filename) 
+  {
     std::cout << "SAVE-------------" << std::endl;
     //debug_print();
 

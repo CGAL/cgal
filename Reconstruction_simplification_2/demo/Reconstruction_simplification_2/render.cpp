@@ -7,7 +7,6 @@
 #include "Reconstruction_simplification_kerneled_2.h"
 #include <CGAL/Reconstruction_simplification_2.h>
 
-
 typedef Reconstruction_simplification_kerneled_2::Rec_edge_2 PEdge;
 typedef Reconstruction_simplification_kerneled_2 R_s_k_2;
 
