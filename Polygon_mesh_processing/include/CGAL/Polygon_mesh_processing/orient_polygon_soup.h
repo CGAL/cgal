@@ -24,11 +24,13 @@
 
 #include <CGAL/tuple.h>
 #include <CGAL/array.h>
+#include <CGAL/assertions.h>
 #include <boost/foreach.hpp>
 
 #include <set>
 #include <map>
 #include <stack>
+#include <vector>
 #include <algorithm>
 #include <iostream>
 
