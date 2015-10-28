@@ -37,6 +37,7 @@ icc 15 work.
 
 \cgalModels `Kernel_d`
 \cgalModels `DelaunayTriangulationTraits`
+\cgalModels `RegularTriangulationTraits`
 
 \sa `CGAL::Cartesian_d<FieldNumberType>`
 \sa `CGAL::Homogeneous_d<RingNumberType>`
