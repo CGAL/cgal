@@ -30,11 +30,13 @@ namespace CGAL {
 
 template<typename AABBTree>
 class AABB_ray_intersection {
+  typedef typename AABBTree::AABB_traits AABB_traits;
+  typedef typename AABB_traits::Ray_3 Ray;
+  typedef typename AABBTree::template Intersection_and_primitive_id<Ray>::Type Ray_intersection_and_primitive_id;
 public:
   AABB_ray_intersection(const AABBTree& tree) : tree_(tree) {}
 
-  template<typename Ray>
-  boost::optional< typename AABBTree::template Intersection_and_primitive_id<Ray>::Type >
+  boost::optional< Ray_intersection_and_primitive_id >
   ray_intersection(const Ray& query) const {
     // We hit the root, now continue on the children. Keep track of
     // nb_primitives through a variable in each Node on the stack. In
@@ -48,7 +50,7 @@ public:
     typename AABB_traits::Intersection_distance
       intersection_distance_obj = tree_.traits().intersection_distance_object();
     Heap_type pq;
-    boost::optional< typename AABBTree::template Intersection_and_primitive_id<Ray>::Type >
+    boost::optional< Ray_intersection_and_primitive_id >
       intersection, /* the temporary for calculating the result */
       p; /* the current best intersection */
 
@@ -126,7 +128,6 @@ public:
   }
 private:
   const AABBTree& tree_;
-  typedef typename AABBTree::AABB_traits AABB_traits;
   typedef typename AABBTree::Point Point;
   typedef typename AABBTree::FT FT;
   typedef typename AABBTree::Node Node;
@@ -142,9 +143,8 @@ private:
     bool operator>(const Node_ptr_with_ft& other) const { return value > other.value; }
   };
 
-  template<typename Ray>
   FT as_ray_parameter(const Ray& ray,
-                      const typename AABBTree::template Intersection_and_primitive_id<Ray>::Type& intersection)
+                      const Ray_intersection_and_primitive_id& intersection)
     const {
     // TODO replace with non-hacky solution
     if(const Point* point = boost::get<const Point>(&(intersection.first))) {
