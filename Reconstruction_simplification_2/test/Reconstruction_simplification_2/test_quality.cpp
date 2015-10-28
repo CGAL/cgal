@@ -8,7 +8,7 @@
 #include <CGAL/Reconstruction_simplification_2.h>
 #include "testing_tools.h"
 
-#include<iostream>
+#include <iostream>
 #include <string>
 #include <iterator>
 #include <utility>      // std::pair
@@ -18,7 +18,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                          Point;
-typedef K::FT                                         		FT;
+typedef K::FT                                         		  FT;
 
 typedef std::pair<Point, FT> PointMassPair;
 typedef std::vector<PointMassPair> PointMassList;
@@ -37,18 +37,14 @@ int main ()
   Mass_property_map  mass_pmap;
 
   CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map>
-  rs2(points, point_pmap, mass_pmap);
+    rs2(points, point_pmap, mass_pmap);
 
   rs2.run_until(9);
 
-
-
-  std::cout << " total_edge_cost "<< rs2.total_edge_cost() << std::endl;
-
+  std::cout << "Total_edge_cost: "<< rs2.total_edge_cost() << std::endl;
 
   assert(rs2.total_edge_cost() < 0.3);
   assert(0 < rs2.total_edge_cost());
-
 
   rs2.print_stats_debug();
 }

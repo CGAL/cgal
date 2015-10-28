@@ -1,5 +1,6 @@
 #include <fstream>
 #include <vector>
+#include <string>
 
 template <class PointMassList, class Point>
 void load_xy_file(const std::string& filename, PointMassList& points)
