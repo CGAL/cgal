@@ -11,6 +11,7 @@
 #include <QApplication>
 #include <QtPlugin>
 #include "Scene_polyhedron_item.h"
+#include "Scene_c3t3_item.h"
 #include <QInputDialog>
 #include <QFileDialog>
 #include <fstream>
@@ -163,7 +164,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  Scene_item* result_item = cgal_code_mesh_3(pMesh,
+  Scene_item* temp_item = cgal_code_mesh_3(pMesh,
                                              item->name(),
                                              angle,
                                              facet_sizing,
@@ -172,6 +173,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                                              radius_edge,
                                              protect_features,
                                              scene);
+  Scene_c3t3_item *result_item = qobject_cast<Scene_c3t3_item*>(temp_item);
   if(result_item) {
       result_item->setName(tr("%1 3d mesh (%2 %3 %4 %5)")
                            .arg(item->name())
@@ -182,6 +184,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
       result_item->setColor(Qt::magenta);
       result_item->setRenderingMode(item->renderingMode());
       item->setVisible(false);
+      result_item->set_data_item(item);
       scene->itemChanged(index);
       result_item->invalidate_buffers();
       scene->addItem(result_item);

@@ -153,7 +153,7 @@ init(QMainWindow* mainWindow,
   
   // Create menu items
 #ifndef CGAL_MESH_3_DEMO_DISABLE_ODT
-  actionOdt = this->getActionFromMainWindow(mw, "actionOdt");
+  actionOdt = new QAction(tr("actionOdt"), mw);
   if( NULL != actionOdt )
   {
     connect(actionOdt, SIGNAL(triggered()), this, SLOT(odt()));
@@ -161,7 +161,7 @@ init(QMainWindow* mainWindow,
 #endif
   
 #ifndef CGAL_MESH_3_DEMO_DISABLE_LLOYD
-  actionLloyd = this->getActionFromMainWindow(mw, "actionLloyd");
+  actionLloyd = new QAction(tr("actionLloyd"), mw);
   if( NULL != actionLloyd )
   {
     connect(actionLloyd, SIGNAL(triggered()), this, SLOT(lloyd()));
@@ -169,7 +169,7 @@ init(QMainWindow* mainWindow,
 #endif
   
 #ifndef CGAL_MESH_3_DEMO_DISABLE_PERTURBER
-  actionPerturb = this->getActionFromMainWindow(mw, "actionPerturb");
+  actionPerturb = new QAction(tr("actionPerturb"), mw);
   if( NULL != actionPerturb )
   {
     connect(actionPerturb, SIGNAL(triggered()), this, SLOT(perturb()));
@@ -177,7 +177,7 @@ init(QMainWindow* mainWindow,
 #endif
   
 #ifndef CGAL_MESH_3_DEMO_DISABLE_EXUDER
-  actionExude = this->getActionFromMainWindow(mw, "actionExude");
+  actionExude =new QAction(tr("actionExude"), mw);
   if( NULL != actionExude )
   {
     connect(actionExude, SIGNAL(triggered()), this, SLOT(exude()));
@@ -274,7 +274,7 @@ Mesh_3_optimization_plugin::lloyd()
   // -----------------------------------
   Scene_c3t3_item* item = get_c3t3_item();
   if ( NULL == item ) { return; }
-  
+
   // -----------------------------------
   // Dialog box
   // -----------------------------------
@@ -319,13 +319,11 @@ Mesh_3_optimization_plugin::lloyd()
                                                         freeze,
                                                         max_iteration_nb,
                                                         create_new_item);
-  
   if ( NULL == opt_thread )
   {
     QApplication::restoreOverrideCursor();
     return;
   }
-
   source_item_ = item;
   launch_thread(opt_thread, "Lloyd iterations are running...");
   QApplication::restoreOverrideCursor();
@@ -467,7 +465,7 @@ get_c3t3_item() const
 {
   const Scene_interface::Item_id index = scene->mainSelectionIndex();
   Scene_c3t3_item* item = qobject_cast<Scene_c3t3_item*>(scene->item(index));
-  
+
   if ( NULL == item )
   {
     QMessageBox::warning(mw,tr(""),
@@ -509,7 +507,7 @@ treat_result(Scene_c3t3_item& source_item,
     result_item.setColor(QColor(59,74,226));
     result_item.setRenderingMode(source_item.renderingMode());
     result_item.set_data_item(source_item.data_item());
-    
+
     source_item.setVisible(false);
     
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -553,10 +551,8 @@ optimization_done(Optimizer_thread* thread)
   // Treat new c3t3 item
   Scene_c3t3_item* result_item = thread->item();
   treat_result( *source_item_, *result_item, name);
-
   // close message box
   message_box_->close();
-  
   // free memory
   delete thread;
 }
@@ -566,6 +562,7 @@ void
 Mesh_3_optimization_plugin::
 launch_thread(Optimizer_thread* opt_thread, const QString& window_text)
 {
+
   // -----------------------------------
   // Create message box with stop button
   // -----------------------------------
@@ -594,6 +591,7 @@ launch_thread(Optimizer_thread* opt_thread, const QString& window_text)
                    this,       SLOT(status_report(QString)));
   
   opt_thread->start();
+
 }
 
 

@@ -113,7 +113,7 @@ void Volume_plane_intersection::init_buffers()
 
 }
 
-void Volume_plane_intersection::attrib_buffers(Viewer* viewer) const
+void Volume_plane_intersection::attrib_buffers(CGAL::Three::Viewer_interface *viewer) const
 {
     QMatrix4x4 mvpMatrix;
     double mat[16];
@@ -129,7 +129,7 @@ void Volume_plane_intersection::attrib_buffers(Viewer* viewer) const
     rendering_program.release();
 }
 
-void Volume_plane_intersection::draw(Viewer* viewer) const {
+void Volume_plane_intersection::draw(Viewer_interface *viewer) const {
   viewer->glLineWidth(4.0f);
   attrib_buffers(viewer);
   if(b && c) {

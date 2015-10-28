@@ -105,6 +105,7 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
   {
     // Build domain
     const Image* p_image = image_item->image();
+
     if ( NULL == p_image )
     {
       return NULL;
@@ -138,7 +139,6 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
     // Create thread
     typedef Optimization_function<Polyhedral_mesh_domain,Parameters> Opt_function;
     Opt_function* p_opt_function = new Opt_function(p_result_item->c3t3(), p_domain, param);
-    
     return new Optimizer_thread(p_opt_function, p_result_item);
   }
   
