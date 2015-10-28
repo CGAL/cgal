@@ -18,8 +18,8 @@
 //
 // Author(s)     : Yin Xu, Andreas Fabri and Ilker O. Yaz
 
-#ifndef CGAL_SURFACE_MODELING_WEIGHTS_H
-#define CGAL_SURFACE_MODELING_WEIGHTS_H
+#ifndef CGAL_PMP_INTERNAL_HOLE_FILLING_WEIGHTS_H
+#define CGAL_PMP_INTERNAL_HOLE_FILLING_WEIGHTS_H
 /// @cond CGAL_DOCUMENT_INTERNAL
 
 #include <CGAL/boost/graph/helpers.h>
@@ -661,4 +661,4 @@ public:
 
 
 }//namespace CGAL
-#endif //CGAL_SURFACE_MODELING_WEIGHTS_H
+#endif //CGAL_PMP_INTERNAL_HOLE_FILLING_WEIGHTS_H
