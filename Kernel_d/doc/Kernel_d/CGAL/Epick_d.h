@@ -83,11 +83,11 @@ represents a weighted point in the Euclidean space
 class Weighted_point_d {
 public:
 /*! introduces a weighted point with point p and weight w. */
-Weighted_point_d(const Point_d& p, const FT& w);
+Weighted_point_d(const Point_d& p, const double& w);
 /*! extracts the point of a weighted point. */
-Point_d point()const;
+Point_d point() const;
 /*! extracts the weight of a weighted point. */
-FT weight()const;
+double weight() const;
 };
 
 /*! \cgalModels `Kernel_d::Center_of_sphere_d`
