@@ -95,8 +95,8 @@ namespace CGAL {
     typedef typename Base::Use_index Use_index;
 
     static const size_type NB_MARKS = Base::NB_MARKS;
-    // to fix the use of -1 to test unused marks in several algorithms
     static const size_type INVALID_MARK = NB_MARKS;
+
     static const unsigned int dimension = Base::dimension;
 
     typedef typename Base::Null_handle_type Null_handle_type;
@@ -145,7 +145,7 @@ namespace CGAL {
       public Base::template Attribute_const_range<i>
     {};
 
-  class Exception_no_more_available_mark {};
+    class Exception_no_more_available_mark {};
 
   public:
     /** Default Combinatorial_map constructor.
@@ -3783,6 +3783,7 @@ namespace CGAL {
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Dart_const_handle Dart_const_handle;
     typedef typename Base::Alloc Alloc;
+    using Base::Exception_no_more_available_mark;
 
     Combinatorial_map() : Base()
     {}
