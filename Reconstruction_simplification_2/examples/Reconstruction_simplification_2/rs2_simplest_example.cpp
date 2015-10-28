@@ -7,17 +7,12 @@
 #include <fstream>
 #include <iostream>
 #include <string>
-#include <iterator>
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                          Point;
-typedef K::Segment_2                                        Segment;
-
-typedef K::FT                                               FT;
 
 typedef CGAL::Reconstruction_simplification_2<K>            Rs_2;
-
 
 void load_xy_file(const std::string& fileName, std::vector<Point>& points)
 {
@@ -36,7 +31,6 @@ int main ()
   load_xy_file("data/stair.xy", points);
 
   Rs_2 rs2(points);
-
   rs2.run(100); // 100 steps
 
   return 0;

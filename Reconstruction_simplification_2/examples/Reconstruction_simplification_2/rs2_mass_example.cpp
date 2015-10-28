@@ -2,8 +2,6 @@
 #include <CGAL/Reconstruction_simplification_2.h>
 
 #include <fstream>
-// Example for Reconstruction_simplification_2
-
 #include <iostream>
 #include <string>
 #include <iterator>
@@ -13,10 +11,9 @@
 #include <CGAL/property_map.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef K::FT                                               FT;
 typedef K::Point_2                                          Point;
 typedef K::Segment_2                                        Segment;
-
-typedef K::FT                                               FT;
 
 typedef std::pair<Point, FT>                                PointMassPair;
 typedef std::vector<PointMassPair>                          PointMassList;
@@ -26,7 +23,6 @@ typedef CGAL::Second_of_pair_property_map <PointMassPair>   Mass_property_map;
 
 typedef CGAL::Reconstruction_simplification_2<
     K, Point_property_map, Mass_property_map>                 Rs_2;
-
 
 void load_xym_file(const std::string& filename, PointMassList& points)
 {

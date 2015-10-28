@@ -8,13 +8,11 @@
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
+typedef K::FT                                               FT;
 typedef K::Point_2                                          Point;
 typedef K::Segment_2                                        Segment;
 
-typedef K::FT                                               FT;
-
 typedef CGAL::Reconstruction_simplification_2<K>            Rs_2;
-
 
 void load_xy_file(const std::string& filename, std::vector<Point>& points)
 {
@@ -25,7 +23,6 @@ void load_xy_file(const std::string& filename, std::vector<Point>& points)
 
   ifs.close();
 }
-
 
 void list_output(Rs_2& rs2)
 {
@@ -45,7 +42,6 @@ void list_output(Rs_2& rs2)
   for (sit = segments.begin(); sit != segments.end(); sit++) 
     std::cout << *sit << std::endl;
 }
-
 
 void indexed_output(Rs_2& rs2)
 {  
