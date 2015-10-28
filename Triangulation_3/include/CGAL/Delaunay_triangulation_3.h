@@ -1032,7 +1032,7 @@ protected:
       {
         bool success = false;
         std::ptrdiff_t i_point = m_indices[i_idx];
-        const Weighted_point &p = m_points[i_point];
+        const Point &p = m_points[i_point];
         while(!success)
         {
           if (m_dt.try_lock_vertex(hint) && m_dt.try_lock_point(p))
