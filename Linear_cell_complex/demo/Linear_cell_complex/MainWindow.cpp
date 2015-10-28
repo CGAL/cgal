@@ -990,8 +990,8 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
   scene.lcc->set_update_attributes(false);
 
   std::vector<Dart_handle> edges;
-  int treated =  scene.lcc->get_new_mark();
-  int treated2 =  scene.lcc->get_new_mark();
+  LCC::size_type treated  = scene.lcc->get_new_mark();
+  LCC::size_type treated2 = scene.lcc->get_new_mark();
 
   for ( LCC::Dart_range::iterator it= scene.lcc->darts().begin(),
           itend = scene.lcc->darts().end(); it!=itend; ++it )
