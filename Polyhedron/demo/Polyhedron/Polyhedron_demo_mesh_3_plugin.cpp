@@ -25,7 +25,7 @@
 #include "Scene_segmented_image_item.h"
 #endif
 
-#include "ui_Meshing_dialog.h"
+#include "ui_Polyhedron_demo_mesh_3_plugin_dialog.h"
 
 // declare the CGAL function
 Scene_item* cgal_code_mesh_3(const Polyhedron*,
