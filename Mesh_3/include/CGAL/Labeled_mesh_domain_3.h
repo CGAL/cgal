@@ -72,6 +72,8 @@ protected:
 public:
   // Kernel_traits compatibility
   typedef BGT R;
+  // access Function type from inherited class
+  typedef Function Fct;
 
   //-------------------------------------------------------
   // Index Types
