@@ -59,83 +59,83 @@ void test_root_of_traits(){
       Root_of_2 r  = ftd(make_root_of_2(T(0),T(-1),T(2))); //-sqrt(2)
       Root_of_2 rl = ftd(make_root_of_2(T(1),T(0),T(-2),true)); //-sqrt(2);
       Root_of_2 rr = ftd(make_root_of_2(T(1),T(0),T(-2),false)); //+sqrt(2)
-      assert(r == rl);
-      assert(rl != rr);
+      CGAL_assertion(r == rl);
+      CGAL_assertion(rl != rr);
       
-      assert( ftd(r * Root_of_1(2)) == ftd(make_root_of_2(T(0),T(-2),T(2))));
-      assert( ftd(r * T(2)) == ftd(make_root_of_2(T(0),T(-2),T(2))));
+      CGAL_assertion( ftd(r * Root_of_1(2)) == ftd(make_root_of_2(T(0),T(-2),T(2))));
+      CGAL_assertion( ftd(r * T(2)) == ftd(make_root_of_2(T(0),T(-2),T(2))));
     }{
       Root_of_2 r  = ftd(CGAL::make_root_of_2(T(0),T(-1),T(2))); //-sqrt(2)
       Root_of_2 rl = ftd(CGAL::make_root_of_2(T(1),T(0),T(-2),true)); //-sqrt(2);
       Root_of_2 rr = ftd(CGAL::make_root_of_2(T(1),T(0),T(-2),false)); //+sqrt(2)
-      assert(r == rl);
-      assert(rl != rr);
-      
-      assert( ftd(r * Root_of_1(2)) == ftd(CGAL::make_root_of_2(T(0),T(-2),T(2))));
-      assert( ftd(r * T(2)) == ftd(CGAL::make_root_of_2(T(0),T(-2),T(2))));
+      CGAL_assertion(r == rl);
+      CGAL_assertion(rl != rr);
+
+      CGAL_assertion( ftd(r * Root_of_1(2)) == ftd(CGAL::make_root_of_2(T(0),T(-2),T(2))));
+      CGAL_assertion( ftd(r * T(2)) == ftd(CGAL::make_root_of_2(T(0),T(-2),T(2))));
     }
 
    
     {
       Root_of_2 r  = ftd(make_sqrt(T(2))); //sqrt(2)
       Root_of_2 rr = ftd(make_root_of_2(T(1),T(0),T(-2),false)); //+sqrt(2)
-      assert(r == rr);
+      CGAL_assertion(r == rr);
     }{
       Root_of_2 r  = ftd(CGAL::make_sqrt(T(2))); //sqrt(2)
       Root_of_2 rr = ftd(CGAL::make_root_of_2(T(1),T(0),T(-2),false)); //+sqrt(2)
-      assert(r == rr);
+      CGAL_assertion(r == rr);
     }
 
     {
       Root_of_2 r  = ftd(inverse(ftd(CGAL::make_sqrt(T(2)))));
       Root_of_2 rr = ftd(1/ftd(CGAL::make_sqrt(T(2))));
-      assert(r == rr);
+      CGAL_assertion(r == rr);
     }{
         Root_of_2 r  = ftd(CGAL::inverse(ftd(CGAL::make_sqrt(T(2)))));
         Root_of_2 rr = ftd(1/ftd(CGAL::make_sqrt(T(2))));
-        assert(r == rr);
+        CGAL_assertion(r == rr);
     }
 
     {
       Root_of_2 r  = ftd(square(ftd(CGAL::make_sqrt(T(2)))));
       Root_of_2 rr = ftd(ftd(CGAL::make_sqrt(T(2)))*ftd(CGAL::make_sqrt(T(2))));
-      assert(r == rr);
+      CGAL_assertion(r == rr);
     }{
       Root_of_2 r  = ftd(CGAL::square(ftd(CGAL::make_sqrt(T(2)))));
       Root_of_2 rr = ftd(ftd(CGAL::make_sqrt(T(2)))*ftd(CGAL::make_sqrt(T(2))));
-      assert(r == rr);
+      CGAL_assertion(r == rr);
     }
 
     bool is_not_exact = !CGAL::Algebraic_structure_traits<T>::Is_exact::value; 
     {
       std::vector<Root_of_2> roots;
       CGAL::compute_roots_of_2(T(1),T(0),T(-2),std::back_inserter(roots));
-      assert(roots.size()==2);  
-      assert(roots[0]==-CGAL::make_sqrt(T(2)) || is_not_exact );
-      assert(roots[1]== CGAL::make_sqrt(T(2)) || is_not_exact );
+      CGAL_assertion(roots.size()==2);
+      CGAL_assertion(roots[0]==-CGAL::make_sqrt(T(2)) || is_not_exact );
+      CGAL_assertion(roots[1]== CGAL::make_sqrt(T(2)) || is_not_exact );
     }  
     {
       Root_of_2 roots[2]= {Root_of_2(1),Root_of_2(1)};
       CGAL::compute_roots_of_2(T(13),T(4),T(-23),roots); 
-      assert(roots[0]==CGAL::make_root_of_2(T(13),T(4),T(-23),true)  || is_not_exact );
-      assert(roots[1]==CGAL::make_root_of_2(T(13),T(4),T(-23),false) || is_not_exact );
+      CGAL_assertion(roots[0]==CGAL::make_root_of_2(T(13),T(4),T(-23),true)  || is_not_exact );
+      CGAL_assertion(roots[1]==CGAL::make_root_of_2(T(13),T(4),T(-23),false) || is_not_exact );
     }   
     {
       std::vector<Root_of_2> roots;
       CGAL::compute_roots_of_2(T(1),T(-6),T(9),std::back_inserter(roots));
-      assert(roots.size()==1);
-      assert(roots[0]==Root_of_2(3) || is_not_exact );
+      CGAL_assertion(roots.size()==1);
+      CGAL_assertion(roots[0]==Root_of_2(3) || is_not_exact );
     }  
     {
       std::vector<Root_of_2> roots;
       CGAL::compute_roots_of_2(T(1),T(0),T(2),std::back_inserter(roots));
-      assert(roots.size()==0);
+      CGAL_assertion(roots.size()==0);
     } 
     {
       std::vector<Root_of_2> roots;
       CGAL::compute_roots_of_2(T(0),T(2),T(3),std::back_inserter(roots));
-      assert(roots.size()==1);
-      assert(roots[0]==-Root_of_2(3)/Root_of_2(2) || is_not_exact );
+      CGAL_assertion(roots.size()==1);
+      CGAL_assertion(roots[0]==-Root_of_2(3)/Root_of_2(2) || is_not_exact );
     } 
     
 }

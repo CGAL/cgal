@@ -25,6 +25,7 @@
 #endif
 
 #include <CGAL/gl.h>
+#include <CGAL/basic.h>
 
 namespace CGAL {
 
@@ -221,7 +222,7 @@ Image_3::read_vtk_image_data(vtkImageData* vtk_image)
   std::cerr << "GetNumberOfTuples()=" << vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples()
             << "\nimage->size()=" << dims[0]*dims[1]*dims[2]
             << "\nwdim=" << image->wdim << '\n';
-  assert(vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples() == dims[0]*dims[1]*dims[2]);
+  CGAL_assertion(vtk_image->GetPointData()->GetScalars()->GetNumberOfTuples() == dims[0]*dims[1]*dims[2]);
   vtk_image->GetPointData()->GetScalars()->ExportToVoidPointer(image->data);
 
   return this->private_read(image);
