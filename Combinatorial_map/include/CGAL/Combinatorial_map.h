@@ -3783,7 +3783,8 @@ namespace CGAL {
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Dart_const_handle Dart_const_handle;
     typedef typename Base::Alloc Alloc;
-    using Base::Exception_no_more_available_mark;
+    typedef typename Base::Exception_no_more_available_mark
+    Exception_no_more_available_mark;
 
     Combinatorial_map() : Base()
     {}

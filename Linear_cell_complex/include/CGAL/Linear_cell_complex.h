@@ -105,6 +105,8 @@ namespace CGAL {
 
     typedef typename Base::size_type size_type;
     typedef typename Base::Use_index Use_index;
+    typedef typename Base::Exception_no_more_available_mark
+    Exception_no_more_available_mark;
 
     /// To use previous definition of create_dart methods.
     using Base::create_dart;
@@ -119,7 +121,6 @@ namespace CGAL {
     using Base::unmark;
     using Base::free_mark;
     using Base::get_new_mark;
-    using Base::Exception_no_more_available_mark;
 
     Linear_cell_complex_base() : Base()
     {}
@@ -899,7 +900,8 @@ namespace CGAL {
 
       typedef typename Base::Use_index Use_index;
       typedef typename Base::Storage Storage;
-      using Base::Exception_no_more_available_mark;
+      typedef typename Base::Exception_no_more_available_mark
+      Exception_no_more_available_mark;
 
       Linear_cell_complex() : Base()
       {}
