@@ -27,6 +27,8 @@
 #define CGAL_POLYHEDRON_DEMO_LABELED_MESH_DOMAIN_3_H
 
 #include <CGAL/Labeled_mesh_domain_3.h>
+#include <CGAL/Random.h>
+#include "Image_type.h"
 
 #include <boost/type_traits.hpp>
 
@@ -36,7 +38,7 @@ namespace CGAL {
  * \class Polyhedron_demo_labeled_mesh_domain_3
  * LabeledDomain must be a Labeled_mesh_domain_3
  */
-template<class LabeledDomain>
+template<class LabeledDomain, class Image = CGAL::Image_3>
 class Polyhedron_demo_labeled_mesh_domain_3
   : public LabeledDomain
 {
@@ -66,14 +68,6 @@ public:
   //constructors
   Polyhedron_demo_labeled_mesh_domain_3(
     const typename Base::Fct& f,
-    const typename Base::Sphere_3& bounding_sphere,
-    const typename Base::FT& error_bound = FT(1e-3),
-    CGAL::Random* p_rng = NULL)
-    : Base(f, bounding_sphere, error_bound, p_rng)
-  {}
-
-  Polyhedron_demo_labeled_mesh_domain_3(
-    const typename Base::Fct& f,
     const typename Base::Bbox_3& bbox,
     const typename Base::FT& error_bound = FT(1e-3),
     CGAL::Random* p_rng = NULL)
@@ -81,11 +75,10 @@ public:
   {}
 
   Polyhedron_demo_labeled_mesh_domain_3(
-    const typename Base::Fct& f,
-    const typename Base::Iso_cuboid_3& bbox,
+    const Image& img,
     const typename Base::FT& error_bound = FT(1e-3),
     CGAL::Random* p_rng = NULL)
-    : Base(f, bbox, error_bound, p_rng)
+    : Base(img, error_bound, p_rng)
   {}
 
   /**

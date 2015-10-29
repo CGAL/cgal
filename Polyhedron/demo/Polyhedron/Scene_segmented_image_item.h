@@ -2,7 +2,6 @@
 #define SCENE_SEGMENTED_IMAGE_ITEM_H
 
 #include "Scene_item.h"
-#include <CGAL/Three/Scene_interface.h>
 #include "Image_type_fwd.h"
 #include "Scene_segmented_image_item_config.h"
 #include <CGAL/gl.h>
@@ -10,7 +9,10 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
+
+#include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Viewer_interface.h>
+
 typedef CGAL::Image_3 Image;
 using namespace CGAL::Three;
 class SCENE_SEGMENTED_IMAGE_ITEM_EXPORT Scene_segmented_image_item 
@@ -32,17 +34,20 @@ public:
   virtual bool supportsRenderingMode(RenderingMode m) const;
 
   // draw
-  virtual void direct_draw(Viewer_interface* viewer) const { draw(viewer); }
-  virtual void direct_draw_edges(Viewer_interface* viewer) const { draw_edges(viewer); }
-  virtual void draw(Viewer_interface*) const;
-  virtual void draw_edges(Viewer_interface* viewer) const { draw_gl(viewer); }
+  virtual void direct_draw(CGAL::Three::Viewer_interface* viewer) const
+  { draw(viewer); }
+  virtual void direct_draw_edges(CGAL::Three::Viewer_interface* viewer) const
+  { draw_edges(viewer); }
+  virtual void draw(CGAL::Three::Viewer_interface*) const;
+  virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const
+  { draw_gl(viewer); }
   
   virtual QString toolTip() const;
   
   const Image* image() const { return m_image; }
 
 private:
-  void draw_gl(Viewer_interface* viewer) const;
+  void draw_gl(CGAL::Three::Viewer_interface* viewer) const;
   
   void initialize_buffers();
   GLint ibo_size() const;
@@ -73,7 +78,7 @@ private:
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
   void draw_bbox();
-  void attrib_buffers(Viewer_interface*) const;
+  void attrib_buffers(CGAL::Three::Viewer_interface*) const;
   void compile_shaders();
   void draw_Bbox(Bbox bbox, std::vector<float> *vertices);
 public Q_SLOTS:

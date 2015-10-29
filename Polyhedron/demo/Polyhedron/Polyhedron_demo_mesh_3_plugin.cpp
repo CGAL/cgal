@@ -21,6 +21,9 @@
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 #include "Scene_implicit_function_item.h"
 #endif
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+#include "Scene_segmented_image_item.h"
+#endif
 
 #include "ui_Meshing_dialog.h"
 
@@ -37,6 +40,16 @@ Scene_item* cgal_code_mesh_3(const Polyhedron*,
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 Scene_item* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
+                             const double facet_angle,
+                             const double facet_sizing,
+                             const double facet_approx,
+                             const double tet_sizing,
+                             const double tet_shape,
+                             CGAL::Three::Scene_interface* scene);
+#endif
+
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+Scene_item* cgal_code_mesh_3(const Image* pImage,
                              const double facet_angle,
                              const double facet_sizing,
                              const double facet_approx,
@@ -106,6 +119,10 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
   Scene_implicit_function_item* function_item =
     qobject_cast<Scene_implicit_function_item*>(scene->item(index));
 #endif
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+  Scene_segmented_image_item* image_item =
+    qobject_cast<Scene_segmented_image_item*>(scene->item(index));
+#endif
 
   Scene_item* item = NULL;
   bool features_protection_available = false;
@@ -116,6 +133,9 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
   }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
   else if (NULL != function_item) { item = function_item; }
+#endif
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+  else if (NULL != image_item)    { item = image_item; }
 #endif
 
   if (NULL == item)
@@ -231,6 +251,25 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
     }
 
     temp_item = cgal_code_mesh_3(pFunction,
+                                 angle,
+                                 facet_sizing,
+                                 approx,
+                                 tet_sizing,
+                                 radius_edge,
+                                 scene);
+  }
+#endif
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+  else if (NULL != image_item)
+  {
+    const Image* pImage = image_item->image();
+    if (NULL == pImage)
+    {
+      QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
+      return;
+    }
+
+    temp_item = cgal_code_mesh_3(pImage,
                                  angle,
                                  facet_sizing,
                                  approx,
