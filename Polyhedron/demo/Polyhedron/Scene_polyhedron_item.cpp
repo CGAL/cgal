@@ -589,7 +589,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
             he != poly->edges_end();
             he++)
         {
-            if(he->is_feature_edge()) continue;
+            if (!show_feature_edges_m && he->is_feature_edge()) continue;
             const Point& a = he->vertex()->point();
             const Point& b = he->opposite()->vertex()->point();
             positions_lines.push_back(a.x());
@@ -621,10 +621,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
         positions_lines.push_back(b.y());
         positions_lines.push_back(b.z());
         positions_lines.push_back(1.0);
-
-
     }
-
 
     //set the colors
     compute_colors();
@@ -962,6 +959,7 @@ void Scene_polyhedron_item::show_only_feature_edges(bool b)
 void Scene_polyhedron_item::show_feature_edges(bool b)
 {
   show_feature_edges_m = b;
+  invalidate_buffers();
   Q_EMIT itemChanged();
 }
 
@@ -1033,34 +1031,6 @@ void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) co
         compute_normals_and_vertices();
         initialize_buffers(viewer);
     }
-
-    ::glBegin(GL_LINES);
-    Edge_iterator he;
-    if (!show_only_feature_edges_m) {
-      for (he = poly->edges_begin();
-        he != poly->edges_end();
-        he++)
-      {
-        if (he->is_feature_edge()) continue;
-        const Point& a = he->vertex()->point();
-        const Point& b = he->opposite()->vertex()->point();
-        ::glVertex3d(a.x(), a.y(), a.z());
-        ::glVertex3d(b.x(), b.y(), b.z());
-      }
-    }
-  if (show_feature_edges_m)
-    ::glColor3d(1.0, 0.0, 0.0);
-  for(he = poly->edges_begin();
-    he != poly->edges_end();
-    he++)
-  {
-    if(!he->is_feature_edge()) continue;
-    const Point& a = he->vertex()->point();
-    const Point& b = he->opposite()->vertex()->point();
-    ::glVertex3d(a.x(),a.y(),a.z());
-    ::glVertex3d(b.x(),b.y(),b.z());
-  }
-  ::glEnd();
 
   if (!is_selected)
   {
