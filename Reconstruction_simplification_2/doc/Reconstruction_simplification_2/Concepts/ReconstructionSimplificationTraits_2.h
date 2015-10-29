@@ -8,7 +8,7 @@ for the traits class of `CGAL::Reconstruction_simplification_2`.
 
 \cgalRefines `DelaunayTriangulationTraits_2` 
 
-\cgalHasModel All the \cgal 2D Kernels
+\cgalHasModel Any model of the `Kernel` concept
 \cgalHasModel `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended)
 
 \sa `CGAL::Reconstruction_simplification_2`
