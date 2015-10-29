@@ -156,6 +156,7 @@ init(QMainWindow* mainWindow,
   actionOdt = new QAction(tr("actionOdt"), mw);
   if( NULL != actionOdt )
   {
+    actionOdt->setProperty("subMenuName", "3D Mesh Generation");
     connect(actionOdt, SIGNAL(triggered()), this, SLOT(odt()));
   }
 #endif
@@ -164,6 +165,7 @@ init(QMainWindow* mainWindow,
   actionLloyd = new QAction(tr("actionLloyd"), mw);
   if( NULL != actionLloyd )
   {
+    actionLloyd->setProperty("subMenuName", "3D Mesh Generation");
     connect(actionLloyd, SIGNAL(triggered()), this, SLOT(lloyd()));
   }
 #endif
@@ -172,6 +174,7 @@ init(QMainWindow* mainWindow,
   actionPerturb = new QAction(tr("actionPerturb"), mw);
   if( NULL != actionPerturb )
   {
+    actionPerturb->setProperty("subMenuName", "3D Mesh Generation");
     connect(actionPerturb, SIGNAL(triggered()), this, SLOT(perturb()));
   }
 #endif
@@ -180,6 +183,7 @@ init(QMainWindow* mainWindow,
   actionExude =new QAction(tr("actionExude"), mw);
   if( NULL != actionExude )
   {
+    actionExude->setProperty("subMenuName", "3D Mesh Generation");
     connect(actionExude, SIGNAL(triggered()), this, SLOT(exude()));
   }
 #endif
