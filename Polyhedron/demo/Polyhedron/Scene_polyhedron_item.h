@@ -17,8 +17,6 @@
 
 #include <QColor>
 
-#include "ui_Polyhedron_demo_statistics_on_polyhedron_dialog.h"
-
 class QMenu;
 
 // This class represents a polyhedron in the OpenGL scene
