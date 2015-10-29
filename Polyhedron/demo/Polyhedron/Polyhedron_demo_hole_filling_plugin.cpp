@@ -29,7 +29,6 @@
 #include <algorithm>
 
 #include <QGLViewer/qglviewer.h>
-#include <CGAL/gl_render.h>
 
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include "Kernel_type.h"

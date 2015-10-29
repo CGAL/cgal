@@ -1,4 +1,5 @@
 #include "Scene_polyhedron_selection_item.h"
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 
 void Scene_polyhedron_selection_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)const

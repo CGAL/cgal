@@ -9,7 +9,6 @@
 #include "Polyhedron_type.h"
 
 #include <CGAL/property_map.h>
-#include <CGAL/gl_render.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>

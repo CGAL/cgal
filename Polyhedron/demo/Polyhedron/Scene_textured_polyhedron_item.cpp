@@ -1,9 +1,9 @@
 #include "Scene_textured_polyhedron_item.h"
 #include "Textured_polyhedron_type.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <QObject>
-#include <CGAL/gl_render.h>
 
 typedef EPIC_kernel::Point_3 Point;
 
