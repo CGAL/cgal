@@ -293,7 +293,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     polyhedron_demo_plugin(mesh_3_plugin Polyhedron_demo_mesh_3_plugin 
       Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Meshing_thread.cpp #Scene_c3t3_item.moc
       ${meshingUI_FILES})
-    target_link_libraries(mesh_3_plugin scene_polyhedron_item scene_polygon_soup_item scene_c3t3_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+    target_link_libraries(mesh_3_plugin scene_polyhedron_item scene_polygon_soup_item
+	scene_implicit_function_item scene_c3t3_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
   
     add_item(scene_segmented_image_item Scene_segmented_image_item.cpp)
     qt5_wrap_cpp( VOLUME_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_thread.h )

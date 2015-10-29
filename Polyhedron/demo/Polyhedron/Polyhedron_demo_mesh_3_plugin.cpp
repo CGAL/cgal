@@ -10,11 +10,18 @@
 #include <QMainWindow>
 #include <QApplication>
 #include <QtPlugin>
-#include "Scene_polyhedron_item.h"
 #include "Scene_c3t3_item.h"
 #include <QInputDialog>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <fstream>
+
+#include "Scene_polyhedron_item.h"
+
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+#include "Scene_implicit_function_item.h"
+#endif
+
 #include "ui_Meshing_dialog.h"
 
 // declare the CGAL function
@@ -27,6 +34,17 @@ Scene_item* cgal_code_mesh_3(const Polyhedron*,
                              const double tet_shape,
                              const bool protect_features,
                              CGAL::Three::Scene_interface* scene);
+
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+Scene_item* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
+                             const double facet_angle,
+                             const double facet_sizing,
+                             const double facet_approx,
+                             const double tet_sizing,
+                             const double tet_shape,
+                             CGAL::Three::Scene_interface* scene);
+#endif
+
 using namespace CGAL::Three;
 class Polyhedron_demo_mesh_3_plugin :
   public QObject,
@@ -82,14 +100,30 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
-  Scene_polyhedron_item* item =
-  qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_polyhedron_item* poly_item =
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+  Scene_implicit_function_item* function_item =
+    qobject_cast<Scene_implicit_function_item*>(scene->item(index));
+#endif
 
-  if(!item) return;
+  Scene_item* item = NULL;
+  bool features_protection_available = false;
+  if (NULL != poly_item)
+  {
+    item = poly_item;
+    features_protection_available = true;
+  }
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+  else if (NULL != function_item) { item = function_item; }
+#endif
 
-  Polyhedron* pMesh = item->polyhedron();
-
-  if(!pMesh) return;
+  if (NULL == item)
+  {
+    QMessageBox::warning(mw, tr(""),
+      tr("Selected object can't be meshed"));
+    return;
+  }
 
   // -----------------------------------
   // Create Mesh dialog
@@ -148,6 +182,8 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                       diag); // max
   ui.approx->setValue(approx_default);
 
+  ui.protect->setCheckable(features_protection_available);
+
   // -----------------------------------
   // Get values
   // -----------------------------------
@@ -164,16 +200,48 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  Scene_item* temp_item = cgal_code_mesh_3(pMesh,
-                                             item->name(),
-                                             angle,
-                                             facet_sizing,
-                                             approx,
-                                             tet_sizing,
-                                             radius_edge,
-                                             protect_features,
-                                             scene);
+  Scene_item* temp_item;
+  if (NULL != poly_item)
+  {
+    Polyhedron* pMesh = poly_item->polyhedron();
+    if (NULL == pMesh)
+    {
+      QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
+      return;
+    }
+
+    temp_item = cgal_code_mesh_3(pMesh,
+                                 item->name(),
+                                 angle,
+                                 facet_sizing,
+                                 approx,
+                                 tet_sizing,
+                                 radius_edge,
+                                 protect_features,
+                                 scene);
+  }
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+  else if (NULL != function_item)
+  {
+    const Implicit_function_interface* pFunction = function_item->function();
+    if (NULL == pFunction)
+    {
+      QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
+      return;
+    }
+
+    temp_item = cgal_code_mesh_3(pFunction,
+                                 angle,
+                                 facet_sizing,
+                                 approx,
+                                 tet_sizing,
+                                 radius_edge,
+                                 scene);
+  }
+#endif
+
   Scene_c3t3_item *result_item = qobject_cast<Scene_c3t3_item*>(temp_item);
+
   if(result_item) {
       result_item->setName(tr("%1 3d mesh (%2 %3 %4 %5)")
                            .arg(item->name())

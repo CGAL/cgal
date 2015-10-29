@@ -4,9 +4,13 @@
 #include "Polyhedron_type.h"
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Image_type.h"
+#include <CGAL/Labeled_image_mesh_domain_3.h>
+#include "Polyhedron_demo_mesh_3_labeled_mesh_domain_3.h"
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 #include "implicit_functions/Implicit_function_interface.h"
+#include <CGAL/Labeled_image_mesh_domain_3.h>
+#include "Polyhedron_demo_mesh_3_labeled_mesh_domain_3.h"
 #endif
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -15,7 +19,6 @@
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Polyhedral_mesh_domain_3.h>
 #include <CGAL/Polyhedral_mesh_domain_with_features_3.h>
-#include <CGAL/Labeled_image_mesh_domain_3.h>
 
 #include <CGAL/tags.h>
 
@@ -45,10 +48,14 @@ typedef CGAL::Polyhedral_mesh_domain_with_features_3<
 // until now, in `Image_mesh_domain`, and `Function_mesh_domain`.
 // Patch_id is pair<int,int>
 
-#if CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-typedef CGAL::Labeled_image_mesh_domain_3<Image,Kernel>                 Image_mesh_domain;
-typedef Wrapper<Kernel>                                                 Function_wrapper;
-typedef CGAL::Labeled_mesh_domain_3<Function_wrapper, Kernel>           Function_mesh_domain;
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+typedef CGAL::Labeled_image_mesh_domain_3<Image,Kernel>           Image_domain;
+typedef CGAL::Polyhedron_demo_labeled_mesh_domain_3<Image_domain> Image_mesh_domain;
+#endif
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+typedef Wrapper<Kernel>                                              Function_wrapper;
+typedef CGAL::Labeled_mesh_domain_3<Function_wrapper, Kernel>        Function_domain;
+typedef CGAL::Polyhedron_demo_labeled_mesh_domain_3<Function_domain> Function_mesh_domain;
 #endif
 
 // Triangulation
