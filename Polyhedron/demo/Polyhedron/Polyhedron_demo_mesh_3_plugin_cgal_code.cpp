@@ -66,8 +66,12 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
               CGAL::parameters::features(domain) :
               CGAL::parameters::no_features();
 
-  Scene_c3t3_item* new_item =
-          new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(domain, criteria, features));
+  Scene_c3t3_item* new_item = new Scene_c3t3_item(
+    CGAL::make_mesh_3<C3t3>(domain, criteria,
+      features,
+      CGAL::parameters::no_perturb(),
+      CGAL::parameters::no_exude()));
+
   new_item->set_scene(scene);
   std::cerr << "done (" << timer.time() << " ms, " << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;
 
@@ -131,9 +135,12 @@ Scene_item* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
 //  return new Meshing_thread(p_mesh_function, p_new_item);
 
   CGAL::Timer timer;
-  p_new_item->c3t3() = CGAL::make_mesh_3<C3t3>(*p_domain, criteria);
-  p_new_item->set_scene(scene);
+  p_new_item->c3t3() = CGAL::make_mesh_3<C3t3>(*p_domain,
+    criteria,
+    CGAL::parameters::no_perturb(),
+    CGAL::parameters::no_exude());
 
+  p_new_item->set_scene(scene);
   std::cerr << "done (" << timer.time() << " ms, "
     << p_new_item->c3t3().triangulation().number_of_vertices() << " vertices)"
     << std::endl;
@@ -192,7 +199,11 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
   //  return new Meshing_thread(p_mesh_function, p_new_item);
 
   CGAL::Timer timer;
-  p_new_item->c3t3() = CGAL::make_mesh_3<C3t3>(*p_domain, criteria);
+  p_new_item->c3t3() = CGAL::make_mesh_3<C3t3>(*p_domain,
+    criteria,
+    CGAL::parameters::no_perturb(),
+    CGAL::parameters::no_exude());
+
   p_new_item->set_scene(scene);
 
   std::cerr << "done (" << timer.time() << " ms, "
