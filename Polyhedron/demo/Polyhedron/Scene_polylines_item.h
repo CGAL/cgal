@@ -22,8 +22,6 @@ public:
     typedef std::vector<Point_3> Polyline;
     typedef std::list<Polyline> Polylines_container;
 
-    typedef K::Iso_cuboid_3 Iso_cuboid_3;
-
     Scene_polylines_item();
     virtual ~Scene_polylines_item();
 
@@ -104,7 +102,6 @@ private:
     mutable std::size_t nb_wire;
     mutable std::size_t nb_centers;
     mutable std::size_t nb_lines;
-    mutable QOpenGLShaderProgram *program;
     mutable   GLuint nbSpheres;
     typedef std::map<Point_3, int> Point_to_int_map;
     typedef Point_to_int_map::iterator iterator;

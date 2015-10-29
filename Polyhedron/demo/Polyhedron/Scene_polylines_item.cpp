@@ -34,6 +34,7 @@ Scene_polylines_item::create_Sphere(double R) const
 void
 Scene_polylines_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const
 {
+    QOpenGLShaderProgram *program;
    //vao for the lines
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
@@ -356,6 +357,8 @@ Scene_polylines_item::isEmpty() const {
 
 CGAL::Three::Scene_interface::Bbox
 Scene_polylines_item::bbox() const {
+    typedef K::Iso_cuboid_3 Iso_cuboid_3;
+
     if(isEmpty())
         return Bbox();
     std::list<Point_3> boxes;
@@ -436,7 +439,7 @@ Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
         if(viewer->extension_is_found)
         {
             vaos[1]->bind();
-            program = getShaderProgram(PROGRAM_INSTANCED);
+            QOpenGLShaderProgram* program = getShaderProgram(PROGRAM_INSTANCED);
             attrib_buffers(viewer, PROGRAM_INSTANCED);
             program->bind();
             viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
@@ -447,7 +450,7 @@ Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
         else
         {
             vaos[1]->bind();
-            program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+            QOpenGLShaderProgram* program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
             attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
             glPointSize(8.0f);
             glEnable(GL_POINT_SMOOTH);
@@ -471,7 +474,7 @@ Scene_polylines_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
 
     vaos[0]->bind();
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/4));
@@ -504,7 +507,7 @@ Scene_polylines_item::draw_points(CGAL::Three::Viewer_interface* viewer) const {
 
     vaos[0]->bind();
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     QColor temp = this->color();
     program->setAttributeValue("colors", temp);
