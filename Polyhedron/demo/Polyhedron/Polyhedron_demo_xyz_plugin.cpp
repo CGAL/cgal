@@ -1,7 +1,4 @@
 #include "Scene_points_with_normal_item.h"
-#include "Scene_polyhedron_item.h"
-#include "Scene_polygon_soup_item.h"
-#include "Polyhedron_type.h"
 #include "Kernel_type.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>

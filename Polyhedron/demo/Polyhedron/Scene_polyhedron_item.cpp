@@ -7,8 +7,6 @@
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
 
-
-
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
@@ -30,6 +28,8 @@
 #include <QDialog>
 
 #include <boost/foreach.hpp>
+
+#include "ui_Polyhedron_demo_statistics_on_polyhedron_dialog.h"
 
 
 namespace PMP = CGAL::Polygon_mesh_processing;
