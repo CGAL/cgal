@@ -11,20 +11,20 @@
 #include "Scene_polylines_item.h"
 #include "Polyhedron_type.h"
 
-#include "Polyhedron_demo_plugin_helper.h"
-#include "Polyhedron_demo_plugin_interface.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 
 #include <CGAL/Reconstruction_from_parallel_slices_3.h>
 #include <CGAL/Reconstruction_from_parallel_slices_3/contour_providers.h>
 
 
-
+using namespace CGAL::Three;
 class Polyhedron_demo_reconstruction_parallel_slices_plugin : 
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
-  Q_INTERFACES(Polyhedron_demo_plugin_interface)
+  Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
   QAction* actionReconstructionParallelSlices;
 
@@ -177,7 +177,10 @@ void Polyhedron_demo_reconstruction_parallel_slices_plugin::on_actionReconstruct
     Contour_reader reader(polylines_item->polylines, cst_coord);
     CGAL::Reconstruction_from_parallel_slices_3<Slice_writer> reconstruction;
     reconstruction.run(reader,writer,cst_coord);
-    
+
+    new_item->invalidate_buffers();
+    scene->itemChanged(item_index);
+
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
 
