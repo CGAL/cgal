@@ -30,6 +30,8 @@
 class QWidget;
 class QMouseEvent;
 class QKeyEvent;
+class QOpenGLShaderProgram;
+
 //! \file Viewer_interface.h
 #include "../Viewer_config.h" // for VIEWER_EXPORT
 namespace CGAL{
@@ -41,6 +43,14 @@ class VIEWER_EXPORT Viewer_interface : public QGLViewer, public QOpenGLFunctions
   Q_OBJECT
 
 public:
+  enum OpenGL_program_IDs { PROGRAM_WITH_LIGHT,
+                            PROGRAM_WITHOUT_LIGHT,
+                            PROGRAM_WITH_TEXTURE,
+                            PROGRAM_WITH_TEXTURED_EDGES,
+                            PROGRAM_INSTANCED,
+                            PROGRAM_INSTANCED_WIRE,
+                            NB_OF_PROGRAMS };
+
   Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(), parent) {}
   virtual ~Viewer_interface() {}
 
@@ -57,6 +67,24 @@ public:
   static QString dumpFrame(const qglviewer::Frame&);
   //! @returns the fastDrawing state.
   virtual bool inFastDrawing() const = 0;
+
+  /*! Passes all the uniform data to the shaders.
+   * According to program_name, this data may change.
+   */
+  virtual void attrib_buffers(int program_name) const = 0;
+
+  /*! Returns a program according to name.
+   * If the program does not exist yet, it is created and stored in #shader_programs.
+   * name cans be :
+   * - PROGRAM_WITH_LIGHT : used for the facets
+   * - PROGRAM_WITHOUT_LIGHT : used for the points and lines
+   * - PROGRAM_WITH_TEXTURE : used for textured facets
+   * - PROGRAM_WITH_TEXTURED_EDGES : use dfor textured edges
+   * - PROGRAM_INSTANCED : used for items that have to be rendered numerous times(spheres)
+   * - PROGRAM_INSTANCED_WIRE : used for the wireframe mode of PROGRAM_INSTANCED
+   * @returns a pointer to the corresponding program.*/
+  virtual QOpenGLShaderProgram* getShaderProgram(int name) const = 0;
+
   //!Allows OpenGL 2.1 context to get access to glDrawArraysInstanced.
   typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
   //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.

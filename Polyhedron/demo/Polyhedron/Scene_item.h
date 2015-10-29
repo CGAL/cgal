@@ -56,8 +56,7 @@ public:
       defaultContextMenu(0),
       buffersSize(20),
       vaosSize(10),
-      vaos(10),
-      shader_programs(NB_OF_PROGRAMS)
+      vaos(10)
   {
       is_monochrome = true;
       for(int i=0; i<vaosSize; i++)
@@ -88,8 +87,7 @@ public:
       defaultContextMenu(0),
       buffersSize(buffers_size),
       vaosSize(vaos_size),
-      vaos(vaos_size),
-      shader_programs(NB_OF_PROGRAMS)
+      vaos(vaos_size)
   {
       is_monochrome = true;
       for(int i=0; i<vaosSize; i++)
@@ -339,19 +337,6 @@ protected:
       vaos[i] = n_vao;
   }
 
-  //! Contains all the programs for the item rendering.
-  mutable std::vector<QOpenGLShaderProgram*> shader_programs;
-  /*! Returns a program according to name.
-   * If the program does not exist yet, it is created and stored in #shader_programs.
-   * name cans be :
-   * - PROGRAM_WITH_LIGHT : used for the facets
-   * - PROGRAM_WITHOUT_LIGHT : used for the points and lines
-   * - PROGRAM_WITH_TEXTURE : used for textured facets
-   * - PROGRAM_WITH_TEXTURED_EDGES : use dfor textured edges
-   * - PROGRAM_INSTANCED : used for items that have to be rendered numerous times(spheres)
-   * - PROGRAM_INSTANCED_WIRE : used for the wireframe mode of PROGRAM_INSTANCED
-   * @returns a pointer to the corresponding program.*/
-  QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;
   //! Used pass data to the shader.
   int vertexLoc;
   //! Used pass data to the shader.
@@ -372,8 +357,8 @@ protected:
    */
   virtual void attrib_buffers(CGAL::Three::Viewer_interface*, int program_name) const;
 
-
-
+  /*! Compatibility function. Calls `viewer->getShaderProgram()`. */
+  virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;
 }; // end class Scene_item
 
 

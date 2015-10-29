@@ -59,6 +59,10 @@ public:
   bool antiAliasing() const;
   //! @returns the fastDrawing state.
   bool inFastDrawing() const;
+  //! Implementation of `Viewer_interface::attrib_buffers()`
+  void attrib_buffers(int program_name) const;
+  //! Implementation of `Viewer_interface::getShaderProgram()`
+  QOpenGLShaderProgram* getShaderProgram(int name) const;
 
 public Q_SLOTS:
   //! Sets the antialiasing to true or false.
