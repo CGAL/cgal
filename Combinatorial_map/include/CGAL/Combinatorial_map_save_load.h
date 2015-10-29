@@ -295,7 +295,7 @@ namespace CGAL {
   boost::property_tree::ptree cmap_save_darts
   (const CMap& amap, std::map<typename CMap::Dart_const_handle, typename CMap::size_type>& myDarts)
   {
-    assert( myDarts.empty() );
+    CGAL_assertion( myDarts.empty() );
     
     // First we numbered each dart by using the std::map.
     typename CMap::Dart_range::const_iterator it(amap.darts().begin());

@@ -712,7 +712,7 @@ detect_bubbles(FT border_angle) {
 		    {
 		      unsigned int i0 = (i + j + 1)%4;
 		      unsigned int i1 = (i + (j+1)%3 + 1)%4;
-		      assert (i0 != i && i1 != i);
+                      CGAL_assertion (i0 != i && i1 != i);
 		      Edge edge (c, i0, i1);
 
 		      if (_shape->classify (edge) != Shape::REGULAR)
