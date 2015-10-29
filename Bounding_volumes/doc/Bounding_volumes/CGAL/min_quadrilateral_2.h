@@ -28,7 +28,7 @@ omitted, if `ForwardIterator` refers to a two-dimensional point
 type from one the \cgal kernels. In this case, a default traits class 
 (`Min_quadrilateral_default_traits_2<K>`) is used. 
 
-\cgalRequires <OL> 
+<OL>
 <LI>If `Traits` is specified, it is a model for 
 `MinQuadrilateralTraits_2` and the value type `VT` of 
 `ForwardIterator` is `Traits::Point_2`. Otherwise 
@@ -99,7 +99,7 @@ omitted, if `ForwardIterator` refers to a two-dimensional point
 type from one the \cgal kernels. In this case, a default traits class 
 (`Min_quadrilateral_default_traits_2<K>`) is used. 
 
-\cgalRequires <OL> 
+<OL>
 <LI>If `Traits` is specified, it is a model for 
 `MinQuadrilateralTraits_2` and the value type `VT` of 
 `ForwardIterator` is `Traits::Point_2`. Otherwise `VT` 
@@ -167,7 +167,7 @@ point type from one the \cgal kernels. In this case, a default
 traits class (`Min_quadrilateral_default_traits_2<K>`) is 
 used. 
 
-\cgalRequires <OL> 
+<OL>
 <LI>If `Traits` is specified, it is a model for 
 `MinQuadrilateralTraits_2` and the value type `VT` of 
 `ForwardIterator` is `Traits::Point_2`. Otherwise `VT` 

@@ -5,7 +5,7 @@ namespace CGAL {
 
 converts a manifold surface reconstructed by `make_surface_mesh()` to a `Polyhedron_3<Traits>`.
 
-\cgalRequires the surface must be manifold. For this purpose, you may call
+The surface must be manifold. For this purpose, you may call
 `make_surface_mesh()` with `Manifold_tag` or
 `Manifold_with_boundary_tag` parameter.
 

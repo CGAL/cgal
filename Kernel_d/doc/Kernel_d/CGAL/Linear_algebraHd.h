@@ -10,7 +10,7 @@ algebra for Euclidean ring number types `RT`.
 
 \cgalModels `LinearAlgebraTraits_d`
 
-\cgalRequires To make a ring number type `RT` work with this class it has to 
+To make a ring number type `RT` work with this class it has to
 provide a division `operator/` with remainder. 
 
 \cgalHeading{Operations}

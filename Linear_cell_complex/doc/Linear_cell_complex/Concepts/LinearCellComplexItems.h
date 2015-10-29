@@ -10,7 +10,7 @@ models of the `CellAttributeWithPoint` concept.
 
 \cgalRefines `CombinatorialMapItems`
 
-\cgalRequires The first type in \ref CombinatorialMapItems::Dart_wrapper "Attributes" must be a model of the
+ The first type in \ref CombinatorialMapItems::Dart_wrapper "Attributes" must be a model of the
 `CellAttributeWithPoint` concept.
 
 \cgalHasModel \ref CGAL::Linear_cell_complex_min_items "CGAL::Linear_cell_complex_min_items<d>"

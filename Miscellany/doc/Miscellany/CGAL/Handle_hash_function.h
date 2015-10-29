@@ -44,8 +44,7 @@ Handle_hash_function();
 Returns unique hash value for any `Handle` 
 type for which `&*key` gives a unique address. 
 
-\cgalRequires The type 
-`std::iterator_traits<Handle>::%value_type` has to be defined 
+The type `std::iterator_traits<Handle>::%value_type` has to be defined
 (which it is already for pointers, handles, iterators, and 
 circulators). 
 */ 

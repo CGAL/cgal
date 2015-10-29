@@ -196,7 +196,7 @@ Inserts the fixed alpha shape `A` into the stream `os`.
 
 Defined in `CGAL/IO/io.h`
 
-\cgalRequires The insert operator must be defined for `GT::Point`. 
+The insert operator must be defined for `GT::Point`.
 \relates Fixed_alpha_shape_3 
 */ 
 ostream& operator<<(ostream& os, const Fixed_alpha_shape_3<Dt>& A); 

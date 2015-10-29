@@ -45,7 +45,7 @@ comes in <I>dense</I> representation which includes zero entries.
 \cgalHasModel `CGAL::Quadratic_program_from_mps<NT>` 
 \cgalHasModel `CGAL::Nonnegative_linear_program_from_iterators<A_it, B_it, R_it, FL_it, L_it, FU_it, U_it, D_it, C_it>`
 
-\cgalRequires The value types of all iterator types (nested iterator
+The value types of all iterator types (nested iterator
 types, respectively, for `A_iterator`) must be convertible to some
 common `IntegralDomain` `ET`.
 

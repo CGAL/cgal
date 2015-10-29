@@ -227,7 +227,7 @@ can be omitted if `ForwardIterator` refers to a point type from
 the 2D-Kernel. In this case, a default traits class 
 (`Rectangular_p_center_default_traits_2<K>`) is used. 
 
-\cgalRequires <OL> 
+<OL>
 <LI><I>Either: (if no traits parameter is given)</I> Value type 
 of `ForwardIterator` is `CGAL::Point_2<K>` for some 
 representation class `K` and `FT` is equivalent to 

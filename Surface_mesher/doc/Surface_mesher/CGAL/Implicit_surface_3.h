@@ -24,7 +24,7 @@ mesh traits
 
 \tparam Function must be a of the concept `ImplicitFunction`. 
 
-\cgalRequires The number type `Function::FT` has to match 
+The number type `Function::FT` has to match
 the type `Traits::FT`. 
 
 \cgalModels `Surface_3`
