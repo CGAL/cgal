@@ -100,7 +100,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
     , choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, pmesh))
     , normal);
  
-  return normal / std::sqrt(normal * normal);
+  return normal / CGAL::sqrt(normal * normal);
 }
 
 /**
@@ -183,12 +183,12 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     if (!is_border(he, pmesh))
     {
       Vector n = compute_face_normal(face(he, pmesh), pmesh, np);
-      normal = normal + (n / std::sqrt(n*n));
+      normal = normal + (n / CGAL::sqrt(n*n));
     }
     he = opposite(next(he, pmesh), pmesh);
   } while (he != end);
 
-  return normal / std::sqrt(normal * normal);
+  return normal / CGAL::sqrt(normal * normal);
 }
 
 /**
