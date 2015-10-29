@@ -446,13 +446,13 @@ class Polyhedron_demo_surface_reconstruction_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
-  QAction* actionScaleSpaceReconstruction;
+  QAction* actionSurfaceReconstruction;
 
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
 
-    actionScaleSpaceReconstruction = new QAction(tr("Surface surface reconstruction"), mainWindow);
-    actionScaleSpaceReconstruction->setObjectName("actionSurfaceReconstruction");
+    actionSurfaceReconstruction = new QAction(tr("Surface reconstruction"), mainWindow);
+    actionSurfaceReconstruction->setObjectName("actionSurfaceReconstruction");
 
     CGAL::Three::Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
@@ -468,7 +468,7 @@ public:
   }
 
   QList<QAction*> actions() const {
-    return QList<QAction*>() << actionScaleSpaceReconstruction;
+    return QList<QAction*>() << actionSurfaceReconstruction;
   }
 
 public Q_SLOTS:
