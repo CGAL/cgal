@@ -107,6 +107,19 @@ public:
   ///@}
 };
 
+template <typename Integral>
+inline std::pair<Integral, Integral>
+patch_id_default_value(std::pair<Integral, Integral>)
+{
+  return std::pair<Integral, Integral>(1, 0);
+}
+
+template <typename Integral>
+inline Integral patch_id_default_value(Integral)
+{
+  return Integral(1);
+}
+
 template <class Refs, class T_, class Pln_, class Patch_id_>
 class Polyhedron_demo_face : 
   public CGAL::HalfedgeDS_face_base<Refs,T_,Pln_>
@@ -119,8 +132,8 @@ private:
 public:
   typedef Patch_id_ Patch_id;
   
-  Polyhedron_demo_face() 
-    : patch_id_(), mID(-1) {}
+  Polyhedron_demo_face()
+    : patch_id_(patch_id_default_value(Patch_id())), mID(-1) {}
   
   const Patch_id& patch_id() const {
     return patch_id_;
