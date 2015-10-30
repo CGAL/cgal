@@ -12,8 +12,6 @@
 
 #include "Mesh_function.h"
 
-#include <fstream>
-
 #include <CGAL/Timer.h>
 
 // Mesh Criteria
@@ -77,9 +75,6 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
 
   if(new_item->c3t3().triangulation().number_of_vertices() > 0)
   {
-    std::ofstream medit_out("out.mesh");
-    new_item->c3t3().output_to_medit(medit_out);
-
     const Scene_item::Bbox& bbox = new_item->bbox();
     new_item->setPosition((float)(bbox.xmin + bbox.xmax)/2.f,
                           (float)(bbox.ymin + bbox.ymax)/2.f,
