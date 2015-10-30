@@ -185,12 +185,19 @@ protected:
             is_active=false;
           }
       }
+      //to avoid the contextual menu to mess up the states.
+      else if(mouse_event->button() == Qt::RightButton) {
+          state.left_button_pressing = false;
+          state.shift_pressing = false;
+        }
     }
-
     // use mouse move event for paint-like selection
-    if(event->type() == QEvent::MouseMove &&
-      (state.shift_pressing && state.left_button_pressing) )    
-    { // paint with mouse move event 
+    if( (event->type() == QEvent::MouseMove
+         || (event->type() == QEvent::MouseButtonPress
+             && static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton))
+      && (state.shift_pressing && state.left_button_pressing) )
+    {
+      // paint with mouse move event
       QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       qglviewer::Camera* camera = viewer->camera();
