@@ -34,7 +34,7 @@ option( POLYHEDRON_QTSCRIPT_DEBUGGER
   "Activate the use of Qt Script Debugger in Polyhedron_3 demo" OFF)
 
 # Find Qt5 itself
-find_package(CGAL COMPONENTS Qt5)
+find_package(CGAL COMPONENTS Qt5 ImageIO)
 include( ${CGAL_USE_FILE} )
 
 find_package(Qt5
@@ -309,6 +309,12 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       Polyhedron_demo_mesh_3_optimization_plugin_cgal_code.cpp Optimizer_thread.cpp #Scene_c3t3_item.moc
       ${meshingUI_FILES})
     target_link_libraries(mesh_3_optimization_plugin scene_c3t3_item)
+
+  qt5_wrap_ui( imgUI_FILES Image_res_dialog.ui)
+  polyhedron_demo_plugin(io_image_plugin Io_image_plugin ${imgUI_FILES})
+  target_link_libraries(io_image_plugin scene_segmented_image_item)
+
+
       
   else( Boost_VERSION GREATER 103400 )
     message(STATUS "warning: the plugin mesh_3_plugin requires Boost>=1.34.1 and will not be compiled.")

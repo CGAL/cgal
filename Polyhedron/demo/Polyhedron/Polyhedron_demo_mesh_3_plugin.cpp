@@ -85,6 +85,14 @@ public:
 
 
   bool applicable(QAction*) const {
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+  if(qobject_cast<Scene_implicit_function_item*>(scene->item(scene->mainSelectionIndex())))
+    return true;
+#endif
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+  if( qobject_cast<Scene_segmented_image_item*>(scene->item(scene->mainSelectionIndex())))
+    return true;
+#endif
       return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
