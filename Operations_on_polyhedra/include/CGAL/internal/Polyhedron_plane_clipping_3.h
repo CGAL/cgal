@@ -277,23 +277,30 @@ void inplace_clip_open_polyhedron(Polyhedron& P, const Plane_3& p)
         .face_index_map(get(boost::face_external_index,P))
     );
 
-    // collect one face per cc that is on the positive side of the plane
+    // remove cc on the positive side of the plane
     std::vector<bool> cc_handled(nb_cc, false);
     std::vector<std::size_t> ccs_to_remove;
     BOOST_FOREACH(typename Polyhedron::Face_handle f, faces(P))
     {
       std::size_t cc_id=face_ccs[f];
       if (cc_handled[cc_id]) continue;
-      cc_handled[cc_id]=true;
+
+      //look for a vertex not on the intersection
       typename Polyhedron::Halfedge_handle h=f->halfedge();
-      for(int i=0;i<3;++i)
-        if (p.oriented_side(h->vertex()->point())==ON_POSITIVE_SIDE)
-        {
-          ccs_to_remove.push_back(cc_id);
+      for(int i=0;i<3;++i){
+        bool no_marked_edge=true;
+        BOOST_FOREACH(typename Polyhedron::Halfedge_handle h, halfedges_around_target(h, P))
+          if ( marked_halfedges.count(h) )
+            no_marked_edge=false;
+        if (no_marked_edge){
+          if ( p.oriented_side(h->vertex()->point())==ON_POSITIVE_SIDE )
+            ccs_to_remove.push_back(cc_id);
+          cc_handled[cc_id]=true;
+          if (--nb_cc==0) break;
           break;
         }
-
-      if (--nb_cc==0) break;
+        h=h->next();
+      }
     }
 
   //now remove the faces on the positive side
