@@ -108,7 +108,72 @@ public:
     std::vector<boost::shared_ptr<Plane_shape> > ().swap (m_planes);
   }
 
+
   
+  void run ()
+  {
+
+  }
+
+  Vector regularize_normal (const Vector& n, FT cos_vertical)
+  {
+    FT A = 1 - cos_vertical * cos_vertical;
+    FT B = 1 + (n.y() * n.y()) / (n.x() * n.x());
+    
+    FT vx = std::sqrt (A/B);
+    
+    if (n.x() < 0)
+      vx = -vx;
+    
+    FT vy = vx * (n.y() / n.x()); 
+
+    Vector res (vx, vy, cos_vertical);
+
+    return res / std::sqrt (res * res);
+  }
+
+  Vector regularize_normals_from_prior (const Vector& np,
+                                        const Vector& n,
+                                        FT cos_vertical)
+  {
+    FT vx, vy;
+
+    if (np.x() != 0)
+      { 
+        FT a = (np.y() * np.y()) / (np.x() * np.x()) + 1;
+        FT b = 2 * np.y() * np.z() * cos_vertical / np.x();
+        FT c= cos_vertical * cos_vertical-1;
+
+        if (4 * a * c > b * b)
+          return regularize_normal (n, cos_vertical); 
+        else
+          {
+            FT delta = std::sqrt (b * b-4 * a * c);
+            FT vy1= (-b-delta) / (2 * a);
+            FT vy2= (-b+delta) / (2 * a);
+
+            vy = (std::fabs(n.y()-vy1) < std::fabs(n.y()-vy2))
+              ? vy1 : vy2;
+
+            vx = (-np.y() * vy-np.z() * cos_vertical) / np.x();
+          }
+      }
+    else if (np.y() != 0)
+      {
+        vy = -np.z() * cos_vertical / np.y();
+        vx = std::sqrt (1 - cos_vertical * cos_vertical - vy * vy);
+        
+        if (n.x() < 0)
+          vx = -vx;
+      }
+    else
+      return regularize_normal (n, cos_vertical); 
+
+    Vector_3 res (vx, vy, cos_vertical);
+    FT norm = std::max(1e-5, 1. / sqrt(res.squared_length ()));
+
+    return norm * res;
+  }
 
   
 
