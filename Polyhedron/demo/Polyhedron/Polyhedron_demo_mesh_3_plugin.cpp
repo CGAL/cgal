@@ -302,7 +302,8 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
       result_item->set_data_item(item);
       scene->itemChanged(index);
       result_item->invalidate_buffers();
-      scene->addItem(result_item);
+      int item_id = scene->addItem(result_item);
+      scene->setSelectedItem(item_id);
   }
   QApplication::restoreOverrideCursor();
 }
