@@ -1,3 +1,4 @@
 include( polyhedron_demo_macros )
+ qt5_wrap_ui( statisticsPolyhedronUI_FILES Polyhedron_demo_statistics_on_polyhedron_dialog.ui)
  polyhedron_demo_plugin(off_plugin Polyhedron_demo_off_plugin)
   target_link_libraries(off_plugin scene_polyhedron_item scene_polygon_soup_item)
