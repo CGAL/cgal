@@ -211,6 +211,8 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
   ui.approx->setValue(approx_default);
 
   ui.protect->setEnabled(features_protection_available);
+  if (!features_protection_available)
+    ui.protect->setChecked(false);
 
   // -----------------------------------
   // Get values
