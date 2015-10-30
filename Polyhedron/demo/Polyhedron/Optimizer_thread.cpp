@@ -60,7 +60,6 @@ run()
   //SEGFAULT
   rc_ = f_->launch();
   time_ = double(timer.elapsed()) / 1000;
-  qDebug()<<"fin run";
   Q_EMIT done(this);
 }
 
