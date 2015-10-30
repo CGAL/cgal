@@ -11,7 +11,6 @@
 
 #include "Volume_plane_thread.h"
 #include "Volume_plane_intersection.h"
-
 #include "Scene_segmented_image_item.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -176,9 +175,7 @@ public:
 
     QList<QMenu*> menus = mw->findChildren<QMenu*>();
 
-    planeSwitch = new QAction(mw);
-    planeSwitch->setText("Add Volume Planes");
-
+    planeSwitch = new QAction(tr("Add Volume Planes"), mw);
     connect(planeSwitch, SIGNAL(triggered()), this, SLOT(selectPlanes()));
     
     // evil
@@ -190,9 +187,6 @@ public:
     createOrGetDockLayout();
   }
 
-  virtual QList<QAction*> actions() const {
-    return QList<QAction*>() << planeSwitch;
-  }
 
 public Q_SLOTS:
   void selectPlanes() {

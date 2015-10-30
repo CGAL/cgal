@@ -69,14 +69,14 @@ public:
   Polyhedron_demo_labeled_mesh_domain_3(
     const typename Base::Fct& f,
     const typename Base::Bbox_3& bbox,
-    const typename Base::FT& error_bound = FT(1e-3),
+    const typename Base::FT& error_bound = Base::FT(1e-3),
     CGAL::Random* p_rng = NULL)
     : Base(f, bbox, error_bound, p_rng)
   {}
 
   Polyhedron_demo_labeled_mesh_domain_3(
     const Image& img,
-    const typename Base::FT& error_bound = FT(1e-3),
+    const typename Base::FT& error_bound = Base::FT(1e-3),
     CGAL::Random* p_rng = NULL)
     : Base(img, error_bound, p_rng)
   {}
@@ -206,10 +206,10 @@ public:
         ci = r_domain_.Base::construct_intersection_object();
       typename Base::Intersection bi = ci(q);
 
-      return std::make_tuple(
-        std::get<0>(bi),
-        r_domain_.index_from_surface_patch_index(std::get<1>(bi)),
-        std::get<2>(bi));
+      return CGAL::cpp11::make_tuple(
+        CGAL::cpp11::get<0>(bi),
+        r_domain_.index_from_surface_patch_index(CGAL::cpp11::get<1>(bi)),
+        CGAL::cpp11::get<2>(bi));
     }
 
   private:

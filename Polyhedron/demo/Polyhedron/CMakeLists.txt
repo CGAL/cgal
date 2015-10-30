@@ -302,7 +302,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     qt5_wrap_cpp( VOLUME_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_thread.h )
     qt5_wrap_cpp( VOLUME_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_interface.h )
 
-    polyhedron_demo_plugin(mesh_3_volume_planes_plugin Polyhedron_demo_mesh_3_volume_planes_plugin)
+    polyhedron_demo_plugin(mesh_3_volume_planes_plugin Polyhedron_demo_mesh_3_volume_planes_plugin ${VOLUME_MOC_OUTFILES} Volume_plane_intersection.cpp)
     target_link_libraries(mesh_3_volume_planes_plugin scene_segmented_image_item)
 
     polyhedron_demo_plugin(mesh_3_optimization_plugin Polyhedron_demo_mesh_3_optimization_plugin

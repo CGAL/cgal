@@ -120,6 +120,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
     qobject_cast<Scene_implicit_function_item*>(scene->item(index));
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+  qDebug()<<"IMAGES OK";
   Scene_segmented_image_item* image_item =
     qobject_cast<Scene_segmented_image_item*>(scene->item(index));
 #endif
