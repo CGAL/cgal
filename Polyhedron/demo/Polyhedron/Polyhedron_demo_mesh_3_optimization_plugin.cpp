@@ -153,7 +153,7 @@ init(QMainWindow* mainWindow,
   
   // Create menu items
 #ifndef CGAL_MESH_3_DEMO_DISABLE_ODT
-  actionOdt = new QAction(tr("actionOdt"), mw);
+  actionOdt = new QAction(tr("odt_optimize_mesh_3"), mw);
   if( NULL != actionOdt )
   {
     actionOdt->setProperty("subMenuName", "3D Mesh Generation");
@@ -162,7 +162,7 @@ init(QMainWindow* mainWindow,
 #endif
   
 #ifndef CGAL_MESH_3_DEMO_DISABLE_LLOYD
-  actionLloyd = new QAction(tr("actionLloyd"), mw);
+  actionLloyd = new QAction(tr("lloyd_optimize_mesh_3"), mw);
   if( NULL != actionLloyd )
   {
     actionLloyd->setProperty("subMenuName", "3D Mesh Generation");
@@ -171,7 +171,7 @@ init(QMainWindow* mainWindow,
 #endif
   
 #ifndef CGAL_MESH_3_DEMO_DISABLE_PERTURBER
-  actionPerturb = new QAction(tr("actionPerturb"), mw);
+  actionPerturb = new QAction(tr("perturb_mesh_3"), mw);
   if( NULL != actionPerturb )
   {
     actionPerturb->setProperty("subMenuName", "3D Mesh Generation");
@@ -180,7 +180,7 @@ init(QMainWindow* mainWindow,
 #endif
   
 #ifndef CGAL_MESH_3_DEMO_DISABLE_EXUDER
-  actionExude =new QAction(tr("actionExude"), mw);
+  actionExude =new QAction(tr("exude_mesh_3"), mw);
   if( NULL != actionExude )
   {
     actionExude->setProperty("subMenuName", "3D Mesh Generation");
