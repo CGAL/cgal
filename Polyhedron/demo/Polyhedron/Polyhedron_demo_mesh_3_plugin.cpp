@@ -210,7 +210,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                       diag); // max
   ui.approx->setValue(approx_default);
 
-  ui.protect->setCheckable(features_protection_available);
+  ui.protect->setEnabled(features_protection_available);
 
   // -----------------------------------
   // Get values
