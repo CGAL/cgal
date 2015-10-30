@@ -103,10 +103,18 @@ struct AABB_traits_base_2<GeomTraits,false>{};
 template <typename GeomTraits>
 struct AABB_traits_base_2<GeomTraits,true>{
   typedef typename GeomTraits::Ray_3 Ray_3;
+  typedef typename GeomTraits::Point_3 Point_3;
+  typedef typename GeomTraits::Vector_3 Vector_3;
   typedef typename GeomTraits::FT    FT;
-  // defining Bounding_box here is a hack. Otherwise we would need to
-  // use CRTP to get access to the derived class, which would bloat
-  // the code even more.
+  typedef typename GeomTraits::Cartesian_const_iterator_3 Cartesian_const_iterator_3;
+  typedef typename GeomTraits::Construct_cartesian_const_iterator_3 Construct_cartesian_const_iterator_3;
+  typedef typename GeomTraits::Construct_source_3 Construct_source_3;
+  typedef typename GeomTraits::Construct_vector_3 Construct_vector_3;
+
+  // Defining Bounding_box and other types from the full AABB_traits
+  // here is might seem strange, but otherwise we would need to use
+  // CRTP to get access to the derived class, which would bloat the
+  // code more.
   typedef typename CGAL::Bbox_3      Bounding_box;
 
   struct Intersection_distance {
@@ -114,14 +122,24 @@ struct AABB_traits_base_2<GeomTraits,true>{
       FT t_near = -DBL_MAX; // std::numeric_limits<FT>::lowest(); C++1903
       FT t_far = DBL_MAX;
 
-      for(int i = 0; i < 3; i++) {
-        if(ray.direction().delta(i) == 0) {
-          if((ray.source()[i] < bbox.min(i)) || (ray.source()[i] > bbox.max(i))) {
+      Construct_cartesian_const_iterator_3 construct_cartesian_const_iterator_3
+        = GeomTraits().construct_cartesian_const_iterator_3_object();
+      Construct_source_3 construct_source_3 = GeomTraits().construct_source_3_object();
+      Construct_vector_3 construct_vector_3 = GeomTraits().construct_vector_3_object();
+      Point_3 source = construct_source_3(ray);
+      Vector_3 direction = construct_vector_3(ray);
+      Cartesian_const_iterator_3 source_iter = construct_cartesian_const_iterator_3(source);
+      Cartesian_const_iterator_3 direction_iter = construct_cartesian_const_iterator_3(direction);
+
+      for(int i = 0; i < 3; ++i, ++source_iter, ++direction_iter) {
+        // we only use i as invariant to safe some checks
+        if(*direction_iter == 0) {
+          if((*source_iter < bbox.min(i)) || (*source_iter > bbox.max(i))) {
             return boost::none;
           }
         } else {
-          FT t1 = (bbox.min(i) - ray.source()[i]) / ray.direction().delta(i);
-          FT t2 = (bbox.max(i) - ray.source()[i]) / ray.direction().delta(i);
+          FT t1 = (bbox.min(i) - *source_iter) / *direction_iter;
+          FT t2 = (bbox.max(i) - *source_iter) / *direction_iter;
 
           t_near = (std::max)(t_near, (std::min)(t1, t2));
           t_far = (std::min)(t_far, (std::max)(t1, t2));
