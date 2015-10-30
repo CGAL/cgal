@@ -30,6 +30,7 @@
 #define CGAL_PLANE_REGULARIZATION_H
 
 #include <CGAL/Shape_detection_3.h>
+#include <CGAL/centroid.h>
 
 #include <boost/foreach.hpp>
 
@@ -58,22 +59,6 @@ namespace CGAL {
   
 
   private:
-
-    struct HPoint {
-      Point position;
-      bool is_kept;
-      bool is_fitted_to_plane;
-      //	bool is_fitted_to_plane_bordering_point;
-      bool is_edge;
-      bool is_corner;
-      int  primitive_index;
-      std::vector < int > plane_index_list;
-      std::vector < int > list_camera_index;
-      float accuracy;
-      float weight;
-      int weight_visibility;
-
-    };
 
     Traits m_traits;
 
@@ -130,11 +115,11 @@ namespace CGAL {
     {
       // WRAPPER BEGIN
       std::vector<Plane> extracted_planes;
+      std::vector<std::vector<int> > plane_point_index;
+      std::vector<int> primitive_index (m_input_end - m_input_begin, -1);
+      std::vector<int> label_plane (m_input_end - m_input_begin, -1);
       std::vector<Point> list_centroid;
       std::vector<FT> list_areas;
-      std::vector<std::vector<int> > plane_point_index;
-      std::vector<HPoint> HPS;
-      std::vector<int> label_plane;
       
       for (std::size_t i = 0; i < m_planes.size (); ++ i)
         {
@@ -143,10 +128,26 @@ namespace CGAL {
           std::copy (m_planes[i]->indices_of_assigned_points().begin (),
                      m_planes[i]->indices_of_assigned_points().begin (),
                      std::back_inserter (plane_point_index.back ()));
+
+          std::vector < Point > listp;
+          for (std::size_t j = 0; j < plane_point_index.back ().size (); ++ j)
+            {
+              primitive_index[j] = i;
+              
+              int yy = plane_point_index.back()[j];
+              label_plane[yy] = i;
+
+              Point pt = get (m_point_pmap, *(m_input_begin + yy));
+              listp.push_back(pt);
+            }
+          list_centroid.push_back (CGAL::centroid (listp.begin (), listp.end ()));
+          list_areas.push_back ((double)(plane_point_index.back().size()) / 100.);
         }
-
-
+      
       // WRAPPER END
+
+
+
       
       // find pairs of epsilon-parallel primitives and store them in table_parallel 
       std::vector < std::vector < bool > > table_parallel; 
@@ -157,7 +158,7 @@ namespace CGAL {
           Vector v1=extracted_planes[i].orthogonal_vector();
           Vector v2=extracted_planes[j].orthogonal_vector();
 			
-          if( abs(v1*v2)>1.-epsilon && i!=j) table_parallel_tmp.push_back(true); 
+          if( std::fabs(v1*v2)>1.-epsilon && i!=j) table_parallel_tmp.push_back(true); 
           else table_parallel_tmp.push_back(false); 
         }
         table_parallel.push_back(table_parallel_tmp);
@@ -199,7 +200,7 @@ namespace CGAL {
 						
                 Vector normal_it=extracted_planes[it].orthogonal_vector();
 
-                if( table_parallel[plane_index][it] && is_available[it] && abs(normal_it*cluster_normal)>1.-epsilon ){	
+                if( table_parallel[plane_index][it] && is_available[it] && std::fabs(normal_it*cluster_normal)>1.-epsilon ){	
 							
                   propagation=true;
                   index_container_current_ring_parallel.push_back(it);
@@ -228,7 +229,7 @@ namespace CGAL {
           list_cluster_normales.push_back(cluster_normal);
           list_cluster_area.push_back(cumulated_area);
           Vector v_vertical(0.,0.,1.);
-          list_cluster_cosangle_vertical.push_back(abs(v_vertical*cluster_normal)); 
+          list_cluster_cosangle_vertical.push_back(std::fabs(v_vertical*cluster_normal)); 
         }
       }
       is_available.clear();
@@ -240,7 +241,7 @@ namespace CGAL {
       for (std::size_t i=0; i<group_planes_orthogonal.size();i++){
         for (std::size_t j=0; j<group_planes_orthogonal.size();j++){
 
-          if( i!=j && abs(list_cluster_normales[i]*list_cluster_normales[j])<epsilon){
+          if( i!=j && std::fabs(list_cluster_normales[i]*list_cluster_normales[j])<epsilon){
             group_planes_orthogonal[i][j]=true; 
             group_planes_orthogonal[j][i]=true;
           }
@@ -261,7 +262,7 @@ namespace CGAL {
           double mean=list_cluster_area[i]*list_cluster_cosangle_vertical[i];
           double mean_area=list_cluster_area[i];
           for (std::size_t j=i+1; j<list_cluster_cosangle_vertical.size(); j++){
-            if( list_cluster_index[j]<0 && abs(list_cluster_cosangle_vertical[j]-mean/mean_area)<epsilon ){
+            if( list_cluster_index[j]<0 && std::fabs(list_cluster_cosangle_vertical[j]-mean/mean_area)<epsilon ){
               list_cluster_index[j]=mean_index;
               mean_area+=list_cluster_area[j];
               mean+=list_cluster_area[j]*list_cluster_cosangle_vertical[j];
@@ -285,7 +286,7 @@ namespace CGAL {
 
 
       //display console
-      /*
+      //      /*
         std::cout<<std::endl<<std::endl<<"clusters of parallel primitives:";
         for (std::size_t i=0; i<list_parallel_planes.size();i++){
         std::cout<<std::endl<<i<<" -> ";
@@ -300,7 +301,7 @@ namespace CGAL {
         }
         std::cout<<"     -> "<<list_cluster_cosangle_vertical[i]<<"  -> "<<cosangle_centroids[list_cluster_index[i]];
         }
-      */
+        //      */
 
 
       //find subgraphs of mutually orthogonal clusters (store index of clusters in subgraph_clusters), and select the cluster of largest area
@@ -444,7 +445,7 @@ namespace CGAL {
           if( extracted_planes[index_prim].orthogonal_vector() * vec_reg < 0) vec_reg=-vec_reg;
           Plane plane_reg(pt_reg,vec_reg);
 		
-          if( abs(extracted_planes[index_prim].orthogonal_vector()*plane_reg.orthogonal_vector()) > 1. - epsilon) extracted_planes[index_prim]=plane_reg;
+          if( std::fabs(extracted_planes[index_prim].orthogonal_vector()*plane_reg.orthogonal_vector()) > 1. - epsilon) extracted_planes[index_prim]=plane_reg;
         }
       }
 
@@ -521,7 +522,7 @@ namespace CGAL {
           std::vector< int > list_primitive_reg_index_extracted_planes_tmp1;
           for (std::size_t k=0; k<list_coplanar_prim[i][j].size();k++){
             int index_prim=list_coplanar_prim[i][j][k];
-            if( abs(extracted_planes[index_prim].orthogonal_vector()*plane_reg.orthogonal_vector()) > 1. - epsilon){
+            if( std::fabs(extracted_planes[index_prim].orthogonal_vector()*plane_reg.orthogonal_vector()) > 1. - epsilon){
               if(extracted_planes[index_prim].orthogonal_vector()*plane_reg.orthogonal_vector()<0) extracted_planes[index_prim]=plane_reg.opposite();
               else extracted_planes[index_prim]=plane_reg;
               is_reg_used=true;
@@ -558,7 +559,7 @@ namespace CGAL {
           plane_point_index_temp.push_back(plane_point_index[i]);
           for (std::size_t k=0; k<plane_point_index[i].size();k++) {
             int index_pt=plane_point_index[i][k];
-            HPS[index_pt].primitive_index=label_index;
+            primitive_index[index_pt]=label_index;
             label_plane[index_pt]=label_index;
           }
 	
@@ -572,7 +573,7 @@ namespace CGAL {
               for (std::size_t k=0; k<plane_point_index[j].size();k++){
                 int ind=plane_point_index[j][k];
                 plane_point_index_new.push_back(ind);
-                HPS[ind].primitive_index=label_index;
+                primitive_index[ind]=label_index;
                 label_plane[ind]=label_index;
               }
               plane_point_index_temp[plane_point_index_temp.size()-1]=plane_point_index_new;
