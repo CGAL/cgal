@@ -168,11 +168,18 @@ struct AABB_traits_base_2<GeomTraits,true>{
 /// segments as query types for intersection detection and
 /// computations, and it handles points as query type for distance
 /// queries.
+///
 /// \cgalModels AABBTraits
+/// \cgalModels AABBRayIntersectionTraits
+
 /// \tparam GeomTraits must  be a model of the concept \ref AABBGeomTraits,
-/// snd provide the geometric types as well as the intersection tests and computations.
+/// and provide the geometric types as well as the intersection tests and computations.
 /// \tparam Primitive provide the type of primitives stored in the AABB_tree.
 ///   It is a model of the concept `AABBPrimitive` or `AABBPrimitiveWithSharedData`.
+///
+/// If the argument GeomTraits is a model of the concept \ref
+/// AABBRayIntersectionGeomTraits, this class is also a model of \ref
+/// AABBRayIntersectionTraits.
 ///
 /// \sa `AABBTraits`
 /// \sa `AABB_tree`
