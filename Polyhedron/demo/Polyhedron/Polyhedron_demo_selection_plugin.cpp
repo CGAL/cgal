@@ -322,6 +322,7 @@ public Q_SLOTS:
 
     double angle = ui_widget.Sharp_angle_spinbox->value();
     selection_item->select_sharp_edges(angle);
+    scene->itemChanged(selection_item);
   }
 
   void on_Dilate_erode_button_clicked() {

@@ -708,7 +708,7 @@ public:
       if (h->is_feature_edge())
         selected_edges.insert(e);
     }
-    changed_with_poly_item();
+    invalidate_buffers();
   }
 
   void changed_with_poly_item() {
