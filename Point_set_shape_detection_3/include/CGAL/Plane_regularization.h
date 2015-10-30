@@ -29,35 +29,92 @@
 #ifndef CGAL_PLANE_REGULARIZATION_H
 #define CGAL_PLANE_REGULARIZATION_H
 
-template <typename GeomTraits>
+#include <CGAL/Shape_detection_3.h>
+
+#include <boost/foreach.hpp>
+
+
+namespace CGAL {
+
+template <typename Traits>
 class Plane_regularization
 {
 public:
 
-  typedef typename GeomTraits::FT FT;
-  typedef typename GeomTraits::Point_3 Point;
-  typedef typename GeomTraits::Vector_3 Vector;
-  typedef typename GeomTraits::Plane_3 Plane;
+  typedef Plane_regularization<Traits> Self;
+
+  typedef typename Traits::FT FT;
+  typedef typename Traits::Point_3 Point;
+  typedef typename Traits::Vector_3 Vector;
+  typedef typename Traits::Plane_3 Plane;
+
+  typedef typename Traits::Point_map Point_map;
+  typedef typename Traits::Normal_map Normal_map;
+  typedef typename Traits::Input_range Input_range;
+  typedef typename Input_range::iterator Input_iterator;
+
+  typedef Shape_detection_3::Shape_base<Traits> Shape;
+  typedef Shape_detection_3::Plane<Traits> Plane_shape;
+  
 
 private:
 
+  Traits m_traits;
+
+  Input_iterator m_input_begin;
+  Input_iterator m_input_end;
+  Point_map m_point_pmap;
+  Normal_map m_normal_pmap;
+
+  std::vector<boost::shared_ptr<Plane_shape> > m_planes;
+
 public:
 
-  Plane_regularization ()
+  Plane_regularization (Traits t = Traits ())
+    : m_traits (t)
   {
+
+  }
+
+  Plane_regularization (Input_range& input_range,
+                         Shape_detection_3::Efficient_RANSAC<Traits>& shape_detection)
+    : m_traits (shape_detection.traits())
+  {
+    m_input_begin = input_range.begin ();
+    m_input_end = input_range.end ();
+
+    BOOST_FOREACH (boost::shared_ptr<Shape> shape, shape_detection.shapes())
+      {
+        boost::shared_ptr<Plane_shape> pshape
+          = boost::dynamic_pointer_cast<Plane_shape>(shape);
+        
+        // Ignore all shapes other than plane
+        if (!pshape)
+          continue;
+
+        m_planes.push_back (pshape);
+
+      }
 
   }
 
   virtual ~Plane_regularization ()
   {
+    clear ();
+  }
 
+  void clear ()
+  {
+    std::vector<boost::shared_ptr<Plane_shape> > ().swap (m_planes);
   }
 
   
+
   
 
 };
 
 
+}; // namespace CGAL
 
 #endif // CGAL_PLANE_REGULARIZATION_H
