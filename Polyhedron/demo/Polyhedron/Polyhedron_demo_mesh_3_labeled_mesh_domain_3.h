@@ -103,6 +103,19 @@ public:
     return index_from_surface_patch_index(surface_patch_index(index));
   }
 
+  Index index_from_index(
+    const typename Base::Index& index) const
+  {
+    if (const typename Base::Surface_patch_index* index_pair =
+      boost::get<typename Base::Surface_patch_index>(&index))
+        return Index(index_pair->first * 1000 + index_pair->second);
+
+    else if (const typename Base::Subdomain_index* sub_index =
+      boost::get<typename Base::Subdomain_index>(&index))
+        return Index(*sub_index);
+
+    return Index(-1);//~error
+  }
 
   /**
    * Returns the index to be stored in a vertex lying in the subdomain
@@ -208,7 +221,7 @@ public:
 
       return CGAL::cpp11::make_tuple(
         CGAL::cpp11::get<0>(bi),
-        r_domain_.index_from_surface_patch_index(CGAL::cpp11::get<1>(bi)),
+        r_domain_.index_from_index(CGAL::cpp11::get<1>(bi)),
         CGAL::cpp11::get<2>(bi));
     }
 
