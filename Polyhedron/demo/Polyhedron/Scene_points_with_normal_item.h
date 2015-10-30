@@ -1,6 +1,6 @@
 #ifndef POINT_SET_ITEM_H
 #define POINT_SET_ITEM_H
-#include "Scene_item.h"
+#include  <CGAL/Three/Scene_item.h>
 #include "Scene_points_with_normal_item_config.h"
 #include "Polyhedron_type_fwd.h"
 #include "Kernel_type.h"
@@ -18,7 +18,7 @@ class QAction;
 
 // This class represents a point set in the OpenGL scene
 class SCENE_POINTS_WITH_NORMAL_ITEM_EXPORT Scene_points_with_normal_item
-  : public Scene_item
+  : public CGAL::Three::Scene_item
 {
   Q_OBJECT
 
@@ -104,7 +104,7 @@ private:
 
   mutable QOpenGLShaderProgram *program;
 
-  using Scene_item::initialize_buffers;
+  using CGAL::Three::Scene_item::initialize_buffers;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
 
   void compute_normals_and_vertices() const;

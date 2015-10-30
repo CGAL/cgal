@@ -31,7 +31,7 @@ class QWidget;
 class QMouseEvent;
 class QKeyEvent;
 //! \file Viewer_interface.h
-#include "../Viewer_config.h" // for VIEWER_EXPORT
+#include "Viewer_config.h" // for VIEWER_EXPORT
 namespace CGAL{
 namespace Three{
 class Scene_draw_interface;

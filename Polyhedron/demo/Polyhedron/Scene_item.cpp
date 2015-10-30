@@ -1,12 +1,12 @@
-#include "Scene_item.h"
+#include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <QMenu>
 #include <iostream>
 #include <QDebug>
 #include <CGAL/Three/Viewer_interface.h>
-const QColor Scene_item::defaultColor = QColor(100, 100, 255);
+const QColor CGAL::Three::Scene_item::defaultColor = QColor(100, 100, 255);
 
-Scene_item::~Scene_item() {
+CGAL::Three::Scene_item::~Scene_item() {
     delete defaultContextMenu;
     for(int i=0; i<buffersSize; i++)
     {
@@ -18,7 +18,7 @@ Scene_item::~Scene_item() {
     }
 }
 
-void Scene_item::itemAboutToBeDestroyed(Scene_item* item) {
+void CGAL::Three::Scene_item::itemAboutToBeDestroyed(CGAL::Three::Scene_item* item) {
     if(this == item)
     Q_EMIT aboutToBeDestroyed();
 }
@@ -71,11 +71,11 @@ const char* slotName(RenderingMode mode) {
 }
 
 // Rendering mode as a human readable string
-QString Scene_item::renderingModeName() const
+QString CGAL::Three::Scene_item::renderingModeName() const
 {
     return modeName(renderingMode());
 } 
-QMenu* Scene_item::contextMenu()
+QMenu* CGAL::Three::Scene_item::contextMenu()
 {
     if(defaultContextMenu) {
         defaultContextMenu->setTitle(name());
@@ -101,12 +101,12 @@ QMenu* Scene_item::contextMenu()
     return defaultContextMenu;
 }
 
-void Scene_item::invalidate_buffers() {}
+void CGAL::Three::Scene_item::invalidate_buffers() {}
 
-void Scene_item::selection_changed(bool) {}
+void CGAL::Three::Scene_item::selection_changed(bool) {}
 
 
-void Scene_item::select(double /*orig_x*/,
+void CGAL::Three::Scene_item::select(double /*orig_x*/,
                         double /*orig_y*/,
                         double /*orig_z*/,
                         double /*dir_x*/,
@@ -116,7 +116,7 @@ void Scene_item::select(double /*orig_x*/,
 }
 
 // set-up the uniform attributes of the shader programs.
-void Scene_item::attrib_buffers(CGAL::Three::Viewer_interface* viewer, int program_name) const
+void CGAL::Three::Scene_item::attrib_buffers(CGAL::Three::Viewer_interface* viewer, int program_name) const
 {
     GLint is_both_sides = 0;
     //ModelViewMatrix used for the transformation of the camera.
@@ -248,7 +248,7 @@ void Scene_item::attrib_buffers(CGAL::Three::Viewer_interface* viewer, int progr
 }
 
 
-QOpenGLShaderProgram* Scene_item::getShaderProgram(int name, CGAL::Three::Viewer_interface * viewer) const
+QOpenGLShaderProgram* CGAL::Three::Scene_item::getShaderProgram(int name, CGAL::Three::Viewer_interface * viewer) const
 {
     switch(name)
     {

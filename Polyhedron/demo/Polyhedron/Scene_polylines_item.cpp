@@ -330,7 +330,7 @@ Scene_polylines_item::compute_elements() const
 
 
 Scene_polylines_item::Scene_polylines_item() 
-    :Scene_item(8,3)
+    :CGAL::Three::Scene_item(8,3)
     ,d(new Scene_polylines_item_private())
     ,nbSpheres(0)
 {

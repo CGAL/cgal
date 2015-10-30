@@ -66,9 +66,9 @@ The following code will create a plugin that adds an action to the MainWindow. T
 #include <QMainWindow>
 #include <QAction>
 
-#include "Scene_item.h"
+#include  <CGAL/Three/Scene_item.h>
 #include "Viewer_interface.h"
-class Q_DECL_EXPORT Scene_triangle_item : public Scene_item
+class Q_DECL_EXPORT Scene_triangle_item : public CGAL::Three::Scene_item
 {
 
     Q_OBJECT
@@ -150,7 +150,7 @@ private:
 
     std::vector<float> vertices;
     mutable QOpenGLShaderProgram *program;
-    using Scene_item::initialize_buffers;
+    using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer)const
     {
 

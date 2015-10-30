@@ -1,0 +1,3 @@
+include( polyhedron_demo_macros )
+  polyhedron_demo_plugin(mesh_simplification_plugin Polyhedron_demo_mesh_simplification_plugin)
+  target_link_libraries(mesh_simplification_plugin scene_polyhedron_item)

@@ -341,7 +341,7 @@ void Scene_implicit_function_item::compute_vertices_and_texmap(void)
 
 Scene_implicit_function_item::
 Scene_implicit_function_item(Implicit_function_interface* f)
-    :Scene_item(4,3)
+    :CGAL::Three::Scene_item(4,3)
     , function_(f)
     , frame_(new ManipulatedFrame())
     , need_update_(true)

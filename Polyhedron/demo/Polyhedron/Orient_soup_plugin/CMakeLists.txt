@@ -1,0 +1,5 @@
+include( polyhedron_demo_macros )
+
+
+polyhedron_demo_plugin(orient_soup_plugin Polyhedron_demo_orient_soup_plugin)
+target_link_libraries(orient_soup_plugin scene_polygon_soup_item scene_polyhedron_item)

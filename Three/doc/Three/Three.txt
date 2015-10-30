@@ -24,18 +24,24 @@ A plugin usually defines an object that inherits from Scene_item or uses some of
 \section examplePlugin Creating a simple Plugin
 \subsection examplePluginItself The plugin itself
 A basic plugin will inherit from Polyhedron_demo_plugin_interface. It can also inherits from the Polyhedron_demo_plugin_helper instead, for a more detailed model of plugin.
+It must be created in a folder named Xxxx_yyyy_plugin containing all the files created for it, and a CMakeLists.txt file. This file contains the following line :
 Its name must be of the form Polyhedron_demo_xxxx_yyyy_plugin. \n
 <b>In the CMakeList.txt file, in the section Plugins, add the following lines :</b>
 
-    polyhedron_demo_plugin(xxxx_yyyy_plugin Polyhedron_demo_xxxx_yyyy_plugin)
+    include( polyhedron_demo_macros )
+    #if the plugin has a UI file
+    qt5_wrap_ui( xxxx_yyyyUI_FILES Polyhedron_demo_xxxx_yyyy_plugin.ui)
+    polyhedron_demo_plugin(xxx_yyyy_plugin Polyhedron_demo_xxx_yyyy_plugin ${xxx_yyyyUI_FILES})
+    #if the plugin uses external libraries like scene_items
+    target_link_libraries(xxx_yyyy_plugin scene_polygon_xxxx_yyyy_item scene_xxxx_zzzz_item)
     
-<b>If your plugin interacts with scene items, then you have to add the following line too :</b>
-    
-    target_link_libraries(xxxx_yyyy_plugin scene_polyhedron_item) 
-      
+And in the main CMakeLists.txt, you must add the following line:
+
+    add_subdirectory(Xxxx_yyyy_plugin)
+
   [init]: @ref CGAL::Three::Polyhedron_demo_plugin_helper#init(QMainWindow *, Scene_interface *)
   The class must contain the following lines :\n
-  
+    
     Q_OBJECT\n
     Q_INTERFACES(Polyhedron_demo_plugin_interface)\n
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")\n
@@ -118,15 +124,64 @@ dock widget visible or not.
 - MainWindow
 - CGAL::Three::Viewer_interface
 - CGAL::Three::Scene_interface
-- Scene_item
+- CGAL::Three::Scene_item
 - CGAL::Three::Polyhedron_demo_plugin_helper
 - CGAL::Three::Polyhedron_demo_plugin_interface
 
+\section examplePlugin Creating an external plugin
+To create an external plugin, you must make a new Cmake project.
+In the CMakeLists you must fetch the exported targets of the polyhedron demo (polyhedron_demo_macros.cmake).
+An external plugin will not be automatically loaded in the Polyhedron demo. It must be built in its own project.
 
 \section example Example : 
-
+\subsection example1 Creating a simple plugin
 The following code will create a plugin that adds an action to the MainWindow. This action is called "Draw Triangle" and adds a triangle to the scene.
-\cgalExample{Polyhedron/Polyhedron_demo_example_plugin.cpp}
+\cgalExample{Three/Example_plugin/Polyhedron_demo_example_plugin.cpp}
+
+\subsection example2 Creating an external plugin
+The following code makes the same thing than the previous, only the plugin is external.
+
+    project( Example_plugin )
+    # Find includes in corresponding build directories
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
+    # Instruct CMake to run moc automatically when needed.
+    set(CMAKE_AUTOMOC ON)
+    cmake_minimum_required(VERSION 2.8.11)
+    if(POLICY CMP0043)
+      cmake_policy(SET CMP0043 OLD)
+    endif()
+
+    # Compatibility with CMake 3.0
+    if(POLICY CMP0042)
+      # Do not enable the use of MACOSX_RPATH
+      # http://www.cmake.org/cmake/help/v3.0/policy/CMP0042.html
+      cmake_policy(SET CMP0042 OLD)
+    endif()
+    #Find CGAL
+    find_package(CGAL COMPONENTS Qt5)
+    include( ${CGAL_USE_FILE} )
+    # Find Qt5 itself
+    find_package(Qt5
+                 QUIET
+                 COMPONENTS            OpenGL Script Svg Xml
+                 OPTIONAL_COMPONENTS   ScriptTools)
+
+    if(Qt5_FOUND AND CGAL_FOUND)
+      find_package(CGAL_polyhedron_demo
+      HINTS "${CGAL_DIR}" "${CGAL_DIR}/Polyhedron/demo/Polyhedron-build"
+      )
+
+    include( ${CGAL_POLYHEDRON_DEMO_USE_FILE} )
+    # Let plugins be compiled in the same directory as the executable.
+    set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+
+
+      #include( ${CMAKE_CURRENT_SOURCE_DIR}/../../Polyhedron/demo/Polyhedron/polyhedron_demo_macros.cmake )
+      qt5_wrap_ui( exampleUI_FILES Polyhedron_demo_example_plugin.ui dock_example.ui)
+      qt5_wrap_ui( example_dockUI_FILES dock_example.ui)
+      polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES} ${example_dockUI_FILES})
+      target_link_libraries(example_plugin scene_polyhedron_item)
+    endif()
 
 */
 } /* namespace CGAL */

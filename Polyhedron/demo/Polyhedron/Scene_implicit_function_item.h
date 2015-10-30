@@ -1,7 +1,7 @@
 #ifndef SCENE_IMPLICIT_FUNCTION_ITEM_H
 #define SCENE_IMPLICIT_FUNCTION_ITEM_H
 
-#include <Scene_item.h>
+#include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
 #include "Scene_implicit_function_item_config.h"
 #include "implicit_functions/Implicit_function_interface.h"
@@ -38,7 +38,7 @@ public:
 
 };
 class SCENE_IMPLICIT_FUNCTION_ITEM_EXPORT Scene_implicit_function_item 
-  : public Scene_item
+  : public CGAL::Three::Scene_item
 {
   Q_OBJECT
   
@@ -107,7 +107,7 @@ private:
 
   GLuint vao;
   GLuint buffer[4];
-  using Scene_item::initialize_buffers;
+  using CGAL::Three::Scene_item::initialize_buffers;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_vertices_and_texmap(void);
   void compute_texture(int, int);

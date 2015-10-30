@@ -1,7 +1,7 @@
 #ifndef SCENE_POLYGON_SOUP_ITEM_H
 #define SCENE_POLYGON_SOUP_ITEM_H
 #include "Scene_polygon_soup_item_config.h"
-#include "Scene_item.h"
+#include  <CGAL/Three/Scene_item.h>
 #include "Viewer.h"
 #include "Polyhedron_type.h"
 
@@ -97,7 +97,7 @@ struct Polygon_soup
 class Scene_polyhedron_item;
 
 class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item 
-        : public Scene_item
+        : public CGAL::Three::Scene_item
 {
     typedef Kernel::Point_3 Point_3;
 
@@ -176,7 +176,7 @@ private:
     mutable std::size_t nb_nm_edges;
     mutable std::size_t nb_polys;
     mutable std::size_t nb_lines;
-    using Scene_item::initialize_buffers;
+    using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
     void compute_normals_and_vertices(void) const;
     void triangulate_polygon(Polygons_iterator ) const;
