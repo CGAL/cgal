@@ -5,7 +5,7 @@
 The concept `AABBRayIntersectionTraits` is a refinement of the Model
 `AABBTraits`. In addition to the types and functions required by
 `AABBTraits` it also requires function objects to calculate the
-distance of an intersection along
+distance of an intersection along a ray.
 
 \cgalHasModel `CGAL::AABB_traits<AABBGeomTraits,AABBPrimitive>`
 
@@ -15,6 +15,7 @@ distance of an intersection along
 
 */
 class AABBRayIntersectionTraits {
+public:
   
   /*!
     Type of a 3D ray. 
