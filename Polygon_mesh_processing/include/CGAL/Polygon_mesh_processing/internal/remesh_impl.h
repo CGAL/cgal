@@ -429,7 +429,6 @@ namespace internal {
         //the edge with shortest length
         typename Boost_bimap::right_map::iterator eit = short_edges.right.begin();
         halfedge_descriptor he = eit->second;
-        double sqlen = eit->first;
         short_edges.right.erase(eit);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -1011,7 +1010,6 @@ namespace internal {
 
       //get missing data
       halfedge_descriptor eno = opposite(en, mesh_);
-      Halfedge_status s_en = status(en);
       Halfedge_status s_eno = status(eno);
 
       if (s_epo == MESH_BORDER && s_eno == MESH_BORDER)
