@@ -111,6 +111,12 @@ Scene_c3t3_item::c3t3()
 }
 
 void
+Scene_c3t3_item::changed()
+{
+  this->c3t3_changed();
+}
+
+void
 Scene_c3t3_item::c3t3_changed()
 {
   // Update colors
@@ -131,7 +137,7 @@ Scene_c3t3_item::c3t3_changed()
   // Rebuild histogram
   build_histogram();
   //compute_elements();
-  are_buffers_filled = false;
+  this->invalidate_buffers();
 }
 
 QPixmap

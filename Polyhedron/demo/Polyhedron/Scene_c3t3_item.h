@@ -117,6 +117,8 @@ private:
 
   void update_histogram();
 
+  void changed();
+
 private:
   void build_histogram();
 
