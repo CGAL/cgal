@@ -99,7 +99,7 @@ Returns the intersection constructor.
 Intersect_3 intersect_3_object(); 
 
 /*!
-Returns the distance comparison functor. 
+Returns the sphere constructor.
 */ 
 Construct_sphere_3 construct_sphere_3_object(); 
 
