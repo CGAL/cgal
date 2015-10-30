@@ -22,7 +22,7 @@
 // File Description : 
 //******************************************************************************
 
-#include "config.h"
+#include "config_mesh_3.h"
 
 #include <QTime>
 #include <QTimer>
