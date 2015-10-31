@@ -52,7 +52,7 @@ public:
   }
 
   virtual ~Ref_counted_base() {
-    CGAL_assertion(reference_count_==0);
+    CGAL_destructor_assertion(reference_count_==0);
   }
 
   friend void intrusive_ptr_release(const This *t);

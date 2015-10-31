@@ -196,7 +196,7 @@ public:
     }
 
     ~Polyhedron_incremental_builder_3() {
-        CGAL_assertion( check_protocoll == 0);
+        CGAL_destructor_assertion( check_protocoll == 0);
     }
 
 // OPERATIONS
