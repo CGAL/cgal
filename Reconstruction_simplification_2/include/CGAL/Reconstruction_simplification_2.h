@@ -327,9 +327,11 @@ public:
   An edge is relevant from the approximation point of view
   if it is long, covers a large mass (or equivalently the
   number of points when all masses are equal), and has a
-  small transport cost. This notion is defined as
-  m(e) x |e|^2 / cost(e), where m(e) denotes the mass of the edge,
-  |e| denotes its length and cost(e) its transport cost.
+  small transport cost. This notion is defined as 
+  \f$ m(e) * |e|^2 / cost(e) \f$, where \f$ m(e) \f$ 
+  denotes the mass of the points approximated by the edge,
+  \f$ |e| \f$ denotes the edge length and \f$ cost(e) \f$
+  its approximation error.
   As the cost is defined by mass time squared distance the
   relevance is unitless.
 
@@ -1535,7 +1537,7 @@ public:
   /*!
     Writes the points and segments of the output simplex in an indexed format into output iterators.
         \tparam PointOutputIterator An output iterator with value type 
-                `Reconstruction_simplification_2::Point`.
+                \link Reconstruction_simplification_2::Point Point \endlink.
         \tparam IndexOutputIterator An output iterator with value type 
                 `std::size_t`.
         \tparam IndexPairOutputIterator An output iterator with value type 
@@ -1618,9 +1620,9 @@ public:
     isolated points and one for storing the edges of the reconstructed shape.
 
     \tparam PointOutputIterator An output iterator with value type 
-            `Reconstruction_simplification_2::Point`.
+            \link Reconstruction_simplification_2::Point Point \endlink.
     \tparam SegmentOutputIterator An output iterator with value type 
-            `Reconstruction_simplification_2::Segment`.
+            \link Reconstruction_simplification_2::Segment Segment \endlink.
    */
   template<class PointOutputIterator, class SegmentOutputIterator>
   void list_output (PointOutputIterator v_it, SegmentOutputIterator e_it) const

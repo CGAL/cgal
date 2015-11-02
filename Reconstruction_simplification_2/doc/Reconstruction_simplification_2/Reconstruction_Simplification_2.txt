@@ -56,6 +56,7 @@ rs2.run(100); // perform 100 contraction steps
 
 In case the input is not just points without masses, one can provide 
 property maps that match his input.
+\code{.cpp}
 /*
 K            	   : a geometric kernel.
 Point_property_map : a PropertyMap for accessing the input points.
@@ -69,7 +70,8 @@ Reconstruction_simplification_2<K, Point_property_map, Mass_property_map>
 rs2.run(100); // perform 100 contraction steps
 \endcode
 
-Alternatively to calling `run`, one can use the `run_until` function
+Alternatively to calling \link Reconstruction_simplification_2::run run \endlink, 
+one can call \link Reconstruction_simplification_2::run_until run_until \endlink
 and specify the number of output vertices one wants to keep as illustrated in
 Figure \cgalFigureRef{2D_Reconstruction_Simplification_twenty_vertices}.
 \code{.cpp}
@@ -112,7 +114,7 @@ Edge flipping. Left: the blue edge creates fold-overs because of blocking edges 
 
 \subsection Reconstruction_simplification_2Relevance Edge Relevance
 
-An edge is relevant from the approximation point of view if (1) it is long, (2) approximates a large number of points (or a large amount of mass when points have mass attributes), and (3) has a small approximation error. The notion of relevance is defined as m(e) x |e|^2 / cost(e), where m(e) denotes the mass of the points approximated by the edge, |e| denotes the edge length and cost(e) its approximation error. As the error is defined by mass time squared distance the relevance is unitless.
+An edge is relevant from the approximation point of view if (1) it is long, (2) approximates a large number of points (or a large amount of mass when points have mass attributes), and (3) has a small approximation error. The notion of relevance is defined as \f$ m(e) * |e|^2 / cost(e) \f$, where \f$ m(e) \f$ denotes the mass of the points approximated by the edge, \f$ |e| \f$ denotes the edge length and \f$ cost(e) \f$ its approximation error. As the error is defined by mass time squared distance the relevance is unitless.
 The default value is 0, so that all edges approximating some input points are considered relevant. A larger relevance value provides a means to increase resilience to outliers.
 
 
