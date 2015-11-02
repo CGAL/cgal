@@ -260,7 +260,7 @@ private:
       ang_max = (std::max)(ang_max, angle);
     }
    
-    w = std::make_pair(ang_max, std::sqrt(CGAL::squared_area(P[i],P[j],P[k])));
+    w = std::make_pair(ang_max, CGAL::sqrt(CGAL::squared_area(P[i],P[j],P[k])));
   }
 
 public:
@@ -330,7 +330,7 @@ private:
       // check whether the edge is border
       bool border = (v0 + 1 == v1) || (v0 == n-1 && v1 == 0);
       if(!border) {
-        total_length += std::sqrt(CGAL::squared_distance(P[v0],P[v1]));
+        total_length += CGAL::sqrt(CGAL::squared_distance(P[v0],P[v1]));
       }
     }
   }

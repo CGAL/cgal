@@ -49,10 +49,10 @@ public:
     double e0_square = vec0.squared_length();
     double e1_square = vec1.squared_length();
     double e2_square = vec2.squared_length();
-    double e0 = std::sqrt(e0_square); 
-    double e2 = std::sqrt(e2_square);
+    double e0 = CGAL::sqrt(e0_square);
+    double e2 = CGAL::sqrt(e2_square);
     double cos_angle = ( e0_square + e2_square - e1_square ) / 2.0 / e0 / e2;
-    double sin_angle = std::sqrt(1-cos_angle*cos_angle);
+    double sin_angle = CGAL::sqrt(1-cos_angle*cos_angle);
 
     return (cos_angle/sin_angle);
   }
@@ -100,10 +100,10 @@ public:
     // rewritten for safer fp arithmetic
     //double dot_aa = a.squared_length();
     //double dot_bb = b.squared_length();
-    //double divider = std::sqrt( dot_aa * dot_bb - dot_ab * dot_ab );
+    //double divider = CGAL::sqrt( dot_aa * dot_bb - dot_ab * dot_ab );
 
     Vector cross_ab = CGAL::cross_product(a, b);
-    double divider = std::sqrt(cross_ab*cross_ab);
+    double divider = CGAL::sqrt(cross_ab*cross_ab);
 
     if(divider == 0 /*|| divider != divider*/) 
     {
@@ -273,7 +273,7 @@ public:
         voronoi_area += (1.0 / 8.0) * (term1 + term2);
       }
       else {
-        double area_t = std::sqrt(squared_area(v0_p, v1_p, v_op_p));
+        double area_t = CGAL::sqrt(squared_area(v0_p, v1_p, v_op_p));
         if(angle0 == CGAL::OBTUSE) {
           voronoi_area += area_t / 2.0;
         }
@@ -312,7 +312,7 @@ public:
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
     return CotangentValue::operator()(v0, v1, v2)
-      / std::sqrt(squared_area(v0->point(), v1->point(), v2->point()));
+      / CGAL::sqrt(squared_area(v0->point(), v1->point(), v2->point()));
   }
 };
 /////////////////////////////////////////////////////////////////////////////////////////
@@ -456,7 +456,7 @@ public:
     vertex_descriptor v0 = target(he, pmesh());
     vertex_descriptor v1 = source(he, pmesh());
     Vector vec = v0->point() - v1->point();
-    double norm = std::sqrt( vec.squared_length() );
+    double norm = CGAL::sqrt( vec.squared_length() );
 
     // Only one triangle for border edges
     if ( is_border_edge(he, pmesh()) )
@@ -492,8 +492,8 @@ private:
     double e0_square = vec0.squared_length();
     double e1_square = vec1.squared_length();
     double e2_square = vec2.squared_length();
-    double e0 = std::sqrt(e0_square); 
-    double e2 = std::sqrt(e2_square);
+    double e0 = CGAL::sqrt(e0_square);
+    double e2 = CGAL::sqrt(e2_square);
     double cos_angle = ( e0_square + e2_square - e1_square ) / 2.0 / e0 / e2;
     cos_angle = (std::max)(-1.0, (std::min)(1.0, cos_angle)); // clamp into [-1, 1]
     double angle = acos(cos_angle);
@@ -512,8 +512,8 @@ private:
     double dot_aa_bb = dot_aa * dot_bb;
 
     double cos_rep = dot_ab;
-    double sin_rep = std::sqrt(dot_aa_bb  - dot_ab * dot_ab);
-    double normalizer = std::sqrt(dot_aa_bb); // |a|*|b|
+    double sin_rep = CGAL::sqrt(dot_aa_bb  - dot_ab * dot_ab);
+    double normalizer = CGAL::sqrt(dot_aa_bb); // |a|*|b|
 
     return (normalizer - cos_rep) / sin_rep; // formula from [Floater04] page 4
                                              // tan(Q/2) = (1 - cos(Q)) / sin(Q)
@@ -590,7 +590,7 @@ public:
   double w_ij(halfedge_descriptor he)
   {
     Vector v = target(he, pmesh())->point() - source(he, pmesh())->point();
-    double divider = std::sqrt(v.squared_length());
+    double divider = CGAL::sqrt(v.squared_length());
     if(divider == 0.0) {
       CGAL_warning(!"Scale dependent weight - zero length edge.");
       return (std::numeric_limits<double>::max)();

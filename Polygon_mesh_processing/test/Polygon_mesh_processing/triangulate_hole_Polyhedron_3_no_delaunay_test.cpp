@@ -94,7 +94,7 @@ CGAL::internal::Weight_min_max_dihedral_and_area
       ang_max = (std::max)(angle, ang_max);
     }
 
-    double area = std::sqrt(CGAL::squared_area(ppmap[target(edge_it,poly)],
+    double area = CGAL::sqrt(CGAL::squared_area(ppmap[target(edge_it,poly)],
                                                ppmap[target(next(edge_it,poly),poly)],
                                                ppmap[target(prev(edge_it,poly),poly)]));
     res = res + Weight(ang_max,area);

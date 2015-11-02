@@ -41,8 +41,8 @@ triangle_grid_sampling(const typename Kernel::Point_3& p0,
                 double distance,
                 OutputIterator out)
 {
-  const double d_p0p1 = std::sqrt( CGAL::squared_distance(p0, p1) );
-  const double d_p0p2 = std::sqrt( CGAL::squared_distance(p0, p2) );
+  const double d_p0p1 = CGAL::sqrt( CGAL::squared_distance(p0, p1) );
+  const double d_p0p2 = CGAL::sqrt( CGAL::squared_distance(p0, p2) );
 
   const double n = (std::max)(std::ceil( d_p0p1 / distance ),
                                    std::ceil( d_p0p2 / distance ));
@@ -88,7 +88,7 @@ sample_triangles(const TriangleRange& triangles, double distance, OutputIterator
       const Point_3& p1=t[(i+1)%3];
       if ( sampled_edges.insert(CGAL::make_sorted_pair(p0, p1)).second )
       {
-        const double d_p0p1 = std::sqrt( CGAL::squared_distance(p0, p1) );
+        const double d_p0p1 = CGAL::sqrt( CGAL::squared_distance(p0, p1) );
 
         const double nb_pts = std::ceil( d_p0p1 / distance );
         const Vector_3 step_vec = (p1 - p0) / nb_pts;
@@ -139,7 +139,7 @@ double approximated_Hausdorff_distance(
   double hdist = 0;
   BOOST_FOREACH(const typename Kernel::Point_3& pt, sample_points)
   {
-    double d = std::sqrt( tree.squared_distance(pt) );
+    double d = CGAL::sqrt( tree.squared_distance(pt) );
     // if ( d > 1e-1 ) std::cout << pt << "\n";
     if (d>hdist) hdist=d;
   }
