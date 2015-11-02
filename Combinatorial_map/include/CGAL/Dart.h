@@ -267,28 +267,28 @@ namespace CGAL {
      * @param amark the mark number.
      * @return the value for this number.
      */
-    bool get_mark(int amark) const
+    bool get_mark(size_type amark) const
     {
-      CGAL_assertion(amark>=0 && (size_type)amark<NB_MARKS);
-      return mmarks[(size_type)amark];
+      CGAL_assertion(amark>=0 && amark<NB_MARKS);
+      return mmarks[amark];
     }
 
     /** Set the mark of a given mark number to a given value.
      * @param amark the mark number.
      * @param AValue the value.
      */
-    void set_mark(int amark, bool avalue) const
+    void set_mark(size_type amark, bool avalue) const
     {
-      CGAL_assertion(amark>=0 && (size_type)amark<NB_MARKS);
-      mmarks.set((size_type)amark, avalue);
+      CGAL_assertion(amark>=0 && amark<NB_MARKS);
+      mmarks.set(amark, avalue);
     }
     /** Flip the mark of a given mark number.
      * @param amark the mark number.
      */
-    void flip_mark(int amark) const
+    void flip_mark(size_type amark) const
     {
-      CGAL_assertion(amark>=0 && (size_type)amark<NB_MARKS);
-      mmarks.flip((size_type)amark);
+      CGAL_assertion(amark>=0 && amark<NB_MARKS);
+      mmarks.flip(amark);
     }
 
     /** Return all the marks of this dart.

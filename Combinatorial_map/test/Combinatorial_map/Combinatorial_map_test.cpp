@@ -132,8 +132,65 @@ typedef CGAL::Combinatorial_map<4, Map_dart_items_4> Map8;
 
 typedef CGAL::Combinatorial_map<4, Map_dart_max_items_4> Map9;
 
+bool test_get_new_mark()
+{
+  cout << "***************************** TEST GET_NEW_MARK:"
+       << endl;
+
+  Map1 map;
+
+  Map1::size_type marks[Map1::NB_MARKS];
+  for (Map1::size_type i=0; i<Map1::NB_MARKS; ++i)
+  {
+    try
+    {
+      marks[i] = map.get_new_mark();
+    }
+    catch (Map1::Exception_no_more_available_mark)
+    {
+      std::cerr<<"No more free mark, exit."<<std::endl;
+      return false;
+    }
+  }
+
+  cout << "Creation of NB_MARK marks: OK" << endl;
+
+  bool res = false;
+  Map1::size_type mark=0;
+  try
+  {
+    mark = map.get_new_mark();
+  }
+  catch (Map1::Exception_no_more_available_mark)
+  {
+    std::cout<<"The creation of an additional mark throw an exception: OK"<<std::endl;
+    res = true;
+  }
+
+  if ( !res )
+  {
+      std::cerr<<"PB we can reserve NB_MARK+1 !! mark, exit."<<std::endl;
+      return false;
+  }
+  
+  for (Map1::size_type i=0; i<Map1::NB_MARKS; ++i)
+  {
+    map.free_mark(marks[i]);
+  }
+
+  cout << "***************************** TEST GET_NEW_MARK DONE" << endl;
+
+  return true;
+}
+
 int main()
 {
+  if ( !test_get_new_mark() )
+  {
+    std::cout<<"ERROR during test_get_new_mark."<<std::endl;
+    return EXIT_FAILURE;
+  }
+
   if ( !test2D<Map1>() )
   {
     std::cout<<"ERROR during test2D<Map1>."<<std::endl;

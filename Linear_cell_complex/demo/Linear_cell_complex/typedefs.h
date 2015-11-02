@@ -175,13 +175,20 @@ typedef LCC::Vector   Vector_3;
 
 typedef CGAL::Timer Timer;
 
-typedef CGAL::Triangulation_2_filtered_projection_traits_3<Mytraits> P_traits;
-typedef CGAL::Triangulation_vertex_base_with_info_2<Dart_handle,P_traits> Vb;
+struct Vertex_info
+{
+  Dart_handle dh;
+  Vector_3 v;
+};
 
 struct Face_info {
   bool exist_edge[3];
   bool is_external;
+  bool is_process;
 };
+
+typedef CGAL::Triangulation_2_filtered_projection_traits_3<Mytraits> P_traits;
+typedef CGAL::Triangulation_vertex_base_with_info_2<Vertex_info, P_traits> Vb;
 
 typedef CGAL::Triangulation_face_base_with_info_2<Face_info,P_traits> Fb1;
 

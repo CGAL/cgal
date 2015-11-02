@@ -577,7 +577,7 @@ namespace CGAL {
                  alcc.vertex_attributes().end());
     writer.write_facet_header();
 
-    int m = alcc.get_new_mark();
+    typename LCC::size_type m = alcc.get_new_mark();
 
     for ( typename LCC::Dart_range::iterator itall = alcc.darts().begin(),
             itallend = alcc.darts().end(); itall!=itallend; ++itall )

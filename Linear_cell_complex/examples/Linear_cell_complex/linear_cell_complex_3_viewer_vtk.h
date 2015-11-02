@@ -151,8 +151,8 @@ public:
 
     vtkPolyData *polydata = vtkPolyData::New();
   
-    int facettreated = lcc.get_new_mark();
-    int vertextreated = lcc.get_new_mark();
+    typename LCC::size_type facettreated = lcc.get_new_mark();
+    typename LCC::size_type vertextreated = lcc.get_new_mark();
 
     vtkCellArray* polygons = vtkCellArray::New();
     vtkCellArray* vertices = vtkCellArray::New();  

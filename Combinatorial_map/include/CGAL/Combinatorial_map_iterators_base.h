@@ -96,6 +96,8 @@ namespace CGAL {
     /// true iff this iterator is basic
     typedef Tag_true Basic_iterator;
 
+    typedef typename Map::size_type size_type;
+
   public:
     /// Main constructor.
     CMap_dart_iterator(Map& amap, Dart_handle adart):
@@ -150,7 +152,7 @@ namespace CGAL {
 
   protected:
     /// test if adart->beta(ai) exists and is not marked for amark
-    bool is_unmarked(Dart_handle adart, unsigned int ai, unsigned amark) const
+    bool is_unmarked(Dart_handle adart, unsigned int ai, size_type amark) const
     { return
 #ifdef CGAL_CMAP_DEPRECATED
         !mmap->is_free(adart,ai) && // Pb with static null_dart_handle for windows
@@ -164,7 +166,7 @@ namespace CGAL {
 
     /// test if adart->beta(ai)->beta(aj) exists and is not marked for amark
     bool is_unmarked2(Dart_handle adart, unsigned int ai, unsigned int aj,
-                      unsigned amark) const
+                      typename Map::size_type amark) const
     { return
 #ifdef CGAL_CMAP_DEPRECATED
          exist_betaij(adart, ai, aj) && // Pb with static null_dart_handle for windows
@@ -200,12 +202,14 @@ namespace CGAL {
 
     typedef Tag_true Use_mark;
 
+    typedef typename Map::size_type size_type;
+
     CGAL_static_assertion( (Bi<=Map::dimension &&
                             boost::is_same<Ite_has_stack,Tag_false>::value) );
 
   public:
     /// Main constructor.
-    CMap_extend_iterator(Map& amap, Dart_handle adart, int amark):
+    CMap_extend_iterator(Map& amap, Dart_handle adart, size_type amark):
       Base(amap, adart),
       mmark_number(amark),
       minitial_dart(adart)
@@ -226,7 +230,7 @@ namespace CGAL {
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(mmark_number != -1);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       Base::operator= ( Base(*this->mmap,minitial_dart) );
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark(minitial_dart, mmark_number);
@@ -242,7 +246,7 @@ namespace CGAL {
     /// Prefix ++ operator.
     Self& operator++()
     {
-      CGAL_assertion(mmark_number != -1);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       CGAL_assertion(this->cont());
 
       do
@@ -298,7 +302,7 @@ namespace CGAL {
     std::queue<Dart_handle> mto_treat;
 
     /// Index of the used mark.
-    int mmark_number;
+    size_type mmark_number;
 
     /// Initial dart
     Dart_handle minitial_dart;
@@ -320,8 +324,10 @@ namespace CGAL {
 
     typedef Tag_true Use_mark;
 
+    typedef typename Map::size_type size_type;
+
     /// Main constructor.
-    CMap_extend_iterator(Map& amap, Dart_handle adart, int amark):
+    CMap_extend_iterator(Map& amap, Dart_handle adart, size_type amark):
       Base(amap, adart, amark)
     {
       if ( this->minitial_dart!=amap.null_handle &&
@@ -336,7 +342,7 @@ namespace CGAL {
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(this->mmark_number != -1);
+      CGAL_assertion(this->mmark_number != Map::INVALID_MARK);
       Base::rewind();
       if ( !this->mmap->is_free(this->minitial_dart, Bi) &&
            this->mmap->beta(this->minitial_dart, Bi)!=this->minitial_dart )
@@ -393,6 +399,8 @@ namespace CGAL {
     /// True iff this iterator is basic
     typedef Tag_false Basic_iterator;
 
+    typedef typename Map::size_type size_type;
+
     CGAL_static_assertion( (boost::is_same<typename Base::Basic_iterator,
                             Tag_true>::value) );
 
@@ -404,12 +412,12 @@ namespace CGAL {
     /// Destructor.
     ~CMap_non_basic_iterator()
     {
-      CGAL_assertion( this->mmark_number!=-1 );
+      CGAL_assertion( this->mmark_number!=Map::INVALID_MARK );
       if (this->mmap->get_number_of_times_mark_reserved
           (this->mmark_number)==1)
         unmark_treated_darts();
       this->mmap->free_mark(this->mmark_number);
-      this->mmark_number = -1; // To avoid basic class to try to unmark darts.
+      this->mmark_number = Map::INVALID_MARK; // To avoid basic class to try to unmark darts.
     }
 
     /// Copy constructor.
@@ -426,7 +434,7 @@ namespace CGAL {
             (this->mmark_number)==1)
           unmark_treated_darts();
         this->mmap->free_mark(this->mmark_number);
-        this->mmark_number = -1;
+        this->mmark_number = Map::INVALID_MARK;
 
         Base::operator=(aiterator);
         this->mmap->share_a_mark(this->mmark_number);
@@ -522,7 +530,10 @@ namespace CGAL {
     typedef CMap_range<Map_,It,Const_it,Tag_true> Base_cmap_range;
     typedef It iterator;
     typedef Const_it const_iterator;
-    CMap_range(Map_ &amap, typename Map_::Dart_handle adart, int amark=-1):
+
+    typedef typename Map_::size_type size_type;
+
+    CMap_range(Map_ &amap, typename Map_::Dart_handle adart, size_type amark=Map_::INVALID_MARK):
       mmap(amap), mdart(adart), msize(0), mmark(amark)
     {}
     iterator begin()             { return iterator(mmap,mdart,mmark); }
@@ -543,7 +554,7 @@ namespace CGAL {
     Map_ & mmap;
     typename Map_::Dart_handle mdart;
     mutable typename Map_::size_type msize;
-    int mmark;
+    size_type mmark;
   };
   //****************************************************************************
   template <typename Map_, typename Const_it,
@@ -575,8 +586,9 @@ namespace CGAL {
   struct CMap_const_range<Map_,Const_it,Tag_true>
   {
     typedef Const_it const_iterator;
+    typedef typename Map_::size_type size_type;
     CMap_const_range(const Map_ &amap, typename Map_::Dart_const_handle adart,
-                     int amark=-1):
+                     size_type amark=Map_::INVALID_MARK):
       mmap(amap), mdart(adart), msize(0), mmark(amark)
     {}
     const_iterator begin() const { return const_iterator(mmap,mdart,mmark); }
@@ -595,7 +607,7 @@ namespace CGAL {
     const Map_ & mmap;
     typename Map_::Dart_const_handle mdart;
     mutable typename Map_::size_type msize;
-    int mmark;
+    size_type mmark;
   };
   //****************************************************************************
 } // namespace CGAL

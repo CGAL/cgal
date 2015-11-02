@@ -164,7 +164,7 @@ void MainWindow::onSceneChanged ()
 {
   QApplication::setOverrideCursor( Qt::WaitCursor );
 
-  int mark = scene.lcc->get_new_mark ();
+  LCC::size_type mark = scene.lcc->get_new_mark ();
   scene.lcc->negate_mark (mark);
 
   std::vector<unsigned int> cells;
@@ -724,7 +724,7 @@ void MainWindow::on_actionCompute_Voronoi_3D_triggered ()
   // We remove the infinite volume and all its adjacent volumes.
   {
     std::stack<Dart_handle> toremove;
-    int mark_toremove=scene.lcc->get_new_mark();
+    LCC::size_type mark_toremove=scene.lcc->get_new_mark();
     toremove.push(ddh);
     CGAL::mark_cell<LCC,3>(*scene.lcc, ddh, mark_toremove);
     for (LCC::Dart_of_cell_range<3>::iterator
@@ -829,7 +829,7 @@ void MainWindow::on_actionClose_volume_triggered()
 
 void MainWindow::on_actionSew3_same_facets_triggered()
 {
-  int mymark = scene.lcc->get_new_mark();
+  LCC::size_type mymark = scene.lcc->get_new_mark();
   mark_all_filled_and_visible_volumes(mymark);
 
   QApplication::setOverrideCursor (Qt::WaitCursor);
@@ -990,8 +990,8 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
   scene.lcc->set_update_attributes(false);
 
   std::vector<Dart_handle> edges;
-  int treated =  scene.lcc->get_new_mark();
-  int treated2 =  scene.lcc->get_new_mark();
+  LCC::size_type treated  = scene.lcc->get_new_mark();
+  LCC::size_type treated2 = scene.lcc->get_new_mark();
 
   for ( LCC::Dart_range::iterator it= scene.lcc->darts().begin(),
           itend = scene.lcc->darts().end(); it!=itend; ++it )
@@ -1149,7 +1149,7 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
           itend(lcc.darts_of_orbit<1>(d1).end()); it!=itend; ++it)
    {
      vh = cdt.insert(lcc.point(it));
-     vh->info()=it;
+     vh->info().dh=it;
      if( first==NULL )
      {
        first=vh;
@@ -1169,22 +1169,48 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
    for( CDT::All_faces_iterator fit = cdt.all_faces_begin(),
           fitend = cdt.all_faces_end(); fit != fitend; ++fit)
    {
-     fit->info().is_external = false;
+     fit->info().is_external = true;
+     fit->info().is_process = false;
      fit->info().exist_edge[0]=false;
      fit->info().exist_edge[1]=false;
      fit->info().exist_edge[2]=false;
    }
 
    std::queue<CDT::Face_handle> face_queue;
+   CDT::Face_handle face_internal = NULL;
 
    face_queue.push(cdt.infinite_vertex()->face());
    while(! face_queue.empty() )
    {
      CDT::Face_handle fh = face_queue.front();
      face_queue.pop();
-     if(!fh->info().is_external)
+     if(!fh->info().is_process)
      {
-       fh->info().is_external = true;
+       fh->info().is_process = true;
+       for(int i = 0; i <3; ++i)
+       {
+         if(!cdt.is_constrained(std::make_pair(fh, i)))
+         {
+           face_queue.push(fh->neighbor(i));
+         }
+         else if (face_internal==NULL)
+         {
+           face_internal = fh->neighbor(i);
+         }
+       }
+     }
+   }
+   if ( face_internal!=NULL )
+     face_queue.push(face_internal);
+   
+   while(! face_queue.empty() )
+   {
+     CDT::Face_handle fh = face_queue.front();
+     face_queue.pop();
+     if(!fh->info().is_process)
+     {
+       fh->info().is_process = true;
+       fh->info().is_external = false;
        for(int i = 0; i <3; ++i)
        {
          if(!cdt.is_constrained(std::make_pair(fh, i)))
@@ -1194,6 +1220,7 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
        }
      }
    }
+   
    for( CDT::Finite_edges_iterator eit = cdt.finite_edges_begin(),
           eitend = cdt.finite_edges_end(); eit != eitend; ++eit)
    {
@@ -1228,12 +1255,31 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
        CGAL_assertion( !fh->info().exist_edge[index] );
        CGAL_assertion( !opposite_fh->info().
                        exist_edge[cdt.mirror_index(fh,index)] );
+       // triangle is (vc, vb, va)
        const CDT::Vertex_handle va = fh->vertex(cdt. cw(index));
        const CDT::Vertex_handle vb = fh->vertex(cdt.ccw(index));
-
-       Dart_handle ndart=
-         CGAL::insert_cell_1_in_cell_2(lcc,va->info(),vb->info());
-       va->info()=lcc.beta<2>(ndart);
+       const CDT::Vertex_handle vc = fh->vertex(index);
+       
+       Dart_handle dd1 = NULL;
+       for (LCC::Dart_of_cell_range<0, 2>::iterator it(lcc.darts_of_cell<0, 2>(va->info().dh).begin());
+            dd1==NULL && it.cont(); ++it)
+       {
+         if (lcc.point(lcc.beta<1>(it))==vc->point())
+           dd1=it;
+       }
+       
+       Dart_handle dd2 = NULL;
+       for (LCC::Dart_of_cell_range<0, 2>::iterator it(lcc.darts_of_cell<0, 2>(vb->info().dh).begin());
+            dd2==NULL && it.cont(); ++it)
+       {
+         if (lcc.point(lcc.beta<0>(it))==vc->point())
+           dd2=it;
+       }
+       
+       //       assert(((lcc.beta<0,0>(dd1)==dd2) || lcc.beta<1,1>(dd1)==dd2));
+       
+       Dart_handle ndart=CGAL::insert_cell_1_in_cell_2(lcc, dd1, dd2);
+       va->info().dh=lcc.beta<2>(ndart);
 
        fh->info().exist_edge[index]=true;
        opposite_fh->info().exist_edge[cdt.mirror_index(fh,index)]=true;
@@ -1485,7 +1531,7 @@ void MainWindow::onHeaderClicked(int col)
   }
 }
 
-void MainWindow::mark_all_filled_and_visible_volumes(int amark)
+void MainWindow::mark_all_filled_and_visible_volumes(LCC::size_type amark)
 {
   for (LCC::Attribute_range<3>::type::iterator
        it=scene.lcc->attributes<3>().begin(),
@@ -1504,7 +1550,7 @@ void MainWindow::on_actionExtend_filled_volumes_triggered()
 
   std::vector<LCC::Attribute_handle<3>::type> tofill;
 
-  int mark_volume = scene.lcc->get_new_mark();
+  LCC::size_type mark_volume = scene.lcc->get_new_mark();
   bool already_tofill;
 
   for (LCC::Attribute_range<3>::type::iterator
@@ -1559,7 +1605,7 @@ void MainWindow::on_actionExtend_hidden_volumes_triggered()
 
   std::vector<LCC::Attribute_handle<3>::type> tohide;
 
-  int mark_volume = scene.lcc->get_new_mark();
+  LCC::size_type mark_volume = scene.lcc->get_new_mark();
   bool already_tohide;
 
   for (LCC::Attribute_range<3>::type::iterator
@@ -1679,9 +1725,9 @@ void MainWindow::onMengerInc()
   std::vector<Dart_handle> faces;
   std::size_t nbvolinit = mengerVolumes.size();
 
-  int markEdges = (scene.lcc)->get_new_mark();
-  int markFaces = (scene.lcc)->get_new_mark();
-  int markVols  = (scene.lcc)->get_new_mark();
+  LCC::size_type markEdges = (scene.lcc)->get_new_mark();
+  LCC::size_type markFaces = (scene.lcc)->get_new_mark();
+  LCC::size_type markVols  = (scene.lcc)->get_new_mark();
 
   for(std::vector<Dart_handle>::iterator itvol=mengerVolumes.begin();
         itvol!=mengerVolumes.end(); ++itvol)
@@ -1994,7 +2040,7 @@ void MainWindow::split_vol_in_twentyseven(Dart_handle dh)
 
 void MainWindow::process_full_slice(Dart_handle init,
                                   std::vector<Dart_handle>& faces,
-                                  int markVols)
+                                  LCC::size_type markVols)
 {
   Dart_handle d[12];
   d[0]=scene.lcc->beta(init,1,2);
@@ -2025,7 +2071,7 @@ void MainWindow::process_full_slice(Dart_handle init,
 
 void MainWindow::process_inter_slice(Dart_handle init,
                                    std::vector<Dart_handle>& faces,
-                                   int markVols)
+                                   LCC::size_type markVols)
 {
   Dart_handle d[24];
   d[0]=init;
@@ -2085,8 +2131,8 @@ void MainWindow::onMengerDec()
   // thus we can directly "cut" the std::vector to the correct size.
   mengerVolumes.resize(CGAL::ipower(20,mengerLevel));
 
-  int markVols     = (scene.lcc)->get_new_mark();
-  int markVertices = (scene.lcc)->get_new_mark();
+  LCC::size_type markVols     = (scene.lcc)->get_new_mark();
+  LCC::size_type markVertices = (scene.lcc)->get_new_mark();
 
   std::vector<Dart_handle> faces;
   std::vector<Dart_handle> edges;
@@ -2322,8 +2368,8 @@ void MainWindow::onSierpinskiCarpetInc()
   std::vector<Dart_handle> edges;
   nbfacesinit = sierpinskiCarpetSurfaces.size();
 
-  int markEdges = (scene.lcc)->get_new_mark();
-  int markFaces = (scene.lcc)->get_new_mark();
+  LCC::size_type markEdges = (scene.lcc)->get_new_mark();
+  LCC::size_type markFaces = (scene.lcc)->get_new_mark();
 
   for(std::vector<Dart_handle>::iterator itfaces=sierpinskiCarpetSurfaces.begin();
         itfaces!=sierpinskiCarpetSurfaces.end(); ++itfaces)
@@ -2446,7 +2492,7 @@ void MainWindow::sierpinski_carpet_update_geometry()
 
   if (updateAttributesMethodTraversal)*/
   {
-    int markVertices = (scene.lcc)->get_new_mark();
+    LCC::size_type markVertices = (scene.lcc)->get_new_mark();
 
     for(std::size_t i = 0; i < nbfacesinit; i++)
     {
@@ -2546,7 +2592,7 @@ void MainWindow::sierpinski_carpet_update_geometry()
 
 void MainWindow::sierpinski_carpet_compute_geometry()
 {
-  int markVertices = (scene.lcc)->get_new_mark();
+  LCC::size_type markVertices = (scene.lcc)->get_new_mark();
 
   for(std::size_t i = 0; i < nbfacesinit; i++)
   {
@@ -2860,8 +2906,8 @@ void MainWindow::onSierpinskiCarpetDec()
   // thus we can directly "cut" the std::vector to the correct size.
   sierpinskiCarpetSurfaces.resize(CGAL::ipower(8,sierpinskiCarpetLevel));
 
-  int markSurfaces = (scene.lcc)->get_new_mark();
-  int markVertices = (scene.lcc)->get_new_mark();
+  LCC::size_type markSurfaces = (scene.lcc)->get_new_mark();
+  LCC::size_type markVertices = (scene.lcc)->get_new_mark();
 
   std::vector<Dart_handle> edges;
   std::vector<Dart_handle> vertices;
@@ -3060,8 +3106,8 @@ void MainWindow::onSierpinskiTriangleInc()
   std::vector<Dart_handle> edges;
   nbfacesinit = sierpinskiTriangleSurfaces.size();
 
-  int markEdges = (scene.lcc)->get_new_mark();
-  int markFaces = (scene.lcc)->get_new_mark();
+  LCC::size_type markEdges = (scene.lcc)->get_new_mark();
+  LCC::size_type markFaces = (scene.lcc)->get_new_mark();
 
   for(std::vector<Dart_handle>::iterator itfaces=sierpinskiTriangleSurfaces.begin();
         itfaces!=sierpinskiTriangleSurfaces.end(); ++itfaces)
@@ -3247,8 +3293,8 @@ void MainWindow::onSierpinskiTriangleDec()
   // thus we can directly "cut" the std::vector to the correct size.
   sierpinskiTriangleSurfaces.resize(CGAL::ipower(3,sierpinskiTriangleLevel));
 
-  int markSurfaces = (scene.lcc)->get_new_mark();
-  int markVertices = (scene.lcc)->get_new_mark();
+  LCC::size_type markSurfaces = (scene.lcc)->get_new_mark();
+  LCC::size_type markVertices = (scene.lcc)->get_new_mark();
 
   std::vector<Dart_handle> edges;
   std::vector<Dart_handle> vertices;

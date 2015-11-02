@@ -338,7 +338,7 @@ bool test3D()
 {
   typedef typename Map::Dart_handle Dart_handle;
   Dart_handle d,dh,dh2,d1,d2,d3,d4;
-  int mark;
+  typename Map::size_type mark;
   unsigned int nbc,nb2;
   Map map;
   cout << "***************************** TEST BASIC CREATION 3D:"

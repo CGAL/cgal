@@ -65,8 +65,10 @@ namespace CGAL
 template<typename CMap>
 struct Reserve_mark_functor
 {
+  typedef typename CMap::size_type size_type;
+
   template <unsigned int i>
-  static void run(const CMap* amap, std::vector<int>* marks)
+  static void run(const CMap* amap, std::vector<size_type>* marks)
   { (*marks)[i] = amap->get_new_mark(); }
 };
 // ****************************************************************************
@@ -94,7 +96,9 @@ struct Test_is_valid_attribute_functor
   static bool run(const CMap* amap,
                   typename CMap::Dart_const_handle adart)
   {
-    int mark=amap->get_new_mark();
+    typedef typename CMap::size_type size_type;
+
+    size_type mark=amap->get_new_mark();
     bool res = true;
     CGAL::internal::Test_is_valid_attribute_functor<CMap>::
         run<i>(amap, adart, mark, &res);

@@ -196,7 +196,7 @@ protected:
   void on_new_volume(Dart_handle adart);
   void on_delete_volume(Dart_handle adart);
   void init_all_new_volumes();
-  void mark_all_filled_and_visible_volumes(int amark);
+  void mark_all_filled_and_visible_volumes(LCC::size_type amark);
 
   Dart_handle make_iso_cuboid(const Point_3 basepoint, LCC::FT lg);
 
@@ -218,10 +218,10 @@ protected:
   void split_vol_in_twentyseven(Dart_handle dh);
   void process_full_slice(Dart_handle init,
                           std::vector<Dart_handle>& faces,
-                          int markVols);
+                          LCC::size_type markVols);
   void process_inter_slice(Dart_handle init,
                            std::vector<Dart_handle>& faces,
-                           int markVols);
+                           LCC::size_type markVols);
 
   void sierpinski_carpet_copy_attributes_and_embed_vertex(Dart_handle dh,
                                                           LCC::Point& p);

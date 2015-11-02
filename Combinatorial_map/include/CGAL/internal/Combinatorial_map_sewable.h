@@ -56,14 +56,14 @@ struct Is_sewable_functor
         typename CMap::Dart_const_handle,
         typename CMap::Hash_function> bijection;
 
-    int m1 = amap->get_new_mark();
-    int m2 = amap->get_new_mark();
+    typename CMap::size_type m1 = amap->get_new_mark();
+    typename CMap::size_type m2 = amap->get_new_mark();
     CGAL::CMap_dart_const_iterator_basic_of_involution<CMap,i>
         I1(*amap, adart1, m1);
     CGAL::CMap_dart_const_iterator_basic_of_involution_inv<CMap,i>
         I2(*amap, adart2, m2);
     bool res = true;
-    int mbijection = amap->get_new_mark();
+    typename CMap::size_type mbijection = amap->get_new_mark();
 
     while ( res && I1.cont() && I2.cont() )
     {
