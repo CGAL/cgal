@@ -126,7 +126,7 @@ namespace CGAL {
           extracted_planes.push_back (static_cast<Plane> (*(m_planes[i])));
           plane_point_index.push_back (std::vector<int>());
           std::copy (m_planes[i]->indices_of_assigned_points().begin (),
-                     m_planes[i]->indices_of_assigned_points().begin (),
+                     m_planes[i]->indices_of_assigned_points().end (),
                      std::back_inserter (plane_point_index.back ()));
 
           std::vector < Point > listp;
@@ -227,7 +227,7 @@ namespace CGAL {
 							
                               if(cluster_normal*normal_it <0)
                                 normal_it=-normal_it;
-                            
+
                               cluster_normal=(FT)cumulated_area*cluster_normal+(FT)list_areas[it]*normal_it;
                               FT norm=1./sqrt(cluster_normal.squared_length()); 
                               cluster_normal=norm*cluster_normal;
@@ -343,7 +343,7 @@ namespace CGAL {
       for (std::size_t i=0; i<group_planes_orthogonal.size();i++)
         {
           std::cout<<std::endl<<i<<" -> ";
-          for (std::size_t j=0;j<group_planes_orthogonal.size();j++)
+          for (std::size_t j=0;j<group_planes_orthogonal[i].size();j++)
             {
               if(group_planes_orthogonal[i][j])
                 std::cout<<j<<"  ";
