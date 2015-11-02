@@ -37,14 +37,14 @@ namespace Polygon_mesh_processing {
 * edge flips, Laplacian smoothing and projection to the initial surface
 * to generate a smooth mesh with a prescribed edge length.
 *
-* @tparam TriangleMesh model of `MutableFaceGraph` that 
+* @tparam PolygonMesh model of `MutableFaceGraph` that 
 *         has an internal property map for `CGAL::vertex_point_t`.
-* @tparam FaceRange range of `boost::graph_traits<TriangleMesh>::%face_descriptor`,
+* @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `InputIterator`.
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
-* @param tmesh triangulated surface mesh with patches to be remeshed
-* @param faces the range of faces defining one or several surface patches to be remeshed
+* @param pmesh a polygon mesh with triangulated surface patches to be remeshed
+* @param faces the range of triangular faces defining one or several surface patches to be remeshed
 * @param target_edge_length the edge length that is targetted in the remeshed patch
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
@@ -53,7 +53,7 @@ namespace Polygon_mesh_processing {
 *
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
-*    to the vertices of `tmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
 *  \cgalParamEnd
 *  \cgalParamBegin{number_of_iterations} the number of iterations for the
 *    sequence of atomic operations performed (listed in the above description)
@@ -80,34 +80,34 @@ namespace Polygon_mesh_processing {
 *
 *@todo add possibility to provide a functor that projects to a prescribed surface
 */
-template<typename TriangleMesh
+template<typename PolygonMesh
        , typename FaceRange
        , typename NamedParameters>
-void isotropic_remeshing(TriangleMesh& tmesh
+void isotropic_remeshing(PolygonMesh& pmesh
                        , const FaceRange& faces
                        , const double& target_edge_length
                        , const NamedParameters& np)
 {
-  typedef TriangleMesh TM;
+  typedef PolygonMesh PM;
   using boost::choose_pmap;
   using boost::get_param;
   using boost::choose_param;
 
-  typedef typename GetGeomTraits<TM, NamedParameters>::type GT;
+  typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
 
-  typedef typename GetVertexPointMap<TM, NamedParameters>::type VPMap;
+  typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
-                            tmesh,
+                            pmesh,
                             boost::vertex_point);
 
   typedef typename boost::lookup_named_param_def <
       CGAL::edge_is_constrained_t,
       NamedParameters,
-      internal::Border_constraint_pmap<TM, FaceRange>//default
+      internal::Border_constraint_pmap<PM, FaceRange>//default
     > ::type ECMap;
   ECMap ecmap
     = choose_param(get_param(np, edge_is_constrained),
-                   internal::Border_constraint_pmap<TM, FaceRange>(tmesh, faces));
+                   internal::Border_constraint_pmap<PM, FaceRange>(pmesh, faces));
 
   double low = 4. / 5. * target_edge_length;
   double high = 4. / 3. * target_edge_length;
@@ -119,12 +119,12 @@ void isotropic_remeshing(TriangleMesh& tmesh
     msg.append(" true with constraints larger than 4/3 * target_edge_length.");
     msg.append(" Remeshing aborted.");
     CGAL_precondition_msg(
-      internal::constraints_are_short_enough(tmesh, ecmap, vpmap, high),
+      internal::constraints_are_short_enough(pmesh, ecmap, vpmap, high),
       msg.c_str());
   }
 
-  typename internal::Incremental_remesher<TM, VPMap, GT>
-    remesher(tmesh, vpmap, protect);
+  typename internal::Incremental_remesher<PM, VPMap, GT>
+    remesher(pmesh, vpmap, protect);
   remesher.init_faces_remeshing(faces, ecmap);
 
   unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
@@ -158,13 +158,13 @@ void isotropic_remeshing(TriangleMesh& tmesh
 #endif
 }
 
-template<typename TriangleMesh
+template<typename PolygonMesh
        , typename FaceRange>
-void isotropic_remeshing(TriangleMesh& tmesh
+void isotropic_remeshing(PolygonMesh& pmesh
   , const FaceRange& faces
   , const double& target_edge_length)
 {
-  isotropic_remeshing(tmesh,
+  isotropic_remeshing(pmesh,
     faces,
     target_edge_length,
     parameters::all_default());
@@ -180,13 +180,13 @@ void isotropic_remeshing(TriangleMesh& tmesh
 * activated (to match the constrained edge length required by the
 * remeshing algorithm to be guaranteed to terminate)
 *
-* @tparam TriangleMesh model of `MutableFaceGraph` that
+* @tparam PolygonMesh model of `MutableFaceGraph` that
 *         has an internal property map for `CGAL::vertex_point_t`.
-* @tparam EdgeRange range of `boost::graph_traits<TriangleMesh>::%edge_descriptor`,
+* @tparam EdgeRange range of `boost::graph_traits<PolygonMesh>::%edge_descriptor`,
 *   model of `Range`. Its iterator type is `InputIterator`.
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
-* @param tmesh triangulated surface mesh with patches to be remeshed
+* @param pmesh a polygon mesh
 * @param edges the range of edges to be split if they are longer than given threshold
 * @param max_length the edge length above which an edge from `edges` is split
 *        into to sub-edges
@@ -194,71 +194,71 @@ void isotropic_remeshing(TriangleMesh& tmesh
 
 * \cgalNamedParamsBegin
 *  \cgalParamBegin{vertex_point_map} the property map with the points associated
-*    to the vertices of `tmesh`. Instance of a class model of `ReadWritePropertyMap`.
+*    to the vertices of `pmesh`. Instance of a class model of `ReadWritePropertyMap`.
 *  \cgalParamEnd
 * \cgalNamedParamsEnd
 *
 * @sa `isotropic_remeshing()`
 *
 */
-template<typename TriangleMesh
+template<typename PolygonMesh
        , typename EdgeRange
        , typename NamedParameters>
-void split_long_edges(TriangleMesh& tmesh
+void split_long_edges(PolygonMesh& pmesh
                     , EdgeRange& edges
                     , const double& max_length
                     , const NamedParameters& np)
 {
-  typedef TriangleMesh TM;
+  typedef PolygonMesh PM;
   using boost::choose_pmap;
   using boost::get_param;
 
-  typedef typename GetGeomTraits<TM, NamedParameters>::type GT;
-  typedef typename GetVertexPointMap<TM, NamedParameters>::type VPMap;
+  typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
+  typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
-                            tmesh,
+                            pmesh,
                             boost::vertex_point);
 
-  typename internal::Incremental_remesher<TM, VPMap, GT>
-    remesher(tmesh, vpmap, false/*protect constraints*/);
+  typename internal::Incremental_remesher<PM, VPMap, GT>
+    remesher(pmesh, vpmap, false/*protect constraints*/);
 
   remesher.split_long_edges(edges, max_length, Emptyset_iterator());
 }
 
-template<typename TriangleMesh, typename EdgeRange>
-void split_long_edges(TriangleMesh& tmesh
+template<typename PolygonMesh, typename EdgeRange>
+void split_long_edges(PolygonMesh& pmesh
                     , EdgeRange& edges
                     , const double& max_length)
 {
-  split_long_edges(tmesh,
+  split_long_edges(pmesh,
     edges,
     max_length,
     parameters::all_default());
 }
 
 //used in the Polyhedron demo
-template<typename TriangleMesh
+template<typename PolygonMesh
        , typename EdgeRange
        , typename OutputIterator
        , typename NamedParameters>
-void split_long_edges(TriangleMesh& tmesh
+void split_long_edges(PolygonMesh& pmesh
         , EdgeRange& edge_range
         , const double& max_length
         , OutputIterator out//edges after splitting, all shorter than target_length
         , const NamedParameters& np)
 {
-  typedef TriangleMesh TM;
+  typedef PolygonMesh PM;
   using boost::choose_pmap;
   using boost::get_param;
 
-  typedef typename GetGeomTraits<TM, NamedParameters>::type GT;
-  typedef typename GetVertexPointMap<TM, NamedParameters>::type VPMap;
+  typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
+  typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
   VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
-                            tmesh,
+                            pmesh,
                             boost::vertex_point);
 
-  typename internal::Incremental_remesher<TM, VPMap, GT>
-    remesher(tmesh, vpmap, false/*protect constraints*/);
+  typename internal::Incremental_remesher<PM, VPMap, GT>
+    remesher(pmesh, vpmap, false/*protect constraints*/);
 
   remesher.split_long_edges(edge_range, max_length, out);
 }
