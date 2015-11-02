@@ -59,6 +59,7 @@
 <td width="28%">
 
 <table CELLSPACING=0>
+<tr><td><a href="#release4.8">4.8</a>&nbsp;<td> (2016)
 <tr><td><a href="#release4.7">4.7</a>&nbsp;<td> (October 2015)
 <tr><td><a href="#release4.6.2">4.6.2</a>&nbsp;<td> (August 2015)
 <tr><td><a href="#release4.6.1">4.6.1</a>&nbsp;<td> (June 2015)
@@ -146,6 +147,10 @@ and <code>src/</code> directories).
   <h3>3D Boolean Operations on Nef Polyhedra</h3>
   <ul>
     <li>Add 3 new constructors: from a point range, from a point, and from a segment.</li>
+  </ul>
+  <h3>Combinatorial Maps</h3>
+  <ul>
+    <li>Change the type of Boolean marks, old type is int, new type is size_type. If no more mark is available, get_new_mark throws an exception, instead of returning -1.</li>
   </ul>
 <!-- Arrangements -->
   <h3>2D Arrangements</h3>
