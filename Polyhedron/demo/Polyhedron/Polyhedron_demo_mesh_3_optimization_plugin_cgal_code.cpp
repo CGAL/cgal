@@ -1,5 +1,5 @@
 #include "config.h"
-
+#include "config_mesh_3.h"
 #include "C3t3_type.h"
 #include "Scene_c3t3_item.h"
 #include "Scene_polyhedron_item.h"
@@ -86,7 +86,7 @@ Optimizer_thread* cgal_code_optimization(Scene_c3t3_item& c3t3_item,
   // Create result item
   Scene_c3t3_item* p_result_item = create_new_item ? 
     new Scene_c3t3_item(c3t3_item.c3t3()) : &c3t3_item;
-  
+
   if ( NULL == p_result_item )
   {
     return NULL;
@@ -480,7 +480,7 @@ cgal_code_lloyd_mesh_3(Scene_c3t3_item& c3t3_item,
   p.convergence_ratio = convergence_ratio;
   p.freeze_ratio = freeze_ratio;
   p.max_iteration_nb = max_iteration_number;
-  
+
   return cgal_code_optimization(c3t3_item, p, create_new_item);
 }
 #endif

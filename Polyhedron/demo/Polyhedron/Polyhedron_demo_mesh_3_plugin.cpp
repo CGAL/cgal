@@ -299,7 +299,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                            .arg(tet_sizing)
                            .arg(approx));
       result_item->setColor(Qt::magenta);
-      result_item->setRenderingMode(item->renderingMode());
+      result_item->setRenderingMode(FlatPlusEdges);
       item->setVisible(false);
       result_item->set_data_item(item);
       scene->itemChanged(index);

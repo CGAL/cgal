@@ -914,4 +914,3 @@ void Scene_segmented_image_item::draw_Bbox(Bbox bbox, std::vector<float> *vertic
 
 }
 
-

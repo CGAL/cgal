@@ -51,6 +51,7 @@ Scene_c3t3_item::Scene_c3t3_item()
   normals.resize(0);
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
   c3t3_changed();
+  setRenderingMode(FlatPlusEdges);
 }
 
 Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
@@ -67,6 +68,7 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   normals.resize(0);
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
   c3t3_changed();
+  setRenderingMode(FlatPlusEdges);
 }
 
 Scene_c3t3_item::~Scene_c3t3_item()

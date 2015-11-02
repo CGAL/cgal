@@ -278,7 +278,6 @@ Mesh_3_optimization_plugin::lloyd()
   // -----------------------------------
   Scene_c3t3_item* item = get_c3t3_item();
   if ( NULL == item ) { return; }
-
   // -----------------------------------
   // Dialog box
   // -----------------------------------
