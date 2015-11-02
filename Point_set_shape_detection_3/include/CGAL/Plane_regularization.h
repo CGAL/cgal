@@ -60,6 +60,14 @@ namespace CGAL {
 
   private:
 
+    struct Plane_cluster
+    {
+      std::vector<std::size_t> planes;
+      Vector normal;
+      FT cosangle_vertical;
+      FT area;
+    };
+
     Traits m_traits;
 
     Input_iterator m_input_begin;
@@ -141,47 +149,43 @@ namespace CGAL {
 	
 
 
-      // clustering the parallel primitives and store them in list_parallel_planes
-      // & compute the normal, size and cos angle to the vertical of each cluster, and store that in list_cluster_normales, list_cluster_angle and list_cluster_area
-      std::vector < std::vector < int > > list_parallel_planes;
-      std::vector < Vector > list_cluster_normales;
-      std::vector < double > list_cluster_cosangle_vertical; 
-      std::vector < double > list_cluster_area;
+      // clustering the parallel primitives and store them in clusters
+      // & compute the normal, size and cos angle to the vertical of each cluster
       
-      std::vector < bool > is_available;
-      for (std::size_t i = 0; i < m_planes.size (); ++ i)
-        is_available.push_back (true);
+      std::vector<Plane_cluster> clusters;
+      std::vector<bool> is_available (m_planes.size (), true);
       
       for (std::size_t i = 0; i < m_planes.size(); ++ i)
         {
 
           if(is_available[i])
             {
+              is_available[i] = false;
 
-              is_available[i]=false;
+              clusters.push_back (Plane_cluster());
+              Plane_cluster& clu = clusters.back ();
 
               //initialization containers
-              std::vector < int > index_container_parallel;
-              index_container_parallel.push_back(i);
+              clu.planes.push_back (i);
               
-              std::vector < int > index_container_former_ring_parallel;
+              std::vector<std::size_t> index_container_former_ring_parallel;
               index_container_former_ring_parallel.push_back(i);
               
-              std::list < int > index_container_current_ring_parallel;
+              std::list<std::size_t> index_container_current_ring_parallel;
 
               //propagation over the pairs of epsilon-parallel primitives
               bool propagation=true;
-              Vector cluster_normal = m_planes[i]->plane_normal ();
-              double cumulated_area = m_areas[i];
+              clu.normal = m_planes[i]->plane_normal ();
+              clu.area = m_areas[i];
 			
               do
                 {
-                  propagation=false;
+                  propagation = false;
 
-                  for (std::size_t k=0;k<index_container_former_ring_parallel.size();k++)
+                  for (std::size_t k = 0; k < index_container_former_ring_parallel.size(); ++ k)
                     {
 
-                      int plane_index=index_container_former_ring_parallel[k];
+                      std::size_t plane_index = index_container_former_ring_parallel[k];
 
                       for (std::size_t l = 0; l < parallel_planes[plane_index].size(); ++ l)
                         {
@@ -190,20 +194,20 @@ namespace CGAL {
                           Vector normal_it =  m_planes[it]->plane_normal ();
 
                           if(is_available[it]
-                             && std::fabs (normal_it*cluster_normal) > 1. - epsilon )
+                             && std::fabs (normal_it*clu.normal) > 1. - epsilon )
                             {	
                               propagation = true;
                               index_container_current_ring_parallel.push_back(it);
                               is_available[it]=false;
                               
-                              if(cluster_normal * normal_it <0)
+                              if(clu.normal * normal_it <0)
                                 normal_it = -normal_it;
 
-                              cluster_normal = (FT)cumulated_area * cluster_normal
+                              clu.normal = (FT)clu.area * clu.normal
                                 + (FT)m_areas[it] * normal_it;
-                              FT norm = 1. / std::sqrt (cluster_normal.squared_length()); 
-                              cluster_normal = norm * cluster_normal;
-                              cumulated_area += m_areas[it];
+                              FT norm = 1. / std::sqrt (clu.normal.squared_length()); 
+                              clu.normal = norm * clu.normal;
+                              clu.area += m_areas[it];
                             }	
                         }
                     }
@@ -214,38 +218,35 @@ namespace CGAL {
                        it != index_container_current_ring_parallel.end(); ++it)
                     {
                       index_container_former_ring_parallel.push_back(*it);
-                      index_container_parallel.push_back(*it);
+                      clu.planes.push_back(*it);
                     }
                   index_container_current_ring_parallel.clear();
 
                 }
               while(propagation);
-			
-              list_parallel_planes.push_back(index_container_parallel);
-              list_cluster_normales.push_back(cluster_normal);
-              list_cluster_area.push_back(cumulated_area);
+
               Vector v_vertical(0.,0.,1.);
-              list_cluster_cosangle_vertical.push_back(std::fabs(v_vertical*cluster_normal)); 
+              clu.cosangle_vertical = std::fabs(v_vertical*clu.normal);
             }
         }
       is_available.clear();
 
       //discovery orthogonal relationship between clusters 
       std::vector < std::vector < bool > > group_planes_orthogonal;
-      for( std::size_t i=0;i<list_parallel_planes.size(); i++)
+      for (std::size_t i = 0; i < clusters.size(); ++ i)
         {
-          std::vector < bool > gp_tmp;
-          for( std::size_t j=0;j<list_parallel_planes.size(); j++)
+          std::vector<bool> gp_tmp;
+          for (std::size_t j = 0; j < clusters.size(); ++ j)
             gp_tmp.push_back(false);
-          group_planes_orthogonal.push_back(gp_tmp);
+          group_planes_orthogonal.push_back (gp_tmp);
         }
 
-      for (std::size_t i=0; i<group_planes_orthogonal.size();i++)
+      for (std::size_t i = 0; i < group_planes_orthogonal.size(); ++ i)
         {
-          for (std::size_t j=0; j<group_planes_orthogonal.size();j++)
+          for (std::size_t j = 0; j < group_planes_orthogonal.size(); ++ j)
             {
 
-              if( i!=j && std::fabs(list_cluster_normales[i]*list_cluster_normales[j])<epsilon)
+              if (i != j && std::fabs (clusters[i].normal * clusters[j].normal) < epsilon)
                 {
                   group_planes_orthogonal[i][j]=true; 
                   group_planes_orthogonal[j][i]=true;
@@ -260,47 +261,45 @@ namespace CGAL {
       //clustering the vertical cosangle and store their centroids in cosangle_centroids and the centroid index of each cluster in list_cluster_index 
       std::vector < double > cosangle_centroids;
       std::vector < int > list_cluster_index;
-      for( std::size_t i=0;i<list_cluster_cosangle_vertical.size(); i++)
+      for( std::size_t i = 0; i < clusters.size(); ++ i)
         list_cluster_index.push_back(-1);
       
-      int mean_index=0;
-      for( std::size_t i=0;i<list_cluster_cosangle_vertical.size(); i++)
+      int mean_index = 0;
+      for (std::size_t i = 0; i < clusters.size(); ++ i)
         {
           if(list_cluster_index[i]<0)
             {
-              list_cluster_index[i]=mean_index;
-              double mean=list_cluster_area[i]*list_cluster_cosangle_vertical[i];
-              double mean_area=list_cluster_area[i];
-              for (std::size_t j=i+1; j<list_cluster_cosangle_vertical.size(); j++)
+              list_cluster_index[i] = mean_index;
+              double mean = clusters[i].area * clusters[i].cosangle_vertical;
+              double mean_area = clusters[i].area;
+              
+              for (std::size_t j = i+1; j < clusters.size(); ++ j)
                 {
-                  if( list_cluster_index[j]<0 && std::fabs(list_cluster_cosangle_vertical[j]-mean/mean_area)<epsilon )
+                  if (list_cluster_index[j] < 0 && std::fabs (clusters[j].cosangle_vertical -
+                                                              mean / mean_area) < epsilon)
                     {
-                      list_cluster_index[j]=mean_index;
-                      mean_area+=list_cluster_area[j];
-                      mean+=list_cluster_area[j]*list_cluster_cosangle_vertical[j];
+                      list_cluster_index[j] = mean_index;
+                      mean_area += clusters[j].area;
+                      mean += clusters[j].area * clusters[j].cosangle_vertical;
                     }
                 }
-              mean_index++;
-              mean/=mean_area;
-              cosangle_centroids.push_back(mean);
+              ++ mean_index;
+              mean /= mean_area;
+              cosangle_centroids.push_back (mean);
             }
         }
+      
       //desactive Z-verticalité
-      for( std::size_t i=0;i<cosangle_centroids.size(); i++)
+      for (std::size_t i = 0; i < cosangle_centroids.size(); ++ i)
         {
-          if(cosangle_centroids[i]<epsilon)
-            cosangle_centroids[i]=0;
-          else if(cosangle_centroids[i]>1.-epsilon)
-            cosangle_centroids[i]=1;
+          if (cosangle_centroids[i] < epsilon)
+            cosangle_centroids[i] = 0;
+          else if (cosangle_centroids[i] > 1. - epsilon)
+            cosangle_centroids[i] = 1;
         }
-      for (std::size_t i=0; i<group_planes_orthogonal.size();i++)
-        list_cluster_cosangle_vertical[i]=cosangle_centroids[list_cluster_index[i]];
+      for (std::size_t i = 0; i < group_planes_orthogonal.size(); ++ i)
+        clusters[i].cosangle_vertical = cosangle_centroids[list_cluster_index[i]];
 	
-
-
-
-
-
       //display console
       /*
       std::cout<<std::endl<<std::endl<<"clusters of parallel primitives:";
@@ -329,15 +328,15 @@ namespace CGAL {
       std::vector < std::vector < int > > subgraph_clusters;
       std::vector < int > subgraph_clusters_max_area_index;
       std::vector < bool > is_free;
-      for (std::size_t i=0; i<list_parallel_planes.size();i++)
+      for (std::size_t i = 0; i < clusters.size(); ++ i)
         is_free.push_back(true);
-      for (std::size_t i=0; i<list_parallel_planes.size();i++)
+      for (std::size_t i = 0; i < clusters.size(); ++ i)
         {
           if(is_free[i])
             {
               is_free[i]=false;
-              double max_area=list_cluster_area[i];
-              int index_max_area=i;
+              double max_area = clusters[i].area;
+              int index_max_area = i;
 
               //initialization containers
               std::vector < int > index_container;
@@ -366,10 +365,10 @@ namespace CGAL {
                               index_container_current_ring.push_back(j);
                               is_free[j]=false;
 
-                              if(max_area<list_cluster_area[j])
+                              if(max_area < clusters[j].area)
                                 {
-                                  max_area=list_cluster_area[j];
-                                  index_max_area=j;
+                                  max_area = clusters[j].area;
+                                  index_max_area = j;
                                 }
                             }	
                         }
@@ -421,17 +420,17 @@ namespace CGAL {
 
       //regularization of cluster normals : in eachsubgraph, we start from the largest area cluster and we propage over the subgraph by regularizing the normals of the clusters accorting to orthogonality and cosangle to vertical
       std::vector< bool > cluster_is_available; 
-      for( std::size_t i=0;i<list_cluster_cosangle_vertical.size();i++)
+      for (std::size_t i = 0; i < clusters.size(); ++ i)
         cluster_is_available.push_back(true);
 
-      for (std::size_t i=0; i<subgraph_clusters_prop.size();i++)
+      for (std::size_t i = 0; i < subgraph_clusters_prop.size(); ++ i)
         {
 	
           int index_current=subgraph_clusters_max_area_index[i];
-          Vector vec_current=regularize_normal(list_cluster_normales[index_current],
-                                               list_cluster_cosangle_vertical[index_current]);
-          list_cluster_normales[index_current]=vec_current;
-          cluster_is_available[index_current]=false;
+          Vector vec_current=regularize_normal(clusters[index_current].normal,
+                                               clusters[index_current].cosangle_vertical);
+          clusters[index_current].normal = vec_current;
+          cluster_is_available[index_current] = false;
 
           //initialization containers
           std::vector < int > index_container;
@@ -462,10 +461,10 @@ namespace CGAL {
                           index_container_current_ring.push_back(j);
                           cluster_is_available[j]=false;
 
-                          Vector new_vect=regularize_normals_from_prior(list_cluster_normales[cluster_index],
-                                                                        list_cluster_normales[j],
-                                                                        list_cluster_cosangle_vertical[j]);
-                          list_cluster_normales[j]=new_vect;
+                          Vector new_vect=regularize_normals_from_prior(clusters[cluster_index].normal,
+                                                                        clusters[j].normal,
+                                                                        clusters[j].cosangle_vertical);
+                          clusters[j].normal = new_vect;
                         }
                     }	
                 }
@@ -485,14 +484,14 @@ namespace CGAL {
 
 
       //recompute optimal plane for each primitive after normal regularization
-      for (std::size_t i=0; i<list_cluster_normales.size();i++)
+      for (std::size_t i=0; i < clusters.size(); ++ i)
         {
 
-          Vector vec_reg=list_cluster_normales[i];
+          Vector vec_reg = clusters[i].normal;
 
-          for (std::size_t j=0; j<list_parallel_planes[i].size();j++)
+          for (std::size_t j = 0; j < clusters[i].planes.size(); ++ j)
             {
-              int index_prim=list_parallel_planes[i][j];
+              int index_prim = clusters[i].planes[j];
               Point pt_reg = m_planes[index_prim]->projection (m_centroids[index_prim]);
               if( m_planes[index_prim]->plane_normal () * vec_reg < 0)
                 vec_reg=-vec_reg;
@@ -511,24 +510,24 @@ namespace CGAL {
 
       //detecting co-planarity and store in list_coplanar_prim
       std::vector< std::vector< std::vector < int > > > list_coplanar_prim;
-      for (std::size_t i=0; i<list_parallel_planes.size();i++)
+      for (std::size_t i = 0; i < clusters.size(); ++ i)
         {
 
           std::vector< std::vector < int > > list_coplanar_prim_tmp;
-          Vector vec_reg=list_cluster_normales[i];
+          Vector vec_reg = clusters[i].normal;
           std::vector < int > list_cop_index;
-          for( std::size_t ip=0;ip<list_parallel_planes[i].size(); ip++)
+          for (std::size_t ip = 0; ip < clusters[i].planes.size(); ++ ip)
             list_cop_index.push_back(-1);
 
           int cop_index=0;
 
-          for (std::size_t j=0; j<list_parallel_planes[i].size();j++)
+          for (std::size_t j = 0; j < clusters[i].planes.size(); ++ j)
             {
-              int index_prim=list_parallel_planes[i][j];
+              int index_prim = clusters[i].planes[j];
 
-              if(list_cop_index[j]<0)
+              if (list_cop_index[j] < 0)
                 {
-			
+		
                   std::vector < int > list_coplanar_prim_tmp_tmp;
                   list_cop_index[j]=cop_index;
                   list_coplanar_prim_tmp_tmp.push_back(index_prim);
@@ -536,12 +535,11 @@ namespace CGAL {
                   Point pt_reg = m_planes[index_prim]->projection(m_centroids[index_prim]);
                   Plane plan_reg(pt_reg,vec_reg);
 
-                  for (std::size_t k=j+1; k<list_parallel_planes[i].size(); k++)
+                  for (std::size_t k = j+1; k < clusters[i].planes.size(); ++ k)
                     {
-                      if( list_cop_index[k]<0)
+                      if (list_cop_index[k] < 0)
                         {
-					
-                          int index_prim_next=list_parallel_planes[i][k];
+                          int index_prim_next = clusters[i].planes[k];
                           Point pt_reg_next = m_planes[index_prim_next]->projection(m_centroids[index_prim_next]);
                           Point pt_proj=plan_reg.projection(pt_reg_next);
                           double distance=distance_Point(pt_reg_next,pt_proj);
