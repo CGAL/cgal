@@ -119,23 +119,24 @@ namespace CGAL {
     {
       compute_centroids_and_areas ();
       
-      // find pairs of epsilon-parallel primitives and store them in table_parallel
-      std::vector < std::vector < bool > > table_parallel; 
+      // find pairs of epsilon-parallel primitives and store them in parallel_planes
+      
+      std::vector < std::vector < std::size_t > > parallel_planes (m_planes.size ());
+      
       for (std::size_t i = 0; i < m_planes.size (); ++ i)
-        {  
-          std::vector < bool > table_parallel_tmp; 
+        {
+          Vector v1 = m_planes[i]->plane_normal ();
+          
           for (std::size_t j = 0; j < m_planes.size(); ++ j)
-            { 
-
-              Vector v1 = m_planes[i]->plane_normal ();
+            {
+              if (i == j)
+                continue;
+              
               Vector v2 = m_planes[i]->plane_normal ();
               
-              if (i != j && std::fabs (v1 * v2) > 1. - epsilon)
-                table_parallel_tmp.push_back (true); 
-              else
-                table_parallel_tmp.push_back (false); 
+              if (std::fabs (v1 * v2) > 1. - epsilon)
+                parallel_planes[i].push_back (j);
             }
-          table_parallel.push_back (table_parallel_tmp);
         }
 	
 
@@ -182,26 +183,27 @@ namespace CGAL {
 
                       int plane_index=index_container_former_ring_parallel[k];
 
-                      for (std::size_t it=0;it<table_parallel[plane_index].size();it++)
+                      for (std::size_t l = 0; l < parallel_planes[plane_index].size(); ++ l)
                         {
-						
+                          std::size_t it = parallel_planes[plane_index][l];
+                          
                           Vector normal_it =  m_planes[it]->plane_normal ();
 
-                          if( table_parallel[plane_index][it] && is_available[it]
-                              && std::fabs(normal_it*cluster_normal)>1.-epsilon )
+                          if(is_available[it]
+                             && std::fabs (normal_it*cluster_normal) > 1. - epsilon )
                             {	
-							
-                              propagation=true;
+                              propagation = true;
                               index_container_current_ring_parallel.push_back(it);
                               is_available[it]=false;
-							
-                              if(cluster_normal*normal_it <0)
-                                normal_it=-normal_it;
+                              
+                              if(cluster_normal * normal_it <0)
+                                normal_it = -normal_it;
 
-                              cluster_normal=(FT)cumulated_area*cluster_normal+(FT)m_areas[it]*normal_it;
-                              FT norm=1./sqrt(cluster_normal.squared_length()); 
-                              cluster_normal=norm*cluster_normal;
-                              cumulated_area+=m_areas[it];
+                              cluster_normal = (FT)cumulated_area * cluster_normal
+                                + (FT)m_areas[it] * normal_it;
+                              FT norm = 1. / std::sqrt (cluster_normal.squared_length()); 
+                              cluster_normal = norm * cluster_normal;
+                              cumulated_area += m_areas[it];
                             }	
                         }
                     }
