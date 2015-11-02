@@ -85,7 +85,25 @@ namespace CGAL {
       return d * d;
     }
 
-    
+    /*!
+      Computes the orthogonal projection of a query point on the shape.
+     */
+    Point_3 projection (const Point_3 &p) const {
+      Vector_3 v (m_point_on_primitive, p);
+      return m_point_on_primitive + (v * m_base1) * m_base1 + (v * m_base2) * m_base2;
+    }
+
+    /*!
+      Replaces the plane by p
+    */
+    void update (const Plane_3& p) {
+      m_base1 = p.base1 (); m_base2 = p.base2 (); m_normal = p.orthogonal_vector ();
+      m_d = -(this->get_x(m_point_on_primitive) * this->get_x(m_normal) 
+        + this->get_y(m_point_on_primitive) * this->get_y(m_normal) 
+        + this->get_z(m_point_on_primitive) * this->get_z(m_normal));
+
+    }
+
     /*!
       Helper function to write the plane equation and
       number of assigned points into a string.
