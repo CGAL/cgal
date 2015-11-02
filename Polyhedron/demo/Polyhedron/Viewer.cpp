@@ -6,7 +6,9 @@
 #include <QGLViewer/manipulatedCameraFrame.h>
 #include <QDebug>
 #include <QOpenGLShader>
+#include <QOpenGLShaderProgram>
 #include <cmath>
+
 class Viewer_impl {
 public:
   CGAL::Three::Scene_draw_interface* scene;
@@ -16,6 +18,9 @@ public:
   bool inFastDrawing;
 
   void draw_aux(bool with_names, Viewer*);
+
+  //! Contains all the programs for the item rendering.
+  mutable std::vector<QOpenGLShaderProgram*> shader_programs;
 };
 Viewer::Viewer(QWidget* parent, bool antialiasing)
   : CGAL::Three::Viewer_interface(parent)
@@ -25,6 +30,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->antialiasing = antialiasing;
   d->twosides = false;
   d->macro_mode = false;
+  d->shader_programs.resize(NB_OF_PROGRAMS);
   setShortcut(EXIT_VIEWER, 0);
   setShortcut(DRAW_AXIS, 0);
   setKeyDescription(Qt::Key_T,
@@ -404,6 +410,110 @@ QString Viewer::dumpCameraCoordinates()
   }
 }
 
+void Viewer::attrib_buffers(int program_name) const {
+    GLint is_both_sides = 0;
+    //ModelViewMatrix used for the transformation of the camera.
+    QMatrix4x4 mvp_mat;
+    // ModelView Matrix used for the lighting system
+    QMatrix4x4 mv_mat;
+    // transformation of the manipulated frame
+    QMatrix4x4 f_mat;
+    // used for the picking. Is Identity except while selecting an item.
+    QMatrix4x4 pick_mat;
+    f_mat.setToIdentity();
+    //fills the MVP and MV matrices.
+    GLdouble d_mat[16];
+    this->camera()->getModelViewProjectionMatrix(d_mat);
+    //Convert the GLdoubles matrices in GLfloats
+    for (int i=0; i<16; ++i){
+        mvp_mat.data()[i] = GLfloat(d_mat[i]);
+    }
+    this->camera()->getModelViewMatrix(d_mat);
+    for (int i=0; i<16; ++i)
+        mv_mat.data()[i] = GLfloat(d_mat[i]);
+    for (int i=0; i<16; ++i)
+        pick_mat.data()[i] = this->pickMatrix_[i];
+
+    mvp_mat = pick_mat * mvp_mat;
+
+    const_cast<Viewer*>(this)->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE,
+                                             &is_both_sides);
+
+    QVector4D position(0.0f,0.0f,1.0f, 1.0f );
+    QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
+    // Diffuse
+    QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
+    // Specular
+    QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
+    QOpenGLShaderProgram* program = getShaderProgram(program_name);
+    program->bind();
+    switch(program_name)
+    {
+    /// @TODO: factorize that implementation!
+    case PROGRAM_WITH_LIGHT:
+        program->setUniformValue("mvp_matrix", mvp_mat);
+        program->setUniformValue("mv_matrix", mv_mat);
+        program->setUniformValue("light_pos", position);
+        program->setUniformValue("light_diff",diffuse);
+        program->setUniformValue("light_spec", specular);
+        program->setUniformValue("light_amb", ambient);
+        program->setUniformValue("spec_power", 51.8f);
+        program->setUniformValue("is_two_side", is_both_sides);
+        break;
+    case PROGRAM_WITHOUT_LIGHT:
+        program->setUniformValue("mvp_matrix", mvp_mat);
+        program->setUniformValue("mv_matrix", mv_mat);
+
+        program->setUniformValue("light_pos", position);
+        program->setUniformValue("light_diff", diffuse);
+        program->setUniformValue("light_spec", specular);
+        program->setUniformValue("light_amb", ambient);
+        program->setUniformValue("spec_power", 51.8f);
+        program->setUniformValue("is_two_side", is_both_sides);
+        program->setAttributeValue("normals", 0.0,0.0,0.0);
+        program->setUniformValue("f_matrix",f_mat);
+
+
+        break;
+    case PROGRAM_WITH_TEXTURE:
+
+        program->setUniformValue("mvp_matrix", mvp_mat);
+        program->setUniformValue("mv_matrix", mv_mat);
+        program->setUniformValue("light_pos", position);
+        program->setUniformValue("light_diff",diffuse);
+        program->setUniformValue("light_spec", specular);
+        program->setUniformValue("light_amb", ambient);
+        program->setUniformValue("spec_power", 51.8f);
+        program->setUniformValue("s_texture",0);
+        program->setUniformValue("f_matrix",f_mat);
+
+        break;
+    case PROGRAM_WITH_TEXTURED_EDGES:
+
+        program->setUniformValue("mvp_matrix", mvp_mat);
+        program->setUniformValue("s_texture",0);
+
+        break;
+    case PROGRAM_INSTANCED:
+
+        program->setUniformValue("mvp_matrix", mvp_mat);
+        program->setUniformValue("mv_matrix", mv_mat);
+
+        program->setUniformValue("light_pos", position);
+        program->setUniformValue("light_diff",diffuse);
+        program->setUniformValue("light_spec", specular);
+        program->setUniformValue("light_amb", ambient);
+        program->setUniformValue("spec_power", 51.8f);
+        program->setUniformValue("is_two_side", is_both_sides);
+
+        break;
+    case PROGRAM_INSTANCED_WIRE:
+        program->setUniformValue("mvp_matrix", mvp_mat);
+        break;
+    }
+    program->release();
+}
+
 
 void Viewer::pickMatrix(GLdouble x, GLdouble y, GLdouble width, GLdouble height,
 GLint viewport[4])
@@ -760,4 +870,149 @@ void Viewer::resizeGL(int w, int h)
     rendering_program.setUniformValue("ortho_mat", orthoMatrix);
     rendering_program.release();
 
+}
+
+QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
+{
+    // workaround constness issues in Qt
+    Viewer* viewer = const_cast<Viewer*>(this);
+
+    switch(name)
+    {
+    /// @TODO: factorize this code
+    case PROGRAM_WITH_LIGHT:
+        if(d->shader_programs[PROGRAM_WITH_LIGHT])
+        {
+            return d->shader_programs[PROGRAM_WITH_LIGHT];
+        }
+
+        else
+        {
+
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_with_light.v"))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_light.f"))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            d->shader_programs[PROGRAM_WITH_LIGHT] = program;
+            return program;
+        }
+        break;
+    case PROGRAM_WITHOUT_LIGHT:
+        if( d->shader_programs[PROGRAM_WITHOUT_LIGHT])
+        {
+            return d->shader_programs[PROGRAM_WITHOUT_LIGHT];
+        }
+        else
+        {
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_without_light.v"))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_without_light.f"))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            d->shader_programs[PROGRAM_WITHOUT_LIGHT] = program;
+            return program;
+        }
+        break;
+    case PROGRAM_WITH_TEXTURE:
+        if( d->shader_programs[PROGRAM_WITH_TEXTURE])
+        {
+            return d->shader_programs[PROGRAM_WITH_TEXTURE];
+        }
+        else
+        {
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_with_texture.v"))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_texture.f"))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            d->shader_programs[PROGRAM_WITH_TEXTURE] = program;
+            return program;
+        }
+        break;
+    case PROGRAM_WITH_TEXTURED_EDGES:
+        if( d->shader_programs[PROGRAM_WITH_TEXTURED_EDGES])
+        {
+            return d->shader_programs[PROGRAM_WITH_TEXTURED_EDGES];
+        }
+        else
+        {
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_with_textured_edges.v" ))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_textured_edges.f" ))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            d->shader_programs[PROGRAM_WITH_TEXTURED_EDGES] = program;
+            return program;
+
+        }
+        break;
+    case PROGRAM_INSTANCED:
+        if( d->shader_programs[PROGRAM_INSTANCED])
+        {
+            return d->shader_programs[PROGRAM_INSTANCED];
+        }
+        else
+        {
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_instanced.v" ))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_light.f" ))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            d->shader_programs[PROGRAM_INSTANCED] = program;
+            return program;
+
+        }
+        break;
+    case PROGRAM_INSTANCED_WIRE:
+        if( d->shader_programs[PROGRAM_INSTANCED_WIRE])
+        {
+            return d->shader_programs[PROGRAM_INSTANCED_WIRE];
+        }
+        else
+        {
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_instanced.v" ))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_without_light.f" ))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            d->shader_programs[PROGRAM_INSTANCED_WIRE] = program;
+            return program;
+
+        }
+        break;
+    default:
+        std::cerr<<"ERROR : Program not found."<<std::endl;
+        return 0;
+    }
 }

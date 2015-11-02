@@ -4,7 +4,7 @@
 #include <boost/foreach.hpp>
 #include <algorithm>
 #include <QTime>
-#include <CGAL/gl_render.h>
+
 Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 (Scene_polyhedron_item* poly_item,
  Ui::DeformMesh* ui_widget,

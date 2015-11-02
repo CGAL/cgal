@@ -321,7 +321,6 @@ Scene_polyhedron_item::triangulate_facet_color(Facet_iterator fit) const
 #include <QObject>
 #include <QMenu>
 #include <QAction>
-#include <CGAL/gl_render.h>
 
 
 void

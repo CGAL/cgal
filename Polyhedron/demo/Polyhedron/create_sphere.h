@@ -11,7 +11,7 @@ void create_flat_sphere(double R,
                         std::vector<FLOAT>& normals_spheres)
 {
   //The more small they are, the more precise the Sphere will be.
-  // Must be a multiple of 360 and 180.
+  // Must be divisors of 180 and 360.
   const int rings=18;
   const int sectors=36;
   const float to_rad = static_cast<float>(CGAL_PI / 180.0);
@@ -187,7 +187,7 @@ void create_flat_and_wire_sphere(double R,
                    std::vector<FLOAT>& positions_wire_spheres)
 {
   //The more small they are, the more precise the Sphere will be.
-  // Must be a multiple of 360 and 180.
+  // Must be divisors of 180 and 360.
   const int rings=18;
   const int sectors=36;
   const float to_rad = static_cast<float>(CGAL_PI / 180.0);

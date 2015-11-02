@@ -10,7 +10,6 @@
 #include "Kernel_type.h"
 
 #include "opengl_tools.h"
-#include <CGAL/gl_render.h>
 
 #include <QGLViewer/qglviewer.h>
 #include <QKeyEvent>
