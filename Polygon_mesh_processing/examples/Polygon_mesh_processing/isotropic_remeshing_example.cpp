@@ -47,9 +47,5 @@ int main(int argc, char* argv[])
 
   std::cout << "Remeshing done." << std::endl;
 
-  std::ofstream out("remeshed.off");
-  out << mesh;
-  out.close();
-
   return 0;
 }
