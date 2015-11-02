@@ -148,7 +148,7 @@ how the approximation evolves when pushing the simplification forward.
 \cgalFigureEnd
 
 \section Reconstruction_simplification_2Mixed Mixed Dimension
-Figure \cgalFigureRef{2D_Reconstruction_Simplification_mixed} depicts an input point set sampling a set of line segments and a solid area. Depending on the targeted complexity, the solid area is approximated by a set of evenly sampled isolated vertices.
+Figure \cgalFigureRef{2D_Reconstruction_Simplification_mixed} depicts an input point set sampling a set of line segments and a solid area. Depending on the targeted number of points in the output, the solid area is approximated by a set of evenly sampled isolated vertices.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_mixed,mixed.png}
 Mixed dimension. Left: input point set. Middle: Isolated vertices in blue, relevant edges in green and irrelevant edges in red. Right: final output.
