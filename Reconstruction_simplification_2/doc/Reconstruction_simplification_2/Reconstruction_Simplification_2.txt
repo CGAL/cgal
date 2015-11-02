@@ -132,7 +132,10 @@ The verbose parameter, between 0 and 2, determines how much console output the a
 
 
 \section Reconstruction_simplification_2Robustness Robustness
-A virtue of the algorithm is its robustness to noise and outliers, see Figure \cgalFigureRef{2D_Reconstruction_Simplification_robustness} .
+A virtue of the algorithm is its robustness to noise and outliers. 
+Figure \cgalFigureRef{2D_Reconstruction_Simplification_robustness} shows that
+the output of the algorithm is hardly affected by noise and/or outliers.
+
 \cgalFigureBegin{2D_Reconstruction_Simplification_robustness,robustness.png}
 Robustness to noise and outliers. Left: noise-free point set. Middle: noisy point set. Right: point set hampered by noise and outliers.
 \cgalFigureEnd
