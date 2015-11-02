@@ -111,10 +111,9 @@ namespace CGAL {
 
 
   
-    void run (FT epsilon, FT tolerance_coplanarity)
+    std::size_t run (FT epsilon, FT tolerance_coplanarity)
     {
       // WRAPPER BEGIN
-      std::vector<Plane> extracted_planes;
       std::vector<std::vector<int> > plane_point_index;
       std::vector<int> primitive_index (m_input_end - m_input_begin, -1);
       std::vector<int> label_plane (m_input_end - m_input_begin, -1);
@@ -123,7 +122,6 @@ namespace CGAL {
       
       for (std::size_t i = 0; i < m_planes.size (); ++ i)
         {
-          extracted_planes.push_back (static_cast<Plane> (*(m_planes[i])));
           plane_point_index.push_back (std::vector<int>());
           std::copy (m_planes[i]->indices_of_assigned_points().begin (),
                      m_planes[i]->indices_of_assigned_points().end (),
@@ -147,25 +145,25 @@ namespace CGAL {
       // WRAPPER END
 
 
-
+      //      std::cout<<std::endl<<"NB planes init = "<< extracted_planes.size () << std::endl;
       
-      // find pairs of epsilon-parallel primitives and store them in table_parallel 
+      // find pairs of epsilon-parallel primitives and store them in table_parallel
       std::vector < std::vector < bool > > table_parallel; 
-      for( std::size_t i=0;i<extracted_planes.size(); i++)
+      for (std::size_t i = 0; i < m_planes.size (); ++ i)
         {  
           std::vector < bool > table_parallel_tmp; 
-          for( std::size_t j=0;j<extracted_planes.size(); j++)
+          for (std::size_t j = 0; j < m_planes.size(); ++ j)
             { 
-			
-              Vector v1=extracted_planes[i].orthogonal_vector();
-              Vector v2=extracted_planes[j].orthogonal_vector();
-			
-              if (std::fabs(v1*v2)>1.-epsilon && i!=j)
-                table_parallel_tmp.push_back(true); 
+
+              Vector v1 = m_planes[i]->plane_normal ();
+              Vector v2 = m_planes[i]->plane_normal ();
+              
+              if (i != j && std::fabs (v1 * v2) > 1. - epsilon)
+                table_parallel_tmp.push_back (true); 
               else
-                table_parallel_tmp.push_back(false); 
+                table_parallel_tmp.push_back (false); 
             }
-          table_parallel.push_back(table_parallel_tmp);
+          table_parallel.push_back (table_parallel_tmp);
         }
 	
 
@@ -178,10 +176,10 @@ namespace CGAL {
       std::vector < double > list_cluster_area;
       
       std::vector < bool > is_available;
-      for( std::size_t i=0;i<extracted_planes.size();i++)
-        is_available.push_back(true);
+      for (std::size_t i = 0; i < m_planes.size (); ++ i)
+        is_available.push_back (true);
       
-      for( std::size_t i=0;i<extracted_planes.size();i++)
+      for (std::size_t i = 0; i < m_planes.size(); ++ i)
         {
 
           if(is_available[i])
@@ -200,8 +198,8 @@ namespace CGAL {
 
               //propagation over the pairs of epsilon-parallel primitives
               bool propagation=true;
-              Vector cluster_normal=extracted_planes[i].orthogonal_vector();
-              double cumulated_area=list_areas[i];
+              Vector cluster_normal = m_planes[i]->plane_normal ();
+              double cumulated_area = list_areas[i];
 			
               do
                 {
@@ -215,7 +213,7 @@ namespace CGAL {
                       for (std::size_t it=0;it<table_parallel[plane_index].size();it++)
                         {
 						
-                          Vector normal_it=extracted_planes[it].orthogonal_vector();
+                          Vector normal_it =  m_planes[it]->plane_normal ();
 
                           if( table_parallel[plane_index][it] && is_available[it]
                               && std::fabs(normal_it*cluster_normal)>1.-epsilon )
@@ -330,7 +328,7 @@ namespace CGAL {
 
 
       //display console
-      //      /*
+      /*
       std::cout<<std::endl<<std::endl<<"clusters of parallel primitives:";
       for (std::size_t i=0; i<list_parallel_planes.size();i++)
         {
@@ -350,7 +348,7 @@ namespace CGAL {
             }
           std::cout<<"     -> "<<list_cluster_cosangle_vertical[i]<<"  -> "<<cosangle_centroids[list_cluster_index[i]];
         }
-      //      */
+      */
 
 
       //find subgraphs of mutually orthogonal clusters (store index of clusters in subgraph_clusters), and select the cluster of largest area
@@ -521,13 +519,15 @@ namespace CGAL {
           for (std::size_t j=0; j<list_parallel_planes[i].size();j++)
             {
               int index_prim=list_parallel_planes[i][j];
-              Point pt_reg=extracted_planes[index_prim].projection(list_centroid[index_prim]);
-              if( extracted_planes[index_prim].orthogonal_vector() * vec_reg < 0)
+              Point pt_reg = m_planes[index_prim]->projection (list_centroid[index_prim]);
+              if( m_planes[index_prim]->plane_normal () * vec_reg < 0)
                 vec_reg=-vec_reg;
               Plane plane_reg(pt_reg,vec_reg);
 		
-              if( std::fabs(extracted_planes[index_prim].orthogonal_vector()*plane_reg.orthogonal_vector()) > 1. - epsilon)
-                extracted_planes[index_prim]=plane_reg;
+              if( std::fabs(m_planes[index_prim]->plane_normal () * plane_reg.orthogonal_vector ()) > 1. - epsilon)
+                {
+                  m_planes[index_prim]->update (plane_reg);
+                }
             }
         }
 
@@ -559,7 +559,7 @@ namespace CGAL {
                   list_cop_index[j]=cop_index;
                   list_coplanar_prim_tmp_tmp.push_back(index_prim);
 			
-                  Point pt_reg=extracted_planes[index_prim].projection(list_centroid[index_prim]);
+                  Point pt_reg = m_planes[index_prim]->projection(list_centroid[index_prim]);
                   Plane plan_reg(pt_reg,vec_reg);
 
                   for (std::size_t k=j+1; k<list_parallel_planes[i].size(); k++)
@@ -568,7 +568,7 @@ namespace CGAL {
                         {
 					
                           int index_prim_next=list_parallel_planes[i][k];
-                          Point pt_reg_next=extracted_planes[index_prim_next].projection(list_centroid[index_prim_next]);
+                          Point pt_reg_next = m_planes[index_prim_next]->projection(list_centroid[index_prim_next]);
                           Point pt_proj=plan_reg.projection(pt_reg_next);
                           double distance=distance_Point(pt_reg_next,pt_proj);
 					
@@ -603,12 +603,12 @@ namespace CGAL {
               for (std::size_t k=0; k<list_coplanar_prim[i][j].size();k++)
                 {
                   int index_prim=list_coplanar_prim[i][j][k];
-                  Point pt_reg=extracted_planes[index_prim].projection(list_centroid[index_prim]);
+                  Point pt_reg = m_planes[index_prim]->projection(list_centroid[index_prim]);
 
                   pt_bary=barycenter(pt_bary, area,pt_reg,list_areas[index_prim]); 
                   area+=list_areas[index_prim];
                 }
-              Vector vec_reg=extracted_planes[list_coplanar_prim[i][j][0]].orthogonal_vector();
+              Vector vec_reg = m_planes[list_coplanar_prim[i][j][0]]->plane_normal ();
 
               Plane plane_reg(pt_bary,vec_reg);
 
@@ -618,17 +618,17 @@ namespace CGAL {
               for (std::size_t k=0; k<list_coplanar_prim[i][j].size();k++)
                 {
                   int index_prim=list_coplanar_prim[i][j][k];
-                  if( std::fabs(extracted_planes[index_prim].orthogonal_vector()*plane_reg.orthogonal_vector()) > 1. - epsilon)
+                  if( std::fabs(m_planes[index_prim]->plane_normal () * plane_reg.orthogonal_vector()) > 1. - epsilon)
                     {
-                      if(extracted_planes[index_prim].orthogonal_vector()*plane_reg.orthogonal_vector()<0)
-                        extracted_planes[index_prim]=plane_reg.opposite();
+                      if(m_planes[index_prim]->plane_normal () * plane_reg.orthogonal_vector()<0)
+                        m_planes[index_prim]->update (plane_reg.opposite());
                       else
-                        extracted_planes[index_prim]=plane_reg;
+                        m_planes[index_prim]->update (plane_reg);
                       is_reg_used=true;
                       list_primitive_reg_index_extracted_planes_tmp1.push_back(index_prim);
                     }
                   else{
-                    list_primitive_reg.push_back(extracted_planes[index_prim]);
+                    list_primitive_reg.push_back(static_cast<Plane> (*(m_planes[index_prim])));
                     std::vector< int > list_primitive_reg_index_extracted_planes_tmp;
                     list_primitive_reg_index_extracted_planes_tmp.push_back(index_prim);
                     list_primitive_reg_index_extracted_planes.push_back(list_primitive_reg_index_extracted_planes_tmp);
@@ -641,59 +641,60 @@ namespace CGAL {
             }
         }
 
-      std::cout<<std::endl<<std::endl<<"NB planes final = "<<list_primitive_reg.size()<<std::endl<<std::endl;
+      //      std::cout<<std::endl<<std::endl<<"NB planes final = "<<list_primitive_reg.size()<<std::endl<<std::endl;
 
 
 
       //merge similar planes in plane_point_index and extracted planes and HPS[i].primitive_index
-      std::vector < std::vector < int > > plane_point_index_temp;
-      std::vector < Plane > extracted_planes_temp;
-      std::vector < bool > has_been_merged;
-      for (std::size_t i=0; i<plane_point_index.size();i++)
-        has_been_merged.push_back(false);
+      // std::vector < std::vector < int > > plane_point_index_temp;
+      // std::vector < Plane > extracted_planes_temp;
+      // std::vector < bool > has_been_merged;
+      // for (std::size_t i=0; i<plane_point_index.size();i++)
+      //   has_been_merged.push_back(false);
 
-      for (std::size_t i=0; i<plane_point_index.size();i++)
-        {
+      // for (std::size_t i=0; i<plane_point_index.size();i++)
+      //   {
 	
-          if (!has_been_merged[i])
-            {
-              extracted_planes_temp.push_back(extracted_planes[i]);
-              int label_index=extracted_planes_temp.size()-1;
-              plane_point_index_temp.push_back(plane_point_index[i]);
-              for (std::size_t k=0; k<plane_point_index[i].size();k++)
-                {
-                  int index_pt=plane_point_index[i][k];
-                  primitive_index[index_pt]=label_index;
-                  label_plane[index_pt]=label_index;
-                }
+      //     if (!has_been_merged[i])
+      //       {
+      //         extracted_planes_temp.push_back (extracted_planes[i]);
+      //         int label_index=extracted_planes_temp.size()-1;
+      //         plane_point_index_temp.push_back(plane_point_index[i]);
+      //         for (std::size_t k=0; k<plane_point_index[i].size();k++)
+      //           {
+      //             int index_pt=plane_point_index[i][k];
+      //             primitive_index[index_pt]=label_index;
+      //             label_plane[index_pt]=label_index;
+      //           }
 	
-              for (std::size_t j=i+1;j<plane_point_index.size();j++)
-                {
+      //         for (std::size_t j=i+1;j<plane_point_index.size();j++)
+      //           {
 
-                  if(extracted_planes[i]==extracted_planes[j])
-                    { //if identical (do opposite plane too ?) then store the second in the first
+      //             if(extracted_planes[i]==extracted_planes[j])
+      //               { //if identical (do opposite plane too ?) then store the second in the first
 			
-                      has_been_merged[j]=true;
+      //                 has_been_merged[j]=true;
 
-                      std::vector< int > plane_point_index_new
-                        = plane_point_index_temp[plane_point_index_temp.size()-1];
-                      for (std::size_t k=0; k<plane_point_index[j].size();k++)
-                        {
-                          int ind=plane_point_index[j][k];
-                          plane_point_index_new.push_back(ind);
-                          primitive_index[ind]=label_index;
-                          label_plane[ind]=label_index;
-                        }
-                      plane_point_index_temp[plane_point_index_temp.size()-1]=plane_point_index_new;
+      //                 std::vector< int > plane_point_index_new
+      //                   = plane_point_index_temp[plane_point_index_temp.size()-1];
+      //                 for (std::size_t k=0; k<plane_point_index[j].size();k++)
+      //                   {
+      //                     int ind=plane_point_index[j][k];
+      //                     plane_point_index_new.push_back(ind);
+      //                     primitive_index[ind]=label_index;
+      //                     label_plane[ind]=label_index;
+      //                   }
+      //                 plane_point_index_temp[plane_point_index_temp.size()-1]=plane_point_index_new;
 
-                    }
-                }
-            }
-        }
+      //               }
+      //           }
+      //       }
+      //   }
 
-      extracted_planes=extracted_planes_temp;
-      plane_point_index=plane_point_index_temp;
-    
+      // extracted_planes=extracted_planes_temp;
+      // plane_point_index=plane_point_index_temp;
+
+      return list_primitive_reg.size ();
     }
 
     FT distance_Point (const Point& a, const Point& b)
