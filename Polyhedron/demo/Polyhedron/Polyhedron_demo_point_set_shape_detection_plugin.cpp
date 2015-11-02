@@ -6,6 +6,7 @@
 #include <CGAL/Random.h>
 
 #include <CGAL/Shape_detection_3.h>
+#include <CGAL/Plane_regularization.h>
 
 #include <QObject>
 #include <QAction>
@@ -115,7 +116,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
     typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
     typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
-
+    typedef CGAL::Plane_regularization<Traits>                   Regularization;
+    
     Shape_detection shape_detection;
     shape_detection.set_input(*points);
 
@@ -199,6 +201,11 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
       ++index;
     }
+    std::cerr << "Regularization of planes... " << std::endl;
+    Regularization regularization (*points, shape_detection);
+    regularization.run (op.epsilon, op.normal_threshold);
+    
+    std::cerr << "done" << std::endl;
 
     // Updates scene
     scene->itemChanged(index);
