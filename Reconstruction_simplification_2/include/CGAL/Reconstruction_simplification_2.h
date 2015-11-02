@@ -96,13 +96,16 @@ public:
    */
   typedef typename Gt::Point_2 Point;
 
+  /*!
+        Segment type.
+  */
+  typedef typename Gt::Segment_2 Segment;
+
   /// \cond SKIP_IN_MANUAL
   /*!
         Vector type.
    */
   typedef typename Gt::Vector_2 Vector;
-
-  typedef typename Gt::Segment_2 Segment;
 
   typedef typename std::pair<Point, FT> PointMassPair;
   typedef typename std::vector<PointMassPair> PointMassList;
@@ -1527,13 +1530,16 @@ public:
 
   /*!
     Writes the points and segments of the output simplex in an indexed format into output iterators.
-        \tparam PointOutputIterator An output iterator with value type `Point`.
-        \tparam IndexOutputIterator An output iterator with value type `std::size_t`
-        \tparam IndexPairOutputIterator An output iterator with value type `std::pair<std::size_t,std::size_t>`
+        \tparam PointOutputIterator An output iterator with value type 
+                `Reconstruction_simplification_2::Point`.
+        \tparam IndexOutputIterator An output iterator with value type 
+                `std::size_t`.
+        \tparam IndexPairOutputIterator An output iterator with value type 
+                `std::pair<std::size_t, std::size_t>`.
 
-        \param points The output iterator for all points
-        \param isolated_points The output iterator for the indices of isolated points
-        \param segments The output iterator for the pairs of segment indices
+        \param points The output iterator for all points.
+        \param isolated_points The output iterator for the indices of isolated points.
+        \param segments The output iterator for the pairs of segment indices.
    */
   template <
     typename PointOutputIterator,
@@ -1600,8 +1606,6 @@ public:
     return CGAL::cpp11::make_tuple(points, isolated_points, segments);
   }
 
-  /// \cond SKIP_IN_MANUAL
-
   /*!
      Returns the solid edges and vertices present after the reconstruction
      process finished.
@@ -1609,8 +1613,10 @@ public:
     \details It takes two output iterators, one for storing the
     isolated points and one for storing the edges of the reconstructed shape.
 
-    \tparam PointOutputIterator The output iterator type for storing the isolated points
-    \tparam SegmentOutputIterator The output iterator type for storing the edges as segments.
+    \tparam PointOutputIterator An output iterator with value type 
+            `Reconstruction_simplification_2::Point`.
+    \tparam SegmentOutputIterator An output iterator with value type 
+            `Reconstruction_simplification_2::Segment`.
    */
   template<class PointOutputIterator, class SegmentOutputIterator>
   void list_output (PointOutputIterator v_it, SegmentOutputIterator e_it) const
