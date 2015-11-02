@@ -297,6 +297,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
             }
         }
     }
+  m_points->unselect_all();  
   invalidate_buffers();
   return ok;
 }
