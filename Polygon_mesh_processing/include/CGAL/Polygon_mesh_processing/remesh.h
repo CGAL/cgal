@@ -44,7 +44,7 @@ namespace Polygon_mesh_processing {
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param tmesh triangulated surface mesh with patches to be remeshed
-* @param faces the range of faces defining one patch to be remeshed
+* @param faces the range of faces defining one or several surface patches to be remeshed
 * @param target_edge_length the edge length that is targetted in the remeshed patch
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
@@ -78,7 +78,6 @@ namespace Polygon_mesh_processing {
 *
 * @sa `split_long_edges()`
 *
-*@todo we suppose `faces` describe only one patch. Handle several patches.
 *@todo add possibility to provide a functor that projects to a prescribed surface
 */
 template<typename TriangleMesh
