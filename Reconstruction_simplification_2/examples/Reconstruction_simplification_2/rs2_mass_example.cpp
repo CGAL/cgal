@@ -53,14 +53,15 @@ int main ()
   std::vector<Point> isolated_vertices;
   std::vector<Segment> edges;
 
-  rs2.list_output (std::back_inserter(isolated_vertices), std::back_inserter(edges));
+  rs2.list_output(
+    std::back_inserter(isolated_vertices), std::back_inserter(edges));
 
-  std::cerr << "Isolated vertices" << std::endl;
+  std::cout << "Isolated vertices:" << std::endl;
   std::vector<Point>::iterator vit;
   for (vit = isolated_vertices.begin(); vit != isolated_vertices.end(); vit++) 
-    std::cout  <<  *vit << std::endl;
+    std::cout << *vit << std::endl;
 
-  std::cerr << "Edges" << std::endl;
+  std::cerr << "Edges:" << std::endl;
   std::vector<Segment>::iterator eit;
   for (eit = edges.begin(); eit != edges.end(); eit++) 
     std::cout << *eit << std::endl;
