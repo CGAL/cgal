@@ -9,15 +9,15 @@ namespace CGAL {
 
 \section Reconstruction_simplification_2Introduction Introduction
 
-This package implements a method to reconstruct and simplify 2D point sets \cgalCite{degoes:hal-00758019}. The input is a set of 2D points with mass attributes, possibly hampered by noise and outliers. The output is a set of line segments and isolated points which approximate the input points, as illustrated in Figure \cgalFigureRef{2D_Reconstruction_Simplification_summary}. The mass attribute relates to the importance given to each point for approximation.
+This package implements a method to reconstruct and simplify 2D point sets \cgalCite{degoes:hal-00758019}. The input is a set of 2D points with mass attributes, possibly hampered by noise and outliers. The output is a set of <em>line segments</em> and <em>isolated points</em> which approximate the input points, as illustrated in Figure \cgalFigureRef{2D_Reconstruction_Simplification_summary}. The mass attribute relates to the importance given to each point for approximation.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_summary,summary.png}
 Left: input point set hampered by noise. Right: The corresponding reconstructed shape consisting of line segments.
 \cgalFigureEnd
 
-Internally, the algorithm constructs an initial 2D Delaunay triangulation from all the input points, then simplifies the triangulation so that a subset of the edges and vertices of the triangulation approximate well the input points. Approximate herein refers to a robust distance based on optimal transportation (see advanced section for more details). The triangulation is simplified using a combination of half edge collapse operators and edge flips. The triangulation remains valid during simplification, i.e., with neither overlaps nor fold-overs. 
+Internally, the algorithm constructs an initial 2D Delaunay triangulation from all the input points, then simplifies the triangulation so that a subset of the edges and vertices of the triangulation approximate well the input points. Approximate herein refers to a robust distance based on <em>optimal transportation</em> (see section \ref Reconstruction_simplification_2HowDoesItWork for more details). The triangulation is simplified using a combination of <em>half edge collapse operators</em> and <em>edge flips</em>. The triangulation remains valid during simplification, i.e., with neither overlaps nor fold-overs. 
 
-The output of the reconstruction algorithm is a subset of edges and vertices of the triangulation. Figure \cgalFigureRef{2D_Reconstruction_Simplification_algorithm} depicts an example where the output is composed of green edges and one isolated vertex. The green edges are considered relevant as they approximate well many of the input points. The edges depicted in grey, referred to as ghost edges and discarded, approximate none of the input points. The edges depicted in red, referred to as irrelevant and also discarded, approximate some of the input points but not enough to be considered relevant.
+The output of the reconstruction algorithm is a subset of edges and vertices of the triangulation. Figure \cgalFigureRef{2D_Reconstruction_Simplification_algorithm} depicts an example where the output is composed of green edges and one isolated vertex. The green edges are considered relevant as they approximate well many of the input points. The edges depicted in grey, referred to as <em>ghost edges</em> and discarded, approximate none of the input points. The edges depicted in red, referred to as irrelevant and also discarded, approximate some of the input points but not enough to be considered relevant.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_algorithm,algorithm.png}
 (a) Input point set (b) Delaunay triangulation of the input points (c) After simplification, with ghost edges in grey, relevant edges in green, and irrelevant edges in red (d) Final reconstruction made up of several edges and one isolated vertex.
@@ -25,7 +25,7 @@ The output of the reconstruction algorithm is a subset of edges and vertices of 
 
 
 \subsection Reconstruction_simplification_2Simplest_example Simplest Example
-The following example first reads a set of input points from an ASCII file. The points, with no mass attribute, are then passed to the Reconstruction_simplification_2 object. After initializing it, 100 iterations of the reconstruction process are performed. 
+The following example first generates a set of input points on a square. The points, with no mass attribute, are then passed to the Reconstruction_simplification_2 object. After initialization, 100 iterations of the reconstruction process are performed. 
 \cgalExample{Reconstruction_simplification_2/rs2_simplest_example.cpp}
 
 \subsubsection Reconstruction_simplification_2Output_example Output Example
