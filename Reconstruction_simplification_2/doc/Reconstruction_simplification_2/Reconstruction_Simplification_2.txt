@@ -140,7 +140,8 @@ Robustness to noise and outliers. Left: noise-free point set. Middle: noisy poin
 \section Reconstruction_simplification_2Density Variable Density
 Figure \cgalFigureRef{2D_Reconstruction_Simplification_density} illustrates the behavior of the algorithm on a point set with uniform mass attributes, and variable density. As the algorithm gives more importance to densely sampled areas, this translates into smaller edges on densely sampled areas. On sparsely sampled areas the algorithm initially approximates each point by one isolated vertex, then progressively approximates the points with edges. 
 \cgalFigureBegin{2D_Reconstruction_Simplification_density,density.png}
-Variable density. Left: input point set. Middle left: the output is composed of isolated vertices on sparse areas and of edges with adapted length elsewhere.
+Variable density. Left: input point set. The three other pictures show
+how the approximation evolves when pushing the simplification forward.
 \cgalFigureEnd
 
 \section Reconstruction_simplification_2Mixed Mixed Dimension
