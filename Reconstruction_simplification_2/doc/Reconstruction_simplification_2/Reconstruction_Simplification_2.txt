@@ -162,7 +162,7 @@ The mass attributes provides a means to adjust the importance given to each poin
 Variable mass. Left: input gray level image. Middle: image after thresholding to reduce the number of pixels used as points with non-zero mass. Right: final reconstruction.
 \cgalFigureEnd
 
-\section Reconstruction_simplification_2Advanced Advanced
+\section Reconstruction_simplification_2HowDoesItWork How does it work?
 
 The task addressed here is to reconstruct a shape from a noisy point set \f$ S \f$ in  \f$ \mathbb{R}^2 \f$, i.e., given a set of points in the plane, find a set of points and segments (more formally, a <I> 0-1 simplicial complex </I>) which best approximates \f$ S \f$. 
 
