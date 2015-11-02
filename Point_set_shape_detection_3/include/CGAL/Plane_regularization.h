@@ -151,18 +151,22 @@ namespace CGAL {
       
       // find pairs of epsilon-parallel primitives and store them in table_parallel 
       std::vector < std::vector < bool > > table_parallel; 
-      for( std::size_t i=0;i<extracted_planes.size(); i++){  
-        std::vector < bool > table_parallel_tmp; 
-        for( std::size_t j=0;j<extracted_planes.size(); j++){ 
+      for( std::size_t i=0;i<extracted_planes.size(); i++)
+        {  
+          std::vector < bool > table_parallel_tmp; 
+          for( std::size_t j=0;j<extracted_planes.size(); j++)
+            { 
 			
-          Vector v1=extracted_planes[i].orthogonal_vector();
-          Vector v2=extracted_planes[j].orthogonal_vector();
+              Vector v1=extracted_planes[i].orthogonal_vector();
+              Vector v2=extracted_planes[j].orthogonal_vector();
 			
-          if( std::fabs(v1*v2)>1.-epsilon && i!=j) table_parallel_tmp.push_back(true); 
-          else table_parallel_tmp.push_back(false); 
+              if (std::fabs(v1*v2)>1.-epsilon && i!=j)
+                table_parallel_tmp.push_back(true); 
+              else
+                table_parallel_tmp.push_back(false); 
+            }
+          table_parallel.push_back(table_parallel_tmp);
         }
-        table_parallel.push_back(table_parallel_tmp);
-      }
 	
 
 
@@ -172,81 +176,110 @@ namespace CGAL {
       std::vector < Vector > list_cluster_normales;
       std::vector < double > list_cluster_cosangle_vertical; 
       std::vector < double > list_cluster_area;
-      std::vector < bool > is_available; for( std::size_t i=0;i<extracted_planes.size();i++) is_available.push_back(true);
-      for( std::size_t i=0;i<extracted_planes.size();i++){
+      
+      std::vector < bool > is_available;
+      for( std::size_t i=0;i<extracted_planes.size();i++)
+        is_available.push_back(true);
+      
+      for( std::size_t i=0;i<extracted_planes.size();i++)
+        {
 
-        if(is_available[i]){
+          if(is_available[i])
+            {
 
-          is_available[i]=false;
+              is_available[i]=false;
 
-          //initialization containers
-          std::vector < int > index_container_parallel; index_container_parallel.push_back(i);
-          std::vector < int > index_container_former_ring_parallel; index_container_former_ring_parallel.push_back(i);
-          std::list < int > index_container_current_ring_parallel;
+              //initialization containers
+              std::vector < int > index_container_parallel;
+              index_container_parallel.push_back(i);
+              
+              std::vector < int > index_container_former_ring_parallel;
+              index_container_former_ring_parallel.push_back(i);
+              
+              std::list < int > index_container_current_ring_parallel;
 
-          //propagation over the pairs of epsilon-parallel primitives
-          bool propagation=true;
-          Vector cluster_normal=extracted_planes[i].orthogonal_vector();
-          double cumulated_area=list_areas[i];
+              //propagation over the pairs of epsilon-parallel primitives
+              bool propagation=true;
+              Vector cluster_normal=extracted_planes[i].orthogonal_vector();
+              double cumulated_area=list_areas[i];
 			
-          do{
-            propagation=false;
+              do
+                {
+                  propagation=false;
 
-            for (std::size_t k=0;k<index_container_former_ring_parallel.size();k++){
+                  for (std::size_t k=0;k<index_container_former_ring_parallel.size();k++)
+                    {
 
-              int plane_index=index_container_former_ring_parallel[k];
+                      int plane_index=index_container_former_ring_parallel[k];
 
-              for (std::size_t it=0;it<table_parallel[plane_index].size();it++){
+                      for (std::size_t it=0;it<table_parallel[plane_index].size();it++)
+                        {
 						
-                Vector normal_it=extracted_planes[it].orthogonal_vector();
+                          Vector normal_it=extracted_planes[it].orthogonal_vector();
 
-                if( table_parallel[plane_index][it] && is_available[it] && std::fabs(normal_it*cluster_normal)>1.-epsilon ){	
+                          if( table_parallel[plane_index][it] && is_available[it]
+                              && std::fabs(normal_it*cluster_normal)>1.-epsilon )
+                            {	
 							
-                  propagation=true;
-                  index_container_current_ring_parallel.push_back(it);
-                  is_available[it]=false;
+                              propagation=true;
+                              index_container_current_ring_parallel.push_back(it);
+                              is_available[it]=false;
 							
-                  if(cluster_normal*normal_it <0) normal_it=-normal_it; 
-                  cluster_normal=(FT)cumulated_area*cluster_normal+(FT)list_areas[it]*normal_it;
-                  FT norm=1./sqrt(cluster_normal.squared_length()); 
-                  cluster_normal=norm*cluster_normal;
-                  cumulated_area+=list_areas[it];
-                }	
-              }
-            }
+                              if(cluster_normal*normal_it <0)
+                                normal_it=-normal_it;
+                            
+                              cluster_normal=(FT)cumulated_area*cluster_normal+(FT)list_areas[it]*normal_it;
+                              FT norm=1./sqrt(cluster_normal.squared_length()); 
+                              cluster_normal=norm*cluster_normal;
+                              cumulated_area+=list_areas[it];
+                            }	
+                        }
+                    }
 
-            //update containers
-            index_container_former_ring_parallel.clear();
-            for(std::list < int >::iterator it = index_container_current_ring_parallel.begin(); it != index_container_current_ring_parallel.end(); ++it){
-              index_container_former_ring_parallel.push_back(*it);
-              index_container_parallel.push_back(*it);
-            }
-            index_container_current_ring_parallel.clear();
+                  //update containers
+                  index_container_former_ring_parallel.clear();
+                  for (std::list < int >::iterator it = index_container_current_ring_parallel.begin();
+                       it != index_container_current_ring_parallel.end(); ++it)
+                    {
+                      index_container_former_ring_parallel.push_back(*it);
+                      index_container_parallel.push_back(*it);
+                    }
+                  index_container_current_ring_parallel.clear();
 
-          }while(propagation);
+                }
+              while(propagation);
 			
-          list_parallel_planes.push_back(index_container_parallel);
-          list_cluster_normales.push_back(cluster_normal);
-          list_cluster_area.push_back(cumulated_area);
-          Vector v_vertical(0.,0.,1.);
-          list_cluster_cosangle_vertical.push_back(std::fabs(v_vertical*cluster_normal)); 
+              list_parallel_planes.push_back(index_container_parallel);
+              list_cluster_normales.push_back(cluster_normal);
+              list_cluster_area.push_back(cumulated_area);
+              Vector v_vertical(0.,0.,1.);
+              list_cluster_cosangle_vertical.push_back(std::fabs(v_vertical*cluster_normal)); 
+            }
         }
-      }
       is_available.clear();
 
       //discovery orthogonal relationship between clusters 
       std::vector < std::vector < bool > > group_planes_orthogonal;
-      for( std::size_t i=0;i<list_parallel_planes.size(); i++){  std::vector < bool > gp_tmp; for( std::size_t j=0;j<list_parallel_planes.size(); j++) gp_tmp.push_back(false); group_planes_orthogonal.push_back(gp_tmp);}
-
-      for (std::size_t i=0; i<group_planes_orthogonal.size();i++){
-        for (std::size_t j=0; j<group_planes_orthogonal.size();j++){
-
-          if( i!=j && std::fabs(list_cluster_normales[i]*list_cluster_normales[j])<epsilon){
-            group_planes_orthogonal[i][j]=true; 
-            group_planes_orthogonal[j][i]=true;
-          }
+      for( std::size_t i=0;i<list_parallel_planes.size(); i++)
+        {
+          std::vector < bool > gp_tmp;
+          for( std::size_t j=0;j<list_parallel_planes.size(); j++)
+            gp_tmp.push_back(false);
+          group_planes_orthogonal.push_back(gp_tmp);
         }
-      }
+
+      for (std::size_t i=0; i<group_planes_orthogonal.size();i++)
+        {
+          for (std::size_t j=0; j<group_planes_orthogonal.size();j++)
+            {
+
+              if( i!=j && std::fabs(list_cluster_normales[i]*list_cluster_normales[j])<epsilon)
+                {
+                  group_planes_orthogonal[i][j]=true; 
+                  group_planes_orthogonal[j][i]=true;
+                }
+            }
+        }
 
 
 
@@ -254,31 +287,42 @@ namespace CGAL {
 
       //clustering the vertical cosangle and store their centroids in cosangle_centroids and the centroid index of each cluster in list_cluster_index 
       std::vector < double > cosangle_centroids;
-      std::vector < int > list_cluster_index; for( std::size_t i=0;i<list_cluster_cosangle_vertical.size(); i++) list_cluster_index.push_back(-1);
+      std::vector < int > list_cluster_index;
+      for( std::size_t i=0;i<list_cluster_cosangle_vertical.size(); i++)
+        list_cluster_index.push_back(-1);
+      
       int mean_index=0;
-      for( std::size_t i=0;i<list_cluster_cosangle_vertical.size(); i++){
-        if(list_cluster_index[i]<0){
-          list_cluster_index[i]=mean_index;
-          double mean=list_cluster_area[i]*list_cluster_cosangle_vertical[i];
-          double mean_area=list_cluster_area[i];
-          for (std::size_t j=i+1; j<list_cluster_cosangle_vertical.size(); j++){
-            if( list_cluster_index[j]<0 && std::fabs(list_cluster_cosangle_vertical[j]-mean/mean_area)<epsilon ){
-              list_cluster_index[j]=mean_index;
-              mean_area+=list_cluster_area[j];
-              mean+=list_cluster_area[j]*list_cluster_cosangle_vertical[j];
+      for( std::size_t i=0;i<list_cluster_cosangle_vertical.size(); i++)
+        {
+          if(list_cluster_index[i]<0)
+            {
+              list_cluster_index[i]=mean_index;
+              double mean=list_cluster_area[i]*list_cluster_cosangle_vertical[i];
+              double mean_area=list_cluster_area[i];
+              for (std::size_t j=i+1; j<list_cluster_cosangle_vertical.size(); j++)
+                {
+                  if( list_cluster_index[j]<0 && std::fabs(list_cluster_cosangle_vertical[j]-mean/mean_area)<epsilon )
+                    {
+                      list_cluster_index[j]=mean_index;
+                      mean_area+=list_cluster_area[j];
+                      mean+=list_cluster_area[j]*list_cluster_cosangle_vertical[j];
+                    }
+                }
+              mean_index++;
+              mean/=mean_area;
+              cosangle_centroids.push_back(mean);
             }
-          }
-          mean_index++;
-          mean/=mean_area;
-          cosangle_centroids.push_back(mean);
         }
-      }
       //desactive Z-verticalité
-      for( std::size_t i=0;i<cosangle_centroids.size(); i++) {
-        if(cosangle_centroids[i]<epsilon) cosangle_centroids[i]=0;
-        else if(cosangle_centroids[i]>1.-epsilon) cosangle_centroids[i]=1;
-      }
-      for (std::size_t i=0; i<group_planes_orthogonal.size();i++) list_cluster_cosangle_vertical[i]=cosangle_centroids[list_cluster_index[i]];
+      for( std::size_t i=0;i<cosangle_centroids.size(); i++)
+        {
+          if(cosangle_centroids[i]<epsilon)
+            cosangle_centroids[i]=0;
+          else if(cosangle_centroids[i]>1.-epsilon)
+            cosangle_centroids[i]=1;
+        }
+      for (std::size_t i=0; i<group_planes_orthogonal.size();i++)
+        list_cluster_cosangle_vertical[i]=cosangle_centroids[list_cluster_index[i]];
 	
 
 
@@ -287,95 +331,116 @@ namespace CGAL {
 
       //display console
       //      /*
-        std::cout<<std::endl<<std::endl<<"clusters of parallel primitives:";
-        for (std::size_t i=0; i<list_parallel_planes.size();i++){
-        std::cout<<std::endl<<i<<" -> ";
-        for (std::size_t j=0; j<list_parallel_planes[i].size();j++) std::cout<<list_parallel_planes[i][j]<<"  ";
+      std::cout<<std::endl<<std::endl<<"clusters of parallel primitives:";
+      for (std::size_t i=0; i<list_parallel_planes.size();i++)
+        {
+          std::cout<<std::endl<<i<<" -> ";
+          for (std::size_t j=0; j<list_parallel_planes[i].size();j++)
+            std::cout<<list_parallel_planes[i][j]<<"  ";
         }
 
-        std::cout<<std::endl<<std::endl<<"pairs of orthogonal clusters:";
-        for (std::size_t i=0; i<group_planes_orthogonal.size();i++){
-        std::cout<<std::endl<<i<<" -> ";
-        for (std::size_t j=0;j<group_planes_orthogonal.size();j++){
-        if(group_planes_orthogonal[i][j]) std::cout<<j<<"  ";
+      std::cout<<std::endl<<std::endl<<"pairs of orthogonal clusters:";
+      for (std::size_t i=0; i<group_planes_orthogonal.size();i++)
+        {
+          std::cout<<std::endl<<i<<" -> ";
+          for (std::size_t j=0;j<group_planes_orthogonal.size();j++)
+            {
+              if(group_planes_orthogonal[i][j])
+                std::cout<<j<<"  ";
+            }
+          std::cout<<"     -> "<<list_cluster_cosangle_vertical[i]<<"  -> "<<cosangle_centroids[list_cluster_index[i]];
         }
-        std::cout<<"     -> "<<list_cluster_cosangle_vertical[i]<<"  -> "<<cosangle_centroids[list_cluster_index[i]];
-        }
-        //      */
+      //      */
 
 
       //find subgraphs of mutually orthogonal clusters (store index of clusters in subgraph_clusters), and select the cluster of largest area
       std::vector < std::vector < int > > subgraph_clusters;
       std::vector < int > subgraph_clusters_max_area_index;
-      std::vector < bool > is_free; for (std::size_t i=0; i<list_parallel_planes.size();i++) is_free.push_back(true);
-      for (std::size_t i=0; i<list_parallel_planes.size();i++){
-        if(is_free[i]){
+      std::vector < bool > is_free;
+      for (std::size_t i=0; i<list_parallel_planes.size();i++)
+        is_free.push_back(true);
+      for (std::size_t i=0; i<list_parallel_planes.size();i++)
+        {
+          if(is_free[i])
+            {
+              is_free[i]=false;
+              double max_area=list_cluster_area[i];
+              int index_max_area=i;
 
-          is_free[i]=false;
-          double max_area=list_cluster_area[i];
-          int index_max_area=i;
+              //initialization containers
+              std::vector < int > index_container;
+              index_container.push_back(i);
+              std::vector < int > index_container_former_ring;
+              index_container_former_ring.push_back(i);
+              std::list < int > index_container_current_ring;
 
-          //initialization containers
-          std::vector < int > index_container; index_container.push_back(i);
-          std::vector < int > index_container_former_ring; index_container_former_ring.push_back(i);
-          std::list < int > index_container_current_ring;
+              //propagation
+              bool propagation=true;
+              do
+                {
+                  propagation=false;
 
-          //propagation
-          bool propagation=true;
-          do{
-            propagation=false;
+                  //neighbors
+                  for (std::size_t k=0;k<index_container_former_ring.size();k++)
+                    {
 
-            //neighbors
-            for (std::size_t k=0;k<index_container_former_ring.size();k++){
+                      int cluster_index=index_container_former_ring[k];
 
-              int cluster_index=index_container_former_ring[k];
+                      for (std::size_t j=0;j<group_planes_orthogonal[cluster_index].size();j++)
+                        {
+                          if(group_planes_orthogonal[cluster_index][j] && is_free[j])
+                            { 	
+                              propagation=true;
+                              index_container_current_ring.push_back(j);
+                              is_free[j]=false;
 
-              for (std::size_t j=0;j<group_planes_orthogonal[cluster_index].size();j++){
-                if(group_planes_orthogonal[cluster_index][j] && is_free[j]){ 	
-                  propagation=true;
-                  index_container_current_ring.push_back(j);
-                  is_free[j]=false;
+                              if(max_area<list_cluster_area[j])
+                                {
+                                  max_area=list_cluster_area[j];
+                                  index_max_area=j;
+                                }
+                            }	
+                        }
+                    }
 
-                  if(max_area<list_cluster_area[j]){
-                    max_area=list_cluster_area[j];
-                    index_max_area=j;
-                  }
-                }	
-              }
+                  //update containers
+                  index_container_former_ring.clear();
+                  for(std::list < int >::iterator it = index_container_current_ring.begin();
+                      it != index_container_current_ring.end(); ++it)
+                    {
+                      index_container_former_ring.push_back(*it);
+                      index_container.push_back(*it);
+                    }
+                  index_container_current_ring.clear();
+
+                }
+              while(propagation);
+              subgraph_clusters.push_back(index_container);
+              subgraph_clusters_max_area_index.push_back(index_max_area);
             }
-
-            //update containers
-            index_container_former_ring.clear();
-            for(std::list < int >::iterator it = index_container_current_ring.begin(); it != index_container_current_ring.end(); ++it){
-              index_container_former_ring.push_back(*it);
-              index_container.push_back(*it);
-            }
-            index_container_current_ring.clear();
-
-          }while(propagation);
-          subgraph_clusters.push_back(index_container);
-          subgraph_clusters_max_area_index.push_back(index_max_area);
         }
-      }
       is_free.clear();
 
 
       //create subgraphs of mutually orthogonal clusters in which the largest cluster is excluded and store in subgraph_clusters_prop
       std::vector < std::vector < int > > subgraph_clusters_prop;
-      for (std::size_t i=0;i<subgraph_clusters.size(); i++){
-        int index=subgraph_clusters_max_area_index[i];
-        std::vector < int > subgraph_clusters_prop_temp;
-        for (std::size_t j=0;j<subgraph_clusters[i].size(); j++){
-          if(subgraph_clusters[i][j]!=index) subgraph_clusters_prop_temp.push_back(subgraph_clusters[i][j]);
+      for (std::size_t i=0;i<subgraph_clusters.size(); i++)
+        {
+          int index=subgraph_clusters_max_area_index[i];
+          std::vector < int > subgraph_clusters_prop_temp;
+          for (std::size_t j=0;j<subgraph_clusters[i].size(); j++)
+            if(subgraph_clusters[i][j]!=index)
+              subgraph_clusters_prop_temp.push_back(subgraph_clusters[i][j]);
+
+          subgraph_clusters_prop.push_back(subgraph_clusters_prop_temp);
         }
-        subgraph_clusters_prop.push_back(subgraph_clusters_prop_temp);
-      }
 
 
 
       //display console
       /*
-        for (std::size_t i=0;i<subgraph_clusters_prop.size(); i++){
+        for (std::size_t i=0;i<subgraph_clusters_prop.size(); i++)
+        {
         std::cout<<std::endl<<std::endl<<"subgraph "<<i<<" ("<<subgraph_clusters_max_area_index[i]<<" max area): ";
         for (std::size_t j=0;j<subgraph_clusters_prop[i].size(); j++) std::cout<<subgraph_clusters_prop[i][j]<<"  ";
         }
@@ -384,70 +449,87 @@ namespace CGAL {
 
       //regularization of cluster normals : in eachsubgraph, we start from the largest area cluster and we propage over the subgraph by regularizing the normals of the clusters accorting to orthogonality and cosangle to vertical
       std::vector< bool > cluster_is_available; 
-      for( std::size_t i=0;i<list_cluster_cosangle_vertical.size();i++) cluster_is_available.push_back(true);
+      for( std::size_t i=0;i<list_cluster_cosangle_vertical.size();i++)
+        cluster_is_available.push_back(true);
 
-      for (std::size_t i=0; i<subgraph_clusters_prop.size();i++){
+      for (std::size_t i=0; i<subgraph_clusters_prop.size();i++)
+        {
 	
-        int index_current=subgraph_clusters_max_area_index[i];
-        Vector vec_current=regularize_normal(list_cluster_normales[index_current],list_cluster_cosangle_vertical[index_current]);
-        list_cluster_normales[index_current]=vec_current;
-        cluster_is_available[index_current]=false;
+          int index_current=subgraph_clusters_max_area_index[i];
+          Vector vec_current=regularize_normal(list_cluster_normales[index_current],
+                                               list_cluster_cosangle_vertical[index_current]);
+          list_cluster_normales[index_current]=vec_current;
+          cluster_is_available[index_current]=false;
 
-        //initialization containers
-        std::vector < int > index_container; index_container.push_back(index_current);
-        std::vector < int > index_container_former_ring; index_container_former_ring.push_back(index_current);
-        std::list < int > index_container_current_ring;
+          //initialization containers
+          std::vector < int > index_container;
+          index_container.push_back(index_current);
+          std::vector < int > index_container_former_ring;
+          index_container_former_ring.push_back(index_current);
+          std::list < int > index_container_current_ring;
 
-        //propagation
-        bool propagation=true;
-        do{
-          propagation=false;
+          //propagation
+          bool propagation=true;
+          do
+            {
+              propagation=false;
 
-          //neighbors
-          for (std::size_t k=0;k<index_container_former_ring.size();k++){
+              //neighbors
+              for (std::size_t k=0;k<index_container_former_ring.size();k++)
+                {
 
-            int cluster_index=index_container_former_ring[k];
+                  int cluster_index=index_container_former_ring[k];
 
-            for (std::size_t j=0;j<group_planes_orthogonal[cluster_index].size();j++){
+                  for (std::size_t j=0;j<group_planes_orthogonal[cluster_index].size();j++)
+                    {
 						
-              if(group_planes_orthogonal[cluster_index][j] && cluster_is_available[j]){ 	
+                      if(group_planes_orthogonal[cluster_index][j] && cluster_is_available[j])
+                        { 	
 							
-                propagation=true;
-                index_container_current_ring.push_back(j);
-                cluster_is_available[j]=false;
+                          propagation=true;
+                          index_container_current_ring.push_back(j);
+                          cluster_is_available[j]=false;
 
-                Vector new_vect=regularize_normals_from_prior(list_cluster_normales[cluster_index], list_cluster_normales[j], list_cluster_cosangle_vertical[j]);
-                list_cluster_normales[j]=new_vect;
-              }
-            }	
-          }
+                          Vector new_vect=regularize_normals_from_prior(list_cluster_normales[cluster_index],
+                                                                        list_cluster_normales[j],
+                                                                        list_cluster_cosangle_vertical[j]);
+                          list_cluster_normales[j]=new_vect;
+                        }
+                    }	
+                }
 			
-          //update containers
-          index_container_former_ring.clear();
-          for(std::list < int >::iterator it = index_container_current_ring.begin(); it != index_container_current_ring.end(); ++it){
-            index_container_former_ring.push_back(*it);
-            index_container.push_back(*it);
-          }
-          index_container_current_ring.clear();
-        }while(propagation);
-      }
+              //update containers
+              index_container_former_ring.clear();
+              for(std::list < int >::iterator it = index_container_current_ring.begin();
+                  it != index_container_current_ring.end(); ++it)
+                {
+                  index_container_former_ring.push_back(*it);
+                  index_container.push_back(*it);
+                }
+              index_container_current_ring.clear();
+            }while(propagation);
+        }
 
 
 
       //recompute optimal plane for each primitive after normal regularization
-      for (std::size_t i=0; i<list_cluster_normales.size();i++){
+      for (std::size_t i=0; i<list_cluster_normales.size();i++)
+        {
 
-        Vector vec_reg=list_cluster_normales[i];
+          Vector vec_reg=list_cluster_normales[i];
 
-        for (std::size_t j=0; j<list_parallel_planes[i].size();j++){
-          int index_prim=list_parallel_planes[i][j];
-          Point pt_reg=extracted_planes[index_prim].projection(list_centroid[index_prim]);
-          if( extracted_planes[index_prim].orthogonal_vector() * vec_reg < 0) vec_reg=-vec_reg;
-          Plane plane_reg(pt_reg,vec_reg);
+          for (std::size_t j=0; j<list_parallel_planes[i].size();j++)
+            {
+              int index_prim=list_parallel_planes[i][j];
+              Point pt_reg=extracted_planes[index_prim].projection(list_centroid[index_prim]);
+              if( extracted_planes[index_prim].orthogonal_vector() * vec_reg < 0)
+                vec_reg=-vec_reg;
+              Plane plane_reg(pt_reg,vec_reg);
 		
-          if( std::fabs(extracted_planes[index_prim].orthogonal_vector()*plane_reg.orthogonal_vector()) > 1. - epsilon) extracted_planes[index_prim]=plane_reg;
+              if( std::fabs(extracted_planes[index_prim].orthogonal_vector()*plane_reg.orthogonal_vector()) > 1. - epsilon)
+                extracted_planes[index_prim]=plane_reg;
+            }
         }
-      }
 
 
 
@@ -455,45 +537,54 @@ namespace CGAL {
 
       //detecting co-planarity and store in list_coplanar_prim
       std::vector< std::vector< std::vector < int > > > list_coplanar_prim;
-      for (std::size_t i=0; i<list_parallel_planes.size();i++){
+      for (std::size_t i=0; i<list_parallel_planes.size();i++)
+        {
 
-        std::vector< std::vector < int > > list_coplanar_prim_tmp;
-        Vector vec_reg=list_cluster_normales[i];
-        std::vector < int > list_cop_index; for( std::size_t ip=0;ip<list_parallel_planes[i].size(); ip++) list_cop_index.push_back(-1);
-        int cop_index=0;
+          std::vector< std::vector < int > > list_coplanar_prim_tmp;
+          Vector vec_reg=list_cluster_normales[i];
+          std::vector < int > list_cop_index;
+          for( std::size_t ip=0;ip<list_parallel_planes[i].size(); ip++)
+            list_cop_index.push_back(-1);
 
-        for (std::size_t j=0; j<list_parallel_planes[i].size();j++){
-          int index_prim=list_parallel_planes[i][j];
+          int cop_index=0;
 
-          if(list_cop_index[j]<0){
+          for (std::size_t j=0; j<list_parallel_planes[i].size();j++)
+            {
+              int index_prim=list_parallel_planes[i][j];
+
+              if(list_cop_index[j]<0)
+                {
 			
-            std::vector < int > list_coplanar_prim_tmp_tmp;
-            list_cop_index[j]=cop_index;
-            list_coplanar_prim_tmp_tmp.push_back(index_prim);
+                  std::vector < int > list_coplanar_prim_tmp_tmp;
+                  list_cop_index[j]=cop_index;
+                  list_coplanar_prim_tmp_tmp.push_back(index_prim);
 			
-            Point pt_reg=extracted_planes[index_prim].projection(list_centroid[index_prim]);
-            Plane plan_reg(pt_reg,vec_reg);
+                  Point pt_reg=extracted_planes[index_prim].projection(list_centroid[index_prim]);
+                  Plane plan_reg(pt_reg,vec_reg);
 
-            for (std::size_t k=j+1; k<list_parallel_planes[i].size(); k++){
-              if( list_cop_index[k]<0){
+                  for (std::size_t k=j+1; k<list_parallel_planes[i].size(); k++)
+                    {
+                      if( list_cop_index[k]<0)
+                        {
 					
-                int index_prim_next=list_parallel_planes[i][k];
-                Point pt_reg_next=extracted_planes[index_prim_next].projection(list_centroid[index_prim_next]);
-                Point pt_proj=plan_reg.projection(pt_reg_next);
-                double distance=distance_Point(pt_reg_next,pt_proj);
+                          int index_prim_next=list_parallel_planes[i][k];
+                          Point pt_reg_next=extracted_planes[index_prim_next].projection(list_centroid[index_prim_next]);
+                          Point pt_proj=plan_reg.projection(pt_reg_next);
+                          double distance=distance_Point(pt_reg_next,pt_proj);
 					
-                if(distance<tolerance_coplanarity ){
-                  list_cop_index[k]=cop_index;
-                  list_coplanar_prim_tmp_tmp.push_back(index_prim_next);
+                          if(distance<tolerance_coplanarity )
+                            {
+                              list_cop_index[k]=cop_index;
+                              list_coplanar_prim_tmp_tmp.push_back(index_prim_next);
+                            }
+                        }
+                    }
+                  list_coplanar_prim_tmp.push_back(list_coplanar_prim_tmp_tmp);
+                  cop_index++; 
                 }
-              }
             }
-            list_coplanar_prim_tmp.push_back(list_coplanar_prim_tmp_tmp);
-            cop_index++; 
-          }
+          list_coplanar_prim.push_back(list_coplanar_prim_tmp);
         }
-        list_coplanar_prim.push_back(list_coplanar_prim_tmp);
-      }
 
 
 
@@ -501,46 +592,54 @@ namespace CGAL {
       std::vector < std::vector < int > > list_primitive_reg_index_extracted_planes;
       std::vector < Plane > list_primitive_reg;
 
-      for (std::size_t i=0;i<list_coplanar_prim.size();i++){
-        for (std::size_t j=0;j<list_coplanar_prim[i].size();j++){
+      for (std::size_t i=0;i<list_coplanar_prim.size();i++)
+        {
+          for (std::size_t j=0;j<list_coplanar_prim[i].size();j++)
+            {
 
-          Point pt_bary(0.,0.,0.);
-          double area=0;
+              Point pt_bary(0.,0.,0.);
+              double area=0;
 
-          for (std::size_t k=0; k<list_coplanar_prim[i][j].size();k++){
-            int index_prim=list_coplanar_prim[i][j][k];
-            Point pt_reg=extracted_planes[index_prim].projection(list_centroid[index_prim]);
+              for (std::size_t k=0; k<list_coplanar_prim[i][j].size();k++)
+                {
+                  int index_prim=list_coplanar_prim[i][j][k];
+                  Point pt_reg=extracted_planes[index_prim].projection(list_centroid[index_prim]);
 
-            pt_bary=barycenter(pt_bary, area,pt_reg,list_areas[index_prim]); 
-            area+=list_areas[index_prim];
-          }
-          Vector vec_reg=extracted_planes[list_coplanar_prim[i][j][0]].orthogonal_vector();
+                  pt_bary=barycenter(pt_bary, area,pt_reg,list_areas[index_prim]); 
+                  area+=list_areas[index_prim];
+                }
+              Vector vec_reg=extracted_planes[list_coplanar_prim[i][j][0]].orthogonal_vector();
 
-          Plane plane_reg(pt_bary,vec_reg);
+              Plane plane_reg(pt_bary,vec_reg);
 
-          bool is_reg_used=false;
-          std::vector< int > list_primitive_reg_index_extracted_planes_tmp1;
-          for (std::size_t k=0; k<list_coplanar_prim[i][j].size();k++){
-            int index_prim=list_coplanar_prim[i][j][k];
-            if( std::fabs(extracted_planes[index_prim].orthogonal_vector()*plane_reg.orthogonal_vector()) > 1. - epsilon){
-              if(extracted_planes[index_prim].orthogonal_vector()*plane_reg.orthogonal_vector()<0) extracted_planes[index_prim]=plane_reg.opposite();
-              else extracted_planes[index_prim]=plane_reg;
-              is_reg_used=true;
-              list_primitive_reg_index_extracted_planes_tmp1.push_back(index_prim);
+              bool is_reg_used=false;
+              std::vector< int > list_primitive_reg_index_extracted_planes_tmp1;
+
+              for (std::size_t k=0; k<list_coplanar_prim[i][j].size();k++)
+                {
+                  int index_prim=list_coplanar_prim[i][j][k];
+                  if( std::fabs(extracted_planes[index_prim].orthogonal_vector()*plane_reg.orthogonal_vector()) > 1. - epsilon)
+                    {
+                      if(extracted_planes[index_prim].orthogonal_vector()*plane_reg.orthogonal_vector()<0)
+                        extracted_planes[index_prim]=plane_reg.opposite();
+                      else
+                        extracted_planes[index_prim]=plane_reg;
+                      is_reg_used=true;
+                      list_primitive_reg_index_extracted_planes_tmp1.push_back(index_prim);
+                    }
+                  else{
+                    list_primitive_reg.push_back(extracted_planes[index_prim]);
+                    std::vector< int > list_primitive_reg_index_extracted_planes_tmp;
+                    list_primitive_reg_index_extracted_planes_tmp.push_back(index_prim);
+                    list_primitive_reg_index_extracted_planes.push_back(list_primitive_reg_index_extracted_planes_tmp);
+                  }
+                }
+              if(is_reg_used) {
+                list_primitive_reg.push_back(plane_reg);
+                list_primitive_reg_index_extracted_planes.push_back(list_primitive_reg_index_extracted_planes_tmp1);
+              }
             }
-            else{
-              list_primitive_reg.push_back(extracted_planes[index_prim]);
-              std::vector< int > list_primitive_reg_index_extracted_planes_tmp;
-              list_primitive_reg_index_extracted_planes_tmp.push_back(index_prim);
-              list_primitive_reg_index_extracted_planes.push_back(list_primitive_reg_index_extracted_planes_tmp);
-            }
-          }
-          if(is_reg_used) {
-            list_primitive_reg.push_back(plane_reg);
-            list_primitive_reg_index_extracted_planes.push_back(list_primitive_reg_index_extracted_planes_tmp1);
-          }
         }
-      }
 
       std::cout<<std::endl<<std::endl<<"NB planes final = "<<list_primitive_reg.size()<<std::endl<<std::endl;
 
@@ -549,39 +648,48 @@ namespace CGAL {
       //merge similar planes in plane_point_index and extracted planes and HPS[i].primitive_index
       std::vector < std::vector < int > > plane_point_index_temp;
       std::vector < Plane > extracted_planes_temp;
-      std::vector < bool > has_been_merged; for (std::size_t i=0; i<plane_point_index.size();i++) has_been_merged.push_back(false);
+      std::vector < bool > has_been_merged;
+      for (std::size_t i=0; i<plane_point_index.size();i++)
+        has_been_merged.push_back(false);
 
-      for (std::size_t i=0; i<plane_point_index.size();i++){
+      for (std::size_t i=0; i<plane_point_index.size();i++)
+        {
 	
-        if (!has_been_merged[i]){
-          extracted_planes_temp.push_back(extracted_planes[i]);
-          int label_index=extracted_planes_temp.size()-1;
-          plane_point_index_temp.push_back(plane_point_index[i]);
-          for (std::size_t k=0; k<plane_point_index[i].size();k++) {
-            int index_pt=plane_point_index[i][k];
-            primitive_index[index_pt]=label_index;
-            label_plane[index_pt]=label_index;
-          }
+          if (!has_been_merged[i])
+            {
+              extracted_planes_temp.push_back(extracted_planes[i]);
+              int label_index=extracted_planes_temp.size()-1;
+              plane_point_index_temp.push_back(plane_point_index[i]);
+              for (std::size_t k=0; k<plane_point_index[i].size();k++)
+                {
+                  int index_pt=plane_point_index[i][k];
+                  primitive_index[index_pt]=label_index;
+                  label_plane[index_pt]=label_index;
+                }
 	
-          for (std::size_t j=i+1;j<plane_point_index.size();j++){
+              for (std::size_t j=i+1;j<plane_point_index.size();j++)
+                {
 
-            if(extracted_planes[i]==extracted_planes[j]){ //if identical (do opposite plane too ?) then store the second in the first
+                  if(extracted_planes[i]==extracted_planes[j])
+                    { //if identical (do opposite plane too ?) then store the second in the first
 			
-              has_been_merged[j]=true;
+                      has_been_merged[j]=true;
 
-              std::vector< int > plane_point_index_new=plane_point_index_temp[plane_point_index_temp.size()-1];
-              for (std::size_t k=0; k<plane_point_index[j].size();k++){
-                int ind=plane_point_index[j][k];
-                plane_point_index_new.push_back(ind);
-                primitive_index[ind]=label_index;
-                label_plane[ind]=label_index;
-              }
-              plane_point_index_temp[plane_point_index_temp.size()-1]=plane_point_index_new;
+                      std::vector< int > plane_point_index_new
+                        = plane_point_index_temp[plane_point_index_temp.size()-1];
+                      for (std::size_t k=0; k<plane_point_index[j].size();k++)
+                        {
+                          int ind=plane_point_index[j][k];
+                          plane_point_index_new.push_back(ind);
+                          primitive_index[ind]=label_index;
+                          label_plane[ind]=label_index;
+                        }
+                      plane_point_index_temp[plane_point_index_temp.size()-1]=plane_point_index_new;
 
+                    }
+                }
             }
-          }
         }
-      }
 
       extracted_planes=extracted_planes_temp;
       plane_point_index=plane_point_index_temp;
