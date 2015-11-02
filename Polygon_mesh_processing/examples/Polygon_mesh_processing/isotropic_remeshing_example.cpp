@@ -7,7 +7,6 @@
 
 #include <fstream>
 #include <vector>
-#include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Surface_mesh<K::Point_3> Mesh;
@@ -39,9 +38,6 @@ int main(int argc, char* argv[])
   std::cout << "Start remeshing of " << filename
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
-  CGAL::Timer t;
-  t.start();
-
   PMP::isotropic_remeshing(mesh,
       faces(mesh),
       target_edge_length,
@@ -49,8 +45,7 @@ int main(int argc, char* argv[])
       .protect_constraints(true)//i.e. protect border, here
       );
 
-  t.stop();
-  std::cout << "Remeshing took " << t.time() << std::endl;
+  std::cout << "Remeshing done." << std::endl;
 
   std::ofstream out("remeshed.off");
   out << mesh;
