@@ -71,9 +71,13 @@ Furthermore, we can relocate the vertices by calling `relocate_points()`.
 
 \tparam Gt a model of the concept `ReconstructionSimplificationTraits_2`.
 
-\tparam PointMap a model of `ReadablePropertyMap` with value type `Gt::Point_2`
+\tparam PointMap a model of `ReadablePropertyMap` with value type `Gt::Point_2`.
+        Defaults to `boost::typed_identity_property_map<Gt::Point_2>`
+        (for the case the input is points without mass).
 
 \tparam MassMap a model of `ReadablePropertyMap` with value type `Gt::FT`
+        Defaults to `boost::static_property_map<Gt::FT>` 
+        (for the case the input is points without mass).
 
  */
 template<
