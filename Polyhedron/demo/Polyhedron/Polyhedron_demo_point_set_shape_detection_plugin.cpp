@@ -1,11 +1,14 @@
 #include "config.h"
 #include "Scene_points_with_normal_item.h"
+#include "Scene_polygon_soup_item.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/Random.h>
 
 #include <CGAL/Shape_detection_3.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Alpha_shape_2.h>
 
 #include <QObject>
 #include <QAction>
@@ -56,6 +59,13 @@ public:
 
   public Q_SLOTS:
     void on_actionDetect_triggered();
+
+private:
+
+  typedef Kernel::Plane_3 Plane_3;
+  
+  void build_alpha_shape (Point_set& points, const Plane_3& plane,
+                          Scene_polygon_soup_item* item, double epsilon);
 
 }; // end Polyhedron_demo_point_set_shape_detection_plugin
 
@@ -180,7 +190,22 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
         ss << item->name().toStdString() << "_cylinder_" << cyl->radius() << "_";
       }
       else if (dynamic_cast<CGAL::Shape_detection_3::Plane<Traits> *>(shape.get()))
-        ss << item->name().toStdString() << "_plane_";
+        {
+          ss << item->name().toStdString() << "_plane_";
+
+          // If plane, build alpha shape
+          Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
+
+          Plane_3 plane = (Plane_3)(*(dynamic_cast<CGAL::Shape_detection_3::Plane<Traits>*>(shape.get ())));
+          build_alpha_shape (*(point_item->point_set()), plane,
+                             soup_item, dialog.cluster_epsilon());
+          
+          soup_item->setRbgColor(r-32, g-32, b-32);
+          soup_item->setName(QString("%1alpha_shape").arg(QString::fromStdString(ss.str())));
+          soup_item->setRenderingMode (Flat);
+          scene->addItem(soup_item);
+
+        }
       else if (dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
         ss << item->name().toStdString() << "_cone_";
       else if (dynamic_cast<CGAL::Shape_detection_3::Torus<Traits> *>(shape.get()))
@@ -216,6 +241,53 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     item->setVisible(false);
   }
 }
+
+void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
+(Point_set& points, const Plane_3& plane, Scene_polygon_soup_item* item, double epsilon)
+{
+  typedef Kernel::Point_2  Point_2;
+  typedef CGAL::Alpha_shape_vertex_base_2<Kernel> Vb;
+  typedef CGAL::Alpha_shape_face_base_2<Kernel>  Fb;
+  typedef CGAL::Triangulation_data_structure_2<Vb,Fb> Tds;
+  typedef CGAL::Delaunay_triangulation_2<Kernel,Tds> Triangulation_2;
+  typedef CGAL::Alpha_shape_2<Triangulation_2>  Alpha_shape_2;
+
+
+  std::vector<Point_2> projections;
+  projections.reserve (points.size ());
+
+  for (std::size_t i = 0; i < points.size (); ++ i)
+    projections.push_back (plane.to_2d (points[i]));
+
+  Alpha_shape_2 ashape (projections.begin (), projections.end (), epsilon);
+  
+  std::map<Alpha_shape_2::Vertex_handle, std::size_t> map_v2i;
+
+  item->init_polygon_soup(points.size(), ashape.number_of_faces ());
+  std::size_t current_index = 0;
+
+  for (Alpha_shape_2::Finite_faces_iterator it = ashape.finite_faces_begin ();
+       it != ashape.finite_faces_end (); ++ it)
+    {
+      if (ashape.classify (it) != Alpha_shape_2::INTERIOR)
+        continue;
+
+      for (std::size_t i = 0; i < 3; ++ i)
+        {
+          if (map_v2i.find (it->vertex (i)) == map_v2i.end ())
+            {
+              map_v2i.insert (std::make_pair (it->vertex (i), current_index ++));
+              Point p = plane.to_3d (it->vertex (i)->point ());
+              item->new_vertex (p.x (), p.y (), p.z ());
+            }
+        }
+      item->new_triangle (map_v2i[it->vertex (0)],
+                          map_v2i[it->vertex (1)],
+                          map_v2i[it->vertex (2)]);
+    }
+
+}
+
 
 #include <QtPlugin>
 
