@@ -26,6 +26,8 @@ public:
                   QString application_name = "Polyhedron_3 demo",
                   QString main_window_title = "CGAL Polyhedron demo");
 
+  ~Polyhedron_demo();
+
   /*!
    * Catches unhandled exceptions from all the widgets
    */

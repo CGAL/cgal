@@ -222,28 +222,17 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${lib} )
   endforeach()
 
-  add_definitions(-DQT_STATICPLUGIN)
-#  if(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
-    set(CGAL_POLYHEDRON_DEMO_DEFINITIONS "-DUSE_FORWARD_DECL")
-    add_definitions(${CGAL_POLYHEDRON_DEMO_DEFINITIONS})
-    add_executable  ( Polyhedron_3
-      MainWindow.cpp
-      Polyhedron_3.cpp
-      File_loader_dialog_moc.cpp
-       ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} )
-    add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
-    qt5_use_modules(Polyhedron_3 Gui OpenGL Xml Widgets Script Svg )
-    if(EIGEN3_FOUND)
-#      add_executable( Polyhedron_3 Scene_tex_rendering.cpp Scene_tex_polyhedron_operations.cpp )
-    endif()
-#  else(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
-#    add_file_dependencies( Polyhedron_3.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
-#                                            "${CMAKE_CURRENT_BINARY_DIR}/Scene_moc.cpp"
-#                                            "${CMAKE_CURRENT_BINARY_DIR}/File_loader_dialog_moc.cpp"
-#					    "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
-#    add_executable  ( Polyhedron_3 Polyhedron_3.cpp ${UI_FILES} ${RESOURCE_FILES} )
-#  endif(POLYHEDRON_DEMO_ENABLE_FORWARD_DECL)
+  add_definitions(-DQT_STATICPLUGIN -DUSE_FORWARD_DECL)
+  add_library(polyhedron_demo SHARED
+    MainWindow.cpp
+    Polyhedron_demo.cpp
+    File_loader_dialog_moc.cpp
+    ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES})
+  qt5_use_modules(polyhedron_demo Gui OpenGL Xml Widgets Script Svg )
 
+  add_executable  ( Polyhedron_3 Polyhedron_3.cpp )
+  target_link_libraries( Polyhedron_3 polyhedron_demo )
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
 
   if( POLYHEDRON_QTSCRIPT_DEBUGGER )
     if(TARGET Qt5::ScriptTools)
