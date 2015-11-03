@@ -53,6 +53,8 @@
     <addaction name="separator"/>
     <addaction name="actionLoad_Script"/>
     <addaction name="separator"/>
+    <addaction name="actionLoad_plugin"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -81,7 +83,6 @@
      <addaction name="separator"/>
      <addaction name="actionMinkowskiSum"/>
     </widget>
-
     <addaction name="actionEstimateCurvature"/>
     <addaction name="actionSelfIntersection"/>
     <addaction name="actionConvexHull"/>
@@ -631,6 +632,11 @@
   <action name="actionLSC">
    <property name="text">
     <string>Least square conformal maps</string>
+   </property>
+  </action>
+  <action name="actionLoad_plugin">
+   <property name="text">
+    <string>Load plugin</string>
    </property>
   </action>
  </widget>

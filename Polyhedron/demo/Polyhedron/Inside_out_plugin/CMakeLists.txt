@@ -1,0 +1,4 @@
+include( polyhedron_demo_macros )
+
+polyhedron_demo_plugin(inside_out_plugin Polyhedron_demo_inside_out_plugin)
+target_link_libraries(inside_out_plugin scene_polyhedron_item scene_polygon_soup_item)

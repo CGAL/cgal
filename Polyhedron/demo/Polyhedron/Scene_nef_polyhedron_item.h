@@ -1,6 +1,6 @@
 #ifndef SCENE_NEF_POLYHEDRON_ITEM_H
 #define SCENE_NEF_POLYHEDRON_ITEM_H
-#include "Scene_item.h"
+#include  <CGAL/Three/Scene_item.h>
 #include "Scene_nef_polyhedron_item_config.h"
 #include "Nef_type_fwd.h"
 #include <iostream>
@@ -8,7 +8,7 @@
 class Scene_polyhedron_item;
 
 class SCENE_NEF_POLYHEDRON_ITEM_EXPORT Scene_nef_polyhedron_item
- : public Scene_item
+ : public CGAL::Three::Scene_item
 {
   Q_OBJECT
 public:
@@ -88,7 +88,7 @@ private:
 
   mutable QOpenGLShaderProgram *program;
 
-  using Scene_item::initialize_buffers;
+  using CGAL::Three::Scene_item::initialize_buffers;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void) const;
 

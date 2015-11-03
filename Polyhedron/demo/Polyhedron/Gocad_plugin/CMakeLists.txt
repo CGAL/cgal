@@ -1,0 +1,4 @@
+include( polyhedron_demo_macros )
+
+ polyhedron_demo_plugin(gocad_plugin Polyhedron_demo_gocad_plugin)
+ target_link_libraries(gocad_plugin scene_polyhedron_item)

@@ -1,0 +1,5 @@
+include( polyhedron_demo_macros )
+
+qt5_wrap_ui( segmentationUI_FILES Mesh_segmentation_widget.ui)
+polyhedron_demo_plugin(mesh_segmentation_plugin Polyhedron_demo_mesh_segmentation_plugin ${segmentationUI_FILES})
+  target_link_libraries(mesh_segmentation_plugin scene_polyhedron_item)
