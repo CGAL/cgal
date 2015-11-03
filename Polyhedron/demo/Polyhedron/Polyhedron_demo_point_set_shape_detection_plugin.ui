@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>444</width>
-    <height>205</height>
+    <height>269</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -196,6 +196,20 @@
       </widget>
      </item>
     </layout>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="m_generate_alpha">
+     <property name="text">
+      <string>Generate alpha shapes for planes</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="m_do_not_generate_subset">
+     <property name="text">
+      <string>Do not generate point subsets</string>
+     </property>
+    </widget>
    </item>
    <item>
     <widget class="QDialogButtonBox" name="buttonBox">

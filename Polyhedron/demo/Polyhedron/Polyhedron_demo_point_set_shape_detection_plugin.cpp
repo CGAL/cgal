@@ -89,7 +89,9 @@ public:
   bool detect_sphere() const { return sphereCB->isChecked(); } 
   bool detect_cylinder() const { return cylinderCB->isChecked(); } 
   bool detect_torus() const { return torusCB->isChecked(); } 
-  bool detect_cone() const { return coneCB->isChecked(); } 
+  bool detect_cone() const { return coneCB->isChecked(); }
+  bool generate_alpha() const { return m_generate_alpha->isChecked(); }
+  bool generate_subset() const { return !(m_do_not_generate_subset->isChecked()); }
 };
 
 void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered() {
@@ -193,18 +195,20 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
         {
           ss << item->name().toStdString() << "_plane_";
 
-          // If plane, build alpha shape
-          Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
+          if (dialog.generate_alpha ())
+            {
+              // If plane, build alpha shape
+              Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
 
-          Plane_3 plane = (Plane_3)(*(dynamic_cast<CGAL::Shape_detection_3::Plane<Traits>*>(shape.get ())));
-          build_alpha_shape (*(point_item->point_set()), plane,
-                             soup_item, dialog.cluster_epsilon());
+              Plane_3 plane = (Plane_3)(*(dynamic_cast<CGAL::Shape_detection_3::Plane<Traits>*>(shape.get ())));
+              build_alpha_shape (*(point_item->point_set()), plane,
+                                 soup_item, dialog.cluster_epsilon());
           
-          soup_item->setRbgColor(r-32, g-32, b-32);
-          soup_item->setName(QString("%1alpha_shape").arg(QString::fromStdString(ss.str())));
-          soup_item->setRenderingMode (Flat);
-          scene->addItem(soup_item);
-
+              soup_item->setRbgColor(r-32, g-32, b-32);
+              soup_item->setName(QString("%1alpha_shape").arg(QString::fromStdString(ss.str())));
+              soup_item->setRenderingMode (Flat);
+              scene->addItem(soup_item);
+            }
         }
       else if (dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
         ss << item->name().toStdString() << "_cone_";
@@ -220,7 +224,10 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       point_item->setName(QString::fromStdString(ss.str()));
       point_item->set_has_normals(true);
       point_item->setRenderingMode(item->renderingMode());
-      scene->addItem(point_item);
+      if (dialog.generate_subset())
+        scene->addItem(point_item);
+      else
+        delete point_item;
 
       ++index;
     }
