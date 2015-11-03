@@ -206,7 +206,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
                                  poly_item, dialog.cluster_epsilon());
           
               poly_item->setRbgColor(r-32, g-32, b-32);
-              poly_item->setName(QString("%1alpha_shape").arg(QString::fromStdString(ss.str())));
+              poly_item->setName(QString("%1%2_alpha_shape").arg(QString::fromStdString(ss.str()))
+                                 .arg (QString::number (shape->indices_of_assigned_points().size())));
               poly_item->setRenderingMode (Flat);
               scene->addItem(poly_item);
             }
