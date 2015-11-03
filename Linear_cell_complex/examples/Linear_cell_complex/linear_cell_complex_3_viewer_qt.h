@@ -726,9 +726,9 @@ protected:
       {
         vao[0].bind();
         attrib_buffers(this);
-        color.setRgbF(0.7f, 0.2f, 0.7f);
+        color.setRgbF(0.1f, 0.7f, 0.1f);
         rendering_program.bind();
-        rendering_program.setAttributeValue(colorLocation2,color);
+        rendering_program.setUniformValue(colorLocation2,color);
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_facets.size()/3));
         rendering_program.release();
         vao[0].release();
@@ -737,9 +737,9 @@ protected:
       {
         vao[1].bind();
         attrib_buffers(this);
-        color.setRgbF(0.7f, 0.2f, 0.7f);
+        color.setRgbF(0.1f, 0.7f, 0.1f);
         rendering_program.bind();
-        rendering_program.setAttributeValue(colorLocation2,color);
+        rendering_program.setUniformValue(colorLocation2,color);
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_facets.size()/3));
         rendering_program.release();
         vao[1].release();
@@ -796,23 +796,12 @@ protected:
 
     ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
-    if (flatShading)
-    {
-      ::glShadeModel(GL_FLAT);
-      ::glDisable(GL_BLEND);
-      ::glDisable(GL_LINE_SMOOTH);
-      ::glDisable(GL_POLYGON_SMOOTH_HINT);
-      ::glBlendFunc(GL_ONE, GL_ZERO);
-      ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-    }
-    else
-    {
-      ::glShadeModel(GL_SMOOTH);
-      ::glEnable(GL_BLEND);
-      ::glEnable(GL_LINE_SMOOTH);
-      ::glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-      ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    }
+    ::glShadeModel(GL_FLAT);
+    ::glDisable(GL_BLEND);
+    ::glDisable(GL_LINE_SMOOTH);
+    ::glDisable(GL_POLYGON_SMOOTH_HINT);
+    ::glBlendFunc(GL_ONE, GL_ZERO);
+    ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
 
     initializeOpenGLFunctions();
     compile_shaders();
@@ -832,7 +821,6 @@ protected:
   {
     const Qt::KeyboardModifiers modifiers = e->modifiers();
 
-    bool handled = false;
     if ((e->key()==Qt::Key_W) && (modifiers==Qt::NoButton))
     {
       wireframe = !wireframe;
@@ -840,46 +828,24 @@ protected:
         glPolygonMode(GL_FRONT_AND_BACK, GL_LINE);
       else
         glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
-      handled = true;
       updateGL();
     }
     else if ((e->key()==Qt::Key_F) && (modifiers==Qt::NoButton))
     {
       flatShading = !flatShading;
-      if (flatShading)
-      {
-        ::glShadeModel(GL_FLAT);
-        ::glDisable(GL_BLEND);
-        ::glDisable(GL_LINE_SMOOTH);
-        ::glDisable(GL_POLYGON_SMOOTH_HINT);
-        ::glBlendFunc(GL_ONE, GL_ZERO);
-        ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-      }
-      else
-      {
-        ::glShadeModel(GL_SMOOTH);
-        ::glEnable(GL_BLEND);
-        ::glEnable(GL_LINE_SMOOTH);
-        ::glHint(GL_LINE_SMOOTH_HINT, GL_NICEST);
-        ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      }
-      handled = true;
       updateGL();
     }
     else if ((e->key()==Qt::Key_E) && (modifiers==Qt::NoButton))
     {
       edges = !edges;
-      handled = true;
       updateGL();
     }
     else if ((e->key()==Qt::Key_V) && (modifiers==Qt::NoButton))
     {
       vertices = !vertices;
-      handled = true;
       updateGL();
     }
-
-    if (!handled)
+    else
       QGLViewer::keyPressEvent(e);
   }
 

@@ -737,24 +737,13 @@ void Viewer::init()
 
   ::glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_TRUE);
 
-  if (flatShading)
-  {
-    ::glShadeModel(GL_FLAT);
-    ::glDisable(GL_BLEND);
-    ::glDisable(GL_LINE_SMOOTH);
-    ::glDisable(GL_POLYGON_SMOOTH_HINT);
-    ::glBlendFunc(GL_ONE, GL_ZERO);
-    ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-  }
-  else
-  {
-      ::glShadeModel(GL_FLAT);
-      ::glDisable(GL_BLEND);
-      ::glDisable(GL_LINE_SMOOTH);
-      ::glDisable(GL_POLYGON_SMOOTH_HINT);
-      ::glBlendFunc(GL_ONE, GL_ZERO);
-      ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-  }
+  ::glShadeModel(GL_FLAT);
+  ::glDisable(GL_BLEND);
+  ::glDisable(GL_LINE_SMOOTH);
+  ::glDisable(GL_POLYGON_SMOOTH_HINT);
+  ::glBlendFunc(GL_ONE, GL_ZERO);
+  ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
+
   initializeOpenGLFunctions();
   compile_shaders();
 }
@@ -775,24 +764,6 @@ void Viewer::keyPressEvent(QKeyEvent *e)
   else if ((e->key()==Qt::Key_F) && (modifiers==Qt::NoButton))
   {
     flatShading = !flatShading;
-    if (flatShading)
-    {
-      ::glShadeModel(GL_FLAT);
-      ::glDisable(GL_BLEND);
-      ::glDisable(GL_LINE_SMOOTH);
-      ::glDisable(GL_POLYGON_SMOOTH_HINT);
-      ::glBlendFunc(GL_ONE, GL_ZERO);
-      ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-    }
-    else
-    {
-      ::glShadeModel(GL_FLAT);
-      ::glDisable(GL_BLEND);
-      ::glDisable(GL_LINE_SMOOTH);
-      ::glDisable(GL_POLYGON_SMOOTH_HINT);
-      ::glBlendFunc(GL_ONE, GL_ZERO);
-      ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-    }
     updateGL();
   }
   else if ((e->key()==Qt::Key_E) && (modifiers==Qt::NoButton))
