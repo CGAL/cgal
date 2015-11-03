@@ -9,18 +9,28 @@
 
 class Polyhedron_demo : public QApplication
 {
+  bool catch_exceptions;
 public:
   /*!
    * Constructor : calls the constructor of QApplication.
    */
-  Polyhedron_demo(int& argc, char **argv) : QApplication(argc, argv) {}
+  Polyhedron_demo(int& argc, char **argv)
+    : QApplication(argc, argv)
+    , catch_exceptions(true)
+  {}
+
+  void do_not_catch_exceptions() {
+    catch_exceptions = false;
+  }
 
   /*!
    * Catches unhandled exceptions from all the widgets.
    */
   bool notify(QObject* receiver, QEvent* event)
   {
-    try {
+    if(!catch_exceptions)
+      return QApplication::notify(receiver, event);
+    else try {
       return QApplication::notify(receiver, event);
     } catch (std::exception &e) {
       // find the mainwindow to spawn an error message
@@ -67,6 +77,11 @@ int main(int argc, char **argv)
   if(!args.empty() && args[0] == "--use-meta")
   {
     mainWindow.setAddKeyFrameKeyboardModifiers(::Qt::MetaModifier);
+    args.removeAt(0);
+  }
+  if(!args.empty() && args[0] == "--no-try-catch")
+  {
+    app.do_not_catch_exceptions();
     args.removeAt(0);
   }
 #ifdef QT_SCRIPT_LIB
