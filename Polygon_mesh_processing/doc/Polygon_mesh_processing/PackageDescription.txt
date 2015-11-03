@@ -86,13 +86,15 @@ and provides a list of the parameters that are used in this package.
 - \link remove_connected_components_grp `CGAL::Polygon_mesh_processing::remove_connected_components()` \endlink
 
 ## Geometric Measure functions
+- \link measure_grp `CGAL::Polygon_mesh_processing::face_area()` \endlink
 - \link measure_grp `CGAL::Polygon_mesh_processing::area()` \endlink
-- \link measure_grp `CGAL::Polygon_mesh_processing::length()` \endlink
-- \link measure_grp `CGAL::Polygon_mesh_processing::border_length()` \endlink
-
+- \link measure_grp `CGAL::Polygon_mesh_processing::volume()` \endlink
+- \link measure_grp `CGAL::Polygon_mesh_processing::edge_length()` \endlink
+- \link measure_grp `CGAL::Polygon_mesh_processing::face_border_length()` \endlink
 
 ## Miscellaneous ##
 - `CGAL::Polygon_mesh_slicer`
+- `CGAL::Polygon_mesh_processing::bbox_3()`
 
 \todo make template parameter names uniform in other packages using BGL. Here we chose PolygonMesh as template parameter.
 It can be made short to PM. And TriangleMesh (or TM) specifies when the parameter should be a triangle mesh.

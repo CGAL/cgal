@@ -43,7 +43,7 @@ namespace Polygon_mesh_processing {
   * computes the length of a halfedge of a given polygon mesh.
   *
   * @tparam PolygonMesh a model of `HalfedgeGraph` that has an internal property map
-  *         for `boost::vertex_point_t`
+  *         for `CGAL::vertex_point_t`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
   * @param h the halfedge of which the length is computed
@@ -54,11 +54,21 @@ namespace Polygon_mesh_processing {
   *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
   * \cgalNamedParamsEnd
   *
-  * @sa `border_length()`
+  * @return the length of `h`. The return type `FT` is a number type. It is
+  * either deduced from the `geom_traits` \ref namedparameters if provided,
+  * or the geometric traits class deduced from the point property map
+  * of `pmesh`.
+  *
+  * @sa `face_border_length()`
   */
   template<typename PolygonMesh,
            typename NamedParameters>
-  double edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
+#ifdef DOXYGEN_RUNNING
+  FT
+#else
+  typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
+#endif
+  edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
               , const PolygonMesh& pmesh
               , const NamedParameters& np)
   {
@@ -75,8 +85,10 @@ namespace Polygon_mesh_processing {
   }
 
   template<typename PolygonMesh>
-  double edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
-    , const PolygonMesh& pmesh)
+  typename CGAL::Kernel_traits<typename property_map_value<PolygonMesh,
+    CGAL::vertex_point_t>::type>::Kernel::FT
+  edge_length(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
+            , const PolygonMesh& pmesh)
   {
     return edge_length(h, pmesh,
       CGAL::Polygon_mesh_processing::parameters::all_default());
@@ -89,7 +101,7 @@ namespace Polygon_mesh_processing {
   *
   * @pre `h` is a border halfedge
   * @tparam PolygonMesh a model of `HalfedgeGraph` that has an internal property map
-  *         for `boost::vertex_point_t`
+  *         for `CGAL::vertex_point_t`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
   * @param h a halfedge of the border polyline of which the length is computed
@@ -100,11 +112,22 @@ namespace Polygon_mesh_processing {
   *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
   * \cgalNamedParamsEnd
   *
-  * @sa `length()`
+  * @return the length of the sequence of border edges of `face(h, pmesh)`.
+  * The return type `FT` is a number type. It is
+  * either deduced from the `geom_traits` \ref namedparameters if provided,
+  * or the geometric traits class deduced from the point property map
+  * of `pmesh`.
+  *
+  * @sa `edge_length()`
   */
   template<typename PolygonMesh,
            typename NamedParameters>
-  double face_border_length(
+#ifdef DOXYGEN_RUNNING
+   FT
+#else
+  typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
+#endif
+  face_border_length(
               typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
               , const PolygonMesh& pmesh
               , const NamedParameters& np)
@@ -121,7 +144,9 @@ namespace Polygon_mesh_processing {
   }
 
   template<typename PolygonMesh>
-  double face_border_length(
+  typename CGAL::Kernel_traits<typename property_map_value<PolygonMesh,
+    CGAL::vertex_point_t>::type>::Kernel::FT
+  face_border_length(
               typename boost::graph_traits<PolygonMesh>::halfedge_descriptor h
               , const PolygonMesh& pmesh)
   {
@@ -136,7 +161,7 @@ namespace Polygon_mesh_processing {
   * triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `HalfedgeGraph` that has an internal property map
-  *         for `boost::vertex_point_t`
+  *         for `CGAL::vertex_point_t`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
   * @param f the face of which the area is computed
@@ -147,10 +172,23 @@ namespace Polygon_mesh_processing {
   *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
   *  \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
   * \cgalNamedParamsEnd
+
+  * @return the area of `f`.
+  * The return type `FT` is a number type. It is
+  * either deduced from the `geom_traits` \ref namedparameters if provided,
+  * or the geometric traits class deduced from the point property map
+  * of `tmesh`.
+  *
+  * @sa `area()`
   */
   template<typename TriangleMesh,
            typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-  double face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f
+#ifdef DOXYGEN_RUNNING
+  FT
+#else
+  typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::FT
+#endif
+  face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f
             , const TriangleMesh& tmesh
             , const CGAL_PMP_NP_CLASS& np)
   {
@@ -174,7 +212,9 @@ namespace Polygon_mesh_processing {
   }
 
   template<typename TriangleMesh>
-  double face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f
+  typename CGAL::Kernel_traits<typename property_map_value<TriangleMesh,
+    CGAL::vertex_point_t>::type>::Kernel::FT
+  face_area(typename boost::graph_traits<TriangleMesh>::face_descriptor f
             , const TriangleMesh& tmesh)
   {
     return face_area(f, tmesh,
@@ -190,7 +230,7 @@ namespace Polygon_mesh_processing {
           model of `Range`.
           Its iterator type is `InputIterator`.
   * @tparam TriangleMesh a model of `HalfedgeGraph` that has an internal property map
-  *         for `boost::vertex_point_t`
+  *         for `CGAL::vertex_point_t`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
   * @param face_range the range of faces of which the area is computed
@@ -201,13 +241,26 @@ namespace Polygon_mesh_processing {
   *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
   *  \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
   * \cgalNamedParamsEnd
+  *
+  * @return sum of face areas of `faces`.
+  * The return type `FT` is a number type. It is
+  * either deduced from the `geom_traits` \ref namedparameters if provided,
+  * or the geometric traits class deduced from the point property map
+  * of `tmesh`.
+  *
+  * @sa `face_area()`
   */
   template<typename FaceRange,
            typename TriangleMesh,
            typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-  double area(FaceRange face_range
-            , const TriangleMesh& tmesh
-            , const CGAL_PMP_NP_CLASS& np)
+#ifdef DOXYGEN_RUNNING
+  FT
+#else
+  typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::FT
+#endif
+  area(FaceRange face_range
+     , const TriangleMesh& tmesh
+     , const CGAL_PMP_NP_CLASS& np)
   {
     typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
     double result = 0.;
@@ -230,7 +283,7 @@ namespace Polygon_mesh_processing {
   * computes the surface area of a triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `HalfedgeGraph` that has an internal property map
-  *         for `boost::vertex_point_t`
+  *         for `CGAL::vertex_point_t`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
   * @param tmesh the triangulated surface mesh
@@ -240,17 +293,31 @@ namespace Polygon_mesh_processing {
   *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
   *  \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
   * \cgalNamedParamsEnd
+  *
+  * @return the surface area of `tmesh`.
+  * The return type `FT` is a number type. It is
+  * either deduced from the `geom_traits` \ref namedparameters if provided,
+  * or the geometric traits class deduced from the point property map
+  * of `tmesh`.
+  *
+  * @sa `face_area()`
   */
   template<typename TriangleMesh
          , typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-  double area(const TriangleMesh& tmesh
-            , const CGAL_PMP_NP_CLASS& np)
+#ifdef DOXYGEN_RUNNING
+  FT
+#else
+  typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::FT
+#endif
+  area(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
   {
     return area(faces(tmesh), tmesh, np);
   }
 
   template<typename TriangleMesh>
-  double area(const TriangleMesh& tmesh)
+  typename CGAL::Kernel_traits<typename property_map_value<TriangleMesh,
+    CGAL::vertex_point_t>::type>::Kernel::FT
+  area(const TriangleMesh& tmesh)
   {
     return area(faces(tmesh), tmesh);
   }
@@ -261,7 +328,7 @@ namespace Polygon_mesh_processing {
   * a closed triangulated surface mesh.
   *
   * @tparam TriangleMesh a model of `HalfedgeGraph` that has an internal property map
-  *         for `boost::vertex_point_t`
+  *         for `CGAL::vertex_point_t`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
   * @param tmesh the closed triangulated surface mesh bounding the volume
@@ -273,13 +340,23 @@ namespace Polygon_mesh_processing {
   *  \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
   *  \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
   * \cgalNamedParamsEnd
+  *
+  * @return the volume bounded by `tmesh`.
+  * The return type `FT` is a number type. It is
+  * either deduced from the `geom_traits` \ref namedparameters if provided,
+  * or the geometric traits class deduced from the point property map
+  * of `tmesh`.
   */
   template<typename TriangleMesh
          , typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
-  double volume(const TriangleMesh& tmesh
-              , const CGAL_PMP_NP_CLASS& np)
+#ifdef DOXYGEN_RUNNING
+  FT
+#else
+  typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::FT
+#endif
+  volume(const TriangleMesh& tmesh, const CGAL_PMP_NP_CLASS& np)
   {
-    CGAL_assertion(is_pure_triangle(tmesh));
+    CGAL_assertion(is_triangle_mesh(tmesh));
     CGAL_assertion(is_closed(tmesh));
 
     using boost::choose_const_pmap;
@@ -306,7 +383,9 @@ namespace Polygon_mesh_processing {
   }
 
   template<typename TriangleMesh>
-  double volume(const TriangleMesh& tmesh)
+  typename CGAL::Kernel_traits<typename property_map_value<TriangleMesh,
+    CGAL::vertex_point_t>::type>::Kernel::FT
+  volume(const TriangleMesh& tmesh)
   {
     return volume(tmesh,
       CGAL::Polygon_mesh_processing::parameters::all_default());

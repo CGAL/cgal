@@ -50,8 +50,6 @@ namespace CGAL {
     * \cgalNamedParamsEnd
     *
     * @return a bounding box of `pmesh`
-    *
-    * @todo write user manual
     */
     template<typename PolygonMesh, typename NamedParameters>
     CGAL::Bbox_3 bbox_3(const PolygonMesh& pmesh,
