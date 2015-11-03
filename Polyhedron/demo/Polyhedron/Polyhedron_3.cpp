@@ -1,77 +1,46 @@
+#include "Polyhedron_demo.h"
 #include "MainWindow.h"
-#include <QApplication>
 #include <QMessageBox>
 #include <CGAL/Qt/resources.h>
 #include <stdexcept>
-/*!
- * \brief The Polyhedron_demo class : defines the main function
- */
 
-class Polyhedron_demo : public QApplication
-{
+struct Polyhedron_demo_impl {
   bool catch_exceptions;
-public:
-  /*!
-   * Constructor : calls the constructor of QApplication.
-   */
-  Polyhedron_demo(int& argc, char **argv)
-    : QApplication(argc, argv)
-    , catch_exceptions(true)
-  {}
+  QScopedPointer<MainWindow> mainWindow;
 
-  void do_not_catch_exceptions() {
-    catch_exceptions = false;
-  }
+  Polyhedron_demo_impl() : catch_exceptions(true) {}
+}; // end struct Polyhedron_demo_impl
 
-  /*!
-   * Catches unhandled exceptions from all the widgets.
-   */
-  bool notify(QObject* receiver, QEvent* event)
-  {
-    if(!catch_exceptions)
-      return QApplication::notify(receiver, event);
-    else try {
-      return QApplication::notify(receiver, event);
-    } catch (std::exception &e) {
-      // find the mainwindow to spawn an error message
-      Q_FOREACH (QWidget *widget, QApplication::topLevelWidgets()) {
-        if(MainWindow* mw = qobject_cast<MainWindow*>(widget)) {
-          QMessageBox::critical(
-            mw,
-            tr("Unhandled exception"),
-            e.what());
-          break;
-        }
-      }
-      QApplication::restoreOverrideCursor();
-    } catch (...) {
-      qFatal("Unknown exception encountered. Aborting.");
-    }
-    return false;
-  }
-};
-
-/*!
- * \brief Defines the entry point of the demo.
- * Creates the application and sets a main window.
- */
-int main(int argc, char **argv)
+Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
+                                 QString application_name,
+                                 QString main_window_title)
+  : QApplication(argc, argv)
+  , d_ptr_is_initialized(false)
+  , d_ptr(new Polyhedron_demo_impl)
 {
-  Polyhedron_demo app(argc, argv);
-  app.setOrganizationDomain("geometryfactory.com");
-  app.setOrganizationName("GeometryFactory");
-  app.setApplicationName("Polyhedron_3 demo");
+  d_ptr_is_initialized = true;
+  std::cerr.precision(17);
+  std::cout.precision(17);
+  std::clog.precision(17);
+
   //for windows
 #if (QT_VERSION >= QT_VERSION_CHECK(5, 3, 0))
-  app.setAttribute(Qt::AA_UseDesktopOpenGL);
+  this->setAttribute(Qt::AA_UseDesktopOpenGL);
 #endif
 
   // Import resources from libCGAL (Qt5).
   CGAL_QT_INIT_RESOURCES;
 
-  MainWindow mainWindow;
+  this->setOrganizationDomain("geometryfactory.com");
+  this->setOrganizationName("GeometryFactory");
+  this->setApplicationName(application_name);
+
+  d_ptr->mainWindow.reset(new MainWindow);
+  MainWindow& mainWindow = *d_ptr->mainWindow;
+
+  mainWindow.setWindowTitle(main_window_title);
   mainWindow.show();
-  QStringList args = app.arguments();
+  QStringList args = this->arguments();
   args.removeAt(0);
 
   if(!args.empty() && args[0] == "--use-meta")
@@ -81,7 +50,7 @@ int main(int argc, char **argv)
   }
   if(!args.empty() && args[0] == "--no-try-catch")
   {
-    app.do_not_catch_exceptions();
+    this->do_not_catch_exceptions();
     args.removeAt(0);
   }
 #ifdef QT_SCRIPT_LIB
@@ -99,21 +68,54 @@ int main(int argc, char **argv)
     mainWindow.open(filename);
   }
 
-  // A Qt Script may have closed the main window
-  // The following loop launch app.exec() only if there is a visible
-  // window.
-  Q_FOREACH (QWidget *widget, QApplication::topLevelWidgets()) {
-    if(widget->isVisible())
-      return app.exec();
+}
+
+void Polyhedron_demo::do_not_catch_exceptions() {
+  d_ptr->catch_exceptions = false;
+}
+
+bool Polyhedron_demo::notify(QObject* receiver, QEvent* event)
+{
+  if(!d_ptr_is_initialized || !d_ptr->catch_exceptions)
+    return QApplication::notify(receiver, event);
+  else try {
+      return QApplication::notify(receiver, event);
+    } catch (std::exception &e) {
+      // find the mainwindow to spawn an error message
+      Q_FOREACH (QWidget *widget, QApplication::topLevelWidgets()) {
+        if(MainWindow* mw = qobject_cast<MainWindow*>(widget)) {
+          QMessageBox::critical(
+                                mw,
+                                tr("Unhandled exception"),
+                                e.what());
+          break;
+        }
+      }
+      QApplication::restoreOverrideCursor();
+    } catch (...) {
+      qFatal("Unknown exception encountered. Aborting.");
+    }
+  return false;
+}
+
+int Polyhedron_demo::try_exec()
+{
+  // A Qt Script may have closed the main window.
+  // The following loop launch app.exec() only if the main window is visible.
+  if(d_ptr->mainWindow->isVisible()) {
+    return this->exec();
   }
   return 0;
 }
 
-#ifndef USE_FORWARD_DECL
-#  include "Scene.cpp"
-#  include "Scene_item.cpp"
-#  include "Viewer.cpp"
-#  include "Viewer_moc.cpp"
-#  include "MainWindow.cpp"
-#  include "MainWindow_moc.cpp"
-#endif
+/*!
+ * \brief Defines the entry point of the demo.
+ * Creates the application and sets a main window.
+ */
+int main(int argc, char **argv)
+{
+  Polyhedron_demo app(argc, argv,
+                      "Polyhedron_3 demo",
+                      "CGAL Polyhedron demo");
+  return app.try_exec();
+}
