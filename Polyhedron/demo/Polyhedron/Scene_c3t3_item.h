@@ -113,6 +113,12 @@ private:
 
   void data_item_destroyed();
 
+  void show_spheres(bool b)
+  {
+    spheres_are_shown = b;
+    Q_EMIT redraw();
+
+  }
   virtual QPixmap graphicalToolTip() const;
 
   void update_histogram();
@@ -136,21 +142,39 @@ private:
   qglviewer::ManipulatedFrame* frame;
   CGAL::Three::Scene_interface* last_known_scene;
 
+  bool spheres_are_shown;
   const Scene_item* data_item_;
   QPixmap histogram_;
 
   typedef std::set<int> Indices;
   Indices indices_;
 
+  //!Allows OpenGL 2.1 context to get access to glDrawArraysInstanced.
+  typedef void (APIENTRYP PFNGLDRAWARRAYSINSTANCEDARBPROC) (GLenum mode, GLint first, GLsizei count, GLsizei primcount);
+  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
+  typedef void (APIENTRYP PFNGLVERTEXATTRIBDIVISORARBPROC) (GLuint index, GLuint divisor);
+  //!Allows OpenGL 2.1 context to get access to gkFrameBufferTexture2D.
+  PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
+  //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
+  PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
+
   mutable std::vector<float> positions_lines;
   mutable std::vector<float> positions_grid;
   mutable std::vector<float> positions_poly;
   mutable std::vector<float> normals;
+  mutable std::vector<float> s_normals;
+  mutable std::vector<float> s_colors;
+  mutable std::vector<float> s_vertex;
+  mutable std::vector<float> ws_vertex;
+  mutable std::vector<float> s_radius;
+  mutable std::vector<float> s_center;
   mutable QOpenGLShaderProgram *program;
+  mutable QOpenGLShaderProgram *program_sphere;
 
   using Scene_item::initialize_buffers;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const;
   void compute_elements() const;
+  void compile_shaders();
 };
 
 #endif // SCENE_C3T3_ITEM_H

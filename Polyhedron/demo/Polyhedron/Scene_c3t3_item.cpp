@@ -1,5 +1,5 @@
 #include "config.h"
-
+#include "create_sphere.h"
 #include "Scene_c3t3_item.h"
 
 #include <QVector>
@@ -26,6 +26,56 @@ struct Scene_c3t3_item_priv {
   QVector<QColor> colors;
 };
 
+void Scene_c3t3_item::compile_shaders()
+{
+    program_sphere = new QOpenGLShaderProgram();
+
+    //Source code
+    const char vertex_source[] =
+    {
+        "#version 120                                                                                             \n"
+        "attribute highp vec4 vertex;                                                                             \n"
+        "attribute highp vec3 normals;                                                                            \n"
+        "attribute highp vec3 colors;                                                                             \n"
+        "attribute highp vec3 center;                                                                             \n"
+        "attribute highp float radius;                                                                            \n"
+        "uniform highp mat4 mvp_matrix;                                                                           \n"
+        "uniform highp mat4 mv_matrix;                                                                            \n"
+        "varying highp vec4 fP;                                                                                   \n"
+        "varying highp vec3 fN;                                                                                   \n"
+        "varying highp vec4 color;                                                                                \n"
+        "                                                                                                         \n"
+        "                                                                                                         \n"
+        "void main(void)                                                                                          \n"
+        "{                                                                                                        \n"
+        "  color = vec4(colors,1.0);                                                                            \n"
+        "  fP = mv_matrix * vertex;                                                                                 \n"
+        "  fN = mat3(mv_matrix)* normals;                                                                           \n"
+        "   gl_Position =  mvp_matrix *                                                                           \n"
+        "  vec4(radius*vertex.x + center.x, radius* vertex.y + center.y, radius*vertex.z + center.z, 1.0) ;                      \n"
+        "}                                                                                                        \n"
+    };
+    QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
+    if(!vertex_shader->compileSourceCode(vertex_source))
+    {
+        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
+    }
+
+
+    if(!program_sphere->addShader(vertex_shader))
+    {
+        std::cerr<<"adding vertex shader FAILED"<<std::endl;
+    }
+    if(!program_sphere->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_light.f" ))
+    {
+        std::cerr<<"adding fragment shader FAILED"<<std::endl;
+    }
+    if(!program_sphere->link())
+    {
+        //std::cerr<<"linking Program FAILED"<<std::endl;
+        qDebug() << program_sphere->log();
+    }
+}
 double complex_diag(const Scene_item* item) {
   const Scene_item::Bbox& bbox = item->bbox();
   const double& xdelta = bbox.xmax-bbox.xmin;
@@ -38,7 +88,7 @@ double complex_diag(const Scene_item* item) {
 }
 
 Scene_c3t3_item::Scene_c3t3_item()
-  : Scene_item(4, 3)
+  : Scene_item(10, 5)
   , d(new Scene_c3t3_item_priv())
   , frame(new ManipulatedFrame())
   , histogram_()
@@ -49,13 +99,19 @@ Scene_c3t3_item::Scene_c3t3_item()
   positions_lines.resize(0);
   positions_poly.resize(0);
   normals.resize(0);
+  s_vertex.resize(0);
+  s_normals.resize(0);
+  ws_vertex.resize(0);
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
+  compile_shaders();
+  spheres_are_shown = false;
+  create_flat_and_wire_sphere(1.0,s_vertex,s_normals, ws_vertex);
 }
 
 Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
-  : Scene_item(4, 3)
+  : Scene_item(10, 5)
   , d(new Scene_c3t3_item_priv(c3t3))
   , frame(new ManipulatedFrame())
   , histogram_()
@@ -66,9 +122,15 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   positions_lines.resize(0);
   positions_poly.resize(0);
   normals.resize(0);
+  s_vertex.resize(0);
+  s_normals.resize(0);
+  ws_vertex.resize(0);
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
+  compile_shaders();
+  spheres_are_shown = false;
+  create_flat_and_wire_sphere(1.0,s_vertex,s_normals, ws_vertex);
 }
 
 Scene_c3t3_item::~Scene_c3t3_item()
@@ -402,6 +464,49 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size() / 3));
   program->release();
   vaos[0]->release();
+
+  if(spheres_are_shown)
+  {
+      vaos[3]->bind();
+      program_sphere->bind();
+      //ModelViewMatrix used for the transformation of the camera.
+      QMatrix4x4 mvp_mat;
+      // ModelView Matrix used for the lighting system
+      QMatrix4x4 mv_mat;
+      GLdouble d_mat[16];
+      GLint is_both_sides = 0;
+      viewer->camera()->getModelViewProjectionMatrix(d_mat);
+      //Convert the GLdoubles matrices in GLfloats
+      for (int i=0; i<16; ++i){
+          mvp_mat.data()[i] = GLfloat(d_mat[i]);
+      }
+      viewer->camera()->getModelViewMatrix(d_mat);
+      for (int i=0; i<16; ++i)
+          mv_mat.data()[i] = GLfloat(d_mat[i]);
+      QVector4D position(0.0f,0.0f,1.0f, 1.0f );
+      QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
+      // Diffuse
+      QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
+      // Specular
+      QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
+      viewer->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
+
+
+      program_sphere->setUniformValue("mvp_matrix", mvp_mat);
+      program_sphere->setUniformValue("mv_matrix", mv_mat);
+      program_sphere->setUniformValue("light_pos", position);
+      program_sphere->setUniformValue("light_diff",diffuse);
+      program_sphere->setUniformValue("light_spec", specular);
+      program_sphere->setUniformValue("light_amb", ambient);
+      program_sphere->setUniformValue("spec_power", 51.8f);
+      program_sphere->setUniformValue("is_two_side", is_both_sides);
+
+      viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
+                                  static_cast<GLsizei>(s_vertex.size()/3),
+                                  static_cast<GLsizei>(s_radius.size()));
+      program_sphere->release();
+      vaos[3]->release();
+  }
 }
 
 void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
@@ -431,6 +536,49 @@ void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size() / 3));
   program->release();
   vaos[1]->release();
+
+  if(spheres_are_shown)
+  {
+      vaos[4]->bind();
+      program_sphere->bind();
+      //ModelViewMatrix used for the transformation of the camera.
+      QMatrix4x4 mvp_mat;
+      // ModelView Matrix used for the lighting system
+      QMatrix4x4 mv_mat;
+      GLdouble d_mat[16];
+      GLint is_both_sides = 0;
+      viewer->camera()->getModelViewProjectionMatrix(d_mat);
+      //Convert the GLdoubles matrices in GLfloats
+      for (int i=0; i<16; ++i){
+          mvp_mat.data()[i] = GLfloat(d_mat[i]);
+      }
+      viewer->camera()->getModelViewMatrix(d_mat);
+      for (int i=0; i<16; ++i)
+          mv_mat.data()[i] = GLfloat(d_mat[i]);
+      QVector4D position(0.0f,0.0f,1.0f, 1.0f );
+      QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
+      // Diffuse
+      QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
+      // Specular
+      QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
+      viewer->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
+
+
+      program_sphere->setUniformValue("mvp_matrix", mvp_mat);
+      program_sphere->setUniformValue("mv_matrix", mv_mat);
+      program_sphere->setUniformValue("light_pos", position);
+      program_sphere->setUniformValue("light_diff",diffuse);
+      program_sphere->setUniformValue("light_spec", specular);
+      program_sphere->setUniformValue("light_amb", ambient);
+      program_sphere->setUniformValue("spec_power", 51.8f);
+      program_sphere->setUniformValue("is_two_side", is_both_sides);
+
+      viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
+                                  static_cast<GLsizei>(ws_vertex.size()/3),
+                                  static_cast<GLsizei>(s_radius.size()));
+      program_sphere->release();
+      vaos[4]->release();
+  }
 }
 
 void Scene_c3t3_item::draw_points(CGAL::Three::Viewer_interface * viewer) const
@@ -582,6 +730,14 @@ QMenu* Scene_c3t3_item::contextMenu()
     connect(actionExportFacetsInComplex,
       SIGNAL(triggered()), this,
       SLOT(export_facets_in_complex()));
+
+    QAction* actionShowSpheres =
+      menu->addAction(tr("Show protecting &spheres"));
+    actionShowSpheres->setCheckable(true);
+    actionShowSpheres->setObjectName("actionShowSpheres");
+    connect(actionShowSpheres, SIGNAL(toggled(bool)),
+            this, SLOT(show_spheres(bool)));
+    menu->setProperty(prop_name, true);
   }
   return menu;
 }
@@ -631,7 +787,7 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
 
       }
 
-      //vao containing the data for the grid
+  //vao containing the data for the grid
       {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
@@ -646,14 +802,107 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
         vaos[2]->release();
         program->release();
       }
+
+  //vao containing the data for the spheres
+    {
+      program_sphere->bind();
+
+      vaos[3]->bind();
+      buffers[4].bind();
+      buffers[4].allocate(s_vertex.data(),
+        static_cast<int>(s_vertex.size()*sizeof(float)));
+      program_sphere->enableAttributeArray("vertex");
+      program_sphere->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+      buffers[4].release();
+
+      buffers[5].bind();
+      buffers[5].allocate(s_normals.data(),
+        static_cast<int>(s_normals.size()*sizeof(float)));
+      program_sphere->enableAttributeArray("normals");
+      program_sphere->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
+      buffers[5].release();
+
+      buffers[6].bind();
+      buffers[6].allocate(s_colors.data(),
+        static_cast<int>(s_colors.size()*sizeof(float)));
+      program_sphere->enableAttributeArray("colors");
+      program_sphere->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
+      buffers[6].release();
+
+      buffers[7].bind();
+      buffers[7].allocate(s_radius.data(),
+        static_cast<int>(s_radius.size()*sizeof(float)));
+      program_sphere->enableAttributeArray("radius");
+      program_sphere->setAttributeBuffer("radius", GL_FLOAT, 0, 3);
+      buffers[7].release();
+
+      buffers[8].bind();
+      buffers[8].allocate(s_center.data(),
+        static_cast<int>(s_center.size()*sizeof(float)));
+      program_sphere->enableAttributeArray("center");
+      program_sphere->setAttributeBuffer("center", GL_FLOAT, 0, 3);
+      buffers[8].release();
+
+      viewer->glVertexAttribDivisor(program_sphere->attributeLocation("center"), 1);
+      viewer->glVertexAttribDivisor(program_sphere->attributeLocation("radius"), 1);
+      viewer->glVertexAttribDivisor(program_sphere->attributeLocation("colors"), 1);
+      vaos[3]->release();
+
+    }
+
+    //vao containing the data for the wired spheres
+      {
+        program_sphere->bind();
+
+        vaos[4]->bind();
+        buffers[9].bind();
+        buffers[9].allocate(s_vertex.data(),
+          static_cast<int>(s_vertex.size()*sizeof(float)));
+        program_sphere->enableAttributeArray("vertex");
+        program_sphere->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+        buffers[9].release();
+
+        buffers[5].bind();
+        program_sphere->enableAttributeArray("normals");
+        program_sphere->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
+        buffers[5].release();
+
+        buffers[6].bind();
+        program_sphere->enableAttributeArray("colors");
+        program_sphere->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
+        buffers[6].release();
+
+        buffers[7].bind();
+        program_sphere->enableAttributeArray("radius");
+        program_sphere->setAttributeBuffer("radius", GL_FLOAT, 0, 3);
+        buffers[7].release();
+
+        buffers[8].bind();
+        program_sphere->enableAttributeArray("center");
+        program_sphere->setAttributeBuffer("center", GL_FLOAT, 0, 3);
+        buffers[8].release();
+
+        viewer->glVertexAttribDivisor(program_sphere->attributeLocation("center"), 1);
+        viewer->glVertexAttribDivisor(program_sphere->attributeLocation("radius"), 1);
+        viewer->glVertexAttribDivisor(program_sphere->attributeLocation("colors"), 1);
+        vaos[4]->release();
+
+        program_sphere->release();
+      }
+    program_sphere->release();
       are_buffers_filled = true;
 }
+
 
 void Scene_c3t3_item::compute_elements() const
 {
   positions_lines.clear();
   positions_poly.clear();
   normals.clear();
+  s_colors.resize(0);
+  s_center.resize(0);
+  s_radius.resize(0);
+
 
   //The grid
   {
@@ -712,13 +961,13 @@ void Scene_c3t3_item::compute_elements() const
       const Side sa = plane.oriented_side(pa);
       const Side sb = plane.oriented_side(pb);
       const Side sc = plane.oriented_side(pc);
-      bool is_showned = false;
+      bool is_shown = false;
       if (pa.x() * clip_plane[0] + pa.y() * clip_plane[1] + pa.z() * clip_plane[2] + clip_plane[3]  > 0
         && pb.x() * clip_plane[0] + pb.y() * clip_plane[1] + pb.z() * clip_plane[2] + clip_plane[3]  > 0
         && pc.x() * clip_plane[0] + pc.y() * clip_plane[1] + pc.z() * clip_plane[2] + clip_plane[3]  > 0)
-        is_showned = true;
+        is_shown = true;
 
-      if (is_showned && sa != ON_ORIENTED_BOUNDARY &&
+      if (is_shown && sa != ON_ORIENTED_BOUNDARY &&
         sb != ON_ORIENTED_BOUNDARY &&
         sc != ON_ORIENTED_BOUNDARY &&
         sb == sa && sc == sa)
@@ -768,4 +1017,46 @@ void Scene_c3t3_item::compute_elements() const
       }
     }
   }
+  //The Spheres
+  {
+
+      for(Tr::Finite_vertices_iterator
+          vit = d->c3t3.triangulation().finite_vertices_begin(),
+          end =  d->c3t3.triangulation().finite_vertices_end();
+          vit != end; ++vit)
+      {
+          typedef Tr::Vertex_handle Vertex_handle;
+          std::vector<Vertex_handle> incident_vertices;
+          d->c3t3.triangulation().incident_vertices(vit, std::back_inserter(incident_vertices));
+          bool red = vit->is_special();
+          for(std::vector<Vertex_handle>::const_iterator
+              vvit = incident_vertices.begin(), end = incident_vertices.end();
+              vvit != end; ++vvit)
+          {
+              if(Kernel::Sphere_3(vit->point().point(),
+                                  vit->point().weight()).bounded_side((*vvit)->point().point())
+                      == CGAL::ON_BOUNDED_SIDE)
+                  red = true;
+          }
+          if(red){
+              s_colors.push_back(1.0);
+              s_colors.push_back(0.0);
+              s_colors.push_back(0.0);
+
+          }
+          else{
+                  QColor c = this->color().darker(250);
+                  s_colors.push_back(c.redF());
+                  s_colors.push_back(c.greenF());
+                  s_colors.push_back(c.blueF());
+              }
+              s_center.push_back(vit->point().point().x());
+              s_center.push_back(vit->point().point().y());
+              s_center.push_back(vit->point().point().z());
+
+              s_radius.push_back(CGAL::sqrt(vit->point().weight()));
+      }
+  }
 }
+
+
