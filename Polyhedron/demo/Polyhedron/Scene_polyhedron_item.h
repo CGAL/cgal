@@ -120,8 +120,6 @@ private:
     mutable std::vector<float> normals_gouraud;
     mutable std::vector<float> color_lines;
     mutable std::vector<float> color_facets;
-    mutable std::vector<float> color_lines_selected;
-    mutable std::vector<float> color_facets_selected;
     mutable std::size_t nb_facets;
     mutable std::size_t nb_lines;
     mutable QOpenGLShaderProgram *program;
