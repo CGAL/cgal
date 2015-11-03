@@ -1,6 +1,7 @@
 #include "config.h"
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polygon_soup_item.h"
+#include "Scene_polyhedron_item.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
@@ -65,7 +66,7 @@ private:
   typedef Kernel::Plane_3 Plane_3;
   
   void build_alpha_shape (Point_set& points, const Plane_3& plane,
-                          Scene_polygon_soup_item* item, double epsilon);
+                          Scene_polyhedron_item* item, double epsilon);
 
 }; // end Polyhedron_demo_point_set_shape_detection_plugin
 
@@ -198,16 +199,16 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
           if (dialog.generate_alpha ())
             {
               // If plane, build alpha shape
-              Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
+              Scene_polyhedron_item* poly_item = new Scene_polyhedron_item;
 
               Plane_3 plane = (Plane_3)(*(dynamic_cast<CGAL::Shape_detection_3::Plane<Traits>*>(shape.get ())));
               build_alpha_shape (*(point_item->point_set()), plane,
-                                 soup_item, dialog.cluster_epsilon());
+                                 poly_item, dialog.cluster_epsilon());
           
-              soup_item->setRbgColor(r-32, g-32, b-32);
-              soup_item->setName(QString("%1alpha_shape").arg(QString::fromStdString(ss.str())));
-              soup_item->setRenderingMode (Flat);
-              scene->addItem(soup_item);
+              poly_item->setRbgColor(r-32, g-32, b-32);
+              poly_item->setName(QString("%1alpha_shape").arg(QString::fromStdString(ss.str())));
+              poly_item->setRenderingMode (Flat);
+              scene->addItem(poly_item);
             }
         }
       else if (dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
@@ -250,7 +251,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 }
 
 void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
-(Point_set& points, const Plane_3& plane, Scene_polygon_soup_item* item, double epsilon)
+(Point_set& points, const Plane_3& plane, Scene_polyhedron_item* item, double epsilon)
 {
   typedef Kernel::Point_2  Point_2;
   typedef CGAL::Alpha_shape_vertex_base_2<Kernel> Vb;
@@ -270,7 +271,9 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
   
   std::map<Alpha_shape_2::Vertex_handle, std::size_t> map_v2i;
 
-  item->init_polygon_soup(points.size(), ashape.number_of_faces ());
+  Scene_polygon_soup_item *soup_item = new Scene_polygon_soup_item;
+  
+  soup_item->init_polygon_soup(points.size(), ashape.number_of_faces ());
   std::size_t current_index = 0;
 
   for (Alpha_shape_2::Finite_faces_iterator it = ashape.finite_faces_begin ();
@@ -285,14 +288,18 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
             {
               map_v2i.insert (std::make_pair (it->vertex (i), current_index ++));
               Point p = plane.to_3d (it->vertex (i)->point ());
-              item->new_vertex (p.x (), p.y (), p.z ());
+              soup_item->new_vertex (p.x (), p.y (), p.z ());
             }
         }
-      item->new_triangle (map_v2i[it->vertex (0)],
-                          map_v2i[it->vertex (1)],
-                          map_v2i[it->vertex (2)]);
+      soup_item->new_triangle (map_v2i[it->vertex (0)],
+                               map_v2i[it->vertex (1)],
+                               map_v2i[it->vertex (2)]);
     }
 
+  soup_item->orient();
+  soup_item->exportAsPolyhedron (item->polyhedron());
+  
+  delete soup_item;
 }
 
 
