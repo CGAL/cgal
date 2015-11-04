@@ -97,40 +97,19 @@ Itag>             CDTbase;
 typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 
 //Make sure all the facets are triangles
-void
-Scene_polyhedron_item::is_Triangulated() const
-{
-    typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
-    Facet_iterator f = poly->facets_begin();
-    int nb_points_per_facet =0;
 
-    for(f = poly->facets_begin();
-        f != poly->facets_end();
-        f++)
-    {
-        HF_circulator he = f->facet_begin();
-        HF_circulator end = he;
-        CGAL_For_all(he,end)
-        {
-            nb_points_per_facet++;
-        }
-
-        if(nb_points_per_facet !=3)
-        {
-            is_Triangle = false;
-            break;
-        }
-
-        nb_points_per_facet = 0;
-    }
-}
 void
 Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
 {
     //Computes the normal of the facet
     Traits::Vector_3 normal =
             CGAL::Polygon_mesh_processing::compute_face_normal(fit,*poly);
-
+    //check if normal contains NaN values
+    if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
+    {
+        qDebug()<<"Warning : normal is not valid. Facet not displayed";
+        return;
+    }
     P_traits cdt_traits(normal);
     CDT cdt(cdt_traits);
 
@@ -141,6 +120,7 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
     // Iterates on the vector of facet handles
     CDT::Vertex_handle previous, first;
     do {
+        std::cerr<<he_circ->vertex()->point()<<std::endl;
         CDT::Vertex_handle vh = cdt.insert(he_circ->vertex()->point());
         if(first == 0) {
             first = vh;
@@ -237,6 +217,12 @@ Scene_polyhedron_item::triangulate_facet_color(Facet_iterator fit) const
 {
     Traits::Vector_3 normal =
             CGAL::Polygon_mesh_processing::compute_face_normal(fit, *poly);
+    //check if normal contains NaN values
+    if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
+    {
+        qDebug()<<"Warning : normal is not valid. Facet not displayed";
+        return;
+    }
 
     P_traits cdt_traits(normal);
     CDT cdt(cdt_traits);
@@ -452,7 +438,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
         f++)
     {
 
-        if(!is_Triangle)
+        if(!is_triangle(f->halfedge(),*poly))
             triangulate_facet(f);
         else
         {
@@ -554,7 +540,7 @@ Scene_polyhedron_item::compute_colors() const
         f != poly->facets_end();
         f++)
     {
-        if(!is_Triangle)
+        if(!is_triangle(f->halfedge(),*poly))
             triangulate_facet_color(f);
         else
         {
@@ -606,7 +592,6 @@ Scene_polyhedron_item::compute_colors() const
 
 Scene_polyhedron_item::Scene_polyhedron_item()
     : Scene_item(6,3),
-      is_Triangle(true),
       poly(new Polyhedron),
       show_only_feature_edges_m(false),
       facet_picking_m(false),
@@ -624,7 +609,6 @@ Scene_polyhedron_item::Scene_polyhedron_item()
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     : Scene_item(6,3),
-      is_Triangle(true),
       poly(p),
       show_only_feature_edges_m(false),
       facet_picking_m(false),
@@ -642,7 +626,6 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
 
 Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     : Scene_item(6,3),
-      is_Triangle(true),
       poly(new Polyhedron(p)),
       show_only_feature_edges_m(false),
       facet_picking_m(false),
@@ -844,7 +827,6 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        is_Triangulated();
         compute_normals_and_vertices();
         initialize_buffers(viewer);
     }
@@ -879,7 +861,6 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        is_Triangulated();
         compute_normals_and_vertices();
         initialize_buffers(viewer);
     }
@@ -906,7 +887,6 @@ void
 Scene_polyhedron_item::draw_points(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        is_Triangulated();
         compute_normals_and_vertices();
         initialize_buffers(viewer);
     }
