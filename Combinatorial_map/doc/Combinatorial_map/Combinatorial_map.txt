@@ -905,8 +905,8 @@ When one wants to use a Boolean
 mark, the following methods are available (with `cm` an instance of a
 combinatorial map):
 <ul>
-<li> get a new free mark: `int m = cm.`\ref CombinatorialMap::get_new_mark "get_new_mark()"
-     (return -1 if no mark is available);
+<li> get a new free mark: `size_type m = cm.`\ref CombinatorialMap::get_new_mark "get_new_mark()"
+     (throws the exception Exception_no_more_available_mark if no mark is available);
 <li> set mark `m` for a given dart `d0`: `cm.`\ref CombinatorialMap::mark "mark(dh0,m)";
 <li> unset mark `m` for a given dart `d0`: `cm.`\ref CombinatorialMap::unmark "unmark(dh0,m)";
 <li> test if a given dart `d0` is marked for `m`:
