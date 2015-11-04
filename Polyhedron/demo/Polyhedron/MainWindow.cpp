@@ -30,7 +30,6 @@
 #include <QMap>
 #include <QStandardItemModel>
 #include <QStandardItem>
-
 #include <stdexcept>
 
 #ifdef QT_SCRIPT_LIB
@@ -1494,7 +1493,10 @@ void MainWindow::on_addButton_clicked()
           double res = s.toDouble(&ok);
           if(!ok)
           {
-              error("Coordinates not valid");
+              QMessageBox *msgBox = new QMessageBox;
+              msgBox->setWindowTitle("Error");
+              msgBox->setText("ERROR : Coordinates are invalid.");
+              msgBox->exec();
               break;
           }
           else
@@ -1512,6 +1514,7 @@ void MainWindow::on_addButton_clicked()
   }
     if(ok)
     {
+        add_polydiagui->textEdit->clear();
         Scene_polylines_item* item = new Scene_polylines_item;
         item->polylines = polylines;
         nb_of_polylines++;
