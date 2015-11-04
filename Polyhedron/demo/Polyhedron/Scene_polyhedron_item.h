@@ -35,7 +35,6 @@ public:
     // IO
     bool load(std::istream& in);
     bool save(std::ostream& out) const;
-    mutable bool is_Triangle;
 
     // Function for displaying meta-data of the item
     virtual QString toolTip() const;
@@ -118,8 +117,6 @@ private:
     mutable std::vector<float> normals_gouraud;
     mutable std::vector<float> color_lines;
     mutable std::vector<float> color_facets;
-    mutable std::vector<float> color_lines_selected;
-    mutable std::vector<float> color_facets_selected;
     mutable std::size_t nb_facets;
     mutable std::size_t nb_lines;
     mutable QOpenGLShaderProgram *program;
@@ -130,7 +127,6 @@ private:
     void compute_colors() const;
     void triangulate_facet(Facet_iterator ) const;
     void triangulate_facet_color(Facet_iterator ) const;
-    void is_Triangulated() const;
     double volume, area;
 
 }; // end class Scene_polyhedron_item

@@ -287,7 +287,19 @@ private:
   mutable std::size_t nb_axis;
   mutable std::size_t nb_bbox;
 
-
+  enum Buffer
+  {
+      Facet_vertices =0,
+      Facet_normals,
+      Roi_points,
+      Control_points,
+      Sphere_vertices,
+      Sphere_normals,
+      Bbox_vertices,
+      Axis_vertices,
+      Axis_colors,
+      NumberOfBuffers = Axis_colors+1
+  };
 
   mutable QOpenGLBuffer *in_bu;
   using Scene_item::initialize_buffers;

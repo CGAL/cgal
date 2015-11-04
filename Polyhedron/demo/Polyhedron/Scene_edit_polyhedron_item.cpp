@@ -9,7 +9,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 (Scene_polyhedron_item* poly_item,
  Ui::DeformMesh* ui_widget,
  QMainWindow* mw)
-  : Scene_item(19,8),
+  : Scene_item(NumberOfBuffers,8),
     ui_widget(ui_widget),
     poly_item(poly_item),
     deform_mesh(*(poly_item->polyhedron()), Deform_mesh::Vertex_index_map(), Deform_mesh::Hedge_index_map(), Array_based_vertex_point_map(&positions)),
@@ -133,19 +133,19 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
         program->bind();
 
         vaos[0]->bind();
-        buffers[0].bind();
-        buffers[0].allocate(positions.data(),
+        buffers[Facet_vertices].bind();
+        buffers[Facet_vertices].allocate(positions.data(),
                             static_cast<int>(positions.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[0].release();
+        buffers[Facet_vertices].release();
 
-        buffers[1].bind();
-        buffers[1].allocate(normals.data(),
+        buffers[Facet_normals].bind();
+        buffers[Facet_normals].allocate(normals.data(),
                             static_cast<int>(normals.size()*sizeof(double)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_DOUBLE,0,3);
-        buffers[1].release();
+        buffers[Facet_normals].release();
         vaos[0]->release();
         program->release();
     }
@@ -153,19 +153,12 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
     {   program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
         vaos[1]->bind();
-        buffers[2].bind();
-        buffers[2].allocate(ROI_points.data(),
+        buffers[Roi_points].bind();
+        buffers[Roi_points].allocate(ROI_points.data(),
                             static_cast<int>(ROI_points.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[2].release();
-
-        buffers[3].bind();
-        buffers[3].allocate(ROI_color.data(),
-                            static_cast<int>(ROI_color.size()*sizeof(double)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
-        buffers[3].release();
+        buffers[Roi_points].release();
         vaos[1]->release();
 
         program->release();
@@ -176,13 +169,10 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
         vaos[2]->bind();
-        buffers[4].bind();
-        buffers[4].allocate(positions.data(),
-                            static_cast<int>(positions.size()*sizeof(double)));
+        buffers[Facet_vertices].bind();
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[4].release();
-
+        buffers[Facet_vertices].release();
         vaos[2]->release();
         program->release();
     }
@@ -191,33 +181,24 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
         program = getShaderProgram(PROGRAM_INSTANCED, viewer);
         program->bind();
         vaos[3]->bind();
-        buffers[5].bind();
-        buffers[5].allocate(pos_sphere.data(),
+        buffers[Sphere_vertices].bind();
+        buffers[Sphere_vertices].allocate(pos_sphere.data(),
                             static_cast<int>(pos_sphere.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[5].release();
+        buffers[Sphere_vertices].release();
 
-        buffers[6].bind();
-        buffers[6].allocate(normals_sphere.data(),
+        buffers[Sphere_normals].bind();
+        buffers[Sphere_normals].allocate(normals_sphere.data(),
                             static_cast<int>(normals_sphere.size()*sizeof(double)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_DOUBLE,0,3);
-        buffers[6].release();
+        buffers[Sphere_normals].release();
 
-        buffers[7].bind();
-        buffers[7].allocate(ROI_color.data(),
-                            static_cast<int>(ROI_color.size()*sizeof(double)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
-        buffers[7].release();
-
-        buffers[8].bind();
-        buffers[8].allocate(ROI_points.data(),
-                            static_cast<int>(ROI_points.size()*sizeof(double)));
+        buffers[Roi_points].bind();
         program->enableAttributeArray("center");
         program->setAttributeBuffer("center",GL_DOUBLE,0,3);
-        buffers[8].release();
+        buffers[Roi_points].release();
 
         if(viewer->extension_is_found)
         {
@@ -235,19 +216,13 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
     {
         bbox_program.bind();
         vaos[4]->bind();
-        buffers[9].bind();
-        buffers[9].allocate(pos_bbox.data(),
+        buffers[Bbox_vertices].bind();
+        buffers[Bbox_vertices].allocate(pos_bbox.data(),
                              static_cast<int>(pos_bbox.size()*sizeof(double)));
         bbox_program.enableAttributeArray("vertex");
         bbox_program.setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[9].release();
+        buffers[Bbox_vertices].release();
 
-        buffers[10].bind();
-        buffers[10].allocate(color_bbox.data(),
-                             static_cast<int>(color_bbox.size()*sizeof(double)));
-        bbox_program.enableAttributeArray("colors");
-        bbox_program.setAttributeBuffer("colors",GL_DOUBLE,0,3);
-        buffers[10].release();
         vaos[4]->release();
         nb_bbox = pos_bbox.size();
         pos_bbox.resize(0);
@@ -261,19 +236,13 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
         vaos[5]->bind();
-        buffers[11].bind();
-        buffers[11].allocate(control_points.data(),
+        buffers[Control_points].bind();
+        buffers[Control_points].allocate(control_points.data(),
                              static_cast<int>(control_points.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[11].release();
+        buffers[Control_points].release();
 
-        buffers[12].bind();
-        buffers[12].allocate(control_color.data(),
-                             static_cast<int>(control_color.size()*sizeof(double)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
-        buffers[12].release();
         vaos[5]->release();
         program->release();
     }
@@ -282,38 +251,23 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
         program = getShaderProgram(PROGRAM_INSTANCED, viewer);
         program->bind();
         vaos[6]->bind();
-        buffers[13].bind();
-        buffers[13].allocate(pos_sphere.data(),
-                             static_cast<int>(pos_sphere.size()*sizeof(double)));
+        buffers[Sphere_vertices].bind();
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[13].release();
 
-        buffers[14].bind();
-        buffers[14].allocate(normals_sphere.data(),
-                             static_cast<int>(normals_sphere.size()*sizeof(double)));
+        buffers[Sphere_normals].bind();
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_DOUBLE,0,3);
-        buffers[14].release();
+        buffers[Sphere_normals].release();
 
-        buffers[15].bind();
-        buffers[15].allocate(control_color.data(),
-                             static_cast<int>(control_color.size()*sizeof(double)));
-        program->enableAttributeArray("colors");
-        program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
-        buffers[15].release();
-
-        buffers[16].bind();
-        buffers[16].allocate(control_points.data(),
-                             static_cast<int>(control_points.size()*sizeof(double)));
+        buffers[Control_points].bind();
         program->enableAttributeArray("center");
         program->setAttributeBuffer("center",GL_DOUBLE,0,3);
-        buffers[16].release();
+        buffers[Control_points].release();
 
         if(viewer->extension_is_found)
         {
             viewer->glVertexAttribDivisor(program->attributeLocation("center"), 1);
-            viewer->glVertexAttribDivisor(program->attributeLocation("colors"), 1);
         }
         vaos[6]->release();
         nb_sphere = pos_sphere.size();
@@ -332,19 +286,18 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
         vaos[7]->bind();
-        buffers[17].bind();
-        buffers[17].allocate(pos_axis.data(),
+        buffers[Axis_vertices].bind();
+        buffers[Axis_vertices].allocate(pos_axis.data(),
                              static_cast<int>(pos_axis.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[17].release();
-
-        buffers[18].bind();
-        buffers[18].allocate(color_lines.data(),
+        buffers[Axis_vertices].release();
+        buffers[Axis_colors].bind();
+        buffers[Axis_colors].allocate(color_lines.data(),
                              static_cast<int>(color_lines.size()*sizeof(double)));
         program->enableAttributeArray("colors");
         program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
-        buffers[18].release();
+        buffers[Axis_colors].release();
         vaos[7]->release();
         program->release();
         nb_axis = pos_axis.size();
