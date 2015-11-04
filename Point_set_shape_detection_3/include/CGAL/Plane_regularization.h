@@ -64,6 +64,7 @@ namespace CGAL {
     {
       bool is_free;
       std::vector<std::size_t> planes;
+      std::vector<std::size_t> coplanar_group;
       std::vector<std::size_t> orthogonal_clusters;
       Vector normal;
       FT cosangle_vertical;
@@ -180,15 +181,12 @@ namespace CGAL {
 
 
       //detecting co-planarity and store in list_coplanar_prim
-      std::vector<std::vector< std::vector < int > > > list_coplanar_prim;
       for (std::size_t i = 0; i < clusters.size(); ++ i)
         {
-
-          std::vector< std::vector < int > > list_coplanar_prim_tmp;
           Vector vec_reg = clusters[i].normal;
-          std::vector < int > list_cop_index;
+
           for (std::size_t ip = 0; ip < clusters[i].planes.size(); ++ ip)
-            list_cop_index.push_back(-1);
+            clusters[i].coplanar_group.push_back (-1);
 
           int cop_index=0;
 
@@ -196,161 +194,61 @@ namespace CGAL {
             {
               int index_prim = clusters[i].planes[j];
 
-              if (list_cop_index[j] < 0)
+              if (clusters[i].coplanar_group[j] == static_cast<std::size_t>(-1))
                 {
-		
-                  std::vector < int > list_coplanar_prim_tmp_tmp;
-                  list_cop_index[j]=cop_index;
-                  list_coplanar_prim_tmp_tmp.push_back(index_prim);
+                  clusters[i].coplanar_group[j] = cop_index;
 			
                   Point pt_reg = m_planes[index_prim]->projection(m_centroids[index_prim]);
                   Plane plan_reg(pt_reg,vec_reg);
 
-                  for (std::size_t k = j+1; k < clusters[i].planes.size(); ++ k)
+                  for (std::size_t k = j + 1; k < clusters[i].planes.size(); ++ k)
                     {
-                      if (list_cop_index[k] < 0)
+                      if (clusters[i].coplanar_group[k] == static_cast<std::size_t>(-1))
                         {
                           int index_prim_next = clusters[i].planes[k];
                           Point pt_reg_next = m_planes[index_prim_next]->projection(m_centroids[index_prim_next]);
                           Point pt_proj=plan_reg.projection(pt_reg_next);
                           double distance=distance_Point(pt_reg_next,pt_proj);
 					
-                          if(distance<tolerance_coplanarity )
-                            {
-                              list_cop_index[k]=cop_index;
-                              list_coplanar_prim_tmp_tmp.push_back(index_prim_next);
-                            }
+                          if (distance < tolerance_coplanarity)
+                            clusters[i].coplanar_group[k] = cop_index;
                         }
                     }
-                  list_coplanar_prim_tmp.push_back(list_coplanar_prim_tmp_tmp);
                   cop_index++; 
                 }
             }
-          list_coplanar_prim.push_back(list_coplanar_prim_tmp);
-        }
 
-
-
-      //regularize primitive position by computing barycenter of cplanar planes
-      std::vector < std::vector < int > > list_primitive_reg_index_extracted_planes;
-      std::vector < Plane > list_primitive_reg;
-
-      for (std::size_t i=0;i<list_coplanar_prim.size();i++)
-        {
-          for (std::size_t j=0;j<list_coplanar_prim[i].size();j++)
+          //regularize primitive position by computing barycenter of cplanar planes
+          std::vector<Point> pt_bary (cop_index);
+          std::vector<double> area (cop_index, 0.);
+      
+          for (std::size_t j = 0; j < clusters[i].planes.size (); ++ j)
             {
+              std::size_t index_prim = clusters[i].planes[j];
+              std::size_t group = clusters[i].coplanar_group[j];
+              
+              Point pt_reg = m_planes[index_prim]->projection(m_centroids[index_prim]);
 
-              Point pt_bary(0.,0.,0.);
-              double area=0;
-
-              for (std::size_t k=0; k<list_coplanar_prim[i][j].size();k++)
-                {
-                  int index_prim=list_coplanar_prim[i][j][k];
-                  Point pt_reg = m_planes[index_prim]->projection(m_centroids[index_prim]);
-
-                  pt_bary=barycenter(pt_bary, area,pt_reg,m_areas[index_prim]); 
-                  area+=m_areas[index_prim];
-                }
-              Vector vec_reg = m_planes[list_coplanar_prim[i][j][0]]->plane_normal ();
-
-              Plane plane_reg(pt_bary,vec_reg);
-
-              bool is_reg_used=false;
-              std::vector< int > list_primitive_reg_index_extracted_planes_tmp1;
-
-              for (std::size_t k=0; k<list_coplanar_prim[i][j].size();k++)
-                {
-                  int index_prim=list_coplanar_prim[i][j][k];
-                  if( std::fabs(m_planes[index_prim]->plane_normal () * plane_reg.orthogonal_vector()) > 1. - epsilon)
-                    {
-                      if(m_planes[index_prim]->plane_normal () * plane_reg.orthogonal_vector()<0)
-                        m_planes[index_prim]->update (plane_reg.opposite());
-                      else
-                        m_planes[index_prim]->update (plane_reg);
-                      is_reg_used=true;
-                      list_primitive_reg_index_extracted_planes_tmp1.push_back(index_prim);
-                    }
-                  else{
-                    list_primitive_reg.push_back(static_cast<Plane> (*(m_planes[index_prim])));
-                    std::vector< int > list_primitive_reg_index_extracted_planes_tmp;
-                    list_primitive_reg_index_extracted_planes_tmp.push_back(index_prim);
-                    list_primitive_reg_index_extracted_planes.push_back(list_primitive_reg_index_extracted_planes_tmp);
-                  }
-                }
-              if(is_reg_used) {
-                list_primitive_reg.push_back(plane_reg);
-                list_primitive_reg_index_extracted_planes.push_back(list_primitive_reg_index_extracted_planes_tmp1);
-              }
+              pt_bary[group] = barycenter (pt_bary[group], area[group], pt_reg, m_areas[index_prim]); 
+              area[group] += m_areas[index_prim];
+            }
+          
+          for (std::size_t j = 0; j < clusters[i].planes.size (); ++ j)
+            {
+              std::size_t index_prim = clusters[i].planes[j];
+              std::size_t group = clusters[i].coplanar_group[j];
+              
+              Plane plane_reg (pt_bary[group], vec_reg);
+              
+              if (m_planes[index_prim]->plane_normal ()
+                  * plane_reg.orthogonal_vector() < 0)
+                m_planes[index_prim]->update (plane_reg.opposite());
+              else
+                m_planes[index_prim]->update (plane_reg);
             }
         }
-
-      //      std::cout<<std::endl<<std::endl<<"NB planes final = "<<list_primitive_reg.size()<<std::endl<<std::endl;
-
-      std::cerr << m_planes.size () << " planes" << std::endl;
-      std::cerr << clusters.size () << " clusters" << std::endl;
-      std::cerr << list_coplanar_prim.size () << " list coplanar prim" << std::endl;
-      for (std::size_t i = 0; i < list_coplanar_prim.size (); ++ i)
-        std::cerr << list_coplanar_prim[i].size () << " ";
-      std::cerr << std::endl;
-      std::cerr << list_primitive_reg_index_extracted_planes.size () << " list primitive reg index extracted planes" << std::endl;
-      for (std::size_t i = 0; i < list_primitive_reg_index_extracted_planes.size (); ++ i)
-        std::cerr << list_primitive_reg_index_extracted_planes[i].size () << " ";
-      std::cerr << std::endl;
       
-      std::cerr << list_primitive_reg.size () << " list primitive reg" << std::endl;
-
-
-      //merge similar planes in plane_point_index and extracted planes and HPS[i].primitive_index
-      // std::vector < std::vector < int > > plane_point_index_temp;
-      // std::vector < Plane > extracted_planes_temp;
-      // std::vector < bool > has_been_merged;
-      // for (std::size_t i=0; i< m_planes.size();i++)
-      //   has_been_merged.push_back(false);
-
-      // for (std::size_t i=0; i< m_planes.size();i++)
-      //   {
-	
-      //     if (!has_been_merged[i])
-      //       {
-      //         extracted_planes_temp.push_back (m_planes[i]);
-      //         int label_index=extracted_planes_temp.size()-1;
-      //         plane_point_index_temp.push_back(m_planes[i]->indices_of_assigned_points[i]);
-      //         for (std::size_t k=0; k< m_planes[i]->indices_of_assigned_points().size();k++)
-      //           {
-      //             int index_pt=m_planes[i]->indices_of_assigned_points[k];
-      //             primitive_index[index_pt]=label_index;
-      //             label_plane[index_pt]=label_index;
-      //           }
-	
-      //         for (std::size_t j=i+1;j< m_planes.size();j++)
-      //           {
-
-      //             if(m_planes[i]==m_planes[j])
-      //               { //if identical (do opposite plane too ?) then store the second in the first
-			
-      //                 has_been_merged[j]=true;
-
-      //                 std::vector< int > plane_point_index_new
-      //                   = plane_point_index_temp[m_planes.size()-1];
-      //                 for (std::size_t k=0; k< m_planes[j]->indices_of_assigned_points().size();k++)
-      //                   {
-      //                     int ind=m_planes[j]->indices_of_assigned_points[k];
-      //                     plane_point_index_new.push_back(ind);
-      //                     primitive_index[ind]=label_index;
-      //                     label_plane[ind]=label_index;
-      //                   }
-      //                 plane_point_index_temp[plane_point_index_temp.size()-1]=plane_point_index_new;
-
-      //               }
-      //           }
-      //       }
-      //   }
-
-      // TODO
-      // m_planes=extracted_planes_temp;
-      // m_planes->indices_of_assigned_points=plane_point_index_temp;
-
-      return list_primitive_reg.size ();
+      return clusters.size ();
     }
 
     void compute_centroids_and_areas ()
@@ -501,12 +399,6 @@ namespace CGAL {
             }
         }
 
-      for (std::size_t i = 0; i < cosangle_centroids.size (); ++ i)
-        std::cerr << cosangle_centroids[i] << ", ";
-      std::cerr <<std::endl;
-      for (std::size_t i = 0; i < list_cluster_index.size (); ++ i)
-        std::cerr << list_cluster_index[i] << " ";
-      std::cerr <<std::endl;
       
       //desactive Z-verticalité
       for (std::size_t i = 0; i < cosangle_centroids.size(); ++ i)
@@ -672,15 +564,6 @@ namespace CGAL {
               index_container_current_ring.clear();
             }while(propagation);
         }
-      std::cerr << subgraph_clusters.size () << " subgraph clusters" << std::endl;
-      for (std::size_t i = 0; i < subgraph_clusters.size (); ++ i)
-        std::cerr << subgraph_clusters[i].size () << " ";
-      std::cerr << std::endl;
-      std::cerr << subgraph_clusters_max_area_index.size () << " subgraph clusters max area index" << std::endl
-                << subgraph_clusters_prop.size () << " subgraph clusters prop" << std::endl;
-      for (std::size_t i = 0; i < subgraph_clusters_prop.size (); ++ i)
-        std::cerr << subgraph_clusters_prop[i].size () << " ";
-      std::cerr << std::endl;
     }
                                     
 
