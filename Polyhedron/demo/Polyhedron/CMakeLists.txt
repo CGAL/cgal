@@ -228,6 +228,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Polyhedron_demo.cpp
     File_loader_dialog_moc.cpp
     ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES})
+  target_link_libraries(polyhedron_demo demo_framework point_dialog)
   qt5_use_modules(polyhedron_demo Gui OpenGL Xml Widgets Script Svg )
 
   add_executable  ( Polyhedron_3 Polyhedron_3.cpp )
@@ -242,8 +243,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     endif()
   endif()
   target_link_libraries( Polyhedron_3 demo_framework )
-  target_link_libraries( Polyhedron_3 point_dialog )
-  target_link_libraries( Polyhedron_3 gl_splat)
 
   # Link with CGAL
   target_link_libraries( Polyhedron_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
