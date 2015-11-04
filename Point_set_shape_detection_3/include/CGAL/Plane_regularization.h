@@ -157,159 +157,8 @@ namespace CGAL {
       //find subgraphs of mutually orthogonal clusters (store index of
       //clusters in subgraph_clusters), and select the cluster of
       //largest area
-      std::vector < std::vector < int > > subgraph_clusters;
-      std::vector < int > subgraph_clusters_max_area_index;
-
-      for (std::size_t i = 0; i < clusters.size(); ++ i)
-        clusters[i].is_free = true;
-
-      for (std::size_t i = 0; i < clusters.size(); ++ i)
-        {
-          if(clusters[i].is_free)
-            {
-              clusters[i].is_free = false;
-              double max_area = clusters[i].area;
-              int index_max_area = i;
-
-              //initialization containers
-              std::vector < int > index_container;
-              index_container.push_back(i);
-              std::vector < int > index_container_former_ring;
-              index_container_former_ring.push_back(i);
-              std::list < int > index_container_current_ring;
-
-              //propagation
-              bool propagation=true;
-              do
-                {
-                  propagation=false;
-
-                  //neighbors
-                  for (std::size_t k=0;k<index_container_former_ring.size();k++)
-                    {
-
-                      int cluster_index=index_container_former_ring[k];
-
-                      for (std::size_t j = 0; j < clusters[cluster_index].orthogonal_clusters.size(); ++ j)
-                        {
-                          if(clusters[j].is_free)
-                            { 	
-                              propagation = true;
-                              index_container_current_ring.push_back(j);
-                              clusters[j].is_free = false;
-
-                              if(max_area < clusters[j].area)
-                                {
-                                  max_area = clusters[j].area;
-                                  index_max_area = j;
-                                }
-                            }	
-                        }
-                    }
-
-                  //update containers
-                  index_container_former_ring.clear();
-                  for(std::list < int >::iterator it = index_container_current_ring.begin();
-                      it != index_container_current_ring.end(); ++it)
-                    {
-                      index_container_former_ring.push_back(*it);
-                      index_container.push_back(*it);
-                    }
-                  index_container_current_ring.clear();
-
-                }
-              while(propagation);
-              subgraph_clusters.push_back(index_container);
-              subgraph_clusters_max_area_index.push_back(index_max_area);
-            }
-        }
-
-
-      //create subgraphs of mutually orthogonal clusters in which the
-      //largest cluster is excluded and store in
-      //subgraph_clusters_prop
-      std::vector < std::vector < int > > subgraph_clusters_prop;
-      for (std::size_t i=0;i<subgraph_clusters.size(); i++)
-        {
-          int index=subgraph_clusters_max_area_index[i];
-          std::vector < int > subgraph_clusters_prop_temp;
-          for (std::size_t j=0;j<subgraph_clusters[i].size(); j++)
-            if(subgraph_clusters[i][j]!=index)
-              subgraph_clusters_prop_temp.push_back(subgraph_clusters[i][j]);
-
-          subgraph_clusters_prop.push_back(subgraph_clusters_prop_temp);
-        }
-
-
-
-      //regularization of cluster normals : in eachsubgraph, we start
-      //from the largest area cluster and we propage over the subgraph
-      //by regularizing the normals of the clusters accorting to
-      //orthogonality and cosangle to vertical
-
-      for (std::size_t i = 0; i < clusters.size(); ++ i)
-        clusters[i].is_free = true;
-
-      for (std::size_t i = 0; i < subgraph_clusters_prop.size(); ++ i)
-        {
-	
-          int index_current=subgraph_clusters_max_area_index[i];
-          Vector vec_current=regularize_normal(clusters[index_current].normal,
-                                               clusters[index_current].cosangle_vertical);
-          clusters[index_current].normal = vec_current;
-          clusters[index_current].is_free = false;
-
-          //initialization containers
-          std::vector < int > index_container;
-          index_container.push_back(index_current);
-          std::vector < int > index_container_former_ring;
-          index_container_former_ring.push_back(index_current);
-          std::list < int > index_container_current_ring;
-
-          //propagation
-          bool propagation=true;
-          do
-            {
-              propagation=false;
-
-              //neighbors
-              for (std::size_t k=0;k<index_container_former_ring.size();k++)
-                {
-
-                  int cluster_index=index_container_former_ring[k];
-
-                  for (std::size_t j = 0; j < clusters[cluster_index].orthogonal_clusters.size(); ++ j)
-                    {
-						
-                      if(clusters[j].is_free)
-                        { 	
-							
-                          propagation = true;
-                          index_container_current_ring.push_back(j);
-                          clusters[j].is_free = false;
-
-                          Vector new_vect=regularize_normals_from_prior(clusters[cluster_index].normal,
-                                                                        clusters[j].normal,
-                                                                        clusters[j].cosangle_vertical);
-                          clusters[j].normal = new_vect;
-                        }
-                    }	
-                }
-			
-              //update containers
-              index_container_former_ring.clear();
-              for(std::list < int >::iterator it = index_container_current_ring.begin();
-                  it != index_container_current_ring.end(); ++it)
-                {
-                  index_container_former_ring.push_back(*it);
-                  index_container.push_back(*it);
-                }
-              index_container_current_ring.clear();
-            }while(propagation);
-        }
-
-
-
+      subgraph_mutually_orthogonal_clusters (clusters);
+      
       //recompute optimal plane for each primitive after normal regularization
       for (std::size_t i=0; i < clusters.size(); ++ i)
         {
@@ -325,18 +174,13 @@ namespace CGAL {
               Plane plane_reg(pt_reg,vec_reg);
 		
               if( std::fabs(m_planes[index_prim]->plane_normal () * plane_reg.orthogonal_vector ()) > 1. - epsilon)
-                {
-                  m_planes[index_prim]->update (plane_reg);
-                }
+                m_planes[index_prim]->update (plane_reg);
             }
         }
 
 
-
-
-
       //detecting co-planarity and store in list_coplanar_prim
-      std::vector< std::vector< std::vector < int > > > list_coplanar_prim;
+      std::vector<std::vector< std::vector < int > > > list_coplanar_prim;
       for (std::size_t i = 0; i < clusters.size(); ++ i)
         {
 
@@ -387,7 +231,7 @@ namespace CGAL {
 
 
 
-      //regularize primitive position by computing barycenter of coplanar planes
+      //regularize primitive position by computing barycenter of cplanar planes
       std::vector < std::vector < int > > list_primitive_reg_index_extracted_planes;
       std::vector < Plane > list_primitive_reg;
 
@@ -442,15 +286,8 @@ namespace CGAL {
 
       //      std::cout<<std::endl<<std::endl<<"NB planes final = "<<list_primitive_reg.size()<<std::endl<<std::endl;
 
-      std::cerr << subgraph_clusters.size () << " subgraph clusters" << std::endl;
-      for (std::size_t i = 0; i < subgraph_clusters.size (); ++ i)
-        std::cerr << subgraph_clusters[i].size () << " ";
-      std::cerr << std::endl;
-      std::cerr << subgraph_clusters_max_area_index.size () << " subgraph clusters max area index" << std::endl
-                << subgraph_clusters_prop.size () << " subgraph clusters prop" << std::endl;
-      for (std::size_t i = 0; i < subgraph_clusters_prop.size (); ++ i)
-        std::cerr << subgraph_clusters_prop[i].size () << " ";
-      std::cerr << std::endl;
+      std::cerr << m_planes.size () << " planes" << std::endl;
+      std::cerr << clusters.size () << " clusters" << std::endl;
       std::cerr << list_coplanar_prim.size () << " list coplanar prim" << std::endl;
       for (std::size_t i = 0; i < list_coplanar_prim.size (); ++ i)
         std::cerr << list_coplanar_prim[i].size () << " ";
@@ -681,6 +518,169 @@ namespace CGAL {
         }
       for (std::size_t i = 0; i < clusters.size(); ++ i)
         clusters[i].cosangle_vertical = cosangle_centroids[list_cluster_index[i]];
+    }
+
+    void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster>& clusters)
+    {
+      std::vector < std::vector < int > > subgraph_clusters;
+      std::vector < int > subgraph_clusters_max_area_index;
+
+      for (std::size_t i = 0; i < clusters.size(); ++ i)
+        clusters[i].is_free = true;
+
+      for (std::size_t i = 0; i < clusters.size(); ++ i)
+        {
+          if(clusters[i].is_free)
+            {
+              clusters[i].is_free = false;
+              double max_area = clusters[i].area;
+              int index_max_area = i;
+
+              //initialization containers
+              std::vector < int > index_container;
+              index_container.push_back(i);
+              std::vector < int > index_container_former_ring;
+              index_container_former_ring.push_back(i);
+              std::list < int > index_container_current_ring;
+
+              //propagation
+              bool propagation=true;
+              do
+                {
+                  propagation=false;
+
+                  //neighbors
+                  for (std::size_t k=0;k<index_container_former_ring.size();k++)
+                    {
+
+                      int cluster_index=index_container_former_ring[k];
+
+                      for (std::size_t j = 0; j < clusters[cluster_index].orthogonal_clusters.size(); ++ j)
+                        {
+                          if(clusters[j].is_free)
+                            { 	
+                              propagation = true;
+                              index_container_current_ring.push_back(j);
+                              clusters[j].is_free = false;
+
+                              if(max_area < clusters[j].area)
+                                {
+                                  max_area = clusters[j].area;
+                                  index_max_area = j;
+                                }
+                            }	
+                        }
+                    }
+
+                  //update containers
+                  index_container_former_ring.clear();
+                  for(std::list < int >::iterator it = index_container_current_ring.begin();
+                      it != index_container_current_ring.end(); ++it)
+                    {
+                      index_container_former_ring.push_back(*it);
+                      index_container.push_back(*it);
+                    }
+                  index_container_current_ring.clear();
+
+                }
+              while(propagation);
+              subgraph_clusters.push_back(index_container);
+              subgraph_clusters_max_area_index.push_back(index_max_area);
+            }
+        }
+
+
+      //create subgraphs of mutually orthogonal clusters in which the
+      //largest cluster is excluded and store in
+      //subgraph_clusters_prop
+      std::vector < std::vector < int > > subgraph_clusters_prop;
+      for (std::size_t i=0;i<subgraph_clusters.size(); i++)
+        {
+          int index=subgraph_clusters_max_area_index[i];
+          std::vector < int > subgraph_clusters_prop_temp;
+          for (std::size_t j=0;j<subgraph_clusters[i].size(); j++)
+            if(subgraph_clusters[i][j]!=index)
+              subgraph_clusters_prop_temp.push_back(subgraph_clusters[i][j]);
+
+          subgraph_clusters_prop.push_back(subgraph_clusters_prop_temp);
+        }
+
+
+
+      //regularization of cluster normals : in eachsubgraph, we start
+      //from the largest area cluster and we propage over the subgraph
+      //by regularizing the normals of the clusters accorting to
+      //orthogonality and cosangle to vertical
+
+      for (std::size_t i = 0; i < clusters.size(); ++ i)
+        clusters[i].is_free = true;
+
+      for (std::size_t i = 0; i < subgraph_clusters_prop.size(); ++ i)
+        {
+	
+          int index_current=subgraph_clusters_max_area_index[i];
+          Vector vec_current=regularize_normal(clusters[index_current].normal,
+                                               clusters[index_current].cosangle_vertical);
+          clusters[index_current].normal = vec_current;
+          clusters[index_current].is_free = false;
+
+          //initialization containers
+          std::vector < int > index_container;
+          index_container.push_back(index_current);
+          std::vector < int > index_container_former_ring;
+          index_container_former_ring.push_back(index_current);
+          std::list < int > index_container_current_ring;
+
+          //propagation
+          bool propagation=true;
+          do
+            {
+              propagation=false;
+
+              //neighbors
+              for (std::size_t k=0;k<index_container_former_ring.size();k++)
+                {
+
+                  int cluster_index=index_container_former_ring[k];
+
+                  for (std::size_t j = 0; j < clusters[cluster_index].orthogonal_clusters.size(); ++ j)
+                    {
+						
+                      if(clusters[j].is_free)
+                        { 	
+							
+                          propagation = true;
+                          index_container_current_ring.push_back(j);
+                          clusters[j].is_free = false;
+
+                          Vector new_vect=regularize_normals_from_prior(clusters[cluster_index].normal,
+                                                                        clusters[j].normal,
+                                                                        clusters[j].cosangle_vertical);
+                          clusters[j].normal = new_vect;
+                        }
+                    }	
+                }
+			
+              //update containers
+              index_container_former_ring.clear();
+              for(std::list < int >::iterator it = index_container_current_ring.begin();
+                  it != index_container_current_ring.end(); ++it)
+                {
+                  index_container_former_ring.push_back(*it);
+                  index_container.push_back(*it);
+                }
+              index_container_current_ring.clear();
+            }while(propagation);
+        }
+      std::cerr << subgraph_clusters.size () << " subgraph clusters" << std::endl;
+      for (std::size_t i = 0; i < subgraph_clusters.size (); ++ i)
+        std::cerr << subgraph_clusters[i].size () << " ";
+      std::cerr << std::endl;
+      std::cerr << subgraph_clusters_max_area_index.size () << " subgraph clusters max area index" << std::endl
+                << subgraph_clusters_prop.size () << " subgraph clusters prop" << std::endl;
+      for (std::size_t i = 0; i < subgraph_clusters_prop.size (); ++ i)
+        std::cerr << subgraph_clusters_prop[i].size () << " ";
+      std::cerr << std::endl;
     }
                                     
 
