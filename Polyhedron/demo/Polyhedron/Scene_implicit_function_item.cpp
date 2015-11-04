@@ -61,7 +61,6 @@ void Scene_implicit_function_item::initialize_buffers(CGAL::Three::Viewer_interf
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[2].release();
 
-        program->setAttributeValue("colors", QVector3D(0,0,0));
         program->release();
         vaos[1]->release();
     }
@@ -78,7 +77,6 @@ void Scene_implicit_function_item::initialize_buffers(CGAL::Three::Viewer_interf
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[3].release();
-        program->setAttributeValue("colors", QVector3D(0.6f, 0.6f, 0.6f));
         program->release();
         vaos[2]->release();
     }
@@ -429,6 +427,7 @@ Scene_implicit_function_item::draw_edges(CGAL::Three::Viewer_interface* viewer) 
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
+    program->setAttributeValue("colors", QVector3D(0,0,0));
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_cube.size()/3));
     vaos[1]->release();
     vaos[2]->bind();
@@ -440,6 +439,7 @@ Scene_implicit_function_item::draw_edges(CGAL::Three::Viewer_interface* viewer) 
         f_mat.data()[i] = GLfloat(d_mat[i]);
     }
     program->setUniformValue("f_matrix", f_mat);
+    program->setAttributeValue("colors", QVector3D(0.6,0.6,0.6));
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size()/3));
     vaos[2]->release();
     program->release();
