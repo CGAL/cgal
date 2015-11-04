@@ -4,6 +4,9 @@
 #include <CGAL/Qt/resources.h>
 #include <stdexcept>
 
+#include <QCommandLineParser>
+#include <QCommandLineOption>
+
 struct Polyhedron_demo_impl {
   bool catch_exceptions;
   QScopedPointer<MainWindow> mainWindow;
@@ -35,36 +38,48 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   this->setOrganizationName("GeometryFactory");
   this->setApplicationName(application_name);
 
+  QCommandLineParser parser;
+  parser.addHelpOption();
+
+  QCommandLineOption use_meta("use-meta",
+                              tr("Use the [Meta] key to move frames, instead of [Tab]."));
+  parser.addOption(use_meta);
+  QCommandLineOption no_try_catch("no-try-catch",
+                                  tr("Do not catch uncaught exceptions."));
+  parser.addOption(no_try_catch);
+#ifdef QT_SCRIPT_LIB
+  QCommandLineOption debug_scripts("debug-scripts",
+                                   tr("Use the scripts debugger."));
+  parser.addOption(debug_scripts);
+#endif
+  QCommandLineOption no_autostart("no-autostart",
+                                  tr("Ignore the autostart.js file, if any."));
+  parser.addOption(no_autostart);
+  parser.addPositionalArgument("files", tr("Files to open"), "[files...]");
+  parser.process(*this);
+
   d_ptr->mainWindow.reset(new MainWindow);
   MainWindow& mainWindow = *d_ptr->mainWindow;
 
   mainWindow.setWindowTitle(main_window_title);
   mainWindow.show();
-  QStringList args = this->arguments();
-  args.removeAt(0);
 
-  if(!args.empty() && args[0] == "--use-meta")
-  {
+  if(parser.isSet(use_meta)) {
     mainWindow.setAddKeyFrameKeyboardModifiers(::Qt::MetaModifier);
-    args.removeAt(0);
   }
-  if(!args.empty() && args[0] == "--no-try-catch")
-  {
+  if(parser.isSet(no_try_catch)) {
     this->do_not_catch_exceptions();
-    args.removeAt(0);
   }
 #ifdef QT_SCRIPT_LIB
-  if(!args.empty() && args[0] == "--debug-scripts")
-  {
+  if(parser.isSet(debug_scripts)) {
     mainWindow.enableScriptDebugger();
-    args.removeAt(0);
   }
   QFileInfo autostart_js("autostart.js");
-  if(autostart_js.exists()) {
+  if(!parser.isSet(no_autostart) && autostart_js.exists()) {
     mainWindow.load_script(autostart_js);
   }
 #endif
-  Q_FOREACH(QString filename, args) {
+  Q_FOREACH(QString filename, parser.positionalArguments()) {
     mainWindow.open(filename);
   }
 
