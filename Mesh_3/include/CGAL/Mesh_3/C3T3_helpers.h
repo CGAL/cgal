@@ -1215,8 +1215,8 @@ private:
       if(update_c3t3)
       {
         // Update status in c3t3
-        if(surface)
-          c3t3_.add_to_complex(facet,*surface);
+        if(surface != boost::none)
+          c3t3_.add_to_complex(facet, surface.get());
         else
           c3t3_.remove_from_complex(facet);
       }

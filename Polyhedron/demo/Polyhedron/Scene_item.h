@@ -223,7 +223,7 @@ public Q_SLOTS:
   virtual void setRenderingMode(RenderingMode m) { 
     if (supportsRenderingMode(m))
       rendering_mode = m; 
-    Q_EMIT renderingModeChanged();
+    Q_EMIT redraw();
   }
   //!Set the RenderingMode to Points.
   void setPointsMode() {
@@ -276,7 +276,7 @@ public Q_SLOTS:
 Q_SIGNALS:
   void itemChanged();
   void aboutToBeDestroyed();
-  void renderingModeChanged();
+  void redraw();
 
 protected:
   // The four basic properties

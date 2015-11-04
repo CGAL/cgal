@@ -1,4 +1,6 @@
 #include "config.h"
+#include "config_mesh_3.h"
+
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
@@ -8,11 +10,22 @@
 #include <QMainWindow>
 #include <QApplication>
 #include <QtPlugin>
-#include "Scene_polyhedron_item.h"
+#include "Scene_c3t3_item.h"
 #include <QInputDialog>
 #include <QFileDialog>
+#include <QMessageBox>
 #include <fstream>
-#include "ui_Meshing_dialog.h"
+
+#include "Scene_polyhedron_item.h"
+
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+#include "Scene_implicit_function_item.h"
+#endif
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+#include "Scene_segmented_image_item.h"
+#endif
+
+#include "ui_Polyhedron_demo_mesh_3_plugin_dialog.h"
 
 // declare the CGAL function
 Scene_item* cgal_code_mesh_3(const Polyhedron*,
@@ -24,6 +37,27 @@ Scene_item* cgal_code_mesh_3(const Polyhedron*,
                              const double tet_shape,
                              const bool protect_features,
                              CGAL::Three::Scene_interface* scene);
+
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+Scene_item* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
+                             const double facet_angle,
+                             const double facet_sizing,
+                             const double facet_approx,
+                             const double tet_sizing,
+                             const double tet_shape,
+                             CGAL::Three::Scene_interface* scene);
+#endif
+
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+Scene_item* cgal_code_mesh_3(const Image* pImage,
+                             const double facet_angle,
+                             const double facet_sizing,
+                             const double facet_approx,
+                             const double tet_sizing,
+                             const double tet_shape,
+                             CGAL::Three::Scene_interface* scene);
+#endif
+
 using namespace CGAL::Three;
 class Polyhedron_demo_mesh_3_plugin :
   public QObject,
@@ -51,6 +85,14 @@ public:
 
 
   bool applicable(QAction*) const {
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+  if(qobject_cast<Scene_implicit_function_item*>(scene->item(scene->mainSelectionIndex())))
+    return true;
+#endif
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+  if( qobject_cast<Scene_segmented_image_item*>(scene->item(scene->mainSelectionIndex())))
+    return true;
+#endif
       return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
@@ -79,14 +121,37 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
-  Scene_polyhedron_item* item =
-  qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Scene_polyhedron_item* poly_item =
+    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+  Scene_implicit_function_item* function_item =
+    qobject_cast<Scene_implicit_function_item*>(scene->item(index));
+#endif
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+  Scene_segmented_image_item* image_item =
+    qobject_cast<Scene_segmented_image_item*>(scene->item(index));
+#endif
 
-  if(!item) return;
+  Scene_item* item = NULL;
+  bool features_protection_available = false;
+  if (NULL != poly_item)
+  {
+    item = poly_item;
+    features_protection_available = true;
+  }
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+  else if (NULL != function_item) { item = function_item; }
+#endif
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+  else if (NULL != image_item)    { item = image_item; }
+#endif
 
-  Polyhedron* pMesh = item->polyhedron();
-
-  if(!pMesh) return;
+  if (NULL == item)
+  {
+    QMessageBox::warning(mw, tr(""),
+      tr("Selected object can't be meshed"));
+    return;
+  }
 
   // -----------------------------------
   // Create Mesh dialog
@@ -145,6 +210,10 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                       diag); // max
   ui.approx->setValue(approx_default);
 
+  ui.protect->setEnabled(features_protection_available);
+  if (!features_protection_available)
+    ui.protect->setChecked(false);
+
   // -----------------------------------
   // Get values
   // -----------------------------------
@@ -161,15 +230,67 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  Scene_item* result_item = cgal_code_mesh_3(pMesh,
-                                             item->name(),
-                                             angle,
-                                             facet_sizing,
-                                             approx,
-                                             tet_sizing,
-                                             radius_edge,
-                                             protect_features,
-                                             scene);
+  Scene_item* temp_item;
+  if (NULL != poly_item)
+  {
+    Polyhedron* pMesh = poly_item->polyhedron();
+    if (NULL == pMesh)
+    {
+      QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
+      return;
+    }
+
+    temp_item = cgal_code_mesh_3(pMesh,
+                                 item->name(),
+                                 angle,
+                                 facet_sizing,
+                                 approx,
+                                 tet_sizing,
+                                 radius_edge,
+                                 protect_features,
+                                 scene);
+  }
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
+  else if (NULL != function_item)
+  {
+    const Implicit_function_interface* pFunction = function_item->function();
+    if (NULL == pFunction)
+    {
+      QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
+      return;
+    }
+
+    temp_item = cgal_code_mesh_3(pFunction,
+                                 angle,
+                                 facet_sizing,
+                                 approx,
+                                 tet_sizing,
+                                 radius_edge,
+                                 scene);
+  }
+#endif
+#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
+  else if (NULL != image_item)
+  {
+    const Image* pImage = image_item->image();
+    if (NULL == pImage)
+    {
+      QMessageBox::critical(mw, tr(""), tr("ERROR: no data in selected item"));
+      return;
+    }
+
+    temp_item = cgal_code_mesh_3(pImage,
+                                 angle,
+                                 facet_sizing,
+                                 approx,
+                                 tet_sizing,
+                                 radius_edge,
+                                 scene);
+  }
+#endif
+
+  Scene_c3t3_item *result_item = qobject_cast<Scene_c3t3_item*>(temp_item);
+
   if(result_item) {
       result_item->setName(tr("%1 3d mesh (%2 %3 %4 %5)")
                            .arg(item->name())
@@ -178,11 +299,13 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                            .arg(tet_sizing)
                            .arg(approx));
       result_item->setColor(Qt::magenta);
-      result_item->setRenderingMode(item->renderingMode());
+      result_item->setRenderingMode(FlatPlusEdges);
       item->setVisible(false);
+      result_item->set_data_item(item);
       scene->itemChanged(index);
       result_item->invalidate_buffers();
-      scene->addItem(result_item);
+      int item_id = scene->addItem(result_item);
+      scene->setSelectedItem(item_id);
   }
   QApplication::restoreOverrideCursor();
 }

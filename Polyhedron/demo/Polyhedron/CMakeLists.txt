@@ -34,7 +34,7 @@ option( POLYHEDRON_QTSCRIPT_DEBUGGER
   "Activate the use of Qt Script Debugger in Polyhedron_3 demo" OFF)
 
 # Find Qt5 itself
-find_package(CGAL COMPONENTS Qt5)
+find_package(CGAL COMPONENTS Qt5 ImageIO)
 include( ${CGAL_USE_FILE} )
 
 find_package(Qt5
@@ -49,6 +49,7 @@ find_package(OpenGL)
 if(Qt5_FOUND)
 
   add_definitions(-DQT_NO_KEYWORDS)
+  add_definitions(-DSCENE_SEGMENTED_IMAGE_GL_BUFFERS_AVAILABLE)
   find_package(QGLViewer )
 
 endif(Qt5_FOUND)
@@ -85,7 +86,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt5_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
   qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
-  qt5_wrap_ui( meshingUI_FILES  Meshing_dialog.ui )
+  qt5_wrap_ui( meshingUI_FILES  
+                       Polyhedron_demo_mesh_3_plugin_dialog.ui 
+                       Polyhedron_demo_mesh_3_local_optimizers_dialog.ui 
+		       Polyhedron_demo_mesh_3_smoother_dialog.ui  )
   qt5_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
   qt5_wrap_ui( PreferencesUI_FILES   Preferences.ui )
   qt5_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
@@ -212,6 +216,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)# Scene_points_with_normal_item.moc)
   target_link_libraries( scene_points_with_normal_item gl_splat)
   target_link_libraries( demo_framework gl_splat)
+  
+  add_item(scene_c3t3_item Scene_c3t3_item.cpp)
+  target_link_libraries(scene_c3t3_item scene_polyhedron_item scene_polygon_soup_item)
 
   foreach( lib 
       demo_framework
@@ -282,13 +289,35 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   target_link_libraries( camera_positions_plugin ${QGLVIEWER_LIBRARIES} demo_framework)
 
+
+  add_item(scene_segmented_image_item Scene_segmented_image_item.cpp)
+
   if ( Boost_VERSION GREATER 103400 )
     qt5_generate_moc( "Polyhedron_demo_mesh_3_plugin_cgal_code.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Scene_c3t3_item.moc" )
-
     polyhedron_demo_plugin(mesh_3_plugin Polyhedron_demo_mesh_3_plugin 
-      Polyhedron_demo_mesh_3_plugin_cgal_code.cpp #Scene_c3t3_item.moc
+      Polyhedron_demo_mesh_3_plugin_cgal_code.cpp Meshing_thread.cpp #Scene_c3t3_item.moc
       ${meshingUI_FILES})
-    target_link_libraries(mesh_3_plugin scene_polyhedron_item scene_polygon_soup_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+    target_link_libraries(mesh_3_plugin scene_polyhedron_item scene_polygon_soup_item
+	scene_implicit_function_item scene_segmented_image_item
+	scene_c3t3_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY})
+  
+    qt5_wrap_cpp( VOLUME_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_thread.h )
+    qt5_wrap_cpp( VOLUME_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_interface.h )
+
+    polyhedron_demo_plugin(mesh_3_volume_planes_plugin Polyhedron_demo_mesh_3_volume_planes_plugin ${VOLUME_MOC_OUTFILES} Volume_plane_intersection.cpp)
+    target_link_libraries(mesh_3_volume_planes_plugin scene_segmented_image_item)
+
+    polyhedron_demo_plugin(mesh_3_optimization_plugin Polyhedron_demo_mesh_3_optimization_plugin
+      Polyhedron_demo_mesh_3_optimization_plugin_cgal_code.cpp Optimizer_thread.cpp #Scene_c3t3_item.moc
+      ${meshingUI_FILES})
+    target_link_libraries(mesh_3_optimization_plugin scene_c3t3_item scene_polyhedron_item scene_segmented_image_item scene_implicit_function_item )
+
+  qt5_wrap_ui( imgUI_FILES Image_res_dialog.ui)
+  polyhedron_demo_plugin(io_image_plugin Io_image_plugin ${imgUI_FILES})
+  target_link_libraries(io_image_plugin scene_segmented_image_item)
+
+
+      
   else( Boost_VERSION GREATER 103400 )
     message(STATUS "warning: the plugin mesh_3_plugin requires Boost>=1.34.1 and will not be compiled.")
   endif( Boost_VERSION GREATER 103400 )

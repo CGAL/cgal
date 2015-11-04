@@ -8,12 +8,13 @@
 template <class FLOAT>
 void create_flat_sphere(double R,
                         std::vector<FLOAT>& positions_spheres,
-                        std::vector<FLOAT>& normals_spheres)
+                        std::vector<FLOAT>& normals_spheres,
+                        int prec = 36)
 {
   //The more small they are, the more precise the Sphere will be.
   // Must be divisors of 180 and 360.
-  const int rings=18;
-  const int sectors=36;
+  const int rings=prec/2;
+  const int sectors=prec;
   const float to_rad = static_cast<float>(CGAL_PI / 180.0);
 
   float T, P;
@@ -184,12 +185,13 @@ template <class FLOAT>
 void create_flat_and_wire_sphere(double R,
                    std::vector<FLOAT>& positions_spheres,
                    std::vector<FLOAT>& normals_spheres,
-                   std::vector<FLOAT>& positions_wire_spheres)
+                   std::vector<FLOAT>& positions_wire_spheres,
+                   int prec = 36)
 {
-  //The more small they are, the more precise the Sphere will be.
-  // Must be divisors of 180 and 360.
-  const int rings=18;
-  const int sectors=36;
+  //The smaller they are, the more precise the Sphere will be.
+  // Must be a divisor of 360 and 180.
+  const int rings=prec/2;
+  const int sectors=prec;
   const float to_rad = static_cast<float>(CGAL_PI / 180.0);
 
   create_flat_sphere(R, positions_spheres, normals_spheres);

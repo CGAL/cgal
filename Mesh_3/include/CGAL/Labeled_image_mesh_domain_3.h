@@ -31,7 +31,7 @@
 #include <CGAL/Random.h>
 #include <CGAL/Labeled_mesh_domain_3.h>
 #include <CGAL/Mesh_3/Image_to_labeled_function_wrapper.h>
-
+#include <CGAL/Bbox_3.h>
 
 namespace CGAL {
 
@@ -60,6 +60,16 @@ public:
                               CGAL::Random* p_rng = NULL)
     : Base(Wrapper(image),
            compute_bounding_box(image),
+           error_bound,
+           p_rng)
+  {}
+
+  Labeled_image_mesh_domain_3(const Image& image,
+                              const CGAL::Bbox_3& bbox,
+                              const FT& error_bound = FT(1e-3),
+                              CGAL::Random* p_rng = NULL)
+    : Base(Wrapper(image),
+           bbox,
            error_bound,
            p_rng)
   {}
