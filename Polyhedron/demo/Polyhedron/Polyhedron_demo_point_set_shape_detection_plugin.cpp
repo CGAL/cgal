@@ -94,6 +94,7 @@ public:
   bool detect_cone() const { return coneCB->isChecked(); }
   bool generate_alpha() const { return m_generate_alpha->isChecked(); }
   bool generate_subset() const { return !(m_do_not_generate_subset->isChecked()); }
+  bool regularize() const { return m_regularize->isChecked(); }
 };
 
 void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered() {
@@ -163,6 +164,18 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     shape_detection.detect(op);
 
     std::cout << shape_detection.shapes().size() << " shapes found" << std::endl;
+
+    if (dialog.regularize ())
+      {
+        std::cerr << "Regularization of planes... " << std::endl;
+        Regularization regularization (*points, shape_detection);
+        regularization.run (op.epsilon, 0.1);
+    
+        std::cerr << "done" << std::endl;
+      }
+
+    std::map<Kernel::Point_3, QColor> color_map;
+    
     //print_message(QString("%1 shapes found.").arg(shape_detection.number_of_shapes()));
     int index = 0;
     BOOST_FOREACH(boost::shared_ptr<Shape_detection::Shape> shape, shape_detection.shapes())
@@ -182,9 +195,11 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       point_item->point_set()->unselect_all ();
       
       unsigned char r, g, b;
+
       r = static_cast<unsigned char>(64 + rand.get_int(0, 192));
       g = static_cast<unsigned char>(64 + rand.get_int(0, 192));
       b = static_cast<unsigned char>(64 + rand.get_int(0, 192));
+
       point_item->setRbgColor(r, g, b);
 
       // Providing a useful name consisting of the order of detection, name of type and number of inliers
@@ -198,16 +213,29 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
         {
           ss << item->name().toStdString() << "_plane_";
 
+          
+          if (dialog.regularize ())
+            {
+              Kernel::Point_3 ref
+                = CGAL::ORIGIN + (dynamic_cast<CGAL::Shape_detection_3::Plane<Traits>*>(shape.get ()))->plane_normal ();
+
+              if (color_map.find (ref) == color_map.end ())
+                color_map[ref] = point_item->color ();
+              else
+                point_item->setColor (color_map[ref]);
+            }
+      
           if (dialog.generate_alpha ())
             {
               // If plane, build alpha shape
               Scene_polyhedron_item* poly_item = new Scene_polyhedron_item;
 
               Plane_3 plane = (Plane_3)(*(dynamic_cast<CGAL::Shape_detection_3::Plane<Traits>*>(shape.get ())));
+              std::cerr << plane << std::endl;
               build_alpha_shape (*(point_item->point_set()), plane,
                                  poly_item, dialog.cluster_epsilon());
           
-              poly_item->setRbgColor(r-32, g-32, b-32);
+              poly_item->setColor(point_item->color ());
               poly_item->setName(QString("%1%2_alpha_shape").arg(QString::fromStdString(ss.str()))
                                  .arg (QString::number (shape->indices_of_assigned_points().size())));
               poly_item->setRenderingMode (Flat);
@@ -235,11 +263,6 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
       ++index;
     }
-    std::cerr << "Regularization of planes... " << std::endl;
-    Regularization regularization (*points, shape_detection);
-    regularization.run (op.epsilon, op.normal_threshold);
-    
-    std::cerr << "done" << std::endl;
 
     // Updates scene
     scene->itemChanged(index);
