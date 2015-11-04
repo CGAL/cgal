@@ -611,7 +611,8 @@ void Viewer::attrib_buffers(QGLViewer* viewer)
                       0.0f,
                       1.0f );
 
-  QVector4D position( 10.0f, 10.0f, 10.0f, 0.0f  );
+
+  QVector4D position((bb.xmax()-bb.xmin())/2, (bb.ymax()-bb.ymin())/2,bb.zmax(), 0.0 );
   GLfloat shininess =  1.0f;
 
   rendering_program.bind();
