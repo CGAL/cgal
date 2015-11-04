@@ -2,6 +2,7 @@
 #include "MainWindow.h"
 #include "Scene.h"
 #include "Scene_item.h"
+#include "Scene_polylines_item.h"
 #include <CGAL/Qt/debug.h>
 
 #include <QtDebug>
@@ -44,6 +45,7 @@
 
 #include "ui_MainWindow.h"
 #include "ui_Preferences.h"
+#include "ui_Add_polylines_dialog.h"
 
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
@@ -123,7 +125,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
   ui = new Ui::MainWindow;
   ui->setupUi(this);
-
+  nb_of_polylines = 0;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
   ui->menuBar->removeAction(ui->actionLoad_Script);
@@ -240,8 +242,7 @@ MainWindow::MainWindow(QWidget* parent)
   this->addAboutCGAL();
   this->addAboutDemo(":/cgal/Polyhedron_3/about.html");
 
-  // Connect the button "addButton" with actionLoad
-  ui->addButton->setDefaultAction(ui->actionLoad);
+  // Connect the button "addButton" with actionLoad  ui->addButton->setDefaultAction(ui->actionLoad);
   // Same with "removeButton" and "duplicateButton"
   ui->removeButton->setDefaultAction(ui->actionErase);
   ui->duplicateButton->setDefaultAction(ui->actionDuplicate);
@@ -1465,6 +1466,69 @@ void MainWindow::on_actionPreferences_triggered()
   delete iStandardModel;
 }
 
+void MainWindow::on_actionAdd_polylines_triggered()
+{
+  add_polydiag = new QDialog(this);
+  add_polydiagui = new Ui::Add_polylines_dialog();
+  add_polydiagui->setupUi(add_polydiag);
+  connect(add_polydiagui->addButton, SIGNAL(clicked()), this, SLOT(on_addButton_clicked()));
+  connect(add_polydiagui->closeButton, SIGNAL(clicked()), this, SLOT(on_closeButton_clicked()));
+  add_polydiag->exec();
+}
+
+void MainWindow::on_addButton_clicked()
+{
+  QString text = add_polydiagui->textEdit->toPlainText();
+  std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
+  polylines.resize(polylines.size()+1);
+  std::vector<Scene_polylines_item::Point_3>& polyline = *(polylines.rbegin());
+  QStringList polylines_metadata;
+  QStringList list = text.split(" ");
+  int counter = 0;
+  double coord[3];
+  bool ok = true;
+  Q_FOREACH(QString s, list)
+  {
+      if(!s.isEmpty())
+      {
+          double res = s.toDouble(&ok);
+          if(!ok)
+          {
+              error("Coordinates not valid");
+              break;
+          }
+          else
+          {
+            coord[counter] = res;
+            counter++;
+          }
+      }
+      if(counter == 3)
+      {
+          Scene_polylines_item::Point_3 p(coord[0], coord[1], coord[2]);
+          polyline.push_back(p);
+          counter =0;
+      }
+  }
+    if(ok)
+    {
+        Scene_polylines_item* item = new Scene_polylines_item;
+        item->polylines = polylines;
+        nb_of_polylines++;
+        QString name = QString("Polyline #%1").arg(QString::number(nb_of_polylines));
+        item->setName(name);
+        item->setColor(Qt::black);
+        item->setProperty("polylines metadata", polylines_metadata);
+        item->invalidate_buffers();
+        scene->addItem(item);
+    }
+}
+
+void MainWindow::on_closeButton_clicked()
+{
+    add_polydiag->close();
+}
+
 void MainWindow::on_actionSetBackgroundColor_triggered()
 {
   QColor c =  QColorDialog::getColor();
@@ -1532,5 +1596,4 @@ void MainWindow::on_actionRecenterScene_triggered()
   updateViewerBBox();
   viewer->camera()->interpolateToFitScene();
 }
-
 

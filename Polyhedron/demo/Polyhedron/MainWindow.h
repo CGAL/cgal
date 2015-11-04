@@ -30,6 +30,7 @@ class QSortFilterProxyModel;
 
 namespace Ui {
   class MainWindow;
+  class Add_polylines_dialog;
 }
 
 #include "Polyhedron_type_fwd.h"
@@ -266,6 +267,13 @@ protected Q_SLOTS:
   //Preferences edition
   //!Opens the Preferences dialog.
   void on_actionPreferences_triggered();
+  //!Opens a dialog to add polylines on the fly.
+  void on_actionAdd_polylines_triggered();
+  //!Adds a polyline
+  void on_addButton_clicked();
+  //!Closes the dialog
+  void on_closeButton_clicked();
+
   // save as...
   //!Opens a dialog to save selected item if able.
   void on_actionSaveAs_triggered(); 
@@ -335,6 +343,9 @@ private:
   QSortFilterProxyModel* proxyModel;
   QTreeView* sceneView;
   Ui::MainWindow* ui;
+  Ui::Add_polylines_dialog *add_polydiagui;
+  QDialog *add_polydiag;
+  int nb_of_polylines;
   QVector<CGAL::Three::Polyhedron_demo_io_plugin_interface*> io_plugins;
   QMap<QString,QString> default_plugin_selection;
   // typedef to make Q_FOREACH work

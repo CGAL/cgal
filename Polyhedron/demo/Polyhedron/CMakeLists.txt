@@ -80,7 +80,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
-  qt5_wrap_ui( MainWindowUI_files MainWindow.ui )
+  qt5_wrap_ui( MainWindowUI_files MainWindow.ui Add_polylines_dialog.ui)
   qt5_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt5_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
@@ -243,6 +243,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     endif()
   endif()
   target_link_libraries( Polyhedron_3 demo_framework )
+  target_link_libraries( Polyhedron_3 scene_polylines_item)
+
 
   # Link with CGAL
   target_link_libraries( Polyhedron_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
