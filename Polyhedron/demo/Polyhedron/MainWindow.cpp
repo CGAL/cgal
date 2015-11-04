@@ -1486,6 +1486,14 @@ void MainWindow::on_addButton_clicked()
   int counter = 0;
   double coord[3];
   bool ok = true;
+  if (list.isEmpty()) return;
+  if (list.size()%3!=0){
+    QMessageBox *msgBox = new QMessageBox;
+    msgBox->setWindowTitle("Error");
+    msgBox->setText("ERROR : Input should consists of triplets.");
+    msgBox->exec();
+    return;
+  }
   Q_FOREACH(QString s, list)
   {
       if(!s.isEmpty())

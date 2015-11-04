@@ -36,7 +36,7 @@ p, li { white-space: pre-wrap; }
        <bool>false</bool>
       </property>
       <property name="placeholderText">
-       <string notr="true">New polyline format:  A1 A2 A3 B1 B2 B3 C1 C2 C3... </string>
+       <string notr="true">Polyline format:  Ax Ay A3 Bx By Bz ... Zx Zy Zz </string>
       </property>
      </widget>
     </item>
