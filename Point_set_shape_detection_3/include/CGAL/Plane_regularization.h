@@ -106,9 +106,7 @@ namespace CGAL {
           // Ignore all shapes other than plane
           if (pshape == boost::shared_ptr<Plane_shape>())
             continue;
-
           m_planes.push_back (pshape);
-
         }
 
     }
@@ -127,14 +125,14 @@ namespace CGAL {
 
 
   
-    std::size_t run (FT epsilon, FT tolerance_coplanarity)
+    std::size_t run (FT tolerance_cosangle, FT tolerance_coplanarity)
     {
       compute_centroids_and_areas ();
       
       // clustering the parallel primitives and store them in clusters
       // & compute the normal, size and cos angle to the vertical of each cluster
       std::vector<Plane_cluster> clusters;
-      compute_parallel_clusters (clusters, epsilon);
+      compute_parallel_clusters (clusters, tolerance_cosangle);
 
       //discovery orthogonal relationship between clusters 
       for (std::size_t i = 0; i < clusters.size(); ++ i)
@@ -142,7 +140,7 @@ namespace CGAL {
           for (std::size_t j = i + 1; j < clusters.size(); ++ j)
             {
               
-              if (std::fabs (clusters[i].normal * clusters[j].normal) < epsilon)
+              if (std::fabs (clusters[i].normal * clusters[j].normal) < tolerance_cosangle)
                 {
                   clusters[i].orthogonal_clusters.push_back (j);
                   clusters[j].orthogonal_clusters.push_back (i);
@@ -153,7 +151,7 @@ namespace CGAL {
       //clustering the vertical cosangle and store their centroids in
       //cosangle_centroids and the centroid index of each cluster in
       //list_cluster_index
-      cluster_vertical_cosangles (clusters, epsilon);
+      cluster_vertical_cosangles (clusters, tolerance_cosangle);
 
       //find subgraphs of mutually orthogonal clusters (store index of
       //clusters in subgraph_clusters), and select the cluster of
@@ -174,7 +172,7 @@ namespace CGAL {
                 vec_reg=-vec_reg;
               Plane plane_reg(pt_reg,vec_reg);
 		
-              if( std::fabs(m_planes[index_prim]->plane_normal () * plane_reg.orthogonal_vector ()) > 1. - epsilon)
+              if( std::fabs(m_planes[index_prim]->plane_normal () * plane_reg.orthogonal_vector ()) > 1. - tolerance_cosangle)
                 m_planes[index_prim]->update (plane_reg);
             }
         }
@@ -219,7 +217,7 @@ namespace CGAL {
             }
 
           //regularize primitive position by computing barycenter of cplanar planes
-          std::vector<Point> pt_bary (cop_index);
+          std::vector<Point> pt_bary (cop_index, Point (0., 0., 0.));
           std::vector<double> area (cop_index, 0.);
       
           for (std::size_t j = 0; j < clusters[i].planes.size (); ++ j)
@@ -229,10 +227,14 @@ namespace CGAL {
               
               Point pt_reg = m_planes[index_prim]->projection(m_centroids[index_prim]);
 
-              pt_bary[group] = barycenter (pt_bary[group], area[group], pt_reg, m_areas[index_prim]); 
+              pt_bary[group] = CGAL::barycenter (pt_bary[group], area[group], pt_reg, m_areas[index_prim]); 
               area[group] += m_areas[index_prim];
             }
+
+          for (std::size_t j = 0; j < clusters[i].planes.size (); ++ j)
+            std::cerr << pt_bary[clusters[i].coplanar_group[j]] << " + " << vec_reg << std::endl;
           
+
           for (std::size_t j = 0; j < clusters[i].planes.size (); ++ j)
             {
               std::size_t index_prim = clusters[i].planes[j];
@@ -267,7 +269,7 @@ namespace CGAL {
         }
     }
 
-    void compute_parallel_clusters (std::vector<Plane_cluster>& clusters, double epsilon)
+    void compute_parallel_clusters (std::vector<Plane_cluster>& clusters, double tolerance_cosangle)
     {
       // find pairs of epsilon-parallel primitives and store them in parallel_planes
       std::vector<std::vector<std::size_t> > parallel_planes (m_planes.size ());
@@ -282,7 +284,7 @@ namespace CGAL {
               
               Vector v2 = m_planes[i]->plane_normal ();
               
-              if (std::fabs (v1 * v2) > 1. - epsilon)
+              if (std::fabs (v1 * v2) > 1. - tolerance_cosangle)
                 parallel_planes[i].push_back (j);
             }
         }
@@ -329,7 +331,7 @@ namespace CGAL {
                           Vector normal_it =  m_planes[it]->plane_normal ();
 
                           if(is_available[it]
-                             && std::fabs (normal_it*clu.normal) > 1. - epsilon )
+                             && std::fabs (normal_it*clu.normal) > 1. - tolerance_cosangle )
                             {	
                               propagation = true;
                               index_container_current_ring_parallel.push_back(it);
@@ -367,7 +369,7 @@ namespace CGAL {
       is_available.clear();
     }
 
-    void cluster_vertical_cosangles (std::vector<Plane_cluster>& clusters, double epsilon)
+    void cluster_vertical_cosangles (std::vector<Plane_cluster>& clusters, double tolerance_cosangle)
     {
       std::vector < double > cosangle_centroids;
       std::vector < int > list_cluster_index;
@@ -386,7 +388,7 @@ namespace CGAL {
               for (std::size_t j = i+1; j < clusters.size(); ++ j)
                 {
                   if (list_cluster_index[j] < 0 && std::fabs (clusters[j].cosangle_vertical -
-                                                              mean / mean_area) < epsilon)
+                                                              mean / mean_area) < tolerance_cosangle)
                     {
                       list_cluster_index[j] = mean_index;
                       mean_area += clusters[j].area;
@@ -403,9 +405,9 @@ namespace CGAL {
       //desactive Z-verticalité
       for (std::size_t i = 0; i < cosangle_centroids.size(); ++ i)
         {
-          if (cosangle_centroids[i] < epsilon)
+          if (cosangle_centroids[i] < tolerance_cosangle)
             cosangle_centroids[i] = 0;
-          else if (cosangle_centroids[i] > 1. - epsilon)
+          else if (cosangle_centroids[i] > 1. - tolerance_cosangle)
             cosangle_centroids[i] = 1;
         }
       for (std::size_t i = 0; i < clusters.size(); ++ i)
@@ -574,9 +576,10 @@ namespace CGAL {
   
     Vector regularize_normal (const Vector& n, FT cos_vertical)
     {
+      std::cerr << "N = " << n << std::endl;
       FT A = 1 - cos_vertical * cos_vertical;
       FT B = 1 + (n.y() * n.y()) / (n.x() * n.x());
-    
+      
       FT vx = std::sqrt (A/B);
     
       if (n.x() < 0)
@@ -585,7 +588,7 @@ namespace CGAL {
       FT vy = vx * (n.y() / n.x()); 
 
       Vector res (vx, vy, cos_vertical);
-
+      std::cerr << "Res = " << res << std::endl;
       return res / std::sqrt (res * res);
     }
 
@@ -629,7 +632,7 @@ namespace CGAL {
 
       Vector res (vx, vy, cos_vertical);
       FT norm = std::max(1e-5, 1. / sqrt(res.squared_length ()));
-
+      std::cerr << "NRes = " << norm * res << std::endl;
       return norm * res;
     }
 

@@ -169,7 +169,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       {
         std::cerr << "Regularization of planes... " << std::endl;
         Regularization regularization (*points, shape_detection);
-        regularization.run (op.epsilon, 0.1);
+        regularization.run (1. - op.normal_threshold, op.epsilon);
     
         std::cerr << "done" << std::endl;
       }
