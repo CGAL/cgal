@@ -487,7 +487,7 @@ void MainWindow::load_moka(const QString & fileName, bool clear)
 
 Dart_handle MainWindow::make_iso_cuboid(const Point_3 basepoint, LCC::FT lg)
 {
-  return scene.lcc->make_hexahedron(basepoint,
+  Dart_handle dh = scene.lcc->make_hexahedron(basepoint,
                                     LCC::Traits::Construct_translated_point()
                                     (basepoint,LCC::Traits::Vector(lg,0,0)),
                                     LCC::Traits::Construct_translated_point()
@@ -502,6 +502,9 @@ Dart_handle MainWindow::make_iso_cuboid(const Point_3 basepoint, LCC::FT lg)
                                     (basepoint,LCC::Traits::Vector(lg,0,lg)),
                                     LCC::Traits::Construct_translated_point()
                                     (basepoint,LCC::Traits::Vector(lg,lg,lg)));
+
+  scene.lcc->reverse_orientation_connected_component(dh);
+  return dh;
 }
 
 Dart_handle MainWindow::on_actionCreate_cube_triggered ()
