@@ -70,7 +70,10 @@ public:
       NT x_floor = std::floor(CGAL::to_double(x_tmp));
       NT y_floor = std::floor(CGAL::to_double(y_tmp));
 
-      //fix the double floor
+      // fix the usage of to_double and floor:
+      // there is no guarantee that the double approximation of *_tmp
+      // has the same integer part as the NT version. The while loops
+      // is a simple way to ensure that *_tmp are the true floor.
       while(x_floor>x_tmp) x_floor-=NT(1);
       while(y_floor>y_tmp) y_floor-=NT(1);
       while(x_floor+1<=x_tmp) x_floor+=NT(1);
