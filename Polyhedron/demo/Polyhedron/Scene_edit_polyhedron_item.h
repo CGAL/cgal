@@ -63,7 +63,7 @@ put(Array_based_vertex_point_map pmap,
   key->point() = val; // to make things easy (ray selection after deformation, save to polyhedron after close etc),
   // I also change point() of vertex together with positions list
   // So that we do not need to pmap everywhere other than draw
-  if (key->id() == -1)
+  if (key->id() == std::size_t(-1))
   {
     key->id() = pmap.positions->size() / 3;
     pmap.positions->push_back(val.x());
