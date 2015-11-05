@@ -272,7 +272,7 @@ protected Q_SLOTS:
   //!Adds a polyline
   void on_addButton_clicked();
   //!Closes the dialog
-  void on_closeButton_clicked();
+  void when_closeButton_clicked();
 
   // save as...
   //!Opens a dialog to save selected item if able.

@@ -1471,7 +1471,7 @@ void MainWindow::on_actionAdd_polylines_triggered()
   add_polydiagui = new Ui::Add_polylines_dialog();
   add_polydiagui->setupUi(add_polydiag);
   connect(add_polydiagui->addButton, SIGNAL(clicked()), this, SLOT(on_addButton_clicked()));
-  connect(add_polydiagui->closeButton, SIGNAL(clicked()), this, SLOT(on_closeButton_clicked()));
+  connect(add_polydiagui->closeButton, SIGNAL(clicked()), this, SLOT(when_closeButton_clicked()));
   add_polydiag->exec();
 }
 
@@ -1535,7 +1535,7 @@ void MainWindow::on_addButton_clicked()
     }
 }
 
-void MainWindow::on_closeButton_clicked()
+void MainWindow::when_closeButton_clicked()
 {
     add_polydiag->close();
 }
