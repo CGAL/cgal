@@ -1037,9 +1037,6 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
 {
-    typedef Polyhedron::Edge_iterator Edge_iterator;
-    typedef Polyhedron::Point         Point;
-
     if (!are_buffers_filled)
     {
         is_Triangulated();
