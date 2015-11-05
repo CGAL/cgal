@@ -60,7 +60,6 @@ namespace Polygon_mesh_processing {
                 , HalfedgeOutputIterator out)
   {
     typedef PolygonMesh PM;
-    typedef typename boost::graph_traits<PM>::edge_descriptor     edge_descriptor;
     typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PM>::face_descriptor     face_descriptor;
 
