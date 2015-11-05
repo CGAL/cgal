@@ -1485,7 +1485,7 @@ void MainWindow::on_addButton_clicked()
   polylines.resize(polylines.size()+1);
   std::vector<Scene_polylines_item::Point_3>& polyline = *(polylines.rbegin());
   QStringList polylines_metadata;
-  QStringList list = text.split(" ");
+  QStringList list = text.split(QRegExp("\\W+"), QString::SkipEmptyParts);
   int counter = 0;
   double coord[3];
   bool ok = true;
@@ -1557,7 +1557,7 @@ void MainWindow::on_okButton_clicked()
 {
   QString text = add_pointsetdiagui->textEdit->toPlainText();
   Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
-  QStringList list = text.split(" ");
+  QStringList list = text.split(QRegExp("\\W+"), QString::SkipEmptyParts);
   int counter = 0;
   double coord[3];
   bool ok = true;

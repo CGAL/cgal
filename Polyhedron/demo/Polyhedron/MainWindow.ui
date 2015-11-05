@@ -53,9 +53,8 @@
     <addaction name="separator"/>
     <addaction name="actionLoad_Script"/>
     <addaction name="separator"/>
-    <addaction name="actionAdd_polylines"/>
-    <addaction name="separator"/>
     <addaction name="actionAdd_point_set"/>
+    <addaction name="actionAdd_polylines"/>
     <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
