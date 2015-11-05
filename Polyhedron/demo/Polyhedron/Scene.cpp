@@ -52,7 +52,6 @@ Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
     Bbox bbox_before = bbox();
-    qDebug()<<bbox_before.xmin<<bbox_before.ymin<<bbox_before.zmin<<bbox_before.xmax<<bbox_before.ymax<<bbox_before.zmax;
     m_entries.push_back(item);
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
