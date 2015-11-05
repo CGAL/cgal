@@ -3,6 +3,7 @@
 #include "Scene.h"
 #include "Scene_item.h"
 #include "Scene_polylines_item.h"
+#include "Scene_points_with_normal_item.h"
 #include <CGAL/Qt/debug.h>
 
 #include <QtDebug>
@@ -45,6 +46,7 @@
 #include "ui_MainWindow.h"
 #include "ui_Preferences.h"
 #include "ui_Add_polylines_dialog.h"
+#include "ui_Add_point_set_dialog.h"
 
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
@@ -125,6 +127,7 @@ MainWindow::MainWindow(QWidget* parent)
   ui = new Ui::MainWindow;
   ui->setupUi(this);
   nb_of_polylines = 0;
+  nb_of_point_set = 0;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
   ui->menuBar->removeAction(ui->actionLoad_Script);
@@ -1538,6 +1541,80 @@ void MainWindow::on_addButton_clicked()
 void MainWindow::when_closeButton_clicked()
 {
     add_polydiag->close();
+}
+
+void MainWindow::on_actionAdd_point_set_triggered()
+{
+  add_pointsetdiag = new QDialog(this);
+  add_pointsetdiagui = new Ui::Add_point_set_dialog();
+  add_pointsetdiagui->setupUi(add_pointsetdiag);
+  connect(add_pointsetdiagui->okButton, SIGNAL(clicked()), this, SLOT(on_okButton_clicked()));
+  connect(add_pointsetdiagui->cancelButton, SIGNAL(clicked()), this, SLOT(on_cancelButton_clicked()));
+  add_pointsetdiag->exec();
+}
+
+void MainWindow::on_okButton_clicked()
+{
+  QString text = add_pointsetdiagui->textEdit->toPlainText();
+  Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
+  QStringList list = text.split(" ");
+  int counter = 0;
+  double coord[3];
+  bool ok = true;
+  if (list.isEmpty()) return;
+  if (list.size()%3!=0){
+    QMessageBox *msgBox = new QMessageBox;
+    msgBox->setWindowTitle("Error");
+    msgBox->setText("ERROR : Input should consists of triplets.");
+    msgBox->exec();
+    return;
+  }
+  Q_FOREACH(QString s, list)
+  {
+      if(!s.isEmpty())
+      {
+          double res = s.toDouble(&ok);
+          if(!ok)
+          {
+              QMessageBox *msgBox = new QMessageBox;
+              msgBox->setWindowTitle("Error");
+              msgBox->setText("ERROR : Coordinates are invalid.");
+              msgBox->exec();
+              break;
+          }
+          else
+          {
+            coord[counter] = res;
+            counter++;
+          }
+      }
+      if(counter == 3)
+      {
+          const Kernel::Point_3 p(coord[0], coord[1], coord[2]);
+          Kernel::Vector_3 n(0,0,0);
+          UI_point point(p,n);
+          item->point_set()->push_back(point);
+
+
+          counter =0;
+      }
+  }
+    if(ok)
+    {
+        add_pointsetdiagui->textEdit->clear();
+        item->point_set()->unselect_all();
+        nb_of_point_set++;
+        QString name = QString("Point_set #%1").arg(QString::number(nb_of_point_set));
+        item->setName(name);
+        item->setColor(Qt::black);
+        item->invalidate_buffers();
+        scene->addItem(item);
+    }
+}
+
+void MainWindow::on_cancelButton_clicked()
+{
+    add_pointsetdiag->close();
 }
 
 void MainWindow::on_actionSetBackgroundColor_triggered()

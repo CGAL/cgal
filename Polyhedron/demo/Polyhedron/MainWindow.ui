@@ -55,6 +55,8 @@
     <addaction name="separator"/>
     <addaction name="actionAdd_polylines"/>
     <addaction name="separator"/>
+    <addaction name="actionAdd_point_set"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuEdit">
@@ -637,6 +639,11 @@
   <action name="actionAdd_polylines">
    <property name="text">
     <string>Add polylines</string>
+   </property>
+  </action>
+  <action name="actionAdd_point_set">
+   <property name="text">
+    <string>Add point set</string>
    </property>
   </action>
  </widget>

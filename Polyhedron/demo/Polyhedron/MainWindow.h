@@ -31,6 +31,7 @@ class QSortFilterProxyModel;
 namespace Ui {
   class MainWindow;
   class Add_polylines_dialog;
+  class Add_point_set_dialog;
 }
 
 #include "Polyhedron_type_fwd.h"
@@ -269,10 +270,16 @@ protected Q_SLOTS:
   void on_actionPreferences_triggered();
   //!Opens a dialog to add polylines on the fly.
   void on_actionAdd_polylines_triggered();
+  //!Opens a dialog to add a point set on the fly.
+  void on_actionAdd_point_set_triggered();
   //!Adds a polyline
   void on_addButton_clicked();
+  //!Adds a point set
+  void on_okButton_clicked();
   //!Closes the dialog
   void when_closeButton_clicked();
+  //!Closes the dialog
+  void on_cancelButton_clicked();
 
   // save as...
   //!Opens a dialog to save selected item if able.
@@ -344,8 +351,11 @@ private:
   QTreeView* sceneView;
   Ui::MainWindow* ui;
   Ui::Add_polylines_dialog *add_polydiagui;
+  Ui::Add_point_set_dialog *add_pointsetdiagui;
   QDialog *add_polydiag;
+  QDialog *add_pointsetdiag;
   int nb_of_polylines;
+  int nb_of_point_set;
   QVector<CGAL::Three::Polyhedron_demo_io_plugin_interface*> io_plugins;
   QMap<QString,QString> default_plugin_selection;
   // typedef to make Q_FOREACH work

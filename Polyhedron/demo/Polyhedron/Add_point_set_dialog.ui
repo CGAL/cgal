@@ -1,23 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Add_polylines_dialog</class>
- <widget class="QDialog" name="Add_polylines_dialog">
+ <class>Add_point_set_dialog</class>
+ <widget class="QDialog" name="Add_point_set_dialog">
   <property name="geometry">
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>459</width>
-    <height>332</height>
+    <width>400</width>
+    <height>300</height>
    </rect>
   </property>
-  <property name="sizePolicy">
-   <sizepolicy hsizetype="MinimumExpanding" vsizetype="MinimumExpanding">
-    <horstretch>0</horstretch>
-    <verstretch>0</verstretch>
-   </sizepolicy>
-  </property>
   <property name="windowTitle">
-   <string>Add polylines</string>
+   <string>Dialog</string>
   </property>
   <layout class="QHBoxLayout" name="horizontalLayout_2">
    <item>
@@ -44,7 +38,7 @@ p, li { white-space: pre-wrap; }
         <bool>false</bool>
        </property>
        <property name="placeholderText">
-        <string notr="true">Polyline format:  Ax Ay A3 Bx By Bz ... Zx Zy Zz </string>
+        <string notr="true">Point set format:  Ax Ay A3 Bx By Bz ... Zx Zy Zz </string>
        </property>
       </widget>
      </item>
@@ -54,9 +48,9 @@ p, li { white-space: pre-wrap; }
         <enum>QLayout::SetMinimumSize</enum>
        </property>
        <item>
-        <widget class="QPushButton" name="addButton">
+        <widget class="QPushButton" name="okButton">
          <property name="text">
-          <string>Create Polyline Item</string>
+          <string>Ok</string>
          </property>
         </widget>
        </item>
@@ -74,7 +68,7 @@ p, li { white-space: pre-wrap; }
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="closeButton">
+        <widget class="QPushButton" name="cancelButton">
          <property name="text">
           <string>Close</string>
          </property>
