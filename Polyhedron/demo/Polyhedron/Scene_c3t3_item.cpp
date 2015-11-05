@@ -91,9 +91,9 @@ Scene_c3t3_item::Scene_c3t3_item()
   : Scene_item(10, 5)
   , d(new Scene_c3t3_item_priv())
   , frame(new ManipulatedFrame())
-  , histogram_()
-  , data_item_(NULL)
   , last_known_scene(NULL)
+  , data_item_(NULL)
+  , histogram_()
   , indices_()
 {
   positions_lines.resize(0);
@@ -114,9 +114,9 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   : Scene_item(10, 5)
   , d(new Scene_c3t3_item_priv(c3t3))
   , frame(new ManipulatedFrame())
+  , last_known_scene(NULL)  
+  , data_item_(NULL)  
   , histogram_()
-  , data_item_(NULL)
-  , last_known_scene(NULL)
   , indices_()
 {
   positions_lines.resize(0);

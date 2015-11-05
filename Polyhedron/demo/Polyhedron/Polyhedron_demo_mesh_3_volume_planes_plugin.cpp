@@ -193,7 +193,7 @@ public Q_SLOTS:
     std::vector< Scene_segmented_image_item* > seg_items;
     Scene_segmented_image_item* seg_img = NULL;
 
-    for(unsigned int i = 0; i < sc->numberOfEntries(); ++i) {
+    for(int i = 0; i < sc->numberOfEntries(); ++i) {
       Scene_segmented_image_item* tmp = qobject_cast<Scene_segmented_image_item*>(sc->item(i));
       if(tmp != NULL)
         seg_items.push_back(tmp);
