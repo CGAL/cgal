@@ -74,7 +74,7 @@ public:
     }
 
 public Q_SLOTS:
-    virtual void changed();
+    virtual void invalidate_buffers();
     void change_corner_radii(double);
     void change_corner_radii();
     void split_at_sharp_angles();
@@ -84,7 +84,8 @@ public Q_SLOTS:
     void smooth(){
         for (Polylines_container::iterator pit=polylines.begin(),pit_end=polylines.end();pit!=pit_end;++pit)
             smooth(*pit);
-    Q_EMIT itemChanged();
+      invalidate_buffers();
+      Q_EMIT itemChanged();
     }
 public:
     Polylines_container polylines;
@@ -92,17 +93,19 @@ public:
     // http://en.wikipedia.org/wiki/D-pointer
     Scene_polylines_item_private* d;
 private:
-    std::vector<float> positions_lines;
-    std::vector<float> positions_spheres;
-    std::vector<float> positions_wire_spheres;
-    std::vector<float> positions_center;
-    std::vector<float> normals_spheres;
-    std::vector<float> color_spheres;
-    std::vector<float> color_wire_spheres;
-
-
-  mutable QOpenGLShaderProgram *program;
-  mutable   GLuint nbSpheres;
+    mutable std::vector<float> positions_lines;
+    mutable std::vector<float> positions_spheres;
+    mutable std::vector<float> positions_wire_spheres;
+    mutable std::vector<float> positions_center;
+    mutable std::vector<float> normals_spheres;
+    mutable std::vector<float> color_spheres;
+    mutable std::vector<float> color_wire_spheres;
+    mutable std::size_t nb_spheres;
+    mutable std::size_t nb_wire;
+    mutable std::size_t nb_centers;
+    mutable std::size_t nb_lines;
+    mutable QOpenGLShaderProgram *program;
+    mutable   GLuint nbSpheres;
     typedef std::map<Point_3, int> Point_to_int_map;
     typedef Point_to_int_map::iterator iterator;
     void create_Sphere(double);

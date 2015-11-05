@@ -102,8 +102,8 @@ public:
   void draw_edges(Viewer_interface* viewer) const {
     
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
-      if(it == active_hole) { ::glLineWidth(7.f); }
-      else                  { ::glLineWidth(3.f); }
+      if(it == active_hole) { viewer->glLineWidth(7.f); }
+      else                  { viewer->glLineWidth(3.f); }
 
       if(selected_holes.find(it) != selected_holes.end()) 
       { it->polyline->setRbgColor(255, 0, 0); }
@@ -338,6 +338,7 @@ protected:
 
   void change_poly_item_by_blocking(Scene_polyhedron_item* poly_item, Scene_hole_visualizer* collection) {
     if(collection) collection->block_poly_item_changed = true;
+    poly_item->invalidate_buffers();
     scene->itemChanged(poly_item);
     if(collection) collection->block_poly_item_changed = false;
   }

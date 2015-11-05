@@ -139,7 +139,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionDetectBorders_trigger
         new_item->setName(tr("Boundary of %1").arg(item->name()));
         new_item->setColor(Qt::red);
         scene->addItem(new_item);
-        new_item->changed();
+        new_item->invalidate_buffers();
       }
     }
   }
@@ -156,6 +156,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionStitchBorders_trigger
     {
       Polyhedron* pMesh = item->polyhedron();
       CGAL::Polygon_mesh_processing::stitch_borders(*pMesh);
+      item->invalidate_buffers();
       scene->itemChanged(item);
     }
   }

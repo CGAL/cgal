@@ -36,6 +36,7 @@
 
 #include <new>           // for placement new
 #include <cassert>
+#include <CGAL/assertions.h>
 
 namespace CORE { 
 
@@ -96,7 +97,7 @@ void* MemoryPool< T, nObjects >::allocate(std::size_t) {
 
 template< class T, int nObjects >
 void MemoryPool< T, nObjects >::free(void* t) {
-   assert(t != 0);     
+   CGAL_assertion(t != 0);     
    if (t == 0) return; // for safety
 
    // recycle the object memory, by putting it back into the chain

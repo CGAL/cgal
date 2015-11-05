@@ -158,6 +158,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_PrevCtrlVertPushButton_clicked()
   if(!edit_item) return;                             // the selected item is not of the right type
 
   edit_item->prev_ctrl_vertices_group();
+  edit_item->invalidate_buffers();
   scene->itemChanged(edit_item); // for repaint
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_NextCtrlVertPushButton_clicked()
@@ -176,6 +177,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_SelectAllVerticesPushButton_clic
   if(!edit_item) return;                             // the selected item is not of the right type
 
   edit_item->set_all_vertices_as_roi();
+  edit_item->invalidate_buffers();
   scene->itemChanged(edit_item); // for repaint
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_DeleteCtrlVertPushButton_clicked()
@@ -185,6 +187,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_DeleteCtrlVertPushButton_clicked
   if(!edit_item) return;                             // the selected item is not of the right type
 
   edit_item->delete_ctrl_vertices_group();
+  edit_item->invalidate_buffers();
   scene->itemChanged(edit_item); // for repaint
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_ClearROIPushButton_clicked()
@@ -194,6 +197,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ClearROIPushButton_clicked()
   if(!edit_item) return;                             // the selected item is not of the right type
 
   edit_item->clear_roi();
+  edit_item->invalidate_buffers();
   scene->itemChanged(edit_item); // for repaint
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_ApplyAndClosePushButton_clicked()
@@ -299,6 +303,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ReadROIPushButton_clicked()
   if(fileName.isNull()) { return; }
 
   edit_item->read_roi(fileName.toLocal8Bit().data());
+  edit_item->invalidate_buffers();
   scene->itemChanged(edit_item); 
 }
 void Polyhedron_demo_edit_polyhedron_plugin::dock_widget_visibility_changed(bool visible)

@@ -110,9 +110,12 @@ public:
 
 public Q_SLOTS:
   // File menu
+  void on_actionSave_triggered();
+  void on_actionLoad_triggered();  
   void on_actionImportOFF_triggered();
   void on_actionAddOFF_triggered();
   void on_actionImport3DTDS_triggered();
+  void on_actionImportMoka_triggered();
   void on_actionCompute_Voronoi_3D_triggered();
   void on_actionClear_triggered();
   
@@ -130,19 +133,25 @@ public Q_SLOTS:
   void on_actionSubdivide_pqq_triggered();
   void on_actionDual_3_triggered();
   void on_actionClose_volume_triggered();
-  void on_actionTriangulate_all_facets_triggered();
   void on_actionSew3_same_facets_triggered();
   void on_actionUnsew3_all_triggered();
+  void on_actionMerge_coplanar_faces_triggered();
   void on_actionMerge_all_volumes_triggered();
   void on_actionRemove_filled_volumes_triggered();
+  void on_actionInsert_center_vertices_triggered();
+  void on_actionTriangulate_all_facets_triggered();
 
   // View menu
   void on_actionExtend_filled_volumes_triggered();
   void on_actionExtend_hidden_volumes_triggered();
 
   // Other slots
+  void load_depend_on_extension(const QString& fileName, bool clear=true);
+  void load(const QString& fileName, bool clear=true);
+  void save(const QString& fileName);
   void load_off(const QString& fileName, bool clear=true);
   void load_3DTDS(const QString& fileName, bool clear=true);
+  void load_moka(const QString& fileName, bool clear=true);
 
   void onSceneChanged();
 

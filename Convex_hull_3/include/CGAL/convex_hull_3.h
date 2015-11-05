@@ -552,7 +552,7 @@ ch_quickhull_3_scan(TDS_2& tds,
      border.erase(it);
      while(! border.empty()){
        it = border.find(e.first->vertex(TDS_2::ccw(e.second)));
-       assert(it != border.end());
+       CGAL_ch_assertion(it != border.end());
        e = it->second;
        e.first->info() = 0; 
        edges.push_back(e);

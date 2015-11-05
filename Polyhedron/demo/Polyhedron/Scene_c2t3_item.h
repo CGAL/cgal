@@ -72,11 +72,11 @@ public:
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m != Gouraud && m!=PointsPlusNormals); // CHECK THIS!
+    return (m != Gouraud && m!=PointsPlusNormals && m!=Splatting); // CHECK THIS!
   }
 
   void draw() const {
-    ::glBegin(GL_TRIANGLES);
+   /* ::glBegin(GL_TRIANGLES);
     for(C2t3::Facet_iterator
           fit = c2t3().facets_begin(),
           end = c2t3().facets_end();
@@ -89,7 +89,7 @@ public:
       const Tr::Geom_traits::Point_3& pc = cell->vertex((index+3)&3)->point();
       draw_triangle(pa, pb, pc);
     }
-    ::glEnd();
+    ::glEnd();*/
   }
 
 private:

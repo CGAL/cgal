@@ -21,6 +21,7 @@
 #ifndef CGAL_ARR_RATIONAL_ARC_TRAITS_D_1_H
 #define CGAL_ARR_RATIONAL_ARC_TRAITS_D_1_H
 
+#include <CGAL/assertions.h>
 #include <CGAL/tags.h>
 #include <CGAL/Fraction_traits.h>
 #include <CGAL/Arr_tags.h>
@@ -1295,7 +1296,7 @@ public:
     Approximate_number_type operator()(const Point_2& p, int i){
       if(i==0) return approx_x(p); 
       if(i==1) return approx_y(p);
-      assert(false);
+      CGAL_assertion(false);
       return Approximate_number_type(0);
     }
   };

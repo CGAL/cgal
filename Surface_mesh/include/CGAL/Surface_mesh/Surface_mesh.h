@@ -2516,7 +2516,7 @@ private: //------------------------------------------------------- private data
     int n, f, e;
     std::string off;
     is >> off;
-    assert(off == "OFF" || off == "COFF");
+    CGAL_assertion(off == "OFF" || off == "COFF");
     is >> n >> f >> e;
     sm.reserve(n,2*f,e);
     P p;

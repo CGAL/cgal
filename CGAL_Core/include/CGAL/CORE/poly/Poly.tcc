@@ -67,7 +67,7 @@ Polynomial<NT>::Polynomial(void) {
 //Creates a polynomial with nominal degree n
 template <class NT>
 Polynomial<NT>::Polynomial(int n) {
-  assert(n>= -1);
+  CGAL_assertion(n>= -1);
   degree = n;
   if (n == -1)
     return;	// return the zero polynomial!
@@ -80,7 +80,7 @@ Polynomial<NT>::Polynomial(int n) {
 
 template <class NT>
 Polynomial<NT>::Polynomial(int n, const NT * c) {
-  //assert("array c has n+1 elements");
+  //CGAL_assertion("array c has n+1 elements");
   degree = n;
   if (n >= 0) {
     coeff = new NT[n+1];
@@ -113,7 +113,7 @@ Polynomial<NT>::Polynomial(const Polynomial<NT> & p):degree(-1) {
 ///////////////////////////////////////
 template <class NT>
 Polynomial<NT>::Polynomial(int n, const char * s[]) {
-  //assert("array s has n+1 elements");
+  //CGAL_assertion("array s has n+1 elements");
   degree = n;
   if (n >= 0) {
     coeff = new NT[n+1];
@@ -826,7 +826,7 @@ template <>
 CORE_INLINE
 BigFloat Polynomial<BigInt>::evalApprox(const BigFloat& /*f*/,
 	const extLong& /*r*/, const extLong& /*a*/) const {	// evaluation
-  assert(0);
+  CGAL_assertion(0);
   return BigFloat(0);
 }
 
@@ -861,7 +861,7 @@ BigFloat Polynomial<BigInt>::evalApprox(const BigFloat& /*f*/,
 template <class NT>
 BigFloat Polynomial<NT>::evalExactSign(const BigFloat& val,
 	 const extLong& oldMSB) const {
-    assert(val.isExact());
+    CGAL_assertion(val.isExact());
     if (getTrueDegree() == -1)
       return BigFloat(0);
   
@@ -1063,7 +1063,7 @@ Polynomial<NT> & Polynomial<NT>::differentiate() {	// self-differentiation
 // multi-differentiate
 template <class NT>
 Polynomial<NT> & Polynomial<NT>::differentiate(int n) {
-  assert(n >= 0);
+  CGAL_assertion(n >= 0);
   for (int i=1; i<=n; i++)
     this->differentiate();
   return *this;
@@ -1128,7 +1128,7 @@ template <class NT>
 Polynomial<NT> & Polynomial<NT>::primPart() {
   // ASSERT: GCD must be provided by NT
   int d = getTrueDegree();
-  assert (d >= 0);
+  CGAL_assertion (d >= 0);
   if (d == 0) {
     if (coeff[0] > 0) coeff[0] = 1;
     else coeff[0] = -1;
@@ -1371,7 +1371,7 @@ Polynomial<NT> differentiate(const Polynomial<NT> & p) {	  // differentiate
 template <class NT>
 Polynomial<NT> differentiate(const Polynomial<NT> & p, int n) {//multi-differentiate
   Polynomial<NT> q(p);
-  assert(n >= 0);
+  CGAL_assertion(n >= 0);
   for (int i=1; i<=n; i++)
     q.differentiate();
   return q;
@@ -1491,7 +1491,7 @@ NT res(Polynomial<NT> p, Polynomial<NT> q) {
 template <class NT>
 NT psc(int i,Polynomial<NT> p, Polynomial<NT> q) {
 
-  assert(i >= 0);
+  CGAL_assertion(i >= 0);
   if(i == 0)
      return res(p,q);
 

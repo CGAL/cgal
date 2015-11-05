@@ -28,7 +28,7 @@
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.2}
-\cgalPkgDependsOn{\ref PkgKdsFrameworkSummary. Two dimensional visualization depends on \ref thirdpartyQt\, three dimensional visualization depends on \ref thirdpartyCoin.}
+\cgalPkgDependsOn{\ref PkgKdsFrameworkSummary. Two dimensional visualization depends on \sc{Qt} 3, three dimensional visualization depends on \ref thirdpartyCoin.}
 \cgalPkgBib{cgal:r-kds}
 \cgalPkgLicense{\ref licensesLGPL "LGPL"}
 \cgalPkgShortInfoEnd

@@ -142,8 +142,6 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
 				  map_i2i[(*it)[2]] );
         }
 
-        new_item->finalize_polygon_soup();
-
         new_item->setName(tr("%1-shell %2 (ss reconstruction)").arg(scene->item(index)->name()).arg(sh+1));
         new_item->setColor(Qt::magenta);
         new_item->setRenderingMode(FlatPlusEdges);
@@ -175,8 +173,6 @@ void Polyhedron_demo_scale_space_reconstruction_plugin::on_actionScaleSpaceRecon
 					     map_i2i_smoothed[(*it)[1]],
 					     map_i2i_smoothed[(*it)[2]] );
           }
-
-          new_item_smoothed->finalize_polygon_soup();
 
           new_item_smoothed->setName(tr("%1-shell %2 (ss smoothed reconstruction)").arg(scene->item(index)->name()).arg(sh+1));
           new_item_smoothed->setColor(Qt::magenta);

@@ -42,12 +42,12 @@ public:
 /// \name Tags 
 /// @{
   /*! 
-    identifies whether the regularized visibility area is computed (either \ref CGAL::Tag_true or \ref CGAL::Tag_false). 
+    identifies whether the regularized visibility area is computed (either `#Tag_true` or `#Tag_false`). 
   */
   typedef unspecified_type Regularization_category;
   
   /*! 
-    identifies whether general polygons (with holes) are supported (either \ref CGAL::Tag_true or \ref CGAL::Tag_false). 
+    identifies whether general polygons (with holes) are supported (either `#Tag_true` or `#Tag_false`). 
     A general polygon is represented by a face \f$ f \f$ with no 
     isolated vertex and any edge of \f$ f \f$ separates \f$ f \f$ from another face.
     Note that this allows \f$ f \f$ to touch a vertex from several sides. 
@@ -55,7 +55,7 @@ public:
   typedef unspecified_type Supports_general_polygon_category; 
 
   /*! 
-    identifies whether simple polygons are supported (either \ref CGAL::Tag_true or \ref CGAL::Tag_false). 
+    identifies whether simple polygons are supported (either `#Tag_true` or `#Tag_false`). 
 
     A simple polygon is represented by a face \f$ f \f$ with no holes, 
     no isolated vertex and any edge of \f$ f \f$ separates \f$ f \f$ from another face.
@@ -114,8 +114,8 @@ The visibility region of `q` is stored in `out_arr`, that is,
 all features but the unbounded face of `out_arr` represent the visibility region. 
 
 \tparam VisibilityArrangement_2 is the type of the output arrangement representing the visibility polygon.
-It must be an instance of CGAL::Arrangement_2, where its CGAL::Arrangement_2::Traits_2 
-must be mutual convertible to Visibility_2::Traits_2. 
+It must be an instance of `CGAL::Arrangement_2`, where its `CGAL::Arrangement_2::Traits_2` 
+must be mutual convertible to `VisibilityArrangement_2::Traits_2`. 
 
 \param q is the query point
 \param f is the face of the arrangement in which the visibility region is computed
@@ -138,8 +138,8 @@ The visibility region of `q` is stored in `out_arr`, that is,
 all features but the unbounded face of `out_arr` represent the visibility region.
 
 \tparam VisibilityArrangement_2 is the type of the output arrangement representing the visibility polygon.
-It must be an instance of CGAL::Arrangement_2, where its CGAL::Arrangement_2::Traits_2 
-must be mutual convertible to Visibility_2::Traits_2.
+It must be an instance of `CGAL::Arrangement_2`, where its `CGAL::Arrangement_2::Traits_2` 
+must be mutual convertible to `VisibilityArrangement_2::Traits_2`.
 \param q is the query point
 \param e the halfedge on which `q` is located
 \param out_arr is the output arrangement

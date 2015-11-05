@@ -25,10 +25,10 @@
 
 namespace CGAL {
 
-template<class K>
+template<class K, class C>
 boost::shared_ptr< Straight_skeleton_2<K> >
 inline
-create_interior_straight_skeleton_2 ( Polygon_with_holes_2<K> const& aPolyWithHoles )
+create_interior_straight_skeleton_2 ( Polygon_with_holes_2<K,C> const& aPolyWithHoles )
 {
   return create_interior_straight_skeleton_2(aPolyWithHoles.outer_boundary().vertices_begin()
                                             ,aPolyWithHoles.outer_boundary().vertices_end  ()

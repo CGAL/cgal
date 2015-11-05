@@ -483,7 +483,7 @@ struct Mpzf {
     }
 #endif
     if(u.s.sig) size=-size;
-    //assert(to_double()==IA_force_to_double(d));
+    //CGAL_assertion(to_double()==IA_force_to_double(d));
   }
 
 #ifdef CGAL_USE_GMPXX

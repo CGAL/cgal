@@ -12,6 +12,7 @@ Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer
 
 {
     frame->setPosition(pos);
+    nb_lines = 0;
 }
 
 void Scene_polyhedron_transform_item::initialize_buffers(Viewer_interface *viewer =0) const
@@ -34,6 +35,10 @@ void Scene_polyhedron_transform_item::initialize_buffers(Viewer_interface *viewe
         vaos[0]->release();
         program->release();
     }
+    nb_lines = positions_lines.size();
+    positions_lines.resize(0);
+    std::vector<float>(positions_lines).swap(positions_lines);
+
     are_buffers_filled = true;
 }
 
@@ -75,7 +80,7 @@ void Scene_polyhedron_transform_item::draw_edges(Viewer_interface* viewer) const
         f_matrix.data()[i] = (float)frame->matrix()[i];
     }
     program->setUniformValue("f_matrix", f_matrix);
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
     vaos[0]->release();
     program->release();
 
@@ -109,7 +114,7 @@ Scene_polyhedron_transform_item::bbox() const {
 }
 
 
-void Scene_polyhedron_transform_item::changed()
+void Scene_polyhedron_transform_item::invalidate_buffers()
 {
     compute_elements();
     are_buffers_filled = false;

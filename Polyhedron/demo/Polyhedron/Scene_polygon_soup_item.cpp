@@ -103,6 +103,12 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
 
         program->release();
         vaos[0]->release();
+        nb_polys = positions_poly.size();
+        positions_poly.resize(0);
+        std::vector<float>(positions_poly).swap(positions_poly);
+
+        normals.resize(0);
+        std::vector<float>(normals).swap(normals);
 
     }
     //vao containing the data for the edges
@@ -117,11 +123,29 @@ Scene_polygon_soup_item::initialize_buffers(Viewer_interface* viewer) const
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[3].release();
-
         program->release();
-
         vaos[1]->release();
 
+        nb_lines = positions_lines.size();
+        positions_lines.resize(0);
+        std::vector<float>(positions_lines).swap(positions_lines);
+
+    }
+    //vao containing the data for the non manifold edges
+    {
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program->bind();
+        vaos[2]->bind();
+        buffers[4].bind();
+        buffers[4].allocate(positions_nm_lines.data(),
+                            static_cast<int>(positions_nm_lines.size()*sizeof(float)));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
+        buffers[4].release();
+        vaos[2]->release();
+        nb_nm_edges = positions_nm_lines.size();
+        positions_nm_lines.resize(0);
+        std::vector<float> (positions_nm_lines).swap(positions_nm_lines);
     }
     are_buffers_filled = true;
 }
@@ -146,7 +170,7 @@ TDS,
 Itag>             CDTbase;
 typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 void
-Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
+Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit) const
 {
     //Computes the normal of the facet
     const Point_3& pa = soup->points[pit->at(0)];
@@ -203,7 +227,6 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
         }
     }
 
-
     //iterates on the internal faces to add the vertices to the positions
     //and the normals to the appropriate vectors
     int count =0;
@@ -256,13 +279,14 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit)
     }
 }
 void
-Scene_polygon_soup_item::compute_normals_and_vertices(){
+Scene_polygon_soup_item::compute_normals_and_vertices() const{
     //get the vertices and normals
-
     typedef Polygon_soup::Polygons::size_type size_type;
     positions_poly.resize(0);
     positions_lines.resize(0);
     normals.resize(0);
+    positions_nm_lines.resize(0);
+    soup->fill_edges();
     for(Polygons_iterator it = soup->polygons.begin();
         it != soup->polygons.end(); ++it)
     {
@@ -321,14 +345,35 @@ Scene_polygon_soup_item::compute_normals_and_vertices(){
         }
     }
 
+    //Non manifold edges
+    BOOST_FOREACH(const Polygon_soup::Edge& edge,
+                    soup->non_manifold_edges)
+      {
+
+        const Point_3& a = soup->points[edge[0]];
+        const Point_3& b = soup->points[edge[1]];
+        positions_nm_lines.push_back(a.x());
+        positions_nm_lines.push_back(a.y());
+        positions_nm_lines.push_back(a.z());
+        positions_nm_lines.push_back(1.0);
+
+        positions_nm_lines.push_back(b.x());
+        positions_nm_lines.push_back(b.y());
+        positions_nm_lines.push_back(b.z());
+        positions_nm_lines.push_back(1.0);
+      }
+
 }
 
 
 Scene_polygon_soup_item::Scene_polygon_soup_item()
-    : Scene_item(4,2),
+    : Scene_item(5,3),
     soup(0),
     oriented(false)
 {
+    nb_polys = 0;
+    nb_lines = 0;
+    nb_nm_edges = 0;
 }
 
 Scene_polygon_soup_item::~Scene_polygon_soup_item()
@@ -353,7 +398,7 @@ Scene_polygon_soup_item::load(std::istream& in)
   else soup->clear();
 
     bool result = CGAL::read_OFF(in, soup->points, soup->polygons);
-    Q_EMIT changed();
+    Q_EMIT invalidate_buffers();
     return result;
 }
 
@@ -366,7 +411,7 @@ void Scene_polygon_soup_item::init_polygon_soup(std::size_t nb_pts, std::size_t 
   oriented = false;
 }
 
-void Scene_polygon_soup_item::finalize_polygon_soup(){ soup->fill_edges(); }
+
 
 #include <CGAL/IO/generic_print_polyhedron.h>
 #include <iostream>
@@ -382,7 +427,7 @@ void Scene_polygon_soup_item::load(Scene_polyhedron_item* poly_item) {
   CGAL::generic_print_polyhedron(std::cerr,
                                  *poly_item->polyhedron(),
                                  writer);
-  Q_EMIT changed();
+  Q_EMIT invalidate_buffers();
 }
 
 void
@@ -390,7 +435,6 @@ Scene_polygon_soup_item::setDisplayNonManifoldEdges(const bool b)
 {
 
   soup->display_non_manifold_edges = b;
-  changed();
 }
 
 bool
@@ -406,8 +450,7 @@ void Scene_polygon_soup_item::shuffle_orientations()
   {
     if(std::rand() % 2 == 0) soup->inverse_orientation(i);
   }
-  soup->fill_edges();
-  changed();
+  invalidate_buffers();
 }
 
 void Scene_polygon_soup_item::inside_out()
@@ -417,8 +460,7 @@ void Scene_polygon_soup_item::inside_out()
   {
     soup->inverse_orientation(i);
   }
-  soup->fill_edges();
-  changed();
+  invalidate_buffers();
 }
 
 bool 
@@ -523,7 +565,8 @@ Scene_polygon_soup_item::toolTip() const
 void
 Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
-  {
+    {
+     compute_normals_and_vertices();
      initialize_buffers(viewer);
     }
     if(soup == 0) return;
@@ -540,19 +583,19 @@ Scene_polygon_soup_item::draw(Viewer_interface* viewer) const {
     program->setAttributeValue("colors", v_colors);
     //draw the polygons
     // the third argument is the number of vec4 that will be entered
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size()/4));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_polys/4));
     // Clean-up
     program->release();
     vaos[0]->release();
-
   }
 
 void
 Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-     initialize_buffers(viewer);
-  }
+      compute_normals_and_vertices();
+      initialize_buffers(viewer);
+    }
     if(soup == 0) return;
     vaos[1]->bind();
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
@@ -561,7 +604,7 @@ Scene_polygon_soup_item::draw_points(Viewer_interface* viewer) const {
     QColor color = this->color();
     program->setAttributeValue("colors", color);
     //draw the points
-    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size()/4));
+    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_lines/4));
     // Clean-up
     program->release();
     vaos[1]->release();
@@ -571,10 +614,10 @@ void
 Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
     if(!are_buffers_filled)
   {
+     compute_normals_and_vertices();
      initialize_buffers(viewer);
   }
     if(soup == 0) return;
-
     vaos[1]->bind();
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
@@ -583,10 +626,26 @@ Scene_polygon_soup_item::draw_edges(Viewer_interface* viewer) const {
 
     program->setAttributeValue("colors", color);
     //draw the edges
-    viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( positions_lines.size()/4));
+    viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( nb_lines/4));
     // Clean-up
     program->release();
     vaos[1]->release();
+    if(displayNonManifoldEdges())
+    {
+        vaos[2]->bind();
+        attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+        program->bind();
+        QColor c = QColor(255,0,0,255);
+
+        program->setAttributeValue("colors", c);
+        //draw the edges
+        viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( nb_nm_edges/4));
+        // Clean-up
+        program->release();
+        vaos[2]->release();
+    }
+
 }
 
 bool
@@ -595,9 +654,8 @@ Scene_polygon_soup_item::isEmpty() const {
   return (soup == 0 || soup->points.empty());
 }
 void
-Scene_polygon_soup_item::changed()
+Scene_polygon_soup_item::invalidate_buffers()
 {
-    compute_normals_and_vertices();
     are_buffers_filled = false;
 }
 

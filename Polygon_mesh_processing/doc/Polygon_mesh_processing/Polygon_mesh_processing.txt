@@ -270,6 +270,7 @@ with duplicated border edges.
 \cgalExample{Polygon_mesh_processing/stitch_borders_example.cpp}
 
 *******************
+<!---
 \subsection DegenerateFaces Removing Degenerate Faces
 
 Some degenerate faces may be part of a given triangle mesh.
@@ -289,7 +290,7 @@ are removed, the connectivity is fixed, and the number of removed faces
 is output.
 
 \cgalExample{Polygon_mesh_processing/remove_degeneracies_example.cpp}
-
+--->
 
 *******************
 \subsection PolygonSoups Polygon Soups
@@ -457,7 +458,6 @@ Function or Class                     | Pure Triangle  | Self-Intersection Free 
 `stitch_borders()`                    |     no         |        no              |   no
 `polygon_soup_to_polygon_mesh()`      |     no         |        no              |   no
 `orient_polygon_soup()`               |     no         |        no              |   no
-`remove_degenerate_faces()`           |     yes        |        no              |   no
 `remove_isolated_vertices()`           |     no        |        no              |   no
 `compute_face_normal()`               |     no         |        no              |   no
 `compute_face_normals()`              |     no         |        no              |   no
@@ -471,6 +471,9 @@ Function or Class                     | Pure Triangle  | Self-Intersection Free 
 `keep_connected_components()`         |     no         |        no              |   no
 `remove_connected_components()`       |     no         |        no              |   no
 </center>
+<!---
+`remove_degenerate_faces()`           |     yes        |        no              |   no
+--->
 ****************************************
 \section PMPHistory Implementation History
 

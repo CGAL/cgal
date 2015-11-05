@@ -121,8 +121,8 @@ void Polyhedron_demo_jet_fitting_plugin::on_actionEstimateCurvature_triggered()
 
   scene->addItem(max_curv);
   scene->addItem(min_curv);
-  max_curv->changed();
-  min_curv->changed();
+  max_curv->invalidate_buffers();
+  min_curv->invalidate_buffers();
   
   // default cursor
   QApplication::restoreOverrideCursor();

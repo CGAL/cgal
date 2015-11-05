@@ -23,6 +23,7 @@
 #include <CGAL/boost/graph/properties_Polyhedron_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/result_of.h>
+#include <CGAL/assertions.h>
 
 #include <CGAL/Surface_mesh_shortest_path/internal/misc_functions.h>
 
@@ -454,7 +455,7 @@ public:
 
     LineLineIntersectResult intersectResult1(m_intersect_2(s1Line, l1));
 
-    assert(intersectResult1);
+    CGAL_assertion(bool(intersectResult1));
 
     Point_2 p1;
 
@@ -464,19 +465,19 @@ public:
     {
       Point_2* result = boost::get<Point_2, Point_2, Line_2>(&*intersectResult1);
 
-      assert(result && "Intersection should have been a point");
+      CGAL_assertion(result && "Intersection should have been a point");
 
       if (result)
       {
         t1 = m_parametric_distance_along_segment_2(s1, *result);
         p1 = *result;
-        assert(t1 >= FT(-0.00001) && t1 <= FT(1.00001));
+        CGAL_assertion(t1 >= FT(-0.00001) && t1 <= FT(1.00001));
       }
     }
 
     LineLineIntersectResult intersectResult2 = m_intersect_2(s2Line, l2);
 
-    assert(intersectResult2);
+    CGAL_assertion(bool(intersectResult2));
 
     FT t2;
     Point_2 p2;
@@ -485,13 +486,13 @@ public:
     {
       Point_2* result = boost::get<Point_2, Point_2, Line_2>(&*intersectResult2);
 
-      assert(result && "Intersection should have been a point");
+      CGAL_assertion(result && "Intersection should have been a point");
 
       if (result)
       {
         t2 = m_parametric_distance_along_segment_2(s2, *result);
         p2 = *result;
-        assert(t2 >= FT(-0.00001) && t2 <= FT(1.00001));
+        CGAL_assertion(t2 >= FT(-0.00001) && t2 <= FT(1.00001));
       }
     }
 
@@ -589,7 +590,7 @@ public:
 
     CGAL::Orientation baseOrientation = m_orientation_2(m_construct_vertex_2(baseFace2, 0), m_construct_vertex_2(baseFace2, 2), m_construct_vertex_2(baseFace2, 1));
 
-    assert(baseOrientation != CGAL::COLLINEAR);
+    CGAL_assertion(baseOrientation != CGAL::COLLINEAR);
 
     do
     {

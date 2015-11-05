@@ -59,6 +59,7 @@
 #ifndef CORE_STURM_H
 #define CORE_STURM_H
 
+#include <CGAL/assertions.h>
 #include "CGAL/CORE/BigFloat.h"
 #include "CGAL/CORE/Expr.h"
 #include "CGAL/CORE/poly/Poly.h"
@@ -205,7 +206,7 @@ public:
   //   where sx = sign of evaluating seq[0] at x
   //   PRE-CONDITION: sx != 0  and len > 0
   int signVariations(const BigFloat & x, int sx) const {
-    assert((sx != 0) && (len >0));
+    CGAL_assertion((sx != 0) && (len >0));
     int cnt = 0;
     int last_sign = sx;
     for (int i=1; i<=len; i++) {// Chee (4/29/04): Bug fix,
@@ -237,7 +238,7 @@ public:
     if (len <= 0) return len;
     int cnt = 0;
     int last_sign = sign(seq[0].coeff[seq[0].getTrueDegree()]);
-    assert(last_sign != 0);
+    CGAL_assertion(last_sign != 0);
     for (int i=1; i<=len; i++) {
       int sgn = sign(seq[i].coeff[seq[i].getTrueDegree()]);
       if (sgn*last_sign < 0)
@@ -255,7 +256,7 @@ public:
     int last_sign = sign(seq[0].coeff[seq[0].getTrueDegree()]);
     if (seq[0].getTrueDegree() % 2 != 0)
       last_sign *= -1;
-    assert(last_sign != 0);
+    CGAL_assertion(last_sign != 0);
     for (int i=1; i<=len; i++) {
       int parity = (seq[i].getTrueDegree() % 2 == 0) ? 1 : -1;
       int sgn = parity * sign(seq[i].coeff[seq[i].getTrueDegree()]);
@@ -275,7 +276,7 @@ public:
   //        "x.makeExact(); y.makeExact()" before calling].
   ///////////////////////////////////////////
   int numberOfRoots(const BigFloat &x, const BigFloat &y) const {
-    assert(x <= y);   // we allow x=y
+    CGAL_assertion(x <= y);   // we allow x=y
     if (len <= 0) return len;  // return of -1 means infinity of roots!
     int signx = sign(seq[0].evalExactSign(x));
     if (x == y) return ((signx == 0) ? 1 : 0);
@@ -354,7 +355,7 @@ public:
    */
   void isolateRoots(const BigFloat &x, const BigFloat &y,
                     BFVecInterval &v) const {
-    assert(x<=y);
+    CGAL_assertion(x<=y);
 
     int n = numberOfRoots(x,y);
     if (n == 0) return;
@@ -767,7 +768,7 @@ public:
   // 	says that z is a robust approximate zero).
   //
   bool smaleBoundTest(const BigFloat& z){
-    assert(z.isExact());   // the bound only makes sense for exact z
+    CGAL_assertion(z.isExact());   // the bound only makes sense for exact z
 
 #ifdef CORE_DEBUG
     std::cout <<"Computing Smale's bound = " <<  std::endl;
@@ -869,7 +870,7 @@ std::cout << "In newtonRefine, input J=" << J.first
       return J;
     }
 
-    assert( leftSign * rightSign < 0 );
+    CGAL_assertion( leftSign * rightSign < 0 );
 
     //N is number of times Newton is called without checking
     // whether the result is still in the interval or not
@@ -1060,7 +1061,7 @@ std::cout << "In newtonRefine, input J=" << J.first
 	      << J.first.err() << " Err at end = " << J.second.err() << std::endl;
 #endif
 
-    assert( (seq[0].evalExactSign(J.first) * seq[0].evalExactSign(J.second) <= 0) );
+    CGAL_assertion( (seq[0].evalExactSign(J.first) * seq[0].evalExactSign(J.second) <= 0) );
 
 #ifdef CORE_DEBUG_NEWTON
     if (seq[0].evalExactSign(J.first) * seq[0].evalExactSign(J.second) > 0)

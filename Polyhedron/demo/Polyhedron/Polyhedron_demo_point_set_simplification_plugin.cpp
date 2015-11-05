@@ -125,6 +125,7 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
     points->select(first_point_to_remove, points->end(), true);
 
     // Updates scene
+    item->invalidate_buffers();
     scene->itemChanged(index);
 
     QApplication::restoreOverrideCursor();

@@ -35,7 +35,7 @@ public:
     // IO
     bool load(std::istream& in);
     bool save(std::ostream& out) const;
-    bool is_Triangle;
+    mutable bool is_Triangle;
 
     // Function for displaying meta-data of the item
     virtual QString toolTip() const;
@@ -44,7 +44,7 @@ public:
     QMenu* contextMenu();
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals); }
+    virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=PointsPlusNormals && m!=Splatting); }
     // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
     void draw() const {}
     virtual void draw(Viewer_interface*) const;
@@ -64,7 +64,7 @@ public:
     void set_color_vector_read_only(bool on_off) {plugin_has_set_color_vector_m=on_off;}
 
 public Q_SLOTS:
-    virtual void changed();
+    virtual void invalidate_buffers();
     virtual void contextual_changed();
     virtual void selection_changed(bool);
     virtual void setColor(QColor c);
@@ -90,7 +90,7 @@ Q_SIGNALS:
     void selected_facet(void*);
     void selected_edge(void*);
     void selected_halfedge(void*);
-    void item_is_about_to_be_changed(); // emitted in changed()
+    void item_is_about_to_be_changed(); // emitted in invalidate_buffers()
 
 private:
     // Initialization
@@ -114,23 +114,25 @@ private:
     bool plugin_has_set_color_vector_m;
 
 
-    std::vector<float> positions_lines;
-    std::vector<float> positions_facets;
-    std::vector<float> normals;
-    std::vector<float> color_lines;
-    std::vector<float> color_facets;
-    std::vector<float> color_lines_selected;
-    std::vector<float> color_facets_selected;
-
+    mutable std::vector<float> positions_lines;
+    mutable std::vector<float> positions_facets;
+    mutable std::vector<float> normals_flat;
+    mutable std::vector<float> normals_gouraud;
+    mutable std::vector<float> color_lines;
+    mutable std::vector<float> color_facets;
+    mutable std::vector<float> color_lines_selected;
+    mutable std::vector<float> color_facets_selected;
+    mutable std::size_t nb_facets;
+    mutable std::size_t nb_lines;
     mutable QOpenGLShaderProgram *program;
 
     using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer = 0) const;
-    void compute_normals_and_vertices(void);
-    void compute_colors();
-    void triangulate_facet(Facet_iterator );
-    void triangulate_facet_color(Facet_iterator );
-    void is_Triangulated();
+    void compute_normals_and_vertices(void) const;
+    void compute_colors() const;
+    void triangulate_facet(Facet_iterator ) const;
+    void triangulate_facet_color(Facet_iterator ) const;
+    void is_Triangulated() const;
     double volume, area;
 
 }; // end class Scene_polyhedron_item

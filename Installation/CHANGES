@@ -1,7 +1,7 @@
 
 -------------------------------- Release 4.7 --------------------------------
 
-Release date: September 2015
+Release date: October 2015
 
 
 * Installation
@@ -20,13 +20,10 @@ Release date: September 2015
   - The code of the 3D demos now use modern OpenGL, with shaders, instead of
     the fixed pipeline API of OpenGL-1.
 
-  - Initial support of the Microsoft Windows Visual C++ compiler 2015 (VC14).
-
-
-* General
-
-  - Support for unordered sets and maps of the stdlib and of boost for handle
-    and index classes.
+  - The Microsoft Windows Visual C++ compiler 2015 (VC14) is now supported.
+    However, since this compiler is not officially supported by Intel TBB 4.4
+    and Qt 5.5 (the latest versions available at the time of this release), the
+    parallelism features of CGAL and Qt5 demos will not work.
 
 
 * L Infinity Segment Delaunay Graphs (new package)
@@ -93,6 +90,12 @@ Release date: September 2015
     mesh processing.
 
 
+* General
+
+  - Support for unordered sets and maps of the stdlib and of boost for handle
+    and index classes.
+
+
 * Approximation of Ridges and Umbilics on Triangulated Surface Meshes
 
   - This package now supports any model of the concept FaceGraph.
@@ -102,15 +105,11 @@ Release date: September 2015
     FaceGraph.
 
 
-
-
 * dD Geometry Kernel
 
   - Epick_d gains 3 new functors: Construct_circumcenter_d,
     Compute_squared_radius_d, Side_of_bounded_sphere_d. Those are essential for
     the computation of alpha-shapes.
-
-
 
 
 * 2D Arrangements
@@ -154,16 +153,14 @@ Release date: September 2015
 
 * 3D Periodic Triangulations
 
-  - Rename Periodic_3_triangulation_traits_3
+  - Rename Periodic_3_triangulation_traits_3 to
     Periodic_3_Delaunay_triangulation_traits_3.
 
-  - Rename the concept Periodic_3TriangulationTraits_3
+  - Rename the concept Periodic_3TriangulationTraits_3 to
     Periodic_3DelaunayTriangulationTraits_3.
 
   - Create Periodic_3_triangulation_traits_3 and the concept
     Periodic_3TriangulationTraits_3.
-
-
 
 
 * 2D Conforming Triangulations and Meshes
@@ -190,8 +187,6 @@ Release date: September 2015
   - Add the possibility to sort points on a sphere along a space-filling curve
     using the functions CGAL::hilbert_sort_on_sphere and CGAL::
     spatial_sort_on_sphere.
-
-
 
 
 * Geometric Object Generators

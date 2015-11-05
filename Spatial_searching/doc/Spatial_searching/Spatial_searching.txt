@@ -429,7 +429,7 @@ k | bucket size | Surface/Surface  | Surface/Random | Random/Random
 </center>
 
 \cgalFigureBegin{Spatial_searchingfigbenchmark,gargoyle.png}
-Benchmark dataset(downsampled for visualization).\n
+Benchmark dataset (downsampled for visualization).\n
 Blue: Gargoyle surface. Green: Gargoyle bbox random.
 \cgalFigureEnd
 

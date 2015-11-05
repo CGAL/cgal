@@ -85,6 +85,19 @@ void Scene_textured_polyhedron_item::initialize_buffers(Viewer_interface *viewer
     viewer->glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexEnvf(GL_TEXTURE_ENV, GL_TEXTURE_ENV_MODE, GL_MODULATE);
 
+    nb_facets = positions_facets.size();
+    positions_facets.resize(0);
+    std::vector<float>(positions_facets).swap(positions_facets);
+    normals.resize(0);
+    std::vector<float>(normals).swap(normals);
+    textures_map_facets.resize(0);
+    std::vector<float>(textures_map_facets).swap(textures_map_facets);
+    nb_lines = positions_lines.size();
+    positions_lines.resize(0);
+    std::vector<float>(positions_lines).swap(positions_lines);
+    textures_map_lines.resize(0);
+    std::vector<float>(textures_map_lines).swap(textures_map_lines);
+
     are_buffers_filled = true;
 }
 
@@ -200,7 +213,9 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
     cur_shading=FlatPlusEdges;
     is_selected=false;
-    changed();
+    nb_facets = 0;
+    nb_lines = 0;
+    invalidate_buffers();
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(Textured_polyhedron* const p)
@@ -209,7 +224,9 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(Textured_polyhedr
     cur_shading=FlatPlusEdges;
     is_selected=false;
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
-    changed();
+    nb_facets = 0;
+    nb_lines = 0;
+    invalidate_buffers();
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Textured_polyhedron& p)
@@ -218,7 +235,9 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Textured_po
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
     cur_shading=FlatPlusEdges;
     is_selected=false;
-    changed();
+    nb_facets = 0;
+    nb_lines = 0;
+    invalidate_buffers();
 }
 
 Scene_textured_polyhedron_item::~Scene_textured_polyhedron_item()
@@ -237,7 +256,7 @@ Scene_textured_polyhedron_item::load(std::istream& in)
 {
     std::cout<<"LOAD"<<std::endl;
     in >> *poly;
-    changed();
+    invalidate_buffers();
     return in && !isEmpty();
 }
 
@@ -279,7 +298,7 @@ void Scene_textured_polyhedron_item::draw(Viewer_interface* viewer) const {
     attrib_buffers(viewer, PROGRAM_WITH_TEXTURE);
     program=getShaderProgram(PROGRAM_WITH_TEXTURE);
     program->bind();
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/4));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/4));
     //Clean-up
     program->release();
     vaos[0]->release();
@@ -295,7 +314,7 @@ void Scene_textured_polyhedron_item::draw_edges(Viewer_interface* viewer) const 
 
     program=getShaderProgram(PROGRAM_WITH_TEXTURED_EDGES);
     program->bind();
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/4));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/4));
     //Clean-up
     program->release();
     vaos[1]->release();
@@ -324,7 +343,7 @@ Scene_textured_polyhedron_item::bbox() const {
                 bbox.xmax(),bbox.ymax(),bbox.zmax());
 }
 void
-Scene_textured_polyhedron_item::changed()
+Scene_textured_polyhedron_item::invalidate_buffers()
 {
     compute_normals_and_vertices();
     are_buffers_filled = false;}
@@ -336,7 +355,7 @@ contextual_changed()
     cur_shading = renderingMode();
     if(prev_shading != cur_shading)
     {
-        changed();
+        invalidate_buffers();
     }
 }
 void

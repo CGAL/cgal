@@ -28,7 +28,7 @@ public:
   virtual QString toolTip() const;
 
   // Indicate if rendering mode is supported
-  virtual bool supportsRenderingMode(RenderingMode) const { return true; }
+  virtual bool supportsRenderingMode(RenderingMode m) const { return m != Splatting; }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
    void draw() const {}
   virtual void draw(Viewer_interface*) const;
@@ -44,19 +44,20 @@ public:
   bool isEmpty() const;
   Bbox bbox() const;
 
-  virtual void changed();
+  virtual void invalidate_buffers();
   virtual void contextual_changed();
   virtual void selection_changed(bool);
 
 private:
   Textured_polyhedron* poly;
   Texture texture;
-  std::vector<float> positions_lines;
-  std::vector<float> positions_facets;
-  std::vector<float> normals;
-  std::vector<float> textures_map_facets;
-  std::vector<float> textures_map_lines;
-
+  mutable std::vector<float> positions_lines;
+  mutable std::vector<float> positions_facets;
+  mutable std::vector<float> normals;
+  mutable std::vector<float> textures_map_facets;
+  mutable std::vector<float> textures_map_lines;
+  mutable std::size_t nb_facets;
+  mutable std::size_t nb_lines;
 
   mutable GLuint textureId;
   mutable QOpenGLShaderProgram* program;

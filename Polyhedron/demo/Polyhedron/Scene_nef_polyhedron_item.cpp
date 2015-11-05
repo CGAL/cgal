@@ -52,6 +52,9 @@ Scene_nef_polyhedron_item::Scene_nef_polyhedron_item()
       nef_poly(new Nef_polyhedron)
 {
     is_selected = true;
+    nb_points = 0;
+    nb_lines = 0;
+    nb_facets = 0;
 }
 
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(Nef_polyhedron* const p)
@@ -59,6 +62,9 @@ Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(Nef_polyhedron* const p)
       nef_poly(p)
 {
     is_selected = true;
+    nb_points = 0;
+    nb_lines = 0;
+    nb_facets = 0;
 }
 
 Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(const Nef_polyhedron& p)
@@ -66,6 +72,9 @@ Scene_nef_polyhedron_item::Scene_nef_polyhedron_item(const Nef_polyhedron& p)
       nef_poly(new Nef_polyhedron(p))
 {
      is_selected = true;
+     nb_points = 0;
+     nb_lines = 0;
+     nb_facets = 0;
 }
 
 Scene_nef_polyhedron_item::~Scene_nef_polyhedron_item()
@@ -104,6 +113,15 @@ void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) con
         program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
         buffers[2].release();
         vaos[0]->release();
+        nb_facets = positions_facets.size();
+        positions_facets.resize(0);
+        std::vector<double>(positions_facets).swap(positions_facets);
+
+        normals.resize(0);
+        std::vector<double>(normals).swap(normals);
+
+        color_facets.resize(0);
+        std::vector<double>(color_facets).swap(color_facets);
         program->release();
 
     }
@@ -129,6 +147,12 @@ void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) con
         program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
         buffers[4].release();
 
+        nb_lines = positions_lines.size();
+        positions_lines.resize(0);
+        std::vector<double>(positions_lines).swap(positions_lines);
+
+        color_lines.resize(0);
+        std::vector<double>(color_lines).swap(color_lines);
         vaos[1]->release();
         program->release();
     }
@@ -155,6 +179,13 @@ void Scene_nef_polyhedron_item::initialize_buffers(Viewer_interface *viewer) con
         buffers[6].release();
 
         vaos[2]->release();
+
+        nb_points = positions_points.size();
+        positions_points.resize(0);
+        std::vector<double>(positions_points).swap(positions_points);
+
+        color_points.resize(0);
+        std::vector<double>(color_points).swap(color_points);
         program->release();
     }
     are_buffers_filled = true;
@@ -405,7 +436,7 @@ Scene_nef_polyhedron_item::load_from_off(std::istream& in)
     //   Polyhedron poly;
     //   in >> poly;
     //   *nef_poly = Nef_polyhedron(poly);
-    changed();
+    invalidate_buffers();
     return (bool) in;
 }
 
@@ -420,7 +451,7 @@ bool
 Scene_nef_polyhedron_item::load(std::istream& in)
 {
     in >> *nef_poly;
-    changed();
+    invalidate_buffers();
     return (bool) in;
 }
 
@@ -462,7 +493,7 @@ void Scene_nef_polyhedron_item::draw(Viewer_interface* viewer) const
     program=getShaderProgram(PROGRAM_WITH_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/3));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/3));
     vaos[0]->release();
     program->release();
     GLfloat point_size;
@@ -482,7 +513,7 @@ void Scene_nef_polyhedron_item::draw_edges(Viewer_interface* viewer) const
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer ,PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    viewer->glDrawArrays(GL_LINES,0,static_cast<GLsizei>(positions_lines.size()/3));
+    viewer->glDrawArrays(GL_LINES,0,static_cast<GLsizei>(nb_lines/3));
     vaos[1]->release();
     program->release();
     if(renderingMode() == PointsPlusNormals)
@@ -503,7 +534,7 @@ void Scene_nef_polyhedron_item::draw_points(Viewer_interface* viewer) const
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer ,PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    viewer->glDrawArrays(GL_POINTS,0,static_cast<GLsizei>(positions_points.size()/3));
+    viewer->glDrawArrays(GL_POINTS,0,static_cast<GLsizei>(nb_points/3));
     vaos[2]->release();
     program->release();
 
@@ -694,17 +725,17 @@ convex_decomposition(std::list< Scene_polyhedron_item*>& convex_parts)
             from_exact(P, *poly);
             Scene_polyhedron_item *spoly = new Scene_polyhedron_item(poly);
             convex_parts.push_back(spoly);
-            spoly->changed();
+            spoly->invalidate_buffers();
         }
     }
 }
 
 void
 Scene_nef_polyhedron_item::
-changed()
+invalidate_buffers()
 {
     //  init();
-    Base::changed();
+    Base::invalidate_buffers();
     compute_normals_and_vertices();
     are_buffers_filled = false;
 }
@@ -715,7 +746,7 @@ Scene_nef_polyhedron_item::selection_changed(bool p_is_selected)
     if(p_is_selected != is_selected)
     {
         is_selected = p_is_selected;
-        changed();
+        invalidate_buffers();
     }
 
 }

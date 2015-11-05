@@ -27,7 +27,7 @@ public:
     const Scene_polyhedron_item* getBase() const{ return poly_item;  };
     const qglviewer::Vec& center() const { return center_; }
     virtual bool supportsRenderingMode(RenderingMode m) const { return m==Wireframe ; }
-    virtual void changed();
+    virtual void invalidate_buffers();
     virtual bool keyPressEvent(QKeyEvent*);
 
 private:
@@ -37,7 +37,8 @@ private:
     const Polyhedron* poly;
     qglviewer::Vec center_;
     mutable QOpenGLShaderProgram *program;
-    std::vector<float> positions_lines;
+    mutable std::vector<float> positions_lines;
+    mutable std::size_t nb_lines;
     using Scene_item::initialize_buffers;
     void initialize_buffers(Viewer_interface *viewer) const;
     void compute_elements();

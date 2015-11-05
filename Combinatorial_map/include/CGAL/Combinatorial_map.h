@@ -22,7 +22,6 @@
 
 #include <CGAL/Compact_container.h>
 #include <CGAL/internal/Combinatorial_map_utility.h>
-#include <CGAL/internal/Combinatorial_map_internal_functors.h>
 #include <CGAL/internal/Combinatorial_map_group_functors.h>
 #include <CGAL/internal/Combinatorial_map_copy_functors.h>
 #include <CGAL/internal/Combinatorial_map_sewable.h>
@@ -349,6 +348,18 @@ namespace CGAL {
      */
     bool is_empty() const
     { return mdarts.empty(); }
+
+    friend std::ostream& operator<< (std::ostream& os, const Self& amap)
+    {
+      save_combinatorial_map(amap, os);
+      return os;
+    }
+
+    friend std::ifstream& operator>> (std::ifstream& is, Self& amap)
+    {
+      load_combinatorial_map(is, amap);
+      return is;
+    }
 
     /** Create a new dart and add it to the map.
      * The marks of the darts are initialised with mmask_marks, i.e. the dart

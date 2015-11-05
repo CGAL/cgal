@@ -248,7 +248,7 @@ protected:
 
 
 public Q_SLOTS:
-  void changed();
+  void invalidate_buffers();
   void selected(const std::set<Polyhedron::Vertex_handle>& m)
   {
     bool any_changes = false;
@@ -266,7 +266,7 @@ public Q_SLOTS:
       }
       any_changes |= changed;
     }
-    if(any_changes) { Q_EMIT itemChanged(); }
+    if(any_changes) { invalidate_buffers(); Q_EMIT itemChanged(); }
   }
 
   void select(double orig_x,
@@ -284,23 +284,30 @@ private:
   Ui::DeformMesh* ui_widget;
   Scene_polyhedron_item* poly_item;
   // For drawing
-  std::vector<GLdouble> positions;
-  std::vector<unsigned int> tris;
-  std::vector<unsigned int> edges;
-  std::vector<GLdouble> color_lines;
-  std::vector<GLdouble> color_bbox;
-  std::vector<GLdouble> ROI_points;
-  std::vector<GLdouble> control_points;
-  std::vector<GLdouble> ROI_color;
-  std::vector<GLdouble> control_color;
-  std::vector<GLdouble> normals;
-  std::vector<GLdouble> pos_bbox;
-  std::vector<GLdouble> pos_axis;
-  std::vector<GLdouble> pos_sphere;
-  std::vector<GLdouble> normals_sphere;
+  mutable std::vector<GLdouble> positions;
+  mutable std::vector<unsigned int> tris;
+  mutable std::vector<unsigned int> edges;
+  mutable std::vector<GLdouble> color_lines;
+  mutable std::vector<GLdouble> color_bbox;
+  mutable std::vector<GLdouble> ROI_points;
+  mutable std::vector<GLdouble> control_points;
+  mutable std::vector<GLdouble> ROI_color;
+  mutable std::vector<GLdouble> control_color;
+  mutable std::vector<GLdouble> normals;
+  mutable std::vector<GLdouble> pos_bbox;
+  mutable std::vector<GLdouble> pos_axis;
+  mutable std::vector<GLdouble> pos_sphere;
+  mutable std::vector<GLdouble> normals_sphere;
   mutable std::vector<GLdouble> pos_frame_plane;
   mutable QOpenGLShaderProgram *program;
   mutable QOpenGLShaderProgram bbox_program;
+  mutable std::size_t nb_ROI;
+  mutable std::size_t nb_sphere;
+  mutable std::size_t nb_control;
+  mutable std::size_t nb_axis;
+  mutable std::size_t nb_bbox;
+
+
 
   mutable QOpenGLBuffer *in_bu;
   using Scene_item::initialize_buffers;
@@ -407,6 +414,7 @@ public:
 
     active_group = --ctrl_vertex_frame_map.end();
 
+    invalidate_buffers();
     Q_EMIT itemChanged();
 
     print_message("A new empty group of control vertices is created.");
@@ -609,7 +617,7 @@ public:
       (vertices(*polyhedron()).first, vertices(*polyhedron()).second,
       polyhedron()->size_of_vertices(), Is_selected(deform_mesh), visitor);
 
-    if(visitor.any_inserted) { Q_EMIT itemChanged(); }
+    if(visitor.any_inserted) { invalidate_buffers(); Q_EMIT itemChanged(); }
     return visitor.minimum_visitor.minimum;
   }
 protected:

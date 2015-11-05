@@ -404,7 +404,7 @@ namespace CGAL {
 	    if (Object_2 result = Intersect_2()(seg, ray_origin) )
 	      {
 		const Point_2 * ipoint = object_cast<Point_2>(&result);
-		assert( ipoint != NULL );
+		CGAL_assertion( ipoint != NULL );
 		s_t = *ipoint;
 		upcase = SCANB;
 	      }
@@ -487,7 +487,7 @@ namespace CGAL {
 	  Object_2 result = Intersect_2()( seg, seg2 );
 	  if(result) {
 	    const Point_2 * ipoint = object_cast<Point_2>(&result);
-	    assert( ipoint != NULL );
+	    CGAL_assertion( ipoint != NULL );
 	    u = *ipoint;
 	    mode = 2;
 	    break;
@@ -495,7 +495,7 @@ namespace CGAL {
 	}
     }
 
-    assert( mode != 0 );
+    CGAL_assertion( mode != 0 );
     if ( mode == 1 ) {
       orient1 = traits->orientation_2_object()(q, vertices[i], vertices[i+1] );
 
@@ -520,7 +520,7 @@ namespace CGAL {
 	Object_2 result = Intersect_2()( seg, ray );
 	const Point_2 * ipoint = object_cast<Point_2>(&result);
 
-	assert( ipoint != NULL );
+	CGAL_assertion( ipoint != NULL );
 
 	u = *ipoint;
 	if ( stack.top() != u ) {
@@ -539,7 +539,7 @@ namespace CGAL {
 	Object_2 result = Intersect_2()( seg, ray );
 	const Point_2 * ipoint = object_cast<Point_2>(&result);
 
-	assert( ipoint != NULL );
+	CGAL_assertion( ipoint != NULL );
 
 	u = *ipoint;
 	if ( stack.top() != u ) {
@@ -670,7 +670,7 @@ namespace CGAL {
       }
       old_orient = curr_orient;
     }
-    assert( k+1<vertices.size() );
+    CGAL_assertion( k+1<vertices.size() );
     const Point_2 * ipoint = object_cast<Point_2>( &result );
     if ( ipoint ) {
       u = *ipoint;

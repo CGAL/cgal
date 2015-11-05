@@ -103,6 +103,9 @@ public:
   // Points OpenGL drawing
   virtual void draw_points() const { draw(); }
   virtual void draw_points(Viewer_interface*) const { draw_points(); }
+  // Splats OpenGL drawing
+  virtual void draw_splats() const {}
+  virtual void draw_splats(Viewer_interface*) const {draw_splats();}
   virtual void selection_changed(bool);
 
   // Functions for displaying meta-data of the item
@@ -135,17 +138,18 @@ public:
 public Q_SLOTS:
   // Call that once you have finished changing something in the item
   // (either the properties or internal data)
-  virtual void changed();
+  virtual void invalidate_buffers();
   virtual void contextual_changed(){}
 
   // Setters for the four basic properties
-  virtual void setColor(QColor c) { color_ = c; changed(); }
+  virtual void setColor(QColor c) { color_ = c; invalidate_buffers(); }
   void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
   virtual void setName(QString n) { name_ = n; }
   virtual void setVisible(bool b) { visible_ = b; }
   virtual void setRenderingMode(RenderingMode m) { 
     if (supportsRenderingMode(m))
       rendering_mode = m; 
+    Q_EMIT renderingModeChanged();
   }
   void setPointsMode() {
     setRenderingMode(Points);
@@ -177,6 +181,10 @@ public Q_SLOTS:
     setRenderingMode(PointsPlusNormals);
   }
   
+  void setSplattingMode(){
+    setRenderingMode(Splatting);
+  }
+  
   virtual void itemAboutToBeDestroyed(Scene_item*);
 
   virtual void select(double orig_x,
@@ -189,6 +197,7 @@ public Q_SLOTS:
 Q_SIGNALS:
   void itemChanged();
   void aboutToBeDestroyed();
+  void renderingModeChanged();
 
 protected:
   // The four basic properties

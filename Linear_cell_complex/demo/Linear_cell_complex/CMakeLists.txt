@@ -16,6 +16,7 @@ endif()
 
 ## To add expensive tests
 # add_definitions("-DCGAL_CHECK_EXPENSIVE")
+# add_definitions("-Wall -Wextra")
 
 ## For profilling with gprof
 # add_definitions("-pg")
@@ -72,7 +73,6 @@ target_link_libraries(Linear_cell_complex_3_demo ${CGAL_LIBRARIES}
                                                  ${CGAL_3RD_PARTY_LIBRARIES})
 target_link_libraries(Linear_cell_complex_3_demo ${QT_LIBRARIES}
                                                  ${QGLVIEWER_LIBRARIES} )
-target_link_libraries(Linear_cell_complex_3_demo ${OPENGL_gl_LIBRARY}
-                                                 ${OPENGL_glu_LIBRARY} )
+target_link_libraries(Linear_cell_complex_3_demo ${OPENGL_gl_LIBRARY} )
 
 endif()

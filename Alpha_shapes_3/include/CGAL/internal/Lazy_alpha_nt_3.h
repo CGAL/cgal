@@ -21,6 +21,7 @@
 #ifndef CGAL_INTERNAL_LAZY_ALPHA_NT_3_H
 #define CGAL_INTERNAL_LAZY_ALPHA_NT_3_H
 
+#include <CGAL/assertions.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/type_traits.hpp>
@@ -140,7 +141,7 @@ public:
         exact_ = Exact_squared_radius()( to_exact(*data()[0]),to_exact(*data()[1]),to_exact(*data()[2]),to_exact(*data()[3]) );
       break;
       default:
-        assert(false);
+        CGAL_assertion(false);
     }
     updated=true;
   }
@@ -160,7 +161,7 @@ public:
         approx_ = Approx_squared_radius()( to_approx(*data()[0]),to_approx(*data()[1]),to_approx(*data()[2]),to_approx(*data()[3]) );
       break;
       default:
-        assert(false);
+        CGAL_assertion(false);
     }    
   }
 

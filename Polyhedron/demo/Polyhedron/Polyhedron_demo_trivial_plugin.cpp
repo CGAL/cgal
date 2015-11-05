@@ -62,7 +62,7 @@ public:
 
     }
 
-    void changed()
+    void invalidate_buffers()
     {
         compute_elements();
         are_buffers_filled = false;

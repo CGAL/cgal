@@ -11,7 +11,7 @@
 #include <QKeyEvent>
 #include <CGAL/corefinement_operations.h>
 
-Scene_combinatorial_map_item::Scene_combinatorial_map_item(Scene_interface* scene,void* address):last_known_scene(scene),volume_to_display(0),exportSelectedVolume(NULL),address_of_A(address){m_combinatorial_map=NULL; are_buffers_filled = false;;}
+Scene_combinatorial_map_item::Scene_combinatorial_map_item(Scene_interface* scene,void* address):last_known_scene(scene),volume_to_display(0),exportSelectedVolume(NULL),address_of_A(address){m_combinatorial_map=NULL; are_buffers_filled = false; nb_points = 0; nb_lines =0; nb_facets =0;}
 Scene_combinatorial_map_item::~Scene_combinatorial_map_item(){if (m_combinatorial_map!=NULL) delete m_combinatorial_map;}
 
 Scene_combinatorial_map_item* Scene_combinatorial_map_item::clone() const{return NULL;}
@@ -52,6 +52,7 @@ void Scene_combinatorial_map_item::set_next_volume(){
     ++volume_to_display;
     volume_to_display=volume_to_display%(combinatorial_map().attributes<3>().size()+1);
   are_buffers_filled = false;
+  invalidate_buffers();
   Q_EMIT itemChanged();
 
     if (exportSelectedVolume!=NULL && ( volume_to_display==1 || volume_to_display==0 ) )
@@ -350,7 +351,9 @@ void Scene_combinatorial_map_item::initialize_buffers(Viewer_interface *viewer) 
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
         buffers[0].release();
-
+        nb_lines = positions_lines.size();
+        positions_lines.resize(0);
+        std::vector<double>(positions_lines).swap(positions_lines);
         vaos[0]->release();
         program->release();
     }
@@ -367,6 +370,9 @@ void Scene_combinatorial_map_item::initialize_buffers(Viewer_interface *viewer) 
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
         buffers[1].release();
         vaos[1]->release();
+        nb_points = positions_points.size();
+        positions_points.resize(0);
+        std::vector<double>(positions_points).swap(positions_points);
         program->release();
     }
     //vao for the facets
@@ -384,11 +390,15 @@ void Scene_combinatorial_map_item::initialize_buffers(Viewer_interface *viewer) 
 
         buffers[3].bind();
         buffers[3].allocate(normals.data(),
-                            static_cast<int>(positions_facets.size()*sizeof(double)));
+                            static_cast<int>(normals.size()*sizeof(double)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_DOUBLE,0,3);
         buffers[3].release();
-
+        nb_facets = positions_facets.size();
+        positions_facets.resize(0);
+        std::vector<double>(positions_facets).swap(positions_facets);
+        normals.resize(0);
+        std::vector<double>(normals).swap(normals);
         vaos[2]->release();
         program->release();
     }
@@ -469,7 +479,7 @@ void Scene_combinatorial_map_item::draw(Viewer_interface* viewer) const
     attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
     program->setAttributeValue("colors", this->color());
-    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_facets.size()/3));
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/3));
     vaos[2]->release();
     program->release();
 
@@ -486,7 +496,7 @@ void Scene_combinatorial_map_item::draw(Viewer_interface* viewer) const
      attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
      program->bind();
      program->setAttributeValue("colors", this->color());
-     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
+     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
      vaos[0]->release();
      program->release();
 
@@ -503,7 +513,7 @@ void Scene_combinatorial_map_item::draw(Viewer_interface* viewer) const
      attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
      program->bind();
      program->setAttributeValue("colors", this->color());
-     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_points.size()/3));
+     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_points/3));
      vaos[1]->release();
      program->release();
 

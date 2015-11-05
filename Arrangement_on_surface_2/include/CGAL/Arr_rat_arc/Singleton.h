@@ -20,8 +20,10 @@
 
 
 
-#ifndef SINGLETON_H_
+#ifndef CGAL_SINGLETON_H_
 #define SINGLETON_H_
+
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 namespace Arr_rational_arc {
@@ -33,7 +35,7 @@ public:
   {
     if(!m_pInstance) 
       m_pInstance = new T;
-    assert(m_pInstance !=NULL);
+    CGAL_assertion(m_pInstance !=NULL);
     return m_pInstance;
   }
       
@@ -53,4 +55,4 @@ template <class T> T* Singleton<T>::m_pInstance=NULL;
 
 }   // namespace Arr_rational_arc
 }   //namespace CGAL { 
-#endif // SINGLETON_H_
+#endif // CGAL_SINGLETON_H_

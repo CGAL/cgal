@@ -39,7 +39,7 @@ public:
     QString toolTip() const;
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const { return (m != Gouraud && m!=PointsPlusNormals); } // CHECK THIS!
+    virtual bool supportsRenderingMode(RenderingMode m) const { return (m != Gouraud && m!=PointsPlusNormals && m!=Splatting); } // CHECK THIS!
     //Event handling
     virtual bool keyPressEvent(QKeyEvent*);
     //drawing of the scene
@@ -77,6 +77,9 @@ private:
    mutable std::vector<double> positions_points;
    mutable std::vector<double> positions_facets;
    mutable std::vector<double> normals;
+   mutable std::size_t nb_lines;
+   mutable std::size_t nb_points;
+   mutable std::size_t nb_facets;
 
     mutable QOpenGLShaderProgram *program;
 

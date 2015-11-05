@@ -62,6 +62,20 @@ if (EIGEN3_FOUND)
   include( ${EIGEN3_USE_FILE} )
 endif(EIGEN3_FOUND)
 
+# Activate concurrency?
+option(POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY
+  "Enable concurrency"
+  ON)
+
+if( POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY )
+  find_package( TBB )
+  if( TBB_FOUND )
+    include( ${TBB_USE_FILE} )
+    list( APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES} )
+  else()
+    message( STATUS "NOTICE: Intel TBB was not found. Bilateral smoothing and WLOP plugins are faster if TBB is linked." )
+  endif()
+endif()
 
 if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
@@ -101,6 +115,11 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
 
   qt5_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
+  qt5_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
+  add_library(gl_splat SHARED
+      GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
+  qt5_use_modules(gl_splat OpenGL Gui Xml)
+  target_link_libraries(gl_splat ${QT_QTCORE_LIBRARY} ${QT_QTGUI_LIBRARY} ${QT_QTOPENGL_LIBRARY} ${GLEW_LIBRARIES})
 
   qt5_generate_moc( "CGAL_demo/Viewer_interface.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
 
@@ -187,6 +206,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   
   target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)# Scene_points_with_normal_item.moc)
+  target_link_libraries( scene_points_with_normal_item gl_splat ${GLEW_LIBRARIES} )
+  target_link_libraries( demo_framework gl_splat ${GLEW_LIBRARIES} )
 
   foreach( lib 
       demo_framework
@@ -228,12 +249,14 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries( Polyhedron_3 ${QT_LIBRARIES} )
   target_link_libraries( Polyhedron_3 demo_framework )
   target_link_libraries( Polyhedron_3 point_dialog )
+  target_link_libraries( Polyhedron_3 gl_splat ${GLEW_LIBRARIES})
 
   # Link with CGAL
   target_link_libraries( Polyhedron_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
   # Link with libQGLViewer, OpenGL
   target_link_libraries( Polyhedron_3 ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
 
@@ -439,6 +462,20 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(point_set_shape_detection_plugin Polyhedron_demo_point_set_shape_detection_plugin ${point_set_shape_detectionUI_FILES})
   target_link_libraries(point_set_shape_detection_plugin scene_polyhedron_item scene_points_with_normal_item)
 
+  qt5_wrap_ui(point_set_wlopFILES Polyhedron_demo_point_set_wlop_plugin.ui)
+  polyhedron_demo_plugin(point_set_wlop_plugin Polyhedron_demo_point_set_wlop_plugin ${point_set_wlopFILES})
+  target_link_libraries(point_set_wlop_plugin scene_points_with_normal_item)
+
+  qt5_wrap_ui(point_set_bilateral_smoothingUI_FILES Polyhedron_demo_point_set_bilateral_smoothing_plugin.ui)
+  polyhedron_demo_plugin(point_set_bilateral_smoothing_plugin Polyhedron_demo_point_set_bilateral_smoothing_plugin ${point_set_bilateral_smoothingUI_FILES})
+  target_link_libraries(point_set_bilateral_smoothing_plugin scene_points_with_normal_item)
+
+  qt5_wrap_ui(point_set_upsamplingUI_FILES Polyhedron_demo_point_set_upsampling_plugin.ui)
+  polyhedron_demo_plugin(point_set_upsampling_plugin Polyhedron_demo_point_set_upsampling_plugin ${point_set_upsamplingUI_FILES})
+  target_link_libraries(point_set_upsampling_plugin scene_points_with_normal_item)
+
+  qt5_wrap_ui( ps_outliers_removal_UI_FILES Polyhedron_demo_point_set_outliers_removal_plugin.ui)
+
   polyhedron_demo_plugin(point_set_outliers_removal_plugin Polyhedron_demo_point_set_outliers_removal_plugin ${ps_outliers_removal_UI_FILES}) 
   target_link_libraries(point_set_outliers_removal_plugin scene_points_with_normal_item)
   
@@ -483,6 +520,12 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     scene_points_with_normal_item
     scene_implicit_function_item
     scene_polylines_item
+    NAMESPACE Polyhedron_
+    APPEND FILE polyhedron_demo_targets.cmake)
+
+  export(
+    TARGETS
+    gl_splat
     NAMESPACE Polyhedron_
     APPEND FILE polyhedron_demo_targets.cmake)
 

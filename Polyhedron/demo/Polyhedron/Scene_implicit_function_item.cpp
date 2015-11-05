@@ -367,7 +367,7 @@ Scene_implicit_function_item(Implicit_function_interface* f)
     frame_->setOrientation(1., 0, 0, 0);
     connect(frame_, SIGNAL(modified()), this, SLOT(plane_was_moved()));
 
-    changed();
+    invalidate_buffers();
 }
 
 
@@ -457,6 +457,7 @@ Scene_implicit_function_item::supportsRenderingMode(RenderingMode m) const
 {
     switch ( m )
     {
+    case Splatting:
     case Gouraud:
         return false;
 
@@ -505,7 +506,7 @@ compute_function_grid() const
     typedef K::Point_3                      Point_3;
 
     // Get transformation
-    const ::GLdouble* m = frame_->matrix();
+    const GLdouble* m = frame_->matrix();
 
     // OpenGL matrices are row-major matrices
     Aff_transformation t (m[0], m[4], m[8], m[12],
@@ -536,7 +537,7 @@ compute_function_grid() const
     }
 
     // Update
-    const_cast<Scene_implicit_function_item*>(this)->changed();
+    const_cast<Scene_implicit_function_item*>(this)->invalidate_buffers();
 
 }
 
@@ -574,9 +575,9 @@ compute_min_max()
 }
 
 void
-Scene_implicit_function_item::changed()
+Scene_implicit_function_item::invalidate_buffers()
 {
-    Scene_item::changed();
+    Scene_item::invalidate_buffers();
     compute_vertices_and_texmap();
     are_buffers_filled = false;
 }

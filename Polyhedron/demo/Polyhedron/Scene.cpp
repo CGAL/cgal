@@ -1,3 +1,7 @@
+#include "GlSplat/GlSplat.h"
+
+
+
 #include "config.h"
 #include "Scene.h"
 #include "Scene_item.h"
@@ -16,11 +20,14 @@
 #include <QAbstractProxyModel>
 
 
-namespace {
-void CGALglcolor(QColor c)
+
+
+GlSplat::SplatRenderer* Scene::ms_splatting = 0;
+int Scene::ms_splattingCounter = 0;
+GlSplat::SplatRenderer* Scene::splatting()
 {
-    ::glColor4d(c.red()/255.0, c.green()/255.0, c.blue()/255.0, c.alpha()/255.0);
-}
+    assert(ms_splatting!=0 && "A Scene object must be created before requesting the splatting object");
+    return ms_splatting;
 }
 
 Scene::Scene(QObject* parent)
@@ -34,8 +41,13 @@ Scene::Scene(QObject* parent)
                                       double, double, double)),
             this, SLOT(setSelectionRay(double, double, double,
                                        double, double, double)));
-}
 
+    if(ms_splatting==0)
+        ms_splatting  = new GlSplat::SplatRenderer();
+    ms_splattingCounter++;
+
+
+}
 Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
@@ -44,6 +56,8 @@ Scene::addItem(Scene_item* item)
     m_entries.push_back(item);
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
+    connect(item, SIGNAL(renderingModeChanged()),
+            this, SLOT(callDraw()));
     if(bbox_before + item->bbox() != bbox_before)
 { Q_EMIT updated_bbox(); }
     QAbstractListModel::beginResetModel();
@@ -57,7 +71,6 @@ Scene::addItem(Scene_item* item)
 Scene_item*
 Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_to_be_destroyed)
 {
-    item->changed();
     if(index < 0 || index >= m_entries.size())
         return 0;
 
@@ -150,6 +163,9 @@ Scene::~Scene()
         delete item_ptr;
     }
     m_entries.clear();
+
+    if((--ms_splattingCounter)==0)
+        delete ms_splatting;
 }
 
 Scene_item*
@@ -193,6 +209,8 @@ Scene::duplicate(Item_id index)
 
 void Scene::initializeGL()
 {
+    ms_splatting->init();
+
     //Setting the light options
 
     // Create light components
@@ -245,37 +263,37 @@ Scene::drawWithNames(Viewer_interface* viewer)
 void 
 Scene::draw_aux(bool with_names, Viewer_interface* viewer)
 {
+    if(!ms_splatting->viewer_is_set)
+        ms_splatting->setViewer(viewer);
     // Flat/Gouraud OpenGL drawing
     for(int index = 0; index < m_entries.size(); ++index)
     {
         if(with_names) {
-            ::glPushName(index);
+            viewer->glPushName(index);
         }
         Scene_item& item = *m_entries[index];
         if(item.visible())
         {
             if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
             {
-                ::glEnable(GL_LIGHTING);
-                ::glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
-                ::glPointSize(2.f);
-                ::glLineWidth(1.0f);
+                viewer->glEnable(GL_LIGHTING);
+                viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+                viewer->glPointSize(2.f);
+                viewer->glLineWidth(1.0f);
                 if(index == selected_item)
                 {
                     item.selection_changed(true);
-                    CGALglcolor(item.color().lighter(120));
                 }
                 else
 
                 {
                     item.selection_changed(false);
-                    CGALglcolor(item.color());
                 }
 
                 if(item.renderingMode() == Gouraud)
-                    ::glShadeModel(GL_SMOOTH);
+                    viewer->glShadeModel(GL_SMOOTH);
                 else
-                    ::glShadeModel(GL_FLAT);
+                    viewer->glShadeModel(GL_FLAT);
 
                 item.contextual_changed();
                 if(viewer)
@@ -285,7 +303,7 @@ Scene::draw_aux(bool with_names, Viewer_interface* viewer)
             }
         }
         if(with_names) {
-            ::glPopName();
+            viewer->glPopName();
         }
     }
 glDepthFunc(GL_LEQUAL);
@@ -293,25 +311,23 @@ glDepthFunc(GL_LEQUAL);
     for(int index = 0; index < m_entries.size(); ++index)
     {
         if(with_names) {
-            ::glPushName(index);
+            viewer->glPushName(index);
         }
         Scene_item& item = *m_entries[index];
         if(item.visible())
         {
             if(item.renderingMode() == FlatPlusEdges || item.renderingMode() == Wireframe)
             {
-                ::glDisable(GL_LIGHTING);
-                ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-                ::glPointSize(2.f);
-                ::glLineWidth(1.0f);
+                viewer->glDisable(GL_LIGHTING);
+                viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+                viewer->glPointSize(2.f);
+                viewer->glLineWidth(1.0f);
                 if(index == selected_item)
                 {
-                    CGALglcolor(Qt::black);
                       item.selection_changed(true);
                 }
                 else
                 {
-                    CGALglcolor(item.color().lighter(50));
                       item.selection_changed(false);
                 }
 
@@ -324,21 +340,19 @@ glDepthFunc(GL_LEQUAL);
             }
             else{
                 if( item.renderingMode() == PointsPlusNormals ){
-                    ::glDisable(GL_LIGHTING);
-                    ::glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-                    ::glPointSize(2.f);
-                    ::glLineWidth(1.0f);
+                    viewer->glDisable(GL_LIGHTING);
+                    viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+                    viewer->glPointSize(2.f);
+                    viewer->glLineWidth(1.0f);
                     if(index == selected_item)
                     {
 
                         item.selection_changed(true);
-                        CGALglcolor(item.color().lighter(120));
                     }
                     else
                     {
 
                         item.selection_changed(false);
-                        CGALglcolor(item.color());
                     }
                     if(viewer)
                         item.draw_edges(viewer);
@@ -349,7 +363,7 @@ glDepthFunc(GL_LEQUAL);
         }
          item.contextual_changed();
         if(with_names) {
-            ::glPopName();
+            viewer->glPopName();
         }
     }
 
@@ -358,18 +372,17 @@ glDepthFunc(GL_LEQUAL);
     for(int index = 0; index < m_entries.size(); ++index)
     {
         if(with_names) {
-            ::glPushName(index);
+            viewer->glPushName(index);
         }
         Scene_item& item = *m_entries[index];
         if(item.visible())
         {
             if(item.renderingMode() == Points  || item.renderingMode() == PointsPlusNormals)
             {
-                ::glDisable(GL_LIGHTING);
-                ::glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
-                ::glPointSize(2.f);
-                ::glLineWidth(1.0f);
-                CGALglcolor(item.color());
+                viewer->glDisable(GL_LIGHTING);
+                viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
+                viewer->glPointSize(2.f);
+                viewer->glLineWidth(1.0f);
 
                 if(viewer)
                     item.draw_points(viewer);
@@ -379,12 +392,49 @@ glDepthFunc(GL_LEQUAL);
         }
          item.contextual_changed();
         if(with_names) {
-            ::glPopName();
+            viewer->glPopName();
         }
     }
     glDepthFunc(GL_LESS);
+    // Splatting
+    if(!with_names && ms_splatting->isSupported())
+    {
 
+        ms_splatting->beginVisibilityPass();
+        for(int index = 0; index < m_entries.size(); ++index)
+        {
+            Scene_item& item = *m_entries[index];
+            if(item.visible() && item.renderingMode() == Splatting)
+            {
+
+                if(viewer)
+                {
+                    item.draw_splats(viewer);
+                }
+                else
+                    item.draw_splats();
+            }
+
+        }
+       ms_splatting->beginAttributePass();
+         for(int index = 0; index < m_entries.size(); ++index)
+        {  Scene_item& item = *m_entries[index];
+            if(item.visible() && item.renderingMode() == Splatting)
+            {
+                viewer->glColor4d(item.color().redF(), item.color().greenF(), item.color().blueF(), item.color().alphaF());
+                if(viewer)
+                    item.draw_splats(viewer);
+                else
+                    item.draw_splats();
+            }
+        }
+        ms_splatting->finalize();
+
+    }
 }
+
+// workaround for Qt-4.2 (see above)
+#undef lighter
 
 int 
 Scene::rowCount(const QModelIndex & parent) const
@@ -529,13 +579,11 @@ Scene::setData(const QModelIndex &index,
     {
     case NameColumn:
         item->setName(value.toString());
-        item->changed();
     Q_EMIT dataChanged(index, index);
         return true;
         break;
     case ColorColumn:
         item->setColor(value.value<QColor>());
-        item->changed();
     Q_EMIT dataChanged(index, index);
         return true;
         break;
@@ -543,12 +591,13 @@ Scene::setData(const QModelIndex &index,
     {
         RenderingMode rendering_mode = static_cast<RenderingMode>(value.toInt());
         // Find next supported rendering mode
-        while ( ! item->supportsRenderingMode(rendering_mode) )
+        while ( ! item->supportsRenderingMode(rendering_mode)
+      //          || (rendering_mode==Splatting && !Scene::splatting()->isSupported())
+                )
         {
             rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );
         }
         item->setRenderingMode(rendering_mode);
-        item->changed();
     Q_EMIT dataChanged(index, index);
         return true;
         break;
@@ -603,14 +652,12 @@ void Scene::itemChanged(Item_id i)
     if(i < 0 || i >= m_entries.size())
         return;
 
-    m_entries[i]->changed();
   Q_EMIT dataChanged(this->createIndex(i, 0),
                      this->createIndex(i, LastColumn));
 }
 
-void Scene::itemChanged(Scene_item* item)
+void Scene::itemChanged(Scene_item* /* item */)
 {
-    item->changed();
   Q_EMIT dataChanged(this->createIndex(0, 0),
                      this->createIndex(m_entries.size() - 1, LastColumn));
 }

@@ -514,7 +514,12 @@ if [ -z "\$CMAKE_GENERATOR" ]; then
   CMAKE_GENERATOR='${CMAKE_GENERATOR}';
 fi
 MAKE_CMD='${MAKE_CMD}';
-CGAL_REFERENCE_CACHE_DIR='${CGAL_REFERENCE_CACHE_DIR}';
+if [ -n "${IS_CYGWIN}" ]; then
+  CGAL_REFERENCE_CACHE_DIR=\$( cygpath -w '${CGAL_REFERENCE_CACHE_DIR}' );
+else
+  CGAL_REFERENCE_CACHE_DIR='${CGAL_REFERENCE_CACHE_DIR}';\
+fi
+
 export CMAKE_GENERATOR;
 export MAKE_CMD;
 export CGAL_BINARY_DIR;
@@ -663,7 +668,7 @@ echo 'COLLECTING RESULTS';
 ./collect_cgal_testresults_from_cmake;
 if [ -n "\$COLLECT_DEMOS_BINARIES" ]; then 
   echo 'COLLECTING DEMOS BINARIES';
-  tar czvf '${CGAL_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar.gz' *_Demo/*.exe *_Demo/*.dll
+  tar czvf '${CGAL_TEST_DIR}/demos_${CGAL_TESTER}_${PLATFORM}.tar.gz' *_Demo/*.exe *_Demo/*.dll *_Demo/*/*.dll
 fi
 echo 'COPYING RESULTS';
 cp 'results_${CGAL_TESTER}_${PLATFORM}.tar.gz' 'results_${CGAL_TESTER}_${PLATFORM}.txt' '${CGAL_TEST_DIR}';
@@ -888,6 +893,8 @@ else
   MAKE_CMD='make'
 fi
 
+if [ -z "$IS_CYGWIN" ]; then
+
 # Acquire lock
 lockfile -r 1 "$LOCK_FILE";
 if [ ${?} != 0 ]; then
@@ -909,6 +916,8 @@ fi
 chmod u+w "$LOCK_FILE"
 # Put the PID of current process in the lock file
 echo $$ > "$LOCK_FILE"
+
+fi
 
 # that line makes the script remove the lock file in case of unwanted exit
 trap "rm -f \"$LOCK_FILE\"" EXIT HUP INT TERM

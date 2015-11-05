@@ -26,10 +26,12 @@ public:
   QFont font() const;
   QString toolTip() const;
 
-  virtual void changed();
+  virtual void invalidate_buffers();
   virtual void selection_changed(bool);
   // Indicate if rendering mode is supported
-  virtual bool supportsRenderingMode(RenderingMode m) const { return m != Gouraud; } // CHECK THIS!
+  virtual bool supportsRenderingMode(RenderingMode m) const { return m != Gouraud && m!=Splatting; } // CHECK THIS!
+  // OpenGL drawing in a display list
+  void direct_draw() const;
 
   virtual void draw(Viewer_interface*) const;
   virtual void draw_edges() const {}
@@ -73,13 +75,16 @@ private:
   Nef_polyhedron* nef_poly;
 
 
-  std::vector<double> positions_lines;
-  std::vector<double> positions_facets;
-  std::vector<double> positions_points;
-  std::vector<double> normals;
-  std::vector<double> color_lines;
-  std::vector<double> color_facets;
-  std::vector<double> color_points;
+  mutable std::vector<double> positions_lines;
+  mutable std::vector<double> positions_facets;
+  mutable std::vector<double> positions_points;
+  mutable std::vector<double> normals;
+  mutable std::vector<double> color_lines;
+  mutable std::vector<double> color_facets;
+  mutable std::vector<double> color_points;
+  mutable std::size_t nb_points;
+  mutable std::size_t nb_lines;
+  mutable std::size_t nb_facets;
 
   mutable QOpenGLShaderProgram *program;
 

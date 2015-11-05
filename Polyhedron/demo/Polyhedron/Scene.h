@@ -14,6 +14,7 @@
 #include <QItemDelegate>
 #include <QPixmap>
 #include <QItemSelection>
+#include <QGLViewer/qglviewer.h>
 
 #include <iostream>
 #include <cmath>
@@ -21,6 +22,7 @@
 
 class QEvent;
 class QMouseEvent;
+namespace GlSplat { class SplatRenderer; }
 
 class Viewer_interface;
 
@@ -160,6 +162,7 @@ Q_SIGNALS:
 
 private Q_SLOTS:
   void setSelectionRay(double, double, double, double, double, double);
+  void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}
 
 private:
   void draw_aux(bool with_names, Viewer_interface*);
@@ -169,6 +172,11 @@ private:
   QList<int> selected_items_list;
   int item_A;
   int item_B;
+  static GlSplat::SplatRenderer* ms_splatting;
+  static int ms_splattingCounter;
+public:
+  static GlSplat::SplatRenderer* splatting();
+
 }; // end class Scene
 
 class SCENE_EXPORT SceneDelegate : public QItemDelegate

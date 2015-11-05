@@ -44,7 +44,7 @@ public:
   // Function for displaying meta-data of the item
   virtual QString toolTip() const;
 
-  virtual void changed();
+  virtual void invalidate_buffers();
 
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const;
@@ -52,6 +52,8 @@ public:
   virtual void draw_edges(Viewer_interface* viewer) const;
   virtual void draw_points(Viewer_interface*) const;
 
+  virtual void draw_splats(Viewer_interface*) const;
+  
   // Gets wrapped point set
   Point_set*       point_set();
   const Point_set* point_set() const;
@@ -90,17 +92,20 @@ private:
   QAction* actionSelectDuplicatedPoints;
 
 
-  std::vector<double> positions_lines;
-  std::vector<double> positions_points;
-  std::vector<double> positions_selected_points;
-  std::vector<double> normals;
+  mutable std::vector<double> positions_lines;
+  mutable std::vector<double> positions_points;
+  mutable std::vector<double> positions_selected_points;
+  mutable std::vector<double> normals;
+  mutable std::size_t nb_points;
+  mutable std::size_t nb_selected_points;
+  mutable std::size_t nb_lines;
 
   mutable QOpenGLShaderProgram *program;
 
   using Scene_item::initialize_buffers;
   void initialize_buffers(Viewer_interface *viewer) const;
 
-  void compute_normals_and_vertices(void);
+  void compute_normals_and_vertices() const;
 
 
 }; // end class Scene_points_with_normal_item

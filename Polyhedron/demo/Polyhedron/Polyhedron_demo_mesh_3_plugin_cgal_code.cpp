@@ -66,7 +66,7 @@ public:
         delete frame;
     }
 
-    void changed()
+    void invalidate_buffers()
     {
         compute_elements();
         are_buffers_filled = false;
@@ -75,7 +75,7 @@ public:
     void contextual_changed()
     {
         if(frame->isManipulated()||frame->isSpinning())
-            changed();
+            invalidate_buffers();
     }
     const C3t3& c3t3() const {
         return c3t3_;
@@ -150,7 +150,7 @@ public:
 
     // Indicate if rendering mode is supported
     bool supportsRenderingMode(RenderingMode m) const {
-        return (m != Gouraud && m!=PointsPlusNormals); // CHECK THIS!
+        return (m != Gouraud && m!=PointsPlusNormals && m!=Splatting); // CHECK THIS!
     }
 
     void draw(Viewer_interface* viewer) const {

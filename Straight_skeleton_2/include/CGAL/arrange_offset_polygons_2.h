@@ -98,12 +98,12 @@ void arrange_offset_polygons_2 ( InputPolygonPtrIterator           aBegin
   }  
 }
 
-template<class K>
-std::vector< boost::shared_ptr< Polygon_with_holes_2<K> > >
+template<class K, class C>
+std::vector< boost::shared_ptr< Polygon_with_holes_2<K,C> > >
 inline
-arrange_offset_polygons_2 ( std::vector< boost::shared_ptr< Polygon_2<K> > > const& aPolygons )
+arrange_offset_polygons_2 ( std::vector< boost::shared_ptr< Polygon_2<K,C> > > const& aPolygons )
 {
-  std::vector< boost::shared_ptr< Polygon_with_holes_2<K> > > rResult ;
+  std::vector< boost::shared_ptr< Polygon_with_holes_2<K,C> > > rResult ;
   
   arrange_offset_polygons_2(aPolygons.begin(), aPolygons.end(), std::back_inserter(rResult), K() ) ;
   

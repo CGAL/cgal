@@ -446,7 +446,7 @@ enclosing_constraint(T  vaa, T  vbb, T& va, T& vb) const
   va = *pos;
   pos = hcit->pos;
   ++pos;
-  assert(vbb == *pos);
+  CGAL_triangulation_assertion(vbb == *pos);
   while(!pos.input()){
     ++pos;
   }
@@ -483,8 +483,9 @@ std::size_t
 Polyline_constraint_hierarchy_2<T,Compare,Data>::
 number_of_enclosing_constraints(T va, T vb) const
 {
-  Context_list* hcl;
-  if (! get_contexts(va,vb,hcl)) CGAL_triangulation_assertion(false);
+  Context_list* hcl = NULL;
+  CGAL_triangulation_assertion_code( bool found = ) get_contexts(va,vb,hcl);
+  CGAL_triangulation_assertion(found);
   return hcl->size();
 }
 
