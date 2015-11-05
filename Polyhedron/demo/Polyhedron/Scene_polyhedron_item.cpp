@@ -803,22 +803,22 @@ void
 Scene_polyhedron_item::
 init()
 {
-    typedef Polyhedron::Facet_iterator Facet_iterator;
+  typedef Polyhedron::Facet_iterator Facet_iterator;
 
-    if ( !plugin_has_set_color_vector_m )
+  if ( !plugin_has_set_color_vector_m )
+  {
+    // Fill indices map and get max subdomain value
+    int max = 0;
+    for(Facet_iterator fit = poly->facets_begin(), end = poly->facets_end() ;
+        fit != end; ++fit)
     {
-        // Fill indices map and get max subdomain value
-        int max = 0;
-        for(Facet_iterator fit = poly->facets_begin(), end = poly->facets_end() ;
-            fit != end; ++fit)
-        {
-            max = (std::max)(max, fit->patch_id());
-        }
-
-        colors_.resize(0);
-        compute_color_map(this->color(), max + 1,
-                          std::back_inserter(colors_));
+      max = (std::max)(max, fit->patch_id());
     }
+
+    colors_.resize(0);
+    compute_color_map(this->color(), max + 1,
+                      std::back_inserter(colors_));
+  }
 
   volume=-std::numeric_limits<double>::infinity();
   area=-std::numeric_limits<double>::infinity();
