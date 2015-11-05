@@ -61,7 +61,7 @@ Planes are directly modified. Points are left unaltered, as well as
 their relationships to planes (no transfer of point from a primitive
 plane to another).
 
-The implementation follows \cgalCite{verdie2015lod}.
+The implementation follows \cgalCite{cgal:vla-lod-15}.
 
 \tparam Traits a model of `EfficientRANSACTraits`
 
@@ -71,21 +71,33 @@ The implementation follows \cgalCite{verdie2015lod}.
   {
   public:
 
+    /// \cond SKIP_IN_MANUAL
     typedef Plane_regularization<Traits> Self;
+    /// \endcond
 
+    /// \name Types 
+    /// @{
+    /// \cond SKIP_IN_MANUAL
     typedef typename Traits::FT FT;
     typedef typename Traits::Point_3 Point;
     typedef typename Traits::Vector_3 Vector;
-    typedef typename Traits::Plane_3 Plane;
+
+    /// \endcond
+    typedef typename Traits::Plane_3 Plane; ///< Raw plane type
 
     typedef typename Traits::Point_map Point_map;
+    ///< property map to access the location of an input point.
     typedef typename Traits::Normal_map Normal_map;
+    ///< property map to access the unoriented normal of an input point
     typedef typename Traits::Input_range Input_range;
-    typedef typename Input_range::iterator Input_iterator;
+    ///< Model of the concept `Range` with random access iterators, providing input points and normals
+    /// through the following two property maps.
 
-    typedef Shape_detection_3::Shape_base<Traits> Shape;
-    typedef Shape_detection_3::Plane<Traits> Plane_shape;
-  
+    typedef typename Input_range::iterator Input_iterator; ///< Iterator on input data
+
+    typedef Shape_detection_3::Shape_base<Traits> Shape; ///< Shape type.
+    typedef Shape_detection_3::Plane<Traits> Plane_shape; ///< Plane type.
+    /// @}
 
   private:
 
@@ -114,12 +126,32 @@ The implementation follows \cgalCite{verdie2015lod}.
 
   public:
 
+    /// \name Initialization 
+    /// @{
+    /*! 
+      Constructs an empty plane regularization engine.
+    */ 
     Plane_regularization (Traits t = Traits ())
       : m_traits (t)
     {
 
     }
 
+    /*! 
+
+      Constructs a plane regularization engine base on an input range
+      of points with its related shape detection engine.
+
+      \param input_range Range of input data.
+
+      \param shape_detection Shape detection engine used to detect
+      shapes from the input data. This engine may handle any types of
+      primitive shapes but only planes will be regularized.
+
+      \warning The `shape_detection` parameter must have already
+      detected shapes and must have been using `input_range` as input.
+
+    */ 
     Plane_regularization (Input_range& input_range,
                           const Shape_detection_3::Efficient_RANSAC<Traits>& shape_detection)
       : m_traits (shape_detection.traits())
@@ -140,22 +172,54 @@ The implementation follows \cgalCite{verdie2015lod}.
 
     }
 
+    /*! 
+      Releases all memory allocated by this instance.
+    */ 
     virtual ~Plane_regularization ()
     {
       clear ();
     }
+    /// @}
 
+    /// \name Memory Management
+    /// @{
+    /*!
+      Clear all internal structures.
+     */ 
     void clear ()
     {
       std::vector<boost::shared_ptr<Plane_shape> > ().swap (m_planes);
       std::vector<Point> ().swap (m_centroids);
       std::vector<FT> ().swap (m_areas);
     }
+    /// @}
 
+    /// \name Regularization 
+    /// @{
+    /*! 
 
-  
-    std::size_t run (FT tolerance_cosangle, FT tolerance_coplanarity,
-                     bool regularize_coplanarity = true,
+      Performs the plane regularization. Planes are directly modified.
+
+      \param tolerance_cosangle Tolerance of deviation between normal
+      vectors of planes so that they are considered parallel,
+      expressed as the cosinus of their angle.
+
+      \param tolerance_coplanarity Maximal distance between two
+      parallel planes such that they are considered coplanar. The
+      default value is 0, meaning that coplanarity is not taken into
+      account for regularization.
+
+      \param regularize_orthogonality Make almost orthogonal clusters
+      of plane exactly orthogonal.
+
+      \param z_symmetry Make almost Z-symmetrical clusters exactly
+      Z-symmetrical.
+
+      \return The number of clusters of parallel planes found.
+    */ 
+
+    std::size_t run (FT tolerance_cosangle = 0.1,
+                     FT tolerance_coplanarity = 0.0,
                      bool regularize_orthogonality = true,
                      bool z_symmetry = true)
     {
@@ -284,7 +348,11 @@ The implementation follows \cgalCite{verdie2015lod}.
       
       return clusters.size ();
     }
+    /// @}
 
+
+  private:
+    
     void compute_centroids_and_areas ()
     {
       for (std::size_t i = 0; i < m_planes.size (); ++ i)
