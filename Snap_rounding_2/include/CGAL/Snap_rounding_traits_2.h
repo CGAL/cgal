@@ -67,10 +67,25 @@ public:
       NT x_tmp = p.x() / pixel_size;
       NT y_tmp = p.y() / pixel_size;
 
-      double x_floor = std::floor(CGAL::to_double(x_tmp));
-      double y_floor = std::floor(CGAL::to_double(y_tmp));
-      x = NT(x_floor) * pixel_size + pixel_size / NT(2.0);
-      y = NT(y_floor) * pixel_size + pixel_size / NT(2.0);
+      NT x_floor = std::floor(CGAL::to_double(x_tmp));
+      NT y_floor = std::floor(CGAL::to_double(y_tmp));
+
+      // fix the usage of to_double and floor:
+      // there is no guarantee that the double approximation of *_tmp
+      // has the same integer part as the NT version. The while loops
+      // is a simple way to ensure that *_tmp are the true floor.
+      while(x_floor>x_tmp) x_floor-=NT(1);
+      while(y_floor>y_tmp) y_floor-=NT(1);
+      while(x_floor+1<=x_tmp) x_floor+=NT(1);
+      while(y_floor+1<=y_tmp) y_floor+=NT(1);
+
+      CGAL_assertion(x_floor<=x_tmp);
+      CGAL_assertion(y_floor<=y_tmp);
+      CGAL_assertion(x_floor+1>x_tmp);
+      CGAL_assertion(y_floor+1>y_tmp);
+
+      x = x_floor * pixel_size + pixel_size / NT(2.0);
+      y = y_floor * pixel_size + pixel_size / NT(2.0);
     }
   };
 
