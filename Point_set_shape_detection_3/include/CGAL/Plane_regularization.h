@@ -37,6 +37,35 @@
 
 namespace CGAL {
 
+  
+/*!
+\ingroup PkgPointSetShapeDetection3
+\brief A plane regularization algorithm applied as a post-processing
+to a shape detection algorithm.
+
+Given a set of detected planes with their respective inlier sets, this
+class enables to regularize the planes: planes almost parallel are
+made exactly parallel. In addition, some additional regularization can
+be performed:
+
+- Plane clusters that are almost orthogonal can be made exactly
+  orthogonal.
+
+- Planes that are parallel and almost coplanar can be made exactly
+  coplanar.
+
+- Planes that are almost symmetrical with a user-defined axis can be
+  made exactly symmetrical.
+
+Planes are directly modified. Points are left unaltered, as well as
+their relationships to planes (no transfer of point from a primitive
+plane to another).
+
+The implementation follows \cgalCite{verdie2015lod}.
+
+\tparam Traits a model of `EfficientRANSACTraits`
+
+*/
   template <typename Traits>
   class Plane_regularization
   {
@@ -125,7 +154,10 @@ namespace CGAL {
 
 
   
-    std::size_t run (FT tolerance_cosangle, FT tolerance_coplanarity)
+    std::size_t run (FT tolerance_cosangle, FT tolerance_coplanarity,
+                     bool regularize_coplanarity = true,
+                     bool regularize_orthogonality = true,
+                     bool z_symmetry = true)
     {
       compute_centroids_and_areas ();
       
@@ -576,20 +608,30 @@ namespace CGAL {
   
     Vector regularize_normal (const Vector& n, FT cos_vertical)
     {
-      std::cerr << "N = " << n << std::endl;
-      FT A = 1 - cos_vertical * cos_vertical;
-      FT B = 1 + (n.y() * n.y()) / (n.x() * n.x());
-      
-      FT vx = std::sqrt (A/B);
-    
-      if (n.x() < 0)
-        vx = -vx;
-    
-      FT vy = vx * (n.y() / n.x()); 
+      FT vz = cos_vertical;
+      FT A = 1 - cos_vertical*cos_vertical;
+		
+      if (n.x() != 0)
+        {
+          FT B = 1 + (n.y() * n.y()) / (n.x() * n.x());
+          FT vx = std::sqrt(A / B);
+          if (n.x() < 0)
+            vx = -vx;
+          FT vy = vx * (n.y() / n.x());
 
-      Vector res (vx, vy, cos_vertical);
-      std::cerr << "Res = " << res << std::endl;
-      return res / std::sqrt (res * res);
+          Vector res (vx, vy, vz);
+          return res / std::sqrt (res * res);;
+        }
+      else
+        {
+          FT vx = 0;
+          FT vy = sqrt(A);
+          if (n.y() < 0)
+            vy = -vy;
+          Vector res(vx, vy, vz);
+          return res / std::sqrt (res * res);;
+        }
+
     }
 
   
