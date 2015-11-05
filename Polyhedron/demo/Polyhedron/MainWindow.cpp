@@ -126,8 +126,6 @@ MainWindow::MainWindow(QWidget* parent)
 {
   ui = new Ui::MainWindow;
   ui->setupUi(this);
-  nb_of_polylines = 0;
-  nb_of_point_set = 0;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
   ui->menuBar->removeAction(ui->actionLoad_Script);
@@ -1481,6 +1479,7 @@ void MainWindow::on_actionAdd_polylines_triggered()
 
 void MainWindow::addPolylineButton_clicked()
 {
+    static int nb_of_polylines = 0;
   QString text = add_polydiagui->textEdit->toPlainText();
   std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
   polylines.resize(polylines.size()+1);
@@ -1558,6 +1557,7 @@ void MainWindow::on_actionAdd_point_set_triggered()
 
 void MainWindow::addPointSetButton_clicked()
 {
+    static int nb_of_point_set =0;
   QString text = add_pointsetdiagui->textEdit->toPlainText();
   Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
   QStringList list = text.split(QRegExp("\\W+"), QString::SkipEmptyParts);

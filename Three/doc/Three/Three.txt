@@ -41,11 +41,11 @@ And in the main CMakeLists.txt, you must add the following line:
 
   [init]: @ref CGAL::Three::Polyhedron_demo_plugin_helper#init(QMainWindow *, Scene_interface *)
   The class must contain the following lines :\n
-    
+
     Q_OBJECT\n
     Q_INTERFACES(Polyhedron_demo_plugin_interface)\n
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")\n
-    
+
 In the function [init], get a reference to the Scene  and to the MainWindow. Then, create and link the actions of the plugin.\n
 Create a list of QActions containing the actions of the plugin.\n
 Add the following line:

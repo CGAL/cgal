@@ -354,8 +354,6 @@ private:
   Ui::Add_point_set_dialog *add_pointsetdiagui;
   QDialog *add_polydiag;
   QDialog *add_pointsetdiag;
-  int nb_of_polylines;
-  int nb_of_point_set;
   QVector<CGAL::Three::Polyhedron_demo_io_plugin_interface*> io_plugins;
   QMap<QString,QString> default_plugin_selection;
   // typedef to make Q_FOREACH work
