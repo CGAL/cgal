@@ -80,7 +80,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
 
-  qt5_wrap_ui( MainWindowUI_files MainWindow.ui Add_polylines_dialog.ui Add_point_set_dialog.ui)
+  qt5_wrap_ui( MainWindowUI_files MainWindow.ui)
   qt5_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt5_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
@@ -243,9 +243,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     endif()
   endif()
   target_link_libraries( Polyhedron_3 demo_framework )
-  target_link_libraries( Polyhedron_3 scene_polylines_item)
-  target_link_libraries( Polyhedron_3 scene_points_with_normal_item)
-
 
   # Link with CGAL
   target_link_libraries( Polyhedron_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
@@ -293,7 +290,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(nef_io_plugin Polyhedron_demo_io_nef_plugin)
   target_link_libraries(nef_io_plugin  scene_nef_polyhedron_item)
 
-  polyhedron_demo_plugin(polylines_io_plugin Polyhedron_demo_polylines_io_plugin)
+  qt5_wrap_ui( polylines_ioUI_FILES Add_polylines_dialog.ui )
+  polyhedron_demo_plugin(polylines_io_plugin Polyhedron_demo_polylines_io_plugin ${polylines_ioUI_FILES})
   target_link_libraries(polylines_io_plugin scene_polylines_item)
 
   polyhedron_demo_plugin(io_implicit_function_plugin Io_implicit_function_plugin ${funcUI_FILES})
@@ -305,7 +303,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(stl_plugin Polyhedron_demo_stl_plugin)
   target_link_libraries(stl_plugin scene_polyhedron_item scene_polygon_soup_item)
 
-  polyhedron_demo_plugin(xyz_plugin Polyhedron_demo_xyz_plugin)
+  qt5_wrap_ui( xyzUI_filesAdd_point_set_dialog.ui)
+  polyhedron_demo_plugin(xyz_plugin Polyhedron_demo_xyz_plugin ${xyzUI_FILES})
   target_link_libraries(xyz_plugin scene_points_with_normal_item)
   
   polyhedron_demo_plugin(selection_io_plugin Polyhedron_demo_selection_io_plugin)

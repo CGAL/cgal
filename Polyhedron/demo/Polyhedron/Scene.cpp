@@ -52,6 +52,7 @@ Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
     Bbox bbox_before = bbox();
+    qDebug()<<bbox_before.xmin<<bbox_before.ymin<<bbox_before.zmin<<bbox_before.xmax<<bbox_before.ymax<<bbox_before.zmax;
     m_entries.push_back(item);
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
@@ -833,7 +834,7 @@ void Scene::setItemB(int i)
 Scene::Bbox Scene::bbox() const
 {
     if(m_entries.empty())
-        return Bbox();
+        return Bbox(0,0,0,0,0,0);
 
     bool bbox_initialized = false;
     Bbox bbox;

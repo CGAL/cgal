@@ -95,6 +95,7 @@ void
 Io_implicit_function_plugin::
 init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface)
 {
+
   this->scene = scene_interface;
   this->mw = mainWindow;
   

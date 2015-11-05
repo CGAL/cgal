@@ -2,8 +2,6 @@
 #include "MainWindow.h"
 #include "Scene.h"
 #include "Scene_item.h"
-#include "Scene_polylines_item.h"
-#include "Scene_points_with_normal_item.h"
 #include <CGAL/Qt/debug.h>
 
 #include <QtDebug>
@@ -45,8 +43,6 @@
 
 #include "ui_MainWindow.h"
 #include "ui_Preferences.h"
-#include "ui_Add_polylines_dialog.h"
-#include "ui_Add_point_set_dialog.h"
 
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
@@ -1465,161 +1461,6 @@ void MainWindow::on_actionPreferences_triggered()
   
   for (int k=0,k_end=iStandardModel->rowCount();k<k_end;++k) delete iStandardModel->item(k);
   delete iStandardModel;
-}
-
-void MainWindow::on_actionAdd_polylines_triggered()
-{
-  add_polydiag = new QDialog(this);
-  add_polydiagui = new Ui::Add_polylines_dialog();
-  add_polydiagui->setupUi(add_polydiag);
-  connect(add_polydiagui->add_polylineButton, SIGNAL(clicked()), this, SLOT(addPolylineButton_clicked()));
-  connect(add_polydiagui->close_polylineButton, SIGNAL(clicked()), this, SLOT(closePolylinesButton_clicked()));
-  add_polydiag->exec();
-}
-
-void MainWindow::addPolylineButton_clicked()
-{
-    static int nb_of_polylines = 0;
-  QString text = add_polydiagui->textEdit->toPlainText();
-  std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
-  polylines.resize(polylines.size()+1);
-  std::vector<Scene_polylines_item::Point_3>& polyline = *(polylines.rbegin());
-  QStringList polylines_metadata;
-  QStringList list = text.split(QRegExp("\\W+"), QString::SkipEmptyParts);
-  int counter = 0;
-  double coord[3];
-  bool ok = true;
-  if (list.isEmpty()) return;
-  if (list.size()%3!=0){
-    QMessageBox *msgBox = new QMessageBox;
-    msgBox->setWindowTitle("Error");
-    msgBox->setText("ERROR : Input should consists of triplets.");
-    msgBox->exec();
-    return;
-  }
-  Q_FOREACH(QString s, list)
-  {
-      if(!s.isEmpty())
-      {
-          double res = s.toDouble(&ok);
-          if(!ok)
-          {
-              QMessageBox *msgBox = new QMessageBox;
-              msgBox->setWindowTitle("Error");
-              msgBox->setText("ERROR : Coordinates are invalid.");
-              msgBox->exec();
-              break;
-          }
-          else
-          {
-            coord[counter] = res;
-            counter++;
-          }
-      }
-      if(counter == 3)
-      {
-          Scene_polylines_item::Point_3 p(coord[0], coord[1], coord[2]);
-          polyline.push_back(p);
-          counter =0;
-      }
-  }
-    if(ok)
-    {
-        add_polydiagui->textEdit->clear();
-        Scene_polylines_item* item = new Scene_polylines_item;
-        item->polylines = polylines;
-        nb_of_polylines++;
-        QString name = QString("Polyline #%1").arg(QString::number(nb_of_polylines));
-        item->setName(name);
-        item->setColor(Qt::black);
-        item->setProperty("polylines metadata", polylines_metadata);
-        item->invalidate_buffers();
-        scene->addItem(item);
-        updateViewerBBox();
-        viewer->camera()->interpolateToFitScene();
-    }
-}
-
-void MainWindow::closePolylinesButton_clicked()
-{
-    add_polydiag->close();
-}
-
-void MainWindow::on_actionAdd_point_set_triggered()
-{
-  add_pointsetdiag = new QDialog(this);
-  add_pointsetdiagui = new Ui::Add_point_set_dialog();
-  add_pointsetdiagui->setupUi(add_pointsetdiag);
-  connect(add_pointsetdiagui->add_point_setButton, SIGNAL(clicked()), this, SLOT(addPointSetButton_clicked()));
-  connect(add_pointsetdiagui->close_point_setButton, SIGNAL(clicked()), this, SLOT(closePointSetButton_clicked()));
-  add_pointsetdiag->exec();
-}
-
-void MainWindow::addPointSetButton_clicked()
-{
-    static int nb_of_point_set =0;
-  QString text = add_pointsetdiagui->textEdit->toPlainText();
-  Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
-  QStringList list = text.split(QRegExp("\\W+"), QString::SkipEmptyParts);
-  int counter = 0;
-  double coord[3];
-  bool ok = true;
-  if (list.isEmpty()) return;
-  if (list.size()%3!=0){
-    QMessageBox *msgBox = new QMessageBox;
-    msgBox->setWindowTitle("Error");
-    msgBox->setText("ERROR : Input should consists of triplets.");
-    msgBox->exec();
-    return;
-  }
-  Q_FOREACH(QString s, list)
-  {
-      if(!s.isEmpty())
-      {
-          double res = s.toDouble(&ok);
-          if(!ok)
-          {
-              QMessageBox *msgBox = new QMessageBox;
-              msgBox->setWindowTitle("Error");
-              msgBox->setText("ERROR : Coordinates are invalid.");
-              msgBox->exec();
-              break;
-          }
-          else
-          {
-            coord[counter] = res;
-            counter++;
-          }
-      }
-      if(counter == 3)
-      {
-          const Kernel::Point_3 p(coord[0], coord[1], coord[2]);
-          Kernel::Vector_3 n(0,0,0);
-          UI_point point(p,n);
-          item->point_set()->push_back(point);
-
-
-          counter =0;
-      }
-  }
-    if(ok)
-    {
-        add_pointsetdiagui->textEdit->clear();
-        item->point_set()->unselect_all();
-        nb_of_point_set++;
-        QString name = QString("Point_set #%1").arg(QString::number(nb_of_point_set));
-        item->setName(name);
-        item->setColor(Qt::black);
-        item->invalidate_buffers();
-        scene->addItem(item);
-        updateViewerBBox();
-        viewer->camera()->interpolateToFitScene();
-    }
-}
-
-void MainWindow::closePointSetButton_clicked()
-{
-    add_pointsetdiag->close();
 }
 
 void MainWindow::on_actionSetBackgroundColor_triggered()
