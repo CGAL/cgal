@@ -48,9 +48,9 @@ p, li { white-space: pre-wrap; }
         <enum>QLayout::SetMinimumSize</enum>
        </property>
        <item>
-        <widget class="QPushButton" name="okButton">
+        <widget class="QPushButton" name="add_point_setButton">
          <property name="text">
-          <string>Ok</string>
+          <string>Add point set</string>
          </property>
         </widget>
        </item>
@@ -68,7 +68,7 @@ p, li { white-space: pre-wrap; }
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="cancelButton">
+        <widget class="QPushButton" name="close_point_setButton">
          <property name="text">
           <string>Close</string>
          </property>

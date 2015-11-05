@@ -1473,8 +1473,8 @@ void MainWindow::on_actionAdd_polylines_triggered()
   add_polydiag = new QDialog(this);
   add_polydiagui = new Ui::Add_polylines_dialog();
   add_polydiagui->setupUi(add_polydiag);
-  connect(add_polydiagui->addButton, SIGNAL(clicked()), this, SLOT(on_addButton_clicked()));
-  connect(add_polydiagui->closeButton, SIGNAL(clicked()), this, SLOT(when_closeButton_clicked()));
+  connect(add_polydiagui->add_polylineButton, SIGNAL(clicked()), this, SLOT(on_addButton_clicked()));
+  connect(add_polydiagui->close_polylineButton, SIGNAL(clicked()), this, SLOT(on_close_polylinesButton_clicked()));
   add_polydiag->exec();
 }
 
@@ -1535,10 +1535,12 @@ void MainWindow::on_addButton_clicked()
         item->setProperty("polylines metadata", polylines_metadata);
         item->invalidate_buffers();
         scene->addItem(item);
+        updateViewerBBox();
+        viewer->camera()->interpolateToFitScene();
     }
 }
 
-void MainWindow::when_closeButton_clicked()
+void MainWindow::on_close_polylinesButton_clicked()
 {
     add_polydiag->close();
 }
@@ -1548,12 +1550,12 @@ void MainWindow::on_actionAdd_point_set_triggered()
   add_pointsetdiag = new QDialog(this);
   add_pointsetdiagui = new Ui::Add_point_set_dialog();
   add_pointsetdiagui->setupUi(add_pointsetdiag);
-  connect(add_pointsetdiagui->okButton, SIGNAL(clicked()), this, SLOT(on_okButton_clicked()));
-  connect(add_pointsetdiagui->cancelButton, SIGNAL(clicked()), this, SLOT(on_cancelButton_clicked()));
+  connect(add_pointsetdiagui->add_point_setButton, SIGNAL(clicked()), this, SLOT(on_add_point_setButton_clicked()));
+  connect(add_pointsetdiagui->close_point_setButton, SIGNAL(clicked()), this, SLOT(on_close_point_setButton_clicked()));
   add_pointsetdiag->exec();
 }
 
-void MainWindow::on_okButton_clicked()
+void MainWindow::on_add_point_setButton_clicked()
 {
   QString text = add_pointsetdiagui->textEdit->toPlainText();
   Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
@@ -1609,10 +1611,12 @@ void MainWindow::on_okButton_clicked()
         item->setColor(Qt::black);
         item->invalidate_buffers();
         scene->addItem(item);
+        updateViewerBBox();
+        viewer->camera()->interpolateToFitScene();
     }
 }
 
-void MainWindow::on_cancelButton_clicked()
+void MainWindow::on_close_point_setButton_clicked()
 {
     add_pointsetdiag->close();
 }

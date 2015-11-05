@@ -275,11 +275,11 @@ protected Q_SLOTS:
   //!Adds a polyline
   void on_addButton_clicked();
   //!Adds a point set
-  void on_okButton_clicked();
+  void on_add_point_setButton_clicked();
   //!Closes the dialog
-  void when_closeButton_clicked();
+  void on_close_polylinesButton_clicked();
   //!Closes the dialog
-  void on_cancelButton_clicked();
+  void on_close_point_setButton_clicked();
 
   // save as...
   //!Opens a dialog to save selected item if able.

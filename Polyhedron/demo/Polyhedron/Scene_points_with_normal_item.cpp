@@ -172,7 +172,6 @@ void Scene_points_with_normal_item::compute_normals_and_vertices() const
       for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->first_selected(); it++)
 	{
 	  const UI_point& p = *it;
-      std::cout<<p<<std::endl;
 	  positions_points.push_back(p.x());
 	  positions_points.push_back(p.y());
 	  positions_points.push_back(p.z());

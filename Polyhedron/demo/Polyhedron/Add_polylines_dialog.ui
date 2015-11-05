@@ -54,7 +54,7 @@ p, li { white-space: pre-wrap; }
         <enum>QLayout::SetMinimumSize</enum>
        </property>
        <item>
-        <widget class="QPushButton" name="addButton">
+        <widget class="QPushButton" name="add_polylineButton">
          <property name="text">
           <string>Create Polyline Item</string>
          </property>
@@ -74,7 +74,7 @@ p, li { white-space: pre-wrap; }
         </spacer>
        </item>
        <item>
-        <widget class="QPushButton" name="closeButton">
+        <widget class="QPushButton" name="close_polylineButton">
          <property name="text">
           <string>Close</string>
          </property>
