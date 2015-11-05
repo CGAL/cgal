@@ -42,8 +42,8 @@
 #include <vector>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Local_kernel;
-typedef typename Local_kernel::Point_3  Local_point;
-typedef typename Local_kernel::Vector_3 Local_vector;
+typedef Local_kernel::Point_3  Local_point;
+typedef Local_kernel::Vector_3 Local_vector;
 
 template<class LCC, int dim=LCC::ambient_dimension>
 struct Geom_utils;
