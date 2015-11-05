@@ -733,6 +733,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
       is_Triangle(true),
       poly(new Polyhedron),
       show_only_feature_edges_m(false),
+      show_feature_edges_m(false),
       facet_picking_m(false),
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
@@ -751,6 +752,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
       is_Triangle(true),
       poly(p),
       show_only_feature_edges_m(false),
+      show_feature_edges_m(false),
       facet_picking_m(false),
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
@@ -769,6 +771,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
       is_Triangle(true),
       poly(new Polyhedron(p)),
       show_only_feature_edges_m(false),
+      show_feature_edges_m(false),
       facet_picking_m(false),
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
@@ -918,12 +921,20 @@ QMenu* Scene_polyhedron_item::contextMenu()
         connect(actionShowOnlyFeatureEdges, SIGNAL(toggled(bool)),
                 this, SLOT(show_only_feature_edges(bool)));
 
-        QAction* actionPickFacets =
-                menu->addAction(tr("Facets picking"));
-        actionPickFacets->setCheckable(true);
-        actionPickFacets->setObjectName("actionPickFacets");
-        connect(actionPickFacets, SIGNAL(toggled(bool)),
-                this, SLOT(enable_facets_picking(bool)));
+    QAction* actionShowFeatureEdges =
+      menu->addAction(tr("Show feature edges"));
+    actionShowFeatureEdges->setCheckable(true);
+    actionShowFeatureEdges->setChecked(show_feature_edges_m);
+    actionShowFeatureEdges->setObjectName("actionShowFeatureEdges");
+    connect(actionShowFeatureEdges, SIGNAL(toggled(bool)),
+      this, SLOT(show_feature_edges(bool)));
+
+    QAction* actionPickFacets = 
+      menu->addAction(tr("Facets picking"));
+    actionPickFacets->setCheckable(true);
+    actionPickFacets->setObjectName("actionPickFacets");
+    connect(actionPickFacets, SIGNAL(toggled(bool)),
+            this, SLOT(enable_facets_picking(bool)));
 
         QAction* actionEraseNextFacet =
                 menu->addAction(tr("Erase next picked facet"));
@@ -946,6 +957,12 @@ void Scene_polyhedron_item::show_only_feature_edges(bool b)
     show_only_feature_edges_m = b;
     invalidate_buffers();
     Q_EMIT itemChanged();
+}
+
+void Scene_polyhedron_item::show_feature_edges(bool b)
+{
+  show_feature_edges_m = b;
+  Q_EMIT itemChanged();
 }
 
 void Scene_polyhedron_item::enable_facets_picking(bool b)
@@ -1005,19 +1022,51 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
-    if(!are_buffers_filled)
+void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
+{
+    typedef Polyhedron::Edge_iterator Edge_iterator;
+    typedef Polyhedron::Point         Point;
+
+    if (!are_buffers_filled)
     {
         is_Triangulated();
         compute_normals_and_vertices();
         initialize_buffers(viewer);
     }
 
-    if(!is_selected)
-    {
-        vaos[1]->bind();
+    ::glBegin(GL_LINES);
+    Edge_iterator he;
+    if (!show_only_feature_edges_m) {
+      for (he = poly->edges_begin();
+        he != poly->edges_end();
+        he++)
+      {
+        if (he->is_feature_edge()) continue;
+        const Point& a = he->vertex()->point();
+        const Point& b = he->opposite()->vertex()->point();
+        ::glVertex3d(a.x(), a.y(), a.z());
+        ::glVertex3d(b.x(), b.y(), b.z());
+      }
     }
-    else
+  if (show_feature_edges_m)
+    ::glColor3d(1.0, 0.0, 0.0);
+  for(he = poly->edges_begin();
+    he != poly->edges_end();
+    he++)
+  {
+    if(!he->is_feature_edge()) continue;
+    const Point& a = he->vertex()->point();
+    const Point& b = he->opposite()->vertex()->point();
+    ::glVertex3d(a.x(),a.y(),a.z());
+    ::glVertex3d(b.x(),b.y(),b.z());
+  }
+  ::glEnd();
+
+  if (!is_selected)
+  {
+    vaos[1]->bind();
+  }
+  else
     {
         vaos[3]->bind();
     }

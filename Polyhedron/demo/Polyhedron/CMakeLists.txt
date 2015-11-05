@@ -87,6 +87,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_wrap_ui( Mean_curvature_flow_skeleton_pluginUI_FILES  Mean_curvature_flow_skeleton_plugin.ui)
   qt5_wrap_ui( meshingUI_FILES  Meshing_dialog.ui )
   qt5_wrap_ui( cameraUI_FILES   Camera_positions_list.ui )
+  qt5_wrap_ui( isotropicRemeshingUI_FILES Polyhedron_demo_isotropic_remeshing_dialog.ui)
   qt5_wrap_ui( PreferencesUI_FILES   Preferences.ui )
   qt5_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
   qt5_wrap_ui( point_set_selectionUI_FILES Point_set_selection_widget.ui)
@@ -344,6 +345,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(advancing_front_plugin Polyhedron_demo_advancing_front_plugin ${advancing_frontUI_FILES})
   target_link_libraries(advancing_front_plugin scene_polygon_soup_item scene_points_with_normal_item)
 
+  qt5_wrap_ui( statisticsUI_FILES Polyhedron_demo_statistics_on_polyhedron_plugin.ui)
+  polyhedron_demo_plugin(statistics_plugin Polyhedron_demo_statistics_plugin ${statisticsUI_FILES})
+  target_link_libraries(statistics_plugin scene_polyhedron_item scene_polygon_soup_item)
+
   if(EIGEN3_FOUND)
     qt5_wrap_ui( scale_spaceUI_FILES Polyhedron_demo_scale_space_reconstruction_plugin.ui)
     polyhedron_demo_plugin(scale_space_reconstruction_plugin Polyhedron_demo_scale_space_reconstruction_plugin ${scale_spaceUI_FILES})
@@ -427,8 +432,11 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(corefinement_plugin Polyhedron_demo_corefinement_plugin)
   target_link_libraries(corefinement_plugin  scene_polyhedron_item scene_combinatorial_map_item scene_polylines_item)
 
-  polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
+  polyhedron_demo_plugin(repair_polyhedron_plugin Polyhedron_demo_repair_polyhedron_plugin)
+  target_link_libraries(repair_polyhedron_plugin scene_polyhedron_item)
 
+  polyhedron_demo_plugin(trivial_plugin Polyhedron_demo_trivial_plugin)
+  
   # Edit polyhedron scene item and plugin
   if ( EIGEN3_FOUND AND "${EIGEN3_VERSION}" VERSION_GREATER "3.1.90" )
     qt5_wrap_ui( editionUI_FILES Deform_mesh.ui )
@@ -498,6 +506,14 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   
   polyhedron_demo_plugin(shortest_path_plugin Polyhedron_demo_shortest_path_plugin ${shortestPathUI_FILES})
   target_link_libraries(shortest_path_plugin scene_polyhedron_item scene_polylines_item scene_polyhedron_selection_item scene_polyhedron_shortest_path_item scene_basic_objects)
+  
+  polyhedron_demo_plugin(detect_sharp_edges_plugin Polyhedron_demo_detect_sharp_edges_plugin)
+  target_link_libraries(detect_sharp_edges_plugin scene_polyhedron_item)
+  
+  
+  polyhedron_demo_plugin(isotropic_remeshing_plugin Polyhedron_demo_isotropic_remeshing_plugin  ${isotropicRemeshingUI_FILES})
+  target_link_libraries(isotropic_remeshing_plugin  scene_polyhedron_item scene_polyhedron_selection_item)
+  
 
   qt5_wrap_ui( exampleUI_FILES Polyhedron_demo_example_plugin.ui dock_example.ui)
   qt5_wrap_ui( example_dockUI_FILES dock_example.ui)
