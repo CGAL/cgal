@@ -437,7 +437,8 @@ connected_component(typename boost::graph_traits<PolygonMesh>::face_descriptor s
     internal::No_constraint<PolygonMesh>//default
   > ::type                                               EdgeConstraintMap;
   EdgeConstraintMap ecmap
-    = choose_param(get_param(np, edge_is_constrained), EdgeConstraintMap());
+    = choose_param(get_param(np, edge_is_constrained),
+                   internal::No_constraint<PolygonMesh>());
 
   typedef typename boost::graph_traits<PolygonMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;

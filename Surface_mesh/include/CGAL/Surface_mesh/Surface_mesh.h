@@ -2474,7 +2474,7 @@ private: //------------------------------------------------------- private data
     reindex.resize(sm.num_vertices());
     int n = 0;
     BOOST_FOREACH(Vertex_index v, sm.vertices()){
-      os << sm.point(v) << std::endl;
+      os << sm.point(v) << '\n';
       reindex[v]=n++;
     }
 
@@ -2483,7 +2483,7 @@ private: //------------------------------------------------------- private data
       BOOST_FOREACH(Vertex_index v, CGAL::vertices_around_face(sm.halfedge(f),sm)){
         os << " " << reindex[v];
       }
-      os << "\n";
+      os << '\n';
     }
     return os;
   }
