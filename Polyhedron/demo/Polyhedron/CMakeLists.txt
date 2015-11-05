@@ -303,7 +303,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(stl_plugin Polyhedron_demo_stl_plugin)
   target_link_libraries(stl_plugin scene_polyhedron_item scene_polygon_soup_item)
 
-  qt5_wrap_ui( xyzUI_filesAdd_point_set_dialog.ui)
+  qt5_wrap_ui( xyzUI_FILES Add_point_set_dialog.ui)
   polyhedron_demo_plugin(xyz_plugin Polyhedron_demo_xyz_plugin ${xyzUI_FILES})
   target_link_libraries(xyz_plugin scene_points_with_normal_item)
   
