@@ -244,7 +244,8 @@ MainWindow::MainWindow(QWidget* parent)
   this->addAboutCGAL();
   this->addAboutDemo(":/cgal/Polyhedron_3/about.html");
 
-  // Connect the button "addButton" with actionLoad  ui->addButton->setDefaultAction(ui->actionLoad);
+  // Connect the button "addButton" with actionLoad
+  ui->addButton->setDefaultAction(ui->actionLoad);
   // Same with "removeButton" and "duplicateButton"
   ui->removeButton->setDefaultAction(ui->actionErase);
   ui->duplicateButton->setDefaultAction(ui->actionDuplicate);
@@ -1473,12 +1474,12 @@ void MainWindow::on_actionAdd_polylines_triggered()
   add_polydiag = new QDialog(this);
   add_polydiagui = new Ui::Add_polylines_dialog();
   add_polydiagui->setupUi(add_polydiag);
-  connect(add_polydiagui->add_polylineButton, SIGNAL(clicked()), this, SLOT(on_addButton_clicked()));
-  connect(add_polydiagui->close_polylineButton, SIGNAL(clicked()), this, SLOT(on_close_polylinesButton_clicked()));
+  connect(add_polydiagui->add_polylineButton, SIGNAL(clicked()), this, SLOT(addPolylineButton_clicked()));
+  connect(add_polydiagui->close_polylineButton, SIGNAL(clicked()), this, SLOT(closePolylinesButton_clicked()));
   add_polydiag->exec();
 }
 
-void MainWindow::on_addButton_clicked()
+void MainWindow::addPolylineButton_clicked()
 {
   QString text = add_polydiagui->textEdit->toPlainText();
   std::list<std::vector<Scene_polylines_item::Point_3> > polylines;
@@ -1540,7 +1541,7 @@ void MainWindow::on_addButton_clicked()
     }
 }
 
-void MainWindow::on_close_polylinesButton_clicked()
+void MainWindow::closePolylinesButton_clicked()
 {
     add_polydiag->close();
 }
@@ -1550,12 +1551,12 @@ void MainWindow::on_actionAdd_point_set_triggered()
   add_pointsetdiag = new QDialog(this);
   add_pointsetdiagui = new Ui::Add_point_set_dialog();
   add_pointsetdiagui->setupUi(add_pointsetdiag);
-  connect(add_pointsetdiagui->add_point_setButton, SIGNAL(clicked()), this, SLOT(on_add_point_setButton_clicked()));
-  connect(add_pointsetdiagui->close_point_setButton, SIGNAL(clicked()), this, SLOT(on_close_point_setButton_clicked()));
+  connect(add_pointsetdiagui->add_point_setButton, SIGNAL(clicked()), this, SLOT(addPointSetButton_clicked()));
+  connect(add_pointsetdiagui->close_point_setButton, SIGNAL(clicked()), this, SLOT(closePointSetButton_clicked()));
   add_pointsetdiag->exec();
 }
 
-void MainWindow::on_add_point_setButton_clicked()
+void MainWindow::addPointSetButton_clicked()
 {
   QString text = add_pointsetdiagui->textEdit->toPlainText();
   Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
@@ -1616,7 +1617,7 @@ void MainWindow::on_add_point_setButton_clicked()
     }
 }
 
-void MainWindow::on_close_point_setButton_clicked()
+void MainWindow::closePointSetButton_clicked()
 {
     add_pointsetdiag->close();
 }
