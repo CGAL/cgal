@@ -37,9 +37,9 @@ void create_flat_sphere(double R,
     x[1] = sin(P) * cos(T) ;
     y[1] = sin(P) * sin(T) ;
     z[1] = cos(P);
-    positions_spheres.push_back(R * x[1]);
-    positions_spheres.push_back(R * y[1]);
-    positions_spheres.push_back(R * z[1]);
+    positions_spheres.push_back((FLOAT)R * x[1]);
+    positions_spheres.push_back((FLOAT)R * y[1]);
+    positions_spheres.push_back((FLOAT)R * z[1]);
 
     normals_spheres.push_back(x[1]);
     normals_spheres.push_back(y[1]);
@@ -51,9 +51,9 @@ void create_flat_sphere(double R,
     x[2] = sin(P) * cos(T) ;
     y[2] = sin(P) * sin(T) ;
     z[2] = cos(P);
-    positions_spheres.push_back(R * x[2]);
-    positions_spheres.push_back(R * y[2]);
-    positions_spheres.push_back(R * z[2]);
+    positions_spheres.push_back((FLOAT)R * x[2]);
+    positions_spheres.push_back((FLOAT)R * y[2]);
+    positions_spheres.push_back((FLOAT)R * z[2]);
 
     normals_spheres.push_back(x[2]);
     normals_spheres.push_back(y[2]);
@@ -71,9 +71,9 @@ void create_flat_sphere(double R,
       y[0] = sin(P) * sin(T) ;
       z[0] = cos(P);
 
-      positions_spheres.push_back(R * x[0]);
-      positions_spheres.push_back(R * y[0]);
-      positions_spheres.push_back(R * z[0]);
+      positions_spheres.push_back((FLOAT)R * x[0]);
+      positions_spheres.push_back((FLOAT)R * y[0]);
+      positions_spheres.push_back((FLOAT)R * z[0]);
 
       normals_spheres.push_back(x[0]);
       normals_spheres.push_back(y[0]);
@@ -85,9 +85,9 @@ void create_flat_sphere(double R,
       x[1] = sin(P) * cos(T) ;
       y[1] = sin(P) * sin(T) ;
       z[1] = cos(P);
-      positions_spheres.push_back(R * x[1]);
-      positions_spheres.push_back(R * y[1]);
-      positions_spheres.push_back(R * z[1]);
+      positions_spheres.push_back((FLOAT)R * x[1]);
+      positions_spheres.push_back((FLOAT)R * y[1]);
+      positions_spheres.push_back((FLOAT)R * z[1]);
 
       normals_spheres.push_back(x[1]);
       normals_spheres.push_back(y[1]);
@@ -99,9 +99,9 @@ void create_flat_sphere(double R,
       x[2] = sin(P) * cos(T) ;
       y[2] = sin(P) * sin(T) ;
       z[2] = cos(P);
-      positions_spheres.push_back(R * x[2]);
-      positions_spheres.push_back(R * y[2]);
-      positions_spheres.push_back(R * z[2]);
+      positions_spheres.push_back((FLOAT)R * x[2]);
+      positions_spheres.push_back((FLOAT)R * y[2]);
+      positions_spheres.push_back((FLOAT)R * z[2]);
 
 
       normals_spheres.push_back(x[2]);
@@ -113,26 +113,26 @@ void create_flat_sphere(double R,
       x[3] = sin(P) * cos(T) ;
       y[3] = sin(P) * sin(T) ;
       z[3] = cos(P);
-      positions_spheres.push_back(R * x[3]);
-      positions_spheres.push_back(R * y[3]);
-      positions_spheres.push_back(R * z[3]);
+      positions_spheres.push_back((FLOAT)R * x[3]);
+      positions_spheres.push_back((FLOAT)R * y[3]);
+      positions_spheres.push_back((FLOAT)R * z[3]);
 
 
       normals_spheres.push_back(x[3]);
       normals_spheres.push_back(y[3]);
       normals_spheres.push_back(z[3]);
 
-      positions_spheres.push_back(R * x[1]);
-      positions_spheres.push_back(R * y[1]);
-      positions_spheres.push_back(R * z[1]);
+      positions_spheres.push_back((FLOAT)R * x[1]);
+      positions_spheres.push_back((FLOAT)R * y[1]);
+      positions_spheres.push_back((FLOAT)R * z[1]);
 
       normals_spheres.push_back(x[1]);
       normals_spheres.push_back(y[1]);
       normals_spheres.push_back(z[1]);
 
-      positions_spheres.push_back(R * x[2]);
-      positions_spheres.push_back(R * y[2]);
-      positions_spheres.push_back(R * z[2]);
+      positions_spheres.push_back((FLOAT)R * x[2]);
+      positions_spheres.push_back((FLOAT)R * y[2]);
+      positions_spheres.push_back((FLOAT)R * z[2]);
 
       normals_spheres.push_back(x[2]);
       normals_spheres.push_back(y[2]);
@@ -156,9 +156,9 @@ void create_flat_sphere(double R,
     x[1] = sin(P) * cos(T) ;
     y[1] = sin(P) * sin(T) ;
     z[1] = cos(P);
-    positions_spheres.push_back(R * x[1]);
-    positions_spheres.push_back(R * y[1]);
-    positions_spheres.push_back(R * z[1]);
+    positions_spheres.push_back((FLOAT)R * x[1]);
+    positions_spheres.push_back((FLOAT)R * y[1]);
+    positions_spheres.push_back((FLOAT)R * z[1]);
 
     normals_spheres.push_back(x[1]);
     normals_spheres.push_back(y[1]);
@@ -170,9 +170,9 @@ void create_flat_sphere(double R,
     x[2] = sin(P) * cos(T) ;
     y[2] = sin(P) * sin(T) ;
     z[2] = cos(P);
-    positions_spheres.push_back(R * x[2]);
-    positions_spheres.push_back(R * y[2]);
-    positions_spheres.push_back(R * z[2]);
+    positions_spheres.push_back((FLOAT)R * x[2]);
+    positions_spheres.push_back((FLOAT)R * y[2]);
+    positions_spheres.push_back((FLOAT)R * z[2]);
 
     normals_spheres.push_back(x[2]);
     normals_spheres.push_back(y[2]);
@@ -212,13 +212,13 @@ void create_flat_and_wire_sphere(double R,
     y[1] = sin(P) * sin(T) ;
     z[1] = cos(P);
 
-    positions_wire_spheres.push_back(R * x[1]);
-    positions_wire_spheres.push_back(R * y[1]);
-    positions_wire_spheres.push_back(R * z[1]);
+    positions_wire_spheres.push_back((FLOAT)R * x[1]);
+    positions_wire_spheres.push_back((FLOAT)R * y[1]);
+    positions_wire_spheres.push_back((FLOAT)R * z[1]);
 
-    positions_wire_spheres.push_back(R * x[1]);
-    positions_wire_spheres.push_back(R * y[1]);
-    positions_wire_spheres.push_back(R * z[1]);
+    positions_wire_spheres.push_back((FLOAT)R * x[1]);
+    positions_wire_spheres.push_back((FLOAT)R * y[1]);
+    positions_wire_spheres.push_back((FLOAT)R * z[1]);
 
     //
     P = rings*to_rad;
@@ -226,13 +226,13 @@ void create_flat_and_wire_sphere(double R,
     x[2] = sin(P) * cos(T) ;
     y[2] = sin(P) * sin(T) ;
     z[2] = cos(P);
-    positions_wire_spheres.push_back(R * x[2]);
-    positions_wire_spheres.push_back(R * y[2]);
-    positions_wire_spheres.push_back(R * z[2]);
+    positions_wire_spheres.push_back((FLOAT)R * x[2]);
+    positions_wire_spheres.push_back((FLOAT)R * y[2]);
+    positions_wire_spheres.push_back((FLOAT)R * z[2]);
 
-    positions_wire_spheres.push_back(R * x[2]);
-    positions_wire_spheres.push_back(R * y[2]);
-    positions_wire_spheres.push_back(R * z[2]);
+    positions_wire_spheres.push_back((FLOAT)R * x[2]);
+    positions_wire_spheres.push_back((FLOAT)R * y[2]);
+    positions_wire_spheres.push_back((FLOAT)R * z[2]);
 
     positions_wire_spheres.push_back(0);
     positions_wire_spheres.push_back(0);
@@ -271,47 +271,47 @@ void create_flat_and_wire_sphere(double R,
       y[3] = sin(P) * sin(T) ;
       z[3] = cos(P);
 
-      positions_wire_spheres.push_back(R * x[0]);
-      positions_wire_spheres.push_back(R * y[0]);
-      positions_wire_spheres.push_back(R * z[0]);
+      positions_wire_spheres.push_back((FLOAT)R * x[0]);
+      positions_wire_spheres.push_back((FLOAT)R * y[0]);
+      positions_wire_spheres.push_back((FLOAT)R * z[0]);
 
 
-      positions_wire_spheres.push_back(R * x[1]);
-      positions_wire_spheres.push_back(R * y[1]);
-      positions_wire_spheres.push_back(R * z[1]);
+      positions_wire_spheres.push_back((FLOAT)R * x[1]);
+      positions_wire_spheres.push_back((FLOAT)R * y[1]);
+      positions_wire_spheres.push_back((FLOAT)R * z[1]);
 
 
-      positions_wire_spheres.push_back(R * x[1]);
-      positions_wire_spheres.push_back(R * y[1]);
-      positions_wire_spheres.push_back(R * z[1]);
-
-
-
-      positions_wire_spheres.push_back(R * x[3]);
-      positions_wire_spheres.push_back(R * y[3]);
-      positions_wire_spheres.push_back(R * z[3]);
+      positions_wire_spheres.push_back((FLOAT)R * x[1]);
+      positions_wire_spheres.push_back((FLOAT)R * y[1]);
+      positions_wire_spheres.push_back((FLOAT)R * z[1]);
 
 
 
-      positions_wire_spheres.push_back(R * x[3]);
-      positions_wire_spheres.push_back(R * y[3]);
-      positions_wire_spheres.push_back(R * z[3]);
+      positions_wire_spheres.push_back((FLOAT)R * x[3]);
+      positions_wire_spheres.push_back((FLOAT)R * y[3]);
+      positions_wire_spheres.push_back((FLOAT)R * z[3]);
 
 
 
-      positions_wire_spheres.push_back(R * x[2]);
-      positions_wire_spheres.push_back(R * y[2]);
-      positions_wire_spheres.push_back(R * z[2]);
+      positions_wire_spheres.push_back((FLOAT)R * x[3]);
+      positions_wire_spheres.push_back((FLOAT)R * y[3]);
+      positions_wire_spheres.push_back((FLOAT)R * z[3]);
 
 
-      positions_wire_spheres.push_back(R * x[2]);
-      positions_wire_spheres.push_back(R * y[2]);
-      positions_wire_spheres.push_back(R * z[2]);
+
+      positions_wire_spheres.push_back((FLOAT)R * x[2]);
+      positions_wire_spheres.push_back((FLOAT)R * y[2]);
+      positions_wire_spheres.push_back((FLOAT)R * z[2]);
 
 
-      positions_wire_spheres.push_back(R * x[0]);
-      positions_wire_spheres.push_back(R * y[0]);
-      positions_wire_spheres.push_back(R * z[0]);
+      positions_wire_spheres.push_back((FLOAT)R * x[2]);
+      positions_wire_spheres.push_back((FLOAT)R * y[2]);
+      positions_wire_spheres.push_back((FLOAT)R * z[2]);
+
+
+      positions_wire_spheres.push_back((FLOAT)R * x[0]);
+      positions_wire_spheres.push_back((FLOAT)R * y[0]);
+      positions_wire_spheres.push_back((FLOAT)R * z[0]);
 
     }
   //Bottom of the sphere
@@ -333,23 +333,23 @@ void create_flat_and_wire_sphere(double R,
     positions_wire_spheres.push_back(0);
     positions_wire_spheres.push_back(-R);
 
-    positions_wire_spheres.push_back(R * x[1]);
-    positions_wire_spheres.push_back(R * y[1]);
-    positions_wire_spheres.push_back(R * z[1]);
+    positions_wire_spheres.push_back((FLOAT)R * x[1]);
+    positions_wire_spheres.push_back((FLOAT)R * y[1]);
+    positions_wire_spheres.push_back((FLOAT)R * z[1]);
 
 
-    positions_wire_spheres.push_back(R * x[1]);
-    positions_wire_spheres.push_back(R * y[1]);
-    positions_wire_spheres.push_back(R * z[1]);
+    positions_wire_spheres.push_back((FLOAT)R * x[1]);
+    positions_wire_spheres.push_back((FLOAT)R * y[1]);
+    positions_wire_spheres.push_back((FLOAT)R * z[1]);
 
-    positions_wire_spheres.push_back(R * x[2]);
-    positions_wire_spheres.push_back(R * y[2]);
-    positions_wire_spheres.push_back(R * z[2]);
+    positions_wire_spheres.push_back((FLOAT)R * x[2]);
+    positions_wire_spheres.push_back((FLOAT)R * y[2]);
+    positions_wire_spheres.push_back((FLOAT)R * z[2]);
 
 
-    positions_wire_spheres.push_back(R * x[2]);
-    positions_wire_spheres.push_back(R * y[2]);
-    positions_wire_spheres.push_back(R * z[2]);
+    positions_wire_spheres.push_back((FLOAT)R * x[2]);
+    positions_wire_spheres.push_back((FLOAT)R * y[2]);
+    positions_wire_spheres.push_back((FLOAT)R * z[2]);
 
     positions_wire_spheres.push_back(0);
     positions_wire_spheres.push_back(0);

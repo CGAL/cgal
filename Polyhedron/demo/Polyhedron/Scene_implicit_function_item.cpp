@@ -437,7 +437,7 @@ Scene_implicit_function_item::draw_edges(CGAL::Three::Viewer_interface* viewer) 
     frame_->getMatrix(d_mat);
     //Convert the GLdoubles matrices in GLfloats
     for (int i=0; i<16; ++i){
-        f_mat.data()[i] = GLfloat(d_mat[i]);
+        f_mat.data()[i] = double(d_mat[i]);
     }
     program->setUniformValue("f_matrix", f_mat);
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size()/3));
