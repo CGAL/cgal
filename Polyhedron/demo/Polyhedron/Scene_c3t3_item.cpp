@@ -107,7 +107,7 @@ Scene_c3t3_item::Scene_c3t3_item()
   setRenderingMode(FlatPlusEdges);
   compile_shaders();
   spheres_are_shown = false;
-  create_flat_and_wire_sphere(1.0,s_vertex,s_normals, ws_vertex);
+  create_flat_and_wire_sphere(1.0f,s_vertex,s_normals, ws_vertex);
 }
 
 Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
@@ -130,7 +130,7 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   setRenderingMode(FlatPlusEdges);
   compile_shaders();
   spheres_are_shown = false;
-  create_flat_and_wire_sphere(1.0,s_vertex,s_normals, ws_vertex);
+  create_flat_and_wire_sphere(1.0f,s_vertex,s_normals, ws_vertex);
 }
 
 Scene_c3t3_item::~Scene_c3t3_item()
