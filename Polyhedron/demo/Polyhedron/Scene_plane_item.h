@@ -25,7 +25,7 @@ public:
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
 
   Scene_plane_item(const CGAL::Three::Scene_interface* scene_interface)
-      :Scene_item(2,2),
+      :Scene_item(NbOfVbos,NbOfVaos),
       scene(scene_interface),
       manipulable(false),
       can_clone(true),
@@ -150,6 +150,17 @@ private:
   bool manipulable;
   bool can_clone;
   qglviewer::ManipulatedFrame* frame;
+
+  enum VAOs {
+      Facets = 0,
+      Edges,
+      NbOfVaos = Edges +1
+  };
+  enum VBOs {
+      Facets_vertices = 0,
+      Edges_vertices,
+      NbOfVbos = Edges_vertices +1
+  };
 
   mutable std::vector<float> positions_lines;
   mutable std::vector<float> positions_quad;

@@ -91,6 +91,23 @@ public:
     // http://en.wikipedia.org/wiki/D-pointer
     Scene_polylines_item_private* d;
 private:
+
+    enum VAOs {
+        Edges=0,
+        Spheres,
+        Wired_Spheres,
+        NbOfVaos = Wired_Spheres+1
+    };
+    enum VBOs {
+        Edges_Vertices = 0,
+        Spheres_Vertices,
+        Spheres_Normals,
+        Spheres_Colors,
+        Spheres_Center,
+        Wired_Spheres_Vertices,
+        NbOfVbos = Wired_Spheres_Vertices+1
+    };
+
     mutable std::vector<float> positions_lines;
     mutable std::vector<float> positions_spheres;
     mutable std::vector<float> positions_wire_spheres;

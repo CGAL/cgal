@@ -74,6 +74,19 @@ private:
 
   Nef_polyhedron* nef_poly;
 
+  enum VAOs {
+      Facets = 0,
+      Edges,
+      Points,
+      NbOfVaos = Points +1
+  };
+  enum VBOs {
+      Facets_vertices = 0,
+      Facets_normals,
+      Edges_vertices,
+      Points_vertices,
+      NbOfVbos = Points_vertices +1
+  };
 
   mutable std::vector<double> positions_lines;
   mutable std::vector<double> positions_facets;

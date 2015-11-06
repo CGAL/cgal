@@ -291,8 +291,8 @@ private:
   {
       Facet_vertices =0,
       Facet_normals,
-      Roi_points,
-      Control_points,
+      Roi_vertices,
+      Control_vertices,
       Sphere_vertices,
       Sphere_normals,
       Bbox_vertices,
@@ -300,7 +300,18 @@ private:
       Axis_colors,
       NumberOfBuffers = Axis_colors+1
   };
-
+  enum Vao
+  {
+      Facets=0,
+      Roi_points,
+      Edges,
+      ROI_spheres,
+      BBox,
+      Control_points,
+      Control_spheres,
+      Axis,
+      NumberOfVaos= Axis+1
+  };
   mutable QOpenGLBuffer *in_bu;
   using Scene_item::initialize_buffers;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;

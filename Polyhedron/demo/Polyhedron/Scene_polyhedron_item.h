@@ -110,6 +110,21 @@ private:
     //the following variable is used to indicate if the color vector must not be automatically updated.
     bool plugin_has_set_color_vector_m;
 
+    enum VAOs {
+        Facets=0,
+        Edges,
+        Gouraud_Facets,
+        NbOfVaos = Gouraud_Facets+1
+    };
+    enum VBOs {
+        Facets_vertices = 0,
+        Facets_normals_flat,
+        Facets_color,
+        Edges_vertices,
+        Edges_color,
+        Facets_normals_gouraud,
+        NbOfVbos = Facets_normals_gouraud+1
+    };
 
     mutable std::vector<float> positions_lines;
     mutable std::vector<float> positions_facets;

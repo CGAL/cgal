@@ -26,59 +26,59 @@ void Scene_implicit_function_item::initialize_buffers(CGAL::Three::Viewer_interf
     {
         program = getShaderProgram(PROGRAM_WITH_TEXTURE, viewer);
         program->bind();
-        vaos[0]->bind();
+        vaos[Plane]->bind();
 
 
-        buffers[0].bind();
-        buffers[0].allocate(positions_tex_quad.data(),
+        buffers[Quad_vertices].bind();
+        buffers[Quad_vertices].allocate(positions_tex_quad.data(),
                             static_cast<int>(positions_tex_quad.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-        buffers[0].release();
+        buffers[Quad_vertices].release();
 
-        buffers[1].bind();
-        buffers[1].allocate(texture_map.data(),
+        buffers[TexMap].bind();
+        buffers[TexMap].allocate(texture_map.data(),
                             static_cast<int>(texture_map.size()*sizeof(float)));
         program->enableAttributeArray("v_texCoord");
         program->setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
-        buffers[1].release();
+        buffers[TexMap].release();
         program->setAttributeValue("normal", QVector3D(0,0,0));
 
         program->release();
-        vaos[0]->release();
+        vaos[Plane]->release();
     }
     //vao fot the bbox
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[1]->bind();
+        vaos[BBox]->bind();
 
 
-        buffers[2].bind();
-        buffers[2].allocate(positions_cube.data(),
+        buffers[Cube_vertices].bind();
+        buffers[Cube_vertices].allocate(positions_cube.data(),
                             static_cast<int>(positions_cube.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-        buffers[2].release();
+        buffers[Cube_vertices].release();
 
         program->release();
-        vaos[1]->release();
+        vaos[BBox]->release();
     }
     //vao fot the grid
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[2]->bind();
+        vaos[Grid]->bind();
 
 
-        buffers[3].bind();
-        buffers[3].allocate(positions_grid.data(),
+        buffers[Grid_vertices].bind();
+        buffers[Grid_vertices].allocate(positions_grid.data(),
                             static_cast<int>(positions_grid.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-        buffers[3].release();
+        buffers[Grid_vertices].release();
         program->release();
-        vaos[2]->release();
+        vaos[Grid]->release();
     }
 
 
@@ -395,7 +395,7 @@ Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
             need_update_ = false;
         }
     }
-    vaos[0]->bind();
+    vaos[Plane]->bind();
     viewer->glActiveTexture(GL_TEXTURE0);
     viewer->glBindTexture(GL_TEXTURE_2D, textureId);
     attrib_buffers(viewer, PROGRAM_WITH_TEXTURE);
@@ -413,7 +413,7 @@ Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
     program->setUniformValue("light_diff", QVector4D(0,0,0,1));
     program->setAttributeValue("color_facets", QVector3D(1.0,1.0,1.0));
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_tex_quad.size()/3));
-    vaos[0]->release();
+    vaos[Plane]->release();
     program->release();
 }
 
@@ -423,14 +423,14 @@ Scene_implicit_function_item::draw_edges(CGAL::Three::Viewer_interface* viewer) 
     if(!are_buffers_filled)
         initialize_buffers(viewer);
     //  draw_aux(viewer, true);
-    vaos[1]->bind();
+    vaos[BBox]->bind();
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors", QVector3D(0,0,0));
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_cube.size()/3));
-    vaos[1]->release();
-    vaos[2]->bind();
+    vaos[BBox]->release();
+    vaos[Grid]->bind();
     QMatrix4x4 f_mat;
     GLdouble d_mat[16];
     frame_->getMatrix(d_mat);
@@ -441,7 +441,7 @@ Scene_implicit_function_item::draw_edges(CGAL::Three::Viewer_interface* viewer) 
     program->setUniformValue("f_matrix", f_mat);
     program->setAttributeValue("colors", QVector3D(0.6,0.6,0.6));
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size()/3));
-    vaos[2]->release();
+    vaos[Grid]->release();
     program->release();
 }
 

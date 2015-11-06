@@ -306,58 +306,58 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
         program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
         program->bind();
         //flat
-        vaos[0]->bind();
-        buffers[0].bind();
-        buffers[0].allocate(positions_facets.data(),
+        vaos[Facets]->bind();
+        buffers[Facets_vertices].bind();
+        buffers[Facets_vertices].allocate(positions_facets.data(),
                             static_cast<int>(positions_facets.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
-        buffers[0].release();
+        buffers[Facets_vertices].release();
 
 
 
-        buffers[1].bind();
-        buffers[1].allocate(normals_flat.data(),
+        buffers[Facets_normals_flat].bind();
+        buffers[Facets_normals_flat].allocate(normals_flat.data(),
                             static_cast<int>(normals_flat.size()*sizeof(float)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-        buffers[1].release();
+        buffers[Facets_normals_flat].release();
 
         if(!is_monochrome)
         {
-            buffers[2].bind();
-            buffers[2].allocate(color_facets.data(),
+            buffers[Facets_color].bind();
+            buffers[Facets_color].allocate(color_facets.data(),
                                 static_cast<int>(color_facets.size()*sizeof(float)));
             program->enableAttributeArray("colors");
             program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-            buffers[2].release();
+            buffers[Facets_color].release();
         }
-        vaos[0]->release();
+        vaos[Facets]->release();
         //gouraud
-        vaos[2]->bind();
-        buffers[0].bind();
+        vaos[Gouraud_Facets]->bind();
+        buffers[Facets_vertices].bind();
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
-        buffers[0].release();
+        buffers[Facets_vertices].release();
 
-        buffers[5].bind();
-        buffers[5].allocate(normals_gouraud.data(),
+        buffers[Facets_normals_gouraud].bind();
+        buffers[Facets_normals_gouraud].allocate(normals_gouraud.data(),
                             static_cast<int>(normals_gouraud.size()*sizeof(float)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-        buffers[5].release();
+        buffers[Facets_normals_gouraud].release();
         if(!is_monochrome)
         {
-            buffers[2].bind();
+            buffers[Facets_color].bind();
             program->enableAttributeArray("colors");
             program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-            buffers[2].release();
+            buffers[Facets_color].release();
         }
         else
         {
             program->disableAttributeArray("colors");
         }
-        vaos[2]->release();
+        vaos[Gouraud_Facets]->release();
 
         program->release();
 
@@ -366,23 +366,23 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[1]->bind();
+        vaos[Edges]->bind();
 
-        buffers[3].bind();
-        buffers[3].allocate(positions_lines.data(),
+        buffers[Edges_vertices].bind();
+        buffers[Edges_vertices].allocate(positions_lines.data(),
                             static_cast<int>(positions_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
-        buffers[3].release();
+        buffers[Edges_vertices].release();
 
-        buffers[4].bind();
-        buffers[4].allocate(color_lines.data(),
+        buffers[Edges_color].bind();
+        buffers[Edges_color].allocate(color_lines.data(),
                             static_cast<int>(color_lines.size()*sizeof(float)));
        if(!is_monochrome)
        {
            program->enableAttributeArray("colors");
            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
-           buffers[4].release();
+           buffers[Edges_color].release();
        }
        else
        {
@@ -390,7 +390,7 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
        }
         program->release();
 
-        vaos[1]->release();
+        vaos[Edges]->release();
 
     }
     nb_lines = positions_lines.size();
@@ -590,7 +590,7 @@ Scene_polyhedron_item::compute_colors() const
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item()
-    : Scene_item(6,3),
+    : Scene_item(NbOfVbos,NbOfVaos),
       poly(new Polyhedron),
       show_only_feature_edges_m(false),
       facet_picking_m(false),
@@ -607,7 +607,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
-    : Scene_item(6,3),
+    : Scene_item(NbOfVbos,NbOfVaos),
       poly(p),
       show_only_feature_edges_m(false),
       facet_picking_m(false),
@@ -624,7 +624,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
-    : Scene_item(6,3),
+    : Scene_item(NbOfVbos,NbOfVaos),
       poly(new Polyhedron(p)),
       show_only_feature_edges_m(false),
       facet_picking_m(false),
@@ -832,10 +832,10 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
 
     if(renderingMode() == Flat || renderingMode() == FlatPlusEdges)
-        vaos[0]->bind();
+        vaos[Facets]->bind();
     else
     {
-        vaos[2]->bind();
+        vaos[Gouraud_Facets]->bind();
     }
     attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
@@ -851,9 +851,9 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/4));
     program->release();
     if(renderingMode() == Flat || renderingMode() == FlatPlusEdges)
-        vaos[0]->release();
+        vaos[Facets]->release();
     else
-        vaos[2]->release();
+        vaos[Gouraud_Facets]->release();
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
@@ -864,7 +864,7 @@ void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) co
         initialize_buffers(viewer);
     }
 
-    vaos[1]->bind();
+    vaos[Edges]->bind();
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
@@ -879,7 +879,7 @@ void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) co
     }
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/4));
     program->release();
-    vaos[1]->release();
+    vaos[Edges]->release();
     }
 
 void
@@ -890,7 +890,7 @@ Scene_polyhedron_item::draw_points(CGAL::Three::Viewer_interface* viewer) const 
         initialize_buffers(viewer);
     }
 
-    vaos[1]->bind();
+    vaos[Edges]->bind();
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
@@ -898,7 +898,7 @@ Scene_polyhedron_item::draw_points(CGAL::Three::Viewer_interface* viewer) const 
     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_lines/4));
     // Clean-up
     program->release();
-    vaos[1]->release();
+    vaos[Edges]->release();
 }
 
 Polyhedron*

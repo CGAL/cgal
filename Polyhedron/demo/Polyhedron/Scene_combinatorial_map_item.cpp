@@ -344,17 +344,17 @@ void Scene_combinatorial_map_item::initialize_buffers(CGAL::Three::Viewer_interf
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[0]->bind();
-        buffers[0].bind();
-        buffers[0].allocate(positions_lines.data(),
+        vaos[Edges]->bind();
+        buffers[Edges_vertices].bind();
+        buffers[Edges_vertices].allocate(positions_lines.data(),
                             static_cast<int>(positions_lines.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[0].release();
+        buffers[Edges_vertices].release();
         nb_lines = positions_lines.size();
         positions_lines.resize(0);
         std::vector<double>(positions_lines).swap(positions_lines);
-        vaos[0]->release();
+        vaos[Edges]->release();
         program->release();
     }
     //vao for the points
@@ -362,14 +362,14 @@ void Scene_combinatorial_map_item::initialize_buffers(CGAL::Three::Viewer_interf
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[1]->bind();
-        buffers[1].bind();
-        buffers[1].allocate(positions_points.data(),
+        vaos[Points]->bind();
+        buffers[Points_vertices].bind();
+        buffers[Points_vertices].allocate(positions_points.data(),
                             static_cast<int>(positions_points.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[1].release();
-        vaos[1]->release();
+        buffers[Points_vertices].release();
+        vaos[Points]->release();
         nb_points = positions_points.size();
         positions_points.resize(0);
         std::vector<double>(positions_points).swap(positions_points);
@@ -380,26 +380,26 @@ void Scene_combinatorial_map_item::initialize_buffers(CGAL::Three::Viewer_interf
         program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
         program->bind();
 
-        vaos[2]->bind();
-        buffers[2].bind();
-        buffers[2].allocate(positions_facets.data(),
+        vaos[Facets]->bind();
+        buffers[Facets_vertices].bind();
+        buffers[Facets_vertices].allocate(positions_facets.data(),
                             static_cast<int>(positions_facets.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[2].release();
+        buffers[Facets_vertices].release();
 
-        buffers[3].bind();
-        buffers[3].allocate(normals.data(),
+        buffers[Facets_normals].bind();
+        buffers[Facets_normals].allocate(normals.data(),
                             static_cast<int>(normals.size()*sizeof(double)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_DOUBLE,0,3);
-        buffers[3].release();
+        buffers[Facets_normals].release();
         nb_facets = positions_facets.size();
         positions_facets.resize(0);
         std::vector<double>(positions_facets).swap(positions_facets);
         normals.resize(0);
         std::vector<double>(normals).swap(normals);
-        vaos[2]->release();
+        vaos[Facets]->release();
         program->release();
     }
     are_buffers_filled = true;
@@ -474,13 +474,13 @@ void Scene_combinatorial_map_item::draw(CGAL::Three::Viewer_interface* viewer) c
         compute_elements();
         initialize_buffers(viewer);
     }
-    vaos[2]->bind();
+    vaos[Facets]->bind();
     program=getShaderProgram(PROGRAM_WITH_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
     program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/3));
-    vaos[2]->release();
+    vaos[Facets]->release();
     program->release();
 
 }
@@ -491,13 +491,13 @@ void Scene_combinatorial_map_item::draw(CGAL::Three::Viewer_interface* viewer) c
          compute_elements();
          initialize_buffers(viewer);
      }
-     vaos[0]->bind();
+     vaos[Edges]->bind();
      program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
      attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
      program->bind();
      program->setAttributeValue("colors", this->color());
      viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
-     vaos[0]->release();
+     vaos[Edges]->release();
      program->release();
 
 }
@@ -508,13 +508,13 @@ void Scene_combinatorial_map_item::draw(CGAL::Three::Viewer_interface* viewer) c
          compute_elements();
          initialize_buffers(viewer);
      }
-     vaos[1]->bind();
+     vaos[Points]->bind();
      program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
      attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
      program->bind();
      program->setAttributeValue("colors", this->color());
      viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_points/3));
-     vaos[1]->release();
+     vaos[Points]->release();
      program->release();
 
 }

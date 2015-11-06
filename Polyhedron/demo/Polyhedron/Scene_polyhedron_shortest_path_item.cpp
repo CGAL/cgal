@@ -53,14 +53,14 @@ void Scene_polyhedron_shortest_path_item::initialize_buffers(CGAL::Three::Viewer
     //vao containing the data for the selected lines
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
-        vaos[0]->bind();
+        vaos[Selected_Edges]->bind();
         program->bind();
-        buffers[0].bind();
-        buffers[0].allocate(vertices.data(), vertices.size()*sizeof(float));
+        buffers[Vertices].bind();
+        buffers[Vertices].allocate(vertices.data(), vertices.size()*sizeof(float));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-        buffers[0].release();
-        vaos[0]->release();
+        buffers[Vertices].release();
+        vaos[Selected_Edges]->release();
     }
     are_buffers_filled = true;
 }
@@ -103,12 +103,12 @@ void Scene_polyhedron_shortest_path_item::draw_points(CGAL::Three::Viewer_interf
    glPointSize(4.0f);
    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
-   vaos[0]->bind();
+   vaos[Selected_Edges]->bind();
    program->bind();
    program->setAttributeValue("colors", QColor(Qt::green));
    viewer->glDrawArrays(GL_POINTS, 0, vertices.size()/3);
    program->release();
-   vaos[0]->release();
+   vaos[Selected_Edges]->release();
    glPointSize(1.0f);
 }
   

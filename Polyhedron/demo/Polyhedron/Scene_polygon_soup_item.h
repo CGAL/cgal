@@ -169,6 +169,21 @@ private:
     typedef Polygon_soup::Polygons::const_iterator Polygons_iterator;
     Polygon_soup* soup;
     bool oriented;
+
+    enum VAOs {
+        Facets=0,
+        Edges,
+        NM_Edges,
+        NbOfVaos = NM_Edges+1
+    };
+    enum VBOs {
+        Facets_vertices = 0,
+        Facets_normals,
+        Edges_vertices,
+        NM_Edges_vertices,
+        NbOfVbos = NM_Edges_vertices+1
+    };
+
     mutable std::vector<float> positions_poly;
     mutable std::vector<float> positions_lines;
     mutable std::vector<float> normals;

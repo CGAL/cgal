@@ -51,6 +51,21 @@ public:
 private:
   Textured_polyhedron* poly;
   Texture texture;
+
+  enum VAOs {
+      Facets=0,
+      Edges,
+      NbOfVaos = Edges+1
+  };
+  enum VBOs {
+      Facets_Vertices,
+      Facets_Normals,
+      Facets_Texmap,
+      Edges_Vertices = 0,
+      Edges_Texmap= 0,
+      NbOfVbos = Edges_Texmap+1
+  };
+
   mutable std::vector<float> positions_lines;
   mutable std::vector<float> positions_facets;
   mutable std::vector<float> normals;

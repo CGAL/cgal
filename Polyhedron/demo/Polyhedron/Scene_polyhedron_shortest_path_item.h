@@ -72,6 +72,14 @@ public:
     FACE_MODE = 2
   };
   
+  enum VAOs {
+      Selected_Edges=0,
+      NbOfVaos = Selected_Edges+1
+  };
+  enum VBOs {
+      Vertices = 0,
+      NbOfVbos = Vertices+1
+  };
 private:
   Messages_interface* m_messages;
   QMainWindow* m_mainWindow;

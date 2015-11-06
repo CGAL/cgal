@@ -84,25 +84,25 @@ Scene_polygon_soup_item::initialize_buffers(CGAL::Three::Viewer_interface* viewe
         program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
         program->bind();
 
-        vaos[0]->bind();
-        buffers[0].bind();
-        buffers[0].allocate(positions_poly.data(),
+        vaos[Facets]->bind();
+        buffers[Facets_vertices].bind();
+        buffers[Facets_vertices].allocate(positions_poly.data(),
                             static_cast<int>(positions_poly.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
-        buffers[0].release();
+        buffers[Facets_vertices].release();
 
 
 
-        buffers[1].bind();
-        buffers[1].allocate(normals.data(),
+        buffers[Facets_normals].bind();
+        buffers[Facets_normals].allocate(normals.data(),
                             static_cast<int>(normals.size()*sizeof(float)));
         program->enableAttributeArray("normals");
         program->setAttributeBuffer("normals",GL_FLOAT,0,3);
-        buffers[1].release();
+        buffers[Facets_normals].release();
 
         program->release();
-        vaos[0]->release();
+        vaos[Facets]->release();
         nb_polys = positions_poly.size();
         positions_poly.resize(0);
         std::vector<float>(positions_poly).swap(positions_poly);
@@ -115,16 +115,16 @@ Scene_polygon_soup_item::initialize_buffers(CGAL::Three::Viewer_interface* viewe
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[1]->bind();
+        vaos[Edges]->bind();
 
-        buffers[3].bind();
-        buffers[3].allocate(positions_lines.data(),
+        buffers[Edges_vertices].bind();
+        buffers[Edges_vertices].allocate(positions_lines.data(),
                             static_cast<int>(positions_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
-        buffers[3].release();
+        buffers[Edges_vertices].release();
         program->release();
-        vaos[1]->release();
+        vaos[Edges]->release();
 
         nb_lines = positions_lines.size();
         positions_lines.resize(0);
@@ -135,14 +135,14 @@ Scene_polygon_soup_item::initialize_buffers(CGAL::Three::Viewer_interface* viewe
     {
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
-        vaos[2]->bind();
-        buffers[4].bind();
-        buffers[4].allocate(positions_nm_lines.data(),
+        vaos[NM_Edges]->bind();
+        buffers[NM_Edges_vertices].bind();
+        buffers[NM_Edges_vertices].allocate(positions_nm_lines.data(),
                             static_cast<int>(positions_nm_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
-        buffers[4].release();
-        vaos[2]->release();
+        buffers[NM_Edges_vertices].release();
+        vaos[NM_Edges]->release();
         nb_nm_edges = positions_nm_lines.size();
         positions_nm_lines.resize(0);
         std::vector<float> (positions_nm_lines).swap(positions_nm_lines);
@@ -367,7 +367,7 @@ Scene_polygon_soup_item::compute_normals_and_vertices() const{
 
 
 Scene_polygon_soup_item::Scene_polygon_soup_item()
-    : Scene_item(5,3),
+    : Scene_item(NbOfVbos,NbOfVaos),
     soup(0),
     oriented(false)
 {
@@ -574,7 +574,7 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(soup == 0) return;
     //Calls the buffer info again so that it's the right one used even if
     //there are several objects drawn
-    vaos[0]->bind();
+    vaos[Facets]->bind();
     attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     //fills the arraw of colors with the current color
 
@@ -588,7 +588,7 @@ Scene_polygon_soup_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_polys/4));
     // Clean-up
     program->release();
-    vaos[0]->release();
+    vaos[Facets]->release();
   }
 
 void
@@ -599,7 +599,7 @@ Scene_polygon_soup_item::draw_points(CGAL::Three::Viewer_interface* viewer) cons
       initialize_buffers(viewer);
     }
     if(soup == 0) return;
-    vaos[1]->bind();
+    vaos[Edges]->bind();
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
@@ -609,7 +609,7 @@ Scene_polygon_soup_item::draw_points(CGAL::Three::Viewer_interface* viewer) cons
     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_lines/4));
     // Clean-up
     program->release();
-    vaos[1]->release();
+    vaos[Edges]->release();
 }
 
 void
@@ -620,7 +620,7 @@ Scene_polygon_soup_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
      initialize_buffers(viewer);
   }
     if(soup == 0) return;
-    vaos[1]->bind();
+    vaos[Edges]->bind();
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
@@ -631,10 +631,10 @@ Scene_polygon_soup_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
     viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( nb_lines/4));
     // Clean-up
     program->release();
-    vaos[1]->release();
+    vaos[Edges]->release();
     if(displayNonManifoldEdges())
     {
-        vaos[2]->bind();
+        vaos[NM_Edges]->bind();
         attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         program->bind();
@@ -645,7 +645,7 @@ Scene_polygon_soup_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
         viewer->glDrawArrays(GL_LINES, 0,static_cast<GLsizei>( nb_nm_edges/4));
         // Clean-up
         program->release();
-        vaos[2]->release();
+        vaos[NM_Edges]->release();
     }
 
 }
