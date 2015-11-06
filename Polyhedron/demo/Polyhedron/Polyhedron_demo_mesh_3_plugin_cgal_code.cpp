@@ -97,8 +97,6 @@ Scene_item* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double tet_shape,
                                  CGAL::Three::Scene_interface* scene)
 {
-  typedef Mesh_function<Function_mesh_domain> Mesh_function;
-
   if (pfunction == NULL) { return NULL; }
 
   CGAL::Bbox_3 domain_bbox(pfunction->bbox().xmin,
@@ -117,21 +115,10 @@ Scene_item* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
   Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
 
-  Mesh_parameters param;
-  param.protect_features = false;
-  param.facet_angle = facet_angle;
-  param.facet_sizing = facet_sizing;
-  param.facet_approx = facet_approx;
-  param.tet_sizing = tet_sizing;
-  param.tet_shape = tet_shape;
-
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(*p_domain,
                                                                            criteria,
                                                                            CGAL::parameters::no_perturb(),
                                                                            CGAL::parameters::no_exude()));
-
-  Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(), p_domain, param);
-//  return new Meshing_thread(p_mesh_function, p_new_item);
 
   CGAL::Timer timer;
   p_new_item->set_scene(scene);
@@ -165,20 +152,11 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
                              const double tet_shape,
                              CGAL::Three::Scene_interface* scene)
 {
-  typedef Mesh_function<Image_mesh_domain> Mesh_function;
 
   if (NULL == pImage) { return NULL; }
 
   Image_mesh_domain* p_domain
     = new Image_mesh_domain(*pImage, 1e-6);
-
-  Mesh_parameters param;
-  param.protect_features = false;
-  param.facet_angle = facet_angle;
-  param.facet_sizing = facet_sizing;
-  param.facet_approx = facet_approx;
-  param.tet_sizing = tet_sizing;
-  param.tet_shape = tet_shape;
 
   // Set mesh criteria
   Edge_criteria edge_criteria(facet_sizing);
@@ -191,9 +169,6 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
                                                                             CGAL::parameters::no_perturb(),
                                                                             CGAL::parameters::no_exude())
 );
-  Mesh_function* p_mesh_function
-    = new Mesh_function(p_new_item->c3t3(), p_domain, param);
-  //  return new Meshing_thread(p_mesh_function, p_new_item);
   CGAL::Timer timer;
   p_new_item->set_scene(scene);
 
