@@ -183,7 +183,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     if (!is_border(he, pmesh))
     {
       Vector n = compute_face_normal(face(he, pmesh), pmesh, np);
-      normal = normal + (n / CGAL::sqrt(n*n));
+      normal = normal + n;
     }
     he = opposite(next(he, pmesh), pmesh);
   } while (he != end);
