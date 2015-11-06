@@ -159,7 +159,7 @@ class Volume_plane_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  Volume_plane_plugin() : planeSwitch(NULL), sc(NULL), mw(NULL)
+  Volume_plane_plugin() : planeSwitch(NULL)
     {
     }
 
@@ -167,38 +167,36 @@ public:
     return qobject_cast<Scene_segmented_image_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
-  virtual void init(QMainWindow* mw, Scene_interface* sc) {
-    assert(mw != NULL);
-    assert(sc != NULL);
-    this->sc = sc;
-    this->mw = mw;
-
-    QList<QMenu*> menus = mw->findChildren<QMenu*>();
-
-    planeSwitch = new QAction(tr("Add Volume Planes"), mw);
-    connect(planeSwitch, SIGNAL(triggered()), this, SLOT(selectPlanes()));
-    
-    // evil
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+    this->scene = scene_interface;
+    this->mw = mainWindow;
+    planeSwitch = new QAction("Add Volume Planes", mw);
+    if(planeSwitch) {
+      planeSwitch->setProperty("subMenuName", "3D Mesh Generation");
+      connect(planeSwitch, SIGNAL(triggered()),
+              this, SLOT(selectPlanes()));
+    }
     Viewer_interface* v = mw->findChild<Viewer_interface*>("viewer");
     CGAL_assertion(v != 0);
     pxr_.setViewer(v);
     connect(v, SIGNAL(pointSelected(QPoint)), &pxr_, SLOT(update(QPoint)));
 
     createOrGetDockLayout();
+
   }
-
-
+  QList<QAction*> actions() const {
+    return QList<QAction*>() << planeSwitch;
+  }
 public Q_SLOTS:
   void selectPlanes() {
     std::vector< Scene_segmented_image_item* > seg_items;
     Scene_segmented_image_item* seg_img = NULL;
-
-    for(int i = 0; i < sc->numberOfEntries(); ++i) {
-      Scene_segmented_image_item* tmp = qobject_cast<Scene_segmented_image_item*>(sc->item(i));
-      if(tmp != NULL)
+    for(int i = 0; i < scene->numberOfEntries(); ++i) {
+      Scene_segmented_image_item* tmp = qobject_cast<Scene_segmented_image_item*>(scene->item(i));
+      if(tmp != NULL){
         seg_items.push_back(tmp);
+      }
     }
-    
     if(seg_items.empty()) {
       QMessageBox::warning(mw, tr("No suitable item found"), tr("Load an inrimage or hdr file to enable Volume Planes."));
       return;
@@ -208,13 +206,10 @@ public Q_SLOTS:
           it != seg_items.end(); ++it) { 
         items << (*it)->name();
       }
-
       bool ok;
       QString selected = QInputDialog::getItem(mw, tr("Select a dataset:"), tr("Items"), items, 0, false, &ok);
-      
       if(!ok || selected.isEmpty())
         return;
-
       for(std::vector< Scene_segmented_image_item*>::const_iterator it = seg_items.begin(); 
           it != seg_items.end(); ++it) { 
         if(selected == (*it)->name())
@@ -229,7 +224,7 @@ public Q_SLOTS:
       Volume_plane_intersection* i = new Volume_plane_intersection(img->xdim() * img->vx(), 
                                                                    img->ydim() * img->vy(), 
                                                                    img->zdim() * img->vz());
-      this->intersectionId = sc->addItem(i);
+      this->intersectionId = scene->addItem(i);
     } else {
       QMessageBox::warning(mw, tr("Something went wrong"), tr("Selected a suitable Object but couldn't get an image pointer."));
       return;
@@ -242,7 +237,7 @@ public Q_SLOTS:
     plane->init();
 
     // add the interface for this Volume_plane
-    int id = sc->addItem(plane);
+    int id = scene->addItem(plane);
     
     QLayout* layout = createOrGetDockLayout();
     
@@ -260,7 +255,7 @@ public Q_SLOTS:
     QFontMetrics metric = cubeLabel->fontMetrics();
     cubeLabel->setFixedWidth(metric.width(QString("9999")));
 
-    QSlider* slider = new Plane_slider(plane->translationVector(), id, sc, plane->manipulatedFrame(), 
+    QSlider* slider = new Plane_slider(plane->translationVector(), id, scene, plane->manipulatedFrame(),
                                        Qt::Horizontal, controls);
     slider->setRange(0, (plane->cDim() - 1) * 100);
 
@@ -281,7 +276,7 @@ public Q_SLOTS:
     delete *it;
     threads.erase(it);
 
-    Volume_plane_intersection* intersection = dynamic_cast<Volume_plane_intersection*>(sc->item(intersectionId));
+    Volume_plane_intersection* intersection = dynamic_cast<Volume_plane_intersection*>(scene->item(intersectionId));
     if(!intersection) {
       // the intersection is gone before it was initialized
       return;
@@ -302,8 +297,6 @@ public Q_SLOTS:
  
 private:
   QAction* planeSwitch;
-  Scene_interface* sc;
-  QMainWindow* mw;
   PixelReader pxr_;
 
   std::vector<Volume_plane_thread*> threads;

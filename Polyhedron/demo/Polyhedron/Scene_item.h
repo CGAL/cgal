@@ -355,7 +355,7 @@ protected:
   /*! Passes all the uniform data to the shaders.
    * According to program_name, this data may change.
    */
-  virtual void attrib_buffers(CGAL::Three::Viewer_interface*, int program_name) const;
+  void attrib_buffers(CGAL::Three::Viewer_interface*, int program_name) const;
 
   /*! Compatibility function. Calls `viewer->getShaderProgram()`. */
   virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;

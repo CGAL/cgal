@@ -105,7 +105,7 @@ private:
     mutable   GLuint nbSpheres;
     typedef std::map<Point_3, int> Point_to_int_map;
     typedef Point_to_int_map::iterator iterator;
-    void create_Sphere(double) const;
+    void create_Sphere(float) const;
     using Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
     using Scene_item::compute_elements;
