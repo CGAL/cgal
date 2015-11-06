@@ -81,6 +81,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
     typedef typename Traits::FT FT;
     typedef typename Traits::Point_3 Point;
     typedef typename Traits::Vector_3 Vector;
+    typedef typename Traits::Line_3 Line;
 
     /// \endcond
     typedef typename Traits::Plane_3 Plane; ///< Raw plane type
@@ -221,14 +222,14 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
     std::size_t run (FT tolerance_cosangle = 0.1,
                      FT tolerance_coplanarity = 0.0,
                      bool regularize_orthogonality = true,
-                     bool z_symmetry = true)
+                     Vector symmetry_direction = Vector (0., 0., 1.))
     {
       compute_centroids_and_areas ();
       
       // clustering the parallel primitives and store them in clusters
       // & compute the normal, size and cos angle to the vertical of each cluster
       std::vector<Plane_cluster> clusters;
-      compute_parallel_clusters (clusters, tolerance_cosangle);
+      compute_parallel_clusters (clusters, tolerance_cosangle, symmetry_direction);
 
       //discovery orthogonal relationship between clusters 
       for (std::size_t i = 0; i < clusters.size(); ++ i)
@@ -252,7 +253,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
       //find subgraphs of mutually orthogonal clusters (store index of
       //clusters in subgraph_clusters), and select the cluster of
       //largest area
-      subgraph_mutually_orthogonal_clusters (clusters);
+      subgraph_mutually_orthogonal_clusters (clusters, symmetry_direction);
       
       //recompute optimal plane for each primitive after normal regularization
       for (std::size_t i=0; i < clusters.size(); ++ i)
@@ -369,7 +370,8 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
         }
     }
 
-    void compute_parallel_clusters (std::vector<Plane_cluster>& clusters, double tolerance_cosangle)
+    void compute_parallel_clusters (std::vector<Plane_cluster>& clusters, double tolerance_cosangle,
+                                    const Vector& symmetry_direction)
     {
       // find pairs of epsilon-parallel primitives and store them in parallel_planes
       std::vector<std::vector<std::size_t> > parallel_planes (m_planes.size ());
@@ -462,8 +464,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
                 }
               while(propagation);
 
-              Vector v_vertical(0.,0.,1.);
-              clu.cosangle_vertical = std::fabs(v_vertical*clu.normal);
+              clu.cosangle_vertical = std::fabs(symmetry_direction * clu.normal);
             }
         }
       is_available.clear();
@@ -514,7 +515,8 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
         clusters[i].cosangle_vertical = cosangle_centroids[list_cluster_index[i]];
     }
 
-    void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster>& clusters)
+    void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster>& clusters,
+                                                const Vector& symmetry_direction)
     {
       std::vector < std::vector < int > > subgraph_clusters;
       std::vector < int > subgraph_clusters_max_area_index;
@@ -614,6 +616,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
 	
           int index_current=subgraph_clusters_max_area_index[i];
           Vector vec_current=regularize_normal(clusters[index_current].normal,
+                                               symmetry_direction,
                                                clusters[index_current].cosangle_vertical);
           clusters[index_current].normal = vec_current;
           clusters[index_current].is_free = false;
@@ -649,6 +652,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
 
                           Vector new_vect=regularize_normals_from_prior(clusters[cluster_index].normal,
                                                                         clusters[j].normal,
+                                                                        symmetry_direction,
                                                                         clusters[j].cosangle_vertical);
                           clusters[j].normal = new_vect;
                         }
@@ -674,76 +678,76 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
       return std::sqrt (CGAL::squared_distance (a, b));
     }
   
-    Vector regularize_normal (const Vector& n, FT cos_vertical)
+    Vector regularize_normal (const Vector& n, const Vector& symmetry_direction,
+                              FT cos_vertical)
     {
-      FT vz = cos_vertical;
-      FT A = 1 - cos_vertical*cos_vertical;
-		
-      if (n.x() != 0)
-        {
-          FT B = 1 + (n.y() * n.y()) / (n.x() * n.x());
-          FT vx = std::sqrt(A / B);
-          if (n.x() < 0)
-            vx = -vx;
-          FT vy = vx * (n.y() / n.x());
+      Point pt_symmetry = CGAL::ORIGIN + cos_vertical* symmetry_direction;
 
-          Vector res (vx, vy, vz);
-          return res / std::sqrt (res * res);;
-        }
+      Plane plane_symmetry (pt_symmetry, symmetry_direction);
+      Point pt_normal = CGAL::ORIGIN + n;
+
+      if (n != symmetry_direction || n != -symmetry_direction)
+        {
+          Plane plane_cut (CGAL::ORIGIN, pt_normal, CGAL::ORIGIN + symmetry_direction);
+          Line line;
+          CGAL::Object ob_1 = CGAL::intersection(plane_cut, plane_symmetry);
+          if (!assign(line, ob_1))
+            return n;
+
+          double delta = std::sqrt (1 - cos_vertical * cos_vertical);
+
+          Point projected_origin = line.projection (CGAL::ORIGIN);
+          Vector line_vector (line);
+          line_vector = line_vector / std::sqrt (line_vector * line_vector);
+          Point pt1 = projected_origin + delta * line_vector;
+          Point pt2 = projected_origin - delta * line_vector;
+
+          if (CGAL::squared_distance (pt_normal, pt1) <= CGAL::squared_distance (pt_normal, pt2))
+            return Vector (CGAL::ORIGIN, pt1);
+          else
+            return Vector (CGAL::ORIGIN, pt2);
+
+      }
       else
-        {
-          FT vx = 0;
-          FT vy = sqrt(A);
-          if (n.y() < 0)
-            vy = -vy;
-          Vector res(vx, vy, vz);
-          return res / std::sqrt (res * res);;
-        }
-
+        return n;
     }
 
   
     Vector regularize_normals_from_prior (const Vector& np,
                                           const Vector& n,
+                                          const Vector& symmetry_direction,
                                           FT cos_vertical)
     {
-      FT vx, vy;
+      Plane plane_orthogonality (CGAL::ORIGIN, np);
+      Point pt_symmetry = CGAL::ORIGIN + cos_vertical* symmetry_direction;
 
-      if (np.x() != 0)
-        { 
-          FT a = (np.y() * np.y()) / (np.x() * np.x()) + 1;
-          FT b = 2 * np.y() * np.z() * cos_vertical / np.x();
-          FT c= cos_vertical * cos_vertical-1;
+      Plane plane_symmetry (pt_symmetry, symmetry_direction);
+		
+      Line line;
+      CGAL::Object ob_1 = CGAL::intersection (plane_orthogonality, plane_symmetry);
+      if (!assign(line, ob_1))
+        return regularize_normal (n, symmetry_direction, cos_vertical);
 
-          if (4 * a * c > b * b)
-            return regularize_normal (n, cos_vertical); 
-          else
-            {
-              FT delta = std::sqrt (b * b-4 * a * c);
-              FT vy1= (-b-delta) / (2 * a);
-              FT vy2= (-b+delta) / (2 * a);
+      Point projected_origin = line.projection (CGAL::ORIGIN);
+      FT R = CGAL::squared_distance (Point (CGAL::ORIGIN), projected_origin);
 
-              vy = (std::fabs(n.y()-vy1) < std::fabs(n.y()-vy2))
-                ? vy1 : vy2;
-
-              vx = (-np.y() * vy-np.z() * cos_vertical) / np.x();
-            }
-        }
-      else if (np.y() != 0)
+      if (R <= 1)  // 2 (or 1) possible points intersecting the unit sphere and line
         {
-          vy = -np.z() * cos_vertical / np.y();
-          vx = std::sqrt (1 - cos_vertical * cos_vertical - vy * vy);
-        
-          if (n.x() < 0)
-            vx = -vx;
+          double delta = std::sqrt (1 - R);
+          Vector line_vector(line); 
+          line_vector = line_vector / std::sqrt (line_vector * line_vector);
+          Point pt1 = projected_origin + delta * line_vector;
+          Point pt2 = projected_origin - delta * line_vector;
+			
+          Point pt_n = CGAL::ORIGIN + n;
+          if (CGAL::squared_distance (pt_n, pt1) <= CGAL::squared_distance (pt_n, pt2))
+            return Vector (CGAL::ORIGIN, pt1);
+          else
+            return Vector (CGAL::ORIGIN, pt2);
         }
-      else
-        return regularize_normal (n, cos_vertical); 
+      else //no point intersecting the unit sphere and line
+        return regularize_normal (n,symmetry_direction, cos_vertical);
 
-      Vector res (vx, vy, cos_vertical);
-      FT norm = std::max(1e-5, 1. / sqrt(res.squared_length ()));
-      std::cerr << "NRes = " << norm * res << std::endl;
-      return norm * res;
     }
 
   
