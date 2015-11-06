@@ -210,14 +210,6 @@ public:
   void finalize(){}
 };
 
-
-template<class T1,class T2>
-std::pair<T1,T2>
-make_sorted_pair(T1 va,T2 vb) {
-  if (va<vb) return std::make_pair(va,vb);
-  return std::make_pair(vb,va);
-}
-
 template <class Slice_writer>
 class Reconstruction_from_parallel_slices_3{
   #ifndef CGAL_ADD_VOLUME_TO_REMOVE_NON_MANIFOLDNESS
