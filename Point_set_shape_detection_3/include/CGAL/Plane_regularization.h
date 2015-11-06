@@ -201,9 +201,9 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
 
       Performs the plane regularization. Planes are directly modified.
 
-      \param tolerance_cosangle Tolerance of deviation between normal
-      vectors of planes so that they are considered parallel,
-      expressed as the cosinus of their angle.
+      \param tolerance_angle Tolerance of deviation between normal
+      vectors of planes so that they are considered parallel (in
+      degrees).
 
       \param tolerance_coplanarity Maximal distance between two
       parallel planes such that they are considered coplanar. The
@@ -213,18 +213,22 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
       \param regularize_orthogonality Make almost orthogonal clusters
       of plane exactly orthogonal.
 
-      \param z_symmetry Make almost Z-symmetrical clusters exactly
-      Z-symmetrical.
+      \param symmetry_direction Make clusters that are almost
+      symmetrical in the symmetry direction exactly symmetrical. This
+      parameter is ignored if it is equal to `CGAL::NULL_VECTOR`
+      (default value).
 
       \return The number of clusters of parallel planes found.
     */ 
 
-    std::size_t run (FT tolerance_cosangle = 0.1,
+    std::size_t run (FT tolerance_angle = 25.0,
                      FT tolerance_coplanarity = 0.0,
                      bool regularize_orthogonality = true,
                      Vector symmetry_direction = CGAL::NULL_VECTOR)
     {
       compute_centroids_and_areas ();
+
+      FT tolerance_cosangle = 1. - std::cos (tolerance_angle);
       
       // clustering the parallel primitives and store them in clusters
       // & compute the normal, size and cos angle to the symmetry
@@ -274,7 +278,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
               if( m_planes[index_prim]->plane_normal () * vec_reg < 0)
                 vec_reg=-vec_reg;
               Plane plane_reg(pt_reg,vec_reg);
-		
+              
               if( std::fabs(m_planes[index_prim]->plane_normal () * plane_reg.orthogonal_vector ()) > 1. - tolerance_cosangle)
                 m_planes[index_prim]->update (plane_reg);
             }
@@ -334,9 +338,6 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
               area[group] += m_areas[index_prim];
             }
 
-          for (std::size_t j = 0; j < clusters[i].planes.size (); ++ j)
-            std::cerr << pt_bary[clusters[i].coplanar_group[j]] << " + " << vec_reg << std::endl;
-          
 
           for (std::size_t j = 0; j < clusters[i].planes.size (); ++ j)
             {
