@@ -29,7 +29,6 @@
 #include <QMap>
 #include <QStandardItemModel>
 #include <QStandardItem>
-
 #include <stdexcept>
 
 #ifdef QT_SCRIPT_LIB
@@ -123,7 +122,6 @@ MainWindow::MainWindow(QWidget* parent)
 {
   ui = new Ui::MainWindow;
   ui->setupUi(this);
-
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
   ui->menuBar->removeAction(ui->actionLoad_Script);
@@ -1532,5 +1530,4 @@ void MainWindow::on_actionRecenterScene_triggered()
   updateViewerBBox();
   viewer->camera()->interpolateToFitScene();
 }
-
 

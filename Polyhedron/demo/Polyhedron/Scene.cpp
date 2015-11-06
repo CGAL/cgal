@@ -833,7 +833,7 @@ void Scene::setItemB(int i)
 Scene::Bbox Scene::bbox() const
 {
     if(m_entries.empty())
-        return Bbox();
+        return Bbox(0,0,0,0,0,0);
 
     bool bbox_initialized = false;
     Bbox bbox;
