@@ -927,6 +927,6 @@ void display_lcc(LCC& alcc)
   mainwindow.show();
 
   app.exec();
-};
+}
 
 #endif // CGAL_LCC_3_VIEWER_QT_H
