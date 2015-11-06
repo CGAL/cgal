@@ -109,7 +109,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
       std::vector<std::size_t> coplanar_group;
       std::vector<std::size_t> orthogonal_clusters;
       Vector normal;
-      FT cosangle_vertical;
+      FT cosangle_symmetry;
       FT area;
       FT cosangle_centroid;
     };
@@ -222,38 +222,44 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
     std::size_t run (FT tolerance_cosangle = 0.1,
                      FT tolerance_coplanarity = 0.0,
                      bool regularize_orthogonality = true,
-                     Vector symmetry_direction = Vector (0., 0., 1.))
+                     Vector symmetry_direction = CGAL::NULL_VECTOR)
     {
       compute_centroids_and_areas ();
       
       // clustering the parallel primitives and store them in clusters
-      // & compute the normal, size and cos angle to the vertical of each cluster
+      // & compute the normal, size and cos angle to the symmetry
+      // direction of each cluster
       std::vector<Plane_cluster> clusters;
       compute_parallel_clusters (clusters, tolerance_cosangle, symmetry_direction);
 
-      //discovery orthogonal relationship between clusters 
-      for (std::size_t i = 0; i < clusters.size(); ++ i)
+      if (regularize_orthogonality)
         {
-          for (std::size_t j = i + 1; j < clusters.size(); ++ j)
+          //discovery orthogonal relationship between clusters 
+          for (std::size_t i = 0; i < clusters.size(); ++ i)
             {
-              
-              if (std::fabs (clusters[i].normal * clusters[j].normal) < tolerance_cosangle)
+              for (std::size_t j = i + 1; j < clusters.size(); ++ j)
                 {
-                  clusters[i].orthogonal_clusters.push_back (j);
-                  clusters[j].orthogonal_clusters.push_back (i);
+              
+                  if (std::fabs (clusters[i].normal * clusters[j].normal) < tolerance_cosangle)
+                    {
+                      clusters[i].orthogonal_clusters.push_back (j);
+                      clusters[j].orthogonal_clusters.push_back (i);
+                    }
                 }
             }
         }
-
-      //clustering the vertical cosangle and store their centroids in
+      
+      //clustering the symmetry cosangle and store their centroids in
       //cosangle_centroids and the centroid index of each cluster in
       //list_cluster_index
-      cluster_vertical_cosangles (clusters, tolerance_cosangle);
+      if (symmetry_direction != CGAL::NULL_VECTOR)
+        cluster_symmetric_cosangles (clusters, tolerance_cosangle);
 
       //find subgraphs of mutually orthogonal clusters (store index of
       //clusters in subgraph_clusters), and select the cluster of
       //largest area
-      subgraph_mutually_orthogonal_clusters (clusters, symmetry_direction);
+      if (regularize_orthogonality)
+        subgraph_mutually_orthogonal_clusters (clusters, symmetry_direction);
       
       //recompute optimal plane for each primitive after normal regularization
       for (std::size_t i=0; i < clusters.size(); ++ i)
@@ -464,13 +470,14 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
                 }
               while(propagation);
 
-              clu.cosangle_vertical = std::fabs(symmetry_direction * clu.normal);
+              if (symmetry_direction != CGAL::NULL_VECTOR)
+                clu.cosangle_symmetry = std::fabs(symmetry_direction * clu.normal);
             }
         }
       is_available.clear();
     }
 
-    void cluster_vertical_cosangles (std::vector<Plane_cluster>& clusters, double tolerance_cosangle)
+    void cluster_symmetric_cosangles (std::vector<Plane_cluster>& clusters, double tolerance_cosangle)
     {
       std::vector < double > cosangle_centroids;
       std::vector < int > list_cluster_index;
@@ -483,17 +490,17 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
           if(list_cluster_index[i]<0)
             {
               list_cluster_index[i] = mean_index;
-              double mean = clusters[i].area * clusters[i].cosangle_vertical;
+              double mean = clusters[i].area * clusters[i].cosangle_symmetry;
               double mean_area = clusters[i].area;
               
               for (std::size_t j = i+1; j < clusters.size(); ++ j)
                 {
-                  if (list_cluster_index[j] < 0 && std::fabs (clusters[j].cosangle_vertical -
+                  if (list_cluster_index[j] < 0 && std::fabs (clusters[j].cosangle_symmetry -
                                                               mean / mean_area) < tolerance_cosangle)
                     {
                       list_cluster_index[j] = mean_index;
                       mean_area += clusters[j].area;
-                      mean += clusters[j].area * clusters[j].cosangle_vertical;
+                      mean += clusters[j].area * clusters[j].cosangle_symmetry;
                     }
                 }
               ++ mean_index;
@@ -502,8 +509,6 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
             }
         }
 
-      
-      //desactive Z-verticalité
       for (std::size_t i = 0; i < cosangle_centroids.size(); ++ i)
         {
           if (cosangle_centroids[i] < tolerance_cosangle)
@@ -512,7 +517,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
             cosangle_centroids[i] = 1;
         }
       for (std::size_t i = 0; i < clusters.size(); ++ i)
-        clusters[i].cosangle_vertical = cosangle_centroids[list_cluster_index[i]];
+        clusters[i].cosangle_symmetry = cosangle_centroids[list_cluster_index[i]];
     }
 
     void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster>& clusters,
@@ -606,7 +611,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
       //regularization of cluster normals : in eachsubgraph, we start
       //from the largest area cluster and we propage over the subgraph
       //by regularizing the normals of the clusters accorting to
-      //orthogonality and cosangle to vertical
+      //orthogonality and cosangle to symmetry direction
 
       for (std::size_t i = 0; i < clusters.size(); ++ i)
         clusters[i].is_free = true;
@@ -617,7 +622,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
           int index_current=subgraph_clusters_max_area_index[i];
           Vector vec_current=regularize_normal(clusters[index_current].normal,
                                                symmetry_direction,
-                                               clusters[index_current].cosangle_vertical);
+                                               clusters[index_current].cosangle_symmetry);
           clusters[index_current].normal = vec_current;
           clusters[index_current].is_free = false;
 
@@ -653,7 +658,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
                           Vector new_vect=regularize_normals_from_prior(clusters[cluster_index].normal,
                                                                         clusters[j].normal,
                                                                         symmetry_direction,
-                                                                        clusters[j].cosangle_vertical);
+                                                                        clusters[j].cosangle_symmetry);
                           clusters[j].normal = new_vect;
                         }
                     }	
@@ -679,9 +684,12 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
     }
   
     Vector regularize_normal (const Vector& n, const Vector& symmetry_direction,
-                              FT cos_vertical)
+                              FT cos_symmetry)
     {
-      Point pt_symmetry = CGAL::ORIGIN + cos_vertical* symmetry_direction;
+      if (symmetry_direction == CGAL::NULL_VECTOR)
+        return n;
+      
+      Point pt_symmetry = CGAL::ORIGIN + cos_symmetry* symmetry_direction;
 
       Plane plane_symmetry (pt_symmetry, symmetry_direction);
       Point pt_normal = CGAL::ORIGIN + n;
@@ -694,7 +702,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
           if (!assign(line, ob_1))
             return n;
 
-          double delta = std::sqrt (1 - cos_vertical * cos_vertical);
+          double delta = std::sqrt (1 - cos_symmetry * cos_symmetry);
 
           Point projected_origin = line.projection (CGAL::ORIGIN);
           Vector line_vector (line);
@@ -716,17 +724,20 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
     Vector regularize_normals_from_prior (const Vector& np,
                                           const Vector& n,
                                           const Vector& symmetry_direction,
-                                          FT cos_vertical)
+                                          FT cos_symmetry)
     {
+      if (symmetry_direction == CGAL::NULL_VECTOR)
+        return n;
+
       Plane plane_orthogonality (CGAL::ORIGIN, np);
-      Point pt_symmetry = CGAL::ORIGIN + cos_vertical* symmetry_direction;
+      Point pt_symmetry = CGAL::ORIGIN + cos_symmetry* symmetry_direction;
 
       Plane plane_symmetry (pt_symmetry, symmetry_direction);
 		
       Line line;
       CGAL::Object ob_1 = CGAL::intersection (plane_orthogonality, plane_symmetry);
       if (!assign(line, ob_1))
-        return regularize_normal (n, symmetry_direction, cos_vertical);
+        return regularize_normal (n, symmetry_direction, cos_symmetry);
 
       Point projected_origin = line.projection (CGAL::ORIGIN);
       FT R = CGAL::squared_distance (Point (CGAL::ORIGIN), projected_origin);
@@ -746,7 +757,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
             return Vector (CGAL::ORIGIN, pt2);
         }
       else //no point intersecting the unit sphere and line
-        return regularize_normal (n,symmetry_direction, cos_vertical);
+        return regularize_normal (n,symmetry_direction, cos_symmetry);
 
     }
 
