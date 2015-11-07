@@ -379,7 +379,7 @@ public:
 } // namespace internal
 
 /**
- * \ingroup PkgPolygonMeshProcessing
+ * \ingroup PMP_repairing_grp
  * tries to consistently orient a soup of polygons in 3D space.
  * When it is not possible to produce a combinatorial manifold surface,
  * some points are duplicated.

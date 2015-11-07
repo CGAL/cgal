@@ -58,7 +58,7 @@ void sum_normals(const PM& pmesh,
 }
 
 /**
-* \ingroup PkgPolygonMeshProcessing
+* \ingroup PMP_normal_grp
 * computes the outward unit vector normal to face `f`.
 * @tparam PolygonMesh a model of `FaceGraph` that has an internal property map
 *         for `CGAL::vertex_point_t`
@@ -104,7 +104,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 }
 
 /**
-* \ingroup PkgPolygonMeshProcessing
+* \ingroup PMP_normal_grp
 * computes the outward unit vector normal for all faces of the polygon mesh.
 * @tparam PolygonMesh a model of `FaceGraph` that has an internal property map
 *         for `CGAL::vertex_point_t`
@@ -140,7 +140,7 @@ compute_face_normals(const PolygonMesh& pmesh
 }
 
 /**
-* \ingroup PkgPolygonMeshProcessing
+* \ingroup PMP_normal_grp
 * computes the unit normal at vertex `v` as the average of the normals of incident faces.
 * @tparam PolygonMesh a model of `FaceGraph` that has an internal property map
 *         for `CGAL::vertex_point_t`
@@ -192,7 +192,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 }
 
 /**
-* \ingroup PkgPolygonMeshProcessing
+* \ingroup PMP_normal_grp
 * computes the outward unit vector normal for all vertices of the polygon mesh.
 * @tparam PolygonMesh a model of `FaceListGraph` that has an internal property map
 *         for `CGAL::vertex_point_t`
@@ -230,7 +230,7 @@ compute_vertex_normals(const PolygonMesh& pmesh
 }
 
 /**
-* \ingroup PkgPolygonMeshProcessing
+* \ingroup PMP_normal_grp
 * computes the outward unit vector normal for all vertices and faces of the polygon mesh.
 * @tparam PolygonMesh a model of `FaceListGraph` that has an internal property map
 *         for `CGAL::vertex_point_t`

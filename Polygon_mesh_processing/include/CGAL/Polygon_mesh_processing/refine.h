@@ -31,7 +31,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
   /*!
-  \ingroup PkgPolygonMeshProcessing
+  \ingroup PMP_meshing_grp
   @brief refines a region of a polygon mesh
 
   @tparam PolygonMesh model of `MutableFaceGraph`

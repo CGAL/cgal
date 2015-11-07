@@ -1,13 +1,30 @@
 /// \defgroup PkgPolygonMeshProcessing Polygon Mesh Processing Reference
 /// \defgroup PkgPolygonMeshProcessingConcepts Concepts
 /// \ingroup PkgPolygonMeshProcessing
-/// \defgroup stitching_grp CGAL::Polygon_mesh_processing::stitch_borders()
+
+/// \defgroup keep_connected_components_grp Connected Components
+///
+/// Two faces are in the same <em>connected component</em> if there is a path 
+/// of adjacent faces such that all edges between two consecutive faces of the 
+/// path are not marked as constrained.
+///
 /// \ingroup PkgPolygonMeshProcessing
-/// \defgroup reverse_face_orientations_grp CGAL::reverse_face_orientations()
+
+
+/// \defgroup hole_filling_grp Hole Filling
+/// Functions to fill holes given as a range of halfedges or as range of points.
 /// \ingroup PkgPolygonMeshProcessing
-/// \defgroup keep_connected_components_grp CGAL::keep_connected_components()
+
+/// \defgroup PMP_meshing_grp Meshing
 /// \ingroup PkgPolygonMeshProcessing
-/// \defgroup remove_connected_components_grp CGAL::remove_connected_components()
+
+/// \defgroup PMP_normal_grp Normal Computation
+/// \ingroup PkgPolygonMeshProcessing
+
+/// \defgroup PMP_orientation_grp Orientation Functions
+/// \ingroup PkgPolygonMeshProcessing
+
+/// \defgroup PMP_repairing_grp Combinatorial Repairing
 /// \ingroup PkgPolygonMeshProcessing
 
 /*!
@@ -65,7 +82,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::reverse_face_orientations()`
 
 ## Combinatorial Repairing Functions ##
-- \link stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
+- \link PMP_repairing_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
 <!---
@@ -84,7 +101,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::keep_large_connected_components()`
 - `CGAL::Polygon_mesh_processing::keep_largest_connected_components()`
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::keep_connected_components()` \endlink
-- \link remove_connected_components_grp `CGAL::Polygon_mesh_processing::remove_connected_components()` \endlink
+- \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::remove_connected_components()` \endlink
 
 ## Miscellaneous ##
 - `CGAL::Polygon_mesh_slicer`

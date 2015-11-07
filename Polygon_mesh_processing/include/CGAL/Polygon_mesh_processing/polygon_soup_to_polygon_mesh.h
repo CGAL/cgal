@@ -94,7 +94,7 @@ public:
 
   /// \cond SKIP_IN_MANUAL
   /**
-  * \ingroup PkgPolygonMeshProcessing
+  * \ingroup PMP_repairing_grp
   * returns `true` if the soup of polygons defines a valid polygon mesh
   * that can be handled by `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`.
   *
@@ -128,7 +128,7 @@ public:
   /// \endcond
 
   /**
-  * \ingroup PkgPolygonMeshProcessing
+  * \ingroup PMP_repairing_grp
   * builds a polygon mesh from a soup of polygons.
   * @pre the input polygon soup describes consistently oriented
   * polygon mesh.
