@@ -16,9 +16,11 @@
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup PMP_meshing_grp Meshing
+/// Functions to triangulate faces, and to refine and fair regions of a polygon mesh.
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup PMP_normal_grp Normal Computation
+/// Functions to compute unit normals for individual/all vertices or faces.
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup PMP_orientation_grp Orientation Functions
