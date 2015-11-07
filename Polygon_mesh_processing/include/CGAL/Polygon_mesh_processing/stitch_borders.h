@@ -260,7 +260,7 @@ private:
 * \ingroup PMP_repairing_grp
 * Stitches together border halfedges in a polygon mesh.
 * The halfedges to be stitched are provided in `hedge_pairs_to_stitch`.
-* For each pair `p` in this vector, p.second and its opposite will be removed
+* For each pair `p` in this vector, `p.second` and its opposite will be removed
 * from `pmesh`.
 *
 * The vertices that get removed from `pmesh` are selected as follows:
