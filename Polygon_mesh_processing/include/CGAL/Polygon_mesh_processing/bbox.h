@@ -36,7 +36,7 @@ namespace CGAL {
 
     /*!
     * \ingroup PkgPolygonMeshProcessing
-    *  computes a bounding box of a triangulated surface mesh
+    *  computes a bounding box of a polygon mesh.
     *
     * @tparam PolygonMesh a model of `HalfedgeListGraph`
     *   that has an internal property map for `CGAL::vertex_point_t`

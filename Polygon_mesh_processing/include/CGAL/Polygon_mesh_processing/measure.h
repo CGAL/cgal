@@ -40,7 +40,8 @@ namespace Polygon_mesh_processing {
 
   /**
   * \ingroup measure_grp
-  * computes the length of a halfedge of a given polygon mesh.
+  * computes the length of an edge of a given polygon mesh.
+  * The edge is given by one of its halfedges.
   *
   * @tparam PolygonMesh a model of `HalfedgeGraph` that has an internal property map
   *         for `CGAL::vertex_point_t`
