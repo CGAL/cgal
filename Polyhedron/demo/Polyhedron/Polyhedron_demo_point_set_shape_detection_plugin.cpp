@@ -169,7 +169,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       {
         std::cerr << "Regularization of planes... " << std::endl;
         Regularization regularization (*points, shape_detection);
-        regularization.run (1. - op.normal_threshold, op.epsilon);
+
+        regularization.run (180 * std::acos (op.normal_threshold) / M_PI, op.epsilon);
     
         std::cerr << "done" << std::endl;
       }
@@ -214,15 +215,24 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
           ss << item->name().toStdString() << "_plane_";
 
           
-          if (dialog.regularize ())
+          //          if (dialog.regularize ())
             {
               Kernel::Point_3 ref
                 = CGAL::ORIGIN + (dynamic_cast<CGAL::Shape_detection_3::Plane<Traits>*>(shape.get ()))->plane_normal ();
 
               if (color_map.find (ref) == color_map.end ())
-                color_map[ref] = point_item->color ();
+                {
+                  ref
+                    = CGAL::ORIGIN + (-1.) * (dynamic_cast<CGAL::Shape_detection_3::Plane<Traits>*>(shape.get ()))->plane_normal ();
+                  if (color_map.find (ref) == color_map.end ())
+                    color_map[ref] = point_item->color ();
+                  else
+                    point_item->setColor (color_map[ref]);
+                }
               else
                 point_item->setColor (color_map[ref]);
+
+              ss << "(" << ref << ")_";
             }
       
           if (dialog.generate_alpha ())
@@ -231,7 +241,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
               Scene_polyhedron_item* poly_item = new Scene_polyhedron_item;
 
               Plane_3 plane = (Plane_3)(*(dynamic_cast<CGAL::Shape_detection_3::Plane<Traits>*>(shape.get ())));
-              std::cerr << plane << std::endl;
+
               build_alpha_shape (*(point_item->point_set()), plane,
                                  poly_item, dialog.cluster_epsilon());
           
