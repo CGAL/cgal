@@ -304,7 +304,7 @@ typename boost::property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::face_ind
 get(const boost::face_index_t&, const OpenMesh::PolyMesh_ArrayKernelT<K>&)
 {
   typedef OpenMesh::PolyMesh_ArrayKernelT<K> Mesh;
-  return CGAL::OM_index_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::face_descriptor>();
+  return CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::face_descriptor>();
 }
 
 template <typename K>
