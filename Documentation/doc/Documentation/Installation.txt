@@ -293,7 +293,7 @@ We next list the libraries and essential 3rd party software
 
 | Library   | CMake Variable | Functionality | Dependencies |
 | :-------- | :------------- | :------------ | :----------- |
-| `%CGAL`   | none           | Main library  | \sc{Gmp}, \sc{Mpfr}, \sc{Boost} (headers), Boost.Thread and Boost.System (library) |
+| `%CGAL`   | none           | Main library  | \sc{Gmp}, \sc{Mpfr}, \sc{Boost} (headers), Boost.Thread and Boost.System (library) for compilers not supporting the keyword `threadlocal` |
 | `CGAL_Core` | `WITH_CGAL_Core`  | The CORE library for algebraic numbers.\cgalFootnote{CGAL_Core is not part of \cgal, but a custom version of the \sc{Core} library distributed by \cgal for the user convenience and it has it's own license.}  | \sc{Gmp} and \sc{Mpfr} |
 | `CGAL_ImageIO` | `WITH_CGAL_ImageIO` | Utilities to read and write image files  | \sc{OpenGL}, \sc{zlib}, \sc{Vtk}(optional) |
 | `CGAL_Qt5`  | `WITH_CGAL_Qt5` | `QGraphicsView` support for \sc{Qt}5-based demos | \sc{Qt}5 and \sc{OpenGL} |
@@ -350,7 +350,8 @@ installed as binaries.
 
 \cgal requires the \sc{Boost} libraries. In particular the header files
 and the threading library (`Boost.Thread` and
-`Boost.System` binaries). Version 1.48 (or higher) are needed.
+`Boost.System` binaries). Version 1.48 (or higher) are needed
+for compilers not supporting the keyword `threadlocal` (This is supported for g++ when using the option `-std=c++11`, and for Visual C++ starting with 2015, that is VC14).
 
 On Windows, as auto-linking is used, you also need the binaries of
 `Boost.Serialization` and `Boost.DateTime`, but the
@@ -360,9 +361,9 @@ not depend on the DLL's of those two libraries.
 In \cgal some demos and examples depend on `Boost.Program_options`.
 
 In case the \sc{Boost} libraries are not installed on your system already, you
-can obtain them from <A HREF="http://www.boost.org/">`http://www.boost.org/`</A>. For Windows you can download precompiled libraries
-from <A HREF="http://boost.teeks99.com/">`http://boost.teeks99.com/`</A>.
-Since `Boost.Thread` is required, make sure to either install the precompiled 
+can obtain them from <A HREF="http://www.boost.org/">`http://www.boost.org/`</A>. For Visual C++ you can download precompiled libraries
+from <A HREF="http://sourceforge.net/projects/boost/files/boost-binaries/">`http://sourceforge.net/projects/boost/files/boost-binaries/`</A>.
+For Visual C++ versions prior to 2015  `Boost.Thread` is required, so make sure to either install the precompiled 
 libraries for your compiler or build `libboost-thread` and `libboost-system`.
 
 As on Windows there is no canonical directory for where to find
