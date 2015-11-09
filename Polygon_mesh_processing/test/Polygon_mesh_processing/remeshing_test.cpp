@@ -1,9 +1,9 @@
 // data/joint_refined.off 0.1 5 data/joint-patch.selection.txt
 
 #define CGAL_PMP_REMESHING_DEBUG
-#define CGAL_DUMP_REMESHING_STEPS
+//#define CGAL_DUMP_REMESHING_STEPS
 #define CGAL_PMP_REMESHING_VERBOSE
-#define CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
+//#define CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh.h>
