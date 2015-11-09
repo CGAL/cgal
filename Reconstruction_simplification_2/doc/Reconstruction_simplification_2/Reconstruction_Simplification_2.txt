@@ -89,11 +89,13 @@ the algorithm when the input point density decreases.
 
 As noise and missing data may prevent the reconstructed shape to have sharp
 corners at the correct places, the algorithm offers a function to relocate 
-all points:
+all points of the reconstruction:
 \code{.cpp}
   rs2.relocate_all_points();
 \endcode
-The new point locations are chosen such that the approximation of the output segments and isolated points to the input points is improved. 
+Note that these points coincide with the vertices of the underlying triangulation. This function can be called either after one run of simplification, or interleaved with several runs of simplification. 
+
+The new point locations are chosen such that the approximation of the output segments and isolated points to the input points is improved. More specifically, the relocation process iterates between computing the best transport plan given the current reconstruction, and relocating the triangulation vertices while keeping the current transport plan unchanged. The vertices are relocated so as to minimize the transport cost induced by the current transport plan \cgalCite{degoes:hal-00758019}.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_relocation,relocation.png}
 Left: before point relocation. Right: after point relocation.
@@ -124,7 +126,9 @@ By default the simplification relies upon an exhaustive priority queue of half e
 
 \subsection Reconstruction_simplification_2Local_relocation Local Point Relocation
 
-In addition to the global relocation function an optional parameter of the constructor of the <I> Reconstruction_simplification_2 </I> class provides a means to relocate the points locally after a specified number of atomic simplification operators. The new local point locations are chosen such that the approximation of the output segments and isolated points to the input points is improved. 
+In addition to the global relocation function described above, an optional parameter of the constructor of the <I> Reconstruction_simplification_2 </I> class provides a means to relocate the points <em>locally</em> after each series of a specified number of atomic simplification operators (edge collapse operators combined with edge flips). Locally herein means that only the vertices of a local stencil in the triangulation around the each edge collapse operator are relocated. The local stencil is chosen as the one-ring neighborhood of the vertex remaining after collapsing an edge.
+
+The vertices of this stencil are relocated such that the approximation of the output segments and isolated points to the input points is improved. More specifically, the local relocation process iterates between computing the best local transport plan given the current reconstruction, and relocating the local vertices so as to minimize the transport cost induced by the current (unchanged) transport plan.
 
 \subsection Reconstruction_simplification_2Verbose Verbose Output
 
