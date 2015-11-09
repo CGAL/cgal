@@ -211,7 +211,7 @@ void Polyhedron_demo_polylines_io_plugin::addPolylineButton_clicked()
   polylines.resize(polylines.size()+1);
   std::vector<Scene_polylines_item::Point_3>& polyline = *(polylines.rbegin());
   QStringList polylines_metadata;
-  QStringList list = text.split(QRegExp("\\W+"), QString::SkipEmptyParts);
+  QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
   int counter = 0;
   double coord[3];
   bool ok = true;

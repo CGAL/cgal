@@ -159,7 +159,7 @@ void Polyhedron_demo_xyz_plugin::addPointSetButton_clicked()
     static int nb_of_point_set =0;
   QString text = add_pointsetdiagui->textEdit->toPlainText();
   Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
-  QStringList list = text.split(QRegExp("\\W+"), QString::SkipEmptyParts);
+  QStringList list = text.split(QRegExp("\\s+"), QString::SkipEmptyParts);
   int counter = 0;
   double coord[3];
   bool ok = true;
