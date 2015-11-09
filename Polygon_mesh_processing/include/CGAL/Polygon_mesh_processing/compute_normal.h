@@ -89,6 +89,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
                     , const NamedParameters& np)
 {
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
+  typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
 
@@ -100,7 +101,7 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
     , choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, pmesh))
     , normal);
  
-  return normal / CGAL::sqrt(normal * normal);
+  return normal / FT( std::sqrt( to_double(normal * normal) ) );
 }
 
 /**
@@ -171,6 +172,7 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
                       )
 {
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
+  typedef typename Kernel::FT FT;
 
   typedef typename Kernel::Vector_3 Vector;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
@@ -183,12 +185,12 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     if (!is_border(he, pmesh))
     {
       Vector n = compute_face_normal(face(he, pmesh), pmesh, np);
-      normal = normal + (n / CGAL::sqrt(n*n));
+      normal = normal + n;
     }
     he = opposite(next(he, pmesh), pmesh);
   } while (he != end);
 
-  return normal / CGAL::sqrt(normal * normal);
+  return normal / FT( std::sqrt( to_double(normal * normal)  ) );
 }
 
 /**
