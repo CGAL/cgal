@@ -26,7 +26,12 @@
 /// \defgroup PMP_orientation_grp Orientation Functions
 /// \ingroup PkgPolygonMeshProcessing
 
+/// \defgroup PMP_intersection_grp Intersection Functions
+/// Functions to test if there are self intersections, and to report faces that do intersect.
+/// \ingroup PkgPolygonMeshProcessing
+
 /// \defgroup PMP_repairing_grp Combinatorial Repairing
+/// Functions to orient polygon soups  and to stitch geometrically identical boundaries.
 /// \ingroup PkgPolygonMeshProcessing
 
 /*!
@@ -77,7 +82,7 @@ and provides a list of the parameters that are used in this package.
 ## Predicate Functions and Classes ##
 - `CGAL::Polygon_mesh_processing::does_self_intersect()`
 - `CGAL::Polygon_mesh_processing::self_intersections()`
-- `CGAL::Side_of_triangle_mesh`
+
 
 ## Orientation Functions ##
 - `CGAL::Polygon_mesh_processing::is_outward_oriented()`
@@ -107,6 +112,7 @@ and provides a list of the parameters that are used in this package.
 
 ## Miscellaneous ##
 - `CGAL::Polygon_mesh_slicer`
+- `CGAL::Side_of_triangle_mesh`
 
 \todo make template parameter names uniform in other packages using BGL. Here we chose PolygonMesh as template parameter.
 It can be made short to PM. And TriangleMesh (or TM) specifies when the parameter should be a triangle mesh.

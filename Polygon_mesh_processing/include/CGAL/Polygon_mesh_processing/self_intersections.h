@@ -203,7 +203,7 @@ self_intersections( const FaceRange& face_range,
 #endif
 
 /** 
- * \ingroup PkgPolygonMeshProcessing
+ * \ingroup PMP_intersection_grp
  * detects and records self-intersections of a triangulated surface mesh.
  * This function depends on the package \ref PkgBoxIntersectionDSummary
  * @pre `CGAL::is_triangle_mesh(tmesh)`
@@ -256,7 +256,7 @@ self_intersections(const TriangleMesh& tmesh, OutputIterator out)
 /// \endcond
 
 /*!
- * \ingroup PkgPolygonMeshProcessing
+ * \ingroup PMP_intersection_grp
  * Same as above but the self-intersections reported
  * are only limited to the faces in `face_range`.
  *
@@ -350,7 +350,7 @@ OutputIterator self_intersections(const FaceRange& face_range,
 /// \endcond
 
 /**
- * \ingroup PkgPolygonMeshProcessing
+ * \ingroup PMP_intersection_grp
  * tests if a triangulated surface mesh self-intersects.
  * This function depends on the package \ref PkgBoxIntersectionDSummary
  * @pre `CGAL::is_triangle_mesh(tmesh)`
