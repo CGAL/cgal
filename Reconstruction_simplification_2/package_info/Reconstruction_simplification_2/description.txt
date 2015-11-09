@@ -1,0 +1,1 @@
+This component implements a robust method to reconstruct and simplify 2D point sets. The algorithm takes as input a set of 2D points (optionally with mass attributes) and generates as output a set of line segments and isolated points which approximate the input points. 
