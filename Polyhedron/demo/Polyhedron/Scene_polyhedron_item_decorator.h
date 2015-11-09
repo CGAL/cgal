@@ -5,7 +5,7 @@
 
 // This class is a decorator for Scene_polyhedron_item yet it does not inherit it but Scene_item
 class SCENE_POLYHEDRON_ITEM_DECORATOR_EXPORT Scene_polyhedron_item_decorator 
-  : public Scene_item {
+  : public CGAL::Three::Scene_item {
   Q_OBJECT
 public:  
   /// Create an Scene_polyhedron_item_decorator from a Scene_polyhedron_item.

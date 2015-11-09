@@ -1,0 +1,3 @@
+include( polyhedron_demo_macros )
+polyhedron_demo_plugin(polyhedron_stitching_plugin Polyhedron_demo_polyhedron_stitching_plugin)
+target_link_libraries(polyhedron_stitching_plugin scene_polyhedron_item scene_polylines_item)

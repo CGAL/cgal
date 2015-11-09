@@ -2,7 +2,7 @@
 #define SCENE_POLYHEDRON_ITEM_H
 
 #include "Scene_polyhedron_item_config.h"
-#include "Scene_item.h" //<- modif ?
+#include  <CGAL/Three/Scene_item.h> //<- modif ?
 #include "Polyhedron_type_fwd.h"
 #include "Polyhedron_type.h"
 #include "Viewer.h"
@@ -21,7 +21,7 @@ class QMenu;
 
 // This class represents a polyhedron in the OpenGL scene
 class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item 
-        : public Scene_item{
+        : public CGAL::Three::Scene_item{
     Q_OBJECT
 public:  
     Scene_polyhedron_item();
@@ -136,7 +136,7 @@ private:
     mutable std::size_t nb_lines;
     mutable QOpenGLShaderProgram *program;
 
-    using Scene_item::initialize_buffers;
+    using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;
     void compute_normals_and_vertices(void) const;
     void compute_colors() const;

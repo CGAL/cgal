@@ -33,7 +33,7 @@ class QKeyEvent;
 class QOpenGLShaderProgram;
 
 //! \file Viewer_interface.h
-#include "../Viewer_config.h" // for VIEWER_EXPORT
+#include <CGAL/Three/Viewer_config.h> // for VIEWER_EXPORT
 namespace CGAL{
 namespace Three{
 class Scene_draw_interface;

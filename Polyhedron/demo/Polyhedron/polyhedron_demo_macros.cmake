@@ -1,4 +1,5 @@
 include(AddFileDependencies)
+include (CGAL_Macros)
 
   macro(polyhedron_demo_plugin plugin_name plugin_implementation_base_name)
     list_split(option ARGN_TAIL ${ARGN} )
@@ -38,5 +39,7 @@ include(AddFileDependencies)
     endif()
     # Link with CGAL
     target_link_libraries( ${plugin_name} ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
-    add_dependencies( ${plugin_name} Polyhedron_3 )
+    if(TARGET Polyhedron_3)
+      add_dependencies( ${plugin_name} Polyhedron_3 )
+    endif()
   endmacro(polyhedron_demo_plugin)

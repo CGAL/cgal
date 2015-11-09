@@ -1,0 +1,5 @@
+include( polyhedron_demo_macros )
+
+qt5_wrap_ui( selectionUI_FILES Selection_widget.ui)
+polyhedron_demo_plugin(selection_plugin Polyhedron_demo_selection_plugin ${selectionUI_FILES})
+target_link_libraries(selection_plugin scene_polyhedron_selection_item scene_points_with_normal_item scene_polylines_item)

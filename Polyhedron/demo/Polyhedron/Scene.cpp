@@ -4,7 +4,7 @@
 
 #include "config.h"
 #include "Scene.h"
-#include "Scene_item.h"
+#include  <CGAL/Three/Scene_item.h>
 
 #include <QObject>
 #include <QMetaObject>
@@ -18,7 +18,6 @@
 #include <QPointer>
 #include <QList>
 #include <QAbstractProxyModel>
-
 
 
 
@@ -49,7 +48,7 @@ Scene::Scene(QObject* parent)
 
 }
 Scene::Item_id
-Scene::addItem(Scene_item* item)
+Scene::addItem(CGAL::Three::Scene_item* item)
 {
     Bbox bbox_before = bbox();
     m_entries.push_back(item);
@@ -72,8 +71,8 @@ Scene::addItem(Scene_item* item)
     return id;
 }
 
-Scene_item*
-Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_to_be_destroyed)
+CGAL::Three::Scene_item*
+Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed)
 {
     if(index < 0 || index >= m_entries.size())
         return 0;
@@ -103,7 +102,7 @@ Scene::erase(int index)
     if(index < 0 || index >= m_entries.size())
         return -1;
 
-    Scene_item* item = m_entries[index];
+    CGAL::Three::Scene_item* item = m_entries[index];
   Q_EMIT itemAboutToBeDestroyed(item);
     delete item;
     m_entries.removeAt(index);
@@ -124,20 +123,20 @@ Scene::erase(int index)
 int
 Scene::erase(QList<int> indices)
 {
-    QList<Scene_item*> to_be_removed;
+    QList<CGAL::Three::Scene_item*> to_be_removed;
 
     int max_index = -1;
     Q_FOREACH(int index, indices) {
         if(index < 0 || index >= m_entries.size())
             continue;
         max_index = (std::max)(max_index, index);
-        Scene_item* item = m_entries[index];
+        CGAL::Three::Scene_item* item = m_entries[index];
         to_be_removed.push_back(item);
     }
 
 
 
-  Q_FOREACH(Scene_item* item, to_be_removed) {
+  Q_FOREACH(CGAL::Three::Scene_item* item, to_be_removed) {
     Q_EMIT itemAboutToBeDestroyed(item);
     delete item;
     m_entries.removeAll(item);
@@ -162,7 +161,7 @@ Scene::erase(QList<int> indices)
 
 Scene::~Scene()
 {
-    Q_FOREACH(Scene_item* item_ptr, m_entries)
+    Q_FOREACH(CGAL::Three::Scene_item* item_ptr, m_entries)
     {
         delete item_ptr;
     }
@@ -172,14 +171,14 @@ Scene::~Scene()
         delete ms_splatting;
 }
 
-Scene_item*
+CGAL::Three::Scene_item*
 Scene::item(Item_id index) const
 {
     return m_entries.value(index); // QList::value checks bounds
 }
 
 Scene::Item_id 
-Scene::item_id(Scene_item* scene_item) const
+Scene::item_id(CGAL::Three::Scene_item* scene_item) const
 {
     return m_entries.indexOf(scene_item);
 }
@@ -198,8 +197,8 @@ Scene::duplicate(Item_id index)
     if(index < 0 || index >= m_entries.size())
         return -1;
 
-    const Scene_item* item = m_entries[index];
-    Scene_item* new_item = item->clone();
+    const CGAL::Three::Scene_item* item = m_entries[index];
+    CGAL::Three::Scene_item* new_item = item->clone();
     if(new_item) {
         new_item->setName(tr("%1 (copy)").arg(item->name()));
         new_item->setColor(item->color());
@@ -237,7 +236,7 @@ Scene::keyPressEvent(QKeyEvent* e){
     for (QList<int>::iterator it=selected_items_list.begin(),endit=selected_items_list.end();
          it!=endit;++it)
     {
-        Scene_item* item=m_entries[*it];
+        CGAL::Three::Scene_item* item=m_entries[*it];
         res |= item->keyPressEvent(e);
     }
     return res;
@@ -275,7 +274,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
         if(with_names) {
             viewer->glPushName(index);
         }
-        Scene_item& item = *m_entries[index];
+        CGAL::Three::Scene_item& item = *m_entries[index];
         if(item.visible())
         {
             if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
@@ -317,7 +316,7 @@ glDepthFunc(GL_LEQUAL);
         if(with_names) {
             viewer->glPushName(index);
         }
-        Scene_item& item = *m_entries[index];
+        CGAL::Three::Scene_item& item = *m_entries[index];
         if(item.visible())
         {
             if(item.renderingMode() == FlatPlusEdges || item.renderingMode() == Wireframe)
@@ -378,7 +377,7 @@ glDepthFunc(GL_LEQUAL);
         if(with_names) {
             viewer->glPushName(index);
         }
-        Scene_item& item = *m_entries[index];
+        CGAL::Three::Scene_item& item = *m_entries[index];
         if(item.visible())
         {
             if(item.renderingMode() == Points  || item.renderingMode() == PointsPlusNormals)
@@ -407,7 +406,7 @@ glDepthFunc(GL_LEQUAL);
         ms_splatting->beginVisibilityPass();
         for(int index = 0; index < m_entries.size(); ++index)
         {
-            Scene_item& item = *m_entries[index];
+            CGAL::Three::Scene_item& item = *m_entries[index];
             if(item.visible() && item.renderingMode() == Splatting)
             {
 
@@ -422,7 +421,7 @@ glDepthFunc(GL_LEQUAL);
         }
        ms_splatting->beginAttributePass();
          for(int index = 0; index < m_entries.size(); ++index)
-        {  Scene_item& item = *m_entries[index];
+        {  CGAL::Three::Scene_item& item = *m_entries[index];
             if(item.visible() && item.renderingMode() == Splatting)
             {
                 viewer->glColor4d(item.color().redF(), item.color().greenF(), item.color().blueF(), item.color().alphaF());
@@ -577,7 +576,7 @@ Scene::setData(const QModelIndex &index,
     if(index.row() < 0 || index.row() >= m_entries.size())
         return false;
 
-    Scene_item* item = m_entries[index.row()];
+    CGAL::Three::Scene_item* item = m_entries[index.row()];
     if(!item) return false;
     switch(index.column())
     {
@@ -646,7 +645,7 @@ QItemSelection Scene::createSelectionAll()
 
 void Scene::itemChanged()
 {
-    Scene_item* item = qobject_cast<Scene_item*>(sender());
+    CGAL::Three::Scene_item* item = qobject_cast<CGAL::Three::Scene_item*>(sender());
     if(item)
         itemChanged(item);
 }
@@ -660,7 +659,7 @@ void Scene::itemChanged(Item_id i)
                      this->createIndex(i, LastColumn));
 }
 
-void Scene::itemChanged(Scene_item* /* item */)
+void Scene::itemChanged(CGAL::Three::Scene_item* /* item */)
 {
   Q_EMIT dataChanged(this->createIndex(0, 0),
                      this->createIndex(m_entries.size() - 1, LastColumn));
@@ -798,7 +797,7 @@ void Scene::setSelectionRay(double orig_x,
                             double dir_y,
                             double dir_z)
 {
-    Scene_item* item = this->item(selected_item);
+    CGAL::Three::Scene_item* item = this->item(selected_item);
     if(item) item->select(orig_x,
                           orig_y,
                           orig_z,
@@ -837,7 +836,7 @@ Scene::Bbox Scene::bbox() const
 
     bool bbox_initialized = false;
     Bbox bbox;
-    Q_FOREACH(Scene_item* item, m_entries)
+    Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
     {
         if(item->isFinite() && !item->isEmpty() && item->visible()) {
             if(bbox_initialized) {
@@ -863,31 +862,31 @@ float Scene::get_bbox_length() const
 namespace scene { namespace details {
 
 Q_DECL_EXPORT
-Scene_item* 
+CGAL::Three::Scene_item*
 findItem(const CGAL::Three::Scene_interface* scene_interface,
          const QMetaObject& metaobj,
          QString name, Scene_item_name_fn_ptr fn) {
     const Scene* scene = dynamic_cast<const Scene*>(scene_interface);
     if(!scene) return 0;
-    Q_FOREACH(Scene_item* item, scene->entries()) {
-        Scene_item* ptr = qobject_cast<Scene_item*>(metaobj.cast(item));
+    Q_FOREACH(CGAL::Three::Scene_item* item, scene->entries()) {
+       CGAL::Three::Scene_item* ptr = qobject_cast<CGAL::Three::Scene_item*>(metaobj.cast(item));
         if(ptr && ((ptr->*fn)() == name)) return ptr;
     }
     return 0;
 }
 
 Q_DECL_EXPORT
-QList<Scene_item*> 
+QList<CGAL::Three::Scene_item*>
 findItems(const CGAL::Three::Scene_interface* scene_interface,
           const QMetaObject&,
           QString name, Scene_item_name_fn_ptr fn)
 {
     const Scene* scene = dynamic_cast<const Scene*>(scene_interface);
-    QList<Scene_item*> list;
+    QList<CGAL::Three::Scene_item*> list;
     if(!scene) return list;
 
-    Q_FOREACH(Scene_item* item, scene->entries()) {
-        Scene_item* ptr = qobject_cast<Scene_item*>(item);
+    Q_FOREACH(CGAL::Three::Scene_item* item, scene->entries()) {
+        CGAL::Three::Scene_item* ptr = qobject_cast<CGAL::Three::Scene_item*>(item);
         if(ptr && ((ptr->*fn)() == name)) {
             list << ptr;
         }

@@ -322,7 +322,7 @@ Scene_polylines_item::compute_elements() const
 
 
 Scene_polylines_item::Scene_polylines_item() 
-    :Scene_item(NbOfVbos,NbOfVaos)
+    :CGAL::Three::Scene_item(NbOfVbos,NbOfVaos)
     ,d(new Scene_polylines_item_private())
     ,nbSpheres(0)
 {
