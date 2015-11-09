@@ -15,12 +15,12 @@ This package implements a method to reconstruct and simplify 2D point sets \cgal
 Left: input point set hampered by noise. Right: The corresponding reconstructed shape consisting of line segments.
 \cgalFigureEnd
 
-Internally, the algorithm constructs an initial 2D Delaunay triangulation from all the input points, then simplifies the triangulation so that a subset of the edges and vertices of the triangulation approximate well the input points. Approximate herein refers to a robust distance based on <em>optimal transportation</em> (see section \ref Reconstruction_simplification_2HowDoesItWork for more details). The triangulation is simplified using a combination of <em>half edge collapse operators</em> and <em>edge flips</em>. The triangulation remains valid during simplification, i.e., with neither overlaps nor fold-overs. 
+Internally, the algorithm constructs an initial 2D Delaunay triangulation from all the input points, then simplifies the triangulation so that a subset of the edges and vertices of the triangulation approximate well the input points. Approximate herein refers to a robust distance based on <em>optimal transportation</em> (see section \ref Reconstruction_simplification_2HowDoesItWork for more details). The triangulation is simplified using a combination of <em>half edge collapse</em>, <em>edge flips</em> and <em>vertex relocation</em> operators. The triangulation remains valid during simplification, i.e., with neither overlaps nor fold-overs. 
 
 The output of the reconstruction algorithm is a subset of edges and vertices of the triangulation. Figure \cgalFigureRef{2D_Reconstruction_Simplification_algorithm} depicts an example where the output is composed of green edges and one isolated vertex. The green edges are considered relevant as they approximate well many of the input points. The edges depicted in grey, referred to as <em>ghost edges</em> and discarded, approximate none of the input points. The edges depicted in red, referred to as irrelevant and also discarded, approximate some of the input points but not enough to be considered relevant.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_algorithm,algorithm.png}
-(a) Input point set (b) Delaunay triangulation of the input points (c) After simplification, with ghost edges in grey, relevant edges in green, and irrelevant edges in red (d) Final reconstruction made up of several edges and one isolated vertex.
+(a) Input points. (b) Delaunay triangulation of the input points. (c) After simplification, with ghost edges in grey, relevant edges in green, and irrelevant edges in red. (d) Final reconstruction made up of several edges and one isolated vertex.
 \cgalFigureEnd
 
 
@@ -29,11 +29,11 @@ The following example first generates a set of input points on a square. The poi
 \cgalExample{Reconstruction_simplification_2/rs2_simplest_example.cpp}
 
 \subsubsection Reconstruction_simplification_2Output_example Output Example
-The output of the reconstruction can be obtained in two ways: either as a sequence of points and segments, or as an indexed format when the connectivity of the segments is encoded, hence the terms vertices and edges. The indexed format records a list of points, then pairs of point indices in the said list for the edges, and point indices for isolated vertices. 
+The output of the reconstruction can be obtained in two ways: either as a sequence of 2D points and segments, or as an indexed format where the connectivity of the segments is encoded, hence the terms vertices and edges. The indexed format records a list of points, then pairs of point indices in the said list for the edges, and point indices for the isolated vertices. 
 \cgalExample{Reconstruction_simplification_2/rs2_output_example.cpp}
 
 \subsection Reconstruction_simplification_2Mass_example Example with Mass Attributes
-The following example first reads a set of input points and masses from an ASCII file. Using two property maps,  the points and their initial mass are passed to the Reconstruction_simplification_2 object. After initializing it, 100 iterations of the reconstruction process are performed. Lastly, the segments and isolated points of the reconstructed shape are extracted and printed to the console. 
+The following example first reads a set of input points and masses from an ASCII file. Using two property maps, the points and their initial mass are passed to the Reconstruction_simplification_2 object. After initialization 100 iterations of the reconstruction process are performed, then the segments and isolated points of the reconstructed shape are extracted and printed to the console. 
 \cgalExample{Reconstruction_simplification_2/rs2_mass_example.cpp}
 
 
@@ -51,11 +51,11 @@ K : a geometric kernel.
 Reconstruction_simplification_2<K>
   rs2(points.begin(), points.end());
 
-rs2.run(100); // perform 100 contraction steps
+rs2.run(100); // perform 100 edge collapse operators
 \endcode
 
 In case the input is not just points without masses, one can provide 
-property maps that match his input.
+a property map that matches this input.
 \code{.cpp}
 /*
 K            	   : a geometric kernel.
@@ -67,7 +67,7 @@ Mass_property_map  : a PropertyMap for accessing the mass attributes of the
 Reconstruction_simplification_2<K, Point_property_map, Mass_property_map>
   rs2(points.begin(), points.end(), point_pmap, mass_pmap);
 
-rs2.run(100); // perform 100 contraction steps
+rs2.run(100); // perform 100 edge collapse operators
 \endcode
 
 Alternatively to calling \link Reconstruction_simplification_2::run run \endlink, 
@@ -75,19 +75,19 @@ one can call \link Reconstruction_simplification_2::run_until run_until \endlink
 and specify the number of output vertices one wants to keep as illustrated in
 Figure \cgalFigureRef{2D_Reconstruction_Simplification_twenty_vertices}.
 \code{.cpp}
-  rs2.run_until(20); // perform edge contractions until only 20 vertices are left.
+  rs2.run_until(20); // perform edge collapse operators until 20 vertices remain.
 \endcode
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_twenty_vertices,twenty_vertices.png}
 Examples of 20-vertex reconstructions from datasets consisting of 2000, 400 
-and 200 input points respectively. The examples illustrates the behavior of
+and 200 input points respectively. These examples illustrate the behavior of
 the algorithm when the input point density decreases. 
 \cgalFigureEnd
 
 
 \subsection Reconstruction_simplification_2Global_relocation Global Point Relocation
 
-Since noise and missing data may prevent the reconstructed shape to have sharp
+As noise and missing data may prevent the reconstructed shape to have sharp
 corners at the correct places, the algorithm offers a function to relocate 
 all points:
 \code{.cpp}
@@ -109,13 +109,13 @@ The behavior of the algorithm is controlled via the following parameters.
 During simplification of the internal triangulation some recursive edge flip operators are required to guarantee that the triangulation remain valid when applying a half edge collapse operator (see Figure \cgalFigureRef{2D_Reconstruction_Simplification_edgeflip}). Calling set_use_flip(false) prevents the algorithm from using edge flips, yielding shorter computational times at the price of suboptimal results as not all edges can be considered for being collapsible.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_edgeflip,edgeflip.jpg}
-Edge flipping. Left: the blue edge creates fold-overs because of blocking edges shown in black. Middle: after running the recursive edge flipping procedure the blue edge is collapsible. Right: triangulation after collapse.
+Edge flipping. Left: the blue edge creates fold-overs because of blocking edges shown in black. Middle: after running the recursive edge flipping procedure the blue edge is collapsible. Right: triangulation after edge collapse.
 \cgalFigureEnd
 
 \subsection Reconstruction_simplification_2Relevance Edge Relevance
 
-An edge is relevant from the approximation point of view if (1) it is long, (2) approximates a large number of points (or a large amount of mass when points have mass attributes), and (3) has a small approximation error. The notion of relevance is defined as \f$ m(e) * |e|^2 / cost(e) \f$, where \f$ m(e) \f$ denotes the mass of the points approximated by the edge, \f$ |e| \f$ denotes the edge length and \f$ cost(e) \f$ its approximation error. As the error is defined by mass time squared distance the relevance is unitless.
-The default value is 0, so that all edges approximating some input points are considered relevant. A larger relevance value provides a means to increase resilience to outliers.
+An edge is relevant from the approximation point of view if (1) it is long, (2) approximates a large number of points (or a large amount of mass when points have mass attributes), and (3) has a small approximation error. More specifically, the notion of relevance is defined as \f$ m(e) * |e|^2 / cost(e) \f$, where \f$ m(e) \f$ denotes the mass of the points approximated by the edge, \f$ |e| \f$ denotes the edge length and \f$ cost(e) \f$ its approximation error. As the error is defined by mass time squared distance the relevance is unitless.
+The default value is 0, so that all edges approximating some input points are considered relevant. A larger relevance value provides us with a means to increase resilience to outliers.
 
 
 \subsection Reconstruction_simplification_2Random Random Sample Size
