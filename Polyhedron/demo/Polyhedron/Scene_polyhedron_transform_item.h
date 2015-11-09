@@ -36,6 +36,16 @@ private:
     qglviewer::ManipulatedFrame* frame;
     const Polyhedron* poly;
     qglviewer::Vec center_;
+
+    enum VAOs {
+        Edges=0,
+        NbOfVaos = Edges+1
+    };
+    enum VBOs {
+        Vertices = 0,
+        NbOfVbos = Vertices+1
+    };
+
     mutable QOpenGLShaderProgram *program;
     mutable std::vector<float> positions_lines;
     mutable std::size_t nb_lines;

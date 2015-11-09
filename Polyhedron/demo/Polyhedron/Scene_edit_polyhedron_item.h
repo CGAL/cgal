@@ -287,8 +287,31 @@ private:
   mutable std::size_t nb_axis;
   mutable std::size_t nb_bbox;
 
-
-
+  enum Buffer
+  {
+      Facet_vertices =0,
+      Facet_normals,
+      Roi_vertices,
+      Control_vertices,
+      Sphere_vertices,
+      Sphere_normals,
+      Bbox_vertices,
+      Axis_vertices,
+      Axis_colors,
+      NumberOfBuffers = Axis_colors+1
+  };
+  enum Vao
+  {
+      Facets=0,
+      Roi_points,
+      Edges,
+      ROI_spheres,
+      BBox,
+      Control_points,
+      Control_spheres,
+      Axis,
+      NumberOfVaos= Axis+1
+  };
   mutable QOpenGLBuffer *in_bu;
   using Scene_item::initialize_buffers;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;

@@ -93,6 +93,20 @@ private:
   Color_ramp blue_color_ramp_;
   Color_ramp red_color_ramp_;
 
+  enum VAOs {
+      Plane = 0,
+      BBox,
+      Grid,
+      NbOfVaos = Grid +1
+  };
+  enum VBOs {
+      Quad_vertices = 0,
+      TexMap,
+      Cube_vertices,
+      Grid_vertices,
+      NbOfVbos = Grid_vertices +1
+  };
+
   std::vector<float> positions_cube;
   std::vector<float> positions_grid;
   std::vector<float> positions_tex_quad;

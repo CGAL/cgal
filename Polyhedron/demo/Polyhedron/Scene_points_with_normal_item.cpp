@@ -25,7 +25,7 @@
 
 
 Scene_points_with_normal_item::Scene_points_with_normal_item()
-    : Scene_item(3,3),
+    : Scene_item(NbOfVbos,NbOfVaos),
     m_points(new Point_set),
     m_has_normals(false)
 {
@@ -38,7 +38,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item()
 
 // Copy constructor
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_with_normal_item& toCopy)
-    : Scene_item(3,3), // do not call superclass' copy constructor
+    :Scene_item(NbOfVbos,NbOfVaos), // do not call superclass' copy constructor
     m_points(new Point_set(*toCopy.m_points)),
     m_has_normals(toCopy.m_has_normals)
 {
@@ -60,7 +60,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
 
 // Converts polyhedron to point set
 Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& input_mesh)
-    : Scene_item(6,3),
+    : Scene_item(NbOfVbos,NbOfVaos),
     m_points(new Point_set),
     m_has_normals(true)
 {
@@ -102,15 +102,15 @@ void Scene_points_with_normal_item::initialize_buffers(CGAL::Three::Viewer_inter
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[0]->bind();
-        buffers[0].bind();
-        buffers[0].allocate(positions_lines.data(),
+        vaos[Edges]->bind();
+        buffers[Edges_vertices].bind();
+        buffers[Edges_vertices].allocate(positions_lines.data(),
                             static_cast<int>(positions_lines.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[0].release();
+        buffers[Edges_vertices].release();
 
-        vaos[0]->release();
+        vaos[Edges]->release();
         nb_lines = positions_lines.size();
         positions_lines.resize(0);
         std::vector<double>(positions_lines).swap(positions_lines);
@@ -121,14 +121,14 @@ void Scene_points_with_normal_item::initialize_buffers(CGAL::Three::Viewer_inter
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[1]->bind();
-        buffers[1].bind();
-        buffers[1].allocate(positions_points.data(),
+        vaos[ThePoints]->bind();
+        buffers[Points_vertices].bind();
+        buffers[Points_vertices].allocate(positions_points.data(),
                             static_cast<int>(positions_points.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[1].release();
-        vaos[1]->release();
+        buffers[Points_vertices].release();
+        vaos[ThePoints]->release();
         nb_points = positions_points.size();
         positions_points.resize(0);
         std::vector<double>(positions_points).swap(positions_points);
@@ -139,15 +139,15 @@ void Scene_points_with_normal_item::initialize_buffers(CGAL::Three::Viewer_inter
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[2]->bind();
-        buffers[2].bind();
-        buffers[2].allocate(positions_selected_points.data(),
+        vaos[Selected_points]->bind();
+        buffers[Selected_points_vertices].bind();
+        buffers[Selected_points_vertices].allocate(positions_selected_points.data(),
                             static_cast<int>(positions_selected_points.size()*sizeof(double)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[2].release();
+        buffers[Selected_points_vertices].release();
 
-        vaos[2]->release();
+        vaos[Selected_points]->release();
         nb_selected_points = positions_selected_points.size();
         positions_selected_points.resize(0);
         std::vector<double>(positions_selected_points).swap(positions_selected_points);
@@ -423,13 +423,13 @@ void Scene_points_with_normal_item::draw_edges(CGAL::Three::Viewer_interface* vi
 {
     if(!are_buffers_filled)
         initialize_buffers(viewer);
-    vaos[0]->bind();
+    vaos[Edges]->bind();
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
-    vaos[0]->release();
+    vaos[Edges]->release();
     program->release();
 }
 void Scene_points_with_normal_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
@@ -437,26 +437,26 @@ void Scene_points_with_normal_item::draw_points(CGAL::Three::Viewer_interface* v
     if(!are_buffers_filled)
         initialize_buffers(viewer);
 
-    vaos[1]->bind();
+    vaos[ThePoints]->bind();
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_points/3));
-    vaos[1]->release();
+    vaos[ThePoints]->release();
     program->release();
     GLfloat point_size;
     viewer->glGetFloatv(GL_POINT_SIZE, &point_size);
     viewer->glPointSize(4.f);
 
-    vaos[2]->bind();
+    vaos[Selected_points]->bind();
     program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors", QColor(255,0,0));
     viewer->glDrawArrays(GL_POINTS, 0,
                        static_cast<GLsizei>(nb_selected_points/3));
-    vaos[2]->release();
+    vaos[Selected_points]->release();
     program->release();
     viewer->glPointSize(point_size);
 }

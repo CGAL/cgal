@@ -93,6 +93,18 @@ private:
   QAction* actionResetSelection;
   QAction* actionSelectDuplicatedPoints;
 
+  enum VAOs {
+      Edges=0,
+      ThePoints,
+      Selected_points,
+      NbOfVaos = Selected_points+1
+  };
+  enum VBOs {
+      Edges_vertices = 0,
+      Points_vertices,
+      Selected_points_vertices,
+      NbOfVbos = Selected_points_vertices+1
+  };
 
   mutable std::vector<double> positions_lines;
   mutable std::vector<double> positions_points;

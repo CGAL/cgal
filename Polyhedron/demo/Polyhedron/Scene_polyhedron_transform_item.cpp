@@ -3,7 +3,7 @@
 #include "Polyhedron_type.h"
 
 Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer::Vec& pos,const Scene_polyhedron_item* poly_item_,const CGAL::Three::Scene_interface*):
-    Scene_item(1,1),
+    Scene_item(NbOfVbos,NbOfVaos),
     poly_item(poly_item_),
     manipulable(false),
     frame(new ManipulatedFrame()),
@@ -22,17 +22,17 @@ void Scene_polyhedron_transform_item::initialize_buffers(CGAL::Three::Viewer_int
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[0]->bind();
-        buffers[0].bind();
-        buffers[0].allocate(positions_lines.data(),
+        vaos[Edges]->bind();
+        buffers[Vertices].bind();
+        buffers[Vertices].allocate(positions_lines.data(),
                             static_cast<int>(positions_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
-        buffers[0].release();
+        buffers[Vertices].release();
 
         QColor color = this->color();
         program->setAttributeValue("colors",color);
-        vaos[0]->release();
+        vaos[Edges]->release();
         program->release();
     }
     nb_lines = positions_lines.size();
@@ -71,7 +71,7 @@ void Scene_polyhedron_transform_item::draw_edges(CGAL::Three::Viewer_interface* 
 {
     if(!are_buffers_filled)
         initialize_buffers(viewer);
-    vaos[0]->bind();
+    vaos[Edges]->bind();
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
@@ -81,7 +81,7 @@ void Scene_polyhedron_transform_item::draw_edges(CGAL::Three::Viewer_interface* 
     }
     program->setUniformValue("f_matrix", f_matrix);
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
-    vaos[0]->release();
+    vaos[Edges]->release();
     program->release();
 
 }
