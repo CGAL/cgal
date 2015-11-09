@@ -223,7 +223,7 @@ public Q_SLOTS:
   virtual void setRenderingMode(RenderingMode m) { 
     if (supportsRenderingMode(m))
       rendering_mode = m; 
-    Q_EMIT renderingModeChanged();
+    Q_EMIT redraw();
   }
   //!Set the RenderingMode to Points.
   void setPointsMode() {
@@ -276,7 +276,7 @@ public Q_SLOTS:
 Q_SIGNALS:
   void itemChanged();
   void aboutToBeDestroyed();
-  void renderingModeChanged();
+  void redraw();
 
 protected:
   // The four basic properties
@@ -355,7 +355,7 @@ protected:
   /*! Passes all the uniform data to the shaders.
    * According to program_name, this data may change.
    */
-  virtual void attrib_buffers(CGAL::Three::Viewer_interface*, int program_name) const;
+  void attrib_buffers(CGAL::Three::Viewer_interface*, int program_name) const;
 
   /*! Compatibility function. Calls `viewer->getShaderProgram()`. */
   virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;

@@ -40,7 +40,7 @@ public:
     return nb_of_feature_edges != 0;
   }
 
-  void add_incident_patch(const Patch_id i) {
+  void add_incident_patch(const Patch_id& i) {
     indices.insert(i);
   }
 
@@ -107,6 +107,19 @@ public:
   ///@}
 };
 
+template <typename Integral>
+inline std::pair<Integral, Integral>
+patch_id_default_value(std::pair<Integral, Integral>)
+{
+  return std::pair<Integral, Integral>(1, 0);
+}
+
+template <typename Integral>
+inline Integral patch_id_default_value(Integral)
+{
+  return Integral(1);
+}
+
 template <class Refs, class T_, class Pln_, class Patch_id_>
 class Polyhedron_demo_face : 
   public CGAL::HalfedgeDS_face_base<Refs,T_,Pln_>
@@ -119,14 +132,14 @@ private:
 public:
   typedef Patch_id_ Patch_id;
   
-  Polyhedron_demo_face() 
-    : patch_id_(1), mID(-1) {}
+  Polyhedron_demo_face()
+    : patch_id_(patch_id_default_value(Patch_id())), mID(-1) {}
   
-  int patch_id() const {
+  const Patch_id& patch_id() const {
     return patch_id_;
   }
   
-  void set_patch_id(const int i) {
+  void set_patch_id(const Patch_id& i) {
     patch_id_ = i;
   }
   
@@ -181,6 +194,8 @@ public:
 #include "Polyhedron_type_fwd.h"
 
 // surface mesh
-typedef CGAL::Polyhedron_3<Kernel, Polyhedron_demo_items<int> > Polyhedron;
+typedef Polyhedron_demo_items<Patch_id>              Polyhedron_items;
+typedef CGAL::Polyhedron_3<Kernel, Polyhedron_items> Polyhedron;
+
 
 #endif // POLYHEDRON_TYPE_H

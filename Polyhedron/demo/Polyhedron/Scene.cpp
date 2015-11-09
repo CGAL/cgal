@@ -55,7 +55,7 @@ Scene::addItem(Scene_item* item)
     m_entries.push_back(item);
     connect(item, SIGNAL(itemChanged()),
             this, SLOT(itemChanged()));
-    connect(item, SIGNAL(renderingModeChanged()),
+    connect(item, SIGNAL(redraw()),
             this, SLOT(callDraw()));
     if(item->isFinite()
             && !item->isEmpty()
