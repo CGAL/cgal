@@ -564,7 +564,7 @@ namespace internal {
           fix_degenerate_faces(vkept, short_edges, sq_low);
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
-          unsigned int nbb = nb_valid_halfedges();
+          CGAL_assertion_code(unsigned int nbb = nb_valid_halfedges());
           CGAL_assertion(nbb == halfedge_status_map_.size());
           debug_status_map();
           CGAL_assertion(!incident_to_degenerate(halfedge(vkept, mesh_)));
