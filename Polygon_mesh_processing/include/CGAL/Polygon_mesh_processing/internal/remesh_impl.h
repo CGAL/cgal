@@ -564,7 +564,7 @@ namespace internal {
           fix_degenerate_faces(vkept, short_edges, sq_low);
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
-          CGAL_assertion_code(unsigned int nbb = nb_valid_halfedges());
+          CGAL_assertion_code(std::size_t nbb = nb_valid_halfedges());
           CGAL_assertion(nbb == halfedge_status_map_.size());
           debug_status_map();
           CGAL_assertion(!incident_to_degenerate(halfedge(vkept, mesh_)));
@@ -1243,12 +1243,10 @@ namespace internal {
       halfedge_status_map_.erase(opposite(h, mesh_));
     }
 
-    unsigned int nb_valid_halfedges() const
+    std::size_t nb_valid_halfedges() const
     {
-      unsigned int nb = 0;
-      BOOST_FOREACH(halfedge_descriptor h, halfedges(mesh_))
-        ++nb;
-      return nb;
+      return static_cast<std::size_t>(
+        std::distance(halfedges(mesh_).first, halfedges(mesh_).second));
     }
 
     void debug_status_map() const
