@@ -25,6 +25,9 @@
 #include <queue>
 #include <functional>
 #include <boost/optional.hpp>
+#include <boost/type_traits/is_same.hpp>
+
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
@@ -161,6 +164,9 @@ template<typename AABBTraits>
 template<typename Ray>
 boost::optional< typename AABB_tree<AABBTraits>::template Intersection_and_primitive_id<Ray>::Type >
 AABB_tree<AABBTraits>::ray_intersection(const Ray& query) const {
+  CGAL_static_assertion_msg((boost::is_same<Ray, typename AABBTraits::Ray_3>::value), 
+                            "Ray and Ray_3 must be the same type");
+
   switch(size()) // copy-paste from AABB_tree::traversal
   {
   case 0: // Tree empty, nothing to intersect
