@@ -495,7 +495,7 @@ void MainWindow::loadPlugins()
   {
       //checks if the path leads to a directory and if this
       //directory is a plugin directory
-      if(QDir(name).exists()&& name.contains("_plugin") )
+      if(QDir(name).exists())
         plugins_directories<<name;
   }
   QString env_path = qgetenv("POLYHEDRON_DEMO_PLUGINS_PATH");
@@ -1054,7 +1054,6 @@ void MainWindow::selectionChanged()
   if(item != NULL && item->manipulatable()) {
     viewer->setManipulatedFrame(item->manipulatedFrame());
   } else {
-      qDebug()<<viewer->manipulatedFrame();
     viewer->setManipulatedFrame(0);
   }
   if(viewer->manipulatedFrame() == 0) {

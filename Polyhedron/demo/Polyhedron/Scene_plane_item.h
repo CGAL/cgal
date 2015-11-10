@@ -93,7 +93,7 @@ public:
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m == Wireframe || m == Flat); 
+    return (m == Wireframe || m == Flat || m == FlatPlusEdges);
   }
   virtual void draw(CGAL::Three::Viewer_interface*) const;
  virtual void draw_edges(CGAL::Three::Viewer_interface* viewer)const;

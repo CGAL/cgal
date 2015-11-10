@@ -29,7 +29,7 @@
 #include <CGAL/Scale_space_surface_reconstruction_3.h>
 #include <CGAL/Advancing_front_surface_reconstruction.h>
 
-#include "ui_Polyhedron_demo_surface_reconstruction_plugin.h"
+#include "ui_Surface_reconstruction_plugin.h"
 
 // Concurrency
 #ifdef CGAL_LINKED_WITH_TBB
@@ -848,4 +848,4 @@ void Polyhedron_demo_surface_reconstruction_plugin::poisson_reconstruction
 }
 
 
-#include "Polyhedron_demo_surface_reconstruction_plugin.moc"
+#include "Surface_reconstruction_plugin.moc"

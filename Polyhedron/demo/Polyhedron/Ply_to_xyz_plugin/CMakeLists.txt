@@ -1,0 +1,4 @@
+include( polyhedron_demo_macros )
+
+polyhedron_demo_plugin(ply_to_xyz_plugin Ply_to_xyz_plugin)
+target_link_libraries(ply_to_xyz_plugin scene_points_with_normal_item)

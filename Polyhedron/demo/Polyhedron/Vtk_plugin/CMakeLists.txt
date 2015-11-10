@@ -1,0 +1,13 @@
+include( polyhedron_demo_macros )
+include(${VTK_USE_FILE})
+  if ("${VTK_VERSION_MAJOR}" GREATER "5")
+    if(VTK_LIBRARIES)
+      polyhedron_demo_plugin(vtk_plugin Vtk_plugin)
+      target_link_libraries(vtk_plugin scene_polyhedron_item
+                                        vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML)
+    else()
+      message(STATUS "NOTICE : the vtk IO plugin needs VTK libraries and will not be compiled.")
+    endif()
+  else()
+    message(STATUS "NOTICE : the vtk IO plugin needs VTK 6.0 or greater and will not be compiled (incorrect version found).")
+  endif()

@@ -120,6 +120,11 @@ void CGAL::Three::Scene_item::attrib_buffers(CGAL::Three::Viewer_interface* view
                                              int program_name) const
 {
     viewer->attrib_buffers(program_name);
+    viewer->getShaderProgram(program_name)->bind();
+    if(is_selected)
+        viewer->getShaderProgram(program_name)->setUniformValue("is_selected", true);
+    else
+        viewer->getShaderProgram(program_name)->setUniformValue("is_selected", false);
     QColor c = this->color();
     if(program_name == Scene_item::PROGRAM_WITH_TEXTURE)
     {
@@ -137,6 +142,7 @@ void CGAL::Three::Scene_item::attrib_buffers(CGAL::Three::Viewer_interface* view
           ("color_lines",
            QVector3D(c.redF(), c.greenF(), c.blueF()));
     }
+    viewer->getShaderProgram(program_name)->release();
 }
 
 

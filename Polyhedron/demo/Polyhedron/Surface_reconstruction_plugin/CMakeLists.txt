@@ -1,0 +1,6 @@
+ include( polyhedron_demo_macros )
+ 
+ qt5_wrap_ui( surface_reconstructionUI_FILES Surface_reconstruction_plugin.ui)
+ polyhedron_demo_plugin(surface_reconstruction_plugin Surface_reconstruction_plugin ${surface_reconstructionUI_FILES})
+ target_link_libraries(surface_reconstruction_plugin scene_polygon_soup_item scene_polyhedron_item scene_points_with_normal_item)
+

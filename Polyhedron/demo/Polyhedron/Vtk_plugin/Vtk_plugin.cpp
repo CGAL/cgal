@@ -18,8 +18,8 @@
 //                 Jane Tournois
 //
 
-#include "Kernel_type.h"
-#include "Polyhedron_type.h"
+#include "../Kernel_type.h"
+#include "../Polyhedron_type.h"
 #include "Scene_polyhedron_item.h"
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 
@@ -49,7 +49,6 @@
 #include <vtkDoubleArray.h>
 #include <vtkCell.h>
 #include <vtkCellData.h>
-
 namespace CGAL{
 
   template <typename TM, typename VertexMap, typename FaceMap>
@@ -118,11 +117,11 @@ public:
   QString nameFilters() const { return "VTK PolyData files (*.vtk, *.vtp)"; }
   QString name() const { return "vtk_plugin"; }
 
-  bool canSave(const Scene_item*) { return false; } //todo
-  bool save(const Scene_item*, QFileInfo) { return false; }
+  bool canSave(const CGAL::Three::Scene_item*) { return false; } //todo
+  bool save(const CGAL::Three::Scene_item*, QFileInfo) { return false; }
 
   bool canLoad() const { return true; }
-  Scene_item* load(QFileInfo fileinfo)
+  CGAL::Three::Scene_item* load(QFileInfo fileinfo)
   {
     if (fileinfo.suffix().toLower() != "vtk"
      && fileinfo.suffix().toLower() != "vtp")
@@ -166,4 +165,4 @@ public:
 }; // end Polyhedron_demo_vtk_plugin
 
 
-#include "Polyhedron_demo_vtk_plugin.moc"
+#include "Vtk_plugin.moc"
