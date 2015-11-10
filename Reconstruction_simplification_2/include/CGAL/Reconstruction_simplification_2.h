@@ -47,22 +47,16 @@ namespace CGAL {
 
 This class provides a means to reconstruct a 1-dimensional shape from a set of 2D points with masses.
 The algorithm computes an initial 2D Delaunay triangulation from the input points, 
-and performs a simplification of the triangulation by performing half edge collapses, edge flips 
-and vertex relocations.
+and performs a simplification of the triangulation by performing half edge collapses, edge flips and vertex relocations.
 
-The edges are either processed in the order imposed by an priority queue, or in an order based
-on random selection of edge collapse operators.
+The edges are either processed in the order imposed by an priority queue, or in an order based on random selection of edge collapse operators.
 As the exhaustive priority queue guarantees a higher quality it is the default.
-The user can switch to the other method, for example for an initial simplification round,
-by calling `set_random_sample_size()`.
+The user can switch to the other method, for example for an initial simplification round, by calling `set_random_sample_size()`.
 
-By default edge flip operators are applied to ensure that every edge of the triangulation are
-candidate to be collapsed, while preserving a valid embedding of the triangulation.
-This option can be disabled by calling `set_use_flip(false)` to reduce the running times.
+By default edge flip operators are applied to ensure that every edge of the triangulation are candidate to be collapsed, while preserving a valid embedding of the triangulation. This option can be disabled by calling `set_use_flip(false)` to reduce the running times.
 
-By default the vertices are relocated after each half edge collapse.
-This option can be changed by setting the number of vertex relocations performed between
-two edge contraction operators.
+By default the vertices are not relocated after each half edge collapse.
+This option can be changed by setting the number of vertex relocation steps performed between two edge collapse operators.
 
 The simplification is performed by calling either `run_until(n)` or `run(steps)`. 
 The former simplifies the triangulation until n points remain, while the latter
@@ -1482,11 +1476,7 @@ public:
 
 
   /*!
-    Since noise and missing data may prevent the reconstructed shape to
-    have sharp corners well located, the algorithm offers the possibility to automatically
-    relocate points after each edge contraction. The new location of the
-    points is chosen such that the fitting of the output segments to the
-    input points is improved. 
+    Since noise and missing data may prevent the reconstructed shape to have sharp corners well located, the algorithm offers the possibility to automatically relocate points after each edge collapse. The new location of the points is chosen such that the fitting of the output segments to the input points is improved. 
    */
   void relocate_all_points() {
     CGAL::Real_timer timer;
