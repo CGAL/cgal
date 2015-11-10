@@ -94,7 +94,7 @@ private:
   
   static double& prime_inv_internal()
   {
-    static CGAL_THREAD_LOCAL_VARIABLE(double, prime_inv, 1490067204.5640400859667452463541);
+    static CGAL_THREAD_LOCAL_VARIABLE(double, prime_inv, 0.000000014900672045640400859667452463541);
     return prime_inv;
   }
 
