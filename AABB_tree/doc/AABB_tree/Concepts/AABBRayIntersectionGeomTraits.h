@@ -3,8 +3,9 @@
 \cgalConcept
 
 The concept `AABBRayIntersectionGeomTraits` is a refinement of the
-Model `AABBGeomTraits`. In addition to the types required by
-`AABBGeomTraits` it also requires
+concept `AABBGeomTraits`. In addition to the types required by
+`AABBGeomTraits` it also requires types and functors necessary to
+define the Intersection_distance functor.
 
 \cgalRefines `AABBGeomTraits`
 \cgalHasModel Any 3D Kernel is a model of this concept.
@@ -54,4 +55,14 @@ public:
   /*!
    */
   Construct_source_3 construct_cartesian_const_iterator_3_object();
+
+  /*!
+    A functor object to construct a vector giving the direction of a ray. Provides the operator:
+    `Vector_3 operator()(const Ray_3&);`
+   */
+  typedef unspecified_type Construct_vector_3;
+
+  /*!
+   */
+  Construct_source_3 construct_vector_3_object();
 };
