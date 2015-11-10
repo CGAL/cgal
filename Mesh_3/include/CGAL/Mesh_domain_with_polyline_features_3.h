@@ -166,7 +166,9 @@ public:
       // Increment iterators and update length
       ++previous;
       ++pit;
-      CGAL_assertion(pit != points_.end());
+
+      if (pit == points_.end())
+        return *previous;
 
       segment_length = this->distance(*previous,*pit);
     }
