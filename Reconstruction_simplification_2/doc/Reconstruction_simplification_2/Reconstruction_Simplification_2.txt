@@ -9,7 +9,7 @@ namespace CGAL {
 
 \section Reconstruction_simplification_2Introduction Introduction
 
-This package implements a method to reconstruct and simplify 2D point sets \cgalCite{degoes:hal-00758019}. The input is a set of 2D points with mass attributes, possibly hampered by noise and outliers. The output is a set of <em>line segments</em> and <em>isolated points</em> which approximate the input points, as illustrated in Figure \cgalFigureRef{2D_Reconstruction_Simplification_summary}. The mass attribute relates to the importance given to each point for approximation.
+This package implements a method to reconstruct and simplify 2D point sets \cgalCite{degoes:hal-00758019}. The input is a set of 2D points with mass attributes, possibly hampered by noise and outliers. The output is a set of <em>line segments</em> and <em>isolated points</em> which approximate the input points, as illustrated in \cgalFigureRef{2D_Reconstruction_Simplification_summary}. The mass attribute relates to the importance given to each point for approximation.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_summary,summary.png}
 Left: input point set hampered by noise. Right: The corresponding reconstructed shape consisting of line segments.
@@ -17,7 +17,7 @@ Left: input point set hampered by noise. Right: The corresponding reconstructed 
 
 Internally, the algorithm constructs an initial 2D Delaunay triangulation from all the input points, then simplifies the triangulation so that a subset of the edges and vertices of the triangulation approximate well the input points. Approximate herein refers to a robust distance based on <em>optimal transportation</em> (see section \ref Reconstruction_simplification_2HowDoesItWork for more details). The triangulation is simplified using a combination of <em>half edge collapse</em>, <em>edge flips</em> and <em>vertex relocation</em> operators. The triangulation remains valid during simplification, i.e., with neither overlaps nor fold-overs. 
 
-The output of the reconstruction algorithm is a subset of edges and vertices of the triangulation. Figure \cgalFigureRef{2D_Reconstruction_Simplification_algorithm} depicts an example where the output is composed of green edges and one isolated vertex. The green edges are considered relevant as they approximate well many of the input points. The edges depicted in grey, referred to as <em>ghost edges</em> and discarded, approximate none of the input points. The edges depicted in red, referred to as irrelevant and also discarded, approximate some of the input points but not enough to be considered relevant.
+The output of the reconstruction algorithm is a subset of edges and vertices of the triangulation.  \cgalFigureRef{2D_Reconstruction_Simplification_algorithm} depicts an example where the output is composed of green edges and one isolated vertex. The green edges are considered relevant as they approximate well many of the input points. The edges depicted in grey, referred to as <em>ghost edges</em> and discarded, approximate none of the input points. The edges depicted in red, referred to as irrelevant and also discarded, approximate some of the input points but not enough to be considered relevant.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_algorithm,algorithm.png}
 (a) Input points. (b) Delaunay triangulation of the input points. (c) After simplification, with ghost edges in grey, relevant edges in green, and irrelevant edges in red. (d) Final reconstruction made up of several edges and one isolated vertex.
@@ -70,10 +70,10 @@ Reconstruction_simplification_2<K, Point_property_map, Mass_property_map>
 rs2.run(100); // perform 100 edge collapse operators
 \endcode
 
-Alternatively to calling \link Reconstruction_simplification_2::run run \endlink, 
-one can call \link Reconstruction_simplification_2::run_until run_until \endlink
+Alternatively to calling \link Reconstruction_simplification_2::run `run()`\endlink, 
+one can call \link Reconstruction_simplification_2::run_until `run_until()` \endlink
 and specify the number of output vertices one wants to keep as illustrated in
-Figure \cgalFigureRef{2D_Reconstruction_Simplification_twenty_vertices}.
+ \cgalFigureRef{2D_Reconstruction_Simplification_twenty_vertices}.
 \code{.cpp}
   rs2.run_until(20); // perform edge collapse operators until 20 vertices remain.
 \endcode
@@ -102,13 +102,13 @@ Left: before point relocation. Right: after point relocation.
 \cgalFigureEnd
 
 
-\section Reconstruction_simplification_2Parameters User parameters
+\section Reconstruction_simplification_2Parameters User Parameters
 
 The behavior of the algorithm is controlled via the following parameters. 
 
 \subsection Reconstruction_simplification_2Flip Edge Flipping
 
-During simplification of the internal triangulation some recursive edge flip operators are required to guarantee that the triangulation remain valid when applying a half edge collapse operator (see Figure \cgalFigureRef{2D_Reconstruction_Simplification_edgeflip}). Calling set_use_flip(false) prevents the algorithm from using edge flips, yielding shorter computational times at the price of suboptimal results as not all edges can be considered for being collapsible.
+During simplification of the internal triangulation some recursive edge flip operators are required to guarantee that the triangulation remain valid when applying a half edge collapse operator (see \cgalFigureRef{2D_Reconstruction_Simplification_edgeflip}). Calling set_use_flip(false) prevents the algorithm from using edge flips, yielding shorter computational times at the price of suboptimal results as not all edges can be considered for being collapsible.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_edgeflip,edgeflip.jpg}
 Edge flipping. Left: the blue edge creates fold-overs because of blocking edges shown in black. Middle: after running the recursive edge flipping procedure the blue edge is collapsible. Right: triangulation after edge collapse.
@@ -131,12 +131,12 @@ In addition to the global relocation function described above, an optional param
 
 \subsection Reconstruction_simplification_2Verbose Verbose Output
 
-The verbose parameter, between 0 and 2, determines how much console output the algorithm generates. A 0 value generates no output to the standard output. A value greater than 0 generates output to the standard output std::cerr.
+The verbose parameter, between 0 and 2, determines how much console output the algorithm generates. A 0 value generates no output to the standard output. A value greater than 0 generates output to the standard output `std::cerr`.
 
 
 \section Reconstruction_simplification_2Robustness Robustness
 A virtue of the algorithm is its robustness to noise and outliers. 
-Figure \cgalFigureRef{2D_Reconstruction_Simplification_robustness} shows that
+\cgalFigureRef{2D_Reconstruction_Simplification_robustness} shows that
 the output of the algorithm is robust in the sense that it is hardly affected by noise and/or outliers, as long as the density of outliers is small compared to the density of the input points.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_robustness,robustness.png}
@@ -144,14 +144,14 @@ Robustness to noise and outliers. Left: noise-free point set. Middle: noisy poin
 \cgalFigureEnd
 
 \section Reconstruction_simplification_2Density Variable Density
-Figure \cgalFigureRef{2D_Reconstruction_Simplification_density} illustrates the behavior of the algorithm on a point set with uniform mass attributes, versus variable density. As the algorithm gives more importance to densely sampled areas, this translates into smaller edges on densely sampled areas. On sparsely sampled areas the algorithm initially approximates each point by one isolated vertex, then progressively approximates the points with edges. 
+\cgalFigureRef{2D_Reconstruction_Simplification_density} illustrates the behavior of the algorithm on a point set with uniform mass attributes, versus variable density. As the algorithm gives more importance to densely sampled areas, this translates into smaller edges on densely sampled areas. On sparsely sampled areas the algorithm initially approximates each point by one isolated vertex, then progressively approximates the points with edges. 
 \cgalFigureBegin{2D_Reconstruction_Simplification_density,density.png}
 Variable density. Left: input point set. The three other pictures show
 how the approximation evolves when pushing the simplification forward.
 \cgalFigureEnd
 
 \section Reconstruction_simplification_2Mixed Mixed Dimension
-Figure \cgalFigureRef{2D_Reconstruction_Simplification_mixed} depicts an input point set sampling a set of line segments and a solid area. Depending on the targeted number of points in the output, the solid area is approximated by a set of evenly sampled isolated vertices.
+\cgalFigureRef{2D_Reconstruction_Simplification_mixed} depicts an input point set sampling a set of line segments and a solid area. Depending on the targeted number of points in the output, the solid area is approximated by a set of evenly sampled isolated vertices.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_mixed,mixed.png}
 Mixed dimension. Left: input point set. Middle: Isolated vertices in blue, relevant edges in green and irrelevant edges in red. Right: final output.
@@ -159,7 +159,7 @@ Mixed dimension. Left: input point set. Middle: Isolated vertices in blue, relev
 
 \section Reconstruction_simplification_2Variable_mass Variable Mass
 
-The mass attributes provides a means to adjust the importance given to each point for approximation. Figure \cgalFigureRef{2D_Reconstruction_Simplification_variable} depicts a reconstruction from a gray level image after thresholding, where the gray level of the pixels are used as mass attribute.
+The mass attributes provides a means to adjust the importance given to each point for approximation. \cgalFigureRef{2D_Reconstruction_Simplification_variable} depicts a reconstruction from a gray level image after thresholding, where the gray level of the pixels are used as mass attribute.
 
 \cgalFigureBegin{2D_Reconstruction_Simplification_variable,variable.png}
 Variable mass. Left: input gray level image. Middle: image after thresholding to reduce the number of pixels used as points with non-zero mass. Right: final reconstruction.
@@ -171,7 +171,7 @@ The task addressed here is to reconstruct a shape from a noisy point set \f$ S \
 
 The approximation error is derived from the theory of optimal transportation between geometric measures \cgalCite{degoes:hal-00758019}. More specifically, the input point set is seen as a discrete measure, i.e., a set of pointwise masses. The goal is to find a 0-1 simplicial complex where the edges are the support of a <em>piecewise uniform</em> continuous measure (i.e., a line density of masses) and the vertices are the support of a discrete measure. Approximating the input point set in our context translates into approximating the input discrete measure by another measure composed of line segments and points. 
 
-\subsection Reconstruction_simplification_2Wasserstein Wasserstein distance 
+\subsection Reconstruction_simplification_2Wasserstein Wasserstein Distance 
 
 Intuitively, the optimal transportation distance (Wasserstein-2 distance in our context) measures the amount of work that it takes to transport the input measure onto the vertices and edges of the triangulation, where the measure is constrained to be uniform (and greater or equal to zero) on each edge, and just greater or equal to zero on each vertex. Note that the Wasserstein distance is symmetric.
 
