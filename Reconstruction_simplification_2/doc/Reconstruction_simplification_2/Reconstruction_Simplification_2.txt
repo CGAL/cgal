@@ -126,9 +126,8 @@ By default the simplification relies upon an exhaustive priority queue of half e
 
 \subsection Reconstruction_simplification_2Local_relocation Local Point Relocation
 
-In addition to the global relocation function described above, an optional parameter of the constructor of the <I> Reconstruction_simplification_2 </I> class provides a means to relocate the points <em>locally</em> after each series of a specified number of atomic simplification operators (edge collapse operators combined with edge flips). Locally herein means that only the vertices of a local stencil in the triangulation around the each edge collapse operator are relocated. The local stencil is chosen as the one-ring neighborhood of the vertex remaining after collapsing an edge.
+In addition to the global relocation function described above, an optional parameter of the constructor of the <I> Reconstruction_simplification_2 </I> class provides a means to relocate the points <em>locally</em> after each edge collapse operator (possibly combined with edge flips). Locally herein means that only the vertices of a local stencil in the triangulation around the each edge collapse operator are relocated, with a process similar to the one described above in the global relocation function. The local stencil is chosen as the one-ring neighborhood of the vertex remaining after collapsing an edge. The relocation process being iterative, one parameter controls the number of relocation steps. 
 
-The vertices of this stencil are relocated such that the approximation of the output segments and isolated points to the input points is improved. More specifically, the local relocation process iterates between computing the best local transport plan given the current reconstruction, and relocating the local vertices so as to minimize the transport cost induced by the current (unchanged) transport plan.
 
 \subsection Reconstruction_simplification_2Verbose Verbose Output
 
