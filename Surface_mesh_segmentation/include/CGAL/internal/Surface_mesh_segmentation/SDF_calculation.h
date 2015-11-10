@@ -303,7 +303,7 @@ public:
         }
 
         boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
-          = cast_and_return_minimum(segment, skip, accept_if_acute);
+          = cast_and_return_minimum_1(segment, skip, accept_if_acute);
       } else {
         Ray ray(center, ray_direction);
 
@@ -372,6 +372,18 @@ private:
                                         accept_if_acute, disk_samples);
   }
 
+  template <class Query, class SkipPrimitiveFunctor> // Query can be templated for just Ray and Segment types.
+  boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum(
+    const Query& query, SkipPrimitiveFunctor skip, bool accept_if_acute) const {
+    boost::tuple<bool, bool, double, Primitive_id>
+      one = cast_and_return_minimum_1(query, skip, accept_if_acute);
+    boost::tuple<bool, bool, double, Primitive_id>
+      two = cast_and_return_minimum_2(query, skip, accept_if_acute);
+    (void)one;(void)two;
+
+    return one;
+  }
+
   /**
    * Finds closest intersection for parameter @a query.
    * @param query `Segment` or `Ray` type query
@@ -385,7 +397,7 @@ private:
    *   - get<3> Primitive_id : closest intersected primitive if get<0> is true, else Primitive_id()
    */
   template <class Query, class SkipPrimitiveFunctor> // Query can be templated for just Ray and Segment types.
-  boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum(
+  boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum_1(
     const Query& query, SkipPrimitiveFunctor skip, bool accept_if_acute) const {
     boost::tuple<bool, bool, double, Primitive_id>
     min_distance(false, false, 0.0, Primitive_id());
@@ -427,6 +439,46 @@ private:
     }
     if(!min_distance.template get<0>()) {
       return min_distance;
+    }
+
+    if(accept_if_acute) {
+      // check whether the ray makes acute angle with intersected facet
+      const Point& min_v1 = get(vertex_point_map,target(halfedge(min_id,mesh),mesh));
+      const Point& min_v2 = get(vertex_point_map,target(next(halfedge(min_id,mesh),mesh),mesh));
+      const Point& min_v3 = get(vertex_point_map,target(prev(halfedge(min_id,mesh),mesh),mesh));
+      Vector min_normal = scale_functor(normal_functor(min_v1, min_v2, min_v3), -1.0);
+
+      if(angle_functor(translated_point_functor(Point(ORIGIN), min_i_ray),
+                       Point(ORIGIN),
+                       translated_point_functor(Point(ORIGIN), min_normal)) != ACUTE) {
+        return min_distance;
+      }
+    }
+
+    min_distance.template get<1>() = true; // founded intersection is acceptable.
+    min_distance.template get<2>() = std::sqrt(min_distance.template get<2>());
+    return min_distance;
+  }
+
+  template <class Query, class SkipPrimitiveFunctor> // Query can be templated for just Ray and Segment types.
+  boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum_2(
+    const Query& query, SkipPrimitiveFunctor, bool accept_if_acute) const {
+    boost::tuple<bool, bool, double, Primitive_id>
+    min_distance(false, false, 0.0, Primitive_id());
+
+    boost::optional< typename Tree::template Intersection_and_primitive_id<Query>::Type >
+      min_intersection = tree.ray_intersection(query);
+    if(!min_intersection)
+      return min_distance;
+
+    Vector min_i_ray(NULL_VECTOR);
+    Primitive_id min_id(min_intersection->second);
+
+    if(const Point* i_point = boost::get<const Point>(&(min_intersection->first))) {
+      min_i_ray = Vector(*i_point, query.source());
+      boost::get<2>(min_distance) = to_double(min_i_ray.squared_length());
+    } else {
+      std::cout << "oopps" << std::endl;
     }
 
     if(accept_if_acute) {
