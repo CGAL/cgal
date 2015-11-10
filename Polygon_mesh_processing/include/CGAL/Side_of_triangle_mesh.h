@@ -47,7 +47,7 @@ namespace CGAL {
  * In case of self-inclusions,
  * the user should be aware that the predicate called
  * inside every other sub-volume bounded by a nested surface
- * will return in turns `ON_BOUNDED_SIDE` and `ON_UNBOUNDED_SIDE`,
+ * will return in turns `CGAL::ON_BOUNDED_SIDE` and `CGAL::ON_UNBOUNDED_SIDE`,
  * following the aforementioned parity criterion.
  *
  * This class depends on the package \ref PkgAABB_treeSummary.
@@ -157,8 +157,7 @@ public:
    * @param point the query point to be located with respect to the input
             polyhedral surface
    * @return 
-   *   - `CGAL::ON_BOUNDED_SIDE` if the point is inside the
-   -      volume bounded by the input triangle mesh
+   *   - `CGAL::ON_BOUNDED_SIDE` if the point is inside the volume bounded by the input triangle mesh
    *   - `CGAL::ON_BOUNDARY` if the point is on triangle mesh
    *   - `CGAL::ON_UNBOUNDED_SIDE` if the point is outside triangle mesh
    */

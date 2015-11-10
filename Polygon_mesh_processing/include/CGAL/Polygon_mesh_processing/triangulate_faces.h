@@ -248,7 +248,7 @@ public:
 }//end namespace internal
 
 /**
-* \ingroup PkgPolygonMeshProcessing
+* \ingroup PMP_meshing_grp
 * triangulates faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2Summary
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 *         that has an internal property map for `boost::vertex_point_t`

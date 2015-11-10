@@ -257,10 +257,10 @@ private:
 
 
 /*!
-* \ingroup stitching_grp
+* \ingroup PMP_repairing_grp
 * Stitches together border halfedges in a polygon mesh.
 * The halfedges to be stitched are provided in `hedge_pairs_to_stitch`.
-* For each pair `p` in this vector, p.second and its opposite will be removed
+* For each pair `p` in this vector, `p.second` and its opposite will be removed
 * from `pmesh`.
 *
 * The vertices that get removed from `pmesh` are selected as follows:
@@ -324,7 +324,7 @@ void stitch_borders(PolygonMesh& pmesh,
 }
 ///\endcond
 
-/// \ingroup stitching_grp
+/// \ingroup PMP_repairing_grp
 /// Same as the other overload but the pairs of halfedges to be stitched
 /// are automatically found amongst all border halfedges.
 /// Two border halfedges `h1` and `h2` are set to be stitched

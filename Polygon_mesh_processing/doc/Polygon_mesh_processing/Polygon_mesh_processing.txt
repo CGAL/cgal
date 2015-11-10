@@ -248,7 +248,7 @@ First, border edges that are similar but duplicated are detected and paired.
 Then, they are "stitched" together so that the edges and vertices duplicates are removed
 from the mesh, and each of these remaining edges is incident to exactly two faces.
 
-The function \link stitching_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
+The function \link PMP_repairing_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
  performs such repairing operation. The input mesh should be manifold.
 Otherwise, stitching is not guaranteed to succeed.
 
