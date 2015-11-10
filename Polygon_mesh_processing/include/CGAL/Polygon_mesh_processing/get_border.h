@@ -29,6 +29,7 @@
 namespace CGAL{
 namespace Polygon_mesh_processing {
 
+#ifdef PMP_TODO_DOC
   /*!
   \ingroup PkgPolygonMeshProcessing
   * collects the border of a surface patch
@@ -52,6 +53,7 @@ namespace Polygon_mesh_processing {
   *
   * @todo add get_border to the user manual
   */
+#endif
   template<typename PolygonMesh
          , typename FaceRange
          , typename HalfedgeOutputIterator>
