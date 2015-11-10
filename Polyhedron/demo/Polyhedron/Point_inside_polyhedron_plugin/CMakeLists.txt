@@ -1,4 +1,0 @@
-include( polyhedron_demo_macros )
-qt5_wrap_ui( point_inside_polyhedronUI_FILES Point_inside_polyhedron_widget.ui)
- polyhedron_demo_plugin(point_inside_polyhedron_plugin Polyhedron_demo_point_inside_polyhedron_plugin ${point_inside_polyhedronUI_FILES})
-  target_link_libraries(point_inside_polyhedron_plugin scene_polyhedron_item scene_points_with_normal_item)

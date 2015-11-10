@@ -1,4 +1,0 @@
-include( polyhedron_demo_macros )
- qt5_wrap_ui( features_detection_pluginUI_FILES Polyhedron_demo_features_detection_plugin.ui)
- polyhedron_demo_plugin(features_detection_plugin Polyhedron_demo_features_detection_plugin ${features_detection_pluginUI_FILES})
- target_link_libraries(features_detection_plugin scene_points_with_normal_item)

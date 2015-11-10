@@ -1,3 +1,0 @@
-include( polyhedron_demo_macros )
-  polyhedron_demo_plugin(kernel_plugin Polyhedron_demo_kernel_plugin)
-  target_link_libraries(kernel_plugin scene_polyhedron_item)

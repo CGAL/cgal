@@ -1,3 +1,0 @@
-include( polyhedron_demo_macros )
-polyhedron_demo_plugin(jet_fitting_plugin Polyhedron_demo_jet_fitting_plugin)
-    target_link_libraries(jet_fitting_plugin scene_polyhedron_item scene_polylines_item)

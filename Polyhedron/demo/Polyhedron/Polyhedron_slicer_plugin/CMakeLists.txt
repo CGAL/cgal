@@ -1,5 +1,0 @@
-include( polyhedron_demo_macros )
-
-qt5_wrap_ui( polyhedron_slicerUI_FILES Polyhedron_slicer_widget.ui)
-polyhedron_demo_plugin(polyhedron_slicer_plugin Polyhedron_demo_polyhedron_slicer_plugin ${polyhedron_slicerUI_FILES})
-target_link_libraries(polyhedron_slicer_plugin scene_polyhedron_item scene_basic_objects scene_polylines_item)

@@ -1,5 +1,0 @@
-include( polyhedron_demo_macros )
-
-
-  polyhedron_demo_plugin(join_and_split_polyhedra_plugin Polyhedron_demo_join_and_split_polyhedra_plugin)
-  target_link_libraries(join_and_split_polyhedra_plugin scene_polyhedron_item)

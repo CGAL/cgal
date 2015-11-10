@@ -1,4 +1,0 @@
-include( polyhedron_demo_macros )
-
-polyhedron_demo_plugin(transform_polyhedron_plugin Polyhedron_demo_transform_polyhedron_plugin)
-target_link_libraries(transform_polyhedron_plugin  scene_polyhedron_item scene_polyhedron_transform_item)

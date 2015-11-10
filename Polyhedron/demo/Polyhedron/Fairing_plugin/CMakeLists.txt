@@ -1,5 +1,0 @@
-include( polyhedron_demo_macros )
-
-qt5_wrap_ui( fairingUI_FILES Fairing_widget.ui)
-polyhedron_demo_plugin(fairing_plugin Polyhedron_demo_fairing_plugin ${fairingUI_FILES})
-target_link_libraries(fairing_plugin scene_polyhedron_selection_item)

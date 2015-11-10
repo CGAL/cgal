@@ -1,4 +1,0 @@
-include( polyhedron_demo_macros )
-qt5_wrap_ui( polylines_ioUI_FILES Add_polylines_dialog.ui )
-polyhedron_demo_plugin(polylines_io_plugin Polyhedron_demo_polylines_io_plugin ${polylines_ioUI_FILES})
-target_link_libraries(polylines_io_plugin scene_polylines_item)

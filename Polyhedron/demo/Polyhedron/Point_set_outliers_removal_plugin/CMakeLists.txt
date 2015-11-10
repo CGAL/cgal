@@ -1,5 +1,0 @@
-include( polyhedron_demo_macros )
-
-qt5_wrap_ui( ps_outliers_removal_UI_FILES Polyhedron_demo_point_set_outliers_removal_plugin.ui)
-polyhedron_demo_plugin(point_set_outliers_removal_plugin Polyhedron_demo_point_set_outliers_removal_plugin ${ps_outliers_removal_UI_FILES}) 
-target_link_libraries(point_set_outliers_removal_plugin scene_points_with_normal_item)

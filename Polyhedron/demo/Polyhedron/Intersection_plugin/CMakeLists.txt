@@ -1,4 +1,0 @@
-include( polyhedron_demo_macros )
-
-polyhedron_demo_plugin(intersection_plugin Polyhedron_demo_intersection_plugin)
-target_link_libraries(intersection_plugin  scene_polyhedron_item scene_polylines_item)

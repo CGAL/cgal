@@ -1,3 +1,0 @@
-include( polyhedron_demo_macros )
- polyhedron_demo_plugin(off_to_nef_plugin Polyhedron_demo_off_to_nef_plugin)
-  target_link_libraries(off_to_nef_plugin scene_nef_polyhedron_item)

@@ -1,4 +1,0 @@
-include( polyhedron_demo_macros )
-qt5_wrap_ui(point_set_upsamplingUI_FILES Polyhedron_demo_point_set_upsampling_plugin.ui)
-  polyhedron_demo_plugin(point_set_upsampling_plugin Polyhedron_demo_point_set_upsampling_plugin ${point_set_upsamplingUI_FILES})
-  target_link_libraries(point_set_upsampling_plugin scene_points_with_normal_item)

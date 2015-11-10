@@ -1,3 +1,0 @@
-include( polyhedron_demo_macros )
-polyhedron_demo_plugin(self_intersection_plugin Polyhedron_demo_self_intersection_plugin)
-  target_link_libraries(self_intersection_plugin scene_polyhedron_item scene_polyhedron_selection_item)

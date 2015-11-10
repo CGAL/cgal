@@ -1,3 +1,0 @@
-include( polyhedron_demo_macros )
-polyhedron_demo_plugin(point_set_average_spacing_plugin Polyhedron_demo_point_set_average_spacing_plugin)
-    target_link_libraries(point_set_average_spacing_plugin scene_points_with_normal_item)

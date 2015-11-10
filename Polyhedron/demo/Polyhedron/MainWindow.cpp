@@ -490,13 +490,23 @@ void MainWindow::loadPlugins()
     initIOPlugin(obj);
   }
   QList<QDir> plugins_directories;
-  plugins_directories<<qApp->applicationDirPath();
-  Q_FOREACH( QString name, QDir(qApp->applicationDirPath()).entryList())
+  QString dirPath = qApp->applicationDirPath();
+  plugins_directories<<dirPath;
+  Q_FOREACH( QString name, QDir(dirPath).entryList())
   {
-      //checks if the path leads to a directory and if this
-      //directory is a plugin directory
-      if(QDir(name).exists())
-        plugins_directories<<name;
+      //checks if the path leads to a directory
+      if(name.contains("Plugins"))
+      {
+          QString path = dirPath;
+          path.append("/").append(name);
+              Q_FOREACH(QString sub_path, QDir(path).entryList())
+              {
+                  QString temp = path;
+                  temp.append("/").append(sub_path);
+                if(QDir(temp).exists())
+                  plugins_directories<<QDir(temp);
+                }
+      }
   }
   QString env_path = qgetenv("POLYHEDRON_DEMO_PLUGINS_PATH");
   if(!env_path.isEmpty()) {

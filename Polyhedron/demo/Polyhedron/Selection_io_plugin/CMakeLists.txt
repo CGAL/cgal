@@ -1,4 +1,0 @@
-include( polyhedron_demo_macros )
-
-polyhedron_demo_plugin(selection_io_plugin Polyhedron_demo_selection_io_plugin)
-target_link_libraries(selection_io_plugin scene_polyhedron_selection_item)
