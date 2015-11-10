@@ -47,7 +47,7 @@ namespace Polygon_mesh_processing {
   *         for `CGAL::vertex_point_t`
   * @tparam NamedParameters a sequence of \ref namedparameters
   *
-  * @param h the halfedge of which the length is computed
+  * @param h one halfedge of the edge to compute the length
   * @param pmesh the polygon mesh to which `h` belongs
   * @param np optional sequence of \ref namedparameters among the ones listed below
   *
