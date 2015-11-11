@@ -26,6 +26,7 @@
 #include <functional>
 #include <boost/optional.hpp>
 #include <boost/type_traits/is_same.hpp>
+#include <boost/variant/apply_visitor.hpp>
 
 #include <CGAL/assertions.h>
 
@@ -36,6 +37,7 @@ class AABB_ray_intersection {
   typedef typename AABBTree::AABB_traits AABB_traits;
   typedef typename AABB_traits::Ray_3 Ray;
   typedef typename AABBTree::template Intersection_and_primitive_id<Ray>::Type Ray_intersection_and_primitive_id;
+  typedef typename Ray_intersection_and_primitive_id::first_type Ray_intersection;
 public:
   AABB_ray_intersection(const AABBTree& tree) : tree_(tree) {}
 
@@ -52,6 +54,8 @@ public:
       intersection_obj = tree_.traits().intersection_object();
     typename AABB_traits::Intersection_distance
       intersection_distance_obj = tree_.traits().intersection_distance_object();
+    as_ray_param_visitor param_visitor = as_ray_param_visitor(&query);
+
     Heap_type pq;
     boost::optional< Ray_intersection_and_primitive_id >
       intersection, /* the temporary for calculating the result */
@@ -73,7 +77,7 @@ public:
         //left child
         intersection = intersection_obj(query, current.node->left_data());
         if(intersection) {
-          FT ray_distance = as_ray_parameter(query, *intersection);
+          FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
           if(ray_distance < t) {
             t = ray_distance;
             p = intersection;
@@ -83,7 +87,7 @@ public:
         // right child
         intersection = intersection_obj(query, current.node->right_data());
         if(intersection) {
-          FT ray_distance = as_ray_parameter(query, *intersection);
+          FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
           if(ray_distance < t) {
             t = ray_distance;
             p = intersection;
@@ -95,7 +99,7 @@ public:
         //left child
         intersection = intersection_obj(query, current.node->left_data());
         if(intersection) {
-          FT ray_distance = as_ray_parameter(query, *intersection);
+          FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
           if(ray_distance < t) {
             t = ray_distance;
             p = intersection;
@@ -146,18 +150,23 @@ private:
     bool operator>(const Node_ptr_with_ft& other) const { return value > other.value; }
   };
 
-  FT as_ray_parameter(const Ray& ray,
-                      const Ray_intersection_and_primitive_id& intersection)
-    const {
-    // TODO replace with non-hacky solution
-    if(const Point* point = boost::get<const Point>(&(intersection.first))) {
-      typename AABB_traits::Geom_traits::Vector_3 distance_ray(*point, ray.source());
-      return distance_ray.squared_length();
-    } else {
-      std::cout << "not handled" << std::endl;
-      return 0;
+  struct as_ray_param_visitor {
+    typedef FT result_type;
+    as_ray_param_visitor(const Ray* ray) : ray(ray) {}
+
+    template<typename T>
+    FT operator()(const T&)
+    { std::cout << "not handled" << std::endl; return FT(); }
+
+    FT operator()(const Point& point) {
+      typename AABB_traits::Geom_traits::Vector_3 x(ray->source(), point);
+      typename AABB_traits::Geom_traits::Vector_3 v = ray->to_vector();
+      boost::array<FT,3> xv = {x[0] / v[0],  x[1] / v[1], x[2] / v[2]};
+      return *std::max_element(xv.begin(), xv.end());
     }
-  }
+
+    const Ray* ray;
+  };
 };
 
 template<typename AABBTraits>
@@ -186,6 +195,5 @@ AABB_tree<AABBTraits>::ray_intersection(const Ray& query) const {
 }
 
 }
-
 
 #endif /* CGAL_AABB_RAY_INTERSECTION_H */
