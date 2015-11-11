@@ -55,6 +55,12 @@ struct FirstIntersectionVisitor {
   }
 };
 
+template<typename FT>
+struct Epsilon {
+  static /* CGAL_CONSTEXPR */ FT epsilon() { return std::numeric_limits<double>::epsilon(); }
+};
+
+
 /**
  * @brief Responsible for calculating Shape Diameter Function over surface of the mesh.
  *
@@ -305,15 +311,18 @@ public:
         boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
           = cast_and_return_minimum_1(segment, skip, accept_if_acute);
       } else {
-        Ray ray(center, ray_direction);
+        // shift the center along the normal by epsilon
+        Point center_shifted = translated_point_functor(center, scale_functor(ray_direction, internal::Epsilon<FT>::epsilon()));
+        Ray ray_1(center, ray_direction);
+        Ray ray_2(center_shifted, ray_direction);
 
-        if(traits.is_degenerate_3_object()(ray)) {
+        if(traits.is_degenerate_3_object()(ray_1) || traits.is_degenerate_3_object()(ray_2)) {
           CGAL_warning(false &&
                        "A degenerate ray is constructed. Most probable reason is using CGAL_PI as cone_angle parameter and also picking center of disk as a sample.");
         }
 
         boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
-          = cast_and_return_minimum(ray, skip, accept_if_acute);
+          = cast_and_return_minimum(ray_1, ray_2, skip, accept_if_acute);
       }
 
       if(!intersection_is_acute) {
@@ -374,12 +383,14 @@ private:
 
   template <class Query, class SkipPrimitiveFunctor> // Query can be templated for just Ray and Segment types.
   boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum(
-    const Query& query, SkipPrimitiveFunctor skip, bool accept_if_acute) const {
+    const Query& query_1, const Query& query_2, SkipPrimitiveFunctor skip, bool accept_if_acute) const {
     boost::tuple<bool, bool, double, Primitive_id>
-      one = cast_and_return_minimum_1(query, skip, accept_if_acute);
+      one = cast_and_return_minimum_1(query_1, skip, accept_if_acute);
     boost::tuple<bool, bool, double, Primitive_id>
-      two = cast_and_return_minimum_2(query, skip, accept_if_acute);
-    (void)one;(void)two;
+      two = cast_and_return_minimum_2(query_2, skip, accept_if_acute);
+    assert(boost::get<3>(one) == boost::get<3>(two));
+    assert(boost::get<0>(one) == boost::get<0>(two));
+    assert(boost::get<1>(one) == boost::get<1>(two));
 
     return one;
   }
@@ -460,19 +471,22 @@ private:
     return min_distance;
   }
 
-  template <class Query, class SkipPrimitiveFunctor> // Query can be templated for just Ray and Segment types.
+  template <class SkipPrimitiveFunctor>
   boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum_2(
-    const Query& query, SkipPrimitiveFunctor, bool accept_if_acute) const {
+    const Ray& query, SkipPrimitiveFunctor /* skip*/, bool accept_if_acute) const {
     boost::tuple<bool, bool, double, Primitive_id>
     min_distance(false, false, 0.0, Primitive_id());
 
-    boost::optional< typename Tree::template Intersection_and_primitive_id<Query>::Type >
+    boost::optional< typename Tree::template Intersection_and_primitive_id<Ray>::Type >
       min_intersection = tree.ray_intersection(query);
     if(!min_intersection)
       return min_distance;
 
+    min_distance.template get<0>() = true;
+    min_distance.template get<3>() = min_intersection->second;
+
     Vector min_i_ray(NULL_VECTOR);
-    Primitive_id min_id(min_intersection->second);
+    Primitive_id& min_id = min_distance.template get<3>();
 
     if(const Point* i_point = boost::get<const Point>(&(min_intersection->first))) {
       min_i_ray = Vector(*i_point, query.source());
@@ -497,6 +511,7 @@ private:
 
     min_distance.template get<1>() = true; // founded intersection is acceptable.
     min_distance.template get<2>() = std::sqrt(min_distance.template get<2>());
+
     return min_distance;
   }
 
