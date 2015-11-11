@@ -52,11 +52,14 @@ public:
 
     typename AABB_traits::Intersection
       intersection_obj = tree_.traits().intersection_object();
+    typename AABB_traits::Do_intersect
+      do_intersect_obj = tree_.traits().do_intersect_object();
     typename AABB_traits::Intersection_distance
       intersection_distance_obj = tree_.traits().intersection_distance_object();
     as_ray_param_visitor param_visitor = as_ray_param_visitor(&query);
 
     Heap_type pq;
+    pq.reserve(tree_.size() / 2);
     boost::optional< Ray_intersection_and_primitive_id >
       intersection, /* the temporary for calculating the result */
       p; /* the current best intersection */
@@ -75,34 +78,40 @@ public:
       case 2: // Left & right child both leaves
       {
         //left child
-        intersection = intersection_obj(query, current.node->left_data());
-        if(intersection) {
-          FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
-          if(ray_distance < t) {
-            t = ray_distance;
-            p = intersection;
+        if(do_intersect_obj(query, current.node->left_data())) {
+          intersection = intersection_obj(query, current.node->left_data());
+          if(intersection) {
+            FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
+            if(ray_distance < t) {
+              t = ray_distance;
+              p = intersection;
+            }
           }
         }
 
         // right child
-        intersection = intersection_obj(query, current.node->right_data());
-        if(intersection) {
-          FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
-          if(ray_distance < t) {
-            t = ray_distance;
-            p = intersection;
+        if(do_intersect_obj(query, current.node->right_data())) {
+          intersection = intersection_obj(query, current.node->right_data());
+          if(intersection) {
+            FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
+            if(ray_distance < t) {
+              t = ray_distance;
+              p = intersection;
+            }
           }
         }
       }
       case 3: // Left child leaf, right child inner node
       {
         //left child
-        intersection = intersection_obj(query, current.node->left_data());
-        if(intersection) {
-          FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
-          if(ray_distance < t) {
-            t = ray_distance;
-            p = intersection;
+        if(do_intersect_obj(query, current.node->left_data())) {
+          intersection = intersection_obj(query, current.node->left_data());
+          if(intersection) {
+            FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
+            if(ray_distance < t) {
+              t = ray_distance;
+              p = intersection;
+            }
           }
         }
 
