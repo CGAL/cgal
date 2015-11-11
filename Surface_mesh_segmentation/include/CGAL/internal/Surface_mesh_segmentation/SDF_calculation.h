@@ -313,16 +313,15 @@ public:
       } else {
         // shift the center along the normal by epsilon
         Point center_shifted = translated_point_functor(center, scale_functor(ray_direction, internal::Epsilon<FT>::epsilon()));
-        Ray ray_1(center, ray_direction);
         Ray ray_2(center_shifted, ray_direction);
 
-        if(traits.is_degenerate_3_object()(ray_1) || traits.is_degenerate_3_object()(ray_2)) {
+        if(traits.is_degenerate_3_object()(ray_2)) {
           CGAL_warning(false &&
                        "A degenerate ray is constructed. Most probable reason is using CGAL_PI as cone_angle parameter and also picking center of disk as a sample.");
         }
 
         boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
-          = cast_and_return_minimum(ray_1, ray_2, skip, accept_if_acute);
+          = cast_and_return_minimum_2(ray_2, accept_if_acute);
       }
 
       if(!intersection_is_acute) {
@@ -335,7 +334,7 @@ public:
     }
 
     if(ray_distances.empty()) {
-      return boost::optional<double>();
+      return boost::none;
     }
 
     return boost::optional<double>(remove_outliers_and_calculate_sdf_value(
@@ -379,20 +378,6 @@ private:
 
     return calculate_sdf_value_of_point(center, normal, skip, visitor, cone_angle,
                                         accept_if_acute, disk_samples);
-  }
-
-  template <class Query, class SkipPrimitiveFunctor> // Query can be templated for just Ray and Segment types.
-  boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum(
-    const Query& query_1, const Query& query_2, SkipPrimitiveFunctor skip, bool accept_if_acute) const {
-    boost::tuple<bool, bool, double, Primitive_id>
-      one = cast_and_return_minimum_1(query_1, skip, accept_if_acute);
-    boost::tuple<bool, bool, double, Primitive_id>
-      two = cast_and_return_minimum_2(query_2, skip, accept_if_acute);
-    assert(boost::get<3>(one) == boost::get<3>(two));
-    assert(boost::get<0>(one) == boost::get<0>(two));
-    assert(boost::get<1>(one) == boost::get<1>(two));
-
-    return one;
   }
 
   /**
@@ -471,29 +456,35 @@ private:
     return min_distance;
   }
 
-  template <class SkipPrimitiveFunctor>
-  boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum_2(
-    const Ray& query, SkipPrimitiveFunctor /* skip*/, bool accept_if_acute) const {
-    boost::tuple<bool, bool, double, Primitive_id>
-    min_distance(false, false, 0.0, Primitive_id());
+  struct min_i_ray_visitor {
+    typedef Vector result_type;
+    min_i_ray_visitor(const Ray* ray) : ray(ray) {}
+    const Ray* ray;
 
-    boost::optional< typename Tree::template Intersection_and_primitive_id<Ray>::Type >
+    Vector operator()(const Point& p) const
+    { return Vector(p, ray->source()); }
+
+    template<typename T>
+    Vector operator()(const T&) const
+    { CGAL_warning(false && "Visitor Case not handled"); return NULL_VECTOR; }
+  };
+
+
+  boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum_2(
+    const Ray& query, bool accept_if_acute) const {
+
+    const boost::optional< typename Tree::template Intersection_and_primitive_id<Ray>::Type >
       min_intersection = tree.ray_intersection(query);
     if(!min_intersection)
-      return min_distance;
+      return boost::make_tuple(false, false, 0.0, Primitive_id());
 
-    min_distance.template get<0>() = true;
-    min_distance.template get<3>() = min_intersection->second;
+    min_i_ray_visitor v(&query);
+    Vector min_i_ray = boost::apply_visitor(v, min_intersection->first);
 
-    Vector min_i_ray(NULL_VECTOR);
-    Primitive_id& min_id = min_distance.template get<3>();
+    boost::tuple<bool, bool, double, Primitive_id>
+    min_distance(true, false, to_double(min_i_ray.squared_length()), min_intersection->second);
 
-    if(const Point* i_point = boost::get<const Point>(&(min_intersection->first))) {
-      min_i_ray = Vector(*i_point, query.source());
-      boost::get<2>(min_distance) = to_double(min_i_ray.squared_length());
-    } else {
-      std::cout << "oopps" << std::endl;
-    }
+    const Primitive_id& min_id = min_distance.template get<3>();
 
     if(accept_if_acute) {
       // check whether the ray makes acute angle with intersected facet
