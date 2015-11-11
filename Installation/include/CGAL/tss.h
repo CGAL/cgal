@@ -23,7 +23,7 @@
 #  else
 
 #    define CGAL_THREAD_LOCAL_VARIABLE(TYPE, VAR,VAL)       \
-       thread_local TYPE VAR = VAL
+       thread_local TYPE VAR(VAL)
 
 #  endif
 

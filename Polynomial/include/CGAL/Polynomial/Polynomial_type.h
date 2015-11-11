@@ -265,7 +265,7 @@ protected:
 //
 private:
     static Self& get_default_instance(){
-      CGAL_THREAD_LOCAL_VARIABLE(Self, x, Self(0));
+      static CGAL_THREAD_LOCAL_VARIABLE(Self, x, 0);
       return x;      
     }
 public:
