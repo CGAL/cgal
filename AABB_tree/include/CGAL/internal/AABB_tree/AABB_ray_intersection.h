@@ -22,11 +22,11 @@
 #ifndef CGAL_AABB_RAY_INTERSECTION_H
 #define CGAL_AABB_RAY_INTERSECTION_H
 
-#include <queue>
 #include <functional>
 #include <boost/optional.hpp>
 #include <boost/type_traits/is_same.hpp>
 #include <boost/variant/apply_visitor.hpp>
+#include <boost/heap/priority_queue.hpp>
 
 #include <CGAL/assertions.h>
 
@@ -47,8 +47,8 @@ public:
     // nb_primitives through a variable in each Node on the stack. In
     // BVH_node::traversal this is done through the function parameter
     // nb_primitives in the recursion.
-    typedef std::priority_queue< Node_ptr_with_ft, std::vector<Node_ptr_with_ft>,
-                                 std::greater<Node_ptr_with_ft> > Heap_type;
+    typedef boost::heap::priority_queue< Node_ptr_with_ft, boost::heap::compare< std::greater<Node_ptr_with_ft> > >
+      Heap_type;
 
     typename AABB_traits::Intersection
       intersection_obj = tree_.traits().intersection_object();
