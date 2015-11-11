@@ -142,8 +142,8 @@ private:
 
   struct Node_ptr_with_ft {
     Node_ptr_with_ft(const Node* node, const FT& value, size_type nb_primitives)
-      : node(const_cast<Node*>(node)), value(value), nb_primitives(nb_primitives) {}
-    Node* node;
+      : node(node), value(value), nb_primitives(nb_primitives) {}
+    const Node* node;
     FT value;
     size_type nb_primitives;
     bool operator<(const Node_ptr_with_ft& other) const { return value < other.value; }
