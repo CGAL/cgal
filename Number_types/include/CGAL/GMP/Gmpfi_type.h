@@ -108,6 +108,7 @@ class Gmpfi:
   static mp_prec_t&  default_precision()
   {
     static CGAL_THREAD_LOCAL_VARIABLE(mp_prec_t, Gmpfi_default_precision, CGAL_GMPFI_DEFAULT_PRECISION);
+    return Gmpfi_default_precision;
   }
         
 
