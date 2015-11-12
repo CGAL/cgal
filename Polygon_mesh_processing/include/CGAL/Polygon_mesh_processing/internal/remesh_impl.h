@@ -85,7 +85,7 @@ namespace internal {
       : pmesh_(pmesh)
     {
       std::vector<halfedge_descriptor> border;
-      PMP::get_border(pmesh_, faces, std::back_inserter(border));
+      PMP::get_border(faces, std::back_inserter(border), pmesh_);
 
       BOOST_FOREACH(edge_descriptor e, edges(pmesh_))
         border_edges.insert(std::make_pair(e, false));

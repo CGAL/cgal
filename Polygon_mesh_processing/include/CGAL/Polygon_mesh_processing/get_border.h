@@ -51,15 +51,15 @@ namespace Polygon_mesh_processing {
   * @param out the output iterator that collects halfedges that form the border
   *            of `faces`, seen from inside the surface patch
   *
-  * @todo add get_border to the user manual
+  * @returns `out`
   */
 #endif
   template<typename PolygonMesh
          , typename FaceRange
          , typename HalfedgeOutputIterator>
-  void get_border(const PolygonMesh& pmesh
-                , const FaceRange& faces
-                , HalfedgeOutputIterator out)
+  HalfedgeOutputIterator get_border(const FaceRange& faces
+                                  , HalfedgeOutputIterator out
+                                  , const PolygonMesh& pmesh)
   {
     typedef PolygonMesh PM;
     typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
@@ -94,6 +94,7 @@ namespace Polygon_mesh_processing {
       else
         *out++ = opposite(hd.first, pmesh);
     }
+    return out;
   }
 
 } } // end of namespace CGAL::Polygon_mesh_processing

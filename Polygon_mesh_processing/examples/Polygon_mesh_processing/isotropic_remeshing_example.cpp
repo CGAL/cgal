@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
   std::cout << "Split border...";
 
     std::vector<halfedge_descriptor> border;
-    PMP::get_border(mesh, faces(mesh), std::back_inserter(border));
+    PMP::get_border(faces(mesh), std::back_inserter(border), mesh);
     PMP::split_long_edges(mesh, border, target_edge_length);
 
   std::cout << "done." << std::endl;
