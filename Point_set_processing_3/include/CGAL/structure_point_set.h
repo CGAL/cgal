@@ -108,7 +108,7 @@ namespace internal {
     {
 
       for (Input_iterator it = begin; it != end; ++ it)
-        m_points.push_back (get(m_point_pmap, *begin));
+        m_points.push_back (get(m_point_pmap, *it));
 
       m_indices = std::vector<int> (m_points.size (), -1);
 
@@ -152,19 +152,18 @@ namespace internal {
 
     void find_pairs_of_adjacent_primitives (double radius)
     {
-      
       typedef typename Traits::Search_traits Search_traits_base;
       typedef Search_traits_adapter <std::size_t, My_point_property_map, Search_traits_base> Search_traits;
       typedef CGAL::Kd_tree<Search_traits> Tree;
       typedef CGAL::Fuzzy_sphere<Search_traits> Fuzzy_sphere;
 
       My_point_property_map pmap (m_points);
-      Search_traits straits (pmap);      
+
       Tree tree (boost::counting_iterator<std::size_t> (0),
                  boost::counting_iterator<std::size_t> (m_points.size()),
                  typename Tree::Splitter(),
-                 straits);
-        
+                 Search_traits (pmap));
+
       std::vector<std::vector<bool> > adjacency_table (m_planes.size (),
                                                        std::vector<bool> (m_planes.size (), false));
 
@@ -174,12 +173,12 @@ namespace internal {
       for (std::size_t i = 0; i < m_points.size (); ++ i)
         {
           int ind_i = m_indices[i];
-          std::cerr << ind_i << " ";
+
           if (ind_i == -1)
             continue;
 
-          Fuzzy_sphere query (i, radius, 0., straits);
-
+          Fuzzy_sphere query (i, radius, 0., tree.traits());
+          
           std::vector<std::size_t> neighbors;
           tree.search (std::back_inserter (neighbors), query); // WIP: SegFaults so far...
 
