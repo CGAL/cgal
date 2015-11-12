@@ -280,10 +280,15 @@ namespace Polygon_mesh_processing {
   Note that no degenerate triangles will be produced.
   If no triangulation can be found, then nothing is recorded in `out`.
 
+  If faces incident to the polyline outside the hole are known,
+  it is recommended to use this function.
   The point range `third_points` indicates for each pair of consecutive points in the range `points`,
-  the third point of the facet this segment is incident to.
+  the third point of the face this segment is incident to. It influences the choice
+  of the best triangulation while avoiding overfolding.
 
   Note that the ranges `points` and `third_points` may or may not contain duplicated first point at the end of sequence.
+
+  @pre `third_points.size() == points.size()`
 
   @tparam PointRange range of points, model of `Range`.
     Its iterator type is `InputIterator`.
