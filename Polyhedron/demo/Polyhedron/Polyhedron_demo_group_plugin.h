@@ -82,7 +82,7 @@ public :
 
     bool applicable(QAction*) const
     {
-        return true;
+        return scene->numberOfEntries() > 0;
     }
     QList<QAction*> actions() const {
         return QList<QAction*>() << actionAddToGroup;
@@ -93,19 +93,23 @@ public :
         Q_FOREACH(Scene_item* item, selected_items)
         {
             if(selected_group->getChildren().contains(item))
-                 selected_group->removeChild(item);
+            {
+                 //selected_group->removeChild(item);
+                trueScene->check_empty_group(item);
+                item->has_group = 0;
+
+            }
             else if(selected_group == item)
                  print_message("A group cannot contain itself.");
             else
             {
-                //selected_group->addChild(item);
                 trueScene->changeGroup(item, selected_group);
-            }
 
+                if(!trueScene->item_entries().contains(selected_group))
+                    scene->addItem(selected_group);
+            }
         }
         selected_items.clear();
-        if(!trueScene->item_entries().contains(selected_group))
-            scene->addItem(selected_group);
     }
     QList<Scene_item*> selected_items;
     Scene_group_item* selected_group;

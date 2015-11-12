@@ -663,8 +663,23 @@ bool Scene::dropMimeData(const QMimeData *data,
 {
     //gets the moving items
     QList<Scene_item*> items;
+    QList<int> groups_children;
+
+    //get IDs of all children of selected groups
     Q_FOREACH(int i, selected_items_list)
-        items << item(i);
+    {
+        Scene_group_item* group =
+                qobject_cast<Scene_group_item*>(item(i));
+        if(group)
+            Q_FOREACH(Scene_item* child, group->getChildren())
+              groups_children << item_id(child);
+    }
+    // Insure thhat children of selected groups will not be added twice
+    Q_FOREACH(int i, selected_items_list)
+    {
+        if(!groups_children.contains(i))
+          items << item(i);
+    }
     //Gets the group at the drop position
     Scene_group_item* group =
             qobject_cast<Scene_group_item*>(this->item(index_map[parent]));
@@ -980,7 +995,6 @@ void Scene::group_added()
     organize_items(item, viewItem, 0);
     }
 }
-//TO DO gerer les has_group
 void Scene::changeGroup(Scene_item *item, Scene_group_item *target_group)
 {
     //remove item from the containing group if any
@@ -989,7 +1003,8 @@ void Scene::changeGroup(Scene_item *item, Scene_group_item *target_group)
   {
     if(group->getChildren().contains(item))
     {
-      group->removeChild(item);
+      //group->removeChild(item);
+        check_empty_group(item);
       break;
     }
   }
