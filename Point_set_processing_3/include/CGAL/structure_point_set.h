@@ -26,6 +26,8 @@
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/assertions.h>
 
+#include <CGAL/centroid.h>
+
 #include <CGAL/Kd_tree.h>
 #include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Fuzzy_iso_box.h>
@@ -54,6 +56,7 @@ namespace internal {
     typedef typename Traits::FT FT;
     typedef typename Traits::Point_3 Point;
     typedef typename Traits::Vector_3 Vector;
+    typedef typename Traits::Segment_3 Segment;
     typedef typename Traits::Line_3 Line;
 
     typedef typename Traits::Plane_3 Plane;
@@ -69,6 +72,8 @@ namespace internal {
 
   private:
 
+    const std::size_t minus1;
+    
     class My_point_property_map{
       const std::vector<Point>& points;
     public:
@@ -107,7 +112,7 @@ namespace internal {
     Traits m_traits;
 
     std::vector<Point> m_points;
-    std::vector<int> m_indices;
+    std::vector<std::size_t> m_indices;
     std::vector<Point_status> m_status;
     Point_map m_point_pmap;
     Normal_map m_normal_pmap;
@@ -119,21 +124,19 @@ namespace internal {
   public:
 
     Point_set_structuring (Traits t = Traits ())
-      : m_traits (t)
+      : minus1 (static_cast<std::size_t>(-1)), m_traits (t)
     {
-
     }
 
     
     Point_set_structuring (Input_iterator begin, Input_iterator end,
                            const Shape_detection_3::Efficient_RANSAC<Traits>& shape_detection)
-      : m_traits (shape_detection.traits())
+      : minus1 (static_cast<std::size_t>(-1)), m_traits (shape_detection.traits())
     {
-
       for (Input_iterator it = begin; it != end; ++ it)
         m_points.push_back (get(m_point_pmap, *it));
 
-      m_indices = std::vector<int> (m_points.size (), -1);
+      m_indices = std::vector<std::size_t> (m_points.size (), minus1);
       m_status = std::vector<Point_status> (m_points.size (), POINT);
 
       BOOST_FOREACH (boost::shared_ptr<Shape> shape, shape_detection.shapes())
@@ -175,6 +178,13 @@ namespace internal {
       compute_edges (epsilon);
       std::cerr << " -> Done" << std::endl;
 
+      std::cerr << "Creating edge-anchor points... " << std::endl;
+      {
+        std::size_t size_before = m_points.size ();
+        create_edge_anchor_points (radius, epsilon);
+        std::cerr << " -> " << m_points.size () - size_before << " anchor point(s) created." << std::endl;
+      }
+
     }
 
   private:
@@ -201,9 +211,9 @@ namespace internal {
       //of a point of the primitive 2 and vice versa)
       for (std::size_t i = 0; i < m_points.size (); ++ i)
         {
-          int ind_i = m_indices[i];
+          std::size_t ind_i = m_indices[i];
 
-          if (ind_i == -1)
+          if (ind_i == minus1)
             continue;
 
           Fuzzy_sphere query (i, radius, 0., tree.traits());
@@ -214,8 +224,8 @@ namespace internal {
           
           for (std::size_t k = 0; k < neighbors.size(); ++ k)
             {
-              int ind_k = m_indices[neighbors[k]];
-              if (ind_k != -1 && ind_k != ind_i)
+              std::size_t ind_k = m_indices[neighbors[k]];
+              if (ind_k != minus1 && ind_k != ind_i)
                 adjacency_table[ind_i][ind_k] = true;
             }
         }
@@ -289,6 +299,220 @@ namespace internal {
         }
     }
 
+    void create_edge_anchor_points (double radius, double epsilon)
+    {
+      double d_DeltaEdge = std::sqrt (2.) * epsilon;
+      double r_edge = d_DeltaEdge / 2.;
+      
+      for (std::size_t i = 0; i < m_edges.size(); ++ i)
+        {
+          boost::shared_ptr<Plane_shape> plane1 = m_planes[m_edges[i].planes[0]];
+          boost::shared_ptr<Plane_shape> plane2 = m_planes[m_edges[i].planes[1]];       
+
+          const Line& line = m_edges[i].support;
+
+          if (!(m_edges[i].active))
+            {
+              continue;
+            }
+							
+          //find set of points close (<attraction_radius) to the edge and store in intersection_points
+          std::vector<std::size_t> intersection_points;
+          for (std::size_t k = 0; k < plane1->indices_of_assigned_points().size(); ++ k)
+            {
+              std::size_t index_point = plane1->indices_of_assigned_points()[k];
+              Point point = m_points[index_point];
+              Point projected = line.projection (point);
+              if (CGAL::squared_distance (point, projected) < radius * radius)
+                intersection_points.push_back (index_point);
+            }
+          for (std::size_t k = 0; k < plane2->indices_of_assigned_points().size(); ++ k)
+            {
+              std::size_t index_point = plane2->indices_of_assigned_points()[k];
+              Point point = m_points[index_point];
+              Point projected = line.projection (point);
+              if (CGAL::squared_distance (point, projected) < radius * radius)
+                intersection_points.push_back (index_point);
+            }
+
+          if (intersection_points.empty ())
+            {
+              continue;
+            }
+
+          const Point& t0 = m_points[intersection_points[0]];
+          Point t0p = line.projection (t0);
+          double dmin = 0.;
+          double dmax = 0.;
+          Point Pmin = t0p;
+          Point Pmax = t0p;
+          Vector dir = line.to_vector ();
+          
+          //compute the segment of the edge
+          for (std::size_t k = 0; k < intersection_points.size(); ++ k)
+            {
+              std::size_t ind = intersection_points[k];
+              const Point& point = m_points[ind];
+              Point projected = line.projection (point);
+              double d = Vector (t0p, projected) * dir;
+                  
+              if (d < dmin)
+                {
+                  dmin = d;
+                  Pmin = projected;
+                }
+              else if (d > dmax)
+                {
+                  dmax = d;
+                  Pmax = projected;
+                }
+            }
+
+          //faire un partitionnement ds une image 1D en votant si
+          //a la fois au moins un point de plan1 et aussi de plan
+          //2 tombent dans une case (meme pas que pour les plans).
+          Segment seg (Pmin,Pmax);
+          int number_of_division = std::sqrt (seg.squared_length ()) / d_DeltaEdge + 1;
+          std::vector<std::vector<std::size_t> > division_tab (number_of_division);
+
+          for (std::size_t k = 0; k < intersection_points.size(); ++ k)
+            {
+              std::size_t ind = intersection_points[k];
+              const Point& point = m_points[ind];
+              Point projected = line.projection (point);
+
+              std::size_t tab_index = std::sqrt (CGAL::squared_distance (seg[0], projected)) / d_DeltaEdge;
+
+              division_tab[tab_index].push_back (ind);
+            }
+
+          //C1-CREATE the EDGE
+          std::vector<int> index_of_edge_points;
+          for (std::size_t j = 0; j < division_tab.size(); ++ j)
+            {
+              bool p1found = false, p2found = false;
+              for (std::size_t k = 0; k < division_tab[j].size () && !(p1found && p2found); ++ k)
+                {
+                  if (m_indices[division_tab[j][k]] == m_edges[i].planes[0])
+                    p1found = true;
+                  if (m_indices[division_tab[j][k]] == m_edges[i].planes[1])
+                    p2found = true;
+                }
+
+              if (!(p1found && p2found))
+                {
+                  division_tab[j].clear();
+                  continue;
+                }
+              
+              Point perfect (seg[0].x() + (seg[1].x() - seg[0].x()) * (j + 0.5) / (double)number_of_division,
+                             seg[0].y() + (seg[1].y() - seg[0].y()) * (j + 0.5) / (double)number_of_division,
+                             seg[0].z() + (seg[1].z() - seg[0].z()) * (j + 0.5) / (double)number_of_division);
+
+              // keep closest point, replace it by perfect one and skip the others
+              double dist_min = (std::numeric_limits<double>::max)();
+              std::size_t index_best = 0;
+
+              for (std::size_t k = 0; k < division_tab[j].size(); ++ k)
+                {
+                  std::size_t inde = division_tab[j][k];
+                  m_status[inde] = SKIPPED; // Deactive all points except best (below)
+                  double distance = CGAL::squared_distance (perfect, m_points[inde]);
+                  if (distance < dist_min)
+                    {
+                      dist_min = distance;
+                      index_best = inde;
+                    }
+                }
+
+              m_points[index_best] = perfect;
+              m_status[index_best] = EDGE;
+              m_edges[i].indices.push_back (index_best);
+
+            }
+
+          //C2-CREATE the ANCHOR
+          Vector direction_p1(0,0,0);
+          Vector direction_p2(0,0,0);
+
+          for (std::size_t j = 0; j < division_tab.size() - 1; ++ j)
+            {
+              if (division_tab[j].empty () || division_tab[j+1].empty ())
+                continue;
+              Point anchor (seg[0].x() + (seg[1].x() - seg[0].x()) * (j + 1) / (double)number_of_division,
+                            seg[0].y() + (seg[1].y() - seg[0].y()) * (j + 1) / (double)number_of_division,
+                            seg[0].z() + (seg[1].z() - seg[0].z()) * (j + 1) / (double)number_of_division);
+              
+              Plane ortho = seg.supporting_line().perpendicular_plane(anchor); 
+
+              std::vector<Point> pts1, pts2;
+              //Computation of the permanent angle and directions
+              for (std::size_t k = 0; k < division_tab[j].size(); ++ k)
+                { 
+                  std::size_t inde = division_tab[j][k];
+                  std::size_t plane = m_indices[inde];
+                  if (plane == m_edges[i].planes[0])
+                    pts1.push_back (m_points[inde]);
+                  else if (plane == m_edges[i].planes[1])
+                    pts2.push_back (m_points[inde]);
+                }
+
+              Point centroid1 = CGAL::centroid (pts1.begin (), pts1.end ());
+              Point centroid2 = CGAL::centroid (pts2.begin (), pts2.end ());
+
+              Line line_p1;
+              CGAL::Object ob_temp1 = CGAL::intersection (static_cast<Plane> (*plane1), ortho);
+              if (!assign(line_p1, ob_temp1))
+                std::cout<<"Warning: bad intersection"<<std::endl;
+              else
+                {
+                  Vector vecp1 = line_p1.to_vector();
+                  vecp1 = vecp1/ std::sqrt (vecp1 * vecp1);
+                  Vector vtest1 (anchor, centroid1);
+                  if (vtest1 * vecp1<0)
+                    vecp1 = -vecp1;
+
+                  direction_p1 = direction_p1+vecp1;
+
+                  Point anchor1 = anchor + vecp1 * r_edge;
+                  m_points.push_back (anchor1);
+                  m_indices.push_back (m_edges[i].planes[0]);
+                  m_status.push_back (POINT);
+                }
+
+              Line line_p2;
+              CGAL::Object ob_temp2 = CGAL::intersection (static_cast<Plane> (*plane2),ortho);
+              if (!assign(line_p2, ob_temp2))
+                std::cout<<"Warning: bad intersection"<<std::endl;
+              else
+                {
+                  Vector vecp2 = line_p2.to_vector();
+                  vecp2 = vecp2 / std::sqrt (vecp2 * vecp2);
+                  Vector vtest2 (anchor, centroid2);
+                  if (vtest2 * vecp2 < 0)
+                    vecp2 =- vecp2;
+
+                  direction_p2 = direction_p2+vecp2;
+
+                  Point anchor2 = anchor + vecp2 * r_edge;
+                  m_points.push_back (anchor2);
+                  m_indices.push_back (m_edges[i].planes[1]);
+                  m_status.push_back (POINT);
+                }
+
+            }
+
+          //if not information enough (not enough edges to create
+          //anchor) we unactivate the edge, else we update the angle
+          //and directions
+          if ( !(direction_p1.squared_length()>0 || direction_p2.squared_length()>0) )
+            {
+              m_edges[i].active = false;
+              for (std::size_t j = 0; j < m_edges[i].indices.size (); ++ j)
+                m_status[m_edges[i].indices[j]] = SKIPPED;
+            }
+        }
+    }
     
   };
   
