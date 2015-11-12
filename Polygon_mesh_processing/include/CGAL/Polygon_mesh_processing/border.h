@@ -97,7 +97,22 @@ namespace Polygon_mesh_processing {
     return out;
   }
 
-} } // end of namespace CGAL::Polygon_mesh_processing
+  template<typename PolygonMesh
+         , typename HalfedgeOutputIterator>
+  HalfedgeOutputIterator border_halfedges(HalfedgeOutputIterator out
+                                        , const PolygonMesh& pmesh)
+  {
+    typedef PolygonMesh PM;
+    typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges(pmesh))
+      if (is_border(hd, pmesh))
+        *out++ = hd;
+
+    return out;
+  }
+
+}
+} // end of namespace CGAL::Polygon_mesh_processing
 
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_GET_BORDER_H
