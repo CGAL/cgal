@@ -49,7 +49,7 @@ int main (int argc, char** argv)
 
   CGAL::structure_point_set (points.begin (), points.end (), // input points
                              ransac, // shape detection engine
-                             0.5); // radius for structuring points
+                             0.01); // epsilon for structuring points
 
   return EXIT_SUCCESS;
 }

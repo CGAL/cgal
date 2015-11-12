@@ -81,17 +81,40 @@ namespace internal {
       friend inline reference get (const My_point_property_map& ppmap, key_type i) 
       { return ppmap[i]; }
     };
+
+    enum Point_status { POINT, EDGE, CORNER, SKIPPED };
+    
+    struct Edge
+    {
+      CGAL::cpp11::array<std::size_t, 2> planes;
+      std::vector<std::size_t> indices; // Points belonging to intersection
+      Line support;
+      bool active;
+
+      Edge (std::size_t a, std::size_t b)
+      { planes[0] = a; planes[1] = b; active = true; }
+    };
+    struct Corner
+    {
+      CGAL::cpp11::array<std::size_t, 3> planes;
+      CGAL::cpp11::array<std::size_t, 3> edges;
+      std::vector<std::size_t> indices; // Points belonging to intersection
+      Point support;
+      bool active;
+    };
       
 
     Traits m_traits;
 
     std::vector<Point> m_points;
     std::vector<int> m_indices;
+    std::vector<Point_status> m_status;
     Point_map m_point_pmap;
     Normal_map m_normal_pmap;
     
     std::vector<boost::shared_ptr<Plane_shape> > m_planes;
-    std::vector<std::pair<std::size_t, std::size_t> > m_pairs;
+    std::vector<Edge> m_edges;
+    std::vector<Corner> m_corners;
     
   public:
 
@@ -111,6 +134,7 @@ namespace internal {
         m_points.push_back (get(m_point_pmap, *it));
 
       m_indices = std::vector<int> (m_points.size (), -1);
+      m_status = std::vector<Point_status> (m_points.size (), POINT);
 
       BOOST_FOREACH (boost::shared_ptr<Shape> shape, shape_detection.shapes())
         {
@@ -139,12 +163,17 @@ namespace internal {
 
     }
 
-    void run (double radius)
+    void run (double epsilon, double attraction_factor = 3.)
     {
-
+      double radius = epsilon * attraction_factor;
+      
       std::cerr << "Finding adjacent primitives... " << std::endl;
       find_pairs_of_adjacent_primitives (radius);
-      std::cerr << "Found " << m_pairs.size () << " pair(s) of adjacent primitives." << std::endl;
+      std::cerr << " -> Found " << m_edges.size () << " pair(s) of adjacent primitives." << std::endl;
+
+      std::cerr << "Computing edges... " << std::endl;
+      compute_edges (epsilon);
+      std::cerr << " -> Done" << std::endl;
 
     }
 
@@ -192,13 +221,74 @@ namespace internal {
         }
 
       //verify the symmetry and store the pairs of primitives in
-      //primitive_pairs
+      //m_edges
       for (std::size_t i = 0; i < adjacency_table.size() - 1; ++ i)
         for (std::size_t j = i + 1; j < adjacency_table[i].size(); ++ j)
           if ((adjacency_table[i][j]) && (adjacency_table[j][i]))
-            m_pairs.push_back (std::make_pair (i, j));
+            m_edges.push_back (Edge (i, j));
 
     }
+
+    void compute_edges (double epsilon)
+    {
+      for (std::size_t i = 0; i < m_edges.size(); ++ i)
+        {
+          boost::shared_ptr<Plane_shape> plane1 = m_planes[m_edges[i].planes[0]];
+          boost::shared_ptr<Plane_shape> plane2 = m_planes[m_edges[i].planes[1]];       
+
+          double angle_A = std::acos (std::abs (plane1->plane_normal() * plane2->plane_normal()));
+          double angle_B = CGAL_PI - angle_A;
+
+          CGAL::Object ob_temp = CGAL::intersection (static_cast<Plane>(*plane1),
+                                                     static_cast<Plane>(*plane2));
+          if (!assign (m_edges[i].support, ob_temp))
+            {
+              std::cerr << "Warning: bad intersection" << std::endl;
+              continue;
+            }
+
+          Vector direction_p1 (0., 0., 0.);
+          for (std::size_t k = 0; k < plane1->indices_of_assigned_points ().size(); ++ k)
+            {
+              std::size_t index_point = plane1->indices_of_assigned_points ()[k];
+              
+              const Point& point = m_points[index_point];
+              Point projected = m_edges[i].support.projection (point);
+              if (std::sqrt (CGAL::squared_distance (point, projected))
+                  < 2 * std::min (4., 1 / std::sin (angle_A)) * epsilon
+                  && m_status[index_point] != SKIPPED)
+                direction_p1 = direction_p1 + Vector (projected, point);
+            }
+          if (direction_p1.squared_length() > 0)
+            direction_p1 = direction_p1 / std::sqrt (direction_p1 * direction_p1);
+
+          Vector direction_p2 (0., 0., 0.);
+          for (std::size_t k = 0; k < plane2->indices_of_assigned_points ().size(); ++ k)
+            {
+              std::size_t index_point = plane2->indices_of_assigned_points ()[k];
+              
+              const Point& point = m_points[index_point];
+              Point projected = m_edges[i].support.projection (point);
+              if (std::sqrt (CGAL::squared_distance (point, projected))
+                  < 2 * std::min (4., 1 / std::sin (angle_A)) * epsilon
+                  && m_status[index_point] != SKIPPED)
+                direction_p2 = direction_p2 + Vector (projected, point);
+            }
+          if (direction_p2.squared_length() > 0)
+            direction_p2 = direction_p2 / std::sqrt (direction_p2 * direction_p2);
+
+          double angle = std::acos (direction_p1 * direction_p2);
+      
+          if (direction_p1.squared_length() == 0
+              || direction_p2.squared_length() == 0
+              || (std::fabs (angle - angle_A) > 1e-2
+                  && std::fabs (angle - angle_B) > 1e-2 ))
+            {
+              m_edges[i].active = false;
+            }
+        }
+    }
+
     
   };
   
