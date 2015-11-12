@@ -285,13 +285,11 @@ namespace Polygon_mesh_processing {
 
   Note that the ranges `points` and `third_points` may or may not contain duplicated first point at the end of sequence.
 
-  @tparam OutputIteratorValueType value type of `OutputIterator`
-    having a constructor `OutputIteratorValueType(int p0, int p1, int p2)` available.
-    It defaults to `value_type_traits<OutputIterator>::%type`, and can be omitted when the default is fine.
   @tparam PointRange range of points, model of `Range`.
     Its iterator type is `InputIterator`.
   @tparam OutputIterator model of `OutputIterator`
-     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
+     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
+     A specialization for `CGAL::value_type_traits<OutputIterator>` must be available.
   @tparam NamedParameters a sequence of \ref namedparameters
 
   @param points the range of input points
@@ -306,8 +304,7 @@ namespace Polygon_mesh_processing {
 
   \todo handle islands
   */
-  template </*typename OutputIteratorValueType,*/
-            typename PointRange,
+  template <typename PointRange,
             typename OutputIterator,
             typename NamedParameters>
   OutputIterator
