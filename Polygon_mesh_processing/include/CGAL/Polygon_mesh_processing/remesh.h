@@ -182,13 +182,14 @@ void isotropic_remeshing(PolygonMesh& pmesh
 *
 * @tparam PolygonMesh model of `MutableFaceGraph` that
 *         has an internal property map for `CGAL::vertex_point_t`.
-* @tparam EdgeRange range of `boost::graph_traits<PolygonMesh>::%edge_descriptor`,
+* @tparam HalfedgeRange range of
+*   `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`,
 *   model of `Range`. Its iterator type is `InputIterator`.
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param pmesh a polygon mesh
-* @param edges the range of edges to be split if they are longer than given threshold
-* @param max_length the edge length above which an edge from `edges` is split
+* @param halfedges the range of edges to be split if they are longer than given threshold (each given by one of its halfedges)
+* @param max_length the edge length above which an edge from `halfedges` is split
 *        into to sub-edges
 * @param np optional \ref namedparameters described below
 
@@ -202,10 +203,10 @@ void isotropic_remeshing(PolygonMesh& pmesh
 *
 */
 template<typename PolygonMesh
-       , typename EdgeRange
+       , typename HalfedgeRange
        , typename NamedParameters>
 void split_long_edges(PolygonMesh& pmesh
-                    , EdgeRange& edges
+                    , HalfedgeRange& halfedges
                     , const double& max_length
                     , const NamedParameters& np)
 {
@@ -222,27 +223,27 @@ void split_long_edges(PolygonMesh& pmesh
   typename internal::Incremental_remesher<PM, VPMap, GT>
     remesher(pmesh, vpmap, false/*protect constraints*/);
 
-  remesher.split_long_edges(edges, max_length, Emptyset_iterator());
+  remesher.split_long_edges(halfedges, max_length, Emptyset_iterator());
 }
 
-template<typename PolygonMesh, typename EdgeRange>
+template<typename PolygonMesh, typename HalfedgeRange>
 void split_long_edges(PolygonMesh& pmesh
-                    , EdgeRange& edges
+                    , HalfedgeRange& halfedges
                     , const double& max_length)
 {
   split_long_edges(pmesh,
-    edges,
+    halfedges,
     max_length,
     parameters::all_default());
 }
 
 //used in the Polyhedron demo
 template<typename PolygonMesh
-       , typename EdgeRange
+       , typename HalfedgeRange
        , typename OutputIterator
        , typename NamedParameters>
 void split_long_edges(PolygonMesh& pmesh
-        , EdgeRange& edge_range
+        , HalfedgeRange& edge_range
         , const double& max_length
         , OutputIterator out//edges after splitting, all shorter than target_length
         , const NamedParameters& np)

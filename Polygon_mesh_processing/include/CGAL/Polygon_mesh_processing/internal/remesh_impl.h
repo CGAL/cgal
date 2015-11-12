@@ -218,13 +218,13 @@ namespace internal {
 
       //collect long edges
       Boost_bimap long_edges;
-      BOOST_FOREACH(edge_descriptor e, edge_range)
+      BOOST_FOREACH(halfedge_descriptor h, edge_range)
       {
-        double sqlen = sqlength(e);
+        double sqlen = sqlength(h);
         if (sqlen > sq_high)
-          long_edges.insert(long_edge(halfedge(e, mesh_), sqlen));
+          long_edges.insert(long_edge(h, sqlen));
         else
-          *out++ = e;
+          *out++ = h;
       }
 
       //split long edges
@@ -260,8 +260,8 @@ namespace internal {
         }
         else
         {
-          *out++ = edge(hnew, mesh_);
-          *out++ = edge(next(hnew, mesh_), mesh_);
+          *out++ = hnew;
+          *out++ = next(hnew, mesh_);
         }
 
         //insert new edges to keep triangular faces, and update long_edges

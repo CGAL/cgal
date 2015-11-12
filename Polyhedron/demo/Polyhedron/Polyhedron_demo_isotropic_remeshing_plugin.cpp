@@ -139,18 +139,18 @@ public Q_SLOTS:
       typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
       if (selection_item)
       {
-        std::vector<edge_descriptor> updated_selected_edges;
+        std::vector<halfedge_descriptor> updated_selected_edges;
         if (edges_only)
         {
           const Polyhedron& pmesh = *selection_item->polyhedron();
-          std::vector<edge_descriptor> edges;
+          std::vector<halfedge_descriptor> edges;
           BOOST_FOREACH(edge_descriptor e, selection_item->selected_edges)
           {
             if (selection_item->selected_facets.find(face(halfedge(e, pmesh), pmesh))
                  != selection_item->selected_facets.end()
              || selection_item->selected_facets.find(face(opposite(halfedge(e, pmesh), pmesh), pmesh))
                  != selection_item->selected_facets.end())
-              edges.push_back(e);
+              edges.push_back(halfedge(e, pmesh));
           }
           BOOST_FOREACH(face_descriptor f, selection_item->selected_facets)
           {
@@ -158,7 +158,7 @@ public Q_SLOTS:
             {
               if (selection_item->selected_facets.find(face(opposite(he, pmesh), pmesh))
                   == selection_item->selected_facets.end())
-              edges.push_back(edge(he, pmesh));
+              edges.push_back(he);
             }
           }
           CGAL::Polygon_mesh_processing::split_long_edges(
@@ -208,12 +208,9 @@ public Q_SLOTS:
             faces(*poly_item->polyhedron()),
             std::back_inserter(border),
             pmesh);
-          std::vector<edge_descriptor> border_edges;
-          BOOST_FOREACH(halfedge_descriptor h, border)
-            border_edges.push_back(edge(h, pmesh));
 
           CGAL::Polygon_mesh_processing::split_long_edges(*poly_item->polyhedron()
-                                                        , border_edges
+                                                        , border
                                                         , target_length);
         }
         else
