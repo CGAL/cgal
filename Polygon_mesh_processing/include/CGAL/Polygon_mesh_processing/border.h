@@ -57,7 +57,7 @@ namespace Polygon_mesh_processing {
   template<typename PolygonMesh
          , typename FaceRange
          , typename HalfedgeOutputIterator>
-  HalfedgeOutputIterator get_border(const FaceRange& faces
+  HalfedgeOutputIterator border_halfedges(const FaceRange& faces
                                   , HalfedgeOutputIterator out
                                   , const PolygonMesh& pmesh)
   {

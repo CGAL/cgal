@@ -22,7 +22,7 @@
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_IMPL_H
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
-#include <CGAL/Polygon_mesh_processing/get_border.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/iterator.h>
@@ -85,7 +85,7 @@ namespace internal {
       : pmesh_(pmesh)
     {
       std::vector<halfedge_descriptor> border;
-      PMP::get_border(faces, std::back_inserter(border), pmesh_);
+      PMP::border_halfedges(faces, std::back_inserter(border), pmesh_);
 
       BOOST_FOREACH(edge_descriptor e, edges(pmesh_))
         border_edges.insert(std::make_pair(e, false));

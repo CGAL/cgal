@@ -3,7 +3,7 @@
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/remesh.h>
-#include <CGAL/Polygon_mesh_processing/get_border.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
 
 #include <fstream>
 #include <vector>
@@ -30,7 +30,7 @@ int main(int argc, char* argv[])
   std::cout << "Split border...";
 
     std::vector<halfedge_descriptor> border;
-    PMP::get_border(faces(mesh), std::back_inserter(border), mesh);
+    PMP::border_halfedges(faces(mesh), std::back_inserter(border), mesh);
     PMP::split_long_edges(mesh, border, target_edge_length);
 
   std::cout << "done." << std::endl;
