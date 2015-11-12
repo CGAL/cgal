@@ -45,7 +45,7 @@ namespace Polygon_mesh_processing {
      holding `boost::graph_traits<PolygonMesh>::%halfedge_descriptor`
      for patch border
   *
-  * @param pmesh the polygon mesh to be scanned
+  * @param pmesh the polygon mesh to which `faces` belong
   * @param faces the range of faces defining the patch
   *              around which the border is collected
   * @param out the output iterator that collects halfedges that form the border
