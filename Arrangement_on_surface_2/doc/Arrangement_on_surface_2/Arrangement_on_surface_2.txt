@@ -2185,7 +2185,7 @@ If, in addition, the subcurve traits also models the concept
 concepts `ArrangementApproximateTraits_2` and
 `ArrangementConstructXMonotoneCurveTraits_2` implies modeling the
 concept `ArrangementLandmarkTraits_2`.) The same holds for the
-`ArrangementOpenTraits_2` concept as well.
+`ArrangementOpenBoundaryTraits_2` concept as well.
 Modeling the `ArrangementConstructXMonotoneCurveTraits_2` concept
 implies that the subcurve traits must support the construction of a
 unique (\f$x\f$-monotone) segment given two input points. Roughly
