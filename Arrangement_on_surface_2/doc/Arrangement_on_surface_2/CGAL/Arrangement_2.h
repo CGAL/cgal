@@ -68,7 +68,7 @@ public:
   /*!
     the traits class in use. 
   */ 
-  typedef unspecified_type Traits_2; 
+  typedef Traits Traits_2;
 
   /*!
     the <span class="textsc">Dcel</span> representation of the arrangement. 
