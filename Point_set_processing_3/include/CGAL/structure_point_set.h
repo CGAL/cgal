@@ -211,11 +211,7 @@ namespace internal {
         std::cerr << " -> " << m_points.size () - size_before << " corner point(s) created." << std::endl;
       }
 
-      std::ofstream f ("out.xyz");
-      for (std::size_t i = 0; i < m_points.size (); ++ i)
-        if (m_status[i] != SKIPPED)
-          f << m_points[i] << std::endl;
-      f.close ();
+      
     }
 
     template <typename BackInserter>
