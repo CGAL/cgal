@@ -118,7 +118,7 @@ struct AABB_traits_base_2<GeomTraits,true>{
   typedef typename CGAL::Bbox_3      Bounding_box;
 
   struct Intersection_distance {
-    boost::optional<FT> operator()(const Ray_3& ray, const Bounding_box& bbox) {
+    boost::optional<FT> operator()(const Ray_3& ray, const Bounding_box& bbox) const {
       FT t_near = -DBL_MAX; // std::numeric_limits<FT>::lowest(); C++1903
       FT t_far = DBL_MAX;
 
@@ -126,8 +126,8 @@ struct AABB_traits_base_2<GeomTraits,true>{
         = GeomTraits().construct_cartesian_const_iterator_3_object();
       Construct_source_3 construct_source_3 = GeomTraits().construct_source_3_object();
       Construct_vector_3 construct_vector_3 = GeomTraits().construct_vector_3_object();
-      Point_3 source = construct_source_3(ray);
-      Vector_3 direction = construct_vector_3(ray);
+      const Point_3 source = construct_source_3(ray);
+      const Vector_3 direction = construct_vector_3(ray);
       Cartesian_const_iterator_3 source_iter = construct_cartesian_const_iterator_3(source);
       Cartesian_const_iterator_3 direction_iter = construct_cartesian_const_iterator_3(direction);
 
@@ -368,7 +368,7 @@ public:
       typename cpp11::result_of<typename GeomTraits::Intersect_3(Query, typename Primitive::Datum) >::type
         inter_res = GeomTraits().intersect_3_object()(internal::Primitive_helper<AT>::get_datum(primitive,m_traits),query);
       if (!inter_res)
-        return boost::optional<typename Intersection_and_primitive_id<Query>::Type>();
+        return boost::none;
       return boost::make_optional( std::make_pair(*inter_res, primitive.id()) );
     }
     #endif
