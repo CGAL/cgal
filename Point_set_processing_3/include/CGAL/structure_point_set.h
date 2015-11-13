@@ -226,6 +226,20 @@ namespace internal {
           *(pts ++) = m_points[i];
     }
 
+    template <typename BackInserter>
+    void get_detailed_output (BackInserter pts_planes,
+                              BackInserter pts_edges,
+                              BackInserter pts_corners)
+    {
+      for (std::size_t i = 0; i < m_points.size (); ++ i)
+        if (m_status[i] == POINT || m_status[i] == RESIDUS)
+          *(pts_planes ++) = m_points[i];
+        else if (m_status[i] == EDGE)
+          *(pts_edges ++) = m_points[i];
+        else if (m_status[i] == CORNER)
+          *(pts_corners ++) = m_points[i];
+    }
+
   private:
 
     void project_inliers ()
