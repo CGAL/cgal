@@ -784,8 +784,9 @@ private:
   // which is in particular heavily used for pruning DAGs.
   static const Self & zero()
   {
-    Lazy_rep_0<AT, ET, E2A>* ptr = new Lazy_rep_0<AT, ET, E2A>();
-    static CGAL_THREAD_LOCAL_VARIABLE(Self,z,ptr);
+    // Note that the new only happens inside an if() inside the macro
+    // So it would be a mistake to put the new before the macro
+    static CGAL_THREAD_LOCAL_VARIABLE(Self,z,(new Lazy_rep_0<AT, ET, E2A>()));
     return z;
   }
 
