@@ -14,6 +14,10 @@ public :
 
     bool isEmpty() const ;
 
+    bool isExpanded() const;
+
+    void setExpanded(bool);
+
     Bbox bbox() const;
 
     Scene_group_item* clone() const {return 0;}
@@ -83,6 +87,7 @@ Q_SIGNALS:
 private:
     QList<Scene_item*> children;
     void add_group_number(Scene_item*new_item);
+    bool expanded;
 
 }; //end of class Scene_group_item
 

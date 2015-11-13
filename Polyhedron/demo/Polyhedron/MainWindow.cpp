@@ -213,6 +213,15 @@ MainWindow::MainWindow(QWidget* parent)
   connect(sceneView, SIGNAL(customContextMenuRequested(const QPoint & )),
           this, SLOT(showSceneContextMenu(const QPoint &)));
 
+  connect(sceneView, SIGNAL(expanded(QModelIndex)),
+          scene, SLOT(setExpanded(QModelIndex)));
+
+  connect(sceneView, SIGNAL(collapsed(QModelIndex)),
+          scene, SLOT(setCollapsed(QModelIndex)));
+
+  connect(scene, SIGNAL(restoreCollapsedState()),
+          this, SLOT(restoreCollapseState()));
+
   connect(viewer, SIGNAL(selected(int)),
           this, SLOT(selectSceneItem(int)));
   connect(viewer, SIGNAL(selectedPoint(double, double, double)),
@@ -1621,4 +1630,20 @@ void MainWindow::on_actionRecenterScene_triggered()
 {
   updateViewerBBox();
   viewer->camera()->interpolateToFitScene();
+}
+
+void MainWindow::restoreCollapseState()
+{
+    QModelIndex modelIndex = sceneView->indexAt(sceneView->rect().topLeft());
+
+    while (modelIndex.isValid())
+    {
+        Scene_group_item* group =
+                qobject_cast<Scene_group_item*>(scene->item(scene->index_map.value(scene->index(0, 0, modelIndex.parent()))));
+        if(group && group->isExpanded())
+        {
+            sceneView->setExpanded(modelIndex, true);
+        }
+        modelIndex = sceneView->indexBelow(modelIndex);
+    }
 }

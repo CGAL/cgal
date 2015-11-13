@@ -7,6 +7,7 @@ Scene_group_item::Scene_group_item(QString name)
     :  Scene_item(0,0)
 {
     this->name_ = name;
+    expanded = false;
 }
 
 bool Scene_group_item::isFinite() const
@@ -115,3 +116,12 @@ void Scene_group_item::setVisible(bool b)
   }
 }
 
+bool Scene_group_item::isExpanded() const
+{
+  return expanded;
+}
+
+void Scene_group_item::setExpanded(bool b)
+{
+    expanded = b;
+}

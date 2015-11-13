@@ -180,8 +180,10 @@ Q_SIGNALS:
   void itemAboutToBeDestroyed(Scene_item*);
   void selectionRay(double, double, double, double, double, double);
   void selectionChanged(int i);
-
+  void restoreCollapsedState();
 private Q_SLOTS:
+  void setExpanded(QModelIndex);
+  void setCollapsed(QModelIndex);
   void test_rows()
   {
   }

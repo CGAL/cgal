@@ -71,11 +71,11 @@ Scene::addItem(Scene_item* item)
     for(int i=0; i<5; i++){
         index_map[list.at(i)->index()] = m_entries.size() -1;
     }
-
+    Q_EMIT restoreCollapsedState();
     Q_EMIT updated();
     QStandardItemModel::endResetModel();
     Item_id id = m_entries.size() - 1;
-  Q_EMIT newItem(id);
+    Q_EMIT newItem(id);
     return id;
 }
 
@@ -100,7 +100,7 @@ Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_
     }
   Q_EMIT updated();
     itemChanged(index);
-    // QStandardItemModel::reset();
+    Q_EMIT restoreCollapsedState();
     return item;
 }
 
@@ -154,6 +154,7 @@ void Scene::check_empty_group(Scene_item* item)
         }
     }
        check_first_group();
+       Q_EMIT restoreCollapsedState();
 }
 
 int
@@ -755,6 +756,7 @@ void Scene::itemChanged(Item_id i)
 
   Q_EMIT dataChanged(this->createIndex(i, 0),
                      this->createIndex(i, LastColumn));
+    Q_EMIT restoreCollapsedState();
 }
 
 void Scene::itemChanged(Scene_item* /* item */)
@@ -1042,6 +1044,24 @@ void Scene::organize_items(Scene_item* item, QStandardItem* root, int loop)
             }
         }
     }
+    Q_EMIT restoreCollapsedState();
+}
+
+void Scene::setExpanded(QModelIndex id)
+{
+    Scene_group_item* group =
+            qobject_cast<Scene_group_item*>(item(index_map.value(index(0, 0, id.parent()))));
+    if(group)
+    {
+        group->setExpanded(true);
+    }
+}
+void Scene::setCollapsed(QModelIndex id)
+{
+    Scene_group_item* group =
+            qobject_cast<Scene_group_item*>(item(index_map.value(index(0, 0, id.parent()))));
+    if(group)
+        group->setExpanded(false);
 }
 namespace scene { namespace details {
 
