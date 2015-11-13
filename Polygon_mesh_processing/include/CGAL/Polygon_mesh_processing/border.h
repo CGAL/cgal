@@ -155,9 +155,6 @@ namespace Polygon_mesh_processing {
                                   , const NamedParameters& np)
   {
     typedef PolygonMesh PM;
-    typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-    typedef typename boost::graph_traits<PM>::face_descriptor     face_descriptor;
-
     typedef typename GetFaceIndexMap<PM, NamedParameters>::type           FIMap;
     typedef typename boost::property_map<typename internal::Dummy_PM,
                                               CGAL::face_index_t>::type   Unset_FIMap;
