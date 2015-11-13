@@ -6,11 +6,12 @@
 //#define CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 
 #include <CGAL/Polygon_mesh_processing/remesh.h>
-#include <CGAL/Polygon_mesh_processing/get_border.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
@@ -27,7 +28,6 @@ typedef boost::graph_traits<Mesh>::halfedge_descriptor  halfedge_descriptor;
 typedef boost::graph_traits<Mesh>::edge_descriptor      edge_descriptor;
 typedef boost::graph_traits<Mesh>::vertex_descriptor    vertex_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor      face_descriptor;
-
 
 void collect_patch(const char* file,
                    const Mesh& m,
@@ -50,14 +50,14 @@ void collect_patch(const char* file,
   if (!std::getline(in, line)) { return ; }
   std::istringstream facet_line(line);
   while (facet_line >> id) {
-    if (id >= m.number_of_faces()) { return ; }
+    if (id >= m.number_of_faces()) { return; }
     patch.insert(Mesh::Face_index(Mesh::size_type(id)));
   }
 
   if (!std::getline(in, line)) { return ; }
   std::istringstream edge_line(line);
   while (edge_line >> id) {
-    if (id >= m.number_of_edges()) { return ; }
+    if (id >= m.number_of_edges()) { return; }
     //do nothing with edges
   }
 
@@ -93,6 +93,20 @@ void test_precondition(const char* filename,
   CGAL_assertion(exception_caught);
 #endif
 }
+
+struct halfedge2edge
+{
+  halfedge2edge(const Mesh& m, std::vector<edge_descriptor>& edges)
+    : m_mesh(m), m_edges(edges)
+  {}
+  void operator()(const halfedge_descriptor& h) const
+  {
+    m_edges.push_back(edge(h, m_mesh));
+  }
+  const Mesh& m_mesh;
+  std::vector<edge_descriptor>& m_edges;
+};
+
 
 int main(int argc, char* argv[])
 {
@@ -132,11 +146,13 @@ int main(int argc, char* argv[])
     std::cout << "OK." << std::endl;
 
   std::cout << "Split border...";
-  std::vector<halfedge_descriptor> border;
-  PMP::get_border(m, pre_patch, std::back_inserter(border));
-  PMP::split_long_edges(m,
-                        border,
-                        target_edge_length);
+
+    std::vector<edge_descriptor> border;
+    PMP::border_halfedges(pre_patch,
+      boost::make_function_output_iterator(halfedge2edge(m, border)),
+      m);
+    PMP::split_long_edges(m, border, target_edge_length);
+
   std::cout << "done." << std::endl;
 
   std::set<face_descriptor> patch;
