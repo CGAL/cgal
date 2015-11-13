@@ -102,17 +102,16 @@ namespace internal {
     };
     struct Corner
     {
-      CGAL::cpp11::array<std::size_t, 3> planes;
-      CGAL::cpp11::array<std::size_t, 3> edges;
-      std::vector<std::size_t> indices; // Points belonging to intersection
+      std::vector<std::size_t> planes;
+      std::vector<std::size_t> edges;
       Point support;
       bool active;
 
       Corner (std::size_t p1, std::size_t p2, std::size_t p3,
               std::size_t e1, std::size_t e2, std::size_t e3)
       {
-        planes[0] = p1; planes[1] = p2; planes[2] = p3;
-        edges[0] = e1; edges[1] = e2; edges[2] = e3;
+        planes.resize (3); planes[0] = p1; planes[1] = p2; planes[2] = p3;
+        edges.resize (3); edges[0] = e1; edges[1] = e2; edges[2] = e3;
         active = true;
       }
     };
@@ -177,6 +176,8 @@ namespace internal {
 
     void run (double epsilon, double attraction_factor = 3.)
     {
+
+
       double radius = epsilon * attraction_factor;
       
       std::cerr << "Finding adjacent primitives... " << std::endl;
@@ -197,6 +198,13 @@ namespace internal {
       std::cerr << "Computating first set of corners... " << std::endl;
       compute_corners (radius);
       std::cerr << " -> Found " << m_corners.size () << " triple(s) of adjacent primitives/edges." << std::endl;
+
+      std::cerr << "Merging corners... " << std::endl;
+      {
+        std::size_t size_before = m_points.size ();
+        merge_corners (radius);
+        std::cerr << " -> " << m_points.size () - size_before << " corner point(s) created." << std::endl;
+      }
 
     }
 
@@ -624,7 +632,66 @@ namespace internal {
 
           if ( !(neighborhood[0] && neighborhood[1] && neighborhood[2]) )
             m_corners[i].active = false;
+        }
+    }
 
+    void merge_corners (double radius)
+    {
+      for (std::size_t k = 0; k < m_corners.size(); ++ k)
+        {
+          if (!(m_corners[k].active))
+            continue;
+
+          int count_plane_number=3;
+          
+          for (std::size_t kb = k + 1; kb < m_corners.size(); ++ kb)
+            {
+              if (!(m_corners[kb].active))
+                continue;
+
+              int count_new_plane = 0;
+
+              if (CGAL::squared_distance (m_corners[kb].support, m_corners[k].support) >= radius * radius)
+                continue;
+
+              for (std::size_t i = 0; i < m_corners[kb].planes.size (); ++ i)
+                {
+                  bool testtt = true; 
+                  for (std::size_t l = 0; l < m_corners[k].planes.size(); ++ l)
+                    if (m_corners[kb].planes[i] == m_corners[k].planes[l])
+                      {
+                        testtt = false;
+                        break;
+                      }
+                  if (!testtt)
+                    continue;
+
+                  m_corners[k].planes.push_back (m_corners[kb].planes[i]);
+                  ++ count_new_plane;
+                  m_corners[kb].active = false;
+
+                  std::vector<bool> is_edge_in (3, false);
+                  for (std::size_t l = 0; l < m_corners[k].edges.size(); ++ l)
+                    {
+                      for (std::size_t j = 0; j < 3; ++ i)
+                        if (m_corners[k].edges[l] == m_corners[kb].edges[j])
+                          is_edge_in[j] = true;
+                    }
+                  for (std::size_t j = 0; j < 3; ++ i)
+                    if (!(is_edge_in[j]))
+                      m_corners[k].edges.push_back (m_corners[kb].edges[j]);
+
+                }
+              
+              //update barycenter
+              m_corners[k].support = CGAL::barycenter (m_corners[k].support, count_plane_number,
+                                                       m_corners[kb].support, count_new_plane);
+              count_plane_number += count_new_plane;
+            }
+
+          m_points.push_back (m_corners[k].support);
+          m_indices.push_back (minus1);
+          m_status.push_back (CORNER);
         }
     }
     
