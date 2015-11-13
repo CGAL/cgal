@@ -55,12 +55,6 @@ struct FirstIntersectionVisitor {
   }
 };
 
-template<typename FT>
-struct Epsilon {
-  static /* CGAL_CONSTEXPR */ FT epsilon() { return std::numeric_limits<double>::epsilon(); }
-};
-
-
 /**
  * @brief Responsible for calculating Shape Diameter Function over surface of the mesh.
  *
@@ -311,17 +305,15 @@ public:
         boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
           = cast_and_return_minimum_1(segment, skip, accept_if_acute);
       } else {
-        // shift the center along the normal by epsilon
-        Point center_shifted = translated_point_functor(center, scale_functor(ray_direction, internal::Epsilon<FT>::epsilon()));
-        Ray ray_2(center_shifted, ray_direction);
+        Ray ray(center, ray_direction);
 
-        if(traits.is_degenerate_3_object()(ray_2)) {
+        if(traits.is_degenerate_3_object()(ray)) {
           CGAL_warning(false &&
                        "A degenerate ray is constructed. Most probable reason is using CGAL_PI as cone_angle parameter and also picking center of disk as a sample.");
         }
 
         boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
-          = cast_and_return_minimum_2(ray_2, accept_if_acute);
+          = cast_and_return_minimum(ray, skip, accept_if_acute);
       }
 
       if(!intersection_is_acute) {
@@ -470,11 +462,59 @@ private:
   };
 
 
+  template<typename Skip>
+  boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum(
+    const Ray& ray, Skip s, bool accept_if_acute) const {
+
+    boost::tuple<bool, bool, double, Primitive_id> one = cast_and_return_minimum_1(ray, s, accept_if_acute);
+    boost::tuple<bool, bool, double, Primitive_id> two = cast_and_return_minimum_2(ray, s, accept_if_acute);
+    if(s(boost::get<3>(two))) {
+      std::cout.precision(15);
+      std::cout << "ERROR still returning a skip" << std::endl;
+      std::cout << "1: " << std::fixed << ray_1.source() << std::endl;
+      std::cout << "2: " << std::fixed << ray_2.source() << std::endl;
+    }
+
+    if(boost::get<0>(one) != boost::get<0>(two)) {
+      std::cout.precision(15);
+      std::cout << "First bool mismatch" << std::endl;
+      std::cout << "bool1 1: " << std::boolalpha << boost::get<0>(one) << std::endl;
+      std::cout << "bool1 2: " << std::boolalpha << boost::get<0>(two) << std::endl;
+      std::cout << "bool2 1: " << std::boolalpha << boost::get<1>(one) << std::endl;
+      std::cout << "bool2 2: " << std::boolalpha << boost::get<1>(two) << std::endl;
+      std::cout << "dist 1: " << boost::get<2>(one) << std::endl;
+      std::cout << "dist 2: " << boost::get<2>(two) << std::endl;
+
+    }
+    if(boost::get<1>(one) != boost::get<1>(two)) {
+      std::cout.precision(15);
+      std::cout << "Second bool mismatch" << std::endl;
+      std::cout << "1: " << std::fixed << ray_1.source() << std::endl;
+      std::cout << "2: " << std::fixed << ray_2.source() << std::endl;
+    }
+
+    if(boost::get<3>(one) != boost::get<3>(two)) {
+      std::cout.precision(15);
+      std::cout << "Primitive mismatch" << std::endl;
+      std::cout << "1: " << std::fixed << ray_1.source() << std::endl;
+      std::cout << "2: " << std::fixed << ray_2.source() << std::endl;
+    }
+
+    assert(boost::get<0>(one) == boost::get<0>(two));
+    assert(boost::get<3>(one) == boost::get<3>(two));
+    assert(boost::get<1>(one) == boost::get<1>(two));
+
+    // assert(boost::get<2>(one) == boost::get<2>(two));
+
+    return two;
+  }
+
+  template<typename SkipFunctor>
   boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum_2(
-    const Ray& query, bool accept_if_acute) const {
+    const Ray& query, SkipFunctor s, bool accept_if_acute) const {
 
     const boost::optional< typename Tree::template Intersection_and_primitive_id<Ray>::Type >
-      min_intersection = tree.ray_intersection(query);
+      min_intersection = tree.ray_intersection(query, s);
     if(!min_intersection)
       return boost::make_tuple(false, false, 0.0, Primitive_id());
 
