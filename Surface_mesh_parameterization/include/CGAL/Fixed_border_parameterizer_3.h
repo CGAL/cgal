@@ -397,8 +397,8 @@ check_parameterize_preconditions(Adaptor& amesh)
         return status;
 
     // The whole surface parameterization package is restricted to triangular meshes
-    status = is_pure_triangle(mesh) ? Base::OK
-                                        : Base::ERROR_NON_TRIANGULAR_MESH;
+    status = is_triangle_mesh(mesh) ? Base::OK
+                                    : Base::ERROR_NON_TRIANGULAR_MESH;
     if (status != Base::OK)
         return status;
 
