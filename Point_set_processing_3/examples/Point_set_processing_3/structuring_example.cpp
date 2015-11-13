@@ -12,6 +12,7 @@
 
 // Type declarations
 typedef CGAL::Exact_predicates_inexact_constructions_kernel  Kernel;
+typedef Kernel::Point_3                                      Point;
 typedef std::pair<Kernel::Point_3, Kernel::Vector_3>         Point_with_normal;
 typedef std::vector<Point_with_normal>                       Pwn_vector;
 typedef CGAL::First_of_pair_property_map<Point_with_normal>  Point_map;
@@ -47,9 +48,15 @@ int main (int argc, char** argv)
   ransac.add_shape_factory<Plane>();
   ransac.detect();
 
+  std::vector<Point> structured_pts;
+
   CGAL::structure_point_set (points.begin (), points.end (), // input points
+                             std::back_inserter (structured_pts),
                              ransac, // shape detection engine
                              0.01); // epsilon for structuring points
+
+  std::cerr << structured_pts.size ()
+            << " structured point(s) generated." << std::endl;
 
   return EXIT_SUCCESS;
 }

@@ -211,6 +211,19 @@ namespace internal {
         std::cerr << " -> " << m_points.size () - size_before << " corner point(s) created." << std::endl;
       }
 
+      std::ofstream f ("out.xyz");
+      for (std::size_t i = 0; i < m_points.size (); ++ i)
+        if (m_status[i] != SKIPPED)
+          f << m_points[i] << std::endl;
+      f.close ();
+    }
+
+    template <typename BackInserter>
+    void get_output (BackInserter pts)
+    {
+      for (std::size_t i = 0; i < m_points.size (); ++ i)
+        if (m_status[i] != SKIPPED)
+          *(pts ++) = m_points[i];
     }
 
   private:
@@ -876,14 +889,14 @@ namespace internal {
 
 // This variant requires the kernel.
 template <typename InputIterator,
-          typename PointPMap,
+          typename OutputIterator,
           typename EfficientRANSACTraits,
           typename Kernel
 >
-void
+OutputIterator
 structure_point_set (InputIterator first,  ///< iterator over the first input point.
                      InputIterator beyond, ///< past-the-end iterator over the input points.
-                     PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
+                     OutputIterator output, ///< output iterator where output points are put
                      Shape_detection_3::Efficient_RANSAC<EfficientRANSACTraits>&
                      shape_detection, ///< shape detection engine
                      double radius, ///< attraction radius
@@ -891,54 +904,35 @@ structure_point_set (InputIterator first,  ///< iterator over the first input po
 {
   internal::Point_set_structuring<EfficientRANSACTraits> pss
     (first, beyond, shape_detection);
+
   pss.run (radius);
+
+  pss.get_output (output);
+
+  return output;
 }
 
 /// @cond SKIP_IN_MANUAL
 // This variant deduces the kernel from the iterator type.
 template <typename InputIterator,
-          typename PointPMap,
+          typename OutputIterator,
           typename EfficientRANSACTraits
 >
-void
+OutputIterator
 structure_point_set (InputIterator first,    ///< iterator over the first input point.
                      InputIterator beyond,   ///< past-the-end iterator over the input points.
-                     PointPMap point_pmap, ///< property map: value_type of InputIterator -> Point_3
+                     OutputIterator output, ///< output iterator where output points are put
                      Shape_detection_3::Efficient_RANSAC<EfficientRANSACTraits>&
                      shape_detection, ///< shape detection engine
                      double radius) ///< attraction radius
 {
-  typedef typename boost::property_traits<PointPMap>::value_type Point;
+  typedef typename std::iterator_traits<InputIterator>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
   return structure_point_set (
-    first,beyond,
-    point_pmap,
+    first,beyond, output,
     shape_detection,
     radius,
     Kernel());
-}
-/// @endcond
-
-/// @cond SKIP_IN_MANUAL
-// This variant creates a default point property map = Identity_property_map.
-template < typename InputIterator, typename EfficientRANSACTraits >
-void
-structure_point_set (InputIterator first,    ///< iterator over the first input point.
-                     InputIterator beyond,   ///< past-the-end iterator over the input points.
-                     Shape_detection_3::Efficient_RANSAC<EfficientRANSACTraits>&
-                     shape_detection, ///< shape detection engine
-                     double radius) ///< attraction radius
-{
-  return structure_point_set (
-    first,beyond,
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-    make_dereference_property_map(first),
-#else
-    make_identity_property_map(
-    typename std::iterator_traits<InputIterator>::value_type()),
-#endif
-    shape_detection,
-    radius);
 }
 /// @endcond
 
