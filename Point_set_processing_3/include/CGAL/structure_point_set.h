@@ -865,11 +865,11 @@ namespace internal {
                   std::vector<bool> is_edge_in (3, false);
                   for (std::size_t l = 0; l < m_corners[k].edges.size(); ++ l)
                     {
-                      for (std::size_t j = 0; j < 3; ++ i)
+                      for (std::size_t j = 0; j < 3; ++ j)
                         if (m_corners[k].edges[l] == m_corners[kb].edges[j])
                           is_edge_in[j] = true;
                     }
-                  for (std::size_t j = 0; j < 3; ++ i)
+                  for (std::size_t j = 0; j < 3; ++ j)
                     if (!(is_edge_in[j]))
                       m_corners[k].edges.push_back (m_corners[kb].edges[j]);
 
