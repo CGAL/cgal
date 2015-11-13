@@ -399,9 +399,9 @@ public:
     //
     // `AABBTraits` must be a model of `AABBRayIntersectionTraits` to
     // call this member function.
-    template<typename Ray>
+    template<typename Ray, typename SkipFunctor>
     boost::optional< typename Intersection_and_primitive_id<Ray>::Type >
-    ray_intersection(const Ray& query) const;
+    ray_intersection(const Ray& query, SkipFunctor skip) const;
 
     ///@}
 
@@ -538,9 +538,8 @@ public:
     ///@}
 
 	private:
-		template<typename AABBTree>
-		friend
-		class AABB_ray_intersection;
+		template<typename AABBTree, typename SkipFunctor>
+		friend class AABB_ray_intersection;
 
     // clear nodes
     void clear_nodes()

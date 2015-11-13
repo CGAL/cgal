@@ -32,7 +32,7 @@
 
 namespace CGAL {
 
-template<typename AABBTree>
+template<typename AABBTree, typename SkipFunctor>
 class AABB_ray_intersection {
   typedef typename AABBTree::AABB_traits AABB_traits;
   typedef typename AABB_traits::Ray_3 Ray;
@@ -42,7 +42,7 @@ public:
   AABB_ray_intersection(const AABBTree& tree) : tree_(tree) {}
 
   boost::optional< Ray_intersection_and_primitive_id >
-  ray_intersection(const Ray& query) const {
+  ray_intersection(const Ray& query, SkipFunctor skip) const {
     // We hit the root, now continue on the children. Keep track of
     // nb_primitives through a variable in each Node on the stack. In
     // BVH_node::traversal this is done through the function parameter
@@ -78,7 +78,7 @@ public:
       case 2: // Left & right child both leaves
       {
         //left child
-        if(do_intersect_obj(query, current.node->left_data())) {
+        if(!skip(current.node->left_data().id()) && do_intersect_obj(query, current.node->left_data())) {
           intersection = intersection_obj(query, current.node->left_data());
           if(intersection) {
             FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
@@ -90,7 +90,7 @@ public:
         }
 
         // right child
-        if(do_intersect_obj(query, current.node->right_data())) {
+        if(!skip(current.node->right_data().id()) && do_intersect_obj(query, current.node->right_data())) {
           intersection = intersection_obj(query, current.node->right_data());
           if(intersection) {
             FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
@@ -104,7 +104,7 @@ public:
       case 3: // Left child leaf, right child inner node
       {
         //left child
-        if(do_intersect_obj(query, current.node->left_data())) {
+        if(!skip(current.node->left_data().id()) && do_intersect_obj(query, current.node->left_data())) {
           intersection = intersection_obj(query, current.node->left_data());
           if(intersection) {
             FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
@@ -179,9 +179,9 @@ private:
 };
 
 template<typename AABBTraits>
-template<typename Ray>
+template<typename Ray, typename SkipFunctor>
 boost::optional< typename AABB_tree<AABBTraits>::template Intersection_and_primitive_id<Ray>::Type >
-AABB_tree<AABBTraits>::ray_intersection(const Ray& query) const {
+AABB_tree<AABBTraits>::ray_intersection(const Ray& query, SkipFunctor skip) const {
   CGAL_static_assertion_msg((boost::is_same<Ray, typename AABBTraits::Ray_3>::value), 
                             "Ray and Ray_3 must be the same type");
 
@@ -193,8 +193,8 @@ AABB_tree<AABBTraits>::ray_intersection(const Ray& query) const {
     return traits().intersection_object()(query, singleton_data());
   default: // Tree has >= 2 nodes
     if(traits().do_intersect_object()(query, root_node()->bbox())) {
-      AABB_ray_intersection< AABB_tree<AABBTraits> > ri(*this);
-      return ri.ray_intersection(query);
+      AABB_ray_intersection< AABB_tree<AABBTraits>, SkipFunctor > ri(*this);
+      return ri.ray_intersection(query, skip);
     } else {
       // but we don't hit the root
       break;
