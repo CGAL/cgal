@@ -292,14 +292,17 @@ namespace Polygon_mesh_processing {
 
   @tparam PointRange range of points, model of `Range`.
     Its iterator type is `InputIterator`.
-  @tparam OutputIterator model of `OutputIterator`
-     holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces.
-     A specialization for `CGAL::value_type_traits<OutputIterator>` must be available.
+  @tparam OutputIterator model of `OutputIterator`, to collect patch faces.
+     A specialization for `CGAL::value_type_traits<OutputIterator>` must be available,
+     and the corresponding value type `type` must have
+     a constructor `type(int p0, int p1, int p2)` available.
+     The indices correspond to the ones of input points in `points`.
   @tparam NamedParameters a sequence of \ref namedparameters
 
   @param points the range of input points
   @param third_points the range of third points
-  @param out iterator over output patch triangles
+  @param out iterator over output patch triangles, described by indices of points
+             in `points`
   @param np optional sequence of \ref namedparameters among the ones listed below
 
   \cgalNamedParamsBegin
