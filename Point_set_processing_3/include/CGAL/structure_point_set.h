@@ -70,6 +70,7 @@ namespace internal {
     typedef Shape_detection_3::Shape_base<Traits> Shape; 
     typedef Shape_detection_3::Plane<Traits> Plane_shape;
 
+
   private:
 
     const std::size_t minus1;
@@ -106,6 +107,14 @@ namespace internal {
       std::vector<std::size_t> indices; // Points belonging to intersection
       Point support;
       bool active;
+
+      Corner (std::size_t p1, std::size_t p2, std::size_t p3,
+              std::size_t e1, std::size_t e2, std::size_t e3)
+      {
+        planes[0] = p1; planes[1] = p2; planes[2] = p3;
+        edges[0] = e1; edges[1] = e2; edges[2] = e3;
+        active = true;
+      }
     };
       
 
@@ -185,6 +194,10 @@ namespace internal {
         std::cerr << " -> " << m_points.size () - size_before << " anchor point(s) created." << std::endl;
       }
 
+      std::cerr << "Computating first set of corners... " << std::endl;
+      compute_corners (radius);
+      std::cerr << " -> Found " << m_corners.size () << " triple(s) of adjacent primitives/edges." << std::endl;
+
     }
 
   private:
@@ -253,7 +266,7 @@ namespace internal {
                                                      static_cast<Plane>(*plane2));
           if (!assign (m_edges[i].support, ob_temp))
             {
-              std::cerr << "Warning: bad intersection" << std::endl;
+              std::cerr << "Warning: bad plane/plane intersection" << std::endl;
               continue;
             }
 
@@ -463,7 +476,7 @@ namespace internal {
               Line line_p1;
               CGAL::Object ob_temp1 = CGAL::intersection (static_cast<Plane> (*plane1), ortho);
               if (!assign(line_p1, ob_temp1))
-                std::cout<<"Warning: bad intersection"<<std::endl;
+                std::cout<<"Warning: bad plane/plane intersection"<<std::endl;
               else
                 {
                   Vector vecp1 = line_p1.to_vector();
@@ -483,7 +496,7 @@ namespace internal {
               Line line_p2;
               CGAL::Object ob_temp2 = CGAL::intersection (static_cast<Plane> (*plane2),ortho);
               if (!assign(line_p2, ob_temp2))
-                std::cout<<"Warning: bad intersection"<<std::endl;
+                std::cout<<"Warning: bad plane/plane intersection"<<std::endl;
               else
                 {
                   Vector vecp2 = line_p2.to_vector();
@@ -511,6 +524,107 @@ namespace internal {
               for (std::size_t j = 0; j < m_edges[i].indices.size (); ++ j)
                 m_status[m_edges[i].indices[j]] = SKIPPED;
             }
+        }
+    }
+
+    void compute_corners (double radius)
+    {
+
+      for (std::size_t i = 0; i < m_edges.size () - 2; ++ i)
+        {
+          if (!(m_edges[i].active))
+            continue;
+
+          for (std::size_t j = i + 1; j < m_edges.size () - 1; ++ j)
+            {
+              if (!(m_edges[j].active))
+                continue;
+
+              for (std::size_t k = j + 1; k < m_edges.size (); ++ k)
+                {
+                  if (!(m_edges[k].active))
+                    continue;
+
+                  std::set<std::size_t> planes;
+                  planes.insert (m_edges[i].planes[0]);
+                  planes.insert (m_edges[i].planes[1]);
+                  planes.insert (m_edges[j].planes[0]);
+                  planes.insert (m_edges[j].planes[1]);
+                  planes.insert (m_edges[k].planes[0]);
+                  planes.insert (m_edges[k].planes[1]);
+
+                  if (planes.size () == 3) // Triple found
+                    {
+                      std::vector<std::size_t> vecplanes (planes.begin (), planes.end ());
+                      m_corners.push_back (Corner (vecplanes[0], vecplanes[1], vecplanes[2],
+                                                   i, j, k));
+                    }
+                }
+            }
+        }
+
+      for (std::size_t i = 0; i < m_corners.size (); ++ i)
+        {
+          //calcul pt d'intersection des 3 plans
+          Plane plane1 = static_cast<Plane> (*(m_planes[m_corners[i].planes[0]]));
+          Plane plane2 = static_cast<Plane> (*(m_planes[m_corners[i].planes[1]]));
+          Plane plane3 = static_cast<Plane> (*(m_planes[m_corners[i].planes[2]]));
+          Line line;
+
+          CGAL::Object ob_temp = CGAL::intersection(plane1, plane2);
+          if (!assign(line, ob_temp))
+            {
+              std::cerr << "Warning: bad plane/plane intersection" << std::endl;
+              continue;
+            }
+          else
+            {
+              CGAL::Object ob_temp2 = CGAL::intersection (line, plane3);
+              if (!assign (m_corners[i].support, ob_temp2))
+                {
+                  std::cerr << "Warning: bad plane/line intersection" << std::endl;
+                  continue;
+                }
+            }
+
+          // test if point is in bbox + delta
+          CGAL::Bbox_3 bbox = CGAL::bbox_3 (m_points.begin (), m_points.end ());
+          
+          double margin_x = 0.1 * (bbox.xmax() - bbox.xmin());
+          double X_min = bbox.xmin() - margin_x;
+          double X_max = bbox.xmax() + margin_x; 
+          double margin_y = 0.1 * (bbox.ymax() - bbox.ymin());
+          double Y_min = bbox.ymin() - margin_y;
+          double Y_max = bbox.ymax() + margin_y; 
+          double margin_z = 0.1* (bbox.zmax() - bbox.zmin());
+          double Z_min = bbox.zmin() - margin_z;
+          double Z_max = bbox.zmax() + margin_z;
+          
+          if ((m_corners[i].support.x() < X_min) || (m_corners[i].support.x() > X_max)
+              || (m_corners[i].support.y() < Y_min) || (m_corners[i].support.y() > Y_max)
+              || (m_corners[i].support.z() < Z_min) || (m_corners[i].support.z() > Z_max))
+            break;
+
+          // test if corner is in neighborhood of at least one point each of the 3 planes
+          std::vector<bool> neighborhood (3, false);
+
+          for (std::size_t k = 0; k < 3; ++ k)
+            {
+              for (std::size_t j = 0; j < m_edges[m_corners[i].edges[k]].indices.size(); ++ j)
+                {
+                  const Point& p = m_points[m_edges[m_corners[i].edges[k]].indices[j]];
+
+                  if (CGAL::squared_distance (m_corners[i].support, p) < radius * radius)
+                    {
+                      neighborhood[k] = true;
+                      break;
+                    }
+                }
+            }
+
+          if ( !(neighborhood[0] && neighborhood[1] && neighborhood[2]) )
+            m_corners[i].active = false;
+
         }
     }
     
