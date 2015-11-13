@@ -58,8 +58,9 @@ namespace internal {
     typedef typename Traits::Vector_3 Vector;
     typedef typename Traits::Segment_3 Segment;
     typedef typename Traits::Line_3 Line;
-
     typedef typename Traits::Plane_3 Plane;
+
+    typedef typename Traits::Point_2 Point_2;
 
     typedef typename Traits::Point_map Point_map;
     typedef typename Traits::Normal_map Normal_map;
@@ -88,7 +89,7 @@ namespace internal {
       { return ppmap[i]; }
     };
 
-    enum Point_status { POINT, EDGE, CORNER, SKIPPED };
+    enum Point_status { POINT, RESIDUS, EDGE, CORNER, SKIPPED };
     
     struct Edge
     {
@@ -105,6 +106,7 @@ namespace internal {
       std::vector<std::size_t> planes;
       std::vector<std::size_t> edges;
       Point support;
+      Vector direction;
       bool active;
 
       Corner (std::size_t p1, std::size_t p2, std::size_t p3,
@@ -176,10 +178,13 @@ namespace internal {
 
     void run (double epsilon, double attraction_factor = 3.)
     {
-
-
       double radius = epsilon * attraction_factor;
       
+      std::cerr << "Computing planar points... " << std::endl;
+      project_inliers ();
+      resample_planes (epsilon);
+      std::cerr << " -> Done" << std::endl;
+
       std::cerr << "Finding adjacent primitives... " << std::endl;
       find_pairs_of_adjacent_primitives (radius);
       std::cerr << " -> Found " << m_edges.size () << " pair(s) of adjacent primitives." << std::endl;
@@ -209,6 +214,166 @@ namespace internal {
     }
 
   private:
+
+    void project_inliers ()
+    {
+      for(std::size_t i = 0; i < m_planes.size (); ++ i)
+        for (std::size_t j = 0; j < m_planes[i]->indices_of_assigned_points ().size(); ++ j)
+          {
+            std::size_t ind = m_planes[i]->indices_of_assigned_points ()[j];
+            m_points[ind] = static_cast<Plane> (*(m_planes[i])).projection (m_points[ind]);
+          }
+    }
+
+    void resample_planes (double epsilon)
+    {
+      double grid_length = epsilon * (std::sqrt(2.) - 1e-3);
+
+      for (std::size_t c = 0; c < m_planes.size (); ++ c)
+        {
+          //plane attributes and 2D projection vectors
+          Plane plane = static_cast<Plane> (*(m_planes[c]));
+          Vector vortho = plane.orthogonal_vector();
+          Vector b1 = plane.base1();
+          Vector b2 = plane.base2();
+			
+          FT norm1 = std::sqrt (b1.squared_length ());
+          if (norm1 < 1e-7)
+            norm1 = 1e-7;
+          FT norm2 = std::sqrt (b2.squared_length ());
+          if (norm2 < 1e-7)
+            norm2 = 1e-7;
+
+          b1 = b1 / norm1;
+          b2 = b2 / norm2;
+
+          std::vector<Point_2> points_2d;
+
+          //storage of the 2D points in "pt_2d"
+          for (std::size_t j = 0; j < m_planes[c]->indices_of_assigned_points ().size(); ++ j)
+            {
+              std::size_t ind = m_planes[c]->indices_of_assigned_points ()[j];
+              const Point& pt = m_points[ind];
+              points_2d.push_back (Point_2 (b1.x() * pt.x() + b1.y() * pt.y() + b1.z() * pt.z(),
+                                            b2.x() * pt.x() + b2.y() * pt.y() + b2.z() * pt.z()));
+            }
+
+
+          //creation of a 2D-grid with cell width = grid_length, and image structures
+          CGAL::Bbox_2 box_2d = CGAL::bbox_2 (points_2d.begin(), points_2d.end());
+          int Nx = (box_2d.xmax() - box_2d.xmin()) / grid_length + 1;
+          int Ny = (box_2d.ymax() - box_2d.ymin()) / grid_length + 1;
+          
+          std::vector<std::vector<bool> > Mask (Nx, std::vector<bool> (Ny, false));
+          std::vector<std::vector<bool> > Mask_border (Nx, std::vector<bool> (Ny, false));
+          std::vector<std::vector<std::vector<int> > >
+            point_map (Nx, std::vector<std::vector<int> > (Ny, std::vector<int>()));
+
+          //storage of the points in the 2D-grid "point_map"
+          for (std::size_t i = 0; i < points_2d.size(); ++ i)
+            {
+              std::size_t ind_x = (std::size_t)((points_2d[i].x() - box_2d.xmin()) / grid_length);
+              std::size_t ind_y = (std::size_t)((points_2d[i].y() - box_2d.ymin()) / grid_length);
+              Mask[ind_x][ind_y]=true;
+              point_map[ind_x][ind_y].push_back (m_planes[c]->indices_of_assigned_points ()[i]);
+            }
+
+          //hole filing in Mask in 4-connexity
+          for (int j = 1; j < Ny - 1; ++ j)
+            for (int i = 1; i < Nx - 1; ++ i)
+              if( !Mask[i][j]
+                  && Mask[i-1][j] && Mask[i][j-1]
+                  && Mask[i][j+1] && Mask[i+1][j] )
+                Mask[i][j]=true;
+					
+          //finding mask border in 8-connexity	
+          for (int j = 1; j < Ny - 1; ++ j)
+            for (int i = 1; i < Nx - 1; ++ i)
+              if( Mask[i][j] &&
+                  ( !Mask[i-1][j-1] || !Mask[i-1][j] ||
+                    !Mask[i-1][j+1] || !Mask[i][j-1] ||
+                    !Mask[i][j+1] || !Mask[i+1][j-1] ||
+                    !Mask[i+1][j]|| !Mask[i+1][j+1] ) )
+                Mask_border[i][j]=true;
+          
+          for (int j = 0; j < Ny; ++ j)
+            {
+              if (Mask[0][j])
+                Mask_border[0][j]=true;
+              if (Mask[Nx-1][j])
+                Mask_border[Nx-1][j]=true;
+            }
+
+          for (int i = 0; i < Nx; ++ i)
+            {
+              if(Mask[i][0])
+                Mask_border[i][0]=true;
+              if(Mask[i][Ny-1])
+                Mask_border[i][Ny-1]=true;
+            }
+
+          //saving of points to keep
+          for (int j = 0; j < Ny; ++ j)
+            for (int i = 0; i < Nx; ++ i)
+              if( point_map[i][j].size()>0)
+                {
+                  //inside: recenter (cell center) the first point of the cell and desactivate the others points 
+                  if (!Mask_border[i][j] && Mask[i][j])
+                    {
+                      double x2pt = (i+0.5) * grid_length + box_2d.xmin();
+                      double y2pt = (j+0.4) * grid_length + box_2d.ymin();
+							
+                      if (i%2 == 1)
+                        {
+                          x2pt = (i+0.5) * grid_length + box_2d.xmin();
+                          y2pt = (j+0.6) * grid_length + box_2d.ymin();
+                        }
+
+                      FT X1 = x2pt * b1.x() + y2pt * b2.x() - plane.d() * vortho.x();
+                      FT X2 = x2pt * b1.y() + y2pt * b2.y() - plane.d() * vortho.y();
+                      FT X3 = x2pt * b1.z() + y2pt * b2.z() - plane.d() * vortho.z();
+
+                      std::size_t index_pt = point_map[i][j][0];
+                      m_points[index_pt] = Point (X1, X2, X3);
+                      
+                      for (std::size_t np = 1; np < point_map[i][j].size(); ++ np)
+                        m_status[point_map[i][j][np]] = SKIPPED;
+                    }
+
+                  //border: recenter (barycenter) the first point of the cell and desactivate the others points
+                  else if (Mask_border[i][j] && Mask[i][j])
+                    {
+                      std::vector<Point> pts;
+                      for (std::size_t np = 0; np < point_map[i][j].size(); ++ np)
+                        pts.push_back (m_points[point_map[i][j][np]]);
+
+                      m_points[point_map[i][j][0]] = CGAL::centroid (pts.begin (), pts.end ());
+                      
+                      for (std::size_t np = 1; np < point_map[i][j].size(); ++ np)
+                        m_status[point_map[i][j][np]] = SKIPPED;
+                    }
+                }
+          // point use to filling 4-connexity holes are store in HPS_residus
+              else if (point_map[i][j].size()==0 && !Mask_border[i][j] && Mask[i][j])
+                {
+                  double x2pt = (i+0.5) * grid_length + box_2d.xmin();
+                  double y2pt = (j+0.49) * grid_length + box_2d.ymin();
+                  if(i%2==1)
+                    {
+                      x2pt = (i+0.5) * grid_length + box_2d.xmin();
+                      y2pt = (j+0.51) * grid_length + box_2d.ymin();
+                    }
+                  FT X1 = x2pt * b1.x() + y2pt * b2.x() - plane.d() * vortho.x();
+                  FT X2 = x2pt * b1.y() + y2pt * b2.y() - plane.d() * vortho.y();
+                  FT X3 = x2pt * b1.z() + y2pt * b2.z() - plane.d() * vortho.z();
+
+                  m_points.push_back (Point (X1, X2, X3));
+                  m_indices.push_back (c);
+                  m_status.push_back (RESIDUS);
+                }
+        }
+
+    }
 
     void find_pairs_of_adjacent_primitives (double radius)
     {
