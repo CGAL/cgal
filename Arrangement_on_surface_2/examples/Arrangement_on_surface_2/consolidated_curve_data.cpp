@@ -2,8 +2,8 @@
 // Associating a color attribute with segments using the consolidated
 // curve-data traits.
 
-#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_consolidated_curve_data_traits_2.h>
 #include <CGAL/Arrangement_2.h>
@@ -14,7 +14,7 @@ enum Segment_color {
   BLUE
 };
 
-typedef CGAL::Cartesian<Number_type>                      Kernel;
+typedef CGAL::Cartesian<CGAL::Exact_rational>             Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>                Segment_traits_2;
 typedef Segment_traits_2::Curve_2                         Segment_2;
 typedef CGAL::Arr_consolidated_curve_data_traits_2
@@ -79,7 +79,7 @@ int main ()
     // Print the vertex only if incident RED and BLUE edges were found.
     if (has_red && has_blue)
     {
-      std::cout << "Red-blue intersection at (" << vit->point() << ")" 
+      std::cout << "Red-blue intersection at (" << vit->point() << ")"
                 << std::endl;
     }
   }
@@ -102,7 +102,7 @@ int main ()
       if (*dit == RED)
         has_red = true;
       else if (*dit == BLUE)
-        has_blue = true;	
+        has_blue = true;
     }
 
     // Print the edge only if it corresponds to a red-blue overlap.

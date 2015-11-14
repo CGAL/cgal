@@ -1,14 +1,14 @@
 //! \file examples/Arrangement_on_surface_2/overlay.cpp
 // A simple overlay of two arrangements.
 
-#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_default_overlay_traits.h>
 
-typedef CGAL::Cartesian<Number_type>                     Kernel;
+typedef CGAL::Cartesian<CGAL::Exact_rational>            Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>               Traits_2;
 typedef Traits_2::Point_2                                Point_2;
 typedef Traits_2::X_monotone_curve_2                     Segment_2;
@@ -52,7 +52,7 @@ int main ()
   // Print the size of the overlaid arrangement.
   std::cout << "The overlaid arrangement size:" << std::endl
             << "   V = " << overlay_arr.number_of_vertices()
-            << ",  E = " << overlay_arr.number_of_edges() 
+            << ",  E = " << overlay_arr.number_of_edges()
             << ",  F = " << overlay_arr.number_of_faces() << std::endl;
 
   return 0;
