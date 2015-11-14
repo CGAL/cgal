@@ -721,14 +721,23 @@ public:
     Comparison_result operator()(const Point_2& p,
                                  const X_monotone_curve_2& xcv) const
     {
-      // Get the index of the subcurve in xcv containing p.
-      std::size_t i =
-        m_poly_traits.locate_impl(xcv, p, Are_all_sides_oblivious_tag());
-      CGAL_precondition(i != INVALID_INDEX);
-
-      // Compare the subcurve xcv[i] and p.
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
-      return geom_traits->compare_y_at_x_2_object()(p, xcv[i]);
+      if (! m_poly_traits.is_vertical_2_object()(xcv)) {
+        // Get the index of the subcurve in xcv containing p.
+        std::size_t i =
+          m_poly_traits.locate_impl(xcv, p, Are_all_sides_oblivious_tag());
+        CGAL_precondition(i != INVALID_INDEX);
+
+        // Compare the subcurve xcv[i] and p.
+        return geom_traits->compare_y_at_x_2_object()(p, xcv[i]);
+      }
+      // The curve is vertical
+      Comparison_result rc = geom_traits->compare_y_at_x_2_object()(p, xcv[0]);
+      if (rc == SMALLER) return SMALLER;
+      std::size_t n = xcv.number_of_subcurves();
+      rc = geom_traits->compare_y_at_x_2_object()(p, xcv[n-1]);
+      if (rc == LARGER) return LARGER;
+      return EQUAL;
     }
 
     /*! Obtain the location of the given curve_end with respect to the input
