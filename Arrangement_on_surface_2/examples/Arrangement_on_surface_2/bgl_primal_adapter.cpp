@@ -1,8 +1,8 @@
 //! \file examples/Arrangement_on_surface_2/bgl_primal_adapter.cpp
 // Adapting an arrangement to a BGL graph.
 
-#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/graph_traits_Arrangement_2.h>
@@ -12,7 +12,7 @@
 
 #include <CGAL/property_map.h>
 
-typedef CGAL::Cartesian<Number_type>                    Kernel;
+typedef CGAL::Cartesian<CGAL::Exact_rational>           Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Traits_2;
 typedef Traits_2::Point_2                               Point_2;
 typedef Traits_2::X_monotone_curve_2                    Segment_2;
@@ -92,7 +92,7 @@ class Arr_vertex_index_map_boost :
 template<class Arrangement>
 unsigned int
 get(const boost::Arr_vertex_index_map_boost<Arrangement> & index_map,
-    typename Arrangement::Vertex_handle v) 
+    typename Arrangement::Vertex_handle v)
 {
   const CGAL::Arr_vertex_index_map<Arrangement> & index_map_tmp =
     static_cast<const CGAL::Arr_vertex_index_map<Arrangement> &>(index_map);
@@ -100,15 +100,15 @@ get(const boost::Arr_vertex_index_map_boost<Arrangement> & index_map,
 }
 
 }
- 
+
 int main()
 {
   Arrangement_2   arr;
- 
+
   // Construct an arrangement of seven intersecting line segments.
   // We keep a handle for the vertex v_0 that corresponds to the point (1,1).
   Arrangement_2::Halfedge_handle  e =
-    insert_non_intersecting_curve (arr, Segment_2 (Point_2 (1, 1), 
+    insert_non_intersecting_curve (arr, Segment_2 (Point_2 (1, 1),
                                                    Point_2 (7, 1)));
   Arrangement_2::Vertex_handle    v0 = e->source();
   insert (arr, Segment_2 (Point_2 (1, 1), Point_2 (3, 7)));
@@ -121,16 +121,16 @@ int main()
   // Create a mapping of the arrangement vertices to indices.
   CGAL::Arr_vertex_index_map<Arrangement_2>        index_map_tmp(arr);
   boost::Arr_vertex_index_map_boost<Arrangement_2> index_map(index_map_tmp);
-  
+
   // Perform Dijkstra's algorithm from the vertex v0.
   Edge_length_func                                      edge_length;
-  
+
   boost::vector_property_map<double, boost::Arr_vertex_index_map_boost<Arrangement_2> > dist_map(static_cast<unsigned int>(arr.number_of_vertices()), index_map);
   boost::dijkstra_shortest_paths(arr, v0,
                                  boost::vertex_index_map(index_map).
                                  weight_map(edge_length).
                                  distance_map(dist_map));
-  
+
   // Print the results:
   Arrangement_2::Vertex_iterator      vit;
 
