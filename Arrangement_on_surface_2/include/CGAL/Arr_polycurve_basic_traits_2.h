@@ -91,7 +91,19 @@ public:
    *        be used by the class.
    */
   Arr_polycurve_basic_traits_2(const Subcurve_traits_2* geom_traits) :
-    m_subcurve_traits(geom_traits), m_own_traits(false){ }
+    m_subcurve_traits(geom_traits), m_own_traits(false) {}
+
+  /*! Construct copy.
+   * If the 'other' polycurve traits owns its subcurve traits, then make
+   * this polycurve traits own its subcurve traits as well
+   * \param other the other traits.
+   */
+  Arr_polycurve_basic_traits_2(const Arr_polycurve_basic_traits_2& other)
+  {
+    m_subcurve_traits = (other.m_own_traits) ?
+      new Subcurve_traits_2() : other.m_subcurve_traits;
+    m_own_traits = other.m_own_traits;
+  }
 
   /* Destructor
    * Deletes the subcurve tarits class in case it was constructed during the
