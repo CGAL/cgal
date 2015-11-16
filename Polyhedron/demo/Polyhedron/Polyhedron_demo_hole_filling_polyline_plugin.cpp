@@ -10,6 +10,7 @@
 
 #include <CGAL/Polygon_mesh_processing/triangulate_hole.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
+#include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Timer.h>
@@ -25,6 +26,8 @@
 
 #include <boost/function_output_iterator.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+
+namespace PMP = CGAL::Polygon_mesh_processing;
 
 template<class HDS>
 class Polyhedron_builder : public CGAL::Modifier_base<HDS> {
@@ -125,7 +128,9 @@ public Q_SLOTS:
 
       CGAL::Timer timer; timer.start();
       std::vector<CGAL::Triple<int, int, int> > patch;
-      CGAL::Polygon_mesh_processing::triangulate_hole_polyline(*it, std::back_inserter(patch), use_DT);
+      CGAL::Polygon_mesh_processing::triangulate_hole_polyline(*it,
+        std::back_inserter(patch),
+        PMP::parameters::use_delaunay_triangulation(use_DT));
       print_message(QString("Triangulated in %1 sec.").arg(timer.time()));
 
       if(patch.empty()) {

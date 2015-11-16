@@ -156,12 +156,20 @@ and <code>src/</code> directories).
   <h3>2D Arrangements</h3>
   <ul>
     <li>Speed up the edge removal in case the incident faces contains many holes.</li>
-  <ul>
+  </ul>
 <!-- Triangulations and Delaunay Triangulations -->
 <!-- Voronoi Diagrams -->
 <!-- Mesh Generation -->
 <!-- Surface Reconstruction -->
 <!-- Geometry Processing -->
+  <h3>Polygon Mesh Processing</h3>
+  <ul>
+    <li>Add a new triangle-based isotropic remeshing algorithm for 
+    triangulated surface meshes, 
+    <code>CGAL::Polygon_mesh_processing::isotropic_remeshing()</code>
+    and a helper function for isotropic remeshing :
+    <code>CGAL::Polygon_mesh_processing::split_long_edges()</code></li>
+  </ul>
   <h3>Surface Mesh Parameterization</h3>
   <ul>
     <li><code>LSCM_parameterizer_3</code> now uses by default Eigen

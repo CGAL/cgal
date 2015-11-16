@@ -76,6 +76,7 @@ if (EIGEN3_FOUND)
   create_single_source_cgal_program("test_stitching.cpp")
   create_single_source_cgal_program("remove_degeneracies_test.cpp")
   create_single_source_cgal_program("test_pmp_bgl_named_params.cpp")
+  create_single_source_cgal_program("remeshing_test.cpp" )
 
 if(NOT (${EIGEN3_VERSION} VERSION_LESS 3.2.0))
   create_single_source_cgal_program("fairing_test.cpp")

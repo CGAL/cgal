@@ -480,7 +480,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
             he != poly->edges_end();
             he++)
         {
-            if(he->is_feature_edge()) continue;
+            if (!show_feature_edges_m && he->is_feature_edge()) continue;
             const Point& a = he->vertex()->point();
             const Point& b = he->opposite()->vertex()->point();
             positions_lines.push_back(a.x());
@@ -512,10 +512,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
         positions_lines.push_back(b.y());
         positions_lines.push_back(b.z());
         positions_lines.push_back(1.0);
-
-
     }
-
 
     //set the colors
     compute_colors();
@@ -593,6 +590,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     : Scene_item(NbOfVbos,NbOfVaos),
       poly(new Polyhedron),
       show_only_feature_edges_m(false),
+      show_feature_edges_m(false),
       facet_picking_m(false),
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
@@ -610,6 +608,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     : Scene_item(NbOfVbos,NbOfVaos),
       poly(p),
       show_only_feature_edges_m(false),
+      show_feature_edges_m(false),
       facet_picking_m(false),
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
@@ -627,6 +626,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     : Scene_item(NbOfVbos,NbOfVaos),
       poly(new Polyhedron(p)),
       show_only_feature_edges_m(false),
+      show_feature_edges_m(false),
       facet_picking_m(false),
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
@@ -776,12 +776,20 @@ QMenu* Scene_polyhedron_item::contextMenu()
         connect(actionShowOnlyFeatureEdges, SIGNAL(toggled(bool)),
                 this, SLOT(show_only_feature_edges(bool)));
 
-        QAction* actionPickFacets =
-                menu->addAction(tr("Facets picking"));
-        actionPickFacets->setCheckable(true);
-        actionPickFacets->setObjectName("actionPickFacets");
-        connect(actionPickFacets, SIGNAL(toggled(bool)),
-                this, SLOT(enable_facets_picking(bool)));
+    QAction* actionShowFeatureEdges =
+      menu->addAction(tr("Show feature edges"));
+    actionShowFeatureEdges->setCheckable(true);
+    actionShowFeatureEdges->setChecked(show_feature_edges_m);
+    actionShowFeatureEdges->setObjectName("actionShowFeatureEdges");
+    connect(actionShowFeatureEdges, SIGNAL(toggled(bool)),
+      this, SLOT(show_feature_edges(bool)));
+
+    QAction* actionPickFacets = 
+      menu->addAction(tr("Facets picking"));
+    actionPickFacets->setCheckable(true);
+    actionPickFacets->setObjectName("actionPickFacets");
+    connect(actionPickFacets, SIGNAL(toggled(bool)),
+            this, SLOT(enable_facets_picking(bool)));
 
         QAction* actionEraseNextFacet =
                 menu->addAction(tr("Erase next picked facet"));
@@ -810,6 +818,13 @@ void Scene_polyhedron_item::show_only_feature_edges(bool b)
     show_only_feature_edges_m = b;
     invalidate_buffers();
     Q_EMIT itemChanged();
+}
+
+void Scene_polyhedron_item::show_feature_edges(bool b)
+{
+  show_feature_edges_m = b;
+  invalidate_buffers();
+  Q_EMIT itemChanged();
 }
 
 void Scene_polyhedron_item::enable_facets_picking(bool b)
@@ -857,14 +872,16 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
-    if(!are_buffers_filled)
+void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
+{
+    if (!are_buffers_filled)
     {
         compute_normals_and_vertices();
         initialize_buffers(viewer);
     }
 
     vaos[Edges]->bind();
+
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
