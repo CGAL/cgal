@@ -59,7 +59,6 @@ Scene::addItem(Scene_item* item)
             this, SLOT(callDraw()));
     if(bbox_before + item->bbox() != bbox_before)
 { Q_EMIT updated_bbox(); }
-    QStandardItemModel::beginResetModel();
     QList<QStandardItem*> list;
     for(int i=0; i<5; i++)
     {
@@ -70,9 +69,8 @@ Scene::addItem(Scene_item* item)
     for(int i=0; i<5; i++){
         index_map[list.at(i)->index()] = m_entries.size() -1;
     }
-    Q_EMIT restoreCollapsedState();
     Q_EMIT updated();
-    QStandardItemModel::endResetModel();
+    Q_EMIT restoreCollapsedState();
     Item_id id = m_entries.size() - 1;
     Q_EMIT newItem(id);
     return id;
@@ -130,6 +128,7 @@ Scene::erase(int index)
   QStandardItemModel::beginResetModel();
   Q_EMIT updated();
   QStandardItemModel::endResetModel();
+  Q_EMIT restoreCollapsedState();
     if(--index >= 0)
         return index;
     if(!m_entries.isEmpty())
@@ -178,6 +177,7 @@ Scene::erase(QList<int> indices)
   QStandardItemModel::beginResetModel();
   Q_EMIT updated();
   QStandardItemModel::endResetModel();
+  Q_EMIT restoreCollapsedState();
 
   int index = max_index + 1 - indices.size();
   if(index >= m_entries.size()) {
@@ -191,19 +191,13 @@ Scene::erase(QList<int> indices)
 
 }
 
-void Scene::check_empty_group(Scene_item* item)
+void Scene::remove_item_from_groups(Scene_item* item)
 {
     Q_FOREACH(Scene_group_item* group, m_group_entries)
     {
         if(group->getChildren().contains(item))
         {
             group->removeChild(item);
-            if (group->getChildren().isEmpty())
-            {
-                check_empty_group(group);
-                m_group_entries.removeOne(group);
-                m_entries.removeOne(group);
-            }
         }
     }
        check_first_group();
@@ -496,7 +490,7 @@ Scene::data(const QModelIndex &index, int role) const
         return QVariant();
     }
 
-    int id = index_map[index];\
+    int id = index_map[index];
     if(id < 0 || id >= m_entries.size())
         return QVariant();
     if(role == ::Qt::ToolTipRole)
@@ -972,8 +966,6 @@ QList<Scene_item*> Scene::item_entries() const
 
 void Scene::check_first_group()
 {
-
-
     if(m_group_entries.isEmpty() || m_group_entries.first()->name() != "new group")
     {
       m_group_entries.prepend(new Scene_group_item("new group"));
@@ -1009,8 +1001,7 @@ void Scene::changeGroup(Scene_item *item, Scene_group_item *target_group)
   {
     if(group->getChildren().contains(item))
     {
-      //group->removeChild(item);
-        check_empty_group(item);
+        remove_item_from_groups(item);
       break;
     }
   }

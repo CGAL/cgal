@@ -118,7 +118,7 @@ public:
 public Q_SLOTS:
   //!insures that the groupview and data always has a "new group" in first position.
   void check_first_group();
-  void check_empty_group(Scene_item* item);
+  void remove_item_from_groups(Scene_item* item);
   void group_added();
   // Notify the scene that an item was modified
   void itemChanged(); // slots called by items themself

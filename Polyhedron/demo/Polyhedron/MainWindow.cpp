@@ -1077,7 +1077,6 @@ void MainWindow::selectSceneItem(int i)
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);
   }
-  restoreCollapseState();
 }
 
 

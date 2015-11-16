@@ -95,7 +95,7 @@ public :
             if(selected_group->getChildren().contains(item))
             {
                  //selected_group->removeChild(item);
-                trueScene->check_empty_group(item);
+                trueScene->remove_item_from_groups(item);
                 item->has_group = 0;
 
             }
