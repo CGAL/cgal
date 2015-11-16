@@ -199,6 +199,9 @@
          <property name="editTriggers">
           <set>QAbstractItemView::DoubleClicked|QAbstractItemView::EditKeyPressed|QAbstractItemView::SelectedClicked</set>
          </property>
+         <property name="dragDropMode">
+          <enum>QAbstractItemView::InternalMove</enum>
+         </property>
          <property name="alternatingRowColors">
           <bool>true</bool>
          </property>
@@ -206,7 +209,7 @@
           <enum>QAbstractItemView::ExtendedSelection</enum>
          </property>
          <property name="indentation">
-          <number>0</number>
+          <number>10</number>
          </property>
         </widget>
        </item>

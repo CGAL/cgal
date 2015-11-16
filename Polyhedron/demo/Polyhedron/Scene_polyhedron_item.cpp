@@ -830,7 +830,6 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
         initialize_buffers(viewer);
     }
 
-
     if(renderingMode() == Flat || renderingMode() == FlatPlusEdges)
         vaos[Facets]->bind();
     else

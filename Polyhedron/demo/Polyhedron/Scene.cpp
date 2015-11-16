@@ -4,7 +4,6 @@
 
 #include "config.h"
 #include "Scene.h"
-#include "Scene_item.h"
 
 #include <QObject>
 #include <QMetaObject>
@@ -18,7 +17,7 @@
 #include <QPointer>
 #include <QList>
 #include <QAbstractProxyModel>
-
+#include <QMimeData>
 
 
 
@@ -31,7 +30,7 @@ GlSplat::SplatRenderer* Scene::splatting()
 }
 
 Scene::Scene(QObject* parent)
-    : QAbstractListModel(parent),
+    : QStandardItemModel(parent),
       selected_item(-1),
       item_A(-1),
       item_B(-1)
@@ -46,11 +45,15 @@ Scene::Scene(QObject* parent)
         ms_splatting  = new GlSplat::SplatRenderer();
     ms_splattingCounter++;
 
-
 }
 Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
+
+    Scene_group_item* group =
+            qobject_cast<Scene_group_item*>(item);
+  if(group)
+    m_group_entries.prepend(group);
     Bbox bbox_before = bbox();
     m_entries.push_back(item);
     connect(item, SIGNAL(itemChanged()),
@@ -64,9 +67,18 @@ Scene::addItem(Scene_item* item)
     {
         Q_EMIT updated_bbox();
     }
-    QAbstractListModel::beginResetModel();
+    QList<QStandardItem*> list;
+    for(int i=0; i<5; i++)
+    {
+        list<<new QStandardItem();
+        list.at(i)->setEditable(false);
+    }
+    invisibleRootItem()->appendRow(list);
+    for(int i=0; i<5; i++){
+        index_map[list.at(i)->index()] = m_entries.size() -1;
+    }
     Q_EMIT updated();
-    QAbstractListModel::endResetModel();
+    Q_EMIT restoreCollapsedState();
     Item_id id = m_entries.size() - 1;
     Q_EMIT newItem(id);
     return id;
@@ -93,7 +105,7 @@ Scene::replaceItem(Scene::Item_id index, Scene_item* item, bool emit_item_about_
     }
   Q_EMIT updated();
     itemChanged(index);
-    // QAbstractListModel::reset();
+    Q_EMIT restoreCollapsedState();
     return item;
 }
 
@@ -104,50 +116,75 @@ Scene::erase(int index)
         return -1;
 
     Scene_item* item = m_entries[index];
+    Q_FOREACH(Scene_group_item* group, m_group_entries)
+    {
+        if(group->getChildren().contains(item))
+            group->removeChild(item);
+        if (group->getChildren().isEmpty())
+        {
+            m_group_entries.removeOne(group);
+            m_entries.removeOne(group);
+        }
+    }
+
   Q_EMIT itemAboutToBeDestroyed(item);
     delete item;
     m_entries.removeAt(index);
-
   selected_item = -1;
 
-  QAbstractListModel::beginResetModel();
+  QStandardItemModel::beginResetModel();
   Q_EMIT updated();
-  QAbstractListModel::endResetModel();
-
+  QStandardItemModel::endResetModel();
+  Q_EMIT restoreCollapsedState();
     if(--index >= 0)
         return index;
     if(!m_entries.isEmpty())
         return 0;
     return -1;
+
 }
 
 int
 Scene::erase(QList<int> indices)
 {
+    clear();
+    index_map.clear();
     QList<Scene_item*> to_be_removed;
-
     int max_index = -1;
     Q_FOREACH(int index, indices) {
         if(index < 0 || index >= m_entries.size())
             continue;
+
         max_index = (std::max)(max_index, index);
+
         Scene_item* item = m_entries[index];
         to_be_removed.push_back(item);
     }
 
-
-
-  Q_FOREACH(Scene_item* item, to_be_removed) {
+    Q_FOREACH(Scene_item* item, to_be_removed) {
+      Scene_group_item* group =
+              qobject_cast<Scene_group_item*>(item);
+    if(group)
+    {
+        m_group_entries.removeAll(group);
+    }
+    Q_FOREACH(Scene_group_item* group_item, m_group_entries)
+        if(group_item->getChildren().contains(item))
+            group_item->removeChild(item);
     Q_EMIT itemAboutToBeDestroyed(item);
     delete item;
     m_entries.removeAll(item);
   }
-
   selected_item = -1;
-  QAbstractListModel::beginResetModel();
+  Q_FOREACH(Scene_item* item, m_entries)
+  {
+    organize_items(item, invisibleRootItem(), 0);
+  }
+  QStandardItemModel::beginResetModel();
   Q_EMIT updated();
-  QAbstractListModel::endResetModel();
- 
+  QStandardItemModel::endResetModel();
+  Q_EMIT restoreCollapsedState();
+
   int index = max_index + 1 - indices.size();
   if(index >= m_entries.size()) {
     index = m_entries.size() - 1;
@@ -160,6 +197,17 @@ Scene::erase(QList<int> indices)
 
 }
 
+void Scene::remove_item_from_groups(Scene_item* item)
+{
+    Q_FOREACH(Scene_group_item* group, m_group_entries)
+    {
+        if(group->getChildren().contains(item))
+        {
+            group->removeChild(item);
+        }
+    }
+       Q_EMIT restoreCollapsedState();
+}
 Scene::~Scene()
 {
     Q_FOREACH(Scene_item* item_ptr, m_entries)
@@ -178,7 +226,7 @@ Scene::item(Item_id index) const
     return m_entries.value(index); // QList::value checks bounds
 }
 
-Scene::Item_id 
+Scene::Item_id
 Scene::item_id(Scene_item* scene_item) const
 {
     return m_entries.indexOf(scene_item);
@@ -231,7 +279,7 @@ void Scene::initializeGL()
 
 }
 
-bool 
+bool
 Scene::keyPressEvent(QKeyEvent* e){
     bool res=false;
     for (QList<int>::iterator it=selected_items_list.begin(),endit=selected_items_list.end();
@@ -243,7 +291,7 @@ Scene::keyPressEvent(QKeyEvent* e){
     return res;
 }
 
-void 
+void
 Scene::draw()
 {
     draw_aux(false, 0);
@@ -253,7 +301,7 @@ Scene::draw(CGAL::Three::Viewer_interface* viewer)
 {
     draw_aux(false, viewer);
 }
-void 
+void
 Scene::drawWithNames()
 {
     draw_aux(true, 0);
@@ -284,7 +332,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                 viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
                 viewer->glPointSize(2.f);
                 viewer->glLineWidth(1.0f);
-                if(index == selected_item)
+                if(index == selected_item || selected_items_list.contains(index))
                 {
                     item.selection_changed(true);
                 }
@@ -326,7 +374,7 @@ glDepthFunc(GL_LEQUAL);
                 viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
                 viewer->glPointSize(2.f);
                 viewer->glLineWidth(1.0f);
-                if(index == selected_item)
+                if(index == selected_item || selected_items_list.contains(index))
                 {
                       item.selection_changed(true);
                 }
@@ -348,7 +396,7 @@ glDepthFunc(GL_LEQUAL);
                     viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
                     viewer->glPointSize(2.f);
                     viewer->glLineWidth(1.0f);
-                    if(index == selected_item)
+                    if(index == selected_item || selected_items_list.contains(index))
                     {
 
                         item.selection_changed(true);
@@ -439,58 +487,41 @@ glDepthFunc(GL_LEQUAL);
 
 // workaround for Qt-4.2 (see above)
 #undef lighter
-
-int 
-Scene::rowCount(const QModelIndex & parent) const
-{
-    if (parent.isValid())
-        return 0;
-    else
-        return m_entries.size();
-}
-
-int 
-Scene::columnCount(const QModelIndex & parent) const
-{
-    if (parent.isValid())
-        return 0;
-    else
-        return NumberOfColumns;
-}
-
-QVariant 
+QVariant
 Scene::data(const QModelIndex &index, int role) const
 {
     if (!index.isValid())
+    {
         return QVariant();
+    }
 
-    if(index.row() < 0 || index.row() >= m_entries.size())
+    int id = index_map[index];
+    if(id < 0 || id >= m_entries.size())
         return QVariant();
-
     if(role == ::Qt::ToolTipRole)
     {
-        return m_entries[index.row()]->toolTip();
+        return m_entries[id]->toolTip();
     }
     switch(index.column())
     {
     case ColorColumn:
         if(role == ::Qt::DisplayRole || role == ::Qt::EditRole)
-            return m_entries.value(index.row())->color();
+            return m_entries.value(id)->color();
         else if(role == ::Qt::DecorationRole)
-            return m_entries.value(index.row())->color();
+            return m_entries.value(id)->color();
         break;
     case NameColumn:
         if(role == ::Qt::DisplayRole || role == ::Qt::EditRole)
-            return m_entries.value(index.row())->name();
+            return m_entries.value(id)->name();
         if(role == ::Qt::FontRole)
-            return m_entries.value(index.row())->font();
+            return m_entries.value(id)->font();
         break;
     case RenderingModeColumn:
         if(role == ::Qt::DisplayRole) {
-            return m_entries.value(index.row())->renderingModeName();
+            return m_entries.value(id)->renderingModeName();
         }
         else if(role == ::Qt::EditRole) {
-            return static_cast<int>(m_entries.value(index.row())->renderingMode());
+            return static_cast<int>(m_entries.value(id)->renderingMode());
         }
         else if(role == ::Qt::TextAlignmentRole) {
             return ::Qt::AlignCenter;
@@ -498,9 +529,9 @@ Scene::data(const QModelIndex &index, int role) const
         break;
     case ABColumn:
         if(role == ::Qt::DisplayRole) {
-            if(index.row() == item_A)
+            if(id == item_A)
                 return "A";
-            if(index.row() == item_B)
+            if(id == item_B)
                 return "B";
         }
         else if(role == ::Qt::TextAlignmentRole) {
@@ -509,7 +540,7 @@ Scene::data(const QModelIndex &index, int role) const
         break;
     case VisibleColumn:
         if(role == ::Qt::DisplayRole || role == ::Qt::EditRole)
-            return m_entries.value(index.row())->visible();
+            return m_entries.value(id)->visible();
         break;
     default:
         return QVariant();
@@ -517,7 +548,7 @@ Scene::data(const QModelIndex &index, int role) const
     return QVariant();
 }
 
-QVariant 
+QVariant
 Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
 {
     if(orientation == ::Qt::Horizontal)  {
@@ -552,32 +583,35 @@ Scene::headerData ( int section, ::Qt::Orientation orientation, int role ) const
             }
         }
     }
-    return QAbstractListModel::headerData(section, orientation, role);
+    return QStandardItemModel::headerData(section, orientation, role);
 }
 
-Qt::ItemFlags 
+Qt::ItemFlags
 Scene::flags ( const QModelIndex & index ) const
 {
     if (index.isValid() && index.column() == NameColumn) {
-        return QAbstractListModel::flags(index) | ::Qt::ItemIsEditable;
+        return QStandardItemModel::flags(index) | ::Qt::ItemIsEditable;
     }
     else {
-        return QAbstractListModel::flags(index);
+        return QStandardItemModel::flags(index);
     }
 }
 
-bool 
-Scene::setData(const QModelIndex &index, 
+bool
+Scene::setData(const QModelIndex &index,
                const QVariant &value,
                int role)
 {
+
     if( role != ::Qt::EditRole || !index.isValid() )
         return false;
 
-    if(index.row() < 0 || index.row() >= m_entries.size())
+    int id = index_map[index];
+    if(id < 0 || id >= m_entries.size()){
         return false;
+    }
 
-    Scene_item* item = m_entries[index.row()];
+    Scene_item* item = m_entries[id];
     if(!item) return false;
     switch(index.column())
     {
@@ -602,18 +636,87 @@ Scene::setData(const QModelIndex &index,
             rendering_mode = static_cast<RenderingMode>( (rendering_mode+1) % NumberOfRenderingMode );
         }
         item->setRenderingMode(rendering_mode);
-    Q_EMIT dataChanged(index, index);
+        QModelIndex nindex = createIndex(m_entries.size()-1,RenderingModeColumn+1);
+    Q_EMIT dataChanged(index, nindex);
         return true;
         break;
     }
     case VisibleColumn:
         item->setVisible(value.toBool());
-    Q_EMIT dataChanged(index, index);
+    Q_EMIT dataChanged(index, createIndex(m_entries.size()-1,VisibleColumn+1));
         return true;
     default:
         return false;
     }
     return false;
+}
+
+bool Scene::dropMimeData(const QMimeData *data,
+                         Qt::DropAction action,
+                         int row,
+                         int column,
+                         const QModelIndex &parent)
+{
+    //gets the moving items
+    QList<Scene_item*> items;
+    QList<int> groups_children;
+
+    //get IDs of all children of selected groups
+    Q_FOREACH(int i, selected_items_list)
+    {
+        Scene_group_item* group =
+                qobject_cast<Scene_group_item*>(item(i));
+        if(group)
+            Q_FOREACH(Scene_item* child, group->getChildren())
+              groups_children << item_id(child);
+    }
+    // Insure that children of selected groups will not be added twice
+    Q_FOREACH(int i, selected_items_list)
+    {
+        if(!groups_children.contains(i))
+          items << item(i);
+    }
+    //Gets the group at the drop position
+    Scene_group_item* group =
+            qobject_cast<Scene_group_item*>(this->item(index_map[parent]));
+    bool one_contained = false;
+    if(group)
+    {
+    Q_FOREACH(int id, selected_items_list)
+        if(group->getChildren().contains(item(id)))
+        {
+            one_contained = true;
+            break;
+        }
+    }
+    //if the drop item is not a group_item or if it already con, then the drop action must be ignored
+    if(!group ||one_contained)
+    {
+        //unless the drop zone is empty, which means the item should be removed from all groups.
+        if(!parent.isValid())
+        {
+          Q_FOREACH(Scene_item* item, items)
+            while(item->has_group!=0)
+            {
+              Q_FOREACH(Scene_group_item* group_item, m_group_entries)
+                if(group_item->getChildren().contains(item))
+                {
+                  group_item->removeChild(item);
+                  break;
+                }
+            }
+        group_added();
+        return true;
+        }
+        return false;
+    }
+      Q_FOREACH(Scene_item* item, items)
+    changeGroup(item, group);
+    //group->addChild(item(mainSelectionIndex()));
+    group_added();
+    return true;
+
+
 }
 
 Scene::Item_id Scene::mainSelectionIndex() const {
@@ -634,14 +737,14 @@ int Scene::selectionBindex() const {
 
 QItemSelection Scene::createSelection(int i)
 {
-    return QItemSelection(this->createIndex(i, 0),
-                          this->createIndex(i, LastColumn));
+    return QItemSelection(index_map.keys(i).at(0),
+                          index_map.keys(i).at(4));
 }
 
 QItemSelection Scene::createSelectionAll()
 {
-    return QItemSelection(this->createIndex(0, 0),
-                          this->createIndex(m_entries.size() - 1 , LastColumn));
+    return QItemSelection(index_map.keys(0).at(0),
+                          index_map.keys(m_entries.size() - 1).at(4));
 }
 
 void Scene::itemChanged()
@@ -658,6 +761,7 @@ void Scene::itemChanged(Item_id i)
 
   Q_EMIT dataChanged(this->createIndex(i, 0),
                      this->createIndex(i, LastColumn));
+    Q_EMIT restoreCollapsedState();
 }
 
 void Scene::itemChanged(Scene_item* /* item */)
@@ -674,6 +778,7 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
     Q_ASSERT(proxyModel);
     Scene *scene = dynamic_cast<Scene*>(proxyModel->sourceModel());
     Q_ASSERT(scene);
+    int id = scene->index_map[proxyModel->mapToSource(index)];
     switch(index.column()) {
     case Scene::VisibleColumn:
         if (event->type() == QEvent::MouseButtonPress) {
@@ -682,7 +787,7 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
                 int x = mouseEvent->pos().x() - option.rect.x();
                 if(x >= (option.rect.width() - size)/2 &&
                         x <= (option.rect.width() + size)/2) {
-                    model->setData(index, ! model->data(index).toBool() );
+                    model->setData(index, !model->data(index).toBool());
                 }
             }
             return false; //so that the selection can change
@@ -725,19 +830,19 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
         break;
     case Scene::ABColumn:
         if (event->type() == QEvent::MouseButtonPress) {
-            if(index.row() == scene->item_B) {
-                scene->item_A = index.row();
+            if(id == scene->item_B) {
+                scene->item_A = id;
                 scene->item_B = -1;
             }
-            else if(index.row() == scene->item_A) {
-                scene->item_B = index.row();
+            else if(id == scene->item_A) {
+                scene->item_B = id;
                 scene->item_A = -1;
             }
             else if(scene->item_A == -1) {
-                scene->item_A = index.row();
+                scene->item_A = id;
             }
             else {
-                scene->item_B = index.row();
+                scene->item_B = id;
             }
             scene->dataChanged(scene->createIndex(0, Scene::ABColumn),
                                scene->createIndex(scene->rowCount() - 1, Scene::ABColumn));
@@ -752,31 +857,35 @@ bool SceneDelegate::editorEvent(QEvent *event, QAbstractItemModel *model,
 void SceneDelegate::paint(QPainter *painter, const QStyleOptionViewItem &option,
                           const QModelIndex &index) const
 {
+    QModelIndex test = proxy->mapToSource(index);
     if (index.column() != Scene::VisibleColumn) {
         QItemDelegate::paint(painter, option, index);
     } else {
         const QAbstractItemModel *model = index.model();
+
         QPalette::ColorGroup cg = (option.state & QStyle::State_Enabled) ?
                     (option.state & QStyle::State_Active) ? QPalette::Normal : QPalette::Inactive : QPalette::Disabled;
 
         if (option.state & QStyle::State_Selected)
             painter->fillRect(option.rect, option.palette.color(cg, QPalette::Highlight));
-
         bool checked = model->data(index, ::Qt::DisplayRole).toBool();
         int width = option.rect.width();
         int height = option.rect.height();
         size = (std::min)(width, height);
         int x = option.rect.x() + (option.rect.width() / 2) - (size / 2);;
         int y = option.rect.y() + (option.rect.height() / 2) - (size / 2);
-        if(checked) {
-            painter->drawPixmap(x, y, checkOnPixmap.scaled(QSize(size, size),
-                                                           ::Qt::KeepAspectRatio,
-                                                           ::Qt::SmoothTransformation));
-        }
-        else {
-            painter->drawPixmap(x, y, checkOffPixmap.scaled(QSize(size, size),
-                                                            ::Qt::KeepAspectRatio,
-                                                            ::Qt::SmoothTransformation));
+        if(test.row()>=0 && test.row()<scene->m_entries.size()){
+
+            if(checked) {
+                painter->drawPixmap(x, y, checkOnPixmap.scaled(QSize(size, size),
+                                                               ::Qt::KeepAspectRatio,
+                                                               ::Qt::SmoothTransformation));
+            }
+            else {
+                painter->drawPixmap(x, y, checkOffPixmap.scaled(QSize(size, size),
+                                                                ::Qt::KeepAspectRatio,
+                                                                ::Qt::SmoothTransformation));
+            }
         }
         drawFocus(painter, option, option.rect); // since we draw the grid ourselves
     }
@@ -851,6 +960,44 @@ Scene::Bbox Scene::bbox() const
     }
     return bbox;
 }
+QList<Scene_group_item*> Scene::group_entries() const
+{
+    return m_group_entries;
+}
+
+QList<Scene_item*> Scene::item_entries() const
+{
+    return m_entries;
+}
+void Scene::group_added()
+{
+
+//makes the hierarchy in the tree
+    //clears the model
+    clear();
+    index_map.clear();
+    //fills the model
+    Q_FOREACH(Scene_item* item, m_entries)
+    {
+        organize_items(item, invisibleRootItem(), 0);
+    }
+}
+void Scene::changeGroup(Scene_item *item, Scene_group_item *target_group)
+{
+    //remove item from the containing group if any
+ if(item->has_group!=0)
+  Q_FOREACH(Scene_group_item* group, m_group_entries)
+  {
+    if(group->getChildren().contains(item))
+    {
+        remove_item_from_groups(item);
+      break;
+    }
+  }
+ //add the item to the target group
+ target_group->addChild(item);
+ item->has_group = target_group->has_group +1;
+}
 
 float Scene::get_bbox_length() const
 {
@@ -860,6 +1007,59 @@ float Scene::get_bbox_length() const
 
 #include "Scene_find_items.h"
 
+void Scene::organize_items(Scene_item* item, QStandardItem* root, int loop)
+{
+    if(item->has_group <= loop)
+    {
+        QList<QStandardItem*> list;
+        for(int i=0; i<5; i++)
+        {
+            list<<new QStandardItem();
+            list.at(i)->setEditable(false);
+        }
+        root->appendRow(list);
+        for(int i=0; i<5; i++){
+            index_map[list.at(i)->index()] = m_entries.indexOf(item);
+        }
+        Scene_group_item* group =
+                qobject_cast<Scene_group_item*>(item);
+        if(group)
+        {
+            Q_FOREACH(Scene_item*child, group->getChildren())
+            {
+                organize_items(child, list.first(), loop+1);
+            }
+        }
+    }
+    Q_EMIT restoreCollapsedState();
+}
+
+void Scene::setExpanded(QModelIndex id)
+{
+    Scene_group_item* group =
+            qobject_cast<Scene_group_item*>(item(index_map.value(index(0, 0, id.parent()))));
+    if(group)
+    {
+        group->setExpanded(true);
+    }
+}
+void Scene::setCollapsed(QModelIndex id)
+{
+    Scene_group_item* group =
+            qobject_cast<Scene_group_item*>(item(index_map.value(index(0, 0, id.parent()))));
+    if(group)
+        group->setExpanded(false);
+}
+
+int Scene::getIdFromModelIndex(QModelIndex modelId)const
+{
+    return index_map.value(modelId);
+}
+
+QList<QModelIndex> Scene::getModelIndexFromId(int id) const
+{
+    return index_map.keys(id);
+}
 namespace scene { namespace details {
 
 Q_DECL_EXPORT
@@ -879,6 +1079,7 @@ findItem(const CGAL::Three::Scene_interface* scene_interface,
 Q_DECL_EXPORT
 QList<Scene_item*> 
 findItems(const CGAL::Three::Scene_interface* scene_interface,
+
           const QMetaObject&,
           QString name, Scene_item_name_fn_ptr fn)
 {

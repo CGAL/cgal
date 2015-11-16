@@ -335,7 +335,8 @@ void Viewer::drawWithNames()
 
 void Viewer::postSelection(const QPoint& pixel)
 {
-  bool found = false;
+    qDebug()<<"postSelection";
+ /* bool found = false;
   qglviewer::Vec point = camera()->pointUnderPixel(pixel, found);
   if(found) {
     Q_EMIT selectedPoint(point.x,
@@ -346,7 +347,7 @@ void Viewer::postSelection(const QPoint& pixel)
     const qglviewer::Vec dir = point - orig;
     Q_EMIT selectionRay(orig.x, orig.y, orig.z,
                       dir.x, dir.y, dir.z);
-  }
+  }*/
 }
 bool CGAL::Three::Viewer_interface::readFrame(QString s, qglviewer::Frame& frame)
 {

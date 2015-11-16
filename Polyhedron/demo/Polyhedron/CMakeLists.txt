@@ -147,6 +147,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Viewer.cpp #Viewer_moc.cpp
     Viewer_interface_moc.cpp
     Scene_item.cpp #Scene_item.moc
+    Scene_group_item.cpp
     Polyhedron_demo_plugin_helper.cpp)
     qt5_use_modules(demo_framework OpenGL Gui Widgets Script Xml)
 
@@ -225,7 +226,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       scene_basic_objects
       scene_polyhedron_item
       scene_polygon_soup_item
-      scene_nef_polyhedron_item )
+      scene_nef_polyhedron_item)
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${lib} )
   endforeach()
 
@@ -514,7 +515,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   polyhedron_demo_plugin(shortest_path_plugin Polyhedron_demo_shortest_path_plugin ${shortestPathUI_FILES})
   target_link_libraries(shortest_path_plugin scene_polyhedron_item scene_polylines_item scene_polyhedron_selection_item scene_polyhedron_shortest_path_item scene_basic_objects)
 
-
   qt5_wrap_ui( exampleUI_FILES Polyhedron_demo_example_plugin.ui dock_example.ui)
   qt5_wrap_ui( example_dockUI_FILES dock_example.ui)
   polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES} ${example_dockUI_FILES})
@@ -538,6 +538,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   else()
     message(STATUS "NOTICE : the vtk IO plugin needs VTK 6.0 or greater and will not be compiled.")
   endif()
+ add_item(scene_group_item Scene_group_item.cpp)
+  polyhedron_demo_plugin(group_plugin Polyhedron_demo_group_plugin ${groupUI_FILES})
+  target_link_libraries(group_plugin scene_group_item)
 #
 # Exporting
 #
