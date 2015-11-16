@@ -29,14 +29,14 @@ namespace CGAL {
   template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H>
   void convert_surface_mesh(const SourceMesh& sm, TargetMesh& tm, V2V& v2v, H2H& h2h)
 {
-  typedef boost::graph_traits<SourceMesh>::vertex_descriptor sm_vertex_descriptor;
-  typedef boost::graph_traits<TargetMesh>::vertex_descriptor tm_vertex_descriptor;
+  typedef typename boost::graph_traits<SourceMesh>::vertex_descriptor sm_vertex_descriptor;
+  typedef typename boost::graph_traits<TargetMesh>::vertex_descriptor tm_vertex_descriptor;
 
-  typedef boost::graph_traits<SourceMesh>::face_descriptor sm_face_descriptor;
-  typedef boost::graph_traits<TargetMesh>::face_descriptor tm_face_descriptor;
+  typedef typename boost::graph_traits<SourceMesh>::face_descriptor sm_face_descriptor;
+  typedef typename boost::graph_traits<TargetMesh>::face_descriptor tm_face_descriptor;
 
-  typedef boost::graph_traits<SourceMesh>::halfedge_descriptor sm_halfedge_descriptor;
-  typedef boost::graph_traits<TargetMesh>::halfedge_descriptor tm_halfedge_descriptor;
+  typedef typename boost::graph_traits<SourceMesh>::halfedge_descriptor sm_halfedge_descriptor;
+  typedef typename boost::graph_traits<TargetMesh>::halfedge_descriptor tm_halfedge_descriptor;
 
   typedef typename boost::property_map<SourceMesh, vertex_point_t>::const_type sm_PMap;
   typedef typename boost::property_map<TargetMesh, vertex_point_t>::type tm_PMap;

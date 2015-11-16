@@ -242,8 +242,8 @@ template <typename K>
 struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::edge_index_t >
 {
   typedef OpenMesh::PolyMesh_ArrayKernelT<K> Mesh;
-  typedef CGAL::OM_index_pmap<K, typename Mesh::edge_descriptor> type;
-  typedef CGAL::OM_index_pmap<K, typename Mesh::edge_descriptor> const_type;
+  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::edge_descriptor> type;
+  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::edge_descriptor> const_type;
 };
 
 //
@@ -254,8 +254,8 @@ template <typename K>
 struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::halfedge_index_t >
 {
   typedef OpenMesh::PolyMesh_ArrayKernelT<K> Mesh;
-  typedef CGAL::OM_index_pmap<K, typename Mesh::halfedge_descriptor> type;
-  typedef CGAL::OM_index_pmap<K, typename Mesh::halfedge_descriptor> const_type;
+  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::halfedge_descriptor> type;
+  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::halfedge_descriptor> const_type;
 };
 
 

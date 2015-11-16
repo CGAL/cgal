@@ -58,11 +58,11 @@ inline  std::size_t hash_value(const FaceHandle&  i)
 
 }
 
-int main(int, char* argv[])
+int main(int argc, char* argv[])
 {
   Source S;
   Target T;
-  std::ifstream in(argv[1]);
+  std::ifstream in((argc>1)?argv[1]:"cube.off");
   in >> S;
 
   {
@@ -72,8 +72,8 @@ int main(int, char* argv[])
     convert_surface_mesh(S,T,v2v,h2h);
     OpenMesh::IO::write_mesh(T, "om.off");
   }
-
- {
+  S.clear();
+  {
     boost::unordered_map<tm_vertex_descriptor, sm_vertex_descriptor> v2v;
     boost::unordered_map<tm_halfedge_descriptor, sm_halfedge_descriptor> h2h;
     
