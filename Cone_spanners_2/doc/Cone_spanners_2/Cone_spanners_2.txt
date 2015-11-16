@@ -9,16 +9,16 @@ namespace CGAL {
 
 \section sec_CBS_Introduction Introduction
 
-This chapter describes the package for constructing cone-based spanners given a set of vertices on the plane. 
-Currently, this package includes the functors for constructing two kinds of cone-based spanners: 
-Yao graph and Theta graph. Both exact and inexact constructions are supported.
+This chapter describes the package for constructing two kinds of cone-based spanners:
+Yao graph and Theta graph, given a set of vertices on the plane. 
+Both exact and inexact constructions are supported.
 In exact construction, the cone boundaries are calculated using roots of polynomials,
 which achieves the exactness by avoiding using \f$ \pi \f$ in the computation.
-In inexact construction, the cone boundaries are calculated using an approximate
+In inexact construction, the cone boundaries are calculated with an approximate
 \f$ \pi \f$ value, which uses the constant `CGAL_PI` defined in \cgal and is still accurate 
 enough for most applications. 
 Moreover, for visualization purpose, this chapter describes a global function 
-that, given a constructed graph as input, can generate the data and script files used by Gnuplot
+that, given a constructed graph as input, can generate the data and script files for Gnuplot
 to plot that graph.
  
 \section sec_CBS_mydefinitions Definitions
@@ -137,8 +137,9 @@ add edges. In the stage of adding edges, since all calculations use the predicat
 functions provided by CGAL, the type given in `Kernel_` actually determines overall whether the
 Theta graph will be constructed exactly. The template parameter
 `Graph_` specifies the graph type used to store the constructed graph. 
-Our package requires it to be `boost::adjacency_list` 
-from the Boost Graph Library (BGL, http://www.boost.org/). 
+Our package requires it to be 
+<a href="http://www.boost.org/libs/graph/doc/adjacency_list.html">boost::adjacency_list</a>
+from the Boost Graph Library (BGL). 
 The advantage of using `boost::adjacency_list` is that it provides convenience 
 to the further processing of the constructed graphs, since BGL includes most common graph algorithms. 
 Note that BGL altogether provides two template classes for representing graphs: 
@@ -150,7 +151,9 @@ are different, our package only supports `boost::adjacency_list`.
 Note that there are seven template parameters for `adjacency_list` in BGL: `OutEdgeList`, `VertexList`, 
 `Directed`, `VertexProperties`, `EdgeProperties`, `GraphProperties`, `EdgeList`, 
 of which we require `VertexProperties` to be `CGAL::Point_2`, 
-and other parameters can be chosen freely. That is, we make `Point_2` passed
+and other parameters can be chosen freely. And the kernel type for the `CGAL::Point_2` is
+decided by the template parameter `Kernel_`.
+Also note that, here we make `Point_2` passed
 directly as bundled properties to `adjacency_list`, because this makes our implementation of this 
 package more straightforward than using property maps from BGL. For detailed information about 
 bundled properties, please refer to http://www.boost.org/doc/libs/1_58_0/libs/graph/doc/bundles.html.
