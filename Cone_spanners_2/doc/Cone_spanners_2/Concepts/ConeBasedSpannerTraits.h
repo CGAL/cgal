@@ -65,17 +65,15 @@ NT CGAL::root_of(int k, InputIterator begin, InputIterator end);
 */ 
 NT CGAL::sqrt(const NT &  x); 
 
-/*!
+/*
   This function should compute the sine value of arg (measured in radians). 
   It is needed in calculating cone boundaries inexactly.
-*/ 
 long double sin( long double arg );
 
-/*!
   This function should compute the cosine value of arg (measured in radians). 
   It is needed in calculating cone boundaries inexactly.
-*/ 
 long double cos( long double arg );
+*/
 
 /*!
   This function should return the bisector of the two lines l1 and l2. 
