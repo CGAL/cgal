@@ -22,7 +22,8 @@
 
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/iterator.h>
-
+#include <boost/unordered_map.hpp>
+#include <CGAL/boost/graph/helpers.h>
 
 namespace CGAL {
 
