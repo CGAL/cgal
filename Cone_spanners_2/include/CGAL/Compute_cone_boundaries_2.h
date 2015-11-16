@@ -89,7 +89,7 @@ public:
 	 * This operator first places the `initial_direction` at the 
 	 * position pointed by `result`. Then, it calculates the remaining directions (cone boundaries)
 	 * and output them to `result` in the counterclockwise order.
-	 * Finally, the pass-the-end iterator for the resulting directions is returned. 
+	 * Finally, the past-the-end iterator for the resulting directions is returned. 
 	 *
 	 * \param cone_number The number of cones
 	 * \param initial_direction The direction of the first ray
@@ -100,7 +100,7 @@ public:
                     const Direction_2& initial_direction,
                     DirectionOutputIterator result)  {
         if (cone_number<2) {
-            std::cout << "The number of cones should be larger than 1!" << std::endl;
+            std::cout << "The number of cones must be larger than 1!" << std::endl;
             std::exit(1);
         }
 
@@ -157,14 +157,15 @@ public:
                     DirectionOutputIterator result)  {
 
         if (cone_number<2) {
-            std::cout << "The number of cones should be larger than 1!" << std::endl;
+            std::cout << "The number of cones must be larger than 1!" << std::endl;
             std::exit(1);
         }
 
         //std::cout << "Specialization is called!" << std::endl;
 
-        // here -x is actually used instead of x, since CGAL::root_of() gives the 
-		// k-th smallest root, but we want the second largest one with no need to count.
+        // Since CGAL::root_of() gives the k-th smallest root,
+        // here -x is actually used instead of x. 
+		// But we want the second largest one with no need to count.
         Polynomial<FT> x(CGAL::shift(Polynomial<FT>(-1), 1));
         Polynomial<FT> double_x(2*x);
         Polynomial<FT> a(1), b(x);

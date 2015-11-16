@@ -87,7 +87,7 @@ public:
 
     {
         if (k<2) {
-            std::cout << "The number of cones should be larger than 1!" << std::endl;
+            std::cout << "The number of cones must be larger than 1!" << std::endl;
             std::exit(1);
         }
 
@@ -107,12 +107,12 @@ public:
     /*! 
 	  \brief Operator to construct a Yao graph.
 
-      \details This operator implements the algorithm for adding edges to build the Yao graph.
+      \details This operator implements the algorithm for constructing the Yao graph.
          The algorithm implemented is an adaptation from the algorithm for constructing Theta graph. 
 		 For more details, please refer to the user manual.
      
-      \param[in] start An iterator pointing to the first point (vertex).
-      \param[in]  end  An iterator pointing to the place that passes the last point.
+      \param[in] start An iterator pointing to the first vertex of the input.
+      \param[in]  end  An iterator pointing to the past-the-end location of the input.
       \param[out]  g   The constructed graph object.
      */
     template <typename PointInputIterator>
@@ -145,7 +145,7 @@ public:
 
     /*! \brief outputs the directions in the vector rays to the iterator `result`.
 	       
-        \return the pass-the-end iterator of the vector `rays`.
+        \return the past-the-end iterator of the vector `rays`.
     */
     template<class DirectionOutputIterator>
     DirectionOutputIterator directions(DirectionOutputIterator result) {
