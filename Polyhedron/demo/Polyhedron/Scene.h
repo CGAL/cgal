@@ -35,7 +35,8 @@ class SCENE_EXPORT Scene  :
   friend class SceneDelegate;
 
 public:
-  QMap<QModelIndex, int> index_map;
+  QList<QModelIndex> getModelIndexFromId(int id) const;
+  int getIdFromModelIndex(QModelIndex modelId) const;
   enum Columns { NameColumn = 0, 
                  ColorColumn, 
                  RenderingModeColumn, 
@@ -184,17 +185,12 @@ Q_SIGNALS:
 private Q_SLOTS:
   void setExpanded(QModelIndex);
   void setCollapsed(QModelIndex);
-  void test_rows()
-  {
-  }
   void setSelectionRay(double, double, double, double, double, double);
   void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}
 
 private:
   void draw_aux(bool with_names, Viewer_interface*);
   void organize_items(Scene_item* item, QStandardItem *root, int loop);
-  //Temp member, used only for dev purpose for now.
-  QStandardItem* viewItem;
   typedef QList<Scene_item*> Entries;
   Entries m_entries;
   QList<Scene_group_item*> m_group_entries;
@@ -204,6 +200,7 @@ private:
   int item_B;
   static GlSplat::SplatRenderer* ms_splatting;
   static int ms_splattingCounter;
+  QMap<QModelIndex, int> index_map;
 
 public:
   static GlSplat::SplatRenderer* splatting();
@@ -244,8 +241,3 @@ private:
 #endif // SCENE_H
 
 
-/*TO DO
-virer viewItem
-arranger les choses pour remettre index_map en private.
-virer test_rows
-  */

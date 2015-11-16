@@ -1077,6 +1077,7 @@ void MainWindow::selectSceneItem(int i)
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);
   }
+  restoreCollapseState();
 }
 
 
@@ -1133,7 +1134,7 @@ int MainWindow::getSelectedSceneItemIndex() const
     return -1;
   else {
     QModelIndex i = proxyModel->mapToSource(selectedRows.first());
-    return scene->index_map[i];
+    return scene->getIdFromModelIndex(i);
   }
 }
 
@@ -1143,7 +1144,7 @@ QList<int> MainWindow::getSelectedSceneItemIndices() const
   QModelIndexList selectedIndices = sceneView->selectionModel()->selectedIndexes();
   QList<int> result;
   Q_FOREACH(QModelIndex index, selectedIndices) {
-      int temp = scene->index_map[proxyModel->mapToSource(index)];;
+      int temp = scene->getIdFromModelIndex(proxyModel->mapToSource(index));
       if(!result.contains(temp))
           result<<temp;
   }
@@ -1188,7 +1189,7 @@ void MainWindow::contextMenuRequested(const QPoint& global_pos) {
 void MainWindow::showSceneContextMenu(int selectedItemIndex,
                                       const QPoint& global_pos)
 {
-  Scene_item* item = scene->item(scene->index_map.value(scene->index(selectedItemIndex,0)));//scene->item(selectedItemIndex);
+  Scene_item* item = scene->item(scene->getIdFromModelIndex(scene->index(selectedItemIndex,0)));
   if(!item) return;
 
   const char* prop_name = "Menu modified by MainWindow.";
@@ -1632,18 +1633,25 @@ void MainWindow::on_actionRecenterScene_triggered()
   viewer->camera()->interpolateToFitScene();
 }
 
+QModelIndex MainWindow::recurseExpand(QModelIndex index)
+{
+    if(index.child(0,0).isValid())
+        recurseExpand(index.child(0,0));
+    int row = index.row();
+    int column = index.column();
+    QModelIndex id = scene->index(index.row(),0,index.sibling(row+1, column));
+        Scene_group_item* group =
+                qobject_cast<Scene_group_item*>(scene->item(scene->getIdFromModelIndex(id)));
+        if(group && group->isExpanded())
+        {
+            sceneView->setExpanded(index, true);
+        }
+        if( index.sibling(index.row()+1,0).isValid())
+            recurseExpand(index.sibling(index.row()+1,0));
+
+}
 void MainWindow::restoreCollapseState()
 {
     QModelIndex modelIndex = sceneView->indexAt(sceneView->rect().topLeft());
-
-    while (modelIndex.isValid())
-    {
-        Scene_group_item* group =
-                qobject_cast<Scene_group_item*>(scene->item(scene->index_map.value(scene->index(0, 0, modelIndex.parent()))));
-        if(group && group->isExpanded())
-        {
-            sceneView->setExpanded(modelIndex, true);
-        }
-        modelIndex = sceneView->indexBelow(modelIndex);
-    }
+    recurseExpand(modelIndex);
 }

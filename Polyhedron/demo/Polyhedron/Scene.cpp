@@ -44,7 +44,6 @@ Scene::Scene(QObject* parent)
     if(ms_splatting==0)
         ms_splatting  = new GlSplat::SplatRenderer();
     ms_splattingCounter++;
-    viewItem = invisibleRootItem();
 
     m_group_entries.append(new Scene_group_item("new group"));
 
@@ -67,7 +66,7 @@ Scene::addItem(Scene_item* item)
         list<<new QStandardItem();
         list.at(i)->setEditable(false);
     }
-    viewItem->appendRow(list);
+    invisibleRootItem()->appendRow(list);
     for(int i=0; i<5; i++){
         index_map[list.at(i)->index()] = m_entries.size() -1;
     }
@@ -138,6 +137,60 @@ Scene::erase(int index)
     return -1;
 
 }
+
+int
+Scene::erase(QList<int> indices)
+{
+    clear();
+    index_map.clear();
+    QList<Scene_item*> to_be_removed;
+    int max_index = -1;
+    Q_FOREACH(int index, indices) {
+        if(index < 0 || index >= m_entries.size())
+            continue;
+
+        max_index = (std::max)(max_index, index);
+
+        Scene_item* item = m_entries[index];
+        to_be_removed.push_back(item);
+    }
+
+    Q_FOREACH(Scene_item* item, to_be_removed) {
+      Scene_group_item* group =
+              qobject_cast<Scene_group_item*>(item);
+    if(group)
+    {
+        m_group_entries.removeAll(group);
+    }
+    Q_FOREACH(Scene_group_item* group_item, m_group_entries)
+        if(group_item->getChildren().contains(item))
+            group_item->removeChild(item);
+    Q_EMIT itemAboutToBeDestroyed(item);
+    delete item;
+    m_entries.removeAll(item);
+  }
+    check_first_group();
+  selected_item = -1;
+  Q_FOREACH(Scene_item* item, m_entries)
+  {
+    organize_items(item, invisibleRootItem(), 0);
+  }
+  QStandardItemModel::beginResetModel();
+  Q_EMIT updated();
+  QStandardItemModel::endResetModel();
+
+  int index = max_index + 1 - indices.size();
+  if(index >= m_entries.size()) {
+    index = m_entries.size() - 1;
+  }
+  if(index >= 0)
+    return index;
+  if(!m_entries.isEmpty())
+    return 0;
+  return -1;
+
+}
+
 void Scene::check_empty_group(Scene_item* item)
 {
     Q_FOREACH(Scene_group_item* group, m_group_entries)
@@ -156,62 +209,6 @@ void Scene::check_empty_group(Scene_item* item)
        check_first_group();
        Q_EMIT restoreCollapsedState();
 }
-
-int
-Scene::erase(QList<int> indices)
-{
-    clear();
-    index_map.clear();
-    QList<Scene_item*> to_be_removed;
-    viewItem = invisibleRootItem();
-    int max_index = -1;
-    Q_FOREACH(int index, indices) {
-        if(index < 0 || index >= m_entries.size())
-            continue;
-
-        max_index = (std::max)(max_index, index);
-
-        Scene_item* item = m_entries[index];
-        to_be_removed.push_back(item);
-    }
-
-    Q_FOREACH(Scene_item* item, to_be_removed) {
-      Scene_group_item* group =
-              qobject_cast<Scene_group_item*>(item);
-    if(group)
-    {
-        QList<int> to_erase;
-        Q_FOREACH(Scene_item* child, group->getChildren())
-            to_erase<<m_entries.indexOf(child);
-        erase(to_erase);
-    }
-    check_empty_group(item);
-
-    Q_EMIT itemAboutToBeDestroyed(item);
-    delete item;
-    m_entries.removeAll(item);
-  }
-  selected_item = -1;
-  Q_FOREACH(Scene_item* item, m_entries)
-  {
-    organize_items(item, viewItem, 0);
-  }
-  QStandardItemModel::beginResetModel();
-  Q_EMIT updated();
-  QStandardItemModel::endResetModel();
-
-  int index = max_index + 1 - indices.size();
-  if(index >= m_entries.size()) {
-    index = m_entries.size() - 1;
-  }
-  if(index >= 0)
-    return index;
-  if(!m_entries.isEmpty())
-    return 0;
-  return -1;
-
-}
-
 Scene::~Scene()
 {
     Q_FOREACH(Scene_item* item_ptr, m_entries)
@@ -675,7 +672,7 @@ bool Scene::dropMimeData(const QMimeData *data,
             Q_FOREACH(Scene_item* child, group->getChildren())
               groups_children << item_id(child);
     }
-    // Insure thhat children of selected groups will not be added twice
+    // Insure that children of selected groups will not be added twice
     Q_FOREACH(int i, selected_items_list)
     {
         if(!groups_children.contains(i))
@@ -684,8 +681,16 @@ bool Scene::dropMimeData(const QMimeData *data,
     //Gets the group at the drop position
     Scene_group_item* group =
             qobject_cast<Scene_group_item*>(this->item(index_map[parent]));
-    //if the drop item is not a group_item, then the drop action must be ignored
-    if(!group)
+    bool one_contained = false;
+    Q_FOREACH(int id, selected_items_list)
+        if(group->getChildren().contains(item(id)))
+        {
+            one_contained = true;
+            break;
+        }
+
+    //if the drop item is not a group_item or if it already con, then the drop action must be ignored
+    if(!group ||one_contained)
     {
         //unless the drop zone is empty, which means the item should be removed from all groups.
         if(!parent.isValid())
@@ -990,11 +995,10 @@ void Scene::group_added()
     //clears the model
     clear();
     index_map.clear();
-    viewItem = invisibleRootItem();
     //fills the model
     Q_FOREACH(Scene_item* item, m_entries)
     {
-    organize_items(item, viewItem, 0);
+    organize_items(item, invisibleRootItem(), 0);
     }
 }
 void Scene::changeGroup(Scene_item *item, Scene_group_item *target_group)
@@ -1062,6 +1066,16 @@ void Scene::setCollapsed(QModelIndex id)
             qobject_cast<Scene_group_item*>(item(index_map.value(index(0, 0, id.parent()))));
     if(group)
         group->setExpanded(false);
+}
+
+int Scene::getIdFromModelIndex(QModelIndex modelId)const
+{
+    return index_map.value(modelId);
+}
+
+QList<QModelIndex> Scene::getModelIndexFromId(int id) const
+{
+    return index_map.keys(id);
 }
 namespace scene { namespace details {
 

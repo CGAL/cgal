@@ -22,6 +22,7 @@ class Polyhedron_demo_io_plugin_interface;
 class Polyhedron_demo_plugin_interface;
 class Scene_item;
 class QSortFilterProxyModel;
+class QModelIndex;
 
 namespace Ui {
   class MainWindow;
@@ -170,6 +171,7 @@ protected:
   QList<int> getSelectedSceneItemIndices() const;
 
 private:
+  QModelIndex recurseExpand(QModelIndex index);
   QString strippedName(const QString &fullFileName);
   void setMenus(QString, QString, QAction *a);
   /// plugin black-list

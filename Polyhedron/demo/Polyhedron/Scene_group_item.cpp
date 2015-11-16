@@ -7,7 +7,7 @@ Scene_group_item::Scene_group_item(QString name)
     :  Scene_item(0,0)
 {
     this->name_ = name;
-    expanded = false;
+    expanded = true;
 }
 
 bool Scene_group_item::isFinite() const
