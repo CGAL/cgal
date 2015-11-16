@@ -28,7 +28,6 @@
 #include <CGAL/config.h>
 #include <CGAL/Mesh_3/config.h>
 
-#define BOOST_PARAMETER_MAX_ARITY 12
 #include <boost/parameter.hpp>
 
 
