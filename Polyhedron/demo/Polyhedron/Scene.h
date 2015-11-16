@@ -113,11 +113,8 @@ public:
   // auxiliary public function for QMainWindow
   QItemSelection createSelection(int i);
   QItemSelection createSelectionAll();
-  void setGroupName(QString name);
 
 public Q_SLOTS:
-  //!insures that the groupview and data always has a "new group" in first position.
-  void check_first_group();
   void remove_item_from_groups(Scene_item* item);
   void group_added();
   // Notify the scene that an item was modified

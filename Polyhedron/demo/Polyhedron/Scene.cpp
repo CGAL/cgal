@@ -45,12 +45,14 @@ Scene::Scene(QObject* parent)
         ms_splatting  = new GlSplat::SplatRenderer();
     ms_splattingCounter++;
 
-    m_group_entries.append(new Scene_group_item("new group"));
-
 }
 Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
+    Scene_group_item* group =
+            qobject_cast<Scene_group_item*>(item);
+  if(group)
+    m_group_entries.prepend(group);
     Bbox bbox_before = bbox();
     m_entries.push_back(item);
     connect(item, SIGNAL(itemChanged()),
@@ -116,7 +118,6 @@ Scene::erase(int index)
         {
             m_group_entries.removeOne(group);
             m_entries.removeOne(group);
-            check_first_group();
         }
     }
 
@@ -168,7 +169,6 @@ Scene::erase(QList<int> indices)
     delete item;
     m_entries.removeAll(item);
   }
-    check_first_group();
   selected_item = -1;
   Q_FOREACH(Scene_item* item, m_entries)
   {
@@ -200,7 +200,6 @@ void Scene::remove_item_from_groups(Scene_item* item)
             group->removeChild(item);
         }
     }
-       check_first_group();
        Q_EMIT restoreCollapsedState();
 }
 Scene::~Scene()
@@ -612,7 +611,6 @@ Scene::setData(const QModelIndex &index,
     {
     case NameColumn:
         item->setName(value.toString());
-        check_first_group();
     Q_EMIT dataChanged(index, index);
         return true;
         break;
@@ -676,13 +674,15 @@ bool Scene::dropMimeData(const QMimeData *data,
     Scene_group_item* group =
             qobject_cast<Scene_group_item*>(this->item(index_map[parent]));
     bool one_contained = false;
+    if(group)
+    {
     Q_FOREACH(int id, selected_items_list)
         if(group->getChildren().contains(item(id)))
         {
             one_contained = true;
             break;
         }
-
+    }
     //if the drop item is not a group_item or if it already con, then the drop action must be ignored
     if(!group ||one_contained)
     {
@@ -963,25 +963,8 @@ QList<Scene_item*> Scene::item_entries() const
 {
     return m_entries;
 }
-
-void Scene::check_first_group()
-{
-    if(m_group_entries.isEmpty() || m_group_entries.first()->name() != "new group")
-    {
-      m_group_entries.prepend(new Scene_group_item("new group"));
-    }
-}
 void Scene::group_added()
 {
-    Q_FOREACH(Scene_group_item *group, m_group_entries)
-    {
-        if (group->getChildren().isEmpty())
-        {
-            m_group_entries.removeOne(group);
-            m_entries.removeOne(group);
-        }
-    }
-    check_first_group();
 
 //makes the hierarchy in the tree
     //clears the model
@@ -990,7 +973,7 @@ void Scene::group_added()
     //fills the model
     Q_FOREACH(Scene_item* item, m_entries)
     {
-    organize_items(item, invisibleRootItem(), 0);
+        organize_items(item, invisibleRootItem(), 0);
     }
 }
 void Scene::changeGroup(Scene_item *item, Scene_group_item *target_group)
@@ -1009,10 +992,7 @@ void Scene::changeGroup(Scene_item *item, Scene_group_item *target_group)
  target_group->addChild(item);
  item->has_group = target_group->has_group +1;
 }
-void Scene::setGroupName(QString name)
-{
- m_group_entries[0]->setName(name);
-}
+
 #include "Scene_find_items.h"
 
 void Scene::organize_items(Scene_item* item, QStandardItem* root, int loop)
