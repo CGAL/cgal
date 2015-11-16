@@ -318,7 +318,8 @@ private:
       Bbox_vertices,
       Axis_vertices,
       Axis_colors,
-      NumberOfBuffers = Axis_colors+1
+      Frame_vertices,
+      NumberOfBuffers
   };
   enum Vao
   {
@@ -330,7 +331,8 @@ private:
       Control_points,
       Control_spheres,
       Axis,
-      NumberOfVaos= Axis+1
+      Frame_plane,
+      NumberOfVaos
   };
   mutable QOpenGLBuffer *in_bu;
   using Scene_item::initialize_buffers;

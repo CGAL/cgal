@@ -297,15 +297,15 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
         bbox_program.bind();
-        vaos[8]->bind();
-        buffers[19].bind();
-        buffers[19].allocate(pos_frame_plane.data(),
+        vaos[Frame_plane]->bind();
+        buffers[Frame_vertices].bind();
+        buffers[Frame_vertices].allocate(pos_frame_plane.data(),
                              static_cast<int>(pos_frame_plane.size()*sizeof(double)));
         bbox_program.enableAttributeArray("vertex");
         bbox_program.setAttributeBuffer("vertex",GL_DOUBLE,0,3);
-        buffers[19].release();
+        buffers[Frame_vertices].release();
 
-        vaos[8]->release();
+        vaos[Frame_plane]->release();
         bbox_program.release();
         program->release();
     }
@@ -597,14 +597,14 @@ void Scene_edit_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewe
     vaos[Edges]->release();
 
 
-    vaos[8]->bind();
+    vaos[Frame_plane]->bind();
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors", QColor(0,0,0));
     viewer->glDrawArrays(GL_LINE_LOOP, 0, (GLsizei)pos_frame_plane.size()/3);
     program->release();
-    vaos[8]->release();
+    vaos[Frame_plane]->release();
 
 
   if(rendering_mode == Wireframe) {
