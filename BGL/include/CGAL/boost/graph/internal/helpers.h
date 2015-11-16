@@ -196,7 +196,7 @@ adjust_incoming_halfedge(typename boost::graph_traits<Graph>::vertex_descriptor 
     }
     do
     {
-      if(is_border(h, g))
+      if(face(h, g)==boost::graph_traits<Graph>::null_face())
       {
         set_halfedge(v, h, g);
         return;
