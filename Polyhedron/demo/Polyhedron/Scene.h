@@ -137,7 +137,7 @@ public:
 
 
   // QStandardItemModel functions
-  bool dropMimeData(const QMimeData *data, Qt::DropAction action, int row, int column, const QModelIndex &parent);
+  bool dropMimeData(const QMimeData *, Qt::DropAction, int, int, const QModelIndex &parent);
   QVariant data ( const QModelIndex & index, int role = ::Qt::DisplayRole ) const;
   //!@returns the type of data correspondind to the role.
   QVariant headerData ( int section, ::Qt::Orientation orientation, int role = ::Qt::DisplayRole ) const;

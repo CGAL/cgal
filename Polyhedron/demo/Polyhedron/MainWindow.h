@@ -328,7 +328,7 @@ protected:
   QList<int> getSelectedSceneItemIndices() const;
 
 private:
-  QModelIndex recurseExpand(QModelIndex index);
+  void recurseExpand(QModelIndex index);
   QString strippedName(const QString &fullFileName);
   void setMenus(QString, QString, QAction *a);
   /// plugin black-list

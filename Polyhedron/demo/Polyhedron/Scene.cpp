@@ -158,7 +158,8 @@ Scene::erase(QList<int> indices)
         max_index = (std::max)(max_index, index);
 
         Scene_item* item = m_entries[index];
-        to_be_removed.push_back(item);
+        if(!to_be_removed.contains(item))
+            to_be_removed.push_back(item);
     }
 
     Q_FOREACH(Scene_item* item, to_be_removed) {
@@ -651,10 +652,10 @@ Scene::setData(const QModelIndex &index,
     return false;
 }
 
-bool Scene::dropMimeData(const QMimeData *data,
-                         Qt::DropAction action,
-                         int row,
-                         int column,
+bool Scene::dropMimeData(const QMimeData */*data*/,
+                         Qt::DropAction /*action*/,
+                         int /*row*/,
+                         int /*column*/,
                          const QModelIndex &parent)
 {
     //gets the moving items

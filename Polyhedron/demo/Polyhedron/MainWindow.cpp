@@ -1550,7 +1550,7 @@ void MainWindow::on_actionRecenterScene_triggered()
   viewer->camera()->interpolateToFitScene();
 }
 
-QModelIndex MainWindow::recurseExpand(QModelIndex index)
+void MainWindow::recurseExpand(QModelIndex index)
 {
     if(index.child(0,0).isValid())
         recurseExpand(index.child(0,0));

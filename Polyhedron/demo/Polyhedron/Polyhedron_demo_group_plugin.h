@@ -34,8 +34,59 @@ public :
     Scene* trueScene;
 public Q_SLOTS:
     void add_group() {
-        scene->addItem(new Scene_group_item("new group"));
-        trueScene->group_added();
+        //checks if all the selected items are in the same group
+        bool all_in_one = true;
+        if(trueScene->selectionIndices().isEmpty())
+            all_in_one = false;
+        // new group to create
+        Scene_group_item * group = new Scene_group_item("new group");
+        //group containing the selected item
+        Scene_group_item * existing_group = 0;
+        //for each selected item
+        Q_FOREACH(int id, trueScene->selectionIndices()){
+            //if the selected item is in a group
+            if(trueScene->item(id)->has_group!=0){
+                //for each group
+                Q_FOREACH(Scene_group_item *item, trueScene->group_entries())
+                {
+                    //if the group contains the selected item
+                    if(item->getChildren().contains(trueScene->item(id))){
+                        //if it is the first one, we initialize existing_group
+                        if(existing_group == 0)
+                            existing_group = item;
+                        //else we check if it is the same group as before.
+                        //If not, all selected items are not in the same group
+                        else if(existing_group != item)
+                            all_in_one = false;
+                        break;
+                    }
+                }//end for each group
+            }
+            //else it is impossible that all the selected items are in the same group
+            else{
+                all_in_one = false;
+                break;
+            }
+        }//end foreach selected item
+
+        //If all the selected items are in the same group, we put them in a sub_group of this group
+        if(all_in_one)
+        {
+            Q_FOREACH(int id, trueScene->selectionIndices())
+                trueScene->changeGroup(trueScene->item(id),group);
+            trueScene->changeGroup(group, existing_group);
+            scene->addItem(group);
+            trueScene->group_added();
+        }
+        //else wer create a new group
+        else
+        {
+            Q_FOREACH(int id, trueScene->selectionIndices())
+                trueScene->changeGroup(trueScene->item(id),group);
+            scene->addItem(group);
+            trueScene->group_added();
+        }
+
     }
 
 
