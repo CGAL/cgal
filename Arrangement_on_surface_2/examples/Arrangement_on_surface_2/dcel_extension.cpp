@@ -1,15 +1,15 @@
 //! \file examples/Arrangement_on_surface_2/dcel_extension.cpp
 // Extending all DCEL records (vertices, edges and faces).
 
-#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/Arr_extended_dcel.h>
 
 enum Color {BLUE, RED, WHITE};
 
-typedef CGAL::Cartesian<Number_type>                            Kernel;
+typedef CGAL::Cartesian<CGAL::Exact_rational>                   Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>                      Traits_2;
 typedef Traits_2::Point_2                                       Point_2;
 typedef Traits_2::X_monotone_curve_2                            Segment_2;

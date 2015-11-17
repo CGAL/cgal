@@ -1,15 +1,15 @@
 //! \file examples/Arrangement_2/io_unbounded.cpp
 // Using the I/O operators with an arrangement of unbounded curves.
 
-#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_linear_traits_2.h>
 #include <CGAL/Arrangement_2.h>
 #include <CGAL/IO/Arr_iostream.h>
 #include <list>
 #include <fstream>
 
-typedef CGAL::Cartesian<Number_type>                  Kernel;
+typedef CGAL::Cartesian<CGAL::Exact_rational>         Kernel;
 typedef CGAL::Arr_linear_traits_2<Kernel>             Traits_2;
 typedef Traits_2::Point_2                             Point_2;
 typedef Traits_2::Segment_2                           Segment_2;

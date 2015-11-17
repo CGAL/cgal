@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 (based on old version by Tali Zvi)
@@ -44,8 +44,8 @@
 #define CGAL_SL_DEBUG(a)
 #define CGAL_PRINT_INSERT(a)
 #define CGAL_PRINT_ERASE(a)
-#define CGAL_PRINT_NEW_EVENT(p, e) 
-#define CGAL_PRINT_UPDATE_EVENT(p, e) 
+#define CGAL_PRINT_NEW_EVENT(p, e)
+#define CGAL_PRINT_UPDATE_EVENT(p, e)
 #define CGAL_PRINT(a)
 
 #else
@@ -56,7 +56,7 @@
 #define CGAL_PRINT_INSERT(a) { std::cout << "+++ inserting "; \
                           (a)->Print(); \
                           std::cout << "    currentPos = "; \
-                          PrintEvent(this->m_currentEvent); \
+                          this->PrintEvent(this->m_currentEvent); \
                           std::cout << std::endl; \
                           }
 #define CGAL_PRINT_ERASE(a)  { std::cout << "--- erasing "; \
@@ -73,7 +73,7 @@
 
 namespace CGAL {
 
-/*! \class Basic_Sweep_line_2 
+/*! \class Basic_Sweep_line_2
  * A class that implements the sweep line algorithm for general x-monotone
  * curves that are pairwise disjoint in their interiors (an additional set
  * of isolated points may also be supplied).
@@ -103,20 +103,20 @@ public:
   typedef typename Traits_adaptor_2::Right_side_category  Right_side_category;
 
   BOOST_MPL_ASSERT(
-      (typename 
-       Arr_sane_identified_tagging< Left_side_category, Bottom_side_category, 
+      (typename
+       Arr_sane_identified_tagging< Left_side_category, Bottom_side_category,
        Top_side_category, Right_side_category >::result)
   );
-  
+
 protected:
-  typedef typename Arr_are_all_sides_oblivious_tag< 
-                     Left_side_category, Bottom_side_category, 
+  typedef typename Arr_are_all_sides_oblivious_tag<
+                     Left_side_category, Bottom_side_category,
                      Top_side_category, Right_side_category >::result
     Are_all_sides_oblivious_category;
-  
+
 public:
   typedef CGAL::Compare_events<Traits_adaptor_2, Event> Compare_events;
-  typedef Multiset<Event*, Compare_events, Allocator>   Event_queue; 
+  typedef Multiset<Event*, Compare_events, Allocator>   Event_queue;
   typedef typename Event_queue::iterator                Event_queue_iterator;
 
   typedef typename Event::Subcurve_iterator
@@ -124,11 +124,11 @@ public:
 
   typedef Sweep_line_event<Traits_2, Subcurve>          Base_event;
   typedef typename Base_event::Attribute                Attribute;
-  
+
   typedef Sweep_line_subcurve<Traits_2>                 Base_subcurve;
   typedef class Curve_comparer<Traits_2, Base_subcurve> Compare_curves;
   typedef Multiset<Base_subcurve*,
-                   Compare_curves, 
+                   Compare_curves,
                    Allocator>                           Status_line;
   typedef typename Status_line::iterator                Status_line_iterator;
 
@@ -180,7 +180,7 @@ protected:
                                      // is used as a hint for insertions.
 
   bool m_is_event_on_above;          // Indicates if the current event is on
-                                     // the interior of existing curve. This 
+                                     // the interior of existing curve. This
                                      // may happen only with events that are
                                      // associated with isolated query points.
 
@@ -231,7 +231,7 @@ public:
     m_visitor ->after_sweep();
   }
 
-  /*! Run the sweep-line algorithm on a range of x-monotone curves and a range 
+  /*! Run the sweep-line algorithm on a range of x-monotone curves and a range
    * of action event points (if a curve passed through an action point, it will
    * be split).
    * \param curves_begin  An iterator for the first x-monotone curve in the
@@ -258,7 +258,7 @@ public:
     m_visitor ->after_sweep();
   }
 
-  /*! Run the sweep-line alogrithm on a range of x-monotone curves, a range   
+  /*! Run the sweep-line alogrithm on a range of x-monotone curves, a range
    * of action event points (if a curve passed through an action point, it will
    * be split) and a range of query points (if a curve passed through a
    * query point,it will not be splitted).
@@ -267,8 +267,8 @@ public:
    * \param curves_end A past-the-end iterator for this range.
    * \param points_begin An iterator for the first point in the range.
    * \param points_end A past-the-end iterator for this range.
-   * \pre The value-type of XCurveInputIterator is the traits-class 
-   *      X_monotone_curve_2, and the value-type of PointInputIterator is the 
+   * \pre The value-type of XCurveInputIterator is the traits-class
+   *      X_monotone_curve_2, and the value-type of PointInputIterator is the
    *      traits-class Point_2.
    */
   template <typename CurveInputIterator, typename ActionPointItr,
@@ -330,7 +330,7 @@ public:
 
   /*! Deallocate event object.
    * This method is made public to allow the visitor to manage the events
-   * deallocation (as necessary). 
+   * deallocation (as necessary).
    */
   void deallocate_event(Event* event);
 
@@ -401,8 +401,8 @@ protected:
    */
   void _init_curve_end(const X_monotone_curve_2& cv, Arr_curve_end ind,
                        Subcurve* sc);
-  
-  /*! Handle the subcurves that are to the left of the event point (i.e., 
+
+  /*! Handle the subcurves that are to the left of the event point (i.e.,
    * subcurves that we are done with).
    */
   virtual void _handle_left_curves();
@@ -431,19 +431,19 @@ protected:
 
   /*! Remove a curve from the status line. */
   void _remove_curve_from_status_line(Subcurve *leftCurve);
- 
+
   /*! Allocate an event object associated with a given point.
    * \param pt The point.
    * \param type The event type.
    * \param ps_x The location of the point in x.
    * \param ps_y The location of the point in y.
-   * \pre Neither one of the boundary conditions is +/-oo. 
+   * \pre Neither one of the boundary conditions is +/-oo.
    * \return The created event.
    */
   Event* _allocate_event(const Point_2& pt, Attribute type,
                          Arr_parameter_space ps_x, Arr_parameter_space ps_y);
 
-  /*! Allocate an event at open boundary, 
+  /*! Allocate an event at open boundary,
    * which is not associated with a valid point.
    * \param type The event type.
    * \param ps_x The location of the point in x.
@@ -493,7 +493,7 @@ protected:
                                       Arr_curve_end ind,
                                       bool is_new)
   {
-    _update_event_at_open_boundary(e, cv, ind, is_new, 
+    _update_event_at_open_boundary(e, cv, ind, is_new,
                                    Are_all_sides_oblivious_category());
   }
 
