@@ -65,7 +65,7 @@ typedef CGAL::Polyhedron_demo_labeled_mesh_domain_3<Function_domain> Function_me
 #endif
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
-typedef CGAL::Robust_weighted_circumcenter_filtered_traits_3<Kernel> Geom_traits;
+typedef Tr::Geom_traits Geom_traits;
 
 // 3D complex
 
