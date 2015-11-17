@@ -236,8 +236,10 @@ void Scene_combinatorial_map_item::compute_elements(void) const{
     //Facets
     {
     std::size_t index = 0;
-    int voltreated = combinatorial_map().get_new_mark();
-    int facetreated = combinatorial_map().get_new_mark();
+    Combinatorial_map_3::size_type voltreated
+      = combinatorial_map().get_new_mark();
+    Combinatorial_map_3::size_type facetreated
+      = combinatorial_map().get_new_mark();
     Combinatorial_map_3::Dart_const_range::const_iterator
             darts_it=combinatorial_map().darts().begin(), darts_end=combinatorial_map().darts().end();
     for( ; darts_it!=darts_end; ++darts_it)
