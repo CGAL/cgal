@@ -809,7 +809,6 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh)
 /// \endcond
 
 
-#ifdef PMP_TODO_DOC
 /// \ingroup PkgPolygonMeshProcessing
 /// removes the isolated vertices from any polygon mesh.
 /// A vertex is considered isolated if it is not incident to any simplex
@@ -821,7 +820,6 @@ std::size_t remove_degenerate_faces(TriangleMesh& tmesh)
 ///
 /// @return number of removed isolated vertices
 ///
-#endif
 template <class PolygonMesh>
 std::size_t remove_isolated_vertices(PolygonMesh& pmesh)
 {
