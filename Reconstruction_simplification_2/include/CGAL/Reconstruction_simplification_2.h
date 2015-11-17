@@ -63,21 +63,21 @@ The former simplifies the triangulation until n points remain, while the latter
 stops after `steps` edge collapse operators have been performed.
 Furthermore, we can relocate the vertices by calling `relocate_points()`.
 
-\tparam Gt a model of the concept `ReconstructionSimplificationTraits_2`.
+\tparam Traits a model of the concept `ReconstructionSimplificationTraits_2`.
 
-\tparam PointMap a model of `ReadablePropertyMap` with value type `Gt::Point_2`.
-        Defaults to `boost::typed_identity_property_map<Gt::Point_2>`
+\tparam PointPMap a model of `ReadablePropertyMap` with value type `Traits::Point_2`.
+        Defaults to `boost::typed_identity_property_map<Traits::Point_2>`
         (for the case the input is points without mass).
 
-\tparam MassMap a model of `ReadablePropertyMap` with value type `Gt::FT`
-        Defaults to `boost::static_property_map<Gt::FT>` 
+\tparam MassPMap a model of `ReadablePropertyMap` with value type `Traits::FT`
+        Defaults to `boost::static_property_map<Traits::FT>` 
         (for the case the input is points without mass).
 
  */
 template<
-  class Gt,
-  class PointMap = boost::typed_identity_property_map <typename Gt::Point_2>,
-  class MassMap  = boost::static_property_map <typename Gt::FT> >
+  class Traits,
+  class PointPMap = boost::typed_identity_property_map <typename Traits::Point_2>,
+  class MassPMap  = boost::static_property_map <typename Traits::FT> >
 class Reconstruction_simplification_2
 {
 public:
@@ -87,23 +87,23 @@ public:
   /*!
         Number type.
    */
-  typedef typename Gt::FT FT;
+  typedef typename Traits::FT FT;
 
   /*!
         Point type.
    */
-  typedef typename Gt::Point_2 Point;
+  typedef typename Traits::Point_2 Point;
 
   /*!
         Segment type.
   */
-  typedef typename Gt::Segment_2 Segment;
+  typedef typename Traits::Segment_2 Segment;
 
   /// \cond SKIP_IN_MANUAL
   /*!
         Vector type.
    */
-  typedef typename Gt::Vector_2 Vector;
+  typedef typename Traits::Vector_2 Vector;
 
   typedef typename std::pair<Point, FT> PointMassPair;
   typedef typename std::vector<PointMassPair> PointMassList;
@@ -112,7 +112,7 @@ public:
   /*!
     The Output simplex.
    */
-  typedef Reconstruction_triangulation_2<Gt> Triangulation;
+  typedef Reconstruction_triangulation_2<Traits> Triangulation;
 
   typedef typename Triangulation::Vertex                Vertex;
   typedef typename Triangulation::Vertex_handle         Vertex_handle;
@@ -155,7 +155,7 @@ public:
 
 protected:
   Triangulation m_dt;
-  Gt const& m_traits;
+  Traits const& m_traits;
   MultiIndex m_mindex;
   int m_ignore;
   int m_verbose;
@@ -172,8 +172,8 @@ protected:
   FT m_bbox_y;
   FT m_bbox_size;
 
-  PointMap point_pmap;
-  MassMap  mass_pmap;
+  PointPMap point_pmap;
+  MassPMap  mass_pmap;
 
   /// \endcond
 
@@ -189,7 +189,7 @@ public:
 
   \tparam InputRange is a model of `Range` with forward iterators, 
           providing input points and point masses through the 
-          `PointMap` and `MassMap` property maps.
+          `PointPMap` and `MassPMap` property maps.
 
   \param input_range  Range of input data.
   \param point_map    A `ReadablePropertyMap` used to access the input points.
@@ -208,13 +208,13 @@ public:
   template <class InputRange>
   Reconstruction_simplification_2(
     const InputRange& input_range,
-    PointMap point_map = PointMap(),
-    MassMap  mass_map = MassMap(1),
+    PointPMap point_map = PointPMap(),
+    MassPMap  mass_map = MassPMap(1),
     std::size_t sample_size = 0,
     bool use_flip = true,
     unsigned int relocation = 0,
     int verbose = 0,
-    Gt traits = Gt())
+    Traits traits = Traits())
   : m_dt(traits),
     m_traits(m_dt.geom_traits()),
     m_ignore(0), 
@@ -383,8 +383,8 @@ public:
   void initialize(
     InputIterator start_itr,
     InputIterator beyond_itr,
-    PointMap point_map,
-    MassMap  mass_map) 
+    PointPMap point_map,
+    MassPMap  mass_map)
   {
     point_pmap = point_map;
     mass_pmap  = mass_map;

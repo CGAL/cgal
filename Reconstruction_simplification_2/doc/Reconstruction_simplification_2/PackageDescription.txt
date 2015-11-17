@@ -27,10 +27,11 @@
 
 \cgalClassifedRefPages
 
+## Concepts ##
+- `ReconstructionSimplificationTraits_2`
 
 ## Classes ##
-- `CGAL::Reconstruction_simplification_2<Traits_, PointPMap, MassPMap>`
-
+- `CGAL::Reconstruction_simplification_2<Traits, PointPMap, MassPMap>`
 
 */
 
