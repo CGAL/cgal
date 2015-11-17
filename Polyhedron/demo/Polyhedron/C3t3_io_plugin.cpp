@@ -101,7 +101,7 @@ save(const Scene_item* item, QFileInfo fileinfo)
 struct Fake_mesh_domain {
   typedef CGAL::Tag_true Has_features;
   typedef int Subdomain_index;
-  typedef std::pair<int, int> Surface_patch_index;
+  typedef int Surface_patch_index;
   typedef int Curve_segment_index;
   typedef int Corner_index;
   typedef boost::variant<Subdomain_index,Surface_patch_index> Index;
@@ -232,17 +232,17 @@ operator>>( std::istream& is, Fake_CDT_3_cell_base<Cb>& c) {
 typedef CGAL::Triangulation_data_structure_3<Fake_CDT_3_vertex_base<>, Fake_CDT_3_cell_base<> > Fake_CDT_3_TDS;
 typedef CGAL::Triangulation_3<Kernel, Fake_CDT_3_TDS> Fake_CDT_3;
 
-#ifdef CGAL_MESH_3_IO_SIGNATURE_H
-namespace CGAL {
-template <>
-struct Get_io_signature<Fake_mesh_domain::Surface_patch_index> {
-  std::string operator()() const
-  {
-    return std::string("std::pair<i,i>");
-  }
-}; // end Get_io_signature<Fake_mesh_domain::Surface_patch_index>
-} // end namespace CGAL
-#endif
+//#ifdef CGAL_MESH_3_IO_SIGNATURE_H
+//namespace CGAL {
+//template <>
+//struct Get_io_signature<Fake_mesh_domain::Surface_patch_index> {
+//  std::string operator()() const
+//  {
+//    return std::string("std::pair<i,i>");
+//  }
+//}; // end Get_io_signature<Fake_mesh_domain::Surface_patch_index>
+//} // end namespace CGAL
+//#endif
 
 /*namespace std {
   std::ostream& operator<<(std::ostream& out, const Patch_id& id) {
@@ -306,12 +306,8 @@ struct Update_vertex {
       break;
     default: // case 2
       const typename V1::Index& index = v1.index();
-      const Sp_index sp_index =
-        boost::get<Sp_index>(index);
-      const int i = (static_cast<int>(sp_index.first)
-                     << (std::numeric_limits<int>::digits >> 1))
-        + sp_index.second;
-      v2.set_index(i);
+      const Sp_index sp_index = boost::get<Sp_index>(index);
+      v2.set_index(sp_index);
     }
     return true;
   }
@@ -324,10 +320,7 @@ struct Update_cell {
     c2.set_subdomain_index(c1.subdomain_index());
     for(int i = 0; i < 4; ++i) {
       const Sp_index sp_index = c1.surface_patch_index(i);
-      const int new_index = (static_cast<int>(sp_index.first)
-                             << (std::numeric_limits<int>::digits >> 1))
-        + sp_index.second;
-      c2.set_surface_patch_index(i, new_index);
+      c2.set_surface_patch_index(i, sp_index);
     }
     return true;
   }
@@ -379,8 +372,8 @@ try_load_a_cdt_3(std::istream& is, C3t3& c3t3)
 //Generates a compilation error.
 bool
 Polyhedron_demo_c3t3_binary_io_plugin::
-try_load_other_binary_format(std::istream& /*is*/, C3t3& /*c3t3*/)
-{/*
+try_load_other_binary_format(std::istream& is, C3t3& c3t3)
+{
   CGAL::set_ascii_mode(is);
   std::string s;
   is >> s;
@@ -407,7 +400,7 @@ try_load_other_binary_format(std::istream& /*is*/, C3t3& /*c3t3*/)
     C3t3::Triangulation,
     Update_vertex,
     Update_cell>(is, c3t3.triangulation());
-  return f_is.good();*/
+  return f_is.good();
     return false;
 }
 
