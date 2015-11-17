@@ -131,6 +131,7 @@ dock widget visible or not.
 - CGAL::Three::Polyhedron_demo_plugin_interface
 
 \section exampleexternalPlugin Creating an external plugin
+
 To create an external plugin, you must make a new Cmake project.
 In the CMakeLists you must fetch the exported targets of the polyhedron demo (polyhedron_demo_macros.cmake).
 An external plugin will not be automatically loaded in the Polyhedron demo. It must be built in its own project.

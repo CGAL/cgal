@@ -3,7 +3,7 @@
 #ifndef VIEWER_H
 #define VIEWER_H
 
-#include "Viewer_config.h"
+#include <CGAL/Three/Viewer_config.h>
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLShaderProgram>

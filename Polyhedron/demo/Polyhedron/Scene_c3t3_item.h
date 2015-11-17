@@ -20,7 +20,7 @@
 
 #include <CGAL/Three/Viewer_interface.h>
 
-#include <Scene_item.h>
+#include <CGAL/Three/Scene_item.h>
 #include <Scene_polyhedron_item.h>
 #include <Scene_polygon_soup_item.h>
 

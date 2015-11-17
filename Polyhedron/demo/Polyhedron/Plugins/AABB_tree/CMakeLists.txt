@@ -1,0 +1,7 @@
+include( polyhedron_demo_macros )
+
+polyhedron_demo_plugin(cut_plugin Cut_plugin)
+target_link_libraries(cut_plugin scene_polyhedron_item scene_basic_objects)
+qt5_wrap_ui( shortestPathUI_FILES Shortest_path_widget.ui )
+polyhedron_demo_plugin(shortest_path_plugin Shortest_path_plugin ${shortestPathUI_FILES})
+target_link_libraries(shortest_path_plugin scene_polyhedron_item scene_polylines_item scene_polyhedron_selection_item scene_polyhedron_shortest_path_item scene_basic_objects)

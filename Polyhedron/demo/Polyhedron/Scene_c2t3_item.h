@@ -4,12 +4,12 @@
 #include "Scene_c2t3_item_config.h"
 #include "C2t3_type.h"
 #include <iostream>
-#include "Scene_item.h"
+#include  <CGAL/Three/Scene_item.h>
 #include <qgl.h>
 #include <QtCore/qglobal.h>
 #include <CGAL/gl.h>
 
-class SCENE_C2T3_ITEM_EXPORT Scene_c2t3_item : public Scene_item
+class SCENE_C2T3_ITEM_EXPORT Scene_c2t3_item : public CGAL::Three::Scene_item
 {
   Q_OBJECT
 public:

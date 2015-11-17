@@ -412,10 +412,6 @@ void Scene_nef_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) cons
     program=getShaderProgram(PROGRAM_WITH_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
-    if(is_selected)
-        program->setAttributeValue("colors", this->color().lighter(120));
-    else
-        program->setAttributeValue("colors", this->color());
     program->setUniformValue("is_two_side", 1);
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/3));
     vaos[Facets]->release();
@@ -440,10 +436,6 @@ void Scene_nef_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     attrib_buffers(viewer ,PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    if(is_selected)
-        program->setAttributeValue("colors", QColor(Qt::black));
-    else
-        program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_LINES,0,static_cast<GLsizei>(nb_lines/3));
     vaos[Edges]->release();
     program->release();

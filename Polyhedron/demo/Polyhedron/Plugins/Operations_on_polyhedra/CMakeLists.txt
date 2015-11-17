@@ -1,0 +1,5 @@
+include( polyhedron_demo_macros )
+ polyhedron_demo_plugin(corefinement_plugin Corefinement_plugin)
+ target_link_libraries(corefinement_plugin  scene_polyhedron_item scene_combinatorial_map_item scene_polylines_item)
+ polyhedron_demo_plugin(intersection_plugin Intersection_plugin)
+ target_link_libraries(intersection_plugin  scene_polyhedron_item scene_polylines_item)
