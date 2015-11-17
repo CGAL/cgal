@@ -49,19 +49,26 @@ This class provides a means to reconstruct a 1-dimensional shape from a set of 2
 The algorithm computes an initial 2D Delaunay triangulation from the input points, 
 and performs a simplification of the triangulation by performing half edge collapses, edge flips and vertex relocations.
 
-The edges are either processed in the order imposed by an priority queue, or in an order based on random selection of edge collapse operators.
+The edges are either processed in the order imposed by an priority queue, or
+in an order based on random selection of edge collapse operators.
 As the exhaustive priority queue guarantees a higher quality it is the default.
-The user can switch to the other method, for example for an initial simplification round, by calling `set_random_sample_size()`.
+The user can switch to the other method, for example for an initial
+simplification round, by calling `set_random_sample_size()`.
 
-By default edge flip operators are applied to ensure that every edge of the triangulation are candidate to be collapsed, while preserving a valid embedding of the triangulation. This option can be disabled by calling `set_use_flip(false)` to reduce the running times.
+By default edge flip operators are applied to ensure that every edge of the 
+triangulation are candidate to be collapsed, while preserving a valid embedding
+of the triangulation. This option can be disabled by calling
+\link set_use_flip() `set_use_flip(false)`\endlink to reduce the running times.
 
 By default the vertices are not relocated after each half edge collapse.
-This option can be changed by setting the number of vertex relocation steps performed between two edge collapse operators.
+This option can be changed by setting the number of vertex relocation steps
+performed between two edge collapse operators.
 
-The simplification is performed by calling either `run_until(n)` or `run(steps)`. 
+The simplification is performed by calling either 
+\link run_until() `run_until(n)`\endlink or \link run() `run(steps)`\endlink.
 The former simplifies the triangulation until n points remain, while the latter
 stops after `steps` edge collapse operators have been performed.
-Furthermore, we can relocate the vertices by calling `relocate_points()`.
+Furthermore, we can relocate the vertices by calling `relocate_all_points()`.
 
 \tparam Traits a model of the concept `ReconstructionSimplificationTraits_2`.
 
@@ -254,7 +261,7 @@ public:
   /*!
         Determines how much console output the algorithm generates.
         If set to a value larger than 0
-        details about the reconstruction process are written to `std::err`.
+        details about the reconstruction process are written to `std::cerr`.
 
         \param verbose The verbosity level.
    */
