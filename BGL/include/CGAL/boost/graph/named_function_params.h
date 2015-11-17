@@ -48,8 +48,20 @@
 #define CGAL_BOOST_GRAPH_NAMED_FUNCTION_PARAMS_H
 
 #include <CGAL/basic.h>
+
 #include <CGAL/boost/graph/properties.h>
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4172) // returning address of local variable or temporary
+#endif
+
 #include <boost/graph/named_function_params.hpp>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
+
 #include <boost/type_traits/is_same.hpp>
 #include <boost/version.hpp>
 

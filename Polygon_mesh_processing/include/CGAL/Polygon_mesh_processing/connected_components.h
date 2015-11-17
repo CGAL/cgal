@@ -23,6 +23,8 @@
 
 #include<set>
 #include<vector>
+
+#include <CGAL/boost/graph/named_function_params.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 #include <boost/graph/filtered_graph.hpp>

@@ -29,7 +29,6 @@
 
 #include <fstream>
 
-#define BOOST_PARAMETER_MAX_ARITY 12
 #include <boost/parameter.hpp>
 #include <boost/parameter/name.hpp>
 

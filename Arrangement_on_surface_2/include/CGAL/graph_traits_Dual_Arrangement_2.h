@@ -27,6 +27,9 @@
  * and the specialized boost::graph_traits<Dual<Arrangement_2> >class.
  */
 
+// include this to avoid a VC15 warning
+#include <CGAL/boost/graph/named_function_params.h>
+
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arrangement_2.h>
 
