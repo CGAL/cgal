@@ -232,7 +232,8 @@ Image_3::trilinear_interpolation(const Coord_type& x,
 				 Image_transform transform) const 
 {
   // Check on double/float coordinates, because (int)-0.1 gives 0
-  if ( x < 0 || y < 0 || z < 0 ) return value_outside;
+  if ( x < 0 || y < 0 || z < 0 )
+    return Target_word_type(value_outside);
   
   const Coord_type lx = x / image()->vx;
   const Coord_type ly = y / image()->vy;
@@ -249,7 +250,7 @@ Image_3::trilinear_interpolation(const Coord_type& x,
      ly >= dimy-1 ||
      lx >= dimx-1)
   {
-    return transform(value_outside);
+    return Target_word_type(transform(value_outside));
   }  
 
   // images are indexed by (z,y,x)
@@ -288,17 +289,17 @@ Image_3::trilinear_interpolation(const Coord_type& x,
 
   Image_word_type* ptr = (Image_word_type*)image()->data;
   ptr += i1 * dimxy + j1 * dimx + k1;
-  const Target_word_type a = transform(*ptr);
-  const Target_word_type e = transform(*(ptr+1));
+  const Target_word_type a = Target_word_type(transform(*ptr));
+  const Target_word_type e = Target_word_type(transform(*(ptr+1)));
   ptr += dimxy; // i2 * dimxy + j1 * dimx + k1;
-  const Target_word_type b = transform(*ptr);
-  const Target_word_type f = transform(*(ptr+1));
+  const Target_word_type b = Target_word_type(transform(*ptr));
+  const Target_word_type f = Target_word_type(transform(*(ptr+1)));
   ptr += dimx; // i2 * dimxy + j2 * dimx + k1
-  const Target_word_type c = transform(*ptr);
-  const Target_word_type g = transform(*(ptr+1));
+  const Target_word_type c = Target_word_type(transform(*ptr));
+  const Target_word_type g = Target_word_type(transform(*(ptr+1)));
   ptr -= dimxy; // i1 * dimxy + j2 * dimx + k1
-  const Target_word_type d = transform(*ptr);
-  const Target_word_type h = transform(*(ptr+1));
+  const Target_word_type d = Target_word_type(transform(*ptr));
+  const Target_word_type h = Target_word_type(transform(*(ptr+1)));
   
 
 //   const Target_word_type a = ((Image_word_type*)image()->data)[i1 * dimxy + j1 * dimx + k1];
@@ -310,7 +311,7 @@ Image_3::trilinear_interpolation(const Coord_type& x,
 //   const Target_word_type g = ((Image_word_type*)image()->data)[i2 * dimxy + j2 * dimx + k2];
 //   const Target_word_type h = ((Image_word_type*)image()->data)[i1 * dimxy + j2 * dimx + k2];
 
-//   const Target_word_type outside = transform(value_outside);
+//   const Target_word_type outside = Target_word_type(transform(value_outside);
 
 //   if(x < 0.f ||
 //      y < 0.f ||
