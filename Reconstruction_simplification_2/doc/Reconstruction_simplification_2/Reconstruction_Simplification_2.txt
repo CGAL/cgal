@@ -28,9 +28,10 @@ The output of the reconstruction algorithm is a subset of edges and vertices of 
 The following example first generates a set of input points on a square. The points, with no mass attribute, are then passed to the Reconstruction_simplification_2 object. After initialization, 100 iterations of the reconstruction process are performed. 
 \cgalExample{Reconstruction_simplification_2/rs2_simplest_example.cpp}
 
-\subsubsection Reconstruction_simplification_2Output_example Output Example
+\subsection Reconstruction_simplification_2Output_example Output Examples
 The output of the reconstruction can be obtained in two ways: either as a sequence of 2D points and segments, or as an indexed format where the connectivity of the segments is encoded, hence the terms vertices and edges. The indexed format records a list of points, then pairs of point indices in the said list for the edges, and point indices for the isolated vertices. 
-\cgalExample{Reconstruction_simplification_2/rs2_output_example.cpp}
+\cgalExample{Reconstruction_simplification_2/rs2_list_output_example.cpp}
+\cgalExample{Reconstruction_simplification_2/rs2_indexed_output_example.cpp}
 
 \subsection Reconstruction_simplification_2Mass_example Example with Mass Attributes
 The following example first reads a set of input points and masses from an ASCII file. Using two property maps, the points and their initial mass are passed to the Reconstruction_simplification_2 object. After initialization 100 iterations of the reconstruction process are performed, then the segments and isolated points of the reconstructed shape are extracted and printed to the console. 

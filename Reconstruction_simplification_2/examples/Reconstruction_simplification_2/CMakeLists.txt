@@ -21,9 +21,10 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "include")
 
-  create_single_source_cgal_program( "rs2_output_example.cpp" )
-  create_single_source_cgal_program( "rs2_mass_example.cpp" )
   create_single_source_cgal_program( "rs2_simplest_example.cpp" )
+  create_single_source_cgal_program( "rs2_list_output_example.cpp" )
+  create_single_source_cgal_program( "rs2_indexed_output_example.cpp" )
+  create_single_source_cgal_program( "rs2_mass_example.cpp" )
 
 else()
   
