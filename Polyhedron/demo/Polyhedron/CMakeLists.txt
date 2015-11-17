@@ -300,9 +300,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       ${meshingUI_FILES})
     target_link_libraries(mesh_3_optimization_plugin scene_c3t3_item scene_polyhedron_item scene_segmented_image_item scene_implicit_function_item )
 
-  qt5_wrap_ui( imgUI_FILES Image_res_dialog.ui)
-  polyhedron_demo_plugin(io_image_plugin Io_image_plugin ${imgUI_FILES})
-  target_link_libraries(io_image_plugin scene_segmented_image_item)
+    qt5_wrap_ui( imgUI_FILES Image_res_dialog.ui)
+    polyhedron_demo_plugin(io_image_plugin Io_image_plugin ${imgUI_FILES})
+    target_link_libraries(io_image_plugin scene_segmented_image_item)
 
 
       
