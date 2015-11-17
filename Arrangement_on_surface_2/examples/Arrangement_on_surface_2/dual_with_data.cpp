@@ -35,10 +35,10 @@ int main(int argc, char *argv[])
   std::vector<Point_2>           points;
   std::list<X_monotone_curve_2>  dual_lines;
 
-  size_t n;
+  unsigned int n;
   in_file >> n;
   points.resize(n);
-  size_t k;
+  unsigned int k;
   for (k = 0; k < n; ++k) {
     int px, py;
     in_file >> px >> py;
