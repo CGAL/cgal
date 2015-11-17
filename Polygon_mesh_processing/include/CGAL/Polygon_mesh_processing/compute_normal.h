@@ -94,11 +94,11 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
   typedef typename Kernel::Vector_3 Vector;
 
   using boost::get_param;
-  using boost::choose_param;
+  using boost::choose_const_pmap;
 
   Vector normal = CGAL::NULL_VECTOR;
   sum_normals<Point>(pmesh, f
-    , choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, pmesh))
+    , choose_const_pmap(get_param(np, CGAL::vertex_point), pmesh, CGAL::vertex_point)
     , normal);
  
   return normal / FT( std::sqrt( to_double(normal * normal) ) );
