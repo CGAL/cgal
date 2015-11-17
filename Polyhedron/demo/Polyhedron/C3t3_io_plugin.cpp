@@ -388,8 +388,8 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
     C3t3::Triangulation,
     Update_vertex,
     Update_cell>(is, c3t3.triangulation());
+
   return f_is.good();
-    return false;
 }
 
 #include <QtPlugin>
