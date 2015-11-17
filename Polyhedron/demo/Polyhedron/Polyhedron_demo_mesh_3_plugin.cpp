@@ -230,7 +230,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  Scene_item* temp_item;
+  Scene_item* temp_item = 0;
   if (NULL != poly_item)
   {
     Polyhedron* pMesh = poly_item->polyhedron();
