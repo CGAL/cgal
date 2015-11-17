@@ -126,7 +126,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     NO_DEFAULT_PATH
     DOC "Path to CGAL/Three/Viewer_interface.h")
   hide_variable(CGAL_THREE_VIEWER_INTERFACE_H_PATH)
-
   if(CGAL_THREE_VIEWER_INTERFACE_H_PATH)
     qt5_generate_moc( "${CGAL_THREE_VIEWER_INTERFACE_H_PATH}/CGAL/Three/Viewer_interface.h"
       "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
@@ -318,6 +317,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   polyhedron_demo_plugin(nef_io_plugin Polyhedron_demo_io_nef_plugin)
   target_link_libraries(nef_io_plugin  scene_nef_polyhedron_item)
+
+  polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin)
+  target_link_libraries(c3t3_io_plugin  scene_c3t3_item)
 
   qt5_wrap_ui( polylines_ioUI_FILES Add_polylines_dialog.ui )
   polyhedron_demo_plugin(polylines_io_plugin Polyhedron_demo_polylines_io_plugin ${polylines_ioUI_FILES})
