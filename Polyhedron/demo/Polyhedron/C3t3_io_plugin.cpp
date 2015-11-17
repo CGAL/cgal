@@ -232,18 +232,6 @@ operator>>( std::istream& is, Fake_CDT_3_cell_base<Cb>& c) {
 typedef CGAL::Triangulation_data_structure_3<Fake_CDT_3_vertex_base<>, Fake_CDT_3_cell_base<> > Fake_CDT_3_TDS;
 typedef CGAL::Triangulation_3<Kernel, Fake_CDT_3_TDS> Fake_CDT_3;
 
-//#ifdef CGAL_MESH_3_IO_SIGNATURE_H
-//namespace CGAL {
-//template <>
-//struct Get_io_signature<Fake_mesh_domain::Surface_patch_index> {
-//  std::string operator()() const
-//  {
-//    return std::string("std::pair<i,i>");
-//  }
-//}; // end Get_io_signature<Fake_mesh_domain::Surface_patch_index>
-//} // end namespace CGAL
-//#endif
-
 /*namespace std {
   std::ostream& operator<<(std::ostream& out, const Patch_id& id) {
     return out << id;
