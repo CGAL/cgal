@@ -690,7 +690,7 @@ bool Scene::dropMimeData(const QMimeData */*data*/,
             break;
         }
     }
-    //if the drop item is not a group_item or if it already con, then the drop action must be ignored
+    //if the drop item is not a group_item or if it already contains the item, then the drop action must be ignored
     if(!group ||one_contained)
     {
         //unless the drop zone is empty, which means the item should be removed from all groups.

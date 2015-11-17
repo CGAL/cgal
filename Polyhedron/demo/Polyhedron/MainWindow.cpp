@@ -1135,10 +1135,24 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
 
   int index = -1;
   if(sender == sceneView) {
-    QModelIndex modelIndex = sceneView->indexAt(p);
-    if(!modelIndex.isValid()) return;
+      QModelIndex modelIndex = sceneView->indexAt(p);
+      if(!modelIndex.isValid())
+      {
+          const char* prop_name = "Menu modified by MainWindow.";
 
-    index = proxyModel->mapToSource(modelIndex).row();
+          QMenu* menu = ui->menuFile;
+          if(menu) {
+              bool menuChanged = menu->property(prop_name).toBool();
+              if(!menuChanged) {
+                  menu->setProperty(prop_name, true);
+              }
+          }
+          if(menu)
+              menu->exec(sender->mapToGlobal(p));
+          return;
+      }
+      else
+          index = proxyModel->mapToSource(modelIndex).row();
   }
   else {
     index = scene->mainSelectionIndex();
@@ -1552,16 +1566,22 @@ void MainWindow::on_actionRecenterScene_triggered()
 
 void MainWindow::recurseExpand(QModelIndex index)
 {
-    if(index.child(0,0).isValid())
-        recurseExpand(index.child(0,0));
+    //qDebug()<<index;
     int row = index.row();
     int column = index.column();
+    if(index.child(0,0).isValid())
+        recurseExpand(index.child(0,0));
     QModelIndex id = scene->index(index.row(),0,index.sibling(row+1, column));
         Scene_group_item* group =
                 qobject_cast<Scene_group_item*>(scene->item(scene->getIdFromModelIndex(id)));
+
         if(group && group->isExpanded())
         {
+           // qDebug()<<group->name();
             sceneView->setExpanded(index, true);
+        }
+        else if (group && !group->isExpanded()){
+            sceneView->setExpanded(index, false);
         }
         if( index.sibling(index.row()+1,0).isValid())
             recurseExpand(index.sibling(index.row()+1,0));
