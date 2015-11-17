@@ -122,7 +122,7 @@ The default value is 0, so that all edges approximating some input points are co
 
 \subsection Reconstruction_simplification_2Random Random Sample Size
 
-By default the simplification relies upon an exhaustive priority queue of half edge collapse operators during decimation. For improved efficiency, a parameter <I> sample size </I> strictly greater than 0 switches to a multiple choice approach, i.e., a best-choice selection in a random sample of edge collapse operators, of size sample_size. A typical value for the sample size is 15, but this value must be enlarged when targeting a very coarse simplification. 
+By default the simplification relies upon an exhaustive priority queue of half edge collapse operators during decimation. For improved efficiency, a parameter <I> sample size </I> strictly greater than 0 switches to a multiple choice approach, i.e., a best-choice selection in a random sample of edge collapse operators, of size <I>sample size</I>. A typical value for the sample size is 15, but this value must be enlarged when targeting a very coarse simplification. 
 
 \subsection Reconstruction_simplification_2Local_relocation Local Point Relocation
 
