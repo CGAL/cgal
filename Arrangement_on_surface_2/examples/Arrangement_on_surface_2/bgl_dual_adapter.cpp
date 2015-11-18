@@ -1,8 +1,8 @@
 //! \file examples/Arrangement_on_surface_2/bgl_dual_adapter.cpp
 // Adapting the dual of an arrangement to a BGL graph.
 
-#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_extended_dcel.h>
 #include <CGAL/Arrangement_2.h>
@@ -38,7 +38,7 @@ public:
   { key->set_data(val); }
 };
 
-typedef CGAL::Cartesian<Number_type>                         Kernel;
+typedef CGAL::Cartesian<CGAL::Exact_rational>                Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>                   Traits_2;
 typedef CGAL::Arr_face_extended_dcel<Traits_2, unsigned int> Dcel;
 typedef CGAL::Arrangement_2<Traits_2, Dcel>                  Ex_arrangement;

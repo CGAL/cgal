@@ -1,8 +1,8 @@
 //! \file examples/Arrangement_on_surface_2/curve_history.cpp
 // Constructing an arrangement with curve history.
 
-#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_segment_traits_2.h>
 
 #include <CGAL/Arrangement_on_surface_with_history_2.h>
@@ -11,7 +11,7 @@
 
 #include "point_location_utils.h"
 
-typedef CGAL::Cartesian<Number_type>                      Kernel;
+typedef CGAL::Cartesian<CGAL::Exact_rational>             Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>                Traits_2;
 typedef Traits_2::Point_2                                 Point_2;
 typedef Traits_2::Curve_2                                 Segment_2;
@@ -44,7 +44,7 @@ int main()
             << arr.number_of_curves() << " curves:" << std::endl;
   for (cit = arr.curves_begin(); cit != arr.curves_end(); ++cit)
     std::cout << "Curve [" << *cit << "] induces "
-              << arr.number_of_induced_edges(cit) << " edges." << std::endl; 
+              << arr.number_of_induced_edges(cit) << " edges." << std::endl;
 
   // Print the arrangement edges, along with the list of curves that
   // induce each edge.

@@ -2,8 +2,8 @@
 // Associating a name attribute with segments using the generic curve-data
 // traits.
 
-#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arr_polyline_traits_2.h>
 #include <CGAL/Arr_curve_data_traits_2.h>
@@ -21,7 +21,7 @@ struct Merge_names
   }
 };
 
-typedef CGAL::Cartesian<Number_type>                    Kernel;
+typedef CGAL::Cartesian<CGAL::Exact_rational>           Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>              Segment_traits_2;
 typedef CGAL::Arr_polyline_traits_2<Segment_traits_2>   Polyline_traits_2;
 typedef Polyline_traits_2::Curve_2                      Polyline_2;
