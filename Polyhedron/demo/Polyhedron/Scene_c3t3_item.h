@@ -43,6 +43,12 @@ public:
   {
     return CGAL::Mesh_3::save_binary_file(os, c3t3());
   }
+  bool save_ascii(std::ostream& os) const
+  {
+      os << "ascii CGAL c3t3 " << CGAL::Get_io_signature<C3t3>()() << "\n";
+      CGAL::set_ascii_mode(os);
+      return !!(os << c3t3());
+  }
 
   void invalidate_buffers()
   {
@@ -88,6 +94,8 @@ public:
   }
 
   bool load_binary(std::istream& is);
+
+  bool load_ascii(std::istream& is);
 
   // data item
   const Scene_item* data_item() const;

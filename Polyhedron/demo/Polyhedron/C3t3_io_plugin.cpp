@@ -15,7 +15,7 @@ class Polyhedron_demo_c3t3_binary_io_plugin :
 
 public:
   QString name() const { return "C3t3_io_plugin"; }
-  QString nameFilters() const { return "binary files (*.cgal)"; }
+  QString nameFilters() const { return "binary files (*.cgal);;ascii (*.mesh)"; }
 
   bool canLoad() const;
   Scene_item* load(QFileInfo fileinfo);
@@ -37,40 +37,75 @@ bool Polyhedron_demo_c3t3_binary_io_plugin::canLoad() const {
 Scene_item*
 Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
 
-  // Open file
-  std::ifstream in(fileinfo.filePath().toUtf8(),
-                   std::ios_base::in|std::ios_base::binary);
-  if(!in) {
-    std::cerr << "Error! Cannot open file "
-              << (const char*)fileinfo.filePath().toUtf8() << std::endl;
-    return NULL;
-  }
+    if(fileinfo.suffix().toLower() == "mesh")
+    {
+        // Open file
+        std::ifstream in(fileinfo.filePath().toUtf8(),
+                         std::ios_base::in);
+        if(!in) {
+          std::cerr << "Error! Cannot open file "
+                    << (const char*)fileinfo.filePath().toUtf8() << std::endl;
+          return NULL;
+        }
 
-  Scene_c3t3_item* item = new Scene_c3t3_item();
-  item->setName(fileinfo.baseName());
+        Scene_c3t3_item* item = new Scene_c3t3_item();
+        item->setName(fileinfo.baseName());
 
 
-  if(item->load_binary(in)) {
-    item->changed();
-    return item;
-  }
+        if(item->load_ascii(in)) {
+          item->changed();
+          return item;
+        }
 
-  item->c3t3().clear();
-  in.seekg(0);
-  if(try_load_other_binary_format(in, item->c3t3())) {
-    item->changed();
-    return item;
-  }
+        item->c3t3().clear();
+        in.seekg(0);
 
-  item->c3t3().clear();
-  in.seekg(0);
-  if(try_load_a_cdt_3(in, item->c3t3())) {
-    item->changed();
-    return item;
-  }
+        item->c3t3().clear();
+        in.seekg(0);
+        if(try_load_a_cdt_3(in, item->c3t3())) {
+          item->changed();
+          return item;
+        }
+    }
+
+    else if(fileinfo.suffix().toLower() == "cgal")
+    {
+        // Open file
+        std::ifstream in(fileinfo.filePath().toUtf8(),
+                         std::ios_base::in|std::ios_base::binary);
+        if(!in) {
+          std::cerr << "Error! Cannot open file "
+                    << (const char*)fileinfo.filePath().toUtf8() << std::endl;
+          return NULL;
+        }
+
+        Scene_c3t3_item* item = new Scene_c3t3_item();
+        item->setName(fileinfo.baseName());
+
+
+        if(item->load_binary(in)) {
+          item->changed();
+          return item;
+        }
+
+        item->c3t3().clear();
+        in.seekg(0);
+        if(try_load_other_binary_format(in, item->c3t3())) {
+          item->changed();
+          return item;
+        }
+
+        item->c3t3().clear();
+        in.seekg(0);
+        if(try_load_a_cdt_3(in, item->c3t3())) {
+          item->changed();
+          return item;
+        }
+    }
+
+
 
   // if all loading failed...
-  delete item;
   return NULL;
 }
 
@@ -84,18 +119,27 @@ bool
 Polyhedron_demo_c3t3_binary_io_plugin::
 save(const Scene_item* item, QFileInfo fileinfo)
 {
-  if(!fileinfo.filePath().endsWith(".cgal"))
-    return false;
   // This plugin supports polyhedrons and polygon soups
   const Scene_c3t3_item* c3t3_item =
     qobject_cast<const Scene_c3t3_item*>(item);
 
   if(!c3t3_item)
     return false;
+  if(fileinfo.filePath().endsWith(".cgal"))
+  {
   std::ofstream out(fileinfo.filePath().toUtf8(),
                    std::ios_base::out|std::ios_base::binary);
 
   return out && c3t3_item->save_binary(out);
+  }
+  else if(fileinfo.filePath().endsWith(".mesh"))
+  {
+      std::ofstream out(fileinfo.filePath().toUtf8(),
+                        std::ios_base::out);
+      return out && c3t3_item->save_ascii(out);
+  }
+  else
+      return false;
 }
 
 struct Fake_mesh_domain {
@@ -231,15 +275,6 @@ operator>>( std::istream& is, Fake_CDT_3_cell_base<Cb>& c) {
 
 typedef CGAL::Triangulation_data_structure_3<Fake_CDT_3_vertex_base<>, Fake_CDT_3_cell_base<> > Fake_CDT_3_TDS;
 typedef CGAL::Triangulation_3<Kernel, Fake_CDT_3_TDS> Fake_CDT_3;
-
-/*namespace std {
-  std::ostream& operator<<(std::ostream& out, const Patch_id& id) {
-    return out << id;
-  }
-  std::istream& operator>>(std::istream& in, Patch_id& id) {
-    return in >> id;
-  }
-} // end namespace std*/
 
 namespace CGAL {
 template <>

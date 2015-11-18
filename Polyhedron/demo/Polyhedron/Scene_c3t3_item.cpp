@@ -47,11 +47,11 @@ void Scene_c3t3_item::compile_shaders()
         "                                                                                                         \n"
         "void main(void)                                                                                          \n"
         "{                                                                                                        \n"
-        "  color = vec4(colors,1.0);                                                                            \n"
-        "  fP = mv_matrix * vertex;                                                                                 \n"
-        "  fN = mat3(mv_matrix)* normals;                                                                           \n"
+        "  color = vec4(colors,1.0);                                                                              \n"
+        "  fP = mv_matrix * vertex;                                                                               \n"
+        "  fN = mat3(mv_matrix)* normals;                                                                         \n"
         "   gl_Position =  mvp_matrix *                                                                           \n"
-        "  vec4(radius*vertex.x + center.x, radius* vertex.y + center.y, radius*vertex.z + center.z, 1.0) ;                      \n"
+        "  vec4(radius*vertex.x + center.x, radius* vertex.y + center.y, radius*vertex.z + center.z, 1.0) ;       \n"
         "}                                                                                                        \n"
     };
     QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
@@ -1062,6 +1062,48 @@ void Scene_c3t3_item::compute_elements() const
 bool Scene_c3t3_item::load_binary(std::istream& is)
 {
   if(!CGAL::Mesh_3::load_binary_file(is, c3t3())) return false;
+  // if(!c3t3().triangulation().is_valid()) std::cerr << "INVALID\n";
+  if(is && frame == 0) {
+    frame = new qglviewer::ManipulatedFrame();
+  }
+  reset_cut_plane();
+  if(is.good()) {
+    changed();
+    return true;
+  }
+  else
+    return false;
+}
+
+bool Scene_c3t3_item::load_ascii(std::istream& is)
+{
+
+      std::string s;
+      is >> s;
+      if (s != "ascii" ||
+          !(is >> s) ||
+          s != "CGAL" ||
+          !(is >> s) ||
+          s != "c3t3")
+      {
+        return false;
+      }
+      std::getline(is, s);
+      if(s != "") {
+        if(s != std::string(" ") + CGAL::Get_io_signature<C3t3>()()) {
+          std::cerr << "load_ascii_file:"
+                    << "\n  expected format: " << CGAL::Get_io_signature<C3t3>()()
+                    << "\n       got format:" << s << std::endl;
+          return false;
+        }
+      }
+      CGAL::set_ascii_mode(is);
+      is >> c3t3();
+     // return !!is;
+      // call operator!() twice, because operator bool() is C++11
+
+
+  if(!(!!is)) return false;
   // if(!c3t3().triangulation().is_valid()) std::cerr << "INVALID\n";
   if(is && frame == 0) {
     frame = new qglviewer::ManipulatedFrame();
