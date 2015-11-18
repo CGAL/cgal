@@ -20,6 +20,13 @@
 #ifndef CGAL_LA_EIGEN_CONSTRUCTORS_H
 #define CGAL_LA_EIGEN_CONSTRUCTORS_H
 #include <CGAL/config.h>
+
+#if defined(BOOST_MSVC)
+#  pragma warning(push)
+#  pragma warning(disable:4003) // not enough actual parameters for macro 'BOOST_PP_EXPAND_I'
+                                // http://lists.boost.org/boost-users/2014/11/83291.php
+#endif 
+
 #ifndef CGAL_EIGEN3_ENABLED
 #error Requires Eigen
 #endif
@@ -148,4 +155,8 @@ BOOST_PP_REPEAT_FROM_TO(1, 11, CGAL_CODE, _ )
     };
   };
 }
+#if defined(BOOST_MSVC)
+#  pragma warning(pop)
+#endif
+
 #endif
