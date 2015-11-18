@@ -15,6 +15,9 @@
 #include <CGAL/Polygon_mesh_processing/remesh.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
+#include <boost/graph/graph_traits.hpp>
+#include <CGAL/property_map.h>
+
 #include <QTime>
 #include <QAction>
 #include <QMainWindow>
@@ -44,7 +47,9 @@ public:
   {
     this->scene = scene_interface;
     this->mw = mainWindow;
+
     actionIsotropicRemeshing_ = new QAction("Isotropic remeshing", mw);
+    actionIsotropicRemeshing_->setProperty("subMenuName", "Polygon Mesh Processing");
     if (actionIsotropicRemeshing_) {
       connect(actionIsotropicRemeshing_, SIGNAL(triggered()),
         this, SLOT(isotropic_remeshing()));
@@ -137,12 +142,22 @@ public Q_SLOTS:
       typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
       typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
       typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+
+      const Polyhedron& pmesh = p_ ? *poly_item->polyhedron()
+                                   : *selection_item->polyhedron();
+      boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
+        = get(CGAL::face_index, pmesh);
+      unsigned int id = 0;
+      BOOST_FOREACH(face_descriptor f, faces(pmesh))
+      {
+        put(fim, f, id++);
+      }
+
       if (selection_item)
       {
         std::vector<edge_descriptor> updated_selected_edges;
         if (edges_only)
         {
-          const Polyhedron& pmesh = *selection_item->polyhedron();
           std::vector<edge_descriptor> edges;
           BOOST_FOREACH(edge_descriptor e, selection_item->selected_edges)
           {
@@ -202,7 +217,6 @@ public Q_SLOTS:
       {
         if (edges_only)
         {
-          const Polyhedron& pmesh = *poly_item->polyhedron();
           std::vector<halfedge_descriptor> border;
           CGAL::Polygon_mesh_processing::border_halfedges(
             faces(*poly_item->polyhedron()),
