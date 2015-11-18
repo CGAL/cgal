@@ -1,7 +1,7 @@
 include( polyhedron_demo_macros )
 if(EIGEN3_FOUND)
   qt5_wrap_ui( surface_reconstructionUI_FILES Surface_reconstruction_plugin.ui)
-  polyhedron_demo_plugin(surface_reconstruction_plugin Surface_reconstruction_plugin ${surface_reconstructionUI_FILES})
+  polyhedron_demo_plugin(surface_reconstruction_plugin Surface_reconstruction_plugin Surface_reconstruction_plugin_impl ${surface_reconstructionUI_FILES})
   target_link_libraries(surface_reconstruction_plugin scene_polygon_soup_item scene_polyhedron_item scene_points_with_normal_item)
 
   qt5_wrap_ui( normal_estimationUI_FILES Normal_estimation_plugin.ui)
@@ -45,7 +45,7 @@ endif()
 
   qt5_wrap_ui(point_set_shape_detectionUI_FILES Point_set_shape_detection_plugin.ui)
   polyhedron_demo_plugin(point_set_shape_detection_plugin Point_set_shape_detection_plugin ${point_set_shape_detectionUI_FILES})
-  target_link_libraries(point_set_shape_detection_plugin scene_polyhedron_item scene_points_with_normal_item)
+  target_link_libraries(point_set_shape_detection_plugin scene_polyhedron_item scene_points_with_normal_item scene_polygon_soup_item)
 
   qt5_wrap_ui(point_set_simplificationUI_FILES Point_set_simplification_plugin.ui)
   polyhedron_demo_plugin(point_set_simplification_plugin Point_set_simplification_plugin ${point_set_simplificationUI_FILES})
