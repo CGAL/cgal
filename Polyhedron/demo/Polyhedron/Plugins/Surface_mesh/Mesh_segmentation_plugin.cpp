@@ -74,7 +74,7 @@ public:
         // adding slot for itemAboutToBeDestroyed signal, aim is removing item from item-functor map.
         
         if( Scene* scene = dynamic_cast<Scene*>(scene_interface) ) {
-            connect(scene, SIGNAL(itemAboutToBeDestroyed(Scene_item*)), this, SLOT(itemAboutToBeDestroyed(Scene_item*)));
+            connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)));
         }
         
         init_color_map_sdf();
@@ -101,7 +101,7 @@ public:
         void on_actionSegmentation_triggered();
         void on_Partition_button_clicked();
         void on_SDF_button_clicked();
-        void itemAboutToBeDestroyed(Scene_item*);
+        void itemAboutToBeDestroyed(CGAL::Three::Scene_item*);
 private:
     QAction*                      actionSegmentation;
     QDockWidget*                  dock_widget;
@@ -128,24 +128,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::init_color_map_sdf()
 
 void Polyhedron_demo_mesh_segmentation_plugin::init_color_map_segmentation()
 {
-    /*
-    color_map_segmentation.push_back(QColor("#fce94f"));
-    color_map_segmentation.push_back(QColor("#edd400"));
-    color_map_segmentation.push_back(QColor("#c4a000"));
-    color_map_segmentation.push_back(QColor("#fcaf3e"));
-    color_map_segmentation.push_back(QColor("#f57900"));
-    color_map_segmentation.push_back(QColor("#ce5c00")); 
-    color_map_segmentation.push_back(QColor("#e9b96e"));
-    color_map_segmentation.push_back(QColor("#c17d11"));
-    color_map_segmentation.push_back(QColor("#8f5902")); 
-    color_map_segmentation.push_back(QColor("#729fcf"));
-    color_map_segmentation.push_back(QColor("#3465a4"));
-    color_map_segmentation.push_back(QColor("#204a87"));
-    color_map_segmentation.push_back(QColor("#ad7fa8"));
-    color_map_segmentation.push_back(QColor("#75507b"));
-    color_map_segmentation.push_back(QColor("#5c3566"));
-    */
-    
+
     color_map_segmentation.push_back(QColor( 173, 35, 35)); 
     color_map_segmentation.push_back(QColor( 87, 87, 87));    
     color_map_segmentation.push_back(QColor( 42, 75, 215)); 
@@ -163,7 +146,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::init_color_map_segmentation()
     
 }
 
-void Polyhedron_demo_mesh_segmentation_plugin::itemAboutToBeDestroyed(Scene_item* scene_item)
+void Polyhedron_demo_mesh_segmentation_plugin::itemAboutToBeDestroyed(CGAL::Three::Scene_item* scene_item)
 {
     if(Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene_item)) {
       item_sdf_map.erase(item);

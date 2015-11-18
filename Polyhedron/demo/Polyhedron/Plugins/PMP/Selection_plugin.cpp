@@ -101,7 +101,7 @@ public:
 
     QObject* scene = dynamic_cast<QObject*>(scene_interface);
     if(scene) { 
-      connect(scene, SIGNAL(itemAboutToBeDestroyed(Scene_item*)), this, SLOT(item_about_to_be_destroyed(Scene_item*)));
+      connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*)));
       connect(scene, SIGNAL(newItem(int)), this, SLOT(new_item_created(int)));
     } 
   }
@@ -372,7 +372,7 @@ public Q_SLOTS:
 
     selection_item_map.insert(std::make_pair(poly_item, selection_item));
   }
-  void item_about_to_be_destroyed(Scene_item* scene_item) {
+  void item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item) {
     // if polyhedron item
     Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene_item);
     if(poly_item) {

@@ -182,8 +182,8 @@ MainWindow::MainWindow(QWidget* parent)
   connect(scene, SIGNAL(updated()),
           this, SLOT(selectionChanged()));
 
-  connect(scene, SIGNAL(itemAboutToBeDestroyed(Scene_item*)),
-          this, SLOT(removeManipulatedFrame(Scene_item*)));
+  connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
+          this, SLOT(removeManipulatedFrame(CGAL::Three::Scene_item*)));
 
   connect(scene, SIGNAL(updated_bbox()),
           this, SLOT(updateViewerBBox()));

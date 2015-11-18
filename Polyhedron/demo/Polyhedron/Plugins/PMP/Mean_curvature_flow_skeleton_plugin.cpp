@@ -154,8 +154,8 @@ public:
             this, SLOT(on_actionSegment()));
 
     QObject* scene_object = dynamic_cast<QObject*>(scene);
-    connect(scene_object, SIGNAL(itemAboutToBeDestroyed(Scene_item*)),
-            this, SLOT(on_actionItemAboutToBeDestroyed(Scene_item*)));
+    connect(scene_object, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
+            this, SLOT(on_actionItemAboutToBeDestroyed(CGAL::Three::Scene_item*)));
   }
 
   QList<QAction*> actions() const {
@@ -361,7 +361,7 @@ public Q_SLOTS:
   void on_actionConverge();
   void on_actionUpdateBBox();
   void on_actionSegment();
-  void on_actionItemAboutToBeDestroyed(Scene_item*);
+  void on_actionItemAboutToBeDestroyed(CGAL::Three::Scene_item*);
 
 private:
   Mean_curvature_skeleton* mcs;
@@ -905,7 +905,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConverge()
   QApplication::restoreOverrideCursor();
 }
 
-void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionItemAboutToBeDestroyed(Scene_item* /* item */)
+void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionItemAboutToBeDestroyed(CGAL::Three::Scene_item* /* item */)
 {
   if (mcs != NULL)
   {

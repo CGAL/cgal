@@ -323,7 +323,7 @@ public Q_SLOTS:
   void on_Create_polyline_items_button();
   void on_Accept_button();
   void on_Reject_button();
-  void item_about_to_be_destroyed(Scene_item*);
+  void item_about_to_be_destroyed(CGAL::Three::Scene_item*);
   void hole_visualizer_changed();
   void dock_widget_closed();
   void on_Select_small_holes_button();
@@ -418,10 +418,10 @@ void Polyhedron_demo_hole_filling_plugin::init(QMainWindow* mainWindow,
   connect(ui_widget.Select_small_holes_button,  SIGNAL(clicked()), this, SLOT(on_Select_small_holes_button()));
 
   if(Scene* scene_casted = dynamic_cast<Scene*>(scene_interface)) 
-  { connect(scene_casted, SIGNAL(itemAboutToBeDestroyed(Scene_item*)), this, SLOT(item_about_to_be_destroyed(Scene_item*))); }
+  { connect(scene_casted, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*))); }
 }
 
-void Polyhedron_demo_hole_filling_plugin::item_about_to_be_destroyed(Scene_item* scene_item) {
+void Polyhedron_demo_hole_filling_plugin::item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item) {
   Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene_item);
   if(poly_item) {
     // erase assoc polylines item
