@@ -2,7 +2,7 @@
 #define SCENE_PLANE_ITEM_H
 
 
-#include "Scene_item.h"
+#include  <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Scene_interface.h>
 
 #include "Scene_basic_objects_config.h"
@@ -18,14 +18,14 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel_epic;
 typedef Kernel_epic::Plane_3 Plane_3;
 
 class SCENE_BASIC_OBJECTS_EXPORT Scene_plane_item 
-  : public Scene_item
+  : public CGAL::Three::Scene_item
 {
   Q_OBJECT
 public:
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
 
   Scene_plane_item(const CGAL::Three::Scene_interface* scene_interface)
-      :Scene_item(NbOfVbos,NbOfVaos),
+      :CGAL::Three::Scene_item(NbOfVbos,NbOfVaos),
       scene(scene_interface),
       manipulable(false),
       can_clone(true),
@@ -37,6 +37,7 @@ public:
   }
 
   ~Scene_plane_item() {
+    frame = 0;
     delete frame;
   }
 
@@ -92,7 +93,7 @@ public:
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m == Wireframe || m == Flat); 
+    return (m == Wireframe || m == Flat || m == FlatPlusEdges);
   }
   virtual void draw(CGAL::Three::Viewer_interface*) const;
  virtual void draw_edges(CGAL::Three::Viewer_interface* viewer)const;
@@ -168,7 +169,7 @@ private:
   mutable bool smooth_shading;
   mutable QOpenGLShaderProgram *program;
 
-  using Scene_item::initialize_buffers;
+  using CGAL::Three::Scene_item::initialize_buffers;
   void initialize_buffers(CGAL::Three::Viewer_interface*)const;
   void compute_normals_and_vertices(void);
 };
