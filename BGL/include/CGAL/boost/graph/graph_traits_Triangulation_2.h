@@ -22,6 +22,9 @@
 
 #include <functional>
 
+// include this to avoid a VC15 warning
+#include <CGAL/boost/graph/named_function_params.h>
+
 #include <boost/config.hpp>
 #include <boost/iterator_adaptors.hpp>
 #include <boost/graph/graph_traits.hpp>

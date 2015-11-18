@@ -229,9 +229,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
   const bool protect_features = ui.protect->isChecked();
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
-
-
-   CGAL::Three::Scene_item* temp_item;
+  Scene_item* temp_item = 0;
   if (NULL != poly_item)
   {
     Polyhedron* pMesh = poly_item->polyhedron();

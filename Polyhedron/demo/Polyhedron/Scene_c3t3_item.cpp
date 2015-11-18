@@ -88,7 +88,7 @@ double complex_diag(const Scene_item* item) {
 }
 
 Scene_c3t3_item::Scene_c3t3_item()
-  : Scene_item(10, 5)
+  : Scene_item(NumberOfBuffers, NumberOfVaos)
   , d(new Scene_c3t3_item_priv())
   , frame(new ManipulatedFrame())
   , last_known_scene(NULL)
@@ -111,7 +111,7 @@ Scene_c3t3_item::Scene_c3t3_item()
 }
 
 Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
-  : Scene_item(10, 5)
+  : Scene_item(NumberOfBuffers, NumberOfVaos)
   , d(new Scene_c3t3_item_priv(c3t3))
   , frame(new ManipulatedFrame())
   , last_known_scene(NULL)  
@@ -457,18 +457,18 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     compute_elements();
     initialize_buffers(viewer);
   }
-  vaos[0]->bind();
+  vaos[Facets]->bind();
   program = getShaderProgram(PROGRAM_WITH_LIGHT);
   attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
   program->bind();
   program->setAttributeValue("colors", this->color());
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size() / 3));
   program->release();
-  vaos[0]->release();
+  vaos[Facets]->release();
 
   if(spheres_are_shown)
   {
-      vaos[3]->bind();
+      vaos[Spheres]->bind();
       program_sphere->bind();
       //ModelViewMatrix used for the transformation of the camera.
       QMatrix4x4 mvp_mat;
@@ -506,7 +506,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
                                   static_cast<GLsizei>(s_vertex.size()/3),
                                   static_cast<GLsizei>(s_radius.size()));
       program_sphere->release();
-      vaos[3]->release();
+      vaos[Spheres]->release();
   }
 }
 
@@ -529,18 +529,18 @@ void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
   program->release();
   vaos[2]->release();
 
-  vaos[1]->bind();
+  vaos[Edges]->bind();
   program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
   attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
   program->bind();
   program->setAttributeValue("colors", QColor(Qt::black));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size() / 3));
   program->release();
-  vaos[1]->release();
+  vaos[Edges]->release();
 
   if(spheres_are_shown)
   {
-      vaos[4]->bind();
+      vaos[Wired_spheres]->bind();
       program_sphere->bind();
       //ModelViewMatrix used for the transformation of the camera.
       QMatrix4x4 mvp_mat;
@@ -578,7 +578,7 @@ void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
                                   static_cast<GLsizei>(ws_vertex.size()/3),
                                   static_cast<GLsizei>(s_radius.size()));
       program_sphere->release();
-      vaos[4]->release();
+      vaos[Wired_spheres]->release();
   }
 }
 
@@ -589,13 +589,13 @@ void Scene_c3t3_item::draw_points(CGAL::Three::Viewer_interface * viewer) const
     compute_elements();
     initialize_buffers(viewer);
   }
-  vaos[1]->bind();
+  vaos[Edges]->bind();
   program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
   attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
   program->bind();
   program->setAttributeValue("colors", this->color());
   viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size() / 3));
-  vaos[1]->release();
+  vaos[Edges]->release();
   program->release();
 
   vaos[2]->bind();
@@ -750,22 +750,22 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
     program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
     program->bind();
 
-    vaos[0]->bind();
-    buffers[0].bind();
-    buffers[0].allocate(positions_poly.data(),
+    vaos[Facets]->bind();
+    buffers[Facet_vertices].bind();
+    buffers[Facet_vertices].allocate(positions_poly.data(),
       static_cast<int>(positions_poly.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-    buffers[0].release();
+    buffers[Facet_vertices].release();
 
-    buffers[1].bind();
-    buffers[1].allocate(normals.data(),
+    buffers[Facet_normals].bind();
+    buffers[Facet_normals].allocate(normals.data(),
       static_cast<int>(normals.size()*sizeof(float)));
     program->enableAttributeArray("normals");
     program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
-    buffers[1].release();
+    buffers[Facet_normals].release();
 
-    vaos[0]->release();
+    vaos[Facets]->release();
     program->release();
 
   }
@@ -775,15 +775,15 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[1]->bind();
-        buffers[2].bind();
-        buffers[2].allocate(positions_lines.data(),
+        vaos[Edges]->bind();
+        buffers[Edges_vertices].bind();
+        buffers[Edges_vertices].allocate(positions_lines.data(),
           static_cast<int>(positions_lines.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-        buffers[2].release();
+        buffers[Edges_vertices].release();
 
-        vaos[1]->release();
+        vaos[Edges]->release();
         program->release();
 
       }
@@ -794,12 +794,12 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
         program->bind();
 
         vaos[2]->bind();
-        buffers[3].bind();
-        buffers[3].allocate(positions_grid.data(),
+        buffers[Grid_vertices].bind();
+        buffers[Grid_vertices].allocate(positions_grid.data(),
           static_cast<int>(positions_grid.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-        buffers[3].release();
+        buffers[Grid_vertices].release();
         vaos[2]->release();
         program->release();
       }
@@ -808,46 +808,46 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
     {
       program_sphere->bind();
 
-      vaos[3]->bind();
-      buffers[4].bind();
-      buffers[4].allocate(s_vertex.data(),
+      vaos[Spheres]->bind();
+      buffers[Sphere_vertices].bind();
+      buffers[Sphere_vertices].allocate(s_vertex.data(),
         static_cast<int>(s_vertex.size()*sizeof(float)));
       program_sphere->enableAttributeArray("vertex");
       program_sphere->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-      buffers[4].release();
+      buffers[Sphere_vertices].release();
 
-      buffers[5].bind();
-      buffers[5].allocate(s_normals.data(),
+      buffers[Sphere_normals].bind();
+      buffers[Sphere_normals].allocate(s_normals.data(),
         static_cast<int>(s_normals.size()*sizeof(float)));
       program_sphere->enableAttributeArray("normals");
       program_sphere->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
-      buffers[5].release();
+      buffers[Sphere_normals].release();
 
-      buffers[6].bind();
-      buffers[6].allocate(s_colors.data(),
+      buffers[Sphere_colors].bind();
+      buffers[Sphere_colors].allocate(s_colors.data(),
         static_cast<int>(s_colors.size()*sizeof(float)));
       program_sphere->enableAttributeArray("colors");
       program_sphere->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
-      buffers[6].release();
+      buffers[Sphere_colors].release();
 
-      buffers[7].bind();
-      buffers[7].allocate(s_radius.data(),
+      buffers[Sphere_radius].bind();
+      buffers[Sphere_radius].allocate(s_radius.data(),
         static_cast<int>(s_radius.size()*sizeof(float)));
       program_sphere->enableAttributeArray("radius");
       program_sphere->setAttributeBuffer("radius", GL_FLOAT, 0, 3);
-      buffers[7].release();
+      buffers[Sphere_radius].release();
 
-      buffers[8].bind();
-      buffers[8].allocate(s_center.data(),
+      buffers[Sphere_center].bind();
+      buffers[Sphere_center].allocate(s_center.data(),
         static_cast<int>(s_center.size()*sizeof(float)));
       program_sphere->enableAttributeArray("center");
       program_sphere->setAttributeBuffer("center", GL_FLOAT, 0, 3);
-      buffers[8].release();
+      buffers[Sphere_center].release();
 
       viewer->glVertexAttribDivisor(program_sphere->attributeLocation("center"), 1);
       viewer->glVertexAttribDivisor(program_sphere->attributeLocation("radius"), 1);
       viewer->glVertexAttribDivisor(program_sphere->attributeLocation("colors"), 1);
-      vaos[3]->release();
+      vaos[Spheres]->release();
 
     }
 
@@ -855,38 +855,38 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
       {
         program_sphere->bind();
 
-        vaos[4]->bind();
-        buffers[9].bind();
-        buffers[9].allocate(s_vertex.data(),
+        vaos[Wired_spheres]->bind();
+        buffers[Wired_spheres_vertices].bind();
+        buffers[Wired_spheres_vertices].allocate(s_vertex.data(),
           static_cast<int>(s_vertex.size()*sizeof(float)));
         program_sphere->enableAttributeArray("vertex");
         program_sphere->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-        buffers[9].release();
+        buffers[Wired_spheres_vertices].release();
 
-        buffers[5].bind();
+        buffers[Sphere_normals].bind();
         program_sphere->enableAttributeArray("normals");
         program_sphere->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
-        buffers[5].release();
+        buffers[Sphere_normals].release();
 
-        buffers[6].bind();
+        buffers[Sphere_colors].bind();
         program_sphere->enableAttributeArray("colors");
         program_sphere->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
-        buffers[6].release();
+        buffers[Sphere_colors].release();
 
-        buffers[7].bind();
+        buffers[Sphere_radius].bind();
         program_sphere->enableAttributeArray("radius");
         program_sphere->setAttributeBuffer("radius", GL_FLOAT, 0, 3);
-        buffers[7].release();
+        buffers[Sphere_radius].release();
 
-        buffers[8].bind();
+        buffers[Sphere_center].bind();
         program_sphere->enableAttributeArray("center");
         program_sphere->setAttributeBuffer("center", GL_FLOAT, 0, 3);
-        buffers[8].release();
+        buffers[Sphere_center].release();
 
         viewer->glVertexAttribDivisor(program_sphere->attributeLocation("center"), 1);
         viewer->glVertexAttribDivisor(program_sphere->attributeLocation("radius"), 1);
         viewer->glVertexAttribDivisor(program_sphere->attributeLocation("colors"), 1);
-        vaos[4]->release();
+        vaos[Wired_spheres]->release();
 
         program_sphere->release();
       }

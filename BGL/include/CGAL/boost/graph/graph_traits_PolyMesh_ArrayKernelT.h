@@ -20,6 +20,9 @@
 #ifndef CGAL_BOOST_GRAPH_GRAPH_TRAITS_POLYMESH_ARRAYKERNELT_H
 #define CGAL_BOOST_GRAPH_GRAPH_TRAITS_POLYMESH_ARRAYKERNELT_H
 
+// include this to avoid a VC15 warning
+#include <CGAL/boost/graph/named_function_params.h>
+
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 
@@ -355,6 +358,9 @@ typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfedge_desc
 halfedge(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor v,
          const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 {
+  if(sm.halfedge_handle(v) == boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::null_halfedge()){
+    return boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::null_halfedge();
+  }
   // prev because OpenMesh stores out-going halfedges
   // return sm.prev_halfedge_handle(sm.halfedge_handle(v));
   return sm.opposite_halfedge_handle(sm.halfedge_handle(v));
@@ -612,7 +618,7 @@ remove_face(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::f
   sm.status(f).set_deleted(true);
 }
 
-
+#if 0 // conflits with function in Euler_operations.h
 template<typename K>
 std::pair<typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::edge_descriptor,
           bool>
@@ -622,6 +628,7 @@ add_edge(typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vert
   
   return sm.new_edge(v1, v2);
 }
+#endif
 
 template<typename K>
 typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::face_descriptor

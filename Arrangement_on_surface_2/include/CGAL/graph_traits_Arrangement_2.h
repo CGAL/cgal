@@ -26,6 +26,9 @@
  * Definition of the specialized boost::graph_traits<Arrangement_2> class.
  */
 
+// include this to avoid a VC15 warning
+#include <CGAL/boost/graph/named_function_params.h>
+
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/iterator/counting_iterator.hpp>
 #include <CGAL/Arrangement_on_surface_2.h>

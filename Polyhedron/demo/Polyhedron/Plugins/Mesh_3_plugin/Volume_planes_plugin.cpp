@@ -65,10 +65,8 @@ struct DoubleConverter {
 class PixelReader : public QObject
 {
 Q_OBJECT
-public Q_SLOTS:
-  void update(const QPoint& p) {
-    getPixel(p);
-  }
+
+
 Q_SIGNALS:
   void x(int);
 
@@ -179,7 +177,6 @@ public:
     Viewer_interface* v = mw->findChild<Viewer_interface*>("viewer");
     CGAL_assertion(v != 0);
     pxr_.setViewer(v);
-    connect(v, SIGNAL(pointSelected(QPoint)), &pxr_, SLOT(update(QPoint)));
 
     createOrGetDockLayout();
 

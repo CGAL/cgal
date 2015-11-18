@@ -96,7 +96,7 @@ public:
     Scene* trueScene = dynamic_cast<Scene*>(scene_interface);
     // This is for later
     if(trueScene) {
-        connect(trueScene, SIGNAL(itemAboutToBeDestroyed(Scene_item*)), this, SLOT(item_about_to_be_destroyed(Scene_item*)));
+        connect(trueScene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*)));
         connect(trueScene, SIGNAL(newItem(int)), this, SLOT(new_item(int)));
     }
   }
@@ -113,7 +113,7 @@ public Q_SLOTS:
   void on_Selection_type_combo_box_changed(int index);
   void on_Primitives_type_combo_box_changed(int index);
   void new_item(int index);
-  void item_about_to_be_destroyed(Scene_item* scene_item);
+  void item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item);
 
 private:
   Shortest_paths_map m_shortestPathsMap;
@@ -134,7 +134,7 @@ Scene_polyhedron_shortest_path_item::Primitives_mode Polyhedron_demo_shortest_pa
   return (Scene_polyhedron_shortest_path_item::Primitives_mode) ui_widget.Primitives_type_combo_box->currentIndex();
 }
 
-void Polyhedron_demo_shortest_path_plugin::item_about_to_be_destroyed(Scene_item* sceneItem)
+void Polyhedron_demo_shortest_path_plugin::item_about_to_be_destroyed(CGAL::Three::Scene_item* sceneItem)
 {
     // if polyhedron item
     Scene_polyhedron_item* polyhedronItem = qobject_cast<Scene_polyhedron_item*>(sceneItem);

@@ -25,3 +25,6 @@ include( polyhedron_demo_macros )
   else( Boost_VERSION GREATER 103400 )
     message(STATUS "warning: the plugin mesh_3_plugin requires Boost>=1.34.1 and will not be compiled.")
   endif( Boost_VERSION GREATER 103400 )
+
+  polyhedron_demo_plugin(detect_sharp_edges_plugin Detect_sharp_edges_plugin)
+  target_link_libraries(detect_sharp_edges_plugin scene_polyhedron_item)

@@ -85,17 +85,17 @@ public:
 };
 
 
-template <typename K>
+template <typename OpenMesh>
 class OM_edge_weight_pmap 
-  : public boost::put_get_helper<typename OpenMesh::PolyMesh_ArrayKernelT<K>::Scalar , OM_edge_weight_pmap<K> >
+  : public boost::put_get_helper<typename OpenMesh::Scalar , OM_edge_weight_pmap<OpenMesh> >
 {
 public:
   typedef boost::readable_property_map_tag                         category;
-  typedef typename OpenMesh::PolyMesh_ArrayKernelT<K>::Scalar      value_type;
+  typedef typename OpenMesh::Scalar                                value_type;
   typedef value_type                                               reference;
-  typedef typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::edge_descriptor key_type;
+  typedef typename boost::graph_traits<OpenMesh>::edge_descriptor  key_type;
 
-  OM_edge_weight_pmap(const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
+  OM_edge_weight_pmap(const OpenMesh& sm)
     : sm_(sm)
     {}
 
@@ -105,7 +105,7 @@ public:
   }
 
 private:
-  const OpenMesh::PolyMesh_ArrayKernelT<K>& sm_;
+  const OpenMesh& sm_;
 };
 
 template <typename K, typename VEF>
@@ -124,25 +124,25 @@ public:
 };
 
 
-  template<typename K, typename P>
-class OM_point_pmap //: public boost::put_get_helper<bool, OM_point_pmap<K> >
+template<typename OpenMesh, typename P>
+class OM_point_pmap //: public boost::put_get_helper<bool, OM_point_pmap<OpenMesh> >
 {
 public:
   typedef boost::read_write_property_map_tag category;
 #if defined(CGAL_USE_OM_POINTS)
-  typedef typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point             value_type;
-  typedef const typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point&      reference;
+  typedef typename OpenMesh::Point             value_type;
+  typedef const typename OpenMesh::Point&      reference;
 #else
   typedef P value_type;
   typedef P reference;
 #endif
-  typedef typename boost::graph_traits< OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor key_type;
+  typedef typename boost::graph_traits<OpenMesh>::vertex_descriptor key_type;
     
   OM_point_pmap()
     : sm_(NULL)
   {}
 
-  OM_point_pmap(const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
+  OM_point_pmap(const OpenMesh& sm)
     : sm_(&sm)
     {}
     
@@ -156,36 +156,36 @@ public:
     return sm_->point(v);
 #else
     CGAL_assertion(sm_!=NULL);
-    typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point const& omp = sm_->point(v);
+    typename OpenMesh::Point const& omp = sm_->point(v);
     return value_type(omp[0], omp[1], omp[2]);
 #endif
   }
 
-  inline friend reference get(const OM_point_pmap<K,P>& pm, key_type v)
+  inline friend reference get(const OM_point_pmap<OpenMesh,P>& pm, key_type v)
   {
     CGAL_precondition(pm.sm_!=NULL);
 #if defined(CGAL_USE_OM_POINTS)
     return pm.sm_->point(v);
 #else
     CGAL_assertion(pm.sm_!=NULL);
-    typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point const& omp = pm.sm_->point(v);
+    typename OpenMesh::Point const& omp = pm.sm_->point(v);
     return value_type(omp[0], omp[1], omp[2]);
 #endif
   }
 
-  inline friend void put(const OM_point_pmap<K,P>& pm, key_type v, const value_type& p)
+  inline friend void put(const OM_point_pmap<OpenMesh,P>& pm, key_type v, const value_type& p)
   {
     CGAL_precondition(pm.sm_!=NULL);
 #if defined(CGAL_USE_OM_POINTS)
-    const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>&>(*pm.sm_).set_point(v,p);
+    const_cast<OpenMesh&>(*pm.sm_).set_point(v,p);
 #else
-    const_cast<OpenMesh::PolyMesh_ArrayKernelT<K>&>(*pm.sm_).set_point
-      (v, typename OpenMesh::PolyMesh_ArrayKernelT<K>::Point((float)p[0], (float)p[1], (float)p[2]));
+    const_cast<OpenMesh&>(*pm.sm_).set_point
+      (v, typename OpenMesh::Point((float)p[0], (float)p[1], (float)p[2]));
 #endif
   }
 
   private:
-  const OpenMesh::PolyMesh_ArrayKernelT<K>* sm_;
+  const OpenMesh* sm_;
 };
 
 
@@ -202,8 +202,9 @@ namespace boost {
 template <typename K>
 struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::edge_weight_t >
 {
-  typedef CGAL::OM_edge_weight_pmap<K> type;
-  typedef CGAL::OM_edge_weight_pmap<K> const_type;
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> Mesh;
+  typedef CGAL::OM_edge_weight_pmap<Mesh> type;
+  typedef CGAL::OM_edge_weight_pmap<Mesh> const_type;
 };
 
 
@@ -215,8 +216,9 @@ struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::edge_weight_t >
 template <typename K>
 struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::vertex_index_t >
 {
-  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor> type;
-  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor> const_type;
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> Mesh;
+  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::vertex_descriptor> type;
+  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::vertex_descriptor> const_type;
 };
 
 
@@ -227,8 +229,9 @@ struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::vertex_index_t >
 template <typename K>
 struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::face_index_t >
 {
-  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::face_descriptor> type;
-  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::face_descriptor> const_type;
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> Mesh;
+  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::face_descriptor> type;
+  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::face_descriptor> const_type;
 };
 
 //
@@ -238,8 +241,9 @@ struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::face_index_t >
 template <typename K>
 struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::edge_index_t >
 {
-  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::edge_descriptor> type;
-  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::edge_descriptor> const_type;
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> Mesh;
+  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::edge_descriptor> type;
+  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::edge_descriptor> const_type;
 };
 
 //
@@ -249,8 +253,9 @@ struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::edge_index_t >
 template <typename K>
 struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::halfedge_index_t >
 {
-  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfedge_descriptor> type;
-  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::halfedge_descriptor> const_type;
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> Mesh;
+  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::halfedge_descriptor> type;
+  typedef CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::halfedge_descriptor> const_type;
 };
 
 
@@ -258,7 +263,8 @@ template<typename K>
 struct property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::vertex_point_t >
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel::Point_3 P;
-  typedef CGAL::OM_point_pmap<K,P> type;
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> Mesh;
+  typedef CGAL::OM_point_pmap<Mesh, P> type;
   typedef type const_type;
 };
 
@@ -271,7 +277,8 @@ template <typename K>
 typename boost::property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::edge_weight_t>::const_type
 get(boost::edge_weight_t, const OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
 {
-  return CGAL::OM_edge_weight_pmap<K>(sm);
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> Mesh;
+  return CGAL::OM_edge_weight_pmap<Mesh>(sm);
 }
 
 template <typename K>
@@ -279,7 +286,8 @@ typename OpenMesh::PolyMesh_ArrayKernelT<K>::Scalar
 get(boost::edge_weight_t, const OpenMesh::PolyMesh_ArrayKernelT<K>& sm, 
     const typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::edge_descriptor& e)
 {
-  return CGAL::OM_edge_weight_pmap<K>(sm)[e];
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> Mesh;
+  return CGAL::OM_edge_weight_pmap<Mesh>(sm)[e];
 }
 
 
@@ -287,14 +295,16 @@ template <typename K>
 CGAL::OM_index_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor>
 get(const boost::vertex_index_t&, const OpenMesh::PolyMesh_ArrayKernelT<K>&)
 {
-  return CGAL::OM_index_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::vertex_descriptor>();
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> Mesh;
+  return CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::vertex_descriptor>();
 }
 
 template <typename K>
 typename boost::property_map<OpenMesh::PolyMesh_ArrayKernelT<K>, boost::face_index_t>::const_type
 get(const boost::face_index_t&, const OpenMesh::PolyMesh_ArrayKernelT<K>&)
 {
-  return CGAL::OM_index_pmap<K, typename boost::graph_traits<OpenMesh::PolyMesh_ArrayKernelT<K> >::face_descriptor>();
+  typedef OpenMesh::PolyMesh_ArrayKernelT<K> Mesh;
+  return CGAL::OM_index_pmap<K, typename boost::graph_traits<Mesh>::face_descriptor>();
 }
 
 template <typename K>
@@ -312,11 +322,12 @@ get(const boost::halfedge_index_t&, const OpenMesh::PolyMesh_ArrayKernelT<K>&)
 }
 
 template<typename K>
-CGAL::OM_point_pmap<K,typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3>
+CGAL::OM_point_pmap<OpenMesh::PolyMesh_ArrayKernelT<K>,
+                    typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3>
 get(boost::vertex_point_t, const OpenMesh::PolyMesh_ArrayKernelT<K>& g) 
 {
   typedef typename CGAL::Exact_predicates_inexact_constructions_kernel::Point_3 P;
-  return CGAL::OM_point_pmap<K,P>(g);
+  return CGAL::OM_point_pmap<OpenMesh::PolyMesh_ArrayKernelT<K>, P>(g);
 }
 
 // get for intrinsic properties

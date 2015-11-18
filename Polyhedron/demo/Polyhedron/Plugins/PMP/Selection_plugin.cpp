@@ -97,9 +97,11 @@ public:
     connect(ui_widget.Keep_connected_components_button, SIGNAL(clicked()), this, SLOT(on_Keep_connected_components_button_clicked()));
     connect(ui_widget.Dilate_erode_button, SIGNAL(clicked()), this, SLOT(on_Dilate_erode_button_clicked()));
     connect(ui_widget.Create_polyhedron_item_button, SIGNAL(clicked()), this, SLOT(on_Create_polyhedron_item_button_clicked()));
+    connect(ui_widget.Select_sharp_edges_button, SIGNAL(clicked()), this, SLOT(on_Select_sharp_edges_button_clicked()));
+
     QObject* scene = dynamic_cast<QObject*>(scene_interface);
     if(scene) { 
-      connect(scene, SIGNAL(itemAboutToBeDestroyed(Scene_item*)), this, SLOT(item_about_to_be_destroyed(Scene_item*)));
+      connect(scene, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*)));
       connect(scene, SIGNAL(newItem(int)), this, SLOT(new_item_created(int)));
     } 
   }
@@ -310,6 +312,19 @@ public Q_SLOTS:
       print_message("Error: polyhedron item is not created!");
     }
   }
+
+  void on_Select_sharp_edges_button_clicked() {
+    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    if (!selection_item) {
+      print_message("Error: there is no selected polyhedron selection item!");
+      return;
+    }
+
+    double angle = ui_widget.Sharp_angle_spinbox->value();
+    selection_item->select_sharp_edges(angle);
+    scene->itemChanged(selection_item);
+  }
+
   void on_Dilate_erode_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
     if(!selection_item) {
@@ -357,7 +372,7 @@ public Q_SLOTS:
 
     selection_item_map.insert(std::make_pair(poly_item, selection_item));
   }
-  void item_about_to_be_destroyed(Scene_item* scene_item) {
+  void item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item) {
     // if polyhedron item
     Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene_item);
     if(poly_item) {

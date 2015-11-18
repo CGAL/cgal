@@ -1,14 +1,14 @@
 //! \file examples/Arrangement_on_surface_2/io_curve_history.cpp
 // Using the arrangement-with-history I/O operators.
 
-#include "arr_rational_nt.h"
 #include <CGAL/Cartesian.h>
+#include <CGAL/Exact_rational.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_with_history_2.h>
 #include <CGAL/IO/Arr_with_history_iostream.h>
 #include <fstream>
 
-typedef CGAL::Cartesian<Number_type>                  Kernel;
+typedef CGAL::Cartesian<CGAL::Exact_rational>         Kernel;
 typedef CGAL::Arr_segment_traits_2<Kernel>            Traits_2;
 typedef Traits_2::Point_2                             Point_2;
 typedef Traits_2::Curve_2                             Segment_2;

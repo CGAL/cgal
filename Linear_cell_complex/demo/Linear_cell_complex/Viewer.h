@@ -65,9 +65,9 @@ private:
   void compile_shaders();
 
   void compute_elements();
-  void compute_faces(Dart_handle dh);
-  void compute_edges(Dart_handle dh);
-  void compute_vertices(Dart_handle dh, bool empty);
+  void compute_face(Dart_handle dh, LCC::size_type markface);
+  void compute_edge(Dart_handle dh, LCC::size_type markedge);
+  void compute_vertex(Dart_handle dh, LCC::size_type markvertex, bool& empty);
 
 private:
   Scene* scene;

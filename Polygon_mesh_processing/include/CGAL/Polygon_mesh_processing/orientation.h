@@ -56,7 +56,7 @@ namespace internal{
 } // end of namespace internal
 
 /**
- * \ingroup PkgPolygonMeshProcessing
+ * \ingroup PMP_orientation_grp
  * tests whether a closed polygon mesh has a positive orientation.
  * A closed polygon mesh is considered to have a positive orientation if the normal vectors
  * to all its faces point outside the domain bounded by the polygon mesh.
@@ -160,7 +160,7 @@ void reverse_orientation(typename boost::graph_traits<PolygonMesh>::halfedge_des
 }
 
 /**
-* \ingroup reverse_face_orientations_grp
+* \ingroup PMP_orientation_grp
 * reverses for each face the order of the vertices along the face boundary.
 *
 * @tparam PolygonMesh a model of `FaceListGraph`
@@ -187,7 +187,7 @@ void reverse_face_orientations(PolygonMesh& pmesh)
 }
 
 /**
-* \ingroup reverse_face_orientations_grp
+* \ingroup PMP_orientation_grp
 * reverses for each face in `face_range` the order of the vertices along the face boundary.
 * The function does not perform any control and if the orientation change of the faces
 * makes the polygon mesh invalid, the behavior is undefined.

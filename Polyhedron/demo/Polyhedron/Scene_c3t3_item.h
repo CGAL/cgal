@@ -139,6 +139,29 @@ protected:
   Scene_c3t3_item_priv* d;
 
 private:
+  enum Buffer
+  {
+      Facet_vertices =0,
+      Facet_normals,
+      Edges_vertices,
+      Grid_vertices,
+      Sphere_vertices,
+      Sphere_normals,
+      Sphere_colors,
+      Sphere_radius,
+      Sphere_center,
+      Wired_spheres_vertices,
+      NumberOfBuffers
+  };
+  enum Vao
+  {
+      Facets=0,
+      Edges,
+      Grid,
+      Spheres,
+      Wired_spheres,
+      NumberOfVaos
+  };
   qglviewer::ManipulatedFrame* frame;
   CGAL::Three::Scene_interface* last_known_scene;
 

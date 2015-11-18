@@ -20,6 +20,9 @@
 #ifndef CGAL_BOOST_GRAPH_TRAITS_SURFACE_MESH_H
 #define CGAL_BOOST_GRAPH_TRAITS_SURFACE_MESH_H
 
+// include this to avoid a VC15 warning
+#include <CGAL/boost/graph/named_function_params.h>
+
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/properties.hpp>
 
@@ -512,7 +515,7 @@ add_face(InputIterator begin, InputIterator end, CGAL::Surface_mesh<P>& sm)
 }
 
 template<typename P>
-bool is_valid(CGAL::Surface_mesh<P>& sm, bool verbose = false)
+bool is_valid(const CGAL::Surface_mesh<P>& sm, bool verbose = false)
 {
   return sm.is_valid(verbose);
 }

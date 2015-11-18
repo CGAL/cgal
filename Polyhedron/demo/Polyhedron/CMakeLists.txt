@@ -81,6 +81,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
   qt5_wrap_ui( MainWindowUI_files MainWindow.ui)
   qt5_wrap_ui( FileLoaderDialogUI_files FileLoaderDialog.ui )
+  qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
   qt5_wrap_ui( PreferencesUI_FILES   Preferences.ui )
   qt5_wrap_ui( statisticsPolyhedronUI_FILES Polyhedron_demo_statistics_on_polyhedron_dialog.ui)
   qt5_wrap_ui( Show_point_dialogUI_FILES Show_point_dialog.ui )
@@ -260,6 +261,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   ###########
   # PLUGINS #
   ###########
+
   file(GLOB DEMO_PLUGINS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/" "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/*")
   FOREACH(SUB_DIR ${DEMO_PLUGINS})
       add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${SUB_DIR}")

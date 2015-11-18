@@ -60,7 +60,7 @@ namespace internal {
 } //end namespace internal
 
   /*!
-  \ingroup PkgPolygonMeshProcessing
+  \ingroup PMP_meshing_grp
   @brief fairs a region on a polygon mesh.
   The points of the selected vertices are
   relocated to yield an as-smooth-as-possible surface patch,
