@@ -42,7 +42,7 @@ void Scene_implicit_function_item::initialize_buffers(CGAL::Three::Viewer_interf
         program->enableAttributeArray("v_texCoord");
         program->setAttributeBuffer("v_texCoord",GL_FLOAT,0,2);
         buffers[TexMap].release();
-        program->setAttributeValue("normal", QVector3D(0,0,0));
+        program->setAttributeValue("normal", QVector3D(0.f,0.f,0.f));
 
         program->release();
         vaos[Plane]->release();
@@ -409,9 +409,9 @@ Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
     program = getShaderProgram(PROGRAM_WITH_TEXTURE);
     program->bind();
     program->setUniformValue("f_matrix", f_mat);
-    program->setUniformValue("light_amb", QVector4D(1.0,1.0,1.0,1.0));
-    program->setUniformValue("light_diff", QVector4D(0,0,0,1));
-    program->setAttributeValue("color_facets", QVector3D(1.0,1.0,1.0));
+    program->setUniformValue("light_amb", QVector4D(1.f,1.f,1.f,1.f));
+    program->setUniformValue("light_diff", QVector4D(0.f,0.f,0.f,1.f));
+    program->setAttributeValue("color_facets", QVector3D(1.f,1.f,1.f));
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_tex_quad.size()/3));
     vaos[Plane]->release();
     program->release();
@@ -427,7 +427,7 @@ Scene_implicit_function_item::draw_edges(CGAL::Three::Viewer_interface* viewer) 
     attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
-    program->setAttributeValue("colors", QVector3D(0,0,0));
+    program->setAttributeValue("colors", QVector3D(0.f,0.f,0.f));
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_cube.size()/3));
     vaos[BBox]->release();
     vaos[Grid]->bind();
@@ -439,7 +439,7 @@ Scene_implicit_function_item::draw_edges(CGAL::Three::Viewer_interface* viewer) 
         f_mat.data()[i] = double(d_mat[i]);
     }
     program->setUniformValue("f_matrix", f_mat);
-    program->setAttributeValue("colors", QVector3D(0.6,0.6,0.6));
+    program->setAttributeValue("colors", QVector3D(0.6f, 0.6f, 0.6f));
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size()/3));
     vaos[Grid]->release();
     program->release();

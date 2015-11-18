@@ -283,7 +283,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::build_alpha_shape
       if (ashape.classify (it) != Alpha_shape_2::INTERIOR)
         continue;
 
-      for (std::size_t i = 0; i < 3; ++ i)
+      for (int i = 0; i < 3; ++ i)
         {
           if (map_v2i.find (it->vertex (i)) == map_v2i.end ())
             {

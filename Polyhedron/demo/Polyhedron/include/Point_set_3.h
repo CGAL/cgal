@@ -78,7 +78,7 @@ private:
 
   // Assignment operator not implemented and declared private to make
   // sure nobody uses the default one without knowing it
-  Point_set_3& operator= (const Point_set_3& other)
+  Point_set_3& operator= (const Point_set_3&)
   {
     return *this;
   }
