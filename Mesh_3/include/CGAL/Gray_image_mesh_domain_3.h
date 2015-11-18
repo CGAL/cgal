@@ -69,7 +69,7 @@ public:
   Gray_image_mesh_domain_3(const Image& image,
                            const Image_word_type iso_value,
                            const Image_word_type value_outside = 
-                             std::numeric_limits<Image_word_type>::max(),
+                             (std::numeric_limits<Image_word_type>::max)(),
                            const FT& error_bound = FT(1e-3),
                            CGAL::Random* p_rng = NULL)
     : Base(Wrapper(image, 
@@ -83,7 +83,7 @@ public:
   Gray_image_mesh_domain_3(const Image& image,
                            const Transform& transform,
                            const Image_word_type value_outside = 
-                             std::numeric_limits<Image_word_type>::max(),
+                             (std::numeric_limits<Image_word_type>::max)(),
                            const FT& error_bound = FT(1e-3),
                            CGAL::Random* p_rng = NULL)
     : Base(Wrapper(image, transform, value_outside),
