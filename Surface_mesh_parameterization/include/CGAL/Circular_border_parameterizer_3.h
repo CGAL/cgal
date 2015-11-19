@@ -122,7 +122,7 @@ public:
       
       len += CGAL::sqrt(squared_distance(get(vpm, source(hd,mesh)), get(vpm,vd)));
     }
-    
+    std::cerr << "Circular_border_parameterizer_3 done"<<std::endl;
     return Parameterizer_traits_3<ParameterizationMesh_3>::OK;
   }
   

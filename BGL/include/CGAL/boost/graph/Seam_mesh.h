@@ -35,14 +35,32 @@ typedef typename boost::graph_traits<TM>::vertex_descriptor vertex_descriptor;
       : tmhd(other.tmhd), seam(other.seam)
     {}
 
+
     halfedge_descriptor(TM_halfedge_descriptor tmhd, bool seam=false)
       : tmhd(tmhd),seam(seam)
     {}
+
 
     bool operator ==(const halfedge_descriptor& other) const
     {
       return (tmhd == other.tmhd) && (seam == other.seam); 
     }
+
+
+    bool operator !=(const halfedge_descriptor& other) const
+    {
+      return (tmhd != other.tmhd) || (seam != other.seam); 
+    }
+
+
+    bool operator<(const halfedge_descriptor& other) const
+    {
+      if(tmhd < other.tmhd) return true;
+      if(tmhd > other.tmhd) return false;
+      if( (! seam) && other.seam) return true;
+      return false;
+    }
+
 
     operator TM_halfedge_descriptor() const
     {
@@ -75,6 +93,19 @@ public:
     Halfedge_around_target_circulator<TM> hatc(hd.tmhd,tm);
     do {
       --hatc;
+    }while((! is_on_seam(*hatc))&&(! is_border(CGAL::opposite(*hatc,tm),tm)));
+    return halfedge_descriptor(CGAL::opposite(*hatc,tm), ! is_border(CGAL::opposite(*hatc,tm),tm));
+  }
+  
+
+  halfedge_descriptor prev(const halfedge_descriptor& hd) const
+  {
+    if((! hd.seam)&& (! is_border(hd.tmhd,tm))){
+      return halfedge_descriptor(CGAL::prev(hd.tmhd, tm));
+    }
+    Halfedge_around_source_circulator<TM> hatc(hd.tmhd,tm);
+    do {
+      ++hatc;
     }while((! is_on_seam(*hatc))&&(! is_border(CGAL::opposite(*hatc,tm),tm)));
     return halfedge_descriptor(CGAL::opposite(*hatc,tm), ! is_border(CGAL::opposite(*hatc,tm),tm));
   }

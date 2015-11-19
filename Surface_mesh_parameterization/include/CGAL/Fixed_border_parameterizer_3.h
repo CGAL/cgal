@@ -110,10 +110,7 @@ public:
 private:
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
-  typedef typename boost::graph_traits<TriangleMesh>::face_iterator face_iterator;
-  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
  
   typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
   typedef CGAL::Vertex_around_face_circulator<TriangleMesh> vertex_around_face_circulator;
@@ -462,6 +459,7 @@ typename Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::Er
 Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
 check_parameterize_preconditions(TriangleMesh& amesh)
 {
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
 
     const TriangleMesh& mesh = amesh.get_adapted_mesh();
 
@@ -588,6 +586,8 @@ is_one_to_one_mapping(const TriangleMesh& mesh,
                       const Vector& ,
                       const Vector& )
 {
+  typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  
     Vector_3 first_triangle_normal = NULL_VECTOR; // initialize to avoid warning
 
     BOOST_FOREACH(face_descriptor f, faces(mesh))

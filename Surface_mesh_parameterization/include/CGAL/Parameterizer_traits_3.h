@@ -178,6 +178,7 @@ protected:
                      const Point_3& Q,
                      const Point_3& R)
     {
+      //      std::cerr << P <<  "   "  << Q  << "   " << R << std::endl;
         Vector_3 u = P - Q;
         Vector_3 v = R - Q;
         // (u . v)/((u x v).len)
