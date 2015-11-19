@@ -1274,8 +1274,9 @@ namespace internal {
     {
       std::cout << "Test self intersections...";
       std::vector<std::pair<face_descriptor, face_descriptor> > facets;
-      PMP::does_self_intersect(
+      PMP::self_intersections(
         mesh_,
+        std::back_inserter(facets),
         PMP::parameters::vertex_point_map(vpmap_));
       CGAL_assertion(facets.empty());
       std::cout << "done." << std::endl;
@@ -1285,7 +1286,7 @@ namespace internal {
     {
       std::cout << "Test self intersections...";
       std::vector<std::pair<face_descriptor, face_descriptor> > facets;
-      PMP::does_self_intersect(
+      PMP::self_intersections(
         faces_around_target(halfedge(v, mesh_), mesh_),
         mesh_,
         std::back_inserter(facets),
