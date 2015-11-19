@@ -23,6 +23,7 @@
 #include <CGAL/Three/Scene_item.h>
 #include <Scene_polyhedron_item.h>
 #include <Scene_polygon_soup_item.h>
+#include <CGAL/IO/File_binary_mesh_3.h>
 
 struct Scene_c3t3_item_priv;
 
@@ -37,6 +38,17 @@ public:
   Scene_c3t3_item();
   Scene_c3t3_item(const C3t3& c3t3);
   ~Scene_c3t3_item();
+
+  bool save_binary(std::ostream& os) const
+  {
+    return CGAL::Mesh_3::save_binary_file(os, c3t3());
+  }
+  bool save_ascii(std::ostream& os) const
+  {
+      os << "ascii CGAL c3t3 " << CGAL::Get_io_signature<C3t3>()() << "\n";
+      CGAL::set_ascii_mode(os);
+      return !!(os << c3t3());
+  }
 
   void invalidate_buffers()
   {
@@ -81,6 +93,10 @@ public:
     return 0;
   }
 
+  bool load_binary(std::istream& is);
+
+  bool load_ascii(std::istream& is);
+
   // data item
   const Scene_item* data_item() const;
   void set_data_item(const Scene_item* data_item);
@@ -96,6 +112,7 @@ public:
   void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
   void draw_points(CGAL::Three::Viewer_interface * viewer) const;
 private:
+  void reset_cut_plane();
   void draw_triangle(const Kernel::Point_3& pa,
     const Kernel::Point_3& pb,
     const Kernel::Point_3& pc, bool /* is_cut */) const;

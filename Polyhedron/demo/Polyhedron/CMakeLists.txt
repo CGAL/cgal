@@ -108,7 +108,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     NO_DEFAULT_PATH
     DOC "Path to CGAL/Three/Viewer_interface.h")
   hide_variable(CGAL_THREE_VIEWER_INTERFACE_H_PATH)
-
   if(CGAL_THREE_VIEWER_INTERFACE_H_PATH)
     qt5_generate_moc( "${CGAL_THREE_VIEWER_INTERFACE_H_PATH}/CGAL/Three/Viewer_interface.h"
       "${CMAKE_CURRENT_BINARY_DIR}/Viewer_interface_moc.cpp" )
@@ -175,7 +174,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   endmacro(add_item)
 
   add_item(scene_c2t3_item Scene_c2t3_item.cpp)# Scene_c2t3_item.moc)
-
+  add_item(scene_c3t3_item Scene_c3t3_item.cpp)
+  target_link_libraries(scene_c3t3_item scene_polyhedron_item scene_polygon_soup_item)
   add_item(scene_polyhedron_item Scene_polyhedron_item.cpp ${statisticsPolyhedronUI_FILES})# Scene_polyhedron_item.moc)
   add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_polyhedron_transform_item.cpp )#Scene_polyhedron_transform_item.moc)
 
@@ -216,8 +216,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries( scene_points_with_normal_item gl_splat)
   target_link_libraries( demo_framework gl_splat)
   
-  add_item(scene_c3t3_item Scene_c3t3_item.cpp)
-  target_link_libraries(scene_c3t3_item scene_polyhedron_item scene_polygon_soup_item)
+
 
   foreach( lib 
       demo_framework
@@ -261,6 +260,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   ###########
   # PLUGINS #
   ###########
+
 
   file(GLOB DEMO_PLUGINS RELATIVE "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/" "${CMAKE_CURRENT_SOURCE_DIR}/Plugins/*")
   FOREACH(SUB_DIR ${DEMO_PLUGINS})
