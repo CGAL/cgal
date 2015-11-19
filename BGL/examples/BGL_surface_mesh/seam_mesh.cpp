@@ -85,6 +85,8 @@ int main(int argc, char* argv[])
      std::cout << source(hd.tmhd,sm) << std::endl;
   }
   
+  boost::property_map<Seam_mesh, CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point,ssm);
+  std::cout << get(vpm, source(hd,ssm)) << std::endl;
   return 0;
 }
 

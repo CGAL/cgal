@@ -67,12 +67,15 @@ parameterize(ParameterizationMesh_3& mesh)  ///< 3D mesh, model of Parameterizat
 /// \pre The mesh border must be mapped onto a convex polygon
 ///   (for fixed border parameterizations).
 ///
-template <class ParameterizationMesh_3, class ParameterizerTraits_3>
+  template <class ParameterizationMesh_3, class ParameterizerTraits_3, class HD, class Huvmap, typename HalfedgeAsVertexIndexMap>
 typename Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
 parameterize(ParameterizationMesh_3& mesh,          ///< 3D mesh, model of ParameterizationMesh_3
-             ParameterizerTraits_3 parameterizer)   ///< Parameterization method for `mesh`
+             ParameterizerTraits_3 parameterizer,    ///< Parameterization method for `mesh`
+             HD bhd,
+             Huvmap huvm,
+             HalfedgeAsVertexIndexMap himap)
 {
-    return parameterizer.parameterize(mesh);
+  return parameterizer.parameterize(mesh, bhd, huvm, himap);
 }
 
 

@@ -77,19 +77,29 @@ public:
     ERROR_WRONG_PARAMETER           ///< A method received an unexpected parameter
     };
 
-    /// Export ParameterizationMesh_3 template parameter
-    typedef ParameterizationMesh_3          Adaptor;
 
+    /// Export ParameterizationMesh_3 template parameter
+  ///    typedef ParameterizationMesh_3          Adaptor;
+
+  typedef typename boost::property_map<ParameterizationMesh_3, CGAL::vertex_point_t>::type VPM;
+  typedef typename boost::property_traits<VPM>::value_type Point_3;
+  typedef typename Kernel_traits<Point_3>::Kernel Kernel;
+
+  // Mesh_Adaptor_3 subtypes:
+  typedef typename Kernel::Point_2       Point_2;
+  typedef typename Kernel::Vector_3      Vector_3;
+  typedef typename Kernel::FT            NT;
+  
 // Protected types
 protected:
-
+#if 0
     // Mesh_Adaptor_3 subtypes:
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Point_2       Point_2;
     typedef typename Adaptor::Point_3       Point_3;
     typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Vector_3      Vector_3;
-#if 0
+
     typedef typename Adaptor::Facet         Facet;
     typedef typename Adaptor::Facet_handle  Facet_handle;
     typedef typename Adaptor::Facet_const_handle
@@ -132,7 +142,7 @@ public:
     ///
     /// \pre `mesh` must be a surface with one connected component.
     /// \pre `mesh` must be a triangular mesh.
-    virtual Error_code  parameterize (Adaptor& mesh) = 0;
+    //virtual Error_code  parameterize (Adaptor& mesh) = 0;
 
     /// Get message corresponding to an error code
     /// \param error_code The code returned by `parameterize()`

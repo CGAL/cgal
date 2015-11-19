@@ -58,6 +58,7 @@ if ( CGAL_FOUND )
     # Executables that require Eigen 3.1
     include( ${EIGEN3_USE_FILE} ) 
 
+  create_single_source_cgal_program( "debug.cpp" )
   create_single_source_cgal_program( "Authalic_parameterization.cpp" )
   create_single_source_cgal_program( "Mesh_cutting_parameterization.cpp" )
   create_single_source_cgal_program( "Simple_parameterization.cpp" )

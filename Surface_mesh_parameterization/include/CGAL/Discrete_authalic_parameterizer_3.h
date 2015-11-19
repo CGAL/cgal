@@ -26,6 +26,7 @@
 
 
 #include <CGAL/Fixed_border_parameterizer_3.h>
+#include <CGAL/Circular_border_parameterizer_3.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Eigen_solver_traits.h>
 
@@ -88,7 +89,7 @@ public:
     // We have to repeat the types exported by superclass
     /// @cond SKIP_IN_MANUAL
     typedef typename Base::Error_code       Error_code;
-    typedef ParameterizationMesh_3          Adaptor;
+    typedef ParameterizationMesh_3          TriangleMesh;
     typedef BorderParameterizer_3           Border_param;
     typedef SparseLinearAlgebraTraits_d     Sparse_LA;
     /// @endcond
@@ -96,13 +97,12 @@ public:
 // Private types
 private:
 
-  typedef typename Adaptor::Polyhedron TriangleMesh;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef CGAL::Halfedge_around_target_circulator<TriangleMesh> halfedge_around_target_circulator;
     // Mesh_Adaptor_3 subtypes:
-    typedef typename Adaptor::NT            NT;
-    typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Vector_3      Vector_3;
+  typedef typename Parameterizer_traits_3<TriangleMesh>::NT            NT;
+    typedef typename Parameterizer_traits_3<TriangleMesh>::Point_3       Point_3;
+    typedef typename Parameterizer_traits_3<TriangleMesh>::Vector_3      Vector_3;
 
     // SparseLinearAlgebraTraits_d subtypes:
     typedef typename Sparse_LA::Vector      Vector;
@@ -117,7 +117,7 @@ public:
                                         ///< Object that maps the surface's border to 2D space.
                                       Sparse_LA sparse_la = Sparse_LA())
                                         ///< Traits object to access a sparse linear system.
-    :   Fixed_border_parameterizer_3<Adaptor,
+    :   Fixed_border_parameterizer_3<TriangleMesh,
                                      Border_param,
                                      Sparse_LA>(border_param, sparse_la)
     {}
@@ -127,13 +127,12 @@ public:
 // Protected operations
 protected:
     /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
-    virtual NT compute_w_ij(const Adaptor& mesh,
+    virtual NT compute_w_ij(const TriangleMesh& tmesh,
                             vertex_descriptor main_vertex_v_i,
                             halfedge_around_target_circulator neighbor_vertex_v_j)
     {
-  const TriangleMesh& tmesh = mesh.get_adapted_mesh();
-        typedef typename boost::property_map<typename Adaptor::Polyhedron, boost::vertex_point_t>::const_type PPmap;
-        typedef typename boost::property_traits<PPmap>::reference Point_3;
+
+      typedef typename Parameterizer_traits_3<TriangleMesh>::VPM PPmap;
  
         PPmap ppmap = get(vertex_point, tmesh);
 

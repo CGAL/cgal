@@ -32,10 +32,10 @@
 
 #include <CGAL/Parameterizer_traits_3.h>
 #include <CGAL/Circular_border_parameterizer_3.h>
-#include <CGAL/Parameterization_mesh_feature_extractor.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <boost/foreach.hpp>
 #include <iostream>
+#include <set>
 
 /// \file Fixed_border_parameterizer_3.h
 
@@ -91,16 +91,14 @@ class Fixed_border_parameterizer_3
 {
 // Private types
 private:
-    // Superclass
-    typedef Parameterizer_traits_3<ParameterizationMesh_3>
-                                            Base;
+    typedef Parameterizer_traits_3<ParameterizationMesh_3> Base;
 
 // Public types
 public:
     // We have to repeat the types exported by superclass
     /// @cond SKIP_IN_MANUAL
     typedef typename Base::Error_code       Error_code;
-    typedef ParameterizationMesh_3          Adaptor;
+    typedef ParameterizationMesh_3          TriangleMesh;
     /// @endcond
 
     /// Export BorderParameterizer_3 template parameter.
@@ -111,9 +109,9 @@ public:
 // Private types
 private:
 
-  typedef typename Adaptor::Polyhedron TriangleMesh;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::face_iterator face_iterator;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_iterator vertex_iterator;
  
@@ -122,10 +120,10 @@ private:
   typedef CGAL::Halfedge_around_target_circulator<TriangleMesh> halfedge_around_target_circulator;
 
     // Mesh_Adaptor_3 subtypes:
-    typedef typename Adaptor::NT            NT;
-    typedef typename Adaptor::Point_2       Point_2;
-    typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Vector_3      Vector_3;
+    typedef typename Base::NT            NT;
+    typedef typename Base::Point_2       Point_2;
+    typedef typename Base::Point_3       Point_3;
+    typedef typename Base::Vector_3      Vector_3;
 
 
     // SparseLinearAlgebraTraits_d subtypes:
@@ -157,7 +155,12 @@ public:
     /// \pre `mesh` must be a surface with one connected component.
     /// \pre `mesh` must be a triangular mesh.
     /// \pre The mesh border must be mapped onto a convex polygon.
-    virtual Error_code  parameterize(Adaptor& mesh);
+
+  template <typename HalfedgeUVmap, typename HalfedgeAsVertexIndexMap>
+   Error_code  parameterize(TriangleMesh& mesh,
+                            halfedge_descriptor,
+                            HalfedgeUVmap,
+                            HalfedgeAsVertexIndexMap hvimap);
 
 // Protected operations
 protected:
@@ -165,7 +168,7 @@ protected:
     /// - `mesh` must be a surface with one connected component.
     /// - `mesh` must be a triangular mesh.
     /// - The mesh border must be mapped onto a convex polygon.
-    virtual Error_code  check_parameterize_preconditions(Adaptor& mesh);
+    /// virtual Error_code  check_parameterize_preconditions(TriangleMesh& mesh);
 
     /// Initialize A, Bu and Bv after border parameterization.
     /// Fill the border vertices' lines in both linear systems:
@@ -174,15 +177,37 @@ protected:
     /// \pre Vertices must be indexed.
     /// \pre A, Bu and Bv must be allocated.
     /// \pre Border vertices must be parameterized.
+  template <typename HalfedgeUVmap, typename HalfedgeAsVertexIndexMap >
     void  initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
-                                              const Adaptor& mesh);
+                                              const TriangleMesh& tmesh,
+                                              halfedge_descriptor bhd,
+                                              HalfedgeUVmap uvmap,
+                                              HalfedgeAsVertexIndexMap hvimap)
+{
+  // AF: loop over border halfedges
+  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,tmesh)){
+      // AF not written for halfedge      CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_parameterized(target(hd,tmesh)));
+
+        // AF: get the halfedge-as-vertex index
+        // Get vertex index in sparse linear system
+    int index = get(hvimap,hd);
+
+        // Write a diagonal coefficient of A
+        A.set_coef(index, index, 1, true /*new*/);
+        //std::cerr << index << "  " << index << " 1" << std::endl;
+        // get the halfedge uv
+        // Write constant in Bu and Bv
+        Point_2 uv = get(uvmap, opposite(next(hd,tmesh),tmesh));
+        Bu[index] = uv.x();
+        Bv[index] = uv.y();
+    }
+}
 
     /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
     /// Implementation note: Subclasses must at least implement compute_w_ij().
-    virtual NT compute_w_ij(const Adaptor& mesh,
+    virtual NT compute_w_ij(const TriangleMesh& mesh,
                             vertex_descriptor main_vertex_v_i,
-                            //                        vertex_around_target_circulator neighbor_vertex_v_j)
-      halfedge_around_target_circulator neighbor_vertex_v_j)
+                            halfedge_around_target_circulator neighbor_vertex_v_j)
     = 0;
 
     /// Compute the line i of matrix A for i inner vertex:
@@ -192,29 +217,70 @@ protected:
     /// \pre Vertices must be indexed.
     /// \pre Vertex i musn't be already parameterized.
     /// \pre Line i of A must contain only zeros.
-    virtual Error_code setup_inner_vertex_relations(Matrix& A,
-                                                    Vector& Bu,
-                                                    Vector& Bv,
-                                                    const Adaptor& mesh,
-                                                    vertex_descriptor vertex);
+    // TODO: check if this must be virtual 
+    // virtual 
+  template <typename HalfedgeAsVertexIndexMap>
+    Error_code setup_inner_vertex_relations(Matrix& A,
+                                            Vector& Bu,
+                                            Vector& Bv,
+                                            const TriangleMesh& mesh,
+                                            vertex_descriptor vertex,
+                                            HalfedgeAsVertexIndexMap hvimap)
+{
+  // CGAL_surface_mesh_parameterization_assertion( ! amesh.is_vertex_on_main_border(vertex) );
+  // CGAL_surface_mesh_parameterization_assertion( ! amesh.is_vertex_parameterized(vertex) );
 
-    /// Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex.
-    void  set_mesh_uv_from_system (Adaptor& mesh,
-                                   const Vector& Xu, const Vector& Xv);
+  int i = get(hvimap,halfedge(vertex,mesh));
 
+    // circulate over vertices around 'vertex' to compute w_ii and w_ijs
+    // use halfedge_around_target to get the right "vertex" if it is on a seam
+    NT w_ii = 0;
+    int vertexIndex = 0;
+
+    halfedge_around_target_circulator v_j(halfedge(vertex,mesh), mesh),
+      end = v_j;
+    CGAL_For_all(v_j, end)
+    {
+        // Call to virtual method to do the actual coefficient computation
+      NT w_ij = -1.0 * compute_w_ij(mesh, vertex, v_j);
+
+        // w_ii = - sum of w_ijs
+        w_ii -= w_ij;
+
+        // Get j index
+        int j = get(hvimap, opposite(*v_j,mesh));
+
+        // Set w_ij in matrix
+        A.set_coef(i,j, w_ij, true /*new*/);
+
+        vertexIndex++;
+    }
+    if (vertexIndex < 2)
+        return Base::ERROR_NON_TRIANGULAR_MESH;
+
+    // Set w_ii in matrix
+    A.set_coef(i,i, w_ii, true /*new*/);
+
+    return Base::OK;
+}
+
+
+
+#if 0
     /// Check parameterize() postconditions:
     /// - 3D -> 2D mapping is one-to-one.
-    virtual Error_code check_parameterize_postconditions(const Adaptor& mesh,
+    virtual Error_code check_parameterize_postconditions(const TriangleMesh& mesh,
                                                          const Matrix& A,
                                                          const Vector& Bu,
                                                          const Vector& Bv);
 
     /// Check if 3D -> 2D mapping is one-to-one.
     /// The default implementation checks each normal.
-    virtual bool  is_one_to_one_mapping(const Adaptor& mesh,
+    virtual bool  is_one_to_one_mapping(const TriangleMesh& mesh,
                                         const Matrix& A,
                                         const Vector& Bu,
                                         const Vector& Bv);
+#endif 
 
 // Protected accessors
 protected:
@@ -247,13 +313,12 @@ private:
 // - `mesh` must be a surface with one connected component.
 // - `mesh` must be a triangular mesh.
 // - The mesh border must be mapped onto a convex polygon.
-template<class Adaptor, class Border_param, class Sparse_LA>
-inline
-typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
-Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-parameterize(Adaptor& amesh)
+template <class TriangleMesh, class Border_param, class Sparse_LA> 
+template <typename HalfedgeUVmap, typename HalfedgeAsVertexIndexMap>
+typename Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::Error_code
+Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
+parameterize(TriangleMesh& mesh, halfedge_descriptor bhd, HalfedgeUVmap uvmap, HalfedgeAsVertexIndexMap hvimap)
 {
-  const TriangleMesh& mesh = amesh.get_adapted_mesh();
 
 #ifdef DEBUG_TRACE
     // Create timer for traces
@@ -271,18 +336,19 @@ parameterize(Adaptor& amesh)
         return status;
 
     // Count vertices
-    int nbVertices = amesh.count_mesh_vertices();
+    int nbVertices = num_vertices(mesh);
 
+    
     // AF: mark all halfedges as not parameterized
     // Mark all vertices as *not* "parameterized"
-    BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
-    {
-        amesh.set_vertex_parameterized(v, false);
-    }
-
+    // BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+    // {
+    //     amesh.set_vertex_parameterized(v, false);
+    // }
+    
     // Compute (u,v) for border vertices
     // and mark them as "parameterized"
-    status = get_border_parameterizer().parameterize_border(amesh);
+    status = get_border_parameterizer().parameterize_border(mesh,bhd,uvmap);
 #ifdef DEBUG_TRACE
     std::cerr << "  border vertices parameterization: " << timer.time() << " seconds." << std::endl;
     timer.reset();
@@ -301,23 +367,30 @@ parameterize(Adaptor& amesh)
     // @todo Fixed_border_parameterizer_3 should remove border vertices
     // from the linear systems in order to have a symmetric positive definite
     // matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
-    initialize_system_from_mesh_border (A, Bu, Bv, amesh);
+    initialize_system_from_mesh_border (A, Bu, Bv, mesh, bhd, uvmap, hvimap);
 
     // AF: no change, as this are only concerns inner vertices
     // Fill the matrix for the inner vertices v_i: compute A's coefficient
     // w_ij for each neighbor j; then w_ii = - sum of w_ijs
+    std::set<vertex_descriptor> main_border;
+
+    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(bhd,mesh)){
+      main_border.insert(v);
+    }
+
     BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
     {
       //        CGAL_surface_mesh_parameterization_assertion(amesh.is_vertex_on_main_border(v)
       // == amesh.is_vertex_parameterized(v));
 
         // inner vertices only
-        if( ! amesh.is_vertex_on_main_border(v) )
+      if( main_border.find(v) == main_border.end() )
         {
             // Compute the line i of matrix A for i inner vertex
             status = setup_inner_vertex_relations(A, Bu, Bv,
-                                                  amesh,
-                                                  v);
+                                                  mesh,
+                                                  v,
+                                                  hvimap);
             if (status != Base::OK)
                 return status;
         }
@@ -349,7 +422,18 @@ parameterize(Adaptor& amesh)
     CGAL_surface_mesh_parameterization_assertion(Dv == 1.0);
 
     // Copy Xu and Xv coordinates into the (u,v) pair of each vertex
-    set_mesh_uv_from_system (amesh, Xu, Xv);
+
+    BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
+    {
+      // inner vertices only
+      if( main_border.find(v) == main_border.end() )
+        {
+          BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(v,mesh)){
+            int index = get(hvimap,hd);
+            put(uvmap,hd,Point_2(Xu[index],Xv[index]));
+          }
+        }
+    }
 #ifdef DEBUG_TRACE
     std::cerr << "  copy computed UVs to mesh :"
               << timer.time() << " seconds." << std::endl;
@@ -367,16 +451,16 @@ parameterize(Adaptor& amesh)
     return status;
 }
 
-
+#if 0
 // Check parameterize() preconditions:
 // - `mesh` must be a surface with one connected component.
 // - `mesh` must be a triangular mesh.
 // - The mesh border must be mapped onto a convex polygon.
-template<class Adaptor, class Border_param, class Sparse_LA>
+template<class TriangleMesh, class Border_param, class Sparse_LA>
 inline
-typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
-Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-check_parameterize_preconditions(Adaptor& amesh)
+typename Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::Error_code
+Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
+check_parameterize_preconditions(TriangleMesh& amesh)
 {
 
     const TriangleMesh& mesh = amesh.get_adapted_mesh();
@@ -384,9 +468,9 @@ check_parameterize_preconditions(Adaptor& amesh)
     Error_code status = Base::OK;	    // returned value
 
     // Helper class to compute genus or count borders, vertices, ...
-    typedef Parameterization_mesh_feature_extractor<Adaptor>
-                                            Mesh_feature_extractor;
-    Mesh_feature_extractor feature_extractor(amesh);
+    //typedef Parameterization_mesh_feature_extractor<TriangleMesh>
+    //                                        Mesh_feature_extractor;
+    //Mesh_feature_extractor feature_extractor(amesh);
 
     // Check that mesh is not empty
     vertex_iterator b, e;
@@ -423,7 +507,9 @@ check_parameterize_preconditions(Adaptor& amesh)
 
     return status;
 }
+#endif
 
+#if 0
 // Initialize A, Bu and Bv after border parameterization.
 // Fill the border vertices' lines in both linear systems: "u = constant" and "v = constant".
 //
@@ -431,34 +517,17 @@ check_parameterize_preconditions(Adaptor& amesh)
 // - Vertices must be indexed.
 // - A, Bu and Bv must be allocated.
 // - Border vertices must be parameterized.
-template<class Adaptor, class Border_param, class Sparse_LA>
+template<class TriangleMesh, class Border_param, class Sparse_LA>
 inline
-void Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
+template<class HalfedgeUVmap>
+void Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
 initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
-                                    const Adaptor& mesh)
-{
-  const TriangleMesh& tmesh = mesh.get_adapted_mesh();
-   
-  // AF: loop over border halfedges
-  BOOST_FOREACH(halfedge_descriptor hd, mesh.main_border())
-    {
-      // AF not written for halfedge      CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_parameterized(target(hd,tmesh)));
+                                    const TriangleMesh& tmesh,
+                                    halfedge_descriptor bhd,
+                                    HalfedgeUVmap uvmap)
+#endif
 
-        // AF: get the halfedge-as-vertex index
-        // Get vertex index in sparse linear system
-        int index = mesh.get_vertex_index(hd);
-
-        // Write a diagonal coefficient of A
-        A.set_coef(index, index, 1, true /*new*/);
-
-        // get the halfedge uv
-        // Write constant in Bu and Bv
-        Point_2 uv = mesh.get_vertex_uv(hd);
-        Bu[index] = uv.x();
-        Bv[index] = uv.y();
-    }
-}
-
+#if 0
 // Compute the line i of matrix A for i inner vertex:
 // - call compute_w_ij() to compute the A coefficient w_ij for each neighbor v_j.
 // - compute w_ii = - sum of w_ijs.
@@ -467,87 +536,32 @@ initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
 // - Vertices must be indexed.
 // - Vertex i must not be already parameterized.
 // - Line i of A must contain only zeros.
-template<class Adaptor, class Border_param, class Sparse_LA>
+template<class TriangleMesh, class Border_param, class Sparse_LA>
 inline
-typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
-Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
+template <typename HalfedgeAsVertexIndexMap>
+typename Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::Error_code
+Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
 setup_inner_vertex_relations(Matrix& A,
                              Vector& ,
                              Vector& ,
-                             const Adaptor& amesh,
-                             vertex_descriptor vertex)
-{
-    const TriangleMesh& mesh = amesh.get_adapted_mesh();
-    CGAL_surface_mesh_parameterization_assertion( ! amesh.is_vertex_on_main_border(vertex) );
-    CGAL_surface_mesh_parameterization_assertion( ! amesh.is_vertex_parameterized(vertex) );
-
-    int i = amesh.get_vertex_index(vertex);
-
-    // circulate over vertices around 'vertex' to compute w_ii and w_ijs
-    // use halfedge_around_target to get the right "vertex" if it is on a seam
-    NT w_ii = 0;
-    int vertexIndex = 0;
-
-    halfedge_around_target_circulator v_j(halfedge(vertex,mesh), mesh),
-      end = v_j;
-    CGAL_For_all(v_j, end)
-    {
-        // Call to virtual method to do the actual coefficient computation
-      NT w_ij = -1.0 * compute_w_ij(amesh, vertex, v_j);
-
-        // w_ii = - sum of w_ijs
-        w_ii -= w_ij;
-
-        // Get j index
-        int j= amesh.get_vertex_index(opposite(*v_j,mesh));
-
-        // Set w_ij in matrix
-        A.set_coef(i,j, w_ij, true /*new*/);
-
-        vertexIndex++;
-    }
-    if (vertexIndex < 2)
-        return Base::ERROR_NON_TRIANGULAR_MESH;
-
-    // Set w_ii in matrix
-    A.set_coef(i,i, w_ii, true /*new*/);
-
-    return Base::OK;
-}
+                             const TriangleMesh& mesh,
+                             vertex_descriptor vertex,
+                             HalfedgeAsVertexIndexMap hvimap)
 
 // Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex.
 // AF: this only concerns vertices NOT on the border
-template<class Adaptor, class Border_param, class Sparse_LA>
-inline
-void Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-set_mesh_uv_from_system(Adaptor& amesh,
-                        const Vector& Xu, const Vector& Xv)
-{
-    const TriangleMesh& mesh = amesh.get_adapted_mesh();
-      
-    // AF: do that for halfedges
-    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
-    {
-        int index = amesh.get_vertex_index(vd);
+template<class TriangleMesh, class Border_param, class Sparse_LA>
+#endif
 
-        if(index != -1){
-          NT u = Xu[index];
-          NT v = Xv[index];
-          
-          // Fill vertex (u,v) and mark it as "parameterized"
-          amesh.set_vertex_uv(vd, Point_2(u,v));
-          amesh.set_vertex_parameterized(vd, true);
-        }
-    }
-}
 
+#if 0
 // Check parameterize() postconditions:
 // - 3D -> 2D mapping is one-to-one.
-template<class Adaptor, class Border_param, class Sparse_LA>
+template<class TriangleMesh, class Border_param, class Sparse_LA>
 inline
-typename Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::Error_code
-Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-check_parameterize_postconditions(const Adaptor& mesh,
+typename Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::Error_code
+Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
+check_parameterize_postconditions(const TriangleMesh& mesh,
                                   const Matrix& A,
                                   const Vector& Bu,
                                   const Vector& Bv)
@@ -566,16 +580,14 @@ check_parameterize_postconditions(const Adaptor& mesh,
 
 // Check if 3D -> 2D mapping is one-to-one.
 // The default implementation checks each normal.
-template<class Adaptor, class Border_param, class Sparse_LA>
+template<class TriangleMesh, class Border_param, class Sparse_LA>
 inline
-bool Fixed_border_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
-is_one_to_one_mapping(const Adaptor& amesh,
+bool Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
+is_one_to_one_mapping(const TriangleMesh& mesh,
                       const Matrix& ,
                       const Vector& ,
                       const Vector& )
 {
-    const TriangleMesh& mesh = amesh.get_adapted_mesh();
-
     Vector_3 first_triangle_normal = NULL_VECTOR; // initialize to avoid warning
 
     BOOST_FOREACH(face_descriptor f, faces(mesh))
@@ -625,7 +637,7 @@ is_one_to_one_mapping(const Adaptor& amesh,
 
     return true;            // OK if we reach this point
 }
-
+#endif 
 
 } //namespace CGAL
 

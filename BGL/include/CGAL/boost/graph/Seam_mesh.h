@@ -18,6 +18,11 @@ template <class TM>
 public:
 typedef typename boost::graph_traits<TM>::vertex_descriptor vertex_descriptor;
 
+  const TM& mesh()const
+  {
+    return tm;
+  }
+
   struct halfedge_descriptor {
     TM_halfedge_descriptor tmhd;
     bool seam;

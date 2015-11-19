@@ -25,7 +25,7 @@
 
 #include <boost/iterator/transform_iterator.hpp>
 
-//#include <CGAL/boost/graph/properties_Seam_mesh.h>
+#include <CGAL/boost/graph/properties_Seam_mesh.h>
 #include <CGAL/boost/graph/iterator.h>
 
 #include <CGAL/boost/graph/Seam_mesh.h>
