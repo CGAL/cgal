@@ -356,6 +356,8 @@ public Q_SLOTS:
         scene->erase(item_id);
         return;
       }
+      selection_item->invalidate_buffers();
+      scene->itemChanged(selection_item);
     }
     // now set default params both for selection items coming from selection_io, or on_Create_selection_item_button_clicked
     Active_handle::Type aht = static_cast<Active_handle::Type>(ui_widget.Selection_type_combo_box->currentIndex());
