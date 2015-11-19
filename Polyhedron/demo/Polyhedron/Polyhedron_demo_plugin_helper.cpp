@@ -8,8 +8,6 @@
 #include <QSet>
 #include <QDockWidget>
 
-#include "MainWindow.h"
-
 using namespace CGAL::Three;
 QAction*
 Polyhedron_demo_plugin_helper::
