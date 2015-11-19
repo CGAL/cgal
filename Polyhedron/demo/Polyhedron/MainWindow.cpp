@@ -492,20 +492,36 @@ void MainWindow::loadPlugins()
   QList<QDir> plugins_directories;
   QString dirPath = qApp->applicationDirPath();
   plugins_directories<<dirPath;
-  Q_FOREACH( QString name, QDir(dirPath).entryList())
+
+  QDir msvc_dir(dirPath);
+  QString build_dir_name = msvc_dir.dirName();//Debug or Release for msvc
+  msvc_dir.cdUp();
+
+  QFileInfoList filist = QDir(dirPath).entryInfoList();
+  filist << msvc_dir.entryInfoList();
+
+  Q_FOREACH(QFileInfo fileinfo, filist)
   {
       //checks if the path leads to a directory
-      if(name.contains("Plugins"))
+      if(fileinfo.baseName().contains("Plugins"))
       {
-          QString path = dirPath;
-          path.append("/").append(name);
-              Q_FOREACH(QString sub_path, QDir(path).entryList())
-              {
-                  QString temp = path;
-                  temp.append("/").append(sub_path);
-                if(QDir(temp).exists())
-                  plugins_directories<<QDir(temp);
-                }
+        QString plugins_dir = fileinfo.absolutePath();
+        plugins_dir.append("/").append(fileinfo.baseName());
+
+        Q_FOREACH(QString package_dir,
+                  QDir(plugins_dir).entryList(QDir::Dirs))
+        {
+          QString package_dir_path(plugins_dir);
+          package_dir_path.append("/").append(package_dir);
+
+          QString libdir_path(package_dir_path);
+          libdir_path.append("/").append(build_dir_name);
+
+          if (QDir(libdir_path).exists())
+            plugins_directories << QDir(libdir_path);
+          else
+            plugins_directories << QDir(package_dir);
+        }
       }
   }
   QString env_path = qgetenv("POLYHEDRON_DEMO_PLUGINS_PATH");
