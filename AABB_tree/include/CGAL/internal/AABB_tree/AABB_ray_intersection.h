@@ -100,6 +100,7 @@ public:
             }
           }
         }
+        break;
       }
       case 3: // Left child leaf, right child inner node
       {
