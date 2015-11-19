@@ -148,6 +148,11 @@ struct AABB_traits_base_2<GeomTraits,true>{
 
       if(t_far > t_near && t_far > 0) {
         return t_near;
+      if(t_far > t_near && t_far > FT(0.)) {
+        if(t_near < FT(0.))
+          return FT(0.);
+        else
+          return t_near;
       } else {
         return boost::none;
       }
