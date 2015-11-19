@@ -1,6 +1,7 @@
 #ifndef MAINWINDOW_H
 #define MAINWINDOW_H
 #include "config.h"
+#include "MainWindow_config.h"
 
 #include <QtOpenGL/qgl.h>
 #include <CGAL/Qt/DemosMainWindow.h>
@@ -41,7 +42,7 @@ namespace Ui {
  * It contains all the widgets, the menus and the elements of interface
  * of the application.*/
 
-class MainWindow : 
+class MAINWINDOW_EXPORT MainWindow : 
   public CGAL::Qt::DemosMainWindow,
   public Messages_interface
 {
