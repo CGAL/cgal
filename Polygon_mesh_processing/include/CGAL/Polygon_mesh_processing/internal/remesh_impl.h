@@ -834,7 +834,7 @@ namespace internal {
     void dump(const char* filename) const
     {
       std::ofstream out(filename);
-//      out << mesh_;
+      out << mesh_;
       out.close();
     }
 
