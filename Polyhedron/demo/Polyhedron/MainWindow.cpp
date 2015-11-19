@@ -520,7 +520,7 @@ void MainWindow::loadPlugins()
           if (QDir(libdir_path).exists())
             plugins_directories << QDir(libdir_path);
           else
-            plugins_directories << QDir(package_dir);
+            plugins_directories << QDir(package_dir_path);
         }
       }
   }
