@@ -95,8 +95,6 @@ public:
 
   bool load_binary(std::istream& is);
 
-  bool load_ascii(std::istream& is);
-
   // data item
   const Scene_item* data_item() const;
   void set_data_item(const Scene_item* data_item);

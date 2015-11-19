@@ -892,7 +892,7 @@ void MainWindow::open(QString filename)
     Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* io_plugin, io_plugins) {
       if ( !io_plugin->canLoad() ) continue;
       all_items << io_plugin->name();
-      if ( file_matches_filter(io_plugin->nameFilters(), filename) )
+      if ( file_matches_filter(io_plugin->loadNameFilters(), filename) )
         selected_items << io_plugin->name();
     }
   }
@@ -1275,7 +1275,7 @@ void MainWindow::on_actionLoad_triggered()
   FilterPluginMap filterPluginMap;
   
   Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
-    QStringList split_filters = plugin->nameFilters().split(";;");
+    QStringList split_filters = plugin->loadNameFilters().split(";;");
     Q_FOREACH(const QString& filter, split_filters) {
       FilterPluginMap::iterator it = filterPluginMap.find(filter);
       if(it != filterPluginMap.end()) {
@@ -1346,7 +1346,7 @@ void MainWindow::on_actionSaveAs_triggered()
   Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
     if(plugin->canSave(item)) {
       canSavePlugins << plugin;
-      filters += plugin->nameFilters();
+      filters += plugin->saveNameFilters();
     }
   }
   filters << tr("All files (*)");
@@ -1373,7 +1373,7 @@ void MainWindow::save(QString filename, CGAL::Three::Scene_item* item) {
 
   Q_FOREACH(CGAL::Three::Polyhedron_demo_io_plugin_interface* plugin, io_plugins) {
     if(  plugin->canSave(item) &&
-        file_matches_filter(plugin->nameFilters(),filename) )
+        file_matches_filter(plugin->saveNameFilters(),filename) )
     {
       if(plugin->save(item, fileinfo))
         break;
