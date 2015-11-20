@@ -313,7 +313,7 @@ public:
         }
 
         boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
-          = cast_and_return_minimum(ray, skip, accept_if_acute);
+          = cast_and_return_minimum_2(ray, skip, accept_if_acute);
       }
 
       if(!intersection_is_acute) {
