@@ -77,7 +77,7 @@ public :
       if(group)
         Q_FOREACH(Scene_item* child, group->getChildren())
             removeChild(child);
-      item->has_group--;
+      item->has_group=0;
       children.removeOne(item);
     }
 

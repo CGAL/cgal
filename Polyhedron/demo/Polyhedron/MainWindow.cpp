@@ -116,7 +116,6 @@ MainWindow::~MainWindow()
 {
   delete ui;
 }
-
 MainWindow::MainWindow(QWidget* parent)
   : CGAL::Qt::DemosMainWindow(parent)
 {
@@ -1171,6 +1170,7 @@ void MainWindow::removeManipulatedFrame(Scene_item* item)
 
 void MainWindow::updateInfo() {
   Scene_item* item = scene->item(getSelectedSceneItemIndex());
+
   if(item) {
     QString item_text = item->toolTip();
     QString item_filename = item->property("source filename").toString();
@@ -1188,7 +1188,7 @@ void MainWindow::updateInfo() {
     }
     ui->infoLabel->setText(item_text);
   }
-  else 
+  else
     ui->infoLabel->clear();
 }
 

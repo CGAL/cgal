@@ -201,7 +201,7 @@ public Q_SLOTS:
   //! Sets the target list of indices as the selected indices.
   QList<int> setSelectedItemsList(QList<int> l )
   {
-    Q_FOREACH(int i,l)
+    /*Q_FOREACH(int i,l)
     {
        Scene_group_item* group =
                qobject_cast<Scene_group_item*>(item(i));
@@ -213,7 +213,7 @@ public Q_SLOTS:
          l << setSelectedItemsList(list);
        }
 
-    }
+    }*/
     selected_items_list = l;
     return l;
   }

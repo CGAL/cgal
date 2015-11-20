@@ -22,27 +22,14 @@ bool Scene_group_item::isFinite() const
 bool Scene_group_item::isEmpty() const {
     Q_FOREACH(Scene_item *item, children)
         if(!item->isEmpty()){
-            return false;
+            return true;
         }
     return true;
 }
 
 Scene_group_item::Bbox Scene_group_item::bbox() const
 {
-    double xmax=0, ymax=0, zmax=0;
-    double xmin=0, ymin=0, zmin=0;
-    if(!children.isEmpty())
-    {
-        xmax = children.first()->bbox().xmax; ymax = children.first()->bbox().ymax; zmax = children.first()->bbox().zmax;
-        xmin = children.first()->bbox().xmin; ymin = children.first()->bbox().ymin; zmin = children.first()->bbox().zmin;
-    }
-
-    Q_FOREACH(Scene_item* item, children)
-    {
-        xmax = std::max(xmax,item->bbox().xmax); ymax = std::max(ymax, item->bbox().ymax); zmax = std::max(zmax, item->bbox().zmax);
-        xmin = std::min(xmin, item->bbox().xmin);  ymin = std::min(ymin,item->bbox().ymin); zmin = std::min(zmin,item->bbox().zmin);
-    }
-    return Bbox(xmin, ymin, zmin, xmax, ymax, zmax);
+    return Bbox(0, 0, 0, 0, 0,0);
 }
 
 

@@ -20,7 +20,6 @@
 #include <QMimeData>
 
 
-
 GlSplat::SplatRenderer* Scene::ms_splatting = 0;
 int Scene::ms_splattingCounter = 0;
 GlSplat::SplatRenderer* Scene::splatting()
@@ -969,7 +968,6 @@ QList<Scene_item*> Scene::item_entries() const
 }
 void Scene::group_added()
 {
-
     //makes the hierarchy in the tree
     //clears the model
     clear();
