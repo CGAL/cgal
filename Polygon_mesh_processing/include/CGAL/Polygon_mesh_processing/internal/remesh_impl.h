@@ -901,6 +901,8 @@ namespace internal {
         return false;//too many cases to be handled
       else if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
         return false;//too many cases to be handled
+      if (is_on_patch_border(target(he, mesh_)) && is_on_patch_border(source(he, mesh_)))
+        return false;//collapse would induce pinching the selection
       else
         return true;
     }
