@@ -141,19 +141,25 @@ struct AABB_traits_base_2<GeomTraits,true>{
           FT t1 = (bbox.min(i) - *source_iter) / *direction_iter;
           FT t2 = (bbox.max(i) - *source_iter) / *direction_iter;
 
-          t_near = (std::max)(t_near, (std::min)(t1, t2));
-          t_far = (std::min)(t_far, (std::max)(t1, t2));
+
+          if(t1 > t2)
+            std::swap(t1, t2);
+          if(t1 > t_near)
+            t_near = t1;
+          if(t2 < t_far)
+            t_far = t2;
+
+          if(t_near > t_far)
+            return boost::none;
+          if(t_far < 0)
+            return boost::none;
         }
       }
 
-      if(t_far > t_near && t_far > 0) {
+      if(t_near < FT(0.))
+        return FT(0.);
+      else
         return t_near;
-      if(t_far > t_near && t_far > FT(0.)) {
-        if(t_near < FT(0.))
-          return FT(0.);
-        else
-          return t_near;
-      } else {
         return boost::none;
       }
     }
