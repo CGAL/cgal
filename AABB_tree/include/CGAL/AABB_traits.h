@@ -122,17 +122,16 @@ struct AABB_traits_base_2<GeomTraits,true>{
       FT t_near = -DBL_MAX; // std::numeric_limits<FT>::lowest(); C++1903
       FT t_far = DBL_MAX;
 
-      Construct_cartesian_const_iterator_3 construct_cartesian_const_iterator_3
+      const Construct_cartesian_const_iterator_3 construct_cartesian_const_iterator_3
         = GeomTraits().construct_cartesian_const_iterator_3_object();
-      Construct_source_3 construct_source_3 = GeomTraits().construct_source_3_object();
-      Construct_vector_3 construct_vector_3 = GeomTraits().construct_vector_3_object();
+      const Construct_source_3 construct_source_3 = GeomTraits().construct_source_3_object();
+      const Construct_vector_3 construct_vector_3 = GeomTraits().construct_vector_3_object();
       const Point_3 source = construct_source_3(ray);
       const Vector_3 direction = construct_vector_3(ray);
       Cartesian_const_iterator_3 source_iter = construct_cartesian_const_iterator_3(source);
       Cartesian_const_iterator_3 direction_iter = construct_cartesian_const_iterator_3(direction);
 
       for(int i = 0; i < 3; ++i, ++source_iter, ++direction_iter) {
-        // we only use i as invariant to safe some checks
         if(*direction_iter == 0) {
           if((*source_iter < bbox.min(i)) || (*source_iter > bbox.max(i))) {
             return boost::none;
@@ -141,17 +140,17 @@ struct AABB_traits_base_2<GeomTraits,true>{
           FT t1 = (bbox.min(i) - *source_iter) / *direction_iter;
           FT t2 = (bbox.max(i) - *source_iter) / *direction_iter;
 
+          t_near = (std::max)(t_near, (std::min)(t1, t2));
+          t_far = (std::min)(t_far, (std::max)(t1, t2));
 
-          if(t1 > t2)
-            std::swap(t1, t2);
-          if(t1 > t_near)
-            t_near = t1;
-          if(t2 < t_far)
-            t_far = t2;
+          // if(t1 > t2)
+          //   std::swap(t1, t2);
+          // if(t1 > t_near)
+          //   t_near = t1;
+          // if(t2 < t_far)
+          //   t_far = t2;
 
-          if(t_near > t_far)
-            return boost::none;
-          if(t_far < 0)
+          if(t_near > t_far || t_far < FT(0.))
             return boost::none;
         }
       }

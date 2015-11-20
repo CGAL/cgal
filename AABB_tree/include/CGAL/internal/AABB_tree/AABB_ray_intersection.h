@@ -152,10 +152,10 @@ private:
 
   struct Node_ptr_with_ft {
     Node_ptr_with_ft(const Node* node, const FT& value, size_type nb_primitives)
-      : node(node), value(value), nb_primitives(nb_primitives) {}
+      : node(node), nb_primitives(nb_primitives), value(value) {}
     const Node* node;
-    FT value;
     size_type nb_primitives;
+    FT value;
     bool operator<(const Node_ptr_with_ft& other) const { return value < other.value; }
     bool operator>(const Node_ptr_with_ft& other) const { return value > other.value; }
   };
@@ -171,14 +171,13 @@ private:
     FT operator()(const Point& point) {
       typename AABB_traits::Geom_traits::Vector_3 x(ray->source(), point);
       typename AABB_traits::Geom_traits::Vector_3 v = ray->to_vector();
-      FT dist = 0;
 
       for(int i = 0; i < 3; ++i) {
-        if(v[0] != 0) {
-          dist = std::max(dist, x[0] / v[0]);
+        if(v[0] != FT(0.)) {
+          return x[0] / v[0];
         }
       }
-      return dist;
+      return FT(0.);
     }
 
     const Ray* ray;
