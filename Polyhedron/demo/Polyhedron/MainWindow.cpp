@@ -1096,7 +1096,7 @@ void MainWindow::contextMenuRequested(const QPoint& global_pos) {
 void MainWindow::showSceneContextMenu(int selectedItemIndex,
                                       const QPoint& global_pos)
 {
-  Scene_item* item = scene->item(scene->getIdFromModelIndex(scene->index(selectedItemIndex,0)));
+  Scene_item* item = scene->item(scene->getIdFromModelIndex(scene->index(selectedItemIndex,0,QModelIndex())));
   if(!item) return;
 
   const char* prop_name = "Menu modified by MainWindow.";
@@ -1566,29 +1566,31 @@ void MainWindow::on_actionRecenterScene_triggered()
 
 void MainWindow::recurseExpand(QModelIndex index)
 {
-    //qDebug()<<index;
     int row = index.row();
-    int column = index.column();
     if(index.child(0,0).isValid())
+    {
         recurseExpand(index.child(0,0));
-    QModelIndex id = scene->index(index.row(),0,index.sibling(row+1, column));
+    }
+
+    QString name = scene->item(scene->getIdFromModelIndex(index))->name();
         Scene_group_item* group =
-                qobject_cast<Scene_group_item*>(scene->item(scene->getIdFromModelIndex(id)));
+                qobject_cast<Scene_group_item*>(scene->item(scene->getIdFromModelIndex(index)));
 
         if(group && group->isExpanded())
         {
-           // qDebug()<<group->name();
-            sceneView->setExpanded(index, true);
+            sceneView->setExpanded(proxyModel->mapFromSource(index), true);
         }
         else if (group && !group->isExpanded()){
-            sceneView->setExpanded(index, false);
+            sceneView->setExpanded(proxyModel->mapFromSource(index), false);
         }
-        if( index.sibling(index.row()+1,0).isValid())
-            recurseExpand(index.sibling(index.row()+1,0));
 
+
+        if( index.sibling(row+1,0).isValid())
+            recurseExpand(index.sibling(row+1,0));
 }
 void MainWindow::restoreCollapseState()
 {
-    QModelIndex modelIndex = sceneView->indexAt(sceneView->rect().topLeft());
-    recurseExpand(modelIndex);
+    QModelIndex modelIndex = scene->index(0,0,scene->invisibleRootItem()->index());
+    if(modelIndex.isValid())
+        recurseExpand(modelIndex);
 }

@@ -45,11 +45,11 @@ Scene::Scene(QObject* parent)
         ms_splatting  = new GlSplat::SplatRenderer();
     ms_splattingCounter++;
 
+
 }
 Scene::Item_id
 Scene::addItem(Scene_item* item)
 {
-
     Scene_group_item* group =
             qobject_cast<Scene_group_item*>(item);
   if(group)
@@ -78,7 +78,6 @@ Scene::addItem(Scene_item* item)
         index_map[list.at(i)->index()] = m_entries.size() -1;
     }
     Q_EMIT updated();
-    Q_EMIT restoreCollapsedState();
     Item_id id = m_entries.size() - 1;
     Q_EMIT newItem(id);
     return id;
@@ -135,7 +134,6 @@ Scene::erase(int index)
   QStandardItemModel::beginResetModel();
   Q_EMIT updated();
   QStandardItemModel::endResetModel();
-  Q_EMIT restoreCollapsedState();
     if(--index >= 0)
         return index;
     if(!m_entries.isEmpty())
@@ -207,7 +205,6 @@ void Scene::remove_item_from_groups(Scene_item* item)
             group->removeChild(item);
         }
     }
-       Q_EMIT restoreCollapsedState();
 }
 Scene::~Scene()
 {
@@ -762,7 +759,7 @@ void Scene::itemChanged(Item_id i)
 
   Q_EMIT dataChanged(this->createIndex(i, 0),
                      this->createIndex(i, LastColumn));
-    Q_EMIT restoreCollapsedState();
+  //  Q_EMIT restoreCollapsedState();
 }
 
 void Scene::itemChanged(Scene_item* /* item */)
@@ -973,7 +970,7 @@ QList<Scene_item*> Scene::item_entries() const
 void Scene::group_added()
 {
 
-//makes the hierarchy in the tree
+    //makes the hierarchy in the tree
     //clears the model
     clear();
     index_map.clear();
@@ -982,6 +979,7 @@ void Scene::group_added()
     {
         organize_items(item, invisibleRootItem(), 0);
     }
+    Q_EMIT restoreCollapsedState();
 }
 void Scene::changeGroup(Scene_item *item, Scene_group_item *target_group)
 {
@@ -1017,6 +1015,7 @@ void Scene::organize_items(Scene_item* item, QStandardItem* root, int loop)
         {
             list<<new QStandardItem();
             list.at(i)->setEditable(false);
+
         }
         root->appendRow(list);
         for(int i=0; i<5; i++){
@@ -1032,7 +1031,6 @@ void Scene::organize_items(Scene_item* item, QStandardItem* root, int loop)
             }
         }
     }
-    Q_EMIT restoreCollapsedState();
 }
 
 void Scene::setExpanded(QModelIndex id)
@@ -1061,6 +1059,7 @@ QList<QModelIndex> Scene::getModelIndexFromId(int id) const
 {
     return index_map.keys(id);
 }
+
 namespace scene { namespace details {
 
 Q_DECL_EXPORT
