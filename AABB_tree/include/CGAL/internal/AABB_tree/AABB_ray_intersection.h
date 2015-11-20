@@ -171,8 +171,14 @@ private:
     FT operator()(const Point& point) {
       typename AABB_traits::Geom_traits::Vector_3 x(ray->source(), point);
       typename AABB_traits::Geom_traits::Vector_3 v = ray->to_vector();
-      boost::array<FT,3> xv = {x[0] / v[0],  x[1] / v[1], x[2] / v[2]};
-      return *std::max_element(xv.begin(), xv.end());
+      FT dist = 0;
+
+      for(int i = 0; i < 3; ++i) {
+        if(v[0] != 0) {
+          dist = std::max(dist, x[0] / v[0]);
+        }
+      }
+      return dist;
     }
 
     const Ray* ray;

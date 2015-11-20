@@ -160,8 +160,6 @@ struct AABB_traits_base_2<GeomTraits,true>{
         return FT(0.);
       else
         return t_near;
-        return boost::none;
-      }
     }
   };
 
