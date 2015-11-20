@@ -471,8 +471,6 @@ private:
     if(s(boost::get<3>(two))) {
       std::cout.precision(15);
       std::cout << "ERROR still returning a skip" << std::endl;
-      std::cout << "1: " << std::fixed << ray_1.source() << std::endl;
-      std::cout << "2: " << std::fixed << ray_2.source() << std::endl;
     }
 
     if(boost::get<0>(one) != boost::get<0>(two)) {
@@ -489,15 +487,11 @@ private:
     if(boost::get<1>(one) != boost::get<1>(two)) {
       std::cout.precision(15);
       std::cout << "Second bool mismatch" << std::endl;
-      std::cout << "1: " << std::fixed << ray_1.source() << std::endl;
-      std::cout << "2: " << std::fixed << ray_2.source() << std::endl;
     }
 
     if(boost::get<3>(one) != boost::get<3>(two)) {
       std::cout.precision(15);
       std::cout << "Primitive mismatch" << std::endl;
-      std::cout << "1: " << std::fixed << ray_1.source() << std::endl;
-      std::cout << "2: " << std::fixed << ray_2.source() << std::endl;
     }
 
     assert(boost::get<0>(one) == boost::get<0>(two));
