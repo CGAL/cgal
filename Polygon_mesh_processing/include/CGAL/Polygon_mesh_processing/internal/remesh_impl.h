@@ -1276,8 +1276,8 @@ namespace internal {
         mesh_,
         std::back_inserter(facets),
         PMP::parameters::vertex_point_map(vpmap_));
-      CGAL_assertion(facets.empty());
-      std::cout << "done." << std::endl;
+      //CGAL_assertion(facets.empty());
+      std::cout << "done ("<< facets.size() <<" facets)." << std::endl;
     }
 
     void debug_self_intersections(const vertex_descriptor& v) const
@@ -1289,8 +1289,8 @@ namespace internal {
         mesh_,
         std::back_inserter(facets),
         PMP::parameters::vertex_point_map(vpmap_));
-      CGAL_assertion(facets.empty());
-      std::cout << "done." << std::endl;
+      //CGAL_assertion(facets.empty());
+      std::cout << "done ("<< facets.size() <<" facets)." << std::endl;
     }
 #endif
 
