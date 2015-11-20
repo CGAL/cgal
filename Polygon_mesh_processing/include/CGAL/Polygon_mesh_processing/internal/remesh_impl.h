@@ -193,9 +193,17 @@ namespace internal {
     
     template<typename FaceRange
            , typename EdgeIsConstrainedMap>
-    void init_faces_remeshing(const FaceRange& face_range
-                            , const EdgeIsConstrainedMap& ecmap)
+    void init_remeshing(const FaceRange& face_range
+                      , const EdgeIsConstrainedMap& ecmap)
     {
+      if (protect_constraints_)
+      {
+        BOOST_FOREACH(edge_descriptor e, edges(mesh_))
+        {
+          if (get(ecmap, e))
+            constrained_edges_.insert(e);
+        }
+      }
       tag_halfedges_status(face_range, ecmap);
     }
 
@@ -868,15 +876,21 @@ namespace internal {
           && sqh >= sqlength(next(next(hopp, mesh_), mesh_));
     }
 
+    bool is_constrained(const edge_descriptor& e) const
+    {
+      if (protect_constraints_)
+        return false;
+      else
+        return constrained_edges_.find(e) != constrained_edges_.end();
+    }
+
     bool is_split_allowed(const edge_descriptor& e) const
     {
       halfedge_descriptor h = halfedge(e, mesh_);
       halfedge_descriptor hopp = opposite(h, mesh_);
 
-      if (protect_constraints_)
-      {
-        return is_on_patch(h); //PATCH are the only splittable edges
-      }
+      if (protect_constraints_ && is_constrained(e))
+        return false;
       else //allow splitting constraints
       {
         if (is_on_mesh(h) && is_on_mesh(hopp))
@@ -895,7 +909,9 @@ namespace internal {
       halfedge_descriptor he = halfedge(e, mesh_);
       halfedge_descriptor hopp = opposite(he, mesh_);
 
-      if (!is_on_patch(he)) //hopp is also on patch
+      if (protect_constraints_ && is_constrained(e))
+        return false;
+      else if (!is_on_patch(he)) //hopp is also on patch
         return false;
       else if (is_on_patch_border(next(he, mesh_)) && is_on_patch_border(prev(he, mesh_)))
         return false;//too many cases to be handled
@@ -992,11 +1008,12 @@ namespace internal {
         }
       }
 
+      internal::Border_constraint_pmap<PM, FaceRange> border_map(mesh_, face_range);
       //override the border of PATCH
       //tag PATCH_BORDER,//h belongs to the patch, hopp doesn't
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
-        if (get(ecmap, e))
+        if (get(ecmap, e) || get(border_map, e))
         {
           //deal with h and hopp for borders that are sharp edges to be preserved
           halfedge_descriptor h = halfedge(e, mesh_);
@@ -1339,6 +1356,7 @@ namespace internal {
     Triangle_list input_triangles_;
     boost::unordered_map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
     bool protect_constraints_;
+    std::set<edge_descriptor> constrained_edges_;
 
   };//end class Incremental_remesher
 }//end namespace internal
