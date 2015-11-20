@@ -855,7 +855,7 @@ halfedges_around_target(typename boost::graph_traits<Graph>::halfedge_descriptor
  */
 template<typename Graph>
 Iterator_range<Halfedge_around_target_iterator<Graph> >
-halfedges_around_target(typename boost::graph_traits<Graph>::vertex_descriptor v, Graph& g)
+halfedges_around_target(typename boost::graph_traits<Graph>::vertex_descriptor v, const Graph& g)
 {
   return halfedges_around_target(halfedge(v,g),g);
 }
