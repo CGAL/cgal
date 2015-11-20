@@ -1,5 +1,6 @@
 #include <CGAL/Epick_d.h>
 #include <CGAL/Delaunay_triangulation.h>
+#include <CGAL/IO/Triangulation_off_ostream.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Timer.h>
 #include <CGAL/algorithm.h>
@@ -13,6 +14,7 @@
 
 //#define USE_DYNAMIC_KERNEL
 #define OUTPUT_STATS_IN_CSV
+//#define EXPORT_POINTS_TO_A_FILE
 
 #ifdef OUTPUT_STATS_IN_CSV
 static std::ofstream csv_file("stats.csv");
@@ -46,6 +48,15 @@ std::size_t compute_triangulation(std::size_t N)
   CGAL::Random rng;
   Random_points_iterator rand_it(D, 2.0, rng);
   CGAL::cpp11::copy_n(rand_it, N, std::back_inserter(points));
+
+#ifdef EXPORT_POINTS_TO_A_FILE
+  std::ofstream os("points.txt");
+  for (auto const& p : points)
+  {
+    CGAL::Triangulation_IO::output_point(os, K(), p);
+    os << std::endl;
+  }
+#endif
 
   std::size_t mem_before = CGAL::Memory_sizer().virtual_size();
   cost.reset();
@@ -101,17 +112,17 @@ int main(int argc, char **argv)
 {
   srand(static_cast<unsigned int>(time(NULL)));
   //int N = 100; if( argc > 1 ) N = atoi(argv[1]);
-  go<2>(5000000); // 1e7
-  go<3>(1000000); // 1e6
-  go<4>(300000); // 1e5
-  go<5>(50000); // 1e4
-  go<6>(5000);
-  go<7>(1000);
-  go<8>(300);
-  go<9>(100);
-  go<10>(30);
-  go<11>(20);
-  go<12>(15);
+  go<2>(5000000);
+  //go<3>(1000000);
+  //go<4>(300000);
+  //go<5>(50000);
+  //go<6>(5000);
+  //go<7>(1000);
+  //go<8>(300);
+  //go<9>(100);
+  //go<10>(30);
+  //go<11>(20);
+  //go<12>(15);
 
   return 0;
 }
