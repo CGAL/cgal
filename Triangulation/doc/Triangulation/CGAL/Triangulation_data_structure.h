@@ -12,12 +12,12 @@ Parameters
 
 `Dimensionality` can be either <UL> 
 
-<LI>CGAL::`Dimension_tag<D>` for some integer `D`. This 
+<LI>`CGAL::Dimension_tag<D>` for some integer `D`. This 
 indicates that the triangulation data structure can store simplices (full cells) of dimension at most 
 `D`. The maximal dimension `D` is known by the compiler, which 
 triggers some optimizations. Or 
 
-<LI>CGAL::`Dynamic_dimension_tag`. In this case, the maximum 
+<LI>`CGAL::Dynamic_dimension_tag`. In this case, the maximum 
 dimension of the simplices (full cells) is passed as an integer argument to an instance 
 constructor (see `TriangulationDataStructure`).</UL> 
 
