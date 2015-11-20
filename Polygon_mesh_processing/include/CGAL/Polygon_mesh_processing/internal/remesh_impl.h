@@ -901,8 +901,6 @@ namespace internal {
         return false;//too many cases to be handled
       else if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
         return false;//too many cases to be handled
-      else if (is_on_patch_border(he) || is_on_patch_border(hopp))
-        return !protect_constraints_;//allowed only when no protection
       else
         return true;
     }
