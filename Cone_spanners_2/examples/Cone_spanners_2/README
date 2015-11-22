@@ -1,0 +1,7 @@
+In the example cpp files, the function std::to_string() is used. Because this function is
+available since c++0x, please turn on '-std=gnu++0x' or '-std=c++0x' to compile. A recommended way 
+is to add the following codes into your 'CMakeLists.txt' file.
+
+if(UNIX)
+	    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
+endif()
