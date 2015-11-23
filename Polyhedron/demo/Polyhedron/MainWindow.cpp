@@ -237,8 +237,6 @@ MainWindow::MainWindow(QWidget* parent)
   // connect(ui->infoLabel, SIGNAL(customContextMenuRequested(const QPoint & )),
   //         this, SLOT(showSceneContextMenu(const QPoint &)));
 
-  connect(scene, SIGNAL(updated()),
-          scene, SLOT(test_rows()));
   connect(ui->actionRecenterScene, SIGNAL(triggered()),
           viewer, SLOT(update()));
 
