@@ -101,7 +101,7 @@
 
   !define MUI_FINISHPAGE_LINK "Installation instructions"
   
-  !define MUI_FINISHPAGE_LINK_LOCATION "file:///$INSTDIR/doc_html/index.html"
+  !define MUI_FINISHPAGE_LINK_LOCATION "http://www.cgal.org/download/windows.html"
   
 ;--------------------------------
 ; Pages
