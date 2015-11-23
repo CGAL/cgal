@@ -524,7 +524,7 @@ public:
   {}
 
   Halfedge_around_source_circulator(halfedge_descriptor hd, const Graph& g)
-    : Halfedge_around_source_circulator::iterator_adaptor_(Halfedge_around_target_circulator<Graph>(hd,g)), opp(g)
+    : Halfedge_around_source_circulator::iterator_adaptor_(Halfedge_around_target_circulator<Graph>(opposite(hd,g),g)), opp(g)
   {}
 
   Halfedge_around_source_circulator(vertex_descriptor vd, const Graph& g)
