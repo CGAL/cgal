@@ -67,8 +67,10 @@ int main(int, char* argv[])
 
   {
     halfedge_around_target_circulator havc(hd,P), done(havc);
-    
+    vertex_descriptor vd = target(hd,P);
     do {
+      halfedge_descriptor hd2 = *havc;
+      assert(target(hd2,P) == vd);
       std::cout << get(CGAL::vertex_point, P, target(*havc,P)) << std::endl;
       ++havc;
     }while(havc != done);
@@ -91,8 +93,10 @@ int main(int, char* argv[])
   }
   {
     halfedge_around_source_circulator havc(hd,P), done(havc);
-    
+    vertex_descriptor vd = source(hd,P);
     do {
+      halfedge_descriptor hd2 = *havc;
+      assert(source(hd2,P) == vd);
       std::cout << get(CGAL::vertex_point, P, target(*havc,P)) << std::endl;
       ++havc;
     }while(havc != done);
@@ -100,10 +104,11 @@ int main(int, char* argv[])
 
   {
     halfedge_around_target_iterator vit, end;
+    vertex_descriptor vd = target(hd,P);
     boost::tie(vit,end) = halfedges_around_target(hd,P);
-    
     while(vit!= end) {
       halfedge_descriptor hd = *vit;
+      assert(target(hd,P) == vd);
       std::cout << get(CGAL::vertex_point, P, target(hd,P)) << std::endl;
       ++vit;
     }
