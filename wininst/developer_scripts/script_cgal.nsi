@@ -44,7 +44,7 @@
   OutFile "${CGAL_SRC}-Setup.exe"
   !endif
 
-  ;Default installation folder: C:\Program Files\CGAL-4.8
+  ;Default installation folder: C:\CGAL-4.8
   ; See also .onInit
   Installdir ""
 
@@ -313,11 +313,7 @@ Function .onInit
 
   # Setup the default installation dir
   ${If} $InstDir == "" ; /D= was not used on the command line
-    ${If} ${RunningX64}
-      StrCpy $InstDir "$PROGRAMFILES64\${CGAL_SRC}"
-    ${Else}
-      StrCpy $InstDir "$PROGRAMFILES\${CGAL_SRC}"
-    ${EndIf}
+      StrCpy $InstDir "C:\${CGAL_SRC}"
   ${EndIf}
 
   !ifdef DebugLog
