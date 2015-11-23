@@ -117,7 +117,7 @@ public Q_SLOTS:
       int item_id = scene->addItem(new_item);
       QObject* scene_ptr = dynamic_cast<QObject*>(scene);
       if (scene_ptr)
-        connect(new_item,SIGNAL(simplicesSelected(Scene_item*)), scene_ptr, SLOT(setSelectedItem(Scene_item*)));
+        connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
       scene->setSelectedItem(item_id);
     }
   }
@@ -215,7 +215,7 @@ public Q_SLOTS:
        begin != selection_item->selected_vertices.end(); ++begin) {
        point_item->point_set()->push_back((*begin)->point());
     }
-    
+    point_item->point_set()->unselect_all();
     scene->setSelectedItem( scene->addItem(point_item) );
     scene->itemChanged(point_item);
   }
