@@ -465,6 +465,7 @@ the propagation of a connected component index to cross it.
 
 \cgalExample{Polygon_mesh_processing/connected_components_example.cpp}
 
+
 ****************************************
 \section PMPAll Requirements Summary
 
