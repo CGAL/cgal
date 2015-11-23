@@ -42,7 +42,6 @@ maxNumRecentFiles(15), recentFileActs(15)
   addRecentFiles(menuFile, actionQuit);
   connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
   connect(min_mass_slider, SIGNAL(valueChanged(int)), this, SLOT(update()));
-  connect(discard_spinbox, SIGNAL(valueChanged(int)), this, SLOT(update()));
   connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
 }
 
@@ -154,7 +153,6 @@ void MainWindow::save(const QString& filename)
 void MainWindow::update()
 {
   m_scene->set_min_mass(min_mass());
-  m_scene->set_nb_edges_to_ignore(ignore_edges());
   m_scene->set_percentage(percentage());
   viewer->repaint();
 }

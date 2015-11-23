@@ -18,6 +18,9 @@
    <layout class="QGridLayout">
     <item row="0" column="0">
      <layout class="QVBoxLayout">
+      <property name="sizeConstraint">
+       <enum>QLayout::SetDefaultConstraint</enum>
+      </property>
       <item>
        <widget class="GlViewer" name="viewer" native="true">
         <property name="focusPolicy">
@@ -29,46 +32,31 @@
        </widget>
       </item>
       <item>
-       <layout class="QVBoxLayout">
+       <layout class="QHBoxLayout" name="horizontalLayout_2">
         <item>
-         <widget class="QSlider" name="min_mass_slider">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Min. mass</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
           </property>
          </widget>
         </item>
         <item>
-         <layout class="QHBoxLayout">
+         <layout class="QVBoxLayout" name="verticalLayout">
           <item>
-           <spacer>
+           <widget class="QSlider" name="min_mass_slider">
             <property name="orientation">
              <enum>Qt::Horizontal</enum>
             </property>
-            <property name="sizeHint" stdset="0">
-             <size>
-              <width>40</width>
-              <height>20</height>
-             </size>
+            <property name="tickPosition">
+             <enum>QSlider::TicksBelow</enum>
             </property>
-           </spacer>
-          </item>
-          <item>
-           <layout class="QHBoxLayout">
-            <item>
-             <widget class="QLabel" name="label">
-              <property name="text">
-               <string>Discard</string>
-              </property>
-             </widget>
-            </item>
-            <item>
-             <widget class="QSpinBox" name="discard_spinbox">
-              <property name="maximum">
-               <number>10000</number>
-              </property>
-             </widget>
-            </item>
-           </layout>
+            <property name="tickInterval">
+             <number>10</number>
+            </property>
+           </widget>
           </item>
          </layout>
         </item>
@@ -648,10 +636,6 @@
    <container>1</container>
   </customwidget>
  </customwidgets>
- <tabstops>
-  <tabstop>min_mass_slider</tabstop>
-  <tabstop>discard_spinbox</tabstop>
- </tabstops>
  <resources>
   <include location="pwsrec.qrc"/>
  </resources>

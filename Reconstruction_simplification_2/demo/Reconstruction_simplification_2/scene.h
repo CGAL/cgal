@@ -120,10 +120,6 @@ public:
     m_min_mass = min_value;
   }
 
-  void set_nb_edges_to_ignore(int nb) {
-    m_ignore = nb;
-  }
-
   void set_percentage(double percentage) {
     m_percentage = percentage;
   }

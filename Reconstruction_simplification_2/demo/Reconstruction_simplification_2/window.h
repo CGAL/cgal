@@ -56,11 +56,6 @@ public:
     return value / max_value;
   }
 
-  int ignore_edges() const
-  {
-    return discard_spinbox->value();
-  }
-
   protected Q_SLOTS:
   // drag and drop
   void dropEvent(QDropEvent *event);
