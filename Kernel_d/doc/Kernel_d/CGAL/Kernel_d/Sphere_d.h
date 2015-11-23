@@ -61,7 +61,7 @@ sphere through the points in `A = tuple [first,last)`.
 
 \pre \f$A\f$ consists of \f$d+1\f$ \f$d\f$-dimensional points. 
 
-\cgalRequires The value type of ForwardIterator is `Point_d<Kernel>`. 
+\tparam ForwardIterator has `Point_d<Kernel>` as value type.
 */ 
 template <class ForwardIterator> Sphere_d<Kernel>(int d, 
 ForwardIterator first, ForwardIterator last); 

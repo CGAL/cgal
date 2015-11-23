@@ -73,7 +73,7 @@ Direction_d<Kernel>(Vector_d<Kernel> v);
 introduces a variable `dir` of type `Direction_d<Kernel>` in 
 dimension `d` with representation tuple `set [first,last)`. 
 \pre `d` is nonnegative, `[first,last)` has `d` elements. 
-\cgalRequires The value type of `InputIterator` is `RT`. 
+\tparam InputIterator has `RT` as value type.
 */ 
 template <class InputIterator> 
 Direction_d<Kernel>(int d, InputIterator first, InputIterator last); 

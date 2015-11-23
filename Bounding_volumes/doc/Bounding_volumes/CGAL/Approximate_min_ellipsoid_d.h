@@ -213,7 +213,7 @@ than `eps` in general). In any case, the number
 \f$ 1+\epsilon\f$) can be queried by calling the routine 
 `achieved_epsilon()` discussed below. 
 
-\cgalRequires `Iterator` must be a model for concept `InputIterator` with value type `Point`. 
+\tparam Iterator must be a model of `InputIterator` with `Point` as value type.
 
 \pre The dimension \f$ d\f$ of the input points must be at least \f$ 2\f$, and \f$ \epsilon>0\f$. 
 */ 

@@ -146,7 +146,7 @@ where `K` is a model for `Kernel`.
 \tparam OutputIterator must accepts dereference/assignments of  `Traits::Point_2`.
 
 
-\cgalRequires There is a global function `K::FT CGAL::sqrt(K::FT)` 
+There must be a global function `K::FT CGAL::sqrt(K::FT)`
 defined that computes the squareroot of a number. 
 
 \sa `CGAL::maximum_area_inscribed_k_gon_2()`

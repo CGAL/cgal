@@ -28,13 +28,13 @@ omitted, if `ForwardIterator` refers to a two-dimensional point
 type from one the \cgal kernels. In this case, a default traits class 
 (`Min_quadrilateral_default_traits_2<K>`) is used. 
 
-\cgalRequires <OL> 
-<LI>If `Traits` is specified, it is a model for 
+<OL>
+<LI>If `Traits` is specified, it must be a model for 
 `MinQuadrilateralTraits_2` and the value type `VT` of 
 `ForwardIterator` is `Traits::Point_2`. Otherwise 
-`VT` is `CGAL::Point_2<K>` for some kernel 
+`VT` must be `CGAL::Point_2<K>` for some kernel 
 `K`. 
-<LI>`OutputIterator` accepts `VT` as value type. 
+<LI>`OutputIterator` must accept `VT` as value type. 
 </OL> 
 
 \sa `CGAL::min_rectangle_2()` 
@@ -99,12 +99,12 @@ omitted, if `ForwardIterator` refers to a two-dimensional point
 type from one the \cgal kernels. In this case, a default traits class 
 (`Min_quadrilateral_default_traits_2<K>`) is used. 
 
-\cgalRequires <OL> 
-<LI>If `Traits` is specified, it is a model for 
+<OL>
+<LI>If `Traits` is specified, it must be a model for 
 `MinQuadrilateralTraits_2` and the value type `VT` of 
 `ForwardIterator` is `Traits::Point_2`. Otherwise `VT` 
-is `CGAL::Point_2<K>` for some kernel `K`. 
-<LI>`OutputIterator` accepts `VT` as value type. 
+must be `CGAL::Point_2<K>` for some kernel `K`. 
+<LI>`OutputIterator` must accept `VT` as value type. 
 </OL> 
 
 \sa `CGAL::min_parallelogram_2()` 
@@ -167,12 +167,12 @@ point type from one the \cgal kernels. In this case, a default
 traits class (`Min_quadrilateral_default_traits_2<K>`) is 
 used. 
 
-\cgalRequires <OL> 
-<LI>If `Traits` is specified, it is a model for 
+<OL>
+<LI>If `Traits` is specified, it must be a model for 
 `MinQuadrilateralTraits_2` and the value type `VT` of 
 `ForwardIterator` is `Traits::Point_2`. Otherwise `VT` 
-is `CGAL::Point_2<K>` for some kernel `K`. 
-<LI>`OutputIterator` accepts `Traits::Line_2` as value type. 
+must be `CGAL::Point_2<K>` for some kernel `K`. 
+<LI>`OutputIterator` must accept `Traits::Line_2` as value type. 
 </OL> 
 
 \sa `CGAL::min_rectangle_2()` 

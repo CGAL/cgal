@@ -126,7 +126,7 @@ creates a variable `width` initialized to the width of \f$ \mathcal{S}\f$ -
 with \f$ \mathcal{S}\f$ being the set of points in the range 
 [`first`,`beyond`). 
 
-\cgalRequires The value type of `InputIterator` is `Point_3`. 
+\tparam InputIterator has `Point_3` as value type.
 */ 
 template < class InputIterator > 
 Width_3( InputIterator first, InputIterator beyond); 
@@ -137,7 +137,7 @@ the width of the polyhedron \f$ P\f$. Note that the vertex point coordinates
 are altered! 
 \pre \f$ P\f$ is a convex polyhedron. 
 
-\cgalRequires `Polyhedron` is a 
+\tparam Polyhedron is a
 `CGAL::Polyhedron_3` with facets supporting plane equations 
 where `Polyhedron::Point_3` \f$ \equiv\f$ `Point_3` and 
 `Polyhedron::Plane_3` \f$ \equiv\f$ `Plane_3`. 

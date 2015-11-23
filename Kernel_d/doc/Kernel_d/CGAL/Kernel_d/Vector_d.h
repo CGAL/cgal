@@ -87,7 +87,7 @@ coordinates `set [first,last)`. If `size [first,last) == p+1` the range specifie
 sign chosen is the sign of \f$ h_d\f$.
 
 \pre `d` is nonnegative, `[first,last)` has `d` or `d+1` elements where the last has to be non-zero. 
-\cgalRequires The value type of `InputIterator` is `RT`. 
+\tparam InputIterator has `RT` as value type.
 */ 
 template <class InputIterator> Vector_d<Kernel>(int d, 
 InputIterator first, InputIterator last); 
@@ -101,7 +101,7 @@ initialized to the vector with homogeneous coordinates as defined by
 chosen is the sign of \f$ D\f$.
 
 \pre `D` is non-zero, the iterator range defines a \f$ d\f$-tuple of `RT`. 
-\cgalRequires The value type of `InputIterator` is `RT`. 
+\tparam InputIterator has `RT` as value type.
 */ 
 template <class InputIterator> Vector_d<Kernel>(int d, 
 InputIterator first, InputIterator last, RT D); 

@@ -65,7 +65,7 @@ introduces a
 variable `h` of type `Hyperplane_d<Kernel>` initialized to the 
 hyperplane with coefficients `set [first,last)` and `D`. 
 \pre `size [first,last) == d`. 
-\cgalRequires The value type of InputIterator is `RT`. 
+\tparam InputIterator has `RT` as value type.
 */ 
 template <class InputIterator> Hyperplane_d<Kernel>(int d, 
 InputIterator first, InputIterator last, RT D); 
@@ -76,7 +76,7 @@ introduces a variable
 with coefficients `set [first,last)`.
 
 \pre `size [first,last) == d+1`. 
-\cgalRequires The value type of InputIterator is `RT`. 
+\tparam InputIterator has `RT` as value type.
 */ 
 template <class InputIterator> Hyperplane_d<Kernel>(int d, 
 InputIterator first, InputIterator last); 
@@ -88,7 +88,7 @@ some hyperplane that passes through the points in `set [first,last)`. If `side` 
 constructed hyperplane.
 
 \pre A hyperplane with the stated properties must exist. 
-\cgalRequires The value type of `ForwardIterator` is `Point_d<Kernel>`. 
+\tparam ForwardIterator has `Point_d<Kernel>` as value type.
 */ 
 template <class ForwardIterator> 
 Hyperplane_d<Kernel>(ForwardIterator first, ForwardIterator last, 

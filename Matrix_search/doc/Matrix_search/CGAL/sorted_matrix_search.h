@@ -45,8 +45,8 @@ to `Traits::compare_non_strictly`.
 true. 
 </OL> 
 
-\cgalRequires `Traits` is a model for `SortedMatrixSearchTraits`. 
-\cgalRequires Value type of `RandomAccessIterator` is `Traits::Matrix`. 
+\tparam Traits is a model for `SortedMatrixSearchTraits`.
+\tparam RandomAccessIterator has `Traits::Matrix` as value type.
 
 \cgalHeading{Implementation}
 

@@ -17,7 +17,7 @@ computes
 the affine rank of the points in `A = tuple [first,last)`. 
 \pre The objects are of the same dimension. 
 
-\cgalRequires The value type of `ForwardIterator` is `Kernel_d::Point_d`. 
+\tparam ForwardIterator is a model of `ForwardIterator` with `Kernel_d::Point_d` as value type.
 */ 
 template <class ForwardIterator> int 
 operator()(ForwardIterator first, ForwardIterator last); 

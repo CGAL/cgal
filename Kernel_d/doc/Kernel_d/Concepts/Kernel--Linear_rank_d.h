@@ -17,7 +17,7 @@ computes
 the linear rank of the vectors in `A = tuple [first,last)`. 
 \pre \f$ A\f$ contains vectors of the same dimension \f$ d\f$. 
 
-\cgalRequires The value type of `ForwardIterator` is `Kernel_d::Vector_d`. 
+\tparam ForwardIterator has `Kernel_d::Vector_d` as value type.
 */ 
 template <class ForwardIterator> int 
 operator()(ForwardIterator first, ForwardIterator last); 

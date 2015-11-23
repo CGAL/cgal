@@ -161,7 +161,7 @@ constructs a quadruple such that
 constructed from `v`, `third` is constructed from `w`,
 and `fourth` is constructed from `x`.
 
-\cgalRequires Proper conversion operators exist from `U` to `T1`, `V` to `T2`, `W` to `T3`, and `X` to `T4`.
+Proper conversion operators must exist from `U` to `T1`, `V` to `T2`, `W` to `T3`, and `X` to `T4`.
 */
 template <class U, class V, class W, class X>
 Quadruple(U u, V v, W w, X x);
@@ -357,7 +357,7 @@ Triple(T1 x, T2 y, T3 z);
 constructs a triple such that `first` is constructed
 from `u`, `second` is constructed from `v`, and
 `third` is constructed from `w`.
-\cgalRequires Proper conversion operators exist from `U` to `T1`, `V` to `T2`, and `W` to `T3`.
+Proper conversion operators must exist from `U` to `T1`, `V` to `T2`, and `W` to `T3`.
 */
 template <class U, class V, class W> Triple(U u, V v,
 W w);

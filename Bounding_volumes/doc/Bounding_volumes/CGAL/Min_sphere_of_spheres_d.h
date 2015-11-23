@@ -176,7 +176,8 @@ creates a variable `minsphere` of type
 `Min_sphere_of_spheres_d` and inserts (cf. 
 `insert()`) the spheres from 
 the range [`first`,`last`). 
-\cgalRequires The value type of `first` and `last` is `Sphere`. If the traits parameter is not supplied, the class `Traits` must provide a default constructor. 
+\tparam InputIterator is a model of `InputIterator` with `Sphere` as value type.
+If the traits parameter is not supplied, the class `Traits` must provide a default constructor.
 */ 
 template < typename InputIterator > 
 Min_sphere_of_spheres_d( InputIterator first, 
@@ -265,7 +266,7 @@ void clear ();
 sets `minsphere` to 
 the \f$ ms(S)\f$, where \f$ S\f$ is the set of spheres in the range 
 [`first`,`last`). 
-\cgalRequires The value type of `first` and `last` is `Sphere`. 
+\tparam InputIterator is a model of `InputIterator` with `Sphere` as value type.
 */ 
 template < class InputIterator > void 
 set( InputIterator first, InputIterator last ); 
@@ -280,7 +281,7 @@ void insert( const Sphere& s );
 inserts the spheres in 
 the range [`first`,`last`) into the set \f$ S\f$ of instance 
 `minsphere`. 
-\cgalRequires The value type of `first` and `last` is `Sphere`. 
+\tparam InputIterator is a model of `InputIterator` with `Sphere` as value type.
 */ 
 template < class InputIterator > void insert( 
 InputIterator first, InputIterator last ); 

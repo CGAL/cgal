@@ -123,8 +123,8 @@ advance, using the random numbers generator `random`.
 Usually, this will not be necessary, however, the algorithm's 
 efficiency depends on the order in which the points are 
 processed, and a bad order might lead to extremely poor 
-performance (see example below). 
-\cgalRequires The value type of `first` and `last` is `Point`. 
+performance (see example below).
+\tparam InputIterator must be a model of `InputIterator` with `Point` as value type.
 */ 
 template < class InputIterator > 
 Min_circle_2( InputIterator first, 
@@ -299,7 +299,7 @@ inserts the points in the range [`first`,`last`)
 into `min_circle` and recomputes the smallest enclosing circle by 
 calling `insert(p)` for each point `p` in 
 [`first`,`last`). 
-\cgalRequires The value type of `first` and `last` is `Point`. 
+\tparam InputIterator must be a model of `InputIterator` with `Point` as value type.
 */ 
 template < class InputIterator > 
 void insert( InputIterator first, 
@@ -350,7 +350,7 @@ const Traits& traits( ) const;
 /*!
 
 writes `min_circle` to output stream `os`. 
-\cgalRequires The output operator is defined for `Point` (and for `Circle`, if pretty printing is used). 
+An overload of `operator<<` must be defined for `Point` (and for `Circle`, if pretty printing is used).
 \relates Min_circle_2 
 */ 
 std::ostream& 
@@ -360,7 +360,7 @@ const Min_circle_2<Traits>& min_circle);
 /*!
 
 reads `min_circle` from input stream `is`. 
-\cgalRequires The input operator is defined for `Point`. 
+An overload of `operator>>` must be defined for `Point`.
 \relates Min_circle_2 
 */ 
 std::istream& 

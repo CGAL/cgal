@@ -18,7 +18,7 @@ returns the relative position of point
 order of the points of \f$ A\f$ does not matter.
 
 \pre `orientation(first,last)` is not `ZERO`. 
-\cgalRequires The value type of `ForwardIterator` is `Kernel_d::Point_d`. 
+\tparam ForwardIterator has `Kernel_d::Point_d` as value type.
 */ 
 template <class ForwardIterator> Bounded_side 
 operator()( ForwardIterator first, ForwardIterator last, const 

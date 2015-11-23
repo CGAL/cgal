@@ -18,7 +18,8 @@ independent.
 
 \pre The objects are of the same dimension. 
 
-\cgalRequires The value type of `ForwardIterator` is `Kernel_d::Point_d`. 
+\tparam ForwardIterator has `Kernel_d::Point_d` as value type.
+
 */ 
 template <class ForwardIterator> bool 
 operator()(ForwardIterator first, ForwardIterator last); 

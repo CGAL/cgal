@@ -9,7 +9,7 @@ namespace CGAL {
 returns the center of the sphere spanned by the points in `A = tuple[first,last)`.
 
 \pre \f$ A\f$ contains \f$ d+1\f$ affinely independent points of dimension \f$ d\f$. 
-\cgalRequires The value type of `ForwardIterator` is `Point_d<R>`.
+\tparam ForwardIterator has `Point_d<R>` as value type.
 */
 template <class ForwardIterator> Point_d<R>
 center_of_sphere(ForwardIterator first, ForwardIterator last);
@@ -34,7 +34,7 @@ it via an iterator range starting in `result`. The returned
 iterator marks the end of the output. 
 \pre \f$ A\f$ contains vectors of the same dimension \f$ d\f$.
 
-\cgalRequires The value type of `ForwardIterator` and `OutputIterator` is `Vector_d<R>`. 
+\tparam ForwardIterator has `Vector_d<R>` as value type.
 */
 template <class ForwardIterator, class OutputIterator>
 OutputIterator linear_base(ForwardIterator first, ForwardIterator

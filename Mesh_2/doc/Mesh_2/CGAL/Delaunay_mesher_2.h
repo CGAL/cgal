@@ -267,11 +267,10 @@ constrained edges of `t`, except for the unbounded component.
 
 \tparam CDT  must be 2D constrained Delaunay triangulation
 and its geometric traits class must be a model of `DelaunayMeshTraits_2`.
+The face of the constrained Delaunay triangulation must be a model of the concept `DelaunayMeshFaceBase_2`.
 
 \tparam Criteria must be a model of the concept `MeshingCriteria_2`. 
-
-\cgalRequires The face of the constrained Delaunay triangulation must be a model of the concept `DelaunayMeshFaceBase_2`.
-\cgalRequires `CDT::Face_handle` must be the same as `Criteria::Face_handle`. 
+`Criteria::Face_handle` must be the same as `CDT::Face_handle`.
 */
 template<class CDT, class Criteria> 
 void refine_Delaunay_mesh_2 (CDT &t, const Criteria& criteria = Criteria()); 
@@ -297,12 +296,12 @@ never meshed.
 
 \tparam CDT  must be 2D constrained Delaunay triangulation
 and its geometric traits class must be a model of `DelaunayMeshTraits_2`.
+The face of the constrained Delaunay triangulation must be a model of the concept `DelaunayMeshFaceBase_2`.
 
 \tparam Criteria must be a model of the concept `MeshingCriteria_2`. 
+`Criteria::Face_handle` must be the same as `CDT::Face_handle`.
 \tparam InputIterator must be an input iterator with value type `CDT::Geom_traits::Point_2`.
 
-\cgalRequires The face of the constrained Delaunay triangulation must be a model of the concept `DelaunayMeshFaceBase_2`.
-\cgalRequires `CDT::Face_handle` must be the same as `Criteria::Face_handle`. 
 
 */
 template <class CDT, class Criteria, class InputIterator>

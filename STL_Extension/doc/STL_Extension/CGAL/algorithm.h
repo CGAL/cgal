@@ -75,8 +75,12 @@ especially for large and/or complex sequences.
 second component refers to the maximal element in the range
 [`first`, `last`).
 
-\cgalRequires `CompareMin` and `CompareMax` are adaptable binary
-function objects: `VT` \f$ \times\f$ `VT` \f$ \rightarrow\f$ `bool` where `VT`
+\tparam CompareMin is an adaptable binary
+function object: `VT` \f$ \times\f$ `VT` \f$ \rightarrow\f$ `bool` where `VT`
+is the value type of `ForwardIterator`.
+
+\tparam CompareMax is an adaptable binary
+function object: `VT` \f$ \times\f$ `VT` \f$ \rightarrow\f$ `bool` where `VT`
 is the value type of `ForwardIterator`.
 */
 template < class ForwardIterator, class CompareMin,

@@ -113,7 +113,7 @@ Halfedge_handle create_segment();
 
 removes the first vertex if vertices are supported. 
 
-\cgalRequires `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+`Supports_removal` must be `CGAL::Tag_true`.
 */ 
 void vertices_pop_front(); 
 
@@ -127,7 +127,7 @@ void vertices_pop_back();
 
 removes the vertex `v` if vertices are supported. 
 
-\cgalRequires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+`Supports_removal` must be `CGAL::Tag_true`.
 */ 
 void vertices_erase( Vertex_handle v); 
 
@@ -135,7 +135,8 @@ void vertices_erase( Vertex_handle v);
 
 removes the range `[first,last)` if vertices 
 are supported. 
-\cgalRequires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+
+`Supports_removal` must be `CGAL::Tag_true`.
 */ 
 void vertices_erase( Vertex_handle first, Vertex_handle last); 
 
@@ -143,7 +144,7 @@ void vertices_erase( Vertex_handle first, Vertex_handle last);
 
 removes the first face if faces are supported. 
 
-\cgalRequires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+`Supports_removal` must be `CGAL::Tag_true`.
 */ 
 void faces_pop_front(); 
 
@@ -157,7 +158,7 @@ void faces_pop_back();
 
 removes the face `f` if faces are supported. 
 
-\cgalRequires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+`Supports_removal` must be `CGAL::Tag_true`.
 */ 
 void faces_erase( Face_handle f); 
 
@@ -165,7 +166,7 @@ void faces_erase( Face_handle f);
 
 removes the range `[first,last)` if faces are 
 supported. 
-\cgalRequires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+`Supports_removal` must be `CGAL::Tag_true`.
 */ 
 void faces_erase( Face_handle first, Face_handle last); 
 
@@ -178,7 +179,7 @@ creates isolated vertices they get removed as well. See
 `make_hole()` for a more specialized variant. 
 \pre `h->is_border() == false`. 
 
-\cgalRequires If faces are supported, `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+If faces are supported, `Supports_removal`must be `CGAL::Tag_true`.
 */ 
 void erase_face( Halfedge_handle h); 
 
@@ -186,7 +187,7 @@ void erase_face( Halfedge_handle h);
 removes the vertices, halfedges, and faces that belong to the 
 connected component of `h`. \pre For all halfedges `g` in the connected component `g.next() != Halfedge_handle()`. 
 
-\cgalRequires `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+`Supports_removal` must be `CGAL::Tag_true`.
 */ 
 void erase_connected_component( Halfedge_handle h); 
 
@@ -195,9 +196,9 @@ Erases the small connected components and the isolated vertices.
 Keep `nb_components_to_keep` largest connected components. 
 Returns the number of connected components erased (ignoring isolated vertices). 
 
-\cgalRequires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`,
-               `Supports_vertex_halfedge` \f$ \equiv\f$ `CGAL::Tag_true` and
-              `Supports_halfedge_vertex` \f$ \equiv\f$ `CGAL::Tag_true`
+`Supports_removal` must be `CGAL::Tag_true`,
+`Supports_vertex_halfedge` must be `CGAL::Tag_true` and
+`Supports_halfedge_vertex` must be `CGAL::Tag_true`.
 */
 unsigned int keep_largest_connected_components(unsigned int nb_components_to_keep); 
 
@@ -210,7 +211,7 @@ unsigned int keep_largest_connected_components(unsigned int nb_components_to_kee
 removes the face incident to `h` from `hds` and creates a hole. 
 \pre `h != Halfedge_handle()` and `!(h->is_border())`. 
 
-\cgalRequires If faces are supported, `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+If faces are supported, `Supports_removal` must be `CGAL::Tag_true`.
 */ 
 void make_hole( Halfedge_handle h); 
 
@@ -294,7 +295,7 @@ holes. Returns the predecessor of `h` around the face. The invariant
 the data structure unchanged. The time is proportional to the size 
 of the face removed and the time to compute `h->prev()`. 
 
-\cgalRequires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+`Supports_removal` must be `CGAL::Tag_true`.
 
 \image html euler_face.png
 \image latex euler_face.png
@@ -325,7 +326,7 @@ and keeps the polyhedron unchanged.
 The time is proportional to the degree of the vertex removed and 
 the time to compute `h->prev()` and `h->opposite()->prev()`. 
 
-\cgalRequires `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+`Supports_removal` must be `CGAL::Tag_true`.
 
 \image html euler_vertex.png
 \image latex euler_vertex.png
@@ -360,7 +361,7 @@ create_center_vertex(h))` holds if `h` is not a border halfedge.
 The time is proportional to the sum of the size of all incident faces. 
 \pre None of the incident faces of `g->vertex()` is a hole. There are at least two distinct faces incident to the faces that are incident to `g->vertex()`. (This prevents the operation from collapsing a volume into two faces glued together with opposite orientations, such as would happen with any vertex of a tetrahedron.) 
 
-\cgalRequires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+`Supports_removal` must be `CGAL::Tag_true`.
 
 \image html euler_center.png
 \image latex euler_center.png
@@ -395,7 +396,7 @@ by `g` gets removed. Both faces may be holes. The invariant
 data structure unchanged. 
 \pre The faces denoted by `h` and `g` are different and have equal degree (i.e., number of edges). 
 
-\cgalRequires  `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`. 
+`Supports_removal` must be `CGAL::Tag_true`.
 
 \image html euler_loop.png
 \image latex euler_loop.png

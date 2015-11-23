@@ -401,7 +401,7 @@ additional argument.
 
 \cgalModels `OutputIterator`
 
-\cgalRequires `Container` provides a member function `insert(const Container::const_reference&)`.
+\tparam Container provides a member function `insert(const Container::const_reference&)`.
 
 */
 template< typename Container >

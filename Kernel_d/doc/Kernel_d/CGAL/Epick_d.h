@@ -59,7 +59,7 @@ Point_d(double x0, double x1, ...);
 
 /*! introduces a point with coordinate set `[first,end)`.
     \pre If `DimensionTag` is a fixed dimension, it matches `distance(first,end)`.
-    \cgalRequires The value type of `InputIterator` is convertible to `double`.
+    \tparam InputIterator has its value type that is convertible to `double`.
     */
 template<typename InputIterator>
 Point_d(InputIterator first, InputIterator end);
@@ -79,7 +79,7 @@ Cartesian_const_iterator_d cartesian_end()const;
 struct Construct_circumcenter_d {
 /*! returns the center of the sphere defined by `A=tuple[first,last)`. The sphere is centered in the affine hull of A and passes through all the points of A. The order of the points of A does not matter.
     \pre A is affinely independant.
-    \cgalRequires The value type of `ForwardIterator` is `Epick_d::Point_d`.
+    \tparam ForwardIterator has `Epick_d::Point_d` as value type.
     */
 template<typename ForwardIterator>
 Point_d operator()(ForwardIterator first, ForwardIterator last);
@@ -87,7 +87,7 @@ Point_d operator()(ForwardIterator first, ForwardIterator last);
 struct Compute_squared_radius_d {
 /*! returns the radius of the sphere defined by `A=tuple[first,last)`. The sphere is centered in the affine hull of A and passes through all the points of A. The order of the points of A does not matter.
     \pre A is affinely independant.
-    \cgalRequires The value type of `ForwardIterator` is `Epick_d::Point_d`.
+    \tparam ForwardIterator has `Epick_d::Point_d` as value type.
     */
 template<class ForwardIterator>
 Point_d operator()(ForwardIterator first, ForwardIterator last);
@@ -97,7 +97,7 @@ Point_d operator()(ForwardIterator first, ForwardIterator last);
 struct Side_of_bounded_sphere_d {
 /*! returns the relative position of point p to the sphere defined by `A=tuple[first,last)`. The sphere is centered in the affine hull of A and passes through all the points of A. The order of the points of A does not matter.
     \pre A is affinely independant.
-    \cgalRequires The value type of `ForwardIterator` is `Epick_d::Point_d`.
+    \tparam ForwardIterator has `Epick_d::Point_d` as value type.
     */
 template<class ForwardIterator>
 Bounded_side operator()(ForwardIterator first, ForwardIterator last, const Point_d&p);

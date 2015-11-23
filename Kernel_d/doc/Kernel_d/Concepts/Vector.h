@@ -60,7 +60,7 @@ Vector(int d, NT x);
 creates an 
 instance `v` of type `Vector`; `v` is initialized to the 
 vector with entries `set [first,last)`. 
-\cgalRequires `Forward_iterator` has value type `NT`. 
+\tparam ForwardIterator has `NT` as value type.
 */ 
 template <class Forward_iterator> 
 Vector(Forward_iterator first, Forward_iterator last); 
