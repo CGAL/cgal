@@ -463,4 +463,11 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 
 } //namespace CGAL
 
+//Support for c++11 noexcept
+#ifdef CGAL_CXX11
+#define CGAL_NOEXCEPT(x) noexcept(x)
+#else
+#define CGAL_NOEXCEPT(x)
+#endif
+
 #endif // CGAL_CONFIG_H

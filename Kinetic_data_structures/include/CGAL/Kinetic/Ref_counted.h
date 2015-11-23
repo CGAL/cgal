@@ -51,7 +51,8 @@ public:
     return reference_count_ != 0;
   }
 
-  virtual ~Ref_counted_base() {
+  virtual ~Ref_counted_base() CGAL_NOEXCEPT(false)
+  {
     CGAL_destructor_assertion(reference_count_==0);
   }
 
