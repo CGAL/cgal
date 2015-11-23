@@ -142,6 +142,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Viewer_interface_moc.cpp
     Scene_item_moc.cpp
     Scene_item.cpp #Scene_item.moc
+    Scene_group_item.cpp
     Polyhedron_demo_plugin_helper.cpp)
     qt5_use_modules(demo_framework OpenGL Gui Widgets Script Xml)
 
@@ -222,7 +223,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       scene_basic_objects
       scene_polyhedron_item
       scene_polygon_soup_item
-      scene_nef_polyhedron_item )
+      scene_nef_polyhedron_item)
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${lib} )
   endforeach()
 
@@ -264,8 +265,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   FOREACH(SUB_DIR ${DEMO_PLUGINS})
       add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${SUB_DIR}")
   ENDFOREACH()
-  add_executable(example_plugin IMPORTED)
-  set_property(TARGET example_plugin PROPERTY IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/../../../Example_plugin/example_plugin.cmake")
+  add_item(scene_group_item Scene_group_item.cpp)
+  polyhedron_demo_plugin(group_plugin Polyhedron_demo_group_plugin ${groupUI_FILES})
+  target_link_libraries(group_plugin scene_group_item)
 #
 # Exporting
 #

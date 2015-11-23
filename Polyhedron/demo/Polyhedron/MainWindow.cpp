@@ -116,7 +116,6 @@ MainWindow::~MainWindow()
 {
   delete ui;
 }
-
 MainWindow::MainWindow(QWidget* parent)
   : CGAL::Qt::DemosMainWindow(parent)
 {
@@ -146,17 +145,21 @@ MainWindow::MainWindow(QWidget* parent)
 
   proxyModel = new QSortFilterProxyModel(this);
   proxyModel->setSourceModel(scene);
+  SceneDelegate *delegate = new SceneDelegate(this);
+  delegate->setProxy(proxyModel);
+  delegate->setScene(scene);
+
 
   connect(ui->searchEdit, SIGNAL(textChanged(QString)),
           proxyModel, SLOT(setFilterFixedString(QString)));
   sceneView->setModel(proxyModel);
 
   // setup the sceneview: delegation and columns sizing...
-  sceneView->setItemDelegate(new SceneDelegate(this));
+  sceneView->setItemDelegate(delegate);
 
-  sceneView->header()->setStretchLastSection(false);
-  sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
-  sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+ //sceneView->header()->setStretchLastSection(false);
+  /* sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
+   sceneView->header()->setSectionResizeMode(Scene::NameColumn, QHeaderView::Stretch);
   sceneView->header()->setSectionResizeMode(Scene::ColorColumn, QHeaderView::ResizeToContents);
   sceneView->header()->setSectionResizeMode(Scene::RenderingModeColumn, QHeaderView::Fixed);
   sceneView->header()->setSectionResizeMode(Scene::ABColumn, QHeaderView::Fixed);
@@ -165,7 +168,7 @@ MainWindow::MainWindow(QWidget* parent)
   sceneView->resizeColumnToContents(Scene::RenderingModeColumn);
   sceneView->resizeColumnToContents(Scene::ABColumn);
   sceneView->resizeColumnToContents(Scene::VisibleColumn);
-
+*/
   // setup connections
   connect(scene, SIGNAL(dataChanged(const QModelIndex &, const QModelIndex & )),
           this, SLOT(updateInfo()));
@@ -206,6 +209,15 @@ MainWindow::MainWindow(QWidget* parent)
   sceneView->setContextMenuPolicy(Qt::CustomContextMenu);
   connect(sceneView, SIGNAL(customContextMenuRequested(const QPoint & )),
           this, SLOT(showSceneContextMenu(const QPoint &)));
+
+  connect(sceneView, SIGNAL(expanded(QModelIndex)),
+          scene, SLOT(setExpanded(QModelIndex)));
+
+  connect(sceneView, SIGNAL(collapsed(QModelIndex)),
+          scene, SLOT(setCollapsed(QModelIndex)));
+
+  connect(scene, SIGNAL(restoreCollapsedState()),
+          this, SLOT(restoreCollapseState()));
 
   connect(viewer, SIGNAL(selected(int)),
           this, SLOT(selectSceneItem(int)));
@@ -999,6 +1011,7 @@ void MainWindow::selectSceneItem(int i)
   else {
     QItemSelection s =
       proxyModel->mapSelectionFromSource(scene->createSelection(i));
+
     sceneView->selectionModel()->select(s,
                                         QItemSelectionModel::ClearAndSelect);
   }
@@ -1053,21 +1066,24 @@ void MainWindow::selectAll()
 
 int MainWindow::getSelectedSceneItemIndex() const
 {
-  QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
-  if(selectedRows.size() != 1)
+  QModelIndexList selectedRows = sceneView->selectionModel()->selectedIndexes();
+  if(selectedRows.size() != 5)
     return -1;
   else {
     QModelIndex i = proxyModel->mapToSource(selectedRows.first());
-    return i.row();
+    return scene->getIdFromModelIndex(i);
   }
 }
 
 QList<int> MainWindow::getSelectedSceneItemIndices() const
 {
-  QModelIndexList selectedRows = sceneView->selectionModel()->selectedRows();
+
+  QModelIndexList selectedIndices = sceneView->selectionModel()->selectedIndexes();
   QList<int> result;
-  Q_FOREACH(QModelIndex index, selectedRows) {
-    result << proxyModel->mapToSource(index).row();
+  Q_FOREACH(QModelIndex index, selectedIndices) {
+      int temp = scene->getIdFromModelIndex(proxyModel->mapToSource(index));
+      if(!result.contains(temp))
+          result<<temp;
   }
   return result;
 }
@@ -1110,7 +1126,7 @@ void MainWindow::contextMenuRequested(const QPoint& global_pos) {
 void MainWindow::showSceneContextMenu(int selectedItemIndex,
                                       const QPoint& global_pos)
 {
-  CGAL::Three::Scene_item* item = scene->item(selectedItemIndex);
+  CGAL::Three::Scene_item* item = scene->item(scene->getIdFromModelIndex(scene->index(selectedItemIndex,0,QModelIndex())));
   if(!item) return;
 
   const char* prop_name = "Menu modified by MainWindow.";
@@ -1149,10 +1165,24 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
 
   int index = -1;
   if(sender == sceneView) {
-    QModelIndex modelIndex = sceneView->indexAt(p);
-    if(!modelIndex.isValid()) return;
+      QModelIndex modelIndex = sceneView->indexAt(p);
+      if(!modelIndex.isValid())
+      {
+          const char* prop_name = "Menu modified by MainWindow.";
 
-    index = proxyModel->mapToSource(modelIndex).row();
+          QMenu* menu = ui->menuFile;
+          if(menu) {
+              bool menuChanged = menu->property(prop_name).toBool();
+              if(!menuChanged) {
+                  menu->setProperty(prop_name, true);
+              }
+          }
+          if(menu)
+              menu->exec(sender->mapToGlobal(p));
+          return;
+      }
+      else
+          index = proxyModel->mapToSource(modelIndex).row();
   }
   else {
     index = scene->mainSelectionIndex();
@@ -1188,7 +1218,7 @@ void MainWindow::updateInfo() {
     }
     ui->infoLabel->setText(item_text);
   }
-  else 
+  else
     ui->infoLabel->clear();
 }
 
@@ -1617,5 +1647,35 @@ Q_FOREACH(QAction* a, as)
             ui->menuOperations->clear();
             ui->menuOperations->addActions(as);
         }
+}
 
+void MainWindow::recurseExpand(QModelIndex index)
+{
+    int row = index.row();
+    if(index.child(0,0).isValid())
+    {
+        recurseExpand(index.child(0,0));
+    }
+
+    QString name = scene->item(scene->getIdFromModelIndex(index))->name();
+        Scene_group_item* group =
+                qobject_cast<Scene_group_item*>(scene->item(scene->getIdFromModelIndex(index)));
+
+        if(group && group->isExpanded())
+        {
+            sceneView->setExpanded(proxyModel->mapFromSource(index), true);
+        }
+        else if (group && !group->isExpanded()){
+            sceneView->setExpanded(proxyModel->mapFromSource(index), false);
+        }
+
+
+        if( index.sibling(row+1,0).isValid())
+            recurseExpand(index.sibling(row+1,0));
+}
+void MainWindow::restoreCollapseState()
+{
+    QModelIndex modelIndex = scene->index(0,0,scene->invisibleRootItem()->index());
+    if(modelIndex.isValid())
+        recurseExpand(modelIndex);
 }

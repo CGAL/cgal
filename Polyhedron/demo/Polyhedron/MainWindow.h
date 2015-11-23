@@ -28,6 +28,7 @@ class Scene_item;
 }
 
 class QSortFilterProxyModel;
+class QModelIndex;
 
 namespace Ui {
   class MainWindow;
@@ -72,7 +73,8 @@ public Q_SLOTS:
   void updateViewerBBox();
   void open(QString);
 
-  //! given an extension file, returns true if `filename` matches the filter
+  void restoreCollapseState();
+  /// given a file extension file, returns true if `filename` matches the filter
   bool file_matches_filter(const QString& filters, const QString& filename);
 
   /*! Open a file with a given loader, and return true if it was successful.
@@ -328,6 +330,7 @@ protected:
   QList<int> getSelectedSceneItemIndices() const;
 
 private:
+  void recurseExpand(QModelIndex index);
   QString strippedName(const QString &fullFileName);
   void setMenus(QString, QString, QAction *a);
   /// plugin black-list

@@ -3,25 +3,25 @@
 #define SCENE_H
 #include "config.h"
 #include "Scene_config.h"
-
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Scene_draw_interface.h>
 #include <CGAL/Three/Viewer_config.h>
 
 #include <QtOpenGL/qgl.h>
-#include <QAbstractListModel>
+#include <QStandardItemModel>
 #include <QString>
 #include <QColor>
 #include <QList>
+#include <QMap>
 #include <QItemDelegate>
 #include <QPixmap>
 #include <QItemSelection>
 #include <QGLViewer/qglviewer.h>
-
+#include <QDebug>
 #include <iostream>
 #include <cmath>
 #include <boost/variant.hpp>
-
+#include "Scene_group_item.h"
 class QEvent;
 class QMouseEvent;
 namespace GlSplat { class SplatRenderer; }
@@ -29,7 +29,8 @@ namespace CGAL { namespace Three{ class Viewer_interface;}}
 
 
 class SCENE_EXPORT Scene  :
-  public QAbstractListModel, public CGAL::Three::Scene_interface, public CGAL::Three::Scene_draw_interface
+  public QStandardItemModel, public CGAL::Three::Scene_interface, public CGAL::Three::Scene_draw_interface
+
 {
   Q_OBJECT
   Q_PROPERTY(int numberOfEntries READ numberOfEntries)
@@ -37,6 +38,8 @@ class SCENE_EXPORT Scene  :
   friend class SceneDelegate;
 
 public:
+  QList<QModelIndex> getModelIndexFromId(int id) const;
+  int getIdFromModelIndex(QModelIndex modelId) const;
   enum Columns { NameColumn = 0, 
                  ColorColumn, 
                  RenderingModeColumn, 
@@ -50,8 +53,11 @@ public:
   //!Adds item to the items list, gives it an ID and
   //!updates the bounding box if needed.
   int addItem(CGAL::Three::Scene_item* item);
-  //!Sets item as the item at index and calls @ref Scene_item#changed().
 
+  //!Moves item to the targeted group.
+  void changeGroup(CGAL::Three::Scene_item* item, Scene_group_item* target_group);
+
+  //!Sets item as the item at index and calls @ref Scene_item#changed().
   //!If emit_item_about_to_be_destroyed is set to true, emits
   //!an itemAboutToBeDestroyed signal.
   CGAL::Three::Scene_item* replaceItem(int index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false);
@@ -134,12 +140,9 @@ public:
     return std::sqrt(dx*dx + dy*dy + dz*dz);
   }
 
-  // QAbstractItemModel functions
-  //!@returns the number of items, which is also the sumber of rows in the sceneView.
-  int rowCount ( const QModelIndex & parent = QModelIndex() ) const;
-  //!@returns the number of columns in the sceneView.
-  int columnCount ( const QModelIndex & parent = QModelIndex() ) const;
-  //!@returns the column data corresponding to role.
+
+  // QStandardItemModel functions
+  bool dropMimeData(const QMimeData *, Qt::DropAction, int, int, const QModelIndex &parent);
   QVariant data ( const QModelIndex & index, int role = ::Qt::DisplayRole ) const;
   //!@returns the type of data correspondind to the role.
   QVariant headerData ( int section, ::Qt::Orientation orientation, int role = ::Qt::DisplayRole ) const;
@@ -148,7 +151,8 @@ public:
   /*! Sets the column data for the target index. Returns false if index is not valid and
    * if role is not EditRole.*/
   bool setData(const QModelIndex &index, const QVariant &value, int role);
-
+  QList<Scene_group_item*> group_entries() const ;
+  QList<CGAL::Three::Scene_item*> item_entries() const ;
   // auxiliary public function for QMainWindow
   //!Selects the row at index i in the sceneView.
   QItemSelection createSelection(int i);
@@ -169,6 +173,10 @@ public Q_SLOTS:
    *  Calls @ref Scene_item#changed().
    * This function is called by the items.*/
   void itemChanged(CGAL::Three::Scene_item*);
+  //!Removes item from all the groups of the scene.
+  void remove_item_from_groups(CGAL::Three::Scene_item* item);
+  //!Re-organizes the sceneView.
+  void group_added();
   //! Sets the selected item to the target index.
   void setSelectedItemIndex(int i)
   {
@@ -179,7 +187,8 @@ public Q_SLOTS:
   {
     selected_item = i;
     Q_EMIT selectionChanged(i);
-  };
+  }
+
   //! Sets the target item as selected and emits setSelectedItem for its index.
   void setSelectedItem(CGAL::Three::Scene_item* item_to_select)
   {
@@ -193,12 +202,26 @@ public Q_SLOTS:
       }
       ++i;
     }
-  };
+  }
   //! Sets the target list of indices as the selected indices.
-  void setSelectedItemsList(QList<int> l )
+  QList<int> setSelectedItemsList(QList<int> l )
   {
+    Q_FOREACH(int i,l)
+    {
+       Scene_group_item* group =
+               qobject_cast<Scene_group_item*>(item(i));
+       if(group)
+       {
+         QList<int> list;
+         Q_FOREACH(CGAL::Three::Scene_item* child, group->getChildren())
+           list<<m_entries.indexOf(child);
+         l << setSelectedItemsList(list);
+       }
+
+    }
     selected_items_list = l;
-  };
+    return l;
+  }
 
   // Accessors (setters)
   //!Sets the item at index i to visible or not visible.
@@ -216,8 +239,12 @@ Q_SIGNALS:
   void itemAboutToBeDestroyed(CGAL::Three::Scene_item*);
   void selectionRay(double, double, double, double, double, double);
   void selectionChanged(int i);
-
+  void restoreCollapsedState();
 private Q_SLOTS:
+  //!Specifies a group as Expanded for the view
+  void setExpanded(QModelIndex);
+  //!Specifies a group as Collapsed for the view
+  void setCollapsed(QModelIndex);
   //! Casts a selection ray and calls the item function select.
   void setSelectionRay(double, double, double, double, double, double);
   void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}
@@ -227,12 +254,16 @@ private:
    * to its current renderingMode. If with_names is true, uses
    * the OpenGL mode GL_WITH_NAMES, essentially used for the picking.*/
   void draw_aux(bool with_names, CGAL::Three::Viewer_interface*);
+  //! Re-draw the hierarchy of the view.
+  void organize_items(CGAL::Three::Scene_item* item, QStandardItem *root, int loop);
   //! List of Scene_items.
   typedef QList<CGAL::Three::Scene_item*> Entries;
   //!List containing all the scene_items.
   Entries m_entries;
   //! Index of the currently selected item.
   int selected_item;
+  //!List containing all the scene_group_items.
+  QList<Scene_group_item*> m_group_entries;
   //!List of indices of the currently selected items.
   QList<int> selected_items_list;
   //!Index of the item_A.
@@ -241,10 +272,14 @@ private:
   int item_B;
   static GlSplat::SplatRenderer* ms_splatting;
   static int ms_splattingCounter;
+  QMap<QModelIndex, int> index_map;
+
 public:
   static GlSplat::SplatRenderer* splatting();
 
 }; // end class Scene
+
+class QAbstractProxyModel;
 /*!
  * \brief The SceneDelegate class
  * Handles the columns of the sceneView
@@ -265,11 +300,21 @@ public:
   //! Draws the content of the sceneView
   void paint(QPainter *painter, const QStyleOptionViewItem &option,
              const QModelIndex &index) const;
+  void setProxy(QAbstractProxyModel* p_proxy){
+      proxy = p_proxy;
+  }
+  void setScene(Scene* p_scene){
+      scene = p_scene;
+  }
 
 private:
   QPixmap checkOnPixmap;
   QPixmap checkOffPixmap;
+  QAbstractProxyModel *proxy;
+  Scene *scene;
   mutable int size;
 }; // end class SceneDelegate
 
 #endif // SCENE_H
+
+
