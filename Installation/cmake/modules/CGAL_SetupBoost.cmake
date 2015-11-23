@@ -13,7 +13,7 @@ if ( NOT CGAL_Boost_Setup )
           AND CMAKE_CXX_FLAGS MATCHES "\\-std=c\\+\\+[01][14yx]")
         #GCC 6.0+ without c++03 on
         OR ( NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.0
-             AND NOT CMAKE_CXX_FLAGS MATCHES "\\-std=c\\+\\+03")
+             AND NOT CMAKE_CXX_FLAGS MATCHES "\\-std=c\\+\\+[90][83]")
       ) )
     set ( CGAL_requires_Boost_libs FALSE )
   endif()
