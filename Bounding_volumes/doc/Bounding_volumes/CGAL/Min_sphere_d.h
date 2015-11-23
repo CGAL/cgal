@@ -126,8 +126,7 @@ Min_sphere_d (const Traits& traits = Traits());
 creates a variable `min_sphere` of type `Min_sphere_d`. 
 It is initialized to \f$ ms(P)\f$ with \f$ P\f$ being the set of points 
 in the range [`first`,`last`). 
-@tparam first has the value type of `Point`.
-@tparam last has the value type of `Point`.
+\tparam InputIterator is a model of `InputIterator` with `Point` as value type.
 If the traits parameter is not supplied, the class `Traits` must provide a default constructor.
 \pre All points have the same dimension.
 */ 
@@ -262,8 +261,7 @@ void clear ();
 
 sets `min_sphere` to the \f$ ms(P)\f$, where \f$ P\f$ is the set of points 
 in the range [`first`,`last`). 
-@tparam first has the value type of `Point`.
-@tparam last has the value type of `Point`.
+\tparam InputIterator is a model of `InputIterator` with `Point` as value type.
 \pre All points have the same dimension. 
 */ 
 template < class InputIterator > 
@@ -285,8 +283,7 @@ void insert( const Point& p);
 inserts the points in the range [`first`,`last`) 
 into `min_sphere` and recomputes the smallest enclosing sphere, by 
 calling `insert` for all points in the range. 
-@tparam first has the value type of `Point`.
-@tparam last has the value type of `Point`.
+\tparam InputIterator is a model of `InputIterator` with `Point` as value type.
 \pre All points have the same dimension. If `min_sphere` is not empty, this dimension must be equal to `ambient_dimension()`. 
 */ 
 template < class InputIterator > 
@@ -336,7 +333,7 @@ const Traits& traits( ) const;
 /*!
 
 writes `min_sphere` to output stream `os`. 
-The output operator is defined for `Point`.
+An overload of `operator<<` must be defined for `Point`.
 \relates Min_sphere_d 
 */ 
 std::ostream& operator << ( std::ostream& os, 
@@ -346,7 +343,7 @@ min_sphere);
 /*!
 
 reads `min_sphere` from input stream `is`. 
-The input operator is defined for `Point`.
+An overload of `operator>>` must be defined for `Point`
 \relates Min_sphere_d 
 */ 
 std::istream& operator >> ( std::istream& is, 

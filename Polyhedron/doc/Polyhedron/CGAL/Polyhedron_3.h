@@ -1238,7 +1238,7 @@ public:
     facet removed and the time to compute `h->%prev()`. 
     \pre The degree of both vertices incident to `h` is at least three (no antennas). 
 
-    Requires :    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`.
+    `Supports_removal` must be `CGAL::Tag_true`.
 
     \image html euler_facet.png
     \image latex euler_facet.png
@@ -1284,7 +1284,7 @@ n  */
     the time to compute `h->%prev()` and `h->%opposite()->%prev()`. 
     \pre The size of both facets incident to `h` is at least four (no multi-edges). 
 
-    Requires :    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`.
+    `Supports_removal` must be `CGAL::Tag_true`.
 
     \image html euler_vertex.png
     \image latex euler_vertex.png
@@ -1338,7 +1338,7 @@ n  */
     The time is proportional to the sum of the size of all incident facets. 
     \pre None of the incident facets of `g->vertex()` is a hole. There are at least two distinct facets incident to the facets that are incident to `g->vertex()`. (This prevents the operation from collapsing a volume into two facets glued together with opposite orientations, such as would happen with any vertex of a tetrahedron.) 
 
-    Requires :    `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`.
+    `Supports_removal` must be `CGAL::Tag_true`.
 
     \image html euler_center.png
     \image latex euler_center.png
@@ -1375,7 +1375,7 @@ n  */
     polyhedron unchanged. 
     \pre The facets denoted by `h` and `g` are different and have equal degree (i.e., number of edges). 
 
-    Requires :     `Supports_removal` \f$ \equiv\f$     `CGAL::Tag_true`.
+    `Supports_removal` must be `CGAL::Tag_true`.
 
     \image html euler_loop.png
     \image latex euler_loop.png
@@ -1395,7 +1395,7 @@ n  */
     See `erase_facet(h)` for a more generalized variant. 
     \pre None of the incident halfedges of the facet is a border edge. 
 
-    Requires :    `Supports_removal` \f$ \equiv\f$     `CGAL::Tag_true`.
+    `Supports_removal` must be `CGAL::Tag_true`.
   */ 
   Halfedge_handle make_hole( Halfedge_handle h); 
 
@@ -1450,7 +1450,7 @@ n  */
     See `make_hole(h)` for a more specialized variant. 
     \pre `h->is_border() == false`. 
 
-    Requires : `Supports_removal` \f$ \equiv\f$ `CGAL::Tag_true`
+    `Supports_removal` must be `CGAL::Tag_true`
 
     \image html add_facet1.png
     \image latex add_facet1.png
@@ -1464,7 +1464,7 @@ n  */
     removes the vertices, halfedges, and facets that belong to the 
     connected component of `h`. 
 
-    Requires :    `Supports_removal` \f$ \equiv\f$     `CGAL::Tag_true`.
+    `Supports_removal` must be `CGAL::Tag_true`.
   */ 
   void erase_connected_component( Halfedge_handle h); 
 
@@ -1473,7 +1473,7 @@ n  */
     Keep `nb_components_to_keep` largest connected components. 
     Returns the number of connected components erased (ignoring isolated vertices). 
 
-    Requires : supports vertices, halfedges, and removal operation.
+    The polyhedron type must support vertices, halfedges, and removal operations.
   */ 
   unsigned int keep_largest_connected_components(unsigned int nb_components_to_keep); 
 

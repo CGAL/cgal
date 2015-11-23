@@ -18,7 +18,7 @@ independent.
 
 \pre The objects are of the same dimension. 
 
-\tparam `ForwardIterator`has `Kernel_d::Point_d` as value type.
+\tparam ForwardIterator has `Kernel_d::Point_d` as value type.
 
 */ 
 template <class ForwardIterator> bool 

@@ -60,7 +60,7 @@ Vector(int d, NT x);
 creates an 
 instance `v` of type `Vector`; `v` is initialized to the 
 vector with entries `set [first,last)`. 
-\tparam `ForwardIterator`has `NT` as value type.
+\tparam ForwardIterator has `NT` as value type.
 */ 
 template <class Forward_iterator> 
 Vector(Forward_iterator first, Forward_iterator last); 

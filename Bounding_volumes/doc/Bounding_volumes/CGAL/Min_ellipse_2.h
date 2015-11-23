@@ -113,8 +113,7 @@ Usually, this will not be necessary, however, the algorithm's
 efficiency depends on the order in which the points are 
 processed, and a bad order might lead to extremely poor 
 performance (see example below). 
-@tparam first has the value type of `Point`.
-@tparam last has the value type of `Point`.
+\tparam InputIterator is a model of `InputIterator` with `Point` as value type.
 */ 
 template < class InputIterator > 
 Min_Ellipse_2( InputIterator first, 
@@ -313,8 +312,7 @@ inserts the points in the range [`first`,`last`)
 into `min_ellipse` and recomputes the smallest enclosing ellipse by 
 calling `insert(p)` for each point `p` in 
 [`first`,`last`). 
-@tparam first has the value type of `Point`.
-@tparam last has the value type of `Point`.
+\tparam InputIterator is a model of `InputIterator` with `Point` as value type.
 */ 
 template < class InputIterator > 
 void insert( InputIterator first, 
@@ -370,7 +368,7 @@ const Traits& traits( ) const;
 /*!
 
 writes `min_ellipse` to output stream `os`. 
-The output operator is defined for `Point` (and for `Ellipse`, if pretty printing is used).
+An overload of `operator<<` must be defined for `Point` (and for `Ellipse`, if pretty printing is used).
 \relates Min_ellipse_2 
 */ 
 std::ostream& 
@@ -380,7 +378,7 @@ const Min_ellipse_2<Traits>& min_ellipse);
 /*!
 
 reads `min_ellipse` from input stream `is`. 
-The input operator is defined for `Point`.
+An overload of `operator>>` must be defined for `Point`.
 \relates Min_ellipse_2 
 */ 
 std::istream& 

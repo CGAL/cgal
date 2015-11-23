@@ -238,7 +238,6 @@ ALIASES += "cgalConcept=\details <div id=\"CGALConcept\"></div>\n \brief"
 ALIASES += "cgalConceptNamespace=\details <div id=\"CGALConceptNS\"></div>\n \brief"
 
 ALIASES += "cgalRefines=\xrefitem refines \"Refines\" \"Refinement Relationships\""
-ALIASES += "cgalRequires=\xrefitem requires \"Requires\" \"Type Requirements\""
 ALIASES += "cgalModels=\xrefitem models \"Is Model Of\" \"Is Model Relationships\""
 ALIASES += "cgalGeneralizes=\xrefitem generalizes \"Generalizes\" \"Generalization Relationships\""
 ALIASES += "cgalHasModel=\xrefitem hasModels \"Has Models\" \"Has Model Relationships\""

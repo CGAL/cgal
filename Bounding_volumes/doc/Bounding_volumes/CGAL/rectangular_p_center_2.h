@@ -229,12 +229,12 @@ the 2D-Kernel. In this case, a default traits class
 
 <OL>
 <LI><I>Either: (if no traits parameter is given)</I> Value type 
-of `ForwardIterator` is `CGAL::Point_2<K>` for some 
-representation class `K` and `FT` is equivalent to 
+of `ForwardIterator` must be `CGAL::Point_2<K>` for some 
+representation class `K` and `FT` must be equivalent to 
 `K::FT`, 
 <LI><I>Or: (if a traits parameter is specified)</I> `Traits` 
-is a model for `RectangularPCenterTraits_2`. 
-<LI>`OutputIterator` accepts the value type of 
+must be a model for `RectangularPCenterTraits_2`. 
+<LI>`OutputIterator` must accept the value type of 
 `ForwardIterator` as value type. 
 </OL> 
 

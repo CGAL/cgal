@@ -36,8 +36,8 @@ monotone).
 
 \pre `t` points to a structure of size at least `m.number_of_rows()` 
 
-\tparam `Matrix` is a model for `MonotoneMatrixSearchTraits`.
-\tparam `RandomAccessIc`has `int` as value type.
+\tparam Matrix is a model of `MonotoneMatrixSearchTraits`.
+\tparam RandomAccessIC is a model of `RandomAccessIterator` with `int` as value type.
 If `compare_strictly` is defined, it is an adaptable
 binary function: `Matrix::Value` \f$ \times\f$ 
 `Matrix::Value` \f$ \rightarrow\f$ `bool` describing a strict 

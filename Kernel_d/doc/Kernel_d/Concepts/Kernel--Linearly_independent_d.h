@@ -18,7 +18,7 @@ whether the vectors in `A = tuple [first,last)` are linearly
 independent.
 
 \pre The objects in `A` are of the same dimension. 
-\tparam `ForwardIterator`has `Kernel_d::Vector_d` as value type.
+\tparam ForwardIterator has `Kernel_d::Vector_d` as value type.
 */ 
 template <class ForwardIterator> bool 
 operator()(ForwardIterator first, ForwardIterator last); 

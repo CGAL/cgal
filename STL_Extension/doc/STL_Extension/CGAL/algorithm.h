@@ -75,11 +75,11 @@ especially for large and/or complex sequences.
 second component refers to the maximal element in the range
 [`first`, `last`).
 
-\tparam `CompareMin` is an adaptable binary
+\tparam CompareMin is an adaptable binary
 function object: `VT` \f$ \times\f$ `VT` \f$ \rightarrow\f$ `bool` where `VT`
 is the value type of `ForwardIterator`.
 
-\tparam `CompareMax` is an adaptable binary
+\tparam CompareMax is an adaptable binary
 function object: `VT` \f$ \times\f$ `VT` \f$ \rightarrow\f$ `bool` where `VT`
 is the value type of `ForwardIterator`.
 */

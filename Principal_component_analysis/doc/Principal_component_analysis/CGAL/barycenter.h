@@ -33,7 +33,7 @@ CGAL::Kernel_traits<
 >::Kernel
 \endcode
 
-\tparam `InputIterator` must have
+\tparam InputIterator must have
 `std::pair<K::Point_2, K::FT>` or `std::pair<K::Point_3, K::FT> as value type`.
 
 \pre first != beyond, and the sum of the weights is non-zero.
@@ -50,7 +50,7 @@ points.
 \returns `K::Point_2` or `K::Point_3` depending on the dimension of
 the input values.
 
-\tparam `InputIterator` must have
+\tparam InputIterator must have
 `std::pair<K::Point_2, K::FT>` or `std::pair<K::Point_3, K::FT>` as value type.
 
 \pre first != beyond, and the sum of the weights is non-zero.
