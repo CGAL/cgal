@@ -449,7 +449,11 @@ void Viewer::attrib_buffers(int program_name) const {
     program->bind();
     switch(program_name)
     {
-    /// @TODO: factorize that implementation!
+    case PROGRAM_NO_SELECTION:
+        program->setUniformValue("mvp_matrix", mvp_mat);
+
+        program->setUniformValue("f_matrix",f_mat);
+        break;
     case PROGRAM_WITH_LIGHT:
         program->setUniformValue("mvp_matrix", mvp_mat);
         program->setUniformValue("mv_matrix", mv_mat);
@@ -921,6 +925,27 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
             }
             program->link();
             d->shader_programs[PROGRAM_WITHOUT_LIGHT] = program;
+            return program;
+        }
+        break;
+    case PROGRAM_NO_SELECTION:
+        if( d->shader_programs[PROGRAM_NO_SELECTION])
+        {
+            return d->shader_programs[PROGRAM_NO_SELECTION];
+        }
+        else
+        {
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_without_light.v"))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_no_light_no_selection.f"))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            d->shader_programs[PROGRAM_NO_SELECTION] = program;
             return program;
         }
         break;

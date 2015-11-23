@@ -32,7 +32,7 @@ void Scene_polyhedron_selection_item::initialize_buffers(CGAL::Three::Viewer_int
     }
     //vao containing the data for the unselected lines
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
         vaos[1]->bind();
 
@@ -50,7 +50,7 @@ void Scene_polyhedron_selection_item::initialize_buffers(CGAL::Three::Viewer_int
     }
     //vao containing the data for the points
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
         vaos[2]->bind();
 
@@ -201,9 +201,10 @@ void Scene_polyhedron_selection_item::draw_edges(CGAL::Three::Viewer_interface* 
 
     viewer->glLineWidth(3.f);
     vaos[1]->bind();
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    program = getShaderProgram(PROGRAM_NO_SELECTION);
+    attrib_buffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
+
     program->setAttributeValue("colors",edge_color);
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
     program->release();
@@ -220,8 +221,8 @@ void Scene_polyhedron_selection_item::draw_points(CGAL::Three::Viewer_interface*
     }
     viewer->glPointSize(5.f);
     vaos[2]->bind();
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    program = getShaderProgram(PROGRAM_NO_SELECTION);
+    attrib_buffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors",vertex_color);
     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_points/3));
