@@ -128,7 +128,6 @@ void Polyhedron_demo_point_set_upsampling_plugin::on_actionEdgeAwareUpsampling_t
       for (unsigned int i = 0; i < new_points.size (); ++ i)
 	points->push_back (Point_set::Point_with_normal (new_points[i].first,
 							 new_points[i].second));
-      points->unselect_all();
       
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << task_timer.time() << " seconds, "
