@@ -7,8 +7,14 @@ if ( NOT CGAL_Boost_Setup )
     set ( CGAL_requires_Boost_libs FALSE )
   endif()
   if ( CMAKE_COMPILER_IS_GNUCXX
-       AND (NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8)
-       AND (CMAKE_CXX_FLAGS MATCHES "\\-std=c\\+\\+1[14]")  )
+      AND(
+        #GCC 4.8+ with c++11 on
+        ( NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 4.8
+          AND CMAKE_CXX_FLAGS MATCHES "\\-std=c\\+\\+[01][14yx]")
+        #GCC 6.0+ without c++03 on
+        OR ( NOT CMAKE_CXX_COMPILER_VERSION VERSION_LESS 6.0
+             AND NOT CMAKE_CXX_FLAGS MATCHES "\\-std=c\\+\\+03")
+      ) )
     set ( CGAL_requires_Boost_libs FALSE )
   endif()
 
