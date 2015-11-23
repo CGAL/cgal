@@ -175,6 +175,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_item(scene_c2t3_item Scene_c2t3_item.cpp)# Scene_c2t3_item.moc)
 
+  add_item(scene_group_item Scene_group_item.cpp)
   add_item(scene_polyhedron_item Scene_polyhedron_item.cpp ${statisticsPolyhedronUI_FILES})# Scene_polyhedron_item.moc)
   add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_polyhedron_transform_item.cpp )#Scene_polyhedron_transform_item.moc)
 
@@ -257,6 +258,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
 
+
   ###########
   # PLUGINS #
   ###########
@@ -265,9 +267,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   FOREACH(SUB_DIR ${DEMO_PLUGINS})
       add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${SUB_DIR}")
   ENDFOREACH()
-  add_item(scene_group_item Scene_group_item.cpp)
-  polyhedron_demo_plugin(group_plugin Polyhedron_demo_group_plugin ${groupUI_FILES})
-  target_link_libraries(group_plugin scene_group_item)
+
 #
 # Exporting
 #
