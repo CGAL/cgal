@@ -647,7 +647,7 @@ Scene::setData(const QModelIndex &index,
     return false;
 }
 
-bool Scene::dropMimeData(const QMimeData */*data*/,
+bool Scene::dropMimeData(const QMimeData * /*data*/,
                          Qt::DropAction /*action*/,
                          int /*row*/,
                          int /*column*/,

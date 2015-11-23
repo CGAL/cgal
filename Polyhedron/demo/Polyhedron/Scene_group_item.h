@@ -4,7 +4,15 @@
 #include <CGAL/Three/Scene_item.h>
 #include "Messages_interface.h"
 using namespace CGAL::Three;
-class Q_DECL_EXPORT Scene_group_item : public Scene_item
+
+#include <QtCore/qglobal.h>
+#ifdef demo_framework_EXPORTS
+#  define DEMO_FRAMEWORK_EXPORT Q_DECL_EXPORT
+#else
+#  define DEMO_FRAMEWORK_EXPORT Q_DECL_IMPORT
+#endif
+
+class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item
 {
     Q_OBJECT
 public :

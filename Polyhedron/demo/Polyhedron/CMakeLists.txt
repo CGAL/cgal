@@ -175,7 +175,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_item(scene_c2t3_item Scene_c2t3_item.cpp)# Scene_c2t3_item.moc)
 
-  add_item(scene_group_item Scene_group_item.cpp)
   add_item(scene_polyhedron_item Scene_polyhedron_item.cpp ${statisticsPolyhedronUI_FILES})# Scene_polyhedron_item.moc)
   add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_polyhedron_transform_item.cpp )#Scene_polyhedron_transform_item.moc)
 
