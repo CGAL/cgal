@@ -125,7 +125,7 @@ void isotropic_remeshing(PolygonMesh& pmesh
 
   typename internal::Incremental_remesher<PM, VPMap, GT>
     remesher(pmesh, vpmap, protect);
-  remesher.init_faces_remeshing(faces, ecmap);
+  remesher.init_remeshing(faces, ecmap);
 
   unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
 
