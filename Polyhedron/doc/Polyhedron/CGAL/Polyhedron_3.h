@@ -427,7 +427,9 @@ public:
 
     A facet optionally stores a plane equation, and a reference to an 
     incident halfedge that points to the facet. Type tags indicate whether 
-    these member functions are supported. 
+    these member functions are supported. Note that the plane equation is
+    not automatically computed nor maintained and should handled by the user
+    (see \ref Polyhedron/polyhedron_prog_planes.cpp for an example).
     Figure \ref figurePolyOptionalMethods 
     depicts the relationship between a halfedge and its incident 
     halfedges, vertices, and facets. The circulator is assignable to the 
