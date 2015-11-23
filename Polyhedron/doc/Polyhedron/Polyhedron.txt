@@ -173,7 +173,7 @@ compute plane equations.
 
 This example computes the plane equations of a polyhedral surface.
 The actual computation is implemented in the
-`compute_plane_equations()` function. Depending on the arithmetic
+`Plane_equation` functor. Depending on the arithmetic
 (exact/inexact) and the shape of the facets (convex/non-convex)
 different methods are useful. We assume here strictly convex facets
 and exact arithmetic. In our example a homogeneous representation with
