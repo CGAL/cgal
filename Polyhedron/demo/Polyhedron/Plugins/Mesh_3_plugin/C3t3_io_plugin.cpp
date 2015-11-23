@@ -170,7 +170,7 @@ operator>>( std::istream& is, Fake_CDT_3_vertex_base<Vb>& v)
       is >> v.ref_1 >> v.ref_2;
     }
     else {
-      CGAL_assertion(s == '.' or s == 'F');
+      CGAL_assertion(s == '.' || s == 'F');
       v.steiner = false;
     }
   } else {
