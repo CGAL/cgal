@@ -135,7 +135,8 @@ namespace Mesh_3 {
 
 template < typename C3T3, typename MeshDomain, typename MeshCriteria >
 void
-init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&)
+init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
+          const int nb_initial_points)
 {
   typedef typename MeshDomain::Point_3 Point_3;
   typedef typename MeshDomain::Index Index;
@@ -145,7 +146,8 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&)
   
   // Mesh initialization : get some points and add them to the mesh
   Initial_points_vector initial_points;
-  domain.construct_initial_points_object()(std::back_inserter(initial_points));
+  domain.construct_initial_points_object()(std::back_inserter(initial_points),
+                                           nb_initial_points);
 
   // Insert points and set their index and dimension
   for ( Ipv_iterator it = initial_points.begin() ;
@@ -211,7 +213,8 @@ struct C3t3_initializer < C3T3, MD, MC, false, HasFeatures >
   void operator()(C3T3& c3t3,
                   const MD& domain,
                   const MC& criteria,
-                  bool with_features)
+                  bool with_features,
+                  const int nb_initial_points)
   {
     if ( with_features )
     {
@@ -219,7 +222,7 @@ struct C3t3_initializer < C3T3, MD, MC, false, HasFeatures >
                 << " without features !" << std::endl;
     }
     
-    init_c3t3(c3t3,domain,criteria);
+    init_c3t3(c3t3,domain,criteria,nb_initial_points);
   }
 };
 
@@ -231,10 +234,11 @@ struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures >
   void operator()(C3T3& c3t3,
                   const MD& domain,
                   const MC& criteria,
-                  bool with_features)
+                  bool with_features,
+                  const int nb_initial_points)
   {
     C3t3_initializer < C3T3, MD, MC, true, typename MD::Has_features >()
-      (c3t3,domain,criteria,with_features);
+      (c3t3,domain,criteria,with_features,nb_initial_points);
   }  
 };
 
@@ -247,10 +251,11 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
   void operator()(C3T3& c3t3,
                   const MD& domain,
                   const MC& criteria,
-                  bool with_features)
+                  bool with_features,
+                  const int nb_initial_points)
   {
     if ( with_features ) { init_c3t3_with_features(c3t3,domain,criteria); }
-    else { init_c3t3(c3t3,domain,criteria); }
+    else { init_c3t3(c3t3,domain,criteria,nb_initial_points); }
   }
 };
   
@@ -263,7 +268,8 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
   void operator()(C3T3& c3t3,
                   const MD& domain,
                   const MC& criteria,
-                  bool with_features)
+                  bool with_features,
+                  const int nb_initial_points)
   {
     if ( with_features )
     {
@@ -271,7 +277,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
                 << " without features !" << std::endl;
     }
     
-    init_c3t3(c3t3,domain,criteria);
+    init_c3t3(c3t3,domain,criteria,nb_initial_points);
   }
 };
 
@@ -412,15 +418,17 @@ void make_mesh_3_impl(C3T3& c3t3,
     MeshDomain,
     MeshCriteria,
     internal::Mesh_3::has_Has_features<MeshDomain>::value > () (c3t3,
-                                                                domain,
-                                                                criteria,
-                                                                with_features);
-  
+            domain,
+            criteria,
+            with_features,
+            mesh_options.number_of_initial_points);
+
   // If c3t3 initialization is not sufficient (may happen if there is only
   // a planar curve as feature for example), add some surface points
   if ( c3t3.triangulation().dimension() != 3 )
   {
-    internal::Mesh_3::init_c3t3(c3t3, domain, criteria);
+    internal::Mesh_3::init_c3t3(c3t3, domain, criteria,
+              mesh_options.number_of_initial_points);
   }
   CGAL_assertion( c3t3.triangulation().dimension() == 3 );
   
