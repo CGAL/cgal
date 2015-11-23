@@ -55,10 +55,7 @@ typedef typename boost::graph_traits<TM>::vertex_descriptor vertex_descriptor;
 
     bool operator<(const halfedge_descriptor& other) const
     {
-      if(tmhd < other.tmhd) return true;
-      if(tmhd > other.tmhd) return false;
-      if( (! seam) && other.seam) return true;
-      return false;
+      return tmhd < other.tmhd;
     }
 
 
@@ -66,18 +63,76 @@ typedef typename boost::graph_traits<TM>::vertex_descriptor vertex_descriptor;
     {
       return tmhd;
     }
+
+    friend
+    std::ostream& operator<<(std::ostream& os, const halfedge_descriptor& hd)
+  {
+    os << hd.tmhd  << ((hd.seam)?" on seam":"");
+    return os;
+  }
   };
 
   const TM& tm;
   std::set<TM_edge_descriptor> seam_edges;
+
+  int index;
+  
 public:
-  template <typename EdgeRange>
-  Seam_mesh(const TM& tm, EdgeRange er)
-    : tm(tm), seam_edges(er.begin(), er.end())
+  template <typename EdgeRange, typename HalfedgeAsVertexIndexMap>
+  Seam_mesh(const TM& tm, EdgeRange er, typename boost::graph_traits<TM>::halfedge_descriptor smhd, HalfedgeAsVertexIndexMap hvipm)
+    : tm(tm), seam_edges(er.begin(), er.end()), index(0)
   {
-   
+    Self& mesh=*this;
+     // Initialize all indices with -1
+  BOOST_FOREACH(TM_halfedge_descriptor hd, halfedges(tm)){
+    put(hvipm,hd,-1);
   }
+
+  halfedge_descriptor bhd(smhd);
+  bhd = opposite(bhd,mesh);
+  // Walk along the seam which may contain real border edges
+  CGAL::Halfedge_around_face_circulator<Mesh> hafc(bhd,mesh), prev(hafc), done;
+  ++hafc;
+  done = hafc;
+  do {
+    halfedge_descriptor ohd = opposite(*hafc,mesh);
+    assert(! ohd.seam);
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(ohd,mesh)){
+      if(! hd.seam){
+        TM_halfedge_descriptor shd(hd);
+        if(get(hvipm,shd) == -1){
+          put(hvipm,shd,index);
+        }
+      }
+      if(hd == *prev){
+        break;
+      }
+    }
+    ++index;
+    prev = hafc;
+    ++hafc;
+  }while(hafc != done);
+
  
+  // now as all halfedges incident to seam vertices are handled
+  // we look at the not yet marked halfedges
+  
+  BOOST_FOREACH(TM_halfedge_descriptor hd, halfedges(tm)){
+    if(get(hvipm,hd) == -1){
+      BOOST_FOREACH(halfedge_descriptor hav, halfedges_around_target(hd,tm)){
+        put(hvipm,TM_halfedge_descriptor(hav),index);
+      }
+      ++index;
+    }
+  } 
+  }
+
+  // this is the number of different halfedge indices
+  int m_num_vertices() const
+  {
+    return index;
+  }
+
 
   bool is_on_seam(const halfedge_descriptor hd) const
   {
@@ -85,53 +140,55 @@ public:
   }
 
 
-  halfedge_descriptor next(const halfedge_descriptor& hd) const
+  halfedge_descriptor m_next(const halfedge_descriptor& hd) const
   {
     if((! hd.seam)&& (! is_border(hd.tmhd,tm))){
-      return halfedge_descriptor(CGAL::next(hd.tmhd, tm));
+      return halfedge_descriptor(next(hd.tmhd, tm));
     }
     Halfedge_around_target_circulator<TM> hatc(hd.tmhd,tm);
     do {
       --hatc;
-    }while((! is_on_seam(*hatc))&&(! is_border(CGAL::opposite(*hatc,tm),tm)));
-    return halfedge_descriptor(CGAL::opposite(*hatc,tm), ! is_border(CGAL::opposite(*hatc,tm),tm));
+    }while((! is_on_seam(*hatc))&&(! is_border(opposite(*hatc,tm),tm)));
+    return halfedge_descriptor(opposite(*hatc,tm), ! is_border(opposite(*hatc,tm),tm));
   }
   
 
-  halfedge_descriptor prev(const halfedge_descriptor& hd) const
+  halfedge_descriptor m_prev(const halfedge_descriptor& hd) const
   {
     if((! hd.seam)&& (! is_border(hd.tmhd,tm))){
-      return halfedge_descriptor(CGAL::prev(hd.tmhd, tm));
+      return halfedge_descriptor(prev(hd.tmhd, tm));
     }
     Halfedge_around_source_circulator<TM> hatc(hd.tmhd,tm);
     do {
       ++hatc;
-    }while((! is_on_seam(*hatc))&&(! is_border(CGAL::opposite(*hatc,tm),tm)));
-    return halfedge_descriptor(CGAL::opposite(*hatc,tm), ! is_border(CGAL::opposite(*hatc,tm),tm));
+    }while((! is_on_seam(*hatc))&&(! is_border(opposite(*hatc,tm),tm)));
+    return halfedge_descriptor(opposite(*hatc,tm), ! is_border(opposite(*hatc,tm),tm));
   }
   
 
- halfedge_descriptor opposite(const halfedge_descriptor& hd) const
+ halfedge_descriptor m_opposite(const halfedge_descriptor& hd) const
   {
     if(! hd.seam){
-      return halfedge_descriptor(CGAL::opposite(hd.tmhd,tm), is_on_seam(hd));
+      return halfedge_descriptor(opposite(hd.tmhd,tm), is_on_seam(hd));
     }
     
-    return halfedge_descriptor(CGAL::opposite(hd.tmhd,tm));
+    return halfedge_descriptor(opposite(hd.tmhd,tm));
   }
 
 
-  vertex_descriptor target(const halfedge_descriptor& hd) const
+  vertex_descriptor m_target(const halfedge_descriptor& hd) const
   {
-    return CGAL::target(hd.tmhd, tm);
+    return target(hd.tmhd, tm);
   }
 
 
-  vertex_descriptor source(const halfedge_descriptor& hd) const
+  vertex_descriptor m_source(const halfedge_descriptor& hd) const
   {
-    return CGAL::source(hd.tmhd, tm);
+    return source(hd.tmhd, tm);
   }
 };
+
+
 
 } // namespace
 

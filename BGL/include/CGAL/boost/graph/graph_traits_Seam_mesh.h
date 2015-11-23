@@ -105,20 +105,21 @@ struct graph_traits< const CGAL::Seam_mesh<P> >
 
 namespace CGAL {
 
-#if 0
+
 template <typename P>
 typename boost::graph_traits<CGAL::Seam_mesh<P> >::vertices_size_type
 num_vertices(const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.num_vertices();
+  return sm.m_num_vertices();
 }
-  
+
+#if 0  
 
 template <typename P>
 typename boost::graph_traits<CGAL::Seam_mesh<P> >::edges_size_type
 num_edges(const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.num_edges();
+  return sm.m_num_edges();
 }
   
 
@@ -127,7 +128,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::degree_size_type
 degree(typename boost::graph_traits<CGAL::Seam_mesh<P> >::vertex_descriptor v,
        const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.degree(v);
+  return sm.m_degree(v);
 }
 
          
@@ -136,7 +137,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::degree_size_type
 out_degree(typename boost::graph_traits<CGAL::Seam_mesh<P> >::vertex_descriptor v,
            const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.degree(v);
+  return sm.m_degree(v);
 }
              
   
@@ -145,7 +146,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::degree_size_type
 in_degree(typename boost::graph_traits<CGAL::Seam_mesh<P> >::vertex_descriptor v,
           const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.degree(v);
+  return sm.m_degree(v);
 }
             
   
@@ -154,7 +155,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::vertex_descriptor
 source(typename boost::graph_traits<CGAL::Seam_mesh<P> >::edge_descriptor e,
        const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.source(e.halfedge());
+  return sm.m_source(e.halfedge());
 }
 #endif
 
@@ -164,7 +165,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::vertex_descriptor
 source(typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor h,
        const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.source(h);
+  return sm.m_source(h);
 }
 
 #if 0
@@ -173,7 +174,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::vertex_descriptor
 target(typename boost::graph_traits<CGAL::Seam_mesh<P> >::edge_descriptor e,
        const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.target(e.halfedge());
+  return sm.m_target(e.halfedge());
 }
 
 #endif
@@ -184,7 +185,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::vertex_descriptor
 target(typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor h,
        const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.target(h);
+  return sm.m_target(h);
 }
     
 template <typename P>
@@ -246,7 +247,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor
 next(typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor h,
      const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.next(h);
+  return sm.m_next(h);
 }
 
 
@@ -255,7 +256,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor
 prev(typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor h,
      const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.prev(h);
+  return sm.m_prev(h);
 }
 
 
@@ -264,7 +265,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor
 opposite(typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor h,
          const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.opposite(h);
+  return sm.m_opposite(h);
 }
 
 #if 0
@@ -273,7 +274,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::edge_descriptor
 edge(typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor h,
      const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.edge(h);
+  return sm.m__edge(h);
 }
 
 template <typename P>
@@ -281,7 +282,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor
 halfedge(typename boost::graph_traits<CGAL::Seam_mesh<P> >::edge_descriptor e,
          const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.halfedge(e);
+  return sm.m_halfedge(e);
 }
 
 #endif

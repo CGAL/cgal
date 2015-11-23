@@ -102,14 +102,16 @@ public:
     const double tmp = 2*CGAL_PI/total_len;
     double len = 0.0;           // current position on circle in [0, total_len]
       
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,mesh)){
+    Halfedge_around_face_circulator<ParameterizationMesh_3> circ(bhd,mesh), done(circ);
+    do {
+      halfedge_descriptor hd = *circ;
+      --circ;
       vertex_descriptor vd = target(hd,mesh);
       
       double angle = len*tmp; // current position on the circle in radians
       
       // map vertex on unit circle
-      Point_2 uv;
-      uv = Point_2(0.5+0.5*std::cos(-angle),0.5+0.5*std::sin(-angle));
+      Point_2 uv(0.5+0.5*std::cos(-angle),0.5+0.5*std::sin(-angle));
       BOOST_FOREACH(halfedge_descriptor hat, halfedges_around_target(hd,mesh)){
         // We do not set the uv value of halfedges on the main border or seam edges
         if(hat != hd){
@@ -121,8 +123,8 @@ public:
       //  mesh.set_vertex_parameterized(hd, true);
       
       len += CGAL::sqrt(squared_distance(get(vpm, source(hd,mesh)), get(vpm,vd)));
-    }
-    std::cerr << "Circular_border_parameterizer_3 done"<<std::endl;
+    }while(circ != done);
+
     return Parameterizer_traits_3<ParameterizationMesh_3>::OK;
   }
   

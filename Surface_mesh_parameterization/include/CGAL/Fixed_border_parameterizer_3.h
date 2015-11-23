@@ -89,211 +89,202 @@ template
 class Fixed_border_parameterizer_3
     : public Parameterizer_traits_3<ParameterizationMesh_3>
 {
-// Private types
+  // Private types
 private:
-    typedef Parameterizer_traits_3<ParameterizationMesh_3> Base;
+  typedef Parameterizer_traits_3<ParameterizationMesh_3> Base;
 
-// Public types
+  // Public types
 public:
-    // We have to repeat the types exported by superclass
-    /// @cond SKIP_IN_MANUAL
-    typedef typename Base::Error_code       Error_code;
-    typedef ParameterizationMesh_3          TriangleMesh;
-    /// @endcond
-
-    /// Export BorderParameterizer_3 template parameter.
-    typedef BorderParameterizer_3           Border_param;
-    /// Export SparseLinearAlgebraTraits_d template parameter.
-    typedef SparseLinearAlgebraTraits_d     Sparse_LA;
-
-// Private types
+  // We have to repeat the types exported by superclass
+  /// @cond SKIP_IN_MANUAL
+  typedef typename Base::Error_code       Error_code;
+  typedef ParameterizationMesh_3          TriangleMesh;
+  /// @endcond
+  
+  /// Export BorderParameterizer_3 template parameter.
+  typedef BorderParameterizer_3           Border_param;
+  /// Export SparseLinearAlgebraTraits_d template parameter.
+  typedef SparseLinearAlgebraTraits_d     Sparse_LA;
+  
+  // Private types
 private:
-
+  
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
- 
+  
   typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
   typedef CGAL::Vertex_around_face_circulator<TriangleMesh> vertex_around_face_circulator;
   typedef CGAL::Halfedge_around_target_circulator<TriangleMesh> halfedge_around_target_circulator;
-
-    // Mesh_Adaptor_3 subtypes:
-    typedef typename Base::NT            NT;
-    typedef typename Base::Point_2       Point_2;
-    typedef typename Base::Point_3       Point_3;
-    typedef typename Base::Vector_3      Vector_3;
-
-
-    // SparseLinearAlgebraTraits_d subtypes:
-    typedef typename Sparse_LA::Vector      Vector;
-    typedef typename Sparse_LA::Matrix      Matrix;
-
+  
+  // Mesh_Adaptor_3 subtypes:
+  typedef typename Base::NT            NT;
+  typedef typename Base::Point_2       Point_2;
+  typedef typename Base::Point_3       Point_3;
+  typedef typename Base::Vector_3      Vector_3;
+  
+  
+  // SparseLinearAlgebraTraits_d subtypes:
+  typedef typename Sparse_LA::Vector      Vector;
+  typedef typename Sparse_LA::Matrix      Matrix;
+  
 protected:
-    // Using statements needed for derived class
-    using Base::compute_angle_rad;
-    using Base::cotangent;
-
-// Public operations
+  // Using statements needed for derived class
+  using Base::compute_angle_rad;
+  using Base::cotangent;
+  
+  // Public operations
 public:
-    /// Constructor
-    Fixed_border_parameterizer_3(Border_param border_param = Border_param(),
-                                    ///< Object that maps the surface's border to 2D space
+  /// Constructor
+  Fixed_border_parameterizer_3(Border_param border_param = Border_param(),
+                               ///< Object that maps the surface's border to 2D space
                                Sparse_LA sparse_la = Sparse_LA())
-                                    ///< Traits object to access a sparse linear system
-        : m_borderParameterizer(border_param), m_linearAlgebra(sparse_la)
-    {}
-
-    // Default copy constructor and operator =() are fine
-
-    /// Compute a one-to-one mapping from a triangular 3D surface mesh
-    /// to a piece of the 2D space.
-    /// The mapping is linear by pieces (linear in each triangle).
-    /// The result is the (u,v) pair image of each vertex of the 3D surface.
-    ///
-    /// \pre `mesh` must be a surface with one connected component.
-    /// \pre `mesh` must be a triangular mesh.
-    /// \pre The mesh border must be mapped onto a convex polygon.
-
+    ///< Traits object to access a sparse linear system
+    : m_borderParameterizer(border_param), m_linearAlgebra(sparse_la)
+  {}
+  
+  // Default copy constructor and operator =() are fine
+  
+  /// Compute a one-to-one mapping from a triangular 3D surface mesh
+  /// to a piece of the 2D space.
+  /// The mapping is linear by pieces (linear in each triangle).
+  /// The result is the (u,v) pair image of each vertex of the 3D surface.
+  ///
+  /// \pre `mesh` must be a surface with one connected component.
+  /// \pre `mesh` must be a triangular mesh.
+  /// \pre The mesh border must be mapped onto a convex polygon.
+  
   template <typename HalfedgeUVmap, typename HalfedgeAsVertexIndexMap>
-   Error_code  parameterize(TriangleMesh& mesh,
-                            halfedge_descriptor,
-                            HalfedgeUVmap,
-                            HalfedgeAsVertexIndexMap hvimap);
-
-// Protected operations
+  Error_code  parameterize(TriangleMesh& mesh,
+                           halfedge_descriptor,
+                           HalfedgeUVmap,
+                           HalfedgeAsVertexIndexMap hvimap);
+  
+  // Protected operations
 protected:
-    /// Check parameterize() preconditions:
-    /// - `mesh` must be a surface with one connected component.
-    /// - `mesh` must be a triangular mesh.
-    /// - The mesh border must be mapped onto a convex polygon.
-    /// virtual Error_code  check_parameterize_preconditions(TriangleMesh& mesh);
-
-    /// Initialize A, Bu and Bv after border parameterization.
-    /// Fill the border vertices' lines in both linear systems:
-    /// "u = constant" and "v = constant".
-    ///
-    /// \pre Vertices must be indexed.
-    /// \pre A, Bu and Bv must be allocated.
-    /// \pre Border vertices must be parameterized.
+  /// Check parameterize() preconditions:
+  /// - `mesh` must be a surface with one connected component.
+  /// - `mesh` must be a triangular mesh.
+  /// - The mesh border must be mapped onto a convex polygon.
+  /// virtual Error_code  check_parameterize_preconditions(TriangleMesh& mesh);
+  
+  /// Initialize A, Bu and Bv after border parameterization.
+  /// Fill the border vertices' lines in both linear systems:
+  /// "u = constant" and "v = constant".
+  ///
+  /// \pre Vertices must be indexed.
+  /// \pre A, Bu and Bv must be allocated.
+  /// \pre Border vertices must be parameterized.
   template <typename HalfedgeUVmap, typename HalfedgeAsVertexIndexMap >
-    void  initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
-                                              const TriangleMesh& tmesh,
-                                              halfedge_descriptor bhd,
-                                              HalfedgeUVmap uvmap,
-                                              HalfedgeAsVertexIndexMap hvimap)
-{
-  // AF: loop over border halfedges
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,tmesh)){
-      // AF not written for halfedge      CGAL_surface_mesh_parameterization_assertion(mesh.is_vertex_parameterized(target(hd,tmesh)));
-
-        // AF: get the halfedge-as-vertex index
-        // Get vertex index in sparse linear system
-    int index = get(hvimap,hd);
-
-        // Write a diagonal coefficient of A
-        A.set_coef(index, index, 1, true /*new*/);
-        //std::cerr << index << "  " << index << " 1" << std::endl;
-        // get the halfedge uv
-        // Write constant in Bu and Bv
-        Point_2 uv = get(uvmap, opposite(next(hd,tmesh),tmesh));
-        Bu[index] = uv.x();
-        Bv[index] = uv.y();
-    }
-}
-
-    /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
-    /// Implementation note: Subclasses must at least implement compute_w_ij().
-    virtual NT compute_w_ij(const TriangleMesh& mesh,
-                            vertex_descriptor main_vertex_v_i,
-                            halfedge_around_target_circulator neighbor_vertex_v_j)
-    = 0;
-
-    /// Compute the line i of matrix A for i inner vertex:
-    /// - call compute_w_ij() to compute the A coefficient w_ij for each neighbor v_j.
-    /// - compute w_ii = - sum of w_ijs.
-    ///
-    /// \pre Vertices must be indexed.
-    /// \pre Vertex i musn't be already parameterized.
-    /// \pre Line i of A must contain only zeros.
-    // TODO: check if this must be virtual 
-    // virtual 
-  template <typename HalfedgeAsVertexIndexMap>
-    Error_code setup_inner_vertex_relations(Matrix& A,
-                                            Vector& Bu,
-                                            Vector& Bv,
-                                            const TriangleMesh& mesh,
-                                            vertex_descriptor vertex,
+  void  initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
+                                            const TriangleMesh& tmesh,
+                                            halfedge_descriptor bhd,
+                                            HalfedgeUVmap uvmap,
                                             HalfedgeAsVertexIndexMap hvimap)
-{
-  // CGAL_surface_mesh_parameterization_assertion( ! amesh.is_vertex_on_main_border(vertex) );
-  // CGAL_surface_mesh_parameterization_assertion( ! amesh.is_vertex_parameterized(vertex) );
+  {
+    // AF: loop over border halfedges
+    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,tmesh)){
+      // AF: get the halfedge-as-vertex index
+      // Get vertex index in sparse linear system
+      int index = get(hvimap, opposite(next(hd,tmesh),tmesh));
+      // Write a diagonal coefficient of A
+      A.set_coef(index, index, 1, true /*new*/);
+      //std::cerr << index << "  " << index << " 1" << std::endl;
+      // get the halfedge uv
+      // Write constant in Bu and Bv
+      Point_2 uv = get(uvmap, opposite(next(hd,tmesh),tmesh));
+      Bu[index] = uv.x();
+      Bv[index] = uv.y();
+    }
+  }
 
-  int i = get(hvimap,halfedge(vertex,mesh));
+  /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
+  /// Implementation note: Subclasses must at least implement compute_w_ij().
+  virtual NT compute_w_ij(const TriangleMesh& mesh,
+                          vertex_descriptor main_vertex_v_i,
+                          halfedge_around_target_circulator neighbor_vertex_v_j)
+  = 0;
 
+  /// Compute the line i of matrix A for i inner vertex:/// - call compute_w_ij() to compute the A coefficient w_ij for each neighbor v_j.
+  /// - compute w_ii = - sum of w_ijs.
+  ///
+  /// \pre Vertices must be indexed.
+  /// \pre Vertex i musn't be already parameterized.
+  /// \pre Line i of A must contain only zeros.
+  // TODO: check if this must be virtual 
+  // virtual 
+  template <typename HalfedgeAsVertexIndexMap>
+  Error_code setup_inner_vertex_relations(Matrix& A,
+                                          Vector& Bu,
+                                          Vector& Bv,
+                                          const TriangleMesh& mesh,
+                                          vertex_descriptor vertex,
+                                          HalfedgeAsVertexIndexMap hvimap)
+  {
+    int i = get(hvimap,halfedge(vertex,mesh));
+  
     // circulate over vertices around 'vertex' to compute w_ii and w_ijs
     // use halfedge_around_target to get the right "vertex" if it is on a seam
     NT w_ii = 0;
     int vertexIndex = 0;
-
-    halfedge_around_target_circulator v_j(halfedge(vertex,mesh), mesh),
-      end = v_j;
-    CGAL_For_all(v_j, end)
-    {
-        // Call to virtual method to do the actual coefficient computation
+  
+    halfedge_around_target_circulator v_j(halfedge(vertex,mesh), mesh), end = v_j;
+    CGAL_For_all(v_j, end){
+      // Call to virtual method to do the actual coefficient computation
       NT w_ij = -1.0 * compute_w_ij(mesh, vertex, v_j);
-
-        // w_ii = - sum of w_ijs
-        w_ii -= w_ij;
-
-        // Get j index
-        int j = get(hvimap, opposite(*v_j,mesh));
-
-        // Set w_ij in matrix
-        A.set_coef(i,j, w_ij, true /*new*/);
-
-        vertexIndex++;
+    
+      // w_ii = - sum of w_ijs
+      w_ii -= w_ij;
+    
+      // Get j index
+      int j = get(hvimap, opposite(*v_j,mesh));
+    
+      // Set w_ij in matrix
+      A.set_coef(i,j, w_ij, true /*new*/);
+      //std::cout << i << " " << j << " "  << w_ij << std::endl;
+      vertexIndex++;
     }
     if (vertexIndex < 2)
-        return Base::ERROR_NON_TRIANGULAR_MESH;
-
+      return Base::ERROR_NON_TRIANGULAR_MESH;
+  
     // Set w_ii in matrix
     A.set_coef(i,i, w_ii, true /*new*/);
-
+    // std::cout << i << " " << i << " "  << w_ii << std::endl;
     return Base::OK;
-}
-
+  }
+  
 
 
 #if 0
-    /// Check parameterize() postconditions:
-    /// - 3D -> 2D mapping is one-to-one.
-    virtual Error_code check_parameterize_postconditions(const TriangleMesh& mesh,
-                                                         const Matrix& A,
-                                                         const Vector& Bu,
-                                                         const Vector& Bv);
+  /// Check parameterize() postconditions:
+  /// - 3D -> 2D mapping is one-to-one.
+  virtual Error_code check_parameterize_postconditions(const TriangleMesh& mesh,
+                                                       const Matrix& A,
+                                                       const Vector& Bu,
+                                                       const Vector& Bv);
 
-    /// Check if 3D -> 2D mapping is one-to-one.
-    /// The default implementation checks each normal.
-    virtual bool  is_one_to_one_mapping(const TriangleMesh& mesh,
-                                        const Matrix& A,
-                                        const Vector& Bu,
-                                        const Vector& Bv);
+  /// Check if 3D -> 2D mapping is one-to-one.
+  /// The default implementation checks each normal.
+  virtual bool  is_one_to_one_mapping(const TriangleMesh& mesh,
+                                      const Matrix& A,
+                                      const Vector& Bu,
+                                      const Vector& Bv);
 #endif 
 
-// Protected accessors
+  // Protected accessors
 protected:
-    /// Get the object that maps the surface's border onto a 2D space.
-    Border_param&   get_border_parameterizer()    { return m_borderParameterizer; }
+  /// Get the object that maps the surface's border onto a 2D space.
+  Border_param&   get_border_parameterizer()    { return m_borderParameterizer; }
 
-    /// Get the sparse linear algebra (traits object to access the linear system).
-    Sparse_LA&      get_linear_algebra_traits() { return m_linearAlgebra; }
+  /// Get the sparse linear algebra (traits object to access the linear system).
+  Sparse_LA&      get_linear_algebra_traits() { return m_linearAlgebra; }
 
-// Fields
+  // Fields
 private:
-    /// Object that maps the surface's border onto a 2D space.
-    Border_param    m_borderParameterizer;
+  /// Object that maps the surface's border onto a 2D space.
+  Border_param    m_borderParameterizer;
 
-    /// Traits object to solve a sparse linear system
-    Sparse_LA       m_linearAlgebra;
+  /// Traits object to solve a sparse linear system
+  Sparse_LA       m_linearAlgebra;
 };
 
 
@@ -333,16 +324,8 @@ parameterize(TriangleMesh& mesh, halfedge_descriptor bhd, HalfedgeUVmap uvmap, H
         return status;
 
     // Count vertices
-    int nbVertices = num_vertices(mesh);
+    int nbVertices= num_vertices(mesh);
 
-    
-    // AF: mark all halfedges as not parameterized
-    // Mark all vertices as *not* "parameterized"
-    // BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
-    // {
-    //     amesh.set_vertex_parameterized(v, false);
-    // }
-    
     // Compute (u,v) for border vertices
     // and mark them as "parameterized"
     status = get_border_parameterizer().parameterize_border(mesh,bhd,uvmap);
@@ -375,12 +358,8 @@ parameterize(TriangleMesh& mesh, halfedge_descriptor bhd, HalfedgeUVmap uvmap, H
       main_border.insert(v);
     }
 
-    BOOST_FOREACH(vertex_descriptor v, vertices(mesh))
-    {
-      //        CGAL_surface_mesh_parameterization_assertion(amesh.is_vertex_on_main_border(v)
-      // == amesh.is_vertex_parameterized(v));
-
-        // inner vertices only
+    BOOST_FOREACH(vertex_descriptor v, vertices(mesh)){
+      // inner vertices only
       if( main_border.find(v) == main_border.end() )
         {
             // Compute the line i of matrix A for i inner vertex

@@ -76,94 +76,93 @@ class Discrete_authalic_parameterizer_3
                                           BorderParameterizer_3,
                                           SparseLinearAlgebraTraits_d>
 {
-// Private types
+  // Private types
 private:
-    // Superclass
-    typedef Fixed_border_parameterizer_3<ParameterizationMesh_3,
-                                         BorderParameterizer_3,
-                                         SparseLinearAlgebraTraits_d>
-                                            Base;
+  // Superclass
+  typedef Fixed_border_parameterizer_3<ParameterizationMesh_3,
+                                       BorderParameterizer_3,
+                                       SparseLinearAlgebraTraits_d>  Base;
 
-// Public types
+  // Public types
 public:
-    // We have to repeat the types exported by superclass
-    /// @cond SKIP_IN_MANUAL
-    typedef typename Base::Error_code       Error_code;
-    typedef ParameterizationMesh_3          TriangleMesh;
-    typedef BorderParameterizer_3           Border_param;
-    typedef SparseLinearAlgebraTraits_d     Sparse_LA;
-    /// @endcond
+  // We have to repeat the types exported by superclass
+  /// @cond SKIP_IN_MANUAL
+  typedef typename Base::Error_code       Error_code;
+  typedef ParameterizationMesh_3          TriangleMesh;
+  typedef BorderParameterizer_3           Border_param;
+  typedef SparseLinearAlgebraTraits_d     Sparse_LA;
+  /// @endcond
 
-// Private types
+  // Private types
 private:
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef CGAL::Halfedge_around_target_circulator<TriangleMesh> halfedge_around_target_circulator;
-    // Mesh_Adaptor_3 subtypes:
+  // Mesh_Adaptor_3 subtypes:
   typedef typename Parameterizer_traits_3<TriangleMesh>::NT            NT;
-    typedef typename Parameterizer_traits_3<TriangleMesh>::Point_3       Point_3;
-    typedef typename Parameterizer_traits_3<TriangleMesh>::Vector_3      Vector_3;
+  typedef typename Parameterizer_traits_3<TriangleMesh>::Point_3       Point_3;
+  typedef typename Parameterizer_traits_3<TriangleMesh>::Vector_3      Vector_3;
 
-    // SparseLinearAlgebraTraits_d subtypes:
-    typedef typename Sparse_LA::Vector      Vector;
-    typedef typename Sparse_LA::Matrix      Matrix;
+  // SparseLinearAlgebraTraits_d subtypes:
+  typedef typename Sparse_LA::Vector      Vector;
+  typedef typename Sparse_LA::Matrix      Matrix;
 
-    using Base::cotangent;
+  using Base::cotangent;
 
-// Public operations
+  // Public operations
 public:
-    /// Constructor
-    Discrete_authalic_parameterizer_3(Border_param border_param = Border_param(),
-                                        ///< Object that maps the surface's border to 2D space.
-                                      Sparse_LA sparse_la = Sparse_LA())
-                                        ///< Traits object to access a sparse linear system.
+  /// Constructor
+  Discrete_authalic_parameterizer_3(Border_param border_param = Border_param(),
+                                    ///< Object that maps the surface's border to 2D space.
+                                    Sparse_LA sparse_la = Sparse_LA())
+    ///< Traits object to access a sparse linear system.
     :   Fixed_border_parameterizer_3<TriangleMesh,
-                                     Border_param,
-                                     Sparse_LA>(border_param, sparse_la)
-    {}
+        Border_param,
+        Sparse_LA>(border_param, sparse_la)
+  {}
 
-    // Default copy constructor and operator =() are fine
+  // Default copy constructor and operator =() are fine
 
-// Protected operations
+  // Protected operations
 protected:
-    /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
-    virtual NT compute_w_ij(const TriangleMesh& tmesh,
-                            vertex_descriptor main_vertex_v_i,
-                            halfedge_around_target_circulator neighbor_vertex_v_j)
-    {
+  /// Compute w_ij = (i, j) coefficient of matrix A for j neighbor vertex of i.
+  virtual NT compute_w_ij(const TriangleMesh& tmesh,
+                          vertex_descriptor main_vertex_v_i,
+                          halfedge_around_target_circulator neighbor_vertex_v_j)
+  {
 
-      typedef typename Parameterizer_traits_3<TriangleMesh>::VPM PPmap;
+    typedef typename Parameterizer_traits_3<TriangleMesh>::VPM PPmap;
  
-        PPmap ppmap = get(vertex_point, tmesh);
+    PPmap ppmap = get(vertex_point, tmesh);
 
-        Point_3 position_v_i = get(ppmap,main_vertex_v_i);
-        Point_3 position_v_j = get(ppmap,source(*neighbor_vertex_v_j,tmesh));
+    Point_3 position_v_i = get(ppmap,main_vertex_v_i);
+    Point_3 position_v_j = get(ppmap,source(*neighbor_vertex_v_j,tmesh));
 
-        // Compute the square norm of v_j -> v_i vector
-        Vector_3 edge = position_v_i - position_v_j;
-        double square_len = edge*edge;
+    // Compute the square norm of v_j -> v_i vector
+    Vector_3 edge = position_v_i - position_v_j;
+    double square_len = edge*edge;
 
-        // Compute cotangent of (v_k,v_j,v_i) corner (i.e. cotan of v_j corner)
-        // if v_k is the vertex before v_j when circulating around v_i
-        halfedge_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
-        previous_vertex_v_k --;
-        Point_3 position_v_k = get(ppmap,source(*previous_vertex_v_k,tmesh));
-        double cotg_psi_ij  = cotangent(position_v_k, position_v_j, position_v_i);
+    // Compute cotangent of (v_k,v_j,v_i) corner (i.e. cotan of v_j corner)
+    // if v_k is the vertex before v_j when circulating around v_i
+    halfedge_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
+    previous_vertex_v_k --;
+    Point_3 position_v_k = get(ppmap,source(*previous_vertex_v_k,tmesh));
+    double cotg_psi_ij  = cotangent(position_v_k, position_v_j, position_v_i);
 
-        // Compute cotangent of (v_i,v_j,v_l) corner (i.e. cotan of v_j corner)
-        // if v_l is the vertex after v_j when circulating around v_i
-        halfedge_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
-        next_vertex_v_l ++;
-        Point_3 position_v_l = get(ppmap,source(*next_vertex_v_l,tmesh));
-        double cotg_theta_ij = cotangent(position_v_i, position_v_j, position_v_l);
+    // Compute cotangent of (v_i,v_j,v_l) corner (i.e. cotan of v_j corner)
+    // if v_l is the vertex after v_j when circulating around v_i
+    halfedge_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
+    next_vertex_v_l ++;
+    Point_3 position_v_l = get(ppmap,source(*next_vertex_v_l,tmesh));
+    double cotg_theta_ij = cotangent(position_v_i, position_v_j, position_v_l);
 
-        double weight = 0.0;
-        CGAL_surface_mesh_parameterization_assertion(square_len != 0.0);    // two points are identical!
-        if(square_len != 0.0)
-            weight = (cotg_psi_ij+cotg_theta_ij)/square_len;
+    double weight = 0.0;
+    CGAL_surface_mesh_parameterization_assertion(square_len != 0.0);    // two points are identical!
+    if(square_len != 0.0)
+      weight = (cotg_psi_ij+cotg_theta_ij)/square_len;
 
-        return weight;
-    }
+    return weight;
+  }
 };
 
 
