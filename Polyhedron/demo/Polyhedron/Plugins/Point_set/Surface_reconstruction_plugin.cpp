@@ -372,12 +372,14 @@ namespace SurfaceReconstruction
       }
   }
   
-  void advancing_front (const Point_set& points, Scene_polyhedron_item* new_item, double size)
+  void advancing_front (const Point_set& points, Scene_polyhedron_item* new_item, double size,
+                        double radius_ratio_bound = 5., double beta = 0.52)
   {
     Polyhedron& P = * const_cast<Polyhedron*>(new_item->polyhedron());
-    Radius filter(10 * size);
+    Radius filter (size);
 
-    CGAL::advancing_front_surface_reconstruction (points.begin (), points.end (), P, filter);
+    CGAL::advancing_front_surface_reconstruction (points.begin (), points.end (), P, filter,
+                                                  radius_ratio_bound, beta);
 						  
   }
 
@@ -422,6 +424,8 @@ public:
   bool boundaries () const { return m_boundaries->isChecked (); }
   bool interpolate () const { return m_interpolate->isChecked (); }
   double longest_edge () const { return m_longestEdge->value (); }
+  double radius_ratio_bound () const { return m_radiusRatioBound->value (); }
+  double beta_angle () const { return m_betaAngle->value (); }
   unsigned int neighbors () const { return m_neighbors->value (); }
   unsigned int samples () const { return m_samples->value (); }
   unsigned int iterations () const { return m_iterations->value (); }
@@ -621,7 +625,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	      time.restart();
 
 	      Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(Polyhedron());
-	      SurfaceReconstruction::advancing_front (*points, reco_item, (std::max)(noise_size, aniso_size));
+	      SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
 	      
 	      reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
 	      reco_item->setColor(Qt::magenta);
@@ -640,7 +644,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	      time.restart();
 
 	      Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(Polyhedron());
-	      SurfaceReconstruction::advancing_front (*points, reco_item, (std::max)(noise_size, aniso_size));
+	      SurfaceReconstruction::advancing_front (*points, reco_item, 10. * (std::max)(noise_size, aniso_size));
 	      
 	      reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
 	      reco_item->setColor(Qt::magenta);
@@ -718,7 +722,10 @@ void Polyhedron_demo_surface_reconstruction_plugin::advancing_front_reconstructi
       std::cerr << "Advancing front reconstruction... ";
 
       Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(Polyhedron());
-      SurfaceReconstruction::advancing_front (*points, reco_item, dialog.longest_edge ());
+      SurfaceReconstruction::advancing_front (*points, reco_item,
+                                              dialog.longest_edge (),
+                                              dialog.radius_ratio_bound (),
+                                              CGAL_PI * dialog.beta_angle () / 180.);
 	      
       reco_item->setName(tr("%1 (advancing front)").arg(scene->item(index)->name()));
       reco_item->setColor(Qt::magenta);
