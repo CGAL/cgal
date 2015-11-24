@@ -46,7 +46,8 @@ void test(const Mesh& pmesh)
   double border_l = PMP::face_border_length(border_he, pmesh);
   std::cout << "length of hole border = " << border_l << std::endl;
 
-  std::list<face_descriptor> patch;
+  face_descriptor valid_patch_face;
+  unsigned int count = 0;
   BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh))
   {
     if (is_border(h, pmesh) || is_border(opposite(h, pmesh), pmesh))
@@ -55,14 +56,31 @@ void test(const Mesh& pmesh)
     {
       double face_area = PMP::face_area(face(h, pmesh), pmesh);
       std::cout << "face area = " << face_area << std::endl;
- 
-      patch.push_back(face(h, pmesh));
-      patch.push_back(face(opposite(h, pmesh), pmesh));
-      patch.push_back(face(opposite(next(h, pmesh), pmesh), pmesh));
-      patch.push_back(face(opposite(prev(h, pmesh), pmesh), pmesh));
-      break;
+
+      if(++count == 20)
+      {
+        valid_patch_face = face(h, pmesh);
+        break;
+      }
     }
   }
+
+  std::list<face_descriptor> patch;
+  patch.push_back(valid_patch_face);
+  while (patch.size() < 5)
+  {
+    face_descriptor f = patch.front();
+    patch.pop_front();
+    BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(halfedge(f, pmesh), pmesh))
+    {
+      if (boost::graph_traits<Mesh>::null_halfedge() != opposite(h, pmesh))
+        patch.push_back(face(opposite(h, pmesh), pmesh));
+      patch.push_back(f);
+    }
+    if (patch.front() == valid_patch_face)
+      break;//back to starting point
+  }
+
   double patch_area = PMP::area(patch, pmesh);
   std::cout << "patch area = " << patch_area << std::endl;
 
