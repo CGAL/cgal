@@ -55,19 +55,18 @@ namespace CGAL {
 /// \cgalModels `BorderParameterizer_3`
 ///
 
-template<class ParameterizationMesh_3>      //< 3D surface
+template<class TriangleMesh>      //< 3D surface
 class Two_vertices_parameterizer_3
 {
 // Public types
 public:
-    /// Export ParameterizationMesh_3 template parameter
-    typedef ParameterizationMesh_3          Adaptor;
-    typedef typename Adaptor::Polyhedron TriangleMesh;
+    /// Export TriangleMesh template parameter
+    typedef TriangleMesh TriangleMesh;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 // Private types
 private:
-    // Mesh_Adaptor_3 subtypes:
+  typedef Parameterizer_traits_3<TriangleMesh> Adaptor;
     typedef typename Adaptor::Point_2       Point_2;
     typedef typename Adaptor::Point_3       Point_3;
     typedef typename Adaptor::Vector_3      Vector_3;
@@ -77,8 +76,8 @@ public:
     // Default constructor, copy constructor and operator =() are fine.
 
     /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
-    typename Parameterizer_traits_3<Adaptor>::Error_code
-                                        parameterize_border(Adaptor& mesh);
+  typename Parameterizer_traits_3<TriangleMesh>::Error_code
+                                        parameterize_border(TriangleMesh& mesh);
 
     /// Indicate if border's shape is convex.
     /// Meaningless for free border parameterization algorithms.
@@ -91,19 +90,14 @@ public:
 //
 
 // Map two extreme vertices of the 3D mesh and mark them as "parameterized".
-template<class Adaptor>
+template<class TriangleMesh>
 inline
-typename Parameterizer_traits_3<Adaptor>::Error_code
-Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
+typename Parameterizer_traits_3<TriangleMesh>::Error_code
+Two_vertices_parameterizer_3<TriangleMesh>::parameterize_border(TriangleMesh& tmesh)
 {
-    const TriangleMesh& tmesh = mesh.get_adapted_mesh();
-
-    typedef typename boost::property_map<typename Adaptor::Polyhedron, boost::vertex_point_t>::const_type PPmap;
+    typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type PPmap;
     PPmap ppmap = get(vertex_point, tmesh);
-    // Nothing to do if no border
-    if (mesh.main_border().empty())
-        return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
-
+  
     // Get mesh's bounding box
     double xmin = (std::numeric_limits<double>::max)() ;
     double ymin = (std::numeric_limits<double>::max)() ;
@@ -221,7 +215,7 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
         u = (u - V1_min) / (V1_max - V1_min);
         v = (v - V2_min) / (V2_max - V2_min);
 
-        mesh.set_vertex_uv(vd, Point_2(u,v)) ; // useful only for vxmin and vxmax
+        // TODOtmesh.set_vertex_uv(vd, Point_2(u,v)) ; // useful only for vxmin and vxmax
 
         if(u < umin || (u==umin && v < vmin) ) {
             vxmin = vd ;
@@ -234,8 +228,8 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
             vmax = v ;
         }
     }
-    mesh.set_vertex_parameterized(vxmin, true) ;
-    mesh.set_vertex_parameterized(vxmax, true) ;
+    //mesh.set_vertex_parameterized(vxmin, true) ;
+    //mesh.set_vertex_parameterized(vxmax, true) ;
 
 #ifdef DEBUG_TRACE
     std::cerr << "  map two vertices..." << std::endl;
@@ -243,7 +237,7 @@ Two_vertices_parameterizer_3<Adaptor>::parameterize_border(Adaptor& mesh)
     // std::cerr << "    #" << mesh.get_vertex_index(vxmax) << "(" << vxmax->vertex()->index() << ") parameterized " << std::endl;
 #endif
 
-    return Parameterizer_traits_3<Adaptor>::OK;
+    return Parameterizer_traits_3<TriangleMesh>::OK;
 }
 
 

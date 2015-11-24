@@ -52,8 +52,25 @@ int main(int argc, char* argv[])
   }
 #endif 
 
-  Seam_mesh ssm(sm, seam);
-  halfedge_descriptor mhd = halfedge(seam.front(),sm);
+  typedef std::map<Seam_mesh::halfedge_descriptor,int> H_vertex_index_map;
+  typedef boost::associative_property_map<H_vertex_index_map> H_vertex_index_pmap;
+  H_vertex_index_map hvim; H_vertex_index_pmap hvipm(hvim);
+
+  halfedge_descriptor mhd = halfedge(seam.front(),sm);    
+  Seam_mesh ssm(sm, seam, mhd, hvipm);
+
+
+
+  BOOST_FOREACH(Seam_mesh::vertex_descriptor vd, vertices(ssm)){
+    halfedge_descriptor hd = vd;
+    std::cerr << vd << " has incident halfedges:" << std::endl;
+    BOOST_FOREACH(Seam_mesh::halfedge_descriptor hd2, halfedges_around_target(vd,ssm)){
+      std::cerr << hd2 << std::endl;
+    }
+  }
+  std::cerr << "done"<< std::endl;
+
+  return 0;
   Seam_mesh::halfedge_descriptor smhd(mhd), smhd2(opposite(mhd,sm));
   std::cout << "target = " << target(smhd,ssm) << std::endl;
 
@@ -84,9 +101,13 @@ int main(int argc, char* argv[])
   BOOST_FOREACH(Seam_mesh::halfedge_descriptor hd, halfedges_around_target(opposite(smhd2,ssm),ssm)){
      std::cout << source(hd.tmhd,sm) << std::endl;
   }
+
   
   boost::property_map<Seam_mesh, CGAL::vertex_point_t>::type vpm = get(CGAL::vertex_point,ssm);
-  std::cout << get(vpm, source(hd,ssm)) << std::endl;
+  //std::cout << get(vpm, source(hd,ssm)) << std::endl;
+  
+
+
   return 0;
 }
 

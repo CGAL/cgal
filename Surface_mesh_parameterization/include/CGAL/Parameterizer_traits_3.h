@@ -88,6 +88,7 @@ public:
   // Mesh_Adaptor_3 subtypes:
   typedef typename Kernel::Point_2       Point_2;
   typedef typename Kernel::Vector_3      Vector_3;
+  typedef typename Kernel::Vector_2      Vector_2;
   typedef typename Kernel::FT            NT;
   
 // Protected types
@@ -97,7 +98,6 @@ protected:
     typedef typename Adaptor::NT            NT;
     typedef typename Adaptor::Point_2       Point_2;
     typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
     typedef typename Adaptor::Vector_3      Vector_3;
 
     typedef typename Adaptor::Facet         Facet;

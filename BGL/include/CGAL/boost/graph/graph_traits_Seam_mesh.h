@@ -53,6 +53,7 @@ private:
 public:
   // Graph
   typedef typename SM::vertex_descriptor                                        vertex_descriptor;
+  typedef typename SM::face_descriptor                                        face_descriptor;
   /*
   typedef typename SM::Point                                               vertex_property_type;
   typedef typename SM::Edge_index  edge_descriptor;
@@ -68,7 +69,7 @@ public:
   //typedef typename SM::face_index   face_descriptor;
   
   // VertexListGraph
-  typedef typename boost::graph_traits<P>::vertex_iterator   vertex_iterator;
+  typedef typename SM::vertex_iterator   vertex_iterator;
   typedef typename boost::graph_traits<P>::vertices_size_type vertices_size_type;
  
  // EdgeListGraph
@@ -79,7 +80,7 @@ public:
   //typedef typename SM::Halfedge_iterator halfedge_iterator;
   //typedef typename SM::size_type              halfedges_size_type;
   // FaceListGraph
-  //typedef typename SM::Face_iterator    face_iterator;
+  typedef typename boost::graph_traits<P>::face_iterator    face_iterator;
   //typedef typename SM::size_type              faces_size_type;
 
   // IncidenceGraph
@@ -192,7 +193,7 @@ template <typename P>
 Iterator_range<typename boost::graph_traits<CGAL::Seam_mesh<P> >::vertex_iterator>
 vertices(const CGAL::Seam_mesh<P>& sm)
 {
-  return vertices(sm.mesh()); 
+  return sm.m_vertices(); 
 }
 
  
@@ -274,7 +275,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::edge_descriptor
 edge(typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor h,
      const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.m__edge(h);
+  return sm.m_edge(h);
 }
 
 template <typename P>
@@ -292,7 +293,7 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor
 halfedge(typename boost::graph_traits<CGAL::Seam_mesh<P> >::vertex_descriptor v,
          const CGAL::Seam_mesh<P>& sm)
 {
-  return halfedge(v,sm.mesh());
+  return halfedge_descriptor(boost::graph_traits<P>::halfedge_descriptor(v));
 }
 
 
@@ -334,6 +335,8 @@ num_halfedges(const CGAL::Seam_mesh<P>& sm)
 
 
 
+#endif
+
 //
 // FaceGraph
 //
@@ -342,9 +345,10 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor
 halfedge(typename boost::graph_traits<CGAL::Seam_mesh<P> >::face_descriptor f,
      const CGAL::Seam_mesh<P>& sm) 
 {
-  return sm.halfedge(f);
+  return halfedge(f, sm.mesh());
 }
   
+#if 0
 template<typename P>
 typename boost::graph_traits<CGAL::Seam_mesh<P> >::face_descriptor
 face(typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor h,
@@ -353,7 +357,7 @@ face(typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor h,
   return sm.face(h);
 }
 
-
+#endif
 
  
 //
@@ -370,10 +374,10 @@ template <typename P>
 Iterator_range<typename boost::graph_traits<CGAL::Seam_mesh<P> >::face_iterator>
 faces(const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.faces(); 
+  return faces(sm.mesh()); 
 }
  
-#endif
+
 
 } // namespace CGAL
 

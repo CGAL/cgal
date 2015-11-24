@@ -3,7 +3,9 @@
 #include <CGAL/boost/graph/Seam_mesh.h>
 
 #include <CGAL/parameterize.h>
+#include <CGAL/Two_vertices_parameterizer_3.h>
 #include <CGAL/Discrete_authalic_parameterizer_3.h>
+#include <CGAL/LSCM_parameterizer_3.h>
 #include <boost/foreach.hpp>
 #include <iostream>
 #include <cstdlib>
@@ -26,15 +28,15 @@ typedef boost::graph_traits<SurfaceMesh>::face_descriptor SM_face_descriptor;
 
 
 
-vertex_descriptor find(const Point_3& p, const SurfaceMesh& sm)
+SM_vertex_descriptor find(const Point_3& p, const SurfaceMesh& sm)
 {
-  BOOST_FOREACH(vertex_descriptor vd, vertices(sm)){
+  BOOST_FOREACH(SM_vertex_descriptor vd, vertices(sm)){
     if(squared_distance(p, sm.point(vd)) < 0.0001){
       return vd;
     }
   }
   std::cerr << "epsilon is too small" << std::endl;
-  return vertex_descriptor();
+  return SM_vertex_descriptor();
 }
 
 void
@@ -59,17 +61,22 @@ int main(int argc, char * argv[])
     in >> n;
     Point_3 p;
     in >> p;
-    vertex_descriptor v = find(p,sm);
+    SM_vertex_descriptor v = find(p,sm);
 
     for(int i=1; i < n; i++){
       in >> p;
-      vertex_descriptor w = find(p,sm);
+      SM_vertex_descriptor w = find(p,sm);
       seam.push_back(edge(v,w,sm).first);
       v = w;
     }
   }
   
+#if 1
   typedef CGAL::Discrete_authalic_parameterizer_3<Mesh> Parameterizer;
+#else
+ typedef CGAL::LSCM_parameterizer_3<Mesh,
+                           CGAL::Two_vertices_parameterizer_3<Mesh> > Parameterizer;
+#endif
 
   // The 2D points of the uv parametrisation will be written into this map  
   typedef std::map<halfedge_descriptor,Point_2> H_uv_map;
