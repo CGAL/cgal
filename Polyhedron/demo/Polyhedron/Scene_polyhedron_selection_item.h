@@ -718,7 +718,7 @@ public:
   }
 
 Q_SIGNALS:
-  void simplicesSelected(Scene_item*);
+  void simplicesSelected(CGAL::Three::Scene_item*);
 
 public Q_SLOTS:
   void invalidate_buffers() {
