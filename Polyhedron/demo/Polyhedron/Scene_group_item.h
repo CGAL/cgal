@@ -10,66 +10,73 @@ class Q_DECL_EXPORT Scene_group_item : public Scene_item
 public :
     Scene_group_item(QString name = QString());
     ~Scene_group_item() {}
+    //!Returns false to avoid disturbing the BBox of the scene.
     bool isFinite() const;
-
+    //!Returns true to avoid disturbing the BBox of the scene.
     bool isEmpty() const ;
-
+    //!Getter for expanded.
+    //!@see expanded. @see setExpanded.
     bool isExpanded() const;
-
+    //! Setter for expanded.
     void setExpanded(bool);
-
+    //!@see expanded. @see isExpanded.
+    //!Returns an empty BBox to avoid disturbing the BBox of the scene.
     Bbox bbox() const;
-
+    //!Not supported.
     Scene_group_item* clone() const {return 0;}
     //! Indicate if rendering mode is supported.
     bool supportsRenderingMode(RenderingMode m) const;
-
+    //!Prints the number of children.
     QString toolTip() const;
-
+    //!Adds a Scene_item* to the list of children.
+    //!@see getChildren. @see removeChild.
     void addChild(Scene_item* new_item);
-
+    //!Sets all the children to the specified color.
     void setColor(QColor c);
-
+    //!Sets all the children in the specified rendering mode.
     void setRenderingMode(RenderingMode m);
-
+    //!Sets all the children to the specified visibility.
     void setVisible(bool b);
-
+    //!Sets all the children in points mode.
     void setPointsMode() {
       setRenderingMode(Points);
     }
-
+    //!Sets all the children in wireframe rendering.
     void setWireframeMode() {
       setRenderingMode(Wireframe);
     }
+    //!Sets all the children in wireframe rendering.
     void setWireframe() {
       setRenderingMode(Wireframe);
     }
-
+    //!Sets all the children in flat rendering.
     void setFlat() {
       setRenderingMode(Flat);
     }
+    //!Sets all the children in flat rendering.
     void setFlatMode() {
       setRenderingMode(Flat);
     }
-
+    //!Sets all the children in flat rendering with edges.
     void setFlatPlusEdgesMode() {
       setRenderingMode(FlatPlusEdges);
     }
-
+    //!Sets all the children in smooth rendering.
     void setGouraudMode() {
       setRenderingMode(Gouraud);
     }
-
+    //!Sets all the children in point rendering with normals.
     void setPointsPlusNormalsMode(){
       setRenderingMode(PointsPlusNormals);
     }
-
+    //!Sets all the children in splat rendering.
     void setSplattingMode(){
       setRenderingMode(Splatting);
     }
-
+    //!Returns a list of all the children.
     QList<Scene_item*> getChildren() const {return children;}
-
+    //!Removes a Scene_item from the list of children.
+    //!@see getChildren @see addChild
     void removeChild( Scene_item* item)
     {
       Scene_group_item* group =
@@ -81,12 +88,12 @@ public :
       children.removeOne(item);
     }
 
-Q_SIGNALS:
-    void updated(int row, int column);
-
 private:
+    //!Contains a reference to all the children of this group.
     QList<Scene_item*> children;
+    //!Updates the property has_group for each group and sub-groups containing new_item.
     void add_group_number(Scene_item*new_item);
+    //!Specifies if the group_item is currently expanded or collapsed in the view.
     bool expanded;
 
 }; //end of class Scene_group_item

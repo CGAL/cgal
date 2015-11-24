@@ -224,6 +224,7 @@ public:
 
   //!Handles key press events.
   virtual bool keyPressEvent(QKeyEvent*){return false;}
+  //!Contrains the number of group and subgroups containing this item.
   int has_group;
 public Q_SLOTS:
 

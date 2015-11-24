@@ -45,13 +45,6 @@ QString Scene_group_item::toolTip() const {
     QString str =
             QObject::tr( "<p>Number of children: %1<br />").arg(children.size());
     str+="</p>";
-    str += QString("Bounding box: min (%1,%2,%3), max(%4,%5,%6)")
-            .arg(bbox().xmin)
-            .arg(bbox().ymin)
-            .arg(bbox().zmin)
-            .arg(bbox().xmax)
-            .arg(bbox().ymax)
-            .arg(bbox().zmax);
     return str;
 }
 

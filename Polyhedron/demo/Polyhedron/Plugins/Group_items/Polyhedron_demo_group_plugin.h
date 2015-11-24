@@ -31,6 +31,10 @@ public :
 
     Scene* trueScene;
 public Q_SLOTS:
+    /*! Called by the action "add new group". Adds a new group to the Scene. If items were selected at the
+     * moment this function is called, they are added to the group.
+     * If all the selected items were in the same group, the new group
+     * is added as a sub-group of this group.*/
     void add_group() {
         //Find the indices of the selected items
         QList<int> indices;
@@ -102,6 +106,7 @@ public Q_SLOTS:
 
 
 private:
+    //!Called when "Add new group" in the file menu is triggered.
     QAction* actionAddToGroup;
     void print_message(QString message) { messages->information(message); }
     Messages_interface* messages;

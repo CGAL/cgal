@@ -1,5 +1,4 @@
 #include "Polyhedron_demo_group_plugin.h"
-#include "Polyhedron_demo_group_plugin.moc"
 #include "Scene.h"
 #include <QMenu>
 /****************
