@@ -98,9 +98,8 @@ namespace Polygon_mesh_processing {
   /**
   * \ingroup measure_grp
   * computes the length of the border polyline
-  * that contains a given border halfedge.
+  * that contains a given halfedge.
   *
-  * @pre `h` is a border halfedge
   * @tparam PolygonMesh a model of `HalfedgeGraph` that has an internal property map
   *         for `CGAL::vertex_point_t`
   * @tparam NamedParameters a sequence of \ref namedparameters
@@ -133,8 +132,6 @@ namespace Polygon_mesh_processing {
               , const PolygonMesh& pmesh
               , const NamedParameters& np)
   {
-    CGAL_precondition(is_border(h, pmesh));
-
     double result = 0.;
     BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor haf,
                   halfedges_around_face(h, pmesh))
@@ -173,7 +170,9 @@ namespace Polygon_mesh_processing {
   *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
   *  \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
   * \cgalNamedParamsEnd
-
+  *
+  *@pre `f != boost::graph_traits<TriangleMesh>::%null_face()`
+  *
   * @return the area of `f`.
   * The return type `FT` is a number type. It is
   * either deduced from the `geom_traits` \ref namedparameters if provided,
@@ -195,6 +194,8 @@ namespace Polygon_mesh_processing {
   {
     using boost::choose_const_pmap;
     using boost::get_param;
+
+    CGAL_precondition(boost::graph_traits<TriangleMesh>::null_face() != f);
 
     typename GetVertexPointMap<TriangleMesh, CGAL_PMP_NP_CLASS>::const_type
     vpm = choose_const_pmap(get_param(np, CGAL::vertex_point),
