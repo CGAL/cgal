@@ -291,7 +291,7 @@ namespace parameters {
                             (dump_after_glob_opt_prefix_, (std::string), "" )
                             (dump_after_perturb_prefix_, (std::string), "" )
                             (dump_after_exude_prefix_, (std::string), "" )
-                            (number_of_initial_points_, (int), 6)
+                            (number_of_initial_points_, (int), -1)
                             )
                            )
   { 

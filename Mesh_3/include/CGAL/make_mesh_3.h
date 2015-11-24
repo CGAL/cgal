@@ -146,8 +146,11 @@ init_c3t3(C3T3& c3t3, const MeshDomain& domain, const MeshCriteria&,
   
   // Mesh initialization : get some points and add them to the mesh
   Initial_points_vector initial_points;
-  domain.construct_initial_points_object()(std::back_inserter(initial_points),
-                                           nb_initial_points);
+  if (nb_initial_points > 0)
+    domain.construct_initial_points_object()(std::back_inserter(initial_points),
+                                             nb_initial_points);
+  else //use default number of points
+    domain.construct_initial_points_object()(std::back_inserter(initial_points));
 
   // Insert points and set their index and dimension
   for ( Ipv_iterator it = initial_points.begin() ;
@@ -214,7 +217,7 @@ struct C3t3_initializer < C3T3, MD, MC, false, HasFeatures >
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
-                  const int nb_initial_points)
+                  const int nb_initial_points = -1)
   {
     if ( with_features )
     {
@@ -235,7 +238,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, HasFeatures >
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
-                  const int nb_initial_points)
+                  const int nb_initial_points = -1)
   {
     C3t3_initializer < C3T3, MD, MC, true, typename MD::Has_features >()
       (c3t3,domain,criteria,with_features,nb_initial_points);
@@ -252,7 +255,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_true >
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
-                  const int nb_initial_points)
+                  const int nb_initial_points = -1)
   {
     if ( with_features ) { init_c3t3_with_features(c3t3,domain,criteria); }
     else { init_c3t3(c3t3,domain,criteria,nb_initial_points); }
@@ -269,7 +272,7 @@ struct C3t3_initializer < C3T3, MD, MC, true, CGAL::Tag_false >
                   const MD& domain,
                   const MC& criteria,
                   bool with_features,
-                  const int nb_initial_points)
+                  const int nb_initial_points = -1)
   {
     if ( with_features )
     {
