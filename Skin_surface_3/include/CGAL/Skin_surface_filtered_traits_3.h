@@ -25,7 +25,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Skin_surface_traits_3.h>
-#include <CGAL/Regular_triangulation_filtered_traits_3.h>
+#include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <CGAL/Filtered_predicate.h>
 
 namespace CGAL { 
