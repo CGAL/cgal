@@ -89,26 +89,32 @@ public:
   }
 
   Reconstruction_face_base_2(Face_handle f)
-  : Base(f),
-    m_samples[0](f->samples(0)),
-    m_samples[1](f->samples(1)),
-    m_samples[2](f->samples(2)),
-    m_mass[0](f->mass(0)),
-    m_mass[1](f->mass(1)),
-    m_mass[2](f->mass(2)),
-    m_cost0[0](f->vertex_cost(0)),
-    m_cost0[1](f->vertex_cost(1)),
-    m_cost0[2](f->vertex_cost(2)),
-    m_cost1[0](f->edge_cost(0)),
-    m_cost1[1](f->edge_cost(1)),
-    m_cost1[2](f->edge_cost(2)),
-    m_plan[0](f->plan(0)),
-    m_plan[1](f->plan(1)),
-    m_plan[2](f->plan(2)),
-    m_relevance[0](f->relevance(0)),
-    m_relevance[1](f->relevance(1)),
-    m_relevance[2](f->relevance(2))
-  {}
+  : Base(f)
+  {
+    m_samples[0] = f->samples(0);
+    m_samples[1] = f->samples(1);
+    m_samples[2] = f->samples(2);
+
+    m_mass[0] = f->mass(0);
+    m_mass[1] = f->mass(1);
+    m_mass[2] = f->mass(2);
+
+    m_cost0[0] = f->vertex_cost(0);
+    m_cost0[1] = f->vertex_cost(1);
+    m_cost0[2] = f->vertex_cost(2);
+
+    m_cost1[0] = f->edge_cost(0);
+    m_cost1[1] = f->edge_cost(1);
+    m_cost1[2] = f->edge_cost(2);
+
+    m_plan[0] = f->plan(0);
+    m_plan[1] = f->plan(1);
+    m_plan[2] = f->plan(2);
+
+    m_relevance[0] = f->relevance(0);
+    m_relevance[1] = f->relevance(1);
+    m_relevance[2] = f->relevance(2);
+  }
 
   ~Reconstruction_face_base_2()
   {
