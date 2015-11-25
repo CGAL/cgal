@@ -79,13 +79,13 @@ public:
   }
   bool isFinite() const { return true; }
   bool isEmpty() const { return polyline_data_list.empty(); }
-  Bbox bbox() const {
-    if(polyline_data_list.empty()) { return Bbox(); }
+  void compute_bbox() const {
+    if(polyline_data_list.empty()) { _bbox = Bbox(); return;}
     Bbox bbox = polyline_data_list.begin()->polyline->bbox();
     for(Polyline_data_list::const_iterator it = polyline_data_list.begin(); it != polyline_data_list.end(); ++it) {
       bbox = bbox + it->polyline->bbox();
     }
-    return bbox;
+    _bbox = bbox;
   }
   Scene_hole_visualizer* clone() const {
     return 0;

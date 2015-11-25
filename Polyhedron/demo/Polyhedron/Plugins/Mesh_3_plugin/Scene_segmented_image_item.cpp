@@ -645,11 +645,15 @@ void Scene_segmented_image_item::attrib_buffers(Viewer_interface* viewer) const
     rendering_program.release();
 }
 
-Scene_segmented_image_item::Bbox
-Scene_segmented_image_item::bbox() const
+void
+Scene_segmented_image_item::compute_bbox()const
 {
-  if(!m_image) return Bbox();
-  return Bbox(0, 0, 0,
+  if(!m_image)
+  {
+      _bbox = Bbox();
+      return;
+  }
+  _bbox = Bbox(0, 0, 0,
               m_image->xdim() * m_image->vx(),
               m_image->ydim() * m_image->vy(),
               m_image->zdim() * m_image->vz());

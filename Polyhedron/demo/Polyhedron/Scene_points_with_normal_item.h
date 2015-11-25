@@ -63,7 +63,7 @@ public:
   // Gets dimensions
   virtual bool isFinite() const { return true; }
   virtual bool isEmpty() const;
-  virtual Bbox bbox() const;
+  virtual void compute_bbox() const;
 
   virtual void setRenderingMode(RenderingMode m);
 

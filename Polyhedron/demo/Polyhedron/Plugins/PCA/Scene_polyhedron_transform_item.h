@@ -19,7 +19,7 @@ public:
     Scene_item* clone() const{return NULL;}
     QString toolTip() const;
     void draw_edges(CGAL::Three::Viewer_interface*) const;
-    Bbox bbox() const;
+    void compute_bbox() const;
     ~Scene_polyhedron_transform_item() {delete frame; Q_EMIT killed();}
     bool manipulatable() const { return manipulable; }
     ManipulatedFrame* manipulatedFrame() { return frame; }

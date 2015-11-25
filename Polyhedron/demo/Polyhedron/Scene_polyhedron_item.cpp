@@ -843,6 +843,7 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     {
         compute_normals_and_vertices();
         initialize_buffers(viewer);
+        compute_bbox();
     }
 
 
@@ -878,6 +879,7 @@ void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) co
     {
         compute_normals_and_vertices();
         initialize_buffers(viewer);
+        compute_bbox();
     }
 
     vaos[Edges]->bind();
@@ -905,6 +907,7 @@ Scene_polyhedron_item::draw_points(CGAL::Three::Viewer_interface* viewer) const 
     {
         compute_normals_and_vertices();
         initialize_buffers(viewer);
+        compute_bbox();
     }
 
     vaos[Edges]->bind();
@@ -928,8 +931,7 @@ Scene_polyhedron_item::isEmpty() const {
     return (poly == 0) || poly->empty();
 }
 
-Scene_polyhedron_item::Bbox
-Scene_polyhedron_item::bbox() const {
+void Scene_polyhedron_item::compute_bbox() const {
     const Kernel::Point_3& p = *(poly->points_begin());
     CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
     for(Polyhedron::Point_iterator it = poly->points_begin();
@@ -937,7 +939,7 @@ Scene_polyhedron_item::bbox() const {
         ++it) {
         bbox = bbox + it->bbox();
     }
-    return Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+    _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
                 bbox.xmax(),bbox.ymax(),bbox.zmax());
 }
 

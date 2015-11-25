@@ -149,7 +149,7 @@ public:
     void invalidate_buffers();
     bool isFinite() const { return true; }
     bool isEmpty() const;
-    Bbox bbox() const;
+    void compute_bbox() const;
 
     void new_vertex(const double&, const double&, const double&);
     void new_triangle(const std::size_t, const std::size_t, const std::size_t);

@@ -25,7 +25,7 @@ public:
     }
     bool isFinite() const { return true; }
     bool isEmpty() const { return true; }
-    Bbox bbox() const { return scene->bbox(); }
+    void compute_bbox() const { _bbox = scene->bbox(); }
 
     Scene_bbox_item* clone() const {
         return 0;
@@ -66,6 +66,7 @@ public:
     {
         compute_elements();
         are_buffers_filled = false;
+        compute_bbox();
     }
 
 private:

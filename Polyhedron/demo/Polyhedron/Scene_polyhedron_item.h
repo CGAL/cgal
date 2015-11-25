@@ -58,7 +58,7 @@ public:
     // Get dimensions
     bool isFinite() const { return true; }
     bool isEmpty() const;
-    Bbox bbox() const;
+    void compute_bbox() const;
     std::vector<QColor>& color_vector() {return colors_;}
     void set_color_vector_read_only(bool on_off) {plugin_has_set_color_vector_m=on_off;}
 

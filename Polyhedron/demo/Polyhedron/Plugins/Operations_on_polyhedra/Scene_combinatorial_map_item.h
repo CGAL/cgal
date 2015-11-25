@@ -52,7 +52,7 @@ public:
     bool isFinite() const { return true; }
     bool is_from_corefinement() const {return address_of_A!=NULL;}
     bool isEmpty() const;
-    Bbox bbox() const;
+    void compute_bbox() const;
 
     const Combinatorial_map_3& combinatorial_map() const
     {

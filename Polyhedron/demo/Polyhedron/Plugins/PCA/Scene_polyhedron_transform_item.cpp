@@ -100,8 +100,8 @@ bool Scene_polyhedron_transform_item::keyPressEvent(QKeyEvent* e){
     return false;
 }
 
-Scene_polyhedron_transform_item::Bbox
-Scene_polyhedron_transform_item::bbox() const {
+void
+Scene_polyhedron_transform_item::compute_bbox() const {
     const Kernel::Point_3& p = *(poly->points_begin());
     CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
     for(Polyhedron::Point_const_iterator it = poly->points_begin();
@@ -109,7 +109,7 @@ Scene_polyhedron_transform_item::bbox() const {
         ++it) {
         bbox = bbox + it->bbox();
     }
-    return Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+    _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
                 bbox.xmax(),bbox.ymax(),bbox.zmax());
 }
 
@@ -118,5 +118,6 @@ void Scene_polyhedron_transform_item::invalidate_buffers()
 {
     compute_elements();
     are_buffers_filled = false;
+    compute_bbox();
 }
 

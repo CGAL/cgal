@@ -43,7 +43,7 @@ public:
 
   bool isFinite() const { return false; }
   bool isEmpty() const { return false; }
-  Bbox bbox() const { return Bbox(); }
+  void compute_bbox() const { _bbox = Bbox(); }
 
   bool manipulatable() const {
     return manipulable;
@@ -121,6 +121,7 @@ public Q_SLOTS:
   {
       compute_normals_and_vertices();
       are_buffers_filled = false;
+      compute_bbox();
   }
 
   void setPosition(float x, float y, float z) {

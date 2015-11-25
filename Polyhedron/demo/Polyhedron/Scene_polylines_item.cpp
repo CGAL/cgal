@@ -346,12 +346,15 @@ Scene_polylines_item::isEmpty() const {
     return polylines.empty();
 }
 
-CGAL::Three::Scene_interface::Bbox
-Scene_polylines_item::bbox() const {
+void
+Scene_polylines_item::compute_bbox() const {
     typedef K::Iso_cuboid_3 Iso_cuboid_3;
 
     if(isEmpty())
-        return Bbox();
+    {
+        _bbox =Bbox();
+        return;
+    }
     std::list<Point_3> boxes;
     for(std::list<std::vector<Point_3> >::const_iterator it = polylines.begin();
         it != polylines.end();
@@ -367,7 +370,7 @@ Scene_polylines_item::bbox() const {
                 CGAL::bounding_box(boxes.begin(), boxes.end()) :
                 Iso_cuboid_3();
 
-    return Bbox(bbox.xmin(),
+    _bbox = Bbox(bbox.xmin(),
                 bbox.ymin(),
                 bbox.zmin(),
                 bbox.xmax(),
@@ -537,6 +540,7 @@ QMenu* Scene_polylines_item::contextMenu()
 void Scene_polylines_item::invalidate_buffers()
 {
     are_buffers_filled = false;
+    compute_bbox();
 
 
 }

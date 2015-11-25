@@ -264,8 +264,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   FOREACH(SUB_DIR ${DEMO_PLUGINS})
       add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${SUB_DIR}")
   ENDFOREACH()
-  add_executable(example_plugin IMPORTED)
-  set_property(TARGET example_plugin PROPERTY IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/../../../Example_plugin/example_plugin.cmake")
+ # add_executable(example_plugin IMPORTED)
+ # set_property(TARGET example_plugin PROPERTY IMPORTED_LOCATION "${CMAKE_CURRENT_SOURCE_DIR}/../../../Example_plugin/example_plugin.cmake")
 #
 # Exporting
 #
