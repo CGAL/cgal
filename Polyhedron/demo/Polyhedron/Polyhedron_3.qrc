@@ -32,5 +32,6 @@
         <file>resources/shader_with_textured_edges.v</file>
         <file>resources/shader_with_texture.v</file>
         <file>resources/shader_instanced.v</file>
+        <file>resources/shader_no_light_no_selection.f</file>
     </qresource>
 </RCC>

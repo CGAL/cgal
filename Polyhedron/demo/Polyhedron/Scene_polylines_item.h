@@ -3,7 +3,7 @@
 #include "Scene_polylines_item_config.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include  <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item.h>
 
 #include <QString>
 #include <QMenu>

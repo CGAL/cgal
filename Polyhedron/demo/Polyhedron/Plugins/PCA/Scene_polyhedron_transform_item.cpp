@@ -29,9 +29,6 @@ void Scene_polyhedron_transform_item::initialize_buffers(CGAL::Three::Viewer_int
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[Vertices].release();
-
-        QColor color = this->color();
-        program->setAttributeValue("colors",color);
         vaos[Edges]->release();
         program->release();
     }
@@ -80,6 +77,9 @@ void Scene_polyhedron_transform_item::draw_edges(CGAL::Three::Viewer_interface* 
         f_matrix.data()[i] = (float)frame->matrix()[i];
     }
     program->setUniformValue("f_matrix", f_matrix);
+    program->setUniformValue("is_selected", false);
+    QColor color = this->color();
+    program->setAttributeValue("colors",color);
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
     vaos[Edges]->release();
     program->release();

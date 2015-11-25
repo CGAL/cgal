@@ -37,7 +37,7 @@ Scene_polylines_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer =
     QOpenGLShaderProgram *program;
    //vao for the lines
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
 
         vaos[Edges]->bind();
@@ -92,7 +92,7 @@ Scene_polylines_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer =
         }
         else
         {
-            program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+            program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
             program->bind();
 
             vaos[Spheres]->bind();
@@ -444,8 +444,8 @@ Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
         else
         {
             vaos[Spheres]->bind();
-            QOpenGLShaderProgram* program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-            attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+            QOpenGLShaderProgram* program = getShaderProgram(PROGRAM_NO_SELECTION);
+            attrib_buffers(viewer, PROGRAM_NO_SELECTION);
             glPointSize(8.0f);
             glEnable(GL_POINT_SMOOTH);
             program->bind();
@@ -467,8 +467,8 @@ Scene_polylines_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
     }
 
     vaos[Edges]->bind();
-    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
-    QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/4));
@@ -500,8 +500,8 @@ Scene_polylines_item::draw_points(CGAL::Three::Viewer_interface* viewer) const {
     }
 
     vaos[Edges]->bind();
-    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
-    QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
     program->bind();
     QColor temp = this->color();
     program->setAttributeValue("colors", temp);
