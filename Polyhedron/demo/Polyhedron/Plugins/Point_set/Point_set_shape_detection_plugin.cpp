@@ -244,14 +244,27 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
                                                                    shape_detection);
         
         structuring.run (op.epsilon);
-        
+
+        Scene_points_with_normal_item *pts_full = new Scene_points_with_normal_item;
         Scene_points_with_normal_item *pts_planes = new Scene_points_with_normal_item;
         Scene_points_with_normal_item *pts_edges = new Scene_points_with_normal_item;
         Scene_points_with_normal_item *pts_corners = new Scene_points_with_normal_item;
 
+        structuring.get_output (std::back_inserter (*(pts_full->point_set())));
         structuring.get_detailed_output (std::back_inserter (*(pts_planes->point_set())),
                                          std::back_inserter (*(pts_edges->point_set())),
                                          std::back_inserter (*(pts_corners->point_set())));
+
+        if (pts_full->point_set ()->empty ())
+          delete pts_full;
+        else
+          {
+            pts_full->point_set ()->unselect_all();
+            pts_full->setName(tr("%1 (structured)").arg(item->name()));
+            pts_full->set_has_normals(false);
+            pts_full->setColor(Qt::blue);
+            scene->addItem (pts_full);
+          }
 
         if (pts_planes->point_set ()->empty ())
           delete pts_planes;
