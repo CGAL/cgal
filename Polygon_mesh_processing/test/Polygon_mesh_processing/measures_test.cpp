@@ -31,8 +31,8 @@ namespace PMP = CGAL::Polygon_mesh_processing;
 template<typename Mesh>
 void test(const Mesh& pmesh)
 {
-  typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
-  typedef boost::graph_traits<Mesh>::face_descriptor     face_descriptor;
+  typedef typename boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
+  typedef typename boost::graph_traits<Mesh>::face_descriptor     face_descriptor;
 
   halfedge_descriptor border_he;
   BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh))
