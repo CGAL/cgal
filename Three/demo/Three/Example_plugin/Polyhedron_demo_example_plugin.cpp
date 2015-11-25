@@ -5,6 +5,7 @@
 
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Three/Scene_group_item.h>
 #include "ui_Polyhedron_demo_example_plugin.h"
 #include "ui_dock_example.h"
 
@@ -30,6 +31,7 @@ class Polyhedron_demo_example_plugin_dialog : public QDialog, private Ui::Polyhe
     double getCx() const { return doubleSpinBox_Cx->value(); }
     double getCy() const { return doubleSpinBox_Cy->value(); }
     double getCz() const { return doubleSpinBox_Cz->value(); }
+    void setTriangleName(QString name) {triangle_name_label->setText(name); }
 };
 
 //! The special Scene_item only for triangles
@@ -175,6 +177,7 @@ public :
       //get the references
       this->scene = scene_interface;
       this->mw = mainWindow;
+        nb_triangles = 0;
       //creates and link the actions
       actionDrawTriangle= new QAction("Draw Triangle", mw);
       if(actionDrawTriangle) {
@@ -201,25 +204,42 @@ public :
 
   public Q_SLOTS:
 
-  void populate_dialog()
-  {
-      // dock widget should be constructed in init()
-      if(dock_widget->isVisible()) { dock_widget->hide(); }
-      else                         { dock_widget->show(); }
-      dialog = new Polyhedron_demo_example_plugin_dialog();
-      if(!dialog->exec())
-        return;
-      ax = dialog->getAx();
-      ay = dialog->getAy();
-      az = dialog->getAz();
-      bx = dialog->getBx();
-      by = dialog->getBy();
-      bz = dialog->getBz();
-      cx = dialog->getCx();
-      cy = dialog->getCy();
-      cz = dialog->getCz();
-      draw_triangle();
-  }
+    void populate_dialog()
+    {
+        dialog->setTriangleName(QString("Triangle %1").arg(nb_triangles));
+        // dock widget should be constructed in init()
+        if(dock_widget->isVisible()) { dock_widget->hide(); }
+        else                         { dock_widget->show(); }
+        dialog = new Polyhedron_demo_example_plugin_dialog();
+        if(!dialog->exec())
+            return;
+        ax = dialog->getAx();
+        ay = dialog->getAy();
+        az = dialog->getAz();
+        bx = dialog->getBx();
+        by = dialog->getBy();
+        bz = dialog->getBz();
+        cx = dialog->getCx();
+        cy = dialog->getCy();
+        cz = dialog->getCz();
+        draw_triangle();
+        if(nb_triangles < 3)
+        {
+            triangle_array[nb_triangles] = new Scene_triangle_item(ax, ay, az,
+                                                                   bx, by, bz,
+                                                                   cx, cy, cz);
+            scene->addItem(triangle_array[nb_triangles]);
+            populate_dialog();
+        }
+        else
+        {
+            Scene_group_item group;
+            for(int i =0; i<3; i++)
+                scene->changeGroup(triangle_array[i], &group);
+            scene->addItem(&group);
+        }
+        nb_triangles = (nb_triangles +1 )%3;
+    }
 
   void draw_triangle() {
 
@@ -243,6 +263,7 @@ public :
       cy = ui_widget.doubleSpinBox_Cy->value();
       cz = ui_widget.doubleSpinBox_Cz->value();
       draw_triangle();
+
   }
 
 private:
@@ -258,6 +279,8 @@ private:
   double cx;
   double cy;
   double cz;
+  int nb_triangles;
+  Scene_triangle_item* triangle_array[3];
 Ui::Dock_example ui_widget;
 QDockWidget* dock_widget;
 

@@ -54,7 +54,6 @@ public:
   //!updates the bounding box if needed.
   int addItem(CGAL::Three::Scene_item* item);
 
-  //!Moves item to the targeted group.
   void changeGroup(CGAL::Three::Scene_item* item, CGAL::Three::Scene_group_item* target_group);
   //!Sets item as the item at index and calls @ref Scene_item#changed().
   //!If emit_item_about_to_be_destroyed is set to true, emits
