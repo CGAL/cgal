@@ -44,8 +44,8 @@ private:
 public:
   Sample(const Point& point,
       const FT mass = FT(1))
-  : m_mass(mass),
-    m_point(point),
+  : m_point(point),
+    m_mass(mass),
     m_dist2_to_edge(0),
     m_coordinate(0),
     m_backup_dist2(0),
