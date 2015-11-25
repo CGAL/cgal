@@ -211,7 +211,9 @@ namespace internal {
         std::cerr << " -> " << m_points.size () - size_before << " corner point(s) created." << std::endl;
       }
 
-      
+      std::cerr << "Refining sampling... " << std::endl;
+      refine_sampling (double epsilon);
+      std::cerr << " -> Done" << std::endl;
     }
 
     template <typename BackInserter>
@@ -880,6 +882,43 @@ namespace internal {
           m_points.push_back (m_corners[k].support);
           m_indices.push_back (minus1);
           m_status.push_back (CORNER);
+        }
+    }
+
+    void refine_sampling (double epsilon)
+    {
+      double d_DeltaEdge = std::sqrt (2.) * epsilon;
+
+      // Work in progress
+      //
+      //
+      
+      for (std::size_t k = 0; k < m_corners.size(); ++ k)
+        {
+          if (!(m_corners[k].active))
+            continue;
+          
+          for (std::size_t ed = 0; ed < m_corners[k].edges.size(); ++ ed)
+            {
+              const Edge& edge = m_corners[k].edges[ed];
+
+              for (std::size_t i = 0; i < edge.indices.size(); ++ i)
+                {
+                  //if too close from a corner, ->remove
+                  if (CGAL::squared_distance (m_corners[k].support, m_points[edge.indices[i]])
+                      < d_DeltaEdge * d_DeltaEdge)
+                    m_status[edge.indices[i]] = false;
+				
+                  //if too close from a corner (non dominant side), ->remove
+                  if (m_corners[k].direction[ed].squared_length() > 0
+                      && m_corners[k].direction[ed]
+                      * Vector (m_corners[k].support, m_points[edge.indices[i]]) < 0
+                      && CGAL::squared_distance (m_corners[k].support, m_points[edge.indices[i]])
+                      < 4 * d_DeltaEdge * d_DeltaEdge)
+                    m_status[edge.indices[i]] = false;
+                }
+              
+            }
         }
     }
     
