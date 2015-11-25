@@ -345,6 +345,10 @@ private:
   // typedef to make Q_FOREACH work
   typedef QPair<CGAL::Three::Polyhedron_demo_plugin_interface*, QString> PluginNamePair;
   QVector<PluginNamePair > plugins;
+  //!Called when "Add new group" in the file menu is triggered.
+  QAction* actionAddToGroup;
+  void print_message(QString message) { messages->information(message); }
+  Messages_interface* messages;
 #ifdef QT_SCRIPT_LIB
   QScriptEngine* script_engine;
 public:

@@ -1057,6 +1057,75 @@ QList<QModelIndex> Scene::getModelIndexFromId(int id) const
     return index_map.keys(id);
 }
 
+void Scene::add_group()
+{
+    //Find the indices of the selected items
+    QList<int> indices;
+    QList<int> blacklist;
+    Q_FOREACH(int id, selectionIndices()){
+        Scene_group_item* group =
+                qobject_cast<Scene_group_item*>(item(id));
+        if(group)
+            Q_FOREACH(CGAL::Three::Scene_item *item, group->getChildren())
+                blacklist<<item_id(item);
+
+        if(!indices.contains(id) && !blacklist.contains(id))
+            indices<<id;
+}
+    //checks if all the selected items are in the same group
+    bool all_in_one = true;
+    if(indices.isEmpty())
+        all_in_one = false;
+    // new group to create
+    Scene_group_item * group = new Scene_group_item("new group");
+    //group containing the selected item
+    Scene_group_item * existing_group = 0;
+    //for each selected item
+    Q_FOREACH(int id, indices){
+        //if the selected item is in a group
+        if(item(id)->has_group!=0){
+            //for each group
+            Q_FOREACH(Scene_group_item *group, group_entries())
+            {
+                //if the group contains the selected item
+                if(group->getChildren().contains(item(id))){
+                    //if it is the first one, we initialize existing_group
+                    if(existing_group == 0)
+                        existing_group = group;
+                    //else we check if it is the same group as before.
+                    //If not, all selected items are not in the same group
+                    else if(existing_group != group)
+                        all_in_one = false;
+                    break;
+                }
+            }//end for each group
+        }
+        //else it is impossible that all the selected items are in the same group
+        else{
+            all_in_one = false;
+            break;
+        }
+    }//end foreach selected item
+
+    //If all the selected items are in the same group, we put them in a sub_group of this group
+    if(all_in_one)
+    {
+        Q_FOREACH(int id, indices)
+            changeGroup(item(id),group);
+        changeGroup(group, existing_group);
+        addItem(group);
+        group_added();
+    }
+    //else wer create a new group
+    else
+    {
+        Q_FOREACH(int id, indices)
+            changeGroup(item(id),group);
+        addItem(group);
+        group_added();
+    }
+}
+
 namespace scene { namespace details {
 
 Q_DECL_EXPORT

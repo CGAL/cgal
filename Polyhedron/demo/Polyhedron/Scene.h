@@ -56,7 +56,6 @@ public:
 
   //!Moves item to the targeted group.
   void changeGroup(CGAL::Three::Scene_item* item, Scene_group_item* target_group);
-
   //!Sets item as the item at index and calls @ref Scene_item#changed().
   //!If emit_item_about_to_be_destroyed is set to true, emits
   //!an itemAboutToBeDestroyed signal.
@@ -175,6 +174,11 @@ public Q_SLOTS:
   void itemChanged(CGAL::Three::Scene_item*);
   //!Removes item from all the groups of the scene.
   void remove_item_from_groups(CGAL::Three::Scene_item* item);
+  /*! Called by the action "add new group". Adds a new group to the Scene. If items were selected at the
+   * moment this function is called, they are added to the group.
+   * If all the selected items were in the same group, the new group
+   * is added as a sub-group of this group.*/
+  void add_group();
   //!Re-organizes the sceneView.
   void group_added();
   //! Sets the selected item to the target index.

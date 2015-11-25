@@ -332,6 +332,41 @@ MainWindow::MainWindow(QWidget* parent)
   }
   ui->menuDockWindows->removeAction(ui->dummyAction);
 
+  //Manages the group_item creation
+  actionAddToGroup= new QAction("Add new group", this);
+
+  if(actionAddToGroup) {
+    connect(actionAddToGroup, SIGNAL(triggered()),
+            scene, SLOT(add_group()));
+  }
+
+  QMenu* menuFile = findChild<QMenu*>("menuFile");
+  if ( NULL != menuFile )
+  {
+    QList<QAction*> menuFileActions = menuFile->actions();
+
+    // Look for action just after "Load..." action
+    QAction* actionAfterLoad = NULL;
+    for ( QList<QAction*>::iterator it_action = menuFileActions.begin(),
+         end = menuFileActions.end() ; it_action != end ; ++ it_action ) //Q_FOREACH( QAction* action, menuFileActions)
+    {
+      if ( NULL != *it_action && (*it_action)->text().contains("Load") )
+      {
+        ++it_action;
+        if ( it_action != end && NULL != *it_action )
+        {
+          actionAfterLoad = *it_action;
+        }
+      }
+    }
+
+    // Insert "Load implicit function" action
+    if ( NULL != actionAfterLoad )
+    {
+      menuFile->insertAction(actionAfterLoad,actionAddToGroup);
+    }
+  }
+
 
 #ifdef QT_SCRIPT_LIB
   // evaluate_script("print(plugins);");
@@ -1679,3 +1714,4 @@ void MainWindow::restoreCollapseState()
     if(modelIndex.isValid())
         recurseExpand(modelIndex);
 }
+
