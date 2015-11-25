@@ -718,7 +718,7 @@ public:
   }
 
 Q_SIGNALS:
-  void simplicesSelected(Scene_item*);
+  void simplicesSelected(CGAL::Three::Scene_item*);
 
 public Q_SLOTS:
   void invalidate_buffers() {
@@ -813,11 +813,9 @@ protected:
       Selection_traits<edge_descriptor,
                        Scene_polyhedron_selection_item> tr(this);
       tr.update_indices();
-
       std::vector<bool> mark(tr.size(), false);
       BOOST_FOREACH(edge_descriptor e, selected_edges)
         mark[tr.id(e)] = true;
-
       std::vector<Facet_handle> selected_cc;
       CGAL::Polygon_mesh_processing::connected_component(
         face(*selection.begin()),
@@ -825,7 +823,6 @@ protected:
         std::back_inserter(selected_cc),
         CGAL::Polygon_mesh_processing::parameters::edge_is_constrained_map(
           Is_selected_property_map<edge_descriptor>(mark)));
-
       any_change = treat_selection(selected_cc);
     }
     else
