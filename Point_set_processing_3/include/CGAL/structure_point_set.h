@@ -105,8 +105,8 @@ namespace internal {
     {
       std::vector<std::size_t> planes;
       std::vector<std::size_t> edges;
+      std::vector<Vector> directions;
       Point support;
-      Vector direction;
       bool active;
 
       Corner (std::size_t p1, std::size_t p2, std::size_t p3,
@@ -211,8 +211,12 @@ namespace internal {
         std::cerr << " -> " << m_points.size () - size_before << " corner point(s) created." << std::endl;
       }
 
+      std::cerr << "Merging corners... " << std::endl;
+      compute_corner_directions (epsilon);
+      std::cerr << " -> Done" << std::endl;
+
       std::cerr << "Refining sampling... " << std::endl;
-      refine_sampling (double epsilon);
+      refine_sampling (epsilon);
       std::cerr << " -> Done" << std::endl;
     }
 
@@ -885,6 +889,36 @@ namespace internal {
         }
     }
 
+    void compute_corner_directions (double epsilon)
+    {
+      for (std::size_t k = 0; k < m_corners.size(); ++ k)
+        {
+          for (std::size_t ed = 0; ed < m_corners[k].edges.size(); ++ ed)
+            {
+              if (m_corners[k].edges[ed] < m_edges.size())
+                {  
+                  const Edge& edge = m_edges[m_corners[k].edges[ed]];
+
+                  Vector direction (0., 0., 0.);
+                  for (std::size_t i = 0; i < edge.indices.size(); ++ i)
+                    {
+                      std::size_t index_pt = edge.indices[i];
+                      if (std::sqrt (CGAL::squared_distance (m_corners[k].support,
+                                                             m_points[index_pt])) < 5 * epsilon)
+                        direction = direction + Vector (m_corners[k].support, m_points[index_pt]);
+                    }
+
+                  if (direction.squared_length() > 1e-5)
+                    m_corners[k].directions.push_back (direction / std::sqrt (direction * direction));
+                  else
+                    m_corners[k].directions.push_back (Vector (0., 0., 0.));
+                }
+              else
+                m_corners[k].directions.push_back (Vector (0., 0., 0.));
+            }
+        }
+    }
+    
     void refine_sampling (double epsilon)
     {
       double d_DeltaEdge = std::sqrt (2.) * epsilon;
@@ -900,26 +934,76 @@ namespace internal {
           
           for (std::size_t ed = 0; ed < m_corners[k].edges.size(); ++ ed)
             {
-              const Edge& edge = m_corners[k].edges[ed];
+              const Edge& edge = m_edges[m_corners[k].edges[ed]];
 
               for (std::size_t i = 0; i < edge.indices.size(); ++ i)
                 {
                   //if too close from a corner, ->remove
                   if (CGAL::squared_distance (m_corners[k].support, m_points[edge.indices[i]])
                       < d_DeltaEdge * d_DeltaEdge)
-                    m_status[edge.indices[i]] = false;
+                    m_status[edge.indices[i]] = SKIPPED;
 				
                   //if too close from a corner (non dominant side), ->remove
-                  if (m_corners[k].direction[ed].squared_length() > 0
-                      && m_corners[k].direction[ed]
-                      * Vector (m_corners[k].support, m_points[edge.indices[i]]) < 0
-                      && CGAL::squared_distance (m_corners[k].support, m_points[edge.indices[i]])
-                      < 4 * d_DeltaEdge * d_DeltaEdge)
-                    m_status[edge.indices[i]] = false;
+                  if (m_corners[k].directions[ed].squared_length() > 0
+                      && (m_corners[k].directions[ed]
+                          * Vector (m_corners[k].support, m_points[edge.indices[i]]) < 0)
+                      && (CGAL::squared_distance (m_corners[k].support, m_points[edge.indices[i]])
+                          < 4 * d_DeltaEdge * d_DeltaEdge))
+                    m_status[edge.indices[i]] = SKIPPED;
                 }
               
             }
         }
+
+      for (std::size_t k = 0; k < m_corners.size(); ++ k)
+        {
+          if (!(m_corners[k].active))
+            continue;
+		
+          for (std::size_t ed = 0; ed < m_corners[k].edges.size(); ++ ed)
+            {
+              if (m_corners[k].directions[ed].squared_length() <= 0.)
+                continue;
+              
+              Edge& edge = m_edges[m_corners[k].edges[ed]];
+
+              //rajouter un edge a epsilon du cote dominant si pas de point entre SS_edge/2 et 3/2*SS_edge
+              bool is_in_interval = false;
+              for (std::size_t i = 0; i < edge.indices.size(); ++ i)
+                {
+                  std::size_t index_pt = edge.indices[i];
+                  double dist = CGAL::squared_distance (m_corners[k].support,
+                                                        m_points[index_pt]);
+                  if (m_status[index_pt] != SKIPPED
+                      && dist < 1.5 * d_DeltaEdge && dist > d_DeltaEdge / 2)
+                    {
+                      Vector move (m_corners[k].support,
+                                   m_points[index_pt]);
+                      if (move * m_corners[k].directions[ed] > 0.)
+                        {
+                          is_in_interval = true;
+                          break;
+                        }
+                    }
+                }
+
+              //rajouter un edge a 1 epsilon du cote dominant si pas de point entre SS_edge/2 et 3/2*SS_edge
+              if (!is_in_interval)
+                {
+                  Point new_edge = m_corners[k].support + m_corners[k].directions[ed] * d_DeltaEdge;
+                  m_points.push_back (new_edge);
+                  m_status.push_back (EDGE);
+                  edge.indices.push_back (m_points.size() - 1);
+                }
+						
+              //rajouter un edge a 1/3 epsilon du cote dominant
+              Point new_edge = m_corners[k].support + m_corners[k].directions[ed] * d_DeltaEdge / 3;
+              m_points.push_back (new_edge);
+              m_status.push_back (EDGE);
+              edge.indices.push_back (m_points.size() - 1);
+            }
+        }
+
     }
     
   };
