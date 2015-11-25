@@ -832,7 +832,6 @@ protected:
     {
       any_change = treat_selection(selection);
     }
-    if(any_change) { Q_EMIT changed_with_poly_item(); }
   }
 
 public:
