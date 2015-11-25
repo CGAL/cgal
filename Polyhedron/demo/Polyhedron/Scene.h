@@ -21,7 +21,7 @@
 #include <iostream>
 #include <cmath>
 #include <boost/variant.hpp>
-#include "Scene_group_item.h"
+#include <CGAL/Three/Scene_group_item.h>
 class QEvent;
 class QMouseEvent;
 namespace GlSplat { class SplatRenderer; }
@@ -55,7 +55,7 @@ public:
   int addItem(CGAL::Three::Scene_item* item);
 
   //!Moves item to the targeted group.
-  void changeGroup(CGAL::Three::Scene_item* item, Scene_group_item* target_group);
+  void changeGroup(CGAL::Three::Scene_item* item, CGAL::Three::Scene_group_item* target_group);
   //!Sets item as the item at index and calls @ref Scene_item#changed().
   //!If emit_item_about_to_be_destroyed is set to true, emits
   //!an itemAboutToBeDestroyed signal.
@@ -150,7 +150,7 @@ public:
   /*! Sets the column data for the target index. Returns false if index is not valid and
    * if role is not EditRole.*/
   bool setData(const QModelIndex &index, const QVariant &value, int role);
-  QList<Scene_group_item*> group_entries() const ;
+  QList<CGAL::Three::Scene_group_item*> group_entries() const ;
   QList<CGAL::Three::Scene_item*> item_entries() const ;
   // auxiliary public function for QMainWindow
   //!Selects the row at index i in the sceneView.
@@ -212,8 +212,8 @@ public Q_SLOTS:
   {
     Q_FOREACH(int i,l)
     {
-       Scene_group_item* group =
-               qobject_cast<Scene_group_item*>(item(i));
+       CGAL::Three::Scene_group_item* group =
+               qobject_cast<CGAL::Three::Scene_group_item*>(item(i));
        if(group)
        {
          QList<int> list;
@@ -267,7 +267,7 @@ private:
   //! Index of the currently selected item.
   int selected_item;
   //!List containing all the scene_group_items.
-  QList<Scene_group_item*> m_group_entries;
+  QList<CGAL::Three::Scene_group_item*> m_group_entries;
   //!List of indices of the currently selected items.
   QList<int> selected_items_list;
   //!Index of the item_A.

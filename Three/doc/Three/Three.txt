@@ -127,6 +127,7 @@ dock widget visible or not.
 - CGAL::Three::Viewer_interface
 - CGAL::Three::Scene_interface
 - CGAL::Three::Scene_item
+- CGAL::Three::Scene_group_item
 - CGAL::Three::Polyhedron_demo_plugin_helper
 - CGAL::Three::Polyhedron_demo_plugin_interface
 

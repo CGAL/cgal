@@ -2,7 +2,6 @@
 #define SCENE_GROUP_ITEM_H
 
 #include <CGAL/Three/Scene_item.h>
-#include "Messages_interface.h"
 using namespace CGAL::Three;
 
 #include <QtCore/qglobal.h>
@@ -11,7 +10,11 @@ using namespace CGAL::Three;
 #else
 #  define DEMO_FRAMEWORK_EXPORT Q_DECL_IMPORT
 #endif
-
+namespace CGAL {
+namespace Three {
+//!A Scene_group_item is a virtual Scene_item that does not draw anything,
+//! but regroups other items as its children. It allows the
+//! user to apply several actions to multiple items at the same time.
 class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item
 {
     Q_OBJECT
@@ -22,12 +25,14 @@ public :
     bool isFinite() const;
     //!Returns true to avoid disturbing the BBox of the scene.
     bool isEmpty() const ;
-    //!Getter for expanded.
-    //!@see expanded. @see setExpanded.
+    //!Returns if the group_item is currently expanded or collapsed in the view.
+    //! True means expanded, false means collapsed.
+    //! @see setExpanded.
     bool isExpanded() const;
-    //! Setter for expanded.
+    //!Makes the group_item expanded or collapsed in the view.
+    //! True means expanded, false means collapsed.
     void setExpanded(bool);
-    //!@see expanded. @see isExpanded.
+    //! @see isExpanded.
     //!Returns an empty BBox to avoid disturbing the BBox of the scene.
     Bbox bbox() const;
     //!Not supported.
@@ -101,10 +106,11 @@ private:
     QList<Scene_item*> children;
     //!Updates the property has_group for each group and sub-groups containing new_item.
     void add_group_number(Scene_item*new_item);
-    //!Specifies if the group_item is currently expanded or collapsed in the view.
     bool expanded;
 
 }; //end of class Scene_group_item
 
+}
+}
 
 #endif // SCENE_GROUP_ITEM_H

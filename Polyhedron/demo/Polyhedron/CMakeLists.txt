@@ -121,11 +121,25 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     DOC "Path to CGAL/Three/Scene_item.h")
   hide_variable(CGAL_THREE_SCENE_ITEM_H_PATH)
 
+  find_path(CGAL_THREE_SCENE_GROUP_ITEM_H_PATH
+    NAME CGAL/Three/Scene_group_item.h
+    PATHS ${CGAL_INCLUDE_DIRS}
+    NO_DEFAULT_PATH
+    DOC "Path to CGAL/Three/Scene_group_item.h")
+  hide_variable(CGAL_THREE_SCENE_GROUP_ITEM_H_PATH)
+
   if(CGAL_THREE_SCENE_ITEM_H_PATH)
     qt5_generate_moc( "${CGAL_THREE_SCENE_ITEM_H_PATH}/CGAL/Three/Scene_item.h"
       "${CMAKE_CURRENT_BINARY_DIR}/Scene_item_moc.cpp" )
   else()
     message(FATAL_ERROR "Cannot find <CGAL/Three/Viewer_interface.h>")
+  endif()
+
+  if(CGAL_THREE_SCENE_GROUP_ITEM_H_PATH)
+    qt5_generate_moc( "${CGAL_THREE_SCENE_GROUP_ITEM_H_PATH}/CGAL/Three/Scene_group_item.h"
+      "${CMAKE_CURRENT_BINARY_DIR}/Scene_group_item_moc.cpp" )
+  else()
+    message(FATAL_ERROR "Cannot find <CGAL/Three/Scene_group_item.h>")
   endif()
 
 
@@ -143,6 +157,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Scene_item_moc.cpp
     Scene_item.cpp #Scene_item.moc
     Scene_group_item.cpp
+    Scene_group_item_moc.cpp
     Polyhedron_demo_plugin_helper.cpp)
     qt5_use_modules(demo_framework OpenGL Gui Widgets Script Xml)
 

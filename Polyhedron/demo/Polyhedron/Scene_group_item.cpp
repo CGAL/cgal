@@ -1,8 +1,8 @@
 
-#include "Scene_group_item.h"
+#include <CGAL/Three/Scene_group_item.h>
 #include <QDebug>
 
-
+using namespace CGAL::Three;
 Scene_group_item::Scene_group_item(QString name)
     :  Scene_item(0,0)
 {

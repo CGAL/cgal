@@ -1693,8 +1693,8 @@ void MainWindow::recurseExpand(QModelIndex index)
     }
 
     QString name = scene->item(scene->getIdFromModelIndex(index))->name();
-        Scene_group_item* group =
-                qobject_cast<Scene_group_item*>(scene->item(scene->getIdFromModelIndex(index)));
+        CGAL::Three::Scene_group_item* group =
+                qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(scene->getIdFromModelIndex(index)));
 
         if(group && group->isExpanded())
         {
