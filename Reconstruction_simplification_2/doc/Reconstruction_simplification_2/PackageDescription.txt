@@ -1,0 +1,37 @@
+/// \defgroup PkgReconstructionSimplification2 2D Reconstruction Simplification Reference
+
+/// \defgroup PkgReconstructionSimplification2Concepts Concepts
+/// \ingroup PkgReconstructionSimplification2
+
+/// \defgroup PkgReconstructionSimplification2Classes Classes
+/// \ingroup PkgReconstructionSimplification2
+
+
+/*!
+\addtogroup PkgReconstructionSimplification2
+\cgalPkgDescriptionBegin{2D Reconstruction Simplification, PkgReconstructionSimplification2Summary}
+\cgalPkgPicture{overview.png}
+\cgalPkgSummaryBegin
+\cgalPkgAuthor{Pierre Alliez, Fernando de Goes, Clement Jamin, Ivo Vigan}
+\cgalPkgDesc{This package provides an algorithm to reconstruct and simplify a shape from a point set in the plane, possibly hampered with noise and outliers. It generates as output a set of line segments and isolated points, which approximate the input point set.}
+\cgalPkgManuals{Chapter_2D_Reconstruction_Simplification, PkgReconstructionSimplification2}
+\cgalPkgSummaryEnd
+\cgalPkgShortInfoBegin
+\cgalPkgSince{4.x}
+\cgalPkgDependsOn{\ref PkgTriangulation2Summary}
+\cgalPkgBib{cgal:gavj-rs}
+\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgShortInfoEnd
+\cgalPkgDescriptionEnd
+
+
+\cgalClassifedRefPages
+
+## Concepts ##
+- `ReconstructionSimplificationTraits_2`
+
+## Classes ##
+- `CGAL::Reconstruction_simplification_2<Traits, PointPMap, MassPMap>`
+
+*/
+
