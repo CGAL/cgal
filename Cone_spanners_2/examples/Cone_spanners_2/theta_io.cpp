@@ -11,12 +11,12 @@
 #include <string>
 #include <vector>
 #include <boost/graph/adjacency_list.hpp>
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_root_of.h>
 #include <CGAL/Construct_theta_graph_2.h>
 #include <CGAL/gnuplot_output_2.h>
 
 // select the kernel type
-typedef CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt   Kernel;
+typedef CGAL::Exact_predicates_exact_constructions_kernel_with_root_of   Kernel;
 typedef Kernel::Point_2                   Point_2;
 typedef Kernel::Direction_2               Direction_2;
 // define the graph type
