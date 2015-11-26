@@ -10,12 +10,12 @@
 #include <iterator>
 #include <string>
 #include <vector>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Construct_theta_graph_2.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <boost/property_map/property_map.hpp>
 #include <boost/graph/dijkstra_shortest_paths.hpp>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Construct_theta_graph_2.h>
 
 using namespace boost;
 
