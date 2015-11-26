@@ -823,6 +823,7 @@ void Scene_edit_polyhedron_item::invalidate_buffers()
 {
     compute_normals_and_vertices();
     update_normals();
+    compute_bbox();
     are_buffers_filled = false;
 }
 
@@ -857,8 +858,8 @@ QString Scene_edit_polyhedron_item::toolTip() const
 bool Scene_edit_polyhedron_item::isEmpty() const {
   return poly_item->isEmpty();
 }
-Scene_edit_polyhedron_item::Bbox Scene_edit_polyhedron_item::bbox() const {
-  return poly_item->bbox();
+void Scene_edit_polyhedron_item::compute_bbox() const {
+  _bbox = poly_item->bbox();
 }
 
 void Scene_edit_polyhedron_item::setVisible(bool b) {

@@ -42,7 +42,7 @@ public:
   // Get dimensions
   bool isFinite() const { return true; }
   bool isEmpty() const;
-  Bbox bbox() const;
+  void compute_bbox() const;
 
   virtual void invalidate_buffers();
   virtual void contextual_changed();

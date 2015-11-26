@@ -41,7 +41,7 @@ public:
 
   bool isFinite() const { return true; }
   bool isEmpty() const;
-  Bbox bbox() const;
+  void compute_bbox() const;
 
   Nef_polyhedron* nef_polyhedron();
   const Nef_polyhedron* nef_polyhedron() const;

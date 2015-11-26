@@ -59,8 +59,8 @@ public:
   }
   bool isFinite() const { return true; }
   bool isEmpty() const { return poly().empty(); }
-  Bbox bbox() const {
-    return point_set_bbox;
+  void compute_bbox() const {
+    _bbox = point_set_bbox;
   }
   Scene_point_set_selection_visualizer* clone() const {
     return 0;

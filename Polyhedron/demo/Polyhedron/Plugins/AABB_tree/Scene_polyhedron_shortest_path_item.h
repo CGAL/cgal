@@ -145,7 +145,7 @@ protected:
   
   virtual bool isFinite() const;
   virtual bool isEmpty() const;
-  virtual Bbox bbox() const;
+  virtual void compute_bbox()const;
   virtual QString toolTip() const;
   
 protected:

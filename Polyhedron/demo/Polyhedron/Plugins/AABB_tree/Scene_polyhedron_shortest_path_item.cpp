@@ -184,6 +184,7 @@ void Scene_polyhedron_shortest_path_item::poly_item_changed()
 void Scene_polyhedron_shortest_path_item::invalidate_buffers()
 {
   compute_elements();
+  compute_bbox();
   are_buffers_filled = false;
 
 }
@@ -518,9 +519,9 @@ bool Scene_polyhedron_shortest_path_item::isEmpty() const
   return false;
 }
 
-Scene_polyhedron_shortest_path_item::Bbox Scene_polyhedron_shortest_path_item::bbox() const 
+void Scene_polyhedron_shortest_path_item::compute_bbox() const
 {
-  return polyhedron_item()->bbox();
+  _bbox = polyhedron_item()->bbox();
 }
 
 QString Scene_polyhedron_shortest_path_item::toolTip() const

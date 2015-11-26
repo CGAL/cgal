@@ -411,14 +411,14 @@ void Scene_combinatorial_map_item::initialize_buffers(CGAL::Three::Viewer_interf
 
 bool Scene_combinatorial_map_item::isEmpty() const {return combinatorial_map().number_of_darts()==0;}
 
-Scene_combinatorial_map_item::Bbox 
-Scene_combinatorial_map_item::bbox() const {
+void
+Scene_combinatorial_map_item::compute_bbox() const {
     typedef Combinatorial_map_3::Attribute_const_range<0>::type Point_range;
     const Point_range& points=combinatorial_map().attributes<0>();
     CGAL::Bbox_3 bbox=points.begin()->point().bbox();
     for(Point_range::const_iterator pit=boost::next(points.begin());pit!=points.end();++pit)
         bbox=bbox+pit->point().bbox();
-    return Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+    _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
                 bbox.xmax(),bbox.ymax(),bbox.zmax());
 }
 

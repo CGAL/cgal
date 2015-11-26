@@ -41,6 +41,7 @@ public:
   void invalidate_buffers()
   {
     are_buffers_filled = false;
+    compute_bbox();
   }
 
   void c3t3_changed();
@@ -75,7 +76,7 @@ public:
     return c3t3().triangulation().number_of_vertices() == 0;
   }
 
-  Bbox bbox() const;
+  void compute_bbox() const;
 
   Scene_c3t3_item* clone() const {
     return 0;

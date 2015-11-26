@@ -475,13 +475,13 @@ Scene_points_with_normal_item::isEmpty() const
   return m_points->empty();
 }
 
-Scene_points_with_normal_item::Bbox
-Scene_points_with_normal_item::bbox() const
+void
+Scene_points_with_normal_item::compute_bbox() const
 {
   Q_ASSERT(m_points != NULL);
 
   Kernel::Iso_cuboid_3 bbox = m_points->bounding_box();
-  return Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+  _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
               bbox.xmax(),bbox.ymax(),bbox.zmax());
 }
 
@@ -574,5 +574,6 @@ void Scene_points_with_normal_item::set_has_normals(bool b) {
 void Scene_points_with_normal_item::invalidate_buffers()
 {
     are_buffers_filled = false;
+    compute_bbox();
 }
 

@@ -82,6 +82,7 @@ public:
       vaosSize(10),
       vaos(10)
   {
+      is_bbox_computed = false;
       is_monochrome = true;
       for(int i=0; i<vaosSize; i++)
       {
@@ -113,6 +114,7 @@ public:
       vaosSize(vaos_size),
       vaos(vaos_size)
   {
+      is_bbox_computed = false;
       is_monochrome = true;
       for(int i=0; i<vaosSize; i++)
       {
@@ -197,8 +199,12 @@ public:
   //! Specifies if the item is empty or null.
   virtual bool isEmpty() const { return true; }
   //!@returns the item's bounding box.
-  virtual Bbox bbox() const { return Bbox(); }
-
+  virtual Bbox bbox() const {
+      if(!is_bbox_computed)
+          compute_bbox();
+      is_bbox_computed = true;
+      return _bbox;
+  }
   // Function about manipulation
   //! Decides if the item can have a ManipulatedFrame.
   virtual bool manipulatable() const { return false; }
@@ -303,6 +309,10 @@ Q_SIGNALS:
   void redraw();
 
 protected:
+  //!Holds the BBox of the item
+  mutable Bbox _bbox;
+  mutable bool is_bbox_computed;
+  virtual void compute_bbox()const{}
   // The four basic properties
   //!The name of the item.
   QString name_;

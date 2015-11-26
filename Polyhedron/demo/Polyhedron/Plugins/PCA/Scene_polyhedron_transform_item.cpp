@@ -29,9 +29,6 @@ void Scene_polyhedron_transform_item::initialize_buffers(CGAL::Three::Viewer_int
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
         buffers[Vertices].release();
-
-        QColor color = this->color();
-        program->setAttributeValue("colors",color);
         vaos[Edges]->release();
         program->release();
     }
@@ -80,6 +77,9 @@ void Scene_polyhedron_transform_item::draw_edges(CGAL::Three::Viewer_interface* 
         f_matrix.data()[i] = (float)frame->matrix()[i];
     }
     program->setUniformValue("f_matrix", f_matrix);
+    program->setUniformValue("is_selected", false);
+    QColor color = this->color();
+    program->setAttributeValue("colors",color);
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
     vaos[Edges]->release();
     program->release();
@@ -100,8 +100,8 @@ bool Scene_polyhedron_transform_item::keyPressEvent(QKeyEvent* e){
     return false;
 }
 
-Scene_polyhedron_transform_item::Bbox
-Scene_polyhedron_transform_item::bbox() const {
+void
+Scene_polyhedron_transform_item::compute_bbox() const {
     const Kernel::Point_3& p = *(poly->points_begin());
     CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
     for(Polyhedron::Point_const_iterator it = poly->points_begin();
@@ -109,7 +109,7 @@ Scene_polyhedron_transform_item::bbox() const {
         ++it) {
         bbox = bbox + it->bbox();
     }
-    return Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+    _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
                 bbox.xmax(),bbox.ymax(),bbox.zmax());
 }
 
@@ -118,5 +118,6 @@ void Scene_polyhedron_transform_item::invalidate_buffers()
 {
     compute_elements();
     are_buffers_filled = false;
+    compute_bbox();
 }
 

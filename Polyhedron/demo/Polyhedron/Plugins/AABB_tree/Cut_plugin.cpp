@@ -48,9 +48,9 @@ public:
 
   bool isFinite() const { return true; }
   bool isEmpty() const { return tree.empty(); }
-  Bbox bbox() const {
+  void compute_bbox() const {
     const CGAL::Bbox_3 bbox = tree.bbox();
-    return Bbox(bbox.xmin(),
+    _bbox = Bbox(bbox.xmin(),
                 bbox.ymin(),
                 bbox.zmin(),
                 bbox.xmax(),
@@ -84,6 +84,7 @@ public:
   {
       compute_elements();
       are_buffers_filled = false;
+      compute_bbox();
   }
 public:
   const AABB_tree& tree;
@@ -149,14 +150,15 @@ public:
   }
     bool isFinite() const { return true; }
   bool isEmpty() const { return edges.empty(); }
-  Bbox bbox() const {
+  void compute_bbox() const {
     if(isEmpty())
-      return Bbox();
+      _bbox = Bbox();
+    return;
     CGAL::Bbox_3 bbox = edges.begin()->bbox();
     for(size_t i = 1, end = edges.size(); i < end; ++i) {
       bbox = bbox + edges[i].bbox();
     }
-    return Bbox(bbox.xmin(),
+    _bbox = Bbox(bbox.xmin(),
                 bbox.ymin(),
                 bbox.zmin(),
                 bbox.xmax(),
@@ -167,6 +169,7 @@ public:
   {
       compute_elements();
       are_buffers_filled = false;
+      compute_bbox();
   }
 
   Scene_edges_item* clone() const {

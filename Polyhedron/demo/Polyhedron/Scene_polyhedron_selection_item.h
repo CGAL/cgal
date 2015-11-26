@@ -281,7 +281,7 @@ public:
       else
         viewer->setNoBinding();
   }
-  Bbox bbox() const 
+  void compute_bbox() const
   {
     // Workaround a bug in g++-4.8.3:
     //   http://stackoverflow.com/a/21755207/1728537
@@ -316,8 +316,8 @@ public:
         }
     }
 
-    if(!item_bbox) { return this->poly_item->bbox(); }
-    return Bbox(item_bbox->xmin(),item_bbox->ymin(),item_bbox->zmin(),
+    if(!item_bbox) { _bbox = this->poly_item->bbox(); return;}
+    _bbox = Bbox(item_bbox->xmin(),item_bbox->ymin(),item_bbox->zmin(),
                 item_bbox->xmax(),item_bbox->ymax(),item_bbox->zmax());
   }
 
@@ -726,6 +726,7 @@ public Q_SLOTS:
     // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
       //  poly_item->invalidate_buffers();
         are_buffers_filled = false;
+        compute_bbox();
   }
   // slots are called by signals of polyhedron_k_ring_selector
   void selected(const std::set<Polyhedron::Vertex_handle>& m)

@@ -659,10 +659,10 @@ void
 Scene_polygon_soup_item::invalidate_buffers()
 {
     are_buffers_filled = false;
+    compute_bbox();
 }
 
-Scene_polygon_soup_item::Bbox
-Scene_polygon_soup_item::bbox() const {
+void Scene_polygon_soup_item::compute_bbox() const {
 
   const Point_3& p = *(soup->points.begin());
   CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
@@ -671,7 +671,7 @@ Scene_polygon_soup_item::bbox() const {
       ++it) {
     bbox = bbox + it->bbox();
   }
-  return Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+  _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
               bbox.xmax(),bbox.ymax(),bbox.zmax());
 }
 

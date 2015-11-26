@@ -104,6 +104,7 @@ void Scene_plane_item::draw(CGAL::Three::Viewer_interface* viewer)const
     program->bind();
     program->setUniformValue("f_matrix", f_matrix);
     program->setAttributeValue("colors",this->color());
+    program->setUniformValue("is_selected", false);
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_quad.size()/3));
     program->release();
     vaos[Facets]->release();

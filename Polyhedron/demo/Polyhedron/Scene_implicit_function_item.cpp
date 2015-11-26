@@ -377,10 +377,10 @@ Scene_implicit_function_item::~Scene_implicit_function_item()
 }
 
 
-Scene_implicit_function_item::Bbox
-Scene_implicit_function_item::bbox() const
+void
+Scene_implicit_function_item::compute_bbox() const
 {
-    return function_->bbox();
+    _bbox = function_->bbox();
 }
 
 void
@@ -578,6 +578,7 @@ void
 Scene_implicit_function_item::invalidate_buffers()
 {
     Scene_item::invalidate_buffers();
+    compute_bbox();
     compute_vertices_and_texmap();
     are_buffers_filled = false;
 }

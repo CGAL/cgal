@@ -234,7 +234,7 @@ public:
   // Get dimensions
   bool isFinite() const { return true; }
   bool isEmpty() const;
-  Bbox bbox() const;
+  void compute_bbox() const;
 
   int get_k_ring()       { return k_ring_selector.k_ring; }
   void set_k_ring(int v) { k_ring_selector.k_ring = v; }

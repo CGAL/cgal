@@ -43,7 +43,7 @@ public:
   // Get dimensions
   bool isFinite() const { return true; }
   bool isEmpty() const;
-  Bbox bbox() const;
+  void compute_bbox() const;
 
   bool delete_item() { return delete_poly_item; }
   void set_delete_item(bool delete_item) { delete_poly_item = delete_item; }

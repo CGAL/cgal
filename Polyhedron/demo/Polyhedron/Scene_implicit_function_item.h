@@ -52,7 +52,7 @@ public:
 
   bool isFinite() const { return true; }
   bool isEmpty() const { return false; }
-  Bbox bbox() const;
+  void compute_bbox() const;
 
   Scene_implicit_function_item* clone() const { return NULL; }
 

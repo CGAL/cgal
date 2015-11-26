@@ -34,9 +34,9 @@ public:
     return c2t3().triangulation().number_of_vertices() == 0;
   }
 
-  Bbox bbox() const {
+  void compute_bbox() const {
     if(isEmpty())
-      return Bbox();
+      _bbox =  Bbox();
     else {
       bool first = true;
       CGAL::Bbox_3 result;
@@ -52,7 +52,7 @@ public:
           result = result + vit->point().bbox();
         }
       }
-      return Bbox(result.xmin(), result.ymin(), result.zmin(),
+      _bbox = Bbox(result.xmin(), result.ymin(), result.zmin(),
                   result.xmax(), result.ymax(), result.zmax());
     }
   }

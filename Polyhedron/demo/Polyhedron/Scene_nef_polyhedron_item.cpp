@@ -478,17 +478,20 @@ Scene_nef_polyhedron_item::isEmpty() const {
     return (nef_poly == 0) || nef_poly->is_empty();
 }
 
-Scene_nef_polyhedron_item::Bbox
-Scene_nef_polyhedron_item::bbox() const {
+void
+Scene_nef_polyhedron_item::compute_bbox() const {
     if(isEmpty())
-        return Bbox();
+    {
+        _bbox = Bbox();
+        return;
+    }
     CGAL::Bbox_3 bbox(nef_poly->vertices_begin()->point().bbox());
     for(Nef_polyhedron::Vertex_const_iterator it = nef_poly->vertices_begin();
         it != nef_poly->vertices_end();
         ++it) {
         bbox = bbox + it->point().bbox();
     }
-    return Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
+    _bbox = Bbox(bbox.xmin(),bbox.ymin(),bbox.zmin(),
                 bbox.xmax(),bbox.ymax(),bbox.zmax());
 }
 
@@ -661,6 +664,7 @@ void
 Scene_nef_polyhedron_item::
 invalidate_buffers()
 {
+    compute_bbox();
     Base::invalidate_buffers();
     are_buffers_filled = false;
 }

@@ -415,9 +415,9 @@ Kernel::Plane_3 Scene_c3t3_item::plane() const {
   return Kernel::Plane_3(n[0], n[1], n[2], -n * pos);
 }
 
-Scene_item::Bbox Scene_c3t3_item::bbox() const {
+void Scene_c3t3_item::compute_bbox() const {
   if (isEmpty())
-    return Bbox();
+    _bbox = Bbox();
   else {
     CGAL::Bbox_3 result = c3t3().triangulation().finite_vertices_begin()->point().bbox();
     for (Tr::Finite_vertices_iterator
@@ -427,7 +427,7 @@ Scene_item::Bbox Scene_c3t3_item::bbox() const {
     {
       result = result + vit->point().bbox();
     }
-    return Bbox(result.xmin(), result.ymin(), result.zmin(),
+    _bbox = Bbox(result.xmin(), result.ymin(), result.zmin(),
       result.xmax(), result.ymax(), result.zmax());
   }
 }
