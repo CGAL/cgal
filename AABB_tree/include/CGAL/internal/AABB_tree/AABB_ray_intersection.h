@@ -78,7 +78,7 @@ public:
       case 2: // Left & right child both leaves
       {
         //left child
-        if(!skip(current.node->left_data().id()) && do_intersect_obj(query, current.node->left_data())) {
+        if(!skip(current.node->left_data().id()) /* && do_intersect_obj(query, current.node->left_data()) */) {
           intersection = intersection_obj(query, current.node->left_data());
           if(intersection) {
             FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
@@ -90,7 +90,7 @@ public:
         }
 
         // right child
-        if(!skip(current.node->right_data().id()) && do_intersect_obj(query, current.node->right_data())) {
+        if(!skip(current.node->right_data().id()) /* && do_intersect_obj(query, current.node->right_data()) */) {
           intersection = intersection_obj(query, current.node->right_data());
           if(intersection) {
             FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
@@ -105,7 +105,7 @@ public:
       case 3: // Left child leaf, right child inner node
       {
         //left child
-        if(!skip(current.node->left_data().id()) && do_intersect_obj(query, current.node->left_data())) {
+        if(!skip(current.node->left_data().id()) /* && do_intersect_obj(query, current.node->left_data()) */) {
           intersection = intersection_obj(query, current.node->left_data());
           if(intersection) {
             FT ray_distance = boost::apply_visitor(param_visitor, intersection->first);
