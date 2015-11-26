@@ -184,7 +184,7 @@ namespace internal {
       project_inliers ();
       resample_planes (epsilon);
       std::cerr << " -> Done" << std::endl;
-
+      
       std::cerr << "Finding adjacent primitives... " << std::endl;
       find_pairs_of_adjacent_primitives (radius);
       std::cerr << " -> Found " << m_edges.size () << " pair(s) of adjacent primitives." << std::endl;
@@ -266,15 +266,8 @@ namespace internal {
           Vector b1 = plane.base1();
           Vector b2 = plane.base2();
 			
-          FT norm1 = std::sqrt (b1.squared_length ());
-          if (norm1 < 1e-7)
-            norm1 = 1e-7;
-          FT norm2 = std::sqrt (b2.squared_length ());
-          if (norm2 < 1e-7)
-            norm2 = 1e-7;
-
-          b1 = b1 / norm1;
-          b2 = b2 / norm2;
+          b1 = b1 / std::sqrt (b1 * b1);
+          b2 = b2 / std::sqrt (b2 * b2);
 
           std::vector<Point_2> points_2d;
 
@@ -303,7 +296,7 @@ namespace internal {
             {
               std::size_t ind_x = (std::size_t)((points_2d[i].x() - box_2d.xmin()) / grid_length);
               std::size_t ind_y = (std::size_t)((points_2d[i].y() - box_2d.ymin()) / grid_length);
-              Mask[ind_x][ind_y]=true;
+              Mask[ind_x][ind_y] = true;
               point_map[ind_x][ind_y].push_back (m_planes[c]->indices_of_assigned_points ()[i]);
             }
 
@@ -434,7 +427,7 @@ namespace internal {
           Fuzzy_sphere query (i, radius, 0., tree.traits());
           
           std::vector<std::size_t> neighbors;
-          tree.search (std::back_inserter (neighbors), query); // WIP: SegFaults so far...
+          tree.search (std::back_inserter (neighbors), query);
 
           
           for (std::size_t k = 0; k < neighbors.size(); ++ k)
@@ -631,7 +624,11 @@ namespace internal {
               for (std::size_t k = 0; k < division_tab[j].size(); ++ k)
                 {
                   std::size_t inde = division_tab[j][k];
-                  m_status[inde] = SKIPPED; // Deactive all points except best (below)
+                  Point proj = line.projection (m_points[inde]);
+
+                  if (CGAL::squared_distance (proj, m_points[inde]) < d_DeltaEdge * d_DeltaEdge)
+                    m_status[inde] = SKIPPED; // Deactive points too close (except best, see below)
+                  
                   double distance = CGAL::squared_distance (perfect, m_points[inde]);
                   if (distance < dist_min)
                     {
@@ -731,7 +728,9 @@ namespace internal {
 
     void compute_corners (double radius)
     {
-
+      if (m_edges.size () < 3)
+        return;
+      
       for (std::size_t i = 0; i < m_edges.size () - 2; ++ i)
         {
           if (!(m_edges[i].active))
@@ -923,10 +922,6 @@ namespace internal {
     {
       double d_DeltaEdge = std::sqrt (2.) * epsilon;
 
-      // Work in progress
-      //
-      //
-      
       for (std::size_t k = 0; k < m_corners.size(); ++ k)
         {
           if (!(m_corners[k].active))
