@@ -50,6 +50,15 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
       endif()
     endif()
     hide_variable(CMAKE_UNAME)
+
+    # Optionally setup the Visual Leak Detector
+    include(CGAL_SetupVLD)
+    CGAL_SetupVLD()
+    if(VLD_FOUND)
+      message(STATUS "Visual Leak Detector (VLD) is enabled.")
+    else()
+      message(STATUS "Visual Leak Detector (VLD) is not found.")
+    endif()
   endif()
 
   set(CMAKE_COLORMAKEFILE ON)
