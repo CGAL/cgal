@@ -82,7 +82,7 @@ This functor has the following definition and is a model of the `ComputeConeBoun
 \endcode
 
 The template parameter `Kernel_` determines whether the cone boundaries are computed
-exactly or inexactly. If this parameter is `Exact_predicates_exact_constructions_kernel_with_sqrt`,
+exactly or inexactly. If this parameter is `Exact_predicates_exact_constructions_kernel_with_root_of`,
 the computation will be done exactly; otherwise, inexactly.
 The exact computation is implemented based on the fact that
 when the cone angle \f$ \theta \f$ is in the form of \f$ 2\pi / n \f$, 
@@ -128,7 +128,7 @@ This functor has the following definition and is a model of the `ConstructConeBa
 \endcode
 
 The template parameter `Kernel_` specifies the \cgal kernel to be used by this functor. 
-If this parameter is `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt`,
+If this parameter is `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`,
 this functor will call the corresponding specialization of
 `CGAL::Compute_cone_boundaries_2` to compute the cone boundaries exactly and then
 add edges in each cone. If not, this functor will call the general
@@ -227,7 +227,7 @@ For details on how to use this function to generate Gnuplot files, please refer 
 The following example, 'compute_cones.cpp', shows how to compute the directions of the cone boundaries 
 exactly given the cone number and the initial direction. This example basically consists of the following steps:
 
-1. Define `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt` as the kernel type
+1. Define `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` as the kernel type
    to compute the cone boundaries exactly.
 2. Construct a `CGAL::Compute_cone_boundaries_2` object named  `cones` with the above kernel 
    as the template parameter. Note that since the functor `CGAL::Compute_cone_boundaries_2` has no
@@ -252,7 +252,7 @@ As a final note, to compute the cone boundaries inexactly, just define the `Kern
 
 The following example, 'theta_io.cpp', shows how to construct Theta graphs exactly and generate Gnuplot files. 
 This example basically consists of the following steps:
-1. Define `CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt` as the kernel type
+1. Define `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` as the kernel type
    to construct the graph exactly.
 2. Define the graph type to store the constructed graph.
 3. Construct a `CGAL::Construct_theta_graph_2` object named `theta` with the number of cones and the initial direction 
@@ -347,7 +347,7 @@ Specifically, this example constructs a Theta graph first and then calculates
 the shortest paths on this graph by calling the Dijkstra's algorithm from BGL.
 It mainly consists of the following steps:
 
-1. Define `CGAL::Exact_predicates_inexact_constructions_kernel_with_sqrt` as the kernel type
+1. Define `CGAL::Exact_predicates_inexact_constructions_kernel_with_root_of` as the kernel type
    to construct the graph inexactly.
 2. Define a structure named `Edge_property` for storing the Euclidean length of each edge,
    which is needed by the Dijkstra's algorithm. 
