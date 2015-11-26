@@ -5,6 +5,7 @@
 
 #include <CGAL/pca_estimate_normals.h>
 #include <CGAL/jet_estimate_normals.h>
+#include <CGAL/vcm_estimate_normals.h>
 #include <CGAL/mst_orient_normals.h>
 #include <CGAL/Timer.h>
 #include <CGAL/Memory_sizer.h>
@@ -17,7 +18,7 @@
 #include <QInputDialog>
 #include <QMessageBox>
 
-#include "ui_Normal_estimation_plugin.h"
+#include "ui_Point_set_normal_estimation_plugin.h"
 
 #if BOOST_VERSION == 105700
 #if !defined(BOOST_NO_CXX11_RVALUE_REFERENCES) && !defined(BOOST_NO_CXX11_DEFAULTED_FUNCTIONS)
@@ -33,7 +34,7 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
 using namespace CGAL::Three;
 
-class Polyhedron_demo_normal_estimation_plugin :
+class Polyhedron_demo_point_set_normal_estimation_plugin :
   public QObject,
   public Polyhedron_demo_plugin_helper
 {
@@ -47,10 +48,10 @@ class Polyhedron_demo_normal_estimation_plugin :
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
 
-    actionNormalEstimation = new QAction(tr("Normal estimation of point set"), mainWindow);
+    actionNormalEstimation = new QAction(tr("Point set normal estimation"), mainWindow);
     actionNormalEstimation->setObjectName("actionNormalEstimation");
 
-    actionNormalInversion = new QAction(tr("Inverse normal orientation"), mainWindow);
+    actionNormalInversion = new QAction(tr("Point set inverse normal orientations"), mainWindow);
     actionNormalInversion->setObjectName("actionNormalInversion");
     
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
@@ -88,15 +89,32 @@ class Point_set_demo_normal_estimation_dialog : public QDialog, private Ui::Norm
       setupUi(this);
     }
 
-    QString directionMethod() const { return m_inputDirection->currentText(); }
-    int directionNbNeighbors() const { return m_inputNbNeighborsDirection->value(); }
+  int pca_neighbors() const { return m_pca_neighbors->value(); }
+  int jet_neighbors() const { return m_jet_neighbors->value(); }
+  unsigned int convolution_neighbors() const { return m_convolution_neighbors->value(); }
+  double convolution_radius() const { return m_convolution_radius->value(); }
+  double offset_radius() const { return m_offset_radius->value(); }
+  int orient_neighbors() const { return m_orient_neighbors->value(); }
 
-    QString orientationMethod() const { return m_inputOrientation->currentText(); }
-    int orientationNbNeighbors() const { return m_inputNbNeighborsOrientation->value(); }
+  unsigned int method () const
+  {
+    if (buttonPCA->isChecked ())       return 0;
+    if (buttonJet->isChecked ())       return 1;
+    if (buttonVCM->isChecked ())       return 2;
+    return -1;
+  }
+  bool orient () const
+  {
+    return buttonOrient->isChecked();
+  }
+  bool use_convolution_radius () const
+  {
+    return buttonRadius->isChecked();
+  }
 };
 
 
-void Polyhedron_demo_normal_estimation_plugin::on_actionNormalInversion_triggered()
+void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalInversion_triggered()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
@@ -118,7 +136,7 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalInversion_triggere
   }
 }
 
-void Polyhedron_demo_normal_estimation_plugin::on_actionNormalEstimation_triggered()
+void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimation_triggered()
 {
 #if !CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
@@ -147,88 +165,124 @@ void Polyhedron_demo_normal_estimation_plugin::on_actionNormalEstimation_trigger
     // normal estimation
     //***************************************
 
-    if (dialog.directionMethod() == "plane")
+    if (dialog.method() == 0) // PCA
     {
       CGAL::Timer task_timer; task_timer.start();
-      std::cerr << "Estimates normal direction by PCA (k=" << dialog.directionNbNeighbors() <<")...\n";
+      std::cerr << "Estimates normal direction by PCA (k=" << dialog.pca_neighbors() <<")...\n";
 
       // Estimates normals direction.
       CGAL::pca_estimate_normals<Concurrency_tag>(points->begin(), points->end(),
                                 CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
-                                dialog.directionNbNeighbors());
-
-      // Mark all normals as unoriented
-      first_unoriented_point = points->begin();
+                                dialog.pca_neighbors());
 
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << "Estimates normal direction: " << task_timer.time() << " seconds, "
                                                   << (memory>>20) << " Mb allocated"
                                                   << std::endl;
     }
-    else if (dialog.directionMethod() == "quadric")
+    else if (dialog.method() == 1) // Jet
     {
       CGAL::Timer task_timer; task_timer.start();
-      std::cerr << "Estimates normal direction by Jet Fitting (k=" << dialog.directionNbNeighbors() <<")...\n";
+      std::cerr << "Estimates normal direction by Jet Fitting (k=" << dialog.jet_neighbors() <<")...\n";
 
       // Estimates normals direction.
       CGAL::jet_estimate_normals<Concurrency_tag>(points->begin(), points->end(),
                                 CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
-                                dialog.directionNbNeighbors());
-
-      // Mark all normals as unoriented
-      first_unoriented_point = points->begin();
+                                dialog.jet_neighbors());
 
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
       std::cerr << "Estimates normal direction: " << task_timer.time() << " seconds, "
                                                   << (memory>>20) << " Mb allocated"
                                                   << std::endl;
     }
+    else if (dialog.method() == 2) // VCM
+    {
+      CGAL::Timer task_timer; task_timer.start();
+      // Estimates normals direction.
+      if (dialog.use_convolution_radius())
+        {
+          std::cerr << "Estimates Normals Direction using VCM (R="
+                    << dialog.offset_radius() << " and r=" << dialog.convolution_radius() << ")...\n";
+
+          CGAL::vcm_estimate_normals(points->begin(), points->end(),
+                                     CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
+                                     dialog.offset_radius(), dialog.convolution_radius());
+        }
+      else
+        {
+          std::cerr << "Estimates Normals Direction using VCM (R="
+                    << dialog.offset_radius() << " and k=" << dialog.convolution_neighbors() << ")...\n";
+
+          CGAL::vcm_estimate_normals(points->begin(), points->end(),
+                                     CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
+                                     dialog.offset_radius(), dialog.convolution_neighbors());
+        }
+
+      std::size_t memory = CGAL::Memory_sizer().virtual_size();
+      std::cerr << "Estimates normal direction: " << task_timer.time() << " seconds, "
+                                                  << (memory>>20) << " Mb allocated"
+                                                  << std::endl;
+    }
+
+    item->set_has_normals(true);
+    item->setRenderingMode(PointsPlusNormals);
 
     //***************************************
     // normal orientation
     //***************************************
 
-    CGAL::Timer task_timer; task_timer.start();
-    std::cerr << "Orient normals with a Minimum Spanning Tree (k=" << dialog.orientationNbNeighbors() << ")...\n";
+    if (dialog.orient ())
+      {
+        CGAL::Timer task_timer; task_timer.start();
+        std::cerr << "Orient normals with a Minimum Spanning Tree (k=" << dialog.orient_neighbors() << ")...\n";
 
-    // Tries to orient normals
-    first_unoriented_point =
-      CGAL::mst_orient_normals(points->begin(), points->end(),
-                              CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
-                              dialog.orientationNbNeighbors());
+        // Tries to orient normals
+        first_unoriented_point =
+          CGAL::mst_orient_normals(points->begin(), points->end(),
+                                   CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
+                                   dialog.orient_neighbors());
 
-    //indicates that the point set has normals
-    if (first_unoriented_point!=points->begin()){
-      item->set_has_normals(true);
-      item->setRenderingMode(PointsPlusNormals);
-    }
+        //indicates that the point set has normals
+        if (first_unoriented_point!=points->begin()){
+          item->set_has_normals(true);
+          item->setRenderingMode(PointsPlusNormals);
+        }
 
-    std::size_t nb_unoriented_normals = std::distance(first_unoriented_point, points->end());
-    std::size_t memory = CGAL::Memory_sizer().virtual_size();
-    std::cerr << "Orient normals: " << nb_unoriented_normals << " point(s) with an unoriented normal are selected ("
-                                    << task_timer.time() << " seconds, "
-                                    << (memory>>20) << " Mb allocated)"
-                                    << std::endl;
+        std::size_t nb_unoriented_normals = std::distance(first_unoriented_point, points->end());
+        std::size_t memory = CGAL::Memory_sizer().virtual_size();
+        std::cerr << "Orient normals: " << nb_unoriented_normals << " point(s) with an unoriented normal are selected ("
+                  << task_timer.time() << " seconds, "
+                  << (memory>>20) << " Mb allocated)"
+                  << std::endl;
 
-    // Selects points with an unoriented normal
-    points->set_first_selected (first_unoriented_point);
+        // Selects points with an unoriented normal
+        points->set_first_selected (first_unoriented_point);
 
-    // Updates scene
-    item->invalidate_buffers();
-    scene->itemChanged(index);
+        // Updates scene
+        item->invalidate_buffers();
+        scene->itemChanged(index);
 
-    QApplication::restoreOverrideCursor();
+        QApplication::restoreOverrideCursor();
 
-    // Warns user
-    if (nb_unoriented_normals > 0)
-    {
-      QMessageBox::information(NULL,
-                               tr("Points with an unoriented normal"),
-                               tr("%1 point(s) with an unoriented normal are selected.\nPlease orient them or remove them before running Poisson reconstruction.")
-                               .arg(nb_unoriented_normals));
-    }
+        // Warns user
+        if (nb_unoriented_normals > 0)
+          {
+            QMessageBox::information(NULL,
+                                     tr("Points with an unoriented normal"),
+                                     tr("%1 point(s) with an unoriented normal are selected.\nPlease orient them or remove them before running Poisson reconstruction.")
+                                     .arg(nb_unoriented_normals));
+          }
+      }
+    else
+      {
+        // Updates scene
+        item->invalidate_buffers();
+        scene->itemChanged(index);
+
+        QApplication::restoreOverrideCursor();
+      }
   }
 #endif // !CGAL_DISABLE_NORMAL_ESTIMATION_PLUGIN
 }
 
-#include "Normal_estimation_plugin.moc"
+#include "Point_set_normal_estimation_plugin.moc"
