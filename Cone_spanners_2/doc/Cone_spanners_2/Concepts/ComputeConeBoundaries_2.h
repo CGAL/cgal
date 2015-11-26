@@ -17,7 +17,7 @@ public:
 /// @{
 
 /*! The CGAL kernel type used by the functor. If this parameter is
-	`CGAL::Exact_predicates_exact_constructions_kernel_with_sqrt`,
+	`CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`,
     the cone boundaries will be computed exactly; otherwise, inexactly using an approximate PI=3.1415...
 	This kernel type also decides other types such as Kernel_::Point_2, Kernel_::Direction_2, etc.
 */
