@@ -49,21 +49,21 @@ namespace CGAL {
    
    \cgalModels `ConstructConeBasedSpanner_2`
  */
-template <typename Traits, typename Graph_>
+template <typename SpannerKernel, typename Graph_>
 class Construct_theta_graph_2 {
 
 public:
-	/*! is the geometric traits which must be a model of the concept `ConeBasedSpannerTraits`  */
-    typedef Traits                          Geom_traits;
+	/*! indicate the type of the \cgal kernel.  */
+    typedef SpannerKernel                          Kernel_type;
 	/*! Indicate the specific type of `boost::adjacency_list`. */
     typedef Graph_                           Graph_type;
 
 private:
-    typedef typename Geom_traits::Direction_2             Direction_2;
-    typedef typename Geom_traits::Point_2                 Point_2;
-    typedef typename Geom_traits::Line_2                  Line_2;
-    typedef typename Geom_traits::Aff_transformation_2    Transformation;
-    typedef Less_by_direction_2<Geom_traits, Graph_>      Less_by_direction;
+    typedef typename SpannerKernel::Direction_2             Direction_2;
+    typedef typename SpannerKernel::Point_2                 Point_2;
+    typedef typename SpannerKernel::Line_2                  Line_2;
+    typedef typename SpannerKernel::Aff_transformation_2    Transformation;
+    typedef Less_by_direction_2<SpannerKernel, Graph_>      Less_by_direction;
 
     /* Store the number of cones.  */
     unsigned int  cone_number;
@@ -94,7 +94,7 @@ public:
 
         /* Initialize a functor, specialization will happen here depending on the kernel type to 
 		 compute the cone boundaries either exactly or inexactly */
-        Compute_cone_boundaries_2<Geom_traits> compute_cones;
+        Compute_cone_boundaries_2<SpannerKernel> compute_cones;
         // compute the rays using the functor
         compute_cones(k, initial_direction, rays.begin());
     }
