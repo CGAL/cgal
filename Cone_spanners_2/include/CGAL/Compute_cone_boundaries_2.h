@@ -37,7 +37,7 @@
 #include <CGAL/Polynomial.h>
 #include <CGAL/number_type_config.h>    // CGAL_PI is defined there
 #include <CGAL/enum.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel_with_sqrt.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel_with_root_of.h>
 #include <CGAL/Aff_transformation_2.h>
 
 namespace CGAL {
@@ -52,13 +52,13 @@ namespace CGAL {
  *  which are slow). The inexact computation is done by the general functor definition,
  *  while the exact computation is done by a specialization of this functor.
  *   
- *  \tparam Kernel_   If this parameter is `Exact_predicates_exact_constructions_kernel_with_sqrt`,
+ *  \tparam SpannerKernel   If this parameter is `Exact_predicates_exact_constructions_kernel_with_root_of`,
  *                    the specialization functor will be called; otherwise, the general functor will
  *                    be called.
  *
  *  In the construction of Yao graph and Theta graph implemented by this package,
  *  all predicates and construction functions are from \cgal.
- *  Therefore, if the kernel `Exact_predicates_exact_constructions_kernel_with_sqrt` is used,
+ *  Therefore, if the kernel `Exact_predicates_exact_constructions_kernel_with_root_of` is used,
  *  the Yao or Theta graph will be constructed exactly, otherwise inexactly.
  *
  *  Of course, this functor can also be used in other applications where the plane needs to be divided
@@ -67,16 +67,16 @@ namespace CGAL {
  *  \cgalModels `ComputeConeBoundaries_2`
  *
  */
-template <typename Kernel_>
+template <typename SpannerKernel>
 class Compute_cone_boundaries_2 {
 
 public:
 	/*! Indicate the type of the \cgal kernel. */
-    typedef  Kernel_                    Kernel_type;
+    typedef  SpannerKernel                    Kernel_type;
 
 private:
-    typedef  typename Kernel_::Direction_2       Direction_2;
-	typedef  typename Kernel_::Aff_transformation_2    Transformation;
+    typedef  typename SpannerKernel::Direction_2       Direction_2;
+	typedef  typename SpannerKernel::Aff_transformation_2    Transformation;
 
 public:
 	/* No member variables in this class, so a custom constructor is not needed. */
@@ -126,11 +126,11 @@ public:
  with a given cone number and a given initial direction. 
 */
 template <>
-class Compute_cone_boundaries_2<Exact_predicates_exact_constructions_kernel_with_sqrt> {
+class Compute_cone_boundaries_2<Exact_predicates_exact_constructions_kernel_with_root_of> {
 
 public:
 	/* Indicate the type of the cgal kernel. */
-    typedef  Exact_predicates_exact_constructions_kernel_with_sqrt  Kernel_type;
+    typedef  Exact_predicates_exact_constructions_kernel_with_root_of  Kernel_type;
 
 private:
     typedef  typename Kernel_type::FT            FT;
