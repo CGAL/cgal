@@ -22,6 +22,10 @@
 ///
 /// CAUTION:
 /// - User is responsible to call invalidate_bounds() after adding, moving or removing points.
+/// - Selecting points changes the order of the points in the
+///   container. If selection is *not* empty, it becomes invalid after
+///   adding, moving or removing points, user is reponsible to call
+///   unselect_all() in those cases.
 ///
 /// @heading Parameters:
 /// @param Gt       Geometric traits class.
@@ -72,7 +76,7 @@ private:
   mutable Point m_barycenter; // point set's barycenter
   mutable FT m_diameter_standard_deviation; // point set's standard deviation
 
-  iterator m_first_selected; // handle selection
+  std::size_t m_nb_selected; // handle selection
 
   bool m_radii_are_uptodate;
 
@@ -90,7 +94,7 @@ public:
   /// Default constructor.
   Point_set_3()
   {
-    m_first_selected = end();
+    m_nb_selected = 0;
     m_bounding_box_is_valid = false;
     m_radii_are_uptodate = false;
   }
@@ -103,7 +107,7 @@ public:
     m_barycenter = p.m_barycenter;
     m_diameter_standard_deviation = p.m_diameter_standard_deviation;
 
-    m_first_selected = end() - p.nb_selected_points();
+    m_nb_selected = p.nb_selected_points ();
     
     m_radii_are_uptodate = p.m_radii_are_uptodate;
   }
@@ -115,42 +119,49 @@ public:
   using Base::size;
   /// @endcond
 
-  iterator first_selected() { return m_first_selected; }
-  const_iterator first_selected() const { return m_first_selected; }
+  iterator first_selected() { return end() - m_nb_selected; }
+  const_iterator first_selected() const { return end () - m_nb_selected; }
   void set_first_selected(iterator it)
   {
-    m_first_selected = it;
+    m_nb_selected = static_cast<std::size_t>(std::distance (it, end()));
   }
 
   // Test if point is selected
   bool is_selected(const_iterator it) const
   {
-    return static_cast<std::size_t>(std::distance (it, end())) <= nb_selected_points();
+    return static_cast<std::size_t>(std::distance (it, end())) <= m_nb_selected;
   }
 
   /// Gets the number of selected points.
   std::size_t nb_selected_points() const
   {
-    return std::distance (first_selected(), end());
+    return m_nb_selected;
   }
 
   /// Mark a point as selected/not selected.
   void select(iterator it, bool selected = true)
   {
     bool currently = is_selected (it);
+    iterator first = first_selected();
     if (currently && !selected)
-      std::swap (*it, *(m_first_selected ++));
+      {
+        std::swap (*it, *first);
+        -- m_nb_selected;
+      }
     else if (!currently && selected)
-      std::swap (*it, *(-- m_first_selected));
+      {
+        std::swap (*it, *first);
+        ++ m_nb_selected;
+      }
   }
 
   void select_all()
   {
-    m_first_selected = begin();
+    m_nb_selected = size ();
   }
   void unselect_all()
   {
-    m_first_selected = end();
+    m_nb_selected = 0;
   }
 
 
@@ -160,21 +171,23 @@ public:
     iterator sel = end() - 1;
     iterator unsel = begin();
 
-    std::size_t nb_selected = nb_selected_points();
-    while (sel != m_first_selected-1 && unsel != m_first_selected)
+    iterator first = first_selected();
+
+    while (sel != first - 1 && unsel != first)
       std::swap (*(sel --), *(unsel ++));
-    m_first_selected = begin() + nb_selected;
+    
+    m_nb_selected = size() - m_nb_selected;
   }
 
   /// Deletes selected points.
   void delete_selection()
   {
     // Deletes selected points using erase-remove idiom
-    erase (m_first_selected, end ());
+    erase (first_selected(), end ());
 
     // after erase(), use Scott Meyer's "swap trick" to trim excess capacity
     Point_set_3(*this).swap(*this);
-    m_first_selected = end();
+    m_nb_selected = 0;
     invalidate_bounds();
   }
 

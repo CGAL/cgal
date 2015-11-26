@@ -83,7 +83,6 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& i
   nb_selected_points = 0;
   nb_lines = 0;
   invalidate_buffers();
-  m_points->unselect_all();
 }
 
 Scene_points_with_normal_item::~Scene_points_with_normal_item()
@@ -297,7 +296,6 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
             }
         }
     }
-  m_points->unselect_all();
   invalidate_buffers();
   return ok;
 }
@@ -324,7 +322,6 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
                                               std::back_inserter(*m_points),
                                               CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())) &&
             !isEmpty();
-  m_points->unselect_all();
   invalidate_buffers();
   return ok;
 }
@@ -365,7 +362,6 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
       }
     }
   }
-  m_points->unselect_all();
   invalidate_buffers();
   return ok;
 }
