@@ -64,7 +64,7 @@ probably must be deprecated and phased out), trying not to break backward
 compatibility too much.
 
 A list of reasonnable Boost libraries to use is:
-Any, Array, Function, Graph, Optional, Parameter, Property Map,
+Any, Array, Function, Graph, Optional, Property Map,
 Range, Smart Pointers, Tuple, Utility and Variant.
 
 \section secusing_version_macros Using the version-number and configuration macros and flags 
