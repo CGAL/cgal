@@ -78,7 +78,7 @@ Scene::addItem(CGAL::Three::Scene_item* item)
     }
     Q_EMIT updated();
     Item_id id = m_entries.size() - 1;
-    Q_EMIT newItem(id);
+    //Q_EMIT newItem(id);
     return id;
 }
 
@@ -1057,7 +1057,7 @@ QList<QModelIndex> Scene::getModelIndexFromId(int id) const
     return index_map.keys(id);
 }
 
-void Scene::add_group()
+void Scene::add_group(Scene_group_item* group)
 {
     //Find the indices of the selected items
     QList<int> indices;
@@ -1076,8 +1076,6 @@ void Scene::add_group()
     bool all_in_one = true;
     if(indices.isEmpty())
         all_in_one = false;
-    // new group to create
-    CGAL::Three::Scene_group_item * group = new CGAL::Three::Scene_group_item("new group");
     //group containing the selected item
     CGAL::Three::Scene_group_item * existing_group = 0;
     //for each selected item

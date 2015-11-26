@@ -2,12 +2,18 @@
 #include <QApplication>
 #include <QMainWindow>
 #include <QAction>
-
+#include <QVector>
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Scene_group_item.h>
 #include "ui_Polyhedron_demo_example_plugin.h"
 #include "ui_dock_example.h"
+
+#ifdef scene_triangle_item_EXPORTS
+#  define SCENE_TRIANGLE_ITEM_EXPORT Q_DECL_EXPORT
+#else
+#  define SCENE_TRIANGLE_ITEM_EXPORT Q_DECL_IMPORT
+#endif
 
 //! The dialog class to get the coordinates of the triangle
 class Polyhedron_demo_example_plugin_dialog : public QDialog, private Ui::Polyhedron_demo_example_plugin_dialog
@@ -35,7 +41,7 @@ class Polyhedron_demo_example_plugin_dialog : public QDialog, private Ui::Polyhe
 };
 
 //! The special Scene_item only for triangles
-class Q_DECL_EXPORT Scene_triangle_item : public CGAL::Three::Scene_item
+class SCENE_TRIANGLE_ITEM_EXPORT Scene_triangle_item : public CGAL::Three::Scene_item
 {
 
     Q_OBJECT
@@ -177,7 +183,8 @@ public :
       //get the references
       this->scene = scene_interface;
       this->mw = mainWindow;
-        nb_triangles = 0;
+        triangle_array.resize(0);
+
       //creates and link the actions
       actionDrawTriangle= new QAction("Draw Triangle", mw);
       if(actionDrawTriangle) {
@@ -206,11 +213,11 @@ public :
 
     void populate_dialog()
     {
-        dialog->setTriangleName(QString("Triangle %1").arg(nb_triangles));
         // dock widget should be constructed in init()
         if(dock_widget->isVisible()) { dock_widget->hide(); }
         else                         { dock_widget->show(); }
         dialog = new Polyhedron_demo_example_plugin_dialog();
+        dialog->setTriangleName(QString("Triangle %1").arg(triangle_array.size()));
         if(!dialog->exec())
             return;
         ax = dialog->getAx();
@@ -222,23 +229,21 @@ public :
         cx = dialog->getCx();
         cy = dialog->getCy();
         cz = dialog->getCz();
-        draw_triangle();
-        if(nb_triangles < 3)
+        triangle_array.push_back(new Scene_triangle_item(ax, ay, az,
+                                                               bx, by, bz,
+                                                               cx, cy, cz));
+        if(triangle_array.size()%3 > 0)
         {
-            triangle_array[nb_triangles] = new Scene_triangle_item(ax, ay, az,
-                                                                   bx, by, bz,
-                                                                   cx, cy, cz);
-            scene->addItem(triangle_array[nb_triangles]);
+            scene->addItem(triangle_array[triangle_array.size()-1]);
             populate_dialog();
         }
         else
         {
-            Scene_group_item group;
+            Scene_group_item *group = new Scene_group_item("triangle group");
             for(int i =0; i<3; i++)
-                scene->changeGroup(triangle_array[i], &group);
-            scene->addItem(&group);
+                scene->changeGroup(triangle_array[triangle_array.size()-i-1], group);
+            scene->addItem(group);
         }
-        nb_triangles = (nb_triangles +1 )%3;
     }
 
   void draw_triangle() {
@@ -279,8 +284,7 @@ private:
   double cx;
   double cy;
   double cz;
-  int nb_triangles;
-  Scene_triangle_item* triangle_array[3];
+  QVector<Scene_triangle_item*> triangle_array;
 Ui::Dock_example ui_widget;
 QDockWidget* dock_widget;
 

@@ -70,6 +70,7 @@ public:
   CGAL::Three::Scene_item* load_item(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface*);
 
 public Q_SLOTS:
+  void make_new_group();
   void updateViewerBBox();
   void open(QString);
 

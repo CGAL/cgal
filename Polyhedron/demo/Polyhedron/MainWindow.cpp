@@ -337,7 +337,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   if(actionAddToGroup) {
     connect(actionAddToGroup, SIGNAL(triggered()),
-            scene, SLOT(add_group()));
+            this, SLOT(make_new_group()));
   }
 
   QMenu* menuFile = findChild<QMenu*>("menuFile");
@@ -1714,4 +1714,8 @@ void MainWindow::restoreCollapseState()
     if(modelIndex.isValid())
         recurseExpand(modelIndex);
 }
-
+void MainWindow::make_new_group()
+{
+    Scene_group_item * group = new Scene_group_item("New group");
+    scene->add_group(group);
+}

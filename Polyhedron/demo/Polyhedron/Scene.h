@@ -177,7 +177,7 @@ public Q_SLOTS:
    * moment this function is called, they are added to the group.
    * If all the selected items were in the same group, the new group
    * is added as a sub-group of this group.*/
-  void add_group();
+  void add_group(Scene_group_item* group);
   //!Re-organizes the sceneView.
   void group_added();
   //! Sets the selected item to the target index.
