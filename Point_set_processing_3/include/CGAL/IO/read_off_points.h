@@ -95,6 +95,11 @@ read_off_points_and_normals(
   {
     iss.clear();
     iss.str(line);
+
+    // Ignore empty lines and comments
+    if (line.empty () || line[0] == '#')
+      continue;
+
     lineNumber++;
 
     // Reads file signature on first line
