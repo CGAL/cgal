@@ -119,7 +119,6 @@ else
       mesh_simplification_plugin \
       nef_io_plugin \
       nef_plugin \
-      normal_estimation_plugin \
       off_plugin \
       off_to_nef_plugin \
       off_to_xyz_plugin \
@@ -131,6 +130,7 @@ else
       point_inside_polyhedron_plugin \
       point_set_average_spacing_plugin \
       point_set_bilateral_smoothing_plugin \
+      point_set_normal_estimation_plugin \
       point_set_outliers_removal_plugin \
       point_set_selection_plugin \
       point_set_shape_detection_plugin  \
@@ -168,7 +168,6 @@ else
       transform_polyhedron_plugin \
       triangulate_facets_plugin \
       trivial_plugin \
-      vcm_normal_estimation_plugin \
       xyz_plugin \
       p_klein_function_plugin \
       p_sphere_function_plugin \
