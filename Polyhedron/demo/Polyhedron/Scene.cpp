@@ -51,8 +51,8 @@ Scene::addItem(CGAL::Three::Scene_item* item)
 {
     CGAL::Three::Scene_group_item* group =
             qobject_cast<CGAL::Three::Scene_group_item*>(item);
-  if(group)
-    m_group_entries.prepend(group);
+    if(group)
+        m_group_entries.prepend(group);
     Bbox bbox_before = bbox();
     m_entries.push_back(item);
     connect(item, SIGNAL(itemChanged()),

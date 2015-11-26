@@ -19,7 +19,7 @@ class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item
 {
     Q_OBJECT
 public :
-    Scene_group_item(QString name = QString());
+    Scene_group_item(QString name = QString("New group"));
     ~Scene_group_item() {}
     //!Returns false to avoid disturbing the BBox of the scene.
     bool isFinite() const;

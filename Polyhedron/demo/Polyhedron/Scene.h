@@ -173,10 +173,7 @@ public Q_SLOTS:
   void itemChanged(CGAL::Three::Scene_item*);
   //!Removes item from all the groups of the scene.
   void remove_item_from_groups(CGAL::Three::Scene_item* item);
-  /*! Called by the action "add new group". Adds a new group to the Scene. If items were selected at the
-   * moment this function is called, they are added to the group.
-   * If all the selected items were in the same group, the new group
-   * is added as a sub-group of this group.*/
+
   void add_group(Scene_group_item* group);
   //!Re-organizes the sceneView.
   void group_added();

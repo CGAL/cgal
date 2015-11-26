@@ -178,6 +178,11 @@ public:
 
   /*! Selects an item. Must be overloaded.*/
   virtual void setSelectedItem(Item_id) = 0;
+  /*!  Adds group to the Scene. If items were selected at the
+   * moment this function is called, they are added to the group.
+   * If all the selected items were in the same group, the new group
+   * is added as a sub-group of this group.*/
+  virtual void add_group(Scene_group_item* group) = 0;
   
 }; // end interface Scene_interface
 }

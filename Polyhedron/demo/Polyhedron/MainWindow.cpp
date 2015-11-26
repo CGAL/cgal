@@ -651,7 +651,7 @@ bool MainWindow::initPlugin(QObject* obj)
     plugin->init(this, this->scene, this);
     plugins << qMakePair(plugin, obj->objectName());
 #ifdef QT_SCRIPT_LIB
-    QScriptValue objectValue = 
+    QScriptValue objectValue =
       script_engine->newQObject(obj);
     script_engine->globalObject().setProperty(obj->objectName(), objectValue);
     evaluate_script_quiet(QString("plugins.push(%1);").arg(obj->objectName()));
