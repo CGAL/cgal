@@ -154,13 +154,13 @@ protected:
   {
     std::set<edge_descriptor> selection;
     selection.insert(clicked);
+
     if (k>0)
       CGAL::dilate_edge_selection(CGAL::make_array(clicked),
                                   *poly_item->polyhedron(),
                                   k,
                                   Is_selected_from_set<edge_descriptor>(selection),
                                   CGAL::Emptyset_iterator());
-
     return selection;
   }
 

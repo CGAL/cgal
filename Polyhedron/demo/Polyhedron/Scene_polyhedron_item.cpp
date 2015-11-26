@@ -31,7 +31,6 @@
 
 #include "ui_Polyhedron_demo_statistics_on_polyhedron_dialog.h"
 
-
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 
@@ -996,17 +995,13 @@ Scene_polyhedron_item::select(double orig_x,
             const Kernel::Point_3 ray_origin(orig_x, orig_y, orig_z);
             const Kernel::Vector_3 ray_dir(dir_x, dir_y, dir_z);
             const Kernel::Ray_3 ray(ray_origin, ray_dir);
-
             typedef std::list<Object_and_primitive_id> Intersections;
             Intersections intersections;
-
             aabb_tree->all_intersections(ray, std::back_inserter(intersections));
-
             Intersections::iterator closest = intersections.begin();
             if(closest != intersections.end()) {
                 const Kernel::Point_3* closest_point =
                         CGAL::object_cast<Kernel::Point_3>(&closest->first);
-
                 for(Intersections::iterator
                     it = boost::next(intersections.begin()),
                     end = intersections.end();
@@ -1042,7 +1037,6 @@ Scene_polyhedron_item::select(double orig_x,
 
                         Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
                                                                     v->point());
-
                         while(++he_it != around_end) {
                             v = he_it->vertex();
                             Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
@@ -1052,7 +1046,7 @@ Scene_polyhedron_item::select(double orig_x,
                                 nearest_v = v;
                             }
                         }
-
+                        //bottleneck
             Q_EMIT selected_vertex((void*)(&*nearest_v));
                     }
 
