@@ -1,14 +1,7 @@
-stylesheet.css
-depends
-GNUmakefile
-Doxyfile
 TODO
 applications
 applications.README
-spheres_create_input.sh
 README
-makefile.dependencies
-examples/Mesh_3/old_stuff
 demo/Mesh_3/C3t3_rib_exporter_plugin.cpp
 examples/Mesh_3/mesh_polyhedral_edge_tolerance_region.cpp
 examples/Mesh_3/mesh_polyhedral_implicit_function.cpp
