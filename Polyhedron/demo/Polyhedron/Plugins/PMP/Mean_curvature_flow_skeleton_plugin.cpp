@@ -7,8 +7,6 @@
 #include "Scene.h"
 
 #include "Polyhedron_type.h"
-#include "MainWindow.h"
-#include "ui_MainWindow.h"
 
 #include <QApplication>
 #include <QMainWindow>

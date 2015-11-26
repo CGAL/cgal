@@ -320,6 +320,7 @@ MainWindow::MainWindow(QWidget* parent)
   }
   ui->menuDockWindows->removeAction(ui->dummyAction);
 
+  this->readState("MainWindow", Size|State);
 
 #ifdef QT_SCRIPT_LIB
   // evaluate_script("print(plugins);");
@@ -1210,7 +1211,6 @@ void MainWindow::readSettings()
     QStringList blacklist=settings.value("plugin_blacklist",QStringList()).toStringList();
     Q_FOREACH(QString name,blacklist){ plugin_blacklist.insert(name); }
   }
-  this->readState("MainWindow", Size|State);
 }
 
 void MainWindow::writeSettings()
