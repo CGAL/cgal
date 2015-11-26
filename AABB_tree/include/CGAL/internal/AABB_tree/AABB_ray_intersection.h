@@ -52,14 +52,14 @@ public:
 
     typename AABB_traits::Intersection
       intersection_obj = tree_.traits().intersection_object();
-    typename AABB_traits::Do_intersect
-      do_intersect_obj = tree_.traits().do_intersect_object();
+    // typename AABB_traits::Do_intersect
+    //   do_intersect_obj = tree_.traits().do_intersect_object();
     typename AABB_traits::Intersection_distance
       intersection_distance_obj = tree_.traits().intersection_distance_object();
     as_ray_param_visitor param_visitor = as_ray_param_visitor(&query);
 
     Heap_type pq;
-    pq.reserve(tree_.size() / 2);
+    // pq.reserve(tree_.size() / 2);
     boost::optional< Ray_intersection_and_primitive_id >
       intersection, /* the temporary for calculating the result */
       p; /* the current best intersection */
