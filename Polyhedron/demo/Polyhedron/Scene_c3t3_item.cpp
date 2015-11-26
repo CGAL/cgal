@@ -12,7 +12,6 @@
 #include <vector>
 #include <CGAL/gl.h>
 #include <CGAL/Mesh_3/dihedral_angle_3.h>
-
 #include <CGAL/Three/Scene_interface.h>
 
 #include <QGLViewer/manipulatedFrame.h>
@@ -48,11 +47,11 @@ void Scene_c3t3_item::compile_shaders()
         "                                                                                                         \n"
         "void main(void)                                                                                          \n"
         "{                                                                                                        \n"
-        "  color = vec4(colors,1.0);                                                                            \n"
-        "  fP = mv_matrix * vertex;                                                                                 \n"
-        "  fN = mat3(mv_matrix)* normals;                                                                           \n"
+        "  color = vec4(colors,1.0);                                                                              \n"
+        "  fP = mv_matrix * vertex;                                                                               \n"
+        "  fN = mat3(mv_matrix)* normals;                                                                         \n"
         "   gl_Position =  mvp_matrix *                                                                           \n"
-        "  vec4(radius*vertex.x + center.x, radius* vertex.y + center.y, radius*vertex.z + center.z, 1.0) ;                      \n"
+        "  vec4(radius*vertex.x + center.x, radius* vertex.y + center.y, radius*vertex.z + center.z, 1.0) ;       \n"
         "}                                                                                                        \n"
     };
     QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
@@ -1061,3 +1060,28 @@ void Scene_c3t3_item::compute_elements() const
 }
 
 
+bool Scene_c3t3_item::load_binary(std::istream& is)
+{
+  if(!CGAL::Mesh_3::load_binary_file(is, c3t3())) return false;
+  // if(!c3t3().triangulation().is_valid()) std::cerr << "INVALID\n";
+  if(is && frame == 0) {
+    frame = new qglviewer::ManipulatedFrame();
+  }
+  reset_cut_plane();
+  if(is.good()) {
+    changed();
+    return true;
+  }
+  else
+    return false;
+}
+
+void
+Scene_c3t3_item::reset_cut_plane() {
+  const Bbox& bbox = this->bbox();
+  const float xcenter = static_cast<float>((bbox.xmax+bbox.xmin)/2.);
+  const float ycenter = static_cast<float>((bbox.ymax+bbox.ymin)/2.);
+  const float zcenter = static_cast<float>((bbox.zmax+bbox.zmin)/2.);
+
+  frame->setPosition(qglviewer::Vec(xcenter, ycenter, zcenter));
+}

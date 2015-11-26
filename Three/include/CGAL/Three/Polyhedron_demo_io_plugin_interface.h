@@ -42,6 +42,9 @@ public:
    * Example : to filter OFF files : return "OFF files (*.off)"
 */
   virtual QString nameFilters() const = 0;
+  virtual QString saveNameFilters() const {return nameFilters();}
+  virtual QString loadNameFilters() const {return nameFilters();}
+
   //! Specifies if the io_plugin is able to load an item or not.
   virtual bool canLoad() const = 0;
   //!  Loads an item from a file.
