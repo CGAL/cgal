@@ -28,7 +28,6 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
-#include <CGAL/boost/graph/properties.h> 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 

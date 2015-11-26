@@ -15,6 +15,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <CGAL/statistics_helpers.h>
 
@@ -672,30 +673,11 @@ init()
   area=-std::numeric_limits<double>::infinity();
   if (poly->is_pure_triangle())
   {
-    // compute the volume if the polyhedron is closed
     if (poly->is_closed())
-    {
-      volume=0;
-      Polyhedron::Vertex::Point p(0,0,0);
-      Q_FOREACH(Polyhedron::Face_handle fh, faces(*poly))
-      {
-        volume+=CGAL::volume( p,
-                    fh->halfedge()->vertex()->point(),
-                    fh->halfedge()->next()->vertex()->point(),
-                    fh->halfedge()->prev()->vertex()->point() );
-      }
-    }
+      volume = CGAL::Polygon_mesh_processing::volume(*poly);
 
     // compute the surface area
-    area=0;
-    Q_FOREACH(Polyhedron::Face_handle fh, faces(*poly))
-    {
-      area+=std::sqrt( CGAL::squared_area(
-              fh->halfedge()->vertex()->point(),
-              fh->halfedge()->next()->vertex()->point(),
-              fh->halfedge()->prev()->vertex()->point() )
-            );
-    }
+    area = CGAL::Polygon_mesh_processing::area(*poly);
   }
 }
 

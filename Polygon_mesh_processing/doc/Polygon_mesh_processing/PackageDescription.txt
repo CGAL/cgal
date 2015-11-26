@@ -24,6 +24,7 @@
 
 /// \defgroup PMP_normal_grp Normal Computation
 /// Functions to compute unit normals for individual/all vertices or faces.
+/// \defgroup measure_grp Geometric Measure functions
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup PMP_orientation_grp Orientation Functions
@@ -113,9 +114,17 @@ and provides a list of the parameters that are used in this package.
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::keep_connected_components()` \endlink
 - \link keep_connected_components_grp `CGAL::Polygon_mesh_processing::remove_connected_components()` \endlink
 
+## Geometric Measure functions
+- \link measure_grp `CGAL::Polygon_mesh_processing::face_area()` \endlink
+- \link measure_grp `CGAL::Polygon_mesh_processing::area()` \endlink
+- \link measure_grp `CGAL::Polygon_mesh_processing::volume()` \endlink
+- \link measure_grp `CGAL::Polygon_mesh_processing::edge_length()` \endlink
+- \link measure_grp `CGAL::Polygon_mesh_processing::face_border_length()` \endlink
+
 ## Miscellaneous ##
 - `CGAL::Polygon_mesh_slicer`
 - `CGAL::Side_of_triangle_mesh`
+- `CGAL::Polygon_mesh_processing::bbox_3()`
 
 \todo make template parameter names uniform in other packages using BGL. Here we chose PolygonMesh as template parameter.
 It can be made short to PM. And TriangleMesh (or TM) specifies when the parameter should be a triangle mesh.
