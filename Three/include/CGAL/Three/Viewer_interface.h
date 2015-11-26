@@ -45,6 +45,7 @@ class VIEWER_EXPORT Viewer_interface : public QGLViewer, public QOpenGLFunctions
 public:
   enum OpenGL_program_IDs { PROGRAM_WITH_LIGHT,
                             PROGRAM_WITHOUT_LIGHT,
+                            PROGRAM_NO_SELECTION,
                             PROGRAM_WITH_TEXTURE,
                             PROGRAM_WITH_TEXTURED_EDGES,
                             PROGRAM_INSTANCED,
