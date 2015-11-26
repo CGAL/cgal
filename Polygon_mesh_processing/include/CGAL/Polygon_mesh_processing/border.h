@@ -113,7 +113,6 @@ namespace Polygon_mesh_processing {
 
   }//end namespace internal
 
-#ifdef PMP_TODO_DOC
   /*!
   \ingroup PkgPolygonMeshProcessing
   * collects the border of a surface patch
@@ -144,7 +143,6 @@ namespace Polygon_mesh_processing {
   *
   * @returns `out`
   */
-#endif
   template<typename PolygonMesh
          , typename FaceRange
          , typename HalfedgeOutputIterator
