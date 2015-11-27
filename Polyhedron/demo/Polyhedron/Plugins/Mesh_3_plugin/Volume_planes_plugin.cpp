@@ -239,7 +239,6 @@ public Q_SLOTS:
     QLayout* layout = createOrGetDockLayout();
     
     QWidget* controls = new QWidget;
-    controls->setVisible(false);
     QHBoxLayout* box = new QHBoxLayout(controls);
     layout->addWidget(controls);
 
@@ -302,10 +301,14 @@ private:
 
   QLayout* createOrGetDockLayout() {
     QLayout* layout = NULL;
-    QDockWidget* controlDockWidget = mw->findChild<QDockWidget*>("volumePlanesControl");
+    QDockWidget* controlDockWidget = NULL;
+    Q_FOREACH(QDockWidget* dock, mw->findChildren<QDockWidget*>())
+      if(dock->property("name").toString() == "volumePlanesControl")
+          controlDockWidget = dock;
+
     if(!controlDockWidget) {
       controlDockWidget = new QDockWidget(mw);
-      controlDockWidget->setObjectName("volumePlanesControl");
+      controlDockWidget->setProperty("name","volumePlanesControl");
       QWidget* content = new QWidget(controlDockWidget);
       layout = new QVBoxLayout(content);
       layout->setObjectName("vpSliderLayout");
@@ -325,8 +328,11 @@ private:
       
       vbox->addWidget(text); vbox->addWidget(x);
       controlDockWidget->setWidget(content);
+      controlDockWidget->hide();
+
     } else {
       layout = controlDockWidget->findChild<QLayout*>("vpSliderLayout");
+      controlDockWidget->show();
     }
 
     return layout;
