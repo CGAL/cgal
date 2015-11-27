@@ -33,6 +33,9 @@
 #include <CGAL/Fuzzy_iso_box.h>
 #include <CGAL/Search_traits_d.h>
 
+#include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Triangulation_vertex_base_with_info_3.h>
+
 #include <iterator>
 #include <list>
 
@@ -89,7 +92,20 @@ namespace internal {
       { return ppmap[i]; }
     };
 
-    enum Point_status { POINT, RESIDUS, EDGE, CORNER, SKIPPED };
+    struct On_the_fly_pair{
+      std::vector<Point>& points;
+      typedef std::pair<Point, std::size_t> result_type;
+
+      On_the_fly_pair(std::vector<Point>& points) : points(points) {}
+  
+      result_type
+      operator()(std::size_t i) const
+      {
+        return result_type(points[i],i);
+      }
+    };
+    
+    enum Point_status { POINT, RESIDUS, PLANE, EDGE, CORNER, SKIPPED };
     
     struct Edge
     {
@@ -160,7 +176,10 @@ namespace internal {
           m_planes.push_back (pshape);
 
           for (std::size_t i = 0; i < pshape->indices_of_assigned_points().size (); ++ i)
-            m_indices[pshape->indices_of_assigned_points()[i]] = m_planes.size () - 1;
+            {
+              m_indices[pshape->indices_of_assigned_points()[i]] = m_planes.size () - 1;
+              m_status[pshape->indices_of_assigned_points()[i]] = PLANE;
+            }
         }
 
     }
@@ -234,7 +253,7 @@ namespace internal {
                               BackInserter pts_corners)
     {
       for (std::size_t i = 0; i < m_points.size (); ++ i)
-        if (m_status[i] == POINT || m_status[i] == RESIDUS)
+        if (m_status[i] == PLANE || m_status[i] == RESIDUS)
           *(pts_planes ++) = m_points[i];
         else if (m_status[i] == EDGE)
           *(pts_edges ++) = m_points[i];
@@ -242,7 +261,177 @@ namespace internal {
           *(pts_corners ++) = m_points[i];
     }
 
+    template <typename BackInserter>
+    void get_coherent_delaunay_facets (BackInserter facets)
+    {
+      typedef typename Traits::Base_kernel K;
+      typedef CGAL::Triangulation_vertex_base_with_info_3<std::size_t, K> Vb;
+      typedef CGAL::Triangulation_cell_base_3<K> Cb;
+      typedef CGAL::Triangulation_data_structure_3<Vb,Cb> Tds;
+      typedef CGAL::Delaunay_triangulation_3<K, Tds> Triangulation;
+
+      std::cerr << m_points.size () << " == " << m_indices.size () << " == " << m_status.size () << std::endl;
+      std::vector<Point> points;
+      std::vector<std::size_t> indices;
+      std::vector<Point_status> status;
+      for (std::size_t i = 0; i < m_points.size (); ++ i)
+        if (m_status[i] != SKIPPED)
+          {
+            points.push_back (m_points[i]);
+            status.push_back (m_status[i]);
+            if (m_status[i] == RESIDUS)
+              status.back () = PLANE;
+            indices.push_back (m_indices[i]);
+          }
+
+      std::vector<std::size_t> point_indices(boost::counting_iterator<std::size_t>(0),
+                                             boost::counting_iterator<std::size_t>(points.size()));
+
+      Triangulation dt (boost::make_transform_iterator(point_indices.begin(), On_the_fly_pair(points)),
+                        boost::make_transform_iterator(point_indices.end(), On_the_fly_pair(points)));
+
+      std::cerr << "Points = " << points.size () << std::endl;
+      for (typename Triangulation::Finite_facets_iterator it = dt.finite_facets_begin ();
+           it != dt.finite_facets_end (); ++ it)
+        {
+          bool valid = true;
+          CGAL::cpp11::array<std::size_t, 3> f;
+          for (std::size_t i = 0; i < 3; ++ i)
+            {
+              f[i] = it->first->vertex ((it->second + 1 + i)%4)->info();
+              if (f[i] == minus1)
+                {
+                  valid = false;
+                  break;
+                }
+              //              std::cerr << f[i] << " ";
+            }
+          //          std::cerr << std::endl;
+          if (!valid)
+            continue;
+          
+          if (facet_is_coherent (f, indices, status))
+            *(facets ++) = f;
+        }
+    }
+    
+
   private:
+
+    bool facet_is_coherent (CGAL::cpp11::array<std::size_t, 3>& f,
+                            const std::vector<std::size_t>& indices,
+                            const std::vector<Point_status>& status) const
+    {
+      // 1- PLANAR CASE
+      if (status[f[0]] == PLANE &&
+          status[f[1]] == PLANE &&
+          status[f[2]] == PLANE)
+        return (indices[f[0]] == indices[f[1]] &&
+                indices[f[0]] == indices[f[2]]);
+
+      for (std::size_t i = 0; i < 3; ++ i)
+        {
+          Point_status sa = status[f[(i+1)%3]];
+          Point_status sb = status[f[(i+2)%3]];
+          Point_status sc = status[f[(i+3)%3]];
+          std::size_t a = indices[f[(i+1)%3]];
+          std::size_t b = indices[f[(i+2)%3]];
+          std::size_t c = indices[f[(i+3)%3]];
+
+          // 2- CREASE CASES
+          if (sa == EDGE && sb == EDGE && sc == PLANE)
+            return
+              ((c == m_edges[a].planes[0] ||
+                c == m_edges[a].planes[1]) &&
+               (c == m_edges[b].planes[0] ||
+                c == m_edges[b].planes[1]));
+
+          if (sa == EDGE && sb == PLANE && sc == PLANE)
+            return
+              (b == c &&
+               (b == m_edges[a].planes[0] ||
+                b == m_edges[a].planes[1]) &&
+               (c == m_edges[a].planes[0] ||
+                c == m_edges[a].planes[1]));
+
+          // 3- CORNER CASES
+          if (sc == CORNER)
+            {
+              if (sa == EDGE && sb == EDGE)
+                {
+                  bool a0 = false, a1 = false, b0 = false, b1 = false;
+
+                  if ((m_edges[a].planes[0] != m_edges[b].planes[0] &&
+                       m_edges[a].planes[0] != m_edges[b].planes[1] &&
+                       m_edges[a].planes[1] != m_edges[b].planes[0] &&
+                       m_edges[a].planes[1] != m_edges[b].planes[1]))
+                    return false;
+                  
+                  for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
+                    {
+                      if (m_corners[c].planes[j] == m_edges[a].planes[0])
+                        a0 = true;
+                      else if (m_corners[c].planes[j] == m_edges[a].planes[1])
+                        a1 = true;
+                      if (m_corners[c].planes[j] == m_edges[b].planes[0])
+                        b0 = true;
+                      else if (m_corners[c].planes[j] == m_edges[b].planes[1])
+                        b1 = true;
+                    }
+                  return (a0 && a1 && b0 && b1);
+                }
+              else if (sa == PLANE && sb == PLANE)
+                {
+                  if (a != b)
+                    return false;
+
+                  for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
+                    if (m_corners[c].planes[j] == a)
+                      return true;
+                  
+                  return false;
+                }
+              else if (sa == PLANE && sb == EDGE)
+                {
+                  bool pa = false, b0 = false, b1 = false;
+                  if (a != m_edges[b].planes[0] && a != m_edges[b].planes[1])
+                    return false;
+                  
+                  for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
+                    {
+                      if (m_corners[c].planes[j] == a)
+                        pa = true;
+                      if (m_corners[c].planes[j] == m_edges[b].planes[0])
+                        b0 = true;
+                      else if (m_corners[c].planes[j] == m_edges[b].planes[1])
+                        b1 = true;
+                    }
+                  return (pa && b0 && b1);
+                }
+              else if (sa == EDGE && sb == PLANE)
+                {
+                  bool a0 = false, a1 = false, pb = false;
+                  if (b != m_edges[a].planes[0] && b != m_edges[a].planes[1])
+                    return false;
+                  
+                  for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
+                    {
+                      if (m_corners[c].planes[j] == b)
+                        pb = true;
+                      if (m_corners[c].planes[j] == m_edges[a].planes[0])
+                        a0 = true;
+                      else if (m_corners[c].planes[j] == m_edges[a].planes[1])
+                        a1 = true;
+                    }
+                  return (a0 && a1 && pb);
+                }
+              else
+                return false;
+            }
+        }
+      
+      return false;
+    }
 
     void project_inliers ()
     {
@@ -357,7 +546,8 @@ namespace internal {
 
                       std::size_t index_pt = point_map[i][j][0];
                       m_points[index_pt] = Point (X1, X2, X3);
-                      
+                      m_status[index_pt] = PLANE;
+
                       for (std::size_t np = 1; np < point_map[i][j].size(); ++ np)
                         m_status[point_map[i][j][np]] = SKIPPED;
                     }
@@ -370,7 +560,7 @@ namespace internal {
                         pts.push_back (m_points[point_map[i][j][np]]);
 
                       m_points[point_map[i][j][0]] = CGAL::centroid (pts.begin (), pts.end ());
-                      
+                      m_status[point_map[i][j][0]] = PLANE;
                       for (std::size_t np = 1; np < point_map[i][j].size(); ++ np)
                         m_status[point_map[i][j][np]] = SKIPPED;
                     }
@@ -690,7 +880,7 @@ namespace internal {
                   Point anchor1 = anchor + vecp1 * r_edge;
                   m_points.push_back (anchor1);
                   m_indices.push_back (m_edges[i].planes[0]);
-                  m_status.push_back (POINT);
+                  m_status.push_back (PLANE);
                 }
 
               Line line_p2;
@@ -710,7 +900,7 @@ namespace internal {
                   Point anchor2 = anchor + vecp2 * r_edge;
                   m_points.push_back (anchor2);
                   m_indices.push_back (m_edges[i].planes[1]);
-                  m_status.push_back (POINT);
+                  m_status.push_back (PLANE);
                 }
 
             }
