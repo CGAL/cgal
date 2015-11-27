@@ -253,6 +253,24 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
                                          std::back_inserter (*(pts_edges->point_set())),
                                          std::back_inserter (*(pts_corners->point_set())));
 
+        std::vector<CGAL::cpp11::array<std::size_t, 3> > facets;
+        structuring.get_coherent_delaunay_facets (std::back_inserter (facets));
+        
+        Scene_polygon_soup_item *soup_item = new Scene_polygon_soup_item;
+  
+        soup_item->init_polygon_soup(pts_full->point_set()->size(), facets.size ());
+        std::cerr << "Size = " << pts_full->point_set()->size () << std::endl;
+        for (std::size_t i = 0; i < pts_full->point_set()->size (); ++ i)
+          {
+            Point p = (*(pts_full->point_set()))[i];
+            soup_item->new_vertex (p.x (), p.y (), p.z ());
+          }
+            
+        for (std::size_t i = 0; i < facets.size (); ++ i)
+          soup_item->new_triangle (facets[i][0], facets[i][1], facets[i][2]);
+        soup_item->setName(tr("%1 (Delaunay coherent facets)").arg(item->name()));
+        scene->addItem (soup_item);
+
         if (pts_full->point_set ()->empty ())
           delete pts_full;
         else
@@ -296,8 +314,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
             pts_corners->setColor(Qt::black);
             scene->addItem (pts_corners);
           }
-
         std::cout << "done" << std::endl;
+
       }
     
 
