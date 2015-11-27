@@ -262,8 +262,11 @@ namespace internal {
     }
 
     template <typename BackInserter>
-    void get_coherent_delaunay_facets (BackInserter facets)
+    void get_coherent_delaunay_facets (BackInserter facets,
+                                       double epsilon)
     {
+      double d_DeltaEdge = std::sqrt (2.) * epsilon;
+      
       typedef typename Traits::Base_kernel K;
       typedef CGAL::Triangulation_vertex_base_with_info_3<std::size_t, K> Vb;
       typedef CGAL::Triangulation_cell_base_3<K> Cb;
@@ -308,6 +311,11 @@ namespace internal {
             }
           //          std::cerr << std::endl;
           if (!valid)
+            continue;
+
+          if (CGAL::squared_distance (points[f[0]], points[f[1]]) > d_DeltaEdge * d_DeltaEdge
+              || CGAL::squared_distance (points[f[0]], points[f[2]]) > d_DeltaEdge * d_DeltaEdge
+              || CGAL::squared_distance (points[f[1]], points[f[2]]) > d_DeltaEdge * d_DeltaEdge)
             continue;
           
           if (facet_is_coherent (f, indices, status))

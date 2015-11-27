@@ -254,7 +254,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
                                          std::back_inserter (*(pts_corners->point_set())));
 
         std::vector<CGAL::cpp11::array<std::size_t, 3> > facets;
-        structuring.get_coherent_delaunay_facets (std::back_inserter (facets));
+        structuring.get_coherent_delaunay_facets (std::back_inserter (facets), op.epsilon * 5);
         
         Scene_polygon_soup_item *soup_item = new Scene_polygon_soup_item;
   
