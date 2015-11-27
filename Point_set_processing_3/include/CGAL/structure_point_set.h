@@ -639,6 +639,7 @@ namespace internal {
 
               m_points[index_best] = perfect;
               m_status[index_best] = EDGE;
+              m_indices[index_best] = i;
               m_edges[i].indices.push_back (index_best);
 
             }
@@ -883,7 +884,7 @@ namespace internal {
             }
 
           m_points.push_back (m_corners[k].support);
-          m_indices.push_back (minus1);
+          m_indices.push_back (k);
           m_status.push_back (CORNER);
         }
     }
@@ -988,6 +989,7 @@ namespace internal {
                   Point new_edge = m_corners[k].support + m_corners[k].directions[ed] * d_DeltaEdge;
                   m_points.push_back (new_edge);
                   m_status.push_back (EDGE);
+                  m_indices.push_back (m_corners[k].edges[ed]);
                   edge.indices.push_back (m_points.size() - 1);
                 }
 						
@@ -995,6 +997,7 @@ namespace internal {
               Point new_edge = m_corners[k].support + m_corners[k].directions[ed] * d_DeltaEdge / 3;
               m_points.push_back (new_edge);
               m_status.push_back (EDGE);
+              m_indices.push_back (m_corners[k].edges[ed]);
               edge.indices.push_back (m_points.size() - 1);
             }
         }
