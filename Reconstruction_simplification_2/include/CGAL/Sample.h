@@ -54,8 +54,8 @@ public:
   }
 
   Sample(const Sample& sample)
-  : m_mass(sample.mass()),
-    m_point(sample.point()),
+  : m_point(sample.point()),
+    m_mass(sample.mass()),
     m_dist2_to_edge(0),
     m_coordinate(0),
     m_backup_dist2(0),
