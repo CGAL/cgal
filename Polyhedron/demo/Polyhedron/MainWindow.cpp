@@ -1578,8 +1578,9 @@ void MainWindow::on_actionLoad_plugin_triggered()
     Q_FOREACH(QString fileName, paths)
     {
       if(fileName.contains("plugin") && QLibrary::isLibrary(fileName)) {
+          QFileInfo fileinfo(fileName);
         //set plugin name
-        QString name = fileName;
+        QString name = fileinfo.fileName();
         name.remove(QRegExp("^lib"));
         name.remove(QRegExp("\\..*"));
         QDebug qdebug = qDebug();
