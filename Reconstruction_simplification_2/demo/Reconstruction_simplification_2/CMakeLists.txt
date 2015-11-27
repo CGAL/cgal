@@ -22,12 +22,6 @@ find_package(Qt5 COMPONENTS OpenGL)
 # Find OpenGL
 #find_package(OpenGL)
 
-# Find QGLViewer
-if(Qt5_FOUND)
-  add_definitions(-DQT_NO_KEYWORDS)
-  find_package(QGLViewer)
-endif(Qt5_FOUND)
-
 # Find CImg
 find_path(CIMG_INCLUDE_DIR
           NAMES CImg.h
@@ -43,9 +37,7 @@ else()
                  "Try setting the environment variable CIMG_INC_DIR to point to the path of the directory containing CImg.h.")
 endif()
 
-if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
-
-  include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
+if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
 
   set(
   SRCS 
@@ -93,8 +85,8 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FO
   # Link with CGAL
   target_link_libraries( Reconstruction_simplification_2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
-  # Link with libQGLViewer, OpenGL
-  target_link_libraries( Reconstruction_simplification_2_demo ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+  # Link with OpenGL
+  target_link_libraries( Reconstruction_simplification_2_demo ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
 
   # Link with CImg dependencies
   if( NOT WIN32 )
@@ -103,7 +95,7 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FO
     
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Reconstruction_simplification_2_demo )
 
-else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
 
   set(RS2_MISSING_DEPS "")
 
@@ -123,10 +115,6 @@ else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER
     set(RS2_MISSING_DEPS "OpenGL, ${RS2_MISSING_DEPS}")
   endif()
 
-  if(NOT QGLVIEWER_FOUND)
-    set(RS2_MISSING_DEPS "QGLViewer, ${RS2_MISSING_DEPS}")
-  endif()
-
   message(STATUS "NOTICE: This demo requires ${RS2_MISSING_DEPS}and will not be compiled.")
 
-endif (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
+endif (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
