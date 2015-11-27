@@ -43,6 +43,7 @@ maxNumRecentFiles(15), recentFileActs(15)
   connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
   connect(min_mass_slider, SIGNAL(valueChanged(int)), this, SLOT(update()));
   connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
+  Q_EMIT update();
 }
 
 MainWindow::~MainWindow()

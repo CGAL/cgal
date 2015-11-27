@@ -7,6 +7,7 @@ int main(int argv, char **args)
   QApplication app(argv, args);
   app.setApplicationName("Reconstruction_simplification_2 Demo");
   MainWindow window;
+
   window.show();
   return app.exec();
 }

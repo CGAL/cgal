@@ -50,6 +50,7 @@ void GlViewer::initializeGL()
   glClearColor(1., 1., 1., 0.);
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_SMOOTH);
+  resizeGL(width(), height());
 }
 
 void GlViewer::paintGL() 
