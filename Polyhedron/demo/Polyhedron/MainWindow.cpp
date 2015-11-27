@@ -1236,7 +1236,10 @@ void MainWindow::quit()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
-  Q_EMIT on_closure();
+    for(int i=0; i<plugins.size(); i++)
+    {
+      plugins[i].first->closure();
+    }
   writeSettings();
   event->accept();
 }

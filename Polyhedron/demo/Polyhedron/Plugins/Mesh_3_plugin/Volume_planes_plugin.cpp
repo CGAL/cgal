@@ -12,7 +12,6 @@
 #include "Volume_plane_thread.h"
 #include "Volume_plane_intersection.h"
 #include "Scene_segmented_image_item.h"
-#include "MainWindow.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "Messages_interface.h"
@@ -165,6 +164,7 @@ public:
     return qobject_cast<Scene_segmented_image_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
+
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     this->scene = scene_interface;
     this->mw = mainWindow;
@@ -177,25 +177,19 @@ public:
     Viewer_interface* v = mw->findChild<Viewer_interface*>("viewer");
     CGAL_assertion(v != 0);
     pxr_.setViewer(v);
-    MainWindow *trueMainWindow = qobject_cast<MainWindow*>(mw);
-    if(trueMainWindow)
-    {
-        connect (trueMainWindow, SIGNAL(on_closure()),
-                 this, SLOT(closure()));
-    }
     createOrGetDockLayout();
 
   }
   QList<QAction*> actions() const {
     return QList<QAction*>() << planeSwitch;
   }
-public Q_SLOTS:
-  void closure()
+  virtual void closure()
   {
       QDockWidget* controlDockWidget = mw->findChild<QDockWidget*>("volumePlanesControl");
       if(controlDockWidget)
           controlDockWidget->hide();
   }
+public Q_SLOTS:
   void selectPlanes() {
     std::vector< Scene_segmented_image_item* > seg_items;
     Scene_segmented_image_item* seg_img = NULL;
