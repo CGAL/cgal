@@ -98,6 +98,7 @@ public:
           buffers[i].create();
       }
       nb_isolated_vertices = 0;
+      has_group = 0;
   }
   //!The Constructor.
   /*!
@@ -130,6 +131,7 @@ public:
           buffers[i].create();
       }
       nb_isolated_vertices = 0;
+      has_group = 0;
   }
   //! Setter for the number of isolated vertices.
   void setNbIsolatedvertices(std::size_t nb) { nb_isolated_vertices = nb;}
@@ -229,6 +231,8 @@ public:
 
   //!Handles key press events.
   virtual bool keyPressEvent(QKeyEvent*){return false;}
+  //!Contrains the number of group and subgroups containing this item.
+  int has_group;
 public Q_SLOTS:
 
   //! Notifies the program that the internal data or the properties of

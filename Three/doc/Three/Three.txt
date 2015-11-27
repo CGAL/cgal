@@ -122,11 +122,31 @@ and initialize them in the init fucntion :
 Use signal/slots to connect the dock widget to the plugin, and connect them in the init() function, and use the functions show()/hide() to make your 
 dock widget visible or not.
 
+\subsection exampleUsingAGroupItem Using a Scene_group_item
+This section will explain how to use a group item in a plugin. 
+A group item is a virtual item that is not seen in the viewer, nor drawn, but act as a parent for a list of actual items. Its main goal lays within the 
+interaction with the sceneView (which is the list of items on the left of the viewer). With group items, this view becomes hierarchic, which allows to interract with several objects at the same time, and organize this view.
+
+To use a group item in your plugin, you will need a CGAL::Three::Scene_group_item, of course, and a CGAL::Three::Scene_interface. As a group item will automatically contain all the selected items of the scene when it is created, 
+the first thing to do is to clear the selection with CGAL::Three::Scene_interface::setSelectedItem(-1). Then you can create a new Scene_group_item and give the items you want to regroup to it with CGAL::Three::Scene_interface::changeGroup().
+Once it is done, add the group to the scene with CGAL::Three::Scene_interface::add_group(). 
+~~~~~~~~~~~~~{.cpp}
+    //clears the selection to avoid adding unwanted items to the group.
+    scene->setSelectedItem(-1);
+    //Creates a new group
+    Scene_group_item *group = new Scene_group_item("New group");
+    //Then gives it its children
+    for(int i =0; i<3; i++)
+    scene->changeGroup(items[i], group);
+    //adds it to the scene
+    scene->add_group(group);
+~~~~~~~~~~~~~
 \section usefulItems List of useful classes :
 - MainWindow
 - CGAL::Three::Viewer_interface
 - CGAL::Three::Scene_interface
 - CGAL::Three::Scene_item
+- CGAL::Three::Scene_group_item
 - CGAL::Three::Polyhedron_demo_plugin_helper
 - CGAL::Three::Polyhedron_demo_plugin_interface
 

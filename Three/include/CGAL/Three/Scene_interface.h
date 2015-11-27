@@ -28,6 +28,7 @@
 #include <cmath>
 namespace CGAL{namespace Three{
 class Scene_item;
+class Scene_group_item;
     }}
 // OpenGL rendering mode
 /** \file Scene_interface.h
@@ -125,7 +126,8 @@ public:
   //!an itemAboutToBeDestroyed signal. Must be overloaded.
   //!@returns a pointer to the old item.
   virtual Scene_item* replaceItem(Item_id, CGAL::Three::Scene_item*, bool emit_item_about_to_be_destroyed = false) = 0;
-
+  //!Moves item to the targeted group.
+  virtual void changeGroup(CGAL::Three::Scene_item* item, CGAL::Three::Scene_group_item* target_group) = 0;
 
   /*! Erases an item in the list. Must be overloaded.
    * @returns the index of the item just before the one that is erased,
@@ -176,6 +178,11 @@ public:
 
   /*! Selects an item. Must be overloaded.*/
   virtual void setSelectedItem(Item_id) = 0;
+  /*!  Adds group to the Scene. If items were selected at the
+   * moment this function is called, they are added to the group.
+   * If all the selected items were in the same group, the new group
+   * is added as a sub-group of this group.*/
+  virtual void add_group(Scene_group_item* group) = 0;
   
 }; // end interface Scene_interface
 }
