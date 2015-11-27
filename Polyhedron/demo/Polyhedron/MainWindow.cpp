@@ -1236,6 +1236,7 @@ void MainWindow::quit()
 
 void MainWindow::closeEvent(QCloseEvent *event)
 {
+  Q_EMIT on_closure();
   writeSettings();
   event->accept();
 }

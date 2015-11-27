@@ -12,6 +12,7 @@
 #include "Volume_plane_thread.h"
 #include "Volume_plane_intersection.h"
 #include "Scene_segmented_image_item.h"
+#include "MainWindow.h"
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "Messages_interface.h"
@@ -79,7 +80,6 @@ private:
   boost::optional<IntConverter> ic;
   boost::optional<DoubleConverter> fc;
   Viewer_interface* viewer;
-
 
   void getPixel(const QPoint& e) {
     float data[3];
@@ -177,7 +177,12 @@ public:
     Viewer_interface* v = mw->findChild<Viewer_interface*>("viewer");
     CGAL_assertion(v != 0);
     pxr_.setViewer(v);
-
+    MainWindow *trueMainWindow = qobject_cast<MainWindow*>(mw);
+    if(trueMainWindow)
+    {
+        connect (trueMainWindow, SIGNAL(on_closure()),
+                 this, SLOT(closure()));
+    }
     createOrGetDockLayout();
 
   }
@@ -185,6 +190,12 @@ public:
     return QList<QAction*>() << planeSwitch;
   }
 public Q_SLOTS:
+  void closure()
+  {
+      QDockWidget* controlDockWidget = mw->findChild<QDockWidget*>("volumePlanesControl");
+      if(controlDockWidget)
+          controlDockWidget->hide();
+  }
   void selectPlanes() {
     std::vector< Scene_segmented_image_item* > seg_items;
     Scene_segmented_image_item* seg_img = NULL;
@@ -301,14 +312,11 @@ private:
 
   QLayout* createOrGetDockLayout() {
     QLayout* layout = NULL;
-    QDockWidget* controlDockWidget = NULL;
-    Q_FOREACH(QDockWidget* dock, mw->findChildren<QDockWidget*>())
-      if(dock->property("name").toString() == "volumePlanesControl")
-          controlDockWidget = dock;
+    QDockWidget* controlDockWidget = mw->findChild<QDockWidget*>("volumePlanesControl");;
 
     if(!controlDockWidget) {
       controlDockWidget = new QDockWidget(mw);
-      controlDockWidget->setProperty("name","volumePlanesControl");
+      controlDockWidget->setObjectName("volumePlanesControl");
       QWidget* content = new QWidget(controlDockWidget);
       layout = new QVBoxLayout(content);
       layout->setObjectName("vpSliderLayout");
