@@ -4,13 +4,9 @@ if(EIGEN3_FOUND)
   polyhedron_demo_plugin(surface_reconstruction_plugin Surface_reconstruction_plugin Surface_reconstruction_plugin_impl ${surface_reconstructionUI_FILES})
   target_link_libraries(surface_reconstruction_plugin scene_polygon_soup_item scene_polyhedron_item scene_points_with_normal_item)
 
-  qt5_wrap_ui( normal_estimationUI_FILES Normal_estimation_plugin.ui)
-  polyhedron_demo_plugin(normal_estimation_plugin Normal_estimation_plugin ${normal_estimationUI_FILES})
-  target_link_libraries(normal_estimation_plugin scene_points_with_normal_item)
-
-  qt5_wrap_ui( vcm_normal_estimationUI_FILES Vcm_normal_estimation_plugin.ui)
-  polyhedron_demo_plugin(vcm_normal_estimation_plugin Vcm_normal_estimation_plugin ${vcm_normal_estimationUI_FILES})
-  target_link_libraries(vcm_normal_estimation_plugin scene_points_with_normal_item)
+  qt5_wrap_ui( point_set_normal_estimationUI_FILES Point_set_normal_estimation_plugin.ui)
+  polyhedron_demo_plugin(point_set_normal_estimation_plugin Point_set_normal_estimation_plugin ${point_set_normal_estimationUI_FILES})
+  target_link_libraries(point_set_normal_estimation_plugin scene_points_with_normal_item)
 
   qt5_wrap_ui( features_detection_pluginUI_FILES Features_detection_plugin.ui)
   polyhedron_demo_plugin(features_detection_plugin Features_detection_plugin ${features_detection_pluginUI_FILES})
