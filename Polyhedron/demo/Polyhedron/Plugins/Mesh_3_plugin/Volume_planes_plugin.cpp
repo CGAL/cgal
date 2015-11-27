@@ -239,6 +239,7 @@ public Q_SLOTS:
     QLayout* layout = createOrGetDockLayout();
     
     QWidget* controls = new QWidget;
+    controls->setVisible(false);
     QHBoxLayout* box = new QHBoxLayout(controls);
     layout->addWidget(controls);
 
