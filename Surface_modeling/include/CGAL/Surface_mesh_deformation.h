@@ -1303,7 +1303,8 @@ private:
     {
       std::size_t v_id = ros_id(ros[i]);
       Point p(X[v_id], Y[v_id], Z[v_id]);
-      solution[v_id] = p;
+      if (!is_ctrl_map[id(ros[i])])
+        solution[v_id] = p;
     }
   }
   /// calculate right-hand side of eq:lap_ber_rims in user manual and solve the system
@@ -1373,7 +1374,8 @@ private:
     {
       std::size_t v_id = ros_id(ros[i]);
       Point p(X[v_id], Y[v_id], Z[v_id]);
-      solution[v_id] = p;
+      if (!is_ctrl_map[id(ros[i])])
+        solution[v_id] = p;
     }
   }
 
