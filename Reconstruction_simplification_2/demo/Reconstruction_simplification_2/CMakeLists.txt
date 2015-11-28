@@ -18,6 +18,9 @@ include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
 find_package(Qt5 COMPONENTS OpenGL)
+if(Qt5_FOUND)
+  add_definitions(-DQT_NO_KEYWORDS)
+endif(Qt5_FOUND)
 
 # Find OpenGL
 #find_package(OpenGL)
