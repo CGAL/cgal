@@ -83,9 +83,9 @@ void test_index_output(Rs_2& rs2)
     res.push_back(line);
   }
 
-  assert(res.size() >= 89 && res.size() <= 95);
-  assert(points.size() >= 57 && points.size() <= 63);
-  assert(edges.size() >= 28 && edges.size() <= 34);
+  assert(res.size() >= 80 && res.size() <= 105);
+  assert(points.size() >= 50 && points.size() <= 70);
+  assert(edges.size() >= 20 && edges.size() <= 40);
 
   for (std::size_t i = points.size() + 1 ; i < res.size() ; i++)
   {
@@ -110,7 +110,7 @@ void test_list_output(Rs_2& rs2)
     vertex_count++;
     std::cout << *it << std::endl;
   }
-  assert(vertex_count >= 15 && vertex_count <= 25);
+  assert(vertex_count >= 13 && vertex_count <= 25);
 
   int edge_count = 0;
   for (std::vector<Segment>::iterator it = edges.begin();
@@ -119,5 +119,5 @@ void test_list_output(Rs_2& rs2)
     std::cout << *it << std::endl;
     edge_count++;
   }
-  assert(edge_count >= 29 && edge_count <= 33);
+  assert(edge_count >= 25 && edge_count <= 37);
 }
