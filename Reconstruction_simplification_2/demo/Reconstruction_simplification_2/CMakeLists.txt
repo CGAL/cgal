@@ -90,11 +90,6 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
 
   # Link with OpenGL
   target_link_libraries( Reconstruction_simplification_2_demo ${OPENGL_gl_LIBRARY} )
-
-  # Link with CImg dependencies
-  if( NOT WIN32 )
-	  target_link_libraries( Reconstruction_simplification_2_demo -L/usr/X11R6/lib -lm -lpthread -lX11 )
-  endif()
     
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Reconstruction_simplification_2_demo )
 

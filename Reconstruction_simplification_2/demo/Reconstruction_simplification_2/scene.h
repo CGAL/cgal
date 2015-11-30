@@ -15,6 +15,7 @@
 
 
 #ifdef CGAL_USE_CIMG
+#define cimg_display 0 // To avoid X11 or Windows-GDI dependency
 #include <CImg.h>
 #endif
 #include "random.h"
@@ -309,6 +310,8 @@ public:
     CGAL_USE(qw);
     std::cerr << "Invalid file (try .xy, .txt, .gtn, .dat)" << std::endl;
 #endif
+
+
   }
 
   void load_xy_file(const QString& fileName) {
