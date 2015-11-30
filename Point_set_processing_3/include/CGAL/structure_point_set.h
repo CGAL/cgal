@@ -1003,7 +1003,10 @@ namespace internal {
           if ((m_corners[i].support.x() < X_min) || (m_corners[i].support.x() > X_max)
               || (m_corners[i].support.y() < Y_min) || (m_corners[i].support.y() > Y_max)
               || (m_corners[i].support.z() < Z_min) || (m_corners[i].support.z() > Z_max))
-            break;
+            {
+              m_corners[i].active = false;
+              break;
+            }
 
           // test if corner is in neighborhood of at least one point each of the 3 planes
           std::vector<bool> neighborhood (3, false);
