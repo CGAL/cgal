@@ -21,8 +21,24 @@
 #include <QMessageBox>
 
 #include <boost/foreach.hpp>
+#include <boost/function_output_iterator.hpp>
 
 #include "ui_Point_set_shape_detection_plugin.h"
+
+
+struct build_from_pair
+{
+  Point_set& m_pts;
+
+  build_from_pair (Point_set& pts) : m_pts (pts) { }
+
+  void operator() (const std::pair<Point_set::Point, Point_set::Vector>& pair)
+  {
+    m_pts.push_back (Point_set::Point_with_normal (pair.first, pair.second));
+  }
+
+
+};
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Epic_kernel;
 typedef Epic_kernel::Point_3 Point;
@@ -248,10 +264,11 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
         Scene_points_with_normal_item *pts_edges = new Scene_points_with_normal_item;
         Scene_points_with_normal_item *pts_corners = new Scene_points_with_normal_item;
 
-        structuring.get_output (std::back_inserter (*(pts_full->point_set())));
-        structuring.get_detailed_output (std::back_inserter (*(pts_planes->point_set())),
-                                         std::back_inserter (*(pts_edges->point_set())),
-                                         std::back_inserter (*(pts_corners->point_set())));
+        structuring.get_output (boost::make_function_output_iterator (build_from_pair ((*(pts_full->point_set())))));
+        structuring.get_detailed_output (boost::make_function_output_iterator (build_from_pair ((*(pts_planes->point_set())))),
+                                         boost::make_function_output_iterator (build_from_pair ((*(pts_edges->point_set())))),
+                                         boost::make_function_output_iterator (build_from_pair ((*(pts_corners->point_set())))));
+
 
         std::vector<CGAL::cpp11::array<std::size_t, 3> > facets;
         structuring.get_coherent_delaunay_facets (std::back_inserter (facets), op.epsilon * 5);
@@ -277,7 +294,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
           {
             pts_full->point_set ()->unselect_all();
             pts_full->setName(tr("%1 (structured)").arg(item->name()));
-            pts_full->set_has_normals(false);
+            pts_full->set_has_normals(true);
+            pts_full->setRenderingMode(PointsPlusNormals);
             pts_full->setColor(Qt::blue);
             scene->addItem (pts_full);
           }
@@ -288,7 +306,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
           {
             pts_planes->point_set ()->unselect_all();
             pts_planes->setName(tr("%1 (structured planes)").arg(item->name()));
-            pts_planes->set_has_normals(false);
+            pts_planes->set_has_normals(true);
+            pts_planes->setRenderingMode(PointsPlusNormals);
             pts_planes->setColor(Qt::blue);
             scene->addItem (pts_planes);
           }
@@ -299,7 +318,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
           {
             pts_edges->point_set ()->unselect_all();
             pts_edges->setName(tr("%1 (structured edges)").arg(item->name()));
-            pts_edges->set_has_normals(false);
+            pts_edges->set_has_normals(true);
+            pts_edges->setRenderingMode(PointsPlusNormals);
             pts_edges->setColor(Qt::red);
             scene->addItem (pts_edges);
           }
@@ -310,7 +330,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
           {
             pts_corners->point_set ()->unselect_all();
             pts_corners->setName(tr("%1 (structured corners)").arg(item->name()));
-            pts_corners->set_has_normals(false);
+            pts_corners->set_has_normals(true);
+            pts_corners->setRenderingMode(PointsPlusNormals);
             pts_corners->setColor(Qt::black);
             scene->addItem (pts_corners);
           }
