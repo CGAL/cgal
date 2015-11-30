@@ -81,8 +81,6 @@ void Scene_polyhedron_transform_item::draw_edges(CGAL::Three::Viewer_interface* 
     program->setAttributeValue("colors",color);
     program->setUniformValue("f_matrix", f_matrix);
     program->setUniformValue("is_selected", false);
-    QColor color = this->color();
-    program->setAttributeValue("colors",color);
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
     vaos[Edges]->release();
     program->release();
