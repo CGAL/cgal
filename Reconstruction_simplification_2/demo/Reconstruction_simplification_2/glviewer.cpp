@@ -5,7 +5,7 @@
 #include "glviewer.h"
 
 GlViewer::GlViewer(QWidget *pParent)
-: QGLWidget(QGLFormat(QGL::SampleBuffers), pParent)
+: QOpenGLWidget(pParent)
 {
   m_scene = NULL;
 
@@ -50,11 +50,11 @@ void GlViewer::initializeGL()
   glClearColor(1., 1., 1., 0.);
   glDisable(GL_DEPTH_TEST);
   glEnable(GL_SMOOTH);
-  resizeGL(width(), height());
 }
 
 void GlViewer::paintGL() 
 {
+
   glClear(GL_COLOR_BUFFER_BIT);
   if (!m_scene) return;
 
@@ -85,7 +85,7 @@ void GlViewer::wheelEvent(QWheelEvent *event)
   if (!m_scene) return;
   m_scale += 0.05 * (event->delta() / 120);
   if (m_scale <= 0.0) m_scale = 0.0;
-  updateGL();
+  update();
 }
 
 void GlViewer::mousePressEvent(QMouseEvent *event) 
@@ -120,7 +120,7 @@ void GlViewer::mouseMoveEvent(QMouseEvent *event)
   }
 
   m_mouse_click = m_mouse_move;
-  updateGL();
+  update();
 }
 
 void GlViewer::mouseReleaseEvent(QMouseEvent *event) 
@@ -140,7 +140,7 @@ void GlViewer::mouseReleaseEvent(QMouseEvent *event)
 
   m_mouse_click = m_mouse_move;
   setCursor(QCursor(Qt::ArrowCursor));
-  updateGL();
+  update();
 }
 
 void GlViewer::sample_mouse_path(const QPoint& point)
