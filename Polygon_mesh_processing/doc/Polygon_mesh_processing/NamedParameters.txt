@@ -73,7 +73,7 @@ Here is the list of the named parameters available in this package:
 
 \cgalNPBegin{use_delaunay_triangulation} \anchor PMP_use_delaunay_triangulation
  enables the use of the Delaunay triangulation facet search space for hole filling functions.\n
-\b Type: boolean \n
+\b Type: `bool` \n
 \b Default value is `true`
 \cgalNPEnd
 
@@ -145,7 +145,7 @@ algorithm.\n
 the property map containing information about edges of the input polygon mesh being constrained or not.\n
 \b Type : a class model of `ReadablePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
-`bool` as value type.It should be default constructible.\n
+`bool` as value type. It should be default constructible.\n
 \b Default : if this parameter is omitted,
 a default property map where no edge is constrained is provided.
 \cgalNPEnd
@@ -154,7 +154,7 @@ a default property map where no edge is constrained is provided.
 enables the protection of constraints listed by \ref PMP_edge_is_constrained_map "edge_is_constrained_map"
 during isotropic remeshing. If `true`, constraint edges cannot be modified at all
 during the remeshing process.\n
-\b Type : boolean \n
+\b Type : `bool` \n
 \b Default value is `false`
 \cgalNPEnd
 
