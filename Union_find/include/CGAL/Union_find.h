@@ -58,6 +58,11 @@ public:
 
     bool      operator==( const Self& x) const { return m_p == x.m_p; }
     bool      operator!=( const Self& x) const { return !(*this == x); }
+    bool      operator<(const Self& other) const{ return m_p<other.m_p; }
+    bool      operator>(const Self& other) const{ return m_p>other.m_p; }
+    bool      operator<=(const Self& other) const{ return m_p<=other.m_p; }
+    bool      operator>=(const Self& other) const{ return m_p>=other.m_p; }
+
     reference operator*()  const { return m_p->value; }
     pointer   operator->() const { return &(m_p->value); }
     Self&     operator++() {
