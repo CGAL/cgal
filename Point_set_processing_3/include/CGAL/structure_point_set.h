@@ -138,6 +138,7 @@ namespace internal {
     Traits m_traits;
 
     std::vector<Point> m_points;
+    std::vector<Vector> m_normals;
     std::vector<std::size_t> m_indices;
     std::vector<Point_status> m_status;
     Point_map m_point_pmap;
@@ -160,8 +161,11 @@ namespace internal {
       : minus1 (static_cast<std::size_t>(-1)), m_traits (shape_detection.traits())
     {
       for (Input_iterator it = begin; it != end; ++ it)
-        m_points.push_back (get(m_point_pmap, *it));
-
+        {
+          m_points.push_back (get(m_point_pmap, *it));
+          m_normals.push_back (get(m_normal_pmap, *it));
+        }
+      
       m_indices = std::vector<std::size_t> (m_points.size (), minus1);
       m_status = std::vector<Point_status> (m_points.size (), POINT);
 
@@ -239,12 +243,13 @@ namespace internal {
       std::cerr << " -> Done" << std::endl;
     }
 
-    template <typename BackInserter>
-    void get_output (BackInserter pts)
+
+    template <typename OutputIterator>
+    void get_output (OutputIterator pts)
     {
       for (std::size_t i = 0; i < m_points.size (); ++ i)
         if (m_status[i] != SKIPPED)
-          *(pts ++) = m_points[i];
+          *(pts ++) = std::make_pair (m_points[i], m_normals[i]);
     }
 
     template <typename BackInserter>
@@ -254,11 +259,11 @@ namespace internal {
     {
       for (std::size_t i = 0; i < m_points.size (); ++ i)
         if (m_status[i] == PLANE || m_status[i] == RESIDUS)
-          *(pts_planes ++) = m_points[i];
+          *(pts_planes ++) = std::make_pair (m_points[i], m_normals[i]);
         else if (m_status[i] == EDGE)
-          *(pts_edges ++) = m_points[i];
+          *(pts_edges ++) = std::make_pair (m_points[i], m_normals[i]);
         else if (m_status[i] == CORNER)
-          *(pts_corners ++) = m_points[i];
+          *(pts_corners ++) = std::make_pair (m_points[i], m_normals[i]);
     }
 
     template <typename BackInserter>
@@ -554,6 +559,7 @@ namespace internal {
 
                       std::size_t index_pt = point_map[i][j][0];
                       m_points[index_pt] = Point (X1, X2, X3);
+                      m_normals[index_pt] = m_planes[c]->plane_normal();
                       m_status[index_pt] = PLANE;
 
                       for (std::size_t np = 1; np < point_map[i][j].size(); ++ np)
@@ -588,6 +594,7 @@ namespace internal {
                   FT X3 = x2pt * b1.z() + y2pt * b2.z() - plane.d() * vortho.z();
 
                   m_points.push_back (Point (X1, X2, X3));
+                  m_normals.push_back (m_planes[c]->plane_normal());
                   m_indices.push_back (c);
                   m_status.push_back (RESIDUS);
                 }
@@ -713,7 +720,7 @@ namespace internal {
       for (std::size_t i = 0; i < m_edges.size(); ++ i)
         {
           boost::shared_ptr<Plane_shape> plane1 = m_planes[m_edges[i].planes[0]];
-          boost::shared_ptr<Plane_shape> plane2 = m_planes[m_edges[i].planes[1]];       
+          boost::shared_ptr<Plane_shape> plane2 = m_planes[m_edges[i].planes[1]];
 
           const Line& line = m_edges[i].support;
 
@@ -721,6 +728,8 @@ namespace internal {
             {
               continue;
             }
+
+          Vector normal = 0.5 * plane1->plane_normal () + 0.5 * plane2->plane_normal();
 							
           //find set of points close (<attraction_radius) to the edge and store in intersection_points
           std::vector<std::size_t> intersection_points;
@@ -836,6 +845,7 @@ namespace internal {
                 }
 
               m_points[index_best] = perfect;
+              m_normals[index_best] = normal;
               m_status[index_best] = EDGE;
               m_indices[index_best] = i;
               m_edges[i].indices.push_back (index_best);
@@ -887,6 +897,7 @@ namespace internal {
 
                   Point anchor1 = anchor + vecp1 * r_edge;
                   m_points.push_back (anchor1);
+                  m_normals.push_back (m_planes[m_edges[i].planes[0]]->plane_normal());
                   m_indices.push_back (m_edges[i].planes[0]);
                   m_status.push_back (PLANE);
                 }
@@ -907,6 +918,7 @@ namespace internal {
 
                   Point anchor2 = anchor + vecp2 * r_edge;
                   m_points.push_back (anchor2);
+                  m_normals.push_back (m_planes[m_edges[i].planes[1]]->plane_normal());
                   m_indices.push_back (m_edges[i].planes[1]);
                   m_status.push_back (PLANE);
                 }
@@ -1084,7 +1096,14 @@ namespace internal {
               count_plane_number += count_new_plane;
             }
 
+          // Compute normal vector
+          Vector normal (0., 0., 0.);
+          for (std::size_t i = 0; i < m_corners[k].planes.size(); ++ i)
+            normal = normal + (1. / (double)(m_corners[k].planes.size()))
+              * m_planes[m_corners[k].planes[i]]->plane_normal();
+          
           m_points.push_back (m_corners[k].support);
+          m_normals.push_back (normal);
           m_indices.push_back (k);
           m_status.push_back (CORNER);
         }
@@ -1189,6 +1208,8 @@ namespace internal {
                 {
                   Point new_edge = m_corners[k].support + m_corners[k].directions[ed] * d_DeltaEdge;
                   m_points.push_back (new_edge);
+                  m_normals.push_back (0.5 * m_planes[m_edges[m_corners[k].edges[ed]].planes[0]]->plane_normal()
+                                       + 0.5 * m_planes[m_edges[m_corners[k].edges[ed]].planes[1]]->plane_normal());
                   m_status.push_back (EDGE);
                   m_indices.push_back (m_corners[k].edges[ed]);
                   edge.indices.push_back (m_points.size() - 1);
@@ -1197,6 +1218,8 @@ namespace internal {
               //rajouter un edge a 1/3 epsilon du cote dominant
               Point new_edge = m_corners[k].support + m_corners[k].directions[ed] * d_DeltaEdge / 3;
               m_points.push_back (new_edge);
+              m_normals.push_back (0.5 * m_planes[m_edges[m_corners[k].edges[ed]].planes[0]]->plane_normal()
+                                   + 0.5 * m_planes[m_edges[m_corners[k].edges[ed]].planes[1]]->plane_normal());
               m_status.push_back (EDGE);
               m_indices.push_back (m_corners[k].edges[ed]);
               edge.indices.push_back (m_points.size() - 1);
