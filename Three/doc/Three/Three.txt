@@ -120,7 +120,8 @@ and initialize them in the init fucntion :
 ~~~~~~~~~~~~~
 
 Use signal/slots to connect the dock widget to the plugin, and connect them in the init() function, and use the functions show()/hide() to make your 
-dock widget visible or not.
+dock widget visible or not. By default, a dock widget will remain visible next time the demo is launched if it has not been closed. If you want to avoid that behavior, override the
+function closure() in you plugin, and simply call hide on your dock widget in it.
 
 \section usefulItems List of useful classes :
 - MainWindow
