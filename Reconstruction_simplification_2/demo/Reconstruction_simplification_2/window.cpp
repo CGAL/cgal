@@ -44,6 +44,7 @@ maxNumRecentFiles(15), recentFileActs(15)
   connect(min_mass_slider, SIGNAL(valueChanged(int)), this, SLOT(update()));
   connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
   Q_EMIT update();
+  viewer->update();
 }
 
 MainWindow::~MainWindow()
@@ -187,7 +188,7 @@ void MainWindow::on_actionSnapshot_triggered()
   QClipboard *qb = QApplication::clipboard();
   viewer->makeCurrent();
   viewer->raise();
-  QImage snapshot = viewer->grabFrameBuffer(true);
+  QImage snapshot = viewer->grabFramebuffer();
   qb->setImage(snapshot);
   QApplication::restoreOverrideCursor();
   std::cout << "done" << std::endl;

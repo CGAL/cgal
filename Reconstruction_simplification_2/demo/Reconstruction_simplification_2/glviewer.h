@@ -2,13 +2,13 @@
 #define GLWIDGET_H
 
 // Qt
-#include <QGLWidget>
+#include <QOpenGLWidget>
 #include <QPaintEvent>
 
 // local
 #include "scene.h"
 
-class GlViewer : public QGLWidget 
+class GlViewer : public QOpenGLWidget
 {
     Q_OBJECT
     
