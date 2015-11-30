@@ -141,6 +141,7 @@ void MainWindow::open(const QString& filename)
   m_scene->load(filename, this);
   QApplication::restoreOverrideCursor();
   addToRecentFiles(filename);
+  on_actionRecenter_triggered();
   update();
 }
 
