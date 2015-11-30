@@ -105,7 +105,10 @@ public:
       connect(scene, SIGNAL(newItem(int)), this, SLOT(new_item_created(int)));
     } 
   }
-
+  virtual void closure()
+  {
+    dock_widget->hide();
+  }
 public Q_SLOTS:
   void selection_action() { 
     dock_widget->show();

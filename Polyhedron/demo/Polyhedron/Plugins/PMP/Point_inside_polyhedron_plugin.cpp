@@ -76,6 +76,11 @@ public:
     connect(ui_widget.Sample_random_points_from_bbox,  SIGNAL(clicked()), this, SLOT(on_Sample_random_points_from_bbox())); 
     
   }
+
+  virtual void closure()
+  {
+    dock_widget->hide();
+  }
 private:
   // for transform iterator
   struct Get_ref {

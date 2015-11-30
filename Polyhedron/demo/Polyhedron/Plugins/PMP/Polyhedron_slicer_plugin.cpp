@@ -41,6 +41,10 @@ public:
 
   using Polyhedron_demo_plugin_helper::init;
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m);
+  virtual void closure()
+  {
+    dock_widget->hide();
+  }
   QList<QAction*> actions() const;
   bool get_base_1_2(double bases[6]) {
     bool oks[6];

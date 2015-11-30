@@ -227,7 +227,10 @@ public:
 
 
   }
-
+  virtual void closure()
+  {
+    dock_widget->hide();
+  }
 
 protected:
 
