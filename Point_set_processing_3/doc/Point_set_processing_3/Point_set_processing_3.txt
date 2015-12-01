@@ -395,6 +395,12 @@ the article \cgalCite{cgal:la-srpss-13}.
 Each detected plane is regularly resampled at a given density. In addition,
 edges and corners are estimated and sampled.
 
+\subsection Point_set_processing_3Example_9 Example
+
+The following example applies shape detection followed by structuring to a
+point set:
+\cgalExample{Point_set_processing_3/structuring_example.cpp}
+
 
 
 \section Point_set_processing_3ImplementationHistory Implementation History

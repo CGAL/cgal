@@ -48,7 +48,7 @@ int main (int argc, char** argv)
   ransac.add_shape_factory<Plane>();
   ransac.detect();
 
-  std::vector<Point> structured_pts;
+  Pwn_vector structured_pts;
 
   CGAL::structure_point_set (points.begin (), points.end (), // input points
                              std::back_inserter (structured_pts),
