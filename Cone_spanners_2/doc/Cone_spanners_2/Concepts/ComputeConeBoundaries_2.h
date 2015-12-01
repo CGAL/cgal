@@ -9,7 +9,7 @@ either exactly or inexactly.
 \cgalHasModel `CGAL::Compute_cone_boundaries_2`
 
 */
-template <typename Kernel_>
+template <typename SpannerKernel>
 class ComputeConeBoundaries_2 {
 public:
 
@@ -19,9 +19,9 @@ public:
 /*! The CGAL kernel type used by the functor. If this parameter is
 	`CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`,
     the cone boundaries will be computed exactly; otherwise, inexactly using an approximate PI=3.1415...
-	This kernel type also decides other types such as Kernel_::Point_2, Kernel_::Direction_2, etc.
+	This kernel type also decides other types such as SpannerKernel::Point_2, SpannerKernel::Direction_2, etc.
 */
-typedef Kernel_                          kernel_type;
+typedef SpannerKernel                          kernel_type;
 
 /// @}
 
