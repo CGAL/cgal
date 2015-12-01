@@ -77,11 +77,11 @@ Below, we detail the design and the usage of the above functors and function.
 This functor has the following definition and is a model of the `ComputeConeBoundaries_2` concept.
 
 \code{.cpp}
-    template <typename Kernel_>
+    template <typename SpannerKernel>
     class Compute_cone_boundaries_2{}
 \endcode
 
-The template parameter `Kernel_` determines whether the cone boundaries are computed
+The template parameter `SpannerKernel` determines whether the cone boundaries are computed
 exactly or inexactly. If this parameter is `Exact_predicates_exact_constructions_kernel_with_root_of`,
 the computation will be done exactly; otherwise, inexactly.
 The exact computation is implemented based on the fact that
@@ -123,18 +123,18 @@ please refer to Section \ref sec_CBS_examples.
 This functor has the following definition and is a model of the `ConstructConeBasedSpanner_2` concept.
 
 \code{.cpp}
-    template <typename Kernel_, typename Graph_>
+    template <typename SpannerKernel, typename Graph_>
     class Construct_theta_graph_2{} 
 \endcode
 
-The template parameter `Kernel_` specifies the \cgal kernel to be used by this functor. 
+The template parameter `SpannerKernel` specifies the \cgal kernel to be used by this functor. 
 If this parameter is `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`,
 this functor will call the corresponding specialization of
 `CGAL::Compute_cone_boundaries_2` to compute the cone boundaries exactly and then
 add edges in each cone. If not, this functor will call the general
 `CGAL::Compute_cone_boundaries_2` to compute the cone boundaries inexactly and then
 add edges. In the stage of adding edges, since all calculations use the predicates or construction 
-functions provided by CGAL, the type given in `Kernel_` actually determines overall whether the
+functions provided by CGAL, the type given in `SpannerKernel` actually determines overall whether the
 Theta graph will be constructed exactly. The template parameter
 `Graph_` specifies the graph type used to store the constructed graph. 
 Our package requires it to be 
@@ -152,7 +152,7 @@ Note that there are seven template parameters for `adjacency_list` in BGL: `OutE
 `Directed`, `VertexProperties`, `EdgeProperties`, `GraphProperties`, `EdgeList`, 
 of which we require `VertexProperties` to be `CGAL::Point_2`, 
 and other parameters can be chosen freely. And the kernel type for the `CGAL::Point_2` is
-decided by the template parameter `Kernel_`.
+decided by the template parameter `SpannerKernel`.
 Also note that, here we make `Point_2` passed
 directly as bundled properties to `adjacency_list`, because this makes our implementation of this 
 package more straightforward than using property maps from BGL. For detailed information about 
@@ -176,7 +176,7 @@ With a similar definition (see below) to `CGAL::Construct_theta_graph_2`, this f
 is also a model of the `ConstructConeBasedSpanner_2` concept.
 
 \code{.cpp}
-    template <typename Kernel_, typename Graph_>
+    template <typename SpannerKernel, typename Graph_>
     class Construct_yao_graph_2{} 
 \endcode
 
