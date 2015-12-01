@@ -104,6 +104,11 @@ bool Viewer::inFastDrawing() const
 
 void Viewer::draw()
 {
+    if(!painter->isActive())
+    {
+        //painter->begin(this);
+        setBackgroundColor(Qt::white);
+    }
   glEnable(GL_DEPTH_TEST);
   d->draw_aux(false, this);
 }
@@ -115,6 +120,7 @@ void Viewer::fastDraw()
 
 void Viewer::initializeGL()
 {
+  painter = new QPainter(this);
   QGLViewer::initializeGL();
   initializeOpenGLFunctions();
   glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
@@ -744,7 +750,25 @@ void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec t
 
 void Viewer::drawVisualHints()
 {
+    if(!painter->isActive())
+    {
+        painter->begin(this);
+    }
     QGLViewer::drawVisualHints();
+    bool has_text = true;
+    if(has_text)
+    {
+
+    TextRenderer *textRenderer = new TextRenderer();
+    for(int i=0; i<3; i++)
+    {
+        float x = 0.3*i, y = 0.10, z=0.1;
+        textRenderer->addText(new TextItem(x,y,z,"Under Testing"));
+    }
+    textRenderer->draw(this);
+    textRenderer = 0;
+    delete textRenderer;
+    }
     if(axis_are_displayed)
     {
         QMatrix4x4 mvpMatrix;
@@ -806,18 +830,8 @@ void Viewer::drawVisualHints()
         rendering_program.release();
         vao[0].release();
     }
-bool has_text = false;
-    if(has_text)
-    {
-    TextRenderer *textRenderer = new TextRenderer();
-    for(int i=0; i<3; i++)
-    {
-        float x = 30*i, y = 120, z=0;
-        textRenderer->addText(new TextItem(x,y,z,"Under Testing"));
+    //painter->end();
     }
-    textRenderer->draw(this);
-    }
-}
 
 void Viewer::resizeGL(int w, int h)
 {
@@ -1144,13 +1158,16 @@ void Viewer::wheelEvent(QWheelEvent* e)
 
 void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 {
-    QPainter painter(viewer);
+    QPainter *painter = viewer->painter;
+    if(!painter->isActive())
+    {
+        qDebug()<<"new painter";
+        painter->begin(viewer);
+    }
+
     QRect rect;
     qglviewer::Camera* camera = viewer->camera();
-    //fbo = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth);
-    //fbo->bind();
-    //viewer->glEnable(GL_DEPTH_TEST);
-    //viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    //painter->setBackgroundMode(Qt::TransparentMode);
     Q_FOREACH(TextItem* item, textItems)
     {
         qglviewer::Vec src(item->position()->x(), item->position()->y(),item->position()->z());
@@ -1158,8 +1175,8 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
                      camera->projectedCoordinatesOf(src).y-item->height()/2,
                      item->width(),
                      item->height());
-        painter.setFont(item->font());
-        painter.drawText(rect, item->text());
+        painter->setFont(item->font());
+        painter->drawText(rect, item->text());
     }
 
 
