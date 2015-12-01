@@ -134,6 +134,13 @@ Introduces a variable `ext` initialized with \f$ x\f$.
 Sqrt_extension (const NT &x); 
 
 /*!
+Introduces a variable `ext` initialized with \f$ x\f$.
+\pre NT must constructible from NTX
+*/
+template <class NTX>
+explicit Sqrt_extension(const NTX& x);
+
+/*!
 Constructor from int: `ext`\f$ = a0 +a1 \cdot sqrt(r)\f$. \pre \f$ r \neq0\f$ 
 */ 
 Sqrt_extension (int a0, int a1, int r); 
