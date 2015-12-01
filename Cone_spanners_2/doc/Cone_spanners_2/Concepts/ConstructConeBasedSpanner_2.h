@@ -21,7 +21,7 @@ public:
     the graph will be constructed exactly; otherwise, inexactly using an approximate PI=3.1415...
 	This kernel type also decides other types such as SpannerKernel::Point_2, SpannerKernel::Direction_2, etc.
 */
-typedef SpannerKernel                          kernel_type;
+typedef SpannerKernel                          Kernel_type;
 
 /*! The graph type to store the constructed cone based spanner. It should be a model of
 	both concepts MutableGraph and VertexAndEdgeListGraph in BGL. Of the two graph classes provided
@@ -36,7 +36,7 @@ typedef SpannerKernel                          kernel_type;
 	If more properties for vertices are needed, they can be added later as external properties using 
 	property maps.
 */
-typedef Graph_                           graph_type;
+typedef Graph_                           Graph_type;
 
 /// @}
 
