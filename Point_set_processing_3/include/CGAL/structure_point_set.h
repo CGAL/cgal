@@ -203,44 +203,73 @@ namespace internal {
     {
       double radius = epsilon * attraction_factor;
       
+#ifdef CGAL_PSP3_VERBOSE
       std::cerr << "Computing planar points... " << std::endl;
+#endif
+      
       project_inliers ();
       resample_planes (epsilon);
-      std::cerr << " -> Done" << std::endl;
       
-      std::cerr << "Finding adjacent primitives... " << std::endl;
-      find_pairs_of_adjacent_primitives (radius);
-      std::cerr << " -> Found " << m_edges.size () << " pair(s) of adjacent primitives." << std::endl;
-
-      std::cerr << "Computing edges... " << std::endl;
-      compute_edges (epsilon);
+#ifdef CGAL_PSP3_VERBOSE
       std::cerr << " -> Done" << std::endl;
+      std::cerr << "Finding adjacent primitives... " << std::endl;
+#endif
+      
+      find_pairs_of_adjacent_primitives (radius);
 
+#ifdef CGAL_PSP3_VERBOSE
+      std::cerr << " -> Found " << m_edges.size () << " pair(s) of adjacent primitives." << std::endl;
+      std::cerr << "Computing edges... " << std::endl;
+#endif
+      
+      compute_edges (epsilon);
+
+#ifdef CGAL_PSP3_VERBOSE
+      std::cerr << " -> Done" << std::endl;
       std::cerr << "Creating edge-anchor points... " << std::endl;
       {
         std::size_t size_before = m_points.size ();
+#endif
+
         create_edge_anchor_points (radius, epsilon);
+
+#ifdef CGAL_PSP3_VERBOSE
         std::cerr << " -> " << m_points.size () - size_before << " anchor point(s) created." << std::endl;
       }
 
       std::cerr << "Computating first set of corners... " << std::endl;
+#endif
+      
       compute_corners (radius);
-      std::cerr << " -> Found " << m_corners.size () << " triple(s) of adjacent primitives/edges." << std::endl;
 
+#ifdef CGAL_PSP3_VERBOSE
+      std::cerr << " -> Found " << m_corners.size () << " triple(s) of adjacent primitives/edges." << std::endl;
       std::cerr << "Merging corners... " << std::endl;
       {
         std::size_t size_before = m_points.size ();
+#endif
+        
         merge_corners (radius);
+
+#ifdef CGAL_PSP3_VERBOSE
         std::cerr << " -> " << m_points.size () - size_before << " corner point(s) created." << std::endl;
       }
 
       std::cerr << "Merging corners... " << std::endl;
+#endif
+      
       compute_corner_directions (epsilon);
-      std::cerr << " -> Done" << std::endl;
 
-      std::cerr << "Refining sampling... " << std::endl;
-      refine_sampling (epsilon);
+#ifdef CGAL_PSP3_VERBOSE
       std::cerr << " -> Done" << std::endl;
+      std::cerr << "Refining sampling... " << std::endl;
+#endif
+      
+      refine_sampling (epsilon);
+
+#ifdef CGAL_PSP3_VERBOSE
+      std::cerr << " -> Done" << std::endl;
+#endif
     }
 
 
@@ -252,10 +281,10 @@ namespace internal {
           *(pts ++) = std::make_pair (m_points[i], m_normals[i]);
     }
 
-    template <typename BackInserter>
-    void get_detailed_output (BackInserter pts_planes,
-                              BackInserter pts_edges,
-                              BackInserter pts_corners)
+    template <typename OutputIterator>
+    void get_detailed_output (OutputIterator pts_planes,
+                              OutputIterator pts_edges,
+                              OutputIterator pts_corners)
     {
       for (std::size_t i = 0; i < m_points.size (); ++ i)
         if (m_status[i] == PLANE || m_status[i] == RESIDUS)
@@ -266,8 +295,8 @@ namespace internal {
           *(pts_corners ++) = std::make_pair (m_points[i], m_normals[i]);
     }
 
-    template <typename BackInserter>
-    void get_coherent_delaunay_facets (BackInserter facets,
+    template <typename OutputIterator>
+    void get_coherent_delaunay_facets (OutputIterator facets,
                                        double epsilon)
     {
       double d_DeltaEdge = std::sqrt (2.) * epsilon;
@@ -278,7 +307,6 @@ namespace internal {
       typedef CGAL::Triangulation_data_structure_3<Vb,Cb> Tds;
       typedef CGAL::Delaunay_triangulation_3<K, Tds> Triangulation;
 
-      std::cerr << m_points.size () << " == " << m_indices.size () << " == " << m_status.size () << std::endl;
       std::vector<Point> points;
       std::vector<std::size_t> indices;
       std::vector<Point_status> status;
@@ -298,7 +326,6 @@ namespace internal {
       Triangulation dt (boost::make_transform_iterator(point_indices.begin(), On_the_fly_pair(points)),
                         boost::make_transform_iterator(point_indices.end(), On_the_fly_pair(points)));
 
-      std::cerr << "Points = " << points.size () << std::endl;
       for (typename Triangulation::Finite_facets_iterator it = dt.finite_facets_begin ();
            it != dt.finite_facets_end (); ++ it)
         {
@@ -312,9 +339,7 @@ namespace internal {
                   valid = false;
                   break;
                 }
-              //              std::cerr << f[i] << " ";
             }
-          //          std::cerr << std::endl;
           if (!valid)
             continue;
 
