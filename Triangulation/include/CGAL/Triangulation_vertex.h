@@ -79,6 +79,12 @@ public:
         return point_;
     }
 
+	    /// Returns the position in space of the vertex
+    Point & point()
+    {
+        return point_;
+    }
+
     const Data & data() const
     {
         return data_;

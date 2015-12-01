@@ -266,6 +266,17 @@ std::ostream& operator <<(std::ostream& os, const Point_d<R_>& p)
   return os;
 }
 
+template <class R_>
+std::istream& operator >>(std::istream& is, Point_d<R_>& p)
+{
+	int dimension;
+	is >> dimension;
+	for (int i = 0; i < dimension; ++i){
+		is >> p.rep()[i];
+	}
+	return is;
+}
+
 //template <class R_>
 //Vector_d<R_> operator+(const Vector_d<R_>& v,const Vector_d<R_>& w) const
 //{

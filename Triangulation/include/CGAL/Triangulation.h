@@ -606,6 +606,11 @@ public:
         return tds().new_vertex(p);
     }
 
+	Vertex_handle  new_vertex()
+	{
+		return tds().new_vertex();
+	}
+
     void set_neighbors(Full_cell_handle s, int i, Full_cell_handle s1, int j)
     {
         tds().set_neighbors(s, i, s1, j);
@@ -1276,6 +1281,7 @@ operator>>(std::istream & is, Triangulation<TT, TDS> & tr)
    return tr.tds().read_full_cells(is, vertices);
 }
 
+
 template < class TT, class TDS >
 std::ostream & 
 operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
@@ -1295,7 +1301,7 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
     // outputs dimensions and number of vertices
     size_t n = tr.number_of_vertices();
     if( is_ascii(os) )
-        os << tr.current_dimension() << std::endl << n << std::endl;
+        os << tr.current_dimension() << std::endl << n;
     else
     {
         write(os, tr.current_dimension());
@@ -1305,18 +1311,18 @@ operator<<(std::ostream & os, const Triangulation<TT, TDS> & tr)
     if( n == 0 )
         return os;
 
-    size_t i(0);
+    int i(0);
     // write the vertices
     std::map<Vertex_handle, int> index_of_vertex;
 
     // infinite vertex has index 0 (among all the vertices)
     index_of_vertex[tr.infinite_vertex()] = i++;
-    os << *tr.infinite_vertex();
+	os << std::endl << *tr.infinite_vertex();
     for( Vertex_iterator it = tr.vertices_begin(); it != tr.vertices_end(); ++it )
     {
         if( tr.is_infinite(it) )
             continue;
-        os << *it; // write the vertex
+        os << std::endl << *it; // write the vertex
         index_of_vertex[it] = i++;
     }
     CGAL_assertion( i == n+1 );
