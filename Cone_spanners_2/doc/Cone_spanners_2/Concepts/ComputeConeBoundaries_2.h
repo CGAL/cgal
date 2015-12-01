@@ -21,7 +21,7 @@ public:
     the cone boundaries will be computed exactly; otherwise, inexactly using an approximate PI=3.1415...
 	This kernel type also decides other types such as SpannerKernel::Point_2, SpannerKernel::Direction_2, etc.
 */
-typedef SpannerKernel                          kernel_type;
+typedef SpannerKernel                          Kernel_type;
 
 /// @}
 
