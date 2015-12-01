@@ -63,6 +63,10 @@ allowed, then \cgal code must use it instead of a \cgal version (which
 probably must be deprecated and phased out), trying not to break backward
 compatibility too much.
 
+A list of reasonnable Boost libraries to use is:
+Any, Array, Function, Graph, Optional, Property Map,
+Range, Smart Pointers, Tuple, Utility and Variant.
+
 \section secusing_version_macros Using the version-number and configuration macros and flags 
 
 Here is a short example on how these macros can be used. Assume you have some
