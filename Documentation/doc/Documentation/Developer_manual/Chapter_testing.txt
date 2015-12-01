@@ -18,12 +18,13 @@ Here is what you need:
 - <i>On Windows:</i> define the environment variable `MAKE_CMD`  (put the line `export MAKE_CMD=nmake` in your `$HOME/.bashrc` for VC++)
 - <i>On Windows:</i> define the environment variable `CMAKE_GENERATOR` (put the line `export CMAKE_GENERATOR='-GNMake Makefiles'`  in your `$HOME/.bashrc` for VC++)
 - go in the directory you want to test
-- Run `cgal_test_with_cmake`. This should run CMake, compile and run, and you can see what happened in the generated file `error.txt`.
+- Run `cgal_test_with_cmake` in the `test` and `examples` directories of the package. This should run CMake, compile and run, and you can see what happened in the generated file `error.txt`.
 
 \section fullTestsuite Running the Whole Testsuite
-We describe here how to proceed to the testing of a full copy of `master` or `any branch` creating a flat <i>release</i>.
+We describe here how to proceed to the testing of a full copy of `master` or any branch by creating a <i>flat release</i>
+(that is having a layout similar to a release rather than a branch layout with header files gathered by packages).
 
-The creation of the flat release is done using the script <code>create_internal_release</code> located in the directory `Scripts/developer_scripts`.
+The creation of the flat release is done using the script `create_internal_release` located in the directory `Scripts/developer_scripts`.
 Running the script with no argument will give the complete usage of this script. We only describe one way of using it.
 
 The prerequisite is to have a checkout of the branch we want to test.
