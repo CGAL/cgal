@@ -177,6 +177,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_polyhedron_item Scene_polyhedron_item.cpp ${statisticsPolyhedronUI_FILES})# Scene_polyhedron_item.moc)
   add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_polyhedron_transform_item.cpp )#Scene_polyhedron_transform_item.moc)
 
+  add_item(scene_segmented_image_item Scene_segmented_image_item.cpp)
+ 
   # special
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
 
@@ -213,6 +215,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)# Scene_points_with_normal_item.moc)
   target_link_libraries( scene_points_with_normal_item gl_splat)
   target_link_libraries( demo_framework gl_splat)
+  
   
 
 
