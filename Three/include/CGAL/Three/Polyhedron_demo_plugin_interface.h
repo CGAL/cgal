@@ -58,6 +58,9 @@ public:
   virtual bool applicable(QAction*) const = 0;
   //!The list of the actions of the plugin.
   virtual QList<QAction*> actions() const = 0;
+  //!If you need to do something when the plugin is closed, do it here
+  virtual void closure() {
+ }
 };
 }
 }

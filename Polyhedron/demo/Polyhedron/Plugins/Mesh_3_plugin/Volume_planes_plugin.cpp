@@ -80,7 +80,6 @@ private:
   boost::optional<DoubleConverter> fc;
   Viewer_interface* viewer;
 
-
   void getPixel(const QPoint& e) {
     float data[3];
     int vp[4];
@@ -165,6 +164,7 @@ public:
     return qobject_cast<Scene_segmented_image_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
+
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     this->scene = scene_interface;
     this->mw = mainWindow;
@@ -177,12 +177,17 @@ public:
     Viewer_interface* v = mw->findChild<Viewer_interface*>("viewer");
     CGAL_assertion(v != 0);
     pxr_.setViewer(v);
-
     createOrGetDockLayout();
 
   }
   QList<QAction*> actions() const {
     return QList<QAction*>() << planeSwitch;
+  }
+  virtual void closure()
+  {
+      QDockWidget* controlDockWidget = mw->findChild<QDockWidget*>("volumePlanesControl");
+      if(controlDockWidget)
+          controlDockWidget->hide();
   }
 public Q_SLOTS:
   void selectPlanes() {
@@ -301,7 +306,8 @@ private:
 
   QLayout* createOrGetDockLayout() {
     QLayout* layout = NULL;
-    QDockWidget* controlDockWidget = mw->findChild<QDockWidget*>("volumePlanesControl");
+    QDockWidget* controlDockWidget = mw->findChild<QDockWidget*>("volumePlanesControl");;
+
     if(!controlDockWidget) {
       controlDockWidget = new QDockWidget(mw);
       controlDockWidget->setObjectName("volumePlanesControl");
@@ -324,8 +330,11 @@ private:
       
       vbox->addWidget(text); vbox->addWidget(x);
       controlDockWidget->setWidget(content);
+      controlDockWidget->hide();
+
     } else {
       layout = controlDockWidget->findChild<QLayout*>("vpSliderLayout");
+      controlDockWidget->show();
     }
 
     return layout;

@@ -26,6 +26,10 @@ public:
   { }
 
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface);
+  virtual void closure()
+  {
+    dock_widget->hide();
+  }
   QList<QAction*> actions() const;
   bool applicable(QAction*) const;
 

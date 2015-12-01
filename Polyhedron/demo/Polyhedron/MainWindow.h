@@ -68,6 +68,9 @@ public:
    * `std::invalid_argument` if `fileinfo` specifies an invalid file*/
   CGAL::Three::Scene_item* load_item(QFileInfo fileinfo, CGAL::Three::Polyhedron_demo_io_plugin_interface*);
 
+Q_SIGNALS:
+  void on_closure();
+
 public Q_SLOTS:
   void updateViewerBBox();
   void open(QString);

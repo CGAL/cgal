@@ -190,7 +190,10 @@ public :
       mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
       connect(ui_widget.buttonBox, SIGNAL(accepted()), this, SLOT(on_dock_OK_clicked()));
     }
-
+    virtual void closure()
+    {
+      dock_widget->hide();
+    }
     bool applicable(QAction*) const
     {
         return true;

@@ -101,6 +101,10 @@ public:
     }
   }
 
+  virtual void closure()
+  {
+    dock_widget->hide();
+  }
 private:
 
   Scene_polyhedron_shortest_path_item::Selection_mode get_selection_mode() const;
@@ -301,5 +305,7 @@ void Polyhedron_demo_shortest_path_plugin::check_and_set_ids(Polyhedron* polyhed
     }
   }
 }
+
+
 
 #include "Shortest_path_plugin.moc"

@@ -88,6 +88,10 @@ public:
         connect(ui_widget.Partition_button,  SIGNAL(clicked()), this, SLOT(on_Partition_button_clicked()));   
         connect(ui_widget.SDF_button,  SIGNAL(clicked()), this, SLOT(on_SDF_button_clicked()));   
     }
+    virtual void closure()
+    {
+      dock_widget->hide();
+    }
     
     template<class SDFPropertyMap>
     void colorize_sdf(Scene_polyhedron_item* item, SDFPropertyMap sdf_values, std::vector<QColor>& color_vector);

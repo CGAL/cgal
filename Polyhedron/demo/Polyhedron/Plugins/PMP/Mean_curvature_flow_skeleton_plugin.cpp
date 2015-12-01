@@ -156,6 +156,11 @@ public:
             this, SLOT(on_actionItemAboutToBeDestroyed(CGAL::Three::Scene_item*)));
   }
 
+  virtual void closure()
+  {
+    dockWidget->hide();
+  }
+
   QList<QAction*> actions() const {
     return QList<QAction*>() << actionMCFSkeleton << actionConvert_to_medial_skeleton;
   }

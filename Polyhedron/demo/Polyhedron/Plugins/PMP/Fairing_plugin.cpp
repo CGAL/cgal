@@ -60,6 +60,10 @@ public:
     connect(ui_widget.Fair_button,  SIGNAL(clicked()), this, SLOT(on_Fair_button_clicked()));  
     connect(ui_widget.Refine_button,  SIGNAL(clicked()), this, SLOT(on_Refine_button_clicked()));
   }
+  virtual void closure()
+  {
+    dock_widget->hide();
+  }
 
 public Q_SLOTS:
   void fairing_action() {

@@ -306,6 +306,10 @@ public:
   using Polyhedron_demo_plugin_helper::init;
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m);
 
+  virtual void closure()
+  {
+    dock_widget->hide();
+  }
   Scene_hole_visualizer* get_hole_visualizer(Scene_polyhedron_item* poly_item) {
       return visualizers[poly_item];
   }
