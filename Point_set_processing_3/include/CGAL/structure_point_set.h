@@ -1265,24 +1265,39 @@ namespace internal {
 // ----------------------------------------------------------------------------
 
 /// \ingroup PkgPointSetProcessing
-/// TODO documentation
+  
+/// This is an implementation of the Point Set Structuring algorithm. This
+/// algorithm takes advantage of a set of detected planes: it detects adjacency
+/// relationships between planes and resamples the detected planes, edges and
+/// corners to produce a structured point set.
+///
+/// The size parameter `epsilon` is used both for detecting adjacencies and for
+/// setting the sampling density of the structured point set.
+///
+/// @tparam InputIterator Iterator over input points
+///
+/// @tparam OutputIterator Type of the output iterator. The type of the objects
+/// put in it is `std::pair<Traits::Point_3, Traits::Vector_3>`.  Note that the
+/// user may use a <A HREF="http://www.boost.org/libs/iterator/doc/function_output_iterator.html">function_output_iterator</A>
+/// to match specific needs.
+///
+/// @tparam Traits A model of `EfficientRANSACTraits`
+  
 
 // This variant requires the kernel.
-template <typename InputIterator,
-          typename OutputIterator,
-          typename EfficientRANSACTraits,
-          typename Kernel
+template <typename OutputIterator,
+          typename InputIterator,
+          typename Traits
 >
 OutputIterator
 structure_point_set (InputIterator first,  ///< iterator over the first input point.
                      InputIterator beyond, ///< past-the-end iterator over the input points.
                      OutputIterator output, ///< output iterator where output points are put
-                     Shape_detection_3::Efficient_RANSAC<EfficientRANSACTraits>&
+                     Shape_detection_3::Efficient_RANSAC<Traits>&
                      shape_detection, ///< shape detection engine
-                     double radius, ///< attraction radius
-                     const Kernel& /*kernel*/) ///< geometric traits.
+                     double epsilon) ///< size parameter
 {
-  internal::Point_set_structuring<EfficientRANSACTraits> pss
+  internal::Point_set_structuring<Traits> pss
     (first, beyond, shape_detection);
 
   pss.run (radius);
@@ -1292,29 +1307,6 @@ structure_point_set (InputIterator first,  ///< iterator over the first input po
   return output;
 }
 
-/// @cond SKIP_IN_MANUAL
-// This variant deduces the kernel from the iterator type.
-template <typename InputIterator,
-          typename OutputIterator,
-          typename EfficientRANSACTraits
->
-OutputIterator
-structure_point_set (InputIterator first,    ///< iterator over the first input point.
-                     InputIterator beyond,   ///< past-the-end iterator over the input points.
-                     OutputIterator output, ///< output iterator where output points are put
-                     Shape_detection_3::Efficient_RANSAC<EfficientRANSACTraits>&
-                     shape_detection, ///< shape detection engine
-                     double radius) ///< attraction radius
-{
-  typedef typename std::iterator_traits<InputIterator>::value_type Point;
-  typedef typename Kernel_traits<Point>::Kernel Kernel;
-  return structure_point_set (
-    first,beyond, output,
-    shape_detection,
-    radius,
-    Kernel());
-}
-/// @endcond
 
 
 } //namespace CGAL
