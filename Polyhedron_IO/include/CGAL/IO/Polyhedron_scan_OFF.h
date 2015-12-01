@@ -114,6 +114,7 @@ Polyhedron_scan_OFF<HDS>:: operator()( HDS& target) {
             scanner.scan_facet_vertex_index( index, i);
             B.add_vertex_to_facet( index);
         }
+        //TO DO : Insert read color
         B.end_facet();
         scanner.skip_to_next_facet( i);
     }

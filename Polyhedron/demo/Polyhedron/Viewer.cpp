@@ -806,7 +806,17 @@ void Viewer::drawVisualHints()
         rendering_program.release();
         vao[0].release();
     }
-
+bool has_text = false;
+    if(has_text)
+    {
+    TextRenderer *textRenderer = new TextRenderer();
+    for(int i=0; i<3; i++)
+    {
+        float x = 30*i, y = 120, z=0;
+        textRenderer->addText(new TextItem(x,y,z,"Under Testing"));
+    }
+    textRenderer->draw(this);
+    }
 }
 
 void Viewer::resizeGL(int w, int h)
@@ -1131,3 +1141,32 @@ void Viewer::wheelEvent(QWheelEvent* e)
     else
         QGLViewer::wheelEvent(e);
 }
+
+void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
+{
+    QPainter painter(viewer);
+    QRect rect;
+    qglviewer::Camera* camera = viewer->camera();
+    //fbo = new QOpenGLFramebufferObject(viewer->width(), viewer->height(),QOpenGLFramebufferObject::Depth);
+    //fbo->bind();
+    //viewer->glEnable(GL_DEPTH_TEST);
+    //viewer->glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    Q_FOREACH(TextItem* item, textItems)
+    {
+        qglviewer::Vec src(item->position()->x(), item->position()->y(),item->position()->z());
+        rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
+                     camera->projectedCoordinatesOf(src).y-item->height()/2,
+                     item->width(),
+                     item->height());
+        painter.setFont(item->font());
+        painter.drawText(rect, item->text());
+    }
+
+
+}
+
+ void TextRenderer::addText(TextItem *ti)
+ {
+     textItems.push_back(ti);
+ }
+

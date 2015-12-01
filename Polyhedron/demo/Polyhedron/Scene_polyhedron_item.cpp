@@ -36,6 +36,9 @@
 #include <boost/foreach.hpp>
 #include <boost/container/flat_map.hpp>
 
+
+#include <QPainter>
+
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 
@@ -832,6 +835,7 @@ void Scene_polyhedron_item::set_erase_next_picked_facet(bool b)
 }
 
 void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
+
     if(!are_buffers_filled)
     {
         compute_normals_and_vertices();
@@ -862,6 +866,9 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
         vaos[Facets]->release();
     else
         vaos[Gouraud_Facets]->release();
+
+    viewer->qglColor(Qt::black);
+    viewer->drawText(viewer->width()/2, viewer->height()/2, "CENTER");
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list

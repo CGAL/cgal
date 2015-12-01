@@ -11,6 +11,8 @@
 
 #include <QGLViewer/qglviewer.h>
 #include <QPoint>
+#include <QFont>
+#include <QOpenGLFramebufferObject>
 
 // forward declarations
 class QWidget;
@@ -92,6 +94,7 @@ protected:
       std::vector<float> *normals;
       std::vector<float> *colors;
   };
+
   //! The buffers used to draw the axis system
   QOpenGLBuffer buffers[3];
   //! The VAO used to draw the axis system
@@ -133,4 +136,50 @@ protected:
   double prev_radius;
 }; // end class Viewer
 
+//!This class holds the properties of each line of text to be rendered.
+class TextItem{
+public :
+    TextItem(float p_x, float p_y, float p_z, QString p_text, QFont font = QFont(), QColor p_color = Qt::black)
+        :x(p_x), y(p_y), z(p_z), m_text(p_text), m_font(font), color(p_color)
+    {
+       QFontMetrics fm(m_font);
+       _width = fm.width(m_text);
+       _height = fm.height();
+    }
+    QString text()const {return m_text;}
+    //!Returns the position of the center of the text, in world coordinates.
+    QVector3D *position(){return new QVector3D(x,y,z);}
+    float width(){return _width;}
+    float height(){return _height;}
+    QFont font(){return m_font;}
+private:
+    float x;
+    float y;
+    float z;
+    float _width;
+    float _height;
+    QString m_text;
+    QFont m_font;
+    QColor color;
+};//end class TextItem
+
+//!This class draws all the textItems.
+class TextRenderer{
+public:
+    TextRenderer()
+    {
+        textItems.resize(0);
+    }
+    /*!
+      * Projects each textItem from the world coordinates to the Screen coordinates
+      * and draws it.
+     */
+    void draw(CGAL::Three::Viewer_interface* viewer);
+    void addText(TextItem* ti);
+
+private:
+    std::vector<TextItem*> textItems;
+    QOpenGLFramebufferObject *fbo;
+
+};//end class TextRenderer
 #endif // VIEWER_H
