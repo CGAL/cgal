@@ -1302,7 +1302,7 @@ structure_point_set (InputIterator first,  ///< iterator over the first input po
   internal::Point_set_structuring<Traits> pss
     (first, beyond, shape_detection);
 
-  pss.run (radius);
+  pss.run (epsilon);
 
   pss.get_output (output);
 
