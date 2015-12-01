@@ -1274,6 +1274,8 @@ namespace internal {
 /// The size parameter `epsilon` is used both for detecting adjacencies and for
 /// setting the sampling density of the structured point set.
 ///
+/// For more details, please refer to \cgalCite{cgal:la-srpss-13}.
+///
 /// @tparam InputIterator Iterator over input points
 ///
 /// @tparam OutputIterator Type of the output iterator. The type of the objects

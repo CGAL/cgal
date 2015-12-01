@@ -389,9 +389,11 @@ points that are on sharp edges:
 
 The function `structure_point_set()` generates a structured version of the
 input point set. It requires that a shape detection algorithm is first applied
-to the point set (see \ref Chapter_Point_Set_Shape_Detection). Each detected
-plane is regularly resampled at a given density. In addition, edges and corners
-are estimated and sampled.
+to the point set (see \ref Chapter_Point_Set_Shape_Detection). It is based on
+the article \cgalCite{cgal:la-srpss-13}.
+
+Each detected plane is regularly resampled at a given density. In addition,
+edges and corners are estimated and sampled.
 
 
 
