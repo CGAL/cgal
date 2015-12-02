@@ -56,14 +56,21 @@ template <typename Structuring>
 struct Structure_coherence {
 
   Structuring& structuring;
-
-  Structure_coherence(Structuring& structuring)
-    : structuring (structuring)
+  double max_length;
+  
+  Structure_coherence(Structuring& structuring,
+                      double max_length)
+    : structuring (structuring), max_length (max_length)
   {}
 
   template <typename Vertex_handle>
   bool operator()(const Vertex_handle& p, const Vertex_handle& q, const Vertex_handle& r) const
   {
+    if (CGAL::squared_distance (p->point (), q->point ()) > max_length * max_length ||
+        CGAL::squared_distance (p->point (), r->point ()) > max_length * max_length ||
+        CGAL::squared_distance (q->point (), r->point ()) > max_length * max_length)
+      return true;
+    
     Facet f = {{ p->info(), q->info(), r->info() }};
     return (structuring.facet_coherence (f) == 0);
   }
@@ -121,7 +128,7 @@ int main (int argc, char* argv[])
   Triangulation_3 dt (boost::make_transform_iterator(point_indices.begin(), On_the_fly_pair(structured_pts)),
                       boost::make_transform_iterator(point_indices.end(), On_the_fly_pair(structured_pts)));
 
-  Structure_coherence<Structuring> filter (pss);
+  Structure_coherence<Structuring> filter (pss, 3 * op.cluster_epsilon);
   
   Reconstruction R(dt, filter);
   R.run (5., 0.52);
