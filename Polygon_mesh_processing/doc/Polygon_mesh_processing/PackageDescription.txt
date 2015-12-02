@@ -128,7 +128,6 @@ and provides a list of the parameters that are used in this package.
 
 \todo make template parameter names uniform in other packages using BGL. Here we chose PolygonMesh as template parameter.
 It can be made short to PM. And TriangleMesh (or TM) specifies when the parameter should be a triangle mesh.
-\todo document `BGL/include/CGAL/boost/graph/selection.h`
 \todo document `BGL/include/CGAL/boost/graph/split_graph_into_polylines.h`
 \todo add in BGL `clear(pmesh)` and use it in `keep_largest_connected_components(pmesh, 0);`
 \todo document BGL/include/CGAL/boost/graph/Dual.h and remove the example from dont_submit
