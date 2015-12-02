@@ -1,7 +1,7 @@
 include( polyhedron_demo_macros )
- if ( Boost_VERSION GREATER 103400 )
+
+if ( Boost_VERSION GREATER 103400 )
   remove_definitions(-DQT_STATICPLUGIN)
-  add_item(scene_segmented_image_item Scene_segmented_image_item.cpp)
 
     qt5_wrap_cpp( VOLUME_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_thread.h )
     qt5_wrap_cpp( VOLUME_MOC_OUTFILES ${CMAKE_CURRENT_SOURCE_DIR}/Volume_plane_interface.h )
