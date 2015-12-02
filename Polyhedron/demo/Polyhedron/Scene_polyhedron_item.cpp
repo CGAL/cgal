@@ -315,11 +315,13 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
         program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
         buffers[Edges_vertices].release();
 
-        buffers[Edges_color].bind();
-        buffers[Edges_color].allocate(color_lines.data(),
-                            static_cast<int>(color_lines.size()*sizeof(float)));
+
+
        if(!is_monochrome)
        {
+           buffers[Edges_color].bind();
+           buffers[Edges_color].allocate(color_lines.data(),
+                               static_cast<int>(color_lines.size()*sizeof(float)));
            program->enableAttributeArray("colors");
            program->setAttributeBuffer("colors",GL_FLOAT,0,3);
            buffers[Edges_color].release();

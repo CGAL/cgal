@@ -106,9 +106,9 @@ void Viewer::draw()
 {
     if(!painter->isActive())
     {
-        //painter->begin(this);
-        setBackgroundColor(Qt::white);
+        painter->begin(this);
     }
+    painter->fillRect(this->rect(),backgroundColor());
   glEnable(GL_DEPTH_TEST);
   d->draw_aux(false, this);
 }
@@ -755,20 +755,6 @@ void Viewer::drawVisualHints()
         painter->begin(this);
     }
     QGLViewer::drawVisualHints();
-    bool has_text = true;
-    if(has_text)
-    {
-
-    TextRenderer *textRenderer = new TextRenderer();
-    for(int i=0; i<3; i++)
-    {
-        float x = 0.3*i, y = 0.10, z=0.1;
-        textRenderer->addText(new TextItem(x,y,z,"Under Testing"));
-    }
-    textRenderer->draw(this);
-    textRenderer = 0;
-    delete textRenderer;
-    }
     if(axis_are_displayed)
     {
         QMatrix4x4 mvpMatrix;
@@ -830,7 +816,22 @@ void Viewer::drawVisualHints()
         rendering_program.release();
         vao[0].release();
     }
-    //painter->end();
+    bool has_text = true;
+    if(has_text)
+    {
+
+    TextRenderer *textRenderer = new TextRenderer();
+    for(int i=0; i<3; i++)
+    {
+        float x = 0.3*i, y = 0.10, z=0.1;
+        textRenderer->addText(new TextItem(x,y,z,"Under Testing"));
+    }
+    textRenderer->draw(this);
+    textRenderer = 0;
+    delete textRenderer;
+    }
+
+    painter->end();
     }
 
 void Viewer::resizeGL(int w, int h)
