@@ -94,10 +94,10 @@ namespace internal {
     };
 
     struct On_the_fly_pair{
-      std::vector<Point>& points;
+      const std::vector<Point>& points;
       typedef std::pair<Point, std::size_t> result_type;
 
-      On_the_fly_pair(std::vector<Point>& points) : points(points) {}
+      On_the_fly_pair(const std::vector<Point>& points) : points(points) {}
   
       result_type
       operator()(std::size_t i) const
@@ -190,12 +190,30 @@ namespace internal {
     
     virtual ~Point_set_structuring ()
     {
-      clear ();
     }
 
-    void clear ()
+    void clean ()
     {
-
+      std::vector<Point> points;
+      std::vector<Vector> normals;
+      std::vector<std::size_t> indices;
+      std::vector<Point_status> status;
+      
+      for (std::size_t i = 0; i < m_points.size (); ++ i)
+        if (m_status[i] != SKIPPED)
+          {
+            points.push_back (m_points[i]);
+            normals.push_back (m_normals[i]);
+            status.push_back (m_status[i]);
+            if (m_status[i] == RESIDUS)
+              status.back () = PLANE;
+            indices.push_back (m_indices[i]);
+          }
+      
+      m_points.swap (points);
+      m_normals.swap (normals);
+      m_indices.swap (indices);
+      m_status.swap (status);
     }
 
     std::size_t number_of_points () const { return m_points.size (); }
@@ -274,22 +292,29 @@ namespace internal {
 
 #ifdef CGAL_PSP3_VERBOSE
       std::cerr << " -> Done" << std::endl;
+
+      std::cerr << "Cleaning data set... " << std::endl;
+#endif
+      
+      clean ();
+
+#ifdef CGAL_PSP3_VERBOSE
+      std::cerr << " -> Done" << std::endl;
 #endif
     }
 
 
     template <typename OutputIterator>
-    void get_output (OutputIterator pts)
+    void get_output (OutputIterator pts) const
     {
       for (std::size_t i = 0; i < m_points.size (); ++ i)
-        if (m_status[i] != SKIPPED)
-          *(pts ++) = std::make_pair (m_points[i], m_normals[i]);
+        *(pts ++) = std::make_pair (m_points[i], m_normals[i]);
     }
 
     template <typename OutputIterator>
     void get_detailed_output (OutputIterator pts_planes,
                               OutputIterator pts_edges,
-                              OutputIterator pts_corners)
+                              OutputIterator pts_corners) const
     {
       for (std::size_t i = 0; i < m_points.size (); ++ i)
         if (m_status[i] == PLANE || m_status[i] == RESIDUS)
@@ -302,7 +327,7 @@ namespace internal {
 
     template <typename OutputIterator>
     void get_coherent_delaunay_facets (OutputIterator facets,
-                                       double epsilon)
+                                       double epsilon) const
     {
       double d_DeltaEdge = std::sqrt (2.) * epsilon;
       
@@ -312,24 +337,11 @@ namespace internal {
       typedef CGAL::Triangulation_data_structure_3<Vb,Cb> Tds;
       typedef CGAL::Delaunay_triangulation_3<K, Tds> Triangulation;
 
-      std::vector<Point> points;
-      std::vector<std::size_t> indices;
-      std::vector<Point_status> status;
-      for (std::size_t i = 0; i < m_points.size (); ++ i)
-        if (m_status[i] != SKIPPED)
-          {
-            points.push_back (m_points[i]);
-            status.push_back (m_status[i]);
-            if (m_status[i] == RESIDUS)
-              status.back () = PLANE;
-            indices.push_back (m_indices[i]);
-          }
-
       std::vector<std::size_t> point_indices(boost::counting_iterator<std::size_t>(0),
-                                             boost::counting_iterator<std::size_t>(points.size()));
+                                             boost::counting_iterator<std::size_t>(m_points.size()));
 
-      Triangulation dt (boost::make_transform_iterator(point_indices.begin(), On_the_fly_pair(points)),
-                        boost::make_transform_iterator(point_indices.end(), On_the_fly_pair(points)));
+      Triangulation dt (boost::make_transform_iterator(point_indices.begin(), On_the_fly_pair(m_points)),
+                        boost::make_transform_iterator(point_indices.end(), On_the_fly_pair(m_points)));
 
       for (typename Triangulation::Finite_facets_iterator it = dt.finite_facets_begin ();
            it != dt.finite_facets_end (); ++ it)
@@ -339,33 +351,31 @@ namespace internal {
             f[i] = it->first->vertex ((it->second + 1 + i)%4)->info();
 
 
-          if (CGAL::squared_distance (points[f[0]], points[f[1]]) > d_DeltaEdge * d_DeltaEdge
-              || CGAL::squared_distance (points[f[0]], points[f[2]]) > d_DeltaEdge * d_DeltaEdge
-              || CGAL::squared_distance (points[f[1]], points[f[2]]) > d_DeltaEdge * d_DeltaEdge)
+          if (CGAL::squared_distance (m_points[f[0]], m_points[f[1]]) > d_DeltaEdge * d_DeltaEdge
+              || CGAL::squared_distance (m_points[f[0]], m_points[f[2]]) > d_DeltaEdge * d_DeltaEdge
+              || CGAL::squared_distance (m_points[f[1]], m_points[f[2]]) > d_DeltaEdge * d_DeltaEdge)
             continue;
           
-          if (facet_coherence (f, indices, status) == 2)
+          if (facet_coherence (f) == 2)
             *(facets ++) = f;
         }
     }
     
-    unsigned int facet_coherence (CGAL::cpp11::array<std::size_t, 3>& f,
-                                  const std::vector<std::size_t>& indices,
-                                  const std::vector<Point_status>& status) const
+    unsigned int facet_coherence (CGAL::cpp11::array<std::size_t, 3>& f) const
     {
       // O- FREEFORM CASE
-      if (status[f[0]] == POINT &&
-          status[f[1]] == POINT &&
-          status[f[2]] == POINT)
+      if (m_status[f[0]] == POINT &&
+          m_status[f[1]] == POINT &&
+          m_status[f[2]] == POINT)
         return 1;
       
       // 1- PLANAR CASE
-      if (status[f[0]] == PLANE &&
-          status[f[1]] == PLANE &&
-          status[f[2]] == PLANE)
+      if (m_status[f[0]] == PLANE &&
+          m_status[f[1]] == PLANE &&
+          m_status[f[2]] == PLANE)
         {
-          if (indices[f[0]] == indices[f[1]] &&
-              indices[f[0]] == indices[f[2]])
+          if (m_indices[f[0]] == m_indices[f[1]] &&
+              m_indices[f[0]] == m_indices[f[2]])
             return 2;
           else
             return 0;
@@ -373,12 +383,12 @@ namespace internal {
 
       for (std::size_t i = 0; i < 3; ++ i)
         {
-          Point_status sa = status[f[(i+1)%3]];
-          Point_status sb = status[f[(i+2)%3]];
-          Point_status sc = status[f[(i+3)%3]];
-          std::size_t a = indices[f[(i+1)%3]];
-          std::size_t b = indices[f[(i+2)%3]];
-          std::size_t c = indices[f[(i+3)%3]];
+          Point_status sa = m_status[f[(i+1)%3]];
+          Point_status sb = m_status[f[(i+2)%3]];
+          Point_status sc = m_status[f[(i+3)%3]];
+          std::size_t a = m_indices[f[(i+1)%3]];
+          std::size_t b = m_indices[f[(i+2)%3]];
+          std::size_t c = m_indices[f[(i+3)%3]];
 
           // O- FREEFORM CASE
           if (sa == POINT && sb == POINT && sc == PLANE)
