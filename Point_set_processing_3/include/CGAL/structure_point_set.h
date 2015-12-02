@@ -74,6 +74,7 @@ namespace internal {
     typedef Shape_detection_3::Shape_base<Traits> Shape; 
     typedef Shape_detection_3::Plane<Traits> Plane_shape;
 
+    enum Point_status { POINT, RESIDUS, PLANE, EDGE, CORNER, SKIPPED };
 
   private:
 
@@ -104,8 +105,6 @@ namespace internal {
         return result_type(points[i],i);
       }
     };
-    
-    enum Point_status { POINT, RESIDUS, PLANE, EDGE, CORNER, SKIPPED };
     
     struct Edge
     {
@@ -198,6 +197,12 @@ namespace internal {
     {
 
     }
+
+    std::size_t number_of_points () const { return m_points.size (); }
+    const Point& point (std::size_t i) const { return m_points[i]; }
+    const Vector& normal (std::size_t i) const { return m_normals[i]; }
+    const std::size_t& index (std::size_t i) const { return m_indices[i]; }
+    const Point_status& status (std::size_t i) const { return m_status[i]; }
 
     void run (double epsilon, double attraction_factor = 3.)
     {
@@ -329,43 +334,42 @@ namespace internal {
       for (typename Triangulation::Finite_facets_iterator it = dt.finite_facets_begin ();
            it != dt.finite_facets_end (); ++ it)
         {
-          bool valid = true;
           CGAL::cpp11::array<std::size_t, 3> f;
           for (std::size_t i = 0; i < 3; ++ i)
-            {
-              f[i] = it->first->vertex ((it->second + 1 + i)%4)->info();
-              if (f[i] == minus1)
-                {
-                  valid = false;
-                  break;
-                }
-            }
-          if (!valid)
-            continue;
+            f[i] = it->first->vertex ((it->second + 1 + i)%4)->info();
+
 
           if (CGAL::squared_distance (points[f[0]], points[f[1]]) > d_DeltaEdge * d_DeltaEdge
               || CGAL::squared_distance (points[f[0]], points[f[2]]) > d_DeltaEdge * d_DeltaEdge
               || CGAL::squared_distance (points[f[1]], points[f[2]]) > d_DeltaEdge * d_DeltaEdge)
             continue;
           
-          if (facet_is_coherent (f, indices, status))
+          if (facet_coherence (f, indices, status) == 2)
             *(facets ++) = f;
         }
     }
     
-
-  private:
-
-    bool facet_is_coherent (CGAL::cpp11::array<std::size_t, 3>& f,
-                            const std::vector<std::size_t>& indices,
-                            const std::vector<Point_status>& status) const
+    unsigned int facet_coherence (CGAL::cpp11::array<std::size_t, 3>& f,
+                                  const std::vector<std::size_t>& indices,
+                                  const std::vector<Point_status>& status) const
     {
+      // O- FREEFORM CASE
+      if (status[f[0]] == POINT &&
+          status[f[1]] == POINT &&
+          status[f[2]] == POINT)
+        return 1;
+      
       // 1- PLANAR CASE
       if (status[f[0]] == PLANE &&
           status[f[1]] == PLANE &&
           status[f[2]] == PLANE)
-        return (indices[f[0]] == indices[f[1]] &&
-                indices[f[0]] == indices[f[2]]);
+        {
+          if (indices[f[0]] == indices[f[1]] &&
+              indices[f[0]] == indices[f[2]])
+            return 2;
+          else
+            return 0;
+        }
 
       for (std::size_t i = 0; i < 3; ++ i)
         {
@@ -376,21 +380,39 @@ namespace internal {
           std::size_t b = indices[f[(i+2)%3]];
           std::size_t c = indices[f[(i+3)%3]];
 
+          // O- FREEFORM CASE
+          if (sa == POINT && sb == POINT && sc == PLANE)
+            return 1;
+          if (sa == POINT && sb == PLANE && sc == PLANE)
+            {
+              if (b == c)
+                return 1;
+              else
+                return 0;
+            }
+          
           // 2- CREASE CASES
           if (sa == EDGE && sb == EDGE && sc == PLANE)
-            return
-              ((c == m_edges[a].planes[0] ||
-                c == m_edges[a].planes[1]) &&
-               (c == m_edges[b].planes[0] ||
-                c == m_edges[b].planes[1]));
+            {
+              if ((c == m_edges[a].planes[0] ||
+                   c == m_edges[a].planes[1]) &&
+                  (c == m_edges[b].planes[0] ||
+                   c == m_edges[b].planes[1]))
+                return 2;
+              else
+                return 0;
+            }
 
           if (sa == EDGE && sb == PLANE && sc == PLANE)
-            return
-              (b == c &&
-               (b == m_edges[a].planes[0] ||
-                b == m_edges[a].planes[1]) &&
-               (c == m_edges[a].planes[0] ||
-                c == m_edges[a].planes[1]));
+            {
+              if (b == c &&
+                  (b == m_edges[a].planes[0] ||
+                   b == m_edges[a].planes[1]))
+                return 2;
+              else
+                return 0;
+            }
+
 
           // 3- CORNER CASES
           if (sc == CORNER)
@@ -403,7 +425,7 @@ namespace internal {
                        m_edges[a].planes[0] != m_edges[b].planes[1] &&
                        m_edges[a].planes[1] != m_edges[b].planes[0] &&
                        m_edges[a].planes[1] != m_edges[b].planes[1]))
-                    return false;
+                    return 0;
                   
                   for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
                     {
@@ -416,24 +438,27 @@ namespace internal {
                       else if (m_corners[c].planes[j] == m_edges[b].planes[1])
                         b1 = true;
                     }
-                  return (a0 && a1 && b0 && b1);
+                  if (a0 && a1 && b0 && b1)
+                    return 2;
+                  else
+                    return 0;
                 }
               else if (sa == PLANE && sb == PLANE)
                 {
                   if (a != b)
-                    return false;
+                    return 0;
 
                   for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
                     if (m_corners[c].planes[j] == a)
-                      return true;
+                      return 2;
                   
-                  return false;
+                  return 0;
                 }
               else if (sa == PLANE && sb == EDGE)
                 {
                   bool pa = false, b0 = false, b1 = false;
                   if (a != m_edges[b].planes[0] && a != m_edges[b].planes[1])
-                    return false;
+                    return 0;
                   
                   for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
                     {
@@ -444,13 +469,16 @@ namespace internal {
                       else if (m_corners[c].planes[j] == m_edges[b].planes[1])
                         b1 = true;
                     }
-                  return (pa && b0 && b1);
+                  if (pa && b0 && b1)
+                    return 2;
+                  else
+                    return 0;
                 }
               else if (sa == EDGE && sb == PLANE)
                 {
                   bool a0 = false, a1 = false, pb = false;
                   if (b != m_edges[a].planes[0] && b != m_edges[a].planes[1])
-                    return false;
+                    return 0;
                   
                   for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
                     {
@@ -461,15 +489,21 @@ namespace internal {
                       else if (m_corners[c].planes[j] == m_edges[a].planes[1])
                         a1 = true;
                     }
-                  return (a0 && a1 && pb);
+                  if (a0 && a1 && pb)
+                    return 2;
+                  else
+                    return 0;
                 }
               else
-                return false;
+                return 0;
             }
         }
       
-      return false;
+      return 0;
     }
+
+
+  private:
 
     void project_inliers ()
     {
@@ -856,9 +890,8 @@ namespace internal {
               for (std::size_t k = 0; k < division_tab[j].size(); ++ k)
                 {
                   std::size_t inde = division_tab[j][k];
-                  Point proj = line.projection (m_points[inde]);
 
-                  if (CGAL::squared_distance (proj, m_points[inde]) < d_DeltaEdge * d_DeltaEdge)
+                  if (CGAL::squared_distance (line, m_points[inde]) < d_DeltaEdge * d_DeltaEdge)
                     m_status[inde] = SKIPPED; // Deactive points too close (except best, see below)
                   
                   double distance = CGAL::squared_distance (perfect, m_points[inde]);
