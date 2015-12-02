@@ -53,7 +53,7 @@ int main (int argc, char** argv)
   CGAL::structure_point_set (points.begin (), points.end (), // input points
                              std::back_inserter (structured_pts),
                              ransac, // shape detection engine
-                             0.01); // epsilon for structuring points
+                             0.05); // epsilon for structuring points
 
   std::cerr << structured_pts.size ()
             << " structured point(s) generated." << std::endl;

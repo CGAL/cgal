@@ -257,7 +257,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
         CGAL::internal::Point_set_structuring<Traits> structuring (points->begin (), points->end (),
                                                                    shape_detection);
         
-        structuring.run (op.epsilon);
+        structuring.run (op.cluster_epsilon);
 
         Scene_points_with_normal_item *pts_full = new Scene_points_with_normal_item;
         Scene_points_with_normal_item *pts_planes = new Scene_points_with_normal_item;
@@ -271,7 +271,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
 
         std::vector<CGAL::cpp11::array<std::size_t, 3> > facets;
-        structuring.get_coherent_delaunay_facets (std::back_inserter (facets), op.epsilon * 5);
+        structuring.get_coherent_delaunay_facets (std::back_inserter (facets), op.cluster_epsilon * 2);
         
         Scene_polygon_soup_item *soup_item = new Scene_polygon_soup_item;
   
