@@ -786,7 +786,7 @@ private:
   {
     // Note that the new only happens inside an if() inside the macro
     // So it would be a mistake to put the new before the macro
-    static CGAL_THREAD_LOCAL_VARIABLE(Self,z,(new Lazy_rep_0<AT, ET, E2A>()));
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(Self,z,(new Lazy_rep_0<AT, ET, E2A>()));
     return z;
   }
 

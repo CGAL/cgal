@@ -15,21 +15,21 @@
 
 #  ifdef CGAL_USE_BOOST_THREAD
 
-#    define CGAL_THREAD_LOCAL_VARIABLE(TYPE, VAR, ARG1)               \
-       boost::thread_specific_ptr<TYPE> VAR##_ptr;                   \
+#    define CGAL_STATIC_THREAD_LOCAL_VARIABLE(TYPE, VAR, ARG1)               \
+       static boost::thread_specific_ptr<TYPE> VAR##_ptr;                   \
        if(VAR##_ptr.get() == NULL) {VAR##_ptr.reset(new TYPE(ARG1));} \
        TYPE& VAR =  * VAR##_ptr.get()
 
 #  else
 
-#    define CGAL_THREAD_LOCAL_VARIABLE(TYPE, VAR, ARG1)       \
-       thread_local TYPE VAR(ARG1)
+#    define CGAL_STATIC_THREAD_LOCAL_VARIABLE(TYPE, VAR, ARG1)       \
+       static thread_local TYPE VAR(ARG1)
 
 #  endif
 
 #else 
 
-#  define CGAL_THREAD_LOCAL_VARIABLE(TYPE, VAR,ARG1) TYPE VAR(ARG1)
+#  define CGAL_STATIC_THREAD_LOCAL_VARIABLE(TYPE, VAR,ARG1) static TYPE VAR(ARG1)
 
 #endif
 

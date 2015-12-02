@@ -73,7 +73,7 @@ private:
 
   static int& prime_int_internal()
   {
-    static CGAL_THREAD_LOCAL_VARIABLE(int, prime_int, 67111067);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, prime_int, 67111067);
     return prime_int;
   }
   
@@ -84,7 +84,7 @@ private:
   
   static double& prime_internal()
   {
-    static CGAL_THREAD_LOCAL_VARIABLE(double, prime, 67111067.0);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(double, prime, 67111067.0);
     return prime;
   }
 
@@ -94,7 +94,7 @@ private:
   
   static double& prime_inv_internal()
   {
-    static CGAL_THREAD_LOCAL_VARIABLE(double, prime_inv, 0.000000014900672045640400859667452463541);
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(double, prime_inv, 0.000000014900672045640400859667452463541);
     return prime_inv;
   }
 
