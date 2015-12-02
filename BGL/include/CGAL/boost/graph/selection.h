@@ -204,8 +204,6 @@ of an halfedge in `hedges`. Faces are put exactly once in `out`.
 \param hg the graph containing the input halfedges.
 \param out faces added to the selection are added exactly once in `out`
 */
-
-// select all faces incident to the target vertex of halfedges in `hedges`
 template <class HalfedgeRange, class FaceGraph, class OutputIterator>
 OutputIterator
 select_incident_faces(
