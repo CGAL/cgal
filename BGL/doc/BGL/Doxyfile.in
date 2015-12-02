@@ -4,6 +4,7 @@ PROJECT_NAME =  "CGAL ${CGAL_FULL_VERSION} - CGAL and the Boost Graph Library"
 INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Euler_operations.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/iterator.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Graph_geometry.h \
-         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/helpers.h
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/helpers.h \
+         ${CMAKE_SOURCE_DIR}/BGL/include/CGAL/boost/graph/selection.h
 
 ALIASES +=  "bgllink{1}=<a href=\"http://www.boost.org/libs/graph/doc/\1.html\"><code>\1</code></a>"

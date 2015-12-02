@@ -65,11 +65,32 @@ extract_selection_boundary(
 }
 } //end of namespace internal
 
+
+/*!
+\ingroup PkgBGLSelectionFct
+Augments a selection with faces of `fg` that are adjacent
+to a face in `selection`. This process is applied `k` times considering
+all faces added in the previous steps.
+Two faces are said to be adjacent if they share a vertex or an edge.
+Each new face added in the selection is added exactly once in `out`.
+\tparam FaceRange a range of face descriptors, model of `Range`.
+          Its iterator type is `InputIterator`.
+\tparam FaceGraph a model of `FaceGraph`.
+\tparam IsFaceSelectedPMap a model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%face_descriptor`
+        as key type and `bool` as value type.
+\tparam OutputIterator an output iterator accepting face descriptors.
+\param selection the initial selection of faces that will be dilated.
+\param fg the graph containing the selected faces.
+\param k the number of times the dilation procedure is iteratively applied.
+\param is_selected indicates if a face is part of the selection. It is updated by the function
+       to accomodate new faces added to the selection.
+\param out new faces added to the selection are added exactly once in `out`.
+*/
 template <class FaceRange, class FaceGraph, class IsFaceSelectedPMap, class OutputIterator>
 OutputIterator
 dilate_face_selection(
   const FaceRange& selection,
-  FaceGraph& graph,
+  FaceGraph& fg,
   unsigned int k,
   IsFaceSelectedPMap is_selected,
   OutputIterator out)
@@ -83,7 +104,7 @@ dilate_face_selection(
   {
     //extract faces on the boundary of the selection
     std::vector<halfedge_descriptor> selection_boundary_halfedges;
-    internal::extract_selection_boundary(current_selection, graph, is_selected,
+    internal::extract_selection_boundary(current_selection, fg, is_selected,
                                          std::back_inserter(selection_boundary_halfedges));
 
     if (selection_boundary_halfedges.empty()) break;
@@ -92,13 +113,13 @@ dilate_face_selection(
     std::set<face_descriptor> new_selection_set;
     BOOST_FOREACH(halfedge_descriptor hd, selection_boundary_halfedges)
     {
-      face_descriptor fd=face(hd, graph);
+      face_descriptor fd=face(hd, fg);
       while( !get(is_selected,fd) )
       {
         new_selection_set.insert(fd);
-        hd=opposite( next(hd, graph), graph );
-        fd=face(hd, graph);
-        if ( face(hd, graph)==GT::null_face() ) break;
+        hd=opposite( next(hd, fg), fg );
+        fd=face(hd, fg);
+        if ( face(hd, fg)==GT::null_face() ) break;
       }
     }
 
@@ -170,12 +191,26 @@ erode_face_selection(
   return out;
 }
 
+
+/*!
+\ingroup PkgBGLSelectionFct
+discovers and puts in `out` all faces incident to the target vertex
+of an halfedge in `hedges`. Faces are put exactly once in `out`.
+\tparam HalfedgeRange a range of halfedge descriptors, model of `Range`.
+          Its iterator type is `InputIterator`.
+\tparam HalfedgeGraph a model of `HalfedgeGraph`.
+\tparam OutputIterator an output iterator accepting face descriptors.
+\param hedges the range a halfedge descriptors consider during the face selection.
+\param hg the graph containing the input halfedges.
+\param out faces added to the selection are added exactly once in `out`
+*/
+
 // select all faces incident to the target vertex of halfedges in `hedges`
 template <class HalfedgeRange, class FaceGraph, class OutputIterator>
 OutputIterator
 select_incident_faces(
   const HalfedgeRange& hedges,
-  FaceGraph& graph,
+  FaceGraph& hg,
   OutputIterator out)
 {
   typedef boost::graph_traits<FaceGraph> GT;
@@ -187,13 +222,13 @@ select_incident_faces(
   BOOST_FOREACH(halfedge_descriptor hd, hedges)
   {
     halfedge_descriptor first = hd;
-    face_descriptor fd=face(hd, graph);
+    face_descriptor fd=face(hd, hg);
     do
     {
-      if ( face(hd, graph)!=GT::null_face() && selection_set.insert(fd).second)
+      if ( face(hd, hg)!=GT::null_face() && selection_set.insert(fd).second)
         *out++=fd;
-      hd=opposite( next(hd, graph), graph );
-      fd=face(hd, graph);
+      hd=opposite( next(hd, hg), hg );
+      fd=face(hd, hg);
     }while( hd!=first );
   }
 
