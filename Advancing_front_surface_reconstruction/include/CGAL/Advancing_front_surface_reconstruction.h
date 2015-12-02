@@ -1339,9 +1339,9 @@ namespace CGAL {
               // If the triangle has a high perimeter,
               // we do not want to consider it as a good candidate.
 
-              if(filter(facet_it.first->vertex(n_i1)->point(),
-                        facet_it.first->vertex(n_i2)->point(),
-                        facet_it.first->vertex(n_i3)->point())){
+              if(filter(facet_it.first->vertex(n_i1),
+                        facet_it.first->vertex(n_i2),
+                        facet_it.first->vertex(n_i3))){
                 tmp = HUGE_VAL;
               }
 
@@ -1487,9 +1487,9 @@ namespace CGAL {
                     coord_type value = smallest_radius_delaunay_sphere(c, index);
 
                     // we might not want the triangle, for example because it is too large
-                    if(filter(c->vertex((index+1)&3)->point(),
-                              c->vertex((index+2)&3)->point(),
-                              c->vertex((index+3)&3)->point())){
+                    if(filter(c->vertex((index+1)&3),
+                              c->vertex((index+2)&3),
+                              c->vertex((index+3)&3))){
                       value = min_value;
                     }
 
