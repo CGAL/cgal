@@ -17,7 +17,7 @@ find_package(CGAL COMPONENTS Qt5)
 include( ${CGAL_USE_FILE} )
 
 # Find Qt5 itself
-find_package(Qt5 QUIET COMPONENTS OpenGL)
+find_package(Qt5 5.4 QUIET COMPONENTS OpenGL)
 if(Qt5_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
 endif(Qt5_FOUND)
@@ -36,7 +36,7 @@ if (CIMG_INCLUDE_DIR)
   include_directories(${CIMG_INCLUDE_DIR})
   MESSAGE(STATUS "CImg library found, the demo can load point set from image files.")
 else()
-  MESSAGE(STATUS "CImg library was not found, the demo will not be able to load point set. "
+  MESSAGE(STATUS "Warning: CImg library was not found, the demo will not be able to load point set from image files. "
                  "Try setting the environment variable CIMG_INC_DIR to point to the path of the directory containing CImg.h.")
 endif()
 
@@ -106,7 +106,7 @@ else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
   endif()
 
   if(NOT Qt5_FOUND)
-    set(RS2_MISSING_DEPS "Qt5, ${RS2_MISSING_DEPS}")
+    set(RS2_MISSING_DEPS "Qt5.4, ${RS2_MISSING_DEPS}")
   endif()
 
   if(NOT OPENGL_FOUND)
