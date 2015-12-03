@@ -59,7 +59,7 @@ typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
     }
 
 
-    operator TM_halfedge_descriptor() 
+    operator TM_halfedge_descriptor() const
     {
       return hd;
     }
@@ -207,14 +207,14 @@ typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   int index;
   
 public:
-  template <typename EdgeRange, typename HalfedgeAsVertexIndexMap>
-  Seam_mesh(const TM& tm, EdgeRange er, typename boost::graph_traits<TM>::halfedge_descriptor smhd, HalfedgeAsVertexIndexMap hvipm)
+  template <typename EdgeRange, typename VertexIndexMap>
+  Seam_mesh(const TM& tm, EdgeRange er, typename boost::graph_traits<TM>::halfedge_descriptor smhd, VertexIndexMap& vipm)
     : tm(tm), seam_edges(er.begin(), er.end()), index(0)
   {
     Self& mesh=*this;
      // Initialize all indices with -1
   BOOST_FOREACH(TM_halfedge_descriptor hd, halfedges(tm)){
-    put(hvipm,hd,-1);
+    put(vipm,halfedge_descriptor(hd),-1);
   }
 
   halfedge_descriptor bhd(smhd);
@@ -230,9 +230,9 @@ public:
     assert(! ohd.seam);
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(ohd,mesh)){
       if(! hd.seam){
-        TM_halfedge_descriptor shd(hd);
-        if(get(hvipm,shd) == -1){
-          put(hvipm,shd,index);
+        vertex_descriptor vd(hd);
+        if(get(vipm,vd) == -1){
+          put(vipm,vd,index);
         }
       }
       if(hd == *prev){
@@ -249,13 +249,14 @@ public:
   // we look at the not yet marked halfedges
   
   BOOST_FOREACH(TM_halfedge_descriptor hd, halfedges(tm)){
-    if(get(hvipm,hd) == -1){
+    if(get(vipm,vertex_descriptor(halfedge_descriptor(hd))) == -1){
       BOOST_FOREACH(halfedge_descriptor hav, halfedges_around_target(hd,tm)){
-        put(hvipm,TM_halfedge_descriptor(hav),index);
+        put(vipm,vertex_descriptor(halfedge_descriptor(hav)), index);
       }
       ++index;
     }
   } 
+
   }
 
   // this is the number of different halfedge indices

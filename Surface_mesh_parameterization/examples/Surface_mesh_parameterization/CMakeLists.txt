@@ -59,6 +59,7 @@ if ( CGAL_FOUND )
     include( ${EIGEN3_USE_FILE} ) 
 
   create_single_source_cgal_program( "blob.cpp" )
+  create_single_source_cgal_program( "discrete_authalic.cpp" )
   create_single_source_cgal_program( "debug.cpp" )
   create_single_source_cgal_program( "Authalic_parameterization.cpp" )
   create_single_source_cgal_program( "Mesh_cutting_parameterization.cpp" )

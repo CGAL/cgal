@@ -97,6 +97,8 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
 
     qt5_use_modules(${prj} OpenGL Xml Svg)
 
+    qt5_use_modules(${prj} OpenGL Xml Svg )
+    
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${prj} )
 
     set(VTK_LIBS "")

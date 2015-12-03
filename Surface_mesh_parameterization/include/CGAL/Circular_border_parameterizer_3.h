@@ -75,8 +75,6 @@ private:
   typedef typename Traits::Point_2  Point_2;
   typedef typename Traits::Error_code Error_code;
 
-  VPM vpm;
-
 // Public operations
 public:
     /// Destructor of base class should be virtual.
@@ -86,10 +84,14 @@ public:
 
     /// Assign to mesh's border vertices a 2D position (i.e.\ a (u,v) pair)
     /// on border's shape. Mark them as <i>parameterized</i>.
-  template <typename HalfedgeUVmap>
+  template <typename VertexUVmap, typename VertexParameterizedMap>
   Error_code
-  parameterize_border(ParameterizationMesh_3& mesh, halfedge_descriptor bhd, HalfedgeUVmap uvmap)
+  parameterize_border(ParameterizationMesh_3& mesh,
+                      halfedge_descriptor bhd,
+                      VertexUVmap uvmap,
+                      VertexParameterizedMap vpmap)
   {
+    VPM vpm = get(vertex_point, mesh);
     // TODO  Nothing to do if no border
     //if (! is_border(bhd,tmesh)){
     // return Parameterizer_traits_3<Adaptor>::ERROR_BORDER_TOO_SHORT;
@@ -106,23 +108,16 @@ public:
     do {
       halfedge_descriptor hd = *circ;
       --circ;
-      vertex_descriptor vd = target(hd,mesh);
+      vertex_descriptor vd = target(opposite(hd,mesh),mesh);
       
       double angle = len*tmp; // current position on the circle in radians
       
       // map vertex on unit circle
       Point_2 uv(0.5+0.5*std::cos(-angle),0.5+0.5*std::sin(-angle));
-      BOOST_FOREACH(halfedge_descriptor hat, halfedges_around_target(hd,mesh)){
-        // We do not set the uv value of halfedges on the main border or seam edges
-        if(hat != hd){
-          put(uvmap, hat, uv);
-        }
-      }
-      // Mark vertex as "parameterized"  
-      // TODO
-      //  mesh.set_vertex_parameterized(hd, true);
+      put(uvmap, vd, uv);
+      put(vpmap, vd, true);
       
-      len += CGAL::sqrt(squared_distance(get(vpm, source(hd,mesh)), get(vpm,vd)));
+      len += CGAL::sqrt(squared_distance(get(vpm, target(hd,mesh)), get(vpm,vd)));
     }while(circ != done);
 
     return Parameterizer_traits_3<ParameterizationMesh_3>::OK;
@@ -144,7 +139,7 @@ public:
     /// Compute the total length of the border
     double compute_border_length(const ParameterizationMesh_3& tmesh, halfedge_descriptor bhd){
 
-      vpm = get(CGAL::vertex_point,tmesh);
+      VPM vpm = get(CGAL::vertex_point,tmesh);
       double len = 0.0;
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,tmesh)){
         len += CGAL::sqrt(squared_distance(get(vpm, source(hd,tmesh)), get(vpm, target(hd,tmesh))));

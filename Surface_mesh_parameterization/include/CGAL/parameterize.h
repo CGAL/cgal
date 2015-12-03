@@ -60,22 +60,42 @@ parameterize(ParameterizationMesh_3& mesh)  ///< 3D mesh, model of Parameterizat
 /// The result is a pair (u,v) of parameter coordinates for each vertex of the input mesh.
 ///
 /// One-to-one mapping may be guaranteed or
-/// not, depending on the chosen ParametizerTraits_3 algorithm.
+/// not, depending on the chosen Parameterizer algorithm.
 ///
 /// \pre `mesh` must be a surface with one connected component.
 /// \pre `mesh` must be a triangular mesh.
 /// \pre The mesh border must be mapped onto a convex polygon
 ///   (for fixed border parameterizations).
 ///
-  template <class ParameterizationMesh_3, class ParameterizerTraits_3, class HD, class Huvmap, typename HalfedgeAsVertexIndexMap>
-typename Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
-parameterize(ParameterizationMesh_3& mesh,          ///< 3D mesh, model of ParameterizationMesh_3
-             ParameterizerTraits_3 parameterizer,    ///< Parameterization method for `mesh`
+template <class TriangleMesh, class Parameterizer, class HD, class VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
+typename Parameterizer_traits_3<TriangleMesh>::Error_code
+parameterize(TriangleMesh& mesh,
+             Parameterizer parameterizer,
              HD bhd,
-             Huvmap huvm,
-             HalfedgeAsVertexIndexMap himap)
+             VertexUVmap uvm,
+             VertexIndexMap vimap,
+             VertexParameterizedMap vpm)
 {
-  return parameterizer.parameterize(mesh, bhd, huvm, himap);
+  return parameterizer.parameterize(mesh, bhd, uvm, vimap, vpm);
+}
+
+
+template <class TM>
+class Seam_mesh;
+
+
+template <class TriangleMesh, class Parameterizer, class HD, class VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
+typename Parameterizer_traits_3<Seam_mesh<TriangleMesh> >::Error_code
+parameterize(Seam_mesh<TriangleMesh>& mesh,
+             Parameterizer parameterizer,
+             HD bhd,
+             VertexUVmap uvm,
+             VertexIndexMap vimap,
+             VertexParameterizedMap vpm)
+{
+  std::cerr << "treat Seam_mesh"<< std::endl;
+  Seam_mesh_uv_map<TriangleMesh,VertexUVmap>  putter(mesh,uvm);
+  return parameterizer.parameterize(mesh, bhd, putter, vimap, vpm);
 }
 
 

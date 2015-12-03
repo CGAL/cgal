@@ -153,11 +153,12 @@ public:
   /// \pre `mesh` must be a triangular mesh.
   /// \pre The mesh border must be mapped onto a convex polygon.
   
-  template <typename HalfedgeUVmap, typename HalfedgeAsVertexIndexMap>
+  template <typename VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
   Error_code  parameterize(TriangleMesh& mesh,
                            halfedge_descriptor,
-                           HalfedgeUVmap,
-                           HalfedgeAsVertexIndexMap hvimap);
+                           VertexUVmap,
+                           VertexIndexMap vimap,
+                           VertexParameterizedMap vpm);
   
   // Protected operations
 protected:
@@ -174,24 +175,24 @@ protected:
   /// \pre Vertices must be indexed.
   /// \pre A, Bu and Bv must be allocated.
   /// \pre Border vertices must be parameterized.
-  template <typename HalfedgeUVmap, typename HalfedgeAsVertexIndexMap >
+  template <typename VertexUVmap, typename VertexIndexMap >
   void  initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
                                             const TriangleMesh& tmesh,
                                             halfedge_descriptor bhd,
-                                            HalfedgeUVmap uvmap,
-                                            HalfedgeAsVertexIndexMap hvimap)
+                                            VertexUVmap uvmap,
+                                            VertexIndexMap vimap)
   {
     // AF: loop over border halfedges
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,tmesh)){
       // AF: get the halfedge-as-vertex index
       // Get vertex index in sparse linear system
-      int index = get(hvimap, opposite(next(hd,tmesh),tmesh));
+      int index = get(vimap, target(opposite(next(hd,tmesh),tmesh),tmesh));
       // Write a diagonal coefficient of A
       A.set_coef(index, index, 1, true /*new*/);
       //std::cerr << index << "  " << index << " 1" << std::endl;
       // get the halfedge uv
       // Write constant in Bu and Bv
-      Point_2 uv = get(uvmap, opposite(next(hd,tmesh),tmesh));
+      Point_2 uv = get(uvmap, target(opposite(next(hd,tmesh),tmesh),tmesh));
       Bu[index] = uv.x();
       Bv[index] = uv.y();
     }
@@ -212,15 +213,15 @@ protected:
   /// \pre Line i of A must contain only zeros.
   // TODO: check if this must be virtual 
   // virtual 
-  template <typename HalfedgeAsVertexIndexMap>
+  template <typename VertexIndexMap>
   Error_code setup_inner_vertex_relations(Matrix& A,
                                           Vector& Bu,
                                           Vector& Bv,
                                           const TriangleMesh& mesh,
                                           vertex_descriptor vertex,
-                                          HalfedgeAsVertexIndexMap hvimap)
+                                          VertexIndexMap vimap)
   {
-    int i = get(hvimap,halfedge(vertex,mesh));
+    int i = get(vimap,vertex);
   
     // circulate over vertices around 'vertex' to compute w_ii and w_ijs
     // use halfedge_around_target to get the right "vertex" if it is on a seam
@@ -236,7 +237,7 @@ protected:
       w_ii -= w_ij;
     
       // Get j index
-      int j = get(hvimap, opposite(*v_j,mesh));
+      int j = get(vimap, target(opposite(*v_j,mesh),mesh));
     
       // Set w_ij in matrix
       A.set_coef(i,j, w_ij, true /*new*/);
@@ -302,10 +303,11 @@ private:
 // - `mesh` must be a triangular mesh.
 // - The mesh border must be mapped onto a convex polygon.
 template <class TriangleMesh, class Border_param, class Sparse_LA> 
-template <typename HalfedgeUVmap, typename HalfedgeAsVertexIndexMap>
+template <typename VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
 typename Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::Error_code
 Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
-parameterize(TriangleMesh& mesh, halfedge_descriptor bhd, HalfedgeUVmap uvmap, HalfedgeAsVertexIndexMap hvimap)
+parameterize(TriangleMesh& mesh, halfedge_descriptor bhd, VertexUVmap uvmap, VertexIndexMap vimap,
+                           VertexParameterizedMap vpm)
 {
 
 #ifdef DEBUG_TRACE
@@ -328,7 +330,7 @@ parameterize(TriangleMesh& mesh, halfedge_descriptor bhd, HalfedgeUVmap uvmap, H
 
     // Compute (u,v) for border vertices
     // and mark them as "parameterized"
-    status = get_border_parameterizer().parameterize_border(mesh,bhd,uvmap);
+    status = get_border_parameterizer().parameterize_border(mesh,bhd,uvmap,vpm);
 #ifdef DEBUG_TRACE
     std::cerr << "  border vertices parameterization: " << timer.time() << " seconds." << std::endl;
     timer.reset();
@@ -347,7 +349,7 @@ parameterize(TriangleMesh& mesh, halfedge_descriptor bhd, HalfedgeUVmap uvmap, H
     // @todo Fixed_border_parameterizer_3 should remove border vertices
     // from the linear systems in order to have a symmetric positive definite
     // matrix for Tutte Barycentric Mapping and Discrete Conformal Map algorithms.
-    initialize_system_from_mesh_border (A, Bu, Bv, mesh, bhd, uvmap, hvimap);
+    initialize_system_from_mesh_border (A, Bu, Bv, mesh, bhd, uvmap, vimap);
 
     // AF: no change, as this are only concerns inner vertices
     // Fill the matrix for the inner vertices v_i: compute A's coefficient
@@ -366,7 +368,7 @@ parameterize(TriangleMesh& mesh, halfedge_descriptor bhd, HalfedgeUVmap uvmap, H
             status = setup_inner_vertex_relations(A, Bu, Bv,
                                                   mesh,
                                                   v,
-                                                  hvimap);
+                                                  vimap);
             if (status != Base::OK)
                 return status;
         }
@@ -404,10 +406,15 @@ parameterize(TriangleMesh& mesh, halfedge_descriptor bhd, HalfedgeUVmap uvmap, H
       // inner vertices only
       if( main_border.find(v) == main_border.end() )
         {
+          int index = get(vimap,v);
+          put(uvmap,v,Point_2(Xu[index],Xv[index]));
+          put(vpm,v,true);
+          /*
           BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(v,mesh)){
-            int index = get(hvimap,hd);
+            int index = get(vimap,hd);
             put(uvmap,hd,Point_2(Xu[index],Xv[index]));
           }
+          */
         }
     }
 #ifdef DEBUG_TRACE
@@ -496,12 +503,12 @@ check_parameterize_preconditions(TriangleMesh& amesh)
 // - Border vertices must be parameterized.
 template<class TriangleMesh, class Border_param, class Sparse_LA>
 inline
-template<class HalfedgeUVmap>
+template<class VertexUVmap>
 void Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
 initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
                                     const TriangleMesh& tmesh,
                                     halfedge_descriptor bhd,
-                                    HalfedgeUVmap uvmap)
+                                    VertexUVmap uvmap)
 #endif
 
 #if 0
@@ -515,7 +522,7 @@ initialize_system_from_mesh_border (Matrix& A, Vector& Bu, Vector& Bv,
 // - Line i of A must contain only zeros.
 template<class TriangleMesh, class Border_param, class Sparse_LA>
 inline
-template <typename HalfedgeAsVertexIndexMap>
+template <typename VertexIndexMap>
 typename Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::Error_code
 Fixed_border_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
 setup_inner_vertex_relations(Matrix& A,
@@ -523,7 +530,7 @@ setup_inner_vertex_relations(Matrix& A,
                              Vector& ,
                              const TriangleMesh& mesh,
                              vertex_descriptor vertex,
-                             HalfedgeAsVertexIndexMap hvimap)
+                             VertexIndexMap vimap)
 
 // Copy Xu and Xv coordinates into the (u,v) pair of each surface vertex.
 // AF: this only concerns vertices NOT on the border

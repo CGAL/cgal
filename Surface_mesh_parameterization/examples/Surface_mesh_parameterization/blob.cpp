@@ -20,6 +20,7 @@ typedef CGAL::Seam_mesh<SurfaceMesh>        Mesh;
 
 typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
 typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
 typedef boost::graph_traits<SurfaceMesh>::edge_descriptor SM_edge_descriptor;
 typedef boost::graph_traits<SurfaceMesh>::halfedge_descriptor SM_halfedge_descriptor;
@@ -79,31 +80,29 @@ int main(int argc, char * argv[])
 #endif
 
   // The 2D points of the uv parametrisation will be written into this map  
-  typedef std::map<halfedge_descriptor,Point_2> H_uv_map;
-  typedef boost::associative_property_map<H_uv_map> H_uv_pmap;
-  H_uv_map huvm; H_uv_pmap huvpm(huvm);
+  typedef std::map<vertex_descriptor,Point_2> uv_map;
+  typedef boost::associative_property_map<uv_map> uv_pmap;
+  uv_map uvm; uv_pmap uvpm(uvm);
   
   // When we have seams vertices are "duplicated"
   // We give halfedges that have as target the same duplicated vertex the same index
-  typedef std::map<halfedge_descriptor,int> H_vertex_index_map;
-  typedef boost::associative_property_map<H_vertex_index_map> H_vertex_index_pmap;
-  H_vertex_index_map hvim; H_vertex_index_pmap hvipm(hvim);
+  typedef std::map<vertex_descriptor,int> vertex_index_map;
+  typedef boost::associative_property_map<vertex_index_map> vertex_index_pmap;
+  vertex_index_map vim; vertex_index_pmap vipm(vim);
+
+  typedef std::map<vertex_descriptor,bool> vertex_parameterized_map;
+  typedef boost::associative_property_map<vertex_parameterized_map> vertex_parameterized_pmap;
+  vertex_parameterized_map vpam; vertex_parameterized_pmap vpapm(vpam);
 
   SM_halfedge_descriptor smhd = halfedge(seam.front(),sm);    
-  Mesh mesh(sm, seam, smhd, hvipm);
+  Mesh mesh(sm, seam, smhd,vipm);
 
   halfedge_descriptor bhd(smhd);
   bhd = opposite(bhd,mesh); // a halfedge on the virtual hole
 
 
-  // check that all halfedges are marked
-  BOOST_FOREACH(SM_halfedge_descriptor hd, halfedges(sm)){
-    assert(get(hvipm,hd) != -1);
-    assert(get(hvipm,halfedge_descriptor(hd)) != -1);
-  }
+  Parameterizer::Error_code err = CGAL::parameterize(mesh, Parameterizer(), bhd, uvpm, vipm, vpapm);
 
-
-  Parameterizer::Error_code err = CGAL::parameterize(mesh, Parameterizer(), bhd, huvpm, hvipm);
   switch(err) {
   case Parameterizer::OK: // Success
     break;
@@ -120,17 +119,16 @@ int main(int argc, char * argv[])
     break;
   };
     
-  BOOST_FOREACH(SM_face_descriptor fd, faces(sm)){  
-    SM_halfedge_descriptor hd = halfedge(fd,sm);
-    std::cout << "4 " << huvm[hd].x() << " " << huvm[hd].y() << " 0 ";
-    hd = next(hd,sm);
-    BOOST_FOREACH(SM_halfedge_descriptor hd2, halfedges_around_face(hd,sm)){
-      std::cout << huvm[hd2].x() << " " << huvm[hd2].y() << " 0 ";
+
+  BOOST_FOREACH(face_descriptor fd, faces(mesh)){  
+    halfedge_descriptor hd = halfedge(fd,mesh);
+    std::cout << "4 " << uvm[target(hd,mesh)].x() << " " << uvm[target(hd,mesh)].y() << " 0 ";
+    hd = next(hd,mesh);
+    BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd,mesh)){
+      std::cout << uvm[vd].x() << " " << uvm[vd].y() << " 0 ";
     }
     std::cout << std::endl;
   }
-  
-  return EXIT_SUCCESS;
-  
 
+  return EXIT_SUCCESS;
 }
