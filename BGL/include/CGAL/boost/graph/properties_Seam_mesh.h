@@ -100,14 +100,11 @@ public:
 
   inline friend void put(const Seam_mesh_uv_map<P,Map>& pm, key_type k, const value_type& v)
   {
-    std::cerr << "put" << std::endl;
     typedef typename boost::graph_traits<typename Seam_mesh_uv_map<P,Map>::Mesh>::halfedge_descriptor halfedge_descriptor;
     BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(halfedge(k,pm.mesh),pm.mesh)){
       if(! hd.seam){
-        std::cerr << "  forward put" << std::endl;
         put(pm.map,target(hd,pm.mesh),v);
       } else {
-        std::cerr << " do not forward put as on seam" << std::endl;
       }
     }
   }
