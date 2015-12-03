@@ -31,6 +31,7 @@ class QWidget;
 class QMouseEvent;
 class QKeyEvent;
 class QOpenGLShaderProgram;
+class TextRenderer;
 
 //! \file Viewer_interface.h
 #include <CGAL/Three/Viewer_config.h> // for VIEWER_EXPORT
@@ -65,9 +66,14 @@ public:
   };
   /*!
   * \brief painter is used to draw text on the screen.
-  * The painter is what draws 2D elements over the 3D scene. It can be used to display some text on the screen.
+  * The painter is what draws on screen. It needs to be maintained when the viewer is used to draw things.
   */
   QPainter *painter;
+  /*!
+   * \brief textRenderer is used to display text on the screen.
+   * The textRenderer uses the painter tu display 2D text over the 3D Scene. It has a list containing the TextItems to display.
+   */
+  TextRenderer *textRenderer;
 
   Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(), parent) {}
   virtual ~Viewer_interface() {}

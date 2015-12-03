@@ -10,6 +10,7 @@
 
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
@@ -40,7 +41,30 @@
 #include <QPainter>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
-
+typedef Polyhedron::Traits Traits;
+typedef Polyhedron::Facet Facet;
+typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
+typedef Polyhedron::Halfedge_handle Halfedge_handle;
+struct Face_info {
+    Polyhedron::Halfedge_handle e[3];
+    bool is_external;
+};
+typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
+P_traits>        Vb;
+typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
+P_traits>          Fb1;
+typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
+typedef CGAL::No_intersection_tag                                    Itag;
+typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
+TDS,
+Itag>             CDTbase;
+typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
+typedef Polyhedron::Traits	    Kernel;
+typedef Kernel::Point_3	    Point;
+typedef Kernel::Vector_3	    Vector;
+typedef Polyhedron::Facet_iterator Facet_iterator;
+typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
 
 typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
@@ -82,6 +106,7 @@ void delete_aabb_tree(Scene_polyhedron_item* item)
         item->setProperty(aabb_property_name, QVariant());
     }
 }
+
 
 template<typename TypeWithXYZ, typename ContainerWithPushBack>
 void push_back_xyz(const TypeWithXYZ& t,
@@ -373,6 +398,40 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
     normals_gouraud.resize(0);
     std::vector<float>(normals_gouraud).swap(normals_gouraud);
     are_buffers_filled = true;
+
+    CGAL::set_halfedgeds_items_id(*poly);
+
+    QFont font;
+    font.setBold(true);
+    Q_FOREACH(Polyhedron::Vertex_const_handle vh, vertices(*poly))
+    {
+        const Point& p = vh->point();
+        viewer->textRenderer->addText((float)p.x(), (float)p.y(), (float)p.z(), QString("%1").arg(vh->id()), font, Qt::red);
+
+    }
+
+    Q_FOREACH(boost::graph_traits<Polyhedron>::edge_descriptor e, edges(*poly))
+    {
+        const Point& p1 = source(e, *poly)->point();
+        const Point& p2 = target(e, *poly)->point();
+        viewer->textRenderer->addText((float)(p1.x()+p2.x())/2, (float)(p1.y()+p2.y())/2, (float)(p1.z()+p2.z())/2, QString("%1").arg(e.halfedge()->id()/2), font, Qt::green);
+    }
+
+    Q_FOREACH(Polyhedron::Facet_handle fh, faces(*poly))
+    {
+        double x(0), y(0), z(0);
+        int total(0);
+        Q_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(fh->halfedge(), *poly))
+        {
+            x+=vh->point().x();
+            y+=vh->point().y();
+            z+=vh->point().z();
+            ++total;
+        }
+
+        viewer->textRenderer->addText((float)x/total, (float)y/total, (float)z/total, QString("%1").arg(fh->id()), font, Qt::blue);
+    }
+
 }
 
 void

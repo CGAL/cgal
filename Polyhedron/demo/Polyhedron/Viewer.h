@@ -140,7 +140,7 @@ protected:
 class TextItem{
 public :
     TextItem(float p_x, float p_y, float p_z, QString p_text, QFont font = QFont(), QColor p_color = Qt::black)
-        :x(p_x), y(p_y), z(p_z), m_text(p_text), m_font(font), color(p_color)
+        :x(p_x), y(p_y), z(p_z), m_text(p_text), m_font(font), m_color(p_color)
     {
        QFontMetrics fm(m_font);
        _width = fm.width(m_text);
@@ -152,6 +152,7 @@ public :
     float width(){return _width;}
     float height(){return _height;}
     QFont font(){return m_font;}
+    QColor color() {return m_color;}
 private:
     float x;
     float y;
@@ -160,7 +161,7 @@ private:
     float _height;
     QString m_text;
     QFont m_font;
-    QColor color;
+    QColor m_color;
 };//end class TextItem
 
 //!This class draws all the textItems.
@@ -176,6 +177,7 @@ public:
      */
     void draw(CGAL::Three::Viewer_interface* viewer);
     void addText(TextItem* ti);
+    void addText(float p_x, float p_y, float p_z, QString p_text, QFont font = QFont(), QColor p_color = Qt::black);
 
 private:
     std::vector<TextItem*> textItems;

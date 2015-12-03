@@ -34,6 +34,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->inFastDrawing = true;
   d->inDrawWithNames = false;
   d->shader_programs.resize(NB_OF_PROGRAMS);
+  textRenderer = new TextRenderer();
   setShortcut(EXIT_VIEWER, 0);
   setShortcut(DRAW_AXIS, 0);
   setKeyDescription(Qt::Key_T,
@@ -824,6 +825,7 @@ void Viewer::drawVisualHints()
         glDisable(GL_DEPTH_TEST);
     painter->endNativePainting();
     //HERE : draw the text
+    textRenderer->draw(this);
     }
 
     painter->end();
@@ -1172,7 +1174,17 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
                      item->width(),
                      item->height());
         painter->setFont(item->font());
-        painter->drawText(rect, item->text());
+        painter->setPen(QPen(item->color()));
+        QPoint pouaing(camera->projectedCoordinatesOf(src).x,
+                       camera->projectedCoordinatesOf(src).y);
+        bool found;
+        qglviewer::Vec pUp =viewer->camera()->pointUnderPixel(pouaing, found);
+        qglviewer::Vec pos_point = qglviewer::Vec(item->position()->x(), item->position()->y(), item->position()->z());
+        float dist =(pUp.x-pos_point.x) * (pUp.x-pos_point.x) +  (pUp.y-pos_point.y) * (pUp.y-pos_point.y) + (pUp.z-pos_point.z) * (pUp.z-pos_point.z);
+
+    //    qDebug()<<item->text()<<":    dist = "<<dist<<", rad2 = "<<viewer->sceneRadius() * viewer->sceneRadius()/10.0;
+        if( dist < viewer->sceneRadius() * viewer->sceneRadius()/10000.0)
+            painter->drawText(rect, item->text());
     }
 
 
@@ -1183,3 +1195,7 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
      textItems.push_back(ti);
  }
 
+ void TextRenderer::addText(float p_x, float p_y, float p_z, QString p_text, QFont font , QColor p_color )
+ {
+     textItems.push_back(new TextItem(p_x, p_y, p_z, p_text, font, p_color));
+ }
