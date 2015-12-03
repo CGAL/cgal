@@ -86,6 +86,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
       #now write IMAGE_PATH
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "${IMAGE_PATH_VALUES}\n")
 
+      set(CGAL_PACKAGE_DOC_DIR "${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/")
       configure_file(${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME}/Doxyfile.in 
         ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
       
