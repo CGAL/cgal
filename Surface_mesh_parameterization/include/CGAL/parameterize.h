@@ -127,6 +127,7 @@ parameterize(Seam_mesh<TriangleMesh>& mesh,
              VertexIndexMap vimap,
              VertexParameterizedMap vpm)
 {
+  mesh.initialize_vertex_index_map(bhd,vimap);
   Seam_mesh_uv_map<TriangleMesh,VertexUVmap>  putter(mesh,uvm);
   return parameterizer.parameterize(mesh, bhd, putter, vimap, vpm);
 }

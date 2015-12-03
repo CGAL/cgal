@@ -217,56 +217,57 @@ typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   int index;
   
 public:
-  template <typename EdgeRange, typename VertexIndexMap>
-  Seam_mesh(const TM& tm, EdgeRange er, typename boost::graph_traits<TM>::halfedge_descriptor smhd, VertexIndexMap& vipm)
+  template <typename EdgeRange>
+  Seam_mesh(const TM& tm, EdgeRange er) 
     : tm(tm), seam_edges(er.begin(), er.end()), index(0)
+    {}
+
+  template <typename VertexIndexMap>
+  void initialize_vertex_index_map(halfedge_descriptor bhd, VertexIndexMap& vipm)
   {
     Self& mesh=*this;
-     // Initialize all indices with -1
-  BOOST_FOREACH(TM_halfedge_descriptor hd, halfedges(tm)){
-    put(vipm,halfedge_descriptor(hd),-1);
-  }
-
-  halfedge_descriptor bhd(smhd);
-  bhd = opposite(bhd,mesh);
-  // Walk along the seam which may contain real border edges
-  CGAL::Halfedge_around_face_circulator<Self> hafc(bhd,mesh), prev(hafc), done;
-  ++hafc;
-  done = hafc;
-  do {
-    halfedge_descriptor ohd = opposite(*hafc,mesh);
-    TM_halfedge_descriptor tohd(ohd);
-    seam_vertices.insert(target(tohd,tm));
-    assert(! ohd.seam);
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(ohd,mesh)){
-      if(! hd.seam){
-        vertex_descriptor vd(hd);
-        if(get(vipm,vd) == -1){
-          put(vipm,vd,index);
+    // Initialize all indices with -1
+    BOOST_FOREACH(TM_halfedge_descriptor hd, halfedges(tm)){
+      put(vipm,halfedge_descriptor(hd),-1);
+    }
+    
+    // Walk along the seam which may contain real border edges
+    CGAL::Halfedge_around_face_circulator<Self> hafc(bhd,mesh), prev(hafc), done;
+    ++hafc;
+    done = hafc;
+    do {
+      halfedge_descriptor ohd = opposite(*hafc,mesh);
+      TM_halfedge_descriptor tohd(ohd);
+      seam_vertices.insert(target(tohd,tm));
+      assert(! ohd.seam);
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(ohd,mesh)){
+        if(! hd.seam){
+          vertex_descriptor vd(hd);
+          if(get(vipm,vd) == -1){
+            put(vipm,vd,index);
+          }
+        }
+        if(hd == *prev){
+          break;
         }
       }
-      if(hd == *prev){
-        break;
-      }
-    }
-    ++index;
-    prev = hafc;
-    ++hafc;
-  }while(hafc != done);
-
- 
-  // now as all halfedges incident to seam vertices are handled
-  // we look at the not yet marked halfedges
-  
-  BOOST_FOREACH(TM_halfedge_descriptor hd, halfedges(tm)){
-    if(get(vipm,vertex_descriptor(halfedge_descriptor(hd))) == -1){
-      BOOST_FOREACH(halfedge_descriptor hav, halfedges_around_target(hd,tm)){
-        put(vipm,vertex_descriptor(halfedge_descriptor(hav)), index);
-      }
       ++index;
-    }
-  } 
-
+      prev = hafc;
+      ++hafc;
+    }while(hafc != done);
+    
+    
+    // now as all halfedges incident to seam vertices are handled
+    // we look at the not yet marked halfedges
+    
+    BOOST_FOREACH(TM_halfedge_descriptor hd, halfedges(tm)){
+      if(get(vipm,vertex_descriptor(halfedge_descriptor(hd))) == -1){
+        BOOST_FOREACH(halfedge_descriptor hav, halfedges_around_target(hd,tm)){
+          put(vipm,vertex_descriptor(halfedge_descriptor(hav)), index);
+        }
+        ++index;
+      }
+    } 
   }
 
   // this is the number of different halfedge indices

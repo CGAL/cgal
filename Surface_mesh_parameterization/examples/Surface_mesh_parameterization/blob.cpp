@@ -95,7 +95,7 @@ int main(int argc, char * argv[])
   vertex_parameterized_map vpam; vertex_parameterized_pmap vpapm(vpam);
 
   SM_halfedge_descriptor smhd = halfedge(seam.front(),sm);    
-  Mesh mesh(sm, seam, smhd,vipm);
+  Mesh mesh(sm, seam);
 
   halfedge_descriptor bhd(smhd);
 
@@ -128,7 +128,7 @@ int main(int argc, char * argv[])
     break;
   };
     
-#if 0
+#if 1
   BOOST_FOREACH(face_descriptor fd, faces(mesh)){  
     halfedge_descriptor hd = halfedge(fd,mesh);
     std::cout << "4 " << uvm[target(hd,mesh)].x() << " " << uvm[target(hd,mesh)].y() << " 0 ";
