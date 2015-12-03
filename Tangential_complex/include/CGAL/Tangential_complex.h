@@ -302,7 +302,10 @@ public:
     , m_points_for_tse(first_for_tse, last_for_tse)
     , m_points_ds_for_tse(m_points_for_tse)
 #endif
-  { }
+  {
+    if (sparsity <= 0.)
+      std::cerr << "!Warning! Sparsity should be > 0\n";
+  }
 
   /// Destructor
   ~Tangential_complex()
@@ -517,7 +520,7 @@ public:
 # ifdef CGAL_TC_VERBOSE
       std::cerr << "Nothing to fix." << std::endl;
 # endif
-      return 0;
+      return TC_FIXED;
     }
 #endif // CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
 
@@ -682,7 +685,7 @@ public:
         << "  * Number of inconsistent simplices in stars (incl. duplicates): "
         << num_inconsistent_simplices << std::endl
         << "  * Percentage of inconsistencies: "
-        << 100 * num_inconsistent_simplices / num_simplices << "%" << std::endl
+        << 100. * num_inconsistent_simplices / num_simplices << "%" << std::endl
         << "=========================================================="
         << std::endl;
     }
