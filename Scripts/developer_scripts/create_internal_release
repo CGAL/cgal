@@ -159,6 +159,10 @@ sub install_packages() {
     }
     print "\n";
     system(@command);
+    # generate the list of header file per package that not in an internal subdirectory. Files start with CGAL
+    system("tar -tf /tmp/temppack.tar --wildcards './include/\*\*.h' --transform 's/.\\\/include\\\///' --show-transformed-names --exclude=**/internal --index-file=/tmp/templist");
+    system("mv", "/tmp/templist", "/tmp/$package_name.txt");
+
     move("$RELEASEDIR/temppack.tar", "$RELEASEDIR/$VERSION/");
 
 
@@ -192,6 +196,12 @@ sub install_packages() {
       }
     }
     system('tar', '-xf', "temppack.tar");
+    if(-d "$RELEASEDIR/$VERSION/doc/$package_name/") {
+      system("mv", ,"/tmp/$package_name.txt", "$RELEASEDIR/$VERSION/doc/$package_name/filelist.txt");
+    } else {
+      system("rm", ,"/tmp/$package_name.txt");
+    }
+
 #    $tmp_package_name = "temp_${package_name}";
 #    system("mv", "$package_name", "$tmp_package_name");
 #    opendir packagename, "$tmp_package_name";
