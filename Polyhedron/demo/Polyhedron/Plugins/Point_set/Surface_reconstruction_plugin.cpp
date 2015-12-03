@@ -985,17 +985,6 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
       structuring.get_output (boost::make_function_output_iterator
                               (SurfaceReconstruction::build_from_pair ((*(structured->point_set())))));
       std::cerr << structured->point_set()->size() << " point(s) generated" << std::endl;
-      if (dialog.generate_structured ())
-        {
-          structured->setName(tr("%1 (structured)").arg(point_set_item->name()));
-          structured->set_has_normals(true);
-          structured->setRenderingMode(PointsPlusNormals);
-          structured->setColor(Qt::blue);
-          scene->addItem (structured);
-        }
-      else
-        delete structured;
-
       typedef CGAL::Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
       typedef CGAL::Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;
 
@@ -1025,6 +1014,17 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
       CGAL::AFSR::construct_polyhedron(P, R);
       std::cerr << "done" << std::endl;
       
+      if (dialog.generate_structured ())
+        {
+          structured->setName(tr("%1 (structured)").arg(point_set_item->name()));
+          structured->set_has_normals(true);
+          structured->setRenderingMode(PointsPlusNormals);
+          structured->setColor(Qt::blue);
+          scene->addItem (structured);
+        }
+      else
+        delete structured;
+
       reco_item->setName(tr("%1 (RANSAC-based reconstruction)").arg(scene->item(index)->name()));
       reco_item->setColor(Qt::magenta);
       reco_item->setRenderingMode(FlatPlusEdges);
