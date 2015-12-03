@@ -98,8 +98,17 @@ int main(int argc, char * argv[])
   Mesh mesh(sm, seam, smhd,vipm);
 
   halfedge_descriptor bhd(smhd);
-  bhd = opposite(bhd,mesh); // a halfedge on the virtual hole
 
+#if 0
+  std::vector<face_descriptor> faces;
+  CGAL::Polygon_mesh_processing::connected_component(face(bhd,mesh),
+                                                     mesh,
+                                                     std::back_inserter(faces));
+  std::cerr << faces.size() << std::endl;
+  return 0;
+#endif
+
+  bhd = opposite(bhd,mesh); // a halfedge on the virtual hole
 
   Parameterizer::Error_code err = CGAL::parameterize(mesh, Parameterizer(), bhd, uvpm, vipm, vpapm);
 
@@ -119,7 +128,7 @@ int main(int argc, char * argv[])
     break;
   };
     
-
+#if 0
   BOOST_FOREACH(face_descriptor fd, faces(mesh)){  
     halfedge_descriptor hd = halfedge(fd,mesh);
     std::cout << "4 " << uvm[target(hd,mesh)].x() << " " << uvm[target(hd,mesh)].y() << " 0 ";
@@ -129,6 +138,6 @@ int main(int argc, char * argv[])
     }
     std::cout << std::endl;
   }
-
+#endif
   return EXIT_SUCCESS;
 }

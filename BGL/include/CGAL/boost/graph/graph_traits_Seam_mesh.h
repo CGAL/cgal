@@ -52,21 +52,22 @@ private:
 
 public:
   // Graph
-  typedef typename SM::vertex_descriptor                                        vertex_descriptor;
-  typedef typename SM::face_descriptor                                        face_descriptor;
+  typedef typename SM::vertex_descriptor              vertex_descriptor;
   /*
   typedef typename SM::Point                                               vertex_property_type;
-  typedef typename SM::Edge_index  edge_descriptor;
   */
+
+  typedef typename SM::edge_descriptor  edge_descriptor;
+
   typedef boost::undirected_tag                                            directed_category;
   typedef boost::disallow_parallel_edge_tag                                edge_parallel_category; 
   typedef SM_graph_traversal_category                                      traversal_category;
 
   // HalfedgeGraph
-  typedef typename SM::halfedge_descriptor              halfedge_descriptor;
+  typedef typename SM::halfedge_descriptor            halfedge_descriptor;
   
    // FaceGraph
-  //typedef typename SM::face_index   face_descriptor;
+  typedef typename SM::face_descriptor   face_descriptor;
   
   // VertexListGraph
   typedef typename SM::vertex_iterator   vertex_iterator;
@@ -92,9 +93,9 @@ public:
   //typedef CGAL::Out_edge_iterator<SM> out_edge_iterator;
 
   // nulls
-  //static vertex_descriptor   null_vertex() { return vertex_descriptor(); }
-  //static face_descriptor     null_face()   { return face_descriptor(); }
-  //static halfedge_descriptor null_halfedge()   { return halfedge_descriptor(); }
+  static vertex_descriptor   null_vertex() { return vertex_descriptor(); }
+  static face_descriptor     null_face() { return face_descriptor(); }
+  static halfedge_descriptor null_halfedge() { return halfedge_descriptor(); }
 };
 
 template<typename P>
@@ -269,13 +270,13 @@ opposite(typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor 
   return sm.m_opposite(h);
 }
 
-#if 0
+
 template <typename P>
 typename boost::graph_traits<CGAL::Seam_mesh<P> >::edge_descriptor
 edge(typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor h,
      const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.m_edge(h);
+  return h;
 }
 
 template <typename P>
@@ -283,10 +284,10 @@ typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor
 halfedge(typename boost::graph_traits<CGAL::Seam_mesh<P> >::edge_descriptor e,
          const CGAL::Seam_mesh<P>& sm)
 {
-  return sm.m_halfedge(e);
+  return e.hd;
 }
 
-#endif
+
 
 template <typename P>
 typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor
@@ -348,16 +349,17 @@ halfedge(typename boost::graph_traits<CGAL::Seam_mesh<P> >::face_descriptor f,
   return halfedge(f, sm.mesh());
 }
   
-#if 0
+
 template<typename P>
 typename boost::graph_traits<CGAL::Seam_mesh<P> >::face_descriptor
 face(typename boost::graph_traits<CGAL::Seam_mesh<P> >::halfedge_descriptor h,
      const CGAL::Seam_mesh<P>& sm) 
 {
-  return sm.face(h);
+  if(h.seam){
+    return boost::graph_traits<CGAL::Seam_mesh<P> >::null_face();
+  }
+  return face(h, sm.mesh());
 }
-
-#endif
 
  
 //

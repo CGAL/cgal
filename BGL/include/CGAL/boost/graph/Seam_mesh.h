@@ -200,6 +200,16 @@ typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
   }
   };
 
+  
+  struct edge_descriptor {
+    halfedge_descriptor hd;
+
+    edge_descriptor(const halfedge_descriptor& hd)
+      : hd(hd)
+    {}
+
+  };
+  
   const TM& tm;
   std::set<TM_edge_descriptor> seam_edges;
   std::set<TM_vertex_descriptor> seam_vertices;

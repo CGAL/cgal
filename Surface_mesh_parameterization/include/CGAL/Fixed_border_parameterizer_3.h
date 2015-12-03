@@ -409,12 +409,6 @@ parameterize(TriangleMesh& mesh, halfedge_descriptor bhd, VertexUVmap uvmap, Ver
           int index = get(vimap,v);
           put(uvmap,v,Point_2(Xu[index],Xv[index]));
           put(vpm,v,true);
-          /*
-          BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(v,mesh)){
-            int index = get(vimap,hd);
-            put(uvmap,hd,Point_2(Xu[index],Xv[index]));
-          }
-          */
         }
     }
 #ifdef DEBUG_TRACE

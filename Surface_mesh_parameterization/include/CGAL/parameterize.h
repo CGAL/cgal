@@ -25,6 +25,9 @@
 
 
 #include <CGAL/Mean_value_coordinates_parameterizer_3.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <boost/function_output_iterator.hpp>
+#include <boost/property_map/property_map.hpp>
 
 /// \file parameterize.h
 
@@ -52,6 +55,31 @@ parameterize(ParameterizationMesh_3& mesh)  ///< 3D mesh, model of Parameterizat
 }
 
 
+  namespace Parameterization {
+    
+    template <typename Mesh, typename Map>
+    struct Vertices {
+
+      Vertices(const Mesh& mesh, Map& map)
+        : mesh(mesh), map(&map), index(0)
+      {}
+    
+      void operator()(const typename boost::graph_traits<Mesh>::face_descriptor& fd)
+      {
+        BOOST_FOREACH(typename boost::graph_traits<Mesh>::vertex_descriptor vd, vertices_around_face(halfedge(fd,mesh),mesh)){
+          if(map->find(vd) == map->end()){
+            (*map)[vd] = index++;
+          }
+        }
+      }
+
+      const Mesh& mesh;
+      mutable Map* map;
+      int index;
+    };
+  }
+
+
 /// \ingroup  PkgSurfaceParameterizationMainFunction
 ///
 /// Compute a one-to-one mapping from a 3D triangle surface `mesh` to a
@@ -66,7 +94,7 @@ parameterize(ParameterizationMesh_3& mesh)  ///< 3D mesh, model of Parameterizat
 /// \pre `mesh` must be a triangular mesh.
 /// \pre The mesh border must be mapped onto a convex polygon
 ///   (for fixed border parameterizations).
-///
+
 template <class TriangleMesh, class Parameterizer, class HD, class VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
 typename Parameterizer_traits_3<TriangleMesh>::Error_code
 parameterize(TriangleMesh& mesh,
@@ -76,7 +104,13 @@ parameterize(TriangleMesh& mesh,
              VertexIndexMap vimap,
              VertexParameterizedMap vpm)
 {
-  return parameterizer.parameterize(mesh, bhd, uvm, vimap, vpm);
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef std::map<vertex_descriptor,int> Indices;
+  Indices indices;
+  CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
+                                                     mesh,
+                                                     boost::make_function_output_iterator(Parameterization::Vertices<TriangleMesh,Indices>(mesh,indices)));
+  return parameterizer.parameterize(mesh, bhd, uvm, boost::make_assoc_property_map(indices), vpm);
 }
 
 
@@ -93,7 +127,6 @@ parameterize(Seam_mesh<TriangleMesh>& mesh,
              VertexIndexMap vimap,
              VertexParameterizedMap vpm)
 {
-  std::cerr << "treat Seam_mesh"<< std::endl;
   Seam_mesh_uv_map<TriangleMesh,VertexUVmap>  putter(mesh,uvm);
   return parameterizer.parameterize(mesh, bhd, putter, vimap, vpm);
 }
