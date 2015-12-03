@@ -219,8 +219,6 @@ namespace internal {
     std::size_t number_of_points () const { return m_points.size (); }
     const Point& point (std::size_t i) const { return m_points[i]; }
     const Vector& normal (std::size_t i) const { return m_normals[i]; }
-    const std::size_t& index (std::size_t i) const { return m_indices[i]; }
-    const Point_status& status (std::size_t i) const { return m_status[i]; }
 
     void run (double epsilon, double attraction_factor = 3.)
     {
@@ -356,7 +354,7 @@ namespace internal {
               || CGAL::squared_distance (m_points[f[1]], m_points[f[2]]) > d_DeltaEdge * d_DeltaEdge)
             continue;
           
-          if (facet_coherence (f) == 2)
+          if (facet_coherence (f) > 1)
             *(facets ++) = f;
         }
     }
@@ -376,7 +374,7 @@ namespace internal {
         {
           if (m_indices[f[0]] == m_indices[f[1]] &&
               m_indices[f[0]] == m_indices[f[2]])
-            return 2;
+            return 4;
           else
             return 0;
         }
@@ -408,7 +406,7 @@ namespace internal {
                    c == m_edges[a].planes[1]) &&
                   (c == m_edges[b].planes[0] ||
                    c == m_edges[b].planes[1]))
-                return 2;
+                return 3;
               else
                 return 0;
             }
@@ -418,7 +416,7 @@ namespace internal {
               if (b == c &&
                   (b == m_edges[a].planes[0] ||
                    b == m_edges[a].planes[1]))
-                return 2;
+                return 3;
               else
                 return 0;
             }
@@ -508,7 +506,8 @@ namespace internal {
                 return 0;
             }
         }
-      
+
+
       return 0;
     }
 
@@ -888,7 +887,7 @@ namespace internal {
                   division_tab[j].clear();
                   continue;
                 }
-              
+
               Point perfect (seg[0].x() + (seg[1].x() - seg[0].x()) * (j + 0.5) / (double)number_of_division,
                              seg[0].y() + (seg[1].y() - seg[0].y()) * (j + 0.5) / (double)number_of_division,
                              seg[0].z() + (seg[1].z() - seg[0].z()) * (j + 0.5) / (double)number_of_division);
