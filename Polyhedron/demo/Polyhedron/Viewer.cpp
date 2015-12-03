@@ -108,7 +108,7 @@ void Viewer::draw()
     {
         painter->begin(this);
     }
-    painter->fillRect(this->rect(),backgroundColor());
+  painter->fillRect(this->rect(),backgroundColor());
   glEnable(GL_DEPTH_TEST);
   d->draw_aux(false, this);
 }
@@ -819,16 +819,11 @@ void Viewer::drawVisualHints()
     bool has_text = true;
     if(has_text)
     {
-
-    TextRenderer *textRenderer = new TextRenderer();
-    for(int i=0; i<3; i++)
-    {
-        float x = 0.3*i, y = 0.10, z=0.1;
-        textRenderer->addText(new TextItem(x,y,z,"Under Testing"));
-    }
-    textRenderer->draw(this);
-    textRenderer = 0;
-    delete textRenderer;
+        //So that the text is drawn in front of everything
+    painter->beginNativePainting();
+        glDisable(GL_DEPTH_TEST);
+    painter->endNativePainting();
+    //HERE : draw the text
     }
 
     painter->end();

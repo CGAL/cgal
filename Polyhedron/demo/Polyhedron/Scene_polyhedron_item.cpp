@@ -869,11 +869,8 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     else
         vaos[Gouraud_Facets]->release();
 
-    viewer->qglColor(Qt::black);
-    viewer->drawText(viewer->width()/2, viewer->height()/2, "CENTER");
 }
 
-// Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
 void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
 {
     if (!are_buffers_filled)
