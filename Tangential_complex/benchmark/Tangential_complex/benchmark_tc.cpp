@@ -43,6 +43,7 @@ typedef CGAL::Tangential_complex<
 //#define JUST_BENCHMARK_SPATIAL_SEARCH // CJTODO: test
 //#define CHECK_IF_ALL_SIMPLICES_ARE_IN_THE_AMBIENT_DELAUNAY
 #define TC_INPUT_STRIDES 3 // only take one point every TC_INPUT_STRIDES points
+#define TC_NO_EXPORT
 
 #ifdef JUST_BENCHMARK_SPATIAL_SEARCH
 std::ofstream spatial_search_csv_file("benchmark_spatial_search.csv");
@@ -169,6 +170,9 @@ bool export_to_off(
   std::set<std::set<std::size_t> > const *p_simpl_to_color_in_green = NULL,
   std::set<std::set<std::size_t> > const *p_simpl_to_color_in_blue = NULL)
 {
+#ifdef TC_NO_EXPORT
+  return true;
+#endif
   if (tc.intrinsic_dimension() <= 3)
   {
     std::stringstream output_filename;
@@ -181,11 +185,13 @@ bool export_to_off(
 
     if (p_complex)
     {
+#ifndef TC_NO_EXPORT
       tc.export_to_off(
         *p_complex, off_stream, 
         p_simpl_to_color_in_red,
         p_simpl_to_color_in_green, 
         p_simpl_to_color_in_blue);
+#endif
     }
     else
     {
@@ -734,7 +740,7 @@ int main()
             if (!points.empty())
             {
 #if defined(TC_INPUT_STRIDES) && TC_INPUT_STRIDES > 1
-              auto p = points | boost::adaptors::strided(TC_INPUT_STRIDES);
+              auto p = points | boost::adaptors::strided(TC_INPUT_STRIDES); // CJTODO C++11 (auto)
               std::vector<Point> points(p.begin(), p.end());
               std::cerr << "****************************************\n"
                 << "WARNING: taking 1 point every " << TC_INPUT_STRIDES
