@@ -51,33 +51,61 @@ struct On_the_fly_pair{
   }
 };
 
+struct Perimeter {
 
-template <typename Structuring>
-struct Structure_coherence {
+  double bound;
 
-  Structuring& structuring;
-  double max_length;
-  
-  Structure_coherence(Structuring& structuring,
-                      double max_length)
-    : structuring (structuring), max_length (max_length)
+  Perimeter(double bound)
+    : bound(bound)
   {}
 
-  template <typename Vertex_handle>
-  bool operator()(const Vertex_handle& p, const Vertex_handle& q, const Vertex_handle& r) const
+  // The point type that will be injected here will be
+  // CGAL::Exact_predicates_inexact_constructions_kernel::Point_3
+  template <typename Point>
+  bool operator()(const Point& p, const Point& q, const Point& r) const
   {
-    if (CGAL::squared_distance (p->point (), q->point ()) > max_length * max_length ||
-        CGAL::squared_distance (p->point (), r->point ()) > max_length * max_length ||
-        CGAL::squared_distance (q->point (), r->point ()) > max_length * max_length)
-      return true;
-    
-    Facet f = {{ p->info(), q->info(), r->info() }};
-    return (structuring.facet_coherence (f) == 0);
+    // bound == 0 is better than bound < infinity
+    // as it avoids the distance computations
+    if(bound == 0){
+      return false;
+    }
+    double d  = sqrt(squared_distance(p,q));
+    if(d>bound) return true;
+    d += sqrt(squared_distance(p,r)) ;
+    if(d>bound) return true;
+    d+= sqrt(squared_distance(q,r));
+    return d>bound;
   }
 };
 
+
+template <typename Structuring>
+struct Priority_with_structure_coherence {
+
+  Structuring& structuring;
+  
+  Priority_with_structure_coherence(Structuring& structuring)
+    : structuring (structuring)
+  {}
+
+  template <typename AdvancingFront, typename Cell_handle>
+  double operator() (AdvancingFront& adv, Cell_handle& c,
+                     const int& index) const
+  {
+    Facet f = {{ c->vertex ((index + 1) % 4)->info (),
+                 c->vertex ((index + 2) % 4)->info (),
+                 c->vertex ((index + 3) % 4)->info () }};
+
+    double weight = 100. * (5 - structuring.facet_coherence (f));
+
+    return weight * adv.smallest_radius_delaunay_sphere (c, index);
+  }
+
+};
+
 typedef CGAL::Advancing_front_surface_reconstruction<Triangulation_3,
-                                                     Structure_coherence<Structuring> > Reconstruction;
+                                                     Perimeter,
+                                                     Priority_with_structure_coherence<Structuring> > Reconstruction;
 
 
 
@@ -128,9 +156,11 @@ int main (int argc, char* argv[])
   Triangulation_3 dt (boost::make_transform_iterator(point_indices.begin(), On_the_fly_pair(structured_pts)),
                       boost::make_transform_iterator(point_indices.end(), On_the_fly_pair(structured_pts)));
 
-  Structure_coherence<Structuring> filter (pss, 3 * op.cluster_epsilon);
-  
-  Reconstruction R(dt, filter);
+
+  Priority_with_structure_coherence<Structuring> priority (pss);
+  Perimeter filter (1000. * op.cluster_epsilon);
+  Reconstruction R(dt, filter, priority);
+
   R.run (5., 0.52);
   std::cerr << "done\nWriting result... ";
   std::vector<Facet> output;
@@ -146,6 +176,34 @@ int main (int argc, char* argv[])
       << output[i][1] << " "
       << output[i][2] << std::endl;
   std::cerr << "all done\n" << std::endl;
+
+  f.close();
+  
+  std::vector<Facet> out[3];
+  for (std::size_t i = 0; i < output.size (); ++ i)
+    {
+      unsigned int coherence = pss.facet_coherence (output[i]);
+      if (coherence > 2) coherence = 2;
+      out[coherence].push_back (output[i]);
+    }
+  
+  for (std::size_t n = 0; n < 3; ++ n)
+    {
+      std::stringstream ss;
+      ss << "out" << n << ".off";
+      std::ofstream f (ss.str().c_str());
+      f << "OFF\n" << structured_pts.size () << " " << out[n].size() << " 0\n";
+      for (std::size_t i = 0; i < structured_pts.size (); ++ i)
+        f << structured_pts[i].first << std::endl;
+      for (std::size_t i = 0; i < out[n].size (); ++ i)
+        f << "3 "
+          << out[n][i][0] << " "
+          << out[n][i][1] << " "
+          << out[n][i][2] << std::endl;
+      std::cerr << "all done\n" << std::endl;
+
+      f.close();
+    }
   
   return 0;
 }
