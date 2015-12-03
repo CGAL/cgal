@@ -16,6 +16,7 @@
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim_all.hpp>
+#include <boost/range/adaptor/strided.hpp>
 
 #include <cstdlib>
 #include <ctime>
@@ -40,6 +41,8 @@ typedef CGAL::Tangential_complex<
   CGAL::Parallel_tag>                                           TC;
 
 //#define JUST_BENCHMARK_SPATIAL_SEARCH // CJTODO: test
+//#define CHECK_IF_ALL_SIMPLICES_ARE_IN_THE_AMBIENT_DELAUNAY
+#define TC_INPUT_STRIDES 3 // only take one point every TC_INPUT_STRIDES points
 
 #ifdef JUST_BENCHMARK_SPATIAL_SEARCH
 std::ofstream spatial_search_csv_file("benchmark_spatial_search.csv");
@@ -186,7 +189,7 @@ bool export_to_off(
     }
     else
     {
-#ifdef CGAL_ALPHA_TC
+/*#ifdef CGAL_ALPHA_TC
       TC::Simplicial_complex complex;
       tc.export_TC(complex, false);
       tc.export_to_off(
@@ -194,13 +197,13 @@ bool export_to_off(
         p_simpl_to_color_in_red,
         p_simpl_to_color_in_green, 
         p_simpl_to_color_in_blue);
-#else
+#else*/
       tc.export_to_off(
         off_stream, color_inconsistencies, 
         p_simpl_to_color_in_red,
         p_simpl_to_color_in_green, 
         p_simpl_to_color_in_blue);
-#endif
+//#endif
     }
     return true;
   }
@@ -335,8 +338,10 @@ void make_tc(std::vector<Point> &points,
   return;*/
   // CJTODO TEMP ===========================
   
+#ifdef CHECK_IF_ALL_SIMPLICES_ARE_IN_THE_AMBIENT_DELAUNAY
   if (ambient_dim <= 4)
     tc.check_if_all_simplices_are_in_the_ambient_delaunay();
+#endif
 
   //tc.check_correlation_between_inconsistencies_and_fatness();
 
@@ -728,7 +733,15 @@ int main()
 
             if (!points.empty())
             {
-              make_tc(points, intrinsic_dim, sparsity,
+#if defined(TC_INPUT_STRIDES) && TC_INPUT_STRIDES > 1
+              auto p = points | boost::adaptors::strided(TC_INPUT_STRIDES);
+              std::vector<Point> points(p.begin(), p.end());
+              std::cerr << "****************************************\n"
+                << "WARNING: taking 1 point every " << TC_INPUT_STRIDES
+                << " points.\n"
+                << "****************************************\n";
+#endif
+              make_tc(points, intrinsic_dim, sparsity, // strided: CJTODO TEMP
                       perturb=='Y', add_high_dim_simpl=='Y', collapse=='Y',
                       time_limit_for_perturb, input.c_str());
 
@@ -757,5 +770,6 @@ int main()
     std::cerr << "Script file '" << BENCHMARK_SCRIPT_FILENAME << "' NOT found." << std::endl;
   }
 
+  system("pause");
   return 0;
 }
