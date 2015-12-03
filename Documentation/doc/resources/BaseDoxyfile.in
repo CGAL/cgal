@@ -679,7 +679,7 @@ FILE_VERSION_FILTER    =
 # You can optionally specify a file name after the option, if omitted
 # DoxygenLayout.xml will be used as the name of the layout file.
 
-LAYOUT_FILE            = ${CMAKE_CURRENT_SOURCE_DIR}/DoxygenLayoutPackage.xml
+LAYOUT_FILE            = ${CGAL_DOC_RESOURCE_DIR}/DoxygenLayoutPackage.xml
 
 # The CITE_BIB_FILES tag can be used to specify one or more bib files
 # containing the references data. This must be a list of .bib files. The
@@ -1007,7 +1007,7 @@ HTML_HEADER            = ${CGAL_DOC_HEADER_PACKAGE}
 # each generated HTML page. If it is left blank doxygen will generate a
 # standard footer.
 
-HTML_FOOTER            = ${CMAKE_CURRENT_SOURCE_DIR}/footer.html
+HTML_FOOTER            = ${CGAL_DOC_RESOURCE_DIR}/footer.html
 
 # The HTML_STYLESHEET tag can be used to specify a user-defined cascading
 # style sheet that is used by each HTML page. It can be used to
@@ -1016,7 +1016,7 @@ HTML_FOOTER            = ${CMAKE_CURRENT_SOURCE_DIR}/footer.html
 # HTML_EXTRA_STYLESHEET instead of this one, as it is more robust and this
 # tag will in the future become obsolete.
 
-HTML_STYLESHEET        = ${CMAKE_CURRENT_SOURCE_DIR}/stylesheet.css
+HTML_STYLESHEET        = ${CGAL_DOC_RESOURCE_DIR}/stylesheet.css
 
 # The HTML_EXTRA_STYLESHEET tag can be used to specify an additional
 # user-defined cascading style sheet that is included after the standard
