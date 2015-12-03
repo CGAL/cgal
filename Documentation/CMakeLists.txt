@@ -155,6 +155,9 @@ if(DOXYGEN_FOUND)
   set(CGAL_DOC_DXY_DIR "${CMAKE_BINARY_DIR}/doc_dxy")
   file(MAKE_DIRECTORY "${CGAL_DOC_DXY_DIR}")
 
+  set(CGAL_DOC_RESOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/resources")
+  set(CGAL_DOC_SCRIPT_DIR "${CMAKE_CURRENT_LIST_DIR}/script")
+
   set(CGAL_DOC_HEADER ${CGAL_DOC_DXY_DIR}/header.html)
   configure_file(${CMAKE_CURRENT_SOURCE_DIR}/header.html ${CGAL_DOC_HEADER} @ONLY)
   set(CGAL_DOC_HEADER_PACKAGE ${CGAL_DOC_DXY_DIR}/header_package.html)
