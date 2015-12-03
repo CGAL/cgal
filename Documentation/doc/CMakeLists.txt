@@ -239,7 +239,7 @@ if(DOXYGEN_FOUND)
 
   if(PYTHONINTERP_FOUND)
     add_custom_target(doc_with_postprocessing
-      ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --output ${CGAL_DOC_OUTPUT_DIR} --resources ${CMAKE_CURRENT_SOURCE_DIR}/resources
+      ${PYTHON_EXECUTABLE} ${CMAKE_CURRENT_SOURCE_DIR}/html_output_post_processing.py --output ${CGAL_DOC_OUTPUT_DIR} --resources ${CGAL_DOC_RESOURCE_DIR}
     )
     add_dependencies(doc_with_postprocessing doc)
 
