@@ -165,7 +165,7 @@ namespace CGAL {
         return adv.smallest_radius_delaunay_sphere (c, index);
       }
     };
-  } //end of namespa AFSR
+  } //end of namespace AFSR
 
 
   /*!
@@ -182,10 +182,10 @@ namespace CGAL {
   `Advancing_front_surface_reconstruction_vertex_base_3` and `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type.
   The default uses the `Exact_predicates_inexact_constructions_kernel` as geometric traits class.
 
-  \tparam F must be a functor with `bool operator()(Point,Point,Point)` returning `true` if a triangle should not appear in the output.
-          This functor enables the user to priority candidate triangles, for example based on its size.
-          The type `Point` must be the point type of the geometric traits class of the triangulation.
-          It defaults to a functor that always returns `false`.
+  \tparam P must be a functor with `double operator()(AdvancingFront,Cell_handle,int)` returning the
+  priority of the facet `(Cell_handle,int)`. This functor enables the user to choose how candidate triangles
+  are prioritized. If a facet should not appear in the output, `HUGE_VAL` must be returned. It defaults to a
+  functor that returns the smallest radius of the Delaunay sphere.
 
   */
   template <
@@ -220,7 +220,7 @@ namespace CGAL {
     typedef unspecified_type Triangulation_3;
 
   /*!
-  The type of the triangle priority functor.
+  The type of the facet priority functor.
   */
     typedef unspecified_type Priority;
 
@@ -2507,7 +2507,8 @@ namespace CGAL {
   be convertible to `Exact_predicates_inexact_constructions_kernel::Point_3` with the `Cartesian_converter`.
   \tparam IndicesOutputIterator must be an output iterator to which
   `CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t>` can be assigned.
-  \tparam Priority must be a functor with `bool operator()(Point,Point,Point)` where Point is `Exact_predicates_inexact_constructions_kernel::Point_3`.
+  \tparam Priority must be a functor with `double operator()(AdvancingFront,Cell_handle,int)` returning the
+  priority of the facet `(Cell_handle,int)`.
 
   \param b iterator on the first point of the sequence
   \param e past the end iterator of the point sequence
@@ -2517,7 +2518,7 @@ namespace CGAL {
          Described in Section \ref AFSR_Boundaries
   \param beta half the angle of the wedge in which only the radius of triangles counts for the plausibility of candidates.
          Described in Section \ref AFSR_Selection
-  \param priority allows the user to priority candidate triangles, for example based on their size.
+  \param priority allows the user to choose how candidate triangles are prioritized.
 
   */
   template <typename PointInputIterator, typename IndicesOutputIterator, typename Priority>
