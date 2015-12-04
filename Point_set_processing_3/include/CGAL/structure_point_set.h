@@ -222,8 +222,11 @@ namespace internal {
 
     void run (double epsilon, double attraction_factor = 3.)
     {
-      double radius = epsilon * attraction_factor;
+      if (m_planes.empty ())
+        return;
       
+      double radius = epsilon * attraction_factor;
+#define CGAL_PSP3_VERBOSE
 #ifdef CGAL_PSP3_VERBOSE
       std::cerr << "Computing planar points... " << std::endl;
 #endif
