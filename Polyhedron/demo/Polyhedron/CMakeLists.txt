@@ -73,6 +73,37 @@ if( POLYHEDRON_DEMO_ACTIVATE_CONCURRENCY )
   endif()
 endif()
 
+
+# Activate concurrency ? (turned OFF by default)
+option(ACTIVATE_CONCURRENT_MESH_3
+  "Activate parallelism in Mesh_3"
+  OFF)
+
+# And add -DCGAL_CONCURRENT_MESH_3 if that option is ON
+if( ACTIVATE_CONCURRENT_MESH_3 OR ENV{ACTIVATE_CONCURRENT_MESH_3} )
+  add_definitions( -DCGAL_CONCURRENT_MESH_3 )
+  if(NOT TBB_FOUND)
+    find_package( TBB REQUIRED )
+    if( TBB_FOUND )
+      include(${TBB_USE_FILE})
+      list(APPEND CGAL_3RD_PARTY_LIBRARIES ${TBB_LIBRARIES})
+    else()
+      message(STATUS "NOTICE: Intel TBB was not found. Mesh_3 is faster if TBB is linked.")
+    endif()
+  endif()
+
+else( ACTIVATE_CONCURRENT_MESH_3 OR ENV{ACTIVATE_CONCURRENT_MESH_3} )
+  option( LINK_WITH_TBB
+    "Link with TBB anyway so we can use TBB timers for profiling"
+    ON)
+  if( LINK_WITH_TBB )
+    find_package( TBB )
+  endif( LINK_WITH_TBB )
+endif()
+
+
+
+
 if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   set(Boost_USE_MULTITHREADED      ON)
