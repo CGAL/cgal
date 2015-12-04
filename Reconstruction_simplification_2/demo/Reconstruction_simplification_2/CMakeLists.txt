@@ -36,7 +36,7 @@ if (CIMG_INCLUDE_DIR)
   include_directories(${CIMG_INCLUDE_DIR})
   MESSAGE(STATUS "CImg library found, the demo can load point set from image files.")
 else()
-  MESSAGE(STATUS "Warning: CImg library was not found, the demo will not be able to load point set from image files. "
+  MESSAGE(STATUS "CImg library was not found, the demo will not be able to load point set from image files. "
                  "Try setting the environment variable CIMG_INC_DIR to point to the path of the directory containing CImg.h.")
 endif()
 
