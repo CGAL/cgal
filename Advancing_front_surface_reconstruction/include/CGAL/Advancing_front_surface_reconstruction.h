@@ -159,7 +159,7 @@ namespace CGAL {
   namespace AFSR{
     struct Default_priority {
       template <typename AdvancingFront, typename Cell_handle>
-      double operator() (AdvancingFront& adv, Cell_handle& c,
+      double operator() (const AdvancingFront& adv, Cell_handle& c,
                          const int& index) const
       {
         return adv.smallest_radius_delaunay_sphere (c, index);
