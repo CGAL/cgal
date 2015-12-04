@@ -418,11 +418,12 @@ void Scene_c3t3_item::compute_bbox() const {
   if (isEmpty())
     _bbox = Bbox();
   else {
-    CGAL::Bbox_3 result = c3t3().triangulation().finite_vertices_begin()->point().bbox();
-    for (Tr::Finite_vertices_iterator
-      vit = ++c3t3().triangulation().finite_vertices_begin(),
-      end = c3t3().triangulation().finite_vertices_end();
-    vit != end; ++vit)
+
+    CGAL::Bbox_3 result = c3t3().vertices_in_complex_begin()->point().bbox();
+    for (C3t3::Vertices_in_complex_iterator
+      vit = ++c3t3().vertices_in_complex_begin(),
+      end = c3t3().vertices_in_complex_end();
+      vit != end; ++vit)
     {
       result = result + vit->point().bbox();
     }
