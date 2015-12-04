@@ -562,6 +562,7 @@ void Viewer::attrib_buffers(int program_name) const {
 
 void Viewer::beginSelection(const QPoint &point)
 {
+    textRenderer->printFacetId(point, this);
     makeCurrent();
     glEnable(GL_SCISSOR_TEST);
     glScissor(point.x(), camera()->screenHeight()-1-point.y(), 1, 1);
@@ -817,7 +818,7 @@ void Viewer::drawVisualHints()
         rendering_program.release();
         vao[0].release();
     }
-    bool has_text = true;
+    bool has_text = true ;
     if(has_text)
     {
         //So that the text is drawn in front of everything
@@ -1154,6 +1155,36 @@ void Viewer::wheelEvent(QWheelEvent* e)
         QGLViewer::wheelEvent(e);
 }
 
+void TextRenderer::printFacetId(QPoint pt, CGAL::Three::Viewer_interface *viewer)
+{
+    qDebug()<<"print";
+    displayList.clear();
+    QMap<float,double> distances;
+    bool found;
+    float min_dist = 0;
+    qglviewer::Vec pup = viewer->camera()->pointUnderPixel(pt, found);
+    if(found)
+    {
+        TextItem *it = textItems.values().first();
+        float dist =
+                 (it->position()->x() - pup.x)*(it->position()->x() - pup.x)
+                +(it->position()->y() - pup.y)*(it->position()->y() - pup.y)
+                +(it->position()->z() - pup.z)*(it->position()->z() - pup.z);
+            min_dist = dist;
+
+        Q_FOREACH(TextItem* item, textItems.values())
+        {
+            float dist =
+                     (item->position()->x() - pup.x)*(item->position()->x() - pup.x)
+                    +(item->position()->y() - pup.y)*(item->position()->y() - pup.y)
+                    +(item->position()->z() - pup.z)*(item->position()->z() - pup.z);
+            distances[dist] = item->id();
+            if(dist < min_dist)
+                min_dist = dist;
+        }
+        displayList.append(distances[min_dist]);
+    }
+}
 void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 {
     QPainter *painter = viewer->painter;
@@ -1166,8 +1197,9 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
     QRect rect;
     qglviewer::Camera* camera = viewer->camera();
     //painter->setBackgroundMode(Qt::TransparentMode);
-    Q_FOREACH(TextItem* item, textItems)
+    Q_FOREACH(double i, displayList)
     {
+        TextItem* item = textItems[i];
         qglviewer::Vec src(item->position()->x(), item->position()->y(),item->position()->z());
         rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
                      camera->projectedCoordinatesOf(src).y-item->height()/2,
@@ -1175,27 +1207,33 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
                      item->height());
         painter->setFont(item->font());
         painter->setPen(QPen(item->color()));
-        QPoint pouaing(camera->projectedCoordinatesOf(src).x,
-                       camera->projectedCoordinatesOf(src).y);
+        qglviewer::Vec v = camera->projectedCoordinatesOf(src);
+        QPoint pouaing((int)(v.x),
+                       (int)(v.y));
         bool found;
         qglviewer::Vec pUp =viewer->camera()->pointUnderPixel(pouaing, found);
         qglviewer::Vec pos_point = qglviewer::Vec(item->position()->x(), item->position()->y(), item->position()->z());
         float dist =(pUp.x-pos_point.x) * (pUp.x-pos_point.x) +  (pUp.y-pos_point.y) * (pUp.y-pos_point.y) + (pUp.z-pos_point.z) * (pUp.z-pos_point.z);
-
-    //    qDebug()<<item->text()<<":    dist = "<<dist<<", rad2 = "<<viewer->sceneRadius() * viewer->sceneRadius()/10.0;
-        if( dist < viewer->sceneRadius() * viewer->sceneRadius()/10000.0)
+        if( dist < viewer->sceneRadius()*viewer->sceneRadius()/1000.0)
             painter->drawText(rect, item->text());
     }
-
 
 }
 
  void TextRenderer::addText(TextItem *ti)
  {
-     textItems.push_back(ti);
+     m_lastId+=0.1;
+     textItems[ti->id()]=ti;
  }
 
- void TextRenderer::addText(float p_x, float p_y, float p_z, QString p_text, QFont font , QColor p_color )
+ void TextRenderer::addText(float p_x, float p_y, float p_z, QString p_text, double p_id, QFont p_font , QColor p_color )
  {
-     textItems.push_back(new TextItem(p_x, p_y, p_z, p_text, font, p_color));
+     m_lastId+=0.1;
+     textItems[p_id]=new TextItem(p_x, p_y, p_z, p_text, p_id, p_font, p_color);
+
+
  }
+void TextRenderer::removeText(double id)
+{
+    textItems.remove(id);
+}

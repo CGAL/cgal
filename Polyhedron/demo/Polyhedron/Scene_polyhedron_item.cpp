@@ -401,12 +401,19 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
 
     CGAL::set_halfedgeds_items_id(*poly);
 
+    TextRenderer *renderer = viewer->textRenderer;
+    Q_FOREACH(double id, text_ids)
+        renderer->removeText(id);
+    text_ids.clear();
     QFont font;
     font.setBold(true);
+
+
     Q_FOREACH(Polyhedron::Vertex_const_handle vh, vertices(*poly))
     {
         const Point& p = vh->point();
-        viewer->textRenderer->addText((float)p.x(), (float)p.y(), (float)p.z(), QString("%1").arg(vh->id()), font, Qt::red);
+        renderer->addText((float)p.x(), (float)p.y(), (float)p.z(), QString("%1").arg(vh->id()), renderer->lastId(), font, Qt::red);
+        text_ids.append(renderer->lastId());
 
     }
 
@@ -414,7 +421,8 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
     {
         const Point& p1 = source(e, *poly)->point();
         const Point& p2 = target(e, *poly)->point();
-        viewer->textRenderer->addText((float)(p1.x()+p2.x())/2, (float)(p1.y()+p2.y())/2, (float)(p1.z()+p2.z())/2, QString("%1").arg(e.halfedge()->id()/2), font, Qt::green);
+        renderer->addText((float)(p1.x()+p2.x())/2, (float)(p1.y()+p2.y())/2, (float)(p1.z()+p2.z())/2, QString("%1").arg(e.halfedge()->id()/2), renderer->lastId(), font, Qt::green);
+        text_ids.append(renderer->lastId());
     }
 
     Q_FOREACH(Polyhedron::Facet_handle fh, faces(*poly))
@@ -429,10 +437,12 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
             ++total;
         }
 
-        viewer->textRenderer->addText((float)x/total, (float)y/total, (float)z/total, QString("%1").arg(fh->id()), font, Qt::blue);
+        renderer->addText((float)x/total, (float)y/total, (float)z/total, QString("%1").arg(fh->id()), renderer->lastId(), font, Qt::blue);
+        text_ids.append(renderer->lastId());
     }
 
 }
+
 
 void
 Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) const
@@ -667,7 +677,6 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
 {
-    //setItemIsMulticolor(true);
     cur_shading=FlatPlusEdges;
     is_selected=true;
     init();
@@ -681,6 +690,13 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
 {
     delete_aabb_tree(this);
     delete poly;
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    CGAL::Three::Viewer_interface* v = qobject_cast<CGAL::Three::Viewer_interface*>(viewer);
+    if(v)
+    {
+        Q_FOREACH(double id, text_ids)
+            v->textRenderer->removeText(id);
+    }
 }
 
 #include "Color_map.h"
@@ -1065,6 +1081,7 @@ Scene_polyhedron_item::select(double orig_x,
                               double dir_y,
                               double dir_z)
 {
+
     if(facet_picking_m) {
         typedef Input_facets_AABB_tree Tree;
         typedef Tree::Object_and_primitive_id Object_and_primitive_id;
@@ -1125,7 +1142,6 @@ Scene_polyhedron_item::select(double orig_x,
                                 nearest_v = v;
                             }
                         }
-                        //bottleneck
             Q_EMIT selected_vertex((void*)(&*nearest_v));
                     }
 

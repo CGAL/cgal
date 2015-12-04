@@ -174,12 +174,15 @@ private:
 
     using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;
+
     void compute_normals_and_vertices(const bool colors_only = false) const;
     template<typename FaceNormalPmap, typename VertexNormalPmap>
     void triangulate_facet(Facet_iterator,
       const FaceNormalPmap&, const VertexNormalPmap&,
       const bool colors_only) const;
     double volume, area;
+    mutable QList<double> text_ids;
+
 
   int m_min_patch_id; // the min value of the patch ids initialized in init()
 }; // end class Scene_polyhedron_item
