@@ -25,10 +25,11 @@
 
 #include "implicit_functions/Implicit_function_interface.h"
 #include "Image_type.h"
-#include "Polyhedron_type.h"
 
 #include "Scene_c3t3_item.h"
 #include "Meshing_thread.h"
+
+#include "Polyhedron_type.h"
 
 #include <iostream>
 #include <fstream>
