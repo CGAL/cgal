@@ -939,16 +939,26 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
 
       QApplication::setOverrideCursor(Qt::WaitCursor);
 
+      CGAL::Timer global_timer;
+      global_timer.start();
+
+      CGAL::Timer local_timer;
+
       if (!(point_set_item->has_normals()))
         {
+          local_timer.start();
+                
           std::cerr << "Estimation of normal vectors... ";
 
           CGAL::jet_estimate_normals<Concurrency_tag>(points->begin(), points->end(),
                                                       CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
                                                       12);
-		  
+          local_timer.stop();
           point_set_item->set_has_normals (true);
           point_set_item->setRenderingMode(PointsPlusNormals);
+
+          std::cerr << "done in " << local_timer.time() << " second(s)" << std::endl;
+          local_timer.reset();
         }
 
       typedef CGAL::Identity_property_map<Point_set::Point_with_normal> PointPMap;
@@ -957,6 +967,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
       typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Kernel, Point_set, PointPMap, NormalPMap> Traits;
       typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
 
+      local_timer.start();
       Shape_detection shape_detection;
       shape_detection.set_input(*points);
 
@@ -970,12 +981,15 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
       op.normal_threshold = 0.7;
 
       shape_detection.detect(op);
-
-      std::cout << shape_detection.shapes().size() << " plane(s) found" << std::endl;
-
+      local_timer.stop();
+      std::cout << shape_detection.shapes().size() << " plane(s) found in "
+                << local_timer.time() << " second(s)" << std::endl;
+      local_timer.reset();
+      
       std::cout << "Structuring point set... " << std::endl;
       typedef CGAL::internal::Point_set_structuring<Traits>        Structuring;
-      
+
+      local_timer.start();
       Structuring structuring (points->begin (), points->end (),
                                shape_detection);
       
@@ -984,7 +998,10 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
       Scene_points_with_normal_item *structured = new Scene_points_with_normal_item;
       structuring.get_output (boost::make_function_output_iterator
                               (SurfaceReconstruction::build_from_pair ((*(structured->point_set())))));
-      std::cerr << structured->point_set()->size() << " point(s) generated" << std::endl;
+      local_timer.stop ();
+      std::cerr << structured->point_set()->size() << " point(s) generated in "
+                << local_timer.time() << std::endl;
+      local_timer.reset();
       typedef CGAL::Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
       typedef CGAL::Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;
 
@@ -996,6 +1013,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
                                                            Priority_with_structure_coherence<Structuring> > Reconstruction;
 
       std::cerr << "Reconstructing... ";
+      local_timer.start();
       std::vector<std::size_t> point_indices(boost::counting_iterator<std::size_t>(0),
                                              boost::counting_iterator<std::size_t>(structured->point_set()->size()));
 
@@ -1012,7 +1030,8 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
       Scene_polyhedron_item* reco_item = new Scene_polyhedron_item(Polyhedron());
       Polyhedron& P = * const_cast<Polyhedron*>(reco_item->polyhedron());
       CGAL::AFSR::construct_polyhedron(P, R);
-      std::cerr << "done" << std::endl;
+      local_timer.stop();
+      std::cerr << "done in " << local_timer.time() << " second(s)" << std::endl;
       
       if (dialog.generate_structured ())
         {
@@ -1029,6 +1048,8 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
       reco_item->setColor(Qt::magenta);
       reco_item->setRenderingMode(FlatPlusEdges);
       scene->addItem(reco_item);
+
+      std::cerr << "All done in " << global_timer.time() << " seconds." << std::endl;
       
       QApplication::restoreOverrideCursor();
     }
