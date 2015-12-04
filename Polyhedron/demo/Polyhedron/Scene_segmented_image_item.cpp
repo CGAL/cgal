@@ -252,9 +252,6 @@ private:
   Indices indices_;
   std::vector<GLfloat> colors_, normals_, vertices_;
   std::vector<GLuint> quads_;
-  
-  GLuint* quad_array_;
-  std::size_t color_size_, normal_size_, vertex_size_, quad_size_;
 };
 
 int Vertex_buffer_helper::vertex_not_found_ = -1;
