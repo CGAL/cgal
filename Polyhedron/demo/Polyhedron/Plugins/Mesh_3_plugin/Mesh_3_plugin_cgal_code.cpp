@@ -167,13 +167,14 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
   Facet_criteria facet_criteria(facet_angle, facet_sizing, facet_approx); // angle, size, approximation
   Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
   Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
-
+  CGAL::Timer timer;
+  timer.start();
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(*p_domain,
                                                                             criteria,
                                                                             CGAL::parameters::no_perturb(),
                                                                             CGAL::parameters::no_exude())
 );
-  CGAL::Timer timer;
+
   p_new_item->set_scene(scene);
 
   std::cerr << "done (" << timer.time() << " ms, "
