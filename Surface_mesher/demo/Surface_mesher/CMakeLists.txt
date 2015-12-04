@@ -41,7 +41,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
   add_definitions(-DQT_NO_KEYWORDS)
   include( ${CGAL_USE_FILE} )
 
-  find_package(Qt5 QUIET COMPONENTS OpenGL Xml )
+  find_package(Qt5 QUIET COMPONENTS OpenGL Xml Svg)
   find_package(QGLViewer )
   find_package(OpenGL    )
   
@@ -92,7 +92,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
 
     add_executable  ( ${prj}  ${sources} ${uis} ${qrc_sources} )
 
-    qt5_use_modules(${prj} OpenGL Xml )
+    qt5_use_modules(${prj} OpenGL Xml Svg)
     
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${prj} )
     
