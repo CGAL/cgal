@@ -120,11 +120,25 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     DOC "Path to CGAL/Three/Scene_item.h")
   hide_variable(CGAL_THREE_SCENE_ITEM_H_PATH)
 
+  find_path(CGAL_THREE_SCENE_GROUP_ITEM_H_PATH
+    NAME CGAL/Three/Scene_group_item.h
+    PATHS ${CGAL_INCLUDE_DIRS}
+    NO_DEFAULT_PATH
+    DOC "Path to CGAL/Three/Scene_group_item.h")
+  hide_variable(CGAL_THREE_SCENE_GROUP_ITEM_H_PATH)
+
   if(CGAL_THREE_SCENE_ITEM_H_PATH)
     qt5_generate_moc( "${CGAL_THREE_SCENE_ITEM_H_PATH}/CGAL/Three/Scene_item.h"
       "${CMAKE_CURRENT_BINARY_DIR}/Scene_item_moc.cpp" )
   else()
     message(FATAL_ERROR "Cannot find <CGAL/Three/Viewer_interface.h>")
+  endif()
+
+  if(CGAL_THREE_SCENE_GROUP_ITEM_H_PATH)
+    qt5_generate_moc( "${CGAL_THREE_SCENE_GROUP_ITEM_H_PATH}/CGAL/Three/Scene_group_item.h"
+      "${CMAKE_CURRENT_BINARY_DIR}/Scene_group_item_moc.cpp" )
+  else()
+    message(FATAL_ERROR "Cannot find <CGAL/Three/Scene_group_item.h>")
   endif()
 
 
@@ -141,6 +155,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     Viewer_interface_moc.cpp
     Scene_item_moc.cpp
     Scene_item.cpp #Scene_item.moc
+    Scene_group_item.cpp
+    Scene_group_item_moc.cpp
     Polyhedron_demo_plugin_helper.cpp)
     qt5_use_modules(demo_framework OpenGL Gui Widgets Script Xml)
 
@@ -228,7 +244,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       scene_basic_objects
       scene_polyhedron_item
       scene_polygon_soup_item
-      scene_nef_polyhedron_item )
+      scene_nef_polyhedron_item)
     add_to_cached_list( CGAL_EXECUTABLE_TARGETS ${lib} )
   endforeach()
 
@@ -262,6 +278,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )
 
+
   ###########
   # PLUGINS #
   ###########
@@ -271,6 +288,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   FOREACH(SUB_DIR ${DEMO_PLUGINS})
       add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Plugins/${SUB_DIR}")
   ENDFOREACH()
+
 #
 # Exporting
 #

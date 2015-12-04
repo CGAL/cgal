@@ -16,19 +16,19 @@ typedef QString (CGAL::Three::Scene_item ::*Scene_item_name_fn_ptr)() const;
 // Declaration only (defined in Scene.cpp)
 SCENE_EXPORT 
 CGAL::Three::Scene_item*
-findItem(const Scene_interface* scene_interface,
+findItem(const CGAL::Three::Scene_interface* scene_interface,
          const QMetaObject& metaobj,
          QString name, Scene_item_name_fn_ptr fn); 
 
 // Declaration only (defined in Scene.cpp)
 SCENE_EXPORT
 QList<CGAL::Three::Scene_item*>
-findItems(const Scene_interface* scene_interface, 
+findItems(const CGAL::Three::Scene_interface* scene_interface,
           const QMetaObject& metaobj,
           QString name, Scene_item_name_fn_ptr fn); // fwd declaration
 
 template <typename T>
-T findItem(const Scene_interface* scene, QString name,
+T findItem(const CGAL::Three::Scene_interface* scene, QString name,
            Scene_item_name_fn_ptr fn) 
 {
   return 
@@ -38,7 +38,7 @@ T findItem(const Scene_interface* scene, QString name,
 }
 
 template <typename T>
-QList<T> findItems(const Scene_interface* scene, QString name, 
+QList<T> findItems(const CGAL::Three::Scene_interface* scene, QString name,
                    Scene_item_name_fn_ptr fn)
 {
   QList<CGAL::Three::Scene_item*> void_list =
@@ -60,7 +60,7 @@ QList<T> findItems(const Scene_interface* scene, QString name,
     accepted.
 */      
 template <typename T>
-T findItem(const Scene_interface* scene, 
+T findItem(const CGAL::Three::Scene_interface* scene,
            QString item_name = QString())
 { return details::findItem<T>(scene, item_name, &CGAL::Three::Scene_item::name); }
 
@@ -69,7 +69,7 @@ T findItem(const Scene_interface* scene,
     accepted.
 */      
 template <typename T>
-QList<T> findItems(const Scene_interface* scene, 
+QList<T> findItems(const CGAL::Three::Scene_interface* scene,
                    QString item_name = QString()) 
 { return details::findItems<T>(scene, item_name, &CGAL::Three::Scene_item::name); }
 
@@ -78,7 +78,7 @@ QList<T> findItems(const Scene_interface* scene,
     omitted, all names are accepted.
 */      
 template <typename T>
-T findItemByObjectName(const Scene_interface* scene, 
+T findItemByObjectName(const CGAL::Three::Scene_interface* scene,
                        QString obj_name = QString()) 
 { return details::findItem<T>(scene, obj_name, &QObject::objectName); }
 
@@ -87,7 +87,7 @@ T findItemByObjectName(const Scene_interface* scene,
     names are accepted.
 */      
 template <typename T>
-QList<T> findItemsByObjectName(const Scene_interface* scene, 
+QList<T> findItemsByObjectName(const CGAL::Three::Scene_interface* scene,
                                QString obj_name = QString()) 
 { return details::findItems<T>(scene, obj_name, &QObject::objectName); }
 
