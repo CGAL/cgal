@@ -305,7 +305,7 @@ fill_buffer_data()
       }
     }
   }
-  
+
   create_arrays();
 }
 
@@ -354,10 +354,9 @@ Vertex_buffer_helper::push_vertex(std::size_t i, std::size_t j, std::size_t k)
   indices_.insert(std::make_pair(compute_position(i,j,k),
                                  vertices_.size()/3)); 
   
-  vertices_.push_back(i*data_.vx());
-  vertices_.push_back(j*data_.vy());
-  vertices_.push_back(k*data_.vz());
-
+  vertices_.push_back( (i - 0.5) * data_.vx());
+  vertices_.push_back( (j - 0.5) * data_.vy());
+  vertices_.push_back( (k - 0.5) * data_.vz());
 }
 
 void
