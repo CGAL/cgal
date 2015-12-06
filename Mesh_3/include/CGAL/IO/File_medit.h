@@ -778,15 +778,14 @@ output_to_medit(std::ostream& os,
   //-------------------------------------------------------
   os << std::setprecision(17);
 
-  os << "MeshVersionFormatted 1" << std::endl
-     << "Dimension 3" << std::endl;
+  os << "MeshVersionFormatted 1\n"
+     << "Dimension 3\n";
 
 
   //-------------------------------------------------------
   // Vertices
   //-------------------------------------------------------
-  os << "Vertices" << std::endl
-     << tr.number_of_vertices() << std::endl;
+  os << "Vertices\n" << tr.number_of_vertices() << '\n';
 
   std::map<Vertex_handle, int> V;
   int inum = 1;
@@ -800,7 +799,7 @@ output_to_medit(std::ostream& os,
        << CGAL::to_double(p.y()) << " "
        << CGAL::to_double(p.z()) << " "
        << get(vertex_pmap, vit)
-       << std::endl;
+       <<  '\n';
   }
 
   //-------------------------------------------------------
@@ -811,8 +810,8 @@ output_to_medit(std::ostream& os,
   if ( print_each_facet_twice )
     number_of_triangles += number_of_triangles;
   
-  os << "Triangles" << std::endl
-     << number_of_triangles << std::endl;
+  os << "Triangles\n" 
+     << number_of_triangles << '\n';
 
   for( Facet_iterator fit = c3t3.facets_in_complex_begin();
        fit != c3t3.facets_in_complex_end();
@@ -826,7 +825,7 @@ output_to_medit(std::ostream& os,
         os << V[vh] << " ";
       }
     }
-    os << get(facet_pmap, *fit) << std::endl;
+    os << get(facet_pmap, *fit) << '\n';
     
     // Print triangle again if needed
     if ( print_each_facet_twice )
@@ -839,15 +838,15 @@ output_to_medit(std::ostream& os,
           os << V[vh] << " ";
         }
       }
-      os << get(facet_twice_pmap, *fit) << std::endl;
+      os << get(facet_twice_pmap, *fit) << '\n';
     }
   }
 
   //-------------------------------------------------------
   // Tetrahedra
   //-------------------------------------------------------
-  os << "Tetrahedra" << std::endl
-     << c3t3.number_of_cells_in_complex() << std::endl;
+  os << "Tetrahedra\n"
+     << c3t3.number_of_cells_in_complex() << '\n';
 
   for( Cell_iterator cit = c3t3.cells_in_complex_begin() ;
        cit != c3t3.cells_in_complex_end() ;
@@ -856,13 +855,13 @@ output_to_medit(std::ostream& os,
     for (int i=0; i<4; i++)
       os << V[cit->vertex(i)] << " ";
 
-    os << get(cell_pmap, cit) << std::endl;
+    os << get(cell_pmap, cit) << '\n';
   }
 
   //-------------------------------------------------------
   // End
   //-------------------------------------------------------
-  os << "End" << std::endl;
+  os << "End\n";
 
 } // end output_to_medit(...)
 
