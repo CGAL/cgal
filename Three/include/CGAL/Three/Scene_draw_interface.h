@@ -40,6 +40,7 @@ public:
   virtual void setPickedPixel(const QPoint &e) = 0;
   virtual bool keyPressEvent(QKeyEvent* e) = 0;
   virtual float get_bbox_length() const = 0;
+  virtual void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*) = 0;
 };
 }
 }

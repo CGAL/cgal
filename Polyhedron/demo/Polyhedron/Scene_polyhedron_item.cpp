@@ -401,7 +401,10 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
 
     CGAL::set_halfedgeds_items_id(*poly);
 
-    TextRenderer *renderer = viewer->textRenderer;
+
+    /*
+     * Comming soon
+     * TextRenderer *renderer = viewer->textRenderer;
     Q_FOREACH(double id, text_ids)
         renderer->removeText(id);
     text_ids.clear();
@@ -440,7 +443,7 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
         renderer->addText((float)x/total, (float)y/total, (float)z/total, QString("%1").arg(fh->id()), renderer->lastId(), font, Qt::blue);
         text_ids.append(renderer->lastId());
     }
-
+*/
 }
 
 
@@ -1363,4 +1366,104 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
   data.titles.append(QString("Maximum"));
   data.titles.append(QString("Average"));
   return data;
+}
+
+void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface *viewer)
+{
+    TextRenderer *renderer = viewer->textRenderer;
+    Q_FOREACH(double id, text_ids)
+        renderer->removeText(id);
+    QFont font;
+    font.setBold(true);
+
+    typedef Input_facets_AABB_tree Tree;
+    typedef Tree::Object_and_primitive_id Object_and_primitive_id;
+
+    Tree* aabb_tree = get_aabb_tree(this);
+    if(aabb_tree) {
+        //find clicked facet
+        bool found = false;
+        const Kernel::Point_3 ray_origin(viewer->camera()->position().x, viewer->camera()->position().y, viewer->camera()->position().z);
+        qglviewer::Vec point_under = viewer->camera()->pointUnderPixel(point,found);
+        qglviewer::Vec dir = point_under - viewer->camera()->position();
+        const Kernel::Vector_3 ray_dir(dir.x, dir.y, dir.z);
+        const Kernel::Ray_3 ray(ray_origin, ray_dir);
+        typedef std::list<Object_and_primitive_id> Intersections;
+        Intersections intersections;
+        aabb_tree->all_intersections(ray, std::back_inserter(intersections));
+        Intersections::iterator closest = intersections.begin();
+        if(closest != intersections.end()) {
+            const Kernel::Point_3* closest_point =
+                    CGAL::object_cast<Kernel::Point_3>(&closest->first);
+            for(Intersections::iterator
+                it = boost::next(intersections.begin()),
+                end = intersections.end();
+                it != end; ++it)
+            {
+                if(! closest_point) {
+                    closest = it;
+                }
+                else {
+                    const Kernel::Point_3* it_point =
+                            CGAL::object_cast<Kernel::Point_3>(&it->first);
+                    if(it_point &&
+                            (ray_dir * (*it_point - *closest_point)) < 0)
+                    {
+                        closest = it;
+                        closest_point = it_point;
+                    }
+                }
+            }
+            if(closest_point) {
+                Polyhedron::Facet_handle selected_fh = closest->second;
+                //Test spots around facet to find the closest to point
+
+                float dist = 0;
+                float min_dist =0;
+                QMap<float, TextItem*> textItems;
+                qglviewer::Vec test((*vertices_around_face(selected_fh->halfedge(), *poly).begin())->point().x(),
+                                    (*vertices_around_face(selected_fh->halfedge(), *poly).begin())->point().y(),
+                                    (*vertices_around_face(selected_fh->halfedge(), *poly).begin())->point().z());
+
+                min_dist = (test.x-point_under.x)*(test.x-point_under.x)+(test.y-point_under.y)*(test.y-point_under.y)+(test.z-point_under.z)*(test.z-point_under.z);
+                Q_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *poly))
+                {
+                    test = qglviewer::Vec(vh->point().x(), vh->point().y(),vh->point().z());
+                    dist = (test.x-point_under.x)*(test.x-point_under.x)+(test.y-point_under.y)*(test.y-point_under.y)+(test.z-point_under.z)*(test.z-point_under.z);
+                    if(dist < min_dist)
+                        min_dist = dist;
+                    textItems[dist] = new TextItem(test.x, test.y, test.z,QString("%1").arg(vh->id()),renderer->lastId(), font, Qt::red);
+                }
+                Q_FOREACH(boost::graph_traits<Polyhedron>::halfedge_descriptor e, halfedges_around_face(selected_fh->halfedge(), *poly))
+                {
+                    const Point& p1 = source(e, *poly)->point();
+                    const Point& p2 = target(e, *poly)->point();
+                    test = qglviewer::Vec((p1.x()+p2.x())/2, (float)(p1.y()+p2.y())/2, (float)(p1.z()+p2.z())/2);
+                    dist = (test.x-point_under.x)*(test.x-point_under.x)+(test.y-point_under.y)*(test.y-point_under.y)+(test.z-point_under.z)*(test.z-point_under.z);
+                    if(dist < min_dist)
+                        min_dist = dist;
+                    textItems[dist] = new TextItem(test.x, test.y, test.z, QString("%1").arg(e->id()/2), renderer->lastId(), font, Qt::green);
+
+                }
+
+                double x(0), y(0), z(0);
+                int total(0);
+                Q_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *poly))
+                {
+                    x+=vh->point().x();
+                    y+=vh->point().y();
+                    z+=vh->point().z();
+                    ++total;
+                }
+
+                test = qglviewer::Vec(x/total,y/total,z/total);
+                dist = (test.x-point_under.x)*(test.x-point_under.x)+(test.y-point_under.y)*(test.y-point_under.y)+(test.z-point_under.z)*(test.z-point_under.z);
+                if(dist < min_dist)
+                    min_dist = dist;
+                textItems[dist] = new TextItem(test.x, test.y, test.z, QString("%1").arg(selected_fh->id()), renderer->lastId(), font, Qt::blue);
+                text_ids.append(renderer->lastId());
+                renderer->addText(textItems[min_dist]);
+            }
+        }
+    }
 }

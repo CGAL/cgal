@@ -212,3 +212,6 @@ QString CGAL::Three::Scene_item::compute_stats(int )
 {
   return QString();
 }
+
+void CGAL::Three::Scene_item::printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*)
+{}

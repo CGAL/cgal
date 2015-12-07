@@ -159,6 +159,8 @@ public:
       is_bbox_computed = true;
       return _bbox;
   }
+  //!Finds the spot the closest to point and prints the id of the corresponding Primitive (vertex, edg or Facet).
+  virtual void printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*);
   // Function about manipulation
   //! Decides if the item can have a ManipulatedFrame.
   virtual bool manipulatable() const { return false; }

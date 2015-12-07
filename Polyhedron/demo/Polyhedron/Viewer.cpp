@@ -245,6 +245,11 @@ void Viewer::mousePressEvent(QMouseEvent* event)
     requestContextMenu(event->globalPos());
     event->accept();
   }
+  else if(event->button() == Qt::LeftButton &&
+          event->modifiers().testFlag(Qt::AltModifier) && event->modifiers().testFlag(Qt::ControlModifier))
+  {
+      d->scene->printPrimitiveId(event->pos(), this);
+  }
   else {
     QGLViewer::mousePressEvent(event);
   }
@@ -567,7 +572,6 @@ void Viewer::beginSelection(const QPoint &point)
     glEnable(GL_SCISSOR_TEST);
     glScissor(point.x(), camera()->screenHeight()-1-point.y(), 1, 1);
     d->scene->setPickedPixel(point);
-
 }
 void Viewer::endSelection(const QPoint&)
 {
@@ -1193,16 +1197,15 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
     QPainter *painter = viewer->painter;
     if(!painter->isActive())
     {
-        qDebug()<<"new painter";
         painter->begin(viewer);
     }
 
     QRect rect;
     qglviewer::Camera* camera = viewer->camera();
     //painter->setBackgroundMode(Qt::TransparentMode);
-    Q_FOREACH(double i, displayList)
+    Q_FOREACH(TextItem* item, textItems)
     {
-        TextItem* item = textItems[i];
+        //TextItem* item = textItems[i];
         qglviewer::Vec src(item->position()->x(), item->position()->y(),item->position()->z());
         rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
                      camera->projectedCoordinatesOf(src).y-item->height()/2,

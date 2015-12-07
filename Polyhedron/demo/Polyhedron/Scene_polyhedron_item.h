@@ -89,6 +89,8 @@ public:
     bool triangulated(){return poly->is_pure_triangle();}
     bool self_intersected(){return !self_intersect;}
 
+    void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer);
+
 public Q_SLOTS:
     virtual void invalidateOpenGLBuffers();
     virtual void selection_changed(bool);

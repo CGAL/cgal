@@ -123,6 +123,7 @@ public:
    */
   bool keyPressEvent(QKeyEvent* e);
 
+  void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*);
   //!@returns the scene bounding box
   Bbox bbox() const;
   float get_bbox_length() const;
