@@ -52,14 +52,24 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL);
   //use the new API for these
   setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, SELECT);
+
+  setMouseBindingDescription(Qt::Key(0), Qt::ShiftModifier, Qt::LeftButton,
+                             tr("Selects and display context "
+                                "menu of the selected item"));
+  setMouseBindingDescription(Qt::Key_I, Qt::NoModifier, Qt::LeftButton,
+                             tr("Displays the closest primitive ID :"
+                                "facets IDs in blue, edges IDs in green"
+                                "and vertices IDs in red."));
 #else
   setMouseBinding(Qt::SHIFT + Qt::LeftButton, SELECT);
   setMouseBindingDescription(Qt::SHIFT + Qt::RightButton,
                              tr("Selects and display context "
                                 "menu of the selected item"));
+
 #endif // QGLVIEWER_VERSION >= 2.5.0
   prev_radius = sceneRadius();
   axis_are_displayed = true;
+  i_is_pressed = false;
 }
 
 Viewer::~Viewer()
@@ -246,7 +256,7 @@ void Viewer::mousePressEvent(QMouseEvent* event)
     event->accept();
   }
   else if(event->button() == Qt::LeftButton &&
-          event->modifiers().testFlag(Qt::AltModifier) && event->modifiers().testFlag(Qt::ControlModifier))
+          i_is_pressed)
   {
       d->scene->printPrimitiveId(event->pos(), this);
   }
@@ -293,12 +303,22 @@ void Viewer::keyPressEvent(QKeyEvent* e)
           axis_are_displayed = !axis_are_displayed;
           updateGL();
         }
+    else if(e->key() == Qt::Key_I) {
+          i_is_pressed = true;
+        }
   }
   //forward the event to the scene (item handling of the event)
   if (! d->scene->keyPressEvent(e) )
     QGLViewer::keyPressEvent(e);
 }
 
+void Viewer::keyReleaseEvent(QKeyEvent *e)
+{
+    if(e->key() == Qt::Key_I) {
+        i_is_pressed = false;
+    }
+    QGLViewer::keyReleaseEvent(e);
+}
 void Viewer::turnCameraBy180Degres() {
   qglviewer::Camera* camera = this->camera();
   using qglviewer::ManipulatedCameraFrame;
@@ -1159,39 +1179,6 @@ void Viewer::wheelEvent(QWheelEvent* e)
         QGLViewer::wheelEvent(e);
 }
 
-void TextRenderer::printFacetId(QPoint pt, CGAL::Three::Viewer_interface *viewer)
-{
-    qDebug()<<"print";
-    displayList.clear();
-    QMap<float,double> distances;
-    bool found;
-    float min_dist = 0;
-    qglviewer::Vec pup = viewer->camera()->pointUnderPixel(pt, found);
-    if(found)
-    {
-        //initializes min_dist
-        TextItem *it = textItems.values().first();
-        float dist =
-                 (it->position()->x() - pup.x)*(it->position()->x() - pup.x)
-                +(it->position()->y() - pup.y)*(it->position()->y() - pup.y)
-                +(it->position()->z() - pup.z)*(it->position()->z() - pup.z);
-            min_dist = dist;
-
-            //search for the smallest distance between The clicked point and every ID position
-        Q_FOREACH(TextItem* item, textItems.values())
-        {
-            float dist =
-                     (item->position()->x() - pup.x)*(item->position()->x() - pup.x)
-                    +(item->position()->y() - pup.y)*(item->position()->y() - pup.y)
-                    +(item->position()->z() - pup.z)*(item->position()->z() - pup.z);
-            distances[dist] = item->id();
-            if(dist < min_dist)
-                min_dist = dist;
-        }
-        //Adds the corresponding Id to the list
-        displayList.append(distances[min_dist]);
-    }
-}
 void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 {
     QPainter *painter = viewer->painter;
@@ -1202,10 +1189,8 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 
     QRect rect;
     qglviewer::Camera* camera = viewer->camera();
-    //painter->setBackgroundMode(Qt::TransparentMode);
     Q_FOREACH(TextItem* item, textItems)
     {
-        //TextItem* item = textItems[i];
         qglviewer::Vec src(item->position()->x(), item->position()->y(),item->position()->z());
         rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
                      camera->projectedCoordinatesOf(src).y-item->height()/2,
@@ -1234,5 +1219,4 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 void TextRenderer::removeText(double id)
 {
     textItems.remove(id);
-    displayList.removeAll(id);
 }

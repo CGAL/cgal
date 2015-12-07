@@ -116,6 +116,8 @@ protected:
   void keyPressEvent(QKeyEvent*);
   //!Deal with context menu events
   void contextMenuEvent(QContextMenuEvent*);
+  //!Defines the behaviour for the key release events
+  void keyReleaseEvent(QKeyEvent *);
   /*!
    * \brief makeArrow creates an arrow and stores it in a struct of vectors.
    * \param R the radius of the arrow.
@@ -129,6 +131,7 @@ protected:
 
   void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
   void resizeGL(int w, int h);
+  bool i_is_pressed;
 
 
 protected:
@@ -184,9 +187,7 @@ public:
     void removeText(double id);
     double lastId()const{return m_lastId;}
     QMap<double,TextItem*> items() const{return textItems;}
-    void printFacetId(QPoint pt, CGAL::Three::Viewer_interface*);
 private:
-    QList<double> displayList;
     QMap<double,TextItem*> textItems;
     QOpenGLFramebufferObject *fbo;
     double m_lastId;
