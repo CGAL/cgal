@@ -690,8 +690,8 @@ LAYOUT_FILE            = ${CGAL_DOC_RESOURCE_DIR}/DoxygenLayoutPackage.xml
 # feature you need bibtex and perl available in the search path. Do not use
 # file names with spaces, bibtex cannot handle them.
 
-CITE_BIB_FILES         = ${CMAKE_CURRENT_SOURCE_DIR}/biblio/cgal_manual.bib \
-                         ${CMAKE_CURRENT_SOURCE_DIR}/biblio/geom.bib
+CITE_BIB_FILES         = ${CGAL_DOC_BIBLIO_DIR}/cgal_manual.bib \
+                         ${CGAL_DOC_BIBLIO_DIR}/geom.bib
 
 #---------------------------------------------------------------------------
 # configuration options related to warning and progress messages
