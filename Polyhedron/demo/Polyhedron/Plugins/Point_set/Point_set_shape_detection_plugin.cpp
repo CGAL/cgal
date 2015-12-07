@@ -2,8 +2,10 @@
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
+
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Scene_group_item.h>
 
 #include <CGAL/Random.h>
 
@@ -139,7 +141,13 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     Point_set_demo_point_set_shape_detection_dialog dialog;
     if(!dialog.exec())
       return;
-
+    
+    scene->setSelectedItem(-1);
+    Scene_group_item *subsets_item = new Scene_group_item(QString("%1 (RANSAC subsets)").arg(item->name()));
+    subsets_item->setExpanded(false);
+    Scene_group_item *planes_item = new Scene_group_item(QString("%1 (RANSAC planes)").arg(item->name()));
+    planes_item->setExpanded(false);
+    
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
     typedef CGAL::Identity_property_map<Point_set::Point_with_normal> PointPMap;
@@ -226,7 +234,9 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
               poly_item->setName(QString("%1%2_alpha_shape").arg(QString::fromStdString(ss.str()))
                                  .arg (QString::number (shape->indices_of_assigned_points().size())));
               poly_item->setRenderingMode (Flat);
+
               scene->addItem(poly_item);
+              scene->changeGroup(poly_item, planes_item);
             }
         }
       else if (dynamic_cast<CGAL::Shape_detection_3::Cone<Traits> *>(shape.get()))
@@ -244,15 +254,29 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       point_item->set_has_normals(true);
       point_item->setRenderingMode(item->renderingMode());
       if (dialog.generate_subset())
-        scene->addItem(point_item);
+        {
+          scene->addItem(point_item);
+          scene->changeGroup(point_item, subsets_item);
+        }
       else
         delete point_item;
 
       ++index;
     }
 
+    if (dialog.generate_subset())
+      scene->add_group(subsets_item);
+    else
+      delete subsets_item;
+    
+    if (dialog.generate_alpha())
+      scene->add_group(planes_item);
+    else
+      delete planes_item;
+
     if (dialog.generate_structured ())
       {
+        Scene_group_item *group_item = new Scene_group_item(QString("%1 (structured)").arg(item->name()));
         std::cout << "Structuring point set... ";
         CGAL::internal::Point_set_structuring<Traits> structuring (points->begin (), points->end (),
                                                                    shape_detection);
@@ -287,7 +311,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
           soup_item->new_triangle (facets[i][0], facets[i][1], facets[i][2]);
         soup_item->setName(tr("%1 (Delaunay coherent facets)").arg(item->name()));
         scene->addItem (soup_item);
-
+        scene->changeGroup(soup_item, group_item);
+        
         if (pts_full->point_set ()->empty ())
           delete pts_full;
         else
@@ -298,6 +323,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
             pts_full->setRenderingMode(PointsPlusNormals);
             pts_full->setColor(Qt::blue);
             scene->addItem (pts_full);
+            scene->changeGroup(pts_full, group_item);
           }
 
         if (pts_planes->point_set ()->empty ())
@@ -310,6 +336,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
             pts_planes->setRenderingMode(PointsPlusNormals);
             pts_planes->setColor(Qt::blue);
             scene->addItem (pts_planes);
+            scene->changeGroup(pts_planes, group_item);
           }
 
         if (pts_edges->point_set ()->empty ())
@@ -322,6 +349,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
             pts_edges->setRenderingMode(PointsPlusNormals);
             pts_edges->setColor(Qt::red);
             scene->addItem (pts_edges);
+            scene->changeGroup(pts_edges, group_item);
           }
 
         if (pts_corners->point_set ()->empty ())
@@ -334,9 +362,10 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
             pts_corners->setRenderingMode(PointsPlusNormals);
             pts_corners->setColor(Qt::black);
             scene->addItem (pts_corners);
+            scene->changeGroup(pts_corners, group_item);
           }
         std::cout << "done" << std::endl;
-
+        scene->add_group (group_item);
       }
     
 
