@@ -30,7 +30,7 @@
 #include <fstream>
 
 #ifdef BOOST_PARAMETER_MAX_ARITY
-#  if (BOOST_PARAMETER_MAX_ARITY < 12)
+#  if (BOOST_PARAMETER_MAX_ARITY < 8)
 #    error "BOOST_PARAMETER_MAX_ARITY must be at least 8 for CGAL::lloyd_optimize_mesh_2()"
 #  endif
 #else
