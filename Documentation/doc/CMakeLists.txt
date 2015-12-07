@@ -59,6 +59,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
     file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "STRIP_FROM_INC_PATH += ${CGAL_PACKAGE_DIR}/include/\n")
     file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "ALIASES += \"cgalPkgDescriptionBegin{2}=\\details \"\n")
     file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "ALIASES += \"cgalPkgManuals{2}=<BR>\"\n")
+    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "INPUT = ${CGAL_PACKAGE_DOC_DIR}\n")
 
     # IMAGE_PATH is set by default. For Documentation, we generate the extra path using packages.txt
     set(IMAGE_PATH_VALUES "IMAGE_PATH = ${CGAL_PACKAGE_DOC_DIR}/fig")
