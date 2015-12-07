@@ -1,6 +1,10 @@
 #ifndef CGAL_DEMO_MESH_3_C3T3_TYPE_H
 #define CGAL_DEMO_MESH_3_C3T3_TYPE_H
 
+// include this to get #define BOOST_PARAMETER_MAX_ARITY 12
+// as otherwise it gets set via inclusion of Polyhedron_3.h
+#include <CGAL/Mesh_3/global_parameters.h>
+
 #include "Polyhedron_type.h"
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 #include "Image_type.h"

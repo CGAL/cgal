@@ -88,17 +88,6 @@
 #  define BOOST_RANDOM_HPP
 #endif
 
-#ifdef BOOST_PARAMETER_MAX_ARITY
-#  if (BOOST_PARAMETER_MAX_ARITY < 12)
-#  error "BOOST_PARAMETER_MAX_ARITY must be at least 12 for some CGAL packages"
-#  endif
-#else
-// set it to 12 needed in
-// * <CGAL/lloyd_optimize_mesh_2.h>
-// * <CGAL/Mesh_3/global_parameters.h>
-#define  BOOST_PARAMETER_MAX_ARITY 12
-#endif
-
 // The following header file defines among other things  BOOST_PREVENT_MACRO_SUBSTITUTION 
 #include <boost/config.hpp>
 #include <boost/version.hpp>

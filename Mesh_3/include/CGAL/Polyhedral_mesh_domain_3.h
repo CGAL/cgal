@@ -29,6 +29,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Side_of_triangle_mesh/Point_inside_vertical_ray_cast.h>
 
+#include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_3/Robust_intersection_traits_3.h>
 #include <CGAL/Mesh_3/Triangle_accessor_primitive.h>
 #include <CGAL/Triangle_accessor_3.h>
