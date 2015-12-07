@@ -392,10 +392,8 @@ input point set. It requires that a shape detection algorithm is first applied
 to the point set (see \ref Chapter_Point_Set_Shape_Detection). It is based on
 the article \cgalCite{cgal:la-srpss-13}.
 
-Each detected plane is regularly resampled at a given density. In
-addition, edges and corners are estimated and sampled. This algorithm
-is mainly designed for point set sampling scenes with planar sections
-and sharp features: urban or indoor scenes, for example. 
+Each detected plane is regularly resampled at a given density. In addition,
+edges and corners are estimated and sampled.
 
 \subsection Point_set_processing_3Example_9 Example
 
