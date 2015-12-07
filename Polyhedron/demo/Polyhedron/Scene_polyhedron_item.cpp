@@ -691,9 +691,9 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
     delete_aabb_tree(this);
     delete poly;
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-    CGAL::Three::Viewer_interface* v = qobject_cast<CGAL::Three::Viewer_interface*>(viewer);
-    if(v)
+    if(viewer)
     {
+    CGAL::Three::Viewer_interface* v = qobject_cast<CGAL::Three::Viewer_interface*>(viewer);
         Q_FOREACH(double id, text_ids)
             v->textRenderer->removeText(id);
     }

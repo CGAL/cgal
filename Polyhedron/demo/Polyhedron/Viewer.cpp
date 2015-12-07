@@ -1165,6 +1165,7 @@ void TextRenderer::printFacetId(QPoint pt, CGAL::Three::Viewer_interface *viewer
     qglviewer::Vec pup = viewer->camera()->pointUnderPixel(pt, found);
     if(found)
     {
+        //initializes min_dist
         TextItem *it = textItems.values().first();
         float dist =
                  (it->position()->x() - pup.x)*(it->position()->x() - pup.x)
@@ -1172,6 +1173,7 @@ void TextRenderer::printFacetId(QPoint pt, CGAL::Three::Viewer_interface *viewer
                 +(it->position()->z() - pup.z)*(it->position()->z() - pup.z);
             min_dist = dist;
 
+            //search for the smallest distance between The clicked point and every ID position
         Q_FOREACH(TextItem* item, textItems.values())
         {
             float dist =
@@ -1182,6 +1184,7 @@ void TextRenderer::printFacetId(QPoint pt, CGAL::Three::Viewer_interface *viewer
             if(dist < min_dist)
                 min_dist = dist;
         }
+        //Adds the corresponding Id to the list
         displayList.append(distances[min_dist]);
     }
 }
@@ -1207,15 +1210,7 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
                      item->height());
         painter->setFont(item->font());
         painter->setPen(QPen(item->color()));
-        qglviewer::Vec v = camera->projectedCoordinatesOf(src);
-        QPoint pouaing((int)(v.x),
-                       (int)(v.y));
-        bool found;
-        qglviewer::Vec pUp =viewer->camera()->pointUnderPixel(pouaing, found);
-        qglviewer::Vec pos_point = qglviewer::Vec(item->position()->x(), item->position()->y(), item->position()->z());
-        float dist =(pUp.x-pos_point.x) * (pUp.x-pos_point.x) +  (pUp.y-pos_point.y) * (pUp.y-pos_point.y) + (pUp.z-pos_point.z) * (pUp.z-pos_point.z);
-        if( dist < viewer->sceneRadius()*viewer->sceneRadius()/1000.0)
-            painter->drawText(rect, item->text());
+        painter->drawText(rect, item->text());
     }
 
 }
@@ -1236,4 +1231,5 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 void TextRenderer::removeText(double id)
 {
     textItems.remove(id);
+    displayList.removeAll(id);
 }
