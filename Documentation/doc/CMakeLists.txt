@@ -187,7 +187,11 @@ if(DOXYGEN_FOUND)
     execute_process(COMMAND ${PYTHON_EXECUTABLE}
                             ${CGAL_DOC_SCRIPT_DIR}/generate_how_to_cite.py
                             ${CMAKE_CURRENT_SOURCE_DIR}
-                            ${CMAKE_BINARY_DIR})
+                            ${CMAKE_BINARY_DIR}
+                    RESULT_VARIABLE GENERATE_HOW_TO_CITE_RESULT)
+    if(NOT GENERATE_HOW_TO_CITE_RESULT EQUAL "0")
+      message(FATAL_ERROR "generate_how_to_cite did not exit correctly")
+    endif()
 
     configure_file(${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib.in ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib)
     configure_file(${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt.in ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt)
