@@ -22,22 +22,21 @@
 
 namespace CGAL {
 
-  template <class Triangulation, class Filter>
+  template <class Triangulation, class Filter, class Priority>
   class Advancing_front_surface_reconstruction;
 
   namespace AFSR {
 
-
-    template <class Tr, class TDS, class Filter>
+    template <class Tr, class TDS, class Filter, class Priority>
     typename TDS::Vertex_handle
-    construct_surface(TDS& tds, const Advancing_front_surface_reconstruction<Tr,Filter>& surface)
+    construct_surface(TDS& tds, const Advancing_front_surface_reconstruction<Tr,Filter,Priority>& surface)
     {
 
       typedef typename TDS::Vertex_handle Vertex_handle;
       typedef std::pair<Vertex_handle,Vertex_handle> Vh_pair;
       typedef typename TDS::Face_handle Face_handle;
       typedef typename TDS::Edge Edge;
-      typedef typename Advancing_front_surface_reconstruction<Tr,Filter>::Triangulation_3 Triangulation;
+      typedef typename Advancing_front_surface_reconstruction<Tr,Filter,Priority>::Triangulation_3 Triangulation;
 
       Triangulation& T = surface.triangulation_3();
       // create an infinite-vertex and  infinite faces with the
