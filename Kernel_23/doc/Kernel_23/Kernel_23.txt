@@ -740,7 +740,7 @@ struct Intersection_visitor : public boost::static_visitor<> {
 template <class R>
 void foo(Segment_2<R> seg, Line_2<R> lin)
 {
-  CGAL::Object obj = intersection(seg1, seg2);
+  CGAL::Object obj = intersection(seg, lin);
   if(const Point_2* foo = object_cast<Point_2>(&obj)) {
     // Point_2 
   } else if(const Segment_2* foo = object_cast<Segment_2>(&obj)) {
@@ -752,9 +752,9 @@ void foo(Segment_2<R> seg, Line_2<R> lin)
   // becomes
   auto result = intersection(seg, lin);
   if(result) {
-    if(const Point_2* foo = boost::get<Point_2>(&*obj)) {
+    if(const Point_2* foo = boost::get<Point_2>(&*result)) {
       // Point_2 
-    } else if(const Segment_2* foo = boost::get<Segment_2>(&*obj)) {
+    } else if(const Segment_2* foo = boost::get<Segment_2>(&*result)) {
       // Segment_2 
     }
   } else {

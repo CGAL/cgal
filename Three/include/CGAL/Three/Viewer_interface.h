@@ -75,7 +75,7 @@ public:
   virtual void attrib_buffers(int program_name) const = 0;
 
   /*! Returns a program according to name.
-   * If the program does not exist yet, it is created and stored in #shader_programs.
+   * If the program does not exist yet, it is created and stored in shader_programs.
    * name cans be :
    * - PROGRAM_WITH_LIGHT : used for the facets
    * - PROGRAM_WITHOUT_LIGHT : used for the points and lines

@@ -102,6 +102,7 @@ protected:
   bool axis_are_displayed;
   //!Defines the behaviour for the mouse press events
   void mousePressEvent(QMouseEvent*);
+  void wheelEvent(QWheelEvent *);
   //!Defines the behaviour for the key press events
   void keyPressEvent(QKeyEvent*);
   /*! \brief Encapsulates the pickMatrix.

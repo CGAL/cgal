@@ -1041,3 +1041,19 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
         return 0;
     }
 }
+void Viewer::wheelEvent(QWheelEvent* e)
+{
+    if(e->modifiers().testFlag(Qt::ShiftModifier))
+    {
+        double delta = e->delta();
+        if(delta>0)
+        {
+            camera()->setZNearCoefficient(camera()->zNearCoefficient() * 1.01);
+        }
+        else
+            camera()->setZNearCoefficient(camera()->zNearCoefficient() / 1.01);
+        updateGL();
+    }
+    else
+        QGLViewer::wheelEvent(e);
+}
