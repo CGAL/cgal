@@ -163,7 +163,7 @@ if(DOXYGEN_FOUND)
   file(MAKE_DIRECTORY "${CGAL_DOC_DXY_DIR}")
 
   set(CGAL_DOC_RESOURCE_DIR "${CMAKE_CURRENT_LIST_DIR}/resources")
-  set(CGAL_DOC_SCRIPT_DIR "${CMAKE_CURRENT_LIST_DIR}/script")
+  set(CGAL_DOC_SCRIPT_DIR "${CMAKE_CURRENT_LIST_DIR}/scripts")
 
   set(CGAL_DOC_HEADER ${CGAL_DOC_DXY_DIR}/header.html)
   configure_file(${CGAL_DOC_RESOURCE_DIR}/header.html ${CGAL_DOC_HEADER} @ONLY)
@@ -186,7 +186,7 @@ if(DOXYGEN_FOUND)
   if(PYTHONINTERP_FOUND)
     execute_process(COMMAND ${PYTHON_EXECUTABLE}
                             ${CGAL_DOC_SCRIPT_DIR}/generate_how_to_cite.py
-                            ${CMAKE_CURRENT_SOURCE_DIR}
+                            ${CMAKE_SOURCE_DIR}
                             ${CMAKE_BINARY_DIR}
                     RESULT_VARIABLE GENERATE_HOW_TO_CITE_RESULT)
     if(NOT GENERATE_HOW_TO_CITE_RESULT EQUAL "0")

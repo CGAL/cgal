@@ -5,6 +5,7 @@ import re
 import codecs
 from sys import argv
 from sys import stderr
+import os
 
 ### Constants ###
 
@@ -151,6 +152,8 @@ def protect_accentuated_letters(authors):
 
 ### Start of the main function ###
 
+assert len(argv) == 3, "require exactly two arguments"
+
 SOURCE_DIR=argv[1]
 BUILD_DIR=argv[2]
 
@@ -161,13 +164,15 @@ pattern_title_and_anchor = re.compile(r"\\cgalPkgDescriptionBegin{([^}]*),\s?([^
 pattern_author = re.compile(r"\\cgalPkgAuthors?{([^}]*)}")
 pattern_bib = re.compile(r"\\cgalPkgBib{([^}]*)}")
 
-f = codecs.open(SOURCE_DIR+"/doc/Documentation/packages.txt", 'r', encoding='utf-8')
+
+
+f = codecs.open(os.path.join(SOURCE_DIR, "Documentation/doc/Documentation/packages.txt"), 'r', encoding='utf-8')
 k=2
 for line in f:
     match = pattern.match(line)
     if(match):
       pkg = match.group(1)
-      filename=SOURCE_DIR+"/../" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
+      filename=os.path.join(SOURCE_DIR, pkg, "doc", pkg, "PackageDescription.txt")
       pkgdesc = codecs.open(filename, 'r', encoding='utf-8')
       authors=""
       bib=""
