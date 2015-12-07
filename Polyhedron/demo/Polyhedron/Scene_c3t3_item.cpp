@@ -101,12 +101,15 @@ Scene_c3t3_item::Scene_c3t3_item()
   s_vertex.resize(0);
   s_normals.resize(0);
   ws_vertex.resize(0);
+  need_changed = false;
+  startTimer(0);
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
   compile_shaders();
   spheres_are_shown = false;
   create_flat_and_wire_sphere(1.0f,s_vertex,s_normals, ws_vertex);
+
 }
 
 Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
@@ -124,6 +127,8 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   s_vertex.resize(0);
   s_normals.resize(0);
   ws_vertex.resize(0);
+  need_changed = false;
+  startTimer(0);
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
@@ -177,9 +182,16 @@ Scene_c3t3_item::c3t3()
 void
 Scene_c3t3_item::changed()
 {
-  this->c3t3_changed();
+
+  need_changed = true;
 }
 
+void Scene_c3t3_item::timerEvent(QTimerEvent* /*event*/)
+{ // just handle deformation - paint like selection is handled in eventFilter()
+  if(need_changed) {
+      c3t3_changed();
+  }
+}
 void
 Scene_c3t3_item::c3t3_changed()
 {
@@ -202,6 +214,7 @@ Scene_c3t3_item::c3t3_changed()
   build_histogram();
   //compute_elements();
   this->invalidate_buffers();
+  need_changed = false;
 }
 
 QPixmap

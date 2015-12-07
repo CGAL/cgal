@@ -296,7 +296,6 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                            .arg(facet_sizing)
                            .arg(tet_sizing)
                            .arg(approx));
-      //result_item->setColor(Qt::magenta);
       result_item->setItemIsMulticolor(true);
       result_item->setRenderingMode(FlatPlusEdges);
       item->setVisible(false);

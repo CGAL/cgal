@@ -111,6 +111,7 @@ public:
   void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
   void draw_points(CGAL::Three::Viewer_interface * viewer) const;
 private:
+  bool need_changed;
   void reset_cut_plane();
   void draw_triangle(const Kernel::Point_3& pa,
     const Kernel::Point_3& pb,
@@ -140,6 +141,8 @@ private:
   void update_histogram();
 
   void changed();
+
+  void timerEvent(QTimerEvent*);
 
 private:
   void build_histogram();
