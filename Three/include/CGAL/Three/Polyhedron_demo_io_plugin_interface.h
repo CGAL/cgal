@@ -24,9 +24,9 @@
 #include <QFileInfo>
 #include <QStringList>
 
-class Scene_item;
 namespace CGAL{
 namespace Three {
+class Scene_item;
   /*!
    * \file Polyhedron_demo_io_plugin_interface.h
    * This class provides a base for creating a new IO plugin.
