@@ -460,7 +460,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   program = getShaderProgram(PROGRAM_WITH_LIGHT);
   attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
   program->bind();
-  program->setAttributeValue("colors", this->color());
+  //program->setAttributeValue("colors", this->color());
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size() / 3));
   program->release();
   vaos[Facets]->release();
@@ -638,6 +638,8 @@ void Scene_c3t3_item::draw_triangle(const Kernel::Point_3& pa,
   positions_poly.push_back(pc.y());
   positions_poly.push_back(pc.z());
 
+
+
 }
 
 void Scene_c3t3_item::draw_triangle_edges(const Kernel::Point_3& pa,
@@ -763,6 +765,13 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
     program->enableAttributeArray("normals");
     program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
     buffers[Facet_normals].release();
+
+    buffers[Facet_colors].bind();
+    buffers[Facet_colors].allocate(f_colors.data(),
+      static_cast<int>(f_colors.size()*sizeof(float)));
+    program->enableAttributeArray("colors");
+    program->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
+    buffers[Facet_colors].release();
 
     vaos[Facets]->release();
     program->release();
@@ -899,6 +908,7 @@ void Scene_c3t3_item::compute_elements() const
   positions_lines.clear();
   positions_poly.clear();
   normals.clear();
+  f_colors.resize(0);
   s_colors.resize(0);
   s_center.resize(0);
   s_radius.resize(0);
@@ -972,6 +982,19 @@ void Scene_c3t3_item::compute_elements() const
         sc != ON_ORIENTED_BOUNDARY &&
         sb == sa && sc == sa)
       {
+          if(cell->subdomain_index() == 0) {
+
+              QColor color = d->colors[cell->neighbor(index)->subdomain_index()];
+              f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+              f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+              f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+          }
+          else {
+            QColor color = d->colors[cell->subdomain_index()];
+            f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+            f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+            f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+          }
         if ((index % 2 == 1) == c3t3().is_in_complex(cell)) draw_triangle(pb, pa, pc, false);
         else draw_triangle(pa, pb, pc, false);
         draw_triangle_edges(pa, pb, pc);
@@ -1005,6 +1028,24 @@ void Scene_c3t3_item::compute_elements() const
         sd == ON_ORIENTED_BOUNDARY ||
         sb != sa || sc != sa || sd != sa)
       {
+        QColor color = d->colors[cit->subdomain_index()].darker(150);
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+
+
         draw_triangle(pb, pa, pc, true);
         draw_triangle(pa, pb, pd, true);
         draw_triangle(pa, pd, pc, true);

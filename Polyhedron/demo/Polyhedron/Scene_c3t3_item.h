@@ -159,6 +159,7 @@ private:
   {
       Facet_vertices =0,
       Facet_normals,
+      Facet_colors,
       Edges_vertices,
       Grid_vertices,
       Sphere_vertices,
@@ -201,6 +202,7 @@ private:
   mutable std::vector<float> positions_grid;
   mutable std::vector<float> positions_poly;
   mutable std::vector<float> normals;
+  mutable std::vector<float> f_colors;
   mutable std::vector<float> s_normals;
   mutable std::vector<float> s_colors;
   mutable std::vector<float> s_vertex;
