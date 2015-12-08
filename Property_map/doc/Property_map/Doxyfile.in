@@ -2,4 +2,4 @@
 
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - CGAL and Boost Property Maps"
 INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/property_map.h
-EXAMPLE_PATH               =  ${CMAKE_SOURCE_DIR}/Point_set_processing_3/examples
+EXAMPLE_PATH = ${CGAL_Point_set_processing_3_EXAMPLE_DIR}

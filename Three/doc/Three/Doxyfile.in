@@ -7,7 +7,7 @@ INPUT        = ${CMAKE_SOURCE_DIR}/Three/doc/Three/ \
                ${CMAKE_SOURCE_DIR}/Polyhedron/demo/Polyhedron/MainWindow.h \
                ${CMAKE_SOURCE_DIR}/Polyhedron/demo/Polyhedron/Polyhedron_demo.h \
                
-EXAMPLE_PATH = ${CMAKE_SOURCE_DIR}/Three/demo/Three/ \
+EXAMPLE_PATH = ${CGAL_PACKAGE_DIR}/demo
 
 EXTRACT_ALL                =  false
 HIDE_UNDOC_MEMBERS         =  true
