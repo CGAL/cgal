@@ -21,10 +21,14 @@ endmacro()
 
 function(configure_doxygen_package CGAL_PACKAGE_NAME)
   if(CGAL_BRANCH_BUILD)
-    set(CGAL_PACKAGE_DOC_DIR ${CMAKE_SOURCE_DIR}/${CGAL_PACKAGE_NAME}/doc/${CGAL_PACKAGE_NAME})
+    set(CGAL_PACKAGE_DIR ${CMAKE_SOURCE_DIR}/${CGAL_PACKAGE_NAME})
   else()
-    set(CGAL_PACKAGE_DOC_DIR ${CMAKE_SOURCE_DIR}/doc/${CGAL_PACKAGE_NAME})
+    set(CGAL_PACKAGE_DIR ${CMAKE_SOURCE_DIR})
   endif()
+
+  set(CGAL_PACKAGE_DOC_DIR ${CGAL_PACKAGE_DIR}/doc/${CGAL_PACKAGE_NAME})
+  set(CGAL_PACKAGE_INCLUDE_DIR ${CGAL_PACKAGE_DIR}/include/)
+
   if(NOT IS_DIRECTORY ${CGAL_PACKAGE_DOC_DIR})
     message(STATUS "${CGAL_PACKAGE_NAME} reported but has no doc dir: ${CGAL_PACKAGE_DOC_DIR}")
     return()
@@ -32,7 +36,6 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
     message(STATUS "Configuring documentation of ${CGAL_PACKAGE_NAME}")
   endif()
 
-  set(CGAL_PACKAGE_DIR ${CMAKE_SOURCE_DIR}/${CGAL_PACKAGE_NAME})
   if(EXISTS ${CGAL_PACKAGE_DOC_DIR}/Doxyfile.in)
     set(CGAL_DOC_PACKAGE_DEFAULTS ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}_defaults.dxy)
     file(REMOVE ${CGAL_DOC_PACKAGE_DEFAULTS})
@@ -60,6 +63,19 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
     file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "ALIASES += \"cgalPkgDescriptionBegin{2}=\\details \"\n")
     file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "ALIASES += \"cgalPkgManuals{2}=<BR>\"\n")
     file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "INPUT = ${CGAL_PACKAGE_DOC_DIR}\n")
+    if(NOT EXISTS "${CGAL_PACKAGE_DOC_DIR}/CGAL")
+      # This package has in-source documentation.
+      if(CGAL_BRANCH_BUILD) # use the entire include subdir
+        file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "INPUT += ${CGAL_PACKAGE_DIR}/include/\n")
+      else() # use the filelist
+        if(EXITS "${CGAL_PACKAGE_DOC_DIR}/filelist.txt")
+          file(STRINGS "${CGAL_PACKAGE_DOC_DIR}/filelist.txt" CGAL_PKG_FILES)
+          foreach(pkg_file ${CGAL_PKG_FILES})
+            file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "INPUT += ${CGAL_PACKAGE_DIR}/include/${pkg_file}\n")
+          endforeach()
+        endif()
+      endif()
+    endif()
 
     # IMAGE_PATH is set by default. For Documentation, we generate the extra path using packages.txt
     set(IMAGE_PATH_VALUES "IMAGE_PATH = ${CGAL_PACKAGE_DOC_DIR}/fig")
