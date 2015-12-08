@@ -24,8 +24,8 @@ struct Perimeter {
 
     // If perimeter > bound, return HUGE_VAL so that facet is not used
     double d  = 0;
-    sqrt(squared_distance(c->vertex((index+1)%4)->point(),
-                          c->vertex((index+2)%4)->point()));
+    d = sqrt(squared_distance(c->vertex((index+1)%4)->point(),
+                              c->vertex((index+2)%4)->point()));
     if(d>bound) return HUGE_VAL;
     d += sqrt(squared_distance(c->vertex((index+2)%4)->point(),
                                c->vertex((index+3)%4)->point()));
