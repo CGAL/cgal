@@ -33,7 +33,7 @@ maxNumRecentFiles(15), recentFileActs(15)
   m_percent  = 100.0;
   m_norm_tol = 100.0;
   m_tang_tol = 100.0;
-  m_relocation = 0;
+  m_relocation = 2;
 
   // accepts drop events
   setAcceptDrops(true);

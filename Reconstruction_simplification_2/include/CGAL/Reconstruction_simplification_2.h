@@ -219,7 +219,7 @@ public:
     MassPMap  mass_map = MassPMap(1),
     std::size_t sample_size = 0,
     bool use_flip = true,
-    unsigned int relocation = 0,
+    unsigned int relocation = 2,
     int verbose = 0,
     Traits traits = Traits())
   : m_dt(traits),
