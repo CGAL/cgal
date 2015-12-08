@@ -257,11 +257,13 @@ The predicate must return `true`
 if the traversal of that `Facet` leads to a good full cell.
 
 All the good full cells are output into the last argument `out`.
-\pre `start != Full_cell_handle()` and `start` is a good cell.
 
+Returns a facet on the boundary of the set of cells.
+
+\pre `start != Full_cell_handle()` and `start` is a good cell.
 */
 template< typename TraversalPredicate, typename OutputIterator >
-void gather_full_cells(Full_cell_handle start, TraversalPredicate & tp,
+Facet gather_full_cells(Full_cell_handle start, TraversalPredicate & tp,
 OutputIterator & out) const;
 
 /*!
