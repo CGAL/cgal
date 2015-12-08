@@ -193,6 +193,9 @@ user might encounter.
 - `CGAL::Euler::split_loop()`
 - `CGAL::Euler::split_vertex()`
 
+## Miscellaneous ##
+- `CGAL::split_graph_into_polylines()`
+
 */
 
 /*!
