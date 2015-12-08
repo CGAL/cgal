@@ -78,26 +78,26 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
     endif()
 
     # IMAGE_PATH is set by default. For Documentation, we generate the extra path using packages.txt
-    set(IMAGE_PATH_VALUES "IMAGE_PATH = ${CGAL_PACKAGE_DOC_DIR}/fig")
+    set(IMAGE_PATHS "${CGAL_PACKAGE_DOC_DIR}/fig")
     set(DEPENDENCIES "")
     # figure out the dependencies, using the file `dependencies` or `packages.txt` for Documentation
     if (${CGAL_PACKAGE_NAME} STREQUAL "Documentation")
       set(PackageFile ${CGAL_PACKAGE_DOC_DIR}/packages.txt)
-      file(READ ${PackageFile} Entries)
-      string(REPLACE "\n" ";" EntriesAsList ${Entries})
+      file(STRINGS ${PackageFile} EntriesAsList REGEX "^\\\\package_listing{.+}$")
       foreach(Line ${EntriesAsList})
-        if("${Line}" MATCHES "^\\\\package_listing{.+}$")
-          string(REGEX REPLACE "^\\\\package_listing{(.+)}$" "\\1" PKG "${Line}")
-          list(APPEND DEPENDENCIES ${PKG})
-          # update IMAGE_PATH
+        string(REGEX REPLACE "^\\\\package_listing{(.+)}$" "\\1" PKG "${Line}")
+        list(APPEND DEPENDENCIES ${PKG})
+
+        if(CGAL_BRANCH_BUILD)
           SET(IMG_DIR "${CMAKE_SOURCE_DIR}/${PKG}/doc/${PKG}/fig")
-          if(EXISTS ${IMG_DIR})
-            set(IMAGE_PATH_VALUES "${IMAGE_PATH_VALUES} \\\n             ${IMG_DIR}")
-          endif()
+        else()
+          SET(IMG_DIR "${CMAKE_SOURCE_DIR}/doc/${PKG}/fig")
+        endif()
+
+        if(EXISTS ${IMG_DIR})
+          list(APPEND IMAGE_PATHS ${IMG_DIR})
         endif()
       endforeach()
-      set(IMAGE_PATH_VALUES ${IMAGE_PATH_VALUES} PARENT_SCOPE)
-      set(DOCUMENTATION_DEPENDENCIES ${DEPENDENCIES} PARENT_SCOPE)
     else()
       if(EXISTS ${CGAL_PACKAGE_DOC_DIR}/dependencies)
         file(STRINGS ${CGAL_PACKAGE_DOC_DIR}/dependencies DEPENDENCIES)
@@ -108,9 +108,11 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
       file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} 
         "TAGFILES += ${CGAL_DOC_TAG_DIR}/${depend}.tag=../${depend}\n")
     endforeach()
-    
-    #now write IMAGE_PATH
-    file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "${IMAGE_PATH_VALUES}\n")
+
+    foreach(image_path ${IMAGE_PATHS})
+      file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS}
+        "IMAGE_PATH += ${image_path}\n")
+    endforeach()
 
     configure_file(${CGAL_PACKAGE_DOC_DIR}/Doxyfile.in ${CGAL_DOC_DXY_DIR}/${CGAL_PACKAGE_NAME}.dxy)
     
@@ -251,7 +253,7 @@ if(DOXYGEN_FOUND)
   set_target_properties(Documentation_doc PROPERTIES FOLDER Documentation)
 
   # hard-code that doc depends on all packages
-  foreach(depend ${DOCUMENTATION_DEPENDENCIES})
+  foreach(depend ${CGAL_DOC_PACKAGES})
     add_dependencies(doc_pre ${depend}_internal_doxygen_run)
     add_dependencies(doc_post ${depend}_copy_doc_tags)
     add_dependencies(${depend}_copy_doc_tags doc_pre)
