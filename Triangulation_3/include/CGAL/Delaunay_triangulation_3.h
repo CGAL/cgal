@@ -355,7 +355,7 @@ public:
 #endif //CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
   {
 #ifdef CGAL_TRIANGULATION_3_PROFILING
-    WallClockTimer t;
+    Wall_clock_timer t;
 #endif
 
     size_type n = number_of_vertices();
@@ -691,7 +691,7 @@ public:
     size_type n = number_of_vertices();
 
 #ifdef CGAL_TRIANGULATION_3_PROFILING
-    WallClockTimer t;
+    Wall_clock_timer t;
 #endif
 
     // Parallel

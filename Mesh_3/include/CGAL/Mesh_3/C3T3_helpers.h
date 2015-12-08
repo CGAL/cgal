@@ -2651,7 +2651,7 @@ rebuild_restricted_delaunay(OutdatedCells& outdated_cells,
 
 # ifdef CGAL_MESH_3_PROFILING
   std::cerr << std::endl << "  Updating cells...";
-  WallClockTimer t;
+  Wall_clock_timer t;
   size_t num_cells = c3t3_.number_of_cells_in_complex();
 # endif
 

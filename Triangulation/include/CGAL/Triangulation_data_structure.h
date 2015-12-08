@@ -611,7 +611,8 @@ public:
         return incident_faces(v, dim, out, cmp, true);
     }
     template< typename OutputIterator, typename Comparator = std::less<Vertex_const_handle> >
-    OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator, Comparator = Comparator(), bool = false) const;
+    OutputIterator incident_faces(Vertex_const_handle, const int, OutputIterator,
+                                  Comparator = Comparator(), bool = false) const;
 #else
     template< typename OutputIterator, typename Comparator >
     OutputIterator incident_upper_faces(Vertex_const_handle v, const int dim, OutputIterator out, Comparator cmp = Comparator())
@@ -664,6 +665,9 @@ Triangulation_data_structure<Dim, Vb, Fcb>
 {
 //    CGAL_expensive_precondition(is_vertex(v));
     CGAL_precondition(Vertex_handle() != v);
+    CGAL_precondition(v->full_cell()->has_vertex(v));
+    if (!v->full_cell()->has_vertex(v)) // CJTODO TEMP
+      std::cout << "ERROR: incident_full_cells !v->full_cell()->has_vertex(v). Is the point cloud sparse enough?";
     Face f(v->full_cell());
     f.set_index(0, v->full_cell()->index(v));
     return incident_full_cells(f, out);
@@ -713,7 +717,9 @@ Triangulation_data_structure<Dim, Vb, Fcb>
             }
         }
     }
-    clear_visited_marks(start);
+    clear_visited_marks(start); // CJTODO: couldn't we use what is in "out" 
+                                // to make ot faster? (would require to
+                                // replace the output iterator by a container)
     return ft;
 }
 
@@ -998,7 +1004,7 @@ Triangulation_data_structure<Dim, Vb, Fcb>
       associate_vertex_with_full_cell(new_s, facet_index, v);
       set_neighbors(new_s,
                     facet_index,
-                    neighbor(old_s, facet_index),
+                    outside_neighbor,
                     mirror_index(old_s, facet_index));
 
       // add the new full_cell to the list of new full_cells
