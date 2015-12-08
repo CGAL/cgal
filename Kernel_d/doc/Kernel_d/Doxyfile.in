@@ -2,7 +2,3 @@
 
 PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - dD Geometry Kernel"
 SORT_GROUP_NAMES           =  true
-
-
-
-EXAMPLE_PATH =

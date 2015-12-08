@@ -6,8 +6,4 @@ PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Number
 INPUT                      =  ${CMAKE_SOURCE_DIR}/Number_types/doc/Number_types/ \
                               ${CMAKE_SOURCE_DIR}/Number_types/include/CGAL/Exact_integer.h \
                               ${CMAKE_SOURCE_DIR}/Number_types/include/CGAL/Exact_rational.h
-
-
-
-EXAMPLE_PATH =
 SHOW_FILES = YES
