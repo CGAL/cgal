@@ -68,7 +68,7 @@ function(configure_doxygen_package CGAL_PACKAGE_NAME)
       if(CGAL_BRANCH_BUILD) # use the entire include subdir
         file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "INPUT += ${CGAL_PACKAGE_DIR}/include/\n")
       else() # use the filelist
-        if(EXITS "${CGAL_PACKAGE_DOC_DIR}/filelist.txt")
+        if(EXISTS "${CGAL_PACKAGE_DOC_DIR}/filelist.txt")
           file(STRINGS "${CGAL_PACKAGE_DOC_DIR}/filelist.txt" CGAL_PKG_FILES)
           foreach(pkg_file ${CGAL_PKG_FILES})
             file(APPEND ${CGAL_DOC_PACKAGE_DEFAULTS} "INPUT += ${CGAL_PACKAGE_DIR}/include/${pkg_file}\n")
@@ -206,6 +206,7 @@ if(DOXYGEN_FOUND)
                             ${CGAL_DOC_SCRIPT_DIR}/generate_how_to_cite.py
                             ${CMAKE_SOURCE_DIR}
                             ${CMAKE_BINARY_DIR}
+                            "${CGAL_BRANCH_BUILD}"
                     RESULT_VARIABLE GENERATE_HOW_TO_CITE_RESULT)
     if(NOT GENERATE_HOW_TO_CITE_RESULT EQUAL "0")
       message(FATAL_ERROR "generate_how_to_cite did not exit correctly")
@@ -229,13 +230,16 @@ if(DOXYGEN_FOUND)
   configure_file(${CGAL_DOC_SCRIPT_DIR}/pkglist_filter ${CMAKE_BINARY_DIR}/pkglist_filter)
   configure_file(${CGAL_DOC_SCRIPT_DIR}/pkglist_filter.py ${CMAKE_BINARY_DIR}/pkglist_filter.py)
 
-  foreach(package ${CGAL_CONFIGURED_PACKAGES_NAMES})
+  if(CGAL_BRANCH_BUILD)
+    set(CGAL_DOC_PACKAGES ${CGAL_CONFIGURED_PACKAGES_NAMES} "Miscellany")
+  else()
+    subdirlist(CGAL_DOC_PACKAGES ${CMAKE_SOURCE_DIR}/doc)
+    list(REMOVE_ITEM CGAL_DOC_PACKAGES "scripts" "biblio" "resources" "Documentation")
+  endif()
+
+  foreach(package ${CGAL_DOC_PACKAGES})
     configure_doxygen_package(${package})
   endforeach()
-
-  # hard-coded. this is not recognized as a package by the
-  # build-system, because it doesn't have a package_description subdir.
-  configure_doxygen_package("Miscellany")
 
   # Add a custom target "doc"
   add_custom_target(doc)
