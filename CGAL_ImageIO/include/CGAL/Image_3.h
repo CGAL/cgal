@@ -23,9 +23,10 @@
 #define CGAL_IMAGE_3_H
 
 #include <CGAL/basic.h>
+#include <CGAL/array.h>
 
 #include <boost/shared_ptr.hpp>
-
+#include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #include <boost/unordered_set.hpp>
 #include <CGAL/ImageIO.h>
