@@ -211,6 +211,11 @@ typedef unspecified_type Construct_ray_3;
 */ 
 Power_test_3 power_test_3_object(); 
 
+/*!
+
+*/
+Compare_power_distance_3 compare_power_distance_3_object();
+
 
 /// @}
 
