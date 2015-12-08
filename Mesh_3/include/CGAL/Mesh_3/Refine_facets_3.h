@@ -731,9 +731,13 @@ private:
   void treat_new_facet(Facet& facet);
 
   /// Compute the (exact) dual of a facet
-  void dual_segment(const Facet & f, Bare_point& p1, Bare_point& p2, bool force_exact = false) const;
+  void dual_segment(const Facet & f, Bare_point& p1, Bare_point& p2) const;
 
-  void dual_ray(const Facet & f, Ray_3& ray, bool force_exact = false) const;
+  void dual_segment_exact(const Facet & f, Bare_point& p1, Bare_point& p2) const;
+
+  void dual_ray(const Facet & f, Ray_3& ray) const;
+
+  void dual_ray_exact(const Facet & f, Ray_3& ray) const;
 
   /**
    * Computes at once is_facet_on_surface and facet_surface_center.
@@ -1524,7 +1528,28 @@ treat_new_facet(Facet& facet)
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 void
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-dual_segment(const Facet & facet, Bare_point& p, Bare_point& q, bool force_exact) const
+dual_segment(const Facet & facet, Bare_point& p, Bare_point& q) const
+{
+  Cell_handle c = facet.first;
+  int i = facet.second;
+  Cell_handle n = c->neighbor(i);
+  CGAL_assertion( ! r_tr_.is_infinite(c) && ! r_tr_.is_infinite(n) );
+  p = Gt().construct_weighted_circumcenter_3_object()(
+      c->vertex(0)->point(),
+      c->vertex(1)->point(),
+      c->vertex(2)->point(),
+      c->vertex(3)->point());
+  q = Gt().construct_weighted_circumcenter_3_object()(
+      n->vertex(0)->point(),
+      n->vertex(1)->point(),
+      n->vertex(2)->point(),
+      n->vertex(3)->point());
+}
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+void
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+dual_segment_exact(const Facet & facet, Bare_point& p, Bare_point& q) const
 {
   Cell_handle c = facet.first;
   int i = facet.second;
@@ -1535,20 +1560,54 @@ dual_segment(const Facet & facet, Bare_point& p, Bare_point& q, bool force_exact
       c->vertex(1)->point(),
       c->vertex(2)->point(),
       c->vertex(3)->point(),
-      force_exact);
+      true);
   q = Gt().construct_weighted_circumcenter_3_object()(
       n->vertex(0)->point(),
       n->vertex(1)->point(),
       n->vertex(2)->point(),
       n->vertex(3)->point(),
-      force_exact);
+      true);
 }
-
 
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 void
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-dual_ray(const Facet & facet, Ray_3& ray, bool force_exact) const
+dual_ray(const Facet & facet, Ray_3& ray) const
+{
+  Cell_handle c = facet.first;
+  int i = facet.second;
+  Cell_handle n = c->neighbor(i);
+  // either n or c is infinite
+  int in;
+  if ( r_tr_.is_infinite(c) )
+    in = n->index(c);
+  else {
+    n = c;
+    in = i;
+  }
+  // n now denotes a finite cell, either c or c->neighbor(i)
+  int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
+  if ( (in&1) == 1 )
+    std::swap(ind[0], ind[1]);
+  const Point& p = n->vertex(ind[0])->point();
+  const Point& q = n->vertex(ind[1])->point();
+  const Point& r = n->vertex(ind[2])->point();
+
+  typename Gt::Line_3 l = Gt().construct_perpendicular_line_3_object()
+    ( Gt().construct_plane_3_object()(p,q,r),
+      Gt().construct_weighted_circumcenter_3_object()(p,q,r) );
+
+ ray = Gt().construct_ray_3_object()(Gt().construct_weighted_circumcenter_3_object()(
+        n->vertex(0)->point(),
+        n->vertex(1)->point(),
+        n->vertex(2)->point(),
+        n->vertex(3)->point()), l);
+}
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+void
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+dual_ray_exact(const Facet & facet, Ray_3& ray) const
 {
   Cell_handle c = facet.first;
   int i = facet.second;
@@ -1578,8 +1637,9 @@ dual_ray(const Facet & facet, Ray_3& ray, bool force_exact) const
         n->vertex(1)->point(),
         n->vertex(2)->point(),
         n->vertex(3)->point(),
-        force_exact), l);
+        true), l);
 }
+
 
 
 
@@ -1618,8 +1678,11 @@ compute_facet_properties(const Facet& facet,
   if ( ! r_tr_.is_infinite(c) && ! r_tr_.is_infinite(n) ){
     // the dual is a segment
     Bare_point p1, p2;
-    dual_segment(facet, p1, p2, force_exact);
-
+    if(force_exact){
+      dual_segment_exact(facet, p1, p2);
+    } else {
+      dual_segment(facet, p1, p2);
+    }
     if (p1 == p2) { fp = Facet_properties(); return; }
 
     // Trick to have canonical vector : thus, we compute always the same
@@ -1663,7 +1726,11 @@ compute_facet_properties(const Facet& facet,
     // constructed ray is degenerate (the point(1) of the ray is
     // point(0) plus a vector whose coordinates are epsilon).
     Ray_3 ray;
-    dual_ray(facet,ray,force_exact);
+    if(force_exact){
+      dual_ray_exact(facet,ray);
+    } else {
+      dual_ray(facet,ray);
+    }
     if (is_degenerate(ray)) { fp = Facet_properties(); return; }
 
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3

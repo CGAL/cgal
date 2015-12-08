@@ -65,6 +65,48 @@ determinants_for_weighted_circumcenterC3(
 			    spx,spy,spz);
 }
 
+template <class FT>
+void
+determinants_for_circumcenterC3(
+		const FT &px, const FT &py, const FT &pz,
+                const FT &qx, const FT &qy, const FT &qz,
+                const FT &rx, const FT &ry, const FT &rz,
+                const FT &sx, const FT &sy, const FT &sz,
+                FT &num_x,  FT &num_y, FT &num_z, FT& den)
+{
+  // translate origin to p
+  // and compute determinants for weighted_circumcenter and
+  // circumradius
+  FT qpx = qx-px;
+  FT qpy = qy-py;
+  FT qpz = qz-pz;
+  FT qp2 = CGAL_NTS square(qpx) + CGAL_NTS square(qpy) +
+           CGAL_NTS square(qpz);
+  FT rpx = rx-px;
+  FT rpy = ry-py;
+  FT rpz = rz-pz;
+  FT rp2 = CGAL_NTS square(rpx) + CGAL_NTS square(rpy) +
+           CGAL_NTS square(rpz);
+  FT spx = sx-px;
+  FT spy = sy-py;
+  FT spz = sz-pz;
+  FT sp2 = CGAL_NTS square(spx) + CGAL_NTS square(spy) +
+           CGAL_NTS square(spz);
+
+  num_x = determinant(qpy,qpz,qp2,
+			    rpy,rpz,rp2,
+			    spy,spz,sp2);
+  num_y = determinant(qpx,qpz,qp2,
+			    rpx,rpz,rp2,
+			    spx,spz,sp2);
+  num_z = determinant(qpx,qpy,qp2,
+			    rpx,rpy,rp2,
+			    spx,spy,sp2);
+  den   = determinant(qpx,qpy,qpz,
+			    rpx,rpy,rpz,
+			    spx,spy,spz);
+}
+
 
 template < class FT>
 void
