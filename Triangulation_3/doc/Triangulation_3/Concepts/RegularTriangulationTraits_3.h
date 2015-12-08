@@ -3,16 +3,16 @@
 \ingroup PkgTriangulation3Concepts
 \cgalConcept
 
-The concept `RegularTriangulationTraits_3` is the first template parameter of the class 
-`Regular_triangulation_3`. It defines the geometric objects (points, 
-segments...) forming the triangulation together with a few geometric 
-predicates and constructions on these objects. 
+The concept `RegularTriangulationTraits_3` is the first template parameter of the class
+`CGAL::Regular_triangulation_3`. It defines the geometric objects (points,
+segments...) forming the triangulation together with a few geometric
+predicates and constructions on these objects.
 
-\cgalRefines `TriangulationTraits_3` 
+\cgalRefines `TriangulationTraits_3`
 
-In addition to the requirements described for the traits class of 
-  Triangulation_3, the geometric traits class of 
-  Regular_triangulation_3 must fulfill the following requirements. 
+In addition to the requirements described for the traits class of
+  `CGAL::Triangulation_3`, the geometric traits class of
+  `CGAL::Regular_triangulation_3` must fulfill the following requirements.
 
 \cgalHasModel CGAL::Regular_triangulation_euclidean_traits_3 
 
@@ -106,7 +106,7 @@ If all the points have a weight equal to 0, then
 
 which is the same for collinear points, where \f$ {z(p,q)}^{(w)}\f$ is the 
 power segment of `p` and `q`. 
-\pre `p` and `q` have different Bare_points, and `p, q, t` are collinear. 
+\pre `p` and `q` have different bare points, and `p, q, t` are collinear. 
 If all points have a weight equal to 0, then 
 `power_test_3(p,q,t)` gives the same answer as the kernel predicate 
 `s(p,q).has_on(t)` would give, where `s(p,q)` denotes the 
@@ -119,7 +119,7 @@ segment with endpoints `p` and `q`.
 which is the same for equal points, that is when `p` and `q` 
 have equal coordinates, then it returns the comparison of the weights 
 (`ON_POSITIVE_SIDE` when `q` is heavier than `p`). 
-\pre `p` and `q` have equal Bare_points. 
+\pre `p` and `q` have equal bare points.
 
 */ 
 typedef unspecified_type Power_test_3; 
@@ -141,7 +141,7 @@ issued.
 typedef unspecified_type Compare_power_distance_3; 
 
 /*!
-A constructor type. The operator() constructs the bare point 
+A constructor type. The `operator()` constructs the bare point 
 which is the center of the smallest orthogonal sphere to the input 
 weighted points. 
 
@@ -213,15 +213,19 @@ Power_test_3 power_test_3_object();
 
 /*!
 
+*/
+Compare_power_distance_3 compare_power_distance_3_object();
+
+
 /// @}
 
 /*! \name
 The following functions must be provided only if the member functions of 
-`Regular_triangulation_3` returning elements of the dual diagram are called: 
+`CGAL::Regular_triangulation_3` returning elements of the dual diagram are called: 
 */
 /// @{
 
-*/ 
+ 
 Construct_weighted_circumcenter_3 construct_weighted_circumcenter_3_object(); 
 
 /*!
