@@ -18,8 +18,4 @@ option( CGAL_REPORT_DUPLICATE_FILES "Switch on to start (naive) detection of dup
 message( "== CMake setup (DONE) ==\n" )
 # and finally start actual build
 add_subdirectory( Installation )
-
-# for releases, where dont_submit is honored
-if(IS_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}/Documentation/doc")
-  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/Documentation/doc")
-endif()
+add_subdirectory( Documentation/doc)

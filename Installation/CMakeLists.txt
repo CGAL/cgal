@@ -1029,3 +1029,8 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
     add_custom_target(check_headers DEPENDS ${check_pkg_target_list})
   endif()
 endif( CGAL_BRANCH_BUILD )
+
+if(NOT CGAL_BRANCH_BUILD)
+  # in a non-branch build this is the top-level CMakeLists.txt
+  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/doc/")
+endif()
