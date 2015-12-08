@@ -218,7 +218,6 @@ if(DOXYGEN_FOUND)
     configure_file(${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt.in ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt)
     configure_file(${CMAKE_BINARY_DIR}/how_to_cite.html.in ${CMAKE_BINARY_DIR}/how_to_cite.html)
   endif()
-  ##
 
   configure_file(${CGAL_DOC_RESOURCE_DIR}/BaseDoxyfile.in ${CGAL_DOC_DXY_DIR}/BaseDoxyfile)
   
@@ -232,13 +231,40 @@ if(DOXYGEN_FOUND)
   configure_file(${CGAL_DOC_SCRIPT_DIR}/pkglist_filter ${CMAKE_BINARY_DIR}/pkglist_filter)
   configure_file(${CGAL_DOC_SCRIPT_DIR}/pkglist_filter.py ${CMAKE_BINARY_DIR}/pkglist_filter.py)
 
+  set(CGAL_DOC_PACKAGES "")
   if(CGAL_BRANCH_BUILD)
-    set(CGAL_DOC_PACKAGES ${CGAL_CONFIGURED_PACKAGES_NAMES} "Miscellany")
+    foreach(pkg ${CGAL_CONFIGURED_PACKAGES_NAMES} "Miscellany")
+      if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/${pkg}/doc/${pkg})
+        list(APPEND CGAL_DOC_PACKAGES ${pkg})
+      endif()
+      if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/${pkg}/examples/${pkg})
+        set(CGAL_${pkg}_EXAMPLE_DIR "${CMAKE_SOURCE_DIR}/${pkg}/examples")
+      endif()
+      if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/${pkg}/include)
+        set(CGAL_${pkg}_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/${pkg}/include")
+      endif()
+      if(IS_DIRECTORY ${CMAKE_SOURCE_DIR}/${pkg}/include)
+        set(CGAL_${pkg}_DEMO_DIR "${CMAKE_SOURCE_DIR}/${pkg}/demo")
+      endif()
+    endforeach()
   else()
     subdirlist(CGAL_DOC_PACKAGES ${CMAKE_SOURCE_DIR}/doc)
+    # Remove known offenders
     list(REMOVE_ITEM CGAL_DOC_PACKAGES "scripts" "biblio" "resources" "Documentation")
+    subdirlist(CGAL_EXAMPLE_PACKAGES ${CMAKE_SOURCE_DIR}/examples)
+    subdirlist(CGAL_DEMO_PACKAGES ${CMAKE_SOURCE_DIR}/demo)
+    foreach(pkg ${CGAL_EXAMPLE_PACKAGES})
+      set(CGAL_${pkg}_EXAMPLE_DIR "${CMAKE_SOURCE_DIR}/examples")
+      # This might not be entirely correct, but there is no reliable,
+      # easy way to get a list of all package names when not in a
+      # branch build.
+      set(CGAL_${pkg}_INCLUDE_DIR "${CMAKE_SOURCE_DIR}/include")
+    endforeach()
+    foreach(pkg ${CGAL_DEMO_PACKAGES})
+      set(CGAL_${pkg}_DEMO_DIR "${CMAKE_SOURCE_DIR}/demo")
+    endforeach()
   endif()
-
+  
   foreach(package ${CGAL_DOC_PACKAGES})
     configure_doxygen_package(${package})
   endforeach()
