@@ -54,8 +54,8 @@ defaults to `Triangulation_data_structure` whose template parameters are
 instantiated as follows:
 <UL>
 <LI>`RegularTriangulationTraits::Dimension`</LI>
-<LI>`Triangulation_vertex<RegularTriangulationTraits>`</LI>
-<LI>`Triangulation_full_cell<RegularTriangulationTraits>`.</LI>
+<LI>`Triangulation_vertex<CGAL::Regular_triangulation_euclidean_traits<RegularTriangulationTraits> >`</LI>
+<LI>`Triangulation_full_cell<CGAL::Regular_triangulation_euclidean_traits<RegularTriangulationTraits> >`.</LI>
 </UL>
 
 \tparam Regular_triangulation can

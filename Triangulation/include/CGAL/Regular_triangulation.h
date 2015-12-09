@@ -37,7 +37,7 @@ class Regular_triangulation
     typename Default::Get<
       TDS_, 
       Triangulation_data_structure<
-        typename CGAL::Regular_triangulation_euclidean_traits<Traits_>::Dimension,
+        typename Traits_::Dimension,
         Triangulation_vertex<CGAL::Regular_triangulation_euclidean_traits<Traits_> >,
         Triangulation_full_cell<CGAL::Regular_triangulation_euclidean_traits<Traits_> >
       >
