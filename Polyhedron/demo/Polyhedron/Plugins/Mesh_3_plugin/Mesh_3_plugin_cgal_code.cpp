@@ -175,7 +175,7 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
   Edge_criteria edge_criteria(facet_sizing);
   Facet_criteria facet_criteria(facet_angle, facet_sizing, facet_approx); // angle, size, approximation
   Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
-  Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
+
 
 
   typedef Facet_extra_criterion<Tr,
@@ -184,6 +184,8 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
     Extra_criterion;
   
   facet_criteria.add(new Extra_criterion(*p_domain));
+
+  Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
 
   CGAL::Timer timer;
   timer.start();
