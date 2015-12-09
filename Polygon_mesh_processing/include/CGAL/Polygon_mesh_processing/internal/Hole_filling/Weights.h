@@ -66,8 +66,8 @@ public:
 template<class PolygonMesh
   , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>
 class Cotangent_value_Meyer
-{ 
-public:
+{
+protected:
   typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
   typedef VertexPointMap Point_property_map;
   typedef typename boost::property_traits<Point_property_map>::value_type Point;
@@ -85,9 +85,6 @@ public:
 
   PolygonMesh& pmesh()
   {
-    //std::cout << num_vertices(pmesh_) << std::endl;
-    //std::cout << std::distance(vertices(pmesh_).first, vertices(pmesh_).second)
-    //  << std::endl;
     return pmesh_;
   }
 
@@ -117,6 +114,50 @@ public:
     }
     
     return dot_ab / divider;
+  }
+};
+
+
+// imported from skeletonization
+template<class PolygonMesh,
+         class VertexPointMap =
+          typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>
+class Cotangent_value_Meyer_secure
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+  typedef VertexPointMap Point_property_map;
+  typedef typename boost::property_traits<Point_property_map>::value_type Point;
+  typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
+
+  PolygonMesh& pmesh_;
+  Point_property_map ppmap;
+
+public:
+  
+  Cotangent_value_Meyer_secure(PolygonMesh& pmesh_, VertexPointMap vpmap_)
+    : pmesh_(pmesh_)
+    , ppmap(vpmap_)
+  {}
+
+  PolygonMesh& pmesh()
+  {
+    return pmesh_;
+  }
+
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
+  {
+    Vector a = get(ppmap, v0) - get(ppmap, v1);
+    Vector b = get(ppmap, v2) - get(ppmap, v1);
+    
+    double dot_ab = a*b;
+    double dot_aa = a.squared_length();
+    double dot_bb = b.squared_length();
+    double lb = -0.999, ub = 0.999;
+    double cosine = dot_ab / CGAL::sqrt(dot_aa) / CGAL::sqrt(dot_bb);
+    cosine = (cosine < lb) ? lb : cosine;
+    cosine = (cosine > ub) ? ub : cosine;
+    double sine = std::sqrt(1.0 - cosine * cosine);
+    return cosine / sine;
   }
 };
 
