@@ -959,16 +959,16 @@ void Scene_c3t3_item::compute_elements() const
   if (isEmpty())
     return;
 
-  const Kernel::Plane_3& plane = this->plane();
-  GLdouble clip_plane[4];
-  clip_plane[0] = -plane.a();
-  clip_plane[1] = -plane.b();
-  clip_plane[2] = -plane.c();
-  clip_plane[3] = -plane.d();
-
 
   //The facets
-  {
+  {  
+    const Kernel::Plane_3& plane = this->plane();
+    GLdouble clip_plane[4];
+    clip_plane[0] = plane.a();
+    clip_plane[1] = plane.b();
+    clip_plane[2] = plane.c();
+    clip_plane[3] = plane.d();
+
     for (C3t3::Facet_iterator
       fit = c3t3().facets_begin(),
       end = c3t3().facets_end();
@@ -979,21 +979,14 @@ void Scene_c3t3_item::compute_elements() const
       const Kernel::Point_3& pa = cell->vertex((index + 1) & 3)->point();
       const Kernel::Point_3& pb = cell->vertex((index + 2) & 3)->point();
       const Kernel::Point_3& pc = cell->vertex((index + 3) & 3)->point();
-      typedef Kernel::Oriented_side Side;
-      using CGAL::ON_ORIENTED_BOUNDARY;
-      const Side sa = plane.oriented_side(pa);
-      const Side sb = plane.oriented_side(pb);
-      const Side sc = plane.oriented_side(pc);
-      bool is_shown = false;
-      if (pa.x() * clip_plane[0] + pa.y() * clip_plane[1] + pa.z() * clip_plane[2] + clip_plane[3]  > 0
-        && pb.x() * clip_plane[0] + pb.y() * clip_plane[1] + pb.z() * clip_plane[2] + clip_plane[3]  > 0
-        && pc.x() * clip_plane[0] + pc.y() * clip_plane[1] + pc.z() * clip_plane[2] + clip_plane[3]  > 0)
-        is_shown = true;
 
-      if (is_shown && sa != ON_ORIENTED_BOUNDARY &&
-        sb != ON_ORIENTED_BOUNDARY &&
-        sc != ON_ORIENTED_BOUNDARY &&
-        sb == sa && sc == sa)
+      bool is_shown = 
+        pa.x() * clip_plane[0] + pa.y() * clip_plane[1] + pa.z() * clip_plane[2] + clip_plane[3]  < 0
+        && pb.x() * clip_plane[0] + pb.y() * clip_plane[1] + pb.z() * clip_plane[2] + clip_plane[3]  < 0
+        && pc.x() * clip_plane[0] + pc.y() * clip_plane[1] + pc.z() * clip_plane[2] + clip_plane[3]  < 0;
+
+
+      if (is_shown)
       {
           if(cell->subdomain_index() == 0) {
 
