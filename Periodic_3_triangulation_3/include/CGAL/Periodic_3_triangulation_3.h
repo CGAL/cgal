@@ -2351,7 +2351,7 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
   hider.set_vertices(cells.begin(), cells.end());
   
   if (!is_1_cover())
-    cover_manager.delete_too_long_edges(cells.begin(), cells.end());
+    cover_manager.delete_unsatisfying_elements(cells.begin(), cells.end());
   
   // Insertion. Attention: facets[0].first MUST be in conflict!
   // Compute the star and put it into the data structure.
@@ -2390,7 +2390,7 @@ Periodic_3_triangulation_3<GT,TDS>::periodic_insert(
   }
 
   if (!is_1_cover())
-    cover_manager.insert_too_long_edges(v, nbs.begin(), nbs.end());
+    cover_manager.insert_unsatisfying_elements(v, nbs.begin(), nbs.end());
 
   // Store the hidden points in their new cells.
   hider.reinsert_vertices(v);
@@ -2958,7 +2958,7 @@ inline void Periodic_3_triangulation_3<GT,TDS>::periodic_remove(Vertex_handle v,
   CGAL_triangulation_assertion(outer_map.size()==hole.size());
 
   if (!is_1_cover()) {
-    cover_manager.delete_too_long_edges(hole.begin(), hole.end());
+    cover_manager.delete_unsatisfying_elements(hole.begin(), hole.end());
   }
 
   // Build up the map between Vertices on the boundary and offsets

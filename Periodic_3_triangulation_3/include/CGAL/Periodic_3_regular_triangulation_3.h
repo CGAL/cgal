@@ -159,15 +159,15 @@ private:
     }
 
     template <class CellIt>
-    void delete_too_long_edges(const CellIt begin, const CellIt end)
+    void delete_unsatisfying_elements(const CellIt begin, const CellIt end)
     {
-      tr.delete_too_long_edges(begin, end);
+      tr.delete_cells_with_too_big_orthoball(begin, end);
     }
 
     template <class CellIt>
-    void insert_too_long_edges(Vertex_handle v, const CellIt begin, const CellIt end)
+    void insert_unsatisfying_elements(Vertex_handle v, const CellIt begin, const CellIt end)
     {
-      tr.insert_too_long_edges(v, begin, end);
+      tr.insert_cells_with_too_big_orthoball(v, begin, end);
     }
 
     bool can_be_converted_to_1_sheet () const
@@ -251,7 +251,7 @@ public:
          vit != tr.vertices_end() ; ++vit)
       vit->clear_offset();
 
-    insert_too_long_edges(tr.cells_begin(), tr.cells_end());
+    insert_cells_with_too_big_orthoball(tr.cells_begin(), tr.cells_end());
   }
 
   template < typename InputIterator >
@@ -284,7 +284,7 @@ public:
   }
 
   template <class CellIt>
-  void delete_too_long_edges(CellIt begin, const CellIt end)
+  void delete_cells_with_too_big_orthoball(CellIt begin, const CellIt end)
   {
     for (; begin != end; ++begin)
     {
@@ -321,7 +321,7 @@ public:
   }
 
   template <class CellIt>
-  void insert_too_long_edges(Vertex_handle /*v*/, CellIt begin, const CellIt end)
+  void insert_cells_with_too_big_orthoball(Vertex_handle /*v*/, CellIt begin, const CellIt end)
   {
     FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
     for (; begin != end; ++begin)
@@ -333,7 +333,7 @@ public:
     }
   }
 
-  void insert_too_long_edges(Cell_iterator begin, Cell_iterator end)
+  void insert_cells_with_too_big_orthoball(Cell_iterator begin, Cell_iterator end)
   {
     FT threshold = FT(0.015625) * (domain().xmax()-domain().xmin()) * (domain().xmax()-domain().xmin());
     for (; begin != end; ++begin)
@@ -6790,7 +6790,7 @@ operator>> (std::istream& is, Periodic_3_regular_triangulation_3<GT,TDS> &tr)
 
   is >> static_cast<Base&>(tr);
 
-  tr.insert_too_long_edges(tr.cells_begin(), tr.cells_end());
+  tr.insert_cells_with_too_big_orthoball(tr.cells_begin(), tr.cells_end());
 
   CGAL_triangulation_expensive_assertion( tr.is_valid() );
   return is;

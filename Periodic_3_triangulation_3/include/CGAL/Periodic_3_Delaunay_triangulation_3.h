@@ -185,13 +185,13 @@ private:
     }
 
     template <class CellIt>
-    void delete_too_long_edges(const CellIt begin, const CellIt end)
+    void delete_unsatisfying_elements(const CellIt begin, const CellIt end)
     {
       tr.delete_too_long_edges(begin, end);
     }
 
     template <class CellIt>
-    void insert_too_long_edges(Vertex_handle v, const CellIt begin, const CellIt end)
+    void insert_unsatisfying_elements(Vertex_handle v, const CellIt begin, const CellIt end)
     {
       tr.insert_too_long_edges(v, begin, end);
     }
