@@ -183,7 +183,8 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
                                 Mesh_criteria::Facet_criteria::Visitor>
     Extra_criterion;
   
-  facet_criteria.add(new Extra_criterion(*p_domain));
+  
+  // facet_criteria.add(new Extra_criterion(*p_domain));
 
   Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
 
