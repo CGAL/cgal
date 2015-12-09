@@ -662,8 +662,6 @@ void Scene_c3t3_item::draw_triangle_edges(const Kernel::Point_3& pa,
   const Kernel::Point_3& pc)const {
 
 #undef darker
-  Kernel::Vector_3 n = cross_product(pb - pa, pc - pa);
-  n = n / CGAL::sqrt(n*n);
   positions_lines.push_back(pa.x());
   positions_lines.push_back(pa.y());
   positions_lines.push_back(pa.z());
