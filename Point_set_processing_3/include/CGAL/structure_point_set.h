@@ -75,6 +75,14 @@ namespace internal {
     typedef Shape_detection_3::Plane<Traits> Plane_shape;
 
     enum Point_status { POINT, RESIDUS, PLANE, EDGE, CORNER, SKIPPED };
+    enum Coherence_type
+      {
+        INCOHERENT = -1, // Incoherent
+        FREEFORM = 0,    // FF-coherent
+        VERTEX = 1,      // S-coherent
+        CREASE = 2,      // S-coherent
+        PLANAR = 3       // S-coherent
+      };
 
   private:
 
@@ -357,18 +365,18 @@ namespace internal {
               || CGAL::squared_distance (m_points[f[1]], m_points[f[2]]) > d_DeltaEdge * d_DeltaEdge)
             continue;
           
-          if (facet_coherence (f) > 1)
+          if (facet_coherence (f) > 0)
             *(facets ++) = f;
         }
     }
     
-    unsigned int facet_coherence (CGAL::cpp11::array<std::size_t, 3>& f) const
+    Coherence_type facet_coherence (CGAL::cpp11::array<std::size_t, 3>& f) const
     {
       // O- FREEFORM CASE
       if (m_status[f[0]] == POINT &&
           m_status[f[1]] == POINT &&
           m_status[f[2]] == POINT)
-        return 1;
+        return FREEFORM;
       
       // 1- PLANAR CASE
       if (m_status[f[0]] == PLANE &&
@@ -377,9 +385,9 @@ namespace internal {
         {
           if (m_indices[f[0]] == m_indices[f[1]] &&
               m_indices[f[0]] == m_indices[f[2]])
-            return 4;
+            return PLANAR;
           else
-            return 0;
+            return INCOHERENT;
         }
 
       for (std::size_t i = 0; i < 3; ++ i)
@@ -393,13 +401,13 @@ namespace internal {
 
           // O- FREEFORM CASE
           if (sa == POINT && sb == POINT && sc == PLANE)
-            return 1;
+            return FREEFORM;
           if (sa == POINT && sb == PLANE && sc == PLANE)
             {
               if (b == c)
-                return 1;
+                return FREEFORM;
               else
-                return 0;
+                return INCOHERENT;
             }
           
           // 2- CREASE CASES
@@ -409,9 +417,9 @@ namespace internal {
                    c == m_edges[a].planes[1]) &&
                   (c == m_edges[b].planes[0] ||
                    c == m_edges[b].planes[1]))
-                return 3;
+                return CREASE;
               else
-                return 0;
+                return INCOHERENT;
             }
 
           if (sa == EDGE && sb == PLANE && sc == PLANE)
@@ -419,9 +427,9 @@ namespace internal {
               if (b == c &&
                   (b == m_edges[a].planes[0] ||
                    b == m_edges[a].planes[1]))
-                return 3;
+                return CREASE;
               else
-                return 0;
+                return INCOHERENT;
             }
 
 
@@ -436,7 +444,7 @@ namespace internal {
                        m_edges[a].planes[0] != m_edges[b].planes[1] &&
                        m_edges[a].planes[1] != m_edges[b].planes[0] &&
                        m_edges[a].planes[1] != m_edges[b].planes[1]))
-                    return 0;
+                    return INCOHERENT;
                   
                   for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
                     {
@@ -450,26 +458,26 @@ namespace internal {
                         b1 = true;
                     }
                   if (a0 && a1 && b0 && b1)
-                    return 2;
+                    return VERTEX;
                   else
-                    return 0;
+                    return INCOHERENT;
                 }
               else if (sa == PLANE && sb == PLANE)
                 {
                   if (a != b)
-                    return 0;
+                    return INCOHERENT;
 
                   for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
                     if (m_corners[c].planes[j] == a)
-                      return 2;
+                      return VERTEX;
                   
-                  return 0;
+                  return INCOHERENT;
                 }
               else if (sa == PLANE && sb == EDGE)
                 {
                   bool pa = false, b0 = false, b1 = false;
                   if (a != m_edges[b].planes[0] && a != m_edges[b].planes[1])
-                    return 0;
+                    return INCOHERENT;
                   
                   for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
                     {
@@ -481,15 +489,15 @@ namespace internal {
                         b1 = true;
                     }
                   if (pa && b0 && b1)
-                    return 2;
+                    return VERTEX;
                   else
-                    return 0;
+                    return INCOHERENT;
                 }
               else if (sa == EDGE && sb == PLANE)
                 {
                   bool a0 = false, a1 = false, pb = false;
                   if (b != m_edges[a].planes[0] && b != m_edges[a].planes[1])
-                    return 0;
+                    return INCOHERENT;
                   
                   for (std::size_t j = 0; j < m_corners[c].planes.size (); ++ j)
                     {
@@ -501,17 +509,17 @@ namespace internal {
                         a1 = true;
                     }
                   if (a0 && a1 && pb)
-                    return 2;
+                    return VERTEX;
                   else
-                    return 0;
+                    return INCOHERENT;
                 }
               else
-                return 0;
+                return INCOHERENT;
             }
         }
 
 
-      return 0;
+      return INCOHERENT;
     }
 
 
