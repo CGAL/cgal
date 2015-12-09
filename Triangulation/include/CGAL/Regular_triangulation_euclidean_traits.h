@@ -209,7 +209,6 @@ public:
       const Weighted_point & p, const int i) const
     {
       Point_drop_weight_d pdw = m_kernel.point_drop_weight_d_object();
-      m_kernel.compute_coordinate_d_object()(pdw(p), i);
       return m_kernel.compute_coordinate_d_object()(pdw(p), i);
     }
   };
