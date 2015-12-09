@@ -104,7 +104,7 @@ struct Priority_with_structure_coherence {
                  static_cast<std::size_t> (c->vertex ((index + 2) % 4)->info ()),
                  static_cast<std::size_t> (c->vertex ((index + 3) % 4)->info ()) }};
 
-    double weight = 100. * (5 - structuring.facet_coherence (f));
+    double weight = 100. * (4 - structuring.facet_coherence (f));
 
     return weight * adv.smallest_radius_delaunay_sphere (c, index);
   }
