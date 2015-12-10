@@ -9,19 +9,17 @@ constructs a cone based spanner, such as a Theta graph and a Yao graph, etc.
 \cgalHasModel `CGAL::Construct_yao_graph_2`
 
 */
-template <typename SpannerKernel, typename Graph_>
+template <typename Traits, typename Graph_>
 class ConstructConeBasedSpanner_2 {
 public:
 
 /// \name Types 
 /// @{
 
-/*! The CGAL kernel type used by the functor. If this parameter is
-	`CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`,
-    the graph will be constructed exactly; otherwise, inexactly using an approximate PI=3.1415...
-	This kernel type also decides other types such as SpannerKernel::Point_2, SpannerKernel::Direction_2, etc.
+/*! The CGAL kernel type used by the functor. Its requirements are described in
+    the concept `ConeBasedSpannerTraits_2`.
 */
-typedef SpannerKernel                          Kernel_type;
+typedef Traits                          Kernel_type;
 
 /*! The graph type to store the constructed cone based spanner. It should be a model of
 	both concepts MutableGraph and VertexAndEdgeListGraph in BGL. Of the two graph classes provided
