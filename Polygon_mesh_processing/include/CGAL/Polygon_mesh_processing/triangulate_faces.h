@@ -249,6 +249,50 @@ public:
 
 /**
 * \ingroup PMP_meshing_grp
+* triangulates a single face of a polygon mesh. This function depends on the package \ref PkgTriangulation2Summary
+* @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+*         that has an internal property map for `boost::vertex_point_t`
+* @tparam NamedParameters a sequence of \ref namedparameters
+*
+* @param f face
+* @param pmesh the polygon mesh to which the face to be triangulated belongs to
+* @param np optional sequence of \ref namedparameters among the ones listed below
+*
+* \cgalNamedParamsBegin
+*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+* \cgalNamedParamsEnd
+*
+*/
+template<typename PolygonMesh, typename NamedParameters>
+void triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
+                      PolygonMesh& pmesh,
+                      const NamedParameters& np)
+{
+  using boost::choose_const_pmap;
+  using boost::get_param;
+
+  //VertexPointMap
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
+  VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
+                            pmesh,
+                            boost::vertex_point);
+  //Kernel
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
+
+  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel> modifier(vpmap);
+  modifier.triangulate_face(f, pmesh);
+}
+
+template<typename PolygonMesh>
+void triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor f,
+                      PolygonMesh& pmesh)
+{
+  triangulate_face(f, pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
+/**
+* \ingroup PMP_meshing_grp
 * triangulates faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2Summary
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 *         that has an internal property map for `boost::vertex_point_t`
