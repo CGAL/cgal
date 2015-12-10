@@ -28,35 +28,6 @@
 
 namespace CGAL {
 namespace internal {
-/////////////////////////////////////////////////////////////////////////////////////////
-// Returns the cotangent value of half angle v0 v1 v2
-template<class PolygonMesh>
-class Cotangent_value
-{
-public:
-  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
-
-  typedef typename boost::property_map<PolygonMesh,vertex_point_t>::type Point_property_map;
-  typedef typename boost::property_traits<Point_property_map>::value_type Point;
-  typedef typename Kernel_traits<Point>::Kernel::Vector_3  Vector;
-
-
-  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
-  {
-    Vector vec0 = v1->point() - v2->point();
-    Vector vec1 = v2->point() - v0->point();
-    Vector vec2 = v0->point() - v1->point();
-    double e0_square = vec0.squared_length();
-    double e1_square = vec1.squared_length();
-    double e2_square = vec2.squared_length();
-    double e0 = CGAL::sqrt(e0_square);
-    double e2 = CGAL::sqrt(e2_square);
-    double cos_angle = ( e0_square + e2_square - e1_square ) / 2.0 / e0 / e2;
-    double sin_angle = CGAL::sqrt(1-cos_angle*cos_angle);
-
-    return (cos_angle/sin_angle);
-  }
-};
 
 // Returns the cotangent value of half angle v0 v1 v2
 // using formula in -[Meyer02] Discrete Differential-Geometry Operators for- page 19
@@ -101,6 +72,7 @@ struct Cotangent_value_Meyer_impl
   }
 };
 
+// Same as above but with a different API
 template<class PolygonMesh
   , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>
 class Cotangent_value_Meyer
