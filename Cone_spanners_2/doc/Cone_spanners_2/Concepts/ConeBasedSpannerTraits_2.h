@@ -3,12 +3,11 @@
 \cgalConcept
 
 The functors provided in this package for constructing cones and cone-based spanners
-all have a template parameter `ConeBasedSpannerTraits_2`. To specify the requirements
-for the models (i.e., the various kernels from CGAL) that can be passed to 
-this parameter, we document a concept also called
-`ConeBasedSpannerTraits_2` here. Basically, this concept 
-specifies all the types and primitives (predicates and construction objects) that 
-the model should include to make the functors work properly.
+all have a template parameter `Traits`. To specify the requirements
+for the models (typically the kernels from CGAL) that can be passed to 
+this parameter, we document a concept called `ConeBasedSpannerTraits_2` here. 
+Basically, this concept specifies all the types and primitives (predicates and construction objects) 
+that the model should have to make the functors work properly.
 It is recommended that if you want to construct the cones or the cone-based spanners
 exactly, you should use the kernel `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`;
 and if you want to construct them inexactly, you should use the kernel
@@ -19,7 +18,7 @@ and if you want to construct them inexactly, you should use the kernel
 
 */
 
-class ConeBasedSpannerTraits {
+class ConeBasedSpannerTraits_2 {
 public:
 
 /// \name Types 
@@ -94,4 +93,4 @@ Comparison_result  CGAL::compare_signed_distance_to_line(
 					   const CGAL::Point_2<Kernel> &q);
 /// @}
 
-}; /* end ConeBasedSpannerTraits */
+}; /* end ConeBasedSpannerTraits_2 */
