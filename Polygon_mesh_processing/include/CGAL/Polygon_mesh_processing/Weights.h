@@ -760,9 +760,8 @@ public:
 ////////////////////////////////////////////////////////////////////////////
 
 }//namespace internal
-/// @endcond
-
 
 
 }//namespace CGAL
+/// @endcond
 #endif //CGAL_PMP_INTERNAL_HOLE_FILLING_WEIGHTS_H
