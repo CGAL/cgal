@@ -98,7 +98,7 @@ private:
 
 /// The class Tangential_complex represents a tangential complex
 template <
-  typename Kernel, // ambiant dimension
+  typename Kernel_, // ambiant dimension
   typename DimensionTag, // intrinsic dimension
   typename Concurrency_tag = CGAL::Parallel_tag,
 #ifdef CGAL_ALPHA_TC
@@ -106,9 +106,7 @@ template <
   // => we need to force 
   typename Tr = Regular_triangulation
   <
-    Regular_triangulation_euclidean_traits<
-      Epick_d<CGAL::Dynamic_dimension_tag> >,
-
+    Epick_d<CGAL::Dynamic_dimension_tag>,
     Triangulation_data_structure
     <
       typename Regular_triangulation_euclidean_traits<
@@ -122,9 +120,7 @@ template <
 #else
   typename Tr = Regular_triangulation
   <
-    Regular_triangulation_euclidean_traits<
-      Epick_d<DimensionTag> >,
-
+    Epick_d<DimensionTag>,
     Triangulation_data_structure
     <
       typename Regular_triangulation_euclidean_traits<
@@ -139,10 +135,11 @@ template <
 >
 class Tangential_complex
 {
-  typedef typename Kernel::FT                         FT;
-  typedef typename Kernel::Point_d                    Point;
-  typedef typename Kernel::Weighted_point_d           Weighted_point;
-  typedef typename Kernel::Vector_d                   Vector;
+  typedef Kernel_                                     K;
+  typedef typename K::FT                              FT;
+  typedef typename K::Point_d                         Point;
+  typedef typename K::Weighted_point_d                Weighted_point;
+  typedef typename K::Vector_d                        Vector;
 
   typedef Tr                                          Triangulation;
   typedef typename Triangulation::Geom_traits         Tr_traits;
@@ -152,8 +149,8 @@ class Tangential_complex
   typedef typename Triangulation::Full_cell_handle    Tr_full_cell_handle;
   typedef typename Tr_traits::Vector_d                Tr_vector;
 
-  typedef Basis<Kernel>                               Tangent_space_basis;
-  typedef Basis<Kernel>                               Orthogonal_space_basis;
+  typedef Basis<K>                                    Tangent_space_basis;
+  typedef Basis<K>                                    Orthogonal_space_basis;
 
   typedef std::vector<Point>                          Points;
 #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
@@ -172,7 +169,7 @@ class Tangential_complex
 #endif
   typedef std::vector<Translation_for_perturb>        Translations_for_perturb;
 
-  typedef Point_cloud_data_structure<Kernel, Points>  Points_ds;
+  typedef Point_cloud_data_structure<K, Points>       Points_ds;
   typedef typename Points_ds::KNS_range               KNS_range;
   typedef typename Points_ds::KNS_iterator            KNS_iterator;
   typedef typename Points_ds::INS_range               INS_range;
@@ -276,7 +273,7 @@ public:
 #ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
                      InputIterator first_for_tse, InputIterator last_for_tse,
 #endif
-                     const Kernel &k = Kernel()
+                     const K &k = K()
                      )
   : m_k(k),
     m_intrinsic_dim(intrinsic_dimension),
@@ -414,8 +411,7 @@ public:
   void estimate_intrinsic_dimension() const
   {
     // Kernel functors
-    typename Kernel::Compute_coordinate_d coord =
-      m_k.compute_coordinate_d_object();
+    typename K::Compute_coordinate_d coord = m_k.compute_coordinate_d_object();
 
     std::vector<FT> sum_eigen_values(m_ambient_dim, FT(0));
     std::size_t num_points_for_pca = static_cast<std::size_t>(
@@ -589,14 +585,12 @@ public:
         << num_inconsistent_local_tr
         << " (" << 100. * num_inconsistent_local_tr / m_points.size() << "%)"
         << std::endl
-        << std::endl
         << "  * AFTER fix_inconsistencies_using_perturbation:" << std::endl
         << "    - Total number of simplices in stars (incl. duplicates): "
         << stats_after.first << std::endl
         << "    - Num inconsistent simplices in stars (incl. duplicates): "
-        << stats_after.second << std::endl
-        << "    - Percentage of inconsistencies: "
-        << 100. * stats_after.second / stats_after.first << "%"
+        << stats_after.second
+        << " (" << 100. * stats_after.second / stats_after.first << "%)"
         << std::endl
         << "=========================================================="
         << std::endl;
@@ -771,9 +765,9 @@ private:
   std::size_t fill_pqueues_for_alpha_tc(std::size_t i, PQueues &pqueues)
   {
     // Kernel/traits functors
-    typename Kernel::Difference_of_points_d k_diff_points =
+    typename K::Difference_of_points_d k_diff_points =
       m_k.difference_of_points_d_object();
-    typename Kernel::Squared_length_d k_sqlen =
+    typename K::Squared_length_d k_sqlen =
       m_k.squared_length_d_object();
     typename Tr_traits::Construct_weighted_point_d constr_wp =
       m_triangulations[0].tr().geom_traits().construct_weighted_point_d_object();
@@ -955,9 +949,16 @@ public:
       // Update the alpha+/- values
       tangent_basis.update_alpha_values_of_thickening_vectors(
         saa.m_thickening_vector, m_k);
-      
+
+#ifdef CGAL_TC_PROFILING
+      Wall_clock_timer t_recomputation;
+#endif
       // Recompute triangulation & star
       compute_tangent_triangulation(saa.m_center_point_index);
+#ifdef CGAL_TC_PROFILING
+      double recomp_timing = t_recomputation.elapsed();
+#endif
+
 
 #ifdef CGAL_TC_PERFORM_EXTRA_CHECKS
       if (!is_simplex_in_star(saa.m_center_point_index, saa.m_simplex))
@@ -967,11 +968,12 @@ public:
           << "simplex " << saa.m_center_point_index << ", ";
         std::copy(saa.m_simplex.begin(), saa.m_simplex.end(), 
           std::ostream_iterator<std::size_t>(std::cerr, ", ")); 
-        std::cerr << " not added in star #" 
+        std::cerr << " not added in star #"
           << saa.m_center_point_index
           << " (basis dim = " << tangent_basis.dimension()
 # ifdef CGAL_TC_PROFILING
-          << " - " << t_one_fix.elapsed() << " s"
+          << " - " << t_one_fix.elapsed() << " s [recomputation = "
+          << recomp_timing << " s]"
 # endif
           << ")\n";
 
@@ -1049,7 +1051,8 @@ public:
           << saa.m_center_point_index 
           << " (basis dim = " << tangent_basis.dimension()
 # ifdef CGAL_TC_PROFILING
-          << " - " << t_one_fix.elapsed() << " s"
+          << " - " << t_one_fix.elapsed() << " s [recomputation = "
+          << recomp_timing << " s]"
 # endif
           << ")\n";
         //check_if_all_simplices_are_in_the_ambient_delaunay();
@@ -1197,7 +1200,7 @@ public:
     // Then save its simplices into "amb_dt_simplices"
     //-------------------------------------------------------------------------
 
-    typedef Regular_triangulation_euclidean_traits<Kernel>    RT_Traits;
+    typedef Regular_triangulation_euclidean_traits<K>         RT_Traits;
     typedef Regular_triangulation<
       RT_Traits,
       Triangulation_data_structure<
@@ -1241,15 +1244,15 @@ public:
     if (m_points.empty())
       return true;
 
-    typedef Regular_triangulation_euclidean_traits<Kernel>    RT_Traits;
+    typedef Regular_triangulation_euclidean_traits<K>       RT_Traits;
     typedef Regular_triangulation<
       RT_Traits,
       Triangulation_data_structure<
         typename RT_Traits::Dimension,
         Triangulation_vertex<RT_Traits, Vertex_data>
-      > >                                                     RT;
-    typedef typename RT::Vertex_handle                        RT_VH;
-    typedef typename RT::Finite_full_cell_const_iterator      FFC_it;
+      > >                                                   RT;
+    typedef typename RT::Vertex_handle                      RT_VH;
+    typedef typename RT::Finite_full_cell_const_iterator    FFC_it;
 
     //-------------------------------------------------------------------------
     // Build the ambient Delaunay triangulation
@@ -1343,6 +1346,8 @@ public:
         }
       }*/
 
+
+
       p_simplices = &stars_simplices;
     }
     else
@@ -1384,19 +1389,19 @@ private:
   class Compare_distance_to_ref_point
   {
   public:
-    Compare_distance_to_ref_point(Point const& ref, Kernel const& k)
+    Compare_distance_to_ref_point(Point const& ref, K const& k)
       : m_ref(ref), m_k(k) {}
 
     bool operator()(Point const& p1, Point const& p2)
     {
-      typename Kernel::Squared_distance_d sqdist =
+      typename K::Squared_distance_d sqdist =
         m_k.squared_distance_d_object();
       return sqdist(p1, m_ref) < sqdist(p2, m_ref);
     }
 
   private:
     Point const& m_ref;
-    Kernel const& m_k;
+    K const& m_k;
   };
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -1473,6 +1478,9 @@ private:
     }
 #endif
 
+#if defined(CGAL_TC_PROFILING) && defined(CGAL_TC_VERY_VERBOSE)
+    Wall_clock_timer t;
+#endif
     int tangent_space_dim = tangent_basis_dim(i);
     Triangulation &local_tr =
       m_triangulations[i].construct_triangulation(tangent_space_dim);
@@ -1480,16 +1488,13 @@ private:
     Tr_vertex_handle &center_vertex = m_triangulations[i].center_vertex();
 
     // Kernel functor & objects
-    typename Kernel::Squared_distance_d k_sqdist =
-      m_k.squared_distance_d_object();
+    typename K::Squared_distance_d k_sqdist = m_k.squared_distance_d_object();
 
     // Triangulation's traits functor & objects
     typename Tr_traits::Point_weight_d point_weight =
       local_tr_traits.point_weight_d_object();
     typename Tr_traits::Power_center_d power_center =
       local_tr_traits.power_center_d_object();
-    typename Tr_traits::Compute_coordinate_d coord =
-      local_tr_traits.compute_coordinate_d_object();
 
 
     //***************************************************
@@ -1649,7 +1654,12 @@ private:
         }
       }
     }
-    
+
+#if defined(CGAL_TC_PROFILING) && defined(CGAL_TC_VERY_VERBOSE)
+    std::cerr << "  - triangulation construction: " << t.elapsed() << " s.\n";
+    t.reset();
+#endif
+
 #ifdef CGAL_TC_VERY_VERBOSE
     std::cerr << "Inserted " << num_inserted_points << " points / " 
       << num_attempts_to_insert_points << " attemps to compute the star\n";
@@ -1664,6 +1674,10 @@ private:
     }
 #else
     update_star__no_thickening_vectors(i);
+#endif
+
+#if defined(CGAL_TC_PROFILING) && defined(CGAL_TC_VERY_VERBOSE)
+    std::cerr << "  - update_star: " << t.elapsed() << " s.\n";
 #endif
   }
 
@@ -1917,8 +1931,8 @@ next_face:
     Vector t(2, &tt[0], &tt[2]);
 
     // Normalize t1 and t2
-    typename Kernel::Squared_length_d sqlen      = m_k.squared_length_d_object();
-    typename Kernel::Scaled_vector_d  scaled_vec = m_k.scaled_vector_d_object();
+    typename K::Squared_length_d sqlen      = m_k.squared_length_d_object();
+    typename K::Scaled_vector_d  scaled_vec = m_k.scaled_vector_d_object();
 
     Tangent_space_basis ts(i);
     ts.reserve(m_intrinsic_dim);
@@ -1937,8 +1951,8 @@ next_face:
     Vector t2(3, &tt2[0], &tt2[3]);
 
     // Normalize t1 and t2
-    typename Kernel::Squared_length_d sqlen      = m_k.squared_length_d_object();
-    typename Kernel::Scaled_vector_d  scaled_vec = m_k.scaled_vector_d_object();
+    typename K::Squared_length_d sqlen      = m_k.squared_length_d_object();
+    typename K::Scaled_vector_d  scaled_vec = m_k.scaled_vector_d_object();
 
     Tangent_space_basis ts(i);
     ts.reserve(m_intrinsic_dim);
@@ -1974,19 +1988,19 @@ next_face:
       std::pow(BASE_VALUE_FOR_PCA, m_intrinsic_dim));
 
     // Kernel functors
-    typename Kernel::Construct_vector_d      constr_vec =
+    typename K::Construct_vector_d      constr_vec =
       m_k.construct_vector_d_object();
-    typename Kernel::Compute_coordinate_d    coord =
+    typename K::Compute_coordinate_d    coord =
       m_k.compute_coordinate_d_object();
-    typename Kernel::Squared_length_d        sqlen =
+    typename K::Squared_length_d        sqlen =
       m_k.squared_length_d_object();
-    typename Kernel::Scaled_vector_d         scaled_vec =
+    typename K::Scaled_vector_d         scaled_vec =
       m_k.scaled_vector_d_object();
-    typename Kernel::Scalar_product_d        scalar_pdct =
+    typename K::Scalar_product_d        scalar_pdct =
       m_k.scalar_product_d_object();
-    typename Kernel::Difference_of_vectors_d diff_vec =
+    typename K::Difference_of_vectors_d diff_vec =
       m_k.difference_of_vectors_d_object();
-    //typename Kernel::Translated_point_d      transl =
+    //typename K::Translated_point_d      transl =
     //  m_k.translated_point_d_object();
 
 #ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
@@ -2008,8 +2022,8 @@ next_face:
       for (int i = 0 ; i < m_ambient_dim ; ++i)
       {
         //const Point p = transl(
-        //  m_points[nn_it->first], m_translations[nn_it->first]);
-        mat_points(j, i) = CGAL::to_double(coord(m_points[nn_it->first], i));
+        //  points_for_pca[nn_it->first], m_translations[nn_it->first]);
+        mat_points(j, i) = CGAL::to_double(coord(points_for_pca[nn_it->first], i));
 #ifdef CGAL_TC_ADD_NOISE_TO_TANGENT_SPACE
         mat_points(j, i) += m_random_generator.get_double(
             -0.5*m_half_sparsity, 0.5*m_half_sparsity);
@@ -2143,7 +2157,7 @@ next_face:
 
   Weighted_point compute_perturbed_weighted_point(std::size_t pt_idx) const
   {
-    typename Kernel::Construct_weighted_point_d k_constr_wp =
+    typename K::Construct_weighted_point_d k_constr_wp =
       m_k.construct_weighted_point_d_object();
 
     Weighted_point wp = k_constr_wp(
@@ -2161,9 +2175,9 @@ next_face:
                         const Tangent_space_basis &tsb,
                         const Tr_traits &tr_traits) const
   {
-    typename Kernel::Translated_point_d k_transl =
+    typename K::Translated_point_d k_transl =
       m_k.translated_point_d_object();
-    typename Kernel::Scaled_vector_d k_scaled_vec =
+    typename K::Scaled_vector_d k_scaled_vec =
       m_k.scaled_vector_d_object();
     typename Tr_traits::Compute_coordinate_d coord =
       tr_traits.compute_coordinate_d_object();
@@ -2189,9 +2203,9 @@ next_face:
   Tr_bare_point project_point(const Point &p,
                               const Tangent_space_basis &tsb) const
   {
-    typename Kernel::Scalar_product_d scalar_pdct =
+    typename K::Scalar_product_d scalar_pdct =
       m_k.scalar_product_d_object();
-    typename Kernel::Difference_of_points_d diff_points =
+    typename K::Difference_of_points_d diff_points =
       m_k.difference_of_points_d_object();
     
     Vector v = diff_points(p, compute_perturbed_point(tsb.origin()));
@@ -2224,9 +2238,9 @@ next_face:
                                             const Tangent_space_basis &tsb,
                                             const Tr_traits &tr_traits) const
   {
-    typename Kernel::Point_drop_weight_d k_drop_w =
+    typename K::Point_drop_weight_d k_drop_w =
       m_k.point_drop_weight_d_object();
-    typename Kernel::Point_weight_d k_point_weight =
+    typename K::Point_weight_d k_point_weight =
       m_k.point_weight_d_object();
     return project_point_and_compute_weight(
       k_drop_w(wp), k_point_weight(wp), tsb, tr_traits);
@@ -2237,13 +2251,13 @@ next_face:
                                             const Tr_traits &tr_traits) const
   {
     const int point_dim = m_k.point_dimension_d_object()(p);
-    typename Kernel::Scalar_product_d scalar_pdct =
+    typename K::Scalar_product_d scalar_pdct =
       m_k.scalar_product_d_object();
-    typename Kernel::Difference_of_points_d diff_points =
+    typename K::Difference_of_points_d diff_points =
       m_k.difference_of_points_d_object();
-    typename Kernel::Compute_coordinate_d coord =
+    typename K::Compute_coordinate_d coord =
       m_k.compute_coordinate_d_object();
-    typename Kernel::Construct_cartesian_const_iterator_d ccci =
+    typename K::Construct_cartesian_const_iterator_d ccci =
       m_k.construct_cartesian_const_iterator_d_object();
 
     Point origin = compute_perturbed_point(tsb.origin());
@@ -2333,11 +2347,11 @@ next_face:
   double compute_simplex_fatness(IndexRange const& simplex) const
   {
     // Kernel functors
-    typename Kernel::Compute_coordinate_d coord =
+    typename K::Compute_coordinate_d coord =
       m_k.compute_coordinate_d_object();
-    typename Kernel::Squared_distance_d sqdist =
+    typename K::Squared_distance_d sqdist =
       m_k.squared_distance_d_object();
-    typename Kernel::Difference_of_points_d diff_pts =
+    typename K::Difference_of_points_d diff_pts =
       m_k.difference_of_points_d_object();
     
     typename Tr_traits::Difference_of_points_d tr_diff_pts =
@@ -2551,7 +2565,7 @@ next_face:
     // Perturb the position?
 #ifdef CGAL_TC_PERTURB_POSITION
 # ifdef CGAL_TC_PERTURB_POSITION_GLOBAL
-    typename Kernel::Point_to_vector_d k_pt_to_vec =
+    typename K::Point_to_vector_d k_pt_to_vec =
       m_k.point_to_vector_d_object();
     CGAL::Random_points_in_ball_d<Point>
       tr_point_in_ball_generator(
@@ -2572,11 +2586,11 @@ next_face:
       m_triangulations[point_idx].tr().geom_traits();
     typename Tr_traits::Compute_coordinate_d coord =
       local_tr_traits.compute_coordinate_d_object();
-    typename Kernel::Translated_point_d k_transl =
+    typename K::Translated_point_d k_transl =
       m_k.translated_point_d_object();
-    typename Kernel::Construct_vector_d k_constr_vec =
+    typename K::Construct_vector_d k_constr_vec =
       m_k.construct_vector_d_object();
-    typename Kernel::Scaled_vector_d k_scaled_vec =
+    typename K::Scaled_vector_d k_scaled_vec =
       m_k.scaled_vector_d_object();
 
     CGAL::Random_points_in_ball_d<Tr_bare_point>
@@ -2832,7 +2846,7 @@ next_face:
     const int N = (m_intrinsic_dim == 1 ? 2 : 1);
 
     // Kernel functors
-    typename Kernel::Compute_coordinate_d coord =
+    typename K::Compute_coordinate_d coord =
       m_k.compute_coordinate_d_object();
 
     int num_coords = min(m_ambient_dim, 3);
@@ -2921,19 +2935,19 @@ next_face:
     CGAL_assertion(std::find(m_stars[q_idx].begin(), m_stars[q_idx].end(),
                              inc_s_minus_q) == m_stars[q_idx].end());
 
-    typename Kernel::Point_drop_weight_d k_drop_w =
+    typename K::Point_drop_weight_d k_drop_w =
       m_k.point_drop_weight_d_object();
-    typename Kernel::Translated_point_d k_transl =
+    typename K::Translated_point_d k_transl =
       m_k.translated_point_d_object();
-    typename Kernel::Squared_distance_d k_sqdist =
+    typename K::Squared_distance_d k_sqdist =
       m_k.squared_distance_d_object();
-    typename Kernel::Difference_of_points_d k_diff_pts =
+    typename K::Difference_of_points_d k_diff_pts =
       m_k.difference_of_points_d_object();
-    typename Kernel::Scalar_product_d k_scalar_pdct =
+    typename K::Scalar_product_d k_scalar_pdct =
       m_k.scalar_product_d_object();
-    typename Kernel::Construct_weighted_point_d k_constr_wp =
+    typename K::Construct_weighted_point_d k_constr_wp =
       m_k.construct_weighted_point_d_object();
-    typename Kernel::Power_distance_d k_power_dist =
+    typename K::Power_distance_d k_power_dist =
       m_k.power_distance_d_object();
 
     const Tr_traits &q_tr_traits = m_triangulations[q_idx].tr().geom_traits();
@@ -3100,9 +3114,9 @@ next_face:
     // If co-intrinsic dimension = 1, let's compare normals
     /*if (m_ambient_dim - m_intrinsic_dim == 1)
     {
-      typename Kernel::Scaled_vector_d k_scaled_vec =
+      typename K::Scaled_vector_d k_scaled_vec =
         m_k.scaled_vector_d_object();
-      typename Kernel::Squared_length_d k_sqlen =
+      typename K::Squared_length_d k_sqlen =
         m_k.squared_length_d_object();
       Vector pq = k_diff_pts(
         compute_perturbed_point(q_idx), compute_perturbed_point(p_idx));
@@ -3189,8 +3203,8 @@ next_face:
 
       // CJTODO TEMP ====================
       /*{
-      typename Kernel::Scaled_vector_d scaled_vec = m_k.scaled_vector_d_object();
-      typename Kernel::Point_weight_d k_weight = m_k.point_weight_d_object();
+      typename K::Scaled_vector_d scaled_vec = m_k.scaled_vector_d_object();
+      typename K::Point_weight_d k_weight = m_k.point_weight_d_object();
       Weighted_point C = k_constr_wp(
         k_transl(k_drop_w(global_Cp), scaled_vec(k_diff_pts(k_drop_w(global_Cq), k_drop_w(global_Cp)), min_a)),
         k_sqdist(k_transl(k_drop_w(global_Cp), scaled_vec(k_diff_pts(k_drop_w(global_Cq), k_drop_w(global_Cp)), min_a)), pt_p));
@@ -3284,13 +3298,13 @@ next_face:
       // CJTODO TEMP
       /*else if (m_ambient_dim - m_intrinsic_dim == 1)
       {
-        typename Kernel::Difference_of_points_d k_diff_pts =
+        typename K::Difference_of_points_d k_diff_pts =
           m_k.difference_of_points_d_object();
-        typename Kernel::Scaled_vector_d k_scaled_vec =
+        typename K::Scaled_vector_d k_scaled_vec =
           m_k.scaled_vector_d_object();
-        typename Kernel::Squared_length_d k_sqlen =
+        typename K::Squared_length_d k_sqlen =
           m_k.squared_length_d_object();
-        typename Kernel::Scalar_product_d k_scalar_pdct =
+        typename K::Scalar_product_d k_scalar_pdct =
           m_k.scalar_product_d_object();
         Vector pq = k_diff_pts(
           compute_perturbed_point(*it_point_idx), compute_perturbed_point(tr_index));
@@ -3336,7 +3350,7 @@ next_face:
     typename Tr_traits::Compute_coordinate_d coord = 
       tr_traits.compute_coordinate_d_object();
     
-    typename Kernel::Compute_coordinate_d k_coord = 
+    typename K::Compute_coordinate_d k_coord = 
       m_k.compute_coordinate_d_object();
 
     std::size_t card_P = P.size();
@@ -3514,9 +3528,9 @@ next_face:
     // Fv: Voronoi k-face
     // Fd: dual, (D-k)-face of Delaunay (p0, p1, ..., pn)
 
-    typename Kernel::Scalar_product_d scalar_pdct = m_k.scalar_product_d_object();
-    typename Kernel::Point_to_vector_d pt_to_vec = m_k.point_to_vector_d_object();
-    typename Kernel::Compute_coordinate_d coord = m_k.compute_coordinate_d_object();
+    typename K::Scalar_product_d scalar_pdct = m_k.scalar_product_d_object();
+    typename K::Point_to_vector_d pt_to_vec = m_k.point_to_vector_d_object();
+    typename K::Compute_coordinate_d coord = m_k.compute_coordinate_d_object();
 
     Point center_pt = compute_perturbed_point(center_pt_index);
     int const ambient_dim = m_k.point_dimension_d_object()(center_pt);
@@ -4057,7 +4071,7 @@ public:
   }
 
 private:
-  const Kernel              m_k;
+  const K              m_k;
   const int                 m_intrinsic_dim;
   const double              m_half_sparsity;
   const double              m_sq_half_sparsity;
