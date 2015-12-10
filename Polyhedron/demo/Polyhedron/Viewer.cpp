@@ -852,7 +852,6 @@ void Viewer::drawVisualHints()
     //HERE : draw the text
     textRenderer->draw(this);
     }
-
     painter->end();
     }
 
@@ -1179,8 +1178,13 @@ void Viewer::wheelEvent(QWheelEvent* e)
         QGLViewer::wheelEvent(e);
 }
 
+bool Viewer::testDisplayId(double x, double y, double z)
+{
+    return d->scene->testDisplayId(x,y,z,this);
+}
 void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 {
+    qDebug()<<textItems.size();
     QPainter *painter = viewer->painter;
     if(!painter->isActive())
     {
@@ -1192,31 +1196,26 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
     Q_FOREACH(TextItem* item, textItems)
     {
         qglviewer::Vec src(item->position()->x(), item->position()->y(),item->position()->z());
-        rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
-                     camera->projectedCoordinatesOf(src).y-item->height()/2,
-                     item->width(),
-                     item->height());
-        painter->setFont(item->font());
-        painter->setPen(QPen(item->color()));
-        painter->drawText(rect, item->text());
+        if(viewer->testDisplayId(src.x, src.y, src.z))
+        {
+            rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
+                         camera->projectedCoordinatesOf(src).y-item->height()/2,
+                         item->width(),
+                         item->height());
+            painter->setFont(item->font());
+            painter->setPen(QPen(item->color()));
+            painter->drawText(rect, item->text());
+        }
     }
 
 }
 
  void TextRenderer::addText(TextItem *ti)
  {
-     m_lastId+=0.1;
-     textItems[ti->id()]=ti;
+     textItems.append(ti);
  }
 
- void TextRenderer::addText(float p_x, float p_y, float p_z, QString p_text, double p_id, QFont p_font , QColor p_color )
+ void TextRenderer::addText(float p_x, float p_y, float p_z, QString p_text, QFont p_font , QColor p_color )
  {
-     m_lastId+=0.1;
-     textItems[p_id]=new TextItem(p_x, p_y, p_z, p_text, p_id, p_font, p_color);
-
-
+     textItems.append(new TextItem(p_x, p_y, p_z, p_text, p_font, p_color));
  }
-void TextRenderer::removeText(double id)
-{
-    textItems.remove(id);
-}

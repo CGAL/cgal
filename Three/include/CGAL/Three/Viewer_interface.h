@@ -74,6 +74,13 @@ public:
    * The textRenderer uses the painter tu display 2D text over the 3D Scene. It has a list containing the TextItems to display.
    */
   TextRenderer *textRenderer;
+  /*!
+  * \brief testDisplayId checks if the id at position (x,y,z) is visible or not.
+  * \param x the X coordinate of the id's position.
+  * \param y the Y coordinate of the id's position.
+  * \param z the Z coordinate of the id's position.
+  * \return true if the ID is visible. */
+  virtual bool testDisplayId(double x, double y, double z) = 0;
 
   Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(), parent) {}
   virtual ~Viewer_interface() {}

@@ -46,6 +46,7 @@ public:
     QString compute_stats(int type);
      bool has_stats()const {return true;}
     CGAL::Three::Scene_item::Header_data header() const;
+    QList<TextItem*>* textItems;
     Scene_polyhedron_item();
     //   Scene_polyhedron_item(const Scene_polyhedron_item&);
     Scene_polyhedron_item(const Polyhedron& p);
@@ -90,6 +91,7 @@ public:
     bool self_intersected(){return !self_intersect;}
 
     void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer);
+    bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*);
 
 public Q_SLOTS:
     virtual void invalidateOpenGLBuffers();

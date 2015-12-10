@@ -34,7 +34,7 @@ class VIEWER_EXPORT Viewer : public CGAL::Three::Viewer_interface {
 public:
   Viewer(QWidget * parent, bool antialiasing = false);
   ~Viewer();
-
+  bool testDisplayId(double, double, double);
   // overload several QGLViewer virtual functions
   //! Deprecated and does nothing.
   void draw();
@@ -142,7 +142,7 @@ protected:
 //!This class holds the properties of each line of text to be rendered.
 class TextItem{
 public :
-    TextItem(float p_x, float p_y, float p_z, QString p_text, double id, QFont font = QFont(), QColor p_color = Qt::black)
+    TextItem(float p_x, float p_y, float p_z, QString p_text, QFont font = QFont(), QColor p_color = Qt::black)
         :x(p_x), y(p_y), z(p_z), m_text(p_text), m_id(id), m_font(font), m_color(p_color)
     {
        QFontMetrics fm(m_font);
@@ -156,7 +156,6 @@ public :
     float height(){return _height;}
     QFont font(){return m_font;}
     QColor color() {return m_color;}
-    double id(){return m_id;}
 private:
     float x;
     float y;
@@ -164,7 +163,6 @@ private:
     float _width;
     float _height;
     QString m_text;
-    double m_id;
     QFont m_font;
     QColor m_color;
 };//end class TextItem
@@ -174,7 +172,6 @@ class TextRenderer{
 public:
     TextRenderer()
     {
-        m_lastId = 0.0;
     }
     /*!
       * Projects each textItem from the world coordinates to the Screen coordinates
@@ -183,14 +180,12 @@ public:
     void draw(CGAL::Three::Viewer_interface* viewer);
     void draw(CGAL::Three::Viewer_interface* viewer, TextItem* item);
     void addText(TextItem* ti);
-    void addText(float p_x, float p_y, float p_z, QString p_text, double p_id, QFont font = QFont(), QColor p_color = Qt::black);
-    void removeText(double id);
+    void addText(float p_x, float p_y, float p_z, QString p_text, QFont font = QFont(), QColor p_color = Qt::black);
     double lastId()const{return m_lastId;}
     QMap<double,TextItem*> items() const{return textItems;}
 private:
-    QMap<double,TextItem*> textItems;
+    QList<QList<TextItem*>*> textItems;
     QOpenGLFramebufferObject *fbo;
-    double m_lastId;
 
 };//end class TextRenderer
 #endif // VIEWER_H

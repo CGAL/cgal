@@ -1140,10 +1140,20 @@ float Scene::get_bbox_length() const
 void Scene::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface* viewer)
 {
     //TO DO :: Add a if condition to disable this when the printId mode is off
-    Q_FOREACH(int id, selectionIndices())
-        item(id)->printPrimitiveId(point, viewer);
+        item(mainSelectionIndex())->printPrimitiveId(point, viewer);
 }
+bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
+{
+    CGAL::Three::Scene_item *i = item(mainSelectionIndex());
+    if(i && i->visible())
+    {
+        bool res = i->testDisplayId(x,y,z, viewer);
+        return res;
+    }
+    else return false;
 
+
+}
 #include "Scene_find_items.h"
 
 void Scene::organize_items(Scene_item* item, QStandardItem* root, int loop)
