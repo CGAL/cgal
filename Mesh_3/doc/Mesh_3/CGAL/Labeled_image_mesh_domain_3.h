@@ -32,6 +32,9 @@ with a model of the concept `BisectionGeometricTraits_3`.
 
 \cgalModels `MeshDomain_3`
 
+An executable that uses `Labeled_image_mesh_domain_3` must be linked with
+the <I>CGAL_ImageIO</I> library.
+
 \sa `BisectionGeometricTraits_3` 
 \sa `CGAL::make_mesh_3()`. 
 
