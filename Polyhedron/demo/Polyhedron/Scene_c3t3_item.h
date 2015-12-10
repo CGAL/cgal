@@ -111,6 +111,7 @@ public:
   void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
   void draw_points(CGAL::Three::Viewer_interface * viewer) const;
 private:
+  bool need_changed;
   void reset_cut_plane();
   void draw_triangle(const Kernel::Point_3& pa,
     const Kernel::Point_3& pb,
@@ -141,6 +142,8 @@ private:
 
   void changed();
 
+  void timerEvent(QTimerEvent*);
+
 private:
   void build_histogram();
 
@@ -159,6 +162,7 @@ private:
   {
       Facet_vertices =0,
       Facet_normals,
+      Facet_colors,
       Edges_vertices,
       Grid_vertices,
       Sphere_vertices,
@@ -201,6 +205,7 @@ private:
   mutable std::vector<float> positions_grid;
   mutable std::vector<float> positions_poly;
   mutable std::vector<float> normals;
+  mutable std::vector<float> f_colors;
   mutable std::vector<float> s_normals;
   mutable std::vector<float> s_colors;
   mutable std::vector<float> s_vertex;
