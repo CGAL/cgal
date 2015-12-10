@@ -1300,8 +1300,7 @@ namespace CGAL {
       int i1 = e.first.second, i2 = e.first.third;
       int i3 = 6 - e.second - i1 - i2;
 
-      Edge_incident_facet e_it = e, predone = previous(e);
-      Cell_handle c_predone = predone.first.first;
+      Edge_incident_facet e_it = e;
 
       coord_type min_valueP = NOT_VALID_CANDIDATE, min_valueA = HUGE_VAL;
       Facet min_facet, min_facetA;
@@ -1320,7 +1319,6 @@ namespace CGAL {
       coord_type norm12 = P2P1*P2P1;
 
       e_it = next(e_it);
-      bool succ_start(true);
 
       do
         {
@@ -1367,10 +1365,7 @@ namespace CGAL {
                   norm =  sqrt(norm1 * (v2*v2));
                   pscal = v1*v2;
                   // check if the triangle will produce a sliver on the surface
-                  bool sliver_facet = ((succ_start || (neigh == c_predone))&&
-                                       (pscal <= COS_ALPHA_SLIVER*norm));
-
-                  if (succ_start) succ_start = false;
+                  bool sliver_facet = (pscal <= COS_ALPHA_SLIVER*norm);
 
                   if (!sliver_facet)
                     {
