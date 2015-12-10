@@ -2,6 +2,7 @@
 #include <map>
 #include <cmath>
 #include <CGAL/property_map.h>
+#include <CGAL/algorithm.h>
 
 struct Custom_point_3{
   // Required by File_scanner_OFF

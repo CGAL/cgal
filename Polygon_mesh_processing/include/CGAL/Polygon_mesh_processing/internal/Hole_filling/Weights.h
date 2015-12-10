@@ -63,6 +63,44 @@ public:
 // The potential problem with previous one (Cotangent_value) is that it does not produce symmetric results
 // (i.e. for v0, v1, v2 and v2, v1, v0 returned cot weights can be slightly different)
 // This one provides stable results.
+template<class PolygonMesh>
+struct Cotangent_value_Meyer_impl
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+
+  template <class VertexPointMap>
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, const VertexPointMap& ppmap)
+  {
+    typedef typename Kernel_traits<
+      typename boost::property_traits<VertexPointMap>::value_type >::Kernel::Vector_3 Vector;
+    
+    Vector a = get(ppmap, v0) - get(ppmap, v1);
+    Vector b = get(ppmap, v2) - get(ppmap, v1);
+    
+    double dot_ab = a*b;
+    // rewritten for safer fp arithmetic
+    //double dot_aa = a.squared_length();
+    //double dot_bb = b.squared_length();
+    //double divider = CGAL::sqrt( dot_aa * dot_bb - dot_ab * dot_ab );
+
+    Vector cross_ab = CGAL::cross_product(a, b);
+    double divider = CGAL::sqrt(cross_ab*cross_ab);
+
+    if(divider == 0 /*|| divider != divider*/) 
+    {
+      CGAL::collinear(get(ppmap, v0), get(ppmap, v1), get(ppmap, v2)) ? 
+        CGAL_warning(!"Infinite Cotangent value with degenerate triangle!") :
+        CGAL_warning(!"Infinite Cotangent value due to floating point arithmetic!");
+      
+
+      return dot_ab > 0 ? (std::numeric_limits<double>::max)() :
+                         -(std::numeric_limits<double>::max)();
+    }
+    
+    return dot_ab / divider;
+  }
+};
+
 template<class PolygonMesh
   , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type>
 class Cotangent_value_Meyer
@@ -90,30 +128,7 @@ public:
 
   double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2)
   {
-    Vector a = get(ppmap, v0) - get(ppmap, v1);
-    Vector b = get(ppmap, v2) - get(ppmap, v1);
-    
-    double dot_ab = a*b;
-    // rewritten for safer fp arithmetic
-    //double dot_aa = a.squared_length();
-    //double dot_bb = b.squared_length();
-    //double divider = CGAL::sqrt( dot_aa * dot_bb - dot_ab * dot_ab );
-
-    Vector cross_ab = CGAL::cross_product(a, b);
-    double divider = CGAL::sqrt(cross_ab*cross_ab);
-
-    if(divider == 0 /*|| divider != divider*/) 
-    {
-      CGAL::collinear(get(ppmap, v0), get(ppmap, v1), get(ppmap, v2)) ? 
-        CGAL_warning(!"Infinite Cotangent value with degenerate triangle!") :
-        CGAL_warning(!"Infinite Cotangent value due to floating point arithmetic!");
-      
-
-      return dot_ab > 0 ? (std::numeric_limits<double>::max)() :
-                         -(std::numeric_limits<double>::max)();
-    }
-    
-    return dot_ab / divider;
+    return Cotangent_value_Meyer_impl<PolygonMesh>()(v0,v1,v2,ppmap);
   }
 };
 
@@ -248,6 +263,20 @@ public:
   }
 };
 
+template<class PolygonMesh,
+         class CotangentValue = Cotangent_value_Meyer_impl<PolygonMesh> >
+struct Cotangent_value_minimum_zero_impl : CotangentValue
+{
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+
+  template <class VertexPointMap>
+  double operator()(vertex_descriptor v0, vertex_descriptor v1, vertex_descriptor v2, const VertexPointMap& ppmap)
+  {
+    double value = CotangentValue::operator()(v0, v1, v2,ppmap);
+    return (std::max)(0.0, value);
+  }
+};
+
 template<class PolygonMesh
     , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
     , class CotangentValue
@@ -362,6 +391,46 @@ public:
 // Cotangent weight calculator 
 // Cotangent_value:               as suggested by -[Sorkine07] ARAP Surface Modeling-
 // Cotangent_value_area_weighted: as suggested by -[Mullen08] Spectral Conformal Parameterization-
+template< class PolygonMesh,
+          class CotangentValue = Cotangent_value_minimum_zero_impl<PolygonMesh> >
+struct Cotangent_weight_impl : CotangentValue
+{
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+
+  // Returns the cotangent weight of specified halfedge_descriptor
+  // Edge orientation is trivial
+  template<class VertexPointMap>
+  double operator()(halfedge_descriptor he, PolygonMesh& pmesh, const VertexPointMap& ppmap)
+  {
+    vertex_descriptor v0 = target(he, pmesh);
+    vertex_descriptor v1 = source(he, pmesh);
+     // Only one triangle for border edges
+    if (is_border_edge(he, pmesh))
+     {
+       
+       halfedge_descriptor he_cw = opposite( next(he, pmesh) , pmesh );
+       vertex_descriptor v2 = source(he_cw, pmesh);
+       if (is_border_edge(he_cw, pmesh) )
+       {
+         halfedge_descriptor he_ccw = prev( opposite(he, pmesh) , pmesh );
+         v2 = source(he_ccw, pmesh);
+       }
+       return ( CotangentValue::operator()(v0, v2, v1, ppmap)/2.0 );
+     }
+     else
+     {
+       halfedge_descriptor he_cw = opposite( next(he, pmesh) , pmesh );
+       vertex_descriptor v2 = source(he_cw, pmesh);     
+       halfedge_descriptor he_ccw = prev( opposite(he, pmesh) , pmesh );
+       vertex_descriptor v3 = source(he_ccw, pmesh);
+
+        return ( CotangentValue::operator()(v0, v2, v1, ppmap)/2.0 +
+                 CotangentValue::operator()(v0, v3, v1, ppmap)/2.0 );
+     }
+  }
+};
+
 template<class PolygonMesh
   , class VertexPointMap = typename boost::property_map<PolygonMesh, vertex_point_t>::type
   , class CotangentValue
@@ -424,6 +493,28 @@ public:
 };
 
 // Single cotangent from -[Chao10] Simple Geometric Model for Elastic Deformation
+template<class PolygonMesh,
+         class CotangentValue = Cotangent_value_Meyer_impl<PolygonMesh> >
+struct Single_cotangent_weight_impl : CotangentValue
+{
+  typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor   halfedge_descriptor;
+  typedef typename boost::graph_traits<PolygonMesh>::vertex_descriptor vertex_descriptor;
+
+  // Returns the cotangent of the opposite angle of the edge
+  // 0 for border edges (which does not have an opposite angle)
+  template <class VertexPointMap>
+  double operator()(halfedge_descriptor he, PolygonMesh& pmesh, const VertexPointMap& ppmap)
+  {
+    if(is_border(he, pmesh)) { return 0.0;}
+     
+    vertex_descriptor v0 = target(he, pmesh);
+    vertex_descriptor v1 = source(he, pmesh);
+
+    vertex_descriptor v_op = target(next(he, pmesh), pmesh);
+     return CotangentValue::operator()(v0, v_op, v1, ppmap);
+  }
+};
+
 template<class PolygonMesh
   , class VertexPointMap = typename boost::property_map<PolygonMesh, CGAL::vertex_point_t>::type
   , class CotangentValue = Cotangent_value_Meyer<PolygonMesh, VertexPointMap> >
