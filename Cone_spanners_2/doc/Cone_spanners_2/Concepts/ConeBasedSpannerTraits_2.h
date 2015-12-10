@@ -2,11 +2,20 @@
 \ingroup PkgConeBasedSpannersConcepts
 \cgalConcept
 
-The functors provided in this package for constructing
-cone-based spanners are parameterized with a traits class `Traits`, which defines the 
-primitives (predicates and construction objects) required by the functors.
+The functors provided in this package for constructing cones and cone-based spanners
+all have a template parameter `ConeBasedSpannerTraits_2`. To specify the requirements
+for the models (i.e., the various kernels from CGAL) that can be passed to 
+this parameter, we document a concept also called
+`ConeBasedSpannerTraits_2` here. Basically, this concept 
+specifies all the types and primitives (predicates and construction objects) that 
+the model should include to make the functors work properly.
+It is recommended that if you want to construct the cones or the cone-based spanners
+exactly, you should use the kernel `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`;
+and if you want to construct them inexactly, you should use the kernel
+`CGAL::Exact_predicates_inexact_constructions`.
 
-\cgalHasModel any model of a \cgal %kernel.
+\cgalHasModel `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`
+\cgalHasModel `CGAL::Exact_predicates_inexact_constructions`
 
 */
 
@@ -40,6 +49,8 @@ typedef unspecified_type Aff_transformation_2;
 The polynomial type. When the cone angle \f$ \theta \f$ is in the form of 
 \f$ 2\pi / n \f$, where \f$ n \f$ is a positive integer, \f$ \sin(\theta) \f$ 
 and \f$ \cos(\theta) \f$ can be represented exactly by roots of polynomials.
+Thus, this polynomial type is needed to avoid the computation by calling
+sin() and cos().
 */ 
 typedef unspecified_type Polynomial; 
 
@@ -53,27 +64,13 @@ typedef unspecified_type Polynomial;
 /*!
   This function should return the k-th real root of an univariate polynomial, which is defined 
   by the iterator range. It is needed in calculating cone boundaries exactly.
-  It is not needed if the cone bounaries are calculated inexactly, which uses
-  sin() and cos() instead.
 */ 
 NT CGAL::root_of(int k, InputIterator begin, InputIterator end); 
 
 /*!
   This function should return the square root of the argument `x`. 
-  It is defined if the argument type is a model of the `FieldWithSqrt` concept.
-  It is needed in calculating cone boundaries exactly.
 */ 
 NT CGAL::sqrt(const NT &  x); 
-
-/*
-  This function should compute the sine value of arg (measured in radians). 
-  It is needed in calculating cone boundaries inexactly.
-long double sin( long double arg );
-
-  This function should compute the cosine value of arg (measured in radians). 
-  It is needed in calculating cone boundaries inexactly.
-long double cos( long double arg );
-*/
 
 /*!
   This function should return the bisector of the two lines l1 and l2. 
