@@ -24,7 +24,7 @@
 #include <CGAL/Default.h>
 #include <CGAL/tuple.h>
 
-#include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Weights.h>
+#include <CGAL/Polygon_mesh_processing/Weights.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <vector>

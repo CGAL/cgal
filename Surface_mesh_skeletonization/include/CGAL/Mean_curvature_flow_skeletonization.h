@@ -38,7 +38,7 @@
 #include <CGAL/boost/graph/iterator.h>
 
 // Compute cotangent Laplacian
-#include <CGAL/Polygon_mesh_processing/internal/Hole_filling/Weights.h>
+#include <CGAL/Polygon_mesh_processing/Weights.h>
 
 // Compute the vertex normal
 #include <CGAL/internal/Surface_mesh_skeletonization/get_normal.h>
