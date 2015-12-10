@@ -23,10 +23,12 @@
 #define CGAL_IMAGE_3_H
 
 #include <CGAL/basic.h>
+#include <CGAL/array.h>
 
 #include <boost/shared_ptr.hpp>
-
+#include <boost/foreach.hpp>
 #include <boost/format.hpp>
+#include <boost/unordered_set.hpp>
 #include <CGAL/ImageIO.h>
 #include <CGAL/function_objects.h>
 
@@ -445,42 +447,56 @@ Image_3::labellized_trilinear_interpolation(const Coord_type& x,
   const int k1 = (int)(lx);
   const int i2 = i1 + 1;
   const int j2 = j1 + 1;
-  const int k2 = k1 + 1;
 
-  std::set<Image_word_type> labels;
-  labels.insert(((Image_word_type*)image()->data)[(i1 * dimy + j1) * dimx + k1]);
-  labels.insert(((Image_word_type*)image()->data)[(i1 * dimy + j1) * dimx + k2]);
-  labels.insert(((Image_word_type*)image()->data)[(i1 * dimy + j2) * dimx + k1]);
-  labels.insert(((Image_word_type*)image()->data)[(i1 * dimy + j2) * dimx + k2]);
-  labels.insert(((Image_word_type*)image()->data)[(i2 * dimy + j1) * dimx + k1]);
-  labels.insert(((Image_word_type*)image()->data)[(i2 * dimy + j1) * dimx + k2]);
-  labels.insert(((Image_word_type*)image()->data)[(i2 * dimy + j2) * dimx + k1]);
-  labels.insert(((Image_word_type*)image()->data)[(i2 * dimy + j2) * dimx + k2]);
+  CGAL::cpp11::array<std::size_t,8> index;
+  index[0] = (i1 * dimy + j1) * dimx + k1;
+  index[1] = index[0] + 1;
+  index[2] = (i1 * dimy + j2) * dimx + k1;
+  index[3] = index[2] + 1;
+  index[4] = (i2 * dimy + j1) * dimx + k1;
+  index[5] = index[4] + 1;
+  index[6] = (i2 * dimy + j2) * dimx + k1;
+  index[7] = index[6] + 1;
+
+  CGAL::cpp11::array<Image_word_type,8> labels;
+  
+  labels[0] = ((Image_word_type*)image()->data)[index[0]];
+  int lc = 1;
+  for(int lci=1; lci<8; ++lci){
+    bool found = false;
+    Image_word_type iwt = ((Image_word_type*)image()->data)[index[lci]];
+    for(int lcj=0; lcj < lc; ++lcj){
+      if(iwt == labels[lcj]){
+        found = true;
+        break;
+      }
+    }
+    if(found) continue;
+    labels[lc] = iwt;
+    ++lc;
+  }
 
   CGAL_HISTOGRAM_PROFILER(
     "Number of labels around a vertex, Image_3::labellized_trilinear_interpolation()", 
-    static_cast<unsigned int>(labels.size()));
+    static_cast<unsigned int>(lc));
 
-  if(labels.size() == 1) {
-    return *(labels.begin());
+  if(lc == 1) {
+    return labels[0];
   }
-
+    
   typedef ImageIO::Indicator<Image_word_type> Indicator;
   double best_value = 0.;
   Image_word_type best = 0;
-  for(typename std::set<Image_word_type>::const_iterator 
-	label_it = labels.begin(),
-	end = labels.end();
-      label_it != end; ++label_it)
+  BOOST_FOREACH(Image_word_type iwt, labels)
   {
     const double r = 
       trilinear_interpolation<Image_word_type,double,Coord_type, Indicator>(
-        x, y, z, value_outside, Indicator(*label_it));
+        x, y, z, value_outside, Indicator(iwt));
     CGAL_assertion(r >= 0.);
     CGAL_assertion(r <= 1.);
 
     if(r > best_value) {
-      best = *label_it;
+      best = iwt;
       best_value = r;
     }
   }

@@ -85,7 +85,8 @@ public:
 
   bool isFinite() const { return true; }
   bool isEmpty() const {
-    return c3t3().triangulation().number_of_vertices() == 0;
+    return c3t3().triangulation().number_of_vertices() == 0
+      || c3t3().number_of_cells() == 0;
   }
 
   void compute_bbox() const;

@@ -58,7 +58,7 @@
       </font>
      </property>
      <property name="text">
-      <string>1:x means that x voxels of the original image are represented by 1 cube in the drawed image</string>
+      <string>1:x means that x voxels of the original image are represented by 1 cube in the drawn image</string>
      </property>
      <property name="wordWrap">
       <bool>true</bool>

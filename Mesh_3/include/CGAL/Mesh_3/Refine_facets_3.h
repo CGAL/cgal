@@ -633,6 +633,7 @@ private:
   typedef typename Gt::Segment_3 Segment_3;
   typedef typename Gt::Ray_3 Ray_3;
   typedef typename Gt::Line_3 Line_3;
+  typedef typename Gt::Bare_point Bare_point;
 
   typedef typename boost::optional<
     CGAL::cpp11::tuple<Surface_patch_index, Index, Point> >
@@ -729,8 +730,14 @@ private:
   /// Computes facet properties and add facet to the refinement queue if needed
   void treat_new_facet(Facet& facet);
 
-  /// Compute the exact dual of a facet
-  Object dual_exact(const Facet & f) const;
+  /// Compute the (exact) dual of a facet
+  void dual_segment(const Facet & f, Bare_point& p1, Bare_point& p2) const;
+
+  void dual_segment_exact(const Facet & f, Bare_point& p1, Bare_point& p2) const;
+
+  void dual_ray(const Facet & f, Ray_3& ray) const;
+
+  void dual_ray_exact(const Facet & f, Ray_3& ray) const;
 
   /**
    * Computes at once is_facet_on_surface and facet_surface_center.
@@ -1519,33 +1526,57 @@ treat_new_facet(Facet& facet)
 }
 
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
-Object
+void
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
-dual_exact(const Facet& facet) const
+dual_segment(const Facet & facet, Bare_point& p, Bare_point& q) const
 {
-  typedef typename Gt::Bare_point Bare_point;
-
   Cell_handle c = facet.first;
   int i = facet.second;
   Cell_handle n = c->neighbor(i);
-  if ( ! r_tr_.is_infinite(c) && ! r_tr_.is_infinite(n) )
-  {
-    Bare_point p1 = Gt().construct_weighted_circumcenter_3_object()(
+  CGAL_assertion( ! r_tr_.is_infinite(c) && ! r_tr_.is_infinite(n) );
+  p = Gt().construct_weighted_circumcenter_3_object()(
+      c->vertex(0)->point(),
+      c->vertex(1)->point(),
+      c->vertex(2)->point(),
+      c->vertex(3)->point());
+  q = Gt().construct_weighted_circumcenter_3_object()(
+      n->vertex(0)->point(),
+      n->vertex(1)->point(),
+      n->vertex(2)->point(),
+      n->vertex(3)->point());
+}
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+void
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+dual_segment_exact(const Facet & facet, Bare_point& p, Bare_point& q) const
+{
+  Cell_handle c = facet.first;
+  int i = facet.second;
+  Cell_handle n = c->neighbor(i);
+  CGAL_assertion( ! r_tr_.is_infinite(c) && ! r_tr_.is_infinite(n) );
+  p = Gt().construct_weighted_circumcenter_3_object()(
       c->vertex(0)->point(),
       c->vertex(1)->point(),
       c->vertex(2)->point(),
       c->vertex(3)->point(),
       true);
-    Bare_point p2 = Gt().construct_weighted_circumcenter_3_object()(
+  q = Gt().construct_weighted_circumcenter_3_object()(
       n->vertex(0)->point(),
       n->vertex(1)->point(),
       n->vertex(2)->point(),
       n->vertex(3)->point(),
       true);
-    return Gt().construct_object_3_object()(
-      Gt().construct_segment_3_object()(p1, p2));
-  }
+}
 
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+void
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+dual_ray(const Facet & facet, Ray_3& ray) const
+{
+  Cell_handle c = facet.first;
+  int i = facet.second;
+  Cell_handle n = c->neighbor(i);
   // either n or c is infinite
   int in;
   if ( r_tr_.is_infinite(c) )
@@ -1565,16 +1596,53 @@ dual_exact(const Facet& facet) const
   typename Gt::Line_3 l = Gt().construct_perpendicular_line_3_object()
     ( Gt().construct_plane_3_object()(p,q,r),
       Gt().construct_weighted_circumcenter_3_object()(p,q,r) );
-  return Gt().construct_object_3_object()(
-    Gt().construct_ray_3_object()(
-      Gt().construct_weighted_circumcenter_3_object()(
+
+ ray = Gt().construct_ray_3_object()(Gt().construct_weighted_circumcenter_3_object()(
+        n->vertex(0)->point(),
+        n->vertex(1)->point(),
+        n->vertex(2)->point(),
+        n->vertex(3)->point()), l);
+}
+
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+void
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+dual_ray_exact(const Facet & facet, Ray_3& ray) const
+{
+  Cell_handle c = facet.first;
+  int i = facet.second;
+  Cell_handle n = c->neighbor(i);
+  // either n or c is infinite
+  int in;
+  if ( r_tr_.is_infinite(c) )
+    in = n->index(c);
+  else {
+    n = c;
+    in = i;
+  }
+  // n now denotes a finite cell, either c or c->neighbor(i)
+  int ind[3] = {(in+1)&3,(in+2)&3,(in+3)&3};
+  if ( (in&1) == 1 )
+    std::swap(ind[0], ind[1]);
+  const Point& p = n->vertex(ind[0])->point();
+  const Point& q = n->vertex(ind[1])->point();
+  const Point& r = n->vertex(ind[2])->point();
+
+  typename Gt::Line_3 l = Gt().construct_perpendicular_line_3_object()
+    ( Gt().construct_plane_3_object()(p,q,r),
+      Gt().construct_weighted_circumcenter_3_object()(p,q,r) );
+
+ ray = Gt().construct_ray_3_object()(Gt().construct_weighted_circumcenter_3_object()(
         n->vertex(0)->point(),
         n->vertex(1)->point(),
         n->vertex(2)->point(),
         n->vertex(3)->point(),
-        true),
-      l));
+        true), l);
 }
+
+
+
+
 
 template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
 void
@@ -1587,6 +1655,7 @@ compute_facet_properties(const Facet& facet,
   // Facet must be finite
   //-------------------------------------------------------
   CGAL_assertion( ! r_tr_.is_infinite(facet) );
+  CGAL_assertion( r_tr_.dimension() == 3 );
 
   // types
   typedef boost::optional<typename MD::Surface_patch_index> Surface_patch;
@@ -1600,34 +1669,36 @@ compute_facet_properties(const Facet& facet,
       r_oracle_.do_intersect_surface_object();
 #endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
 
-  // Get dual of facet
-  Object dual = (force_exact ? dual_exact(facet) : r_tr_.dual(facet));
 
-  // If the dual is a segment
-  if ( const Segment_3* p_segment = object_cast<Segment_3>(&dual) )
-  {
-    if (is_degenerate(*p_segment)) { fp = Facet_properties(); return; }
+ typedef typename Gt::Bare_point Bare_point;
+
+  Cell_handle c = facet.first;
+  int i = facet.second;
+  Cell_handle n = c->neighbor(i);
+  if ( ! r_tr_.is_infinite(c) && ! r_tr_.is_infinite(n) ){
+    // the dual is a segment
+    Bare_point p1, p2;
+    if(force_exact){
+      dual_segment_exact(facet, p1, p2);
+    } else {
+      dual_segment(facet, p1, p2);
+    }
+    if (p1 == p2) { fp = Facet_properties(); return; }
+
+    // Trick to have canonical vector : thus, we compute always the same
+    // intersection
+    Segment_3 segment = ( compare_xyz(p1,p2)== CGAL::SMALLER )
+      ? Segment_3(p1, p2)
+      : Segment_3(p2, p1);
 
     // If facet is on surface, compute intersection point and return true
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-    Surface_patch surface = do_intersect_surface(*p_segment);
+    Surface_patch surface = do_intersect_surface(segment);
     if ( surface )
 #endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
     {
       typename MD::Construct_intersection construct_intersection =
           r_oracle_.construct_intersection_object();
-
-      // Trick to have canonical vector : thus, we compute always the same
-      // intersection
-      Segment_3 segment = *p_segment;
-      if ( compare_xyz(p_segment->source(),p_segment->target())
-              == CGAL::LARGER )
-      {
-        typename Gt::Construct_opposite_segment_3 opposite =
-            Gt().construct_opposite_segment_3_object();
-
-        segment = opposite(*p_segment);
-      }
 
       Intersection intersect = construct_intersection(segment);
 #ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
@@ -1643,11 +1714,10 @@ compute_facet_properties(const Facet& facet,
       fp =  Facet_properties(CGAL::cpp11::make_tuple(*surface,
                                     CGAL::cpp11::get<1>(intersect),
                                     Point(CGAL::cpp11::get<0>(intersect))));
-      return;
     }
   }
   // If the dual is a ray
-  else if ( const Ray_3* p_ray = object_cast<Ray_3>(&dual) )
+  else
   {
     // If a facet is on the convex hull, and if its finite incident
     // cell has a very big Delaunay ball, then the dual of the facet is
@@ -1655,17 +1725,23 @@ compute_facet_properties(const Facet& facet,
     // vector with small coordinates. Its can happen than the
     // constructed ray is degenerate (the point(1) of the ray is
     // point(0) plus a vector whose coordinates are epsilon).
-    if (is_degenerate(*p_ray)) { fp = Facet_properties(); return; }
+    Ray_3 ray;
+    if(force_exact){
+      dual_ray_exact(facet,ray);
+    } else {
+      dual_ray(facet,ray);
+    }
+    if (is_degenerate(ray)) { fp = Facet_properties(); return; }
 
 #ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-    Surface_patch surface = do_intersect_surface(*p_ray);
+    Surface_patch surface = do_intersect_surface(ray);
     if ( surface )
 #endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
     {
       typename MD::Construct_intersection construct_intersection =
           r_oracle_.construct_intersection_object();
 
-      Intersection intersect = construct_intersection(*p_ray);
+      Intersection intersect = construct_intersection(ray);
 #ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
       Surface_patch surface =
         (CGAL::cpp11::get<2>(intersect) == 0) ? Surface_patch() :
@@ -1677,60 +1753,9 @@ compute_facet_properties(const Facet& facet,
         fp = Facet_properties(CGAL::cpp11::make_tuple(*surface,
                                       CGAL::cpp11::get<1>(intersect),
                                       Point(CGAL::cpp11::get<0>(intersect))));
-        return;
       }
     }
   }
-  // If the dual is a line
-  else if ( const Line_3* p_line = object_cast<Line_3>(&dual) )
-  {
-#ifndef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-    Surface_patch surface = do_intersect_surface(*p_line);
-    if ( surface )
-#endif // not CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-    {
-      typename MD::Construct_intersection construct_intersection =
-          r_oracle_.construct_intersection_object();
-
-      // Trick to have canonical vector : thus, we compute always the same
-      // intersection
-      Line_3 line = *p_line;
-      typename Gt::Compare_xyz_3 compare_xyz = Gt().compare_xyz_3_object();
-      if ( compare_xyz(p_line->point(0),p_line->point(1))
-              == CGAL::LARGER )
-      {
-        typename Gt::Construct_opposite_line_3 opposite =
-            Gt().construct_opposite_line_3_object();
-
-        line = opposite(*p_line);
-      }
-
-      Intersection intersect = construct_intersection(line);
-#ifdef CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-      Surface_patch surface =
-        (CGAL::cpp11::get<2>(intersect) == 0) ? Surface_patch() :
-        Surface_patch(
-          r_oracle_.surface_patch_index(CGAL::cpp11::get<1>(intersect)));
-      if(surface)
-#endif // CGAL_MESH_3_NO_LONGER_CALLS_DO_INTERSECT_3
-      {
-       fp = Facet_properties(CGAL::cpp11::make_tuple(*surface,
-                                     CGAL::cpp11::get<1>(intersect),
-                                     Point(CGAL::cpp11::get<0>(intersect))));
-       return;
-      }
-    }
-  }
-  else
-  {
-    // Else there is a problem with the dual
-    std::cerr << "In is_facet_on_surface(const Facet& f, Point& center)\n"
-    << "file " << __FILE__ << ", line " << __LINE__ << "\n";
-    std::cerr << "Incorrect object type: " << dual.type().name() << "\n";
-    CGAL_error();
-  }
-
-  fp = Facet_properties();
 }
 
 

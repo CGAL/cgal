@@ -169,29 +169,43 @@ public:
                           bool force_exact = false) const
   {
     CGAL_precondition(Rt().orientation_3_object()(p,q,r,s) == CGAL::POSITIVE);
-    
+   
     // We use Power_test_3: it is static filtered and
     // we know that p,q,r,s are positive oriented
     typename Rt::Power_test_3 power_test = Rt().power_test_3_object();
 
     // Compute denominator to swith to exact if it is 0
     FT num_x, num_y, num_z, den;
+    bool unweighted = (p.weight() == 0) && (q.weight() == 0) && (r.weight() == 0) && (s.weight() == 0);
+
+    if(unweighted){
+      determinants_for_circumcenterC3(p.x(), p.y(), p.z(),
+                                      q.x(), q.y(), q.z(),
+                                      r.x(), r.y(), r.z(),
+                                      s.x(), s.y(), s.z(),
+                                      num_x,  num_y, num_z, den);
+    } else {
     determinants_for_weighted_circumcenterC3(p.x(), p.y(), p.z(), p.weight(),
                                              q.x(), q.y(), q.z(), q.weight(),
                                              r.x(), r.y(), r.z(), r.weight(),
                                              s.x(), s.y(), s.z(), s.weight(),
                                              num_x,  num_y, num_z, den);
-    
+    }
     if ( ! force_exact && ! CGAL_NTS is_zero(den) )
     {
       FT inv = FT(1)/(FT(2) * den);
       Bare_point res(p.x() + num_x*inv, p.y() - num_y*inv, p.z() + num_z*inv);
-      
+       
+      if(unweighted){
+        if(side_of_oriented_sphere(p.point(),q.point(),r.point(),s.point(), res)
+           == CGAL::ON_POSITIVE_SIDE )
+          return res;
+      } else {
       // Fast output
       if ( power_test(p,q,r,s,res) == CGAL::ON_POSITIVE_SIDE )
         return res;
     }
-    
+    }
     // Switch to exact
     To_exact to_exact;
     Back_from_exact back_from_exact;

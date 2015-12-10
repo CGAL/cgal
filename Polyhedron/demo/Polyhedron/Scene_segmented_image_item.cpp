@@ -215,19 +215,18 @@ class Vertex_buffer_helper
 {
 public:
   Vertex_buffer_helper(const Image_accessor& data);
-  ~Vertex_buffer_helper();
   
   void fill_buffer_data();
 
-  const GLfloat* colors() const { return color_array_; }
-  const GLfloat* normals() const { return normal_array_; }
-  const GLfloat* vertices() const { return vertex_array_; }
-  const GLuint* quads() const { return quad_array_; }
+  const GLfloat* colors() const { return &(colors_[0]); }
+  const GLfloat* normals() const { return &(normals_[0]); }
+  const GLfloat* vertices() const { return &(vertices_[0]); }
+  const GLuint* quads() const { return &(quads_[0]); }
   
-  std::size_t color_size() const { return color_size_*sizeof(GLfloat); }
-  std::size_t normal_size() const { return normal_size_*sizeof(GLfloat); }
-  std::size_t vertex_size() const { return vertex_size_*sizeof(GLfloat); }
-  std::size_t quad_size() const { return quad_size_*sizeof(GLuint); }
+  std::size_t color_size() const { return colors_.size()*sizeof(GLfloat); }
+  std::size_t normal_size() const { return normals_.size()*sizeof(GLfloat); }
+  std::size_t vertex_size() const { return vertices_.size()*sizeof(GLfloat); }
+  std::size_t quad_size() const { return quads_.size()*sizeof(GLuint); }
   
 private:
   void treat_vertex(std::size_t i, std::size_t j, std::size_t k);
@@ -241,11 +240,6 @@ private:
   int compute_position(std::size_t i, std::size_t j, std::size_t k) const;
   int vertex_index(std::size_t i, std::size_t j, std::size_t k) const;
   
-  void create_arrays();
-  
-  template <typename T>
-  void create_array(T*& destination, std::size_t& size, const std::vector<T>& source);
-  
   int dx() const { return data_.dx(); }
   int dy() const { return data_.dy(); }
   int dz() const { return data_.dz(); }
@@ -258,36 +252,15 @@ private:
   Indices indices_;
   std::vector<GLfloat> colors_, normals_, vertices_;
   std::vector<GLuint> quads_;
-  
-  GLfloat *color_array_, *normal_array_, *vertex_array_;
-  GLuint* quad_array_;
-  std::size_t color_size_, normal_size_, vertex_size_, quad_size_;
 };
 
 int Vertex_buffer_helper::vertex_not_found_ = -1;
 
 Vertex_buffer_helper::
 Vertex_buffer_helper(const Image_accessor& data)
-: data_(data)
-, color_array_(NULL)
-, normal_array_(NULL)
-, vertex_array_(NULL)
-, quad_array_(NULL)
-, color_size_(0)
-, normal_size_(0)
-, vertex_size_(0)
-, quad_size_(0)
-{
-}
+  : data_(data)
+{}
 
-Vertex_buffer_helper::
-~Vertex_buffer_helper()
-{
-  delete[] color_array_;
-  delete[] normal_array_;
-  delete[] vertex_array_;
-  delete[] quad_array_;
-}
 
 void
 Vertex_buffer_helper::
@@ -305,8 +278,6 @@ fill_buffer_data()
       }
     }
   }
-  
-  create_arrays();
 }
 
 void
@@ -354,10 +325,9 @@ Vertex_buffer_helper::push_vertex(std::size_t i, std::size_t j, std::size_t k)
   indices_.insert(std::make_pair(compute_position(i,j,k),
                                  vertices_.size()/3)); 
   
-  vertices_.push_back(i*data_.vx());
-  vertices_.push_back(j*data_.vy());
-  vertices_.push_back(k*data_.vz());
-
+  vertices_.push_back( (i - 0.5) * data_.vx());
+  vertices_.push_back( (j - 0.5) * data_.vy());
+  vertices_.push_back( (k - 0.5) * data_.vz());
 }
 
 void
@@ -426,32 +396,6 @@ vertex_index(std::size_t i, std::size_t j, std::size_t k) const
 }
 
 
-void
-Vertex_buffer_helper::
-create_arrays()
-{
-  create_array(color_array_, color_size_, colors_);
-  create_array(normal_array_, normal_size_, normals_);
-  create_array(vertex_array_, vertex_size_, vertices_);
-  create_array(quad_array_, quad_size_, quads_);
-}
-
-template <typename T>
-void
-Vertex_buffer_helper::
-create_array(T*& destination, std::size_t& size, const std::vector<T>& source)
-{
-  size = source.size();
-  destination = new T[size];
-  
-  int i=0;
-  for ( typename std::vector<T>::const_iterator it = source.begin(),
-       end = source.end() ; it != end ; ++it )
-  {
-    destination[i++] = *it;
-  }
-}
-  
 } // namespace internal
 
 
