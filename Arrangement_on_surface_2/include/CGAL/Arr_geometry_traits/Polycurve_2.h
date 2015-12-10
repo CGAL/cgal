@@ -441,22 +441,16 @@ template <typename SubcurveType_2, typename PointType_2>
 std::ostream& operator<<(std::ostream & os,
                          const Polycurve_2<SubcurveType_2, PointType_2>& cv)
 {
-  typedef SubcurveType_2                          Subcurve_type_2;
-  typedef PointType_2                            Point_type_2;
+  typedef SubcurveType_2                                Subcurve_type_2;
+  typedef PointType_2                                   Point_type_2;
+  typedef Polycurve_2<Subcurve_type_2, Point_type_2>    Curve_2;
 
-  typedef Polycurve_2<Subcurve_type_2, Point_type_2> Curve_2;
+  // Export the number of subcurves.
+  os << cv.number_of_subcurves();
 
+  // Export the subcurves.
   typename Curve_2::Subcurve_const_iterator iter = cv.begin_subcurves();
-  while (iter != cv.end_subcurves()) {
-    if (iter == cv.begin_subcurves()) {
-      os << " " << *iter;
-      ++iter;
-    }
-    else {
-      os << " <-> " << *iter;
-      ++iter;
-    }
-  }
+  while (iter != cv.end_subcurves()) os << " " << *iter++;
   return (os);
 }
 
@@ -467,30 +461,18 @@ std::istream& operator>>(std::istream& is,
 {
   typedef SubcurveType_2                                Subcurve_type_2;
   typedef PointType_2                                   Point_type_2;
-
   typedef Polycurve_2<Subcurve_type_2, Point_type_2>    Curve_2;
 
-  // Read the number of input points.
-  unsigned int n_pts;
-  is >> n_pts;
-  CGAL_precondition_msg(n_pts > 1, "Input must contain at least two points");
+  // Import the number of curves.
+  std::size_t num;
+  is >> num;
 
-  // Read m_num_pts points to a list.
-  Point_type_2 p;
-  std::list<Point_type_2> pts;
-  for (unsigned int i = 0; i < n_pts; ++i) {
-    is >> p;
-    pts.push_back(p);
-  }
-
+  // Import the subcurves.
   std::list<Subcurve_type_2> subcurves;
-  typename std::list<Point_type_2>::iterator curr = pts.begin();
-  typename std::list<Point_type_2>::iterator next = pts.begin();
-  ++next;
-  while (next != pts.end()) {
-    subcurves.push_back(Subcurve_type_2(*curr, *next));
-    ++curr;
-    ++next;
+  for (std::size_t i = 0; i < num; ++i) {
+    Subcurve_type_2 subcurve;
+    is >> subcurve;
+    subcurves.push_back(subcurve);
   }
 
   // Create the polycurve curve.
