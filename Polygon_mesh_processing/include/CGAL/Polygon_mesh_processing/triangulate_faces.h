@@ -35,6 +35,7 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#include <boost/range/size.hpp>
 #include <boost/foreach.hpp>
 
 #include <queue>
@@ -209,16 +210,17 @@ public:
     }
   }
 
-  void operator()(PM& pmesh)
+  template<typename FaceRange>
+  void operator()(FaceRange face_range, PM& pmesh)
   {
     // One need to store facet handles into a vector, because the list of
     // facets of the polyhedron will be modified during the loop, and
     // that invalidates the range [facets_begin(), facets_end()[.
     std::vector<face_descriptor> facets;
-    facets.reserve(num_faces(pmesh));
+    facets.reserve(boost::size(face_range));
 
     //only consider non-triangular faces
-    BOOST_FOREACH(face_descriptor fit, faces(pmesh))
+    BOOST_FOREACH(face_descriptor fit, face_range)
       if ( next( next( halfedge(fit, pmesh), pmesh), pmesh)
         !=       prev( halfedge(fit, pmesh), pmesh) )
         facets.push_back(fit);
@@ -298,7 +300,54 @@ void triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 
 /**
 * \ingroup PMP_meshing_grp
-* triangulates faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2Summary
+* triangulates given faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2Summary
+*
+* @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
+          model of `Range`.
+          Its iterator type is `InputIterator`.
+* @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
+*         that has an internal property map for `boost::vertex_point_t`
+* @tparam NamedParameters a sequence of \ref namedparameters
+*
+* @param face_range the range of faces which should be triangulated
+* @param pmesh the polygon mesh to be triangulated
+* @param np optional sequence of \ref namedparameters among the ones listed below
+*
+* \cgalNamedParamsBegin
+*    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+* \cgalNamedParamsEnd
+*
+*/
+template <typename FaceRange, typename PolygonMesh, typename NamedParameters>
+void triangulate_faces(FaceRange face_range,
+                       PolygonMesh& pmesh,
+                       const NamedParameters& np)
+{
+  using boost::choose_const_pmap;
+  using boost::get_param;
+
+  //VertexPointMap
+  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
+  VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
+                            pmesh,
+                            boost::vertex_point);
+  //Kernel
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
+
+  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel> modifier(vpmap);
+  modifier(face_range, pmesh);
+}
+
+template <typename FaceRange, typename PolygonMesh>
+void triangulate_faces(FaceRange face_range, PolygonMesh& pmesh)
+{
+  triangulate_faces(face_range, pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
+}
+
+/**
+* \ingroup PMP_meshing_grp
+* triangulates all faces of a polygon mesh. This function depends on the package \ref PkgTriangulation2Summary
 * @tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 *         that has an internal property map for `boost::vertex_point_t`
 * @tparam NamedParameters a sequence of \ref namedparameters
@@ -316,26 +365,13 @@ template <typename PolygonMesh, typename NamedParameters>
 void triangulate_faces(PolygonMesh& pmesh,
                        const NamedParameters& np)
 {
-  using boost::choose_const_pmap;
-  using boost::get_param;
-
-  //VertexPointMap
-  typedef typename GetVertexPointMap<PolygonMesh, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
-                            pmesh,
-                            boost::vertex_point);
-  //Kernel
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
-
-  internal::Triangulate_modifier<PolygonMesh, VPMap, Kernel> modifier(vpmap);
-  modifier(pmesh);
+  triangulate_faces(faces(pmesh), pmesh, np);
 }
 
 template <typename PolygonMesh>
 void triangulate_faces(PolygonMesh& pmesh)
 {
-  return triangulate_faces(pmesh,
-    CGAL::Polygon_mesh_processing::parameters::all_default());
+  triangulate_faces(faces(pmesh), pmesh, CGAL::Polygon_mesh_processing::parameters::all_default());
 }
 
 } // end namespace Polygon_mesh_processing
