@@ -78,7 +78,7 @@ Scene::addItem(CGAL::Three::Scene_item* item)
     }
     Q_EMIT updated();
     Item_id id = m_entries.size() - 1;
-    //Q_EMIT newItem(id);
+    Q_EMIT newItem(id);
     return id;
 }
 
