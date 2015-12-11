@@ -1101,7 +1101,7 @@ namespace internal {
               || (m_corners[i].support.z() < Z_min) || (m_corners[i].support.z() > Z_max))
             {
               m_corners[i].active = false;
-              break;
+              continue;
             }
 
           // test if corner is in neighborhood of at least one point each of the 3 planes
