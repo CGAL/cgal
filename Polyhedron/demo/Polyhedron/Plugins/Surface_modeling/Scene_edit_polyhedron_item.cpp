@@ -426,7 +426,7 @@ void Scene_edit_polyhedron_item::compute_normals_and_vertices(void)
     color_lines[13] = 1.0; color_lines[16] = 1.0;
 
     if(ui_widget->ActivateFixedPlaneCheckBox->isChecked())
-      draw_frame_plane(viewer);
+     draw_frame_plane(viewer);
 
 }
 
@@ -640,8 +640,8 @@ void Scene_edit_polyhedron_item::draw_frame_plane(QGLViewer* viewer) const
     pos_frame_plane.resize(15);
     for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
     {
-        if(hgb_data->frame == viewer->manipulatedFrame())
-        {
+       // if(hgb_data->frame == viewer->manipulatedFrame())
+       // {
 
           const double diag = scene_diag();
           qglviewer::Vec base1(1,0,0);
@@ -663,8 +663,7 @@ void Scene_edit_polyhedron_item::draw_frame_plane(QGLViewer* viewer) const
           pos_frame_plane[6] = p3.x ; pos_frame_plane[7] = p3.y; pos_frame_plane[8] =p3.z ;
           pos_frame_plane[9] = p4.x ; pos_frame_plane[10]= p4.y; pos_frame_plane[11] =p4.z ;
           pos_frame_plane[12] = p1.x ; pos_frame_plane[13]= p1.y; pos_frame_plane[14] =p1.z ;
-          are_buffers_filled = false;
-        }
+       // }
     }
 }
 
