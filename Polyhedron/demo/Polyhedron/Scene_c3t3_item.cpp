@@ -924,49 +924,8 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
 }
 
 
-void Scene_c3t3_item::compute_elements() const
+void Scene_c3t3_item::compute_intersections() const
 {
-  std::cerr << "compute_elements\n";
-  positions_lines.clear();
-  positions_poly.clear();
-  normals.clear();
-  f_colors.resize(0);
-  s_colors.resize(0);
-  s_center.resize(0);
-  s_radius.resize(0);
-
-
-  //The grid
-  {
-    float x = (2 * (float)complex_diag()) / 10.0;
-    float y = (2 * (float)complex_diag()) / 10.0;
-    for (int u = 0; u < 11; u++)
-    {
-
-      positions_grid.push_back(-(float)complex_diag() + x* u);
-      positions_grid.push_back(-(float)complex_diag());
-      positions_grid.push_back(0.0);
-
-      positions_grid.push_back(-(float)complex_diag() + x* u);
-      positions_grid.push_back((float)complex_diag());
-      positions_grid.push_back(0.0);
-    }
-    for (int v = 0; v<11; v++)
-    {
-
-      positions_grid.push_back(-(float)complex_diag());
-      positions_grid.push_back(-(float)complex_diag() + v * y);
-      positions_grid.push_back(0.0);
-
-      positions_grid.push_back((float)complex_diag());
-      positions_grid.push_back(-(float)complex_diag() + v * y);
-      positions_grid.push_back(0.0);
-    }
-  }
-
-
-  if (isEmpty())
-    return;
 
   const Kernel::Plane_3& plane = this->plane();
   GLdouble clip_plane[4];
@@ -974,56 +933,6 @@ void Scene_c3t3_item::compute_elements() const
   clip_plane[1] = -plane.b();
   clip_plane[2] = -plane.c();
   clip_plane[3] = -plane.d();
-
-
-  //The facets
-  {
-    for (C3t3::Facet_iterator
-      fit = c3t3().facets_begin(),
-      end = c3t3().facets_end();
-    fit != end; ++fit)
-    {
-      const Tr::Cell_handle& cell = fit->first;
-      const int& index = fit->second;
-      const Kernel::Point_3& pa = cell->vertex((index + 1) & 3)->point();
-      const Kernel::Point_3& pb = cell->vertex((index + 2) & 3)->point();
-      const Kernel::Point_3& pc = cell->vertex((index + 3) & 3)->point();
-      typedef Kernel::Oriented_side Side;
-      using CGAL::ON_ORIENTED_BOUNDARY;
-      const Side sa = plane.oriented_side(pa);
-      const Side sb = plane.oriented_side(pb);
-      const Side sc = plane.oriented_side(pc);
-      bool is_shown = false;
-      if (pa.x() * clip_plane[0] + pa.y() * clip_plane[1] + pa.z() * clip_plane[2] + clip_plane[3]  > 0
-        && pb.x() * clip_plane[0] + pb.y() * clip_plane[1] + pb.z() * clip_plane[2] + clip_plane[3]  > 0
-        && pc.x() * clip_plane[0] + pc.y() * clip_plane[1] + pc.z() * clip_plane[2] + clip_plane[3]  > 0)
-        is_shown = true;
-
-      if (is_shown && sa != ON_ORIENTED_BOUNDARY &&
-        sb != ON_ORIENTED_BOUNDARY &&
-        sc != ON_ORIENTED_BOUNDARY &&
-        sb == sa && sc == sa)
-      {
-          if(cell->subdomain_index() == 0) {
-
-              QColor color = d->colors[cell->neighbor(index)->subdomain_index()];
-              f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-              f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-              f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-          }
-          else {
-            QColor color = d->colors[cell->subdomain_index()];
-            f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-            f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-            f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-          }
-        if ((index % 2 == 1) == c3t3().is_in_complex(cell)) draw_triangle(pb, pa, pc, false);
-        else draw_triangle(pa, pb, pc, false);
-        draw_triangle_edges(pa, pb, pc);
-      }
-
-    }
-
 
     for (Tr::Finite_cells_iterator
       cit = c3t3().triangulation().finite_cells_begin(),
@@ -1079,10 +988,89 @@ void Scene_c3t3_item::compute_elements() const
         draw_triangle_edges(pb, pc, pd);
       }
     }
+}
+
+
+void Scene_c3t3_item::compute_elements() const
+{
+  std::cerr << "compute_elements\n";
+  positions_lines.clear();
+  positions_poly.clear();
+  normals.clear();
+  f_colors.resize(0);
+  s_colors.resize(0);
+  s_center.resize(0);
+  s_radius.resize(0);
+
+
+  //The grid
+  {
+    float x = (2 * (float)complex_diag()) / 10.0;
+    float y = (2 * (float)complex_diag()) / 10.0;
+    for (int u = 0; u < 11; u++)
+    {
+
+      positions_grid.push_back(-(float)complex_diag() + x* u);
+      positions_grid.push_back(-(float)complex_diag());
+      positions_grid.push_back(0.0);
+
+      positions_grid.push_back(-(float)complex_diag() + x* u);
+      positions_grid.push_back((float)complex_diag());
+      positions_grid.push_back(0.0);
+    }
+    for (int v = 0; v<11; v++)
+    {
+
+      positions_grid.push_back(-(float)complex_diag());
+      positions_grid.push_back(-(float)complex_diag() + v * y);
+      positions_grid.push_back(0.0);
+
+      positions_grid.push_back((float)complex_diag());
+      positions_grid.push_back(-(float)complex_diag() + v * y);
+      positions_grid.push_back(0.0);
+    }
+  }
+
+
+  if (isEmpty())
+    return;
+
+
+  //The facets
+  {
+    for (C3t3::Facet_iterator
+      fit = c3t3().facets_begin(),
+      end = c3t3().facets_end();
+    fit != end; ++fit)
+    {
+      const Tr::Cell_handle& cell = fit->first;
+      const int& index = fit->second;
+      const Kernel::Point_3& pa = cell->vertex((index + 1) & 3)->point();
+      const Kernel::Point_3& pb = cell->vertex((index + 2) & 3)->point();
+      const Kernel::Point_3& pc = cell->vertex((index + 3) & 3)->point();
+      
+
+      if(cell->subdomain_index() == 0) {
+        QColor color = d->colors[cell->neighbor(index)->subdomain_index()];
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+      }
+      else {
+        QColor color = d->colors[cell->subdomain_index()];
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+      }
+      if ((index % 2 == 1) == c3t3().is_in_complex(cell)) draw_triangle(pb, pa, pc, false);
+      else draw_triangle(pa, pb, pc, false);
+      draw_triangle_edges(pa, pb, pc);
+    }
+
+
   }
   //The Spheres
   {
-
       for(Tr::Finite_vertices_iterator
           vit = d->c3t3.triangulation().finite_vertices_begin(),
           end =  d->c3t3.triangulation().finite_vertices_end();

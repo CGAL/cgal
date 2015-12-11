@@ -214,6 +214,7 @@ private:
   using Scene_item::initialize_buffers;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const;
   void compute_elements() const;
+  void compute_intersections() const;
   void compile_shaders();
 };
 
