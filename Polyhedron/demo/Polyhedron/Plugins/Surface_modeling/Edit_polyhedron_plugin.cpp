@@ -214,6 +214,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_DiscardChangesPushButton_clicked
   if (!edit_item) return;                             // the selected item is not of the right type
 
   edit_item->reset_deform_object();
+  edit_item->invalidate_buffers();
   scene->itemChanged(edit_item); //for redraw
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_ShowROICheckBox_stateChanged(int /*state*/)
