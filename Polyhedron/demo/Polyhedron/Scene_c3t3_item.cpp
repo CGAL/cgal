@@ -1063,22 +1063,26 @@ void Scene_c3t3_item::compute_elements()
   }
 
 
-  if (isEmpty())
+  if (isEmpty()){
     return;
+  }
 
-
-    for (Tr::Finite_cells_iterator
-      cit = c3t3().triangulation().finite_cells_begin(),
-      end = c3t3().triangulation().finite_cells_end();
-    cit != end; ++cit)
+  for (Tr::Finite_facets_iterator
+         fit = c3t3().triangulation().finite_facets_begin(),
+         end = c3t3().triangulation().finite_facets_end();
+       fit != end; ++fit)
     {
-      if (!c3t3().is_in_complex(cit))
-        continue;
-      tree.insert(Primitive(Tr::Facet(cit,0)));
-      tree.insert(Primitive(Tr::Facet(cit,1)));
-      tree.insert(Primitive(Tr::Facet(cit,2)));
-      tree.insert(Primitive(Tr::Facet(cit,3)));
+      Tr::Cell_handle ch = fit->first, nh =ch->neighbor(fit->second);
 
+      if( (!c3t3().is_in_complex(ch)) &&  (!c3t3().is_in_complex(nh)) )
+        continue;
+      
+      if(c3t3().is_in_complex(ch)){
+        tree.insert(Primitive(fit));
+      } else{
+        int ni = nh->index(ch);
+        tree.insert(Primitive(Tr::Facet(nh,ni)));
+      }
     }
     tree.build();
 
