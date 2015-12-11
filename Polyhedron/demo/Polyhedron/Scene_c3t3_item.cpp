@@ -104,6 +104,7 @@ Scene_c3t3_item::Scene_c3t3_item()
   need_changed = false;
   startTimer(0);
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
+  std::cerr << "A \n";
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
   compile_shaders();
@@ -129,7 +130,8 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   ws_vertex.resize(0);
   need_changed = false;
   startTimer(0);
-  connect(frame, SIGNAL(modified()), this, SLOT(changed()));
+  //  connect(frame, SIGNAL(modified()), this, SLOT(changed()));
+  std::cerr << "B \n";
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
   compile_shaders();
@@ -182,19 +184,23 @@ Scene_c3t3_item::c3t3()
 void
 Scene_c3t3_item::changed()
 {
-
+  std::cerr << "changed()\n";
   need_changed = true;
 }
 
 void Scene_c3t3_item::timerEvent(QTimerEvent* /*event*/)
 { // just handle deformation - paint like selection is handled in eventFilter()
   if(need_changed) {
-      c3t3_changed();
+  std::cerr << "C \n";
+      invalidate_buffers();
+      need_changed = false;
   }
 }
+
 void
 Scene_c3t3_item::c3t3_changed()
 {
+  std::cerr << "c3t3_changedn";
   // Update colors
   // Fill indices map and get max subdomain value
   indices_.clear();
@@ -212,9 +218,7 @@ Scene_c3t3_item::c3t3_changed()
 
   // Rebuild histogram
   build_histogram();
-  //compute_elements();
-  this->invalidate_buffers();
-  need_changed = false;
+  
 }
 
 QPixmap
@@ -472,10 +476,12 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     initialize_buffers(viewer);
   }
   vaos[Facets]->bind();
-  program = getShaderProgram(PROGRAM_WITH_LIGHT);
-  attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
+  program = getShaderProgram(PROGRAM_C3T3);
+  attrib_buffers(viewer, PROGRAM_C3T3);
   program->bind();
-  //program->setAttributeValue("colors", this->color());
+  QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
+  program->setUniformValue("cutplane", cp);
+
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size() / 3));
   program->release();
   vaos[Facets]->release();
@@ -763,7 +769,7 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
 {
   //vao containing the data for the facets
   {
-    program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+    program = getShaderProgram(PROGRAM_C3T3, viewer);
     program->bind();
 
     vaos[Facets]->bind();
@@ -920,6 +926,7 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
 
 void Scene_c3t3_item::compute_elements() const
 {
+  std::cerr << "compute_elements\n";
   positions_lines.clear();
   positions_poly.clear();
   normals.clear();

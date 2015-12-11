@@ -58,11 +58,6 @@ public:
 
   void c3t3_changed();
 
-  void contextual_changed()
-  {
-    if (frame->isManipulated() || frame->isSpinning())
-      invalidate_buffers();
-  }
   const C3t3& c3t3() const;
   C3t3& c3t3();
 

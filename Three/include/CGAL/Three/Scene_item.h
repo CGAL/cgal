@@ -60,6 +60,7 @@ public:
                             PROGRAM_WITH_TEXTURED_EDGES,
                             PROGRAM_INSTANCED,
                             PROGRAM_INSTANCED_WIRE,
+                            PROGRAM_C3T3,
                             NB_OF_PROGRAMS };
 
   typedef CGAL::Three::Scene_interface::Bbox Bbox;

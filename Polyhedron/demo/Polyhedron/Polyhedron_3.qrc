@@ -23,6 +23,7 @@
     </qresource>
     <qresource prefix="/cgal/Polyhedron_3">
         <file alias="about.html">resources/about.html</file>
+        <file>resources/shader_c3t3.v</file>
         <file>resources/shader_with_light.v</file>
         <file>resources/shader_with_light.f</file>
         <file>resources/shader_without_light.f</file>
