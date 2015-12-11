@@ -532,9 +532,9 @@ void Scene_edit_polyhedron_item::remesh()
 void Scene_edit_polyhedron_item::timerEvent(QTimerEvent* /*event*/)
 { // just handle deformation - paint like selection is handled in eventFilter()
   if(state.ctrl_pressing && (state.left_button_pressing || state.right_button_pressing)) {
-    if(!ui_widget->ActivatePivotingCheckBox->isChecked()) {
       invalidate_buffers();
-      deform();
+    if(!ui_widget->ActivatePivotingCheckBox->isChecked()) {
+        deform();
     }
     else {
       Q_EMIT itemChanged(); // for redraw while Pivoting (since we close signals of manipulatedFrames while pivoting, 

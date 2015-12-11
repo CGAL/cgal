@@ -727,13 +727,14 @@ protected:
     }
     else
     {
-      if(!ui_widget->ActivatePivotingCheckBox->isChecked() &&
-          ui_widget->ActivateFixedPlaneCheckBox->isChecked())
+      if( ui_widget->ActivateFixedPlaneCheckBox->isChecked())
       {
         // the constraint is local to the frame
         rot_constraint.setTranslationConstraint(qglviewer::AxisPlaneConstraint::PLANE,qglviewer::Vec(0,0,1));
-        rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
-        min_it->frame->setConstraint(&rot_constraint);
+         if(!ui_widget->ActivatePivotingCheckBox->isChecked()){
+             rot_constraint.setRotationConstraintType(qglviewer::AxisPlaneConstraint::FORBIDDEN);
+         }
+         min_it->frame->setConstraint(&rot_constraint);
       }
     }
 
