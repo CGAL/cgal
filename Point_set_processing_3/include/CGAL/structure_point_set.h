@@ -1019,7 +1019,7 @@ namespace internal {
     {
       if (m_edges.size () < 3)
         return;
-      
+
       for (std::size_t i = 0; i < m_edges.size () - 2; ++ i)
         {
           if (!(m_edges[i].active))
@@ -1028,6 +1028,12 @@ namespace internal {
           for (std::size_t j = i + 1; j < m_edges.size () - 1; ++ j)
             {
               if (!(m_edges[j].active))
+                continue;
+
+              if (m_edges[i].planes[0] != m_edges[j].planes[0] &&
+                  m_edges[i].planes[0] != m_edges[j].planes[1] &&
+                  m_edges[i].planes[1] != m_edges[j].planes[0] &&
+                  m_edges[i].planes[1] != m_edges[j].planes[1])
                 continue;
 
               for (std::size_t k = j + 1; k < m_edges.size (); ++ k)
