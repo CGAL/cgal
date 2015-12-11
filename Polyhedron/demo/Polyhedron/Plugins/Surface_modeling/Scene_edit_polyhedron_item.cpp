@@ -137,7 +137,7 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
         program->release();
     }
     //vao for the ROI points
-    {   program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+    {   program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
         vaos[Roi_points]->bind();
         buffers[Roi_vertices].bind();
@@ -152,7 +152,7 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
     }
    //vao for the edges
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
         vaos[Edges]->bind();
         buffers[Facet_vertices].bind();
@@ -219,7 +219,7 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
     }
     //vao for the control points
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
         vaos[Control_points]->bind();
         buffers[Control_vertices].bind();
@@ -269,7 +269,7 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
     }
     //vao for the axis
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
         vaos[Axis]->bind();
         buffers[Axis_vertices].bind();
@@ -294,7 +294,7 @@ void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interfac
     }
     //vao for the frame plane
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
         bbox_program.bind();
         vaos[Frame_plane]->bind();
@@ -595,8 +595,8 @@ void Scene_edit_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewe
     if(!are_buffers_filled)
         initialize_buffers(viewer);
     vaos[Edges]->bind();
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    program = getShaderProgram(PROGRAM_NO_SELECTION);
+    attrib_buffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", QColor(0,0,0));
     viewer->glDrawElements(GL_LINES, (GLsizei) edges.size(), GL_UNSIGNED_INT, edges.data());
@@ -605,8 +605,8 @@ void Scene_edit_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewe
 
 
     vaos[Frame_plane]->bind();
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    program = getShaderProgram(PROGRAM_NO_SELECTION);
+    attrib_buffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", QColor(0,0,0));
     viewer->glDrawArrays(GL_LINE_LOOP, 0, (GLsizei)pos_frame_plane.size()/3);
@@ -679,8 +679,8 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
         if(!ui_widget->ShowAsSphereCheckBox->isChecked() || !viewer->extension_is_found) {
 
             vaos[Roi_points]->bind();
-            program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-            attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+            program = getShaderProgram(PROGRAM_NO_SELECTION);
+            attrib_buffers(viewer,PROGRAM_NO_SELECTION);
             program->bind();
             program->setAttributeValue("colors", QColor(0,255,0));
             viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_ROI/3));
@@ -704,8 +704,8 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
 
     if(!ui_widget->ShowAsSphereCheckBox->isChecked() || !viewer->extension_is_found) {
         vaos[Control_points]->bind();
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-        attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+        program = getShaderProgram(PROGRAM_NO_SELECTION);
+        attrib_buffers(viewer,PROGRAM_NO_SELECTION);
         program->bind();
         program->setAttributeValue("colors", QColor(255,0,0));
         viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_control/3));
@@ -737,8 +737,8 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
                 for(int i=0; i<16; i++)
                     f_mat.data()[i] = (float)f_matrix[i];
             vaos[Axis]->bind();
-            program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-            attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+            program = getShaderProgram(PROGRAM_NO_SELECTION);
+            attrib_buffers(viewer, PROGRAM_NO_SELECTION);
             program->bind();
             program->setUniformValue("f_matrix", f_mat);
             viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_axis/3));
