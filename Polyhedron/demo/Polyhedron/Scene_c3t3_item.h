@@ -25,6 +25,10 @@
 #include <Scene_polygon_soup_item.h>
 #include <CGAL/IO/File_binary_mesh_3.h>
 
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_C3T3_triangle_primitive.h>
+
 struct Scene_c3t3_item_priv;
 
 using namespace CGAL::Three;
@@ -107,6 +111,14 @@ public:
   void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
   void draw_points(CGAL::Three::Viewer_interface * viewer) const;
 private:
+
+  typedef CGAL::AABB_C3T3_triangle_primitive<Kernel,C3t3> Primitive;
+  typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+  typedef CGAL::AABB_tree<Traits> Tree;
+  typedef Tree::Point_and_primitive_id Point_and_primitive_id;
+
+  Tree tree;
+
   bool need_changed;
   void reset_cut_plane();
   void draw_triangle(const Kernel::Point_3& pa,
@@ -155,6 +167,8 @@ protected:
 
 private:
 
+  
+  
   mutable bool are_intersection_buffers_filled;
   enum Buffer
   {
@@ -219,11 +233,27 @@ private:
   mutable QOpenGLShaderProgram *program_sphere;
 
   using Scene_item::initialize_buffers;
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const;
-  void initialize_intersection_buffers(CGAL::Three::Viewer_interface *viewer)const;
-  void compute_elements() const;
-  void compute_intersections() const;
+  void initialize_buffers(CGAL::Three::Viewer_interface *viewer);
+  void initialize_intersection_buffers(CGAL::Three::Viewer_interface *viewer);
+  void compute_elements();
+  void compute_intersections();
+  void compute_intersection(const Primitive& facet);
   void compile_shaders();
+
+struct Compute_intersection {
+  Scene_c3t3_item& item;
+
+  Compute_intersection(Scene_c3t3_item& item)
+    : item(item)
+  {}
+
+  void operator()(const Primitive& facet) const
+  {
+    item.compute_intersection(facet);
+  }
+};
+
+
 };
 
 #endif // SCENE_C3T3_ITEM_H
