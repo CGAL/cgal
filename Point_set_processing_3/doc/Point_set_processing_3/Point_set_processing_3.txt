@@ -385,6 +385,26 @@ points that are on sharp edges:
 \cgalExample{Point_set_processing_3/edges_example.cpp}
 
 
+\section Point_set_processing_3Structuring Structuring
+
+The function `structure_point_set()` generates a structured version of the
+input point set. It requires that a shape detection algorithm is first applied
+to the point set (see \ref Chapter_Point_Set_Shape_Detection). It is based on
+the article \cgalCite{cgal:la-srpss-13}.
+
+Each detected plane is regularly resampled at a given density. In
+addition, edges and corners are estimated and sampled. This algorithm
+is particularly suited for point sets sampled on surfaces with planar
+sections and sharp edges. 
+
+\subsection Point_set_processing_3Example_9 Example
+
+The following example applies shape detection followed by structuring to a
+point set:
+\cgalExample{Point_set_processing_3/structuring_example.cpp}
+
+
+
 \section Point_set_processing_3ImplementationHistory Implementation History
 
 Pierre Alliez and Laurent Saboret contributed the initial component. Nader Salman contributed the grid simplification.
