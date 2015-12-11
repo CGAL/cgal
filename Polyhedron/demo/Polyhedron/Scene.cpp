@@ -78,7 +78,7 @@ Scene::addItem(CGAL::Three::Scene_item* item)
     }
     Q_EMIT updated();
     Item_id id = m_entries.size() - 1;
-    //Q_EMIT newItem(id);
+    Q_EMIT newItem(id);
     return id;
 }
 
@@ -114,24 +114,26 @@ Scene::erase(int index)
         return -1;
 
     CGAL::Three::Scene_item* item = m_entries[index];
+    CGAL::Three::Scene_group_item* group =
+            qobject_cast<CGAL::Three::Scene_group_item*>(item);
+  if(group)
+  {
+      m_group_entries.removeAll(group);
+  }
     Q_FOREACH(CGAL::Three::Scene_group_item* group, m_group_entries)
     {
         if(group->getChildren().contains(item))
             group->removeChild(item);
-        if (group->getChildren().isEmpty())
-        {
-            m_group_entries.removeOne(group);
-            m_entries.removeOne(group);
-        }
     }
   Q_EMIT itemAboutToBeDestroyed(item);
     delete item;
     m_entries.removeAt(index);
   selected_item = -1;
-
+  group_added();
   QStandardItemModel::beginResetModel();
   Q_EMIT updated();
   QStandardItemModel::endResetModel();
+  Q_EMIT restoreCollapsedState();
     if(--index >= 0)
         return index;
     if(!m_entries.isEmpty())
