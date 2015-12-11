@@ -261,7 +261,7 @@ public:
 *         that has an internal property map for `boost::vertex_point_t`
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
-* @param f face
+* @param f face to be triangulated
 * @param pmesh the polygon mesh to which the face to be triangulated belongs to
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
@@ -309,7 +309,7 @@ void triangulate_face(typename boost::graph_traits<PolygonMesh>::face_descriptor
 *         that has an internal property map for `boost::vertex_point_t`
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
-* @param face_range the range of faces which should be triangulated
+* @param face_range the range of faces to be triangulated
 * @param pmesh the polygon mesh to be triangulated
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
