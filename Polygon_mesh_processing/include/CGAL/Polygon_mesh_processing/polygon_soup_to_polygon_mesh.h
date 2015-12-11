@@ -91,7 +91,6 @@ public:
 }//end namespace internal
 
 
-  /// \cond SKIP_IN_MANUAL
   /**
   * \ingroup PMP_repairing_grp
   * returns `true` if the soup of polygons defines a valid polygon mesh
@@ -124,7 +123,6 @@ public:
 
     return true;
   }
-  /// \endcond
 
   /**
   * \ingroup PMP_repairing_grp
