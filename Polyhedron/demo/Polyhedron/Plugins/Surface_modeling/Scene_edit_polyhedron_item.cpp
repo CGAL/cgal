@@ -487,6 +487,13 @@ void Scene_edit_polyhedron_item::remesh()
 
   unsigned int nb_iter = ui_widget->remeshing_iterations_spinbox->value();
 
+  // set face_index map for border_halfedges
+  boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
+    = get(CGAL::face_index, *polyhedron());
+  unsigned int id = 0;
+  BOOST_FOREACH(face_descriptor f, faces(*polyhedron()))
+    put(fim, f, id++);
+
   std::cout << "Remeshing...";
   CGAL::Polygon_mesh_processing::isotropic_remeshing(
     *polyhedron()
