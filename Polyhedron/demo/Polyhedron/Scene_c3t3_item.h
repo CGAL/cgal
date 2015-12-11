@@ -154,6 +154,8 @@ protected:
   Scene_c3t3_item_priv* d;
 
 private:
+
+  mutable bool are_intersection_buffers_filled;
   enum Buffer
   {
       Facet_vertices =0,
@@ -167,6 +169,9 @@ private:
       Sphere_radius,
       Sphere_center,
       Wired_spheres_vertices,
+      iFacet_vertices,
+      iFacet_normals,
+      iFacet_colors,
       NumberOfBuffers
   };
   enum Vao
@@ -176,6 +181,7 @@ private:
       Grid,
       Spheres,
       Wired_spheres,
+      iFacets,
       NumberOfVaos
   };
   qglviewer::ManipulatedFrame* frame;
@@ -197,6 +203,7 @@ private:
   //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
   PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
 
+  mutable std::size_t positions_poly_size;
   mutable std::vector<float> positions_lines;
   mutable std::vector<float> positions_grid;
   mutable std::vector<float> positions_poly;
@@ -213,6 +220,7 @@ private:
 
   using Scene_item::initialize_buffers;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const;
+  void initialize_intersection_buffers(CGAL::Three::Viewer_interface *viewer)const;
   void compute_elements() const;
   void compute_intersections() const;
   void compile_shaders();

@@ -95,6 +95,7 @@ Scene_c3t3_item::Scene_c3t3_item()
   , histogram_()
   , indices_()
 {
+  are_intersection_buffers_filled = false;
   positions_lines.resize(0);
   positions_poly.resize(0);
   normals.resize(0);
@@ -104,7 +105,6 @@ Scene_c3t3_item::Scene_c3t3_item()
   need_changed = false;
   startTimer(0);
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
-  std::cerr << "A \n";
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
   compile_shaders();
@@ -130,8 +130,7 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   ws_vertex.resize(0);
   need_changed = false;
   startTimer(0);
-  //  connect(frame, SIGNAL(modified()), this, SLOT(changed()));
-  std::cerr << "B \n";
+  connect(frame, SIGNAL(modified()), this, SLOT(changed()));
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
   compile_shaders();
@@ -184,23 +183,20 @@ Scene_c3t3_item::c3t3()
 void
 Scene_c3t3_item::changed()
 {
-  std::cerr << "changed()\n";
   need_changed = true;
 }
 
 void Scene_c3t3_item::timerEvent(QTimerEvent* /*event*/)
 { // just handle deformation - paint like selection is handled in eventFilter()
   if(need_changed) {
-  std::cerr << "C \n";
-      invalidate_buffers();
-      need_changed = false;
+    are_intersection_buffers_filled = false;
+    need_changed = false;
   }
 }
 
 void
 Scene_c3t3_item::c3t3_changed()
 {
-  std::cerr << "c3t3_changedn";
   // Update colors
   // Fill indices map and get max subdomain value
   indices_.clear();
@@ -481,10 +477,29 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   program->bind();
   QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
   program->setUniformValue("cutplane", cp);
-
-  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size() / 3));
+  // positions_poly_size is the number of total facets in the C3T3
+  // it is only computed once and positions_poly is emptied at the end
+  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly_size / 3));
   program->release();
   vaos[Facets]->release();
+
+
+ if (!are_intersection_buffers_filled)
+  {
+    compute_intersections();
+    initialize_intersection_buffers(viewer);
+  }
+  vaos[iFacets]->bind();
+  program = getShaderProgram(PROGRAM_WITH_LIGHT);
+  attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
+  program->bind();
+
+  // positions_poly is also used for the faces in the cut plane
+  // and changes when the cut plane is moved
+  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size() / 3));
+  program->release();
+  vaos[iFacets]->release();
+
 
   if(spheres_are_shown)
   {
@@ -765,6 +780,44 @@ QMenu* Scene_c3t3_item::contextMenu()
   return menu;
 }
 
+
+void Scene_c3t3_item::initialize_intersection_buffers(CGAL::Three::Viewer_interface *viewer)const
+{
+ //vao containing the data for the facets
+  {
+    program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+    program->bind();
+
+    vaos[iFacets]->bind();
+    buffers[iFacet_vertices].bind();
+    buffers[iFacet_vertices].allocate(positions_poly.data(),
+      static_cast<int>(positions_poly.size()*sizeof(float)));
+    program->enableAttributeArray("vertex");
+    program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+    buffers[iFacet_vertices].release();
+
+    buffers[iFacet_normals].bind();
+    buffers[iFacet_normals].allocate(normals.data(),
+      static_cast<int>(normals.size()*sizeof(float)));
+    program->enableAttributeArray("normals");
+    program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
+    buffers[iFacet_normals].release();
+
+    buffers[iFacet_colors].bind();
+    buffers[iFacet_colors].allocate(f_colors.data(),
+      static_cast<int>(f_colors.size()*sizeof(float)));
+    program->enableAttributeArray("colors");
+    program->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
+    buffers[iFacet_colors].release();
+
+    vaos[iFacets]->release();
+    program->release();
+
+  }
+  are_intersection_buffers_filled = true;
+}
+
+
 void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
 {
   //vao containing the data for the facets
@@ -796,7 +849,14 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
 
     vaos[Facets]->release();
     program->release();
-
+    
+    positions_poly_size = positions_poly.size();
+    positions_poly.clear();
+    positions_poly.swap(std::vector<float>());
+    normals.clear();
+    normals.swap(std::vector<float>());
+    f_colors.clear();
+    f_colors.swap(std::vector<float>());
   }
 
   //vao containing the data for the lines
@@ -926,14 +986,12 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
 
 void Scene_c3t3_item::compute_intersections() const
 {
+  positions_poly.clear();
+  normals.clear();
+  f_colors.clear();
 
   const Kernel::Plane_3& plane = this->plane();
-  GLdouble clip_plane[4];
-  clip_plane[0] = -plane.a();
-  clip_plane[1] = -plane.b();
-  clip_plane[2] = -plane.c();
-  clip_plane[3] = -plane.d();
-
+ 
     for (Tr::Finite_cells_iterator
       cit = c3t3().triangulation().finite_cells_begin(),
       end = c3t3().triangulation().finite_cells_end();
@@ -993,11 +1051,7 @@ void Scene_c3t3_item::compute_intersections() const
 
 void Scene_c3t3_item::compute_elements() const
 {
-  std::cerr << "compute_elements\n";
   positions_lines.clear();
-  positions_poly.clear();
-  normals.clear();
-  f_colors.resize(0);
   s_colors.resize(0);
   s_center.resize(0);
   s_radius.resize(0);
