@@ -691,8 +691,6 @@ void Scene_c3t3_item::draw_triangle_edges(const Kernel::Point_3& pa,
   const Kernel::Point_3& pc)const {
 
 #undef darker
-  Kernel::Vector_3 n = cross_product(pb - pa, pc - pa);
-  n = n / CGAL::sqrt(n*n);
   positions_lines.push_back(pa.x());
   positions_lines.push_back(pa.y());
   positions_lines.push_back(pa.z());
@@ -1088,7 +1086,14 @@ void Scene_c3t3_item::compute_elements()
 
 
   //The facets
-  {
+  {  
+    const Kernel::Plane_3& plane = this->plane();
+    GLdouble clip_plane[4];
+    clip_plane[0] = plane.a();
+    clip_plane[1] = plane.b();
+    clip_plane[2] = plane.c();
+    clip_plane[3] = plane.d();
+
     for (C3t3::Facet_iterator
       fit = c3t3().facets_begin(),
       end = c3t3().facets_end();
@@ -1099,7 +1104,6 @@ void Scene_c3t3_item::compute_elements()
       const Kernel::Point_3& pa = cell->vertex((index + 1) & 3)->point();
       const Kernel::Point_3& pb = cell->vertex((index + 2) & 3)->point();
       const Kernel::Point_3& pc = cell->vertex((index + 3) & 3)->point();
-      
 
       if(cell->subdomain_index() == 0) {
         QColor color = d->colors[cell->neighbor(index)->subdomain_index()];
