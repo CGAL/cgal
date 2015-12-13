@@ -20,9 +20,11 @@ class Polyhedron_demo_off_plugin :
 
 public:
   QString name() const { return "off_plugin"; }
-  QString nameFilters() const { return "OFF files (*.off)"; }
+  QString nameFilters() const { return "OFF files (*.off *.obj)"; }
   bool canLoad() const;
   CGAL::Three::Scene_item* load(QFileInfo fileinfo);
+   CGAL::Three::Scene_item* load_off(QFileInfo fileinfo);
+   CGAL::Three::Scene_item* load_obj(QFileInfo fileinfo);
   
   bool canSave(const CGAL::Three::Scene_item*);
   bool save(const CGAL::Three::Scene_item*, QFileInfo fileinfo);
@@ -35,7 +37,17 @@ bool Polyhedron_demo_off_plugin::canLoad() const {
 
 CGAL::Three::Scene_item*
 Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
-  if(fileinfo.suffix().toLower() != "off") return 0;
+  if(fileinfo.suffix().toLower() == "off"){
+    return load_off(fileinfo);
+  } else if(fileinfo.suffix().toLower() == "obj"){
+    return load_obj(fileinfo);
+  }
+  return 0;
+}
+
+
+CGAL::Three::Scene_item*
+Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
   // Open file
   std::ifstream in(fileinfo.filePath().toUtf8());
   if(!in) {
@@ -76,6 +88,28 @@ Polyhedron_demo_off_plugin::load(QFileInfo fileinfo) {
                      tr("%1 isolated vertices ignored")
                      .arg(item->getNbIsolatedvertices()));
     }
+
+  return item;
+}
+
+CGAL::Three::Scene_item*
+Polyhedron_demo_off_plugin::load_obj(QFileInfo fileinfo) {
+  // Open file
+  std::ifstream in(fileinfo.filePath().toUtf8());
+  if(!in) {
+    std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
+    return NULL;
+  }
+
+  // Try to read .obj in a polyhedron
+  Scene_polyhedron_item* item = new Scene_polyhedron_item();
+  item->setName(fileinfo.baseName());
+  if(!item->load_obj(in))
+    {
+      delete item;
+      return 0;
+    }
+
 
   return item;
 }
