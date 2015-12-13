@@ -21,14 +21,15 @@ public:
 */
 typedef Traits                          Kernel_type;
 
-/*! The graph type to store the constructed cone based spanner. It should be a model of
-	both concepts MutableGraph and VertexAndEdgeListGraph in BGL. Of the two graph classes provided
-    in BGL: `adjacency_list` and `adjacency_matrix`, only `adjacency_list` is such a model.
-    So please use `adjacency_list` to be your graph type. Note that there are seven template parameters for
+/*! The graph type to store the constructed cone based spanner. 
+    This package requires the use of the `boost::adjacency_list` in the Boost Graph Library as 
+	the graph type. Note that there are seven template parameters for
     `boost::adjacency_list`: `OutEdgeList`, `VertexList`, `Directed`, `VertexProperties`, `EdgeProperties`,
-    `GraphProperties`, `EdgeList`, of which we only require the `VertexProperties` be `CGAL::Point_2`,
-    while other parameters can be chosen freely. Here `Point_2` is passed directly as bundled properties
-	to `adjacency_list` because this makes our implementation much more straightforward than using property maps.
+    `GraphProperties`, `EdgeList`, of which we require the `VertexProperties` be `CGAL::Point_2`,
+    while other parameters can be chosen freely. Here the CGAL kernel type used by `CGAL::Point_2` is
+	determined by the first template parameter `Traits`, and we pass `CGAL::Point_2` directly 
+	to `adjacency_list` as bundled properties because this makes our implementation much more 
+	straightforward than using property maps.
 	For detailed information about bundled properties, please refer to
 	http://www.boost.org/doc/libs/1_58_0/libs/graph/doc/bundles.html.
 	If more properties for vertices are needed, they can be added later as external properties using 

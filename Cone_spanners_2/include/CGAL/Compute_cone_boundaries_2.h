@@ -52,31 +52,30 @@ namespace CGAL {
  *  which are slow). The inexact computation is done by the general functor definition,
  *  while the exact computation is done by a specialization of this functor.
  *   
- *  \tparam SpannerKernel   If this parameter is `Exact_predicates_exact_constructions_kernel_with_root_of`,
+ *  \tparam Traits   If this parameter is `Exact_predicates_exact_constructions_kernel_with_root_of`,
  *                    the specialization functor will be called; otherwise, the general functor will
- *                    be called.
+ *                    be called. A recommended parameter for the general functor is 
+ *                    `Exact_predicates_inexact_constructions_kernel`. For the detailed requirements of 
+ *                    this parameter, please refer to the concept `ConeBasedSpannerTraits_2`.
  *
- *  In the construction of Yao graph and Theta graph implemented by this package,
- *  all predicates and construction functions are from \cgal.
- *  Therefore, if the kernel `Exact_predicates_exact_constructions_kernel_with_root_of` is used,
- *  the Yao or Theta graph will be constructed exactly, otherwise inexactly.
- *
+ *  In the construction of cone-based spanners such as Yao graph and Theta graph implemented by this package,
+ *  this functor is called first to compute the cone boundaries.
  *  Of course, this functor can also be used in other applications where the plane needs to be divided
  *  into equally-angled cones.
  *
  *  \cgalModels `ComputeConeBoundaries_2`
  *
  */
-template <typename SpannerKernel>
+template <typename Traits>
 class Compute_cone_boundaries_2 {
 
 public:
 	/*! Indicate the type of the \cgal kernel. */
-    typedef  SpannerKernel                    Kernel_type;
+    typedef  Traits                    Kernel_type;
 
 private:
-    typedef  typename SpannerKernel::Direction_2       Direction_2;
-	typedef  typename SpannerKernel::Aff_transformation_2    Transformation;
+    typedef  typename Kernel_type::Direction_2       Direction_2;
+	typedef  typename kernel_type::Aff_transformation_2    Transformation;
 
 public:
 	/* No member variables in this class, so a custom constructor is not needed. */
