@@ -1064,7 +1064,7 @@ void Scene_c3t3_item::compute_intersection(const Primitive& facet)
   draw_triangle_edges(pb, pc, pd);
   {
     Tr::Cell_handle nh = facet.id().first->neighbor(facet.id().second);
-    if(nh->subdomain_index() == facet.id().first->subdomain_index()){
+    if(c3t3().is_in_complex(nh)){
       const Kernel::Point_3& pa = nh->vertex(0)->point();
       const Kernel::Point_3& pb = nh->vertex(1)->point();
       const Kernel::Point_3& pc = nh->vertex(2)->point();
