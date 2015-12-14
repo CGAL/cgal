@@ -482,45 +482,45 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
   if(spheres_are_shown)
   {
-      vaos[Spheres]->bind();
-      program_sphere->bind();
-      //ModelViewMatrix used for the transformation of the camera.
-      QMatrix4x4 mvp_mat;
-      // ModelView Matrix used for the lighting system
-      QMatrix4x4 mv_mat;
-      GLdouble d_mat[16];
-      GLint is_both_sides = 0;
-      viewer->camera()->getModelViewProjectionMatrix(d_mat);
-      //Convert the GLdoubles matrices in GLfloats
-      for (int i=0; i<16; ++i){
-          mvp_mat.data()[i] = GLfloat(d_mat[i]);
-      }
-      viewer->camera()->getModelViewMatrix(d_mat);
-      for (int i=0; i<16; ++i)
-          mv_mat.data()[i] = GLfloat(d_mat[i]);
-      QVector4D position(0.0f,0.0f,1.0f, 1.0f );
-      QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
-      // Diffuse
-      QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
-      // Specular
-      QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
-      viewer->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
+    vaos[Spheres]->bind();
+    program_sphere->bind();
+    //ModelViewMatrix used for the transformation of the camera.
+    QMatrix4x4 mvp_mat;
+    // ModelView Matrix used for the lighting system
+    QMatrix4x4 mv_mat;
+    GLdouble d_mat[16];
+    GLint is_both_sides = 0;
+    viewer->camera()->getModelViewProjectionMatrix(d_mat);
+    //Convert the GLdoubles matrices in GLfloats
+    for (int i=0; i<16; ++i){
+      mvp_mat.data()[i] = GLfloat(d_mat[i]);
+    }
+    viewer->camera()->getModelViewMatrix(d_mat);
+    for (int i=0; i<16; ++i)
+      mv_mat.data()[i] = GLfloat(d_mat[i]);
+    QVector4D position(0.0f,0.0f,1.0f, 1.0f );
+    QVector4D ambient(0.4f, 0.4f, 0.4f, 0.4f);
+    // Diffuse
+    QVector4D diffuse(1.0f, 1.0f, 1.0f, 1.0f);
+    // Specular
+    QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
+    viewer->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
 
 
-      program_sphere->setUniformValue("mvp_matrix", mvp_mat);
-      program_sphere->setUniformValue("mv_matrix", mv_mat);
-      program_sphere->setUniformValue("light_pos", position);
-      program_sphere->setUniformValue("light_diff",diffuse);
-      program_sphere->setUniformValue("light_spec", specular);
-      program_sphere->setUniformValue("light_amb", ambient);
-      program_sphere->setUniformValue("spec_power", 51.8f);
-      program_sphere->setUniformValue("is_two_side", is_both_sides);
+    program_sphere->setUniformValue("mvp_matrix", mvp_mat);
+    program_sphere->setUniformValue("mv_matrix", mv_mat);
+    program_sphere->setUniformValue("light_pos", position);
+    program_sphere->setUniformValue("light_diff",diffuse);
+    program_sphere->setUniformValue("light_spec", specular);
+    program_sphere->setUniformValue("light_amb", ambient);
+    program_sphere->setUniformValue("spec_power", 51.8f);
+    program_sphere->setUniformValue("is_two_side", is_both_sides);
 
-      viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
+    viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                   static_cast<GLsizei>(s_vertex.size()/3),
                                   static_cast<GLsizei>(s_radius.size()));
-      program_sphere->release();
-      vaos[Spheres]->release();
+    program_sphere->release();
+    vaos[Spheres]->release();
   }
 }
 
@@ -589,8 +589,8 @@ void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
       program_sphere->setUniformValue("is_two_side", is_both_sides);
 
       viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
-                                  static_cast<GLsizei>(ws_vertex.size()/3),
-                                  static_cast<GLsizei>(s_radius.size()));
+                                    static_cast<GLsizei>(ws_vertex.size()/3),
+                                    static_cast<GLsizei>(s_radius.size()));
       program_sphere->release();
       vaos[Wired_spheres]->release();
   }
@@ -794,75 +794,114 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
   }
 
   //vao containing the data for the lines
-      {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
-        program->bind();
+  {
+    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+    program->bind();
 
-        vaos[Edges]->bind();
-        buffers[Edges_vertices].bind();
-        buffers[Edges_vertices].allocate(positions_lines.data(),
-          static_cast<int>(positions_lines.size()*sizeof(float)));
-        program->enableAttributeArray("vertex");
-        program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-        buffers[Edges_vertices].release();
+    vaos[Edges]->bind();
+    buffers[Edges_vertices].bind();
+    buffers[Edges_vertices].allocate(positions_lines.data(),
+                                     static_cast<int>(positions_lines.size()*sizeof(float)));
+    program->enableAttributeArray("vertex");
+    program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+    buffers[Edges_vertices].release();
 
-        vaos[Edges]->release();
-        program->release();
+    vaos[Edges]->release();
+    program->release();
 
-      }
+  }
 
   //vao containing the data for the grid
-      {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
-        program->bind();
+  {
+    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+    program->bind();
 
-        vaos[2]->bind();
-        buffers[Grid_vertices].bind();
-        buffers[Grid_vertices].allocate(positions_grid.data(),
-          static_cast<int>(positions_grid.size()*sizeof(float)));
-        program->enableAttributeArray("vertex");
-        program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-        buffers[Grid_vertices].release();
-        vaos[2]->release();
-        program->release();
-      }
+    vaos[2]->bind();
+    buffers[Grid_vertices].bind();
+    buffers[Grid_vertices].allocate(positions_grid.data(),
+                                    static_cast<int>(positions_grid.size()*sizeof(float)));
+    program->enableAttributeArray("vertex");
+    program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+    buffers[Grid_vertices].release();
+    vaos[2]->release();
+    program->release();
+  }
 
   //vao containing the data for the spheres
+  {
+    program_sphere->bind();
+
+    vaos[Spheres]->bind();
+    buffers[Sphere_vertices].bind();
+    buffers[Sphere_vertices].allocate(s_vertex.data(),
+                                      static_cast<int>(s_vertex.size()*sizeof(float)));
+    program_sphere->enableAttributeArray("vertex");
+    program_sphere->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+    buffers[Sphere_vertices].release();
+
+    buffers[Sphere_normals].bind();
+    buffers[Sphere_normals].allocate(s_normals.data(),
+                                     static_cast<int>(s_normals.size()*sizeof(float)));
+    program_sphere->enableAttributeArray("normals");
+    program_sphere->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
+    buffers[Sphere_normals].release();
+
+    buffers[Sphere_colors].bind();
+    buffers[Sphere_colors].allocate(s_colors.data(),
+                                    static_cast<int>(s_colors.size()*sizeof(float)));
+    program_sphere->enableAttributeArray("colors");
+    program_sphere->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
+    buffers[Sphere_colors].release();
+
+    buffers[Sphere_radius].bind();
+    buffers[Sphere_radius].allocate(s_radius.data(),
+                                    static_cast<int>(s_radius.size()*sizeof(float)));
+    program_sphere->enableAttributeArray("radius");
+    program_sphere->setAttributeBuffer("radius", GL_FLOAT, 0, 1);
+    buffers[Sphere_radius].release();
+
+    buffers[Sphere_center].bind();
+    buffers[Sphere_center].allocate(s_center.data(),
+                                    static_cast<int>(s_center.size()*sizeof(float)));
+    program_sphere->enableAttributeArray("center");
+    program_sphere->setAttributeBuffer("center", GL_FLOAT, 0, 3);
+    buffers[Sphere_center].release();
+
+    viewer->glVertexAttribDivisor(program_sphere->attributeLocation("center"), 1);
+    viewer->glVertexAttribDivisor(program_sphere->attributeLocation("radius"), 1);
+    viewer->glVertexAttribDivisor(program_sphere->attributeLocation("colors"), 1);
+    vaos[Spheres]->release();
+
+  }
+
+    //vao containing the data for the wired spheres
     {
       program_sphere->bind();
 
-      vaos[Spheres]->bind();
-      buffers[Sphere_vertices].bind();
-      buffers[Sphere_vertices].allocate(s_vertex.data(),
-        static_cast<int>(s_vertex.size()*sizeof(float)));
+      vaos[Wired_spheres]->bind();
+      buffers[Wired_spheres_vertices].bind();
+      buffers[Wired_spheres_vertices].allocate(s_vertex.data(),
+                                               static_cast<int>(s_vertex.size()*sizeof(float)));
       program_sphere->enableAttributeArray("vertex");
       program_sphere->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-      buffers[Sphere_vertices].release();
+      buffers[Wired_spheres_vertices].release();
 
       buffers[Sphere_normals].bind();
-      buffers[Sphere_normals].allocate(s_normals.data(),
-        static_cast<int>(s_normals.size()*sizeof(float)));
       program_sphere->enableAttributeArray("normals");
       program_sphere->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
       buffers[Sphere_normals].release();
 
       buffers[Sphere_colors].bind();
-      buffers[Sphere_colors].allocate(s_colors.data(),
-        static_cast<int>(s_colors.size()*sizeof(float)));
       program_sphere->enableAttributeArray("colors");
       program_sphere->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
       buffers[Sphere_colors].release();
 
       buffers[Sphere_radius].bind();
-      buffers[Sphere_radius].allocate(s_radius.data(),
-        static_cast<int>(s_radius.size()*sizeof(float)));
       program_sphere->enableAttributeArray("radius");
       program_sphere->setAttributeBuffer("radius", GL_FLOAT, 0, 1);
       buffers[Sphere_radius].release();
 
       buffers[Sphere_center].bind();
-      buffers[Sphere_center].allocate(s_center.data(),
-        static_cast<int>(s_center.size()*sizeof(float)));
       program_sphere->enableAttributeArray("center");
       program_sphere->setAttributeBuffer("center", GL_FLOAT, 0, 3);
       buffers[Sphere_center].release();
@@ -870,51 +909,12 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
       viewer->glVertexAttribDivisor(program_sphere->attributeLocation("center"), 1);
       viewer->glVertexAttribDivisor(program_sphere->attributeLocation("radius"), 1);
       viewer->glVertexAttribDivisor(program_sphere->attributeLocation("colors"), 1);
-      vaos[Spheres]->release();
+      vaos[Wired_spheres]->release();
 
+      program_sphere->release();
     }
-
-    //vao containing the data for the wired spheres
-      {
-        program_sphere->bind();
-
-        vaos[Wired_spheres]->bind();
-        buffers[Wired_spheres_vertices].bind();
-        buffers[Wired_spheres_vertices].allocate(s_vertex.data(),
-          static_cast<int>(s_vertex.size()*sizeof(float)));
-        program_sphere->enableAttributeArray("vertex");
-        program_sphere->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
-        buffers[Wired_spheres_vertices].release();
-
-        buffers[Sphere_normals].bind();
-        program_sphere->enableAttributeArray("normals");
-        program_sphere->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
-        buffers[Sphere_normals].release();
-
-        buffers[Sphere_colors].bind();
-        program_sphere->enableAttributeArray("colors");
-        program_sphere->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
-        buffers[Sphere_colors].release();
-
-        buffers[Sphere_radius].bind();
-        program_sphere->enableAttributeArray("radius");
-        program_sphere->setAttributeBuffer("radius", GL_FLOAT, 0, 1);
-        buffers[Sphere_radius].release();
-
-        buffers[Sphere_center].bind();
-        program_sphere->enableAttributeArray("center");
-        program_sphere->setAttributeBuffer("center", GL_FLOAT, 0, 3);
-        buffers[Sphere_center].release();
-
-        viewer->glVertexAttribDivisor(program_sphere->attributeLocation("center"), 1);
-        viewer->glVertexAttribDivisor(program_sphere->attributeLocation("radius"), 1);
-        viewer->glVertexAttribDivisor(program_sphere->attributeLocation("colors"), 1);
-        vaos[Wired_spheres]->release();
-
-        program_sphere->release();
-      }
     program_sphere->release();
-      are_buffers_filled = true;
+    are_buffers_filled = true;
 }
 
 
@@ -1075,45 +1075,44 @@ void Scene_c3t3_item::compute_elements() const
   }
   //The Spheres
   {
-
-      for(Tr::Finite_vertices_iterator
+    for(Tr::Finite_vertices_iterator
           vit = d->c3t3.triangulation().finite_vertices_begin(),
           end =  d->c3t3.triangulation().finite_vertices_end();
-          vit != end; ++vit)
+        vit != end; ++vit)
+    {
+      if(vit->point().weight()==0) continue;
+
+      typedef Tr::Vertex_handle Vertex_handle;
+      std::vector<Vertex_handle> incident_vertices;
+      d->c3t3.triangulation().incident_vertices(vit, std::back_inserter(incident_vertices));
+      bool red = vit->is_special();
+      for(std::vector<Vertex_handle>::const_iterator
+            vvit = incident_vertices.begin(), end = incident_vertices.end();
+          vvit != end; ++vvit)
       {
-          if(vit->point().weight()==0) continue;
-
-          typedef Tr::Vertex_handle Vertex_handle;
-          std::vector<Vertex_handle> incident_vertices;
-          d->c3t3.triangulation().incident_vertices(vit, std::back_inserter(incident_vertices));
-          bool red = vit->is_special();
-          for(std::vector<Vertex_handle>::const_iterator
-              vvit = incident_vertices.begin(), end = incident_vertices.end();
-              vvit != end; ++vvit)
-          {
-              if(Kernel::Sphere_3(vit->point().point(),
-                                  vit->point().weight()).bounded_side((*vvit)->point().point())
-                      == CGAL::ON_BOUNDED_SIDE)
-                  red = true;
-          }
-          if(red){
-              s_colors.push_back(1.0);
-              s_colors.push_back(0.0);
-              s_colors.push_back(0.0);
-
-          }
-          else{
-                  QColor c = this->color().darker(250);
-                  s_colors.push_back(c.redF());
-                  s_colors.push_back(c.greenF());
-                  s_colors.push_back(c.blueF());
-              }
-              s_center.push_back(vit->point().point().x());
-              s_center.push_back(vit->point().point().y());
-              s_center.push_back(vit->point().point().z());
-
-              s_radius.push_back(CGAL::sqrt(vit->point().weight()));
+        if(Kernel::Sphere_3(vit->point().point(),
+                            vit->point().weight()).bounded_side((*vvit)->point().point())
+           == CGAL::ON_BOUNDED_SIDE)
+          red = true;
       }
+      if(red){
+        s_colors.push_back(1.0);
+        s_colors.push_back(0.0);
+        s_colors.push_back(0.0);
+
+      }
+      else{
+        QColor c = this->color().darker(250);
+        s_colors.push_back(c.redF());
+        s_colors.push_back(c.greenF());
+        s_colors.push_back(c.blueF());
+      }
+      s_center.push_back(vit->point().point().x());
+      s_center.push_back(vit->point().point().y());
+      s_center.push_back(vit->point().point().z());
+
+      s_radius.push_back(CGAL::sqrt(vit->point().weight()));
+    }
   }
 }
 
