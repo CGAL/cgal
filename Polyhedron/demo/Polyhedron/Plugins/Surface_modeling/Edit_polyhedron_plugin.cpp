@@ -48,6 +48,7 @@ public Q_SLOTS:
   void on_ShowROICheckBox_stateChanged(int state);
   void on_ShowAsSphereCheckBox_stateChanged(int state);  
   void on_ActivatePivotingCheckBox_stateChanged(int state);
+  void on_ActivateFixedPlaneCheckBox_stateChanged(int state);
   void on_OverwritePushButton_clicked();
   void on_SaveROIPushButton_clicked();
   void on_ReadROIPushButton_clicked();
@@ -122,6 +123,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::init(QMainWindow* mainWindow, CGAL:
   connect(ui_widget.ClearROIPushButton, SIGNAL(clicked()), this, SLOT(on_ClearROIPushButton_clicked()));
   connect(ui_widget.ShowROICheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowROICheckBox_stateChanged(int)));
   connect(ui_widget.ShowAsSphereCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ShowAsSphereCheckBox_stateChanged(int)));  
+  connect(ui_widget.ActivateFixedPlaneCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ActivateFixedPlaneCheckBox_stateChanged(int)));
   connect(ui_widget.ActivatePivotingCheckBox, SIGNAL(stateChanged(int)), this, SLOT(on_ActivatePivotingCheckBox_stateChanged(int)));
   connect(ui_widget.OverwritePushButton, SIGNAL(clicked()), this, SLOT(on_OverwritePushButton_clicked()));
   connect(ui_widget.Select_isolated_components_button,  SIGNAL(clicked()), this, SLOT(on_Select_isolated_components_button_clicked()));
@@ -214,6 +216,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_DiscardChangesPushButton_clicked
   if (!edit_item) return;                             // the selected item is not of the right type
 
   edit_item->reset_deform_object();
+  edit_item->invalidate_buffers();
   scene->itemChanged(edit_item); //for redraw
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_ShowROICheckBox_stateChanged(int /*state*/)
@@ -251,6 +254,16 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ActivatePivotingCheckBox_stateCh
     }
     scene->itemChanged(edit_item);     
   }
+}
+void Polyhedron_demo_edit_polyhedron_plugin::on_ActivateFixedPlaneCheckBox_stateChanged(int)
+{
+    for(CGAL::Three::Scene_interface::Item_id i = 0, end = scene->numberOfEntries(); i < end; ++i)
+    {
+        Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
+        if(!edit_item) { continue; }
+        edit_item->invalidate_buffers();
+        scene->itemChanged(edit_item);
+    }
 }
 void Polyhedron_demo_edit_polyhedron_plugin::on_OverwritePushButton_clicked()
 {
