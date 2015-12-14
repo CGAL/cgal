@@ -98,7 +98,7 @@ void Scene_points_with_normal_item::initialize_buffers(CGAL::Three::Viewer_inter
     compute_normals_and_vertices();
     //vao for the edges
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
 
         vaos[Edges]->bind();
@@ -117,7 +117,7 @@ void Scene_points_with_normal_item::initialize_buffers(CGAL::Three::Viewer_inter
     }
     //vao for the points
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
 
         vaos[ThePoints]->bind();
@@ -135,7 +135,7 @@ void Scene_points_with_normal_item::initialize_buffers(CGAL::Three::Viewer_inter
     }
     //vao for the selected points
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
 
         vaos[Selected_points]->bind();
@@ -420,8 +420,8 @@ void Scene_points_with_normal_item::draw_edges(CGAL::Three::Viewer_interface* vi
     if(!are_buffers_filled)
         initialize_buffers(viewer);
     vaos[Edges]->bind();
-    program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    program=getShaderProgram(PROGRAM_NO_SELECTION);
+    attrib_buffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
@@ -434,8 +434,8 @@ void Scene_points_with_normal_item::draw_points(CGAL::Three::Viewer_interface* v
         initialize_buffers(viewer);
 
     vaos[ThePoints]->bind();
-    program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    program=getShaderProgram(PROGRAM_NO_SELECTION);
+    attrib_buffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_points/3));
@@ -446,8 +446,8 @@ void Scene_points_with_normal_item::draw_points(CGAL::Three::Viewer_interface* v
     viewer->glPointSize(4.f);
 
     vaos[Selected_points]->bind();
-    program=getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    attrib_buffers(viewer,PROGRAM_WITHOUT_LIGHT);
+    program=getShaderProgram(PROGRAM_NO_SELECTION);
+    attrib_buffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", QColor(255,0,0));
     viewer->glDrawArrays(GL_POINTS, 0,
