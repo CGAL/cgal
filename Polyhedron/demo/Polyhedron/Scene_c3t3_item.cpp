@@ -1081,6 +1081,8 @@ void Scene_c3t3_item::compute_elements() const
           end =  d->c3t3.triangulation().finite_vertices_end();
           vit != end; ++vit)
       {
+          if(vit->point().weight()==0) continue;
+
           typedef Tr::Vertex_handle Vertex_handle;
           std::vector<Vertex_handle> incident_vertices;
           d->c3t3.triangulation().incident_vertices(vit, std::back_inserter(incident_vertices));
