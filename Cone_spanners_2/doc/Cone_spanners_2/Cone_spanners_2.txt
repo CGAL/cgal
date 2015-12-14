@@ -77,13 +77,13 @@ Below, we detail the design and the usage of the above functors and function.
 This functor has the following definition and is a model of the `ComputeConeBoundaries_2` concept.
 
 \code{.cpp}
-    template <typename Traits>
+    template <typename ConeBasedSpannerTraits_2>
     class Compute_cone_boundaries_2{}
 \endcode
 
-The template parameter `Traits` determines whether the cone boundaries are computed
-exactly or inexactly. The concept `ConeBasedSpannerTraits_2` documents the requirements 
-for the models (typically the \cgal kernels) that can be passed to this parameter.  
+The template parameter `ConeBasedSpannerTraits_2` determines whether the cone boundaries are computed
+exactly or inexactly. The concept with the same name `ConeBasedSpannerTraits_2` documents the requirements 
+for the \cgal kernels that can be passed to this parameter.  
 Basically, if this parameter is `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`,
 the computation will be done exactly; if this parameter is 
 `CGAL::Exact_predicates_inexact_constructions_kernel`, the computation will be done inexactly.
@@ -126,11 +126,11 @@ please refer to Section \ref sec_CBS_examples.
 This functor has the following definition and is a model of the `ConstructConeBasedSpanner_2` concept.
 
 \code{.cpp}
-    template <typename Traits, typename Graph_>
+    template <typename ConeBasedSpannerTraits_2, typename Graph_>
     class Construct_theta_graph_2{} 
 \endcode
 
-Similar to the functor `CGAL::Compute_cone_boundaries_2`, the template parameter `Traits` 
+Similar to the functor `CGAL::Compute_cone_boundaries_2`, the template parameter `ConeBasedSpannerTraits_2` 
 determines whether the Theta graph will constructed exactly or inexactly. 
 The basic requirements for this parameter are described in the concept
 `ConeBasedSpannerTraits_2`. The template parameter
@@ -150,7 +150,7 @@ Note that there are seven template parameters for `adjacency_list` in BGL: `OutE
 `Directed`, `VertexProperties`, `EdgeProperties`, `GraphProperties`, `EdgeList`, 
 of which we require `VertexProperties` to be `CGAL::Point_2`, 
 and other parameters can be chosen freely. And the kernel type for the `CGAL::Point_2` is
-decided by the template parameter `Traits`.
+decided by the template parameter `ConeBasedSpannerTraits_2`.
 Also note that, here we make `Point_2` passed
 directly as bundled properties to `adjacency_list`, because this makes our implementation of this 
 package more straightforward than using property maps from BGL. For detailed information about 
@@ -174,7 +174,7 @@ With a similar definition (see below) to `CGAL::Construct_theta_graph_2`, this f
 is also a model of the `ConstructConeBasedSpanner_2` concept.
 
 \code{.cpp}
-    template <typename Traits, typename Graph_>
+    template <typename ConeBasedSpannerTraits_2, typename Graph_>
     class Construct_yao_graph_2{} 
 \endcode
 
