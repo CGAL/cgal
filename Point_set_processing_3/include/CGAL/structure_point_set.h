@@ -287,7 +287,7 @@ namespace internal {
         std::cerr << " -> " << m_points.size () - size_before << " corner point(s) created." << std::endl;
       }
 
-      std::cerr << "Merging corners... " << std::endl;
+      std::cerr << "Computing corner directions... " << std::endl;
 #endif
       
       compute_corner_directions (epsilon);
@@ -1020,27 +1020,53 @@ namespace internal {
       if (m_edges.size () < 3)
         return;
 
-      for (std::size_t i = 0; i < m_edges.size () - 2; ++ i)
+      std::vector<std::vector<std::size_t> > plane_edge_adj (m_planes.size());
+      for (std::size_t i = 0; i < m_edges.size (); ++ i)
+        if (m_edges[i].active)
+          {
+            plane_edge_adj[m_edges[i].planes[0]].push_back (i);
+            plane_edge_adj[m_edges[i].planes[1]].push_back (i);
+          }
+
+      std::vector<std::set<std::size_t> > edge_adj (m_edges.size ());
+
+      for (std::size_t i = 0; i < plane_edge_adj.size (); ++ i)
         {
-          if (!(m_edges[i].active))
+          if (plane_edge_adj[i].size () < 2)
+            continue;
+          
+          for (std::size_t j = 0; j < plane_edge_adj[i].size ()- 1; ++ j)
+            for (std::size_t k = j + 1; k < plane_edge_adj[i].size (); ++ k)
+              {
+                edge_adj[plane_edge_adj[i][j]].insert (plane_edge_adj[i][k]);
+                edge_adj[plane_edge_adj[i][k]].insert (plane_edge_adj[i][j]);
+              }
+        }
+
+      for (std::size_t i = 0; i < edge_adj.size (); ++ i)
+        {
+          if (edge_adj[i].size () < 2)
             continue;
 
-          for (std::size_t j = i + 1; j < m_edges.size () - 1; ++ j)
+          std::set<std::size_t>::iterator end = edge_adj[i].end();
+          end --;
+          
+          for (std::set<std::size_t>::iterator jit = edge_adj[i].begin ();
+               jit != end; ++ jit)
             {
-              if (!(m_edges[j].active))
+              std::size_t j = *jit;
+              if (j < i)
                 continue;
 
-              if (m_edges[i].planes[0] != m_edges[j].planes[0] &&
-                  m_edges[i].planes[0] != m_edges[j].planes[1] &&
-                  m_edges[i].planes[1] != m_edges[j].planes[0] &&
-                  m_edges[i].planes[1] != m_edges[j].planes[1])
-                continue;
-
-              for (std::size_t k = j + 1; k < m_edges.size (); ++ k)
+              std::set<std::size_t>::iterator begin = jit;
+              begin ++;
+              for (std::set<std::size_t>::iterator kit = begin;
+                   kit != edge_adj[i].end (); ++ kit)
                 {
-                  if (!(m_edges[k].active))
+                  std::size_t k = *kit;
+                  if (k < j)
                     continue;
-
+                  
                   std::set<std::size_t> planes;
                   planes.insert (m_edges[i].planes[0]);
                   planes.insert (m_edges[i].planes[1]);
@@ -1058,6 +1084,7 @@ namespace internal {
                 }
             }
         }
+
 
       for (std::size_t i = 0; i < m_corners.size (); ++ i)
         {
