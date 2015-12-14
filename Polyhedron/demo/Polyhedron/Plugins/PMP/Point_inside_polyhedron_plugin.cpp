@@ -145,10 +145,11 @@ public Q_SLOTS:
       point_set_it != point_sets.end(); ++point_set_it) 
     {
       Point_set* point_set = *point_set_it;
-      for(Point_set::iterator point_it = point_set->begin();
-          point_it != point_set->end();
-          ++point_it, ++nb_query)
+      for (std::size_t pt = 0;
+           pt < point_set->size() - point_set->nb_selected_points();
+           ++ pt, ++ nb_query)
       {
+        Point_set::iterator point_it = point_set->begin() + pt;
         for (std::size_t i = 0; i < inside_testers.size(); ++i)
         {
         CGAL::Bounded_side res = (*inside_testers[i])(point_it->position());
@@ -158,6 +159,7 @@ public Q_SLOTS:
             (outside     && res == CGAL::ON_UNBOUNDED_SIDE) )
         {
           point_set->select(point_it); ++nb_selected;
+          -- pt; // Selection replaces current point with unselected one
           break;//loop on i
         }
         }
@@ -179,6 +181,7 @@ public Q_SLOTS:
         scene->itemChanged(point_item);
       }
     }
+
   }
 
   void on_Sample_random_points_from_bbox() {
