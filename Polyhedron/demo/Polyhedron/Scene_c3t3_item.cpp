@@ -41,6 +41,7 @@ void Scene_c3t3_item::compile_shaders()
         "attribute highp vec3 colors;                                                                             \n"
         "attribute highp vec3 center;                                                                             \n"
         "attribute highp float radius;                                                                            \n"
+        "uniform highp vec4 cutplane;                                                                             \n"
         "uniform highp mat4 mvp_matrix;                                                                           \n"
         "uniform highp mat4 mv_matrix;                                                                            \n"
         "varying highp vec4 fP;                                                                                   \n"
@@ -50,10 +51,13 @@ void Scene_c3t3_item::compile_shaders()
         "                                                                                                         \n"
         "void main(void)                                                                                          \n"
         "{                                                                                                        \n"
-        "  color = vec4(colors,1.0);                                                                              \n"
+        " if(center.x * cutplane.x  + center.y * cutplane.y  + center.z * cutplane.z  +  cutplane.w > 0){         \n"
+        "    color = vec4(colors,0.0);                                                                            \n"
+        " }else{                                                                                                  \n"
+        "  color = vec4(colors,1.0);}                                                                             \n"
         "  fP = mv_matrix * vertex;                                                                               \n"
         "  fN = mat3(mv_matrix)* normals;                                                                         \n"
-        "   gl_Position =  mvp_matrix *                                                                           \n"
+        "  gl_Position =  mvp_matrix *                                                                            \n"
         "  vec4(radius*vertex.x + center.x, radius* vertex.y + center.y, radius*vertex.z + center.z, 1.0) ;       \n"
         "}                                                                                                        \n"
     };
@@ -68,7 +72,7 @@ void Scene_c3t3_item::compile_shaders()
     {
         std::cerr<<"adding vertex shader FAILED"<<std::endl;
     }
-    if(!program_sphere->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_light.f" ))
+    if(!program_sphere->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_c3t3.f" ))
     {
         std::cerr<<"adding fragment shader FAILED"<<std::endl;
     }
@@ -547,7 +551,8 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
       QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
       viewer->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
 
-
+      QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
+      program_sphere->setUniformValue("cutplane", cp);
       program_sphere->setUniformValue("mvp_matrix", mvp_mat);
       program_sphere->setUniformValue("mv_matrix", mv_mat);
       program_sphere->setUniformValue("light_pos", position);
