@@ -130,6 +130,7 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   need_changed = false;
   startTimer(0);
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
+  reset_cut_plane();
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
   compile_shaders();
