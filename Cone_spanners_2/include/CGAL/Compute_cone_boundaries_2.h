@@ -75,7 +75,7 @@ public:
 
 private:
     typedef  typename Kernel_type::Direction_2       Direction_2;
-	typedef  typename kernel_type::Aff_transformation_2    Transformation;
+	typedef  typename Kernel_type::Aff_transformation_2    Transformation;
 
 public:
 	/* No member variables in this class, so a custom constructor is not needed. */

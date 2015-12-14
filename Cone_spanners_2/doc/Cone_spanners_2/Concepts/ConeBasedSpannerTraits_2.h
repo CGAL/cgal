@@ -40,7 +40,7 @@ The direction type.
 typedef unspecified_type Direction_2; 
 
 /*!
-The affine transformation type. 
+The affine transformation type. This is needed to rotate directions.
 */ 
 typedef unspecified_type Aff_transformation_2; 
 
@@ -75,7 +75,6 @@ NT CGAL::sqrt(const NT &  x);
   This function should return the bisector of the two lines l1 and l2. 
   And the bisector should have the direction of the vector which is the sum of 
   the normalized directions of the two lines. 
-  This function requires that Kernel::RT supports the sqrt() operation. 
   It is needed in constructing Theta graphs, not in constructing Yao graphs.
 */ 
 CGAL::Line_2<Kernel> CGAL::bisector(const CGAL::Line_2<Kernel> &  l1,  
