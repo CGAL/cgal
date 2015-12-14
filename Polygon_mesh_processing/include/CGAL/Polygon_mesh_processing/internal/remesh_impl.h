@@ -24,6 +24,7 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
 
 #include <CGAL/iterator.h>
 #include <CGAL/AABB_tree.h>
@@ -718,33 +719,53 @@ namespace internal {
       typedef std::map<vertex_descriptor, Vector_3> VNormalsMap;
       VNormalsMap vnormals;
       boost::associative_property_map<VNormalsMap> propmap_normals(vnormals);
+      std::map<vertex_descriptor, Point> barycenters;
+
+      // at each vertex, compute vertex normal
+      // at each vertex, compute barycenter of neighbors
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
       {
-        if (!is_on_patch(v))
-          continue;
+        if (is_on_patch(v))
+        {
         Vector_3 vn = PMP::compute_vertex_normal(v, mesh_
                             , PMP::parameters::vertex_point_map(vpmap_)
                             .geom_traits(GeomTraits()));
         put(propmap_normals, v, vn);
-      }
 
-      // at each vertex, compute barycenter of neighbors
-      std::map<vertex_descriptor, Point> barycenters;
-      BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
-      {
-        if (!is_on_patch(v))
-          continue;
-        Vector_3 move = CGAL::NULL_VECTOR;
-        unsigned int star_size = 0;
-        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, mesh_))
-        {
-          move = move + Vector_3(get(vpmap_, v), get(vpmap_, source(h, mesh_)));
-          ++star_size;
+          Vector_3 move = CGAL::NULL_VECTOR;
+          unsigned int star_size = 0;
+          BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, mesh_))
+          {
+            move = move + Vector_3(get(vpmap_, v), get(vpmap_, source(h, mesh_)));
+            ++star_size;
+          }
+          CGAL_assertion(star_size > 0);
+          move = (1. / (double)star_size) * move;
+
+          barycenters[v] = get(vpmap_, v) + move;
         }
-        CGAL_assertion(star_size > 0);
-        move = (1. / (double)star_size) * move;
+        else if (!protect_constraints_ && is_on_patch_border(v))
+        {
+          put(propmap_normals, v, CGAL::NULL_VECTOR);
 
-        barycenters[v] = get(vpmap_, v) + move;
+          std::vector<halfedge_descriptor> border_halfedges;
+          BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, mesh_))
+          {
+            if (is_on_patch_border(h) || is_on_patch_border(opposite(h, mesh_)))
+              border_halfedges.push_back(h);
+          }
+          if (border_halfedges.size() == 2)//others are corner cases
+          {
+            vertex_descriptor ph0 = source(border_halfedges[0], mesh_);
+            vertex_descriptor ph1 = source(border_halfedges[1], mesh_);
+            double dot = Vector_3(get(vpmap_, v), get(vpmap_, ph0))
+                       * Vector_3(get(vpmap_, v), get(vpmap_, ph1));
+            //check squared cosine is < 0.25 (~120 degrees)
+            if (0.25 < dot / (sqlength(border_halfedges[0]) * sqlength(border_halfedges[0])))
+              barycenters[v] = CGAL::midpoint(midpoint(border_halfedges[0]),
+                                              midpoint(border_halfedges[1]));
+          }
+        }
       }
 
       // compute moves
