@@ -857,7 +857,7 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
       buffers[Sphere_radius].allocate(s_radius.data(),
         static_cast<int>(s_radius.size()*sizeof(float)));
       program_sphere->enableAttributeArray("radius");
-      program_sphere->setAttributeBuffer("radius", GL_FLOAT, 0, 3);
+      program_sphere->setAttributeBuffer("radius", GL_FLOAT, 0, 1);
       buffers[Sphere_radius].release();
 
       buffers[Sphere_center].bind();
@@ -898,7 +898,7 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
 
         buffers[Sphere_radius].bind();
         program_sphere->enableAttributeArray("radius");
-        program_sphere->setAttributeBuffer("radius", GL_FLOAT, 0, 3);
+        program_sphere->setAttributeBuffer("radius", GL_FLOAT, 0, 1);
         buffers[Sphere_radius].release();
 
         buffers[Sphere_center].bind();
