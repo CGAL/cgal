@@ -52,7 +52,7 @@ namespace CGAL {
  *  which are slow). The inexact computation is done by the general functor definition,
  *  while the exact computation is done by a specialization of this functor.
  *   
- *  \tparam Traits   If this parameter is `Exact_predicates_exact_constructions_kernel_with_root_of`,
+ *  \tparam ConeBasedSpannerTraits_2   If this parameter is `Exact_predicates_exact_constructions_kernel_with_root_of`,
  *                    the specialization functor will be called; otherwise, the general functor will
  *                    be called. A recommended parameter for the general functor is 
  *                    `Exact_predicates_inexact_constructions_kernel`. For the detailed requirements of 
@@ -66,12 +66,12 @@ namespace CGAL {
  *  \cgalModels `ComputeConeBoundaries_2`
  *
  */
-template <typename Traits>
+template <typename ConeBasedSpannerTraits_2>
 class Compute_cone_boundaries_2 {
 
 public:
 	/*! Indicate the type of the \cgal kernel. */
-    typedef  Traits                    Kernel_type;
+    typedef  ConeBasedSpannerTraits_2      Kernel_type;
 
 private:
     typedef  typename Kernel_type::Direction_2       Direction_2;
