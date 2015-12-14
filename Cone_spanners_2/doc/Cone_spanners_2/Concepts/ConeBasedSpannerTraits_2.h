@@ -3,15 +3,15 @@
 \cgalConcept
 
 The functors provided in this package for constructing cones and cone-based spanners
-all have a template parameter `Traits`. To specify the requirements
-for the models (typically the kernels from CGAL) that can be passed to 
-this parameter, we document a concept called `ConeBasedSpannerTraits_2` here. 
+all have a template parameter `ConeBasedSpannerTraits_2`. To specify the requirements
+for the CGAL kernels that can be passed to 
+this parameter, we document a concept also called `ConeBasedSpannerTraits_2` here. 
 Basically, this concept specifies all the types and primitives (predicates and construction objects) 
-that the model should have to make the functors work properly.
-It is recommended that if you want to construct the cones or the cone-based spanners
-exactly, you should use the kernel `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`;
-and if you want to construct them inexactly, you should use the kernel
-`CGAL::Exact_predicates_inexact_constructions`.
+that the CGAL kernel should have to make the functors work properly.
+It is recommended that if the cones or the cone-based spanners are to be constructed
+exactly, the kernel `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`
+should be used; and if they are to be constructed inexactly, the kernel
+`CGAL::Exact_predicates_inexact_constructions` should be used.
 
 \cgalHasModel `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`
 \cgalHasModel `CGAL::Exact_predicates_inexact_constructions`
@@ -62,23 +62,26 @@ typedef unspecified_type Polynomial;
 
 /*!
   This function should return the k-th real root of an univariate polynomial, which is defined 
-  by the iterator range. It is needed in calculating cone boundaries exactly.
+  by the iterator range, where 'begin' refers to the constant term. 
+  It is needed in calculating cone boundaries exactly.
 */ 
 NT CGAL::root_of(int k, InputIterator begin, InputIterator end); 
 
-/*!
+/*
   This function should return the square root of the argument `x`. 
-*/ 
+  It is needed in calculating cone boundaries exactly.
+
 NT CGAL::sqrt(const NT &  x); 
+*/ 
 
 /*!
-  This function should return the bisector of the two lines l1 and l2. 
+  This functor should return the bisector of the two lines l1 and l2. 
   And the bisector should have the direction of the vector which is the sum of 
   the normalized directions of the two lines. 
   It is needed in constructing Theta graphs, not in constructing Yao graphs.
 */ 
-CGAL::Line_2<Kernel> CGAL::bisector(const CGAL::Line_2<Kernel> &  l1,  
-		  const CGAL::Line_2<Kernel> &  l2);
+Kernel::Line_2 Kernel::ConstructBisector_2::operator()  ( const Kernel::Line_2 &  l1,  
+		  const Kernel::Line_2 &  l2 ); 
 
 /*!
   This function should return CGAL::LARGER iff the signed distance of p and l 
