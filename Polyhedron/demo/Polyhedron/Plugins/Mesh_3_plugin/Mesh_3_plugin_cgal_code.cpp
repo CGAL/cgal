@@ -178,10 +178,10 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
 
 
 
-  typedef Facet_extra_criterion<Tr,
+  /*typedef Facet_extra_criterion<Tr,
                                 Image_mesh_domain,
                                 Mesh_criteria::Facet_criteria::Visitor>
-    Extra_criterion;
+    Extra_criterion;*/
   
   
   // facet_criteria.add(new Extra_criterion(*p_domain));

@@ -183,6 +183,7 @@ private:
       Sphere_radius,
       Sphere_center,
       Wired_spheres_vertices,
+      iEdges_vertices,
       iFacet_vertices,
       iFacet_normals,
       iFacet_colors,
@@ -195,6 +196,7 @@ private:
       Grid,
       Spheres,
       Wired_spheres,
+      iEdges,
       iFacets,
       NumberOfVaos
   };
@@ -218,6 +220,7 @@ private:
   PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
 
   mutable std::size_t positions_poly_size;
+  mutable std::size_t positions_lines_size;
   mutable std::vector<float> positions_lines;
   mutable std::vector<float> positions_grid;
   mutable std::vector<float> positions_poly;

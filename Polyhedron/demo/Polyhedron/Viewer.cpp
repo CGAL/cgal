@@ -474,6 +474,9 @@ void Viewer::attrib_buffers(int program_name) const {
         program->setUniformValue("spec_power", 51.8f);
         program->setUniformValue("is_two_side", is_both_sides);
         break;
+    case PROGRAM_C3T3_EDGES:
+        program->setUniformValue("mvp_matrix", mvp_mat);
+        break;
     case PROGRAM_WITHOUT_LIGHT:
         program->setUniformValue("mvp_matrix", mvp_mat);
         program->setUniformValue("mv_matrix", mv_mat);
@@ -908,12 +911,35 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
             {
                 std::cerr<<"adding vertex shader FAILED"<<std::endl;
             }
-            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_light.f"))
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_c3t3.f"))
             {
                 std::cerr<<"adding fragment shader FAILED"<<std::endl;
             }
             program->link();
             d->shader_programs[PROGRAM_C3T3] = program;
+            return program;
+        }
+        break;
+    case PROGRAM_C3T3_EDGES:
+        if(d->shader_programs[PROGRAM_C3T3_EDGES])
+        {
+            return d->shader_programs[PROGRAM_C3T3_EDGES];
+        }
+
+        else
+        {
+
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_c3t3_edges.v"))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_c3t3_edges.f"))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            d->shader_programs[PROGRAM_C3T3_EDGES] = program;
             return program;
         }
         break;

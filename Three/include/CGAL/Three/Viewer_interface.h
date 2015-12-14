@@ -51,6 +51,7 @@ public:
                             PROGRAM_INSTANCED,
                             PROGRAM_INSTANCED_WIRE,
                             PROGRAM_C3T3,
+                            PROGRAM_C3T3_EDGES,
                             NB_OF_PROGRAMS };
 
   Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(), parent) {}

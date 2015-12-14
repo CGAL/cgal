@@ -95,4 +95,4 @@ struct Graph_manipulations
 } // namespace internal
 } // namespace CGAL
 
-#endif CGAL_INTERNAL_MESH_3_INTERNAL_GRAPH_MANIPULATIONS
+#endif //CGAL_INTERNAL_MESH_3_INTERNAL_GRAPH_MANIPULATIONS

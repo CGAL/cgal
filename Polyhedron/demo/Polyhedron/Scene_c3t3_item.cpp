@@ -477,6 +477,20 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     ncthis->compute_elements();
     ncthis->initialize_buffers(viewer);
   }
+
+  vaos[Grid]->bind();
+  program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+  attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+  program->bind();
+  program->setAttributeValue("colors", QColor(Qt::black));
+  QMatrix4x4 f_mat;
+  for (int i = 0; i<16; i++)
+    f_mat.data()[i] = frame->matrix()[i];
+  program->setUniformValue("f_matrix", f_mat);
+  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size() / 3));
+  program->release();
+  vaos[Grid]->release();
+
   vaos[Facets]->bind();
   program = getShaderProgram(PROGRAM_C3T3);
   attrib_buffers(viewer, PROGRAM_C3T3);
@@ -558,27 +572,41 @@ void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
     ncthis->compute_elements();
     ncthis->initialize_buffers(viewer);
   }
-  vaos[2]->bind();
-  program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-  attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
-  program->bind();
-  program->setAttributeValue("colors", QColor(Qt::black));
-  QMatrix4x4 f_mat;
-  for (int i = 0; i<16; i++)
-    f_mat.data()[i] = frame->matrix()[i];
-  program->setUniformValue("f_matrix", f_mat);
-  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size() / 3));
-  program->release();
-  vaos[2]->release();
 
+  if(renderingMode() == Wireframe)
+  {
+    vaos[Grid]->bind();
+    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    program->bind();
+    program->setAttributeValue("colors", QColor(Qt::black));
+    QMatrix4x4 f_mat;
+    for (int i = 0; i<16; i++)
+        f_mat.data()[i] = frame->matrix()[i];
+    program->setUniformValue("f_matrix", f_mat);
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size() / 3));
+    program->release();
+    vaos[Grid]->release();
+  }
   vaos[Edges]->bind();
-  program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-  attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+  program = getShaderProgram(PROGRAM_C3T3_EDGES);
+  attrib_buffers(viewer, PROGRAM_C3T3_EDGES);
+  program->bind();
+  QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
+  program->setUniformValue("cutplane", cp);
+  program->setAttributeValue("colors", QColor(Qt::black));
+  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines_size / 3));
+  program->release();
+  vaos[Edges]->release();
+
+  vaos[iEdges]->bind();
+  program = getShaderProgram(PROGRAM_NO_SELECTION);
+  attrib_buffers(viewer, PROGRAM_NO_SELECTION);
   program->bind();
   program->setAttributeValue("colors", QColor(Qt::black));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size() / 3));
   program->release();
-  vaos[Edges]->release();
+  vaos[iEdges]->release();
 
   if(spheres_are_shown)
   {
@@ -633,15 +661,17 @@ void Scene_c3t3_item::draw_points(CGAL::Three::Viewer_interface * viewer) const
     ncthis-> initialize_buffers(viewer);
   }
   vaos[Edges]->bind();
-  program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-  attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+  program = getShaderProgram(PROGRAM_C3T3_EDGES);
+  attrib_buffers(viewer, PROGRAM_C3T3_EDGES);
   program->bind();
+  QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
+  program->setUniformValue("cutplane", cp);
   program->setAttributeValue("colors", this->color());
   viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size() / 3));
   vaos[Edges]->release();
   program->release();
 
-  vaos[2]->bind();
+  vaos[Grid]->bind();
   program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
   attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
   program->bind();
@@ -652,7 +682,7 @@ void Scene_c3t3_item::draw_points(CGAL::Three::Viewer_interface * viewer) const
   program->setUniformValue("f_matrix", f_mat);
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size() / 3));
   program->release();
-  vaos[2]->release();
+  vaos[Grid]->release();
 }
 
 void Scene_c3t3_item::draw_triangle(const Kernel::Point_3& pa,
@@ -820,7 +850,23 @@ void Scene_c3t3_item::initialize_intersection_buffers(CGAL::Three::Viewer_interf
     program->release();
 
   }
-  are_intersection_buffers_filled = true;
+    //vao containing the data for the lines
+    {
+        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+        program->bind();
+
+        vaos[iEdges]->bind();
+        buffers[iEdges_vertices].bind();
+        buffers[iEdges_vertices].allocate(positions_lines.data(),
+                                         static_cast<int>(positions_lines.size()*sizeof(float)));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+        buffers[iEdges_vertices].release();
+
+        vaos[iEdges]->release();
+        program->release();
+    }
+        are_intersection_buffers_filled = true;
 }
 
 
@@ -858,16 +904,16 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)
     
     positions_poly_size = positions_poly.size();
     positions_poly.clear();
-    positions_poly.swap(std::vector<float>());
+    positions_poly.swap(positions_poly);
     normals.clear();
-    normals.swap(std::vector<float>());
+    normals.swap(normals);
     f_colors.clear();
-    f_colors.swap(std::vector<float>());
+    f_colors.swap(f_colors);
   }
 
   //vao containing the data for the lines
       {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = getShaderProgram(PROGRAM_C3T3_EDGES, viewer);
         program->bind();
 
         vaos[Edges]->bind();
@@ -881,6 +927,10 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)
         vaos[Edges]->release();
         program->release();
 
+        positions_lines_size = positions_lines.size();
+        positions_lines.clear();
+        positions_lines.swap(positions_lines);
+
       }
 
   //vao containing the data for the grid
@@ -888,14 +938,14 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
         program->bind();
 
-        vaos[2]->bind();
+        vaos[Grid]->bind();
         buffers[Grid_vertices].bind();
         buffers[Grid_vertices].allocate(positions_grid.data(),
           static_cast<int>(positions_grid.size()*sizeof(float)));
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
         buffers[Grid_vertices].release();
-        vaos[2]->release();
+        vaos[Grid]->release();
         program->release();
       }
 
@@ -1012,6 +1062,8 @@ void Scene_c3t3_item::compute_intersection(const Primitive& facet)
   draw_triangle_edges(pa, pb, pd);
   draw_triangle_edges(pa, pc, pd);
   draw_triangle_edges(pb, pc, pd);
+
+
 }
 
 void Scene_c3t3_item::compute_intersections()
@@ -1019,6 +1071,7 @@ void Scene_c3t3_item::compute_intersections()
   positions_poly.clear();
   normals.clear();
   f_colors.clear();
+  positions_lines.clear();
   const Kernel::Plane_3& plane = this->plane();
   tree.all_intersected_primitives(plane, boost::make_function_output_iterator(Compute_intersection(*this)));
 }
@@ -1087,13 +1140,6 @@ void Scene_c3t3_item::compute_elements()
 
   //The facets
   {  
-    const Kernel::Plane_3& plane = this->plane();
-    GLdouble clip_plane[4];
-    clip_plane[0] = plane.a();
-    clip_plane[1] = plane.b();
-    clip_plane[2] = plane.c();
-    clip_plane[3] = plane.d();
-
     for (C3t3::Facet_iterator
       fit = c3t3().facets_begin(),
       end = c3t3().facets_end();

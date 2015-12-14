@@ -34,14 +34,14 @@ namespace CGAL {
   template <typename P>
   void
   polylines_to_protect(const CGAL::Image_3& cgal_image,
-                       const double vx, const double vy, const double vz,
+                       const double, const double, const double,
                        std::vector<std::vector<P> >& polylines)
   {
     typedef typename Kernel_traits<P>::Kernel K;
     typedef P Point_3;
     typedef boost::adjacency_list<boost::setS, boost::setS, boost::undirectedS, Point_3> Graph;
-    typedef boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
-    typedef boost::graph_traits<Graph>::edge_iterator edge_iterator;
+    typedef typename boost::graph_traits<Graph>::vertex_descriptor vertex_descriptor;
+   // typedef typename boost::graph_traits<Graph>::edge_iterator edge_iterator;
 
     const int xdim = static_cast<int>(cgal_image.xdim());
     const int ydim = static_cast<int>(cgal_image.ydim());
