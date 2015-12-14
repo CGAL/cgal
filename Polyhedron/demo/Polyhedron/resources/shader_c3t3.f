@@ -10,7 +10,7 @@ uniform highp float spec_power ;
 uniform int is_two_side; 
 uniform bool is_selected;
 void main(void) {
- if(color.x>0)
+ if(color.w>0)
  {
     highp vec3 L = light_pos.xyz - fP.xyz; 
     highp vec3 V = -fP.xyz; 
