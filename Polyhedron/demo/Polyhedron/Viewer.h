@@ -57,6 +57,8 @@ public:
   void setScene(CGAL::Three::Scene_draw_interface* scene);
   //! @returns the antialiasing state.
   bool antiAliasing() const;
+  //! @returns the quick camera state.
+  bool quickCameraMode() const;
   //! @returns the fastDrawing state.
   bool inFastDrawing() const;
   //! Implementation of `Viewer_interface::attrib_buffers()`
@@ -70,6 +72,9 @@ public Q_SLOTS:
   //! If b is true, facets will be ligted from both internal and external sides.
   //! If b is false, only the side that is exposed to the light source will be lighted.
   void setTwoSides(bool b);
+  //! If b is true, some items are displayed in a simplified version when moving the camera.
+  //! If b is false, items display is never altered, even when moving.
+  void setQuickCameraMode(bool b);
   //! Make the camera turn around.
   void turnCameraBy180Degres();
   //! @returns a QString containing the position and orientation of the camera.

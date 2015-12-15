@@ -16,7 +16,8 @@ public:
   bool twosides;
   bool macro_mode;
   bool inFastDrawing;
-
+  bool quick_camera;
+  
   void draw_aux(bool with_names, Viewer*);
 
   //! Contains all the programs for the item rendering.
@@ -29,6 +30,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->scene = 0;
   d->antialiasing = antialiasing;
   d->twosides = false;
+  d->quick_camera = true;
   d->macro_mode = false;
   d->shader_programs.resize(NB_OF_PROGRAMS);
   setShortcut(EXIT_VIEWER, 0);
@@ -91,6 +93,18 @@ void Viewer::setAntiAliasing(bool b)
 void Viewer::setTwoSides(bool b)
 {
   d->twosides = b;
+  updateGL();
+}
+
+
+bool Viewer::quickCameraMode() const
+{
+  return d->quick_camera;
+}
+
+void Viewer::setQuickCameraMode(bool b)
+{
+  d->quick_camera = b;
   updateGL();
 }
 
