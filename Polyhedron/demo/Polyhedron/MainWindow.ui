@@ -115,6 +115,7 @@
     <addaction name="action_Look_at"/>
     <addaction name="actionAntiAliasing"/>
     <addaction name="actionDraw_two_sides"/>
+    <addaction name="actionQuick_camera_mode"/>
     <addaction name="actionSetBackgroundColor"/>
     <addaction name="menuDockWindows"/>
     <addaction name="menuCamera"/>
@@ -640,6 +641,17 @@
   <action name="actionLoad_plugin">
    <property name="text">
     <string>Load plugin</string>
+   </property>
+  </action>
+  <action name="actionQuick_camera_mode">
+   <property name="checkable">
+    <bool>true</bool>
+   </property>
+   <property name="checked">
+    <bool>true</bool>
+   </property>
+   <property name="text">
+    <string>Quick camera mode</string>
    </property>
   </action>
  </widget>
