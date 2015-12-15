@@ -7,9 +7,7 @@
 #include <cstdlib>
 #include <iostream>
 #include <iterator>
-#include <string>
 #include <vector>
-#include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Exact_predicates_exact_constructions_kernel_with_root_of.h>
 #include <CGAL/Compute_cone_boundaries_2.h>
 

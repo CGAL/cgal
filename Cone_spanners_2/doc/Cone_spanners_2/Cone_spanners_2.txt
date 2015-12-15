@@ -15,7 +15,7 @@ Both exact and inexact constructions are supported.
 In exact construction, the cone boundaries are calculated using roots of polynomials,
 which achieves the exactness by avoiding using \f$ \pi \f$ in the computation.
 In inexact construction, the cone boundaries are calculated with an approximate
-\f$ \pi \f$ value, which uses the constant `CGAL_PI` defined in \cgal and is still accurate 
+\f$ \pi \f$ value, which uses the constant `CGAL_PI`  and is still accurate 
 enough for most applications. 
 Moreover, for visualization purpose, this chapter describes a global function 
 that, given a constructed graph as input, can generate the data and script files for Gnuplot
@@ -61,20 +61,20 @@ The bisector in a cone of a Theta Graph.
 \section sec_CBS_design Software Design
 This package provides the following template functors:
 
-- `CGAL::Compute_cone_boundaries_2`: The functor for computing the directions of cone boundaries 
+- `Compute_cone_boundaries_2`: The functor for computing the directions of cone boundaries 
   given a cone number and an initial direction. 
-- `CGAL::Construct_theta_graph_2`: The functor for constructing Theta graphs given a set of vertices 
+- `Construct_theta_graph_2`: The functor for constructing Theta graphs given a set of vertices 
   on the plane.
-- `CGAL::Construct_yao_graph_2`: The functor for constructing Yao graphs given a set of vertices 
+- `Construct_yao_graph_2`: The functor for constructing Yao graphs given a set of vertices 
   on the plane. 
 
 In addition to the these functors, for visualizing the constructed graphs, this package provides a global function 
-called `CGAL::gnuplot_output_2()` to output a `boost::adjacency_list` data structure to Gnuplot data and script files.
+called `gnuplot_output_2()` to output a `boost::adjacency_list` data structure to Gnuplot data and script files.
 Below, we detail the design and the usage of the above functors and function.
 
-\subsection subsec_CBS_cone Functor CGAL::Compute_cone_boundaries_2
+\subsection subsec_CBS_cone Computing Cone Boundaries
 
-This functor has the following definition and is a model of the `ComputeConeBoundaries_2` concept.
+The functor `Compute_cone_boundaries_2` has the following definition and is a model of the `ComputeConeBoundaries_2` concept.
 
 \code{.cpp}
     template <typename ConeBasedSpannerTraits_2>
@@ -84,9 +84,9 @@ This functor has the following definition and is a model of the `ComputeConeBoun
 The template parameter `ConeBasedSpannerTraits_2` determines whether the cone boundaries are computed
 exactly or inexactly. The concept with the same name `ConeBasedSpannerTraits_2` documents the requirements 
 for the \cgal kernels that can be passed to this parameter.  
-Basically, if this parameter is `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`,
+Basically, if this parameter is `Exact_predicates_exact_constructions_kernel_with_root_of`,
 the computation will be done exactly; if this parameter is 
-`CGAL::Exact_predicates_inexact_constructions_kernel`, the computation will be done inexactly.
+`Exact_predicates_inexact_constructions_kernel`, the computation will be done inexactly.
 The exact computation is implemented based on the fact that
 when the cone angle \f$ \theta \f$ is in the form of \f$ 2\pi / n \f$, 
 where \f$ n \f$ is a positive integer, \f$ \sin(\theta) \f$ and \f$ \cos(\theta) \f$ 
@@ -95,8 +95,7 @@ in the computation. The exact computation requires the number type of either `CO
 or `leda_real`.
 In inexact computation, the cone angle \f$ \theta \f$ is
 simply calculated as \f$ 2\pi/k \f$, where \f$ k \f$ is the number of cones and
-\f$ \pi \f$ takes the value of the constant `CGAL_PI=3.14159265358979323846`
-defined in <TT>CGAL/number_type_config.h</TT>. 
+\f$ \pi \f$ takes the value of the constant `CGAL_PI=3.14159265358979323846`. 
 Then, the \f$ \sin(\theta) \f$ and \f$ \cos(\theta) \f$ are calculated.
 While the inexact computation is done by the general functor
 definition, the exact computation is done by a specialization of this functor.
@@ -116,21 +115,21 @@ of directions for the rays from \f$l_0\f$ to \f$l_{k-1}\f$ respectively.
 -->
 
 This functor is currently used by the functors 
-`CGAL::Construct_theta_graph_2` and `CGAL::Construct_yao_graph_2` 
+`Construct_theta_graph_2` and `Construct_yao_graph_2` 
 in constructing Theta and Yao graphs. This functor can also be used in other applications where the plane needs to be
 divided into equally-angled cones. For how to use this functor to compute cone boundaries in writing an application, 
 please refer to Section \ref sec_CBS_examples.
 
-\subsection subsec_CBS_theta Functor CGAL::Construct_theta_graph_2
+\subsection subsec_CBS_theta Constructing a Theta Graph
 
-This functor has the following definition and is a model of the `ConstructConeBasedSpanner_2` concept.
+The functor `Construct_theta_graph_2` has the following definition and is a model of the `ConstructConeBasedSpanner_2` concept.
 
 \code{.cpp}
     template <typename ConeBasedSpannerTraits_2, typename Graph_>
     class Construct_theta_graph_2{} 
 \endcode
 
-Similar to the functor `CGAL::Compute_cone_boundaries_2`, the template parameter `ConeBasedSpannerTraits_2` 
+Similar to the functor `Compute_cone_boundaries_2`, the template parameter `ConeBasedSpannerTraits_2` 
 determines whether the Theta graph will constructed exactly or inexactly. 
 The basic requirements for this parameter are described in the concept
 `ConeBasedSpannerTraits_2`. The template parameter
@@ -143,16 +142,16 @@ to the further processing of the constructed graphs, since BGL includes most com
 Note that BGL altogether provides two template classes for representing graphs: 
 `boost::adjacency_list` and `boost::adjacency_matrix`, with the former suitable for 
 sparse graphs and the latter suitable for dense graphs. While cone-based spanners
-are sparse graphs and the interfaces provided by `adjacency_list` and `adjaceny_matrix`
+are sparse graphs and the interfaces provided by `boost::adjacency_list` and `boost::adjaceny_matrix`
 are different, our package only supports `boost::adjacency_list`.
 
-Note that there are seven template parameters for `adjacency_list` in BGL: `OutEdgeList`, `VertexList`, 
+Note that there are seven template parameters for `boost::adjacency_list` in BGL: `OutEdgeList`, `VertexList`, 
 `Directed`, `VertexProperties`, `EdgeProperties`, `GraphProperties`, `EdgeList`, 
-of which we require `VertexProperties` to be `CGAL::Point_2`, 
-and other parameters can be chosen freely. And the kernel type for the `CGAL::Point_2` is
+of which we require `VertexProperties` to be `Point_2`, 
+and other parameters can be chosen freely. And the kernel type for the `Point_2` is
 decided by the template parameter `ConeBasedSpannerTraits_2`.
 Also note that, here we make `Point_2` passed
-directly as bundled properties to `adjacency_list`, because this makes our implementation of this 
+directly as bundled properties to `boost::adjacency_list`, because this makes our implementation of this 
 package more straightforward than using property maps from BGL. For detailed information about 
 bundled properties, please refer to http://www.boost.org/doc/libs/1_58_0/libs/graph/doc/bundles.html.
 If you want more properties other than `Point_2` for vertices, you can still
@@ -165,12 +164,12 @@ balanced search tree to store the vertices that have already been scanned.
 It has the complexity of \f$O(n \log n)\f$, where \f$n\f$ is the number of vertices in the plane. 
 This complexity has been proved to be optimal. 
 
-For more details on how to use this `CGAL::Construct_theta_graph_2` functor to write an application to build Theta graphs, 
+For more details on how to use this `Construct_theta_graph_2` functor to write an application to build Theta graphs, 
 please refer to Section \ref sec_CBS_examples.
 
-\subsection subsec_CBS_yao Functor CGAL::Construct_yao_graph_2
+\subsection subsec_CBS_yao Constructing a Yao Graph
 
-With a similar definition (see below) to `CGAL::Construct_theta_graph_2`, this functor 
+With a similar definition (see below) to `Construct_theta_graph_2`, the functor `Construct_yao_graph_2`
 is also a model of the `ConstructConeBasedSpanner_2` concept.
 
 \code{.cpp}
@@ -178,7 +177,7 @@ is also a model of the `ConstructConeBasedSpanner_2` concept.
     class Construct_yao_graph_2{} 
 \endcode
 
-The way of using these two template parameters is the same as that of `CGAL::Construct_theta_graph_2`,
+The way of using these two template parameters is the same as that of `Construct_theta_graph_2`,
 so please refer to the previous subsection for the details. We note here that construction algorithm for Yao graph 
 is a slight adaptation of the algorithm for constructing Theta graph, having a complexity of \f$O(n^2)\f$. 
 The increase of complexity in this adaptation is because in constructing Theta graph, 
@@ -191,9 +190,9 @@ described in \cgalCite{cgal:cht-oacov-90}. However, this algorithm is much more 
 the current algorithm implemented, and it can hardly reuse the codes for constructing Theta graphs,
 so it is not implemented in this package right now. 
 
-\subsection subsec_CBS_gnuplot Global function CGAL::gnuplot_output_2()
+\subsection subsec_CBS_gnuplot Gnuplot Output
 
-This package also implements a template function `CGAL::gnuplot_output_2()`, which will read a 
+This package also implements a template function `gnuplot_output_2()`, which reads a 
 `boost::adjacency_list` object and generate two files used by Gnuplot to visualize the graph stored 
 in the `boost::adjacency_list` object. This template function has the following definition: 
 
@@ -203,7 +202,7 @@ in the `boost::adjacency_list` object. This template function has the following 
 \endcode
 
 The template parameter `Graph_` specifies the type of the graph to be plotted. For this function to work,
-the graph type must be `boost::adjacency_list` with `CGAL::Point_2` as the `VertexProperties`.
+the graph type must be `boost::adjacency_list` with `Point_2` as the `VertexProperties`.
 As for the two arguments to the function, `g` gives the graph to be plotted, and `prefix` gives the 
 prefix for the names of the files generated by the function. Specifically, this function will
 generate the following two files:
@@ -211,7 +210,7 @@ generate the following two files:
   of each vertex. To be read by Gnuplot, 
   the \f$(x, y)\f$-coordinates are written into the data file with decimal format, 
   no matter which number type is used in the \cgal kernel. 
-  This is achieved by calling `CGAL::to_double()` on \f$x\f$ or \f$y\f$ coordinate before outputing them. 
+  This is achieved by calling `to_double()` on \f$x\f$ or \f$y\f$ coordinate before outputing them. 
 - A Gnuplot script file named `prefix.plt` to be loaded by Gnuplot to plot the set of vertices and the set of edges. 
   The set of vertices is read from the above data file and the set of edges are included in the script file
   with the syntax `set arrow from x1, y1 to x2, y2`. 
@@ -220,17 +219,17 @@ For details on how to use this function to generate Gnuplot files, please refer 
  
 \section sec_CBS_examples Examples
 
-\subsection CBS_coneboundaries Computing cone boundaries exactly or inexactly
+\subsection CBS_coneboundaries Computing Cone Boundaries Exactly or Inexactly
 
-The following example, 'compute_cones.cpp', shows how to compute the directions of the cone boundaries 
+The following example shows how to compute the directions of the cone boundaries 
 exactly given the cone number and the initial direction. This example basically consists of the following steps:
 
-1. Define `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` as the kernel type
+1. Define `Exact_predicates_exact_constructions_kernel_with_root_of` as the kernel type
    to compute the cone boundaries exactly.
-2. Construct a `CGAL::Compute_cone_boundaries_2` object named  `cones` with the above kernel 
-   as the template parameter. Note that since the functor `CGAL::Compute_cone_boundaries_2` has no
+2. Construct a `Compute_cone_boundaries_2` object named  `cones` with the above kernel 
+   as the template parameter. Note that since the functor `Compute_cone_boundaries_2` has no
    member variables but member types and functions, its constructor needs no arguments.
-3. Initialize a vector of `CGAL::Direction_2` named `rays` to store the computed results.
+3. Initialize a vector of `Direction_2` named `rays` to store the computed results.
 4. Use `cones` to compute the cone boundaries by passing the cone number, the initial direction
    and the beginning iterator of `rays` to it.
 5. Output the computed results.
@@ -244,16 +243,16 @@ is used, the computation will be successful for any k>1, and much quicker than e
 We also note here that we don't experiment with `leda_real`. 
 
 As a final note, to compute the cone boundaries inexactly, just define the `Kernel` to be
-`CGAL::Exact_predicates_inexact_constructions_kernel` in the above example.
+`Exact_predicates_inexact_constructions_kernel` in the above example.
 
-\subsection CBS_construction Constructing graphs exactly or inexactly and generating Gnuplot files
+\subsection CBS_construction Constructing Graphs Exactly or Inexactly and Generating Gnuplot Files
 
-The following example, 'theta_io.cpp', shows how to construct Theta graphs exactly and generate Gnuplot files. 
+The following example shows how to construct Theta graphs exactly and generate Gnuplot files. 
 This example basically consists of the following steps:
-1. Define `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` as the kernel type
+1. Define `Exact_predicates_exact_constructions_kernel_with_root_of` as the kernel type
    to construct the graph exactly.
 2. Define the graph type to store the constructed graph.
-3. Construct a `CGAL::Construct_theta_graph_2` object named `theta` with the number of cones and the initial direction 
+3. Construct a `Construct_theta_graph_2` object named `theta` with the number of cones and the initial direction 
    as constructor arguments.
 4. Construct a graph object `g` to store the constructed graph.
 5. Use `theta` to construct the Theta graph by passing the input vertices and `g` to it.
@@ -262,17 +261,17 @@ This example basically consists of the following steps:
 \cgalExample{Cone_spanners_2/theta_io.cpp}
 
 To construct Theta graphs inexactly, just define the `Kernel` to be
-`CGAL::Exact_predicates_inexact_constructions_kernel` in the above example. And the way of
+`Exact_predicates_inexact_constructions_kernel` in the above example. And the way of
 constructing Yao graphs exactly or inexactly is the same as that of constructing
-Theta graphs, just replacing the functor `CGAL::Construct_theta_graph_2` by the functor
-`CGAL::Construct_yao_graph_2`.
+Theta graphs, just replacing the functor `Construct_theta_graph_2` by the functor
+`Construct_yao_graph_2`.
 
 Note that, for Theta graph, the `Kernel` defined must support the `CGAL::sqrt()` operation. 
-This is required by the `CGAL::bisector()` function, which is used to calculate the angle 
+This is required by the `bisector()` function, which is used to calculate the angle 
 bisector of a cone. For instance, the compiler will complain if 
-`CGAL::Exact_predicates_exact_constructions_kernel` (not supporting `CGAL::sqrt()`) 
-is defined as the kernel, but `CGAL::Exact_predicates_inexact_constructions_kernel` will be fine 
-since it supports `CGAL::sqrt()`. For Yao graph, there is no such restriction, since its construction 
+`Exact_predicates_exact_constructions_kernel` (not supporting `CGAL::sqrt()`) 
+is defined as the kernel, but `Exact_predicates_inexact_constructions_kernel` will be fine 
+since it supports `CAL::sqrt()`. For Yao graph, there is no such restriction, since its construction 
 does not need `CGAL::sqrt()`. 
 
 After compiling 'theta_io.cpp', execute the executable `theta_io` to construct a Theta graph with 4 cones 
@@ -294,7 +293,7 @@ The following two files will be generated for Gnuplot:
 A directed Theta graph of 20 vertices with \f$k=4\f$.
 \cgalFigureEnd
 
-\subsection CBS_diff_exact Exact construction can make a difference
+\subsection CBS_diff_exact Exact Construction Can Make a Difference
 
 This subsection gives an example vertex set on which the exact construction provided 
 in this package can produce the correct Theta graph while the inexact construction cannot.
@@ -336,7 +335,7 @@ This example demonstrates that the exact construction capability
 provided by this package can be very
 valuable if it is a strict requirement that graphs be constructed correctly.
 
-\subsection CBS_using_BGL Using algorithms from BGL
+\subsection CBS_using_BGL Using BGL Algorithms
 
 The following example, 'dijkstra_theta.cpp', shows how to call algorithms from BGL to do further processing 
 after the graphs are constructed. Since the constructed Theta or Yao graphs are stored in the class 
@@ -345,13 +344,13 @@ Specifically, this example constructs a Theta graph first and then calculates
 the shortest paths on this graph by calling the Dijkstra's algorithm from BGL.
 It mainly consists of the following steps:
 
-1. Define `CGAL::Exact_predicates_inexact_constructions_kernel_with_root_of` as the kernel type
+1. Define `Exact_predicates_inexact_constructions_kernel_with_root_of` as the kernel type
    to construct the graph inexactly.
 2. Define a structure named `Edge_property` for storing the Euclidean length of each edge,
    which is needed by the Dijkstra's algorithm. 
 3. Define the graph type to store the constructed graph, passing `Edge_property` as a template
    parameter to the graph type `boost::adjacency_list`.
-4. Construct a `CGAL::Construct_theta_graph_2` object named `theta`.
+4. Construct a `Construct_theta_graph_2` object named `theta`.
 5. Construct a graph object `g` to store the constructed graph.
 6. Use `theta` to construct the Theta graph by passing the input vertices and `g` to it.
 7. After `g` is constructed, calculate the Euclidean length of each edge in `g`. 
