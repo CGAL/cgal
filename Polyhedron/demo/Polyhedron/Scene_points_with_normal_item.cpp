@@ -169,7 +169,8 @@ void Scene_points_with_normal_item::compute_normals_and_vertices() const
 
     //Shuffle container to allow quick display random points
     Point_set_3<Kernel> points = *m_points;
-    std::random_shuffle (points.begin(), points.end());
+    std::random_shuffle (points.begin(), points.end() - m_points->nb_selected_points());
+    std::random_shuffle (points.end() - m_points->nb_selected_points(), points.end());
     
     //The points
     {
