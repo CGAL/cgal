@@ -36,6 +36,9 @@ typedef ConeBasedSpannerTraits_2      Kernel_type;
 	property maps.
 */
 typedef Graph_                           Graph_type;
+/*! The directon type.
+*/
+  typedef ConeBasedSpannerTraits_2::Direction_2      Direction_2;
 
 /// @}
 
@@ -57,17 +60,15 @@ Construct_spanner_2(unsigned int k, Direction_2 initial_direction = Direction_2(
 /// \name Operator 
 /// @{
 
-/*! \brief Operator () to construct a cone based spanner.
- *
- * This operator implements the algorithm to build the spanner.
+/*! \brief Function  operator to construct a cone based spanner.
  *
  * \tparam PointInputIterator This template parameter is to give the application developer freedom 
- *          in choosing whichever Iterator he/she will use to input the coordinates of the points. 
+ *          in choosing whichever iterator he will use to input the coordinates of the points. 
  *          If omitted, the type of the Iterator can be inferred from the arguments passed to the 
  *          operator().
  *
  * \param[in] start An iterator pointing to the first point (vertex).
- * \param[in] end   An iterator pointing to the place that passes the last point.
+ * \param[in] end   Past-the-end iterator.
  * \param[out] g   The constructed graph object.
  */
 template <typename PointInputIterator>

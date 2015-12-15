@@ -8,7 +8,6 @@
 #include <iostream>
 #include <fstream>
 #include <iterator>
-#include <string>
 #include <vector>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Construct_theta_graph_2.h>

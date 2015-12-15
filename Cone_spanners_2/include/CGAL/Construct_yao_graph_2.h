@@ -74,8 +74,7 @@ private:
 public:
     /*! 
 	  \brief    Constructor.
-      \details  Constructs a `Construct_yao_graph_2` object.
-     
+
       \param k     Number of cones to divide space into
       \param initial_direction  A direction denoting one of the rays dividing the
                    cones. This allows arbitary rotations of the rays that divide
@@ -105,7 +104,7 @@ public:
     */
 
     /*! 
-	  \brief Operator to construct a Yao graph.
+	  \brief Function operator to construct a Yao graph.
 
       \details This operator implements the algorithm for constructing the Yao graph.
          The algorithm implemented is an adaptation from the algorithm for constructing Theta graph. 
@@ -145,7 +144,7 @@ public:
 
     /*! \brief outputs the directions in the vector rays to the iterator `result`.
 	       
-        \return the past-the-end iterator of the vector `rays`.
+        \return `result`
     */
     template<class DirectionOutputIterator>
     DirectionOutputIterator directions(DirectionOutputIterator result) {

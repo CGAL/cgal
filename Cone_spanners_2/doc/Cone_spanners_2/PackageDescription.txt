@@ -4,12 +4,6 @@
 /// \defgroup PkgConeBasedSpannersConcepts Concepts
 /// \ingroup PkgConeBasedSpanners
 
-/// \defgroup PkgConeBasedSpannersTraitsClasses Traits Classes
-/// \ingroup PkgConeBasedSpanners
-
-/// \defgroup PkgConeBasedSpannersMiscellaneous Miscellaneous
-/// \ingroup PkgConeBasedSpanners
-
 /*!
 \addtogroup PkgConeBasedSpanners
 \todo check generated documentation
@@ -32,10 +26,8 @@ generate the data and script files used by Gnuplot to plot the constructed graph
 
 \cgalPkgShortInfoBegin
 \cgalPkgSince{X.X}
-\cgalPkgDependsOn{\ref PkgDEPENDENCY}
 \cgalPkgBib{cgal:st-cbs}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
-\cgalPkgDemo{DEMO 1,demo1.zip}
 \cgalPkgShortInfoEnd
 
 \cgalPkgDescriptionEnd
@@ -43,7 +35,7 @@ generate the data and script files used by Gnuplot to plot the constructed graph
 \cgalClassifedRefPages
 
 ## Concepts ##
-- `ConeBasedSpannerTraits`
+- `ConeBasedSpannerTraits_2`
 - `ComputeConeBoundaries_2`
 - `ConstructConeBasedSpanner_2`
 
@@ -51,9 +43,5 @@ generate the data and script files used by Gnuplot to plot the constructed graph
 - `CGAL::Compute_cone_boundaries_2`
 - `CGAL::Construct_yao_graph_2`
 - `CGAL::Construct_theta_graph_2`
-
-## Functions to generate Gnuplot files ##
-
-- `CGAL::gnuplot_output_2()`
 
 */
