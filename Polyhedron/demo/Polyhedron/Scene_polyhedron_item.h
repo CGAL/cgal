@@ -46,7 +46,7 @@ public:
     QString compute_stats(int type);
      bool has_stats()const {return true;}
     CGAL::Three::Scene_item::Header_data header() const;
-    QList<TextItem*>* textItems;
+    TextListItem* textItems;
     Scene_polyhedron_item();
     //   Scene_polyhedron_item(const Scene_polyhedron_item&);
     Scene_polyhedron_item(const Polyhedron& p);
@@ -178,7 +178,6 @@ private:
 
     using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;
-
     void compute_normals_and_vertices(const bool colors_only = false) const;
     template<typename FaceNormalPmap, typename VertexNormalPmap>
     void triangulate_facet(Facet_iterator,
@@ -186,8 +185,7 @@ private:
       const bool colors_only) const;
     double volume, area;
     mutable QList<double> text_ids;
-
-
+    mutable TextItem* targeted_id;
   int m_min_patch_id; // the min value of the patch ids initialized in init()
 }; // end class Scene_polyhedron_item
 

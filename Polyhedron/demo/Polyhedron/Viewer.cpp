@@ -69,6 +69,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
 #endif // QGLVIEWER_VERSION >= 2.5.0
   prev_radius = sceneRadius();
   axis_are_displayed = true;
+  has_text = false;
   i_is_pressed = false;
 }
 
@@ -307,6 +308,10 @@ void Viewer::keyPressEvent(QKeyEvent* e)
           i_is_pressed = true;
         }
   }
+  else if(e->key() == Qt::Key_I && e->modifiers() & Qt::ControlModifier){
+        has_text = !has_text;
+        updateGL();
+      }
   //forward the event to the scene (item handling of the event)
   if (! d->scene->keyPressEvent(e) )
     QGLViewer::keyPressEvent(e);
@@ -842,16 +847,12 @@ void Viewer::drawVisualHints()
         rendering_program.release();
         vao[0].release();
     }
-    bool has_text = true ;
-    if(has_text)
-    {
         //So that the text is drawn in front of everything
     painter->beginNativePainting();
         glDisable(GL_DEPTH_TEST);
     painter->endNativePainting();
     //HERE : draw the text
     textRenderer->draw(this);
-    }
     painter->end();
     }
 
@@ -1182,9 +1183,13 @@ bool Viewer::testDisplayId(double x, double y, double z)
 {
     return d->scene->testDisplayId(x,y,z,this);
 }
+
+bool Viewer::textDisplayed() const
+{
+    return has_text;
+}
 void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 {
-    qDebug()<<textItems.size();
     QPainter *painter = viewer->painter;
     if(!painter->isActive())
     {
@@ -1193,29 +1198,64 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 
     QRect rect;
     qglviewer::Camera* camera = viewer->camera();
-    Q_FOREACH(TextItem* item, textItems)
+    if(viewer->textDisplayed())
     {
-        qglviewer::Vec src(item->position()->x(), item->position()->y(),item->position()->z());
-        if(viewer->testDisplayId(src.x, src.y, src.z))
-        {
-            rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
-                         camera->projectedCoordinatesOf(src).y-item->height()/2,
-                         item->width(),
-                         item->height());
-            painter->setFont(item->font());
-            painter->setPen(QPen(item->color()));
-            painter->drawText(rect, item->text());
-        }
+      Q_FOREACH(TextListItem* list, textItems)
+          if(list->item() == scene->item(scene->mainSelectionIndex()))
+              Q_FOREACH(TextItem* item, list->textList())
+              {
+                qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
+                if(viewer->testDisplayId(src.x, src.y, src.z))
+                {
+                  rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
+                               camera->projectedCoordinatesOf(src).y-item->height()/2,
+                               item->width(),
+                               item->height());
+                          painter->setFont(item->font());
+                  painter->setPen(QPen(item->color()));
+                  painter->drawText(rect, item->text());
+                }
+              }
     }
-
+    Q_FOREACH(TextItem* item, local_textItems)
+    {
+      qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
+      if(viewer->testDisplayId(src.x, src.y, src.z))
+      {
+          rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
+                       camera->projectedCoordinatesOf(src).y-item->height()/2,
+                       item->width(),
+                       item->height());
+          painter->setFont(item->font());
+          painter->setPen(QPen(item->color()));
+          painter->drawText(rect, item->text());
+      }
+    }
 }
+
+ void TextRenderer::addTextList(TextListItem *tl)
+ {
+     textItems.append(tl);
+ }
 
  void TextRenderer::addText(TextItem *ti)
  {
-     textItems.append(ti);
+     local_textItems.append(ti);
  }
 
  void TextRenderer::addText(float p_x, float p_y, float p_z, QString p_text, QFont p_font , QColor p_color )
  {
-     textItems.append(new TextItem(p_x, p_y, p_z, p_text, p_font, p_color));
+     local_textItems.append(new TextItem(p_x, p_y, p_z, p_text, p_font, p_color));
+ }
+
+ void TextRenderer::removeText(TextItem *item)
+ {
+             local_textItems.removeAll(item);
+ }
+
+ void TextRenderer::removeTextList(TextListItem *p_list)
+ {
+     Q_FOREACH(TextListItem *list, textItems)
+         if(list == p_list)
+             textItems.removeAll(list);
  }

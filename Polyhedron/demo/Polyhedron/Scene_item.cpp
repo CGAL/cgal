@@ -217,5 +217,7 @@ void CGAL::Three::Scene_item::printPrimitiveId(QPoint, CGAL::Three::Viewer_inter
 {}
 
 bool CGAL::Three::Scene_item::testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)
-{}
+{
+    return false;
+}
 

@@ -4,6 +4,7 @@
 #define VIEWER_H
 
 #include <CGAL/Three/Viewer_config.h>
+#include <CGAL/Three/Scene_interface.h>
 #include <QOpenGLBuffer>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLShaderProgram>
@@ -35,6 +36,7 @@ public:
   Viewer(QWidget * parent, bool antialiasing = false);
   ~Viewer();
   bool testDisplayId(double, double, double);
+  bool textDisplayed() const;
   // overload several QGLViewer virtual functions
   //! Deprecated and does nothing.
   void draw();
@@ -109,6 +111,8 @@ protected:
   std::vector<float> c_Axis;
   //! Decides if the axis system must be drawn or not
   bool axis_are_displayed;
+  //! Decides if the text is displayed in the drawVidulaHints function.
+  bool has_text;
   //!Defines the behaviour for the mouse press events
   void mousePressEvent(QMouseEvent*);
   void wheelEvent(QWheelEvent *);
@@ -143,7 +147,7 @@ protected:
 class TextItem{
 public :
     TextItem(float p_x, float p_y, float p_z, QString p_text, QFont font = QFont(), QColor p_color = Qt::black)
-        :x(p_x), y(p_y), z(p_z), m_text(p_text), m_id(id), m_font(font), m_color(p_color)
+        :x(p_x), y(p_y), z(p_z), m_text(p_text), m_font(font), m_color(p_color)
     {
        QFontMetrics fm(m_font);
        _width = fm.width(m_text);
@@ -151,7 +155,7 @@ public :
     }
     QString text()const {return m_text;}
     //!Returns the position of the center of the text, in world coordinates.
-    QVector3D *position(){return new QVector3D(x,y,z);}
+    QVector3D position(){return QVector3D(x,y,z);}
     float width(){return _width;}
     float height(){return _height;}
     QFont font(){return m_font;}
@@ -167,6 +171,22 @@ private:
     QColor m_color;
 };//end class TextItem
 
+class TextListItem{
+public:
+    TextListItem(CGAL::Three::Scene_item* pItem)
+    {
+      _list = QList<TextItem*>();
+      _item = pItem;
+    }
+
+     CGAL::Three::Scene_item* item()const {return _item;}
+    QList<TextItem*> textList()const {return _list;}
+    void append(TextItem* ti) {_list.append(ti);}
+private:
+    CGAL::Three::Scene_item* _item;
+    QList<TextItem*> _list;
+
+};
 //!This class draws all the textItems.
 class TextRenderer{
 public:
@@ -179,13 +199,17 @@ public:
      */
     void draw(CGAL::Three::Viewer_interface* viewer);
     void draw(CGAL::Three::Viewer_interface* viewer, TextItem* item);
-    void addText(TextItem* ti);
+    void addText(TextItem*);
+    void addTextList(TextListItem*);
     void addText(float p_x, float p_y, float p_z, QString p_text, QFont font = QFont(), QColor p_color = Qt::black);
-    double lastId()const{return m_lastId;}
-    QMap<double,TextItem*> items() const{return textItems;}
+    void removeText(TextItem*);
+    void removeTextList(TextListItem*);
+    QList<TextItem*> local_textItems;
+    QList<TextListItem*> items() const{return textItems;}
+    void setScene(CGAL::Three::Scene_interface* p_scene){scene = p_scene;}
 private:
-    QList<QList<TextItem*>*> textItems;
-    QOpenGLFramebufferObject *fbo;
+    QList<TextListItem*> textItems;
+    CGAL::Three::Scene_interface *scene;
 
 };//end class TextRenderer
 #endif // VIEWER_H

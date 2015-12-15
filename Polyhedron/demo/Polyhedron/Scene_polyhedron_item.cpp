@@ -406,6 +406,8 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
 
     TextRenderer *renderer = viewer->textRenderer;
     //clears textitems
+    renderer->removeTextList(textItems);
+
     QFont font;
     font.setBold(true);
 
@@ -413,7 +415,7 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
     Q_FOREACH(Polyhedron::Vertex_const_handle vh, vertices(*poly))
     {
         const Point& p = vh->point();
-        textItems->append(new TextItem((float)p.x(), (float)p.y(), (float)p.z(), QString("%1").arg(vh->id()), renderer->lastId(), font, Qt::red));
+        textItems->append(new TextItem((float)p.x(), (float)p.y(), (float)p.z(), QString("%1").arg(vh->id()), font, Qt::red));
 
     }
 
@@ -421,7 +423,7 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
     {
         const Point& p1 = source(e, *poly)->point();
         const Point& p2 = target(e, *poly)->point();
-        textItems->append( new TextItem((float)(p1.x()+p2.x())/2, (float)(p1.y()+p2.y())/2, (float)(p1.z()+p2.z())/2, QString("%1").arg(e.halfedge()->id()/2), renderer->lastId(), font, Qt::green));
+        textItems->append( new TextItem((float)(p1.x()+p2.x())/2, (float)(p1.y()+p2.y())/2, (float)(p1.z()+p2.z())/2, QString("%1").arg(e.halfedge()->id()/2), font, Qt::green));
     }
 
     Q_FOREACH(Polyhedron::Facet_handle fh, faces(*poly))
@@ -436,9 +438,10 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
             ++total;
         }
 
-        textItems->append( new TextItem((float)x/total, (float)y/total, (float)z/total, QString("%1").arg(fh->id()), renderer->lastId(), font, Qt::blue));
+        textItems->append( new TextItem((float)x/total, (float)y/total, (float)z/total, QString("%1").arg(fh->id()), font, Qt::blue));
     }
     //add the QList to the render's pool
+    renderer->addTextList(textItems);
 }
 
 
@@ -646,7 +649,8 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     nb_lines = 0;
     nb_f_lines = 0;
     invalidate_stats();
-    textItems = new QList<TextItem*>();
+    textItems = new TextListItem(this);
+    init();
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
@@ -663,7 +667,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     nb_facets = 0;
     nb_lines = 0;
     nb_f_lines = 0;
-    textItems = new QList<TextItem*>();
+    textItems = new TextListItem(this);
     init();
     invalidateOpenGLBuffers();
 }
@@ -679,7 +683,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
 {
     cur_shading=FlatPlusEdges;
     is_selected=true;
-    textItems = new QList<TextItem*>();
+    textItems = new TextListItem(this);
     init();
     nb_facets = 0;
     nb_lines = 0;
@@ -695,9 +699,14 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
     if(viewer)
     {
     CGAL::Three::Viewer_interface* v = qobject_cast<CGAL::Three::Viewer_interface*>(viewer);
+
+    //Clears the targeted Id
+    targeted_id = NULL;
+    delete targeted_id;
     //Remove textitems
+    v->textRenderer->removeTextList(textItems);
     textItems =0;
-    delete textitems;
+    delete textItems;
     }
 
 }
@@ -1371,9 +1380,8 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
 void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface *viewer)
 {
     TextRenderer *renderer = viewer->textRenderer;
-    //Clears the list of textItems
+    renderer->local_textItems.clear();
 
-    //Creates a new textItem
     QFont font;
     font.setBold(true);
 
@@ -1421,7 +1429,7 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
 
                 float dist = 0;
                 float min_dist =0;
-                QMap<float, TextItem*> textItems;
+                QMap<float, TextItem*> t_Items;
                 qglviewer::Vec test((*vertices_around_face(selected_fh->halfedge(), *poly).begin())->point().x(),
                                     (*vertices_around_face(selected_fh->halfedge(), *poly).begin())->point().y(),
                                     (*vertices_around_face(selected_fh->halfedge(), *poly).begin())->point().z());
@@ -1433,7 +1441,7 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
                     dist = (test.x-point_under.x)*(test.x-point_under.x)+(test.y-point_under.y)*(test.y-point_under.y)+(test.z-point_under.z)*(test.z-point_under.z);
                     if(dist < min_dist)
                         min_dist = dist;
-                    textItems[dist] = new TextItem(test.x, test.y, test.z,QString("%1").arg(vh->id()),font, Qt::red);
+                    t_Items[dist] = new TextItem(test.x, test.y, test.z,QString("%1").arg(vh->id()),font, Qt::red);
                 }
                 Q_FOREACH(boost::graph_traits<Polyhedron>::halfedge_descriptor e, halfedges_around_face(selected_fh->halfedge(), *poly))
                 {
@@ -1443,7 +1451,7 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
                     dist = (test.x-point_under.x)*(test.x-point_under.x)+(test.y-point_under.y)*(test.y-point_under.y)+(test.z-point_under.z)*(test.z-point_under.z);
                     if(dist < min_dist)
                         min_dist = dist;
-                    textItems[dist] = new TextItem(test.x, test.y, test.z, QString("%1").arg(e->id()/2), font, Qt::green);
+                    t_Items[dist] = new TextItem(test.x, test.y, test.z, QString("%1").arg(e->id()/2), font, Qt::green);
 
                 }
 
@@ -1461,8 +1469,32 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
                 dist = (test.x-point_under.x)*(test.x-point_under.x)+(test.y-point_under.y)*(test.y-point_under.y)+(test.z-point_under.z)*(test.z-point_under.z);
                 if(dist < min_dist)
                     min_dist = dist;
-                textItems[dist] = new TextItem(test.x, test.y, test.z, QString("%1").arg(selected_fh->id()), font, Qt::blue);
-                renderer->addText(textItems[min_dist]);
+                t_Items[dist] = new TextItem(test.x, test.y, test.z, QString("%1").arg(selected_fh->id()), font, Qt::blue);
+                if(!targeted_id || targeted_id->position() != t_Items[min_dist]->position())
+                {
+                    targeted_id = t_Items[min_dist];
+                    renderer->addText(targeted_id);
+                }
+                else
+                {
+                    Q_FOREACH(TextItem *item, renderer->local_textItems)
+                    {
+                        if(item->position() == targeted_id->position())
+                        {
+                            renderer->removeText(item);
+                        }
+                    }
+                    targeted_id = NULL;
+                }
+                //Clean-up
+                Q_FOREACH(TextItem* item, t_Items)
+                {
+                    if (item !=t_Items[min_dist])
+                    {
+                        item = 0;
+                        delete item;
+                    }
+                }
             }
         }
     }
@@ -1471,13 +1503,13 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
 
 bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
 {
-    CGAL::Point_3<Kernel> src(x,y,z);
-    CGAL::Point_3<Kernel>  dest(viewer->camera()->position().x, viewer->camera()->position().y,viewer->camera()->position().z);
+    Kernel::Point_3 src(x,y,z);
+    Kernel::Point_3 dest(viewer->camera()->position().x, viewer->camera()->position().y,viewer->camera()->position().z);
     Kernel::Vector_3 v(src,dest);
     v = 0.01*v;
     Kernel::Point_3 point = src;
     point = point + v;
-    CGAL::Segment_3<Kernel> query(point, dest);
+    Kernel::Segment_3 query(point, dest);
     return !get_aabb_tree(this)->do_intersect(query);
 
 }

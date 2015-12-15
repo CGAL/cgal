@@ -135,6 +135,7 @@ MainWindow::MainWindow(QWidget* parent)
 
   // setup scene
   scene = new Scene(this);
+  viewer->textRenderer->setScene(scene);
   viewer->setScene(scene);
   {
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
