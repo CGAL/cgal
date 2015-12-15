@@ -44,6 +44,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                        "but decrease the z-buffer precision"));
   setKeyDescription(Qt::Key_A,
                       tr("Toggle the axis system visibility."));
+  setKeyDescription(Qt::Key_I + Qt::SHIFT,
+                      tr("Toggle the privtive IDs visibility of the selected Item."));
 #if QGLVIEWER_VERSION >= 0x020501
   //modify mouse bindings that have been updated
   setMouseBinding(Qt::Key(0), Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL, true, Qt::RightButton);
@@ -57,9 +59,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                              tr("Selects and display context "
                                 "menu of the selected item"));
   setMouseBindingDescription(Qt::Key_I, Qt::NoModifier, Qt::LeftButton,
-                             tr("Displays the closest primitive ID :"
-                                "facets IDs in blue, edges IDs in green"
-                                "and vertices IDs in red."));
+                             tr("Show/hide the primitive ID."));
 #else
   setMouseBinding(Qt::SHIFT + Qt::LeftButton, SELECT);
   setMouseBindingDescription(Qt::SHIFT + Qt::RightButton,
