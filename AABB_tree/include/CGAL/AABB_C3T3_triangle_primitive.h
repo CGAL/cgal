@@ -85,9 +85,9 @@ namespace CGAL {
         Datum datum() const
         {
           int i = m_facet.second;
-          const Point& a = m_facet.first->vertex((i+1) %3)->point();
-          const Point& b = m_facet.first->vertex((i+2) %3)->point();
-          const Point& c = m_facet.first->vertex((i+3) %3)->point();
+          const Point& a = m_facet.first->vertex((i+1) &3)->point();
+          const Point& b = m_facet.first->vertex((i+2) &3)->point();
+          const Point& c = m_facet.first->vertex((i+3) &3)->point();
           
           return Datum(a,b,c);
         }
@@ -95,7 +95,7 @@ namespace CGAL {
         // Returns a point on the primitive
         Point reference_point() const
         {
-          return  m_facet.first->vertex((m_facet.second +1) %3)->point();
+          return  m_facet.first->vertex((m_facet.second +1) &3)->point();
         }
 
         // Returns the identifier
