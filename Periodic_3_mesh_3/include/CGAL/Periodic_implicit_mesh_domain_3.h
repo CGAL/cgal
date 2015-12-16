@@ -64,7 +64,7 @@ public:
    */
   Periodic_implicit_mesh_domain_3(const Function& f,
                          const Iso_cuboid_3& cuboid,
-                         const FT& error_bound = FT(1e-3))
+                         FT error_bound = FT(1e-3))
     : Base(Wrapper(f), cuboid, error_bound) {}
 
   /// Destructor

@@ -94,7 +94,7 @@ public:
       FT b_min [3] = { b.x(), b.y(), b.z() };
       for (unsigned idx = 0; idx < 3; ++idx)
       {
-        FT offset = dimension[idx] * static_cast<FT>(std::min(o1[idx], o2[idx]));
+        FT offset = dimension[idx] * static_cast<FT>((std::min)(o1[idx], o2[idx]));
         a_min[idx] -= offset;
         b_min[idx] -= offset;
       }
@@ -108,7 +108,7 @@ public:
       FT b_max [3] = { b.x(), b.y(), b.z() };
       for (unsigned idx = 0; idx < 3; ++idx)
       {
-        FT offset = dimension[idx] * static_cast<FT>(std::max(o1[idx], o2[idx]));
+        FT offset = dimension[idx] * static_cast<FT>((std::max)(o1[idx], o2[idx]));
         a_max[idx] -= offset;
         b_max[idx] -= offset;
       }
@@ -201,7 +201,7 @@ public:
       b_t[0] -= pbb.xmin();
       b_t[1] -= pbb.ymin();
       b_t[2] -= pbb.zmin();
-      // AF: Isn't there the risk that all values become zero??
+
       int o1 [3] = { a_t[0] / dimension[0], a_t[1] / dimension[1], a_t[2] / dimension[2] };
       int o2 [3] = { b_t[0] / dimension[0], b_t[1] / dimension[1], b_t[2] / dimension[2] };
 
@@ -209,7 +209,7 @@ public:
       FT b_min [3] = { b.x(), b.y(), b.z() };
       for (unsigned idx = 0; idx < 3; ++idx)
       {
-        FT offset = dimension[idx] * static_cast<FT>(std::min(o1[idx], o2[idx]));
+        FT offset = dimension[idx] * static_cast<FT>((std::min)(o1[idx], o2[idx]));
         a_min[idx] -= offset;
         b_min[idx] -= offset;
       }
@@ -233,7 +233,7 @@ public:
         FT b_max [3] = { b.x(), b.y(), b.z() };
         for (unsigned idx = 0; idx < 3; ++idx)
         {
-          FT offset = dimension[idx] * static_cast<FT>(std::max(o1[idx], o2[idx]));
+          FT offset = dimension[idx] * static_cast<FT>((std::max)(o1[idx], o2[idx]));
           a_max[idx] -= offset;
           b_max[idx] -= offset;
         }

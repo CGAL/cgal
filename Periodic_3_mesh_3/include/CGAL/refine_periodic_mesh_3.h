@@ -146,7 +146,7 @@ void refine_periodic_mesh_3_impl(C3T3& c3t3,
                    parameters::sliver_bound = perturb.bound());
   }
 
-#if 0 // regular stuff is not yet supported by periodic triangulations
+#if 1 // regular stuff is not yet supported by periodic triangulations
   // Exudation
   if ( exude )
   {

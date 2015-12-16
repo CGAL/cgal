@@ -119,6 +119,18 @@ public:
       this->insert_dummy_points();      
   }
 
+  template <typename Cell_handle>
+  bool try_lock_cell(const Cell_handle &, int = 0) const
+  { return true; }
+  bool
+  try_lock_and_get_incident_cells(Vertex_handle v,
+                                  std::vector<Cell_handle>& cells) const
+  {
+    std::cerr << "ERROR: implement try_lock_and_get_incident_cells()"<< std::endl;
+    return true;
+  }
+
+
   bool is_infinite(const Vertex_handle v) const
   { return false; }
 

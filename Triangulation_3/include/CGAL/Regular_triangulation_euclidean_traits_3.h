@@ -392,7 +392,7 @@ public:
 
 
   result_type operator() (
-        const Weighted_point_3 & p,
+                          const Weighted_point_3 & p,
 			  const Weighted_point_3 & q,
 			  const Weighted_point_3 & r,
 			  const Weighted_point_3 & s,

@@ -370,7 +370,7 @@ public:
       }
         
       case 4:
-        do_spheres_intersect_ = ((compare(p1,p2,p3,p4,FT(0)) != CGAL::LARGER));
+        do_spheres_intersect_ = (compare(p1,p2,p3,p4,FT(0)) != CGAL::LARGER);
         break;
         
       default:
