@@ -112,13 +112,13 @@ public:
       assert(p.weight() < 0.015625);
       stream << p << std::endl;
 
-      std::ptrdiff_t hidden_point_count = 0;
+      std::size_t hidden_point_count = 0;
       for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
         hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
 
       Vertex_handle vh = p3rt3.insert(p);
 
-      std::ptrdiff_t hidden_point_count_2 = 0;
+      std::size_t hidden_point_count_2 = 0;
       for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
         hidden_point_count_2 += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
       assert(hidden_point_count <= hidden_point_count_2);
@@ -153,7 +153,7 @@ public:
 
       std::cout << "    p3rt3.number_of_vertices() : " << p3rt3.number_of_vertices() << "  .number_of_stored_vertices : " << p3rt3.number_of_stored_vertices() << std::endl;
 
-      std::ptrdiff_t hidden_point_count = 0;
+      std::size_t hidden_point_count = 0;
       for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
         hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
 
