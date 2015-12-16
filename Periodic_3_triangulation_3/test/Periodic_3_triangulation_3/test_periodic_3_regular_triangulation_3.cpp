@@ -509,8 +509,7 @@ public:
     while (points.size() != pt_count)
     {
       Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
-      //points.push_back(p);
-      std::cout << p <<std::endl;
+      points.push_back(p);
     }
         std::cout << "--- done " << std::endl;
     p3rt3.insert(points.begin(), points.end(), true);
@@ -756,7 +755,6 @@ public:
 
 int main (int argc, char** argv)
 {
-  std::cout.precision(17);
   std::cout << "TESTING ..." << std::endl;
 
   CGAL::force_ieee_double_precision();
