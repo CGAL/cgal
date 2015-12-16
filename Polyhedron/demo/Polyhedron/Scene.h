@@ -233,6 +233,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   //generated automatically by moc
+  void itemPicked(const QModelIndex &);
   void newItem(int);
   void updated_bbox();
   void updated();
@@ -270,6 +271,7 @@ private:
   int item_A;
   //!Index of the item_B.
   int item_B;
+  bool picked;
   static GlSplat::SplatRenderer* ms_splatting;
   static int ms_splattingCounter;
   QMap<QModelIndex, int> index_map;
