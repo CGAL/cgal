@@ -120,7 +120,7 @@ public:
     assert(p3rt3.number_of_vertices() == 1);
     assert(p3rt3.number_of_stored_vertices() == 27);
 
-    unsigned hidden_point_count = 0;
+    std::ptrdiff_t hidden_point_count = 0;
     for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
       hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
     assert(hidden_point_count == 0);
@@ -152,7 +152,7 @@ public:
     assert(p3rt3.number_of_vertices() == 5);
     assert(p3rt3.number_of_stored_vertices() == 135);
 
-    unsigned hidden_point_count = 0;
+    std::ptrdiff_t hidden_point_count = 0;
     for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
       hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
     assert(hidden_point_count == 0);
@@ -177,7 +177,7 @@ public:
     assert(p3rt3.number_of_vertices() == 4);
     assert(p3rt3.number_of_stored_vertices() == 108);
 
-    unsigned hidden_point_count = 0;
+    std::ptrdiff_t hidden_point_count = 0;
     for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
       hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
     assert(hidden_point_count == 0);
@@ -220,7 +220,7 @@ public:
     assert(p3rt3.number_of_vertices() == 4);
     assert(p3rt3.number_of_stored_vertices() == 108);
 
-    unsigned hidden_point_count = 0;
+    std::ptrdiff_t hidden_point_count = 0;
     for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
       hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
     assert(hidden_point_count == 0);
@@ -260,7 +260,7 @@ public:
     assert(p3rt3.number_of_vertices() == 1);
     assert(p3rt3.number_of_stored_vertices() == 27);
 
-    unsigned hidden_point_count = 0;
+    std::ptrdiff_t hidden_point_count = 0;
     for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
       hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
     assert(hidden_point_count == 0);
@@ -287,7 +287,7 @@ public:
     assert(p3rt3.number_of_stored_vertices() == 27);
 
     unsigned hidden_found_count = 0;
-    unsigned hidden_point_count = 0;
+    std::ptrdiff_t hidden_point_count = 0;
     for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
     {
       hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
@@ -328,7 +328,7 @@ public:
     assert(p3rt3.number_of_vertices() == 4);
     assert(p3rt3.number_of_stored_vertices() == 108);
 
-    unsigned hidden_point_count = 0;
+    std::ptrdiff_t hidden_point_count = 0;
     for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
       hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
     assert(hidden_point_count == 0);
@@ -365,7 +365,7 @@ public:
         p3rt3.number_of_stored_vertices() == 27 * pt_count
         : p3rt3.number_of_stored_vertices() == pt_count);
 
-    unsigned hidden_point_count = 0;
+    std::ptrdiff_t hidden_point_count = 0;
     for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
       hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
     assert(hidden_point_count == 0);
@@ -441,7 +441,7 @@ public:
     assert(p3rt3.number_of_vertices() == 6*6*8);
     assert(p3rt3.is_valid());
 
-    unsigned hidden_point_count = 0;
+    std::ptrdiff_t hidden_point_count = 0;
     for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
       hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
 
@@ -650,7 +650,7 @@ public:
     assert(p3rt3.number_of_vertices() == 4);
     assert(p3rt3.number_of_stored_vertices() == 108);
 
-    unsigned hidden_point_count = 0;
+    std::ptrdiff_t hidden_point_count = 0;
     for (Cell_iterator iter = p3rt3.cells_begin(), end_iter = p3rt3.cells_end(); iter != end_iter; ++iter)
       hidden_point_count += std::distance(iter->hidden_points_begin(), iter->hidden_points_end());
     assert(hidden_point_count == 0);

@@ -97,11 +97,11 @@ private:
 	Iso_cuboid_3 _dom;
 };
 
-template <class Kernel, class Off = typename CGAL::Periodic_3_offset_3>
-class Periodic_3_regular_triangulation_traits_base_3 : public Kernel
+template <class Kernel_, class Off = typename CGAL::Periodic_3_offset_3>
+class Periodic_3_regular_triangulation_traits_base_3 : public Kernel_
 {
 public:
-  typedef Kernel K;
+  typedef Kernel_ K;
   typedef K                                                       RT;
 	typedef Off                                                          Offset;
 	typedef Periodic_3_regular_triangulation_traits_base_3<RT, Offset>    Self;
