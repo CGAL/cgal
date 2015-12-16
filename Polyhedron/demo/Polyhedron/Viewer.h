@@ -144,7 +144,7 @@ protected:
 }; // end class Viewer
 
 //!This class holds the properties of each line of text to be rendered.
-class TextItem{
+class  VIEWER_EXPORT TextItem{
 public :
     TextItem(float p_x, float p_y, float p_z, QString p_text, QFont font = QFont(), QColor p_color = Qt::black)
         :x(p_x), y(p_y), z(p_z), m_text(p_text), m_font(font), m_color(p_color)
@@ -171,7 +171,7 @@ private:
     QColor m_color;
 };//end class TextItem
 
-class TextListItem{
+class  VIEWER_EXPORT TextListItem{
 public:
     TextListItem(CGAL::Three::Scene_item* pItem)
     {
@@ -188,7 +188,7 @@ private:
 
 };
 //!This class draws all the textItems.
-class TextRenderer{
+class  VIEWER_EXPORT TextRenderer{
 public:
     TextRenderer()
     {
