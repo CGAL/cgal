@@ -717,6 +717,24 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
 
 }
 
+void Scene::moveRowUp()
+{
+  if(index_map.key(mainSelectionIndex()).row() > 0)
+  {
+      m_entries.move(mainSelectionIndex(), mainSelectionIndex()-1);
+      group_added();
+      setSelectedItem(item(mainSelectionIndex()-1));
+  }
+}
+void Scene::moveRowDown()
+{
+    if(index_map.key(mainSelectionIndex()).row() < rowCount(index_map.key(mainSelectionIndex()).parent())-1)
+    {
+        m_entries.move(mainSelectionIndex(), mainSelectionIndex()+1);
+        group_added();
+        setSelectedItem(item(mainSelectionIndex()+1));
+    }
+}
 Scene::Item_id Scene::mainSelectionIndex() const {
     return selected_item;
 }

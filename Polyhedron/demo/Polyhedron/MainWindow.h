@@ -77,7 +77,8 @@ public Q_SLOTS:
   void make_new_group();
   void updateViewerBBox();
   void open(QString);
-
+  void on_upButton_pressed();
+  void on_downButton_pressed();
   void restoreCollapseState();
   /// given a file extension file, returns true if `filename` matches the filter
   bool file_matches_filter(const QString& filters, const QString& filename);
