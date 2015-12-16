@@ -119,6 +119,13 @@ public:
   }
 
   /**
+   * Returns a bounding box of the domain
+   */
+  Bbox_3 bbox() const {
+    return this->bbox_.bbox();
+  }
+
+  /**
    * Constructs  a set of \ccc{n} points on the surface, and output them to
    *  the output iterator \ccc{pts} whose value type is required to be
    *  \ccc{std::pair<Points_3, Index>}.

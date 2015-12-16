@@ -178,6 +178,15 @@ typedef unspecified_type Construct_intersection;
 
 /// @}
 
+/// \name Bounding box
+/// Since CGAL-4.8, a model of `MeshDomain_3` must provide a function
+/// providing a bounding box of the domain.
+/// @{
+
+/// Return the bounding box of the domain
+Bbox_3 bbox() const;
+/// @}
+
 /// \name Operations
 /// The following functions give access to the function objects:
 /// @{
