@@ -117,6 +117,7 @@ public Q_SLOTS:
       double target_length = ui.edgeLength_dspinbox->value();
       unsigned int nb_iter = ui.nbIterations_spinbox->value();
       bool protect = ui.protect_checkbox->isChecked();
+      bool smooth_features = ui.smooth1D_checkbox->isChecked();
 
       // wait cursor
       QApplication::setOverrideCursor(Qt::WaitCursor);
@@ -181,7 +182,8 @@ public Q_SLOTS:
           , target_length
           , *selection_item->polyhedron()
           , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
-          .protect_constraints(protect));
+          .protect_constraints(protect)
+          .smooth_along_features(smooth_features));
         else
           CGAL::Polygon_mesh_processing::isotropic_remeshing(
            selection_item->selected_facets
@@ -190,7 +192,7 @@ public Q_SLOTS:
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
          .edge_is_constrained_map(selection_item->selected_edges_pmap(selected))
-         );
+         .smooth_along_features(smooth_features));
 
         }
         selection_item->poly_item_changed();
@@ -224,7 +226,8 @@ public Q_SLOTS:
          , target_length
          , *selection_item->polyhedron()
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
-         .protect_constraints(protect));
+         .protect_constraints(protect)
+         .smooth_along_features(smooth_features));
         }
         poly_item->invalidate_buffers();
         Q_EMIT poly_item->itemChanged();
@@ -246,6 +249,7 @@ public Q_SLOTS:
     double target_length = 0.;
     unsigned int nb_iter = 1;
     bool protect = false;
+    bool smooth_features = true;
 
     std::vector<Scene_polyhedron_item*> selection;
     BOOST_FOREACH(int index, scene->selectionIndices())
@@ -280,6 +284,7 @@ public Q_SLOTS:
         target_length = ui.edgeLength_dspinbox->value();
         nb_iter = ui.nbIterations_spinbox->value();
         protect = ui.protect_checkbox->isChecked();
+        smooth_features = ui.smooth1D_checkbox->isChecked();
         }
       }
     }
@@ -301,11 +306,12 @@ public Q_SLOTS:
       tbb::parallel_for(
         tbb::blocked_range<std::size_t>(0, selection.size()),
         Remesh_polyhedron_item_for_parallel_for<Remesh_polyhedron_item>(
-          selection, edges_only, target_length, nb_iter, protect));
+          selection, edges_only, target_length, nb_iter, protect, smooth_features));
 
     total_time = time.elapsed();
 #else
-    Remesh_polyhedron_item remesher(edges_only, target_length, nb_iter, protect);
+    Remesh_polyhedron_item remesher(edges_only,
+      target_length, nb_iter, protect, smooth_features);
     BOOST_FOREACH(Scene_polyhedron_item* poly_item, selection)
     {
       QTime time;
@@ -342,6 +348,7 @@ private:
     double target_length_;
     unsigned int nb_iter_;
     bool protect_;
+    bool smooth_features_;
 
   protected:
     void remesh(Scene_polyhedron_item* poly_item) const
@@ -376,7 +383,8 @@ private:
           , target_length_
           , *poly_item->polyhedron()
           , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter_)
-          .protect_constraints(protect_));
+          .protect_constraints(protect_)
+          .smooth_along_features(smooth_features_));
       }
     }
 
@@ -385,11 +393,13 @@ private:
       const bool edges_only,
       const double target_length,
       const unsigned int nb_iter,
-      const bool protect)
+      const bool protect,
+      const bool smooth_features)
       : edges_only_(edges_only)
       , target_length_(target_length)
       , nb_iter_(nb_iter)
       , protect_(protect)
+      , smooth_features_(smooth_features)
     {}
 
     Remesh_polyhedron_item(const Remesh_polyhedron_item& remesh)
@@ -397,6 +407,7 @@ private:
       , target_length_(remesh.target_length_)
       , nb_iter_(remesh.nb_iter_)
       , protect_(remesh.protect_)
+      , smooth_features_(remesh.smooth_features_)
     {}
 
     void operator()(Scene_polyhedron_item* poly_item) const
@@ -419,8 +430,9 @@ private:
       const bool edges_only,
       const double target_length,
       const unsigned int nb_iter,
-      const bool protect)
-      : RemeshFunctor(edges_only, target_length, nb_iter, protect)
+      const bool protect,
+      const bool smooth_features)
+      : RemeshFunctor(edges_only, target_length, nb_iter, protect, smooth_features)
       , selection_(selection)
     {
       ;
@@ -457,6 +469,8 @@ private:
             ui.nbIterations_spinbox, SLOT(setDisabled(bool)));
     connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
             ui.protect_checkbox, SLOT(setDisabled(bool)));
+    connect(ui.protect_checkbox, SIGNAL(toggled(bool)),
+            ui.smooth1D_checkbox, SLOT(setDisabled(bool)));
 
     //Set default parameters
     Scene_interface::Bbox bbox = poly_item != NULL ? poly_item->bbox()
@@ -490,6 +504,8 @@ private:
     ui.nbIterations_spinbox->setValue(1);
 
     ui.protect_checkbox->setChecked(false);
+    ui.smooth1D_checkbox->setChecked(true);
+
     return ui;
   }
 
