@@ -1,6 +1,6 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Triangulated Surface Mesh Segmentation"
+PROJECT_NAME =  "CGAL ${CGAL_FULL_VERSION} - Triangulated Surface Mesh Segmentation"
 # custom options for this package
 EXTRACT_ALL                =  false
 HIDE_UNDOC_CLASSES         =  true

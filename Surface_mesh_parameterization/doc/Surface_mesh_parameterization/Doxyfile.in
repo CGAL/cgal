@@ -1,6 +1,6 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Planar Parameterization of Triangulated Surface Meshes"
+PROJECT_NAME                       =  "CGAL ${CGAL_FULL_VERSION} - Planar Parameterization of Triangulated Surface Meshes"
 EXTRACT_ALL                =  false
 HIDE_UNDOC_CLASSES         =  true
 WARN_IF_UNDOCUMENTED       =  false

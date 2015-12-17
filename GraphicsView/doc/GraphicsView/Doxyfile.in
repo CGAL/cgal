@@ -1,3 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - CGAL and the Qt Graphics View Framework"
+PROJECT_NAME                       =  "CGAL ${CGAL_FULL_VERSION} - CGAL and the Qt Graphics View Framework"

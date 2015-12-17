@@ -1,6 +1,6 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Point Set Processing"
+PROJECT_NAME                       =  "CGAL ${CGAL_FULL_VERSION} - Point Set Processing"
 EXCLUDE_PATTERNS          +=  property_map.h
 
             
