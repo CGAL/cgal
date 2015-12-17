@@ -142,7 +142,7 @@ FindPolynomialRoots(
 		    FLOAT           *u,                               /* Real component of each root */
 		    FLOAT           *v,                               /* Imaginary component of each root */
 		    FLOAT           *conv,                            /* Convergence constant associated with each root */
-		    register long   n,                                /* Degree of polynomial (order-1) */
+		    long            n,                                /* Degree of polynomial (order-1) */
 		    long            maxiter,                          /* Maximum number of iterations */
 		    long            fig                               /* The number of decimal figures to be computed */
 		    )
@@ -151,7 +151,7 @@ FindPolynomialRoots(
   int number_of_INIT=0;
   CGAL_precondition(static_cast<unsigned int>(fig) < MAXN);
   int i;
-  register int j;
+  int j;
   FLOAT h[MAXN + 3], b[MAXN + 3], c[MAXN + 3], d[MAXN + 3], e[MAXN + 3];
   /* [-2 : n] */
   FLOAT K, ps, qs, pt, qt, s, rev, r= std::numeric_limits<double>::infinity();
