@@ -45,7 +45,7 @@ class LineC3
   {
     Point_3 first;
     Vector_3 second;
-    Rep () : first(Point_3()), second(Vector_3()) { }
+    Rep () : first(), second() { }
     Rep (const Point_3& p, const Vector_3& v) : first(p), second(v) { }
     Rep (const Rep& r) : first(r.first), second(r.second) { }
   };
