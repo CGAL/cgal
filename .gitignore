@@ -476,6 +476,13 @@ Mesh_3/test/Mesh_3/test_meshing_polyhedron_with_features
 Mesh_3/test/Mesh_3/test_meshing_polylines_only
 Mesh_3/test/Mesh_3/test_off
 Mesh_3/test/Mesh_3/test_robust_weighted_circumcenter
+/Mesh_3/test/Mesh_3/test_backward_compatibility
+/Mesh_3/test/Mesh_3/test_c3t3_extract_subdomains_boundaries
+/Mesh_3/test/Mesh_3/test_implicit_multi_domain_to_labeling_function_wrapper
+/Mesh_3/test/Mesh_3/test_labeled_mesh_domain_3
+/Mesh_3/test/Mesh_3/test_mesh_3_implicit_vector_to_labeled_function_wrapper
+/Mesh_3/test/Mesh_3/test_mesh_3_labeled_mesh_domain_3
+/Mesh_3/test/Mesh_3/test_meshing_3D_gray_image
 Minkowski_sum_3/test/Minkowski_sum_3/CMakeLists.txt
 Minkowski_sum_3/test/Minkowski_sum_3/cgal_test_with_cmake
 Nef_2/test/Nef_2/CMakeLists.txt
