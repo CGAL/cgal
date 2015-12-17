@@ -621,7 +621,7 @@ bool LSCM_parameterizer_3<Adaptor, Border_param, Sparse_LA>::
 is_one_to_one_mapping(const Adaptor& mesh,
                       const LeastSquaresSolver& )
 {
-    Vector_3    first_triangle_normal;
+    Vector_3    first_triangle_normal(0., 0., 0.);
 
     for (Facet_const_iterator facetIt = mesh.mesh_facets_begin();
          facetIt != mesh.mesh_facets_end();
