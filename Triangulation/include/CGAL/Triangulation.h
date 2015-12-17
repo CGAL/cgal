@@ -877,8 +877,9 @@ Triangulation<TT, TDS>
     std::back_insert_iterator<std::vector<Full_cell_handle> > out(simps);
     if( current_dimension() < maximal_dimension() )
     {
+        Coaffine_orientation_d ori = coaffine_orientation_predicate();
         Outside_convex_hull_traversal_predicate<Coaffine_orientation_d>
-            ochtp(*this, p, coaffine_orientation_predicate());
+            ochtp(*this, p, ori);
         tds().gather_full_cells(s, ochtp, out);
     }
     else
