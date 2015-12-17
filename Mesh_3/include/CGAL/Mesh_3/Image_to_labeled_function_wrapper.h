@@ -127,7 +127,7 @@ public:
 private:
   /// Labeled image to wrap
   const Image_& r_im_;
-  const Transform& transform;
+  const Transform transform;
   const Image_word_type value_outside;
 
 };  // end class Image_to_labeled_function_wrapper
