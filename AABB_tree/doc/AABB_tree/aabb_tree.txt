@@ -206,10 +206,10 @@ subdivision scheme which multiplies the number of triangles by four.
 
 |  Number of triangles | Construction (in ms) | Construction with internal KD-tree (in ms) |
 | ----: | ----:     | ----:     |
-   14,400 | 156.000 |   157,000 |
-   57,600 | 328.000 |   328,000 |
-  230,400 |   1.141 |     1,437 |
-  921,600 |   4.813 |     5,953 |
+   14,400 |     156 |       157 |
+   57,600 |     328 |       328 |
+  230,400 |   1,141 |     1,437 |
+  921,600 |   4,813 |     5,953 |
 
 \subsection aabb_tree_perf_mem Memory
 
