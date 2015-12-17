@@ -63,7 +63,8 @@ public:
   void attrib_buffers(int program_name) const;
   //! Implementation of `Viewer_interface::getShaderProgram()`
   QOpenGLShaderProgram* getShaderProgram(int name) const;
-
+Q_SIGNALS:
+  void sendMessage(QString);
 public Q_SLOTS:
   //! Sets the antialiasing to true or false.
   void setAntiAliasing(bool b);
@@ -87,11 +88,14 @@ protected:
       std::vector<float> *colors;
   };
   //! The buffers used to draw the axis system
-  QOpenGLBuffer buffers[3];
+  QOpenGLBuffer buffers[4];
   //! The VAO used to draw the axis system
-  QOpenGLVertexArrayObject vao[1];
+  QOpenGLVertexArrayObject vao[2];
   //! The rendering program used to draw the axis system
   QOpenGLShaderProgram rendering_program;
+  //! The rendering program used to draw the distance
+  QOpenGLShaderProgram rendering_program_dist;
+
   //! Holds the vertices data for the axis system
   std::vector<float> v_Axis;
   //! Holds the normals data for the axis system
@@ -100,11 +104,15 @@ protected:
   std::vector<float> c_Axis;
   //! Decides if the axis system must be drawn or not
   bool axis_are_displayed;
+  //! Decides if the distance between APoint and BPoint must be drawn;
+  bool distance_is_displayed;
   //!Defines the behaviour for the mouse press events
   void mousePressEvent(QMouseEvent*);
   void wheelEvent(QWheelEvent *);
   //!Defines the behaviour for the key press events
   void keyPressEvent(QKeyEvent*);
+  //!Defines the behaviour for the key release events
+  void keyReleaseEvent(QKeyEvent*);
   /*! \brief Encapsulates the pickMatrix.
   * Source code of gluPickMatrix slightly modified : instead of multiplying the current matrix by this value,
   * sets the viewer's pickMatrix_ so that the drawing area is only around the cursor. This is because since CGAL 4.7,
@@ -125,7 +133,11 @@ protected:
 
   void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
   void resizeGL(int w, int h);
-
+  //!Draws the distance between two selected points.
+  void showDistance(QPoint);
+  qglviewer::Vec APoint;
+  qglviewer::Vec BPoint;
+  bool is_d_pressed;
 
 protected:
   Viewer_impl* d;
