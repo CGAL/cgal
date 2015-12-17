@@ -36,6 +36,9 @@ namespace CGAL{
   enum number_of_iterations_t       { number_of_iterations };
   enum protect_constraints_t        { protect_constraints };
 
+  //to be documented
+  enum smooth_along_features_t      { smooth_along_features };
+
   //internal
   enum weight_calculator_t          { weight_calculator };
   enum all_default_t                { all_default };
@@ -127,6 +130,14 @@ namespace CGAL{
     protect_constraints(const Boolean b) const
     {
       typedef pmp_bgl_named_params<Boolean, protect_constraints_t, self> Params;
+      return Params(b, *this);
+    }
+
+    template<typename Boolean>
+    pmp_bgl_named_params<Boolean, smooth_along_features_t, self>
+      smooth_along_features(const Boolean b) const
+    {
+      typedef pmp_bgl_named_params<Boolean, smooth_along_features_t, self> Params;
       return Params(b, *this);
     }
 
@@ -249,6 +260,14 @@ namespace parameters{
   protect_constraints(const Boolean b)
   {
     typedef pmp_bgl_named_params<Boolean, protect_constraints_t> Params;
+    return Params(b);
+  }
+
+  template<typename Boolean>
+  pmp_bgl_named_params<Boolean, smooth_along_features_t>
+  smooth_along_features(const Boolean b)
+  {
+    typedef pmp_bgl_named_params<Boolean, smooth_along_features_t> Params;
     return Params(b);
   }
 

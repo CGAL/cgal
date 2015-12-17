@@ -707,7 +707,7 @@ namespace internal {
     // "applies an iterative smoothing filter to the mesh.
     // The vertex movement has to be constrained to the vertex tangent plane [...]
     // smoothing algorithm with uniform Laplacian weights"
-    void tangential_relaxation()
+    void tangential_relaxation(const bool smooth_along_features/*1d smoothing*/)
     {
       //todo : move border vertices along 1-dimensional features
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -744,7 +744,7 @@ namespace internal {
 
           barycenters[v] = get(vpmap_, v) + move;
         }
-        else if (!protect_constraints_ && is_on_patch_border(v))
+        else if (smooth_along_features && !protect_constraints_ && is_on_patch_border(v))
         {
           put(propmap_normals, v, CGAL::NULL_VECTOR);
 
