@@ -134,6 +134,5 @@ and provides a list of the parameters that are used in this package.
 \todo add in BGL `clear(pmesh)` and use it in `keep_largest_connected_components(pmesh, 0);`
 \todo document BGL/include/CGAL/boost/graph/Dual.h and remove the example from dont_submit
 \todo fix and restore remove_degenerate_faces in the user and the reference manual
-\todo publish `is_polygon_soup_a_polygon_mesh` defined in `polygon_soup_to_polygon_mesh.h`
 \todo publish `triangulate_face`. Can be helpful as a preprocessing for isotropic_remeshing
 */
