@@ -217,7 +217,7 @@ public:
     // facets of the polyhedron will be modified during the loop, and
     // that invalidates the range [facets_begin(), facets_end()[.
     std::vector<face_descriptor> facets;
-    facets.reserve(boost::size(face_range));
+    facets.reserve(std::distance(boost::begin(face_range), boost::end(face_range)));
 
     //only consider non-triangular faces
     BOOST_FOREACH(face_descriptor fit, face_range)
