@@ -553,7 +553,7 @@ private:
 
 void construct_axes() const
 { int i;
-  register double f(1.02);
+  double f(1.02);
   glNewList(sphere_list_+3, GL_COMPILE);
   glLineWidth(2.0);
   // red x-axis and equator

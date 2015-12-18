@@ -55,14 +55,14 @@ void ConvertBuffer( void *bufferIn,
 		    int bufferLength )
 {
   const char *proc = "ConvertBuffer";
-  register int i, min, max;
-  register u8 *u8buf;
-  register s8 *s8buf;
-  register u16 *u16buf;
-  register s16 *s16buf;
-  register s32 *s32buf;
-  register r32 *r32buf;
-  register r64 *r64buf;
+  int i, min, max;
+  u8 *u8buf;
+  s8 *s8buf;
+  u16 *u16buf;
+  s16 *s16buf;
+  s32 *s32buf;
+  r32 *r32buf;
+  r64 *r64buf;
 
   if ( (typeOut == typeIn) && (bufferOut == bufferIn) )
     return;
@@ -395,9 +395,9 @@ void Convert_r32_to_s8( r32 *theBuf,
 			s8 *resBuf,
 			int size )
 {
-  register int i;
-  register r32* tb = theBuf;
-  register s8* rb = resBuf;
+  int i;
+  r32* tb = theBuf;
+  s8* rb = resBuf;
   
   for ( i=0; i<size; i++, tb++, rb++ ) {
     if ( *tb < -128.0 ) {
@@ -421,9 +421,9 @@ void Convert_r32_to_u8( r32 *theBuf,
 			u8 *resBuf,
 			int size )
 {
-  register int i;
-  register r32* tb = theBuf;
-  register u8* rb = resBuf;
+  int i;
+  r32* tb = theBuf;
+  u8* rb = resBuf;
   
   for ( i=0; i<size; i++, tb++, rb++ ) {
     if ( *tb < 0.0 ) {
@@ -445,9 +445,9 @@ void Convert_r32_to_s16( r32 *theBuf,
 			 s16 *resBuf,
 			 int size )
 {
-  register int i;
-  register r32* tb = theBuf;
-  register s16* rb = resBuf;
+  int i;
+  r32* tb = theBuf;
+  s16* rb = resBuf;
   
   for ( i=0; i<size; i++, tb++, rb++ ) {
     if ( *tb < -32768.0 ) {
@@ -471,9 +471,9 @@ void Convert_r32_to_u16( r32 *theBuf,
 			 u16 *resBuf,
 			 int size )
 {
-  register int i;
-  register r32* tb = theBuf;
-  register u16* rb = resBuf;
+  int i;
+  r32* tb = theBuf;
+  u16* rb = resBuf;
   
   for ( i=0; i<size; i++, tb++, rb++ ) {
     if ( *tb < 0.0 ) {

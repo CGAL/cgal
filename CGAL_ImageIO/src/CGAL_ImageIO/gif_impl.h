@@ -131,9 +131,9 @@ int readGifImage(const char *name,_image *im) {
 FILE *fp;
 int   gif89 = 0;
 
-  register byte ch, ch1;
-  register byte *ptr, *ptr1;
-  register int i, block;
+  byte ch, ch1;
+  byte *ptr, *ptr1;
+  int i, block;
   int npixels, maxpixels, aspect, filesize;
   float normaspect;
   int OutCount = 0,		/* Decompressor output 'stack count' */

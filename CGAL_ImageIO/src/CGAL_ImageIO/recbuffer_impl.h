@@ -1218,9 +1218,9 @@ int RecursiveFilterOnBuffer( void *bufferIn,
 			     recursiveFilterType filterType )
 {
   const char *proc = "RecursiveFilterOnBuffer";
-  register int dimx, dimxXdimy;
+  int dimx, dimxXdimy;
   int dimy, dimz;
-  register int x, y, z;
+  int x, y, z;
   /* 
    *obviously, we need to perform the computation 
    * with float or double values. For this reason,
@@ -1250,18 +1250,18 @@ int RecursiveFilterOnBuffer( void *bufferIn,
   /*
    * pointers for computations;
    */
-  register r32 *r32firstPoint = (r32*)NULL;
-  register r64 *r64firstPoint = (r64*)NULL;
-  register r32 *r32_pt = (r32*)NULL;
-  register r64 *r64_pt = (r64*)NULL;
-  register double *dbl_pt1 = (double*)NULL;
-  register double *dbl_pt2 = (double*)NULL;
-  register double dbl_first = 0.0;
-  register double dbl_last = 0.0;
+  r32 *r32firstPoint = (r32*)NULL;
+  r64 *r64firstPoint = (r64*)NULL;
+  r32 *r32_pt = (r32*)NULL;
+  r64 *r64_pt = (r64*)NULL;
+  double *dbl_pt1 = (double*)NULL;
+  double *dbl_pt2 = (double*)NULL;
+  double dbl_first = 0.0;
+  double dbl_last = 0.0;
   int offsetLastPoint = 0;
   int offsetNextFirstPoint = 0;
-  register r32 *r32firstPointResult = (r32*)NULL;
-  register r64 *r64firstPointResult = (r64*)NULL;
+  r32 *r32firstPointResult = (r32*)NULL;
+  r64 *r64firstPointResult = (r64*)NULL;
   double *theLinePlusBorder = (double*)NULL;
   double *resLinePlusBorder = (double*)NULL;
 

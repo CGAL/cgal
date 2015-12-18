@@ -758,7 +758,7 @@ incident_simplex_search(Vertex_handle v, Simplex_handle s) const
      the one opposite v */
 
   bool incident = false;
-  register int j;
+  int j;
   for (j = 0; j <= dcur; j++)
     if ( Base::vertex_of_simplex(s,j) == v ) incident = true;
   if ( !incident ) 
@@ -924,7 +924,7 @@ all_vertices_below(const Lifted_hyperplane_d& h,
 { 
   visited_mark(s) = true;
   bool some_vertex_on_or_below_h = false;
-  register int i;
+  int i;
   int low = (is_cocircular ? 0 : 1);
   for (i = low; i <= Base::current_dimension(); i++) {
     Vertex_handle v = Base::vertex_of_simplex(s,i);

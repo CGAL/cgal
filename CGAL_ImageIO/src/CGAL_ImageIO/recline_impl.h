@@ -507,12 +507,12 @@ int RecursiveFilter1D( RFcoefficientType *RFC,
 		       int dim )
 {
   const char *proc="RecursiveFilter1D";
-  register double rp0, rp1, rp2, rp3;
-  register double rd1, rd2, rd3, rd4;
-  register double rn0, rn1, rn2, rn3, rn4;
-  register int i;
-  register double *w0, *w1, *w2, *w3, *w4;
-  register double *d0, *d1, *d2, *d3, *d4;
+  double rp0, rp1, rp2, rp3;
+  double rd1, rd2, rd3, rd4;
+  double rn0, rn1, rn2, rn3, rn4;
+  int i;
+  double *w0, *w1, *w2, *w3, *w4;
+  double *d0, *d1, *d2, *d3, *d4;
 
   if ( RFC->type_filter == UNKNOWN_FILTER ) {
     if ( get_static_verbose_recline() != 0 )
