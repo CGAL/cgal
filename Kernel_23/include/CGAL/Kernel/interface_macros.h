@@ -561,7 +561,7 @@ CGAL_Kernel_pred_RT(Orientation_2,
 		    orientation_2_object)
 CGAL_Kernel_pred_RT(Orientation_3,
 		    orientation_3_object)
-CGAL_Kernel_pred(Power_test_3,
+CGAL_Kernel_pred_RT(Power_test_3,
 		    power_test_3_object)
 CGAL_Kernel_pred(Compare_power_distance_3,
 		    compare_power_distance_3_object)
