@@ -220,7 +220,7 @@ public:
   void draw_edges(CGAL::Three::Viewer_interface*) const;
   void draw_bbox(const CGAL::Three::Scene_interface::Bbox&) const;
   void draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface *viewer) const;
-  void draw_frame_plane(QGLViewer *viewer) const;
+  void draw_frame_plane(QGLViewer *) const;
 
   // Get wrapped polyhedron
   Polyhedron*       polyhedron();
