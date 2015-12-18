@@ -37,6 +37,11 @@
 
 namespace CGAL {
 
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/Mesh_3/config.h>
+CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+
 BOOST_PARAMETER_FUNCTION(
   (Mesh_optimization_return_code),
   perturb_mesh_3,
@@ -56,6 +61,7 @@ BOOST_PARAMETER_FUNCTION(
   return perturb_mesh_3_impl(c3t3, domain, time_limit_, sliver_criterion_,
                              perturbation_vector_);
 }
+CGAL_PRAGMA_DIAG_POP
 
 
 template <typename C3T3, 

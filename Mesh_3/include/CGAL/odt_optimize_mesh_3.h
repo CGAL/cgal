@@ -36,6 +36,11 @@
 
 namespace CGAL {
   
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/Mesh_3/config.h>
+CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+
 BOOST_PARAMETER_FUNCTION(
   (Mesh_optimization_return_code),
   odt_optimize_mesh_3,
@@ -54,7 +59,7 @@ BOOST_PARAMETER_FUNCTION(
                                   convergence_, freeze_bound_
                                   , do_freeze_ );
 } 
-
+CGAL_PRAGMA_DIAG_POP
 
 
 template <typename C3T3, typename MeshDomain> 
