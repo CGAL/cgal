@@ -91,7 +91,7 @@ in_smallest_orthogonal_sphereC3(
   FT sq = spx*qpx + spy*qpy + spz*qpz;
   FT sr = spx*rpx + spy*rpy + spz*rpz;
 
-  CGAL_triangulation_assertion( ! CGAL_NTS is_zero(den) );
+  CGAL_assertion( ! CGAL_NTS is_zero(den) );
   // return  sign of (c- s)^2 - (c^2 - pw) - sw    note that den >= 0 -
   return CGAL_NTS sign( den*(ss - sw + pw)- detq*sq - detr*sr);
 }
@@ -172,7 +172,7 @@ does_simplex_intersect_weighted_dual_supportC3(
   FT dets = determinant(qq,qr,qpw,
 			      qr,rr,rpw,
 			      qs,rs,spw);
-  CGAL_triangulation_assertion( ! CGAL_NTS is_zero(den) );
+  CGAL_assertion( ! CGAL_NTS is_zero(den) );
 
 
   // The barycentrique coordinate of the smallest orthogonal sphere center
@@ -230,7 +230,7 @@ does_simplex_intersect_weighted_dual_supportC3(
   FT detr = determinant(qq,qpw,
 			      qr,rpw);
 
-  CGAL_triangulation_assertion( ! CGAL_NTS is_zero(den) );
+  CGAL_assertion( ! CGAL_NTS is_zero(den) );
 
    // The barycentrique coordinate of the smallest orthogonal sphere center
   // are  detq/2*den detr/2*den

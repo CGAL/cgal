@@ -84,7 +84,6 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
   Weighted_point wp04(p0,18.);
   Weighted_point wp05(p0,24.);
 
-#if 0
   assert(does_simplex_intersect_dual_support(wp0,wp1,wp2,wp3) 
 	 == CGAL::ON_UNBOUNDED_SIDE);
 
@@ -124,7 +123,6 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
 	 ==  CGAL::ON_UNBOUNDED_SIDE);
   assert(does_simplex_intersect_dual_support(wp1,wp05)
 	 ==  CGAL::ON_UNBOUNDED_SIDE);
- #endif
 
   // test of Construct_weighted_circumcenter_3 and compare_power_distance
    std::cout << "test of Construct_weighted_circumcenter_3" << std::endl;
@@ -133,7 +131,7 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
   c = weighted_circumcenter(wp0,wp1,wp2,wp3);
 
   assert (compare_power_distance(c,wp0,wp1) == CGAL::EQUAL);
-#if 0
+
   assert (compare_power_distance(c,wp01,wp1) == CGAL::LARGER);
   assert (compare_power_distance(c,wp03,wp1) == CGAL::SMALLER);
 
@@ -298,5 +296,4 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
   assert(power_test(wq01,wq01) == CGAL::ON_ORIENTED_BOUNDARY);
   assert(power_test(wq01,wq02) == CGAL::ON_NEGATIVE_SIDE);
 
-#endif
 }
