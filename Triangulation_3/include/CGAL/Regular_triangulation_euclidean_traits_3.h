@@ -23,15 +23,6 @@
 #define CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_3_H
 
 #include <CGAL/basic.h>
-#include <CGAL/triangulation_assertions.h>
-#include <CGAL/Weighted_point.h>
-#include <CGAL/representation_tags.h>
-#include <CGAL/Kernel_traits.h>
-
-//#include <CGAL/predicates/Regular_triangulation_ftC3.h>
-//#include <CGAL/predicates/Regular_triangulation_rtH3.h>
-//#include <CGAL/predicates/predicates_on_weighted_points_cartesian_3.h>
-//#include <CGAL/constructions/constructions_on_weighted_points_cartesian_3.h>
 
 namespace CGAL {
 
@@ -76,8 +67,6 @@ public:
                                        Compare_weighted_squared_radius_3;
 
 
-  enum { Has_filtered_predicates = false };
-  
   Power_test_3   power_test_3_object() const
   { return K().power_test_3_object(); }
 
@@ -122,31 +111,6 @@ public:
 
 } //namespace CGAL
 
-#if 0
-// Partial specialization for Filtered_kernel<CK>.
 
-#include <CGAL/internal/Regular_triangulation_filtered_traits_3.h>
-#include <CGAL/Filtered_kernel.h>
-
-namespace CGAL {
-
-namespace internal{
-  // This declaration is needed to break the cyclic dependency.
-  template < typename K,bool b >
-  class Regular_triangulation_filtered_traits_3;
-} //namespace internal
-
-template < typename K, class Weight>
-class Regular_triangulation_euclidean_traits_3<K,Weight,true>
-  : public internal::Regular_triangulation_filtered_traits_3 <K,K::Has_static_filters > 
-{
-public:
-  typedef K  Kernel;
-};
- 
-
-
-} //namespace CGAL
-#endif
 
 #endif // CGAL_REGULAR_TRIANGULATION_EUCLIDEAN_TRAITS_3_H

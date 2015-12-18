@@ -131,7 +131,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                              const Weighted_point_3 & t) const
     {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_test_3 with 4+1 wpoints", tmp);
-      
+
       double px, py, pz, pwt, qx, qy, qz, qwt, rx, ry, rz, rwt, sx, sy, sz, swt, tx, ty, tz, twt;
       init_double(px, py, pz, pwt, qx, qy, qz, qwt, rx, ry, rz, rwt, (FT*)(0));
       init_double(sx, sy, sz, swt, tx, ty, tz, twt, (FT*)(0));
