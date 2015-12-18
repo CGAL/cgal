@@ -14,7 +14,6 @@
 #include <QFileInfo>
 #include <QStringList>
 #include <QSet>
-
 class Scene;
 class Viewer;
 class QTreeView;
@@ -212,6 +211,9 @@ protected Q_SLOTS:
    * frame of the viewer to the new selected item's and calls updateGL().
    */
   void selectionChanged();
+  //! Scrolls to the new selected item.
+  void recenterSceneView(const QModelIndex &id);
+
   /*!
    * Invoques a context menu for the currently selected item at the requested
    * position.

@@ -43,6 +43,7 @@ Scene::Scene(QObject* parent)
     if(ms_splatting==0)
         ms_splatting  = new GlSplat::SplatRenderer();
     ms_splattingCounter++;
+    picked = false;
 
 
 }
@@ -480,6 +481,15 @@ glDepthFunc(GL_LEQUAL);
         ms_splatting->finalize();
 
     }
+
+    //scrolls the sceneView to the selected item's line.
+    if(picked)
+        Q_EMIT(itemPicked(index_map.key(mainSelectionIndex())));
+    if(with_names)
+        picked = true;
+    else
+        picked = false;
+
 }
 
 // workaround for Qt-4.2 (see above)
