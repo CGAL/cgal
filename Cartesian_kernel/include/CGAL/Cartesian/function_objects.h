@@ -2970,6 +2970,10 @@ namespace CartesianKernelFunctors {
     Rep
     operator()(Return_base_tag, const Point_3& p, const RT& w) const
     { return Rep(p,w); }
+
+    Rep
+    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z) const
+    { return Rep(x,y,z); }
   };
 
 
