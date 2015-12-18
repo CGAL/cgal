@@ -65,7 +65,8 @@
 
 #if defined(__clang__) || (BOOST_GCC >= 40600)
 #  define CGAL_MESH_3_IGNORE_UNUSED_VARIABLES \
-    _Pragma("GCC diagnostic ignored \"-Wunused-variable\"")
+    _Pragma("GCC diagnostic ignored \"-Wunused-variable\"") \
+    _Pragma("GCC diagnostic ignored \"-Wunused-parameter\"")
 #else
 #  define CGAL_MESH_3_IGNORE_UNUSED_VARIABLES
 #endif
