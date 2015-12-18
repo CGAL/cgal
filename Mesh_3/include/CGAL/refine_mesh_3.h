@@ -177,6 +177,7 @@ namespace parameters {
         , dump_after_glob_opt_prefix()
         , dump_after_perturb_prefix()
         , dump_after_exude_prefix()
+        , number_of_initial_points()
       {}
 
       std::string dump_after_init_prefix;
@@ -185,6 +186,7 @@ namespace parameters {
       std::string dump_after_glob_opt_prefix;
       std::string dump_after_perturb_prefix;
       std::string dump_after_exude_prefix;
+      int number_of_initial_points;
 
     }; // end struct Mesh_3_options
 
@@ -289,6 +291,7 @@ namespace parameters {
                             (dump_after_glob_opt_prefix_, (std::string), "" )
                             (dump_after_perturb_prefix_, (std::string), "" )
                             (dump_after_exude_prefix_, (std::string), "" )
+                            (number_of_initial_points_, (int), -1)
                             )
                            )
   { 
@@ -300,7 +303,8 @@ namespace parameters {
     options.dump_after_glob_opt_prefix=dump_after_glob_opt_prefix_;
     options.dump_after_perturb_prefix=dump_after_perturb_prefix_;
     options.dump_after_exude_prefix=dump_after_exude_prefix_;
-    
+    options.number_of_initial_points=number_of_initial_points_;
+
     return options;
   }
   

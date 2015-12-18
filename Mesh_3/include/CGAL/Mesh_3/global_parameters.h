@@ -86,6 +86,7 @@ BOOST_PARAMETER_NAME( (dump_after_refine_prefix, tag ) dump_after_refine_prefix_
 BOOST_PARAMETER_NAME( (dump_after_glob_opt_prefix, tag ) dump_after_glob_opt_prefix_)
 BOOST_PARAMETER_NAME( (dump_after_perturb_prefix, tag ) dump_after_perturb_prefix_)
 BOOST_PARAMETER_NAME( (dump_after_exude_prefix, tag ) dump_after_exude_prefix_)
+BOOST_PARAMETER_NAME( (number_of_initial_points, tag) number_of_initial_points_)
 
 CGAL_PRAGMA_DIAG_POP
 } // end namespace parameters
