@@ -635,7 +635,7 @@ void Scene_edit_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) con
 
 }
 
-void Scene_edit_polyhedron_item::draw_frame_plane(QGLViewer* viewer) const
+void Scene_edit_polyhedron_item::draw_frame_plane(QGLViewer*) const
 {
     pos_frame_plane.resize(15);
     for(Ctrl_vertices_group_data_list::const_iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
