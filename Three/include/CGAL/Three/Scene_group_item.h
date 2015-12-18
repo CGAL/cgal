@@ -121,6 +121,10 @@ public :
       item->has_group=0;
       children.removeOne(item);
     }
+    //!Moves a child up in the list.
+    void moveUp(int);
+    //!Moves a child down in the list.
+    void moveDown(int);
 
 private:
     //!Contains a reference to all the children of this group.

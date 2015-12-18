@@ -140,6 +140,8 @@ public:
 
 
   // QStandardItemModel functions
+  void moveRowUp();
+  void moveRowDown();
   bool dropMimeData(const QMimeData *, Qt::DropAction, int, int, const QModelIndex &parent);
   QVariant data ( const QModelIndex & index, int role = ::Qt::DisplayRole ) const;
   //!@returns the type of data correspondind to the role.

@@ -717,6 +717,56 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
 
 }
 
+void Scene::moveRowUp()
+{
+    Scene_item* selected_item = item(mainSelectionIndex());
+    if(index_map.key(mainSelectionIndex()).row() > 0)
+    {
+        if(item(mainSelectionIndex())->has_group >0)
+        {
+            Q_FOREACH(Scene_group_item* group, m_group_entries)
+                if(group->getChildren().contains(selected_item))
+                {
+                    int id = group->getChildren().indexOf(selected_item);
+                    group->moveUp(id);
+                }
+        }
+        else
+        {
+            //if not in group
+            QModelIndex baseId = index_map.key(mainSelectionIndex());
+            int newId = index_map.value(index(baseId.row()-1, baseId.column(),baseId.parent())) ;
+            m_entries.move(mainSelectionIndex(), newId);
+        }
+        group_added();
+        setSelectedItem(m_entries.indexOf(selected_item));
+    }
+}
+void Scene::moveRowDown()
+{
+    Scene_item* selected_item = item(mainSelectionIndex());
+    if(index_map.key(mainSelectionIndex()).row() < rowCount(index_map.key(mainSelectionIndex()).parent())-1)
+    {
+        if(item(mainSelectionIndex())->has_group >0)
+        {
+            Q_FOREACH(Scene_group_item* group, m_group_entries)
+                if(group->getChildren().contains(selected_item))
+                {
+                    int id = group->getChildren().indexOf(selected_item);
+                    group->moveDown(id);
+                }
+        }
+        else
+        {
+            //if not in group
+            QModelIndex baseId = index_map.key(mainSelectionIndex());
+            int newId = index_map.value(index(baseId.row()+1, baseId.column(),baseId.parent())) ;
+            m_entries.move(mainSelectionIndex(), newId);
+        }
+        group_added();
+        setSelectedItem(m_entries.indexOf(selected_item));
+    }
+}
 Scene::Item_id Scene::mainSelectionIndex() const {
     return selected_item;
 }

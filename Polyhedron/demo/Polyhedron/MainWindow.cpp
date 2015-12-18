@@ -1726,3 +1726,13 @@ void MainWindow::make_new_group()
     Scene_group_item * group = new Scene_group_item("New group");
     scene->add_group(group);
 }
+
+void MainWindow::on_upButton_pressed()
+{
+    scene->moveRowUp();
+}
+
+void MainWindow::on_downButton_pressed()
+{
+    scene->moveRowDown();
+}
