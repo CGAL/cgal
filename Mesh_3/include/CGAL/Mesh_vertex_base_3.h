@@ -212,12 +212,12 @@ public:
     cache_validity = true;
   }
 
-  int cached_number_of_incident_facets() const
+  std::size_t cached_number_of_incident_facets() const
   {
     return number_of_incident_facets_;
   }
     
-  int cached_number_of_components() const
+  std::size_t cached_number_of_components() const
   {
     return number_of_components_;
   }
@@ -232,8 +232,8 @@ public:
   }
 private:
 
-  int number_of_incident_facets_;
-  int number_of_components_; // number of components in the adjacency
+  std::size_t number_of_incident_facets_;
+  std::size_t number_of_components_; // number of components in the adjacency
   // graph of incident facets (in complex)
 
 

@@ -337,10 +337,12 @@ template<class Tr,
                                        typename Criteria::Facet_quality>
 # endif
 #endif // CGAL_LINKED_WITH_TBB
+         , class Base_ = Refine_facets_3_base<typename MeshDomain::Index,
+                                              typename Tr::Facet,
+                                              Concurrency_tag>
 >
 class Refine_facets_3
-: public Refine_facets_3_base<typename MeshDomain::Index, typename Tr::Facet,
-                              Concurrency_tag>
+: public Base_
 , public Mesh_3::Mesher_level<Tr,
                       Refine_facets_3<Tr,
                                       Criteria,
@@ -348,7 +350,8 @@ class Refine_facets_3
                                       Complex3InTriangulation3,
                                       Previous_level_,
                                       Concurrency_tag,
-                                      Container_>,
+                                      Container_,
+                                      Base_>,
                       typename Tr::Facet,
                       Previous_level_,
                       Triangulation_mesher_level_traits_3<Tr>,
@@ -364,11 +367,10 @@ class Refine_facets_3
                           Complex3InTriangulation3,
                           Previous_level_,
                           Concurrency_tag,
-                          Container_>                  Self;
+                          Container_,
+                          Base_> Self;
 
-  typedef Refine_facets_3_base<typename MeshDomain::Index,
-                               typename Tr::Facet,
-                               Concurrency_tag>        Base;
+  typedef Base_ Base;
 
   typedef Mesher_level<Tr,
                       Refine_facets_3<Tr,
@@ -836,8 +838,8 @@ private:
 
 
 // For sequential
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 Refine_facets_3(Tr& triangulation,
                 const Cr& criteria,
                 const MD& oracle,
@@ -857,8 +859,8 @@ Refine_facets_3(Tr& triangulation,
 }
 
 // For parallel
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 Refine_facets_3(Tr& triangulation,
                 const Cr& criteria,
                 const MD& oracle,
@@ -881,9 +883,9 @@ Refine_facets_3(Tr& triangulation,
 }
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 void
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 scan_triangulation_impl()
 {
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
@@ -960,9 +962,9 @@ scan_triangulation_impl()
 
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 int
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 number_of_bad_elements_impl()
 {
   typedef typename Tr::Finite_facets_iterator Finite_facet_iterator;
@@ -1120,9 +1122,9 @@ number_of_bad_elements_impl()
 }
 
 // For sequential
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 Mesher_level_conflict_status
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 test_point_conflict_from_superior_impl(const Point& point, Zone& zone)
 {
   typedef typename Zone::Facets_iterator Facet_iterator;
@@ -1166,10 +1168,10 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone)
 }
 
 // For parallel
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 template <typename Mesh_visitor>
 Mesher_level_conflict_status
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 test_point_conflict_from_superior_impl(const Point& point, Zone& zone,
                                        Mesh_visitor &visitor)
 {
@@ -1216,9 +1218,9 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone,
 }
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
-typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Zone
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
+typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::Zone
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 conflicts_zone_impl(const Point& point
                     , const Facet& facet
                     , bool &facet_is_in_its_cz)
@@ -1275,9 +1277,9 @@ conflicts_zone_impl(const Point& point
   return zone;
 }
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
-typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Zone
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
+typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::Zone
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 conflicts_zone_impl(const Point& point
                     , const Facet& facet
                     , bool &facet_is_in_its_cz
@@ -1338,9 +1340,9 @@ conflicts_zone_impl(const Point& point
 
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 void
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 before_insertion_impl(const Facet& facet,
                       const Point& point,
                       Zone& zone)
@@ -1418,9 +1420,9 @@ before_insertion_impl(const Facet& facet,
 
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
-typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::Vertex_handle
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
+typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::Vertex_handle
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 insert_impl(const Point& point,
             const Zone& zone)
 {
@@ -1447,9 +1449,9 @@ insert_impl(const Point& point,
 
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 void
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 restore_restricted_Delaunay(const Vertex_handle& vertex)
 {
   typedef std::vector<Cell_handle> Cell_handle_vector;
@@ -1481,9 +1483,9 @@ restore_restricted_Delaunay(const Vertex_handle& vertex)
 //-------------------------------------------------------
 // Private methods
 //-------------------------------------------------------
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 void
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 treat_new_facet(Facet& facet)
 {
   // Treat facet
@@ -1525,9 +1527,9 @@ treat_new_facet(Facet& facet)
   set_facet_visited(mirror);
 }
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 void
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 dual_segment(const Facet & facet, Bare_point& p, Bare_point& q) const
 {
   Cell_handle c = facet.first;
@@ -1546,9 +1548,9 @@ dual_segment(const Facet & facet, Bare_point& p, Bare_point& q) const
       n->vertex(3)->point());
 }
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 void
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 dual_segment_exact(const Facet & facet, Bare_point& p, Bare_point& q) const
 {
   Cell_handle c = facet.first;
@@ -1569,9 +1571,9 @@ dual_segment_exact(const Facet & facet, Bare_point& p, Bare_point& q) const
       true);
 }
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 void
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 dual_ray(const Facet & facet, Ray_3& ray) const
 {
   Cell_handle c = facet.first;
@@ -1604,9 +1606,9 @@ dual_ray(const Facet & facet, Ray_3& ray) const
         n->vertex(3)->point()), l);
 }
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 void
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 dual_ray_exact(const Facet & facet, Ray_3& ray) const
 {
   Cell_handle c = facet.first;
@@ -1644,9 +1646,9 @@ dual_ray_exact(const Facet & facet, Ray_3& ray) const
 
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 void
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 compute_facet_properties(const Facet& facet,
                          Facet_properties& fp,
                          bool force_exact) const
@@ -1759,9 +1761,9 @@ compute_facet_properties(const Facet& facet,
 }
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 bool
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 is_facet_encroached(const Facet& facet,
                     const Point& point) const
 {
@@ -1783,9 +1785,9 @@ is_facet_encroached(const Facet& facet,
   return ( compare_distance(center, reference_point, point) != CGAL::SMALLER );
 }
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 bool
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 is_encroached_facet_refinable(Facet& facet) const
 {
   typedef typename Gt::Point_3 Point_3;
@@ -1872,9 +1874,9 @@ is_encroached_facet_refinable(Facet& facet) const
   * \c facet is an internal facet we are going to remove
   * \c source_facet is the facet we want to refine by inserting a new point
   */
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 bool
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 before_insertion_handle_facet_in_conflict_zone(Facet& facet,
                                                const Facet& source_facet)
 {
@@ -1899,9 +1901,9 @@ before_insertion_handle_facet_in_conflict_zone(Facet& facet,
 
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, class C_, class B_>
 void
-Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_>::
+Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,C_,B_>::
 after_insertion_handle_incident_facet(Facet& facet)
 {
   // If the facet is infinite or has been already visited,

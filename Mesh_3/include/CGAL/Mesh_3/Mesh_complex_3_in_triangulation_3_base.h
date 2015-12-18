@@ -1,4 +1,5 @@
-// Copyright (c) 2009 INRIA Sophia-Antipolis (France).
+// Copyright (c) 2003-2009  INRIA Sophia-Antipolis (France).
+// Copyright (c) 2013       GeometryFactory Sarl (France).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -16,7 +17,7 @@
 // $Id$
 //
 //
-// Author(s)     : Stéphane Tayeb
+// Author(s)     : Laurent Rineau, Stéphane Tayeb
 //
 //******************************************************************************
 // File Description : Implements class Mesh_complex_3_in_triangulation_3.
@@ -35,6 +36,7 @@
 #include <iostream>
 #include <fstream>
 #include <CGAL/Mesh_3/io_signature.h>
+#include <CGAL/Union_find.h>
 
 #ifdef CGAL_LINKED_WITH_TBB
   #include <tbb/atomic.h>
@@ -43,6 +45,46 @@
 namespace CGAL {
 namespace Mesh_3 {
 
+  namespace details {
+
+    template <typename Tr>
+    class C3t3_helper_class
+    {
+    protected:
+      typedef typename Tr::Vertex_handle Vertex_handle;
+      typedef typename Tr::Cell_handle   Cell_handle;
+      typedef typename Tr::Facet         Facet;
+      typedef typename Tr::Edge          Edge;
+
+      typedef std::pair<Vertex_handle, Vertex_handle> Pair_of_vertices;
+
+      // computes and return an ordered pair of Vertex
+      Pair_of_vertices
+      make_ordered_pair(const Vertex_handle vh1, const Vertex_handle vh2) const {
+	if (vh1 < vh2) {
+	  return std::make_pair(vh1, vh2);
+	}
+	else {
+	  return std::make_pair(vh2, vh1);
+	}
+      }
+
+      // same from an Edge
+      Pair_of_vertices
+      make_ordered_pair(const Edge e) const {
+        return make_ordered_pair(e.first->vertex(e.second),
+                                 e.first->vertex(e.third));
+      }
+
+      Facet canonical_facet(Cell_handle c, int i) const {
+        Cell_handle c2 = c->neighbor(i);
+        return (c2 < c) ? std::make_pair(c2,c2->index(c)) : std::make_pair(c,i);
+      }
+
+    }; // end class template C3t3_helper_class
+
+  } // end namespace Mesh_3::details
+
 /**
  * @class Mesh_complex_3_in_triangulation_3_base
  * @brief A data-structure to represent and maintain a 3D complex embedded
@@ -50,8 +92,10 @@ namespace Mesh_3 {
  */
 template<typename Tr, typename Concurrency_tag>
 class Mesh_complex_3_in_triangulation_3_base
+  : public details::C3t3_helper_class<Tr>
 {
   typedef Mesh_complex_3_in_triangulation_3_base<Tr, Concurrency_tag> Self;
+  typedef details::C3t3_helper_class<Tr> Base;
 
 public:
   // Triangulation types
@@ -67,6 +111,26 @@ public:
   typedef typename Tr::Cell::Surface_patch_index  Surface_patch_index;
   typedef typename Tr::Vertex::Index              Index;
 
+  enum Face_status{ NOT_IN_COMPLEX = 0,
+                    ISOLATED = 1, // - An ISOLATED edge is a marked edge,
+                                  //   without any incident facets.
+                    BOUNDARY,     // - An edge is on BOUNDARY if it has only
+                                  //   one incident facet.
+                                  // - A vertex is on BOUNDARY if all its
+                                  //   incident edges are REGULAR or on
+                                  //   BOUNDARY, at least one is on
+                                  //   BOUNDARY, and the incident facets
+                                  //   form only one connected component.
+                    REGULAR,      // - A facet that is in the complex is
+                                  //   REGULAR.
+                                  // - An edge is REGULAR if it has
+                                  //   exactly two incident facets.
+                                  // - A vertex is REGULAR if all it
+                                  //   incident edges are REGULAR, and the
+                                  //   incident facets form only one
+                                  //   connected component.
+                    SINGULAR};    // - SINGULAR is for all other cases.
+
   //-------------------------------------------------------
   // Constructors / Destructors
   //-------------------------------------------------------
@@ -75,7 +139,10 @@ public:
    * Builds an empty 3D complex.
    */
   Mesh_complex_3_in_triangulation_3_base()
-    : tr_()
+    : Base()
+    , tr_()
+    , edge_facet_counter_() //TODO: parallel!
+    , manifold_info_initialized_(false) //TODO: parallel!
   {
     // We don't put it in the initialization list because
     // tbb::atomic has no contructors
@@ -85,7 +152,10 @@ public:
 
   /// Copy constructor
   Mesh_complex_3_in_triangulation_3_base(const Self& rhs)
-    : tr_(rhs.tr_)
+    : Base()
+    , tr_(rhs.tr_)
+    , edge_facet_counter_(rhs.edge_facet_counter_)
+    , manifold_info_initialized_(rhs.manifold_info_initialized_)
   {
     number_of_facets_ = rhs.number_of_facets_;
     number_of_cells_ = rhs.number_of_cells_;
@@ -98,6 +168,8 @@ public:
     number_of_cells_ = 0;
     number_of_facets_ = 0;
     tr_.clear();
+    manifold_info_initialized_ = false;
+    edge_facet_counter_.clear();
   }
 
   /// Assignment operator
@@ -144,6 +216,87 @@ public:
                          const Surface_patch_index& index) const
   {
     cell->set_surface_patch_index(i, index);
+  }
+
+  /// Returns `NOT_IN_COMPLEX`, `BOUNDARY`, `REGULAR`, or `SINGULAR`,
+  /// depending on the number of incident facets in the complex, and the
+  /// number of connected components of its link
+  Face_status face_status(const Vertex_handle v) const
+  {
+    if(!manifold_info_initialized_) init_manifold_info();
+    const int n = v->cached_number_of_incident_facets();
+
+    if(n == 0) return NOT_IN_COMPLEX;
+
+    //test incident edges for REGULARITY and count BOUNDARY edges
+    typename std::vector<Edge> edges;
+    edges.reserve(64);
+    tr_.incident_edges(v, std::back_inserter(edges));
+    int number_of_boundary_incident_edges = 0; // could be a bool
+    for (typename std::vector<Edge>::iterator
+           eit=edges.begin(), end = edges.end();
+	 eit != end; eit++)
+    {
+      switch( face_status(*eit) )
+      {
+      case NOT_IN_COMPLEX: case REGULAR: break;
+      case BOUNDARY: ++number_of_boundary_incident_edges; break;
+      default :
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+        std::cerr << "singular edge...\n";
+        std::cerr << v->point() << std::endl;
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+        return SINGULAR;
+      }
+    }
+
+    // From here all incident edges (in complex) are REGULAR or BOUNDARY.
+    const int nb_components = union_find_of_incident_facets(v);
+    if(nb_components > 1) {
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+      std::cerr << "singular vertex: nb_components=" << nb_components << std::endl;
+      std::cerr << v->point() << std::endl;
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+      return SINGULAR;
+    }
+    else { // REGULAR OR BOUNDARY
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+      std::cerr << "regular or boundary: " << v->point() << std::endl;
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+      if (number_of_boundary_incident_edges != 0)
+        return BOUNDARY;
+      else
+        return REGULAR;
+    }
+  }
+
+  /// This function should be called only when incident edges
+  /// are known to be REGULAR OR BOUNDARY
+  bool is_regular_or_boundary_for_vertices(Vertex_handle v) const {
+    return union_find_of_incident_facets(v) == 1;
+  }
+
+  /// Returns `NOT_IN_COMPLEX`, `BOUNDARY`, `REGULAR`, or `SINGULAR`,
+  /// depending on the number of incident facets in the complex
+  Face_status face_status(const Edge& edge) const
+  {
+    if(!manifold_info_initialized_) init_manifold_info();
+
+    switch(edge_facet_counter_[this->make_ordered_pair(edge)])
+    {
+    case 0: return NOT_IN_COMPLEX;
+    case 1: return BOUNDARY;
+    case 2: return REGULAR;
+    default: return SINGULAR;
+    }
+  }
+
+  /// Returns true if the vertex \c v has is incident to at least a facet
+  /// of the complex
+  bool has_incident_facets_in_complex(const Vertex_handle& v) const
+  {
+    if(!manifold_info_initialized_) init_manifold_info();
+    return v->cached_number_of_incident_facets() > 0;
   }
 
   /// Returns true if facet \c facet is in complex
@@ -314,6 +467,94 @@ public:
   /// Returns bbox
   Bbox_3 bbox() const;
 
+private:
+  void init_manifold_info() const {
+    for(typename Tr::All_vertices_iterator
+          vit = triangulation().finite_vertices_begin(),
+          end = triangulation().finite_vertices_end();
+        vit != end; ++vit)
+    {
+      vit->set_c2t3_cache(0, -1);
+    }
+    for(typename Tr::Finite_facets_iterator
+          fit = triangulation().finite_facets_begin(),
+          end = triangulation().finite_facets_end();
+        fit != end; ++fit)
+    {
+      if ( is_in_complex(*fit) ) {
+        const Cell_handle cell = fit->first;
+        const int i = fit->second;
+        for(int j = 0; j < 3; ++j)
+        {
+          const int edge_index_va = tr_.vertex_triple_index(i, j);
+          const int edge_index_vb = tr_.vertex_triple_index(i, (j == 2) ? 0 : (j+1));
+          const Vertex_handle edge_va = cell->vertex(edge_index_va);
+          const Vertex_handle edge_vb = cell->vertex(edge_index_vb);
+          ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
+
+          const int n = edge_va->cached_number_of_incident_facets();
+          edge_va->set_c2t3_cache(n+1, -1);
+        }
+      }
+    }
+    manifold_info_initialized_ = true;
+  }
+
+  /// Extract the subset `F` of facets of the complex incident to `v` and
+  /// return the number of connected component of the adjacency graph of `F`.
+  int union_find_of_incident_facets(const Vertex_handle v) const
+  {
+    if( v->is_c2t3_cache_valid() )
+    {
+      const int n = v->cached_number_of_components();
+      if(n >= 0) return v->cached_number_of_components();
+    }
+
+    Union_find<Facet> facets;
+    { // fill the union find
+      std::vector<Facet> non_filtered_facets;
+      tr_.incident_facets(v, std::back_inserter(non_filtered_facets));
+
+      for(typename std::vector<Facet>::iterator
+            fit = non_filtered_facets.begin(),
+            end = non_filtered_facets.end();
+          fit != end; ++fit)
+      {
+        if(is_in_complex(*fit)) facets.push_back(*fit);
+      }
+    }
+
+    typedef std::map<Vertex_handle,
+                     typename Union_find<Facet>::handle> Vertex_set_map;
+    typedef typename Vertex_set_map::iterator Vertex_set_map_iterator;
+
+    Vertex_set_map vsmap;
+
+    for(typename Union_find<Facet>::iterator
+          it = facets.begin(), end = facets.end();
+        it != end; ++it)
+    {
+      const Cell_handle& ch = (*it).first;
+      const int& i = (*it).second;
+      for(int j=0; j < 3; ++j) {
+	const Vertex_handle w = ch->vertex(tr_.vertex_triple_index(i,j));
+	if(w != v){
+	  Vertex_set_map_iterator vsm_it = vsmap.find(w);
+	  if(vsm_it != vsmap.end()){
+	    facets.unify_sets(vsm_it->second, it);
+	  } else {
+	    vsmap.insert(std::make_pair(w, it));
+	  }
+	}
+      }
+    }
+    const int nb_components = static_cast<int>(facets.number_of_sets());
+
+    const int n = v->cached_number_of_incident_facets();
+    v->set_c2t3_cache(n, nb_components);
+    return nb_components;
+  }
+  
   //-------------------------------------------------------
   // Traversal
   //-------------------------------------------------------
@@ -525,8 +766,16 @@ private:
 
   // Private date members
   Triangulation tr_;
+
+  typedef typename Base::Pair_of_vertices Pair_of_vertices;
+  typedef std::map<Pair_of_vertices, int> Edge_facet_counter;
+
+  mutable Edge_facet_counter edge_facet_counter_;
+
   typename Number_of_elements<Concurrency_tag>::type number_of_facets_;
   typename Number_of_elements<Concurrency_tag>::type number_of_cells_;
+
+  mutable bool manifold_info_initialized_;
 };  // end class Mesh_complex_3_in_triangulation_3_base
 
 
@@ -545,6 +794,31 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::add_to_complex(
     set_surface_patch_index(cell, i, index);
     set_surface_patch_index(mirror.first, mirror.second, index);
     ++number_of_facets_;
+    if(manifold_info_initialized_) {
+      for(int j = 0; j < 3; ++j)
+      {
+        int edge_index_va = tr_.vertex_triple_index(i, j);
+        int edge_index_vb = tr_.vertex_triple_index(i, (j == 2) ? 0 : (j+1));
+        Vertex_handle edge_va = cell->vertex(edge_index_va);
+        Vertex_handle edge_vb = cell->vertex(edge_index_vb);
+        ++edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
+
+        const int n = edge_va->cached_number_of_incident_facets();
+        const int m = edge_va->cached_number_of_components();
+        edge_va->set_c2t3_cache(n+1, m);
+      }
+      const int dimension_plus_1 = tr_.dimension() + 1;
+      // update c2t3 for vertices of f
+      for (int j = 0; j < dimension_plus_1; j++) {
+        if (j != i) {
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+          if(cell->vertex(j)->is_c2t3_cache_valid())
+            std::cerr << "(" << cell->vertex(j)->point() << ")->invalidate_c2t3_cache()\n";
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+          cell->vertex(j)->invalidate_c2t3_cache();
+        }
+      }
+    }
   }
 }
 
@@ -559,6 +833,34 @@ Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::remove_from_complex(const Facet& 
     set_surface_patch_index(facet.first, facet.second, Surface_patch_index());
     set_surface_patch_index(mirror.first, mirror.second, Surface_patch_index());
     --number_of_facets_;
+    if(manifold_info_initialized_) {
+      const Cell_handle cell = facet.first;
+      const int i = facet.second;
+      for(int j = 0; j < 3; ++j)
+      {
+        const int edge_index_va = tr_.vertex_triple_index(i, j);
+        const int edge_index_vb = tr_.vertex_triple_index(i, (j == 2) ? 0 : (j+1));
+        const Vertex_handle edge_va = cell->vertex(edge_index_va);
+        const Vertex_handle edge_vb = cell->vertex(edge_index_vb);
+        --edge_facet_counter_[this->make_ordered_pair(edge_va, edge_vb)];
+
+        const int n = edge_va->cached_number_of_incident_facets();
+        CGAL_assertion(n>0);
+        const int m = edge_va->cached_number_of_components();
+        edge_va->set_c2t3_cache(n-1, m);
+      }
+      const int dimension_plus_1 = tr_.dimension() + 1;
+      // update c2t3 for vertices of f
+      for (int j = 0; j < dimension_plus_1; j++) {
+        if (j != facet.second) {
+#ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+          if(cell->vertex(j)->is_c2t3_cache_valid())
+            std::cerr << "(" << cell->vertex(j)->point() << ")->invalidate_c2t3_cache()\n";
+#endif // CGAL_MESHES_DEBUG_REFINEMENT_POINTS
+          cell->vertex(j)->invalidate_c2t3_cache();
+        }
+      }
+    }
   }
 }
 

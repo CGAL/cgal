@@ -74,7 +74,7 @@ namespace CGAL {
         m.pop_front();
       }
 
-      void remove_element(Element& e)
+      void remove_element(const Element& e)
       {
 #if CGAL_MESHES_DEBUG_DOUBLE_MAP
 	std::cerr << "remove_element(" << &*e << ")\n";
