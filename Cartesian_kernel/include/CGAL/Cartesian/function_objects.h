@@ -30,6 +30,7 @@
 #include <CGAL/predicates/kernel_ftC3.h>
 #include <CGAL/constructions/kernel_ftC2.h>
 #include <CGAL/constructions/kernel_ftC3.h>
+#include <CGAL/predicates/Regular_triangulation_ftC3.h>
 #include <CGAL/Cartesian/solve_3.h>
 
 namespace CGAL {
@@ -2182,6 +2183,9 @@ namespace CartesianKernelFunctors {
     }
   };
 
+
+
+
   template <typename K>
   class Construct_cross_product_vector_3
   {
@@ -2950,6 +2954,22 @@ namespace CartesianKernelFunctors {
     Point_3
     operator()(const RT& x, const RT& y, const RT& z, const RT& w) const
     { return Point_3(x, y, z, w); }
+  };
+
+
+  template <typename K>
+  class Construct_weighted_point_3
+  {
+    typedef typename K::RT         RT;
+    typedef typename K::Point_3    Point_3;
+    typedef typename K::Weighted_point_3   Weighted_point_3;
+    typedef typename Weighted_point_3::Rep  Rep;
+  public:
+    typedef Weighted_point_3          result_type;
+
+    Rep
+    operator()(Return_base_tag, const Point_3& p, const RT& w) const
+    { return Rep(p,w); }
   };
 
 
@@ -3942,6 +3962,54 @@ namespace CartesianKernelFunctors {
       return s.rep().orientation();
     }
   };
+
+template < typename K >
+class Power_test_3
+{
+public:
+  typedef typename K::Weighted_point_3                  Weighted_point_3;
+  typedef typename K::Oriented_side                     Oriented_side;
+  typedef Oriented_side    result_type;
+
+  Oriented_side operator() ( const Weighted_point_3 & p,
+			     const Weighted_point_3 & q,
+			     const Weighted_point_3 & r,
+			     const Weighted_point_3 & s,
+			     const Weighted_point_3 & t) const
+    {
+      return power_testC3(p.x(), p.y(), p.z(), p.weight(),
+                          q.x(), q.y(), q.z(), q.weight(),
+                          r.x(), r.y(), r.z(), r.weight(),
+                          s.x(), s.y(), s.z(), s.weight(),
+                          t.x(), t.y(), t.z(), t.weight());
+    }
+
+  Oriented_side operator() ( const Weighted_point_3 & p,
+			     const Weighted_point_3 & q,
+			     const Weighted_point_3 & r,
+			     const Weighted_point_3 & s) const
+    {
+      return power_testC3(p.x(), p.y(), p.z(), p.weight(),
+                          q.x(), q.y(), q.z(), q.weight(),
+                          r.x(), r.y(), r.z(), r.weight(),
+                          s.x(), s.y(), s.z(), s.weight());
+    }
+
+  Oriented_side operator() ( const Weighted_point_3 & p,
+			     const Weighted_point_3 & q,
+			     const Weighted_point_3 & r) const
+    {
+      return power_testC3(p.x(), p.y(), p.z(), p.weight(),
+                          q.x(), q.y(), q.z(), q.weight(),
+                          r.x(), r.y(), r.z(), r.weight());
+    }
+
+  Oriented_side operator() ( const Weighted_point_3 & p,
+			     const Weighted_point_3 & q) const
+    {
+      return power_testC3(p.weight(),q.weight());
+    }
+};
 
   template <typename K>
   class Oriented_side_2

@@ -39,6 +39,7 @@
 #include <CGAL/Aff_transformation_2.h>
 
 #include <CGAL/Point_3.h>
+#include <CGAL/Weighted_point_3.h>
 #include <CGAL/Plane_3.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/Direction_3.h>

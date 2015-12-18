@@ -286,6 +286,18 @@ public:
 	return Point_3(c(a.x()), c(a.y()), c(a.z()));
     }
 
+    typename K2::Weighted_point_3
+    operator()(const typename K1::Weighted_point_3 &a) const
+    {
+        typedef typename K2::Weighted_point_3 Weighted_point_3;
+        K1::Point_3 p = a.point();
+        K1::RT w = a.weight();
+
+        K2::Point_3 cp = (*this)(p);
+        K2::RT cw = c(w);
+	return Weighted_point_3(cp,cw); // fix this (c(a.point()), c(a.weight()));
+    }
+
     typename K2::Vector_3
     operator()(const typename K1::Vector_3 &a) const
     {

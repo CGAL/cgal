@@ -36,4 +36,7 @@ int main()
 {
   typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Traits;
   _test_cls_regular_euclidean_traits_3(Traits() );
+  std::cerr << "done"<< std::endl;
+
+  return 0;
 }

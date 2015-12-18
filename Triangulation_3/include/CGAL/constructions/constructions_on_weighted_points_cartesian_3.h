@@ -127,7 +127,7 @@ weighted_circumcenterC3(
 					   sx, sy, sz, sw,
 					   num_x,  num_y, num_z,den);
 
-  CGAL_triangulation_assertion( ! CGAL_NTS is_zero(den) );
+  CGAL_assertion( ! CGAL_NTS is_zero(den) );
    FT inv = FT(1)/(FT(2) * den);
 
   x = px + num_x*inv;
@@ -155,7 +155,7 @@ weighted_circumcenterC3(
 					   sx, sy, sz, sw,
 					   num_x,  num_y, num_z, den);
 
-  CGAL_triangulation_assertion( ! CGAL_NTS is_zero(den) );
+  CGAL_assertion( ! CGAL_NTS is_zero(den) );
    FT inv = FT(1)/(FT(2) * den);
 
   x = px + num_x*inv;
@@ -186,7 +186,7 @@ squared_radius_orthogonal_sphereC3(
 					   sx, sy, sz, sw,
 					   num_x, num_y, num_z,den);
 
-  CGAL_triangulation_assertion( ! CGAL_NTS is_zero(den) );
+  CGAL_assertion( ! CGAL_NTS is_zero(den) );
    FT inv = FT(1)/(FT(2) * den);
 
    return
@@ -266,7 +266,7 @@ weighted_circumcenterC3(
 					   rx, ry, rz, rw,
 					   num_x,  num_y, num_z, den);
 
-  CGAL_triangulation_assertion( den != FT(0) );
+  CGAL_assertion( den != FT(0) );
   FT inv = FT(1)/(FT(2) * den);
 
   x = px + num_x*inv;
@@ -293,7 +293,7 @@ weighted_circumcenterC3(
 					   rx, ry, rz, rw,
 					   num_x,  num_y, num_z, den);
 
-  CGAL_triangulation_assertion( den != FT(0) );
+  CGAL_assertion( den != FT(0) );
   FT inv = FT(1)/(FT(2) * den);
 
   x = px + num_x*inv;
@@ -322,7 +322,7 @@ squared_radius_smallest_orthogonal_sphereC3(
 					   rx, ry, rz, rw,
 					   num_x,  num_y, num_z, den);
 
-  CGAL_triangulation_assertion( den != FT(0) );
+  CGAL_assertion( den != FT(0) );
   FT inv = FT(1)/(FT(2) * den);
 
  return

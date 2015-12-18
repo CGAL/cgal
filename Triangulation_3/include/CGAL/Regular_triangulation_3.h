@@ -1553,6 +1553,7 @@ dual(Cell_handle c) const
 
     // dimension() == 3
     Cell_handle n = c->neighbor(i);
+    Bare_point bp = dual(c);
     if ( ! is_infinite(c) && ! is_infinite(n) )
       return construct_object(construct_segment( dual(c), dual(n) ));
 
