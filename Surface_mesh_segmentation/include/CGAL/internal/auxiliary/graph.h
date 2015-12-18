@@ -687,6 +687,8 @@ inline Graph::Graph(void (*err_function)(const char *))
   node_block_first = NULL;
   arc_for_block_first = NULL;
   arc_rev_block_first = NULL;
+  orphan_first = NULL;
+  orphan_last = NULL;
   flow = 0;
 }
 
