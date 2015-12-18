@@ -44,7 +44,7 @@
   OutFile "${CGAL_SRC}-Setup.exe"
   !endif
 
-  ;Default installation folder: C:\Program Files\CGAL-4.8
+  ;Default installation folder: C:\dev\CGAL-4.8
   ; See also .onInit
   Installdir ""
 
@@ -101,7 +101,7 @@
 
   !define MUI_FINISHPAGE_LINK "Installation instructions"
   
-  !define MUI_FINISHPAGE_LINK_LOCATION "file:///$INSTDIR/doc_html/index.html"
+  !define MUI_FINISHPAGE_LINK_LOCATION "http://www.cgal.org/download/windows.html"
   
 ;--------------------------------
 ; Pages
@@ -313,11 +313,7 @@ Function .onInit
 
   # Setup the default installation dir
   ${If} $InstDir == "" ; /D= was not used on the command line
-    ${If} ${RunningX64}
-      StrCpy $InstDir "$PROGRAMFILES64\${CGAL_SRC}"
-    ${Else}
-      StrCpy $InstDir "$PROGRAMFILES\${CGAL_SRC}"
-    ${EndIf}
+      StrCpy $InstDir "C:\dev\${CGAL_SRC}"
   ${EndIf}
 
   !ifdef DebugLog
