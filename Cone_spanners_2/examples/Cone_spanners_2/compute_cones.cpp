@@ -1,5 +1,5 @@
 /** @file compute_cones.cpp
- * An example application that computes the cone boundariess given the number of cones
+ * An example application that computes the cone boundaries given the number of cones
  * and the initial direction. 
  *
  * Authors: Weisheng Si and Quincy Tse, University of Western Sydney 
