@@ -160,11 +160,11 @@ sub install_packages() {
     print "\n";
     system(@command);
     # generate the list of header file per package that not in an internal subdirectory. Files start with CGAL
-    system("tar -tf /tmp/temppack.tar --wildcards './include/\*\*.h' --transform 's/.\\\/include\\\///' --show-transformed-names --exclude=**/internal --index-file=/tmp/templist");
-    system("mv", "/tmp/templist", "/tmp/$package_name.txt");
-
+    @filelistcmd = ('tar', '-tf', "$RELEASEDIR/temppack.tar", '--wildcards', "./include/\*\*.h",
+                    "--transform=s/.\\\/include\\\///", '--show-transformed-names',
+                    '--exclude=**/internal', "--index-file=/tmp/$package_name.txt");
+    system(@filelistcmd);
     move("$RELEASEDIR/temppack.tar", "$RELEASEDIR/$VERSION/");
-
 
     chdir "$RELEASEDIR/$VERSION" or die;
     my $tar = Archive::Tar->new;
