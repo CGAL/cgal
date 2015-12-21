@@ -127,7 +127,7 @@ public:
   /**
   * \ingroup PMP_repairing_grp
   * builds a polygon mesh from a soup of polygons.
-  * @pre the input polygon soup describes consistently oriented
+  * @pre the input polygon soup describes a consistently oriented
   * polygon mesh.
   *
   * @tparam PolygonMesh a model of `MutableFaceGraph` with an internal point property map
