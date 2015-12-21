@@ -56,8 +56,10 @@ public:
   /// We do not pass \c const \c Arg_& because \c Arg_ is a ring number type
   Weighted_point operator()(Arg_ a1, Arg_ a2, Arg_ a3) const
   {
-    typedef typename Weighted_point::Point Bare_point;
-    return Weighted_point(Bare_point(a1,a2,a3));
+    // AF: check this
+    //typedef typename Weighted_point::Point Bare_point;
+    //    return Weighted_point(Bare_point(a1,a2,a3));
+    return Weighted_point(a1,a2,a3);
   }
 
 private:

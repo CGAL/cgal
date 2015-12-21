@@ -42,8 +42,8 @@ class Robust_filtered_compute_squared_radius_3
 {
 public:
   typedef Exact_predicates_exact_constructions_kernel         EK;
-  typedef Weighted_converter_3<Cartesian_converter<K, EK> >   To_exact;
-  typedef Weighted_converter_3<Cartesian_converter<EK,K> >    Back_from_exact;
+  typedef Cartesian_converter<K, EK>  To_exact;
+  typedef Cartesian_converter<EK,K>   Back_from_exact;
   
   typedef typename K::Point_3                         Point_3;
   typedef typename K::FT                              FT;
@@ -149,8 +149,8 @@ class Robust_filtered_construct_weighted_circumcenter_3
 {
 public:
   typedef Exact_predicates_exact_constructions_kernel          EK;
-  typedef Weighted_converter_3<Cartesian_converter<K_, EK> >   To_exact;
-  typedef Weighted_converter_3<Cartesian_converter<EK,K_> >    Back_from_exact;
+  typedef Cartesian_converter<K_, EK>   To_exact;
+  typedef Cartesian_converter<EK,K_>     Back_from_exact;
   
   typedef CGAL::Regular_triangulation_euclidean_traits_3<K_> Rt;
   typedef CGAL::Regular_triangulation_euclidean_traits_3<EK> Exact_Rt;
@@ -289,8 +289,8 @@ class Robust_filtered_compute_squared_radius_smallest_orthogonal_sphere_3
 {
 public:
   typedef Exact_predicates_exact_constructions_kernel          EK;
-  typedef Weighted_converter_3<Cartesian_converter<K_, EK> >   To_exact;
-  typedef Weighted_converter_3<Cartesian_converter<EK,K_> >    Back_from_exact;
+  typedef Cartesian_converter<K_, EK>   To_exact;
+  typedef Cartesian_converter<EK,K_>     Back_from_exact;
   
   typedef CGAL::Regular_triangulation_euclidean_traits_3<K_> Rt;
   typedef CGAL::Regular_triangulation_euclidean_traits_3<EK> Exact_Rt;
