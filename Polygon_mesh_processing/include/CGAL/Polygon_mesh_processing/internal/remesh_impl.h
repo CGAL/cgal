@@ -25,12 +25,10 @@
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/AABB_tree_remeshing.h>
 
 #include <CGAL/iterator.h>
-#include <CGAL/AABB_tree.h>
-#include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_triangle_primitive.h>
-
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
@@ -151,11 +149,7 @@ namespace internal {
     typedef typename GeomTraits::Plane_3    Plane_3;
     typedef typename GeomTraits::Triangle_3 Triangle_3;
 
-    typedef std::list<Triangle_3>                                  Triangle_list;
-    typedef typename Triangle_list::iterator                       Tr_iterator;
-    typedef CGAL::AABB_triangle_primitive<GeomTraits, Tr_iterator> Primitive;
-    typedef CGAL::AABB_traits<GeomTraits, Primitive>               Traits;
-    typedef CGAL::AABB_tree<Traits>                                AABB_tree;
+    typedef typename AABB_tree_remeshing<PM, VertexPointMap, GeomTraits> AABB_tree;
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
@@ -164,26 +158,12 @@ namespace internal {
       : mesh_(pmesh)
       , vpmap_(vpmap)
       , own_tree_(true)
-      , input_triangles_()
       , halfedge_status_map_()
       , protect_constraints_(protect_constraints)
     {
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
 
-      //build AABB tree of input surface
       //todo : add a constructor with aabb_tree as parameter
-      //todo : do we really need to keep this copy of the input surface?
-      BOOST_FOREACH(face_descriptor f, faces(mesh_))
-      {
-        halfedge_descriptor h = halfedge(f, mesh_);
-        vertex_descriptor v1 = target(h, mesh_);
-        vertex_descriptor v2 = target(next(h, mesh_), mesh_);
-        vertex_descriptor v3 = target(next(next(h, mesh_), mesh_), mesh_);
-        input_triangles_.push_back(
-          Triangle_3(get(vpmap, v1), get(vpmap, v2), get(vpmap, v3)));
-      }
-      tree_ptr_ = new AABB_tree(input_triangles_.begin(), input_triangles_.end());
-      tree_ptr_->accelerate_distance_queries();
     }
 
     ~Incremental_remesher()
@@ -206,6 +186,19 @@ namespace internal {
         }
       }
       tag_halfedges_status(face_range, ecmap);
+
+      //build AABB tree of input surface
+      //collect connected components
+      boost::vector_property_map<int,
+        boost::property_map<PM, boost::face_index_t>::type>
+          fccmap(get(boost::face_index, mesh_));
+      PMP::connected_components(mesh_,
+        fccmap);
+//        PMP::parameters::edge_is_constrained_map(ecmap));
+
+      tree_ptr_ = new AABB_tree();
+      tree_ptr_->build(faces(mesh_).first, faces(mesh_).second, mesh_, vpmap_, fccmap);
+      tree_ptr_->accelerate_distance_queries();
     }
 
     // split edges of edge_range that have their length > high
@@ -816,7 +809,21 @@ namespace internal {
       {
         if (!is_on_patch(v))
           continue;
-        put(vpmap_, v, tree_ptr_->closest_point(get(vpmap_, v)));
+
+        // if the vertex is not on the destination polyhedron
+        typedef std::map<face_descriptor, std::size_t> FaceCCMap;
+        FaceCCMap f_cc;
+        boost::associative_property_map<FaceCCMap> face_ccmap(f_cc);
+
+        PMP::connected_components(mesh_,
+          face_ccmap);
+//          PMP::parameters::edge_is_constrained_map(Constraint_property_map()));
+
+        Point proj = this->project_vertex_onto(v,
+          get(face_ccmap, face(halfedge(v, mesh_), mesh_)),
+          face_ccmap);
+
+        put(vpmap_, v, proj);
       }
 
       CGAL_assertion(is_valid(mesh_));
@@ -832,6 +839,59 @@ namespace internal {
 #ifdef CGAL_DUMP_REMESHING_STEPS
       dump("5-project.off");
 #endif
+    }
+
+ private:
+   //struct Constraint_property_map
+   //{
+   //  typedef boost::readable_property_map_tag      category;
+   //  typedef bool                                  value_type;
+   //  typedef bool                                  reference;
+   //  typedef edge_descriptor                       key_type;
+
+   //  bool operator[](const edge_descriptor& e) {
+   //    return is_on_border(e) || is_on_patch_border(e);
+   //  }
+   //  friend bool get(const Constraint_property_map& map,
+   //                  const edge_descriptor& e) {
+   //    return is_on_border(e) || is_on_patch_border(e);
+   //  }
+   //};
+
+   struct AABB_CC_property_map
+   {
+     typedef boost::readable_property_map_tag      category;
+     typedef std::size_t                           value_type;
+     typedef std::size_t&                          reference;
+     typedef typename AABB_tree::AABB_primitive    key_type;
+
+     value_type operator[](const key_type& f)
+     {
+       return f.patch_id();
+     }
+     friend value_type get(const AABB_CC_property_map& map,
+                           const key_type& f) {
+       return f.patch_id();
+     }
+   };
+
+   template<typename FaceCCMap>
+   Point project_vertex_onto(vertex_descriptor v,
+                             std::size_t patch_id,
+                             const FaceCCMap& fccmap) const
+    {
+      internal::Filtered_projection_traits<typename AABB_tree::AABB_traits,
+        AABB_CC_property_map,
+        true> /* keep primitives with matching IDs */
+        projection_traits(
+          typename boost::property_traits<AABB_CC_property_map>::value_type(patch_id),
+          tree_ptr_->traits(),
+          AABB_CC_property_map());
+
+       tree_ptr_->traversal(get(vpmap_, v), projection_traits);
+
+      CGAL_assertion(projection_traits.found());
+      return projection_traits.closest_point();
     }
 
   private:
@@ -1223,6 +1283,7 @@ namespace internal {
       return true;
     }
 
+public:
     bool is_on_patch_border(const halfedge_descriptor& h) const
     {
       bool res = (status(h) == PATCH_BORDER);
@@ -1269,6 +1330,7 @@ namespace internal {
       return status(h) == MESH;
     }
 
+private:
     void halfedge_added(const halfedge_descriptor& h,
                         const Halfedge_status& s)
     {
@@ -1372,9 +1434,8 @@ namespace internal {
   private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
-    const AABB_tree* tree_ptr_;
+    AABB_tree* tree_ptr_;
     bool own_tree_;
-    Triangle_list input_triangles_;
     boost::unordered_map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
     bool protect_constraints_;
     std::set<edge_descriptor> constrained_edges_;
