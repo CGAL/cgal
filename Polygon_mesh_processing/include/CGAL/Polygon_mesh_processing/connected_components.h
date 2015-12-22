@@ -519,7 +519,8 @@ connected_components(const PolygonMesh& pmesh,
     internal::No_constraint<PolygonMesh>//default
   > ::type                                               EdgeConstraintMap;
   EdgeConstraintMap ecmap
-    = choose_param(get_param(np, edge_is_constrained), EdgeConstraintMap());
+    = choose_param(get_param(np, edge_is_constrained),
+                   internal::No_constraint<PolygonMesh>());
 
   typedef Dual<PolygonMesh>                              Dual;
   typedef boost::filtered_graph<Dual,
