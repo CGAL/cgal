@@ -31,7 +31,7 @@
 namespace CGAL {
 
 
-  template <typename P>
+  template <typename P, typename Image_word_type>
   void
   polylines_to_protect(const CGAL::Image_3& cgal_image,
                        const double, const double, const double,
@@ -84,7 +84,7 @@ namespace CGAL {
             // we have gone too far
             continue;
           }
-          typedef unsigned char Image_word_type;
+//          typedef unsigned char Image_word_type;
           typedef tuple<Pixel, Point_3, Image_word_type> Enriched_pixel;
 
           array<array<Enriched_pixel, 2>, 2> square =
@@ -351,14 +351,15 @@ case_4:
   }
 
 
-  template <typename P>
+  template <typename P, typename Image_word_type>
   void
   polylines_to_protect(const CGAL::Image_3& cgal_image,
                        std::vector<std::vector<P> >& polylines)
   {
-    polylines_to_protect(cgal_image, 
-                         cgal_image.vx(), cgal_image.vy(),cgal_image.vz(),
-                         polylines);
+    polylines_to_protect<P, Image_word_type>
+      (cgal_image,
+       cgal_image.vx(), cgal_image.vy(),cgal_image.vz(),
+       polylines);
   }
 
 
