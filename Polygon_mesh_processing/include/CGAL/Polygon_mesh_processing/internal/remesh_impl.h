@@ -78,24 +78,26 @@ namespace internal {
     typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
 
     std::map<edge_descriptor, bool> border_edges;
-    const PM& pmesh_;
+    const PM* pmesh_ptr_;
   public:
+    Border_constraint_pmap():pmesh_ptr_(NULL) {}
     Border_constraint_pmap(const PM& pmesh, const FaceRange& faces)
-      : pmesh_(pmesh)
+      : pmesh_ptr_(&pmesh)
     {
       std::vector<halfedge_descriptor> border;
-      PMP::border_halfedges(faces, pmesh_, std::back_inserter(border));
+      PMP::border_halfedges(faces, *pmesh_ptr_, std::back_inserter(border));
 
-      BOOST_FOREACH(edge_descriptor e, edges(pmesh_))
+      BOOST_FOREACH(edge_descriptor e, edges(*pmesh_ptr_))
         border_edges.insert(std::make_pair(e, false));
 
       BOOST_FOREACH(halfedge_descriptor h, border)
-        border_edges[edge(h, pmesh_)] = true;
+        border_edges[edge(h, *pmesh_ptr_)] = true;
     }
 
     friend bool get(const Border_constraint_pmap<PM, FaceRange>& map,
                     const edge_descriptor& e)
     {
+      CGAL_assertion(map.pmesh_ptr_!=NULL);
       CGAL_assertion(!map.border_edges.empty());
       typename std::map<edge_descriptor, bool>::const_iterator it
         = map.border_edges.find(e);
@@ -151,6 +153,7 @@ namespace internal {
 
     typedef AABB_tree_remeshing<PM, VertexPointMap, GeomTraits> AABB_tree;
 
+    typedef Incremental_remesher<PM, VertexPointMap, GeomTraits> Self;
   public:
     Incremental_remesher(PolygonMesh& pmesh
                        , VertexPointMap& vpmap
@@ -193,8 +196,8 @@ namespace internal {
         typename boost::property_map<PM, boost::face_index_t>::type>
           fccmap(get(boost::face_index, mesh_));
       PMP::connected_components(mesh_,
-        fccmap);
-//        PMP::parameters::edge_is_constrained_map(ecmap));
+        fccmap,
+        PMP::parameters::edge_is_constrained_map(ecmap));
 
       tree_ptr_ = new AABB_tree();
       tree_ptr_->build(faces(mesh_).first, faces(mesh_).second, mesh_, vpmap_, fccmap);
@@ -794,6 +797,22 @@ namespace internal {
 #endif
     }
 
+    struct Constraint_property_map
+    {
+      typedef boost::readable_property_map_tag      category;
+      typedef bool                                  value_type;
+      typedef bool                                  reference;
+      typedef edge_descriptor                       key_type;
+      const Self* remesher_ptr_;
+      Constraint_property_map(): remesher_ptr_(NULL) {}
+      Constraint_property_map(const Self& remesher)
+        : remesher_ptr_(&remesher) {}
+      friend bool get(const Constraint_property_map& m,
+                      const edge_descriptor& e) {
+        return m.remesher_ptr_->is_on_border(e) ||
+               m.remesher_ptr_->is_on_patch_border(e);
+      }
+    };
 
     // PMP book :
     // "maps the vertices back to the surface"
@@ -816,8 +835,8 @@ namespace internal {
         boost::associative_property_map<FaceCCMap> face_ccmap(f_cc);
 
         PMP::connected_components(mesh_,
-          face_ccmap);
-//          PMP::parameters::edge_is_constrained_map(Constraint_property_map()));
+          face_ccmap,
+          PMP::parameters::edge_is_constrained_map(Constraint_property_map(*this)));
 
         Point proj = this->project_vertex_onto(v,
           get(face_ccmap, face(halfedge(v, mesh_), mesh_)),
@@ -840,24 +859,7 @@ namespace internal {
       dump("5-project.off");
 #endif
     }
-
- private:
-   //struct Constraint_property_map
-   //{
-   //  typedef boost::readable_property_map_tag      category;
-   //  typedef bool                                  value_type;
-   //  typedef bool                                  reference;
-   //  typedef edge_descriptor                       key_type;
-
-   //  bool operator[](const edge_descriptor& e) {
-   //    return is_on_border(e) || is_on_patch_border(e);
-   //  }
-   //  friend bool get(const Constraint_property_map& map,
-   //                  const edge_descriptor& e) {
-   //    return is_on_border(e) || is_on_patch_border(e);
-   //  }
-   //};
-
+private:
    struct AABB_CC_property_map
    {
      typedef boost::readable_property_map_tag      category;
