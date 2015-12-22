@@ -88,7 +88,7 @@ public:
     for (face_iterator fit = fbegin; fit != fend; ++fit)
     {
       face_descriptor f = *fit;
-      AABB_primitive prim(f, pmesh, vpmap);
+      AABB_primitive prim(fit, pmesh, vpmap);
       prim.set_patch_id(get(fccmap, f));
       this->insert(prim);
     }

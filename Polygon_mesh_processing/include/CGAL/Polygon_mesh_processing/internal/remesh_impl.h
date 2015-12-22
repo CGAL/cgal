@@ -149,7 +149,7 @@ namespace internal {
     typedef typename GeomTraits::Plane_3    Plane_3;
     typedef typename GeomTraits::Triangle_3 Triangle_3;
 
-    typedef typename AABB_tree_remeshing<PM, VertexPointMap, GeomTraits> AABB_tree;
+    typedef AABB_tree_remeshing<PM, VertexPointMap, GeomTraits> AABB_tree;
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
@@ -190,7 +190,7 @@ namespace internal {
       //build AABB tree of input surface
       //collect connected components
       boost::vector_property_map<int,
-        boost::property_map<PM, boost::face_index_t>::type>
+        typename boost::property_map<PM, boost::face_index_t>::type>
           fccmap(get(boost::face_index, mesh_));
       PMP::connected_components(mesh_,
         fccmap);
@@ -869,7 +869,7 @@ namespace internal {
      {
        return f.patch_id();
      }
-     friend value_type get(const AABB_CC_property_map& map,
+     friend value_type get(const AABB_CC_property_map& /* map */,
                            const key_type& f) {
        return f.patch_id();
      }
@@ -880,6 +880,7 @@ namespace internal {
                              std::size_t patch_id,
                              const FaceCCMap& fccmap) const
     {
+      // SL4JT: fccmap not used?
       internal::Filtered_projection_traits<typename AABB_tree::AABB_traits,
         AABB_CC_property_map,
         true> /* keep primitives with matching IDs */
