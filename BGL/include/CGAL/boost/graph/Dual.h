@@ -25,10 +25,18 @@
 
 namespace CGAL {
 
+/*!
+\ingroup PkgBGLHelper
+
+The class template `Dual` is an adaptor that creates the dual view of
+a `FaceGraph`. Faces of the original graph correspond to vertices in
+the `Dual` and vice versa.
+
+
+*/
 template <typename Primal_>
 class Dual
 {
-  
   const Primal_& primal_;
 
 public:
@@ -77,7 +85,7 @@ public:
   typedef typename GTP::halfedge_iterator halfedge_iterator;
   typedef typename GTP::edge_iterator     edge_iterator;
 
-  typedef CGAL::Halfedge_around_face_iterator<Primal> in_edge_iterator;
+  typedef CGAL::Halfedge_around_face_iterator<Primal>      in_edge_iterator;
   typedef CGAL::Opposite_edge_around_face_iterator<Primal> out_edge_iterator;
 
   static vertex_descriptor   null_vertex()   { return vertex_descriptor(); }
