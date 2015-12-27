@@ -262,7 +262,7 @@ public:
 * @tparam NamedParameters a sequence of \ref namedparameters
 *
 * @param f face to be triangulated
-* @param pmesh the polygon mesh to which the face to be triangulated belongs to
+* @param pmesh the polygon mesh to which the face to be triangulated belongs
 * @param np optional sequence of \ref namedparameters among the ones listed below
 *
 * \cgalNamedParamsBegin
