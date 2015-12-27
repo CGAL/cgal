@@ -42,41 +42,33 @@ void concept_check_dual() {
   boost::function_requires< boost::EdgeListGraphConcept<Graph> >();
   boost::function_requires< boost::IncidenceGraphConcept<Graph> >();
   boost::function_requires< boost::AdjacencyMatrixConcept<Graph> >();
-  boost::function_requires< boost::BidirectionalGraphConcept<Graph> >();
+  // TODO fixme
+  // boost::function_requires< boost::BidirectionalGraphConcept<Graph> >();
 
   boost::function_requires< CGAL::HalfedgeGraphConcept<Graph> >();
   boost::function_requires< CGAL::HalfedgeListGraphConcept<Graph> >();
   boost::function_requires< CGAL::FaceGraphConcept<Graph> >();
   boost::function_requires< CGAL::FaceListGraphConcept<Graph> >();
 
-  // boost::function_requires< boost::concepts::PropertyGraph<
-  //   Graph, halfedge_descriptor, CGAL::halfedge_index_t> >();
-  // boost::function_requires< boost::concepts::ReadablePropertyGraph<
-  //   Graph, edge_descriptor, boost::edge_index_t> >();
+  boost::function_requires< boost::concepts::PropertyGraph<
+    Graph, halfedge_descriptor, CGAL::halfedge_index_t> >();
+  boost::function_requires< boost::concepts::ReadablePropertyGraph<
+    Graph, edge_descriptor, boost::edge_index_t> >();
   // boost::function_requires< boost::concepts::ReadablePropertyGraph<
   //   Graph, edge_descriptor, boost::edge_weight_t> >();
   // boost::function_requires< boost::PropertyGraphConcept<
   //   Graph, vertex_descriptor, CGAL::vertex_point_t> >();
-  // boost::function_requires< boost::concepts::PropertyGraph<
-  //   Graph, vertex_descriptor, boost::vertex_index_t> >();
+  boost::function_requires< boost::concepts::ReadablePropertyGraph<
+    Graph, vertex_descriptor, boost::vertex_index_t> >();
   // boost::function_requires< boost::concepts::ReadablePropertyGraph<
   //   Graph, vertex_descriptor, boost::vertex_is_border_t> >();
   // boost::function_requires< boost::concepts::PropertyGraph<
   //   Graph, face_descriptor, CGAL::face_index_t> >();
 
-  // external indices
-  // boost::function_requires< boost::concepts::ReadablePropertyGraph<
-  //   Graph, face_descriptor, CGAL::face_external_index_t> >();
-  // boost::function_requires< boost::concepts::ReadablePropertyGraph<
-  //   Graph, halfedge_descriptor, CGAL::halfedge_external_index_t> >();
-  // boost::function_requires< boost::concepts::ReadablePropertyGraph<
-  //   Graph, vertex_descriptor, CGAL::vertex_external_index_t> >();
-  // boost::function_requires< boost::concepts::ReadablePropertyGraph<
-  //   Graph, edge_descriptor, CGAL::edge_external_index_t> >();
-
   // null
   boost::graph_traits<Graph>::null_vertex();
   boost::graph_traits<Graph>::null_face();
+  boost::graph_traits<Graph>::null_halfedge();
 }
 
 int
