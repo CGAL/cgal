@@ -66,6 +66,8 @@ create_single_source_cgal_program( "graph_concept_Polyhedron_3.cpp" )
 
 create_single_source_cgal_program( "graph_concept_Triangulation_2.cpp" )
 
+create_single_source_cgal_program( "test_clear.cpp" )
+
 create_single_source_cgal_program( "test_graph_geometry.cpp" )
 
 create_single_source_cgal_program( "test_helpers.cpp" )
@@ -76,6 +78,10 @@ create_single_source_cgal_program( "test_cgal_bgl_named_params.cpp" )
 
 if(OpenMesh_FOUND)
   target_link_libraries( test_graph_geometry ${OPENMESH_LIBRARIES})
+endif()
+
+if(OpenMesh_FOUND)
+  target_link_libraries( test_clear ${OPENMESH_LIBRARIES})
 endif()
 
 create_single_source_cgal_program( "test_Euler_operations.cpp" )
