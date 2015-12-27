@@ -135,6 +135,10 @@ struct Dual_face_index_pmap{
 
 } //end of namespace internal
 
+template <typename P, typename Property>
+struct property_map<CGAL::Dual<P>, Property>
+  : property_map<P, Property> {};
+
 template <typename P>
 struct property_map<CGAL::Dual<P>, boost::vertex_index_t>
 {
@@ -153,6 +157,36 @@ struct property_map<CGAL::Dual<P>, boost::face_index_t>
 
 
 namespace CGAL {
+
+template <typename P, typename Property>
+typename boost::property_map<P, Property>::type
+get(Property p, Dual<P>& dual)
+{
+  return get(p, dual.primal());
+}
+
+template <typename P, typename Property>
+typename boost::property_map<P, Property>::const_type
+get(Property p, const Dual<P>& dual)
+{
+  return get(p, dual.primal());
+}
+
+template <typename P, typename Property, typename Key >
+typename boost::property_map_value<P, Property>::type
+get(Property p, const Dual<P>& dual, const Key& k)
+{
+  return get(p, dual.primal(), k);
+}
+
+template <typename P, typename Property, typename Key, typename Value>
+void
+put(Property p, const Dual<P>& dual, const Key& k, const Value& val)
+{
+  put(p, dual.primal(), k, val);
+}
+
+
 
 template <typename P>
 typename boost::internal::Dual_vertex_index_pmap<P>
