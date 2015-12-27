@@ -60,11 +60,6 @@ template <typename Primal>
 class graph_traits<CGAL::Dual<Primal> >
 {
   typedef boost::graph_traits<Primal> GTP;
-  struct Dual_traversal_category : public virtual boost::bidirectional_graph_tag,
-                                   public virtual boost::vertex_list_graph_tag,
-                                   public virtual boost::edge_list_graph_tag
-  {};
-
 public:
   typedef typename GTP::face_descriptor     vertex_descriptor;
   typedef typename GTP::vertex_descriptor   face_descriptor;
@@ -72,7 +67,7 @@ public:
   typedef typename GTP::edge_descriptor     edge_descriptor;
   typedef typename GTP::directed_category   directed_category;
   typedef boost::allow_parallel_edge_tag    edge_parallel_category; 
-  typedef Dual_traversal_category           traversal_category;
+  typedef typename GTP::traversal_category  traversal_category;
 
   typedef typename GTP::faces_size_type          vertices_size_type;
   typedef typename GTP::vertices_size_type       faces_size_type;
