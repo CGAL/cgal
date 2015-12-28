@@ -221,6 +221,8 @@ void Trapezoidal_decomposition_2<Td_traits>
 {
   CGAL_precondition(traits->is_active(trpz_node.get_data()));
   CGAL_precondition(traits->is_td_trapezoid(trpz_node.get_data()));
+  if ( Td_active_trapezoid* trap = boost::get<Td_active_trapezoid>(&trpz_node.get_data()) )
+    trap->clear_neighbors();
   trpz_node.set_data(Td_inactive_trapezoid());
   if (active_node)
     trpz_node.set_left_child(*active_node);
