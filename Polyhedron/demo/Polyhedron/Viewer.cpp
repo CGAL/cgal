@@ -308,7 +308,7 @@ void Viewer::keyPressEvent(QKeyEvent* e)
   }
   else if(e->key() == Qt::Key_I && e->modifiers() & Qt::ControlModifier){
         has_text = !has_text;
-		if (has_text)
+        if (has_text)
 			d->scene->printPrimitiveIds(this);
         update();
       }
@@ -1265,7 +1265,6 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 	 glClearColor(1.0, 1.0, 1.0, 1.0);
 	 painter->endNativePainting();
 	 preDraw();
-	// painter->fillRect(this->rect(), backgroundColor());
 	 draw();
 	 postDraw();
 	 painter->end();

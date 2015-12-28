@@ -662,15 +662,15 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     if(viewer)
     {
-    CGAL::Three::Viewer_interface* v = qobject_cast<CGAL::Three::Viewer_interface*>(viewer);
+      CGAL::Three::Viewer_interface* v = qobject_cast<CGAL::Three::Viewer_interface*>(viewer);
 
-    //Clears the targeted Id
-    targeted_id = NULL;
-    delete targeted_id;
-    //Remove textitems
-    v->textRenderer->removeTextList(textItems);
-    textItems =0;
-    delete textItems;
+      //Clears the targeted Id
+      targeted_id = NULL;
+      delete targeted_id;
+      //Remove textitems
+      v->textRenderer->removeTextList(textItems);
+      textItems =0;
+      delete textItems;
     }
 
 }
@@ -1466,9 +1466,6 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
 
 void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *viewer) const 
 {
-
-	if (viewer->hasText())
-	{
 		TextRenderer *renderer = viewer->textRenderer;
 		//clears textitems
 		renderer->removeTextList(textItems);
@@ -1507,7 +1504,6 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
 		}
 		//add the QList to the render's pool
 		renderer->addTextList(textItems);
-	}
 }
 
 bool Scene_polyhedron_item::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
