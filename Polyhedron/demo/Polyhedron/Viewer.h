@@ -148,6 +148,7 @@ protected:
 //!This class holds the properties of each line of text to be rendered.
 class  VIEWER_EXPORT TextItem{
 public :
+    TextItem() {}
     TextItem(float p_x, float p_y, float p_z, QString p_text, QFont font = QFont(), QColor p_color = Qt::black)
         :x(p_x), y(p_y), z(p_z), m_text(p_text), m_font(font), m_color(p_color)
     {

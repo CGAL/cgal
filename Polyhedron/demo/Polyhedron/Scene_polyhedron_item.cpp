@@ -1364,8 +1364,9 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
         typedef std::list<Intersection_and_primitive_id> Intersections;
         Intersections intersections;
         aabb_tree->all_intersections(ray, std::back_inserter(intersections));
-        Intersections::iterator closest = intersections.begin();
-        if(closest != intersections.end()) {
+
+        if(!intersections.empty()) {
+            Intersections::iterator closest = intersections.begin();
             const Kernel::Point_3* closest_point =
                     boost::get<Kernel::Point_3>(&closest->first);
             for(Intersections::iterator
@@ -1391,34 +1392,32 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
                 Polyhedron::Facet_handle selected_fh = closest->second;
                 //Test spots around facet to find the closest to point
 
-                float dist = 0;
-                float min_dist =0;
-                QMap<float, TextItem*> t_Items;
-                qglviewer::Vec test(selected_fh->halfedge()->vertex()->point().x(),
-                                    selected_fh->halfedge()->vertex()->point().y(),
-                                    selected_fh->halfedge()->vertex()->point().z());
+                double min_dist = (std::numeric_limits<double>::max)();
+                TextItem text_item;
+                Kernel::Point_3 pt_under(point_under.x, point_under.y, point_under.z);
 
-                min_dist = (test.x-point_under.x)*(test.x-point_under.x)+(test.y-point_under.y)*(test.y-point_under.y)+(test.z-point_under.z)*(test.z-point_under.z);
+                // test the vertices of the closest face
                 Q_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *poly))
                 {
-                    test = qglviewer::Vec(vh->point().x(), vh->point().y(),vh->point().z());
-                    dist = (test.x-point_under.x)*(test.x-point_under.x)+(test.y-point_under.y)*(test.y-point_under.y)+(test.z-point_under.z)*(test.z-point_under.z);
-                    if(dist < min_dist)
+                    Kernel::Point_3 test=vh->point();
+                    double dist = CGAL::squared_distance(test, pt_under);
+                    if( dist < min_dist){
                         min_dist = dist;
-                    t_Items[dist] = new TextItem(test.x, test.y, test.z,QString("%1").arg(vh->id()),font, Qt::red);
+                        text_item = TextItem(test.x(), test.y(), test.z(), QString("%1").arg(vh->id()), font, Qt::red);
+                    }
                 }
+                // test the midpoint of edges of the closest face
                 Q_FOREACH(boost::graph_traits<Polyhedron>::halfedge_descriptor e, halfedges_around_face(selected_fh->halfedge(), *poly))
                 {
-                    const Point& p1 = source(e, *poly)->point();
-                    const Point& p2 = target(e, *poly)->point();
-                    test = qglviewer::Vec((p1.x()+p2.x())/2, (float)(p1.y()+p2.y())/2, (float)(p1.z()+p2.z())/2);
-                    dist = (test.x-point_under.x)*(test.x-point_under.x)+(test.y-point_under.y)*(test.y-point_under.y)+(test.z-point_under.z)*(test.z-point_under.z);
-                    if(dist < min_dist)
+                    Kernel::Point_3 test=CGAL::midpoint(source(e, *poly)->point(),target(e, *poly)->point());
+                    double dist = CGAL::squared_distance(test, pt_under);
+                    if(dist < min_dist){
                         min_dist = dist;
-                    t_Items[dist] = new TextItem(test.x, test.y, test.z, QString("%1").arg(e->id()/2), font, Qt::green);
-
+                        text_item = TextItem(test.x(), test.y(), test.z(), QString("%1").arg(e->id()/2), font, Qt::green);
+                    }
                 }
 
+                // test the centroid of the closest face
                 double x(0), y(0), z(0);
                 int total(0);
                 Q_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *poly))
@@ -1429,36 +1428,22 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
                     ++total;
                 }
 
-                test = qglviewer::Vec(x/total,y/total,z/total);
-                dist = (test.x-point_under.x)*(test.x-point_under.x)+(test.y-point_under.y)*(test.y-point_under.y)+(test.z-point_under.z)*(test.z-point_under.z);
-                if(dist < min_dist)
+                Kernel::Point_3 test(x/total, y/total, z/total);
+                double dist = CGAL::squared_distance(test, pt_under);
+                if(dist < min_dist){
                     min_dist = dist;
-                t_Items[dist] = new TextItem(test.x, test.y, test.z, QString("%1").arg(selected_fh->id()), font, Qt::blue);
-                if(targeted_id == NULL	|| (targeted_id->position() != t_Items[min_dist]->position()))
+                    text_item = TextItem(test.x(), test.y(), test.z(), QString("%1").arg(selected_fh->id()), font, Qt::blue);
+                }
+
+                TextItem* former_targeted_id=targeted_id;
+                if (targeted_id == NULL || targeted_id->position() != text_item.position() )
                 {
-                    targeted_id = t_Items[min_dist];
+                    targeted_id = new TextItem(text_item);
                     renderer->addText(targeted_id);
                 }
                 else
-                {
-                    Q_FOREACH(TextItem *item, renderer->local_textItems)
-                    {
-                        if(item->position() == targeted_id->position())
-                        {
-                            renderer->removeText(item);
-                        }
-                    }
-                    targeted_id = NULL;
-                }
-                //Clean-up
-                Q_FOREACH(TextItem* item, t_Items)
-                {
-                    if (item !=t_Items[min_dist])
-                    {
-                        item = 0;
-                        delete item;
-                    }
-                }
+                  targeted_id=NULL;
+                if(former_targeted_id != NULL) renderer->removeText(former_targeted_id);
             }
         }
     }
