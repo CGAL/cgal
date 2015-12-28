@@ -24,6 +24,8 @@
 #include <CGAL/point_generators_3.h>
 #include <cmath>
 
+/// \cond SKIP_IN_MANUAL
+
 namespace CGAL {
     namespace Voronoi_covariance_3 {
         template <class K>
@@ -102,6 +104,8 @@ namespace CGAL {
 
     } // namespace Voronoi_covariance_3
 } // namespace CGAL
+
+/// \endcond
 
 #endif // CGAL_INTERNAL_VCM_VORONOI_COVARIANCE_SPHERE_3_HPP
 
