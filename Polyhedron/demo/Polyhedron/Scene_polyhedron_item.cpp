@@ -1060,20 +1060,20 @@ Scene_polyhedron_item::select(double orig_x,
 
     if(facet_picking_m) {
         typedef Input_facets_AABB_tree Tree;
-        typedef Tree::Object_and_primitive_id Object_and_primitive_id;
+        typedef Tree::Intersection_and_primitive_id<Kernel::Ray_3>::Type Intersection_and_primitive_id;
 
         Tree* aabb_tree = get_aabb_tree(this);
         if(aabb_tree) {
             const Kernel::Point_3 ray_origin(orig_x, orig_y, orig_z);
             const Kernel::Vector_3 ray_dir(dir_x, dir_y, dir_z);
             const Kernel::Ray_3 ray(ray_origin, ray_dir);
-            typedef std::list<Object_and_primitive_id> Intersections;
+            typedef std::list<Intersection_and_primitive_id> Intersections;
             Intersections intersections;
             aabb_tree->all_intersections(ray, std::back_inserter(intersections));
             Intersections::iterator closest = intersections.begin();
             if(closest != intersections.end()) {
                 const Kernel::Point_3* closest_point =
-                        CGAL::object_cast<Kernel::Point_3>(&closest->first);
+                        boost::get<Kernel::Point_3>(&closest->first);
                 for(Intersections::iterator
                     it = boost::next(intersections.begin()),
                     end = intersections.end();
@@ -1084,7 +1084,7 @@ Scene_polyhedron_item::select(double orig_x,
                     }
                     else {
                         const Kernel::Point_3* it_point =
-                                CGAL::object_cast<Kernel::Point_3>(&it->first);
+                                boost::get<Kernel::Point_3>(&it->first);
                         if(it_point &&
                                 (ray_dir * (*it_point - *closest_point)) < 0)
                         {
@@ -1350,7 +1350,7 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
     font.setBold(true);
 
     typedef Input_facets_AABB_tree Tree;
-    typedef Tree::Object_and_primitive_id Object_and_primitive_id;
+    typedef Tree::Intersection_and_primitive_id<Kernel::Ray_3>::Type Intersection_and_primitive_id;
 
     Tree* aabb_tree = get_aabb_tree(this);
     if(aabb_tree) {
@@ -1361,13 +1361,13 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
         qglviewer::Vec dir = point_under - viewer->camera()->position();
         const Kernel::Vector_3 ray_dir(dir.x, dir.y, dir.z);
         const Kernel::Ray_3 ray(ray_origin, ray_dir);
-        typedef std::list<Object_and_primitive_id> Intersections;
+        typedef std::list<Intersection_and_primitive_id> Intersections;
         Intersections intersections;
         aabb_tree->all_intersections(ray, std::back_inserter(intersections));
         Intersections::iterator closest = intersections.begin();
         if(closest != intersections.end()) {
             const Kernel::Point_3* closest_point =
-                    CGAL::object_cast<Kernel::Point_3>(&closest->first);
+                    boost::get<Kernel::Point_3>(&closest->first);
             for(Intersections::iterator
                 it = boost::next(intersections.begin()),
                 end = intersections.end();
@@ -1378,7 +1378,7 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
                 }
                 else {
                     const Kernel::Point_3* it_point =
-                            CGAL::object_cast<Kernel::Point_3>(&it->first);
+                            boost::get<Kernel::Point_3>(&it->first);
                     if(it_point &&
                             (ray_dir * (*it_point - *closest_point)) < 0)
                     {
