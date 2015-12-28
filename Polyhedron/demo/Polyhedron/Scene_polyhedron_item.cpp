@@ -1394,9 +1394,9 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
                 float dist = 0;
                 float min_dist =0;
                 QMap<float, TextItem*> t_Items;
-                qglviewer::Vec test((*vertices_around_face(selected_fh->halfedge(), *poly).begin())->point().x(),
-                                    (*vertices_around_face(selected_fh->halfedge(), *poly).begin())->point().y(),
-                                    (*vertices_around_face(selected_fh->halfedge(), *poly).begin())->point().z());
+                qglviewer::Vec test(selected_fh->halfedge()->vertex()->point().x(),
+                                    selected_fh->halfedge()->vertex()->point().y(),
+                                    selected_fh->halfedge()->vertex()->point().z());
 
                 min_dist = (test.x-point_under.x)*(test.x-point_under.x)+(test.y-point_under.y)*(test.y-point_under.y)+(test.z-point_under.z)*(test.z-point_under.z);
                 Q_FOREACH(Polyhedron::Vertex_handle vh, vertices_around_face(selected_fh->halfedge(), *poly))
