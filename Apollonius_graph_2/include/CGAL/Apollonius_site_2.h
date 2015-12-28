@@ -75,8 +75,8 @@ template <class K>
 std::istream&
 operator>>(std::istream& is, Apollonius_site_2<K>& wp)
 {
-  typename Apollonius_site_2<K>::Weight   weight;
-  typename Apollonius_site_2<K>::Point_2  p;
+  typename Apollonius_site_2<K>::Weight   weight (0.);
+  typename Apollonius_site_2<K>::Point_2  p (0., 0.);
   is >> p >> weight;
   if(is) {
     wp = Apollonius_site_2<K>(p, weight);
