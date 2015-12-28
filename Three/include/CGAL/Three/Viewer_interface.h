@@ -81,6 +81,8 @@ public:
   * \param z the Z coordinate of the id's position.
   * \return true if the ID is visible. */
   virtual bool testDisplayId(double x, double y, double z) = 0;
+  //!Returns true if the primitive ids are displayed
+  virtual bool hasText() const { return false; }
 
   Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(), parent) {}
   virtual ~Viewer_interface() {}

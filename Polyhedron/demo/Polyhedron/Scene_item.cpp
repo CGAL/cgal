@@ -214,8 +214,12 @@ QString CGAL::Three::Scene_item::compute_stats(int )
 }
 
 void CGAL::Three::Scene_item::printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*)
-{}
+{
+}
 
+void CGAL::Three::Scene_item::printPrimitiveIds(CGAL::Three::Viewer_interface*)const
+{
+}
 bool CGAL::Three::Scene_item::testDisplayId(double, double, double, CGAL::Three::Viewer_interface*)
 {
     return false;

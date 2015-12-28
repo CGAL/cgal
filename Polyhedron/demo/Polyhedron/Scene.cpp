@@ -1139,8 +1139,11 @@ float Scene::get_bbox_length() const
 
 void Scene::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface* viewer)
 {
-    //TO DO :: Add a if condition to disable this when the printId mode is off
-        item(mainSelectionIndex())->printPrimitiveId(point, viewer);
+	item(mainSelectionIndex())->printPrimitiveId(point, viewer);
+}
+void Scene::printPrimitiveIds(CGAL::Three::Viewer_interface* viewer)
+{
+	item(mainSelectionIndex())->printPrimitiveIds(viewer);
 }
 bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
 {

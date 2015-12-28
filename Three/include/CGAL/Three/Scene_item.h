@@ -161,6 +161,7 @@ public:
   }
   //!Finds the spot the closest to point and prints the id of the corresponding Primitive (vertex, edg or Facet).
   virtual void printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*);
+  virtual void printPrimitiveIds(CGAL::Three::Viewer_interface*)const;
 
   virtual bool testDisplayId(double, double, double, CGAL::Three::Viewer_interface*);
   // Function about manipulation

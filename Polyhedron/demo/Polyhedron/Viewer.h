@@ -62,6 +62,7 @@ public:
   void setScene(CGAL::Three::Scene_draw_interface* scene);
   //! @returns the antialiasing state.
   bool antiAliasing() const;
+  bool hasText() const{ return has_text; }
   //! @returns the fastDrawing state.
   bool inFastDrawing() const;
   //! Implementation of `Viewer_interface::inDrawWithNames()`
@@ -89,6 +90,7 @@ public Q_SLOTS:
                                float animation_duration = 0.5f);
 
 protected:
+	void paintEvent(QPaintEvent *);
   //! Holds useful data to draw the axis system
   struct AxisData
   {

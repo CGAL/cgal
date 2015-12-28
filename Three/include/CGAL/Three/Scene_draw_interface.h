@@ -41,15 +41,16 @@ public:
   virtual bool keyPressEvent(QKeyEvent* e) = 0;
   virtual float get_bbox_length() const = 0;
   virtual void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*) = 0;
- /*!
+
+  /*!
    * \brief testDisplayId checks if the id at position (x,y,z) is visible or not.
    * \param x the X coordinate of the id's position.
    * \param y the Y coordinate of the id's position.
    * \param z the Z coordinate of the id's position.
    * \param viewer the viewer used to display the Scene.
-   * \return true if the ID is visible.
-   */
+   * \return true if the ID is visible. */
   virtual bool  testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) = 0;
+
 };
 }
 }

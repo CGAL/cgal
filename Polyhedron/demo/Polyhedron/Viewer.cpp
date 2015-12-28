@@ -76,6 +76,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
 Viewer::~Viewer()
 {
   delete d;
+  delete painter;
 }
 
 void Viewer::setScene(CGAL::Three::Scene_draw_interface* scene)
@@ -115,12 +116,8 @@ bool Viewer::inFastDrawing() const
 }
 
 void Viewer::draw()
-{
-    if(!painter->isActive())
-    {
-        painter->begin(this);
-    }
-  painter->fillRect(this->rect(),backgroundColor());
+{ 
+  makeCurrent();
   glEnable(GL_DEPTH_TEST);
   d->draw_aux(false, this);
 }
@@ -132,7 +129,6 @@ void Viewer::fastDraw()
 
 void Viewer::initializeGL()
 {
-  painter = new QPainter(this);
   QGLViewer::initializeGL();
   initializeOpenGLFunctions();
   glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
@@ -242,6 +238,8 @@ void Viewer::initializeGL()
   {
       qDebug() << rendering_program.log();
   }
+
+  painter = new QPainter(this);
 }
 
 #include <QMouseEvent>
@@ -310,7 +308,9 @@ void Viewer::keyPressEvent(QKeyEvent* e)
   }
   else if(e->key() == Qt::Key_I && e->modifiers() & Qt::ControlModifier){
         has_text = !has_text;
-        updateGL();
+		if (has_text)
+			d->scene->printPrimitiveIds(this);
+        update();
       }
   //forward the event to the scene (item handling of the event)
   if (! d->scene->keyPressEvent(e) )
@@ -781,10 +781,7 @@ void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec t
 
 void Viewer::drawVisualHints()
 {
-    if(!painter->isActive())
-    {
-        painter->begin(this);
-    }
+
     QGLViewer::drawVisualHints();
     if(axis_are_displayed)
     {
@@ -847,13 +844,16 @@ void Viewer::drawVisualHints()
         rendering_program.release();
         vao[0].release();
     }
+	if (!painter->isActive())
+		painter->begin(this);
+	//painter->save();
         //So that the text is drawn in front of everything
     painter->beginNativePainting();
         glDisable(GL_DEPTH_TEST);
     painter->endNativePainting();
     //HERE : draw the text
     textRenderer->draw(this);
-    painter->end();
+	//painter->restore();
     }
 
 void Viewer::resizeGL(int w, int h)
@@ -1191,11 +1191,8 @@ bool Viewer::textDisplayed() const
 void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 {
     QPainter *painter = viewer->painter;
-    if(!painter->isActive())
-    {
-        painter->begin(viewer);
-    }
-
+	if (!painter->isActive())
+		painter->begin(viewer);
     QRect rect;
     qglviewer::Camera* camera = viewer->camera();
     if(viewer->textDisplayed())
@@ -1258,4 +1255,19 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
      Q_FOREACH(TextListItem *list, textItems)
          if(list == p_list)
              textItems.removeAll(list);
+ }
+
+ void Viewer::paintEvent(QPaintEvent *)
+ {
+	 if (!painter->isActive())
+	   painter->begin(this);
+	 painter->beginNativePainting();
+	 glClearColor(1.0, 1.0, 1.0, 1.0);
+	 painter->endNativePainting();
+	 preDraw();
+	// painter->fillRect(this->rect(), backgroundColor());
+	 draw();
+	 postDraw();
+	 painter->end();
+	
  }

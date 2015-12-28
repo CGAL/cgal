@@ -91,6 +91,7 @@ public:
     bool self_intersected(){return !self_intersect;}
 
     void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer);
+	void printPrimitiveIds(CGAL::Three::Viewer_interface*viewer) const;
     bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*);
 
 public Q_SLOTS:

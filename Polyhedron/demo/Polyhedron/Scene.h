@@ -124,6 +124,7 @@ public:
   bool keyPressEvent(QKeyEvent* e);
 
   void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*);
+  void printPrimitiveIds(CGAL::Three::Viewer_interface*);
   bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer);
   //!@returns the scene bounding box
   Bbox bbox() const;
