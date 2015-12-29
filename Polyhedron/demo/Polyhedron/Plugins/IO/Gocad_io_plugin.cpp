@@ -106,4 +106,4 @@ bool Polyhedron_demo_gocad_plugin::save(const CGAL::Three::Scene_item* item, QFi
 
 }
 
-#include "Gocad_plugin.moc"
+#include "Gocad_io_plugin.moc"

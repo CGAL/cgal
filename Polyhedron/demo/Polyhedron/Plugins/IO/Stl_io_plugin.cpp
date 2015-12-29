@@ -89,4 +89,4 @@ bool Polyhedron_demo_stl_plugin::save(const CGAL::Three::Scene_item*, QFileInfo)
   return false;
 }
 
-#include "Stl_plugin.moc"
+#include "Stl_io_plugin.moc"
