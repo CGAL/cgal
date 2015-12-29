@@ -116,14 +116,12 @@ void Viewer::draw()
 {
   glEnable(GL_DEPTH_TEST);
   d->inFastDrawing = false;
-  QGLViewer::draw();
   d->draw_aux(false, this);
 }
 
 void Viewer::fastDraw()
 {
   d->inFastDrawing = true;
-  QGLViewer::fastDraw();
   d->draw_aux(false, this);
 }
 
