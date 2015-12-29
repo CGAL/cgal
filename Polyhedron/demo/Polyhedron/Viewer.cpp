@@ -16,7 +16,6 @@ public:
   bool twosides;
   bool macro_mode;
   bool inFastDrawing;
-  bool quick_camera;
   
   void draw_aux(bool with_names, Viewer*);
 
@@ -30,8 +29,8 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->scene = 0;
   d->antialiasing = antialiasing;
   d->twosides = false;
-  d->quick_camera = true;
   d->macro_mode = false;
+  d->inFastDrawing = true;
   d->shader_programs.resize(NB_OF_PROGRAMS);
   setShortcut(EXIT_VIEWER, 0);
   setShortcut(DRAW_AXIS, 0);
@@ -97,31 +96,27 @@ void Viewer::setTwoSides(bool b)
 }
 
 
-bool Viewer::quickCameraMode() const
+void Viewer::setFastDrawing(bool b)
 {
-  return d->quick_camera;
-}
-
-void Viewer::setQuickCameraMode(bool b)
-{
-  d->quick_camera = b;
+  d->inFastDrawing = b;
   updateGL();
 }
 
-bool Viewer::inFastDrawing() const {
-  return d->inFastDrawing;
+bool Viewer::inFastDrawing() const
+{
+  return (d->inFastDrawing
+          && (camera()->frame()->isSpinning()
+              || camera()->frame()->isManipulated()));
 }
 
 void Viewer::draw()
 {
   glEnable(GL_DEPTH_TEST);
-  d->inFastDrawing = false;
   d->draw_aux(false, this);
 }
 
 void Viewer::fastDraw()
 {
-  d->inFastDrawing = true;
   d->draw_aux(false, this);
 }
 

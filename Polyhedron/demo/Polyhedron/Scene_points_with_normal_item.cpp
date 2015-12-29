@@ -425,10 +425,8 @@ void Scene_points_with_normal_item::draw_splats(CGAL::Three::Viewer_interface* v
 void Scene_points_with_normal_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
 {
     double ratio_displayed = 1.0;
-    if (viewer->quickCameraMode () &&
-        (nb_lines/6 > 300000) && // arbitrary large value
-        (viewer->camera()->frame()->isSpinning()
-         || viewer->camera()->frame()->isManipulated()))
+    if (viewer->inFastDrawing () &&
+        (nb_lines/6 > 300000)) // arbitrary large value
       ratio_displayed = 6 * 300000. / (double)(nb_lines);
 
     if(!are_buffers_filled)
@@ -449,10 +447,8 @@ void Scene_points_with_normal_item::draw_points(CGAL::Three::Viewer_interface* v
         initialize_buffers(viewer);
 
     double ratio_displayed = 1.0;
-    if (viewer->quickCameraMode () &&
-        ((nb_points + nb_selected_points)/3 > 300000) && // arbitrary large value
-        (viewer->camera()->frame()->isSpinning()
-         || viewer->camera()->frame()->isManipulated()))
+    if (viewer->inFastDrawing () &&
+        ((nb_points + nb_selected_points)/3 > 300000)) // arbitrary large value
       ratio_displayed = 3 * 300000. / (double)(nb_points + nb_selected_points);
 
     vaos[ThePoints]->bind();
