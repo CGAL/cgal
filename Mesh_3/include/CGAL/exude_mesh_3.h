@@ -34,6 +34,11 @@
 
 namespace CGAL {
 
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/Mesh_3/config.h>
+CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+
 BOOST_PARAMETER_FUNCTION(
   (Mesh_optimization_return_code),
   exude_mesh_3,
@@ -47,6 +52,7 @@ BOOST_PARAMETER_FUNCTION(
 {
   return exude_mesh_3_impl(c3t3, time_limit_, sliver_bound_);
 }
+CGAL_PRAGMA_DIAG_POP
 
 
 

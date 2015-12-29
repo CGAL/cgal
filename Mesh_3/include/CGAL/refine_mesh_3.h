@@ -191,12 +191,13 @@ namespace parameters {
     }; // end struct Mesh_3_options
 
   } // end namespace internal
-#if defined(__clang__) || defined(__GNUC__) && CGAL_GCC_VERSION >= 40600
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Wunused-parameter"
-// remove a warning about an unused parameter "args" in the definition of
-// BOOST_PARAMETER_FUNCTION
-#endif
+
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/Mesh_3/config.h>
+CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+
+
   // -----------------------------------
   // Perturb
   // -----------------------------------
@@ -324,11 +325,8 @@ namespace parameters {
     return options;
   }
 
-#if defined(__clang__) || defined(__GNUC__) && CGAL_GCC_VERSION >= 40600
-//#if defined(__GNUC__) && __GNUC__ >= 4 && __GNUC_MINOR__ > 5
-#pragma GCC diagnostic pop
-#endif
-  
+CGAL_PRAGMA_DIAG_POP
+
   // -----------------------------------
   // Reset_c3t3 (undocumented)
   // -----------------------------------
@@ -353,7 +351,11 @@ CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
 CGAL_PRAGMA_DIAG_POP
 } // end namespace parameters
   
-  
+// see <CGAL/config.h>
+CGAL_PRAGMA_DIAG_PUSH
+// see <CGAL/Mesh_3/config.h>
+CGAL_MESH_3_IGNORE_BOOST_PARAMETER_NAME_WARNINGS
+
 BOOST_PARAMETER_FUNCTION(
   (void),
   refine_mesh_3,
@@ -382,7 +384,9 @@ BOOST_PARAMETER_FUNCTION(
                             reset_param(),
                             mesh_options_param);
 }
-  
+
+CGAL_PRAGMA_DIAG_POP
+
   
 /**
  * @brief This function refines the mesh c3t3 wrt domain & criteria
