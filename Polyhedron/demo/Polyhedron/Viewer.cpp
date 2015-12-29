@@ -1259,14 +1259,19 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 
  void Viewer::paintEvent(QPaintEvent *)
  {
-	 if (!painter->isActive())
-	   painter->begin(this);
-	 painter->beginNativePainting();
-	 glClearColor(1.0, 1.0, 1.0, 1.0);
-	 painter->endNativePainting();
-	 preDraw();
-	 draw();
-	 postDraw();
-	 painter->end();
-	
+     paintGL();
+ }
+
+ void Viewer::paintGL()
+ {
+
+     if (!painter->isActive())
+       painter->begin(this);
+     painter->beginNativePainting();
+     glClearColor(1.0, 1.0, 1.0, 1.0);
+     painter->endNativePainting();
+     preDraw();
+     draw();
+     postDraw();
+     painter->end();
  }

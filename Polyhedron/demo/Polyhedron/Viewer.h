@@ -91,6 +91,7 @@ public Q_SLOTS:
 
 protected:
 	void paintEvent(QPaintEvent *);
+    void paintGL();
   //! Holds useful data to draw the axis system
   struct AxisData
   {
