@@ -273,7 +273,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
 
           for (std::size_t j = 0; j < clusters[i].planes.size(); ++ j)
             {
-              int index_prim = clusters[i].planes[j];
+              std::size_t index_prim = clusters[i].planes[j];
               Point pt_reg = m_planes[index_prim]->projection (m_centroids[index_prim]);
               if( m_planes[index_prim]->plane_normal () * vec_reg < 0)
                 vec_reg=-vec_reg;
@@ -293,11 +293,11 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
           for (std::size_t ip = 0; ip < clusters[i].planes.size(); ++ ip)
             clusters[i].coplanar_group.push_back (-1);
 
-          int cop_index=0;
+          std::size_t cop_index=0;
 
           for (std::size_t j = 0; j < clusters[i].planes.size(); ++ j)
             {
-              int index_prim = clusters[i].planes[j];
+              std::size_t index_prim = clusters[i].planes[j];
 
               if (clusters[i].coplanar_group[j] == static_cast<std::size_t>(-1))
                 {
@@ -310,10 +310,10 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
                     {
                       if (clusters[i].coplanar_group[k] == static_cast<std::size_t>(-1))
                         {
-                          int index_prim_next = clusters[i].planes[k];
+                          std::size_t index_prim_next = clusters[i].planes[k];
                           Point pt_reg_next = m_planes[index_prim_next]->projection(m_centroids[index_prim_next]);
                           Point pt_proj=plan_reg.projection(pt_reg_next);
-                          double distance=distance_Point(pt_reg_next,pt_proj);
+                          FT distance=distance_Point(pt_reg_next,pt_proj);
 					
                           if (distance < tolerance_coplanarity)
                             clusters[i].coplanar_group[k] = cop_index;
@@ -325,7 +325,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
 
           //regularize primitive position by computing barycenter of cplanar planes
           std::vector<Point> pt_bary (cop_index, Point (0., 0., 0.));
-          std::vector<double> area (cop_index, 0.);
+          std::vector<FT> area (cop_index, 0.);
       
           for (std::size_t j = 0; j < clusters[i].planes.size (); ++ j)
             {
@@ -368,16 +368,16 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
           std::vector < Point > listp;
           for (std::size_t j = 0; j < m_planes[i]->indices_of_assigned_points ().size (); ++ j)
             {
-              int yy = m_planes[i]->indices_of_assigned_points()[j];
+              std::size_t yy = m_planes[i]->indices_of_assigned_points()[j];
               Point pt = get (m_point_pmap, *(m_input_begin + yy));
               listp.push_back(pt);
             }
           m_centroids.push_back (CGAL::centroid (listp.begin (), listp.end ()));
-          m_areas.push_back ((double)(m_planes[i]->indices_of_assigned_points().size()) / 100.);
+          m_areas.push_back ((FT)(m_planes[i]->indices_of_assigned_points().size()) / 100.);
         }
     }
 
-    void compute_parallel_clusters (std::vector<Plane_cluster>& clusters, double tolerance_cosangle,
+    void compute_parallel_clusters (std::vector<Plane_cluster>& clusters, FT tolerance_cosangle,
                                     const Vector& symmetry_direction)
     {
       // find pairs of epsilon-parallel primitives and store them in parallel_planes
@@ -478,21 +478,21 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
       is_available.clear();
     }
 
-    void cluster_symmetric_cosangles (std::vector<Plane_cluster>& clusters, double tolerance_cosangle)
+    void cluster_symmetric_cosangles (std::vector<Plane_cluster>& clusters, FT tolerance_cosangle)
     {
-      std::vector < double > cosangle_centroids;
-      std::vector < int > list_cluster_index;
+      std::vector < FT > cosangle_centroids;
+      std::vector < std::size_t> list_cluster_index;
       for( std::size_t i = 0; i < clusters.size(); ++ i)
         list_cluster_index.push_back(-1);
       
-      int mean_index = 0;
+      std::size_t mean_index = 0;
       for (std::size_t i = 0; i < clusters.size(); ++ i)
         {
           if(list_cluster_index[i]<0)
             {
               list_cluster_index[i] = mean_index;
-              double mean = clusters[i].area * clusters[i].cosangle_symmetry;
-              double mean_area = clusters[i].area;
+              FT mean = clusters[i].area * clusters[i].cosangle_symmetry;
+              FT mean_area = clusters[i].area;
               
               for (std::size_t j = i+1; j < clusters.size(); ++ j)
                 {
@@ -524,8 +524,8 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
     void subgraph_mutually_orthogonal_clusters (std::vector<Plane_cluster>& clusters,
                                                 const Vector& symmetry_direction)
     {
-      std::vector < std::vector < int > > subgraph_clusters;
-      std::vector < int > subgraph_clusters_max_area_index;
+      std::vector < std::vector < std::size_t> > subgraph_clusters;
+      std::vector < std::size_t> subgraph_clusters_max_area_index;
 
       for (std::size_t i = 0; i < clusters.size(); ++ i)
         clusters[i].is_free = true;
@@ -535,15 +535,15 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
           if(clusters[i].is_free)
             {
               clusters[i].is_free = false;
-              double max_area = clusters[i].area;
-              int index_max_area = i;
+              FT max_area = clusters[i].area;
+              std::size_t index_max_area = i;
 
               //initialization containers
-              std::vector < int > index_container;
+              std::vector < std::size_t > index_container;
               index_container.push_back(i);
-              std::vector < int > index_container_former_ring;
+              std::vector < std::size_t > index_container_former_ring;
               index_container_former_ring.push_back(i);
-              std::list < int > index_container_current_ring;
+              std::list < std::size_t > index_container_current_ring;
 
               //propagation
               bool propagation=true;
@@ -555,7 +555,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
                   for (std::size_t k=0;k<index_container_former_ring.size();k++)
                     {
 
-                      int cluster_index=index_container_former_ring[k];
+                      std::size_t cluster_index=index_container_former_ring[k];
 
                       for (std::size_t j = 0; j < clusters[cluster_index].orthogonal_clusters.size(); ++ j)
                         {
@@ -576,7 +576,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
 
                   //update containers
                   index_container_former_ring.clear();
-                  for(std::list < int >::iterator it = index_container_current_ring.begin();
+                  for(std::list < std::size_t>::iterator it = index_container_current_ring.begin();
                       it != index_container_current_ring.end(); ++it)
                     {
                       index_container_former_ring.push_back(*it);
@@ -595,11 +595,11 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
       //create subgraphs of mutually orthogonal clusters in which the
       //largest cluster is excluded and store in
       //subgraph_clusters_prop
-      std::vector < std::vector < int > > subgraph_clusters_prop;
+      std::vector < std::vector < std::size_t> > subgraph_clusters_prop;
       for (std::size_t i=0;i<subgraph_clusters.size(); i++)
         {
-          int index=subgraph_clusters_max_area_index[i];
-          std::vector < int > subgraph_clusters_prop_temp;
+          std::size_t index=subgraph_clusters_max_area_index[i];
+          std::vector < std::size_t> subgraph_clusters_prop_temp;
           for (std::size_t j=0;j<subgraph_clusters[i].size(); j++)
             if(subgraph_clusters[i][j]!=index)
               subgraph_clusters_prop_temp.push_back(subgraph_clusters[i][j]);
@@ -620,7 +620,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
       for (std::size_t i = 0; i < subgraph_clusters_prop.size(); ++ i)
         {
 	
-          int index_current=subgraph_clusters_max_area_index[i];
+          std::size_t index_current=subgraph_clusters_max_area_index[i];
           Vector vec_current=regularize_normal(clusters[index_current].normal,
                                                symmetry_direction,
                                                clusters[index_current].cosangle_symmetry);
@@ -628,11 +628,11 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
           clusters[index_current].is_free = false;
 
           //initialization containers
-          std::vector < int > index_container;
+          std::vector < std::size_t> index_container;
           index_container.push_back(index_current);
-          std::vector < int > index_container_former_ring;
+          std::vector < std::size_t> index_container_former_ring;
           index_container_former_ring.push_back(index_current);
-          std::list < int > index_container_current_ring;
+          std::list < std::size_t> index_container_current_ring;
 
           //propagation
           bool propagation=true;
@@ -644,7 +644,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
               for (std::size_t k=0;k<index_container_former_ring.size();k++)
                 {
 
-                  int cluster_index=index_container_former_ring[k];
+                  std::size_t cluster_index=index_container_former_ring[k];
 
                   for (std::size_t j = 0; j < clusters[cluster_index].orthogonal_clusters.size(); ++ j)
                     {
@@ -667,7 +667,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
 			
               //update containers
               index_container_former_ring.clear();
-              for(std::list < int >::iterator it = index_container_current_ring.begin();
+              for(std::list < std::size_t>::iterator it = index_container_current_ring.begin();
                   it != index_container_current_ring.end(); ++it)
                 {
                   index_container_former_ring.push_back(*it);
@@ -703,7 +703,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
           if (!assign(line, ob_1))
             return n;
 
-          double delta = std::sqrt (1 - cos_symmetry * cos_symmetry);
+          FT delta = std::sqrt (1 - cos_symmetry * cos_symmetry);
 
           Point projected_origin = line.projection (CGAL::ORIGIN);
           Vector line_vector (line);
@@ -745,7 +745,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
 
       if (R <= 1)  // 2 (or 1) possible points intersecting the unit sphere and line
         {
-          double delta = std::sqrt (1 - R);
+          FT delta = std::sqrt (1 - R);
           Vector line_vector(line); 
           line_vector = line_vector / std::sqrt (line_vector * line_vector);
           Point pt1 = projected_origin + delta * line_vector;
