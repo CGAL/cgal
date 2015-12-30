@@ -48,7 +48,7 @@ public:
     init(poly_item, mw, aht, k_ring);
   }
 
-  void init(Scene_polyhedron_item* poly_item, QMainWindow* mw, Active_handle::Type aht, int k_ring) {
+  void init(Scene_polyhedron_item* poly_item, QMainWindow* /*mw*/, Active_handle::Type aht, int k_ring) {
     this->poly_item = poly_item;
     this->active_handle_type = aht;
     this->k_ring = k_ring;
@@ -58,7 +58,6 @@ public:
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
-    mw->installEventFilter(this);
 
     connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_facet(void*)), this, SLOT(facet_has_been_selected(void*)));
