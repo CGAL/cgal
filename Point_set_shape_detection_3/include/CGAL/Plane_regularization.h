@@ -221,14 +221,14 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
       \return The number of clusters of parallel planes found.
     */ 
 
-    std::size_t run (FT tolerance_angle = 25.0,
-                     FT tolerance_coplanarity = 0.0,
+    std::size_t run (FT tolerance_angle = (FT)25.0,
+                     FT tolerance_coplanarity = (FT)0.0,
                      bool regularize_orthogonality = true,
                      Vector symmetry_direction = CGAL::NULL_VECTOR)
     {
       compute_centroids_and_areas ();
 
-      FT tolerance_cosangle = 1. - std::cos (tolerance_angle);
+      FT tolerance_cosangle = 1.f - std::cos (tolerance_angle);
       
       // clustering the parallel primitives and store them in clusters
       // & compute the normal, size and cos angle to the symmetry
@@ -451,7 +451,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
 
                               clu.normal = (FT)clu.area * clu.normal
                                 + (FT)m_areas[it] * normal_it;
-                              FT norm = 1. / std::sqrt (clu.normal.squared_length()); 
+                              FT norm = 1.f / std::sqrt (clu.normal.squared_length()); 
                               clu.normal = norm * clu.normal;
                               clu.area += m_areas[it];
                             }	
@@ -703,7 +703,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
           if (!assign(line, ob_1))
             return n;
 
-          FT delta = std::sqrt (1 - cos_symmetry * cos_symmetry);
+          FT delta = std::sqrt (1.f - cos_symmetry * cos_symmetry);
 
           Point projected_origin = line.projection (CGAL::ORIGIN);
           Vector line_vector (line);
@@ -745,7 +745,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
 
       if (R <= 1)  // 2 (or 1) possible points intersecting the unit sphere and line
         {
-          FT delta = std::sqrt (1 - R);
+          FT delta = std::sqrt (1.f - R);
           Vector line_vector(line); 
           line_vector = line_vector / std::sqrt (line_vector * line_vector);
           Point pt1 = projected_origin + delta * line_vector;

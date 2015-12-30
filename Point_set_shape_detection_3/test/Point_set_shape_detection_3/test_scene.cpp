@@ -131,7 +131,7 @@ bool test_scene() {
 
   // Test regularization
   Regularization regularization (points, ransac);
-  regularization.run (50., 0.01);
+  regularization.run ((FT)50., (FT)0.01f); //, true, typename K::Vector_3(1., 0., 0.));
   
   Point_index_range pts = ransac.indices_of_unassigned_points();
 
