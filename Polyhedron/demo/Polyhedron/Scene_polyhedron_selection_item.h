@@ -226,7 +226,7 @@ protected:
     connect(&k_ring_selector, SIGNAL(selected(const std::set<edge_descriptor>&)), this,
       SLOT(selected(const std::set<edge_descriptor>&)));
     connect(&k_ring_selector, SIGNAL(endSelection()), this,SLOT(endSelection()));
-
+    connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
     k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
@@ -742,6 +742,10 @@ public Q_SLOTS:
   }
   void endSelection(){
     Q_EMIT simplicesSelected(this);
+  }
+  void toggle_insert(bool b)
+  {
+   is_insert = b;
   }
 
 protected:

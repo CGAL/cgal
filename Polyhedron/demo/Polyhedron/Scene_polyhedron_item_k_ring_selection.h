@@ -58,6 +58,7 @@ public:
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
+    viewer->setMouseBindingDescription(Qt::Key_D, Qt::ShiftModifier, Qt::LeftButton, "(When in selection plugin) Removes the clicked primitive from the selection. ");
 
     connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_facet(void*)), this, SLOT(facet_has_been_selected(void*)));
@@ -90,6 +91,7 @@ Q_SIGNALS:
   void selected(const std::set<Polyhedron::Vertex_handle>&);
   void selected(const std::set<Polyhedron::Facet_handle>&);
   void selected(const std::set<edge_descriptor>&);
+  void toogle_insert(const bool);
   void endSelection();
 
 protected:
@@ -168,11 +170,23 @@ protected:
   {
     // This filter is both filtering events from 'viewer' and 'main window'
     // key events
-    if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)  {
+      if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)  {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
       Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
 
       state.shift_pressing = modifiers.testFlag(Qt::ShiftModifier);
+    }
+
+    if(event->type() == QEvent::KeyPress
+            && state.shift_pressing
+            && static_cast<QKeyEvent*>(event)->key()==Qt::Key_D)
+    {
+     Q_EMIT toogle_insert(false);
+    }
+    else if(event->type() == QEvent::KeyRelease
+            && static_cast<QKeyEvent*>(event)->key()==Qt::Key_D)
+    {
+     Q_EMIT toogle_insert(true);
     }
     // mouse events
     if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease) {
