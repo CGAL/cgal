@@ -291,7 +291,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
           Vector vec_reg = clusters[i].normal;
 
           for (std::size_t ip = 0; ip < clusters[i].planes.size(); ++ ip)
-            clusters[i].coplanar_group.push_back (-1);
+            clusters[i].coplanar_group.push_back (static_cast<std::size_t>(-1));
 
           std::size_t cop_index=0;
 
@@ -483,12 +483,12 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
       std::vector < FT > cosangle_centroids;
       std::vector < std::size_t> list_cluster_index;
       for( std::size_t i = 0; i < clusters.size(); ++ i)
-        list_cluster_index.push_back(-1);
+        list_cluster_index.push_back(static_cast<std::size_t>(-1));
       
       std::size_t mean_index = 0;
       for (std::size_t i = 0; i < clusters.size(); ++ i)
         {
-          if(list_cluster_index[i]<0)
+          if(list_cluster_index[i] == static_cast<std::size_t>(-1))
             {
               list_cluster_index[i] = mean_index;
               FT mean = clusters[i].area * clusters[i].cosangle_symmetry;
@@ -496,8 +496,9 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
               
               for (std::size_t j = i+1; j < clusters.size(); ++ j)
                 {
-                  if (list_cluster_index[j] < 0 && std::fabs (clusters[j].cosangle_symmetry -
-                                                              mean / mean_area) < tolerance_cosangle)
+                  if (list_cluster_index[j] == static_cast<std::size_t>(-1)
+                      && std::fabs (clusters[j].cosangle_symmetry -
+                                    mean / mean_area) < tolerance_cosangle)
                     {
                       list_cluster_index[j] = mean_index;
                       mean_area += clusters[j].area;
