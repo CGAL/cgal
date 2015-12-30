@@ -165,4 +165,4 @@ public:
 }; // end Polyhedron_demo_vtk_plugin
 
 
-#include "Vtk_plugin.moc"
+#include "Vtk_io_plugin.moc"
