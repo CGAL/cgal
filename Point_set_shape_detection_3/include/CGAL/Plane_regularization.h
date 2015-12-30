@@ -767,6 +767,6 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
   };
 
 
-}; // namespace CGAL
+} // namespace CGAL
 
 #endif // CGAL_PLANE_REGULARIZATION_H
