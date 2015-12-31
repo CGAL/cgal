@@ -516,20 +516,6 @@ public:
   }
 };
 
-template < typename K >
-class Compute_point_3
-{
-public:
-  typedef typename K::Weighted_point_3               Weighted_point_3;
-  typedef typename K::Point_3                        Point_3;
-
-  typedef const Point_3&     result_type;
-
-  const Point_3& operator()(const Weighted_point_3 & p) const
-  {
-    return p.rep().point();
-  }
-};
 
 template < typename K >
 class Compute_weight_3

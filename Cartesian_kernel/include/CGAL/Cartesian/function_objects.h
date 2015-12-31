@@ -2924,9 +2924,10 @@ namespace CartesianKernelFunctors {
   template <typename K>
   class Construct_point_3
   {
-    typedef typename K::RT         RT;
-    typedef typename K::Point_3    Point_3;
-    typedef typename Point_3::Rep  Rep;
+    typedef typename K::RT               RT;
+    typedef typename K::Point_3          Point_3;
+    typedef typename K::Weighted_point_3 Weighted_point_3;
+    typedef typename Point_3::Rep        Rep;
   public:
     typedef Point_3          result_type;
 
@@ -2942,6 +2943,9 @@ namespace CartesianKernelFunctors {
     operator()(Return_base_tag, const RT& x, const RT& y, const RT& z, const RT& w) const
     { return Rep(x, y, z, w); }
 
+    const Point_3& 
+    operator()(const Weighted_point_3 & p) const
+    { return p.rep().point(); }
 
     Point_3
     operator()(Origin o) const

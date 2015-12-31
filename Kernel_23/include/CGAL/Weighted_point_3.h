@@ -100,10 +100,10 @@ public:
     : Rep(typename R::Construct_weighted_point_3()(Return_base_tag(), hx, hy, hz, hw))
   {}
 
-  typename cpp11::result_of<typename R::Compute_point_3( Weighted_point_3)>::type 
+  typename cpp11::result_of<typename R::Construct_point_3( Weighted_point_3)>::type 
   point() const
   {
-    return typename R::Compute_point_3()(*this);
+    return typename R::Construct_point_3()(*this);
   }
 
   typename cpp11::result_of<typename R::Compute_weight_3( Weighted_point_3)>::type

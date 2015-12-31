@@ -106,7 +106,7 @@ void test_compare_weighted_squared_radius_3(){
   K3().compare_weighted_squared_radius_3_object()(p,q,    NT_pair(alpha,alpha));
   K3().compare_weighted_squared_radius_3_object()(p,      NT_pair(alpha,alpha));
 
-  CGAL::Weighted_converter_3<CGAL::Cartesian_converter<FK_with_SF,Exact_kernel>,FTr_with_SF,Exact_traits >    convert_to_exact;
+  CGAL::Cartesian_converter<FK_with_SF,Exact_kernel>   convert_to_exact;
   Exact_traits::Weighted_point_3 p_e=convert_to_exact(p.first);
   Exact_traits::Weighted_point_3 q_e=convert_to_exact(q.first);
   Exact_traits::Weighted_point_3 r_e=convert_to_exact(r.first);
@@ -141,8 +141,8 @@ void test_compare_weighted_squared_radius_3(){
 
 Weighted_point_3 convert_to_pair(const Exact_traits::Weighted_point_3& wp)
 {
-  CGAL::Weighted_converter_3<CGAL::Cartesian_converter<Exact_kernel,FK_with_SF>,Exact_traits,FTr_with_SF >    convert_to_double;
-  CGAL::Weighted_converter_3<CGAL::Cartesian_converter<FK_with_SF,FK_without_SF>,FTr_with_SF,FTr_without_SF > convert_to_double_noSF;
+  CGAL::Cartesian_converter<Exact_kernel,FK_with_SF>    convert_to_double;
+  CGAL::Cartesian_converter<FK_with_SF,FK_without_SF> convert_to_double_noSF;
   
   FTr_with_SF::Weighted_point_3 wp_with_sf = convert_to_double(wp);
   FTr_without_SF::Weighted_point_3 wp_without_sf = convert_to_double_noSF(wp_with_sf);
@@ -150,7 +150,7 @@ Weighted_point_3 convert_to_pair(const Exact_traits::Weighted_point_3& wp)
 }
 
 void test_power_test_3(){
-  CGAL::Weighted_converter_3<CGAL::Cartesian_converter<FK_without_SF,Exact_kernel>,FTr_without_SF,Exact_traits > convert_to_exact;
+  CGAL::Cartesian_converter<FK_without_SF,Exact_kernel> convert_to_exact;
   
   Weighted_point_3 p=my_rand_wp3();
   Weighted_point_3 q=my_rand_wp3();

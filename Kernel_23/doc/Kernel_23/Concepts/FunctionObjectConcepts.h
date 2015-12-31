@@ -5451,7 +5451,7 @@ public:
     introduces a variable with Cartesian coordinates 
     \f$ (0,0)\f$. 
   */ 
-  Kernel::Point_2 operator()(const Origin &ORIGIN); 
+  Kernel::Point_2 operator()(const CGAL::Origin &CGAL::ORIGIN); 
 
   ///@}
 
@@ -5476,7 +5476,7 @@ public:
   /*!
     introduces a point with Cartesian coordinates\f$ (0,0,0)\f$. 
   */ 
-  Kernel::Point_3 operator()(const Origin &ORIGIN); 
+  Kernel::Point_3 operator()(const CGAL::Origin &CGAL::ORIGIN); 
 
   ///@}
 
@@ -6243,7 +6243,7 @@ public:
     returns the point obtained by translating a point at the origin by the vector 
     `v`. 
   */ 
-  Kernel::Point_2 operator()(const Origin& o, 
+  Kernel::Point_2 operator()(const CGAL::Origin& o, 
                              const Kernel::Vector_2& v); 
 
 
@@ -6400,14 +6400,14 @@ public:
   /*!
     introduces the vector `b`. 
   */ 
-  Kernel::Vector_2 operator()(const Origin &o, 
+  Kernel::Vector_2 operator()(const CGAL::Origin &o, 
                               const Kernel::Point_2 &b); 
 
   /*!
     introduces the vector `-a`. 
   */ 
   Kernel::Vector_2 operator()(const Kernel::Point_2 &a, 
-                              const Origin &o); 
+                              const CGAL::Origin &o); 
 
   /*!
     introduces the vector `s.target()-s.source()`. 
@@ -6459,14 +6459,14 @@ public:
   /*!
     introduces the vector `b`. 
   */ 
-  Kernel::Vector_3 operator()(const Origin &o, 
+  Kernel::Vector_3 operator()(const CGAL::Origin &o, 
                               const Kernel::Point_3 &b); 
 
   /*!
     introduces the vector `-a`. 
   */ 
   Kernel::Vector_3 operator()(const Kernel::Point_3 &a, 
-                              const Origin &o); 
+                              const CGAL::Origin &o); 
 
   /*!
     introduces the vector `s.target()-s.source()`. 
