@@ -419,8 +419,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     positions_lines.resize(0);
     normals_flat.resize(0);
     normals_gouraud.resize(0);
-
-
+    number_of_null_length_edges = 0;
     //Facets
     typedef Polyhedron::Traits	    Kernel;
     typedef Kernel::Point_3	    Point;
@@ -474,6 +473,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     typedef Kernel::Point_3		Point;
     typedef Polyhedron::Edge_iterator	Edge_iterator;
 
+    std::vector<double> edge_lengths;
     Edge_iterator he;
     if(!show_only_feature_edges_m) {
         for(he = poly->edges_begin();
@@ -492,6 +492,18 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
             positions_lines.push_back(b.y());
             positions_lines.push_back(b.z());
             positions_lines.push_back(1.0);
+
+            //statistics
+            edge_lengths.push_back(CGAL::sqrt(
+                                       (a.x()-b.x())*(a.x()-b.x())
+                                      +(a.y()-b.y())*(a.y()-b.y())
+                                      +(a.z()-b.z())*(a.z()-b.z())
+                                       ));
+
+            if(a.x() == b.x()
+               && a.y() == b.y()
+               && a.z() == b.z())
+                number_of_null_length_edges++;
 
         }
     }
@@ -512,8 +524,27 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
         positions_lines.push_back(b.y());
         positions_lines.push_back(b.z());
         positions_lines.push_back(1.0);
+        //statistics
+        edge_lengths.push_back(CGAL::sqrt(
+                                   (a.x()-b.x())*(a.x()-b.x())
+                                  +(a.y()-b.y())*(a.y()-b.y())
+                                  +(a.z()-b.z())*(a.z()-b.z())
+                                   ));
+
+        if(a.x() == b.x()
+           && a.y() == b.y()
+           && a.z() == b.z())
+            number_of_null_length_edges++;
     }
 
+std::sort(edge_lengths.begin(), edge_lengths.end());
+min_edges_length = edge_lengths[0];
+max_edges_length = edge_lengths[edge_lengths.size()-1];
+mid_edges_length = edge_lengths[edge_lengths.size()/2];
+mean_edges_length = 0;
+for(size_t i=0; i<edge_lengths.size(); i++)
+    mean_edges_length += edge_lengths[i];
+mean_edges_length/=edge_lengths.size();
     //set the colors
     compute_colors();
 }
@@ -729,6 +760,11 @@ Scene_polyhedron_item::toolTip() const
             .arg(this->renderingModeName())
             .arg(this->color().name());
   str += QString("<br />Number of isolated vertices : %1<br />").arg(getNbIsolatedvertices());
+  str += QString("Minimum edge length : %1<br />").arg(min_edges_length);
+  str += QString("Maximum edge length : %1<br />").arg(max_edges_length);
+  str += QString("Median edge length : %1<br />").arg(mid_edges_length);
+  str += QString("Mean edge length : %1<br />").arg(mean_edges_length);
+  str += QString("Number of null length edges : %1").arg(nb_isolated_vertices);
   if (volume!=-std::numeric_limits<double>::infinity())
     str+=QObject::tr("<br />Volume: %1").arg(volume);
   if (area!=-std::numeric_limits<double>::infinity())

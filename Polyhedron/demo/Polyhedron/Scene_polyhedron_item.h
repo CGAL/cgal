@@ -137,6 +137,8 @@ private:
     mutable std::size_t nb_facets;
     mutable std::size_t nb_lines;
     mutable QOpenGLShaderProgram *program;
+    mutable int number_of_null_length_edges;
+    mutable double min_edges_length, max_edges_length, mean_edges_length, mid_edges_length;
 
     using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;
