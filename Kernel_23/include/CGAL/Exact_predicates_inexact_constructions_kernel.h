@@ -27,6 +27,7 @@
 
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
+#include <CGAL/Triangulation_structural_filtering_traits.h>
 
 namespace CGAL {
 
@@ -44,6 +45,11 @@ class Epick
 {};
 
 typedef Epick Exact_predicates_inexact_constructions_kernel;
+
+template <>
+struct Triangulation_structural_filtering_traits<Epick> {
+  typedef Tag_true Use_structural_filtering_tag;
+};
 
 } //namespace CGAL
 
