@@ -120,7 +120,6 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
     // Iterates on the vector of facet handles
     CDT::Vertex_handle previous, first;
     do {
-        std::cerr<<he_circ->vertex()->point()<<std::endl;
         CDT::Vertex_handle vh = cdt.insert(he_circ->vertex()->point());
         if(first == 0) {
             first = vh;
@@ -132,7 +131,6 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
         previous = vh;
     } while( ++he_circ != he_circ_end );
     cdt.insert_constraint(previous, first);
-
     // sets mark is_external
     for(CDT::All_faces_iterator
         fit2 = cdt.all_faces_begin(),
@@ -156,7 +154,6 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
             }
         }
     }
-
     //iterates on the internal faces to add the vertices to the positions
     //and the normals to the appropriate vectors
     for(CDT::Finite_faces_iterator
@@ -190,16 +187,10 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
         positions_facets.push_back( vertices[1][2]);
         positions_facets.push_back(1.0);
 
-        positions_facets.push_back( vertices[0][0]);
-        positions_facets.push_back( vertices[0][1]);
-        positions_facets.push_back( vertices[0][2]);
+        positions_facets.push_back( vertices[2][0]);
+        positions_facets.push_back( vertices[2][1]);
+        positions_facets.push_back( vertices[2][2]);
         positions_facets.push_back(1.0);
-
-        if((vertices[0][0] == vertices[1][0] && vertices[0][1] == vertices[1][1] && vertices[0][2] == vertices[1][2])
-        || (vertices[0][0] == vertices[2][0] && vertices[0][1] == vertices[2][1] && vertices[0][2] == vertices[2][2])
-        || (vertices[2][0] == vertices[1][0] && vertices[2][1] == vertices[1][1] && vertices[2][2] == vertices[1][2]))
-            number_of_degenerated_faces++;
-
 
         typedef Kernel::Vector_3	    Vector;
         Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(fit, *poly);
@@ -226,7 +217,6 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
         normals_gouraud.push_back(n.x());
         normals_gouraud.push_back(n.y());
         normals_gouraud.push_back(n.z());
-
     }
 }
 
@@ -456,7 +446,10 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     {
 
         if(!is_triangle(f->halfedge(),*poly))
+        {
+            is_triangulated = false;
             triangulate_facet(f);
+        }
         else
         {
             double vertices[3][3];
@@ -661,6 +654,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     is_selected = true;
     nb_facets = 0;
     nb_lines = 0;
+    is_triangulated = true;
     init();
 
 }
@@ -679,6 +673,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     is_selected = true;
     nb_facets = 0;
     nb_lines = 0;
+    is_triangulated = true;
     init();
     invalidate_buffers();
 }
@@ -696,6 +691,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     cur_shading=FlatPlusEdges;
     is_selected=true;
     init();
+    is_triangulated = true;
     nb_facets = 0;
     nb_lines = 0;
     invalidate_buffers();
@@ -795,7 +791,8 @@ Scene_polyhedron_item::toolTip() const
   str += QString("Median edge length : %1<br />").arg(mid_edges_length);
   str += QString("Mean edge length : %1<br />").arg(mean_edges_length);
   str += QString("Number of null length edges : %1<br />").arg(number_of_null_length_edges);
-  str += QString("Number of degenerated faces : %1").arg(number_of_degenerated_faces);
+  if(is_triangulated)
+      str += QString("Number of degenerated faces : %1").arg(number_of_degenerated_faces);
   if (volume!=-std::numeric_limits<double>::infinity())
     str+=QObject::tr("<br />Volume: %1").arg(volume);
   if (area!=-std::numeric_limits<double>::infinity())

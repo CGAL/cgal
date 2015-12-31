@@ -108,6 +108,7 @@ private:
     bool show_only_feature_edges_m;
     bool show_feature_edges_m;
     bool facet_picking_m;
+    mutable bool is_triangulated;
     bool erase_next_picked_facet_m;
     //the following variable is used to indicate if the color vector must not be automatically updated.
     bool plugin_has_set_color_vector_m;
