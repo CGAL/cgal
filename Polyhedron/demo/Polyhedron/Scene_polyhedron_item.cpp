@@ -420,6 +420,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     normals_flat.resize(0);
     normals_gouraud.resize(0);
     number_of_null_length_edges = 0;
+    number_of_degenerated_faces = 0;
     //Facets
     typedef Polyhedron::Traits	    Kernel;
     typedef Kernel::Point_3	    Point;
@@ -440,12 +441,14 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
             triangulate_facet(f);
         else
         {
+            double vertices[3][3];
+            int i=0;
             HF_circulator he = f->facet_begin();
             HF_circulator end = he;
             CGAL_For_all(he,end)
             {
 
-                // // If Flat shading:1 normal per polygon added once per vertex
+                // If Flat shading:1 normal per polygon added once per vertex
 
                 Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(f, *poly);
                 normals_flat.push_back(n.x());
@@ -466,7 +469,16 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
                 positions_facets.push_back(p.y());
                 positions_facets.push_back(p.z());
                 positions_facets.push_back(1.0);
+                vertices[i][0]= p.x();
+                vertices[i][1]= p.y();
+                vertices[i][2]= p.z();
+                i = (i+1) %3;
             }
+            if((vertices[0][0] == vertices[1][0] && vertices[0][1] == vertices[1][1] && vertices[0][2] == vertices[1][2])
+            || (vertices[0][0] == vertices[2][0] && vertices[0][1] == vertices[2][1] && vertices[0][2] == vertices[2][2])
+            || (vertices[2][0] == vertices[1][0] && vertices[2][1] == vertices[1][1] && vertices[2][2] == vertices[1][2]))
+                number_of_degenerated_faces++;
+
         }
     }
     //Lines
@@ -764,7 +776,8 @@ Scene_polyhedron_item::toolTip() const
   str += QString("Maximum edge length : %1<br />").arg(max_edges_length);
   str += QString("Median edge length : %1<br />").arg(mid_edges_length);
   str += QString("Mean edge length : %1<br />").arg(mean_edges_length);
-  str += QString("Number of null length edges : %1").arg(nb_isolated_vertices);
+  str += QString("Number of null length edges : %1<br />").arg(number_of_null_length_edges);
+  str += QString("Number of degenerated faces : %1").arg(number_of_degenerated_faces);
   if (volume!=-std::numeric_limits<double>::infinity())
     str+=QObject::tr("<br />Volume: %1").arg(volume);
   if (area!=-std::numeric_limits<double>::infinity())
