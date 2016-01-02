@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 (based on old version by Tali Zvi)
@@ -39,7 +39,7 @@ namespace CGAL {
  * on the algorithm of Bentley and Ottmann.
  * It extends the algorithm to support not only segments but general x-monotone
  * curves as well and isolated points.
- * The X_monotone_curve_2 type and Point_2 are defined by the traits class that 
+ * The X_monotone_curve_2 type and Point_2 are defined by the traits class that
  * is one of the template arguments.
  *
  * The algorithm is also extended to support the following degenerate cases:
@@ -50,22 +50,22 @@ namespace CGAL {
  *
  * General flow:
  * After the initialization stage, the events are handled from left to right.
- * 
+ *
  * For each event
  *
- *  First pass - handles special cases in which curves start or end 
+ *  First pass - handles special cases in which curves start or end
  *               at the interior of another curve
- *  Handle left curves - iterate over the curves that intersect 
+ *  Handle left curves - iterate over the curves that intersect
  *               at the event point and defined lexicographically to the left
- *               of the event. 
- *  Handle right curves - iterate over the curves that intersect 
+ *               of the event.
+ *  Handle right curves - iterate over the curves that intersect
  *               the event point and defined lexicographically to the right
- *               of the event point. This is where new intersection points 
+ *               of the event point. This is where new intersection points
  *               are calculated.
  * End
  *
  * Convensions through out the code:
- * In order to make the code as readable as possible, some convensions were 
+ * In order to make the code as readable as possible, some convensions were
  * made in regards to variable naming:
  *
  * xp - is the intersection point between two curves
@@ -101,7 +101,7 @@ public:
   typedef typename Base::Traits_adaptor_2                Traits_adaptor_2;
   typedef typename Traits_adaptor_2::Point_2             Point_2;
   typedef typename Traits_adaptor_2::X_monotone_curve_2  X_monotone_curve_2;
- 
+
   typedef typename Base::Event_queue_iterator         Event_queue_iterator;
   typedef typename Event::Subcurve_iterator           Event_subcurve_iterator;
 
@@ -109,12 +109,12 @@ public:
   typedef typename Base_event::Attribute              Attribute;
 
   typedef typename Base::Base_subcurve                Base_subcurve;
-  
+
   typedef std::list<Subcurve*>                        Subcurve_container;
-  typedef typename Subcurve_container::iterator       Subcurve_iterator; 
+  typedef typename Subcurve_container::iterator       Subcurve_iterator;
 
   typedef typename Base::Status_line_iterator         Status_line_iterator;
-  
+
   typedef CGAL::Curve_pair<Subcurve>                       Curve_pair;
   typedef CGAL::Curve_pair_hasher<Subcurve>                Curve_pair_hasher;
   typedef CGAL::Equal_curve_pair<Subcurve>                 Equal_curve_pair;
@@ -196,14 +196,14 @@ protected:
    */
   void _handle_overlap(Event* event, Subcurve* curve,
                        Event_subcurve_iterator iter, bool overlap_exist);
-  
+
   /*! Compute intersections between the two given curves.
-   * If the two curves intersect, create a new event (or use the event that 
+   * If the two curves intersect, create a new event (or use the event that
    * already exits in the intersection point) and insert the curves to the
    * event.
    * \param curve1 The first curve.
    * \param curve2 The second curve.
-   */ 
+   */
   void _intersect(Subcurve* c1, Subcurve* c2);
 
   /*! When a curve is removed from the status line for good, its top and

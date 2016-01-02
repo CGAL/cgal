@@ -1977,7 +1977,7 @@ this predicate determines the location of the curve end along the
 \f$ y\f$-dimension. Formally, the predicate determines whether
 \f$ \lim_{t \rightarrow d} Y(t)\f$ evaluates to \f$ b_b\f$, \f$ b_t\f$, or a value
 in between.
-<DT><B>`Compare_x_at_limit_2`:</B><DD>
+<DT><B>`Compare_x_on_boundary_2`:</B><DD>
 Two versions of this predicate are provided:
 (i) Given a point \f$ p\f$, a parametric \f$ x\f$-monotone curve
 \f$ C(t) = (X(t),Y(t))\f$, and an enumerator that specifies either the
@@ -1998,7 +1998,7 @@ If the parameter space is unbounded, a precondition assures that
 \f$ C_1\f$ and \f$ C_2\f$ have vertical asymptote at their respective ends;
 that is \f$ \lim_{t \rightarrow d_1} X_1(t)\f$ and
 \f$ \lim_{t \rightarrow d_2} X_2(t)\f$ are finite.
-<DT><B>`Compare_x_near_limit_2`:</B><DD>
+<DT><B>`Compare_x_near_boundary_2`:</B><DD>
 Given two \f$ x\f$-monotone curves \f$ C_1\f$ and \f$ C_2\f$ and an enumerator \f$ i\f$
 that specifies either the minimum ends or the maximum ends of the
 two curves, this predicate compares the \f$ x\f$-coordinates of the
@@ -2014,7 +2014,7 @@ under a translation of \f$ p\f$ farther to the bottom. If both curves
 approach the top boundary-side, \f$ p\f$ is located far to the top in a
 similar manner. Another precondition assures that the
 \f$ x\f$-coordinates of the limits of the curves at their respective
-ends are equal. That is, the predicate `Compare_x_at_limit_2`
+ends are equal. That is, the predicate `Compare_x_on_boundary_2`
 applied to \f$ C_1\f$, \f$ C_2\f$, and \f$ i\f$ evaluates to `EQUAL`.
 </DL>
 
