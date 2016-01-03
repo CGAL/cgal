@@ -79,8 +79,6 @@ public:
 private:
   // data
   std::vector<Sample_> m_samples;
-  double m_min_mass;
-  double m_max_mass;
 
   Reconstruction_simplification_kerneled_2* m_pwsrec;
   int m_ignore;
@@ -95,8 +93,6 @@ private:
 public:
   Scene() {
     srand(0); // for sake of repeatability
-    m_min_mass = 0.0;
-    m_max_mass = 0.0;
     m_ignore = 0;
     m_init_done = false;
     m_percentage = 100.;
@@ -114,16 +110,8 @@ public:
   void clear() {
     m_pwsrec->clear();
     m_samples.clear();
-    m_max_mass = 0.0;
   }
 
-  void set_min_mass(const double min_value) {
-    m_min_mass = min_value;
-  }
-
-  void set_percentage(double percentage) {
-    m_percentage = percentage;
-  }
 
 
   void subdivide() {
@@ -160,12 +148,11 @@ public:
 
   void add_sample(const Point& point, const FT mass = 1.0) {
     m_samples.push_back(Sample_(point, mass));
-    m_max_mass = (std::max)(m_max_mass, mass);
     m_init_done = false;
   }
 
   void add_outliers(const unsigned int nb) {
-    std::cerr << "add " << nb << " outliers...";
+    std::cerr << "adding " << nb << " outliers...";
     for (unsigned int i = 0; i < nb; i++) {
       Point outlier = CGAL::ORIGIN + random_vec<Vector>(1.3);
       m_samples.push_back(outlier);
@@ -175,7 +162,7 @@ public:
   }
 
   void noise(const FT scale) {
-    std::cerr << "noise by " << scale << "...";
+    std::cerr << "noising by " << scale << "...";
     std::vector<Sample_>::iterator it;
     for (it = m_samples.begin(); it != m_samples.end(); it++) {
       Sample_& sample = *it;
@@ -233,28 +220,9 @@ public:
   // IO SAMPLES //
 
   void load(const QString& filename, QWidget* qw) {
-    // TODO: load xml
 
     if (filename.contains(".xy", Qt::CaseInsensitive)) {
       load_xy_file(filename);
-      normalize_points();
-      return;
-    }
-
-    if (filename.contains(".txt", Qt::CaseInsensitive)) {
-      load_xy_file(filename);
-      normalize_points();
-      return;
-    }
-
-    if (filename.contains(".gtn", Qt::CaseInsensitive)) {
-      load_gathan_file(filename);
-      normalize_points();
-      return;
-    }
-
-    if (filename.contains(".dat", Qt::CaseInsensitive)) {
-      load_dat_file(filename);
       normalize_points();
       return;
     }
@@ -281,10 +249,10 @@ public:
       return;
     }
 
-    std::cerr << "Invalid file (try .xy, .txt, .gtn, .dat, .bmp)" << std::endl;
+    std::cerr << "Invalid file (try .xy, .bmp)" << std::endl;
 #else
     CGAL_USE(qw);
-    std::cerr << "Invalid file (try .xy, .txt, .gtn, .dat)" << std::endl;
+    std::cerr << "Invalid file (try .xy)" << std::endl;
 #endif
 
 
@@ -292,9 +260,9 @@ public:
 
   void load_xy_file(const QString& fileName) {
 
-    std::cout << "FILENAME " << fileName.toUtf8().constData() << std::endl;
+    std::cout << "filename: " << fileName.toUtf8().constData() << std::endl;
     std::ifstream ifs(qPrintable(fileName));
-    std::cerr << "read xy...";
+    std::cerr << "reading xy...";
     Point point;
     unsigned int nb = 0;
     while (ifs >> point) {
@@ -305,51 +273,20 @@ public:
     ifs.close();
   }
 
-  void load_gathan_file(const QString& fileName) {
-    std::ifstream ifs(qPrintable(fileName));
-    std::cerr << "read gathan...";
-    Point point;
-    unsigned nb, x, y, z;
-    ifs >> nb >> x >> y >> z;
-    for (unsigned int i = 0; i < nb; ++i) {
-      ifs >> x >> point;
-      add_sample(point, 1.0);
-    }
-    std::cerr << "done (" << nb << " points)" << std::endl;
-    ifs.close();
-  }
-
-  void load_dat_file(const QString& fileName) {
-    std::ifstream ifs(qPrintable(fileName));
-    std::cerr << "read dat...";
-    Point point;
-    unsigned int n, m, nb = 0;
-    ifs >> n;
-    for (unsigned int i = 0; i < n; ++i) {
-      ifs >> m;
-      for (unsigned int j = 0; j < m; ++j) {
-        ifs >> point;
-        add_sample(point, 1.0);
-      }
-      nb += m;
-    }
-    std::cerr << "done (" << nb << " points)" << std::endl;
-    ifs.close();
-  }
 
 #ifdef CGAL_USE_CIMG
   void load_image(const QString& fileName) {
-    std::cerr << "read image...";
+    std::cerr << "reading image...";
     cimg_library::CImg<float> image(qPrintable(fileName));
     std::cerr << "done" << std::endl;
 
-    std::cerr << "compute grayscale...";
+    std::cerr << "computing grayscale...";
     cimg_library::CImg<float> grayscale =
         image.RGBtoHSV().get_channel(2).normalize(0.0f, 1.0f);
     std::cerr << "done" << std::endl;
 
     // turn pixels into weighted samples
-    std::cerr << "add samples...";
+    std::cerr << "adding samples...";
     for (int i = 0; i < grayscale.width(); i++) {
       for (int j = 0; j < grayscale.height(); j++) {
         float mass = 1.0f - grayscale.atXY(i, j);
@@ -363,18 +300,18 @@ public:
   }
 
   void load_gradient(const QString& fileName) {
-    std::cerr << "read image...";
+    std::cerr << "reading image...";
     cimg_library::CImg<float> image(qPrintable(fileName));
     std::cerr << "done" << std::endl;
 
-    std::cerr << "compute gradient...";
+    std::cerr << "computing gradient...";
     cimg_library::CImgList<float> grad = image.get_gradient();
     cimg_library::CImg<float> normgrad = sqrt(
         grad[0].pow(2) + grad[1].pow(2)).normalize(0.0f, 1.0f);
     std::cerr << "done" << std::endl;
 
     // turn pixels into weighted samples
-    std::cerr << "add samples...";
+    std::cerr << "adding samples...";
     for (int i = 0; i < normgrad.width(); i++) {
       for (int j = 0; j < normgrad.height(); j++) {
         float mass = normgrad.atXY(i, j);
@@ -426,22 +363,10 @@ public:
 
   void save(const QString& filename) 
   {
-    std::cout << "SAVE-------------" << std::endl;
-    //debug_print();
-
-    /*if (filename.contains(".edges", Qt::CaseInsensitive)) {
-      std::ofstream ofs(qPrintable(filename));
-      m_pwsrec->save_edges(ofs, m_ignore);
-      ofs.close();
-      return;
-    }*/
-
     Sample_vector samples;
     for (std::vector<Sample_>::iterator it = m_samples.begin();
         it != m_samples.end(); ++it) {
       Sample_& s = *it;
-      if (s.mass() < m_min_mass)
-        continue;
       samples.push_back(&s);
     }
 
@@ -451,63 +376,9 @@ public:
     }
 
     std::cerr << "Error: not an XY file." << std::endl;
-
-    /*if (filename.contains(".poff", Qt::CaseInsensitive)) {
-      save_poff(filename, samples);
-      return;
-    }
-
-    if (filename.contains(".gtn", Qt::CaseInsensitive)) {
-      save_gtn(filename, samples);
-      return;
-    }
-
-    if (filename.contains(".pwn", Qt::CaseInsensitive)) {
-      save_pwn(filename, samples);
-      return;
-    }*/
   }
 
-  void save_pwn(const QString& filename, const Sample_vector& samples) {
-    std::vector<Vector> normals;
-    compute_normals(samples, normals);
-    std::ofstream ofs(qPrintable(filename));
-    std::vector<Vector>::const_iterator ni = normals.begin();
-    for (Sample_vector_const_iterator it = samples.begin();
-        it != samples.end(); ++it) {
-      Sample_* sample = *it;
-      ofs << sample->point() << " " << *ni << std::endl;
-      ni++;
-    }
-    ofs.close();
-  }
-
-  void compute_normals(const Sample_vector& samples,
-      std::vector<Vector>& normals) {
-    normals.clear();
-    Point last = samples.back()->point();
-    Sample_vector_const_iterator si = samples.begin();
-    while (si != samples.end()) {
-      Point p = (*si)->point();
-      si++;
-      Point next = samples.front()->point();
-      if (si != samples.end())
-        next = (*si)->point();
-
-      Vector ab = p - last;
-      Vector bc = next - p;
-      Vector ab90(ab.y(), -ab.x());
-      Vector bc90(bc.y(), -bc.x());
-
-      Vector ni = ab90 + bc90;
-      FT norm = std::sqrt(ni * ni);
-      if (norm != 0.0)
-        ni = ni / norm;
-      normals.push_back(ni);
-
-      last = p;
-    }
-  }
+  
 
   void save_xy(const QString& filename, const Sample_vector& samples) {
     std::ofstream ofs(qPrintable(filename));
@@ -519,28 +390,6 @@ public:
     ofs.close();
   }
 
-  void save_poff(const QString& filename, const Sample_vector& samples) {
-    std::ofstream ofs(qPrintable(filename));
-    ofs << "POFF " << samples.size() << " 0 0" << std::endl;
-    for (Sample_vector_const_iterator it = samples.begin();
-        it != samples.end(); ++it) {
-      Sample_* sample = *it;
-      ofs << sample->point() << std::endl;
-    }
-    ofs.close();
-  }
-
-  void save_gtn(const QString& filename, const Sample_vector& samples) {
-    std::ofstream ofs(qPrintable(filename));
-    ofs << samples.size() << " 2 0 0" << std::endl;
-    unsigned int i = 0;
-    for (Sample_vector_const_iterator it = samples.begin();
-        it != samples.end(); ++it, ++i) {
-      Sample_* sample = *it;
-      ofs << i << " " << sample->point() << std::endl;
-    }
-    ofs.close();
-  }
 
   // RECONSTRUCTION //
 
@@ -586,7 +435,7 @@ public:
   }
 
   void decimate(const double percentage) {
-    std::cout << "Decimate from " << m_samples.size() << " to...";
+    std::cout << "decimating from " << m_samples.size() << " to...";
     std::vector<Sample_> selected;
 
     std::vector<Sample_>::iterator it;
@@ -608,8 +457,6 @@ public:
     std::vector<Sample_>::iterator it;
     for (it = m_samples.begin(); it != m_samples.end(); ++it) {
       Sample_& s = *it;
-      if (s.mass() <= m_min_mass)
-        continue;
 
       samples.push_back(&s);
       FT rv = random_double(0.0, 1.0);
@@ -639,7 +486,8 @@ public:
 
   void output_console()
   {
-	  std::cout << "(-------------Off output---------- )" << std::endl;
+	  std::cout << std::endl;
+	  std::cout << "OFF OUTPUT" << std::endl;
 	  std::vector<Point> points;
 	  std::vector<std::size_t> isolated_vertices;
 	  std::vector<std::pair<std::size_t, std::size_t> > edges;
@@ -710,19 +558,15 @@ public:
   }
 
   void draw_samples(const float point_size) {
-    double max_value = m_max_mass;
-    if (max_value == 0.0)
-      max_value = 1.0;
 
     ::glPointSize(point_size);
     ::glBegin(GL_POINTS);
+
     std::vector<Sample_>::const_iterator it;
     for (it = m_samples.begin(); it != m_samples.end(); it++) {
       double mass = it->mass();
-      if (mass <= m_min_mass)
-        continue;
 
-      float value = mass / m_max_mass;
+      float value = mass;
       float grey = 0.9 * (1.0f - value);
       ::glColor3f(grey, grey, grey);
       const Point& p = it->point();

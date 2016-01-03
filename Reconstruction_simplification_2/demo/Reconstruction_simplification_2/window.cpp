@@ -146,7 +146,6 @@ void MainWindow::save(const QString& filename)
   QApplication::setOverrideCursor(Qt::WaitCursor);
   m_scene->save(filename);
   QApplication::restoreOverrideCursor();
-  std::cout << "File " << filename.toStdString()  << " saved" << std::endl;
 }
 
 void MainWindow::update()
