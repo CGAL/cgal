@@ -40,13 +40,6 @@ public:
 
   double percentage() const { return m_percent / 100.0; }
 
-  double min_mass() const
-  {
-    double value = double(min_mass_slider->value());
-    double max_value = double(min_mass_slider->maximum());
-    return value / max_value;
-  }
-
   protected Q_SLOTS:
   // drag and drop
   void dropEvent(QDropEvent *event);

@@ -38,7 +38,6 @@ maxNumRecentFiles(15), recentFileActs(15)
   // Handling actions
   addRecentFiles(menuFile, actionQuit);
   connect(actionQuit, SIGNAL(triggered()), this, SLOT(close()));
-  connect(min_mass_slider, SIGNAL(valueChanged(int)), this, SLOT(update()));
   connect(this, SIGNAL(openRecentFile(QString)), this, SLOT(open(QString)));
   Q_EMIT update();
   viewer->update();
@@ -152,8 +151,6 @@ void MainWindow::save(const QString& filename)
 
 void MainWindow::update()
 {
-  m_scene->set_min_mass(min_mass());
-  m_scene->set_percentage(percentage());
   viewer->repaint();
 }
 
@@ -522,10 +519,12 @@ void MainWindow::on_actionReconstruction_until_triggered()
       this, tr("Number of Points"), tr("Nb:"), 4, 1, 1000000, 1, &ok);
   if (!ok) return;
 
-  QApplication::setOverrideCursor(Qt::WaitCursor);
   set_scene_options();
+
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   m_scene->reconstruct_until(nb_points);
   QApplication::restoreOverrideCursor();
+
   update();
 }
 
