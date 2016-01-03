@@ -97,6 +97,7 @@ public:
   void on_actionReconstruction_until_triggered();
   void on_actionRelocate_vertices_triggered();
   void on_actionReconstruction_reinit_triggered();
+  void on_actionOutput_console_triggered();
 
   // view
   void on_actionView_points_toggled();

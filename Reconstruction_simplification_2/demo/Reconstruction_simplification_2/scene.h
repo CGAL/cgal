@@ -637,6 +637,36 @@ public:
     m_pwsrec->relocate_all_points();
   }
 
+  void output_console()
+  {
+	  std::cout << "(-------------Off output---------- )" << std::endl;
+	  std::vector<Point> points;
+	  std::vector<std::size_t> isolated_vertices;
+	  std::vector<std::pair<std::size_t, std::size_t> > edges;
+
+	  m_pwsrec->indexed_output(
+		  std::back_inserter(points),
+		  std::back_inserter(isolated_vertices),
+		  std::back_inserter(edges));
+
+	  std::cout << "OFF " << points.size() << " 0 " << edges.size() << std::endl;
+
+	  // points
+	  std::vector<Point>::iterator pit;
+	  for (pit = points.begin(); pit != points.end(); pit++)
+		  std::cout << *pit << std::endl;
+
+	  // isolated vertices
+	  std::vector<std::size_t>::iterator vit;
+	  for (vit = isolated_vertices.begin(); vit != isolated_vertices.end(); vit++)
+		  std::cout << "1 " << *vit << std::endl;
+
+	  // edges
+	  std::vector<std::pair<std::size_t, std::size_t> >::iterator eit;
+	  for (eit = edges.begin(); eit != edges.end(); eit++)
+		  std::cout << "2 " << eit->first << " " << eit->second << std::endl;
+  }
+
   // RENDER //
 
   void render(const bool view_points, const bool view_vertices,

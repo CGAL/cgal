@@ -100,7 +100,7 @@
     <addaction name="actionRelocate_vertices"/>
     <addaction name="actionReconstruction_reinit"/>
     <addaction name="separator"/>
-    <addaction name="actionOutput_to_console"/>
+    <addaction name="actionOutput_console"/>
     <addaction name="separator"/>
     <addaction name="actionSet_options"/>
     <addaction name="separator"/>
@@ -590,7 +590,7 @@
     <string>O</string>
    </property>
   </action>
-  <action name="actionOutput_to_console">
+  <action name="actionOutput_console">
    <property name="text">
     <string>Output to console</string>
    </property>
