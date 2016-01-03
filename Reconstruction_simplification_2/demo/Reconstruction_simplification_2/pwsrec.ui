@@ -82,7 +82,7 @@
     </property>
     <addaction name="actionLoadPoints"/>
     <addaction name="actionSave"/>
-    <addaction name="actionSnapshot"/>
+    <addaction name="separator"/>
     <addaction name="actionQuit"/>
    </widget>
    <widget class="QMenu" name="menuPoint_set">
@@ -109,18 +109,14 @@
      <addaction name="actionIncreasingly_sharp_angles"/>
     </widget>
     <addaction name="menuPredefined"/>
+    <addaction name="separator"/>
     <addaction name="actionNoise"/>
     <addaction name="actionAdd_outliers"/>
     <addaction name="separator"/>
     <addaction name="actionDecimate"/>
-    <addaction name="actionKeep_one_point_out_of_n"/>
     <addaction name="actionSubdivide"/>
     <addaction name="separator"/>
-    <addaction name="actionInvert_mass"/>
-    <addaction name="actionClamp_mass"/>
-    <addaction name="separator"/>
     <addaction name="actionInsertPoint"/>
-    <addaction name="separator"/>
     <addaction name="actionClear"/>
    </widget>
    <widget class="QMenu" name="menuAlgorithms">
@@ -180,7 +176,6 @@
    <addaction name="actionClear"/>
    <addaction name="actionLoadPoints"/>
    <addaction name="actionSave"/>
-   <addaction name="actionSnapshot"/>
    <addaction name="separator"/>
    <addaction name="actionInsertPoint"/>
    <addaction name="separator"/>
@@ -236,7 +231,7 @@
      <normaloff>:/icons/fileOpen.png</normaloff>:/icons/fileOpen.png</iconset>
    </property>
    <property name="text">
-    <string>Load point set</string>
+    <string>Load point set...</string>
    </property>
    <property name="statusTip">
     <string>Load point set</string>
@@ -251,7 +246,7 @@
      <normaloff>:/icons/fileSave.png</normaloff>:/icons/fileSave.png</iconset>
    </property>
    <property name="text">
-    <string>Save point set</string>
+    <string>Save point set...</string>
    </property>
    <property name="statusTip">
     <string>Save point set</string>
@@ -428,10 +423,7 @@
   </action>
   <action name="actionAdd_outliers">
    <property name="text">
-    <string>Add outliers</string>
-   </property>
-   <property name="shortcut">
-    <string>O</string>
+    <string>Add outliers...</string>
    </property>
   </action>
   <action name="actionSnapshot">
@@ -500,7 +492,7 @@
   </action>
   <action name="actionNoise">
    <property name="text">
-    <string>Noise</string>
+    <string>Noise...</string>
    </property>
    <property name="shortcut">
     <string>N</string>
@@ -600,7 +592,7 @@
   </action>
   <action name="actionDecimate">
    <property name="text">
-    <string>Decimate</string>
+    <string>Decimate...</string>
    </property>
   </action>
   <action name="actionKeep_one_point_out_of_n">
@@ -621,10 +613,10 @@
   </action>
   <action name="actionSet_options">
    <property name="text">
-    <string>Options</string>
+    <string>Options...</string>
    </property>
    <property name="shortcut">
-    <string>Ctrl+P</string>
+    <string>O</string>
    </property>
   </action>
  </widget>

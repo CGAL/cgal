@@ -169,8 +169,6 @@ protected:
   std::size_t m_mchoice;  // # Edges
   bool m_use_flip;
   FT m_alpha; // [0, 1]
-  FT m_norm_tol; // [0,BBOX]
-  FT m_tang_tol; // [0,BBOX]
   FT m_ghost; // ghost vs solid
   unsigned int m_relocation; // # relocations
 
@@ -229,8 +227,6 @@ public:
     m_mchoice(sample_size),
     m_use_flip(use_flip),
     m_alpha(0.5),
-    m_norm_tol(1.0),
-    m_tang_tol(1.0),
     m_ghost(1.0),
     m_relocation(relocation),
     m_bbox_x(0.0),
@@ -270,12 +266,7 @@ public:
   }
 
 
-  /// \cond SKIP_IN_MANUAL
-  void set_alpha(const FT alpha) {
-    m_alpha = alpha;
-  }
-  /// \endcond
-
+  
 
   /*!
         The use_flip parameter determines whether the edge flipping procedure
@@ -284,28 +275,6 @@ public:
   void set_use_flip(const bool use_flip) {
     m_use_flip = use_flip;
   }
-
-
-  /// \cond SKIP_IN_MANUAL
-  void set_norm_tol(const FT norm_tol) {
-    m_norm_tol = norm_tol;
-  }
-
-
-  FT norm_tol() const {
-    return m_norm_tol;
-  }
-
-
-  void set_tang_tol(const FT tang_tol) {
-    m_tang_tol = tang_tol;
-  }
-
-
-  FT tang_tol() const {
-    return m_tang_tol;
-  }
-  /// \endcond
 
 
   /*!
@@ -372,8 +341,6 @@ public:
     m_mchoice = 0;
     m_use_flip = true;
     m_alpha = FT(0.5);
-    m_norm_tol = FT(1);
-    m_tang_tol = FT(1);
     m_ghost = FT(1);
     m_relocation = 0;
 
@@ -666,10 +633,6 @@ public:
     if (!ok)
       return false;
 
-    bool within_tol = is_within_tol(after_cost);
-    if (!within_tol)
-      return false;
-
     Vertex_handle source = m_dt.source_vertex(edge);
     Cost_ before_cost = m_dt.compute_cost_around_vertex(source);
 
@@ -679,9 +642,6 @@ public:
     return true;
   }
 
-  bool is_within_tol(const Cost_& cost) const {
-    return cost.max_norm() <= m_norm_tol && cost.max_tang() <= m_tang_tol;
-  }
 
   // COST //
 

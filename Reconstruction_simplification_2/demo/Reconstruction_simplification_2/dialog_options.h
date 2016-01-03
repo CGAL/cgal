@@ -32,11 +32,8 @@ public:
         verbose_spinbox->setRange(0, 2);
         mchoice_spinbox->setRange(0, 500);
         percent_spinbox->setRange(0, 100);
-        norm_tol_spinbox->setRange(0., 500.);
-        tang_tol_spinbox->setRange(0., 500.);
-        alpha_spinbox->setRange(0., 100.);
         relocation_spinbox->setRange(0, 50);
-        ghost_spinbox->setRange(0., 100000.);
+		relevance_spinbox->setRange(0., 100000.);
     }
     
     int get_verbose() const { return verbose_spinbox->value(); }
@@ -48,22 +45,13 @@ public:
     double get_percent() const { return percent_spinbox->value(); }
     void set_percent(const double percent) { percent_spinbox->setValue(percent); }
     
-    double get_norm_tol() const { return norm_tol_spinbox->value(); }
-    void set_norm_tol(const double tol) { norm_tol_spinbox->setValue(tol); }
-    
-    double get_tang_tol() const { return tang_tol_spinbox->value(); }
-    void set_tang_tol(const double tol) { tang_tol_spinbox->setValue(tol); }    
-
-    double get_alpha() const { return alpha_spinbox->value(); }
-    void set_alpha(const double alpha) { alpha_spinbox->setValue(alpha); }
-    
     int get_relocation() const { return relocation_spinbox->value(); }
     void set_relocation(const int value) {
     	return relocation_spinbox->setValue(value);
     }
     
-    double get_ghost() const { return ghost_spinbox->value(); }
-    void set_relevance(double ghost) { ghost_spinbox->setValue(ghost); }
+	double get_relevance() const { return relevance_spinbox->value(); }
+	void set_relevance(double ghost) { relevance_spinbox->setValue(ghost); }
     
     bool get_use_flip() const { return use_flip_checkbox->isChecked(); }
     void set_use_flip(const bool flip) {

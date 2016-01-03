@@ -25,7 +25,6 @@ private:
     bool m_view_bins;
     bool m_view_foot_points;
     bool m_view_relocation;
-    bool m_view_tolerance;
     bool m_view_edge_relevance;
 
     // interactive modes
@@ -87,12 +86,8 @@ public:
     void toggle_view_foot_points() { m_view_foot_points = !m_view_foot_points; } 
     
     void toggle_view_relocation() { m_view_relocation = !m_view_relocation; }
-    
-    void toggle_view_tolerance() { m_view_tolerance = !m_view_tolerance; } 
 
-    void toggle_view_edge_relevance() {
-    	m_view_edge_relevance = !m_view_edge_relevance;
-    }
+    void toggle_view_edge_relevance() { m_view_edge_relevance = !m_view_edge_relevance; }
     
     void toggle_insert_points() { m_insert_points = !m_insert_points; }
    

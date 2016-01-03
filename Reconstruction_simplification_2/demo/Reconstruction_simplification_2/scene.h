@@ -125,30 +125,6 @@ public:
     m_percentage = percentage;
   }
 
-  void invert_mass() {
-    double new_max_mass = 0.0;
-    std::vector<Sample_>::iterator it;
-    for (it = m_samples.begin(); it != m_samples.end(); ++it) {
-      Sample_& sample = *it;
-      sample.mass() = m_max_mass - sample.mass();
-      new_max_mass = (std::max)(new_max_mass, sample.mass());
-    }
-    m_max_mass = new_max_mass;
-  }
-
-  void clamp_mass() {
-    std::vector<Sample_> new_samples;
-    std::vector<Sample_>::iterator it;
-    for (it = m_samples.begin(); it != m_samples.end(); ++it) {
-      Sample_& sample = *it;
-      if (sample.mass() > m_min_mass) {
-        sample.mass() = 1.0;
-        new_samples.push_back(sample);
-      }
-    }
-    m_samples = new_samples;
-    m_max_mass = 1.0;
-  }
 
   void subdivide() {
     if (m_samples.size() < 3)
@@ -569,16 +545,12 @@ public:
   // RECONSTRUCTION //
 
   void set_options(const int verbose, const int mchoice,
-      const bool use_flip, const double alpha, const double norm_tol,
-      const double tang_tol, const unsigned int relocation,
+      const bool use_flip, const unsigned int relocation,
       const double ghost) {
 
     m_pwsrec->set_verbose(verbose);
     m_pwsrec->set_random_sample_size(mchoice);
     m_pwsrec->set_use_flip(use_flip);
-    m_pwsrec->set_alpha(alpha);
-    m_pwsrec->set_tang_tol(tang_tol * m_bbox_size);
-    m_pwsrec->set_norm_tol(norm_tol * m_bbox_size);
     m_pwsrec->set_relocation(relocation);
     m_pwsrec->set_relevance(ghost);
   }
@@ -630,22 +602,6 @@ public:
     std::cout << m_samples.size() << std::endl;
   }
 
-  void keep_one_point_out_of(const int n) {
-    std::cout << "Decimate from " << m_samples.size() << " to...";
-    std::vector<Sample_> selected;
-
-    int index = 0;
-    std::vector<Sample_>::iterator it;
-    for (it = m_samples.begin(); it != m_samples.end(); it++, index++) {
-      if (index % n == 0)
-        selected.push_back(*it);
-    }
-
-    m_samples.clear();
-    std::copy(selected.begin(), selected.end(),
-        std::back_inserter(m_samples));
-    std::cout << m_samples.size() << std::endl;
-  }
 
   void select_samples(const double percentage, Sample_vector& vertices,
       Sample_vector& samples) {
@@ -687,9 +643,9 @@ public:
     const bool view_edges, const bool view_ghost_edges,
     const bool view_edge_cost, const bool view_edge_priority,
     const bool view_bins, const bool view_foot_points,
-    const bool view_relocation, const bool view_tolerance,
-    const bool view_edge_relevance, const float point_size, 
-    const float vertex_size, const float line_thickness) 
+    const bool view_relocation, const bool view_edge_relevance, 
+	const float point_size,  const float vertex_size, 
+	const float line_thickness) 
   {
     if (m_pwsrec == NULL) {
       return;
@@ -719,9 +675,6 @@ public:
     if (view_foot_points)
       m_pwsrec->draw_footpoints(line_thickness, 0.2f, 0.8f, 0.2f);
 
-    if (view_tolerance)
-      draw_circles();
-
     if (view_points)
       draw_samples(point_size);
   }
@@ -748,41 +701,6 @@ public:
     ::glEnd();
   }
 
-  void draw_circles() {
-    Sample_vector vertices, samples;
-    select_samples(1.0, vertices, samples);
-    double percentage = 500.0 / double(vertices.size());
-    percentage = (std::min)(percentage, 1.0);
-
-    samples.clear();
-    vertices.clear();
-    select_samples(percentage, vertices, samples);
-
-    ::glEnable(GL_BLEND);
-    ::glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    ::glColor4f(1.0f, 1.0f, 0.2f, 0.25f);
-    for (Sample_vector_const_iterator it = samples.begin();
-        it != samples.end(); it++) {
-      Sample_* sample = *it;
-      draw_one_circle(sample->point());
-    }
-    ::glDisable(GL_BLEND);
-  }
-
-  void draw_one_circle(const Point& center) {
-    unsigned int N = 10;
-    const double r = std::sqrt(m_pwsrec->norm_tol());
-    const double x = center.x();
-    const double y = center.y();
-    ::glBegin (GL_POLYGON);
-    for (unsigned int i = 0; i < N; ++i) {
-      double angle = 2.0 * M_PI * (double(i) / double(N));
-      double u = r * std::cos(angle) + x;
-      double v = r * std::sin(angle) + y;
-      ::glVertex2d(u, v);
-    }
-    ::glEnd();
-  }
 
   // PREDEFINED EXAMPLES //
 

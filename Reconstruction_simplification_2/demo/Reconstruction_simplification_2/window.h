@@ -23,11 +23,8 @@ private:
   int  m_verbose;
   int  m_mchoice;
   bool m_use_flip;
-  double m_alpha;
-  double m_ghost;
+  double m_relevance;
   double m_percent;
-  double m_norm_tol;
-  double m_tang_tol;
   double m_relocation;
 
   unsigned int maxNumRecentFiles;
@@ -42,12 +39,6 @@ public:
   void set_scene_options();
 
   double percentage() const { return m_percent / 100.0; }
-
-  double norm_tol() const { return m_norm_tol / 100.0; }
-
-  double tang_tol() const { return m_tang_tol / 100.0; }
-
-  double alpha() const { return m_alpha / 100.0; }
 
   double min_mass() const
   {
@@ -83,12 +74,8 @@ public:
   void on_actionLoadPoints_triggered();
   void on_actionSave_triggered();
   void on_actionInsertPoint_toggled();
-  void on_actionSnapshot_triggered();
-  void on_actionInvert_mass_triggered();
-  void on_actionClamp_mass_triggered();
   void on_actionSubdivide_triggered();
   void on_actionDecimate_triggered();
-  void on_actionKeep_one_point_out_of_n_triggered();
 
   // data
   void on_actionStar_triggered();
@@ -130,7 +117,6 @@ public:
   void on_actionView_bins_toggled();
   void on_actionView_foot_points_toggled();
   void on_actionView_relocation_toggled();
-  void on_actionView_tolerance_toggled();
 
   Q_SIGNALS:
   void openRecentFile(QString filename);

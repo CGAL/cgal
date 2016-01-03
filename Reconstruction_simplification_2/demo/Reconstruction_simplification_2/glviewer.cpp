@@ -18,7 +18,6 @@ GlViewer::GlViewer(QWidget *pParent)
   m_view_bins           = false;
   m_view_foot_points    = false;
   m_view_relocation     = false;
-  m_view_tolerance      = false;
   m_view_edge_relevance = true;
   m_insert_points       = false;
 
@@ -71,7 +70,6 @@ void GlViewer::paintGL()
       m_view_bins,
       m_view_foot_points,
       m_view_relocation,
-      m_view_tolerance,
       m_view_edge_relevance,
       float(m_point_size),
       float(m_vertex_size),

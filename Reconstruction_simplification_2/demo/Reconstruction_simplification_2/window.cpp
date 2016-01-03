@@ -27,12 +27,9 @@ maxNumRecentFiles(15), recentFileActs(15)
   // options
   m_verbose = 0;
   m_mchoice = 0;
-  m_ghost = 1.0;
-  m_alpha = 50.0;
+  m_relevance = 1.0;
   m_use_flip = true;
   m_percent  = 100.0;
-  m_norm_tol = 100.0;
-  m_tang_tol = 100.0;
   m_relocation = 2;
 
   // accepts drop events
@@ -182,18 +179,6 @@ void MainWindow::on_actionSave_triggered()
   save(filename);
 }
 
-void MainWindow::on_actionSnapshot_triggered() 
-{
-  std::cout << "snapshot...";
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  QClipboard *qb = QApplication::clipboard();
-  viewer->makeCurrent();
-  viewer->raise();
-  QImage snapshot = viewer->grabFramebuffer();
-  qb->setImage(snapshot);
-  QApplication::restoreOverrideCursor();
-  std::cout << "done" << std::endl;
-}
 
 void MainWindow::on_actionInsertPoint_toggled() 
 {
@@ -209,17 +194,6 @@ void MainWindow::on_actionRecenter_triggered()
   update();
 }
 
-void MainWindow::on_actionInvert_mass_triggered()
-{
-  m_scene->invert_mass();
-  update();
-}
-
-void MainWindow::on_actionClamp_mass_triggered()
-{
-  m_scene->clamp_mass();
-  update();
-}
 
 ///////////////////////////
 // PREDEFINED POINT SETS //
@@ -485,18 +459,6 @@ void MainWindow::on_actionDecimate_triggered()
   update();
 }
 
-void MainWindow::on_actionKeep_one_point_out_of_n_triggered()
-{
-  bool ok;
-  int n = QInputDialog::getInt(
-      this, tr("Keep one point out of"), tr("n:"), 2, 2, 1000, 1, &ok);
-  if (!ok) return;
-
-  QApplication::setOverrideCursor(Qt::WaitCursor);
-  m_scene->keep_one_point_out_of(n);
-  QApplication::restoreOverrideCursor();
-  update();
-}
 
 ////////////////////
 // RECONSTRUCTION //
@@ -505,8 +467,7 @@ void MainWindow::on_actionKeep_one_point_out_of_n_triggered()
 void MainWindow::set_scene_options()
 {
   m_scene->set_options(m_verbose, m_mchoice, m_use_flip,
-      alpha(), norm_tol(), tang_tol(),
-      m_relocation, m_ghost);
+      m_relocation, m_relevance);
 }
 
 void MainWindow::on_actionReconstruction_reinit_triggered()
@@ -630,21 +591,16 @@ void MainWindow::on_actionView_foot_points_toggled()
 
 void MainWindow::on_actionView_relocation_toggled()
 {
-  viewer->toggle_view_relocation();
-  update();
-}
-
-void MainWindow::on_actionView_tolerance_toggled()
-{
-  viewer->toggle_view_tolerance();
-  update();
+	viewer->toggle_view_relocation();
+	update();
 }
 
 void MainWindow::on_actionView_relevance_toggled()
 {
-  viewer->toggle_view_edge_relevance();
-  update();
+	viewer->toggle_view_edge_relevance();
+	update();
 }
+
 
 void MainWindow::on_actionSet_options_triggered()
 {
@@ -653,11 +609,8 @@ void MainWindow::on_actionSet_options_triggered()
   dlg.set_verbose(m_verbose);
   dlg.set_random_sample_size(m_mchoice);
   dlg.set_percent(m_percent);
-  dlg.set_norm_tol(m_norm_tol);
-  dlg.set_tang_tol(m_tang_tol);
-  dlg.set_alpha(m_alpha);
   dlg.set_relocation(m_relocation);
-  dlg.set_relevance(m_ghost);
+  dlg.set_relevance(m_relevance);
   dlg.set_use_flip(m_use_flip);
   dlg.set_multiple_choice_checkbox(m_mchoice != 0);
   dlg.set_line_thickness(viewer->line_thickness());
@@ -669,12 +622,9 @@ void MainWindow::on_actionSet_options_triggered()
     m_verbose = dlg.get_verbose();
     m_mchoice = dlg.get_mchoice();
     m_percent = dlg.get_percent();
-    m_norm_tol = dlg.get_norm_tol();
-    m_tang_tol = dlg.get_tang_tol();
-    m_alpha    = dlg.get_alpha();
     m_relocation = dlg.get_relocation();
-    m_ghost    = dlg.get_ghost();
-    m_use_flip = dlg.get_use_flip();
+    m_relevance  = dlg.get_relevance();
+    m_use_flip   = dlg.get_use_flip();
 
     set_scene_options();
     viewer->line_thickness() = dlg.get_line_thickness();
