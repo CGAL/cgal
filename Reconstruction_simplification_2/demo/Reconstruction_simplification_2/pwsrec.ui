@@ -12,7 +12,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>PWS Rec 2D</string>
+   <string>CGAL 2D Reconstruction and Simplification</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout">
@@ -97,6 +97,7 @@
     <addaction name="actionReconstruction_100_steps"/>
     <addaction name="actionReconstruction_1000_steps"/>
     <addaction name="actionReconstruction_until"/>
+    <addaction name="separator"/>
     <addaction name="actionRelocate_vertices"/>
     <addaction name="actionReconstruction_reinit"/>
     <addaction name="separator"/>

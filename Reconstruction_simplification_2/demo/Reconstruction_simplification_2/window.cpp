@@ -609,7 +609,6 @@ void MainWindow::on_actionView_relevance_toggled()
 	update();
 }
 
-
 void MainWindow::on_actionSet_options_triggered()
 {
   Dialog_options dlg;
