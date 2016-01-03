@@ -24,7 +24,7 @@ typedef WFixed_Gt                                                               
 //typedef CGAL::Filtered_weighted_alpha_shape_euclidean_traits_3<Kernel,true>                     Gt;
 
 
-typedef CGAL::Weighted_point<Kernel::Point_3,Kernel::FT>                                        Weighted_point;
+typedef CGAL::Weighted_point_3<Kernel>                                                          Weighted_point;
 typedef CGAL::Fixed_alpha_shape_vertex_base_3<WFixed_Gt>                                        WFixed_Vb;
 typedef CGAL::Fixed_alpha_shape_cell_base_3<WFixed_Gt>                                          WFixed_Cb;
 typedef CGAL::Triangulation_data_structure_3<WFixed_Vb,WFixed_Cb>                               WFixed_TDS;

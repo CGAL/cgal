@@ -3130,11 +3130,12 @@ namespace HomogeneousKernelFunctors {
   template <typename K>
   class Construct_weighted_point_3
   {
-    typedef typename K::RT         RT;
-    typedef typename K::Point_3    Point_3;
-    typedef typename Point_3::Rep  Rep;
+    typedef typename K::RT               RT;
+    typedef typename K::Point_3          Point_3;
+    typedef typename K::Weighted_point_3 Weighted_point_3;
+    typedef typename Point_3::Rep        Rep;
   public:
-    typedef Weighted_point_3          result_type;
+    typedef Weighted_point_3             result_type;
 
     Rep
     operator()(Return_base_tag, const Point_3& p, const RT& w) const

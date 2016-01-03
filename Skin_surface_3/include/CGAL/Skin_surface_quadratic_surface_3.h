@@ -33,7 +33,7 @@ public:
   typedef typename K::Point_3             Point;
   typedef typename K::Vector_3            Vector;
   typedef typename K::Segment_3           Segment;
-  typedef CGAL::Weighted_point<Point,FT>  Weighted_point;
+  typedef typename K::Weighted_point_3    Weighted_point;
 
   Skin_surface_quadratic_surface_3()
     : dim(-1), p(0,0,0), c(0) 
@@ -63,7 +63,7 @@ public:
     Regular_triangulation_euclidean_traits_3<K> reg_traits;
     p = reg_traits.construct_weighted_circumcenter_3_object()(wp0,wp1);
     c = s*(1-s)*reg_traits.compute_squared_radius_smallest_orthogonal_sphere_3_object()(wp0,wp1);
-    Vector t = wp0-wp1;
+    Vector t = reg_traits.construct_vector_3_object()(wp1,wp0);
 
     FT den = t*t;
     Q[0] = (-  t.x()*t.x()/den + (1-s));

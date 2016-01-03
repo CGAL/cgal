@@ -4,7 +4,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3                                          Bare_point;
-typedef CGAL::Weighted_point<Bare_point,K::RT>              Weighted_point;
+typedef K::Weighted_point_3                                 Weighted_point;
 typedef CGAL::Polyhedron_3<K>                               Polyhedron;
 
 int main() {

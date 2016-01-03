@@ -20,7 +20,7 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                                     Kernel;
 typedef CGAL::Regular_triangulation_euclidean_traits_3<Kernel>                                  EPIC_traits;
 
-typedef CGAL::Weighted_point<Kernel::Point_3,Kernel::FT>                                        Weighted_point;
+typedef CGAL::Weighted_point_3<Kernel>                                                          Weighted_point;
 typedef CGAL::Fixed_alpha_shape_vertex_base_3<EPIC_traits>                                      WFixed_Vb;
 typedef CGAL::Fixed_alpha_shape_cell_base_3<EPIC_traits>                                        WFixed_Cb;
 typedef CGAL::Triangulation_data_structure_3<WFixed_Vb,WFixed_Cb>                               WFixed_TDS;

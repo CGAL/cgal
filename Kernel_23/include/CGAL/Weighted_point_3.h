@@ -54,6 +54,8 @@ public:
   typedef typename R_::Vector_3              Vector_3;
   typedef typename R_::Aff_transformation_3  Aff_transformation_3;
 
+  typedef Point_3 Point;
+  typedef RT Weight;
 
   const Rep& rep() const
   {
