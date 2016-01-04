@@ -31,7 +31,7 @@
 
 namespace CGAL {
 
-  template <class B, class C, class P> class Advancing_front_surface_reconstruction;
+  template <class B, class C> class Advancing_front_surface_reconstruction;
 
   /*!
   \ingroup PkgAdvancingFrontSurfaceReconstruction
@@ -55,7 +55,7 @@ namespace CGAL {
     };
 
 
-    template <class B,class C,class P> friend class Advancing_front_surface_reconstruction;
+    template <class B,class C> friend class Advancing_front_surface_reconstruction;
 
 
     typedef Vb Base;
