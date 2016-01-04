@@ -232,7 +232,19 @@ public:
   //!Handles key press events.
   virtual bool keyPressEvent(QKeyEvent*){return false;}
   //!Contrains the number of group and subgroups containing this item.
-  int has_group;
+  int has_group;/*
+  //!returns the number of null length edges ( an edge with equal extremities).
+  virtual int getNumberOfNullLengthEdges();
+  //!returns the number of degenerated faces (a face that has its area equal 0).
+  virtual int getnumberOfDegeneratedFaces();
+  //!returns the length of the smallest edge.
+  virtual double getMinEdgesLength();
+  //!returns the length of the biggest edge.
+  virtual double getMaxEdgesLength();
+  //!returns the mean length of the edges.
+  virtual double getMeanEdgesLength();
+  //!returns the median edge.
+  virtual double getMidEdgesLength();*/
 public Q_SLOTS:
 
   //! Notifies the program that the internal data or the properties of

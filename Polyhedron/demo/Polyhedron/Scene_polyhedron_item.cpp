@@ -495,8 +495,8 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     //Lines
     typedef Kernel::Point_3		Point;
     typedef Polyhedron::Edge_iterator	Edge_iterator;
-
     std::vector<double> edge_lengths;
+
     Edge_iterator he;
     if(!show_only_feature_edges_m) {
         for(he = poly->edges_begin();

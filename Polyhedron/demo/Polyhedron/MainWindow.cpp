@@ -30,7 +30,7 @@
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <stdexcept>
-
+#include <Scene_polyhedron_item.h>
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
 #  ifdef QT_SCRIPTTOOLS_LIB
@@ -1241,28 +1241,75 @@ void MainWindow::removeManipulatedFrame(CGAL::Three::Scene_item* item)
 }
 
 void MainWindow::updateInfo() {
-  CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
-  if(item) {
-    QString item_text = item->toolTip();
-    QString item_filename = item->property("source filename").toString();
-    item_text += QString("Bounding box: min (%1,%2,%3), max(%4,%5,%6)")
-            .arg(item->bbox().xmin)
-            .arg(item->bbox().ymin)
-            .arg(item->bbox().zmin)
-            .arg(item->bbox().xmax)
-            .arg(item->bbox().ymax)
-            .arg(item->bbox().zmax);
-    if(item->getNbIsolatedvertices() > 0)
-    item_text += QString("<br />Number of isolated vertices : %1<br />").arg(item->getNbIsolatedvertices());
-    if(!item_filename.isEmpty()) {
-      item_text += QString("<br /><i>File: %1").arg(item_filename);
+  int null_edges(0), null_facet(0),isolated(0), polys(0), vertices(0), edges(0), facets(0), total_edges(0);
+  double min_edge(std::pow(2, sizeof(double))), max_edge(0);
+  double mean(0);
+  bool all_triangle = true;
+  Q_FOREACH(int id, getSelectedSceneItemIndices())
+  {
+    Scene_polyhedron_item* item =  qobject_cast<Scene_polyhedron_item*>(scene->item(id));
+    if(item)
+    {
+      all_triangle &= item->triangulated();
+      polys++;
+      vertices += item->polyhedron()->size_of_vertices();
+      edges += item->polyhedron()->size_of_halfedges()/2;
+      facets += item->polyhedron()->size_of_facets();
+      null_edges += item->getNumberOfNullLengthEdges();
+      null_facet += item->getNumberOfDegeneratedFaces();
+      isolated += item->getNbIsolatedvertices();
+      max_edge = CGAL::max(max_edge, item->getMaxEdgesLength());
+      min_edge = CGAL::min(min_edge, item->getMinEdgesLength());
+      mean += item->getMeanEdgesLength() * item->polyhedron()->size_of_halfedges()/2;
+      total_edges += edges;
+
     }
-    ui->infoLabel->setText(item_text);
+  }
+  if(getSelectedSceneItemIndices().size() >1 && polys >0 && polys == getSelectedSceneItemIndices().size())
+  {
+    mean /= total_edges;
+    QString str =
+           QObject::tr("<p>Number of vertices: %1<br />"
+                         "Number of edges: %2<br />"
+                       "Number of facets: %3</p>")
+              .arg(vertices)
+              .arg(edges)
+              .arg(facets);
+    str += QString("Minimum edge length : %1<br />").arg(min_edge);
+    str += QString("Maximum edge length : %1<br />").arg(max_edge);
+    str += QString("Mean edge length : %1<br />").arg(mean);
+    str += QString("Number of null length edges : %1<br />").arg(null_edges);
+    if(all_triangle)
+      str += QString("Number of degenerated faces : %1").arg(null_facet);
+    str+="</p>";
+    if(isolated > 0)
+      str += QString("<br />Number of isolated vertices : %1<br />").arg(isolated);
+    ui->infoLabel->setText(str);
   }
   else
-    ui->infoLabel->clear();
+  {
+    CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
+    if(item) {
+      QString item_text = item->toolTip();
+      QString item_filename = item->property("source filename").toString();
+      item_text += QString("Bounding box: min (%1,%2,%3), max(%4,%5,%6)")
+          .arg(item->bbox().xmin)
+          .arg(item->bbox().ymin)
+          .arg(item->bbox().zmin)
+          .arg(item->bbox().xmax)
+          .arg(item->bbox().ymax)
+          .arg(item->bbox().zmax);
+      if(item->getNbIsolatedvertices() > 0)
+        item_text += QString("<br />Number of isolated vertices : %1<br />").arg(item->getNbIsolatedvertices());
+      if(!item_filename.isEmpty()) {
+        item_text += QString("<br /><i>File: %1").arg(item_filename);
+      }
+      ui->infoLabel->setText(item_text);
+    }
+    else
+      ui->infoLabel->clear();
+  }
 }
-
 void MainWindow::updateDisplayInfo() {
   CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item)
