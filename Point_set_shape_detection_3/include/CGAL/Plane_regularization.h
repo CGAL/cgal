@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : 
+// Author(s)     : Florent Lafarge, Simon Giraudot
 //
 
 /**
