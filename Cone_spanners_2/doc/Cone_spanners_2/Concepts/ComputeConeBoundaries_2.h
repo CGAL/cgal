@@ -9,7 +9,7 @@ either exactly or inexactly.
 \cgalHasModel `CGAL::Compute_cone_boundaries_2`
 
 */
-template <typename ConeBasedSpannerTraits_2>
+template <typename Traits>
 class ComputeConeBoundaries_2 {
 public:
 
@@ -19,7 +19,7 @@ public:
 /*! The CGAL kernel type used by the functor. 
     Its requirements are described in the concept `ConeBasedSpannerTraits_2`.
 */
-typedef   ConeBasedSpannerTraits_2    Kernel_type;
+typedef   Traits    Kernel_type;
 
 /// @}
 

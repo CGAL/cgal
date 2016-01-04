@@ -52,11 +52,11 @@ namespace CGAL {
  *  which are slow). The inexact computation is done by the general functor definition,
  *  while the exact computation is done by a specialization of this functor.
  *   
- *  \tparam ConeBasedSpannerTraits_2   If this parameter is `Exact_predicates_exact_constructions_kernel_with_root_of`,
+ *  \tparam Traits    must be a model of `ConeBasedSpannerTraits_2`. 
+ *                    Simply put, if this parameter is 
+ *                    `Exact_predicates_exact_constructions_kernel_with_root_of`,
  *                    the specialization functor will be called; otherwise, the general functor will
- *                    be called. A recommended parameter for the general functor is 
- *                    `Exact_predicates_inexact_constructions_kernel`. For the detailed requirements of 
- *                    this parameter, please refer to the concept `ConeBasedSpannerTraits_2`.
+ *                    be called. 
  *
  *  In the construction of cone-based spanners such as Yao graph and Theta graph implemented by this package,
  *  this functor is called first to compute the cone boundaries.
@@ -66,16 +66,16 @@ namespace CGAL {
  *  \cgalModels `ComputeConeBoundaries_2`
  *
  */
-template <typename ConeBasedSpannerTraits_2>
+template <typename Traits>
 class Compute_cone_boundaries_2 {
 
 public:
 	/*! Indicate the type of the \cgal kernel. */
-    typedef  ConeBasedSpannerTraits_2      Kernel_type;
+    typedef  Traits      Kernel_type;
 
 private:
-    typedef  typename Kernel_type::Direction_2       Direction_2;
-	typedef  typename Kernel_type::Aff_transformation_2    Transformation;
+    typedef  typename Traits::Direction_2       Direction_2;
+	typedef  typename Traits::Aff_transformation_2    Transformation;
 
 public:
 	/* No member variables in this class, so a custom constructor is not needed. */

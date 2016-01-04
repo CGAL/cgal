@@ -47,20 +47,20 @@ namespace CGAL {
 
   \cgalModels `ConstructConeBasedSpanner_2`
  */
-template <typename ConeBasedSpannerTraits_2, typename Graph_>
+template <typename Traits, typename Graph_>
 class Construct_yao_graph_2 {
 
 public:
 	/*! Indicate the type of the \cgal kernel. */
-    typedef ConeBasedSpannerTraits_2      Kernel_type;
+    typedef Traits      Kernel_type;
 	/*! Indicate the specific type of `boost::adjacency_list`. */
     typedef Graph_                        Graph_type;
 
 private:
-    typedef typename ConeBasedSpannerTraits_2::Direction_2           Direction_2;
-    typedef typename ConeBasedSpannerTraits_2::Point_2               Point_2;
-    typedef typename ConeBasedSpannerTraits_2::Line_2                Line_2;
-    typedef Less_by_direction_2<ConeBasedSpannerTraits_2, Graph_>    Less_by_direction;
+    typedef typename Traits::Direction_2           Direction_2;
+    typedef typename Traits::Point_2               Point_2;
+    typedef typename Traits::Line_2                Line_2;
+    typedef Less_by_direction_2<Traits, Graph_>    Less_by_direction;
     // a type for the set to store vertices sorted by a direction
     typedef std::set<typename Graph_::vertex_descriptor, Less_by_direction> Point_set;
 
@@ -92,7 +92,7 @@ public:
 
         /* Initialize a functor, specialization will happen here depending on the kernel type to
          compute the cone boundaries either exactly or inexactly */
-        Compute_cone_boundaries_2<ConeBasedSpannerTraits_2> compute_cones;
+        Compute_cone_boundaries_2<Traits> compute_cones;
         // compute the rays using the functor
         compute_cones(k, initial_direction, rays.begin());
     }
