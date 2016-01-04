@@ -9,7 +9,7 @@ constructs a cone based spanner, such as a Theta graph and a Yao graph, etc.
 \cgalHasModel `CGAL::Construct_yao_graph_2`
 
 */
-template <typename ConeBasedSpannerTraits_2, typename Graph_>
+template <typename Traits, typename Graph_>
 class ConstructConeBasedSpanner_2 {
 public:
 
@@ -19,7 +19,7 @@ public:
 /*! The CGAL kernel type used by the functor. Its requirements are described in
     the concept `ConeBasedSpannerTraits_2`.
 */
-typedef ConeBasedSpannerTraits_2      Kernel_type;
+typedef Traits      Kernel_type;
 
 /*! The graph type to store the constructed cone based spanner. 
     This package requires the use of the `boost::adjacency_list` in the Boost Graph Library as 
@@ -27,7 +27,7 @@ typedef ConeBasedSpannerTraits_2      Kernel_type;
     `boost::adjacency_list`: `OutEdgeList`, `VertexList`, `Directed`, `VertexProperties`, `EdgeProperties`,
     `GraphProperties`, `EdgeList`, of which we require the `VertexProperties` be `CGAL::Point_2`,
     while other parameters can be chosen freely. Here the CGAL kernel type used by `CGAL::Point_2` is
-	determined by the first template parameter `ConeBasedSpannerTraits_2`, and we pass `CGAL::Point_2` directly 
+	determined by the first template parameter `Traits`, and we pass `CGAL::Point_2` directly 
 	to `adjacency_list` as bundled properties because this makes our implementation much more 
 	straightforward than using property maps.
 	For detailed information about bundled properties, please refer to
@@ -36,9 +36,10 @@ typedef ConeBasedSpannerTraits_2      Kernel_type;
 	property maps.
 */
 typedef Graph_                           Graph_type;
+
 /*! The directon type.
 */
-  typedef ConeBasedSpannerTraits_2::Direction_2      Direction_2;
+  typedef Traits::Direction_2      Direction_2;
 
 /// @}
 
