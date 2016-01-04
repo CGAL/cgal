@@ -5,6 +5,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Shape_detection_3.h>
+#include <CGAL/Plane_regularization.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 
@@ -31,6 +32,8 @@ bool test_scene() {
   typedef CGAL::Shape_detection_3::Sphere<Traits>             Sphere;
   typedef CGAL::Shape_detection_3::Torus<Traits>              Torus;
 
+  typedef CGAL::Plane_regularization<Traits>                  Regularization;
+  
   Pwn_vector points;
 
   // Loads point set from a file. 
@@ -126,6 +129,10 @@ bool test_scene() {
     return false;
   }
 
+  // Test regularization
+  Regularization regularization (points, ransac);
+  regularization.run ((FT)50., (FT)0.01f, true, typename K::Vector_3(1., 0., 0.));
+  
   Point_index_range pts = ransac.indices_of_unassigned_points();
 
   std::cout << " succeeded" << std::endl;

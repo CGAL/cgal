@@ -212,6 +212,16 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="m_regularize">
+     <property name="text">
+      <string>Regularize planes</string>
+     </property>
+     <property name="checked">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item>
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
