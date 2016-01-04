@@ -17,6 +17,7 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/statistics_helpers.h>
 
@@ -485,9 +486,10 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
                 vertices[i][2]= p.z();
                 i = (i+1) %3;
             }
-            if((vertices[0][0] == vertices[1][0] && vertices[0][1] == vertices[1][1] && vertices[0][2] == vertices[1][2])
-            || (vertices[0][0] == vertices[2][0] && vertices[0][1] == vertices[2][1] && vertices[0][2] == vertices[2][2])
-            || (vertices[2][0] == vertices[1][0] && vertices[2][1] == vertices[1][1] && vertices[2][2] == vertices[1][2]))
+            if(CGAL::Polygon_mesh_processing::is_degenerated(f,
+                                                             *poly,
+                                                             get(CGAL::vertex_point, *poly),
+                                                             poly->traits()))
                 number_of_degenerated_faces++;
 
         }
@@ -517,15 +519,9 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
             positions_lines.push_back(1.0);
 
             //statistics
-            edge_lengths.push_back(CGAL::sqrt(
-                                       (a.x()-b.x())*(a.x()-b.x())
-                                      +(a.y()-b.y())*(a.y()-b.y())
-                                      +(a.z()-b.z())*(a.z()-b.z())
-                                       ));
+            edge_lengths.push_back(CGAL::squared_distance(a,b));
 
-            if(a.x() == b.x()
-               && a.y() == b.y()
-               && a.z() == b.z())
+            if(edge_lengths.back() == 0)
                 number_of_null_length_edges++;
 
         }
@@ -548,25 +544,19 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
         positions_lines.push_back(b.z());
         positions_lines.push_back(1.0);
         //statistics
-        edge_lengths.push_back(CGAL::sqrt(
-                                   (a.x()-b.x())*(a.x()-b.x())
-                                  +(a.y()-b.y())*(a.y()-b.y())
-                                  +(a.z()-b.z())*(a.z()-b.z())
-                                   ));
+        edge_lengths.push_back(CGAL::squared_distance(a,b));
 
-        if(a.x() == b.x()
-           && a.y() == b.y()
-           && a.z() == b.z())
+        if(edge_lengths.back() == 0)
             number_of_null_length_edges++;
     }
 
 std::sort(edge_lengths.begin(), edge_lengths.end());
-min_edges_length = edge_lengths[0];
-max_edges_length = edge_lengths[edge_lengths.size()-1];
-mid_edges_length = edge_lengths[edge_lengths.size()/2];
+min_edges_length = CGAL::sqrt(edge_lengths[0]);
+max_edges_length = CGAL::sqrt(edge_lengths[edge_lengths.size()-1]);
+mid_edges_length = CGAL::sqrt(edge_lengths[edge_lengths.size()/2]);
 mean_edges_length = 0;
 for(size_t i=0; i<edge_lengths.size(); i++)
-    mean_edges_length += edge_lengths[i];
+    mean_edges_length += CGAL::sqrt(edge_lengths[i]);
 mean_edges_length/=edge_lengths.size();
     //set the colors
     compute_colors();
