@@ -22,17 +22,17 @@ struct Perimeter {
       return adv.smallest_radius_delaunay_sphere (c, index);
     }
 
-    // If perimeter > bound, return HUGE_VAL so that facet is not used
+    // If perimeter > bound, return infinity so that facet is not used
     double d  = 0;
     d = sqrt(squared_distance(c->vertex((index+1)%4)->point(),
                               c->vertex((index+2)%4)->point()));
-    if(d>bound) return HUGE_VAL;
+    if(d>bound) return std::numeric_limits<typename AdvancingFront::coord_type>::infinity();
     d += sqrt(squared_distance(c->vertex((index+2)%4)->point(),
                                c->vertex((index+3)%4)->point()));
-    if(d>bound) return HUGE_VAL;
+    if(d>bound) return std::numeric_limits<typename AdvancingFront::coord_type>::infinity();
     d += sqrt(squared_distance(c->vertex((index+1)%4)->point(),
                                c->vertex((index+3)%4)->point()));
-    if(d>bound) return HUGE_VAL;
+    if(d>bound) return std::numeric_limits<typename AdvancingFront::coord_type>::infinity();
 
     // Otherwise, return usual priority value: smallest radius of
     // delaunay sphere

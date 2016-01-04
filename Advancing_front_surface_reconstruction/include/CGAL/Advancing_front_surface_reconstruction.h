@@ -183,9 +183,10 @@ namespace CGAL {
   The default uses the `Exact_predicates_inexact_constructions_kernel` as geometric traits class.
 
   \tparam P must be a functor with `double operator()(AdvancingFront,Cell_handle,int)` returning the
-  priority of the facet `(Cell_handle,int)`. This functor enables the user to choose how candidate triangles
-  are prioritized. If a facet should not appear in the output, `HUGE_VAL` must be returned. It defaults to a
-  functor that returns the smallest radius of the Delaunay sphere.
+  priority of the facet `(Cell_handle,int)`. This functor enables the user to choose how candidate
+  triangles are prioritized. If a facet should not appear in the output,
+  `std::numeric_limits<coord_type>::infinity()` must be returned. It defaults to a functor that returns the
+  smallest radius of the Delaunay sphere.
 
   */
   template <
@@ -662,7 +663,7 @@ namespace CGAL {
     Advancing_front_surface_reconstruction(Triangulation_3& dt,
                                            Priority priority = Priority())
       : T(dt), _number_of_border(1), COS_ALPHA_SLIVER(-0.86),
-        NB_BORDER_MAX(15), DELTA(.86), min_K(HUGE_VAL),
+        NB_BORDER_MAX(15), DELTA(.86), min_K(std::numeric_limits<coord_type>::infinity()),
         eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
         STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1),
         NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2),
@@ -1183,7 +1184,7 @@ namespace CGAL {
                            || (c->vertex((index+2) & 3) == added_vertex)
                            || (c->vertex((index+3) & 3) == added_vertex) ))
         {
-          return HUGE_VAL;
+          return std::numeric_limits<coord_type>::infinity();
         }
       Cell_handle n = c->neighbor(index);
       // lazy evaluation ...
@@ -1210,7 +1211,7 @@ namespace CGAL {
           (c_is_plane && n_is_infinite)||
           (n_is_plane && c_is_infinite)||
           my_collinear(cp1, cp2, cp3))
-        value = HUGE_VAL;
+        value = std::numeric_limits<coord_type>::infinity();
       else
         {
           if (c_is_infinite||n_is_infinite||c_is_plane||n_is_plane)
@@ -1303,7 +1304,8 @@ namespace CGAL {
       Edge_incident_facet e_it = e, predone = previous(e);
       Cell_handle c_predone = predone.first.first;
 
-      coord_type min_valueP = NOT_VALID_CANDIDATE, min_valueA = HUGE_VAL;
+      coord_type min_valueP = NOT_VALID_CANDIDATE,
+        min_valueA = std::numeric_limits<coord_type>::infinity();
       Facet min_facet, min_facetA;
       bool border_facet(false);
 
@@ -1341,7 +1343,7 @@ namespace CGAL {
               Edge_like el1(neigh->vertex(n_i1),neigh->vertex(n_i3)),
                 el2(neigh->vertex(n_i2),neigh->vertex(n_i3));
 
-              if ((tmp != HUGE_VAL)&&
+              if ((tmp != std::numeric_limits<coord_type>::infinity())&&
                   neigh->vertex(n_i3)->not_interior()&&
                   (!is_interior_edge(el1))&&(!is_interior_edge(el2)))
                 {
@@ -1389,7 +1391,7 @@ namespace CGAL {
 
       criteria value;
 
-      if ((min_valueA == HUGE_VAL) || border_facet) // bad facets case
+      if ((min_valueA == std::numeric_limits<coord_type>::infinity()) || border_facet) // bad facets case
         {
           min_facet = Facet(c, i); // !!! sans aucune signification....
           value = NOT_VALID_CANDIDATE; // Attention a ne pas inserer dans PQ
@@ -1443,7 +1445,7 @@ namespace CGAL {
     {
       init_timer.start();
       Facet min_facet;
-      coord_type min_value = HUGE_VAL;
+      coord_type min_value = std::numeric_limits<coord_type>::infinity();
       int i1, i2, i3;
 
       if (!re_init){
@@ -1475,7 +1477,7 @@ namespace CGAL {
                     coord_type value = priority (*this, c, index);
 
                     // we might not want the triangle, for example because it is too large
-                    if(value == HUGE_VAL){
+                    if(value == std::numeric_limits<coord_type>::infinity()){
                       value = min_value;
                     }
 
@@ -1488,7 +1490,7 @@ namespace CGAL {
           }
       }
 
-      if (min_value != HUGE_VAL)
+      if (min_value != std::numeric_limits<coord_type>::infinity())
         {
           Cell_handle c_min = min_facet.first;
 
@@ -1764,7 +1766,7 @@ namespace CGAL {
                                     v1, v2, c->vertex(i),
                                     e1, e2, p1, p2);
 
-                      // if e1 contain HUGE_VAL there is no candidates to
+                      // if e1 contain infinity there is no candidates to
                       // continue: compute_value is not valid...
 
                       _ordered_border.insert(Radius_ptr_type(e1.first, p1));
@@ -1978,7 +1980,7 @@ namespace CGAL {
       }
       do
         {
-          min_K = HUGE_VAL; // pour retenir le prochain K necessaire pour progresser...
+          min_K = std::numeric_limits<coord_type>::infinity(); // pour retenir le prochain K necessaire pour progresser...
           do
             {
 
@@ -2040,10 +2042,10 @@ namespace CGAL {
           // on augmente progressivement le K mais on a deja rempli sans
           // faire des betises auparavant...
         }
-      while((!_ordered_border.empty())&&(K <= K)&&(min_K != HUGE_VAL));
+      while((!_ordered_border.empty())&&(K <= K)&&(min_K != std::numeric_limits<coord_type>::infinity()));
 
 #ifdef VERBOSE
-      if ((min_K < HUGE_VAL)&&(!_ordered_border.empty())) {
+      if ((min_K < std::numeric_limits<coord_type>::infinity())&&(!_ordered_border.empty())) {
         std::cout << "   [ next K required = " << min_K << " ]" << std::endl;
       }
 #endif // VERBOSE
@@ -2404,7 +2406,7 @@ namespace CGAL {
         return false;
       }
 
-      min_K = HUGE_VAL;
+      min_K = std::numeric_limits<coord_type>::infinity();
       // fin--
       //   if (_postprocessing_counter < 5)
       //     return true;
