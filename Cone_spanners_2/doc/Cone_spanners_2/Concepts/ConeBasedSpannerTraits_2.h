@@ -5,10 +5,10 @@
 The concept `ConeBasedSpannerTraits_2` specifies the requirements
 for the CGAL kernels that can be used in this package. 
 Basically, this concept describes all the types and primitives (predicates and construction objects) 
-that the CGAL kernel should have to make this package work properly.
-It is recommended that if the cone-based spanners are to be constructed
-exactly, the kernel `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`
-should be used; and if they are to be constructed inexactly, the kernel
+that the CGAL kernel should include to make this package work properly.
+Simply put, for the exact construction of the cone-based spanners,
+the kernel `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`
+should be used; and for the inexact construction, the kernel
 `CGAL::Exact_predicates_inexact_constructions_kernel` should be used.
 
 \cgalHasModel `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of`
