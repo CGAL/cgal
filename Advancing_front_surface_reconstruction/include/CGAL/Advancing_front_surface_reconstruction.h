@@ -675,7 +675,7 @@ namespace CGAL {
     */
     Advancing_front_surface_reconstruction(Triangulation_3& dt,
                                            Filter filter = Filter(),
-                                           Priority priority = Priority())
+                                           Priority& priority = Priority())
       : T(dt), _number_of_border(1), COS_ALPHA_SLIVER(-0.86),
         NB_BORDER_MAX(15), DELTA(.86), min_K(HUGE_VAL),
         eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
