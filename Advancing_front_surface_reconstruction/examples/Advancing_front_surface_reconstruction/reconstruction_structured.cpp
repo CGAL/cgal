@@ -51,47 +51,36 @@ struct On_the_fly_pair{
   }
 };
 
-struct Perimeter {
-
-  double bound;
-
-  Perimeter(double bound)
-    : bound(bound)
-  {}
-
-  // The point type that will be injected here will be
-  // CGAL::Exact_predicates_inexact_constructions_kernel::Point_3
-  template <typename Point>
-  bool operator()(const Point& p, const Point& q, const Point& r) const
-  {
-    // bound == 0 is better than bound < infinity
-    // as it avoids the distance computations
-    if(bound == 0){
-      return false;
-    }
-    double d  = sqrt(squared_distance(p,q));
-    if(d>bound) return true;
-    d += sqrt(squared_distance(p,r)) ;
-    if(d>bound) return true;
-    d+= sqrt(squared_distance(q,r));
-    return d>bound;
-  }
-};
-
-
 template <typename Structuring>
 struct Priority_with_structure_coherence {
 
   Structuring& structuring;
+  double bound;
   
-  Priority_with_structure_coherence(Structuring& structuring)
-    : structuring (structuring)
+  Priority_with_structure_coherence(Structuring& structuring,
+                                    double bound)
+    : structuring (structuring), bound (bound)
   {}
 
   template <typename AdvancingFront, typename Cell_handle>
   double operator() (AdvancingFront& adv, Cell_handle& c,
                      const int& index) const
   {
+    // If perimeter > bound, return infinity so that facet is not used
+    if (bound != 0)
+      {
+        double d  = 0;
+        d = sqrt(squared_distance(c->vertex((index+1)%4)->point(),
+                                  c->vertex((index+2)%4)->point()));
+        if(d>bound) return adv.infinity();
+        d += sqrt(squared_distance(c->vertex((index+2)%4)->point(),
+                                   c->vertex((index+3)%4)->point()));
+        if(d>bound) return adv.infinity();
+        d += sqrt(squared_distance(c->vertex((index+1)%4)->point(),
+                                   c->vertex((index+3)%4)->point()));
+        if(d>bound) return adv.infinity();
+      }
+
     Facet f = {{ c->vertex ((index + 1) % 4)->info (),
                  c->vertex ((index + 2) % 4)->info (),
                  c->vertex ((index + 3) % 4)->info () }};
@@ -104,7 +93,6 @@ struct Priority_with_structure_coherence {
 };
 
 typedef CGAL::Advancing_front_surface_reconstruction<Triangulation_3,
-                                                     Perimeter,
                                                      Priority_with_structure_coherence<Structuring> > Reconstruction;
 
 
@@ -157,9 +145,8 @@ int main (int argc, char* argv[])
                       boost::make_transform_iterator(point_indices.end(), On_the_fly_pair(structured_pts)));
 
 
-  Priority_with_structure_coherence<Structuring> priority (pss);
-  Perimeter filter (1000. * op.cluster_epsilon);
-  Reconstruction R(dt, filter, priority);
+  Priority_with_structure_coherence<Structuring> priority (pss, 1000. * op.cluster_epsilon);
+  Reconstruction R(dt, priority);
 
   R.run (5., 0.52);
   std::cerr << "done\nWriting result... ";

@@ -72,17 +72,31 @@ struct Radius {
     : bound(bound)
   {}
 
-  bool operator()(const Kernel::Point_3& p, const Kernel::Point_3& q, const Kernel::Point_3& r) const
+  template <typename AdvancingFront, typename Cell_handle>
+  double operator() (const AdvancingFront& adv, Cell_handle& c,
+                     const int& index) const
   {
+    // bound == 0 is better than bound < infinity
+    // as it avoids the distance computations
     if(bound == 0){
-      return false;
+      return adv.smallest_radius_delaunay_sphere (c, index);
     }
-    double d  = sqrt(squared_distance(p,q));
-    if(d>bound) return true;
-    d = sqrt(squared_distance(p,r)) ;
-    if(d>bound) return true;
-    d = sqrt(squared_distance(q,r));
-    return d>bound;
+
+    // If perimeter > bound, return infinity so that facet is not used
+    double d  = 0;
+    d = sqrt(squared_distance(c->vertex((index+1)%4)->point(),
+                              c->vertex((index+2)%4)->point()));
+    if(d>bound) return adv.infinity();
+    d = sqrt(squared_distance(c->vertex((index+2)%4)->point(),
+                               c->vertex((index+3)%4)->point()));
+    if(d>bound) return adv.infinity();
+    d = sqrt(squared_distance(c->vertex((index+1)%4)->point(),
+                               c->vertex((index+3)%4)->point()));
+    if(d>bound) return adv.infinity();
+
+    // Otherwise, return usual priority value: smallest radius of
+    // delaunay sphere
+    return adv.smallest_radius_delaunay_sphere (c, index);
   }
 };
 
@@ -91,20 +105,37 @@ template <typename Structuring>
 struct Priority_with_structure_coherence {
 
   Structuring& structuring;
+  double bound;
   
-  Priority_with_structure_coherence(Structuring& structuring)
-    : structuring (structuring)
+  Priority_with_structure_coherence(Structuring& structuring,
+                                    double bound)
+    : structuring (structuring), bound (bound)
   {}
 
   template <typename AdvancingFront, typename Cell_handle>
   double operator() (AdvancingFront& adv, Cell_handle& c,
                      const int& index) const
   {
-    Facet f = {{ static_cast<std::size_t> (c->vertex ((index + 1) % 4)->info ()),
-                 static_cast<std::size_t> (c->vertex ((index + 2) % 4)->info ()),
-                 static_cast<std::size_t> (c->vertex ((index + 3) % 4)->info ()) }};
+    // If perimeter > bound, return infinity so that facet is not used
+    if (bound != 0)
+      {
+        double d  = 0;
+        d = sqrt(squared_distance(c->vertex((index+1)%4)->point(),
+                                  c->vertex((index+2)%4)->point()));
+        if(d>bound) return adv.infinity();
+        d += sqrt(squared_distance(c->vertex((index+2)%4)->point(),
+                                   c->vertex((index+3)%4)->point()));
+        if(d>bound) return adv.infinity();
+        d += sqrt(squared_distance(c->vertex((index+1)%4)->point(),
+                                   c->vertex((index+3)%4)->point()));
+        if(d>bound) return adv.infinity();
+      }
 
-    double weight = 100. * (4 - structuring.facet_coherence (f));
+    Facet f = {{ c->vertex ((index + 1) % 4)->info (),
+                 c->vertex ((index + 2) % 4)->info (),
+                 c->vertex ((index + 3) % 4)->info () }};
+
+    double weight = 100. * (5 - structuring.facet_coherence (f));
 
     return weight * adv.smallest_radius_delaunay_sphere (c, index);
   }
@@ -1009,7 +1040,6 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
       typedef CGAL::Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
       typedef CGAL::Advancing_front_surface_reconstruction<Triangulation_3,
-                                                           Radius,
                                                            Priority_with_structure_coherence<Structuring> > Reconstruction;
 
       std::cerr << "Reconstructing... ";
@@ -1021,9 +1051,8 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
                           boost::make_transform_iterator(point_indices.end(), On_the_fly_pair(*(structured->point_set()))));
 
 
-      Priority_with_structure_coherence<Structuring> priority (structuring);
-      Radius filter (10. * op.cluster_epsilon);
-      Reconstruction R(dt, filter, priority);
+      Priority_with_structure_coherence<Structuring> priority (structuring, 10. * op.cluster_epsilon);
+      Reconstruction R(dt, priority);
 
       R.run (5., 0.52);
 
