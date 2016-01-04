@@ -1241,7 +1241,7 @@ void MainWindow::removeManipulatedFrame(CGAL::Three::Scene_item* item)
 }
 
 void MainWindow::updateInfo() {
-  int null_edges(0), null_facet(0),isolated(0), polys(0), vertices(0), edges(0), facets(0), total_edges(0);
+  int null_edges(0), null_facet(0),isolated(0), polys(0), vertices(0), edges(0), facets(0), total_edges(0), holes(0);
   double min_edge(std::pow(2, sizeof(double))), max_edge(0);
   double mean(0);
   bool all_triangle = true;
@@ -1263,9 +1263,43 @@ void MainWindow::updateInfo() {
       mean += item->getMeanEdgesLength() * item->polyhedron()->size_of_halfedges()/2;
       total_edges += edges;
 
+      //gets the number of holes
+
+      //if is_closed is false, then there are borders (= holes)
+      if(!item->polyhedron()->is_closed())
+      {
+        int n(0), i(0);
+
+        // initialization : keep the original ids in memory and set them to 0
+        std::vector<int> ids;
+        for(Polyhedron::Halfedge_iterator it = item->polyhedron()->halfedges_begin(); it != item->polyhedron()->halfedges_end(); ++it)
+        {
+          ids.push_back(it->id());
+          it->id() = 0;
+        }
+
+        //if a border halfedge is found, increment the number of hole and set all the ids of the hole's border halfedges to 1 to prevent
+        // the algorithm from counting them several times.
+        for(Polyhedron::Halfedge_iterator it = item->polyhedron()->halfedges_begin(); it != item->polyhedron()->halfedges_end(); ++it){
+          if(it->is_border() && it->id() == 0){
+            n++;
+            Polyhedron::Halfedge_around_facet_circulator hf_around_facet = it->facet_begin();
+            do {
+              CGAL_assertion(hf_around_facet->id() == 0);
+              hf_around_facet->id() = 1;
+            } while(++hf_around_facet != it->facet_begin());
+          }
+        }
+        //reset the ids to their initial value
+        for(Polyhedron::Halfedge_iterator it = item->polyhedron()->halfedges_begin(); it != item->polyhedron()->halfedges_end(); ++it)
+        {
+          it->id() = ids[i++];
+        }
+        holes += n;
+      }
     }
   }
-  if(getSelectedSceneItemIndices().size() >1 && polys >0 && polys == getSelectedSceneItemIndices().size())
+  if(polys >0 && polys == getSelectedSceneItemIndices().size())
   {
     mean /= total_edges;
     QString str =
@@ -1278,6 +1312,7 @@ void MainWindow::updateInfo() {
     str += QString("Minimum edge length : %1<br />").arg(min_edge);
     str += QString("Maximum edge length : %1<br />").arg(max_edge);
     str += QString("Mean edge length : %1<br />").arg(mean);
+    str += QString("Number of holes : %1<br />").arg(holes);
     str += QString("Number of null length edges : %1<br />").arg(null_edges);
     if(all_triangle)
       str += QString("Number of degenerated faces : %1").arg(null_facet);
@@ -1299,6 +1334,7 @@ void MainWindow::updateInfo() {
           .arg(item->bbox().xmax)
           .arg(item->bbox().ymax)
           .arg(item->bbox().zmax);
+      item_text += QString("Number of holes : %1<br />").arg(holes);
       if(item->getNbIsolatedvertices() > 0)
         item_text += QString("<br />Number of isolated vertices : %1<br />").arg(item->getNbIsolatedvertices());
       if(!item_filename.isEmpty()) {
