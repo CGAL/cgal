@@ -1244,13 +1244,14 @@ void MainWindow::updateInfo() {
   int null_edges(0), null_facet(0),isolated(0), polys(0), vertices(0), edges(0), facets(0), total_edges(0), holes(0);
   double min_edge(std::pow(2, sizeof(double))), max_edge(0);
   double mean(0);
-  bool all_triangle = true;
+  bool all_triangle = true, none_self_interset = true;
   Q_FOREACH(int id, getSelectedSceneItemIndices())
   {
     Scene_polyhedron_item* item =  qobject_cast<Scene_polyhedron_item*>(scene->item(id));
     if(item)
     {
       all_triangle &= item->triangulated();
+      none_self_interset &= item->self_intersected();
       polys++;
       vertices += item->polyhedron()->size_of_vertices();
       edges += item->polyhedron()->size_of_halfedges()/2;
@@ -1315,7 +1316,11 @@ void MainWindow::updateInfo() {
     str += QString("Number of holes : %1<br />").arg(holes);
     str += QString("Number of null length edges : %1<br />").arg(null_edges);
     if(all_triangle)
-      str += QString("Number of degenerated faces : %1").arg(null_facet);
+      str += QString("Number of degenerated faces : %1<br />").arg(null_facet);
+    if(none_self_interset)
+      str += QString("No self-intersection");
+    else
+      str += QString("There are self-intersections");
     str+="</p>";
     if(isolated > 0)
       str += QString("<br />Number of isolated vertices : %1<br />").arg(isolated);

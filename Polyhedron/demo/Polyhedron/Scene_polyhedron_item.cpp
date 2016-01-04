@@ -16,6 +16,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
 
 #include <CGAL/statistics_helpers.h>
 
@@ -435,8 +436,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     typedef Kernel::Vector_3	    Vector;
     typedef Polyhedron::Facet_iterator Facet_iterator;
     typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
-
-
+    self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect(*poly);
 
     Facet_iterator f = poly->facets_begin();
 
@@ -656,7 +656,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     nb_lines = 0;
     is_triangulated = true;
     init();
-
+    self_intersect = false;
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
@@ -676,6 +676,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     is_triangulated = true;
     init();
     invalidate_buffers();
+    self_intersect = false;
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
@@ -695,6 +696,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     nb_facets = 0;
     nb_lines = 0;
     invalidate_buffers();
+    self_intersect = false;
 }
 
 Scene_polyhedron_item::~Scene_polyhedron_item()
@@ -791,6 +793,10 @@ Scene_polyhedron_item::toolTip() const
   str += QString("Median edge length : %1<br />").arg(mid_edges_length);
   str += QString("Mean edge length : %1<br />").arg(mean_edges_length);
   str += QString("Number of null length edges : %1<br />").arg(number_of_null_length_edges);
+  if(self_intersect)
+    str += QString("Does self-intersect<br />");
+  else
+    str += QString("Does not self-intersect<br />");
   if(is_triangulated)
       str += QString("Number of degenerated faces : %1").arg(number_of_degenerated_faces);
   if (volume!=-std::numeric_limits<double>::infinity())

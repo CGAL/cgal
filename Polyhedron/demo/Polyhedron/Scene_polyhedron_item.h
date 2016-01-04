@@ -68,6 +68,7 @@ public:
     double getMeanEdgesLength(){return mean_edges_length;}
     double getMidEdgesLength(){return mid_edges_length;}
     bool triangulated(){return is_triangulated;}
+    bool self_intersected(){return !self_intersect;}
 
 public Q_SLOTS:
     virtual void invalidate_buffers();
@@ -147,6 +148,7 @@ private:
     mutable QOpenGLShaderProgram *program;
     mutable int number_of_null_length_edges, number_of_degenerated_faces;
     mutable double min_edges_length, max_edges_length, mean_edges_length, mid_edges_length;
+    mutable bool self_intersect;
 
     using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;
