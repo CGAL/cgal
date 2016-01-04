@@ -222,6 +222,13 @@ operator!=(const Origin& o, const Weighted_point_3<R>& p)
 { return p != o; }
 
 
+template <class R>
+inline
+bool
+operator<(const Weighted_point_3<R>& p, const Weighted_point_3<R>& q)
+{ return p.point() < q.point(); }
+
+
 template <class R >
 std::ostream&
 insert(std::ostream& os, const Weighted_point_3<R>& p,const Cartesian_tag&)
