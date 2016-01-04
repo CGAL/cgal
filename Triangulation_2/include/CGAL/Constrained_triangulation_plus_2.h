@@ -798,23 +798,16 @@ insert_subconstraint(Vertex_handle vaa,
   // edges may contain mirror edges. They no longer exist after triangulate_hole
   // so we have to remove them before calling get_bounded_faces
   if(! edges.empty()){
-    typename List_edges::iterator it, it2;
-    
-    it = edges.begin();
-    it2 = it;
-    ++it2;
-    for(; it2 != edges.end();){
-      Edge e1 = *it, e2 = *it2;
-      if(this->mirror_edge(e1) == e2){
-        typename List_edges::iterator del = it;
-        --it;
-        edges.erase(del);
-        edges.erase(it2);
-        it2 = it;
-        ++it2;
-      } else {
+
+  std::set<Face_handle> faces(intersected_faces.begin(), intersected_faces.end());
+    typename List_edges::iterator it2;
+    for(typename List_edges::iterator it = edges.begin(); it!= edges.end();){
+      if(faces.find(it->first) != faces.end()){
+        typename List_edges::iterator it2 = it;
         ++it;
-        ++it2;
+        edges.erase(it2);
+      }else {
+        ++it;
       }
     }
   }
