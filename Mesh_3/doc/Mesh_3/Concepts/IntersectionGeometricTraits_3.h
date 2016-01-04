@@ -43,7 +43,7 @@ Partial model of `::Kernel::DoIntersect_3`. Provides the operators:
 
 - `bool operator()(Triangle_3 tr, Segment_3 seg)`
 
-which return `true`, iff the triangle and the segment 
+which returns `true`, iff the triangle and the segment
 have a non empty intersection. 
 */ 
 typedef unspecified_type Do_intersect_3; 

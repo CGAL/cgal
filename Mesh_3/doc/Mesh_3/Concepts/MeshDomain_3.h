@@ -108,7 +108,7 @@ Assignable, DefaultConstructible and EqualityComparable.
 typedef unspecified_type Index;
 
 /*!
-Return type of `Construct_intersection` queries.
+Returns type of `Construct_intersection` queries.
 `int` represents the
 dimension of the lower dimensional face of the input complex on which the intersection
 point lies and `%Index` is the index of this face.
@@ -183,7 +183,7 @@ typedef unspecified_type Construct_intersection;
 /// providing a bounding box of the domain.
 /// @{
 
-/// Return the bounding box of the domain
+/// Returns a bounding box of the domain
 Bbox_3 bbox() const;
 /// @}
 

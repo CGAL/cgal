@@ -288,7 +288,7 @@ and the user does not want corners and curve segments
 to be accurately represented 
 in the mesh. 
 
-Return a `Features_options` value that prevents the mesh generator 
+Returns a `Features_options` value that prevents the mesh generator
 to take into account 0 and 1-dimensional input features. 
 
 \sa `CGAL::make_mesh_3()` 
