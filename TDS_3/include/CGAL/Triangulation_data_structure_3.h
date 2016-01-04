@@ -51,14 +51,6 @@
 #include <CGAL/internal/Triangulation_ds_iterators_3.h>
 #include <CGAL/internal/Triangulation_ds_circulators_3.h>
 
-#ifdef CGAL_HAS_THREADS
-#  ifdef CGAL_LINKED_WITH_TBB
-#    include <tbb/enumerable_thread_specific.h>
-#  else
-#    include <boost/thread/tss.hpp>
-#  endif
-#endif
-
 #ifdef CGAL_LINKED_WITH_TBB
 #  include <tbb/scalable_allocator.h>
 #endif

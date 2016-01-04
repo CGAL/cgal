@@ -1,0 +1,20 @@
+/*!
+
+\page devman_multithreading Multithreading
+
+\author Andreas Fabri
+
+
+\section Developer_manualThreadlocal Thread Local Storage
+
+The header file <CGAL/tss.h> provides a macro `CGAL_STATIC_THREAD_LOCAL_VARIABLE(TYPE,VAR,ARG1)`
+that creates a thread local variable `VAR` of type `TYPE`, and passes `ARG1` to the
+constructor.  The variable is either `threadlocal`, or a `boost::thread_specific_ptr`, 
+or just a local variable if `CGAL_HAS_THREADS` is not defined.
+
+
+\section Developer_manualMutex Mutex
+
+The header file <CGAL/mutex.h> provides a macro `CGAL_MUTEX` and a macro `CGAL_SCOPED_LOCK(M)` that is either a `std::unique_lock<std::mutex>` or a `boost::mutex::scoped_lock`. 
+
+*/

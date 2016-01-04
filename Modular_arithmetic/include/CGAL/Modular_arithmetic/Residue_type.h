@@ -22,13 +22,12 @@
 #define CGAL_RESIDUE_TYPE_H
 
 #include <CGAL/basic.h>
+#include <CGAL/tss.h>
 
 #include <cfloat>
+
 #include <boost/operators.hpp>
 
-#ifdef CGAL_HAS_THREADS
-#  include <boost/thread/tss.hpp>
-#endif
 
 namespace CGAL {
 
@@ -71,96 +70,40 @@ private:
   static const double& get_static_CST_CUT()
   { return Residue::CST_CUT; }
 #endif // CGAL_HEADER_ONLY
-  
-#ifdef CGAL_HAS_THREADS
-#ifdef CGAL_HEADER_ONLY
-  static boost::thread_specific_ptr<int>& get_static_prime_int_()
+
+  static int& prime_int_internal()
   {
-    static boost::thread_specific_ptr<int> prime_int_;
-    return prime_int_;
-  }
-  static boost::thread_specific_ptr<double>& get_static_prime_()
-  {
-    static boost::thread_specific_ptr<double> prime_;
-    return prime_;
-  }
-  static boost::thread_specific_ptr<double>& get_static_prime_inv_()
-  {
-    static boost::thread_specific_ptr<double> prime_inv_;
-    return prime_inv_;
-  }
-#else // CGAL_HEADER_ONLY
-  CGAL_EXPORT static boost::thread_specific_ptr<int>    prime_int_;
-  CGAL_EXPORT static boost::thread_specific_ptr<double> prime_;
-  CGAL_EXPORT static boost::thread_specific_ptr<double> prime_inv_;
-  static boost::thread_specific_ptr<int>& get_static_prime_int_()
-  { return Residue::prime_int_; }
-  static boost::thread_specific_ptr<double>& get_static_prime_()
-  { return Residue::prime_; }
-  static boost::thread_specific_ptr<double>& get_static_prime_inv_()
-  { return Residue::prime_inv_; }
-#endif // CGAL_HEADER_ONLY
-  
-  static void init_class_for_thread(){
-    CGAL_precondition(get_static_prime_int_().get() == NULL);
-    CGAL_precondition(get_static_prime_().get()     == NULL);
-    CGAL_precondition(get_static_prime_inv_().get() == NULL);
-    get_static_prime_int_().reset(new int(67111067));
-    get_static_prime_().reset(new double(67111067.0));
-    get_static_prime_inv_().reset(new double(1.0/67111067.0));
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(int, prime_int, 67111067);
+    return prime_int;
   }
   
   static inline int get_prime_int(){
-    if (get_static_prime_int_().get() == NULL)
-      init_class_for_thread();
-    return *get_static_prime_int_().get();
+    return prime_int_internal();
   }
   
-  static inline double get_prime(){
-    if (get_static_prime_().get() == NULL)
-      init_class_for_thread();
-    return *get_static_prime_().get();
-  }
   
-  static inline double get_prime_inv(){
-    if (get_static_prime_inv_().get() == NULL)
-      init_class_for_thread();
-    return *get_static_prime_inv_().get();
-  }
-#else // CGAL_HAS_THREADS
-
-#ifdef CGAL_HEADER_ONLY
-  static int& get_static_prime_int()
+  static double& prime_internal()
   {
-    static int prime_int = 67111067;
-    return prime_int;
-  }
-  static double& get_static_prime()
-  {
-    static double prime = 67111067.0;
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(double, prime, 67111067.0);
     return prime;
   }
-  static double& get_static_prime_inv()
+
+  static inline double get_prime(){
+    return prime_internal();
+  }
+  
+  static double& prime_inv_internal()
   {
-    static double prime_inv = 1/67111067.0;
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(double, prime_inv, 0.000000014900672045640400859667452463541);
     return prime_inv;
   }
 
-#else //
-  CGAL_EXPORT  static int prime_int;
-  CGAL_EXPORT  static double prime;
-  CGAL_EXPORT  static double prime_inv;
-  static int& get_static_prime_int()
-  { return Residue::prime_int; }
-  static double& get_static_prime()
-  { return Residue::prime; }
-  static double& get_static_prime_inv()
-  { return Residue::prime_inv; }
-#endif // CGAL_HEADER_ONLY
-  static int get_prime_int(){ return get_static_prime_int();}
-  static double get_prime()    { return get_static_prime();}
-  static double get_prime_inv(){ return get_static_prime_inv();}
-#endif
+  static inline double get_prime_inv(){
+    return prime_inv_internal();
+  }
+
+
+
 
     /* Quick integer rounding, valid if a<2^51. for double */ 
     static inline 
@@ -255,15 +198,10 @@ public:
     static int 
     set_current_prime(int p){   
       int old_prime = get_prime_int();  
-#ifdef CGAL_HAS_THREADS
-      *get_static_prime_int_().get() = p;
-      *get_static_prime_().get() = double(p);
-      *get_static_prime_inv_().get() = 1.0/double(p);
-#else
-      get_static_prime_int() = p;
-      get_static_prime() = double(p);
-      get_static_prime_inv() = 1.0 / prime;
-#endif
+      prime_int_internal() = p;  
+      prime_internal() = double(p);  
+      prime_inv_internal() =  1.0 / double(p);
+
       return old_prime; 
     }
  
@@ -289,10 +227,11 @@ public:
     }
 
     //! constructor of Residue, from long 
-    Residue(long n){
+
+    Residue (long n) {
         x_= RES_soft_reduce (static_cast< double > (n % get_prime_int()));
     }
-   
+
     //! constructor of Residue, from long long
     Residue (long long n) {
         x_= RES_soft_reduce (static_cast< double > (n % get_prime_int()));

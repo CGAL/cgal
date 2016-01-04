@@ -1,5 +1,5 @@
-// Copyright (c) Max-Planck-Institute Saarbruecken (Germany).
-// All rights reserved.
+// Copyright (c) 2016 GeometryFactory (France)
+//  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public License as
@@ -14,19 +14,21 @@
 //
 // $URL$
 // $Id$
-//
-// Author(s)     : Michael Hemmer
 
-#ifndef CGAL_HEADER_ONLY
+#ifndef CGAL_MUTEX_H
+#define CGAL_MUTEX_H
 
-#include <CGAL/Residue.h>
-#include <CGAL/Modular_arithmetic/Residue_type.h>
+#include <CGAL/config.h>
 
-namespace CGAL{
-
-
-const double Residue::CST_CUT = std::ldexp( 3., 51 );
-
-}
-
+#ifdef CGAL_HAS_THREADS
+#ifdef CGAL_CAN_USE_CXX11_MUTEX
+#include <mutex>
+#define CGAL_MUTEX std::mutex
+#define CGAL_SCOPED_LOCK(M) std::unique_lock<std::mutex> scoped_lock(M)
+#else
+#include <boost/thread/mutex.hpp>
+#define CGAL_MUTEX boost::mutex
+#define CGAL_SCOPED_LOCK(M) boost::mutex::scoped_lock scoped_lock(M)
 #endif
+#endif
+#endif // CGAL_MUTEX_H

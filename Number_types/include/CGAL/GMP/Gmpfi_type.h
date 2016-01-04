@@ -26,9 +26,8 @@
 #include <mpfi.h>
 #include <boost/operators.hpp>
 #include <CGAL/Uncertain.h>
-#ifdef CGAL_HAS_THREADS
-#  include <boost/thread/tss.hpp>
-#endif
+#include <CGAL/tss.h>
+
 #include <limits>
 #include <algorithm>
 
@@ -80,11 +79,8 @@ Uncertain<bool> operator==(const Gmpfi&,const Gmpq&);
 
 // the default precision is a variable local to each thread in multithreaded
 // environments, or a global variable otherwise
-#ifdef CGAL_HAS_THREADS
-        static boost::thread_specific_ptr<mp_prec_t> Gmpfi_default_precision_;
-#else
-        static mp_prec_t Gmpfi_default_precision=CGAL_GMPFI_DEFAULT_PRECISION;
-#endif
+
+
 
 class Gmpfi:
         boost::ordered_euclidian_ring_operators1<Gmpfi,
@@ -108,6 +104,13 @@ class Gmpfi:
         // back the result of the operation in _left and _right.
         Gmpfr _left,_right;
         mutable __mpfi_struct _interval;
+
+  static mp_prec_t&  default_precision()
+  {
+    CGAL_STATIC_THREAD_LOCAL_VARIABLE(mp_prec_t, Gmpfi_default_precision, CGAL_GMPFI_DEFAULT_PRECISION);
+    return Gmpfi_default_precision;
+  }
+        
 
         bool is_unique(){
 #ifdef CGAL_GMPFR_NO_REFCOUNT
@@ -296,9 +299,7 @@ CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
 
         // default precision
 
-#ifdef CGAL_HAS_THREADS
-        static void init_precision_for_thread();
-#endif
+
         static Gmpfi::Precision_type get_default_precision();
         static Gmpfi::Precision_type set_default_precision(
                                                 Gmpfi::Precision_type prec);
@@ -400,35 +401,20 @@ CGAL_GMPFI_CONSTRUCTOR_FROM_SCALAR(Gmpz);
 // --------------
 
 // default precision
-#ifdef CGAL_HAS_THREADS
-inline
-void Gmpfi::init_precision_for_thread(){
-        CGAL_precondition(Gmpfi_default_precision_.get()==NULL);
-        Gmpfi_default_precision_.reset(
-                new mp_prec_t(CGAL_GMPFI_DEFAULT_PRECISION));
-}
-#endif
+
 
 inline
 Gmpfi::Precision_type Gmpfi::get_default_precision(){
-#ifdef CGAL_HAS_THREADS
-        if(Gmpfi_default_precision_.get()==NULL)
-                Gmpfi::init_precision_for_thread();
-        return *Gmpfi_default_precision_.get();
-#else
-        return Gmpfi_default_precision;
-#endif
+
+  return default_precision();
 }
 
 inline
 Gmpfi::Precision_type Gmpfi::set_default_precision(Gmpfi::Precision_type prec){
-        Gmpfi::Precision_type old_prec=Gmpfi::get_default_precision();
+        Gmpfi::Precision_type old_prec= default_precision();
         CGAL_assertion(prec>=MPFR_PREC_MIN&&prec<=MPFR_PREC_MAX);
-#ifdef CGAL_HAS_THREADS
-        *Gmpfi_default_precision_.get()=prec;
-#else
-        Gmpfi_default_precision=prec;
-#endif
+        default_precision() = prec;
+
         return old_prec;
 }
 
