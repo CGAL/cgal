@@ -40,7 +40,7 @@ struct Array_based_vertex_point_map
 public:
   typedef vertex_descriptor            key_type;
   typedef Polyhedron::Traits::Point_3  value_type;
-  typedef value_type&                  reference;
+  typedef const value_type&                  reference;
   typedef boost::read_write_property_map_tag category;
   Array_based_vertex_point_map(std::vector<double>* positions) : positions(positions) {}
   std::vector<double>* positions;
@@ -48,7 +48,7 @@ public:
 
 
 inline
-Array_based_vertex_point_map::value_type
+Array_based_vertex_point_map::reference
 get(Array_based_vertex_point_map,
   Array_based_vertex_point_map::key_type key) {
     return key->point();
