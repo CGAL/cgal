@@ -78,7 +78,7 @@ public:
     void toggle_view_edge_cost() { m_view_edge_cost = !m_view_edge_cost; }
     
     void toggle_view_edge_priority() {
-    	m_view_edge_priority = !m_view_edge_priority;
+      m_view_edge_priority = !m_view_edge_priority;
     }
     
     void toggle_view_bins () { m_view_bins = !m_view_bins; }

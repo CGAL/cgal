@@ -33,7 +33,7 @@ public:
         mchoice_spinbox->setRange(0, 500);
         percent_spinbox->setRange(0, 100);
         relocation_spinbox->setRange(0, 50);
-		relevance_spinbox->setRange(0., 100000.);
+        relevance_spinbox->setRange(0., 100000.);
     }
     
     int get_verbose() const { return verbose_spinbox->value(); }
@@ -47,15 +47,15 @@ public:
     
     int get_relocation() const { return relocation_spinbox->value(); }
     void set_relocation(const int value) {
-    	return relocation_spinbox->setValue(value);
+      return relocation_spinbox->setValue(value);
     }
     
-	double get_relevance() const { return relevance_spinbox->value(); }
-	void set_relevance(double ghost) { relevance_spinbox->setValue(ghost); }
+    double get_relevance() const { return relevance_spinbox->value(); }
+    void set_relevance(double ghost) { relevance_spinbox->setValue(ghost); }
     
     bool get_use_flip() const { return use_flip_checkbox->isChecked(); }
     void set_use_flip(const bool flip) {
-    	return use_flip_checkbox->setChecked(flip);
+      return use_flip_checkbox->setChecked(flip);
     }
 
     bool get_multiple_choice_checkbox() const { 

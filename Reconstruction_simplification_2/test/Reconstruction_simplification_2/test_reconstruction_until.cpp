@@ -17,8 +17,8 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                          Point;
-typedef K::FT                                         		  FT;
-typedef K::Segment_2 										                    Segment;
+typedef K::FT                                               FT;
+typedef K::Segment_2                                         Segment;
 
 int main ()
 {

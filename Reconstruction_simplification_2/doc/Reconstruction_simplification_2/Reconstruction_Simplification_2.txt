@@ -59,7 +59,7 @@ In case the input is not just points without masses, one can provide
 a property map that matches this input.
 \code{.cpp}
 /*
-K            	   : a geometric kernel.
+K                  : a geometric kernel.
 Point_property_map : a PropertyMap for accessing the input points.
 Mass_property_map  : a PropertyMap for accessing the mass attributes of the 
                      input points.

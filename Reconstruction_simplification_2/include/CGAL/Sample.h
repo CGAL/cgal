@@ -90,7 +90,7 @@ public:
   }
 };
 
-template <class	Sample_>
+template <class Sample_>
 class Sample_with_priority
 {
 public:

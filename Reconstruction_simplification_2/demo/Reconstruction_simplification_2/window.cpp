@@ -63,14 +63,14 @@ void MainWindow::addToRecentFiles(QString fileName)
 void MainWindow::dropEvent(QDropEvent *event)
 {
   Q_FOREACH(QUrl url, event->mimeData()->urls())
-	    {
+  {
     QString filename = url.toLocalFile();
     if (!filename.isEmpty())
     {
       QTextStream(stderr) << QString("dropEvent(\"%1\")\n").arg(filename);
       open(filename);
     }
-	    }
+  }
   event->acceptProposedAction();
 }
 
@@ -529,18 +529,18 @@ void MainWindow::on_actionReconstruction_until_triggered()
 
 void MainWindow::on_actionRelocate_vertices_triggered()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-	m_scene->relocate_all_points();
-	QApplication::restoreOverrideCursor();
-	update();
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  m_scene->relocate_all_points();
+  QApplication::restoreOverrideCursor();
+  update();
 }
 
 void MainWindow::on_actionOutput_console_triggered()
 {
-	QApplication::setOverrideCursor(Qt::WaitCursor);
-	m_scene->output_console();
-	QApplication::restoreOverrideCursor();
-	update();
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+  m_scene->output_console();
+  QApplication::restoreOverrideCursor();
+  update();
 }
 
 
@@ -599,14 +599,14 @@ void MainWindow::on_actionView_foot_points_toggled()
 
 void MainWindow::on_actionView_relocation_toggled()
 {
-	viewer->toggle_view_relocation();
-	update();
+  viewer->toggle_view_relocation();
+  update();
 }
 
 void MainWindow::on_actionView_relevance_toggled()
 {
-	viewer->toggle_view_edge_relevance();
-	update();
+  viewer->toggle_view_edge_relevance();
+  update();
 }
 
 void MainWindow::on_actionSet_options_triggered()

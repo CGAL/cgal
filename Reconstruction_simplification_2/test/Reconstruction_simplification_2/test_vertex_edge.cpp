@@ -22,7 +22,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_2                                          Point;
-typedef K::FT                                         		  FT;
+typedef K::FT                                               FT;
 
 typedef std::pair<Point, FT> PointMassPair;
 typedef std::vector<PointMassPair> PointMassList;
