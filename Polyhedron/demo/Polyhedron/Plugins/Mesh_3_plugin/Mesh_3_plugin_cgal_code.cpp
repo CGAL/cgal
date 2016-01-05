@@ -2,7 +2,7 @@
 
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/make_mesh_3.h>
-#include <CGAL/polylines_to_protect.h>
+#include <CGAL/Mesh_3/polylines_to_protect.h>
 #include <CGAL/Bbox_3.h>
 
 #include <Polyhedron_type.h>
