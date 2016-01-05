@@ -299,6 +299,7 @@ namespace internal {
         boost::bimaps::set_of<halfedge_descriptor>,
         boost::bimaps::multiset_of<double, std::greater<double> > >  Boost_bimap;
       typedef typename Boost_bimap::value_type                       long_edge;
+      typedef typename boost::property_traits<Patch_id_property_map>::value_type Patch_id;
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
       std::cout << "Split long edges (" << high << ")..." << std::endl;
@@ -365,6 +366,7 @@ namespace internal {
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_on_border(hnew))
         {
+          Patch_id patch_id = get(patch_ids_pmap_, face(hnew, mesh_));
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(hnew,
                                                               next(next(hnew, mesh_), mesh_),
                                                               mesh_);
@@ -376,6 +378,9 @@ namespace internal {
 
           if (snew == PATCH)
           {
+            put(patch_ids_pmap_, face(hnew2, mesh_), patch_id);
+            put(patch_ids_pmap_, face(opposite(hnew2, mesh_), mesh_), patch_id);
+
             double sql = sqlength(hnew2);
             if (sql > sq_high)
               long_edges.insert(long_edge(hnew2, sql));
@@ -385,6 +390,7 @@ namespace internal {
         //do it again on the other side if we're not on boundary
         if (!is_on_border(hnew_opp))
         {
+          Patch_id patch_id = get(patch_ids_pmap_, face(hnew_opp, mesh_));
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(prev(hnew_opp, mesh_),
                                                               next(hnew_opp, mesh_),
                                                               mesh_);
@@ -396,6 +402,9 @@ namespace internal {
 
           if (snew == PATCH)
           {
+            put(patch_ids_pmap_, face(hnew2, mesh_), patch_id);
+            put(patch_ids_pmap_, face(opposite(hnew2, mesh_), mesh_), patch_id);
+
             double sql = sqlength(hnew2);
             if (sql > sq_high)
               long_edges.insert(long_edge(hnew2, sql));
