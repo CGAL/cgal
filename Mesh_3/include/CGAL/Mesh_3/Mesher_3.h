@@ -161,11 +161,6 @@ public:
   //-------------------------------------------------------
   // Mesher_levels
   //-------------------------------------------------------
-  typedef Refine_facets_3_handle_queue_base<
-    typename MeshDomain::Index,
-    typename Triangulation::Facet,
-    Concurrency_tag>                                Rf_base;
-
   // typedef Refine_facets_manifold_base<Rf_base>      Rf_manifold_base;
 
   /// Facets mesher level
@@ -175,9 +170,9 @@ public:
       MeshDomain,
       C3T3,
       Null_mesher_level,
-      Concurrency_tag// ,
-      // Rf_base
-    >                                      Facets_level;
+      Concurrency_tag,
+      Refine_facets_manifold_base
+    >                                               Facets_level;
 
   /// Cells mesher level
   typedef Refine_cells_3<

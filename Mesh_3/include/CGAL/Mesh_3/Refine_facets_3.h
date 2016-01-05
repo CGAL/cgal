@@ -995,6 +995,7 @@ scan_triangulation_impl()
   std::cerr << "Refining... ";
   Base_ML::m_timer.reset();
 #endif
+  Base::scan_triangulation_impl_amendement();
 }
 
 
