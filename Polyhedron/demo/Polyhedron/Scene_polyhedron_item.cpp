@@ -778,23 +778,6 @@ Scene_polyhedron_item::toolTip() const
             .arg(this->renderingModeName())
             .arg(this->color().name());
   str += QString("<br />Number of isolated vertices : %1<br />").arg(getNbIsolatedvertices());
-  str += QString("Minimum edge length : %1<br />").arg(min_edges_length);
-  str += QString("Maximum edge length : %1<br />").arg(max_edges_length);
-  str += QString("Median edge length : %1<br />").arg(mid_edges_length);
-  str += QString("Mean edge length : %1<br />").arg(mean_edges_length);
-  str += QString("Number of null length edges : %1<br />").arg(number_of_null_length_edges);
-  if(self_intersect)
-    str += QString("Does self-intersect<br />");
-  else
-    str += QString("Does not self-intersect<br />");
-  if(is_triangulated)
-      str += QString("Number of degenerated faces : %1").arg(number_of_degenerated_faces);
-  if (volume!=-std::numeric_limits<double>::infinity())
-    str+=QObject::tr("<br />Volume: %1").arg(volume);
-  if (area!=-std::numeric_limits<double>::infinity())
-    str+=QObject::tr("<br />Area: %1").arg(area);
-  str+="</p>";
-
   return str;
 }
 
@@ -1171,14 +1154,37 @@ void Scene_polyhedron_item::statistics_on_polyhedron()
 
   ui.label_nbvertices->setText(QString::number(poly->size_of_vertices()));
   ui.label_nbfacets->setText(QString::number(poly->size_of_facets()));
-  ui.label_nbborderedges->setText(QString::number(poly->size_of_border_edges()));
-
+  poly->normalize_border();
+  ui.label_nbborderedges->setText(QString::number(poly->size_of_border_halfedges()));
+  ui.label_nbedges->setText(QString::number(poly->size_of_halfedges()/2));
+  double min, max, mean, mid;
+  edges_length(poly, min, max, mean, mid);
+  ui.label_minlength->setText(QString::number(min));
+  ui.label_maxlength->setText(QString::number(max));
+  ui.label_midlength->setText(QString::number(mid));
+  ui.label_meanlength->setText(QString::number(mean));
+  ui.label_nulllength->setText(QString::number(number_of_null_length_edges));
+  if(self_intersect)
+    ui.label_selfintersect->setText("Yes");
+  else
+    ui.label_selfintersect->setText("No");
+  if(is_triangulated)
+      ui.label_degenfaces->setText(QString::number(number_of_degenerated_faces));
+  else
+    ui.label_degenfaces->setText(QString("Unknown (not triangulated)"));
+  if (volume!=-std::numeric_limits<double>::infinity())
+    ui.label_volume->setText(QString::number(volume));
+  else
+    ui.label_volume->setText(QString("Inifinite"));
+  if (area!=-std::numeric_limits<double>::infinity())
+    ui.label_area->setText(QString::number(area));
+  else
+    ui.label_area->setText(QString("Infinite"));
   typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
   int i = 0;
   BOOST_FOREACH(face_descriptor f, faces(*poly)){
     f->id() = i++;
   }
-
   boost::vector_property_map<int,
     boost::property_map<Polyhedron, boost::face_index_t>::type>
     fccmap(get(boost::face_index, *poly));
