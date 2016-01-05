@@ -83,8 +83,8 @@ void test_index_output(Rs_2& rs2)
     res.push_back(line);
   }
 
-  assert(res.size() >= 80 && res.size() <= 105);
-  assert(points.size() >= 40 && points.size() <= 70);
+  assert(res.size() >= 60 && res.size() <= 105);
+  assert(points.size() >= 35 && points.size() <= 70);
   assert(edges.size() >= 15 && edges.size() <= 40);
 
   for (std::size_t i = points.size() + 1 ; i < res.size() ; i++)
