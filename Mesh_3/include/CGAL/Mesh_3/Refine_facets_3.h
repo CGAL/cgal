@@ -320,6 +320,39 @@ public:
     restore_restricted_Delaunay(v);
   }
 
+  /// debug info: class name
+  std::string debug_info_class_name_impl() const
+  {
+    return "Refine_facets_3";
+  }
+
+  /// debug info
+  std::string debug_info() const
+  {
+    std::stringstream s;
+    s << Container_::size();
+    return s.str();
+  }
+
+  /// debug_info_header
+  std::string debug_info_header() const
+  {
+    return "#facets to refine";
+  }
+
+  std::string debug_info_element_impl(const Facet &facet) const
+  {
+    std::stringstream sstr;
+    sstr << "Facet { " << std::endl
+    << "  - " << *facet.first->vertex((facet.second+1)%4)  << std::endl
+    << "  - " << *facet.first->vertex((facet.second+2)%4)  << std::endl
+    << "  - " << *facet.first->vertex((facet.second+3)%4)  << std::endl
+    << "  - 4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
+    << "}" << std::endl;
+
+    return sstr.str();
+  }
+
 protected:
 
   // Functor for scan_triangulation_impl function
@@ -825,39 +858,6 @@ public:
   bool try_lock_element(const Facet &f, int lock_radius = 0) const
   {
     return this->triangulation().try_lock_facet(f, lock_radius);
-  }
-
-  /// debug info: class name
-  std::string debug_info_class_name_impl() const
-  {
-    return "Refine_facets_3";
-  }
-
-  /// debug info
-  std::string debug_info() const
-  {
-    std::stringstream s;
-    s << Container_::size();
-    return s.str();
-  }
-
-  /// debug_info_header
-  std::string debug_info_header() const
-  {
-    return "#facets to refine";
-  }
-
-  std::string debug_info_element_impl(const Facet &facet) const
-  {
-    std::stringstream sstr;
-    sstr << "Facet { " << std::endl
-    << "  - " << *facet.first->vertex((facet.second+1)%4)  << std::endl
-    << "  - " << *facet.first->vertex((facet.second+2)%4)  << std::endl
-    << "  - " << *facet.first->vertex((facet.second+3)%4)  << std::endl
-    << "  - 4th vertex in cell: " << *facet.first->vertex(facet.second)  << std::endl
-    << "}" << std::endl;
-
-    return sstr.str();
   }
 
 #ifdef CGAL_MESH_3_MESHER_STATUS_ACTIVATED

@@ -600,6 +600,12 @@ public:
     }
   }
 
+  /// debug info: class name
+  std::string debug_info_class_name_impl() const
+  {
+    return "Refine_facets_manifold_base";
+  }
+
   std::string debug_info() const
   {
     std::stringstream s;
