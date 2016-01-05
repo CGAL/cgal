@@ -75,10 +75,16 @@ public:
       1e-3, //error_bound
       &CGAL::default_random);//random generator for determinism
 
+    const CGAL::Mesh_facet_topology topology =
+      boost::is_same<Concurrency_tag, CGAL::Sequential_tag>::value ?
+      CGAL::MANIFOLD :
+      CGAL::FACET_VERTICES_ON_SURFACE;
+
     // Mesh criteria
     Mesh_criteria criteria(facet_angle = 30,
                            facet_size = 6,
                            facet_distance = 2,
+                           facet_topology = topology,
                            cell_radius_edge_ratio = 3,
                            cell_size = 8);
 
