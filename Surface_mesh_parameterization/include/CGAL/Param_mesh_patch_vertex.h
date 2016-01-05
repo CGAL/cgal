@@ -268,9 +268,10 @@ public:
     bool operator!=(const Self& hdl) const { return ! (*this == hdl); }
 
     /// Comparison to NULL pointer
+  
     bool operator==(Nullptr_t ptr) const {
         CGAL_surface_mesh_parameterization_assertion(ptr == NULL);
-        return m_ptr == NULL;
+        return m_ptr == ptr;
     }
     bool operator!=(Nullptr_t ptr) const { return ! (*this == ptr); }
 
@@ -416,7 +417,7 @@ public:
     /// Comparison to NULL pointer
     bool operator==(Nullptr_t ptr) const {
         CGAL_surface_mesh_parameterization_assertion(ptr == NULL);
-        return m_ptr == NULL;
+        return m_ptr == ptr;
     }
     bool operator!=(Nullptr_t ptr) const { return ! (*this == ptr); }
 

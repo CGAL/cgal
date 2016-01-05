@@ -344,7 +344,7 @@ intersection(const CGAL::Sphere_circle<R>& c,
       s1 = *this; return 1;
     } 
     // now this is a halfcircle
-    register bool halfcircle_notin_hminus =
+    bool halfcircle_notin_hminus =
       (CGAL::orientation(source(),target(),
 			 CGAL::ORIGIN + c.orthogonal_vector(),
 			 CGAL::ORIGIN + sphere_circle().orthogonal_vector())

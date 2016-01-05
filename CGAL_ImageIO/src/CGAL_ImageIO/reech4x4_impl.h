@@ -106,20 +106,20 @@ void Reech3DTriLin4x4_u8 ( void* theBuf, /* buffer to be resampled */
 			     double* mat   /* transformation matrix */
 			     )
 {
-  register int i, j, k, ix, iy, iz;
-  register double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
-  register double res;
+  int i, j, k, ix, iy, iz;
+  double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
+  double res;
   double v6, v5, v4;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1], tdimz=theDim[2];
   int tdimxy=tdimx*tdimy;
   int toffset1=tdimxy+tdimx+1, toffset2=tdimxy-tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register double ddimz = (double)tdimz-0.5;
-  register u8 *tbuf = (u8*)theBuf;
-  register u8 *tpt;
-  register u8 *rbuf = (u8*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  double ddimz = (double)tdimz-0.5;
+  u8 *tbuf = (u8*)theBuf;
+  u8 *tpt;
+  u8 *rbuf = (u8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -268,22 +268,22 @@ void Reech3DTriLin4x4gb_u8 ( void* theBuf, /* buffer to be resampled */
 			     float gain,
 			     float bias )
 {
-  register int i, j, k, ix, iy, iz;
-  register double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
-  register double res;
+  int i, j, k, ix, iy, iz;
+  double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
+  double res;
   double v6, v5, v4;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1], tdimz=theDim[2];
   int tdimxy=tdimx*tdimy;
   int toffset1=tdimxy+tdimx+1, toffset2=tdimxy-tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register double ddimz = (double)tdimz-0.5;
-  register u8 *tbuf = (u8*)theBuf;
-  register u8 *tpt;
-  register u8 *rbuf = (u8*)resBuf;
-  register double b=bias;
-  register double g=gain;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  double ddimz = (double)tdimz-0.5;
+  u8 *tbuf = (u8*)theBuf;
+  u8 *tpt;
+  u8 *rbuf = (u8*)resBuf;
+  double b=bias;
+  double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -439,14 +439,14 @@ void Reech3DNearest4x4_u8 ( void* theBuf, /* buffer to be resampled */
 			      double* mat   /* transformation matrix */
 			      )
 {
-  register int i, j, k, ix, iy, iz;
-  register double x, y, z;
+  int i, j, k, ix, iy, iz;
+  double x, y, z;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1], tdimz=theDim[2];
   int tdimxy=tdimx*tdimy;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
-  register u8 *tbuf = (u8*)theBuf;
-  register u8 *rbuf = (u8*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
+  u8 *tbuf = (u8*)theBuf;
+  u8 *rbuf = (u8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -477,17 +477,17 @@ void Reech2DTriLin4x4_u8 ( void* theBuf, /* buffer to be resampled */
 			     double* mat   /* transformation matrix */
 			     )
 {
-  register int i, j, k, ix, iy;
-  register double x, y, dx, dy, dxdy;
-  register double res, v;
+  int i, j, k, ix, iy;
+  double x, y, dx, dy, dxdy;
+  double res, v;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1];
   int toffset=tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register u8 *tbuf = (u8*)theBuf;
-  register u8 *tpt;
-  register u8 *rbuf = (u8*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  u8 *tbuf = (u8*)theBuf;
+  u8 *tpt;
+  u8 *rbuf = (u8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -567,19 +567,19 @@ void Reech2DTriLin4x4gb_u8 ( void* theBuf, /* buffer to be resampled */
 			     float gain,
 			     float bias )
 {
-  register int i, j, k, ix, iy;
-  register double x, y, dx, dy, dxdy;
-  register double res, v;
+  int i, j, k, ix, iy;
+  double x, y, dx, dy, dxdy;
+  double res, v;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1];
   int toffset=tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register u8 *tbuf = (u8*)theBuf;
-  register u8 *tpt;
-  register u8 *rbuf = (u8*)resBuf;
-  register double b=bias;
-  register double g=gain;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  u8 *tbuf = (u8*)theBuf;
+  u8 *tpt;
+  u8 *rbuf = (u8*)resBuf;
+  double b=bias;
+  double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -662,13 +662,13 @@ void Reech2DNearest4x4_u8 ( void* theBuf, /* buffer to be resampled */
 			      double* mat   /* transformation matrix */
 			      )
 {
-  register int i, j, k, ix, iy;
-  register double x, y;
+  int i, j, k, ix, iy;
+  double x, y;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1];
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1;
-  register u8 *tbuf = (u8*)theBuf;
-  register u8 *rbuf = (u8*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1;
+  u8 *tbuf = (u8*)theBuf;
+  u8 *rbuf = (u8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -722,20 +722,20 @@ void Reech3DTriLin4x4_s8 ( void* theBuf, /* buffer to be resampled */
 			     double* mat   /* transformation matrix */
 			     )
 {
-  register int i, j, k, ix, iy, iz;
-  register double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
-  register double res;
+  int i, j, k, ix, iy, iz;
+  double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
+  double res;
   double v6, v5, v4;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1], tdimz=theDim[2];
   int tdimxy=tdimx*tdimy;
   int toffset1=tdimxy+tdimx+1, toffset2=tdimxy-tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register double ddimz = (double)tdimz-0.5;
-  register s8 *tbuf = (s8*)theBuf;
-  register s8 *tpt;
-  register s8 *rbuf = (s8*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  double ddimz = (double)tdimz-0.5;
+  s8 *tbuf = (s8*)theBuf;
+  s8 *tpt;
+  s8 *rbuf = (s8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -884,22 +884,22 @@ void Reech3DTriLin4x4gb_s8 ( void* theBuf, /* buffer to be resampled */
 			     float gain,
 			     float bias )
 {
-  register int i, j, k, ix, iy, iz;
-  register double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
-  register double res;
+  int i, j, k, ix, iy, iz;
+  double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
+  double res;
   double v6, v5, v4;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1], tdimz=theDim[2];
   int tdimxy=tdimx*tdimy;
   int toffset1=tdimxy+tdimx+1, toffset2=tdimxy-tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register double ddimz = (double)tdimz-0.5;
-  register s8 *tbuf = (s8*)theBuf;
-  register s8 *tpt;
-  register s8 *rbuf = (s8*)resBuf;
-  register double b=bias;
-  register double g=gain;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  double ddimz = (double)tdimz-0.5;
+  s8 *tbuf = (s8*)theBuf;
+  s8 *tpt;
+  s8 *rbuf = (s8*)resBuf;
+  double b=bias;
+  double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -1055,14 +1055,14 @@ void Reech3DNearest4x4_s8 ( void* theBuf, /* buffer to be resampled */
 			      double* mat   /* transformation matrix */
 			      )
 {
-  register int i, j, k, ix, iy, iz;
-  register double x, y, z;
+  int i, j, k, ix, iy, iz;
+  double x, y, z;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1], tdimz=theDim[2];
   int tdimxy=tdimx*tdimy;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
-  register s8 *tbuf = (s8*)theBuf;
-  register s8 *rbuf = (s8*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
+  s8 *tbuf = (s8*)theBuf;
+  s8 *rbuf = (s8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -1093,17 +1093,17 @@ void Reech2DTriLin4x4_s8 ( void* theBuf, /* buffer to be resampled */
 			     double* mat   /* transformation matrix */
 			     )
 {
-  register int i, j, k, ix, iy;
-  register double x, y, dx, dy, dxdy;
-  register double res, v;
+  int i, j, k, ix, iy;
+  double x, y, dx, dy, dxdy;
+  double res, v;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1];
   int toffset=tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register s8 *tbuf = (s8*)theBuf;
-  register s8 *tpt;
-  register s8 *rbuf = (s8*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  s8 *tbuf = (s8*)theBuf;
+  s8 *tpt;
+  s8 *rbuf = (s8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -1183,19 +1183,19 @@ void Reech2DTriLin4x4gb_s8 ( void* theBuf, /* buffer to be resampled */
 			     float gain,
 			     float bias )
 {
-  register int i, j, k, ix, iy;
-  register double x, y, dx, dy, dxdy;
-  register double res, v;
+  int i, j, k, ix, iy;
+  double x, y, dx, dy, dxdy;
+  double res, v;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1];
   int toffset=tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register s8 *tbuf = (s8*)theBuf;
-  register s8 *tpt;
-  register s8 *rbuf = (s8*)resBuf;
-  register double b=bias;
-  register double g=gain;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  s8 *tbuf = (s8*)theBuf;
+  s8 *tpt;
+  s8 *rbuf = (s8*)resBuf;
+  double b=bias;
+  double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -1278,13 +1278,13 @@ void Reech2DNearest4x4_s8 ( void* theBuf, /* buffer to be resampled */
 			      double* mat   /* transformation matrix */
 			      )
 {
-  register int i, j, k, ix, iy;
-  register double x, y;
+  int i, j, k, ix, iy;
+  double x, y;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1];
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1;
-  register s8 *tbuf = (s8*)theBuf;
-  register s8 *rbuf = (s8*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1;
+  s8 *tbuf = (s8*)theBuf;
+  s8 *rbuf = (s8*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -1339,20 +1339,20 @@ void Reech3DTriLin4x4_u16 ( void* theBuf, /* buffer to be resampled */
 			     double* mat   /* transformation matrix */
 			     )
 {
-  register int i, j, k, ix, iy, iz;
-  register double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
-  register double res;
+  int i, j, k, ix, iy, iz;
+  double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
+  double res;
   double v6, v5, v4;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1], tdimz=theDim[2];
   int tdimxy=tdimx*tdimy;
   int toffset1=tdimxy+tdimx+1, toffset2=tdimxy-tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register double ddimz = (double)tdimz-0.5;
-  register u16 *tbuf = (u16*)theBuf;
-  register u16 *tpt;
-  register u16 *rbuf = (u16*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  double ddimz = (double)tdimz-0.5;
+  u16 *tbuf = (u16*)theBuf;
+  u16 *tpt;
+  u16 *rbuf = (u16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -1501,22 +1501,22 @@ void Reech3DTriLin4x4gb_u16 ( void* theBuf, /* buffer to be resampled */
 			     float gain,
 			     float bias )
 {
-  register int i, j, k, ix, iy, iz;
-  register double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
-  register double res;
+  int i, j, k, ix, iy, iz;
+  double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
+  double res;
   double v6, v5, v4;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1], tdimz=theDim[2];
   int tdimxy=tdimx*tdimy;
   int toffset1=tdimxy+tdimx+1, toffset2=tdimxy-tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register double ddimz = (double)tdimz-0.5;
-  register u16 *tbuf = (u16*)theBuf;
-  register u16 *tpt;
-  register u16 *rbuf = (u16*)resBuf;
-  register double b=bias;
-  register double g=gain;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  double ddimz = (double)tdimz-0.5;
+  u16 *tbuf = (u16*)theBuf;
+  u16 *tpt;
+  u16 *rbuf = (u16*)resBuf;
+  double b=bias;
+  double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -1672,14 +1672,14 @@ void Reech3DNearest4x4_u16 ( void* theBuf, /* buffer to be resampled */
 			      double* mat   /* transformation matrix */
 			      )
 {
-  register int i, j, k, ix, iy, iz;
-  register double x, y, z;
+  int i, j, k, ix, iy, iz;
+  double x, y, z;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1], tdimz=theDim[2];
   int tdimxy=tdimx*tdimy;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
-  register u16 *tbuf = (u16*)theBuf;
-  register u16 *rbuf = (u16*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
+  u16 *tbuf = (u16*)theBuf;
+  u16 *rbuf = (u16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -1710,17 +1710,17 @@ void Reech2DTriLin4x4_u16 ( void* theBuf, /* buffer to be resampled */
 			     double* mat   /* transformation matrix */
 			     )
 {
-  register int i, j, k, ix, iy;
-  register double x, y, dx, dy, dxdy;
-  register double res, v;
+  int i, j, k, ix, iy;
+  double x, y, dx, dy, dxdy;
+  double res, v;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1];
   int toffset=tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register u16 *tbuf = (u16*)theBuf;
-  register u16 *tpt;
-  register u16 *rbuf = (u16*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  u16 *tbuf = (u16*)theBuf;
+  u16 *tpt;
+  u16 *rbuf = (u16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -1800,19 +1800,19 @@ void Reech2DTriLin4x4gb_u16 ( void* theBuf, /* buffer to be resampled */
 			     float gain,
 			     float bias )
 {
-  register int i, j, k, ix, iy;
-  register double x, y, dx, dy, dxdy;
-  register double res, v;
+  int i, j, k, ix, iy;
+  double x, y, dx, dy, dxdy;
+  double res, v;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1];
   int toffset=tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register u16 *tbuf = (u16*)theBuf;
-  register u16 *tpt;
-  register u16 *rbuf = (u16*)resBuf;
-  register double b=bias;
-  register double g=gain;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  u16 *tbuf = (u16*)theBuf;
+  u16 *tpt;
+  u16 *rbuf = (u16*)resBuf;
+  double b=bias;
+  double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -1895,13 +1895,13 @@ void Reech2DNearest4x4_u16 ( void* theBuf, /* buffer to be resampled */
 			      double* mat   /* transformation matrix */
 			      )
 {
-  register int i, j, k, ix, iy;
-  register double x, y;
+  int i, j, k, ix, iy;
+  double x, y;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1];
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1;
-  register u16 *tbuf = (u16*)theBuf;
-  register u16 *rbuf = (u16*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1;
+  u16 *tbuf = (u16*)theBuf;
+  u16 *rbuf = (u16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -1956,20 +1956,20 @@ void Reech3DTriLin4x4_s16 ( void* theBuf, /* buffer to be resampled */
 			     double* mat   /* transformation matrix */
 			     )
 {
-  register int i, j, k, ix, iy, iz;
-  register double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
-  register double res;
+  int i, j, k, ix, iy, iz;
+  double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
+  double res;
   double v6, v5, v4;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1], tdimz=theDim[2];
   int tdimxy=tdimx*tdimy;
   int toffset1=tdimxy+tdimx+1, toffset2=tdimxy-tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register double ddimz = (double)tdimz-0.5;
-  register s16 *tbuf = (s16*)theBuf;
-  register s16 *tpt;
-  register s16 *rbuf = (s16*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  double ddimz = (double)tdimz-0.5;
+  s16 *tbuf = (s16*)theBuf;
+  s16 *tpt;
+  s16 *rbuf = (s16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -2118,22 +2118,22 @@ void Reech3DTriLin4x4gb_s16 ( void* theBuf, /* buffer to be resampled */
 			     float gain,
 			     float bias )
 {
-  register int i, j, k, ix, iy, iz;
-  register double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
-  register double res;
+  int i, j, k, ix, iy, iz;
+  double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
+  double res;
   double v6, v5, v4;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1], tdimz=theDim[2];
   int tdimxy=tdimx*tdimy;
   int toffset1=tdimxy+tdimx+1, toffset2=tdimxy-tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register double ddimz = (double)tdimz-0.5;
-  register s16 *tbuf = (s16*)theBuf;
-  register s16 *tpt;
-  register s16 *rbuf = (s16*)resBuf;
-  register double b=bias;
-  register double g=gain;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  double ddimz = (double)tdimz-0.5;
+  s16 *tbuf = (s16*)theBuf;
+  s16 *tpt;
+  s16 *rbuf = (s16*)resBuf;
+  double b=bias;
+  double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -2289,14 +2289,14 @@ void Reech3DNearest4x4_s16 ( void* theBuf, /* buffer to be resampled */
 			      double* mat   /* transformation matrix */
 			      )
 {
-  register int i, j, k, ix, iy, iz;
-  register double x, y, z;
+  int i, j, k, ix, iy, iz;
+  double x, y, z;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1], tdimz=theDim[2];
   int tdimxy=tdimx*tdimy;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
-  register s16 *tbuf = (s16*)theBuf;
-  register s16 *rbuf = (s16*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
+  s16 *tbuf = (s16*)theBuf;
+  s16 *rbuf = (s16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -2327,17 +2327,17 @@ void Reech2DTriLin4x4_s16 ( void* theBuf, /* buffer to be resampled */
 			     double* mat   /* transformation matrix */
 			     )
 {
-  register int i, j, k, ix, iy;
-  register double x, y, dx, dy, dxdy;
-  register double res, v;
+  int i, j, k, ix, iy;
+  double x, y, dx, dy, dxdy;
+  double res, v;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1];
   int toffset=tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register s16 *tbuf = (s16*)theBuf;
-  register s16 *tpt;
-  register s16 *rbuf = (s16*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  s16 *tbuf = (s16*)theBuf;
+  s16 *tpt;
+  s16 *rbuf = (s16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -2417,19 +2417,19 @@ void Reech2DTriLin4x4gb_s16 ( void* theBuf, /* buffer to be resampled */
 			     float gain,
 			     float bias )
 {
-  register int i, j, k, ix, iy;
-  register double x, y, dx, dy, dxdy;
-  register double res, v;
+  int i, j, k, ix, iy;
+  double x, y, dx, dy, dxdy;
+  double res, v;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1];
   int toffset=tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register s16 *tbuf = (s16*)theBuf;
-  register s16 *tpt;
-  register s16 *rbuf = (s16*)resBuf;
-  register double b=bias;
-  register double g=gain;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  s16 *tbuf = (s16*)theBuf;
+  s16 *tpt;
+  s16 *rbuf = (s16*)resBuf;
+  double b=bias;
+  double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -2512,13 +2512,13 @@ void Reech2DNearest4x4_s16 ( void* theBuf, /* buffer to be resampled */
 			      double* mat   /* transformation matrix */
 			      )
 {
-  register int i, j, k, ix, iy;
-  register double x, y;
+  int i, j, k, ix, iy;
+  double x, y;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1];
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1;
-  register s16 *tbuf = (s16*)theBuf;
-  register s16 *rbuf = (s16*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1;
+  s16 *tbuf = (s16*)theBuf;
+  s16 *rbuf = (s16*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -2573,20 +2573,20 @@ void Reech3DTriLin4x4_r32 ( void* theBuf, /* buffer to be resampled */
 			     double* mat   /* transformation matrix */
 			     )
 {
-  register int i, j, k, ix, iy, iz;
-  register double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
-  register double res;
+  int i, j, k, ix, iy, iz;
+  double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
+  double res;
   double v6, v5, v4;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1], tdimz=theDim[2];
   int tdimxy=tdimx*tdimy;
   int toffset1=tdimxy+tdimx+1, toffset2=tdimxy-tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register double ddimz = (double)tdimz-0.5;
-  register r32 *tbuf = (r32*)theBuf;
-  register r32 *tpt;
-  register r32 *rbuf = (r32*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  double ddimz = (double)tdimz-0.5;
+  r32 *tbuf = (r32*)theBuf;
+  r32 *tpt;
+  r32 *rbuf = (r32*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -2735,22 +2735,22 @@ void Reech3DTriLin4x4gb_r32 ( void* theBuf, /* buffer to be resampled */
 			     float gain,
 			     float bias )
 {
-  register int i, j, k, ix, iy, iz;
-  register double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
-  register double res;
+  int i, j, k, ix, iy, iz;
+  double x, y, z, dx, dy, dz, dxdy,dxdz,dydz,dxdydz;
+  double res;
   double v6, v5, v4;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1], tdimz=theDim[2];
   int tdimxy=tdimx*tdimy;
   int toffset1=tdimxy+tdimx+1, toffset2=tdimxy-tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register double ddimz = (double)tdimz-0.5;
-  register r32 *tbuf = (r32*)theBuf;
-  register r32 *tpt;
-  register r32 *rbuf = (r32*)resBuf;
-  register double b=bias;
-  register double g=gain;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  double ddimz = (double)tdimz-0.5;
+  r32 *tbuf = (r32*)theBuf;
+  r32 *tpt;
+  r32 *rbuf = (r32*)resBuf;
+  double b=bias;
+  double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -2906,14 +2906,14 @@ void Reech3DNearest4x4_r32 ( void* theBuf, /* buffer to be resampled */
 			      double* mat   /* transformation matrix */
 			      )
 {
-  register int i, j, k, ix, iy, iz;
-  register double x, y, z;
+  int i, j, k, ix, iy, iz;
+  double x, y, z;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1], tdimz=theDim[2];
   int tdimxy=tdimx*tdimy;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
-  register r32 *tbuf = (r32*)theBuf;
-  register r32 *rbuf = (r32*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1, t1dimz=tdimz-1;
+  r32 *tbuf = (r32*)theBuf;
+  r32 *rbuf = (r32*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -2944,17 +2944,17 @@ void Reech2DTriLin4x4_r32 ( void* theBuf, /* buffer to be resampled */
 			     double* mat   /* transformation matrix */
 			     )
 {
-  register int i, j, k, ix, iy;
-  register double x, y, dx, dy, dxdy;
-  register double res, v;
+  int i, j, k, ix, iy;
+  double x, y, dx, dy, dxdy;
+  double res, v;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1];
   int toffset=tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register r32 *tbuf = (r32*)theBuf;
-  register r32 *tpt;
-  register r32 *rbuf = (r32*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  r32 *tbuf = (r32*)theBuf;
+  r32 *tpt;
+  r32 *rbuf = (r32*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -3034,19 +3034,19 @@ void Reech2DTriLin4x4gb_r32 ( void* theBuf, /* buffer to be resampled */
 			     float gain,
 			     float bias )
 {
-  register int i, j, k, ix, iy;
-  register double x, y, dx, dy, dxdy;
-  register double res, v;
+  int i, j, k, ix, iy;
+  double x, y, dx, dy, dxdy;
+  double res, v;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1];
   int toffset=tdimx-1;
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1;
-  register double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
-  register r32 *tbuf = (r32*)theBuf;
-  register r32 *tpt;
-  register r32 *rbuf = (r32*)resBuf;
-  register double b=bias;
-  register double g=gain;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1;
+  double ddimx = (double)tdimx-0.5, ddimy = (double)tdimy-0.5;
+  r32 *tbuf = (r32*)theBuf;
+  r32 *tpt;
+  r32 *rbuf = (r32*)resBuf;
+  double b=bias;
+  double g=gain;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )
@@ -3129,13 +3129,13 @@ void Reech2DNearest4x4_r32 ( void* theBuf, /* buffer to be resampled */
 			      double* mat   /* transformation matrix */
 			      )
 {
-  register int i, j, k, ix, iy;
-  register double x, y;
+  int i, j, k, ix, iy;
+  double x, y;
   int rdimx=resDim[0], rdimy=resDim[1], rdimz=resDim[2];
   int tdimx=theDim[0], tdimy=theDim[1];
-  register int t1dimx=tdimx-1, t1dimy=tdimy-1;
-  register r32 *tbuf = (r32*)theBuf;
-  register r32 *rbuf = (r32*)resBuf;
+  int t1dimx=tdimx-1, t1dimy=tdimy-1;
+  r32 *tbuf = (r32*)theBuf;
+  r32 *rbuf = (r32*)resBuf;
 
   for ( k = 0; k < rdimz; k ++ ) {
     if ( get_static_verbose_reech4x4() != 0 )

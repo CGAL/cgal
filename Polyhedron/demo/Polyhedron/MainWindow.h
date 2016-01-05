@@ -14,7 +14,6 @@
 #include <QFileInfo>
 #include <QStringList>
 #include <QSet>
-
 class Scene;
 class Viewer;
 class QTreeView;
@@ -77,7 +76,8 @@ public Q_SLOTS:
   void make_new_group();
   void updateViewerBBox();
   void open(QString);
-
+  void on_upButton_pressed();
+  void on_downButton_pressed();
   void restoreCollapseState();
   /// given a file extension file, returns true if `filename` matches the filter
   bool file_matches_filter(const QString& filters, const QString& filename);
@@ -211,6 +211,9 @@ protected Q_SLOTS:
    * frame of the viewer to the new selected item's and calls updateGL().
    */
   void selectionChanged();
+  //! Scrolls to the new selected item.
+  void recenterSceneView(const QModelIndex &id);
+
   /*!
    * Invoques a context menu for the currently selected item at the requested
    * position.

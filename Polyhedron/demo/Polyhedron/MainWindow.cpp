@@ -194,6 +194,9 @@ MainWindow::MainWindow(QWidget* parent)
   connect(scene, SIGNAL(selectionChanged(int)),
           this, SLOT(selectSceneItem(int)));
 
+  connect(scene, SIGNAL(itemPicked(const QModelIndex &)),
+          this, SLOT(recenterSceneView(const QModelIndex &)));
+
   connect(sceneView->selectionModel(), 
           SIGNAL(selectionChanged ( const QItemSelection & , const QItemSelection & ) ),
           this, SLOT(updateInfo()));
@@ -1725,4 +1728,25 @@ void MainWindow::make_new_group()
 {
     Scene_group_item * group = new Scene_group_item("New group");
     scene->add_group(group);
+}
+
+void MainWindow::on_upButton_pressed()
+{
+    scene->moveRowUp();
+}
+
+void MainWindow::on_downButton_pressed()
+{
+    scene->moveRowDown();
+}
+
+void MainWindow::recenterSceneView(const QModelIndex &id)
+{
+    if(id.isValid())
+    {
+        // mapFromSource is necessary to convert the QModelIndex received
+        // from the Scene into a valid QModelIndex in the view, beacuse of
+        // the proxymodel
+        sceneView->scrollTo(proxyModel->mapFromSource(id));
+    }
 }

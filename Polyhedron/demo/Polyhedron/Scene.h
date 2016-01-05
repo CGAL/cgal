@@ -140,6 +140,8 @@ public:
 
 
   // QStandardItemModel functions
+  void moveRowUp();
+  void moveRowDown();
   bool dropMimeData(const QMimeData *, Qt::DropAction, int, int, const QModelIndex &parent);
   QVariant data ( const QModelIndex & index, int role = ::Qt::DisplayRole ) const;
   //!@returns the type of data correspondind to the role.
@@ -233,6 +235,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
   //generated automatically by moc
+  void itemPicked(const QModelIndex &);
   void newItem(int);
   void updated_bbox();
   void updated();
@@ -270,6 +273,7 @@ private:
   int item_A;
   //!Index of the item_B.
   int item_B;
+  bool picked;
   static GlSplat::SplatRenderer* ms_splatting;
   static int ms_splattingCounter;
   QMap<QModelIndex, int> index_map;

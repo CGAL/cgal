@@ -115,12 +115,12 @@ BGL/test/BGL/CMakeLists.txt
 BGL/test/BGL/cgal_test_with_cmake
 Boolean_set_operations_2/demo/Boolean_set_operations_2/Makefile
 Boolean_set_operations_2/demo/Boolean_set_operations_2/boolean_operations_2
+Box_intersection_d/test/Box_intersection_d/CMakeLists.txt
 Box_intersection_d/test/Box_intersection_d/automated_test
-Box_intersection_d/test/Box_intersection_d/benchmark_box_intersection
 Box_intersection_d/test/Box_intersection_d/benchmark.data
+Box_intersection_d/test/Box_intersection_d/benchmark_box_intersection
 Box_intersection_d/test/Box_intersection_d/box_grid
 Box_intersection_d/test/Box_intersection_d/cgal_test_with_cmake
-Box_intersection_d/test/Box_intersection_d/CMakeLists.txt
 Box_intersection_d/test/Box_intersection_d/random_set_test
 CGAL_ImageIO/demo/CGALimageIO/Makefile
 CGAL_ImageIO/demo/CGALimageIO/cgal_test_with_cmake

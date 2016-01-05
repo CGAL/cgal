@@ -113,7 +113,7 @@ A `TriangulationDataStructure` has a <!--- property called the --->
 <I>maximal dimension</I> which is a 
 positive integer equal to the maximum dimension a full cell can have.
 This maximal dimension can be chosen by the user at the creation of a 
-TriangulationDataStructure` and can then be queried using the method `tds.maximal_dimension()`.
+`TriangulationDataStructure` and can then be queried using the method `tds.maximal_dimension()`.
 A `TriangulationDataStructure` also knows the <I>current dimension</I> of its full cells,
 which can be queried with `tds.current_dimension()`. In the sequel, let
 us denote the maximal dimension with \f$ D \f$ and the current dimension with \f$ d \f$.

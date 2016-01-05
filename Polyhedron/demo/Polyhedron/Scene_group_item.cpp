@@ -104,3 +104,13 @@ void Scene_group_item::setExpanded(bool b)
 {
     expanded = b;
 }
+
+void Scene_group_item::moveDown(int i)
+{
+    children.move(i, i+1);
+}
+
+void Scene_group_item::moveUp(int i)
+{
+    children.move(i, i-1);
+}

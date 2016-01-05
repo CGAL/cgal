@@ -568,7 +568,7 @@ void keep_connected_components(PolygonMesh& pmesh
  * should be either available as internal property maps 
  * to `pmesh` or provided as \ref namedparameters.
  *
- * \tparam PolygonMesh a model of `FaceListGraph`
+ * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref namedparameters
  *
  * \param pmesh the polygon mesh
@@ -645,7 +645,7 @@ std::size_t keep_largest_connected_components(PolygonMesh& pmesh,
  * should be either available as internal property maps 
  * to `pmesh` or provided as \ref namedparameters.
  *
- * \tparam PolygonMesh a model of `FaceListGraph`
+ * \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
  * \tparam NamedParameters a sequence of \ref namedparameters
  *
  * \param pmesh the polygon mesh
@@ -864,7 +864,7 @@ void keep_or_remove_connected_components(PolygonMesh& pmesh
 * should be either available as internal property map
 * to `pmesh` or provided as \ref namedparameters.
 *
-* \tparam PolygonMesh a model of `FaceListGraph`
+* \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * \tparam NamedParameters a sequence of \ref namedparameters
 * \tparam ComponentRange a range of ids convertible to `std::size`
 * \tparam FaceComponentMap a model of `ReadWritePropertyMap` with
@@ -908,7 +908,7 @@ void keep_connected_components(PolygonMesh& pmesh
 * to `pmesh` or provided as \ref namedparameters.
 *
 *
-* \tparam PolygonMesh a model of `FaceListGraph`
+* \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * \tparam NamedParameters a sequence of \ref namedparameters
 * \tparam ComponentRange a range of ids convertible to `std::size`
 * \tparam FaceComponentMap a model of `ReadWritePropertyMap` with
@@ -951,7 +951,7 @@ void remove_connected_components(PolygonMesh& pmesh
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
 *
-* \tparam PolygonMesh a model of `FaceListGraph`
+* \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * \tparam NamedParameters a sequence of \ref namedparameters
 * \tparam FaceRange a range of `boost::graph_traits<PolygonMesh>::%face_descriptor`
 *         indicating the connected components to be removed.
@@ -1011,7 +1011,7 @@ void remove_connected_components(PolygonMesh& pmesh
 * \note If the removal of the connected components makes `pmesh` a non-manifold surface,
 * then the behavior of this function is undefined.
 *
-* \tparam PolygonMesh a model of `FaceListGraph`
+* \tparam PolygonMesh a model of `FaceListGraph` and `MutableFaceGraph`
 * \tparam NamedParameters a sequence of \ref namedparameters
 * \tparam FaceRange a range of `boost::graph_traits<PolygonMesh>::%face_descriptor`
 *         indicating the connected components to be kept.
