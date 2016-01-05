@@ -102,8 +102,9 @@ int main (int argc, char* argv[])
   // Points with normals.
   Pwn_vector points;
 
+  const char* fname = (argc>1) ? argv[1] : "data/cube.pwn";
   // Loading point set from a file. 
-  std::ifstream stream(argc>1 ? argv[1] : "data/cube.pwn");
+  std::ifstream stream(fname);
 
   if (!stream || 
     !CGAL::read_xyz_points_and_normals(stream,
