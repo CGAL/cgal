@@ -6,5 +6,7 @@ INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Euler_operations.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Graph_geometry.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/helpers.h \
          ${CMAKE_SOURCE_DIR}/BGL/include/CGAL/boost/graph/split_graph_into_polylines.h
+EXAMPLE_PATH               =  ${CMAKE_SOURCE_DIR}/Surface_mesh_skeletonization/examples \
+                              ${CMAKE_SOURCE_DIR}/BGL/examples
 
 ALIASES +=  "bgllink{1}=<a href=\"http://www.boost.org/libs/graph/doc/\1.html\"><code>\1</code></a>"
