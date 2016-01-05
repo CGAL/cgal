@@ -58,18 +58,33 @@ struct Radius {
     : bound(bound)
   {}
 
-  bool operator()(const Kernel::Point_3& p, const Kernel::Point_3& q, const Kernel::Point_3& r) const
+  template <typename AdvancingFront, typename Cell_handle>
+  double operator() (const AdvancingFront& adv, Cell_handle& c,
+                     const int& index) const
   {
+    // bound == 0 is better than bound < infinity
+    // as it avoids the distance computations
     if(bound == 0){
-      return false;
+      return adv.smallest_radius_delaunay_sphere (c, index);
     }
-    double d  = sqrt(squared_distance(p,q));
-    if(d>bound) return true;
-    d = sqrt(squared_distance(p,r)) ;
-    if(d>bound) return true;
-    d = sqrt(squared_distance(q,r));
-    return d>bound;
+
+    // If radius > bound, return infinity so that facet is not used
+    double d  = 0;
+    d = sqrt(squared_distance(c->vertex((index+1)%4)->point(),
+                              c->vertex((index+2)%4)->point()));
+    if(d>bound) return adv.infinity();
+    d = sqrt(squared_distance(c->vertex((index+2)%4)->point(),
+                               c->vertex((index+3)%4)->point()));
+    if(d>bound) return adv.infinity();
+    d = sqrt(squared_distance(c->vertex((index+1)%4)->point(),
+                               c->vertex((index+3)%4)->point()));
+    if(d>bound) return adv.infinity();
+
+    // Otherwise, return usual priority value: smallest radius of
+    // delaunay sphere
+    return adv.smallest_radius_delaunay_sphere (c, index);
   }
+
 };
 
 
