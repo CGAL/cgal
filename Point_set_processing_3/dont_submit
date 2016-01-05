@@ -1,7 +1,0 @@
-cgal_test_with_cmake.bat
-remove_outliers_wrt_median_knn_sq_distance.h
-improved_laplacian_smooth_point_set.h
-improved_jet_smooth_point_set.h
-pca_smooth_point_set.h
-property_map_multiple_streams.cpp
-Point_set_processing_images.ppt
