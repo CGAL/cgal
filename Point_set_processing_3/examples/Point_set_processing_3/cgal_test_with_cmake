@@ -183,6 +183,10 @@ else
     compile_and_run grid_simplification_example
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
   fi
+  if [ `can_compile hierarchy_simplification_example` = "y" ]; then
+    compile_and_run hierarchy_simplification_example
+    [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
+  fi
   if [ `can_compile jet_smoothing_example` = "y" ]; then
     compile_and_run jet_smoothing_example
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
@@ -209,6 +213,10 @@ else
   fi
   if [ `can_compile remove_outliers_example` = "y" ]; then
     compile_and_run remove_outliers_example
+    [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
+  fi
+  if [ `can_compile structuring_example` = "y" ]; then
+    compile_and_run structuring_example
     [ -z "${NEED_CLEAN}" ] && NEED_CLEAN=y
   fi
   if [ `can_compile wlop_simplify_and_regularize_point_set_example` = "y" ]; then
