@@ -1144,59 +1144,106 @@ void Scene_polyhedron_item::invalidate_aabb_tree()
 {
   delete_aabb_tree(this);
 }
-
-void Scene_polyhedron_item::statistics_on_polyhedron()
+QString Scene_polyhedron_item::compute_stats()
 {
-  QDialog dlg;
-  Ui::Polyhedron_demo_statistics_on_polyhedron_dialog ui;
-  ui.setupUi(&dlg);
-  connect(ui.okButtonBox, SIGNAL(accepted()), &dlg, SLOT(accept()));
-
-  ui.label_nbvertices->setText(QString::number(poly->size_of_vertices()));
-  ui.label_nbfacets->setText(QString::number(poly->size_of_facets()));
   poly->normalize_border();
-  ui.label_nbborderedges->setText(QString::number(poly->size_of_border_halfedges()));
-  ui.label_nbedges->setText(QString::number(poly->size_of_halfedges()/2));
   double min, max, mean, mid;
   edges_length(poly, min, max, mean, mid);
-  ui.label_minlength->setText(QString::number(min));
-  ui.label_maxlength->setText(QString::number(max));
-  ui.label_midlength->setText(QString::number(mid));
-  ui.label_meanlength->setText(QString::number(mean));
-  ui.label_nulllength->setText(QString::number(number_of_null_length_edges));
-  if(self_intersect)
-    ui.label_selfintersect->setText("Yes");
-  else
-    ui.label_selfintersect->setText("No");
-  if(is_triangulated)
-      ui.label_degenfaces->setText(QString::number(number_of_degenerated_faces));
-  else
-    ui.label_degenfaces->setText(QString("Unknown (not triangulated)"));
-  if (volume!=-std::numeric_limits<double>::infinity())
-    ui.label_volume->setText(QString::number(volume));
-  else
-    ui.label_volume->setText(QString("Inifinite"));
-  if (area!=-std::numeric_limits<double>::infinity())
-    ui.label_area->setText(QString::number(area));
-  else
-    ui.label_area->setText(QString("Infinite"));
   typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
   int i = 0;
   BOOST_FOREACH(face_descriptor f, faces(*poly)){
     f->id() = i++;
   }
   boost::vector_property_map<int,
-    boost::property_map<Polyhedron, boost::face_index_t>::type>
-    fccmap(get(boost::face_index, *poly));
-  ui.label_nbconnectedcomponents->setText(
-    QString::number(PMP::connected_components(*poly, fccmap)));
+      boost::property_map<Polyhedron, boost::face_index_t>::type>
+      fccmap(get(boost::face_index, *poly));
 
   double mini, maxi, ave;
   angles(poly, mini, maxi, ave);
-  ui.label_minangle->setText(QString::number(mini));
-  ui.label_maxangle->setText(QString::number(maxi));
-  ui.label_averageangle->setText(QString::number(ave));
+  QString nb_vertices(QString::number(poly->size_of_vertices())), nb_facets(QString::number(poly->size_of_facets())),
+      nbborderedges(QString::number(poly->size_of_border_halfedges())), nbedges(QString::number(poly->size_of_halfedges()/2)),
+      minlength(QString::number(CGAL::sqrt(min))), maxlength(QString::number(CGAL::sqrt(max))),midlength(QString::number(CGAL::sqrt(mid))), meanlength(QString::number(CGAL::sqrt(mean))),
+      nulllength(QString::number(number_of_null_length_edges)), selfintersect, degenfaces, s_volume,
+      s_area, nbconnectedcomponents(QString::number(PMP::connected_components(*poly, fccmap))), minangle(QString::number(min)),
+      maxangle(QString::number(max)), averageangle(QString::number(ave));
+  if (area!=-std::numeric_limits<double>::infinity())
+    s_area = QString::number(area);
+  else
+    s_area = QString("Infinite");
+  if (volume!=-std::numeric_limits<double>::infinity())
+    s_volume = QString::number(volume);
+  else
+    s_volume = QString("Inifinite");
+  if(self_intersect)
+    selfintersect = QString("Yes");
+  else
+    selfintersect = QString("No");
+  if(is_triangulated)
+    degenfaces = QString::number(number_of_degenerated_faces);
+  else
+    degenfaces = QString("Unknown (not triangulated)");
+ return QString("<html> <table border=1> "
+                                    "<tr><td colspan = 2></td><td>%18</td>"
+                                    "<tr><th rowspan=8> Properties </th>"
+                                        "<td>Nb. Vertices</td> <td>%1</td> "
+                                    "</tr>"
+                                        "<tr><td> Nb. Facets </td><td>%2</td></tr>"
+                                        "<tr><td>Nb. Connected Components</td> <td>%3</td> </tr> "
+                                        "<tr><td>Nb. border edges</td><td>%4</td></tr> "
+                                        "<tr><td>Nb. Degenerated Faces</td><td>%5</td></tr>"
+                                        "<tr><td>Area</td><td>%6</td></tr>"
+                                        "<tr><td>Volume</td><td>%7</td></tr>"
+                                        "<tr><td>Self-Intersecting</td><td>%8</td></tr> "
 
-  dlg.exec();
+                                    "<tr><th rowspan=6> Edges </th>"
+                                        "<td>Nb. Edges</td><td>%9</td>"
+                                    "</tr> "
+                                        "<tr><td> Minimum Length </td><td>%10</td></tr>"
+                                        "<tr><td> Maximum Length </td><td>%11</td></tr>"
+                                        "<tr><td> Median Length  </td><td>%12</td></tr>"
+                                        "<tr><td> Mean Length    </td><td>%13</td></tr>"
+                                        "<tr><td> Nb. Null Length</td><td>%14</td></tr>"
+                                    "<tr><th rowspan=3>Angles </th>"
+                                        "<td>Minimum</td><td>%15</td>"
+                                    "</tr>"
+                                        "<tr><td> Maximum</td><td>%16</td></tr>"
+                                        "<tr><td> Average</td><td>%17</td></tr>"
+                                    "</tr>"
+                                    "</table></html>")
+                            .arg(nb_vertices)
+                            .arg(nb_facets)
+                            .arg(nbconnectedcomponents)
+                            .arg(nbborderedges)
+                            .arg(degenfaces)
+                            .arg(s_area)
+                            .arg(s_volume)
+                            .arg(selfintersect)
+                            .arg(nbedges)
+                            .arg(minlength)
+                            .arg(maxlength)
+                            .arg(midlength)
+                            .arg(meanlength)
+                            .arg(nulllength)
+                            .arg(minangle)
+                            .arg(maxangle)
+                            .arg(averageangle)
+                            .arg(name());
+}
+void Scene_polyhedron_item::stat_dlg_update()
+{
+
+  statistics_dlg->hide();
+  statistics_on_polyhedron();
+}
+void Scene_polyhedron_item::statistics_on_polyhedron()
+{
+  statistics_dlg = new QDialog();
+  Ui::Polyhedron_demo_statistics_on_polyhedron_dialog ui;
+  ui.setupUi(statistics_dlg);
+  connect(ui.okButtonBox, SIGNAL(accepted()), statistics_dlg, SLOT(accept()));
+  connect(ui.updateButton, SIGNAL(clicked()), this, SLOT(stat_dlg_update()));
+   ui.label_htmltab->setText(compute_stats());
+  statistics_dlg->show();
+  statistics_dlg->raise();
 }
 

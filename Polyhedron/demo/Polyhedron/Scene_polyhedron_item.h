@@ -91,6 +91,7 @@ public Q_SLOTS:
     void update_halfedge_indices();
     void invalidate_aabb_tree();
     void statistics_on_polyhedron();
+    void stat_dlg_update();
 
 Q_SIGNALS:
     void selected_vertex(void*);
@@ -105,6 +106,8 @@ private:
 
 private:
     Polyhedron* poly;
+    QDialog *statistics_dlg;
+    QString compute_stats();
 
 private:
     typedef Scene_item Base;
