@@ -98,6 +98,7 @@ and their associated classes:
 - `CGAL::Polyhedral_mesh_domain_3<Polyhedron,IGT,TriangleAccessor>`
 - `CGAL::Polyhedral_mesh_domain_with_features_3<IGT>`
 - `CGAL::Labeled_image_mesh_domain_3<Image,BGT>`
+- `CGAL::Gray_image_mesh_domain_3<Image,BGT,Image_word_type>`
 - `CGAL::Mesh_domain_with_polyline_features_3<MeshDomain_3>`
 - `CGAL::Mesh_polyhedron_3<IGT>`
 - `CGAL::Triangle_accessor_3<CGAL::Polyhedron_3<K>,K>`

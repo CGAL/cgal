@@ -795,11 +795,11 @@ output_to_medit(std::ostream& os,
   {
     V[vit] = inum++;
     Point_3 p = vit->point();
-    os << CGAL::to_double(p.x()) << " "
-       << CGAL::to_double(p.y()) << " "
-       << CGAL::to_double(p.z()) << " "
+    os << CGAL::to_double(p.x()) << ' '
+       << CGAL::to_double(p.y()) << ' '
+       << CGAL::to_double(p.z()) << ' '
        << get(vertex_pmap, vit)
-       <<  '\n';
+       << '\n';
   }
 
   //-------------------------------------------------------
@@ -822,7 +822,7 @@ output_to_medit(std::ostream& os,
       if (i != fit->second)
       {
         const Vertex_handle& vh = (*fit).first->vertex(i);
-        os << V[vh] << " ";
+        os << V[vh] << ' ';
       }
     }
     os << get(facet_pmap, *fit) << '\n';
@@ -835,7 +835,7 @@ output_to_medit(std::ostream& os,
         if (i != fit->second)
         {
           const Vertex_handle& vh = (*fit).first->vertex(i);
-          os << V[vh] << " ";
+          os << V[vh] << ' ';
         }
       }
       os << get(facet_twice_pmap, *fit) << '\n';
@@ -853,7 +853,7 @@ output_to_medit(std::ostream& os,
        ++cit )
   {
     for (int i=0; i<4; i++)
-      os << V[cit->vertex(i)] << " ";
+      os << V[cit->vertex(i)] << ' ';
 
     os << get(cell_pmap, cit) << '\n';
   }

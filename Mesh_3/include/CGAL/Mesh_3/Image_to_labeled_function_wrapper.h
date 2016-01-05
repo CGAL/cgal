@@ -27,9 +27,9 @@
 #ifndef CGAL_MESH_3_IMAGE_TO_LABELED_FUNCTION_WRAPPER_H
 #define CGAL_MESH_3_IMAGE_TO_LABELED_FUNCTION_WRAPPER_H
 
-
-
 #include <CGAL/Image_3.h>
+#include <CGAL/function_objects.h>
+
 
 namespace CGAL {
 
@@ -46,6 +46,8 @@ template<class Image_,
          class BGT,
          typename Image_word_type = unsigned char,
          typename Return_type = int,
+         typename Transform = Identity<Image_word_type>,
+         bool labeled_image = true,
          bool use_trilinear_interpolation=true>
 class Image_to_labeled_function_wrapper
 {
@@ -56,8 +58,13 @@ public:
   typedef typename BGT::Point_3   Point_3;
 
   /// Constructor
-  Image_to_labeled_function_wrapper(const Image_& image)
-    : r_im_(image) {}
+  Image_to_labeled_function_wrapper(const Image_& image, 
+                                    const Transform& transform = Transform(),
+                                    const Image_word_type value_outside = 0)
+    : r_im_(image)
+    , transform(transform)
+    , value_outside(value_outside)
+  {}
 
   // Default copy constructor and assignment operator are ok
 
@@ -73,12 +80,23 @@ public:
   {
     if ( use_trilinear_interpolation )
     {
-      return static_cast<return_type>(
+      if ( labeled_image )
+      {
+        return static_cast<return_type>(transform(
           r_im_.labellized_trilinear_interpolation(
               CGAL::to_double(p.x()),
               CGAL::to_double(p.y()),
               CGAL::to_double(p.z()),
-              word_type(0)));
+              value_outside)));
+      } else {
+        return static_cast<return_type>(transform(
+          static_cast<typename Transform::argument_type>(
+            r_im_.template trilinear_interpolation<Image_word_type, double>(
+              CGAL::to_double(p.x()),
+              CGAL::to_double(p.y()),
+              CGAL::to_double(p.z()),
+              value_outside))));
+      }
     }
     else
     {
@@ -101,13 +119,16 @@ public:
       }
 
       const word_type* data = static_cast<const word_type*>(r_im_.data());
-      return data[ pz*dimy*dimx + py*dimx + px ];
+      return static_cast<return_type>(transform(
+                data[pz*dimy*dimx + py*dimx + px]));
     }
   }
 
 private:
   /// Labeled image to wrap
   const Image_& r_im_;
+  const Transform transform;
+  const Image_word_type value_outside;
 
 };  // end class Image_to_labeled_function_wrapper
 
