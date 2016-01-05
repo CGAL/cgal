@@ -467,6 +467,11 @@ public:
   /// Returns bbox
   Bbox_3 bbox() const;
 
+  void clear_manifold_info() {
+    edge_facet_counter_.clear();
+    manifold_info_initialized_ = false;
+  }
+
 private:
   void init_manifold_info() const {
     for(typename Tr::All_vertices_iterator
@@ -476,6 +481,9 @@ private:
     {
       vit->set_c2t3_cache(0, -1);
     }
+
+    edge_facet_counter_.clear();
+
     for(typename Tr::Finite_facets_iterator
           fit = triangulation().finite_facets_begin(),
           end = triangulation().finite_facets_end();
