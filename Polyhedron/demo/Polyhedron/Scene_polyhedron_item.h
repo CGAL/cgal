@@ -23,7 +23,28 @@ class QMenu;
 class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item 
         : public CGAL::Three::Scene_item{
     Q_OBJECT
-public:  
+public:
+  enum STATS {
+    NB_VERTICES = 0,
+    NB_FACETS,
+    NB_CONNECTED_COMPOS,
+    NB_BORDER_EDGES,
+    NB_DEGENERATED_FACES,
+    AREA,
+    VOLUME,
+    SELFINTER,
+    NB_EDGES,
+    MIN_LENGTH,
+    MAX_LENGTH,
+    MID_LENGTH,
+    MEAN_LENGTH,
+    NB_NULL_LENGTH,
+    MIN_ANGLE,
+    MAX_ANGLE,
+    MEAN_ANGLE,
+    NAME
+  };
+  QString compute_stats(int type);
     Scene_polyhedron_item();
     //   Scene_polyhedron_item(const Scene_polyhedron_item&);
     Scene_polyhedron_item(const Polyhedron& p);
@@ -90,8 +111,6 @@ public Q_SLOTS:
     void update_facet_indices();
     void update_halfedge_indices();
     void invalidate_aabb_tree();
-    void statistics_on_polyhedron();
-    void stat_dlg_update();
 
 Q_SIGNALS:
     void selected_vertex(void*);
@@ -106,8 +125,6 @@ private:
 
 private:
     Polyhedron* poly;
-    QDialog *statistics_dlg;
-    QString compute_stats();
 
 private:
     typedef Scene_item Base;
