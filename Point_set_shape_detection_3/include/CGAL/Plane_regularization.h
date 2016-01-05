@@ -373,7 +373,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
               listp.push_back(pt);
             }
           m_centroids.push_back (CGAL::centroid (listp.begin (), listp.end ()));
-          m_areas.push_back ((FT)(m_planes[i]->indices_of_assigned_points().size()) / 100.);
+          m_areas.push_back ((FT)(m_planes[i]->indices_of_assigned_points().size()) / (FT)100.);
         }
     }
 
