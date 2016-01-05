@@ -759,8 +759,7 @@ operator()(int nb_iterations, Visitor visitor)
     % initial_vertices_nb
     % (running_time_.time() - step_begin)
     % (running_time_.time() / (i+1))
-    % sum_moves_
-    << std::endl;
+    % sum_moves_;
     step_begin = running_time_.time();
 #endif
 
@@ -770,6 +769,10 @@ operator()(int nb_iterations, Visitor visitor)
     if(check_convergence())
       break;
   }
+#ifdef CGAL_MESH_3_OPTIMIZER_VERBOSE
+  std::cerr << std::endl;
+#endif
+
   running_time_.stop();
 
 #ifdef CGAL_MESH_3_PROFILING
