@@ -84,7 +84,7 @@ public:
 
   void intersection(const Point_3& query, const Primitive& primitive)
   {
-    const Index_type& id = get(index_map, primitive);
+    const Index_type& id = get(index_map, primitive.id());
     if(keep != (set_of_indices.count(id) > 0)) return;
     if(!m_closest_point_initialized) {
       typedef CGAL::internal::Primitive_helper<AABBTraits> Helper;

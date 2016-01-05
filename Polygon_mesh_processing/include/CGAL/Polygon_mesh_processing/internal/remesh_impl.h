@@ -191,16 +191,15 @@ namespace internal {
       tag_halfedges_status(face_range, ecmap);
 
       //build AABB tree of input surface
-      //collect connected components
-      boost::vector_property_map<int,
-        typename boost::property_map<PM, boost::face_index_t>::type>
-          fccmap(get(boost::face_index, mesh_));
       PMP::connected_components(mesh_,
-        fccmap,
+        patch_ids_pmap_,// set patch_id() for each face
         PMP::parameters::edge_is_constrained_map(ecmap));
 
       tree_ptr_ = new AABB_tree();
-      tree_ptr_->build(faces(mesh_).first, faces(mesh_).second, mesh_, vpmap_, fccmap);
+      tree_ptr_->build(faces(mesh_).first, faces(mesh_).second,
+                       mesh_,
+                       vpmap_,
+                       patch_ids_pmap_);
       tree_ptr_->accelerate_distance_queries();
     }
 
@@ -829,19 +828,21 @@ namespace internal {
         if (!is_on_patch(v))
           continue;
 
-        // if the vertex is not on the destination polyhedron
-        typedef std::map<face_descriptor, std::size_t> FaceCCMap;
-        FaceCCMap f_cc;
-        boost::associative_property_map<FaceCCMap> face_ccmap(f_cc);
+        typename boost::property_traits<Patch_id_property_map>::value_type
+          patch_id = get(patch_ids_pmap_, face(halfedge(v, mesh_), mesh_));
 
-        PMP::connected_components(mesh_,
-          face_ccmap,
-          PMP::parameters::edge_is_constrained_map(Constraint_property_map(*this)));
+        internal::Filtered_projection_traits<typename AABB_tree::AABB_traits,
+                                             Patch_id_property_map,
+                                             true> /* keep primitives with matching IDs */
+        projection_traits(
+          typename boost::property_traits<Patch_id_property_map>::value_type(patch_id),
+          tree_ptr_->traits(),
+          patch_ids_pmap_);
 
-        Point proj = this->project_vertex_onto(v,
-          get(face_ccmap, face(halfedge(v, mesh_), mesh_)),
-          face_ccmap);
+        tree_ptr_->traversal(get(vpmap_, v), projection_traits);
+        CGAL_assertion(projection_traits.found());
 
+        Point proj = projection_traits.closest_point();
         put(vpmap_, v, proj);
       }
 
@@ -859,43 +860,35 @@ namespace internal {
       dump("5-project.off");
 #endif
     }
+
 private:
-   struct AABB_CC_property_map
+   struct Patch_id_property_map
    {
-     typedef boost::readable_property_map_tag      category;
+     typedef boost::read_write_property_map_tag    category;
      typedef std::size_t                           value_type;
      typedef std::size_t&                          reference;
-     typedef typename AABB_tree::AABB_primitive    key_type;
+     typedef typename face_descriptor              key_type;
 
+   private:
+     std::map<key_type, value_type> patch_ids_;
+
+   public:
      value_type operator[](const key_type& f)
      {
-       return f.patch_id();
+       return patch_ids_[f];
      }
-     friend value_type get(const AABB_CC_property_map& /* map */,
-                           const key_type& f) {
-       return f.patch_id();
+     friend value_type get(const Patch_id_property_map& map,
+                           const key_type& f)
+     {
+       return map.patch_ids_.at(f);
+     }
+     friend void put(Patch_id_property_map& map,
+                     const key_type& f,
+                     const value_type& patch_id)
+     {
+       map.patch_ids_.at(f) = patch_id;
      }
    };
-
-   template<typename FaceCCMap>
-   Point project_vertex_onto(vertex_descriptor v,
-                             std::size_t patch_id,
-                             const FaceCCMap& fccmap) const
-    {
-      // SL4JT: fccmap not used?
-      internal::Filtered_projection_traits<typename AABB_tree::AABB_traits,
-        AABB_CC_property_map,
-        true> /* keep primitives with matching IDs */
-        projection_traits(
-          typename boost::property_traits<AABB_CC_property_map>::value_type(patch_id),
-          tree_ptr_->traits(),
-          AABB_CC_property_map());
-
-       tree_ptr_->traversal(get(vpmap_, v), projection_traits);
-
-      CGAL_assertion(projection_traits.found());
-      return projection_traits.closest_point();
-    }
 
   private:
     double sqlength(const vertex_descriptor& v1,
@@ -1442,6 +1435,7 @@ private:
     boost::unordered_map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
     bool protect_constraints_;
     std::set<edge_descriptor> constrained_edges_;
+    Patch_id_property_map patch_ids_pmap_;
 
   };//end class Incremental_remesher
 }//end namespace internal
