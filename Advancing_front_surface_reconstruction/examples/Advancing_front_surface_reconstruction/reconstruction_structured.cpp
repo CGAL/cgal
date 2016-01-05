@@ -33,7 +33,7 @@ typedef CGAL::Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;
 
 typedef CGAL::Triangulation_data_structure_3<LVb,LCb> Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
-typedef typename Triangulation_3::Vertex_handle Vertex_handle;
+typedef Triangulation_3::Vertex_handle Vertex_handle;
 
 typedef CGAL::cpp11::array<std::size_t,3> Facet;
 
