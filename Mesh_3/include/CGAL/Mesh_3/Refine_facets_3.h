@@ -284,6 +284,8 @@ public:
     , r_c3t3_(c3t3)
   {}
 
+  void scan_triangulation_impl_amendement() const {}
+
   /// Gets the point to insert from the element to refine
   Point refinement_point_impl(const Facet& facet) const
   {
@@ -300,6 +302,12 @@ public:
     this->set_last_vertex_index(get_facet_surface_center_index(facet));
     return get_facet_surface_center(facet);
   };
+
+  Facet get_next_element_impl()
+  {
+    return this->extract_element_from_container_value(
+      Container_::get_next_element_impl());
+  }
 
   /// Job to do before insertion
   void before_insertion_impl(const Facet& facet,
@@ -768,12 +776,6 @@ public:
   {
   }
 
-  Facet get_next_element_impl()
-  {
-    return this->extract_element_from_container_value(
-      Container_::get_next_element_impl());
-  }
-
   Facet get_next_local_element_impl()
   {
     return extract_element_from_container_value(
@@ -1012,7 +1014,7 @@ number_of_bad_elements_impl()
 #if defined(CGAL_MESH_3_VERBOSE) || defined(CGAL_MESH_3_PROFILING)
   std::cerr << "Scanning triangulation for bad facets - "
     "number of finite facets = "
-    << r_c3t3_.triangulation().number_of_finite_facets() << "...";
+    << this->r_c3t3_.triangulation().number_of_finite_facets() << "...";
 #endif
   int num_tested_facets = 0;
   for(Finite_facet_iterator facet_it = this->r_tr_.finite_facets_begin();
