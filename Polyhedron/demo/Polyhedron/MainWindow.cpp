@@ -1246,115 +1246,26 @@ void MainWindow::removeManipulatedFrame(CGAL::Three::Scene_item* item)
 }
 
 void MainWindow::updateInfo() {
-  int null_edges(0), null_facet(0),isolated(0), polys(0), vertices(0), edges(0), facets(0), total_edges(0), holes(0);
-  double min_edge(std::pow(2, sizeof(double))), max_edge(0);
-  double mean(0);
-  bool all_triangle = true, none_self_interset = true;
-  Q_FOREACH(int id, getSelectedSceneItemIndices())
-  {
-    Scene_polyhedron_item* item =  qobject_cast<Scene_polyhedron_item*>(scene->item(id));
-    if(item)
-    {
-      all_triangle &= item->triangulated();
-      none_self_interset &= item->self_intersected();
-      polys++;
-      vertices += item->polyhedron()->size_of_vertices();
-      edges += item->polyhedron()->size_of_halfedges()/2;
-      facets += item->polyhedron()->size_of_facets();
-      null_edges += item->getNumberOfNullLengthEdges();
-      null_facet += item->getNumberOfDegeneratedFaces();
-      isolated += item->getNbIsolatedvertices();
-      max_edge = CGAL::max(max_edge, item->getMaxEdgesLength());
-      min_edge = CGAL::min(min_edge, item->getMinEdgesLength());
-      mean += item->getMeanEdgesLength() * item->polyhedron()->size_of_halfedges()/2;
-      total_edges += edges;
-
-      //gets the number of holes
-
-      //if is_closed is false, then there are borders (= holes)
-      if(!item->polyhedron()->is_closed())
-      {
-        int n(0), i(0);
-
-        // initialization : keep the original ids in memory and set them to 0
-        std::vector<int> ids;
-        for(Polyhedron::Halfedge_iterator it = item->polyhedron()->halfedges_begin(); it != item->polyhedron()->halfedges_end(); ++it)
-        {
-          ids.push_back(it->id());
-          it->id() = 0;
-        }
-
-        //if a border halfedge is found, increment the number of hole and set all the ids of the hole's border halfedges to 1 to prevent
-        // the algorithm from counting them several times.
-        for(Polyhedron::Halfedge_iterator it = item->polyhedron()->halfedges_begin(); it != item->polyhedron()->halfedges_end(); ++it){
-          if(it->is_border() && it->id() == 0){
-            n++;
-            Polyhedron::Halfedge_around_facet_circulator hf_around_facet = it->facet_begin();
-            do {
-              CGAL_assertion(hf_around_facet->id() == 0);
-              hf_around_facet->id() = 1;
-            } while(++hf_around_facet != it->facet_begin());
-          }
-        }
-        //reset the ids to their initial value
-        for(Polyhedron::Halfedge_iterator it = item->polyhedron()->halfedges_begin(); it != item->polyhedron()->halfedges_end(); ++it)
-        {
-          it->id() = ids[i++];
-        }
-        holes += n;
-      }
+  CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
+  if(item) {
+    QString item_text = item->toolTip();
+    QString item_filename = item->property("source filename").toString();
+    item_text += QString("Bounding box: min (%1,%2,%3), max(%4,%5,%6)")
+            .arg(item->bbox().xmin)
+            .arg(item->bbox().ymin)
+            .arg(item->bbox().zmin)
+            .arg(item->bbox().xmax)
+            .arg(item->bbox().ymax)
+            .arg(item->bbox().zmax);
+    if(item->getNbIsolatedvertices() > 0)
+    item_text += QString("<br />Number of isolated vertices : %1<br />").arg(item->getNbIsolatedvertices());
+    if(!item_filename.isEmpty()) {
+      item_text += QString("<br /><i>File: %1").arg(item_filename);
     }
-  }
-  if(polys >0 && polys == getSelectedSceneItemIndices().size())
-  {
-    mean /= total_edges;
-    QString str =
-           QObject::tr("<p>Number of vertices: %1<br />"
-                         "Number of edges: %2<br />"
-                       "Number of facets: %3</p>")
-              .arg(vertices)
-              .arg(edges)
-              .arg(facets);
-    str += QString("Minimum edge length : %1<br />").arg(min_edge);
-    str += QString("Maximum edge length : %1<br />").arg(max_edge);
-    str += QString("Mean edge length : %1<br />").arg(mean);
-    str += QString("Number of holes : %1<br />").arg(holes);
-    str += QString("Number of null length edges : %1<br />").arg(null_edges);
-    if(all_triangle)
-      str += QString("Number of degenerated faces : %1<br />").arg(null_facet);
-    if(none_self_interset)
-      str += QString("No self-intersection");
-    else
-      str += QString("There are self-intersections");
-    str+="</p>";
-    if(isolated > 0)
-      str += QString("<br />Number of isolated vertices : %1<br />").arg(isolated);
-    ui->infoLabel->setText(str);
+    ui->infoLabel->setText(item_text);
   }
   else
-  {
-    CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
-    if(item) {
-      QString item_text = item->toolTip();
-      QString item_filename = item->property("source filename").toString();
-      item_text += QString("Bounding box: min (%1,%2,%3), max(%4,%5,%6)")
-          .arg(item->bbox().xmin)
-          .arg(item->bbox().ymin)
-          .arg(item->bbox().zmin)
-          .arg(item->bbox().xmax)
-          .arg(item->bbox().ymax)
-          .arg(item->bbox().zmax);
-      item_text += QString("Number of holes : %1<br />").arg(holes);
-      if(item->getNbIsolatedvertices() > 0)
-        item_text += QString("<br />Number of isolated vertices : %1<br />").arg(item->getNbIsolatedvertices());
-      if(!item_filename.isEmpty()) {
-        item_text += QString("<br /><i>File: %1").arg(item_filename);
-      }
-      ui->infoLabel->setText(item_text);
-    }
-    else
-      ui->infoLabel->clear();
-  }
+    ui->infoLabel->clear();
 }
 void MainWindow::updateDisplayInfo() {
   CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
