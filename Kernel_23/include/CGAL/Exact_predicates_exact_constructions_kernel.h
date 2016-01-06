@@ -28,7 +28,7 @@
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Lazy_exact_nt.h>
-
+#include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/internal/Exact_type_selector.h>
 
 #ifndef CGAL_DONT_USE_LAZY_KERNEL
@@ -87,6 +87,11 @@ class Epeck
 #endif // no CGAL_DONT_USE_LAZY_KERNEL
 
 typedef Epeck Exact_predicates_exact_constructions_kernel;
+
+template <>
+struct Triangulation_structural_filtering_traits<Epeck> {
+  typedef Tag_true Use_structural_filtering_tag;
+};
 
 } //namespace CGAL
 
