@@ -86,8 +86,6 @@ namespace internal {
 
   private:
 
-    const std::size_t minus1;
-    
     class My_point_property_map{
       const std::vector<Point>& points;
     public:
@@ -158,14 +156,14 @@ namespace internal {
   public:
 
     Point_set_structuring (Traits t = Traits ())
-      : minus1 (static_cast<std::size_t>(-1)), m_traits (t)
+      : m_traits (t)
     {
     }
 
     
     Point_set_structuring (Input_iterator begin, Input_iterator end,
                            const Shape_detection_3::Efficient_RANSAC<Traits>& shape_detection)
-      : minus1 (static_cast<std::size_t>(-1)), m_traits (shape_detection.traits())
+      : m_traits (shape_detection.traits())
     {
       for (Input_iterator it = begin; it != end; ++ it)
         {
@@ -173,7 +171,7 @@ namespace internal {
           m_normals.push_back (get(m_normal_pmap, *it));
         }
       
-      m_indices = std::vector<std::size_t> (m_points.size (), minus1);
+      m_indices = std::vector<std::size_t> (m_points.size (), std::numeric_limits<std::size_t>::max());
       m_status = std::vector<Point_status> (m_points.size (), POINT);
 
       BOOST_FOREACH (boost::shared_ptr<Shape> shape, shape_detection.shapes())
@@ -705,7 +703,7 @@ namespace internal {
         {
           std::size_t ind_i = m_indices[i];
 
-          if (ind_i == minus1)
+          if (ind_i == std::numeric_limits<std::size_t>::max())
             continue;
 
           Fuzzy_sphere query (i, radius, 0., tree.traits());
@@ -717,7 +715,7 @@ namespace internal {
           for (std::size_t k = 0; k < neighbors.size(); ++ k)
             {
               std::size_t ind_k = m_indices[neighbors[k]];
-              if (ind_k != minus1 && ind_k != ind_i)
+              if (ind_k != std::numeric_limits<std::size_t>::max() && ind_k != ind_i)
                 adjacency_table[ind_i][ind_k] = true;
             }
         }
