@@ -344,7 +344,7 @@ Specifically, this example constructs a Theta graph first and then calculates
 the shortest paths on this graph by calling the Dijkstra's algorithm from BGL.
 It mainly consists of the following steps:
 
-1. Define `Exact_predicates_inexact_constructions_kernel_with_root_of` as the kernel type
+1. Define `Exact_predicates_inexact_constructions_kernel` as the kernel type
    to construct the graph inexactly.
 2. Define a structure named `Edge_property` for storing the Euclidean length of each edge,
    which is needed by the Dijkstra's algorithm. 
