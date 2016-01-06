@@ -231,6 +231,18 @@ public:
 
   //!Handles key press events.
   virtual bool keyPressEvent(QKeyEvent*){return false;}
+
+  //!Contains the header for the table in the statistics dialog
+  struct header_data{
+   //!Contains the name of the category of statistics and the number of lines it will contain
+   QList<std::pair<QString, int> > categories;
+   //!Contains the name of the lines of each category. Must be sorted from top to bottom.
+   QList<QString> titles;
+  };
+  //!Fills a header_data struct with the header information.
+  virtual void header(header_data&);
+  //!Returns a QString containing the requested value for the the table in the statistics dialog
+  virtual QString compute_stats(int i);
   //!Contrains the number of group and subgroups containing this item.
   int has_group;
 

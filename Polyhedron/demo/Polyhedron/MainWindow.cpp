@@ -30,7 +30,6 @@
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <stdexcept>
-#include <Scene_polyhedron_item.h>
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
 #  ifdef QT_SCRIPTTOOLS_LIB
@@ -1174,13 +1173,13 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
 
   QMenu* menu = item->contextMenu();
   if(menu) {
-    QAction* actionStatistics =
-    menu->addAction(tr("Statistics..."));
-    actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
-    connect(actionStatistics, SIGNAL(triggered()),
-            this, SLOT(statistics_on_polyhedron()));
     bool menuChanged = menu->property(prop_name).toBool();
     if(!menuChanged) {
+      QAction* actionStatistics =
+      menu->addAction(tr("Statistics..."));
+      actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
+      connect(actionStatistics, SIGNAL(triggered()),
+              this, SLOT(statistics_on_polyhedron()));
       menu->addSeparator();
       if(!item->property("source filename").toString().isEmpty()) {
         QAction* reload = menu->addAction(tr("&Reload item from file"));
@@ -1803,137 +1802,47 @@ QString MainWindow::get_polyhedron_stats()
   QString str;
   for(int i; i< classnames.size(); i++)
   {
-    //1st row : item names
-    str.append("<html> <table border=1>""<tr><td colspan = 2></td>");
-    Q_FOREACH(Scene_item* sit, items[i])
+    CGAL::Three::Scene_item::header_data data;
+    items[i].at(0)->header(data);
+    int title = 0;
+    int titles_limit =0;
+    if(data.titles.size()>0)
     {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::NAME)));
-    }
-    //2nd row : title "Properties" on 8 lines, and Vertices data.
-    str.append(QString("<tr><th rowspan=8> Properties </th>""<td>Nb. Vertices</td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::NB_VERTICES)));
-    }
-    //etc.
-    str.append(QString("</tr>""<tr><td> Nb. Facets </td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::NB_FACETS)));
-    }
-    str.append(QString("</tr>""<tr><td>Nb. Connected Components</td> "));
+      //1st row : item names
+      str.append("<html> <table border=1>""<tr><td colspan = 2></td>");
+      Q_FOREACH(Scene_item* sit, items[i])
+      {
+        str.append(QString("<td>%1</td>").arg(sit->name()));
+      }
 
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::NB_CONNECTED_COMPOS)));
+
+
+      for(int j=0; j<data.categories.size(); j++)
+      {
+        str.append(QString("<tr><th rowspan=%1> %2 </th>")
+                   .arg(QString::number(data.categories[j].second))
+                   .arg(data.categories[j].first));
+        titles_limit+=data.categories[j].second;
+        str.append(QString("<td> %1 </td>").arg(data.titles.at(title)));
+        Q_FOREACH(Scene_item* sit, items[i])
+        {
+          str.append(QString("<td>%1</td>").arg(sit->compute_stats(title)));
+        }
+        title++;
+        for(title; title<titles_limit; title++)
+        {
+          str.append(QString("</tr><tr><td> %1 </td>").arg(data.titles.at(title)));
+          Q_FOREACH(Scene_item* sit, items[i])
+          {
+            str.append(QString("<td>%1</td>").arg(sit->compute_stats(title)));
+          }
+        }
+
+        str.append("</tr>");
+      }
+
+      str.append(QString("</tr>""</table></html>"));
     }
-    str.append(QString("</tr> ""<tr><td>Nb. border edges</td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::NB_BORDER_EDGES)));
-    }
-    str.append(QString("</tr> ""<tr><td>Nb. Degenerated Faces</td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::NB_DEGENERATED_FACES)));
-    }
-    str.append(QString("</tr>""<tr><td>Area</td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::AREA)));
-    }
-    str.append(QString("</tr>""<tr><td>Volume</td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::VOLUME)));
-    }
-    str.append(QString("</tr>""<tr><td>Self-Intersecting</td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::SELFINTER)));
-    }
-    str.append(QString("</tr> ""<tr><th rowspan=6> Edges </th>""<td>Nb. Edges</td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::NB_EDGES)));
-    }
-    str.append(QString("</tr> ""<tr><td> Minimum Length </td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::MIN_LENGTH)));
-    }
-    str.append(QString("</tr>""<tr><td> Maximum Length </td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::MAX_LENGTH)));
-    }
-    str.append(QString("</tr>""<tr><td> Median Length  </td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::MID_LENGTH)));
-    }
-    str.append(QString("</tr>""<tr><td> Mean Length    </td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::MEAN_LENGTH)));
-    }
-    str.append(QString ("</tr>""<tr><td> Nb. Null Length</td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::NB_NULL_LENGTH)));
-    }
-    str.append(QString("</tr>""<tr><th rowspan=3>Angles </th>""<td>Minimum</td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::MIN_ANGLE)));
-    }
-    str.append(QString ("</tr>""<tr><td> Maximum</td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::MAX_ANGLE)));
-    }
-    str.append(QString("</tr>""<tr><td> Average</td>"));
-    Q_FOREACH(Scene_item* sit, items[i])
-    {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(sit);
-      if(item)
-        str.append(QString("<td>%1</td>").arg(item->compute_stats(Scene_polyhedron_item::MEAN_ANGLE)));
-    }
-    str.append(QString("</tr>""</tr>""</table></html>"));
   }
   return str;
 }

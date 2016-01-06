@@ -24,27 +24,28 @@ class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
         : public CGAL::Three::Scene_item{
     Q_OBJECT
 public:
-  enum STATS {
-    NB_VERTICES = 0,
-    NB_FACETS,
-    NB_CONNECTED_COMPOS,
-    NB_BORDER_EDGES,
-    NB_DEGENERATED_FACES,
-    AREA,
-    VOLUME,
-    SELFINTER,
-    NB_EDGES,
-    MIN_LENGTH,
-    MAX_LENGTH,
-    MID_LENGTH,
-    MEAN_LENGTH,
-    NB_NULL_LENGTH,
-    MIN_ANGLE,
-    MAX_ANGLE,
-    MEAN_ANGLE,
-    NAME
-  };
-  QString compute_stats(int type);
+    enum STATS {
+      NB_VERTICES = 0,
+      NB_FACETS,
+      NB_CONNECTED_COMPOS,
+      NB_BORDER_EDGES,
+      NB_DEGENERATED_FACES,
+      HOLES,
+      AREA,
+      VOLUME,
+      SELFINTER,
+      NB_EDGES,
+      MIN_LENGTH,
+      MAX_LENGTH,
+      MID_LENGTH,
+      MEAN_LENGTH,
+      NB_NULL_LENGTH,
+      MIN_ANGLE,
+      MAX_ANGLE,
+      MEAN_ANGLE,
+    };
+    QString compute_stats(int type);
+    void header(header_data &);
     Scene_polyhedron_item();
     //   Scene_polyhedron_item(const Scene_polyhedron_item&);
     Scene_polyhedron_item(const Polyhedron& p);

@@ -1167,6 +1167,7 @@ QString Scene_polyhedron_item::compute_stats(int type)
       degenfaces,
       s_volume,
       s_area,
+      nb_holes,
       nbconnectedcomponents(QString::number(PMP::connected_components(*poly, fccmap))),
       minangle(QString::number(mini)),
       maxangle(QString::number(maxi)),
@@ -1187,6 +1188,41 @@ QString Scene_polyhedron_item::compute_stats(int type)
     degenfaces = QString::number(number_of_degenerated_faces);
   else
     degenfaces = QString("Unknown (not triangulated)");
+
+  //gets the number of holes
+
+   //if is_closed is false, then there are borders (= holes)
+     int n(0);
+     i = 0;
+
+     // initialization : keep the original ids in memory and set them to 0
+     std::vector<int> ids;
+     for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it)
+     {
+       ids.push_back(it->id());
+       it->id() = 0;
+     }
+
+     //if a border halfedge is found, increment the number of hole and set all the ids of the hole's border halfedges to 1 to prevent
+     // the algorithm from counting them several times.
+     for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it){
+       if(it->is_border() && it->id() == 0){
+         n++;
+         Polyhedron::Halfedge_around_facet_circulator hf_around_facet = it->facet_begin();
+         do {
+           CGAL_assertion(hf_around_facet->id() == 0);
+           hf_around_facet->id() = 1;
+         } while(++hf_around_facet != it->facet_begin());
+       }
+     }
+     //reset the ids to their initial value
+     for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it)
+     {
+       it->id() = ids[i++];
+     }
+     nb_holes = QString::number(n);
+
+
 
   switch(type)
   {
@@ -1224,9 +1260,37 @@ QString Scene_polyhedron_item::compute_stats(int type)
     return maxangle;
   case MEAN_ANGLE:
     return averageangle;
-  case NAME:
-    return name();
+  case HOLES:
+    return nb_holes;
 
   }
 }
 
+void Scene_polyhedron_item::header(header_data &data)
+{
+  //categories
+  data.categories.append(std::pair<QString,int>(QString("Properties"),8));
+  data.categories.append(std::pair<QString,int>(QString("Edges"),6));
+  data.categories.append(std::pair<QString,int>(QString("Angles"),3));
+
+
+  //titles
+  data.titles.append(QString("Nb. Vertices"));
+  data.titles.append(QString("Nb. Facets"));
+  data.titles.append(QString("Nb. Connected Components"));
+  data.titles.append(QString("Nb. Border Edges"));
+  data.titles.append(QString("Nb. Degenerated Faces"));
+  data.titles.append(QString("Connected Components Of The Boundary"));
+  data.titles.append(QString("Area"));
+  data.titles.append(QString("Volume"));
+  data.titles.append(QString("Self-Intersecting"));
+  data.titles.append(QString("Nb. Edges"));
+  data.titles.append(QString("Minimum Length"));
+  data.titles.append(QString("Maximum Length"));
+  data.titles.append(QString("Median Length"));
+  data.titles.append(QString("Mean Length"));
+  data.titles.append(QString("Nb. Null Length"));
+  data.titles.append(QString("Minimum"));
+  data.titles.append(QString("Maximum"));
+  data.titles.append(QString("Average"));
+}

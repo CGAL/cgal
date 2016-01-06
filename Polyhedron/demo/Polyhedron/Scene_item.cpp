@@ -152,3 +152,13 @@ QOpenGLShaderProgram* CGAL::Three::Scene_item::getShaderProgram(int name, CGAL::
         viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(*QGLViewer::QGLViewerPool().begin());
     return viewer->getShaderProgram(name);
 }
+
+void CGAL::Three::Scene_item::header(header_data &data)
+{
+
+}
+
+QString CGAL::Three::Scene_item::compute_stats(int i)
+{
+  return QString();
+}
