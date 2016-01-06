@@ -186,7 +186,7 @@ namespace CGAL {
   priority of the facet `(Cell_handle,int)`. This functor enables the user to choose how candidate
   triangles are prioritized. If a facet should not appear in the output,
   `infinity()` must be returned. It defaults to a functor that returns the
-  smallest radius of the Delaunay sphere.
+  `smallest_radius_delaunay_sphere()`.
 
   */
   template <
