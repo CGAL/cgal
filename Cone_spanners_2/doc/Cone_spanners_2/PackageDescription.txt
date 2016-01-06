@@ -1,7 +1,6 @@
 // PRETTY PACKAGE NAME should equal the project title in Doxyfile.in
 
 /// \defgroup PkgConeBasedSpanners Cone-Based Spanners Reference
-/// \defgroup PkgConeBasedSpannersConcepts Concepts
 /// \ingroup PkgConeBasedSpanners
 
 /*!
@@ -34,10 +33,6 @@ generate the data and script files used by Gnuplot to plot the constructed graph
 
 \cgalClassifedRefPages
 
-## Concepts ##
-- `ConeBasedSpannerTraits_2`
-- `ComputeConeBoundaries_2`
-- `ConstructConeBasedSpanner_2`
 
 ## Functors ##
 - `CGAL::Compute_cone_boundaries_2`
