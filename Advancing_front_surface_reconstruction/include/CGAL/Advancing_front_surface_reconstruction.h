@@ -2421,21 +2421,21 @@ namespace CGAL {
   namespace AFSR {
 
     template <typename T>
-    struct Auto_count : public std::unary_function<const T&,std::pair<T,int> >{
-      mutable int i;
+    struct Auto_count : public std::unary_function<const T&,std::pair<T,std::size_t> >{
+      mutable std::size_t i;
 
       Auto_count()
         : i(0)
       {}
 
-      std::pair<T,int> operator()(const T& p) const {
+      std::pair<T,std::size_t> operator()(const T& p) const {
         return std::make_pair(p,i++);
       }
     };
 
     template <typename T, typename CC>
-    struct Auto_count_cc : public std::unary_function<const T&,std::pair<T,int> >{
-      mutable int i;
+    struct Auto_count_cc : public std::unary_function<const T&,std::pair<T,std::size_t> >{
+      mutable std::size_t i;
       CC cc;
 
       Auto_count_cc(CC cc)
@@ -2443,7 +2443,7 @@ namespace CGAL {
       {}
 
       template <typename T2>
-      std::pair<T,int> operator()(const T2& p) const {
+      std::pair<T,std::size_t> operator()(const T2& p) const {
         return std::make_pair(cc(p),i++);
       }
     };

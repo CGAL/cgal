@@ -82,7 +82,7 @@ struct Radius {
       return adv.smallest_radius_delaunay_sphere (c, index);
     }
 
-    // If perimeter > bound, return infinity so that facet is not used
+    // If radius > bound, return infinity so that facet is not used
     double d  = 0;
     d = sqrt(squared_distance(c->vertex((index+1)%4)->point(),
                               c->vertex((index+2)%4)->point()));
@@ -154,6 +154,7 @@ struct On_the_fly_pair{
   {
     return result_type(points[i].position(),i);
   }
+
 };
 
 
