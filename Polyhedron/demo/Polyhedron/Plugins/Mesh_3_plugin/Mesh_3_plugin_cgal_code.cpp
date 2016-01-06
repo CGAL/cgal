@@ -23,9 +23,10 @@ typedef Mesh_criteria::Cell_criteria Cell_criteria;
 typedef Tr::Point Point_3;
 
 CGAL::Mesh_facet_topology topology(int manifold) {
-  return manifold == 1 ?
-    CGAL::MANIFOLD :
-    CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH;
+  return manifold == 1 ? CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH :
+    static_cast<CGAL::Mesh_facet_topology>
+    (CGAL::MANIFOLD |
+     CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH);
 }
 
 Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
