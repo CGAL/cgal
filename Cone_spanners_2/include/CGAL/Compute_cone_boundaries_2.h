@@ -47,34 +47,31 @@ namespace CGAL {
  *  \brief The functor for computing the directions of cone boundaries with a given
  *  cone number and a given initial direction. 
  *
- *  This computation can be either inexact by simply dividing an approximate Pi by the cone number
- *  (which is quick), or exact by using roots of polynomials (requiring number types such as `CORE::Expr` or `LEDA::Real`,
+ *  This computation can be either inexact by simply dividing an approximate \f$ \pi \f$ by the cone number
+ *  (which is quick), or exact by using roots of polynomials (requiring number types such as `CORE::Expr` or `leda_real`,
  *  which are slow). The inexact computation is done by the general functor definition,
  *  while the exact computation is done by a specialization of this functor.
  *   
- *  \tparam Traits    must be a model of `ConeBasedSpannerTraits_2`. 
- *                    Simply put, if this parameter is 
- *                    `Exact_predicates_exact_constructions_kernel_with_root_of`,
- *                    the specialization functor will be called; otherwise, the general functor will
- *                    be called. 
- *
  *  In the construction of cone-based spanners such as Yao graph and Theta graph implemented by this package,
  *  this functor is called first to compute the cone boundaries.
  *  Of course, this functor can also be used in other applications where the plane needs to be divided
  *  into equally-angled cones.
  *
- *  \cgalModels `ComputeConeBoundaries_2`
+ * \tparam Traits_ must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` or `CGAL::Exact_predicates_inexact_constructions_kernel`. 
  *
  */
-template <typename Traits>
+template <typename Traits_>
 class Compute_cone_boundaries_2 {
 
 public:
-	/*! Indicate the type of the \cgal kernel. */
-    typedef  Traits      Kernel_type;
+	/*! the geometric traits class. */
+    typedef  Traits_      Traits;
+
+  /*! the direction type. */
+    typedef  typename Traits::Direction_2       Direction_2;
 
 private:
-    typedef  typename Traits::Direction_2       Direction_2;
+
 	typedef  typename Traits::Aff_transformation_2    Transformation;
 
 public:
@@ -90,6 +87,7 @@ public:
 	 * and output them to `result` in the counterclockwise order.
 	 * Finally, the past-the-end iterator for the resulting directions is returned. 
 	 *
+         * \tparam DirectionOutputIterator  an `OutputIterator` with value type `Direction_2`.
 	 * \param cone_number The number of cones
 	 * \param initial_direction The direction of the first ray
 	 * \param result  The output iterator
@@ -100,7 +98,7 @@ public:
                     DirectionOutputIterator result)  {
         if (cone_number<2) {
             std::cout << "The number of cones must be larger than 1!" << std::endl;
-            std::exit(1);
+            CGAL_assertion(false);
         }
 
         *result++ = initial_direction;

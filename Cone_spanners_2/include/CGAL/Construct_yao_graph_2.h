@@ -42,23 +42,28 @@ namespace CGAL {
   \brief A template functor for constructing Yao graphs with a given set of 2D points and
          a given initial direction for the cone boundaries.
 
-  For the meaning and use of its template parameters, please refer to the concept
-    `ConstructConeBasedSpanner_2`.
+ \tparam Traits_ must be either `CGAL::Exact_predicates_exact_constructions_kernel_with_root_of` or `CGAL::Exact_predicates_inexact_constructions_kernel`.
 
-  \cgalModels `ConstructConeBasedSpanner_2`
+\tparam Graph_ is the graph type to store the constructed cone based spanner.
+        It must be  <A HREF="http://www.boost.org/libs/graph/doc/adjacency_list.html">`boost::adjacency_list`</A> with `Traits_::Point_2` as `VertexProperties`
+
  */
-template <typename Traits, typename Graph_>
+template <typename Traits_, typename Graph_>
 class Construct_yao_graph_2 {
 
 public:
-	/*! Indicate the type of the \cgal kernel. */
-    typedef Traits      Kernel_type;
-	/*! Indicate the specific type of `boost::adjacency_list`. */
-    typedef Graph_                        Graph_type;
+	/*! the geometric traits class. */
+    typedef Traits_      Traits;
+	/*! the specific type of `boost::adjacency_list`. */
+    typedef Graph_                        Graph;
+
+  /*! the point type */
+    typedef typename Traits::Point_2                 Point_2;
+
+  /*! the direction type */
+    typedef typename Traits::Direction_2             Direction_2;
 
 private:
-    typedef typename Traits::Direction_2           Direction_2;
-    typedef typename Traits::Point_2               Point_2;
     typedef typename Traits::Line_2                Line_2;
     typedef Less_by_direction_2<Traits, Graph_>    Less_by_direction;
     // a type for the set to store vertices sorted by a direction
@@ -87,7 +92,7 @@ public:
     {
         if (k<2) {
             std::cout << "The number of cones must be larger than 1!" << std::endl;
-            std::exit(1);
+            CGAL_assertion(false);
         }
 
         /* Initialize a functor, specialization will happen here depending on the kernel type to
@@ -104,12 +109,12 @@ public:
     */
 
     /*! 
-	  \brief Function operator to construct a Yao graph.
+      \brief Function operator to construct a Yao graph.
 
-      \details This operator implements the algorithm for constructing the Yao graph.
-         The algorithm implemented is an adaptation from the algorithm for constructing Theta graph. 
-		 For more details, please refer to the user manual.
+      \details For the details of this algorithm, please refer to the User Manual.
      
+      \tparam  PointInputIterator an `InputIterator` with value type `Point_2`.
+
       \param[in] start An iterator pointing to the first vertex of the input.
       \param[in]  end  An iterator pointing to the past-the-end location of the input.
       \param[out]  g   The constructed graph object.
@@ -142,8 +147,9 @@ public:
         return cone_number;
     }
 
-    /*! \brief outputs the directions in the vector rays to the iterator `result`.
+    /*! \brief outputs the set of directions to the iterator `result`.
 	       
+      \tparam DirectionOutputIterator  an `OutputIterator` with value type `Direction_2`.
         \return `result`
     */
     template<class DirectionOutputIterator>
