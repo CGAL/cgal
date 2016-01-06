@@ -324,7 +324,7 @@ The implementation follows \cgalCite{cgal:vla-lod-15}.
             }
 
           //regularize primitive position by computing barycenter of cplanar planes
-          std::vector<Point> pt_bary (cop_index, Point (0., 0., 0.));
+          std::vector<Point> pt_bary (cop_index, Point ((FT)0., (FT)0., (FT)0.));
           std::vector<FT> area (cop_index, 0.);
       
           for (std::size_t j = 0; j < clusters[i].planes.size (); ++ j)
