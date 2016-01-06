@@ -843,16 +843,14 @@ void Viewer::drawVisualHints()
         rendering_program.release();
         vao[0].release();
     }
-	if (!painter->isActive())
-		painter->begin(this);
-	//painter->save();
-        //So that the text is drawn in front of everything
+
+    if (!painter->isActive())
+      painter->begin(this);
+    //So that the text is drawn in front of everything
     painter->beginNativePainting();
-        glDisable(GL_DEPTH_TEST);
+    glDisable(GL_DEPTH_TEST);
     painter->endNativePainting();
-    //HERE : draw the text
     textRenderer->draw(this);
-	//painter->restore();
     }
 
 void Viewer::resizeGL(int w, int h)

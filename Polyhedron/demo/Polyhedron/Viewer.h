@@ -219,7 +219,7 @@ public:
     QList<TextItem*> getLocalTextItems(){return local_textItems;}
     //!Returns the global list of TextItems. This is the list that is fed by pre-filled lists of TextItems (such as global Polyhedron IDs).
     QList<TextListItem*> items() const{return textItems;}
-    //!Gives the renderer a Scene, needed to print data from Scene_items.
+    //!Gives the renderer a Scene, needed to determine which Ids must be drawn.
     void setScene(CGAL::Three::Scene_interface* p_scene){scene = p_scene;}
 private:
     QList<TextListItem*> textItems;
