@@ -629,7 +629,7 @@ template<class Tr,
          class Complex3InTriangulation3,
          class Previous_level_,
          class Concurrency_tag,
-         template<class Tr_, class Cr, class MD, class C3T3_, class Ct, class C_>
+         template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2>
             class Base_ = Refine_facets_3_base,
 #ifdef CGAL_LINKED_WITH_TBB
          class Container_ = typename boost::mpl::if_c // (parallel/sequential?)
@@ -885,7 +885,7 @@ private:
 
 
 // For sequential
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr, class MD, class C3T3_, class Ct, class C_> class B_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2> class B_, class C_>
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
 Refine_facets_3(Tr& triangulation,
                 const Cr& criteria,
@@ -902,7 +902,7 @@ Refine_facets_3(Tr& triangulation,
 }
 
 // For parallel
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr, class MD, class C3T3_, class Ct, class C_> class B_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2> class B_, class C_>
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
 Refine_facets_3(Tr& triangulation,
                 const Cr& criteria,
@@ -922,7 +922,7 @@ Refine_facets_3(Tr& triangulation,
 }
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr, class MD, class C3T3_, class Ct, class C_> class B_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2> class B_, class C_>
 void
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
 scan_triangulation_impl()
@@ -1002,7 +1002,7 @@ scan_triangulation_impl()
 
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr, class MD, class C3T3_, class Ct, class C_> class B_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2> class B_, class C_>
 int
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
 number_of_bad_elements_impl()
@@ -1162,7 +1162,7 @@ number_of_bad_elements_impl()
 }
 
 // For sequential
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr, class MD, class C3T3_, class Ct, class C_> class B_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2> class B_, class C_>
 Mesher_level_conflict_status
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
 test_point_conflict_from_superior_impl(const Point& point, Zone& zone)
@@ -1208,7 +1208,7 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone)
 }
 
 // For parallel
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr, class MD, class C3T3_, class Ct, class C_> class B_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2> class B_, class C_>
 template <typename Mesh_visitor>
 Mesher_level_conflict_status
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
@@ -1258,7 +1258,7 @@ test_point_conflict_from_superior_impl(const Point& point, Zone& zone,
 }
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr, class MD, class C3T3_, class Ct, class C_> class B_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2> class B_, class C_>
 typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::Zone
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
 conflicts_zone_impl(const Point& point
@@ -1317,7 +1317,7 @@ conflicts_zone_impl(const Point& point
   return zone;
 }
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr, class MD, class C3T3_, class Ct, class C_> class B_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2> class B_, class C_>
 typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::Zone
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
 conflicts_zone_impl(const Point& point
@@ -1459,7 +1459,7 @@ before_insertion_impl(const Facet& facet,
 
 
 
-template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr, class MD, class C3T3_, class Ct, class C_> class B_, class C_>
+template<class Tr, class Cr, class MD, class C3T3_, class P_, class Ct, template<class Tr_, class Cr_, class MD_, class C3T3_2, class Ct_, class C_2> class B_, class C_>
 typename Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::Vertex_handle
 Refine_facets_3<Tr,Cr,MD,C3T3_,P_,Ct,B_,C_>::
 insert_impl(const Point& point,
