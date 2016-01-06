@@ -91,14 +91,14 @@ public:
     bool self_intersected(){return !self_intersect;}
 
     void printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface*viewer);
-	void printPrimitiveIds(CGAL::Three::Viewer_interface*viewer) const;
+    void printPrimitiveIds(CGAL::Three::Viewer_interface*viewer) const;
     bool testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface*);
 
 public Q_SLOTS:
     virtual void invalidateOpenGLBuffers();
     virtual void selection_changed(bool);
     virtual void setColor(QColor c);
-	virtual void show_feature_edges(bool);
+    virtual void show_feature_edges(bool);
     void show_only_feature_edges(bool);
     void enable_facets_picking(bool);
     void set_erase_next_picked_facet(bool);

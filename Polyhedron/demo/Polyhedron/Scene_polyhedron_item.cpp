@@ -400,9 +400,8 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
     are_buffers_filled = true;
 
     CGAL::set_halfedgeds_items_id(*poly);
-
-	if (viewer->hasText())
-      printPrimitiveIds(viewer);
+    if (viewer->hasText())
+        printPrimitiveIds(viewer);
 }
 
 
@@ -1344,7 +1343,7 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
 void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface *viewer)
 {
     TextRenderer *renderer = viewer->textRenderer;
-    renderer->local_textItems.clear();
+    renderer->getLocalTextItems().clear();
 
     QFont font;
     font.setBold(true);

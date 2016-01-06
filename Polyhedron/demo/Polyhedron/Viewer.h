@@ -71,6 +71,7 @@ public:
   void attrib_buffers(int program_name) const;
   //! Implementation of `Viewer_interface::getShaderProgram()`
   QOpenGLShaderProgram* getShaderProgram(int name) const;
+  QPainter* getPainter(){return painter;}
 
 public Q_SLOTS:
   //! Sets the antialiasing to true or false.
@@ -90,8 +91,8 @@ public Q_SLOTS:
                                float animation_duration = 0.5f);
 
 protected:
-	void paintEvent(QPaintEvent *);
-    void paintGL();
+  void paintEvent(QPaintEvent *);
+  void paintGL();
   //! Holds useful data to draw the axis system
   struct AxisData
   {
@@ -139,6 +140,7 @@ protected:
   void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
   void resizeGL(int w, int h);
   bool i_is_pressed;
+  QPainter *painter;
 
 
 protected:
@@ -192,28 +194,37 @@ private:
 
 };
 //!This class draws all the textItems.
+/*!
+  * Projects each textItem from the world coordinates to the Screen coordinates
+  * and draws it.
+ */
 class  VIEWER_EXPORT TextRenderer{
 public:
     TextRenderer()
     {
     }
-    /*!
-      * Projects each textItem from the world coordinates to the Screen coordinates
-      * and draws it.
-     */
+    //!Draws all the TextItems
     void draw(CGAL::Three::Viewer_interface* viewer);
-    void draw(CGAL::Three::Viewer_interface* viewer, TextItem* item);
+    //!Adds a TextItem to the local list.
     void addText(TextItem*);
+    //!Adds a TextListItem to the global list.
     void addTextList(TextListItem*);
+    //!Creates a new TextItem and adds it to the local list.
     void addText(float p_x, float p_y, float p_z, QString p_text, QFont font = QFont(), QColor p_color = Qt::black);
+    //!Removes a TextItem from the local list.
     void removeText(TextItem*);
+    //!Removes a TextItemList from the global list.
     void removeTextList(TextListItem*);
-    QList<TextItem*> local_textItems;
+    //!Returns the local list of TextItems. This is the renderer's default list.
+    QList<TextItem*> getLocalTextItems(){return local_textItems;}
+    //!Returns the global list of TextItems. This is the list that is fed by pre-filled lists of TextItems (such as global Polyhedron IDs).
     QList<TextListItem*> items() const{return textItems;}
+    //!Gives the renderer a Scene, needed to print data from Scene_items.
     void setScene(CGAL::Three::Scene_interface* p_scene){scene = p_scene;}
 private:
     QList<TextListItem*> textItems;
     CGAL::Three::Scene_interface *scene;
+    QList<TextItem*> local_textItems;
 
 };//end class TextRenderer
 #endif // VIEWER_H

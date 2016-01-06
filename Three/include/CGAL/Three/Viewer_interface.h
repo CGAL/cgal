@@ -64,11 +64,10 @@ public:
    PROGRAM_C3T3_EDGES,          /** Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.*/
    NB_OF_PROGRAMS               /** Holds the number of different programs in this enum.*/
   };
-  /*!
-  * \brief painter is used to draw text on the screen.
-  * The painter is what draws on screen. It needs to be maintained when the viewer is used to draw things.
-  */
-  QPainter *painter;
+
+ //!Returns the viewer's QPainter
+ virtual QPainter *getPainter() =0;
+
   /*!
    * \brief textRenderer is used to display text on the screen.
    * The textRenderer uses the painter tu display 2D text over the 3D Scene. It has a list containing the TextItems to display.

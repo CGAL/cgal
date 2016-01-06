@@ -19,7 +19,6 @@ public:
   bool inDrawWithNames;
   
   void draw_aux(bool with_names, Viewer*);
-
   //! Contains all the programs for the item rendering.
   mutable std::vector<QOpenGLShaderProgram*> shader_programs;
 };
@@ -1190,29 +1189,29 @@ bool Viewer::textDisplayed() const
 }
 void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 {
-    QPainter *painter = viewer->painter;
-	if (!painter->isActive())
-		painter->begin(viewer);
+    QPainter *painter = viewer->getPainter();
+    if (!painter->isActive())
+      painter->begin(viewer);
     QRect rect;
     qglviewer::Camera* camera = viewer->camera();
     if(viewer->textDisplayed())
     {
       Q_FOREACH(TextListItem* list, textItems)
-          if(list->item() == scene->item(scene->mainSelectionIndex()))
-              Q_FOREACH(TextItem* item, list->textList())
-              {
-                qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
-                if(viewer->testDisplayId(src.x, src.y, src.z))
-                {
-                  rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
-                               camera->projectedCoordinatesOf(src).y-item->height()/2,
-                               item->width(),
-                               item->height());
-                          painter->setFont(item->font());
-                  painter->setPen(QPen(item->color()));
-                  painter->drawText(rect, item->text());
-                }
-              }
+        if(list->item() == scene->item(scene->mainSelectionIndex()))
+          Q_FOREACH(TextItem* item, list->textList())
+          {
+            qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
+            if(viewer->testDisplayId(src.x, src.y, src.z))
+            {
+              rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
+                           camera->projectedCoordinatesOf(src).y-item->height()/2,
+                           item->width(),
+                           item->height());
+              painter->setFont(item->font());
+              painter->setPen(QPen(item->color()));
+              painter->drawText(rect, item->text());
+            }
+          }
     }
     Q_FOREACH(TextItem* item, local_textItems)
     {
@@ -1247,7 +1246,7 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 
  void TextRenderer::removeText(TextItem *item)
  {
-             local_textItems.removeAll(item);
+     local_textItems.removeAll(item);
  }
 
  void TextRenderer::removeTextList(TextListItem *p_list)
