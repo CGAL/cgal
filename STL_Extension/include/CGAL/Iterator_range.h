@@ -70,6 +70,13 @@ namespace CGAL {
   {
     return std::distance(begin(), end());
   }
+
+  /// returns `std::distance(begin(), end())==0`
+  bool empty() const
+  {
+    return std::distance(begin(), end())==0;
+  }
+
 };
 
   template <typename T>
@@ -77,6 +84,13 @@ namespace CGAL {
   make_range(const T& b, const T&e)
   {
     return Iterator_range<T>(b,e);
+  }
+
+  template <typename T>
+  Iterator_range<T>
+  make_range(const std::pair<T,T>& p)
+  {
+    return Iterator_range<T>(p.first,p.second);
   }
 
 

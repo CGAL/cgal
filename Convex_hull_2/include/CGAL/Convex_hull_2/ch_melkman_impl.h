@@ -37,7 +37,6 @@ ch_melkman( InputIterator first, InputIterator last,
             OutputIterator result, const Traits& ch_traits)
 {
   typedef typename Traits::Point_2      Point;
-  typedef typename Traits::Segment_2    Segment;
   typedef typename Traits::Equal_2      Equal_2;   
   
   typename Traits::Left_turn_2 left_turn  = ch_traits.left_turn_2_object();

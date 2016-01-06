@@ -41,7 +41,7 @@ namespace Polygon_mesh_processing {
   /**
   * \ingroup measure_grp
   * computes the length of an edge of a given polygon mesh.
-  * The edge is given by one of its halfedges.
+  * The edge is given by one of its halfedges, or the edge itself.
   *
   * @tparam PolygonMesh a model of `HalfedgeGraph` that has an internal property map
   *         for `CGAL::vertex_point_t`
@@ -93,6 +93,25 @@ namespace Polygon_mesh_processing {
   {
     return edge_length(h, pmesh,
       CGAL::Polygon_mesh_processing::parameters::all_default());
+  }
+  // edge overloads
+  template<typename PolygonMesh,
+           typename NamedParameters>
+  typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT
+  edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e
+              , const PolygonMesh& pmesh
+              , const NamedParameters& np)
+  {
+    return edge_length(halfedge(e,pmesh), pmesh, np);
+  }
+
+  template<typename PolygonMesh>
+  typename CGAL::Kernel_traits<typename property_map_value<PolygonMesh,
+    CGAL::vertex_point_t>::type>::Kernel::FT
+  edge_length(typename boost::graph_traits<PolygonMesh>::edge_descriptor e
+            , const PolygonMesh& pmesh)
+  {
+    return edge_length(halfedge(e,pmesh), pmesh);
   }
 
   /**
