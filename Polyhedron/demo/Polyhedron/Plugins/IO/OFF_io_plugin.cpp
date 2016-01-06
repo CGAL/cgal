@@ -104,4 +104,4 @@ bool Polyhedron_demo_off_plugin::save(const CGAL::Three::Scene_item* item, QFile
     (soup_item && soup_item->save(out));
 }
 
-#include "Off_plugin.moc"
+#include "OFF_io_plugin.moc"

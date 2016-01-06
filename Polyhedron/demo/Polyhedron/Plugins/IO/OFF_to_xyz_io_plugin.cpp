@@ -81,4 +81,4 @@ bool Polyhedron_demo_off_to_xyz_plugin::save(const CGAL::Three::Scene_item* item
 }
 
 
-#include "Off_to_xyz_plugin.moc"
+#include "OFF_to_xyz_io_plugin.moc"

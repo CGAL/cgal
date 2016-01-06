@@ -74,4 +74,4 @@ bool Polyhedron_demo_io_nef_plugin::save(const CGAL::Three::Scene_item* item, QF
   return (nef_item && nef_item->save(out));
 }
 
-#include "Io_nef_plugin.moc"
+#include "Nef_io_plugin.moc"

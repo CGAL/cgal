@@ -210,4 +210,4 @@ load_function_plugins()
   }
 }
 
-#include "Io_implicit_function_plugin.moc"
+#include "Implicit_function_io_plugin.moc"

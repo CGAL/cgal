@@ -69,4 +69,4 @@ bool Polyhedron_demo_ply_to_xyz_plugin::save(const CGAL::Three::Scene_item* item
 }
 
 
-#include "Ply_to_xyz_plugin.moc"
+#include "PLY_to_xyz_io_plugin.moc"

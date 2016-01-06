@@ -54,4 +54,4 @@ bool Polyhedron_demo_off_to_nef_plugin::save(const CGAL::Three::Scene_item*, QFi
   return false;
 }
 
-#include "Off_to_nef_plugin.moc"
+#include "OFF_to_nef_io_plugin.moc"

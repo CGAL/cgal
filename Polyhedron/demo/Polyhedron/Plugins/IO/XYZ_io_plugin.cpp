@@ -219,4 +219,4 @@ void Polyhedron_demo_xyz_plugin::closePointSetButton_clicked()
     add_pointsetdiag->close();
 }
 
-#include "Xyz_plugin.moc"
+#include "XYZ_io_plugin.moc"
