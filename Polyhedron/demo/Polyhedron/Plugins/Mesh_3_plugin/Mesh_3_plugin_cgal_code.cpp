@@ -22,6 +22,12 @@ typedef Mesh_criteria::Cell_criteria Cell_criteria;
 
 typedef Tr::Point Point_3;
 
+CGAL::Mesh_facet_topology topology(int manifold) {
+  return manifold == 1 ?
+    CGAL::MANIFOLD :
+    CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH;
+}
+
 Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
                              QString filename,
                              const double angle,
@@ -30,6 +36,7 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
                              const double tet_sizing,
                              const double tet_shape,
                              const bool protect_features,
+                             const int manifold,
                              CGAL::Three::Scene_interface* scene)
 {
   if(!pMesh) return 0;
@@ -38,7 +45,7 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
 
   // Set mesh criteria
   Edge_criteria edge_criteria(facet_sizing);
-  Facet_criteria facet_criteria(angle, facet_sizing, approx); // angle, size, approximation
+  Facet_criteria facet_criteria(angle, facet_sizing, approx, topology(manifold)); // angle, size, approximation
   Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
   Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
 
@@ -94,12 +101,13 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 
 Scene_item* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
-                                 const double facet_angle,
-                                 const double facet_sizing,
-                                 const double facet_approx,
-                                 const double tet_sizing,
-                                 const double tet_shape,
-                                 CGAL::Three::Scene_interface* scene)
+                             const double facet_angle,
+                             const double facet_sizing,
+                             const double facet_approx,
+                             const double tet_sizing,
+                             const double tet_shape,
+                             const int manifold,
+                             CGAL::Three::Scene_interface* scene)
 {
   if (pfunction == NULL) { return NULL; }
 
@@ -115,7 +123,7 @@ Scene_item* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
 
   // Set mesh criteria
   Edge_criteria edge_criteria(facet_sizing);
-  Facet_criteria facet_criteria(facet_angle, facet_sizing, facet_approx); // angle, size, approximation
+  Facet_criteria facet_criteria(facet_angle, facet_sizing, facet_approx, topology(manifold)); // angle, size, approximation
   Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
   Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
 
@@ -154,6 +162,7 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
                              const double facet_approx,
                              const double tet_sizing,
                              const double tet_shape,
+                             const int manifold,
                              CGAL::Three::Scene_interface* scene)
 {
 
@@ -164,7 +173,7 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
 
   // Set mesh criteria
   Edge_criteria edge_criteria(facet_sizing);
-  Facet_criteria facet_criteria(facet_angle, facet_sizing, facet_approx); // angle, size, approximation
+  Facet_criteria facet_criteria(facet_angle, facet_sizing, facet_approx, topology(manifold)); // angle, size, approximation
   Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
   Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
   CGAL::Timer timer;

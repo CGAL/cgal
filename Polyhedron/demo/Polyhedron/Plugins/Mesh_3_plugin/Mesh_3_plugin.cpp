@@ -36,6 +36,7 @@ CGAL::Three::Scene_item* cgal_code_mesh_3(const Polyhedron*,
                              const double tets_sizing,
                              const double tet_shape,
                              const bool protect_features,
+                             const int manifold,
                              CGAL::Three::Scene_interface* scene);
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
@@ -45,6 +46,7 @@ Scene_item* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                              const double facet_approx,
                              const double tet_sizing,
                              const double tet_shape,
+                             const int manifold,
                              CGAL::Three::Scene_interface* scene);
 #endif
 
@@ -55,6 +57,7 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
                              const double facet_approx,
                              const double tet_sizing,
                              const double tet_shape,
+                             const int manifold,
                              CGAL::Three::Scene_interface* scene);
 #endif
 
@@ -227,6 +230,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
   const double radius_edge = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   const double tet_sizing = !ui.noTetSizing->isChecked() ? 0  : ui.tetSizing->value();
   const bool protect_features = ui.protect->isChecked();
+  const int manifold = ui.manifoldCheckBox->isChecked() ? 1 : 0;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
   Scene_item* temp_item = 0;
@@ -247,6 +251,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                                  tet_sizing,
                                  radius_edge,
                                  protect_features,
+                                 manifold,
                                  scene);
   }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
@@ -265,6 +270,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                                  approx,
                                  tet_sizing,
                                  radius_edge,
+                                 manifold,
                                  scene);
   }
 #endif
@@ -284,6 +290,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                                  approx,
                                  tet_sizing,
                                  radius_edge,
+                                 manifold,
                                  scene);
   }
 #endif
