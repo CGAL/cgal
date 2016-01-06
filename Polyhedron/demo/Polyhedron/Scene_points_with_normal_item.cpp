@@ -17,6 +17,7 @@
 
 #include <QObject>
 #include <QMenu>
+#include <QGLViewer/manipulatedCameraFrame.h>
 
 #include <set>
 #include <stack>
@@ -165,10 +166,16 @@ void Scene_points_with_normal_item::compute_normals_and_vertices() const
     positions_points.reserve(m_points->size() * 3);
     positions_lines.reserve(m_points->size() * 3 * 2);
 
+
+    //Shuffle container to allow quick display random points
+    Point_set_3<Kernel> points = *m_points;
+    std::random_shuffle (points.begin(), points.end() - m_points->nb_selected_points());
+    std::random_shuffle (points.end() - m_points->nb_selected_points(), points.end());
+    
     //The points
     {
         // The *non-selected* points
-      for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->first_selected(); it++)
+      for (Point_set_3<Kernel>::const_iterator it = points.begin(); it != points.first_selected(); it++)
 	{
 	  const UI_point& p = *it;
 	  positions_points.push_back(p.x());
@@ -177,7 +184,7 @@ void Scene_points_with_normal_item::compute_normals_and_vertices() const
 	}
 
         // Draw *selected* points
-      for (Point_set_3<Kernel>::const_iterator it = m_points->first_selected(); it != m_points->end(); it++)
+      for (Point_set_3<Kernel>::const_iterator it = points.first_selected(); it != points.end(); it++)
 	{
 	  const UI_point& p = *it;
 	  positions_selected_points.push_back(p.x());
@@ -189,10 +196,10 @@ void Scene_points_with_normal_item::compute_normals_and_vertices() const
     //The lines
     {
         // Stock normals
-        Kernel::Sphere_3 region_of_interest = m_points->region_of_interest();
+        Kernel::Sphere_3 region_of_interest = points.region_of_interest();
         float normal_length = (float)std::sqrt(region_of_interest.squared_radius() / 1000.);
 
-	for (Point_set_3<Kernel>::const_iterator it = m_points->begin(); it != m_points->end(); it++)
+	for (Point_set_3<Kernel>::const_iterator it = points.begin(); it != points.end(); it++)
 	  {
 	    const UI_point& p = *it;
 	    const Point_set_3<Kernel>::Vector& n = p.normal();
@@ -417,6 +424,11 @@ void Scene_points_with_normal_item::draw_splats(CGAL::Three::Viewer_interface* v
 
 void Scene_points_with_normal_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
 {
+    double ratio_displayed = 1.0;
+    if (viewer->inFastDrawing () &&
+        (nb_lines/6 > 300000)) // arbitrary large value
+      ratio_displayed = 6 * 300000. / (double)(nb_lines);
+
     if(!are_buffers_filled)
         initialize_buffers(viewer);
     vaos[Edges]->bind();
@@ -424,7 +436,8 @@ void Scene_points_with_normal_item::draw_edges(CGAL::Three::Viewer_interface* vi
     attrib_buffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", this->color());
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/3));
+    viewer->glDrawArrays(GL_LINES, 0,
+                         static_cast<GLsizei>(((std::size_t)(ratio_displayed * nb_lines)/3)));
     vaos[Edges]->release();
     program->release();
 }
@@ -433,12 +446,18 @@ void Scene_points_with_normal_item::draw_points(CGAL::Three::Viewer_interface* v
     if(!are_buffers_filled)
         initialize_buffers(viewer);
 
+    double ratio_displayed = 1.0;
+    if (viewer->inFastDrawing () &&
+        ((nb_points + nb_selected_points)/3 > 300000)) // arbitrary large value
+      ratio_displayed = 3 * 300000. / (double)(nb_points + nb_selected_points);
+
     vaos[ThePoints]->bind();
     program=getShaderProgram(PROGRAM_NO_SELECTION);
     attrib_buffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", this->color());
-    viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_points/3));
+    viewer->glDrawArrays(GL_POINTS, 0,
+                         static_cast<GLsizei>(((std::size_t)(ratio_displayed * nb_points)/3)));
     vaos[ThePoints]->release();
     program->release();
     GLfloat point_size;
@@ -451,7 +470,7 @@ void Scene_points_with_normal_item::draw_points(CGAL::Three::Viewer_interface* v
     program->bind();
     program->setAttributeValue("colors", QColor(255,0,0));
     viewer->glDrawArrays(GL_POINTS, 0,
-                       static_cast<GLsizei>(nb_selected_points/3));
+                         static_cast<GLsizei>(((std::size_t)(ratio_displayed * nb_selected_points)/3)));
     vaos[Selected_points]->release();
     program->release();
     viewer->glPointSize(point_size);

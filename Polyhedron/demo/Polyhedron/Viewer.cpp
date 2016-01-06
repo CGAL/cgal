@@ -16,7 +16,7 @@ public:
   bool twosides;
   bool macro_mode;
   bool inFastDrawing;
-
+  
   void draw_aux(bool with_names, Viewer*);
 
   //! Contains all the programs for the item rendering.
@@ -30,6 +30,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->antialiasing = antialiasing;
   d->twosides = false;
   d->macro_mode = false;
+  d->inFastDrawing = true;
   d->shader_programs.resize(NB_OF_PROGRAMS);
   setShortcut(EXIT_VIEWER, 0);
   setShortcut(DRAW_AXIS, 0);
@@ -94,22 +95,28 @@ void Viewer::setTwoSides(bool b)
   updateGL();
 }
 
-bool Viewer::inFastDrawing() const {
-  return d->inFastDrawing;
+
+void Viewer::setFastDrawing(bool b)
+{
+  d->inFastDrawing = b;
+  updateGL();
+}
+
+bool Viewer::inFastDrawing() const
+{
+  return (d->inFastDrawing
+          && (camera()->frame()->isSpinning()
+              || camera()->frame()->isManipulated()));
 }
 
 void Viewer::draw()
 {
   glEnable(GL_DEPTH_TEST);
-  d->inFastDrawing = false;
-  QGLViewer::draw();
   d->draw_aux(false, this);
 }
 
 void Viewer::fastDraw()
 {
-  d->inFastDrawing = true;
-  QGLViewer::fastDraw();
   d->draw_aux(false, this);
 }
 
