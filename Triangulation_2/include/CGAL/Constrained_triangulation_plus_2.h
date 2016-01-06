@@ -31,6 +31,8 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_2/insert_constraints.h>
 
+#include <boost/container/flat_set.hpp>
+
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
 #  pragma warning(disable:4355)
@@ -799,7 +801,7 @@ insert_subconstraint(Vertex_handle vaa,
   // so we have to remove them before calling get_bounded_faces
   if(! edges.empty()){
 
-  std::set<Face_handle> faces(intersected_faces.begin(), intersected_faces.end());
+    boost::container::flat_set<Face_handle> faces(intersected_faces.begin(), intersected_faces.end());
     typename List_edges::iterator it2;
     for(typename List_edges::iterator it = edges.begin(); it!= edges.end();){
       if(faces.find(it->first) != faces.end()){
