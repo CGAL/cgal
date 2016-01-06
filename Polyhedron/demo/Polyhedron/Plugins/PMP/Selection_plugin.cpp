@@ -182,7 +182,7 @@ public Q_SLOTS:
     int item_id = scene->addItem(new_item);
     QObject* scene_ptr = dynamic_cast<QObject*>(scene);
     if (scene_ptr)
-      connect(new_item,SIGNAL(simplicesSelected(Scene_item*)), scene_ptr, SLOT(setSelectedItem(Scene_item*)));
+      connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
     scene->setSelectedItem(item_id);
   }
   void on_Selection_type_combo_box_changed(int index) {
