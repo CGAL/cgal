@@ -74,7 +74,7 @@ public:
   /// Destructor
   virtual ~Implicit_mesh_domain_3() {}
 
-
+  using Base::bbox;
 private:
   // Disabled copy constructor & assignment operator
   typedef Implicit_mesh_domain_3<Function,BGT> Self;
