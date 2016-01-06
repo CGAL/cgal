@@ -8,9 +8,9 @@ cmake_minimum_required(VERSION 2.8.11)
 
 
 
-find_package(CGAL QUIET COMPONENTS Core GMP MPFR MPFI)
+find_package(CGAL QUIET COMPONENTS Core GMP MPFR)
 
-if ( CGAL_FOUND )
+if ( CGAL_FOUND AND GMP_FOUND )
 
   include( ${CGAL_USE_FILE} )
   include( CGAL_VersionUtils )
@@ -23,6 +23,8 @@ if ( CGAL_FOUND )
   include_directories(include)
 
   include( CGAL_CreateSingleSourceCGALProgram )
+
+  find_package( MPFI )
 
   if( MPFI_FOUND )
     # for the testsuite, the version of MPFI shipped with RS is used; this
