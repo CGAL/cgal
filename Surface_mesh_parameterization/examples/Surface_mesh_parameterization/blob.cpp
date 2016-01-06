@@ -5,6 +5,8 @@
 #include <CGAL/parameterize.h>
 #include <CGAL/Two_vertices_parameterizer_3.h>
 #include <CGAL/Discrete_authalic_parameterizer_3.h>
+#include <CGAL/Discrete_conformal_map_parameterizer_3.h>
+#include <CGAL/Barycentric_mapping_parameterizer_3.h>
 #include <CGAL/LSCM_parameterizer_3.h>
 #include <boost/foreach.hpp>
 #include <iostream>
@@ -73,7 +75,9 @@ int main(int argc, char * argv[])
   }
   
 #if 1
-  typedef CGAL::Discrete_authalic_parameterizer_3<Mesh> Parameterizer;
+  //  typedef CGAL::Barycentric_mapping_parameterizer_3<Mesh> Parameterizer;
+  //  typedef CGAL::Discrete_authalic_parameterizer_3<Mesh> Parameterizer;
+  typedef CGAL::Discrete_conformal_map_parameterizer_3<Mesh> Parameterizer;
 #else
  typedef CGAL::LSCM_parameterizer_3<Mesh,
                            CGAL::Two_vertices_parameterizer_3<Mesh> > Parameterizer;
@@ -98,15 +102,6 @@ int main(int argc, char * argv[])
   Mesh mesh(sm, seam);
 
   halfedge_descriptor bhd(smhd);
-
-#if 0
-  std::vector<face_descriptor> faces;
-  CGAL::Polygon_mesh_processing::connected_component(face(bhd,mesh),
-                                                     mesh,
-                                                     std::back_inserter(faces));
-  std::cerr << faces.size() << std::endl;
-  return 0;
-#endif
 
   bhd = opposite(bhd,mesh); // a halfedge on the virtual hole
 

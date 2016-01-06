@@ -92,18 +92,18 @@ public:
     // We have to repeat the types exported by superclass
     /// @cond SKIP_IN_MANUAL
     typedef typename Base::Error_code       Error_code;
-    typedef ParameterizationMesh_3          Adaptor;
+    typedef ParameterizationMesh_3          TriangleMesh;
     typedef BorderParameterizer_3           Border_param;
     typedef SparseLinearAlgebraTraits_d     Sparse_LA;
     /// @endcond
 
 // Private types
 private:
-  typedef typename Adaptor::Polyhedron TriangleMesh;
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
-  typedef CGAL::Vertex_around_target_circulator<TriangleMesh> vertex_around_target_circulator;
-    typedef typename ParameterizationMesh_3::NT NT;
+  typedef CGAL::Halfedge_around_target_circulator<TriangleMesh> halfedge_around_target_circulator;
+  typedef typename Parameterizer_traits_3<TriangleMesh>::NT  NT;
+
     // SparseLinearAlgebraTraits_d subtypes:
     typedef typename Sparse_LA::Vector      Vector;
     typedef typename Sparse_LA::Matrix      Matrix;
@@ -115,7 +115,7 @@ public:
                                         ///< object that maps the surface's border to 2D space.
                                         Sparse_LA sparse_la = Sparse_LA())
                                         ///< Traits object to access a sparse linear system.
-    :   Fixed_border_parameterizer_3<Adaptor,
+    :   Fixed_border_parameterizer_3<TriangleMesh,
                                    Border_param,
                                    Sparse_LA>(border_param, sparse_la)
     {}
@@ -125,9 +125,9 @@ public:
 // Protected operations
 protected:
     /// Compute w_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.
-    virtual NT compute_w_ij(const Adaptor& /* mesh */,
+    virtual NT compute_w_ij(const TriangleMesh& /* mesh */,
 			  vertex_descriptor /* main_vertex_v_i */,
-			  vertex_around_target_circulator /* neighbor_vertex_v_j */ )
+			  halfedge_around_target_circulator /* neighbor_vertex_v_j */ )
     {
         /// Tutte Barycentric Mapping algorithm is the most simple one:
         /// w_ij = 1 for j neighbor vertex of i.
@@ -135,7 +135,7 @@ protected:
     }
 
     /// Check if 3D -> 2D mapping is one-to-one.
-    virtual bool  is_one_to_one_mapping (const Adaptor& /* mesh */,
+    virtual bool  is_one_to_one_mapping (const TriangleMesh& /* mesh */,
 				       const Matrix& /* A */,
 				       const Vector& /* Bu */,
 				       const Vector& /* Bv */)
