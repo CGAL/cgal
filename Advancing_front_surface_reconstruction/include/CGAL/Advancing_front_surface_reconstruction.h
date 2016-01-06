@@ -1174,8 +1174,21 @@ namespace CGAL {
 
 
     //=====================================================================
-    coord_type infinity() const { return std::numeric_limits<coord_type>::infinity(); }
-    
+
+
+    /// \name Priority values
+    /// @{
+
+    /*!
+
+      computes the priority of the facet `(c,index)` such that the
+      facet with the smallest radius of Delaunay sphere has the
+      highest priority.
+
+    \param c handle to the cell containing the facet
+    \param index index of the facet in `c`
+
+    */
     coord_type
     smallest_radius_delaunay_sphere(const Cell_handle& c,
                                     const int& index) const
@@ -1290,6 +1303,12 @@ namespace CGAL {
       return value;
     }
 
+    /*!
+
+      returns the infinite floating value that prevents a facet to be used.
+    */
+    coord_type infinity() const { return std::numeric_limits<coord_type>::infinity(); }
+    /// @}      
 
     //---------------------------------------------------------------------
     // For a border edge e we determine the incident facet which has the highest
