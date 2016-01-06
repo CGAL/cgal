@@ -668,7 +668,6 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
       delete targeted_id;
       //Remove textitems
       v->textRenderer->removeTextList(textItems);
-      textItems =0;
       delete textItems;
     }
 

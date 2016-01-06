@@ -1139,11 +1139,11 @@ float Scene::get_bbox_length() const
 
 void Scene::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface* viewer)
 {
-	item(mainSelectionIndex())->printPrimitiveId(point, viewer);
+    item(mainSelectionIndex())->printPrimitiveId(point, viewer);
 }
 void Scene::printPrimitiveIds(CGAL::Three::Viewer_interface* viewer)
 {
-	item(mainSelectionIndex())->printPrimitiveIds(viewer);
+    item(mainSelectionIndex())->printPrimitiveIds(viewer);
 }
 bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
 {
