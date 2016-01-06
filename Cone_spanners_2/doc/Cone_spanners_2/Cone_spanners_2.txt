@@ -74,17 +74,15 @@ Below, we detail the design and the usage of the above functors and function.
 
 \subsection subsec_CBS_cone Computing Cone Boundaries
 
-The functor `Compute_cone_boundaries_2` has the following definition and is a model of the `ComputeConeBoundaries_2` concept.
+The functor `Compute_cone_boundaries_2` has the following definition.
 
 \code{.cpp}
-    template <typename ConeBasedSpannerTraits_2>
-    class Compute_cone_boundaries_2{}
+    template <typename Traits>
+    class Compute_cone_boundaries_2;
 \endcode
 
-The template parameter `ConeBasedSpannerTraits_2` determines whether the cone boundaries are computed
-exactly or inexactly. The concept with the same name `ConeBasedSpannerTraits_2` documents the requirements 
-for the \cgal kernels that can be passed to this parameter.  
-Basically, if this parameter is `Exact_predicates_exact_constructions_kernel_with_root_of`,
+The template parameter `Traits` determines whether the cone boundaries are computed
+exactly or inexactly. If this parameter is `Exact_predicates_exact_constructions_kernel_with_root_of`,
 the computation will be done exactly; if this parameter is 
 `Exact_predicates_inexact_constructions_kernel`, the computation will be done inexactly.
 The exact computation is implemented based on the fact that
@@ -122,18 +120,16 @@ please refer to Section \ref sec_CBS_examples.
 
 \subsection subsec_CBS_theta Constructing a Theta Graph
 
-The functor `Construct_theta_graph_2` has the following definition and is a model of the `ConstructConeBasedSpanner_2` concept.
+The functor `Construct_theta_graph_2` has the following definition
 
 \code{.cpp}
-    template <typename ConeBasedSpannerTraits_2, typename Graph_>
-    class Construct_theta_graph_2{} 
+    template <typename Traits, typename Graph>
+    class Construct_theta_graph_2;
 \endcode
 
-Similar to the functor `Compute_cone_boundaries_2`, the template parameter `ConeBasedSpannerTraits_2` 
+Similar to the functor `Compute_cone_boundaries_2`, the template parameter `Traits` 
 determines whether the Theta graph will constructed exactly or inexactly. 
-The basic requirements for this parameter are described in the concept
-`ConeBasedSpannerTraits_2`. The template parameter
-`Graph_` specifies the graph type used to store the constructed graph. 
+The template parameter `Graph` specifies the graph type used to store the constructed graph. 
 Our package requires it to be 
 <a href="http://www.boost.org/libs/graph/doc/adjacency_list.html">boost::adjacency_list</a>
 from the Boost Graph Library (BGL). 
@@ -147,9 +143,8 @@ are different, our package only supports `boost::adjacency_list`.
 
 Note that there are seven template parameters for `boost::adjacency_list` in BGL: `OutEdgeList`, `VertexList`, 
 `Directed`, `VertexProperties`, `EdgeProperties`, `GraphProperties`, `EdgeList`, 
-of which we require `VertexProperties` to be `Point_2`, 
-and other parameters can be chosen freely. And the kernel type for the `Point_2` is
-decided by the template parameter `ConeBasedSpannerTraits_2`.
+of which we require `VertexProperties` to be `Traits::Point_2`, 
+and other parameters can be chosen freely. 
 Also note that, here we make `Point_2` passed
 directly as bundled properties to `boost::adjacency_list`, because this makes our implementation of this 
 package more straightforward than using property maps from BGL. For detailed information about 
@@ -169,12 +164,12 @@ please refer to Section \ref sec_CBS_examples.
 
 \subsection subsec_CBS_yao Constructing a Yao Graph
 
-With a similar definition (see below) to `Construct_theta_graph_2`, the functor `Construct_yao_graph_2`
-is also a model of the `ConstructConeBasedSpanner_2` concept.
+The functor `Construct_yao_graph_2` has a similar definition as `Construct_theta_graph_2`.
+
 
 \code{.cpp}
-    template <typename ConeBasedSpannerTraits_2, typename Graph_>
-    class Construct_yao_graph_2{} 
+    template <typename Traits, typename Graph>
+    class Construct_yao_graph_2;
 \endcode
 
 The way of using these two template parameters is the same as that of `Construct_theta_graph_2`,
