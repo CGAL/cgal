@@ -453,7 +453,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
         }
         else
         {
-            double vertices[3][3];
             int i=0;
             HF_circulator he = f->facet_begin();
             HF_circulator end = he;
@@ -481,9 +480,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
                 positions_facets.push_back(p.y());
                 positions_facets.push_back(p.z());
                 positions_facets.push_back(1.0);
-                vertices[i][0]= p.x();
-                vertices[i][1]= p.y();
-                vertices[i][2]= p.z();
                 i = (i+1) %3;
             }
             if(CGAL::Polygon_mesh_processing::is_degenerated(f,
@@ -550,14 +546,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
             number_of_null_length_edges++;
     }
 
-std::sort(edge_lengths.begin(), edge_lengths.end());
-min_edges_length = CGAL::sqrt(edge_lengths[0]);
-max_edges_length = CGAL::sqrt(edge_lengths[edge_lengths.size()-1]);
-mid_edges_length = CGAL::sqrt(edge_lengths[edge_lengths.size()/2]);
-mean_edges_length = 0;
-for(size_t i=0; i<edge_lengths.size(); i++)
-    mean_edges_length += CGAL::sqrt(edge_lengths[i]);
-mean_edges_length/=edge_lengths.size();
     //set the colors
     compute_colors();
 }
@@ -1264,6 +1252,7 @@ QString Scene_polyhedron_item::compute_stats(int type)
     return nb_holes;
 
   }
+  return QString();
 }
 
 void Scene_polyhedron_item::header(header_data &data)

@@ -1800,7 +1800,7 @@ QString MainWindow::get_polyhedron_stats()
   }
   //last step :: making tables for each type of item
   QString str;
-  for(int i; i< classnames.size(); i++)
+  for(int i=0; i< classnames.size(); i++)
   {
     CGAL::Three::Scene_item::header_data data;
     items[i].at(0)->header(data);
@@ -1829,7 +1829,7 @@ QString MainWindow::get_polyhedron_stats()
           str.append(QString("<td>%1</td>").arg(sit->compute_stats(title)));
         }
         title++;
-        for(title; title<titles_limit; title++)
+        for(;title<titles_limit; title++)
         {
           str.append(QString("</tr><tr><td> %1 </td>").arg(data.titles.at(title)));
           Q_FOREACH(Scene_item* sit, items[i])
