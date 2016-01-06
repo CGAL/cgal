@@ -1191,36 +1191,36 @@ QString Scene_polyhedron_item::compute_stats(int type)
 
   //gets the number of holes
 
-   //if is_closed is false, then there are borders (= holes)
-     int n(0);
-     i = 0;
+  //if is_closed is false, then there are borders (= holes)
+  int n(0);
+  i = 0;
 
-     // initialization : keep the original ids in memory and set them to 0
-     std::vector<int> ids;
-     for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it)
-     {
-       ids.push_back(it->id());
-       it->id() = 0;
-     }
+  // initialization : keep the original ids in memory and set them to 0
+  std::vector<int> ids;
+  for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it)
+  {
+    ids.push_back(it->id());
+    it->id() = 0;
+  }
 
-     //if a border halfedge is found, increment the number of hole and set all the ids of the hole's border halfedges to 1 to prevent
-     // the algorithm from counting them several times.
-     for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it){
-       if(it->is_border() && it->id() == 0){
-         n++;
-         Polyhedron::Halfedge_around_facet_circulator hf_around_facet = it->facet_begin();
-         do {
-           CGAL_assertion(hf_around_facet->id() == 0);
-           hf_around_facet->id() = 1;
-         } while(++hf_around_facet != it->facet_begin());
-       }
-     }
-     //reset the ids to their initial value
-     for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it)
-     {
-       it->id() = ids[i++];
-     }
-     nb_holes = QString::number(n);
+  //if a border halfedge is found, increment the number of hole and set all the ids of the hole's border halfedges to 1 to prevent
+  // the algorithm from counting them several times.
+  for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it){
+    if(it->is_border() && it->id() == 0){
+      n++;
+      Polyhedron::Halfedge_around_facet_circulator hf_around_facet = it->facet_begin();
+      do {
+        CGAL_assertion(hf_around_facet->id() == 0);
+        hf_around_facet->id() = 1;
+      } while(++hf_around_facet != it->facet_begin());
+    }
+  }
+  //reset the ids to their initial value
+  for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it)
+  {
+    it->id() = ids[i++];
+  }
+  nb_holes = QString::number(n);
 
 
 
