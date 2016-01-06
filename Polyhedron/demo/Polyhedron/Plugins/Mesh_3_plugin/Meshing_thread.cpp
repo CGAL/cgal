@@ -28,8 +28,8 @@
 #include <QApplication>
 
 #include "Meshing_thread.h"
-#include "Scene_c3t3_item.h"
 
+class Scene_c3t3_item;
 
 Meshing_thread::
 Meshing_thread(Mesh_function_interface* f, Scene_c3t3_item* item)
