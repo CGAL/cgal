@@ -197,7 +197,7 @@ private:
     typename std::vector<Facet>::iterator fit = facets.begin();
     while(fit != facets.end() && !this->r_c3t3_.is_in_complex(*fit)) ++fit;
     CGAL_assertion(fit!=facets.end());
-    CGAL_assertion_code(int facet_counter = 1);
+    CGAL_assertion_code(std::size_t facet_counter = 1);
 
 #ifdef CGAL_MESHES_DEBUG_REFINEMENT_POINTS
     std::cerr << "  " << v->cached_number_of_incident_facets()
