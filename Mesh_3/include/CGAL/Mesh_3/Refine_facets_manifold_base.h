@@ -29,6 +29,7 @@
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/foreach.hpp>
 #include <boost/mpl/has_xxx.hpp>
+#include <CGAL/Mesh_facet_topology.h>
 
 namespace CGAL {
 
