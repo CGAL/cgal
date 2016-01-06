@@ -167,7 +167,7 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
 
   if(protect_features){
     std::vector<std::vector<Point_3> > polylines;
-    CGAL::polylines_to_protect<Point_3, unsigned char>(*pImage, polylines);
+    CGAL::polylines_to_protect<Point_3>(*pImage, polylines);
     p_domain->add_features(polylines.begin(), polylines.end());
   }
 
