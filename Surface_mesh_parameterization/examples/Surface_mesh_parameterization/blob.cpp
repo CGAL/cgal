@@ -1,3 +1,4 @@
+#define DEBUG_TRACE
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/boost/graph/Seam_mesh.h>
@@ -7,6 +8,7 @@
 #include <CGAL/Discrete_authalic_parameterizer_3.h>
 #include <CGAL/Discrete_conformal_map_parameterizer_3.h>
 #include <CGAL/Barycentric_mapping_parameterizer_3.h>
+#include <CGAL/Mean_value_coordinates_parameterizer_3.h>
 #include <CGAL/LSCM_parameterizer_3.h>
 #include <boost/foreach.hpp>
 #include <iostream>
@@ -75,9 +77,10 @@ int main(int argc, char * argv[])
   }
   
 #if 1
-  //  typedef CGAL::Barycentric_mapping_parameterizer_3<Mesh> Parameterizer;
-  //  typedef CGAL::Discrete_authalic_parameterizer_3<Mesh> Parameterizer;
-  typedef CGAL::Discrete_conformal_map_parameterizer_3<Mesh> Parameterizer;
+  // typedef CGAL::Barycentric_mapping_parameterizer_3<Mesh> Parameterizer;
+  //typedef CGAL::Mean_value_coordinates_parameterizer_3<Mesh> Parameterizer;
+  // typedef CGAL::Discrete_authalic_parameterizer_3<Mesh> Parameterizer;
+   typedef CGAL::Discrete_conformal_map_parameterizer_3<Mesh> Parameterizer;
 #else
  typedef CGAL::LSCM_parameterizer_3<Mesh,
                            CGAL::Two_vertices_parameterizer_3<Mesh> > Parameterizer;
@@ -103,7 +106,7 @@ int main(int argc, char * argv[])
 
   halfedge_descriptor bhd(smhd);
 
-  bhd = opposite(bhd,mesh); // a halfedge on the virtual hole
+  bhd = opposite(bhd,mesh); // a halfedge on the virtual border
 
   Parameterizer::Error_code err = CGAL::parameterize(mesh, Parameterizer(), bhd, uvpm, vipm, vpapm);
 
@@ -125,13 +128,23 @@ int main(int argc, char * argv[])
     
 #if 1
   BOOST_FOREACH(face_descriptor fd, faces(mesh)){  
-    halfedge_descriptor hd = halfedge(fd,mesh);
-    std::cout << "4 " << uvm[target(hd,mesh)].x() << " " << uvm[target(hd,mesh)].y() << " 0 ";
-    hd = next(hd,mesh);
+    halfedge_descriptor hd = halfedge(fd,mesh); 
+    // LSCM produces weird meshes
+    bool skip = false;
     BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd,mesh)){
-      std::cout << uvm[vd].x() << " " << uvm[vd].y() << " 0 ";
+      if( uvm[vd].x() < -10){
+        skip = true;
+      }
     }
-    std::cout << std::endl;
+    if(! skip){
+      std::cout << "4 " << uvm[target(hd,mesh)].x() << " " << uvm[target(hd,mesh)].y() << " 0 ";
+      
+      hd = next(hd,mesh);
+      BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd,mesh)){
+        std::cout << uvm[vd].x() << " " << uvm[vd].y() << " 0 ";
+      }
+      std::cout << std::endl;
+    }
   }
 #endif
   return EXIT_SUCCESS;

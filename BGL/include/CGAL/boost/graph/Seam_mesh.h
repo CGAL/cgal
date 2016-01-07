@@ -32,6 +32,9 @@ typedef typename boost::graph_traits<TM>::face_descriptor face_descriptor;
    **/
   struct vertex_descriptor{
 
+    vertex_descriptor()
+    {}
+
     vertex_descriptor(const halfedge_descriptor& h)
       :hd(h)
     {}

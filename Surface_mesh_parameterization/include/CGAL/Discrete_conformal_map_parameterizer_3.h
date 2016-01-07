@@ -55,46 +55,45 @@ namespace CGAL {
 /// \cgalModels `ParameterizerTraits_3`
 ///
 ///
-/// \param ParameterizationMesh_3       3D surface mesh.
+/// \param TriangleMesh       3D surface mesh.
 /// \param BorderParameterizer_3        Strategy to parameterize the surface border.
 /// \param SparseLinearAlgebraTraits_d  Traits class to solve a sparse linear system.
 ///        Note: the system is *not* symmetric because `Fixed_border_parameterizer_3`
 ///        does not remove (yet) border vertices from the system.
 ///
-/// \sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
-/// \sa `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3>`
-/// \sa `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Parameterizer_traits_3<TriangleMesh>`
+/// \sa `CGAL::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3>`
+/// \sa `CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 template
 <
-    class ParameterizationMesh_3,
+    class TriangleMesh,
     class BorderParameterizer_3
-                = Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
+                = Circular_border_arc_length_parameterizer_3<TriangleMesh>,
     class SparseLinearAlgebraTraits_d
                 = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType, Eigen::IncompleteLUT< double > > >
 >
 class Discrete_conformal_map_parameterizer_3
-    : public Fixed_border_parameterizer_3<ParameterizationMesh_3,
-                                        BorderParameterizer_3,
-                                        SparseLinearAlgebraTraits_d>
+    : public Fixed_border_parameterizer_3<TriangleMesh,
+                                          BorderParameterizer_3,
+                                          SparseLinearAlgebraTraits_d>
 {
 // Private types
 private:
     // Superclass
-    typedef Fixed_border_parameterizer_3<ParameterizationMesh_3,
+    typedef Fixed_border_parameterizer_3<TriangleMesh,
                                         BorderParameterizer_3,
                                         SparseLinearAlgebraTraits_d>
-                                            Base;
+                                        Base;
 
 // Public types
 public:
     // We have to repeat the types exported by superclass
     /// @cond SKIP_IN_MANUAL
     typedef typename Base::Error_code       Error_code;
-    typedef ParameterizationMesh_3          TriangleMesh;
     typedef BorderParameterizer_3           Border_param;
     typedef SparseLinearAlgebraTraits_d     Sparse_LA;
     /// @endcond
@@ -124,8 +123,8 @@ public:
                                            Sparse_LA sparse_la = Sparse_LA())
                                             ///< Traits object to access a sparse linear system.
     :   Fixed_border_parameterizer_3<TriangleMesh,
-                                   Border_param,
-                                   Sparse_LA>(border_param, sparse_la)
+                                     Border_param,
+                                     Sparse_LA>(border_param, sparse_la)
     {}
 
     // Default copy constructor and operator =() are fine

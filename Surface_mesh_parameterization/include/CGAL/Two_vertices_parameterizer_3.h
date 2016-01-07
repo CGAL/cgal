@@ -64,6 +64,7 @@ public:
     typedef TriangleMesh TriangleMesh;
 
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
 // Private types
 private:
   typedef Parameterizer_traits_3<TriangleMesh> Adaptor;
@@ -76,24 +77,12 @@ public:
     // Default constructor, copy constructor and operator =() are fine.
 
     /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
+template <typename VertexUVmap, typename VertexParameterizedMap>
   typename Parameterizer_traits_3<TriangleMesh>::Error_code
-                                        parameterize_border(TriangleMesh& mesh);
-
-    /// Indicate if border's shape is convex.
-    /// Meaningless for free border parameterization algorithms.
-    bool  is_border_convex () { return false; }
-};
-
-
-//
-// Implementation
-//
-
-// Map two extreme vertices of the 3D mesh and mark them as "parameterized".
-template<class TriangleMesh>
-inline
-typename Parameterizer_traits_3<TriangleMesh>::Error_code
-Two_vertices_parameterizer_3<TriangleMesh>::parameterize_border(TriangleMesh& tmesh)
+  parameterize_border(TriangleMesh& tmesh,
+                      halfedge_descriptor bhd,
+                      VertexUVmap uvmap,
+                      VertexParameterizedMap vpmap)
 {
     typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type PPmap;
     PPmap ppmap = get(vertex_point, tmesh);
@@ -196,7 +185,7 @@ Two_vertices_parameterizer_3<TriangleMesh>::parameterize_border(TriangleMesh& tm
     // Project onto longest bounding box axes,
     // Set extrema vertices' (u,v) in unit square and mark them as "parameterized"
     vertex_descriptor vxmin;
-    double  umin  =  (std::numeric_limits<double>::max)() ;
+    double umin  =  (std::numeric_limits<double>::max)() ;
     double vmin =  (std::numeric_limits<double>::max)(), vmax=  (std::numeric_limits<double>::min)();
     vertex_descriptor vxmax;
     double  umax  =  (std::numeric_limits<double>::min)() ;
@@ -215,7 +204,7 @@ Two_vertices_parameterizer_3<TriangleMesh>::parameterize_border(TriangleMesh& tm
         u = (u - V1_min) / (V1_max - V1_min);
         v = (v - V2_min) / (V2_max - V2_min);
 
-        // TODOtmesh.set_vertex_uv(vd, Point_2(u,v)) ; // useful only for vxmin and vxmax
+        put(uvmap, vd, Point_2(u,v)) ; // useful only for vxmin and vxmax
 
         if(u < umin || (u==umin && v < vmin) ) {
             vxmin = vd ;
@@ -228,8 +217,8 @@ Two_vertices_parameterizer_3<TriangleMesh>::parameterize_border(TriangleMesh& tm
             vmax = v ;
         }
     }
-    //mesh.set_vertex_parameterized(vxmin, true) ;
-    //mesh.set_vertex_parameterized(vxmax, true) ;
+    put(vpmap, vxmin, true);
+    put(vpmap, vxmax, true);
 
 #ifdef DEBUG_TRACE
     std::cerr << "  map two vertices..." << std::endl;
@@ -239,6 +228,12 @@ Two_vertices_parameterizer_3<TriangleMesh>::parameterize_border(TriangleMesh& tm
 
     return Parameterizer_traits_3<TriangleMesh>::OK;
 }
+
+    /// Indicate if border's shape is convex.
+    /// Meaningless for free border parameterization algorithms.
+    bool  is_border_convex () { return false; }
+};
+
 
 
 } //namespace CGAL

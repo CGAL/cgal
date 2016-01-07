@@ -37,6 +37,8 @@
 #include <CGAL/Two_vertices_parameterizer_3.h>
 #include <CGAL/surface_mesh_parameterization_assertions.h>
 #include <CGAL/Parameterization_mesh_feature_extractor.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
+
 #include <iostream>
 
 /// \file LSCM_parameterizer_3.h
@@ -125,12 +127,12 @@ private:
   typedef CGAL::Vertex_around_face_circulator<TriangleMesh> vertex_around_face_circulator;
 
     // Mesh_Adaptor_3 subtypes:
-  typedef Parameterizer_traits_3<TriangleMesh> Adaptor;
-    typedef typename Adaptor::NT            NT;
-    typedef typename Adaptor::Point_2       Point_2;
-    typedef typename Adaptor::Point_3       Point_3;
-    typedef typename Adaptor::Vector_2      Vector_2;
-    typedef typename Adaptor::Vector_3      Vector_3;
+  typedef Parameterizer_traits_3<TriangleMesh> Traits;
+    typedef typename Traits::NT            NT;
+    typedef typename Traits::Point_2       Point_2;
+    typedef typename Traits::Point_3       Point_3;
+    typedef typename Traits::Vector_2      Vector_2;
+    typedef typename Traits::Vector_3      Vector_3;
    
     // SparseLinearAlgebraTraits_d subtypes:
     typedef typename Sparse_LA::Vector      Vector;
@@ -158,8 +160,12 @@ public:
     ///
     /// \pre `mesh` must be a surface with one connected component.
     /// \pre `mesh` must be a triangular mesh.
-template <typename HalfedgeUVmap, typename HalfedgeAsVertexIndexMap>
-Error_code  parameterize(TriangleMesh& tmesh, halfedge_descriptor bhd, HalfedgeUVmap uvmap, HalfedgeAsVertexIndexMap hvimap)
+template <typename VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
+Error_code  parameterize(TriangleMesh& tmesh,
+                         halfedge_descriptor bhd,
+                         VertexUVmap uvmap,
+                         VertexIndexMap vimap,
+                         VertexParameterizedMap vpm)
 {
 #ifdef DEBUG_TRACE
     // Create timer for traces
@@ -184,7 +190,7 @@ Error_code  parameterize(TriangleMesh& tmesh, halfedge_descriptor bhd, HalfedgeU
 
     // Compute (u,v) for (at least two) border vertices
     // and mark them as "parameterized"
-    status = get_border_parameterizer().parameterize_border(tmesh);
+    status = get_border_parameterizer().parameterize_border(tmesh,bhd,uvmap,vpm);
 #ifdef DEBUG_TRACE
     std::cerr << "  border vertices parameterization: " << timer.time() << " seconds." << std::endl;
     timer.reset();
@@ -197,21 +203,20 @@ Error_code  parameterize(TriangleMesh& tmesh, halfedge_descriptor bhd, HalfedgeU
     LeastSquaresSolver solver(2*nbVertices);
     solver.set_least_squares(true) ;
 
-  std::set<vertex_descriptor> main_border;
-
-    BOOST_FOREACH(vertex_descriptor v, vertices_around_face(bhd,tmesh)){
-      main_border.insert(v);
-    }
     // Initialize the "A*X = B" linear system after
     // (at least two) border vertices parameterization
-    initialize_system_from_mesh_border(solver, tmesh, bhd, uvmap, hvimap);
+    initialize_system_from_mesh_border(solver, tmesh, uvmap, vimap,vpm);
 
     // Fill the matrix for the other vertices
     solver.begin_system() ;
-    BOOST_FOREACH(face_descriptor fd, faces(tmesh))
+    std::vector<face_descriptor> ccfaces;
+    CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,tmesh),tmesh),
+                                                       tmesh,
+                                                       std::back_inserter(ccfaces));
+    BOOST_FOREACH(face_descriptor fd, ccfaces) // faces(tmesh)
     {
         // Create two lines in the linear system per triangle (one for u, one for v)
-      status = setup_triangle_relations(solver, tmesh, fd,hvimap);
+      status = setup_triangle_relations(solver, tmesh, fd,vimap);
             if (status != Base::OK)
             return status;
     }
@@ -232,12 +237,13 @@ Error_code  parameterize(TriangleMesh& tmesh, halfedge_descriptor bhd, HalfedgeU
     // Copy X coordinates into the (u,v) pair of each vertex
     //set_mesh_uv_from_system(tmesh, solver, uvmap);
 
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges(tmesh))
+    BOOST_FOREACH(vertex_descriptor vd, vertices(tmesh))
     {
-      int index = get(hvimap,hd);
+      int index = get(vimap,vd);
       NT u = solver.variable(2*index    ).value() ;
       NT v = solver.variable(2*index + 1).value() ;
-      put(uvmap,hd,Point_2(u,v));
+      std::cerr << u << " " << v << std::endl;
+      put(uvmap, vd, Point_2(u,v));
     }
 
 #ifdef DEBUG_TRACE
@@ -271,38 +277,35 @@ private:
     /// \pre Vertices must be indexed.
     /// \pre X and B must be allocated and empty.
     /// \pre At least 2 border vertices must be parameterized.
-  template <typename HalfedgeUVmap, typename HalfedgeAsVertexIndexMap >
+  template <typename UVmap, typename VertexIndexMap,  typename VertexParameterizedMap>
     void initialize_system_from_mesh_border(LeastSquaresSolver& solver,
                                             const TriangleMesh& tmesh,
-                                            halfedge_descriptor bhd,
-                                            HalfedgeUVmap uvmap,
-                                            HalfedgeAsVertexIndexMap hvimap)
+                                            UVmap uvmap,
+                                            VertexIndexMap vimap,
+                                            VertexParameterizedMap vpm)
 { 
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,tmesh)){
-    BOOST_FOREACH(vertex_descriptor v, vertices(tmesh))
-    {
+    BOOST_FOREACH(vertex_descriptor v, vertices(tmesh)){
         // Get vertex index in sparse linear system
-      int index = get(hvimap, opposite(next(hd,tmesh),tmesh));
+      int index = get(vimap, v);
 
         // Get vertex (u,v) (meaningless if vertex is not parameterized)
-      Point_2 uv = get(uvmap, opposite(next(hd,tmesh),tmesh));
-
-
+      Point_2 uv = get(uvmap, v);
       // TODO: it is meaningless but must it be called for non-border vertices??
         // Write (u,v) in X (meaningless if vertex is not parameterized)
         // Note  : 2*index     --> u
         //         2*index + 1 --> v
-        //solver.variable(2*index    ).set_value(uv.x()) ;
-        //solver.variable(2*index + 1).set_value(uv.y()) ;
+        solver.variable(2*index    ).set_value(uv.x()) ;
+        solver.variable(2*index + 1).set_value(uv.y()) ;
 
         // Copy (u,v) in B if vertex is parameterized
-        //if (mesh.is_vertex_parameterized(v)) {
-            solver.variable(2*index    ).lock() ;
-            solver.variable(2*index + 1).lock() ;
-            //}
+        if (get(vpm,v)) {
+          std::cerr << "vertex is parameterized"<< std::endl;
+          solver.variable(2*index    ).lock() ;
+          solver.variable(2*index + 1).lock() ;
+        }
     }
-  }
-}
+ }
+    
 
 
     /// Utility for setup_triangle_relations():
@@ -504,7 +507,7 @@ setup_triangle_relations(LeastSquaresSolver& solver,
     vertex_descriptor v0, v1, v2;
     halfedge_descriptor h0 = halfedge(facet,tmesh);
     v0 = target(h0,tmesh);
-    halfedge_descriptor h1 = next(h1,tmesh);
+    halfedge_descriptor h1 = next(h0,tmesh);
     v1 = target(h1,tmesh);
     halfedge_descriptor h2 = next(h1,tmesh);
     v2 = target(h2,tmesh);

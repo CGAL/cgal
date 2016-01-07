@@ -138,7 +138,6 @@ public:
   private:
     /// Compute the total length of the border
     double compute_border_length(const ParameterizationMesh_3& tmesh, halfedge_descriptor bhd){
-
       VPM vpm = get(CGAL::vertex_point,tmesh);
       double len = 0.0;
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,tmesh)){
