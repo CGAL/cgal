@@ -48,8 +48,7 @@ private:
 typedef CGAL::Triangle_accessor_3<Polyhedron, Kernel> T_accessor;
 
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<
-          Kernel, Polyhedron, T_accessor, CGAL::Tag_true> Polyhedral_mesh_domain_with_features;
-typedef CGAL::Mesh_domain_with_polyline_features_3<Polyhedral_mesh_domain_with_features> Polyhedral_mesh_domain;
+          Kernel, Polyhedron, T_accessor, CGAL::Tag_true> Polyhedral_mesh_domain;
 // The last `Tag_true` says the Patch_id type will be int, and not pair<int, int>
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
