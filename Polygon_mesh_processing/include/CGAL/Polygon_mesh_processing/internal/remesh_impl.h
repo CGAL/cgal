@@ -187,20 +187,13 @@ namespace internal {
     void init_remeshing(const FaceRange& face_range
                       , const EdgeIsConstrainedMap& ecmap)
     {
-      if (protect_constraints_)
-      {
-        BOOST_FOREACH(edge_descriptor e, edges(mesh_))
-        {
-          if (get(ecmap, e))
-            constrained_edges_.insert(e);
-        }
-      }
-      tag_halfedges_status(face_range, ecmap);
+      tag_halfedges_status(face_range, ecmap); //called first
+      Constraint_property_map cpmap(*this);
 
       //build AABB tree of input surface
       PMP::connected_components(mesh_,
         boost::make_assoc_property_map(patch_ids_map_),// set patch_id() for each face
-        PMP::parameters::edge_is_constrained_map(ecmap));
+        PMP::parameters::edge_is_constrained_map(cpmap));
 
       tree_ptr_->build(faces(mesh_).first, faces(mesh_).second,
                        mesh_,
@@ -961,7 +954,7 @@ private:
       if (protect_constraints_)
         return false;
       else
-        return constrained_edges_.find(e) != constrained_edges_.end();
+        return get(Constraint_property_map(*this), e);
     }
 
     bool is_split_allowed(const edge_descriptor& e) const
@@ -1437,7 +1430,6 @@ private:
     bool own_tree_;
     boost::unordered_map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
     bool protect_constraints_;
-    std::set<edge_descriptor> constrained_edges_;
     FaceComponentMap patch_ids_map_;
 
   };//end class Incremental_remesher
