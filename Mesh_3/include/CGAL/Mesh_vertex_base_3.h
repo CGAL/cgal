@@ -205,7 +205,7 @@ public:
     cache_validity = false;
   }
 
-  void set_c2t3_cache(const int i, const int j)
+  void set_c2t3_cache(const std::size_t i, const std::size_t j)
   {
     number_of_incident_facets_ = i;
     number_of_components_ = j;
