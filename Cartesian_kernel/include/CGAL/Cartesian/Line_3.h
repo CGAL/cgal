@@ -47,7 +47,6 @@ class LineC3
     Vector_3 second;
     Rep () : first(), second() { }
     Rep (const Point_3& p, const Vector_3& v) : first(p), second(v) { }
-    Rep (const Rep& r) : first(r.first), second(r.second) { }
   };
 
   typedef typename R_::template Handle<Rep>::type  Base;
