@@ -338,7 +338,6 @@ namespace CGAL {
            this->mmap->beta(this->minitial_dart, Bi)!=this->minitial_dart )
       {
         this->mto_treat.push(this->mmap->beta(this->minitial_dart, Bi));
-        this->mmap->mark(this->mmap->beta(this->minitial_dart, Bi), this->mmark_number);
       }
     }
 
@@ -351,7 +350,6 @@ namespace CGAL {
            this->mmap->beta(this->minitial_dart, Bi)!=this->minitial_dart )
       {
         this->mto_treat.push(this->mmap->beta(this->minitial_dart, Bi));
-        this->mmap->mark(this->mmap->beta(this->minitial_dart, Bi), this->mmark_number);
       }
     }
 
@@ -371,7 +369,6 @@ namespace CGAL {
             !this->mmap->is_marked(this->mmap->beta(*this, Bi), this->mmark_number) )
         {
           this->mto_treat.push(this->mmap->beta(*this, Bi));
-          this->mmap->mark(this->mmap->beta(*this, Bi), this->mmark_number);
         }
       }
       return *this;

@@ -2,6 +2,7 @@
 #include <CGAL/Cell_attribute.h>
 #include <CGAL/Combinatorial_map_constructors.h>
 #include <CGAL/Combinatorial_map_operations.h>
+#include "Combinatorial_map_test_iterators.h"
 
 #include <iostream>
 #include <fstream>
@@ -307,6 +308,14 @@ bool testCopy()
 
   Map8 map8; create4Dmap(map8);
   Map9 map9; create4Dmap(map9);
+
+  // Test iterators
+  if ( !test_iterators_2(map1) )
+  {  assert(false); return false; }
+  if ( !test_iterators_3(map4) )
+  {  assert(false); return false; }
+  if ( !test_iterators_4(map8) )
+  {  assert(false); return false; }
 
   // First copy of same types
   {

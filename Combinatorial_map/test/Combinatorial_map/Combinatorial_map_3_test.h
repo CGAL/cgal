@@ -22,6 +22,7 @@
 
 #include <CGAL/Combinatorial_map_constructors.h>
 #include <CGAL/Combinatorial_map_operations.h>
+#include "Combinatorial_map_test_iterators.h"
 
 #include <iostream>
 #include <fstream>
@@ -419,6 +420,7 @@ bool test3D()
   cout << "After insert_cell_0_in_cell_2: "; ;
 
   if (map.is_valid()) cout << "Map valid." << endl;
+
   map.clear();
 
   cout << "***************************** TEST TRIANGULATION_2 3D DONE."
@@ -468,6 +470,9 @@ bool test3D()
       map.template sew<3>(map.beta(d2,2), d3);
       map.template sew<3>(map.beta(d1,2), map.beta(d3,2));
     }
+
+  if ( !test_iterators_3(map) )
+  {  assert(false); return false; }
 
   // Two nested iterators
   cout << "Nombre de brins : " << map.number_of_darts() << ", "
@@ -590,6 +595,9 @@ bool test3D()
       map.template one_dart_per_cell<1>().size();
     std::cout<<nbtest2<<(nbtest==nbtest2?". OK":". PROBLEM")<<std::endl;
   }
+
+  test_iterators_3(map);
+
   map.clear();
 
   cout << "***************************** TEST ITERATORS 3D DONE." << endl;
