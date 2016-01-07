@@ -26,11 +26,12 @@ typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits
 typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
 typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
 
+// Point set structuring type
 typedef CGAL::internal::Point_set_structuring<Traits>        Structuring;
 
+// Advancing front types
 typedef CGAL::Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
 typedef CGAL::Advancing_front_surface_reconstruction_cell_base_3<Kernel> LCb;
-
 typedef CGAL::Triangulation_data_structure_3<LVb,LCb> Tds;
 typedef CGAL::Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 typedef Triangulation_3::Vertex_handle Vertex_handle;
@@ -38,6 +39,7 @@ typedef Triangulation_3::Vertex_handle Vertex_handle;
 typedef CGAL::cpp11::array<std::size_t,3> Facet;
 
 
+// Functor to init the advancing front algorithm with indexed points
 struct On_the_fly_pair{
   const Pwn_vector& points;
   typedef std::pair<Point, std::size_t> result_type;
@@ -51,6 +53,7 @@ struct On_the_fly_pair{
   }
 };
 
+// Specialized priority functor that favor structure coherence
 template <typename Structuring>
 struct Priority_with_structure_coherence {
 
@@ -85,6 +88,9 @@ struct Priority_with_structure_coherence {
                  c->vertex ((index + 2) % 4)->info (),
                  c->vertex ((index + 3) % 4)->info () }};
 
+    // facet_coherence takes values between -1 and 3, 3 being the most
+    // coherent and -1 being incoherent. Smaller weight means higher
+    // priority.
     double weight = 100. * (5 - structuring.facet_coherence (f));
 
     return weight * adv.smallest_radius_delaunay_sphere (c, index);
@@ -92,6 +98,7 @@ struct Priority_with_structure_coherence {
 
 };
 
+// Advancing front type
 typedef CGAL::Advancing_front_surface_reconstruction<Triangulation_3,
                                                      Priority_with_structure_coherence<Structuring> > Reconstruction;
 
@@ -117,11 +124,12 @@ int main (int argc, char* argv[])
   }
 
   std::cerr << "Shape detection... ";
-  // Shape detection
+
   Efficient_ransac ransac;
   ransac.set_input(points);
-  ransac.add_shape_factory<Plane>();
+  ransac.add_shape_factory<Plane>(); // Only planes are useful for stucturing
 
+  // Default RANSAC parameters
   Efficient_ransac::Parameters op;
   op.probability = 0.05;
   op.min_points = 100;
@@ -129,16 +137,17 @@ int main (int argc, char* argv[])
   op.cluster_epsilon = (argc>3 ? boost::lexical_cast<double>(argv[3]) : 0.02);
   op.normal_threshold = 0.7;
 
-  ransac.detect(op);
+  ransac.detect(op); // Plane detection
+
   std::cerr << "done\nPoint set structuring... ";
+
   Pwn_vector structured_pts;
-  
   Structuring pss (points.begin (), points.end (), ransac);
-
-  pss.run (op.cluster_epsilon);
-
+  pss.run (op.cluster_epsilon); // Same parameter as RANSAC
   pss.get_output (std::back_inserter (structured_pts));
+
   std::cerr << "done\nAdvancing front... ";
+
   std::vector<std::size_t> point_indices(boost::counting_iterator<std::size_t>(0),
                                          boost::counting_iterator<std::size_t>(structured_pts.size()));
 
@@ -146,16 +155,18 @@ int main (int argc, char* argv[])
                       boost::make_transform_iterator(point_indices.end(), On_the_fly_pair(structured_pts)));
 
 
-  Priority_with_structure_coherence<Structuring> priority (pss, 1000. * op.cluster_epsilon);
+  Priority_with_structure_coherence<Structuring> priority (pss,
+                                                           1000. * op.cluster_epsilon); // Avoid too large facets
   Reconstruction R(dt, priority);
+  R.run ();
 
-  R.run (5., 0.52);
   std::cerr << "done\nWriting result... ";
+
   std::vector<Facet> output;
   CGAL::write_triple_indices (std::back_inserter (output), R);
 
   std::ofstream f ("out.off");
-  f << "OFF\n" << structured_pts.size () << " " << output.size() << " 0\n";
+  f << "OFF\n" << structured_pts.size () << " " << output.size() << " 0\n"; // Header
   for (std::size_t i = 0; i < structured_pts.size (); ++ i)
     f << structured_pts[i].first << std::endl;
   for (std::size_t i = 0; i < output.size (); ++ i)
@@ -166,32 +177,6 @@ int main (int argc, char* argv[])
   std::cerr << "all done\n" << std::endl;
 
   f.close();
-  
-  std::vector<Facet> out[3];
-  for (std::size_t i = 0; i < output.size (); ++ i)
-    {
-      unsigned int coherence = pss.facet_coherence (output[i]);
-      if (coherence > 2) coherence = 2;
-      out[coherence].push_back (output[i]);
-    }
-  
-  for (std::size_t n = 0; n < 3; ++ n)
-    {
-      std::stringstream ss;
-      ss << "out" << n << ".off";
-      std::ofstream f (ss.str().c_str());
-      f << "OFF\n" << structured_pts.size () << " " << out[n].size() << " 0\n";
-      for (std::size_t i = 0; i < structured_pts.size (); ++ i)
-        f << structured_pts[i].first << std::endl;
-      for (std::size_t i = 0; i < out[n].size (); ++ i)
-        f << "3 "
-          << out[n][i][0] << " "
-          << out[n][i][1] << " "
-          << out[n][i][2] << std::endl;
-      std::cerr << "all done\n" << std::endl;
-
-      f.close();
-    }
   
   return 0;
 }
