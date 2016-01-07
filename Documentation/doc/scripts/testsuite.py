@@ -60,15 +60,6 @@ def get_version():
     date=date[1:11]
     return (rev, date)
 
-def get_cgal_version(path_to_version_h):
-    f=file(path_to_version_h)
-    for line in f.readlines():
-        m = re.match('^#define CGAL_VERSION (.*)',line)
-        if m:
-          return "CGAL-"+m.group(1)
-    return "Unknown Version"
-
-
 def write_report(args):
     page_header='''<html><head>
 <title>CGAL Doxygen Manual Results</title>
@@ -135,7 +126,7 @@ def main():
 
     d, sum=write_report(args)
     if args.cgal_version:
-      version_string=get_cgal_version(args.cgal_version)
+      version_string="CGAL-"+args.cgal_version
       version_date=datetime.datetime.now().strftime("%Y-%m-%d")
     else:
       version_string,version_date=get_version()

@@ -308,10 +308,8 @@ if(PYTHONINTERP_FOUND)
     )
     add_dependencies(Documentation_test_publish doc)
 
-    set(CGAL_DOC_VERSION_H "/tmp/version.h" CACHE PATH "Path to CGAL/version.h")
-
     add_custom_target(doc_and_publish_testsuite
-      ${PYTHON_EXECUTABLE} ${CGAL_DOC_TESTSUITE_SCRIPT} --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results --cgal-version ${CGAL_DOC_VERSION_H} --version-to-keep 10
+      ${PYTHON_EXECUTABLE} ${CGAL_DOC_TESTSUITE_SCRIPT} --output-dir ${CGAL_DOC_OUTPUT_DIR} --doc-log-dir ${CGAL_DOC_LOG_DIR} --publish ${CGAL_DOC_PUBLISH_DIR} --do-copy-results --cgal-version "${CGAL_FULL_VERSION}" --version-to-keep 10
     )
     add_dependencies(doc_and_publish_testsuite doc_with_postprocessing)
 
