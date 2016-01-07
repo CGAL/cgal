@@ -283,11 +283,27 @@ must be applied first as a preprocessing to the point set:
 resample the planar sections and edges and corners detected among
 them.
 
-The following example shows how to define a priority functor that
-favors structurally coherent facets and makes the advancing front
-algorithm robust to sharp features:
+\cgalFigureBegin{figAFSRstruct,structured_example.png}
+Comparison of advancing front output.
+
+- Top: input point set and raw advancing front reconstruction
+
+- Bottom: structured point set and advancing front reconstruction with
+structure-dependent priority functor
+
+\cgalFigureEnd
+
+The quality of the reconstruction can be significantly improved thanks
+to point set structuring when dealing with shapes with sharp features,
+as shown on the previous figure. The following example shows how to
+define a priority functor that favors structurally coherent facets and
+makes the advancing front algorithm robust to sharp features.
+
 
 \cgalExample{Advancing_front_surface_reconstruction/reconstruction_structured.cpp}
+
+
+
 
 
 */
