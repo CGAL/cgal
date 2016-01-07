@@ -5,6 +5,7 @@ import re
 import codecs
 from sys import argv
 from sys import stderr
+import os
 
 ### Constants ###
 
@@ -149,11 +150,19 @@ def protect_accentuated_letters(authors):
                  "Check the new package added and update the function protect_accentuated_letters in Documentation/scripts/generate_how_to_cite.py\n\n")
   return res
 
+def make_doc_path(pkg, arg):
+  if BRANCH_BUILD:
+    return os.path.join(SOURCE_DIR, pkg, "doc", pkg, arg)
+  else:
+    return os.path.join(SOURCE_DIR, "doc", pkg, arg)
+
 ### Start of the main function ###
 
-SOURCE_DIR=argv[1]
-BUILD_DIR=argv[2]
+assert len(argv) == 4, "require exactly three arguments: source_dir, build_dir, branch_build"
 
+SOURCE_DIR = argv[1]
+BUILD_DIR = argv[2]
+BRANCH_BUILD = argv[3]
 
 pattern = re.compile(r"\\package_listing{([^}]*)}")
 
@@ -161,13 +170,13 @@ pattern_title_and_anchor = re.compile(r"\\cgalPkgDescriptionBegin{([^}]*),\s?([^
 pattern_author = re.compile(r"\\cgalPkgAuthors?{([^}]*)}")
 pattern_bib = re.compile(r"\\cgalPkgBib{([^}]*)}")
 
-f = codecs.open(SOURCE_DIR+"/doc/Documentation/packages.txt", 'r', encoding='utf-8')
+f = codecs.open(make_doc_path("Documentation", "packages.txt"), 'r', encoding='utf-8')
 k=2
 for line in f:
     match = pattern.match(line)
     if(match):
       pkg = match.group(1)
-      filename=SOURCE_DIR+"/../" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
+      filename = make_doc_path(pkg, "PackageDescription.txt")
       pkgdesc = codecs.open(filename, 'r', encoding='utf-8')
       authors=""
       bib=""

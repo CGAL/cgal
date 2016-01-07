@@ -5,6 +5,15 @@ import re
 import os
 import sys
 
+SOURCE_DIR   = "${CMAKE_SOURCE_DIR}/"
+BRANCH_BUILD = "${CGAL_BRANCH_BUILD}"
+
+def make_doc_path(pkg, arg):
+  if BRANCH_BUILD:
+    return os.path.join(SOURCE_DIR, pkg, "doc", pkg, arg)
+  else:
+    return os.path.join(SOURCE_DIR, "doc", pkg, arg)
+
 def main(argv):
 #    sys.stdout = codecs.getwriter('utf-8')(sys.stdout)
     pattern = re.compile(r"\\package_listing{([^}]*)}")
@@ -13,7 +22,7 @@ def main(argv):
         match = pattern.match(line)
         if(match):
             pkg = match.group(1)
-            filename="${CMAKE_SOURCE_DIR}/" + pkg + "/doc/" + pkg + "/PackageDescription.txt"
+            filename = make_doc_path(pkg, "PackageDescription.txt")
             pkgdesc = codecs.open(filename, 'r', encoding='utf-8')
             do_print=False
             for l in pkgdesc:
