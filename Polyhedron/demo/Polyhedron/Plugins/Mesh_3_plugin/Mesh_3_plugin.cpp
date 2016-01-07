@@ -28,8 +28,10 @@
 
 #include "ui_Meshing_dialog.h"
 
+using namespace CGAL::Three;
+
 // declare the CGAL function
-CGAL::Three::Scene_item* cgal_code_mesh_3(const Polyhedron*,
+Scene_item* cgal_code_mesh_3(const Polyhedron*,
                              const Scene_polylines_item::Polylines_container&,
                              QString filename,
                              const double angle,
@@ -62,7 +64,6 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
                              CGAL::Three::Scene_interface* scene);
 #endif
 
-using namespace CGAL::Three;
 class Polyhedron_demo_mesh_3_plugin :
   public QObject,
   protected Polyhedron_demo_plugin_helper
