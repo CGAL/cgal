@@ -22,11 +22,41 @@ function error() {
     exit 1
 }
 
-DIR=`readlink /home/lrineau/latest-internal-release-branch`
+CGAL_URL="https://cgal.geometryfactory.com/CGAL/Members/Releases"
+CURL_OPTS="-k --remote-name --silent --location-trusted"
+LATEST_LOCATION="${CGAL_URL}/LATEST"
+CGAL_DOC_BUILD="/home/cgal-testsuite/cgal_doc_build"
 
-rsync -a --delete '--exclude=.git*' "$DIR/" integration
-mkdir /home/cgal-testsuite/integration/build_doc
-cd /home/cgal-testsuite/integration/build_doc
+if [ -r "${CGAL_DOC_BUILD}" ]; then
+    rm -rf "${CGAL_DOC_BUILD}"
+fi
+
+mkdir ${CGAL_DOC_BUILD}
+cd ${CGAL_DOC_BUILD}
+
+if [ -r "LATEST" ]; then
+    rm -rf LATEST
+fi
+
+curl ${CURL_OPTS} "${LATEST_LOCATION}"
+
+if [ ! -f "LATEST" ]; then
+    error "COULD NOT DOWNLOAD LATEST!"
+fi
+
+for i in `cat LATEST`
+do
+    CGAL_LOCATION="${CGAL_URL}/${i}";
+    CGAL_ZIPFILE="${i}";
+done
+CGAL_RELEASE_ID=`echo $CGAL_ZIPFILE | sed "s/.tar.gz//"`
+
+curl ${CURL_OPTS} "${CGAL_LOCATION}"
+tar xvzf "${CGAL_ZIPFILE}" && rm "${CGAL_ZIPFILE}"
+if [ ! -d "${CGAL_DOC_BUILD}/${CGAL_RELEASE_ID}" ]; then
+    error "directory ${CGAL_DOC_BUILD}/${CGAL_RELEASE_ID} does not exist"
+fi
+cd "${CGAL_RELEASE_ID}"
 
 PYTHONPATH=/home/cgal-testsuite/.local/lib/python2.6/site-packages
 export PYTHONPATH
@@ -41,13 +71,14 @@ cmake \
     -DCGAL_DOC_PUBLISH_DIR=/srv/CGAL/www/Members/Manual_doxygen_test \
     -DDOXYGEN_EXECUTABLE:FILEPATH=/home/cgal-testsuite/local/bin/doxygen \
     -DPYTHON_EXECUTABLE:FILEPATH=/home/cgal-testsuite/local/bin/python2 \
-    .. 2>&1 || error "exit code $? returned by CMake"
+    . 2>&1 || error "exit code $? returned by CMake"
 # Note that -DCGAL_DOC_RELEASE:BOOL=TRUE should be only for master-only
 # internal releases, and not for integration releases.
 
 make doc 2>&1 || error "exit code $? returned by the command 'make doc'"
 make doc_and_publish_testsuite 2>&1 || error "exit code $? returned by the command 'make doc_and_publish_testsuite'"
 
+rm -rf "${CGAL_DOC_BUILD}"
 # Then gzip the log file, to save space
 exec
 gzip -f "$LOGFILE"
