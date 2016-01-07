@@ -55,6 +55,7 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
                              const double facet_approx,
                              const double tet_sizing,
                              const double tet_shape,
+                             const bool protect_features,
                              CGAL::Three::Scene_interface* scene);
 #endif
 
@@ -134,7 +135,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
 
   Scene_item* item = NULL;
   bool features_protection_available = false;
-  if (NULL != poly_item)
+  if(NULL != poly_item)
   {
     item = poly_item;
     features_protection_available = true;
@@ -143,7 +144,11 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
   else if (NULL != function_item) { item = function_item; }
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-  else if (NULL != image_item)    { item = image_item; }
+  else if (NULL != image_item)
+    { 
+      item = image_item;
+      features_protection_available = true;
+    }
 #endif
 
   if (NULL == item)
@@ -284,6 +289,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                                  approx,
                                  tet_sizing,
                                  radius_edge,
+                                 protect_features,
                                  scene);
   }
 #endif

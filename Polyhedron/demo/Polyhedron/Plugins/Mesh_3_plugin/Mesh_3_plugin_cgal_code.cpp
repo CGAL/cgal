@@ -2,6 +2,7 @@
 
 #include <CGAL/Mesh_criteria_3.h>
 #include <CGAL/make_mesh_3.h>
+#include <CGAL/Mesh_3/polylines_to_protect.h>
 #include <CGAL/Bbox_3.h>
 
 #include <Polyhedron_type.h>
@@ -11,6 +12,7 @@
 #include <CGAL/Three/Scene_item.h>
 
 #include "Mesh_function.h"
+#include "Facet_extra_criterion.h"
 
 #include <CGAL/Timer.h>
 using namespace CGAL::Three;
@@ -41,7 +43,6 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
   Facet_criteria facet_criteria(angle, facet_sizing, approx); // angle, size, approximation
   Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
   Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
-
   CGAL::Timer timer;
   timer.start();
   std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
@@ -52,6 +53,7 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
   std::cerr << "Build AABB tree...";
   // Create domain
   Polyhedral_mesh_domain domain(*pMesh);
+
   if(protect_features) {
       domain.detect_features();
   }
@@ -126,7 +128,7 @@ Scene_item* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
 
   CGAL::Timer timer;
   p_new_item->set_scene(scene);
-  std::cerr << "done (" << timer.time() << " ms, "
+  std::cerr << "done (" << timer.time() << " sec, "
     << p_new_item->c3t3().triangulation().number_of_vertices() << " vertices)"
     << std::endl;
 
@@ -154,6 +156,7 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
                              const double facet_approx,
                              const double tet_sizing,
                              const double tet_shape,
+                             const bool protect_features,
                              CGAL::Three::Scene_interface* scene)
 {
 
@@ -162,11 +165,29 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
   Image_mesh_domain* p_domain
     = new Image_mesh_domain(*pImage, 1e-6);
 
+  if(protect_features){
+    std::vector<std::vector<Point_3> > polylines;
+    CGAL::polylines_to_protect<Point_3>(*pImage, polylines);
+    p_domain->add_features(polylines.begin(), polylines.end());
+  }
+
   // Set mesh criteria
   Edge_criteria edge_criteria(facet_sizing);
   Facet_criteria facet_criteria(facet_angle, facet_sizing, facet_approx); // angle, size, approximation
   Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
+
+
+
+  /*typedef Facet_extra_criterion<Tr,
+                                Image_mesh_domain,
+                                Mesh_criteria::Facet_criteria::Visitor>
+    Extra_criterion;*/
+  
+  
+  // facet_criteria.add(new Extra_criterion(*p_domain));
+
   Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
+
   CGAL::Timer timer;
   timer.start();
   Scene_c3t3_item* p_new_item = new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(*p_domain,
