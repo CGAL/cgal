@@ -200,6 +200,7 @@ namespace internal {
         input_triangles_.push_back(triangle(f));
         input_patch_ids_.push_back(get_patch_id(f));
       }
+      CGAL_assertion(input_triangles_.size() == input_patch_ids_.size());
 
       tree_ptr_ = new AABB_tree(input_triangles_.begin(),
                                 input_triangles_.end(),
@@ -850,8 +851,8 @@ namespace internal {
           );
 
         tree_ptr_->traversal(get(vpmap_, v), projection_traits);
-        if(!projection_traits.found())
-          tree_ptr_->traversal(get(vpmap_, v), projection_traits);
+        CGAL_assertion(projection_traits.found());
+
         Point proj = projection_traits.closest_point();
         put(vpmap_, v, proj);
       }
