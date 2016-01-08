@@ -7,13 +7,12 @@
 
 Surface reconstruction from point clouds is a wide research topic in
 geometry processing and can be achieved in many different ways. This
-tutorials explains how the different algorithms of \cgal to perform
-reconstruction in the most relevant way.
+tutorials explains how to use the different algorithms of \cgal to
+perform reconstruction in the most relevant way.
 
 \section TutorialsReconstruction_algorithms Which algorithm should I use?
 
-\cgal \cgalReleaseNumber offers three different algorithms for surface
-reconstruction:
+\cgal offers three different algorithms for surface reconstruction:
 
 - \ref Chapter_Poisson_Surface_Reconstruction "Poisson Surface Reconstruction"
 - \ref Chapter_Advancing_Front_Surface_Reconstruction "Advancing Front Surface Reconstruction"
