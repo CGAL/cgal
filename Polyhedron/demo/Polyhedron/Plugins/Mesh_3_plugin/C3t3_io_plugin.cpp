@@ -16,7 +16,7 @@ class Polyhedron_demo_c3t3_binary_io_plugin :
 public:
   QString name() const { return "C3t3_io_plugin"; }
   QString nameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma)"; }
-  QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma)"; }
+  QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am)"; }
   QString loadNameFilters() const { return "binary files (*.cgal)" ; }
 
   bool canLoad() const;
@@ -118,6 +118,12 @@ save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
       std::ofstream maya_file (qPrintable(path));
       c3t3_item->c3t3().output_to_maya(
         maya_file,true);
+          return true;
+    }
+    else if (fileinfo.suffix() == "am")
+    {
+      std::ofstream avizo_file (qPrintable(path));
+      c3t3_item->c3t3().output_to_avizo(avizo_file);
           return true;
     }
     else

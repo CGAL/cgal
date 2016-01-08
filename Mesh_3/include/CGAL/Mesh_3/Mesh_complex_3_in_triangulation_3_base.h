@@ -31,6 +31,7 @@
 #include <CGAL/iterator.h>
 #include <CGAL/IO/File_medit.h>
 #include <CGAL/IO/File_maya.h>
+#include <CGAL/IO/File_avizo.h>
 #include <CGAL/Bbox_3.h>
 #include <iostream>
 #include <fstream>
@@ -250,12 +251,19 @@ public:
     CGAL::output_to_medit(os,*this,rebind,show_patches);
   }
   
-  /// Outputs the mesh to medit
+  /// Outputs the mesh to maya
   void output_to_maya(std::ofstream& os,
                       bool surfaceOnly = true) const
   {
     // Call global function
     CGAL::output_to_maya(os,*this,surfaceOnly);
+  }
+
+  /// Outputs the mesh to avizo
+  void output_to_avizo(std::ofstream& os) const
+  {
+    // Call global function
+    CGAL::output_to_avizo(os,*this);
   }
 
   //-------------------------------------------------------
