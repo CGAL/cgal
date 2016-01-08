@@ -1,8 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - Kinetic Data Structures"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Kinetic_data_structures/doc/Kinetic_data_structures/
-
-IMAGE_PATH = ${CMAKE_SOURCE_DIR}/Kinetic_framework/doc/Kinetic_framework/fig
+PROJECT_NAME                       =  "CGAL ${CGAL_FULL_VERSION} - Kinetic Data Structures"

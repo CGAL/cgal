@@ -81,6 +81,7 @@ public:
   /// Destructor
   virtual ~Labeled_image_mesh_domain_3() {}
 
+  using Base::bbox;
 
 private:
   /// Returns a box enclosing image \c im

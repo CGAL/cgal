@@ -108,11 +108,6 @@ CGAL_CLANG_PUSH_AND_IGNORE_UNUSED_LOCAL_TYPEDEF
      // int to bool performance
 #endif
 
-#if defined(__GNUC__) && defined(__GNUC_MINOR__) \
-    && (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 \
-    && __cplusplus >= 201103L
-#define CGAL_CAN_USE_CXX11_THREAD_LOCAL
-#endif
 
 /*
 #ifdef CGAL_MPZF_NO_USE_CACHE
@@ -883,6 +878,7 @@ struct Mpzf {
   Mpzf& operator+=(Mpzf const&x){ *this=*this+x; return *this; }
   Mpzf& operator-=(Mpzf const&x){ *this=*this-x; return *this; }
   Mpzf& operator*=(Mpzf const&x){ *this=*this*x; return *this; }
+  Mpzf& operator/=(Mpzf const&x){ *this=*this/x; return *this; }
 
   bool is_canonical () const {
     if (size == 0) return true;
@@ -1145,6 +1141,35 @@ CGAL_DEFINE_COERCION_TRAITS_FROM_TO(Gmpz     ,Mpzf)
 CGAL_DEFINE_COERCION_TRAITS_FROM_TO(mpz_class,Mpzf)
 #endif
 
+}
+
+/* There isn't much Eigen can do with such a type,
+ * mostly this is here for IsInteger to protect people.
+ */
+namespace Eigen {
+  template<class> struct NumTraits;
+  template<> struct NumTraits<CGAL::Mpzf>
+  {
+    typedef CGAL::Mpzf Real;
+    /* Should this be Quotient<Mpzf>? Gmpq?  */
+    typedef CGAL::Mpzf NonInteger;
+    typedef CGAL::Mpzf Nested;
+
+    static inline Real epsilon() { return 0; }
+    static inline Real dummy_precision() { return 0; }
+
+    enum {
+      /* Only exact divisions are supported, close enough to an integer.
+       * This way we get compilation failures instead of runtime.  */
+      IsInteger = 1,
+      IsSigned = 1,
+      IsComplex = 0,
+      RequireInitialization = 1,
+      ReadCost = 6,
+      AddCost = 30,
+      MulCost = 50
+    };
+  };
 }
 
 #if defined(BOOST_MSVC)

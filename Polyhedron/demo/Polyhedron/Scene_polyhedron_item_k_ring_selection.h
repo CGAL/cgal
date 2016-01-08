@@ -48,7 +48,7 @@ public:
     init(poly_item, mw, aht, k_ring);
   }
 
-  void init(Scene_polyhedron_item* poly_item, QMainWindow* mw, Active_handle::Type aht, int k_ring) {
+  void init(Scene_polyhedron_item* poly_item, QMainWindow* /*mw*/, Active_handle::Type aht, int k_ring) {
     this->poly_item = poly_item;
     this->active_handle_type = aht;
     this->k_ring = k_ring;
@@ -58,8 +58,11 @@ public:
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
-    mw->installEventFilter(this);
-
+#if QGLVIEWER_VERSION >= 0x020501
+    viewer->setMouseBindingDescription(Qt::Key_D, Qt::ShiftModifier, Qt::LeftButton, "(When in selection plugin) Removes the clicked primitive from the selection. ");
+#else
+    viewer->setMouseBindingDescription(Qt::SHIFT + Qt::LeftButton,  "(When in selection plugin) When D is pressed too, removes the clicked primitive from the selection. ");
+#endif
     connect(poly_item, SIGNAL(selected_vertex(void*)), this, SLOT(vertex_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_facet(void*)), this, SLOT(facet_has_been_selected(void*)));
     connect(poly_item, SIGNAL(selected_edge(void*)), this, SLOT(edge_has_been_selected(void*)));
@@ -91,6 +94,7 @@ Q_SIGNALS:
   void selected(const std::set<Polyhedron::Vertex_handle>&);
   void selected(const std::set<Polyhedron::Facet_handle>&);
   void selected(const std::set<edge_descriptor>&);
+  void toogle_insert(const bool);
   void endSelection();
 
 protected:
@@ -169,11 +173,23 @@ protected:
   {
     // This filter is both filtering events from 'viewer' and 'main window'
     // key events
-    if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)  {
+      if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)  {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
       Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
 
       state.shift_pressing = modifiers.testFlag(Qt::ShiftModifier);
+    }
+
+    if(event->type() == QEvent::KeyPress
+            && state.shift_pressing
+            && static_cast<QKeyEvent*>(event)->key()==Qt::Key_D)
+    {
+     Q_EMIT toogle_insert(false);
+    }
+    else if(event->type() == QEvent::KeyRelease
+            && static_cast<QKeyEvent*>(event)->key()==Qt::Key_D)
+    {
+     Q_EMIT toogle_insert(true);
     }
     // mouse events
     if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease) {

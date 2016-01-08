@@ -143,6 +143,13 @@ public:
   }
 
   /**
+   * Returns a bounding box of the domain
+   */
+  Bbox_3 bbox() const {
+    return bbox_.bbox();
+  }
+
+  /**
    * Returns true if point~\ccc{p} is in the domain. If \ccc{p} is in the
    *  domain, the parameter index is set to the index of the subdomain
    *  including $p$. It is set to the default value otherwise.

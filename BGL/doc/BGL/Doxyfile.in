@@ -1,10 +1,9 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - CGAL and the Boost Graph Library"
-INPUT                      =  ${CMAKE_SOURCE_DIR}/BGL/doc/BGL/ \
-                              ${CMAKE_SOURCE_DIR}/BGL/include/CGAL/boost/graph/Euler_operations.h \
-                              ${CMAKE_SOURCE_DIR}/BGL/include/CGAL/boost/graph/iterator.h \
-                              ${CMAKE_SOURCE_DIR}/BGL/include/CGAL/boost/graph/Graph_geometry.h \
-                              ${CMAKE_SOURCE_DIR}/BGL/include/CGAL/boost/graph/helpers.h
+PROJECT_NAME =  "CGAL ${CGAL_FULL_VERSION} - CGAL and the Boost Graph Library"
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Euler_operations.h \
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/iterator.h \
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/Graph_geometry.h \
+         ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/boost/graph/helpers.h
 
 ALIASES +=  "bgllink{1}=<a href=\"http://www.boost.org/libs/graph/doc/\1.html\"><code>\1</code></a>"

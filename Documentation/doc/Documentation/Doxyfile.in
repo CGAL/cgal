@@ -1,21 +1,21 @@
 # this package is a little peculiar and different from the other packages
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
-PROJECT_NAME        = "CGAL ${CGAL_CREATED_VERSION_NUM} - Manual"
+PROJECT_NAME        = "CGAL ${CGAL_FULL_VERSION} - Manual"
 PROJECT_BRIEF       =
 OUTPUT_DIRECTORY    = ${CGAL_DOC_OUTPUT_DIR}/Manual
 
-INPUT = ${CMAKE_SOURCE_DIR}/Documentation/doc/Documentation \
+INPUT = ${CGAL_PACKAGE_DOC_DIR} \
         ${CMAKE_BINARY_DIR}/how_to_cite_cgal.txt
 
 HTML_HEADER         = ${CGAL_DOC_HEADER}
-LAYOUT_FILE         = ${CMAKE_SOURCE_DIR}/Documentation/DoxygenLayout.xml
+LAYOUT_FILE         = ${CGAL_PACKAGE_DOC_DIR}/DoxygenLayout.xml
 GENERATE_TAGFILE    = ${CGAL_DOC_TAG_GEN_DIR}/Manual.tag
-EXAMPLE_PATH        = ${CMAKE_SOURCE_DIR}/Convex_hull_2/examples \
-                      ${CMAKE_SOURCE_DIR}/Kernel_23/examples
+EXAMPLE_PATH        = ${CGAL_Convex_hull_2_EXAMPLE_DIR} \
+                      ${CGAL_Kernel_23_EXAMPLE_DIR}
 FILTER_PATTERNS     = *.txt=${CMAKE_BINARY_DIR}/pkglist_filter
 
-HTML_EXTRA_FILES += ${CMAKE_SOURCE_DIR}/Documentation/hacks.js \
-                    ${CMAKE_SOURCE_DIR}/Documentation/cgal_stylesheet.css \
+HTML_EXTRA_FILES += ${CGAL_PACKAGE_DOC_DIR}/hacks.js \
+                    ${CGAL_PACKAGE_DOC_DIR}/cgal_stylesheet.css \
                     ${CMAKE_BINARY_DIR}/how_to_cite_cgal.bib \
                     ${CMAKE_BINARY_DIR}/how_to_cite.html
 
@@ -29,4 +29,4 @@ SEARCHENGINE             = true
 
 ALIASES                 += "cgalPkgDescriptionBegin{2}=\subsection \2 \1"
 ALIASES                 += "cgalPkgManuals{2}=<div class=\"PkgManuals\"> <span> \ref \1 \"User Manual\" </span> <span style=\"padding-left: 20px;\">\ref \2 \"Reference Manual\" </span> </div>"
-ALIASES                 += "cgalReleaseNumber=${CGAL_CREATED_VERSION_NUM}"
+ALIASES                 += "cgalReleaseNumber=${CGAL_FULL_VERSION}"

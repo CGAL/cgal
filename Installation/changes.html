@@ -127,6 +127,14 @@ and <code>src/</code> directories).
     </li>
   </ul>
 
+  <h3>Installation</h3>
+  <ul>
+    <li>Starting with Visual C++ 2015 we no longer require <code>Boost.Thread</code> 
+        as we use the keyword <code>threadlocal</code> and the class <code>mutex</code> 
+        from the header file <code><thread></code>.</li>
+    <li>The same holds for g++ 4.8 or later when the c++11 standard is used.</li>
+  </ul>
+
 <!-- New packages -->
 <!-- Major and breaking changes -->
 <!-- Arithmetic and Algebra -->
@@ -163,6 +171,9 @@ and <code>src/</code> directories).
   <h3>3D Mesh Generation</h3>
   <ul>
     <li>Add support of 3D gray level images as input for the tetrahedral mesh generation.</li>
+    <li><b>Breaking change:</b> All models of the
+    concept <code>MeshDomain_3</code> must now provide a member
+    function <code>bbox()</code>. </li>
   </ul>
 <!-- Surface Reconstruction -->
 <!-- Geometry Processing -->
@@ -177,6 +188,10 @@ and <code>src/</code> directories).
     to collect the border of a given face range</li>
     <li>Add the function <code>CGAL::Polygon_mesh_processing::remove_isolated_vertices()</code>
     to be used on any polygon mesh</li>
+    <li>Add the function <code>CGAL::Polygon_mesh_processing::triangulate_face()</code>
+    to triangulate a single face of a polygon mesh</li>
+    <li>Add an overload for <code>CGAL::Polygon_mesh_processing::triangulate_faces()</code>
+    to triangulate a range of faces of a polygon mesh</li>
   </ul>
   <h3>Surface Mesh Parameterization</h3>
   <ul>

@@ -1193,14 +1193,15 @@ public:
  * Internal entry point for both polyline and Polyhedron_3 triangulation functions
  ***********************************************************************************/
 template <
-  typename PointRange,
+  typename PointRange1,
+  typename PointRange2,
   typename Tracer,
   typename WeightCalculator,
   typename Kernel
 >
 typename WeightCalculator::Weight
-triangulate_hole_polyline(const PointRange& points,
-                          const PointRange& third_points,
+triangulate_hole_polyline(const PointRange1& points,
+                          const PointRange2& third_points,
                           Tracer& tracer,
                           const WeightCalculator& WC,
                           bool use_delaunay_triangulation,

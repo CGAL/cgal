@@ -134,7 +134,7 @@
            <string>vx: </string>
           </property>
           <property name="decimals" >
-           <number>3</number>
+           <number>5</number>
           </property>
           <property name="value" >
            <double>1.000000000000000</double>
@@ -147,7 +147,7 @@
            <string>vy: </string>
           </property>
           <property name="decimals" >
-           <number>3</number>
+           <number>5</number>
           </property>
           <property name="value" >
            <double>1.000000000000000</double>
@@ -160,7 +160,7 @@
            <string>vz: </string>
           </property>
           <property name="decimals" >
-           <number>3</number>
+           <number>5</number>
           </property>
           <property name="value" >
            <double>1.000000000000000</double>

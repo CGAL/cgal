@@ -1,9 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - STL Extensions for CGAL"
-
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/STL_Extension/doc/STL_Extension/
-
-
-
+PROJECT_NAME                       =  "CGAL ${CGAL_FULL_VERSION} - STL Extensions for CGAL"

@@ -46,10 +46,7 @@ typename CGAL::internal::Innermost_coefficient_type<T>::Type , 2>::Type
 #include <CGAL/Polynomial/misc.h>
 
 #include <CGAL/use.h>
-
-#ifdef CGAL_HAS_THREADS
-#  include <boost/thread/tss.hpp>
-#endif
+#include <CGAL/tss.h>
 
 namespace CGAL {
 
@@ -268,15 +265,8 @@ protected:
 //
 private:
     static Self& get_default_instance(){
-      #ifdef CGAL_HAS_THREADS  
-        static boost::thread_specific_ptr< Self > safe_x_ptr;
-          if (safe_x_ptr.get() == NULL) 
-            safe_x_ptr.reset(new Self(0));
-        return *safe_x_ptr.get();  
-      #else
-        static Self x = Self(0);
-        return x;
-      #endif        
+      CGAL_STATIC_THREAD_LOCAL_VARIABLE(Self, x, 0);
+      return x;      
     }
 public:
 

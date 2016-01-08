@@ -108,7 +108,7 @@ Assignable, DefaultConstructible and EqualityComparable.
 typedef unspecified_type Index;
 
 /*!
-Return type of `Construct_intersection` queries.
+Returns type of `Construct_intersection` queries.
 `int` represents the
 dimension of the lower dimensional face of the input complex on which the intersection
 point lies and `%Index` is the index of this face.
@@ -176,6 +176,15 @@ intersection between an object of type `Segment_3`, `Ray_3` or
 */
 typedef unspecified_type Construct_intersection;
 
+/// @}
+
+/// \name Bounding box
+/// Since CGAL-4.8, a model of `MeshDomain_3` must provide a function
+/// providing a bounding box of the domain.
+/// @{
+
+/// Returns a bounding box of the domain
+Bbox_3 bbox() const;
 /// @}
 
 /// \name Operations

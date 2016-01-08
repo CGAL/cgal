@@ -1,7 +1,5 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_CREATED_VERSION_NUM} - CGAL and Boost Property Maps"
-
-INPUT                      =  ${CMAKE_SOURCE_DIR}/Property_map/doc/Property_map/ \ 
-                              ${CMAKE_SOURCE_DIR}/Property_map/include/CGAL/property_map.h
-EXAMPLE_PATH               =  ${CMAKE_SOURCE_DIR}/Point_set_processing_3/examples
+PROJECT_NAME                       =  "CGAL ${CGAL_FULL_VERSION} - CGAL and Boost Property Maps"
+INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/property_map.h
+EXAMPLE_PATH = ${CGAL_Point_set_processing_3_EXAMPLE_DIR}

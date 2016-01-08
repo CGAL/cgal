@@ -16,7 +16,7 @@ public:
   bool twosides;
   bool macro_mode;
   bool inFastDrawing;
-
+  
   void draw_aux(bool with_names, Viewer*);
 
   //! Contains all the programs for the item rendering.
@@ -30,6 +30,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->antialiasing = antialiasing;
   d->twosides = false;
   d->macro_mode = false;
+  d->inFastDrawing = true;
   d->shader_programs.resize(NB_OF_PROGRAMS);
   setShortcut(EXIT_VIEWER, 0);
   setShortcut(DRAW_AXIS, 0);
@@ -48,9 +49,6 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   setMouseBinding(Qt::Key_R, Qt::NoModifier, Qt::LeftButton, RAP_FROM_PIXEL);
   //use the new API for these
   setMouseBinding(Qt::ShiftModifier, Qt::LeftButton, SELECT);
-  setMouseBindingDescription(Qt::Key(0), Qt::ShiftModifier, Qt::LeftButton,
-                             tr("Selects and display context "
-                                "menu of the selected item"));
 #else
   setMouseBinding(Qt::SHIFT + Qt::LeftButton, SELECT);
   setMouseBindingDescription(Qt::SHIFT + Qt::RightButton,
@@ -94,22 +92,28 @@ void Viewer::setTwoSides(bool b)
   updateGL();
 }
 
-bool Viewer::inFastDrawing() const {
-  return d->inFastDrawing;
+
+void Viewer::setFastDrawing(bool b)
+{
+  d->inFastDrawing = b;
+  updateGL();
+}
+
+bool Viewer::inFastDrawing() const
+{
+  return (d->inFastDrawing
+          && (camera()->frame()->isSpinning()
+              || camera()->frame()->isManipulated()));
 }
 
 void Viewer::draw()
 {
   glEnable(GL_DEPTH_TEST);
-  d->inFastDrawing = false;
-  QGLViewer::draw();
   d->draw_aux(false, this);
 }
 
 void Viewer::fastDraw()
 {
-  d->inFastDrawing = true;
-  QGLViewer::fastDraw();
   d->draw_aux(false, this);
 }
 
@@ -463,6 +467,19 @@ void Viewer::attrib_buffers(int program_name) const {
         program->setUniformValue("light_amb", ambient);
         program->setUniformValue("spec_power", 51.8f);
         program->setUniformValue("is_two_side", is_both_sides);
+        break;
+    case PROGRAM_C3T3:
+        program->setUniformValue("mvp_matrix", mvp_mat);
+        program->setUniformValue("mv_matrix", mv_mat);
+        program->setUniformValue("light_pos", position);
+        program->setUniformValue("light_diff",diffuse);
+        program->setUniformValue("light_spec", specular);
+        program->setUniformValue("light_amb", ambient);
+        program->setUniformValue("spec_power", 51.8f);
+        program->setUniformValue("is_two_side", is_both_sides);
+        break;
+    case PROGRAM_C3T3_EDGES:
+        program->setUniformValue("mvp_matrix", mvp_mat);
         break;
     case PROGRAM_WITHOUT_LIGHT:
         program->setUniformValue("mvp_matrix", mvp_mat);
@@ -883,7 +900,53 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
 
     switch(name)
     {
-    /// @TODO: factorize this code
+    /// @TODO: factorize this code   
+    case PROGRAM_C3T3:
+        if(d->shader_programs[PROGRAM_C3T3])
+        {
+            return d->shader_programs[PROGRAM_C3T3];
+        }
+
+        else
+        {
+
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_c3t3.v"))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_c3t3.f"))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            d->shader_programs[PROGRAM_C3T3] = program;
+            return program;
+        }
+        break;
+    case PROGRAM_C3T3_EDGES:
+        if(d->shader_programs[PROGRAM_C3T3_EDGES])
+        {
+            return d->shader_programs[PROGRAM_C3T3_EDGES];
+        }
+
+        else
+        {
+
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_c3t3_edges.v"))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_c3t3_edges.f"))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            d->shader_programs[PROGRAM_C3T3_EDGES] = program;
+            return program;
+        }
+        break;
     case PROGRAM_WITH_LIGHT:
         if(d->shader_programs[PROGRAM_WITH_LIGHT])
         {

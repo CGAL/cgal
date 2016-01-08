@@ -36,3 +36,8 @@
 #include <CGAL/Polygon_mesh_processing/orientation.h>
 #include <CGAL/Polygon_mesh_processing/refine.h>
 #include <CGAL/Polygon_mesh_processing/stitch_borders.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/Polygon_mesh_processing/bbox.h>
+#include <CGAL/Polygon_mesh_processing/border.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/remesh.h>

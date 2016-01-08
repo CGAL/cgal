@@ -50,6 +50,8 @@ public:
                             PROGRAM_WITH_TEXTURED_EDGES,
                             PROGRAM_INSTANCED,
                             PROGRAM_INSTANCED_WIRE,
+                            PROGRAM_C3T3,
+                            PROGRAM_C3T3_EDGES,
                             NB_OF_PROGRAMS };
 
   Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(), parent) {}
@@ -59,7 +61,7 @@ public:
   virtual void setScene(CGAL::Three::Scene_draw_interface* scene) = 0;
   //! @returns the antialiasing state.
   virtual bool antiAliasing() const = 0;
-
+  
   // Those two functions are defined in Viewer.cpp
   //!Sets the position and orientation of a frame using a QString.
   //!@returns true if it worked.
@@ -138,6 +140,9 @@ public Q_SLOTS:
   //! If b is true, facets will be ligted from both internal and external sides.
   //! If b is false, only the side that is exposed to the light source will be lighted.
   virtual void setTwoSides(bool b) = 0;
+  //! If b is true, some items are displayed in a simplified version when moving the camera.
+  //! If b is false, items display is never altered, even when moving.
+  virtual void setFastDrawing(bool b) = 0;
   //! Make the camera turn around.
   virtual void turnCameraBy180Degres() = 0;
   //! @returns a QString containing the position and orientation of the camera.

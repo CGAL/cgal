@@ -80,6 +80,17 @@ Scene::addItem(CGAL::Three::Scene_item* item)
     Q_EMIT updated();
     Item_id id = m_entries.size() - 1;
     Q_EMIT newItem(id);
+    //if group selected, add item to it
+    if(mainSelectionIndex() >=0)
+    {
+        CGAL::Three::Scene_group_item* selected_group =
+                qobject_cast<CGAL::Three::Scene_group_item*>(m_entries.at(mainSelectionIndex()));
+        if(selected_group)
+        {
+            selected_group->addChild(item);
+            group_added();
+        }
+    }
     return id;
 }
 

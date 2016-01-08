@@ -17,6 +17,9 @@
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
 
+#include <boost/function_output_iterator.hpp>
+#include <boost/foreach.hpp>
+
 struct Scene_c3t3_item_priv {
   Scene_c3t3_item_priv() : c3t3() {}
   Scene_c3t3_item_priv(const C3t3& c3t3_) : c3t3(c3t3_) {}
@@ -38,6 +41,7 @@ void Scene_c3t3_item::compile_shaders()
         "attribute highp vec3 colors;                                                                             \n"
         "attribute highp vec3 center;                                                                             \n"
         "attribute highp float radius;                                                                            \n"
+        "uniform highp vec4 cutplane;                                                                             \n"
         "uniform highp mat4 mvp_matrix;                                                                           \n"
         "uniform highp mat4 mv_matrix;                                                                            \n"
         "varying highp vec4 fP;                                                                                   \n"
@@ -47,10 +51,13 @@ void Scene_c3t3_item::compile_shaders()
         "                                                                                                         \n"
         "void main(void)                                                                                          \n"
         "{                                                                                                        \n"
-        "  color = vec4(colors,1.0);                                                                              \n"
+        " if(center.x * cutplane.x  + center.y * cutplane.y  + center.z * cutplane.z  +  cutplane.w > 0){         \n"
+        "    color = vec4(colors,0.0);                                                                            \n"
+        " }else{                                                                                                  \n"
+        "  color = vec4(colors,1.0);}                                                                             \n"
         "  fP = mv_matrix * vertex;                                                                               \n"
         "  fN = mat3(mv_matrix)* normals;                                                                         \n"
-        "   gl_Position =  mvp_matrix *                                                                           \n"
+        "  gl_Position =  mvp_matrix *                                                                            \n"
         "  vec4(radius*vertex.x + center.x, radius* vertex.y + center.y, radius*vertex.z + center.z, 1.0) ;       \n"
         "}                                                                                                        \n"
     };
@@ -65,7 +72,7 @@ void Scene_c3t3_item::compile_shaders()
     {
         std::cerr<<"adding vertex shader FAILED"<<std::endl;
     }
-    if(!program_sphere->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_with_light.f" ))
+    if(!program_sphere->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_c3t3.f" ))
     {
         std::cerr<<"adding fragment shader FAILED"<<std::endl;
     }
@@ -95,6 +102,7 @@ Scene_c3t3_item::Scene_c3t3_item()
   , histogram_()
   , indices_()
 {
+  are_intersection_buffers_filled = false;
   positions_lines.resize(0);
   positions_poly.resize(0);
   normals.resize(0);
@@ -146,6 +154,7 @@ Scene_c3t3_item::~Scene_c3t3_item()
 }
 
 
+
 const Scene_item*
 Scene_c3t3_item::data_item() const
 {
@@ -183,16 +192,17 @@ Scene_c3t3_item::c3t3()
 void
 Scene_c3t3_item::changed()
 {
-
   need_changed = true;
 }
 
 void Scene_c3t3_item::timerEvent(QTimerEvent* /*event*/)
 { // just handle deformation - paint like selection is handled in eventFilter()
   if(need_changed) {
-      c3t3_changed();
+    are_intersection_buffers_filled = false;
+    need_changed = false;
   }
 }
+
 void
 Scene_c3t3_item::c3t3_changed()
 {
@@ -213,9 +223,7 @@ Scene_c3t3_item::c3t3_changed()
 
   // Rebuild histogram
   build_histogram();
-  //compute_elements();
-  this->invalidate_buffers();
-  need_changed = false;
+  
 }
 
 QPixmap
@@ -467,19 +475,56 @@ QString Scene_c3t3_item::toolTip() const {
 }
 
 void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
+  Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
+
   if (!are_buffers_filled)
   {
-    compute_elements();
-    initialize_buffers(viewer);
+    ncthis->compute_elements();
+    ncthis->initialize_buffers(viewer);
   }
+
+  vaos[Grid]->bind();
+  program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+  attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+  program->bind();
+  program->setAttributeValue("colors", QColor(Qt::black));
+  QMatrix4x4 f_mat;
+  for (int i = 0; i<16; i++)
+    f_mat.data()[i] = frame->matrix()[i];
+  program->setUniformValue("f_matrix", f_mat);
+  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size() / 3));
+  program->release();
+  vaos[Grid]->release();
+
   vaos[Facets]->bind();
+  program = getShaderProgram(PROGRAM_C3T3);
+  attrib_buffers(viewer, PROGRAM_C3T3);
+  program->bind();
+  QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
+  program->setUniformValue("cutplane", cp);
+  // positions_poly_size is the number of total facets in the C3T3
+  // it is only computed once and positions_poly is emptied at the end
+  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly_size / 3));
+  program->release();
+  vaos[Facets]->release();
+
+
+ if (!are_intersection_buffers_filled)
+  {
+     ncthis->compute_intersections();
+     ncthis->initialize_intersection_buffers(viewer);
+  }
+  vaos[iFacets]->bind();
   program = getShaderProgram(PROGRAM_WITH_LIGHT);
   attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
   program->bind();
-  //program->setAttributeValue("colors", this->color());
+
+  // positions_poly is also used for the faces in the cut plane
+  // and changes when the cut plane is moved
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size() / 3));
   program->release();
-  vaos[Facets]->release();
+  vaos[iFacets]->release();
+
 
   if(spheres_are_shown)
   {
@@ -507,7 +552,9 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     QVector4D specular(0.0f, 0.0f, 0.0f, 1.0f);
     viewer->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE, &is_both_sides);
 
+    QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
 
+    program_sphere->setUniformValue("cutplane", cp);
     program_sphere->setUniformValue("mvp_matrix", mvp_mat);
     program_sphere->setUniformValue("mv_matrix", mv_mat);
     program_sphere->setUniformValue("light_pos", position);
@@ -526,32 +573,47 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 }
 
 void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
+  Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
   if (!are_buffers_filled)
   {
-    compute_elements();
-    initialize_buffers(viewer);
+    ncthis->compute_elements();
+    ncthis->initialize_buffers(viewer);
   }
-  vaos[2]->bind();
-  program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-  attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
-  program->bind();
-  program->setAttributeValue("colors", QColor(Qt::black));
-  QMatrix4x4 f_mat;
-  for (int i = 0; i<16; i++)
-    f_mat.data()[i] = frame->matrix()[i];
-  program->setUniformValue("f_matrix", f_mat);
-  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size() / 3));
-  program->release();
-  vaos[2]->release();
 
+  if(renderingMode() == Wireframe)
+  {
+    vaos[Grid]->bind();
+    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    program->bind();
+    program->setAttributeValue("colors", QColor(Qt::black));
+    QMatrix4x4 f_mat;
+    for (int i = 0; i<16; i++)
+        f_mat.data()[i] = frame->matrix()[i];
+    program->setUniformValue("f_matrix", f_mat);
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size() / 3));
+    program->release();
+    vaos[Grid]->release();
+  }
   vaos[Edges]->bind();
-  program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-  attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+  program = getShaderProgram(PROGRAM_C3T3_EDGES);
+  attrib_buffers(viewer, PROGRAM_C3T3_EDGES);
+  program->bind();
+  QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
+  program->setUniformValue("cutplane", cp);
+  program->setAttributeValue("colors", QColor(Qt::black));
+  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines_size / 3));
+  program->release();
+  vaos[Edges]->release();
+
+  vaos[iEdges]->bind();
+  program = getShaderProgram(PROGRAM_NO_SELECTION);
+  attrib_buffers(viewer, PROGRAM_NO_SELECTION);
   program->bind();
   program->setAttributeValue("colors", QColor(Qt::black));
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size() / 3));
   program->release();
-  vaos[Edges]->release();
+  vaos[iEdges]->release();
 
   if(spheres_are_shown)
   {
@@ -599,21 +661,24 @@ void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
 
 void Scene_c3t3_item::draw_points(CGAL::Three::Viewer_interface * viewer) const
 {
+  Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
   if (!are_buffers_filled)
   {
-    compute_elements();
-    initialize_buffers(viewer);
+    ncthis->compute_elements();
+    ncthis-> initialize_buffers(viewer);
   }
   vaos[Edges]->bind();
-  program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-  attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+  program = getShaderProgram(PROGRAM_C3T3_EDGES);
+  attrib_buffers(viewer, PROGRAM_C3T3_EDGES);
   program->bind();
+  QVector4D cp(this->plane().a(),this->plane().b(),this->plane().c(),this->plane().d());
+  program->setUniformValue("cutplane", cp);
   program->setAttributeValue("colors", this->color());
   viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_lines.size() / 3));
   vaos[Edges]->release();
   program->release();
 
-  vaos[2]->bind();
+  vaos[Grid]->bind();
   program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
   attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
   program->bind();
@@ -624,7 +689,7 @@ void Scene_c3t3_item::draw_points(CGAL::Three::Viewer_interface * viewer) const
   program->setUniformValue("f_matrix", f_mat);
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size() / 3));
   program->release();
-  vaos[2]->release();
+  vaos[Grid]->release();
 }
 
 void Scene_c3t3_item::draw_triangle(const Kernel::Point_3& pa,
@@ -663,8 +728,6 @@ void Scene_c3t3_item::draw_triangle_edges(const Kernel::Point_3& pa,
   const Kernel::Point_3& pc)const {
 
 #undef darker
-  Kernel::Vector_3 n = cross_product(pb - pa, pc - pa);
-  n = n / CGAL::sqrt(n*n);
   positions_lines.push_back(pa.x());
   positions_lines.push_back(pa.y());
   positions_lines.push_back(pa.z());
@@ -760,11 +823,65 @@ QMenu* Scene_c3t3_item::contextMenu()
   return menu;
 }
 
-void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
+
+void Scene_c3t3_item::initialize_intersection_buffers(CGAL::Three::Viewer_interface *viewer)
+{
+ //vao containing the data for the facets
+  {
+    program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+    program->bind();
+
+    vaos[iFacets]->bind();
+    buffers[iFacet_vertices].bind();
+    buffers[iFacet_vertices].allocate(positions_poly.data(),
+      static_cast<int>(positions_poly.size()*sizeof(float)));
+    program->enableAttributeArray("vertex");
+    program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+    buffers[iFacet_vertices].release();
+
+    buffers[iFacet_normals].bind();
+    buffers[iFacet_normals].allocate(normals.data(),
+      static_cast<int>(normals.size()*sizeof(float)));
+    program->enableAttributeArray("normals");
+    program->setAttributeBuffer("normals", GL_FLOAT, 0, 3);
+    buffers[iFacet_normals].release();
+
+    buffers[iFacet_colors].bind();
+    buffers[iFacet_colors].allocate(f_colors.data(),
+      static_cast<int>(f_colors.size()*sizeof(float)));
+    program->enableAttributeArray("colors");
+    program->setAttributeBuffer("colors", GL_FLOAT, 0, 3);
+    buffers[iFacet_colors].release();
+
+    vaos[iFacets]->release();
+    program->release();
+
+  }
+    //vao containing the data for the lines
+    {
+        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+        program->bind();
+
+        vaos[iEdges]->bind();
+        buffers[iEdges_vertices].bind();
+        buffers[iEdges_vertices].allocate(positions_lines.data(),
+                                         static_cast<int>(positions_lines.size()*sizeof(float)));
+        program->enableAttributeArray("vertex");
+        program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+        buffers[iEdges_vertices].release();
+
+        vaos[iEdges]->release();
+        program->release();
+    }
+        are_intersection_buffers_filled = true;
+}
+
+
+void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)
 {
   //vao containing the data for the facets
   {
-    program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+    program = getShaderProgram(PROGRAM_C3T3, viewer);
     program->bind();
 
     vaos[Facets]->bind();
@@ -791,12 +908,19 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
 
     vaos[Facets]->release();
     program->release();
-
+    
+    positions_poly_size = positions_poly.size();
+    positions_poly.clear();
+    positions_poly.swap(positions_poly);
+    normals.clear();
+    normals.swap(normals);
+    f_colors.clear();
+    f_colors.swap(f_colors);
   }
 
   //vao containing the data for the lines
   {
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+    program = getShaderProgram(PROGRAM_C3T3_EDGES, viewer);
     program->bind();
 
     vaos[Edges]->bind();
@@ -810,6 +934,10 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
     vaos[Edges]->release();
     program->release();
 
+    positions_lines_size = positions_lines.size();
+    positions_lines.clear();
+    positions_lines.swap(positions_lines);
+    
   }
 
   //vao containing the data for the grid
@@ -817,14 +945,14 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
     program->bind();
 
-    vaos[2]->bind();
+    vaos[Grid]->bind();
     buffers[Grid_vertices].bind();
     buffers[Grid_vertices].allocate(positions_grid.data(),
                                     static_cast<int>(positions_grid.size()*sizeof(float)));
     program->enableAttributeArray("vertex");
     program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
     buffers[Grid_vertices].release();
-    vaos[2]->release();
+    vaos[Grid]->release();
     program->release();
   }
 
@@ -919,12 +1047,68 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)c
 }
 
 
-void Scene_c3t3_item::compute_elements() const
+
+void Scene_c3t3_item::compute_intersection(const Primitive& facet)
+{  
+
+  const Kernel::Point_3& pa = facet.id().first->vertex(0)->point();
+  const Kernel::Point_3& pb = facet.id().first->vertex(1)->point();
+  const Kernel::Point_3& pc = facet.id().first->vertex(2)->point();
+  const Kernel::Point_3& pd = facet.id().first->vertex(3)->point();
+ 
+  QColor color = d->colors[facet.id().first->subdomain_index()].darker(150);
+  for(int i=0; i < 12;i++){
+    f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+  }
+  draw_triangle(pb, pa, pc, true);
+  draw_triangle(pa, pb, pd, true);
+  draw_triangle(pa, pd, pc, true);
+  draw_triangle(pb, pc, pd, true);
+
+  draw_triangle_edges(pb, pa, pc);
+  draw_triangle_edges(pa, pb, pd);
+  draw_triangle_edges(pa, pd, pc);
+  draw_triangle_edges(pb, pc, pd);
+  {
+    Tr::Cell_handle nh = facet.id().first->neighbor(facet.id().second);
+    if(c3t3().is_in_complex(nh)){
+      const Kernel::Point_3& pa = nh->vertex(0)->point();
+      const Kernel::Point_3& pb = nh->vertex(1)->point();
+      const Kernel::Point_3& pc = nh->vertex(2)->point();
+      const Kernel::Point_3& pd = nh->vertex(3)->point();
+
+      for(int i=0; i < 12;i++){
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+      }
+      draw_triangle(pb, pa, pc, true);
+      draw_triangle(pa, pb, pd, true);
+      draw_triangle(pa, pd, pc, true);
+      draw_triangle(pb, pc, pd, true);
+
+      draw_triangle_edges(pb, pa, pc);
+      draw_triangle_edges(pa, pb, pd);
+      draw_triangle_edges(pa, pd, pc);
+      draw_triangle_edges(pb, pc, pd);
+    }
+  }
+
+}
+
+
+void Scene_c3t3_item::compute_intersections()
 {
-  positions_lines.clear();
   positions_poly.clear();
   normals.clear();
-  f_colors.resize(0);
+  f_colors.clear();
+  positions_lines.clear();
+  const Kernel::Plane_3& plane = this->plane();
+  tree.all_intersected_primitives(plane, boost::make_function_output_iterator(Compute_intersection(*this)));
+}
+
+
+void Scene_c3t3_item::compute_elements()
+{
+  positions_lines.clear();
   s_colors.resize(0);
   s_center.resize(0);
   s_radius.resize(0);
@@ -959,19 +1143,32 @@ void Scene_c3t3_item::compute_elements() const
   }
 
 
-  if (isEmpty())
+  if (isEmpty()){
     return;
+  }
 
-  const Kernel::Plane_3& plane = this->plane();
-  GLdouble clip_plane[4];
-  clip_plane[0] = -plane.a();
-  clip_plane[1] = -plane.b();
-  clip_plane[2] = -plane.c();
-  clip_plane[3] = -plane.d();
+  for (Tr::Finite_facets_iterator
+         fit = c3t3().triangulation().finite_facets_begin(),
+         end = c3t3().triangulation().finite_facets_end();
+       fit != end; ++fit)
+    {
+      Tr::Cell_handle ch = fit->first, nh =ch->neighbor(fit->second);
+
+      if( (!c3t3().is_in_complex(ch)) &&  (!c3t3().is_in_complex(nh)) )
+        continue;
+      
+      if(c3t3().is_in_complex(ch)){
+        tree.insert(Primitive(fit));
+      } else{
+        int ni = nh->index(ch);
+        tree.insert(Primitive(Tr::Facet(nh,ni)));
+      }
+    }
+    tree.build();
 
 
   //The facets
-  {
+  {  
     for (C3t3::Facet_iterator
       fit = c3t3().facets_begin(),
       end = c3t3().facets_end();
@@ -982,97 +1179,25 @@ void Scene_c3t3_item::compute_elements() const
       const Kernel::Point_3& pa = cell->vertex((index + 1) & 3)->point();
       const Kernel::Point_3& pb = cell->vertex((index + 2) & 3)->point();
       const Kernel::Point_3& pc = cell->vertex((index + 3) & 3)->point();
-      typedef Kernel::Oriented_side Side;
-      using CGAL::ON_ORIENTED_BOUNDARY;
-      const Side sa = plane.oriented_side(pa);
-      const Side sb = plane.oriented_side(pb);
-      const Side sc = plane.oriented_side(pc);
-      bool is_shown = false;
-      if (pa.x() * clip_plane[0] + pa.y() * clip_plane[1] + pa.z() * clip_plane[2] + clip_plane[3]  > 0
-        && pb.x() * clip_plane[0] + pb.y() * clip_plane[1] + pb.z() * clip_plane[2] + clip_plane[3]  > 0
-        && pc.x() * clip_plane[0] + pc.y() * clip_plane[1] + pc.z() * clip_plane[2] + clip_plane[3]  > 0)
-        is_shown = true;
 
-      if (is_shown && sa != ON_ORIENTED_BOUNDARY &&
-        sb != ON_ORIENTED_BOUNDARY &&
-        sc != ON_ORIENTED_BOUNDARY &&
-        sb == sa && sc == sa)
-      {
-          if(cell->subdomain_index() == 0) {
-
-              QColor color = d->colors[cell->neighbor(index)->subdomain_index()];
-              f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-              f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-              f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-          }
-          else {
-            QColor color = d->colors[cell->subdomain_index()];
-            f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-            f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-            f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-          }
-        if ((index % 2 == 1) == c3t3().is_in_complex(cell)) draw_triangle(pb, pa, pc, false);
-        else draw_triangle(pa, pb, pc, false);
-        draw_triangle_edges(pa, pb, pc);
+      if(cell->subdomain_index() == 0) {
+        QColor color = d->colors[cell->neighbor(index)->subdomain_index()];
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
       }
-
+      else {
+        QColor color = d->colors[cell->subdomain_index()];
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
+      }
+      if ((index % 2 == 1) == c3t3().is_in_complex(cell)) draw_triangle(pb, pa, pc, false);
+      else draw_triangle(pa, pb, pc, false);
+      draw_triangle_edges(pa, pb, pc);
     }
 
 
-    for (Tr::Finite_cells_iterator
-      cit = c3t3().triangulation().finite_cells_begin(),
-      end = c3t3().triangulation().finite_cells_end();
-    cit != end; ++cit)
-    {
-      if (!c3t3().is_in_complex(cit))
-        continue;
-
-      const Kernel::Point_3& pa = cit->vertex(0)->point();
-      const Kernel::Point_3& pb = cit->vertex(1)->point();
-      const Kernel::Point_3& pc = cit->vertex(2)->point();
-      const Kernel::Point_3& pd = cit->vertex(3)->point();
-      typedef Kernel::Oriented_side Side;
-      using CGAL::ON_ORIENTED_BOUNDARY;
-      const Side sa = plane.oriented_side(pa);
-      const Side sb = plane.oriented_side(pb);
-      const Side sc = plane.oriented_side(pc);
-      const Side sd = plane.oriented_side(pd);
-
-      if (sa == ON_ORIENTED_BOUNDARY ||
-        sb == ON_ORIENTED_BOUNDARY ||
-        sc == ON_ORIENTED_BOUNDARY ||
-        sd == ON_ORIENTED_BOUNDARY ||
-        sb != sa || sc != sa || sd != sa)
-      {
-        QColor color = d->colors[cit->subdomain_index()].darker(150);
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
-
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
-
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
-
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
-
-
-        draw_triangle(pb, pa, pc, true);
-        draw_triangle(pa, pb, pd, true);
-        draw_triangle(pa, pd, pc, true);
-        draw_triangle(pb, pc, pd, true);
-
-        draw_triangle_edges(pa, pb, pc);
-        draw_triangle_edges(pa, pb, pd);
-        draw_triangle_edges(pa, pc, pd);
-        draw_triangle_edges(pb, pc, pd);
-      }
-    }
   }
   //The Spheres
   {

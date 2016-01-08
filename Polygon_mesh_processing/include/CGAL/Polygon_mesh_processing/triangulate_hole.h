@@ -33,6 +33,8 @@
 
 #include <boost/tuple/tuple.hpp>
 
+#include <vector>
+
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -312,12 +314,13 @@ namespace Polygon_mesh_processing {
 
   \todo handle islands
   */
-  template <typename PointRange,
+  template <typename PointRange1,
+            typename PointRange2,
             typename OutputIterator,
             typename NamedParameters>
   OutputIterator
-  triangulate_hole_polyline(const PointRange& points,
-                            const PointRange& third_points,
+  triangulate_hole_polyline(const PointRange1& points,
+                            const PointRange2& third_points,
                             OutputIterator out,
                             const NamedParameters& np)
   {
@@ -343,7 +346,7 @@ namespace Polygon_mesh_processing {
     CGAL::internal::Tracer_polyline_incomplete<OutputIteratorValueType, OutputIterator, Holes_out>
       tracer(out, Holes_out(holes));
     
-    typedef typename PointRange::iterator InIterator;
+    typedef typename PointRange1::iterator InIterator;
     typedef typename std::iterator_traits<InIterator>::value_type Point;
 
     triangulate_hole_polyline(points, third_points, tracer, WC(),
@@ -355,11 +358,12 @@ namespace Polygon_mesh_processing {
     return tracer.out;
   }
 
-  template <typename PointRange,
+  template <typename PointRange1,
+            typename PointRange2,
             typename OutputIterator>
   OutputIterator
-  triangulate_hole_polyline(const PointRange& points,
-                            const PointRange& third_points,
+  triangulate_hole_polyline(const PointRange1& points,
+                            const PointRange2& third_points,
                             OutputIterator out)
   {
     return triangulate_hole_polyline(points, third_points, out,
@@ -373,13 +377,16 @@ namespace Polygon_mesh_processing {
 */
   template <typename PointRange,
             typename OutputIterator,
-            typename NamedParameters>
+            typename CGAL_PMP_NP_TEMPLATE_PARAMETERS>
   OutputIterator
   triangulate_hole_polyline(const PointRange& points,
                             OutputIterator out,
-                            const NamedParameters& np)
+                            const CGAL_PMP_NP_CLASS& np)
   {
-    return triangulate_hole_polyline(points, PointRange(), out, np);
+    typedef typename std::iterator_traits<
+      typename PointRange::iterator>::value_type Point;
+    std::vector< Point > third_points;
+    return triangulate_hole_polyline(points, third_points, out, np);
   }
 
   template <typename PointRange,

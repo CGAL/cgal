@@ -21,9 +21,11 @@
 #define CGAL_SURFACE_MESH_DEFORMATION_H
 
 #include <CGAL/config.h>
-#include <CGAL/internal/Surface_modeling/Weights.h>
 #include <CGAL/Default.h>
 #include <CGAL/tuple.h>
+
+#include <CGAL/Polygon_mesh_processing/Weights.h>
+#include <CGAL/Simple_cartesian.h>
 
 #include <vector>
 #include <list>
@@ -56,19 +58,41 @@ enum Deformation_algorithm_tag
 /// @cond CGAL_DOCUMENT_INTERNAL
 namespace internal {
 template<class HalfedgeGraph, Deformation_algorithm_tag deformation_algorithm_tag>
-struct Weight_calculator_selector {
-  typedef Uniform_weight<HalfedgeGraph> weight_calculator;
-};
+struct Weight_calculator_selector;
 
 template<class HalfedgeGraph>
 struct Weight_calculator_selector<HalfedgeGraph, CGAL::SPOKES_AND_RIMS> {
-  typedef Single_cotangent_weight<HalfedgeGraph> weight_calculator;
+  typedef Single_cotangent_weight_impl<HalfedgeGraph> weight_calculator;
 };
 
 template<class HalfedgeGraph>
 struct Weight_calculator_selector<HalfedgeGraph, CGAL::ORIGINAL_ARAP> {
-  typedef Cotangent_weight<HalfedgeGraph> weight_calculator;
+  typedef Cotangent_weight_impl<HalfedgeGraph> weight_calculator;
 };
+
+// property map that create a Simple_cartesian<double>::Point_3
+// on the fly in order the deformation class to be used
+// with points with minimal requirements
+template <class Vertex_point_map>
+struct SC_on_the_fly_pmap: public Vertex_point_map{
+  typedef boost::readable_property_map_tag category;
+  typedef CGAL::Simple_cartesian<double>::Point_3 value_type;
+  typedef value_type reference;
+  typedef typename boost::property_traits<Vertex_point_map>::key_type key_type;
+
+  SC_on_the_fly_pmap(Vertex_point_map base):
+    Vertex_point_map(base) {}
+
+  friend value_type
+  get(const SC_on_the_fly_pmap map, key_type k)
+  {
+    typename boost::property_traits<Vertex_point_map>::reference base=
+      get(static_cast<const Vertex_point_map&>(map), k);
+    return value_type(base[0], base[1], base[2]);
+  }
+};
+
+
 }//namespace internal
 /// @endcond
 
@@ -367,13 +391,14 @@ public:
 
 private:
   void init() {
+    typedef internal::SC_on_the_fly_pmap<Vertex_point_map> Wrapper;
     // compute halfedge weights
     halfedge_iterator eb, ee;
     hedge_weight.reserve(2*num_edges(m_halfedge_graph));
     for(cpp11::tie(eb, ee) = halfedges(m_halfedge_graph); eb != ee; ++eb)
     {
       hedge_weight.push_back(
-        this->weight_calculator(*eb, m_halfedge_graph, vertex_point_map));
+        this->weight_calculator(*eb, m_halfedge_graph, Wrapper(vertex_point_map)));
     }
 #ifdef CGAL_DEFORM_MESH_USE_EXPERIMENTAL_SR_ARAP
     m_sr_arap_alpha=2;
@@ -761,6 +786,7 @@ public:
    */
   void overwrite_initial_geometry()
   {
+    typedef internal::SC_on_the_fly_pmap<Vertex_point_map> Wrapper;
     if(roi.empty()) { return; } // no ROI to overwrite
 
     region_of_solution(); // the roi should be preprocessed since we are using original_position vec
@@ -781,13 +807,13 @@ public:
         std::size_t id_e = id(he);
         if(is_weight_computed[id_e]) { continue; }
 
-        hedge_weight[id_e] = weight_calculator(he, m_halfedge_graph, vertex_point_map);
+        hedge_weight[id_e] = weight_calculator(he, m_halfedge_graph, Wrapper(vertex_point_map));
         is_weight_computed[id_e] = true;
 
         halfedge_descriptor e_opp = opposite(he, m_halfedge_graph);
         std::size_t id_e_opp = id(e_opp);
 
-        hedge_weight[id_e_opp] = weight_calculator(e_opp, m_halfedge_graph, vertex_point_map);
+        hedge_weight[id_e_opp] = weight_calculator(e_opp, m_halfedge_graph, Wrapper(vertex_point_map));
         is_weight_computed[id_e_opp] = true;
       }
     }

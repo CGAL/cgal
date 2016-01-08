@@ -10,6 +10,7 @@
 - \subpage devman_reference_counting
 - \subpage devman_memory_management
 - \subpage devman_namespaces
+- \subpage devman_multithreading
 - \subpage devman_polyret
 - \subpage devman_iterators_and_circulators
 - \subpage devman_robustness

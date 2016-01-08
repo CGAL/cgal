@@ -7,24 +7,26 @@ namespace CGAL {
 \cgalAutoToc
 \author Laurent Rineau, Sebastien Loriot, Andreas Fabri, Maxime Gimeno
 
-\section intro Understanding the Polyhedron demo
+\section intro Understanding the Polyhedron Demo
 
-These pages are not documenting the whole Polyhedron demo but only the API that can be useful to create and add a new plugin.
+These pages are not documenting the whole Polyhedron demo but only the API that is useful to create and add a new plugin.
 
 There are several levels in this demo. 
 
-- The MainWindow, which contains the UI elements. 
+- The `MainWindow`, which contains the UI elements. 
 
-- Among these elements is the Viewer, which is the drawable surface that handles all the drawing and all the keyboard and mouse events. 
+- Among these elements is the `Viewer`, which is the drawable surface that handles all the drawing and all the keyboard and mouse events. 
 
-- The Viewer has a reference to the Scene, which contains the Scene_item list, which is a list of the drawn elements. 
+- The `Viewer` has a reference to the `Scene`, which contains the `Scene_item` list, which is a list of the drawn elements. 
 
-A plugin usually defines an object that inherits from Scene_item or uses some of them to demonstrate a CGAL feature, so it might have to deal with the above elements.
+A plugin usually defines an object that inherits from `Scene_item` or uses some of them to demonstrate a \cgal feature, so it might have to deal with the above elements.
 
-\section examplePlugin Creating a simple Plugin
-\subsection examplePluginItself The plugin itself
-A basic plugin will inherit from Polyhedron_demo_plugin_interface. It can also inherits from the Polyhedron_demo_plugin_helper instead, for a more detailed model of plugin.
-It must be created in a folder named Xxxx_yyyy_plugin containing all the files created for it, and a CMakeLists.txt file. This file contains the following line :
+\section examplePlugin Creating a Simple Plugin
+
+\subsection examplePluginItself The Plugin Itself
+
+A basic plugin will inherit from `Polyhedron_demo_plugin_interface`. It can also inherits from the `Polyhedron_demo_plugin_helper` instead, for a more detailed model of plugin.
+It must be created in a folder named Xxxx_yyyy_plugin containing all the files created for it, and a CMakeLists.txt file. This file contains the following line:
 Its name must be of the form Polyhedron_demo_xxxx_yyyy_plugin. \n
 <b>In the CMakeList.txt file, in the section Plugins, add the following lines :</b>
 
@@ -46,24 +48,24 @@ And in the main CMakeLists.txt, you must add the following line:
     Q_INTERFACES(Polyhedron_demo_plugin_interface)\n
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")\n
 
-In the function [init], get a reference to the Scene  and to the MainWindow. Then, create and link the actions of the plugin.\n
-Create a list of QActions containing the actions of the plugin.\n
+In the function [init], get a reference to the `Scene`  and to the `MainWindow`. Then, create and link the actions of the plugin.\n
+Create a list of `QActions` containing the actions of the plugin.\n
 Add the following line:
 ~~~~~~~~~~~~~{.cpp}
     actionName->setProperty("submenuName", "Name_you_want_for_your_submenu");
     ~~~~~~~~~~~~~
 to place your action in a submenu in the Operation Menu.\n
-If the plugin implements a new Scene_item, please notice that a Scene_item has a number of functions that will need a reference to the Viewer through the Viewer_interface type.
+If the plugin implements a new `Scene_item`, please notice that a Scene_item has a number of functions that will need a reference to the `Viewer` through the `Viewer_interface` type.
 
 A plugin must always contain
 ~~~~~~~~~~~~~{.cpp}
 #include "Polyhedron_demo_xxxx_yyyy_plugin.moc"
 ~~~~~~~~~~~~~
-\subsection examplePluginDialog Adding a dialog
+\subsection examplePluginDialog Adding a Dialog
 
 This section describes how to add a dialog on the use of an action.
 
-For a minimalist dialog, intended to get a single parameter for instancem you can create a QInputDialog :
+For a minimalist dialog, intended to get a single parameter for instance you can create a `QInputDialog`:
 ~~~~~~~~~~~~~{.cpp}
     const unsigned int parameter =
       QInputDialog::getInt((QWidget*)mw,
@@ -90,13 +92,14 @@ Edit the ui file with the editor, then add the following line to your plugin fil
 #include "ui_Polyhedron_demo_your_plugin_name_plugin.h"
 ~~~~~~~~~~~~~
 
-You can then add a new class inheriting from QDialog and your own dialog, accessible with "Ui::". Add the macro Q_OBJECT and the line 
-    setupUi(this) 
-in your constructor. You can populate the dialog in the action, using dialog.show() or dialog.exec().
+You can then add a new class inheriting from `QDialog` and your own dialog, accessible with "Ui::". Add the macro `Q_OBJECT` and the line 
+    `setupUi(this)` 
+in your constructor. You can populate the dialog in the action, using `dialog.show()` or `dialog.exec()`.
 
-\subsection examplePluginDockWidget Adding a dock widget
-This section describes how to add a Dock Widget to the application.
-Just like with the Dialog, create a new Qt Designer form (file->New file or Project->Qt->Qt Designer Form), choose QDockWidget in Widgets, and add it to the project in the CMakeList :
+\subsection examplePluginDockWidget Adding a Dock Widget
+
+This section describes how to add a dock widget to the application.
+Just like with the Dialog, create a new Qt Designer form (file->New file or Project->Qt->Qt Designer Form), choose `QDockWidget in Widgets, and add it to the project in the CMakeLists.txt :
     qt5_wrap_ui( exampleUI_FILES dock_example.ui )
     polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES})
     target_link_libraries(example_plugin scene_polyhedron_item)
@@ -104,7 +107,7 @@ Edit the ui file with the editor, then add the following line to your plugin fil
 ~~~~~~~~~~~~~{.cpp}
     #include "ui_dock_example.h"
  ~~~~~~~~~~~~~
- Add a DockQWidget* and a Ui::your_dock_widget as private members of your plugin :
+ Add a `DockQWidget*` and a `Ui::your_dock_widget` as private members of your plugin:
  ~~~~~~~~~~~~~{.cpp}
     private:
     Ui::Dock_example ui_widget;
@@ -119,18 +122,19 @@ and initialize them in the init fucntion :
       mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 ~~~~~~~~~~~~~
 
-Use signal/slots to connect the dock widget to the plugin, and connect them in the init() function, and use the functions show()/hide() to make your 
+Use signal/slots to connect the dock widget to the plugin, and connect them in the `init()` function, and use the functions `show()`/`hide()` to make your 
 dock widget visible or not. By default, a dock widget will remain visible next time the demo is launched if it has not been closed. If you want to avoid that behavior, override the
-function closure() in you plugin, and simply call hide on your dock widget in it.
+function `closure()` in you plugin, and simply call `hide()` on your dock widget in it.
 
 \subsection exampleUsingAGroupItem Using a Scene_group_item
-This section will explain how to use a group item in a plugin. 
-A group item is a virtual item that is not seen in the viewer, nor drawn, but act as a parent for a list of actual items. Its main goal lays within the 
-interaction with the sceneView (which is the list of items on the left of the viewer). With group items, this view becomes hierarchic, which allows to interract with several objects at the same time, and organize this view.
 
-To use a group item in your plugin, you will need a CGAL::Three::Scene_group_item, of course, and a CGAL::Three::Scene_interface. As a group item will automatically contain all the selected items of the scene when it is created, 
-the first thing to do is to clear the selection with CGAL::Three::Scene_interface::setSelectedItem(-1). Then you can create a new Scene_group_item and give the items you want to regroup to it with CGAL::Three::Scene_interface::changeGroup().
-Once it is done, add the group to the scene with CGAL::Three::Scene_interface::add_group(). 
+This section will explain how to use a group item in a plugin. 
+A group item is a virtual item that is not seen in the viewer, nor drawn, but acts as a parent for a list of actual items. Its main goal lies within the 
+interaction with the `SceneView` (which is the list of items on the left of the viewer). With group items, this view becomes hierarchic, which allows to interact with several objects at the same time, and organize this view.
+
+To use a group item in your plugin, you will need a `CGAL::Three::Scene_group_item`, of course, and a `CGAL::Three::Scene_interface`. As a group item will automatically contain all the selected items of the scene when it is created, 
+the first thing to do is to clear the selection with `CGAL::Three::Scene_interface::setSelectedItem(-1)`. Then you can create a new `Scene_group_item` and give the items you want to regroup to it with `CGAL::Three::Scene_interface::changeGroup()`.
+Once it is done, add the group to the scene with `CGAL::Three::Scene_interface::add_group()`. 
 ~~~~~~~~~~~~~{.cpp}
     //clears the selection to avoid adding unwanted items to the group.
     scene->setSelectedItem(-1);
@@ -142,28 +146,29 @@ Once it is done, add the group to the scene with CGAL::Three::Scene_interface::a
     //adds it to the scene
     scene->add_group(group);
 ~~~~~~~~~~~~~
-\section usefulItems List of useful classes :
-- MainWindow
-- CGAL::Three::Viewer_interface
-- CGAL::Three::Scene_interface
-- CGAL::Three::Scene_item
-- CGAL::Three::Scene_group_item
-- CGAL::Three::Polyhedron_demo_plugin_helper
-- CGAL::Three::Polyhedron_demo_plugin_interface
 
-\section exampleexternalPlugin Creating an external plugin
+\section usefulItems List of Useful Classes:
+- `MainWindow`
+- `CGAL::Three::Viewer_interface`
+- `CGAL::Three::Scene_interface`
+- `CGAL::Three::Scene_item`
+- `CGAL::Three::Scene_group_item`
+- `CGAL::Three::Polyhedron_demo_plugin_helper`
+- `CGAL::Three::Polyhedron_demo_plugin_interface`
+
+\section exampleexternalPlugin Creating an External Plugin
 
 To create an external plugin, you must make a new Cmake project.
-In the CMakeLists you must fetch the exported targets of the polyhedron demo (polyhedron_demo_macros.cmake).
+In the CMakeLists.txt you must fetch the exported targets of the polyhedron demo (polyhedron_demo_macros.cmake).
 An external plugin will not be automatically loaded in the Polyhedron demo. It must be built in its own project.
 
-\section example Example : 
-\subsection example1 Creating a simple plugin
-The following code will create a plugin that adds an action to the MainWindow. This action is called "Draw Triangle" and adds a triangle to the scene.
+\section example Examples 
+\subsection example1 Creating a Simple Plugin
+The following code will create a plugin that adds an action to the `MainWindow`. This action is called "Draw Triangle" and adds a triangle to the scene.
 \cgalExample{Three/Example_plugin/Polyhedron_demo_example_plugin.cpp}
 
-\subsection example2 Creating an external plugin
-The following code makes the same thing than the previous, only the plugin is external.
+\subsection example2 Creating an External Plugin
+The following code makes the same thing as the previous example, only the plugin is external.
 
     project( Example_plugin )
     # Find includes in corresponding build directories

@@ -11,7 +11,9 @@ int main(){
   typedef PT_2::Innermost_coefficient_type             Integer; 
    
   PT_2::Construct_polynomial construct_polynomial;
-  
+  Poly_2 dc;
+
+
   // constructing a constant polynomial from int
   Poly_2 two(2); // = 2 
   std::cout << "A constant polynomial: " << two << std::endl;
