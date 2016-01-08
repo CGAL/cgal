@@ -1,3 +1,25 @@
+// Copyright (c) 2010-2011 CNRS and LIRIS' Establishments (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+// Author(s)     : Guillaume Damiand <guillaume.damiand@liris.cnrs.fr>
+//
+
+#ifndef COMBINATORIAL_MAP_TEST_ITERATORS_H
+#define COMBINATORIAL_MAP_TEST_ITERATORS_H
 
 // This function allows to test if the iterators iterate through the dart exactly once.
 template<typename CMap>
@@ -48,7 +70,7 @@ bool test_iterators_2(CMap & cm)
   for (int i=0; i<NBTESTS; ++i)
   {
     if(nbdarts[i]!=cm.number_of_darts()) res=false;
-    cm.free_mark( marks[i]);
+    cm.free_mark( marks[i] );
   }
   return res;
 }
@@ -115,15 +137,12 @@ bool test_iterators_3(CMap & cm)
     }
   }
 
-  // std::cout<<"Number of marked darts: ";
   bool res = true;  
   for (int i=0; i<NBTESTS; ++i)
   {
     if(nbdarts[i]!=cm.number_of_darts()) res=false;
-    cm.free_mark( marks[i]);
-    // std::cout<<nbdarts[i]<<" ";
+    cm.free_mark( marks[i] );
   }
-  // std::cout<<"number of darts="<<cm.number_of_darts()<<std::endl;
   return res;
 }
 
@@ -214,14 +233,13 @@ bool test_iterators_4(CMap & cm)
     }
   }
 
-  // std::cout<<"Number of marked darts: ";
   bool res = true;
   for (int i=0; i<NBTESTS; ++i)
   {
     if(nbdarts[i]!=cm.number_of_darts()) res=false;
-    cm.free_mark( marks[i]);
-    // std::cout<<nbdarts[i]<<" ";
+    cm.free_mark( marks[i] );
   }
-  // std::cout<<"number of darts="<<cm.number_of_darts()<<std::endl;
   return res;
 }
+
+#endif // COMBINATORIAL_MAP_TEST_ITERATORS_H

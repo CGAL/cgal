@@ -513,7 +513,7 @@ namespace CGAL {
         CGAL_assertion(!this->mmap->is_free(*this, Bi));
         this->set_current_dart(this->mmap->beta(*this, Bi));
         this->mprev_op = OP_BETAI;
-        mcurdart=1;
+        mcurdart=3;
       }
       else 
       {

@@ -22,6 +22,7 @@
 
 #include <CGAL/Combinatorial_map_constructors.h>
 #include <CGAL/Combinatorial_map_operations.h>
+#include "Combinatorial_map_test_iterators.h"
 
 #include <iostream>
 #include <fstream>
@@ -149,6 +150,9 @@ bool test2D()
         map.template sew<2> ( map.beta(d2, 1), d3 );
         map.template sew<2> ( map.beta(d1, 1), map.beta (d3, 1) );
     }
+
+    if ( !test_iterators_2(map) )
+    {  assert(false); return false; }
 
     // Two nested iterators
     cout << "Nombre de brins : " << map.number_of_darts() << ", "
