@@ -127,9 +127,9 @@ to it.
 \subsection TutorialsReconstruction_preprocessing_outliers Outlier removal
 
 Some acquisition techniques generate points that are far away from the
-surface have no relevance for reconstruction. They are usually refered
-to as 'outliers'. Using the \cgal reconstruction algorithms on
-outlier-ridden point clouds produce overly distorted output, it is
+surface have no relevance for reconstruction. They are usually
+referred to as 'outliers'. Using the \cgal reconstruction algorithms
+on outlier-ridden point clouds produce overly distorted output, it is
 therefore strongly advised to filter these outliers _before_
 performing reconstruction.
 
@@ -335,11 +335,11 @@ noisy but the user still wants the surface to pass exactly through the
 points.
 
 Notice that although there is an option to force the output to be
-manifold, it is not guaranted to be orientable (contrary to _Poisson_
+manifold, it is not guaranteed to be orientable (contrary to _Poisson_
 and _Avdancing front_).
 
 \code{.cpp}
-CGAL::Scale_space_surface_receonstruction_3<Kernel> reconstruct
+CGAL::Scale_space_surface_reconstruction_3<Kernel> reconstruct
   (10, // Number of neighborhood points
    300); // Number of samples used to estimate neighborhood radius
 
