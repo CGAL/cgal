@@ -23,6 +23,7 @@
 
 #include <vector>
 #include <map>
+#include <CGAL/tuple.h>
 #include <CGAL/Image_3.h>
 #include <CGAL/internal/Mesh_3/split_in_polylines.h>
 #include <CGAL/internal/Mesh_3/Graph_manipulations.h>
