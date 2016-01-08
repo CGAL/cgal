@@ -1258,27 +1258,27 @@ QString Scene_polyhedron_item::compute_stats(int type)
 void Scene_polyhedron_item::header(header_data &data)
 {
   //categories
-  data.categories.append(std::pair<QString,int>(QString("Properties"),8));
+  data.categories.append(std::pair<QString,int>(QString("Properties"),9));
   data.categories.append(std::pair<QString,int>(QString("Edges"),6));
   data.categories.append(std::pair<QString,int>(QString("Angles"),3));
 
 
   //titles
-  data.titles.append(QString("Nb. Vertices"));
-  data.titles.append(QString("Nb. Facets"));
-  data.titles.append(QString("Nb. Connected Components"));
-  data.titles.append(QString("Nb. Border Edges"));
-  data.titles.append(QString("Nb. Degenerated Faces"));
+  data.titles.append(QString("#Vertices"));
+  data.titles.append(QString("#Facets"));
+  data.titles.append(QString("#Connected Components"));
+  data.titles.append(QString("#Border Edges"));
+  data.titles.append(QString("#Degenerated Faces"));
   data.titles.append(QString("Connected Components Of The Boundary"));
   data.titles.append(QString("Area"));
   data.titles.append(QString("Volume"));
   data.titles.append(QString("Self-Intersecting"));
-  data.titles.append(QString("Nb. Edges"));
+  data.titles.append(QString("#Edges"));
   data.titles.append(QString("Minimum Length"));
   data.titles.append(QString("Maximum Length"));
   data.titles.append(QString("Median Length"));
   data.titles.append(QString("Mean Length"));
-  data.titles.append(QString("Nb. Null Length"));
+  data.titles.append(QString("#Null Length"));
   data.titles.append(QString("Minimum"));
   data.titles.append(QString("Maximum"));
   data.titles.append(QString("Average"));

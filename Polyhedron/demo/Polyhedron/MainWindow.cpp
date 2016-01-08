@@ -1763,7 +1763,9 @@ void MainWindow::stat_dlg_update()
 }
 void MainWindow::statistics_on_polyhedron()
 {
-  statistics_dlg = new QDialog();
+  if(statistics_dlg)
+    delete statistics_dlg;
+  statistics_dlg = new QDialog(this);
   Ui::Polyhedron_demo_statistics_on_polyhedron_dialog ui;
   ui.setupUi(statistics_dlg);
   connect(ui.okButtonBox, SIGNAL(accepted()), statistics_dlg, SLOT(accept()));
