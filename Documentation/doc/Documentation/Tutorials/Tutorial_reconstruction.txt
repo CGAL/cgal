@@ -43,12 +43,12 @@ method is more suited for your work:
 
 __Comparison of reconstruction methods applied to the same input (full shape and close-up).__
 
-From left to right: original point cloud; poisson; advancing front; scale space.
+From left to right: original point cloud; Poisson; advancing front; scale space.
 
 \cgalFigureEnd
 
 More information on these different methods can be found on their
-respective manual pages and on section \ref TutorialsReconstruction_reconstruction.
+respective manual pages and in section \ref TutorialsReconstruction_reconstruction.
 
 \section TutorialsReconstruction_overview Pipeline Overview
 
@@ -65,7 +65,7 @@ We now review some of these steps in more details.
 
 \section TutorialsReconstruction_input Reading Input
 
-The reconstruction algorithms on \cgal take a range of iterators on a
+The reconstruction algorithms in \cgal take a range of iterators on a
 container as input and use property maps to access the points (and the
 normals if they are needed). Points are typically stored in plain text
 format (denoted as 'xyz' format), each point separated by a newline
@@ -75,8 +75,8 @@ provides functions to read such a format:
 - `read_xyz_points()`
 - `read_xyz_points_and_normals()`
 
-Point may also be stored in an 'off' container, for which we also
-provide function:
+Points may also be stored in an 'off' container, for which we also
+provide functions:
 
 - `read_off_points()`
 - `read_off_points_and_normals()`
@@ -125,7 +125,7 @@ to it.
 
 \subsection TutorialsReconstruction_preprocessing_outliers Outlier removal
 
-Some acquisition techniques generate points that are far away from the
+Some acquisition techniques generate points which are far away from the
 surface have no relevance for reconstruction. They are usually
 referred to as 'outliers'. Using the \cgal reconstruction algorithms
 on outlier-ridden point clouds produce overly distorted output, it is
@@ -207,8 +207,8 @@ These functions directly modify the container:
 
 \ref Chapter_Poisson_Surface_Reconstruction "Poisson Surface Reconstruction"
 requires points with oriented normal vectors. To apply the algorithm
-to a raw point cloud, normals must be estimated first with one of
-these two functions:
+to a raw point cloud, normals must be estimated first, for example
+with one of these two functions:
 
 - `pca_estimate_normals()`
 - `jet_estimate_normals()`
@@ -256,12 +256,12 @@ whose gradient matches the input normal vector field: this indicator
 function has opposite signs inside and outside of the inferred shape
 (hence the need for closed shapes). This method thus requires normals
 and produces smooth closed surfaces. It is not appropriate if the
-surface is expected to pass exactly on the input points. On the
+surface is expected to pass exactly through the input points. On the
 contrary, it performs well if the aim is to approximate a noisy point
 cloud with a smooth surface.
 
 Notice that it does not generate directly a mesh but computes an
-_implicit function_ (that can later be used to generate a mesh):
+_implicit function_ (which can later be used to generate a mesh):
 
 \code{.cpp}
 CGAL::Poisson_reconstruction_function<Kernel> function
@@ -310,15 +310,15 @@ be used:
 
 \subsection TutorialsReconstruction_reconstruction_advancing Advancing Front
 
-Advancing front is a Delaunay-based approach that generates triples of
-point indices that describe the triangular facets of the
+Advancing front is a Delaunay-based approach which generates triples of
+point indices which describe the triangular facets of the
 reconstruction: it uses a priority queue to sequentially pick the
 Delaunay facet the most likely to be part of the surface, based on a
 size criterion (to favor the small facets) and an angle criterion (to
 favor smoothness). Its main asset is to generate oriented manifold
 surfaces with boundaries: contrary to Poisson, it does not require
 normals and is not bound to reconstruct closed shapes. However, it
-requires preprocessing if the point is noisy.
+requires preprocessing if the point cloud is noisy.
 
 The \ref Chapter_Advancing_Front_Surface_Reconstruction "Advancing Front"
 package provides several ways of constructing the function. Here is
@@ -334,7 +334,7 @@ CGAL::advancing_front_surface_reconstruction(points.begin(),
 
 \subsection TutorialsReconstruction_reconstruction_scale_space Scale Space
 
-Scale space reconstruction aims at producing a surface that
+Scale space reconstruction aims at producing a surface which
 interpolates the input points (interpolant) while offering some
 robustness to noise. More specifically, it first applies several times
 a smoothing filter to the input point set to produce a scale space;
@@ -363,12 +363,12 @@ reconstruct.reconstruct_surface(points.begin (), points.end (),
 \section TutorialsReconstruction_postprocessing Output and Postprocessing
 
 Each of these methods produce a triangle mesh stored in different
-ways. If this output mesh is not satisfactory enough, we provide
+ways. If this output mesh is not satisfactory enough, \cgal provide
 several algorithms to post-process it (hole filling, remeshing,
 etc.) in the package \ref Chapter_PolygonMeshProcessing "Polygon Mesh Processing".
 
 We do not discuss these functions here as there are many
-postprocessing possibilities whose relevance strongly depend on the
+postprocessing possibilities whose relevance strongly depends on the
 user's expectations on the output mesh.
 
 The mesh (postprocessed or not) can easily be saved in the OFF format:
@@ -420,11 +420,11 @@ All the code snippets used in this tutorial can be assembled to create
 a full algorithm pipeline (provided the correct _includes_ are
 used). We give a full code example which achieves the following steps:
 
-- Reading an .xyz file
+- Reading a point cloud (from a .xyz file)
 - Simplifying it
 - Smoothing it
 - Reconstructing it by advancing front
-- Writing the output .off file
+- Writing the output surface (in an .off file)
 
 \code{.cpp}
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
