@@ -151,13 +151,14 @@ namespace internal {
     typedef typename GeomTraits::Plane_3    Plane_3;
     typedef typename GeomTraits::Triangle_3 Triangle_3;
 
-    typedef AABB_tree_remeshing<PM, VertexPointMap, GeomTraits> AABB_tree;
-
     typedef Incremental_remesher<PM, VertexPointMap, GeomTraits> Self;
 
   private:
-    typedef boost::unordered_map<face_descriptor, std::size_t> FaceComponentMap;
-    typedef boost::associative_property_map<FaceComponentMap> FaceComponentPMap;
+    typedef std::size_t                                  Patch_id;
+    typedef std::vector<Triangle_3>                      Triangle_list;
+    typedef std::vector<Patch_id>                        Patch_id_list;
+    typedef internal::AABB_tree_remeshing<GeomTraits,
+        Triangle_list, Patch_id_list>                    AABB_tree;
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
@@ -165,15 +166,14 @@ namespace internal {
                        , const bool protect_constraints)
       : mesh_(pmesh)
       , vpmap_(vpmap)
-      , tree_ptr_(new AABB_tree())
       , own_tree_(true)
+      , input_triangles_()
+      , input_patch_ids_()
       , halfedge_status_map_()
       , protect_constraints_(protect_constraints)
       , patch_ids_map_()
     {
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
-
-      //todo : add a constructor with aabb_tree as parameter
     }
 
     ~Incremental_remesher()
@@ -195,10 +195,16 @@ namespace internal {
         boost::make_assoc_property_map(patch_ids_map_),// set patch_id() for each face
         PMP::parameters::edge_is_constrained_map(cpmap));
 
-      tree_ptr_->build(faces(mesh_).first, faces(mesh_).second,
-                       mesh_,
-                       vpmap_,
-                       boost::make_assoc_property_map(patch_ids_map_));
+      BOOST_FOREACH(face_descriptor f, faces(mesh_))
+      {
+        input_triangles_.push_back(triangle(f));
+        input_patch_ids_.push_back(get_patch_id(f));
+      }
+
+      tree_ptr_ = new AABB_tree(input_triangles_.begin(),
+                                input_triangles_.end(),
+                                input_patch_ids_.begin(),
+                                input_patch_ids_.end());
       tree_ptr_->accelerate_distance_queries();
     }
 
@@ -364,7 +370,7 @@ namespace internal {
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_on_border(hnew))
         {
-          std::size_t patch_id = get_patch_id(face(hnew, mesh_));
+          Patch_id patch_id = get_patch_id(face(hnew, mesh_));
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(hnew,
                                                               next(next(hnew, mesh_), mesh_),
                                                               mesh_);
@@ -373,12 +379,11 @@ namespace internal {
             : MESH;
           halfedge_added(hnew2,                  snew);
           halfedge_added(opposite(hnew2, mesh_), snew);
+          set_patch_id(face(hnew2, mesh_), patch_id);
+          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
 
           if (snew == PATCH)
           {
-            set_patch_id(face(hnew2, mesh_), patch_id);
-            set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
-
             double sql = sqlength(hnew2);
             if (sql > sq_high)
               long_edges.insert(long_edge(hnew2, sql));
@@ -388,7 +393,7 @@ namespace internal {
         //do it again on the other side if we're not on boundary
         if (!is_on_border(hnew_opp))
         {
-          std::size_t patch_id = get_patch_id(face(hnew_opp, mesh_));
+          Patch_id patch_id = get_patch_id(face(hnew_opp, mesh_));
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(prev(hnew_opp, mesh_),
                                                               next(hnew_opp, mesh_),
                                                               mesh_);
@@ -397,12 +402,11 @@ namespace internal {
             : MESH;
           halfedge_added(hnew2,                  snew);
           halfedge_added(opposite(hnew2, mesh_), snew);
+          set_patch_id(face(hnew2, mesh_), patch_id);
+          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
 
           if (snew == PATCH)
           {
-            set_patch_id(face(hnew2, mesh_), patch_id);
-            set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
-
             double sql = sqlength(hnew2);
             if (sql > sq_high)
               long_edges.insert(long_edge(hnew2, sql));
@@ -835,16 +839,15 @@ namespace internal {
         if (!is_on_patch(v))
           continue;
 
-        typename boost::property_traits<FaceComponentPMap>::value_type
-          patch_id = get_patch_id(face(halfedge(v, mesh_), mesh_));
-
+        Patch_id_property_map pid_pmap(*this);
         internal::Filtered_projection_traits<typename AABB_tree::AABB_traits,
-                                             FaceComponentPMap,
+                                             Patch_id_property_map,
                                              true> /* keep primitives with matching IDs */
         projection_traits(
-          typename boost::property_traits<FaceComponentPMap>::value_type(patch_id),
+          get_patch_id(face(halfedge(v, mesh_), mesh_)),
           tree_ptr_->traits(),
-          boost::make_assoc_property_map(patch_ids_map_));
+          pid_pmap
+          );
 
         tree_ptr_->traversal(get(vpmap_, v), projection_traits);
         CGAL_assertion(projection_traits.found());
@@ -869,8 +872,7 @@ namespace internal {
     }
 
 private:
-
-  std::size_t get_patch_id(const face_descriptor& f) const
+  Patch_id get_patch_id(const face_descriptor& f) const
   {
     if (patch_ids_map_.empty())
       return -1;
@@ -878,7 +880,7 @@ private:
       return patch_ids_map_.at(f);
   }
 
-  void set_patch_id(const face_descriptor& f, const std::size_t& i)
+  void set_patch_id(const face_descriptor& f, const Patch_id& i)
   {
     if (patch_ids_map_.find(f) == patch_ids_map_.end())
       patch_ids_map_.insert(std::make_pair(f, i));
@@ -886,7 +888,42 @@ private:
       patch_ids_map_[f] = i;
   }
 
+  struct Patch_id_property_map
+  {
+    typedef boost::readable_property_map_tag     category;
+    typedef Patch_id                             value_type;
+    typedef Patch_id&                            reference;
+    typedef typename Triangle_list::const_iterator key_type;
+
+    const Self* remesher_ptr_;
+
+    Patch_id_property_map()
+      : remesher_ptr_(NULL) {}
+    Patch_id_property_map(const Self& remesher)
+      : remesher_ptr_(&remesher) {}
+
+    friend bool get(const Patch_id_property_map& m, key_type tr_it)
+    {
+      //tr_it is an iterator from triangles_
+      std::size_t id_in_vec = std::distance(
+        m.remesher_ptr_->input_triangles().begin(), tr_it);
+      CGAL_assertion(0 <= id_in_vec);
+      CGAL_assertion(id_in_vec < m.remesher_ptr_->input_patch_ids().size());
+
+      return m.remesher_ptr_->input_patch_ids()[id_in_vec];
+    }
+  };
+
   private:
+    Triangle_3 triangle(face_descriptor f) const
+    {
+      halfedge_descriptor h = halfedge(f, mesh_);
+      vertex_descriptor v1  = target(h, mesh_);
+      vertex_descriptor v2  = target(next(h, mesh_), mesh_);
+      vertex_descriptor v3  = target(next(next(h, mesh_), mesh_), mesh_);
+      return Triangle_3(get(vpmap_, v1), get(vpmap_, v2), get(vpmap_, v3));
+    }
+
     double sqlength(const vertex_descriptor& v1,
                     const vertex_descriptor& v2) const
     {
@@ -1423,14 +1460,25 @@ private:
       return n * no > 0.;
     }
 
+  public:
+    const Triangle_list& input_triangles() const {
+      return input_triangles_;
+    }
+
+    const Patch_id_list& input_patch_ids() const {
+      return input_patch_ids_;
+    }
+
   private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
-    AABB_tree* tree_ptr_;
+    const AABB_tree* tree_ptr_;
     bool own_tree_;
+    Triangle_list input_triangles_;
+    Patch_id_list input_patch_ids_;
     boost::unordered_map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
     bool protect_constraints_;
-    FaceComponentMap patch_ids_map_;
+    boost::unordered_map<face_descriptor, Patch_id> patch_ids_map_;
 
   };//end class Incremental_remesher
 }//end namespace internal

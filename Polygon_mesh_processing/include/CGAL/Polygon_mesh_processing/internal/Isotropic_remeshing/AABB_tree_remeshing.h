@@ -23,32 +23,36 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/AABB_triangle_primitive.h>
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/AABB_filtered_projection_traits.h>
 
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
-template<typename PolygonMesh
-       , typename VertexPointMap>
-class AABB_facet_primitive_remeshing
-  : public CGAL::AABB_face_graph_triangle_primitive<PolygonMesh, VertexPointMap>
+namespace CGAL {
+namespace Polygon_mesh_processing {
+namespace internal {
+
+template<typename GeomTraits
+       , typename TriangleIterator
+       , typename IdType>
+class AABB_triangle_with_id_primitive
+  : public CGAL::AABB_triangle_primitive<GeomTraits, TriangleIterator>
 {
-  typedef CGAL::AABB_face_graph_triangle_primitive<PolygonMesh, VertexPointMap> Base;
-  typedef typename boost::graph_traits<PolygonMesh>::face_iterator face_iterator;
+  typedef CGAL::AABB_triangle_primitive<GeomTraits, TriangleIterator> Base;
+  typedef typename GeomTraits::Triangle_3 Triangle_3;
 
 public:
-  AABB_facet_primitive_remeshing(face_iterator it,
-                                 const PolygonMesh &pmesh,
-                                 VertexPointMap vpm)
-    : Base(it, pmesh, vpm)
+  AABB_triangle_with_id_primitive(TriangleIterator it)
+    : Base(it)
+    , patch_id_(-1)
   {}
 
-  void set_patch_id(const std::size_t& patch_id) {
+  void set_patch_id(const IdType& patch_id) {
     patch_id_ = patch_id;
   }
-  std::size_t patch_id() const {
+  IdType patch_id() const {
     return patch_id_;
   }
 
@@ -56,45 +60,47 @@ private:
   std::size_t patch_id_;
 };
 
-template<typename PolygonMesh
-       , typename VertexPointMap
-       , typename GeomTraits
->
+template<typename GeomTraits,
+         typename TriangleList,
+         typename PatchIdList>
 class AABB_tree_remeshing
   : public CGAL::AABB_tree<
       CGAL::AABB_traits<
         GeomTraits,
-        AABB_facet_primitive_remeshing<PolygonMesh, VertexPointMap> > >
+        AABB_triangle_with_id_primitive<GeomTraits,
+          typename TriangleList::iterator,
+          typename PatchIdList::value_type
+    > > >
 {
-  typedef PolygonMesh    PM;
-  typedef VertexPointMap VPMap;
+  typedef typename TriangleList::iterator     TriangleIterator;
+  typedef typename PatchIdList::iterator      PatchIdIterator;
+  typedef typename PatchIdList::value_type    IdType;
 
-  typedef typename boost::graph_traits<PM>::face_iterator face_iterator;
-  typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
-
-public:
-  typedef AABB_facet_primitive_remeshing<PM, VPMap>       AABB_primitive;
-  typedef CGAL::AABB_traits<GeomTraits, AABB_primitive>   AABB_traits;
-  typedef CGAL::AABB_tree<AABB_traits>                    AABB_tree;
+  typedef AABB_triangle_with_id_primitive<GeomTraits,
+            TriangleIterator, IdType>         Primitive;
 
 public:
-  template<typename FaceIndexMap>
-  void build(face_iterator fbegin,
-             face_iterator fend,
-             const PM& pmesh,
-             VertexPointMap vpmap,
-             FaceIndexMap fccmap)//connected components
+  typedef CGAL::AABB_traits<GeomTraits, Primitive> AABB_traits;
+
+public:
+  AABB_tree_remeshing(TriangleIterator tb, TriangleIterator te,
+                      PatchIdIterator pib, PatchIdIterator pie)
   {
-    for (face_iterator fit = fbegin; fit != fend; ++fit)
+    TriangleIterator tr_it = tb;
+    PatchIdIterator pid_it = pib;
+    for (; tr_it != te; ++tr_it, ++pid_it)
     {
-      face_descriptor f = *fit;
-      AABB_primitive prim(fit, pmesh, vpmap);
-      prim.set_patch_id(get(fccmap, f));
+      CGAL_assertion(pid_it != pie);
+
+      Primitive prim(tr_it);
+      prim.set_patch_id(*pid_it);
       this->insert(prim);
     }
   }
 };
 
-
+}//namespace internal
+}//namespace PMP
+}//namespace CGAL
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_AABB_TREE_REMESHING_H
