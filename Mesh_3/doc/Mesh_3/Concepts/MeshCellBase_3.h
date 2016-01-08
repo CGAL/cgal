@@ -24,7 +24,7 @@ Each surface facet has a Delaunay surface ball, i. e.
 a circumscribing ball, centered 
 on an input complex surface patch, 
 and empty of triangulation vertices. 
-In the following we call `surface center` 
+In the following we call *surface center* 
 of a surface facet, the center of its biggest Delaunay surface ball.
 
 The optimizers also need this concept to provide read-write access to two `Cell_handle`
@@ -33,8 +33,8 @@ called 'intrusive'.
 For parallel algorithms, the functions related to facet 
 access/modification must be concurrency-safe when several calls are
 made in parallel on different facets of the cell (e.g. calling 
-set_facet_visited(0, true), set_facet_visited(2, true) 
-and is_facet_visited(1) in parallel must be safe)
+`set_facet_visited(0, true)`, `set_facet_visited(2, true)` 
+and `is_facet_visited(1)` in parallel must be safe)
 
 Moreover, the parallel algorithms require an erase counter in 
 each cell (see below).
