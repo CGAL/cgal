@@ -514,7 +514,8 @@ private:
   {
     if( v->is_c2t3_cache_valid() )
     {
-      return v->cached_number_of_components();
+      const std::size_t n = v->cached_number_of_components();
+      if(n != std::size_t(-1)) return n;
     }
 
     Union_find<Facet> facets;
