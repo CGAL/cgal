@@ -470,4 +470,10 @@ typedef const void * Nullptr_t;   // Anticipate C++0x's std::nullptr_t
 #define CGAL_NOEXCEPT(x)
 #endif
 
+#ifndef CGAL_NO_ASSERTIONS
+#  define CGAL_NO_ASSERTIONS_BOOL false
+#else
+#  define CGAL_NO_ASSERTIONS_BOOL true
+#endif
+
 #endif // CGAL_CONFIG_H
