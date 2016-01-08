@@ -37,6 +37,9 @@ public:
   }
   
   bool applicable(QAction*) const {
+    if (scene->selectionIndices().size() < 2)
+      return false;
+    
     Q_FOREACH(int index, scene->selectionIndices())
       {
         if ( qobject_cast<Scene_points_with_normal_item*>(scene->item(index)) )
