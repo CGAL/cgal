@@ -23,15 +23,17 @@ typedef Mesh_criteria::Facet_criteria Facet_criteria;
 typedef Mesh_criteria::Cell_criteria Cell_criteria;
 
 typedef Tr::Point Point_3;
+typedef std::list<std::vector<CGAL::Exact_predicates_inexact_constructions_kernel::Point_3> > Polylines_container;
 
 Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
+                             const Polylines_container& polylines,
                              QString filename,
                              const double angle,
                              const double facet_sizing,
                              const double approx,
                              const double tet_sizing,
                              const double tet_shape,
-                             const bool protect_features,
+                             bool protect_features,
                              CGAL::Three::Scene_interface* scene)
 {
   if(!pMesh) return 0;
@@ -54,9 +56,14 @@ Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
   // Create domain
   Polyhedral_mesh_domain domain(*pMesh);
 
-  if(protect_features) {
+  if(polylines.empty() && protect_features) {
       domain.detect_features();
   }
+  if(! polylines.empty()){
+    domain.add_features(polylines.begin(), polylines.end());
+    protect_features = true; // so that it will be passed in make_mesh_3
+  }
+
   std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
   // Meshing
@@ -151,6 +158,7 @@ Scene_item* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 
 Scene_item* cgal_code_mesh_3(const Image* pImage,
+                             const Polylines_container& polylines,
                              const double facet_angle,
                              const double facet_sizing,
                              const double facet_approx,
@@ -159,15 +167,19 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
                              const bool protect_features,
                              CGAL::Three::Scene_interface* scene)
 {
-
   if (NULL == pImage) { return NULL; }
 
   Image_mesh_domain* p_domain
     = new Image_mesh_domain(*pImage, 1e-6);
 
-  if(protect_features){
-    std::vector<std::vector<Point_3> > polylines;
-    CGAL::polylines_to_protect<Point_3>(*pImage, polylines);
+
+  if(protect_features && polylines.empty()){
+    std::vector<std::vector<Point_3> > polylines_on_bbox;
+    CGAL::polylines_to_protect<Point_3>(*pImage, polylines_on_bbox);
+    p_domain->add_features(polylines_on_bbox.begin(), polylines_on_bbox.end());
+  }
+  if(! polylines.empty()){
+    // Insert edge in domain
     p_domain->add_features(polylines.begin(), polylines.end());
   }
 

@@ -17,6 +17,7 @@
 #include <fstream>
 
 #include "Scene_polyhedron_item.h"
+#include "Scene_polylines_item.h"
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 #include "Scene_implicit_function_item.h"
@@ -29,13 +30,14 @@
 
 // declare the CGAL function
 CGAL::Three::Scene_item* cgal_code_mesh_3(const Polyhedron*,
+                             const Scene_polylines_item::Polylines_container&,
                              QString filename,
                              const double angle,
                              const double sizing,
                              const double approx,
                              const double tets_sizing,
                              const double tet_shape,
-                             const bool protect_features,
+                             bool protect_features,
                              CGAL::Three::Scene_interface* scene);
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
@@ -50,6 +52,7 @@ Scene_item* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 Scene_item* cgal_code_mesh_3(const Image* pImage,
+                             const Scene_polylines_item::Polylines_container&,
                              const double facet_angle,
                              const double facet_sizing,
                              const double facet_approx,
@@ -87,14 +90,20 @@ public:
 
   bool applicable(QAction*) const {
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
-  if(qobject_cast<Scene_implicit_function_item*>(scene->item(scene->mainSelectionIndex())))
-    return true;
+    if(qobject_cast<Scene_implicit_function_item*>(scene->item(scene->mainSelectionIndex())))
+      return true;
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-  if( qobject_cast<Scene_segmented_image_item*>(scene->item(scene->mainSelectionIndex())))
-    return true;
-#endif
-      return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
+    Q_FOREACH(int ind, scene->selectionIndices()){
+      if( qobject_cast<Scene_segmented_image_item*>(scene->item(ind)))
+        return true;
+    }
+#endif  
+    Q_FOREACH(int ind, scene->selectionIndices()){
+      if( qobject_cast<Scene_polyhedron_item*>(scene->item(ind)))
+        return true;
+    }
+    return false;
   }
 
 public Q_SLOTS:
@@ -120,19 +129,40 @@ get_approximate(double d, int precision, int& decimals)
 
 void Polyhedron_demo_mesh_3_plugin::mesh_3()
 {
-  const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
+  CGAL::Three::Scene_interface::Item_id index = -1;
+  Scene_polyhedron_item* poly_item = NULL;
+  Scene_implicit_function_item* function_item = NULL;
+  Scene_segmented_image_item* image_item = NULL;
+  Scene_polylines_item* polylines_item = NULL;
 
-  Scene_polyhedron_item* poly_item =
-    qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+  Q_FOREACH(int ind, scene->selectionIndices()) {
+
+    if(poly_item == NULL){
+      poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
+      if(poly_item != NULL){
+        index = ind;
+      }
+    }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
-  Scene_implicit_function_item* function_item =
-    qobject_cast<Scene_implicit_function_item*>(scene->item(index));
+    if(function_item == NULL){
+      function_item = qobject_cast<Scene_implicit_function_item*>(scene->item(ind));
+      if(function_item != NULL){
+        index = ind;
+      }
+    }
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-  Scene_segmented_image_item* image_item =
-    qobject_cast<Scene_segmented_image_item*>(scene->item(index));
+    if(image_item == NULL){
+      image_item = qobject_cast<Scene_segmented_image_item*>(scene->item(ind));
+       if(image_item != NULL){
+        index = ind;
+      }
+    }
 #endif
-
+    if(polylines_item == NULL){
+      polylines_item = qobject_cast<Scene_polylines_item*>(scene->item(ind));
+    }
+  }
   Scene_item* item = NULL;
   bool features_protection_available = false;
   if(NULL != poly_item)
@@ -244,7 +274,10 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
       return;
     }
 
+    Scene_polylines_item::Polylines_container plc;
+
     temp_item = cgal_code_mesh_3(pMesh,
+                                 (polylines_item == NULL)?plc:polylines_item->polylines,
                                  item->name(),
                                  angle,
                                  facet_sizing,
@@ -283,7 +316,10 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
       return;
     }
 
+    Scene_polylines_item::Polylines_container plc;
+
     temp_item = cgal_code_mesh_3(pImage,
+                                 (polylines_item == NULL)?plc:polylines_item->polylines,
                                  angle,
                                  facet_sizing,
                                  approx,
