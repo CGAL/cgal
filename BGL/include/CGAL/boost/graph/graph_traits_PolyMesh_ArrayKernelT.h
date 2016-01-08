@@ -654,6 +654,25 @@ bool is_valid(OpenMesh::PolyMesh_ArrayKernelT<K>& sm, bool /* verbose */ = false
 
 } // namespace OpenMesh
 
+namespace CGAL {
+
+// Overload CGAL::clear function. PolyMesh_ArrayKernel behaves
+// differently from other meshes. Calling clear does not affect the
+// number of vertices, edges, or faces in the mesh. To get actual
+// numbers it is necessary to first collect garbage. We add an
+// overlaod to get consistent behavior.
+template<typename K>
+void clear(OpenMesh::PolyMesh_ArrayKernelT<K>& sm)
+{
+  sm.clear();
+  sm.garbage_collection(true, true, true);
+  CGAL_postcondition(num_edges(sm) == 0);
+  CGAL_postcondition(num_vertices(sm) == 0);
+  CGAL_postcondition(num_faces(sm) == 0);
+}
+
+}
+
 
 #ifndef CGAL_NO_DEPRECATED_CODE
 #include <CGAL/boost/graph/backward_compatibility_functions.h>
