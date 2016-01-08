@@ -903,7 +903,7 @@ private:
     Patch_id_property_map(const Self& remesher)
       : remesher_ptr_(&remesher) {}
 
-    friend bool get(const Patch_id_property_map& m, key_type tr_it)
+    friend Patch_id get(const Patch_id_property_map& m, key_type tr_it)
     {
       //tr_it is an iterator from triangles_
       std::size_t id_in_vec = std::distance(
