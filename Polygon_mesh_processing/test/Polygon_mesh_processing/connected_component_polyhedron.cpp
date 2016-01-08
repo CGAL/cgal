@@ -53,9 +53,9 @@ void mesh_with_id(const char* argv1)
 
   PMP::keep_largest_connected_components(sm,2);
 
- std::ofstream ofile("blobby_2cc_id.off");
- ofile << sm << std::endl;
- ofile.close();
+  std::ofstream ofile("blobby_2cc_id.off");
+  ofile << sm << std::endl;
+  ofile.close();
 }
 
 void mesh_no_id(const char* argv1)
