@@ -1,5 +1,0 @@
-#!/bin/sh
-
-grep -r 'DEBUG' "${@:-.}" | \
-  perl -ne '/(CGAL_[[:alnum:]_]*DEBUG[[:alnum:]_]*)/ && print "$1\n"' | \
-  sort -u
