@@ -26,7 +26,12 @@
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
-#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/AABB_tree_remeshing.h>
+
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_triangle_primitive.h>
+
+#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/AABB_filtered_projection_traits.h>
 
 #include <CGAL/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -157,8 +162,11 @@ namespace internal {
     typedef std::size_t                                  Patch_id;
     typedef std::vector<Triangle_3>                      Triangle_list;
     typedef std::vector<Patch_id>                        Patch_id_list;
-    typedef internal::AABB_tree_remeshing<GeomTraits,
-        Triangle_list, Patch_id_list>                    AABB_tree;
+
+    typedef CGAL::AABB_triangle_primitive<GeomTraits,
+                     typename Triangle_list::iterator>    AABB_primitive;
+    typedef CGAL::AABB_traits<GeomTraits, AABB_primitive> AABB_traits;
+    typedef CGAL::AABB_tree<AABB_traits>                  AABB_tree;
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
@@ -203,9 +211,7 @@ namespace internal {
       CGAL_assertion(input_triangles_.size() == input_patch_ids_.size());
 
       tree_ptr_ = new AABB_tree(input_triangles_.begin(),
-                                input_triangles_.end(),
-                                input_patch_ids_.begin(),
-                                input_patch_ids_.end());
+                                input_triangles_.end());
       tree_ptr_->accelerate_distance_queries();
     }
 
