@@ -850,7 +850,7 @@ namespace internal {
           );
 
         tree_ptr_->traversal(get(vpmap_, v), projection_traits);
-        CGAL_assertion(projection_traits.found());
+        //CGAL_assertion(projection_traits.found());
 
         Point proj = projection_traits.closest_point();
         put(vpmap_, v, proj);
