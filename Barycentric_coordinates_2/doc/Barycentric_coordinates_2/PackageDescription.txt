@@ -43,4 +43,9 @@
 - `CGAL::Barycentric_coordinates::Query_point_location`
 - `CGAL::Barycentric_coordinates::Type_of_algorithm`
 
+@todo To make the code parallel. Get iteration number from the thread. Add parallel class to each type of the coordinate functions. Use begin() + offset. Resize vector. Parallel class takes as parameters list of points and polygon. Use random access iterator. - Done but we have problems with it.
+
+@todo Add hard tests with epsilon distance away from the polygon’s boundary, which we have discussed during our first group meeting, to current test suit.
+
+
 */

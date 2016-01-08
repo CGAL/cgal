@@ -25,7 +25,7 @@
 #ifndef CGAL_DEMO_MESH_3_MESH_FUNCTION_H
 #define CGAL_DEMO_MESH_3_MESH_FUNCTION_H
 
-//#define CGAL_MESH_3_MESHER_STATUS_ACTIVATED 1
+#define CGAL_MESH_3_MESHER_STATUS_ACTIVATED 1
 
 #include <CGAL/Mesh_3/Concurrent_mesher_config.h>
 
@@ -52,23 +52,6 @@ struct Mesh_parameters
   bool protect_features;
   
   inline QStringList log() const;
-};
-
-
-template < typename EdgeCriteria >
-struct Edge_criteria_sizing_field_wrapper
-{
-  typedef typename EdgeCriteria::Index    Index;
-  typedef typename EdgeCriteria::FT       FT;
-  typedef typename EdgeCriteria::Point_3  Point_3;
-
-  Edge_criteria_sizing_field_wrapper(const EdgeCriteria& ec) : ec_(ec) {}
-  FT operator()(const Point_3& p, const int dim, const Index& index) const
-  { return ec_.sizing_field(p,dim,index); }
-
-private:
-  // No need to copy EdgeCriteria here
-  const EdgeCriteria& ec_;
 };
 
 
@@ -200,23 +183,26 @@ launch()
 
   // Build mesher and launch refinement process
   mesher_ = new Mesher(c3t3_, *domain_, criteria);
-  mesher_->refine_mesh();
-  /*mesher_->initialize();
-  
+
 #ifdef CGAL_MESH_3_PROFILING
-  WallClockTimer t;
+  CGAL::Real_timer t;
+  t.start();
 #endif
 
+#if CGAL_MESH_3_MESHER_STATUS_ACTIVATED
+  mesher_->initialize();
   while ( ! mesher_->is_algorithm_done() && continue_ )
   {
     mesher_->one_step();
   }
+#else // not CGAL_MESH_3_MESHER_STATUS_ACTIVATED
+  mesher_->refine_mesh();
+#endif
 
 #ifdef CGAL_MESH_3_PROFILING
-  std::cerr << "Full refinement time (without fix_c3t3): " << t.elapsed() << " seconds." << std::endl;
+  std::cerr << "Full refinement time (without fix_c3t3): " << t.time() << " seconds." << std::endl;
 #endif
-  */
-  
+
   // Ensure c3t3 is ok (usefull if process has been stop by the user)
   mesher_->fix_c3t3();
 }

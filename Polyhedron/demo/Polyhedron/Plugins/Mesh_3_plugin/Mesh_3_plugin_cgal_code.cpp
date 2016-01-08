@@ -1,7 +1,6 @@
 #include "config_mesh_3.h"
+#include "Mesh_3_plugin_cgal_code.h"
 
-#include <CGAL/Mesh_criteria_3.h>
-#include <CGAL/make_mesh_3.h>
 #include <CGAL/Mesh_3/polylines_to_protect.h>
 #include <CGAL/Bbox_3.h>
 
@@ -9,115 +8,76 @@
 #include <C3t3_type.h>
 
 #include <Scene_c3t3_item.h>
-#include <CGAL/Three/Scene_item.h>
 
 #include "Mesh_function.h"
 #include "Facet_extra_criterion.h"
 
 #include <CGAL/Timer.h>
 using namespace CGAL::Three;
-// Mesh Criteria
-typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
-typedef Mesh_criteria::Edge_criteria Edge_criteria;
-typedef Mesh_criteria::Facet_criteria Facet_criteria;
-typedef Mesh_criteria::Cell_criteria Cell_criteria;
 
 typedef Tr::Point Point_3;
-typedef std::list<std::vector<CGAL::Exact_predicates_inexact_constructions_kernel::Point_3> > Polylines_container;
 
-CGAL::Mesh_facet_topology topology(int manifold) {
-  return manifold == 0 ? CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH :
-    static_cast<CGAL::Mesh_facet_topology>
-    (CGAL::MANIFOLD |
-     CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH);
-}
-
-Scene_item* cgal_code_mesh_3(const Polyhedron* pMesh,
-                             const Polylines_container& polylines,
-                             QString filename,
-                             const double angle,
-                             const double facet_sizing,
-                             const double approx,
-                             const double tet_sizing,
-                             const double tet_shape,
-                             bool protect_features,
-                             const int manifold,
-                             CGAL::Three::Scene_interface* scene)
+Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
+                                 const Polylines_container& polylines,
+                                 QString filename,
+                                 const double facet_angle,
+                                 const double facet_sizing,
+                                 const double facet_approx,
+                                 const double tet_sizing,
+                                 const double tet_shape,
+                                 bool protect_features,
+                                 const int manifold,
+                                 CGAL::Three::Scene_interface* scene)
 {
   if(!pMesh) return 0;
 
-  // remesh
-
-  // Set mesh criteria
-  Edge_criteria edge_criteria(facet_sizing);
-  Facet_criteria facet_criteria(angle, facet_sizing, approx, topology(manifold)); // angle, size, approximation
-  Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
-  Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
-  CGAL::Timer timer;
-  timer.start();
   std::cerr << "Meshing file \"" << qPrintable(filename) << "\"\n";
-  std::cerr << "  angle: " << angle << std::endl
+  std::cerr << "  angle: " << facet_angle << std::endl
             << "  facets size bound: " << facet_sizing << std::endl
-            << "  approximation bound: " << approx << std::endl
+            << "  approximation bound: " << facet_approx << std::endl
             << "  tetrahedra size bound: " << tet_sizing << std::endl;
   std::cerr << "Build AABB tree...";
+  CGAL::Timer timer;
+  timer.start();
   // Create domain
-  Polyhedral_mesh_domain domain(*pMesh);
-
+  Polyhedral_mesh_domain* p_domain = new Polyhedral_mesh_domain(*pMesh);
   if(polylines.empty() && protect_features) {
-      domain.detect_features();
+      p_domain->detect_features();
   }
   if(! polylines.empty()){
-    domain.add_features(polylines.begin(), polylines.end());
+    p_domain->add_features(polylines.begin(), polylines.end());
     protect_features = true; // so that it will be passed in make_mesh_3
   }
 
   std::cerr << "done (" << timer.time() << " ms)" << std::endl;
 
-  // Meshing
-  std::cerr << "Mesh...";
-  CGAL::parameters::internal::Features_options features =
-          protect_features ?
-              CGAL::parameters::features(domain) :
-              CGAL::parameters::no_features();
+  Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
+  p_new_item->set_scene(scene);
 
-  Scene_c3t3_item* new_item = new Scene_c3t3_item(
-    CGAL::make_mesh_3<C3t3>(domain, criteria,
-      features,
-      CGAL::parameters::no_perturb(),
-      CGAL::parameters::no_exude()));
+  Mesh_parameters param;
+  param.facet_angle = facet_angle;
+  param.facet_sizing = facet_sizing;
+  param.facet_approx = facet_approx;
+  param.tet_sizing = tet_sizing;
+  param.tet_shape = tet_shape;
+  param.protect_features = protect_features;
 
-  new_item->set_scene(scene);
-  std::cerr << "done (" << timer.time() << " ms, " << new_item->c3t3().triangulation().number_of_vertices() << " vertices)" << std::endl;
-
-  if(new_item->c3t3().triangulation().number_of_vertices() > 0)
-  {
-
-    std::ofstream medit_out("out.mesh");
-    new_item->c3t3().output_to_medit(medit_out);
-
-    const CGAL::Three::Scene_item::Bbox& bbox = new_item->bbox();
-    new_item->setPosition((float)(bbox.xmin + bbox.xmax)/2.f,
-                          (float)(bbox.ymin + bbox.ymax)/2.f,
-                          (float)(bbox.zmin + bbox.zmax)/2.f);
-    return new_item;
-  }
-  else {
-    delete new_item;
-    return 0;
-  }
+  typedef ::Mesh_function<Polyhedral_mesh_domain> Mesh_function;
+  Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
+                                                     p_domain, param);
+  return new Meshing_thread(p_mesh_function, p_new_item);
 }
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 
-Scene_item* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
-                             const double facet_angle,
-                             const double facet_sizing,
-                             const double facet_approx,
-                             const double tet_sizing,
-                             const double tet_shape,
-                             const int manifold,
-                             CGAL::Three::Scene_interface* scene)
+Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
+                                 const double facet_angle,
+                                 const double facet_sizing,
+                                 const double facet_approx,
+                                 const double tet_sizing,
+                                 const double tet_shape,
+                                 const int manifold,
+                                 CGAL::Three::Scene_interface* scene)
 {
   if (pfunction == NULL) { return NULL; }
 
@@ -131,56 +91,41 @@ Scene_item* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   Function_mesh_domain* p_domain =
     new Function_mesh_domain(Function_wrapper(*pfunction), domain_bbox, 1e-7);
 
-  // Set mesh criteria
-  Edge_criteria edge_criteria(facet_sizing);
-  Facet_criteria facet_criteria(facet_angle, facet_sizing, facet_approx, topology(manifold)); // angle, size, approximation
-  Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
-  Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
-
-  Scene_c3t3_item* p_new_item = new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(*p_domain,
-                                                                           criteria,
-                                                                           CGAL::parameters::no_perturb(),
-                                                                           CGAL::parameters::no_exude()));
-
-  CGAL::Timer timer;
+  Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
   p_new_item->set_scene(scene);
-  std::cerr << "done (" << timer.time() << " sec, "
-    << p_new_item->c3t3().triangulation().number_of_vertices() << " vertices)"
-    << std::endl;
 
-  if (p_new_item->c3t3().triangulation().number_of_vertices() > 0)
-  {
-    const Scene_item::Bbox& bbox = p_new_item->bbox();
-    p_new_item->setPosition((float)(bbox.xmin + bbox.xmax) / 2.f,
-                            (float)(bbox.ymin + bbox.ymax) / 2.f,
-                            (float)(bbox.zmin + bbox.zmax) / 2.f);
-    return p_new_item;
-  }
-  else {
-    delete p_new_item;
-    return 0;
-  }
+  Mesh_parameters param;
+  param.protect_features = false;
+  param.facet_angle = facet_angle;
+  param.facet_sizing = facet_sizing;
+  param.facet_approx = facet_approx;
+  param.tet_sizing = tet_sizing;
+  param.tet_shape = tet_shape;
+
+  typedef ::Mesh_function<Function_mesh_domain> Mesh_function;
+  Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
+                                                     p_domain, param);
+  return new Meshing_thread(p_mesh_function, p_new_item);
 }
 #endif // CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
 
 
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
 
-Scene_item* cgal_code_mesh_3(const Image* pImage,
-                             const Polylines_container& polylines,
-                             const double facet_angle,
-                             const double facet_sizing,
-                             const double facet_approx,
-                             const double tet_sizing,
-                             const double tet_shape,
-                             const bool protect_features,
-                             const int manifold,
-                             CGAL::Three::Scene_interface* scene)
+Meshing_thread* cgal_code_mesh_3(const Image* pImage,
+                                 const Polylines_container& polylines,
+                                 const double facet_angle,
+                                 const double facet_sizing,
+                                 const double facet_approx,
+                                 const double tet_sizing,
+                                 const double tet_shape,
+                                 bool protect_features,
+                                 const int manifold,
+                                 CGAL::Three::Scene_interface* scene)
 {
   if (NULL == pImage) { return NULL; }
 
-  Image_mesh_domain* p_domain
-    = new Image_mesh_domain(*pImage, 1e-6);
+  Image_mesh_domain* p_domain = new Image_mesh_domain(*pImage, 1e-6);
 
 
   if(protect_features && polylines.empty()){
@@ -191,52 +136,25 @@ Scene_item* cgal_code_mesh_3(const Image* pImage,
   if(! polylines.empty()){
     // Insert edge in domain
     p_domain->add_features(polylines.begin(), polylines.end());
+    protect_features = true; // so that it will be passed in make_mesh_3
   }
-
-  // Set mesh criteria
-  Edge_criteria edge_criteria(facet_sizing);
-  Facet_criteria facet_criteria(facet_angle, facet_sizing, facet_approx, topology(manifold)); // angle, size, approximation
-  Cell_criteria cell_criteria(tet_shape, tet_sizing); // radius-edge ratio, size
-
-
-
-  /*typedef Facet_extra_criterion<Tr,
-                                Image_mesh_domain,
-                                Mesh_criteria::Facet_criteria::Visitor>
-    Extra_criterion;*/
-
-
-  // facet_criteria.add(new Extra_criterion(*p_domain));
-
-  Mesh_criteria criteria(edge_criteria, facet_criteria, cell_criteria);
-
   CGAL::Timer timer;
   timer.start();
-  Scene_c3t3_item* p_new_item = new Scene_c3t3_item(CGAL::make_mesh_3<C3t3>(*p_domain,
-                                                                            criteria,
-                                                                            CGAL::parameters::no_perturb(),
-                                                                            CGAL::parameters::no_exude())
-);
-
+  Scene_c3t3_item* p_new_item = new Scene_c3t3_item;
   p_new_item->set_scene(scene);
 
-  std::cerr << "done (" << timer.time() << " ms, "
-    << p_new_item->c3t3().triangulation().number_of_vertices() << " vertices)"
-    << std::endl;
-
-  if (p_new_item->c3t3().triangulation().number_of_vertices() > 0)
-  {
-    const Scene_item::Bbox& bbox = p_new_item->bbox();
-    p_new_item->setPosition((float)(bbox.xmin + bbox.xmax) / 2.f,
-                            (float)(bbox.ymin + bbox.ymax) / 2.f,
-                            (float)(bbox.zmin + bbox.zmax) / 2.f);
-    return p_new_item;
-  }
-  else {
-    delete p_new_item;
-    return 0;
-  }
-
+  Mesh_parameters param;
+  param.protect_features = false;
+  param.facet_angle = facet_angle;
+  param.facet_sizing = facet_sizing;
+  param.facet_approx = facet_approx;
+  param.tet_sizing = tet_sizing;
+  param.tet_shape = tet_shape;
+  
+  typedef ::Mesh_function<Image_mesh_domain> Mesh_function;
+  Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
+                                                     p_domain, param);
+  return new Meshing_thread(p_mesh_function, p_new_item);
 }
 
 #endif //CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
