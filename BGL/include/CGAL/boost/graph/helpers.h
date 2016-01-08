@@ -695,7 +695,12 @@ clear_impl(FaceGraph& g)
 /**
  * \ingroup PkgBGLHelperFct
  *
- * removes all vertices, faces and halfedges from a graph.
+ * removes all vertices, faces and halfedges from a graph. Calls
+ * `remove_edge()`, `remove_vertex()`, and `remove_face()` for each
+ * edge, vertex or face.
+ *
+ * If the graph has a member function `clear`, it will be called
+ * instead.
  * 
  * @tparam FaceGraph model of `MutableHalfedgeGraph` and `MutableFaceGraph`
  *
