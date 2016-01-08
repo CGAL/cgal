@@ -251,10 +251,14 @@ consistent.
 
 \subsection TutorialsReconstruction_reconstruction_poisson Poisson
 
-Poisson reconstruction uses points with normals to produce smooth
-closed surfaces. It is not indicated if the surface is expected to
-pass exactly on the input points. On the contrary, it performs well if
-the aim is to approximate a noisy point cloud with a smooth surface.
+Poisson reconstruction consists in computing an indicator function
+whose gradient matches the input normal vector field: this indicator
+function has opposite signs inside and outside of the inferred shape
+(hence the need for closed shapes). This method thus requires normals
+and produces smooth closed surfaces. It is not appropriate if the
+surface is expected to pass exactly on the input points. On the
+contrary, it performs well if the aim is to approximate a noisy point
+cloud with a smooth surface.
 
 Notice that it does not generate directly a mesh but computes an
 _implicit function_ (that can later be used to generate a mesh):
@@ -308,7 +312,10 @@ be used:
 
 Advancing front is a Delaunay-based approach that generates triples of
 point indices that describe the triangular facets of the
-reconstruction. Its main asset is to generate oriented manifold
+reconstruction: it uses a priority queue to sequentially pick the
+Delaunay facet the most likely to be part of the surface, based on a
+size criterion (to favor the small facets) and an angle criterion (to
+favor smoothness). Its main asset is to generate oriented manifold
 surfaces with boundaries: contrary to Poisson, it does not require
 normals and is not bound to reconstruct closed shapes. However, it
 requires preprocessing if the point is noisy.
@@ -329,9 +336,13 @@ CGAL::advancing_front_surface_reconstruction(points.begin(),
 
 Scale space reconstruction aims at producing a surface that
 interpolates the input points (interpolant) while offering some
-robustness to noise. It is the good choice if the input point cloud is
-noisy but the user still wants the surface to pass exactly through the
-points.
+robustness to noise. More specifically, it first applies several times
+a smoothing filter to the input point set to produce a scale space;
+then, the smoothest scale is meshed using an alpha shape; finally, the
+resulting connectivity between smoothed points is propagated to the
+original raw input point set. This method is the right choice if the
+input point cloud is noisy but the user still wants the surface to
+pass exactly through the points.
 
 Notice that although there is an option to force the output to be
 manifold, it is not guaranteed to be orientable (contrary to _Poisson_
