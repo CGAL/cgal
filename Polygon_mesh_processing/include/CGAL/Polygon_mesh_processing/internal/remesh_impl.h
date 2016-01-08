@@ -850,8 +850,8 @@ namespace internal {
           );
 
         tree_ptr_->traversal(get(vpmap_, v), projection_traits);
-        //CGAL_assertion(projection_traits.found());
-
+        if(!projection_traits.found())
+          tree_ptr_->traversal(get(vpmap_, v), projection_traits);
         Point proj = projection_traits.closest_point();
         put(vpmap_, v, proj);
       }
@@ -907,8 +907,10 @@ private:
       //tr_it is an iterator from triangles_
       std::size_t id_in_vec = std::distance(
         m.remesher_ptr_->input_triangles().begin(), tr_it);
+
       CGAL_assertion(0 <= id_in_vec);
       CGAL_assertion(id_in_vec < m.remesher_ptr_->input_patch_ids().size());
+      CGAL_assertion(*tr_it == m.remesher_ptr_->input_triangles()[id_in_vec]);
 
       return m.remesher_ptr_->input_patch_ids()[id_in_vec];
     }
