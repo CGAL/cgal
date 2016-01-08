@@ -346,7 +346,7 @@ pass exactly through the points.
 
 Notice that although there is an option to force the output to be
 manifold, it is not guaranteed to be orientable (contrary to _Poisson_
-and _Avdancing front_).
+and _Advancing front_).
 
 \code{.cpp}
 CGAL::Scale_space_surface_reconstruction_3<Kernel> reconstruct
