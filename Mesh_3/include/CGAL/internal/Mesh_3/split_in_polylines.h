@@ -23,6 +23,7 @@
 #include <vector>
 #include <set>
 #include <iostream>
+#include <fstream>
 #include <boost/foreach.hpp>
 #include <CGAL/number_utils.h>
 #include <boost/graph/graph_traits.hpp>
