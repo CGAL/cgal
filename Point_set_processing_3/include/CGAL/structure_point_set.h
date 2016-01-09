@@ -813,7 +813,7 @@ namespace internal {
           for (std::size_t k = 0; k < plane1->indices_of_assigned_points().size(); ++ k)
             {
               std::size_t index_point = plane1->indices_of_assigned_points()[k];
-              Point point = m_points[index_point];
+              const Point& point = m_points[index_point];
               Point projected = line.projection (point);
               if (CGAL::squared_distance (point, projected) < radius * radius)
                 intersection_points.push_back (index_point);
@@ -821,7 +821,7 @@ namespace internal {
           for (std::size_t k = 0; k < plane2->indices_of_assigned_points().size(); ++ k)
             {
               std::size_t index_point = plane2->indices_of_assigned_points()[k];
-              Point point = m_points[index_point];
+              const Point& point = m_points[index_point];
               Point projected = line.projection (point);
               if (CGAL::squared_distance (point, projected) < radius * radius)
                 intersection_points.push_back (index_point);
