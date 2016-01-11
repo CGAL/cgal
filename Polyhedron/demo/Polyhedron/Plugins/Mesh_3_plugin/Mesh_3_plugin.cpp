@@ -47,6 +47,7 @@ class Mesh_3_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
+  using Polyhedron_demo_plugin_helper::init;
   void init(QMainWindow* mainWindow,
             CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* msg_interface)
