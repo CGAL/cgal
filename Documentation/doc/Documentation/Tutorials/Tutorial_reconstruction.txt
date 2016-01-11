@@ -273,8 +273,9 @@ if ( ! function.compute_implicit_function() )
   return -1;
 \endcode
 
-To produce a mesh out of this implicit function, the \cgal Mesher can
-be used:
+To produce a mesh out of this implicit function, the
+\ref Chapter_3D_Surface_Mesh_Generation "CGAL Surface Mesh Generator"
+\cgalCite{cgal:ry-gsddrm-06} can be used:
 
 \code{.cpp}
     // Gets one point inside the implicit surface
