@@ -232,7 +232,7 @@ namespace internal {
         return;
       
       double radius = epsilon * attraction_factor;
-#define CGAL_PSP3_VERBOSE
+
 #ifdef CGAL_PSP3_VERBOSE
       std::cerr << "Computing planar points... " << std::endl;
 #endif
@@ -743,7 +743,9 @@ namespace internal {
                                                      static_cast<Plane>(*plane2));
           if (!assign (m_edges[i].support, ob_temp))
             {
+#ifdef CGAL_PSP3_VERBOSE
               std::cerr << "Warning: bad plane/plane intersection" << std::endl;
+#endif
               continue;
             }
 
@@ -960,7 +962,11 @@ namespace internal {
               Line line_p1;
               CGAL::Object ob_temp1 = CGAL::intersection (static_cast<Plane> (*plane1), ortho);
               if (!assign(line_p1, ob_temp1))
-                std::cout<<"Warning: bad plane/plane intersection"<<std::endl;
+                {
+#ifdef CGAL_PSP3_VERBOSE
+                std::cerr<<"Warning: bad plane/plane intersection"<<std::endl;
+#endif
+                }
               else
                 {
                   Vector vecp1 = line_p1.to_vector();
@@ -981,7 +987,11 @@ namespace internal {
               Line line_p2;
               CGAL::Object ob_temp2 = CGAL::intersection (static_cast<Plane> (*plane2),ortho);
               if (!assign(line_p2, ob_temp2))
-                std::cout<<"Warning: bad plane/plane intersection"<<std::endl;
+                {
+#ifdef CGAL_PSP3_VERBOSE
+                  std::cerr<<"Warning: bad plane/plane intersection"<<std::endl;
+#endif
+                }
               else
                 {
                   Vector vecp2 = line_p2.to_vector();
@@ -1095,7 +1105,9 @@ namespace internal {
           CGAL::Object ob_temp = CGAL::intersection(plane1, plane2);
           if (!assign(line, ob_temp))
             {
+#ifdef CGAL_PSP3_VERBOSE
               std::cerr << "Warning: bad plane/plane intersection" << std::endl;
+#endif
               continue;
             }
           else
@@ -1103,7 +1115,9 @@ namespace internal {
               CGAL::Object ob_temp2 = CGAL::intersection (line, plane3);
               if (!assign (m_corners[i].support, ob_temp2))
                 {
+#ifdef CGAL_PSP3_VERBOSE
                   std::cerr << "Warning: bad plane/line intersection" << std::endl;
+#endif
                   continue;
                 }
             }
