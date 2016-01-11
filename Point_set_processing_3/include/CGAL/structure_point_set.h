@@ -39,6 +39,13 @@
 #include <iterator>
 #include <list>
 
+// The following lines only for MS Visual C++
+#ifdef _MSC_VER
+#pragma warning(push)
+#pragma warning(disable:4244) // boost converts signed to std::size_t
+#endif
+
+
 
 namespace CGAL {
 
@@ -1410,6 +1417,11 @@ structure_point_set (InputIterator first,  ///< iterator over the first input po
 
 
 } //namespace CGAL
+
+#ifdef _MSC_VER
+#pragma warning(pop)
+#endif
+
 
 #endif // CGAL_STRUCTURE_POINT_SET_3_H
 
