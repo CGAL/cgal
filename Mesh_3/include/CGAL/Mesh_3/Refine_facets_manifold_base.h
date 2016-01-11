@@ -161,9 +161,9 @@ private:
     Cell_handle c;
     int index1, index2;
 
-    CGAL_assertion_code(bool is_edge =)
+    CGAL_assume_code(bool is_edge =)
     this->r_tr_.is_edge(v1, v2, c, index1, index2);
-    CGAL_assertion(is_edge);
+    CGAL_assume(is_edge);
 
     return make_triple( c, index1, index2 );
   }
