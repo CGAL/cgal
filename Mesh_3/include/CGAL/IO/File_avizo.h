@@ -38,14 +38,12 @@ output_to_avizo(std::ostream& os,
                 const C3T3& c3t3)
 {
   typedef typename C3T3::Triangulation Tr;
-  typedef typename C3T3::Facets_in_complex_iterator Facet_iterator;
   typedef typename C3T3::Cells_in_complex_iterator Cell_iterator;
 
   typedef typename Tr::Finite_vertices_iterator Finite_vertices_iterator;
   typedef typename Tr::Vertex_handle Vertex_handle;
   typedef typename Tr::Cell_handle Cell_handle;
   typedef typename Tr::Point Point_3;
-  typedef typename Tr::Facet Facet;
 
   const Tr& tr = c3t3.triangulation();
 
