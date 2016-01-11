@@ -28,12 +28,13 @@
 #define CGAL_COMPUTE_CONE_BOUNDARIES_2_H
 
 // if leda::real is used, pls modify the following definition
-#define CGAL_USE_CORE 1
+//#define CGAL_USE_CORE 1
 
 #include <iostream>
 #include <cstdlib>
 #include <vector>
 #include <utility>
+#include <CGAL/config.h>      // included compiler_config.h, defining CGAL_USE_CORE, etc.
 #include <CGAL/Polynomial.h>
 #include <CGAL/number_type_config.h>    // CGAL_PI is defined there
 #include <CGAL/enum.h>
