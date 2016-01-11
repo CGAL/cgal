@@ -205,7 +205,7 @@ template<typename PolygonMesh
        , typename EdgeRange
        , typename NamedParameters>
 void split_long_edges(PolygonMesh& pmesh
-                    , EdgeRange& edges
+                    , const EdgeRange& edges
                     , const double& max_length
                     , const NamedParameters& np)
 {
@@ -227,7 +227,7 @@ void split_long_edges(PolygonMesh& pmesh
 
 template<typename PolygonMesh, typename EdgeRange>
 void split_long_edges(PolygonMesh& pmesh
-                    , EdgeRange& edges
+                    , const EdgeRange& edges
                     , const double& max_length)
 {
   split_long_edges(pmesh,
@@ -242,7 +242,7 @@ template<typename PolygonMesh
        , typename OutputIterator
        , typename NamedParameters>
 void split_long_edges(PolygonMesh& pmesh
-        , EdgeRange& edge_range
+        , const EdgeRange& edge_range
         , const double& max_length
         , OutputIterator out//edges after splitting, all shorter than target_length
         , const NamedParameters& np)
