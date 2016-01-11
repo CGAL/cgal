@@ -71,7 +71,7 @@ public:
   void attrib_buffers(int program_name) const;
   //! Implementation of `Viewer_interface::getShaderProgram()`
   QOpenGLShaderProgram* getShaderProgram(int name) const;
-  QPainter* getPainter(){return painter;}
+  QPainter* getPainter();
 
 public Q_SLOTS:
   //! Sets the antialiasing to true or false.
@@ -140,7 +140,6 @@ protected:
   void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
   void resizeGL(int w, int h);
   bool i_is_pressed;
-  QPainter *painter;
 
 
 protected:

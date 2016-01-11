@@ -17,7 +17,7 @@ public:
   bool macro_mode;
   bool inFastDrawing;
   bool inDrawWithNames;
-  
+  QPainter *painter;
   void draw_aux(bool with_names, Viewer*);
   //! Contains all the programs for the item rendering.
   mutable std::vector<QOpenGLShaderProgram*> shader_programs;
@@ -75,7 +75,6 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
 Viewer::~Viewer()
 {
   delete d;
-  delete painter;
 }
 
 void Viewer::setScene(CGAL::Three::Scene_draw_interface* scene)
@@ -238,7 +237,7 @@ void Viewer::initializeGL()
       qDebug() << rendering_program.log();
   }
 
-  painter = new QPainter(this);
+  d->painter = new QPainter(this);
 }
 
 #include <QMouseEvent>
@@ -844,12 +843,12 @@ void Viewer::drawVisualHints()
         vao[0].release();
     }
 
-    if (!painter->isActive())
-      painter->begin(this);
+    if (!d->painter->isActive())
+      d->painter->begin(this);
     //So that the text is drawn in front of everything
-    painter->beginNativePainting();
+    d->painter->beginNativePainting();
     glDisable(GL_DEPTH_TEST);
-    painter->endNativePainting();
+    d->painter->endNativePainting();
     textRenderer->draw(this);
     }
 
@@ -1185,6 +1184,27 @@ bool Viewer::textDisplayed() const
 {
     return has_text;
 }
+
+QPainter* Viewer::getPainter(){return d->painter;}
+
+void Viewer::paintEvent(QPaintEvent *)
+{
+    paintGL();
+}
+
+void Viewer::paintGL()
+{
+
+    if (!d->painter->isActive())
+      d->painter->begin(this);
+    d->painter->beginNativePainting();
+    glClearColor(1.0, 1.0, 1.0, 1.0);
+    d->painter->endNativePainting();
+    preDraw();
+    draw();
+    postDraw();
+    d->painter->end();
+}
 void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 {
     QPainter *painter = viewer->getPainter();
@@ -1252,23 +1272,4 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
      Q_FOREACH(TextListItem *list, textItems)
          if(list == p_list)
              textItems.removeAll(list);
- }
-
- void Viewer::paintEvent(QPaintEvent *)
- {
-     paintGL();
- }
-
- void Viewer::paintGL()
- {
-
-     if (!painter->isActive())
-       painter->begin(this);
-     painter->beginNativePainting();
-     glClearColor(1.0, 1.0, 1.0, 1.0);
-     painter->endNativePainting();
-     preDraw();
-     draw();
-     postDraw();
-     painter->end();
  }
