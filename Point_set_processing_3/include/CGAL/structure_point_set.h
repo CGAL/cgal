@@ -562,13 +562,13 @@ namespace internal {
 
           //creation of a 2D-grid with cell width = grid_length, and image structures
           CGAL::Bbox_2 box_2d = CGAL::bbox_2 (points_2d.begin(), points_2d.end());
-          int Nx = (box_2d.xmax() - box_2d.xmin()) / grid_length + 1;
-          int Ny = (box_2d.ymax() - box_2d.ymin()) / grid_length + 1;
+          std::size_t Nx = (box_2d.xmax() - box_2d.xmin()) / grid_length + 1;
+          std::size_t Ny = (box_2d.ymax() - box_2d.ymin()) / grid_length + 1;
           
           std::vector<std::vector<bool> > Mask (Nx, std::vector<bool> (Ny, false));
           std::vector<std::vector<bool> > Mask_border (Nx, std::vector<bool> (Ny, false));
-          std::vector<std::vector<std::vector<int> > >
-            point_map (Nx, std::vector<std::vector<int> > (Ny, std::vector<int>()));
+          std::vector<std::vector<std::vector<std::size_t> > >
+            point_map (Nx, std::vector<std::vector<std::size_t> > (Ny, std::vector<std::size_t>()));
 
           //storage of the points in the 2D-grid "point_map"
           for (std::size_t i = 0; i < points_2d.size(); ++ i)
@@ -580,16 +580,16 @@ namespace internal {
             }
 
           //hole filing in Mask in 4-connexity
-          for (int j = 1; j < Ny - 1; ++ j)
-            for (int i = 1; i < Nx - 1; ++ i)
+          for (std::size_t j = 1; j < Ny - 1; ++ j)
+            for (std::size_t i = 1; i < Nx - 1; ++ i)
               if( !Mask[i][j]
                   && Mask[i-1][j] && Mask[i][j-1]
                   && Mask[i][j+1] && Mask[i+1][j] )
                 Mask[i][j]=true;
 					
           //finding mask border in 8-connexity	
-          for (int j = 1; j < Ny - 1; ++ j)
-            for (int i = 1; i < Nx - 1; ++ i)
+          for (std::size_t j = 1; j < Ny - 1; ++ j)
+            for (std::size_t i = 1; i < Nx - 1; ++ i)
               if( Mask[i][j] &&
                   ( !Mask[i-1][j-1] || !Mask[i-1][j] ||
                     !Mask[i-1][j+1] || !Mask[i][j-1] ||
@@ -597,7 +597,7 @@ namespace internal {
                     !Mask[i+1][j]|| !Mask[i+1][j+1] ) )
                 Mask_border[i][j]=true;
           
-          for (int j = 0; j < Ny; ++ j)
+          for (std::size_t j = 0; j < Ny; ++ j)
             {
               if (Mask[0][j])
                 Mask_border[0][j]=true;
@@ -605,7 +605,7 @@ namespace internal {
                 Mask_border[Nx-1][j]=true;
             }
 
-          for (int i = 0; i < Nx; ++ i)
+          for (std::size_t i = 0; i < Nx; ++ i)
             {
               if(Mask[i][0])
                 Mask_border[i][0]=true;
@@ -614,8 +614,8 @@ namespace internal {
             }
 
           //saving of points to keep
-          for (int j = 0; j < Ny; ++ j)
-            for (int i = 0; i < Nx; ++ i)
+          for (std::size_t j = 0; j < Ny; ++ j)
+            for (std::size_t i = 0; i < Nx; ++ i)
               if( point_map[i][j].size()>0)
                 {
                   //inside: recenter (cell center) the first point of the cell and desactivate the others points 
