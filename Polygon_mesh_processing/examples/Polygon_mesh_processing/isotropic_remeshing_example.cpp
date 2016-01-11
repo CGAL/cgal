@@ -46,8 +46,8 @@ int main(int argc, char* argv[])
 
     std::vector<edge_descriptor> border;
     PMP::border_halfedges(faces(mesh),
-      boost::make_function_output_iterator(halfedge2edge(mesh, border)),
-      mesh);
+      mesh,
+      boost::make_function_output_iterator(halfedge2edge(mesh, border)));
     PMP::split_long_edges(mesh, border, target_edge_length);
 
   std::cout << "done." << std::endl;

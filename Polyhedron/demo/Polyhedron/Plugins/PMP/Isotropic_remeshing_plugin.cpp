@@ -220,8 +220,8 @@ public Q_SLOTS:
           std::vector<halfedge_descriptor> border;
           CGAL::Polygon_mesh_processing::border_halfedges(
             faces(*poly_item->polyhedron()),
-            std::back_inserter(border),
-            pmesh);
+            pmesh,
+            std::back_inserter(border));
           std::vector<edge_descriptor> border_edges;
           BOOST_FOREACH(halfedge_descriptor h, border)
             border_edges.push_back(edge(h, pmesh));

@@ -148,8 +148,8 @@ namespace Polygon_mesh_processing {
          , typename HalfedgeOutputIterator
          , typename NamedParameters>
   HalfedgeOutputIterator border_halfedges(const FaceRange& faces
-                                  , HalfedgeOutputIterator out
                                   , const PolygonMesh& pmesh
+                                  , HalfedgeOutputIterator out
                                   , const NamedParameters& np)
   {
     typedef PolygonMesh PM;
@@ -170,8 +170,8 @@ namespace Polygon_mesh_processing {
 
   template<typename PolygonMesh
          , typename HalfedgeOutputIterator>
-  HalfedgeOutputIterator border_halfedges(HalfedgeOutputIterator out
-                                        , const PolygonMesh& pmesh)
+  HalfedgeOutputIterator border_halfedges(const PolygonMesh& pmesh
+                                        , HalfedgeOutputIterator out)
   {
     typedef PolygonMesh PM;
     typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
@@ -185,10 +185,10 @@ namespace Polygon_mesh_processing {
          , typename FaceRange
          , typename HalfedgeOutputIterator>
   HalfedgeOutputIterator border_halfedges(const FaceRange& faces
-                                        , HalfedgeOutputIterator out
-                                        , const PolygonMesh& pmesh)
+                                        , const PolygonMesh& pmesh
+                                        , HalfedgeOutputIterator out)
   {
-    return border_halfedges(faces, out, pmesh,
+    return border_halfedges(faces, pmesh, out,
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
