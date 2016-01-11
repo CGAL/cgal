@@ -97,6 +97,47 @@ Open Scheme) Project under Contract No IST-006413
 (ACS - Algorithms for Complex
 Shapes).
 
+
+@todo fix manual for operator>>
+
+@todo manual filtered bbox kernel, ref counting
+
+@todo manual orientation: NO (only when points have same delta, so don't document)
+
+@todo clean manual AK (concepts like Polynomial_1_2, access to a() b() c() ?
+used in solve to check that solutions are the same)
+
+@todo rendre Bbox filtered kernel completement generique -> 
+	utilisation dans linear kernel aussi
+
+@todo echecs de filtres 
+
+@todo voir make_x_monotone pour que ca retourne des arcs 
+(necessite bricolage de la traits car Arr_2 demande des Object)
+
+@todo interface intersect avec plusieurs outputIt types (types de retour differents)
+
+@todo --> a transferer dans linear kernel ? 
+	- unoriented equal (pb general orientation dans noyau cgal...)
+
+@todo construct intersection for *arcs* should use solve or solve in range
+
+@todo  done (?)
+
+@todo memory leaks in Filtered_bbox_circular_kernel_2
+
+@todo from Andreas: 
+  there are new statements in constructors having no corresponding 
+  delete statements.
+  This concerns the files in the directory:
+  CGAL-3.3.1/include/CGAL/Filtered_bbox_circular_kernel_2/...with_bbox_2.h
+  It should be enough to add destructors and add conditional
+  deletes.
+
+@todo  Reading the code I think that the IO routines also don't
+  do what they should do, namely computing new bboxes. 
+
+
 */ 
 } /* namespace CGAL */
 
