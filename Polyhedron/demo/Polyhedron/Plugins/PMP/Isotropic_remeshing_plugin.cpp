@@ -177,9 +177,9 @@ public Q_SLOTS:
             }
           }
           CGAL::Polygon_mesh_processing::split_long_edges(
-            *selection_item->polyhedron()
-            , edges
+              edges
             , target_length
+            , *selection_item->polyhedron()
             , std::back_inserter(updated_selected_edges)
             , PMP::parameters::geom_traits(Kernel()));
         }
@@ -226,9 +226,10 @@ public Q_SLOTS:
           BOOST_FOREACH(halfedge_descriptor h, border)
             border_edges.push_back(edge(h, pmesh));
 
-          CGAL::Polygon_mesh_processing::split_long_edges(*poly_item->polyhedron()
-                                                        , border_edges
-                                                        , target_length);
+          CGAL::Polygon_mesh_processing::split_long_edges(
+              border_edges
+            , target_length
+            , *poly_item->polyhedron());
         }
         else
         {

@@ -204,9 +204,9 @@ void isotropic_remeshing(PolygonMesh& pmesh
 template<typename PolygonMesh
        , typename EdgeRange
        , typename NamedParameters>
-void split_long_edges(PolygonMesh& pmesh
-                    , const EdgeRange& edges
+void split_long_edges(const EdgeRange& edges
                     , const double& max_length
+                    , PolygonMesh& pmesh
                     , const NamedParameters& np)
 {
   typedef PolygonMesh PM;
@@ -226,13 +226,13 @@ void split_long_edges(PolygonMesh& pmesh
 }
 
 template<typename PolygonMesh, typename EdgeRange>
-void split_long_edges(PolygonMesh& pmesh
-                    , const EdgeRange& edges
-                    , const double& max_length)
+void split_long_edges(const EdgeRange& edges
+                    , const double& max_length
+                    , PolygonMesh& pmesh)
 {
-  split_long_edges(pmesh,
-    edges,
+  split_long_edges(edges,
     max_length,
+    pmesh,
     parameters::all_default());
 }
 
@@ -241,9 +241,10 @@ template<typename PolygonMesh
        , typename EdgeRange
        , typename OutputIterator
        , typename NamedParameters>
-void split_long_edges(PolygonMesh& pmesh
-        , const EdgeRange& edge_range
+void split_long_edges(
+          const EdgeRange& edge_range
         , const double& max_length
+        , PolygonMesh& pmesh
         , OutputIterator out//edges after splitting, all shorter than target_length
         , const NamedParameters& np)
 {
