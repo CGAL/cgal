@@ -83,9 +83,9 @@ namespace Polygon_mesh_processing {
 template<typename PolygonMesh
        , typename FaceRange
        , typename NamedParameters>
-void isotropic_remeshing(PolygonMesh& pmesh
-                       , const FaceRange& faces
+void isotropic_remeshing(const FaceRange& faces
                        , const double& target_edge_length
+                       , PolygonMesh& pmesh
                        , const NamedParameters& np)
 {
   typedef PolygonMesh PM;
@@ -160,13 +160,15 @@ void isotropic_remeshing(PolygonMesh& pmesh
 
 template<typename PolygonMesh
        , typename FaceRange>
-void isotropic_remeshing(PolygonMesh& pmesh
-  , const FaceRange& faces
-  , const double& target_edge_length)
+void isotropic_remeshing(
+    const FaceRange& faces
+  , const double& target_edge_length
+  , PolygonMesh& pmesh)
 {
-  isotropic_remeshing(pmesh,
+  isotropic_remeshing(
     faces,
     target_edge_length,
+    pmesh,
     parameters::all_default());
 }
 

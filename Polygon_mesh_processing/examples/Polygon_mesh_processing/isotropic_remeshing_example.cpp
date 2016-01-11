@@ -55,9 +55,10 @@ int main(int argc, char* argv[])
   std::cout << "Start remeshing of " << filename
     << " (" << num_faces(mesh) << " faces)..." << std::endl;
 
-  PMP::isotropic_remeshing(mesh,
+  PMP::isotropic_remeshing(
       faces(mesh),
       target_edge_length,
+      mesh,
       PMP::parameters::number_of_iterations(nb_iter)
       .protect_constraints(true)//i.e. protect border, here
       );

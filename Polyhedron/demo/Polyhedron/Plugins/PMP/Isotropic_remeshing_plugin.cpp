@@ -191,16 +191,16 @@ public Q_SLOTS:
 
         if (selection_item->selected_edges.empty())
           CGAL::Polygon_mesh_processing::isotropic_remeshing(
-          *selection_item->polyhedron()
-          , selection_item->selected_facets
+            selection_item->selected_facets
           , target_length
+          , *selection_item->polyhedron()
           , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
           .protect_constraints(protect));
         else
           CGAL::Polygon_mesh_processing::isotropic_remeshing(
-         *selection_item->polyhedron()
-         , selection_item->selected_facets
+           selection_item->selected_facets
          , target_length
+         , *selection_item->polyhedron()
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
          .edge_is_constrained_map(selection_item->selected_edges_pmap(selected))
@@ -234,9 +234,9 @@ public Q_SLOTS:
         else
         {
         CGAL::Polygon_mesh_processing::isotropic_remeshing(
-         *poly_item->polyhedron()
-         , faces(*poly_item->polyhedron())
+           faces(*poly_item->polyhedron())
          , target_length
+         , *selection_item->polyhedron()
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect));
         }

@@ -83,7 +83,7 @@ void test_precondition(const char* filename,
   bool exception_caught = false;
   try
   {
-    PMP::isotropic_remeshing(m, patch, 0.079,
+    PMP::isotropic_remeshing(patch, 0.079, m,
       PMP::parameters::protect_constraints(true));
   }
   catch (const std::exception &)
@@ -165,9 +165,10 @@ int main(int argc, char* argv[])
   CGAL::Timer t;
   t.start();
 
-  PMP::isotropic_remeshing(m,
+  PMP::isotropic_remeshing(
     patch,
     target_edge_length,
+    m,
     PMP::parameters::number_of_iterations(nb_iter)
     .protect_constraints(true)
     );
