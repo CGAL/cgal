@@ -23,7 +23,7 @@ function error() {
 }
 
 CGAL_URL="https://cgal.geometryfactory.com/CGAL/Members/Releases"
-CURL_OPTS="-k --remote-name --silent --location-trusted"
+CURL_OPTS="--remote-name --silent -n"
 LATEST_LOCATION="${CGAL_URL}/LATEST"
 CGAL_DOC_BUILD="/home/cgal-testsuite/cgal_doc_build"
 
