@@ -116,10 +116,10 @@ Edit the ui file with the editor, then add the following line to your plugin fil
 and initialize them in the init fucntion :
 ~~~~~~~~~~~~~{.cpp}
   dock_widget = new QDockWidget("Mesh Deformation", mw);
-      dock_widget->setVisible(false); // do not show at the beginning
+  dock_widget->setVisible(false); // do not show at the beginning
 
-      ui_widget.setupUi(dock_widget);
-      mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+  ui_widget.setupUi(dock_widget);
+  mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
 ~~~~~~~~~~~~~
 
 Use signal/slots to connect the dock widget to the plugin, and connect them in the `init()` function, and use the functions `show()`/`hide()` to make your 
