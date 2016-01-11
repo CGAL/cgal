@@ -496,9 +496,9 @@ void Scene_edit_polyhedron_item::remesh()
 
   std::cout << "Remeshing...";
   CGAL::Polygon_mesh_processing::isotropic_remeshing(
-    *polyhedron()
-    , roi_facets
+      roi_facets
     , target_length
+    , *polyhedron()
     , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
     .protect_constraints(false) //no edge_is_constrained_map
     .vertex_point_map(vpmap)
