@@ -31,7 +31,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /*!
-* \ingroup remeshing_grp
+* \ingroup PMP_meshing_grp
 * @brief remeshes a triangulated region of a polygon mesh.
 * This operation sequentially performs edge splits, edge collapses,
 * edge flips, Laplacian smoothing and projection to the initial surface
@@ -173,7 +173,7 @@ void isotropic_remeshing(
 }
 
 /*!
-* \ingroup remeshing_grp
+* \ingroup PMP_meshing_grp
 * @brief splits the edges listed in `edges` into sub-edges
 * that are not longer than the given threshold `max_length`.
 *
