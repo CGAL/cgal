@@ -171,7 +171,7 @@ namespace internal {
           m_normals.push_back (get(m_normal_pmap, *it));
         }
       
-      m_indices = std::vector<std::size_t> (m_points.size (), std::numeric_limits<std::size_t>::max());
+      m_indices = std::vector<std::size_t> (m_points.size (), (std::numeric_limits<std::size_t>::max)());
       m_status = std::vector<Point_status> (m_points.size (), POINT);
 
       BOOST_FOREACH (boost::shared_ptr<Shape> shape, shape_detection.shapes())
@@ -703,7 +703,7 @@ namespace internal {
         {
           std::size_t ind_i = m_indices[i];
 
-          if (ind_i == std::numeric_limits<std::size_t>::max())
+          if (ind_i == (std::numeric_limits<std::size_t>::max)())
             continue;
 
           Fuzzy_sphere query (i, radius, 0., tree.traits());
@@ -715,7 +715,7 @@ namespace internal {
           for (std::size_t k = 0; k < neighbors.size(); ++ k)
             {
               std::size_t ind_k = m_indices[neighbors[k]];
-              if (ind_k != std::numeric_limits<std::size_t>::max() && ind_k != ind_i)
+              if (ind_k != (std::numeric_limits<std::size_t>::max)() && ind_k != ind_i)
                 adjacency_table[ind_i][ind_k] = true;
             }
         }
@@ -815,7 +815,7 @@ namespace internal {
           for (std::size_t k = 0; k < plane1->indices_of_assigned_points().size(); ++ k)
             {
               std::size_t index_point = plane1->indices_of_assigned_points()[k];
-              Point point = m_points[index_point];
+              const Point& point = m_points[index_point];
               Point projected = line.projection (point);
               if (CGAL::squared_distance (point, projected) < radius * radius)
                 intersection_points.push_back (index_point);
@@ -823,7 +823,7 @@ namespace internal {
           for (std::size_t k = 0; k < plane2->indices_of_assigned_points().size(); ++ k)
             {
               std::size_t index_point = plane2->indices_of_assigned_points()[k];
-              Point point = m_points[index_point];
+              const Point& point = m_points[index_point];
               Point projected = line.projection (point);
               if (CGAL::squared_distance (point, projected) < radius * radius)
                 intersection_points.push_back (index_point);
