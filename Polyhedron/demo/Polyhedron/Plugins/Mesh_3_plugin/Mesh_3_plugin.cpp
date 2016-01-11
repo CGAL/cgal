@@ -4,6 +4,7 @@
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include "Messages_interface.h"
 
 #include <QObject>
 #include <QAction>
@@ -26,44 +27,18 @@
 #include "Scene_segmented_image_item.h"
 #endif
 
+#include "Meshing_thread.h"
+
 #include "ui_Meshing_dialog.h"
 
-// declare the CGAL function
-CGAL::Three::Scene_item* cgal_code_mesh_3(const Polyhedron*,
-                             const Scene_polylines_item::Polylines_container&,
-                             QString filename,
-                             const double angle,
-                             const double sizing,
-                             const double approx,
-                             const double tets_sizing,
-                             const double tet_shape,
-                             bool protect_features,
-                             CGAL::Three::Scene_interface* scene);
-
-#ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
-Scene_item* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
-                             const double facet_angle,
-                             const double facet_sizing,
-                             const double facet_approx,
-                             const double tet_sizing,
-                             const double tet_shape,
-                             CGAL::Three::Scene_interface* scene);
-#endif
-
-#ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-Scene_item* cgal_code_mesh_3(const Image* pImage,
-                             const Scene_polylines_item::Polylines_container&,
-                             const double facet_angle,
-                             const double facet_sizing,
-                             const double facet_approx,
-                             const double tet_sizing,
-                             const double tet_shape,
-                             const bool protect_features,
-                             CGAL::Three::Scene_interface* scene);
-#endif
-
 using namespace CGAL::Three;
-class Polyhedron_demo_mesh_3_plugin :
+
+// Constants
+const QColor default_mesh_color(45,169,70);
+
+#include "Mesh_3_plugin_cgal_code.h" // declare functions `cgal_code_mesh_3`
+
+class Mesh_3_plugin :
   public QObject,
   protected Polyhedron_demo_plugin_helper
 {
@@ -72,7 +47,11 @@ class Polyhedron_demo_mesh_3_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+  using Polyhedron_demo_plugin_helper::init;
+  void init(QMainWindow* mainWindow,
+            CGAL::Three::Scene_interface* scene_interface,
+            Messages_interface* msg_interface)
+  {
     this->scene = scene_interface;
     this->mw = mainWindow;
     actionMesh_3 = new QAction("Create a tetrahedral mesh", mw);
@@ -81,6 +60,7 @@ public:
       connect(actionMesh_3, SIGNAL(triggered()),
               this, SLOT(mesh_3()));
     }
+    this->msg = msg_interface;
   }
 
   QList<QAction*> actions() const {
@@ -108,10 +88,19 @@ public:
 
 public Q_SLOTS:
   void mesh_3();
+  void meshing_done(Meshing_thread* t);
+  void status_report(QString str);
+
+private:
+  void launch_thread(Meshing_thread* mesh_thread);
+  void treat_result(Scene_item& source_item, Scene_c3t3_item& result_item) const;
 
 private:
   QAction* actionMesh_3;
-}; // end class Polyhedron_demo_mesh_3_plugin
+  Messages_interface* msg;
+  QMessageBox* message_box_;
+  Scene_item* source_item_;
+}; // end class Mesh_3_plugin
 
 double
 get_approximate(double d, int precision, int& decimals)
@@ -127,9 +116,8 @@ get_approximate(double d, int precision, int& decimals)
     return std::floor(d)*std::pow(10.,decimals);
 }
 
-void Polyhedron_demo_mesh_3_plugin::mesh_3()
+void Mesh_3_plugin::mesh_3()
 {
-  CGAL::Three::Scene_interface::Item_id index = -1;
   Scene_polyhedron_item* poly_item = NULL;
   Scene_implicit_function_item* function_item = NULL;
   Scene_segmented_image_item* image_item = NULL;
@@ -139,24 +127,15 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
 
     if(poly_item == NULL){
       poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(ind));
-      if(poly_item != NULL){
-        index = ind;
-      }
     }
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
     if(function_item == NULL){
       function_item = qobject_cast<Scene_implicit_function_item*>(scene->item(ind));
-      if(function_item != NULL){
-        index = ind;
-      }
     }
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
     if(image_item == NULL){
       image_item = qobject_cast<Scene_segmented_image_item*>(scene->item(ind));
-       if(image_item != NULL){
-        index = ind;
-      }
     }
 #endif
     if(polylines_item == NULL){
@@ -264,8 +243,11 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
   const bool protect_features = ui.protect->isChecked();
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  Scene_item* temp_item = 0;
-  if (NULL != poly_item)
+
+  Meshing_thread* thread = NULL;
+
+  // Polyhedron
+  if ( NULL != poly_item )
   {
     Polyhedron* pMesh = poly_item->polyhedron();
     if (NULL == pMesh)
@@ -276,7 +258,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
 
     Scene_polylines_item::Polylines_container plc;
 
-    temp_item = cgal_code_mesh_3(pMesh,
+    thread =    cgal_code_mesh_3(pMesh,
                                  (polylines_item == NULL)?plc:polylines_item->polylines,
                                  item->name(),
                                  angle,
@@ -287,6 +269,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
                                  protect_features,
                                  scene);
   }
+  // Image
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_IMPLICIT_FUNCTIONS
   else if (NULL != function_item)
   {
@@ -297,7 +280,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
       return;
     }
 
-    temp_item = cgal_code_mesh_3(pFunction,
+    thread =    cgal_code_mesh_3(pFunction,
                                  angle,
                                  facet_sizing,
                                  approx,
@@ -318,7 +301,7 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
 
     Scene_polylines_item::Polylines_container plc;
 
-    temp_item = cgal_code_mesh_3(pImage,
+    thread =    cgal_code_mesh_3(pImage,
                                  (polylines_item == NULL)?plc:polylines_item->polylines,
                                  angle,
                                  facet_sizing,
@@ -330,24 +313,131 @@ void Polyhedron_demo_mesh_3_plugin::mesh_3()
   }
 #endif
 
-  Scene_c3t3_item *result_item = qobject_cast<Scene_c3t3_item*>(temp_item);
-  if(result_item) {
-      result_item->setName(tr("%1 3d mesh (%2 %3 %4 %5)")
-                           .arg(item->name())
-                           .arg(angle)
-                           .arg(facet_sizing)
-                           .arg(tet_sizing)
-                           .arg(approx));
-      result_item->setItemIsMulticolor(true);
-      result_item->setRenderingMode(FlatPlusEdges);
-      item->setVisible(false);
-      result_item->set_data_item(item);
-      scene->itemChanged(index);
-      result_item->invalidate_buffers();
-      int item_id = scene->addItem(result_item);
-      scene->setSelectedItem(item_id);
+  if ( NULL == thread )
+  {
+    QMessageBox::critical(mw,tr(""),tr("ERROR: no thread created"));
+    return;
   }
+
+  // Launch thread
+  source_item_ = item;
+  launch_thread(thread);
+
   QApplication::restoreOverrideCursor();
+}
+
+void
+Mesh_3_plugin::
+launch_thread(Meshing_thread* mesh_thread)
+{
+  // -----------------------------------
+  // Create message box with stop button
+  // -----------------------------------
+  message_box_ = new QMessageBox(QMessageBox::NoIcon,
+                                 "Meshing",
+                                 "Mesh generation in progress...",
+                                 QMessageBox::Cancel,
+                                 mw);
+
+  message_box_->setDefaultButton(QMessageBox::Cancel);
+  QAbstractButton* cancelButton = message_box_->button(QMessageBox::Cancel);
+  cancelButton->setText(tr("Stop"));
+
+  QObject::connect(cancelButton, SIGNAL(clicked()),
+                   mesh_thread,  SLOT(stop()));
+
+  message_box_->show();
+
+  // -----------------------------------
+  // Connect main thread to meshing thread
+  // -----------------------------------
+  QObject::connect(mesh_thread, SIGNAL(done(Meshing_thread*)),
+                   this,        SLOT(meshing_done(Meshing_thread*)));
+
+  QObject::connect(mesh_thread, SIGNAL(status_report(QString)),
+                   this,        SLOT(status_report(QString)));
+
+  // -----------------------------------
+  // Launch mesher
+  // -----------------------------------
+  mesh_thread->start();
+}
+
+
+void
+Mesh_3_plugin::
+status_report(QString str)
+{
+  if ( NULL == message_box_ ) { return; }
+
+  message_box_->setInformativeText(str);
+}
+
+
+void
+Mesh_3_plugin::
+meshing_done(Meshing_thread* thread)
+{
+  // Print message in console
+  QString str = QString("Meshing of \"%1\" done in %2s<br>")
+    .arg(source_item_->name())
+    .arg(thread->time());
+
+  Q_FOREACH( QString param, thread->parameters_log() )
+  {
+    str.append(QString("( %1 )<br>").arg(param));
+  }
+
+  Scene_c3t3_item* result_item = thread->item();
+  const Scene_item::Bbox& bbox = result_item->bbox();
+  str.append(QString("BBox (x,y,z): [ %1, %2 ], [ %3, %4 ], [ %5, %6 ], <br>")
+    .arg(bbox.xmin)
+    .arg(bbox.xmax)
+    .arg(bbox.ymin)
+    .arg(bbox.ymax)
+    .arg(bbox.zmin)
+    .arg(bbox.zmax));
+
+  msg->information(qPrintable(str));
+
+  // Treat new c3t3 item
+  treat_result(*source_item_, *result_item);
+
+  // close message box
+  message_box_->close();
+  message_box_ = NULL;
+
+  // free memory
+  // TODO: maybe there is another way to do that
+  delete thread;
+}
+
+
+void
+Mesh_3_plugin::
+treat_result(Scene_item& source_item,
+             Scene_c3t3_item& result_item) const
+{
+  result_item.setName(tr("%1 [3D Mesh]").arg(source_item.name()));
+
+  result_item.c3t3_changed();
+
+  const Scene_item::Bbox& bbox = result_item.bbox();
+  result_item.setPosition((bbox.xmin + bbox.xmax)/2.f,
+                          (bbox.ymin + bbox.ymax)/2.f,
+                          (bbox.zmin + bbox.zmax)/2.f);
+
+  result_item.setColor(default_mesh_color);
+  result_item.setRenderingMode(source_item.renderingMode());
+  result_item.set_data_item(&source_item);
+
+  source_item.setVisible(false);
+
+  const Scene_interface::Item_id index = scene->mainSelectionIndex();
+  scene->itemChanged(index);
+
+  Scene_interface::Item_id new_item_id = scene->addItem(&result_item);
+  scene->setSelectedItem(new_item_id);
 }
 
 #include "Mesh_3_plugin.moc"

@@ -819,7 +819,7 @@ public:
     return derived().test_point_conflict_from_superior_impl(p, zone, visitor);
   }
 
-  /** Refines elements of this level and previous levels (SEQUENTIAL VERSION). */
+  /** Refines elements of this level and previous levels (PARALLEL VERSION). */
   template <class Mesh_visitor>
   void refine(Mesh_visitor visitor)
   {
