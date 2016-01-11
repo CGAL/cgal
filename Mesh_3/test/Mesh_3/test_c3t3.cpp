@@ -385,10 +385,5 @@ int main()
   Tester<K_e_e> test_epec;
   test_epec();
 
-  int *p = new int;
-  *p = 18;
-  std::cout << *p << std::endl;
-  p = 0;
-
   return EXIT_SUCCESS;
 }
