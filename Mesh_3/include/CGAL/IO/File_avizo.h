@@ -137,7 +137,6 @@ output_to_avizo(std::ostream& os,
          end = c3t3.cells_in_complex_end();
        cit != end; ++cit)
   {
-    const Cell_handle ch = cit;
     os << cit->subdomain_index() << "\n";
   }
 
