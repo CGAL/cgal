@@ -56,4 +56,6 @@ endif()
   polyhedron_demo_plugin(point_set_wlop_plugin Point_set_wlop_plugin ${point_set_wlopFILES})
   target_link_libraries(point_set_wlop_plugin scene_points_with_normal_item)
 
+  polyhedron_demo_plugin(merge_point_sets_plugin Merge_point_sets_plugin)
+  target_link_libraries(merge_point_sets_plugin scene_points_with_normal_item)
 
