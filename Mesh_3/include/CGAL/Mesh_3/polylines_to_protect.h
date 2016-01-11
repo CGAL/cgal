@@ -337,18 +337,6 @@ case_4:
 
 
   internal::Mesh_3::split_in_polylines(graph, polylines, K());
-  {
-    std::ofstream out("polylines.cgal.txt");
-    out.precision(17);
-
-    BOOST_FOREACH(const std::vector<Point_3>& polyline, polylines) {
-      out << polyline.size();
-      BOOST_FOREACH(const Point_3& p, polyline ) {
-        out << " " << p;
-      }
-      out << std::endl;
-    }
-  }
   }
 
 
