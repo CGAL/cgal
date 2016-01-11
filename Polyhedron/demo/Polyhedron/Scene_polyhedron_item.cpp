@@ -664,7 +664,6 @@ Scene_polyhedron_item::~Scene_polyhedron_item()
       CGAL::Three::Viewer_interface* v = qobject_cast<CGAL::Three::Viewer_interface*>(viewer);
 
       //Clears the targeted Id
-      targeted_id = NULL;
       delete targeted_id;
       //Remove textitems
       v->textRenderer->removeTextList(textItems);
