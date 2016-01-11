@@ -171,10 +171,11 @@ namespace internal {
   public:
     Incremental_remesher(PolygonMesh& pmesh
                        , VertexPointMap& vpmap
-                       , const bool protect_constraints)
+                       , const bool protect_constraints
+                       , const bool own_tree = true)//built by the remesher
       : mesh_(pmesh)
       , vpmap_(vpmap)
-      , own_tree_(true)
+      , own_tree_(own_tree)
       , input_triangles_()
       , input_patch_ids_()
       , halfedge_status_map_()

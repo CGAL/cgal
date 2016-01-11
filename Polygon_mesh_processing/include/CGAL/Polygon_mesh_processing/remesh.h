@@ -224,7 +224,7 @@ void split_long_edges(const EdgeRange& edges
                             boost::vertex_point);
 
   typename internal::Incremental_remesher<PM, VPMap, GT>
-    remesher(pmesh, vpmap, false/*protect constraints*/);
+    remesher(pmesh, vpmap, false/*protect constraints*/, false/*need aabb_tree*/);
 
   remesher.split_long_edges(edges, max_length, Emptyset_iterator());
 }
@@ -263,7 +263,7 @@ void split_long_edges(
                             boost::vertex_point);
 
   typename internal::Incremental_remesher<PM, VPMap, GT>
-    remesher(pmesh, vpmap, false/*protect constraints*/);
+    remesher(pmesh, vpmap, false/*protect constraints*/, false/*need aabb_tree*/);
 
   remesher.split_long_edges(edge_range, max_length, out);
 }
