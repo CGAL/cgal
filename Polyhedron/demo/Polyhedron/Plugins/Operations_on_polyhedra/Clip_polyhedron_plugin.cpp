@@ -129,7 +129,12 @@ public :
   }
   bool applicable(QAction*) const
   {
-    return true;
+    Q_FOREACH(int id, scene->selectionIndices())
+    {
+      if(qobject_cast<Scene_polyhedron_item*>(scene->item(id)))
+        return true;
+    }
+    return false;
   }
   QList<QAction*> actions() const {
     return QList<QAction*>() << actionClipPolyhedra;
@@ -155,7 +160,7 @@ public Q_SLOTS:
       plane->setNormal(0., 0., 1.);
       plane->setManipulatable(true);
       plane->setClonable(false);
-      plane->setColor(Qt::green);
+      plane->setColor(QColor(0,126,255));
       plane->setFlatMode();
       plane->setName(tr("Clipping plane"));
       connect(plane, SIGNAL(destroyed()),
