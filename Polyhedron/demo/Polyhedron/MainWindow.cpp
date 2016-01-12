@@ -1804,7 +1804,7 @@ QString MainWindow::get_polyhedron_stats()
   QString str;
   for(int i=0; i< classnames.size(); i++)
   {
-    CGAL::Three::Scene_item::header_data data;
+    CGAL::Three::Scene_item::Header_data data;
     items[i].at(0)->header(data);
     int title = 0;
     int titles_limit =0;

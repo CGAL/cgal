@@ -233,17 +233,49 @@ public:
   virtual bool keyPressEvent(QKeyEvent*){return false;}
 
   //!Contains the header for the table in the statistics dialog
-  struct header_data{
+  /*!
+   * A header data is composed of 2 columns : the Categories and the titles.
+   * A category is the name given to an association of titles.
+   * A title is the name of a line.
+   *
+   * For example,
+   * Category :    | Titles| Values
+   * 2 lines       |       |
+   *  ____________________________
+   * |             |Name   |Cube |
+   * |             |_______|_____|
+   * |General Info |#Edges |12   |
+   * |_____________|_______|_____|
+   *
+   *  would be stored as follows :
+   * categories = std::pair<QString,int>(QString("General Info"),2)
+   * titles.append("Name");
+   * titles.append("#Edges");
+   */
+  struct Header_data{
    //!Contains the name of the category of statistics and the number of lines it will contain
    QList<std::pair<QString, int> > categories;
    //!Contains the name of the lines of each category. Must be sorted from top to bottom.
    QList<QString> titles;
   };
-  //!Fills a header_data struct with the header information.
-  virtual void header(header_data&);
+  //!Returns a Header_data struct containing the header information.
+  virtual Header_data header();
   //!Returns a QString containing the requested value for the the table in the statistics dialog
+  /*!
+   * Example :
+   *  ____________________________
+   * |             |Name   |Cube |
+   * |             |_______|_____|
+   * |General Info |#Edges |12   |
+   * |_____________|_______|_____|
+   * compute stats(0) should return "Cube" and compute_stats(1) should return QString::number(12);
+   * The numbers must be coherent with the order of declaration of the titles in the header.
+   *
+   *
+   */
   virtual QString compute_stats(int i);
-  //!Contrains the number of group and subgroups containing this item.
+
+  //!Contains the number of group and subgroups containing this item.
   int has_group;
 
 public Q_SLOTS:

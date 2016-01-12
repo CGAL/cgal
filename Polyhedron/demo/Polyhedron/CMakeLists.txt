@@ -182,11 +182,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_library(demo_framework SHARED
     Scene.cpp
-    Viewer.cpp #Viewer_moc.cpp
+    Viewer.cpp
     Viewer_interface_moc.cpp
     Scene_item_moc.cpp
-    Scene_item.cpp #Scene_item.moc
-    Scene_polyhedron_item.cpp
+    Scene_item.cpp
     Scene_group_item.cpp
     Scene_group_item_moc.cpp
     Polyhedron_demo_plugin_helper.cpp)
@@ -200,7 +199,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_library(scene_basic_objects SHARED
     Scene_plane_item.cpp
-    #Scene_plane_item.moc
 )
   target_link_libraries(scene_basic_objects 
     demo_framework

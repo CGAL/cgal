@@ -42,10 +42,10 @@ public:
       NB_NULL_LENGTH,
       MIN_ANGLE,
       MAX_ANGLE,
-      MEAN_ANGLE,
+      MEAN_ANGLE
     };
     QString compute_stats(int type);
-    void header(header_data &);
+    void header(Header_data &);
     Scene_polyhedron_item();
     //   Scene_polyhedron_item(const Scene_polyhedron_item&);
     Scene_polyhedron_item(const Polyhedron& p);

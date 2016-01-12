@@ -1255,7 +1255,7 @@ QString Scene_polyhedron_item::compute_stats(int type)
   return QString();
 }
 
-void Scene_polyhedron_item::header(header_data &data)
+void Scene_polyhedron_item::header(Header_data &data)
 {
   //categories
   data.categories.append(std::pair<QString,int>(QString("Properties"),9));
@@ -1269,7 +1269,7 @@ void Scene_polyhedron_item::header(header_data &data)
   data.titles.append(QString("#Connected Components"));
   data.titles.append(QString("#Border Edges"));
   data.titles.append(QString("#Degenerated Faces"));
-  data.titles.append(QString("Connected Components Of The Boundary"));
+  data.titles.append(QString("Connected Components of the Boundary"));
   data.titles.append(QString("Area"));
   data.titles.append(QString("Volume"));
   data.titles.append(QString("Self-Intersecting"));
