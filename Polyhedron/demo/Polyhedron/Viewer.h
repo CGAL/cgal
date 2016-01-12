@@ -115,7 +115,7 @@ protected:
   std::vector<float> c_Axis;
   //! Decides if the axis system must be drawn or not
   bool axis_are_displayed;
-  //! Decides if the text is displayed in the drawVidulaHints function.
+  //! Decides if the text is displayed in the drawVisualHints function.
   bool has_text;
   //!Defines the behaviour for the mouse press events
   void mousePressEvent(QMouseEvent*);
