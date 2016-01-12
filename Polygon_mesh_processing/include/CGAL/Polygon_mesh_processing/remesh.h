@@ -31,7 +31,7 @@ namespace CGAL {
 namespace Polygon_mesh_processing {
 
 /*!
-* \ingroup remeshing_grp
+* \ingroup PMP_meshing_grp
 * @brief remeshes a triangulated region of a polygon mesh.
 * This operation sequentially performs edge splits, edge collapses,
 * edge flips, Laplacian smoothing and projection to the initial surface
@@ -83,9 +83,9 @@ namespace Polygon_mesh_processing {
 template<typename PolygonMesh
        , typename FaceRange
        , typename NamedParameters>
-void isotropic_remeshing(PolygonMesh& pmesh
-                       , const FaceRange& faces
+void isotropic_remeshing(const FaceRange& faces
                        , const double& target_edge_length
+                       , PolygonMesh& pmesh
                        , const NamedParameters& np)
 {
   typedef PolygonMesh PM;
@@ -160,18 +160,20 @@ void isotropic_remeshing(PolygonMesh& pmesh
 
 template<typename PolygonMesh
        , typename FaceRange>
-void isotropic_remeshing(PolygonMesh& pmesh
-  , const FaceRange& faces
-  , const double& target_edge_length)
+void isotropic_remeshing(
+    const FaceRange& faces
+  , const double& target_edge_length
+  , PolygonMesh& pmesh)
 {
-  isotropic_remeshing(pmesh,
+  isotropic_remeshing(
     faces,
     target_edge_length,
+    pmesh,
     parameters::all_default());
 }
 
 /*!
-* \ingroup remeshing_grp
+* \ingroup PMP_meshing_grp
 * @brief splits the edges listed in `edges` into sub-edges
 * that are not longer than the given threshold `max_length`.
 *
@@ -204,9 +206,9 @@ void isotropic_remeshing(PolygonMesh& pmesh
 template<typename PolygonMesh
        , typename EdgeRange
        , typename NamedParameters>
-void split_long_edges(PolygonMesh& pmesh
-                    , EdgeRange& edges
+void split_long_edges(const EdgeRange& edges
                     , const double& max_length
+                    , PolygonMesh& pmesh
                     , const NamedParameters& np)
 {
   typedef PolygonMesh PM;
@@ -226,13 +228,13 @@ void split_long_edges(PolygonMesh& pmesh
 }
 
 template<typename PolygonMesh, typename EdgeRange>
-void split_long_edges(PolygonMesh& pmesh
-                    , EdgeRange& edges
-                    , const double& max_length)
+void split_long_edges(const EdgeRange& edges
+                    , const double& max_length
+                    , PolygonMesh& pmesh)
 {
-  split_long_edges(pmesh,
-    edges,
+  split_long_edges(edges,
     max_length,
+    pmesh,
     parameters::all_default());
 }
 
@@ -241,9 +243,10 @@ template<typename PolygonMesh
        , typename EdgeRange
        , typename OutputIterator
        , typename NamedParameters>
-void split_long_edges(PolygonMesh& pmesh
-        , EdgeRange& edge_range
+void split_long_edges(
+          const EdgeRange& edge_range
         , const double& max_length
+        , PolygonMesh& pmesh
         , OutputIterator out//edges after splitting, all shorter than target_length
         , const NamedParameters& np)
 {

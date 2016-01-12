@@ -177,9 +177,9 @@ public Q_SLOTS:
             }
           }
           CGAL::Polygon_mesh_processing::split_long_edges(
-            *selection_item->polyhedron()
-            , edges
+              edges
             , target_length
+            , *selection_item->polyhedron()
             , std::back_inserter(updated_selected_edges)
             , PMP::parameters::geom_traits(Kernel()));
         }
@@ -191,16 +191,16 @@ public Q_SLOTS:
 
         if (selection_item->selected_edges.empty())
           CGAL::Polygon_mesh_processing::isotropic_remeshing(
-          *selection_item->polyhedron()
-          , selection_item->selected_facets
+            selection_item->selected_facets
           , target_length
+          , *selection_item->polyhedron()
           , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
           .protect_constraints(protect));
         else
           CGAL::Polygon_mesh_processing::isotropic_remeshing(
-         *selection_item->polyhedron()
-         , selection_item->selected_facets
+           selection_item->selected_facets
          , target_length
+         , *selection_item->polyhedron()
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
          .edge_is_constrained_map(selection_item->selected_edges_pmap(selected))
@@ -220,22 +220,23 @@ public Q_SLOTS:
           std::vector<halfedge_descriptor> border;
           CGAL::Polygon_mesh_processing::border_halfedges(
             faces(*poly_item->polyhedron()),
-            std::back_inserter(border),
-            pmesh);
+            pmesh,
+            std::back_inserter(border));
           std::vector<edge_descriptor> border_edges;
           BOOST_FOREACH(halfedge_descriptor h, border)
             border_edges.push_back(edge(h, pmesh));
 
-          CGAL::Polygon_mesh_processing::split_long_edges(*poly_item->polyhedron()
-                                                        , border_edges
-                                                        , target_length);
+          CGAL::Polygon_mesh_processing::split_long_edges(
+              border_edges
+            , target_length
+            , *poly_item->polyhedron());
         }
         else
         {
         CGAL::Polygon_mesh_processing::isotropic_remeshing(
-         *poly_item->polyhedron()
-         , faces(*poly_item->polyhedron())
+           faces(*poly_item->polyhedron())
          , target_length
+         , *selection_item->polyhedron()
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect));
         }
