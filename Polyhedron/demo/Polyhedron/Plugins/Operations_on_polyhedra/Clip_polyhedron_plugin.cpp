@@ -10,10 +10,84 @@
 #include "ui_Clip_polyhedron_plugin.h"
 #include "Viewer.h"
 
-
+//Helps Windows to manage its dll
+#ifdef scene_triangle_item_EXPORTS
+#  define SCENE_CLIPPING_PLANE_EXPORT Q_DECL_EXPORT
+#else
+#  define SCENE_CLIPPING_PLANE_EXPORT Q_DECL_IMPORT
+#endif
 
 using namespace CGAL::Three;
+// The special 2 faces plane
+class SCENE_CLIPPING_PLANE_EXPORT Scene_clipping_plane_item : public Scene_plane_item
+{
+  Q_OBJECT
 
+public:
+  Scene_clipping_plane_item(const CGAL::Three::Scene_interface* scene_interface)
+    :Scene_plane_item(scene_interface)
+  {
+  }
+
+  void draw(CGAL::Three::Viewer_interface* viewer)const
+  {
+    if(!are_buffers_filled)
+      initialize_buffers(viewer);
+    vaos[Facets]->bind();
+    program = getShaderProgram(PROGRAM_PLANE_TWO_FACES);
+    attrib_buffers(viewer, PROGRAM_PLANE_TWO_FACES);
+    QMatrix4x4 f_matrix;
+    for(int i=0; i<16; i++)
+      f_matrix.data()[i] = (float)frame->matrix()[i];
+    program->bind();
+    program->setUniformValue("f_matrix", f_matrix);
+    program->setAttributeValue("colors",this->color());
+    QVector3D normal;
+    normal.setX(plane().orthogonal_vector().x());normal.setY(plane().orthogonal_vector().y());normal.setZ(plane().orthogonal_vector().z());
+    program->setUniformValue("plane_normal", normal);
+    QVector3D vd;
+    vd.setX(viewer->camera()->position().x); vd.setY(viewer->camera()->position().y); vd.setZ(viewer->camera()->position().z);
+    program->setUniformValue("dirView", vd);
+    QVector3D pp;
+    pp.setX(plane().point().x());pp.setY(plane().point().y());pp.setZ(plane().point().z());
+    program->setUniformValue("plane_pos", pp);
+
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_quad.size()/3));
+    program->release();
+    vaos[Facets]->release();
+
+  }
+
+private:
+  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
+  {
+    program = getShaderProgram(PROGRAM_PLANE_TWO_FACES, viewer);
+    program->bind();
+    vaos[Facets]->bind();
+
+    buffers[Facets_vertices].bind();
+    buffers[Facets_vertices].allocate(positions_quad.data(),
+                                      static_cast<int>(positions_quad.size()*sizeof(float)));
+    program->enableAttributeArray("vertex");
+    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+    buffers[Facets_vertices].release();
+    vaos[Facets]->release();
+
+
+    vaos[Edges]->bind();
+    buffers[Edges_vertices].bind();
+    buffers[Edges_vertices].allocate(positions_lines.data(),
+                                     static_cast<int>(positions_lines.size()*sizeof(float)));
+    program->enableAttributeArray("vertex");
+    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+    buffers[Edges_vertices].release();
+    vaos[Edges]->release();
+
+    program->release();
+    are_buffers_filled = true;
+
+  }
+}; //end of class Scene_triangle_item
 
 
 class Clip_polyhedron_plugin :
@@ -74,7 +148,7 @@ public Q_SLOTS:
     //creates a new  cutting_plane;
     if(!plane)
     {
-      plane = new Scene_plane_item(scene);
+      plane = new Scene_clipping_plane_item(scene);
       plane->setNormal(0., 0., 1.);
       plane->setManipulatable(true);
       plane->setClonable(false);
@@ -119,7 +193,7 @@ private:
   QAction* actionClipPolyhedra;
   Ui::ClipPolyhedronWidget ui_widget;
   QDockWidget* dock_widget;
-  Scene_plane_item* plane;
+  Scene_clipping_plane_item* plane;
 
 }; //end of plugin class
 #include "Clip_polyhedron_plugin.moc"

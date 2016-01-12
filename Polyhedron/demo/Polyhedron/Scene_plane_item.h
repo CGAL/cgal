@@ -147,7 +147,7 @@ public Q_SLOTS:
   void setManipulatable(bool b = true) {
     manipulable = b;
   }
-private:
+protected:
   const CGAL::Three::Scene_interface* scene;
   bool manipulable;
   bool can_clone;

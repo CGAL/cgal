@@ -509,6 +509,17 @@ void Viewer::attrib_buffers(int program_name) const {
         program->setUniformValue("f_matrix",f_mat);
 
         break;
+    case PROGRAM_PLANE_TWO_FACES:
+        program->setUniformValue("mvp_matrix", mvp_mat);
+        program->setUniformValue("mv_matrix", mv_mat);
+        program->setUniformValue("light_pos", position);
+        program->setUniformValue("light_diff",diffuse);
+        program->setUniformValue("light_spec", specular);
+        program->setUniformValue("light_amb", ambient);
+        program->setUniformValue("spec_power", 51.8f);
+        program->setUniformValue("is_two_side", is_both_sides);
+        break;
+
     case PROGRAM_WITH_TEXTURED_EDGES:
 
         program->setUniformValue("mvp_matrix", mvp_mat);
@@ -1033,6 +1044,30 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
             return program;
         }
         break;
+    case PROGRAM_PLANE_TWO_FACES:
+        if(d->shader_programs[PROGRAM_PLANE_TWO_FACES])
+        {
+            return d->shader_programs[PROGRAM_PLANE_TWO_FACES];
+        }
+
+        else
+        {
+
+            QOpenGLShaderProgram *program = new QOpenGLShaderProgram(viewer);
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_without_light.v"))
+            {
+                std::cerr<<"adding vertex shader FAILED"<<std::endl;
+            }
+            if(!program->addShaderFromSourceFile(QOpenGLShader::Fragment,":/cgal/Polyhedron_3/resources/shader_plane_two_faces.f"))
+            {
+                std::cerr<<"adding fragment shader FAILED"<<std::endl;
+            }
+            program->link();
+            d->shader_programs[PROGRAM_PLANE_TWO_FACES] = program;
+            return program;
+        }
+        break;
+
     case PROGRAM_WITH_TEXTURED_EDGES:
         if( d->shader_programs[PROGRAM_WITH_TEXTURED_EDGES])
         {
