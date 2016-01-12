@@ -6,12 +6,16 @@
 #include "Scene_plane_item.h"
 #include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
-
 #include <CGAL/internal/Polyhedron_plane_clipping_3.h>
 #include "ui_Clip_polyhedron_plugin.h"
+#include "Viewer.h"
+
 
 
 using namespace CGAL::Three;
+
+
+
 class Clip_polyhedron_plugin :
     public QObject,
     public CGAL::Three::Polyhedron_demo_plugin_helper
@@ -88,6 +92,7 @@ public Q_SLOTS:
       return;
     else
     {
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
       QList<Scene_polyhedron_item*> polyhedra;
 
       //Fills the list of target polyhedra and the cutting plane
@@ -105,6 +110,7 @@ public Q_SLOTS:
       {
         CGAL::corefinement::inplace_clip_open_polyhedron(*(poly->polyhedron()),plane->plane());
         poly->invalidate_buffers();
+        viewer->updateGL();
         qDebug()<<poly->name()<<" clipped";
       }
     }
