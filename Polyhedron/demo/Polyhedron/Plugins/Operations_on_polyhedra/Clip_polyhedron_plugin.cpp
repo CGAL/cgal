@@ -182,10 +182,28 @@ public Q_SLOTS:
       //apply the clipping function
       Q_FOREACH(Scene_polyhedron_item* poly, polyhedra)
       {
-        CGAL::corefinement::inplace_clip_open_polyhedron(*(poly->polyhedron()),plane->plane());
-        poly->invalidate_buffers();
-        viewer->updateGL();
-        qDebug()<<poly->name()<<" clipped";
+        if(ui_widget.close_checkBox->isChecked() && poly->polyhedron()->is_closed())
+        {
+          Scene_polyhedron_item* new_item = new Scene_polyhedron_item(CGAL::corefinement::clip_polyhedron(*(poly->polyhedron()),plane->plane()));
+          new_item->setName(poly->name());
+          new_item->setColor(poly->color());
+          new_item->setRenderingMode(poly->renderingMode());
+          new_item->setVisible(poly->visible());
+          new_item->invalidate_buffers();
+          new_item->setProperty("source filename", poly->property("source filename"));
+          scene->replaceItem(scene->item_id(poly),new_item);
+          delete poly;
+          new_item->invalidate_buffers();
+          viewer->updateGL();
+          qDebug()<<new_item->name()<<" clipped";
+        }
+        else
+        {
+          CGAL::corefinement::inplace_clip_open_polyhedron(*(poly->polyhedron()),plane->plane());
+          poly->invalidate_buffers();
+          viewer->updateGL();
+          qDebug()<<poly->name()<<" clipped";
+        }
       }
     }
   }
