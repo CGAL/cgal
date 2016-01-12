@@ -8,7 +8,7 @@ else(EIGEN3_FOUND)
   message(STATUS "NOTICE: Eigen 3.1 (or greater) was not found. Jet fitting plugin will not be available.")
 endif(EIGEN3_FOUND)
 
-if(EIGEN3_FOUND AND ${EIGEN3_VERSION} VERSION_GREATER "3.1.90")
+if(EIGEN3_FOUND AND "${EIGEN3_VERSION}" VERSION_GREATER "3.1.90")
 
   qt5_wrap_ui( hole_fillingUI_FILES Hole_filling_widget.ui)
   polyhedron_demo_plugin(hole_filling_plugin Hole_filling_plugin ${hole_fillingUI_FILES})
