@@ -46,9 +46,9 @@ namespace CGAL {
     for(Face_iterator fit = tds.faces_begin(); fit != tds.faces_end(); ++fit){
 
       if(fit->is_on_surface()){
-        *out++ = CGAL::make_array(std::size_t(fit->vertex(0)->vertex_3()->id()),
-                                  std::size_t(fit->vertex(1)->vertex_3()->id()),
-                                  std::size_t(fit->vertex(2)->vertex_3()->id()));
+        *out++ = CGAL::make_array(fit->vertex(0)->vertex_3()->id(),
+                                  fit->vertex(1)->vertex_3()->id(),
+                                  fit->vertex(2)->vertex_3()->id());
       }
     }
     return out;

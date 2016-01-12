@@ -91,10 +91,10 @@ namespace CGAL {
 
     //-------------------- DATA MEMBERS ---------------------------------
 
-    typedef int Info;  // so that we are a model of TriangulationVertexBaseWithInfo_3
+    typedef std::size_t Info;  // so that we are a model of TriangulationVertexBaseWithInfo_3
 
   private:
-    int m_id;
+    std::size_t m_id;
     int m_mark;
     int m_post_mark;
     Intern_successors_type* m_incident_border;
@@ -144,22 +144,22 @@ namespace CGAL {
 
   public:
 
-    int& id()
+    std::size_t& id()
     {
       return m_id;
     }
 
-    const int& id() const
+    const std::size_t& id() const
     {
       return m_id;
     }
 
-    int& info()
+    std::size_t& info()
     {
       return m_id;
     }
 
-    const int& info() const
+    const std::size_t& info() const
     {
       return m_id;
     }

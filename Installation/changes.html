@@ -176,6 +176,17 @@ and <code>src/</code> directories).
     function <code>bbox()</code>. </li>
   </ul>
 <!-- Surface Reconstruction -->
+  <h3>Advancing Front Surface Reconstruction</h3>
+  <ul>
+    <li>Optional template functor <code>Filter</code> is replaced by
+    another optional template functor <code>Priority</code>. This
+    allows to change the way facets are prioritized by the algorithm
+    instead of having a simple option to reject some
+    facets. <b>Breaking change</b>: Programs using the
+    old <code>Filter</code> API will not compile anymore as it must be
+    replaced with the <code>Priority</code> API as described in the
+    manual. Codes using the default behavior are not impacted.</li>
+  </ul>
 <!-- Geometry Processing -->
   <h3>Polygon Mesh Processing</h3>
   <ul>
