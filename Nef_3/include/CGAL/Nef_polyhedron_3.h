@@ -48,9 +48,6 @@
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Nef_3/Mark_bounded_volumes.h>
 
-#ifdef CGAL_NEF3_POINT_LOCATOR_NAIVE
-#include <CGAL/Nef_3/SNC_ray_shooter.h>
-#endif
 
 #ifdef CGAL_NEF3_CGAL_NEF3_SM_VISUALIZOR
 #include <CGAL/Nef_3/SNC_SM_visualizor.h>
@@ -115,11 +112,7 @@ class Nef_polyhedron_3_rep
   typedef CGAL::SNC_external_structure<I, SNC_structure>  SNC_external_structure;
   typedef CGAL::SNC_point_locator<SNC_decorator> SNC_point_locator;
   typedef CGAL::SNC_simplify<I, SNC_structure>            SNC_simplify;
-#ifdef CGAL_NEF3_POINT_LOCATOR_NAIVE
-  typedef CGAL::SNC_point_locator_naive<SNC_decorator> SNC_point_locator_default;
-#else
   typedef CGAL::SNC_point_locator_by_spatial_subdivision<SNC_decorator> SNC_point_locator_default;
-#endif
 
   typedef typename SNC_structure::Sphere_map       Sphere_map;
   typedef CGAL::SM_decorator<Sphere_map>           SM_decorator;
