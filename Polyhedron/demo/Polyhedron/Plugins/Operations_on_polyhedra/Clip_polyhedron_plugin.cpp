@@ -1,3 +1,4 @@
+#include "Messages_interface.h"
 #include <QApplication>
 #include <QMainWindow>
 #include <QAction>
@@ -104,10 +105,12 @@ public :
   using Polyhedron_demo_plugin_helper::init;
   // Adds an action to the menu and configures the widget
   void init(QMainWindow* mainWindow,
-            CGAL::Three::Scene_interface* scene_interface) {
+            CGAL::Three::Scene_interface* scene_interface,
+            Messages_interface* mi) {
     //get the references
     this->scene = scene_interface;
     this->mw = mainWindow;
+    this->messages = mi;
     plane = NULL;
     //creates and link the actions
     actionClipPolyhedra = new QAction("Clip Polyhedra", mw);
@@ -195,14 +198,14 @@ public Q_SLOTS:
           delete poly;
           new_item->invalidate_buffers();
           viewer->updateGL();
-          qDebug()<<new_item->name()<<" clipped";
+          messages->information(QString("%1 clipped").arg(new_item->name()));
         }
         else
         {
           CGAL::corefinement::inplace_clip_open_polyhedron(*(poly->polyhedron()),plane->plane());
           poly->invalidate_buffers();
           viewer->updateGL();
-          qDebug()<<poly->name()<<" clipped";
+          messages->information(QString("%1 clipped").arg(poly->name()));
         }
       }
     }
@@ -212,6 +215,6 @@ private:
   Ui::ClipPolyhedronWidget ui_widget;
   QDockWidget* dock_widget;
   Scene_clipping_plane_item* plane;
-
+  Messages_interface* messages;
 }; //end of plugin class
 #include "Clip_polyhedron_plugin.moc"
