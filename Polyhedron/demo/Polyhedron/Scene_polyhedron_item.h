@@ -45,7 +45,7 @@ public:
       MEAN_ANGLE
     };
     QString compute_stats(int type);
-    void header(Header_data &);
+    CGAL::Three::Scene_item::Header_data header() const;
     Scene_polyhedron_item();
     //   Scene_polyhedron_item(const Scene_polyhedron_item&);
     Scene_polyhedron_item(const Polyhedron& p);

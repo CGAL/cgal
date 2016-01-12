@@ -153,9 +153,10 @@ QOpenGLShaderProgram* CGAL::Three::Scene_item::getShaderProgram(int name, CGAL::
     return viewer->getShaderProgram(name);
 }
 
-CGAL::Three::Scene_item::Header_data CGAL::Three::Scene_item::header()
+CGAL::Three::Scene_item::Header_data CGAL::Three::Scene_item::header() const
 {
-
+  CGAL::Three::Scene_item::Header_data data;
+  return data;
 }
 
 QString CGAL::Three::Scene_item::compute_stats(int )

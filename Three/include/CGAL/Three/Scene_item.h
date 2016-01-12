@@ -259,7 +259,7 @@ public:
    QList<QString> titles;
   };
   //!Returns a Header_data struct containing the header information.
-  virtual Header_data header();
+  virtual Header_data header()const;
   //!Returns a QString containing the requested value for the the table in the statistics dialog
   /*!
    * Example :

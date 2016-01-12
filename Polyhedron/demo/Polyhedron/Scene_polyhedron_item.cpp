@@ -1255,8 +1255,9 @@ QString Scene_polyhedron_item::compute_stats(int type)
   return QString();
 }
 
-void Scene_polyhedron_item::header(Header_data &data)
+CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
 {
+  CGAL::Three::Scene_item::Header_data data;
   //categories
   data.categories.append(std::pair<QString,int>(QString("Properties"),9));
   data.categories.append(std::pair<QString,int>(QString("Edges"),6));
@@ -1282,4 +1283,5 @@ void Scene_polyhedron_item::header(Header_data &data)
   data.titles.append(QString("Minimum"));
   data.titles.append(QString("Maximum"));
   data.titles.append(QString("Average"));
+  return data;
 }
