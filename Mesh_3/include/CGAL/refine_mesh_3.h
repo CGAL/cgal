@@ -435,6 +435,7 @@ void refine_mesh_3_impl(C3T3& c3t3,
   // Build mesher and launch refinement process
   Mesher mesher (c3t3, domain, criteria);
   double refine_time = mesher.refine_mesh(mesh_options.dump_after_refine_surface_prefix);
+  c3t3.clear_manifold_info();
 
   dump_c3t3(c3t3, mesh_options.dump_after_refine_prefix);
 

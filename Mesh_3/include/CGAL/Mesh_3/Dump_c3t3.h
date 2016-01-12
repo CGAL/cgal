@@ -58,19 +58,35 @@ template <typename C3t3>
 struct Dump_c3t3<C3t3, false> {
   void dump_c3t3(const C3t3&, std::string) {
     std::cerr << "Warning " << __FILE__ << ":" << __LINE__ << "\n"
-              << "  the c3t3 object cannot be dumped because some types are"
-              << " not streamable:\n";
-    if(!is_streamable<typename C3t3::Triangulation::Vertex>::value)
+              << "  the c3t3 object of following type:\n"
+              << typeid(C3t3).name() << std::endl
+              << "  cannot be dumped because some types are not streamable:\n";
+    if(!is_streamable<typename C3t3::Triangulation::Vertex>::value) {
       std::cerr << "     - C3t3::Triangulation::Vertex is not streamble\n";
+      std::cerr << "       "
+                << typeid(typename C3t3::Triangulation::Vertex).name()
+                << "\n";
+    }
 
-    if(!is_streamable<typename C3t3::Triangulation::Cell>::value)
+    if(!is_streamable<typename C3t3::Triangulation::Cell>::value) {
       std::cerr << "     - C3t3::Triangulation::Cell is not streamble\n";
+      std::cerr << "       "
+                << typeid(typename C3t3::Triangulation::Cell).name()
+                << "\n";
+    }
 
-    if(!is_streamable<typename C3t3::Surface_patch_index>::value)
+    if(!is_streamable<typename C3t3::Surface_patch_index>::value) {
       std::cerr << "     - C3t3::Surface_patch_index is not streamable\n";
-      
-    if(!is_streamable<typename C3t3::Subdomain_index>::value)
+      std::cerr << "       "
+                << typeid(typename C3t3::Surface_patch_index).name()
+                << "\n";
+    }
+    if(!is_streamable<typename C3t3::Subdomain_index>::value) {
       std::cerr << "     - C3t3::Subdomain_index is not streamable\n";      
+      std::cerr << "       "
+                << typeid(typename C3t3::Subdomain_index).name()
+                << "\n";
+    }
   }
 }; // end struct template specialization Dump_c3t3<C3t3, false>
 

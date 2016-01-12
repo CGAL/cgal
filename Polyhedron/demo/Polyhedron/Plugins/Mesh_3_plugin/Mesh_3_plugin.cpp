@@ -241,6 +241,7 @@ void Mesh_3_plugin::mesh_3()
   const double radius_edge = !ui.noTetShape->isChecked() ? 0 : ui.tetShape->value();
   const double tet_sizing = !ui.noTetSizing->isChecked() ? 0  : ui.tetSizing->value();
   const bool protect_features = ui.protect->isChecked();
+  const int manifold = ui.manifoldCheckBox->isChecked() ? 1 : 0;
 
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
@@ -267,6 +268,7 @@ void Mesh_3_plugin::mesh_3()
                                  tet_sizing,
                                  radius_edge,
                                  protect_features,
+                                 manifold,
                                  scene);
   }
   // Image
@@ -286,6 +288,7 @@ void Mesh_3_plugin::mesh_3()
                                  approx,
                                  tet_sizing,
                                  radius_edge,
+                                 manifold,
                                  scene);
   }
 #endif
@@ -309,6 +312,7 @@ void Mesh_3_plugin::mesh_3()
                                  tet_sizing,
                                  radius_edge,
                                  protect_features,
+                                 manifold,
                                  scene);
   }
 #endif

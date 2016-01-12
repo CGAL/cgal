@@ -50,6 +50,7 @@ struct Mesh_parameters
   double tet_shape;
   double tet_sizing;
   bool protect_features;
+  int manifold;
   
   inline QStringList log() const;
 };
@@ -152,6 +153,13 @@ Mesh_function<D_>::
 }
 
 
+CGAL::Mesh_facet_topology topology(int manifold) {
+  return manifold == 0 ? CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH :
+    static_cast<CGAL::Mesh_facet_topology>
+    (CGAL::MANIFOLD |
+     CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH);
+}
+
 template < typename D_ >
 void
 Mesh_function<D_>::
@@ -165,7 +173,8 @@ launch()
   Mesh_criteria criteria(Edge_criteria(p_.facet_sizing),
                          Facet_criteria(p_.facet_angle,
                                         p_.facet_sizing,
-                                        p_.facet_approx),
+                                        p_.facet_approx,
+                                        topology(p_.manifold)),
                          Cell_criteria(p_.tet_shape,
                                        p_.tet_sizing));
 

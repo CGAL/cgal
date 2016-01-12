@@ -205,19 +205,19 @@ public:
     cache_validity = false;
   }
 
-  void set_c2t3_cache(const int i, const int j)
+  void set_c2t3_cache(const std::size_t i, const std::size_t j)
   {
     number_of_incident_facets_ = i;
     number_of_components_ = j;
     cache_validity = true;
   }
 
-  int cached_number_of_incident_facets() const
+  std::size_t cached_number_of_incident_facets() const
   {
     return number_of_incident_facets_;
   }
     
-  int cached_number_of_components() const
+  std::size_t cached_number_of_components() const
   {
     return number_of_components_;
   }
@@ -232,8 +232,8 @@ public:
   }
 private:
 
-  int number_of_incident_facets_;
-  int number_of_components_; // number of components in the adjacency
+  std::size_t number_of_incident_facets_;
+  std::size_t number_of_components_; // number of components in the adjacency
   // graph of incident facets (in complex)
 
 

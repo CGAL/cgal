@@ -32,6 +32,7 @@
 #include <CGAL/Mesh_3/Dump_c3t3.h>
 
 #include<CGAL/Mesh_3/Refine_facets_3.h>
+#include<CGAL/Mesh_3/Refine_facets_manifold_base.h>
 #include<CGAL/Mesh_3/Refine_cells_3.h>
 #include <CGAL/Mesh_3/Refine_tets_visitor.h>
 #include <CGAL/Mesher_level_visitors.h>
@@ -160,6 +161,8 @@ public:
   //-------------------------------------------------------
   // Mesher_levels
   //-------------------------------------------------------
+  // typedef Refine_facets_manifold_base<Rf_base>      Rf_manifold_base;
+
   /// Facets mesher level
   typedef Refine_facets_3<
       Triangulation,
@@ -167,7 +170,9 @@ public:
       MeshDomain,
       C3T3,
       Null_mesher_level,
-      Concurrency_tag>                              Facets_level;
+      Concurrency_tag,
+      Refine_facets_manifold_base
+    >                                               Facets_level;
 
   /// Cells mesher level
   typedef Refine_cells_3<

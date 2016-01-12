@@ -50,6 +50,8 @@ private:
   typedef Mesh_facet_criteria_3<Tr> Self;
 
 public:
+  typedef CGAL::Tag_true Has_manifold_criterion;
+
   /**
    * @brief Constructor
    */
@@ -110,6 +112,10 @@ public:
     criteria_.add(criterion);
   }
 
+  Mesh_facet_topology topology() const {
+    return topology_;
+  }
+
 private:
   void init_aspect(const FT& angle_bound)
   {
@@ -138,7 +144,8 @@ private:
   
   void init_topo(const Mesh_facet_topology topology)
   {
-    switch ( topology )
+    topology_ = topology;
+    switch ( topology % MANIFOLD )
     {
       case FACET_VERTICES_ON_SURFACE:
       {
@@ -166,6 +173,7 @@ private:
   
 private:
   Criteria criteria_;
+  Mesh_facet_topology topology_;
 };  // end class Mesh_facet_criteria_3
 
 }  // end namespace CGAL

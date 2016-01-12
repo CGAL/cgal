@@ -26,6 +26,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
                                  const double tet_sizing,
                                  const double tet_shape,
                                  bool protect_features,
+                                 const int manifold,
                                  CGAL::Three::Scene_interface* scene)
 {
   if(!pMesh) return 0;
@@ -59,6 +60,7 @@ Meshing_thread* cgal_code_mesh_3(const Polyhedron* pMesh,
   param.facet_approx = facet_approx;
   param.tet_sizing = tet_sizing;
   param.tet_shape = tet_shape;
+  param.manifold = manifold;
   param.protect_features = protect_features;
 
   typedef ::Mesh_function<Polyhedral_mesh_domain> Mesh_function;
@@ -75,6 +77,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
                                  const double facet_approx,
                                  const double tet_sizing,
                                  const double tet_shape,
+                                 const int manifold,
                                  CGAL::Three::Scene_interface* scene)
 {
   if (pfunction == NULL) { return NULL; }
@@ -99,6 +102,7 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
   param.facet_approx = facet_approx;
   param.tet_sizing = tet_sizing;
   param.tet_shape = tet_shape;
+  param.manifold = manifold;
 
   typedef ::Mesh_function<Function_mesh_domain> Mesh_function;
   Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
@@ -118,6 +122,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
                                  const double tet_sizing,
                                  const double tet_shape,
                                  bool protect_features,
+                                 const int manifold,
                                  CGAL::Three::Scene_interface* scene)
 {
   if (NULL == pImage) { return NULL; }
@@ -147,6 +152,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   param.facet_approx = facet_approx;
   param.tet_sizing = tet_sizing;
   param.tet_shape = tet_shape;
+  param.manifold = manifold;
   
   typedef ::Mesh_function<Image_mesh_domain> Mesh_function;
   Mesh_function* p_mesh_function = new Mesh_function(p_new_item->c3t3(),
