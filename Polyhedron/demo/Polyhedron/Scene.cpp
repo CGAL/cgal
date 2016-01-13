@@ -1014,18 +1014,21 @@ Scene::Bbox Scene::bbox() const
         return Bbox(0,0,0,0,0,0);
 
     bool bbox_initialized = false;
-    Bbox bbox;
+    Bbox bbox = Bbox(0,0,0,0,0,0);
     Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
     {
         if(item->isFinite() && !item->isEmpty() && item->visible()) {
             if(bbox_initialized) {
+
                 bbox = bbox + item->bbox();
             }
             else {
                 bbox = item->bbox();
                 bbox_initialized = true;
+
             }
         }
+
     }
     return bbox;
 }

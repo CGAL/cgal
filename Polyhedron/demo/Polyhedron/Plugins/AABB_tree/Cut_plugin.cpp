@@ -56,6 +56,8 @@ public:
                 bbox.xmax(),
                 bbox.ymax(),
                 bbox.zmax());
+    qDebug()<<this->name()<<" at creation: "<<bbox.xmin()<<", "<<bbox.xmax()<<", "<<bbox.ymin()<<", "<<bbox.ymax()<<", "
+              <<bbox.zmin()<<", "<<bbox.zmax();
   }
 
   Scene_aabb_item* clone() const {
@@ -96,7 +98,7 @@ private:
     using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
         vaos[0]->bind();
 
@@ -126,8 +128,8 @@ private:
         if(!are_buffers_filled)
             initialize_buffers(viewer);
         vaos[0]->bind();
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-        attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+        program = getShaderProgram(PROGRAM_NO_SELECTION);
+        attrib_buffers(viewer, PROGRAM_NO_SELECTION);
         program->bind();
         program->setAttributeValue("colors",this->color());
         viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
@@ -221,7 +223,7 @@ private:
     using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
     {
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT, viewer);
+        program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
         vaos[0]->bind();
 
@@ -254,8 +256,8 @@ private:
         if(!are_buffers_filled)
             initialize_buffers(viewer);
         vaos[0]->bind();
-        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-        attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+        program = getShaderProgram(PROGRAM_NO_SELECTION);
+        attrib_buffers(viewer, PROGRAM_NO_SELECTION);
         program->bind();
         program->setAttributeValue("colors",this->color());
         viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
@@ -454,6 +456,7 @@ void Polyhedron_demo_cut_plugin::cut() {
       Scene_aabb_item* aabb_item = new Scene_aabb_item(*it->second);
       aabb_item->setName(tr("AABB tree of %1").arg(poly_item->name()));
       aabb_item->setRenderingMode(Wireframe);
+      aabb_item->setColor(Qt::black);
       aabb_item->setVisible(false);
       scene->addItem(aabb_item);
       //std::cerr << "size: " << it->second->size() << std::endl;

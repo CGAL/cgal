@@ -37,6 +37,8 @@ Viewer::Viewer(QWidget* parent)
   newFormat.setSampleBuffers(true);
   newFormat.setSamples(16);
   this->setFormat(newFormat);
+  if(!context()->isValid())
+    qDebug()<<"OpenContext
 }
 
 Viewer::~Viewer()
