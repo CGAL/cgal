@@ -54,21 +54,16 @@ public Q_SLOTS:
 
 void Polyhedron_demo_merge_point_sets_plugin::on_actionMergePointSets_triggered()
 {
-  CGAL::Three::Scene_interface::Item_id mainSelectionIndex = -1;
-  Scene_points_with_normal_item* mainSelectionItem = NULL;
+  CGAL::Three::Scene_interface::Item_id mainSelectionIndex
+    = scene->mainSelectionIndex();
+  Scene_points_with_normal_item* mainSelectionItem
+    = qobject_cast<Scene_points_with_normal_item*>(scene->item(mainSelectionIndex));
 
   QList<int> indices_to_remove;
   Q_FOREACH(int index, scene->selectionIndices())
     {
-      if (mainSelectionIndex == -1)
-        {
-          mainSelectionItem =
-            qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
-          if (mainSelectionItem != NULL)
-            mainSelectionIndex = index;
-          mainSelectionItem->point_set()->unselect_all();
-          continue;
-        }
+      if (index == mainSelectionIndex)
+        continue;
 
       Scene_points_with_normal_item* item =
         qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
