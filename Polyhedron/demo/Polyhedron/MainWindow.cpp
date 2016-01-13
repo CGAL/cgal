@@ -1110,7 +1110,7 @@ void MainWindow::selectAll()
 int MainWindow::getSelectedSceneItemIndex() const
 {
   QModelIndexList selectedRows = sceneView->selectionModel()->selectedIndexes();
-  if(selectedRows.size() != 5)
+  if(selectedRows.size() == 0)
     return -1;
   else {
     QModelIndex i = proxyModel->mapToSource(selectedRows.first());
