@@ -38,6 +38,7 @@
 
 #include <iterator>
 #include <list>
+#include <limits>
 
 // The following lines only for MS Visual C++
 #ifdef _MSC_VER
