@@ -42,7 +42,7 @@
 
 #include "ui_MainWindow.h"
 #include "ui_Preferences.h"
-#include "ui_Polyhedron_demo_statistics_on_polyhedron_dialog.h"
+#include "ui_Statistics_on_item_dialog.h"
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
 
@@ -1179,7 +1179,7 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
       menu->addAction(tr("Statistics..."));
       actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
       connect(actionStatistics, SIGNAL(triggered()),
-              this, SLOT(statistics_on_polyhedron()));
+              this, SLOT(statistics_on_item()));
       menu->addSeparator();
       if(!item->property("source filename").toString().isEmpty()) {
         QAction* reload = menu->addAction(tr("&Reload item from file"));
@@ -1758,26 +1758,26 @@ void MainWindow::stat_dlg_update()
 {
   if(statistics_dlg)
     statistics_dlg->hide();
-  statistics_on_polyhedron();
+  statistics_on_item();
 
 }
-void MainWindow::statistics_on_polyhedron()
+void MainWindow::statistics_on_item()
 {
   if(statistics_dlg)
     delete statistics_dlg;
   statistics_dlg = new QDialog(this);
-  Ui::Polyhedron_demo_statistics_on_polyhedron_dialog ui;
+  Ui::Statistics_on_item_dialog ui;
   ui.setupUi(statistics_dlg);
   connect(ui.okButtonBox, SIGNAL(accepted()), statistics_dlg, SLOT(accept()));
   connect(ui.updateButton, SIGNAL(clicked()), this, SLOT(stat_dlg_update()));
-  ui.label_htmltab->setText(get_polyhedron_stats());
+  ui.label_htmltab->setText(get_item_stats());
   statistics_dlg->show();
   statistics_dlg->raise();
 }
 
 /* Creates a string containing an html table. This string is constructed by appending each parts of each row, so that the data can
   depend on the number of selected items. This String is then returned.*/
-QString MainWindow::get_polyhedron_stats()
+QString MainWindow::get_item_stats()
 {
   //1st step : get all classnames of the selected items
   QList<QString> classnames;

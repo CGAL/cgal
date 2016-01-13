@@ -82,7 +82,7 @@ public Q_SLOTS:
   /// given a file extension file, returns true if `filename` matches the filter
   bool file_matches_filter(const QString& filters, const QString& filename);
   //!Prints a dialog containing statistics on the selected polyhedrons.
-  void statistics_on_polyhedron();
+  void statistics_on_item();
   //!Updates the statistics dialog.
   void stat_dlg_update();
   /*! Open a file with a given loader, and return true if it was successful.
@@ -341,7 +341,7 @@ protected:
   QList<int> getSelectedSceneItemIndices() const;
 private:
   void recurseExpand(QModelIndex index);
-  QString get_polyhedron_stats();
+  QString get_item_stats();
   QString strippedName(const QString &fullFileName);
   void setMenus(QString, QString, QAction *a);
   /// plugin black-list

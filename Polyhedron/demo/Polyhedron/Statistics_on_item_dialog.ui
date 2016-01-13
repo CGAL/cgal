@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>Polyhedron_demo_statistics_on_polyhedron_dialog</class>
- <widget class="QDialog" name="Polyhedron_demo_statistics_on_polyhedron_dialog">
+ <class>Statistics_on_item_dialog</class>
+ <widget class="QDialog" name="Statistics_on_item_dialog">
   <property name="windowModality">
    <enum>Qt::NonModal</enum>
   </property>
@@ -70,7 +70,7 @@
   <connection>
    <sender>okButtonBox</sender>
    <signal>rejected()</signal>
-   <receiver>Polyhedron_demo_statistics_on_polyhedron_dialog</receiver>
+   <receiver>Statistics_on_item_dialog</receiver>
    <slot>reject()</slot>
    <hints>
     <hint type="sourcelabel">
@@ -86,7 +86,7 @@
   <connection>
    <sender>okButtonBox</sender>
    <signal>accepted()</signal>
-   <receiver>Polyhedron_demo_statistics_on_polyhedron_dialog</receiver>
+   <receiver>Statistics_on_item_dialog</receiver>
    <slot>accept()</slot>
    <hints>
     <hint type="sourcelabel">
