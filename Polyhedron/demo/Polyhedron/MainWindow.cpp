@@ -1225,7 +1225,10 @@ void MainWindow::showSceneContextMenu(const QPoint& p) {
           return;
       }
       else
+      {
           index = proxyModel->mapToSource(modelIndex).row();
+          scene->setSelectedItemIndex(index);
+      }
   }
   else {
     index = scene->mainSelectionIndex();
