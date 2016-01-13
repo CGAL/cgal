@@ -37,7 +37,10 @@ using namespace CGAL::parameters;
 int main(int argc, char* argv[])
 {
   // Loads image
-   
+  if(argc == 1){
+    std::cerr << "Usage:  " << argv[0] << " <directory with dicom data>\n";
+    return 0;
+  }
 
   vtkDICOMImageReader*dicom_reader = vtkDICOMImageReader::New();
   dicom_reader->SetDirectoryName(argv[1]);

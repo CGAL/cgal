@@ -165,10 +165,6 @@ public:
                                          vx,vy,vz,offset));
   }
 
-#if 0
-  bool read_vtk_image_data(vtkImageData*);
-#endif // CGAL_USE_VTK
-
   // implementation in src/CGAL_ImageIO/Image_3.cpp
   void gl_draw(const float point_size,
                const unsigned char r,
