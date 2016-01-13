@@ -16,6 +16,8 @@
 #include <CGAL/Image_3.h>
 #include <CGAL/read_vtk_image_data.h>
 
+#include <boost/lexical_cast.hpp>
+
 typedef short Image_word_type;
 
 // Domain
@@ -38,10 +40,15 @@ int main(int argc, char* argv[])
 {
   // Loads image
   if(argc == 1){
-    std::cerr << "Usage:  " << argv[0] << " <directory with dicom data>\n";
+    std::cerr << "Usage:  " << argv[0] << " <directory with dicom data> iso_level=1  facet_size=1  facet_distance=0.1  cell_size=1\n";
     return 0;
   }
 
+  Image_word_type iso = (argc>2)? boost::lexical_cast<Image_word_type>(argv[2]): 1;
+  double fs = (argc>3)? boost::lexical_cast<double>(argv[3]): 1;
+  double fd = (argc>4)? boost::lexical_cast<double>(argv[4]): 0.1;
+  double cs = (argc>5)? boost::lexical_cast<double>(argv[5]): 1;
+  
   vtkDICOMImageReader*dicom_reader = vtkDICOMImageReader::New();
   dicom_reader->SetDirectoryName(argv[1]);
   
@@ -65,11 +72,11 @@ int main(int argc, char* argv[])
     return 0;
   }
   // Domain
-  Mesh_domain domain(image, std::bind1st(std::less<Image_word_type>(), -555), -1000);
+  Mesh_domain domain(image, std::bind1st(std::less<Image_word_type>(), iso), 0);
   
   // Mesh criteria
-  Mesh_criteria criteria(facet_angle=30, facet_size=6, facet_distance=1,
-                         cell_radius_edge_ratio=3, cell_size=8);
+  Mesh_criteria criteria(facet_angle=30, facet_size=fs, facet_distance=fd,
+                         cell_radius_edge_ratio=3, cell_size=cs);
   
   // Meshing
   C3t3 c3t3 = CGAL::make_mesh_3<C3t3>(domain, criteria);
