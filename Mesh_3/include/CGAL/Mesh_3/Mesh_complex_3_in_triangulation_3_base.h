@@ -403,7 +403,7 @@ public:
     CGAL::output_to_medit(os,*this,rebind,show_patches);
   }
   
-  /// Outputs the mesh to medit
+  /// Outputs the mesh to maya
   void output_to_maya(std::ofstream& os,
                       bool surfaceOnly = true) const
   {
