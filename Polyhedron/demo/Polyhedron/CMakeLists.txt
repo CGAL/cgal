@@ -181,10 +181,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_library(demo_framework SHARED
     Scene.cpp
-    Viewer.cpp #Viewer_moc.cpp
+    Viewer.cpp
     Viewer_interface_moc.cpp
     Scene_item_moc.cpp
-    Scene_item.cpp #Scene_item.moc
+    Scene_item.cpp
     Scene_group_item.cpp
     Scene_group_item_moc.cpp
     Polyhedron_demo_plugin_helper.cpp)
@@ -198,7 +198,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   add_library(scene_basic_objects SHARED
     Scene_plane_item.cpp
-    #Scene_plane_item.moc
 )
   target_link_libraries(scene_basic_objects 
     demo_framework
@@ -217,30 +216,30 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     target_link_libraries(${item_name} demo_framework ${CGAL_LIBRARIES} ${Boost_LIBRARIES})
   endmacro(add_item)
 
-  add_item(scene_c2t3_item Scene_c2t3_item.cpp)# Scene_c2t3_item.moc)
+  add_item(scene_c2t3_item Scene_c2t3_item.cpp)
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
   target_link_libraries(scene_c3t3_item scene_polyhedron_item scene_polygon_soup_item ${TBB_LIBRARIES})
-  add_item(scene_polyhedron_item Scene_polyhedron_item.cpp ${statisticsPolyhedronUI_FILES})# Scene_polyhedron_item.moc)
-  add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_polyhedron_transform_item.cpp )#Scene_polyhedron_transform_item.moc)
+  add_item(scene_polyhedron_item Scene_polyhedron_item.cpp ${statisticsPolyhedronUI_FILES})
+  add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_polyhedron_transform_item.cpp )
 
   add_item(scene_segmented_image_item Scene_segmented_image_item.cpp)
  
   # special
   target_link_libraries(scene_polyhedron_transform_item scene_polyhedron_item)
 
-  add_item(scene_combinatorial_map_item Plugins/Operations_on_polyhedra/Scene_combinatorial_map_item.cpp)# Scene_combinatorial_map_item.moc)
+  add_item(scene_combinatorial_map_item Plugins/Operations_on_polyhedra/Scene_combinatorial_map_item.cpp)
   # special
   target_link_libraries(scene_combinatorial_map_item scene_polyhedron_item)
 
-  add_item(scene_polylines_item Scene_polylines_item.cpp)# Scene_polylines_item.moc)
+  add_item(scene_polylines_item Scene_polylines_item.cpp)
 
-  add_item(scene_polyhedron_item_decorator Scene_polyhedron_item_decorator.cpp )#Scene_polyhedron_item_decorator.moc)
+  add_item(scene_polyhedron_item_decorator Scene_polyhedron_item_decorator.cpp )
   target_link_libraries(scene_polyhedron_item_decorator scene_polyhedron_item)
   
-  add_item(scene_polyhedron_item_k_ring_selection Scene_polyhedron_item_k_ring_selection.cpp)# Scene_polyhedron_item_k_ring_selection.moc)
+  add_item(scene_polyhedron_item_k_ring_selection Scene_polyhedron_item_k_ring_selection.cpp)
   target_link_libraries(scene_polyhedron_item_k_ring_selection scene_polyhedron_item)
  
-  add_item(scene_polyhedron_selection_item Scene_polyhedron_selection_item.cpp)# Scene_polyhedron_selection_item.moc)
+  add_item(scene_polyhedron_selection_item Scene_polyhedron_selection_item.cpp)
   target_link_libraries(scene_polyhedron_selection_item scene_polyhedron_item_decorator scene_polyhedron_item_k_ring_selection)
 
   add_item(scene_polyhedron_shortest_path_item Plugins/AABB_tree/Scene_polyhedron_shortest_path_item.cpp)
@@ -249,20 +248,20 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   if(EIGEN3_FOUND )
     qt5_wrap_ui( editionUI_FILES Plugins/Surface_modeling/Deform_mesh.ui )
-    add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp)# Scene_textured_polyhedron_item.moc)
+    add_item(scene_textured_polyhedron_item Scene_textured_polyhedron_item.cpp texture.cpp)
     add_item(scene_edit_polyhedron_item Plugins/Surface_modeling/Scene_edit_polyhedron_item.cpp
            ${editionUI_FILES})
     target_link_libraries(scene_edit_polyhedron_item scene_polyhedron_item scene_polyhedron_item_k_ring_selection)
   endif()
 
-  add_item(scene_implicit_function_item Scene_implicit_function_item.cpp  Color_ramp.cpp )#Scene_implicit_function_item.moc)
+  add_item(scene_implicit_function_item Scene_implicit_function_item.cpp  Color_ramp.cpp )
 
-  add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp)# Scene_polygon_soup_item.moc)
+  add_item(scene_polygon_soup_item Scene_polygon_soup_item.cpp)
   target_link_libraries(scene_polygon_soup_item scene_polyhedron_item)
-  add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp)# Scene_nef_polyhedron_item.moc
+  add_item(scene_nef_polyhedron_item Scene_nef_polyhedron_item.cpp)
   
   target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
-  add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)# Scene_points_with_normal_item.moc)
+  add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
   target_link_libraries( scene_points_with_normal_item gl_splat)
   target_link_libraries( demo_framework gl_splat)
   
