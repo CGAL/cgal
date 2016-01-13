@@ -70,7 +70,14 @@ static PTRIMAGE_FORMAT firstFormat=NULL;
 /** the Inrimage file format (default format) is initialized to null */
 static PTRIMAGE_FORMAT InrimageFormat=NULL;
 
+struct Remove_supported_file_format {
+  ~Remove_supported_file_format()
+  {
+    removeSupportedFileFormat();
+  }
+};
 
+static Remove_supported_file_format rsff;
 
 
 
