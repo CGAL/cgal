@@ -9,7 +9,7 @@ This class implements a 2D mesh generator.
 
 
 \tparam CDT must be a 2D constrained Delaunay triangulation, and type `CDT::Face` 
-should be a model of the concept `MeshFaceBase_2`. 
+should be a model of the concept `DelaunayMeshFaceBase_2`.
 The geometric traits class of the instance of `CDT` has to be 
 a model of the concept `DelaunayMeshTraits_2`. 
 
