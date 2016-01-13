@@ -174,21 +174,21 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
 
   set(SCENE_SEGMENTED_IMAGE_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_segmented_image_item")
   add_library(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} SHARED
-    Scene_segmented_image_item.cpp)# Scene_segmented_image_item.moc)
+    Scene_segmented_image_item.cpp)
   qt5_use_modules(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} Xml Script OpenGL Svg)
   target_link_libraries(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} ${SCENE_ITEM_LIB} ${QGLVIEWER_LIBRARIES} ${CGAL_LIBRARIES} ${TBB_LIBRARIES})
   set_target_properties(${SCENE_SEGMENTED_IMAGE_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_segmented_image_item_EXPORTS)
 
   set(SCENE_POLYHEDRON_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_polyhedron_item")
   add_library(${SCENE_POLYHEDRON_ITEM_LIB} SHARED
-    Scene_polyhedron_item.cpp )#Scene_polyhedron_item.moc)
+    Scene_polyhedron_item.cpp )
   qt5_use_modules(${SCENE_POLYHEDRON_ITEM_LIB} Xml Script OpenGL Svg)
   target_link_libraries(${SCENE_POLYHEDRON_ITEM_LIB} ${SCENE_ITEM_LIB}  ${QGLVIEWER_LIBRARIES} ${CGAL_LIBRARIES} ${TBB_LIBRARIES})
   set_target_properties(${SCENE_POLYHEDRON_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_polyhedron_item_EXPORTS)
 
   set(POLYGON_SOUP_LIB "${MESH_3_LIB_PREFIX}polygon_soup")
   add_library(${POLYGON_SOUP_LIB} SHARED
-    Scene_polygon_soup.cpp )#Scene_polygon_soup.moc)
+    Scene_polygon_soup.cpp )
   qt5_use_modules(${POLYGON_SOUP_LIB} Xml Script OpenGL Svg)
   target_link_libraries(${POLYGON_SOUP_LIB} ${SCENE_ITEM_LIB}  ${QGLVIEWER_LIBRARIES} ${CGAL_LIBRARIES} ${TBB_LIBRARIES})
   set_target_properties(${POLYGON_SOUP_LIB} PROPERTIES DEFINE_SYMBOL polygon_soup_EXPORTS)
@@ -196,7 +196,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
   set(SCENE_C3T3_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_c3t3_item")
   set (SCENE_C3T3_ITEM_LIB_SOURCE_FILES Scene_c3t3_item.cpp)
   ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" SCENE_C3T3_ITEM_LIB_SOURCE_FILES)
- # LIST(APPEND SCENE_C3T3_ITEM_LIB_SOURCE_FILES Scene_c3t3_item.moc)
+
   add_library(${SCENE_C3T3_ITEM_LIB} SHARED
     ${SCENE_C3T3_ITEM_LIB_SOURCE_FILES})
   qt5_use_modules(${SCENE_C3T3_ITEM_LIB} Xml Script OpenGL Svg)
@@ -205,7 +205,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
 
   set(SCENE_IMPLICIT_FUNCTION_ITEM_LIB "${MESH_3_LIB_PREFIX}scene_implicit_function_item")
   add_library(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} SHARED
-    Scene_implicit_function_item.cpp Color_ramp.cpp)#Scene_implicit_function_item.moc)
+    Scene_implicit_function_item.cpp Color_ramp.cpp)
   qt5_use_modules(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} Xml Script OpenGL Svg)
   target_link_libraries(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} ${SCENE_ITEM_LIB} ${QGLVIEWER_LIBRARIES} ${QT_LIBRARIES} ${TBB_LIBRARIES})
   set_target_properties(${SCENE_IMPLICIT_FUNCTION_ITEM_LIB} PROPERTIES DEFINE_SYMBOL scene_implicit_function_item_EXPORTS)
@@ -217,7 +217,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
       MainWindow.cpp
       Mesh_3.cpp
       ${DEMO_SRC_DIR}/Scene.cpp
-    #  MainWindow_moc.cpp
+
       Scene_moc.cpp)
     #ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" MESH_3_SOURCE_FILES)
     LIST(APPEND MESH_3_SOURCE_FILES ${UI_FILES} ${RESOURCE_FILES})
