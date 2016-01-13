@@ -1184,7 +1184,7 @@ QString Scene_polyhedron_item::compute_stats(int type)
   i = 0;
 
   // initialization : keep the original ids in memory and set them to 0
-  std::vector<int> ids;
+  std::vector<size_t> ids;
   for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it)
   {
     ids.push_back(it->id());
