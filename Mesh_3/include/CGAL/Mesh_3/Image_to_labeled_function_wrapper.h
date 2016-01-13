@@ -64,7 +64,9 @@ public:
     : r_im_(image)
     , transform(transform)
     , value_outside(value_outside)
-  {}
+  {
+    CGAL_assertion(transform(value_outside) == return_type());
+  }
 
   // Default copy constructor and assignment operator are ok
 
