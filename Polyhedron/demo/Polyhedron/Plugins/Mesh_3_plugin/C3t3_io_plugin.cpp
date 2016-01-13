@@ -2,8 +2,10 @@
 #include "Scene_c3t3_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/IO/File_avizo.h>
 #include <iostream>
 #include <fstream>
+
 
 class Polyhedron_demo_c3t3_binary_io_plugin :
   public QObject,
@@ -123,8 +125,8 @@ save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
     else if (fileinfo.suffix() == "am")
     {
       std::ofstream avizo_file (qPrintable(path));
-      c3t3_item->c3t3().output_to_avizo(avizo_file);
-          return true;
+      CGAL::output_to_avizo(avizo_file, c3t3_item->c3t3());
+      return true;
     }
     else
         return false;
