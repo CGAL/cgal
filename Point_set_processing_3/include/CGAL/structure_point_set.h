@@ -570,8 +570,8 @@ namespace internal {
 
           //creation of a 2D-grid with cell width = grid_length, and image structures
           CGAL::Bbox_2 box_2d = CGAL::bbox_2 (points_2d.begin(), points_2d.end());
-          std::size_t Nx = (box_2d.xmax() - box_2d.xmin()) / grid_length + 1;
-          std::size_t Ny = (box_2d.ymax() - box_2d.ymin()) / grid_length + 1;
+          std::size_t Nx = (std::size_t)((box_2d.xmax() - box_2d.xmin()) / grid_length) + 1;
+          std::size_t Ny = (std::size_t)((box_2d.ymax() - box_2d.ymin()) / grid_length) + 1;
           
           std::vector<std::vector<bool> > Mask (Nx, std::vector<bool> (Ny, false));
           std::vector<std::vector<bool> > Mask_border (Nx, std::vector<bool> (Ny, false));
@@ -874,7 +874,7 @@ namespace internal {
           //a la fois au moins un point de plan1 et aussi de plan
           //2 tombent dans une case (meme pas que pour les plans).
           Segment seg (Pmin,Pmax);
-          int number_of_division = std::sqrt (seg.squared_length ()) / d_DeltaEdge + 1;
+          std::size_t number_of_division = (std::size_t)(std::sqrt (seg.squared_length ()) / d_DeltaEdge) + 1;
           std::vector<std::vector<std::size_t> > division_tab (number_of_division);
 
           for (std::size_t k = 0; k < intersection_points.size(); ++ k)
