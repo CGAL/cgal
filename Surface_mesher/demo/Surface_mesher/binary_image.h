@@ -44,9 +44,16 @@ public:
   typedef FT_ FT;
 
 public:
-  CBinary_image_3() : Image_3(), interpolate_(true)
+  CBinary_image_3()
+    : Image_3(), interpolate_(true)
   {
   }
+
+  CBinary_image_3(const Image_3& bi)
+    : Image_3(bi), interpolate_(true)
+  {
+  }
+
 
   CBinary_image_3(const CBinary_image_3& bi)
     : Image_3(bi), interpolate_(bi.interpolate_),labellized_(bi.labellized_)
@@ -56,9 +63,6 @@ public:
     max_value = bi.max_value;
   }
 
-  ~CBinary_image_3()
-  {
-  }
 
   void finish_open() {
     CGAL_IMAGE_IO_CASE(image_ptr.get(),

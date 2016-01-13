@@ -64,6 +64,7 @@ public:
 
 class CGAL_IMAGEIO_EXPORT Image_3
 {
+
   struct Image_deleter {
     void operator()(_image* image)
     {
@@ -164,7 +165,7 @@ public:
                                          vx,vy,vz,offset));
   }
 
-#ifdef CGAL_USE_VTK
+#if 0
   bool read_vtk_image_data(vtkImageData*);
 #endif // CGAL_USE_VTK
 

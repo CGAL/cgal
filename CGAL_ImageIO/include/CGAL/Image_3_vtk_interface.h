@@ -23,7 +23,6 @@
 
 #include <CGAL/config.h>
 
-#ifdef CGAL_USE_VTK
 #include <CGAL/Image_3.h>
 #include <vtkImageData.h>
 #include <vtkPointData.h>
@@ -125,8 +124,6 @@ struct VTK_type_generator<boost::uint32_t> {
 } // end vtk_image_sharing_same_data_pointer
 
 } //end namespace CGAL
-
-#endif // CGAL_USE_VTK
 
 
 #endif // CGAL_IMAGE_3_VTK_INTERFACE_H

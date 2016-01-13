@@ -157,7 +157,7 @@ void Image_3::gl_draw_bbox(const float line_width,
 
 } // end namespace CGAL
 
-#ifdef CGAL_USE_VTK
+#if 0
 
 #include <vtkImageData.h>
 #include <CGAL/Image_3_vtk_interface.h>
