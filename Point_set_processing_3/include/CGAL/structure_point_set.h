@@ -964,9 +964,6 @@ namespace internal {
                     pts2.push_back (m_points[inde]);
                 }
 
-              Point centroid1 = CGAL::centroid (pts1.begin (), pts1.end ());
-              Point centroid2 = CGAL::centroid (pts2.begin (), pts2.end ());
-
               Line line_p1;
               CGAL::Object ob_temp1 = CGAL::intersection (static_cast<Plane> (*plane1), ortho);
               if (!assign(line_p1, ob_temp1))
@@ -975,11 +972,11 @@ namespace internal {
                 std::cerr<<"Warning: bad plane/plane intersection"<<std::endl;
 #endif
                 }
-              else
+              else if (!(pts1.empty()))
                 {
                   Vector vecp1 = line_p1.to_vector();
                   vecp1 = vecp1/ std::sqrt (vecp1 * vecp1);
-                  Vector vtest1 (anchor, centroid1);
+                  Vector vtest1 (anchor, CGAL::centroid (pts1.begin (), pts1.end ()));
                   if (vtest1 * vecp1<0)
                     vecp1 = -vecp1;
 
@@ -1000,11 +997,11 @@ namespace internal {
                   std::cerr<<"Warning: bad plane/plane intersection"<<std::endl;
 #endif
                 }
-              else
+              else if (!(pts2.empty()))
                 {
                   Vector vecp2 = line_p2.to_vector();
                   vecp2 = vecp2 / std::sqrt (vecp2 * vecp2);
-                  Vector vtest2 (anchor, centroid2);
+                  Vector vtest2 (anchor, CGAL::centroid (pts2.begin (), pts2.end ()));
                   if (vtest2 * vecp2 < 0)
                     vecp2 =- vecp2;
 
