@@ -256,7 +256,8 @@ public Q_SLOTS:
 
       if (poly_item == NULL)
       {
-        std::cout << "Item " << index << " is not a Polyhedron, remeshing skipped\n";
+        std::cout << scene->item(index)->name().data()
+          << " is not a Polyhedron, remeshing skipped\n";
         continue;
       }
       else if (!parameters_set)
