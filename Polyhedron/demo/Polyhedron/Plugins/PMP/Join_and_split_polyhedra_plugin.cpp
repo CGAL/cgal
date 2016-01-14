@@ -63,18 +63,15 @@ public Q_SLOTS:
 
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_triggered()
 {
-  CGAL::Three::Scene_interface::Item_id mainSelectionIndex = -1;
-  Scene_polyhedron_item* mainSelectionItem = NULL;
-
+  CGAL::Three::Scene_interface::Item_id mainSelectionIndex
+    = scene->mainSelectionIndex();
+  Scene_polyhedron_item* mainSelectionItem
+    = qobject_cast<Scene_polyhedron_item*>(scene->item(mainSelectionIndex));
 
   QList<int> indices_to_remove;
   Q_FOREACH(int index, scene->selectionIndices()) {
-    if (mainSelectionIndex==-1){
-      mainSelectionItem =
-        qobject_cast<Scene_polyhedron_item*>(scene->item(index));
-      if(mainSelectionItem!=NULL) mainSelectionIndex=index;
+    if (index == mainSelectionIndex)
       continue;
-    }
 
     Scene_polyhedron_item* item =
       qobject_cast<Scene_polyhedron_item*>(scene->item(index));
