@@ -31,6 +31,12 @@
 #include <queue>
 #include <sstream>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include "tbb/parallel_for.h"
+#include "tbb/blocked_range.h"
+#include "tbb/partitioner.h"
+#endif
+
 #include "ui_Isotropic_remeshing_dialog.h"
 
 using namespace CGAL::Three;
@@ -234,23 +240,15 @@ public Q_SLOTS:
 
   void isotropic_remeshing_of_several_polyhedra()
   {
-    typedef boost::graph_traits<Polyhedron>::edge_descriptor     edge_descriptor;
-    typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
-    typedef boost::graph_traits<Polyhedron>::face_descriptor     face_descriptor;
-
     // Remeshing parameters
     bool parameters_set = false;
     bool edges_only;
     double target_length;
-    int nb_iter;
+    std::size_t nb_iter;
     bool protect;
 
     const QList<int> indices = scene->selectionIndices();
-
-    // wait cursor
-    QApplication::setOverrideCursor(Qt::WaitCursor);
-    int total_time = 0;
-    BOOST_FOREACH(int index, indices)
+    BOOST_FOREACH(int index, scene->selectionIndices())
     {
       Scene_polyhedron_item* poly_item =
         qobject_cast<Scene_polyhedron_item*>(scene->item(index));
@@ -265,7 +263,7 @@ public Q_SLOTS:
         QDialog dialog(mw);
         Ui::Isotropic_remeshing_dialog ui = remeshing_dialog(&dialog, poly_item);
         ui.objectName->setText(QString::number(indices.size())
-                              .append(QString(" items to be remeshed")));
+          .append(QString(" items to be remeshed")));
         int i = dialog.exec();
         if (i == QDialog::Rejected)
         {
@@ -279,58 +277,173 @@ public Q_SLOTS:
         protect = ui.protect_checkbox->isChecked();
 
         parameters_set = true;
+        break;
       }
-      
-      const Polyhedron& pmesh = *poly_item->polyhedron();
+    }
+    if(!parameters_set)
+      std::cout << "Remeshing aborted" << std::endl;
 
-      //fill face_index property map
-      boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
-          = get(CGAL::face_index, pmesh);
-      unsigned int id = 0;
-      BOOST_FOREACH(face_descriptor f, faces(pmesh)) { put(fim, f, id++); }
+    // wait cursor
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    int total_time = 0;
 
+    std::vector<Scene_polyhedron_item*> selection;
+    Q_FOREACH(int sel_i, scene->selectionIndices())
+    {
+      Scene_polyhedron_item* poly_item =
+        qobject_cast<Scene_polyhedron_item*>(scene->item(sel_i));
+      if (poly_item == NULL)
+        std::cout << "Item " << sel_i << " is not a Polyhedron, remeshing skipped\n";
+      else
+        selection.push_back(poly_item);
+    }
+
+#ifdef CGAL_LINKED_WITH_TBB
+    QTime time;
+    time.start();
+
+      tbb::parallel_for(
+        tbb::blocked_range<std::size_t>(0, selection.size()),
+        Remesh_polyhedron_item_for_parallel_for<Remesh_polyhedron_item>(
+          selection, edges_only, target_length, nb_iter, protect));
+
+    total_time = time.elapsed();
+#else
+    Remesh_polyhedron_item remesher(edges_only, target_length, nb_iter, protect);
+    BOOST_FOREACH(Scene_polyhedron_item* poly_item, selection)
+    {
       QTime time;
       time.start();
-      if (edges_only)
+
+        remesher.remesh(poly_item);
+
+      total_time += time.elapsed();
+      std::cout << "Remeshing of item "<< index << " done in "
+                << time.elapsed() << " ms" << std::endl;
+    }
+#endif
+    std::cout << "Remeshing of all selected items done in "
+      << total_time << " ms" << std::endl;
+
+    BOOST_FOREACH(Scene_polyhedron_item* poly_item, selection)
+    {
+      poly_item->invalidate_buffers();
+      Q_EMIT poly_item->itemChanged();
+    }
+    
+    // default cursor
+    QApplication::restoreOverrideCursor();
+  }
+
+private:
+  struct Remesh_polyhedron_item
+  {
+    typedef boost::graph_traits<Polyhedron>::edge_descriptor     edge_descriptor;
+    typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+    typedef boost::graph_traits<Polyhedron>::face_descriptor     face_descriptor;
+
+    bool edges_only_;
+    double target_length_;
+    std::size_t nb_iter_;
+    bool protect_;
+
+  protected:
+    void remesh(Scene_polyhedron_item* poly_item) const
+    {
+      //fill face_index property map
+      boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
+        = get(CGAL::face_index, *poly_item->polyhedron());
+      unsigned int id = 0;
+      BOOST_FOREACH(face_descriptor f, faces(*poly_item->polyhedron()))
+      { put(fim, f, id++); }
+
+      if (edges_only_)
       {
         std::vector<halfedge_descriptor> border;
         CGAL::Polygon_mesh_processing::border_halfedges(
-                 faces(*poly_item->polyhedron())
-               , std::back_inserter(border)
-               , pmesh);
+          faces(*poly_item->polyhedron())
+          , std::back_inserter(border)
+          , *poly_item->polyhedron());
         std::vector<edge_descriptor> border_edges;
         BOOST_FOREACH(halfedge_descriptor h, border)
-          border_edges.push_back(edge(h, pmesh));
+          border_edges.push_back(edge(h, *poly_item->polyhedron()));
 
         CGAL::Polygon_mesh_processing::split_long_edges(*poly_item->polyhedron()
-                                                      , border_edges
-                                                      , target_length);
+          , border_edges
+          , target_length_);
       }
       else
       {
         CGAL::Polygon_mesh_processing::isotropic_remeshing(
-               *poly_item->polyhedron()
-              , faces(*poly_item->polyhedron())
-              , target_length
-              , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
-              .protect_constraints(protect));
+          *poly_item->polyhedron()
+          , faces(*poly_item->polyhedron())
+          , target_length_
+          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter_)
+          .protect_constraints(protect_));
       }
-      total_time += time.elapsed();
-      std::cout << "Remeshing of item "<< index << " done in "
-                << time.elapsed() << " ms" << std::endl;
-
-      poly_item->invalidate_buffers();
-      Q_EMIT poly_item->itemChanged();
     }
-    std::cout << "Remeshing of all seletected items done in"
-              << total_time << " ms" << std::endl;
 
-    // default cursor
-    QApplication::restoreOverrideCursor();
+  public:
+    Remesh_polyhedron_item(
+      const bool edges_only,
+      const double target_length,
+      const std::size_t nb_iter,
+      const bool protect)
+      : edges_only_(edges_only)
+      , target_length_(target_length)
+      , nb_iter_(nb_iter)
+      , protect_(protect)
+    {}
 
-  }
+    Remesh_polyhedron_item(const Remesh_polyhedron_item& remesh)
+      : edges_only_(remesh.edges_only_)
+      , target_length_(remesh.target_length_)
+      , nb_iter_(remesh.nb_iter_)
+      , protect_(remesh.protect_)
+    {}
 
-private:
+    void operator()(Scene_polyhedron_item* poly_item) const
+    {
+      remesh(poly_item);
+    }
+  };
+
+#ifdef CGAL_LINKED_WITH_TBB
+  template<typename RemeshFunctor>
+  struct Remesh_polyhedron_item_for_parallel_for
+    : RemeshFunctor
+  {
+    const std::vector<Scene_polyhedron_item*>& selection_;
+
+  public:
+    // Constructor
+    Remesh_polyhedron_item_for_parallel_for(
+      const std::vector<Scene_polyhedron_item*>& selection,
+      const bool edges_only,
+      const double target_length,
+      const std::size_t nb_iter,
+      const bool protect)
+      : RemeshFunctor(edges_only, target_length, nb_iter, protect)
+      , selection_(selection)
+    {
+      ;
+    }
+
+    // Constructor
+    Remesh_polyhedron_item_for_parallel_for(
+      const Remesh_polyhedron_item_for_parallel_for &remesh)
+      : RemeshFunctor(remesh)
+      , selection_(remesh.selection_)
+    {}
+
+    // operator()
+    void operator()(const tbb::blocked_range<size_t>& r) const
+    {
+      for (size_t i = r.begin(); i != r.end(); ++i)
+        RemeshFunctor::remesh(selection_[i]);
+    }
+  };
+#endif
 
   Ui::Isotropic_remeshing_dialog
   remeshing_dialog(QDialog* dialog,
