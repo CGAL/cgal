@@ -285,11 +285,13 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
   Q_ASSERT(m_points != NULL);
 
   m_points->clear();
+
+  Custom_ply_interpreter<CGAL::Ply_read_number> interpreter (m_points, m_colors);
+  
   bool ok = stream &&
-            CGAL::read_ply_points_and_normals(stream,
-                                              std::back_inserter(*m_points),
-                                              CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())) &&
-            !isEmpty();
+    CGAL::read_ply_custom_points (stream, interpreter, Kernel()) &&
+    !isEmpty();
+
   if (ok)
     {
       for (Point_set::iterator it=m_points->begin(),
