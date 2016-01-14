@@ -36,16 +36,12 @@ Its name must be of the form Polyhedron_demo_xxxx_yyyy_plugin. \n
     polyhedron_demo_plugin(xxx_yyyy_plugin Polyhedron_demo_xxx_yyyy_plugin ${xxx_yyyyUI_FILES})
     #if the plugin uses external libraries like scene_items
     target_link_libraries(xxx_yyyy_plugin scene_polygon_xxxx_yyyy_item scene_xxxx_zzzz_item)
-    
-And in the main CMakeLists.txt, you must add the following line:
-
-    add_subdirectory(Xxxx_yyyy_plugin)
 
   [init]: @ref CGAL::Three::Polyhedron_demo_plugin_helper#init(QMainWindow *, Scene_interface *)
   The class must contain the following lines :\n
 
     Q_OBJECT\n
-    Q_INTERFACES(Polyhedron_demo_plugin_interface)\n
+    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)\n
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")\n
 
 In the function [init], get a reference to the `Scene`  and to the `MainWindow`. Then, create and link the actions of the plugin.\n
@@ -100,9 +96,11 @@ in your constructor. You can populate the dialog in the action, using `dialog.sh
 
 This section describes how to add a dock widget to the application.
 Just like with the Dialog, create a new Qt Designer form (file->New file or Project->Qt->Qt Designer Form), choose `QDockWidget in Widgets, and add it to the project in the CMakeLists.txt :
+
     qt5_wrap_ui( exampleUI_FILES dock_example.ui )
     polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES})
     target_link_libraries(example_plugin scene_polyhedron_item)
+
 Edit the ui file with the editor, then add the following line to your plugin file:
 ~~~~~~~~~~~~~{.cpp}
     #include "ui_dock_example.h"
