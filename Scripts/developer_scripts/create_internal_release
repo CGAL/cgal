@@ -7,6 +7,7 @@ use Cwd;
 use File::Find;
 use Getopt::Std;
 use File::Spec;
+use File::Temp;
 use Archive::Tar;
 use Archive::Tar::File;
 use File::Copy;
@@ -159,10 +160,12 @@ sub install_packages() {
     }
     print "\n";
     system(@command);
+
     # generate the list of header file per package that not in an internal subdirectory. Files start with CGAL
+    $tempdir = File::Temp->newdir();
     @filelistcmd = ('tar', '-tf', "$RELEASEDIR/temppack.tar", '--wildcards', "./include/\*\*.h",
                     "--transform=s/.\\\/include\\\///", '--show-transformed-names',
-                    '--exclude=**/internal', "--index-file=/tmp/$package_name.txt");
+                    '--exclude=**/internal', "--index-file=$tempdir/$package_name.txt");
     system(@filelistcmd);
     move("$RELEASEDIR/temppack.tar", "$RELEASEDIR/$VERSION/");
 
@@ -197,9 +200,9 @@ sub install_packages() {
     }
     system('tar', '-xf', "temppack.tar");
     if(-d "$RELEASEDIR/$VERSION/doc/$package_name/") {
-      system("mv", ,"/tmp/$package_name.txt", "$RELEASEDIR/$VERSION/doc/$package_name/filelist.txt");
+      system("mv", ,"$tempdir/$package_name.txt", "$RELEASEDIR/$VERSION/doc/$package_name/filelist.txt");
     } else {
-      system("rm", ,"/tmp/$package_name.txt");
+      system("rm", ,"$tempdir/$package_name.txt");
     }
 
 #    $tmp_package_name = "temp_${package_name}";
