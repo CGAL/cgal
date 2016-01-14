@@ -11,16 +11,10 @@
 #include "ui_Clip_polyhedron_plugin.h"
 #include "Viewer.h"
 
-//Helps Windows to manage its dll
-#ifdef scene_triangle_item_EXPORTS
-#  define SCENE_CLIPPING_PLANE_EXPORT Q_DECL_EXPORT
-#else
-#  define SCENE_CLIPPING_PLANE_EXPORT Q_DECL_IMPORT
-#endif
 
 using namespace CGAL::Three;
 // The special 2 faces plane
-class SCENE_CLIPPING_PLANE_EXPORT Scene_clipping_plane_item : public Scene_plane_item
+class Scene_clipping_plane_item : public Scene_plane_item
 {
   Q_OBJECT
 
@@ -91,7 +85,7 @@ private:
 }; //end of class Scene_triangle_item
 
 
-class Clip_polyhedron_plugin :
+class Q_DECL_EXPORT Clip_polyhedron_plugin :
     public QObject,
     public CGAL::Three::Polyhedron_demo_plugin_helper
 {
