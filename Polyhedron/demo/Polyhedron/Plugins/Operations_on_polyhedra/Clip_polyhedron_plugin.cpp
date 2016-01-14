@@ -186,18 +186,27 @@ public Q_SLOTS:
       {
         if(ui_widget.close_checkBox->isChecked() && poly->polyhedron()->is_closed())
         {
-          Scene_polyhedron_item* new_item = new Scene_polyhedron_item(CGAL::corefinement::clip_polyhedron(*(poly->polyhedron()),plane->plane()));
-          new_item->setName(poly->name());
-          new_item->setColor(poly->color());
-          new_item->setRenderingMode(poly->renderingMode());
-          new_item->setVisible(poly->visible());
-          new_item->invalidate_buffers();
-          new_item->setProperty("source filename", poly->property("source filename"));
-          scene->replaceItem(scene->item_id(poly),new_item);
-          delete poly;
-          new_item->invalidate_buffers();
-          viewer->updateGL();
-          messages->information(QString("%1 clipped").arg(new_item->name()));
+          Polyhedron * polyhedron = CGAL::corefinement::clip_polyhedron(*(poly->polyhedron()),plane->plane());
+          if(polyhedron)
+          {
+            Scene_polyhedron_item* new_item = new Scene_polyhedron_item(polyhedron);
+            new_item->setName(poly->name());
+            new_item->setColor(poly->color());
+            new_item->setRenderingMode(poly->renderingMode());
+            new_item->setVisible(poly->visible());
+            new_item->invalidate_buffers();
+            new_item->setProperty("source filename", poly->property("source filename"));
+            scene->replaceItem(scene->item_id(poly),new_item);
+            delete poly;
+            new_item->invalidate_buffers();
+            viewer->updateGL();
+            messages->information(QString("%1 clipped").arg(new_item->name()));
+          }
+          else
+          {
+             messages->information(QString("Could not clip %1 : returned polyhedron is null.").arg(poly->name()));
+             delete polyhedron;
+          }
         }
         else
         {
