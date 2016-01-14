@@ -103,6 +103,7 @@ else
       convex_hull_plugin \
       corefinement_plugin \
       cut_plugin \
+      clip_polyhedron_plugin \
       demo_framework \
       edit_polyhedron_plugin \
       features_detection_plugin \
