@@ -29,6 +29,7 @@
 #include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
+#include <CGAL/convex_hull_3.h>
 
 namespace CGAL{
 namespace corefinement{
@@ -148,9 +149,81 @@ Polyhedron clip_to_bbox(const Bbox_3& bbox, const Plane_3& plane)
   dt.insert(intersection_points.begin(),
             intersection_points.end());
 
+  // tangency with the bbox -> no intersection
+  if (dt.dimension()!=2) return P;
+
   //now create the polyhedron from the triangulation
   internal::Builder_from_T_2< typename Polyhedron::HalfedgeDS,DT > builder(dt);
   P.delegate(builder);
+
+  return P;
+}
+
+template <class Polyhedron, class Plane_3>
+Polyhedron clip_bbox(const Bbox_3& bbox, const Plane_3& plane)
+{
+  typedef typename Polyhedron::Traits::Kernel Kernel;
+  typedef typename Kernel::Point_3 Point_3;
+  typedef typename Kernel::Segment_3 Segment_3;
+  cpp11::array<typename Kernel::Point_3,8> corners= {{
+    Point_3(bbox.xmin(),bbox.ymin(),bbox.zmin()),
+    Point_3(bbox.xmin(),bbox.ymax(),bbox.zmin()),
+    Point_3(bbox.xmax(),bbox.ymax(),bbox.zmin()),
+    Point_3(bbox.xmax(),bbox.ymin(),bbox.zmin()),
+    Point_3(bbox.xmin(),bbox.ymin(),bbox.zmax()),
+    Point_3(bbox.xmin(),bbox.ymax(),bbox.zmax()),
+    Point_3(bbox.xmax(),bbox.ymax(),bbox.zmax()),
+    Point_3(bbox.xmax(),bbox.ymin(),bbox.zmax())
+  }};
+
+  cpp11::array<CGAL::Oriented_side,8> orientations = {{
+    plane.oriented_side(corners[0]),
+    plane.oriented_side(corners[1]),
+    plane.oriented_side(corners[2]),
+    plane.oriented_side(corners[3]),
+    plane.oriented_side(corners[4]),
+    plane.oriented_side(corners[5]),
+    plane.oriented_side(corners[6]),
+    plane.oriented_side(corners[7])
+  }};
+
+  std::vector<Point_3> points;
+  // first look for intersections at corners
+  for (int i=0; i<8; ++i)
+    if (orientations[i]==ON_ORIENTED_BOUNDARY)
+      points.push_back(corners[i]);
+  // second look for intersections on edges
+  cpp11::array<int,24> edge_indices = {{ // 2 *12 edges
+    0,1, 1,2, 2,3, 3,0, // bottom face edges
+    4,5, 5,6, 6,7, 7,4, // top face edges
+    0,4, 1,5, 2,6, 3,7
+  }};
+
+  for (int i=0; i<12; ++i)
+  {
+    int i1=edge_indices[2*i], i2=edge_indices[2*i+1];
+    if (orientations[i1]==ON_ORIENTED_BOUNDARY) continue;
+    if (orientations[i2]==ON_ORIENTED_BOUNDARY) continue;
+    if (orientations[i1]!=orientations[i2])
+      points.push_back(
+        get<Point_3>(
+          *CGAL::intersection(plane, Segment_3(corners[i1], corners[i2]) )
+        )
+      );
+  }
+
+  Polyhedron P;
+
+  //if less that 3 points there will be nothing to clipping.
+  if (points.size()<3) return P;
+
+  for (int i=0; i<8; ++i)
+    if (orientations[i]==ON_NEGATIVE_SIDE)
+      points.push_back(corners[i]);
+
+  // take the convex hull of the points on the negative side+intersection points
+  // overkill...
+  CGAL::convex_hull_3(points.begin(), points.end(), P);
 
   return P;
 }
@@ -178,7 +251,7 @@ Polyhedron* clip_polyhedron(const Polyhedron& P, const Plane_3& p)
   double zd=(bbox.zmax()-bbox.zmin())/100;
   bbox=CGAL::Bbox_3(bbox.xmin()-xd, bbox.ymin()-yd, bbox.zmin()-zd,
                     bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
-  Polyhedron clipping_polyhedron=clip_to_bbox<Polyhedron>(bbox, p);
+  Polyhedron clipping_polyhedron=clip_bbox<Polyhedron>(bbox, p);
 
   if (clipping_polyhedron.empty()) //no intersection, result is all or nothing
   {
