@@ -437,7 +437,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     typedef Kernel::Vector_3	    Vector;
     typedef Polyhedron::Facet_iterator Facet_iterator;
     typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
-    self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect(*poly);
 
     Facet_iterator f = poly->facets_begin();
 
@@ -1141,7 +1140,7 @@ QString Scene_polyhedron_item::compute_stats(int type)
 
   double mini, maxi, ave;
   angles(poly, mini, maxi, ave);
-
+  self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect(*poly);
   QString nb_vertices(QString::number(poly->size_of_vertices())),
       nb_facets(QString::number(poly->size_of_facets())),
       nbborderedges(QString::number(poly->size_of_border_halfedges())),
@@ -1184,7 +1183,7 @@ QString Scene_polyhedron_item::compute_stats(int type)
   i = 0;
 
   // initialization : keep the original ids in memory and set them to 0
-  std::vector<size_t> ids;
+  std::vector<std::size_t> ids;
   for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it)
   {
     ids.push_back(it->id());
