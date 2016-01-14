@@ -40,6 +40,11 @@ There are five types of checks.
 <LI><B>Static assertions</B>
       are compile-time assertions, used <I>e.g.</I> to verify the values of compile-time
       constants or compare types for (in)equality.
+<LI><B>Destructor assertions</B>
+      These are checks which can be made within normal clean up of an object.
+      A special macro `CGAL_destructor_assertion` is provided to ensure these
+      checks are not made when the object is being cleaned up during exception
+      handling.
 </UL>
 
 The according macro names all have the format `CGAL_<check_type>` where
@@ -50,6 +55,7 @@ The according macro names all have the format `CGAL_<check_type>` where
  <LI>`assertion`
  <LI>`warning`
  <LI>`static_assertion`
+ <LI>`destructor_assertion`
 </UL>
 
 Failures of the first three types are errors and lead to a halt of the
@@ -235,6 +241,10 @@ safety are: Appendix E of \cgalCite{cgal:s-cpl-97} (also available at
 <A HREF="http://www.research.att.com/~bs/3rd_safe0.html"><TT>http://www.research.att.com/~bs/3rd_safe0.html</TT></A>),
 and \cgalCite{cgal:a-esgc-98} (also available at
 <A HREF="http://www.boost.org/more/generic_exception_safety.html"><TT>http://www.boost.org/more/generic_exception_safety.html</TT></A>).
+Any destructor which might throw an exception, including a destructor which
+uses the `CGAL_destructor_assertion` macro, should be marked with the
+`CGAL_NOEXCEPT(false)` macro. This macro provides future compatibility with
+C++11 and above, which provides the `noexcept` keyword.
 
 \section secchecks_req_and_rec Requirements and recommendations 
 
