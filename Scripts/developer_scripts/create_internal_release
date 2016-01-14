@@ -4,6 +4,7 @@
 use warnings;
 
 use Cwd;
+use Capture::Tiny ':all';
 use File::Find;
 use Getopt::Std;
 use File::Spec;
@@ -166,7 +167,10 @@ sub install_packages() {
     @filelistcmd = ('tar', '-tf', "$RELEASEDIR/temppack.tar", '--wildcards', "./include/\*\*.h",
                     "--transform=s/.\\\/include\\\///", '--show-transformed-names',
                     '--exclude=**/internal', "--index-file=$tempdir/$package_name.txt");
-    system(@filelistcmd);
+    ($stdout, $stderr, $exit) = capture {
+      system(@filelistcmd);
+    };
+
     move("$RELEASEDIR/temppack.tar", "$RELEASEDIR/$VERSION/");
 
     chdir "$RELEASEDIR/$VERSION" or die;
