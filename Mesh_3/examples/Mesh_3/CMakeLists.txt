@@ -8,9 +8,6 @@ cmake_minimum_required(VERSION 2.8.11)
 
 
 include_directories(../../include)
-include_directories(../../../Triangulation_3/include)
-include_directories(../../../STL_Extension/include)
-include_directories(../../../AABB_tree/include)
 add_definitions(-DCGAL_MESH_3_NO_DEPRECATED_SURFACE_INDEX
                 -DCGAL_MESH_3_NO_DEPRECATED_C3T3_ITERATORS)
 
@@ -48,6 +45,21 @@ if ( CGAL_FOUND )
   endif()
 
 
+ set(VTK_LIBS "")
+      find_package(VTK QUIET COMPONENTS vtkImagingGeneral  vtkIOImage NO_MODULE)
+      if(VTK_FOUND)
+          include(${VTK_USE_FILE})
+          if ("${VTK_VERSION_MAJOR}" GREATER "5")
+            message(STATUS "VTK found")
+            set( VTK_LIBS vtkImagingGeneral vtkIOImage )
+          else()
+            message(STATUS "VTK version 6.0 or greater is required")
+          endif()
+      else()
+        message(STATUS "VTK was not found")
+      endif()
+
+
   if ( Boost_FOUND AND Boost_VERSION GREATER 103400 )
     include( CGAL_CreateSingleSourceCGALProgram )
 
@@ -62,6 +74,11 @@ if ( CGAL_FOUND )
    create_single_source_cgal_program( "mesh_polyhedral_domain.cpp" )
     create_single_source_cgal_program( "mesh_polyhedral_domain_with_features.cpp" )
     if( WITH_CGAL_ImageIO )
+      if( VTK_FOUND AND "${VTK_VERSION_MAJOR}" GREATER "5" )
+        add_executable ( mesh_3D_gray_vtk_image mesh_3D_gray_vtk_image.cpp )
+        target_link_libraries(  mesh_3D_gray_vtk_image ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${VTK_LIBS}) 
+      endif()
+ 
       if( CGAL_ImageIO_USE_ZLIB )
         create_single_source_cgal_program( "mesh_optimization_example.cpp" )
         create_single_source_cgal_program( "mesh_optimization_lloyd_example.cpp" )

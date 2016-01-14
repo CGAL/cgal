@@ -325,6 +325,9 @@ void Volume::only_in()
 }
 
 #ifdef CGAL_USE_VTK
+
+#include <CGAL/read_vtk_image_data.h>
+
 #include <vtkImageData.h>
 #include <vtkDICOMImageReader.h>
 #include <vtkImageReader.h>
@@ -368,7 +371,8 @@ bool Volume::opendir(const QString& dirname)
     smoother->Update();
     vtk_image = smoother->GetOutput();
     vtk_image->Print(std::cerr);
-    if(!m_image.read_vtk_image_data(vtk_image))
+    m_image = CGAL::read_vtk_image_data(vtk_image);
+    if(m_image.image() == 0)
     {
       QMessageBox::warning(mw, mw->windowTitle(),
                            tr("Error with file <tt>%1/</tt>:\nunknown file format!").arg(dirname));
@@ -418,7 +422,8 @@ bool Volume::open_vtk(const QString& filename)
     vtk_reader->Print(std::cerr);
     vtk_image = vtk_reader->GetOutput();
     vtk_image->Print(std::cerr);
-    if(!m_image.read_vtk_image_data(vtk_image))
+    m_image = CGAL::read_vtk_image_data(vtk_image);
+    if(m_image.image() == NULL)
     {
       QMessageBox::warning(mw, mw->windowTitle(),
                            tr("Error with file <tt>%1</tt>:\nunknown file format!").arg(filename));
@@ -485,7 +490,8 @@ bool Volume::open_xt(const QString& filename)
     vtk_reader->Print(std::cerr);
     vtkImageData* vtk_image = vtk_reader->GetOutput();
     vtk_image->Print(std::cerr);
-    if(!m_image.read_vtk_image_data(vtk_image))
+    m_image = CGAL::read_vtk_image_data(vtk_image);
+    if(m_image.image() != NULL)
     {
       QMessageBox::warning(mw, mw->windowTitle(),
                            tr("Error with file <tt>%1</tt>:\nunknown file format!").arg(filename));
