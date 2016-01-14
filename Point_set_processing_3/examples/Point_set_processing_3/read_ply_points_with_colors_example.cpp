@@ -18,7 +18,8 @@ typedef std::pair<Point, Vector> Pwn;
 // Color is red/green/blue array
 typedef CGAL::cpp11::array<unsigned char, 3> Color;
 
-
+// Custom interpreter that reads points, normals and colors and stores
+// them in the appropriate container
 class My_ply_interpreter
 {
   std::vector<Pwn>& points;
@@ -30,6 +31,7 @@ public:
     : points (points), colors (colors)
   { }
 
+  // Tests if input file contains the right properties
   bool is_applicable (const std::vector<CGAL::Ply_read_number*>& readers)
   {
     std::size_t nb_property_found = 0;
@@ -49,7 +51,8 @@ public:
 
     return (nb_property_found == 9);
   }
-      
+
+  // Describes how to read one line (= one point object)
   void operator() (const std::vector<CGAL::Ply_read_number*>& readers)
   {
     FT x, y, z, nx, ny, nz;
@@ -101,6 +104,7 @@ int main(int argc, char*argv[])
       return EXIT_FAILURE;
     }
 
+  // Display points with pure r/g/b colors
   for (std::size_t i = 0; i < points.size (); ++ i)
     if (colors[i][0] == 255 && colors[i][1] == 0 && colors[i][2] == 0)
       std::cerr << "Point " << points[i].first << " is red." << std::endl;
