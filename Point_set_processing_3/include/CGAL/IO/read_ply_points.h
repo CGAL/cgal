@@ -193,7 +193,7 @@ namespace internal {
             typename PointPMap,
             typename NormalPMap,
             typename Kernel>
-  class Ply_builder_point_3
+  class Ply_interpreter_point_and_normal_3
   {
     // value_type_traits is a workaround as back_insert_iterator's value_type is void
     // typedef typename value_type_traits<OutputIterator>::type Enriched_point;
@@ -207,7 +207,7 @@ namespace internal {
     NormalPMap& m_normal_pmap;
     
   public:
-    Ply_builder_point_3 (OutputIterator output,
+    Ply_interpreter_point_and_normal_3 (OutputIterator output,
                          PointPMap& point_pmap,
                          NormalPMap& normal_pmap)
       : m_output (output),
@@ -289,7 +289,7 @@ namespace internal {
             if (!(iss >> signature) || (signature != "ply"))
               {
                 // if wrong file format
-                std::cerr << "Incorrect file format line " << lineNumber << " of file" << std::endl;
+                std::cerr << "Error: incorrect file format line " << lineNumber << " of file" << std::endl;
                 return false;
               }
           }
@@ -308,7 +308,7 @@ namespace internal {
             else if (format_string == "binary_big_endian") format = BINARY_BIG_ENDIAN;
             else
               {
-                std::cerr << "Unknown file format \"" << format_string << "\" line " << lineNumber << std::endl;
+                std::cerr << "Error: unknown file format \"" << format_string << "\" line " << lineNumber << std::endl;
                 return false;
               }
           }
@@ -392,10 +392,10 @@ namespace internal {
   }
 
   
-  template < typename PlyBuilder,
+  template < typename PlyInterpreter,
              typename Kernel >
   bool read_ply_content (std::istream& stream,
-                         PlyBuilder& builder,
+                         PlyInterpreter& interpreter,
                          const std::size_t nb_points,
                          std::vector<Ply_read_number*>& readers,
                          const Kernel& /*kernel*/)
@@ -407,7 +407,7 @@ namespace internal {
         for (std::size_t i = 0; i < readers.size (); ++ i)
           readers[i]->get (stream);
         
-        builder (readers);
+        interpreter (readers);
 
         points_read++;
       }
@@ -422,6 +422,45 @@ namespace internal {
 } //namespace internal
   
 //===================================================================================
+/// \ingroup PkgPointSetProcessing
+/// Reads points from a .ply stream (ASCII or binary) using a custom
+/// interpreter provided by the user.
+///
+/// @tparam PlyInterpreter Interpreter of Ply input, must be a model of `PlyInterpreter`
+/// @tparam Kernel Geometric traits class.
+///
+/// @return true on success.
+//-----------------------------------------------------------------------------------
+template < typename PlyInterpreter,
+           typename Kernel >
+bool read_ply_custom_points(std::istream& stream, ///< input stream.
+                            PlyInterpreter& interpreter,
+                            const Kernel& kernel) ///< geometric traits.
+{
+  if(!stream)
+    {
+      std::cerr << "Error: cannot open file" << std::endl;
+      return false;
+    }
+
+  std::size_t nb_points = 0;
+  std::vector<internal::Ply_read_number*> readers;
+
+  if (!(internal::read_ply_header (stream, nb_points, readers)))
+    return false;
+
+  if (!(interpreter.is_applicable (readers)))
+    {
+      std::cerr << "Error: PLY interpreter is not applicable to input file" << std::endl;
+      return false;
+    }
+
+  return internal::read_ply_content (stream, interpreter, nb_points, readers, kernel);
+}
+
+
+
+  //===================================================================================
 /// \ingroup PkgPointSetProcessing
 /// Reads points (positions + normals, if available) from a .ply
 /// stream (ASCII or binary).
@@ -451,24 +490,11 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
                                  NormalPMap normal_pmap, ///< property map: value_type of OutputIterator -> Vector_3.
                                  const Kernel& kernel) ///< geometric traits.
 {
-  if(!stream)
-  {
-    std::cerr << "Error: cannot open file" << std::endl;
-    return false;
-  }
+  internal::Ply_interpreter_point_and_normal_3
+    <OutputIteratorValueType, OutputIterator, PointPMap, NormalPMap, Kernel>
+    interpreter (output, point_pmap, normal_pmap);
 
-  std::size_t nb_points = 0;
-  std::vector<internal::Ply_read_number*> readers;
-  if (!(internal::read_ply_header (stream, nb_points, readers)))
-    return false;
-
-  internal::Ply_builder_point_3<OutputIteratorValueType, OutputIterator, PointPMap, NormalPMap, Kernel>
-    builder (output, point_pmap, normal_pmap);
-
-  if (!(builder.is_applicable (readers)))
-    return false;
-
-  return internal::read_ply_content (stream, builder, nb_points, readers, kernel);
+  return read_ply_custom_points (stream, interpreter, kernel);
 }
 
 /// @cond SKIP_IN_MANUAL
