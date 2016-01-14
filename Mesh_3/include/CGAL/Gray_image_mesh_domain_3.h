@@ -32,6 +32,17 @@
 
 namespace CGAL {
 
+namespace internal {
+
+template<typename T>
+struct Less_than {
+  Less_than(const T& second) : second(second) {}
+  bool operator()(const T& first) const { return std::less<T>()(first, second); }
+  T second;
+};
+
+}
+
 /**
  * @class Gray_image_mesh_domain_3
  *
@@ -40,7 +51,7 @@ namespace CGAL {
 template<class Image,
          class BGT,
          typename Image_word_type = float,
-         typename Transform = std::binder2nd<std::less<Image_word_type> >,
+         typename Transform = internal::Less_than<Image_word_type>,
          typename Subdomain_index = int>
 class Gray_image_mesh_domain_3
   : public Labeled_mesh_domain_3<
@@ -73,7 +84,7 @@ public:
                            const FT& error_bound = FT(1e-3),
                            CGAL::Random* p_rng = NULL)
     : Base(Wrapper(image, 
-                   Transform(std::less<Image_word_type>(), iso_value),
+                   Transform(iso_value),
                    value_outside),
            compute_bounding_box(image),
            error_bound,
