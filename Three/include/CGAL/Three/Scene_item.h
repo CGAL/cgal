@@ -246,7 +246,7 @@ public:
    *  ____________________________
    * |             |Name   |Cube |
    * |             |_______|_____|
-   * |General Info |#Edges |12   |
+   * |General Info |\#Edges|12   |
    * |_____________|_______|_____|
    *
    *  would be stored as follows :
@@ -268,7 +268,7 @@ public:
    *  ____________________________
    * |             |Name   |Cube |
    * |             |_______|_____|
-   * |General Info |#Edges |12   |
+   * |General Info |\#Edges|12   |
    * |_____________|_______|_____|
    * compute stats(0) should return "Cube" and compute_stats(1) should return QString::number(12);
    * The numbers must be coherent with the order of declaration of the titles in the header.
