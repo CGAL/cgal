@@ -765,7 +765,7 @@ namespace internal {
               const Point& point = m_points[index_point];
               Point projected = m_edges[i].support.projection (point);
               if (std::sqrt (CGAL::squared_distance (point, projected))
-                  < 2 * std::min (4., 1 / std::sin (angle_A)) * epsilon
+                  < 2 * (std::min) (4., 1 / std::sin (angle_A)) * epsilon
                   && m_status[index_point] != SKIPPED)
                 direction_p1 = direction_p1 + Vector (projected, point);
             }
