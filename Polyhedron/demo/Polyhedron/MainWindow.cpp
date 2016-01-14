@@ -30,7 +30,6 @@
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <stdexcept>
-
 #ifdef QT_SCRIPT_LIB
 #  include <QScriptValue>
 #  ifdef QT_SCRIPTTOOLS_LIB
@@ -43,7 +42,7 @@
 
 #include "ui_MainWindow.h"
 #include "ui_Preferences.h"
-
+#include "ui_Statistics_on_item_dialog.h"
 #include "Show_point_dialog.h"
 #include "File_loader_dialog.h"
 
@@ -1178,6 +1177,11 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
   if(menu) {
     bool menuChanged = menu->property(prop_name).toBool();
     if(!menuChanged) {
+      QAction* actionStatistics =
+      menu->addAction(tr("Statistics..."));
+      actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
+      connect(actionStatistics, SIGNAL(triggered()),
+              this, SLOT(statistics_on_item()));
       menu->addSeparator();
       if(!item->property("source filename").toString().isEmpty()) {
         QAction* reload = menu->addAction(tr("&Reload item from file"));
@@ -1267,7 +1271,6 @@ void MainWindow::updateInfo() {
   else
     ui->infoLabel->clear();
 }
-
 void MainWindow::updateDisplayInfo() {
   CGAL::Three::Scene_item* item = scene->item(getSelectedSceneItemIndex());
   if(item)
@@ -1754,4 +1757,98 @@ void MainWindow::recenterSceneView(const QModelIndex &id)
         // the proxymodel
         sceneView->scrollTo(proxyModel->mapFromSource(id));
     }
+}
+
+void MainWindow::stat_dlg_update()
+{
+  if(statistics_dlg)
+    statistics_dlg->hide();
+  statistics_on_item();
+
+}
+void MainWindow::statistics_on_item()
+{
+  if(statistics_dlg)
+    delete statistics_dlg;
+  statistics_dlg = new QDialog(this);
+  Ui::Statistics_on_item_dialog ui;
+  ui.setupUi(statistics_dlg);
+  connect(ui.okButtonBox, SIGNAL(accepted()), statistics_dlg, SLOT(accept()));
+  connect(ui.updateButton, SIGNAL(clicked()), this, SLOT(stat_dlg_update()));
+  ui.label_htmltab->setText(get_item_stats());
+  statistics_dlg->show();
+  statistics_dlg->raise();
+}
+
+/* Creates a string containing an html table. This string is constructed by appending each parts of each row, so that the data can
+  depend on the number of selected items. This String is then returned.*/
+QString MainWindow::get_item_stats()
+{
+  //1st step : get all classnames of the selected items
+  QList<QString> classnames;
+  Q_FOREACH(int id, getSelectedSceneItemIndices())
+  {
+    QString classname = scene->item(id)->metaObject()->className();
+    if(!classnames.contains(classname))
+      classnames << classname;
+  }
+  //2nd step : separate the selection in lists corresponding to their classname
+  QVector< QList<Scene_item*> > items;
+  items.resize(classnames.size());
+  Q_FOREACH(int id, getSelectedSceneItemIndices())
+  {
+    Scene_item* s_item = scene->item(id);
+    for(int i=0; i<items.size(); i++)
+      if(classnames.at(i).contains(s_item->metaObject()->className()))
+      {
+        items[i] << s_item;
+        break;
+      }
+  }
+  //last step :: making tables for each type of item
+  QString str;
+  for(int i=0; i< classnames.size(); i++)
+  {
+    CGAL::Three::Scene_item::Header_data data = items[i].at(0)->header();
+    int title = 0;
+    int titles_limit =0;
+    if(data.titles.size()>0)
+    {
+      //1st row : item names
+      str.append("<html> <table border=1>""<tr><td colspan = 2></td>");
+      Q_FOREACH(Scene_item* sit, items[i])
+      {
+        str.append(QString("<td>%1</td>").arg(sit->name()));
+      }
+
+
+
+      for(int j=0; j<data.categories.size(); j++)
+      {
+        str.append(QString("<tr><th rowspan=%1> %2 </th>")
+                   .arg(QString::number(data.categories[j].second))
+                   .arg(data.categories[j].first));
+        titles_limit+=data.categories[j].second;
+        str.append(QString("<td> %1 </td>").arg(data.titles.at(title)));
+        Q_FOREACH(Scene_item* sit, items[i])
+        {
+          str.append(QString("<td>%1</td>").arg(sit->compute_stats(title)));
+        }
+        title++;
+        for(;title<titles_limit; title++)
+        {
+          str.append(QString("</tr><tr><td> %1 </td>").arg(data.titles.at(title)));
+          Q_FOREACH(Scene_item* sit, items[i])
+          {
+            str.append(QString("<td>%1</td>").arg(sit->compute_stats(title)));
+          }
+        }
+
+        str.append("</tr>");
+      }
+
+      str.append(QString("</tr>""</table></html>"));
+    }
+  }
+  return str;
 }

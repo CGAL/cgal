@@ -23,7 +23,29 @@ class QMenu;
 class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item 
         : public CGAL::Three::Scene_item{
     Q_OBJECT
-public:  
+public:
+    enum STATS {
+      NB_VERTICES = 0,
+      NB_FACETS,
+      NB_CONNECTED_COMPOS,
+      NB_BORDER_EDGES,
+      NB_DEGENERATED_FACES,
+      HOLES,
+      AREA,
+      VOLUME,
+      SELFINTER,
+      NB_EDGES,
+      MIN_LENGTH,
+      MAX_LENGTH,
+      MID_LENGTH,
+      MEAN_LENGTH,
+      NB_NULL_LENGTH,
+      MIN_ANGLE,
+      MAX_ANGLE,
+      MEAN_ANGLE
+    };
+    QString compute_stats(int type);
+    CGAL::Three::Scene_item::Header_data header() const;
     Scene_polyhedron_item();
     //   Scene_polyhedron_item(const Scene_polyhedron_item&);
     Scene_polyhedron_item(const Polyhedron& p);
@@ -61,6 +83,10 @@ public:
     void compute_bbox() const;
     std::vector<QColor>& color_vector() {return colors_;}
     void set_color_vector_read_only(bool on_off) {plugin_has_set_color_vector_m=on_off;}
+    int getNumberOfNullLengthEdges(){return number_of_null_length_edges;}
+    int getNumberOfDegeneratedFaces(){return number_of_degenerated_faces;}
+    bool triangulated(){return is_triangulated;}
+    bool self_intersected(){return !self_intersect;}
 
 public Q_SLOTS:
     virtual void invalidate_buffers();
@@ -82,7 +108,6 @@ public Q_SLOTS:
     void update_facet_indices();
     void update_halfedge_indices();
     void invalidate_aabb_tree();
-    void statistics_on_polyhedron();
 
 Q_SIGNALS:
     void selected_vertex(void*);
@@ -108,6 +133,7 @@ private:
     bool show_only_feature_edges_m;
     bool show_feature_edges_m;
     bool facet_picking_m;
+    mutable bool is_triangulated;
     bool erase_next_picked_facet_m;
     //the following variable is used to indicate if the color vector must not be automatically updated.
     bool plugin_has_set_color_vector_m;
@@ -137,6 +163,8 @@ private:
     mutable std::size_t nb_facets;
     mutable std::size_t nb_lines;
     mutable QOpenGLShaderProgram *program;
+    mutable int number_of_null_length_edges, number_of_degenerated_faces;
+    mutable bool self_intersect;
 
     using CGAL::Three::Scene_item::initialize_buffers;
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;

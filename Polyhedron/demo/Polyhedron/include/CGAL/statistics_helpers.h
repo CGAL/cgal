@@ -8,7 +8,8 @@
 #include <boost/accumulators/statistics/mean.hpp>
 #include <boost/accumulators/statistics/min.hpp>
 #include <boost/accumulators/statistics/max.hpp>
-
+#include <boost/accumulators/statistics/median.hpp>
+#include <CGAL/squared_distance_3_0.h>
 #include <map>
 #include <boost/property_map/property_map.hpp>
 
@@ -46,5 +47,27 @@ void angles(Polyhedron* poly, double& mini, double& maxi, double& ave)
   ave = extract_result< tag::mean >(acc);
 }
 
+template<typename Polyhedron>
+void edges_length(Polyhedron* poly, double& mini, double& maxi, double& mean, double& mid)
+{
+  typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+
+  accumulator_set< double,
+    features< tag::min, tag::max, tag::mean , tag::median> > acc;
+
+  typename boost::property_map<Polyhedron, CGAL::vertex_point_t>::type
+    vpmap = get(CGAL::vertex_point, *poly);
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(*poly))
+  {
+    typename Kernel::Point_3 a = get(vpmap, source(h, *poly));
+    typename Kernel::Point_3 b = get(vpmap, target(h, *poly));
+    acc(CGAL::squared_distance(a,b));
+  }
+
+  mini = extract_result< tag::min >(acc);
+  maxi = extract_result< tag::max >(acc);
+  mean = extract_result< tag::mean >(acc);
+  mid =  extract_result< tag::median >(acc);
+}
 #endif // POLYHEDRON_DEMO_STATISTICS_HELPERS_H
 

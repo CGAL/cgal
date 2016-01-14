@@ -81,7 +81,10 @@ public Q_SLOTS:
   void restoreCollapseState();
   /// given a file extension file, returns true if `filename` matches the filter
   bool file_matches_filter(const QString& filters, const QString& filename);
-
+  //!Prints a dialog containing statistics on the selected polyhedrons.
+  void statistics_on_item();
+  //!Updates the statistics dialog.
+  void stat_dlg_update();
   /*! Open a file with a given loader, and return true if it was successful.
    This slot is for use by scripts.*/
   bool open(QString filename, QString loader_name);
@@ -336,9 +339,9 @@ protected:
   int getSelectedSceneItemIndex() const;
   //! Returns a list of the selected items in the sceneView.
   QList<int> getSelectedSceneItemIndices() const;
-
 private:
   void recurseExpand(QModelIndex index);
+  QString get_item_stats();
   QString strippedName(const QString &fullFileName);
   void setMenus(QString, QString, QAction *a);
   /// plugin black-list
@@ -357,6 +360,7 @@ private:
   QAction* actionAddToGroup;
   void print_message(QString message) { messages->information(message); }
   Messages_interface* messages;
+  QDialog *statistics_dlg;
 #ifdef QT_SCRIPT_LIB
   QScriptEngine* script_engine;
 public:

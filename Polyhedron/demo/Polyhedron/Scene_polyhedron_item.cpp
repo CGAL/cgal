@@ -16,6 +16,8 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/Polygon_mesh_processing/self_intersections.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/statistics_helpers.h>
 
@@ -30,7 +32,7 @@
 
 #include <boost/foreach.hpp>
 
-#include "ui_Polyhedron_demo_statistics_on_polyhedron_dialog.h"
+
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -120,7 +122,6 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
     // Iterates on the vector of facet handles
     CDT::Vertex_handle previous, first;
     do {
-        std::cerr<<he_circ->vertex()->point()<<std::endl;
         CDT::Vertex_handle vh = cdt.insert(he_circ->vertex()->point());
         if(first == 0) {
             first = vh;
@@ -132,7 +133,6 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
         previous = vh;
     } while( ++he_circ != he_circ_end );
     cdt.insert_constraint(previous, first);
-
     // sets mark is_external
     for(CDT::All_faces_iterator
         fit2 = cdt.all_faces_begin(),
@@ -156,7 +156,6 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
             }
         }
     }
-
     //iterates on the internal faces to add the vertices to the positions
     //and the normals to the appropriate vectors
     for(CDT::Finite_faces_iterator
@@ -167,21 +166,33 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
         if(ffit->info().is_external)
             continue;
 
-        positions_facets.push_back(ffit->vertex(0)->point().x());
-        positions_facets.push_back(ffit->vertex(0)->point().y());
-        positions_facets.push_back(ffit->vertex(0)->point().z());
+        double vertices[3][3];
+        vertices[0][0] = ffit->vertex(0)->point().x();
+        vertices[0][1] = ffit->vertex(0)->point().y();
+        vertices[0][2] = ffit->vertex(0)->point().z();
+
+        vertices[1][0] = ffit->vertex(1)->point().x();
+        vertices[1][1] = ffit->vertex(1)->point().y();
+        vertices[1][2] = ffit->vertex(1)->point().z();
+
+        vertices[2][0] = ffit->vertex(2)->point().x();
+        vertices[2][1] = ffit->vertex(2)->point().y();
+        vertices[2][2] = ffit->vertex(2)->point().z();
+
+        positions_facets.push_back( vertices[0][0]);
+        positions_facets.push_back( vertices[0][1]);
+        positions_facets.push_back( vertices[0][2]);
         positions_facets.push_back(1.0);
 
-        positions_facets.push_back(ffit->vertex(1)->point().x());
-        positions_facets.push_back(ffit->vertex(1)->point().y());
-        positions_facets.push_back(ffit->vertex(1)->point().z());
+        positions_facets.push_back( vertices[1][0]);
+        positions_facets.push_back( vertices[1][1]);
+        positions_facets.push_back( vertices[1][2]);
         positions_facets.push_back(1.0);
 
-        positions_facets.push_back(ffit->vertex(2)->point().x());
-        positions_facets.push_back(ffit->vertex(2)->point().y());
-        positions_facets.push_back(ffit->vertex(2)->point().z());
+        positions_facets.push_back( vertices[2][0]);
+        positions_facets.push_back( vertices[2][1]);
+        positions_facets.push_back( vertices[2][2]);
         positions_facets.push_back(1.0);
-
 
         typedef Kernel::Vector_3	    Vector;
         Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(fit, *poly);
@@ -208,7 +219,6 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
         normals_gouraud.push_back(n.x());
         normals_gouraud.push_back(n.y());
         normals_gouraud.push_back(n.z());
-
     }
 }
 
@@ -419,16 +429,15 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     positions_lines.resize(0);
     normals_flat.resize(0);
     normals_gouraud.resize(0);
-
-
+    number_of_null_length_edges = 0;
+    number_of_degenerated_faces = 0;
     //Facets
     typedef Polyhedron::Traits	    Kernel;
     typedef Kernel::Point_3	    Point;
     typedef Kernel::Vector_3	    Vector;
     typedef Polyhedron::Facet_iterator Facet_iterator;
     typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
-
-
+    self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect(*poly);
 
     Facet_iterator f = poly->facets_begin();
 
@@ -438,15 +447,19 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     {
 
         if(!is_triangle(f->halfedge(),*poly))
+        {
+            is_triangulated = false;
             triangulate_facet(f);
+        }
         else
         {
+            int i=0;
             HF_circulator he = f->facet_begin();
             HF_circulator end = he;
             CGAL_For_all(he,end)
             {
 
-                // // If Flat shading:1 normal per polygon added once per vertex
+                // If Flat shading:1 normal per polygon added once per vertex
 
                 Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(f, *poly);
                 normals_flat.push_back(n.x());
@@ -467,12 +480,20 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
                 positions_facets.push_back(p.y());
                 positions_facets.push_back(p.z());
                 positions_facets.push_back(1.0);
+                i = (i+1) %3;
             }
+            if(CGAL::Polygon_mesh_processing::is_degenerated(f,
+                                                             *poly,
+                                                             get(CGAL::vertex_point, *poly),
+                                                             poly->traits()))
+                number_of_degenerated_faces++;
+
         }
     }
     //Lines
     typedef Kernel::Point_3		Point;
     typedef Polyhedron::Edge_iterator	Edge_iterator;
+    std::vector<double> edge_lengths;
 
     Edge_iterator he;
     if(!show_only_feature_edges_m) {
@@ -493,6 +514,12 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
             positions_lines.push_back(b.z());
             positions_lines.push_back(1.0);
 
+            //statistics
+            edge_lengths.push_back(CGAL::squared_distance(a,b));
+
+            if(edge_lengths.back() == 0)
+                number_of_null_length_edges++;
+
         }
     }
     for(he = poly->edges_begin();
@@ -512,6 +539,11 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
         positions_lines.push_back(b.y());
         positions_lines.push_back(b.z());
         positions_lines.push_back(1.0);
+        //statistics
+        edge_lengths.push_back(CGAL::squared_distance(a,b));
+
+        if(edge_lengths.back() == 0)
+            number_of_null_length_edges++;
     }
 
     //set the colors
@@ -600,8 +632,9 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     is_selected = true;
     nb_facets = 0;
     nb_lines = 0;
+    is_triangulated = true;
     init();
-
+    self_intersect = false;
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
@@ -618,8 +651,10 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     is_selected = true;
     nb_facets = 0;
     nb_lines = 0;
+    is_triangulated = true;
     init();
     invalidate_buffers();
+    self_intersect = false;
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
@@ -635,9 +670,11 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     cur_shading=FlatPlusEdges;
     is_selected=true;
     init();
+    is_triangulated = true;
     nb_facets = 0;
     nb_lines = 0;
     invalidate_buffers();
+    self_intersect = false;
 }
 
 Scene_polyhedron_item::~Scene_polyhedron_item()
@@ -729,12 +766,6 @@ Scene_polyhedron_item::toolTip() const
             .arg(this->renderingModeName())
             .arg(this->color().name());
   str += QString("<br />Number of isolated vertices : %1<br />").arg(getNbIsolatedvertices());
-  if (volume!=-std::numeric_limits<double>::infinity())
-    str+=QObject::tr("<br />Volume: %1").arg(volume);
-  if (area!=-std::numeric_limits<double>::infinity())
-    str+=QObject::tr("<br />Area: %1").arg(area);
-  str+="</p>";
-
   return str;
 }
 
@@ -778,13 +809,6 @@ QMenu* Scene_polyhedron_item::contextMenu()
         actionEraseNextFacet->setObjectName("actionEraseNextFacet");
         connect(actionEraseNextFacet, SIGNAL(toggled(bool)),
                 this, SLOT(set_erase_next_picked_facet(bool)));
-
-        QAction* actionStatistics =
-                menu->addAction(tr("Statistics..."));
-        actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
-        connect(actionStatistics, SIGNAL(triggered()),
-                this, SLOT(statistics_on_polyhedron()));
-
         menu->setProperty(prop_name, true);
     }
     QAction* action = menu->findChild<QAction*>("actionPickFacets");
@@ -1101,36 +1125,163 @@ void Scene_polyhedron_item::invalidate_aabb_tree()
 {
   delete_aabb_tree(this);
 }
-
-void Scene_polyhedron_item::statistics_on_polyhedron()
+QString Scene_polyhedron_item::compute_stats(int type)
 {
-  QDialog dlg;
-  Ui::Polyhedron_demo_statistics_on_polyhedron_dialog ui;
-  ui.setupUi(&dlg);
-  connect(ui.okButtonBox, SIGNAL(accepted()), &dlg, SLOT(accept()));
-
-  ui.label_nbvertices->setText(QString::number(poly->size_of_vertices()));
-  ui.label_nbfacets->setText(QString::number(poly->size_of_facets()));
-  ui.label_nbborderedges->setText(QString::number(poly->size_of_border_edges()));
-
+  poly->normalize_border();
+  double minl, maxl, meanl, midl;
+  edges_length(poly, minl, maxl, meanl, midl);
   typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
   int i = 0;
   BOOST_FOREACH(face_descriptor f, faces(*poly)){
     f->id() = i++;
   }
-
   boost::vector_property_map<int,
-    boost::property_map<Polyhedron, boost::face_index_t>::type>
-    fccmap(get(boost::face_index, *poly));
-  ui.label_nbconnectedcomponents->setText(
-    QString::number(PMP::connected_components(*poly, fccmap)));
+      boost::property_map<Polyhedron, boost::face_index_t>::type>
+      fccmap(get(boost::face_index, *poly));
 
   double mini, maxi, ave;
   angles(poly, mini, maxi, ave);
-  ui.label_minangle->setText(QString::number(mini));
-  ui.label_maxangle->setText(QString::number(maxi));
-  ui.label_averageangle->setText(QString::number(ave));
 
-  dlg.exec();
+  QString nb_vertices(QString::number(poly->size_of_vertices())),
+      nb_facets(QString::number(poly->size_of_facets())),
+      nbborderedges(QString::number(poly->size_of_border_halfedges())),
+      nbedges(QString::number(poly->size_of_halfedges()/2)),
+      minlength(QString::number(CGAL::sqrt(minl))),
+      maxlength(QString::number(CGAL::sqrt(maxl))),
+      midlength(QString::number(CGAL::sqrt(midl))),
+      meanlength(QString::number(CGAL::sqrt(meanl))),
+      nulllength(QString::number(number_of_null_length_edges)),
+      selfintersect,
+      degenfaces,
+      s_volume,
+      s_area,
+      nb_holes,
+      nbconnectedcomponents(QString::number(PMP::connected_components(*poly, fccmap))),
+      minangle(QString::number(mini)),
+      maxangle(QString::number(maxi)),
+      averageangle(QString::number(ave));
+  if (area!=-std::numeric_limits<double>::infinity())
+    s_area = QString::number(area);
+  else
+    s_area = QString("Infinite");
+  if (volume!=-std::numeric_limits<double>::infinity())
+    s_volume = QString::number(volume);
+  else
+    s_volume = QString("0");
+  if(self_intersect)
+    selfintersect = QString("Yes");
+  else
+    selfintersect = QString("No");
+  if(is_triangulated)
+    degenfaces = QString::number(number_of_degenerated_faces);
+  else
+    degenfaces = QString("Unknown (not triangulated)");
+
+  //gets the number of holes
+
+  //if is_closed is false, then there are borders (= holes)
+  int n(0);
+  i = 0;
+
+  // initialization : keep the original ids in memory and set them to 0
+  std::vector<size_t> ids;
+  for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it)
+  {
+    ids.push_back(it->id());
+    it->id() = 0;
+  }
+
+  //if a border halfedge is found, increment the number of hole and set all the ids of the hole's border halfedges to 1 to prevent
+  // the algorithm from counting them several times.
+  for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it){
+    if(it->is_border() && it->id() == 0){
+      n++;
+      Polyhedron::Halfedge_around_facet_circulator hf_around_facet = it->facet_begin();
+      do {
+        CGAL_assertion(hf_around_facet->id() == 0);
+        hf_around_facet->id() = 1;
+      } while(++hf_around_facet != it->facet_begin());
+    }
+  }
+  //reset the ids to their initial value
+  for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it)
+  {
+    it->id() = ids[i++];
+  }
+  nb_holes = QString::number(n);
+
+
+
+  switch(type)
+  {
+  case NB_VERTICES:
+    return nb_vertices;
+  case NB_FACETS:
+    return nb_facets;
+  case NB_CONNECTED_COMPOS:
+    return nbconnectedcomponents;
+  case NB_BORDER_EDGES:
+    return nbborderedges;
+  case NB_DEGENERATED_FACES:
+    return degenfaces;
+  case AREA:
+    return s_area;
+  case VOLUME:
+    return s_volume;
+  case SELFINTER:
+    return selfintersect;
+  case NB_EDGES:
+    return nbedges;
+  case MIN_LENGTH:
+    return minlength;
+  case MAX_LENGTH:
+    return maxlength;
+  case MID_LENGTH:
+    return midlength;
+  case MEAN_LENGTH:
+    return meanlength;
+  case NB_NULL_LENGTH:
+    return nulllength;
+  case MIN_ANGLE:
+    return minangle;
+  case MAX_ANGLE:
+    return maxangle;
+  case MEAN_ANGLE:
+    return averageangle;
+  case HOLES:
+    return nb_holes;
+
+  }
+  return QString();
 }
 
+CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
+{
+  CGAL::Three::Scene_item::Header_data data;
+  //categories
+  data.categories.append(std::pair<QString,int>(QString("Properties"),9));
+  data.categories.append(std::pair<QString,int>(QString("Edges"),6));
+  data.categories.append(std::pair<QString,int>(QString("Angles"),3));
+
+
+  //titles
+  data.titles.append(QString("#Vertices"));
+  data.titles.append(QString("#Facets"));
+  data.titles.append(QString("#Connected Components"));
+  data.titles.append(QString("#Border Edges"));
+  data.titles.append(QString("#Degenerated Faces"));
+  data.titles.append(QString("Connected Components of the Boundary"));
+  data.titles.append(QString("Area"));
+  data.titles.append(QString("Volume"));
+  data.titles.append(QString("Self-Intersecting"));
+  data.titles.append(QString("#Edges"));
+  data.titles.append(QString("Minimum Length"));
+  data.titles.append(QString("Maximum Length"));
+  data.titles.append(QString("Median Length"));
+  data.titles.append(QString("Mean Length"));
+  data.titles.append(QString("#Null Length"));
+  data.titles.append(QString("Minimum"));
+  data.titles.append(QString("Maximum"));
+  data.titles.append(QString("Average"));
+  return data;
+}
