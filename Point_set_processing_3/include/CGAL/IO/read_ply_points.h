@@ -47,139 +47,141 @@ namespace CGAL {
 // float      single-precision float    4
 // double     double-precision float    8
 
+class Ply_read_number
+{
+protected:
+  std::string m_name;
+  std::size_t m_format;
+  mutable double m_buffer;
+    
+public:
+  Ply_read_number (std::string name, std::size_t format)
+    : m_name (name), m_format (format) { }
+  virtual ~Ply_read_number() { }
+
+  const std::string& name () const { return m_name; }
+
+  virtual void get (std::istream& stream) const = 0;
+
+  template <typename Type>
+  void assign (Type& target) const
+  {
+    target = static_cast<Type>(m_buffer);
+  }
+
+  // The two following functions prevent the stream to only extract
+  // ONE character (= what the types char imply) by requiring
+  // explicitely an integer object when reading the stream
+  void read_ascii (std::istream& stream, boost::int8_t& c) const
+  {
+    short s;
+    stream >> s;
+    c = static_cast<char>(s);
+  }
+  void read_ascii (std::istream& stream, boost::uint8_t& c) const
+  {
+    unsigned short s;
+    stream >> s;
+    c = static_cast<unsigned char>(s);
+  }
+
+  // Default template when Type is not a char type
+  template <typename Type>
+  void read_ascii (std::istream& stream, Type& t) const
+  {
+    stream >> t;
+  }
+    
+  template <typename Type>
+  Type read (std::istream& stream) const
+  {
+    if (m_format == 0) // Ascii
+      {
+        Type t;
+        read_ascii (stream, t);
+        return t;
+      }
+    else // Binary (2 = little endian)
+      {
+        union
+        {
+          char uChar[sizeof (Type)];
+          Type type;
+        } buffer;
+          
+        std::size_t size = sizeof (Type);
+
+        stream.read(buffer.uChar, size);
+      
+        if (m_format == 2) // Big endian
+          {
+            for (std::size_t i = 0; i < size / 2; ++ i)
+              {
+                unsigned char tmp = buffer.uChar[i];
+                buffer.uChar[i] = buffer.uChar[size - 1 - i];
+                buffer.uChar[size - 1 - i] = tmp;
+              }
+          }
+        return buffer.type;
+      }
+    return Type();
+  }
+};
+
+
+  
 namespace internal {
 
-  class Ply_read_number
-  {
-  protected:
-    std::string m_name;
-    std::size_t m_format;
-    mutable double m_buffer;
-    
-  public:
-    Ply_read_number (std::string name, std::size_t format)
-      : m_name (name), m_format (format) { }
-    virtual ~Ply_read_number() { }
-
-    const std::string& name () const { return m_name; }
-
-    virtual void get (std::istream& stream) const = 0;
-
-    template <typename Type>
-    void assign (Type& target) const
-    {
-      target = static_cast<Type>(m_buffer);
-    }
-
-    // The two following functions prevent the stream to only extract
-    // ONE character (= what the types char imply) by requiring
-    // explicitely an integer object when reading the stream
-    void read_ascii (std::istream& stream, boost::int8_t& c) const
-    {
-      short s;
-      stream >> s;
-      c = static_cast<char>(s);
-    }
-    void read_ascii (std::istream& stream, boost::uint8_t& c) const
-    {
-      unsigned short s;
-      stream >> s;
-      c = static_cast<unsigned char>(s);
-    }
-
-    // Default template when Type is not a char type
-    template <typename Type>
-    void read_ascii (std::istream& stream, Type& t) const
-    {
-      stream >> t;
-    }
-    
-    template <typename Type>
-    Type read (std::istream& stream) const
-    {
-      if (m_format == 0) // Ascii
-        {
-          Type t;
-          read_ascii (stream, t);
-          return t;
-        }
-      else // Binary (2 = little endian)
-        {
-          union
-          {
-            char uChar[sizeof (Type)];
-            Type type;
-          } buffer;
-          
-          std::size_t size = sizeof (Type);
-
-          stream.read(buffer.uChar, size);
-      
-          if (m_format == 2) // Big endian
-            {
-              for (std::size_t i = 0; i < size / 2; ++ i)
-                {
-                  unsigned char tmp = buffer.uChar[i];
-                  buffer.uChar[i] = buffer.uChar[size - 1 - i];
-                  buffer.uChar[size - 1 - i] = tmp;
-                }
-            }
-          return buffer.type;
-        }
-      return Type();
-    }
-  };
-
-  class Ply_read_char : public Ply_read_number
+  class Ply_read_char : public CGAL::Ply_read_number
   {
   public:
     Ply_read_char (std::string name, std::size_t format) : Ply_read_number (name, format) { }
     void get (std::istream& stream) const
     { this->m_buffer = (this->read<boost::int8_t> (stream)); }
   };
-  class Ply_read_uchar : public Ply_read_number
+  class Ply_read_uchar : public CGAL::Ply_read_number
   {
   public:
     Ply_read_uchar (std::string name, std::size_t format) : Ply_read_number (name, format) { }
     void get (std::istream& stream) const
     { this->m_buffer = (this->read<boost::uint8_t> (stream)); }
   };
-  class Ply_read_short : public Ply_read_number
+  class Ply_read_short : public CGAL::Ply_read_number
   {
   public:
     Ply_read_short (std::string name, std::size_t format) : Ply_read_number (name, format) { }
     void get (std::istream& stream) const
     { this->m_buffer = (this->read<boost::int16_t> (stream)); }
   };
-  class Ply_read_ushort : public Ply_read_number
+  class Ply_read_ushort : public CGAL::Ply_read_number
   {
   public:
     Ply_read_ushort (std::string name, std::size_t format) : Ply_read_number (name, format) { }
     void get (std::istream& stream) const
     { this->m_buffer = (this->read<boost::uint16_t> (stream)); }
   };
-  class Ply_read_int : public Ply_read_number
+  class Ply_read_int : public CGAL::Ply_read_number
   {
   public:
     Ply_read_int (std::string name, std::size_t format) : Ply_read_number (name, format) { }
     void get (std::istream& stream) const
     { this->m_buffer = (this->read<boost::int32_t> (stream)); }
   };
-  class Ply_read_uint : public Ply_read_number
+  class Ply_read_uint : public CGAL::Ply_read_number
   {
   public:
     Ply_read_uint (std::string name, std::size_t format) : Ply_read_number (name, format) { }
     void get (std::istream& stream) const
     { this->m_buffer = (this->read<boost::uint32_t> (stream)); }
   };
-  class Ply_read_float : public Ply_read_number
+  class Ply_read_float : public CGAL::Ply_read_number
   {
   public:
     Ply_read_float (std::string name, std::size_t format) : Ply_read_number (name, format) { }
     void get (std::istream& stream) const
     { this->m_buffer = (this->read<float> (stream)); }
   };
-  class Ply_read_double : public Ply_read_number
+  class Ply_read_double : public CGAL::Ply_read_number
   {
   public:
     Ply_read_double (std::string name, std::size_t format) : Ply_read_number (name, format) { }
@@ -187,84 +189,8 @@ namespace internal {
     { this->m_buffer = (this->read<double> (stream)); }
   };
 
-
-  template <typename OutputIteratorValueType,
-            typename OutputIterator,
-            typename PointPMap,
-            typename NormalPMap,
-            typename Kernel>
-  class Ply_interpreter_point_and_normal_3
-  {
-    // value_type_traits is a workaround as back_insert_iterator's value_type is void
-    // typedef typename value_type_traits<OutputIterator>::type Enriched_point;
-    typedef OutputIteratorValueType Enriched_point;
-    typedef typename Kernel::FT FT;
-    typedef typename Kernel::Point_3 Point;
-    typedef typename Kernel::Vector_3 Vector;
-    
-    OutputIterator m_output;
-    PointPMap& m_point_pmap;
-    NormalPMap& m_normal_pmap;
-    
-  public:
-    Ply_interpreter_point_and_normal_3 (OutputIterator output,
-                         PointPMap& point_pmap,
-                         NormalPMap& normal_pmap)
-      : m_output (output),
-        m_point_pmap (point_pmap),
-        m_normal_pmap (normal_pmap)
-    { }
-
-    bool is_applicable (const std::vector<Ply_read_number*>& readers)
-    {
-      bool x_found = false, y_found = false, z_found = false;
-      for (std::size_t i = 0; i < readers.size (); ++ i)
-        if (readers[i]->name () == "x")
-          x_found = true;
-        else if (readers[i]->name () == "y")
-          y_found = true;
-        else if (readers[i]->name () == "z")
-          z_found = true;
-
-      return x_found && y_found && z_found;
-    }
-      
-    void operator() (const std::vector<Ply_read_number*>& readers)
-    {
-      FT x, y, z, nx, ny, nz;
-      for (std::size_t i = 0; i < readers.size (); ++ i)
-        if (readers[i]->name () == "x")
-          readers[i]->assign (x);
-        else if (readers[i]->name () == "y")
-          readers[i]->assign (y);
-        else if (readers[i]->name () == "z")
-          readers[i]->assign (z);
-        else if (readers[i]->name () == "nx")
-          readers[i]->assign (nx);
-        else if (readers[i]->name () == "ny")
-          readers[i]->assign (ny);
-        else if (readers[i]->name () == "nz")
-          readers[i]->assign (nz);
-
-      Point point (x, y, z);
-      Vector normal (nx, ny, nz);
-      Enriched_point pwn;
-      
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      put(m_point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
-      put(m_normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
-#else
-      put(m_point_pmap,  pwn, point);  // point_pmap[&pwn] = point
-      put(m_normal_pmap, pwn, normal); // normal_pmap[&pwn] = normal
-#endif
-      *m_output++ = pwn;
-    }
-
-  };
-
-
   bool read_ply_header (std::istream& stream, std::size_t& nb_points,
-                        std::vector<Ply_read_number*>& readers)
+                        std::vector<CGAL::Ply_read_number*>& readers)
   {
     std::size_t lineNumber = 0; // current line number
     enum Format { ASCII = 0, BINARY_LITTLE_ENDIAN = 1, BINARY_BIG_ENDIAN = 2};
@@ -397,7 +323,7 @@ namespace internal {
   bool read_ply_content (std::istream& stream,
                          PlyInterpreter& interpreter,
                          const std::size_t nb_points,
-                         std::vector<Ply_read_number*>& readers,
+                         std::vector<CGAL::Ply_read_number*>& readers,
                          const Kernel& /*kernel*/)
   {
     std::size_t points_read = 0;
@@ -421,6 +347,82 @@ namespace internal {
 
 } //namespace internal
   
+template <typename OutputIteratorValueType,
+          typename OutputIterator,
+          typename PointPMap,
+          typename NormalPMap,
+          typename Kernel>
+class Ply_interpreter_point_and_normal_3
+{
+  // value_type_traits is a workaround as back_insert_iterator's value_type is void
+  // typedef typename value_type_traits<OutputIterator>::type Enriched_point;
+  typedef OutputIteratorValueType Enriched_point;
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Vector_3 Vector;
+    
+  OutputIterator m_output;
+  PointPMap& m_point_pmap;
+  NormalPMap& m_normal_pmap;
+    
+public:
+  Ply_interpreter_point_and_normal_3 (OutputIterator output,
+                                      PointPMap& point_pmap,
+                                      NormalPMap& normal_pmap)
+    : m_output (output),
+      m_point_pmap (point_pmap),
+      m_normal_pmap (normal_pmap)
+  { }
+
+  bool is_applicable (const std::vector<Ply_read_number*>& readers)
+  {
+    bool x_found = false, y_found = false, z_found = false;
+    for (std::size_t i = 0; i < readers.size (); ++ i)
+      if (readers[i]->name () == "x")
+        x_found = true;
+      else if (readers[i]->name () == "y")
+        y_found = true;
+      else if (readers[i]->name () == "z")
+        z_found = true;
+
+    return x_found && y_found && z_found;
+  }
+      
+  void operator() (const std::vector<Ply_read_number*>& readers)
+  {
+    FT x, y, z, nx, ny, nz;
+    for (std::size_t i = 0; i < readers.size (); ++ i)
+      if (readers[i]->name () == "x")
+        readers[i]->assign (x);
+      else if (readers[i]->name () == "y")
+        readers[i]->assign (y);
+      else if (readers[i]->name () == "z")
+        readers[i]->assign (z);
+      else if (readers[i]->name () == "nx")
+        readers[i]->assign (nx);
+      else if (readers[i]->name () == "ny")
+        readers[i]->assign (ny);
+      else if (readers[i]->name () == "nz")
+        readers[i]->assign (nz);
+
+    Point point (x, y, z);
+    Vector normal (nx, ny, nz);
+    Enriched_point pwn;
+      
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+    put(m_point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
+    put(m_normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
+#else
+    put(m_point_pmap,  pwn, point);  // point_pmap[&pwn] = point
+    put(m_normal_pmap, pwn, normal); // normal_pmap[&pwn] = normal
+#endif
+    *m_output++ = pwn;
+  }
+
+};
+
+
+
 //===================================================================================
 /// \ingroup PkgPointSetProcessing
 /// Reads points from a .ply stream (ASCII or binary) using a custom
@@ -444,7 +446,7 @@ bool read_ply_custom_points(std::istream& stream, ///< input stream.
     }
 
   std::size_t nb_points = 0;
-  std::vector<internal::Ply_read_number*> readers;
+  std::vector<Ply_read_number*> readers;
 
   if (!(internal::read_ply_header (stream, nb_points, readers)))
     return false;
@@ -490,7 +492,7 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
                                  NormalPMap normal_pmap, ///< property map: value_type of OutputIterator -> Vector_3.
                                  const Kernel& kernel) ///< geometric traits.
 {
-  internal::Ply_interpreter_point_and_normal_3
+  Ply_interpreter_point_and_normal_3
     <OutputIteratorValueType, OutputIterator, PointPMap, NormalPMap, Kernel>
     interpreter (output, point_pmap, normal_pmap);
 
