@@ -115,6 +115,7 @@ private:
     enum VAOs {
         Facets=0,
         Edges,
+        Feature_edges,
         Gouraud_Facets,
         NbOfVaos = Gouraud_Facets+1
     };
@@ -123,12 +124,14 @@ private:
         Facets_normals_flat,
         Facets_color,
         Edges_vertices,
+        Feature_edges_vertices,
         Edges_color,
         Facets_normals_gouraud,
         NbOfVbos = Facets_normals_gouraud+1
     };
 
     mutable std::vector<float> positions_lines;
+    mutable std::vector<float> positions_feature_lines;
     mutable std::vector<float> positions_facets;
     mutable std::vector<float> normals_flat;
     mutable std::vector<float> normals_gouraud;
@@ -136,6 +139,7 @@ private:
     mutable std::vector<float> color_facets;
     mutable std::size_t nb_facets;
     mutable std::size_t nb_lines;
+    mutable std::size_t nb_f_lines;
     mutable QOpenGLShaderProgram *program;
 
     using CGAL::Three::Scene_item::initialize_buffers;
