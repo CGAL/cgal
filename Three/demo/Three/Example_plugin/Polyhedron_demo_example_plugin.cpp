@@ -9,12 +9,7 @@
 #include "ui_Polyhedron_demo_example_plugin.h"
 #include "ui_dock_example.h"
 
-//Helps Windows to manage its dll
-#ifdef scene_triangle_item_EXPORTS
-#  define SCENE_TRIANGLE_ITEM_EXPORT Q_DECL_EXPORT
-#else
-#  define SCENE_TRIANGLE_ITEM_EXPORT Q_DECL_IMPORT
-#endif
+
 
 // The dialog class to get the coordinates of the triangle
 class Polyhedron_demo_example_plugin_dialog : public QDialog, private Ui::Polyhedron_demo_example_plugin_dialog
@@ -42,7 +37,7 @@ class Polyhedron_demo_example_plugin_dialog : public QDialog, private Ui::Polyhe
 };
 
 // The special Scene_item only for triangles
-class SCENE_TRIANGLE_ITEM_EXPORT Scene_triangle_item : public CGAL::Three::Scene_item
+class Scene_triangle_item : public CGAL::Three::Scene_item
 {
 
     Q_OBJECT
@@ -173,7 +168,7 @@ private:
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 //The actual plugin
 using namespace CGAL::Three;
-class Polyhedron_demo_example_plugin :
+class Q_DECL_EXPORT Polyhedron_demo_example_plugin :
         public QObject,
         public Polyhedron_demo_plugin_helper
 {
