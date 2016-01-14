@@ -181,8 +181,196 @@ namespace internal {
   };
 
 
+  bool read_ply_header (std::istream& stream, std::size_t& nb_points,
+                        std::vector<Ply_read_number*>& readers)
+  {
+    std::size_t lineNumber = 0; // current line number
+    enum Format { ASCII = 0, BINARY_LITTLE_ENDIAN = 1, BINARY_BIG_ENDIAN = 2};
+    Format format = ASCII;
+    
+    std::string line;
+    std::istringstream iss;
 
-} //namespace CGAL
+    // Check the order of the properties of the point set
+    bool reading_properties = false;
+  
+    while (getline (stream,line))
+      {
+        iss.clear();
+        iss.str (line);
+        ++ lineNumber;
+
+        // Reads file signature on first line
+        if (lineNumber == 1)
+          {
+            std::string signature;
+            if (!(iss >> signature) || (signature != "ply"))
+              {
+                // if wrong file format
+                std::cerr << "Incorrect file format line " << lineNumber << " of file" << std::endl;
+                return false;
+              }
+          }
+
+        // Reads format on 2nd line
+        else if (lineNumber == 2)
+          {
+            std::string tag, format_string, version;
+            if ( !(iss >> tag >> format_string >> version) )
+              {
+                std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+                return false;
+              }
+            if (format_string == "ascii") format = ASCII;
+            else if (format_string == "binary_little_endian") format = BINARY_LITTLE_ENDIAN;
+            else if (format_string == "binary_big_endian") format = BINARY_BIG_ENDIAN;
+            else
+              {
+                std::cerr << "Unknown file format \"" << format_string << "\" line " << lineNumber << std::endl;
+                return false;
+              }
+          }
+
+        // Comments and vertex properties
+        else
+          {
+            std::string keyword;
+            if (!(iss >> keyword))
+              {
+                std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+                return false;
+              }
+
+            if (keyword == "property")
+              {
+                if (!reading_properties)
+                  continue;
+
+                std::string type, name;
+                if (!(iss >> type >> name))
+                  {
+                    std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+                    return false;
+                  }
+
+                if (     type == "char"   || type == "int8")
+                  readers.push_back (new internal::Ply_read_char (name, format));
+                else if (type == "uchar"  || type == "uint8")
+                  readers.push_back (new internal::Ply_read_uchar (name, format));
+                else if (type == "short"  || type == "int16")
+                  readers.push_back (new internal::Ply_read_short (name, format));
+                else if (type == "ushort" || type == "uint16")
+                  readers.push_back (new internal::Ply_read_ushort (name, format));
+                else if (type == "int"    || type == "int32")
+                  readers.push_back (new internal::Ply_read_int (name, format));
+                else if (type == "uint"   || type == "uint32")
+                  readers.push_back (new internal::Ply_read_uint (name, format));
+                else if (type == "float"  || type == "float32")
+                  readers.push_back (new internal::Ply_read_float (name, format));
+                else if (type == "double" || type == "float64")
+                  readers.push_back (new internal::Ply_read_double (name, format));
+                
+                continue;
+              }
+            else
+              reading_properties = false;
+            
+            // ignore comments and properties (if not in element
+            // vertex - cf below - properties are useless in our case)
+            if (keyword == "comment" || keyword == "property")
+              continue;
+
+            // When end_header is reached, stop loop and begin reading points
+            if (keyword == "end_header")
+              break;
+            
+            if (keyword == "element")
+              {
+                std::string type;
+                std::size_t number;
+                if (!(iss >> type >> number))
+                  {
+                    std::cerr << "Error line " << lineNumber << " of file" << std::endl;
+                    return false;
+                  }
+                
+                if (type == "vertex")
+                  {
+                    nb_points = number;
+                    reading_properties = true;
+                  }
+                else
+                  continue;
+              }
+            
+          }
+      }
+    
+    return true;
+  }
+
+  
+  template < typename OutputIteratorValueType,
+             typename OutputIterator,
+             typename PointPMap,
+             typename NormalPMap,
+             typename Kernel >
+  bool read_ply_content (std::istream& stream,
+                         OutputIterator output,
+                         PointPMap point_pmap,
+                         NormalPMap normal_pmap,
+                         const std::size_t nb_points,
+                         std::vector<Ply_read_number*>& readers,
+                         const Kernel& /*kernel*/)
+  {
+    // value_type_traits is a workaround as back_insert_iterator's value_type is void
+    // typedef typename value_type_traits<OutputIterator>::type Enriched_point;
+    typedef OutputIteratorValueType Enriched_point;
+
+    typedef typename Kernel::Point_3 Point;
+    typedef typename Kernel::Vector_3 Vector;
+    typedef typename Kernel::FT FT;
+
+    std::size_t points_read = 0;
+    
+    while (!(stream.eof()) && points_read < nb_points)
+      {
+
+        FT x = 0., y = 0., z = 0., nx = 0., ny = 0., nz = 0.;
+        for (std::size_t i = 0; i < readers.size (); ++ i)
+          {
+            FT value = (*readers[i])(stream);
+            if (readers[i]->name () == "x") x = value;
+            else if (readers[i]->name () == "y") y = value;
+            else if (readers[i]->name () == "z") z = value;
+            else if (readers[i]->name () == "nx") nx = value;
+            else if (readers[i]->name () == "ny") ny = value;
+            else if (readers[i]->name () == "nz") nz = value;
+          }
+        Point point(x,y,z);
+        Vector normal(nx,ny,nz);
+        Enriched_point pwn;
+      
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+        put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
+        put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
+#else
+        put(point_pmap,  pwn, point);  // point_pmap[&pwn] = point
+        put(normal_pmap, pwn, normal); // normal_pmap[&pwn] = normal
+#endif
+        *output++ = pwn;
+        points_read++;
+      }
+    // Skip remaining lines
+
+    for (std::size_t i = 0; i < readers.size (); ++ i)
+      delete readers[i];
+
+
+    return (points_read == nb_points);
+  }
+
+} //namespace internal
   
 //===================================================================================
 /// \ingroup PkgPointSetProcessing
@@ -212,182 +400,22 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
                                  OutputIterator output, ///< output iterator over points.
                                  PointPMap point_pmap, ///< property map: value_type of OutputIterator -> Point_3.
                                  NormalPMap normal_pmap, ///< property map: value_type of OutputIterator -> Vector_3.
-                                 const Kernel& /*kernel*/) ///< geometric traits.
+                                 const Kernel& kernel) ///< geometric traits.
 {
-  // value_type_traits is a workaround as back_insert_iterator's value_type is void
-  // typedef typename value_type_traits<OutputIterator>::type Enriched_point;
-  typedef OutputIteratorValueType Enriched_point;
-
-  typedef typename Kernel::Point_3 Point;
-  typedef typename Kernel::Vector_3 Vector;
-  typedef typename Kernel::FT FT;
-
   if(!stream)
   {
     std::cerr << "Error: cannot open file" << std::endl;
     return false;
   }
 
-  // scan points
-  std::size_t pointsCount = 0,  // number of items in file
-    pointsRead = 0, // current number of points read
-    lineNumber = 0; // current line number
-  enum Format { ASCII = 0, BINARY_LITTLE_ENDIAN = 1, BINARY_BIG_ENDIAN = 2};
-  Format format = ASCII;
-    
-  std::string line;
-  std::istringstream iss;
-
-  // Check the order of the properties of the point set
-  bool reading_properties = false;
+  std::size_t nb_points = 0;
   std::vector<internal::Ply_read_number*> readers;
+  if (internal::read_ply_header (stream, nb_points, readers))
+    return false;
   
-  while (getline (stream,line))
-  {
-    iss.clear();
-    iss.str (line);
-    ++ lineNumber;
 
-    // Reads file signature on first line
-    if (lineNumber == 1)
-      {
-        std::string signature;
-        if (!(iss >> signature) || (signature != "ply"))
-          {
-            // if wrong file format
-            std::cerr << "Incorrect file format line " << lineNumber << " of file" << std::endl;
-            return false;
-          }
-      }
-
-    // Reads format on 2nd line
-    else if (lineNumber == 2)
-      {
-        std::string tag, format_string, version;
-        if ( !(iss >> tag >> format_string >> version) )
-          {
-            std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-            return false;
-          }
-        if (format_string == "ascii") format = ASCII;
-        else if (format_string == "binary_little_endian") format = BINARY_LITTLE_ENDIAN;
-        else if (format_string == "binary_big_endian") format = BINARY_BIG_ENDIAN;
-        else
-          {
-            std::cerr << "Unknown file format \"" << format_string << "\" line " << lineNumber << std::endl;
-            return false;
-          }
-      }
-
-    // Comments and vertex properties
-    else
-      {
-        std::string keyword;
-        if (!(iss >> keyword))
-          {
-            std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-            return false;
-          }
-
-        if (keyword == "property")
-          {
-            if (!reading_properties)
-              continue;
-
-            std::string type, name;
-            if (!(iss >> type >> name))
-              {
-                std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-                return false;
-              }
-
-            if (     type == "char"   || type == "int8")
-              readers.push_back (new internal::Ply_read_char (name, format));
-            else if (type == "uchar"  || type == "uint8")
-              readers.push_back (new internal::Ply_read_uchar (name, format));
-            else if (type == "short"  || type == "int16")
-              readers.push_back (new internal::Ply_read_short (name, format));
-            else if (type == "ushort" || type == "uint16")
-              readers.push_back (new internal::Ply_read_ushort (name, format));
-            else if (type == "int"    || type == "int32")
-              readers.push_back (new internal::Ply_read_int (name, format));
-            else if (type == "uint"   || type == "uint32")
-              readers.push_back (new internal::Ply_read_uint (name, format));
-            else if (type == "float"  || type == "float32")
-              readers.push_back (new internal::Ply_read_float (name, format));
-            else if (type == "double" || type == "float64")
-              readers.push_back (new internal::Ply_read_double (name, format));
-                
-            continue;
-          }
-        else
-          reading_properties = false;
-            
-        // ignore comments and properties (if not in element
-        // vertex - cf below - properties are useless in our case)
-        if (keyword == "comment" || keyword == "property")
-          continue;
-
-        // When end_header is reached, stop loop and begin reading points
-        if (keyword == "end_header")
-          break;
-            
-        if (keyword == "element")
-          {
-            std::string type;
-            std::size_t number;
-            if (!(iss >> type >> number))
-              {
-                std::cerr << "Error line " << lineNumber << " of file" << std::endl;
-                return false;
-              }
-                
-            if (type == "vertex")
-              {
-                pointsCount = number;
-                reading_properties = true;
-              }
-            else
-              continue;
-          }
-            
-      }
-  }
-  
-  while (!(stream.eof()) && pointsRead < pointsCount)
-    {
-
-      FT x = 0., y = 0., z = 0., nx = 0., ny = 0., nz = 0.;
-      for (std::size_t i = 0; i < readers.size (); ++ i)
-        {
-          FT value = (*readers[i])(stream);
-          if (readers[i]->name () == "x") x = value;
-          else if (readers[i]->name () == "y") y = value;
-          else if (readers[i]->name () == "z") z = value;
-          else if (readers[i]->name () == "nx") nx = value;
-          else if (readers[i]->name () == "ny") ny = value;
-          else if (readers[i]->name () == "nz") nz = value;
-        }
-      Point point(x,y,z);
-      Vector normal(nx,ny,nz);
-      Enriched_point pwn;
-      
-#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
-      put(point_pmap,  &pwn, point);  // point_pmap[&pwn] = point
-      put(normal_pmap, &pwn, normal); // normal_pmap[&pwn] = normal
-#else
-      put(point_pmap,  pwn, point);  // point_pmap[&pwn] = point
-      put(normal_pmap, pwn, normal); // normal_pmap[&pwn] = normal
-#endif
-      *output++ = pwn;
-      pointsRead++;
-    }
-    // Skip remaining lines
-
-  for (std::size_t i = 0; i < readers.size (); ++ i)
-    delete readers[i];
-  
-  return true;
+  return internal::read_ply_content<OutputIteratorValueType> (stream, output, point_pmap, normal_pmap,
+                                                              nb_points, readers, kernel);
 }
 
 /// @cond SKIP_IN_MANUAL
