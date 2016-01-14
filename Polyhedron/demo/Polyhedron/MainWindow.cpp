@@ -822,8 +822,8 @@ void MainWindow::updateViewerBBox()
   const double xmax = bbox.xmax;
   const double ymax = bbox.ymax;
   const double zmax = bbox.zmax;
-  // qDebug() << QString("Bounding box: (%1, %2, %3) - (%4, %5, %6)\n")
-  // .arg(xmin).arg(ymin).arg(zmin).arg(xmax).arg(ymax).arg(zmax);
+   //qDebug() << QString("Bounding box: (%1, %2, %3) - (%4, %5, %6)\n")
+   //.arg(xmin).arg(ymin).arg(zmin).arg(xmax).arg(ymax).arg(zmax);
   qglviewer::Vec 
     vec_min(xmin, ymin, zmin),
     vec_max(xmax, ymax, zmax);
