@@ -214,6 +214,20 @@ namespace internal {
         m_point_pmap (point_pmap),
         m_normal_pmap (normal_pmap)
     { }
+
+    bool is_applicable (const std::vector<Ply_read_number*>& readers)
+    {
+      bool x_found = false, y_found = false, z_found = false;
+      for (std::size_t i = 0; i < readers.size (); ++ i)
+        if (readers[i]->name () == "x")
+          x_found = true;
+        else if (readers[i]->name () == "y")
+          y_found = true;
+        else if (readers[i]->name () == "z")
+          z_found = true;
+
+      return x_found && y_found && z_found;
+    }
       
     void operator() (const std::vector<Ply_read_number*>& readers)
     {
@@ -450,7 +464,9 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
 
   internal::Ply_builder_point_3<OutputIteratorValueType, OutputIterator, PointPMap, NormalPMap, Kernel>
     builder (output, point_pmap, normal_pmap);
-  
+
+  if (!(builder.is_applicable (readers)))
+    return false;
 
   return internal::read_ply_content (stream, builder, nb_points, readers, kernel);
 }
