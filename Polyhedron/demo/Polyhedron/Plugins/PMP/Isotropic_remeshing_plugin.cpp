@@ -248,7 +248,6 @@ public Q_SLOTS:
     unsigned int nb_iter;
     bool protect;
 
-    const QList<int> indices = scene->selectionIndices();
     BOOST_FOREACH(int index, scene->selectionIndices())
     {
       Scene_polyhedron_item* poly_item =
@@ -264,7 +263,7 @@ public Q_SLOTS:
       {
         QDialog dialog(mw);
         Ui::Isotropic_remeshing_dialog ui = remeshing_dialog(&dialog, poly_item);
-        ui.objectName->setText(QString::number(indices.size())
+        ui.objectName->setText(QString::number(scene->selectionIndices().size())
           .append(QString(" items to be remeshed")));
         int i = dialog.exec();
         if (i == QDialog::Rejected)
