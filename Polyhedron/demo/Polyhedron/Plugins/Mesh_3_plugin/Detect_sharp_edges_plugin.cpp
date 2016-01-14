@@ -110,6 +110,9 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
 
     CGAL::detect_sharp_edges(pMesh, angle);
 
+    //update item
+    scene->item(tuple.first)->invalidate_buffers();
+
     // update scene
     scene->itemChanged(tuple.first);
   }
@@ -117,7 +120,5 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
   // default cursor
   QApplication::restoreOverrideCursor();
 }
-
-//Q_EXPORT_PLUGIN2(Polyhedron_demo_detect_sharp_edges_plugin, Polyhedron_demo_detect_sharp_edges_plugin)
 
 #include "Detect_sharp_edges_plugin.moc"
