@@ -1,4 +1,7 @@
 include( polyhedron_demo_macros )
+ qt5_wrap_ui( clip_polyhedronUI_FILES Clip_polyhedron_plugin.ui )
+ polyhedron_demo_plugin(clip_polyhedron_plugin Clip_polyhedron_plugin ${clip_polyhedronUI_FILES})
+ target_link_libraries(clip_polyhedron_plugin  scene_polyhedron_item scene_basic_objects)
  polyhedron_demo_plugin(corefinement_plugin Corefinement_plugin)
  target_link_libraries(corefinement_plugin  scene_polyhedron_item scene_combinatorial_map_item scene_polylines_item)
  polyhedron_demo_plugin(intersection_plugin Intersection_plugin)

@@ -20,7 +20,7 @@
 class QMenu;
 
 // This class represents a polyhedron in the OpenGL scene
-class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item 
+class SCENE_POLYHEDRON_ITEM_EXPORT Scene_polyhedron_item
         : public CGAL::Three::Scene_item{
     Q_OBJECT
 public:
