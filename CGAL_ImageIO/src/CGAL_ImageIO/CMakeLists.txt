@@ -7,7 +7,7 @@ find_package( ZLIB )
 =======
 #option(WITH_VTK "Add VTK support to libCGAL_ImageIO." OFF)
 
-if (ENABLE_HEADER_ONLY)
+if (CGAL_HEADERS_ONLY)
   cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
 
@@ -62,7 +62,7 @@ if(OPENGL_FOUND)
 
   add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_ImageIO_3RD_PARTY_DEFINITIONS} )
 
-  if (NOT ENABLE_HEADER_ONLY)
+  if (NOT CGAL_HEADERS_ONLY)
       add_dependencies( CGAL_ImageIO CGAL )
 
       # CGAL_ImageIO only depends on CGAL in DEBUG, but we still link it
