@@ -372,6 +372,7 @@ MainWindow::MainWindow(QWidget* parent)
     }
   }
 
+  statistics_dlg = NULL;
 
 #ifdef QT_SCRIPT_LIB
   // evaluate_script("print(plugins);");
@@ -1756,14 +1757,14 @@ void MainWindow::recenterSceneView(const QModelIndex &id)
 
 void MainWindow::stat_dlg_update()
 {
-  if(statistics_dlg)
+  if(statistics_dlg != NULL)
     statistics_dlg->hide();
   statistics_on_item();
 
 }
 void MainWindow::statistics_on_item()
 {
-  if(statistics_dlg)
+  if (statistics_dlg != NULL)
     delete statistics_dlg;
   statistics_dlg = new QDialog(this);
   Ui::Statistics_on_item_dialog ui;
