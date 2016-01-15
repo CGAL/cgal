@@ -403,6 +403,27 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
         vaos[Edges]->release();
 
     }
+  //vao containing the data for the feature_edges
+  {
+      program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+      program->bind();
+      vaos[Feature_edges]->bind();
+
+      buffers[Feature_edges_vertices].bind();
+      buffers[Feature_edges_vertices].allocate(positions_feature_lines.data(),
+                          static_cast<int>(positions_feature_lines.size()*sizeof(float)));
+      program->enableAttributeArray("vertex");
+      program->setAttributeBuffer("vertex",GL_FLOAT,0,4);
+      buffers[Feature_edges_vertices].release();
+      program->disableAttributeArray("colors");
+      program->release();
+
+      vaos[Feature_edges]->release();
+
+  }
+    nb_f_lines = positions_feature_lines.size();
+    positions_feature_lines.resize(0);
+    std::vector<float>(positions_feature_lines).swap(positions_feature_lines);
     nb_lines = positions_lines.size();
     positions_lines.resize(0);
     std::vector<float>(positions_lines).swap(positions_lines);
@@ -427,6 +448,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
 {
     positions_facets.resize(0);
     positions_lines.resize(0);
+    positions_feature_lines.resize(0);
     normals_flat.resize(0);
     normals_gouraud.resize(0);
     number_of_null_length_edges = 0;
@@ -496,14 +518,26 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     std::vector<double> edge_lengths;
 
     Edge_iterator he;
-    if(!show_only_feature_edges_m) {
-        for(he = poly->edges_begin();
-            he != poly->edges_end();
-            he++)
+    for(he = poly->edges_begin();
+        he != poly->edges_end();
+        he++)
+    {
+        const Point& a = he->vertex()->point();
+        const Point& b = he->opposite()->vertex()->point();
+        if ( he->is_feature_edge())
         {
-            if (!show_feature_edges_m && he->is_feature_edge()) continue;
-            const Point& a = he->vertex()->point();
-            const Point& b = he->opposite()->vertex()->point();
+            positions_feature_lines.push_back(a.x());
+            positions_feature_lines.push_back(a.y());
+            positions_feature_lines.push_back(a.z());
+            positions_feature_lines.push_back(1.0);
+
+            positions_feature_lines.push_back(b.x());
+            positions_feature_lines.push_back(b.y());
+            positions_feature_lines.push_back(b.z());
+            positions_feature_lines.push_back(1.0);
+        }
+        else
+        {
             positions_lines.push_back(a.x());
             positions_lines.push_back(a.y());
             positions_lines.push_back(a.z());
@@ -519,16 +553,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
 
             if(edge_lengths.back() == 0)
                 number_of_null_length_edges++;
-
         }
-    }
-    for(he = poly->edges_begin();
-        he != poly->edges_end();
-        he++)
-    {
-        if(!he->is_feature_edge()) continue;
-        const Point& a = he->vertex()->point();
-        const Point& b = he->opposite()->vertex()->point();
 
         positions_lines.push_back(a.x());
         positions_lines.push_back(a.y());
@@ -545,7 +570,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
         if(edge_lengths.back() == 0)
             number_of_null_length_edges++;
     }
-
     //set the colors
     compute_colors();
 }
@@ -588,34 +612,21 @@ Scene_polyhedron_item::compute_colors() const
     typedef Polyhedron::Edge_iterator	Edge_iterator;
 
     Edge_iterator he;
-    if(!show_only_feature_edges_m) {
         for(he = poly->edges_begin();
             he != poly->edges_end();
             he++)
         {
-            if(he->is_feature_edge()) continue;
-            color_lines.push_back(this->color().lighter(50).redF());
-            color_lines.push_back(this->color().lighter(50).greenF());
-            color_lines.push_back(this->color().lighter(50).blueF());
+            if(!he->is_feature_edge())
+            {
+                color_lines.push_back(this->color().lighter(50).redF());
+                color_lines.push_back(this->color().lighter(50).greenF());
+                color_lines.push_back(this->color().lighter(50).blueF());
 
-            color_lines.push_back(this->color().lighter(50).redF());
-            color_lines.push_back(this->color().lighter(50).greenF());
-            color_lines.push_back(this->color().lighter(50).blueF());
+                color_lines.push_back(this->color().lighter(50).redF());
+                color_lines.push_back(this->color().lighter(50).greenF());
+                color_lines.push_back(this->color().lighter(50).blueF());
+            }
         }
-    }
-    for(he = poly->edges_begin();
-        he != poly->edges_end();
-        he++)
-    {
-        if(!he->is_feature_edge()) continue;
-        color_lines.push_back(1.0);
-        color_lines.push_back(0.0);
-        color_lines.push_back(0.0);
-
-        color_lines.push_back(1.0);
-        color_lines.push_back(0.0);
-        color_lines.push_back(0.0);
-    }
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item()
@@ -627,12 +638,12 @@ Scene_polyhedron_item::Scene_polyhedron_item()
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
 {
-   // setItemIsMulticolor(true);
     cur_shading=FlatPlusEdges;
     is_selected = true;
     nb_facets = 0;
     nb_lines = 0;
     is_triangulated = true;
+    nb_f_lines = 0;
     init();
     self_intersect = false;
 }
@@ -646,12 +657,12 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
       erase_next_picked_facet_m(false),
       plugin_has_set_color_vector_m(false)
 {
-   // setItemIsMulticolor(true);
     cur_shading=FlatPlusEdges;
     is_selected = true;
     nb_facets = 0;
     nb_lines = 0;
     is_triangulated = true;
+    nb_f_lines = 0;
     init();
     invalidate_buffers();
     self_intersect = false;
@@ -673,6 +684,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     is_triangulated = true;
     nb_facets = 0;
     nb_lines = 0;
+    nb_f_lines = 0;
     invalidate_buffers();
     self_intersect = false;
 }
@@ -886,23 +898,39 @@ void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) co
         compute_bbox();
     }
 
-    vaos[Edges]->bind();
-
-    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
-    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-    program->bind();
-    //draw the edges
-    if(is_monochrome)
+    if(!show_only_feature_edges_m)
     {
-        program->setAttributeValue("colors", this->color().lighter(50));
-        if(is_selected)
-            program->setUniformValue("is_selected", true);
-        else
-            program->setUniformValue("is_selected", false);
+        vaos[Edges]->bind();
+
+        attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+        program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
+        program->bind();
+        //draw the edges
+        if(is_monochrome)
+        {
+            program->setAttributeValue("colors", this->color().lighter(50));
+            if(is_selected)
+                program->setUniformValue("is_selected", true);
+            else
+                program->setUniformValue("is_selected", false);
+        }
+        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/4));
+        program->release();
+        vaos[Edges]->release();
     }
-    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_lines/4));
-    program->release();
-    vaos[Edges]->release();
+    if(show_feature_edges_m || show_only_feature_edges_m)
+    {
+        vaos[Feature_edges]->bind();
+
+        attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+        program = getShaderProgram(PROGRAM_NO_SELECTION);
+        program->bind();
+        //draw the edges
+        program->setAttributeValue("colors", Qt::red);
+        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_f_lines/4));
+        program->release();
+        vaos[Feature_edges]->release();
+        }
     }
 
 void
