@@ -450,7 +450,8 @@ using std::max;
 #define CGAL_CAN_USE_CXX11_MUTEX
 #endif
 
-#if (__has_include(<atomic>) && __cplusplus >= 201103L ) || \
+#if ( BOOST_VERSION >= 105600 && ! defined(BOOST_NO_CXX11_HDR_ATOMIC) ) || \
+    (__has_include(<atomic>) && __cplusplus >= 201103L ) || \
     ( (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L ) || \
     ( _MSC_VER >= 1700 )
 #define CGAL_CAN_USE_CXX11_ATOMIC
