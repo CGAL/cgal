@@ -233,7 +233,9 @@ public:
   mutable AT at;
   mutable ET *et;
 #ifdef CGAL_LAZY_USE_MUTEX
-  mutable CGAL_MUTEX update_exact_mutex;
+  typedef CGAL::cpp11::mutex Mutex;
+  typedef CGAL::cpp11::lock_guard<Mutex> Lock_guard;
+  mutable Mutex update_exact_mutex;
 #endif
 
   Lazy_rep ()
@@ -248,7 +250,7 @@ public:
   const AT& approx() const
   {
 #ifdef CGAL_LAZY_USE_MUTEX
-      CGAL_SCOPED_LOCK(update_exact_mutex);
+      Lock_guard guard(update_exact_mutex);
 #endif
       return at;
   }
@@ -264,7 +266,7 @@ public:
 #ifdef CGAL_LAZY_USE_MUTEX
     if (et==NULL)
     {
-      CGAL_SCOPED_LOCK(update_exact_mutex);
+      Lock_guard guard(update_exact_mutex);
       if(et==NULL) update_exact();
     }
 #else // not CGAL_LAZY_USE_MUTEX

@@ -7,14 +7,23 @@
 
 \section Developer_manualThreadlocal Thread Local Storage
 
-The header file <CGAL/tss.h> provides a macro `CGAL_STATIC_THREAD_LOCAL_VARIABLE(TYPE,VAR,ARG1)`
-that creates a thread local variable `VAR` of type `TYPE`, and passes `ARG1` to the
-constructor.  The variable is either `threadlocal`, or a `boost::thread_specific_ptr`, 
-or just a local variable if `CGAL_HAS_THREADS` is not defined.
-
+The header file <CGAL/tss.h> provides a macro
+`CGAL_STATIC_THREAD_LOCAL_VARIABLE(TYPE,VAR,ARG1)` that creates a thread
+local variable `VAR` of type `TYPE`, and passes `ARG1` to the constructor.
+The variable either is qualified by `thread_local` (C++11), or uses a
+`boost::thread_specific_ptr`, or is just a local variable if
+`CGAL_HAS_THREADS` is not defined.
 
 \section Developer_manualMutex Mutex
 
-The header file <CGAL/mutex.h> provides a macro `CGAL_MUTEX` and a macro `CGAL_SCOPED_LOCK(M)` that is either a `std::unique_lock<std::mutex>` or a `boost::mutex::scoped_lock`. 
+The header file <CGAL/mutex.h> defines a namespace `CGAL::cpp11` that
+contains `mutex`, `unique_lock`, and `lock_guard`. The implementation uses
+either the C++11 implementation from the namespace `std`, if available, and
+falls back to the Boost implementation from Boost.Thread.
+
+The header file <CGAL/mutex.h> also provides a macro `CGAL_MUTEX` that is
+`CGAL::cpp11:mutex` , and a macro `CGAL_SCOPED_LOCK(M)`, that takes a
+`CGAL_MUTEX` variable as parameter, and evaluates to
+`CGAL::cpp11::lock_guard<CGAL::cpp11::mutex> guard(M)`.
 
 */
