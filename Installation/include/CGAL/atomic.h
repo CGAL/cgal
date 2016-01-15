@@ -31,6 +31,9 @@
      }
 
 #  else // not CGAL_CAN_USE_CXX11_ATOMIC
+#    if BOOST_VERSION < 105300
+#      error Boost.Atomic was introduced in Boost-1.53
+#    endif
 #    include <boost/thread/atomic.hpp>
 
      namespace CGAL {
