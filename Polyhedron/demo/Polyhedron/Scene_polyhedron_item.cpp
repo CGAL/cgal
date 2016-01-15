@@ -1140,7 +1140,9 @@ QString Scene_polyhedron_item::compute_stats(int type)
 
   double mini, maxi, ave;
   angles(poly, mini, maxi, ave);
-  self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect(*poly);
+  if (is_triangulated)
+    self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect(*poly);
+
   QString nb_vertices(QString::number(poly->size_of_vertices())),
       nb_facets(QString::number(poly->size_of_facets())),
       nbborderedges(QString::number(poly->size_of_border_halfedges())),
@@ -1159,18 +1161,24 @@ QString Scene_polyhedron_item::compute_stats(int type)
       minangle(QString::number(mini)),
       maxangle(QString::number(maxi)),
       averageangle(QString::number(ave));
+
   if (area!=-std::numeric_limits<double>::infinity())
     s_area = QString::number(area);
   else
     s_area = QString("Infinite");
+
   if (volume!=-std::numeric_limits<double>::infinity())
     s_volume = QString::number(volume);
   else
     s_volume = QString("0");
-  if(self_intersect)
+
+  if (self_intersect)
     selfintersect = QString("Yes");
-  else
+  else if (is_triangulated)
     selfintersect = QString("No");
+  else
+    selfintersect = QString("n/a");
+
   if(is_triangulated)
     degenfaces = QString::number(number_of_degenerated_faces);
   else
