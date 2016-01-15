@@ -128,10 +128,23 @@ void Scene_points_with_normal_item::initialize_buffers(CGAL::Three::Viewer_inter
         program->enableAttributeArray("vertex");
         program->setAttributeBuffer("vertex",GL_DOUBLE,0,3);
         buffers[Points_vertices].release();
+
+        if (!(m_colors.empty()))
+          {
+            buffers[Points_colors].bind();
+            buffers[Points_colors].allocate (colors_points.data(),
+                                             static_cast<int>(colors_points.size()*sizeof(double)));
+            program->enableAttributeArray("colors");
+            program->setAttributeBuffer("colors",GL_DOUBLE,0,3);
+            buffers[Points_colors].release();
+            std::vector<double>(colors_points).swap(colors_points);
+          }
+        
         vaos[ThePoints]->release();
         nb_points = positions_points.size();
         positions_points.resize(0);
         std::vector<double>(positions_points).swap(positions_points);
+        
         program->release();
     }
     //vao for the selected points
@@ -159,18 +172,24 @@ void Scene_points_with_normal_item::initialize_buffers(CGAL::Three::Viewer_inter
 void Scene_points_with_normal_item::compute_normals_and_vertices() const
 {
     positions_points.resize(0);
+    colors_points.resize(0);
     positions_lines.resize(0);
     positions_selected_points.resize(0);
     normals.resize(0);
 
     positions_points.reserve(m_points->size() * 3);
+    colors_points.reserve(m_points->size() * 3);
     positions_lines.reserve(m_points->size() * 3 * 2);
 
 
     //Shuffle container to allow quick display random points
     Point_set_3<Kernel> points = *m_points;
+    srand(0);
     std::random_shuffle (points.begin(), points.end() - m_points->nb_selected_points());
     std::random_shuffle (points.end() - m_points->nb_selected_points(), points.end());
+    std::vector<QColor> colors = m_colors;
+    srand(0);
+    std::random_shuffle (colors.begin (), colors.end());
     
     //The points
     {
@@ -191,6 +210,14 @@ void Scene_points_with_normal_item::compute_normals_and_vertices() const
 	  positions_selected_points.push_back(p.y());
 	  positions_selected_points.push_back(p.z());
 	}
+      
+      // Colors
+      for (std::size_t i = 0; i < colors.size(); ++ i)
+        {
+          colors_points.push_back ((double)(colors[i].red()) / 255.);
+          colors_points.push_back ((double)(colors[i].green()) / 255.);
+          colors_points.push_back ((double)(colors[i].blue()) / 255.);
+        }
     }
 
     //The lines
@@ -457,7 +484,9 @@ void Scene_points_with_normal_item::draw_points(CGAL::Three::Viewer_interface* v
     program=getShaderProgram(PROGRAM_NO_SELECTION);
     attrib_buffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
-    program->setAttributeValue("colors", this->color());
+    
+    if (m_colors.empty())
+      program->setAttributeValue("colors", this->color());
     viewer->glDrawArrays(GL_POINTS, 0,
                          static_cast<GLsizei>(((std::size_t)(ratio_displayed * nb_points)/3)));
     vaos[ThePoints]->release();

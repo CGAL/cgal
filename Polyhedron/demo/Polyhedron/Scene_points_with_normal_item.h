@@ -104,12 +104,14 @@ private:
   enum VBOs {
       Edges_vertices = 0,
       Points_vertices,
+      Points_colors,
       Selected_points_vertices,
       NbOfVbos = Selected_points_vertices+1
   };
 
   mutable std::vector<double> positions_lines;
   mutable std::vector<double> positions_points;
+  mutable std::vector<double> colors_points;
   mutable std::vector<double> positions_selected_points;
   mutable std::vector<double> normals;
   mutable std::size_t nb_points;
