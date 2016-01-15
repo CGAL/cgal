@@ -242,11 +242,10 @@ public Q_SLOTS:
   void isotropic_remeshing_of_several_polyhedra()
   {
     // Remeshing parameters
-    bool parameters_set = false;
-    bool edges_only;
-    double target_length;
-    unsigned int nb_iter;
-    bool protect;
+    bool edges_only = false;
+    double target_length = 0.;
+    unsigned int nb_iter = 1;
+    bool protect = false;
 
     BOOST_FOREACH(int index, scene->selectionIndices())
     {
@@ -259,7 +258,7 @@ public Q_SLOTS:
           << " is not a Polyhedron, remeshing skipped\n";
         continue;
       }
-      else if (!parameters_set)
+      else if (target_length == 0.)
       {
         QDialog dialog(mw);
         Ui::Isotropic_remeshing_dialog ui = remeshing_dialog(&dialog, poly_item);
@@ -277,12 +276,14 @@ public Q_SLOTS:
         nb_iter = ui.nbIterations_spinbox->value();
         protect = ui.protect_checkbox->isChecked();
 
-        parameters_set = true;
         break;
       }
     }
-    if(!parameters_set)
+    if(target_length == 0.)
+    {
       std::cout << "Remeshing aborted" << std::endl;
+      return;
+    }
 
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
