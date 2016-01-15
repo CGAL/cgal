@@ -32,12 +32,12 @@ endif()
 #                                    -= HEADER ONLY =-
 #
 #--------------------------------------------------------------------------------------------------
-option(ENABLE_HEADER_ONLY "Enable the header only version of CGAL" OFF )
+option(CGAL_HEADERS_ONLY "Enable the header only version of CGAL" OFF )
 
-if (ENABLE_HEADER_ONLY)
-  set(ENABLE_HEADER_ONLY TRUE CACHE BOOL "Enable cgal header only" FORCE)
+if (CGAL_HEADERS_ONLY)
+  set(CGAL_HEADERS_ONLY TRUE CACHE BOOL "Enable cgal header only" FORCE)
   add_definitions(-DCGAL_HEADER_ONLY)
-endif (ENABLE_HEADER_ONLY)
+endif (CGAL_HEADERS_ONLY)
  
 #--------------------------------------------------------------------------------------------------
 #

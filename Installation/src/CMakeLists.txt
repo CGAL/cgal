@@ -36,7 +36,7 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     set(rc_file )
   endif()
 
-  if (NOT ENABLE_HEADER_ONLY)
+  if (NOT CGAL_HEADER_ONLY)
      add_library (${LIBRARY_NAME}
        ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp
        ${rc_file}
@@ -51,7 +51,7 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
    endif()
 
   if(CGAL_AUTO_LINK_ENABLED)
-    if (NOT ENABLE_HEADER_ONLY)
+    if (NOT CGAL_HEADERS_ONLY)
       set_target_properties( ${LIBRARY_NAME} PROPERTIES
         OUTPUT_NAME_DEBUG          "${DEBUG_MANGLED_NAME}"
         OUTPUT_NAME_RELEASE        "${RELEASE_MANGLED_NAME}"
@@ -67,7 +67,7 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     endif()
   endif()
 
-  if (NOT ENABLE_HEADER_ONLY)
+  if (NOT CGAL_HEADER_ONLY)
     install(TARGETS ${LIBRARY_NAME} EXPORT ${LIBRARY_NAME}Exports
       RUNTIME DESTINATION "${CGAL_INSTALL_BIN_DIR}"
       LIBRARY DESTINATION "${CGAL_INSTALL_LIB_DIR}"
@@ -194,7 +194,7 @@ CGAL_add_if_target(CGAL_Core)
 CGAL_add_if_target(CGAL_ImageIO)
 CGAL_add_if_target(CGAL_Qt5)
 
-#if (NOT ENABLE_HEADER_ONLY) # TODO Check on windows these exports
+#if (NOT CGAL_HEADERS_ONLY) # TODO Check on windows these exports
   export(TARGETS ${CGAL_ACTUAL_CONFIGURED_LIBRARIES} NAMESPACE CGAL:: FILE "${CMAKE_BINARY_DIR}/CGALExports.cmake")
 #endif()
 

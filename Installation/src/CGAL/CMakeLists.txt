@@ -10,7 +10,7 @@ link_directories(${CGAL_3RD_PARTY_LIBRARIES_DIRS})
 
 collect_cgal_library(CGAL "")
 
-if(NOT ENABLE_HEADER_ONLY)
+if(NOT CGAL_HEADERS_ONLY)
    target_link_libraries(CGAL ${CGAL_3RD_PARTY_LIBRARIES})
 endif()
 
