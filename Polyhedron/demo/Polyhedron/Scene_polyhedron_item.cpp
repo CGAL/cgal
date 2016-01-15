@@ -1165,12 +1165,12 @@ QString Scene_polyhedron_item::compute_stats(int type)
   if (area!=-std::numeric_limits<double>::infinity())
     s_area = QString::number(area);
   else
-    s_area = QString("Infinite");
+    s_area = QString("n/a");
 
   if (volume!=-std::numeric_limits<double>::infinity())
     s_volume = QString::number(volume);
   else
-    s_volume = QString("0");
+    s_volume = QString("n/a");
 
   if (self_intersect)
     selfintersect = QString("Yes");
