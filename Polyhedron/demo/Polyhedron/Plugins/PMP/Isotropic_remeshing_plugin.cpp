@@ -294,7 +294,8 @@ public Q_SLOTS:
       Scene_polyhedron_item* poly_item =
         qobject_cast<Scene_polyhedron_item*>(scene->item(sel_i));
       if (poly_item == NULL)
-        std::cout << "Item " << sel_i << " is not a Polyhedron, remeshing skipped\n";
+        std::cout << "Item " << scene->item(sel_i)->name().data()
+                  << " is not a Polyhedron, remeshing skipped\n";
       else
         selection.push_back(poly_item);
     }
@@ -316,11 +317,11 @@ public Q_SLOTS:
       QTime time;
       time.start();
 
-        remesher.remesh(poly_item);
+        remesher(poly_item);
 
       total_time += time.elapsed();
-      std::cout << "Remeshing of item "<< index << " done in "
-                << time.elapsed() << " ms" << std::endl;
+      std::cout << "Remeshing of " << poly_item->name().data()
+                << " done in " << time.elapsed() << " ms" << std::endl;
     }
 #endif
     std::cout << "Remeshing of all selected items done in "
