@@ -1182,7 +1182,7 @@ QString Scene_polyhedron_item::compute_stats(int type)
   if(is_triangulated)
     degenfaces = QString::number(number_of_degenerated_faces);
   else
-    degenfaces = QString("Unknown (not triangulated)");
+    degenfaces = QString("n/a");
 
   //gets the number of holes
 
