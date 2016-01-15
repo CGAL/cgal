@@ -1,0 +1,8 @@
+Implementation of generalized maps.
+
+A generalized map is a mathematical model allowing to represent  an
+object in any dimension by describing the subdivision of the object in
+vertices, edges, faces, volumes, ... and the  incidence relationships
+on them. Generalized maps allow to describe non orientable object,
+contrary to combinatorial maps. However, their main interest is their
+homogeneity in any dimension which simplify the algorithms.
