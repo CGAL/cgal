@@ -247,6 +247,7 @@ public Q_SLOTS:
     unsigned int nb_iter = 1;
     bool protect = false;
 
+    std::vector<Scene_polyhedron_item*> selection;
     BOOST_FOREACH(int index, scene->selectionIndices())
     {
       Scene_polyhedron_item* poly_item =
@@ -258,8 +259,12 @@ public Q_SLOTS:
           << " is not a Polyhedron, remeshing skipped\n";
         continue;
       }
-      else if (target_length == 0.)
+      else
       {
+        selection.push_back(poly_item);
+
+        if (target_length == 0.)//parameters have not been set yet
+        {
         QDialog dialog(mw);
         Ui::Isotropic_remeshing_dialog ui = remeshing_dialog(&dialog, poly_item);
         ui.objectName->setText(QString::number(scene->selectionIndices().size())
@@ -275,12 +280,12 @@ public Q_SLOTS:
         target_length = ui.edgeLength_dspinbox->value();
         nb_iter = ui.nbIterations_spinbox->value();
         protect = ui.protect_checkbox->isChecked();
-
-        break;
+        }
       }
     }
-    if(target_length == 0.)
-    {
+
+    if(target_length == 0.)//parameters have not been set
+    {                      // i.e. no item is a polyhedron
       std::cout << "Remeshing aborted" << std::endl;
       return;
     }
@@ -288,18 +293,6 @@ public Q_SLOTS:
     // wait cursor
     QApplication::setOverrideCursor(Qt::WaitCursor);
     int total_time = 0;
-
-    std::vector<Scene_polyhedron_item*> selection;
-    Q_FOREACH(int sel_i, scene->selectionIndices())
-    {
-      Scene_polyhedron_item* poly_item =
-        qobject_cast<Scene_polyhedron_item*>(scene->item(sel_i));
-      if (poly_item == NULL)
-        std::cout << "Item " << scene->item(sel_i)->name().data()
-                  << " is not a Polyhedron, remeshing skipped\n";
-      else
-        selection.push_back(poly_item);
-    }
 
 #ifdef CGAL_LINKED_WITH_TBB
     QTime time;
