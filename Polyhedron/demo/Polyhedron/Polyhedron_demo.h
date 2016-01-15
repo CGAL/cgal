@@ -3,11 +3,7 @@
 
 #include <QtCore/qglobal.h>
 
-#ifdef polyhedron_demo_EXPORTS
-#  define POLYHEDRON_DEMO_EXPORT Q_DECL_EXPORT
-#else
-#  define POLYHEDRON_DEMO_EXPORT Q_DECL_IMPORT
-#endif
+#include "Polyhedron_demo_config.h"
 
 #include <QApplication>
 #include <QScopedPointer>

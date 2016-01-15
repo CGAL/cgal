@@ -935,7 +935,9 @@ void MainWindow::open(QString filename)
                           // << filename << "\", with following content:\n"
                           // << program;
     }
+    QApplication::setOverrideCursor(Qt::WaitCursor);
     evaluate_script(program, filename);
+    QApplication::restoreOverrideCursor();
     return;
   }
 #endif
@@ -995,7 +997,10 @@ void MainWindow::open(QString filename)
   settings.setValue("OFF open directory",
                     fileinfo.absoluteDir().absolutePath());
 
+  QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Three::Scene_item* scene_item = load_item(fileinfo, find_loader(load_pair.first));
+  QApplication::restoreOverrideCursor();
+
   if(scene_item != 0) {
     this->addToRecentFiles(fileinfo.absoluteFilePath());
   }
