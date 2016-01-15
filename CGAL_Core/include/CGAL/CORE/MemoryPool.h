@@ -37,14 +37,39 @@
 #include <new>           // for placement new
 #include <cassert>
 #include <CGAL/assertions.h>
+#include <vector>
 
 namespace CORE { 
 
 #define CORE_EXPANSION_SIZE 1024
 template< class T, int nObjects = CORE_EXPANSION_SIZE >
 class MemoryPool {
+private:
+   struct Thunk {
+      T object;
+      Thunk* next;
+   };
+
 public:
    MemoryPool() : head( 0 ) {}
+
+  ~MemoryPool()
+  {
+    CGAL_assertion_code(
+      int count = 0;
+      Thunk* t = head;
+      while(t!=0){
+	++count;
+	t = t->next;
+      }
+			);
+    CGAL_assertion(count ==  nObjects * blocks.size());
+
+    for(std::size_t i=0; i < blocks.size();i++){
+      delete blocks[i];
+    }
+  }
+
 
    void* allocate(std::size_t size);
    void free(void* p);
@@ -53,15 +78,10 @@ public:
   static MemoryPool<T>& global_allocator() {
     return memPool;
   }
-  
-private:
-   struct Thunk { 
-      T object;
-      Thunk* next;
-   };
-
+ 
 private:
    Thunk* head; // next available block in the pool
+  std::vector<void*> blocks;
 
 private:
   // Static global allocator.
@@ -80,6 +100,7 @@ void* MemoryPool< T, nObjects >::allocate(std::size_t) {
       Thunk* pool = reinterpret_cast<Thunk*>(
 	 ::operator new(nObjects * sizeof(Thunk)));
 
+      blocks.push_back(pool);
       // initialize the chain (one-directional linked list)
       head = pool;
       for (int i = 0; i < last; ++i ) {
@@ -99,6 +120,7 @@ template< class T, int nObjects >
 void MemoryPool< T, nObjects >::free(void* t) {
    CGAL_assertion(t != 0);     
    if (t == 0) return; // for safety
+   assert (! blocks.empty());
 
    // recycle the object memory, by putting it back into the chain
    reinterpret_cast<Thunk*>(t)->next = head;
