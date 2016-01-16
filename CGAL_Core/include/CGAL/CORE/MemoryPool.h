@@ -56,7 +56,7 @@ public:
   ~MemoryPool()
   {
     CGAL_assertion_code(
-      int count = 0;
+                        std::size_t count = 0;
       Thunk* t = head;
       while(t!=0){
 	++count;
