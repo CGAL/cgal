@@ -39,7 +39,7 @@ namespace CGAL {
    */
     //****************************************************************************
   /// Enum of all the possible operations used by the ++ operator.
-  /// Extension of the enum for generalized maps.
+  /// Extension of the enum for combinatorial maps.
   enum
     {
     OP_ALPHAI=OP_END+1, ///< Previous op was the first alpha.
@@ -71,7 +71,7 @@ namespace CGAL {
 
   public:
     /// Main constructor.
-    GMap_extend_iterator(Map& amap, Dart_handle adart, int amark):
+    GMap_extend_iterator(Map& amap, Dart_handle adart, size_type amark):
       Base(amap, adart),
       mmark_number(amark),
       minitial_dart(adart)
@@ -82,8 +82,6 @@ namespace CGAL {
         if (!this->mmap->template is_free<Ai>(adart))
         {
           mto_treat.push(this->mmap->template alpha<Ai>(adart));
-          this->mmap->mark(this->mmap->template alpha<Ai>(adart),
-                           mmark_number);
         }
       }
     }
@@ -91,22 +89,20 @@ namespace CGAL {
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(mmark_number != -1);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       Base::operator= ( Base(*this->mmap,minitial_dart) );
       mto_treat = std::queue<Dart_handle>();
       this->mmap->mark(minitial_dart, mmark_number);
       if (!this->mmap->template is_free<Ai>(minitial_dart))
       {
         mto_treat.push(this->mmap->template alpha<Ai>(minitial_dart));
-        this->mmap->mark(this->mmap->template alpha<Ai>(minitial_dart),
-                         mmark_number);
       }
     }
 
     /// Prefix ++ operator.
     Self& operator++()
     {
-      CGAL_assertion(mmark_number != -1);
+      CGAL_assertion(mmark_number != Map::INVALID_MARK);
       CGAL_assertion(this->cont());
 
       do
@@ -118,29 +114,34 @@ namespace CGAL {
 
       if ( !this->cont() )
       {
+        while ( !mto_treat.empty() &&
+                this->mmap->is_marked(mto_treat.front(), mmark_number))
+        {
+          mto_treat.pop();
+        }
+
         if ( !mto_treat.empty() )
         {
           Base::operator= ( Base(*this->mmap,mto_treat.front()) );
           mto_treat.pop();
           this->mprev_op = OP_POP;
-          CGAL_assertion( this->mmap->is_marked((*this), mmark_number) );
+          CGAL_assertion( !this->mmap->is_marked((*this), mmark_number) );
+          this->mmap->mark((*this), mmark_number);
 
-          if (!this->mmap->is_free(*this, Ai) &&
-              !this->mmap->is_marked(this->mmap->alpha(*this, Ai), mmark_number) )
+          if (!this->mmap->template is_free<Ai>(*this) &&
+              !this->mmap->is_marked(this->mmap->template alpha<Ai>(*this), mmark_number) )
           {
-            mto_treat.push(this->mmap->alpha(*this, Ai));
-            this->mmap->mark(this->mmap->alpha(*this, Ai), mmark_number);
+            mto_treat.push(this->mmap->template alpha<Ai>(*this));
           }
         }
       }
       else
       {
         this->mmap->mark((*this), mmark_number);
-        if (!this->mmap->is_free(*this, Ai) &&
+        if (!this->mmap->template is_free<Ai>(*this) &&
             !this->mmap->is_marked(this->mmap->alpha(*this, Ai), mmark_number) )
         {
-          mto_treat.push(this->mmap->alpha(*this, Ai));
-          this->mmap->mark(this->mmap->alpha(*this, Ai), mmark_number);
+          mto_treat.push(this->mmap->template alpha<Ai>(*this));
         }
       }
 
@@ -156,7 +157,7 @@ namespace CGAL {
     std::queue<Dart_handle> mto_treat;
 
     /// Index of the used mark.
-    int mmark_number;
+    size_type mmark_number;
 
     /// Initial dart
     Dart_handle minitial_dart;
@@ -178,8 +179,10 @@ namespace CGAL {
 
     typedef Tag_true Use_mark;
 
+    typedef typename Map::size_type size_type;
+
     /// Main constructor.
-    GMap_extend_iterator(Map& amap, Dart_handle adart, int amark):
+    GMap_extend_iterator(Map& amap, Dart_handle adart, size_type amark):
       Base(amap, adart, amark)
     {
       if (adart!=amap.null_handle)
@@ -188,7 +191,6 @@ namespace CGAL {
             !this->mmap->is_marked(this->mmap->alpha(amap, Ai), this->mmark_number))
         {
           this->mto_treat.push(adart->alpha(Ai));
-          this->mmap->mark(this->mmap->alpha(this->minitial_dart, Ai), this->mmark_number);
         }
       }
     }
@@ -196,12 +198,11 @@ namespace CGAL {
     /// Rewind of the iterator to its beginning.
     void rewind()
     {
-      CGAL_assertion(this->mmark_number != -1);
+      CGAL_assertion(this->mmark_number != Map::INVALID_MARK);
       Base::rewind();
       if ( !this->mmap->is_free(this->minitial_dart, Ai) )
       {
         this->mto_treat.push(this->mmap->alpha(this->minitial_dart, Ai));
-        this->mmap->mark(this->mmap->alpha(this->minitial_dart, Ai), this->mmark_number);
       }
     }
 
@@ -219,7 +220,6 @@ namespace CGAL {
                                    this->mmark_number))
         {
           this->mto_treat.push(this->mmap->alpha(*this, Ai));
-          this->mmap->mark(this->mmap->alpha(*this, Ai), this->mmark_number);
         }
       }
       return *this;
