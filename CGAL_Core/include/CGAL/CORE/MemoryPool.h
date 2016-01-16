@@ -66,7 +66,7 @@ public:
     CGAL_assertion(count ==  nObjects * blocks.size());
 
     for(std::size_t i=0; i < blocks.size();i++){
-      delete blocks[i];
+      :: delete blocks[i];
     }
   }
 
@@ -120,6 +120,9 @@ template< class T, int nObjects >
 void MemoryPool< T, nObjects >::free(void* t) {
    CGAL_assertion(t != 0);     
    if (t == 0) return; // for safety
+   if(blocks.empty()){
+     std::cerr << typeid(T).name() << std::endl;
+   }
    assert (! blocks.empty());
 
    // recycle the object memory, by putting it back into the chain
