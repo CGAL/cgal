@@ -66,7 +66,7 @@ public:
     CGAL_assertion(count ==  nObjects * blocks.size());
 
     for(std::size_t i=0; i < blocks.size();i++){
-      :: delete blocks[i];
+      ::operator delete(blocks[i]);
     }
   }
 
