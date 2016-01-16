@@ -96,8 +96,8 @@ namespace CGAL
       typename CMap::Dart_handle d1, d2;
       typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
-      int mark = amap.get_new_mark();
-      int mark_modified_darts = amap.get_new_mark();
+      typename CMap::size_type mark = amap.get_new_mark();
+      typename CMap::size_type mark_modified_darts = amap.get_new_mark();
 
       std::deque<typename CMap::Dart_handle> to_erase;
 
@@ -112,10 +112,13 @@ namespace CGAL
         ++res;
       }
 
-      // We group the two (i+1)-cells incident if they exist.
-      if ( dg1!=amap.null_handle )
-        CGAL::internal::Group_attribute_functor_run<CMap, i+1>::
-            run(&amap, dg1, dg2);
+      if (amap.are_attributes_automatically_managed())
+      {
+        // We group the two (i+1)-cells incident if they exist.
+        if ( dg1!=amap.null_handle )
+          CGAL::internal::Group_attribute_functor_run<CMap, i+1>::
+              run(&amap, dg1, dg2);
+      }
 
       // During the operation, we store in modified_darts the darts modified
       // to test after the loop the non void attributes that are split.
@@ -152,11 +155,14 @@ namespace CGAL
         }
       }
 
-      // We test the split of all the incident cells for all the non
-      // void attributes.
-      CMap::Helper::template Foreach_enabled_attributes_except
-        <CGAL::internal::Test_split_attribute_functor<CMap,i>, i>::
-        run(&amap, modified_darts, mark_modified_darts);
+      if (amap.are_attributes_automatically_managed())
+      {
+        // We test the split of all the incident cells for all the non
+        // void attributes.
+        CMap::Helper::template Foreach_enabled_attributes_except
+          <CGAL::internal::Test_split_attribute_functor<CMap,i>, i>::
+          run(&amap, modified_darts, mark_modified_darts);
+      }
 
       // We remove all the darts of the i-cell.
       for ( it=to_erase.begin(); it!=to_erase.end(); ++it )
@@ -196,7 +202,7 @@ namespace CGAL
   {
     static size_t run(Gmap& amap, typename Gmap::Dart_handle adart)
     {
-      int mark = amap.get_new_mark();
+      typename CMap::size_type mark = amap.get_new_mark();
       std::deque<typename Gmap::Dart_handle> to_erase;
       size_t res = 0;
 
@@ -219,16 +225,22 @@ namespace CGAL
         if ( !amap.template is_free<Gmap::dimension>(*it) &&
              !amap.is_marked(amap.template alpha<Gmap::dimension>(*it), mark) )
         {
-          modified_darts.push_back(amap.template alpha<Gmap::dimension>(*it));
+          if (amap.are_attributes_automatically_managed())
+          {
+            modified_darts.push_back(amap.template beta<CMap::dimension>(*it));
+          }
           amap.template unlink_alpha<Gmap::dimension>(*it);
         }
       }
 
-      // We test the split of all the incident cells for all the non
-      // void attributes.
-      Gmap::Helper::template Foreach_enabled_attributes_except
-          <CGAL::internal::Test_split_attribute_functor<Gmap,i>,
-          Gmap::dimension>::run(&amap, modified_darts);
+      if (amap.are_attributes_automatically_managed())
+      {
+        // We test the split of all the incident cells for all the non
+        // void attributes.
+        Gmap::Helper::template Foreach_enabled_attributes_except
+            <CGAL::internal::Test_split_attribute_functor<Gmap,i>,
+            Gmap::dimension>::run(&amap, modified_darts);
+      }
 
       // We remove all the darts of the d-cell.
       for ( it = to_erase.begin(); it != to_erase.end(); ++it )
@@ -322,8 +334,8 @@ namespace CGAL
       typename Gmap::Dart_handle d1, d2;
       typename Gmap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
-      int mark = amap.get_new_mark();
-      int mark_modified_darts = amap.get_new_mark();
+      typename CMap::size_type mark = amap.get_new_mark();
+      typename CMap::size_type mark_modified_darts = amap.get_new_mark();
 
       // First we store and mark all the darts of the i-cell to contract.
       std::deque<typename Gmap::Dart_handle> to_erase;
@@ -337,10 +349,13 @@ namespace CGAL
         ++res;
       }
 
-      // We group the two (i-1)-cells incident if they exist.
-      if ( dg1!=amap.null_handle )
-         CGAL::internal::Group_attribute_functor_run<Gmap,i-1>::
-             run(&amap, dg1, dg2);
+      if ( amap.are_attributes_automatically_managed() )
+      {
+         // We group the two (i-1)-cells incident if they exist.
+        if ( dg1!=amap.null_handle )
+           CGAL::internal::Group_attribute_functor_run<Gmap,i-1>::
+               run(&amap, dg1, dg2);
+      }
 
       // During the operation, we store in modified_darts the darts modified
       // to test after the loop the non void attributes that are split.
@@ -374,11 +389,14 @@ namespace CGAL
         }
       }
 
-      // We test the split of all the incident cells for all the non
-      // void attributes.
-      Gmap::Helper::template Foreach_enabled_attributes_except
-        <CGAL::internal::Test_split_attribute_functor<Gmap,i>, i>::
-        run(&amap, modified_darts, mark_modified_darts);
+      if ( amap.are_attributes_automatically_managed() )
+      {
+        // We test the split of all the incident cells for all the non
+        // void attributes.
+        Gmap::Helper::template Foreach_enabled_attributes_except
+          <CGAL::internal::Test_split_attribute_functor<Gmap,i>, i>::
+          run(&amap, modified_darts, mark_modified_darts);
+      }
 
       // We remove all the darts of the i-cell.
       for ( it=to_erase.begin(); it!=to_erase.end(); ++it )

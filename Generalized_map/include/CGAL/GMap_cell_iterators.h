@@ -78,12 +78,22 @@ namespace CGAL {
       mark_cell<Map,i,dim>(amap, (*this), mmark_number);
     }
 
+   /// Constructor with a dart in parameter (for end iterator).
+    GMap_cell_iterator(Map& amap, Dart_handle adart):
+      Base(amap, adart),
+      mmark_number(amap.get_new_mark())
+    {
+      if (adart!=this->mmap->null_handle)
+        mark_cell<Map,i,dim>(amap, (*this), mmark_number);
+    }
+
     /// Destructor.
     ~GMap_cell_iterator()
     {
       if (this->mmap->get_number_of_times_mark_reserved(mmark_number)==1)
         unmark_treated_darts();
       this->mmap->free_mark(mmark_number);
+      this->mmark_number = Map::INVALID_MARK; // To avoid basic class to try to unmark darts.
     }
 
     /// Copy constructor.
@@ -93,7 +103,7 @@ namespace CGAL {
     { this->mmap->share_a_mark(mmark_number); }
 
     /// Assignment operator.
-    Self& operator=(Self& aiterator)
+    Self& operator=(const Self& aiterator)
     {
       if (this != &aiterator)
       {
@@ -134,7 +144,7 @@ namespace CGAL {
 
   private:
     /// A mark used to mark treated cells.
-    int mmark_number;
+    typename Map::size_type mmark_number;
   };
   //****************************************************************************
   /* Class GMap_one_dart_per_incident_cell_iterator<Map,i,j,dim>: to iterate
@@ -191,8 +201,9 @@ namespace CGAL {
     GMap_one_dart_per_cell_iterator(Map& amap): Base(amap)
     {}
     /// Constructor with a dart in parameter (for end iterator).
-    GMap_one_dart_per_cell_iterator(Map& amap, Dart_handle adart): Base(amap)
-    { this->set_current_dart(adart); }
+    GMap_one_dart_per_cell_iterator(Map& amap, Dart_handle adart):
+        Base(amap, adart)
+    {}
   };
 //****************************************************************************
 //****************************************************************************
