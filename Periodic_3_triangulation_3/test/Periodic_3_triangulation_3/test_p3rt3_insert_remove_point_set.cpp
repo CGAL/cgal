@@ -85,7 +85,7 @@ public:
   typedef typename Traits::Iso_cuboid_3 Iso_cuboid;
 
 
-  static void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed)
+  static void test_insert_rnd_then_remove_all (unsigned pt_count, unsigned seed, const std::string& path)
   {
     std::cout << "--- test_insert_rnd (" << pt_count << ", " << seed << ')' << std::endl;
 
@@ -96,8 +96,9 @@ public:
     Iso_cuboid iso_cuboid(-0.5, -0.5, -0.5, 0.5, 0.5, 0.5);
     P3RT3 p3rt3(iso_cuboid);
 
-    std::ofstream stream("out_p3rt3_test");
+    std::ofstream stream("p3rt3_ir_point_set");
     assert(stream);
+    std::ifstream input_stream(path.c_str());
 
     std::vector<Weighted_point> insert_set;
     insert_set.reserve(pt_count);
@@ -107,8 +108,10 @@ public:
     std::cout << "-- insert" << std::endl;
     for (unsigned cnt = 1; cnt <= pt_count; ++cnt)
     {
-      Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
+//      Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
       //    std::cout << cnt << " : " << p << std::endl;
+    	Weighted_point p;
+    	input_stream >> p;
       assert(p.weight() < 0.015625);
       stream << p << std::endl;
 
@@ -171,8 +174,8 @@ public:
   static void test ()
   {
     //////    Iso_cuboid unitaire ->  0 <= weight < 0.015625
-    test_insert_rnd_then_remove_all(800, 7);
-    test_insert_rnd_then_remove_all(800, 12);
+    test_insert_rnd_then_remove_all(800, 7, "data/p3rt3_ir_point_set__seed_7");
+    test_insert_rnd_then_remove_all(800, 12, "data/p3rt3_ir_point_set__seed_12");
   }
 };
 
