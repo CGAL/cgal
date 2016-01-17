@@ -174,8 +174,8 @@ public:
   static void test ()
   {
     //////    Iso_cuboid unitaire ->  0 <= weight < 0.015625
-    test_insert_rnd_then_remove_all(800, 7, "data/p3rt3_ir_point_set__seed_7");
-    test_insert_rnd_then_remove_all(800, 12, "data/p3rt3_ir_point_set__seed_12");
+    test_insert_rnd_then_remove_all(800, 7, "data/p3rt3_point_set__s7_n800");
+    test_insert_rnd_then_remove_all(800, 12, "data/p3rt3_point_set__s12_n800");
   }
 };
 
