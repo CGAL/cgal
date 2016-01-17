@@ -506,9 +506,13 @@ public:
     std::vector<Weighted_point> points;
     points.reserve(pt_count);
 
+    std::ifstream input_stream("data/p3rt3_point_set__s7_n800");
+
     while (points.size() != pt_count)
     {
-      Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
+//      Weighted_point p(*in_cube++, random.get_double(0., 0.015625));
+    	Weighted_point p;
+    	input_stream >> p;
       points.push_back(p);
     }
         std::cout << "--- done " << std::endl;
