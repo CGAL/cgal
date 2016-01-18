@@ -50,6 +50,14 @@
 #include <boost/preprocessor/repetition/enum_binary_params.hpp>
 #include <boost/preprocessor/repetition/enum.hpp>
 
+#ifdef CGAL_HAS_THREADS
+#  define CGAL_LAZY_USE_MUTEX 1
+#endif
+
+#ifdef CGAL_LAZY_USE_MUTEX
+#  include <CGAL/mutex.h>
+#endif
+
 namespace CGAL {
 
 template <typename AT, typename ET, typename EFT, typename E2A> class Lazy;
@@ -64,16 +72,6 @@ approx(const Lazy<AT,ET, EFT, E2A>& l)
 {
   return l.approx();
 }
-
-// Where is this one (non-const) needed ?  Is it ?
-template <typename AT, typename ET, typename EFT, typename E2A>
-inline
-AT&
-approx(Lazy<AT,ET, EFT, E2A>& l)
-{
-  return l.approx();
-}
-
 
 template <typename AT, typename ET, typename EFT, typename E2A>
 inline
@@ -234,6 +232,9 @@ public:
 
   mutable AT at;
   mutable ET *et;
+#ifdef CGAL_LAZY_USE_MUTEX
+  mutable CGAL_MUTEX update_exact_mutex;
+#endif
 
   Lazy_rep ()
     : at(), et(NULL){}
@@ -246,25 +247,24 @@ public:
 
   const AT& approx() const
   {
-      return at;
-  }
-
-  AT& approx()
-  {
+#ifdef CGAL_LAZY_USE_MUTEX
+      CGAL_SCOPED_LOCK(update_exact_mutex);
+#endif
       return at;
   }
 
   const ET & exact() const
   {
+#ifdef CGAL_LAZY_USE_MUTEX
+    if (et==NULL)
+    {
+      CGAL_SCOPED_LOCK(update_exact_mutex);
+      if(et==NULL) update_exact();
+    }
+#else // not CGAL_LAZY_USE_MUTEX
     if (et==NULL)
       update_exact();
-    return *et;
-  }
-
-  ET & exact()
-  {
-    if (et==NULL)
-      update_exact();
+#endif // not CGAL_LAZY_USE_MUTEX
     return *et;
   }
 
@@ -763,12 +763,6 @@ public :
   { return ptr()->approx(); }
 
   const ET& exact() const
-  { return ptr()->exact(); }
-
-  AT& approx()
-  { return ptr()->approx(); }
-
-  ET& exact()
   { return ptr()->exact(); }
 
   unsigned depth() const
