@@ -3,13 +3,13 @@
 #include <string>
 #include <cstring>
 #include <vector>
+#include <fstream>
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_geodesic_arc_on_sphere_traits_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
-#include <CGAL/IO/Arr_iostream.h>
 
 typedef CGAL::Exact_rational                                 Number_type;
 typedef CGAL::Cartesian<Number_type>                         Kernel;
