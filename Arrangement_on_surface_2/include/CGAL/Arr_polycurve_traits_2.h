@@ -208,7 +208,7 @@ public:
       // that each Object wraps an x-monotone subcurve.
       std::vector<Object> x_seg_objects;
       const_seg_iterator it_segs;
-      for (it_segs = cv.begin_subcurves(); it_segs != cv.end_subcurves();
+      for (it_segs = cv.subcurves_begin(); it_segs != cv.subcurves_end();
            ++it_segs)
         make_seg_x_monotone(*it_segs, std::back_inserter(x_seg_objects));
       typename std::vector<Object>::iterator it = x_seg_objects.begin();
@@ -349,7 +349,7 @@ public:
       // that each Object wraps an x-monotone subcurve.
       std::vector<Object> x_seg_objects;
       const_seg_iterator it_segs;
-      for (it_segs = cv.begin_subcurves(); it_segs != cv.end_subcurves();
+      for (it_segs = cv.subcurves_begin(); it_segs != cv.subcurves_end();
            ++it_segs)
         make_seg_x_monotone(*it_segs, std::back_inserter(x_seg_objects));
       typename std::vector<Object>::iterator it = x_seg_objects.begin();
