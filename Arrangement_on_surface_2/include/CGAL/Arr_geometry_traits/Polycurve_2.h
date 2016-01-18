@@ -349,9 +349,17 @@ public:
   Subcurve_const_iterator subcurves_begin() const
   { return m_subcurves.begin(); }
 
+  /*! Deprecated! */
+  CGAL_DEPRECATED Subcurve_const_iterator begin_subcurves() const
+  { return subcurves_begin(); }
+
   /*! Obtain a past-the-end iterator for the polycurve subcurves. */
   Subcurve_const_iterator subcurves_end() const
   { return m_subcurves.end(); }
+
+  /*! Deprecated! */
+  CGAL_DEPRECATED Subcurve_const_iterator end_subcurves() const
+  { return subcurves_end(); }
 
   /*! Obtain a reverse iterator for the polycurve subcurves. */
   Subcurve_const_reverse_iterator subcurves_rbegin() const
