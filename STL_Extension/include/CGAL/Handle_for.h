@@ -28,7 +28,6 @@
 #include <CGAL/config.h>
 #include <CGAL/assertions.h> // for CGAL_assume
 
-#include <boost/config.hpp>
 #include <CGAL/memory.h>
 #include <algorithm>
 #include <cstddef>
@@ -37,6 +36,19 @@
 #  pragma warning(push)
 #  pragma warning(disable:4345) // Avoid warning  http://msdn.microsoft.com/en-us/library/wewb47ee(VS.80).aspx
 #endif
+
+#ifdef CGAL_HAS_THREADS
+#  define CGAL_HANDLE_FOR_USE_ATOMIC 1
+#endif // CGAL_HAS_THREADS
+
+#ifdef CGAL_HANDLE_FOR_USE_ATOMIC
+#  include <CGAL/atomic.h>
+#  ifdef CGAL_NO_ATOMIC
+#    define CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER 1
+#    include <boost/detail/atomic_count.hpp>
+#  endif
+#endif // not CGAL_HANDLE_FOR_USE_ATOMIC
+
 namespace CGAL {
 
 template <class T, class Alloc = CGAL_ALLOCATOR(T) >
@@ -45,7 +57,13 @@ class Handle_for
     // Wrapper that adds the reference counter.
     struct RefCounted {
         T t;
+#if defined(CGAL_HANDLE_FOR_USE_ATOMIC) && ! defined(CGAL_NO_ATOMIC)
+        CGAL::cpp11::atomic<unsigned int> count;
+#elif CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
+        boost::detail::atomic_count count;
+#else // no atomic
         unsigned int count;
+#endif // no atomic
     };
 
     typedef typename Alloc::template rebind<RefCounted>::other  Allocator;
@@ -64,7 +82,11 @@ public:
     {
         pointer p = allocator.allocate(1);
         new (&(p->t)) element_type(); // we get the warning here
+#ifdef CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
+        new (&(p->count)) boost::detail::atomic_count(1);
+#else // not Boost atomic counter
         p->count = 1;
+#endif // not Boost atomic counter
         ptr_ = p;
     }
 
@@ -72,7 +94,11 @@ public:
     {
         pointer p = allocator.allocate(1);
         new (&(p->t)) element_type(t);
+#ifdef CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
+        new (&(p->count)) boost::detail::atomic_count(1);
+#else // not Boost atomic counter
         p->count = 1;
+#endif // not Boost atomic counter
         ptr_ = p;
     }
 
@@ -81,7 +107,11 @@ public:
     {
         pointer p = allocator.allocate(1);
         new (&(p->t)) element_type(std::move(t));
+#ifdef CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
+        new (&(p->count)) boost::detail::atomic_count(1);
+#else // not Boost atomic counter
         p->count = 1;
+#endif // not Boost atomic counter
         ptr_ = p;
     }
 #endif
@@ -104,7 +134,11 @@ public:
     {
         pointer p = allocator.allocate(1);
         new (&(p->t)) element_type(std::forward<T1>(t1), std::forward<T2>(t2), std::forward<Args>(args)...);
+#ifdef CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
+        new (&(p->count)) boost::detail::atomic_count(1);
+#else // not Boost atomic counter
         p->count = 1;
+#endif // not Boost atomic counter
         ptr_ = p;
     }
 #else
@@ -113,7 +147,11 @@ public:
     {
         pointer p = allocator.allocate(1);
         new (&(p->t)) element_type(t1, t2);
+#ifdef CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
+        new (&(p->count)) boost::detail::atomic_count(1);
+#else // not Boost atomic counter
         p->count = 1;
+#endif // not Boost atomic counter
         ptr_ = p;
     }
 
@@ -122,7 +160,11 @@ public:
     {
         pointer p = allocator.allocate(1);
         new (&(p->t)) element_type(t1, t2, t3);
+#ifdef CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
+        new (&(p->count)) boost::detail::atomic_count(1);
+#else // not Boost atomic counter
         p->count = 1;
+#endif // not Boost atomic counter
         ptr_ = p;
     }
 
@@ -131,7 +173,11 @@ public:
     {
         pointer p = allocator.allocate(1);
         new (&(p->t)) element_type(t1, t2, t3, t4);
+#ifdef CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
+        new (&(p->count)) boost::detail::atomic_count(1);
+#else // not Boost atomic counter
         p->count = 1;
+#endif // not Boost atomic counter
         ptr_ = p;
     }
 #endif // CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
@@ -139,8 +185,11 @@ public:
     Handle_for(const Handle_for& h)
       : ptr_(h.ptr_)
     {
-	CGAL_assume (ptr_->count > 0);
+#if defined(CGAL_HANDLE_FOR_USE_ATOMIC) || ! defined(CGAL_NO_ATOMIC)
+        ptr_->count.fetch_add(1, CGAL::cpp11::memory_order_relaxed);
+#else // not CGAL::cpp11::atomic
         ++(ptr_->count);
+#endif // not CGAL::cpp11::atomic
     }
 
     Handle_for&
@@ -187,10 +236,18 @@ public:
 
     ~Handle_for()
     {
+#if defined(CGAL_HANDLE_FOR_USE_ATOMIC) || ! defined(CGAL_NO_ATOMIC)
+      if (ptr_->count.fetch_sub(1, CGAL::cpp11::memory_order_release) == 1) {
+        CGAL::cpp11::atomic_thread_fence(CGAL::cpp11::memory_order_acquire);
+        allocator.destroy( ptr_);
+        allocator.deallocate( ptr_, 1);
+      }
+#else // not CGAL::cpp11::atomic
       if (--(ptr_->count) == 0) {
           allocator.destroy( ptr_);
           allocator.deallocate( ptr_, 1);
       }
+#endif // not CGAL::cpp11::atomic
     }
 
     void
