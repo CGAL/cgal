@@ -48,6 +48,12 @@ void write_polycurve(OutputStream& os,
                      const Polycurve_2<CGAL::Arr_segment_2<Kernel_>, PointType_2>& xcv)
 { write_polyline(os, xcv); }
 
+/*! Output operator for a polyline of type CGAL::Segment_2<Kernel_>. */
+template <typename OutputStream, typename Kernel_, typename PointType_2>
+void write_polycurve(OutputStream& os,
+                     const Polycurve_2<CGAL::Segment_2<Kernel_>, PointType_2>& xcv)
+{ write_polyline(os, xcv); }
+
 /*! Output operator for a polycurve. */
 template <typename OutputStream, typename SubcurveType_2, typename PointType_2>
 void write_polycurve(OutputStream& os,
@@ -111,6 +117,12 @@ void read_polyline(InputStream& is,
 template <typename InputStream, typename Kernel_, typename PointType_2>
 void read_polycurve(InputStream& is,
                     Polycurve_2<CGAL::Arr_segment_2<Kernel_>, PointType_2>& xcv)
+{ read_polyline(is, xcv); }
+
+/*! Input operator for a polyline of type CGAL::Segment_2<Kernel_>. */
+template <typename InputStream, typename Kernel_, typename PointType_2>
+void read_polycurve(InputStream& is,
+                    Polycurve_2<CGAL::Segment_2<Kernel_>, PointType_2>& xcv)
 { read_polyline(is, xcv); }
 
 /*! Input operator for a polycurve. */
