@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Ron Wein   <wein@post.tau.ac.il>
 //                 (based on old version by Eyal Flato)
@@ -49,9 +49,9 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
 
   // Go over arrangement halfedges and check whether one of them contains
   // the query point in its interior.
-  typename Traits_adaptor_2::Is_in_x_range_2  is_in_x_range = 
+  typename Traits_adaptor_2::Is_in_x_range_2  is_in_x_range =
     m_geom_traits->is_in_x_range_2_object();
-  typename Traits_adaptor_2::Compare_y_at_x_2 cmp_y_at_x = 
+  typename Traits_adaptor_2::Compare_y_at_x_2 cmp_y_at_x =
     m_geom_traits->compare_y_at_x_2_object();
 
   typename Arrangement::Edge_const_iterator   eit;
@@ -72,10 +72,10 @@ Arr_simple_point_location<Arrangement>::locate(const Point_2& p) const
   }
 
   const Result_type& obj = optional_assign(optional_obj);
-  
+
   // In case the ray-shooting returned a vertex, we have to locate the first
   // halfedge whose source vertex is v, rotating clockwise around the vertex
-  // from "6 o'clock", and to return its incident face.   
+  // from "6 o'clock", and to return its incident face.
   const Vertex_const_handle* vh = Result().template assign<Vertex_const_handle>(obj);
   if (vh) {
     Halfedge_const_handle hh = _first_around_vertex(*vh);
@@ -120,7 +120,7 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
   typename Traits_adaptor_2::Compare_y_at_x_left_2 compare_y_at_x_left =
     m_geom_traits->compare_y_at_x_left_2_object();
 
-  typename Dcel::Edge_const_iterator  eit = 
+  typename Dcel::Edge_const_iterator  eit =
     m_topol_traits->dcel().edges_begin();
   typename Dcel::Edge_const_iterator  e_end =
     m_topol_traits->dcel().edges_end();
@@ -128,7 +128,7 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
   const typename Dcel::Vertex*    vs;   // The current edge source
   const typename Dcel::Vertex*    vt;   // The current edge target.
   Comparison_result               res_s;
-  Comparison_result               res;
+  Comparison_result               res = EQUAL;
   Comparison_result               y_res;
   bool                            in_x_range;
   const typename Dcel::Halfedge*  closest_he = NULL; // The closest so far.
@@ -175,12 +175,12 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
 
           y_res = (closest_he->direction() == ARR_LEFT_TO_RIGHT) ?
             // Both curves extend to the right from a common point.
-            compare_y_at_x_right(closest_he->curve(), eit->curve(), 
+            compare_y_at_x_right(closest_he->curve(), eit->curve(),
                                  cl_vs->point()) :
             // Both curves extend to the left from a common point.
             compare_y_at_x_left(closest_he->curve(), eit->curve(),
                                 cl_vs->point());
-          
+
         }
         else if ((cl_vt == vs && closest_he->direction() != eit->direction()) ||
                  (cl_vt == vt && closest_he->direction() == eit->direction()))
@@ -189,10 +189,10 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
 
           y_res = (closest_he->direction() == ARR_LEFT_TO_RIGHT) ?
             // Both curves extend to the left from a common point.
-            compare_y_at_x_left(closest_he->curve(), eit->curve(), 
+            compare_y_at_x_left(closest_he->curve(), eit->curve(),
                                 cl_vt->point()) :
             // Both curves extend to the right from a common point.
-            compare_y_at_x_right(closest_he->curve(), eit->curve(), 
+            compare_y_at_x_right(closest_he->curve(), eit->curve(),
                                  cl_vt->point());
         }
         else {
@@ -204,7 +204,7 @@ _base_vertical_ray_shoot(const Point_2& p, bool shoot_up) const
             ((eit->has_null_curve()) ? point_above_under :
              compare_y_position(closest_he->curve(), eit->curve()));
         }
- 
+
         // If the current edge is closer to the query point than the closest
         // edge so far, update the closest edge.
         if (y_res == curve_above_under) {
@@ -306,7 +306,7 @@ Arr_simple_point_location<Arrangement>::_vertical_ray_shoot(const Point_2& p,
       closest_he = *p_hh;
     }
   }
-  
+
   // Set the result for comparison according to the ray direction.
   const Comparison_result point_above_under = (shoot_up ? SMALLER : LARGER);
 
@@ -359,7 +359,7 @@ Arr_simple_point_location<Arrangement>::_vertical_ray_shoot(const Point_2& p,
     // If we found a valid edge, return it.
     if (! closest_he->is_fictitious())
       return make_result(closest_he);
-  
+
     // If we found a fictitious edge, we have to return a handle to its
     // incident unbounded face.
     if ((shoot_up && closest_he->direction() == ARR_LEFT_TO_RIGHT) ||
@@ -396,8 +396,8 @@ _first_around_vertex(Vertex_const_handle v) const
 
   bool found_lowest_left = false;
   bool found_top_right = false;
-  
-  typename Arrangement::Halfedge_around_vertex_const_circulator  first = 
+
+  typename Arrangement::Halfedge_around_vertex_const_circulator  first =
     v->incident_halfedges();
   typename Arrangement::Halfedge_around_vertex_const_circulator  curr = first;
 
@@ -409,7 +409,7 @@ _first_around_vertex(Vertex_const_handle v) const
       // of v.
       if (! found_lowest_left ||
           (! curr->is_fictitious() &&
-           compare_y_at_x_left(curr->curve(), lowest_left->curve(), 
+           compare_y_at_x_left(curr->curve(), lowest_left->curve(),
                                v->point()) == SMALLER))
       {
         lowest_left = curr;
@@ -421,7 +421,7 @@ _first_around_vertex(Vertex_const_handle v) const
       // of v.
       if (! found_top_right ||
           (! curr->is_fictitious() &&
-           compare_y_at_x_right(curr->curve(), top_right->curve(), 
+           compare_y_at_x_right(curr->curve(), top_right->curve(),
                                 v->point()) == LARGER))
       {
         top_right = curr;
@@ -433,7 +433,7 @@ _first_around_vertex(Vertex_const_handle v) const
   } while (curr != first);
 
   // The first halfedge we encounter is the lowest to the left, but if there
-  // is no edge to the left, we first encounter the topmost halfedge to the 
+  // is no edge to the left, we first encounter the topmost halfedge to the
   // right. Note that as the halfedge we located has v as its target, we now
   // have to return its twin.
   return (found_lowest_left) ? lowest_left->twin() : top_right->twin();
