@@ -1,12 +1,12 @@
 // Testing the compute zone function
 
+#include <list>
+#include <iostream>
+
 #include <CGAL/Quotient.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/IO/Arr_iostream.h>
-
-#include <list>
 
 typedef CGAL::Quotient<int>                           Number_type;
 typedef CGAL::Simple_cartesian<Number_type>           Kernel;
@@ -32,7 +32,7 @@ int main ()
   zone_expected_comp[0] = 1;
   zone_expected_comp[1] = 3;
   zone_expected_comp[2] = 4;
-  
+
   insert(arr, Segment_2(Point_2(0, 0), Point_2(2, 0)));
   insert(arr, Segment_2(Point_2(2, 0), Point_2(2, 2)));
   insert(arr, Segment_2(Point_2(2, 2), Point_2(0, 2)));
@@ -43,15 +43,14 @@ int main ()
     std::list<CGAL::Object> zone_elems;
     zone(arr, segs[k], std::back_inserter(zone_elems));
     std::size_t zone_actual_comp = zone_elems.size();
-    
+
     std::cout << "Segment: " << segs[k];
     std::cout << "        Expected: " << zone_expected_comp[k];
     std::cout << "        Actual: " << zone_actual_comp << std::endl;
-    
+
     if (zone_expected_comp[k] != zone_actual_comp)
       return (1);
   }
-  
+
   return (0);
 }
-
