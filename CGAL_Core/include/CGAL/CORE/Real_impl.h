@@ -288,4 +288,5 @@ std::istream& operator >>(std::istream& i, Real& x) {
   return i;
 }//operator >> (std::istream&, Real&)
 
+
 } //namespace CORE

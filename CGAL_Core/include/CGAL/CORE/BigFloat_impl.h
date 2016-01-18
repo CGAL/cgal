@@ -1322,4 +1322,6 @@ BigFloat root(const BigFloat& x, unsigned long k,
   }
 }//root
 
+  CORE_MEMORY_IMPL(BigFloatRep)
+
 } //namespace CORE

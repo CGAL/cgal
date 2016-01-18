@@ -84,8 +84,8 @@ public:
   //  the destructor
   ~BigFloatRep(); //inline
 
-  CORE_MEMORY(BigFloatRep)    // allocate the memory pool, unless
-	                      // memory pool feature is disabled.
+  CORE_NEW(BigFloatRep)    // allocate the memory pool, unless
+  CORE_DELETE(BigFloatRep) // memory pool feature is disabled.
 
   //  approximation
   void trunc(const BigInt&, const extLong&, const extLong&);
@@ -442,6 +442,8 @@ inline void BigFloatRep::dump() const {
   std::cout << "  exp = " << exp << std::endl;
   std::cout << " -- End of BFRep " << this << " -- " << std::endl;
 }
+
+
 
 } //namespace CORE
 #endif // _CORE_BIGFLOATREP_H_

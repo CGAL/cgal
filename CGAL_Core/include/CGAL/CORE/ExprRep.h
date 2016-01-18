@@ -517,7 +517,8 @@ public:
   /// destructor
   ~ConstDoubleRep() {}
   //@}
-  CORE_MEMORY(ConstDoubleRep)
+  CGAL_CORE_EXPORT CORE_NEW(ConstDoubleRep)
+  CGAL_CORE_EXPORT CORE_DELETE(ConstDoubleRep)
 protected:
   /// compute sign and MSB
   CGAL_CORE_EXPORT void computeExactFlags();
@@ -538,7 +539,8 @@ public:
   /// destructor
   ~ConstRealRep() {}
   //@}
-  CORE_MEMORY(ConstRealRep)
+  CGAL_CORE_EXPORT CORE_NEW(ConstRealRep)
+  CGAL_CORE_EXPORT CORE_DELETE(ConstRealRep)
 private:
   Real value; ///< internal representation of node
 protected:
@@ -593,7 +595,14 @@ public:
   /// destructor
   ~ConstPolyRep() {}
   //@}
-  CORE_MEMORY(ConstPolyRep)
+  
+  CGAL_CORE_EXPORT void *operator new( size_t size){
+    return MemoryPool<ConstPolyRep>::global_allocator().allocate(size);
+  }
+ 
+   CGAL_CORE_EXPORT void operator delete( void *p, size_t ){
+    MemoryPool<ConstPolyRep>::global_allocator().free(p);
+  }
 
 private:
   Sturm<NT> ss; ///< internal Sturm sequences
@@ -696,6 +705,8 @@ protected:
     appValue() = centerize(I.first, I.second);
   }
 };
+
+
 /// \class UnaryOpRep
 /// \brief unary operator node
 class UnaryOpRep : public ExprRep {
@@ -745,7 +756,8 @@ public:
   ~NegRep() {}
   //@}
 
-  CORE_MEMORY(NegRep)
+  CGAL_CORE_EXPORT CORE_NEW(NegRep)
+  CGAL_CORE_EXPORT CORE_DELETE(NegRep)
 protected:
   /// compute sign and MSB
   CGAL_CORE_EXPORT void computeExactFlags();
@@ -775,7 +787,8 @@ public:
   ~SqrtRep() {}
   //@}
 
-  CORE_MEMORY(SqrtRep)
+  CGAL_CORE_EXPORT CORE_NEW(SqrtRep)
+  CGAL_CORE_EXPORT CORE_DELETE(SqrtRep)
 protected:
   /// compute sign and MSB
   CGAL_CORE_EXPORT void computeExactFlags();
@@ -897,7 +910,8 @@ public:
   ~AddSubRep() {}
   //@}
 
-  CORE_MEMORY(AddSubRep)
+  CGAL_CORE_EXPORT CORE_NEW(AddSubRep)
+  CGAL_CORE_EXPORT CORE_DELETE(AddSubRep)
 protected:
   /// compute sign and MSB
    void computeExactFlags();
@@ -1244,7 +1258,8 @@ public:
   ~MultRep() {}
   //@}
   
-  CORE_MEMORY(MultRep)
+  CGAL_CORE_EXPORT CORE_NEW(MultRep)
+  CGAL_CORE_EXPORT CORE_DELETE(MultRep)
   protected:
   /// compute sign and MSB
   CGAL_CORE_EXPORT void computeExactFlags();
@@ -1270,7 +1285,8 @@ public:
   ~DivRep() {}
   //@}
 
-  CORE_MEMORY(DivRep)
+  CGAL_CORE_EXPORT CORE_NEW(DivRep)
+  CGAL_CORE_EXPORT CORE_DELETE(DivRep)
 protected:
   /// compute sign and MSB
   CGAL_CORE_EXPORT void computeExactFlags();

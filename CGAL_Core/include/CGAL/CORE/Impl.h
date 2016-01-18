@@ -42,13 +42,18 @@
 
 // Macros for memory pool
 #ifdef CORE_DISABLE_MEMORY_POOL
-  #define CORE_MEMORY(T)
+  #define CORE_NEW(T)
+  #define CORE_DELETE(T)
+  #define CORE_MEMORY_IMPL(T)
 #else
   #include <CGAL/CORE/MemoryPool.h>
-  #define CORE_MEMORY(T)                                                 \
-    void *operator new( size_t size)                                     \
+  #define CORE_NEW(T)  void *operator new( size_t size);
+  #define CORE_DELETE(T)  void operator delete( void *p, size_t );
+
+  #define CORE_MEMORY_IMPL(T)                                            \
+    void *T::operator new( size_t size)                                  \
     { return MemoryPool<T>::global_allocator().allocate(size); }         \
-    void operator delete( void *p, size_t )                              \
+    void T::operator delete( void *p, size_t )                           \
     { MemoryPool<T>::global_allocator().free(p); }
 #endif
 
