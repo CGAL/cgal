@@ -459,7 +459,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     typedef Kernel::Vector_3	    Vector;
     typedef Polyhedron::Facet_iterator Facet_iterator;
     typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
-    self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect(*poly);
 
     Facet_iterator f = poly->facets_begin();
 
@@ -1169,6 +1168,8 @@ QString Scene_polyhedron_item::compute_stats(int type)
 
   double mini, maxi, ave;
   angles(poly, mini, maxi, ave);
+  if (is_triangulated)
+    self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect(*poly);
 
   QString nb_vertices(QString::number(poly->size_of_vertices())),
       nb_facets(QString::number(poly->size_of_facets())),
@@ -1188,22 +1189,28 @@ QString Scene_polyhedron_item::compute_stats(int type)
       minangle(QString::number(mini)),
       maxangle(QString::number(maxi)),
       averageangle(QString::number(ave));
+
   if (area!=-std::numeric_limits<double>::infinity())
     s_area = QString::number(area);
   else
-    s_area = QString("Infinite");
+    s_area = QString("n/a");
+
   if (volume!=-std::numeric_limits<double>::infinity())
     s_volume = QString::number(volume);
   else
-    s_volume = QString("0");
-  if(self_intersect)
+    s_volume = QString("n/a");
+
+  if (self_intersect)
     selfintersect = QString("Yes");
-  else
+  else if (is_triangulated)
     selfintersect = QString("No");
+  else
+    selfintersect = QString("n/a");
+
   if(is_triangulated)
     degenfaces = QString::number(number_of_degenerated_faces);
   else
-    degenfaces = QString("Unknown (not triangulated)");
+    degenfaces = QString("n/a");
 
   //gets the number of holes
 
@@ -1212,7 +1219,7 @@ QString Scene_polyhedron_item::compute_stats(int type)
   i = 0;
 
   // initialization : keep the original ids in memory and set them to 0
-  std::vector<size_t> ids;
+  std::vector<std::size_t> ids;
   for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it)
   {
     ids.push_back(it->id());
