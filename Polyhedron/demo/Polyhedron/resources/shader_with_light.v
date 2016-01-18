@@ -9,7 +9,7 @@ varying highp vec3 fN;
 varying highp vec4 color; 
 void main(void)
 {
-   color = vec4(colors, 1.0); 
+   color = vec4(colors, 1.0);
    fP = mv_matrix * vertex; 
    fN = mat3(mv_matrix)* normals; 
    gl_Position = mvp_matrix * vertex; 

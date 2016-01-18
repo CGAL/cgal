@@ -30,7 +30,9 @@ inline QGLContext* createOpenGLContext()
     format.setVersion(2,1);
     format.setProfile(QSurfaceFormat::CompatibilityProfile);
     context->setFormat(format);
-    return QGLContext::fromOpenGLContext(context);
+    QGLContext *result = QGLContext::fromOpenGLContext(context);
+    result->create();
+    return result;
 }
 } // namespace Qt
 } // namespace CGAL

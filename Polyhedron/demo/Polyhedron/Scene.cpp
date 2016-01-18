@@ -44,7 +44,7 @@ Scene::Scene(QObject* parent)
         ms_splatting  = new GlSplat::SplatRenderer();
     ms_splattingCounter++;
     picked = false;
-
+    gl_init = false;
 
 }
 Scene::Item_id
@@ -270,7 +270,7 @@ Scene::duplicate(Item_id index)
 
 void Scene::initializeGL()
 {
-    ms_splatting->init();
+   //ms_splatting->init();
 
     //Setting the light options
 
@@ -286,6 +286,7 @@ void Scene::initializeGL()
     glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
     glLightfv(GL_LIGHT0, GL_POSITION, position);
 
+    gl_init = true;
 }
 
 bool
@@ -308,6 +309,8 @@ Scene::draw()
 void
 Scene::draw(CGAL::Three::Viewer_interface* viewer)
 {
+    if(!gl_init)
+        initializeGL();
     draw_aux(false, viewer);
 }
 void

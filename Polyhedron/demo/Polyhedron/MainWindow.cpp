@@ -129,14 +129,12 @@ MainWindow::MainWindow(QWidget* parent)
   // Save some pointers from ui, for latter use.
   sceneView = ui->sceneView;
   viewer = ui->viewer;
-
   // do not save the state of the viewer (anoying)
   viewer->setStateFileName(QString::null);
 
   // setup scene
   scene = new Scene(this);
   viewer->setScene(scene);
-
   {
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
     connect(shortcut, SIGNAL(activated()),
@@ -1390,7 +1388,7 @@ void MainWindow::on_actionLoad_triggered()
   dialog.setFileMode(QFileDialog::ExistingFiles);
 
   if(dialog.exec() != QDialog::Accepted) { return; }
-  
+  viewer->context()->makeCurrent();
   FilterPluginMap::iterator it = 
     filterPluginMap.find(dialog.selectedNameFilter());
   
