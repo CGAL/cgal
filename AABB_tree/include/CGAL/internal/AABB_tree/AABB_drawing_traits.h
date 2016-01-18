@@ -50,7 +50,6 @@ struct AABB_drawing_traits
   // draw bbox
   void gl_draw(const Bbox& bb)
   {
-    ::glBegin(GL_LINES);
     gl_draw_edge(bb.xmin(), bb.ymin(), bb.zmin(),
                  bb.xmax(), bb.ymin(), bb.zmin());
     gl_draw_edge(bb.xmin(), bb.ymin(), bb.zmin(),
@@ -79,7 +78,6 @@ struct AABB_drawing_traits
                  bb.xmax(), bb.ymin(), bb.zmax());
     gl_draw_edge(bb.xmax(), bb.ymax(), bb.zmax(),
                  bb.xmax(), bb.ymax(), bb.zmin());
-    ::glEnd();
   }
 
   void gl_draw_edge(double px, double py, double pz,
