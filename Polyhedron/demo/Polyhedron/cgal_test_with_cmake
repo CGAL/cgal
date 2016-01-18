@@ -111,6 +111,7 @@ else
       inside_out_plugin \
       intersection_plugin \
       io_implicit_function_plugin \
+      isotropic_remeshing_plugin \
       jet_fitting_plugin \
       join_and_split_polyhedra_plugin \
       kernel_plugin \

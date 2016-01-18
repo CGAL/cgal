@@ -31,6 +31,12 @@
 #include <queue>
 #include <sstream>
 
+#ifdef CGAL_LINKED_WITH_TBB
+#include "tbb/parallel_for.h"
+#include "tbb/blocked_range.h"
+#include "tbb/partitioner.h"
+#endif
+
 #include "ui_Isotropic_remeshing_dialog.h"
 
 using namespace CGAL::Three;
@@ -62,13 +68,29 @@ public:
 
   bool applicable(QAction*) const
   {
+    if (scene->selectionIndices().size() == 1)
+    {
     return qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()))
     || qobject_cast<Scene_polyhedron_selection_item*>(scene->item(scene->mainSelectionIndex()));
+    }
+
+    Q_FOREACH(int index, scene->selectionIndices())
+    {
+      //if one polyhedron is found in the selection, it's fine
+      if (qobject_cast<Scene_polyhedron_item*>(scene->item(index)))
+        return true;
+    }
+    return false;
   }
 
 public Q_SLOTS:
   void isotropic_remeshing()
   {
+    if (scene->selectionIndices().size() > 1)
+    {
+      isotropic_remeshing_of_several_polyhedra();
+      return;
+    }
     const Scene_interface::Item_id index = scene->mainSelectionIndex();
 
     Scene_polyhedron_item* poly_item =
@@ -81,45 +103,8 @@ public Q_SLOTS:
     {
       // Create dialog box
       QDialog dialog(mw);
-      Ui::Isotropic_remeshing_dialog ui;
-      ui.setupUi(&dialog);
-      connect(ui.buttonBox, SIGNAL(accepted()), &dialog, SLOT(accept()));
-      connect(ui.buttonBox, SIGNAL(rejected()), &dialog, SLOT(reject()));
-
-      //connect checkbox to spinbox
-      connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
-              ui.nbIterations_spinbox, SLOT(setDisabled(bool)));
-      connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
-              ui.protect_checkbox, SLOT(setDisabled(bool)));
-
-      //Set default parameters
-      bool p_ = (poly_item != NULL);
-      Scene_interface::Bbox bbox = p_ ? poly_item->bbox() : selection_item->bbox();
-      ui.objectName->setText(p_ ? poly_item->name() : selection_item->name());
-      ui.objectNameSize->setText(
-        tr("Object bbox size (w,h,d):  <b>%1</b>,  <b>%2</b>,  <b>%3</b>")
-        .arg(bbox.width(),  0, 'g', 3)
-        .arg(bbox.height(), 0, 'g', 3)
-        .arg(bbox.depth(),  0, 'g', 3));
-
-      double diago_length = bbox.diagonal_length();
-      ui.edgeLength_dspinbox->setDecimals(3);
-      ui.edgeLength_dspinbox->setSingleStep(0.001);
-      ui.edgeLength_dspinbox->setRange(1e-6 * diago_length, //min
-                                       2.   * diago_length);//max
-      ui.edgeLength_dspinbox->setValue(0.05 * diago_length);
-
-      std::ostringstream oss;
-      oss << "Diagonal length of the Bbox of the selection to remesh is ";
-      oss << diago_length << "." << std::endl;
-      oss << "Default is 5% of it" << std::endl;
-      ui.edgeLength_dspinbox->setToolTip(QString::fromStdString(oss.str()));
-
-      ui.nbIterations_spinbox->setSingleStep(1);
-      ui.nbIterations_spinbox->setRange(1/*min*/, 1000/*max*/);
-      ui.nbIterations_spinbox->setValue(1);
-
-      ui.protect_checkbox->setChecked(false);
+      Ui::Isotropic_remeshing_dialog ui
+        = remeshing_dialog(&dialog, poly_item, selection_item);
 
       // Get values
       int i = dialog.exec();
@@ -130,7 +115,7 @@ public Q_SLOTS:
       }
       bool edges_only = ui.splitEdgesOnly_checkbox->isChecked();
       double target_length = ui.edgeLength_dspinbox->value();
-      int nb_iter = ui.nbIterations_spinbox->value();
+      unsigned int nb_iter = ui.nbIterations_spinbox->value();
       bool protect = ui.protect_checkbox->isChecked();
 
       // wait cursor
@@ -143,8 +128,9 @@ public Q_SLOTS:
       typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
       typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 
-      const Polyhedron& pmesh = p_ ? *poly_item->polyhedron()
-                                   : *selection_item->polyhedron();
+      const Polyhedron& pmesh = (poly_item != NULL)
+        ? *poly_item->polyhedron()
+        : *selection_item->polyhedron();
       boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
         = get(CGAL::face_index, pmesh);
       unsigned int id = 0;
@@ -252,6 +238,261 @@ public Q_SLOTS:
       QApplication::restoreOverrideCursor();
     }
   }
+
+  void isotropic_remeshing_of_several_polyhedra()
+  {
+    // Remeshing parameters
+    bool edges_only = false;
+    double target_length = 0.;
+    unsigned int nb_iter = 1;
+    bool protect = false;
+
+    std::vector<Scene_polyhedron_item*> selection;
+    BOOST_FOREACH(int index, scene->selectionIndices())
+    {
+      Scene_polyhedron_item* poly_item =
+        qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+
+      if (poly_item == NULL)
+      {
+        std::cout << scene->item(index)->name().data()
+          << " is not a Polyhedron, remeshing skipped\n";
+        continue;
+      }
+      else
+      {
+        selection.push_back(poly_item);
+
+        if (target_length == 0.)//parameters have not been set yet
+        {
+        QDialog dialog(mw);
+        Ui::Isotropic_remeshing_dialog ui = remeshing_dialog(&dialog, poly_item);
+        ui.objectName->setText(QString::number(scene->selectionIndices().size())
+          .append(QString(" items to be remeshed")));
+        int i = dialog.exec();
+        if (i == QDialog::Rejected)
+        {
+          std::cout << "Remeshing aborted" << std::endl;
+          return;
+        }
+
+        edges_only = ui.splitEdgesOnly_checkbox->isChecked();
+        target_length = ui.edgeLength_dspinbox->value();
+        nb_iter = ui.nbIterations_spinbox->value();
+        protect = ui.protect_checkbox->isChecked();
+        }
+      }
+    }
+
+    if(target_length == 0.)//parameters have not been set
+    {                      // i.e. no item is a polyhedron
+      std::cout << "Remeshing aborted" << std::endl;
+      return;
+    }
+
+    // wait cursor
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    int total_time = 0;
+
+#ifdef CGAL_LINKED_WITH_TBB
+    QTime time;
+    time.start();
+
+      tbb::parallel_for(
+        tbb::blocked_range<std::size_t>(0, selection.size()),
+        Remesh_polyhedron_item_for_parallel_for<Remesh_polyhedron_item>(
+          selection, edges_only, target_length, nb_iter, protect));
+
+    total_time = time.elapsed();
+#else
+    Remesh_polyhedron_item remesher(edges_only, target_length, nb_iter, protect);
+    BOOST_FOREACH(Scene_polyhedron_item* poly_item, selection)
+    {
+      QTime time;
+      time.start();
+
+        remesher(poly_item);
+
+      total_time += time.elapsed();
+      std::cout << "Remeshing of " << poly_item->name().data()
+                << " done in " << time.elapsed() << " ms" << std::endl;
+    }
+#endif
+    std::cout << "Remeshing of all selected items done in "
+      << total_time << " ms" << std::endl;
+
+    BOOST_FOREACH(Scene_polyhedron_item* poly_item, selection)
+    {
+      poly_item->invalidate_buffers();
+      Q_EMIT poly_item->itemChanged();
+    }
+    
+    // default cursor
+    QApplication::restoreOverrideCursor();
+  }
+
+private:
+  struct Remesh_polyhedron_item
+  {
+    typedef boost::graph_traits<Polyhedron>::edge_descriptor     edge_descriptor;
+    typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+    typedef boost::graph_traits<Polyhedron>::face_descriptor     face_descriptor;
+
+    bool edges_only_;
+    double target_length_;
+    unsigned int nb_iter_;
+    bool protect_;
+
+  protected:
+    void remesh(Scene_polyhedron_item* poly_item) const
+    {
+      //fill face_index property map
+      boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
+        = get(CGAL::face_index, *poly_item->polyhedron());
+      unsigned int id = 0;
+      BOOST_FOREACH(face_descriptor f, faces(*poly_item->polyhedron()))
+      { put(fim, f, id++); }
+
+      if (edges_only_)
+      {
+        std::vector<halfedge_descriptor> border;
+        CGAL::Polygon_mesh_processing::border_halfedges(
+          faces(*poly_item->polyhedron())
+          , *poly_item->polyhedron()
+          , std::back_inserter(border));
+        std::vector<edge_descriptor> border_edges;
+        BOOST_FOREACH(halfedge_descriptor h, border)
+          border_edges.push_back(edge(h, *poly_item->polyhedron()));
+
+        CGAL::Polygon_mesh_processing::split_long_edges(
+            border_edges
+          , target_length_
+          , *poly_item->polyhedron());
+      }
+      else
+      {
+        CGAL::Polygon_mesh_processing::isotropic_remeshing(
+            faces(*poly_item->polyhedron())
+          , target_length_
+          , *poly_item->polyhedron()
+          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter_)
+          .protect_constraints(protect_));
+      }
+    }
+
+  public:
+    Remesh_polyhedron_item(
+      const bool edges_only,
+      const double target_length,
+      const unsigned int nb_iter,
+      const bool protect)
+      : edges_only_(edges_only)
+      , target_length_(target_length)
+      , nb_iter_(nb_iter)
+      , protect_(protect)
+    {}
+
+    Remesh_polyhedron_item(const Remesh_polyhedron_item& remesh)
+      : edges_only_(remesh.edges_only_)
+      , target_length_(remesh.target_length_)
+      , nb_iter_(remesh.nb_iter_)
+      , protect_(remesh.protect_)
+    {}
+
+    void operator()(Scene_polyhedron_item* poly_item) const
+    {
+      remesh(poly_item);
+    }
+  };
+
+#ifdef CGAL_LINKED_WITH_TBB
+  template<typename RemeshFunctor>
+  struct Remesh_polyhedron_item_for_parallel_for
+    : RemeshFunctor
+  {
+    const std::vector<Scene_polyhedron_item*>& selection_;
+
+  public:
+    // Constructor
+    Remesh_polyhedron_item_for_parallel_for(
+      const std::vector<Scene_polyhedron_item*>& selection,
+      const bool edges_only,
+      const double target_length,
+      const unsigned int nb_iter,
+      const bool protect)
+      : RemeshFunctor(edges_only, target_length, nb_iter, protect)
+      , selection_(selection)
+    {
+      ;
+    }
+
+    // Constructor
+    Remesh_polyhedron_item_for_parallel_for(
+      const Remesh_polyhedron_item_for_parallel_for &remesh)
+      : RemeshFunctor(remesh)
+      , selection_(remesh.selection_)
+    {}
+
+    // operator()
+    void operator()(const tbb::blocked_range<size_t>& r) const
+    {
+      for (size_t i = r.begin(); i != r.end(); ++i)
+        RemeshFunctor::remesh(selection_[i]);
+    }
+  };
+#endif
+
+  Ui::Isotropic_remeshing_dialog
+  remeshing_dialog(QDialog* dialog,
+                   Scene_polyhedron_item* poly_item,
+                   Scene_polyhedron_selection_item* selection_item = NULL)
+  {
+    Ui::Isotropic_remeshing_dialog ui;
+    ui.setupUi(dialog);
+    connect(ui.buttonBox, SIGNAL(accepted()), dialog, SLOT(accept()));
+    connect(ui.buttonBox, SIGNAL(rejected()), dialog, SLOT(reject()));
+
+    //connect checkbox to spinbox
+    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
+            ui.nbIterations_spinbox, SLOT(setDisabled(bool)));
+    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
+            ui.protect_checkbox, SLOT(setDisabled(bool)));
+
+    //Set default parameters
+    Scene_interface::Bbox bbox = poly_item != NULL ? poly_item->bbox()
+      : (selection_item != NULL ? selection_item->bbox()
+        : scene->bbox());
+    ui.objectName->setText(poly_item != NULL ? poly_item->name()
+      : (selection_item != NULL ? selection_item->name()
+        : QString("Remeshing parameters")));
+
+    ui.objectNameSize->setText(
+      tr("Object bbox size (w,h,d):  <b>%1</b>,  <b>%2</b>,  <b>%3</b>")
+      .arg(bbox.width(), 0, 'g', 3)
+      .arg(bbox.height(), 0, 'g', 3)
+      .arg(bbox.depth(), 0, 'g', 3));
+
+    double diago_length = bbox.diagonal_length();
+    ui.edgeLength_dspinbox->setDecimals(3);
+    ui.edgeLength_dspinbox->setSingleStep(0.001);
+    ui.edgeLength_dspinbox->setRange(1e-6 * diago_length, //min
+      2.   * diago_length);//max
+    ui.edgeLength_dspinbox->setValue(0.05 * diago_length);
+
+    std::ostringstream oss;
+    oss << "Diagonal length of the Bbox of the selection to remesh is ";
+    oss << diago_length << "." << std::endl;
+    oss << "Default is 5% of it" << std::endl;
+    ui.edgeLength_dspinbox->setToolTip(QString::fromStdString(oss.str()));
+
+    ui.nbIterations_spinbox->setSingleStep(1);
+    ui.nbIterations_spinbox->setRange(1/*min*/, 1000/*max*/);
+    ui.nbIterations_spinbox->setValue(1);
+
+    ui.protect_checkbox->setChecked(false);
+    return ui;
+  }
+
 
 private:
   QAction* actionIsotropicRemeshing_;
