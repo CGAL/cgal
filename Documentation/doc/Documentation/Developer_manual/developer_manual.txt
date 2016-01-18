@@ -16,6 +16,7 @@
 - \subpage devman_robustness
 - \subpage devman_portability
 - \subpage devman_debugging
+- \subpage devman_testing
 - \subpage devman_submission
 - \subpage devman_info
 
