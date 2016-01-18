@@ -1,10 +1,11 @@
 // Testing the removal function, covering all possible scenarios.
 
+#include <iostream>
+
 #include <CGAL/Quotient.h>
 #include <CGAL/Simple_cartesian.h>
 #include <CGAL/Arr_segment_traits_2.h>
 #include <CGAL/Arrangement_2.h>
-#include <CGAL/IO/Arr_iostream.h>
 
 typedef CGAL::Quotient<int>                           Number_type;
 typedef CGAL::Simple_cartesian<Number_type>           Kernel;
