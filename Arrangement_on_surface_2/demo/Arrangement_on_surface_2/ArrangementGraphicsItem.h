@@ -346,8 +346,8 @@ protected:
         // Determine the direction of cv (left-to-right or right-to-left)
         Comparison_result dir = comp_end_pts(cv);
 
-        for (seg_it = cv.begin_subcurves();
-             seg_it != cv.end_subcurves() ; ++seg_it)
+        for (seg_it = cv.subcurves_begin();
+             seg_it != cv.subcurves_end() ; ++seg_it)
           {
             if (dir == SMALLER)
               {
