@@ -35,7 +35,7 @@ namespace CGAL {
 namespace internal {
 
 template<typename T>
-struct Less_than {
+struct Less_than : public std::unary_function<T, bool> {
   Less_than(const T& second) : second(second) {}
   bool operator()(const T& first) const { return std::less<T>()(first, second); }
   T second;
