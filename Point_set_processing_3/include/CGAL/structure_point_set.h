@@ -1387,9 +1387,6 @@ namespace internal {
 /// to match specific needs.
 ///
 /// @tparam Traits A model of `EfficientRANSACTraits`
-  
-
-// This variant requires the kernel.
 template <typename OutputIterator,
           typename InputIterator,
           typename Traits
