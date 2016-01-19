@@ -157,15 +157,15 @@ namespace CGAL {
   };
 
   namespace AFSR{
-    struct Always_false {
-
-      template <typename T>
-      bool operator()(const T&, const T&, const T&) const
+    struct Default_priority {
+      template <typename AdvancingFront, typename Cell_handle>
+      double operator() (const AdvancingFront& adv, Cell_handle& c,
+                         const int& index) const
       {
-        return false;
+        return adv.smallest_radius_delaunay_sphere (c, index);
       }
     };
-  } //end of namespa AFSR
+  } //end of namespace AFSR
 
 
   /*!
@@ -182,19 +182,20 @@ namespace CGAL {
   `Advancing_front_surface_reconstruction_vertex_base_3` and `Advancing_front_surface_reconstruction_cell_base_3` blended into the vertex and cell type.
   The default uses the `Exact_predicates_inexact_constructions_kernel` as geometric traits class.
 
-  \tparam F must be a functor with `bool operator()(Point,Point,Point)` returning `true` if a triangle should not appear in the output.
-          This functor enables the user to filter candidate triangles, for example based on its size.
-          The type `Point` must be the point type of the geometric traits class of the triangulation.
-          It defaults to a functor that always returns `false`.
+  \tparam P must be a functor with `double operator()(AdvancingFront,Cell_handle,int)` returning the
+  priority of the facet `(Cell_handle,int)`. This functor enables the user to choose how candidate
+  triangles are prioritized. If a facet should not appear in the output,
+  `infinity()` must be returned. It defaults to a functor that returns the
+  `smallest_radius_delaunay_sphere()`.
 
   */
   template <
     class Dt = Default,
-    class F = Default>
+    class P = Default>
   class Advancing_front_surface_reconstruction {
 
     typedef typename Default::Get<Dt,Delaunay_triangulation_3<Exact_predicates_inexact_constructions_kernel, Triangulation_data_structure_3<Advancing_front_surface_reconstruction_vertex_base_3<Exact_predicates_inexact_constructions_kernel>, Advancing_front_surface_reconstruction_cell_base_3<Exact_predicates_inexact_constructions_kernel> > > >::type Triangulation;
-    typedef typename Default::Get<F,AFSR::Always_false>::type Filter;
+    typedef typename Default::Get<P,AFSR::Default_priority>::type Priority;
   public:
 
 #ifdef DOXYGEN_RUNNING
@@ -220,9 +221,9 @@ namespace CGAL {
     typedef unspecified_type Triangulation_3;
 
   /*!
-  The type of the triangle filter functor.
+  The type of the facet priority functor.
   */
-    typedef unspecified_type Filter;
+    typedef unspecified_type Priority;
 
   /*!
   The point type.
@@ -267,7 +268,7 @@ namespace CGAL {
 
     typedef Triangulation Triangulation_3;
     typedef typename Triangulation_3::Geom_traits Kernel;
-    typedef Advancing_front_surface_reconstruction<Dt,F> Extract;
+    typedef Advancing_front_surface_reconstruction<Dt,P> Extract;
     typedef typename Triangulation_3::Geom_traits Geom_traits;
 
     typedef typename Kernel::FT coord_type;
@@ -369,7 +370,7 @@ namespace CGAL {
 
     Vertex_handle added_vertex;
     bool deal_with_2d;
-    Filter filter;
+    Priority priority;
     int max_connected_component;
     double K_init, K_step;
     std::list<Vertex_handle> interior_edges;
@@ -660,15 +661,15 @@ namespace CGAL {
     Constructor for the unstructured point cloud given as 3D Delaunay triangulation.
     */
     Advancing_front_surface_reconstruction(Triangulation_3& dt,
-                                           Filter filter = Filter())
+                                           Priority priority = Priority())
       : T(dt), _number_of_border(1), COS_ALPHA_SLIVER(-0.86),
-        NB_BORDER_MAX(15), DELTA(.86), min_K(HUGE_VAL),
+        NB_BORDER_MAX(15), DELTA(.86), min_K(infinity()),
         eps(1e-7), inv_eps_2(coord_type(1)/(eps*eps)), eps_3(eps*eps*eps),
         STANDBY_CANDIDATE(3), STANDBY_CANDIDATE_BIS(STANDBY_CANDIDATE+1),
         NOT_VALID_CANDIDATE(STANDBY_CANDIDATE+2),
       _vh_number(static_cast<int>(T.number_of_vertices())), _facet_number(0),
       _postprocessing_counter(0), _size_before_postprocessing(0), _number_of_connected_components(0),
-      deal_with_2d(false), filter(filter), max_connected_component(-1), K_init(1.1), K_step(.1)
+      deal_with_2d(false), priority(priority), max_connected_component(-1), K_init(1.1), K_step(.1)
 
     {
       if(T.dimension() == 2){
@@ -1173,6 +1174,21 @@ namespace CGAL {
 
 
     //=====================================================================
+
+
+    /// \name Priority values
+    /// @{
+
+    /*!
+
+      computes the priority of the facet `(c,index)` such that the
+      facet with the smallest radius of Delaunay sphere has the
+      highest priority.
+
+    \param c handle to the cell containing the facet
+    \param index index of the facet in `c`
+
+    */
     coord_type
     smallest_radius_delaunay_sphere(const Cell_handle& c,
                                     const int& index) const
@@ -1183,7 +1199,7 @@ namespace CGAL {
                            || (c->vertex((index+2) & 3) == added_vertex)
                            || (c->vertex((index+3) & 3) == added_vertex) ))
         {
-          return HUGE_VAL;
+          return infinity();
         }
       Cell_handle n = c->neighbor(index);
       // lazy evaluation ...
@@ -1210,7 +1226,7 @@ namespace CGAL {
           (c_is_plane && n_is_infinite)||
           (n_is_plane && c_is_infinite)||
           my_collinear(cp1, cp2, cp3))
-        value = HUGE_VAL;
+        value = infinity();
       else
         {
           if (c_is_infinite||n_is_infinite||c_is_plane||n_is_plane)
@@ -1287,6 +1303,12 @@ namespace CGAL {
       return value;
     }
 
+    /*!
+
+      returns the infinite floating value that prevents a facet to be used.
+    */
+    coord_type infinity() const { return std::numeric_limits<coord_type>::infinity(); }
+    /// @}      
 
     //---------------------------------------------------------------------
     // For a border edge e we determine the incident facet which has the highest
@@ -1302,7 +1324,8 @@ namespace CGAL {
 
       Edge_incident_facet e_it = e;
 
-      coord_type min_valueP = NOT_VALID_CANDIDATE, min_valueA = HUGE_VAL;
+      coord_type min_valueP = NOT_VALID_CANDIDATE,
+        min_valueA = infinity();
       Facet min_facet, min_facetA;
       bool border_facet(false);
 
@@ -1334,24 +1357,12 @@ namespace CGAL {
 
               coord_type tmp=0;
 
-              // If the triangle has a high perimeter,
-              // we do not want to consider it as a good candidate.
-
-              if(filter(facet_it.first->vertex(n_i1)->point(),
-                        facet_it.first->vertex(n_i2)->point(),
-                        facet_it.first->vertex(n_i3)->point())){
-                tmp = HUGE_VAL;
-              }
-
-
-              if(tmp != HUGE_VAL){
-                tmp = smallest_radius_delaunay_sphere(neigh, n_ind);
-              }
+              tmp = priority (*this, neigh, n_ind);
 
               Edge_like el1(neigh->vertex(n_i1),neigh->vertex(n_i3)),
                 el2(neigh->vertex(n_i2),neigh->vertex(n_i3));
 
-              if ((tmp != HUGE_VAL)&&
+              if ((tmp != infinity())&&
                   neigh->vertex(n_i3)->not_interior()&&
                   (!is_interior_edge(el1))&&(!is_interior_edge(el2)))
                 {
@@ -1396,7 +1407,7 @@ namespace CGAL {
 
       criteria value;
 
-      if ((min_valueA == HUGE_VAL) || border_facet) // bad facets case
+      if ((min_valueA == infinity()) || border_facet) // bad facets case
         {
           min_facet = Facet(c, i); // !!! sans aucune signification....
           value = NOT_VALID_CANDIDATE; // Attention a ne pas inserer dans PQ
@@ -1419,7 +1430,7 @@ namespace CGAL {
           else
             {
               //on refuse une trop grande non-uniformite
-              coord_type tmp = smallest_radius_delaunay_sphere(c, i);
+              coord_type tmp = priority (*this, c, i);
               if (min_valueA <= K * tmp)
                 value = - min_valueP;
               else
@@ -1450,7 +1461,7 @@ namespace CGAL {
     {
       init_timer.start();
       Facet min_facet;
-      coord_type min_value = HUGE_VAL;
+      coord_type min_value = infinity();
       int i1, i2, i3;
 
       if (!re_init){
@@ -1459,8 +1470,8 @@ namespace CGAL {
             facet_it != end;
             ++facet_it)
           {
-            coord_type value = smallest_radius_delaunay_sphere((*facet_it).first,
-                                                               (*facet_it).second);
+            coord_type value = priority (*this, (*facet_it).first,
+                                         (*facet_it).second);
             if (value < min_value)
               {
                 min_facet = *facet_it;
@@ -1479,12 +1490,10 @@ namespace CGAL {
               if (c->vertex((index+2) & 3)->is_exterior())
                 if (c->vertex((index+3) & 3)->is_exterior())
                   {
-                    coord_type value = smallest_radius_delaunay_sphere(c, index);
+                    coord_type value = priority (*this, c, index);
 
                     // we might not want the triangle, for example because it is too large
-                    if(filter(c->vertex((index+1)&3)->point(),
-                              c->vertex((index+2)&3)->point(),
-                              c->vertex((index+3)&3)->point())){
+                    if(value == infinity()){
                       value = min_value;
                     }
 
@@ -1497,7 +1506,7 @@ namespace CGAL {
           }
       }
 
-      if (min_value != HUGE_VAL)
+      if (min_value != infinity())
         {
           Cell_handle c_min = min_facet.first;
 
@@ -1560,7 +1569,7 @@ namespace CGAL {
       if (v1*v2 > COS_BETA*norm)
         return 1; // label bonne pliure sinon:
 
-      if (ear_alpha <= K*smallest_radius_delaunay_sphere(neigh, n_ind))
+      if (ear_alpha <= K * priority(*this, neigh, n_ind))
         return 2; // label alpha coherent...
 
       return 0; //sinon oreille a rejeter...
@@ -1773,7 +1782,7 @@ namespace CGAL {
                                     v1, v2, c->vertex(i),
                                     e1, e2, p1, p2);
 
-                      // if e1 contain HUGE_VAL there is no candidates to
+                      // if e1 contain infinity there is no candidates to
                       // continue: compute_value is not valid...
 
                       _ordered_border.insert(Radius_ptr_type(e1.first, p1));
@@ -1842,16 +1851,14 @@ namespace CGAL {
 			(result12.second==result_ear1.second))
 		      {
 			ear1_valid = test_merge(ear1_e, result_ear1, v1,
-						smallest_radius_delaunay_sphere(ear1_c,
-                                                                                ear1.second)) != 0;
+						priority(*this, ear1_c, ear1.second)) != 0;
 		      }
 		    if (is_border_ear2&&(e2.first < STANDBY_CANDIDATE)&&
 			(e2.first <= value)&&
 			(result12.second==result_ear2.second))
 		      {
 			ear2_valid = test_merge(ear2_e, result_ear2, v2,
-						smallest_radius_delaunay_sphere(ear2_c,
-                                                                                ear2.second)) != 0;
+						priority(*this, ear2_c, ear2.second)) != 0;
 		      }
 		    if ((!ear1_valid)&&(!ear2_valid))
 		      return NOT_VALID_CONNECTING_CASE;
@@ -1989,7 +1996,7 @@ namespace CGAL {
       }
       do
         {
-          min_K = HUGE_VAL; // pour retenir le prochain K necessaire pour progresser...
+          min_K = infinity(); // pour retenir le prochain K necessaire pour progresser...
           do
             {
 
@@ -2051,10 +2058,10 @@ namespace CGAL {
           // on augmente progressivement le K mais on a deja rempli sans
           // faire des betises auparavant...
         }
-      while((!_ordered_border.empty())&&(K <= K)&&(min_K != HUGE_VAL));
+      while((!_ordered_border.empty())&&(K <= K)&&(min_K != infinity()));
 
 #ifdef VERBOSE
-      if ((min_K < HUGE_VAL)&&(!_ordered_border.empty())) {
+      if ((min_K < infinity())&&(!_ordered_border.empty())) {
         std::cout << "   [ next K required = " << min_K << " ]" << std::endl;
       }
 #endif // VERBOSE
@@ -2415,7 +2422,7 @@ namespace CGAL {
         return false;
       }
 
-      min_K = HUGE_VAL;
+      min_K = infinity();
       // fin--
       //   if (_postprocessing_counter < 5)
       //     return true;
@@ -2428,21 +2435,21 @@ namespace CGAL {
   namespace AFSR {
 
     template <typename T>
-    struct Auto_count : public std::unary_function<const T&,std::pair<T,int> >{
-      mutable int i;
+    struct Auto_count : public std::unary_function<const T&,std::pair<T,std::size_t> >{
+      mutable std::size_t i;
 
       Auto_count()
         : i(0)
       {}
 
-      std::pair<T,int> operator()(const T& p) const {
+      std::pair<T,std::size_t> operator()(const T& p) const {
         return std::make_pair(p,i++);
       }
     };
 
     template <typename T, typename CC>
-    struct Auto_count_cc : public std::unary_function<const T&,std::pair<T,int> >{
-      mutable int i;
+    struct Auto_count_cc : public std::unary_function<const T&,std::pair<T,std::size_t> >{
+      mutable std::size_t i;
       CC cc;
 
       Auto_count_cc(CC cc)
@@ -2450,7 +2457,7 @@ namespace CGAL {
       {}
 
       template <typename T2>
-      std::pair<T,int> operator()(const T2& p) const {
+      std::pair<T,std::size_t> operator()(const T2& p) const {
         return std::make_pair(cc(p),i++);
       }
     };
@@ -2518,7 +2525,8 @@ namespace CGAL {
   be convertible to `Exact_predicates_inexact_constructions_kernel::Point_3` with the `Cartesian_converter`.
   \tparam IndicesOutputIterator must be an output iterator to which
   `CGAL::cpp11::tuple<std::size_t,std::size_t,std::size_t>` can be assigned.
-  \tparam Filter must be a functor with `bool operator()(Point,Point,Point)` where Point is `Exact_predicates_inexact_constructions_kernel::Point_3`.
+  \tparam Priority must be a functor with `double operator()(AdvancingFront,Cell_handle,int)` returning the
+  priority of the facet `(Cell_handle,int)`.
 
   \param b iterator on the first point of the sequence
   \param e past the end iterator of the point sequence
@@ -2528,15 +2536,15 @@ namespace CGAL {
          Described in Section \ref AFSR_Boundaries
   \param beta half the angle of the wedge in which only the radius of triangles counts for the plausibility of candidates.
          Described in Section \ref AFSR_Selection
-  \param filter allows the user to filter candidate triangles, for example based on their size.
+  \param priority allows the user to choose how candidate triangles are prioritized.
 
   */
-  template <typename PointInputIterator, typename IndicesOutputIterator, typename Filter>
+  template <typename PointInputIterator, typename IndicesOutputIterator, typename Priority>
   IndicesOutputIterator
   advancing_front_surface_reconstruction(PointInputIterator b,
                                          PointInputIterator e,
                                          IndicesOutputIterator out,
-                                         Filter filter,
+                                         Priority priority,
                                          double radius_ratio_bound = 5,
                                          double beta = 0.52 )
   {
@@ -2547,7 +2555,7 @@ namespace CGAL {
     typedef Triangulation_data_structure_3<LVb,LCb> Tds;
     typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
-    typedef Advancing_front_surface_reconstruction<Triangulation_3,Filter> Reconstruction;
+    typedef Advancing_front_surface_reconstruction<Triangulation_3,Priority> Reconstruction;
     typedef typename std::iterator_traits<PointInputIterator>::value_type InputPoint;
     typedef typename Kernel_traits<InputPoint>::Kernel InputKernel;
     typedef Cartesian_converter<InputKernel,Kernel> CC;
@@ -2557,19 +2565,19 @@ namespace CGAL {
     Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count_cc<Point_3,CC>(cc)),
                         boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
 
-    Reconstruction R(dt, filter);
+    Reconstruction R(dt, priority);
     R.run(radius_ratio_bound, beta);
     write_triple_indices(out, R);
     return out;
   }
 
 
-  template <typename PointInputIterator, typename Kernel, typename Items,  template < class T, class I, class A> class HDS, typename Alloc,typename Filter>
+  template <typename PointInputIterator, typename Kernel, typename Items,  template < class T, class I, class A> class HDS, typename Alloc,typename Priority>
   void
   advancing_front_surface_reconstruction(PointInputIterator b,
                                          PointInputIterator e,
                                          Polyhedron_3<Kernel,Items,HDS,Alloc>& polyhedron,
-                                         Filter filter,
+                                         Priority priority,
                                          double radius_ratio_bound = 5,
                                          double beta = 0.52)
   {
@@ -2579,7 +2587,7 @@ namespace CGAL {
     typedef Triangulation_data_structure_3<LVb,LCb> Tds;
     typedef Delaunay_triangulation_3<Kernel,Tds> Triangulation_3;
 
-    typedef Advancing_front_surface_reconstruction<Triangulation_3,Filter> Reconstruction;
+    typedef Advancing_front_surface_reconstruction<Triangulation_3,Priority> Reconstruction;
     typedef typename std::iterator_traits<PointInputIterator>::value_type InputPoint;
     typedef typename Kernel_traits<InputPoint>::Kernel InputKernel;
     typedef Cartesian_converter<InputKernel,Kernel> CC;
@@ -2589,7 +2597,7 @@ namespace CGAL {
     Triangulation_3 dt( boost::make_transform_iterator(b, AFSR::Auto_count_cc<Point_3,CC>(cc)),
                         boost::make_transform_iterator(e, AFSR::Auto_count_cc<Point_3,CC>(cc) )  );
 
-    Reconstruction R(dt, filter);
+    Reconstruction R(dt, priority);
     R.run(radius_ratio_bound, beta);
     AFSR::construct_polyhedron(polyhedron, R);
   }

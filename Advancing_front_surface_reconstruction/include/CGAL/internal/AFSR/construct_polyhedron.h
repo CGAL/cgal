@@ -51,7 +51,7 @@ namespace CGAL {
 
         const TDS_2& tds = s.triangulation_data_structure_2();
 
-        int index = 0;
+        std::size_t index = 0;
         Vertex_iterator end = tds.vertices_end();
 
         for(Vertex_iterator vit = tds.vertices_begin(); vit != end; ++vit){

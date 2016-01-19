@@ -202,9 +202,10 @@ reconstructed surface a triplet of point indices into an output iterator.
 The following example writes the output triangulated surface to `std::cout`
 in accordance to the OFF format.
 
-The function has an overload with an additional argument that allows to filter triangles,
-for example to avoid the generation of triangles with a perimeter larger
-than a given bound.
+The function has an overload with an additional argument that allows
+to choose how to prioritize facets. It can be written in a way to
+avoid the generation of triangles with a perimeter larger than a given
+bound.
 
 \cgalExample{Advancing_front_surface_reconstruction/reconstruction_fct.cpp}
 
