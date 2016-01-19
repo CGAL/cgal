@@ -397,6 +397,11 @@ addition, edges and corners are estimated and sampled. This algorithm
 is particularly suited for point sets sampled on surfaces with planar
 sections and sharp edges. 
 
+\cgalFigureBegin{Point_set_processing_3figstructuring,structuring.png}
+Point set structuring. Left: input raw point set. Right: structured point set.
+\cgalFigureEnd
+
+
 \subsection Point_set_processing_3Example_9 Example
 
 The following example applies shape detection followed by structuring to a
