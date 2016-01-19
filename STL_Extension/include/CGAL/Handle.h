@@ -35,10 +35,17 @@ class Rep
 {
     friend class Handle;
   protected:
-             Rep() { count = 1; }
+    Rep() : count(1) {}
     virtual ~Rep() {}
 
-    int      count;
+#if defined(CGAL_HANDLE_FOR_USE_ATOMIC) && ! defined(CGAL_NO_ATOMIC)
+    CGAL::cpp11::atomic<unsigned int> count;
+#elif CGAL_HANDLE_FOR_USE_BOOST_ATOMIC_COUNTER
+    boost::detail::atomic_count count;
+#else // no atomic
+    unsigned int count;
+#endif // no atomic
+
 };
 
 class Handle
@@ -54,22 +61,50 @@ class Handle
     {
       CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
       PTR = x.PTR;
-      PTR->count++;
+#if defined(CGAL_HANDLE_FOR_USE_ATOMIC) || ! defined(CGAL_NO_ATOMIC)
+      PTR->count.fetch_add(1, CGAL::cpp11::memory_order_relaxed);
+#else // not CGAL::cpp11::atomic
+      ++(PTR->count);
+#endif // not CGAL::cpp11::atomic
     }
 
     ~Handle()
     {
-	if ( PTR && (--PTR->count == 0))
-	    delete PTR;
+      if ( PTR ) {
+#if defined(CGAL_HANDLE_FOR_USE_ATOMIC) || ! defined(CGAL_NO_ATOMIC)
+        if (PTR->count.fetch_sub(1, CGAL::cpp11::memory_order_release) == 1) {
+          CGAL::cpp11::atomic_thread_fence(CGAL::cpp11::memory_order_acquire);
+          delete PTR;
+        }
+#else // not CGAL::cpp11::atomic
+        if (--(PTR->count) == 0) {
+          delete PTR;
+        }
+#endif // not CGAL::cpp11::atomic
+      }
     }
 
     Handle&
     operator=(const Handle& x)
     {
       CGAL_precondition( x.PTR != static_cast<Rep*>(0) );
-      x.PTR->count++;
-      if ( PTR && (--PTR->count == 0))
-	  delete PTR;
+#if defined(CGAL_HANDLE_FOR_USE_ATOMIC) || ! defined(CGAL_NO_ATOMIC)
+      x.PTR->count.fetch_add(1, CGAL::cpp11::memory_order_relaxed);
+#else // not CGAL::cpp11::atomic
+      ++(x.PTR->count);
+#endif // not CGAL::cpp11::atomic
+      if ( PTR ) {
+#if defined(CGAL_HANDLE_FOR_USE_ATOMIC) || ! defined(CGAL_NO_ATOMIC)
+        if (PTR->count.fetch_sub(1, CGAL::cpp11::memory_order_release) == 1) {
+          CGAL::cpp11::atomic_thread_fence(CGAL::cpp11::memory_order_acquire);
+          delete PTR;
+        }
+#else // not CGAL::cpp11::atomic
+        if (--(PTR->count) == 0) {
+          delete PTR;
+        }
+#endif // not CGAL::cpp11::atomic
+      }
       PTR = x.PTR;
       return *this;
     }
