@@ -32,8 +32,12 @@
 #include <CGAL/point_generators_d.h>
 #include <CGAL/function_objects.h>
 #include <CGAL/Tangential_complex/Point_cloud.h>
+#include <CGAL/Tangential_complex/utilities.h>
+#include <CGAL/IO/Triangulation_off_ostream.h>
+#include <CGAL/iterator.h>
 
 #include <fstream>
+#include <iterator>
 
 // Actually, this is very slow because the "m_points_ds->insert"
 // cleans the tree, which is thus built at each query_ANN call
@@ -206,11 +210,52 @@ sparsify_point_set(
   return output;
 }
 
-template<typename Point, typename OutputIterator>
-bool load_points_from_file(
-  const std::string &filename, OutputIterator points,
+template<
+  typename Kernel, typename OutputIteratorPoints>
+  bool load_points_from_file(
+  const std::string &filename,
+  OutputIteratorPoints points,
   std::size_t only_first_n_points = std::numeric_limits<std::size_t>::max())
 {
+    typedef typename Kernel::Point_d    Point;
+
+    std::ifstream in(filename);
+    if (!in.is_open())
+    {
+      std::cerr << "Could not open '" << filename << "'" << std::endl;
+      return false;
+    }
+
+    Point p;
+    int num_ppints;
+    in >> num_ppints;
+
+    std::size_t i = 0;
+    while (i < only_first_n_points && in >> p)
+    {
+      *points++ = p;
+      ++i;
+    }
+
+#ifdef CGAL_TC_VERBOSE
+    std::cerr << "'" << filename << "' loaded." << std::endl;
+#endif
+
+    return true;
+  }
+
+template<
+  typename Kernel, typename Tangent_space_basis, 
+  typename OutputIteratorPoints, typename OutputIteratorTS>
+bool load_points_from_file(
+  const std::string &filename,
+  OutputIteratorPoints points,
+  OutputIteratorTS tangent_spaces,
+  std::size_t only_first_n_points = std::numeric_limits<std::size_t>::max())
+{
+  typedef typename Kernel::Point_d    Point;
+  typedef typename Kernel::Vector_d   Vector;
+
   std::ifstream in(filename);
   if (!in.is_open())
   {
@@ -218,14 +263,29 @@ bool load_points_from_file(
     return false;
   }
 
+  bool contains_tangent_spaces =
+    (filename.substr(filename.size() - 3) == "pwt");
+
+  Kernel k;
   Point p;
-  int dim_from_file;
-  in >> dim_from_file;
+  int num_ppints;
+  in >> num_ppints;
 
   std::size_t i = 0;
   while(i < only_first_n_points && in >> p)
   {
     *points++ = p;
+    if (contains_tangent_spaces)
+    {
+      Tangent_space_basis tsb(i);
+      for (int d = 0 ; d < 2 ; ++d) // CJTODO : pas toujours "2"
+      {
+        Vector v;
+        in >> v;
+        tsb.push_back(CGAL::Tangential_complex_::normalize_vector(v, k));
+      }
+      *tangent_spaces++ = tsb;
+    }
     ++i;
   }
 

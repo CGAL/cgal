@@ -24,8 +24,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/Dimension.h>
 #include <CGAL/Combination_enumerator.h>
-#include <CGAL/QP_models.h>
-#include <CGAL/QP_functions.h>
 
 #include <Eigen/Core>
 #include <Eigen/Eigen>
@@ -34,13 +32,6 @@
 #include <vector>
 #include <atomic> // CJTODO: this is C++11 => use boost.Atomic (but it's too recent)
                   // or tbb::atomic (works for doubles, but not officially)
-
-// choose exact integral type for QP solver
-// (Gmpzf is not thread-safe)
-#include <CGAL/MP_Float.h>
-typedef CGAL::MP_Float ET;
-//#define CGAL_QP_NO_ASSERTIONS // CJTODO: NECESSARY? http://doc.cgal.org/latest/QP_solver/group__PkgQPSolverFunctions.html#ga1fefbd0436aca0e281f88e8e6cd8eb74
-
 
 
 namespace CGAL {

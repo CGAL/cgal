@@ -244,7 +244,7 @@ public:
     bool exit_at_the_first_problem = false,
     int verbose_level = 0,
     std::size_t *p_num_wrong_dim_simplices = NULL, 
-    std::size_t *p_num_wrong_number_of_cofaces = NULL)
+    std::size_t *p_num_wrong_number_of_cofaces = NULL) const
   {
     typedef std::set<std::size_t>               K_1_face;
     typedef std::map<K_1_face, std::size_t>     Cofaces_map;
@@ -333,7 +333,7 @@ public:
     std::size_t *p_num_unconnected_stars = NULL,
     Simplex_range *p_wrong_dim_simplices = NULL,
     Simplex_range *p_wrong_number_of_cofaces_simplices = NULL,
-    Simplex_range *p_unconnected_stars_simplices = NULL)
+    Simplex_range *p_unconnected_stars_simplices = NULL) const
   {
     // If simplex_dim == 1, we do not need to check if stars are connected
     if (simplex_dim == 1)
@@ -382,7 +382,7 @@ public:
       }
     }
 
-    // Now, for each star, with have a vector of its d-simplices
+    // Now, for each star, we have a vector of its d-simplices
     // i.e. one index for each d-simplex
     // Boost Graph only deals with indexes, so we also need indexes for the
     // (d-1)-simplices
@@ -450,9 +450,13 @@ public:
       }
 
       // What is left is to check the connexity
-      std::vector<int> components(boost::num_vertices(adj_graph));
-      bool is_connected =
-        (boost::connected_components(adj_graph, &components[0]) == 1);
+      bool is_connected = true;
+      if (boost::num_vertices(adj_graph) > 0)
+      {
+        std::vector<int> components(boost::num_vertices(adj_graph));
+        is_connected =
+          (boost::connected_components(adj_graph, &components[0]) == 1);
+      }
 
       if (!is_connected)
       { 

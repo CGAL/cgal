@@ -66,6 +66,10 @@ if ( CGAL_FOUND )
     set (SOURCE_FILES "benchmark_tc.cpp")
     ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" SOURCE_FILES)
     create_single_source_cgal_program( ${SOURCE_FILES} )
+    
+    set (SOURCE_FILES "benchmark_mesh_d.cpp")
+    ADD_MSVC_PRECOMPILED_HEADER("StdAfx.h" "StdAfx.cpp" SOURCE_FILES)
+    create_single_source_cgal_program( ${SOURCE_FILES} )
 
   else()
     message(STATUS "NOTICE: Some of the executables in this directory need Eigen 3.1 (or greater) and will not be compiled.")
