@@ -42,7 +42,6 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
   dialogsierpinskitriangle(this)
 {
   setupUi (this);
-
   scene.lcc = new LCC;
   
   volumeListDock = new QDockWidget(QString(tr("Volume List")),this);
@@ -74,7 +73,6 @@ MainWindow::MainWindow (QWidget * parent):CGAL::Qt::DemosMainWindow (parent),
 
   QObject::connect(&dialogmesh, SIGNAL(accepted()),
                    this, SLOT(onCreateMeshOk()));
-
   this->viewer->setScene(&scene);
 
   connect_actions ();

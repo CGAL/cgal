@@ -31,12 +31,7 @@ Viewer::Viewer(QWidget* parent)
   : QGLViewer(CGAL::Qt::createOpenGLContext(),parent), wireframe(false),
     flatShading(true), edges(true), vertices(true),
     m_previous_scene_empty(true), are_buffers_initialized(false)
-
 {
-  QGLFormat newFormat = this->format();
-  newFormat.setSampleBuffers(true);
-  newFormat.setSamples(16);
-  this->setFormat(newFormat);
 }
 
 Viewer::~Viewer()
@@ -661,62 +656,64 @@ void Viewer::sceneChanged()
 
 void Viewer::draw()
 {
-  glEnable(GL_DEPTH_TEST);
-  if(!are_buffers_initialized)
-    initialize_buffers();
+  if(scene)
+  {
+    glEnable(GL_DEPTH_TEST);
+    if(!are_buffers_initialized)
+      initialize_buffers();
 
-  QColor color;
-  if ( !wireframe )
-  {
-    if(flatShading)
+    QColor color;
+    if ( !wireframe )
     {
-      vao[0].bind();
-      attrib_buffers(this);
-      rendering_program.bind();
-      glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_facets.size()/3));
-      rendering_program.release();
-      vao[0].release();
+      if(flatShading)
+      {
+        vao[0].bind();
+        attrib_buffers(this);
+        rendering_program.bind();
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_facets.size()/3));
+        rendering_program.release();
+        vao[0].release();
+      }
+      else
+      {
+        vao[1].bind();
+        attrib_buffers(this);
+        rendering_program.bind();
+        glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_facets.size()/3));
+        rendering_program.release();
+        vao[1].release();
+      }
     }
-    else
+    if(edges)
     {
-      vao[1].bind();
+      vao[2].bind();
       attrib_buffers(this);
-      rendering_program.bind();
-      glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(pos_facets.size()/3));
-      rendering_program.release();
-      vao[1].release();
+      color.setRgbF(0.2f, 0.2f, 0.7f);
+      rendering_program_p_l.bind();
+      rendering_program_p_l.setAttributeValue(colorLocation,color);
+      glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
+      rendering_program_p_l.release();
+      vao[2].release();
     }
-  }
-  if(edges)
-  {
-    vao[2].bind();
-    attrib_buffers(this);
-    color.setRgbF(0.2f, 0.2f, 0.7f);
-    rendering_program_p_l.bind();
-    rendering_program_p_l.setAttributeValue(colorLocation,color);
-    glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(pos_lines.size()/3));
-    rendering_program_p_l.release();
-    vao[2].release();
-  }
-  if(vertices)
-  {
-    ::glPointSize(7.f);
-    vao[3].bind();
-    attrib_buffers(this);
-    color.setRgbF(.2f,.2f,.6f);
-    rendering_program_p_l.bind();
-    rendering_program_p_l.setAttributeValue(colorLocation,color);
-    glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
-    rendering_program_p_l.release();
-    vao[3].release();
+    if(vertices)
+    {
+      ::glPointSize(7.f);
+      vao[3].bind();
+      attrib_buffers(this);
+      color.setRgbF(.2f,.2f,.6f);
+      rendering_program_p_l.bind();
+      rendering_program_p_l.setAttributeValue(colorLocation,color);
+      glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(pos_points.size()/3));
+      rendering_program_p_l.release();
+      vao[3].release();
+    }
   }
 }
-
 void Viewer::init()
 {
   // Restore previous viewer state.
   restoreStateFromFile();
-
+  initializeOpenGLFunctions();
   // Define 'Control+Q' as the new exit shortcut (default was 'Escape')
   setShortcut(EXIT_VIEWER, Qt::CTRL+Qt::Key_Q);
 
@@ -744,8 +741,6 @@ void Viewer::init()
   ::glDisable(GL_POLYGON_SMOOTH_HINT);
   ::glBlendFunc(GL_ONE, GL_ZERO);
   ::glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
-
-  initializeOpenGLFunctions();
   compile_shaders();
 }
 
