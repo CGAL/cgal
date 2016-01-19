@@ -110,7 +110,6 @@ void SplatRenderer::init(QGLWidget *qglw)
   mIsSupported = true;
   if(qglw)
     qglw->makeCurrent();
-
   const char* rs = (const char*)glGetString(GL_RENDERER);
   QString rendererString("");
   if(rs)
@@ -118,15 +117,14 @@ void SplatRenderer::init(QGLWidget *qglw)
   mWorkaroundATI = rendererString.startsWith("ATI") || rendererString.startsWith("AMD");
   // FIXME: maybe some recent HW correctly supports floating point blending...
   mBuggedAtiBlending = rendererString.startsWith("ATI") || rendererString.startsWith("AMD");
-
   if (mWorkaroundATI && mDummyTexId==0)
-  {
+  {      
+      qDebug()<<viewer;
     viewer->glActiveTexture(GL_TEXTURE0);
     viewer->glGenTextures(1,&mDummyTexId);
     viewer->glBindTexture(GL_TEXTURE_2D, mDummyTexId);
     viewer->glTexImage2D(GL_TEXTURE_2D, 0, GL_LUMINANCE, 4, 4, 0, GL_LUMINANCE, GL_UNSIGNED_BYTE, 0);
   }
-
   // let's check the GPU capabilities
   mSupportedMask = DEPTH_CORRECTION_BIT | BACKFACE_SHADING_BIT;
   if (!QGLFramebufferObject::hasOpenGLFramebufferObjects ())
@@ -150,7 +148,6 @@ void SplatRenderer::init(QGLWidget *qglw)
   mShaderSrcs[3] = loadSource("AttributeFP","Raycasting.glsl");
   mShaderSrcs[4] = "";
   mShaderSrcs[5] = loadSource("Finalization","Finalization.glsl");
-
   mCurrentPass = 2;
   mBindedPass = -1;
   mIsInitialized = true;

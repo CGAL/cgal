@@ -1388,7 +1388,6 @@ void MainWindow::on_actionLoad_triggered()
   dialog.setFileMode(QFileDialog::ExistingFiles);
 
   if(dialog.exec() != QDialog::Accepted) { return; }
-  viewer->context()->makeCurrent();
   FilterPluginMap::iterator it = 
     filterPluginMap.find(dialog.selectedNameFilter());
   
@@ -1402,6 +1401,7 @@ void MainWindow::on_actionLoad_triggered()
     CGAL::Three::Scene_item* item = NULL;
     if(selectedPlugin) {
       QFileInfo info(filename);
+      viewer->context()->makeCurrent();
       item = load_item(info, selectedPlugin);
       Scene::Item_id index = scene->addItem(item);
       selectSceneItem(index);

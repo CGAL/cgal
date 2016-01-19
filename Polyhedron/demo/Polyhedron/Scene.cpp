@@ -270,7 +270,7 @@ Scene::duplicate(Item_id index)
 
 void Scene::initializeGL()
 {
-   //ms_splatting->init();
+   ms_splatting->init();
 
     //Setting the light options
 
@@ -309,8 +309,6 @@ Scene::draw()
 void
 Scene::draw(CGAL::Three::Viewer_interface* viewer)
 {
-    if(!gl_init)
-        initializeGL();
     draw_aux(false, viewer);
 }
 void
@@ -329,6 +327,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 {
     if(!ms_splatting->viewer_is_set)
         ms_splatting->setViewer(viewer);
+    if(!gl_init)
+        initializeGL();
     // Flat/Gouraud OpenGL drawing
     for(int index = 0; index < m_entries.size(); ++index)
     {
