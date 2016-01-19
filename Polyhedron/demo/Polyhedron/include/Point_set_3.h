@@ -31,6 +31,8 @@
 /// @heading Parameters:
 /// @param Gt       Geometric traits class.
 
+namespace CGAL {
+
 template <class Gt>
 class Point_set_3
 {
@@ -46,6 +48,7 @@ public:
   
   typedef CGAL::Surface_mesh<Point> Base;
   typedef typename Base::Vertex_index Index;
+  typedef typename Base::template Property_map<Index, Point> Point_pmap;
   typedef typename Base::template Property_map<Index, Vector> Vector_pmap;
   typedef typename Base::template Property_map<Index, Color> Color_pmap;
 
@@ -115,6 +118,25 @@ public:
     
     m_radii_are_uptodate = p.m_radii_are_uptodate;
   }
+
+
+  Base& surface_mesh()
+  {
+    return m_base;
+  }
+
+
+  Point_pmap points()
+  {
+    return m_base.points();
+  }
+
+
+  Vector_pmap normals()
+  {
+    return m_normals;
+  }
+
 
   void push_back (const Point& p)
   {
@@ -384,5 +406,6 @@ private:
   
 }; // end of class Point_set_3
 
+} // namespace CGAL
 
 #endif // POINT_SET_3_H
