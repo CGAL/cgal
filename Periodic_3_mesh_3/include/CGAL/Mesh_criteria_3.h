@@ -23,8 +23,8 @@
 //******************************************************************************
 
 
-#ifndef CGAL_MESH_CRITERIA_3_H
-#define CGAL_MESH_CRITERIA_3_H
+#ifndef CGAL_PERIODIC_3_MESH_CRITERIA_3_H
+#define CGAL_PERIODIC_3_MESH_CRITERIA_3_H
 
 #include <CGAL/Mesh_3/global_parameters.h>
 #include <CGAL/Mesh_edge_criteria_3.h>
@@ -53,12 +53,12 @@ namespace parameters {
   
 namespace internal {
   
-// Class Mesh_criteria_3_impl
+// Class Periodic_3_mesh_criteria_3_impl
 template < typename Tr,
            typename EdgeCriteria,
            typename FacetCriteria,
            typename CellCriteria >
-class Mesh_criteria_3_impl
+class Periodic_3_mesh_criteria_3_impl
 {
   typedef typename Tr::Geom_traits::FT FT;
   
@@ -68,7 +68,7 @@ public:
   typedef CellCriteria      Cell_criteria;
   
   // Constructor
-  Mesh_criteria_3_impl(const Facet_criteria& facet_criteria,
+  Periodic_3_mesh_criteria_3_impl(const Facet_criteria& facet_criteria,
                        const Cell_criteria& cell_criteria)
     : edge_criteria_(0)
     , facet_criteria_(facet_criteria)
@@ -76,7 +76,7 @@ public:
   { }
   
   // Constructor
-  Mesh_criteria_3_impl(const Edge_criteria& edge_criteria,
+  Periodic_3_mesh_criteria_3_impl(const Edge_criteria& edge_criteria,
                        const Facet_criteria& facet_criteria,
                        const Cell_criteria& cell_criteria)
     : edge_criteria_(edge_criteria)
@@ -88,7 +88,7 @@ public:
   // are not used, so Facet_criteria and Cell_criteria construction from FT
   // is not a problem
   template <class ArgumentPack>
-  Mesh_criteria_3_impl(const ArgumentPack& args)
+  Periodic_3_mesh_criteria_3_impl(const ArgumentPack& args)
     : edge_criteria_(args[parameters::edge_size
                           | args[parameters::edge_sizing_field
                                  | args[parameters::sizing_field | FT(0)] ] ])
@@ -122,7 +122,7 @@ private:
   Facet_criteria facet_criteria_;
   Cell_criteria cell_criteria_;
   
-};  // end class Mesh_criteria_3_impl  
+};  // end class Periodic_3_mesh_criteria_3_impl
 
 } // end namespace internal
   
@@ -134,13 +134,13 @@ template <typename Tr,
           typename EdgeCriteria = Mesh_edge_criteria_3<Tr>,
           typename FacetCriteria = Mesh_facet_criteria_3<Tr>,
           typename CellCriteria = Mesh_cell_criteria_3<Tr> >
-class Mesh_criteria_3
-  : public internal::Mesh_criteria_3_impl< Tr,
+class Periodic_3_mesh_criteria_3
+  : public internal::Periodic_3_mesh_criteria_3_impl< Tr,
                                            EdgeCriteria,
                                            FacetCriteria,
                                            CellCriteria >
 {
-  typedef internal::Mesh_criteria_3_impl< Tr,
+  typedef internal::Periodic_3_mesh_criteria_3_impl< Tr,
                                           EdgeCriteria,
                                           FacetCriteria,
                                           CellCriteria>   Base;
@@ -151,13 +151,13 @@ public:
   typedef typename Base::Cell_criteria    Cell_criteria;
   
   // Constructor
-  Mesh_criteria_3(const Facet_criteria& facet_criteria,
+  Periodic_3_mesh_criteria_3(const Facet_criteria& facet_criteria,
                   const Cell_criteria& cell_criteria)
     : Base(facet_criteria,
            cell_criteria) {}
   
   // Constructor
-  Mesh_criteria_3(const Edge_criteria& edge_criteria,
+  Periodic_3_mesh_criteria_3(const Edge_criteria& edge_criteria,
                   const Facet_criteria& facet_criteria,
                   const Cell_criteria& cell_criteria)
     : Base(edge_criteria,
@@ -165,7 +165,7 @@ public:
            cell_criteria) {}
   
   // For convenient constructor call (see examples)
-  BOOST_PARAMETER_CONSTRUCTOR(Mesh_criteria_3, (Base), parameters::tag,
+  BOOST_PARAMETER_CONSTRUCTOR(Periodic_3_mesh_criteria_3, (Base), parameters::tag,
                               (required (periodic_domain,*))
                               (optional (edge_size_,*)
                                         (edge_sizing_field_,*)
@@ -185,4 +185,4 @@ public:
 }  // end namespace CGAL
 
 
-#endif // CGAL_MESH_CRITERIA_3_H
+#endif // CGAL_PERIODIC_3_MESH_CRITERIA_3_H

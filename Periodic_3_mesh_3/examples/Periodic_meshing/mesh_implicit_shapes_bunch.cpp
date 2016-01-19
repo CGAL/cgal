@@ -34,7 +34,7 @@ typedef CGAL::Periodic_mesh_facet_criteria_3<Tr> Periodic_facet_criteria;
 // Cell criteria
 typedef CGAL::Periodic_mesh_cell_criteria_3<Tr> Periodic_cell_criteria;
 // Criteria
-typedef CGAL::Mesh_criteria_3<Tr, Edge_criteria, Periodic_facet_criteria, Periodic_cell_criteria> Mesh_criteria;
+typedef CGAL::Periodic_3_mesh_criteria_3<Tr, Edge_criteria, Periodic_facet_criteria, Periodic_cell_criteria> Mesh_criteria;
 
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
