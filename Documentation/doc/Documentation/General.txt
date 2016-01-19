@@ -84,43 +84,43 @@ class BackInsertionSequence {};
 
 /*!
 See http://www.boost.org/libs/property_map/doc/LvaluePropertyMap.html
-/// \cgalConcept
+\cgalConcept
 */
 class LvaluePropertyMap {};
 
 /*!
 See http://www.boost.org/libs/property_map/doc/ReadWritePropertyMap.html
-/// \cgalConcept
+\cgalConcept
 */
 class ReadWritePropertyMap {};
 
 /*!
 See http://www.boost.org/libs/property_map/doc/WritablePropertyMap.html
-/// \cgalConcept
+\cgalConcept
 */
 class WritablePropertyMap {};
 
 /*!
 See http://www.boost.org/libs/property_map/doc/ReadablePropertyMap.html
-/// \cgalConcept
+\cgalConcept
 */
 class ReadablePropertyMap {};
 
 /*!
 See http://www.boost.org/libs/range/doc/html/range/concepts/single_pass_range.html
-/// \cgalConcept
+\cgalConcept
 */
 class SinglePassRange {};
 
 /*!
 See http://www.boost.org/libs/range/doc/html/range/concepts/random_access_range.html
-/// \cgalConcept
+\cgalConcept
 */
 class RandomAccessRange {};
 
 /*!
 See http://www.boost.org/libs/range/doc/html/range/concepts/forward_range.html
-/// \cgalConcept
+\cgalConcept
 */
 class ForwardRange {};
 
