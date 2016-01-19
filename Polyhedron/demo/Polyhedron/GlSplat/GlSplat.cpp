@@ -119,7 +119,6 @@ void SplatRenderer::init(QGLWidget *qglw)
   mBuggedAtiBlending = rendererString.startsWith("ATI") || rendererString.startsWith("AMD");
   if (mWorkaroundATI && mDummyTexId==0)
   {      
-      qDebug()<<viewer;
     viewer->glActiveTexture(GL_TEXTURE0);
     viewer->glGenTextures(1,&mDummyTexId);
     viewer->glBindTexture(GL_TEXTURE_2D, mDummyTexId);

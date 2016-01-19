@@ -983,7 +983,8 @@ void MainWindow::open(QString filename)
     default:
       load_pair = File_loader_dialog::getItem(fileinfo.fileName(), selected_items, &ok);
   }
-  
+  viewer->context()->makeCurrent();
+  qDebug()<<"Current";
   if(!ok || load_pair.first.isEmpty()) { return; }
   
   if (load_pair.second)
@@ -1401,7 +1402,6 @@ void MainWindow::on_actionLoad_triggered()
     CGAL::Three::Scene_item* item = NULL;
     if(selectedPlugin) {
       QFileInfo info(filename);
-      viewer->context()->makeCurrent();
       item = load_item(info, selectedPlugin);
       Scene::Item_id index = scene->addItem(item);
       selectSceneItem(index);
