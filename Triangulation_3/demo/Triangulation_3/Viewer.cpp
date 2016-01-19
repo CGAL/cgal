@@ -176,6 +176,8 @@ void Viewer::compile_shaders()
     for(int i=0; i< vaoSize; i++)
         vao[i].create();
 
+     // read last setting from .ini file
+    readSettings();
     draw_cylinder(m_fSizeDEdge,25,points_cylinder,normals_cylinder);
     draw_sphere(m_fSizeVertex, 15, points_sphere, normals_sphere);
     //Vertex source code
