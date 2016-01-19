@@ -129,7 +129,7 @@ void Polyhedron_demo_polyhedron_stitching_plugin::on_actionDetectBorders_trigger
       Polyline_visitor polyline_visitor(new_item); 
       CGAL::split_graph_into_polylines( bg,
                                         polyline_visitor,
-                                        CGAL::IsTerminalDefault() );
+                                        CGAL::internal::IsTerminalDefault() );
 #endif
       
       if (new_item->polylines.empty())
