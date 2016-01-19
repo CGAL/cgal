@@ -173,6 +173,32 @@ operator>>(std::istream &is, typename Wrap::Weighted_point_d<K> & wp)
   return is;
 }
 
+// TODO: test if the stream is binary or text?
+template<typename K>
+std::istream &
+operator>>(std::istream &is, typename Wrap::Vector_d<K> & v)
+{
+  typedef typename Wrap::Vector_d<K> V;
+  typedef typename K::FT FT;
+  std::vector<FT> coords;
+
+  std::string line;
+  for (;;)
+  {
+    if (!std::getline(is, line))
+      return is;
+    if (line != "")
+      break;
+  }
+  std::stringstream line_sstr(line);
+  FT temp;
+  while (line_sstr >> temp)
+    coords.push_back(temp);
+
+  v = V(coords.begin(), coords.end());
+  return is;
+}
+
 template < class GT, class TDS >
 std::ostream &
 export_triangulation_to_off(std::ostream & os,
