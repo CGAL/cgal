@@ -129,7 +129,7 @@ protected:
     std::set<Polyhedron::Vertex_handle> selection;
     selection.insert(clicked);
     if (k>0)
-      CGAL::dilate_vertex_selection(CGAL::make_array(clicked),
+      CGAL::expand_vertex_selection(CGAL::make_array(clicked),
                                     *poly_item->polyhedron(),
                                     k,
                                     Is_selected_from_set<Polyhedron::Vertex_handle>(selection),
@@ -144,7 +144,7 @@ protected:
     std::set<Polyhedron::Facet_handle> selection;
     selection.insert(clicked);
     if (k>0)
-      CGAL::dilate_face_selection(CGAL::make_array(clicked),
+      CGAL::expand_face_selection(CGAL::make_array(clicked),
                                   *poly_item->polyhedron(),
                                   k,
                                   Is_selected_from_set<Polyhedron::Facet_handle>(selection),
@@ -160,7 +160,7 @@ protected:
     selection.insert(clicked);
 
     if (k>0)
-      CGAL::dilate_edge_selection(CGAL::make_array(clicked),
+      CGAL::expand_edge_selection(CGAL::make_array(clicked),
                                   *poly_item->polyhedron(),
                                   k,
                                   Is_selected_from_set<edge_descriptor>(selection),

@@ -95,7 +95,7 @@ public:
     connect(ui_widget.Create_polyline_item_button, SIGNAL(clicked()), this, SLOT(on_Create_polyline_item_button_clicked()));
     connect(ui_widget.Erase_selected_facets_button, SIGNAL(clicked()), this, SLOT(on_Erase_selected_facets_button_clicked()));
     connect(ui_widget.Keep_connected_components_button, SIGNAL(clicked()), this, SLOT(on_Keep_connected_components_button_clicked()));
-    connect(ui_widget.Dilate_erode_button, SIGNAL(clicked()), this, SLOT(on_Dilate_erode_button_clicked()));
+    connect(ui_widget.Expand_reduce_button, SIGNAL(clicked()), this, SLOT(on_Expand_reduce_button_clicked()));
     connect(ui_widget.Create_polyhedron_item_button, SIGNAL(clicked()), this, SLOT(on_Create_polyhedron_item_button_clicked()));
     connect(ui_widget.Select_sharp_edges_button, SIGNAL(clicked()), this, SLOT(on_Select_sharp_edges_button_clicked()));
 
@@ -327,15 +327,15 @@ public Q_SLOTS:
     scene->itemChanged(selection_item);
   }
 
-  void on_Dilate_erode_button_clicked() {
+  void on_Expand_reduce_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return; 
     }
 
-    int steps = ui_widget.Dilate_erode_spin_box->value();
-    selection_item->dilate_or_erode(steps);
+    int steps = ui_widget.Expand_reduce_spin_box->value();
+    selection_item->expand_or_reduce(steps);
   }
   // To handle empty selection items coming from loader
   void new_item_created(int item_id) {

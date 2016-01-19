@@ -88,7 +88,7 @@ Each new face added in the selection is added exactly once in `out`.
 */
 template <class FaceRange, class FaceGraph, class IsFaceSelectedPMap, class OutputIterator>
 OutputIterator
-dilate_face_selection(
+expand_face_selection(
   const FaceRange& selection,
   FaceGraph& fg,
   unsigned int k,
@@ -138,7 +138,7 @@ dilate_face_selection(
 
 template <class FaceRange, class FaceGraph, class IsFaceSelectedPMap, class OutputIterator>
 OutputIterator
-erode_face_selection(
+reduce_face_selection(
   const FaceRange& selection,
   FaceGraph& graph,
   unsigned int k,
@@ -236,7 +236,7 @@ select_incident_faces(
 /// Operations on edges
 template <class EdgeRange, class HalfedgeGraph, class IsEdgeSelectedPMap, class OutputIterator>
 OutputIterator
-dilate_edge_selection(
+expand_edge_selection(
   const EdgeRange& selection,
   HalfedgeGraph& graph,
   unsigned int k,
@@ -283,7 +283,7 @@ dilate_edge_selection(
 
 template <class EdgeRange, class HalfedgeGraph, class IsEdgeSelectedPMap, class OutputIterator>
 OutputIterator
-erode_edge_selection(
+reduce_edge_selection(
   const EdgeRange& selection ,
   HalfedgeGraph& graph,
   unsigned int k,
@@ -351,7 +351,7 @@ erode_edge_selection(
 /// Operations on vertices
 template <class VertexRange, class HalfedgeGraph, class IsVertexSelectedPMap, class OutputIterator>
 OutputIterator
-dilate_vertex_selection(
+expand_vertex_selection(
   const VertexRange& selection,
   HalfedgeGraph& graph,
   unsigned int k,
@@ -386,7 +386,7 @@ dilate_vertex_selection(
 
 template <class VertexRange, class HalfedgeGraph, class IsVertexSelectedPMap, class OutputIterator>
 OutputIterator
-erode_vertex_selection(
+reduce_vertex_selection(
   const VertexRange& selection,
   HalfedgeGraph& graph,
   unsigned int k,

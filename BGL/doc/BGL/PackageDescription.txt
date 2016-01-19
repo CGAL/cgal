@@ -197,12 +197,12 @@ user might encounter.
 - `CGAL::Euler::split_vertex()`
 
 ## Selection ##
-- `CGAL::dilate_face_selection()`
-- `CGAL::erode_face_selection()`
-- `CGAL::dilate_edge_selection()`
-- `CGAL::erode_edge_selection()`
-- `CGAL::dilate_vertex_selection()`
-- `CGAL::erode_vertex_selection()`
+- `CGAL::expand_face_selection()`
+- `CGAL::reduce_face_selection()`
+- `CGAL::expand_edge_selection()`
+- `CGAL::reduce_edge_selection()`
+- `CGAL::expand_vertex_selection()`
+- `CGAL::reduce_vertex_selection()`
 - `CGAL::select_incident_faces()`
 
 */

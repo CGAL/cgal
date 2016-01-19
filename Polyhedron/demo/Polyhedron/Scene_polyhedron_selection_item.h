@@ -45,26 +45,26 @@ struct Selection_traits<typename SelectionItem::Vertex_handle, SelectionItem>
   template <class VertexRange, class HalfedgeGraph, class IsVertexSelectedPMap, class OutputIterator>
   static
   OutputIterator
-  erode_selection(
+  reduce_selection(
     const VertexRange& selection,
     HalfedgeGraph& graph,
     unsigned int k,
     IsVertexSelectedPMap is_selected,
     OutputIterator out)
   {
-    return erode_vertex_selection(selection, graph, k, is_selected, out);
+    return reduce_vertex_selection(selection, graph, k, is_selected, out);
   }
   template <class VertexRange, class HalfedgeGraph, class IsVertexSelectedPMap, class OutputIterator>
   static
   OutputIterator
-  dilate_selection(
+  expand_selection(
     const VertexRange& selection,
     HalfedgeGraph& graph,
     unsigned int k,
     IsVertexSelectedPMap is_selected,
     OutputIterator out)
   {
-    return dilate_vertex_selection(selection, graph, k, is_selected, out);
+    return expand_vertex_selection(selection, graph, k, is_selected, out);
   }
 
   SelectionItem* item;
@@ -87,26 +87,26 @@ struct Selection_traits<typename SelectionItem::Facet_handle, SelectionItem>
   template <class FaceRange, class HalfedgeGraph, class IsFaceSelectedPMap, class OutputIterator>
   static
   OutputIterator
-  erode_selection(
+  reduce_selection(
     const FaceRange& selection,
     HalfedgeGraph& graph,
     unsigned int k,
     IsFaceSelectedPMap is_selected,
     OutputIterator out)
   {
-    return erode_face_selection(selection, graph, k, is_selected, out);
+    return reduce_face_selection(selection, graph, k, is_selected, out);
   }
   template <class FaceRange, class HalfedgeGraph, class IsFaceSelectedPMap, class OutputIterator>
   static
   OutputIterator
-  dilate_selection(
+  expand_selection(
     const FaceRange& selection,
     HalfedgeGraph& graph,
     unsigned int k,
     IsFaceSelectedPMap is_selected,
     OutputIterator out)
   {
-    return dilate_face_selection(selection, graph, k, is_selected, out);
+    return expand_face_selection(selection, graph, k, is_selected, out);
   }
 
   SelectionItem* item;
@@ -129,26 +129,26 @@ struct Selection_traits<typename SelectionItem::edge_descriptor, SelectionItem>
   template <class EdgeRange, class HalfedgeGraph, class IsEdgeSelectedPMap, class OutputIterator>
   static
   OutputIterator
-  erode_selection(
+  reduce_selection(
     const EdgeRange& selection,
     HalfedgeGraph& graph,
     unsigned int k,
     IsEdgeSelectedPMap is_selected,
     OutputIterator out)
   {
-    return erode_edge_selection(selection, graph, k, is_selected, out);
+    return reduce_edge_selection(selection, graph, k, is_selected, out);
   }
   template <class EdgeRange, class HalfedgeGraph, class IsEdgeSelectedPMap, class OutputIterator>
   static
   OutputIterator
-  dilate_selection(
+  expand_selection(
     const EdgeRange& selection,
     HalfedgeGraph& graph,
     unsigned int k,
     IsEdgeSelectedPMap is_selected,
     OutputIterator out)
   {
-    return dilate_edge_selection(selection, graph, k, is_selected, out);
+    return expand_edge_selection(selection, graph, k, is_selected, out);
   }
 
   SelectionItem* item;
@@ -496,33 +496,33 @@ public:
     return visitor.minimum_visitor.minimum;
   }
 
-  void dilate_or_erode(int steps) {
+  void expand_or_reduce(int steps) {
     if (steps>0)
     {
       switch(get_active_handle_type()) {
         case Active_handle::VERTEX:
-          dilate_selection<Vertex_handle>(steps);
+          expand_selection<Vertex_handle>(steps);
         break;
         case Active_handle::FACET:
         case Active_handle::CONNECTED_COMPONENT:
-          dilate_selection<Facet_handle>(steps);
+          expand_selection<Facet_handle>(steps);
         break;
         case Active_handle::EDGE:
-          dilate_selection<edge_descriptor>(steps);
+          expand_selection<edge_descriptor>(steps);
       }
     }
     else
     {
       switch(get_active_handle_type()) {
         case Active_handle::VERTEX:
-          erode_selection<Vertex_handle>(-steps);
+          reduce_selection<Vertex_handle>(-steps);
         break;
         case Active_handle::FACET:
         case Active_handle::CONNECTED_COMPONENT:
-          erode_selection<Facet_handle>(-steps);
+          reduce_selection<Facet_handle>(-steps);
         break;
         case Active_handle::EDGE:
-          erode_selection<edge_descriptor>(-steps);
+          reduce_selection<edge_descriptor>(-steps);
       }
     }
   }
@@ -567,7 +567,7 @@ public:
   };
 
   template <class Handle>
-  void dilate_selection(unsigned int steps)
+  void expand_selection(unsigned int steps)
   {
     typedef Selection_traits<Handle, Scene_polyhedron_selection_item> Tr;
     Tr tr(this);
@@ -578,7 +578,7 @@ public:
     BOOST_FOREACH(Handle h,tr.container())
       mark[tr.id(h)]=true;
 
-    Tr::dilate_selection(
+    Tr::expand_selection(
       tr.container(),
       *this->poly_item->polyhedron(),
       steps,
@@ -596,7 +596,7 @@ public:
   }
 
   template <class Handle>
-  void erode_selection(unsigned int steps) {
+  void reduce_selection(unsigned int steps) {
 
     typedef Selection_traits<Handle, Scene_polyhedron_selection_item> Tr;
     Tr tr(this);
@@ -607,7 +607,7 @@ public:
     BOOST_FOREACH(Handle h,tr.container())
       mark[tr.id(h)]=true;
 
-    Tr::erode_selection(
+    Tr::reduce_selection(
       tr.container(),
       *this->poly_item->polyhedron(),
       steps,
@@ -756,7 +756,7 @@ protected:
     {
       QWheelEvent *event = static_cast<QWheelEvent*>(gen_event);
       int steps = event->delta() / 120;
-      dilate_or_erode(steps);
+      expand_or_reduce(steps);
       return true;
     }
     return false;
