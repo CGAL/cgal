@@ -79,9 +79,9 @@ Each new face added in the selection is added exactly once in `out`.
 \tparam IsFaceSelectedPMap a model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%face_descriptor`
         as key type and `bool` as value type.
 \tparam OutputIterator an output iterator accepting face descriptors.
-\param selection the initial selection of faces that will be dilated.
+\param selection the initial selection of faces that will be expanded.
 \param fg the graph containing the selected faces.
-\param k the number of times the dilation procedure is iteratively applied.
+\param k the number of times the expansion procedure is iteratively applied.
 \param is_selected indicates if a face is part of the selection. It is updated by the function
        to accomodate new faces added to the selection.
 \param out new faces added to the selection are added exactly once in `out`.
@@ -136,6 +136,25 @@ expand_face_selection(
   return out;
 }
 
+/*!
+\ingroup PkgBGLSelectionFct
+Diminishes a selection of faces from faces adjacent to a non-selected face.
+This process is applied `k` times considering all faces removed in the previous steps.
+Two faces are said to be adjacent if they share a vertex or an edge.
+Each face removed from the selection is added exactly once in `out`.
+\tparam FaceRange a range of face descriptors, model of `Range`.
+          Its iterator type is `InputIterator`.
+\tparam FaceGraph a model of `FaceGraph`.
+\tparam IsFaceSelectedPMap a model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%face_descriptor`
+        as key type and `bool` as value type.
+\tparam OutputIterator an output iterator accepting face descriptors.
+\param selection the initial selection of faces that will be expanded.
+\param fg the graph containing the selected faces.
+\param k the number of times the reduction procedure is iteratively applied.
+\param is_selected indicates if a face is part of the selection. It is updated by the function
+       to accomodate faces removed from the selection.
+\param out faces removed from the selection are added exactly once in `out`.
+*/
 template <class FaceRange, class FaceGraph, class IsFaceSelectedPMap, class OutputIterator>
 OutputIterator
 reduce_face_selection(
@@ -195,14 +214,14 @@ reduce_face_selection(
 /*!
 \ingroup PkgBGLSelectionFct
 discovers and puts in `out` all faces incident to the target vertex
-of an halfedge in `hedges`. Faces are put exactly once in `out`.
+of a halfedge in `hedges`. Faces are put exactly once in `out`.
 \tparam HalfedgeRange a range of halfedge descriptors, model of `Range`.
           Its iterator type is `InputIterator`.
 \tparam HalfedgeGraph a model of `HalfedgeGraph`.
 \tparam OutputIterator an output iterator accepting face descriptors.
 \param hedges the range a halfedge descriptors consider during the face selection.
 \param hg the graph containing the input halfedges.
-\param out faces added to the selection are added exactly once in `out`
+\param out faces added to the selection are added exactly once in `out`.
 */
 template <class HalfedgeRange, class FaceGraph, class OutputIterator>
 OutputIterator
@@ -234,6 +253,26 @@ select_incident_faces(
 }
 
 /// Operations on edges
+/*!
+\ingroup PkgBGLSelectionFct
+Augments a selection with edges of `fg` that are adjacent
+to an edge in `selection`. This process is applied `k` times considering
+all edges added in the previous steps.
+Two edges are said to be adjacent if they are incident to the same face or vertex.
+Each new edge added in the selection is added exactly once in `out`.
+\tparam EdgeRange a range of edge descriptors, model of `Range`.
+          Its iterator type is `InputIterator`.
+\tparam FaceGraph a model of `FaceGraph`.
+\tparam IsEdgeSelectedPMap a model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%edge_descriptor`
+        as key type and `bool` as value type.
+\tparam OutputIterator an output iterator accepting edge descriptors.
+\param selection the initial selection of edges that will be expanded.
+\param fg the graph containing the selected edges.
+\param k the number of times the expansion procedure is iteratively applied.
+\param is_selected indicates if an edge is part of the selection. It is updated by the function
+       to accomodate new edges added to the selection.
+\param out new edges added to the selection are added exactly once in `out`.
+*/
 template <class EdgeRange, class HalfedgeGraph, class IsEdgeSelectedPMap, class OutputIterator>
 OutputIterator
 expand_edge_selection(
@@ -281,6 +320,25 @@ expand_edge_selection(
   return out;
 }
 
+/*!
+\ingroup PkgBGLSelectionFct
+Diminishes a selection of edges from edges adjacent to a non-selected edge.
+This process is applied `k` times considering all edges removed in the previous steps.
+Two edges are said to be adjacent if they are incident to the same face or vertex.
+Each edge removed from the selection is added exactly once in `out`.
+\tparam EdgeRange a range of edge descriptors, model of `Range`.
+          Its iterator type is `InputIterator`.
+\tparam FaceGraph a model of `FaceGraph`.
+\tparam IsEdgeSelectedPMap a model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%edge_descriptor`
+        as key type and `bool` as value type.
+\tparam OutputIterator an output iterator accepting edge descriptors.
+\param selection the initial selection of edges that will be reduced.
+\param fg the graph containing the selected edges.
+\param k the number of times the reduction procedure is iteratively applied.
+\param is_selected indicates if an edge is part of the selection. It is updated by the function
+       to accomodate edges removed from the selection.
+\param out edges removed from the selection are added exactly once in `out`.
+*/
 template <class EdgeRange, class HalfedgeGraph, class IsEdgeSelectedPMap, class OutputIterator>
 OutputIterator
 reduce_edge_selection(
@@ -349,6 +407,26 @@ reduce_edge_selection(
 }
 
 /// Operations on vertices
+/*!
+\ingroup PkgBGLSelectionFct
+Augments a selection with vertices of `fg` that are adjacent
+to a vertex in `selection`. This process is applied `k` times considering
+all vertices added in the previous steps.
+Two vertices are said to be adjacent if they are part of the same face.
+Each new vertex added in the selection is added exactly once in `out`.
+\tparam VertexRange a range of vertex descriptors, model of `Range`.
+          Its iterator type is `InputIterator`.
+\tparam FaceGraph a model of `FaceGraph`.
+\tparam IsVertexSelectedPMap a model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+        as key type and `bool` as value type.
+\tparam OutputIterator an output iterator accepting vertex descriptors.
+\param selection the initial selection of vertices that will be expanded.
+\param fg the graph containing the selected vertices.
+\param k the number of times the expansion procedure is iteratively applied.
+\param is_selected indicates if a vertex is part of the selection. It is updated by the function
+       to accomodate new vertices added to the selection.
+\param out new vertices added to the selection are added exactly once in `out`.
+*/
 template <class VertexRange, class HalfedgeGraph, class IsVertexSelectedPMap, class OutputIterator>
 OutputIterator
 expand_vertex_selection(
@@ -384,6 +462,25 @@ expand_vertex_selection(
   return out;
 }
 
+/*!
+\ingroup PkgBGLSelectionFct
+Diminishes a selection of vertices from vertices adjacent to a non-selected vertex.
+This process is applied `k` times considering all vertices removed in the previous steps.
+Two vertices are said to be adjacent if they are part of the same face.
+Each vertex removed from the selection is added exactly once in `out`.
+\tparam VertexRange a range of vertex descriptors, model of `Range`.
+          Its iterator type is `InputIterator`.
+\tparam FaceGraph a model of `FaceGraph`.
+\tparam IsVertexSelectedPMap a model of `ReadWritePropertyMap` with `boost::graph_traits<FaceGraph>::%vertex_descriptor`
+        as key type and `bool` as value type.
+\tparam OutputIterator an output iterator accepting vertex descriptors.
+\param selection the initial selection of vertices that will be reduced.
+\param fg the graph containing the selected vertices.
+\param k the number of times the reduction procedure is iteratively applied.
+\param is_selected indicates if a vertex is part of the selection. It is updated by the function
+       to accomodate vertices removed from the selection.
+\param out vertices removed from the selection are added exactly once in `out`.
+*/
 template <class VertexRange, class HalfedgeGraph, class IsVertexSelectedPMap, class OutputIterator>
 OutputIterator
 reduce_vertex_selection(
