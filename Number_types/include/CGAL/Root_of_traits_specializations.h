@@ -66,7 +66,7 @@ struct Lazy_exact_ro2
         else
           this->et = new RO2(make_root_of_2(op1.exact(), op2.exact(),
                                             op3.exact()));
-        if (!this->approx().is_point())
+        if (!this->approx_with_locked_mutex().is_point())
             this->at = to_interval(*(this->et));
         this->prune_dag();
 
