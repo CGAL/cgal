@@ -883,7 +883,8 @@ namespace internal {
               const Point& point = m_points[ind];
               Point projected = line.projection (point);
 
-              std::size_t tab_index = std::sqrt (CGAL::squared_distance (seg[0], projected)) / d_DeltaEdge;
+              std::size_t tab_index = static_cast<std::size_t>(std::sqrt (CGAL::squared_distance (seg[0], projected))
+                                                               / d_DeltaEdge);
 
               division_tab[tab_index].push_back (ind);
             }
