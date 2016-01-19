@@ -48,7 +48,7 @@
 namespace CGAL {
 
 template<class Gt, class Tds>
-class Periodic_3_Delaunay_triangulation_3_Mesher_3 :
+class Periodic_3_regular_triangulation_3_mesher_3 :
   public Periodic_3_regular_triangulation_3<Gt, Tds> {
 public:
 
@@ -112,7 +112,7 @@ public:
   using Base::periodic_tetrahedron;
 //  using Base::nearest_vertex;
 
-  Periodic_3_Delaunay_triangulation_3_Mesher_3(
+  Periodic_3_regular_triangulation_3_mesher_3(
     const Iso_cuboid& domain = Iso_cuboid(0,0,0,1,1,1),
     const Geometric_traits& gt = Geometric_traits())
     : Base(domain, gt) {
@@ -522,7 +522,7 @@ private:
 
   // Triangulation and tds
   typedef Triangulation_data_structure_3<Vertex_base, Cell_base> Tds;
-  typedef Periodic_3_Delaunay_triangulation_3_Mesher_3<Geom_traits, Tds> Triangulation;
+  typedef Periodic_3_regular_triangulation_3_mesher_3<Geom_traits, Tds> Triangulation;
 
 public:
   typedef Triangulation type;
