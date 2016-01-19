@@ -27,7 +27,7 @@
 #    define CGAL_ATOMIC_NS std
 #  else // not CGAL_CAN_USE_CXX11_ATOMIC
 #    if BOOST_VERSION >= 105300
-#      include <boost/thread/atomic.hpp>
+#      include <boost/atomic.hpp>
 #      define CGAL_ATOMIC_NS boost
 #    else // BOOST_VERSION < 105300
 #      define CGAL_NO_ATOMIC "Boost.Atomic was introduced in Boost-1.53"
