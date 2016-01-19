@@ -71,34 +71,33 @@ namespace CGAL {
 ///
 ///
 ///
-/// \sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
-/// \sa `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::LSCM_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Parameterizer_traits_3<TriangleMesh>`
+/// \sa `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::LSCM_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 template
 <
-    class ParameterizationMesh_3,       ///< 3D surface mesh
+    class TriangleMesh,       ///< 3D surface mesh
     class BorderParameterizer_3         ///< Strategy to parameterize the surface border
-                = Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>,
+                = Circular_border_arc_length_parameterizer_3<TriangleMesh>,
     class SparseLinearAlgebraTraits_d   ///< Traits class to solve a sparse linear system
                 = Eigen_solver_traits<Eigen::BiCGSTAB<Eigen_sparse_matrix<double>::EigenType, Eigen::IncompleteLUT< double > > > >
 
 class Fixed_border_parameterizer_3
-    : public Parameterizer_traits_3<ParameterizationMesh_3>
+    : public Parameterizer_traits_3<TriangleMesh>
 {
   // Private types
 private:
-  typedef Parameterizer_traits_3<ParameterizationMesh_3> Base;
+  typedef Parameterizer_traits_3<TriangleMesh> Base;
 
   // Public types
 public:
   // We have to repeat the types exported by superclass
   /// @cond SKIP_IN_MANUAL
   typedef typename Base::Error_code       Error_code;
-  typedef ParameterizationMesh_3          TriangleMesh;
   /// @endcond
   
   /// Export BorderParameterizer_3 template parameter.

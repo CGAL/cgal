@@ -53,20 +53,17 @@ namespace CGAL {
 ///
 /// Implementation note:
 /// To simplify the implementation, `BorderParameterizer_3` models know only the
-/// `ParameterizationMesh_3` class. They do not know the parameterization algorithm
+/// `TriangleMesh` class. They do not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
 /// \cgalModels `BorderParameterizer_3`
 ///
 
-template<class ParameterizationMesh_3>      //< 3D surface
+template<class TriangleMesh>      //< 3D surface
 class Square_border_parameterizer_3
 {
 // Public types
 public:
-    /// Export ParameterizationMesh_3 template parameter.
-    typedef ParameterizationMesh_3  TriangleMesh;
-
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef Halfedge_around_face_iterator<TriangleMesh> halfedge_around_face_iterator;
 
@@ -256,16 +253,14 @@ Square_border_parameterizer_3<TriangleMesh>::closest_iterator(TriangleMesh& mesh
 /// \cgalModels `BorderParameterizer_3`
 ///
 
-template<class ParameterizationMesh_3>      //< 3D surface
+template<class TriangleMesh>      //< 3D surface
 class Square_border_uniform_parameterizer_3
-    : public Square_border_parameterizer_3<ParameterizationMesh_3>
+    : public Square_border_parameterizer_3<TriangleMesh>
 {
 // Public types
 public:
     // We have to repeat the types exported by superclass
     /// @cond SKIP_IN_MANUAL
-    typedef ParameterizationMesh_3          TriangleMesh; 
-    typedef typename TriangleMesh::Polyhedron TriangleMesh;
 
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
 
@@ -312,16 +307,12 @@ protected:
 /// \cgalModels `BorderParameterizer_3`
 ///
 
-template<class ParameterizationMesh_3>      //< 3D surface
+template<class TriangleMesh>      //< 3D surface
 class Square_border_arc_length_parameterizer_3
-    : public Square_border_parameterizer_3<ParameterizationMesh_3>
+    : public Square_border_parameterizer_3<TriangleMesh>
 {
 // Public types
 public:
-    // We have to repeat the types exported by superclass
-    /// @cond SKIP_IN_MANUAL
-    typedef ParameterizationMesh_3          TriangleMesh;
-   /// @endcond
 
 // Private types
 private:

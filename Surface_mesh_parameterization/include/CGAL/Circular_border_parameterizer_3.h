@@ -53,16 +53,14 @@ namespace CGAL {
 ///
 /// \cgalModels `BorderParameterizer_3`
 ///
-/// \sa `CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
-/// \sa `CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>`
+/// \sa `CGAL::Circular_border_arc_length_parameterizer_3<TriangleMesh>`
+/// \sa `CGAL::Circular_border_uniform_parameterizer_3<TriangleMesh>`
 
-template<class ParameterizationMesh_3>           //< 3D surface
+template<class TriangleMesh>           //< 3D surface
 class Circular_border_parameterizer_3
 {
 // Public types
 public:
-    /// Export ParameterizationMesh_3 template parameter
-    typedef ParameterizationMesh_3 TriangleMesh;
 
     typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
     typedef typename boost::graph_traits<TriangleMesh>::halfedge_descriptor halfedge_descriptor;
@@ -86,7 +84,7 @@ public:
     /// on border's shape. Mark them as <i>parameterized</i>.
   template <typename VertexUVmap, typename VertexParameterizedMap>
   Error_code
-  parameterize_border(ParameterizationMesh_3& mesh,
+  parameterize_border(TriangleMesh& mesh,
                       halfedge_descriptor bhd,
                       VertexUVmap uvmap,
                       VertexParameterizedMap vpmap)
@@ -99,12 +97,12 @@ public:
     // Compute the total border length
     double total_len = compute_border_length(mesh,bhd);
     if (total_len == 0)
-      return Parameterizer_traits_3<ParameterizationMesh_3>::ERROR_BORDER_TOO_SHORT;
+      return Parameterizer_traits_3<TriangleMesh>::ERROR_BORDER_TOO_SHORT;
       
     const double tmp = 2*CGAL_PI/total_len;
     double len = 0.0;           // current position on circle in [0, total_len]
       
-    Halfedge_around_face_circulator<ParameterizationMesh_3> circ(bhd,mesh), done(circ);
+    Halfedge_around_face_circulator<TriangleMesh> circ(bhd,mesh), done(circ);
     do {
       halfedge_descriptor hd = *circ;
       --circ;
@@ -120,7 +118,7 @@ public:
       len += CGAL::sqrt(squared_distance(get(vpm, target(hd,mesh)), get(vpm,vd)));
     }while(circ != done);
 
-    return Parameterizer_traits_3<ParameterizationMesh_3>::OK;
+    return Parameterizer_traits_3<TriangleMesh>::OK;
   }
   
     
@@ -137,7 +135,7 @@ public:
     // Private operations
   private:
     /// Compute the total length of the border
-    double compute_border_length(const ParameterizationMesh_3& tmesh, halfedge_descriptor bhd){
+    double compute_border_length(const TriangleMesh& tmesh, halfedge_descriptor bhd){
       VPM vpm = get(CGAL::vertex_point,tmesh);
       double len = 0.0;
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,tmesh)){
@@ -167,25 +165,25 @@ public:
     ///
     /// \cgalModels `BorderParameterizer_3`
     ///
-    /// \sa `CGAL::Circular_border_arc_length_parameterizer_3<ParameterizationMesh_3>`
-    /// \sa `CGAL::Circular_border_parameterizer_3<ParameterizationMesh_3>`
+    /// \sa `CGAL::Circular_border_arc_length_parameterizer_3<TriangleMesh>`
+    /// \sa `CGAL::Circular_border_parameterizer_3<TriangleMesh>`
 
-    template<class ParameterizationMesh_3>      //< 3D surface
+    template<class TriangleMesh>      //< 3D surface
       class Circular_border_uniform_parameterizer_3
-        : public Circular_border_parameterizer_3<ParameterizationMesh_3>
+        : public Circular_border_parameterizer_3<TriangleMesh>
     {
       // Public types
     public:
       // We have to repeat the types exported by superclass
       /// @cond SKIP_IN_MANUAL
-      typedef ParameterizationMesh_3          Adaptor;
+      typedef TriangleMesh          Adaptor;
       /// @endcond
 
       // Private types
     private:
       // Mesh_Adaptor_3 subtypes:
-      typedef typename Parameterizer_traits_3<ParameterizationMesh_3>::Point_2 Point_2;
-      typedef typename Parameterizer_traits_3<ParameterizationMesh_3>::Vector_3 Vector_3;
+      typedef typename Parameterizer_traits_3<TriangleMesh>::Point_2 Point_2;
+      typedef typename Parameterizer_traits_3<TriangleMesh>::Vector_3 Vector_3;
 
       // Public operations
     public:
@@ -220,25 +218,25 @@ public:
     ///
     /// \cgalModels `BorderParameterizer_3`
     ///
-    /// \sa `CGAL::Circular_border_parameterizer_3<ParameterizationMesh_3>`
-    /// \sa `CGAL::Circular_border_uniform_parameterizer_3<ParameterizationMesh_3>`
+    /// \sa `CGAL::Circular_border_parameterizer_3<TriangleMesh>`
+    /// \sa `CGAL::Circular_border_uniform_parameterizer_3<TriangleMesh>`
 
-    template<class ParameterizationMesh_3>           //< 3D surface
+    template<class TriangleMesh>           //< 3D surface
       class Circular_border_arc_length_parameterizer_3
-        : public Circular_border_parameterizer_3<ParameterizationMesh_3>
+        : public Circular_border_parameterizer_3<TriangleMesh>
     {
       // Public types
     public:
       // We have to repeat the types exported by superclass
       /// @cond SKIP_IN_MANUAL
-      typedef ParameterizationMesh_3          Adaptor;
+      typedef TriangleMesh          Adaptor;
       /// @endcond
 
       // Private types
     private:
       // Mesh_Adaptor_3 subtypes:
-      typedef typename Parameterizer_traits_3<ParameterizationMesh_3>::Point_2 Point_2;
-      typedef typename Parameterizer_traits_3<ParameterizationMesh_3>::Vector_3 Vector_3;
+      typedef typename Parameterizer_traits_3<TriangleMesh>::Point_2 Point_2;
+      typedef typename Parameterizer_traits_3<TriangleMesh>::Vector_3 Vector_3;
  
  
       // Public operations
@@ -248,11 +246,11 @@ public:
       // Protected operations
     protected:
       /// Compute the length of an edge.
-      virtual double compute_edge_length(const ParameterizationMesh_3 & mesh,
+      virtual double compute_edge_length(const TriangleMesh & mesh,
                                          vertex_descriptor source,
                                          vertex_descriptor target)
       {  
-        typedef typename boost::property_map<ParameterizationMesh_3, boost::vertex_point_t>::const_type PPmap;
+        typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type PPmap;
         PPmap ppmap = get(vertex_point, mesh);
         /// Arc-length border parameterization: (u,v) values are
         /// proportional to the length of border edges.

@@ -49,7 +49,7 @@ namespace CGAL {
 ///
 /// Implementation note:
 /// To simplify the implementation, `BorderParameterizer_3` models know only the
-/// `ParameterizationMesh_3` class. They do not know the parameterization algorithm
+/// `TriangleMesh` class. They do not know the parameterization algorithm
 /// requirements or the kind of sparse linear system used.
 ///
 /// \cgalModels `BorderParameterizer_3`

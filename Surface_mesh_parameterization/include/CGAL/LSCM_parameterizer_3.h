@@ -66,37 +66,37 @@ namespace CGAL {
 /// \cgalModels `ParameterizerTraits_3`
 ///
 ///
-/// \sa `CGAL::Parameterizer_traits_3<ParameterizationMesh_3>`
-/// \sa `CGAL::Fixed_border_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Barycentric_mapping_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Discrete_authalic_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Discrete_conformal_map_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
-/// \sa `CGAL::Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Parameterizer_traits_3<TriangleMesh>`
+/// \sa `CGAL::Fixed_border_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Barycentric_mapping_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_authalic_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Discrete_conformal_map_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
+/// \sa `CGAL::Mean_value_coordinates_parameterizer_3<TriangleMesh, BorderParameterizer_3, SparseLinearAlgebraTraits_d>`
 
 template
 <
-    class ParameterizationMesh_3,     ///< 3D surface mesh.
+    class TriangleMesh,     ///< 3D surface mesh.
     class BorderParameterizer_3
-  = Two_vertices_parameterizer_3<ParameterizationMesh_3>,
+  = Two_vertices_parameterizer_3<TriangleMesh>,
                                       ///< Strategy to parameterize the surface border.
                                       ///< The minimum is to parameterize two vertices.
     class SparseLinearAlgebraTraits_d
 #if defined(CGAL_EIGEN3_ENABLED) || defined(DOXYGEN_RUNNING)
   = Eigen_solver_traits<Eigen::SimplicialLDLT<Eigen_sparse_symmetric_matrix<double>::EigenType> >
 #else
-  = OpenNL::SymmetricLinearSolverTraits<typename ParameterizationMesh_3::NT>
+  = OpenNL::SymmetricLinearSolverTraits<typename TriangleMesh::NT>
 #endif
                                       ///< Traits class to solve a sparse linear system.
                                       ///< We may use a symmetric definite positive solver because LSCM
                                       ///< solves the system in the least squares sense.
 >
 class LSCM_parameterizer_3
-    : public Parameterizer_traits_3<ParameterizationMesh_3>
+    : public Parameterizer_traits_3<TriangleMesh>
 {
 // Private types
 private:
     // Superclass
-    typedef Parameterizer_traits_3<ParameterizationMesh_3>
+    typedef Parameterizer_traits_3<TriangleMesh>
                                             Base;
 
 // Public types
@@ -104,7 +104,6 @@ public:
     // We have to repeat the types exported by superclass
     /// @cond SKIP_IN_MANUAL
     typedef typename Base::Error_code       Error_code;
-    typedef ParameterizationMesh_3          TriangleMesh;
     /// @endcond
 
     /// Export BorderParameterizer_3 template parameter.

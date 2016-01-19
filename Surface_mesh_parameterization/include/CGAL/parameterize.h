@@ -46,11 +46,11 @@ namespace CGAL {
 /// \pre `mesh` must be a surface with one connected component.
 /// \pre `mesh` must be a triangular mesh.
 ///
-template <class ParameterizationMesh_3>
-typename Parameterizer_traits_3<ParameterizationMesh_3>::Error_code
-parameterize(ParameterizationMesh_3& mesh)  ///< 3D mesh, model of ParameterizationMesh_3 concept
+template <class TriangleMesh>
+typename Parameterizer_traits_3<TriangleMesh>::Error_code
+parameterize(TriangleMesh& mesh)  ///< 3D mesh, model of TriangleMesh concept
 {
-    Mean_value_coordinates_parameterizer_3<ParameterizationMesh_3> parameterizer;
+    Mean_value_coordinates_parameterizer_3<TriangleMesh> parameterizer;
     return parameterizer.parameterize(mesh);
 }
 
