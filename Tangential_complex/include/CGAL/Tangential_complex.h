@@ -1355,7 +1355,7 @@ public:
     std::set<Indexed_simplex > * incorrect_simplices = NULL) const
   {
     typedef Simplicial_complex::Simplex                     Simplex;
-    typedef Simplicial_complex::Simplex_range               Simplex_range;
+    typedef Simplicial_complex::Simplex_set                 Simplex_set;
 
     if (m_points.empty())
       return true;
@@ -1413,10 +1413,10 @@ public:
     // save its simplices into "stars_simplices"
     //-------------------------------------------------------------------------
 
-    Simplex_range const *p_simplices;
+    Simplex_set const *p_simplices;
 
     std::size_t num_infinite_cells = 0;
-    Simplex_range stars_simplices;
+    Simplex_set stars_simplices;
     if (!p_complex)
     {
       Stars_container::const_iterator it_star = m_stars.begin();
@@ -4186,16 +4186,16 @@ public:
     const
   {
     typedef Simplicial_complex::Simplex                     Simplex;
-    typedef Simplicial_complex::Simplex_range               Simplex_range;
+    typedef Simplicial_complex::Simplex_set                 Simplex_set;
 
     // If m_intrinsic_dim = 1, each point is output two times
     // (see export_vertices_to_off)
     num_OFF_simplices = 0;
     std::size_t num_maximal_simplices = 0;
 
-    typename Simplex_range::const_iterator it_s =
+    typename Simplex_set::const_iterator it_s =
       complex.simplex_range().begin();
-    typename Simplex_range::const_iterator it_s_end =
+    typename Simplex_set::const_iterator it_s_end =
       complex.simplex_range().end();
     // For each simplex
     for ( ; it_s != it_s_end ; ++it_s)

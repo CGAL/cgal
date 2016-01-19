@@ -43,7 +43,7 @@ class Simplicial_complex
 {
 public:
   typedef std::set<std::size_t>                     Simplex;
-  typedef std::set<Simplex>                         Simplex_range;
+  typedef std::set<Simplex>                         Simplex_set;
 
   void add_simplex(
     const std::set<std::size_t> &s, bool perform_checks = true)
@@ -86,7 +86,7 @@ public:
     m_complex.insert(s);
   }
 
-  const Simplex_range &simplex_range() const
+  const Simplex_set &simplex_range() const
   {
     return m_complex;
   }
@@ -322,6 +322,31 @@ public:
     return ret;
   }
 
+  template <int K>
+  std::size_t num_K_simplices()
+  {
+    std::set<Simplex> k_simplices;
+
+    for (Complex::const_iterator it_simplex = m_complex.begin(),
+      it_simplex_end = m_complex.end() ;
+      it_simplex != it_simplex_end ;
+    ++it_simplex)
+    {
+      if (it_simplex->size() == K + 1)
+      {
+        k_simplices.insert(*it_simplex);
+      }
+      else if (it_simplex->size() > K + 1)
+      {
+        // Get the k-faces composing the simplex
+        combinations(
+          *it_simplex, K + 1, std::inserter(k_simplices, k_simplices.begin()));
+      }
+    }
+
+    return k_simplices.size();
+  }
+
   // CJTODO: ADD COMMENTS
   bool is_pure_pseudomanifold(
     int simplex_dim,
@@ -331,9 +356,9 @@ public:
     std::size_t *p_num_wrong_dim_simplices = NULL, 
     std::size_t *p_num_wrong_number_of_cofaces = NULL,
     std::size_t *p_num_unconnected_stars = NULL,
-    Simplex_range *p_wrong_dim_simplices = NULL,
-    Simplex_range *p_wrong_number_of_cofaces_simplices = NULL,
-    Simplex_range *p_unconnected_stars_simplices = NULL) const
+    Simplex_set *p_wrong_dim_simplices = NULL,
+    Simplex_set *p_wrong_number_of_cofaces_simplices = NULL,
+    Simplex_set *p_unconnected_stars_simplices = NULL) const
   {
     // If simplex_dim == 1, we do not need to check if stars are connected
     if (simplex_dim == 1)
@@ -512,7 +537,7 @@ public:
   }
 
 private:
-  typedef Simplex_range Complex;
+  typedef Simplex_set Complex;
  
   // graph is an adjacency list
   typedef boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS> Adj_graph;
