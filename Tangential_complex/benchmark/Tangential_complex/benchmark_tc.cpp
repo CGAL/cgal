@@ -6,6 +6,9 @@
 # define TBB_USE_THREADING_TOOL
 #endif
 
+
+#include <CGAL/Tangential_complex/protected_sets.h> // CJTODO TEST
+
 #include <CGAL/assertions_behaviour.h>
 #include <CGAL/Epick_d.h>
 #include <CGAL/Tangential_complex.h>
@@ -36,14 +39,17 @@ const char * const BENCHMARK_SCRIPT_FILENAME = "benchmark_script.txt";
 typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag>              Kernel;
 typedef Kernel::FT                                              FT;
 typedef Kernel::Point_d                                         Point;
+typedef Kernel::Vector_d                                        Vector;
 typedef CGAL::Tangential_complex<
   Kernel, CGAL::Dynamic_dimension_tag,
   CGAL::Parallel_tag>                                           TC;
 
+//#define CGAL_TC_USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
+//#define TC_PROTECT_POINT_SET_DELTA  0.003
 //#define JUST_BENCHMARK_SPATIAL_SEARCH // CJTODO: test
 //#define CHECK_IF_ALL_SIMPLICES_ARE_IN_THE_AMBIENT_DELAUNAY
-#define TC_INPUT_STRIDES 3 // only take one point every TC_INPUT_STRIDES points
-#define TC_NO_EXPORT
+//#define TC_INPUT_STRIDES 10 // only take one point every TC_INPUT_STRIDES points
+//#define TC_NO_EXPORT
 
 #ifdef JUST_BENCHMARK_SPATIAL_SEARCH
 std::ofstream spatial_search_csv_file("benchmark_spatial_search.csv");
@@ -217,8 +223,10 @@ bool export_to_off(
 }
 
 void make_tc(std::vector<Point> &points, 
+             TC::TS_container const& tangent_spaces, // can be empty
              int intrinsic_dim,
-             double sparsity = 0., 
+             bool sparsify = true,
+             double sparsity = 0.01, 
              bool perturb = true, 
              bool add_high_dim_simpl = false, 
              bool collapse = false,
@@ -226,6 +234,12 @@ void make_tc(std::vector<Point> &points,
              const char *input_name = "tc")
 {
   Kernel k;
+  
+  if (sparsify && !tangent_spaces.empty())
+  {
+    std::cerr << "Error: cannot sparsify point set with pre-computed normals.\n";
+    return;
+  }
 
   // CJTODO TEMP TEST
   //TC::Simplicial_complex compl;
@@ -275,20 +289,41 @@ void make_tc(std::vector<Point> &points,
 
   CGAL_TC_SET_PERFORMANCE_DATA("Num_points_in_input", points.size());
 
-#ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
+#ifdef CGAL_TC_USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
   std::vector<Point> points_not_sparse = points;
 #endif
 
   //===========================================================================
   // Sparsify point set if requested
   //===========================================================================
-  if (sparsity != 0.)
+  if (sparsify)
   {
     std::size_t num_points_before = points.size();
     points = sparsify_point_set(k, points, sparsity*sparsity);
     std::cerr << "Number of points before/after sparsification: "
       << num_points_before << " / " << points.size() << std::endl;
   }
+
+#ifdef TC_PROTECT_POINT_SET_DELTA
+  // CJTODO TEST    
+# ifdef CGAL_TC_PROFILING
+  Wall_clock_timer t_protection;
+# endif
+
+  std::vector<Point> points2;
+  std::vector<int> dummy;
+  std::vector<std::vector<int> > dummy2;
+  landmark_choice_protected_delaunay(
+    points, points.size(), points2, dummy, TC_PROTECT_POINT_SET_DELTA, dummy2, false, true);
+  points = points2;
+
+# ifdef CGAL_TC_PROFILING
+  std::cerr << "Point set protected in " << t_protection.elapsed()
+    << " seconds." << std::endl;
+# endif
+
+  std::cerr << "Number of points after PROTECTION: " << points.size() << "\n";
+#endif
 
   CGAL_TC_SET_PERFORMANCE_DATA("Sparsity", sparsity);
   CGAL_TC_SET_PERFORMANCE_DATA("Num_points", points.size());
@@ -297,12 +332,17 @@ void make_tc(std::vector<Point> &points,
   // Compute Tangential Complex
   //===========================================================================
 
-#ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
+#ifdef CGAL_TC_USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
   TC tc(points.begin(), points.end(), sparsity, intrinsic_dim,
     points_not_sparse.begin(), points_not_sparse.end(), k);
 #else
   TC tc(points.begin(), points.end(), sparsity, intrinsic_dim, k);
 #endif
+
+  if (!tangent_spaces.empty())
+  {
+    tc.set_tangent_planes(tangent_spaces);
+  }
 
   double init_time = t.elapsed(); t.reset();
 
@@ -356,7 +396,7 @@ void make_tc(std::vector<Point> &points,
   //===========================================================================
   t.reset();
   double export_before_time = 
-    (export_to_off(tc, input_name_stripped, "_BEFORE_FIX") ? t.elapsed() : -1);
+    (export_to_off(tc, input_name_stripped, "_INITIAL_TC") ? t.elapsed() : -1);
   t.reset();
   
   unsigned int num_perturb_steps = 0;
@@ -406,6 +446,9 @@ void make_tc(std::vector<Point> &points,
     CGAL_TC_SET_PERFORMANCE_DATA("Final_num_inconsistent_local_tr", "N/A");
   }
 
+  // CJTODO TEST
+  //tc.check_and_solve_inconsistencies_by_filtering_simplices_out();
+
   int max_dim = -1;
   double fix2_time = -1;
   double export_after_fix2_time = -1.;
@@ -447,14 +490,14 @@ void make_tc(std::vector<Point> &points,
 
   complex.display_stats();
 
-  // Export to OFF with higher-dim simplices colored
-  std::set<std::set<std::size_t> > higher_dim_simplices;
+  // CJTODO TEMP: Export to OFF with higher-dim simplices colored
+  /*std::set<std::set<std::size_t> > higher_dim_simplices;
   complex.get_simplices_matching_test(
     Test_dim(intrinsic_dim + 1),
     std::inserter(higher_dim_simplices, higher_dim_simplices.begin()));
   export_to_off(
     tc, input_name_stripped, "_BEFORE_COLLAPSE", false, &complex, 
-    &higher_dim_simplices);
+    &higher_dim_simplices);*/
   
   //===========================================================================
   // Collapse
@@ -484,18 +527,23 @@ void make_tc(std::vector<Point> &points,
   //===========================================================================
   // Export to OFF
   //===========================================================================
-  t.reset();
-  bool exported = export_to_off(
-    tc, input_name_stripped, "_AFTER_COLLAPSE", false, &complex, 
-    &wrong_dim_simplices, &wrong_number_of_cofaces_simplices, 
-    &unconnected_stars_simplices);
-  std::cerr 
-    << " OFF colors:" << std::endl
-    << "   * Red: wrong dim simplices" << std::endl
-    << "   * Green: wrong number of cofaces simplices" << std::endl
-    << "   * Blue: not-connected stars" << std::endl;
-  double export_after_collapse_time = (exported ? t.elapsed() : -1);
-  t.reset();
+  
+  double export_after_collapse_time = -1.;
+  if (collapse)
+  {
+    t.reset();
+    bool exported = export_to_off(
+      tc, input_name_stripped, "_AFTER_COLLAPSE", false, &complex,
+      &wrong_dim_simplices, &wrong_number_of_cofaces_simplices,
+      &unconnected_stars_simplices);
+    std::cerr
+      << " OFF colors:" << std::endl
+      << "   * Red: wrong dim simplices" << std::endl
+      << "   * Green: wrong number of cofaces simplices" << std::endl
+      << "   * Blue: not-connected stars" << std::endl;
+    double export_after_collapse_time = (exported ? t.elapsed() : -1.);
+    t.reset();
+  }
 
   //===========================================================================
   // Display info
@@ -550,7 +598,7 @@ int main()
 # ifdef _DEBUG
   int num_threads = 1;
 # else
-  int num_threads = 10;
+  int num_threads = 8;
 # endif
 #endif
 
@@ -608,6 +656,7 @@ int main()
           std::size_t num_points;
           int ambient_dim;
           int intrinsic_dim;
+          char sparsify;
           double sparsity;
           char perturb, add_high_dim_simpl, collapse;
           double time_limit_for_perturb;
@@ -619,6 +668,7 @@ int main()
           sstr >> num_points;
           sstr >> ambient_dim;
           sstr >> intrinsic_dim;
+          sstr >> sparsify;
           sstr >> sparsity;
           sstr >> perturb;
           sstr >> add_high_dim_simpl;
@@ -657,6 +707,7 @@ int main()
 #endif
 
             std::vector<Point> points;
+            TC::TS_container tangent_spaces;
 
             if (input == "generate_moment_curve")
             {
@@ -728,8 +779,9 @@ int main()
             }
             else
             {
-              load_points_from_file<Point>(
-                input, std::back_inserter(points)/*, 600*/);
+              load_points_from_file<Kernel, typename TC::Tangent_space_basis>(
+                input, std::back_inserter(points), 
+                std::back_inserter(tangent_spaces)/*, 600*/);
             }
 
 #ifdef CGAL_TC_PROFILING
@@ -747,9 +799,9 @@ int main()
                 << " points.\n"
                 << "****************************************\n";
 #endif
-              make_tc(points, intrinsic_dim, sparsity, // strided: CJTODO TEMP
-                      perturb=='Y', add_high_dim_simpl=='Y', collapse=='Y',
-                      time_limit_for_perturb, input.c_str());
+              make_tc(points, tangent_spaces, intrinsic_dim, sparsify=='Y',
+                      sparsity, perturb=='Y', add_high_dim_simpl=='Y', 
+                      collapse=='Y', time_limit_for_perturb, input.c_str());
 
               std::cerr << "TC #" << i++ << " done." << std::endl;
               std::cerr << std::endl << "---------------------------------"

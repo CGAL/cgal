@@ -37,6 +37,8 @@
 #include <CGAL/Delaunay_triangulation.h>
 #include <CGAL/Combination_enumerator.h>
 #include <CGAL/point_generators_d.h>
+#include <CGAL/QP_models.h>
+#include <CGAL/QP_functions.h>
 
 # include <CGAL/Mesh_3/Profiling_tools.h>
 
@@ -47,6 +49,8 @@
 
 #include <boost/optional.hpp>
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/range/adaptor/transformed.hpp>
+#include <boost/range/counting_range.hpp>
 #include <boost/math/special_functions/factorials.hpp>
 
 #include <vector>
@@ -64,6 +68,12 @@
 # include <tbb/combinable.h>
 # include <tbb/mutex.h>
 #endif
+
+// choose exact integral type for QP solver
+// (Gmpzf is not thread-safe)
+#include <CGAL/MP_Float.h>
+typedef CGAL::MP_Float ET;
+//#define CGAL_QP_NO_ASSERTIONS // CJTODO: NECESSARY? http://doc.cgal.org/latest/QP_solver/group__PkgQPSolverFunctions.html#ga1fefbd0436aca0e281f88e8e6cd8eb74
 
 //#define CGAL_TC_EXPORT_NORMALS // Only for 3D surfaces (k=2, d=3)
 
@@ -98,7 +108,7 @@ private:
 
 /// The class Tangential_complex represents a tangential complex
 template <
-  typename Kernel_, // ambiant dimension
+  typename Kernel_, // ambiant kernel
   typename DimensionTag, // intrinsic dimension
   typename Concurrency_tag = CGAL::Parallel_tag,
 #ifdef CGAL_ALPHA_TC
@@ -148,9 +158,6 @@ class Tangential_complex
   typedef typename Triangulation::Vertex_handle       Tr_vertex_handle;
   typedef typename Triangulation::Full_cell_handle    Tr_full_cell_handle;
   typedef typename Tr_traits::Vector_d                Tr_vector;
-
-  typedef Basis<K>                                    Tangent_space_basis;
-  typedef Basis<K>                                    Orthogonal_space_basis;
 
   typedef std::vector<Point>                          Points;
 #if defined(CGAL_LINKED_WITH_TBB) && defined(CGAL_TC_GLOBAL_REFRESH)
@@ -212,11 +219,14 @@ class Tangential_complex
   };
 
 public:
-  typedef typename std::vector<Tangent_space_basis>     TS_container;
-  typedef typename std::vector<Orthogonal_space_basis>  OS_container;
+  typedef Basis<K>                                      Tangent_space_basis;
+  typedef Basis<K>                                      Orthogonal_space_basis;
+  typedef std::vector<Tangent_space_basis>              TS_container;
+  typedef std::vector<Orthogonal_space_basis>           OS_container;
+
 private:
-  typedef typename std::vector<Tr_and_VH>               Tr_container;
-  typedef typename std::vector<Vector>                  Vectors;
+  typedef std::vector<Tr_and_VH>                        Tr_container;
+  typedef std::vector<Vector>                           Vectors;
 
   // An Incident_simplex is the list of the vertex indices
   // except the center vertex
@@ -262,6 +272,22 @@ private:
   {
     return vh->point();
   }
+  struct First_of_pair
+  {
+    template<typename> struct result;
+
+    template <typename F, typename Pair>
+    struct result<F(Pair)>
+    {
+      typedef typename boost::remove_reference<Pair>::type::first_type const& type;
+    };
+
+    template <typename Pair>
+    typename Pair::first_type const& operator()(Pair const& pair) const
+    {
+      return pair.first;
+    }
+  };
 
 public:
   typedef Tangential_complex_::Simplicial_complex     Simplicial_complex;
@@ -270,7 +296,7 @@ public:
   template <typename InputIterator>
   Tangential_complex(InputIterator first, InputIterator last,
                      double sparsity, int intrinsic_dimension,
-#ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
+#ifdef CGAL_TC_USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
                      InputIterator first_for_tse, InputIterator last_for_tse,
 #endif
                      const K &k = K()
@@ -295,7 +321,7 @@ public:
 #ifdef CGAL_TC_EXPORT_NORMALS
     , m_orth_spaces(m_points.size(), Orthogonal_space_basis())
 #endif
-#ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
+#ifdef CGAL_TC_USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
     , m_points_for_tse(first_for_tse, last_for_tse)
     , m_points_ds_for_tse(m_points_for_tse)
 #endif
@@ -581,9 +607,10 @@ public:
         << stats_before.second
         << " (" << 100. * stats_before.second / stats_before.first << "%)"
         << std::endl
-        << "  * Num inconsistent stars: "
+        /*<< "  * Num inconsistent stars: "
         << num_inconsistent_local_tr
         << " (" << 100. * num_inconsistent_local_tr / m_points.size() << "%)"
+        << std::endl*/
         << std::endl
         << "  * AFTER fix_inconsistencies_using_perturbation:" << std::endl
         << "    - Total number of simplices in stars (incl. duplicates): "
@@ -752,7 +779,46 @@ public:
       << 100. * stats_after.second / stats_after.first << "%"
       << std::endl;
   }
-  
+
+  // Returns true if some inconsistencies were found
+  bool check_and_solve_inconsistencies_by_filtering_simplices_out()
+  {
+    // CJTODO TEMP
+    std::pair<std::size_t, std::size_t> stats_before =
+      number_of_inconsistent_simplices(false);
+    std::cerr << "BEFORE check_and_solve_inconsistencies_by_filtering_simplices_out():\n"
+      << "    - Total number of simplices in stars (incl. duplicates): "
+      << stats_before.first << std::endl
+      << "    - Num inconsistent simplices in stars (incl. duplicates): "
+      << stats_before.second << std::endl
+      << "    - Percentage of inconsistencies: "
+      << 100. * stats_before.second / stats_before.first << "%"
+      << std::endl;
+
+    bool inconsistencies_found = false;
+
+    // CJTODO: parallel_for???
+    for (std::size_t idx = 0 ; idx < m_triangulations.size() ; ++idx)
+    {
+      if (filter_inconsistent_simplices_in_a_local_triangulation(idx))
+        inconsistencies_found = true;
+    }
+
+    // CJTODO TEMP
+    std::pair<std::size_t, std::size_t> stats_after =
+      number_of_inconsistent_simplices(false);
+    std::cerr << "AFTER check_and_solve_inconsistencies_by_filtering_simplices_out():\n"
+      << "    - Total number of simplices in stars (incl. duplicates): "
+      << stats_after.first << std::endl
+      << "    - Num inconsistent simplices in stars (incl. duplicates): "
+      << stats_after.second << std::endl
+      << "    - Percentage of inconsistencies: "
+      << 100. * stats_after.second / stats_after.first << "%"
+      << std::endl;
+
+    return inconsistencies_found;
+  }
+
 
 #ifdef CGAL_ALPHA_TC
 private:
@@ -804,21 +870,71 @@ private:
           // star(p) does not contain "s"
           std::size_t p = *it_p;
 
-          // Compute the intersection between aff(Voronoi_cell(s)) and Tq
-          boost::optional<Tr_bare_point> intersection = 
-            compute_aff_of_voronoi_face_and_tangent_subspace_intersection(
+          boost::optional<Tr_bare_point> intersection;
+
+          // If we know the intersection between Tq and voronoi(s) is a point
+          // I.e. dim(Tq) + dim(V(full_simplex)) = D
+          //  <=> dim(Tq) = dim(full_simplex)
+          if (q_tr.current_dimension() == s.size())
+          {
+            // Compute the intersection between aff(Voronoi_cell(s)) and Tq
+            // Note that the computation in done in the sub-space defined by Tq
+            intersection = 
+              compute_aff_of_voronoi_face_and_tangent_subspace_intersection(
+                q_tr.current_dimension(),
+                project_points_and_compute_weights(
+                  full_simplex, m_tangent_spaces[i], q_tr.geom_traits()),
+                m_tangent_spaces[i],
+                q_tr.geom_traits());
+
+            // CJTODO: replace with an assertion?
+            if (!intersection)
+            {
+              std::cerr << "ERROR fill_pqueues_for_alpha_tc: "
+                "aff(Voronoi_cell(s)) and Tq do not intersect.\n";
+              continue;
+            }
+          }
+          else
+          {
+            std::cerr << "***************** Intersection is not a point ********************\n"; // CJTODO TEMP
+            // Compute the intersection between Voronoi_cell(s) and Tq
+            // We need Q, i.e. the vertices which are common neighbors of all 
+            // vertices of full_simplex in the Delaunay triangulation, but we 
+            // don't have, so we use the 5^d nearest neighbors instead
+            int num_neighbors_for_Q_approx = std::pow(
+              BASE_VALUE_FOR_ALPHA_TC_NEIGHBORHOOD, m_intrinsic_dim);
+            const Point center_pt = compute_perturbed_point(p);
+            KNS_range ins_range = m_points_ds.query_ANN(
+              center_pt, num_neighbors_for_Q_approx);
+            
+            // CJTODO: optimize that, use a vector!
+            std::set<std::size_t> Q(
+              boost::make_counting_iterator(std::size_t(0)),
+              boost::make_counting_iterator(m_points.size()));
+            for (auto i : full_simplex)
+              Q.erase(i);
+
+            intersection =
+              compute_voronoi_face_and_tangent_subspace_intersection(
               q_tr.current_dimension(),
               project_points_and_compute_weights(
-                full_simplex, m_tangent_spaces[i], q_tr.geom_traits()),
+              full_simplex, m_tangent_spaces[i], q_tr.geom_traits()),
+              project_points_and_compute_weights(
+                Q,
+                //boost::counting_range(std::size_t(0), m_points.size() - 1),
+                //boost::adaptors::transform(ins_range, First_of_pair()),
+                m_tangent_spaces[i], q_tr.geom_traits()),
               m_tangent_spaces[i],
               q_tr.geom_traits());
 
-          // CJTODO: replace with an assertion?
-          if (!intersection)
-          {
-            std::cerr << "ERROR fill_pqueues_for_alpha_tc: "
-              "aff(Voronoi_cell(s)) and Tq do not intersect.\n";
-            continue;
+            // CJTODO: replace with an assertion?
+            if (!intersection)
+            {
+              std::cerr << "ERROR fill_pqueues_for_alpha_tc: "
+                "Voronoi_cell(s) and Tq do not intersect.\n";
+              continue;
+            }
           }
 
           // The following computations are done in the Euclidian space
@@ -1436,6 +1552,205 @@ private:
     return *s.rbegin() == std::numeric_limits<std::size_t>::max();
   }
 
+  // Output: "triangulation" is a Regular Triangulation containing at least the
+  // star of "center_pt"
+  // Returns the handle of the center vertex
+  Tr_vertex_handle compute_star(
+    std::size_t i, const Point &center_pt, const Tangent_space_basis &tsb,
+    Triangulation &triangulation, bool verbose = false)
+  {
+    int tangent_space_dim = tsb.dimension();
+    const Tr_traits &local_tr_traits = triangulation.geom_traits();
+    Tr_vertex_handle center_vertex;
+
+    // Kernel functor & objects
+    typename K::Squared_distance_d k_sqdist = m_k.squared_distance_d_object();
+
+    // Triangulation's traits functor & objects
+    typename Tr_traits::Point_weight_d point_weight =
+      local_tr_traits.point_weight_d_object();
+    typename Tr_traits::Power_center_d power_center =
+      local_tr_traits.power_center_d_object();
+
+    //***************************************************
+    // Build a minimal triangulation in the tangent space
+    // (we only need the star of p)
+    //***************************************************
+
+    // Insert p
+    Tr_point proj_wp;
+    if (i == tsb.origin())
+    {
+      // Insert {(0, 0, 0...), m_weights[i]}
+      proj_wp = local_tr_traits.construct_weighted_point_d_object()(
+        local_tr_traits.construct_point_d_object()(tangent_space_dim, ORIGIN),
+        m_weights[i]);
+    }
+    else
+    {
+      const Weighted_point& wp = compute_perturbed_weighted_point(i);
+      proj_wp = project_point_and_compute_weight(wp, tsb, local_tr_traits);
+    }
+
+    center_vertex = triangulation.insert(proj_wp);
+    center_vertex->data() = i;
+    if (verbose)
+      std::cerr << "* Inserted point #" << i << std::endl;
+
+#ifdef CGAL_TC_VERY_VERBOSE
+    std::size_t num_attempts_to_insert_points = 1;
+    std::size_t num_inserted_points = 1;
+#endif
+    //const int NUM_NEIGHBORS = 150;
+    //KNS_range ins_range = m_points_ds.query_ANN(center_pt, NUM_NEIGHBORS);
+    INS_range ins_range = m_points_ds.query_incremental_ANN(center_pt);
+
+    // While building the local triangulation, we keep the radius
+    // of the sphere "star sphere" centered at "center_vertex"
+    // and which contains all the
+    // circumspheres of the star of "center_vertex"
+    boost::optional<FT> squared_star_sphere_radius_plus_margin;
+
+#ifdef CGAL_ALPHA_TC  
+    /*FT max_absolute_alpha = tsb.max_absolute_alpha();
+    // "2*m_half_sparsity" because both points can be perturbed
+    FT max_sqdist_to_tangent_space = (max_absolute_alpha == FT(0) ?
+    FT(0) : CGAL::square(2*max_absolute_alpha + 2*m_half_sparsity));*/
+    std::size_t number_of_attempts_to_insert_points = 0;
+    const std::size_t MAX_NUM_INSERTED_POINTS =
+      tsb.num_thickening_vectors() > 0 ?
+      static_cast<std::size_t>(std::pow(BASE_VALUE_FOR_ALPHA_TC_NEIGHBORHOOD, /*tsb.dimension()*/m_intrinsic_dim))
+      : std::numeric_limits<std::size_t>::max();
+#endif
+
+    // Insert points until we find a point which is outside "star shere"
+    for (INS_iterator nn_it = ins_range.begin() ;
+      nn_it != ins_range.end() ;
+      ++nn_it)
+    {
+#ifdef CGAL_ALPHA_TC  
+      ++number_of_attempts_to_insert_points;
+      /*if (number_of_attempts_to_insert_points > MAX_NUM_INSERTED_POINTS)
+      break;*/
+#endif
+
+      std::size_t neighbor_point_idx = nn_it->first;
+
+      // ith point = p, which is already inserted
+      if (neighbor_point_idx != i)
+      {
+        // No need to lock the Mutex_for_perturb here since this will not be
+        // called while other threads are perturbing the positions
+        Point neighbor_pt;
+        FT neighbor_weight;
+        compute_perturbed_weighted_point(
+          neighbor_point_idx, neighbor_pt, neighbor_weight);
+
+        if (squared_star_sphere_radius_plus_margin
+          && k_sqdist(center_pt, neighbor_pt)
+             > *squared_star_sphere_radius_plus_margin)
+             break;
+
+        Tr_point proj_pt = project_point_and_compute_weight(
+          neighbor_pt, neighbor_weight, tsb,
+          local_tr_traits);
+
+#ifdef CGAL_ALPHA_TC
+        /*for (int i = 0 ; i < tsb.num_thickening_vectors() ; ++i)
+        {
+        FT c = coord(proj_pt, m_intrinsic_dim + i);
+        if (c > 2.5*tsb.alpha_plus(i) + 2*m_half_sparsity  //CJTODO: il faut 2*tsb.alpha_plus(i)
+        || c < 2.5*tsb.alpha_minus(i) - 2*m_half_sparsity) //CJTODO: il faut 2*tsb.alpha_minus(i)
+        {
+        goto end_of_insert_loop; // "continue" in n-2 for-loop
+        }
+
+        }*/
+        /*if (max_sqdist_to_tangent_space != FT(0)
+        && center_to_nbor_sqdist > max_sqdist_to_tangent_space)
+        break;*/
+#endif
+
+
+#ifdef CGAL_TC_VERY_VERBOSE
+        ++num_attempts_to_insert_points;
+#endif
+
+
+        Tr_vertex_handle vh = triangulation.insert_if_in_star(proj_pt, center_vertex);
+        //Tr_vertex_handle vh = triangulation.insert(proj_pt);
+        if (vh != Tr_vertex_handle())
+        {
+#ifdef CGAL_TC_VERY_VERBOSE
+          ++num_inserted_points;
+#endif
+          if (verbose)
+            std::cerr << "* Inserted point #" << neighbor_point_idx << std::endl;
+
+          vh->data() = neighbor_point_idx;
+
+          // Let's recompute squared_star_sphere_radius_plus_margin
+          if (triangulation.current_dimension() >= tangent_space_dim)
+          {
+            squared_star_sphere_radius_plus_margin = boost::none;
+            // Get the incident cells and look for the biggest circumsphere
+            std::vector<Tr_full_cell_handle> incident_cells;
+            triangulation.incident_full_cells(
+              center_vertex,
+              std::back_inserter(incident_cells));
+            for (typename std::vector<Tr_full_cell_handle>::iterator cit =
+              incident_cells.begin(); cit != incident_cells.end(); ++cit)
+            {
+              Tr_full_cell_handle cell = *cit;
+              if (triangulation.is_infinite(cell))
+              {
+                squared_star_sphere_radius_plus_margin = boost::none;
+                break;
+              }
+              else
+              {
+                Tr_point c = power_center(
+                  boost::make_transform_iterator(
+                  cell->vertices_begin(),
+                  vertex_handle_to_point<Tr_point, Tr_vertex_handle>),
+                  boost::make_transform_iterator(
+                  cell->vertices_end(),
+                  vertex_handle_to_point<Tr_point, Tr_vertex_handle>));
+
+                FT sq_power_sphere_diam = 4 * point_weight(c);
+
+                if (!squared_star_sphere_radius_plus_margin
+                  || sq_power_sphere_diam >
+                  *squared_star_sphere_radius_plus_margin)
+                {
+                  squared_star_sphere_radius_plus_margin = sq_power_sphere_diam;
+                }
+              }
+            }
+
+            // Let's add the margin, now
+            // The value depends on whether we perturb weight or position
+            if (squared_star_sphere_radius_plus_margin)
+            {
+#ifdef CGAL_TC_PERTURB_WEIGHT
+              // "4*m_sq_half_sparsity" because both points can be perturbed
+              squared_star_sphere_radius_plus_margin =
+                *squared_star_sphere_radius_plus_margin + 4 * m_sq_half_sparsity;
+#else
+              // "2*m_half_sparsity" because both points can be perturbed
+              squared_star_sphere_radius_plus_margin = CGAL::square(
+                CGAL::sqrt(*squared_star_sphere_radius_plus_margin)
+                + 2 * m_half_sparsity);
+#endif
+            }
+          }
+        }
+      }
+    }
+
+    return center_vertex;
+  }
+
   void compute_tangent_triangulation(std::size_t i, bool verbose = false)
   {
     if (verbose)
@@ -1484,176 +1799,9 @@ private:
     int tangent_space_dim = tangent_basis_dim(i);
     Triangulation &local_tr =
       m_triangulations[i].construct_triangulation(tangent_space_dim);
-    const Tr_traits &local_tr_traits = local_tr.geom_traits();
-    Tr_vertex_handle &center_vertex = m_triangulations[i].center_vertex();
 
-    // Kernel functor & objects
-    typename K::Squared_distance_d k_sqdist = m_k.squared_distance_d_object();
-
-    // Triangulation's traits functor & objects
-    typename Tr_traits::Point_weight_d point_weight =
-      local_tr_traits.point_weight_d_object();
-    typename Tr_traits::Power_center_d power_center =
-      local_tr_traits.power_center_d_object();
-
-
-    //***************************************************
-    // Build a minimal triangulation in the tangent space
-    // (we only need the star of p)
-    //***************************************************
-
-    // Insert p
-    Tr_point proj_wp;
-    if(i == tsb.origin())
-    {
-      proj_wp = local_tr_traits.construct_weighted_point_d_object()(
-        local_tr_traits.construct_point_d_object()(tangent_space_dim, ORIGIN),
-        m_weights[i]);
-    }
-    else
-    {
-      const Weighted_point& wp = compute_perturbed_weighted_point(i);
-      proj_wp = project_point_and_compute_weight(wp, tsb, local_tr_traits);
-    }
-
-    center_vertex = local_tr.insert(proj_wp);
-    center_vertex->data() = i;
-    if (verbose)
-      std::cerr << "* Inserted point #" << i << std::endl;
-
-#ifdef CGAL_TC_VERY_VERBOSE
-    std::size_t num_attempts_to_insert_points = 1;
-    std::size_t num_inserted_points = 1;
-#endif
-    //const int NUM_NEIGHBORS = 150;
-    //KNS_range ins_range = m_points_ds.query_ANN(center_pt, NUM_NEIGHBORS);
-    INS_range ins_range = m_points_ds.query_incremental_ANN(center_pt);
-
-    // While building the local triangulation, we keep the radius
-    // of the sphere "star sphere" centered at "center_vertex"
-    // and which contains all the
-    // circumspheres of the star of "center_vertex"
-    boost::optional<FT> squared_star_sphere_radius_plus_margin;
-    
-#ifdef CGAL_ALPHA_TC  
-    /*FT max_absolute_alpha = tsb.max_absolute_alpha();
-    // "2*m_half_sparsity" because both points can be perturbed
-    FT max_sqdist_to_tangent_space = (max_absolute_alpha == FT(0) ?
-      FT(0) : CGAL::square(2*max_absolute_alpha + 2*m_half_sparsity));*/
-    std::size_t number_of_attempts_to_insert_points = 0;
-    const std::size_t MAX_NUM_INSERTED_POINTS = 
-      tsb.num_thickening_vectors() > 0 ?
-        static_cast<std::size_t>(std::pow(4, /*tsb.dimension()*/m_intrinsic_dim))
-        : std::numeric_limits<std::size_t>::max();
-#endif
-
-    // Insert points until we find a point which is outside "star shere"
-    for (INS_iterator nn_it = ins_range.begin() ;
-         nn_it != ins_range.end() ;
-         ++nn_it)
-    {
-#ifdef CGAL_ALPHA_TC  
-        ++number_of_attempts_to_insert_points;
-        if (number_of_attempts_to_insert_points > MAX_NUM_INSERTED_POINTS)
-          break;
-#endif
-
-      std::size_t neighbor_point_idx = nn_it->first;
-
-      // ith point = p, which is already inserted
-      if (neighbor_point_idx != i)
-      {
-        // No need to lock the Mutex_for_perturb here since this will not be
-        // called while other threads are perturbing the positions
-        Point neighbor_pt;
-        FT neighbor_weight;
-        compute_perturbed_weighted_point(
-          neighbor_point_idx, neighbor_pt, neighbor_weight);
-
-        if (squared_star_sphere_radius_plus_margin
-          && k_sqdist(center_pt, neighbor_pt)
-             > *squared_star_sphere_radius_plus_margin)
-          break;
-
-        Tr_point proj_pt = project_point_and_compute_weight(
-          neighbor_pt, neighbor_weight, tsb,
-          local_tr_traits);
-        
-#ifdef CGAL_TC_VERY_VERBOSE
-        ++num_attempts_to_insert_points;
-#endif
-         
-
-        Tr_vertex_handle vh = local_tr.insert_if_in_star(proj_pt, center_vertex);
-        //Tr_vertex_handle vh = local_tr.insert(proj_pt);
-        if (vh != Tr_vertex_handle())
-        {
-#ifdef CGAL_TC_VERY_VERBOSE
-          ++num_inserted_points;
-#endif
-          if (verbose)
-            std::cerr << "* Inserted point #" << neighbor_point_idx << std::endl;
-
-          vh->data() = neighbor_point_idx;
-
-          // Let's recompute squared_star_sphere_radius_plus_margin
-          if (local_tr.current_dimension() >= tangent_space_dim)
-          {
-            squared_star_sphere_radius_plus_margin = boost::none;
-            // Get the incident cells and look for the biggest circumsphere
-            std::vector<Tr_full_cell_handle> incident_cells;
-            local_tr.incident_full_cells(
-              center_vertex,
-              std::back_inserter(incident_cells));
-            for (typename std::vector<Tr_full_cell_handle>::iterator cit =
-                 incident_cells.begin(); cit != incident_cells.end(); ++cit)
-            {
-              Tr_full_cell_handle cell = *cit;
-              if (local_tr.is_infinite(cell))
-              {
-                squared_star_sphere_radius_plus_margin = boost::none;
-                break;
-              }
-              else
-              {
-                Tr_point c = power_center(
-                  boost::make_transform_iterator(
-                    cell->vertices_begin(),
-                    vertex_handle_to_point<Tr_point, Tr_vertex_handle>),
-                  boost::make_transform_iterator(
-                    cell->vertices_end(),
-                    vertex_handle_to_point<Tr_point, Tr_vertex_handle>));
-
-                FT sq_power_sphere_diam = 4*point_weight(c);
-
-                if (!squared_star_sphere_radius_plus_margin
-                 || sq_power_sphere_diam >
-                    *squared_star_sphere_radius_plus_margin)
-                {
-                  squared_star_sphere_radius_plus_margin = sq_power_sphere_diam;
-                }
-              }
-            }
-
-            // Let's add the margin, now
-            // The value depends on whether we perturb weight or position
-            if (squared_star_sphere_radius_plus_margin)
-            {
-#ifdef CGAL_TC_PERTURB_WEIGHT
-              // "4*m_sq_half_sparsity" because both points can be perturbed
-              squared_star_sphere_radius_plus_margin =
-                *squared_star_sphere_radius_plus_margin + 4*m_sq_half_sparsity;
-#else
-              // "2*m_half_sparsity" because both points can be perturbed
-              squared_star_sphere_radius_plus_margin = CGAL::square(
-                CGAL::sqrt(*squared_star_sphere_radius_plus_margin)
-                + 2*m_half_sparsity);
-#endif
-            }
-          }
-        }
-      }
-    }
+    m_triangulations[i].center_vertex() =
+      compute_star(i, center_pt, tsb, local_tr, verbose);
 
 #if defined(CGAL_TC_PROFILING) && defined(CGAL_TC_VERY_VERBOSE)
     std::cerr << "  - triangulation construction: " << t.elapsed() << " s.\n";
@@ -2003,7 +2151,7 @@ next_face:
     //typename K::Translated_point_d      transl =
     //  m_k.translated_point_d_object();
 
-#ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
+#ifdef CGAL_TC_USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
     KNS_range kns_range = m_points_ds_for_tse.query_ANN(
       p, num_points_for_pca, false);
     const Points &points_for_pca = m_points_for_tse;
@@ -2125,6 +2273,95 @@ next_face:
     //ts = compute_gram_schmidt_basis(ts, m_k);
     //return ts;
     */
+  }
+
+  // Compute the space tangent to a simplex (p1, p2, ... pn)
+  // CJTODO: Improve this?
+  // Basically, it takes all the neighbor points to p1, p2... pn and runs PCA
+  // on it. Note that most points are duplicated.
+  Tangent_space_basis compute_tangent_space(
+    const Indexed_simplex &s, bool normalize_basis = true)
+  {
+    unsigned int num_points_for_pca = static_cast<unsigned int>(
+      std::pow(BASE_VALUE_FOR_PCA, m_intrinsic_dim));
+
+    // Kernel functors
+    typename K::Construct_vector_d      constr_vec =
+      m_k.construct_vector_d_object();
+    typename K::Compute_coordinate_d    coord =
+      m_k.compute_coordinate_d_object();
+    typename K::Squared_length_d        sqlen =
+      m_k.squared_length_d_object();
+    typename K::Scaled_vector_d         scaled_vec =
+      m_k.scaled_vector_d_object();
+    typename K::Scalar_product_d        scalar_pdct =
+      m_k.scalar_product_d_object();
+    typename K::Difference_of_vectors_d diff_vec =
+      m_k.difference_of_vectors_d_object();
+    //typename K::Translated_point_d      transl =
+    //  m_k.translated_point_d_object();
+
+    // One row = one point
+    Eigen::MatrixXd mat_points(s.size()*num_points_for_pca, m_ambient_dim);
+    unsigned int current_row = 0;
+
+    for (Indexed_simplex::const_iterator it_index = s.begin();
+          it_index != s.end() ; ++it_index)
+    {
+      const Point &p = m_points[*it_index];
+      
+#ifdef CGAL_TC_USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
+      KNS_range kns_range = m_points_ds_for_tse.query_ANN(
+        p, num_points_for_pca, false);
+      const Points &points_for_pca = m_points_for_tse;
+#else
+      KNS_range kns_range = m_points_ds.query_ANN(p, num_points_for_pca, false);
+      const Points &points_for_pca = m_points;
+#endif
+
+      KNS_iterator nn_it = kns_range.begin();
+      for ( ;
+           current_row < num_points_for_pca && nn_it != kns_range.end() ;
+           ++current_row, ++nn_it)
+      {
+        for (int i = 0 ; i < m_ambient_dim ; ++i)
+        {
+          //const Point p = transl(
+          //  points_for_pca[nn_it->first], m_translations[nn_it->first]);
+          mat_points(current_row, i) = 
+            CGAL::to_double(coord(points_for_pca[nn_it->first], i));
+        }
+      }
+    }
+    Eigen::MatrixXd centered = mat_points.rowwise() - mat_points.colwise().mean();
+    Eigen::MatrixXd cov = centered.adjoint() * centered;
+    Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(cov);
+
+    Tangent_space_basis tsb;
+
+    // The eigenvectors are sorted in increasing order of their corresponding
+    // eigenvalues
+    for (int j = m_ambient_dim - 1 ;
+          j >= m_ambient_dim - m_intrinsic_dim ;
+          --j)
+    {
+      if (normalize_basis)
+      {
+        Vector v = constr_vec(m_ambient_dim,
+                              eig.eigenvectors().col(j).data(),
+                              eig.eigenvectors().col(j).data() + m_ambient_dim);
+        tsb.push_back(normalize_vector(v, m_k));
+      }
+      else
+      {
+        tsb.push_back(constr_vec(
+          m_ambient_dim,
+          eig.eigenvectors().col(j).data(),
+          eig.eigenvectors().col(j).data() + m_ambient_dim));
+      }
+    }
+
+    return tsb;
   }
 
   // Returns the dimension of the ith local triangulation
@@ -2825,6 +3062,95 @@ next_face:
       }
 
 #endif // CGAL_TC_PERTURB_THE_SIMPLEX_ONLY
+    }
+
+    return is_inconsistent;
+  }
+
+
+  bool filter_inconsistent_simplices_in_a_local_triangulation(
+                                                          std::size_t tr_index)
+  {
+    bool is_inconsistent = false;
+
+    Star &star = m_stars[tr_index];
+    Triangulation const& tr    = m_triangulations[tr_index].tr();
+    Tr_vertex_handle center_vh = m_triangulations[tr_index].center_vertex();
+    const Tr_traits &local_tr_traits = tr.geom_traits();
+    int cur_dim = tr.current_dimension();
+
+    // For each incident simplex
+    Star::iterator it_inc_simplex = star.begin();
+    while (it_inc_simplex != star.end())
+    {
+      const Incident_simplex &incident_simplex = *it_inc_simplex;
+
+      // Don't check infinite cells
+      if (is_infinite(incident_simplex))
+      {
+        ++it_inc_simplex;
+        continue;
+      }
+
+      Indexed_simplex c = incident_simplex;
+      c.insert(tr_index); // Add the missing index
+
+      // Inconsistent?
+      if (!is_simplex_consistent(c))
+      {
+        is_inconsistent = true;
+
+        // Compute T, the space tangent to "c"
+        Tangent_space_basis tsb = compute_tangent_space(c);
+
+        std::size_t center_index = *(c.begin());
+        // Compute the star of "center_index" in the RT restricted to T
+        tsb.set_origin(center_index);
+        Triangulation tr(m_intrinsic_dim);
+        Tr_vertex_handle center_vh = compute_star(
+          center_index, compute_perturbed_point(center_index), tsb, tr);
+
+        // Get incident cells
+        std::vector<Tr_full_cell_handle> incident_cells;
+        tr.incident_full_cells(
+          center_vh, std::back_inserter(incident_cells));
+
+        // Check if "c" is among them
+        typename std::vector<Tr_full_cell_handle>::const_iterator it_c = incident_cells.begin();
+        typename std::vector<Tr_full_cell_handle>::const_iterator it_c_end = incident_cells.end();
+        bool found = false;
+        // For each cell
+        for (; !found && it_c != it_c_end ; ++it_c)
+        {
+          Incident_simplex incident_simplex;
+          for (int j = 0 ; j < tr.current_dimension() + 1 ; ++j)
+          {
+            std::size_t index = (*it_c)->vertex(j)->data();
+            incident_simplex.insert(index);
+          }
+          if (incident_simplex == c)
+            found = true;
+        }
+        // If the simplex is not in the new star, we remove it
+        if (!found)
+        {
+          if (it_inc_simplex != star.end() - 1)
+          {
+            *it_inc_simplex = star.back();
+            star.pop_back();
+          }
+          else
+          {
+            star.pop_back();
+            it_inc_simplex = star.end(); // end the loop
+          }
+        }
+        else
+          ++it_inc_simplex;
+      }
+      // Consistent
+      else
+        ++it_inc_simplex;
     }
 
     return is_inconsistent;
@@ -4105,7 +4431,7 @@ private:
   //std::vector<Tr_mutex>     m_tr_mutexes;
 #endif
 
-#ifdef USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
+#ifdef CGAL_TC_USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
   Points                    m_points_for_tse;
   Points_ds                 m_points_ds_for_tse;
 #endif
