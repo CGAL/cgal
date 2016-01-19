@@ -252,7 +252,13 @@ public:
 #endif
       return at;
   }
+protected:
+  const AT& approx_with_locked_mutex() const
+  {
+    return at;
+  }
 
+public:
   const ET & exact() const
   {
 #ifdef CGAL_LAZY_USE_MUTEX
