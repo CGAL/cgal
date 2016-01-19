@@ -131,9 +131,7 @@ int main ()
   // NT b(a);
   // NT c = b;
   NT d (1.0);
-  //std::cerr << d.exact() << std::endl;
   NT e = d + d;
-  std::cerr << e.exact() << std::endl;
   NT f = (short)1;
   NT g = CGAL::POSITIVE;
   NT z = CGAL::my_min(e,d);
@@ -141,7 +139,6 @@ int main ()
   std::cout << e/NT(3) << std::endl;
   // NT f = abs(NT(0));
 
-  std::cerr << e.exact() << std::endl;
   std::cout << "sign(3*(1/3)-1) = " << CGAL::my_sign(NT(3)*(NT(1)/NT(3))-NT(1))
             << std::endl;
   std::cout << "sign(sqrt(2)^2-2) = "
