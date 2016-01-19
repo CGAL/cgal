@@ -35,11 +35,20 @@
 
 typedef float Image_word_type;
 
+template<typename T>
+struct Greater_than : public std::unary_function<T, bool> {
+  Greater_than(const T& second) : second(second) {}
+  bool operator()(const T& first) const {
+    return std::greater<T>()(first, second);
+  }
+  T second;
+};
+
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
-typedef CGAL::Gray_image_mesh_domain_3<CGAL::Image_3,K, 
+typedef CGAL::Gray_image_mesh_domain_3<CGAL::Image_3, K,
                                        Image_word_type,
-                                       std::binder1st< std::less<Image_word_type> > > Mesh_domain;
+                                       Greater_than<Image_word_type> > Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
@@ -58,7 +67,7 @@ int main()
   if(!image.read("data/skull_2.9.inr")) return 1;
 
   // Domain
-  Mesh_domain domain(image, std::bind1st(std::less<Image_word_type>(), 2.9f), 0.f);
+  Mesh_domain domain(image, 2.9f, 0.f);
 
   // Mesh criteria
   Mesh_criteria criteria(facet_angle=30, facet_size=6, facet_distance=2,
