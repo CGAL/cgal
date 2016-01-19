@@ -1211,6 +1211,7 @@ void BinOpRep::debugTree(int level, int indent, int depthLimit) const {
 }
 
 
+CORE_MEMORY_IMPL(BigRatRep)
 CORE_MEMORY_IMPL(ConstDoubleRep)
 CORE_MEMORY_IMPL(ConstRealRep)
 CORE_MEMORY_IMPL(NegRep)
@@ -1247,4 +1248,5 @@ template class Realbase_for<BigRat>;
 template class Realbase_for<BigFloat>;
 
  template class ConstPolyRep<Expr>;
+ template class ConstPolyRep<BigFloat>;
 } //namespace CORE

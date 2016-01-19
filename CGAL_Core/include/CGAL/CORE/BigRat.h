@@ -115,8 +115,8 @@ public:
     mpq_clear(mp);
   }
 
-  CORE_NEW(BigRatRep)
-  CORE_DELETE(BigRatRep)
+  CGAL_CORE_EXPORT CORE_NEW(BigRatRep)
+  CGAL_CORE_EXPORT CORE_DELETE(BigRatRep)
 
   mpq_srcptr get_mp() const {
     return mp;
@@ -486,7 +486,6 @@ inline BigInt BigIntValue(const BigRat& a) {
   return a.BigIntValue();
 }
 
-  CORE_MEMORY_IMPL(BigRatRep)
 
 } //namespace CORE
 #endif // _CORE_BIGRAT_H_
