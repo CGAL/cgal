@@ -342,6 +342,7 @@ void MainWindow::open(QString filename)
               io_plugins)
     {
       if(plugin->canLoad()) {
+          viewer->makeCurrent();
         item = plugin->load(fileinfo);
         if(item) break; // go out of the loop
       }

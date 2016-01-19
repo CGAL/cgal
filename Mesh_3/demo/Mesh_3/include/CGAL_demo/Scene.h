@@ -55,8 +55,6 @@ public:
   int selectionAindex() const;
   int selectionBindex() const;
 
-  // initializeGL() is called by Viewer::initializeGL()
-  void initializeGL();
   // draw() is called by Viewer::draw()
   void draw(Viewer *viewer);
   void drawWithNames(Viewer *viewer);

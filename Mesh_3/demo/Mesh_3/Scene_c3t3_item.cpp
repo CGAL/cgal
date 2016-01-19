@@ -72,7 +72,7 @@ void Scene_c3t3_item::compile_shaders()
     //Fragment source code
     const char fragment_source[] =
     {
-        "#version 330 \n"
+        "#version 120 \n"
         "varying highp vec4 fP; \n"
         "varying highp vec3 fN; \n"
         "varying vec4 color; \n"
@@ -170,6 +170,7 @@ void Scene_c3t3_item::compile_shaders()
     {
         std::cerr<<"adding fragment shader FAILED"<<std::endl;
     }
+    rendering_program_grid.bindAttributeLocation("vertex",0);
     if(!rendering_program_grid .link())
     {
         std::cerr<<"linking Program FAILED"<<std::endl;
