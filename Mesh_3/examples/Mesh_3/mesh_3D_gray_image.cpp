@@ -36,7 +36,8 @@
 typedef float Image_word_type;
 
 template<typename T>
-struct Greater_than : public std::unary_function<T, bool> {
+struct Greater_than {
+  typedef T argument_type;
   Greater_than(const T& second) : second(second) {}
   bool operator()(const T& first) const {
     return std::greater<T>()(first, second);
