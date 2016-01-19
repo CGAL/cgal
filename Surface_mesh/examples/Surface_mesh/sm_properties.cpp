@@ -53,7 +53,10 @@ int main()
   BOOST_FOREACH( vertex_descriptor vd, m.vertices()) { 
     std::cout << name[vd] << " @ " << location[vd] << std::endl;
   }
-  
+
+  // You can access the data also through the boost property maps API
+  std::cout << get(name, v0) << std::endl;
+
   // delete the string property again
   m.remove_property_map(name);
 
