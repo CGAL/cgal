@@ -82,7 +82,7 @@ public:
     void update_bbox();
     Bbox bbox() { return m_bbox; }
     ManipulatedFrame* manipulatedFrame() const { return m_frame; }
-    void initGL(Viewer *viewer);
+    void initGL();
 
 private:
     // member data
@@ -93,6 +93,7 @@ private:
     std::list<Segment> m_segments;
     std::vector<Segment> m_cut_segments;
     bool ready_to_cut;
+    bool gl_init;
 
     // distance functions (simple 2D arrays)
     Color_ramp m_red_ramp;

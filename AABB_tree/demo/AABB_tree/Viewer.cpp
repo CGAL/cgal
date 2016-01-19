@@ -31,7 +31,7 @@ void Viewer::initializeGL()
 {
   QGLViewer::initializeGL();
   setBackgroundColor(::Qt::white);
-  m_pScene->initGL(this);
+  //m_pScene->initGL(this);
 }
 
 void Viewer::mousePressEvent(QMouseEvent* e)
