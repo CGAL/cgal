@@ -29,6 +29,18 @@ inline QGLContext* createOpenGLContext()
     QSurfaceFormat format;
     format.setVersion(2,1);
     format.setProfile(QSurfaceFormat::CompatibilityProfile);
+    context->setFormat(format);
+    QGLContext *result = QGLContext::fromOpenGLContext(context);
+    result->create();
+    return result;
+}
+
+inline QGLContext* createOpenGLMSAAContext()
+{
+    QOpenGLContext *context = new QOpenGLContext();
+    QSurfaceFormat format;
+    format.setVersion(2,1);
+    format.setProfile(QSurfaceFormat::CompatibilityProfile);
     format.setSamples(16);
     context->setFormat(format);
     QGLContext *result = QGLContext::fromOpenGLContext(context);
