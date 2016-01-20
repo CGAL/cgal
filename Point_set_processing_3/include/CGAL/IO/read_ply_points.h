@@ -324,36 +324,75 @@ namespace internal {
   bool read_ply_content (std::istream& stream,
                          PlyInterpreter& interpreter,
                          const std::size_t nb_points,
-                         std::vector<CGAL::Ply_read_number*>& readers,
                          const Kernel& /*kernel*/)
   {
     std::size_t points_read = 0;
     
     while (!(stream.eof()) && points_read < nb_points)
       {
-        for (std::size_t i = 0; i < readers.size (); ++ i)
-          readers[i]->get (stream);
-        
-        interpreter (readers);
+        interpreter.get_line (stream);        
+        interpreter.process_line ();
 
         points_read++;
       }
     // Skip remaining lines
 
-    for (std::size_t i = 0; i < readers.size (); ++ i)
-      delete readers[i];
-
     return (points_read == nb_points);
   }
 
 } //namespace internal
+
+
+class Ply_abstract_interpreter
+{
+  const std::vector<Ply_read_number*>* m_readers;
+  
+public:
+  Ply_abstract_interpreter () : m_readers (NULL) { }
+  virtual ~Ply_abstract_interpreter () { }
+
+  virtual bool init (const std::vector<Ply_read_number*>& readers)
+  {
+    m_readers = &readers;
+    return true;
+  }
+
+  virtual void get_line (std::istream& stream)
+  {
+    for (std::size_t i = 0; i < m_readers->size (); ++ i)
+      (*m_readers)[i]->get (stream);
+  }
+
+  virtual void process_line () = 0;
+  
+protected:
+  bool does_reader_exist (const char* tag)
+  {
+    for (std::size_t i = 0; i < m_readers->size (); ++ i)
+      if ((*m_readers)[i]->name () == tag)
+        return true;
+    return false;
+  }
+  
+  template <typename T>
+  void assign (T& t, const char* tag)
+  {
+    for (std::size_t i = 0; i < m_readers->size (); ++ i)
+      if ((*m_readers)[i]->name () == tag)
+        {
+          (*m_readers)[i]->assign (t);
+          return;
+        }
+  }
+
+};
   
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename PointPMap,
           typename NormalPMap,
           typename Kernel>
-class Ply_interpreter_point_and_normal_3
+class Ply_interpreter_point_and_normal_3 : public Ply_abstract_interpreter
 {
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
   // typedef typename value_type_traits<OutputIterator>::type Enriched_point;
@@ -365,46 +404,35 @@ class Ply_interpreter_point_and_normal_3
   OutputIterator m_output;
   PointPMap& m_point_pmap;
   NormalPMap& m_normal_pmap;
-    
+  
 public:
   Ply_interpreter_point_and_normal_3 (OutputIterator output,
                                       PointPMap& point_pmap,
                                       NormalPMap& normal_pmap)
-    : m_output (output),
+    : Ply_abstract_interpreter(),
+      m_output (output),
       m_point_pmap (point_pmap),
       m_normal_pmap (normal_pmap)
   { }
 
-  bool is_applicable (const std::vector<Ply_read_number*>& readers)
+  bool init (const std::vector<Ply_read_number*>& readers)
   {
-    bool x_found = false, y_found = false, z_found = false;
-    for (std::size_t i = 0; i < readers.size (); ++ i)
-      if (readers[i]->name () == "x")
-        x_found = true;
-      else if (readers[i]->name () == "y")
-        y_found = true;
-      else if (readers[i]->name () == "z")
-        z_found = true;
+    Ply_abstract_interpreter::init (readers);
 
-    return x_found && y_found && z_found;
+    return does_reader_exist ("x")
+      && does_reader_exist ("y")
+      && does_reader_exist ("z");
   }
       
-  void operator() (const std::vector<Ply_read_number*>& readers)
+  void process_line ()
   {
     FT x, y, z, nx, ny, nz;
-    for (std::size_t i = 0; i < readers.size (); ++ i)
-      if (readers[i]->name () == "x")
-        readers[i]->assign (x);
-      else if (readers[i]->name () == "y")
-        readers[i]->assign (y);
-      else if (readers[i]->name () == "z")
-        readers[i]->assign (z);
-      else if (readers[i]->name () == "nx")
-        readers[i]->assign (nx);
-      else if (readers[i]->name () == "ny")
-        readers[i]->assign (ny);
-      else if (readers[i]->name () == "nz")
-        readers[i]->assign (nz);
+    assign (x, "x");
+    assign (y, "y");
+    assign (z, "z");
+    assign (nx, "nx");
+    assign (ny, "ny");
+    assign (nz, "nz");
 
     Point point (x, y, z);
     Vector normal (nx, ny, nz);
@@ -452,13 +480,18 @@ bool read_ply_custom_points(std::istream& stream, ///< input stream.
   if (!(internal::read_ply_header (stream, nb_points, readers)))
     return false;
 
-  if (!(interpreter.is_applicable (readers)))
+  if (!(interpreter.init (readers)))
     {
       std::cerr << "Error: PLY interpreter is not applicable to input file" << std::endl;
       return false;
     }
 
-  return internal::read_ply_content (stream, interpreter, nb_points, readers, kernel);
+  bool success = internal::read_ply_content (stream, interpreter, nb_points, kernel);
+
+  for (std::size_t i = 0; i < readers.size (); ++ i)
+    delete readers[i];
+
+  return success;
 }
 
 
