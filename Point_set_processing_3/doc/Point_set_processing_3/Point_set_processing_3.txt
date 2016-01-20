@@ -105,7 +105,28 @@ in pairs and accessed through property maps.
 
 \subsection Point_set_processing_3Example_ply Example of custom PLY reader
 
-\todo
+PLY files are designed to embed any number of additional properties:
+more specifically, point sets may contain normal vectors, visibility
+vectors, RGB colors, intensity, etc. As it is not possible to provide
+dedicated functions to every possible combination of PLY properties,
+\cgal provides a simple way to write custom PLY readers so that the
+user can adapt its programs to its PLY input.
+
+The function `read_ply_custom_points()` uses the concept
+`PlyInterpreter` to read specific properties defined by the
+user. \cgal provides 2 models for this concept:
+
+- `CGAL::Ply_abstract_interpreter`: defines methods that are not
+likely to vary from one model to another. It cannot be instanciated
+and should be inherited.
+
+- `CGAL::Ply_interpreter_points_and_normals_3`: inherits the previous
+class. It is the standard interpreter that is used internally by
+`read_ply_points()` and `read_ply_points_and_normals()`.
+
+The following example shows how to define a custom interpreter that
+reads a point set with points, normals and RGB colors, and stores
+these attributes in user-defined containers.
 
 \cgalExample{Point_set_processing_3/read_ply_points_with_colors_example.cpp}
 
