@@ -31,10 +31,11 @@ private:
     CLIPPING_COLOR
   };
 
+  bool gl_init;
 public:
   Scene(Ui::MainWindow* ui_) : ui(ui_), p3dt(),
                   moving_point(Point(0.2,0.2,0.2)) {
-
+    gl_init = false;
     flying_ball = ui->actionFlying_ball->isChecked();
 
     dlocate = ui->actionPoint_location->isChecked();

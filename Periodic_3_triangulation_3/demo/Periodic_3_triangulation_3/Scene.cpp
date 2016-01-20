@@ -774,12 +774,14 @@ void Scene::init() {
     // Scene OpenGL state
     compile_shaders();
     init_scene(EMPTY);
-
+    gl_init = true;
 
 }
 
 // Draws the triangulation
 void Scene::draw() {
+    if(!gl_init)
+        init();
     glEnable(GL_DEPTH_TEST);
     if(!are_buffers_initialized)
         initialize_buffers();
