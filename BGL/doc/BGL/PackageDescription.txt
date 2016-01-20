@@ -43,6 +43,9 @@
 /// \defgroup PkgBGLIterators Iterators and Circulators
 /// \ingroup PkgBGL
 
+/// \defgroup PkgBGLSelectionFct Selection Functions
+/// \ingroup PkgBGL
+
 /*!
 \addtogroup PkgBGLIterators
 
@@ -192,6 +195,15 @@ user might encounter.
 - `CGAL::Euler::split_face()`
 - `CGAL::Euler::split_loop()`
 - `CGAL::Euler::split_vertex()`
+
+## Selection ##
+- `CGAL::expand_face_selection()`
+- `CGAL::reduce_face_selection()`
+- `CGAL::expand_edge_selection()`
+- `CGAL::reduce_edge_selection()`
+- `CGAL::expand_vertex_selection()`
+- `CGAL::reduce_vertex_selection()`
+- `CGAL::select_incident_faces()`
 
 ## Miscellaneous ##
 - `CGAL::split_graph_into_polylines()`
