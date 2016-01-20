@@ -34,6 +34,9 @@
 #include <CGAL/squared_distance_3.h>
 #include <CGAL/Kernel/global_functions_3.h>
 
+#include <unordered_set>
+#include <utility>
+
 #ifdef DOXYGEN_RUNNING
 #define CGAL_PMP_NP_TEMPLATE_PARAMETERS NamedParameters
 #define CGAL_PMP_NP_CLASS NamedParameters
@@ -196,6 +199,51 @@ namespace Polygon_mesh_processing {
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 
+
+  template<typename PolygonMesh,
+           typename NamedParameters>
+#ifdef DOXYGEN_RUNNING
+   FT
+#else
+  std::pair<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor,
+            typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT>
+#endif
+  longest_border(const PolygonMesh& pmesh
+         , const NamedParameters& np)
+  {
+    typedef typename CGAL::Kernel_traits<typename property_map_value<PolygonMesh,
+                                                                     CGAL::vertex_point_t>::type>::Kernel::FT  FT;
+    typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
+
+    std::unordered_set<halfedge_descriptor> visited;
+    halfedge_descriptor result_halfedge = boost::graph_traits<PolygonMesh>::null_halfedge();
+    FT result_len = 0;
+    BOOST_FOREACH(halfedge_descriptor h, halfedges(pmesh)){
+      if(visited.find(h)== visited.end()){
+        if(is_border(h,pmesh)){
+          FT len = 0;
+          BOOST_FOREACH(halfedge_descriptor haf, halfedges_around_face(h, pmesh)){
+            len += edge_length(haf, pmesh, np);
+            visited.insert(haf);
+          }
+          if(result_len < len)
+          result_len = len;
+          result_halfedge = h;
+        }
+      }
+    }
+    return std::make_pair(result_halfedge, result_len); 
+  }
+  
+ template<typename PolygonMesh>  
+ std::pair<typename boost::graph_traits<PolygonMesh>::halfedge_descriptor,
+           typename CGAL::Kernel_traits<typename property_map_value<PolygonMesh,
+                                                                    CGAL::vertex_point_t>::type>::Kernel::FT>
+ longest_border(const PolygonMesh& pmesh)
+ {
+   return longest_border(pmesh,
+                         CGAL::Polygon_mesh_processing::parameters::all_default());
+ }
 
   /**
   * \ingroup measure_grp
