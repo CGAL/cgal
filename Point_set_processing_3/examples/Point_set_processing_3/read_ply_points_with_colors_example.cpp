@@ -20,7 +20,7 @@ typedef CGAL::cpp11::array<unsigned char, 3> Color;
 
 // Custom interpreter that reads points, normals and colors and stores
 // them in the appropriate container
-class My_ply_interpreter
+class My_ply_interpreter : public CGAL::Ply_abstract_interpreter
 {
   std::vector<Pwn>& points;
   std::vector<Color>& colors;
@@ -31,52 +31,37 @@ public:
     : points (points), colors (colors)
   { }
 
-  // Tests if input file contains the right properties
-  bool is_applicable (const std::vector<CGAL::Ply_read_number*>& readers)
+  // Init and test if input file contains the right properties
+  bool init (const std::vector<CGAL::Ply_read_number*>& readers)
   {
-    std::size_t nb_property_found = 0;
+    CGAL::Ply_abstract_interpreter::init (readers);
 
-    // Check if all properties are found in PLY input header
-    for (std::size_t i = 0; i < readers.size (); ++ i)
-      if (readers[i]->name () == "x" || // Point
-          readers[i]->name () == "y" ||
-          readers[i]->name () == "z" ||
-          readers[i]->name () == "nx" || // Normal
-          readers[i]->name () == "ny" ||
-          readers[i]->name () == "nz" ||
-          readers[i]->name () == "red" || // Color
-          readers[i]->name () == "green" ||
-          readers[i]->name () == "blue")
-        nb_property_found ++;
-
-    return (nb_property_found == 9);
+    return does_reader_exist ("x")
+      && does_reader_exist ("y")
+      && does_reader_exist ("z")
+      && does_reader_exist ("nx")
+      && does_reader_exist ("ny")
+      && does_reader_exist ("nz")
+      && does_reader_exist ("red")
+      && does_reader_exist ("green")
+      && does_reader_exist ("blue");
   }
 
-  // Describes how to read one line (= one point object)
-  void operator() (const std::vector<CGAL::Ply_read_number*>& readers)
+  // Describes how to process one line (= one point object)
+  void process_line ()
   {
     FT x, y, z, nx, ny, nz;
     Color c = {{ 0, 0, 0 }};
-    
-    for (std::size_t i = 0; i < readers.size (); ++ i)
-      if (readers[i]->name () == "x")
-        readers[i]->assign (x);
-      else if (readers[i]->name () == "y")
-        readers[i]->assign (y);
-      else if (readers[i]->name () == "z")
-        readers[i]->assign (z);
-      else if (readers[i]->name () == "nx")
-        readers[i]->assign (nx);
-      else if (readers[i]->name () == "ny")
-        readers[i]->assign (ny);
-      else if (readers[i]->name () == "nz")
-        readers[i]->assign (nz);
-      else if (readers[i]->name () == "red")
-        readers[i]->assign (c[0]);
-      else if (readers[i]->name () == "green")
-        readers[i]->assign (c[1]);
-      else if (readers[i]->name () == "blue")
-        readers[i]->assign (c[2]);
+
+    assign (x, "x");
+    assign (y, "y");
+    assign (z, "z");
+    assign (nx, "nx");
+    assign (ny, "ny");
+    assign (nz, "nz");
+    assign (c[0], "red");
+    assign (c[1], "green");
+    assign (c[2], "blue");
 
     points.push_back (std::make_pair (Point (x, y, z), Vector (nx, ny, nz)));
     colors.push_back (c);
