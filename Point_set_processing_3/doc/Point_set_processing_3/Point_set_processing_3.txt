@@ -84,15 +84,17 @@ three normal vector coordinates `x y z nx ny nz` per line), OFF
 (%Object File Format) \cgalCite{cgal:p-gmgv16-96} and PLY (Polygon
 File Format).
 
-- `read_xyz_points()` 
-- `read_off_points()`
-- `read_ply_points()` 
-- `write_off_points()` 
-- `write_xyz_points()`
-- `write_ply_points()`
+- `read_xyz_points()` and `read_xyz_points_and_normals()` 
+- `read_off_points()` and `read_off_points_and_normals()` 
+- `read_ply_points()`, `read_ply_points_and_normals()` and `read_ply_custom_points()`
+- `write_xyz_points()` and `write_xyz_points_and_normals()`
+- `write_off_points()` and `write_off_points_and_normals()`
+- `write_ply_points()` and `write_ply_points_and_normals()` 
 
-Note that `read_ply_points()` also accepts binary PLY format in
-addition of ASCII.
+Note that PLY reading functions accepts binary PLY format in addition
+of ASCII. `read_ply_custom_points()` provides the user with a means to
+read any point property from a PLY file (for example, colors), see
+\ref Point_set_processing_3Example_ply.
 
 \subsection Point_set_processing_3Example Example
 
@@ -100,6 +102,12 @@ The following example reads a point set from an input file and writes
 it to a file, both in the XYZ format. Positions and normals are stored
 in pairs and accessed through property maps.
 \cgalExample{Point_set_processing_3/read_write_xyz_point_set_example.cpp}
+
+\subsection Point_set_processing_3Example_ply Example of custom PLY reader
+
+\todo
+
+\cgalExample{Point_set_processing_3/read_ply_points_with_colors_example.cpp}
 
 \section Point_set_processing_3Analysis Analysis
 
