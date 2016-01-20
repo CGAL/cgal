@@ -262,7 +262,6 @@ Volume_plane<T>::~Volume_plane() {
 
 template<typename T>
 void Volume_plane<T>::draw(Viewer* viewer) const {
-    qDebug()<<"draw";
   updateCurrentCube();
 
 
@@ -339,12 +338,10 @@ void Volume_plane<T>::draw(Viewer* viewer) const {
   program.release();
 
   printGlError(__LINE__);
-  qDebug()<<"end draw";
 }
 
 template<typename T>
 void Volume_plane<T>::init() {
-  qDebug()<<"init";
   initShaders();
 
   // for each vertex
@@ -421,7 +418,6 @@ void Volume_plane<T>::init() {
   cbuffer.release();
 
   printGlError(__LINE__);
-  qDebug()<<"end init";
 }
 
 template<typename T>
