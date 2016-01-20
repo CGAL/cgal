@@ -73,7 +73,9 @@ int main (int argc, char** argv)
 
   for(int i =0; i < indices.size(); i++){
     std::cerr << indices[i] << std::endl;
-    }
+  }
+
+  // we next swap two points with all their properties
   Point_set::Index v0(0), v1(1);
   std::cerr << point_set.normal(v0) << "  " << point_set.normal(v1) << std::endl;
   point_set.surface_mesh().swap(v0,v1);
