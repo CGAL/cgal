@@ -170,7 +170,7 @@ void Polyhedron_demo_corefinement_plugin::corefinement()
     new_item->setColor(Qt::green);
     new_item->setRenderingMode(Wireframe);
     scene->addItem(new_item);  
-    new_item->invalidate_buffers();
+    new_item->invalidate_OpenGLBuffers();
     std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
       
   }

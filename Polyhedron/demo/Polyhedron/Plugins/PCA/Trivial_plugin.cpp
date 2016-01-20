@@ -62,7 +62,7 @@ public:
 
     }
 
-    void invalidate_buffers()
+    void invalidate_OpenGLBuffers()
     {
         compute_elements();
         are_buffers_filled = false;

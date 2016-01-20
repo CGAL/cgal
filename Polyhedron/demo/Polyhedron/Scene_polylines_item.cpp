@@ -331,7 +331,7 @@ Scene_polylines_item::Scene_polylines_item()
     nb_wire = 0;
     nb_centers = 0;
     nb_lines = 0;
-    invalidate_buffers();
+    invalidate_OpenGLBuffers();
 
 }
 
@@ -537,7 +537,7 @@ QMenu* Scene_polylines_item::contextMenu()
     return menu;
 }
 
-void Scene_polylines_item::invalidate_buffers()
+void Scene_polylines_item::invalidate_OpenGLBuffers()
 {
     are_buffers_filled = false;
     compute_bbox();
@@ -575,7 +575,7 @@ void Scene_polylines_item::change_corner_radii(double r) {
     if(r >= 0) {
         d->spheres_drawn_radius = r;
         d->draw_extremities = (r > 0);
-        this->invalidate_buffers();
+        this->invalidate_OpenGLBuffers();
     Q_EMIT itemChanged();
     }
 }
@@ -677,6 +677,6 @@ Scene_polylines_item::merge(Scene_polylines_item* other_item) {
         metadata.append(other_metadata_variant.toStringList());
         setProperty("polylines metadata", metadata);
     }
-    invalidate_buffers();
+    invalidate_OpenGLBuffers();
 }
 

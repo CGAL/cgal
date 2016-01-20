@@ -209,7 +209,7 @@ void Polyhedron_demo_xyz_plugin::addPointSetButton_clicked()
         QString name = QString("Point_set #%1").arg(QString::number(nb_of_point_set));
         item->setName(name);
         item->setColor(Qt::black);
-        item->invalidate_buffers();
+        item->invalidate_OpenGLBuffers();
         scene->addItem(item);
     }
 }

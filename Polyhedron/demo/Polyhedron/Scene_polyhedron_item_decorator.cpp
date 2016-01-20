@@ -63,10 +63,10 @@ Scene_polyhedron_item_decorator::compute_bbox() const {
 
 void
 Scene_polyhedron_item_decorator::
-invalidate_buffers()
+invalidate_OpenGLBuffers()
 {
-  poly_item->invalidate_buffers();
-  Scene_item::invalidate_buffers();
+  poly_item->invalidate_OpenGLBuffers();
+  Scene_item::invalidate_OpenGLBuffers();
   compute_bbox();
 }
 

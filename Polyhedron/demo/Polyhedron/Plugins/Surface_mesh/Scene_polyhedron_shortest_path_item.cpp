@@ -177,11 +177,11 @@ void Scene_polyhedron_shortest_path_item::ensure_shortest_paths_tree()
 void Scene_polyhedron_shortest_path_item::poly_item_changed()
 {
   recreate_shortest_path_object();
-  invalidate_buffers();
+  invalidate_OpenGLBuffers();
   Q_EMIT itemChanged();
 }
   
-void Scene_polyhedron_shortest_path_item::invalidate_buffers()
+void Scene_polyhedron_shortest_path_item::invalidate_OpenGLBuffers()
 {
   compute_elements();
   compute_bbox();
@@ -383,7 +383,7 @@ bool Scene_polyhedron_shortest_path_item::run_point_select(const Ray_3& ray)
       }
       break;
     }
-    invalidate_buffers();
+    invalidate_OpenGLBuffers();
     return true;
   }
 }

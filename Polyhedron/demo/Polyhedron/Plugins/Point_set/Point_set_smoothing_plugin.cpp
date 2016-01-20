@@ -87,7 +87,7 @@ void Polyhedron_demo_point_set_smoothing_plugin::on_actionJetSmoothing_triggered
     item->set_has_normals(false);
 
     // update scene
-    item->invalidate_buffers();
+    item->invalidate_OpenGLBuffers();
     scene->itemChanged(index);
 
     QApplication::restoreOverrideCursor();

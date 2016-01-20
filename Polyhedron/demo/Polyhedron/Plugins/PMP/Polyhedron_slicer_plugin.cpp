@@ -311,7 +311,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
       new_polylines_item->setColor(Qt::green);
       new_polylines_item->setRenderingMode(Wireframe);
       scene->addItem(new_polylines_item);
-      new_polylines_item->invalidate_buffers();
+      new_polylines_item->invalidate_OpenGLBuffers();
     }
   }
 }

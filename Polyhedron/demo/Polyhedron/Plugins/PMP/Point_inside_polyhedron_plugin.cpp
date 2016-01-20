@@ -177,7 +177,7 @@ public Q_SLOTS:
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_points_with_normal_item* point_item = qobject_cast<Scene_points_with_normal_item*>(scene->item(id));
       if(point_item) { 
-        point_item->invalidate_buffers();
+        point_item->invalidate_OpenGLBuffers();
         scene->itemChanged(point_item);
       }
     }

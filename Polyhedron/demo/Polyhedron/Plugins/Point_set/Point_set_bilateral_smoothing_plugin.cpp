@@ -117,7 +117,7 @@ void Polyhedron_demo_point_set_bilateral_smoothing_plugin::on_actionBilateralSmo
 	      << std::endl;
 
     // Updates scene
-    item->invalidate_buffers();
+    item->invalidate_OpenGLBuffers();
     scene->itemChanged(index);
 
     QApplication::restoreOverrideCursor();

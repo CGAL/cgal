@@ -868,7 +868,7 @@ void MainWindow::reload_item() {
   new_item->setColor(item->color());
   new_item->setRenderingMode(item->renderingMode());
   new_item->setVisible(item->visible());
-  new_item->invalidate_buffers();
+  new_item->invalidate_OpenGLBuffers();
   scene->replaceItem(item_index, new_item, true);
   item->deleteLater();
 }

@@ -288,9 +288,9 @@ public Q_SLOTS:
   //! important to call this function whenever the internal data is changed,
   //! or the displayed item will not be updated.
   //!Must be overloaded.
-  virtual void invalidate_buffers();
-  //!Setter for the color of the item. Calls invalidate_buffers() so the new color is applied.
-  virtual void setColor(QColor c) { color_ = c; invalidate_buffers(); }
+  virtual void invalidate_OpenGLBuffers();
+  //!Setter for the color of the item. Calls invalidate_OpenGLBuffers() so the new color is applied.
+  virtual void setColor(QColor c) { color_ = c; invalidate_OpenGLBuffers(); }
   //!Setter for the RGB color of the item. Calls setColor(QColor).
   //!@see setColor(QColor c)
   void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
@@ -379,11 +379,11 @@ protected:
   //! file.
   std::size_t nb_isolated_vertices;
   /*! Decides if the draw function must call initialize_buffers() or not. It is set
-   * to true in the end of initialize_buffers() and to false in invalidate_buffers(). The need of
+   * to true in the end of initialize_buffers() and to false in invalidate_OpenGLBuffers(). The need of
    * this boolean comes from the need of a context from the OpenGLFunctions used in
    * initialize_buffers().
    * @see initialize_buffers()
-   * @see invalidate_buffers()
+   * @see invalidate_OpenGLBuffers()
    */
   mutable bool are_buffers_filled;
   //!The rendering mode of the item.
@@ -394,14 +394,14 @@ protected:
   /*! Contains the previous RenderingMode.
    * This is used to determine if invalidate_buffers should be called or not
    * in certain cases.
-   * @see invalidate_buffers()*/
+   * @see invalidate_OpenGLBuffers()*/
   RenderingMode prev_shading;
   /*! \todo replace it by RenderingMode().
    * \brief
    *  Contains the current RenderingMode.
    * This is used to determine if invalidate_buffers should be called or not
    * in certain cases.
-   * @see invalidate_buffers()*/
+   * @see invalidate_OpenGLBuffers()*/
   RenderingMode cur_shading;
   //!Contains the size of the vector of VBOs
   int buffersSize;
@@ -428,10 +428,10 @@ protected:
   /*! Fills the VBOs with data. Must be called after each call to #compute_elements().
    * @see compute_elements()
    */
-  virtual void initialize_buffers(){}
+  void initialize_buffers(){}
 
-  /*! Collects all the data for the shaders. Must be called in #invalidate_buffers().
-   * @see invalidate_buffers().
+  /*! Collects all the data for the shaders. Must be called in #invalidate_OpenGLBuffers().
+   * @see invalidate_OpenGLBuffers().
    */
   void compute_elements(){}
   /*! Passes all the uniform data to the shaders.

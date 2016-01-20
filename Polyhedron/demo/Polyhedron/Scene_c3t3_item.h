@@ -54,7 +54,7 @@ public:
       return !!(os << c3t3());
   }
 
-  void invalidate_buffers()
+  void invalidate_OpenGLBuffers()
   {
     are_buffers_filled = false;
     compute_bbox();

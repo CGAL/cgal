@@ -391,7 +391,7 @@ protected:
 	point_set_item->point_set()->set_first_selected
 	  (point_set_item->point_set()->begin() + size);
       } 
-    point_set_item->invalidate_buffers();
+    point_set_item->invalidate_OpenGLBuffers();
   }
 
   
@@ -475,7 +475,7 @@ public Q_SLOTS:
 	new_item->point_set()->push_back(*it);
     }
     new_item->resetSelection();
-    new_item->invalidate_buffers();
+    new_item->invalidate_OpenGLBuffers();
 
     scene->addItem(new_item);
  }

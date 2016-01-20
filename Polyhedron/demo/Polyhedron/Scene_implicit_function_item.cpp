@@ -364,7 +364,7 @@ Scene_implicit_function_item(Implicit_function_interface* f)
     frame_->setOrientation(1., 0, 0, 0);
     connect(frame_, SIGNAL(modified()), this, SLOT(plane_was_moved()));
 
-    invalidate_buffers();
+    invalidate_OpenGLBuffers();
 }
 
 
@@ -536,7 +536,7 @@ compute_function_grid() const
     }
 
     // Update
-    const_cast<Scene_implicit_function_item*>(this)->invalidate_buffers();
+    const_cast<Scene_implicit_function_item*>(this)->invalidate_OpenGLBuffers();
 
 }
 
@@ -574,9 +574,9 @@ compute_min_max()
 }
 
 void
-Scene_implicit_function_item::invalidate_buffers()
+Scene_implicit_function_item::invalidate_OpenGLBuffers()
 {
-    Scene_item::invalidate_buffers();
+    Scene_item::invalidate_OpenGLBuffers();
     compute_bbox();
     compute_vertices_and_texmap();
     are_buffers_filled = false;

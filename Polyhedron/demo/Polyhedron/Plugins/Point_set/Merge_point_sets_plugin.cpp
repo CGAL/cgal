@@ -77,7 +77,7 @@ void Polyhedron_demo_merge_point_sets_plugin::on_actionMergePointSets_triggered(
     }
   
 
-  mainSelectionItem->invalidate_buffers();
+  mainSelectionItem->invalidate_OpenGLBuffers();
   scene->itemChanged(mainSelectionIndex);
 
   //remove the other items

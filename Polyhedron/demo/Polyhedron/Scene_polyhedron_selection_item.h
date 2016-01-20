@@ -207,7 +207,7 @@ public:
             buffers[i].create();
         }
         init(poly_item, mw);
-        invalidate_buffers();
+        invalidate_OpenGLBuffers();
     }
 
    ~Scene_polyhedron_selection_item()
@@ -404,7 +404,7 @@ public:
       select_all<Facet_handle>(); break;
     case Active_handle::EDGE:
       selected_edges.insert(edges(*polyhedron()).first, edges(*polyhedron()).second);
-      invalidate_buffers();
+      invalidate_OpenGLBuffers();
       QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
       v->update();
 
@@ -418,7 +418,7 @@ public:
     for(typename Tr::Iterator it = tr.iterator_begin() ; it != tr.iterator_end(); ++it) {
       tr.container().insert(*it);
     }
-    invalidate_buffers();
+    invalidate_OpenGLBuffers();
     Q_EMIT itemChanged();
   }
 
@@ -440,7 +440,7 @@ public:
 
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
     tr.container().clear();
-    invalidate_buffers();
+    invalidate_OpenGLBuffers();
     Q_EMIT itemChanged();
   }
 
@@ -492,7 +492,7 @@ public:
     Travel_isolated_components().travel<HandleType>
       (tr.iterator_begin(), tr.iterator_end(), tr.size(), tr.container(), visitor);
 
-    if(visitor.any_inserted) { invalidate_buffers(); Q_EMIT itemChanged(); }
+    if(visitor.any_inserted) { invalidate_OpenGLBuffers(); Q_EMIT itemChanged(); }
     return visitor.minimum_visitor.minimum;
   }
 
@@ -596,7 +596,7 @@ public:
         any_change |= tr.container().insert(*it).second;
       }
     }
-    if(any_change) { invalidate_buffers(); Q_EMIT itemChanged(); }
+    if(any_change) { invalidate_OpenGLBuffers(); Q_EMIT itemChanged(); }
   }
 
   template <class Handle>
@@ -625,7 +625,7 @@ public:
         any_change |= (tr.container().erase(*it)!=0);
       }
     }
-    if(any_change) { invalidate_buffers(); Q_EMIT itemChanged(); }
+    if(any_change) { invalidate_OpenGLBuffers(); Q_EMIT itemChanged(); }
   }
 
   void erase_selected_facets() {
@@ -637,7 +637,7 @@ public:
       polyhedron()->erase_facet((*fb)->halfedge());
     }
     selected_facets.clear();
-    invalidate_buffers();
+    invalidate_OpenGLBuffers();
     changed_with_poly_item();
   }
 
@@ -711,12 +711,12 @@ public:
       if (h->is_feature_edge())
         selected_edges.insert(e);
     }
-    invalidate_buffers();
+    invalidate_OpenGLBuffers();
   }
 
   void changed_with_poly_item() {
     // no need to update indices
-    poly_item->invalidate_buffers();
+    poly_item->invalidate_OpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
     Q_EMIT itemChanged();
   }
@@ -725,10 +725,10 @@ Q_SIGNALS:
   void simplicesSelected(CGAL::Three::Scene_item*);
 
 public Q_SLOTS:
-  void invalidate_buffers() {
+  void invalidate_OpenGLBuffers() {
 
     // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
-      //  poly_item->invalidate_buffers();
+      //  poly_item->invalidate_OpenGLBuffers();
         are_buffers_filled = false;
         compute_bbox();
   }
@@ -799,7 +799,7 @@ protected:
       BOOST_FOREACH(HandleType h, selection)
         any_change |= (tr.container().erase(h)!=0);
     }
-    if(any_change) { invalidate_buffers(); Q_EMIT itemChanged(); }
+    if(any_change) { invalidate_OpenGLBuffers(); Q_EMIT itemChanged(); }
     return any_change;
   }
 

@@ -26,7 +26,7 @@ public:
   QFont font() const;
   QString toolTip() const;
 
-  virtual void invalidate_buffers();
+  virtual void invalidate_OpenGLBuffers();
   virtual void selection_changed(bool);
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const { return m != Gouraud && m!=Splatting; } // CHECK THIS!

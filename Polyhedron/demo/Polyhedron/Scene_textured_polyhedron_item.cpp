@@ -215,7 +215,7 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item()
     is_selected=false;
     nb_facets = 0;
     nb_lines = 0;
-    invalidate_buffers();
+    invalidate_OpenGLBuffers();
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(Textured_polyhedron* const p)
@@ -226,7 +226,7 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(Textured_polyhedr
     texture.GenerateCheckerBoard(2048,2048,128,0,0,0,250,250,255);
     nb_facets = 0;
     nb_lines = 0;
-    invalidate_buffers();
+    invalidate_OpenGLBuffers();
 }
 
 Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Textured_polyhedron& p)
@@ -237,7 +237,7 @@ Scene_textured_polyhedron_item::Scene_textured_polyhedron_item(const Textured_po
     is_selected=false;
     nb_facets = 0;
     nb_lines = 0;
-    invalidate_buffers();
+    invalidate_OpenGLBuffers();
 }
 
 Scene_textured_polyhedron_item::~Scene_textured_polyhedron_item()
@@ -256,7 +256,7 @@ Scene_textured_polyhedron_item::load(std::istream& in)
 {
     std::cout<<"LOAD"<<std::endl;
     in >> *poly;
-    invalidate_buffers();
+    invalidate_OpenGLBuffers();
     return in && !isEmpty();
 }
 
@@ -346,7 +346,7 @@ Scene_textured_polyhedron_item::compute_bbox() const {
                 bbox.xmax(),bbox.ymax(),bbox.zmax());
 }
 void
-Scene_textured_polyhedron_item::invalidate_buffers()
+Scene_textured_polyhedron_item::invalidate_OpenGLBuffers()
 {
     are_buffers_filled = false;
     compute_bbox();

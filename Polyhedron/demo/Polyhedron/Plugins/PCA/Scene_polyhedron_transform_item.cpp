@@ -13,7 +13,7 @@ Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer
 {
     frame->setPosition(pos);
     nb_lines = 0;
-    invalidate_buffers();
+    invalidate_OpenGLBuffers();
 }
 
 void Scene_polyhedron_transform_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer =0) const
@@ -115,7 +115,7 @@ Scene_polyhedron_transform_item::compute_bbox() const {
 }
 
 
-void Scene_polyhedron_transform_item::invalidate_buffers()
+void Scene_polyhedron_transform_item::invalidate_OpenGLBuffers()
 {
     compute_elements();
     are_buffers_filled = false;

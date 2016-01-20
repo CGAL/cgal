@@ -229,7 +229,7 @@ public Q_SLOTS:
          .protect_constraints(protect)
          .smooth_along_features(smooth_features));
         }
-        poly_item->invalidate_buffers();
+        poly_item->invalidate_OpenGLBuffers();
         Q_EMIT poly_item->itemChanged();
       }
       else{
@@ -329,7 +329,7 @@ public Q_SLOTS:
 
     BOOST_FOREACH(Scene_polyhedron_item* poly_item, selection)
     {
-      poly_item->invalidate_buffers();
+      poly_item->invalidate_OpenGLBuffers();
       Q_EMIT poly_item->itemChanged();
     }
     
