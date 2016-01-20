@@ -543,9 +543,9 @@ void Scene_c3t3_item::initialize_buffers() const
         vao[1].bind();
         buffers[3].bind();
         buffers[3].allocate(v_grid.data(), static_cast<int>(v_grid.size()*sizeof(float)));
-        poly_vertexLocation[1] = rendering_program.attributeLocation("vertex");
-        rendering_program.enableAttributeArray(poly_vertexLocation[1]);
-        rendering_program.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
+        poly_vertexLocation[1] = rendering_program_grid.attributeLocation("vertex");
+        rendering_program_grid.enableAttributeArray(poly_vertexLocation[1]);
+        rendering_program_grid.setAttributeBuffer(poly_vertexLocation[1],GL_FLOAT,0,3);
         buffers[3].release();
         vao[1].release();
 
@@ -660,9 +660,7 @@ Scene_c3t3_item::draw_edges(Viewer* viewer) const {
     vao[1].bind();
     attrib_buffers(viewer);
     rendering_program_grid.bind();
-    QColor color;
-    color.setRgbF(this->color().redF(), this->color().greenF(), this->color().blueF());
-    rendering_program_grid.setUniformValue(colorLocation[1], color);
+    rendering_program_grid.setUniformValue(colorLocation[1], QColor(Qt::black));
     viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_grid.size()/3));
     rendering_program_grid.release();
     vao[1].release();
