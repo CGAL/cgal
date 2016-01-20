@@ -1242,14 +1242,16 @@ public:
       final_map_comes_from_outside=true;
       final_map_ptr=ptr;
     }
-    else{
+    else if (!do_not_build_cmap_) {
       final_map_comes_from_outside=false;
       final_map_ptr=new Combinatorial_map_3_();
     }
   }
   
   ~Node_visitor_refine_polyhedra(){
-    if(!final_map_comes_from_outside) delete final_map_ptr;
+    if(!do_not_build_cmap && !final_map_comes_from_outside) {
+      delete final_map_ptr;
+    }
   }
 
   

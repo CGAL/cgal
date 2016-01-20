@@ -1233,3 +1233,7 @@ gmon.*
 /*.html
 /Snap_rounding_2/test/Snap_rounding_2/CMakeLists.txt
 /Snap_rounding_2/test/Snap_rounding_2/data/out
+/Operations_on_polyhedra/examples/Operations_on_polyhedra/CMakeLists.txt
+/Operations_on_polyhedra/examples/Operations_on_polyhedra/cgal_test_with_cmake
+/Operations_on_polyhedra/test/Operations_on_polyhedra/CMakeLists.txt
+/Operations_on_polyhedra/test/Operations_on_polyhedra/cgal_test_with_cmake
