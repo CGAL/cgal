@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/jet_smooth_point_set.h>
+
 #include <vector>
 
 // types

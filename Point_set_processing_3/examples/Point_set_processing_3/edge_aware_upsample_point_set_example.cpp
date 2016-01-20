@@ -46,7 +46,7 @@ int main(int argc, char* argv[])
   const double sharpness_angle = 25;   // control sharpness of the result.
   const double edge_sensitivity = 0;    // higher values will sample more points near the edges          
   const double neighbor_radius = 0.25;  // initial size of neighborhood.
-  const unsigned int number_of_output_points = points.size() * 4;
+  const std::size_t number_of_output_points = points.size() * 4;
 
    //Run algorithm 
   CGAL::edge_aware_upsample_point_set<Concurrency_tag>(

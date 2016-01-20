@@ -10,7 +10,7 @@
 // normal_estimation_test points1.xyz points2.xyz...
 
 // With iterator debugging this testsuite takes to long and the process gets killed
-#define _HAS_ITERATOR_DEBUGGING 0
+//#define _HAS_ITERATOR_DEBUGGING 0
 
 // CGAL
 #include <CGAL/Simple_cartesian.h>
@@ -27,10 +27,10 @@
 #include <CGAL/IO/read_xyz_points.h>
 
 #include <vector>
-#include <cstdlib>
+#include <string>
 #include <fstream>
 #include <cassert>
-#include <math.h>
+#include <cmath>
 
 
 // ----------------------------------------------------------------------------
@@ -141,7 +141,7 @@ bool run_pca_estimate_normals(PointList& points, // input points + output normal
 #endif
                              nb_neighbors_pca_normals);
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
@@ -169,7 +169,7 @@ bool run_jet_estimate_normals(PointList& points, // input points + output normal
 #endif
                              nb_neighbors_jet_fitting_normals);
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
@@ -262,7 +262,7 @@ bool run_mst_orient_normals(PointList& points, // input points + input/output no
 #endif
                              nb_neighbors_mst);
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
@@ -368,8 +368,7 @@ int main(int argc, char * argv[])
     // Check requirements
     //***************************************
 
-    int nb_points = points.size();
-    if (nb_points == 0)
+    if (points.size() == 0)
     {
       std::cerr << "Error: empty file" << std::endl;
       accumulated_fatal_err = EXIT_FAILURE;

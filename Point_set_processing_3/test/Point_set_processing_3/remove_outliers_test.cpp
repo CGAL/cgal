@@ -18,7 +18,7 @@
 #include <CGAL/IO/read_xyz_points.h>
 
 #include <deque>
-#include <cstdlib>
+#include <string>
 #include <fstream>
 #include <cassert>
 
@@ -58,7 +58,7 @@ void test_avg_knn_sq_distance(std::deque<Point>& points, // input point set
   std::deque<Point>(points).swap(points);
 
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;

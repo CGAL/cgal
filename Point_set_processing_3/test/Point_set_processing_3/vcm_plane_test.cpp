@@ -16,7 +16,7 @@ int main (void) {
     std::vector<PointWithNormal> points;
     points.push_back(std::make_pair(Point_3(0, 0, 0), Vector_3(0, 0, 0)));
     for (int i = 0; i < k; ++i) {
-        float theta = 2 * i * M_PI / k;
+        float theta = 2 * i * CGAL_PI / k;
         points.push_back(std::make_pair(Point_3(r * cos(theta), r * sin(theta), 0),
                                         Vector_3(0, 0, 0)));
     }

@@ -6,6 +6,7 @@
 #include <utility> // defines std::pair
 #include <vector>
 #include <fstream>
+#include <iostream>
 
 // types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
