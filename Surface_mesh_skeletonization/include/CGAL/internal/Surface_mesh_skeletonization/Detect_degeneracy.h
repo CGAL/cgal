@@ -81,9 +81,9 @@ bool is_vertex_degenerate(TriangleMesh& hg,
       }
 
       bool in = true;
-      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(hd, hg))
+      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_face(hd, hg))
       {
-        vertex_descriptor v = target(hd,hg);
+        vertex_descriptor v = target(h,hg);
         if (vertices_in_disk.find(v) == vertices_in_disk.end())
         {
           in = false;

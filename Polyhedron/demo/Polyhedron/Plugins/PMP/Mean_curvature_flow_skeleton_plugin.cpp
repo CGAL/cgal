@@ -509,7 +509,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
     Polyline_visitor polyline_visitor(skeleton_item->polylines, skeleton);
     CGAL::split_graph_into_polylines( skeleton,
                                       polyline_visitor,
-                                      CGAL::IsTerminalDefault() );
+                                      CGAL::internal::IsTerminalDefault() );
 
     skeleton_item->setName(QString("Medial skeleton curve of %1").arg(item->name()));
     scene->addItem(skeleton_item);
@@ -824,7 +824,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionSkeletonize()
   Polyline_visitor polyline_visitor(skeleton->polylines, skeleton_curve);
   CGAL::split_graph_into_polylines( skeleton_curve,
                                     polyline_visitor,
-                                    CGAL::IsTerminalDefault() );
+                                    CGAL::internal::IsTerminalDefault() );
 
   skeleton->setName(QString("skeleton curve of %1").arg(item->name()));
   scene->addItem(skeleton);

@@ -29,6 +29,7 @@
 
 namespace CGAL {
 
+namespace internal{
 struct IsTerminalDefault
 {
   template <typename VertexDescriptor, typename Graph>
@@ -45,6 +46,7 @@ struct Dummy_visitor_for_split_graph_into_polylines
   void add_node(typename boost::graph_traits<Graph>::vertex_descriptor){}
   void end_polyline(){}
 };
+} //end of namespace internal
 
 
 namespace internal {
@@ -105,10 +107,25 @@ void split_graph_into_polylines(Graph& graph,
 } // namespace internal
 
   
-/// Split graph into polylines delimited by vertices of degree different from 2,
-/// and vertices for which `is_terminal(v,graph)==true`.
-/// Then the graph is visited and Visitor is called to describe the polylines
-/// Graph must be undirected
+/*!
+\ingroup PkgBGL
+splits into polylines the graph `g` at vertices of degree greater than 2
+and at vertices for which `is_terminal(v,graph)==true`.
+The polylines are reported using a visitor.
+\tparam Graph a model of the `boost` concepts `VertexListGraph` and `EdgeListGraph`.
+\tparam Visitor a class that provides:
+        - <code>void start_new_polyline()</code>
+          called when starting the description of a polyline.
+        - <code>void add_node(typename boost::graph_traits<Graph>::%vertex_descriptor v)</code>
+          called for each vertex `v` of the polyline currently described.
+        - <code>void end_polyline()</code>
+          called when the description of a polyline is finished.
+\tparam IsTerminal A functor providing `bool operator()(boost::graph_traits<Graph>::%vertex_descriptor v, const Graph& g) const`
+                   returning true if the vertex `v` of degree 2 is a polyline endpoint and false otherwise.
+
+An overload without `is_terminal` is provided if no vertices but those of degree
+different from 2 are polyline endpoints.
+*/
 template <typename Graph,
           typename Visitor,
           typename IsTerminal>
@@ -235,6 +252,7 @@ split_graph_into_polylines(const Graph& graph,
   }
 }
 
+/// \cond SKIP_IN_MANUAL
 /// Split graph into polylines delimited by vertices of degree different from 2.
 /// Then the graph is visited and Visitor is called to describe the polylines
 /// Graph must be undirected
@@ -244,9 +262,9 @@ void
 split_graph_into_polylines(const Graph& graph,
                            Visitor& polyline_visitor)
 {
-  split_graph_into_polylines(graph, polyline_visitor, IsTerminalDefault());
+  split_graph_into_polylines(graph, polyline_visitor, internal::IsTerminalDefault());
 }
-
+/// \endcond
 
 } //end of namespace CGAL
 
