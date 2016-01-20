@@ -56,7 +56,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 	struct Construct_vector {
 		struct Dimension {
 			// Initialize with NaN if possible?
-			Vector operator()(unsigned d) const {
+                  Vector operator()(unsigned CGAL_assertion_code(d)) const {
 				CGAL_assertion(d<=d_);
 				return Vector();
 			}
