@@ -26,6 +26,7 @@
 #include <CGAL/Iterator_project.h>
 #include <CGAL/circulator.h>
 #include <CGAL/tags.h>
+#include <CGAL/use.h>
 
 #include <iostream>
 #include <iterator>
@@ -603,6 +604,7 @@ public:
   Ccb_halfedge_circulator ccb_halfedges(const Face_handle& f,
 					const Halfedge_handle& he) const {
     CGAL_precondition( he->face() == f );
+    CGAL_USE(f);
     return Ccb_halfedge_circulator(*he);
   }
 
@@ -614,7 +616,7 @@ public:
 
   Halfedge_around_vertex_circulator
   incident_halfedges(const Vertex_handle& v, const Halfedge_handle& he) const {
-    internal::use(v);
+    CGAL_USE(v);
     CGAL_precondition( he->target() == v );
     return Halfedge_around_vertex_circulator(*he);
   }
