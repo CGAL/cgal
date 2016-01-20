@@ -10,7 +10,6 @@
 #include <CGAL/Barycentric_mapping_parameterizer_3.h>
 #include <CGAL/Mean_value_coordinates_parameterizer_3.h>
 #include <CGAL/LSCM_parameterizer_3.h>
-#include <CGAL/Polygon_mesh_processing/measure.h>
 #include <boost/foreach.hpp>
 #include <iostream>
 #include <cstdlib>

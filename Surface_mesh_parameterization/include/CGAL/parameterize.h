@@ -113,6 +113,24 @@ parameterize(TriangleMesh& mesh,
   return parameterizer.parameterize(mesh, bhd, uvm, boost::make_assoc_property_map(indices), vpm);
 }
 
+  
+template <class TriangleMesh, class HD, class VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
+typename Parameterizer_traits_3<TriangleMesh>::Error_code
+parameterize(TriangleMesh& mesh,
+             HD bhd,
+             VertexUVmap uvm,
+             VertexIndexMap vimap,
+             VertexParameterizedMap vpm)
+{
+  typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
+  typedef std::map<vertex_descriptor,int> Indices;
+  Indices indices;
+  CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
+                                                     mesh,
+                                                     boost::make_function_output_iterator(Parameterization::Vertices<TriangleMesh,Indices>(mesh,indices)));
+  Mean_value_coordinates_parameterizer_3<TriangleMesh> parameterizer;
+  return parameterizer.parameterize(mesh, bhd, uvm, boost::make_assoc_property_map(indices), vpm);
+}
 
 template <class TM>
 class Seam_mesh;
