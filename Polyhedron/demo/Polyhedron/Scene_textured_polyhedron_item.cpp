@@ -352,17 +352,6 @@ Scene_textured_polyhedron_item::invalidate_buffers()
     compute_bbox();
 }
 void
-Scene_textured_polyhedron_item::
-contextual_changed()
-{
-    prev_shading = cur_shading;
-    cur_shading = renderingMode();
-    if(prev_shading != cur_shading)
-    {
-        invalidate_buffers();
-    }
-}
-void
 Scene_textured_polyhedron_item::selection_changed(bool p_is_selected)
 {
     if(p_is_selected != is_selected)

@@ -291,8 +291,6 @@ public Q_SLOTS:
   virtual void invalidate_buffers();
   //!Setter for the color of the item. Calls invalidate_buffers() so the new color is applied.
   virtual void setColor(QColor c) { color_ = c; invalidate_buffers(); }
-  //!When invalidate_buffers() is not enough.
-  virtual void contextual_changed(){}
   //!Setter for the RGB color of the item. Calls setColor(QColor).
   //!@see setColor(QColor c)
   void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
@@ -396,16 +394,14 @@ protected:
   /*! Contains the previous RenderingMode.
    * This is used to determine if invalidate_buffers should be called or not
    * in certain cases.
-   * @see invalidate_buffers()
-   * @see contextual_changed()*/
+   * @see invalidate_buffers()*/
   RenderingMode prev_shading;
   /*! \todo replace it by RenderingMode().
    * \brief
    *  Contains the current RenderingMode.
    * This is used to determine if invalidate_buffers should be called or not
    * in certain cases.
-   * @see invalidate_buffers()
-   * @see contextual_changed()*/
+   * @see invalidate_buffers()*/
   RenderingMode cur_shading;
   //!Contains the size of the vector of VBOs
   int buffersSize;

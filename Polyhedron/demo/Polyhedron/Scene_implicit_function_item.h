@@ -69,11 +69,11 @@ public:
   virtual void draw_edges(CGAL::Three::Viewer_interface*) const;
 
   virtual QString toolTip() const;
-  virtual void contextual_changed();
   virtual void invalidate_buffers();
 public Q_SLOTS:
   void plane_was_moved() { need_update_ = true; }
   void compute_function_grid() const;
+  void timerEvent(QTimerEvent*);
 
 private:
   typedef qglviewer::Vec                  Point;
