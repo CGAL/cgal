@@ -264,15 +264,10 @@ public:
   const ET & exact() const
   {
 #ifdef CGAL_LAZY_USE_MUTEX
-    if (et==NULL)
-    {
-      Lock_guard guard(update_exact_mutex);
-      if(et==NULL) update_exact();
-    }
-#else // not CGAL_LAZY_USE_MUTEX
+    Lock_guard guard(update_exact_mutex);
+#endif // CGAL_LAZY_USE_MUTEX
     if (et==NULL)
       update_exact();
-#endif // not CGAL_LAZY_USE_MUTEX
     return *et;
   }
 
