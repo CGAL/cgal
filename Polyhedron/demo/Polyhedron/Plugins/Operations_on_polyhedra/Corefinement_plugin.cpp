@@ -1,3 +1,4 @@
+#define CGAL_COREFINEMENT_DO_REPORT_SELF_INTERSECTIONS
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/corefinement_operations.h>
 #include <CGAL/bounding_box.h>

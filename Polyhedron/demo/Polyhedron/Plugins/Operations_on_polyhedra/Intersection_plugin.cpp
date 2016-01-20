@@ -1,3 +1,4 @@
+#define CGAL_COREFINEMENT_DO_REPORT_SELF_INTERSECTIONS
 #define CGAL_USE_SEGMENT_APPROACH
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #ifdef CGAL_USE_SEGMENT_APPROACH
