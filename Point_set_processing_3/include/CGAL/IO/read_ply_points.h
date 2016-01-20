@@ -343,11 +343,22 @@ namespace internal {
 } //namespace internal
 
 
+
+//===================================================================================
+/// \ingroup PkgPointSetProcessing
+///
+/// Abstract interpreter for PLY input that implements functions that
+/// are likely to be shared by most PLY interpreters: getting a line
+/// from the input stream, assigning the input to a variable, etc.
+///
+/// \cgalModels `PlyInterpreter`
+//-----------------------------------------------------------------------------------
 class Ply_abstract_interpreter
 {
   const std::vector<Ply_read_number*>* m_readers;
   
 public:
+  /// \cond SKIP_IN_MANUAL
   Ply_abstract_interpreter () : m_readers (NULL) { }
   virtual ~Ply_abstract_interpreter () { }
 
@@ -362,10 +373,15 @@ public:
     for (std::size_t i = 0; i < m_readers->size (); ++ i)
       (*m_readers)[i]->get (stream);
   }
-
+  /// \endcond
+  
+  /*!
+    Pure virtual function that must be implemented by derived classes.
+  */
   virtual void process_line () = 0;
   
 protected:
+  /// \cond SKIP_IN_MANUAL
   bool does_reader_exist (const char* tag)
   {
     for (std::size_t i = 0; i < m_readers->size (); ++ i)
@@ -384,15 +400,33 @@ protected:
           return;
         }
   }
-
+  /// \endcond
 };
-  
+
+//===================================================================================
+/// \ingroup PkgPointSetProcessing
+///
+/// PLY interpreter designed to fill an output iterator of points and
+/// normals based on given property maps. It is used internally by the
+/// functions `read_ply_points()` and `read_ply_points_and_normals()`.
+///
+/// @tparam OutputIteratorValueType type of objects that can be put in `OutputIterator`.
+/// @tparam OutputIterator iterator over output points.
+/// @tparam PointPMap is a model of `WritablePropertyMap` with  value type `Point_3<Kernel>`.
+///        It can be omitted if the value type of `OutputIterator` is convertible to `Point_3<Kernel>`.
+/// @tparam NormalPMap is a model of `WritablePropertyMap` with value type `Vector_3<Kernel>`.
+/// @tparam Kernel Geometric traits class.
+///        It can be omitted and deduced automatically from the value type of `PointPMap`.
+///
+/// \cgalModels `PlyInterpreter`
+//-----------------------------------------------------------------------------------
+
 template <typename OutputIteratorValueType,
           typename OutputIterator,
           typename PointPMap,
           typename NormalPMap,
           typename Kernel>
-class Ply_interpreter_point_and_normal_3 : public Ply_abstract_interpreter
+class Ply_interpreter_points_and_normals_3 : public Ply_abstract_interpreter
 {
   // value_type_traits is a workaround as back_insert_iterator's value_type is void
   // typedef typename value_type_traits<OutputIterator>::type Enriched_point;
@@ -406,7 +440,10 @@ class Ply_interpreter_point_and_normal_3 : public Ply_abstract_interpreter
   NormalPMap& m_normal_pmap;
   
 public:
-  Ply_interpreter_point_and_normal_3 (OutputIterator output,
+  /*!
+    Constructs a PLY interpreter for points and normals.
+   */
+  Ply_interpreter_points_and_normals_3 (OutputIterator output,
                                       PointPMap& point_pmap,
                                       NormalPMap& normal_pmap)
     : Ply_abstract_interpreter(),
@@ -415,6 +452,7 @@ public:
       m_normal_pmap (normal_pmap)
   { }
 
+  /// \cond SKIP_IN_MANUAL
   bool init (const std::vector<Ply_read_number*>& readers)
   {
     Ply_abstract_interpreter::init (readers);
@@ -447,7 +485,7 @@ public:
 #endif
     *m_output++ = pwn;
   }
-
+  /// \endcond
 };
 
 
@@ -465,7 +503,7 @@ public:
 template < typename PlyInterpreter,
            typename Kernel >
 bool read_ply_custom_points(std::istream& stream, ///< input stream.
-                            PlyInterpreter& interpreter,
+                            PlyInterpreter& interpreter, ///< Custom PLY interpreter
                             const Kernel& kernel) ///< geometric traits.
 {
   if(!stream)
@@ -496,7 +534,7 @@ bool read_ply_custom_points(std::istream& stream, ///< input stream.
 
 
 
-  //===================================================================================
+//===================================================================================
 /// \ingroup PkgPointSetProcessing
 /// Reads points (positions + normals, if available) from a .ply
 /// stream (ASCII or binary).
@@ -526,7 +564,7 @@ bool read_ply_points_and_normals(std::istream& stream, ///< input stream.
                                  NormalPMap normal_pmap, ///< property map: value_type of OutputIterator -> Vector_3.
                                  const Kernel& kernel) ///< geometric traits.
 {
-  Ply_interpreter_point_and_normal_3
+  Ply_interpreter_points_and_normals_3
     <OutputIteratorValueType, OutputIterator, PointPMap, NormalPMap, Kernel>
     interpreter (output, point_pmap, normal_pmap);
 
