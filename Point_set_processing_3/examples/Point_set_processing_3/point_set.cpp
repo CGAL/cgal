@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <Point_set_3.h>
+#include <CGAL/Point_set_3.h>
 #include <CGAL/IO/read_xyz_points.h>
 #include <fstream>
 
@@ -19,17 +19,14 @@ struct  Point_push_pmap {
     : ps(ps), ind(ind)
   {}
 
-  inline friend void put(Point_push_pmap& pm, Point_set::Index& /* ignored */ , Point& p)
+  inline friend void put(Point_push_pmap& pm, Point_set::Index& i, Point& p)
   {
-    bool added = false;
     if(! pm.ps.surface_mesh().has_valid_index(pm.ind)){
       pm.ps.surface_mesh().add_vertex();
-      added = true;
     }
     put(pm.ps.points(), pm.ind,p);
-    if(added){
-      ++pm.ind;
-    }
+    i = pm.ind;
+    ++pm.ind;
   }
 };
 
@@ -41,17 +38,14 @@ struct  Normal_push_pmap {
     : ps(ps), ind(ind)
   {}
 
-  inline friend void put(Normal_push_pmap& pm, Point_set::Index& /* ignored */ , Vector& v)
+  inline friend void put(Normal_push_pmap& pm, Point_set::Index& i  , Vector& v)
   {
-    bool added = false;
     if(! pm.ps.surface_mesh().has_valid_index(pm.ind)){
       pm.ps.surface_mesh().add_vertex();
-      added = true;
     }
     put(pm.ps.normals(), pm.ind,v);
-    if(added){
-      ++pm.ind;
-    }
+    i = pm.ind;
+    ++pm.ind;
   }
 };
 
@@ -76,6 +70,14 @@ int main (int argc, char** argv)
                               Normal_push_pmap(point_set),
                               Kernel());
   std::cerr << point_set.surface_mesh() << std::endl;
+
+  for(int i =0; i < indices.size(); i++){
+    std::cerr << indices[i] << std::endl;
+    }
+  Point_set::Index v0(0), v1(1);
+  std::cerr << point_set.normal(v0) << "  " << point_set.normal(v1) << std::endl;
+  point_set.surface_mesh().swap(v0,v1);
+  std::cerr << point_set.normal(v0) << "  " << point_set.normal(v1) << std::endl;
   return 0;
     
   for (std::size_t i = 0; i < 10; ++ i)

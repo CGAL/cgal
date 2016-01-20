@@ -1745,6 +1745,10 @@ public:
     }
     /// @endcond
 
+    void swap(Vertex_index v0, Vertex_index v1)
+    {
+      vprops_.swap(v0,v1);
+    }
     ///@}
 
     /// @cond CGAL_DOCUMENT_INTERNALS
