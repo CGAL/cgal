@@ -19,3 +19,7 @@ target_link_libraries(mesh_simplification_plugin scene_polyhedron_item)
 qt5_wrap_ui( remeshingUI_FILES  Remeshing_dialog.ui)
 polyhedron_demo_plugin(remeshing_plugin Remeshing_plugin Remeshing_plugin_cgal_code.cpp Mesher_base.cpp ${remeshingUI_FILES})
 target_link_libraries(remeshing_plugin scene_polyhedron_item scene_polygon_soup_item scene_c2t3_item)
+
+qt5_wrap_ui( shortestPathUI_FILES Shortest_path_widget.ui )
+polyhedron_demo_plugin(shortest_path_plugin Shortest_path_plugin ${shortestPathUI_FILES})
+target_link_libraries(shortest_path_plugin scene_polyhedron_item scene_polylines_item scene_polyhedron_selection_item scene_polyhedron_shortest_path_item scene_basic_objects)
