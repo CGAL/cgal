@@ -224,7 +224,7 @@ public Q_SLOTS:
         CGAL::Polygon_mesh_processing::isotropic_remeshing(
            faces(*poly_item->polyhedron())
          , target_length
-         , *selection_item->polyhedron()
+         , *poly_item->polyhedron()
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
          .smooth_along_features(smooth_features));
