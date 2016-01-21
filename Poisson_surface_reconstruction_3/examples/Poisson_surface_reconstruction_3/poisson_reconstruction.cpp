@@ -65,8 +65,8 @@ typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> AABB_tree;
 
 struct Counter {
-  int i, N;
-  Counter(int N)
+  std::size_t i, N;
+  Counter(std::size_t N)
     : i(0), N(N)
   {}
 
@@ -210,7 +210,7 @@ int main(int argc, char * argv[])
     }
 
     // Prints status
-    int nb_points = points.size();
+    std::size_t nb_points = points.size();
     std::cerr << "Reads file " << input_filename << ": " << nb_points << " points, "
                                                         << task_timer.time() << " seconds"
                                                         << std::endl;
