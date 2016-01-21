@@ -94,8 +94,8 @@ public:
     mpz_clear(mp);
   }
 
-  CORE_NEW(BigIntRep)
-  CORE_DELETE(BigIntRep)
+  CGAL_CORE_EXPORT CORE_NEW(BigIntRep)
+  CGAL_CORE_EXPORT CORE_DELETE(BigIntRep)
 
   mpz_srcptr get_mp() const {
     return mp;
@@ -559,7 +559,7 @@ inline BigInt randomize(const BigInt& a) {
 }
 //@}
 
-  CORE_MEMORY_IMPL(BigIntRep)
+
 
 } //namespace CORE
 

@@ -1210,7 +1210,7 @@ void BinOpRep::debugTree(int level, int indent, int depthLimit) const {
   second->debugTree(level, indent + 2, depthLimit - 1);
 }
 
-
+CORE_MEMORY_IMPL(BigIntRep)
 CORE_MEMORY_IMPL(BigRatRep)
 CORE_MEMORY_IMPL(ConstDoubleRep)
 CORE_MEMORY_IMPL(ConstRealRep)
