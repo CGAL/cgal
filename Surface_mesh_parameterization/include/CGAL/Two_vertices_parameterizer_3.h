@@ -79,13 +79,13 @@ public:
     /// Map two extreme vertices of the 3D mesh and mark them as <i>parameterized</i>.
 template <typename VertexUVmap, typename VertexParameterizedMap>
   typename Parameterizer_traits_3<TriangleMesh>::Error_code
-  parameterize_border(TriangleMesh& tmesh,
+  parameterize_border(TriangleMesh& mesh,
                       halfedge_descriptor bhd,
                       VertexUVmap uvmap,
                       VertexParameterizedMap vpmap)
 {
     typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type PPmap;
-    PPmap ppmap = get(vertex_point, tmesh);
+    PPmap ppmap = get(vertex_point, mesh);
   
     // Get mesh's bounding box
     double xmin = (std::numeric_limits<double>::max)() ;
@@ -94,7 +94,7 @@ template <typename VertexUVmap, typename VertexParameterizedMap>
     double xmax = (std::numeric_limits<double>::min)() ;
     double ymax = (std::numeric_limits<double>::min)() ;
     double zmax = (std::numeric_limits<double>::min)() ;
-    BOOST_FOREACH(vertex_descriptor vd, vertices(tmesh))
+    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
     {
         Point_3 position = get(ppmap,vd);
 
@@ -189,7 +189,7 @@ template <typename VertexUVmap, typename VertexParameterizedMap>
     double vmin =  (std::numeric_limits<double>::max)(), vmax=  (std::numeric_limits<double>::min)();
     vertex_descriptor vxmax;
     double  umax  =  (std::numeric_limits<double>::min)() ;
-    BOOST_FOREACH(vertex_descriptor vd, vertices(tmesh))
+    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
     {
         Point_3  position = get(ppmap,vd);
         Vector_3 position_as_vector = position - Point_3(0,0,0);

@@ -114,17 +114,19 @@ parameterize(TriangleMesh& mesh,
 }
 
   
-template <class TriangleMesh, class HD, class VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
+template <class TriangleMesh, class HD, class VertexUVmap, typename VertexParameterizedMap>
 typename Parameterizer_traits_3<TriangleMesh>::Error_code
 parameterize(TriangleMesh& mesh,
              HD bhd,
              VertexUVmap uvm,
-             VertexIndexMap vimap,
              VertexParameterizedMap vpm)
 {
   typedef typename boost::graph_traits<TriangleMesh>::vertex_descriptor vertex_descriptor;
   typedef std::map<vertex_descriptor,int> Indices;
   Indices indices;
+  BOOST_FOREACH(vertex_descriptor v, vertices(mesh)){
+    indices[v] = -1;
+  }
   CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
                                                      mesh,
                                                      boost::make_function_output_iterator(Parameterization::Vertices<TriangleMesh,Indices>(mesh,indices)));
@@ -136,18 +138,21 @@ template <class TM>
 class Seam_mesh;
 
 
-template <class TriangleMesh, class Parameterizer, class HD, class VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
+template <class TriangleMesh, class Parameterizer, class HD, class VertexUVmap, typename VertexParameterizedMap>
 typename Parameterizer_traits_3<Seam_mesh<TriangleMesh> >::Error_code
 parameterize(Seam_mesh<TriangleMesh>& mesh,
              Parameterizer parameterizer,
              HD bhd,
              VertexUVmap uvm,
-             VertexIndexMap vimap,
              VertexParameterizedMap vpm)
-{
-  mesh.initialize_vertex_index_map(bhd,vimap);
+{ 
+  typedef typename boost::graph_traits<Seam_mesh<TriangleMesh> >::vertex_descriptor vertex_descriptor;
+  typedef std::map<vertex_descriptor,int> Vertex_index_map;
+  Vertex_index_map vim;
+  boost::associative_property_map<Vertex_index_map> vipm(vim);
+  mesh.initialize_vertex_index_map(bhd,vipm);
   Seam_mesh_uv_map<TriangleMesh,VertexUVmap>  putter(mesh,uvm);
-  return parameterizer.parameterize(mesh, bhd, putter, vimap, vpm);
+  return parameterizer.parameterize(mesh, bhd, putter, vipm, vpm);
 }
 
 

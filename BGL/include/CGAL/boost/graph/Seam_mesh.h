@@ -225,15 +225,28 @@ public:
     : tm(tm), seam_edges(er.begin(), er.end()), index(0)
     {}
 
+  /// Sets indices to 0,1,2,... for vertices in the region, and to -1 outside of it
   template <typename VertexIndexMap>
   void initialize_vertex_index_map(halfedge_descriptor bhd, VertexIndexMap& vipm)
   {
+   
     Self& mesh=*this;
     // Initialize all indices with -1
     BOOST_FOREACH(TM_halfedge_descriptor hd, halfedges(tm)){
       put(vipm,halfedge_descriptor(hd),-1);
     }
     
+    // Set all indices of halfedges inside the region to -2
+    std::vector<face_descriptor> faces;
+    boost::graph_traits<Seam_mesh>::halfedge_descriptor shd(opposite(bhd,*this));
+    CGAL::Polygon_mesh_processing::connected_component(face(shd,*this),
+                                                       *this,
+                                                       std::back_inserter(faces));
+    BOOST_FOREACH(face_descriptor fd, faces){
+      BOOST_FOREACH(TM_halfedge_descriptor tmhd , halfedges_around_face(halfedge(fd,tm),tm)){
+        put(vipm,halfedge_descriptor(tmhd),-2);
+      }
+    }
     // Walk along the seam which may contain real border edges
     CGAL::Halfedge_around_face_circulator<Self> hafc(bhd,mesh), prev(hafc), done;
     ++hafc;
@@ -246,7 +259,7 @@ public:
       BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_target(ohd,mesh)){
         if(! hd.seam){
           vertex_descriptor vd(hd);
-          if(get(vipm,vd) == -1){
+          if(get(vipm,vd) == -2){
             put(vipm,vd,index);
           }
         }
@@ -261,10 +274,10 @@ public:
     
     
     // now as all halfedges incident to seam vertices are handled
-    // we look at the not yet marked halfedges
+    // we look at the not yet marked halfedges inside the region
     
     BOOST_FOREACH(TM_halfedge_descriptor hd, halfedges(tm)){
-      if(get(vipm,vertex_descriptor(halfedge_descriptor(hd))) == -1){
+      if(get(vipm,vertex_descriptor(halfedge_descriptor(hd))) == -2){
         BOOST_FOREACH(halfedge_descriptor hav, halfedges_around_target(hd,tm)){
           put(vipm,vertex_descriptor(halfedge_descriptor(hav)), index);
         }

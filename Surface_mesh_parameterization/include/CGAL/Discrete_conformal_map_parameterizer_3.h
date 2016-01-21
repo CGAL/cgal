@@ -132,28 +132,28 @@ public:
 // Protected operations
 protected:
     /// Compute w_ij = (i,j) coefficient of matrix A for j neighbor vertex of i.
-    virtual NT compute_w_ij(const TriangleMesh& tmesh,
+    virtual NT compute_w_ij(const TriangleMesh& mesh,
                             vertex_descriptor main_vertex_v_i,
                             halfedge_around_target_circulator neighbor_vertex_v_j) // its target is main_vertex_v_i
     {
     typedef typename Parameterizer_traits_3<TriangleMesh>::VPM PPmap;
  
-        PPmap ppmap = get(vertex_point, tmesh);
+        PPmap ppmap = get(vertex_point, mesh);
         Point_3 position_v_i = get(ppmap,main_vertex_v_i);
-        Point_3 position_v_j = get(ppmap,source(*neighbor_vertex_v_j,tmesh));
+        Point_3 position_v_j = get(ppmap,source(*neighbor_vertex_v_j,mesh));
 
         // Compute cotangent of (v_i,v_k,v_j) corner (i.e. cotan of v_k corner)
         // if v_k is the vertex before v_j when circulating around v_i
         halfedge_around_target_circulator previous_vertex_v_k = neighbor_vertex_v_j;
         previous_vertex_v_k --;
-        Point_3 position_v_k = get(ppmap,source(*previous_vertex_v_k, tmesh));
+        Point_3 position_v_k = get(ppmap,source(*previous_vertex_v_k, mesh));
         double cotg_beta_ij  = cotangent(position_v_i, position_v_k, position_v_j);
 
         // Compute cotangent of (v_j,v_l,v_i) corner (i.e. cotan of v_l corner)
         // if v_l is the vertex after v_j when circulating around v_i
         halfedge_around_target_circulator next_vertex_v_l = neighbor_vertex_v_j;
         next_vertex_v_l ++;
-        Point_3 position_v_l = get(ppmap,source(*next_vertex_v_l,tmesh));
+        Point_3 position_v_l = get(ppmap,source(*next_vertex_v_l,mesh));
         double cotg_alpha_ij = cotangent(position_v_j, position_v_l, position_v_i);
 
         double weight = cotg_beta_ij+cotg_alpha_ij;

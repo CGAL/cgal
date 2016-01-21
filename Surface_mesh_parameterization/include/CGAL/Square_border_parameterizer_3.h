@@ -97,7 +97,7 @@ public:
 // Private operations
 private:
     /// Compute the total length of the border.
-  double compute_border_length(const TriangleMesh& tmesh, halfedge_descriptor bhd);
+  double compute_border_length(const TriangleMesh& mesh, halfedge_descriptor bhd);
 
     /// Get mesh iterator whose offset is closest to 'value'.
     halfedge_around_face_iterator closest_iterator(TriangleMesh& mesh,
@@ -110,12 +110,12 @@ private:
 template<class TriangleMesh>
 inline
 double Square_border_parameterizer_3<TriangleMesh>::compute_border_length(
-                                                        const TriangleMesh& tmesh, halfedge_descriptor bhd)
+                                                        const TriangleMesh& mesh, halfedge_descriptor bhd)
 {
-  VPM vpm = get(CGAL::vertex_point,tmesh);
+  VPM vpm = get(CGAL::vertex_point,mesh);
   double len = 0.0;
-  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,tmesh)){
-    len += CGAL::sqrt(squared_distance(get(vpm, source(hd,tmesh)), get(vpm, target(hd,tmesh))));
+  BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(bhd,mesh)){
+    len += CGAL::sqrt(squared_distance(get(vpm, source(hd,mesh)), get(vpm, target(hd,mesh))));
   }
   return len;
 }
@@ -125,12 +125,12 @@ double Square_border_parameterizer_3<TriangleMesh>::compute_border_length(
 template<class TriangleMesh>
 inline
 typename Parameterizer_traits_3<TriangleMesh>::Error_code
-Square_border_parameterizer_3<TriangleMesh>::parameterize_border(TriangleMesh& tmesh,
+Square_border_parameterizer_3<TriangleMesh>::parameterize_border(TriangleMesh& mesh,
                       halfedge_descriptor bhd,
                       VertexUVmap uvmap,
                       VertexParameterizedMap vpmap)
 {
-    VPM vpm = get(vertex_point, tmesh);
+    VPM vpm = get(vertex_point, mesh);
 #ifdef DEBUG_TRACE
     std::cerr << "  map on a square" << std::endl;
 #endif
@@ -140,7 +140,7 @@ Square_border_parameterizer_3<TriangleMesh>::parameterize_border(TriangleMesh& t
     //    return Parameterizer_traits_3<TriangleMesh>::ERROR_BORDER_TOO_SHORT;
 
     // Compute the total border length
-    double total_len = compute_border_length(tmesh,bhd);
+    double total_len = compute_border_length(mesh,bhd);
     if (total_len == 0)
         return Parameterizer_traits_3<TriangleMesh>::ERROR_BORDER_TOO_SHORT;
 
@@ -150,10 +150,10 @@ Square_border_parameterizer_3<TriangleMesh>::parameterize_border(TriangleMesh& t
     offset.resize(mesh.count_mesh_vertices());
 
     halfedge_around_face_iterator b,e;
-    BOOST_FOREACH(halfedge_descriptor hd,  halfedges_around_face(bhd,tmesh)){
+    BOOST_FOREACH(halfedge_descriptor hd,  halfedges_around_face(bhd,mesh)){
     
-      vertex_descriptor vs = source(hd,tmesh);
-      vertex_descriptor vt = target(hd,tmesh);
+      vertex_descriptor vs = source(hd,mesh);
+      vertex_descriptor vt = target(hd,mesh);
 
         offset[mesh.get_vertex_index(vs)] = 4.0f*len/total_len;
                                 // current position on square in [0,4[
@@ -173,35 +173,35 @@ Square_border_parameterizer_3<TriangleMesh>::parameterize_border(TriangleMesh& t
         return Parameterizer_traits_3<TriangleMesh>::ERROR_BORDER_TOO_SHORT;
     //
     // Snap these vertices to corners
-    offset[mesh.get_vertex_index(source(*it0,tmesh))] = 0.0;
-    offset[mesh.get_vertex_index(source(*it1,tmesh))] = 1.0;
-    offset[mesh.get_vertex_index(source(*it2,tmesh))] = 2.0;
-    offset[mesh.get_vertex_index(source(*it3,tmesh))] = 3.0;
+    offset[mesh.get_vertex_index(source(*it0,mesh))] = 0.0;
+    offset[mesh.get_vertex_index(source(*it1,mesh))] = 1.0;
+    offset[mesh.get_vertex_index(source(*it2,mesh))] = 2.0;
+    offset[mesh.get_vertex_index(source(*it3,mesh))] = 3.0;
 
     // Set vertices along square's sides and mark them as "parameterized"
     for(halfedge_around_face_iterator it = it0; it != it1; it++) // 1st side
     {
-      Point_2 uv(offset[mesh.get_vertex_index(source(*it,tmesh))], 0.0);
-        mesh.set_vertex_uv(source(*it,tmesh), uv);
-        mesh.set_vertex_parameterized(source(*it,tmesh), true);
+      Point_2 uv(offset[mesh.get_vertex_index(source(*it,mesh))], 0.0);
+        mesh.set_vertex_uv(source(*it,mesh), uv);
+        mesh.set_vertex_parameterized(source(*it,mesh), true);
     }
     for(halfedge_around_face_iterator it = it1; it != it2; it++) // 2nd side
     {
-        Point_2 uv(1.0, offset[mesh.get_vertex_index(source(*it,tmesh))]-1);
-        mesh.set_vertex_uv(source(*it,tmesh), uv);
-        mesh.set_vertex_parameterized(source(*it,tmesh), true);
+        Point_2 uv(1.0, offset[mesh.get_vertex_index(source(*it,mesh))]-1);
+        mesh.set_vertex_uv(source(*it,mesh), uv);
+        mesh.set_vertex_parameterized(source(*it,mesh), true);
     }
     for(halfedge_around_face_iterator it = it2; it != it3; it++) // 3rd side
     {
-        Point_2 uv(3-offset[mesh.get_vertex_index(source(*it,tmesh))], 1.0);
-        mesh.set_vertex_uv(source(*it,tmesh), uv);
-        mesh.set_vertex_parameterized(source(*it,tmesh), true);
+        Point_2 uv(3-offset[mesh.get_vertex_index(source(*it,mesh))], 1.0);
+        mesh.set_vertex_uv(source(*it,mesh), uv);
+        mesh.set_vertex_parameterized(source(*it,mesh), true);
     }
     for(halfedge_around_face_iterator it = it3; it != e; it++) // 4th side
     {
-        Point_2 uv(0.0, 4-offset[mesh.get_vertex_index(source(*it,tmesh))]);
-        mesh.set_vertex_uv(source(*it,tmesh), uv);
-        mesh.set_vertex_parameterized(source(*it,tmesh), true);
+        Point_2 uv(0.0, 4-offset[mesh.get_vertex_index(source(*it,mesh))]);
+        mesh.set_vertex_uv(source(*it,mesh), uv);
+        mesh.set_vertex_parameterized(source(*it,mesh), true);
     }
 
     return Parameterizer_traits_3<TriangleMesh>::OK;
@@ -216,15 +216,14 @@ Square_border_parameterizer_3<TriangleMesh>::closest_iterator(TriangleMesh& mesh
                                                        const Offset_map& offset,
                                                        double value)
 {
-    const TriangleMesh& tmesh = mesh.get_adapted_mesh();
     halfedge_around_face_iterator b, e, best;
     double min = DBL_MAX;           // distance for 'best'
 
-    for(boost::tie(b,e) = halfedges_around_face(mesh.main_border(), tmesh);
+    for(boost::tie(b,e) = halfedges_around_face(mesh.main_border(), mesh);
         b!=e;
         ++b)
     {
-      double d = CGAL::abs(offset[mesh.get_vertex_index(source(*b,tmesh))] - value);
+      double d = CGAL::abs(offset[mesh.get_vertex_index(source(*b,mesh))] - value);
         if (d < min)
         {
             best = b;

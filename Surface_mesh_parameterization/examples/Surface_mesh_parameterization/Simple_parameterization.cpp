@@ -40,7 +40,6 @@ int main(int argc, char * argv[])
   Parameterizer::Error_code err = CGAL::parameterize(sm,
                                                      hd,
                                                      uv_pm,
-                                                     get(boost::vertex_index_t(),sm),
                                                      parameterized_pm);
   switch(err) {
   case Parameterizer::OK: // Success

@@ -22,14 +22,14 @@ typedef Kernel::Point_3                     Point_3;
 typedef CGAL::Surface_mesh<Kernel::Point_3> SurfaceMesh;
 typedef CGAL::Seam_mesh<SurfaceMesh>        Mesh;
 
-typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
-typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
-typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
-
 typedef boost::graph_traits<SurfaceMesh>::edge_descriptor SM_edge_descriptor;
 typedef boost::graph_traits<SurfaceMesh>::halfedge_descriptor SM_halfedge_descriptor;
 typedef boost::graph_traits<SurfaceMesh>::vertex_descriptor SM_vertex_descriptor;
 typedef boost::graph_traits<SurfaceMesh>::face_descriptor SM_face_descriptor;
+
+typedef boost::graph_traits<Mesh>::vertex_descriptor vertex_descriptor;
+typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<Mesh>::face_descriptor face_descriptor;
 
 
 
@@ -91,12 +91,7 @@ int main(int argc, char * argv[])
   typedef boost::associative_property_map<uv_map> uv_pmap;
   uv_map uvm; uv_pmap uvpm(uvm);
   
-  // When we have seams vertices are "duplicated"
-  // We give halfedges that have as target the same duplicated vertex the same index
-  typedef std::map<vertex_descriptor,int> vertex_index_map;
-  typedef boost::associative_property_map<vertex_index_map> vertex_index_pmap;
-  vertex_index_map vim; vertex_index_pmap vipm(vim);
-
+ 
   typedef std::map<vertex_descriptor,bool> vertex_parameterized_map;
   typedef boost::associative_property_map<vertex_parameterized_map> vertex_parameterized_pmap;
   vertex_parameterized_map vpam; vertex_parameterized_pmap vpapm(vpam);
@@ -108,7 +103,7 @@ int main(int argc, char * argv[])
 
   bhd = opposite(bhd,mesh); // a halfedge on the virtual border
 
-  Parameterizer::Error_code err = CGAL::parameterize(mesh, Parameterizer(), bhd, uvpm, vipm, vpapm);
+  Parameterizer::Error_code err = CGAL::parameterize(mesh, Parameterizer(), bhd, uvpm, vpapm);
 
   switch(err) {
   case Parameterizer::OK: // Success
@@ -126,26 +121,18 @@ int main(int argc, char * argv[])
     break;
   };
     
-#if 1
   BOOST_FOREACH(face_descriptor fd, faces(mesh)){  
     halfedge_descriptor hd = halfedge(fd,mesh); 
-    // LSCM produces weird meshes
-    bool skip = false;
+  
+    std::cout << "4 " << uvm[target(hd,mesh)].x() << " " << uvm[target(hd,mesh)].y() << " 0 ";
+    
+    hd = next(hd,mesh);
     BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd,mesh)){
-      if( uvm[vd].x() < -10){
-        skip = true;
-      }
+      std::cout << uvm[vd].x() << " " << uvm[vd].y() << " 0 ";
     }
-    if(! skip){
-      std::cout << "4 " << uvm[target(hd,mesh)].x() << " " << uvm[target(hd,mesh)].y() << " 0 ";
-      
-      hd = next(hd,mesh);
-      BOOST_FOREACH(vertex_descriptor vd, vertices_around_face(hd,mesh)){
-        std::cout << uvm[vd].x() << " " << uvm[vd].y() << " 0 ";
-      }
-      std::cout << std::endl;
-    }
+    std::cout << std::endl;
+  
   }
-#endif
+
   return EXIT_SUCCESS;
 }

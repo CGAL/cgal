@@ -160,7 +160,7 @@ public:
     /// \pre `mesh` must be a surface with one connected component.
     /// \pre `mesh` must be a triangular mesh.
 template <typename VertexUVmap, typename VertexIndexMap, typename VertexParameterizedMap>
-Error_code  parameterize(TriangleMesh& tmesh,
+Error_code  parameterize(TriangleMesh& mesh,
                          halfedge_descriptor bhd,
                          VertexUVmap uvmap,
                          VertexIndexMap vimap,
@@ -173,7 +173,7 @@ Error_code  parameterize(TriangleMesh& tmesh,
 #endif
 
     // Check preconditions
-    Error_code status = check_parameterize_preconditions(tmesh);
+    Error_code status = check_parameterize_preconditions(mesh);
 #ifdef DEBUG_TRACE
     std::cerr << "  parameterization preconditions: " << timer.time() << " seconds." << std::endl;
     timer.reset();
@@ -182,14 +182,14 @@ Error_code  parameterize(TriangleMesh& tmesh,
         return status;
 
     // Count vertices
-    int nbVertices = num_vertices(tmesh);
+    int nbVertices = num_vertices(mesh);
 
     // Index vertices from 0 to nbVertices-1
     // TODO mesh.index_mesh_vertices();
 
     // Compute (u,v) for (at least two) border vertices
     // and mark them as "parameterized"
-    status = get_border_parameterizer().parameterize_border(tmesh,bhd,uvmap,vpm);
+    status = get_border_parameterizer().parameterize_border(mesh,bhd,uvmap,vpm);
 #ifdef DEBUG_TRACE
     std::cerr << "  border vertices parameterization: " << timer.time() << " seconds." << std::endl;
     timer.reset();
@@ -204,18 +204,18 @@ Error_code  parameterize(TriangleMesh& tmesh,
 
     // Initialize the "A*X = B" linear system after
     // (at least two) border vertices parameterization
-    initialize_system_from_mesh_border(solver, tmesh, uvmap, vimap,vpm);
+    initialize_system_from_mesh_border(solver, mesh, uvmap, vimap,vpm);
 
     // Fill the matrix for the other vertices
     solver.begin_system() ;
     std::vector<face_descriptor> ccfaces;
-    CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,tmesh),tmesh),
-                                                       tmesh,
+    CGAL::Polygon_mesh_processing::connected_component(face(opposite(bhd,mesh),mesh),
+                                                       mesh,
                                                        std::back_inserter(ccfaces));
-    BOOST_FOREACH(face_descriptor fd, ccfaces) // faces(tmesh)
+    BOOST_FOREACH(face_descriptor fd, ccfaces) // faces(mesh)
     {
         // Create two lines in the linear system per triangle (one for u, one for v)
-      status = setup_triangle_relations(solver, tmesh, fd,vimap);
+      status = setup_triangle_relations(solver, mesh, fd,vimap);
             if (status != Base::OK)
             return status;
     }
@@ -234,9 +234,9 @@ Error_code  parameterize(TriangleMesh& tmesh,
         return status;
 
     // Copy X coordinates into the (u,v) pair of each vertex
-    //set_mesh_uv_from_system(tmesh, solver, uvmap);
+    //set_mesh_uv_from_system(mesh, solver, uvmap);
 
-    BOOST_FOREACH(vertex_descriptor vd, vertices(tmesh))
+    BOOST_FOREACH(vertex_descriptor vd, vertices(mesh))
     {
       int index = get(vimap,vd);
       NT u = solver.variable(2*index    ).value() ;
@@ -252,7 +252,7 @@ Error_code  parameterize(TriangleMesh& tmesh,
 #endif
 
     // Check postconditions
-    status = check_parameterize_postconditions(tmesh, solver);
+    status = check_parameterize_postconditions(mesh, solver);
 #ifdef DEBUG_TRACE
     std::cerr << "  parameterization postconditions: " << timer.time() << " seconds." << std::endl;
 #endif
@@ -278,12 +278,12 @@ private:
     /// \pre At least 2 border vertices must be parameterized.
   template <typename UVmap, typename VertexIndexMap,  typename VertexParameterizedMap>
     void initialize_system_from_mesh_border(LeastSquaresSolver& solver,
-                                            const TriangleMesh& tmesh,
+                                            const TriangleMesh& mesh,
                                             UVmap uvmap,
                                             VertexIndexMap vimap,
                                             VertexParameterizedMap vpm)
 { 
-    BOOST_FOREACH(vertex_descriptor v, vertices(tmesh)){
+    BOOST_FOREACH(vertex_descriptor v, vertices(mesh)){
         // Get vertex index in sparse linear system
       int index = get(vimap, v);
 
@@ -380,7 +380,7 @@ private:
 inline
 typename LSCM_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::Error_code
 LSCM_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
-parameterize(TriangleMesh& tmesh, halfedge_descriptor bhd, HalfedgeUVmap uvmap, HalfedgeAsVertexIndexMap hvimap)
+parameterize(TriangleMesh& mesh, halfedge_descriptor bhd, HalfedgeUVmap uvmap, HalfedgeAsVertexIndexMap hvimap)
 */
 
 // Check parameterize() preconditions:
@@ -390,7 +390,7 @@ template<class TriangleMesh, class Border_param, class Sparse_LA>
 inline
 typename LSCM_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::Error_code
 LSCM_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
-check_parameterize_preconditions(TriangleMesh& tmesh)
+check_parameterize_preconditions(TriangleMesh& mesh)
 {
     Error_code status = Base::OK;	    // returned value
 #if 0
@@ -401,14 +401,14 @@ check_parameterize_preconditions(TriangleMesh& tmesh)
 
     // Check that mesh is not empty
     vertex_iterator b,e;
-    boost::tie(b,e) = vertices(tmesh);
+    boost::tie(b,e) = vertices(mesh);
     if (b == e)
         status = Base::ERROR_EMPTY_MESH;
     if (status != Base::OK)
         return status;
 
     // The whole surface parameterization package is restricted to triangular meshes
-    status = is_triangle_mesh(tmesh) ? Base::OK
+    status = is_triangle_mesh(mesh) ? Base::OK
                                      : Base::ERROR_NON_TRIANGULAR_MESH;
     if (status != Base::OK)
         return status;
@@ -440,7 +440,7 @@ template<class TriangleMesh, class Border_param, class Sparse_LA>
 inline
 void LSCM_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
 initialize_system_from_mesh_border(LeastSquaresSolver& solver,
-                                   const TriangleMesh& tmesh)
+                                   const TriangleMesh& mesh)
 #endif
 
 // Utility for setup_triangle_relations():
@@ -496,20 +496,20 @@ inline
 typename LSCM_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::Error_code
 LSCM_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
 setup_triangle_relations(LeastSquaresSolver& solver,
-                         const TriangleMesh& tmesh,
+                         const TriangleMesh& mesh,
                          face_descriptor facet,
                          HalfedgeAsVertexIndexMap hvimap)
 {
     typedef typename boost::property_map<TriangleMesh, boost::vertex_point_t>::const_type PPmap;
-    PPmap ppmap = get(vertex_point, tmesh);
+    PPmap ppmap = get(vertex_point, mesh);
     // Get the 3 vertices of the triangle
     vertex_descriptor v0, v1, v2;
-    halfedge_descriptor h0 = halfedge(facet,tmesh);
-    v0 = target(h0,tmesh);
-    halfedge_descriptor h1 = next(h0,tmesh);
-    v1 = target(h1,tmesh);
-    halfedge_descriptor h2 = next(h1,tmesh);
-    v2 = target(h2,tmesh);
+    halfedge_descriptor h0 = halfedge(facet,mesh);
+    v0 = target(h0,mesh);
+    halfedge_descriptor h1 = next(h0,mesh);
+    v1 = target(h1,mesh);
+    halfedge_descriptor h2 = next(h1,mesh);
+    v2 = target(h2,mesh);
 
     // Get the vertices index
     int id0 = get(hvimap,h0) ;
@@ -578,11 +578,11 @@ template<class TriangleMesh, class Border_param, class Sparse_LA>
 template <typename HalfedgeUVmap>
 inline
 void LSCM_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
-set_mesh_uv_from_system(TriangleMesh& tmesh,
+set_mesh_uv_from_system(TriangleMesh& mesh,
                         const LeastSquaresSolver& solver,
                         HalfedgeUVmap uvmap)
 {
-    BOOST_FOREACH(halfedge_descriptor vd, vertices(tmesh))
+    BOOST_FOREACH(halfedge_descriptor vd, vertices(mesh))
     {
         int index = mesh.get_vertex_index(vd);
 
@@ -626,15 +626,14 @@ bool LSCM_parameterizer_3<TriangleMesh, Border_param, Sparse_LA>::
 is_one_to_one_mapping(const TriangleMesh& mesh,
                       const LeastSquaresSolver& )
 {
-    const TriangleMesh& tmesh = mesh.get_adapted_mesh();
     Vector_3    first_triangle_normal(0., 0., 0.);
 
-    BOOST_FOREACH(face_descriptor fd, faces(tmesh))
+    BOOST_FOREACH(face_descriptor fd, faces(mesh))
     {
         // Get 3 vertices of the facet
         vertex_descriptor v0, v1, v2;
         int vertexIndex = 0;
-        vertex_around_face_circulator cir(halfedge(fd,tmesh),tmesh), first(cir), end(cir);
+        vertex_around_face_circulator cir(halfedge(fd,mesh),mesh), first(cir), end(cir);
         CGAL_For_all(cir, end)
         {
             if (vertexIndex == 0)
