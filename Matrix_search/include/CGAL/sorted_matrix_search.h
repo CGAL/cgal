@@ -397,7 +397,7 @@ sorted_matrix_search(InputIterator f, InputIterator l, Traits t)
     
       } // both upper_median and lower_median are infeasible
     
-      active_cells.erase( new_end, active_cells.end());
+    active_cells.erase( new_end, active_cells.end());
   } // for (;;)
 
   // there must be only one cell left:
