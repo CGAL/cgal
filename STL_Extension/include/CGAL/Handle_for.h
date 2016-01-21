@@ -185,7 +185,7 @@ public:
     Handle_for(const Handle_for& h)
       : ptr_(h.ptr_)
     {
-#if defined(CGAL_HANDLE_FOR_USE_ATOMIC) || ! defined(CGAL_NO_ATOMIC)
+#if defined(CGAL_HANDLE_FOR_USE_ATOMIC) && ! defined(CGAL_NO_ATOMIC)
         ptr_->count.fetch_add(1, CGAL::cpp11::memory_order_relaxed);
 #else // not CGAL::cpp11::atomic
         ++(ptr_->count);
@@ -236,7 +236,7 @@ public:
 
     ~Handle_for()
     {
-#if defined(CGAL_HANDLE_FOR_USE_ATOMIC) || ! defined(CGAL_NO_ATOMIC)
+#if defined(CGAL_HANDLE_FOR_USE_ATOMIC) && ! defined(CGAL_NO_ATOMIC)
       if (ptr_->count.fetch_sub(1, CGAL::cpp11::memory_order_release) == 1) {
         CGAL::cpp11::atomic_thread_fence(CGAL::cpp11::memory_order_acquire);
         allocator.destroy( ptr_);
