@@ -28,6 +28,7 @@
 #include <list>
 #include <vector>
 #include <iterator>
+#include <limits>
 
 #include <CGAL/Bbox_2.h>
 
@@ -215,8 +216,8 @@ public:
   private:
     // The polycurve curve.
     const Polycurve_2<Subcurve_type_2, Point_type_2>* m_cvP;
-    int m_num_pts;                            // Its number of points.
-    int m_index;                              // The current point.
+    size_type m_num_pts;                        // Its number of points.
+    size_type m_index;                          // The current point.
 
     /*! Private constructor.
      * \param cv The scanned curve.
@@ -227,18 +228,20 @@ public:
       m_cvP(cvP),
       m_index(index)
     {
-      if (m_cvP == NULL) m_num_pts = 0;
-      else
-        m_num_pts = (m_cvP->number_of_subcurves() == 0) ?
-          0 : (m_cvP->number_of_subcurves() + 1);
+      m_num_pts = (m_cvP == NULL) ? 0 :
+        ((m_cvP->number_of_subcurves() == 0) ?
+         0 : (m_cvP->number_of_subcurves() + 1));
     }
+
+    bool is_index_valid() const
+    { return m_index != std::numeric_limits<size_type>::max(); }
 
   public:
     /*! Default constructor. */
     Point_const_iterator() :
       m_cvP(NULL),
       m_num_pts(0),
-      m_index(-1)
+      m_index(std::numeric_limits<size_type>::max())
     {}
 
     /*! Dereference operator.
@@ -247,7 +250,7 @@ public:
     const Point_type_2& operator*() const
     {
       CGAL_assertion(m_cvP != NULL);
-      CGAL_assertion((m_index >= 0) && (m_index < m_num_pts));
+      CGAL_assertion((is_index_valid()) && (m_index < m_num_pts));
 
       // First point is the source of the first subcurve.
       // Else return the target of the(i-1)'st subcurve.
@@ -277,15 +280,14 @@ public:
     /*! Decrement operators. */
     Point_const_iterator& operator--()
     {
-      if ((m_cvP != NULL) && (m_index >= 0)) --m_index;
+      if ((m_cvP != NULL) && (is_index_valid())) --m_index;
       return (*this);
     }
 
     Point_const_iterator operator--(int)
     {
-      Point_const_iterator  temp = *this;
-      if ((m_cvP != NULL) && (m_index >= 0))
-        --m_index;
+      Point_const_iterator temp = *this;
+      if ((m_cvP != NULL) && (is_index_valid())) --m_index;
       return temp;
     }
 
@@ -306,7 +308,7 @@ public:
   /*! Obtain an iterator for the polycurve points.*/
   Point_const_iterator points_begin() const
   {
-    if (number_of_subcurves() == 0) return (Point_const_iterator(NULL, -1));
+    if (number_of_subcurves() == 0) return (Point_const_iterator());
     else return (Point_const_iterator(this, 0));
   }
 
@@ -316,7 +318,7 @@ public:
   /*! Obtain a past-the-end iterator for the polycurve points.*/
   Point_const_iterator points_end() const
   {
-    if (number_of_subcurves() == 0) return (Point_const_iterator(NULL, -1));
+    if (number_of_subcurves() == 0) return (Point_const_iterator());
     else return (Point_const_iterator(this, number_of_subcurves() + 1));
   }
 
@@ -325,7 +327,7 @@ public:
 
   /*! Obtain a reverse iterator for the polycurve points. */
   Point_const_reverse_iterator points_rbegin() const
-  { return Point_const_reverse_iterator(end()); }
+  { return Point_const_reverse_iterator(points_end()); }
 
   /*! Obtain a reverse iterator for the polycurve points. */
   CGAL_DEPRECATED Point_const_reverse_iterator rbegin() const
@@ -333,7 +335,7 @@ public:
 
   /*! Obtain a reverse past-the-end iterator for the polycurve points. */
   Point_const_reverse_iterator points_rend() const
-  { return Point_const_reverse_iterator(begin()); }
+  { return Point_const_reverse_iterator(points_begin()); }
 
   /*! Obtain a reverse past-the-end iterator for the polycurve points. */
   CGAL_DEPRECATED Point_const_reverse_iterator rend() const
