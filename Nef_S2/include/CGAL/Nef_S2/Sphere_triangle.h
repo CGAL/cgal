@@ -103,7 +103,8 @@ template <typename R>
 std::ostream& operator<<(std::ostream& os, 
                          const CGAL::Sphere_triangle<R>& t)
 { for (int i=0; i<3; ++i) os << t.point(i);
-  for (int i=0; i<3; ++i) os << t.circle(i); return os; }
+  for (int i=0; i<3; ++i) os << t.circle(i);
+  return os; }
 
 template <typename R>
 std::istream& operator>>(std::istream& is, 

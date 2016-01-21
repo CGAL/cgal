@@ -196,7 +196,7 @@ protected:
   struct AND { Mark operator()(const Mark& b1, const Mark& b2, bool /* inverted */ =false) const { return b1&&b2; } };
   struct OR { Mark operator()(const Mark& b1, const Mark& b2, bool /* inverted */ =false) const { return b1||b2; } };
   struct DIFF { Mark operator()(const Mark& b1, const Mark& b2, bool inverted=false) const { 
-    if(inverted) return !b1&&b2; return b1&&!b2; } };
+    return (inverted) ? !b1&&b2  :  b1&&!b2 ; };
   struct XOR { Mark operator()(const Mark& b1, const Mark& b2, bool /* inverted */ =false) const 
     { return (b1&&!b2)||(!b1&&b2); } };
 
