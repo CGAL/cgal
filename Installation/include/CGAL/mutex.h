@@ -26,7 +26,12 @@
 #    define CGAL_MUTEX_NS std::
 #  else // not CGAL_CAN_USE_CXX11_MUTEX
 #    include <boost/thread/mutex.hpp>
-#    include <boost/thread/lock_guard.hpp>
+#    if BOOST_VERSION < 105300
+       // before Boost.Thread 1.53, `boost::lock_guard` was in ../locks.hpp
+#      include <boost/thread/locks.hpp>
+#    else
+#      include <boost/thread/lock_guard.hpp>
+#    endif
 #    define CGAL_MUTEX_NS boost::
 #  endif // not CGAL_CAN_USE_CXX11_MUTEX
 
