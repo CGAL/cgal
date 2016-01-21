@@ -565,6 +565,7 @@ for more details.
 
 \subsection Mesh_33DDomainsBoundedbyIsosurfaces 3D Domains Bounded by Isosurfaces
 
+\subsubsection Mesh_33DDomainsImplicitIsosurfaces 3D Domains Bounded by Implicit Isosurfaces
 The following code produces a 3D mesh for a domain whose boundary surface
 is an isosurface defined by an implicit
 function. \cgalFigureRef{figureimplicit_domain} shows a cut view of the
@@ -578,6 +579,14 @@ constructor of the `Mesh_criteria` instance.
 \cgalFigureBegin{figureimplicit_domain,implicit_domain.jpg}
 Cut view of a 3D mesh produced from an implicit domain
 \cgalFigureEnd
+
+\subsubsection Mesh_33DDomainsGrayImageIsosurfaces 3D Domains Bounded by Isosurfaces in 3D Gray-Level Images
+
+The following example produces a 3D mesh for a domain whose boundary surface
+is the isosurface associated to an isovalue inside the input gray-level
+3D image.
+
+\cgalExample{Mesh_3/mesh_3D_gray_image.cpp}
 
 \subsection Mesh_3MeshingMultipleDomains Meshing Multiple Domains
 
