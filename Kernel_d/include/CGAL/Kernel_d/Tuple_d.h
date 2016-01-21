@@ -224,11 +224,13 @@ void Tuple_d<NT,LA>::print(std::ostream& os, const char* l) const
     case CGAL::IO::ASCII :
       os << size() << " ";
       for (i = 0; i < size(); ++i) 
-        os << v[i] << " "; break;
+        os << v[i] << " ";
+      break;
     case CGAL::IO::BINARY :
       CGAL::write(os, size()); 
       for (i = 0; i < size(); ++i) 
-        CGAL::write(os, v[i]); break;
+        CGAL::write(os, v[i]);
+      break;
     default :
       os << l << "(" << size() << ", ";
       for (i = 0; i < size(); ++i) {
