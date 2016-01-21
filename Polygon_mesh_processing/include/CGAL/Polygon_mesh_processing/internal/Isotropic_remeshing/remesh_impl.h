@@ -24,12 +24,16 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/border.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
+#include <CGAL/Polygon_mesh_processing/measure.h>
+#include <CGAL/Polygon_mesh_processing/connected_components.h>
 
-#include <CGAL/iterator.h>
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_triangle_primitive.h>
 
+#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/AABB_filtered_projection_traits.h>
+
+#include <CGAL/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
@@ -79,24 +83,26 @@ namespace internal {
     typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
 
     std::map<edge_descriptor, bool> border_edges;
-    const PM& pmesh_;
+    const PM* pmesh_ptr_;
   public:
+    Border_constraint_pmap():pmesh_ptr_(NULL) {}
     Border_constraint_pmap(const PM& pmesh, const FaceRange& faces)
-      : pmesh_(pmesh)
+      : pmesh_ptr_(&pmesh)
     {
       std::vector<halfedge_descriptor> border;
-      PMP::border_halfedges(faces, pmesh_, std::back_inserter(border));
+      PMP::border_halfedges(faces, *pmesh_ptr_, std::back_inserter(border));
 
-      BOOST_FOREACH(edge_descriptor e, edges(pmesh_))
+      BOOST_FOREACH(edge_descriptor e, edges(*pmesh_ptr_))
         border_edges.insert(std::make_pair(e, false));
 
       BOOST_FOREACH(halfedge_descriptor h, border)
-        border_edges[edge(h, pmesh_)] = true;
+        border_edges[edge(h, *pmesh_ptr_)] = true;
     }
 
     friend bool get(const Border_constraint_pmap<PM, FaceRange>& map,
                     const edge_descriptor& e)
     {
+      CGAL_assertion(map.pmesh_ptr_!=NULL);
       CGAL_assertion(!map.border_edges.empty());
       typename std::map<edge_descriptor, bool>::const_iterator it
         = map.border_edges.find(e);
@@ -150,39 +156,33 @@ namespace internal {
     typedef typename GeomTraits::Plane_3    Plane_3;
     typedef typename GeomTraits::Triangle_3 Triangle_3;
 
-    typedef std::list<Triangle_3>                                  Triangle_list;
-    typedef typename Triangle_list::iterator                       Tr_iterator;
-    typedef CGAL::AABB_triangle_primitive<GeomTraits, Tr_iterator> Primitive;
-    typedef CGAL::AABB_traits<GeomTraits, Primitive>               Traits;
-    typedef CGAL::AABB_tree<Traits>                                AABB_tree;
+    typedef Incremental_remesher<PM, VertexPointMap, GeomTraits> Self;
+
+  private:
+    typedef std::size_t                                  Patch_id;
+    typedef std::vector<Triangle_3>                      Triangle_list;
+    typedef std::vector<Patch_id>                        Patch_id_list;
+
+    typedef CGAL::AABB_triangle_primitive<GeomTraits,
+                     typename Triangle_list::iterator>    AABB_primitive;
+    typedef CGAL::AABB_traits<GeomTraits, AABB_primitive> AABB_traits;
+    typedef CGAL::AABB_tree<AABB_traits>                  AABB_tree;
 
   public:
     Incremental_remesher(PolygonMesh& pmesh
                        , VertexPointMap& vpmap
-                       , const bool protect_constraints)
+                       , const bool protect_constraints
+                       , const bool own_tree = true)//built by the remesher
       : mesh_(pmesh)
       , vpmap_(vpmap)
-      , own_tree_(true)
+      , own_tree_(own_tree)
       , input_triangles_()
+      , input_patch_ids_()
       , halfedge_status_map_()
       , protect_constraints_(protect_constraints)
+      , patch_ids_map_()
     {
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
-
-      //build AABB tree of input surface
-      //todo : add a constructor with aabb_tree as parameter
-      //todo : do we really need to keep this copy of the input surface?
-      BOOST_FOREACH(face_descriptor f, faces(mesh_))
-      {
-        halfedge_descriptor h = halfedge(f, mesh_);
-        vertex_descriptor v1 = target(h, mesh_);
-        vertex_descriptor v2 = target(next(h, mesh_), mesh_);
-        vertex_descriptor v3 = target(next(next(h, mesh_), mesh_), mesh_);
-        input_triangles_.push_back(
-          Triangle_3(get(vpmap, v1), get(vpmap, v2), get(vpmap, v3)));
-      }
-      tree_ptr_ = new AABB_tree(input_triangles_.begin(), input_triangles_.end());
-      tree_ptr_->accelerate_distance_queries();
     }
 
     ~Incremental_remesher()
@@ -196,15 +196,24 @@ namespace internal {
     void init_remeshing(const FaceRange& face_range
                       , const EdgeIsConstrainedMap& ecmap)
     {
-      if (protect_constraints_)
+      tag_halfedges_status(face_range, ecmap); //called first
+      Constraint_property_map cpmap(*this);
+
+      //build AABB tree of input surface
+      PMP::connected_components(mesh_,
+        boost::make_assoc_property_map(patch_ids_map_),// set patch_id() for each face
+        PMP::parameters::edge_is_constrained_map(cpmap));
+
+      BOOST_FOREACH(face_descriptor f, faces(mesh_))
       {
-        BOOST_FOREACH(edge_descriptor e, edges(mesh_))
-        {
-          if (get(ecmap, e))
-            constrained_edges_.insert(e);
-        }
+        input_triangles_.push_back(triangle(f));
+        input_patch_ids_.push_back(get_patch_id(f));
       }
-      tag_halfedges_status(face_range, ecmap);
+      CGAL_assertion(input_triangles_.size() == input_patch_ids_.size());
+
+      tree_ptr_ = new AABB_tree(input_triangles_.begin(),
+                                input_triangles_.end());
+      tree_ptr_->accelerate_distance_queries();
     }
 
     // split edges of edge_range that have their length > high
@@ -369,6 +378,7 @@ namespace internal {
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_on_border(hnew))
         {
+          Patch_id patch_id = get_patch_id(face(hnew, mesh_));
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(hnew,
                                                               next(next(hnew, mesh_), mesh_),
                                                               mesh_);
@@ -377,6 +387,8 @@ namespace internal {
             : MESH;
           halfedge_added(hnew2,                  snew);
           halfedge_added(opposite(hnew2, mesh_), snew);
+          set_patch_id(face(hnew2, mesh_), patch_id);
+          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
 
           if (snew == PATCH)
           {
@@ -389,6 +401,7 @@ namespace internal {
         //do it again on the other side if we're not on boundary
         if (!is_on_border(hnew_opp))
         {
+          Patch_id patch_id = get_patch_id(face(hnew_opp, mesh_));
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(prev(hnew_opp, mesh_),
                                                               next(hnew_opp, mesh_),
                                                               mesh_);
@@ -397,6 +410,8 @@ namespace internal {
             : MESH;
           halfedge_added(hnew2,                  snew);
           halfedge_added(opposite(hnew2, mesh_), snew);
+          set_patch_id(face(hnew2, mesh_), patch_id);
+          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
 
           if (snew == PATCH)
           {
@@ -706,7 +721,7 @@ namespace internal {
     // "applies an iterative smoothing filter to the mesh.
     // The vertex movement has to be constrained to the vertex tangent plane [...]
     // smoothing algorithm with uniform Laplacian weights"
-    void tangential_relaxation()
+    void tangential_relaxation(const bool smooth_along_features/*1d smoothing*/)
     {
       //todo : move border vertices along 1-dimensional features
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -718,33 +733,53 @@ namespace internal {
       typedef std::map<vertex_descriptor, Vector_3> VNormalsMap;
       VNormalsMap vnormals;
       boost::associative_property_map<VNormalsMap> propmap_normals(vnormals);
+      std::map<vertex_descriptor, Point> barycenters;
+
+      // at each vertex, compute vertex normal
+      // at each vertex, compute barycenter of neighbors
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
       {
-        if (!is_on_patch(v))
-          continue;
+        if (is_on_patch(v))
+        {
         Vector_3 vn = PMP::compute_vertex_normal(v, mesh_
                             , PMP::parameters::vertex_point_map(vpmap_)
                             .geom_traits(GeomTraits()));
         put(propmap_normals, v, vn);
-      }
 
-      // at each vertex, compute barycenter of neighbors
-      std::map<vertex_descriptor, Point> barycenters;
-      BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
-      {
-        if (!is_on_patch(v))
-          continue;
-        Vector_3 move = CGAL::NULL_VECTOR;
-        unsigned int star_size = 0;
-        BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, mesh_))
-        {
-          move = move + Vector_3(get(vpmap_, v), get(vpmap_, source(h, mesh_)));
-          ++star_size;
+          Vector_3 move = CGAL::NULL_VECTOR;
+          unsigned int star_size = 0;
+          BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, mesh_))
+          {
+            move = move + Vector_3(get(vpmap_, v), get(vpmap_, source(h, mesh_)));
+            ++star_size;
+          }
+          CGAL_assertion(star_size > 0);
+          move = (1. / (double)star_size) * move;
+
+          barycenters[v] = get(vpmap_, v) + move;
         }
-        CGAL_assertion(star_size > 0);
-        move = (1. / (double)star_size) * move;
+        else if (smooth_along_features && !protect_constraints_ && is_on_patch_border(v))
+        {
+          put(propmap_normals, v, CGAL::NULL_VECTOR);
 
-        barycenters[v] = get(vpmap_, v) + move;
+          std::vector<halfedge_descriptor> border_halfedges;
+          BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, mesh_))
+          {
+            if (is_on_patch_border(h) || is_on_patch_border(opposite(h, mesh_)))
+              border_halfedges.push_back(h);
+          }
+          if (border_halfedges.size() == 2)//others are corner cases
+          {
+            vertex_descriptor ph0 = source(border_halfedges[0], mesh_);
+            vertex_descriptor ph1 = source(border_halfedges[1], mesh_);
+            double dot = Vector_3(get(vpmap_, v), get(vpmap_, ph0))
+                       * Vector_3(get(vpmap_, v), get(vpmap_, ph1));
+            //check squared cosine is < 0.25 (~120 degrees)
+            if (0.25 < dot / (sqlength(border_halfedges[0]) * sqlength(border_halfedges[0])))
+              barycenters[v] = CGAL::midpoint(midpoint(border_halfedges[0]),
+                                              midpoint(border_halfedges[1]));
+          }
+        }
       }
 
       // compute moves
@@ -780,6 +815,22 @@ namespace internal {
 #endif
     }
 
+    struct Constraint_property_map
+    {
+      typedef boost::readable_property_map_tag      category;
+      typedef bool                                  value_type;
+      typedef bool                                  reference;
+      typedef edge_descriptor                       key_type;
+      const Self* remesher_ptr_;
+      Constraint_property_map(): remesher_ptr_(NULL) {}
+      Constraint_property_map(const Self& remesher)
+        : remesher_ptr_(&remesher) {}
+      friend bool get(const Constraint_property_map& m,
+                      const edge_descriptor& e) {
+        return m.remesher_ptr_->is_on_border(e) ||
+               m.remesher_ptr_->is_on_patch_border(e);
+      }
+    };
 
     // PMP book :
     // "maps the vertices back to the surface"
@@ -795,7 +846,22 @@ namespace internal {
       {
         if (!is_on_patch(v))
           continue;
-        put(vpmap_, v, tree_ptr_->closest_point(get(vpmap_, v)));
+
+        Patch_id_property_map pid_pmap(*this);
+        internal::Filtered_projection_traits<typename AABB_tree::AABB_traits,
+                                             Patch_id_property_map,
+                                             true> /* keep primitives with matching IDs */
+        projection_traits(
+          get_patch_id(face(halfedge(v, mesh_), mesh_)),
+          tree_ptr_->traits(),
+          pid_pmap
+          );
+
+        tree_ptr_->traversal(get(vpmap_, v), projection_traits);
+        CGAL_assertion(projection_traits.found());
+
+        Point proj = projection_traits.closest_point();
+        put(vpmap_, v, proj);
       }
 
       CGAL_assertion(is_valid(mesh_));
@@ -813,7 +879,61 @@ namespace internal {
 #endif
     }
 
+private:
+  Patch_id get_patch_id(const face_descriptor& f) const
+  {
+    if (patch_ids_map_.empty())
+      return -1;
+    else
+      return patch_ids_map_.at(f);
+  }
+
+  void set_patch_id(const face_descriptor& f, const Patch_id& i)
+  {
+    if (patch_ids_map_.find(f) == patch_ids_map_.end())
+      patch_ids_map_.insert(std::make_pair(f, i));
+    else
+      patch_ids_map_[f] = i;
+  }
+
+  struct Patch_id_property_map
+  {
+    typedef boost::readable_property_map_tag     category;
+    typedef Patch_id                             value_type;
+    typedef Patch_id&                            reference;
+    typedef typename Triangle_list::const_iterator key_type;
+
+    const Self* remesher_ptr_;
+
+    Patch_id_property_map()
+      : remesher_ptr_(NULL) {}
+    Patch_id_property_map(const Self& remesher)
+      : remesher_ptr_(&remesher) {}
+
+    friend Patch_id get(const Patch_id_property_map& m, key_type tr_it)
+    {
+      //tr_it is an iterator from triangles_
+      std::size_t id_in_vec = std::distance(
+        m.remesher_ptr_->input_triangles().begin(), tr_it);
+
+      CGAL_assertion(0 <= id_in_vec);
+      CGAL_assertion(id_in_vec < m.remesher_ptr_->input_patch_ids().size());
+      CGAL_assertion(*tr_it == m.remesher_ptr_->input_triangles()[id_in_vec]);
+
+      return m.remesher_ptr_->input_patch_ids()[id_in_vec];
+    }
+  };
+
   private:
+    Triangle_3 triangle(face_descriptor f) const
+    {
+      halfedge_descriptor h = halfedge(f, mesh_);
+      vertex_descriptor v1  = target(h, mesh_);
+      vertex_descriptor v2  = target(next(h, mesh_), mesh_);
+      vertex_descriptor v3  = target(next(next(h, mesh_), mesh_), mesh_);
+      return Triangle_3(get(vpmap_, v1), get(vpmap_, v2), get(vpmap_, v3));
+    }
+
     double sqlength(const vertex_descriptor& v1,
                     const vertex_descriptor& v2) const
     {
@@ -881,7 +1001,7 @@ namespace internal {
       if (protect_constraints_)
         return false;
       else
-        return constrained_edges_.find(e) != constrained_edges_.end();
+        return get(Constraint_property_map(*this), e);
     }
 
     bool is_split_allowed(const edge_descriptor& e) const
@@ -1202,6 +1322,7 @@ namespace internal {
       return true;
     }
 
+public:
     bool is_on_patch_border(const halfedge_descriptor& h) const
     {
       bool res = (status(h) == PATCH_BORDER);
@@ -1248,6 +1369,7 @@ namespace internal {
       return status(h) == MESH;
     }
 
+private:
     void halfedge_added(const halfedge_descriptor& h,
                         const Halfedge_status& s)
     {
@@ -1348,15 +1470,25 @@ namespace internal {
       return n * no > 0.;
     }
 
+  public:
+    const Triangle_list& input_triangles() const {
+      return input_triangles_;
+    }
+
+    const Patch_id_list& input_patch_ids() const {
+      return input_patch_ids_;
+    }
+
   private:
     PolygonMesh& mesh_;
     VertexPointMap& vpmap_;
     const AABB_tree* tree_ptr_;
     bool own_tree_;
     Triangle_list input_triangles_;
+    Patch_id_list input_patch_ids_;
     boost::unordered_map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
     bool protect_constraints_;
-    std::set<edge_descriptor> constrained_edges_;
+    boost::unordered_map<face_descriptor, Patch_id> patch_ids_map_;
 
   };//end class Incremental_remesher
 }//end namespace internal

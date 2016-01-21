@@ -1,6 +1,6 @@
 // data/joint_refined.off 0.1 5 data/joint-patch.selection.txt
 
-#define CGAL_PMP_REMESHING_DEBUG
+//#define CGAL_PMP_REMESHING_DEBUG
 //#define CGAL_DUMP_REMESHING_STEPS
 #define CGAL_PMP_REMESHING_VERBOSE
 //#define CGAL_PMP_REMESHING_EXPENSIVE_DEBUG
@@ -170,11 +170,20 @@ int main(int argc, char* argv[])
     target_edge_length,
     m,
     PMP::parameters::number_of_iterations(nb_iter)
-    .protect_constraints(true)
+    .protect_constraints(false)
     );
-
   t.stop();
-  std::cout << "Remeshing took " << t.time() << std::endl;
+  std::cout << "Remeshing patch took " << t.time() << std::endl;
+
+  t.start();
+  PMP::isotropic_remeshing(faces(m),
+    2.*target_edge_length,
+    m,
+    PMP::parameters::number_of_iterations(nb_iter)
+    .protect_constraints(true) //they have been refined by previous remeshing
+    );
+  t.stop();
+  std::cout << "Remeshing all took " << t.time() << std::endl;
 
   std::ofstream out("remeshed.off");
   out << m;

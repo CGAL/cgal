@@ -529,9 +529,11 @@ public:
 
   template <class Handle>
   struct Is_selected_property_map{
-    std::vector<bool>& is_selected;
+    std::vector<bool>* is_selected_ptr;
+    Is_selected_property_map()
+      : is_selected_ptr(NULL) {}
     Is_selected_property_map(std::vector<bool>& is_selected)
-      : is_selected( is_selected) {}
+      : is_selected_ptr( &is_selected) {}
 
     template<class H>
     std::size_t id(H h){ return h->id(); }
@@ -539,12 +541,14 @@ public:
 
     friend bool get(Is_selected_property_map map, Handle h)
     {
-      return map.is_selected[map.id(h)];
+      CGAL_assertion(map.is_selected_ptr!=NULL);
+      return (*map.is_selected_ptr)[map.id(h)];
     }
 
     friend void put(Is_selected_property_map map, Handle h, bool b)
     {
-      map.is_selected[map.id(h)]=b;
+      CGAL_assertion(map.is_selected_ptr!=NULL);
+      (*map.is_selected_ptr)[map.id(h)]=b;
     }
   };
 

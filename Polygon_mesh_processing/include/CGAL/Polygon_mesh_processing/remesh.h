@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_REMESH_H
 #define CGAL_POLYGON_MESH_PROCESSING_REMESH_H
 
-#include <CGAL/Polygon_mesh_processing/internal/remesh_impl.h>
+#include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/remesh_impl.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -78,6 +78,7 @@ namespace Polygon_mesh_processing {
 *
 * @sa `split_long_edges()`
 *
+*@todo document `1d_smoothing`
 *@todo add possibility to provide a functor that projects to a prescribed surface
 */
 template<typename PolygonMesh
@@ -128,6 +129,7 @@ void isotropic_remeshing(const FaceRange& faces
   remesher.init_remeshing(faces, ecmap);
 
   unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
+  bool smoothing_1d = choose_param(get_param(np, smooth_along_features), false);
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
   std::cout << std::endl;
@@ -144,7 +146,7 @@ void isotropic_remeshing(const FaceRange& faces
     remesher.split_long_edges(high);
     remesher.collapse_short_edges(low, high);
     remesher.equalize_valences();
-    remesher.tangential_relaxation();
+    remesher.tangential_relaxation(smoothing_1d);
     remesher.project_to_surface();
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -222,7 +224,7 @@ void split_long_edges(const EdgeRange& edges
                             boost::vertex_point);
 
   typename internal::Incremental_remesher<PM, VPMap, GT>
-    remesher(pmesh, vpmap, false/*protect constraints*/);
+    remesher(pmesh, vpmap, false/*protect constraints*/, false/*need aabb_tree*/);
 
   remesher.split_long_edges(edges, max_length, Emptyset_iterator());
 }
@@ -261,7 +263,7 @@ void split_long_edges(
                             boost::vertex_point);
 
   typename internal::Incremental_remesher<PM, VPMap, GT>
-    remesher(pmesh, vpmap, false/*protect constraints*/);
+    remesher(pmesh, vpmap, false/*protect constraints*/, false/*need aabb_tree*/);
 
   remesher.split_long_edges(edge_range, max_length, out);
 }

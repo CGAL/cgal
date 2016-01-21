@@ -506,7 +506,7 @@ template <typename PolygonMesh
 >
 typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(const PolygonMesh& pmesh,
-                     const FaceComponentMap& fcm,
+                     FaceComponentMap fcm,
                      const NamedParameters& np)
 {
   using boost::choose_param;
@@ -519,7 +519,8 @@ connected_components(const PolygonMesh& pmesh,
     internal::No_constraint<PolygonMesh>//default
   > ::type                                               EdgeConstraintMap;
   EdgeConstraintMap ecmap
-    = choose_param(get_param(np, edge_is_constrained), EdgeConstraintMap());
+    = choose_param(get_param(np, edge_is_constrained),
+                   internal::No_constraint<PolygonMesh>());
 
   typedef Dual<PolygonMesh>                              Dual;
   typedef boost::filtered_graph<Dual,
@@ -542,7 +543,7 @@ connected_components(const PolygonMesh& pmesh,
 template <typename PolygonMesh, typename FaceComponentMap>
 typename boost::property_traits<FaceComponentMap>::value_type
 connected_components(const PolygonMesh& pmesh,
-                     const FaceComponentMap& fcm)
+                     FaceComponentMap fcm)
 {
 
   return CGAL::Polygon_mesh_processing::connected_components(pmesh, fcm,
