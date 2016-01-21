@@ -23,6 +23,7 @@
 
 #include <CGAL/intersection_of_Polyhedra_3.h>
 #include <CGAL/intersection_of_Polyhedra_3_refinement_visitor.h>
+#include <CGAL/internal/corefinement/Combinatorial_map_output_builder.h>
 
 namespace CGAL{
 /** \cond */
@@ -258,19 +259,21 @@ public:
                     Polyhedron_ptr_and_type_output_iterator poly_output,
                     int features) const
   {
-    typedef CGAL::Node_visitor_refine_polyhedra<Polyhedron> Split_visitor;
-    Split_visitor visitor;
+    typedef CGAL::Corefinement::Combinatorial_map_output_builder<Polyhedron> Output_builder;
+    Output_builder output_builder;
+    typedef CGAL::Node_visitor_refine_polyhedra<Polyhedron, Output_builder> Split_visitor;
+    Split_visitor visitor(output_builder);
     CGAL::Intersection_of_Polyhedra_3<Polyhedron,
       Kernel,
       Split_visitor> polyline_intersections(visitor);
 
     polyline_intersections(P, Q, polyline_output);
 
-    typedef typename Split_visitor::Combinatorial_map_3  Combinatorial_map_3;
-    typedef typename Split_visitor::Volume_info  Volume_info;
+    typedef typename Output_builder::Combinatorial_map_3  Combinatorial_map_3;
+    typedef typename Output_builder::Volume_info  Volume_info;
     typedef typename Combinatorial_map_3::Dart_const_handle Dart_const_handle;
     
-    const typename Split_visitor::Combinatorial_map_3& final_map=visitor.combinatorial_map();
+    const Combinatorial_map_3& final_map=output_builder.combinatorial_map();
    
     typename Combinatorial_map_3::template One_dart_per_cell_const_range<3> cell_range=final_map.template one_dart_per_cell<3>();
 
