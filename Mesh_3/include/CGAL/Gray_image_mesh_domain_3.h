@@ -28,19 +28,20 @@
 #include <CGAL/Mesh_3/Image_to_labeled_function_wrapper.h>
 
 #include <functional>
-#include <limits>
 
 namespace CGAL {
 
 namespace internal {
 
-template<typename T>
-struct Less_than {
-  typedef T argument_type;
-  Less_than(const T& second) : second(second) {}
-  bool operator()(const T& first) const { return std::less<T>()(first, second); }
-  T second;
-};
+  template<typename T>
+  struct Greater_than {
+    typedef T argument_type;
+    Greater_than(const T& second) : second(second) {}
+    bool operator()(const T& first) const {
+      return std::greater<T>()(first, second);
+    }
+    T second;
+  };
 
 }
 
@@ -52,7 +53,7 @@ struct Less_than {
 template<class Image,
          class BGT,
          typename Image_word_type = float,
-         typename Transform = internal::Less_than<Image_word_type>,
+         typename Transform = internal::Greater_than<Image_word_type>,
          typename Subdomain_index = int>
 class Gray_image_mesh_domain_3
   : public Labeled_mesh_domain_3<
@@ -80,8 +81,7 @@ public:
   /// Constructor
   Gray_image_mesh_domain_3(const Image& image,
                            const Image_word_type iso_value,
-                           const Image_word_type value_outside = 
-                             (std::numeric_limits<Image_word_type>::max)(),
+                           const Image_word_type value_outside = 0.,
                            const FT& error_bound = FT(1e-3),
                            CGAL::Random* p_rng = NULL)
     : Base(Wrapper(image, 
@@ -94,8 +94,7 @@ public:
 
   Gray_image_mesh_domain_3(const Image& image,
                            const Transform& transform,
-                           const Image_word_type value_outside = 
-                             (std::numeric_limits<Image_word_type>::max)(),
+                           const Image_word_type value_outside = 0.,
                            const FT& error_bound = FT(1e-3),
                            CGAL::Random* p_rng = NULL)
     : Base(Wrapper(image, transform, value_outside),
