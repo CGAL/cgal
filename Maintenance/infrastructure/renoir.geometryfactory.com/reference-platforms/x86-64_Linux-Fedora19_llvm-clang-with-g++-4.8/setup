@@ -5,9 +5,6 @@ export CXX CC
 export QTDIR=/usr/lib64/qt-3.3
 source ${REFS}/setup-common
 
-BOOST_ROOT=/home/lrineau/CGAL/boost/boost-release-branch
-export BOOST_ROOT
-
 CXXFLAGS="-isystem $BOOST_ROOT -fsanitize=address"
 
 ASAN_OPTIONS="detect_leaks=1"
