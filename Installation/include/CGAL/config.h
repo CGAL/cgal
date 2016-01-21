@@ -374,6 +374,9 @@ using std::max;
 #ifndef __has_feature
   #define __has_feature(x) 0  // Compatibility with non-clang compilers.
 #endif
+#ifndef __has_include
+  #define __has_include(x) 0  // Compatibility with non-clang compilers.
+#endif
 #ifndef __has_extension
   #define __has_extension __has_feature // Compatibility with pre-3.0 compilers.
 #endif
@@ -434,16 +437,24 @@ using std::max;
 #  endif
 #endif
 
-#if ( defined(__GNUC__) && defined(__GNUC_MINOR__)       \
-      && (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 \
-      && __cplusplus >= 201103L ) || ( _MSC_VER >= 1900 )
+#if __has_feature(cxx_thread_local) || \
+    ( (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L ) || \
+    ( _MSC_VER >= 1900 )
 #define CGAL_CAN_USE_CXX11_THREAD_LOCAL
 #endif
 
-#if ( defined(__GNUC__) && defined(__GNUC_MINOR__)       \
-      && (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 \
-      && __cplusplus >= 201103L ) || ( _MSC_VER >= 1700 )
+#if ( BOOST_VERSION >= 105000 && ! defined(BOOST_NO_CXX11_HDR_MUTEX) ) || \
+    (__has_include(<mutex>) && __cplusplus >= 201103L ) | \
+    ( (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L ) || \
+    ( _MSC_VER >= 1700 )
 #define CGAL_CAN_USE_CXX11_MUTEX
+#endif
+
+#if ( BOOST_VERSION >= 105600 && ! defined(BOOST_NO_CXX11_HDR_ATOMIC) ) || \
+    (__has_include(<atomic>) && __cplusplus >= 201103L ) || \
+    ( (__GNUC__ * 100 + __GNUC_MINOR__) >= 408 && __cplusplus >= 201103L ) || \
+    ( _MSC_VER >= 1700 )
+#define CGAL_CAN_USE_CXX11_ATOMIC
 #endif
 
 // Support for LEDA with threads
