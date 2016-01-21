@@ -50,7 +50,7 @@
 /// @param Gt       Geometric traits class.
 
 template <class Gt>
-class Point_set_3 : CGAL::Point_set_3<Gt>
+class Point_set_3 : public CGAL::Point_set_3<Gt>
 {
 public:
   
