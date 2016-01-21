@@ -61,6 +61,7 @@ public:
 
   bool operator==( Nullptr_t p) const {
     CGAL_assertion( p == 0);
+    CGAL_USE(p);
     return ( nt == 0);                                    //###//
   }
   bool operator!=( Nullptr_t p) const {
