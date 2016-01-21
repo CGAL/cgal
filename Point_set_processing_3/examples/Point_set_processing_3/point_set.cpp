@@ -64,15 +64,16 @@ int main (int argc, char** argv)
   point_set.add_normal_property();
 
   std::vector<Point_set::Index> indices;
-  read_xyz_points_and_normals(std::ifstream("data.pwn"),
-                              std::back_inserter(indices),
-                              Point_push_pmap(point_set),
-                              Normal_push_pmap(point_set),
-                              Kernel());
-  std::cerr << point_set.surface_mesh() << std::endl;
+  std::ifstream f (argc > 1 ? argv[1] : "data/data.pwn");
+  CGAL::read_xyz_points_and_normals(f,
+                                    std::back_inserter(indices),
+                                    Point_push_pmap(point_set),
+                                    Normal_push_pmap(point_set),
+                                    Kernel());
+  f.close ();
 
-  for(int i =0; i < indices.size(); i++){
-    std::cerr << indices[i] << std::endl;
+  for(std::size_t i =0; i < indices.size(); i++){
+    std::cerr << indices[i] << " ";
   }
 
   // we next swap two points with all their properties
