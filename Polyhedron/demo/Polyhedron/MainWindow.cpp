@@ -1767,10 +1767,17 @@ void MainWindow::recenterSceneView(const QModelIndex &id)
 
 void MainWindow::stat_dlg_update()
 {
+  QRect geom;//size and position
   if(statistics_dlg != NULL)
+  {
+    geom = statistics_dlg->geometry();
     statistics_dlg->hide();
+  }
+
   statistics_on_item();
 
+  if (!geom.isNull())
+    statistics_dlg->setGeometry(geom);
 }
 void MainWindow::statistics_on_item()
 {
