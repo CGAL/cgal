@@ -518,8 +518,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     //Lines
     typedef Kernel::Point_3		Point;
     typedef Polyhedron::Edge_iterator	Edge_iterator;
-    std::vector<double> edge_lengths;
-
     Edge_iterator he;
     for(he = poly->edges_begin();
         he != poly->edges_end();
@@ -553,9 +551,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
         }
 
         //statistics
-        edge_lengths.push_back(CGAL::squared_distance(a,b));
-
-        if(edge_lengths.back() == 0)
+        if(a == b)
             number_of_null_length_edges++;
     }
     //set the colors
