@@ -1251,4 +1251,5 @@ template class Realbase_for<BigFloat>;
  template class ConstPolyRep<Expr>;
  template class ConstPolyRep<BigFloat>;
  template class ConstPolyRep<BigInt>;
+ template class ConstPolyRep<BigRat>;
 } //namespace CORE
