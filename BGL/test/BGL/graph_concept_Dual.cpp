@@ -50,20 +50,21 @@ void concept_check_dual() {
   boost::function_requires< CGAL::FaceGraphConcept<Graph> >();
   boost::function_requires< CGAL::FaceListGraphConcept<Graph> >();
 
-  boost::function_requires< boost::concepts::PropertyGraph<
-    Graph, halfedge_descriptor, CGAL::halfedge_index_t> >();
   boost::function_requires< boost::concepts::ReadablePropertyGraph<
     Graph, edge_descriptor, boost::edge_index_t> >();
+  boost::function_requires< boost::concepts::ReadablePropertyGraph<
+    Graph, vertex_descriptor, boost::vertex_index_t> >();
+  boost::function_requires< boost::concepts::ReadablePropertyGraph<
+    Graph, face_descriptor, boost::face_index_t> >();
+
+  // boost::function_requires< boost::concepts::PropertyGraph<
+  //   Graph, halfedge_descriptor, CGAL::halfedge_index_t> >();
   // boost::function_requires< boost::concepts::ReadablePropertyGraph<
   //   Graph, edge_descriptor, boost::edge_weight_t> >();
   // boost::function_requires< boost::PropertyGraphConcept<
   //   Graph, vertex_descriptor, CGAL::vertex_point_t> >();
-  boost::function_requires< boost::concepts::ReadablePropertyGraph<
-    Graph, vertex_descriptor, boost::vertex_index_t> >();
   // boost::function_requires< boost::concepts::ReadablePropertyGraph<
   //   Graph, vertex_descriptor, boost::vertex_is_border_t> >();
-  // boost::function_requires< boost::concepts::PropertyGraph<
-  //   Graph, face_descriptor, CGAL::face_index_t> >();
 
   // null
   boost::graph_traits<Graph>::null_vertex();

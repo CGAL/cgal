@@ -179,14 +179,26 @@ get(Property p, const Dual<P>& dual, const Key& k)
   return get(p, dual.primal(), k);
 }
 
+template <typename P, typename Key >
+typename boost::property_map_value<Dual<P>, boost::vertex_index_t>::type
+get(boost::vertex_index_t, const Dual<P>& dual, const Key& k)
+{
+  return get(typename boost::internal::Dual_vertex_index_pmap<P>(dual.primal()), k);
+}
+
+template <typename P, typename Key >
+typename boost::property_map_value<Dual<P>, boost::face_index_t>::type
+get(boost::face_index_t, const Dual<P>& dual, const Key& k)
+{
+  return get(typename boost::internal::Dual_face_index_pmap<P>(dual.primal()), k);
+}
+
 template <typename P, typename Property, typename Key, typename Value>
 void
 put(Property p, const Dual<P>& dual, const Key& k, const Value& val)
 {
   put(p, dual.primal(), k, val);
 }
-
-
 
 template <typename P>
 typename boost::internal::Dual_vertex_index_pmap<P>
