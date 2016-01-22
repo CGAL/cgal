@@ -15,11 +15,11 @@
 
 #include <CGAL/Polygon_mesh_processing/repair.h>
 
-using namespace boost::accumulators;
 
 template<typename Polyhedron>
 void angles(Polyhedron* poly, double& mini, double& maxi, double& ave)
 {
+  using namespace boost::accumulators;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
 
   double rad_to_deg = 180. / CGAL_PI;
@@ -56,6 +56,7 @@ void edges_length(Polyhedron* poly,
   double& mini, double& maxi, double& mean, double& mid,
   unsigned int& nb_degen)
 {
+  using namespace boost::accumulators;
   typedef typename boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
 
@@ -89,7 +90,7 @@ unsigned int nb_degenerate_faces(Polyhedron* poly, VPmap vpmap)
   unsigned int nb = 0;
   BOOST_FOREACH(face_descriptor f, faces(*poly))
   {
-    if (PMP::is_degenerated(f, *poly, vpmap, Kernel()))
+    if (CGAL::Polygon_mesh_processing::is_degenerated(f, *poly, vpmap, Kernel()))
       ++nb;
   }
   return nb;
