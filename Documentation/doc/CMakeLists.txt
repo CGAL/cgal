@@ -256,6 +256,7 @@ else()
 
   subdirlist(CGAL_EXAMPLE_PACKAGES ${CMAKE_SOURCE_DIR}/examples)
   subdirlist(CGAL_DEMO_PACKAGES ${CMAKE_SOURCE_DIR}/demo)
+  list(APPEND CGAL_EXAMPLE_PACKAGES "BGL") # manually add BGL to the list of packages
   foreach(pkg ${CGAL_EXAMPLE_PACKAGES})
     set(CGAL_${pkg}_EXAMPLE_DIR "${CMAKE_SOURCE_DIR}/examples")
     # This might not be entirely correct, but there is no reliable,
