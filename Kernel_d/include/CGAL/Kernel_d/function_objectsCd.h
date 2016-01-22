@@ -144,7 +144,6 @@ public:
     result_type operator()(Forward_iterator start, Forward_iterator end) const
     {
         CGAL_assertion(start!=end);
-        CGAL_USE(d);
         int d = start->dimension();
         Matrix M(d);
         Vector b(d);
