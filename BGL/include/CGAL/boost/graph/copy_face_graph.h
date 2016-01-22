@@ -82,18 +82,21 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
     put(tm_pmap, tvd, get(sm_pmap, svd));
   }
 
-  boost::unordered_map<sm_face_descriptor, tm_face_descriptor> f2f;
+  // internal f2f
+  boost::unordered_map<sm_face_descriptor, tm_face_descriptor> f2f_;
   BOOST_FOREACH(sm_face_descriptor sfd, faces(sm)){
     std::vector<tm_vertex_descriptor> tv;
     BOOST_FOREACH(sm_vertex_descriptor svd, vertices_around_face(halfedge(sfd,sm),sm)){
       tv.push_back(v2v.at(svd));
     }
-    f2f[sfd] = Euler::add_face(tv,tm);
+    tm_face_descriptor new_face = Euler::add_face(tv,tm);
+    f2f_[sfd] = new_face;
+    *f2f++ = std::make_pair(sfd, new_face);
   }
   
   BOOST_FOREACH(sm_face_descriptor sfd, faces(sm)){
     sm_halfedge_descriptor shd = halfedge(sfd,sm), done(shd);
-    tm_halfedge_descriptor thd = halfedge(f2f[sfd],tm);
+    tm_halfedge_descriptor thd = halfedge(f2f_[sfd],tm);
     tm_vertex_descriptor tvd = v2v.at(target(shd,sm));
     while(target(thd,tm) != tvd){
       thd = next(thd,tm);
