@@ -453,6 +453,8 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     normals_gouraud.resize(0);
     number_of_null_length_edges = 0;
     number_of_degenerated_faces = 0;
+    is_triangulated = true;//a priori
+
     //Facets
     typedef Polyhedron::Traits	    Kernel;
     typedef Kernel::Point_3	    Point;
@@ -461,11 +463,12 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
 
     Facet_iterator f = poly->facets_begin();
-
     for(f = poly->facets_begin();
         f != poly->facets_end();
         f++)
     {
+      if (f == boost::graph_traits<Polyhedron>::null_face())
+        continue;
 
         if(!is_triangle(f->halfedge(),*poly))
         {
@@ -503,7 +506,8 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
                 positions_facets.push_back(1.0);
                 i = (i+1) %3;
             }
-            if(CGAL::Polygon_mesh_processing::is_degenerated(f,
+            if(is_triangulated && 
+              CGAL::Polygon_mesh_processing::is_degenerated(f,
                                                              *poly,
                                                              get(CGAL::vertex_point, *poly),
                                                              poly->traits()))
@@ -546,23 +550,8 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
             positions_lines.push_back(b.y());
             positions_lines.push_back(b.z());
             positions_lines.push_back(1.0);
-
-            //statistics
-            edge_lengths.push_back(CGAL::squared_distance(a,b));
-
-            if(edge_lengths.back() == 0)
-                number_of_null_length_edges++;
         }
 
-        positions_lines.push_back(a.x());
-        positions_lines.push_back(a.y());
-        positions_lines.push_back(a.z());
-        positions_lines.push_back(1.0);
-
-        positions_lines.push_back(b.x());
-        positions_lines.push_back(b.y());
-        positions_lines.push_back(b.z());
-        positions_lines.push_back(1.0);
         //statistics
         edge_lengths.push_back(CGAL::squared_distance(a,b));
 
