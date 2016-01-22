@@ -30,6 +30,9 @@ void angles(Polyhedron* poly, double& mini, double& maxi, double& ave)
     vpmap = get(CGAL::vertex_point, *poly);
   BOOST_FOREACH(halfedge_descriptor h, halfedges(*poly))
   {
+    if (face(h, *poly) == boost::graph_traits<Polyhedron>::null_face())
+      continue;
+
     typename Kernel::Point_3 a = get(vpmap, source(h, *poly));
     typename Kernel::Point_3 b = get(vpmap, target(h, *poly));
     typename Kernel::Point_3 c = get(vpmap, target(next(h, *poly), *poly));
