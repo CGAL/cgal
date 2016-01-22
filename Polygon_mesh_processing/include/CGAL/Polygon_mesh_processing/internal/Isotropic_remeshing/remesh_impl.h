@@ -1031,16 +1031,41 @@ private:
 
       if (protect_constraints_ && is_constrained(e))
         return false;
-      else if (!is_on_patch(he)) //hopp is also on patch
+      if (is_on_patch(he)) //hopp is also on patch
+      {
+        if (is_on_patch_border(next(he, mesh_)) && is_on_patch_border(prev(he, mesh_)))
+          return false;//too many cases to be handled
+        else if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
+          return false;//too many cases to be handled
+        else if (is_on_patch_border(target(he, mesh_)) && is_on_patch_border(source(he, mesh_)))
+          return false;//collapse would induce pinching the selection
+        else return true;
+      }
+      else if (is_on_patch_border(he))
+        return is_collapse_allowed_on_patch_border(he);
+      else if (is_on_patch_border(hopp))
+        return is_collapse_allowed_on_patch_border(hopp);
+      return true;
+    }
+
+    bool is_collapse_allowed_on_patch_border(const halfedge_descriptor& h) const
+    {
+      CGAL_precondition(is_on_patch_border(h));
+      halfedge_descriptor hopp = opposite(h, mesh_);
+
+      if (is_on_patch_border(next(h, mesh_)) && is_on_patch_border(prev(h, mesh_)))
         return false;
-      else if (is_on_patch_border(next(he, mesh_)) && is_on_patch_border(prev(he, mesh_)))
-        return false;//too many cases to be handled
-      else if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
-        return false;//too many cases to be handled
-      if (is_on_patch_border(target(he, mesh_)) && is_on_patch_border(source(he, mesh_)))
-        return false;//collapse would induce pinching the selection
-      else
-        return true;
+
+      if (is_on_patch_border(hopp))
+      {
+        if (is_on_patch_border(next(hopp, mesh_)) && is_on_patch_border(prev(hopp, mesh_)))
+          return false;
+        else
+          return true;
+      }
+      CGAL_assertion(is_on_mesh(hopp));
+
+      return true;//we already checked we're not pinching a hole in the patch
     }
 
     bool collapse_does_not_invert_face(const halfedge_descriptor& h) const
