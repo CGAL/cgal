@@ -1162,6 +1162,7 @@ QString Scene_polyhedron_item::compute_stats(int type)
     return QString::number(PMP::connected_components(*poly, fccmap));
   }
   case NB_BORDER_EDGES:
+    poly->normalize_border();
     return QString::number(poly->size_of_border_halfedges());
 
   case NB_EDGES:
