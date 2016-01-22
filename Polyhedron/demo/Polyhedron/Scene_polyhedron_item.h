@@ -167,7 +167,8 @@ private:
     mutable std::size_t nb_lines;
     mutable std::size_t nb_f_lines;
     mutable QOpenGLShaderProgram *program;
-    mutable int number_of_null_length_edges, number_of_degenerated_faces;
+    mutable unsigned int number_of_null_length_edges;
+    mutable unsigned int number_of_degenerated_faces;
     mutable bool self_intersect;
 
     using CGAL::Three::Scene_item::initialize_buffers;

@@ -451,9 +451,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     positions_feature_lines.resize(0);
     normals_flat.resize(0);
     normals_gouraud.resize(0);
-    number_of_null_length_edges = 0;
-    number_of_degenerated_faces = 0;
-    is_triangulated = true;//a priori
 
     //Facets
     typedef Polyhedron::Traits	    Kernel;
@@ -506,13 +503,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
                 positions_facets.push_back(1.0);
                 i = (i+1) %3;
             }
-            if(is_triangulated && 
-              CGAL::Polygon_mesh_processing::is_degenerated(f,
-                                                             *poly,
-                                                             get(CGAL::vertex_point, *poly),
-                                                             poly->traits()))
-                number_of_degenerated_faces++;
-
         }
     }
     //Lines
@@ -549,10 +539,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
             positions_lines.push_back(b.z());
             positions_lines.push_back(1.0);
         }
-
-        //statistics
-        if(a == b)
-            number_of_null_length_edges++;
     }
     //set the colors
     compute_colors();
@@ -1141,7 +1127,8 @@ QString Scene_polyhedron_item::compute_stats(int type)
 {
   poly->normalize_border();
   double minl, maxl, meanl, midl;
-  edges_length(poly, minl, maxl, meanl, midl);
+  edges_length(poly, minl, maxl, meanl, midl, number_of_null_length_edges);
+
   typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
   int i = 0;
   BOOST_FOREACH(face_descriptor f, faces(*poly)){
@@ -1160,10 +1147,10 @@ QString Scene_polyhedron_item::compute_stats(int type)
       nb_facets(QString::number(poly->size_of_facets())),
       nbborderedges(QString::number(poly->size_of_border_halfedges())),
       nbedges(QString::number(poly->size_of_halfedges()/2)),
-      minlength(QString::number(CGAL::sqrt(minl))),
-      maxlength(QString::number(CGAL::sqrt(maxl))),
-      midlength(QString::number(CGAL::sqrt(midl))),
-      meanlength(QString::number(CGAL::sqrt(meanl))),
+      minlength(QString::number(minl)),
+      maxlength(QString::number(maxl)),
+      midlength(QString::number(midl)),
+      meanlength(QString::number(meanl)),
       nulllength(QString::number(number_of_null_length_edges)),
       selfintersect,
       degenfaces,
@@ -1193,7 +1180,10 @@ QString Scene_polyhedron_item::compute_stats(int type)
     selfintersect = QString("n/a");
 
   if(is_triangulated)
+  {
+    number_of_degenerated_faces = nb_degenerate_faces(poly, get(CGAL::vertex_point, *poly));
     degenfaces = QString::number(number_of_degenerated_faces);
+  }
   else
     degenfaces = QString("n/a");
 
