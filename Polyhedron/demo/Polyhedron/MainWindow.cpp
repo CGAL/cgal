@@ -1776,6 +1776,9 @@ void MainWindow::statistics_on_item()
 {
   if (statistics_dlg != NULL)
     delete statistics_dlg;
+
+  QApplication::setOverrideCursor(Qt::WaitCursor);
+
   statistics_dlg = new QDialog(this);
   Ui::Statistics_on_item_dialog ui;
   ui.setupUi(statistics_dlg);
@@ -1784,6 +1787,8 @@ void MainWindow::statistics_on_item()
   ui.label_htmltab->setText(get_item_stats());
   statistics_dlg->show();
   statistics_dlg->raise();
+
+  QApplication::restoreOverrideCursor();
 }
 
 /* Creates a string containing an html table. This string is constructed by appending each parts of each row, so that the data can
