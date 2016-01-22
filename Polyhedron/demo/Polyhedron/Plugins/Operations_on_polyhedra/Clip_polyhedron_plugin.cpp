@@ -150,8 +150,12 @@ public Q_SLOTS:
     //creates a new  cutting_plane;
     if(!plane)
     {
+      const Scene_interface::Bbox scene_bbox = scene->bbox();
       plane = new Scene_clipping_plane_item(scene);
       plane->setNormal(0., 0., 1.);
+      plane->setPosition((scene_bbox.xmin + scene_bbox.xmax)/2.,
+                         (scene_bbox.ymin + scene_bbox.ymax)/2.,
+                         (scene_bbox.zmin + scene_bbox.zmax)/2.);
       plane->setManipulatable(true);
       plane->setClonable(false);
       plane->setColor(QColor(0,126,255));
