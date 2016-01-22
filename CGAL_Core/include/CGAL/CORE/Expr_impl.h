@@ -1214,6 +1214,7 @@ CORE_MEMORY_IMPL(BigIntRep)
 CORE_MEMORY_IMPL(BigRatRep)
 CORE_MEMORY_IMPL(ConstDoubleRep)
 CORE_MEMORY_IMPL(ConstRealRep)
+
 CORE_MEMORY_IMPL(NegRep)
 CORE_MEMORY_IMPL(SqrtRep)
 
@@ -1249,4 +1250,5 @@ template class Realbase_for<BigFloat>;
 
  template class ConstPolyRep<Expr>;
  template class ConstPolyRep<BigFloat>;
+ template class ConstPolyRep<BigInt>;
 } //namespace CORE
