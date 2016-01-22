@@ -147,11 +147,19 @@ struct Dual_face_index_pmap{
   }
 };
 
+template<typename P, typename Property,
+         bool is_edge = boost::is_same<boost::edge_property_tag,
+                                       typename boost::property_kind<Property>::type>::value>
+struct Dual_property_maps : boost::property_map<P, Property> {};
+
+template< typename P, typename Property>
+struct Dual_property_maps<P, Property, false> {};
+
 } //end of namespace internal
 
 template <typename P, typename Property>
 struct property_map<CGAL::Dual<P>, Property>
-  : property_map<P, Property> {};
+  : internal::Dual_property_maps<P, Property> {};
 
 template <typename P>
 struct property_map<CGAL::Dual<P>, boost::vertex_index_t>
@@ -168,7 +176,6 @@ struct property_map<CGAL::Dual<P>, boost::face_index_t>
 };
 
 } // namespace boost
-
 
 namespace CGAL {
 
