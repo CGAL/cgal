@@ -32,7 +32,21 @@ The class template `Dual` is an adaptor that creates the dual view of
 a `FaceGraph`. Faces of the original graph correspond to vertices in
 the `Dual` and vice versa.
 
+Note that border edges in a `Dual` have the `null_face` of the
+original graph as either source or target. This is unusual and might
+break other algorithms since edges are always assumed to have non-null
+vertices as a source and target. It is possible to filter border edges
+using `boost::filtered_graph` as shown in example
+\ref BGL_surface_mesh/surface_mesh_dual.cpp
 
+Property forwarding
+-------------------
+\cgalAdvancedBegin
+Edge properties of the underlying graph are forwarded directly. For
+faces and vertices only the `face_index` and `vertex_index` properties
+are forwarded. Accessing other properties will lead to a compilation
+error.
+\cgalAdvancedEnd
 */
 template <typename Primal_>
 class Dual
