@@ -25,13 +25,23 @@
 #include <boost/unordered_map.hpp>
 #include <CGAL/boost/graph/helpers.h>
 
+#include <CGAL/iterator.h>
+
 namespace CGAL {
 
 /*!
   \ingroup PkgBGLHelperFct
+  copies a source FaceGraph into another FaceGraph of different type.
+
+  This function assumes that both graphs have an internal property
+  `vertex_point` and that the one of `tm` is constructible from the
+  one of `sm`.
 */
-template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H>
-void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V& v2v, H2H& h2h)
+template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H, typename F2F>
+void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, 
+                     V2V v2v = Emptyset_iterator(), 
+                     H2H h2h = Emptyset_iterator(),
+                     F2F f2f = Emptyset_iterator())
 {
   typedef typename boost::graph_traits<SourceMesh>::vertex_descriptor sm_vertex_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::vertex_descriptor tm_vertex_descriptor;
@@ -51,7 +61,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V& v2v, H2H& h2h)
 
   BOOST_FOREACH(sm_vertex_descriptor svd, vertices(sm)){
     tm_vertex_descriptor tvd = add_vertex(tm);
-    v2v.insert(std::make_pair(svd, tvd));
+    *v2v++ = std::make_pair(svd, tvd);
     put(tm_pmap, tvd, get(sm_pmap, svd));
   }
 
@@ -72,7 +82,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V& v2v, H2H& h2h)
       thd = next(thd,tm);
     }
     do {
-      h2h.insert(std::make_pair(shd, thd));
+      *h2h++ = std::make_pair(shd, thd);
 
       if (face(opposite(shd, sm), sm) == boost::graph_traits<SourceMesh>::null_face())
         h2h.insert(std::make_pair(opposite(shd, sm), opposite(thd, tm)));
