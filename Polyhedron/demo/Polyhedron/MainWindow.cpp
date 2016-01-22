@@ -114,6 +114,7 @@ QScriptValue myPrintFunction(QScriptContext *context, QScriptEngine *engine)
 MainWindow::~MainWindow()
 {
   delete ui;
+  delete statistics_ui;
 }
 MainWindow::MainWindow(QWidget* parent)
   : CGAL::Qt::DemosMainWindow(parent)
@@ -375,6 +376,7 @@ MainWindow::MainWindow(QWidget* parent)
   }
 
   statistics_dlg = NULL;
+  statistics_ui = new Ui::Statistics_on_item_dialog();
 
 #ifdef QT_SCRIPT_LIB
   // evaluate_script("print(plugins);");
@@ -1774,19 +1776,18 @@ void MainWindow::statistics_on_item()
   if (statistics_dlg != NULL)
     statistics_dlg_geometry = statistics_dlg->geometry();
 
-  if (statistics_dlg != NULL)
-    delete statistics_dlg;
-
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
-  statistics_dlg = new QDialog(this);
-  Ui::Statistics_on_item_dialog ui;
-  ui.setupUi(statistics_dlg);
-  connect(ui.okButtonBox, SIGNAL(accepted()), statistics_dlg, SLOT(accept()));
-  connect(ui.updateButton, SIGNAL(clicked()), this, SLOT(stat_dlg_update()));
-  ui.label_htmltab->setText(get_item_stats());
-
-  statistics_dlg->hide();
+  if (statistics_dlg == NULL)
+  {
+    statistics_dlg = new QDialog(this);
+    statistics_ui->setupUi(statistics_dlg);
+    connect(statistics_ui->okButtonBox, SIGNAL(accepted()),
+            statistics_dlg, SLOT(accept()));
+    connect(statistics_ui->updateButton, SIGNAL(clicked()),
+            this, SLOT(stat_dlg_update()));
+  }
+  statistics_ui->label_htmltab->setText(get_item_stats());
 
   if (!statistics_dlg_geometry.isNull())
     statistics_dlg->setGeometry(statistics_dlg_geometry);

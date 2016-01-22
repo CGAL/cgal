@@ -31,6 +31,7 @@ class QModelIndex;
 
 namespace Ui {
   class MainWindow;
+  class Statistics_on_item_dialog;
 }
 
 #include "Polyhedron_type_fwd.h"
@@ -360,8 +361,11 @@ private:
   QAction* actionAddToGroup;
   void print_message(QString message) { messages->information(message); }
   Messages_interface* messages;
+
   QDialog *statistics_dlg;
   QRect statistics_dlg_geometry;
+  Ui::Statistics_on_item_dialog* statistics_ui;
+
 #ifdef QT_SCRIPT_LIB
   QScriptEngine* script_engine;
 public:
