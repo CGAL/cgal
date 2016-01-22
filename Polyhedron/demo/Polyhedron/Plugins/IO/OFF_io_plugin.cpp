@@ -20,7 +20,7 @@ class Polyhedron_demo_off_plugin :
 
 public:
   QString name() const { return "off_plugin"; }
-  QString nameFilters() const { return "OFF files (*.off *.obj)"; }
+  QString nameFilters() const { return "OFF files (*.off);;Wavefront OBJ (*.obj)"; }
   bool canLoad() const;
   CGAL::Three::Scene_item* load(QFileInfo fileinfo);
    CGAL::Three::Scene_item* load_off(QFileInfo fileinfo);
