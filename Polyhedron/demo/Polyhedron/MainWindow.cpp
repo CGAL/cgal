@@ -1767,10 +1767,6 @@ void MainWindow::recenterSceneView(const QModelIndex &id)
     }
 }
 
-void MainWindow::stat_dlg_update()
-{
-  statistics_on_item();
-}
 void MainWindow::statistics_on_item()
 {
   if (statistics_dlg != NULL)
@@ -1785,7 +1781,7 @@ void MainWindow::statistics_on_item()
     connect(statistics_ui->okButtonBox, SIGNAL(accepted()),
             statistics_dlg, SLOT(accept()));
     connect(statistics_ui->updateButton, SIGNAL(clicked()),
-            this, SLOT(stat_dlg_update()));
+            this, SLOT(statistics_on_item()));
   }
   statistics_ui->label_htmltab->setText(get_item_stats());
 

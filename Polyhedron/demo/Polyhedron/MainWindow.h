@@ -84,8 +84,6 @@ public Q_SLOTS:
   bool file_matches_filter(const QString& filters, const QString& filename);
   //!Prints a dialog containing statistics on the selected polyhedrons.
   void statistics_on_item();
-  //!Updates the statistics dialog.
-  void stat_dlg_update();
   /*! Open a file with a given loader, and return true if it was successful.
    This slot is for use by scripts.*/
   bool open(QString filename, QString loader_name);
