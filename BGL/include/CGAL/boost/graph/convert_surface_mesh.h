@@ -17,8 +17,8 @@
 //
 // Author(s)     : Andreas Fabri
 
-#ifndef CGAL_BOOST_GRAPH_CONVERT_SURFACE_MESH_H
-#define CGAL_BOOST_GRAPH_CONVERT_SURFACE_MESH_H
+#ifndef CGAL_BOOST_GRAPH_COPY_FACE_GRAPH_H
+#define CGAL_BOOST_GRAPH_COPY_FACE_GRAPH_H
 
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/iterator.h>
@@ -27,8 +27,11 @@
 
 namespace CGAL {
 
-  template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H>
-  void convert_surface_mesh(const SourceMesh& sm, TargetMesh& tm, V2V& v2v, H2H& h2h)
+/*!
+  \ingroup PkgBGLHelperFct
+*/
+template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H>
+void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V& v2v, H2H& h2h)
 {
   typedef typename boost::graph_traits<SourceMesh>::vertex_descriptor sm_vertex_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::vertex_descriptor tm_vertex_descriptor;
@@ -83,4 +86,4 @@ namespace CGAL {
 
 } // namespace CGAL
 
-#endif //  CGAL_BOOST_GRAPH_CONVERT_SURFACE_MESH_H
+#endif //  CGAL_BOOST_GRAPH_COPY_FACE_GRAPH_H

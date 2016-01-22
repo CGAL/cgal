@@ -152,6 +152,7 @@ user might encounter.
 - `CGAL::make_hexahedron()`
 
 - `CGAL::clear()`
+- `CGAL::copy_face_graph()`
 
 ## Iterators ##
 - `CGAL::Halfedge_around_source_iterator`
