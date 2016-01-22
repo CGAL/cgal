@@ -6,17 +6,27 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>322</width>
-    <height>85</height>
+    <width>364</width>
+    <height>258</height>
    </rect>
   </property>
   <property name="windowTitle">
-   <string>DockWidget</string>
+   <string>Clip polyhedra</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout_2">
     <item>
      <layout class="QVBoxLayout" name="verticalLayout">
+      <item>
+       <widget class="QLabel" name="label">
+        <property name="text">
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This function allows to clip all the selected polyhedra by an half-space. The blue side of the clipping plane will be clipped out, and the yellow side will be kept.&lt;br/&gt;&lt;br/&gt;If the option &lt;span style=&quot; font-style:italic;&quot;&gt;keep closed&lt;/span&gt; is checked, the clipped part of each polyhedron will be closed. Otherwise, it will be left open.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+        </property>
+        <property name="wordWrap">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
       <item>
        <spacer name="verticalSpacer">
         <property name="orientation">
@@ -41,7 +51,7 @@
            <bool>false</bool>
           </property>
           <property name="text">
-           <string>Keep Closed</string>
+           <string>&amp;Keep Closed</string>
           </property>
          </widget>
         </item>
@@ -61,7 +71,7 @@
         <item>
          <widget class="QPushButton" name="clipButton">
           <property name="text">
-           <string>Clip</string>
+           <string>&amp;Clip</string>
           </property>
          </widget>
         </item>
