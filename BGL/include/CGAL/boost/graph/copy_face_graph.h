@@ -31,11 +31,28 @@ namespace CGAL {
 
 /*!
   \ingroup PkgBGLHelperFct
+
   copies a source FaceGraph into another FaceGraph of different type.
 
+  \tparam SourceMesh a `FaceListGraph`
+  \tparam TargetMesh a `FaceListGraph`
+  \tparam V2V an `OutputIterator` accepting `std::pair<sm_vertex_descriptor, tm_vertex_descriptor>`
+  \tparam H2H an `OutputIterator` accepting `std::pair<sm_halfedge_descriptor, tm_halfedge_descriptor>`
+  \tparam F2F an `OutputIterator` accepting `std::pair<sm_face_descriptor, tm_face_descriptor>`
+
+  where the prefixx `sm_` and `tm_` mean belonging to the source or
+  target mesh respectively.
+
+  \param sm the source mesh of the copy operation
+  \param tm the target mesh of the copy operation
+  \param v2v pairs of `vertex_descriptorS` from `sm` and corresponding `vertex_descriptorS` in `tm` are added to `v2v`
+  \param h2h pairs of `halfedge_descriptorS` from `sm` and corresponding `halfedge_descriptorS` in `tm` are added to `h2h`
+  \param f2f pairs of `face_descriptorS` from `sm` and corresponding `face_descriptorS` in `tm` are added to `f2f`
+
+
   This function assumes that both graphs have an internal property
-  `vertex_point` and that the one of `tm` is constructible from the
-  one of `sm`.
+  `vertex_point` and that the `vertex_point` values of `tm` are
+  constructible from the ones of `sm`.
 */
 template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H, typename F2F>
 void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, 
