@@ -361,6 +361,7 @@ private:
   void print_message(QString message) { messages->information(message); }
   Messages_interface* messages;
   QDialog *statistics_dlg;
+  QRect statistics_dlg_geometry;
 #ifdef QT_SCRIPT_LIB
   QScriptEngine* script_engine;
 public:

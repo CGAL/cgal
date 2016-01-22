@@ -1767,20 +1767,13 @@ void MainWindow::recenterSceneView(const QModelIndex &id)
 
 void MainWindow::stat_dlg_update()
 {
-  QRect geom;//size and position
-  if(statistics_dlg != NULL)
-  {
-    geom = statistics_dlg->geometry();
-    statistics_dlg->hide();
-  }
-
   statistics_on_item();
-
-  if (!geom.isNull())
-    statistics_dlg->setGeometry(geom);
 }
 void MainWindow::statistics_on_item()
 {
+  if (statistics_dlg != NULL)
+    statistics_dlg_geometry = statistics_dlg->geometry();
+
   if (statistics_dlg != NULL)
     delete statistics_dlg;
 
@@ -1792,6 +1785,12 @@ void MainWindow::statistics_on_item()
   connect(ui.okButtonBox, SIGNAL(accepted()), statistics_dlg, SLOT(accept()));
   connect(ui.updateButton, SIGNAL(clicked()), this, SLOT(stat_dlg_update()));
   ui.label_htmltab->setText(get_item_stats());
+
+  statistics_dlg->hide();
+
+  if (!statistics_dlg_geometry.isNull())
+    statistics_dlg->setGeometry(statistics_dlg_geometry);
+
   statistics_dlg->show();
   statistics_dlg->raise();
 
