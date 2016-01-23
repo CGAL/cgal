@@ -53,9 +53,9 @@ void mesh_with_id(const char* argv1)
 
   PMP::keep_largest_connected_components(sm,2);
 
- std::ofstream ofile("blobby_2cc_id.off");
- ofile << sm << std::endl;
- ofile.close();
+  std::ofstream ofile("blobby_2cc_id.off");
+  ofile << sm << std::endl;
+  ofile.close();
 }
 
 void mesh_no_id(const char* argv1)
@@ -150,11 +150,38 @@ void test_border_cases()
   assert(num_vertices(copy)==0);
 }
 
+void keep_nothing(const char* argv1)
+{
+  typedef boost::graph_traits<Mesh_with_id>::vertex_descriptor vertex_descriptor;
+  typedef boost::graph_traits<Mesh_with_id>::face_descriptor face_descriptor;
+
+  Mesh_with_id sm;
+  std::ifstream in(argv1);
+  if(!(in >> sm)) {
+    std::cerr << "ERROR reading file: " << argv1 << std::endl;
+    return;
+  }
+  int i=0;
+  BOOST_FOREACH(face_descriptor f, faces(sm)){
+    f->id() = i++;
+  }
+  i=0;
+  BOOST_FOREACH(vertex_descriptor v, vertices(sm)){
+    v->id() = i++;
+  }
+
+  PMP::keep_largest_connected_components(sm, 0);
+  assert(num_vertices(sm) == 0);
+  assert(num_edges(sm) == 0);
+  assert(num_faces(sm) == 0);
+}
+
 int main(int argc, char* argv[]) 
 {
   const char* filename = (argc > 1) ? argv[1] : "data/blobby_3cc.off";
   mesh_with_id(filename);
   mesh_no_id(filename);
   test_border_cases();
+  keep_nothing(filename);
   return 0;
 }

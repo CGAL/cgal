@@ -24,7 +24,7 @@
 #include <boost/foreach.hpp>
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/properties.h>
-
+#include <CGAL/boost/graph/internal/Has_member_clear.h>
 
 namespace CGAL {
 
@@ -660,6 +660,60 @@ make_tetrahedron(const P& p0, const P& p1, const P& p2, const P& p3, Graph& g)
   set_face(opposite(h3,g), f, g);
   
   return opposite(h2,g);
+}
+
+
+namespace internal {
+
+template<typename FaceGraph>
+inline
+typename boost::enable_if<Has_member_clear<FaceGraph>, void>::type
+clear_impl(FaceGraph& g)
+{ g.clear(); }
+
+template<typename FaceGraph>
+inline
+typename boost::disable_if<Has_member_clear<FaceGraph>, void>::type
+clear_impl(FaceGraph& g)
+{
+  typedef typename boost::graph_traits<FaceGraph>::edge_descriptor     edge_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::vertex_descriptor   vertex_descriptor;
+  typedef typename boost::graph_traits<FaceGraph>::face_descriptor     face_descriptor;
+  BOOST_FOREACH(edge_descriptor ed, edges(g)) {
+    remove_edge(ed, g);
+  }
+  BOOST_FOREACH(vertex_descriptor vd, vertices(g)) {
+    remove_vertex(vd, g);
+  }
+  BOOST_FOREACH(face_descriptor fd, faces(g)) {
+    remove_face(fd, g);
+  }
+}
+
+}
+
+/**
+ * \ingroup PkgBGLHelperFct
+ *
+ * removes all vertices, faces and halfedges from a graph. Calls
+ * `remove_edge()`, `remove_vertex()`, and `remove_face()` for each
+ * edge, vertex or face.
+ *
+ * If the graph has a member function `clear`, it will be called
+ * instead.
+ * 
+ * @tparam FaceGraph model of `MutableHalfedgeGraph` and `MutableFaceGraph`
+ *
+ * @param g the graph to clear
+ *
+ **/
+template<typename FaceGraph>
+void clear(FaceGraph& g)
+{ 
+  internal::clear_impl(g); 
+  CGAL_postcondition(num_edges(g) == 0);
+  CGAL_postcondition(num_vertices(g) == 0);
+  CGAL_postcondition(num_faces(g) == 0);
 }
 
 
