@@ -89,6 +89,8 @@ public Q_SLOTS:
   //!Moves the camera to the new coordinates (position and orientation) through an animation.
   bool moveCameraToCoordinates(QString, 
                                float animation_duration = 0.5f);
+  //!Makes the Viewer display a message
+  void printMessage(QString message, int ms_delay );
 
 protected:
   void paintEvent(QPaintEvent *);
@@ -197,9 +199,10 @@ private:
   * Projects each textItem from the world coordinates to the Screen coordinates
   * and draws it.
  */
-class  VIEWER_EXPORT TextRenderer{
+class  VIEWER_EXPORT TextRenderer : public QObject{
+  Q_OBJECT
 public:
-    TextRenderer()
+    TextRenderer() : max_textItems(30000)
     {
     }
     //!Draws all the TextItems
@@ -220,10 +223,14 @@ public:
     QList<TextListItem*> items() const{return textItems;}
     //!Gives the renderer a Scene, needed to determine which Ids must be drawn.
     void setScene(CGAL::Three::Scene_interface* p_scene){scene = p_scene;}
+
+Q_SIGNALS:
+    void sendMessage(QString message, int ms_delay =2000);
 private:
     QList<TextListItem*> textItems;
     CGAL::Three::Scene_interface *scene;
     QList<TextItem*> local_textItems;
+    int max_textItems;
 
 };//end class TextRenderer
 #endif // VIEWER_H

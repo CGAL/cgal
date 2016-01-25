@@ -34,6 +34,9 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->inDrawWithNames = false;
   d->shader_programs.resize(NB_OF_PROGRAMS);
   textRenderer = new TextRenderer();
+  connect( textRenderer, SIGNAL(sendMessage(QString,int)),
+           this, SLOT(printMessage(QString,int)) );
+
   setShortcut(EXIT_VIEWER, 0);
   setShortcut(DRAW_AXIS, 0);
   setKeyDescription(Qt::Key_T,
@@ -305,10 +308,10 @@ void Viewer::keyPressEvent(QKeyEvent* e)
         }
   }
   else if(e->key() == Qt::Key_I && e->modifiers() & Qt::ControlModifier){
-        has_text = !has_text;
-        if (has_text)
-			d->scene->printPrimitiveIds(this);
-        update();
+    has_text = !has_text;
+    if (has_text)
+      d->scene->printPrimitiveIds(this);
+    update();
       }
   //forward the event to the scene (item handling of the event)
   if (! d->scene->keyPressEvent(e) )
@@ -1205,6 +1208,11 @@ void Viewer::paintGL()
     postDraw();
     d->painter->end();
 }
+
+void Viewer::printMessage(QString message, int ms_delay)
+{
+  displayMessage(message, ms_delay);
+}
 void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 {
     QPainter *painter = viewer->getPainter();
@@ -1249,6 +1257,11 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 
  void TextRenderer::addTextList(TextListItem *tl)
  {
+   if(tl->textList().size() > max_textItems)
+   {
+     Q_EMIT sendMessage("There is too many textItems to display, it would not be readable, and it would be too slow to render them all.",5000);
+     return;
+   }
      textItems.append(tl);
  }
 
