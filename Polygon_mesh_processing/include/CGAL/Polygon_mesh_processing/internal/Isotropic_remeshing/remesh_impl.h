@@ -1045,7 +1045,7 @@ private:
         return is_collapse_allowed_on_patch_border(he);
       else if (is_on_patch_border(hopp))
         return is_collapse_allowed_on_patch_border(hopp);
-      return true;
+      return false;
     }
 
     bool is_collapse_allowed_on_patch_border(const halfedge_descriptor& h) const
