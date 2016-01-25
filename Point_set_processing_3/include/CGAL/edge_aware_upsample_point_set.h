@@ -609,6 +609,7 @@ edge_aware_upsample_point_set(
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
+  typedef typename Kernel::FT FT;
   return edge_aware_upsample_point_set<Concurrency_tag>(
     first, beyond,
     output,
