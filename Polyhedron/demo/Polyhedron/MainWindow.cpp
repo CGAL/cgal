@@ -1595,6 +1595,7 @@ void MainWindow::on_actionSetBackgroundColor_triggered()
 void MainWindow::on_action_Look_at_triggered()
 {
   Show_point_dialog dialog(this);
+  dialog.setWindowTitle(tr("Look at..."));
   int i = dialog.exec();
   if( i == QDialog::Accepted &&
       dialog.has_correct_coordinates() )
