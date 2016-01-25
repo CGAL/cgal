@@ -341,8 +341,8 @@ void MainWindow::open(QString filename)
     Q_FOREACH(Io_plugin_interface* plugin, 
               io_plugins)
     {
-      if(plugin->canLoad()) {
-          viewer->makeCurrent();
+        if(plugin->canLoad()) {
+            viewer->makeCurrent();
         item = plugin->load(fileinfo);
         if(item) break; // go out of the loop
       }
