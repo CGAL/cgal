@@ -11,24 +11,24 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::FT FT;
 
 void test (std::vector<Point>& input,
-	   std::size_t result0 = 1, int result1 = 1, int result2 = 1, int result3 = 1, int result4 = 1)
+	   std::ptrdiff_t result0 = 1, int result1 = 1, int result2 = 1, int result3 = 1, int result4 = 1)
 {
   std::vector<Point>::iterator it = 
     CGAL::hierarchy_simplify_point_set (input.begin (), input.end (), 1);
-  if (result0 > 0 && std::distance (input.begin (), it) != (result0))
+  if (result0 > 0 && std::distance (input.begin (), it) != result0)
     exit (EXIT_FAILURE);
 
   it = CGAL::hierarchy_simplify_point_set (input.begin (), input.end ());
-  if (result1 > 0 && std::distance (input.begin (), it) != (result1))
+  if (result1 > 0 && std::distance (input.begin (), it) != result1)
     exit (EXIT_FAILURE);
 
   it = CGAL::hierarchy_simplify_point_set (input.begin (), input.end (), 100);
-  if (result2 > 0 && std::distance (input.begin (), it) != (result2))
+  if (result2 > 0 && std::distance (input.begin (), it) != result2)
     exit (EXIT_FAILURE);
 
 
   it = CGAL::hierarchy_simplify_point_set (input.begin (), input.end (), 1000, 0.1);
-  if (result3 > 0 && std::distance (input.begin (), it) != (result3))
+  if (result3 > 0 && std::distance (input.begin (), it) != result3)
     exit (EXIT_FAILURE);
 
 
@@ -36,7 +36,7 @@ void test (std::vector<Point>& input,
 					   CGAL::Identity_property_map<Point>(),
 					   (std::numeric_limits<unsigned int>::max)(),
 					   0.0001);
-  if (result4 > 0 && std::distance (input.begin (), it) != (result4))
+  if (result4 > 0 && std::distance (input.begin (), it) != result4)
     exit (EXIT_FAILURE);
 
   input.clear ();

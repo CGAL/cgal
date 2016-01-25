@@ -206,7 +206,7 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
   for(int z = 0; z < z_side; z++) 
   {
     unsigned int end_z = start_z;
-    FT max_z = bbox.zmin() + FT(z+1)*radius;
+    FT max_z = static_cast<FT>(bbox.zmin() + FT(z+1)*radius);
     while(end_z < rich_points.size() && rich_points[end_z]->pt.z() < max_z)
       ++end_z; 
 
@@ -217,7 +217,7 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
     for(int y = 0; y < y_side; y++) 
     {
       unsigned int end_y = start_y;        
-      FT max_y = bbox.ymin() + FT(y+1) * radius;
+      FT max_y = static_cast<FT>(bbox.ymin() + FT(y+1) * radius);
       while(end_y < end_z && rich_points[end_y]->pt.y() < max_y)
         ++end_y;
 
@@ -229,7 +229,7 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
       {
         unsigned int end_x = start_x;
         indices[x + x_side * y + x_side * y_side * z] = end_x;          
-        FT max_x = bbox.xmin() + FT(x+1) * radius;
+        FT max_x = static_cast<FT>(bbox.xmin() + FT(x+1) * radius);
         while(end_x < end_y && rich_points[end_x]->pt.x() < max_x)
           ++end_x;
 
@@ -244,7 +244,7 @@ void Rich_grid<Kernel>::init(std::vector<Rich_point<Kernel> > &vert,
   indices[x_side * y_side * z_side] = start_z;
 }
 
-/// define how to travel in the same gird 
+/// define how to travel in the same grid 
 template <typename Kernel>
 void Rich_grid<Kernel>::travel_itself(
   void (*self)(iterator starta, iterator enda, 

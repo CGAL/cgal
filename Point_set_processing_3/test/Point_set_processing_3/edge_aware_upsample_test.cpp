@@ -69,7 +69,7 @@ void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input poi
             sharpness_sigma, 
             edge_senstivity,
             neighbor_radius,
-            static_cast<unsigned int>(points.size() * times_of_output_points));
+            points.size() * times_of_output_points);
 
 
   std::size_t memory = CGAL::Memory_sizer().virtual_size();
@@ -106,7 +106,7 @@ int main(int argc, char * argv[])
   const double sharpness_sigma = 25;   //control sharpness of the result.
   const double edge_senstivity = 0;    // more points will up-sample on edge.          
   const double neighbor_radius = 0.2;      // initial neighbors size.
-  const unsigned int times_of_output_points = 4; 
+  const unsigned int times_of_output_points = 40; 
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;

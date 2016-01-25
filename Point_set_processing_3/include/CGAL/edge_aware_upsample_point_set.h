@@ -183,7 +183,7 @@ update_new_point(
   neighbor_indexes.insert(father_v.index);
   neighbor_indexes.insert(mother_v.index);
 
-  double radius2 = radius * radius;
+  FT radius2 = radius * radius;
 
   new_v.neighbors.clear();
   std::set<int>::iterator set_iter;
@@ -238,7 +238,7 @@ update_new_point(
 
   for (unsigned int i = 0; i < candidate_num; ++i)
   {
-    FT absolute_dist = abs(project_dist_sum[i] / weight_sum[i]);
+    FT absolute_dist = CGAL::abs(project_dist_sum[i] / weight_sum[i]);
     if (absolute_dist < min_project_dist)
     {
       min_project_dist = absolute_dist;
@@ -326,7 +326,7 @@ edge_aware_upsample_point_set(
                     ///< controls the preservation of sharp features. 
                     ///< The larger the value is,
                     ///< the smoother the result will be.
-                    ///< The range of possible value is [0, 90].
+                    ///< The range of possible values is `[0, 90]`.
                     ///< See section \ref Point_set_processing_3Upsample_Parameter2
                     ///< for an example.
   typename Kernel::FT edge_sensitivity,  ///<  
@@ -407,7 +407,7 @@ edge_aware_upsample_point_set(
                                                       neighbor_radius);
 
   //
-  FT cos_sigma = std::cos(sharpness_angle / 180.0 * CGAL_PI);
+  FT cos_sigma = static_cast<FT>(std::cos(CGAL::to_double(sharpness_angle) / 180.0 * CGAL_PI));
   FT sharpness_bandwidth = std::pow((CGAL::max)((FT)1e-8, (FT)1.0 - cos_sigma), 2);
 
   FT sum_density = 0.0;
@@ -457,7 +457,7 @@ edge_aware_upsample_point_set(
         }
 
         unsigned int base_index = 0;
-        double density2 = upsample_internal::
+        FT density2 = upsample_internal::
                               base_point_selection(v,
                                                    neighbor_rich_points,
                                                    edge_sensitivity,
@@ -473,7 +473,7 @@ edge_aware_upsample_point_set(
       }
     }
 
-    density_pass_threshold = sqrt(sum_density / count_density) * 0.65;
+    density_pass_threshold = static_cast<FT>(sqrt(sum_density / count_density) * FT(0.65));
     sum_density = 0.;
     count_density = 1;
 
@@ -614,9 +614,9 @@ edge_aware_upsample_point_set(
     output,
     point_pmap,
     normal_pmap,
-    sharpness_angle, 
-    edge_sensitivity,
-    neighbor_radius, 
+    static_cast<FT>(sharpness_angle), 
+    static_cast<FT>(edge_sensitivity),
+    static_cast<FT>(neighbor_radius), 
     number_of_output_points,
     Kernel());
 }

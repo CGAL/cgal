@@ -28,7 +28,7 @@ std::cout << "=== test_fandisk ===\n";
   // Reads a .xyz point set file in points[].
   std::vector<Point> points;
   std::vector<Covariance> cov;
-  boost::dynamic_bitset<> on_feature_edge(nb_points);
+  boost::dynamic_bitset<std::size_t> on_feature_edge(nb_points);
   points.reserve(nb_points);
   cov.reserve(nb_points);
   std::ifstream stream("data/fandisk.off");
