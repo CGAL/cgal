@@ -99,8 +99,12 @@ public:
   PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstanced;
   //!Allows OpenGL 2.1 context to get access to glVertexAttribDivisor.
   PFNGLVERTEXATTRIBDIVISORARBPROC glVertexAttribDivisor;
-  //!Allows OpenGL 2.1 context to get access to gkFrameBufferTexture2D.
+  //!Allows OpenGL 2.1 context to get access to glFrameBufferTexture2D.
   PFNGLFRAMEBUFFERTEXTURE2DEXTPROC glFramebufferTexture2D;
+  enum filter {
+   LINEAR=0,
+   NEAREST
+  };
   //!@returns true if glVertexAttribDivisor, and glDrawArraysInstanced are found.
   //! Used by the items to avoid SEGFAULT.
   bool extension_is_found;

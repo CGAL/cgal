@@ -63,11 +63,13 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   pickMatrix_[15]=1;
   prev_radius = sceneRadius();
   axis_are_displayed = true;
+  depth_fbo = NULL;
 }
 
 Viewer::~Viewer()
 {
   delete d;
+  delete depth_fbo;
 }
 
 void Viewer::setScene(CGAL::Three::Scene_draw_interface* scene)
@@ -109,7 +111,12 @@ bool Viewer::inFastDrawing() const
 void Viewer::draw()
 {
   glEnable(GL_DEPTH_TEST);
+  glClear(GL_DEPTH_BUFFER_BIT);
+  if(QOpenGLFramebufferObject::hasOpenGLFramebufferBlit())
+    saveDepthBuffer();
   d->draw_aux(false, this);
+ if(QOpenGLFramebufferObject::hasOpenGLFramebufferBlit())
+   restoreDepthBuffer();
 }
 
 void Viewer::fastDraw()
@@ -121,25 +128,21 @@ void Viewer::initializeGL()
 {
   QGLViewer::initializeGL();
   initializeOpenGLFunctions();
+  if(!QOpenGLFramebufferObject::hasOpenGLFramebufferBlit())
+    qDebug()<<"glBlitFrameBuffer not found. Axis system might get clipped by other items.";
+  extension_is_found = true;
   glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
   if(!glDrawArraysInstanced)
   {
       qDebug()<<"glDrawArraysInstancedARB : extension not found. Spheres will be displayed as points.";
       extension_is_found = false;
   }
-  else
-      extension_is_found = true;
-
   glVertexAttribDivisor = (PFNGLVERTEXATTRIBDIVISORARBPROC)this->context()->getProcAddress("glVertexAttribDivisorARB");
   if(!glDrawArraysInstanced)
   {
       qDebug()<<"glVertexAttribDivisorARB : extension not found. Spheres will be displayed as points.";
       extension_is_found = false;
   }
-  else
-      extension_is_found = true;
-
-
   setBackgroundColor(::Qt::white);
   vao[0].create();
   for(int i=0; i<3; i++)
@@ -842,7 +845,6 @@ void Viewer::drawVisualHints()
         vao[0].bind();
         rendering_program.bind();
         //Keeps the axis system in front of everything
-        glClear(GL_DEPTH_BUFFER_BIT);
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(v_Axis.size() / 3));
         //restores the original sceneCenter
         setSceneCenter(center);
@@ -1165,3 +1167,23 @@ void Viewer::wheelEvent(QWheelEvent* e)
     else
         QGLViewer::wheelEvent(e);
 }
+
+void Viewer::saveDepthBuffer()
+{
+  if(depth_fbo)
+    delete depth_fbo;
+  int width = rect().width();
+  int height = rect().height();
+ depth_fbo = new QOpenGLFramebufferObject(QSize(width,height),QOpenGLFramebufferObject::Depth);
+ depth_fbo->release();
+ QOpenGLFramebufferObject::blitFramebuffer(depth_fbo,0,GL_DEPTH_BUFFER_BIT);
+}
+
+void Viewer::restoreDepthBuffer()
+{
+  if(depth_fbo == NULL)
+    return;
+  QOpenGLFramebufferObject::blitFramebuffer(0, depth_fbo,GL_DEPTH_BUFFER_BIT);
+}
+
+
