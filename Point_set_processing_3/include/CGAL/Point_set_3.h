@@ -74,7 +74,8 @@ public:
 
   typedef typename Base::Vertex_range::iterator iterator;
   typedef typename Base::Vertex_range::const_iterator const_iterator;
-  
+  typedef typename Index_pmap::Array::vector_type::iterator index_iterator;
+
 private:
 
   struct Index_back_inserter {
@@ -107,7 +108,8 @@ private:
   
     Index_back_inserter& operator= (std::size_t& ind)
     {
-      if(! ps.surface_mesh().has_valid_index(ind)){
+      if(! ps.surface_mesh().has_valid_index(typename Point_set::Item(ind))){
+        std::cerr << "Add vertex from index " << ind << std::endl;
         ps.surface_mesh().add_vertex();
       }
       put(ps.indices(), Point_set::Item(ind),ind);
@@ -132,7 +134,8 @@ private:
 
     inline friend void put(Point_push_pmap& pm, std::size_t& i, Point& p)
     {
-      if(! pm.ps.surface_mesh().has_valid_index(pm.ind)){
+      if(! pm.ps.surface_mesh().has_valid_index(typename Point_set::Item(pm.ind))){
+        std::cerr << "Add vertex from point " << pm.ind << std::endl;
         pm.ps.surface_mesh().add_vertex();
       }
       put(pm.ps.points(), Point_set::Item(pm.ind),p);
@@ -151,7 +154,8 @@ private:
 
     inline friend void put(Normal_push_pmap& pm, std::size_t& i  , Vector& v)
     {
-      if(! pm.ps.surface_mesh().has_valid_index(pm.ind)){
+      if(! pm.ps.surface_mesh().has_valid_index(typename Point_set::Item(pm.ind))){
+        std::cerr << "Add vertex from normal " << pm.ind << std::endl;
         pm.ps.surface_mesh().add_vertex();
       }
       put(pm.ps.normals(), Point_set::Item(pm.ind),v);
@@ -230,17 +234,35 @@ public:
   const Point& operator[] (std::size_t index) const { return (*this)[index]; }
   std::size_t index (std::size_t i) { return m_indices[Item(i)]; }
 
+  index_iterator indices_begin() { return m_indices.array().begin(); }
+  index_iterator indices_end() { return m_indices.array().end(); }
+
+  void erase (index_iterator begin, index_iterator end)
+  {
+    for (index_iterator it = begin; it != end; ++ it)
+      m_base.remove_vertex (Item (*it));
+    m_base.collect_garbage();
+    reset_indices();
+  }
+
+  void reset_indices()
+  {
+    std::size_t i = 0;
+    for (index_iterator it = indices_begin(); it != indices_end(); ++ it, ++ i)
+      *it = i;
+  }
+  
   Index_back_inserter index_back_inserter ()
   {
-    return Index_back_inserter (*this);
+    return Index_back_inserter (*this, size());
   }
   Point_push_pmap point_push_pmap ()
   {
-    return Point_push_pmap (*this);
+    return Point_push_pmap (*this, size());
   }
   Normal_push_pmap normal_push_pmap ()
   {
-    return Normal_push_pmap (*this);
+    return Normal_push_pmap (*this, size());
   }
     
   iterator first_selected() { return end() - m_nb_selected; }
