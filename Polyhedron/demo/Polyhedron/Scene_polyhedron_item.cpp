@@ -18,7 +18,8 @@
 #include <CGAL/Polygon_mesh_processing/measure.h>
 #include <CGAL/Polygon_mesh_processing/self_intersections.h>
 #include <CGAL/Polygon_mesh_processing/repair.h>
-
+#include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/statistics_helpers.h>
 
 #include <list>
@@ -743,6 +744,48 @@ Scene_polyhedron_item::load(std::istream& in)
     in >> *poly;
 
     if ( in && !isEmpty() )
+    {
+        invalidate_buffers();
+        return true;
+    }
+    return false;
+}
+// Load polyhedron from .obj file
+bool
+Scene_polyhedron_item::load_obj(std::istream& in)
+{
+  typedef Polyhedron::Vertex::Point Point;
+  std::vector<Point> points;
+  std::vector<std::vector<std::size_t> > faces;
+  
+  Point p;
+  std::string line;
+  std::size_t i, j, k;
+  bool failed = false;
+  while(getline(in, line)){
+    if(line[0] == 'v'){
+      std::istringstream iss(line.substr(1));
+      iss >> p;
+      if(! iss) failed = true;
+      points.push_back(p);
+    } else if(line[0] == 'f'){
+      std::istringstream iss(line.substr(1));
+      iss >> i >> j >> k;
+      if(! iss) failed = true;
+      std::vector<std::size_t> face;
+      face.push_back(i-1);
+      face.push_back(j-1);
+      face.push_back(k-1);
+      faces.push_back(face);
+    }
+  }
+  if(CGAL::Polygon_mesh_processing::orient_polygon_soup(points,faces)){
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh( points,faces,*poly);
+  }else{
+    std::cerr << "not orientable"<< std::endl;
+    return false;
+  }
+    if ( (! failed) && !isEmpty() )
     {
         invalidate_buffers();
         return true;
