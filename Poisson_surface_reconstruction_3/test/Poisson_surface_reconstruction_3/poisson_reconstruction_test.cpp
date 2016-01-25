@@ -165,8 +165,8 @@ int main(int argc, char * argv[])
     }
 
     // Prints status
-    long memory = CGAL::Memory_sizer().virtual_size();
-    int nb_points = points.size();
+    std::size_t memory = CGAL::Memory_sizer().virtual_size();
+    std::size_t nb_points = points.size();
     std::cerr << "Reads file " << input_filename << ": " << nb_points << " points, "
                                                         << task_timer.time() << " seconds, "
                                                         << (memory>>20) << " Mb allocated"
