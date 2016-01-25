@@ -1769,9 +1769,6 @@ void MainWindow::recenterSceneView(const QModelIndex &id)
 
 void MainWindow::statistics_on_item()
 {
-  if (statistics_dlg != NULL)
-    statistics_dlg_geometry = statistics_dlg->geometry();
-
   QApplication::setOverrideCursor(Qt::WaitCursor);
 
   if (statistics_dlg == NULL)
@@ -1784,9 +1781,6 @@ void MainWindow::statistics_on_item()
             this, SLOT(statistics_on_item()));
   }
   statistics_ui->label_htmltab->setText(get_item_stats());
-
-  if (!statistics_dlg_geometry.isNull())
-    statistics_dlg->setGeometry(statistics_dlg_geometry);
 
   statistics_dlg->show();
   statistics_dlg->raise();

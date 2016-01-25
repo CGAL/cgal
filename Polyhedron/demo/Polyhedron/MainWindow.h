@@ -361,7 +361,6 @@ private:
   Messages_interface* messages;
 
   QDialog *statistics_dlg;
-  QRect statistics_dlg_geometry;
   Ui::Statistics_on_item_dialog* statistics_ui;
 
 #ifdef QT_SCRIPT_LIB
