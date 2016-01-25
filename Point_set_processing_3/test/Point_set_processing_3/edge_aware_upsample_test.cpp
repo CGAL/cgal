@@ -49,7 +49,7 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 
 void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input point set                            
                               double sharpness_sigma, //control sharpness
-                              double edge_senstivity, // more points will up-sample on edge
+                              double edge_sensitivity,// more points will up-sample on edge
                               double neighbor_radius,  // initial neighbors size.
                               unsigned int times_of_output_points)
 
@@ -67,7 +67,7 @@ void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input poi
             CGAL::First_of_pair_property_map<PointVectorPair>(),
             CGAL::Second_of_pair_property_map<PointVectorPair>(),
             sharpness_sigma, 
-            edge_senstivity,
+            edge_sensitivity,
             neighbor_radius,
             points.size() * times_of_output_points);
 
@@ -104,9 +104,9 @@ int main(int argc, char * argv[])
 
   //Algorithm parameters
   const double sharpness_sigma = 25;   //control sharpness of the result.
-  const double edge_senstivity = 0;    // more points will up-sample on edge.          
+  const double edge_sensitivity = 0;    // more points will up-sample on edge.
   const double neighbor_radius = 0.2;      // initial neighbors size.
-  const unsigned int times_of_output_points = 40; 
+  const unsigned int times_of_output_points = 40;
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
@@ -151,7 +151,7 @@ int main(int argc, char * argv[])
 
     test_edge_aware_upsample(points, 
                              sharpness_sigma,
-                             edge_senstivity,
+                             edge_sensitivity,
                              neighbor_radius,
                              times_of_output_points);
 
