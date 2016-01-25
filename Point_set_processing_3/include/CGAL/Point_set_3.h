@@ -225,10 +225,8 @@ public:
   bool empty() const { return m_base.is_empty(); }
   std::size_t size () const { return m_base.number_of_vertices(); }
   void clear() { m_base.clear(); }
-  Point& operator[] (std::size_t index) { return m_base.point (Item (m_indices[Item(index)])); }
+  Point& operator[] (std::size_t index) { return m_base.point (Item (index)); }
   const Point& operator[] (std::size_t index) const { return (*this)[index]; }
-  std::size_t index (std::size_t i) { return m_indices[Item(i)]; }
-
 
   void erase (iterator begin, iterator end)
   {
@@ -289,7 +287,7 @@ public:
   {
     m_base.remove_property_map (m_normals);
   }
-  Vector& normal (std::size_t index) { return m_normals[Item (m_indices[Item(index)])]; }
+  Vector& normal (std::size_t index) { return m_normals[Item (index)]; }
   const Vector& normal (std::size_t index) const { return this->normal(index); }
 
   bool has_colors() const
