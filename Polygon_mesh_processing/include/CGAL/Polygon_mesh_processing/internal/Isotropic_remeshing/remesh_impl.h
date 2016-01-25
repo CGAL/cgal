@@ -678,7 +678,7 @@ namespace internal {
 
         //check that mesh does not become non-triangle,
         //nor has inverted faces
-        if (deviation_pre < deviation_post
+        if (deviation_pre <= deviation_post
           || !check_normals(he)
           || incident_to_degenerate(he)
           || incident_to_degenerate(opposite(he, mesh_))
