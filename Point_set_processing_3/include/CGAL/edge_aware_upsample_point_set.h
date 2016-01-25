@@ -215,7 +215,7 @@ update_new_point(
 
   for (unsigned int i = 0; i < new_v.neighbors.size(); ++i)
   {
-    Rich_point& t = rich_point_set[new_v.neighbors[i]];
+    const Rich_point& t = rich_point_set[new_v.neighbors[i]];
     FT dist2 = CGAL::squared_distance(new_v.pt, t.pt);
     FT theta = std::exp(dist2 * radius16);
 
@@ -233,7 +233,7 @@ update_new_point(
   }
 
   // select best candidate
-  FT min_project_dist = (FT)(std::numeric_limits<double>::max)();
+  FT min_project_dist = (std::numeric_limits<FT>::max)();
   unsigned int best = 0;
 
   for (unsigned int i = 0; i < candidate_num; ++i)
@@ -444,7 +444,7 @@ edge_aware_upsample_point_set(
       //estimate density threshold for the first time
       for (unsigned int i = 0; i < rich_point_set.size() * 0.05; ++i)
       {
-        Rich_point& v = rich_point_set[i];
+        const Rich_point& v = rich_point_set[i];
 
         if (v.neighbors.empty())
           continue;
@@ -499,7 +499,7 @@ edge_aware_upsample_point_set(
           continue;
         }
 
-        Rich_point& v = rich_point_set[i];
+        const Rich_point& v = rich_point_set[i];
 
         if (v.neighbors.empty())
           continue;
@@ -577,7 +577,7 @@ edge_aware_upsample_point_set(
 
   for (std::size_t i = number_of_input; i < rich_point_set.size(); ++i)
   {
-    Rich_point& v = rich_point_set[i];
+    const Rich_point& v = rich_point_set[i];
     Point point = v.pt;
     Vector normal = v.normal;
     *output++ = std::make_pair(point, normal);
