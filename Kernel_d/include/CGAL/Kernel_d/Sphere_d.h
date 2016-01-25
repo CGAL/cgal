@@ -28,6 +28,7 @@
 #include <CGAL/basic.h>
 #include <vector>
 #include <CGAL/Dimension.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -56,6 +57,7 @@ public:
      P(first,last), cp(0)
   { TUPLE_DIM_CHECK(P.begin(),P.end(),Sphere_d);
     CGAL_assertion(d+1==int(P.size()));
+    CGAL_USE(d);
     typename R::Orientation_d orientation_;
     orient = orientation_(P.begin(),P.end()); }
 

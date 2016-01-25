@@ -34,6 +34,7 @@
 //   So the template parameter will be a comparator, not a converter.
 
 #include <CGAL/basic.h>
+#include <CGAL/use.h>
 #include <utility>
 #include <typeinfo>
 
@@ -52,28 +53,28 @@ template <>
 struct Pairify <bool, bool> {
   typedef bool   result_type;
   result_type operator()(const bool &t1, const bool &t2) const
-  { CGAL_kernel_assertion(t1 == t2); return t1; }
+  { CGAL_kernel_assertion(t1 == t2); CGAL_USE(t2); return t1; }
 };
 
 template <>
 struct Pairify <Sign, Sign> {
   typedef Sign   result_type;
   result_type operator()(const Sign &t1, const Sign &t2) const
-  { CGAL_kernel_assertion(t1 == t2); return t1; }
+  { CGAL_kernel_assertion(t1 == t2); CGAL_USE(t2); return t1; }
 };
 
 template <>
 struct Pairify <Bounded_side, Bounded_side> {
   typedef Bounded_side   result_type;
   result_type operator()(const Bounded_side &t1, const Bounded_side &t2) const
-  { CGAL_kernel_assertion(t1 == t2); return t1; }
+  { CGAL_kernel_assertion(t1 == t2); CGAL_USE(t2); return t1; }
 };
 
 template <>
 struct Pairify <Angle, Angle> {
   typedef Angle   result_type;
   result_type operator()(const Angle &t1, const Angle &t2) const
-  { CGAL_kernel_assertion(t1 == t2); return t1; }
+  { CGAL_kernel_assertion(t1 == t2); CGAL_USE(t2); return t1; }
 };
 
 

@@ -464,6 +464,7 @@ public:
   public:
 
   void audit_move(Event_key k, Point_key pk, Cell_handle h, int) const {
+    CGAL_USE(k);
     CGAL_assertion(kdel_.vertex_handle(pk) == Vertex_handle());
     CGAL_assertion(redundant_points_.find(pk) != redundant_points_.end());
     CGAL_assertion(redundant_points_.find(pk)->second == k);
@@ -471,12 +472,15 @@ public:
   }
   
   void audit_push(Event_key k, Point_key pk, Cell_handle h) const {
+    CGAL_USE(k);
     CGAL_assertion(kdel_.vertex_handle(pk) == Vertex_handle());
     CGAL_assertion(redundant_points_.find(pk) != redundant_points_.end());
     CGAL_assertion(redundant_points_.find(pk)->second == k);
     audit_redundant(pk, h);
   }
   void audit_pop(Event_key k, Vertex_handle vh) const {
+    CGAL_USE(k);
+    CGAL_USE(vh);
     CGAL_assertion_code(if (vh->info() != k) std::cerr << vh->info() << std::endl << k << std::endl);
     CGAL_assertion(vh->info() == k);
   }

@@ -174,8 +174,9 @@ public:
     Direction d_res = direction(e_res);
     Halfedge_around_vertex_const_circulator el(e_res),ee(el);
     CGAL_For_all(el,ee) {
-      if ( K.strictly_ordered_ccw(d_res, direction(el), d) )
+      if ( K.strictly_ordered_ccw(d_res, direction(el), d) ){
         e_res = el; d_res = direction(e_res);
+      }
     }
     CGAL_NEF_TRACEN("  determined "<<PE(e_res)<<" "<<d_res);
     if ( direction(cyclic_adj_succ(e_res)) == d ) {

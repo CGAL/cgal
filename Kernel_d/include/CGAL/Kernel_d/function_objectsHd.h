@@ -128,6 +128,7 @@ typedef typename R::LA LA;
 template <class Forward_iterator>
 Point_d operator()(Forward_iterator start, Forward_iterator end) const
 { CGAL_assertion(start!=end);
+  CGAL_USE(end);
   int d = start->dimension();
   typename LA::Matrix M(d);
   typename LA::Vector b(d);

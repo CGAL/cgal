@@ -27,6 +27,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/enum.h>
+#include <CGAL/use.h>
 #include <CGAL/Referenced_argument.h>
 
 #undef CGAL_KD_TRACE

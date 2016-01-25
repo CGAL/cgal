@@ -26,6 +26,7 @@
 #include <CGAL/Kinetic/internal/debug_counters.h>
 #include <CGAL/Kinetic/Sort_visitor_base.h>
 #include <CGAL/Kinetic/Event_base.h>
+#include <CGAL/use.h>
 #include <algorithm>
 #include <iostream>
 #include <iterator>
@@ -453,15 +454,12 @@ public:
     if (s_.will_fail()) out <<  " next is " << s_.failure_time();
     else out << " out of failures";
   }
-  void audit(typename Sort::Event_key
-#ifndef NDEBUG
-	     tk
-#endif
-) const {
+  void audit(typename Sort::Event_key tk) const {
     //std::cout << "Auditing event ";
     //write(std::cout);
     //std::cout << std::endl;
     CGAL_assertion(left_object_->event() == tk);
+    CGAL_USE(tk);
   }
   Id left_object_; Solver s_;
 };

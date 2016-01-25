@@ -28,6 +28,7 @@
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Arr_observer.h>
 #include <CGAL/assertions.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -217,6 +218,7 @@ public:
 
     out_arr.clear();
     needles.clear();
+    CGAL_USE(face);
     CGAL_assertion(!face->is_unbounded());
 
 

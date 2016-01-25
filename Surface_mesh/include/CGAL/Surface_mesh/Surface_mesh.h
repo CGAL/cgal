@@ -1810,7 +1810,7 @@ public:
             if(!valid) {
               if (verbose)
                 std::cerr << "Integrity of opposite halfedge of " << *it << " corrupted."  << std::endl;
-                break;
+              break;
             }
 
             valid = valid && (next(prev(*it)) == *it);

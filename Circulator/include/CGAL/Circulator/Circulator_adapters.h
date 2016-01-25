@@ -26,6 +26,7 @@
 #define CGAL_CIRCULATOR_IMPL_H 1
 
 #include <CGAL/circulator.h>
+#include <CGAL/use.h>
 
 namespace CGAL {
 
@@ -68,6 +69,7 @@ public:
 
     bool operator==( Nullptr_t p) const {
         CGAL_assertion( p == NULL);
+        CGAL_USE(p);
         return this->_ptr == NULL;
     }
     bool operator!=( Nullptr_t p) const { return !(*this == p); }
@@ -111,6 +113,7 @@ public:
 
     bool operator==( Nullptr_t p) const {
         CGAL_assertion( p == NULL);
+        CGAL_USE(p);
         return this->_ptr == NULL;
     }
     bool operator!=( Nullptr_t p) const { return !(*this == p); }
@@ -158,6 +161,7 @@ public:
 
     bool operator==( Nullptr_t p) const {
         CGAL_assertion( p == NULL);
+        CGAL_USE(p);
         return this->_ptr == NULL;
     }
     bool operator!=( Nullptr_t p) const { return !(*this == p); }
@@ -210,6 +214,7 @@ public:
 
     bool operator==( Nullptr_t p) const {
         CGAL_assertion( p == NULL);
+        CGAL_USE(p);
         return this->_ptr == NULL;
     }
     bool operator!=( Nullptr_t p) const { return !(*this == p); }
@@ -269,6 +274,7 @@ public:
 
     bool operator==( Nullptr_t p) const {
         CGAL_assertion( p == NULL);
+        CGAL_USE(p);
         return this->_ptr == NULL;
     }
     bool operator!=( Nullptr_t p) const { return !(*this == p); }
@@ -307,6 +313,7 @@ public:
 
     bool operator==( Nullptr_t p) const {
         CGAL_assertion( p == NULL);
+        CGAL_USE(p);
         return this->_ptr == NULL;
     }
     bool operator!=( Nullptr_t p) const { return !(*this == p); }
@@ -344,6 +351,7 @@ public:
 
     bool operator==( Nullptr_t p) const {
         CGAL_assertion( p == NULL);
+        CGAL_USE(p);
         return this->_ptr == NULL;
     }
     bool operator!=( Nullptr_t p) const { return !(*this == p); }
@@ -393,6 +401,7 @@ public:
 
     bool operator==( Nullptr_t p) const {
         CGAL_assertion( p == NULL);
+        CGAL_USE(p);
         return this->_ptr == NULL;
     }
     bool operator!=( Nullptr_t p) const { return !(*this == p); }
@@ -465,6 +474,7 @@ public:
 
     bool operator==( Nullptr_t p) const {
         CGAL_assertion( p == NULL);
+        CGAL_USE(p);
         return _i >= _size;
     }
     bool operator!=( Nullptr_t p) const { return !(*this == p); }
@@ -589,6 +599,7 @@ public:
 
     bool operator==( Nullptr_t p) const {
         CGAL_assertion( p == NULL);
+        CGAL_USE(p);
         return _i >= _size;
     }
     bool operator!=( Nullptr_t p) const { return !(*this == p); }

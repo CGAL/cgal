@@ -399,10 +399,10 @@ public:
 
     if (v!=0)
       delete_tree(v);
-      if (header!=0)
-      	delete header;
-      if (sublayer_tree!=0)
-      	delete sublayer_tree;
+    if (header!=0)
+      delete header;
+    if (sublayer_tree!=0)
+      delete sublayer_tree;
   }
 
 

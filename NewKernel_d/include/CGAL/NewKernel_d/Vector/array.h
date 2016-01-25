@@ -56,7 +56,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 	struct Construct_vector {
 		struct Dimension {
 			// Initialize with NaN if possible?
-			Vector operator()(unsigned d) const {
+                  Vector operator()(unsigned CGAL_assertion_code(d)) const {
 				CGAL_assertion(d<=d_);
 				return Vector();
 			}
@@ -91,7 +91,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Array_vector {
 
 		struct Iterator_and_last {
 			template<typename Iter,typename T>
-				Vector operator()(unsigned d,Iter const& f,Iter const& e,CGAL_FORWARDABLE(T) t) const {
+                        Vector operator()(unsigned  CGAL_assertion_code(d),Iter const& f,Iter const& e,CGAL_FORWARDABLE(T) t) const {
 					CGAL_assertion(d==std::distance(f,e)+1);
 					CGAL_assertion(d<=d_);
 					//TODO: optimize for forward iterators

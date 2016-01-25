@@ -28,6 +28,7 @@
 #include <numeric>
 
 #include <CGAL/tags.h>
+#include <CGAL/use.h>
 #include <CGAL/Approximate_min_ellipsoid_d/Khachiyan_approximation.h>
 
 namespace CGAL {
@@ -366,7 +367,7 @@ namespace CGAL {
     CGAL_APPEL_ASSERT(!check_tag(Exact_flag()) || tau == eps/((1+eps)*d-1));
     CGAL_APPEL_ASSERT(!check_tag(Exact_flag()) || 
 		      excess<ET>(tco.cartesian_begin(*P[k])) == (1+eps)*d);
-    
+    CGAL_USE(tau);
     const FT mu = eps / ((d-1)*(1+eps));
     const FT alpha = 1 + mu;
     const FT beta = mu / (1+eps);

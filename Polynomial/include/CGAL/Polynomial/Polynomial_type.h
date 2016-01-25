@@ -597,7 +597,7 @@ public:
 
     //! return \c -p if \c p.sign()<0 and \c p otherwise
     Polynomial<NT> abs() const
-    { if ( sign()<0 ) return -*this; return *this; }
+    { return ( sign()<0 )?  -*this : *this; }
 
     //! return the gcd of all coefficients
     /*! The content is defined as 1 for the zero polynomial. */
