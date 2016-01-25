@@ -72,9 +72,8 @@ public:
   typedef typename Base::template Property_map<Item, Vector> Vector_pmap;
   typedef typename Base::template Property_map<Item, Color> Color_pmap;
 
-  typedef typename Base::Vertex_range::iterator iterator;
-  typedef typename Base::Vertex_range::const_iterator const_iterator;
-  typedef typename Index_pmap::Array::vector_type::iterator index_iterator;
+  typedef typename Index_pmap::Array::vector_type::iterator iterator;
+  typedef typename Index_pmap::Array::vector_type::const_iterator const_iterator;
 
 private:
 
@@ -171,8 +170,6 @@ private:
   Vector_pmap m_normals;
   Color_pmap m_colors;
 
-  std::size_t m_nb_selected; // handle selection
-
   // Assignment operator not implemented and declared private to make
   // sure nobody uses the default one without knowing it
   Point_set_3& operator= (const Point_set_3&)
@@ -185,14 +182,12 @@ public:
 
   Point_set_3 () : m_base()
   {
-    m_nb_selected = 0;
     assert (add_index_property());
   }
 
   // copy constructor 
   Point_set_3 (const Point_set_3& p) : m_base(p.m_base)
   {
-    m_nb_selected = p.nb_selected_points ();
     assert (add_index_property());
   }
 
@@ -223,10 +218,10 @@ public:
   }
 
 
-  iterator begin() { return m_base.vertices().begin(); }
-  iterator end() { return m_base.vertices().end(); }
-  const_iterator begin() const { return m_base.vertices().begin(); }
-  const_iterator end() const { return m_base.vertices().end(); }
+  iterator begin() { return m_indices.array().begin(); }
+  iterator end() { return m_indices.array().end(); }
+  const_iterator begin() const { return m_indices.array().begin(); }
+  const_iterator end() const { return m_indices.array().end(); }
   bool empty() const { return m_base.is_empty(); }
   std::size_t size () const { return m_base.number_of_vertices(); }
   void clear() { m_base.clear(); }
@@ -234,12 +229,10 @@ public:
   const Point& operator[] (std::size_t index) const { return (*this)[index]; }
   std::size_t index (std::size_t i) { return m_indices[Item(i)]; }
 
-  index_iterator indices_begin() { return m_indices.array().begin(); }
-  index_iterator indices_end() { return m_indices.array().end(); }
 
-  void erase (index_iterator begin, index_iterator end)
+  void erase (iterator begin, iterator end)
   {
-    for (index_iterator it = begin; it != end; ++ it)
+    for (iterator it = begin; it != end; ++ it)
       m_base.remove_vertex (Item (*it));
     m_base.collect_garbage();
     reset_indices();
@@ -248,8 +241,17 @@ public:
   void reset_indices()
   {
     std::size_t i = 0;
-    for (index_iterator it = indices_begin(); it != indices_end(); ++ it, ++ i)
+    for (iterator it = begin(); it != end(); ++ it, ++ i)
       *it = i;
+  }
+
+  bool are_indices_up_to_date()
+  {
+    std::size_t i = 0;
+    for (iterator it = begin(); it != end(); ++ it, ++ i)
+      if (*it != i)
+        return false;
+    return true;
   }
   
   Index_back_inserter index_back_inserter ()
@@ -265,75 +267,6 @@ public:
     return Normal_push_pmap (*this, size());
   }
     
-  iterator first_selected() { return end() - m_nb_selected; }
-  const_iterator first_selected() const { return end() - m_nb_selected; }
-  void set_first_selected(iterator it)
-  {
-    m_nb_selected = static_cast<std::size_t>(std::distance (it, end()));
-  }
-  
-  // Test if point is selected
-  bool is_selected(const_iterator it) const
-  {
-    return static_cast<std::size_t>(std::distance (it, end())) <= m_nb_selected;
-  }
-
-  /// Gets the number of selected points.
-  std::size_t nb_selected_points() const
-  {
-    return m_nb_selected;
-  }
-
-  /// Mark a point as selected/not selected.
-  void select(iterator it, bool selected = true)
-  {
-    bool currently = is_selected (it);
-    iterator first = first_selected();
-    if (currently && !selected)
-      {
-        std::swap (*it, *first);
-        -- m_nb_selected;
-      }
-    else if (!currently && selected)
-      {
-        std::swap (*it, *first);
-        ++ m_nb_selected;
-      }
-  }
-
-  void select_all()
-  {
-    m_nb_selected = size ();
-  }
-  void unselect_all()
-  {
-    m_nb_selected = 0;
-  }
-
-  // Invert selection
-  void invert_selection()
-  {
-    iterator sel = end() - 1;
-    iterator unsel = begin();
-
-    iterator first = first_selected();
-
-    while (sel != first - 1 && unsel != first)
-      std::swap (*(sel --), *(unsel ++));
-    
-    m_nb_selected = size() - m_nb_selected;
-  }
-
-  /// Deletes selected points.
-  void delete_selection()
-  {
-    // Deletes selected points using erase-remove idiom
-    for (std::size_t i = size() - 1; i != 0; -- i)
-      m_base.remove_vertex (Item (i));
-
-    m_nb_selected = 0;
-  }
-
   bool add_index_property()
   {
     bool out = false;
