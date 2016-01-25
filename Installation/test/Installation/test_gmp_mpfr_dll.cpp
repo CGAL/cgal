@@ -14,6 +14,11 @@ int main() {
 #include <iostream>
 #include <cassert>
 #include <windows.h>
+
+#pragma warning(disable:4244 4146)
+// conversion with loss of data
+// warning on - applied on unsigned number
+
 #include "gmp.h"
 #include <mpfr.h>
 
