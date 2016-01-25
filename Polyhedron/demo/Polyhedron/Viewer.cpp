@@ -144,8 +144,6 @@ void Viewer::initializeGL()
   vao[0].create();
   for(int i=0; i<3; i++)
     buffers[i].create();
- // qDebug()<<"Viewer's context : "<<context()->contextHandle()->handle();
- // d->scene->initializeGL();
 
   //Vertex source code
   const char vertex_source[] =
@@ -228,7 +226,6 @@ void Viewer::initializeGL()
   }
   if(!rendering_program.link())
   {
-      //std::cerr<<"linking Program FAILED"<<std::endl;
       qDebug() << rendering_program.log();
   }
 }

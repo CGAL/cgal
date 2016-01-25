@@ -270,7 +270,7 @@ Scene::duplicate(Item_id index)
 
 void Scene::initializeGL()
 {
-   ms_splatting->init();
+    ms_splatting->init();
 
     //Setting the light options
 
