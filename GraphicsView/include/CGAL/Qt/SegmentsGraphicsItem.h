@@ -118,7 +118,7 @@ SegmentsGraphicsItem<P>::paint(QPainter *painter,
 {
 
   painterostream = PainterOstream<Traits>(painter);
-  
+  painter->setPen(QPen(::Qt::black, 0, ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
     for(typename P::iterator it = segments->begin();
         it != segments->end();
         it++){
