@@ -57,7 +57,7 @@ int main()
     }
 
     // or the C++11 for loop. Note that there is a ':' and not a ',' as in BOOST_FOREACH 
-    #ifndef CGAL_NO_CPP0X_RANGE_BASED_FOR
+    #ifndef CGAL_CFG_NO_CPP0X_RANGE_BASED_FOR
     for(vertex_descriptor vd : m.vertices()){
       std::cout << vd << std::endl;
     }
