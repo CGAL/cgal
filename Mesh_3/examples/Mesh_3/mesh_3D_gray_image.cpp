@@ -35,21 +35,10 @@
 
 typedef float Image_word_type;
 
-template<typename T>
-struct Greater_than {
-  typedef T argument_type;
-  Greater_than(const T& second) : second(second) {}
-  bool operator()(const T& first) const {
-    return std::greater<T>()(first, second);
-  }
-  T second;
-};
-
 // Domain
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Gray_image_mesh_domain_3<CGAL::Image_3, K,
-                                       Image_word_type,
-                                       Greater_than<Image_word_type> > Mesh_domain;
+                                       Image_word_type> Mesh_domain;
 
 // Triangulation
 typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;

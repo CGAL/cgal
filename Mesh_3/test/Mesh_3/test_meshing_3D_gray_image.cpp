@@ -32,6 +32,16 @@
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
+template<typename T>
+struct Greater_than {
+  typedef T argument_type;
+  Greater_than(const T& second) : second(second) {}
+  bool operator()(const T& first) const {
+    return std::greater<T>()(first, second);
+  }
+  T second;
+};
+
 template <typename Concurrency_tag = CGAL::Sequential_tag>
 struct Image_tester : public Tester<K_e_i>
 {
@@ -44,7 +54,7 @@ public:
       Image,
       K_e_i,
       Image_word_type,
-      std::binder1st< std::less<Image_word_type> > >    Mesh_domain;
+      Greater_than<Image_word_type> >                   Mesh_domain;
 
     typedef typename CGAL::Mesh_triangulation_3<
       Mesh_domain,
@@ -70,7 +80,7 @@ public:
 
     // Domain
     Mesh_domain domain(image,
-      std::bind1st(std::less<Image_word_type>(), 2.9f),//transform
+      2.9f, //isovalue
       0.f,  //value_outside
       1e-3, //error_bound
       &CGAL::default_random);//random generator for determinism
