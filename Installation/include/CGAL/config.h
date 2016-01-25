@@ -92,6 +92,14 @@
 #include <boost/config.hpp>
 #include <boost/version.hpp>
 
+// bug-fix for g++-5.x and Boost.Config<1.57
+//    https://svn.boost.org/trac/boost/ticket/10500
+#if BOOST_VERSION < 105700 && BOOST_GCC < 60000 && \
+  ! defined(__GXX_EXPERIMENTAL_CXX0X__) && defined(BOOST_HAS_VARIADIC_TMPL)
+#  undef BOOST_HAS_VARIADIC_TMPL
+#  define BOOST_NO_CXX11_VARIADIC_TEMPLATES
+#endif
+
 #include <CGAL/version.h>
 
 //----------------------------------------------------------------------//
