@@ -37,6 +37,9 @@
 
 #include <boost/optional.hpp>
 #include <boost/variant.hpp>
+#ifdef CGAL_LAZY_KERNEL_DEBUG
+#  include <boost/optional/optional_io.hpp>
+#endif
 
 #include <boost/mpl/has_xxx.hpp>
 
