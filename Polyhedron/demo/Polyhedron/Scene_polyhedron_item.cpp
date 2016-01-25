@@ -552,11 +552,6 @@ Scene_polyhedron_item::compute_colors() const
     typedef Polyhedron::Facet_iterator Facet_iterator;
     typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
 
-
-
-    // int patch_id = -1;
-   // Facet_iterator f = poly->facets_begin();
-
     for(Facet_iterator f = poly->facets_begin();
         f != poly->facets_end();
         f++)
@@ -687,8 +682,8 @@ void
 Scene_polyhedron_item::
 invalidate_stats()
 {
-  number_of_degenerated_faces = -1;
-  number_of_null_length_edges = -1;
+  number_of_degenerated_faces = (unsigned int)(-1);
+  number_of_null_length_edges = (unsigned int)(-1);
   volume = -std::numeric_limits<double>::infinity();
   area = -std::numeric_limits<double>::infinity();
   self_intersect = false;
@@ -1172,7 +1167,7 @@ QString Scene_polyhedron_item::compute_stats(int type)
   {
     if (poly->is_pure_triangle())
     {
-      if (number_of_degenerated_faces == -1)
+      if (number_of_degenerated_faces == (unsigned int)(-1))
         number_of_degenerated_faces = nb_degenerate_faces(poly, get(CGAL::vertex_point, *poly));
       return QString::number(number_of_degenerated_faces);
     }
