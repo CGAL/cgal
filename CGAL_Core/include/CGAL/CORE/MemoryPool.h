@@ -55,15 +55,15 @@ public:
 
   ~MemoryPool()
   {
-    CGAL_assertion_code(
-                        std::size_t count = 0;
+    CGAL_warning_code(
+      std::size_t count = 0;
       Thunk* t = head;
       while(t!=0){
 	++count;
 	t = t->next;
       }
 			);
-    CGAL_assertion(count ==  nObjects * blocks.size());
+    CGAL_warning(count ==  nObjects * blocks.size());
 
     for(std::size_t i=0; i < blocks.size();i++){
       ::operator delete(blocks[i]);
