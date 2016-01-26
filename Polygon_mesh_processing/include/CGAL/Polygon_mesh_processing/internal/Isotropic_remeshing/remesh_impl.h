@@ -998,10 +998,7 @@ private:
 
     bool is_constrained(const edge_descriptor& e) const
     {
-      if (protect_constraints_)
-        return false;
-      else
-        return get(Constraint_property_map(*this), e);
+      return get(Constraint_property_map(*this), e);
     }
 
     bool is_split_allowed(const edge_descriptor& e) const
@@ -1063,8 +1060,7 @@ private:
         else
           return true;
       }
-      CGAL_assertion(is_on_mesh(hopp));
-
+      CGAL_assertion(is_on_mesh(hopp) || is_on_border(hopp));
       return true;//we already checked we're not pinching a hole in the patch
     }
 
