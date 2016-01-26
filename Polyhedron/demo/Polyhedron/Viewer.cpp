@@ -115,13 +115,19 @@ void Viewer::draw()
   if(QOpenGLFramebufferObject::hasOpenGLFramebufferBlit())
     saveDepthBuffer();
   d->draw_aux(false, this);
- if(QOpenGLFramebufferObject::hasOpenGLFramebufferBlit())
-   restoreDepthBuffer();
+  if(QOpenGLFramebufferObject::hasOpenGLFramebufferBlit())
+    restoreDepthBuffer();
 }
 
 void Viewer::fastDraw()
 {
+  glEnable(GL_DEPTH_TEST);
+  glClear(GL_DEPTH_BUFFER_BIT);
+  if(QOpenGLFramebufferObject::hasOpenGLFramebufferBlit())
+    saveDepthBuffer();
   d->draw_aux(false, this);
+  if(QOpenGLFramebufferObject::hasOpenGLFramebufferBlit())
+    restoreDepthBuffer();
 }
 
 void Viewer::initializeGL()
@@ -1174,16 +1180,16 @@ void Viewer::saveDepthBuffer()
     delete depth_fbo;
   int width = rect().width();
   int height = rect().height();
- depth_fbo = new QOpenGLFramebufferObject(QSize(width,height),QOpenGLFramebufferObject::Depth);
- depth_fbo->release();
- QOpenGLFramebufferObject::blitFramebuffer(depth_fbo,0,GL_DEPTH_BUFFER_BIT);
+  depth_fbo = new QOpenGLFramebufferObject(QSize(width,height),QOpenGLFramebufferObject::CombinedDepthStencil);
+  depth_fbo->release();
+  QOpenGLFramebufferObject::blitFramebuffer(depth_fbo,0,GL_DEPTH24_STENCIL8);
 }
 
 void Viewer::restoreDepthBuffer()
 {
   if(depth_fbo == NULL)
     return;
-  QOpenGLFramebufferObject::blitFramebuffer(0, depth_fbo,GL_DEPTH_BUFFER_BIT);
+  QOpenGLFramebufferObject::blitFramebuffer(0, depth_fbo,GL_DEPTH24_STENCIL8);
 }
 
 
