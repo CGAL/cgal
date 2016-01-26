@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 
 #ifndef CGAL_ARR_GEODESIC_ARC_ON_SPHERE_TRAITS_2_H
@@ -568,7 +564,8 @@ public:
      */
     Comparison_result operator()(const X_monotone_curve_2& xc1,
                                  const X_monotone_curve_2& xc2,
-                                 const Point_2& p) const
+                                 const Point_2&
+                                 CGAL_precondition_code(p)) const
     {
       CGAL_precondition(!xc1.is_degenerate());
       CGAL_precondition(!xc2.is_degenerate());
@@ -942,7 +939,7 @@ public:
      */
     Comparison_result operator()(const Point_2& point,
                                  const X_monotone_curve_2& xcv,
-                                 Arr_curve_end ce) const
+                                 Arr_curve_end CGAL_precondition_code(ce)) const
     {
       CGAL_precondition(point.is_no_boundary());
       CGAL_precondition_code
@@ -985,9 +982,9 @@ public:
      * \pre xcv2 does not coincide with the vertical identification curve.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 Arr_curve_end ce1,
+                                 Arr_curve_end CGAL_precondition_code(ce1),
                                  const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce2) const
+                                 Arr_curve_end CGAL_precondition_code(ce2)) const
     {
       CGAL_precondition_code
         (const Point_2& p1 = (ce1 == ARR_MIN_END) ? xcv1.left() : xcv1.right(););
@@ -1071,9 +1068,11 @@ public:
      * \pre xcv1 does not coincide with the vertical identification curve.
      * \pre xcv2 does not coincide with the vertical identification curve.
      */
-    Comparison_result operator()(const X_monotone_curve_2& xcv1,
-                                 const X_monotone_curve_2& xcv2,
-                                 Arr_curve_end ce) const
+    Comparison_result operator()(const X_monotone_curve_2&
+                                   CGAL_precondition_code(xcv1),
+                                 const X_monotone_curve_2&
+                                   CGAL_precondition_code(xcv2),
+                                 Arr_curve_end CGAL_precondition_code(ce)) const
     {
       CGAL_precondition_code
         (const Point_2& p1 = (ce == ARR_MIN_END) ? xcv1.left() : xcv1.right(););

@@ -224,7 +224,7 @@ public:
      * \param index The index of the subcurve.
      */
     Point_const_iterator(const Polycurve_2<Subcurve_type_2, Point_type_2>* cvP,
-                         int index) :
+                         size_type index) :
       m_cvP(cvP),
       m_index(index)
     {
