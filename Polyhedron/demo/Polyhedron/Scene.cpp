@@ -83,12 +83,16 @@ Scene::addItem(CGAL::Three::Scene_item* item)
     //if group selected, add item to it
     if(mainSelectionIndex() >=0)
     {
-        CGAL::Three::Scene_group_item* selected_group =
-                qobject_cast<CGAL::Three::Scene_group_item*>(m_entries.at(mainSelectionIndex()));
-        if(selected_group)
+        //if new item is a group, don't do that, to avoid any ambiguity
+        if(!group)
         {
-            selected_group->addChild(item);
-            group_added();
+            CGAL::Three::Scene_group_item* selected_group =
+                    qobject_cast<CGAL::Three::Scene_group_item*>(m_entries.at(mainSelectionIndex()));
+            if(selected_group)
+            {
+                selected_group->addChild(item);
+                group_added();
+            }
         }
     }
     return id;
@@ -122,6 +126,8 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
 int
 Scene::erase(int index)
 {
+    clear();
+    index_map.clear();
     if(index < 0 || index >= m_entries.size())
         return -1;
 
@@ -139,17 +145,20 @@ Scene::erase(int index)
     }
   Q_EMIT itemAboutToBeDestroyed(item);
     delete item;
-    m_entries.removeAt(index);
-  selected_item = -1;
-  group_added();
-  QStandardItemModel::beginResetModel();
-  Q_EMIT updated();
-  QStandardItemModel::endResetModel();
-  Q_EMIT restoreCollapsedState();
+    m_entries.removeAll(item);
+    selected_item = -1;
+    Q_FOREACH(Scene_item* item, m_entries)
+    {
+        organize_items(item, invisibleRootItem(), 0);
+    }
+    QStandardItemModel::beginResetModel();
+    Q_EMIT updated();
+    QStandardItemModel::endResetModel();
+    Q_EMIT restoreCollapsedState();
     if(--index >= 0)
-        return index;
+      return index;
     if(!m_entries.isEmpty())
-        return 0;
+      return 0;
     return -1;
 
 }
@@ -157,34 +166,34 @@ Scene::erase(int index)
 int
 Scene::erase(QList<int> indices)
 {
-    QList<CGAL::Three::Scene_item*> to_be_removed;
-    clear();
-    index_map.clear();
-    int max_index = -1;
-    Q_FOREACH(int index, indices) {
-        if(index < 0 || index >= m_entries.size())
-            continue;
+  QList<CGAL::Three::Scene_item*> to_be_removed;
+  int max_index = -1;
+  Q_FOREACH(int index, indices) {
+    if(index < 0 || index >= m_entries.size())
+      continue;
 
-        max_index = (std::max)(max_index, index);
-        CGAL::Three::Scene_item* item = m_entries[index];
-        if(!to_be_removed.contains(item))
-            to_be_removed.push_back(item);
-    }
+    max_index = (std::max)(max_index, index);
+    CGAL::Three::Scene_item* item = m_entries[index];
+    if(!to_be_removed.contains(item))
+      to_be_removed.push_back(item);
+  }
 
-    Q_FOREACH(Scene_item* item, to_be_removed) {
-      CGAL::Three::Scene_group_item* group =
-              qobject_cast<CGAL::Three::Scene_group_item*>(item);
+  Q_FOREACH(Scene_item* item, to_be_removed) {
+    CGAL::Three::Scene_group_item* group =
+        qobject_cast<CGAL::Three::Scene_group_item*>(item);
     if(group)
     {
-        m_group_entries.removeAll(group);
+      m_group_entries.removeAll(group);
     }
     Q_FOREACH(CGAL::Three::Scene_group_item* group_item, m_group_entries)
-        if(group_item->getChildren().contains(item))
-            group_item->removeChild(item);
+      if(group_item->getChildren().contains(item))
+        group_item->removeChild(item);
     Q_EMIT itemAboutToBeDestroyed(item);
     delete item;
     m_entries.removeAll(item);
   }
+  clear();
+  index_map.clear();
   selected_item = -1;
   Q_FOREACH(Scene_item* item, m_entries)
   {
@@ -1118,9 +1127,11 @@ void Scene::setExpanded(QModelIndex id)
 void Scene::setCollapsed(QModelIndex id)
 {
     CGAL::Three::Scene_group_item* group =
-            qobject_cast<CGAL::Three::Scene_group_item*>(item(index_map.value(index(0, 0, id.parent()))));
+            qobject_cast<CGAL::Three::Scene_group_item*>(item(getIdFromModelIndex(id)));
     if(group)
+    {
         group->setExpanded(false);
+    }
 }
 
 int Scene::getIdFromModelIndex(QModelIndex modelId)const

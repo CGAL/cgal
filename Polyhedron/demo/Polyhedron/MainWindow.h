@@ -14,6 +14,7 @@
 #include <QFileInfo>
 #include <QStringList>
 #include <QSet>
+#include <QModelIndex>
 class Scene;
 class Viewer;
 class QTreeView;
@@ -27,7 +28,6 @@ class Scene_item;
 }
 
 class QSortFilterProxyModel;
-class QModelIndex;
 
 namespace Ui {
   class MainWindow;
@@ -70,6 +70,9 @@ public:
 
 Q_SIGNALS:
   void on_closure();
+  void expanded(QModelIndex);
+  void collapsed(QModelIndex);
+
 
 public Q_SLOTS:
   //!Creates a new group and adds it to the scene.
@@ -79,6 +82,8 @@ public Q_SLOTS:
   void on_upButton_pressed();
   void on_downButton_pressed();
   void restoreCollapseState();
+  void setExpanded(QModelIndex);
+  void setCollapsed(QModelIndex);
   /// given a file extension file, returns true if `filename` matches the filter
   bool file_matches_filter(const QString& filters, const QString& filename);
   //!Prints a dialog containing statistics on the selected polyhedrons.

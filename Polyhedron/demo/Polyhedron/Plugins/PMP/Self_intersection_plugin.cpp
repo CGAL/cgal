@@ -86,8 +86,8 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
       }
       selection_item->invalidate_buffers();
       selection_item->setName(tr("%1 (selection) (intersecting triangles)").arg(item->name()));
-      scene->addItem(selection_item);
       item->setRenderingMode(Wireframe);
+      scene->addItem(selection_item);
       scene->itemChanged(item);
       scene->itemChanged(selection_item);
     }
