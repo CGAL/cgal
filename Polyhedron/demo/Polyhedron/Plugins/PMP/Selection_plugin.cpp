@@ -305,7 +305,7 @@ public Q_SLOTS:
     Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
     if(selection_item->export_selected_facets_as_polyhedron(poly_item->polyhedron())) {
       poly_item->setName(QString("%1-facets").arg(selection_item->name()));
-      poly_item->invalidate_OpenGLBuffers(); // for init()
+      poly_item->invalidateOpenGLBuffers(); // for init()
       scene->setSelectedItem( scene->addItem(poly_item) );
       scene->itemChanged(poly_item);
     }
@@ -358,7 +358,7 @@ public Q_SLOTS:
         scene->erase(item_id);
         return;
       }
-      selection_item->invalidate_OpenGLBuffers();
+      selection_item->invalidateOpenGLBuffers();
       scene->itemChanged(selection_item);
     }
     // now set default params both for selection items coming from selection_io, or on_Create_selection_item_button_clicked

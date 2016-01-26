@@ -46,7 +46,7 @@ public:
   // Function for displaying meta-data of the item
   virtual QString toolTip() const;
 
-  virtual void invalidate_OpenGLBuffers();
+  virtual void invalidateOpenGLBuffers();
 
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const;

@@ -88,7 +88,7 @@ void Polyhedron_demo_mesh_simplification_plugin::on_actionSimplify_triggered()
       << pMesh->size_of_halfedges() / 2 << " edges)" << std::endl;
 
     // update scene
-    item->invalidate_OpenGLBuffers();
+    item->invalidateOpenGLBuffers();
     scene->itemChanged(index);
     QApplication::restoreOverrideCursor();
   }

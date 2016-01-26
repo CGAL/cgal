@@ -44,7 +44,7 @@ public:
   bool isEmpty() const;
   void compute_bbox() const;
 
-  virtual void invalidate_OpenGLBuffers();
+  virtual void invalidateOpenGLBuffers();
   virtual void selection_changed(bool);
 
 private:

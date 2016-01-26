@@ -69,7 +69,7 @@ public:
   virtual void draw_edges(CGAL::Three::Viewer_interface*) const;
 
   virtual QString toolTip() const;
-  virtual void invalidate_OpenGLBuffers();
+  virtual void invalidateOpenGLBuffers();
 public Q_SLOTS:
   void plane_was_moved() { need_update_ = true; }
   void compute_function_grid() const;

@@ -153,7 +153,7 @@ protected:
   
 public Q_SLOTS:
   virtual void poly_item_changed();
-  virtual void invalidate_OpenGLBuffers();
+  virtual void invalidateOpenGLBuffers();
 };
 
 #endif // SCENE_POLYHEDRON_SHORTEST_PATH_ITEM_H

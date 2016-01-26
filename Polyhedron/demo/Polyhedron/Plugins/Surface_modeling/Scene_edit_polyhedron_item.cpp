@@ -28,7 +28,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   connect(&k_ring_selector, SIGNAL(selected(const std::set<Polyhedron::Vertex_handle>&)), this,
           SLOT(selected(const std::set<Polyhedron::Vertex_handle>&)));
 
-  poly_item->set_color_vector_read_only(true); // to prevent recomputation of color vector in invalidate_OpenGLBuffers()
+  poly_item->set_color_vector_read_only(true); // to prevent recomputation of color vector in invalidateOpenGLBuffers()
   poly_item->update_vertex_indices();
 
   deform_mesh = new Deform_mesh(*(poly_item->polyhedron()),
@@ -97,7 +97,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 
     //the spheres :
     create_Sphere(length_of_axis/15.0);
-    invalidate_OpenGLBuffers();
+    invalidateOpenGLBuffers();
 }
 
 Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
@@ -532,7 +532,7 @@ void Scene_edit_polyhedron_item::remesh()
 void Scene_edit_polyhedron_item::timerEvent(QTimerEvent* /*event*/)
 { // just handle deformation - paint like selection is handled in eventFilter()
   if(state.ctrl_pressing && (state.left_button_pressing || state.right_button_pressing)) {
-      invalidate_OpenGLBuffers();
+      invalidateOpenGLBuffers();
     if(!ui_widget->ActivatePivotingCheckBox->isChecked()) {
         deform();
     }
@@ -821,7 +821,7 @@ void Scene_edit_polyhedron_item::compute_bbox(const CGAL::Three::Scene_interface
     
 }
 
-void Scene_edit_polyhedron_item::invalidate_OpenGLBuffers()
+void Scene_edit_polyhedron_item::invalidateOpenGLBuffers()
 {
     compute_normals_and_vertices();
     update_normals();
@@ -833,7 +833,7 @@ Scene_polyhedron_item* Scene_edit_polyhedron_item::to_polyhedron_item() {
   Scene_polyhedron_item* poly_item_tmp = poly_item;
   poly_item->set_color_vector_read_only(false);
   own_poly_item=false;
-  poly_item_tmp->invalidate_OpenGLBuffers();
+  poly_item_tmp->invalidateOpenGLBuffers();
   return poly_item_tmp;
 }
 

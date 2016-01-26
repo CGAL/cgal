@@ -109,12 +109,12 @@ void Polyhedron_demo_orient_soup_plugin::orient()
         poly_item->setColor(item->color());
         poly_item->setRenderingMode(item->renderingMode());
         poly_item->setVisible(item->visible());
-        poly_item->invalidate_OpenGLBuffers();
+        poly_item->invalidateOpenGLBuffers();
         poly_item->setProperty("source filename", item->property("source filename"));
         scene->replaceItem(index, poly_item);
         delete item;
       } else {
-        item->invalidate_OpenGLBuffers();
+        item->invalidateOpenGLBuffers();
         scene->itemChanged(item);
       }
 

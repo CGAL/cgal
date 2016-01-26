@@ -84,7 +84,7 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
         selection_item->selected_facets.insert(fb->first);
         selection_item->selected_facets.insert(fb->second);
       }
-      selection_item->invalidate_OpenGLBuffers();
+      selection_item->invalidateOpenGLBuffers();
       selection_item->setName(tr("%1 (selection) (intersecting triangles)").arg(item->name()));
       scene->addItem(selection_item);
       item->setRenderingMode(Wireframe);

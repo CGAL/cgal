@@ -212,7 +212,7 @@ void Polyhedron_demo_intersection_plugin::intersection()
   new_item->setColor(Qt::green);
   new_item->setRenderingMode(Wireframe);
   scene->addItem(new_item);
-  new_item->invalidate_OpenGLBuffers();
+  new_item->invalidateOpenGLBuffers();
 
   QApplication::restoreOverrideCursor();
 }

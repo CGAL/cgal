@@ -33,7 +33,7 @@ public:
   {
     setNormal(0., 0., 1.);
     //Generates an integer which will be used as ID for each buffer
-    invalidate_OpenGLBuffers();
+    invalidateOpenGLBuffers();
   }
 
   ~Scene_plane_item() {
@@ -117,7 +117,7 @@ private:
   }
 
 public Q_SLOTS:
-  virtual void invalidate_OpenGLBuffers()
+  virtual void invalidateOpenGLBuffers()
   {
       compute_normals_and_vertices();
       are_buffers_filled = false;

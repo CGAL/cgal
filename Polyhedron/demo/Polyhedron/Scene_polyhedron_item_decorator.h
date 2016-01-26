@@ -49,7 +49,7 @@ public:
   void set_delete_item(bool delete_item) { delete_poly_item = delete_item; }
 
 public Q_SLOTS:
-  void invalidate_OpenGLBuffers();
+  void invalidateOpenGLBuffers();
   void select(double orig_x,
               double orig_y,
               double orig_z,

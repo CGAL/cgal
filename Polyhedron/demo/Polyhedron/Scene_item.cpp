@@ -101,7 +101,7 @@ QMenu* CGAL::Three::Scene_item::contextMenu()
     return defaultContextMenu;
 }
 
-void CGAL::Three::Scene_item::invalidate_OpenGLBuffers() {}
+void CGAL::Three::Scene_item::invalidateOpenGLBuffers() {}
 
 void CGAL::Three::Scene_item::selection_changed(bool) {}
 

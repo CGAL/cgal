@@ -664,7 +664,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     is_triangulated = true;
     nb_f_lines = 0;
     init();
-    invalidate_OpenGLBuffers();
+    invalidateOpenGLBuffers();
     self_intersect = false;
 }
 
@@ -685,7 +685,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     nb_facets = 0;
     nb_lines = 0;
     nb_f_lines = 0;
-    invalidate_OpenGLBuffers();
+    invalidateOpenGLBuffers();
     self_intersect = false;
 }
 
@@ -745,7 +745,7 @@ Scene_polyhedron_item::load(std::istream& in)
 
     if ( in && !isEmpty() )
     {
-        invalidate_OpenGLBuffers();
+        invalidateOpenGLBuffers();
         return true;
     }
     return false;
@@ -787,7 +787,7 @@ Scene_polyhedron_item::load_obj(std::istream& in)
   }
     if ( (! failed) && !isEmpty() )
     {
-        invalidate_buffers();
+        invalidateOpenGLBuffers();
         return true;
     }
     return false;
@@ -875,14 +875,14 @@ QMenu* Scene_polyhedron_item::contextMenu()
 void Scene_polyhedron_item::show_only_feature_edges(bool b)
 {
     show_only_feature_edges_m = b;
-    invalidate_OpenGLBuffers();
+    invalidateOpenGLBuffers();
     Q_EMIT itemChanged();
 }
 
 void Scene_polyhedron_item::show_feature_edges(bool b)
 {
   show_feature_edges_m = b;
-  invalidate_OpenGLBuffers();
+  invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
 }
 
@@ -1020,12 +1020,12 @@ void Scene_polyhedron_item::compute_bbox() const {
 
 void
 Scene_polyhedron_item::
-invalidate_OpenGLBuffers()
+invalidateOpenGLBuffers()
 {
   Q_EMIT item_is_about_to_be_changed();
     delete_aabb_tree(this);
     init();
-    Base::invalidate_OpenGLBuffers();
+    Base::invalidateOpenGLBuffers();
     are_buffers_filled = false;
 
 }
@@ -1154,7 +1154,7 @@ Scene_polyhedron_item::select(double orig_x,
                         polyhedron()->erase_facet(selected_fh->halfedge());
                         polyhedron()->normalize_border();
                         //set_erase_next_picked_facet(false);
-                        invalidate_OpenGLBuffers();
+                        invalidateOpenGLBuffers();
             Q_EMIT itemChanged();
                     }
                 }

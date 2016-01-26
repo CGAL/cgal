@@ -72,7 +72,7 @@ public:
     }
 
 public Q_SLOTS:
-    virtual void invalidate_OpenGLBuffers();
+    virtual void invalidateOpenGLBuffers();
     void change_corner_radii(double);
     void change_corner_radii();
     void split_at_sharp_angles();
@@ -82,7 +82,7 @@ public Q_SLOTS:
     void smooth(){
         for (Polylines_container::iterator pit=polylines.begin(),pit_end=polylines.end();pit!=pit_end;++pit)
             smooth(*pit);
-      invalidate_OpenGLBuffers();
+      invalidateOpenGLBuffers();
       Q_EMIT itemChanged();
     }
 public:
