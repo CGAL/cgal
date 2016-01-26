@@ -27,7 +27,7 @@ bool Polyhedron_demo_ply_to_xyz_plugin::canLoad() const {
 
 CGAL::Three::Scene_item*
 Polyhedron_demo_ply_to_xyz_plugin::load(QFileInfo fileinfo) {
-  std::ifstream in(fileinfo.filePath().toUtf8());
+  std::ifstream in(fileinfo.filePath().toUtf8(), std::ios_base::binary);
 
   if(!in)
     std::cerr << "Error!\n";
