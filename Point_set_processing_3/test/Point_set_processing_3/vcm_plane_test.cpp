@@ -34,7 +34,8 @@ int main (void) {
     double epsilon=2e-5;
     assert(points[0].second.x() < epsilon && points[0].second.x() > -epsilon);
     assert(points[0].second.y() < epsilon && points[0].second.y() > -epsilon);
-    assert(points[0].second.z() < 1+epsilon && points[0].second.z() > 1-epsilon);
+    assert(points[0].second.z() < 0 || (points[0].second.z() < 1+epsilon && points[0].second.z() > 1-epsilon));
+    assert(points[0].second.z() > 0 || (points[0].second.z() < -1+epsilon && points[0].second.z() > -1-epsilon));
 
     return 0;
 }
