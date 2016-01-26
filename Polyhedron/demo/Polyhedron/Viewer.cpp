@@ -1341,7 +1341,7 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
  {
    if(tl->textList().size() > max_textItems)
    {
-     Q_EMIT sendMessage("There is too many textItems to display, it would not be readable, and it would be too slow to render them all.",5000);
+     Q_EMIT sendMessage("There are too many textItems to display.",5000);
      return;
    }
      textItems.append(tl);

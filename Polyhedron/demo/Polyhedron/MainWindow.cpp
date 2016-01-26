@@ -126,7 +126,6 @@ MainWindow::MainWindow(QWidget* parent)
 #if !defined(QT_SCRIPT_LIB)
   ui->menuBar->removeAction(ui->actionLoad_Script);
 #endif
-  
   // Save some pointers from ui, for latter use.
   sceneView = ui->sceneView;
   viewer = ui->viewer;
@@ -137,6 +136,7 @@ MainWindow::MainWindow(QWidget* parent)
   scene = new Scene(this);
   viewer->textRenderer->setScene(scene);
   viewer->setScene(scene);
+  ui->actionMax_text_items_displayed->setText(QString("Max text items displayed %1").arg(viewer->textRenderer->getMax_textItems()));
   {
     QShortcut* shortcut = new QShortcut(QKeySequence(Qt::ALT+Qt::Key_Q), this);
     connect(shortcut, SIGNAL(activated()),
@@ -268,7 +268,8 @@ MainWindow::MainWindow(QWidget* parent)
   // Connect actionQuit (Ctrl+Q) and qApp->quit()
   connect(ui->actionQuit, SIGNAL(triggered()),
           this, SLOT(quit()));
-
+connect(ui->actionMax_text_items_displayed, SIGNAL(triggered()),
+        this, SLOT(on_actionMaxItemsDisplayed_triggered()));
   // Connect "Select all items"
   connect(ui->actionSelect_all_items, SIGNAL(triggered()),
           this, SLOT(selectAll()));
@@ -1829,6 +1830,7 @@ QString MainWindow::get_item_stats()
   }
   return str;
 }
+
 void MainWindow::setCollapsed(QModelIndex index)
 {
   Q_EMIT collapsed(proxyModel->mapToSource(index));
@@ -1837,4 +1839,18 @@ void MainWindow::setCollapsed(QModelIndex index)
 void MainWindow::setExpanded(QModelIndex index)
 {
   Q_EMIT expanded(proxyModel->mapToSource(index));
+}
+
+void MainWindow::on_actionMaxItemsDisplayed_triggered()
+{
+  bool ok;
+  bool valid;
+  QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
+                                       tr("Maximum text items diplayed:"), QLineEdit::Normal,
+                                       "30000", &ok);
+  text.toInt(&valid);
+  if (ok && valid){
+    viewer->textRenderer->setMax(text.toInt());
+    ui->actionMax_text_items_displayed->setText(QString("Max text items displayed %1").arg(text.toInt()));
+  }
 }

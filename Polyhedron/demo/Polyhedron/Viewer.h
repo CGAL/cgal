@@ -257,6 +257,8 @@ public:
     QList<TextListItem*> items() const{return textItems;}
     //!Gives the renderer a Scene, needed to determine which Ids must be drawn.
     void setScene(CGAL::Three::Scene_interface* p_scene){scene = p_scene;}
+    int getMax_textItems()const{return max_textItems;}
+    void setMax(int max){max_textItems = max;}
 
 Q_SIGNALS:
     void sendMessage(QString message, int ms_delay =2000);
