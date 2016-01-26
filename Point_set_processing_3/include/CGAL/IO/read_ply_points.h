@@ -48,6 +48,8 @@ namespace CGAL {
 // float      single-precision float    4
 // double     double-precision float    8
 
+/// \cond SKIP_IN_MANUAL
+
 class Ply_read_number
 {
 protected:
@@ -342,7 +344,7 @@ namespace internal {
 
 } //namespace internal
 
-
+/// \endcond
 
 //===================================================================================
 /// \ingroup PkgPointSetProcessing
