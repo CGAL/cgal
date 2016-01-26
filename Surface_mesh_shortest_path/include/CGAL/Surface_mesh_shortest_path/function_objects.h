@@ -459,8 +459,6 @@ public:
 
     Point_2 p1;
 
-    FT t1;
-
     if (intersectResult1)
     {
       Point_2* result = boost::get<Point_2, Point_2, Line_2>(&*intersectResult1);
@@ -469,7 +467,7 @@ public:
 
       if (result)
       {
-        t1 = m_parametric_distance_along_segment_2(s1, *result);
+        CGAL_assertion_code(FT t1 = m_parametric_distance_along_segment_2(s1, *result);)
         p1 = *result;
         CGAL_assertion(t1 >= FT(-0.00001) && t1 <= FT(1.00001));
       }
@@ -479,7 +477,6 @@ public:
 
     CGAL_assertion(bool(intersectResult2));
 
-    FT t2;
     Point_2 p2;
 
     if (intersectResult2)
@@ -490,7 +487,7 @@ public:
 
       if (result)
       {
-        t2 = m_parametric_distance_along_segment_2(s2, *result);
+        CGAL_assertion_code(FT t2 = m_parametric_distance_along_segment_2(s2, *result);)
         p2 = *result;
         CGAL_assertion(t2 >= FT(-0.00001) && t2 <= FT(1.00001));
       }
