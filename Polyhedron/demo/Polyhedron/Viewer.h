@@ -91,8 +91,12 @@ public Q_SLOTS:
                                float animation_duration = 0.5f);
   //!Makes the Viewer display a message
   void printMessage(QString message, int ms_delay );
+  void displayMessage(const QString &_message, int delay);
+  void displayMessage(const QString &_message){displayMessage(_message, 2000);}
+  void hideMessage();
 
 protected:
+  void postDraw();
   void paintEvent(QPaintEvent *);
   void paintGL();
   //! Holds useful data to draw the axis system
@@ -147,14 +151,41 @@ protected:
 protected:
   Viewer_impl* d;
   double prev_radius;
+
+private:
+  // F P S    d i s p l a y
+  QTime fpsTime;
+  unsigned int fpsCounter;
+  QString fpsString;
+  float f_p_s;
+  // M e s s a g e s
+  QString message;
+  bool _displayMessage;
+  QTimer messageTimer;
 }; // end class Viewer
 
 //!This class holds the properties of each line of text to be rendered.
 class  VIEWER_EXPORT TextItem{
 public :
+  /*!
+   * \brief The default constructor.
+   * This is an overloaded functtion.
+   */
     TextItem() {}
-    TextItem(float p_x, float p_y, float p_z, QString p_text, QFont font = QFont(), QColor p_color = Qt::black)
-        :x(p_x), y(p_y), z(p_z), m_text(p_text), m_font(font), m_color(p_color)
+    /*!
+     * \brief The construtor for the TextItem
+     * \param p_x the X coordinate of the displayed text.
+     * \param p_y the Y coordinate of the displayed text.
+     * \param p_z the Z coordinate of the displayed text.
+     * \param p_text the text to render.
+     * \param p_3D
+     * If true : the renderer will convert the coordinates into world coordinates.
+     * If false : the renderer will display the text in screen coordinates, and ignore p_z
+     * \param font the font used for the rendering.
+     * \param p_color the color of the text.
+     */
+    TextItem(float p_x, float p_y, float p_z, QString p_text, bool p_3D = true, QFont font = QFont(), QColor p_color = Qt::black)
+        :x(p_x), y(p_y), z(p_z),_3D(p_3D), m_text(p_text), m_font(font), m_color(p_color)
     {
        QFontMetrics fm(m_font);
        _width = fm.width(m_text);
@@ -167,15 +198,18 @@ public :
     float height(){return _height;}
     QFont font(){return m_font;}
     QColor color() {return m_color;}
+    bool is_3D()const{return _3D;}
 private:
     float x;
     float y;
     float z;
     float _width;
     float _height;
+    bool _3D;
     QString m_text;
     QFont m_font;
     QColor m_color;
+
 };//end class TextItem
 
 class  VIEWER_EXPORT TextListItem{
@@ -212,7 +246,7 @@ public:
     //!Adds a TextListItem to the global list.
     void addTextList(TextListItem*);
     //!Creates a new TextItem and adds it to the local list.
-    void addText(float p_x, float p_y, float p_z, QString p_text, QFont font = QFont(), QColor p_color = Qt::black);
+    void addText(float p_x, float p_y, float p_z, QString p_text, bool p_3D = true,  QFont font = QFont(), QColor p_color = Qt::black);
     //!Removes a TextItem from the local list.
     void removeText(TextItem*);
     //!Removes a TextItemList from the global list.

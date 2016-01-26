@@ -1401,7 +1401,7 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
                     double dist = CGAL::squared_distance(test, pt_under);
                     if( dist < min_dist){
                         min_dist = dist;
-                        text_item = TextItem(test.x(), test.y(), test.z(), QString("%1").arg(vh->id()), font, Qt::red);
+                        text_item = TextItem(test.x(), test.y(), test.z(), QString("%1").arg(vh->id()), true, font, Qt::red);
                     }
                 }
                 // test the midpoint of edges of the closest face
@@ -1411,7 +1411,7 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
                     double dist = CGAL::squared_distance(test, pt_under);
                     if(dist < min_dist){
                         min_dist = dist;
-                        text_item = TextItem(test.x(), test.y(), test.z(), QString("%1").arg(e->id()/2), font, Qt::green);
+                        text_item = TextItem(test.x(), test.y(), test.z(), QString("%1").arg(e->id()/2), true, font, Qt::green);
                     }
                 }
 
@@ -1430,7 +1430,7 @@ void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_i
                 double dist = CGAL::squared_distance(test, pt_under);
                 if(dist < min_dist){
                     min_dist = dist;
-                    text_item = TextItem(test.x(), test.y(), test.z(), QString("%1").arg(selected_fh->id()), font, Qt::blue);
+                    text_item = TextItem(test.x(), test.y(), test.z(), QString("%1").arg(selected_fh->id()), true, font, Qt::blue);
                 }
 
                 TextItem* former_targeted_id=targeted_id;
@@ -1461,7 +1461,7 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
     Q_FOREACH(Polyhedron::Vertex_const_handle vh, vertices(*poly))
     {
         const Point& p = vh->point();
-        textItems->append(new TextItem((float)p.x(), (float)p.y(), (float)p.z(), QString("%1").arg(vh->id()), font, Qt::red));
+        textItems->append(new TextItem((float)p.x(), (float)p.y(), (float)p.z(), QString("%1").arg(vh->id()), true, font, Qt::red));
 
     }
 
@@ -1469,7 +1469,7 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
     {
         const Point& p1 = source(e, *poly)->point();
         const Point& p2 = target(e, *poly)->point();
-        textItems->append(new TextItem((float)(p1.x() + p2.x()) / 2, (float)(p1.y() + p2.y()) / 2, (float)(p1.z() + p2.z()) / 2, QString("%1").arg(e.halfedge()->id() / 2), font, Qt::green));
+        textItems->append(new TextItem((float)(p1.x() + p2.x()) / 2, (float)(p1.y() + p2.y()) / 2, (float)(p1.z() + p2.z()) / 2, QString("%1").arg(e.halfedge()->id() / 2), true, font, Qt::green));
     }
 
     Q_FOREACH(Polyhedron::Facet_handle fh, faces(*poly))
@@ -1484,7 +1484,7 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
                 ++total;
         }
 
-        textItems->append(new TextItem((float)x / total, (float)y / total, (float)z / total, QString("%1").arg(fh->id()), font, Qt::blue));
+        textItems->append(new TextItem((float)x / total, (float)y / total, (float)z / total, QString("%1").arg(fh->id()), true, font, Qt::blue));
     }
     //add the QList to the render's pool
     renderer->addTextList(textItems);

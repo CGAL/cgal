@@ -8,6 +8,7 @@
 #include <QOpenGLShader>
 #include <QOpenGLShaderProgram>
 #include <cmath>
+#include <QApplication>
 
 class Viewer_impl {
 public:
@@ -36,7 +37,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   textRenderer = new TextRenderer();
   connect( textRenderer, SIGNAL(sendMessage(QString,int)),
            this, SLOT(printMessage(QString,int)) );
-
+  connect(&messageTimer, SIGNAL(timeout()), SLOT(hideMessage()));
   setShortcut(EXIT_VIEWER, 0);
   setShortcut(DRAW_AXIS, 0);
   setKeyDescription(Qt::Key_T,
@@ -73,6 +74,10 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   axis_are_displayed = true;
   has_text = false;
   i_is_pressed = false;
+  fpsTime.start();
+  fpsCounter=0;
+  f_p_s=0.0;
+  fpsString=tr("%1Hz", "Frames per seconds, in Hertz").arg("?");
 }
 
 Viewer::~Viewer()
@@ -852,8 +857,29 @@ void Viewer::drawVisualHints()
     d->painter->beginNativePainting();
     glDisable(GL_DEPTH_TEST);
     d->painter->endNativePainting();
-    textRenderer->draw(this);
+    //prints FPS
+    TextItem *fps_text;
+    if(FPSIsDisplayed())
+    {
+      fps_text = new TextItem(20, int(1.5*((QApplication::font().pixelSize()>0)?QApplication::font().pixelSize():QApplication::font().pointSize())),0,fpsString,false, QFont(), Qt::gray);
+      textRenderer->addText(fps_text);
     }
+    //Prints the displayMessage
+    QFont font = QFont();
+    QFontMetrics fm(font);
+    TextItem *message_text;
+    if (_displayMessage)
+    {
+      message_text = new TextItem(10 + fm.width(message)/2, height()-20, 0, message, false, QFont(), Qt::gray );
+      textRenderer->addText(message_text);
+    }
+    textRenderer->draw(this);
+    if(FPSIsDisplayed())
+      textRenderer->removeText(fps_text);
+    if (_displayMessage)
+      textRenderer->removeText(message_text);
+    }
+
 
 void Viewer::resizeGL(int w, int h)
 {
@@ -1197,21 +1223,60 @@ void Viewer::paintEvent(QPaintEvent *)
 
 void Viewer::paintGL()
 {
-
-    if (!d->painter->isActive())
-      d->painter->begin(this);
-    d->painter->beginNativePainting();
-    glClearColor(1.0, 1.0, 1.0, 1.0);
-    d->painter->endNativePainting();
-    preDraw();
-    draw();
-    postDraw();
-    d->painter->end();
+  if (!d->painter->isActive())
+    d->painter->begin(this);
+  d->painter->beginNativePainting();
+  glClearColor(1.0, 1.0, 1.0, 1.0);
+  d->painter->endNativePainting();
+  preDraw();
+  draw();
+  postDraw();
+  d->painter->end();
 }
-
-void Viewer::printMessage(QString message, int ms_delay)
+void Viewer::postDraw()
 {
-  displayMessage(message, ms_delay);
+
+#ifdef GL_RESCALE_NORMAL  // OpenGL 1.2 Only...
+  glEnable(GL_RESCALE_NORMAL);
+#endif
+
+  if (cameraIsEdited())
+    camera()->drawAllPaths();
+
+  // Pivot point, line when camera rolls, zoom region
+  drawVisualHints();
+
+  if (gridIsDrawn()) { glLineWidth(1.0); drawGrid(camera()->sceneRadius()); }
+  if (axisIsDrawn()) { glLineWidth(2.0); drawAxis(camera()->sceneRadius()); }
+
+  // FPS computation
+  const unsigned int maxCounter = 20;
+  if (++fpsCounter == maxCounter)
+  {
+    f_p_s = 1000.0 * maxCounter / fpsTime.restart();
+    fpsString = tr("%1Hz", "Frames per seconds, in Hertz").arg(f_p_s, 0, 'f', ((f_p_s < 10.0)?1:0));
+    fpsCounter = 0;
+  }
+
+}
+void Viewer::displayMessage(const QString &_message, int delay)
+{
+          message = _message;
+          _displayMessage = true;
+          // Was set to single shot in defaultConstructor.
+          messageTimer.start(delay);
+          if (textIsEnabled())
+                  update();
+}
+void Viewer::hideMessage()
+{
+        _displayMessage = false;
+        if (textIsEnabled())
+                update();
+}
+void Viewer::printMessage(QString _message, int ms_delay)
+{
+  displayMessage(_message, ms_delay);
 }
 void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
 {
@@ -1229,10 +1294,17 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
             qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
             if(viewer->testDisplayId(src.x, src.y, src.z))
             {
-              rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
+              if(item->is_3D())
+                rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
                            camera->projectedCoordinatesOf(src).y-item->height()/2,
                            item->width(),
                            item->height());
+              else
+                rect = QRect(src.x-item->width()/2,
+                           src.y-item->height()/2,
+                           item->width(),
+                           item->height());
+
               painter->setFont(item->font());
               painter->setPen(QPen(item->color()));
               painter->drawText(rect, item->text());
@@ -1242,12 +1314,22 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
     Q_FOREACH(TextItem* item, local_textItems)
     {
       qglviewer::Vec src(item->position().x(), item->position().y(),item->position().z());
-      if(viewer->testDisplayId(src.x, src.y, src.z))
+      if(item->is_3D())
       {
-          rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
+        if(viewer->testDisplayId(src.x, src.y, src.z))
+        {
+            rect = QRect(camera->projectedCoordinatesOf(src).x-item->width()/2,
                        camera->projectedCoordinatesOf(src).y-item->height()/2,
                        item->width(),
                        item->height());
+        }
+      }
+      else
+      {
+          rect = QRect(src.x-item->width()/2,
+                     src.y-item->height()/2,
+                     item->width(),
+                     item->height());
           painter->setFont(item->font());
           painter->setPen(QPen(item->color()));
           painter->drawText(rect, item->text());
@@ -1270,9 +1352,9 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
      local_textItems.append(ti);
  }
 
- void TextRenderer::addText(float p_x, float p_y, float p_z, QString p_text, QFont p_font , QColor p_color )
+ void TextRenderer::addText(float p_x, float p_y, float p_z, QString p_text, bool p_3D, QFont p_font , QColor p_color )
  {
-     local_textItems.append(new TextItem(p_x, p_y, p_z, p_text, p_font, p_color));
+     local_textItems.append(new TextItem(p_x, p_y, p_z, p_text, p_3D, p_font, p_color));
  }
 
  void TextRenderer::removeText(TextItem *item)
