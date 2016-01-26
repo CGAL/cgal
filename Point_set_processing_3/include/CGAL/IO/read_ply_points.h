@@ -381,7 +381,11 @@ public:
   virtual void process_line () = 0;
   
 protected:
-  /// \cond SKIP_IN_MANUAL
+
+  /*!
+    \param tag name of the property (ex: _nx_ for x normal coordinate)
+    \return true if points inside the PLY input contain the property `tag`
+  */
   bool does_reader_exist (const char* tag)
   {
     for (std::size_t i = 0; i < m_readers->size (); ++ i)
@@ -389,7 +393,11 @@ protected:
         return true;
     return false;
   }
-  
+
+  /*!
+    \param t reference to store last read value of the property `tag`
+    \param tag name of the required property
+  */
   template <typename T>
   void assign (T& t, const char* tag)
   {
@@ -400,7 +408,7 @@ protected:
           return;
         }
   }
-  /// \endcond
+
 };
 
 //===================================================================================
