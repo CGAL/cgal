@@ -45,10 +45,8 @@ public:
 
     // activate functions below if K::FT is floating point and fast_bbox_intersection = true
     template <class K>
-    typename boost::enable_if<
-    boost::type_traits::ice_and<
-    boost::is_floating_point<typename K::FT>::value,
-          fast_bbox_intersection>,
+    typename boost::enable_if_c<
+      boost::is_floating_point<typename K::FT>::value && fast_bbox_intersection,
           bool >::type
     operator()(const CGAL::Segment_3<K>& segment, const Bounding_box& bbox) const {
       const Point_3& p = segment.source();
@@ -65,10 +63,8 @@ public:
     }
 
     template <class K>
-    typename boost::enable_if<
-    boost::type_traits::ice_and<
-    boost::is_floating_point<typename K::FT>::value,
-          fast_bbox_intersection>,
+    typename boost::enable_if_c<
+      boost::is_floating_point<typename K::FT>::value && fast_bbox_intersection,
           bool >::type
     operator()(const CGAL::Ray_3<K>& ray, const Bounding_box& bbox) const {
       const Point_3& p = ray.source();
