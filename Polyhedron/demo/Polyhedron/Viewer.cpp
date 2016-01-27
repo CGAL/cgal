@@ -63,13 +63,11 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   pickMatrix_[15]=1;
   prev_radius = sceneRadius();
   axis_are_displayed = true;
-  depth_fbo = NULL;
 }
 
 Viewer::~Viewer()
 {
   delete d;
-  delete depth_fbo;
 }
 
 void Viewer::setScene(CGAL::Three::Scene_draw_interface* scene)
@@ -111,14 +109,11 @@ bool Viewer::inFastDrawing() const
 void Viewer::draw()
 {
   glEnable(GL_DEPTH_TEST);
-  glClear(GL_DEPTH_BUFFER_BIT);
   d->draw_aux(false, this);
 }
 
 void Viewer::fastDraw()
 {
-  glEnable(GL_DEPTH_TEST);
-  glClear(GL_DEPTH_BUFFER_BIT);
   d->draw_aux(false, this);
 }
 
@@ -126,8 +121,6 @@ void Viewer::initializeGL()
 {
   QGLViewer::initializeGL();
   initializeOpenGLFunctions();
-  if(!QOpenGLFramebufferObject::hasOpenGLFramebufferBlit())
-    qDebug()<<"glBlitFrameBuffer not found. Axis system might get clipped by other items.";
   extension_is_found = true;
   glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
   if(!glDrawArraysInstanced)

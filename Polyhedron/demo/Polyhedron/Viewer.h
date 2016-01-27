@@ -8,7 +8,6 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLShaderProgram>
 #include <CGAL/Three/Viewer_interface.h>
-#include <QOpenGLFramebufferObject>
 #include <QGLViewer/qglviewer.h>
 #include <QPoint>
 
@@ -132,7 +131,6 @@ protected:
 protected:
   Viewer_impl* d;
   double prev_radius;
-  QOpenGLFramebufferObject *depth_fbo;
 }; // end class Viewer
 
 #endif // VIEWER_H
