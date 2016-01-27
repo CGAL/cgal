@@ -199,7 +199,7 @@ void Viewer::initializeGL()
       "   V = normalize(V); \n"
       "   vec3 R = reflect(-L, N); \n"
       "   vec4 diffuse = max(abs(dot(N,L)),0.0) * light_diff*color; \n"
-      "   vec4 specular = pow(abs(dot(R,V)), spec_power) * light_spec; \n"
+      "   vec4 specular = pow(max(dot(R,V), 0.0), spec_power) * light_spec; \n"
 
       "gl_FragColor = color*light_amb + diffuse + specular; \n"
       "} \n"
@@ -783,9 +783,7 @@ void Viewer::drawVisualHints()
         QMatrix4x4 mvpMatrix;
         QMatrix4x4 mvMatrix;
         double mat[16];
-        //Keeps the axis from being clipped
-        qglviewer::Vec center = sceneCenter();
-        setSceneCenter(camera()->position());
+        //camera()->frame()->rotation().getMatrix(mat);
         camera()->getModelViewProjectionMatrix(mat);
         //nullifies the translation
         mat[12]=0;
@@ -800,12 +798,8 @@ void Viewer::drawVisualHints()
         {
             mvMatrix.data()[i] = (float)mat[i];
         }
-        //Keeps the lighing from changing according to the position and orientation of the camera.
-        mvMatrix.data()[12] = 0;
-        mvMatrix.data()[13] = 0;
-        mvMatrix.data()[14] = 1;
 
-        QVector4D	position(0.0f,0.0f,0.0f,1.0f );
+        QVector4D	position(0.0f,0.0f,1.0f,1.0f );
         // define material
         QVector4D	ambient;
         QVector4D	diffuse;
@@ -841,11 +835,7 @@ void Viewer::drawVisualHints()
 
         vao[0].bind();
         rendering_program.bind();
-        //Keeps the axis system in front of everything
-        glClear(GL_DEPTH_BUFFER_BIT);
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(v_Axis.size() / 3));
-        //restores the original sceneCenter
-        setSceneCenter(center);
         rendering_program.release();
         vao[0].release();
     }
