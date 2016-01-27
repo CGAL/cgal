@@ -105,7 +105,8 @@ public:
 
 template <class H>
 std::string PH(H h)
-{ if (h == H()) return "nil"; return h->debug(); }
+{ if (h == H()) return "nil";
+  return h->debug(); }
 
 } //namespace CGAL
 #endif // CGAL_ITERATORTOOLS_H
