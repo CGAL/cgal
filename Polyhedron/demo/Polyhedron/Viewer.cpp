@@ -121,25 +121,19 @@ void Viewer::initializeGL()
 {
   QGLViewer::initializeGL();
   initializeOpenGLFunctions();
+  extension_is_found = true;
   glDrawArraysInstanced = (PFNGLDRAWARRAYSINSTANCEDARBPROC)this->context()->getProcAddress("glDrawArraysInstancedARB");
   if(!glDrawArraysInstanced)
   {
       qDebug()<<"glDrawArraysInstancedARB : extension not found. Spheres will be displayed as points.";
       extension_is_found = false;
   }
-  else
-      extension_is_found = true;
-
   glVertexAttribDivisor = (PFNGLVERTEXATTRIBDIVISORARBPROC)this->context()->getProcAddress("glVertexAttribDivisorARB");
   if(!glDrawArraysInstanced)
   {
       qDebug()<<"glVertexAttribDivisorARB : extension not found. Spheres will be displayed as points.";
       extension_is_found = false;
   }
-  else
-      extension_is_found = true;
-
-
   setBackgroundColor(::Qt::white);
   vao[0].create();
   for(int i=0; i<3; i++)
@@ -783,9 +777,6 @@ void Viewer::drawVisualHints()
         QMatrix4x4 mvpMatrix;
         QMatrix4x4 mvMatrix;
         double mat[16];
-        //Keeps the axis from being clipped
-        qglviewer::Vec center = sceneCenter();
-        setSceneCenter(camera()->position());
         camera()->getModelViewProjectionMatrix(mat);
         //nullifies the translation
         mat[12]=0;
@@ -810,7 +801,7 @@ void Viewer::drawVisualHints()
         QVector4D	ambient;
         QVector4D	diffuse;
         QVector4D	specular;
-        GLfloat      shininess ;
+        GLfloat         shininess ;
         // Ambient
         ambient[0] = 0.29225f;
         ambient[1] = 0.29225f;
@@ -842,14 +833,10 @@ void Viewer::drawVisualHints()
         vao[0].bind();
         rendering_program.bind();
         //Keeps the axis system in front of everything
-        glClear(GL_DEPTH_BUFFER_BIT);
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(v_Axis.size() / 3));
-        //restores the original sceneCenter
-        setSceneCenter(center);
         rendering_program.release();
         vao[0].release();
     }
-
 }
 
 void Viewer::resizeGL(int w, int h)

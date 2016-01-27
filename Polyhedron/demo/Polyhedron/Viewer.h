@@ -8,7 +8,6 @@
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLShaderProgram>
 #include <CGAL/Three/Viewer_interface.h>
-
 #include <QGLViewer/qglviewer.h>
 #include <QPoint>
 
@@ -128,7 +127,6 @@ protected:
 
   void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
   void resizeGL(int w, int h);
-
 
 protected:
   Viewer_impl* d;
