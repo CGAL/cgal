@@ -365,7 +365,7 @@ template <class pNT> class Polynomial :
   Polynomial<NT> abs() const
   /*{\Mop returns |-\Mvar| if |\Mvar.sign()==NEGATIVE| and |\Mvar| 
   otherwise.}*/
-  { if ( sign()==CGAL::NEGATIVE ) return -*this; return *this; }
+  { return ( sign()==CGAL::NEGATIVE ) ? - *this : *this; }
 
 
   NT content() const
