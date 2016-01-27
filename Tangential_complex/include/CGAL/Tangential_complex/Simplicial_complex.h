@@ -323,7 +323,7 @@ public:
   }
 
   template <int K>
-  std::size_t num_K_simplices()
+  std::size_t num_K_simplices() const
   {
     std::set<Simplex> k_simplices;
 

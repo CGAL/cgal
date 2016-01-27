@@ -14,6 +14,7 @@
 #include <CGAL/Mesh_3/Profiling_tools.h>
 
 #include "../../test/Tangential_complex/testing_utilities.h"
+#include "console_color.h"
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim_all.hpp>
@@ -168,6 +169,18 @@ void make_mesh(
 
   // Stats about the simplices
   mesh.complex().display_stats();
+  std::size_t num_edges = mesh.complex().num_K_simplices<1>();
+  std::size_t num_triangles = mesh.complex().num_K_simplices<2>();
+  std::cerr << "Euler caract.: V - E + F = "
+    << mesh.number_of_vertices()
+    << " - " << (std::ptrdiff_t) num_edges
+    << " + " << (std::ptrdiff_t) num_triangles
+    << " = "
+    << yellow
+    << (std::ptrdiff_t) mesh.number_of_vertices()
+    - (std::ptrdiff_t) num_edges
+    + (std::ptrdiff_t) num_triangles
+    << white << "\n";
 
   //===========================================================================
   // Display info
@@ -176,7 +189,8 @@ void make_mesh(
   std::cerr << std::endl
     << "================================================" << std::endl
     << "Number of vertices: " << mesh.number_of_vertices() << std::endl
-    //<< "Pure pseudomanifold: " << (is_pure_pseudomanifold ? "YES" : "NO") << std::endl
+    << "Pure pseudomanifold: " << yellow 
+    << (is_pure_pseudomanifold ? "YES" : "NO") << white << std::endl
     << "Computation times (seconds): " << std::endl
     << "  * Mesh: " << init_time + computation_time << std::endl
     << "    - Init + kd-tree = " << init_time << std::endl
