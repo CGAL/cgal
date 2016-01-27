@@ -125,7 +125,7 @@ int main(int argc, char* argv[])
   }
 
   double target_edge_length = (argc > 2) ? atof(argv[2]) : 0.079;
-  unsigned int nb_iter = (argc > 3) ? atoi(argv[3]) : 1;
+  unsigned int nb_iter = (argc > 3) ? atoi(argv[3]) : 2;
   const char* selection_file = (argc > 4) ? argv[4]
     : "data/joint-patch.selection.txt";
 
@@ -155,25 +155,21 @@ int main(int argc, char* argv[])
 
   std::cout << "done." << std::endl;
 
-  std::set<face_descriptor> patch;
-  std::copy(pre_patch.begin(), pre_patch.end(),
-            std::inserter(patch, patch.begin()));
-
-  std::cout << "Start remeshing of " << selection_file
-    << " (" << patch.size() << " faces)..." << std::endl;
+  //std::cout << "Start remeshing of " << selection_file
+  //  << " (" << patch.size() << " faces)..." << std::endl;
 
   CGAL::Timer t;
-  t.start();
+  //t.start();
 
-  PMP::isotropic_remeshing(
-    patch,
-    target_edge_length,
-    m,
-    PMP::parameters::number_of_iterations(nb_iter)
-    .protect_constraints(false)
-    );
-  t.stop();
-  std::cout << "Remeshing patch took " << t.time() << std::endl;
+  //PMP::isotropic_remeshing(
+  //  patch,
+  //  target_edge_length,
+  //  m,
+  //  PMP::parameters::number_of_iterations(nb_iter)
+  //  .protect_constraints(false)
+  //  );
+  //t.stop();
+  //std::cout << "Remeshing patch took " << t.time() << std::endl;
 
   t.start();
   PMP::isotropic_remeshing(faces(m),
