@@ -88,7 +88,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveIsolatedVertices_t
         *poly_item->polyhedron());
     messages->information(tr(" %1 isolated vertices have been removed.")
       .arg(nbv));
-    poly_item->invalidate_buffers();
+    poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
   }
 }
@@ -106,7 +106,7 @@ void Polyhedron_demo_repair_polyhedron_plugin::on_actionRemoveDegenerateFaces_tr
       *poly_item->polyhedron());
     messages->information(tr(" %1 degenerate faces have been removed.")
       .arg(nbv));
-    poly_item->invalidate_buffers();
+    poly_item->invalidateOpenGLBuffers();
     Q_EMIT poly_item->itemChanged();
   }
 }

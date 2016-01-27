@@ -27,7 +27,7 @@ public:
     const Scene_polyhedron_item* getBase() const{ return poly_item;  };
     const qglviewer::Vec& center() const { return center_; }
     virtual bool supportsRenderingMode(RenderingMode m) const { return m==Wireframe ; }
-    virtual void invalidate_buffers();
+    virtual void invalidateOpenGLBuffers();
     virtual bool keyPressEvent(QKeyEvent*);
 
 private:

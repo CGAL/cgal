@@ -84,7 +84,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_tri
     }
   }
 
-  mainSelectionItem->invalidate_buffers();
+  mainSelectionItem->invalidateOpenGLBuffers();
   scene->itemChanged(mainSelectionIndex);
 
   //remove the other items
@@ -166,7 +166,7 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
         CGAL::internal::corefinement::Dummy_true(),
         marker
       );
-      item->invalidate_buffers();
+      item->invalidateOpenGLBuffers();
       scene->itemChanged(item);
     }
   }

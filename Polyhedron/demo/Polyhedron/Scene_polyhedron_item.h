@@ -90,7 +90,7 @@ public:
     bool self_intersected(){return !self_intersect;}
 
 public Q_SLOTS:
-    virtual void invalidate_buffers();
+    virtual void invalidateOpenGLBuffers();
     virtual void selection_changed(bool);
     virtual void setColor(QColor c);
 	virtual void show_feature_edges(bool);
@@ -115,7 +115,7 @@ Q_SIGNALS:
     void selected_facet(void*);
     void selected_edge(void*);
     void selected_halfedge(void*);
-    void item_is_about_to_be_changed(); // emitted in invalidate_buffers()
+    void item_is_about_to_be_changed(); // emitted in invalidateOpenGLBuffers()
 
 private:
     // Initialization

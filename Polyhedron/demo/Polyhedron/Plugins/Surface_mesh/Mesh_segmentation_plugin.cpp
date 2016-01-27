@@ -205,7 +205,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_SDF_button_clicked()
         scene->setSelectedItem(index);
     }
     else {
-      item->invalidate_buffers();
+      item->invalidateOpenGLBuffers();
       scene->itemChanged(index);
     }
 
@@ -277,7 +277,7 @@ void Polyhedron_demo_mesh_segmentation_plugin::on_Partition_button_clicked()
         scene->setSelectedItem(index);
     }
     else {
-      item->invalidate_buffers();
+      item->invalidateOpenGLBuffers();
       scene->itemChanged(index);
     }
 

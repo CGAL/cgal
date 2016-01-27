@@ -97,7 +97,7 @@ public Q_SLOTS:
       }
       CGAL_assertion_code(pMesh->normalize_border());
       // CGAL_assertion(pMesh->is_valid(true, 3));
-      item->invalidate_buffers();
+      item->invalidateOpenGLBuffers();
       scene->itemChanged(item);
       // default cursor
       QApplication::restoreOverrideCursor();
@@ -127,7 +127,7 @@ public Q_SLOTS:
       CGAL_assertion_code(pMesh->normalize_border());
       CGAL_assertion(pMesh->is_valid(false, 3));
 
-      item->invalidate_buffers();
+      item->invalidateOpenGLBuffers();
       scene->itemChanged(item);
       // default cursor
       QApplication::restoreOverrideCursor();

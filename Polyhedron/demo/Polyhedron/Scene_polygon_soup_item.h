@@ -132,7 +132,7 @@ public:
         //soup->fill_edges();
         oriented = false;
 
-        Q_EMIT invalidate_buffers();
+        Q_EMIT invalidateOpenGLBuffers();
     }
 
     bool save(std::ostream& out) const;
@@ -146,7 +146,7 @@ public:
     virtual void draw(CGAL::Three::Viewer_interface*) const;
     virtual void draw_points(CGAL::Three::Viewer_interface*) const;
     virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
-    void invalidate_buffers();
+    void invalidateOpenGLBuffers();
     bool isFinite() const { return true; }
     bool isEmpty() const;
     void compute_bbox() const;

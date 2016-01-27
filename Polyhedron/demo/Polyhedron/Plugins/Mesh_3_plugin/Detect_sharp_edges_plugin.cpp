@@ -111,7 +111,7 @@ void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdges(bool input_dial
     CGAL::detect_sharp_edges(pMesh, angle);
 
     //update item
-    scene->item(tuple.first)->invalidate_buffers();
+    scene->item(tuple.first)->invalidateOpenGLBuffers();
 
     // update scene
     scene->itemChanged(tuple.first);

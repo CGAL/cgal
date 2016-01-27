@@ -65,11 +65,11 @@ void Polyhedron_demo_inside_out_plugin::on_actionInsideOut_triggered()
   
       // inside out
       CGAL::Polygon_mesh_processing::reverse_face_orientations(*pMesh);
-      poly_item->invalidate_buffers();
+      poly_item->invalidateOpenGLBuffers();
     }
     else {
       soup_item->inside_out();
-      soup_item->invalidate_buffers();
+      soup_item->invalidateOpenGLBuffers();
     }
 
     // update scene

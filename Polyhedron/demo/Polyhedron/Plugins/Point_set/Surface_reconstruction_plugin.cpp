@@ -565,7 +565,7 @@ void Polyhedron_demo_surface_reconstruction_plugin::automatic_reconstruction
 	  new_item->setRenderingMode(pts_item->renderingMode());
 	  new_item->setVisible(pts_item->visible());
 	  new_item->resetSelection();
-	  new_item->invalidate_buffers();
+	  new_item->invalidateOpenGLBuffers();
 
 	  points = new_item->point_set();
 	  std::copy (pts_item->point_set()->begin(), pts_item->point_set()->end(),

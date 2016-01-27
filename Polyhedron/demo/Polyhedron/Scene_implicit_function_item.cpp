@@ -353,9 +353,8 @@ Scene_implicit_function_item(Implicit_function_interface* f)
     texture = new Texture(grid_size_-1,grid_size_-1);
     blue_color_ramp_.build_blue();
     red_color_ramp_.build_red();
-    //
+    startTimer(0);
     //Generates an integer which will be used as ID for each buffer
-
     compute_min_max();
     compute_function_grid();
     double offset_x = (bbox().xmin + bbox().xmax) / 2;
@@ -365,7 +364,7 @@ Scene_implicit_function_item(Implicit_function_interface* f)
     frame_->setOrientation(1., 0, 0, 0);
     connect(frame_, SIGNAL(modified()), this, SLOT(plane_was_moved()));
 
-    invalidate_buffers();
+    invalidateOpenGLBuffers();
 }
 
 
@@ -537,7 +536,7 @@ compute_function_grid() const
     }
 
     // Update
-    const_cast<Scene_implicit_function_item*>(this)->invalidate_buffers();
+    const_cast<Scene_implicit_function_item*>(this)->invalidateOpenGLBuffers();
 
 }
 
@@ -575,23 +574,20 @@ compute_min_max()
 }
 
 void
-Scene_implicit_function_item::invalidate_buffers()
+Scene_implicit_function_item::invalidateOpenGLBuffers()
 {
-    Scene_item::invalidate_buffers();
+    Scene_item::invalidateOpenGLBuffers();
     compute_bbox();
     compute_vertices_and_texmap();
     are_buffers_filled = false;
 }
 
-void Scene_implicit_function_item::contextual_changed()
-{
-    if(!frame_->isManipulated()) {
-        if(need_update_) {
-            compute_function_grid();
-            compute_vertices_and_texmap();
-            need_update_ = false;
-        }
-    }
+
+void Scene_implicit_function_item::timerEvent(QTimerEvent* /*event*/)
+{ // just handle deformation - paint like selection is handled in eventFilter()
+  if(need_update_) {
+    compute_function_grid();
+    compute_vertices_and_texmap();
+    need_update_= false;
+  }
 }
-
-

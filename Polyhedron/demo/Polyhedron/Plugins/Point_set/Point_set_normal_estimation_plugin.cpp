@@ -131,7 +131,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalInversio
     for(Point_set::iterator it = points->begin(); it != points->end(); ++it){
       it->normal() = -1 * it->normal();
     }
-    item->invalidate_buffers();
+    item->invalidateOpenGLBuffers();
     scene->itemChanged(item);
   }
 }
@@ -259,7 +259,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
         points->set_first_selected (first_unoriented_point);
 
         // Updates scene
-        item->invalidate_buffers();
+        item->invalidateOpenGLBuffers();
         scene->itemChanged(index);
 
         QApplication::restoreOverrideCursor();
@@ -276,7 +276,7 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
     else
       {
         // Updates scene
-        item->invalidate_buffers();
+        item->invalidateOpenGLBuffers();
         scene->itemChanged(index);
 
         QApplication::restoreOverrideCursor();

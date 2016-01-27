@@ -341,7 +341,7 @@ protected:
 
   void change_poly_item_by_blocking(Scene_polyhedron_item* poly_item, Scene_hole_visualizer* collection) {
     if(collection) collection->block_poly_item_changed = true;
-    poly_item->invalidate_buffers();
+    poly_item->invalidateOpenGLBuffers();
     scene->itemChanged(poly_item);
     if(collection) collection->block_poly_item_changed = false;
   }

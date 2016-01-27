@@ -28,7 +28,7 @@ public:
   virtual QString toolTip() const;
 
   // Indicate if rendering mode is supported
-  virtual bool supportsRenderingMode(RenderingMode m) const { return m != Splatting; }
+  virtual bool supportsRenderingMode(RenderingMode m) const { return (m != Splatting && m != PointsPlusNormals && m != Points && m != Gouraud ); }
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
    void draw() const {}
   virtual void draw(CGAL::Three::Viewer_interface*) const;
@@ -44,8 +44,7 @@ public:
   bool isEmpty() const;
   void compute_bbox() const;
 
-  virtual void invalidate_buffers();
-  virtual void contextual_changed();
+  virtual void invalidateOpenGLBuffers();
   virtual void selection_changed(bool);
 
 private:
@@ -55,15 +54,15 @@ private:
   enum VAOs {
       Facets=0,
       Edges,
-      NbOfVaos = Edges+1
+      NbOfVaos
   };
   enum VBOs {
-      Facets_Vertices,
+      Facets_Vertices=0,
       Facets_Normals,
       Facets_Texmap,
-      Edges_Vertices = 0,
-      Edges_Texmap= 0,
-      NbOfVbos = Edges_Texmap+1
+      Edges_Vertices,
+      Edges_Texmap,
+      NbOfVbos
   };
 
   mutable std::vector<float> positions_lines;

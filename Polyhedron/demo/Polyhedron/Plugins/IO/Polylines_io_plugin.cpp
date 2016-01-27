@@ -146,7 +146,7 @@ Polyhedron_demo_polylines_io_plugin::load(QFileInfo fileinfo) {
   item->setColor(Qt::black);
   item->setProperty("polylines metadata", polylines_metadata);
   std::cerr << "Number of polylines in item: " << item->polylines.size() << std::endl;
-  item->invalidate_buffers();
+  item->invalidateOpenGLBuffers();
   return item;
 }
 
@@ -259,7 +259,7 @@ void Polyhedron_demo_polylines_io_plugin::addPolylineButton_clicked()
         item->setName(name);
         item->setColor(Qt::black);
         item->setProperty("polylines metadata", polylines_metadata);
-        item->invalidate_buffers();
+        item->invalidateOpenGLBuffers();
         scene->addItem(item);
     }
 }

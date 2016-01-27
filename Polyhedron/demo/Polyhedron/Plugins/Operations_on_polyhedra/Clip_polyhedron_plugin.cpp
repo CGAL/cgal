@@ -198,11 +198,11 @@ public Q_SLOTS:
             new_item->setColor(poly->color());
             new_item->setRenderingMode(poly->renderingMode());
             new_item->setVisible(poly->visible());
-            new_item->invalidate_buffers();
+            new_item->invalidateOpenGLBuffers();
             new_item->setProperty("source filename", poly->property("source filename"));
             scene->replaceItem(scene->item_id(poly),new_item);
             delete poly;
-            new_item->invalidate_buffers();
+            new_item->invalidateOpenGLBuffers();
             viewer->updateGL();
             messages->information(QString("%1 clipped").arg(new_item->name()));
           }
@@ -215,7 +215,7 @@ public Q_SLOTS:
         else
         {
           CGAL::corefinement::inplace_clip_open_polyhedron(*(poly->polyhedron()),plane->plane());
-          poly->invalidate_buffers();
+          poly->invalidateOpenGLBuffers();
           viewer->updateGL();
           messages->information(QString("%1 clipped").arg(poly->name()));
         }

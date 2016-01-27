@@ -82,7 +82,7 @@ public:
   }
 
   // Wireframe OpenGL drawing in a display list
-  void invalidate_buffers()
+  void invalidateOpenGLBuffers()
   {
       compute_elements();
       are_buffers_filled = false;
@@ -167,7 +167,7 @@ public:
                 bbox.ymax(),
                 bbox.zmax());
   }
-  void invalidate_buffers()
+  void invalidateOpenGLBuffers()
   {
       compute_elements();
       are_buffers_filled = false;
@@ -480,7 +480,7 @@ void Polyhedron_demo_cut_plugin::cut() {
   }
 
   messages->information(QString("cut (%1 ms). %2 edges.").arg(time.elapsed()).arg(edges_item->edges.size()));
-  edges_item->invalidate_buffers();
+  edges_item->invalidateOpenGLBuffers();
   scene->itemChanged(edges_item);
   }
   QApplication::restoreOverrideCursor();

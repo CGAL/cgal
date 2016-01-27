@@ -182,7 +182,7 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
     points->set_first_selected(first_point_to_remove);
 
     // Updates scene
-    item->invalidate_buffers();
+    item->invalidateOpenGLBuffers();
     scene->itemChanged(index);
 
     QApplication::restoreOverrideCursor();

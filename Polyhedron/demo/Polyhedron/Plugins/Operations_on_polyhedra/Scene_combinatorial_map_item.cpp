@@ -52,7 +52,7 @@ void Scene_combinatorial_map_item::set_next_volume(){
     ++volume_to_display;
     volume_to_display=volume_to_display%(combinatorial_map().attributes<3>().size()+1);
   are_buffers_filled = false;
-  invalidate_buffers();
+  invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
 
     if (exportSelectedVolume!=NULL && ( volume_to_display==1 || volume_to_display==0 ) )

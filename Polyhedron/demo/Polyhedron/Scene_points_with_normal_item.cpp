@@ -56,7 +56,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Scene_points_
     nb_points = 0;
     nb_selected_points = 0;
     nb_lines = 0;
-    invalidate_buffers();
+    invalidateOpenGLBuffers();
 }
 
 // Converts polyhedron to point set
@@ -83,7 +83,7 @@ Scene_points_with_normal_item::Scene_points_with_normal_item(const Polyhedron& i
   nb_points = 0;
   nb_selected_points = 0;
   nb_lines = 0;
-  invalidate_buffers();
+  invalidateOpenGLBuffers();
 }
 
 Scene_points_with_normal_item::~Scene_points_with_normal_item()
@@ -241,7 +241,7 @@ void Scene_points_with_normal_item::deleteSelection()
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
-  invalidate_buffers();
+  invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
 }
 
@@ -249,7 +249,7 @@ void Scene_points_with_normal_item::deleteSelection()
 void Scene_points_with_normal_item::invertSelection()
 {
   m_points->invert_selection();
-  invalidate_buffers();
+  invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
 }
 
@@ -257,7 +257,7 @@ void Scene_points_with_normal_item::invertSelection()
 void Scene_points_with_normal_item::selectAll()
 {
   m_points->select_all();
-  invalidate_buffers();
+  invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
 }
 // Reset selection mark
@@ -265,7 +265,7 @@ void Scene_points_with_normal_item::resetSelection()
 {
   // Un-select all points
   m_points->unselect_all();
-  invalidate_buffers();
+  invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
 }
   //Select duplicated points
@@ -275,7 +275,7 @@ void Scene_points_with_normal_item::selectDuplicates()
   for (Point_set::iterator ptit=m_points->begin(); ptit!=m_points->end();++ptit )
     if ( !unique_points.insert(*ptit).second )
       m_points->select(ptit);
-  invalidate_buffers();
+  invalidateOpenGLBuffers();
   Q_EMIT itemChanged();
 }
 
@@ -303,7 +303,7 @@ bool Scene_points_with_normal_item::read_ply_point_set(std::istream& stream)
             }
         }
     }
-  invalidate_buffers();
+  invalidateOpenGLBuffers();
   return ok;
 }
 
@@ -329,7 +329,7 @@ bool Scene_points_with_normal_item::read_off_point_set(std::istream& stream)
                                               std::back_inserter(*m_points),
                                               CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type())) &&
             !isEmpty();
-  invalidate_buffers();
+  invalidateOpenGLBuffers();
   return ok;
 }
 
@@ -369,7 +369,7 @@ bool Scene_points_with_normal_item::read_xyz_point_set(std::istream& stream)
       }
     }
   }
-  invalidate_buffers();
+  invalidateOpenGLBuffers();
   return ok;
 }
 
@@ -590,7 +590,7 @@ void Scene_points_with_normal_item::set_has_normals(bool b) {
   }
 }
 
-void Scene_points_with_normal_item::invalidate_buffers()
+void Scene_points_with_normal_item::invalidateOpenGLBuffers()
 {
     are_buffers_filled = false;
     compute_bbox();

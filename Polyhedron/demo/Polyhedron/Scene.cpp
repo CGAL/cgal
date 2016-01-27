@@ -355,8 +355,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                     viewer->glShadeModel(GL_SMOOTH);
                 else
                     viewer->glShadeModel(GL_FLAT);
-
-                item.contextual_changed();
                 if(viewer)
                     item.draw(viewer);
                 else
@@ -422,7 +420,6 @@ glDepthFunc(GL_LEQUAL);
                 }
             }
         }
-         item.contextual_changed();
         if(with_names) {
             viewer->glPopName();
         }
@@ -451,7 +448,6 @@ glDepthFunc(GL_LEQUAL);
                     item.draw_points();
             }
         }
-         item.contextual_changed();
         if(with_names) {
             viewer->glPopName();
         }
