@@ -22,6 +22,9 @@
 
 \cgalClassifedRefPages
 
+## Concept ##
+- `PlyInterpreter`
+
 ## Functions ##
 
 - `CGAL::read_off_points()`

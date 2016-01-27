@@ -1,6 +1,7 @@
 #ifndef POINT_SET_ITEM_H
 #define POINT_SET_ITEM_H
 #include  <CGAL/Three/Scene_item.h>
+
 #include "Scene_points_with_normal_item_config.h"
 #include "Polyhedron_type_fwd.h"
 #include "Kernel_type.h"
@@ -88,6 +89,7 @@ public Q_SLOTS:
 // Data
 private:
   Point_set* m_points;
+  std::vector<QColor> m_colors;
   bool m_has_normals;
   QAction* actionDeleteSelection;
   QAction* actionResetSelection;
@@ -102,12 +104,14 @@ private:
   enum VBOs {
       Edges_vertices = 0,
       Points_vertices,
+      Points_colors,
       Selected_points_vertices,
       NbOfVbos = Selected_points_vertices+1
   };
 
   mutable std::vector<double> positions_lines;
   mutable std::vector<double> positions_points;
+  mutable std::vector<double> colors_points;
   mutable std::vector<double> positions_selected_points;
   mutable std::vector<double> normals;
   mutable std::size_t nb_points;
@@ -123,6 +127,69 @@ private:
 
 
 }; // end class Scene_points_with_normal_item
+
+
+template <typename PlyReadNumber>
+class Custom_ply_interpreter
+{
+  Point_set* m_points;
+  std::vector<QColor>& m_colors;
+    
+public:
+  Custom_ply_interpreter (Point_set* points,
+                          std::vector<QColor>& colors)
+    : m_points (points), m_colors (colors)
+  { }
+
+  bool is_applicable (const std::vector<PlyReadNumber*>& readers)
+  {
+    bool x_found = false, y_found = false, z_found = false;
+    for (std::size_t i = 0; i < readers.size (); ++ i)
+      if (readers[i]->name () == "x")
+        x_found = true;
+      else if (readers[i]->name () == "y")
+        y_found = true;
+      else if (readers[i]->name () == "z")
+        z_found = true;
+
+    return x_found && y_found && z_found;
+  }
+      
+  void operator() (const std::vector<PlyReadNumber*>& readers)
+  {
+    double x, y, z, nx, ny, nz;
+    int r = -1, g = -1, b = -1;
+    for (std::size_t i = 0; i < readers.size (); ++ i)
+      if (readers[i]->name () == "x")
+        readers[i]->assign (x);
+      else if (readers[i]->name () == "y")
+        readers[i]->assign (y);
+      else if (readers[i]->name () == "z")
+        readers[i]->assign (z);
+      else if (readers[i]->name () == "nx")
+        readers[i]->assign (nx);
+      else if (readers[i]->name () == "ny")
+        readers[i]->assign (ny);
+      else if (readers[i]->name () == "nz")
+        readers[i]->assign (nz);
+      else if (readers[i]->name () == "red"
+               || readers[i]->name () == "r")
+        readers[i]->assign (r);
+      else if (readers[i]->name () == "green"
+               || readers[i]->name () == "g")
+        readers[i]->assign (g);
+      else if (readers[i]->name () == "blue"
+               || readers[i]->name () == "b")
+        readers[i]->assign (b);
+
+    m_points->push_back (UI_point (typename Kernel::Point_3 (x, y, z),
+                                   typename Kernel::Vector_3 (nx, ny, nz)));
+    if (r != -1 && g != -1 && b != -1)
+      m_colors.push_back (QColor (r, g, b));
+  }
+
+};
+
 
 
 #endif // POINT_SET_ITEM_H
