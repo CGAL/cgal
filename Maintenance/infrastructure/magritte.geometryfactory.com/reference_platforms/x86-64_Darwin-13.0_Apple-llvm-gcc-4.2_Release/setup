@@ -1,6 +1,0 @@
-CC=/usr/bin/gcc
-CXX=/usr/bin/g++
-CXXFLAGS=-Wall
-
-export CC CXX CXXFLAGS
-source /Users/cgaltester/cgal_test/reference_platforms/common_setup

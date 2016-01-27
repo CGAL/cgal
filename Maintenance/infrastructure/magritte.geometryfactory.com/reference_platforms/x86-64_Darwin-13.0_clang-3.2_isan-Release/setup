@@ -1,5 +1,0 @@
-CXX=/usr/local/bin/clang++
-CC=/usr/local/bin/clang
-CXXFLAGS="-Wall -Wextra -fsanitize=address"
-export CXX CC CXXFLAGS
-source /Users/cgaltester/cgal_test/reference_platforms/common_setup

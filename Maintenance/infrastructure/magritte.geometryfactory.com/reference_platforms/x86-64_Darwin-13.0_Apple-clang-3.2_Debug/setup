@@ -1,5 +1,0 @@
-CXX=/usr/bin/clang++
-CC=/usr/bin/clang
-CXXFLAGS="-Wall -Wextra"
-export CXX CC CXXFLAGS
-source /Users/cgaltester/cgal_test/reference_platforms/common_setup
