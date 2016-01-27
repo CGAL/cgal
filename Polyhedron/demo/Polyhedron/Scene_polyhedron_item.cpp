@@ -1342,8 +1342,7 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
 void Scene_polyhedron_item::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface *viewer)
 {
     TextRenderer *renderer = viewer->textRenderer;
-    renderer->getLocalTextItems().clear();
-
+    renderer->getLocalTextItems().removeAll(targeted_id);
     QFont font;
     font.setBold(true);
 
@@ -1453,11 +1452,11 @@ void Scene_polyhedron_item::printPrimitiveIds(CGAL::Three::Viewer_interface *vie
     TextRenderer *renderer = viewer->textRenderer;
     //clears textitems
     renderer->removeTextList(textItems);
-
+    textItems->clear();
     QFont font;
     font.setBold(true);
 
-
+    //fills textItems
     Q_FOREACH(Polyhedron::Vertex_const_handle vh, vertices(*poly))
     {
         const Point& p = vh->point();

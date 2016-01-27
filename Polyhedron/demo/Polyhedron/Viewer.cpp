@@ -1330,10 +1330,10 @@ void TextRenderer::draw(CGAL::Three::Viewer_interface *viewer)
                      src.y-item->height()/2,
                      item->width(),
                      item->height());
-          painter->setFont(item->font());
-          painter->setPen(QPen(item->color()));
-          painter->drawText(rect, item->text());
       }
+      painter->setFont(item->font());
+      painter->setPen(QPen(item->color()));
+      painter->drawText(rect, item->text());
     }
 }
 

@@ -223,6 +223,7 @@ public:
      CGAL::Three::Scene_item* item()const {return _item;}
     QList<TextItem*> textList()const {return _list;}
     void append(TextItem* ti) {_list.append(ti);}
+    void clear(){_list.clear();}
 private:
     CGAL::Three::Scene_item* _item;
     QList<TextItem*> _list;
