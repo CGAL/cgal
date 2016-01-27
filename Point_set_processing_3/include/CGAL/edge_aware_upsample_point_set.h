@@ -64,7 +64,7 @@ base_point_selection(
   const rich_grid_internal::Rich_point<Kernel>& query, ///< 3D point to project
   const std::vector<rich_grid_internal::Rich_point<Kernel> >& 
                     neighbor_points,///< neighbor sample points
-  const typename Kernel::FT edge_sensitivity,///< edge senstivity parameter
+  const typename Kernel::FT edge_sensitivity,///< edge sensitivity parameter
   unsigned int& output_base_index ///< base point index
   )
 {
@@ -183,7 +183,7 @@ update_new_point(
   neighbor_indexes.insert(father_v.index);
   neighbor_indexes.insert(mother_v.index);
 
-  double radius2 = radius * radius;
+  FT radius2 = radius * radius;
 
   new_v.neighbors.clear();
   std::set<int>::iterator set_iter;
@@ -215,7 +215,7 @@ update_new_point(
 
   for (unsigned int i = 0; i < new_v.neighbors.size(); ++i)
   {
-    Rich_point& t = rich_point_set[new_v.neighbors[i]];
+    const Rich_point& t = rich_point_set[new_v.neighbors[i]];
     FT dist2 = CGAL::squared_distance(new_v.pt, t.pt);
     FT theta = std::exp(dist2 * radius16);
 
@@ -233,12 +233,12 @@ update_new_point(
   }
 
   // select best candidate
-  FT min_project_dist = (FT)(std::numeric_limits<double>::max)();
+  FT min_project_dist = (std::numeric_limits<FT>::max)();
   unsigned int best = 0;
 
   for (unsigned int i = 0; i < candidate_num; ++i)
   {
-    FT absolute_dist = abs(project_dist_sum[i] / weight_sum[i]);
+    FT absolute_dist = CGAL::abs(project_dist_sum[i] / weight_sum[i]);
     if (absolute_dist < min_project_dist)
     {
       min_project_dist = absolute_dist;
@@ -326,7 +326,7 @@ edge_aware_upsample_point_set(
                     ///< controls the preservation of sharp features. 
                     ///< The larger the value is,
                     ///< the smoother the result will be.
-                    ///< The range of possible value is [0, 90].
+                    ///< The range of possible values is `[0, 90]`.
                     ///< See section \ref Point_set_processing_3Upsample_Parameter2
                     ///< for an example.
   typename Kernel::FT edge_sensitivity,  ///<  
@@ -340,7 +340,7 @@ edge_aware_upsample_point_set(
                     ///< The default value is set to 3 times the average spacing of the point set.
                     ///< If the value given by user is smaller than the average spacing, 
                     ///< the function will use the default value instead.
-  const unsigned int number_of_output_points,///< number of output
+  const std::size_t number_of_output_points,///< number of output
                                              ///< points to generate.
   const Kernel& /*kernel*/ ///< geometric traits.
 )
@@ -371,9 +371,9 @@ edge_aware_upsample_point_set(
                    point_pmap,
                    nb_neighbors);
 
-  if (neighbor_radius < average_spacing * 1.0)
+  if (neighbor_radius < average_spacing)
   {
-    neighbor_radius = average_spacing * 3.0;
+    neighbor_radius = average_spacing * 3.0f;
 #ifdef CGAL_PSP3_VERBOSE
     std::cout << "neighbor radius: " << neighbor_radius << std::endl;
 #endif
@@ -407,7 +407,7 @@ edge_aware_upsample_point_set(
                                                       neighbor_radius);
 
   //
-  FT cos_sigma = std::cos(sharpness_angle / 180.0 * 3.1415926);
+  FT cos_sigma = static_cast<FT>(std::cos(CGAL::to_double(sharpness_angle) / 180.0 * CGAL_PI));
   FT sharpness_bandwidth = std::pow((CGAL::max)((FT)1e-8, (FT)1.0 - cos_sigma), 2);
 
   FT sum_density = 0.0;
@@ -444,7 +444,7 @@ edge_aware_upsample_point_set(
       //estimate density threshold for the first time
       for (unsigned int i = 0; i < rich_point_set.size() * 0.05; ++i)
       {
-        Rich_point& v = rich_point_set[i];
+        const Rich_point& v = rich_point_set[i];
 
         if (v.neighbors.empty())
           continue;
@@ -457,7 +457,7 @@ edge_aware_upsample_point_set(
         }
 
         unsigned int base_index = 0;
-        double density2 = upsample_internal::
+        FT density2 = upsample_internal::
                               base_point_selection(v,
                                                    neighbor_rich_points,
                                                    edge_sensitivity,
@@ -473,7 +473,7 @@ edge_aware_upsample_point_set(
       }
     }
 
-    density_pass_threshold = sqrt(sum_density / count_density) * 0.65;
+    density_pass_threshold = static_cast<FT>(sqrt(sum_density / count_density) * FT(0.65));
     sum_density = 0.;
     count_density = 1;
 
@@ -499,7 +499,7 @@ edge_aware_upsample_point_set(
           continue;
         }
 
-        Rich_point& v = rich_point_set[i];
+        const Rich_point& v = rich_point_set[i];
 
         if (v.neighbors.empty())
           continue;
@@ -577,7 +577,7 @@ edge_aware_upsample_point_set(
 
   for (std::size_t i = number_of_input; i < rich_point_set.size(); ++i)
   {
-    Rich_point& v = rich_point_set[i];
+    const Rich_point& v = rich_point_set[i];
     Point point = v.pt;
     Vector normal = v.normal;
     *output++ = std::make_pair(point, normal);
@@ -602,21 +602,22 @@ edge_aware_upsample_point_set(
   PointPMap point_pmap, ///< property map: `ForwardIterator` -> Point_3.
   NormalPMap normal_pmap, ///< property map: `ForwardIterator` -> Vector_3.
   double sharpness_angle,  ///< control sharpness(0-90)
-  double edge_sensitivity,  ///< edge senstivity(0-5)
+  double edge_sensitivity,  ///< edge sensitivity(0-5)
   double neighbor_radius, ///< initial size of neighbors.
-  const unsigned int number_of_output_points///< number of iterations.   
+  const std::size_t number_of_output_points///< number of iterations.   
   )
 {
   typedef typename boost::property_traits<PointPMap>::value_type Point;
   typedef typename Kernel_traits<Point>::Kernel Kernel;
+  typedef typename Kernel::FT FT;
   return edge_aware_upsample_point_set<Concurrency_tag>(
     first, beyond,
     output,
     point_pmap,
     normal_pmap,
-    sharpness_angle, 
-    edge_sensitivity,
-    neighbor_radius, 
+    static_cast<FT>(sharpness_angle), 
+    static_cast<FT>(edge_sensitivity),
+    static_cast<FT>(neighbor_radius), 
     number_of_output_points,
     Kernel());
 }
@@ -635,9 +636,9 @@ edge_aware_upsample_point_set(
   OutputIterator output, ///< output iterator over points.
   NormalPMap normal_pmap, ///< property map:  OutputIterator -> Vector_3.
   double sharpness_angle = 30,  ///< control sharpness(0-90)
-  double edge_sensitivity = 1,  ///< edge senstivity(0-5)
+  double edge_sensitivity = 1,  ///< edge sensitivity(0-5)
   double neighbor_radius = -1, ///< initial size of neighbors.
-  const unsigned int number_of_output_points = 1000///< number of output points.     
+  const std::size_t number_of_output_points = 1000///< number of output points.     
   )
 {
   // just deduce value_type of OutputIterator

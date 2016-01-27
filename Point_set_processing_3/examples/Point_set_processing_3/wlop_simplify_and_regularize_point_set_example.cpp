@@ -5,6 +5,7 @@
 
 #include <vector>
 #include <fstream>
+#include <iostream>
 
 // types
 typedef CGAL::Simple_cartesian<double> Kernel;

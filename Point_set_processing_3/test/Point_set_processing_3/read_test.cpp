@@ -6,7 +6,8 @@
 #include <CGAL/IO/read_xyz_points.h>
 
 #include <vector>
-#include <cstdlib>
+#include <cassert>
+#include <string>
 #include <fstream>
 
 typedef CGAL::Simple_cartesian<double> Kernel;

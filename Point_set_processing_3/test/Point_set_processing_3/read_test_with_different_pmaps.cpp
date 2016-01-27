@@ -2,13 +2,13 @@
 #include <CGAL/property_map.h>
 #include <CGAL/IO/read_off_points.h>
 #include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/property_map.h>
 
 #include <vector>
 #include <deque>
 #include <iostream>
 #include <fstream>
 
-#include <CGAL/property_map.h>
 
 typedef CGAL::Simple_cartesian<double> Kernel;
 typedef Kernel::Point_3 Point_3;

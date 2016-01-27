@@ -5,12 +5,6 @@ project( Point_set_processing_3_example )
 cmake_minimum_required(VERSION 2.8.11)
 
 
-# Require packages new or improved since CGAL 3.4
-include_directories (BEFORE ../../../Installation/include/)
-
-# Include this package's headers first
-include_directories (BEFORE . include ../../include)
-
 # Find CGAL
 find_package(CGAL QUIET COMPONENTS Core )
 
@@ -23,14 +17,9 @@ if ( CGAL_FOUND )
 
   # VisualC++ optimization for applications dealing with large data
   if (MSVC)
-    # Use /FR to turn on IntelliSense
-    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /FR")
-
-    # Allow Windows applications to use up to 3GB of RAM
+  
+    # Allow Windows 32bit applications to use up to 3GB of RAM
     SET (CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /LARGEADDRESSAWARE")
-
-    # Turn off stupid VC++ warnings
-    SET (CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} /wd4267 /wd4311 /wd4800 /wd4503 /wd4244 /wd4345 /wd4996 /wd4396 /wd4018")
 
     # Prints new compilation options
     message( STATUS "USING DEBUG CXXFLAGS   = '${CMAKE_CXX_FLAGS} ${CMAKE_CXX_FLAGS_DEBUG}'" )

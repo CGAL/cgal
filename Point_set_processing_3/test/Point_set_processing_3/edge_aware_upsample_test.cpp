@@ -16,10 +16,8 @@
 #include <CGAL/edge_aware_upsample_point_set.h>
 #include <CGAL/IO/read_xyz_points.h>
 
-#include <deque>
 #include <cstdlib>
 #include <fstream>
-#include <cassert>
 
 
 // ----------------------------------------------------------------------------
@@ -49,10 +47,9 @@ typedef CGAL::Sequential_tag Concurrency_tag;
 // Tests
 // ----------------------------------------------------------------------------
 
-// Removes outliers
 void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input point set                            
                               double sharpness_sigma, //control sharpness
-                              double edge_senstivity, // more points will up-sample on edge
+                              double edge_sensitivity,// more points will up-sample on edge
                               double neighbor_radius,  // initial neighbors size.
                               unsigned int times_of_output_points)
 
@@ -70,12 +67,12 @@ void test_edge_aware_upsample(std::vector<PointVectorPair>& points, // input poi
             CGAL::First_of_pair_property_map<PointVectorPair>(),
             CGAL::Second_of_pair_property_map<PointVectorPair>(),
             sharpness_sigma, 
-            edge_senstivity,
+            edge_sensitivity,
             neighbor_radius,
             points.size() * times_of_output_points);
 
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
@@ -97,7 +94,7 @@ int main(int argc, char * argv[])
   // usage
   if(argc < 2)
   {
-      std::cerr << "For each input point set, remove outliers.\n";
+      std::cerr << "Upsample each input point set.\n";
       std::cerr << "\n";
       std::cerr << "Usage: " << argv[0] << " file1.xyz file2.xyz..." << std::endl;
       std::cerr << "Input file format is .xyz.\n";
@@ -107,9 +104,9 @@ int main(int argc, char * argv[])
 
   //Algorithm parameters
   const double sharpness_sigma = 25;   //control sharpness of the result.
-  const double edge_senstivity = 0;    // more points will up-sample on edge.          
+  const double edge_sensitivity = 0;    // more points will up-sample on edge.
   const double neighbor_radius = 0.2;      // initial neighbors size.
-  const unsigned int times_of_output_points = 4; 
+  const unsigned int times_of_output_points = 40;
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
@@ -154,7 +151,7 @@ int main(int argc, char * argv[])
 
     test_edge_aware_upsample(points, 
                              sharpness_sigma,
-                             edge_senstivity,
+                             edge_sensitivity,
                              neighbor_radius,
                              times_of_output_points);
 

@@ -26,8 +26,9 @@
 
 #include <utility> // defines std::pair
 #include <vector>
-#include <cstdlib>
+#include <string>
 #include <fstream>
+#include <iostream>
 
 
 // ----------------------------------------------------------------------------
@@ -74,7 +75,7 @@ void run_pca_estimate_normals(PointList& points, // input points + output normal
                              CGAL::Second_of_pair_property_map<PointVectorPair>(),
                              nb_neighbors_pca_normals);
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
@@ -96,7 +97,7 @@ void run_jet_estimate_normals(PointList& points, // input points + output normal
                              CGAL::Second_of_pair_property_map<PointVectorPair>(),
                              nb_neighbors_jet_fitting_normals);
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
@@ -119,7 +120,7 @@ void run_vcm_estimate_normals(PointList &points, // input points + output normal
                                R,
                                r);
 
-    long memory = CGAL::Memory_sizer().virtual_size();
+    std::size_t memory = CGAL::Memory_sizer().virtual_size();
     std::cerr << "done: " << task_timer.time() << " seconds, "
         << (memory>>20) << " Mb allocated"
         << std::endl;
@@ -146,7 +147,7 @@ void run_mst_orient_normals(PointList& points, // input points + input/output no
   // if you plan to call a reconstruction algorithm that expects oriented normals.
   points.erase(unoriented_points_begin, points.end());
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "done: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;
@@ -278,7 +279,7 @@ int main(int argc, char * argv[])
     }
 
     // Prints status
-    int nb_points = points.size();
+    std::size_t nb_points = points.size();
     std::cerr << "Reads file " << input_filename << ": " << nb_points << " points, "
                                                          << task_timer.time() << " seconds"
                                                          << std::endl;

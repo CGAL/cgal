@@ -20,7 +20,6 @@
 #include <deque>
 #include <cstdlib>
 #include <fstream>
-#include <cassert>
 
 // ----------------------------------------------------------------------------
 // Types
@@ -55,7 +54,7 @@ void test_average_spacing(std::deque<Point>& points, // input point set
   FT average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(points.begin(), points.end(), nb_neighbors);
   std::cout << average_spacing << std::endl;
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
                         << (memory>>20) << " Mb allocated"
                         << std::endl;

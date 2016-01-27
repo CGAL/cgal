@@ -18,7 +18,7 @@
 #include <CGAL/IO/read_xyz_points.h>
 
 #include <deque>
-#include <cstdlib>
+#include <string>
 #include <fstream>
 #include <cassert>
 
@@ -55,7 +55,7 @@ void test_smooth_jet_fitting(std::deque<Point>& points,// input point set
   CGAL::jet_smooth_point_set<Concurrency_tag>(points.begin(), points.end(),
 					      nb_neighbors_smooth_jet_fitting);
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
                       << (memory>>20) << " Mb allocated"
                       << std::endl;

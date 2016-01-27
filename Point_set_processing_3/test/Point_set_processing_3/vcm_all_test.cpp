@@ -2,11 +2,12 @@
 #include <CGAL/vcm_estimate_edges.h>
 #include <CGAL/property_map.h>
 #include <CGAL/IO/read_off_points.h>
+
 #include <boost/dynamic_bitset.hpp>
+
 #include <vector>
 #include <fstream>
 
-#include <boost/foreach.hpp>
 
 // Types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
@@ -27,7 +28,7 @@ std::cout << "=== test_fandisk ===\n";
   // Reads a .xyz point set file in points[].
   std::vector<Point> points;
   std::vector<Covariance> cov;
-  boost::dynamic_bitset<> on_feature_edge(nb_points);
+  boost::dynamic_bitset<std::size_t> on_feature_edge(nb_points);
   points.reserve(nb_points);
   cov.reserve(nb_points);
   std::ifstream stream("data/fandisk.off");
@@ -44,12 +45,14 @@ std::cout << "=== test_fandisk ===\n";
   std::cout << " Test compute vcm without convolution\n";
   cov.clear();
   CGAL::compute_vcm(points.begin(), points.end(), pmap, cov, 0.2, 0, Kernel());
+
 //    check the cov matrices
   std::ifstream cov_stream("vcm_all_test-covmat_no_cov.txt");
   while( cov_stream >> index >> expected[0] >> expected[1] >> expected[2] >> expected[3] >> expected[4] >> expected[5] )
     for(int i=0;i<6;++i)
       assert( CGAL::abs(cov[index][i]-expected[i]) <= CGAL::abs(expected[i])*5/100 );
   cov_stream.close();
+
 //    check points detected as feature point
   int indices_no_cov[243]={81,616,694,726,740,812,814,823,834,835,874,1153,1170,1188,1273,1382,1415,1563,1720,1745,1752,1763,1825,2013,2041,2042,2065,2181,2463,2508,2573,2616,2630,2632,2654,2715,2842,2864,2867,2893,3006,3014,3018,3121,3122,3144,3382,3654,3740,3914,4392,4454,4549,4765,4774,4804,4843,4862,4918,4949,4980,5054,5150,5178,5179,5181,5183,5373,5374,5557,5583,5584,5655,5657,5767,5827,6380,6565,6619,6645,6784,6786,6839,6895,6896,6929,7064,7071,7074,7098,7239,7350,7545,7659,7661,7681,7709,7843,7859,7895,7973,7983,8003,8064,8115,8125,8143,8255,8334,8428,8429,8464,8554,8689,8768,8769,8881,8883,8924,8962,8963,9121,9168,9213,9267,9380,9495,9503,9536,9577,9648,9661,9665,9668,9695,9696,9740,9753,9798,9805,9821,9972,9977,10095,10096,10254,10266,10267,10269,10297,10305,10671,10725,10727,10824,10915,10948,11015,11026,11201,11234,11455,11466,11553,11611,11667,11713,11724,11745,11849,11903,11952,11992,12008,12287,12297,12321,12342,12467,12468,12511,12530,12715,12758,12987,13012,13045,13188,13210,13380,13442,13443,13475,13503,13549,13564,13572,13591,13630,13672,13694,13740,13742,13791,13856,13896,13905,13942,13945,14008,14055,14077,14140,14166,14397,14460,14482,14485,14546,14566,14614,14667,14721,14793,14816,14864,14928,15029,15037,15090,15132,15148,15168,15360,15363,15384,15394,15478,15501,15522,15810,15811,15827};
   on_feature_edge.reset();

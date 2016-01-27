@@ -20,7 +20,6 @@
 #include <deque>
 #include <cstdlib>
 #include <fstream>
-#include <cassert>
 
 
 // ----------------------------------------------------------------------------
@@ -60,7 +59,7 @@ void test_bilateral_smoothing(std::deque<PointVectorPair>& points,// input point
       sharpness_sigma);
   }
 
-  long memory = CGAL::Memory_sizer().virtual_size();
+  std::size_t memory = CGAL::Memory_sizer().virtual_size();
   std::cerr << "ok: " << task_timer.time() << " seconds, "
                       << (memory>>20) << " Mb allocated"
                       << std::endl;
