@@ -31,6 +31,7 @@ class QModelIndex;
 
 namespace Ui {
   class MainWindow;
+  class Statistics_on_item_dialog;
 }
 
 #include "Polyhedron_type_fwd.h"
@@ -83,8 +84,6 @@ public Q_SLOTS:
   bool file_matches_filter(const QString& filters, const QString& filename);
   //!Prints a dialog containing statistics on the selected polyhedrons.
   void statistics_on_item();
-  //!Updates the statistics dialog.
-  void stat_dlg_update();
   /*! Open a file with a given loader, and return true if it was successful.
    This slot is for use by scripts.*/
   bool open(QString filename, QString loader_name);
@@ -360,7 +359,10 @@ private:
   QAction* actionAddToGroup;
   void print_message(QString message) { messages->information(message); }
   Messages_interface* messages;
+
   QDialog *statistics_dlg;
+  Ui::Statistics_on_item_dialog* statistics_ui;
+
 #ifdef QT_SCRIPT_LIB
   QScriptEngine* script_engine;
 public:

@@ -452,8 +452,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     positions_feature_lines.resize(0);
     normals_flat.resize(0);
     normals_gouraud.resize(0);
-    number_of_null_length_edges = 0;
-    number_of_degenerated_faces = 0;
+
     //Facets
     typedef Polyhedron::Traits	    Kernel;
     typedef Kernel::Point_3	    Point;
@@ -462,15 +461,15 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
 
     Facet_iterator f = poly->facets_begin();
-
     for(f = poly->facets_begin();
         f != poly->facets_end();
         f++)
     {
+      if (f == boost::graph_traits<Polyhedron>::null_face())
+        continue;
 
         if(!is_triangle(f->halfedge(),*poly))
         {
-            is_triangulated = false;
             triangulate_facet(f);
         }
         else
@@ -504,19 +503,11 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
                 positions_facets.push_back(1.0);
                 i = (i+1) %3;
             }
-            if(CGAL::Polygon_mesh_processing::is_degenerated(f,
-                                                             *poly,
-                                                             get(CGAL::vertex_point, *poly),
-                                                             poly->traits()))
-                number_of_degenerated_faces++;
-
         }
     }
     //Lines
     typedef Kernel::Point_3		Point;
     typedef Polyhedron::Edge_iterator	Edge_iterator;
-    std::vector<double> edge_lengths;
-
     Edge_iterator he;
     for(he = poly->edges_begin();
         he != poly->edges_end();
@@ -547,28 +538,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
             positions_lines.push_back(b.y());
             positions_lines.push_back(b.z());
             positions_lines.push_back(1.0);
-
-            //statistics
-            edge_lengths.push_back(CGAL::squared_distance(a,b));
-
-            if(edge_lengths.back() == 0)
-                number_of_null_length_edges++;
         }
-
-        positions_lines.push_back(a.x());
-        positions_lines.push_back(a.y());
-        positions_lines.push_back(a.z());
-        positions_lines.push_back(1.0);
-
-        positions_lines.push_back(b.x());
-        positions_lines.push_back(b.y());
-        positions_lines.push_back(b.z());
-        positions_lines.push_back(1.0);
-        //statistics
-        edge_lengths.push_back(CGAL::squared_distance(a,b));
-
-        if(edge_lengths.back() == 0)
-            number_of_null_length_edges++;
     }
     //set the colors
     compute_colors();
@@ -582,11 +552,6 @@ Scene_polyhedron_item::compute_colors() const
     //Facets
     typedef Polyhedron::Facet_iterator Facet_iterator;
     typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
-
-
-
-    // int patch_id = -1;
-   // Facet_iterator f = poly->facets_begin();
 
     for(Facet_iterator f = poly->facets_begin();
         f != poly->facets_end();
@@ -642,10 +607,8 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     is_selected = true;
     nb_facets = 0;
     nb_lines = 0;
-    is_triangulated = true;
     nb_f_lines = 0;
     init();
-    self_intersect = false;
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
@@ -661,11 +624,9 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     is_selected = true;
     nb_facets = 0;
     nb_lines = 0;
-    is_triangulated = true;
     nb_f_lines = 0;
     init();
     invalidate_buffers();
-    self_intersect = false;
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
@@ -681,12 +642,10 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     cur_shading=FlatPlusEdges;
     is_selected=true;
     init();
-    is_triangulated = true;
     nb_facets = 0;
     nb_lines = 0;
     nb_f_lines = 0;
     invalidate_buffers();
-    self_intersect = false;
 }
 
 Scene_polyhedron_item::~Scene_polyhedron_item()
@@ -717,19 +676,20 @@ init()
     compute_color_map(this->color(), max + 1,
                       std::back_inserter(colors_));
   }
-
-  volume=-std::numeric_limits<double>::infinity();
-  area=-std::numeric_limits<double>::infinity();
-  if (poly->is_pure_triangle())
-  {
-    if (poly->is_closed())
-      volume = CGAL::Polygon_mesh_processing::volume(*poly);
-
-    // compute the surface area
-    area = CGAL::Polygon_mesh_processing::area(*poly);
-  }
+  invalidate_stats();
 }
 
+void
+Scene_polyhedron_item::
+invalidate_stats()
+{
+  number_of_degenerated_faces = (unsigned int)(-1);
+  number_of_null_length_edges = (unsigned int)(-1);
+  volume = -std::numeric_limits<double>::infinity();
+  area = -std::numeric_limits<double>::infinity();
+  self_intersect = false;
+
+}
 
 Scene_polyhedron_item*
 Scene_polyhedron_item::clone() const {
@@ -1028,6 +988,7 @@ invalidate_buffers()
     Base::invalidate_buffers();
     are_buffers_filled = false;
 
+    invalidate_stats();
 }
 
 void
@@ -1197,138 +1158,119 @@ void Scene_polyhedron_item::invalidate_aabb_tree()
 }
 QString Scene_polyhedron_item::compute_stats(int type)
 {
-  poly->normalize_border();
   double minl, maxl, meanl, midl;
-  edges_length(poly, minl, maxl, meanl, midl);
-  typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
-  int i = 0;
-  BOOST_FOREACH(face_descriptor f, faces(*poly)){
-    f->id() = i++;
+  switch (type)
+  {
+  case MIN_LENGTH:
+  case MAX_LENGTH:
+  case MID_LENGTH:
+  case MEAN_LENGTH:
+  case NB_NULL_LENGTH:
+    poly->normalize_border();
+    edges_length(poly, minl, maxl, meanl, midl, number_of_null_length_edges);
   }
-  boost::vector_property_map<int,
-      boost::property_map<Polyhedron, boost::face_index_t>::type>
-      fccmap(get(boost::face_index, *poly));
 
   double mini, maxi, ave;
-  angles(poly, mini, maxi, ave);
-  if (is_triangulated)
-    self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect(*poly);
-
-  QString nb_vertices(QString::number(poly->size_of_vertices())),
-      nb_facets(QString::number(poly->size_of_facets())),
-      nbborderedges(QString::number(poly->size_of_border_halfedges())),
-      nbedges(QString::number(poly->size_of_halfedges()/2)),
-      minlength(QString::number(CGAL::sqrt(minl))),
-      maxlength(QString::number(CGAL::sqrt(maxl))),
-      midlength(QString::number(CGAL::sqrt(midl))),
-      meanlength(QString::number(CGAL::sqrt(meanl))),
-      nulllength(QString::number(number_of_null_length_edges)),
-      selfintersect,
-      degenfaces,
-      s_volume,
-      s_area,
-      nb_holes,
-      nbconnectedcomponents(QString::number(PMP::connected_components(*poly, fccmap))),
-      minangle(QString::number(mini)),
-      maxangle(QString::number(maxi)),
-      averageangle(QString::number(ave));
-
-  if (area!=-std::numeric_limits<double>::infinity())
-    s_area = QString::number(area);
-  else
-    s_area = QString("n/a");
-
-  if (volume!=-std::numeric_limits<double>::infinity())
-    s_volume = QString::number(volume);
-  else
-    s_volume = QString("n/a");
-
-  if (self_intersect)
-    selfintersect = QString("Yes");
-  else if (is_triangulated)
-    selfintersect = QString("No");
-  else
-    selfintersect = QString("n/a");
-
-  if(is_triangulated)
-    degenfaces = QString::number(number_of_degenerated_faces);
-  else
-    degenfaces = QString("n/a");
-
-  //gets the number of holes
-
-  //if is_closed is false, then there are borders (= holes)
-  int n(0);
-  i = 0;
-
-  // initialization : keep the original ids in memory and set them to 0
-  std::vector<std::size_t> ids;
-  for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it)
+  switch (type)
   {
-    ids.push_back(it->id());
-    it->id() = 0;
+  case MIN_ANGLE:
+  case MAX_ANGLE:
+  case MEAN_ANGLE:
+    angles(poly, mini, maxi, ave);
   }
-
-  //if a border halfedge is found, increment the number of hole and set all the ids of the hole's border halfedges to 1 to prevent
-  // the algorithm from counting them several times.
-  for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it){
-    if(it->is_border() && it->id() == 0){
-      n++;
-      Polyhedron::Halfedge_around_facet_circulator hf_around_facet = it->facet_begin();
-      do {
-        CGAL_assertion(hf_around_facet->id() == 0);
-        hf_around_facet->id() = 1;
-      } while(++hf_around_facet != it->facet_begin());
-    }
-  }
-  //reset the ids to their initial value
-  for(Polyhedron::Halfedge_iterator it = polyhedron()->halfedges_begin(); it != polyhedron()->halfedges_end(); ++it)
-  {
-    it->id() = ids[i++];
-  }
-  nb_holes = QString::number(n);
-
-
 
   switch(type)
   {
   case NB_VERTICES:
-    return nb_vertices;
-  case NB_FACETS:
-    return nb_facets;
-  case NB_CONNECTED_COMPOS:
-    return nbconnectedcomponents;
-  case NB_BORDER_EDGES:
-    return nbborderedges;
-  case NB_DEGENERATED_FACES:
-    return degenfaces;
-  case AREA:
-    return s_area;
-  case VOLUME:
-    return s_volume;
-  case SELFINTER:
-    return selfintersect;
-  case NB_EDGES:
-    return nbedges;
-  case MIN_LENGTH:
-    return minlength;
-  case MAX_LENGTH:
-    return maxlength;
-  case MID_LENGTH:
-    return midlength;
-  case MEAN_LENGTH:
-    return meanlength;
-  case NB_NULL_LENGTH:
-    return nulllength;
-  case MIN_ANGLE:
-    return minangle;
-  case MAX_ANGLE:
-    return maxangle;
-  case MEAN_ANGLE:
-    return averageangle;
-  case HOLES:
-    return nb_holes;
+    return QString::number(poly->size_of_vertices());
 
+  case NB_FACETS:
+    return QString::number(poly->size_of_facets());
+  
+  case NB_CONNECTED_COMPOS:
+  {
+    typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
+    int i = 0;
+    BOOST_FOREACH(face_descriptor f, faces(*poly)){
+      f->id() = i++;
+    }
+    boost::vector_property_map<int,
+      boost::property_map<Polyhedron, boost::face_index_t>::type>
+      fccmap(get(boost::face_index, *poly));
+    return QString::number(PMP::connected_components(*poly, fccmap));
+  }
+  case NB_BORDER_EDGES:
+    poly->normalize_border();
+    return QString::number(poly->size_of_border_halfedges());
+
+  case NB_EDGES:
+    return QString::number(poly->size_of_halfedges() / 2);
+
+  case NB_DEGENERATED_FACES:
+  {
+    if (poly->is_pure_triangle())
+    {
+      if (number_of_degenerated_faces == (unsigned int)(-1))
+        number_of_degenerated_faces = nb_degenerate_faces(poly, get(CGAL::vertex_point, *poly));
+      return QString::number(number_of_degenerated_faces);
+    }
+    else
+      return QString("n/a");
+  }
+  case AREA:
+  {
+    if (poly->is_pure_triangle())
+    {
+      if(area == -std::numeric_limits<double>::infinity())
+        area = CGAL::Polygon_mesh_processing::area(*poly);
+      return QString::number(area);
+    }
+    else
+      return QString("n/a");
+  }
+  case VOLUME:
+  {
+    if (poly->is_pure_triangle() && poly->is_closed())
+    {
+      if (volume == -std::numeric_limits<double>::infinity())
+        volume = CGAL::Polygon_mesh_processing::volume(*poly);
+      return QString::number(volume);
+    }
+    else
+      return QString("n/a");
+  }
+  case SELFINTER:
+  {
+    //todo : add a test about cache validity
+    if (poly->is_pure_triangle())
+      self_intersect = CGAL::Polygon_mesh_processing::does_self_intersect(*poly);
+    if (self_intersect)
+      return QString("Yes");
+    else if (poly->is_pure_triangle())
+      return QString("No");
+    else
+      return QString("n/a");
+  }
+  case MIN_LENGTH:
+    return QString::number(minl);
+  case MAX_LENGTH:
+    return QString::number(maxl);
+  case MID_LENGTH:
+    return QString::number(midl);
+  case MEAN_LENGTH:
+    return QString::number(meanl);
+  case NB_NULL_LENGTH:
+    return QString::number(number_of_null_length_edges);
+
+  case MIN_ANGLE:
+    return QString::number(mini);
+  case MAX_ANGLE:
+    return QString::number(maxi);
+  case MEAN_ANGLE:
+    return QString::number(ave);
+
+  case HOLES:
+    return QString::number(nb_holes(poly));
   }
   return QString();
 }

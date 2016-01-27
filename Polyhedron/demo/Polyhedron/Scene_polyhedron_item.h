@@ -86,7 +86,7 @@ public:
     void set_color_vector_read_only(bool on_off) {plugin_has_set_color_vector_m=on_off;}
     int getNumberOfNullLengthEdges(){return number_of_null_length_edges;}
     int getNumberOfDegeneratedFaces(){return number_of_degenerated_faces;}
-    bool triangulated(){return is_triangulated;}
+    bool triangulated(){return poly->is_pure_triangle();}
     bool self_intersected(){return !self_intersect;}
 
 public Q_SLOTS:
@@ -120,6 +120,7 @@ Q_SIGNALS:
 private:
     // Initialization
     void init();
+    void invalidate_stats();
 
 private:
     Polyhedron* poly;
@@ -134,7 +135,6 @@ private:
     bool show_only_feature_edges_m;
     bool show_feature_edges_m;
     bool facet_picking_m;
-    mutable bool is_triangulated;
     bool erase_next_picked_facet_m;
     //the following variable is used to indicate if the color vector must not be automatically updated.
     bool plugin_has_set_color_vector_m;
@@ -168,7 +168,8 @@ private:
     mutable std::size_t nb_lines;
     mutable std::size_t nb_f_lines;
     mutable QOpenGLShaderProgram *program;
-    mutable int number_of_null_length_edges, number_of_degenerated_faces;
+    mutable unsigned int number_of_null_length_edges;
+    mutable unsigned int number_of_degenerated_faces;
     mutable bool self_intersect;
 
     using CGAL::Three::Scene_item::initialize_buffers;
