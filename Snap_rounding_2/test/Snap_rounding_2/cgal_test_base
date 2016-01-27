@@ -80,8 +80,8 @@ run()
       DATANAME=`basename $DATAFILE`
       OUTPUTFILE=ProgramOutput.$1.$DATANAME.$PLATFORM
       rm -f $OUTPUTFILE
-      COMMAND="./$1 $DATAFILE > ${data_dir}/out"
-      echo "Executing ./$1 $DATAFILE > ${data_dir}/out"
+      COMMAND="./$1 $DATAFILE  ${data_dir}/out"
+      echo "Executing ./$1 $DATAFILE  ${data_dir}/out"
       echo
       if eval 2>&1 $COMMAND > $OUTPUTFILE ; then
 	echo "   execution of $1 ${data_dir}/$DATATFILE > ${data_dir}/out succeeded" >> $ERRORFILE
