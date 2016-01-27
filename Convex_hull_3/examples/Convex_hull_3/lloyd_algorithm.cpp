@@ -75,7 +75,7 @@ class Centroid_volume_accumulator {
             return Point(cx, cy, cz);
         }
 
-        double volume () const {
+        typename K::FT volume () const {
             return vol;
         }
 
@@ -88,10 +88,10 @@ class Centroid_volume_accumulator {
 
     private:
         // Volume
-        double vol;
+        typename K::FT vol;
 
         // Centroid
-        double cx, cy, cz;
+        typename K::FT cx, cy, cz;
 };
 
 // Apply a function object to all the triangles composing the faces of a polyhedron.
@@ -150,8 +150,10 @@ void lloyd_algorithm (PolyIterator poly_begin,
         dt.incident_vertices(vit, std::back_inserter(vertices));
         for (std::list<Vertex_handle>::iterator it = vertices.begin();
              it != vertices.end();
-             it++) {
-            Vector p = ((*it)->point() - vit->point()) / 2;
+             it++)
+        {
+            if (dt.is_infinite(*it)) continue;
+            Vector p(vit->point(),(*it)->point());
             planes.push_back (Plane(CGAL::midpoint((*it)->point(), vit->point()), p));
         }
 
