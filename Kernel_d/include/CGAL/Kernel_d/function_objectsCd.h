@@ -143,6 +143,7 @@ public:
     template <class Forward_iterator>
     result_type operator()(Forward_iterator start, Forward_iterator end) const
     {
+        CGAL_USE(end);
         CGAL_assertion(start!=end);
         int d = start->dimension();
         Matrix M(d);
