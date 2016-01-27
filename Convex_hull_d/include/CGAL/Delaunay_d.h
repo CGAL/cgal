@@ -961,7 +961,8 @@ range_search(const Sphere_d& C) const
   Vertex_handle v = nearest_neighbor(c);
   if ( dc == 0 ) {
     if ( C.has_on_bounded_side(associated_point(v)) ) 
-      result.push_back(v); return result;
+      result.push_back(v);
+    return result;
   }
   Simplex_handle s = simplex(v);
   bool is_cocircular = const_cast<Self*>(this)->is_S_cocircular();
