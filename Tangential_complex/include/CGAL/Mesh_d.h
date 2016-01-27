@@ -352,8 +352,6 @@ public:
             m_k.scaled_vector_d_object()(
               m_k.point_to_vector_d_object()(*intersection), weight));
         }
-        else
-
       }
       if (sum_weights > 0)
       {
