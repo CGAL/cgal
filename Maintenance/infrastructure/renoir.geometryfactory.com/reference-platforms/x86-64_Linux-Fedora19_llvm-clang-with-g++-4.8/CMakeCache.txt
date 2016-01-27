@@ -143,7 +143,7 @@ CMAKE_COLOR_MAKEFILE:BOOL=ON
 CMAKE_CXX_COMPILER:FILEPATH=/usr/local/packages/llvm-trunk/bin/clang++
 
 //User-defined flags
-CMAKE_CXX_FLAGS:STRING= -fno-strict-aliasing -Wall -fsanitize=address
+CMAKE_CXX_FLAGS:STRING= -fno-strict-aliasing -Wall -fsanitize=address -DDONT_USE_BOOST_PROGRAM_OPTIONS
 
 //Flags used by the compiler during debug builds.
 CMAKE_CXX_FLAGS_DEBUG:STRING=
@@ -1759,7 +1759,7 @@ CMAKE_UNAME:INTERNAL=/bin/uname
 CMAKE_USE_RELATIVE_PATHS-ADVANCED:INTERNAL=1
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
-CONFIG_CXX_FLAGS:INTERNAL= -fno-strict-aliasing -Wall -fsanitize=address
+CONFIG_CXX_FLAGS:INTERNAL= -fno-strict-aliasing -Wall -fsanitize=address -DDONT_USE_BOOST_PROGRAM_OPTIONS
 //Variable hidden from user
 Core_LIBRARY_INSTALLED:INTERNAL=
 //Variable hidden from user
