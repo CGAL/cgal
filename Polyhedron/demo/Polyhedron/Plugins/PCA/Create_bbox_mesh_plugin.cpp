@@ -130,9 +130,6 @@ void Create_bbox_mesh_plugin::bbox(bool extended)
     const double delta_x = ( bbox.xmax - bbox.xmin ) / 20.;
     const double delta_y = ( bbox.ymax - bbox.ymin ) / 20.;
     const double delta_z = ( bbox.zmax - bbox.zmin ) / 20.;
-    // const double center_x = ( bbox.xmax + bbox.xmin ) / 2.;
-    // const double center_y = ( bbox.ymax + bbox.ymin ) / 2.;
-    // const double center_z = ( bbox.zmax + bbox.zmin ) / 2.;
 
     bbox.xmin -= delta_x;
     bbox.xmax += delta_x;
@@ -149,7 +146,6 @@ void Create_bbox_mesh_plugin::bbox(bool extended)
 
   Scene_item* item = new Scene_polyhedron_item(p);
   item->setName("Scene bbox mesh");
-  // item->setColor(Qt::black);
   item->setRenderingMode(Wireframe);
   scene->addItem(item);
 }
