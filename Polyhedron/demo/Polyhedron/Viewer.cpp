@@ -112,22 +112,14 @@ void Viewer::draw()
 {
   glEnable(GL_DEPTH_TEST);
   glClear(GL_DEPTH_BUFFER_BIT);
-  if(QOpenGLFramebufferObject::hasOpenGLFramebufferBlit())
-    saveDepthBuffer();
   d->draw_aux(false, this);
-  if(QOpenGLFramebufferObject::hasOpenGLFramebufferBlit())
-    restoreDepthBuffer();
 }
 
 void Viewer::fastDraw()
 {
   glEnable(GL_DEPTH_TEST);
   glClear(GL_DEPTH_BUFFER_BIT);
-  if(QOpenGLFramebufferObject::hasOpenGLFramebufferBlit())
-    saveDepthBuffer();
   d->draw_aux(false, this);
-  if(QOpenGLFramebufferObject::hasOpenGLFramebufferBlit())
-    restoreDepthBuffer();
 }
 
 void Viewer::initializeGL()
@@ -792,9 +784,6 @@ void Viewer::drawVisualHints()
         QMatrix4x4 mvpMatrix;
         QMatrix4x4 mvMatrix;
         double mat[16];
-        //Keeps the axis from being clipped
-        qglviewer::Vec center = sceneCenter();
-        setSceneCenter(camera()->position());
         camera()->getModelViewProjectionMatrix(mat);
         //nullifies the translation
         mat[12]=0;
@@ -819,7 +808,7 @@ void Viewer::drawVisualHints()
         QVector4D	ambient;
         QVector4D	diffuse;
         QVector4D	specular;
-        GLfloat      shininess ;
+        GLfloat         shininess ;
         // Ambient
         ambient[0] = 0.29225f;
         ambient[1] = 0.29225f;
@@ -852,12 +841,9 @@ void Viewer::drawVisualHints()
         rendering_program.bind();
         //Keeps the axis system in front of everything
         glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(v_Axis.size() / 3));
-        //restores the original sceneCenter
-        setSceneCenter(center);
         rendering_program.release();
         vao[0].release();
     }
-
 }
 
 void Viewer::resizeGL(int w, int h)
@@ -1173,23 +1159,3 @@ void Viewer::wheelEvent(QWheelEvent* e)
     else
         QGLViewer::wheelEvent(e);
 }
-
-void Viewer::saveDepthBuffer()
-{
-  if(depth_fbo)
-    delete depth_fbo;
-  int width = rect().width();
-  int height = rect().height();
-  depth_fbo = new QOpenGLFramebufferObject(QSize(width,height),QOpenGLFramebufferObject::CombinedDepthStencil);
-  depth_fbo->release();
-  QOpenGLFramebufferObject::blitFramebuffer(depth_fbo,0,GL_DEPTH24_STENCIL8);
-}
-
-void Viewer::restoreDepthBuffer()
-{
-  if(depth_fbo == NULL)
-    return;
-  QOpenGLFramebufferObject::blitFramebuffer(0, depth_fbo,GL_DEPTH24_STENCIL8);
-}
-
-

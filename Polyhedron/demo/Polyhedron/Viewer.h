@@ -128,9 +128,6 @@ protected:
 
   void makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data);
   void resizeGL(int w, int h);
-  void saveDepthBuffer();
-  void restoreDepthBuffer();
-
 
 protected:
   Viewer_impl* d;
