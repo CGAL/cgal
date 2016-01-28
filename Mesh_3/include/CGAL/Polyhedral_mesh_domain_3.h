@@ -287,9 +287,13 @@ public:
                    TriangleAccessor().triangles_end(bounding_polyhedron));
       tree_.build();
       bounding_tree_ =
+        bounding_polyhedron.empty() ?
+        &tree_ :
         new AABB_tree_(TriangleAccessor().triangles_begin(bounding_polyhedron),
                        TriangleAccessor().triangles_end(bounding_polyhedron));
-      bounding_tree_->build();
+      if(!bounding_polyhedron.empty()) {
+        bounding_tree_->build();
+      }
     }
     else {
       tree_.rebuild(TriangleAccessor().triangles_begin(bounding_polyhedron),

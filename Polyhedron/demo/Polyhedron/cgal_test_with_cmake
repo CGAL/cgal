@@ -104,6 +104,7 @@ else
       corefinement_plugin \
       cut_plugin \
       clip_polyhedron_plugin \
+      create_bbox_mesh_plugin \
       demo_framework \
       edit_polyhedron_plugin \
       features_detection_plugin \
