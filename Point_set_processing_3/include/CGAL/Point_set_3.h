@@ -115,10 +115,8 @@ private:
     Property_push_pmap(Point_set& ps, Property& prop, std::size_t ind=0) : ps(ps), prop(prop), ind(ind) {}
     inline friend void put(Property_push_pmap& pm, std::size_t& i, typename Property::value_type& t)
     {
-      if(! pm.ps.surface_mesh().has_valid_index(typename Point_set::Item(pm.ind))){
-        std::cerr << "Add vertex from point " << pm.ind << std::endl;
+      if(! pm.ps.surface_mesh().has_valid_index(typename Point_set::Item(pm.ind)))
         pm.ps.surface_mesh().add_vertex();
-      }
       put(pm.prop, Point_set::Item(pm.ind), t);
       i = pm.ind;
       ++pm.ind;
