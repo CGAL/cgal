@@ -454,51 +454,30 @@ public:
     Line_2 s2Line(m_construct_line_2(s2));
 
     LineLineIntersectResult intersectResult1(m_intersect_2(s1Line, l1));
-
     CGAL_assertion(bool(intersectResult1));
+    if (!intersectResult1) return CGAL::SMALLER;
 
-    Point_2 p1;
+    const Point_2* p1_ptr = boost::get<Point_2, Point_2, Line_2>(&*intersectResult1);
 
-    FT t1;
+    CGAL_assertion(p1_ptr && "Intersection should have been a point");
+    if (!p1_ptr) return CGAL::SMALLER;
 
-    if (intersectResult1)
-    {
-      Point_2* result = boost::get<Point_2, Point_2, Line_2>(&*intersectResult1);
-
-      CGAL_assertion(result && "Intersection should have been a point");
-
-      if (result)
-      {
-        t1 = m_parametric_distance_along_segment_2(s1, *result);
-        p1 = *result;
-        CGAL_assertion(t1 >= FT(-0.00001) && t1 <= FT(1.00001));
-      }
-    }
+    CGAL_assertion_code(FT t1 = m_parametric_distance_along_segment_2(s1, *p1_ptr);)
+    CGAL_assertion(t1 >= FT(-0.00001) && t1 <= FT(1.00001));
 
     LineLineIntersectResult intersectResult2 = m_intersect_2(s2Line, l2);
-
     CGAL_assertion(bool(intersectResult2));
+    if (!intersectResult2) return CGAL::SMALLER;
 
-    FT t2;
-    Point_2 p2;
+    const Point_2* p2_ptr = boost::get<Point_2, Point_2, Line_2>(&*intersectResult2);
 
-    if (intersectResult2)
-    {
-      Point_2* result = boost::get<Point_2, Point_2, Line_2>(&*intersectResult2);
+    CGAL_assertion(p2_ptr && "Intersection should have been a point");
+    if (!p2_ptr) return CGAL::SMALLER;
 
-      CGAL_assertion(result && "Intersection should have been a point");
+    CGAL_assertion_code(FT t2 = m_parametric_distance_along_segment_2(s2, *p2_ptr);)
+    CGAL_assertion(t2 >= FT(-0.00001) && t2 <= FT(1.00001));
 
-      if (result)
-      {
-        t2 = m_parametric_distance_along_segment_2(s2, *result);
-        p2 = *result;
-        CGAL_assertion(t2 >= FT(-0.00001) && t2 <= FT(1.00001));
-      }
-    }
-
-    result_type predicateResult = m_compare_distance_2(s1.source(), p1, s2.source(), p2);
-
-    return predicateResult;
+    return m_compare_distance_2(s1.source(), *p1_ptr, s2.source(), *p2_ptr);
   }
 };
 

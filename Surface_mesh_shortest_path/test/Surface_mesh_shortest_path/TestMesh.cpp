@@ -343,7 +343,7 @@ int main(int argc, char** argv)
   }
   else
   {
-    std::cerr << "Error, must specify a polyhedron." << std::endl;
+    std::cerr << "No polyhedron specified, nothing will be tested." << std::endl;
   }
 
   return 0;
