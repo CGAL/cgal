@@ -2662,9 +2662,13 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_intersect
 //
 template <class RatKer, class AlgKer, class NtTrt, class BndTrt>
 Comparison_result
-_Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_exact_vertical_position
-    (const Point_2& p,
-     bool force_exact) const
+_Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::
+_exact_vertical_position(const Point_2& p,
+                         bool
+#if !defined(CGAL_NO_ASSERTIONS)
+                         force_exact
+#endif
+                         ) const
 {
   // If it is a rational point, obtain its rational reprsentation.
   Rat_point_2              rat_p;
