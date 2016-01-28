@@ -234,14 +234,14 @@ public:
     }
 
     bool is_index_valid() const
-    { return m_index != std::numeric_limits<size_type>::max(); }
+    { return m_index != std::numeric_limits<size_type>::max BOOST_PREVENT_MACRO_SUBSTITUTION (); }
 
   public:
     /*! Default constructor. */
     Point_const_iterator() :
       m_cvP(NULL),
       m_num_pts(0),
-      m_index(std::numeric_limits<size_type>::max())
+      m_index(std::numeric_limits<size_type>::max BOOST_PREVENT_MACRO_SUBSTITUTION ())
     {}
 
     /*! Dereference operator.
