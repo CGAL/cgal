@@ -200,7 +200,7 @@ int Texture::BGRtoRGB()
       m_pData[m_WidthByte32*j+i*BytePerPixel+2] = m_pData[m_WidthByte32*j+i*BytePerPixel];
       m_pData[m_WidthByte32*j+i*BytePerPixel] = pixel;
     }
-    return 1;
+  return 1;
 }
 
 //////////////////////////////////////////////
@@ -684,7 +684,7 @@ int Texture::ReadBuffer(float **ppBuffer,
       m_pData[m_WidthByte32*j + i*3+1] = (unsigned char)(ratio*ppBuffer[j][i]);
       m_pData[m_WidthByte32*j + i*3+2] = (unsigned char)(ratio*ppBuffer[j][i]);
     }
-    return 1;
+  return 1;
 }
 
 //********************************************
@@ -754,7 +754,7 @@ int Texture::ReadBuffer(double *buffer,
       m_pData[m_WidthByte32*j + i*BytePerPixel+2] = (unsigned char)buffer[width*j+i];
     }
 
-    return 1;
+  return 1;
 }
 
 
@@ -817,20 +817,20 @@ void Texture::GenerateMirrorV(unsigned int width,
       m_pData[m_WidthByte32*j + i*3+1] = g;
       m_pData[m_WidthByte32*j + i*3+2] = b;
     }
-    for(unsigned j=0;j<height;j++)
-      for(unsigned int i=width/4;i<3*width/4;i++)
-      {
-	m_pData[m_WidthByte32*j + i*3]   = rb;
-	m_pData[m_WidthByte32*j + i*3+1] = gb;
-	m_pData[m_WidthByte32*j + i*3+2] = bb;
-      }
-      for(unsigned j=0;j<height;j++)
-	for(unsigned int i=3*width/4;i<width;i++)
-	{
-	  m_pData[m_WidthByte32*j + i*3]   = r;
-	  m_pData[m_WidthByte32*j + i*3+1] = g;
-	  m_pData[m_WidthByte32*j + i*3+2] = b;
-	}
+  for(unsigned j=0;j<height;j++)
+    for(unsigned int i=width/4;i<3*width/4;i++)
+    {
+      m_pData[m_WidthByte32*j + i*3]   = rb;
+      m_pData[m_WidthByte32*j + i*3+1] = gb;
+      m_pData[m_WidthByte32*j + i*3+2] = bb;
+    }
+  for(unsigned j=0;j<height;j++)
+    for(unsigned int i=3*width/4;i<width;i++)
+    {
+      m_pData[m_WidthByte32*j + i*3]   = r;
+      m_pData[m_WidthByte32*j + i*3+1] = g;
+      m_pData[m_WidthByte32*j + i*3+2] = b;
+    }
 }
 
 void Texture::GenerateMirrorH(unsigned int width,
@@ -851,20 +851,20 @@ void Texture::GenerateMirrorH(unsigned int width,
       m_pData[m_WidthByte32*j + i*3+1] = g;
       m_pData[m_WidthByte32*j + i*3+2] = b;
     }
-    for(unsigned j=height/4;j<3*height/4;j++)
-      for(unsigned int i=0;i<width;i++)
-      {
-	m_pData[m_WidthByte32*j + i*3]   = rb;
-	m_pData[m_WidthByte32*j + i*3+1] = gb;
-	m_pData[m_WidthByte32*j + i*3+2] = bb;
-      }
-      for(unsigned j=3*height/4;j<height;j++)
-	for(unsigned int i=0;i<width;i++)
-	{
-	  m_pData[m_WidthByte32*j + i*3]   = r;
-	  m_pData[m_WidthByte32*j + i*3+1] = g;
-	  m_pData[m_WidthByte32*j + i*3+2] = b;
-	}
+  for(unsigned j=height/4;j<3*height/4;j++)
+    for(unsigned int i=0;i<width;i++)
+    {
+      m_pData[m_WidthByte32*j + i*3]   = rb;
+      m_pData[m_WidthByte32*j + i*3+1] = gb;
+      m_pData[m_WidthByte32*j + i*3+2] = bb;
+    }
+  for(unsigned j=3*height/4;j<height;j++)
+    for(unsigned int i=0;i<width;i++)
+    {
+      m_pData[m_WidthByte32*j + i*3]   = r;
+      m_pData[m_WidthByte32*j + i*3+1] = g;
+      m_pData[m_WidthByte32*j + i*3+2] = b;
+  }
 }
 
 
@@ -993,25 +993,25 @@ void Texture::GenerateGrid(unsigned int width,
       m_pData[m_WidthByte32*j + i*3+2] = bb;
     }
 
-    // horizontal
-    for(j=height/2-thickness/2;j<height/2+thickness/2;j++)
+  // horizontal
+  for(j=height/2-thickness/2;j<height/2+thickness/2;j++)
+  {
+    for(i=0;i<width;i++)
     {
-      for(i=0;i<width;i++)
-      {
-	m_pData[m_WidthByte32*j + i*3]   = r;
-	m_pData[m_WidthByte32*j + i*3+1] = g;
-	m_pData[m_WidthByte32*j + i*3+2] = b;
-      }
+      m_pData[m_WidthByte32*j + i*3]   = r;
+      m_pData[m_WidthByte32*j + i*3+1] = g;
+      m_pData[m_WidthByte32*j + i*3+2] = b;
     }
+  }
 
-    // vertical
-    for(unsigned int i=width/2-thickness/2;i<width/2+thickness/2;i++)
-      for(unsigned int j=0;j<height;j++)
-      {
-	m_pData[m_WidthByte32*j + i*3]   = r;
-	m_pData[m_WidthByte32*j + i*3+1] = g;
-	m_pData[m_WidthByte32*j + i*3+2] = b;
-      }
+  // vertical
+  for(unsigned int i=width/2-thickness/2;i<width/2+thickness/2;i++)
+    for(unsigned int j=0;j<height;j++)
+    {
+      m_pData[m_WidthByte32*j + i*3]   = r;
+      m_pData[m_WidthByte32*j + i*3+1] = g;
+      m_pData[m_WidthByte32*j + i*3+2] = b;
+    }
 }
 
 void Texture::GenerateGradientH(unsigned int width,
