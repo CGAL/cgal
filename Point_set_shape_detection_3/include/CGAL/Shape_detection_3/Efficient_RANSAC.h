@@ -696,7 +696,7 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
   
             candidates.resize(end);
           }
-          keep_searching = (stop_probability(m_options.min_points,
+        keep_searching = (stop_probability(m_options.min_points,
             m_num_available_points - num_invalid,
             generated_candidates, 
             m_global_octree->maxLevel())
