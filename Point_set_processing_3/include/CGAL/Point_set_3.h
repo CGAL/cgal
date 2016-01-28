@@ -119,7 +119,7 @@ private:
         std::cerr << "Add vertex from point " << pm.ind << std::endl;
         pm.ps.surface_mesh().add_vertex();
       }
-      put(pm.prop, Point_set::Item(pm.ind),t);
+      put(pm.prop, Point_set::Item(pm.ind), t);
       i = pm.ind;
       ++pm.ind;
     }
@@ -220,7 +220,7 @@ public:
   }
   Point_push_pmap point_push_pmap ()
   {
-    Point_pmap pm = m_base.points();
+    Point_pmap& pm = m_base.points();
     return Property_push_pmap<Point_pmap> (*this, pm, size());
   }
   Normal_push_pmap normal_push_pmap ()
