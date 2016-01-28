@@ -364,7 +364,7 @@ public: // virtual interface of Base_property_array
     {
         data_.push_back(value_);
     }
-
+      
     bool transfer(const Base_property_array& other)
     {
       const Property_array<T>* pa = dynamic_cast<const Property_array*>(&other);
@@ -396,6 +396,8 @@ public: // virtual interface of Base_property_array
 
     virtual const std::type_info& type() { return typeid(T); }
 
+    virtual typename vector_type::iterator begin() { return data_.begin(); }
+    virtual typename vector_type::iterator end() { return data_.end(); }
 
 public:
 
@@ -668,6 +670,7 @@ public:
     typedef I key_type;
     typedef T value_type;
     typedef boost::lvalue_property_map_tag category;
+    typedef Property_array<T> Array;
 
 #ifndef DOXYGEN_RUNNING
 
@@ -743,7 +746,7 @@ public:
     }
 
     //@}
-private:
+
 
     Property_array<T>& array()
     {
@@ -756,7 +759,7 @@ private:
         CGAL_assertion(parray_ != NULL);
         return *parray_;
     }
-
+private:
     Property_array<T>* parray_;
 };
 
@@ -971,12 +974,12 @@ private: //------------------------------------------------------ iterator types
     class Index_iterator
       : public boost::iterator_facade< Index_iterator<Index_>,
                                        Index_,
-                                       std::bidirectional_iterator_tag
+                                       std::random_access_iterator_tag
                                        >
     {
         typedef boost::iterator_facade< Index_iterator<Index_>,
                                         Index_,
-                                        std::bidirectional_iterator_tag
+                                        std::random_access_iterator_tag
                                         > Facade;
     public:
         Index_iterator() : hnd_(), mesh_(NULL) {}
@@ -2369,6 +2372,9 @@ private: //--------------------------------------------------- property handling
     /// returns the property for the string "v:point".
     Property_map<Vertex_index, Point>
     points() const { return vpoint_; }
+
+  Property_map<Vertex_index, Point>&
+    points() { return vpoint_; }
 
     /// returns the point associated to vertex `v`.
     const Point&
