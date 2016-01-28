@@ -66,7 +66,7 @@ public:
     //CGAL_warning_msg(count ==  nObjects * blocks.size(),
     //                 "Cannot delete memory as there are cyclic references");
 
-    if(count !=  nObjects * blocks.size()){
+    if(count ==  nObjects * blocks.size()){
       for(std::size_t i=0; i < blocks.size();i++){
         ::operator delete(blocks[i]);
       }
