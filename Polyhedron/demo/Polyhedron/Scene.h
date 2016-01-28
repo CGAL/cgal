@@ -160,6 +160,10 @@ public:
   QItemSelection createSelectionAll();
 
 public Q_SLOTS:
+  //!Specifies a group as Expanded for the view
+  void setExpanded(QModelIndex);
+  //!Specifies a group as Collapsed for the view
+  void setCollapsed(QModelIndex);
   /*! This is an overloaded function.
    * Notifies the scene that the sender item was modified.
    * Called by the items. Calls @ref Scene_item#changed().
@@ -244,10 +248,6 @@ Q_SIGNALS:
   void selectionChanged(int i);
   void restoreCollapsedState();
 private Q_SLOTS:
-  //!Specifies a group as Expanded for the view
-  void setExpanded(QModelIndex);
-  //!Specifies a group as Collapsed for the view
-  void setCollapsed(QModelIndex);
   //! Casts a selection ray and calls the item function select.
   void setSelectionRay(double, double, double, double, double, double);
   void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}

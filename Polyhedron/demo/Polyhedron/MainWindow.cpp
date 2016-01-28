@@ -214,10 +214,14 @@ MainWindow::MainWindow(QWidget* parent)
           this, SLOT(showSceneContextMenu(const QPoint &)));
 
   connect(sceneView, SIGNAL(expanded(QModelIndex)),
-          scene, SLOT(setExpanded(QModelIndex)));
+          this, SLOT(setExpanded(QModelIndex)));
 
   connect(sceneView, SIGNAL(collapsed(QModelIndex)),
+          this, SLOT(setCollapsed(QModelIndex)));
+  connect(this, SIGNAL(collapsed(QModelIndex)),
           scene, SLOT(setCollapsed(QModelIndex)));
+  connect(this, SIGNAL(expanded(QModelIndex)),
+          scene, SLOT(setExpanded(QModelIndex)));
 
   connect(scene, SIGNAL(restoreCollapsedState()),
           this, SLOT(restoreCollapseState()));
@@ -1722,7 +1726,6 @@ void MainWindow::recurseExpand(QModelIndex index)
     QString name = scene->item(scene->getIdFromModelIndex(index))->name();
         CGAL::Three::Scene_group_item* group =
                 qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(scene->getIdFromModelIndex(index)));
-
         if(group && group->isExpanded())
         {
             sceneView->setExpanded(proxyModel->mapFromSource(index), true);
@@ -1730,7 +1733,6 @@ void MainWindow::recurseExpand(QModelIndex index)
         else if (group && !group->isExpanded()){
             sceneView->setExpanded(proxyModel->mapFromSource(index), false);
         }
-
 
         if( index.sibling(row+1,0).isValid())
             recurseExpand(index.sibling(row+1,0));
@@ -1860,4 +1862,13 @@ QString MainWindow::get_item_stats()
     }
   }
   return str;
+}
+void MainWindow::setCollapsed(QModelIndex index)
+{
+  Q_EMIT collapsed(proxyModel->mapToSource(index));
+}
+
+void MainWindow::setExpanded(QModelIndex index)
+{
+  Q_EMIT expanded(proxyModel->mapToSource(index));
 }
