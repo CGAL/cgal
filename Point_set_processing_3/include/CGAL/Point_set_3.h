@@ -115,8 +115,8 @@ private:
     Property_push_pmap(Point_set& ps, Property& prop, std::size_t ind=0) : ps(ps), prop(prop), ind(ind) {}
     inline friend void put(Property_push_pmap& pm, std::size_t& i, typename Property::value_type& t)
     {
-      if(! pm.ps.surface_mesh().has_valid_index(typename Point_set::Item(pm.ind)))
-        pm.ps.surface_mesh().add_vertex();
+      if(!pm.ps.has_valid_index(pm.ind))
+        pm.ps.add_item();
       put(pm.prop, Point_set::Item(pm.ind), t);
       i = pm.ind;
       ++pm.ind;
@@ -194,6 +194,16 @@ public:
       m_base.remove_vertex (Item (*it));
     m_base.collect_garbage();
     reset_indices();
+  }
+
+  void add_item ()
+  {
+    m_base.add_vertex();
+  }
+  
+  bool has_valid_index (std::size_t i) const
+  {
+    return m_base.has_valid_index (Item (i));
   }
 
   void reset_indices()
