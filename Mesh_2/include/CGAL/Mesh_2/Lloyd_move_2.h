@@ -74,7 +74,7 @@ namespace Mesh_2
 
         // Compute mass
         FT density = density_2d(tri_centroid, sizing_field);
-        FT abs_area = CGAL::abs(tri.area());
+        FT abs_area = CGAL::abs(cdt.geom_traits().compute_area_2_object()(tri[0], tri[1], tri[2]));
         FT mass = abs_area * density;
 
         move = move + mass * Vector_2(p, tri_centroid);
