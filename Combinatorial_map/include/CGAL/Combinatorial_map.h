@@ -100,8 +100,8 @@ namespace CGAL {
     static const unsigned int dimension = Base::dimension;
 
     typedef typename Base::Null_handle_type Null_handle_type;
-    static Null_handle_type null_handle;
 
+    using Base::null_handle;
     using Base::null_dart_handle;
     using Base::mdarts;
     using Base::get_beta;
@@ -3759,13 +3759,6 @@ namespace CGAL {
     typename Helper::Split_functors m_onsplit_functors;
     typename Helper::Merge_functors m_onmerge_functors;
   };
-
-  template < unsigned int d_, class Refs, class Items_, class Alloc_,
-             class Storage_ >
-  typename Combinatorial_map_base<d_,Refs,Items_,Alloc_,Storage_>::
-     Base::Null_handle_type
-     Combinatorial_map_base<d_,Refs,Items_,Alloc_,Storage_>::null_handle =
-     Combinatorial_map_base<d_,Refs,Items_,Alloc_,Storage_>::Base::null_handle;
 
   template < unsigned int d_,
              class Items_=Combinatorial_map_min_items<d_>,
