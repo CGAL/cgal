@@ -61,6 +61,7 @@
 #include <boost/mpl/if.hpp>
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
+#include <CGAL/internal/Static_filters/tools.h>
 #include <CGAL/Triangulation_structural_filtering_traits.h>
 #include <CGAL/determinant.h>
 #endif // no CGAL_NO_STRUCTURAL_FILTERING
@@ -895,18 +896,20 @@ public:
   inexact_orientation(const Point &p, const Point &q,
                       const Point &r, const Point &s) const
   {
-    const double px = to_double(p.x());
-    const double py = to_double(p.y());
-    const double pz = to_double(p.z());
-    const double qx = to_double(q.x());
-    const double qy = to_double(q.y());
-    const double qz = to_double(q.z());
-    const double rx = to_double(r.x());
-    const double ry = to_double(r.y());
-    const double rz = to_double(r.z());
-    const double sx = to_double(s.x());
-    const double sy = to_double(s.y());
-    const double sz = to_double(s.z());
+  // So that this code works well with Lazy_kernel
+  internal::Static_filters_predicates::Get_approx<Point> get_approx;
+    const double px = to_double(get_approx(p).x());
+    const double py = to_double(get_approx(p).y());
+    const double pz = to_double(get_approx(p).z());
+    const double qx = to_double(get_approx(q).x());
+    const double qy = to_double(get_approx(q).y());
+    const double qz = to_double(get_approx(q).z());
+    const double rx = to_double(get_approx(r).x());
+    const double ry = to_double(get_approx(r).y());
+    const double rz = to_double(get_approx(r).z());
+    const double sx = to_double(get_approx(s).x());
+    const double sy = to_double(get_approx(s).y());
+    const double sz = to_double(get_approx(s).z());
 
     const double pqx = qx - px;
     const double pqy = qy - py;
