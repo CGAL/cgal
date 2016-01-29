@@ -474,7 +474,8 @@ public:
       
   void process_line ()
   {
-    FT x, y, z, nx, ny, nz;
+    FT x = (FT)0.,y = (FT)0., z = (FT)0.,
+      nx = (FT)0., ny = (FT)0., nz = (FT)0.;
     assign (x, "x");
     assign (y, "y");
     assign (z, "z");
