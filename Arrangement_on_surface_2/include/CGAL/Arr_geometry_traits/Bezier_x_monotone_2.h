@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
 //                 Iddo Hanniel <iddoh@cs.technion.ac.il>
 
@@ -100,7 +96,7 @@ private:
   {
   private:
     Bezier_cache    *p_cache;
-    
+
   public:
 
     Less_intersection_point (Bezier_cache& cache) :
@@ -605,23 +601,27 @@ private:
    *         EQUAL if p lies on the curve.
    */
   Comparison_result _exact_vertical_position (const Point_2& p,
-                                              bool force_exact) const;
+                                              bool
+#if !defined(CGAL_NO_ASSERTIONS)
+                                              force_exact
+#endif
+                                              ) const;
 
 };
 
 /*!
  * Exporter for Bezier curves.
  */
-template <class Rat_kernel, class Alg_kernel, class Nt_traits, 
+template <class Rat_kernel, class Alg_kernel, class Nt_traits,
           class Bounding_traits>
-std::ostream& 
-operator<< (std::ostream& os, 
-            const _Bezier_x_monotone_2<Rat_kernel, Alg_kernel, Nt_traits, 
+std::ostream&
+operator<< (std::ostream& os,
+            const _Bezier_x_monotone_2<Rat_kernel, Alg_kernel, Nt_traits,
                                        Bounding_traits>& cv)
 {
   os << cv.supporting_curve()
      << " [" << cv.xid()
-     << "] | " << cv.source() 
+     << "] | " << cv.source()
      << " --> " << cv.target();
 
   return (os);
@@ -645,11 +645,11 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_x_monotone_2
 
   // Get the originators of the point that correspond to the curve B.
   Originator_iterator   ps_org = ps.get_originator (B, _xid);
-  CGAL_precondition (ps_org != ps.originators_end()); 
-  
+  CGAL_precondition (ps_org != ps.originators_end());
+
   Originator_iterator   pt_org = pt.get_originator (B, _xid);
   CGAL_precondition (pt_org != pt.originators_end());
-  
+
   // Check if the subcurve is directed left or right.
   const Comparison_result    res = _ps.compare_x (_pt, cache);
 
@@ -663,12 +663,12 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_x_monotone_2
   {
     _dir_right = (res == SMALLER);
   }
-  
+
   // Check if the value of the parameter t increases when we traverse the
   // curve from left to right: If the curve is directed to the right, we
   // check if t_src < t_trg, otherwise we check whether t_src > t_trg.
   Comparison_result      t_res;
-  
+
   if (CGAL::compare (ps_org->point_bound().t_max,
                      pt_org->point_bound().t_min) == SMALLER ||
       CGAL::compare (ps_org->point_bound().t_min,
@@ -676,7 +676,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_x_monotone_2
   {
     // Perform the comparison assuming that the possible parameter
     // values do not overlap.
-    t_res = CGAL::compare (ps_org->point_bound().t_min, 
+    t_res = CGAL::compare (ps_org->point_bound().t_min,
                            pt_org->point_bound().t_min);
   }
   else
@@ -684,7 +684,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_x_monotone_2
     // In this case both exact parameter values must be known.
     // We use them to perform an exact comparison.
     CGAL_assertion (ps_org->has_parameter() && pt_org->has_parameter());
-    
+
     t_res = CGAL::compare (ps_org->parameter(), pt_org->parameter());
   }
 
@@ -700,7 +700,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_Bezier_x_monotone_2
 // Get the approximate parameter range defining the curve.
 //
 template <class RatKer, class AlgKer, class NtTrt, class BndTrt>
-std::pair<double, double> 
+std::pair<double, double>
 _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::parameter_range () const
 {
   // First try to use the approximate representation of the endpoints.
@@ -728,14 +728,14 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
      Bezier_cache& cache) const
 {
   Nt_traits nt_traits;
-  
+
   //First check if the bezier is a vertical segment
   if (is_vertical())
   {
     if (! p.is_exact()) p.make_exact (cache);
-    if (! _ps.is_exact()) _ps.make_exact (cache);    
-    if (! _pt.is_exact()) _ps.make_exact (cache);    
-    
+    if (! _ps.is_exact()) _ps.make_exact (cache);
+    if (! _pt.is_exact()) _ps.make_exact (cache);
+
     if (p.is_rational() && _ps.is_rational() && _pt.is_rational())
     {
       const Rat_point_2&  rat_p = (Rat_point_2) p;
@@ -746,7 +746,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
       Comparison_result res2 = (CGAL::compare (rat_p.y(), rat_pt.y()));
       return (res1==res2 ? res1:EQUAL);
     }
-    
+
     Comparison_result res1 = (CGAL::compare (p.y(), _ps.y()));
     Comparison_result res2 = (CGAL::compare (p.y(), _pt.y()));
     return (res1==res2 ? res1:EQUAL);
@@ -755,10 +755,10 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
   if (p.identical(_ps)) {
     return EQUAL;
   }
-  
-  // Then check whether the bezier is an horizontal segment or 
+
+  // Then check whether the bezier is an horizontal segment or
   // if p has the same x-coordinate as one of the endpoint
-  
+
   const Comparison_result  res1 =  p.compare_x (_ps, cache);
 
   if (res1 == EQUAL || nt_traits.degree(_curve.y_polynomial()) <= 0)
@@ -778,13 +778,13 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
     // Compare the algebraic y-coordinates.
     return (CGAL::compare (p.y(), _ps.y()));
   }
-  
+
   if (p.identical(_pt)) {
     return EQUAL;
   }
 
   const Comparison_result  res2 = p.compare_x (_pt, cache);
-  
+
   if (res2 == EQUAL)
   {
     // In this case both points must be exact.
@@ -802,13 +802,13 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
     // Compare the algebraic y-coordinates.
     return (CGAL::compare (p.y(), _pt.y()));
   }
-  
+
   // Make sure that p is in the x-range of our subcurve.
   CGAL_precondition (res1 != res2);
-  
+
   // Check for the case when curve is an originator of the point.
   Originator_iterator   p_org = p.get_originator (_curve, _xid);
- 
+
   if (p_org != p.originators_end())
   {
     CGAL_assertion_code
@@ -838,7 +838,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
     if (in_range)
       return (EQUAL);
   }
-  
+
   // Call the vertical-position function that uses the bounding-boxes
   // to evaluate the comparsion result.
   typename Bounding_traits::Control_points  cp;
@@ -848,10 +848,10 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
 
   Originator_iterator           ps_org = _ps.get_originator (_curve, _xid);
   CGAL_assertion (ps_org != _ps.originators_end());
-  
+
   Originator_iterator           pt_org = _pt.get_originator (_curve, _xid);
   CGAL_assertion (pt_org != _pt.originators_end());
-  
+
   Comparison_result             res_bound = EQUAL;
   typename Bounding_traits::NT  x_min, y_min, x_max, y_max;
   bool                          can_refine;
@@ -949,28 +949,28 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
 
   if (res_bound != EQUAL)
     return (res_bound);
- 
-  
+
+
   if ( p.is_rational() ){
     const Rational& px = ((Rat_point_2) p).x();
-    
+
     Integer denom_px=nt_traits.denominator(px);
     Integer numer_px=nt_traits.numerator(px);
     Polynomial poly_px = CGAL::sign(numer_px) == ZERO ? Polynomial() : nt_traits.construct_polynomial(&numer_px,0);
     Polynomial poly_x = nt_traits.scale(_curve.x_polynomial(),denom_px) - poly_px;
-    
+
     std::vector <Algebraic> roots;
     std::pair<double,double> prange = parameter_range();
     nt_traits.compute_polynomial_roots (poly_x,prange.first,prange.second,std::back_inserter(roots));
-    
+
     CGAL_assertion(roots.size()==1); //p is in the range and the curve is x-monotone
-    
+
     return CGAL::compare(
       ((Rat_point_2) p).y(),
       nt_traits.evaluate_at (_curve.y_polynomial(), *roots.begin())
     );
   }
-  
+
   // In this case we have to switch to exact computations and check whether
   // p lies of the given subcurve. We take one of p's originating curves and
   // compute its intersections with our x-monotone curve.
@@ -978,7 +978,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
     p.make_exact (cache);
 
   CGAL_assertion (p.originators_begin() != p.originators_end());
-    
+
   Originator   org = *(p.originators_begin());
   bool         do_ovlp;
   bool         swap_order = (_curve.id() > org.curve().id());
@@ -1000,20 +1000,20 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
 
   if (do_ovlp)
     return (EQUAL);
-    
+
   // Go over the intersection points and look for p there.
   Intersect_iter       iit;
-    
+
   for (iit = inter_list.begin(); iit != inter_list.end(); ++iit)
   {
     // Get the parameter of the originator and compare it to p's parameter.
     const Algebraic&  s = swap_order ? iit->s : iit->t;
-      
+
     if (CGAL::compare (s, org.parameter()) == EQUAL)
     {
       // Add this curve as an originator for p.
       const Algebraic&  t = swap_order ? iit->t : iit->s;
-    
+
       CGAL_assertion (_is_in_range (t, cache));
 
       Point_2&  pt = const_cast<Point_2&> (p);
@@ -1023,7 +1023,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
       return (EQUAL);
     }
   }
-  
+
   // We now know that p is not on the subcurve. We therefore subdivide the
   // curve using exact rational arithmetic, until we reach a separation
   // between the curve and the point. (This case should be very rare.)
@@ -1039,7 +1039,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::point_position
 
   if (! _ps.is_exact())
     _ps.make_exact (cache);
-  
+
   if (! _pt.is_exact())
     _pt.make_exact (cache);
 
@@ -1074,7 +1074,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_right
       CGAL_precondition_msg (false, "p is not on cv1");
     }
   }
-  
+
   if (! p.equals (cv.left(), cache))
   {
     if (cv.point_position (p, cache) != EQUAL)
@@ -1090,14 +1090,14 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_right
     if (cv.is_vertical())
       // Both are vertical segments with a common endpoint, so they overlap:
       return (EQUAL);
-    
+
     return (LARGER);
   }
   else if (cv.is_vertical())
   {
     return (SMALLER);
   }
-    
+
   // Check if both subcurves originate from the same Bezier curve.
   Nt_traits       nt_traits;
 
@@ -1118,7 +1118,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_right
       {
         // Comparison based on the control polygon of the bounded vertical
         // tangency point, using the fact this polygon is y-monotone.
-        const typename Bounding_traits::Control_points& cp = 
+        const typename Bounding_traits::Control_points& cp =
           org->point_bound().ctrl;
 
         if (_inc_to_right)
@@ -1130,21 +1130,21 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_right
           return (CGAL::compare (cp.front().y(), cp.back().y()));
         }
       }
-    
+
       // Iddo: Handle rational points (using de Casteljau derivative)?
-    
+
       // In this case we know that we have a vertical tangency at t0, so
       // X'(t0) = 0. We evaluate the sign of Y'(t0) in order to find the
       // vertical position of the two subcurves to the right of this point.
       CGAL_assertion (org->has_parameter());
-    
+
       const Algebraic&  t0 = org->parameter();
       Polynomial        polyY_der = nt_traits.derive (_curve.y_polynomial());
       const CGAL::Sign  sign_der =
         CGAL::sign (nt_traits.evaluate_at (polyY_der, t0));
-    
+
       CGAL_assertion (sign_der != CGAL::ZERO);
-    
+
       if (_inc_to_right)
         return ((sign_der == CGAL::POSITIVE) ? LARGER : SMALLER);
       else
@@ -1163,7 +1163,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_right
   // Compare the two subcurves by choosing some point to the right of p
   // and comparing the vertical position there.
   Comparison_result   right_res;
-  
+
   if (right().compare_x (cv.right(), cache) != LARGER)
   {
     right_res = _compare_to_side (cv, p,
@@ -1175,10 +1175,10 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_right
     right_res = cv._compare_to_side (*this, p,
                                      true,        // Compare to p's right.
                                      cache);
-    
+
     right_res = CGAL::opposite (right_res);
   }
-  
+
   return (right_res);
 }
 
@@ -1218,7 +1218,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_left
       CGAL_precondition_msg (false, "p is not on cv2");
     }
   }
-  
+
   // Check for vertical subcurves. A vertical segment is below any other
   // x-monotone subcurve to the left of their common endpoint.
   if (is_vertical())
@@ -1226,14 +1226,14 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_left
     if (cv.is_vertical())
       // Both are vertical segments with a common endpoint, so they overlap:
       return (EQUAL);
-    
+
     return (SMALLER);
   }
   else if (cv.is_vertical())
   {
     return (LARGER);
   }
-    
+
   // Check if both subcurves originate from the same Bezier curve.
   Nt_traits       nt_traits;
 
@@ -1246,16 +1246,16 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_left
 
     CGAL_assertion (org != p.originators_end());
     CGAL_assertion (_inc_to_right != cv._inc_to_right);
-    
+
     if (org->point_bound().type == Bez_point_bound::VERTICAL_TANGENCY_PT)
     {
       if (! p.is_exact())
       {
         // Comparison based on the control polygon of the bounded vertical
         // tangency point, using the fact this polygon is y-monotone.
-        const typename Bounding_traits::Control_points& cp = 
+        const typename Bounding_traits::Control_points& cp =
           org->point_bound().ctrl;
-      
+
         if (_inc_to_right)
         {
           return (CGAL::compare(cp.front().y(), cp.back().y()));
@@ -1265,21 +1265,21 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_left
           return (CGAL::compare(cp.back().y(), cp.front().y()));
         }
       }
-    
+
       // Iddo: Handle rational points (using de Casteljau derivative)?
-    
+
       // In this case we know that we have a vertical tangency at t0, so
       // X'(t0) = 0. We evaluate the sign of Y'(t0) in order to find the
       // vertical position of the two subcurves to the right of this point.
       CGAL_assertion (org->has_parameter());
-    
+
       const Algebraic&  t0 = org->parameter();
       Polynomial        polyY_der = nt_traits.derive (_curve.y_polynomial());
       const CGAL::Sign  sign_der =
         CGAL::sign (nt_traits.evaluate_at (polyY_der, t0));
-    
+
       CGAL_assertion (sign_der != CGAL::ZERO);
-      
+
       if (_inc_to_right)
         return ((sign_der == CGAL::NEGATIVE) ? LARGER : SMALLER);
       else
@@ -1292,14 +1292,14 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_left
   // vertical order to p's right; note that we swap the order of the curves
   // to obtains their position to the left.
   Comparison_result   slope_res = cv._compare_slopes (*this, p, cache);
-    
+
   if (slope_res != EQUAL)
     return (slope_res);
 
   // Compare the two subcurves by choosing some point to the left of p
   // and compareing the vertical position there.
   Comparison_result   left_res;
-  
+
   if (left().compare_x (cv.left(), cache) != SMALLER)
   {
     left_res = _compare_to_side (cv, p,
@@ -1313,7 +1313,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::compare_to_left
                                     cache);
     left_res = CGAL::opposite (left_res);
   }
-  
+
   return (left_res);
 }
 
@@ -1334,11 +1334,11 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::equals
         return compare(left().x(),cv.left().x())==EQUAL;
       return false;
     }
-    
+
     // Check whether the two curves have the same support:
     if (! _curve.has_same_support (cv._curve))
       return (false);
-    
+
     // Mark that the two curves overlap in the cache.
     const Curve_id               id1 = _curve.id();
     const Curve_id               id2 = cv._curve.id();
@@ -1378,13 +1378,13 @@ split(const Point_2& p, Self& c1, Self& c2) const
     CGAL_assertion(sols.size() == 1);
     p.add_originator(Originator(_curve, _xid,*sols.begin()) );
   }
-  
+
   CGAL_precondition(p.get_originator(_curve, _xid) != p.originators_end() ||
                     p.is_rational());
 
   // Duplicate the curve.
   c1 = c2 = *this;
-    
+
   // Perform the split.
   if (_dir_right)
   {
@@ -1410,7 +1410,7 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::can_merge_with
   return (_curve.is_same (cv._curve) &&
           _xid == cv._xid &&
           (right().is_same (cv.left()) || left().is_same (cv.right())));
-  
+
   return (false);
 }
 
@@ -1438,7 +1438,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::merge
   else
   {
     CGAL_precondition (left().is_same (cv.right()));
-    
+
     // Extend the subcurve to the left.
     if (_dir_right)
       res._ps = cv.left();
@@ -1467,7 +1467,7 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_is_in_range
   Nt_traits            nt_traits;
 
   bool  p_lt_ps =
-      (CGAL::compare (t, nt_traits.convert (s_org->point_bound().t_min)) == 
+      (CGAL::compare (t, nt_traits.convert (s_org->point_bound().t_min)) ==
        SMALLER);
   bool  p_gt_ps =
       (CGAL::compare (t, nt_traits.convert (s_org->point_bound().t_max)) ==
@@ -1485,7 +1485,7 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_is_in_range
     // parameter is between the source and target parameters.
     return (true);
   }
-  
+
   if ((p_lt_ps && p_lt_pt) || (p_gt_ps && p_gt_pt))
   {
     // The point p is definately not in the x-range of the subcurve,
@@ -1493,15 +1493,15 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_is_in_range
     // (or greater than both of them).
     return (false);
   }
-  
+
   // Obtain the exact t-range of the curve and peform an exact comparison.
   std::pair<Algebraic, Algebraic> range = _t_range (cache);
   const Algebraic&                t_src = range.first;
   const Algebraic&                t_trg = range.second;
-  
+
   const Comparison_result  res1 = CGAL::compare (t, t_src);
   const Comparison_result  res2 = CGAL::compare (t, t_trg);
-  
+
   return (res1 == EQUAL || res2 == EQUAL || res1 != res2);
 }
 
@@ -1514,7 +1514,7 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_is_in_range
          bool& is_certain) const
 {
   is_certain = true;
-  
+
   // Check the easy case that p is one of the subcurve endpoints.
   if (p.is_same(_ps) || p.is_same(_pt))
     return true;
@@ -1534,14 +1534,14 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_is_in_range
 
   Originator_iterator  s_org = _ps.get_originator (_curve, _xid);
   CGAL_assertion (s_org != _ps.originators_end());
-  
+
   Originator_iterator  t_org = _pt.get_originator (_curve, _xid);
   CGAL_assertion (t_org != _pt.originators_end());
-  
+
   bool      can_refine_p = ! p.is_exact();
   bool      can_refine_s = ! _ps.is_exact();
   bool      can_refine_t = ! _pt.is_exact();
-  
+
   while (can_refine_p || can_refine_s || can_refine_t)
   {
     bool  p_lt_ps = (CGAL::compare (p_org->point_bound().t_max,
@@ -1567,14 +1567,14 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_is_in_range
       // (or greater than both of them).
       return (false);
     }
-    
+
     // Try to refine the points.
     if (can_refine_p)
       can_refine_p = p.refine();
-    
+
     if (can_refine_s)
       can_refine_s = _ps.refine();
-    
+
     if (can_refine_t)
       can_refine_t = _pt.refine();
   }
@@ -1634,7 +1634,7 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_is_in_range
   if ( is_vertical() ){
     if ( compare(rat_p.x(),left().x())==EQUAL ){
       _curve.get_t_at_y (rat_p.y(), std::back_inserter(t_vals));
-      
+
       for (t_iter = t_vals.begin(); t_iter != t_vals.end(); ++t_iter)
       {
         // Compare the current t-value with t_min.
@@ -1670,9 +1670,9 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_is_in_range
       }
     }
     is_endpoint = false;
-    return (false);          
+    return (false);
   }
-  
+
   _curve.get_t_at_x (rat_p.x(), std::back_inserter(t_vals));
   CGAL_assertion (! t_vals.empty() );
 
@@ -1745,7 +1745,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_get_y
   const Algebraic&                         t_src = t_range.first;
   const Algebraic&                         t_trg = t_range.second;
   Comparison_result                        res1, res2;
-  
+
   for (t_iter = t_vals.begin(); t_iter != t_vals.end(); ++t_iter)
   {
     res1 = CGAL::compare (*t_iter, t_src);
@@ -1772,7 +1772,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_get_y
               nt_traits.convert (_curve.y_norm()));
     }
   }
-  
+
   // If we reached here, x0 is not in the x-range of our subcurve.
   CGAL_error();
   return (0);
@@ -1808,7 +1808,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_compare_slopes
     const Bez_point_bound&  bound1 = org1->point_bound();
     const Bez_point_bound&  bound2 = org2->point_bound();
     Bounding_traits         bound_tr;
-    
+
     return (bound_tr.compare_slopes_at_intersection_point (bound1,
                                                            bound2));
   }
@@ -1903,7 +1903,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_compare_slopes
   // Handle the comparison when one slope (or both) is +/- oo.
   if (inf_slope1 == CGAL::POSITIVE)
     return (inf_slope2 == CGAL::POSITIVE ? EQUAL : LARGER);
-  
+
   if (inf_slope1 == CGAL::NEGATIVE)
     return (inf_slope2 == CGAL::NEGATIVE ? EQUAL : SMALLER);
 
@@ -1922,7 +1922,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_compare_slopes
 //
 template <class RatKer, class AlgKer, class NtTrt, class BndTrt>
 std::pair<typename _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt,
-                                        BndTrt>::Algebraic, 
+                                        BndTrt>::Algebraic,
           typename _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt,
                                         BndTrt>::Algebraic>
 _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_t_range
@@ -1930,17 +1930,17 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_t_range
 {
   Originator_iterator  ps_org = _ps.get_originator (_curve, _xid);
   CGAL_assertion(ps_org != _ps.originators_end());
-  
+
   Originator_iterator  pt_org = _pt.get_originator (_curve, _xid);
   CGAL_assertion(pt_org != _pt.originators_end());
-  
+
   // Make sure that the two endpoints are exact.
   if (! ps_org->has_parameter())
     _ps.make_exact (cache);
-  
+
   if (! pt_org->has_parameter())
     _pt.make_exact (cache);
-  
+
   return (std::make_pair (ps_org->parameter(),
                           pt_org->parameter()));
 }
@@ -1981,10 +1981,10 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_compare_to_side
 
   // Get the parameter value for the point p.
   Originator_iterator          org = p.get_originator (_curve, _xid);
-  
+
   CGAL_assertion (org != p.originators_end());
   CGAL_assertion (org->has_parameter());
-  
+
   const Algebraic&             t0 = org->parameter();
 
   // Get the parameter range of the curve.
@@ -1998,14 +1998,14 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_compare_to_side
   Algebraic                    next_t;
   Comparison_result            res = CGAL::EQUAL;
   bool                         found = false;
-  
+
   for (iit = inter_list.begin(); iit != inter_list.end(); ++iit)
   {
     // Check if the current point lies to the right (left) of p. We do so by
     // considering its originating parameter value s (or t, if we swapped
     // the curves).
     const Algebraic&     t = (no_swap_curves ? (iit->s) : iit->t);
-    
+
     res = CGAL::compare (t, t0);
     if ((to_right && ((_inc_to_right && res == LARGER) ||
                       (! _inc_to_right && res == SMALLER))) ||
@@ -2032,7 +2032,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_compare_to_side
       }
     }
   }
-  
+
   // If the next intersection point occurs before the right (left) endpoint
   // of the subcurve, keep it. Otherwise, take the parameter value at
   // the endpoint.
@@ -2043,7 +2043,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_compare_to_side
     else
       res = CGAL::compare (t_src, next_t);
   }
-  
+
   if (! found ||
       (to_right && ((_inc_to_right && res == SMALLER) ||
                     (! _inc_to_right && res == LARGER))) ||
@@ -2052,7 +2052,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_compare_to_side
   {
     next_t = ((to_right == _dir_right) ? t_trg : t_src);
   }
-  
+
   // Find a rational value between t0 and t_next. Using this value, we
   // a point with rational coordinates on our subcurve. We also locate a point
   // on the other curve with the same x-coordinates.
@@ -2217,25 +2217,25 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt,
 
   // Construct the approximated points.
   typename std::list<Intersection_point>::const_iterator  iter;
-  
+
   for (iter = ipt_bounds.begin(); iter != ipt_bounds.end(); ++iter)
   {
-    const Bez_point_bound&  bound1 = iter->bound1; 
-    const Bez_point_bound&  bound2 = iter->bound2; 
-    const Bez_point_bbox&   bbox = iter->bbox; 
-    
+    const Bez_point_bound&  bound1 = iter->bound1;
+    const Bez_point_bound&  bound2 = iter->bound2;
+    const Bez_point_bbox&   bbox = iter->bbox;
+
     // In case it is impossible to further refine the point, stop here.
     if (! bound1.can_refine || ! bound2.can_refine)
       return (false);
-    
+
     // Create the approximated intersection point.
     Point_2                 pt;
-    
+
     if (bound1.type == Bounding_traits::Bez_point_bound::RATIONAL_PT &&
         bound2.type == Bounding_traits::Bez_point_bound::RATIONAL_PT)
     {
-      CGAL_assertion (CGAL::compare (bound1.t_min, bound1.t_max) == EQUAL); 
-      CGAL_assertion (CGAL::compare (bound2.t_min, bound2.t_max) == EQUAL); 
+      CGAL_assertion (CGAL::compare (bound1.t_min, bound1.t_max) == EQUAL);
+      CGAL_assertion (CGAL::compare (bound2.t_min, bound2.t_max) == EQUAL);
       Rational   t1 = bound1.t_min;
       Rational   t2 = bound2.t_min;
       Nt_traits  nt_traits;
@@ -2356,10 +2356,10 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_intersect
 
   if (app_ok)
   {
-    // Approximations are computed using de Casteljau subdivision and 
+    // Approximations are computed using de Casteljau subdivision and
     // filtering using skewed bounding boxes. A property of these bboxes
     // if that it can fail in the following cases: (i) there are two intersection
-    // points lying very close together, (ii) there exists an intersection point 
+    // points lying very close together, (ii) there exists an intersection point
     // whose multiplicity is greater than 1, or (iii) the curves overlap.
     // If the approximation went OK, then we know that we have a simple
     // intersection point (with multiplicity 1) if intersection point
@@ -2369,7 +2369,7 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_intersect
     // ranges of both curves. Note that in case of self-intersections,
     // all points we get are in the respective parameter range of the curves.
     typename std::list<Point_2>::iterator  pit;
-    
+
     for (pit = inter_pts.begin(); pit != inter_pts.end(); ++pit)
     {
       // Check if the point is in the range of this curve - first using
@@ -2388,10 +2388,10 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_intersect
       {
         if (! pit->is_exact())
           pit->make_exact (cache);
-        
+
         Originator_iterator  p_org = pit->get_originator (_curve, _xid);
         CGAL_assertion (p_org != pit->originators_end());
-        
+
         in_range1 = _is_in_range (p_org->parameter(), cache);
       }
 
@@ -2414,13 +2414,13 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_intersect
       {
         if (! pit->is_exact())
           pit->make_exact (cache);
-        
+
         Originator_iterator  p_org = pit->get_originator (cv._curve, cv._xid);
         CGAL_assertion (p_org != pit->originators_end());
-        
+
         in_range2 = cv._is_in_range (p_org->parameter(), cache);
       }
-      
+
       if (in_range1 && in_range2)
       {
         // In case the originators of the intersection point are not marked
@@ -2662,9 +2662,13 @@ bool _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_intersect
 //
 template <class RatKer, class AlgKer, class NtTrt, class BndTrt>
 Comparison_result
-_Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_exact_vertical_position
-    (const Point_2& p,
-     bool force_exact) const
+_Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::
+_exact_vertical_position(const Point_2& p,
+                         bool
+#if !defined(CGAL_NO_ASSERTIONS)
+                         force_exact
+#endif
+                         ) const
 {
   // If it is a rational point, obtain its rational reprsentation.
   Rat_point_2              rat_p;
@@ -2676,17 +2680,17 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_exact_vertical_position
   Nt_traits                nt_traits;
   Originator_iterator      ps_org = _ps.get_originator (_curve, _xid);
   CGAL_assertion (ps_org != _ps.originators_end());
-  
+
   Originator_iterator      pt_org = _pt.get_originator (_curve, _xid);
   CGAL_assertion (pt_org != _pt.originators_end());
 
   Rational                 my_t_min;
   Rational                 my_t_max;
 
-  
+
   bool      can_refine_s = ! _ps.is_exact();
   bool      can_refine_t = ! _pt.is_exact();
-    
+
   do {
     if (CGAL::compare (ps_org->point_bound().t_max,
                        pt_org->point_bound().t_min) == SMALLER)
@@ -2709,9 +2713,9 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_exact_vertical_position
 
     if (can_refine_s)
       can_refine_s = _ps.refine();
-    
+
     if (can_refine_t)
-      can_refine_t = _pt.refine();    
+      can_refine_t = _pt.refine();
   }
   while(can_refine_s || can_refine_t);
 
@@ -2745,7 +2749,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_exact_vertical_position
         subcurves.erase(iter++);
         continue;
       }
-        
+
       // Construct the bounding box of the subcurve and compare it to
       // the bounding box of the point.
       iter->bbox (x_min, y_min, x_max, y_max);
@@ -2781,7 +2785,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_exact_vertical_position
         res_y_min = CGAL::compare (p.y(), nt_traits.convert (y_min));
         res_y_max = CGAL::compare (p.y(), nt_traits.convert (y_max));
       }
-     
+
       is_fully_in_range = (CGAL::compare (iter->t_min, my_t_min) != SMALLER) &&
                           (CGAL::compare (iter->t_max, my_t_max) != LARGER);
 
@@ -2818,7 +2822,7 @@ _Bezier_x_monotone_2<RatKer, AlgKer, NtTrt, BndTrt>::_exact_vertical_position
 
       // If we got here without entering one of the clauses above,
       // then iter has not been incremented yet.
-      ++iter; 
+      ++iter;
     }
   }
 

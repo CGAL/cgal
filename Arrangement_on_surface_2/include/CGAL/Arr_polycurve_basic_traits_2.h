@@ -33,6 +33,7 @@
 #include <CGAL/tags.h>
 #include <CGAL/Arr_non_caching_segment_traits_2.h>
 #include <CGAL/Arr_geometry_traits/Polycurve_2.h>
+#include <CGAL/Arr_geometry_traits/IO/Polycurve_2_iostream.h>
 #include <CGAL/Arr_tags.h>
 #include <CGAL/Arr_enums.h>
 
@@ -1058,7 +1059,7 @@ public:
       std::vector<X_monotone_subcurve_2> rev_segs(xcv.number_of_subcurves());;
       typename X_monotone_curve_2::Subcurve_const_iterator sit;
       typename X_monotone_curve_2::Subcurve_iterator tit = rev_segs.begin();
-      for (sit = xcv.begin_subcurves(); sit != xcv.end_subcurves(); ++sit)
+      for (sit = xcv.subcurves_begin(); sit != xcv.subcurves_end(); ++sit)
         *tit++ = const_op(*sit);
       return X_monotone_curve_2(rev_segs.rbegin(), rev_segs.rend());
     }
@@ -1800,7 +1801,7 @@ public:
     {
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
       typename X_monotone_curve_2::Subcurve_const_iterator it;
-      for (it = xcv.begin_subcurves(); it != xcv.end_subcurves(); ++it)
+      for (it = xcv.subcurves_begin(); it != xcv.subcurves_end(); ++it)
         if (! geom_traits->is_on_y_identification_2_object()(*it)) return false;
       return true;
     }
@@ -1845,7 +1846,7 @@ public:
     {
       const Subcurve_traits_2* geom_traits = m_poly_traits.subcurve_traits_2();
       typename X_monotone_curve_2::Subcurve_const_iterator it;
-      for (it = xcv.begin_subcurves(); it != xcv.end_subcurves(); ++it)
+      for (it = xcv.subcurves_begin(); it != xcv.subcurves_end(); ++it)
         if (! geom_traits->is_on_x_identification_2_object()(*it)) return false;
       return true;
     }

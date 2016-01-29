@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Ron Wein           <wein@post.tau.ac.il>
 //                 (based on old version by Michal Meyerovitch and Ester Ezra)
 
@@ -44,7 +40,7 @@ namespace CGAL {
 template <class GeomTraits, class TopTraits, class Formatter>
 std::ostream&
     write (const Arrangement_on_surface_2<GeomTraits,TopTraits>& arr,
-           std::ostream& os, 
+           std::ostream& os,
            Formatter& format)
 {
   typedef Arrangement_on_surface_2<GeomTraits,TopTraits>  Arrangement_2;
@@ -64,7 +60,7 @@ std::ostream&
  */
 template <class GeomTraits, class TopTraits>
 std::ostream&
-    operator<< (std::ostream& os, 
+    operator<< (std::ostream& os,
                 const Arrangement_on_surface_2<GeomTraits,TopTraits>& arr)
 {
   typedef Arrangement_on_surface_2<GeomTraits,TopTraits>  Arrangement_2;
@@ -87,7 +83,7 @@ std::ostream&
 template <class GeomTraits, class TopTraits, class Formatter>
 std::istream&
     read (Arrangement_on_surface_2<GeomTraits,TopTraits>& arr,
-          std::istream& is, 
+          std::istream& is,
           Formatter& format)
 {
   typedef Arrangement_on_surface_2<GeomTraits,TopTraits>  Arrangement_2;
@@ -107,7 +103,7 @@ std::istream&
  */
 template <class GeomTraits, class TopTraits>
 std::istream&
-    operator>> (std::istream& is, 
+    operator>> (std::istream& is,
                 Arrangement_on_surface_2<GeomTraits,TopTraits>& arr)
 {
   typedef Arrangement_on_surface_2<GeomTraits,TopTraits>  Arrangement_2;
@@ -116,7 +112,7 @@ std::istream&
 
   Text_formatter text_format (is);
   Arr_reader      reader(arr);
-  
+
   reader (text_format);
   return (is);
 }

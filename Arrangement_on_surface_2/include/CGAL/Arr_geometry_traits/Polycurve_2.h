@@ -16,8 +16,8 @@
 //                 Efi Fogel <efif@post.tau.ac.il>
 //                 Dror Atariah <dror.atariah@fu-berlin.de>
 
-#ifndef CGAL_ARR_POLYCURVE_2_H
-#define CGAL_ARR_POLYCURVE_2_H
+#ifndef CGAL_POLYCURVE_2_H
+#define CGAL_POLYCURVE_2_H
 
 /*! \file
  * Header file for the polyline classes used by the
@@ -26,9 +26,10 @@
  */
 
 #include <list>
-#include <iostream>
 #include <vector>
 #include <iterator>
+#include <limits>
+
 #include <CGAL/Bbox_2.h>
 
 namespace CGAL {
@@ -196,13 +197,13 @@ public:
     return bbox;
   }
 
-  class const_iterator;
-  friend class const_iterator;
-  typedef std::reverse_iterator<const_iterator>
-  const_reverse_iterator;
+  class Point_const_iterator;
+  friend class Point_const_iterator;
+  typedef std::reverse_iterator<Point_const_iterator>
+    Point_const_reverse_iterator;
 
   /*! An iterator for the polycurve points. */
-  class CGAL_DEPRECATED const_iterator {
+  class Point_const_iterator {
   public:
     // Type definitions:
     typedef std::bidirectional_iterator_tag     iterator_category;
@@ -215,32 +216,33 @@ public:
   private:
     // The polycurve curve.
     const Polycurve_2<Subcurve_type_2, Point_type_2>* m_cvP;
-    int m_num_pts;                            // Its number of points.
-    int m_index;                              // The current point.
+    size_type m_num_pts;                        // Its number of points.
+    size_type m_index;                          // The current point.
 
     /*! Private constructor.
      * \param cv The scanned curve.
      * \param index The index of the subcurve.
      */
-    const_iterator(const Polycurve_2<Subcurve_type_2, Point_type_2>* cvP,
-                   int index) :
+    Point_const_iterator(const Polycurve_2<Subcurve_type_2, Point_type_2>* cvP,
+                         size_type index) :
       m_cvP(cvP),
       m_index(index)
-      {
-        if (m_cvP == NULL)
-          m_num_pts = 0;
-        else
-          m_num_pts = (m_cvP->number_of_subcurves() == 0) ?
-            0 : (m_cvP->number_of_subcurves() + 1);
-      }
+    {
+      m_num_pts = (m_cvP == NULL) ? 0 :
+        ((m_cvP->number_of_subcurves() == 0) ?
+         0 : (m_cvP->number_of_subcurves() + 1));
+    }
+
+    bool is_index_valid() const
+    { return m_index != std::numeric_limits<size_type>::max BOOST_PREVENT_MACRO_SUBSTITUTION (); }
 
   public:
     /*! Default constructor. */
-    const_iterator() :
+    Point_const_iterator() :
       m_cvP(NULL),
       m_num_pts(0),
-      m_index(-1)
-      {}
+      m_index(std::numeric_limits<size_type>::max BOOST_PREVENT_MACRO_SUBSTITUTION ())
+    {}
 
     /*! Dereference operator.
      * \return The current point.
@@ -248,7 +250,7 @@ public:
     const Point_type_2& operator*() const
     {
       CGAL_assertion(m_cvP != NULL);
-      CGAL_assertion((m_index >= 0) && (m_index < m_num_pts));
+      CGAL_assertion((is_index_valid()) && (m_index < m_num_pts));
 
       // First point is the source of the first subcurve.
       // Else return the target of the(i-1)'st subcurve.
@@ -262,65 +264,82 @@ public:
     const Point_type_2* operator->() const { return (&(this->operator* ())); }
 
     /*! Increment operators. */
-    const_iterator& operator++()
+    Point_const_iterator& operator++()
     {
       if ((m_cvP != NULL) && (m_index < m_num_pts)) ++m_index;
       return (*this);
     }
 
-    const_iterator operator++(int)
+    Point_const_iterator operator++(int)
     {
-      const_iterator temp = *this;
+      Point_const_iterator temp = *this;
       if ((m_cvP != NULL) && (m_index < m_num_pts)) ++m_index;
       return temp;
     }
 
     /*! Decrement operators. */
-    const_iterator& operator--()
+    Point_const_iterator& operator--()
     {
-      if ((m_cvP != NULL) && (m_index >= 0)) --m_index;
+      if ((m_cvP != NULL) && (is_index_valid())) --m_index;
       return (*this);
     }
 
-    const_iterator operator--(int)
+    Point_const_iterator operator--(int)
     {
-      const_iterator  temp = *this;
-      if ((m_cvP != NULL) && (m_index >= 0))
-        --m_index;
+      Point_const_iterator temp = *this;
+      if ((m_cvP != NULL) && (is_index_valid())) --m_index;
       return temp;
     }
 
     /*! Equality operators. */
-    bool operator==(const const_iterator& it) const
+    bool operator==(const Point_const_iterator& it) const
     { return ((m_cvP == it.m_cvP) && (m_index == it.m_index)); }
 
-    bool operator!=(const const_iterator& it) const
+    bool operator!=(const Point_const_iterator& it) const
     { return ((m_cvP != it.m_cvP) || (m_index != it.m_index)); }
 
     friend class Polycurve_2<Subcurve_type_2, Point_type_2>;
   };
 
-  /* ! Obtain an iterator for the polycurve points.*/
-  CGAL_DEPRECATED const_iterator begin() const
+  // Backward compatibility
+  typedef Point_const_iterator                  const_iterator;
+  typedef Point_const_reverse_iterator          const_reverse_iterator;
+
+  /*! Obtain an iterator for the polycurve points.*/
+  Point_const_iterator points_begin() const
   {
-    if (number_of_subcurves() == 0) return (const_iterator(NULL, -1));
-    else return (const_iterator(this, 0));
+    if (number_of_subcurves() == 0) return (Point_const_iterator());
+    else return (Point_const_iterator(this, 0));
+  }
+
+  /*! Obtain an iterator for the polycurve points.*/
+  CGAL_DEPRECATED Point_const_iterator begin() const { return points_begin(); }
+
+  /*! Obtain a past-the-end iterator for the polycurve points.*/
+  Point_const_iterator points_end() const
+  {
+    if (number_of_subcurves() == 0) return (Point_const_iterator());
+    else return (Point_const_iterator(this, number_of_subcurves() + 1));
   }
 
   /*! Obtain a past-the-end iterator for the polycurve points.*/
-  CGAL_DEPRECATED const_iterator end() const
-  {
-    if (number_of_subcurves() == 0) return (const_iterator(NULL, -1));
-    else return (const_iterator(this, number_of_subcurves() + 1));
-  }
+  CGAL_DEPRECATED Point_const_iterator end() const { return points_end(); }
 
   /*! Obtain a reverse iterator for the polycurve points. */
-  CGAL_DEPRECATED const_reverse_iterator rbegin() const
-  { return (const_reverse_iterator(end())); }
+  Point_const_reverse_iterator points_rbegin() const
+  { return Point_const_reverse_iterator(points_end()); }
+
+  /*! Obtain a reverse iterator for the polycurve points. */
+  CGAL_DEPRECATED Point_const_reverse_iterator rbegin() const
+  { return points_rbegin(); }
 
   /*! Obtain a reverse past-the-end iterator for the polycurve points. */
-  CGAL_DEPRECATED const_reverse_iterator rend() const
-  { return (const_reverse_iterator(begin())); }
+  Point_const_reverse_iterator points_rend() const
+  { return Point_const_reverse_iterator(points_begin()); }
+
+  /*! Obtain a reverse past-the-end iterator for the polycurve points. */
+  CGAL_DEPRECATED Point_const_reverse_iterator rend() const
+  { return points_rend(); }
 
   typedef typename Subcurves_container::iterator Subcurve_iterator;
   typedef typename Subcurves_container::const_iterator
@@ -329,23 +348,31 @@ public:
                                                  Subcurve_const_reverse_iterator;
 
   /*! Obtain an iterator for the polycurve subcurves. */
-  Subcurve_const_iterator begin_subcurves() const
+  Subcurve_const_iterator subcurves_begin() const
   { return m_subcurves.begin(); }
 
+  /*! Deprecated! */
+  CGAL_DEPRECATED Subcurve_const_iterator begin_subcurves() const
+  { return subcurves_begin(); }
+
   /*! Obtain a past-the-end iterator for the polycurve subcurves. */
-  Subcurve_const_iterator end_subcurves() const
+  Subcurve_const_iterator subcurves_end() const
   { return m_subcurves.end(); }
 
+  /*! Deprecated! */
+  CGAL_DEPRECATED Subcurve_const_iterator end_subcurves() const
+  { return subcurves_end(); }
+
   /*! Obtain a reverse iterator for the polycurve subcurves. */
-  Subcurve_const_reverse_iterator rbegin_subcurves() const
-  { return (Subcurve_const_reverse_iterator(end_subcurves())); }
+  Subcurve_const_reverse_iterator subcurves_rbegin() const
+  { return (Subcurve_const_reverse_iterator(subcurves_end())); }
 
   /*! Obtain a reverse past-the-end iterator for the polycurve points. */
-  Subcurve_const_reverse_iterator rend_subcurves() const
-  { return (Subcurve_const_reverse_iterator(begin_subcurves())); }
+  Subcurve_const_reverse_iterator subcurves_rend() const
+  { return (Subcurve_const_reverse_iterator(subcurves_begin())); }
 
   /*! Deprecated!
-   * Get the number of points contained in the polycurve.
+   * Obtain the number of points contained in the polycurve.
    * In general (for example if the polycurve is not bounded), then the
    * number of vertices cannot be read-off from the number of subcurves, and
    * the traits class is needed.
@@ -354,21 +381,17 @@ public:
   CGAL_DEPRECATED std::size_t points() const
   { return (number_of_subcurves() == 0) ? 0 : number_of_subcurves() + 1; }
 
-  /*! Deprecated! Replaced by number_of_subcurves()
-   * Get the number of subcurves that comprise the poyline.
-   * \return The number of subcurves.
-   */
-  CGAL_DEPRECATED size_type size() const
-  { return m_subcurves.size(); }
-
   /*! Obtain the number of subcurves that comprise the poyline.
    * \return The number of subcurves.
    */
   size_type number_of_subcurves() const
   { return m_subcurves.size(); }
 
+  /*! Deprecated! Replaced by number_of_subcurves(). */
+  CGAL_DEPRECATED size_type size() const { return number_of_subcurves(); }
+
   /*! Obtain the ith subcurve of the polycurve.
-   * \param i The subcurve index(from 0 to size()-1).
+   * \param[in] i The subcurve index(from 0 to size()-1).
    * \return A const reference to the subcurve.
    */
   inline const Subcurve_type_2& operator[](const std::size_t i) const
@@ -435,51 +458,6 @@ public:
                                                      boost::true_type)
   {}
 };
-
-/*! Output operator for a polycurve. */
-template <typename SubcurveType_2, typename PointType_2>
-std::ostream& operator<<(std::ostream & os,
-                         const Polycurve_2<SubcurveType_2, PointType_2>& cv)
-{
-  typedef SubcurveType_2                                Subcurve_type_2;
-  typedef PointType_2                                   Point_type_2;
-  typedef Polycurve_2<Subcurve_type_2, Point_type_2>    Curve_2;
-
-  // Export the number of subcurves.
-  os << cv.number_of_subcurves();
-
-  // Export the subcurves.
-  typename Curve_2::Subcurve_const_iterator iter = cv.begin_subcurves();
-  while (iter != cv.end_subcurves()) os << " " << *iter++;
-  return (os);
-}
-
-/*! Input operator for a polycurve. */
-template <typename SubcurveType_2, typename PointType_2>
-std::istream& operator>>(std::istream& is,
-                         Polycurve_2<SubcurveType_2, PointType_2>& pl)
-{
-  typedef SubcurveType_2                                Subcurve_type_2;
-  typedef PointType_2                                   Point_type_2;
-  typedef Polycurve_2<Subcurve_type_2, Point_type_2>    Curve_2;
-
-  // Import the number of curves.
-  std::size_t num;
-  is >> num;
-
-  // Import the subcurves.
-  std::list<Subcurve_type_2> subcurves;
-  for (std::size_t i = 0; i < num; ++i) {
-    Subcurve_type_2 subcurve;
-    is >> subcurve;
-    subcurves.push_back(subcurve);
-  }
-
-  // Create the polycurve curve.
-  pl = Curve_2(subcurves.begin(), subcurves.end());
-
-  return (is);
-}
 
 } // namespace polycurve
 } //namespace CGAL

@@ -1709,6 +1709,8 @@ compile_and_run test_removal
 compile_and_run test_unbounded_removal
 compile_and_run test_spherical_removal
 
+compile_and_run test_io
+
 # if any error occured then append the full error description file to error file
 
 if [ -f $FULL_ERROR_DESCRIPTION_FILE ] ; then

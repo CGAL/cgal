@@ -62,19 +62,19 @@ public:
 
   /*! Obtain an iterator for the polycurve subcurves. */
   Segment_const_iterator begin_segments() const
-  { return this->begin_subcurves(); }
+  { return this->subcurves_begin(); }
 
   /*! Obtain a past-the-end iterator for the polycurve subcurves. */
   Segment_const_iterator end_segments() const
-  { return this->end_subcurves(); }
+  { return this->subcurves_end(); }
 
   /*! Obtain a reverse iterator for the polycurve subcurves. */
   Segment_const_reverse_iterator rbegin_segments() const
-  { return this->rbegin_subcurves(); }
+  { return this->subcurves_rbegin(); }
 
   /*! Obtain a reverse past-the-end iterator for the polycurve points. */
   Segment_const_reverse_iterator rend_segments() const
-  { this->returnrend_subcurves() ; }
+  { return this->subcurves_rend() ; }
 
   /*! Obtain the number of subcurves that comprise the poyline.
    * \return The number of subcurves.
@@ -118,19 +118,19 @@ public:
 
   /*! Obtain an iterator for the polycurve subcurves. */
   Segment_const_iterator begin_segments() const
-  { return this->begin_subcurves(); }
+  { return this->subcurves_begin(); }
 
   /*! Obtain a past-the-end iterator for the polycurve subcurves. */
   Segment_const_iterator end_segments() const
-  { return this->end_subcurves(); }
+  { return this->subcurves_end(); }
 
   /*! Obtain a reverse iterator for the polycurve subcurves. */
   Segment_const_reverse_iterator rbegin_segments() const
-  { return this->rbegin_subcurves(); }
+  { return this->subcurves_rbegin(); }
 
   /*! Obtain a reverse past-the-end iterator for the polycurve points. */
   Segment_const_reverse_iterator rend_segments() const
-  { this->returnrend_subcurves() ; }
+  { return this->subcurves_rend() ; }
 
   /*! Obtain the number of subcurves that comprise the poyline.
    * \return The number of subcurves.

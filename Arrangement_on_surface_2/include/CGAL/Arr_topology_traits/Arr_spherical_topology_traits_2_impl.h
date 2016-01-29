@@ -12,9 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
 //                 Ron Wein          <wein@post.tau.ac.il>
 
@@ -523,7 +520,12 @@ CGAL::Object
 Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 place_boundary_vertex(Face* /* f */,
                       const X_monotone_curve_2& xc, Arr_curve_end ind,
-                      Arr_parameter_space ps_x, Arr_parameter_space ps_y)
+                      Arr_parameter_space
+#if !defined(CGAL_NO_ASSERTIONS)
+                      ps_x
+#endif
+                      ,
+                      Arr_parameter_space ps_y)
 {
   // std::cout << "place_boundary_vertex()" << std::endl;
   if (ps_y == ARR_BOTTOM_BOUNDARY) {
@@ -560,7 +562,11 @@ Arr_spherical_topology_traits_2<GeomTraits,Dcel>::
 locate_around_boundary_vertex(Vertex* v,
                               const X_monotone_curve_2& xc,
                               Arr_curve_end ind,
-                              Arr_parameter_space ps_x,
+                              Arr_parameter_space
+#if !defined(CGAL_NO_ASSERTIONS)
+                              ps_x
+#endif
+                              ,
                               Arr_parameter_space ps_y) const
 {
   // std::cout << "locate_around_boundary_vertex()" << std::endl;
@@ -583,7 +589,12 @@ locate_around_boundary_vertex(Vertex* v,
 template <typename GeomTraits, typename Dcel>
 CGAL::Object Arr_spherical_topology_traits_2<GeomTraits, Dcel>::
 locate_curve_end(const X_monotone_curve_2& xc, Arr_curve_end ind,
-                 Arr_parameter_space ps_x, Arr_parameter_space ps_y)
+                 Arr_parameter_space
+#if !defined(CGAL_NO_ASSERTIONS)
+                 ps_x
+#endif
+                 ,
+                 Arr_parameter_space ps_y)
 {
   // Act according to the boundary conditions.
   if (ps_y == ARR_TOP_BOUNDARY) {

@@ -1,4 +1,4 @@
-// Copyright (c) 2007,2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany), 
+// Copyright (c) 2007,2008,2009,2010,2011 Max-Planck-Institute Saarbruecken (Germany),
 // and Tel-Aviv University (Israel).  All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org); you can redistribute it and/or
@@ -18,7 +18,7 @@
 //
 // Author(s)     : Eric Berberich <eric@mpi-inf.mpg.de>
 //                 Arno Eigenwillig <arno@mpi-inf.mpg.de>
-//                 Pavel Emeliyanenko <asm@mpi-sb.mpg.de> 
+//                 Pavel Emeliyanenko <asm@mpi-sb.mpg.de>
 //
 // ============================================================================
 
@@ -39,67 +39,67 @@ namespace CGAL {
 
 namespace internal {
 
-/*!\brief 
- * Splits a curve that can be analyzed 
+/*!\brief
+ * Splits a curve that can be analyzed
  * into connected x-monotone sweepable arcs and isolated points.
  *
  * Arcs are stored as CurvedKernelViaAnalysis_2::Arc_2 objects, and
- * each is either vertical or consists of an x-monotone piece 
+ * each is either vertical or consists of an x-monotone piece
  * of constant arc number wrt to the curve at every interior x-coordinate.
  * Isolated points are stored as \c CurvedKernelViaAnalysis_2::Point_2 objects.
- * 
+ *
  * The resulting arcs and points are written to the output iterator as
  * polymorphic \c CGAL::Object. Past-the-end value of the iterator is returned.
  */
-template < class CurvedKernelViaAnalysis_2, 
-           class ConstructArc_2 = 
+template < class CurvedKernelViaAnalysis_2,
+           class ConstructArc_2 =
            typename CurvedKernelViaAnalysis_2::Construct_arc_2 >
 struct Make_x_monotone_2 :
     public std::binary_function< typename CurvedKernelViaAnalysis_2::Curve_2,
             std::iterator<std::output_iterator_tag, CGAL::Object>,
             std::iterator<std::output_iterator_tag, CGAL::Object> > {
-            
+
     //!\name Public types
     //!@{
-    
+
     //! this instance's first template parameter
     typedef CurvedKernelViaAnalysis_2 Curved_kernel_via_analysis_2;
-    
+
     //! this instance's second template parameter
     typedef ConstructArc_2 Construct_arc_2;
 
     //! type of curve kernel
     typedef typename Curved_kernel_via_analysis_2::Curve_kernel_2
     Curve_kernel_2;
-    
+
     //! type of x-coordinate
     typedef typename Curve_kernel_2::Coordinate_1 Coordinate_1;
-    
+
     //! type of xy-coordinate
     typedef typename Curve_kernel_2::Coordinate_2 Coordinate_2;
-    
+
     //! type of curve analysis
     typedef typename Curve_kernel_2::Curve_analysis_2 Curve_analysis_2;
-    
+
     //! type of vertical line
     typedef typename Curve_analysis_2::Status_line_1 Status_line_1;
-    
+
     //! type of point on curve
     typedef typename Curved_kernel_via_analysis_2::Point_2 Point_2;
-    
+
     //! type of curve arc
     typedef typename Curved_kernel_via_analysis_2::Arc_2 Arc_2;
 
     //! type of not necessarily x-monotone curve arc
     typedef typename Curved_kernel_via_analysis_2::Non_x_monotone_arc_2
         Non_x_monotone_arc_2;
-    
+
     //!@}
 
     //!\name Constructors
     //!@{
 
-    /*!\brief 
+    /*!\brief
      * Standard constructor
      *
      * \param kernel The kernel instance to use
@@ -115,7 +115,7 @@ struct Make_x_monotone_2 :
     //!@{
 
     // TODO add operator for non-x-monotone arc
-    
+
     /*!\brief
      * Splits a curve into x-monotone arcs and isolated points
      *
@@ -127,21 +127,21 @@ struct Make_x_monotone_2 :
     template <class OutputIterator>
     OutputIterator operator()(Curve_analysis_2 curve, OutputIterator oi) {
 
-        Construct_arc_2 construct_arc_2 = 
+        Construct_arc_2 construct_arc_2 =
             _m_curved_kernel->construct_arc_2_object();
         // use CGAL::Total_degree ?
-        if (typename CGAL::Polynomial_traits_d< 
+        if (typename CGAL::Polynomial_traits_d<
             typename Curve_analysis_2::Polynomial_2 >::
             Total_degree()(curve.polynomial_2()) < 1) {
             return oi;
         }
-        
+
         Status_line_1 evt_line1, evt_line2,
             int_line = curve.status_line_of_interval(0);
         int total_events = curve.number_of_status_lines_with_event();
         // handle special case of a curve without any events
         if(total_events == 0) {
-            for(int k = 0; k < int_line.number_of_events(); k++) 
+            for(int k = 0; k < int_line.number_of_events(); k++)
                 *oi++ = CGAL::make_object(construct_arc_2(curve, k));
             return oi;
         }
@@ -150,8 +150,8 @@ struct Make_x_monotone_2 :
             Curve_interval_arcno_cache CIA_cache;
         const CIA_cache& map_interval_arcno =
             _m_curved_kernel->interval_arcno_cache();
-        
-        typename Curved_kernel_via_analysis_2::Construct_point_2 
+
+        typename Curved_kernel_via_analysis_2::Construct_point_2
             construct_point =
             _m_curved_kernel->construct_point_2_object();
 
@@ -163,22 +163,22 @@ struct Make_x_monotone_2 :
         // first handle segments before first event
         evt_line1 = curve.status_line_at_event(0);
         max_x = evt_line1.x();
-        
-        for(k = 0; k < evt_line1.number_of_events(); k++) 
+
+        for(k = 0; k < evt_line1.number_of_events(); k++)
             max_pts.push_back(construct_point(max_x, curve, k));
-                        
-        //std::cout << "handling events over the 1st interval\n";    
+
+        //std::cout << "handling events over the 1st interval\n";
         for(k = 0; k < int_line.number_of_events(); k++) {
-            
-            info1 = map_interval_arcno(evt_line1, 1, k); 
+
+            info1 = map_interval_arcno(evt_line1, 1, k);
             if (info1.second != CGAL::ARR_INTERIOR) {
-                arc = construct_arc_2(CGAL::ARR_MIN_END, max_x, 
-                                      (info1.second == 
+                arc = construct_arc_2(CGAL::ARR_MIN_END, max_x,
+                                      (info1.second ==
                                        CGAL::ARR_BOTTOM_BOUNDARY ?
-                                       CGAL::ARR_MIN_END : CGAL::ARR_MAX_END), 
+                                       CGAL::ARR_MIN_END : CGAL::ARR_MAX_END),
                                       curve, k);
             } else {
-                arc = construct_arc_2(max_pts[info1.first], CGAL::ARR_MIN_END, 
+                arc = construct_arc_2(max_pts[info1.first], CGAL::ARR_MIN_END,
                                       curve, k, info1.first
                 );
             }
@@ -187,42 +187,42 @@ struct Make_x_monotone_2 :
         min_pts = max_pts;
         max_pts.clear();
         min_x = max_x;
-               
+
         // next handle arcs between events, including isolated points
         for (i = 0; i < total_events-1; i++) {
             evt_line1 = curve.status_line_at_event(i);
             evt_line2 = curve.status_line_at_event(i+1);
             max_x = evt_line2.x();
             oi = _handle_vertical_and_isolated(evt_line1, min_x, min_pts, oi);
-                                
+
             n = evt_line2.number_of_events();
-            for(k = 0; k < n; k++) 
+            for(k = 0; k < n; k++)
                 max_pts.push_back(construct_point(max_x, curve, k));
-            
+
             n = curve.status_line_of_interval(i+1).number_of_events();
             CGAL::Arr_curve_end inf1_end, inf2_end;
             for (k = 0; k < n; k++) {
-                
-                info1 = map_interval_arcno(evt_line1, 0, k); 
-                info2 = map_interval_arcno(evt_line2, 1, k); 
-                inf2_end = (info2.second == CGAL::ARR_BOTTOM_BOUNDARY ? 
+
+                info1 = map_interval_arcno(evt_line1, 0, k);
+                info2 = map_interval_arcno(evt_line2, 1, k);
+                inf2_end = (info2.second == CGAL::ARR_BOTTOM_BOUNDARY ?
                     CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
-                
+
                 if (info1.second != CGAL::ARR_INTERIOR) {
-                    inf1_end = (info1.second == CGAL::ARR_BOTTOM_BOUNDARY ? 
+                    inf1_end = (info1.second == CGAL::ARR_BOTTOM_BOUNDARY ?
                         CGAL::ARR_MIN_END : CGAL::ARR_MAX_END);
                     if (info2.second != CGAL::ARR_INTERIOR) {
                         arc = construct_arc_2(min_x, inf1_end, max_x, inf2_end,
                                               curve, k);
                     } else {
-                        arc = construct_arc_2(max_pts[info2.first], min_x, 
+                        arc = construct_arc_2(max_pts[info2.first], min_x,
                                               inf1_end, curve, k, info2.first);
                     }
                 } else if (info2.second != CGAL::ARR_INTERIOR) {
                     arc = construct_arc_2(min_pts[info1.first],  max_x,
                                           inf2_end, curve, k, info1.first);
                 } else {
-                    arc = construct_arc_2(min_pts[info1.first], 
+                    arc = construct_arc_2(min_pts[info1.first],
                                           max_pts[info2.first],
                                           curve, k, info1.first, info2.first);
                 }
@@ -232,26 +232,26 @@ struct Make_x_monotone_2 :
             max_pts.clear();
             min_x = max_x;
         }
-        
+
         // here: min_x/min_pts hold information about the last event line
         // event_line2 - points to the last event line
         // vertical line or isolated points at last event?
         evt_line2 = curve.status_line_at_event(total_events-1);
         min_x = evt_line2.x();
         oi = _handle_vertical_and_isolated(evt_line2, min_x, min_pts, oi);
-        
+
         n = curve.status_line_of_interval(total_events).number_of_events();
         for (k = 0; k < n; k++) {
-        
-            info1 = map_interval_arcno(evt_line2, 0, k); 
+
+            info1 = map_interval_arcno(evt_line2, 0, k);
             if (info1.second != CGAL::ARR_INTERIOR) {
                 arc = construct_arc_2(
-                        CGAL::ARR_MAX_END, min_x, 
-                        (info1.second == CGAL::ARR_BOTTOM_BOUNDARY ? 
+                        CGAL::ARR_MAX_END, min_x,
+                        (info1.second == CGAL::ARR_BOTTOM_BOUNDARY ?
                          CGAL::ARR_MIN_END : CGAL::ARR_MAX_END), curve, k
                 );
             } else {
-                arc = construct_arc_2(min_pts[info1.first], 
+                arc = construct_arc_2(min_pts[info1.first],
                                       CGAL::ARR_MAX_END, curve, k,
                                       info1.first);
             }
@@ -264,7 +264,7 @@ struct Make_x_monotone_2 :
 private:
     //!\name Private members
     //!@{
-    
+
     /*!\brief
      * Constructs vertical arcs and isolated points at event line
      *
@@ -278,12 +278,12 @@ private:
     template <class OutputIterator>
     OutputIterator _handle_vertical_and_isolated(
             Status_line_1 cv_line,
-            Coordinate_1 x, std::vector<Point_2> pts, 
+            Coordinate_1 x, std::vector<Point_2> pts,
             OutputIterator oi) const {
-        
-        Construct_arc_2 construct_arc_2 = 
+
+        Construct_arc_2 construct_arc_2 =
             _m_curved_kernel->construct_arc_2_object();
-        
+
         int n = cv_line.number_of_events(), j;
         if(cv_line.covers_line()) { // look for vertical arcs
             if(n > 0) {
@@ -295,22 +295,23 @@ private:
                     *oi++ = CGAL::make_object(construct_arc_2(pts[j], pts[j+1],
                                                               _m_curve));
                     // the last vertical ray
-                    *oi++ = CGAL::make_object(construct_arc_2(pts[n-1], 
-                        CGAL::ARR_MAX_END, _m_curve));
+                    *oi++ = CGAL::make_object(construct_arc_2(pts[n-1],
+                                                              CGAL::ARR_MAX_END,
+                                                              _m_curve));
             } else // unbounded vertical line
                 *oi++ = CGAL::make_object(construct_arc_2(x, _m_curve));
             return oi;
-        } 
+        }
         // look for isolated points
         std::pair<int, int> ipair;
         for(j = 0; j < n; j++) {
             ipair = cv_line.number_of_incident_branches(j);
             if(ipair.first == 0&&ipair.second == 0) {
                 //std::cout << "isolated point found\n";
-                typename Curved_kernel_via_analysis_2::Construct_point_2 
+                typename Curved_kernel_via_analysis_2::Construct_point_2
                     construct_point =
                     _m_curved_kernel->construct_point_2_object();
-                
+
                 *oi++ = CGAL::make_object(construct_point(x, _m_curve, j));
             }
         }
@@ -321,13 +322,13 @@ private:
 
     //!\name Private data
     //!@{
-            
-    //! pointer to \c Curved_kernel_via_analysis_2 
+
+    //! pointer to \c Curved_kernel_via_analysis_2
     Curved_kernel_via_analysis_2 *_m_curved_kernel;
 
     //! to avoid passing curve as a parameter
     Curve_analysis_2 _m_curve;
-    
+
     //!@}
 };  // struct Make_x_monotone
 

@@ -4,6 +4,7 @@
 #include <string>
 #include <cstring>
 #include <vector>
+#include <fstream>
 
 #include <CGAL/Exact_rational.h>
 #include <CGAL/Cartesian.h>
@@ -13,7 +14,6 @@
 #include <CGAL/Arrangement_on_surface_2.h>
 #include <CGAL/Arr_overlay_2.h>
 #include <CGAL/Arr_spherical_topology_traits_2.h>
-#include <CGAL/IO/Arr_iostream.h>
 #include <CGAL/IO/Arr_text_formatter.h>
 
 typedef CGAL::Exact_rational                              Number_type;

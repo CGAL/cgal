@@ -12,9 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL: $
-// $Id: $
-//
 // Author(s)     : Alex Tsui <alextsui05@gmail.com>
 
 #ifndef CGAL_QT_ARRANGEMENT_PAINTER_OSTREAM_H
@@ -260,8 +257,8 @@ public: // methods
   ArrangementPainterOstream& operator<<( const X_monotone_curve_2& curve )
   {
     for (typename X_monotone_curve_2::Subcurve_const_iterator it =
-           curve.begin_subcurves();
-         it != curve.end_subcurves(); ++it)
+           curve.subcurves_begin();
+         it != curve.subcurves_end(); ++it)
       {
         this->painterOstream << *it;
       }
