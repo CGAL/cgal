@@ -1,4 +1,9 @@
 
+#include <CGAL/basic.h>
+#include <iostream>
+
+#ifdef CGAL_HAS_CORE_ARITHMETIC_KERNEL
+
 #define CGAL_ACK_DEBUG_FLAG 0
 
 //#define CGAL_AK_ENABLE_DEPRECATED_INTERFACE 1
@@ -12,8 +17,6 @@ static const char *ACK_2_ascii_polys[] = {
 };
 
 static const int ACK_2_n_polys = 2;
-
-#include <CGAL/basic.h>
 
 #include <CGAL/Arithmetic_kernel.h>
 
@@ -62,3 +65,13 @@ int main()
 
     return 0;
 }
+
+#else
+
+int main()
+{
+  std::cerr << "Needs CGAL_HAS_CORE_ARITHMETIC_KERNEL" << std::endl;
+  return 0;
+}
+
+#endif
