@@ -75,7 +75,8 @@ namespace boost {
   template <class Visitor, class Graph>
   struct DijkstraVisitorConcept {
     void constraints() {
-      BOOST_CONCEPT_ASSERT(( CopyConstructibleConcept<Visitor> ));
+//      commented to avoid an unused vaiable warning
+//      BOOST_CONCEPT_ASSERT(( CopyConstructibleConcept<Visitor> ));
       vis.initialize_vertex(u, g);
       vis.discover_vertex(u, g);
       vis.examine_vertex(u, g);
