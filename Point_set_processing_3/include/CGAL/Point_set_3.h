@@ -66,9 +66,9 @@ public:
   typedef CGAL::Surface_mesh<Point> Base;
   typedef typename Base::Vertex_index Item;
 
-  typedef typename Base::template Property_map<Item, std::size_t> Index_pmap;
-  typedef typename Base::template Property_map<Item, Point> Point_pmap;
-  typedef typename Base::template Property_map<Item, Vector> Vector_pmap;
+  typedef typename Properties::template Property_map<Item, std::size_t> Index_pmap;
+  typedef typename Properties::template Property_map<Item, Point> Point_pmap;
+  typedef typename Properties::template Property_map<Item, Vector> Vector_pmap;
 
   typedef typename Index_pmap::Array::vector_type::iterator iterator;
   typedef typename Index_pmap::Array::vector_type::const_iterator const_iterator;
@@ -265,14 +265,14 @@ public:
   template <typename T>
   bool has_property (const std::string& name) const
   {
-    std::pair<typename Base::template Property_map<Item, T>, bool>
+    std::pair<typename Properties::template Property_map<Item, T>, bool>
       pm = m_base.template property_map<Item, T> (name);
     return pm.second;
   }
   template <typename T>
   bool add_property (const std::string& name)
   {
-    std::pair<typename Base::template Property_map<Item, T>, bool>
+    std::pair<typename Properties::template Property_map<Item, T>, bool>
       pm = m_base.template add_property_map<Item, T> (name);
     return pm.second;
   }
@@ -286,7 +286,7 @@ public:
   template <typename T>
   bool remove_property (const std::string& name)
   {
-    std::pair<typename Base::template Property_map<Item, T>, bool>
+    std::pair<typename Properties::template Property_map<Item, T>, bool>
       pm = m_base.template property_map<Item, T> (name);
     if (!(pm.second))
       return false;
@@ -295,12 +295,12 @@ public:
   }
 
   template <typename T>
-  T& property (typename Base::template Property_map<Item, T>& pmap, std::size_t index)
+  T& property (typename Properties::template Property_map<Item, T>& pmap, std::size_t index)
   {
     return pmap[Item (index)];
   }
   template <typename T>
-  const T& property (typename Base::template Property_map<Item, T>& pmap, std::size_t index) const
+  const T& property (typename Properties::template Property_map<Item, T>& pmap, std::size_t index) const
   {
     return property (pmap, index);
   }
@@ -308,7 +308,7 @@ public:
   template <typename T>
   T& property (const std::string& name, std::size_t index)
   {
-    std::pair<typename Base::template Property_map<Item, T>, bool>
+    std::pair<typename Properties::template Property_map<Item, T>, bool>
       pm = m_base.template add_property_map<Item, T> (name);
     return property (pm.first, index);
   }
