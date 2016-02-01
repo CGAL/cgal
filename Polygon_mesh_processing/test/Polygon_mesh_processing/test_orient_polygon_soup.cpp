@@ -1,4 +1,5 @@
 #include <CGAL/Polyhedron_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/polygon_mesh_processing.h>
