@@ -65,6 +65,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
                                     // but Lazy ones.
 
       double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, alpha;
+      init_double(px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, alpha, (FT*)(0));
 
       if( fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py)      &&
           fit_in_double(get_approx(p).z(), pz) && 
@@ -216,6 +217,8 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Compare_squared_radius_3 with 3 points", tmp);
       
       double px, py, pz, qx, qy, qz, sx, sy, sz, alpha;
+      init_double(px, py, pz, qx, qy, qz, sx, sy, sz, alpha, (FT*)(0));
+
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)      &&
           fit_in_double(p.z(), pz) && 
           fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy)      &&
@@ -347,6 +350,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Compare_squared_radius_3 with 2 points", tmp);
       
       double px, py, pz, qx, qy, qz, alpha;
+      init_double(px, py, pz, qx, qy, qz, alpha, (FT*)(0));
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)      &&
           fit_in_double(p.z(), pz) && 
           fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy)      &&

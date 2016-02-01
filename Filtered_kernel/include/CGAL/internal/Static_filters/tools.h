@@ -39,6 +39,103 @@ inline bool diff_was_exact(double a, double b, double ab)
     return ab+b == a && a-ab == b;
 }
 
+template < typename T >
+inline void init_double(double&, T* ) {}
+
+template < typename T >
+inline void init_double(double&, double&, T* ) {}
+
+template < typename T >
+inline void init_double(double&, double&, double&, T* ) {}
+
+template < typename T >
+inline void init_double(double&, double&, double&, double&, T* ) {}
+
+template < typename T >
+inline void init_double(double&, double&, double&, double&, double&, T* ) {}
+
+template < typename T >
+inline void init_double(double&, double&, double&, double&, double&, double&, T* ) {}
+
+template < typename T >
+inline void init_double(double&, double&, double&, double&, double&, double&, double&, T* ) {}
+
+template < typename T >
+inline void init_double(double&, double&, double&, double&, double&, double&, double&, double&, T* ) {}
+
+template < typename T >
+inline void init_double(double&, double&, double&,double&, double&, double&, double&, double&, double&, T* ) {}
+
+template < typename T >
+inline void init_double(double&, double&, double&, double&, double&, double&, double&, double&, double&, double&, T* ) {}
+
+
+template < typename T >
+inline void init_double(double&, double&, double&, double&, double&, double&, double&, double&, double&, double&, double&, T* ) {}
+
+
+template < typename T >
+inline void init_double(double&, double&, double&, double&, double&, double&, double&, double&, double&, double&, double&, double&, T* ) {}
+
+
+template < typename T >
+inline void init_double(double&, double&, double&, double&, double&, double&, double&, double&, double&, double&, double&, double&, double&, T* ) {}
+
+
+
+template < typename ET >
+inline void init_double(double& d0, Lazy_exact_nt<ET>* )
+{d0 = 0;}
+
+template < typename ET >
+inline void init_double(double& d0, double& d1, Lazy_exact_nt<ET>* )
+{d0 = d1 = 0;}
+
+template < typename ET >
+inline void init_double(double& d0, double& d1, double& d2, Lazy_exact_nt<ET>* )
+{d0 = d1 = d2 = 0;}
+
+template < typename ET >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, Lazy_exact_nt<ET>* )
+{d0 = d1 = d2 = d3 = 0;}
+
+template < typename ET >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, Lazy_exact_nt<ET>* )
+{d0 = d1 = d2 = d3 = d4 = 0;}
+
+template < typename ET >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, Lazy_exact_nt<ET>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = 0;}
+
+template < typename ET >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, Lazy_exact_nt<ET>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = 0;}
+
+template < typename ET >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, Lazy_exact_nt<ET>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = 0;}
+
+template < typename ET >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double& d8, Lazy_exact_nt<ET>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = 0;}
+
+template < typename ET >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, Lazy_exact_nt<ET>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = 0;}
+
+template < typename ET >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, Lazy_exact_nt<ET>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = d10 = 0;}
+
+template < typename ET >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, double& d11, Lazy_exact_nt<ET>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = d10 = d11 = 0;}
+
+template < typename ET >
+inline void init_double(double& d0, double& d1, double& d2, double& d3, double& d4, double& d5, double& d6, double& d7, double&d8, double& d9, double& d10, double& d11, double& d12, Lazy_exact_nt<ET>* )
+{d0 = d1 = d2 = d3 = d4 = d5 = d6 = d7 = d8 = d9 = d10 = d11 = d12 = 0;}
+
+
 // Auxiliary function to check if static filters can be applied, that is,
 // if to_double() does not add roundoff errors.
 // TODO :

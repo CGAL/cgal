@@ -31,7 +31,7 @@ int main(int , char**)
   for(int i = 0; i < 2; ++i)
   {
     Tr::Cell_handle cell;
-    int i1, i2, i3;
+    int i1=0, i2=0, i3=0; // initialize to avoid a g++ -Wall warning
     tr.is_facet(v[i+1], v[(i+2)&3], v[(i+3)&3],
                 cell,
                 i1, i2, i3);
