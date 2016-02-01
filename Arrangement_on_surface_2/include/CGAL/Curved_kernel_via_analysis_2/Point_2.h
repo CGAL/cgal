@@ -784,7 +784,7 @@ public:
 
     // befriending the functors
     
-#if defined(_MSC_VER) || defined(__clang__)
+#if defined(_MSC_VER)
 #define CGAL_BEFRIEND_CKvA_2_FUNCTOR(Z) \
   friend typename Curved_kernel_via_analysis_2::Z;  \
   friend typename Curved_kernel_via_analysis_2_Functors::Z< Curved_kernel_via_analysis_2 >
