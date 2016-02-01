@@ -1,6 +1,7 @@
 #include "Scene_textured_polyhedron_item.h"
 #include "Textured_polyhedron_type.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 #include <QObject>
