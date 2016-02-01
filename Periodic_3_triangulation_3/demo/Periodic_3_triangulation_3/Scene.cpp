@@ -1388,7 +1388,7 @@ void Scene::gl_draw_location() {
                 Point cp = Point(c.x(),c.y(),c.z());
                 // project facet center
                 double px,py,pz;
-                gluProject(cp.x(),cp.y(),cp.z(),
+                project(cp.x(),cp.y(),cp.z(),
                            modelMatrix, projMatrix, viewport,
                            &px,&py,&pz);
                 cf.push_back(Projected_triangle(pz,Triangle(p,q,r)));
@@ -1499,7 +1499,7 @@ void Scene::gl_draw_conflict() {
                 Point cp = Point(c.x(),c.y(),c.z());
                 // project facet center
                 double px,py,pz;
-                gluProject(cp.x(),cp.y(),cp.z(),
+                project(cp.x(),cp.y(),cp.z(),
                            modelMatrix, projMatrix, viewport,
                            &px,&py,&pz);
                 bfm.push_back(Projected_triangle(pz,Triangle(p,q,r)));
@@ -2181,4 +2181,54 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
         }
 
 
+}
+GLint Scene::project(GLdouble objx, GLdouble objy, GLdouble objz,
+ const GLdouble modelMatrix[16],
+ const GLdouble projMatrix[16],
+ const GLint viewport[4],
+ GLdouble *winx, GLdouble *winy, GLdouble *winz)
+{
+  double in[4];
+
+  in[0]=objx;
+  in[1]=objy;
+  in[2]=objz;
+  in[3]=1.0;
+  QMatrix4x4 mv, p;
+  QVector4D in_v, out_v;
+  for(int i=0; i<16; i++)
+  {
+    mv.data()[i] = modelMatrix[i];
+    p.data()[i] = projMatrix[i];
+  }
+  in_v.setX(in[0]);
+  in_v.setY(in[1]);
+  in_v.setZ(in[2]);
+  in_v.setW(in[3]);
+
+  out_v=mv*in_v;
+  in_v = p*out_v;
+
+  in[0]=in_v.x();
+  in[1]=in_v.y();
+  in[2]=in_v.z();
+  in[3]=in_v.w();
+
+  if (in[3] == 0.0) return(GL_FALSE);
+  in[0] /= in[3];
+  in[1] /= in[3];
+  in[2] /= in[3];
+  /* Map x, y and z to range 0-1 */
+  in[0] = in[0] * 0.5 + 0.5;
+  in[1] = in[1] * 0.5 + 0.5;
+  in[2] = in[2] * 0.5 + 0.5;
+
+  /* Map x,y to viewport */
+  in[0] = in[0] * viewport[2] + viewport[0];
+  in[1] = in[1] * viewport[3] + viewport[1];
+
+  *winx=in[0];
+  *winy=in[1];
+  *winz=in[2];
+  return(GL_TRUE);
 }

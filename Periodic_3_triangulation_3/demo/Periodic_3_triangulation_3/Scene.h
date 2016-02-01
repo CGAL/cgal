@@ -220,7 +220,11 @@ Q_SIGNALS:
 private:
   // Scene management helpers
   void init_scene(Init sceneID);
-
+  GLint project(GLdouble objx, GLdouble objy, GLdouble objz,
+                const GLdouble modelMatrix[16],
+                const GLdouble projMatrix[16],
+                const GLint viewport[4],
+                GLdouble *winx, GLdouble *winy, GLdouble *winz);
 
   // Helper functions
   void get_tri_offsets(const Cell_handle ch, int i,
