@@ -394,9 +394,9 @@ create_riemannian_graph(
                 // Add edge
                 typename boost::graph_traits<Riemannian_graph>::edge_descriptor e;
                 bool inserted;
-                boost::tie(e, inserted) = boost::add_edge(vertex(it_index, riemannian_graph),
-                                                          vertex(neighbor_index, riemannian_graph),
-                                                          riemannian_graph);
+                boost::tie(e, inserted) = add_edge(vertex(it_index, riemannian_graph),
+                                                   vertex(neighbor_index, riemannian_graph),
+                                                   riemannian_graph);
                 CGAL_point_set_processing_assertion(inserted);
 
                 //                               ->        ->
@@ -514,8 +514,8 @@ create_mst_graph(
             // check that bi-directed graph is useless
             CGAL_point_set_processing_assertion(predecessor[predecessor[i]] != i);
 
-            add_edge(boost::vertex(predecessor[i], mst_graph),
-                     boost::vertex(i,     mst_graph),
+            add_edge(vertex(predecessor[i], mst_graph),
+                     vertex(i,     mst_graph),
                      mst_graph);
         }
     }
