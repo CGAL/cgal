@@ -446,7 +446,7 @@ extremal_polygon_2(
     points_begin,
     points_end,
     k,
-    transform_iterator(
+    CGAL::transform_iterator(
       o,
       boost::make_adaptable<Point_2, int>(boost::bind(Index_operator< RandomAccessIC, int, Point_2 >(),
                                                       points_begin, _1))),
