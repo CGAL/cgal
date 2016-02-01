@@ -51,6 +51,10 @@
 #include <boost/type_traits/is_same.hpp>
 #include <boost/typeof/typeof.hpp>
 
+#if  (BOOST_GCC >= 40800)
+_Pragma("GCC diagnostic ignored \"-Wunused-local-typedef\"")
+#endif
+
 using namespace CGAL;
 
 struct item : public In_place_list_base<item> {
