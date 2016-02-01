@@ -84,7 +84,7 @@ public:
     FT d2;
     bool d2_uninitialized = true;
 
-    Vertex_circulator vc = (*vicq)->incident_vertices(), done(vc);
+    Vertex_circulator vc = pct.incident_vertices(*vicq), done(vc);
     do {
       if((vc != pct.infinite_vertex()) && (vc != *vicp) && (vc != *vicr)){
         if(d2_uninitialized){
