@@ -5,7 +5,6 @@
 #include <fstream>
 #include <cassert>
 
-
 #if defined CGAL_USE_LEDA
 #  include <CGAL/leda_real.h>
 #elif defined CGAL_USE_CORE

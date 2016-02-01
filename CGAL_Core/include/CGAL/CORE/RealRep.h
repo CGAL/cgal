@@ -93,7 +93,10 @@ private:
 template <class T>
 class Realbase_for : public RealRep {
 public:
-  CORE_MEMORY(Realbase_for)
+
+  CGAL_CORE_EXPORT CORE_NEW(Realbase_for)
+  CGAL_CORE_EXPORT CORE_DELETE(Realbase_for)
+
   Realbase_for(const T& k);
   ~Realbase_for() {}
   int ID() const;
