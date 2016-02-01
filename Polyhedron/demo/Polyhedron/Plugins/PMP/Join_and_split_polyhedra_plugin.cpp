@@ -32,11 +32,11 @@ public:
   {
     msg_interface = m;
     actionJoinPolyhedra= new QAction(tr("Join selected polyhedra"), mainWindow);
-    actionJoinPolyhedra->setProperty("subMenuName", "Operations on polyhedra");
+    actionJoinPolyhedra->setProperty("subMenuName", "Operations on Polyhedra");
     actionJoinPolyhedra->setObjectName("actionJoinPolyhedra");
 
     actionSplitPolyhedra= new QAction(tr("Split selected polyhedra"), mainWindow);
-    actionSplitPolyhedra->setProperty("subMenuName", "Operations on polyhedra");
+    actionSplitPolyhedra->setProperty("subMenuName", "Operations on Polyhedra");
     actionSplitPolyhedra->setObjectName("actionSplitPolyhedra");
 
     actionColorConnectedComponents = new QAction(tr("Color each connected component of selected polyhedra"), mainWindow);
