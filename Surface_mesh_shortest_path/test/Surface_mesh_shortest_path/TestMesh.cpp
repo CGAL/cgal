@@ -152,7 +152,7 @@ struct TestMeshProgramInstance
 
     CGAL::set_halfedgeds_items_id(polyhedron);
 
-    numVertices = boost::num_vertices(polyhedron);
+    numVertices = num_vertices(polyhedron);
 
     VIM vertexIndexMap(get(boost::vertex_index, polyhedron));
     HIM halfedgeIndexMap(get(boost::halfedge_index, polyhedron));
@@ -188,7 +188,7 @@ struct TestMeshProgramInstance
     Surface_mesh_shortest_path endToStartShortestPaths(polyhedron, traits);
     endToStartShortestPaths.m_debugOutput = debugMode;
 
-    std::cout << "Mesh: " << meshName << " " << boost::num_vertices(polyhedron) << " " << num_faces(polyhedron) << " " << num_halfedges(polyhedron) << std::endl;
+    std::cout << "Mesh: " << meshName << " " << num_vertices(polyhedron) << " " << num_faces(polyhedron) << " " << num_halfedges(polyhedron) << std::endl;
 
     std::cout << std::setprecision(20);
 
