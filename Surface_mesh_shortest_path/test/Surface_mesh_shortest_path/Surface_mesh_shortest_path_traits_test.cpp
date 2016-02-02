@@ -285,7 +285,7 @@ void detect_is_saddle_vertex()
   vertex_iterator currentVertex;
   vertex_iterator endVertex;
 
-  for (boost::tie(currentVertex, endVertex) = boost::vertices(P); currentVertex != endVertex; ++currentVertex)
+  for (boost::tie(currentVertex, endVertex) = vertices(P); currentVertex != endVertex; ++currentVertex)
   {
     if (currentVertexIndex <= 3 || currentVertexIndex == 7)
     {

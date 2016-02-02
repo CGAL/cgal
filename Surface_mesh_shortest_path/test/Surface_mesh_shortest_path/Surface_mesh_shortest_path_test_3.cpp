@@ -71,7 +71,7 @@ int main(int argc, char* argv[])
   Surface_mesh_shortest_path shortestPaths(polyhedron, traits);
 
   face_iterator facesBegin, facesEnd;
-  boost::tie(facesBegin, facesEnd) = CGAL::faces(polyhedron);
+  boost::tie(facesBegin, facesEnd) = faces(polyhedron);
 
   std::vector<face_descriptor> facesList;
 
@@ -90,7 +90,7 @@ int main(int argc, char* argv[])
     size_t faceIndex = random.get_int(0, facesList.size());
     face_descriptor face = facesList[faceIndex];
 
-    Triangle_3 faceTriangle = CGAL::internal::triangle_from_halfedge<Triangle_3, Polyhedron_3, VPM>(CGAL::halfedge(face, polyhedron), polyhedron, vertexPointMap);
+    Triangle_3 faceTriangle = CGAL::internal::triangle_from_halfedge<Triangle_3, Polyhedron_3, VPM>(halfedge(face, polyhedron), polyhedron, vertexPointMap);
 
     Barycentric_coordinate location = CGAL::test::random_coordinate<Traits>(random);
 
