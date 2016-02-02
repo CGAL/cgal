@@ -24,9 +24,9 @@
 #include <CGAL/Kd_tree_rectangle.h>
 #include <CGAL/Euclidean_distance.h> //for default distance specialization
 #include <CGAL/property_map.h>
+#include <CGAL/assertions.h>
 
 #include <boost/mpl/has_xxx.hpp>
-#include <boost/static_assert.hpp>
 #include <boost/type_traits/is_same.hpp>
 
 namespace CGAL{
@@ -72,7 +72,7 @@ template <class Point_with_info,class PointPropertyMap,class Base_traits>
 class Search_traits_adapter : public Base_traits{
   PointPropertyMap ppmap;
 
-  BOOST_STATIC_ASSERT( ( boost::is_same< boost::lvalue_property_map_tag,
+  CGAL_static_assertion( ( boost::is_same< boost::lvalue_property_map_tag,
                            typename boost::property_traits<PointPropertyMap>::category
                          >::value ) );
 public:
@@ -130,7 +130,7 @@ class Distance_adapter : public Base_distance {
   PointPropertyMap ppmap;
   typedef typename Base_distance::FT FT;
 
-  BOOST_STATIC_ASSERT( ( boost::is_same< boost::lvalue_property_map_tag,
+  CGAL_static_assertion( ( boost::is_same< boost::lvalue_property_map_tag,
                            typename boost::property_traits<PointPropertyMap>::category
                          >::value ) );
 public:

@@ -24,7 +24,7 @@
 #include <CGAL/Handle_for.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/representation_tags.h>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
@@ -45,7 +45,7 @@ class Ref_count_obj
   typedef typename Get_functor<Kbase, Construct_ttag<Tag_> >::type CBase;
 
   typedef Ref_count_obj			Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename Get_type<R_, Tag_>::type>::value));
+  CGAL_static_assertion((boost::is_same<Self, typename Get_type<R_, Tag_>::type>::value));
 
 public:
   typedef R_ R;
