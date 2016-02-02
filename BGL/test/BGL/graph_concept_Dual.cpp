@@ -13,7 +13,6 @@ void concept_check_dual() {
   typedef CGAL::Dual<Primal>          Graph;
   typedef boost::graph_traits<Graph>  Traits;
   typedef typename Traits::edge_descriptor     edge_descriptor;
-  typedef typename Traits::halfedge_descriptor halfedge_descriptor;
   typedef typename Traits::vertex_descriptor   vertex_descriptor;
   typedef typename Traits::face_descriptor     face_descriptor;
 
