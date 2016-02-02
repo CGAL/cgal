@@ -9,7 +9,7 @@
 #include <fstream>
 #include <cassert>
 
-#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 #endif
@@ -168,7 +168,7 @@ void compute_differential_quantities(PolyhedralSurf& P, Poly_rings& poly_rings)
 
 
 ///////////////MAIN///////////////////////////////////////////////////////
-#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
 int main(int argc, char *argv[])
 #else
 int main()
@@ -177,7 +177,7 @@ int main()
   std::string if_name, of_name;// of_name same as if_name with '/' -> '_'
 
   try {
-#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
    unsigned int int_tag;
    po::options_description desc("Allowed options");
     desc.add_options()

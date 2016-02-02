@@ -46,7 +46,7 @@
 #include <fstream>
 #include <cassert>
 
-#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
     #include <boost/program_options.hpp>
     namespace po = boost::program_options;
 #endif
@@ -283,7 +283,7 @@ parameterize(ParameterizationMesh_3& mesh,  // Mesh parameterization adaptor
 // main()
 // ----------------------------------------------------------------------------
 
-#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
 int main(int argc, char * argv[])
 #else
 int main()
@@ -305,7 +305,7 @@ int main()
     std::string output;             // default: out.eps
     try
     {
-#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
         po::options_description desc("Allowed options");
         desc.add_options()
             ("help,h", "prints this help message")

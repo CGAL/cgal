@@ -6,7 +6,7 @@
 
 #include <CGAL/property_map.h>
 
-#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
 #include <boost/program_options.hpp>
 namespace po = boost::program_options;
 #endif
@@ -117,7 +117,7 @@ void gather_fitting_points(Vertex* v,
 }
 
 ///////////////MAIN///////////////////////////////////////////////////////
-#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
 int main(int argc, char *argv[])
 #else
 int main()
@@ -131,7 +131,7 @@ int main()
   std::ofstream out_4ogl, out_verbose;
 
   try {
-#ifdef CGAL_USE_BOOST_PROGRAM_OPTIONS
+#if defined(CGAL_USE_BOOST_PROGRAM_OPTIONS) && ! defined(DONT_USE_BOOST_PROGRAM_OPTIONS)
     po::options_description desc("Allowed options");
     desc.add_options()
       ("help,h", "produce help message.")
