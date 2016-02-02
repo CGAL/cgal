@@ -24,6 +24,12 @@
 
 #include <CGAL/Compact_container.h>
 
+#include <boost/config.hpp>
+#if  (BOOST_GCC >= 50000)
+_Pragma("GCC diagnostic push")
+_Pragma("GCC diagnostic ignored \"-Warray-bounds\"")
+#endif
+
 namespace CGAL {
 
   /** @file Combinatorial_map_storages.h
@@ -405,5 +411,9 @@ namespace CGAL {
 
 } // namespace CGAL
 
+
+#if  (BOOST_GCC >= 50000)
+ _Pragma("GCC diagnostic pop")
+#endif
 #endif // CGAL_COMBINATORIAL_MAP_H //
 // EOF //
