@@ -1003,17 +1003,20 @@ class Intersection_of_Polyhedra_3{
 
     std::set<Facet_handle>& m_reported_facets;
     std::vector<std::pair<const Box*,const Box*> >& m_intersecting_bboxes;
+    PolyhedronPointPMap ppmap;
   public:
     Map_edge_facet_bbox_intersection_extract_coplanar_filter_self_intersections(
       Polyhedron_ref  P,
       Polyhedron_ref Q,
       std::set<Facet_handle>& reported_facets,
-      std::vector<std::pair<const Box*,const Box*> >& intersecting_bboxes
+      std::vector<std::pair<const Box*,const Box*> >& intersecting_bboxes,
+      PolyhedronPointPMap ppmap
     )
       : polyhedron_triangle(P)
       , polyhedron_edge(Q)
       , m_reported_facets(reported_facets)
       , m_intersecting_bboxes(intersecting_bboxes)
+      , ppmap(ppmap)
     {}
 
     void operator()( const Box* fb, const Box* eb) {
@@ -1052,8 +1055,8 @@ class Intersection_of_Polyhedra_3{
         OutputIterator out;
         internal::Intersect_facets<Polyhedron,Kernel,
                                    Box,OutputIterator,
-                                   typename boost::property_map<Polyhedron,boost::vertex_point_t>::type>
-          intersect_facets(polyhedron_triangle, out, get(boost::vertex_point, polyhedron_triangle), Kernel());
+                                   PolyhedronPointPMap>
+          intersect_facets(polyhedron_triangle, out, ppmap, Kernel());
         std::ptrdiff_t cutoff = 2000;
         CGAL::box_self_intersection_d(box_ptr.begin(), box_ptr.end(),intersect_facets,cutoff);
         return false;
@@ -1103,7 +1106,7 @@ class Intersection_of_Polyhedra_3{
     std::set<Facet_handle> reported_facets;
     std::vector<std::pair<const Box*,const Box*> > intersecting_bboxes;
     Map_edge_facet_bbox_intersection_extract_coplanar_filter_self_intersections
-      inter_functor4selfi(P, Q, reported_facets, intersecting_bboxes);
+      inter_functor4selfi(P, Q, reported_facets, intersecting_bboxes, ppmap);
     CGAL::box_intersection_d( facet_box_ptr.begin(), facet_box_ptr.end(),
                               edge_box_ptr.begin(), edge_box_ptr.end(),
                               inter_functor4selfi, std::ptrdiff_t(2000) );
