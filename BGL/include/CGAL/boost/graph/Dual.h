@@ -66,6 +66,15 @@ public:
   { return primal_; }
 };
 
+
+/*!
+  Construct a `Dual` from a given `primal`.
+  \relates CGAL::Dual
+ */
+template<typename Primal>
+Dual<Primal> dual(const Primal& primal)
+{ return Dual<Primal>(primal); }
+
 } // namespace CGAL
 
 namespace boost {
