@@ -241,7 +241,11 @@ for example
 | na  | `n = sm.number_of_vertices()` | counts non-deleted vertices and has no BGL equivalent |
 | `n = num_vertices(g)`  | `n = sm.number_of_vertices() +  sm.number_of_removed_vertices()` | counts used and deleted vertices in order to have an upper bound on the largest vertex index used|
 
-
+It would be nicer to return the number of vertices without
+taking removed vertices into account, but this would interact badly with
+the underlying vertex/edge index mappings. The index mapping would no longer 
+fall in the range `[0,num_vertices(g))`  which is assumed in many
+of the algorithms.
 
 The class `Surface_mesh` is also a model of the concept `MutableFaceGraph` defined
 in the package \ref PkgBGLSummary. This and similar concepts like `HalfedgeGraph`
