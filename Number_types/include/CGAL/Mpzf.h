@@ -75,29 +75,10 @@
 #include <builtins.h>
 #endif
 
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/config.hpp>
 #include <boost/detail/workaround.hpp>
 #include <boost/version.hpp>
-
-// Standard way to deal with clang's __has_warning
-// http://clang.llvm.org/docs/LanguageExtensions.html#feature-checking-macros
-#ifndef __has_warning
-#  define __has_warning(x) 0
-#endif
-
-// If Clang has the warning -Wunused-local-typedef, then disable it temporarily.
-#if BOOST_WORKAROUND(BOOST_VERSION, BOOST_TESTED_AT(105800)) && BOOST_CLANG && __has_warning("-Wunused-local-typedef")
-#  define CGAL_CLANG_PUSH_AND_IGNORE_UNUSED_LOCAL_TYPEDEF \
-    _Pragma("clang diagnostic push") \
-    _Pragma("clang diagnostic ignored \"-Wunused-local-typedef\"")
-#  define CGAL_CLANG_POP_DIAGNOSTIC _Pragma("clang diagnostic pop")
-#else
-#  define CGAL_CLANG_PUSH_AND_IGNORE_UNUSED_LOCAL_TYPEDEF
-#  define CGAL_CLANG_POP_DIAGNOSTIC
-#endif
-
-CGAL_CLANG_PUSH_AND_IGNORE_UNUSED_LOCAL_TYPEDEF
 
 #if defined(BOOST_MSVC)
 #  pragma warning(push)
@@ -173,7 +154,7 @@ template <class T, class = void> struct pool2 {
   static bool empty() { return data() == 0; }
   static const int extra = 1; // TODO: handle the case where a pointer is larger than a mp_limb_t
   private:
-  BOOST_STATIC_ASSERT(sizeof(T) >= sizeof(T*));
+  CGAL_static_assertion(sizeof(T) >= sizeof(T*));
   static T& data () {
     static CGAL_MPZF_TLS T data_ = 0;
     return data_;
@@ -188,7 +169,7 @@ template <class T, class = void> struct pool3 {
   static bool empty() { return data() == 0; }
   static const int extra = 1; // TODO: handle the case where a pointer is larger than a mp_limb_t
   private:
-  BOOST_STATIC_ASSERT(sizeof(T) >= sizeof(T*));
+  CGAL_static_assertion(sizeof(T) >= sizeof(T*));
   struct cleaner {
     T data_ = 0;
     ~cleaner(){
@@ -437,7 +418,7 @@ struct Mpzf {
     }
     int e1 = (int)dexp+13;
     // FIXME: make it more general! But not slower...
-    BOOST_STATIC_ASSERT(GMP_NUMB_BITS == 64);
+    CGAL_static_assertion(GMP_NUMB_BITS == 64);
     int e2 = e1 % 64;
     exp = e1 / 64 - 17;
     // 52+1023+13==17*64 ?
@@ -1175,11 +1156,6 @@ namespace Eigen {
 #if defined(BOOST_MSVC)
 #  pragma warning(pop)
 #endif
-
-CGAL_CLANG_POP_DIAGNOSTIC
-
-#undef CGAL_CLANG_PUSH_AND_IGNORE_UNUSED_LOCAL_TYPEDEF
-#undef CGAL_CLANG_POP_DIAGNOSTIC
 
 #endif // GMP_NUMB_BITS == 64
 #endif // CGAL_MPZF_H
