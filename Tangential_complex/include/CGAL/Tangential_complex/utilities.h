@@ -371,6 +371,119 @@ namespace Tangential_complex_ {
     return output_basis;
   }
 
+  // Functor to compute radial projection from R^4 to S^3(sphere_radius)
+  // The returned point coordinates are expressed with the origin 
+  // at `center_of_sphere`, i.e. the new points are all on the sphere 
+  // S^3{(0,0,0,0), sphere_radius}
+  template <typename K>
+  class R4_to_S3_radial_projection
+  {
+  public:
+    typedef typename K::FT      FT;
+    typedef typename K::Point_d Point;
+
+    // center_of_projection will be sent to infinity by the projection
+    R4_to_S3_radial_projection(
+      FT sphere_radius, Point const& center_of_sphere, K const& k)
+      : m_sphere_radius(sphere_radius), m_center_of_sphere(center_of_sphere),
+      m_k(k) {}
+
+    Point operator()(Point const& p) const
+    {
+      CGAL_assertion(m_k.point_dimension_d_object()(p) == 4);
+
+      typedef K::FT         FT;
+      typedef K::Point_d    Point;
+      typedef K::Vector_d   Vector;
+
+      typename K::Translated_point_d transl = m_k.translated_point_d_object();
+      typename K::Point_to_vector_d pt_to_vec = m_k.point_to_vector_d_object();
+      typename K::Vector_to_point_d vec_to_pt = m_k.vector_to_point_d_object();
+      typename K::Squared_length_d sqlen = m_k.squared_length_d_object();
+      typename K::Scaled_vector_d scaled_vec = m_k.scaled_vector_d_object();
+
+      Point transl_p = transl(p, scaled_vec(pt_to_vec(m_center_of_sphere), FT(-1)));
+      Vector v = pt_to_vec(transl_p);
+      v = scaled_vec(v, m_sphere_radius / CGAL::sqrt(sqlen(v)));
+
+      return vec_to_pt(v);
+    }
+
+  private:
+    FT m_sphere_radius;
+    Point m_center_of_sphere;
+    K const& m_k;
+  };
+
+  // Functor to compute stereographic projection from S^3(sphere_radius) to R^3
+  template <typename K>
+  class S3_to_R3_stereographic_projection
+  {
+  public:
+    typedef typename K::FT      FT;
+    typedef typename K::Point_d Point;
+
+    // center_of_projection will be sent to infinity by the projection
+    S3_to_R3_stereographic_projection(
+      FT sphere_radius, Point const& center_of_projection, K const& k)
+    : m_sphere_radius(sphere_radius), m_center_of_proj(center_of_projection), 
+      m_k(k) {}
+
+    Point operator()(Point const& p) const
+    {
+      CGAL_assertion(m_k.point_dimension_d_object()(p) == 4);
+
+      typedef K::FT         FT;
+      typedef K::Point_d    Point;
+
+      typename K::Construct_point_d constr_pt = m_k.construct_point_d_object();
+      typename K::Compute_coordinate_d coord = m_k.compute_coordinate_d_object();
+
+      std::vector<FT> stereo_proj;
+      stereo_proj.reserve(3);
+
+      FT t = (2 * m_sphere_radius + coord(m_center_of_proj, 3))
+        / (m_sphere_radius - (coord(p, 3) - coord(m_center_of_proj, 3)));
+      for (int i = 0 ; i < 3 ; ++i)
+        stereo_proj.push_back(coord(m_center_of_proj, i) + t*(coord(p, i) - coord(m_center_of_proj, i)));
+
+      return constr_pt(3, stereo_proj.begin(), stereo_proj.end());
+    }
+
+  private:
+    FT m_sphere_radius;
+    Point m_center_of_proj;
+    K const& m_k;
+  };
+
+  // Functor to project R^4 points to R^3
+  template <typename K>
+  class R4_to_R3_using_radial_then_stereographic_projection
+  {
+  public:
+    typedef typename K::FT       FT;
+    typedef typename K::Point_d  Point;
+
+    // sphere_radius and center_of_projection are for the stereographic
+    // projection
+    R4_to_R3_using_radial_then_stereographic_projection(
+      FT sphere_radius, Point const& center_of_sphere,
+      Point const& center_of_projection, K const& k)
+    : m_R4toS3(sphere_radius, center_of_sphere, k),
+      m_S3toR3(sphere_radius, center_of_projection, k),
+      m_k(k) {}
+
+    Point operator()(Point const& p) const
+    {
+      return m_S3toR3(m_R4toS3(p));
+    }
+
+  private:
+    R4_to_S3_radial_projection<K>         m_R4toS3;
+    S3_to_R3_stereographic_projection<K>  m_S3toR3;
+    K const&                              m_k;
+  };
+
   // CJTODO: use CGAL::Combination_enumerator<int> (cf. Tangential_complex.h)
   // Compute all the k-combinations of elements
   // Output_iterator::value_type must be std::set<std::size_t> >

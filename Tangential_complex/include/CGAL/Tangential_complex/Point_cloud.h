@@ -89,6 +89,21 @@ public:
   }
 
   /// Constructor
+  template <typename Point_indices_range>
+  Point_cloud_data_structure(
+    Point_container_ const& points,
+    Point_indices_range const& only_these_points)
+    : m_points(points),
+    m_tree(
+    only_these_points.begin(), only_these_points.end(),
+    typename Tree::Splitter(),
+    STraits((Point*)&(points[0])))
+  {
+    // Build the tree now (we don't want to wait for the first query)
+    m_tree.build();
+  }
+
+  /// Constructor
   Point_cloud_data_structure(
     Point_container_ const& points,
     std::size_t begin_idx, std::size_t past_the_end_idx)

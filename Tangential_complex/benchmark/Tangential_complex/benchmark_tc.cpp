@@ -6,9 +6,6 @@
 # define TBB_USE_THREADING_TOOL
 #endif
 
-
-#include <CGAL/Tangential_complex/protected_sets.h> // CJTODO TEST
-
 #include <CGAL/assertions_behaviour.h>
 #include <CGAL/Epick_d.h>
 #include <CGAL/Tangential_complex.h>
@@ -16,6 +13,7 @@
 #include <CGAL/Mesh_3/Profiling_tools.h>
 
 #include "../../test/Tangential_complex/testing_utilities.h"
+#include "console_color.h"
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim_all.hpp>
@@ -48,8 +46,13 @@ typedef CGAL::Tangential_complex<
 //#define TC_PROTECT_POINT_SET_DELTA  0.003
 //#define JUST_BENCHMARK_SPATIAL_SEARCH // CJTODO: test
 //#define CHECK_IF_ALL_SIMPLICES_ARE_IN_THE_AMBIENT_DELAUNAY
-//#define TC_INPUT_STRIDES 10 // only take one point every TC_INPUT_STRIDES points
+//#define TC_INPUT_STRIDES 3 // only take one point every TC_INPUT_STRIDES points
 //#define TC_NO_EXPORT
+
+
+#ifdef TC_PROTECT_POINT_SET_DELTA
+# include <CGAL/Tangential_complex/protected_sets.h> // CJTODO TEST
+#endif
 
 #ifdef JUST_BENCHMARK_SPATIAL_SEARCH
 std::ofstream spatial_search_csv_file("benchmark_spatial_search.csv");
@@ -179,6 +182,19 @@ bool export_to_off(
 #ifdef TC_NO_EXPORT
   return true;
 #endif
+
+#if 0
+  Kernel k;
+  FT center_pt[] = { -0.5, -CGAL::sqrt(3.) / 2, -0.5, CGAL::sqrt(3.) / 2 };
+  FT proj_pt[] = { 0., 0., 0., 0.2 };
+  CGAL::Tangential_complex_::S3_to_R3_stereographic_projection<Kernel>
+    proj_functor(0.2, 
+                 Point(4, &center_pt[0], &center_pt[4]),
+                 k);
+#else
+  CGAL::Identity<Point> proj_functor;
+#endif
+
   if (tc.intrinsic_dimension() <= 3)
   {
     std::stringstream output_filename;
@@ -196,7 +212,8 @@ bool export_to_off(
         *p_complex, off_stream, 
         p_simpl_to_color_in_red,
         p_simpl_to_color_in_green, 
-        p_simpl_to_color_in_blue);
+        p_simpl_to_color_in_blue,
+        proj_functor);
 #endif
     }
     else
@@ -214,7 +231,9 @@ bool export_to_off(
         off_stream, color_inconsistencies, 
         p_simpl_to_color_in_red,
         p_simpl_to_color_in_green, 
-        p_simpl_to_color_in_blue);
+        p_simpl_to_color_in_blue,
+        NULL,
+        proj_functor);
 //#endif
     }
     return true;
@@ -427,6 +446,13 @@ void make_tc(std::vector<Point> &points,
 
     //tc.check_correlation_between_inconsistencies_and_fatness();
 
+    // CJTODO TEMP
+    std::cerr << red << "FINAL CHECK:\n" << white;
+    tc.number_of_inconsistent_simplices(true);
+    tc.refresh_tangential_complex();
+    tc.number_of_inconsistent_simplices(true);
+    // CJTODO
+
     //=========================================================================
     // Export to OFF
     //=========================================================================
@@ -466,7 +492,9 @@ void make_tc(std::vector<Point> &points,
     tc.check_and_solve_inconsistencies_by_adding_higher_dim_simplices();
 #endif
     fix2_time = t.elapsed(); t.reset();
+    std::cerr << "Exporting the TC as a Simplicial_complex... ";
     max_dim = tc.export_TC(complex, false);
+    std::cerr << "done.\n";
     /*std::set<std::set<std::size_t> > not_delaunay_simplices;
     if (ambient_dim <= 4)
     {
@@ -485,10 +513,28 @@ void make_tc(std::vector<Point> &points,
   }
   else
   {
+    std::cerr << "Exporting the TC as a Simplicial_complex... ";
     max_dim = tc.export_TC(complex, false);
+    std::cerr << "done.\n";
   }
 
+  std::cerr << "Computing stats of the complex...\n";
   complex.display_stats();
+
+  if (intrinsic_dim == 2)
+  {
+    std::cerr << "Computing Euler characteristic of the complex...\n";
+    std::size_t num_vertices = complex.num_K_simplices<0>();
+    std::size_t num_edges = complex.num_K_simplices<1>();
+    std::size_t num_triangles = complex.num_K_simplices<2>();
+    std::cerr << "Euler characteristic: V - E + F = "
+      << num_vertices << " - " << num_edges << " + " << num_triangles << " = "
+      << yellow
+      << (std::ptrdiff_t) num_vertices
+      - (std::ptrdiff_t) num_edges
+      + (std::ptrdiff_t) num_triangles
+      << white << "\n";
+  }
 
   // CJTODO TEMP: Export to OFF with higher-dim simplices colored
   /*std::set<std::set<std::size_t> > higher_dim_simplices;
@@ -552,7 +598,8 @@ void make_tc(std::vector<Point> &points,
   std::cerr << std::endl
     << "================================================" << std::endl
     << "Number of vertices: " << tc.number_of_vertices() << std::endl
-    << "Pure pseudomanifold: " << (is_pure_pseudomanifold ? "YES" : "NO") << std::endl
+    << "Pure pseudomanifold: " << yellow
+    << (is_pure_pseudomanifold ? "YES" : "NO") << white << std::endl
     << "Computation times (seconds): " << std::endl
     << "  * Tangential complex: " << init_time + computation_time << std::endl
     << "    - Init + kd-tree = " << init_time << std::endl
