@@ -32,7 +32,9 @@ namespace CGAL {
 /*!
   \ingroup PkgBGLHelperFct
 
-  copies a source FaceGraph into another FaceGraph of different type.
+  copies a source FaceGraph into another FaceGraph of different
+  type. OutputIterators can be provided to produce a mapping between
+  source and target elements.
 
   \tparam SourceMesh a `FaceListGraph`
   \tparam TargetMesh a `FaceListGraph`
@@ -54,11 +56,19 @@ namespace CGAL {
   `vertex_point` and that the `vertex_point` values of `tm` are
   constructible from the ones of `sm`.
 */
-template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H, typename F2F>
-void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, 
-                     V2V v2v = Emptyset_iterator(), 
-                     H2H h2h = Emptyset_iterator(),
-                     F2F f2f = Emptyset_iterator())
+#if defined(CGAL_CXX11) || defined(DOXYGEN_RUNNING) // Use template default arguments
+template <typename SourceMesh, typename TargetMesh,
+          typename V2V = Emptyset_iterator,
+          typename H2H = Emptyset_iterator,
+          typename F2F = Emptyset_iterator>
+void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
+                     V2V v2v = V2V(), H2H h2h = H2H(), F2F f2f = F2F())
+#else // use the overloads
+template <typename SourceMesh, typename TargetMesh,
+          typename V2V, typename H2H, typename F2F>
+void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
+                     V2V v2v, H2H h2h, F2F f2f)
+#endif
 {
   typedef typename boost::graph_traits<SourceMesh>::vertex_descriptor sm_vertex_descriptor;
   typedef typename boost::graph_traits<TargetMesh>::vertex_descriptor tm_vertex_descriptor;
@@ -113,6 +123,20 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
   }
   
 }
+
+#if !defined(CGAL_CXX11)
+template <typename SourceMesh, typename TargetMesh>
+void copy_face_graph(const SourceMesh& sm, TargetMesh& tm)
+{ copy_face_graph(sm, tm, Emptyset_iterator(), Emptyset_iterator(), Emptyset_iterator()); }
+
+template <typename SourceMesh, typename TargetMesh, typename V2V>
+void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v)
+{ copy_face_graph(sm, tm, v2v, Emptyset_iterator(), Emptyset_iterator()); }
+
+template <typename SourceMesh, typename TargetMesh, typename V2V, typename H2H>
+void copy_face_graph(const SourceMesh& sm, TargetMesh& tm, V2V v2v, H2H h2h)
+{ copy_face_graph(sm, tm, v2v, h2h, Emptyset_iterator()); }
+#endif
 
 } // namespace CGAL
 
