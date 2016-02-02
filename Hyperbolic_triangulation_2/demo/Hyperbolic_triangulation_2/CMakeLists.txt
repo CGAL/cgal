@@ -12,23 +12,49 @@ if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
   endif()
 endif()
 
-find_package(CGAL COMPONENTS Qt4)
+project( Hyperbolic_triangulation_2 )
 
-include(${CGAL_USE_FILE})
 
-set( QT_USE_QTXML    TRUE )
-set( QT_USE_QTMAIN   TRUE )
-set( QT_USE_QTSCRIPT  TRUE )
-set( QT_USE_QTOPENGL  TRUE )
+cmake_minimum_required(VERSION 2.6.2)
+if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
+  if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}.${CMAKE_PATCH_VERSION}" VERSION_GREATER 2.8.3)
+    cmake_policy(VERSION 2.8.4)
+  else()
+    cmake_policy(VERSION 2.6)
+  endif()
+endif()
 
-#find_package(Qt4)
+set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
+ 
+if ( COMMAND cmake_policy )
 
-include_directories (BEFORE ../../../GraphicsView/demo/Triangulation_2)
-include_directories (BEFORE ../../include)
-# demos contain their own headers
-include_directories (BEFORE include)
+  cmake_policy( SET CMP0003 NEW )  
 
-if ( CGAL_FOUND AND CGAL_Qt4_FOUND AND QT4_FOUND )
+endif()
+
+# CGAL and its components
+find_package( CGAL QUIET COMPONENTS Qt5Core Qt5Giu Qt5Widgets )
+
+# Find the QtWidgets library
+find_package(Qt5Core)
+find_package(Qt5Gui)
+find_package(Qt5Widgets)
+
+# Add the include directories for the Qt 5 Widgets module to
+# the compile lines.
+include_directories(${Qt5Core_INCLUDE_DIRS})
+include_directories(${Qt5Gui_INCLUDE_DIRS})
+include_directories(${Qt5Widgets_INCLUDE_DIRS})
+
+# Use the compile definitions defined in the Qt 5 Widgets module
+add_definitions(${Qt5Core_DEFINITIONS})
+add_definitions(${Qt5Gui_DEFINITIONS})
+add_definitions(${Qt5Widgets_DEFINITIONS})
+
+# Add compiler flags for building executables (-fPIE)
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Core_EXECUTABLE_COMPILE_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Gui_EXECUTABLE_COMPILE_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} ${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
 
 include(${QT_USE_FILE})
 
@@ -71,39 +97,39 @@ add_executable  ( Hyperbolic_translations_2_demo Hyperbolic_translations_2_demo.
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Hyperbolic_translations_2_demo )
 
-# Link with Qt libraries
-target_link_libraries( Hyperbolic_translations_2_demo ${QT_LIBRARIES} )
-# Link with CGAL
-target_link_libraries( Hyperbolic_translations_2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+# Creating entries for all .cpp/.C files with "main" routine
+# ##########################################################
 
 #--------------------------------
 # The "Periodic Delaunay hyperbolic " demo:
 #--------------------------------
 
-# use the Qt MOC preprocessor on classes that derives from QObject
-qt4_generate_moc( "Periodic_2_Delaunay_hyperbolic_triangulation_2_demo.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Periodic_2_Delaunay_hyperbolic_triangulation_2_demo.moc" )
+qt5_generate_moc( Hyperbolic_Delaunay_triangulation_2_demo.cpp Hyperbolic_Delaunay_triangulation_2_demo.moc )
+create_single_source_cgal_program( "Hyperbolic_Delaunay_triangulation_2_demo.cpp" )
+target_link_libraries(Hyperbolic_Delaunay_triangulation_2_demo CGAL CGAL_Qt5 Qt5::Core Qt5::Gui Qt5::Widgets)
 
-# The executable itself.
-add_executable  ( Periodic_2_Delaunay_hyperbolic_triangulation_2_demo Periodic_2_Delaunay_hyperbolic_triangulation_2_demo.cpp  Periodic_2_Delaunay_hyperbolic_triangulation_2_demo.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+################
 
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS Periodic_2_Delaunay_hyperbolic_triangulation_2_demo )
 
-# Link with Qt libraries
-target_link_libraries( Periodic_2_Delaunay_hyperbolic_triangulation_2_demo ${QT_LIBRARIES} )
-# Link with CGAL
-target_link_libraries( Periodic_2_Delaunay_hyperbolic_triangulation_2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
+qt5_generate_moc( Hyperbolic_Dirichlet_region_2_demo.cpp Hyperbolic_Dirichlet_region_2_demo.moc )
+create_single_source_cgal_program( "Hyperbolic_Dirichlet_region_2_demo.cpp" )
+target_link_libraries(Hyperbolic_Dirichlet_region_2_demo CGAL CGAL_Qt5 Qt5::Core Qt5::Gui Qt5::Widgets)
 
-#--------------------------------
-# The "Hyperbolic Dirichlet Region" demo:
-#--------------------------------
+################
 
-# use the Qt MOC preprocessor on classes that derives from QObject
-qt4_generate_moc( "Hyperbolic_Dirichlet_region_2_demo.cpp" "${CMAKE_CURRENT_BINARY_DIR}/Hyperbolic_Dirichlet_region_2_demo.moc" )
 
-# The executable itself.
-add_executable  ( Hyperbolic_Dirichlet_region_2_demo Hyperbolic_Dirichlet_region_2_demo.cpp Hyperbolic_Dirichlet_region_2_demo.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
+qt5_generate_moc( Periodic_2_Delaunay_hyperbolic_triangulation_2_demo.cpp Periodic_2_Delaunay_hyperbolic_triangulation_2_demo.moc )
+create_single_source_cgal_program( "Periodic_2_Delaunay_hyperbolic_triangulation_2_demo.cpp" )
+target_link_libraries(Periodic_2_Delaunay_hyperbolic_triangulation_2_demo CGAL CGAL_Qt5 Qt5::Core Qt5::Gui Qt5::Widgets)
 
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS Hyperbolic_Dirichlet_region_2_demo.cpp )
+################
+
+qt5_generate_moc( Hyperbolic_translations_2_demo.cpp Hyperbolic_translations_2_demo.moc )
+create_single_source_cgal_program( "Hyperbolic_translations_2_demo.cpp" )
+target_link_libraries(Hyperbolic_translations_2_demo CGAL CGAL_Qt5 Qt5::Core Qt5::Gui Qt5::Widgets)
+
+
+
 
 # Link with Qt libraries
 target_link_libraries( Hyperbolic_Dirichlet_region_2_demo ${QT_LIBRARIES} )
