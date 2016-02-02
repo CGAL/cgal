@@ -27,6 +27,7 @@
 #define CGAL_TIMER_H 1
 
 #include <CGAL/config.h>
+#include <CGAL/assertions.h>
 
 namespace CGAL {
 
