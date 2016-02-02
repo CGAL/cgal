@@ -20,7 +20,7 @@ typedef CGAL::cpp11::array<unsigned char, 3> Color;
 
 // Custom interpreter that reads points, normals and colors and stores
 // them in the appropriate container
-class My_ply_interpreter : public CGAL::Ply_abstract_interpreter
+class My_ply_interpreter
 {
   std::vector<Pwn>& points;
   std::vector<Color>& colors;
@@ -32,37 +32,35 @@ public:
   { }
 
   // Init and test if input file contains the right properties
-  bool init (const std::vector<CGAL::Ply_read_number*>& readers)
+  bool is_applicable (CGAL::Ply_reader& reader)
   {
-    CGAL::Ply_abstract_interpreter::init (readers);
-
-    return does_reader_exist ("x")
-      && does_reader_exist ("y")
-      && does_reader_exist ("z")
-      && does_reader_exist ("nx")
-      && does_reader_exist ("ny")
-      && does_reader_exist ("nz")
-      && does_reader_exist ("red")
-      && does_reader_exist ("green")
-      && does_reader_exist ("blue");
+    return reader.does_tag_exist ("x")
+      && reader.does_tag_exist ("y")
+      && reader.does_tag_exist ("z")
+      && reader.does_tag_exist ("nx")
+      && reader.does_tag_exist ("ny")
+      && reader.does_tag_exist ("nz")
+      && reader.does_tag_exist ("red")
+      && reader.does_tag_exist ("green")
+      && reader.does_tag_exist ("blue");
   }
 
   // Describes how to process one line (= one point object)
-  void process_line ()
+  void process_line (CGAL::Ply_reader& reader)
   {
     FT x = (FT)0., y = (FT)0., z = (FT)0.,
       nx = (FT)0., ny = (FT)0., nz = (FT)0.;
     Color c = {{ 0, 0, 0 }};
 
-    assign (x, "x");
-    assign (y, "y");
-    assign (z, "z");
-    assign (nx, "nx");
-    assign (ny, "ny");
-    assign (nz, "nz");
-    assign (c[0], "red");
-    assign (c[1], "green");
-    assign (c[2], "blue");
+    reader.assign (x, "x");
+    reader.assign (y, "y");
+    reader.assign (z, "z");
+    reader.assign (nx, "nx");
+    reader.assign (ny, "ny");
+    reader.assign (nz, "nz");
+    reader.assign (c[0], "red");
+    reader.assign (c[1], "green");
+    reader.assign (c[2], "blue");
 
     points.push_back (std::make_pair (Point (x, y, z), Vector (nx, ny, nz)));
     colors.push_back (c);
