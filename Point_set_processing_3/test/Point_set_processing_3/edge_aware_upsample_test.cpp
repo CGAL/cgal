@@ -106,7 +106,7 @@ int main(int argc, char * argv[])
   const double sharpness_sigma = 25;   //control sharpness of the result.
   const double edge_sensitivity = 0;    // more points will up-sample on edge.
   const double neighbor_radius = 0.2;      // initial neighbors size.
-  const unsigned int times_of_output_points = 40;
+  const unsigned int times_of_output_points = 4;
 
   // Accumulated errors
   int accumulated_fatal_err = EXIT_SUCCESS;
