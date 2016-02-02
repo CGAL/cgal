@@ -31,6 +31,12 @@
 
 #include <boost/type_traits/is_same.hpp>
 
+#include <boost/config.hpp>
+#if  (BOOST_GCC >= 40800)
+_Pragma("GCC diagnostic push")
+_Pragma("GCC diagnostic ignored \"-Wunused-local-typedef\"")
+#endif
+
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -159,5 +165,9 @@ namespace internal {
 } //end namespace Polygon_mesh_processing
 
 } //end namespace CGAL
+
+#if  (BOOST_GCC >= 40800)
+ _Pragma("GCC diagnostic pop")
+#endif
 
 #endif //CGAL_POLYGON_MESH_PROCESSING_FAIR_H

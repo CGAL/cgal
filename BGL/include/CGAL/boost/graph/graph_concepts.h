@@ -23,6 +23,11 @@
 #include <boost/graph/graph_concepts.hpp>
 #include <boost/concept/detail/concept_def.hpp>
 
+#if  (BOOST_GCC >= 40800)
+_Pragma("GCC diagnostic push")
+_Pragma("GCC diagnostic ignored \"-Wunused-local-typedef\"")
+#endif
+
 namespace CGAL {
 namespace concepts {
 
@@ -197,6 +202,11 @@ using CGAL::concepts::FaceListGraphConcept;
 using CGAL::concepts::MutableFaceGraphConcept;
 using CGAL::concepts::MutableHalfedgeGraphConcept;
 } // CGAL
+
+
+#if  (BOOST_GCC >= 40800)
+ _Pragma("GCC diagnostic pop")
+#endif
 
 #include <boost/concept/detail/concept_undef.hpp>
 
