@@ -66,6 +66,8 @@ namespace Mesh_2
       CGAL_assertion(cell.number_of_vertices() > 2);
 
       typename Cvd_cell::segment_iterator sit = cell.segments_begin();
+      typename CDT::Geom_traits::Compute_area_2 compute_area =
+        cdt.geom_traits().compute_area_2_object();
       for( ; sit != cell.segments_end(); ++sit)
       {
         Segment s = *sit;
@@ -74,7 +76,7 @@ namespace Mesh_2
 
         // Compute mass
         FT density = density_2d(tri_centroid, sizing_field);
-        FT abs_area = CGAL::abs(tri.area());
+        FT abs_area = CGAL::abs(compute_area(tri[0], tri[1], tri[2]));
         FT mass = abs_area * density;
 
         move = move + mass * Vector_2(p, tri_centroid);
