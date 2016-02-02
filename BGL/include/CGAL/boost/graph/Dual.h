@@ -54,16 +54,16 @@ class Dual
   const Primal_& primal_;
 
 public:
+  /*! The underlying primal type. */
   typedef Primal_ Primal;
 
+  /*! Construct a Dual from a given primal. */
   Dual(const Primal& primal)
-  : primal_(primal)
-  {}
+    : primal_(primal) {}
 
+  /*! Returns the underlying primal. */
   const Primal& primal() const
-  {
-    return primal_;
-  }
+  { return primal_; }
 };
 
 } // namespace CGAL
