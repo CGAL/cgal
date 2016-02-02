@@ -76,6 +76,7 @@ target_link_libraries( Hyperbolic_translations_2_demo ${QT_LIBRARIES} )
 # Link with CGAL
 target_link_libraries( Hyperbolic_translations_2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES})
 
+
 #--------------------------------
 # The "Periodic Delaunay hyperbolic " demo:
 #--------------------------------
@@ -104,6 +105,7 @@ qt4_generate_moc( "Hyperbolic_Dirichlet_region_2_demo.cpp" "${CMAKE_CURRENT_BINA
 add_executable  ( Hyperbolic_Dirichlet_region_2_demo Hyperbolic_Dirichlet_region_2_demo.cpp Hyperbolic_Dirichlet_region_2_demo.moc ${DT_UI_FILES} ${DT_RESOURCE_FILES} )
 
 add_to_cached_list( CGAL_EXECUTABLE_TARGETS Hyperbolic_Dirichlet_region_2_demo.cpp )
+
 
 # Link with Qt libraries
 target_link_libraries( Hyperbolic_Dirichlet_region_2_demo ${QT_LIBRARIES} )
