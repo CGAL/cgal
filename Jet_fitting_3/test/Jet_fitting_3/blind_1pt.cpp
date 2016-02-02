@@ -68,7 +68,7 @@ int main()
   assert(almost_equal(monge_form.coefficients()[0], -0.2, precision)
          || almost_equal(monge_form.coefficients()[0], 0.4, precision));
   assert(almost_equal(monge_form.coefficients()[1], -0.4, precision)
-         || almost_equal(monge_form.coefficients()[0], 0.2, precision));
+         || almost_equal(monge_form.coefficients()[1], 0.2, precision));
   std::cout << "success\n";
  return 0;
 }
