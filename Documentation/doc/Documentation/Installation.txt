@@ -1101,7 +1101,6 @@ Only the <I>directory</I> containing the header files of \sc{Eigen} 3.1 (or grea
 
 | Variable             | Description           | Type        |
 | :-                   | :-                    | :-             |
-| `EIGEN3_DIR` | Directory of \sc{EIGEN} default installation | Environment |
 | `EIGEN3_INCLUDE_DIR` | Directory containing the file `signature_of_eigen3_matrix_library` | CMake |
 | `EIGEN3_INC_DIR` | Idem | Environment |
 
