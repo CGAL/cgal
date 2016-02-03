@@ -192,7 +192,21 @@ namespace internal {
     { this->m_buffer = (this->read<double> (stream)); }
   };
 } // namespace internal
+  
 
+/// \endcond
+
+
+
+//===================================================================================
+/// \ingroup PkgPointSetProcessing
+///
+/// The PLY reader is initialized with the correct set of properties (along
+/// with their name tags and number types) based on the header of the PLY input
+/// file. It loads all the points with their specific properties of the PLY
+/// input and delegates the interpretation to a user-specified `PlyInterpreter`.
+///
+//-----------------------------------------------------------------------------------
 class Ply_reader
 {
 
@@ -200,7 +214,8 @@ class Ply_reader
   std::size_t m_nb_points;
 
 public:
-
+  
+  /// \cond SKIP_IN_MANUAL
   Ply_reader () : m_nb_points (0) { }
 
   template <typename Stream>
@@ -337,6 +352,26 @@ public:
     m_readers.clear();
   }
 
+  template <typename Stream, typename PlyInterpreter>
+  bool read_content (Stream& stream, PlyInterpreter& interpreter)
+  {
+    std::size_t points_read = 0;
+    
+    while (!(stream.eof()) && points_read < m_nb_points)
+      {
+        for (std::size_t i = 0; i < m_readers.size (); ++ i)
+          m_readers[i]->get (stream);
+
+        interpreter.process_line (*this);
+
+        ++ points_read;
+      }
+    // Skip remaining lines
+
+    return (points_read == m_nb_points);
+  }
+  /// \endcond
+  
   /*!
     \param tag name of the property (ex: _nx_ for x normal coordinate)
     \return true if points inside the PLY input contain the property `tag`
@@ -363,30 +398,8 @@ public:
           return;
         }
   }
-
-  template <typename Stream, typename PlyInterpreter>
-  bool read_content (Stream& stream, PlyInterpreter& interpreter)
-  {
-    std::size_t points_read = 0;
-    
-    while (!(stream.eof()) && points_read < m_nb_points)
-      {
-        for (std::size_t i = 0; i < m_readers.size (); ++ i)
-          m_readers[i]->get (stream);
-
-        interpreter.process_line (*this);
-
-        ++ points_read;
-      }
-    // Skip remaining lines
-
-    return (points_read == m_nb_points);
-  }
   
 };
-  
-
-/// \endcond
 
 //===================================================================================
 /// \ingroup PkgPointSetProcessing
@@ -442,7 +455,7 @@ public:
       && reader.does_tag_exist ("y")
       && reader.does_tag_exist ("z");
   }
-      
+  
   void process_line (Ply_reader& reader)
   {
     FT x = (FT)0.,y = (FT)0., z = (FT)0.,
