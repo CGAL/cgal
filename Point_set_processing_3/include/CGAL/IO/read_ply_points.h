@@ -57,7 +57,6 @@ namespace internal {
   protected:
     std::string m_name;
     std::size_t m_format;
-    mutable double m_buffer;
     
   public:
     Ply_read_number (std::string name, std::size_t format)
@@ -67,12 +66,6 @@ namespace internal {
     const std::string& name () const { return m_name; }
 
     virtual void get (std::istream& stream) const = 0;
-
-    template <typename Type>
-    void assign (Type& target) const
-    {
-      target = static_cast<Type>(m_buffer);
-    }
 
     // The two following functions prevent the stream to only extract
     // ONE character (= what the types char imply) by requiring
@@ -133,64 +126,25 @@ namespace internal {
     }
   };
 
-
+  template <typename Type>
+  class Ply_read_typed_number : public Ply_read_number
+  {
+    mutable Type m_buffer;
+  public:
+    Ply_read_typed_number (std::string name, std::size_t format)
+      : Ply_read_number (name, format)
+    {
+    }
+    void get (std::istream& stream) const
+    {
+      m_buffer = (this->read<Type> (stream));
+    }
+    const Type& buffer() const
+    {
+      return m_buffer;
+    }
+  };
   
-  class Ply_read_char : public Ply_read_number
-  {
-  public:
-    Ply_read_char (std::string name, std::size_t format) : Ply_read_number (name, format) { }
-    void get (std::istream& stream) const
-    { this->m_buffer = (this->read<boost::int8_t> (stream)); }
-  };
-  class Ply_read_uchar : public Ply_read_number
-  {
-  public:
-    Ply_read_uchar (std::string name, std::size_t format) : Ply_read_number (name, format) { }
-    void get (std::istream& stream) const
-    { this->m_buffer = (this->read<boost::uint8_t> (stream)); }
-  };
-  class Ply_read_short : public Ply_read_number
-  {
-  public:
-    Ply_read_short (std::string name, std::size_t format) : Ply_read_number (name, format) { }
-    void get (std::istream& stream) const
-    { this->m_buffer = (this->read<boost::int16_t> (stream)); }
-  };
-  class Ply_read_ushort : public Ply_read_number
-  {
-  public:
-    Ply_read_ushort (std::string name, std::size_t format) : Ply_read_number (name, format) { }
-    void get (std::istream& stream) const
-    { this->m_buffer = (this->read<boost::uint16_t> (stream)); }
-  };
-  class Ply_read_int : public Ply_read_number
-  {
-  public:
-    Ply_read_int (std::string name, std::size_t format) : Ply_read_number (name, format) { }
-    void get (std::istream& stream) const
-    { this->m_buffer = (this->read<boost::int32_t> (stream)); }
-  };
-  class Ply_read_uint : public Ply_read_number
-  {
-  public:
-    Ply_read_uint (std::string name, std::size_t format) : Ply_read_number (name, format) { }
-    void get (std::istream& stream) const
-    { this->m_buffer = (this->read<boost::uint32_t> (stream)); }
-  };
-  class Ply_read_float : public Ply_read_number
-  {
-  public:
-    Ply_read_float (std::string name, std::size_t format) : Ply_read_number (name, format) { }
-    void get (std::istream& stream) const
-    { this->m_buffer = (this->read<float> (stream)); }
-  };
-  class Ply_read_double : public Ply_read_number
-  {
-  public:
-    Ply_read_double (std::string name, std::size_t format) : Ply_read_number (name, format) { }
-    void get (std::istream& stream) const
-    { this->m_buffer = (this->read<double> (stream)); }
-  };
 } // namespace internal
   
 
@@ -291,21 +245,21 @@ public:
                   }
 
                 if (     type == "char"   || type == "int8")
-                  m_readers.push_back (new internal::Ply_read_char (name, format));
+                  m_readers.push_back (new internal::Ply_read_typed_number<boost::int8_t> (name, format));
                 else if (type == "uchar"  || type == "uint8")
-                  m_readers.push_back (new internal::Ply_read_uchar (name, format));
+                  m_readers.push_back (new internal::Ply_read_typed_number<boost::uint8_t> (name, format));
                 else if (type == "short"  || type == "int16")
-                  m_readers.push_back (new internal::Ply_read_short (name, format));
+                  m_readers.push_back (new internal::Ply_read_typed_number<boost::int16_t> (name, format));
                 else if (type == "ushort" || type == "uint16")
-                  m_readers.push_back (new internal::Ply_read_ushort (name, format));
+                  m_readers.push_back (new internal::Ply_read_typed_number<boost::uint16_t> (name, format));
                 else if (type == "int"    || type == "int32")
-                  m_readers.push_back (new internal::Ply_read_int (name, format));
+                  m_readers.push_back (new internal::Ply_read_typed_number<boost::int32_t> (name, format));
                 else if (type == "uint"   || type == "uint32")
-                  m_readers.push_back (new internal::Ply_read_uint (name, format));
+                  m_readers.push_back (new internal::Ply_read_typed_number<boost::uint32_t> (name, format));
                 else if (type == "float"  || type == "float32")
-                  m_readers.push_back (new internal::Ply_read_float (name, format));
+                  m_readers.push_back (new internal::Ply_read_typed_number<float> (name, format));
                 else if (type == "double" || type == "float64")
-                  m_readers.push_back (new internal::Ply_read_double (name, format));
+                  m_readers.push_back (new internal::Ply_read_typed_number<double> (name, format));
                 
                 continue;
               }
@@ -394,7 +348,10 @@ public:
     for (std::size_t i = 0; i < m_readers.size (); ++ i)
       if (m_readers[i]->name () == tag)
         {
-          m_readers[i]->assign (t);
+          internal::Ply_read_typed_number<T>*
+            reader = dynamic_cast<internal::Ply_read_typed_number<T>*>(m_readers[i]);
+          assert (reader != NULL);
+          t = reader->buffer();
           return;
         }
   }
