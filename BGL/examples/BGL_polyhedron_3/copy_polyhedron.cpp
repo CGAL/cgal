@@ -34,8 +34,7 @@ typedef Kernel::Point_3                                     Point;
 typedef CGAL::Polyhedron_3<Kernel>                       Source;
 typedef boost::graph_traits<Source>::vertex_descriptor   sm_vertex_descriptor;
 typedef boost::graph_traits<Source>::halfedge_descriptor sm_halfedge_descriptor;
-
-typedef CGAL::Surface_mesh<Point>                         Target1;
+typedef boost::graph_traits<Source>::face_descriptor     sm_face_descriptor;
 
 int main(int argc, char* argv[])
 {
@@ -44,15 +43,10 @@ int main(int argc, char* argv[])
   std::ifstream in((argc>1)?argv[1]:"cube.off");
   in >> S;
 
+  typedef CGAL::Surface_mesh<Point> Target1;
   Target1 T1;
   {
-    typedef boost::graph_traits<Target1>::vertex_descriptor   tm_vertex_descriptor;
-    typedef boost::graph_traits<Target1>::halfedge_descriptor tm_halfedge_descriptor;
-
-    boost::unordered_map<sm_vertex_descriptor, tm_vertex_descriptor> v2v;
-    boost::unordered_map<sm_halfedge_descriptor, tm_halfedge_descriptor> h2h;
-    
-    CGAL::copy_face_graph(S, T1, std::inserter(v2v, v2v.end()), std::inserter(h2h, h2h.end()));
+    CGAL::copy_face_graph(S, T1);
     std::ofstream out("sm.off");
     out << T1;
   }
@@ -61,15 +55,18 @@ int main(int argc, char* argv[])
   typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/> Target2;
   Target2 T2;
   {
-    typedef OpenMesh::PolyMesh_ArrayKernelT</* MyTraits*/>    Target2;
-
     typedef boost::graph_traits<Target2>::vertex_descriptor   tm_vertex_descriptor;
     typedef boost::graph_traits<Target2>::halfedge_descriptor tm_halfedge_descriptor;
+    typedef boost::graph_traits<Target2>::face_descriptor     tm_face_descriptor;
 
-    boost::unordered_map<sm_vertex_descriptor, tm_vertex_descriptor> v2v;
+    // Use an unordered_map to keep track of elements.
+    boost::unordered_map<sm_vertex_descriptor, tm_vertex_descriptor>     v2v;
     boost::unordered_map<sm_halfedge_descriptor, tm_halfedge_descriptor> h2h;
+    boost::unordered_map<sm_face_descriptor, tm_face_descriptor>         f2f;
     
-    CGAL::copy_face_graph(S, T2, std::inserter(v2v, v2v.end()), std::inserter(h2h, h2h.end()));
+    CGAL::copy_face_graph(S, T2, std::inserter(v2v, v2v.end()),
+                                 std::inserter(h2h, h2h.end()),
+                                 std::inserter(f2f, f2f.end()));
     OpenMesh::IO::write_mesh(T2, "om.off");
   }
 #endif
