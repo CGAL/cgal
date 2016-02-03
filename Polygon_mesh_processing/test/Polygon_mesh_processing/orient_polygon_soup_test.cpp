@@ -55,7 +55,7 @@ std::istream& read_soup(
   return stream;
 }
 
-void sufffle_off(const char* fname_in, const char* fname_out)
+void shuffle_off(const char* fname_in, const char* fname_out)
 {
   std::ifstream input(fname_in);
   if ( !input ){
@@ -98,7 +98,7 @@ int main(int,char** ) {
   std::vector<Point_3> points;
   std::vector< std::vector<std::size_t> > polygons;
 
-  sufffle_off("data/elephant.off", "elephant-shuffled.off");
+  shuffle_off("data/elephant.off", "elephant-shuffled.off");
   std::ifstream input("elephant-shuffled.off");
   if ( !input || !read_soup(input, points, polygons)){
     std::cerr << "Error: can not shuffled file.\n";
