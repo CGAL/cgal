@@ -34,29 +34,31 @@ namespace CGAL {
 /*!
   \ingroup PkgBGLHelperFct
 
-  copies a source `FaceListGraph` into another `FaceListGraph` of different
-  type. OutputIterators can be provided to produce a mapping between
-  source and target elements.
+  copies a source model of `FaceListGraph` into a target model of a
+  `FaceListGraph`. `OutputIterators` can be provided to produce a
+  mapping between source and target elements. The target graph is not
+  cleared.
 
-  \tparam SourceMesh a `FaceListGraph`
-  \tparam TargetMesh a `FaceListGraph`
-  \tparam V2V an `OutputIterator` accepting `std::pair<sm_vertex_descriptor, tm_vertex_descriptor>`
-  \tparam H2H an `OutputIterator` accepting `std::pair<sm_halfedge_descriptor, tm_halfedge_descriptor>`
-  \tparam F2F an `OutputIterator` accepting `std::pair<sm_face_descriptor, tm_face_descriptor>`
+  \tparam SourceMesh a model of `FaceListGraph`
+  \tparam TargetMesh a model of `FaceListGraph`
+  \tparam V2V a model of `OutputIterator` accepting `std::pair<sm_vertex_descriptor, tm_vertex_descriptor>`
+  \tparam H2H a model of `OutputIterator` accepting `std::pair<sm_halfedge_descriptor, tm_halfedge_descriptor>`
+  \tparam F2F a model of `OutputIterator` accepting `std::pair<sm_face_descriptor, tm_face_descriptor>`
 
-  where the prefix `sm_` and `tm_` mean belonging to the source or
+  where the prefix `sm_` and `tm_` mean belonging to the source and
   target mesh respectively.
 
-  \param sm the source mesh of the copy operation
-  \param tm the target mesh of the copy operation
-  \param v2v pairs of `vertex_descriptorS` from `sm` and corresponding `vertex_descriptorS` in `tm` are added to `v2v`
-  \param h2h pairs of `halfedge_descriptorS` from `sm` and corresponding `halfedge_descriptorS` in `tm` are added to `h2h`
-  \param f2f pairs of `face_descriptorS` from `sm` and corresponding `face_descriptorS` in `tm` are added to `f2f`
-
+  \param sm the source mesh
+  \param tm the target mesh
+  \param v2v pairs of `vertex_descriptors` from `sm` and corresponding `vertex_descriptors` in `tm` are added to `v2v`
+  \param h2h pairs of `halfedge_descriptors` from `sm` and corresponding `halfedge_descriptors` in `tm` are added to `h2h`
+  \param f2f pairs of `face_descriptors` from `sm` and corresponding `face_descriptors` in `tm` are added to `f2f`
 
   This function assumes that both graphs have an internal property
   `vertex_point` and that the `vertex_point` values of `tm` are
   constructible from the ones of `sm`.
+
+  Other properties are not copied.
 */
 #if defined(CGAL_CXX11) || defined(DOXYGEN_RUNNING) // Use template default arguments
 template <typename SourceMesh, typename TargetMesh,
