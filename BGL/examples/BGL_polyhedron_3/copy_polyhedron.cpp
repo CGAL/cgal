@@ -1,4 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -29,12 +30,14 @@ inline std::size_t hash_value(const FaceHandle&  i) { return i.idx(); }
 #include <iterator>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::Point_3                                     Point;
 
 typedef CGAL::Polyhedron_3<Kernel>                       Source;
 typedef boost::graph_traits<Source>::vertex_descriptor   sm_vertex_descriptor;
 typedef boost::graph_traits<Source>::halfedge_descriptor sm_halfedge_descriptor;
 typedef boost::graph_traits<Source>::face_descriptor     sm_face_descriptor;
+
+typedef CGAL::Exact_predicates_exact_constructions_kernel Other_kernel;
+typedef Other_kernel::Point_3                             Point;
 
 int main(int argc, char* argv[])
 {
@@ -43,6 +46,8 @@ int main(int argc, char* argv[])
   std::ifstream in((argc>1)?argv[1]:"cube.off");
   in >> S;
 
+  // Note that the vertex_point property of the Source and Target1
+  // come from different kernels.
   typedef CGAL::Surface_mesh<Point> Target1;
   Target1 T1;
   {

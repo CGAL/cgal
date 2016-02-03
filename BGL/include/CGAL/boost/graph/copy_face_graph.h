@@ -21,13 +21,15 @@
 #define CGAL_BOOST_GRAPH_COPY_FACE_GRAPH_H
 
 #include <CGAL/config.h>
+#include <CGAL/iterator.h>
+#include <CGAL/Kernel_traits.h>
+#include <CGAL/Cartesian_converter.h>
 
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/iterator.h>
-#include <boost/unordered_map.hpp>
 #include <CGAL/boost/graph/helpers.h>
 
-#include <CGAL/iterator.h>
+#include <boost/unordered_map.hpp>
 
 namespace CGAL {
 
@@ -55,8 +57,10 @@ namespace CGAL {
   \param f2f pairs of `face_descriptors` from `sm` and corresponding `face_descriptors` in `tm` are added to `f2f`
 
   This function assumes that both graphs have an internal property
-  `vertex_point` and that the `vertex_point` values of `tm` are
-  constructible from the ones of `sm`.
+  `vertex_point`. Values of that property are converted using
+  `CGAL::Cartesian_converter<SourceKernel,
+  TargetKernel>`. `SourceKernel` and `TargetKernel` are deduced using
+  `CGAL::Kernel_traits`.
 
   Other properties are not copied.
 */
@@ -86,6 +90,10 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
   typedef typename boost::property_map<SourceMesh, vertex_point_t>::const_type sm_PMap;
   typedef typename boost::property_map<TargetMesh, vertex_point_t>::type tm_PMap;
 
+  Cartesian_converter<typename Kernel_traits<typename boost::property_traits<sm_PMap>::value_type>::type, 
+                      typename Kernel_traits<typename boost::property_traits<tm_PMap>::value_type>::type > 
+    conv;
+
   sm_PMap sm_pmap = get(vertex_point, sm);
   tm_PMap tm_pmap = get(vertex_point, tm);
 
@@ -97,7 +105,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
     tm_vertex_descriptor tvd = add_vertex(tm);
     v2v_[svd] = tvd;
     *v2v++ = std::make_pair(svd, tvd);
-    put(tm_pmap, tvd, get(sm_pmap, svd));
+    put(tm_pmap, tvd, conv(get(sm_pmap, svd)));
   }
 
   BOOST_FOREACH(sm_face_descriptor sfd, faces(sm)){
