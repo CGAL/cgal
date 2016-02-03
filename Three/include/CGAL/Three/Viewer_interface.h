@@ -43,6 +43,31 @@ class VIEWER_EXPORT Viewer_interface : public QGLViewer, public QOpenGLFunctions
   Q_OBJECT
 
 public:
+ /*!
+   * \brief The OpenGL_program_IDs enum
+   * PROGRAM_WITH_LIGHT :
+   * used to render a surface of edge affected by the light. It uses a per fragment lighting model, and renders brighter the selected item.
+   * PROGRAM_WITHOUT_LIGHT :
+   * used to render a polygon edge or points. It renders in a uniform color and is not affected by light. It renders the selected item in black.
+   * PROGRAM_NO_SELECTION :
+   * used to render a polyline or a surface that is not affected by light, like a cutting plane. It renders in a uniform color that does not change with selection.
+   * PROGRAM_WITH_TEXTURE :
+   * used to render a textured polyhedron. Affected by light.
+   * PROGRAM_PLANE_TWO_FACES :
+   * Used to render a two-faced plane. The two faces have a different color. Not affected by light.
+   * PROGRAM_WITH_TEXTURED_EDGES :
+   * used to render the edges of a textured polyhedorn. Not affected by light.
+   * PROGRAM_INSTANCED :
+   * used to display instanced rendered spheres.Affected by light.
+   * PROGRAM_INSTANCED_WIRE :
+   * used to display instanced rendered wired spheres. Not affected by light.
+   * PROGRAM_C3T3 :
+   * used to render a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Affected by light.
+   * PROGRAM_C3T3_EDGES,
+   * used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.
+   * NB_OF_PROGRAMS :
+   * holds the number of different programs in this enum.
+   */
   enum OpenGL_program_IDs { PROGRAM_WITH_LIGHT,
                             PROGRAM_WITHOUT_LIGHT,
                             PROGRAM_NO_SELECTION,
@@ -53,7 +78,8 @@ public:
                             PROGRAM_INSTANCED_WIRE,
                             PROGRAM_C3T3,
                             PROGRAM_C3T3_EDGES,
-                            NB_OF_PROGRAMS };
+                            NB_OF_PROGRAMS
+                          };
 
   Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(), parent) {}
   virtual ~Viewer_interface() {}
