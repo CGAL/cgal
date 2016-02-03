@@ -34,7 +34,7 @@ namespace CGAL {
 /*!
   \ingroup PkgBGLHelperFct
 
-  copies a source FaceGraph into another FaceGraph of different
+  copies a source `FaceListGraph` into another `FaceListGraph` of different
   type. OutputIterators can be provided to produce a mapping between
   source and target elements.
 
@@ -44,7 +44,7 @@ namespace CGAL {
   \tparam H2H an `OutputIterator` accepting `std::pair<sm_halfedge_descriptor, tm_halfedge_descriptor>`
   \tparam F2F an `OutputIterator` accepting `std::pair<sm_face_descriptor, tm_face_descriptor>`
 
-  where the prefixx `sm_` and `tm_` mean belonging to the source or
+  where the prefix `sm_` and `tm_` mean belonging to the source or
   target mesh respectively.
 
   \param sm the source mesh of the copy operation
