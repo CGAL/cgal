@@ -1,3 +1,15 @@
+
+#include <boost/config.hpp>
+#if (BOOST_GCC < 40300)
+
+#include <iostream>
+int main()
+{
+  std::cerr << "NOTICE: This test requires G++ > 4.2, and will not be compiled." << std::endl;
+}
+
+#else
+
 //#define BOOST_RESULT_OF_USE_DECLTYPE 1
 #include <CGAL/Epick_d.h>
 #include <typeinfo>
@@ -600,3 +612,5 @@ int main(){
   test3<Ker3>();
   test3<Kerd>();
 }
+
+#endif
