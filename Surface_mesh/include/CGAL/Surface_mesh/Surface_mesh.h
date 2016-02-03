@@ -149,6 +149,12 @@ namespace CGAL {
     {
     public:
 
+        typedef void iterator_category;
+        typedef void value_type;
+        typedef void difference_type;
+        typedef void pointer;
+        typedef void reference;
+
         SM_Halfedge_index() : SM_Index<SM_Halfedge_index>(-1) {}
 
         explicit SM_Halfedge_index(size_type _idx) : SM_Index<SM_Halfedge_index>(_idx) {}
