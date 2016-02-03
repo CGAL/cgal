@@ -468,17 +468,17 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
       if (f == boost::graph_traits<Polyhedron>::null_face())
         continue;
 
-        if(!is_triangle(f->halfedge(),*poly))
-        {
-            triangulate_facet(f);
-        }
-        else
-        {
-            int i=0;
-            HF_circulator he = f->facet_begin();
-            HF_circulator end = he;
-            CGAL_For_all(he,end)
-            {
+      if(!is_triangle(f->halfedge(),*poly))
+      {
+          triangulate_facet(f);
+      }
+      else
+      {
+          int i=0;
+          HF_circulator he = f->facet_begin();
+          HF_circulator end = he;
+          CGAL_For_all(he,end)
+          {
 
                 // If Flat shading:1 normal per polygon added once per vertex
 

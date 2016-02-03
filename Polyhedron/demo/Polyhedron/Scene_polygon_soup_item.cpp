@@ -405,7 +405,7 @@ Scene_polygon_soup_item::load(std::istream& in)
 void Scene_polygon_soup_item::init_polygon_soup(std::size_t nb_pts, std::size_t nb_polygons){
   if(!soup)
     soup = new Polygon_soup;
-    soup->clear();
+  soup->clear();
   soup->points.reserve(nb_pts);
   soup->polygons.reserve(nb_polygons);
   oriented = false;

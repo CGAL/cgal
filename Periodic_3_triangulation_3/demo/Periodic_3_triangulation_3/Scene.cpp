@@ -1,3 +1,33 @@
+//The function project() is a modified version of the function gluProject(),whcich license is :
+/*
+ * SGI FREE SOFTWARE LICENSE B (Version 2.0, Sept. 18, 2008)
+ * Copyright (C) 1991-2000 Silicon Graphics, Inc. All Rights Reserved.
+ *
+ * Permission is hereby granted, free of charge, to any person obtaining a
+ * copy of this software and associated documentation files (the "Software"),
+ * to deal in the Software without restriction, including without limitation
+ * the rights to use, copy, modify, merge, publish, distribute, sublicense,
+ * and/or sell copies of the Software, and to permit persons to whom the
+ * Software is furnished to do so, subject to the following conditions:
+ *
+ * The above copyright notice including the dates of first publication and
+ * either this permission notice or a reference to
+ * http://oss.sgi.com/projects/FreeB/
+ * shall be included in all copies or substantial portions of the Software.
+ *
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS
+ * OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL
+ * SILICON GRAPHICS, INC. BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+ * WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF
+ * OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ *
+ * Except as contained in this notice, the name of Silicon Graphics, Inc.
+ * shall not be used in advertising or otherwise to promote the sale, use or
+ * other dealings in this Software without prior written authorization from
+ * Silicon Graphics, Inc.
+ */
 #include "Scene.h"
 
 
@@ -1388,7 +1418,7 @@ void Scene::gl_draw_location() {
                 Point cp = Point(c.x(),c.y(),c.z());
                 // project facet center
                 double px,py,pz;
-                gluProject(cp.x(),cp.y(),cp.z(),
+                project(cp.x(),cp.y(),cp.z(),
                            modelMatrix, projMatrix, viewport,
                            &px,&py,&pz);
                 cf.push_back(Projected_triangle(pz,Triangle(p,q,r)));
@@ -1499,7 +1529,7 @@ void Scene::gl_draw_conflict() {
                 Point cp = Point(c.x(),c.y(),c.z());
                 // project facet center
                 double px,py,pz;
-                gluProject(cp.x(),cp.y(),cp.z(),
+                project(cp.x(),cp.y(),cp.z(),
                            modelMatrix, projMatrix, viewport,
                            &px,&py,&pz);
                 bfm.push_back(Projected_triangle(pz,Triangle(p,q,r)));
@@ -2181,4 +2211,55 @@ void Scene::draw_cylinder(float R, int prec, std::vector<float> *vertices, std::
         }
 
 
+}
+
+GLint Scene::project(GLdouble objx, GLdouble objy, GLdouble objz,
+ const GLdouble modelMatrix[16],
+ const GLdouble projMatrix[16],
+ const GLint viewport[4],
+ GLdouble *winx, GLdouble *winy, GLdouble *winz)
+{
+  double in[4];
+
+  in[0]=objx;
+  in[1]=objy;
+  in[2]=objz;
+  in[3]=1.0;
+  QMatrix4x4 mv, p;
+  QVector4D in_v, out_v;
+  for(int i=0; i<16; i++)
+  {
+    mv.data()[i] = modelMatrix[i];
+    p.data()[i] = projMatrix[i];
+  }
+  in_v.setX(in[0]);
+  in_v.setY(in[1]);
+  in_v.setZ(in[2]);
+  in_v.setW(in[3]);
+
+  out_v=mv*in_v;
+  in_v = p*out_v;
+
+  in[0]=in_v.x();
+  in[1]=in_v.y();
+  in[2]=in_v.z();
+  in[3]=in_v.w();
+
+  if (in[3] == 0.0) return(GL_FALSE);
+  in[0] /= in[3];
+  in[1] /= in[3];
+  in[2] /= in[3];
+  /* Map x, y and z to range 0-1 */
+  in[0] = in[0] * 0.5 + 0.5;
+  in[1] = in[1] * 0.5 + 0.5;
+  in[2] = in[2] * 0.5 + 0.5;
+
+  /* Map x,y to viewport */
+  in[0] = in[0] * viewport[2] + viewport[0];
+  in[1] = in[1] * viewport[3] + viewport[1];
+
+  *winx=in[0];
+  *winy=in[1];
+  *winz=in[2];
+  return(GL_TRUE);
 }
