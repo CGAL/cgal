@@ -10,6 +10,12 @@ typedef Data_Kernel::Point_3     DPoint;
 typedef CGAL::Monge_via_jet_fitting<Data_Kernel> My_Monge_via_jet_fitting;
 typedef My_Monge_via_jet_fitting::Monge_form     My_Monge_form;
 
+template <typename T>
+bool almost_equal (const T& a, const T& b, const T& precision)
+{
+  return a <= b + precision && a >= b - precision;
+}
+
 int main()
 {
   //open the input file
@@ -59,10 +65,10 @@ int main()
  
   monge_form.dump_4ogl( std::cout, 1 );
   double precision = 0.01;
-  assert(monge_form.coefficients()[0] >= -0.2 - precision);
-  assert(monge_form.coefficients()[0] <= -0.2 + precision);
-  assert(monge_form.coefficients()[1] >= -0.4 - precision);
-  assert(monge_form.coefficients()[1] <= -0.4 + precision);
+  assert(almost_equal(monge_form.coefficients()[0], -0.2, precision)
+         || almost_equal(monge_form.coefficients()[0], 0.4, precision));
+  assert(almost_equal(monge_form.coefficients()[1], -0.4, precision)
+         || almost_equal(monge_form.coefficients()[1], 0.2, precision));
   std::cout << "success\n";
  return 0;
 }
