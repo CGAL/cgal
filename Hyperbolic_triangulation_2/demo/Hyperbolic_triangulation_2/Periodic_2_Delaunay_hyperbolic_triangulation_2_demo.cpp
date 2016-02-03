@@ -404,7 +404,7 @@ MainWindow::on_actionRecenter_triggered()
 }
 
 
-#include "Hyperbolic_Delaunay_triangulation_2_demo.moc"
+#include "Periodic_2_Delaunay_hyperbolic_triangulation_2_demo.moc"
 
 int main(int argc, char **argv)
 {
