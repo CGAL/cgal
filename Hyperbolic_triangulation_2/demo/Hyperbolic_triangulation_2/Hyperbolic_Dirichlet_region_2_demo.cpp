@@ -54,6 +54,7 @@
 #include "ui_Delaunay_triangulation_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
 
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel InR;
 typedef CGAL::Exact_predicates_exact_constructions_kernel R;
 typedef CGAL::Triangulation_hyperbolic_traits_2<R> K;
@@ -804,7 +805,7 @@ MainWindow::on_actionRecenter_triggered()
 }
 
 
-#include "Hyperbolic_Delaunay_triangulation_2_demo.moc"
+#include "Hyperbolic_Dirichlet_region_2_demo.moc"
 
 int main(int argc, char **argv)
 {
