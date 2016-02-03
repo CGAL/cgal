@@ -20,6 +20,8 @@
 #ifndef CGAL_BOOST_GRAPH_COPY_FACE_GRAPH_H
 #define CGAL_BOOST_GRAPH_COPY_FACE_GRAPH_H
 
+#include <CGAL/config.h>
+
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/iterator.h>
 #include <boost/unordered_map.hpp>
@@ -85,19 +87,21 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
   sm_PMap sm_pmap = get(vertex_point, sm);
   tm_PMap tm_pmap = get(vertex_point, tm);
 
+  // internal f2f and v2v
+  boost::unordered_map<sm_vertex_descriptor, tm_vertex_descriptor> v2v_;
+  boost::unordered_map<sm_face_descriptor, tm_face_descriptor> f2f_;
 
   BOOST_FOREACH(sm_vertex_descriptor svd, vertices(sm)){
     tm_vertex_descriptor tvd = add_vertex(tm);
+    v2v_[svd] = tvd;
     *v2v++ = std::make_pair(svd, tvd);
     put(tm_pmap, tvd, get(sm_pmap, svd));
   }
 
-  // internal f2f
-  boost::unordered_map<sm_face_descriptor, tm_face_descriptor> f2f_;
   BOOST_FOREACH(sm_face_descriptor sfd, faces(sm)){
     std::vector<tm_vertex_descriptor> tv;
     BOOST_FOREACH(sm_vertex_descriptor svd, vertices_around_face(halfedge(sfd,sm),sm)){
-      tv.push_back(v2v.at(svd));
+      tv.push_back(v2v_.at(svd));
     }
     tm_face_descriptor new_face = Euler::add_face(tv,tm);
     f2f_[sfd] = new_face;
@@ -107,7 +111,7 @@ void copy_face_graph(const SourceMesh& sm, TargetMesh& tm,
   BOOST_FOREACH(sm_face_descriptor sfd, faces(sm)){
     sm_halfedge_descriptor shd = halfedge(sfd,sm), done(shd);
     tm_halfedge_descriptor thd = halfedge(f2f_[sfd],tm);
-    tm_vertex_descriptor tvd = v2v.at(target(shd,sm));
+    tm_vertex_descriptor tvd = v2v_.at(target(shd,sm));
     while(target(thd,tm) != tvd){
       thd = next(thd,tm);
     }
