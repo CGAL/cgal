@@ -61,6 +61,8 @@ if(OpenMesh_FOUND)
   target_link_libraries( graph_concept_OpenMesh ${OPENMESH_LIBRARIES} )
 endif()
 
+create_single_source_cgal_program( "next.cpp" )
+
 create_single_source_cgal_program( "test_circulator.cpp" )
 
 create_single_source_cgal_program( "graph_concept_Polyhedron_3.cpp" )
