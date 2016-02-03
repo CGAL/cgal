@@ -65,4 +65,17 @@ inline std::ostream& white(std::ostream &s)
   return s;
 }
 
+inline std::ostream& black_on_white(std::ostream &s)
+{
+#if defined(WIN32)
+  HANDLE hStdout = GetStdHandle(STD_OUTPUT_HANDLE);
+  SetConsoleTextAttribute(hStdout,
+    BACKGROUND_RED | BACKGROUND_GREEN | BACKGROUND_BLUE);
+#else
+  s << "\x1b[0;33m";
+#endif
+  return s;
+}
+
+
 #endif

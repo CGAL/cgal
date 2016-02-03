@@ -13,7 +13,6 @@
 #include <CGAL/Mesh_3/Profiling_tools.h>
 
 #include "../../test/Tangential_complex/testing_utilities.h"
-#include "console_color.h"
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim_all.hpp>
@@ -320,7 +319,7 @@ void make_tc(std::vector<Point> &points,
     std::size_t num_points_before = points.size();
     points = sparsify_point_set(k, points, sparsity*sparsity);
     std::cerr << "Number of points before/after sparsification: "
-      << num_points_before << " / " << points.size() << std::endl;
+      << num_points_before << " / " << points.size() << "\n";
   }
 
 #ifdef TC_PROTECT_POINT_SET_DELTA
@@ -338,7 +337,7 @@ void make_tc(std::vector<Point> &points,
 
 # ifdef CGAL_TC_PROFILING
   std::cerr << "Point set protected in " << t_protection.elapsed()
-    << " seconds." << std::endl;
+    << " seconds.\n";
 # endif
 
   std::cerr << "Number of points after PROTECTION: " << points.size() << "\n";
@@ -446,12 +445,15 @@ void make_tc(std::vector<Point> &points,
 
     //tc.check_correlation_between_inconsistencies_and_fatness();
 
-    // CJTODO TEMP
-    std::cerr << red << "FINAL CHECK:\n" << white;
-    tc.number_of_inconsistent_simplices(true);
-    tc.refresh_tangential_complex();
-    tc.number_of_inconsistent_simplices(true);
-    // CJTODO
+    // DEBUGGING: confirm that all stars were actually refreshed
+    //std::cerr << yellow << "FINAL CHECK...\n" << white;
+    //std::size_t num_inc = tc.number_of_inconsistent_simplices(true).second;
+    //tc.refresh_tangential_complex();
+    //if (tc.number_of_inconsistent_simplices(true).second != num_inc)
+    //  std::cerr << red << "FINAL CHECK: FAILED.\n" << white;
+    //else
+    //  std::cerr << green << "FINAL CHECK: PASSED.\n" << white;
+
 
     //=========================================================================
     // Export to OFF
@@ -492,9 +494,7 @@ void make_tc(std::vector<Point> &points,
     tc.check_and_solve_inconsistencies_by_adding_higher_dim_simplices();
 #endif
     fix2_time = t.elapsed(); t.reset();
-    std::cerr << "Exporting the TC as a Simplicial_complex... ";
     max_dim = tc.export_TC(complex, false);
-    std::cerr << "done.\n";
     /*std::set<std::set<std::size_t> > not_delaunay_simplices;
     if (ambient_dim <= 4)
     {
@@ -513,23 +513,20 @@ void make_tc(std::vector<Point> &points,
   }
   else
   {
-    std::cerr << "Exporting the TC as a Simplicial_complex... ";
     max_dim = tc.export_TC(complex, false);
-    std::cerr << "done.\n";
   }
 
-  std::cerr << "Computing stats of the complex...\n";
   complex.display_stats();
 
   if (intrinsic_dim == 2)
   {
-    std::cerr << "Computing Euler characteristic of the complex...\n";
+    std::cerr << "\nComputing Euler characteristic of the complex...\n";
     std::size_t num_vertices = complex.num_K_simplices<0>();
     std::size_t num_edges = complex.num_K_simplices<1>();
     std::size_t num_triangles = complex.num_K_simplices<2>();
     std::cerr << "Euler characteristic: V - E + F = "
       << num_vertices << " - " << num_edges << " + " << num_triangles << " = "
-      << yellow
+      << blue
       << (std::ptrdiff_t) num_vertices
       - (std::ptrdiff_t) num_edges
       + (std::ptrdiff_t) num_triangles
@@ -549,7 +546,10 @@ void make_tc(std::vector<Point> &points,
   // Collapse
   //===========================================================================
   if (collapse)
+  {
     complex.collapse(max_dim);
+    complex.display_stats();
+  }
 
   //===========================================================================
   // Is the result a pure pseudomanifold?
@@ -567,9 +567,6 @@ void make_tc(std::vector<Point> &points,
     &wrong_dim_simplices, &wrong_number_of_cofaces_simplices, 
     &unconnected_stars_simplices);
 
-  // Stats about the simplices
-  complex.display_stats();
-
   //===========================================================================
   // Export to OFF
   //===========================================================================
@@ -583,10 +580,10 @@ void make_tc(std::vector<Point> &points,
       &wrong_dim_simplices, &wrong_number_of_cofaces_simplices,
       &unconnected_stars_simplices);
     std::cerr
-      << " OFF colors:" << std::endl
-      << "   * Red: wrong dim simplices" << std::endl
-      << "   * Green: wrong number of cofaces simplices" << std::endl
-      << "   * Blue: not-connected stars" << std::endl;
+      << " OFF colors:\n"
+      << "   * Red: wrong dim simplices\n"
+      << "   * Green: wrong number of cofaces simplices\n"
+      << "   * Blue: not-connected stars\n";
     double export_after_collapse_time = (exported ? t.elapsed() : -1.);
     t.reset();
   }
@@ -595,26 +592,23 @@ void make_tc(std::vector<Point> &points,
   // Display info
   //===========================================================================
 
-  std::cerr << std::endl
-    << "================================================" << std::endl
-    << "Number of vertices: " << tc.number_of_vertices() << std::endl
-    << "Pure pseudomanifold: " << yellow
-    << (is_pure_pseudomanifold ? "YES" : "NO") << white << std::endl
-    << "Computation times (seconds): " << std::endl
-    << "  * Tangential complex: " << init_time + computation_time << std::endl
-    << "    - Init + kd-tree = " << init_time << std::endl
-    << "    - TC computation = " << computation_time << std::endl
-    << "  * Export to OFF (before perturb): " << export_before_time << std::endl
+  std::cerr
+    << "\n================================================\n"
+    << "Number of vertices: " << tc.number_of_vertices() << "\n"
+    << "Computation times (seconds): \n"
+    << "  * Tangential complex: " << init_time + computation_time << "\n"
+    << "    - Init + kd-tree = " << init_time << "\n"
+    << "    - TC computation = " << computation_time << "\n"
+    << "  * Export to OFF (before perturb): " << export_before_time << "\n"
     << "  * Fix inconsistencies 1: " << perturb_time
     <<      " (" << num_perturb_steps << " steps) ==> "
-    <<      (perturb_ret == CGAL::TC_FIXED ? "FIXED" : "NOT fixed") << std::endl
-    << "  * Fix inconsistencies 2: " << fix2_time << std::endl
-    << "  * Export to OFF (after perturb): " << export_after_perturb_time << std::endl
-    << "  * Export to OFF (after fix2): "<< export_after_fix2_time << std::endl
+    <<      (perturb_ret == CGAL::TC_FIXED ? "FIXED" : "NOT fixed") << "\n"
+    << "  * Fix inconsistencies 2: " << fix2_time << "\n"
+    << "  * Export to OFF (after perturb): " << export_after_perturb_time << "\n"
+    << "  * Export to OFF (after fix2): "<< export_after_fix2_time << "\n"
     << "  * Export to OFF (after collapse): "
-    <<      export_after_collapse_time << std::endl
-    << "================================================" << std::endl
-    << std::endl;
+    <<      export_after_collapse_time << "\n"
+    << "================================================\n";
   
   //===========================================================================
   // Export info
@@ -651,7 +645,7 @@ int main()
 
   unsigned int seed = static_cast<unsigned int>(time(NULL));
   CGAL::default_random = CGAL::Random(seed);
-  std::cerr << "Random seed = " << seed << std::endl;
+  std::cerr << "Random seed = " << seed << "\n";
 
   std::ifstream script_file;
   script_file.open(BENCHMARK_SCRIPT_FILENAME);
@@ -680,7 +674,7 @@ int main()
         num_threads > 0 ? num_threads : tbb::task_scheduler_init::automatic);
 #endif
 
-      std::cerr << "Script file '" << BENCHMARK_SCRIPT_FILENAME << "' found." << std::endl;
+      std::cerr << "Script file '" << BENCHMARK_SCRIPT_FILENAME << "' found.\n";
       script_file.seekg(0);
       while (script_file.good())
       {
@@ -690,10 +684,10 @@ int main()
         {
           boost::replace_all(line, "\t", " ");
           boost::trim_all(line);
-          std::cerr << std::endl << std::endl;
-          std::cerr << "*****************************************" << std::endl;
-          std::cerr << "******* " << line << std::endl;
-          std::cerr << "*****************************************" << std::endl;
+          std::cerr << "\n\n";
+          std::cerr << "*****************************************\n";
+          std::cerr << "******* " << line << "\n";
+          std::cerr << "*****************************************\n";
           std::stringstream sstr(line);
 
           std::string input;
@@ -747,7 +741,7 @@ int main()
             CGAL_TC_SET_PERFORMANCE_DATA("Num_threads", "N/A");
 #endif
 
-            std::cerr << std::endl << "TC #" << i << "..." << std::endl;
+            std::cerr << "\nTC #" << i << "...\n";
           
 #ifdef CGAL_TC_PROFILING
             Wall_clock_timer t_gen;
@@ -833,7 +827,7 @@ int main()
 
 #ifdef CGAL_TC_PROFILING
             std::cerr << "Point set generated/loaded in " << t_gen.elapsed()
-                      << " seconds." << std::endl;
+                      << " seconds.\n";
 #endif
 
             if (!points.empty())
@@ -850,13 +844,12 @@ int main()
                       sparsity, perturb=='Y', add_high_dim_simpl=='Y', 
                       collapse=='Y', time_limit_for_perturb, input.c_str());
 
-              std::cerr << "TC #" << i++ << " done." << std::endl;
-              std::cerr << std::endl << "---------------------------------"
-                        << std::endl << std::endl;
+              std::cerr << "TC #" << i++ << " done.\n";
+              std::cerr << "\n---------------------------------\n";
             }
             else
             {
-              std::cerr << "TC #" << i++ << ": no points loaded." << std::endl;
+              std::cerr << "TC #" << i++ << ": no points loaded.\n";
             }
 
             XML_perf_data::commit();
@@ -872,7 +865,7 @@ int main()
   // Or not script?
   else
   {
-    std::cerr << "Script file '" << BENCHMARK_SCRIPT_FILENAME << "' NOT found." << std::endl;
+    std::cerr << "Script file '" << BENCHMARK_SCRIPT_FILENAME << "' NOT found.\n";
   }
 
   system("pause");

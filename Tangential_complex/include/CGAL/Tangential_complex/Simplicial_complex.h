@@ -24,6 +24,7 @@
 
 #include <CGAL/Tangential_complex/config.h>
 #include <CGAL/Tangential_complex/utilities.h>
+#include "CGAL/Tangential_complex/console_color.h"
 
 #include <CGAL/basic.h>
 #include <CGAL/iterator.h>
@@ -201,18 +202,17 @@ public:
 
 #ifdef CGAL_TC_VERBOSE
     if (!quiet)
-      std::cerr << "done." << std::endl;
+      std::cerr << "done.\n";
 #endif
   }
 
   void display_stats() const
   {
-    std::cerr << "==========================================================\n";
-    std::cerr << "Complex stats:\n";
+    std::cerr << yellow << "Complex stats:\n" << white;
 
     if (m_complex.empty())
     {
-      std::cerr << "No simplices.\n";
+      std::cerr << "  * No simplices.\n";
     }
     else
     {
@@ -231,11 +231,9 @@ public:
            it_map != simplex_stats.end() ; ++it_map)
       {
         std::cerr << "  * " << it_map->first << "-simplices: "
-                  << it_map->second << std::endl;
+                  << it_map->second << "\n";
       }
     }
-
-    std::cerr << "==========================================================\n";
   }
 
   // verbose_level = 0, 1 or 2
@@ -266,7 +264,7 @@ public:
       {
         if (verbose_level >= 2)
           std::cerr << "Found a simplex with dim = "
-                    << it_simplex->size() - 1 << std::endl;
+                    << it_simplex->size() - 1 << "\n";            
         ++num_wrong_dim_simplices;
       }
       else
@@ -304,13 +302,18 @@ public:
 
     if (verbose_level >= 1)
     {
-      std::cerr << "is_pure_manifold: " << (ret ? "YES" : "NO") << std::endl;
-      if (!ret)
+      std::cerr << "Pure pseudo-manifold: ";
+      if (ret)
       {
-        std::cerr << "  * Number of wrong dimension simplices: "
-                  << num_wrong_dim_simplices << std::endl
-                  << "  * Number of wrong number of cofaces: "
-                  << num_wrong_number_of_cofaces << std::endl;
+        std::cerr << green << "YES" << white << "\n";
+      }
+      else
+      {
+        std::cerr << red << "NO" << white << "\n"
+          << "  * Number of wrong dimension simplices: "
+          << num_wrong_dim_simplices << "\n"
+          << "  * Number of wrong number of cofaces: "
+          << num_wrong_number_of_cofaces << "\n";
       }
     }
 
@@ -325,7 +328,7 @@ public:
   template <int K>
   std::size_t num_K_simplices() const
   {
-    std::set<Simplex> k_simplices;
+    std::set<Simplex> k_simplices; 
 
     for (Complex::const_iterator it_simplex = m_complex.begin(),
       it_simplex_end = m_complex.end() ;
@@ -391,7 +394,7 @@ public:
       {
         if (verbose_level >= 2)
           std::cerr << "Found a simplex with dim = " 
-                    << it_simplex->size() - 1 << std::endl;
+                    << it_simplex->size() - 1 << "\n";
         ++num_wrong_dim_simplices;
         if (p_wrong_dim_simplices)
           p_wrong_dim_simplices->insert(*it_simplex);
@@ -487,7 +490,7 @@ public:
       { 
         if (verbose_level >= 2)
           std::cerr << "Error: star #" << center_vertex_index
-                    << " is not connected" << std::endl;
+                    << " is not connected\n";
         ++num_unconnected_stars;
         if (p_unconnected_stars_simplices)
         {
@@ -513,16 +516,20 @@ public:
 
     if (verbose_level >= 1)
     {
-      std::cerr << "is_pure_pseudo_manifold: " 
-                << (ret ? "YES" : "NO") << std::endl;
-      if (!ret)
+      std::cerr << "Pure pseudo-manifold: ";
+      if (ret)
       {
-        std::cerr << "  * Number of wrong dimension simplices: " 
-                  << num_wrong_dim_simplices << std::endl
+        std::cerr << green << "YES" << white << "\n";
+      }
+      else
+      {
+        std::cerr << red << "NO" << white << "\n"
+                  << "  * Number of wrong dimension simplices: " 
+                  << num_wrong_dim_simplices << "\n"
                   << "  * Number of wrong number of cofaces: " 
-                  << num_wrong_number_of_cofaces << std::endl
+                  << num_wrong_number_of_cofaces << "\n"
                   << "  * Number of not-connected stars: " 
-                  << num_unconnected_stars << std::endl;
+                  << num_unconnected_stars << "\n";
       }
     }
 

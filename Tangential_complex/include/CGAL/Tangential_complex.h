@@ -26,6 +26,7 @@
 #include <CGAL/Tangential_complex/Simplicial_complex.h>
 #include <CGAL/Tangential_complex/utilities.h>
 #include <CGAL/Tangential_complex/Point_cloud.h>
+#include "CGAL/Tangential_complex/console_color.h"
 
 #include <CGAL/basic.h>
 #include <CGAL/tags.h>
@@ -86,13 +87,13 @@ typedef CGAL::MP_Float ET;
 //#define CGAL_TC_COMPUTE_TANGENT_PLANES_FOR_TORUS_D
 //#define CGAL_TC_ADD_NOISE_TO_TANGENT_SPACE
 //#define CGAL_TC_BETTER_EXPORT_FOR_FLAT_TORUS
-//#define CGAL_TC_ALVAREZ_SURFACE_WINDOW 0.96
+#define CGAL_TC_ALVAREZ_SURFACE_WINDOW 1.9 // 0.95
 
 namespace CGAL {
 
 using namespace Tangential_complex_;
 
-enum Fix_inconsistencies_status { 
+enum Fix_inconsistencies_status {
   TC_FIXED = 0, TIME_LIMIT_REACHED, FIX_NOT_PERFORMED };
 
 class Vertex_data
@@ -371,7 +372,7 @@ public:
   {
 #ifdef CGAL_TC_PERTURB_TANGENT_SPACE
     std::cerr << "Cannot use CGAL_TC_PERTURB_TANGENT_SPACE and set "
-              << " tangent spaces manually at the same time" << std::endl;
+              << " tangent spaces manually at the same time\n";
     std::exit(EXIT_FAILURE);
 #endif
 #ifdef CGAL_TC_EXPORT_NORMALS
@@ -390,6 +391,11 @@ public:
 
   void compute_tangential_complex()
   {
+#ifdef CGAL_TC_PERFORM_EXTRA_CHECKS
+    std::cerr << red << "WARNING: CGAL_TC_PERFORM_EXTRA_CHECKS is defined."
+      << "Computation might be slower than usual.\n" << white;
+#endif
+
 #if defined(CGAL_TC_PROFILING) && defined(CGAL_LINKED_WITH_TBB)
     Wall_clock_timer t;
 #endif
@@ -433,7 +439,7 @@ public:
 
 #if defined(CGAL_TC_PROFILING) && defined(CGAL_LINKED_WITH_TBB)
     std::cerr << "Tangential complex computed in " << t.elapsed()
-              << " seconds." << std::endl;
+              << " seconds.\n";
 #endif
   }
 
@@ -489,6 +495,10 @@ public:
 
   void refresh_tangential_complex()
   {
+#if defined(CGAL_TC_VERBOSE) || defined(CGAL_TC_PROFILING)
+    std::cerr << yellow << "\nRefreshing TC... " << white;
+#endif
+
 #ifdef CGAL_TC_PROFILING
     Wall_clock_timer t;
 #endif
@@ -509,8 +519,10 @@ public:
     }
 
 #ifdef CGAL_TC_PROFILING
-    std::cerr << "Tangential complex refreshed in " << t.elapsed()
-              << " seconds." << std::endl;
+    std::cerr << yellow << "done in " << t.elapsed()
+      << " seconds.\n" << white;
+#elif defined(CGAL_TC_VERBOSE)
+    std::cerr << yellow << "done.\n" << white;
 #endif
   }
 
@@ -519,6 +531,10 @@ public:
   void refresh_tangential_complex(
     Point_indices_range const& perturbed_points_indices)
   {
+#if defined(CGAL_TC_VERBOSE) || defined(CGAL_TC_PROFILING)
+    std::cerr << yellow << "\nRefreshing TC... " << white;
+#endif
+
 #ifdef CGAL_TC_PROFILING
     Wall_clock_timer t;
 #endif
@@ -543,17 +559,19 @@ public:
     }
 
 #ifdef CGAL_TC_PROFILING
-    std::cerr << "Tangential complex refreshed in " << t.elapsed()
-      << " seconds." << std::endl;
+    std::cerr << yellow << "done in " << t.elapsed()
+      << " seconds.\n" << white;
+#elif defined(CGAL_TC_VERBOSE)
+    std::cerr << yellow << "done.\n" << white;
 #endif
   }
 
   // time_limit in seconds: 0 = no fix to do, < 0 = no time limit
   Fix_inconsistencies_status fix_inconsistencies_using_perturbation(
     unsigned int &num_steps,
-    std::size_t &initial_num_inconsistent_local_tr,
-    std::size_t &best_num_inconsistent_local_tr,
-    std::size_t &final_num_inconsistent_local_tr,
+    std::size_t &initial_num_inconsistent_stars,
+    std::size_t &best_num_inconsistent_stars,
+    std::size_t &final_num_inconsistent_stars,
     double time_limit = -1.)
   {
     if (time_limit == 0.)
@@ -561,34 +579,46 @@ public:
 
     Wall_clock_timer t;
 
-#ifdef CGAL_TC_VERBOSE
-    std::cerr << "Fixing inconsistencies..." << std::endl;
-#endif
-
 #ifdef CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
     std::pair<std::size_t, std::size_t> stats_before =
       number_of_inconsistent_simplices(false);
 
 # ifdef CGAL_TC_VERBOSE
       std::cerr << "Initial number of inconsistencies: "
-      << stats_before.second << std::endl;
+      << stats_before.second << "\n";
 # endif
 
     if (stats_before.second == 0)
     {
 # ifdef CGAL_TC_VERBOSE
-      std::cerr << "Nothing to fix." << std::endl;
+      std::cerr << "Nothing to fix.\n";
 # endif
       return TC_FIXED;
     }
 #endif // CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
 
     bool done = false;
-    best_num_inconsistent_local_tr = m_triangulations.size();
+    best_num_inconsistent_stars = m_triangulations.size();
     num_steps = 0;
     while (!done)
     {
-      std::size_t num_inconsistent_local_tr = 0;
+#ifdef CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
+      std::cerr
+        << "\nBefore fix step:\n"
+        << "  * Total number of simplices in stars (incl. duplicates): "
+        << stats_before.first << "\n"
+        << "  * Num inconsistent simplices in stars (incl. duplicates): "
+        << red << stats_before.second << white
+        << " (" << 100. * stats_before.second / stats_before.first << "%)\n";
+#endif
+
+#if defined(CGAL_TC_VERBOSE) || defined(CGAL_TC_PROFILING)
+      std::cerr << yellow 
+        << "\nAttempt to fix inconsistencies using perturbations - step #"
+        << num_steps + 1 << "... " << white;
+#endif
+
+      std::size_t num_inconsistent_stars = 0;
       std::vector<std::size_t> updated_points;
 
 #ifdef CGAL_TC_PROFILING
@@ -606,7 +636,7 @@ public:
           Try_to_solve_inconsistencies_in_a_local_triangulation(
           *this, num_inconsistencies, tls_updated_points)
         );
-        num_inconsistent_local_tr =
+        num_inconsistent_stars =
           num_inconsistencies.combine(std::plus<std::size_t>());
         updated_points = tls_updated_points.combine(
           [](std::vector<std::size_t> const& x, std::vector<std::size_t> const& y) { // CJTODO: C++11
@@ -623,93 +653,83 @@ public:
       {
         for (std::size_t i = 0 ; i < m_triangulations.size() ; ++i)
         {
-          num_inconsistent_local_tr +=
+          num_inconsistent_stars +=
             try_to_solve_inconsistencies_in_a_local_triangulation(
               i, std::back_inserter(updated_points));
         }
       }
 
+      double fix_step_time = t_fix_step.elapsed();
+
+#if defined(CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES) || defined(CGAL_TC_VERBOSE)
+      std::cerr
+        << "\nEncountered during fix:\n"
+        << "  * Num stars containing inconsistent simplices: "
+        << red << num_inconsistent_stars << white
+        << " (" << 100. * num_inconsistent_stars / m_points.size() << "%)\n";
+#endif
+
 #ifdef CGAL_TC_PROFILING
-      std::cerr << "Attempt to fix inconsistencies: " << t_fix_step.elapsed()
-                << " seconds." << std::endl;
+      std::cerr << yellow << "done in " << fix_step_time
+        << " seconds.\n" << white;
+#elif defined(CGAL_TC_VERBOSE)
+      std::cerr << yellow << "done.\n" << white;
 #endif
 
 #ifdef CGAL_TC_GLOBAL_REFRESH
-      if (num_inconsistent_local_tr > 0)
+      if (num_inconsistent_stars > 0)
         refresh_tangential_complex(updated_points);
+
+# ifdef CGAL_TC_PERFORM_EXTRA_CHECKS
+      // DEBUGGING: confirm that all stars were actually refreshed
+      std::size_t num_inc_1 = number_of_inconsistent_simplices(false).second;
+      refresh_tangential_complex();
+      std::size_t num_inc_2 = number_of_inconsistent_simplices(false).second;
+      if (num_inc_1 != num_inc_2)
+        std::cerr << red << "REFRESHMENT CHECK: FAILED. ("
+          << num_inc_1 << " vs " << num_inc_2 << ")\n" << white;
+      else
+        std::cerr << green << "REFRESHMENT CHECK: PASSED.\n" << white;
+# endif
 #endif
 
 #ifdef CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
-      if (num_inconsistent_local_tr > 0)
-      {
-        std::pair<std::size_t, std::size_t> stats_after =
-          number_of_inconsistent_simplices(false);
+      std::pair<std::size_t, std::size_t> stats_after =
+        number_of_inconsistent_simplices(false);
 
-        std::cerr << std::endl
-          << "=========================================================="
-          << std::endl
-          << "Inconsistencies (detailed stats):\n"
-          << "  * Number of vertices: " << m_points.size() << std::endl
-          << std::endl
-          << "  * BEFORE fix_inconsistencies_using_perturbation:" << std::endl
-          << "    - Total number of simplices in stars (incl. duplicates): "
-          << stats_before.first << std::endl
-          << "    - Num inconsistent simplices in stars (incl. duplicates): "
-          << stats_before.second
-          << " (" << 100. * stats_before.second / stats_before.first << "%)"
-          << std::endl
-          /*<< "  * Num inconsistent stars: "
-          << num_inconsistent_local_tr
-          << " (" << 100. * num_inconsistent_local_tr / m_points.size() << "%)"
-          << std::endl*/
-          << std::endl
-          << "  * AFTER fix_inconsistencies_using_perturbation:" << std::endl
-          << "    - Total number of simplices in stars (incl. duplicates): "
-          << stats_after.first << std::endl
-          << "    - Num inconsistent simplices in stars (incl. duplicates): "
-          << stats_after.second
-          << " (" << 100. * stats_after.second / stats_after.first << "%)"
-          << std::endl
-          << "=========================================================="
-          << std::endl;
+      std::cerr
+        << "\nAfter fix:\n"
+        << "  * Total number of simplices in stars (incl. duplicates): "
+        << stats_after.first << "\n"
+        << "  * Num inconsistent simplices in stars (incl. duplicates): "
+        << red << stats_after.second << white
+        << " (" << 100. * stats_after.second / stats_after.first << "%)\n";
 
-        stats_before = stats_after;
-      }
-
-#else // CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
-# ifdef CGAL_TC_VERBOSE
-      std::cerr << std::endl
-        << "=========================================================="
-        << std::endl
-        << "fix_inconsistencies_using_perturbation():\n"
-        << "  * " << m_points.size() << " vertices" << std::endl
-        << "  * " << num_inconsistent_local_tr
-        << " (" << 100. * num_inconsistent_local_tr / m_points.size() << "%)"
-        << " inconsistent stars encountered" << std::endl
-        << "=========================================================="
-        << std::endl;
-# endif
-#endif // CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
+      stats_before = stats_after;
+#endif
 
       if (num_steps == 0)
-        initial_num_inconsistent_local_tr = num_inconsistent_local_tr;
+        initial_num_inconsistent_stars = num_inconsistent_stars;
 
-      if (num_inconsistent_local_tr < best_num_inconsistent_local_tr)
-        best_num_inconsistent_local_tr = num_inconsistent_local_tr;
+      if (num_inconsistent_stars < best_num_inconsistent_stars)
+        best_num_inconsistent_stars = num_inconsistent_stars;
 
-      final_num_inconsistent_local_tr = num_inconsistent_local_tr;
+      final_num_inconsistent_stars = num_inconsistent_stars;
 
       ++num_steps;
-      done = (num_inconsistent_local_tr == 0);
+      done = (num_inconsistent_stars == 0);
       if (!done && time_limit > 0. && t.elapsed() > time_limit)
       {
 #ifdef CGAL_TC_VERBOSE
-        std::cerr << "Time limit reached." << std::endl;
+        std::cerr << red << "Time limit reached.\n" << white;
 #endif
         return TIME_LIMIT_REACHED;
       }
     }
 
+#ifdef CGAL_TC_VERBOSE
+    std::cerr << green << "Fixed!\n" << white;
+#endif
     return TC_FIXED;
   }
 
@@ -748,19 +768,17 @@ public:
 
     if (verbose)
     {
-      std::cerr << std::endl
-        << "=========================================================="
-        << std::endl
+      std::cerr
+        << "\n==========================================================\n"
         << "Inconsistencies:\n"
-        << "  * Number of vertices: " << m_points.size() << std::endl
+        << "  * Number of vertices: " << m_points.size() << "\n"
         << "  * Total number of simplices in stars (incl. duplicates): "
-        << num_simplices << std::endl
+        << num_simplices << "\n"
         << "  * Number of inconsistent simplices in stars (incl. duplicates): "
-        << num_inconsistent_simplices << std::endl
+        << num_inconsistent_simplices << "\n"
         << "  * Percentage of inconsistencies: "
-        << 100. * num_inconsistent_simplices / num_simplices << "%" << std::endl
-        << "=========================================================="
-        << std::endl;
+        << 100. * num_inconsistent_simplices / num_simplices << "%\n"
+        << "==========================================================\n";
     }
 
     return std::make_pair(num_simplices, num_inconsistent_simplices);
@@ -770,6 +788,14 @@ public:
   int export_TC(Simplicial_complex &complex,
     bool export_infinite_simplices = false) const
   {
+#if defined(CGAL_TC_VERBOSE) || defined(CGAL_TC_PROFILING)
+    std::cerr << yellow
+      << "\nExporting the TC as a Simplicial_complex... " << white;
+#endif
+#ifdef CGAL_TC_PROFILING
+    Wall_clock_timer t;
+#endif
+
     int max_dim = -1;
 
     // For each triangulation
@@ -792,6 +818,14 @@ public:
         complex.add_simplex(c);
       }
     }
+
+#ifdef CGAL_TC_PROFILING
+    std::cerr << yellow << "done in " << t.elapsed()
+      << " seconds.\n" << white;
+#elif defined(CGAL_TC_VERBOSE)
+    std::cerr << yellow << "done.\n" << white;
+#endif
+
     return max_dim;
   }
 
@@ -824,12 +858,11 @@ public:
       number_of_inconsistent_simplices(false);
     std::cerr << "AFTER check_and_solve_inconsistencies_by_adding_higher_dim_simplices():\n"
       << "    - Total number of simplices in stars (incl. duplicates): "
-      << stats_after.first << std::endl
+      << stats_after.first << "\n"
       << "    - Num inconsistent simplices in stars (incl. duplicates): "
-      << stats_after.second << std::endl
+      << stats_after.second << "\n"
       << "    - Percentage of inconsistencies: "
-      << 100. * stats_after.second / stats_after.first << "%"
-      << std::endl;
+      << 100. * stats_after.second / stats_after.first << "%\n";
   }
 
   // Returns true if some inconsistencies were found
@@ -840,12 +873,11 @@ public:
       number_of_inconsistent_simplices(false);
     std::cerr << "BEFORE check_and_solve_inconsistencies_by_filtering_simplices_out():\n"
       << "    - Total number of simplices in stars (incl. duplicates): "
-      << stats_before.first << std::endl
+      << stats_before.first << "\n"
       << "    - Num inconsistent simplices in stars (incl. duplicates): "
-      << stats_before.second << std::endl
+      << stats_before.second << "\n"
       << "    - Percentage of inconsistencies: "
-      << 100. * stats_before.second / stats_before.first << "%"
-      << std::endl;
+      << 100. * stats_before.second / stats_before.first << "%\n";
 
     bool inconsistencies_found = false;
 
@@ -861,12 +893,11 @@ public:
       number_of_inconsistent_simplices(false);
     std::cerr << "AFTER check_and_solve_inconsistencies_by_filtering_simplices_out():\n"
       << "    - Total number of simplices in stars (incl. duplicates): "
-      << stats_after.first << std::endl
+      << stats_after.first << "\n"
       << "    - Num inconsistent simplices in stars (incl. duplicates): "
-      << stats_after.second << std::endl
+      << stats_after.second << "\n"
       << "    - Percentage of inconsistencies: "
-      << 100. * stats_after.second / stats_after.first << "%"
-      << std::endl;
+      << 100. * stats_after.second / stats_after.first << "%\n";
 
     return inconsistencies_found;
   }
@@ -1024,7 +1055,7 @@ public:
 #endif
 
 #ifdef CGAL_TC_VERBOSE
-    std::cerr << "Fixing inconsistencies using alpha TC..." << std::endl;
+    std::cerr << "Fixing inconsistencies using alpha TC...\n";
 #endif
 
     //-------------------------------------------------------------------------
@@ -1054,9 +1085,9 @@ public:
       << "Num inconsistent simplices found when filling the priority queues: "
       << num_inconsistent_simplices;
 # ifdef CGAL_TC_PROFILING
-    std::cerr << " (" << t_pq.elapsed() << " s)" << std::endl;
+    std::cerr << " (" << t_pq.elapsed() << " s)\n";
 # endif
-    std::cerr << std::endl;
+    std::cerr << "\n";
 #endif
 
     //-------------------------------------------------------------------------
@@ -1157,7 +1188,7 @@ public:
           if (is_simplex_in_star(ii, z))
           {
             is_this_simplex_somewhere = true;
-            std::cerr << "The simplex is in star #" << ii << std::endl;
+            std::cerr << "The simplex is in star #" << ii << "\n";
             break;
           }
         }
@@ -1168,28 +1199,28 @@ public:
         if (m_ambient_dim <= 3)
         {
           if (is_simplex_in_the_ambient_delaunay(full_s))
-            std::cerr << "The simplex is in the ambiant Delaunay." << std::endl;
+            std::cerr << "The simplex is in the ambiant Delaunay.\n";
           else
-            std::cerr << "The simplex is NOT in the ambiant Delaunay." << std::endl;
+            std::cerr << "The simplex is NOT in the ambiant Delaunay.\n";
 
           std::cerr << "Checking simplices of the star #" 
-            << saa.m_center_point_index << std::endl;
+            << saa.m_center_point_index << "\n";
           Star const& star = m_stars[saa.m_center_point_index];
           for (Star::const_iterator is = star.begin(), is_end = star.end() ;
             is != is_end ; ++is)
           { 
             if (is_simplex_in_the_ambient_delaunay(*is))
-              std::cerr << "The simplex is in the ambiant Delaunay." << std::endl;
+              std::cerr << "The simplex is in the ambiant Delaunay.\n";
             else
             {
-              std::cerr << "The simplex is NOT in the ambiant Delaunay." << std::endl;
+              std::cerr << "The simplex is NOT in the ambiant Delaunay.\n";
               for(auto ii : *is) // CJTODO C++11
                 perturb(ii);
             }
           }
         }
          
-        std::cerr << "Perturbing the points..." << std::endl;
+        std::cerr << "Perturbing the points...\n";
         perturb(saa.m_center_point_index);
         for(auto ii : saa.m_simplex) // CJTODO C++11
           perturb(ii);
@@ -1205,7 +1236,7 @@ public:
 #ifdef CGAL_TC_VERBOSE
         std::cerr
           << "Num inconsistent simplices found when filling the priority queues: "
-          << num_inconsistent_simplices << std::endl;
+          << num_inconsistent_simplices << "\n";
 #endif
       }
       // CJTODO TEMP
@@ -1234,7 +1265,7 @@ public:
 
 #ifdef CGAL_TC_PROFILING
     std::cerr << "Tangential complex fixed in " << t.elapsed()
-              << " seconds." << std::endl;
+              << " seconds.\n";
 #endif
   }
 #endif // CGAL_ALPHA_TC
@@ -1267,27 +1298,22 @@ public:
 
     if (m_ambient_dim < 2)
     {
-      std::cerr << "Error: export_to_off => ambient dimension should be >= 2."
-                << std::endl;
-      os << "Error: export_to_off => ambient dimension should be >= 2."
-         << std::endl;
+      std::cerr << "Error: export_to_off => ambient dimension should be >= 2.\n";
+      os << "Error: export_to_off => ambient dimension should be >= 2.\n";
       return os;
     }
     if (m_ambient_dim > 3)
     {
       std::cerr << "Warning: export_to_off => ambient dimension should be "
-                   "<= 3. Only the first 3 coordinates will be exported."
-                << std::endl;
+                   "<= 3. Only the first 3 coordinates will be exported.\n";
     }
 
     if (m_intrinsic_dim < 1 || m_intrinsic_dim > 3)
     {
       std::cerr << "Error: export_to_off => intrinsic dimension should be "
-                   "between 1 and 3."
-                << std::endl;
+                   "between 1 and 3.\n";
       os << "Error: export_to_off => intrinsic dimension should be "
-            "between 1 and 3."
-         << std::endl;
+            "between 1 and 3.\n";
       return os;
     }
 
@@ -1542,16 +1568,15 @@ public:
 #ifdef CGAL_TC_VERBOSE
     std::cerr
       << (incorrect_simplices->empty() ? "OK " : "ERROR ")
-      << "check_if_all_simplices_are_in_the_ambient_delaunay:"
-      << std::endl
+      << "check_if_all_simplices_are_in_the_ambient_delaunay:\n"
       << "  Number of simplices in ambient RT: " << amb_dt_simplices.size()
-      << std::endl
+      << "\n"
       << "  Number of unique simplices in TC stars: " << p_simplices->size()
-      << std::endl
+      << "\n"
       << "  Number of infinite full cells in TC stars: " << num_infinite_cells
-      << std::endl
+      << "\n"
       << "  Number of wrong simplices: " << incorrect_simplices->size()
-      << std::endl;
+      << "\n";
 #endif
     return incorrect_simplices->empty();
   }
@@ -1657,6 +1682,10 @@ private:
     for (Indexed_simplex::const_iterator it_index = s.begin();
       it_index != s.end() ; ++it_index)
     {
+      // Infinite vertex? Much too far!
+      if (*it_index == std::numeric_limits<std::size_t>::max())
+        return true;
+
       if (is_one_of_the_coord_far_from_origin(
         compute_perturbed_point(*it_index), limit, only_test_the_first_n_coords))
         return true;
@@ -1707,7 +1736,7 @@ private:
     center_vertex = triangulation.insert(proj_wp);
     center_vertex->data() = i;
     if (verbose)
-      std::cerr << "* Inserted point #" << i << std::endl;
+      std::cerr << "* Inserted point #" << i << "\n";
 
 #ifdef CGAL_TC_VERY_VERBOSE
     std::size_t num_attempts_to_insert_points = 1;
@@ -1797,7 +1826,7 @@ private:
           ++num_inserted_points;
 #endif
           if (verbose)
-            std::cerr << "* Inserted point #" << neighbor_point_idx << std::endl;
+            std::cerr << "* Inserted point #" << neighbor_point_idx << "\n";
 
           vh->data() = neighbor_point_idx;
 
@@ -1876,7 +1905,7 @@ private:
     std::size_t i, Points_ds const& updated_pts_ds, bool verbose = false)
   {
     if (verbose)
-      std::cerr << "** Refreshing tangent tri #" << i << " **" << std::endl;
+      std::cerr << "** Refreshing tangent tri #" << i << " **\n";
 
     if (m_squared_star_spheres_radii_incl_margin[i] == FT(-1))
       return compute_tangent_triangulation(i, verbose);
@@ -1905,8 +1934,8 @@ private:
   void compute_tangent_triangulation(std::size_t i, bool verbose = false)
   {
     if (verbose)
-      std::cerr << "** Computing tangent tri #" << i << " **" << std::endl;
-    //std::cerr << "***********************************************" << std::endl;
+      std::cerr << "** Computing tangent tri #" << i << " **\n";
+    //std::cerr << "***********************************************\n";
 
     // No need to lock the mutex here since this will not be called while
     // other threads are perturbing the positions
@@ -1915,7 +1944,7 @@ private:
     
 #if defined(CGAL_TC_VERY_VERBOSE) && defined(CGAL_ALPHA_TC)
     std::cerr << "Base dimension, incl. thickening vectors: " 
-      << tsb.dimension() << std::endl;
+      << tsb.dimension() << "\n";
 #endif
     // Estimate the tangent space
     if (!m_are_tangent_spaces_computed[i])
@@ -2405,7 +2434,7 @@ next_face:
 
     //Vector n = m_k.point_to_vector_d_object()(p);
     //n = scaled_vec(n, FT(1)/sqrt(sqlen(n)));
-    //std::cerr << "IP = " << scalar_pdct(n, ts[0]) << " & " << scalar_pdct(n, ts[1]) << std::endl;
+    //std::cerr << "IP = " << scalar_pdct(n, ts[0]) << " & " << scalar_pdct(n, ts[1]) << "\n";
 
     return tsb;
     
@@ -3387,7 +3416,7 @@ next_face:
         for (i = 0 ; i < num_coords ; ++i)
           os << " " << CGAL::to_double(coord(*it_os->begin(), i));
 #endif
-        os << std::endl;
+        os << "\n";
       }
 #ifdef CGAL_TC_EXPORT_NORMALS
       ++it_os;
@@ -3538,7 +3567,7 @@ next_face:
       std::size_t neighbor_point_idx = nn_it->first;
       FT point_to_Cp_power_sqdist = k_power_dist(
         global_Cp, compute_perturbed_weighted_point(neighbor_point_idx));
-      //std::cerr << point_to_Cp_power_sqdist << std::endl; // CJTODO TEMP
+      //std::cerr << point_to_Cp_power_sqdist << "\n"; // CJTODO TEMP
       // If the point is ACTUALLY "inside" S
       if (point_to_Cp_power_sqdist <= FT(0)
         && inconsistent_simplex.find(neighbor_point_idx) ==
@@ -3589,13 +3618,13 @@ next_face:
         switch(sid)
         {
         case ON_NEGATIVE_SIDE:
-          std::cerr << "ON_NEGATIVE_SIDE" << std::endl; // CJTODO TEMP
+          std::cerr << "ON_NEGATIVE_SIDE\n"; // CJTODO TEMP
           break;
         case ON_POSITIVE_SIDE:
-          std::cerr << "ON_POSITIVE_SIDE" << std::endl; // CJTODO TEMP
+          std::cerr << "ON_POSITIVE_SIDE\n"; // CJTODO TEMP
           break;
         case ON_ORIENTED_BOUNDARY:
-          std::cerr << "ON_ORIENTED_BOUNDARY" << std::endl; // CJTODO TEMP
+          std::cerr << "ON_ORIENTED_BOUNDARY\n"; // CJTODO TEMP
           break;
         }
       }*/
@@ -3614,9 +3643,9 @@ next_face:
         std::cerr << q_idx << " ";
         std::copy(s.begin(), s.end(),
           std::ostream_iterator<std::size_t>(std::cerr, " "));
-        std::cerr << std::endl;
+        std::cerr << "\n";
       }
-      std::cerr << std::endl;
+      std::cerr << "\n";
     }*/
 
     // CJTODO TEMP DEBUG
@@ -3636,7 +3665,7 @@ next_face:
           k_scalar_pdct(m_orth_spaces[q_idx][0], pq));
       csv_stream << inside_pt_indices.size() << " ; ";
       csv_stream << dot_product_1 << " ; " << dot_product_2;
-      csv_stream << std::endl;
+      csv_stream << "\n";
     }*/
     
     // CJTODO TEMP DEBUG
@@ -3660,8 +3689,8 @@ next_face:
           std::cerr << dot_products_between_normals << ", ";
           //csv_stream << " ; " <<dot_products_between_normals;
         }
-        std::cerr << std::endl;
-        //csv_stream << std::endl;
+        std::cerr << "\n";
+        //csv_stream << "\n";
       }*/
     }
 
@@ -3733,7 +3762,7 @@ next_face:
         std::size_t neighbor_point_idx = nn_it->first;
         FT point_to_C_power_sqdist =
           k_power_dist(C, compute_perturbed_weighted_point(neighbor_point_idx));
-        //std::cerr << point_to_Cp_power_sqdist << std::endl; // CJTODO TEMP
+        //std::cerr << point_to_Cp_power_sqdist << "\n"; // CJTODO TEMP
         // If the point is ACTUALLY "inside" S
         if (point_to_C_power_sqdist <= FT(-0.000001)
           && inconsistent_simplex.find(neighbor_point_idx) ==
@@ -3824,7 +3853,7 @@ next_face:
             k_scalar_pdct(m_orth_spaces[*it_point_idx][0], pq));
         csv_stream << "0 ; ";
         csv_stream << dot_product_1 << " ; " << dot_product_2;
-        csv_stream << std::endl;
+        csv_stream << "\n";
       }*/
     }
 
@@ -4329,37 +4358,33 @@ next_face:
           }            
         }
         ++num_OFF_simplices;
-        os << std::endl;
+        os << "\n";
       }
       if (is_star_inconsistent)
         ++num_inconsistent_stars;
     }
 
 #ifdef CGAL_TC_VERBOSE
-    std::cerr << std::endl
-      << "=========================================================="
-      << std::endl
+    std::cerr
+      << "\n==========================================================\n"
       << "Export from list of stars to OFF:\n"
-      << "  * Number of vertices: " << m_points.size() << std::endl
+      << "  * Number of vertices: " << m_points.size() << "\n"
       << "  * Total number of maximal simplices: " << num_maximal_simplices 
-      << std::endl;
+      << "\n";
     if (color_inconsistencies)
     {
       std::cerr
         << "  * Number of inconsistent stars: "
         << num_inconsistent_stars << " ("
         << (m_points.size() > 0 ?
-            100. * num_inconsistent_stars / m_points.size() : 0.) << "%)"
-        << std::endl
+            100. * num_inconsistent_stars / m_points.size() : 0.) << "%)\n"
         << "  * Number of inconsistent maximal simplices: "
         << num_inconsistent_maximal_simplices << " ("
         << (num_maximal_simplices > 0 ?
             100. * num_inconsistent_maximal_simplices / num_maximal_simplices 
-            : 0.) << "%)"
-        << std::endl;
+            : 0.) << "%)\n";
     }
-    std::cerr << "=========================================================="
-              << std::endl;
+    std::cerr << "==========================================================\n";
 #endif
 
     return os;
@@ -4501,20 +4526,18 @@ public:
         }
 
         ++num_OFF_simplices;
-        os << std::endl;
+        os << "\n";
       }
     }
 
 #ifdef CGAL_TC_VERBOSE
-    std::cerr << std::endl
-      << "=========================================================="
-      << std::endl
+    std::cerr
+      << "\n==========================================================\n"
       << "Export from complex to OFF:\n"
-      << "  * Number of vertices: " << m_points.size() << std::endl
+      << "  * Number of vertices: " << m_points.size() << "\n"
       << "  * Total number of maximal simplices: " << num_maximal_simplices 
-      << std::endl
-      << "=========================================================="
-      << std::endl;
+      << "\n"
+      << "==========================================================\n";
 #endif
 
     return os;
@@ -4527,12 +4550,11 @@ public:
     std::ofstream csv_inconsistent("output/correlation_inconsistent.csv"); // CJTODO TEMP
     if (m_intrinsic_dim < 3)
     {
-      std::cerr << std::endl
-        << "==========================================================" << std::endl
-        << "check_correlation_between_inconsistencies_and_fatness():" << std::endl
-        << "Intrinsic dimension should be >= 3." << std::endl
-        << "==========================================================" << std::endl
-        << std::endl;
+      std::cerr
+        << "\n==========================================================\n"
+        << "check_correlation_between_inconsistencies_and_fatness():\n"
+        << "Intrinsic dimension should be >= 3.\n"
+        << "==========================================================\n\n";
     }
 
     std::size_t num_consistent_simplices = 0;
@@ -4560,13 +4582,13 @@ public:
         {
           ++num_inconsistent_simplices;
           sum_vol_edge_ratio_inconsistent += fatness;
-          csv_inconsistent << fatness << std::endl;
+          csv_inconsistent << fatness << "\n";
         }
         else
         {
           ++num_consistent_simplices;
           sum_vol_edge_ratio_consistent += fatness;
-          csv_consistent << fatness << std::endl;
+          csv_consistent << fatness << "\n";
         }
       }
     }
@@ -4576,18 +4598,16 @@ public:
     double avg_vol_edge_ratio_consistent = 
       sum_vol_edge_ratio_consistent / num_consistent_simplices;
     
-    std::cerr << std::endl
-      << "=========================================================="
-      << std::endl
+    std::cerr
+      << "\n==========================================================\n"
       << "check_correlation_between_inconsistencies_and_fatness()\n"
       << "  * Avg. volume/longest_edge^d ratio of consistent simplices: " 
       << avg_vol_edge_ratio_consistent 
-      << " (" << num_consistent_simplices << " simplices)" << std::endl
+      << " (" << num_consistent_simplices << " simplices)\n"
       << "  * Avg. volume/longest_edge^d ratio of inconsistent simplices: " 
       << avg_vol_edge_ratio_inconsistent
-      << " (" << num_inconsistent_simplices << " simplices)" << std::endl
-      << "=========================================================="
-      << std::endl;
+      << " (" << num_inconsistent_simplices << " simplices)\n"
+      << "==========================================================\n";
   }
 
 private:
