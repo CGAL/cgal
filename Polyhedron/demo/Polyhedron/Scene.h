@@ -274,6 +274,7 @@ private:
   //!Index of the item_B.
   int item_B;
   bool picked;
+  bool gl_init;
   static GlSplat::SplatRenderer* ms_splatting;
   static int ms_splattingCounter;
   QMap<QModelIndex, int> index_map;

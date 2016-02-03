@@ -44,7 +44,7 @@ Scene::Scene(QObject* parent)
         ms_splatting  = new GlSplat::SplatRenderer();
     ms_splattingCounter++;
     picked = false;
-
+    gl_init = false;
 
 }
 Scene::Item_id
@@ -295,6 +295,7 @@ void Scene::initializeGL()
     glLightfv(GL_LIGHT0, GL_SPECULAR, specularLight);
     glLightfv(GL_LIGHT0, GL_POSITION, position);
 
+    gl_init = true;
 }
 
 bool
@@ -335,6 +336,8 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 {
     if(!ms_splatting->viewer_is_set)
         ms_splatting->setViewer(viewer);
+    if(!gl_init)
+        initializeGL();
     // Flat/Gouraud OpenGL drawing
     for(int index = 0; index < m_entries.size(); ++index)
     {

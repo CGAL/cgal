@@ -39,8 +39,6 @@ MainWindow::MainWindow(QWidget* parent)
   //   when the action is invoked, it will popup a messageBox showing the given html
   this->addAboutDemo( "documentation/about.html" );
 
-  // read last setting from .ini file
-  viewer->readSettings();
 }
 
 void MainWindow::connectActions()

@@ -144,7 +144,6 @@ void Viewer::initializeGL()
   vao[0].create();
   for(int i=0; i<3; i++)
     buffers[i].create();
-  d->scene->initializeGL();
 
   //Vertex source code
   const char vertex_source[] =
@@ -227,7 +226,6 @@ void Viewer::initializeGL()
   }
   if(!rendering_program.link())
   {
-      //std::cerr<<"linking Program FAILED"<<std::endl;
       qDebug() << rendering_program.log();
   }
 }
@@ -930,6 +928,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
             {
                 std::cerr<<"adding fragment shader FAILED"<<std::endl;
             }
+            program->bindAttributeLocation("colors", 1);
             program->link();
             d->shader_programs[PROGRAM_C3T3] = program;
             return program;
@@ -953,6 +952,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
             {
                 std::cerr<<"adding fragment shader FAILED"<<std::endl;
             }
+            program->bindAttributeLocation("colors", 1);
             program->link();
             d->shader_programs[PROGRAM_C3T3_EDGES] = program;
             return program;
@@ -976,6 +976,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
             {
                 std::cerr<<"adding fragment shader FAILED"<<std::endl;
             }
+            program->bindAttributeLocation("colors", 1);
             program->link();
             d->shader_programs[PROGRAM_WITH_LIGHT] = program;
             return program;
@@ -997,6 +998,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
             {
                 std::cerr<<"adding fragment shader FAILED"<<std::endl;
             }
+            program->bindAttributeLocation("colors", 1);
             program->link();
             d->shader_programs[PROGRAM_WITHOUT_LIGHT] = program;
             return program;
@@ -1018,6 +1020,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
             {
                 std::cerr<<"adding fragment shader FAILED"<<std::endl;
             }
+            program->bindAttributeLocation("colors", 1);
             program->link();
             d->shader_programs[PROGRAM_NO_SELECTION] = program;
             return program;
@@ -1039,6 +1042,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
             {
                 std::cerr<<"adding fragment shader FAILED"<<std::endl;
             }
+            program->bindAttributeLocation("color_facets", 1);
             program->link();
             d->shader_programs[PROGRAM_WITH_TEXTURE] = program;
             return program;
@@ -1084,6 +1088,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
             {
                 std::cerr<<"adding fragment shader FAILED"<<std::endl;
             }
+            program->bindAttributeLocation("color_lines", 1);
             program->link();
             d->shader_programs[PROGRAM_WITH_TEXTURED_EDGES] = program;
             return program;
@@ -1106,6 +1111,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
             {
                 std::cerr<<"adding fragment shader FAILED"<<std::endl;
             }
+            program->bindAttributeLocation("colors", 1);
             program->link();
             d->shader_programs[PROGRAM_INSTANCED] = program;
             return program;
@@ -1128,6 +1134,7 @@ QOpenGLShaderProgram* Viewer::getShaderProgram(int name) const
             {
                 std::cerr<<"adding fragment shader FAILED"<<std::endl;
             }
+            program->bindAttributeLocation("colors", 1);
             program->link();
             d->shader_programs[PROGRAM_INSTANCED_WIRE] = program;
             return program;

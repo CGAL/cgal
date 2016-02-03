@@ -45,7 +45,6 @@ void Viewer::draw()
 void Viewer::initializeGL()
 {
   QGLViewer::initializeGL();
-  scene->initializeGL();
   initializeOpenGLFunctions();
    setBackgroundColor(::Qt::white);
 }

@@ -108,9 +108,6 @@ Scene::duplicate(Item_id index)
     return -1;
 }
 
-void Scene::initializeGL()
-{
-}
 
 void 
 Scene::draw(Viewer* viewer)
