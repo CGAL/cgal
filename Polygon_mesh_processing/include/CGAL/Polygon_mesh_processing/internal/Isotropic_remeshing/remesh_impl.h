@@ -525,7 +525,7 @@ namespace internal {
 
         if (degree(va, mesh_) < 3
           || degree(vb, mesh_) < 3
-          || !CGAL::Euler::satisfies_link_condition(edge(he, mesh_), mesh_))//necessary to collapse
+          || !CGAL::Euler::does_satisfy_link_condition(edge(he, mesh_), mesh_))//necessary to collapse
           continue;
 
         //check that collapse would not create an edge with length > high

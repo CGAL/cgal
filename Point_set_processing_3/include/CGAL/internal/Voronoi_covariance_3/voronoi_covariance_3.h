@@ -161,7 +161,10 @@ namespace CGAL {
                     #else
                     halfspace_intersection_3
                     #endif
-                      (planes.begin(), planes.end(), P, Point(CGAL::ORIGIN));
+                      (planes.begin(),
+                       planes.end(),
+                       P,
+                       boost::make_optional(Point(CGAL::ORIGIN)));
 
                     // apply f to the triangles on the boundary of P
                     for (typename Polyhedron::Facet_iterator it = P.facets_begin();

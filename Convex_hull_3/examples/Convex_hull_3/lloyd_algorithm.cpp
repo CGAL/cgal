@@ -167,9 +167,9 @@ void lloyd_algorithm (PolyIterator poly_begin,
         // Intersection
         Polyhedron P;
         CGAL::halfspace_intersection_3(planes.begin(),
-                                        planes.end(),
-                                        P,
-                                        vit->point());
+                                       planes.end(),
+                                       P,
+                                       boost::make_optional(vit->point()));
 
         // Centroid
         apply_function_object_polyhedron(P, centroid_acc);

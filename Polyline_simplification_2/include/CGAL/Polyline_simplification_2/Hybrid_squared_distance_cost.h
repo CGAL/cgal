@@ -86,7 +86,7 @@ public:
 
     FT d2 = mSquaredRatio;
 
-    Vertex_circulator vc = (*vicq)->incident_vertices(), done(vc);
+    Vertex_circulator vc = pct.incident_vertices(*vicq), done(vc);
     do {
       if((vc != pct.infinite_vertex()) && (vc != *vicp) && (vc != *vicr)){
 	d2 = (std::min)(d2, compute_squared_distance(vc->point(), (*vicq)->point()));
