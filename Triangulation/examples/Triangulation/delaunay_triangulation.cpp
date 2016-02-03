@@ -1,3 +1,14 @@
+#include <boost/config.hpp>
+#if defined(BOOST_GCC) && (BOOST_GCC < 40300)
+
+#include <iostream>
+int main()
+{
+  std::cerr << "NOTICE: This test requires G++ > 4.2, and will not be compiled." << std::endl;
+}
+
+#else
+
 #include <CGAL/Epick_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Delaunay_triangulation.h>
@@ -64,3 +75,5 @@ int main(int argc, char **argv)
   std::cout << " done in "<<cost.time()<<" seconds." << std::endl;
   return 0;
 }
+
+#endif
