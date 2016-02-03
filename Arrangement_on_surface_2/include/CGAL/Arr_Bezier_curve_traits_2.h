@@ -504,7 +504,7 @@ public:
      * \return The past-the-end iterator.
      */
     template<class OutputIterator>
-    OutputIterator operator() (const Curve_2& B, OutputIterator oi)
+    OutputIterator operator() (const Curve_2& B, OutputIterator oi) const
     {
       typedef typename Bounding_traits::Vertical_tangency_point
                                                 Vertical_tangency_point;
@@ -679,7 +679,7 @@ public:
     template<class OutputIterator>
     OutputIterator operator() (const X_monotone_curve_2& cv1,
                                const X_monotone_curve_2& cv2,
-                               OutputIterator oi)
+                               OutputIterator oi) const
     {
       return (cv1.intersect (cv2, *p_imap, *p_cache, oi));
     }
