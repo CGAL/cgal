@@ -1,6 +1,6 @@
 
 #include <boost/config.hpp>
-#if (BOOST_GCC < 40300)
+#if defined(BOOST_GCC) && (BOOST_GCC < 40300)
 
 #include <iostream>
 int main()
