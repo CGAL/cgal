@@ -154,9 +154,10 @@ namespace CGAL {
        visible_edges(true), visible_vertices(true),
        type(NONE)
     {
-      setVerticesPen(QPen(::Qt::red, 1.));
+      setVerticesPen(QPen(::Qt::red, 1.));      
       setFacesPen(QPen(QColor(100,100,100)));
       setDomainPen(QPen(::Qt::blue, .01));
+      setEdgesPen(QPen(::Qt::black, .01));
       if(t->number_of_vertices() == 0){
         this->hide();
       }
