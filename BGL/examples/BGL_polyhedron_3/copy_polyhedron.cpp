@@ -26,6 +26,7 @@ inline std::size_t hash_value(const FaceHandle&  i) { return i.idx(); }
 
 #include <iostream>
 #include <fstream>
+#include <iterator>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::Point_3                                     Point;
@@ -51,7 +52,7 @@ int main(int argc, char* argv[])
     boost::unordered_map<sm_vertex_descriptor, tm_vertex_descriptor> v2v;
     boost::unordered_map<sm_halfedge_descriptor, tm_halfedge_descriptor> h2h;
     
-    CGAL::copy_face_graph(S,T1,v2v,h2h);
+    CGAL::copy_face_graph(S, T1, std::inserter(v2v, v2v.end()), std::inserter(h2h, h2h.end()));
     std::ofstream out("sm.off");
     out << T1;
   }
@@ -68,8 +69,7 @@ int main(int argc, char* argv[])
     boost::unordered_map<sm_vertex_descriptor, tm_vertex_descriptor> v2v;
     boost::unordered_map<sm_halfedge_descriptor, tm_halfedge_descriptor> h2h;
     
-    CGAL::copy_face_graph(S,T2,v2v,h2h);
-
+    CGAL::copy_face_graph(S, T2, std::inserter(v2v, v2v.end()), std::inserter(h2h, h2h.end()));
     OpenMesh::IO::write_mesh(T2, "om.off");
   }
 #endif
@@ -84,7 +84,7 @@ int main(int argc, char* argv[])
     boost::unordered_map<source_vertex_descriptor, tm_vertex_descriptor> v2v;
     boost::unordered_map<source_halfedge_descriptor, tm_halfedge_descriptor> h2h;
     
-    CGAL::copy_face_graph(T1,S,v2v,h2h);
+    CGAL::copy_face_graph(T1, S, std::inserter(v2v, v2v.end()), std::inserter(h2h, h2h.end()));
     std::ofstream out("reverse.off");
     out << T1;
   }
