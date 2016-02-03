@@ -104,9 +104,12 @@ struct less_xyzw
     bool operator() (const Weighted_point &p,
                      const Weighted_point &q) const
     {
-        if (p.x() < q.x()) return true; if (p.x() > q.x()) return false;
-        if (p.y() < q.y()) return true; if (p.y() > q.y()) return false;
-        if (p.z() < q.z()) return true; if (p.z() > q.z()) return false;
+        if (p.x() < q.x()) return true;
+        if (p.x() > q.x()) return false;
+        if (p.y() < q.y()) return true;
+        if (p.y() > q.y()) return false;
+        if (p.z() < q.z()) return true;
+        if (p.z() > q.z()) return false;
         if (p.weight() < q.weight()) return true;
         return false;
     }

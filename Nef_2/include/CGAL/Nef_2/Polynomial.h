@@ -365,7 +365,7 @@ template <class pNT> class Polynomial :
   Polynomial<NT> abs() const
   /*{\Mop returns |-\Mvar| if |\Mvar.sign()==NEGATIVE| and |\Mvar| 
   otherwise.}*/
-  { if ( sign()==CGAL::NEGATIVE ) return -*this; return *this; }
+  { return ( sign()==CGAL::NEGATIVE ) ? - *this : *this; }
 
 
   NT content() const
@@ -692,7 +692,7 @@ class Polynomial<int> :
   Polynomial<int> abs() const
   /*{\Xop returns |-\Mvar| if |\Mvar.sign()==NEGATIVE| and |\Mvar| 
   otherwise.}*/
-  { if ( sign()==CGAL::NEGATIVE ) return -*this; return *this; }
+  { return ( sign()==CGAL::NEGATIVE ) ? - *this : *this; }
 
   int content() const
   /*{\Xop returns the content of |\Mvar| (the gcd of its coefficients).
@@ -993,7 +993,7 @@ determines the sign for the limit process $x \rightarrow \infty$.
   Polynomial<double> abs() const
   /*{\Xop returns |-\Mvar| if |\Mvar.sign()==NEGATIVE| and |\Mvar| 
   otherwise.}*/
-  { if ( sign()==CGAL::NEGATIVE ) return -*this; return *this; }
+  { return ( sign()==CGAL::NEGATIVE ) ? - *this : *this; }
 
 
   double content() const

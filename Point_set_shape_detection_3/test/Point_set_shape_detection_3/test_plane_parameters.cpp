@@ -43,49 +43,49 @@ bool test_plane_parameters() {
         points.push_back(random_pwn_in<K>(bbox));
       }
 
-      Efficient_ransac ransac;
-      Traits const& traits = ransac.traits();
+    Efficient_ransac ransac;
+    Traits const& traits = ransac.traits();
 
-      ransac.template add_shape_factory<Plane>();
+    ransac.template add_shape_factory<Plane>();
 
-      ransac.set_input(points);
+    ransac.set_input(points);
 
-      // Set cluster epsilon to a high value as just the parameters of
-      // the extracted primitives are to be tested.
-      typename Efficient_ransac::Parameters parameters;
-      parameters.probability = 0.05f;
-      parameters.min_points = 100;
-      parameters.epsilon = 0.002f;
-      parameters.cluster_epsilon = 1.0f;
-      parameters.normal_threshold = 0.9f;
+    // Set cluster epsilon to a high value as just the parameters of
+    // the extracted primitives are to be tested.
+    typename Efficient_ransac::Parameters parameters;
+    parameters.probability = 0.05f;
+    parameters.min_points = 100;
+    parameters.epsilon = 0.002f;
+    parameters.cluster_epsilon = 1.0f;
+    parameters.normal_threshold = 0.9f;
 
-      if (!ransac.detect(parameters)) {
-        std::cout << " aborted" << std::endl;
-        return false;
-      }
+    if (!ransac.detect(parameters)) {
+      std::cout << " aborted" << std::endl;
+      return false;
+    }
 
-      typename Efficient_ransac::Shape_range shapes = ransac.shapes();
+    typename Efficient_ransac::Shape_range shapes = ransac.shapes();
 
-      if (shapes.size() != 1)
-        continue;
+    if (shapes.size() != 1)
+      continue;
 
-      boost::shared_ptr<Plane> pl = boost::dynamic_pointer_cast<Plane>((*shapes.first));
+    boost::shared_ptr<Plane> pl = boost::dynamic_pointer_cast<Plane>((*shapes.first));
 
-      if (!pl)
-        continue;
+    if (!pl)
+      continue;
 
-      const FT phi = traits.compute_scalar_product_3_object()(
-        normal, pl->plane_normal());
-      const FT sign = (phi < 0) ? -1.0f : 1.0f;
+    const FT phi = traits.compute_scalar_product_3_object()(
+      normal, pl->plane_normal());
+    const FT sign = (phi < 0) ? -1.0f : 1.0f;
 
-      const FT dist2 = pl->d();
+    const FT dist2 = pl->d();
 
-      if (CGAL::abs(phi) < 0.98 || CGAL::abs(dist2 - sign * dist) > 0.02)
-        continue;
+    if (CGAL::abs(phi) < 0.98 || CGAL::abs(dist2 - sign * dist) > 0.02)
+      continue;
 
-      std::string info = pl->info();
+    std::string info = pl->info();
 
-      success++;
+    success++;
   }
 
   if (success >= NB_ROUNDS * 0.8) {

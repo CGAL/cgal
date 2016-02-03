@@ -30,7 +30,8 @@
 #include <functional>
 #include <algorithm>
 #include <CGAL/Extremal_polygon_traits_2.h>
-
+#include <boost/bind.hpp>
+#include <boost/bind/make_adaptable.hpp>
 namespace CGAL {
 
 //!!! This will eventually be integrated into function_objects.h
@@ -38,7 +39,6 @@ template < class Array, class Index, class Element >
 struct Index_operator
 : public std::binary_function< Array, Index, Element >
 {
-
   Element&
   operator()( Array& a, const Index& i) const
   { return a[i]; }
@@ -432,8 +432,6 @@ extremal_polygon_2(
 // of $P_k$'s vertices to o and
 // returns the past-the-end iterator of that sequence.
 {
-  using std::bind1st;
-
   // check preconditions:
   CGAL_optimisation_precondition_code(
     int number_of_points(
@@ -448,11 +446,10 @@ extremal_polygon_2(
     points_begin,
     points_end,
     k,
-    transform_iterator(
+    CGAL::transform_iterator(
       o,
-      bind1st(
-        Index_operator< RandomAccessIC, int, Point_2 >(),
-        points_begin)),
+      boost::make_adaptable<Point_2, int>(boost::bind(Index_operator< RandomAccessIC, int, Point_2 >(),
+                                                      points_begin, _1))),
     t);
 }
 
@@ -469,6 +466,7 @@ extremal_polygon(
   OutputIterator o,
   const Traits& t)
 { return extremal_polygon_2(points_begin, points_end, k, o, t); }
+
 template < class RandomAccessIC,
            class OutputIterator,
            class Traits >

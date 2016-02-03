@@ -20,7 +20,14 @@ class LEdge {
   LEdge* t;
 public:
   LEdge(LVertex* v_) : v(v_) {}
-  ~LEdge() { if(v != NULL) delete v; v = NULL; }
+
+  ~LEdge()
+  {
+    if(v != NULL)
+      delete v;
+    v = NULL;
+  }
+
   LVertex* source() { return v; }
   LEdge* twin() { return t; }
   void set_twin(LEdge* t_) { t = t_; }

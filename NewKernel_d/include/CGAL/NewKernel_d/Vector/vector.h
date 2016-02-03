@@ -49,7 +49,7 @@ template<class NT_,class Dim_,class Max_dim_=Dim_> struct Vector_vector {
 
 		struct Iterator {
 			template<typename Iter>
-				Vector operator()(int d,Iter const& f,Iter const& e) const {
+                        Vector operator()(int CGAL_assertion_code(d),Iter const& f,Iter const& e) const {
 					CGAL_assertion(d==std::distance(f,e));
 					return Vector(f,e);
 				}

@@ -325,7 +325,7 @@ public:
             points.push_front (p);  // ensure postcondition of insert
         } else
             points.push_back (p);   // just append p
-            if (support_end == points.end()) --support_end;
+        if (support_end == points.end()) --support_end;
     }
     
     template <class InputIterator>
