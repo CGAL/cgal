@@ -112,7 +112,7 @@ struct TestMeshProgramInstance
         size_t x, y;
         double alpha;
         std::cin >> x >> y >> alpha;
-        std::pair<halfedge_descriptor, bool> he = CGAL::halfedge(vertices[x], vertices[y], polyhedron);
+        std::pair<halfedge_descriptor, bool> he = halfedge(vertices[x], vertices[y], polyhedron);
         assert(he.second);
         return shortestPath.face_location(he.first, FT(alpha));
       }
@@ -121,8 +121,8 @@ struct TestMeshProgramInstance
         size_t x, y;
         double alpha0, alpha1, alpha2;
         std::cin >> x >> y >> alpha0 >> alpha1 >> alpha2;
-        std::pair<halfedge_descriptor, bool> he = CGAL::halfedge(vertices[x], vertices[y], polyhedron);
-        return Face_location(CGAL::face(he.first, polyhedron), construct_barycentric_coordinate(FT(alpha0), FT(alpha1), FT(alpha2)));
+        std::pair<halfedge_descriptor, bool> he = halfedge(vertices[x], vertices[y], polyhedron);
+        return Face_location(face(he.first, polyhedron), construct_barycentric_coordinate(FT(alpha0), FT(alpha1), FT(alpha2)));
       }
 
       return Face_location(Graph_traits::null_face(), construct_barycentric_coordinate(FT(0.0), FT(0.0), FT(0.0)));
@@ -156,7 +156,7 @@ struct TestMeshProgramInstance
 
     CGAL::set_halfedgeds_items_id(polyhedron);
 
-    numVertices = boost::num_vertices(polyhedron);
+    numVertices = num_vertices(polyhedron);
 
     VIM vertexIndexMap(get(boost::vertex_index, polyhedron));
     HIM halfedgeIndexMap(get(boost::halfedge_index, polyhedron));
@@ -167,7 +167,7 @@ struct TestMeshProgramInstance
 
     std::vector<vertex_descriptor> vertices;
 
-    boost::tie(verticesStart, verticesEnd) = boost::vertices(polyhedron);
+    boost::tie(verticesStart, verticesEnd) = CGAL::vertices(polyhedron);
 
     for (vertex_iterator it = verticesStart; it != verticesEnd; ++it)
     {
@@ -192,7 +192,7 @@ struct TestMeshProgramInstance
     Surface_mesh_shortest_path endToStartShortestPaths(polyhedron, traits);
     endToStartShortestPaths.m_debugOutput = debugMode;
 
-    std::cout << "Mesh: " << meshName << " " << boost::num_vertices(polyhedron) << " " << CGAL::num_faces(polyhedron) << " " << CGAL::num_halfedges(polyhedron) << std::endl;
+    std::cout << "Mesh: " << meshName << " " << num_vertices(polyhedron) << " " << num_faces(polyhedron) << " " << num_halfedges(polyhedron) << std::endl;
 
     std::cout << std::setprecision(20);
 
@@ -250,7 +250,7 @@ struct TestMeshProgramInstance
 
           if (seqItem.type == CGAL::test::SEQUENCE_ITEM_EDGE)
           {
-            std::cout << vertexIndexMap[CGAL::source(seqItem.halfedge, polyhedron)] << " , " << vertexIndexMap[CGAL::target(seqItem.halfedge, polyhedron)] << " : " << seqItem.edgeAlpha << std::endl;
+            std::cout << vertexIndexMap[source(seqItem.halfedge, polyhedron)] << " , " << vertexIndexMap[target(seqItem.halfedge, polyhedron)] << " : " << seqItem.edgeAlpha << std::endl;
           }
           else if (seqItem.type == CGAL::test::SEQUENCE_ITEM_VERTEX)
           {

@@ -1459,7 +1459,7 @@ private:
   {
     vertex_iterator current, end;
 
-    for (boost::tie(current, end) = boost::vertices(m_graph); current != end; ++current)
+    for (boost::tie(current, end) = vertices(m_graph); current != end; ++current)
     {
       std::size_t vertexIndex = get(m_vertexIndexMap, *current);
 
@@ -1832,7 +1832,7 @@ private:
 
       std::size_t numVertices = 0;
 
-      for (boost::tie(current,end) = boost::vertices(m_graph); current != end; ++current)
+      for (boost::tie(current,end) = vertices(m_graph); current != end; ++current)
       {
         std::cout << "Vertex#" << numVertices << ": p = " << get(m_vertexPointMap,*current) << " , Saddle Vertex: " << (is_saddle_vertex(*current) ? "yes" : "no") << " , Boundary Vertex: " << (is_boundary_vertex(*current) ? "yes" : "no") << std::endl;
         ++numVertices;
@@ -1855,7 +1855,7 @@ private:
 
         do
         {
-          std::cout << get(m_vertexIndexMap, boost::source(faceEdgesCurrent, m_graph));
+          std::cout << get(m_vertexIndexMap, source(faceEdgesCurrent, m_graph));
 
           faceEdgesCurrent = next(faceEdgesCurrent, m_graph);
 

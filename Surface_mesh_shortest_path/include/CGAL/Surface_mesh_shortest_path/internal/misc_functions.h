@@ -37,7 +37,7 @@ Triangle_3 triangle_from_halfedge(typename boost::graph_traits<Triangle_mesh>::h
   halfedge_descriptor e0 = edge;
   halfedge_descriptor e1 = next(edge, g);
 
-  return Triangle_3(get(vertexPointMap, boost::source(e0, g)), get(vertexPointMap, boost::target(e0, g)), get(vertexPointMap, boost::target(e1, g)));
+  return Triangle_3(get(vertexPointMap, source(e0, g)), get(vertexPointMap, target(e0, g)), get(vertexPointMap, target(e1, g)));
 }
 
 template <class Triangle_3, class Triangle_mesh>

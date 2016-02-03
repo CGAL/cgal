@@ -30,6 +30,7 @@ int main(int argc, char* argv[])
 {
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron_3;
+
   typedef CGAL::Surface_mesh_shortest_path_traits<Kernel, Polyhedron_3> Traits;
   typedef Traits::Barycentric_coordinate Barycentric_coordinate;
   typedef Traits::FT FT;
@@ -42,6 +43,8 @@ int main(int argc, char* argv[])
   typedef boost::property_map<Polyhedron_3, boost::vertex_index_t>::type VIM;
   typedef boost::property_map<Polyhedron_3, boost::halfedge_index_t>::type HIM;
   typedef boost::property_map<Polyhedron_3, boost::face_index_t>::type FIM;
+
+
 
   Traits traits;
 
@@ -74,7 +77,7 @@ int main(int argc, char* argv[])
 
   std::vector<vertex_descriptor> vertices;
 
-  boost::tie(verticesStart, verticesEnd) = boost::vertices(polyhedron);
+  boost::tie(verticesStart, verticesEnd) = CGAL::vertices(polyhedron);
 
   for (vertex_iterator it = verticesStart; it != verticesEnd; ++it)
   {
@@ -168,7 +171,7 @@ int main(int argc, char* argv[])
             {
               if (items[d].type == CGAL::test::SEQUENCE_ITEM_EDGE)
               {
-                std::cout << "\t" << names[d] << "(edge): " << vertexIndexMap[CGAL::source(items[d].halfedge, polyhedron)] << " , " << vertexIndexMap[CGAL::target(items[d].halfedge, polyhedron)] << " : " << items[d].edgeAlpha << std::endl;
+                std::cout << "\t" << names[d] << "(edge): " << vertexIndexMap[source(items[d].halfedge, polyhedron)] << " , " << vertexIndexMap[target(items[d].halfedge, polyhedron)] << " : " << items[d].edgeAlpha << std::endl;
               }
               else if (items[d].type == CGAL::test::SEQUENCE_ITEM_VERTEX)
               {
@@ -266,6 +269,7 @@ int main(int argc, char* argv[])
       }
     }
   }
+
   return 0;
 }
 

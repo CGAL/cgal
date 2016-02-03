@@ -43,7 +43,7 @@ int main(int argc,char** argv)
 
   // Definition of the region of interest (use the whole mesh)
   vertex_iterator vb,ve;
-  boost::tie(vb, ve) = boost::vertices(mesh);
+  boost::tie(vb, ve) = vertices(mesh);
 
   //the selection is set by a file
   input.open(argv[2]);

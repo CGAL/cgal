@@ -74,7 +74,7 @@ int main(int argc, char* argv[])
   Surface_mesh_shortest_path shortestPaths(polyhedron, traits);
 
   face_iterator facesBegin, facesEnd;
-  boost::tie(facesBegin, facesEnd) = CGAL::faces(polyhedron);
+  boost::tie(facesBegin, facesEnd) = faces(polyhedron);
 
   std::vector<face_descriptor> facesList;
 
@@ -89,14 +89,14 @@ int main(int argc, char* argv[])
   typedef boost::property_map<Polyhedron_3, CGAL::face_index_t>::type FIM;
 
   FIM faceIndexMap(get(boost::face_index, polyhedron));
-  VPM vertexPointMap(CGAL::get(CGAL::vertex_point, polyhedron));
+  VPM vertexPointMap(get(CGAL::vertex_point, polyhedron));
 
   for (size_t i = 0; i < numTrials; ++i)
   {
     size_t faceIndex = random.get_int(0, facesList.size());
     face_descriptor face = facesList[faceIndex];
 
-    Triangle_3 faceTriangle = CGAL::internal::triangle_from_halfedge<Triangle_3, Polyhedron_3, VPM>(CGAL::halfedge(face, polyhedron), polyhedron, vertexPointMap);
+    Triangle_3 faceTriangle = CGAL::internal::triangle_from_halfedge<Triangle_3, Polyhedron_3, VPM>(halfedge(face, polyhedron), polyhedron, vertexPointMap);
 
     Barycentric_coordinate location = CGAL::test::random_coordinate<Traits>(random);
 
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
   }
 
   vertex_iterator startVertexIt, endVertexIt;
-  boost::tie(startVertexIt, endVertexIt) = boost::vertices(polyhedron);
+  boost::tie(startVertexIt, endVertexIt) = vertices(polyhedron);
 
   bool first = true;
 
