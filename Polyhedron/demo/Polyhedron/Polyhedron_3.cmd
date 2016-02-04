@@ -1,0 +1,1 @@
+-platform offscreen 'qtscript:main_window.quit()'
