@@ -52,7 +52,7 @@
 #define DT_RGB                  128 /* */
 #define DT_ALL                  255 /* */
 
-#include <string>
+#include <cstring>
 
 struct header_key                       /*      header_key       */
     {                                           /* off + size*/
