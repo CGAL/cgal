@@ -54,7 +54,6 @@ random_convex_set_2( std::size_t n,
   using std::less;
   using std::max_element;
   using CGAL::cpp11::copy_n;
-  using boost::bind2nd;
 
   typedef typename Traits::Point_2         Point_2;
   typedef typename Traits::FT              FT;
@@ -83,7 +82,7 @@ random_convex_set_2( std::size_t n,
     points.begin(),
     points.end(),
     points.begin(),
-    bind2nd( Sum(), scale( centroid, FT( -1))));
+    boost::bind2nd( Sum(), scale( centroid, FT( -1))));
 
   // sort them according to their direction's angle
   // w.r.t. the positive x-axis:
@@ -101,7 +100,7 @@ random_convex_set_2( std::size_t n,
     points.begin(),
     points.end(),
     points.begin(),
-    bind2nd( Sum(), sum( centroid,
+    boost::bind2nd( Sum(), sum( centroid,
                          scale( new_centroid, FT( -1)))));
 
   // compute maximal coordinate:
@@ -117,7 +116,7 @@ random_convex_set_2( std::size_t n,
     points.begin(),
     points.end(),
     o,
-    bind2nd( Scale(), FT( pg.range()) / maxcoord));
+    boost::bind2nd( Scale(), FT( pg.range()) / maxcoord));
 
 } // random_convex_set_2( n, o, pg, t)
 
