@@ -1,5 +1,6 @@
 #include <CGAL/basic.h>
 #include <CGAL/function_objects.h>
+#include <boost/functional.hpp>
 #include <functional>
 #include <algorithm>
 #include <numeric>
@@ -10,8 +11,8 @@ using CGAL::compose1_2;
 using CGAL::compose2_1;
 using CGAL::compose2_2;
 using CGAL::compare_to_less;
-using std::binder1st;
-using std::bind1st;
+using boost::binder1st;
+using boost::bind1st;
 using std::accumulate;
 using std::plus;
 using std::multiplies;

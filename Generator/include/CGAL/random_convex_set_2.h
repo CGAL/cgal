@@ -32,6 +32,7 @@
 #include <numeric>
 #include <CGAL/Random_convex_set_traits_2.h>
 #include <CGAL/centroid.h>
+#include <boost/functional.hpp>
 
 namespace CGAL {
 
@@ -48,12 +49,12 @@ random_convex_set_2( std::size_t n,
   using std::back_inserter;
   using std::accumulate;
   using std::transform;
-  using std::bind2nd;
   using std::sort;
   using std::partial_sum;
   using std::less;
   using std::max_element;
   using CGAL::cpp11::copy_n;
+  using boost::bind2nd;
 
   typedef typename Traits::Point_2         Point_2;
   typedef typename Traits::FT              FT;
