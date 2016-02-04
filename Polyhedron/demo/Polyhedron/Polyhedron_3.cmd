@@ -1,1 +1,1 @@
--platform offscreen 'qtscript:main_window.quit()'
+-platform minimal 'qtscript:main_window.quit()'
