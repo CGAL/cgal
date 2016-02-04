@@ -3,7 +3,6 @@ namespace CGAL {
 
 \mainpage User Manual
 \anchor Chapter_Three
-\anchor chapterThree
 \cgalAutoToc
 \author Laurent Rineau, Sebastien Loriot, Andreas Fabri, Maxime Gimeno
 
@@ -49,7 +48,7 @@ Create a list of `QActions` containing the actions of the plugin.\n
 Add the following line:
 ~~~~~~~~~~~~~{.cpp}
     actionName->setProperty("submenuName", "Name_you_want_for_your_submenu");
-    ~~~~~~~~~~~~~
+~~~~~~~~~~~~~
 to place your action in a submenu in the Operation Menu.\n
 If the plugin implements a new `Scene_item`, please notice that a Scene_item has a number of functions that will need a reference to the `Viewer` through the `Viewer_interface` type.
 
@@ -104,9 +103,9 @@ Just like with the Dialog, create a new Qt Designer form (file->New file or Proj
 Edit the ui file with the editor, then add the following line to your plugin file:
 ~~~~~~~~~~~~~{.cpp}
     #include "ui_dock_example.h"
- ~~~~~~~~~~~~~
+~~~~~~~~~~~~~
  Add a `DockQWidget*` and a `Ui::your_dock_widget` as private members of your plugin:
- ~~~~~~~~~~~~~{.cpp}
+~~~~~~~~~~~~~{.cpp}
     private:
     Ui::Dock_example ui_widget;
     QDockWidget* dock_widget;

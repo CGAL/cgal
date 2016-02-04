@@ -611,11 +611,11 @@ The following code produces a 3D mesh for a domain consisting of several subdoma
 Here, the set of subdomains is given by a vector of vector of signs, whereas the set was built automatically in the previous example.
 Each subdomain corresponds to a sign vector [s1, s2, ..., sn] where si is the sign of the function fi(p) at a point p of the subdomain.
 
-\cgalFigureRef{figuremulti_domain} shows a view of the
+\cgalFigureRef{figuremulti_domain2} shows a view of the
 resulting mesh.
 
 \cgalExample{Mesh_3/mesh_implicit_domains_2.cpp}
-\cgalFigureBegin{figuremulti_domain,multi_domain_2.jpg}
+\cgalFigureBegin{figuremulti_domain2,multi_domain_2.jpg}
 View of a 3D mesh of the relative complement of a torus in a sphere.
 \cgalFigureEnd
 
