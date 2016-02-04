@@ -27,7 +27,7 @@
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <CGAL/FaceGraph_to_Polyhedron_3.h>
+#include <CGAL/boost/graph/copy_face_graph.h>
 
 #include <boost/graph/graph_traits.hpp>
 #include <boost/graph/adjacency_list.hpp>
@@ -385,7 +385,7 @@ public:
                                       const Traits& traits = Traits())
     : m_traits(traits), m_weight_calculator(m_tmesh)
   {
-    init(tmesh, get(vertex_point, tmesh));
+    init(tmesh);
   }
   #endif
   /// @} Constructor
@@ -827,18 +827,11 @@ private:
   }
 
   /// Initialize some global data structures such as vertex id.
-  void init(const TriangleMesh& tmesh,
-            VertexPointMap vpm)
+  void init(const TriangleMesh& tmesh)
   {
-    // copy the input FaceGraph into a mTriangleMesh
-    CGAL::FaceGraph_to_Polyhedron_3<TriangleMesh,
-                                    VertexPointMap,
-                                    typename mTriangleMesh::HalfedgeDS,
-                                    false> modifier(tmesh, vpm);
+    copy_face_graph(tmesh, m_tmesh);
 
-    m_tmesh.delegate(modifier);
-
-    // copy input vertices to keep correspondance
+    // copy input vertices to keep correspondence
     typename boost::graph_traits<mTriangleMesh>::vertex_iterator vit=vertices(m_tmesh).first;
     BOOST_FOREACH(Input_vertex_descriptor vd, vertices(tmesh) )
       (*vit++)->vertices.push_back(vd);
