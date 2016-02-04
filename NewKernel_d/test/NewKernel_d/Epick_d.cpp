@@ -3,7 +3,7 @@
 #include <iostream>
 int main()
 {
-  std::cerr << "NOTICE: This test requires G++ > 4.2, and will not be compiled." << std::endl;
+  std::cerr << "NOTICE: This test requires G++ >= 4.4, and will not be compiled." << std::endl;
 }
 
 #else
