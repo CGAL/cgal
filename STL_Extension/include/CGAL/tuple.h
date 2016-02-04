@@ -32,6 +32,10 @@
   #if defined( _LIBCPP_VERSION ) // check if libc++ is used
     #define CGAL_CFG_NO_CPP0X_TUPLE
   #endif
+  #if defined(__GNUC__) && defined(__GNUC_MINOR__) && (__GNUC__ <= 4) && (__GNUC_MINOR__ <= 4)
+    #define CGAL_CFG_NO_CPP0X_TUPLE
+    #define CGAL_CFG_NO_CPP0X_VARIADIC_TEMPLATES
+  #endif
 #endif
 
 #ifndef CGAL_CFG_NO_CPP0X_TUPLE
