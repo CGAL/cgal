@@ -26,7 +26,8 @@
 #ifndef CGAL_REAL_TIMER_H
 #define CGAL_REAL_TIMER_H 1
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <CGAL/assertions.h>
 // For the numerical limits
 #include <cfloat>
 

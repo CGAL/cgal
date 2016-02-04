@@ -20,7 +20,8 @@
 #ifndef CGAL_MEMORY_SIZER_H
 #define CGAL_MEMORY_SIZER_H
 
-#include <CGAL/basic.h>
+#include <CGAL/config.h>
+#include <CGAL/assertions.h>
 
 // This has only been implemented for MacOSX/Darwin, Linux and VC++ for now.
 #if !defined _MSC_VER && !defined __linux__ && !defined __APPLE__
