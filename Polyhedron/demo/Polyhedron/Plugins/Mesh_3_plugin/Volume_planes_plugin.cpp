@@ -351,15 +351,19 @@ private:
 
     switchReaderConverter< Word >(minmax);
     
-    threads.push_back(new X_plane_thread<Word>(img, clamper, name));
+    Volume_plane<x_tag> *xitem = new Volume_plane<x_tag>();
+    Volume_plane<y_tag> *yitem = new Volume_plane<y_tag>();
+    Volume_plane<z_tag> *zitem = new Volume_plane<z_tag>();
+
+    threads.push_back(new X_plane_thread<Word>(xitem, img, clamper, name));
     connect(threads.back(), SIGNAL(finished(Volume_plane_thread*)), this, SLOT(addVP(Volume_plane_thread*)));
     threads.back()->start();
     
-    threads.push_back(new Y_plane_thread<Word>(img, clamper, name));
+    threads.push_back(new Y_plane_thread<Word>(yitem,img, clamper, name));
     connect(threads.back(), SIGNAL(finished(Volume_plane_thread*)), this, SLOT(addVP(Volume_plane_thread*)));
     threads.back()->start();
 
-    threads.push_back(new Z_plane_thread<Word>(img, clamper, name));
+    threads.push_back(new Z_plane_thread<Word>(zitem,img, clamper, name));
     connect(threads.back(), SIGNAL(finished(Volume_plane_thread*)), this, SLOT(addVP(Volume_plane_thread*)));
     threads.back()->start();
 

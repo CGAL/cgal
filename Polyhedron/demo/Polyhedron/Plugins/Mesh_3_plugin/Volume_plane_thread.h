@@ -44,8 +44,8 @@ protected:
 template<typename Word>
 class X_plane_thread : public Volume_plane_thread {
 public:
-  X_plane_thread(const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
-    : Volume_plane_thread(img, clamp, name) { }
+ X_plane_thread(Volume_plane<x_tag>*p_it, const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
+  : Volume_plane_thread(img, clamp, name) { item = p_it;}
 protected:
   void run();
 };
@@ -53,8 +53,8 @@ protected:
 template<typename Word>
 class Y_plane_thread : public Volume_plane_thread {
 public:
-  Y_plane_thread(const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
-    : Volume_plane_thread(img, clamp, name) { }
+ Y_plane_thread(Volume_plane<y_tag>* p_it, const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
+  : Volume_plane_thread(img, clamp, name) {item = p_it; }
 protected:
   void run();
 };
@@ -62,8 +62,8 @@ protected:
 template<typename Word>
 class Z_plane_thread : public Volume_plane_thread {
 public:
-  Z_plane_thread(const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
-    : Volume_plane_thread(img, clamp, name) { }
+ Z_plane_thread(Volume_plane<z_tag>* p_it, const CGAL::Image_3* img, const Clamp_to_one_zero_range& clamp, const QString& name)
+  : Volume_plane_thread(img, clamp, name) {item = p_it;}
 protected:
   void run();
 };
@@ -80,8 +80,8 @@ void X_plane_thread<Word>::run() {
         }
       }
     }
-    item = new Volume_plane<x_tag>(static_cast<int>(img->ydim()), static_cast<int>(img->zdim()), static_cast<int>(img->xdim()), 
-                                   img->vx(), img->vy(), img->vz(), buffer);
+    item->setData(static_cast<int>(img->ydim()), static_cast<int>(img->zdim()), static_cast<int>(img->xdim()),
+                         img->vx(), img->vy(), img->vz(), buffer);
 
     item->setName(name);
     item->moveToThread(QApplication::instance()->thread());
@@ -100,7 +100,7 @@ void Y_plane_thread<Word>::run() {
         }
       }
     }
-    item = new Volume_plane<y_tag>(static_cast<int>(img->xdim()), static_cast<int>(img->zdim()), static_cast<int>(img->ydim()), 
+    item->setData(static_cast<int>(img->xdim()), static_cast<int>(img->zdim()), static_cast<int>(img->ydim()),
                                    img->vx(), img->vy(), img->vz(), buffer);
     item->setName(name);
     item->moveToThread(QApplication::instance()->thread());
@@ -118,7 +118,7 @@ void Z_plane_thread<Word>::run() {
       }
     }
   }
-  item = new Volume_plane<z_tag>(static_cast<int>(img->xdim()), static_cast<int>(img->ydim()), static_cast<int>(img->zdim()), 
+  item->setData(static_cast<int>(img->xdim()), static_cast<int>(img->ydim()), static_cast<int>(img->zdim()),
                                  img->vx(), img->vy(), img->vz(), buffer);
   item->setName(name);
   item->moveToThread(QApplication::instance()->thread());
