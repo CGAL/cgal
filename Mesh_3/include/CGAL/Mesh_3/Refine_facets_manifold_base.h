@@ -159,7 +159,7 @@ private:
     Vertex_handle v1 = arete.first;
     Vertex_handle v2 = arete.second;
     Cell_handle c;
-    int index1, index2;
+    int index1=0, index2=0; // initialize to avoid g++ 4.8 -Wmaybe-uninitialized
 
     CGAL_assume_code(bool is_edge =)
     this->r_tr_.is_edge(v1, v2, c, index1, index2);
