@@ -449,7 +449,7 @@ void make_tc(std::vector<Point> &points,
     //std::cerr << yellow << "FINAL CHECK...\n" << white;
     //std::size_t num_inc = tc.number_of_inconsistent_simplices(true).second;
     //tc.refresh_tangential_complex();
-    //if (tc.number_of_inconsistent_simplices(true).second != num_inc)
+    //if (CGAL::cpp11::get<1>(tc.number_of_inconsistent_simplices(true)) != num_inc)
     //  std::cerr << red << "FINAL CHECK: FAILED.\n" << white;
     //else
     //  std::cerr << green << "FINAL CHECK: PASSED.\n" << white;

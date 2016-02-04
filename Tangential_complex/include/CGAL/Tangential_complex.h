@@ -580,15 +580,15 @@ public:
     Wall_clock_timer t;
 
 #ifdef CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
-    std::pair<std::size_t, std::size_t> stats_before =
+    CGAL::cpp11::tuple<std::size_t, std::size_t, std::size_t> stats_before =
       number_of_inconsistent_simplices(false);
 
 # ifdef CGAL_TC_VERBOSE
       std::cerr << "Initial number of inconsistencies: "
-      << stats_before.second << "\n";
+      << CGAL::cpp11::get<1>(stats_before) << "\n";
 # endif
 
-    if (stats_before.second == 0)
+    if (CGAL::cpp11::get<1>(stats_before) == 0)
     {
 # ifdef CGAL_TC_VERBOSE
       std::cerr << "Nothing to fix.\n";
@@ -606,10 +606,13 @@ public:
       std::cerr
         << "\nBefore fix step:\n"
         << "  * Total number of simplices in stars (incl. duplicates): "
-        << stats_before.first << "\n"
+        << CGAL::cpp11::get<0>(stats_before) << "\n"
         << "  * Num inconsistent simplices in stars (incl. duplicates): "
-        << red << stats_before.second << white
-        << " (" << 100. * stats_before.second / stats_before.first << "%)\n";
+        << red << CGAL::cpp11::get<1>(stats_before) << white << " (" 
+        << 100. * CGAL::cpp11::get<1>(stats_before) / CGAL::cpp11::get<0>(stats_before) << "%)\n"
+        << "  * Number of stars containing inconsistent simplices: "
+        << red << CGAL::cpp11::get<2>(stats_before) << white << " ("
+        << 100. * CGAL::cpp11::get<2>(stats_before) / m_points.size() << "%)\n";
 #endif
 
 #if defined(CGAL_TC_VERBOSE) || defined(CGAL_TC_PROFILING)
@@ -681,10 +684,12 @@ public:
         refresh_tangential_complex(updated_points);
 
 # ifdef CGAL_TC_PERFORM_EXTRA_CHECKS
-      // DEBUGGING: confirm that all stars were actually refreshed
-      std::size_t num_inc_1 = number_of_inconsistent_simplices(false).second;
+      // Confirm that all stars were actually refreshed
+      std::size_t num_inc_1 = 
+        CGAL::cpp11::get<1>(number_of_inconsistent_simplices(false));
       refresh_tangential_complex();
-      std::size_t num_inc_2 = number_of_inconsistent_simplices(false).second;
+      std::size_t num_inc_2 = 
+        CGAL::cpp11::get<1>(number_of_inconsistent_simplices(false));
       if (num_inc_1 != num_inc_2)
         std::cerr << red << "REFRESHMENT CHECK: FAILED. ("
           << num_inc_1 << " vs " << num_inc_2 << ")\n" << white;
@@ -694,16 +699,19 @@ public:
 #endif
 
 #ifdef CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
-      std::pair<std::size_t, std::size_t> stats_after =
+      CGAL::cpp11::tuple<std::size_t, std::size_t, std::size_t> stats_after =
         number_of_inconsistent_simplices(false);
 
       std::cerr
         << "\nAfter fix:\n"
         << "  * Total number of simplices in stars (incl. duplicates): "
-        << stats_after.first << "\n"
+        << CGAL::cpp11::get<0>(stats_after) << "\n"
         << "  * Num inconsistent simplices in stars (incl. duplicates): "
-        << red << stats_after.second << white
-        << " (" << 100. * stats_after.second / stats_after.first << "%)\n";
+        << red << CGAL::cpp11::get<1>(stats_after) << white << " (" 
+        << 100. * CGAL::cpp11::get<1>(stats_after) / CGAL::cpp11::get<0>(stats_after) << "%)\n"
+        << "  * Number of stars containing inconsistent simplices: "
+        << red << CGAL::cpp11::get<2>(stats_after) << white << " ("
+        << 100. * CGAL::cpp11::get<2>(stats_after) / m_points.size() << "%)\n";
 
       stats_before = stats_after;
 #endif
@@ -716,14 +724,17 @@ public:
 
       final_num_inconsistent_stars = num_inconsistent_stars;
 
-      ++num_steps;
       done = (num_inconsistent_stars == 0);
-      if (!done && time_limit > 0. && t.elapsed() > time_limit)
+      if (!done)
       {
+        ++num_steps;
+        if (time_limit > 0. && t.elapsed() > time_limit)
+        {
 #ifdef CGAL_TC_VERBOSE
-        std::cerr << red << "Time limit reached.\n" << white;
+          std::cerr << red << "Time limit reached.\n" << white;
 #endif
-        return TIME_LIMIT_REACHED;
+          return TIME_LIMIT_REACHED;
+        }
       }
     }
 
@@ -733,8 +744,10 @@ public:
     return TC_FIXED;
   }
 
-  // Return a pair<num_simplices, num_inconsistent_simplices>
-  std::pair<std::size_t, std::size_t> number_of_inconsistent_simplices(
+  // Return a tuple
+  // <num_simplices, num_inconsistent_simplices, num_inconsistent_stars>
+  CGAL::cpp11::tuple<std::size_t, std::size_t, std::size_t> 
+  number_of_inconsistent_simplices(
 #ifdef CGAL_TC_VERBOSE
     bool verbose = true
 #else
@@ -744,9 +757,12 @@ public:
   {
     std::size_t num_simplices = 0;
     std::size_t num_inconsistent_simplices = 0;
+    std::size_t num_inconsistent_stars = 0;
     // For each triangulation
     for (std::size_t idx = 0 ; idx < m_points.size() ; ++idx)
     {
+      bool is_star_inconsistent = false;
+
       // For each cell
       Star::const_iterator it_inc_simplex = m_stars[idx].begin();
       Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
@@ -760,10 +776,14 @@ public:
         c.insert(idx); // Add the missing index
 
         if (!is_simplex_consistent(c))
+        {
           ++num_inconsistent_simplices;
+          is_star_inconsistent = true;
+        }
 
         ++num_simplices;
       }
+      num_inconsistent_stars += is_star_inconsistent;
     }
 
     if (verbose)
@@ -771,22 +791,32 @@ public:
       std::cerr
         << "\n==========================================================\n"
         << "Inconsistencies:\n"
-        << "  * Number of vertices: " << m_points.size() << "\n"
         << "  * Total number of simplices in stars (incl. duplicates): "
         << num_simplices << "\n"
         << "  * Number of inconsistent simplices in stars (incl. duplicates): "
-        << num_inconsistent_simplices << "\n"
-        << "  * Percentage of inconsistencies: "
-        << 100. * num_inconsistent_simplices / num_simplices << "%\n"
+        << num_inconsistent_simplices << " (" 
+        << 100. * num_inconsistent_simplices / num_simplices << "%)\n"
+        << "  * Number of stars containing inconsistent simplices: "
+        << num_inconsistent_stars << " ("
+        << 100. * num_inconsistent_stars / m_points.size() << "%)\n"
         << "==========================================================\n";
     }
 
-    return std::make_pair(num_simplices, num_inconsistent_simplices);
+    return std::make_tuple(
+      num_simplices, num_inconsistent_simplices, num_inconsistent_stars);
   }
 
   // Return the max dimension of the simplices
+  // check_lower_and_higher_dim_simplices : 0 (false), 1 (true), 2 (auto)
+  //   If the check is enabled, the function:
+  //   - won't insert the simplex if it is already in a higher dim simplex
+  //   - will erase any lower-dim simplices that are faces of the new simplex
+  //   "auto" (= 2) will enable the check as a soon as it encounters a 
+  //   simplex whose dimension is different from the previous ones.
+  //   N.B.: The check is quite expensive.
   int export_TC(Simplicial_complex &complex,
-    bool export_infinite_simplices = false) const
+    bool export_infinite_simplices = false, 
+    int check_lower_and_higher_dim_simplices = 2) const
   {
 #if defined(CGAL_TC_VERBOSE) || defined(CGAL_TC_PROFILING)
     std::cerr << yellow
@@ -806,16 +836,35 @@ public:
       Star::const_iterator it_inc_simplex_end = m_stars[idx].end();
       for ( ; it_inc_simplex != it_inc_simplex_end ; ++it_inc_simplex)
       {
+        Indexed_simplex c = *it_inc_simplex;
+
         // Don't export infinite cells
-        if (!export_infinite_simplices && is_infinite(*it_inc_simplex))
+        if (!export_infinite_simplices && is_infinite(c))
           continue;
 
-        Indexed_simplex c = *it_inc_simplex;
+        // Unusual simplex dim?
+        if (check_lower_and_higher_dim_simplices == 2
+          && max_dim != -1
+          && static_cast<int>(c.size()) != max_dim)
+        {
+          // Let's activate the check
+          std::cerr << red << 
+            "Info: check_lower_and_higher_dim_simplices ACTIVATED. "
+            "Export might be take some time...\n" << white;
+          check_lower_and_higher_dim_simplices = 1;
+        }
+
         if (static_cast<int>(c.size()) > max_dim)
           max_dim = static_cast<int>(c.size());
         // Add the missing center vertex
         c.insert(idx);
-        complex.add_simplex(c);
+
+#ifdef CGAL_TC_ALVAREZ_SURFACE_WINDOW
+        if (is_one_of_the_coord_far_from_origin(c, CGAL_TC_ALVAREZ_SURFACE_WINDOW, 2))
+          continue;
+#endif
+
+        complex.add_simplex(c, check_lower_and_higher_dim_simplices == 1);
       }
     }
 
@@ -852,33 +901,11 @@ public:
         }
       } while (inconsistencies_found);
     }
-
-    // CJTODO TEMP
-    std::pair<std::size_t, std::size_t> stats_after =
-      number_of_inconsistent_simplices(false);
-    std::cerr << "AFTER check_and_solve_inconsistencies_by_adding_higher_dim_simplices():\n"
-      << "    - Total number of simplices in stars (incl. duplicates): "
-      << stats_after.first << "\n"
-      << "    - Num inconsistent simplices in stars (incl. duplicates): "
-      << stats_after.second << "\n"
-      << "    - Percentage of inconsistencies: "
-      << 100. * stats_after.second / stats_after.first << "%\n";
   }
 
   // Returns true if some inconsistencies were found
   bool check_and_solve_inconsistencies_by_filtering_simplices_out()
   {
-    // CJTODO TEMP
-    std::pair<std::size_t, std::size_t> stats_before =
-      number_of_inconsistent_simplices(false);
-    std::cerr << "BEFORE check_and_solve_inconsistencies_by_filtering_simplices_out():\n"
-      << "    - Total number of simplices in stars (incl. duplicates): "
-      << stats_before.first << "\n"
-      << "    - Num inconsistent simplices in stars (incl. duplicates): "
-      << stats_before.second << "\n"
-      << "    - Percentage of inconsistencies: "
-      << 100. * stats_before.second / stats_before.first << "%\n";
-
     bool inconsistencies_found = false;
 
     // CJTODO: parallel_for???
@@ -887,17 +914,6 @@ public:
       if (filter_inconsistent_simplices_in_a_local_triangulation(idx))
         inconsistencies_found = true;
     }
-
-    // CJTODO TEMP
-    std::pair<std::size_t, std::size_t> stats_after =
-      number_of_inconsistent_simplices(false);
-    std::cerr << "AFTER check_and_solve_inconsistencies_by_filtering_simplices_out():\n"
-      << "    - Total number of simplices in stars (incl. duplicates): "
-      << stats_after.first << "\n"
-      << "    - Num inconsistent simplices in stars (incl. duplicates): "
-      << stats_after.second << "\n"
-      << "    - Percentage of inconsistencies: "
-      << 100. * stats_after.second / stats_after.first << "%\n";
 
     return inconsistencies_found;
   }

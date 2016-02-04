@@ -46,6 +46,9 @@ public:
   typedef std::set<std::size_t>                     Simplex;
   typedef std::set<Simplex>                         Simplex_set;
 
+  // If perform_checks = true, the function:
+  // - won't insert the simplex if it is already in a higher dim simplex
+  // - will erase any lower-dim simplices that are faces of the new simplex
   void add_simplex(
     const std::set<std::size_t> &s, bool perform_checks = true)
   {
