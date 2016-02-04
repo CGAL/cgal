@@ -1,6 +1,4 @@
-
-#include <boost/config.hpp>
-#if defined(BOOST_GCC) && (BOOST_GCC < 40300)
+#if defined(__GNUC__) && defined(__GNUC_MINOR__) && (__GNUC__ <= 4) && (__GNU_MINOR__ < 4)
 
 #include <iostream>
 int main()
