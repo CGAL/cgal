@@ -32,6 +32,7 @@
 #ifndef __ENDIAN_H_INCLUDED__
 #define __ENDIAN_H_INCLUDED__
 
+#include <cstdio>
 #include "bmptypes.h"
 
 /*
