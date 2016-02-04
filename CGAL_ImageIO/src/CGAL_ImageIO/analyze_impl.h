@@ -52,8 +52,6 @@
 #define DT_RGB                  128 /* */
 #define DT_ALL                  255 /* */
 
-#include <string>
-
 struct header_key                       /*      header_key       */
     {                                           /* off + size*/
         int sizeof_hdr;                         /* 0 + 4     */
