@@ -368,7 +368,7 @@ ideas that was brought to them throughout the last years. In particular,
 they want to thank Menelaos Karavelas and Elias Tsigaridas for their
 initial contributions.
 
-The two generic models where initially developed as part of the <span class="textsc">Exacus</span> \cgalCite{beh}+-eeeafcs-05 project. 
+The two generic models where initially developed as part of the <span class="textsc">Exacus</span> \cgalCite{beh-eeeafcs-05} project. 
 However, the models are now fully integrated into the \cgal library, 
 since also the relevant layers of <span class="textsc">Exacus</span> are now part of \cgal.
 The main authors for `Algebraic_kernel_d_1<Coeff>` and `Algebraic_kernel_d_2<Coeff>` are 

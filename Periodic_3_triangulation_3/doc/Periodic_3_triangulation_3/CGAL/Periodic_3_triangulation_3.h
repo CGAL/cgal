@@ -241,8 +241,6 @@ typedef unspecified_type Periodic_point_iterator;
 /// @{
 
 /*!
-\ingroup PkgPeriodic3Triangulation3Enums
-
 The enum `Locate_type` is defined by `Periodic_3_triangulation_3` to
 specify which case occurs when locating a point in the
 triangulation. If the triangulation does not contain any points
@@ -254,8 +252,6 @@ triangulation. If the triangulation does not contain any points
 enum Locate_type {VERTEX=0, EDGE, FACET, CELL, EMPTY};
 
 /*!
-\ingroup PkgPeriodic3Triangulation3Enums
-
 The enum `Iterator_type` is defined by `Periodic_3_triangulation_3` to
 specify the behavior of geometric iterators.
 

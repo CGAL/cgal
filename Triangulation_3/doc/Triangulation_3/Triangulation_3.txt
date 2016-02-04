@@ -1056,7 +1056,7 @@ she also wrote the traits classes for regular triangulations.
 
 In 2000, Sylvain Pion started working on these packages. He improved
 the efficiency of triangulations in \cgal 2.3 and 2.4 in several ways
-\cgalCite{cgal:bdpty-tc-02:} he implemented the Delaunay hierarchy
+\cgalCite{cgal:bdpty-tc-02} he implemented the Delaunay hierarchy
 \cgalCite{cgal:d-dh-02} in 2.3, he improved the memory footprint in 2.4
 and 3.0, he also performed work on arithmetic filters
 \cgalCite{cgal:dp-eegpd-03} (see `Filtered_kernel`) to improve

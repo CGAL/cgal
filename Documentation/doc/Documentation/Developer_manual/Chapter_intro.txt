@@ -27,7 +27,7 @@ projects 21957 (CGAL) and 28155 (GALIA).
 
 \section secdesign_goals Primary design goals 
 
-The primary design goals of \cgal are described in \cgalCite{fgkss-dccga-00:}
+The primary design goals of \cgal are described in \cgalCite{fgkss-dccga-00}
 
 \subsection Developer_manualCorrectness Correctness
 

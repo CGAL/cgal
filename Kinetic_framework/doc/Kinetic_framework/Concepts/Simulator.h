@@ -385,5 +385,5 @@ double to_double(Simulator::Time);
 */ 
 std::pair<double, double> to_interval(Simulator::Time); 
 
-} /*end namespace Kinetic
+} /* end namespace Kinetic */
 

@@ -9,8 +9,6 @@
 /// \defgroup PkgPeriodic3Triangulation3TraitsClasses Traits Classes
 /// \ingroup PkgPeriodic3Triangulation3
 
-/// \defgroup PkgPeriodic3Triangulation3Enums Enums
-/// \ingroup PkgPeriodic3Triangulation3
 /*!
 \addtogroup PkgPeriodic3Triangulation3
 \todo check generated documentation

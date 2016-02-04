@@ -961,7 +961,7 @@ The trapezoidal map RIC algorithm has expected logarithmic query time,
 while the query time for the landmark strategy may be as large as
 linear. In practice however, the query times of both strategies are
 competitive. For a detailed experimental comparison
-see \cgalCite{hh-eplca-05}
+see \cgalCite{cgal:hh-eplca-05}.
 
 Updating the auxiliary data structures of the trapezoidal map RIC
 algorithm is done very efficiently. On the other hand, updating the
