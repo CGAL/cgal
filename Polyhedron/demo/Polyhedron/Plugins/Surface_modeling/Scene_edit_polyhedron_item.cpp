@@ -649,7 +649,6 @@ void Scene_edit_polyhedron_item::draw_frame_plane(QGLViewer* ) const
           base2=orientation.rotate(base2);
 
           qglviewer::Vec center = hgb_data->calculate_initial_center();
-
           qglviewer::Vec p1 = center - diag*base1 - diag*base2;
           qglviewer::Vec p2 = center + diag*base1 - diag*base2;
           qglviewer::Vec p3 = center + diag*base1 + diag*base2;
@@ -930,3 +929,10 @@ void Scene_edit_polyhedron_item::create_Sphere(double R)
 }
 
 //#include "Scene_edit_polyhedron_item.moc"
+void Scene_edit_polyhedron_item::update_frame_plane()
+{
+  for(Ctrl_vertices_group_data_list::iterator hgb_data = ctrl_vertex_frame_map.begin(); hgb_data != ctrl_vertex_frame_map.end(); ++hgb_data)
+  {
+      hgb_data->refresh();
+  }
+}

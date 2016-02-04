@@ -261,6 +261,7 @@ void Polyhedron_demo_edit_polyhedron_plugin::on_ActivateFixedPlaneCheckBox_state
     {
         Scene_edit_polyhedron_item* edit_item = qobject_cast<Scene_edit_polyhedron_item*>(scene->item(i));
         if(!edit_item) { continue; }
+        edit_item->update_frame_plane();
         edit_item->invalidateOpenGLBuffers();
         scene->itemChanged(edit_item);
     }

@@ -242,6 +242,7 @@ public:
   // take mouse events from viewer, main-window does not work
   // take keyboard events from main-window, which is more stable
   bool eventFilter(QObject *target, QEvent *event);
+  void update_frame_plane();
   
 protected:
   void timerEvent(QTimerEvent *event);
