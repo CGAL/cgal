@@ -53,18 +53,26 @@ class SCENE_ITEM_EXPORT Scene_item : public QObject {
   Q_ENUMS(RenderingMode)
   Q_PROPERTY(RenderingMode renderingMode READ renderingMode WRITE setRenderingMode)
 public:
-  enum OpenGL_program_IDs { PROGRAM_WITH_LIGHT,
-                            PROGRAM_WITHOUT_LIGHT,
-                            PROGRAM_NO_SELECTION,
-                            PROGRAM_WITH_TEXTURE,
-                            PROGRAM_PLANE_TWO_FACES,
-                            PROGRAM_WITH_TEXTURED_EDGES,
-                            PROGRAM_INSTANCED,
-                            PROGRAM_INSTANCED_WIRE,
-                            PROGRAM_C3T3,
-                            PROGRAM_C3T3_EDGES,
-                            NB_OF_PROGRAMS };
-
+ /*!
+   * \brief The OpenGL_program_IDs enum
+   * This enum holds the OpenGL programs IDs that are given to getShaderProgram() and attrib_buffers().
+   *@see getShaderProgram
+   * @see attrib_buffers
+   */
+ enum OpenGL_program_IDs
+ {
+  PROGRAM_WITH_LIGHT = 0,      /** Used to render a surface or edge affected by the light. It uses a per fragment lighting model, and renders brighter the selected item.*/
+  PROGRAM_WITHOUT_LIGHT,       /** Used to render a polygon edge or points. It renders in a uniform color and is not affected by light. It renders the selected item in black.*/
+  PROGRAM_NO_SELECTION,        /** Used to render a polyline or a surface that is not affected by light, like a cutting plane. It renders in a uniform color that does not change with selection.*/
+  PROGRAM_WITH_TEXTURE,        /** Used to render a textured polyhedron. Affected by light.*/
+  PROGRAM_PLANE_TWO_FACES,     /** Used to render a two-faced plane. The two faces have a different color. Not affected by light.*/
+  PROGRAM_WITH_TEXTURED_EDGES, /** Used to render the edges of a textured polyhedorn. Not affected by light.*/
+  PROGRAM_INSTANCED,           /** Used to display instanced rendered spheres.Affected by light.*/
+  PROGRAM_INSTANCED_WIRE,      /** Used to display instanced rendered wired spheres. Not affected by light.*/
+  PROGRAM_C3T3,                /** Used to render a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Affected by light.*/
+  PROGRAM_C3T3_EDGES,          /** Used to render the edges of a c3t3_item. It discards any fragment on a side of a plane, meaning that nothing is displayed on this side of the plane. Not affected by light.*/
+  NB_OF_PROGRAMS               /** Holds the number of different programs in this enum.*/
+ };
   typedef CGAL::Three::Scene_interface::Bbox Bbox;
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
   //! The default color of a scene_item.
