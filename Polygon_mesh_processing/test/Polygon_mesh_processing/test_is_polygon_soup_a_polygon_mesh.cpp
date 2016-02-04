@@ -36,23 +36,33 @@ void test(std::string fname, bool expected)
             << std::boolalpha << is_mesh << ";" << std::endl;
   assert(is_mesh == expected);
 
+  if(is_mesh) {
+    Polyhedron p;
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, p);
+    assert(p.is_valid());
+  }
+
   if(!expected) {
     CGAL::Polygon_mesh_processing::orient_polygon_soup(points, polygons);
     bool is_mesh = CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons);
     std::cout << "After orientation: is_polygon_soup_a_polygon_mesh(" << fname << ") == "
               << std::boolalpha << is_mesh << ";" << std::endl;
     assert(is_mesh);
+    Polyhedron p;
+    CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh(points, polygons, p);
+    assert(p.is_valid());
   }
 
-  std::cout << fname << " OK\n";
+  std::cout << fname << " OK\n\n\n";
 }
 
 int main()
 {
   test("data_polygon_soup/bad_cube.off", false);
-  // TODO those should work after orientation correction
-  // test("data_polygon_soup/isolated_singular_vertex_one_cc.off", false);
-  // test("data_polygon_soup/isolated_vertices.off", false);
+  test("data_polygon_soup/isolated_singular_vertex_one_cc.off", false);
+
+  test("data_polygon_soup/isolated_vertices.off", true);
+
   test("data_polygon_soup/nm_vertex_and_edge.off", false);
   test("data_polygon_soup/one_duplicated_edge.off", false);
   test("data_polygon_soup/one_duplicated_edge_sharing_vertex.off", false);
