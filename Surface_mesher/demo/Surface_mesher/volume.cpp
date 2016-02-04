@@ -28,9 +28,6 @@
 #include <QSettings>
 #include <QUrl>
 #include "Raw_image_dialog.h"
-
-#include <CGAL/glu.h>
-
 #include <CGAL/Surface_mesher/Standard_criteria.h>
 // #include <CGAL/Surface_mesher/Image_surface_oracle_3.h>
 #include <CGAL/Surface_mesher/Implicit_surface_oracle_3.h>
@@ -1518,8 +1515,26 @@ void Volume::gl_draw_marchingcube()
       list_draw_marching_cube_is_valid = (::glGetError() == GL_NO_ERROR);
     }
     if(!list_draw_marching_cube_is_valid)
-      std::cerr << boost::format("OpenGL error: %1%\n") 
-        % ::gluErrorString(::glGetError());
+    {
+       GLenum error = ::glGetError();
+      if(error != GL_NO_ERROR)
+      {
+        if(error == GL_INVALID_ENUM)
+          std::cerr << "An unacceptable value is specified for an enumerated argument." << "@" << line << std::endl;
+        if(error == GL_INVALID_VALUE)
+          std::cerr << "A numeric argument is out of range." << "@" << line << std::endl;
+        if(error == GL_INVALID_OPERATION)
+          std::cerr << "The specified operation is not allowed in the current state." << "@" << line << std::endl;
+        if(error == GL_INVALID_FRAMEBUFFER_OPERATION)
+          std::cerr << "The framebuffer object is not complete." << "@" << line << std::endl;
+        if(error == GL_OUT_OF_MEMORY)
+          std::cerr << "There is not enough memory left to execute the command." << "@" << line << std::endl;
+        if(error == GL_STACK_UNDERFLOW)
+          std::cerr << "An attempt has been made to perform an operation that would cause an internal stack to underflow." << "@" << line << std::endl;
+        if(error == GL_STACK_OVERFLOW)
+          std::cerr << "An attempt has been made to perform an operation that would cause an internal stack to overflow." << "@" << line << std::endl;
+      }
+    }
   }
 }
 #endif // CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE

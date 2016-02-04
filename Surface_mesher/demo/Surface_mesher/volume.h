@@ -123,9 +123,9 @@ private:
   QDoubleSpinBox* spinBox_distance_bound;
 
   bool direct_draw; // do not use display lists
-  std::vector<GLuint> lists_draw_surface;
+  std::vector<GLint> lists_draw_surface;
   bool lists_draw_surface_is_valid;
-  GLuint list_draw_marching_cube;
+  GLint list_draw_marching_cube;
   bool list_draw_marching_cube_is_valid;
 
   CGAL::Timer sm_timer;
@@ -135,7 +135,7 @@ private:
   std::vector<Facet> m_surface_mc;
   MarchingCubes<unsigned char> mc ;
   std::vector<int> nbs_of_mc_triangles;
-  std::vector<GLuint> lists_draw_surface_mc;
+  std::vector<GLint> lists_draw_surface_mc;
   bool lists_draw_surface_mc_is_valid;
   CGAL::Timer mc_timer;
   int mc_total_time;
