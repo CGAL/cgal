@@ -139,7 +139,10 @@ public:
   * @param polygons each element in the vector describes a polygon using the index of the points in `points`
   * @param out the polygon mesh to be built
   *
+  * @pre `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh(polygons)`
+  *
   * \sa `CGAL::Polygon_mesh_processing::orient_polygon_soup()`
+  * \sa `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
   *
   */
   template<class PolygonMesh, class Point, class Polygon>
@@ -148,6 +151,9 @@ public:
     const std::vector<Polygon>& polygons,
     PolygonMesh& out)
   {
+    CGAL_precondition_msg(is_polygon_soup_a_polygon_mesh(polygons),
+                          "Input soup needs to be a polygon mesh!");
+
     internal::Polygon_soup_to_polygon_mesh<PolygonMesh, Point, Polygon>
       converter(points, polygons);
     converter(out);
