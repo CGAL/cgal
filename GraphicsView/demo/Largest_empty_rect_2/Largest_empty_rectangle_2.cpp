@@ -124,11 +124,14 @@ MainWindow::MainWindow()
   rgi = new QGraphicsRectItem(convert(square));
 
   Point_2 bl(-1,-1), br(1,-1), tl(-1,1), tr(1,1);
-  
+
+
   frame[0] = new QGraphicsLineItem(convert(Segment_2(bl, br)));
   frame[1] = new QGraphicsLineItem(convert(Segment_2(br, tr)));
   frame[2] = new QGraphicsLineItem(convert(Segment_2(tr, tl)));
   frame[3] = new QGraphicsLineItem(convert(Segment_2(tl, bl)));
+  for(int i=0; i<4; i++)
+    frame[i]->setPen(QPen(::Qt::black, 0));
 
   QObject::connect(this, SIGNAL(changed()),
 		   pgi, SLOT(modelChanged()));
@@ -138,6 +141,7 @@ MainWindow::MainWindow()
 
   pgi->setVerticesPen(QPen(Qt::red, 3, Qt::SolidLine, Qt::RoundCap, Qt::RoundJoin));
   rgi->setBrush(QBrush(Qt::cyan));
+  rgi->setPen(QPen(::Qt::black, 0));
   scene.addItem(pgi);
   scene.addItem(rgi);
   scene.addItem(frame[0]);
