@@ -81,7 +81,6 @@ Example's point pattern.
 
 This is an advanced example that shows how to use generalized barycentric coordinates for height interpolation with applications to terrain modelling. It also shows how to use a non-default traits class with our package instead of a `Kernel` traits class. Suppose we know the boundary of three-dimensional piece of terrain that can be represented as a polygon with several three-dimensional vertices, where the third dimension gives the corresponding height. The task is to propagate the height from the known sample points on the boundary to the polygon's interior. This gives an approximate estimation of the terrain's surface in this region.
 
-\anchor terrain_example
 \cgalFigureBegin{terrain__example,terrain.png}
 A 2D polygon with 50 vertices representing a piece of terrain with convex and concave parts. The height is not shown.
 \cgalFigureEnd
@@ -92,7 +91,6 @@ In this example we project a three-dimensional polygon orthogonally onto the two
 
 As a result we get a smooth function inside the polygon that approximates the underlying terrain's surface.
 
-\anchor terrain_example
 \cgalFigureBegin{terrain__inter__example,terrain_interpolated.png}
 The interpolated data. The colour bar represents the corresponding height.
 \cgalFigureEnd

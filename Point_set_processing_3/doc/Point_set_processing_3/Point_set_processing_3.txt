@@ -378,7 +378,7 @@ It first computes the VCM of the points set using `compute_vcm()`. Then, it esti
 which points belong to a sharp edge by testing if a ratio of eigenvalues
 is greater than a given threshold.
 
-\subsection Point_set_processing_3Example_6 Example
+\subsection Point_set_processing_3Example_10 Example
 
 The following example reads a point set from a file, estimates the
 points that are on sharp edges:

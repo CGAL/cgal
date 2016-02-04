@@ -54,7 +54,7 @@ Thus, we use the same design used to implement \ref PkgArrangement2Summary point
 Each of the various visibility class templates employs a different 
 algorithm or \em strategy for answering 
 queries\cgalFootnote{The term \em strategy is borrowed from the 
-design-pattern taxonomy~\cite ghjv-dpero-95. 
+design-pattern taxonomy \cgalCite{cgal:ghjv-dpero-95}. 
 A \em strategy provides the means to define a family of algorithms, 
 each implemented by a separate class. All classes that implement the various 
 algorithms are made interchangeable, letting the algorithm in use vary according to the user choice.}.
