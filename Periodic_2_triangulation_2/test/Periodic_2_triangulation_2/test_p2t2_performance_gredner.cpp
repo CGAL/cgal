@@ -1,6 +1,17 @@
 // Author(s)     : Nico Kruithof  <Nico@nghk.nl>
 
-// #define CGAL_PROFILE
+#include <CGAL/config.h>
+
+#ifndef CGAL_NDEBUG
+
+#include <iostream>
+int main()
+{
+  std::cerr << "No performance test for a Debug build" << std::endl;
+  return 0;
+}
+
+#else
 
 #include "./types.h"
 #include <CGAL/Delaunay_triangulation_2.h>
@@ -126,3 +137,5 @@ int main(int argc, char * argv[])
 
   return result;
 }
+
+#endif
