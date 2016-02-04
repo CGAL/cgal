@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>429</width>
-    <height>428</height>
+    <width>473</width>
+    <height>482</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -23,6 +23,9 @@
    <string>Meshing criteria</string>
   </property>
   <layout class="QVBoxLayout" name="verticalLayout">
+   <property name="sizeConstraint">
+    <enum>QLayout::SetFixedSize</enum>
+   </property>
    <item>
     <widget class="QLabel" name="objectName">
      <property name="font">
