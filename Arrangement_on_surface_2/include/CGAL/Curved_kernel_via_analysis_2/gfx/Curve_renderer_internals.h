@@ -43,7 +43,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Polynomial/Real_embeddable_traits.h>
 
-xs#include <CGAL/Curved_kernel_via_analysis_2/gfx/Curve_renderer_traits.h>
+#include <CGAL/Curved_kernel_via_analysis_2/gfx/Curve_renderer_traits.h>
 
 // using boost::multi_index::multi_index_container;
 // using boost::multi_index::get;
