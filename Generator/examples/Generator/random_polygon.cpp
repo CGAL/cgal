@@ -29,12 +29,13 @@ typedef CGAL::Random_points_in_square_2<Point_2, Creator> Point_generator;
 const double RADIUS = 100;
 const int MAX_POLY_SIZE = 100;
 
-int main( )
+int main()
 {
    Polygon_2            polygon;
    std::list<Point_2>   point_set;
    CGAL::Random         rand;
 
+   std::cerr << "Seed = " <<  rand.get_seed() << std::endl;
    int size = rand.get_int(4, MAX_POLY_SIZE);
 
    // copy size points from the generator, eliminating duplicates, so the
