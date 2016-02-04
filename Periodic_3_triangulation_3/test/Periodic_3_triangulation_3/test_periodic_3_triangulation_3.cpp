@@ -22,6 +22,8 @@
 #include <iostream>
 #include <cassert>
 
+#include <CGAL/Timer.h>
+
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_triangulation_3.h>
@@ -55,6 +57,8 @@ template class CGAL::Periodic_3_triangulation_3<PDTT3>;
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   typedef CGAL::Periodic_3_triangulation_3<PDTT1>            P3T3_1;
   _test_periodic_3_triangulation_3_constructors( P3T3_1() );
   typedef CGAL::Periodic_3_Delaunay_triangulation_3<PDTT1>   P3DT3_1;
@@ -70,5 +74,6 @@ int main()
 //   typedef CGAL::Periodic_3_Delaunay_triangulation_3<PDTT3>   P3DT3_3;
 //  _test_cls_periodic_3_triangulation_3( P3DT3_3(), false, true );
 
+  std::cerr << timer.time() << " sec." << std::endl;
   return 0;
 }
