@@ -47,7 +47,7 @@ int main()
     const Scalar y_scale = Scalar(100);
 
     int count = 0;
-    const Scalar epsilon = Scalar(1) / Scalar(std::pow(10.0, 13.0));
+    const Scalar epsilon = Scalar(1) / Scalar(std::pow(10.0, 8.0));
 
     const Scalar limit_x = x_scale*step;
     const Scalar half    = Scalar(1) / Scalar(2);
