@@ -352,6 +352,12 @@ public:
             m_k.scaled_vector_d_object()(
               m_k.point_to_vector_d_object()(*intersection), weight));
         }
+        else
+        {
+          // CJTODO TEMP DEBUG
+          std::cerr << std::hex << (unsigned int)&k_face << std::dec
+            << red << "No intersection" << white << "\n";
+        }
       }
       if (sum_weights > 0)
       {
@@ -366,6 +372,8 @@ public:
         Point const& p0 = (*k_face.begin())->point();
         for (auto neighbor_vh : nghb) // CJTODO: C++11
         {
+          // If a neighbor is closer than p0 to the average intersection, then
+          // the average intersection is inside another Voronoi cell
           if (m_k.squared_distance_d_object()(p0, avg_inters) >
             m_k.squared_distance_d_object()(neighbor_vh->point(), avg_inters))
           {

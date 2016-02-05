@@ -14,7 +14,6 @@
 #include <CGAL/Mesh_3/Profiling_tools.h>
 
 #include "../../test/Tangential_complex/testing_utilities.h"
-#include "console_color.h"
 
 #include <boost/algorithm/string/replace.hpp>
 #include <boost/algorithm/string/trim_all.hpp>
@@ -120,7 +119,7 @@ void make_mesh(
     std::size_t num_points_before = points.size();
     points = sparsify_point_set(k, points, sparsity*sparsity);
     std::cerr << "Number of points before/after sparsification: "
-      << num_points_before << " / " << points.size() << std::endl;
+      << num_points_before << " / " << points.size() << "\n";
   }
 
   //===========================================================================
@@ -186,18 +185,17 @@ void make_mesh(
   // Display info
   //===========================================================================
 
-  std::cerr << std::endl
-    << "================================================" << std::endl
-    << "Number of vertices: " << mesh.number_of_vertices() << std::endl
+  std::cerr
+    << "\n================================================\n"
+    << "Number of vertices: " << mesh.number_of_vertices() << "\n"
     << "Pure pseudomanifold: " << yellow 
-    << (is_pure_pseudomanifold ? "YES" : "NO") << white << std::endl
-    << "Computation times (seconds): " << std::endl
-    << "  * Mesh: " << init_time + computation_time << std::endl
-    << "    - Init + kd-tree = " << init_time << std::endl
-    << "    - Mesh computation = " << computation_time << std::endl
-    //<< "  * Export to OFF : " << export_before_time << std::endl
-    << "================================================" << std::endl
-    << std::endl;
+    << (is_pure_pseudomanifold ? "YES" : "NO") << white << "\n"
+    << "Computation times (seconds): \n"
+    << "  * Mesh: " << init_time + computation_time << "\n"
+    << "    - Init + kd-tree = " << init_time << "\n"
+    << "    - Mesh computation = " << computation_time << "\n"
+    //<< "  * Export to OFF : " << export_before_time << "\n"
+    << "================================================\n\n";
 }
 
 int main()
@@ -214,7 +212,7 @@ int main()
 
   unsigned int seed = static_cast<unsigned int>(time(NULL));
   CGAL::default_random = CGAL::Random(seed);
-  std::cerr << "Random seed = " << seed << std::endl;
+  std::cerr << "Random seed = " << seed << "\n";
 
   std::ifstream script_file;
   script_file.open(BENCHMARK_SCRIPT_FILENAME);
@@ -241,7 +239,7 @@ int main()
 #endif
 
       std::cerr << "Script file '" << BENCHMARK_SCRIPT_FILENAME 
-        << "' found." << std::endl;
+        << "' found.\n";
       script_file.seekg(0);
       while (script_file.good())
       {
@@ -251,10 +249,10 @@ int main()
         {
           boost::replace_all(line, "\t", " ");
           boost::trim_all(line);
-          std::cerr << std::endl << std::endl;
-          std::cerr << "*****************************************" << std::endl;
-          std::cerr << "******* " << line << std::endl;
-          std::cerr << "*****************************************" << std::endl;
+          std::cerr << "\n\n";
+          std::cerr << "*****************************************\n";
+          std::cerr << "******* " << line << "\n";
+          std::cerr << "*****************************************\n";
           std::stringstream sstr(line);
 
           std::string input;
@@ -297,7 +295,7 @@ int main()
             input_stripped = input_stripped.substr(
               slash_index, input_stripped.find_last_of('.') - slash_index);
 
-            std::cerr << std::endl << "Mesh #" << i << "..." << std::endl;
+            std::cerr << "\nMesh #" << i << "...\n";
           
 #ifdef CGAL_MESH_D_PROFILING
             Wall_clock_timer t_gen;
@@ -381,7 +379,7 @@ int main()
 
 #ifdef CGAL_MESH_D_PROFILING
             std::cerr << "Point set generated/loaded in " << t_gen.elapsed()
-                      << " seconds." << std::endl;
+                      << " seconds.\n";
 #endif
 
             if (!points.empty())
@@ -398,13 +396,12 @@ int main()
                 points, intrinsic_dim, sparsify == 'Y', sparsity, 
                 input.c_str());
 
-              std::cerr << "Mesh #" << i++ << " done." << std::endl;
-              std::cerr << std::endl << "---------------------------------"
-                        << std::endl << std::endl;
+              std::cerr << "Mesh #" << i++ << " done.\n";
+              std::cerr << "\n---------------------------------\n\n";
             }
             else
             {
-              std::cerr << "Mesh #" << i++ << ": no points loaded." << std::endl;
+              std::cerr << "Mesh #" << i++ << ": no points loaded.\n";
             }
           }
         }
@@ -418,7 +415,7 @@ int main()
   // Or not script?
   else
   {
-    std::cerr << "Script file '" << BENCHMARK_SCRIPT_FILENAME << "' NOT found." << std::endl;
+    std::cerr << "Script file '" << BENCHMARK_SCRIPT_FILENAME << "' NOT found.\n";
   }
 
   system("pause");
