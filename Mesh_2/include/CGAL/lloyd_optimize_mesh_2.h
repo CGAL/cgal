@@ -44,10 +44,11 @@ namespace CGAL
 {
 namespace parameters
 {
-#ifdef __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-variable"
-#pragma clang diagnostic ignored "-Wunused-parameter"
+#if defined( __clang__ ) || (BOOST_GCC >= 40600 )
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+
 #endif
 
 BOOST_PARAMETER_NAME( cdt )
@@ -60,8 +61,8 @@ BOOST_PARAMETER_NAME( (seeds_end, tag) seeds_end_)
 BOOST_PARAMETER_NAME( (mark, tag) mark_)
 
 //CGAL_PRAGMA_DIAG_POP
-#ifdef __clang__
-#pragma clang diagnostic pop
+#if defined( __clang__ ) || (BOOST_GCC >= 40600 )
+#pragma GCC diagnostic pop
 #endif
 
 }//end namespace parameters
