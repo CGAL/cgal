@@ -519,19 +519,7 @@ void make_tc(std::vector<Point> &points,
   complex.display_stats();
 
   if (intrinsic_dim == 2)
-  {
-    std::cerr << "\nComputing Euler characteristic of the complex...\n";
-    std::size_t num_vertices = complex.num_K_simplices<0>();
-    std::size_t num_edges = complex.num_K_simplices<1>();
-    std::size_t num_triangles = complex.num_K_simplices<2>();
-    std::cerr << "Euler characteristic: V - E + F = "
-      << num_vertices << " - " << num_edges << " + " << num_triangles << " = "
-      << blue
-      << (std::ptrdiff_t) num_vertices
-      - (std::ptrdiff_t) num_edges
-      + (std::ptrdiff_t) num_triangles
-      << white << "\n";
-  }
+    complex.euler_characteristic(true);
 
   // CJTODO TEMP: Export to OFF with higher-dim simplices colored
   /*std::set<std::set<std::size_t> > higher_dim_simplices;

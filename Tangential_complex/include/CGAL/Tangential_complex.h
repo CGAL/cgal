@@ -87,7 +87,7 @@ typedef CGAL::MP_Float ET;
 //#define CGAL_TC_COMPUTE_TANGENT_PLANES_FOR_TORUS_D
 //#define CGAL_TC_ADD_NOISE_TO_TANGENT_SPACE
 //#define CGAL_TC_BETTER_EXPORT_FOR_FLAT_TORUS
-#define CGAL_TC_ALVAREZ_SURFACE_WINDOW 1.9 // 0.95
+//#define CGAL_TC_ALVAREZ_SURFACE_WINDOW 1.9 // 0.95
 
 namespace CGAL {
 
@@ -392,8 +392,12 @@ public:
   void compute_tangential_complex()
   {
 #ifdef CGAL_TC_PERFORM_EXTRA_CHECKS
-    std::cerr << red << "WARNING: CGAL_TC_PERFORM_EXTRA_CHECKS is defined."
+    std::cerr << red << "WARNING: CGAL_TC_PERFORM_EXTRA_CHECKS is defined. "
       << "Computation might be slower than usual.\n" << white;
+#endif
+#ifdef CGAL_TC_ALVAREZ_SURFACE_WINDOW
+    std::cerr << red << "WARNING: CGAL_TC_ALVAREZ_SURFACE_WINDOW is defined ("
+      << CGAL_TC_ALVAREZ_SURFACE_WINDOW << ").\n" << white;
 #endif
 
 #if defined(CGAL_TC_PROFILING) && defined(CGAL_LINKED_WITH_TBB)
@@ -582,11 +586,6 @@ public:
 #ifdef CGAL_TC_SHOW_DETAILED_STATS_FOR_INCONSISTENCIES
     CGAL::cpp11::tuple<std::size_t, std::size_t, std::size_t> stats_before =
       number_of_inconsistent_simplices(false);
-
-# ifdef CGAL_TC_VERBOSE
-      std::cerr << "Initial number of inconsistencies: "
-      << CGAL::cpp11::get<1>(stats_before) << "\n";
-# endif
 
     if (CGAL::cpp11::get<1>(stats_before) == 0)
     {

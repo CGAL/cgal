@@ -36,6 +36,8 @@
 #include <boost/container/flat_map.hpp>
 
 #include <algorithm>
+#include <string>
+#include <fstream>
 
 namespace CGAL {
 namespace Tangential_complex_ {
@@ -88,6 +90,47 @@ public:
       }
     }
     m_complex.insert(s);
+  }
+
+  // Ignore the point coordinates
+  bool load_simplices_from_OFF(const char *filename)
+  {
+    std::ifstream in(filename);
+    if (!in.is_open())
+    {
+      std::cerr << "Could not open '" << filename << "'" << std::endl;
+      return false;
+    }
+
+    std::string line;
+    std::getline(in, line); // Skip first line
+    std::size_t num_points, num_triangles, dummy;
+    in >> num_points;
+    in >> num_triangles;
+    std::getline(in, line); // Skip the rest of the line
+    
+    // Skip points
+    for (std::size_t i = 0 ; i < num_points ; ++i)
+      std::getline(in, line);
+
+    // Read triangles
+    for (std::size_t i = 0 ; i < num_triangles ; ++i)
+    {
+      in >> dummy;
+      CGAL_assertion(dummy == 3);
+      std::set<std::size_t> tri;
+      std::size_t idx;
+      for (int j = 0 ; j < 3 ; ++j)
+      {
+        in >> idx;
+        tri.insert(idx);
+      }
+      std::getline(in, line); // Skip the rest of the line
+
+      add_simplex(tri, false);
+    }
+
+    return true;
   }
 
   const Simplex_set &simplex_range() const
@@ -351,6 +394,30 @@ public:
     }
 
     return k_simplices.size();
+  }
+
+  std::ptrdiff_t euler_characteristic(bool verbose = false) const
+  {
+    if (verbose)
+      std::cerr << "\nComputing Euler characteristic of the complex...\n";
+    
+    std::size_t num_vertices = num_K_simplices<0>();
+    std::size_t num_edges = num_K_simplices<1>();
+    std::size_t num_triangles = num_K_simplices<2>();
+    
+    std::ptrdiff_t ec =
+      (std::ptrdiff_t) num_vertices
+      - (std::ptrdiff_t) num_edges
+      + (std::ptrdiff_t) num_triangles;
+
+    if (verbose)
+      std::cerr << "Euler characteristic: V - E + F = "
+        << num_vertices << " - " << num_edges << " + " << num_triangles << " = "
+        << blue
+        << ec
+        << white << "\n";
+
+    return ec;
   }
 
   // CJTODO: ADD COMMENTS
