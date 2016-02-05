@@ -42,7 +42,7 @@
 
 #if defined( __INTEL_COMPILER )
 // Workarounf for warning in function basic_link_beta_0
-#pragma warning disable:1017
+#pragma warning disable 1017
 #endif
 
 namespace CGAL {
