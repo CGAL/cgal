@@ -213,7 +213,7 @@ public:
 
   FT get_length(const Edge& edge) const {
     Segment segment = get_segment(edge);
-    return std::sqrt(segment.squared_length());
+    return CGAL::sqrt(segment.squared_length());
   }
 
   Segment get_segment(const Edge& edge) const {
@@ -755,7 +755,7 @@ public:
     if (pt == pb)
       return FT(0);
     if (pa == pb)
-      return std::sqrt(geom_traits().compute_squared_distance_2_object()(pa, pt));
+      return CGAL::sqrt(geom_traits().compute_squared_distance_2_object()(pa, pt));
 
     Vector vab = geom_traits().construct_vector_2_object()(pa, pb);
     // Normalize vab
@@ -794,7 +794,7 @@ public:
     CGAL::Object result = CGAL::intersection(lab, lts);
     const Point* iq = CGAL::object_cast<Point>(&result);
     if (iq)
-      Dqt = std::sqrt(geom_traits().compute_squared_distance_2_object()(*iq, pt));
+      Dqt = CGAL::sqrt(geom_traits().compute_squared_distance_2_object()(*iq, pt));
 
     if (Dabt < FT(0))
       Dqt = -Dqt;
