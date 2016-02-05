@@ -85,11 +85,14 @@ class KernelD_converter_
 
 	// Disable the conversion in some cases:
 	struct Do_not_use{};
-	typedef typename boost::mpl::if_c <
-	  // If Point==Vector, keep only one conversion
-	  duplicate::value ||
-	  // For iterator objects, the default is make_transforming_iterator
-	  (iterator_tag_traits<Tag_>::is_iterator && no_converter::value),
+
+        // Explicit calls to boost::mpl functions to avoid parenthesis
+        // warning on some versions of GCC
+	typedef typename boost::mpl::if_ <
+                          // If Point==Vector, keep only one conversion
+          boost::mpl::or_<boost::mpl::bool_<duplicate::value>,
+                          // For iterator objects, the default is make_transforming_iterator
+                          boost::mpl::bool_<(iterator_tag_traits<Tag_>::is_iterator && no_converter::value)> >,
 	  Do_not_use,K1_Obj>::type argument_type;
 	//typedef typename KOC::argument_type K1_Obj;
 	//typedef typename KOC::result_type K2_Obj;
