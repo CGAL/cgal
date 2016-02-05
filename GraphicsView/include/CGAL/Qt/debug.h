@@ -41,6 +41,11 @@ CGAL_QT_EXPORT void traverse_resources(const QString& name,
                                         const QString& dirname = QString(),
                                         int indent = 0);
 
+/**
+ * Call this in the end of an OpenGL implementation to check if it returns errors. 
+ */
+CGAL_QT_EXPORT void opengl_check_errors(unsigned int line);
+
 } // namespace Qt
 } // namespace CGAL
 
