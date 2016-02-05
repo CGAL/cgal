@@ -23,7 +23,7 @@
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/mpl.h>
 #include <CGAL/representation_tags.h>
-#include <boost/static_assert.hpp>
+#include <CGAL/assertions.h>
 #include <boost/type_traits.hpp>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Dimension.h>
@@ -47,7 +47,7 @@ class Segment_d : public Get_type<typename R_::Kernel_base, Segment_tag>::type
   typedef typename Get_functor<Kbase, Segment_extremity_tag>::type CSEBase;
 
   typedef Segment_d                            Self;
-  BOOST_STATIC_ASSERT((boost::is_same<Self, typename Get_type<R_, Segment_tag>::type>::value));
+  CGAL_static_assertion((boost::is_same<Self, typename Get_type<R_, Segment_tag>::type>::value));
 
 public:
 

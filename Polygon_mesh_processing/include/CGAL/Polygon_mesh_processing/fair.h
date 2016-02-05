@@ -123,15 +123,13 @@ namespace internal {
       //if no solver is provided and Eigen version < 3.2
 #endif
 
-    typedef typename GetSolver<NamedParameters, Default_solver>::type SparseLinearSolver;
-
 #if defined(CGAL_EIGEN3_ENABLED)
-    BOOST_STATIC_ASSERT_MSG(
-      (!boost::is_same<SparseLinearSolver, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
+    CGAL_static_assertion_msg(
+      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value) || EIGEN_VERSION_AT_LEAST(3, 2, 0),
       "The function `fair` requires Eigen3 version 3.2 or later.");
 #else
-    BOOST_STATIC_ASSERT_MSG(
-      (!boost::is_same<SparseLinearSolver, bool>::value),
+    CGAL_static_assertion_msg(
+      (!boost::is_same<typename GetSolver<NamedParameters, Default_solver>::type, bool>::value),
       "The function `fair` requires Eigen3 version 3.2 or later.");
 #endif
 

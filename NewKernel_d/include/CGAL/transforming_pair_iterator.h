@@ -23,8 +23,9 @@
 // but boost's iterator_category games are a pain.
 
 #include <CGAL/transforming_iterator.h>
+#include <CGAL/assertions.h>
 #include <boost/type_traits/is_convertible.hpp>
-#include <boost/static_assert.hpp>
+
 
 
 
@@ -32,7 +33,7 @@ namespace CGAL {
 namespace internal {
 template <class Cat1, class Cat2, bool=boost::is_convertible<Cat1,Cat2>::value>
 struct Min_category {
-	BOOST_STATIC_ASSERT((boost::is_convertible<Cat2,Cat1>::value));
+	CGAL_static_assertion((boost::is_convertible<Cat2,Cat1>::value));
 	typedef Cat1 type;
 };
 

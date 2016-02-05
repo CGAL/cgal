@@ -199,7 +199,7 @@ triangle(const HalfedgeGraph& g,
          typename boost::graph_traits<HalfedgeGraph>::halfedge_descriptor h,
          const PositionMap& pm)
 {
-  BOOST_CONCEPT_ASSERT((HalfedgeGraphConcept<HalfedgeGraph>));
+  BOOST_CONCEPT_ASSERT((HalfedgeGraphConcept<HalfedgeGraph>)) CGAL_UNUSED;
 
   typedef typename boost::graph_traits<HalfedgeGraph>::vertex_descriptor vertex_descriptor;
   
