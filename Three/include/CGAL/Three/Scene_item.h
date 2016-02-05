@@ -29,6 +29,7 @@
 #include <QOpenGLShader>
 #include <QOpenGLVertexArrayObject>
 #include <vector>
+#include <CGAL/Three/Scene_item_print_interface.h>
 namespace CGAL {
 namespace Three {
   class Viewer_interface;
@@ -46,7 +47,7 @@ namespace Three {
 class Scene_group_item;
 class Viewer_interface;
 //! This class represents an object in the OpenGL scene
-class SCENE_ITEM_EXPORT Scene_item : public QObject {
+class SCENE_ITEM_EXPORT Scene_item : public QObject, CGAL::Three::Scene_item_print_interface {
   Q_OBJECT
   Q_PROPERTY(QColor color READ color WRITE setColor)
   Q_PROPERTY(QString name READ name WRITE setName)
