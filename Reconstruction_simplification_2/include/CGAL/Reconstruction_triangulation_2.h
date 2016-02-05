@@ -1033,17 +1033,17 @@ public:
 
       if ((std::max)(Dac, Dbd) + EPS < Dbc)
       {
+			/*
         std::cerr.precision(10);
-        std::cerr << "--- Flip makes kernel worse ---"
-            << std::endl;
-        std::cerr << Dac << " or " << Dbd << " vs "
-            << Dbc << std::endl;
+        std::cerr << "--- Flip makes kernel worse ---" << std::endl;
+        std::cerr << Dac << " or " << Dbd << " vs " << Dbc << std::endl;
         std::cerr << "a: " << a->point() << std::endl;
         std::cerr << "b: " << b->point() << std::endl;
         std::cerr << "c: " << c->point() << std::endl;
         std::cerr << "d: " << d->point() << std::endl;
         std::cerr << "t: " << target->point() << std::endl;
         std::cerr << "diff = " << Dbc - (std::max)(Dac, Dbd) << std::endl;
+				*/
         return false;
       }
 

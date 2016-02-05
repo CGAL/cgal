@@ -566,8 +566,7 @@ public:
       ok = copy.make_collapsible(copy_edge, copy_hull.begin(),
           copy_hull.end(), m_verbose);
       if (!ok) {
-        std::cerr << "simulation: failed (make collapsible)"
-          << std::endl;
+        // std::cerr << "simulation: failed (make collapsible)" << std::endl;
         return false;
       }
     }
