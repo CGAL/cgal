@@ -14,7 +14,6 @@
 #include <cassert>
 #include <iostream>
 #include <string>
-#include <iterator>
 #include <vector>
 #include <utility>      // std::pair
 

@@ -10,7 +10,6 @@
 
 #include <iostream>
 #include <string>
-#include <iterator>
 #include <utility>      // std::pair
 #include <cassert>
 

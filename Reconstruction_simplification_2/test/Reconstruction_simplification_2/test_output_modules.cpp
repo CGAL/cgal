@@ -9,7 +9,6 @@
 
 #include <iostream>
 #include <cassert>
-#include <iterator>
 #include <vector>
 
 #include "testing_tools.h"
