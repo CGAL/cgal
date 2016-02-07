@@ -29,6 +29,7 @@
 #include <CGAL/Alpha_shape_3.h>
 #include <CGAL/_test_cls_periodic_3_alpha_shape_3.h>
 
+#include <CGAL/Timer.h>
 
 // Inexact construction types
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Gt;
@@ -65,8 +66,12 @@ typedef CGAL::Alpha_shape_3<EP3DT3>  EAlpha_shape_3;
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   _test_cls_alpha_shape_3<Alpha_shape_3>();
   _test_cls_alpha_shape_3_exact<EAlpha_shape_3>();
+
+  std::cerr << timer.time() << " sec." << std::endl;
   return 0;
 }
 

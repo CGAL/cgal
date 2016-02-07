@@ -19,6 +19,7 @@
 // Author(s)     : Francois Rebufat
 //                 Manuel Caroli
 
+#include <CGAL/Timer.h>
 #include <CGAL/Triangulation_data_structure_3.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_traits_3.h>
 #include <CGAL/Periodic_3_triangulation_ds_cell_base_3.h>
@@ -54,6 +55,9 @@ template class CGAL::Triangulation_data_structure_3<
 // periodic vertices and cells fulfill the requirements.
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   _test_cls_periodic_3_tds_3(Tds());
+  std::cerr << timer.time() << " sec." << std::endl;
   return 0;
 }

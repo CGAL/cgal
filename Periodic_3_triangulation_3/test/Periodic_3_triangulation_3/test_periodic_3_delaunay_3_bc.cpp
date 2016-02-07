@@ -27,6 +27,8 @@ int main() { return 0;}
 #include <iostream>
 #include <fstream>
 
+#include <CGAL/Timer.h>
+
 #include <CGAL/Periodic_3_Delaunay_triangulation_3.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
 
@@ -52,6 +54,8 @@ template class CGAL::Periodic_3_triangulation_3<PTT3>;
 #include <CGAL/_test_cls_periodic_3_delaunay_3.h>
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   typedef CGAL::Periodic_3_Delaunay_triangulation_3< PTT1 > P3T3_1;
   _test_cls_periodic_3_delaunay_3( P3T3_1() );
 
@@ -62,6 +66,7 @@ int main()
   // this takes too much time for the test suite.
   //_test_cls_periodic_3_delaunay_3( P3T3_3(), true );
 
+  std::cerr << timer.time() << " sec." << std::endl;
   return 0;
 }
 #endif

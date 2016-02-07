@@ -1,5 +1,18 @@
 // Author(s)     : Nico Kruithof  <Nico@nghk.nl>
 
+#include <CGAL/config.h>
+
+#ifndef CGAL_NDEBUG
+
+#include <iostream>
+int main()
+{
+  std::cerr << "No performance test for a Debug build" << std::endl;
+  return 0;
+}
+
+#else
+
 #include "./types.h"
 #include <CGAL/Triangulation_2.h>
 #include <ctime>
@@ -105,3 +118,5 @@ int main()
 
   return 0;
 }
+
+#endif
