@@ -40,6 +40,11 @@
 
 #include <CGAL/config.h>
 
+#if defined( __INTEL_COMPILER )
+// Workarounf for warning in function basic_link_beta_0
+#pragma warning disable 1017
+#endif
+
 namespace CGAL {
 
   /** @file Combinatorial_map.h
@@ -1583,6 +1588,7 @@ namespace CGAL {
      */
     void basic_link_beta_0(Dart_handle adart1, Dart_handle adart2)
     {
+      // Intel warning #1017: name following "template" must be a template
       this->template dart_link_beta<0>(adart1, adart2);
       this->template dart_link_beta<1>(adart2, adart1);
     }
@@ -3802,6 +3808,7 @@ namespace CGAL {
   };
 
 } // namespace CGAL
+
 
 #endif // CGAL_COMBINATORIAL_MAP_H //
 // EOF //
