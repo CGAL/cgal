@@ -3,6 +3,7 @@
 #include <CGAL/basic.h>
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Get_arithmetic_kernel.h>
+#include <CGAL/use.h>
 
 #if defined(CGAL_HAS_DEFAULT_ARITHMETIC_KERNEL)
 
@@ -16,14 +17,17 @@ int main() {
   typedef AK::Bigfloat_interval BFI; 
   {
     typedef CGAL::Get_arithmetic_kernel<Integer>::Arithmetic_kernel AK_;
+    CGAL_USE_TYPE(AK_);
     CGAL_static_assertion((boost::is_same<AK,AK_>::value));
   }
   {
     typedef CGAL::Get_arithmetic_kernel<Rational>::Arithmetic_kernel AK_;
+    CGAL_USE_TYPE(AK_);
     CGAL_static_assertion((boost::is_same<AK,AK_>::value));
   }
   {
     typedef CGAL::Get_arithmetic_kernel<BFI>::Arithmetic_kernel AK_;
+    CGAL_USE_TYPE(AK_);
     CGAL_static_assertion((boost::is_same<AK,AK_>::value));
   }
   return 0;
