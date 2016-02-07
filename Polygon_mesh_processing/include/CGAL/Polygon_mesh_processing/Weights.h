@@ -284,14 +284,13 @@ public:
 
     //return 1.0;
     double voronoi_area = 0.0;
-    in_edge_iterator e, e_end;
-    for (boost::tie(e,e_end) = in_edges(v0, pmesh()); e != e_end; e++)
+    BOOST_FOREACH(halfedge_descriptor he,
+                  halfedges_around_target( halfedge(v0,pmesh()), pmesh()) )
     {
-      halfedge_descriptor he = halfedge(*e,pmesh());
       if( is_border(he,pmesh()) ) { continue; }
 
       CGAL_assertion(CGAL::is_triangle_mesh(pmesh()));
-      CGAL_assertion(v0 == target(he, pmesh()) || v0 == source(he, pmesh()));
+      CGAL_assertion( v0 == target(he, pmesh()) );
       vertex_descriptor v1 = source(he, pmesh());
       vertex_descriptor v_op = target(next(he, pmesh()), pmesh());
 
