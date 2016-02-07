@@ -1,3 +1,13 @@
+#if defined(__GNUC__) && defined(__GNUC_MINOR__) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
+
+#include <iostream>
+int main()
+{
+  std::cerr << "NOTICE: This test requires G++ >= 4.4, and will not be compiled." << std::endl;
+}
+
+#else
+
 #include <CGAL/Epick_d.h>
 #include <CGAL/point_generators_d.h>
 #include <CGAL/Delaunay_triangulation.h>
@@ -124,3 +134,5 @@ int main(int argc, char **argv)
     cerr << endl;
     return 0;
 }
+
+#endif

@@ -1,3 +1,13 @@
+#if defined(__GNUC__) && defined(__GNUC_MINOR__) && (__GNUC__ <= 4) && (__GNUC_MINOR__ < 4)
+
+#include <iostream>
+int main()
+{
+  std::cerr << "NOTICE: This test requires G++ >= 4.4, and will not be compiled." << std::endl;
+}
+
+#else
+
 //#define BOOST_RESULT_OF_USE_DECLTYPE 1
 #include <CGAL/Epick_d.h>
 #include <typeinfo>
@@ -600,3 +610,5 @@ int main(){
   test3<Ker3>();
   test3<Kerd>();
 }
+
+#endif
