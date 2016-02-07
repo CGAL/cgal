@@ -22,10 +22,14 @@
 
 /// \defgroup PMP_normal_grp Normal Computation
 /// Functions to compute unit normals for individual/all vertices or faces.
-/// \defgroup measure_grp Geometric Measure functions
+/// \ingroup PkgPolygonMeshProcessing
+
+/// \defgroup measure_grp Geometric Measure Functions
+/// Functions to compute lengths of edges and borders, areas of faces and patches, as well as volunes of closed meshes.
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup PMP_orientation_grp Orientation Functions
+//  Functions to compute or change the orientation of faces and surfaces.
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup PMP_intersection_grp Intersection Functions
