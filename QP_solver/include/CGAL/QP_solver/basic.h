@@ -28,6 +28,7 @@
 #include <CGAL/Quotient.h>
 #include <CGAL/QP_solver/assertions.h>
 #include <CGAL/QP_solver/debug.h>
+#include <boost/functional.hpp>
 
 #endif // CGAL_QP_SOLVER_BASIC_H
 

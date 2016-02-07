@@ -52,7 +52,7 @@ struct Add_determinant_of_iterator_to_points_from_iterator_to_vectors
   template<class D> struct Property<Has_determinant_of_iterator_to_points_tag, D> :
     boost::true_type {};
 
-  // TODO: use std::minus, std::bind, etc
+  // TODO: use std::minus, boost::bind, etc
   template<class T> struct Minus_fixed {
     T const& a;
     Minus_fixed(T const&a_):a(a_){}

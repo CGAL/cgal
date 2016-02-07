@@ -1601,7 +1601,7 @@ ratio_test_1__q_x_S( Tag_false)
 		    q_x_S.begin(),
 		    compose2_2( std::minus<ET>(),
 				Identity<ET>(),
-				std::bind1st( std::multiplies<ET>(), d)));
+				boost::bind1st( std::multiplies<ET>(), d)));
   }
 
   // q_x_S = -+ ( A_S_BxB_O * q_x_O - A_S_Bxj)
@@ -1938,7 +1938,7 @@ compute__x_B_S( Tag_false /*has_equalities_only_and_full_rank*/,
 		  x_B_S.begin(),
 		  x_B_S.begin(),
 		  compose2_2( std::minus<ET>(),
-			      std::bind1st( std::multiplies<ET>(), d),
+			      boost::bind1st( std::multiplies<ET>(), d),
 			      Identity<ET>()));
 				
   // b_S_B - ( A_S_BxB_O * x_B_O) - r_S_B
@@ -1946,7 +1946,7 @@ compute__x_B_S( Tag_false /*has_equalities_only_and_full_rank*/,
 		 r_S_B.begin(), x_B_S.begin(),
 		 compose2_2(std::minus<ET>(),
 			    Identity<ET>(),
-			    std::bind1st( std::multiplies<ET>(), d)));
+			    boost::bind1st( std::multiplies<ET>(), d)));
                         
 
   // x_B_S = +- ( b_S_B - A_S_BxB_O * x_B_O)
@@ -1975,7 +1975,7 @@ compute__x_B_S( Tag_false /*has_equalities_only_and_full_rank*/,
 		  x_B_S.begin(),
 		  x_B_S.begin(),
 		  compose2_2( std::minus<ET>(),
-			      std::bind1st( std::multiplies<ET>(), d),
+			      boost::bind1st( std::multiplies<ET>(), d),
 			      Identity<ET>()));
 
   // x_B_S = +- ( b_S_B - A_S_BxB_O * x_B_O)

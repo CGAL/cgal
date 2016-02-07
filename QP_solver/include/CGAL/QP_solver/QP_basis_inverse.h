@@ -415,7 +415,7 @@ class QP_basis_inverse {
 	m_it1 = M.begin()+l;
 	for ( row = 0; row < s; ++row, ++m_it1) {
 	    std::transform( m_it1->begin(), m_it1->begin()+s, m_it1->begin(),
-			    std::bind2nd( std::multiplies<ET>(), d));
+			    boost::bind2nd( std::multiplies<ET>(), d));
 	}
 
 	// new denominator: |det(A_B)|^2

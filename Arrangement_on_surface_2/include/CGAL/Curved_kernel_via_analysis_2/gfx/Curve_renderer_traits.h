@@ -24,6 +24,7 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/function_objects.h>
+#include <boost/functional.hpp>
 
 /*! \file CGAL/Curved_kernel_via_analysis_2/gfx/Curve_renderer_traits.h
  * \brief
@@ -117,8 +118,8 @@ struct Transform {
 
         Transform<typename OutputPoly_2::NT, typename InputPoly_2::NT, Op> tr;
         return OutputPoly_2(
-            ::boost::make_transform_iterator(p.begin(), std::bind2nd(tr, op)),
-            ::boost::make_transform_iterator(p.end(), std::bind2nd(tr, op)));
+            ::boost::make_transform_iterator(p.begin(), boost::bind2nd(tr, op)),
+            ::boost::make_transform_iterator(p.end(), boost::bind2nd(tr, op)));
     }
 
     OutputPoly_2 operator()(

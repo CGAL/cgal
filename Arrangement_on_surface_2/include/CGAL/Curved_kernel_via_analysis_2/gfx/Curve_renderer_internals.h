@@ -38,6 +38,7 @@
 // #include <boost/multi_index/member.hpp>
 // #include <boost/multi_index/hashed_index.hpp>
 // #include <boost/multi_index/sequenced_index.hpp>
+#include <boost/functional.hpp>
 
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Polynomial/Real_embeddable_traits.h>
@@ -914,9 +915,9 @@ void get_precached_poly(int var, const NT& key, int /* level */, Poly_1& poly)
     
     if(not_cached||not_found) {
         poly = Poly_1(::boost::make_transform_iterator(coeffs->begin(), 
-                            std::bind2nd(std::ptr_fun(binded_eval), key1)),
+                            boost::bind2nd(std::ptr_fun(binded_eval), key1)),
                       ::boost::make_transform_iterator(coeffs->end(),   
-                            std::bind2nd(std::ptr_fun(binded_eval), key1)));
+                            boost::bind2nd(std::ptr_fun(binded_eval), key1)));
         if(not_cached)
             return;
     // all available space consumed: drop the least recently used entry

@@ -2929,7 +2929,7 @@ check_basis_inverse( Tag_false)
 	    }
 	}
 	v_it = std::find_if( q_x_O.begin(), q_x_O.begin()+cols,
-			     std::bind2nd( std::not_equal_to<ET>(), et0));
+			     boost::bind2nd( std::not_equal_to<ET>(), et0));
 	if ( v_it != q_x_O.begin()+cols) {
 	    if ( ! vout4.verbose()) {
 		std::cerr << std::endl << "basis-inverse check: ";
@@ -2970,7 +2970,7 @@ check_basis_inverse( Tag_false)
 	}
 
 	v_it = std::find_if( q_lambda.begin(), q_lambda.begin()+rows,
-			     std::bind2nd( std::not_equal_to<ET>(), et0));
+			     boost::bind2nd( std::not_equal_to<ET>(), et0));
 	if ( v_it != q_lambda.begin()+rows) {
 	    if ( ! vout4.verbose()) {
 		std::cerr << std::endl << "basis-inverse check: ";
