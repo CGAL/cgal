@@ -88,7 +88,7 @@ Surface_reconstruction_points_3
 Surface_mesh_segmentation
 Stream_lines_2
 Stream_support
-Surface_modeling
+Surface_mesh_deformation
 Barycentric_coordinates_2
 Surface_mesh
 Surface_mesh_shortest_path

@@ -33,7 +33,7 @@ as well as through the BGL API as described in the package \ref PkgBGLSummary,
 as it is a model of the concepts `MutableFaceGraph` and `FaceListGraph`.
 Therefore it is possible to apply the algorithms of the packages 
 \ref  PkgSurfaceMeshSimplificationSummary,
-\ref PkgSurfaceSegmentationSummary, and \ref PkgSurfaceModelingSummary  on a surface mesh.
+\ref PkgSurfaceSegmentationSummary, and \ref PkgSurfaceMeshDeformationSummary  on a surface mesh.
 
 
 \section sectionSurfaceMeshUsage Usage
