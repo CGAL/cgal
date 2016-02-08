@@ -20,8 +20,8 @@
 #ifndef CGAL_RECONSTRUCTION_SIMPLIFICATION_2_H_
 #define CGAL_RECONSTRUCTION_SIMPLIFICATION_2_H_
 
-#include <CGAL/Reconstruction_triangulation_2.h>
-#include <CGAL/Reconstruction_edge_2.h>
+#include <CGAL/RS_2/Reconstruction_triangulation_2.h>
+#include <CGAL/RS_2/Reconstruction_edge_2.h>
 
 #include <CGAL/property_map.h>
 #include <CGAL/Real_timer.h>
@@ -119,7 +119,7 @@ public:
   /*!
     The Output simplex.
    */
-  typedef Reconstruction_triangulation_2<Traits> Triangulation;
+  typedef RS_2::Reconstruction_triangulation_2<Traits>  Triangulation;
 
   typedef typename Triangulation::Vertex                Vertex;
   typedef typename Triangulation::Vertex_handle         Vertex_handle;

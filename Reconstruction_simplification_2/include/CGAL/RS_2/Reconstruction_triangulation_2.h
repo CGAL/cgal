@@ -22,10 +22,10 @@
 
 // local
 #include <CGAL/RS_2/Sample.h>
-#include <CGAL/Reconstruction_edge_2.h>
+#include <CGAL/RS_2/Reconstruction_edge_2.h>
 #include <CGAL/RS_2/Cost.h>
-#include <CGAL/Reconstruction_vertex_base_2.h>
-#include <CGAL/Reconstruction_face_base_2.h>
+#include <CGAL/RS_2/Reconstruction_vertex_base_2.h>
+#include <CGAL/RS_2/Reconstruction_face_base_2.h>
 
 // CGAL
 #include <CGAL/basic.h>
@@ -51,7 +51,7 @@
 #define EPS   1e-15
 
 namespace CGAL {
-
+namespace RS_2 {
 
 /// \internal
 ///  The Reconstruction_triangulation_2 class
@@ -1073,6 +1073,7 @@ public:
     return true;
   }
 };
-} //namespace CGAL
+
+} } //namespace CGAL
 
 #endif // CGAL_RECONSTRUCTION_TRIANGULATION_2_H

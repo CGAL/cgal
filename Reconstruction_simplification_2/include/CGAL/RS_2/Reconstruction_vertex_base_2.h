@@ -23,12 +23,14 @@
 #include <CGAL/Triangulation_vertex_base_2.h>
 #include <CGAL/RS_2/Sample.h>
 
+namespace CGAL {
+namespace RS_2 {
+
 /// The Reconstruction_vertex_base_2 class is the default
 /// vertex class of the Reconstruction_triangulation_2 class.
 ///
 /// - Each vertex stores a Sample as well as the corresponding relocated point.
 ///
-namespace CGAL {
 /// @param Traits_  Geometric traits class
 /// @param Vb       Vertex base class, model of TriangulationVertexBase_2.
 template < class Traits_, class Vb = Triangulation_vertex_base_2<Traits_> >
@@ -127,6 +129,6 @@ struct less_Vertex_handle
 
 /// \endcond
 
-} //end namespace
+} } //end namespaces
 
 #endif // CGAL_RECONSTRUCTION_VERTEX_BASE_2_H_

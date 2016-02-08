@@ -28,13 +28,14 @@
 
 /// \cond SKIP_IN_MANUAL
 
+namespace CGAL {
+namespace RS_2 {
 
 /// The Reconstruction_face_base_2 class is the default
 /// vertex class of the Reconstruction_face_base_2 class.
 ///
 /// - Each vertex stores a CSample as well as the corresponding relocated point
 ///
-namespace CGAL {
 /// @param Traits_  Traits class
 /// @param Vb       Vertex base class, model of TriangulationFaceBase_2.
 template < class Traits_, class Fb = Triangulation_face_base_2<Traits_> >
@@ -260,6 +261,6 @@ struct less_Edge
 
 };
 
-} //end namespace
+} } //end namespace
 
 #endif // CGAL_RECONSTRUCTION_FACE_BASE_2_H_
