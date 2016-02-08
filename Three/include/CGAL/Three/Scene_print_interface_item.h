@@ -17,8 +17,8 @@
 //
 // Author(s)     : Maxime GIMENO
 
-#ifndef SCENE_ITEM_PRINT_INTERFACE_H
-#define SCENE_ITEM_PRINT_INTERFACE_H
+#ifndef SCENE_PRINT_INTERFACE_ITEM_H
+#define SCENE_PRINT_INTERFACE_ITEM_H
 #include <QPoint>
 namespace CGAL
 {
@@ -27,9 +27,9 @@ namespace Three {
 
 
 //! Base class to allow an item to print its primitive IDs.
-class Scene_item_print_interface {
+class Scene_print_interface_item {
 public:
-  virtual ~Scene_item_print_interface(){}
+  virtual ~Scene_print_interface_item(){}
  //!Print the ID of the selected primitive.
  virtual void printPrimitiveId(QPoint, CGAL::Three::Viewer_interface*) = 0;
  //!Prints the ID of all the primitives.
@@ -37,5 +37,5 @@ public:
 };
 }
 }
-#endif // SCENE_ITEM_PRINT_INTERFACE_H
+#endif // SCENE_PRINT_INTERFACE_ITEM_H
 
