@@ -17,13 +17,15 @@
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
-#ifndef SAMPLE_H
-#define SAMPLE_H
+#ifndef CGAL_RS2_SAMPLE_H
+#define CGAL_RS2_SAMPLE_H
 
 
 /// \cond SKIP_IN_MANUAL
 
 namespace CGAL {
+namespace RS_2 {
+
 template <class Traits_>
 class Sample
 {
@@ -137,6 +139,6 @@ struct greater_priority
   }
 };
 
-} //end namespace CGAL
+} } //end namespaces
 
-#endif // SAMPLE_H
+#endif // CGAL_RS2_SAMPLE_H

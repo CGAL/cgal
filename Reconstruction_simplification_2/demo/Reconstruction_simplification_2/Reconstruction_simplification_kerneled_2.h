@@ -1,5 +1,5 @@
-#ifndef RECONSTRUCTION_SIMPLIFICATION_KERNEL_2_H_
-#define RECONSTRUCTION_SIMPLIFICATION_KERNEL_2_H_
+#ifndef CGAL_RECONSTRUCTION_SIMPLIFICATION_KERNEL_2_H_
+#define CGAL_RECONSTRUCTION_SIMPLIFICATION_KERNEL_2_H_
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Reconstruction_simplification_2.h>
@@ -7,7 +7,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 
-#include <CGAL/Sample.h>
+#include <CGAL/RS_2/Sample.h>
 #include <utility>      // std::pair
 #include <vector>
 

@@ -17,10 +17,13 @@
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
-#ifndef COST_H_
-#define COST_H_
+#ifndef CGAL_RS2_COST_H_
+#define CGAL_RS2_COST_H_
 
 #include <algorithm>
+
+namespace CGAL {
+namespace RS_2 {
 
 template <class FT>
 class Cost
@@ -102,4 +105,6 @@ public:
   }
 };
 
-#endif // COST_H_
+} } // namespaces
+
+#endif // CGAL_RS2_COST_H_

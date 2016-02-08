@@ -17,13 +17,13 @@
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
-#ifndef RECONSTRUCTION_TRIANGULATION_2_H
-#define RECONSTRUCTION_TRIANGULATION_2_H
+#ifndef CGAL_RECONSTRUCTION_TRIANGULATION_2_H
+#define CGAL_RECONSTRUCTION_TRIANGULATION_2_H
 
 // local
-#include <CGAL/Sample.h>
+#include <CGAL/RS_2/Sample.h>
 #include <CGAL/Reconstruction_edge_2.h>
-#include <CGAL/Cost.h>
+#include <CGAL/RS_2/Cost.h>
 #include <CGAL/Reconstruction_vertex_base_2.h>
 #include <CGAL/Reconstruction_face_base_2.h>
 
@@ -112,14 +112,14 @@ public:
 
   typedef std::vector<Edge> Edge_vector;
 
-  typedef Cost<FT> Cost_;
-  typedef Sample<Traits_> Sample_;
+  typedef RS_2::Cost<FT> Cost_;
+  typedef RS_2::Sample<Traits_> Sample_;
   typedef std::vector<Sample_*> Sample_vector;
   typedef typename Sample_vector::const_iterator Sample_vector_const_iterator;
 
-  typedef Sample_with_priority<Sample_> PSample;
+  typedef RS_2::Sample_with_priority<Sample_> PSample;
   typedef std::priority_queue<PSample, std::vector<PSample>,
-      greater_priority<PSample> > SQueue;
+      RS_2::greater_priority<PSample> > SQueue;
 
   typedef Reconstruction_edge_2<FT, Edge, 
                                 Vertex_handle, Face_handle> Rec_edge_2;
@@ -1075,4 +1075,4 @@ public:
 };
 } //namespace CGAL
 
-#endif
+#endif // CGAL_RECONSTRUCTION_TRIANGULATION_2_H

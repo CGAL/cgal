@@ -17,8 +17,10 @@
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
-#ifndef RECONSTRUCTION_EDGE_2_H_
-#define RECONSTRUCTION_EDGE_2_H_
+#ifndef CGAL_RECONSTRUCTION_EDGE_2_H_
+#define CGAL_RECONSTRUCTION_EDGE_2_H_
+
+namespace CGAL {
 
 template<class FT, class Edge, class Vertex_handle, class Face_handle>
 class Reconstruction_edge_2 {
@@ -136,4 +138,6 @@ protected:
   }
 };
 
-#endif // RECONSTRUCTION_EDGE_2_H_
+} // namespace
+
+#endif // CGAL_RECONSTRUCTION_EDGE_2_H_

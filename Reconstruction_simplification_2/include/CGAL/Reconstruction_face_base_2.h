@@ -17,11 +17,11 @@
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
-#ifndef RECONSTRUCTION_FACE_BASE_2_H_
-#define RECONSTRUCTION_FACE_BASE_2_H_
+#ifndef CGAL_RECONSTRUCTION_FACE_BASE_2_H_
+#define CGAL_RECONSTRUCTION_FACE_BASE_2_H_
 
-#include <CGAL/Cost.h>
-#include <CGAL/Sample.h>
+#include <CGAL/RS_2/Cost.h>
+#include <CGAL/RS_2/Sample.h>
 #include <CGAL/Triangulation_face_base_2.h>
 
 #include <vector>
@@ -53,8 +53,8 @@ public:
   };
 
   typedef typename Traits_::FT    FT;
-  typedef Cost<FT>                Cost_;
-  typedef Sample<Traits_>         Sample_;
+  typedef RS_2::Cost<FT>          Cost_;
+  typedef RS_2::Sample<Traits_>   Sample_;
   typedef std::vector<Sample_*>   Sample_vector;
 
 private:
@@ -262,4 +262,4 @@ struct less_Edge
 
 } //end namespace
 
-#endif /* RECONSTRUCTION_FACE_BASE_2_H_ */
+#endif // CGAL_RECONSTRUCTION_FACE_BASE_2_H_

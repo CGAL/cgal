@@ -17,8 +17,8 @@
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
-#ifndef RECONSTRUCTION_SIMPLIFICATION_2_H_
-#define RECONSTRUCTION_SIMPLIFICATION_2_H_
+#ifndef CGAL_RECONSTRUCTION_SIMPLIFICATION_2_H_
+#define CGAL_RECONSTRUCTION_SIMPLIFICATION_2_H_
 
 #include <CGAL/Reconstruction_triangulation_2.h>
 #include <CGAL/Reconstruction_edge_2.h>
@@ -1668,6 +1668,6 @@ public:
   /// @}
 
 };
-}
+} // namespace
 
-#endif
+#endif // CGAL_RECONSTRUCTION_SIMPLIFICATION_2_H_

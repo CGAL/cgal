@@ -17,11 +17,11 @@
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
-#ifndef RECONSTRUCTION_VERTEX_BASE_2_H_
-#define RECONSTRUCTION_VERTEX_BASE_2_H_
+#ifndef CGAL_RECONSTRUCTION_VERTEX_BASE_2_H_
+#define CGAL_RECONSTRUCTION_VERTEX_BASE_2_H_
 
 #include <CGAL/Triangulation_vertex_base_2.h>
-#include <CGAL/Sample.h>
+#include <CGAL/RS_2/Sample.h>
 
 /// The Reconstruction_vertex_base_2 class is the default
 /// vertex class of the Reconstruction_triangulation_2 class.
@@ -40,7 +40,7 @@ class Reconstruction_vertex_base_2 : public Vb
 public:
   typedef Vb Base;
   typedef typename Traits_::FT        FT;
-  typedef Sample<Traits_>             Sample_;
+  typedef RS_2::Sample<Traits_>       Sample_;
   typedef typename Traits_::Point_2   Point;
   typedef typename Base::Face_handle  Face_handle;
 
@@ -129,4 +129,4 @@ struct less_Vertex_handle
 
 } //end namespace
 
-#endif /* RECONSTRUCTION_VERTEX_BASE_2_H_ */
+#endif // CGAL_RECONSTRUCTION_VERTEX_BASE_2_H_
