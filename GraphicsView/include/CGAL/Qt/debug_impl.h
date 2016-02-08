@@ -28,7 +28,7 @@
 #include <CGAL/Qt/debug.h>
 #include <QDir>
 #include <iostream>
-#include <GL/gl.h>
+#include <CGAL/gl.h>
 namespace CGAL {
 namespace Qt {
 
