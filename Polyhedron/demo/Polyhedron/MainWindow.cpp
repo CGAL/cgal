@@ -1841,16 +1841,4 @@ void MainWindow::setExpanded(QModelIndex index)
   Q_EMIT expanded(proxyModel->mapToSource(index));
 }
 
-void MainWindow::on_actionMaxItemsDisplayed_triggered()
-{
-  bool ok;
-  bool valid;
-  QString text = QInputDialog::getText(this, tr("QInputDialog::getText()"),
-                                       tr("Maximum text items diplayed:"), QLineEdit::Normal,
-                                       "30000", &ok);
-  text.toInt(&valid);
-  if (ok && valid){
-    viewer->textRenderer->setMax(text.toInt());
-    ui->actionMax_text_items_displayed->setText(QString("Max text items displayed %1").arg(text.toInt()));
-  }
-}
+
