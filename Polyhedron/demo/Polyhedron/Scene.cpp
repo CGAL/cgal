@@ -5,6 +5,7 @@
 #include "config.h"
 #include "Scene.h"
 #include  <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_item_print_interface.h>
 
 #include <QObject>
 #include <QMetaObject>
@@ -1141,13 +1142,23 @@ void Scene::printPrimitiveId(QPoint point, CGAL::Three::Viewer_interface* viewer
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
-    it->printPrimitiveId(point, viewer);
+  {
+    //Only call printPrimitiveId if the item is a Scene_item_print_interface
+    Scene_item_print_interface* item= dynamic_cast<Scene_item_print_interface*>(it);
+    if(item)
+      item->printPrimitiveId(point, viewer);
+  }
 }
 void Scene::printPrimitiveIds(CGAL::Three::Viewer_interface* viewer)
 {
   Scene_item *it = item(mainSelectionIndex());
   if(it)
-    it->printPrimitiveIds(viewer);
+  {
+    //Only call printPrimitiveIds if the item is a Scene_item_print_interface
+    Scene_item_print_interface* item= dynamic_cast<Scene_item_print_interface*>(it);
+    if(item)
+      item->printPrimitiveIds(viewer);
+  }
 }
 bool Scene::testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer)
 {

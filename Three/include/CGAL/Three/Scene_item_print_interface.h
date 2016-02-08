@@ -26,7 +26,7 @@ namespace Three {
   class Viewer_interface;
 
 
-//! Base class to allow an item to print ts primitive.
+//! Base class to allow an item to print its primitive IDs.
 class Scene_item_print_interface {
 public:
   virtual ~Scene_item_print_interface(){}
