@@ -6,7 +6,7 @@
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Reconstruction_simplification_2.h>
-#include <CGAL/Reconstruction_triangulation_2.h>
+#include <CGAL/RS_2/Reconstruction_triangulation_2.h>
 
 #include "testing_tools.h"
 
@@ -29,7 +29,7 @@ typedef std::vector<PointMassPair> PointMassList;
 typedef CGAL::First_of_pair_property_map <PointMassPair> Point_property_map;
 typedef CGAL::Second_of_pair_property_map <PointMassPair> Mass_property_map;
 
-typedef CGAL::Reconstruction_triangulation_2<K> Rt_2;
+typedef CGAL::RS_2::Reconstruction_triangulation_2<K> Rt_2;
 typedef Rt_2::Finite_edges_iterator Finite_edges_iterator;
 
 typedef Rt_2::Edge Edge;
