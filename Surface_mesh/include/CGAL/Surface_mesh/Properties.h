@@ -64,6 +64,9 @@ public:
     /// Let two elements swap their storage place.
     virtual void swap(size_t i0, size_t i1) = 0;
 
+    /// Erase range
+    virtual void erase(size_t first, size_t beyond) = 0;
+
     /// Return a deep copy of self.
     virtual Base_property_array* clone () const = 0;
 
@@ -137,6 +140,11 @@ public: // virtual interface of Base_property_array
         data_[i1]=d;
     }
 
+    virtual void erase(size_t first, size_t beyond)
+    {
+      data_.erase (data_.begin() + first, data_.begin() + beyond);
+    }
+
     virtual Base_property_array* clone() const
     {
         Property_array<T>* p = new Property_array<T>(this->name_, this->value_);
@@ -148,6 +156,8 @@ public: // virtual interface of Base_property_array
 
   typename vector_type::iterator begin () { return data_.begin (); }
   typename vector_type::iterator end () { return data_.end (); }
+  typename vector_type::const_iterator begin () const { return data_.begin (); }
+  typename vector_type::const_iterator end () const { return data_.end (); }
 
 
 public:
@@ -351,6 +361,13 @@ public:
     }
 
 
+    // erase elements from each vector
+    void erase (size_t first, size_t beyond)
+    {
+        for (unsigned int i=0; i<parrays_.size(); ++i)
+          parrays_[i]->erase(first, beyond);
+        size_ -= (beyond-first);
+    }
     // reserve memory for n entries in all arrays
     void reserve(size_t n) const
     {
@@ -387,7 +404,6 @@ public:
         for (unsigned int i=0; i<parrays_.size(); ++i)
             parrays_[i]->swap(i0, i1);
     }
-
 
 private:
     std::vector<Base_property_array*>  parrays_;

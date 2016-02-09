@@ -25,7 +25,7 @@
 #include <CGAL/Min_sphere_of_spheres_d.h>
 #include <CGAL/Min_sphere_of_points_d_traits_3.h>
 #include <CGAL/Min_sphere_of_spheres_d_traits_3.h>
-#include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh/Properties.h>
 
 #include <algorithm>
 #include <vector>
@@ -63,12 +63,13 @@ public:
   typedef typename Gt::Iso_cuboid_3 Iso_cuboid;
   typedef typename Gt::Sphere_3 Sphere;
   
-  typedef CGAL::Surface_mesh<Point> Base;
-  typedef typename Base::Vertex_index Item;
 
-  typedef typename Properties::template Property_map<Item, std::size_t> Index_pmap;
-  typedef typename Properties::template Property_map<Item, Point> Point_pmap;
-  typedef typename Properties::template Property_map<Item, Vector> Vector_pmap;
+  typedef typename std::size_t Item;
+
+  typedef typename Properties::Property_container<Item> Base;
+  typedef typename Properties::Property_map<Item, std::size_t> Index_pmap;
+  typedef typename Properties::Property_map<Item, Point> Point_pmap;
+  typedef typename Properties::Property_map<Item, Vector> Vector_pmap;
 
   typedef typename Index_pmap::Array::vector_type::iterator iterator;
   typedef typename Index_pmap::Array::vector_type::const_iterator const_iterator;
@@ -96,8 +97,8 @@ private:
     Index_back_inserter& operator*() { return *this; }
     Index_back_inserter& operator= (std::size_t& ind)
     {
-      if(! ps.surface_mesh().has_valid_index(typename Point_set::Item(ind)))
-        ps.surface_mesh().add_vertex();
+      if(!(ps.size() <= (typename Point_set::Item(ind))))
+        ps.add_item();
       put(ps.indices(), Point_set::Item(ind),ind);
       ++ ind;
       return *this;
@@ -115,7 +116,7 @@ private:
     Property_push_pmap(Point_set& ps, Property& prop, std::size_t ind=0) : ps(ps), prop(prop), ind(ind) {}
     inline friend void put(Property_push_pmap& pm, std::size_t& i, typename Property::value_type& t)
     {
-      if(!pm.ps.has_valid_index(pm.ind))
+      if(!(pm.ps.size() <= (pm.ind)))
         pm.ps.add_item();
       put(pm.prop, Point_set::Item(pm.ind), t);
       i = pm.ind;
@@ -127,6 +128,7 @@ private:
   typedef Property_push_pmap<Vector_pmap> Normal_push_pmap;
 
   Base m_base;
+  Point_pmap m_points;
   Index_pmap m_indices;
   Vector_pmap m_normals;
 
@@ -137,28 +139,25 @@ private:
     return *this;
   }
 
+  // Copy constructor not implemented and declared private to make
+  // sure nobody uses the default one without knowing it
+  Point_set_3 (const Point_set_3& p)
+  {
+  }
+
   
 public:
 
   Point_set_3 () : m_base()
   {
-    assert (add_index_property());
-  }
-
-  // copy constructor 
-  Point_set_3 (const Point_set_3& p) : m_base(p.m_base)
-  {
-    assert (add_index_property());
+    m_indices = m_base.template add<std::size_t> ("index").first;
+    m_points = m_base.template add<Point> ("point").first;
   }
 
   void push_back (const Point& p)
   {
-    m_base.add_vertex (p);
-  }
-
-  Base& surface_mesh()
-  {
-    return m_base;
+    Item i = m_base.push_back();
+    m_points[i] = p;
   }
 
   Index_pmap& indices()
@@ -168,44 +167,55 @@ public:
 
   Point_pmap points()
   {
-    return m_base.points();
+    return m_points;
   }
-
 
   Vector_pmap& normals()
   {
     return m_normals;
   }
 
-
   iterator begin() { return m_indices.array().begin(); }
   iterator end() { return m_indices.array().end(); }
   const_iterator begin() const { return m_indices.array().begin(); }
   const_iterator end() const { return m_indices.array().end(); }
-  bool empty() const { return m_base.is_empty(); }
-  std::size_t size () const { return m_base.number_of_vertices(); }
+  bool empty() const { return (m_base.size() == 0); }
+  std::size_t size () const { return m_base.size(); }
   void clear() { m_base.clear(); }
-  Point& operator[] (std::size_t index) { return m_base.point (Item (index)); }
-  const Point& operator[] (std::size_t index) const { return (*this)[index]; }
+  Point& operator[] (Item index) { return m_points[index]; }
+  const Point& operator[] (Item index) const { return (*this)[index]; }
 
-  void erase (iterator begin, iterator end)
+  void erase (iterator first, iterator beyond)
   {
-    for (iterator it = begin; it != end; ++ it)
-      m_base.remove_vertex (Item (*it));
-    m_base.collect_garbage();
-    reset_indices();
+    if (beyond != end())
+      {
+        // TODO
+      }
+    
+    if (are_indices_up_to_date())
+      {
+        m_base.erase (*first, *beyond);
+      }
+    else
+      {
+        std::size_t size = (beyond - first);
+        apply_indices_change();
+        m_base.resize (m_base.size() - size);
+      }
   }
 
   void add_item ()
   {
-    m_base.add_vertex();
+    m_base.push_back();
   }
   
-  bool has_valid_index (std::size_t i) const
+  void apply_indices_change()
   {
-    return m_base.has_valid_index (Item (i));
+    for (std::size_t i = 0; i < size(); ++ i)
+      if (i != m_indices[i])
+        m_base.swap (i, m_indices[i]);
   }
-
+  
   void reset_indices()
   {
     std::size_t i = 0;
@@ -228,8 +238,7 @@ public:
   }
   Point_push_pmap point_push_pmap ()
   {
-    Point_pmap& pm = m_base.points();
-    return Property_push_pmap<Point_pmap> (*this, pm, size());
+    return Property_push_pmap<Point_pmap> (*this, m_points, size());
   }
   Normal_push_pmap normal_push_pmap ()
   {
@@ -237,57 +246,50 @@ public:
   }
 
     
-  bool add_index_property()
-  {
-    bool out = false;
-    boost::tie (m_indices, out) = m_base.template add_property_map<Item, std::size_t> ("index");
-    return out;
-  }
-
   bool has_normals() const
   {
-    std::pair<Vector_pmap, bool> pm = m_base.template property_map<Item, Vector> ("normal");
+    std::pair<Vector_pmap, bool> pm = m_base.template get<Vector> ("normal");
     return pm.second;
   }
   bool add_normal_property()
   {
     bool out = false;
-    boost::tie (m_normals, out) = m_base.template add_property_map<Item, Vector> ("normal");
+    boost::tie (m_normals, out) = m_base.template add<Vector> ("normal");
     return out;
   }
   void remove_normal_property()
   {
-    m_base.remove_property_map (m_normals);
+    m_base.remove (m_normals);
   }
-  Vector& normal (std::size_t index) { return m_normals[Item (index)]; }
-  const Vector& normal (std::size_t index) const { return this->normal(index); }
+  Vector& normal (Item index) { return m_normals[index]; }
+  const Vector& normal (Item index) const { return this->normal(index); }
 
   template <typename T>
   bool has_property (const std::string& name) const
   {
     std::pair<typename Properties::template Property_map<Item, T>, bool>
-      pm = m_base.template property_map<Item, T> (name);
+      pm = m_base.template get<T> (name);
     return pm.second;
   }
   template <typename T>
   bool add_property (const std::string& name)
   {
     std::pair<typename Properties::template Property_map<Item, T>, bool>
-      pm = m_base.template add_property_map<Item, T> (name);
+      pm = m_base.template add<T> (name);
     return pm.second;
   }
   
   template <typename PMap>
   void remove_property (PMap& prop)
   {
-    m_base.remove_property_map (prop);
+    m_base.remove (prop);
   }
   
   template <typename T>
   bool remove_property (const std::string& name)
   {
     std::pair<typename Properties::template Property_map<Item, T>, bool>
-      pm = m_base.template property_map<Item, T> (name);
+      pm = m_base.template get<T> (name);
     if (!(pm.second))
       return false;
     remove_property (pm.first);
@@ -297,7 +299,7 @@ public:
   template <typename T>
   T& property (typename Properties::template Property_map<Item, T>& pmap, std::size_t index)
   {
-    return pmap[Item (index)];
+    return pmap[index];
   }
   template <typename T>
   const T& property (typename Properties::template Property_map<Item, T>& pmap, std::size_t index) const
@@ -309,7 +311,7 @@ public:
   T& property (const std::string& name, std::size_t index)
   {
     std::pair<typename Properties::template Property_map<Item, T>, bool>
-      pm = m_base.template add_property_map<Item, T> (name);
+      pm = m_base.template get<T> (name);
     return property (pm.first, index);
   }
   template <typename T>
