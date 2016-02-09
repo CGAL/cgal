@@ -96,11 +96,12 @@ h1 {
 \package_listing{Skin_surface_3}
 \package_listing{Mesh_3}
 
-\section PartReconstruction Surface Reconstruction
+\section PartReconstruction Shape Reconstruction
 
 \package_listing{Poisson_surface_reconstruction_3}
 \package_listing{Scale_space_reconstruction_3}
 \package_listing{Advancing_front_surface_reconstruction}
+\package_listing{Reconstruction_simplification_2}
 
 \section PartGeometryProcessing Geometry Processing
 

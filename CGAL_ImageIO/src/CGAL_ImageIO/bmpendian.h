@@ -34,6 +34,7 @@
 
 #include <cstdio>
 #include "bmptypes.h"
+#include <cstdio>
 
 /*
  * Read the basic types as little-endian values.  The return value will be
