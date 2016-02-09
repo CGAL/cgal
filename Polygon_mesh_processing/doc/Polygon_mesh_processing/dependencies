@@ -8,6 +8,6 @@ Polyhedron
 BGL
 Solver_interface
 Surface_mesh
-Surface_modeling
+Surface_mesh_deformation
 AABB_tree
 Triangulation_2

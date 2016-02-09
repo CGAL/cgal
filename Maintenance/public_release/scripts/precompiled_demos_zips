@@ -53,7 +53,7 @@ pushd Arrangement_on_surface_2_Demo;    zip ../arrangements_2.zip *;            
 pushd Periodic_2_triangulation_2_Demo;  zip ../Periodic_2_Delaunay_triangulation_2.zip *;
                                                                                      popd
 # probably an error, in CGAL-4.5:
-rm -rf Surface_modeling_Demo
+rm -rf Surface_mesh_deformation_Demo
 
 # Demo not announced in the CGAL manual, from CGAL-3.8:
 rm -rf Circular_kernel_3_Demo

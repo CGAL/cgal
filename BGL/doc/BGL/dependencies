@@ -11,6 +11,6 @@ Triangulation_2
 Surface_mesh
 Surface_mesh_simplification
 Surface_mesh_segmentation
-Surface_modeling
+Surface_mesh_deformation
 Property_map
 Miscellany
