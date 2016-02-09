@@ -785,51 +785,57 @@ Scene_polyhedron_item::toolTip() const
 
 QMenu* Scene_polyhedron_item::contextMenu()
 {
-    const char* prop_name = "Menu modified by Scene_polyhedron_item.";
+  const char* prop_name = "Menu modified by Scene_polyhedron_item.";
 
-    QMenu* menu = Scene_item::contextMenu();
+  QMenu* menu = Scene_item::contextMenu();
 
-    // Use dynamic properties:
-    // http://doc.qt.io/qt-5/qobject.html#property
-    bool menuChanged = menu->property(prop_name).toBool();
+  // Use dynamic properties:
+  // http://doc.qt.io/qt-5/qobject.html#property
+  bool menuChanged = menu->property(prop_name).toBool();
 
-    if(!menuChanged) {
+  if(!menuChanged) {
 
-        QAction* actionShowOnlyFeatureEdges =
-                menu->addAction(tr("Show only &feature edges"));
-        actionShowOnlyFeatureEdges->setCheckable(true);
-        actionShowOnlyFeatureEdges->setObjectName("actionShowOnlyFeatureEdges");
-        connect(actionShowOnlyFeatureEdges, SIGNAL(toggled(bool)),
-                this, SLOT(show_only_feature_edges(bool)));
+    QAction* actionShowOnlyFeatureEdges =
+        menu->addAction(tr("Show only &feature edges"));
+    actionShowOnlyFeatureEdges->setCheckable(true);
+    actionShowOnlyFeatureEdges->setChecked(show_only_feature_edges_m);
+    actionShowOnlyFeatureEdges->setObjectName("actionShowOnlyFeatureEdges");
+    connect(actionShowOnlyFeatureEdges, SIGNAL(toggled(bool)),
+            this, SLOT(show_only_feature_edges(bool)));
 
     QAction* actionShowFeatureEdges =
-      menu->addAction(tr("Show feature edges"));
+        menu->addAction(tr("Show feature edges"));
     actionShowFeatureEdges->setCheckable(true);
     actionShowFeatureEdges->setChecked(show_feature_edges_m);
     actionShowFeatureEdges->setObjectName("actionShowFeatureEdges");
     connect(actionShowFeatureEdges, SIGNAL(toggled(bool)),
-      this, SLOT(show_feature_edges(bool)));
+            this, SLOT(show_feature_edges(bool)));
 
-    QAction* actionPickFacets = 
-      menu->addAction(tr("Facets picking"));
+    QAction* actionPickFacets =
+        menu->addAction(tr("Facets picking"));
     actionPickFacets->setCheckable(true);
     actionPickFacets->setObjectName("actionPickFacets");
     connect(actionPickFacets, SIGNAL(toggled(bool)),
             this, SLOT(enable_facets_picking(bool)));
 
-        QAction* actionEraseNextFacet =
-                menu->addAction(tr("Erase next picked facet"));
-        actionEraseNextFacet->setCheckable(true);
-        actionEraseNextFacet->setObjectName("actionEraseNextFacet");
-        connect(actionEraseNextFacet, SIGNAL(toggled(bool)),
-                this, SLOT(set_erase_next_picked_facet(bool)));
-        menu->setProperty(prop_name, true);
-    }
-    QAction* action = menu->findChild<QAction*>("actionPickFacets");
-    if(action) action->setChecked(facet_picking_m);
-    action = menu->findChild<QAction*>("actionEraseNextFacet");
-    if(action) action->setChecked(erase_next_picked_facet_m);
-    return menu;
+    QAction* actionEraseNextFacet =
+        menu->addAction(tr("Erase next picked facet"));
+    actionEraseNextFacet->setCheckable(true);
+    actionEraseNextFacet->setObjectName("actionEraseNextFacet");
+    connect(actionEraseNextFacet, SIGNAL(toggled(bool)),
+            this, SLOT(set_erase_next_picked_facet(bool)));
+    menu->setProperty(prop_name, true);
+  }
+
+  QAction* action = menu->findChild<QAction*>("actionShowOnlyFeatureEdges");
+  if(action) action->setChecked(show_only_feature_edges_m);
+  action = menu->findChild<QAction*>("actionShowFeatureEdges");
+  if(action) action->setChecked(show_feature_edges_m);
+  action = menu->findChild<QAction*>("actionPickFacets");
+  if(action) action->setChecked(facet_picking_m);
+  action = menu->findChild<QAction*>("actionEraseNextFacet");
+  if(action) action->setChecked(erase_next_picked_facet_m);
+  return menu;
 }
 
 void Scene_polyhedron_item::show_only_feature_edges(bool b)
