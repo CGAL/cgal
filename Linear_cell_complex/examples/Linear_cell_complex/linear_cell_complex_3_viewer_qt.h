@@ -153,8 +153,8 @@ class SimpleLCCViewerQt : public QGLViewer, public QOpenGLFunctions_2_1
 
 public:
   // Constructor/Destructor
-  SimpleLCCViewerQt(LCC& alcc) :
-    QGLViewer(CGAL::Qt::createOpenGLContext(0)),
+  SimpleLCCViewerQt(LCC& alcc, QObject* parent) :
+    QGLViewer(CGAL::Qt::createOpenGLContext(parent)),
     lcc(alcc),
     wireframe(false),
     flatShading(true),
@@ -923,7 +923,7 @@ void display_lcc(LCC& alcc)
   const char* argv[2]={"lccviewer","\0"};
   QApplication app(argc,const_cast<char**>(argv));
 
-  SimpleLCCViewerQt<LCC> mainwindow(alcc);
+  SimpleLCCViewerQt<LCC> mainwindow(alcc,&app);
   mainwindow.show();
 
   app.exec();
