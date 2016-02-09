@@ -29,6 +29,7 @@
 #include <QDir>
 #include <iostream>
 #include <CGAL/gl.h>
+#include <qopenglfunctions.h>
 namespace CGAL {
 namespace Qt {
 
