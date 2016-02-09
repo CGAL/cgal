@@ -7,15 +7,15 @@
 const QColor CGAL::Three::Scene_item::defaultColor = QColor(100, 100, 255);
 
 CGAL::Three::Scene_item::~Scene_item() {
-    delete defaultContextMenu;
-    for(int i=0; i<buffersSize; i++)
-    {
-        buffers[i].destroy();
-    }
-    for(int i=0; i<vaosSize; i++)
-    {
-     vaos[i]->destroy();
-    }
+  delete defaultContextMenu;
+  for(int i=0; i<buffersSize; i++)
+  {
+    buffers[i].destroy();
+  }
+  for(int i=0; i<vaosSize; i++)
+  {
+    delete vaos[i];
+  }
 }
 
 void CGAL::Three::Scene_item::itemAboutToBeDestroyed(CGAL::Three::Scene_item* item) {
