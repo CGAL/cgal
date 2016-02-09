@@ -154,7 +154,7 @@ class SimpleLCCViewerQt : public QGLViewer, public QOpenGLFunctions_2_1
 public:
   // Constructor/Destructor
   SimpleLCCViewerQt(LCC& alcc) :
-    QGLViewer(CGAL::Qt::createOpenGLContext()),
+    QGLViewer(CGAL::Qt::createOpenGLContext(0)),
     lcc(alcc),
     wireframe(false),
     flatShading(true),

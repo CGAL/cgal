@@ -22,7 +22,7 @@ class Viewer : public QGLViewer, QOpenGLFunctions_2_1 {
   int nr_of_facets;
 public:
   Viewer(QWidget* parent)
-    : QGLViewer(CGAL::Qt::createOpenGLContext(), parent)
+    : QGLViewer(CGAL::Qt::createOpenGLContext(parent), parent)
   {}
   ~Viewer()
   {

@@ -5,7 +5,7 @@
 #include "CGAL/Qt/CreateOpenGLContext.h"
 
 Viewer::Viewer(QWidget* parent)
-  : QGLViewer(CGAL::Qt::createOpenGLContext(),parent)
+  : QGLViewer(CGAL::Qt::createOpenGLContext(parent),parent)
 {
   are_buffers_initialized = false;
 }

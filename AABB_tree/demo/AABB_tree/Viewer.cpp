@@ -5,7 +5,7 @@
 #include <CGAL/Qt/CreateOpenGLContext.h>
 
 Viewer::Viewer(QWidget* parent)
-  : QGLViewer(CGAL::Qt::createOpenGLContext(),parent),
+  : QGLViewer(CGAL::Qt::createOpenGLContext(parent),parent),
     m_pScene(NULL),
     m_custom_mouse(false)
 {

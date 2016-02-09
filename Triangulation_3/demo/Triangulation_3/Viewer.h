@@ -24,7 +24,7 @@ class Viewer : public QGLViewer, QOpenGLFunctions_2_1 {
 
 public:
   Viewer(QWidget* parent)
-    : QGLViewer(CGAL::Qt::createOpenGLContext(),parent)
+    : QGLViewer(CGAL::Qt::createOpenGLContext(parent),parent)
     , m_showAxis(false)
     , m_showVertex(true)
     , m_showDEdge(true)
