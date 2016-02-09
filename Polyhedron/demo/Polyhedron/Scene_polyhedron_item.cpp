@@ -926,19 +926,24 @@ void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) co
         program->release();
         vaos[Edges]->release();
     }
-    if(show_feature_edges_m || show_only_feature_edges_m)
-    {
-        vaos[Feature_edges]->bind();
 
-        attrib_buffers(viewer, PROGRAM_NO_SELECTION);
-        program = getShaderProgram(PROGRAM_NO_SELECTION);
-        program->bind();
-        //draw the edges
+    //draw the feature edges
+    vaos[Feature_edges]->bind();
+    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    program = getShaderProgram(PROGRAM_NO_SELECTION);
+    program->bind();
+    if(show_feature_edges_m || show_only_feature_edges_m)
         program->setAttributeValue("colors", Qt::red);
-        viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_f_lines/4));
-        program->release();
-        vaos[Feature_edges]->release();
-        }
+    else
+    {
+        if(!is_selected)
+            program->setAttributeValue("colors", this->color().lighter(50));
+        else
+            program->setAttributeValue("colors",QColor(0,0,0));
+    }
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_f_lines/4));
+    program->release();
+    vaos[Feature_edges]->release();
     }
 
 void
