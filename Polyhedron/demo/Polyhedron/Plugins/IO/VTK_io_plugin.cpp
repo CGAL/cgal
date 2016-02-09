@@ -18,9 +18,12 @@
 //                 Jane Tournois
 //
 
-#include "../Kernel_type.h"
-#include "../Polyhedron_type.h"
+#include <QtCore/qglobal.h>
+
+#include "Polyhedron_type.h"
 #include "Scene_polyhedron_item.h"
+
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 
 #include <QApplication>
@@ -49,6 +52,16 @@
 #include <vtkDoubleArray.h>
 #include <vtkCell.h>
 #include <vtkCellData.h>
+#include <vtkIdList.h>
+#include <vtkAppendFilter.h>
+#include <vtkSphereSource.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkVersion.h>
+#include <vtkUnstructuredGridWriter.h>
+#include <vtkPoints.h>
+#include <vtkCellArray.h>
+#include <vtkType.h>
+
 namespace CGAL{
 
   template <typename TM, typename VertexMap, typename FaceMap>
@@ -99,6 +112,73 @@ namespace CGAL{
     }
     return true;
   }
+
+  template<typename PM>
+  void polygon_mesh_to_vtkPolyData(const PM& pmesh,
+                                   const char* filename) //PolygonMesh
+  {
+    typedef typename boost::graph_traits<PM>::vertex_descriptor   vertex_descriptor;
+    typedef typename boost::graph_traits<PM>::face_descriptor     face_descriptor;
+    typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
+
+    typedef typename boost::property_map<PM, CGAL::vertex_point_t>::const_type VPMap;
+    typedef typename boost::property_map_value<PM, CGAL::vertex_point_t>::type Point_3;
+    VPMap vpmap = get(CGAL::vertex_point, pmesh);
+
+    vtkPoints* const vtk_points = vtkPoints::New();
+    vtkCellArray* const vtk_cells = vtkCellArray::New();
+
+    vtk_points->Allocate(pmesh.size_of_vertices());
+    vtk_cells->Allocate(pmesh.size_of_facets());
+
+    std::map<Polyhedron::Vertex_handle, vtkIdType> Vids;
+    vtkIdType inum = 0;
+
+    BOOST_FOREACH(vertex_descriptor v, vertices(pmesh))
+    {
+      const Point_3& p = get(vpmap, v);
+      vtk_points->InsertNextPoint(CGAL::to_double(p.x()),
+                                  CGAL::to_double(p.y()),
+                                  CGAL::to_double(p.z()));
+      Vids[v] = inum++;
+    }
+    BOOST_FOREACH(face_descriptor f, faces(pmesh))
+    {
+      vtkIdList* cell = vtkIdList::New();
+      BOOST_FOREACH(halfedge_descriptor h,
+                    halfedges_around_face(halfedge(f, pmesh), pmesh))
+      {
+        cell->InsertNextId(Vids[target(h, pmesh)]);
+      }
+      vtk_cells->InsertNextCell(cell);
+      cell->Delete();
+    }
+
+    vtkPolyData* polydata = vtkPolyData::New();
+
+    polydata->SetPoints(vtk_points);
+    vtk_points->Delete();
+
+    polydata->SetPolys(vtk_cells);
+    vtk_cells->Delete();
+
+    // Combine the two data sets
+    vtkSmartPointer<vtkAppendFilter> appendFilter =
+      vtkSmartPointer<vtkAppendFilter>::New();
+    appendFilter->AddInputData(polydata);
+    appendFilter->Update();
+
+    vtkSmartPointer<vtkUnstructuredGrid> unstructuredGrid =
+      vtkSmartPointer<vtkUnstructuredGrid>::New();
+    unstructuredGrid->ShallowCopy(appendFilter->GetOutput());
+
+    // Write the unstructured grid
+    vtkSmartPointer<vtkUnstructuredGridWriter> writer =
+      vtkSmartPointer<vtkUnstructuredGridWriter>::New();
+    writer->SetFileName(filename);
+    writer->SetInputData(unstructuredGrid);
+    writer->Write();
+  }
 }//end namespace CGAL
 
 
@@ -117,8 +197,28 @@ public:
   QString nameFilters() const { return "VTK PolyData files (*.vtk, *.vtp)"; }
   QString name() const { return "vtk_plugin"; }
 
-  bool canSave(const CGAL::Three::Scene_item*) { return false; } //todo
-  bool save(const CGAL::Three::Scene_item*, QFileInfo) { return false; }
+  bool canSave(const CGAL::Three::Scene_item* item)
+  {
+    return qobject_cast<const Scene_polyhedron_item*>(item);
+  }
+  bool save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
+  {
+    if (fileinfo.suffix().toLower() != "vtk")
+      return false;
+
+    std::string output_filename = fileinfo.absoluteFilePath().toStdString();
+
+    const Scene_polyhedron_item* poly_item =
+      qobject_cast<const Scene_polyhedron_item*>(item);
+
+    if (!poly_item)
+      return false;
+    else
+      CGAL::polygon_mesh_to_vtkPolyData(*poly_item->polyhedron(),
+                                        output_filename.data());
+
+    return true;
+  }
 
   bool canLoad() const { return true; }
   CGAL::Three::Scene_item* load(QFileInfo fileinfo)
