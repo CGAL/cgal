@@ -3,6 +3,7 @@
 
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
+#include <QGraphicsPolygonItem>
 #include <QGraphicsSceneMouseEvent>
 #include <QEvent>
 #include <list>
@@ -81,9 +82,10 @@ TriangulationConflictZone<T>::localize_and_insert_point(QPointF qt_point)
       ++it){
     if(! m_tr->is_infinite(*it)){
       QGraphicsPolygonItem *item = new QGraphicsPolygonItem(m_convert(m_tr->triangle(*it)));
-      QColor color(::Qt::blue);
+      QColor color = ::Qt::blue;
       color.setAlpha(150);
-      item->setBrush(color);
+      item->setBrush(QBrush(color));
+      item->setPen(QPen(::Qt::black, .01));
       m_scene->addItem(item);
       qfaces.push_back(item);
     }

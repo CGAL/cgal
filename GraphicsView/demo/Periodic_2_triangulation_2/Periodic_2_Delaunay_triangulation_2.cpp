@@ -126,7 +126,6 @@ MainWindow::MainWindow()
   // and the input they generate is passed to the triangulation with 
   // the signal/slot mechanism    
   pt_pi = new CGAL::Qt::TriangulationPointInputAndConflictZone<Periodic_DT>(&scene, &triang, this );
-  
   QObject::connect(pt_pi, SIGNAL(generate(CGAL::Object)),
 		   this, SLOT(processInput(CGAL::Object)));
   
@@ -146,6 +145,7 @@ MainWindow::MainWindow()
 		   this, SIGNAL(changed()));
 
   pt_cc = new CGAL::Qt::TriangulationCircumcircle<Periodic_DT>(&scene, &triang, this);
+  pt_cc ->setPen(QPen(::Qt::black, .01));
   QObject::connect(pt_cc, SIGNAL(modelChanged()),
 		   this, SIGNAL(changed()));
   

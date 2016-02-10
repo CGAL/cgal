@@ -5,6 +5,7 @@
 #include <CGAL/Qt/GraphicsViewInput.h>
 #include <CGAL/Qt/Converter.h>
 #include <QGraphicsSceneMouseEvent>
+#include <QGraphicsPolygonItem>
 #include <QEvent>
 #include <list>
 
@@ -71,9 +72,10 @@ TriangulationPointInputAndConflictZone<T>::mousePressEvent(QGraphicsSceneMouseEv
       it != faces.end();
       ++it) {
       QGraphicsPolygonItem *item = new QGraphicsPolygonItem(convert(dt->triangle(*it)));
-      QColor color(::Qt::blue);
+      QColor color = ::Qt::blue;
       color.setAlpha(150);
-      item->setBrush(color);
+      item->setBrush(QBrush(color));
+      item->setPen(QPen(::Qt::black, .01));
       scene_->addItem(item);
       qfaces.push_back(item);
   }
