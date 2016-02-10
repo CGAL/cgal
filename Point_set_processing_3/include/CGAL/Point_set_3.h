@@ -97,7 +97,7 @@ private:
     Index_back_inserter& operator*() { return *this; }
     Index_back_inserter& operator= (std::size_t& ind)
     {
-      if(!(ps.size() <= (typename Point_set::Item(ind))))
+      if(ps.size() <= (typename Point_set::Item(ind)))
         ps.add_item();
       put(ps.indices(), Point_set::Item(ind),ind);
       ++ ind;
@@ -116,7 +116,7 @@ private:
     Property_push_pmap(Point_set& ps, Property& prop, std::size_t ind=0) : ps(ps), prop(prop), ind(ind) {}
     inline friend void put(Property_push_pmap& pm, std::size_t& i, typename Property::value_type& t)
     {
-      if(!(pm.ps.size() <= (pm.ind)))
+      if(pm.ps.size() <= (pm.ind))
         pm.ps.add_item();
       put(pm.prop, Point_set::Item(pm.ind), t);
       i = pm.ind;
@@ -165,7 +165,7 @@ public:
     return m_indices;
   }
 
-  Point_pmap points()
+  Point_pmap& points()
   {
     return m_points;
   }
