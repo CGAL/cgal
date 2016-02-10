@@ -64,7 +64,7 @@ public:
    NB_OF_PROGRAMS               /** Holds the number of different programs in this enum.*/
   };
 
-  Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(), parent) {}
+  Viewer_interface(QWidget* parent) : QGLViewer(CGAL::Qt::createOpenGLContext(parent), parent) {}
   virtual ~Viewer_interface() {}
 
   //! Sets the scene for the viewer.

@@ -23,9 +23,9 @@
 #include <QGLContext>
 namespace CGAL{
 namespace Qt{
-inline QGLContext* createOpenGLContext()
+inline QGLContext* createOpenGLContext(QObject* parent)
 {
-    QOpenGLContext *context = new QOpenGLContext();
+    QOpenGLContext *context = new QOpenGLContext(parent);
     QSurfaceFormat format;
     format.setVersion(2,1);
     format.setProfile(QSurfaceFormat::CompatibilityProfile);
@@ -35,9 +35,9 @@ inline QGLContext* createOpenGLContext()
     return result;
 }
 
-inline QGLContext* createOpenGLMSAAContext()
+inline QGLContext* createOpenGLMSAAContext(QObject* parent)
 {
-    QOpenGLContext *context = new QOpenGLContext();
+    QOpenGLContext *context = new QOpenGLContext(parent);
     QSurfaceFormat format;
     format.setVersion(2,1);
     format.setProfile(QSurfaceFormat::CompatibilityProfile);
