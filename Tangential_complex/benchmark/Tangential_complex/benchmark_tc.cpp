@@ -6,6 +6,19 @@
 # define TBB_USE_THREADING_TOOL
 #endif
 
+#include <cstddef>
+
+//#define CGAL_TC_USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
+//#define TC_PROTECT_POINT_SET_DELTA  0.003
+//#define JUST_BENCHMARK_SPATIAL_SEARCH // CJTODO: test
+//#define CHECK_IF_ALL_SIMPLICES_ARE_IN_THE_AMBIENT_DELAUNAY
+//#define TC_INPUT_STRIDES 3 // only take one point every TC_INPUT_STRIDES points
+//#define TC_NO_EXPORT
+//#define CGAL_TC_ALVAREZ_SURFACE_WINDOW 0.95 // 1.9 - 0.95
+#define CGAL_TC_EXPORT_SPARSIFIED_POINT_SET
+
+const std::size_t ONLY_LOAD_THE_FIRST_N_POINTS = 500000; // 1e10
+
 #include <CGAL/assertions_behaviour.h>
 #include <CGAL/Epick_d.h>
 #include <CGAL/Tangential_complex.h>
@@ -41,13 +54,6 @@ typedef CGAL::Tangential_complex<
   Kernel, CGAL::Dynamic_dimension_tag,
   CGAL::Parallel_tag>                                           TC;
 
-//#define CGAL_TC_USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
-//#define TC_PROTECT_POINT_SET_DELTA  0.003
-//#define JUST_BENCHMARK_SPATIAL_SEARCH // CJTODO: test
-//#define CHECK_IF_ALL_SIMPLICES_ARE_IN_THE_AMBIENT_DELAUNAY
-//#define TC_INPUT_STRIDES 3 // only take one point every TC_INPUT_STRIDES points
-//#define TC_NO_EXPORT
-
 
 #ifdef TC_PROTECT_POINT_SET_DELTA
 # include <CGAL/Tangential_complex/protected_sets.h> // CJTODO TEST
@@ -56,6 +62,8 @@ typedef CGAL::Tangential_complex<
 #ifdef JUST_BENCHMARK_SPATIAL_SEARCH
 std::ofstream spatial_search_csv_file("benchmark_spatial_search.csv");
 #endif
+
+using namespace CGAL::Tangential_complex_;
 
 class XML_perf_data
 {
@@ -167,6 +175,7 @@ private:
   int m_max_allowed_dim;
 };
 
+// color_inconsistencies: only works if p_complex = NULL
 template <typename TC>
 bool export_to_off(
   TC const& tc, 
@@ -186,12 +195,15 @@ bool export_to_off(
   Kernel k;
   FT center_pt[] = { -0.5, -CGAL::sqrt(3.) / 2, -0.5, CGAL::sqrt(3.) / 2 };
   FT proj_pt[] = { 0., 0., 0., 0.2 };
-  CGAL::Tangential_complex_::S3_to_R3_stereographic_projection<Kernel>
+  S3_to_R3_stereographic_projection<Kernel>
     proj_functor(0.2, 
                  Point(4, &center_pt[0], &center_pt[4]),
                  k);
 #else
   CGAL::Identity<Point> proj_functor;
+  //Kernel k;
+  //std::array<int, 3> sel = { 1, 3, 5 };
+  //Orthogonal_projection<Kernel> proj_functor(sel, k);
 #endif
 
   if (tc.intrinsic_dimension() <= 3)
@@ -320,6 +332,11 @@ void make_tc(std::vector<Point> &points,
     points = sparsify_point_set(k, points, sparsity*sparsity);
     std::cerr << "Number of points before/after sparsification: "
       << num_points_before << " / " << points.size() << "\n";
+
+#ifdef CGAL_TC_EXPORT_SPARSIFIED_POINT_SET
+    std::ofstream ps_stream("output/sparsified_point_set.txt");
+    export_point_set(k, points, ps_stream);
+#endif
   }
 
 #ifdef TC_PROTECT_POINT_SET_DELTA
@@ -367,41 +384,6 @@ void make_tc(std::vector<Point> &points,
   tc.compute_tangential_complex();
   double computation_time = t.elapsed(); t.reset();
 
-  //===========================================================================
-  // CJTODO TEMP
-  //===========================================================================
-  /*{
-  TC::Simplicial_complex complex;
-  int max_dim = tc.export_TC(complex, false);
-  complex.display_stats();
-
-  std::stringstream output_filename;
-  output_filename << "output/" << input_name_stripped << "_" << intrinsic_dim
-    << "_in_R" << ambient_dim << "_ALPHA_COMPLEX.off";
-  std::ofstream off_stream(output_filename.str().c_str());
-  tc.export_to_off(complex, off_stream);
-
-  // Collapse
-  complex.collapse(max_dim);
-  {
-  std::stringstream output_filename;
-  output_filename << "output/" << input_name_stripped << "_" << intrinsic_dim
-    << "_in_R" << ambient_dim << "_AFTER_COLLAPSE.off";
-  std::ofstream off_stream(output_filename.str().c_str());
-  tc.export_to_off(complex, off_stream);
-  }
-  std::size_t num_wrong_dim_simplices, 
-              num_wrong_number_of_cofaces, 
-              num_unconnected_stars;
-  bool pure_manifold = complex.is_pure_pseudomanifold(
-    intrinsic_dim, tc.number_of_vertices(), false, 1,
-    &num_wrong_dim_simplices, &num_wrong_number_of_cofaces, 
-    &num_unconnected_stars);
-  complex.display_stats();
-  }
-  return;*/
-  // CJTODO TEMP ===========================
-  
 #ifdef CHECK_IF_ALL_SIMPLICES_ARE_IN_THE_AMBIENT_DELAUNAY
   if (ambient_dim <= 4)
     tc.check_if_all_simplices_are_in_the_ambient_delaunay();
@@ -412,9 +394,17 @@ void make_tc(std::vector<Point> &points,
   //===========================================================================
   // Export to OFF
   //===========================================================================
+
+  // Create complex
+  int max_dim = -1;
+  TC::Simplicial_complex complex;
+  std::set<std::set<std::size_t> > inconsistent_simplices;
+  max_dim = tc.export_TC(complex, false, 2, &inconsistent_simplices);
+
   t.reset();
   double export_before_time = 
-    (export_to_off(tc, input_name_stripped, "_INITIAL_TC") ? t.elapsed() : -1);
+    (export_to_off(tc, input_name_stripped, "_INITIAL_TC", true, 
+      &complex, &inconsistent_simplices) ? t.elapsed() : -1);
   t.reset();
   
   unsigned int num_perturb_steps = 0;
@@ -458,8 +448,15 @@ void make_tc(std::vector<Point> &points,
     //=========================================================================
     // Export to OFF
     //=========================================================================
+
+    // Re-build the complex
+    std::set<std::set<std::size_t> > inconsistent_simplices;
+    max_dim = tc.export_TC(complex, false, 2, &inconsistent_simplices);
+
     t.reset();
-    bool exported = export_to_off(tc, input_name_stripped, "_AFTER_FIX", true);
+    bool exported = export_to_off(
+      tc, input_name_stripped, "_AFTER_FIX", true, &complex, 
+      &inconsistent_simplices);
     double export_after_perturb_time = (exported ? t.elapsed() : -1);
     t.reset();
 
@@ -477,10 +474,8 @@ void make_tc(std::vector<Point> &points,
   // CJTODO TEST
   //tc.check_and_solve_inconsistencies_by_filtering_simplices_out();
 
-  int max_dim = -1;
   double fix2_time = -1;
   double export_after_fix2_time = -1.;
-  TC::Simplicial_complex complex;
   if (add_high_dim_simpl)
   {
     //=========================================================================
@@ -494,7 +489,7 @@ void make_tc(std::vector<Point> &points,
     tc.check_and_solve_inconsistencies_by_adding_higher_dim_simplices();
 #endif
     fix2_time = t.elapsed(); t.reset();
-    max_dim = tc.export_TC(complex, false);
+
     /*std::set<std::set<std::size_t> > not_delaunay_simplices;
     if (ambient_dim <= 4)
     {
@@ -505,15 +500,22 @@ void make_tc(std::vector<Point> &points,
     //=========================================================================
     // Export to OFF
     //=========================================================================
+
+    // Re-build the complex
+    std::set<std::set<std::size_t> > inconsistent_simplices;
+    max_dim = tc.export_TC(complex, false, 2, &inconsistent_simplices);
+
     t.reset();
     bool exported = export_to_off(
-      tc, input_name_stripped, "_AFTER_FIX2", false, &complex);
+      tc, input_name_stripped, "_AFTER_FIX2", false, &complex, 
+      &inconsistent_simplices);
     double export_after_fix2_time = (exported ? t.elapsed() : -1);
     t.reset();
   }
   else
   {
-    max_dim = tc.export_TC(complex, false);
+    std::set<std::set<std::size_t> > inconsistent_simplices;
+    max_dim = tc.export_TC(complex, false, 2, &inconsistent_simplices);
   }
 
   complex.display_stats();
@@ -528,7 +530,7 @@ void make_tc(std::vector<Point> &points,
     std::inserter(higher_dim_simplices, higher_dim_simplices.begin()));
   export_to_off(
     tc, input_name_stripped, "_BEFORE_COLLAPSE", false, &complex, 
-    &higher_dim_simplices);*/
+    &inconsistent_simplices, &higher_dim_simplices);*/
   
   //===========================================================================
   // Collapse
@@ -549,7 +551,13 @@ void make_tc(std::vector<Point> &points,
   std::set<std::set<std::size_t> > wrong_number_of_cofaces_simplices;
   std::set<std::set<std::size_t> > unconnected_stars_simplices;
   bool is_pure_pseudomanifold = complex.is_pure_pseudomanifold(
-    intrinsic_dim, tc.number_of_vertices(), false, 1,
+    intrinsic_dim, tc.number_of_vertices(), 
+#ifdef CGAL_TC_ALVAREZ_SURFACE_WINDOW
+    true, // allow borders
+#else
+    false, // do NOT allow borders
+#endif
+    false, 1,
     &num_wrong_dim_simplices, &num_wrong_number_of_cofaces, 
     &num_unconnected_stars,
     &wrong_dim_simplices, &wrong_number_of_cofaces_simplices, 
@@ -810,7 +818,8 @@ int main()
             {
               load_points_from_file<Kernel, typename TC::Tangent_space_basis>(
                 input, std::back_inserter(points), 
-                std::back_inserter(tangent_spaces)/*, 600*/);
+                std::back_inserter(tangent_spaces), 
+                ONLY_LOAD_THE_FIRST_N_POINTS);
             }
 
 #ifdef CGAL_TC_PROFILING

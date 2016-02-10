@@ -44,7 +44,7 @@
 
 # include <CGAL/Mesh_3/Profiling_tools.h>
 
-#include <CGAL/IO/Triangulation_off_ostream.h> // CJTODO TEMP
+#include <CGAL/IO/Triangulation_off_ostream.h> // CJTODO DEBUG?
 
 #include <Eigen/Core>
 #include <Eigen/Eigen>
@@ -79,7 +79,7 @@ typedef CGAL::MP_Float ET;
 
 //#define CGAL_TC_EXPORT_NORMALS // Only for 3D surfaces (k=2, d=3)
 
-//static std::ofstream csv_stream("output/stats.csv"); // CJTODO TEMP
+//static std::ofstream csv_stream("output/stats.csv"); // CJTODO DEBUG
 
 //CJTODO: debug
 //#define CGAL_TC_COMPUTE_TANGENT_PLANES_FOR_SPHERE_2
@@ -87,7 +87,6 @@ typedef CGAL::MP_Float ET;
 //#define CGAL_TC_COMPUTE_TANGENT_PLANES_FOR_TORUS_D
 //#define CGAL_TC_ADD_NOISE_TO_TANGENT_SPACE
 //#define CGAL_TC_BETTER_EXPORT_FOR_FLAT_TORUS
-//#define CGAL_TC_ALVAREZ_SURFACE_WINDOW 1.9 // 0.95
 
 namespace CGAL {
 
@@ -391,6 +390,34 @@ public:
 
   void compute_tangential_complex()
   {
+    // CJTODO TEMP
+    /*{
+    INS_range ins_range = m_points_ds.query_incremental_ANN(
+      m_k.construct_point_d_object()(8, ORIGIN));
+    int c = 0;
+    for (INS_iterator nn_it = ins_range.begin() ;
+      nn_it != ins_range.end() && c < 10 ;
+      ++nn_it, ++c)
+    {
+      std::size_t neighbor_point_idx = nn_it->first;
+      FT sqdist = nn_it->second;
+      std::cerr << neighbor_point_idx << ":" << CGAL::sqrt(sqdist) << "\n";
+    }
+    }
+    {
+    INS_range ins_range = m_points_ds.query_incremental_ANN(
+      m_points[234]);
+    int c = 0;
+    for (INS_iterator nn_it = ins_range.begin() ;
+      nn_it != ins_range.end() && c < 10 ;
+      ++nn_it, ++c)
+    {
+      std::size_t neighbor_point_idx = nn_it->first;
+      FT sqdist = nn_it->second;
+      std::cerr << neighbor_point_idx << ":" << CGAL::sqrt(sqdist) << "\n";
+    }
+    }*/
+
 #ifdef CGAL_TC_PERFORM_EXTRA_CHECKS
     std::cerr << red << "WARNING: CGAL_TC_PERFORM_EXTRA_CHECKS is defined. "
       << "Computation might be slower than usual.\n" << white;
@@ -805,6 +832,7 @@ public:
       num_simplices, num_inconsistent_simplices, num_inconsistent_stars);
   }
 
+  // First clears the complex then exports the TC into it
   // Return the max dimension of the simplices
   // check_lower_and_higher_dim_simplices : 0 (false), 1 (true), 2 (auto)
   //   If the check is enabled, the function:
@@ -815,7 +843,8 @@ public:
   //   N.B.: The check is quite expensive.
   int export_TC(Simplicial_complex &complex,
     bool export_infinite_simplices = false, 
-    int check_lower_and_higher_dim_simplices = 2) const
+    int check_lower_and_higher_dim_simplices = 2,
+    std::set<Indexed_simplex > *p_inconsistent_simplices = NULL) const
   {
 #if defined(CGAL_TC_VERBOSE) || defined(CGAL_TC_PROFILING)
     std::cerr << yellow
@@ -826,6 +855,7 @@ public:
 #endif
 
     int max_dim = -1;
+    complex.clear();
 
     // For each triangulation
     for (std::size_t idx = 0 ; idx < m_points.size() ; ++idx)
@@ -863,7 +893,15 @@ public:
           continue;
 #endif
 
-        complex.add_simplex(c, check_lower_and_higher_dim_simplices == 1);
+        // Try to insert the simplex
+        bool added = 
+          complex.add_simplex(c, check_lower_and_higher_dim_simplices == 1);
+
+        // Inconsistent?
+        if (p_inconsistent_simplices && added && !is_simplex_consistent(c))
+        {
+          p_inconsistent_simplices->insert(c);
+        }
       }
     }
 
@@ -995,7 +1033,7 @@ private:
           }
           else
           {
-            std::cerr << "***************** Intersection is not a point ********************\n"; // CJTODO TEMP
+            std::cerr << "***************** Intersection is not a point ********************\n"; // CJTODO DEBUG
             // Compute the intersection between Voronoi_cell(s) and Tq
             // We need Q, i.e. the vertices which are common neighbors of all 
             // vertices of full_simplex in the Delaunay triangulation, but we 
@@ -1049,7 +1087,7 @@ private:
           pqueues[simplex_dim - m_intrinsic_dim].push(
             Simplex_and_alpha(p, is, squared_alpha, thickening_v));
 
-          // CJTODO TEMP
+          // CJTODO DEBUG
           /*std::cerr 
             << "Just inserted the simplex ";
           std::copy(full_simplex.begin(), full_simplex.end(), 
@@ -1152,7 +1190,7 @@ public:
           FT(0), /* sqlen_threshold: default value */
           true /* add_to_thickening_vectors */);
 
-        // CJTODO TEMP
+        // CJTODO DEBUG
         if (!vec_added)
         {
           std::cerr << "FYI: the thickening vector was not added "
@@ -1194,7 +1232,7 @@ public:
         Indexed_simplex full_s = saa.m_simplex;
         full_s.insert(saa.m_center_point_index);
 
-        // CJTODO TEMP
+        // CJTODO DEBUG
         bool is_this_simplex_somewhere = false;
         for(auto ii : saa.m_simplex) // CJTODO C++11
         {
@@ -1210,7 +1248,7 @@ public:
         if (!is_this_simplex_somewhere)
           std::cerr << "WOW The simplex is NOWHERE!\n";
 
-        // CJTODO TEMP
+        // CJTODO DEBUG
         if (m_ambient_dim <= 3)
         {
           if (is_simplex_in_the_ambient_delaunay(full_s))
@@ -1254,7 +1292,7 @@ public:
           << num_inconsistent_simplices << "\n";
 #endif
       }
-      // CJTODO TEMP
+      // CJTODO DEBUG
       else
       {
         std::cerr << "SUCCESS: "
@@ -2013,7 +2051,6 @@ private:
     else
     {
       update_star__with_thickening_vector(i);
-      //check_if_all_simplices_are_in_the_ambient_delaunay(); // CJTODO TEMP
     }
 #else
     update_star__no_thickening_vectors(i);
@@ -3380,6 +3417,30 @@ next_face:
     return is_inconsistent;
   }
 
+  // 1st line: number of points
+  // Then one point per line
+  std::ostream &export_point_set(
+    std::ostream & os,
+    bool use_perturbed_points = false,
+    const char *coord_separator = " ") const
+  {
+    if (use_perturbed_points)
+    {
+      std::vector<Point> perturbed_points;
+      perturbed_points.reserve(m_points.size());
+      for (std::size_t i = 0 ; i < m_points.size() ; ++i)
+        perturbed_points.push_back(compute_perturbed_point(i));
+
+      return export_point_set(
+        m_k, perturbed_points, os, coord_separator);
+    }
+    else
+    {
+      return export_point_set(
+        m_k, m_points, os, coord_separator);
+    }
+  }
+
   template<typename ProjectionFunctor = CGAL::Identity<Point> >
   std::ostream &export_vertices_to_off(
     std::ostream & os, std::size_t &num_vertices,
@@ -3414,22 +3475,22 @@ next_face:
         use_perturbed_points ? compute_perturbed_point(i) : *it_p);
       for (int ii = 0 ; ii < N ; ++ii)
       {
-        int i = 0;
+        int j = 0;
 #if CGAL_TC_BETTER_EXPORT_FOR_FLAT_TORUS
         // For flat torus
         os << (2 + 1 * CGAL::to_double(coord(p, 0))) * CGAL::to_double(coord(p, 2)) << " "
            << (2 + 1 * CGAL::to_double(coord(p, 0))) * CGAL::to_double(coord(p, 3)) << " "
            << 1 * CGAL::to_double(coord(p, 1));
 #else
-        for ( ; i < num_coords ; ++i)
-          os << CGAL::to_double(coord(p, i)) << " ";
+        for ( ; j < num_coords ; ++j)
+          os << CGAL::to_double(coord(p, j)) << " ";
 #endif
-        if (i == 2)
+        if (j == 2)
           os << "0";
 
 #ifdef CGAL_TC_EXPORT_NORMALS
-        for (i = 0 ; i < num_coords ; ++i)
-          os << " " << CGAL::to_double(coord(*it_os->begin(), i));
+        for (j = 0 ; j < num_coords ; ++j)
+          os << " " << CGAL::to_double(coord(*it_os->begin(), j));
 #endif
         os << "\n";
       }
@@ -3564,7 +3625,7 @@ next_face:
       unproject_point(Cq, m_tangent_spaces[q_idx], q_tr_traits),
       circumsphere_sqradius_q);
 
-    // CJTODO TEMP ====================
+    // CJTODO DEBUG ====================
     /*{
     INS_range ins_range = m_points_ds.query_incremental_ANN(k_drop_w(global_Cp));
     for (INS_iterator nn_it = ins_range.begin() ;
@@ -3573,8 +3634,6 @@ next_face:
     {
       FT neighbor_sqdist = nn_it->second;
 
-      //std::cerr << nn_it->first << " : " << neighbor_sqdist << " / "; // CJTODO TEMP
-
       // When we're sure we got all the potential points, break
       //if (neighbor_sqdist > circumsphere_sqradius_p + m_sq_half_sparsity)
       //  break;
@@ -3582,7 +3641,6 @@ next_face:
       std::size_t neighbor_point_idx = nn_it->first;
       FT point_to_Cp_power_sqdist = k_power_dist(
         global_Cp, compute_perturbed_weighted_point(neighbor_point_idx));
-      //std::cerr << point_to_Cp_power_sqdist << "\n"; // CJTODO TEMP
       // If the point is ACTUALLY "inside" S
       if (point_to_Cp_power_sqdist <= FT(0)
         && inconsistent_simplex.find(neighbor_point_idx) ==
@@ -3630,24 +3688,12 @@ next_face:
         auto sid = (o == NEGATIVE ?
           side(simplex_pts_in_Tq.rbegin(), simplex_pts_in_Tq.rend(), p)
           : side(simplex_pts_in_Tq.begin(), simplex_pts_in_Tq.end(), p));
-        switch(sid)
-        {
-        case ON_NEGATIVE_SIDE:
-          std::cerr << "ON_NEGATIVE_SIDE\n"; // CJTODO TEMP
-          break;
-        case ON_POSITIVE_SIDE:
-          std::cerr << "ON_POSITIVE_SIDE\n"; // CJTODO TEMP
-          break;
-        case ON_ORIENTED_BOUNDARY:
-          std::cerr << "ON_ORIENTED_BOUNDARY\n"; // CJTODO TEMP
-          break;
-        }
       }*/
     }
     CGAL_assertion_msg(!inside_pt_indices.empty(),
       "There should be at least one vertex inside the sphere");
 
-    // CJTODO TEMP DEBUG
+    // CJTODO DEBUG
     /*if (inside_pt_indices.empty())
     {
       //compute_tangent_triangulation(q_idx, true);
@@ -3663,7 +3709,7 @@ next_face:
       std::cerr << "\n";
     }*/
 
-    // CJTODO TEMP DEBUG
+    // CJTODO DEBUG
     // If co-intrinsic dimension = 1, let's compare normals
     /*if (m_ambient_dim - m_intrinsic_dim == 1)
     {
@@ -3683,7 +3729,7 @@ next_face:
       csv_stream << "\n";
     }*/
     
-    // CJTODO TEMP DEBUG
+    // CJTODO DEBUG
     if (inside_pt_indices.size() > 1)
     {
       std::cerr << "Warning: " << inside_pt_indices.size() << " insiders in "
@@ -3754,7 +3800,7 @@ next_face:
         }
       }
 
-      // CJTODO TEMP ====================
+      // CJTODO DEBUG ====================
       /*{
       typename K::Scaled_vector_d scaled_vec = m_k.scaled_vector_d_object();
       typename K::Point_weight_d k_weight = m_k.point_weight_d_object();
@@ -3768,8 +3814,6 @@ next_face:
       {
         FT neighbor_sqdist = nn_it->second;
 
-        //std::cerr << nn_it->first << " : " << neighbor_sqdist << " / "; // CJTODO TEMP
-
         // When we're sure we got all the potential points, break
         if (neighbor_sqdist > k_weight(C) + m_sq_half_sparsity)
           break;
@@ -3777,7 +3821,6 @@ next_face:
         std::size_t neighbor_point_idx = nn_it->first;
         FT point_to_C_power_sqdist =
           k_power_dist(C, compute_perturbed_weighted_point(neighbor_point_idx));
-        //std::cerr << point_to_Cp_power_sqdist << "\n"; // CJTODO TEMP
         // If the point is ACTUALLY "inside" S
         if (point_to_C_power_sqdist <= FT(-0.000001)
           && inconsistent_simplex.find(neighbor_point_idx) ==
@@ -3848,7 +3891,7 @@ next_face:
         inconsistencies_found = true;
         break;
       }
-      // CJTODO TEMP
+      // CJTODO DEBUG
       /*else if (m_ambient_dim - m_intrinsic_dim == 1)
       {
         typename K::Difference_of_points_d k_diff_pts =
@@ -4561,8 +4604,8 @@ public:
   // Return a pair<num_simplices, num_inconsistent_simplices>
   void check_correlation_between_inconsistencies_and_fatness() const
   {
-    std::ofstream csv_consistent("output/correlation_consistent.csv"); // CJTODO TEMP
-    std::ofstream csv_inconsistent("output/correlation_inconsistent.csv"); // CJTODO TEMP
+    std::ofstream csv_consistent("output/correlation_consistent.csv"); // CJTODO DEBUG
+    std::ofstream csv_inconsistent("output/correlation_inconsistent.csv"); // CJTODO DEBUG
     if (m_intrinsic_dim < 3)
     {
       std::cerr
