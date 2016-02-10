@@ -23,6 +23,7 @@
 
 #include <CGAL/assertions.h>
 #include <CGAL/Surface_mesh.h>
+#include <CGAL/Surface_mesh/Properties.h>
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/squared_distance_3.h>
 
@@ -57,8 +58,8 @@ public:
   }
 
 private:
-   typename SM::template Property_map< typename SM::Vertex_index, 
-                                       typename SM::Point > pm_;
+   typename CGAL::Properties::template Property_map< typename SM::Vertex_index, 
+                                               typename SM::Point > pm_;
   const SM& sm_;
 };
 
@@ -87,7 +88,7 @@ template <typename Point, typename T>
 struct property_map<CGAL::Surface_mesh<Point>, boost::vertex_property_t<T> >
 {
   typedef CGAL::Surface_mesh<Point> SM;
-  typedef typename SM:: template Property_map<typename SM::vertex_index,T> type;
+  typedef typename CGAL::Properties:: template Property_map<typename SM::vertex_index,T> type;
   typedef type const_type;
 };
 
@@ -203,9 +204,9 @@ struct property_map<CGAL::Surface_mesh<P>, CGAL::vertex_point_t >
   typedef CGAL::Surface_mesh<P> SM; 
 
   typedef typename
-    SM::template Property_map< typename SM::Vertex_index, 
-                               P
-                               > type;
+    CGAL::Properties::template Property_map< typename SM::Vertex_index, 
+                                       P
+                                       > type;
   
   typedef type const_type;
   
@@ -243,7 +244,7 @@ put(CGAL::vertex_point_t p, const CGAL::Surface_mesh<K>& g,
     const K& point) {
   typedef CGAL::Surface_mesh<K> SM;
   CGAL_assertion(g.is_valid(x));
-  typename SM::template Property_map< typename boost::graph_traits<SM>::vertex_descriptor, 
+  typename CGAL::Properties::template Property_map< typename boost::graph_traits<SM>::vertex_descriptor, 
                     K> prop = get(p, g);
   prop[x] = point;
 }
