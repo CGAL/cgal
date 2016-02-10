@@ -17,7 +17,7 @@ Release date: March 2016
   - The same holds for g++ 4.8 or later when the C++11 standard is used.
 
 
-* Reconstruction Simplification 2 (new package)
+* 2D Reconstruction and Simplification from Point Set (new package)
 
   - This package implements a method to reconstruct and simplify 2D point sets.
     The input is a set of 2D points with mass attributes, possibly hampered by
@@ -92,21 +92,18 @@ Release date: March 2016
   - Add an overload for CGAL::Polygon_mesh_processing::triangulate_faces() to
     triangulate a range of faces of a polygon mesh
 
-
-* Surface Mesh Parameterization
-
-  - LSCM_parameterizer_3 now uses by default Eigen instead of OpenNL as a model
-    of SparseLinearAlgebraTraits_d.
-
-
-* Polygon Mesh Processing
-
   - Add function keep_large_connected_components()
 
   - Add measuring functions for polygon meshes, to compute length, area, and
     volume of simplices or group of simplices of a polygon mesh.
 
   - Add function bbox_3() to compute the bounding box of a polygon mesh.
+
+
+* Surface Mesh Parameterization
+
+  - LSCM_parameterizer_3 now uses by default Eigen instead of OpenNL as a model
+    of SparseLinearAlgebraTraits_d.
 
 
 * Point Set Processing

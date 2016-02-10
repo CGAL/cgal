@@ -143,7 +143,7 @@ and <code>src/</code> directories).
     <li>The same holds for g++ 4.8 or later when the C++11 standard is
       used.</li>
   </ul>
-  <h3>Reconstruction Simplification 2 (new package)</h3>
+  <h3>2D Reconstruction and Simplification from Point Set (new package)</h3>
   <ul>
     <li>
       This package implements a method to reconstruct and simplify 2D point
@@ -220,20 +220,17 @@ and <code>src/</code> directories).
     <li>Add an overload
     for <code>CGAL::Polygon_mesh_processing::triangulate_faces()</code> to
     triangulate a range of faces of a polygon mesh</li>
-  </ul>
-  <h3>Surface Mesh Parameterization</h3>
-  <ul>
-    <li><code>LSCM_parameterizer_3</code> now uses by default Eigen instead
-    of OpenNL as a model of <code>SparseLinearAlgebraTraits_d</code>.</li>
-  </ul>
-  <h3>Polygon Mesh Processing</h3>
-  <ul>
     <li>Add function <code>keep_large_connected_components()</code></li>
     <li>Add measuring functions for polygon meshes, to compute length,
     area, and volume of simplices or group of simplices of a polygon
     mesh.</li>
     <li>Add function <code>bbox_3()</code> to compute the bounding box of a
     polygon mesh.</li>
+  </ul>
+  <h3>Surface Mesh Parameterization</h3>
+  <ul>
+    <li><code>LSCM_parameterizer_3</code> now uses by default Eigen instead
+    of OpenNL as a model of <code>SparseLinearAlgebraTraits_d</code>.</li>
   </ul>
   <h3>Point Set Processing</h3>
   <ul>
