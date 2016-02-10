@@ -19,7 +19,7 @@ int main(int argc, char* argv[])
  
   std::ifstream in2((argc>2)?argv[2]:"data/quad.off");
 
-  Mesh::Property_map<vertex_descriptor,std::string> name1, name2;
+  CGAL::Properties::Property_map<vertex_descriptor,std::string> name1, name2;
   bool created;
   sm1.add_property_map<vertex_descriptor,int>("v:weight",7812);
   boost::tie(name1, created) = sm1.add_property_map<vertex_descriptor,std::string>("v:name","hello");

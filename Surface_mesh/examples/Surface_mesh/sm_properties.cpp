@@ -26,7 +26,7 @@ int main()
 
 
   // give each vertex a name, the default is empty
-  Mesh::Property_map<vertex_descriptor,std::string> name;
+  CGAL::Properties::Property_map<vertex_descriptor,std::string> name;
   bool created;
   boost::tie(name, created) = m.add_property_map<vertex_descriptor,std::string>("v:name","");
   assert(created);
@@ -36,20 +36,20 @@ int main()
 
   {
     // You get an existing property, and created will be false
-    Mesh::Property_map<vertex_descriptor,std::string> name;
+    CGAL::Properties::Property_map<vertex_descriptor,std::string> name;
     bool created;
     boost::tie(name, created) = m.add_property_map<vertex_descriptor,std::string>("v:name", "");
     assert(! created);
   }
 
   //  You can't get a property that does not exist
-  Mesh::Property_map<face_descriptor,std::string> gnus;
+  CGAL::Properties::Property_map<face_descriptor,std::string> gnus;
   bool found;
   boost::tie(gnus, found) = m.property_map<face_descriptor,std::string>("v:gnus");
   assert(! found);
 
   // retrieve the point property for which exists a convenience function
-  Mesh::Property_map<vertex_descriptor, K::Point_3> location = m.points();
+  CGAL::Properties::Property_map<vertex_descriptor, K::Point_3> location = m.points();
   BOOST_FOREACH( vertex_descriptor vd, m.vertices()) { 
     std::cout << name[vd] << " @ " << location[vd] << std::endl;
   }
