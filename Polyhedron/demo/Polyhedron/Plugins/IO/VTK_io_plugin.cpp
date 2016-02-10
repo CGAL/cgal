@@ -61,6 +61,7 @@
 #include <vtkAppendFilter.h>
 #include <vtkSphereSource.h>
 #include <vtkVersion.h>
+#include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
 #include <vtkType.h>
