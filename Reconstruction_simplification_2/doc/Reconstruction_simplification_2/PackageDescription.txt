@@ -1,4 +1,4 @@
-/// \defgroup PkgReconstructionSimplification2 2D Reconstruction Simplification Reference
+/// \defgroup PkgReconstructionSimplification2 2D Reconstruction and Simplification from Point Set Reference
 
 /// \defgroup PkgReconstructionSimplification2Concepts Concepts
 /// \ingroup PkgReconstructionSimplification2
@@ -9,7 +9,7 @@
 
 /*!
 \addtogroup PkgReconstructionSimplification2
-\cgalPkgDescriptionBegin{2D Reconstruction Simplification, PkgReconstructionSimplification2Summary}
+\cgalPkgDescriptionBegin{2D Reconstruction and Simplification from Point Set, PkgReconstructionSimplification2Summary}
 \cgalPkgPicture{RS_2_small.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Pierre Alliez, David Cohen-Steiner, Fernando de Goes, Clément Jamin, Ivo Vigan}
@@ -17,7 +17,7 @@
 \cgalPkgManuals{Chapter_2D_Reconstruction_Simplification, PkgReconstructionSimplification2}
 \cgalPkgSummaryEnd
 \cgalPkgShortInfoBegin
-\cgalPkgSince{4.x}
+\cgalPkgSince{4.8}
 \cgalPkgDependsOn{\ref PkgTriangulation2Summary}
 \cgalPkgBib{cgal:gavj-rs}
 \cgalPkgLicense{\ref licensesGPL "GPL"}
