@@ -51,7 +51,7 @@
 #include <CGAL/Qt/utility.h>
   
 // the two base classes
-#include "ui_Delaunay_triangulation_2.h"
+#include "ui_Hyperbolic_translations_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
 
 

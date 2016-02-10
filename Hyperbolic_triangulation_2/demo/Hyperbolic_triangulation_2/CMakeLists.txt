@@ -8,6 +8,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
+SET(CMAKE_AUTOUIC ON) 
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
@@ -19,7 +20,7 @@ include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Widgets)
 
-include_directories (BEFORE ../../include include ui)
+include_directories (BEFORE ../../include include)
 
 # ui files, created with Qt Designer
 qt5_wrap_ui( uis Hyperbolic_translations_2.ui )
