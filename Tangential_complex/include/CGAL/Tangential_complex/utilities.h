@@ -30,6 +30,7 @@
 
 #include <set>
 #include <vector>
+#include <array>
 #include <atomic> // CJTODO: this is C++11 => use boost.Atomic (but it's too recent)
                   // or tbb::atomic (works for doubles, but not officially)
 
@@ -355,6 +356,87 @@ namespace Tangential_complex_ {
     return add_it;
   }
 
+  template<
+    typename Kernel, typename Tangent_space_basis,
+    typename OutputIteratorPoints, typename OutputIteratorTS>
+    bool load_points_from_file(
+    const std::string &filename,
+    OutputIteratorPoints points,
+    OutputIteratorTS tangent_spaces,
+    std::size_t only_first_n_points = std::numeric_limits<std::size_t>::max())
+  {
+    typedef typename Kernel::Point_d    Point;
+    typedef typename Kernel::Vector_d   Vector;
+
+    std::ifstream in(filename);
+    if (!in.is_open())
+    {
+      std::cerr << "Could not open '" << filename << "'" << std::endl;
+      return false;
+    }
+
+    bool contains_tangent_spaces =
+      (filename.substr(filename.size() - 3) == "pwt");
+
+    Kernel k;
+    Point p;
+    int num_ppints;
+    in >> num_ppints;
+
+    std::size_t i = 0;
+    while (i < only_first_n_points && in >> p)
+    {
+      *points++ = p;
+      if (contains_tangent_spaces)
+      {
+        Tangent_space_basis tsb(i);
+        for (int d = 0 ; d < 2 ; ++d) // CJTODO : pas toujours "2"
+        {
+          Vector v;
+          in >> v;
+          tsb.push_back(CGAL::Tangential_complex_::normalize_vector(v, k));
+        }
+        *tangent_spaces++ = tsb;
+      }
+      ++i;
+    }
+
+#ifdef CGAL_TC_VERBOSE
+    std::cerr << "'" << filename << "' loaded." << std::endl;
+#endif
+
+    return true;
+  }
+
+  // 1st line: number of points
+  // Then one point per line
+  template <typename Kernel, typename Point_range>
+  std::ostream &export_point_set(
+    Kernel const& k,
+    Point_range const& points,
+    std::ostream & os,
+    const char *coord_separator = " ")
+  {
+    // Kernel functors
+    typename Kernel::Construct_cartesian_const_iterator_d ccci =
+      k.construct_cartesian_const_iterator_d_object();
+
+    os << points.size() << "\n";
+
+    typename Point_range::const_iterator it_p = points.begin();
+    typename Point_range::const_iterator it_p_end = points.end();
+    // For each point p
+    for ( ; it_p != it_p_end ; ++it_p)
+    {
+      for (auto it = ccci(*it_p) ; it != ccci(*it_p, 0) ; ++it) // CJTODO: C++11
+        os << CGAL::to_double(*it) << coord_separator;
+
+      os << "\n";
+    }
+
+    return os;
+  }
+
   template <typename K>
   Basis<K> compute_gram_schmidt_basis(Basis<K> const& input_basis, K const& k)
   {
@@ -370,6 +452,42 @@ namespace Tangential_complex_ {
 
     return output_basis;
   }
+
+  // Functor to compute stereographic projection from S^3(sphere_radius) to R^3
+  template <typename K>
+  class Orthogonal_projection
+  {
+  public:
+    typedef typename K::FT      FT;
+    typedef typename K::Point_d Point;
+
+    // center_of_projection will be sent to infinity by the projection
+    Orthogonal_projection(
+      std::array<int, 3> const& selected_coords, K const& k)
+      : m_selected_coords(selected_coords), m_k(k) 
+    {}
+
+    Point operator()(Point const& p) const
+    {
+      typedef K::FT         FT;
+      typedef K::Point_d    Point;
+
+      typename K::Construct_point_d constr_pt = m_k.construct_point_d_object();
+      typename K::Compute_coordinate_d coord = m_k.compute_coordinate_d_object();
+
+      std::vector<FT> projected_p;
+      projected_p.reserve(3);
+
+      for (int i = 0 ; i < 3 ; ++i)
+        projected_p.push_back(coord(p, m_selected_coords[i]));
+
+      return constr_pt(3, projected_p.begin(), projected_p.end());
+    }
+
+  private:
+    std::array<int, 3> m_selected_coords; // CJTODO C++11
+    K const& m_k;
+  };
 
   // Functor to compute radial projection from R^4 to S^3(sphere_radius)
   // The returned point coordinates are expressed with the origin 

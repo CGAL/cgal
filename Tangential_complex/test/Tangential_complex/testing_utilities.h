@@ -171,7 +171,7 @@ sparsify_point_set(
 
   std::vector<bool> dropped_points(input_pts.size(), false);
 
-  // Parse the following points, and add them if they are not too close to
+  // Parse the input points, and add them if they are not too close to
   // the other points
   std::size_t pt_idx = 0;
   for (typename Point_container::const_iterator it_pt = input_pts.begin() ;
@@ -185,18 +185,20 @@ sparsify_point_set(
 
     INS_range ins_range = points_ds.query_incremental_ANN(*it_pt);
 
-    // Drop it if there is another point that:
-    // - is closer that min_squared_dist
-    // - and has a higher index
+    // If another point Q is closer that min_squared_dist, mark Q to be dropped
     for (INS_iterator nn_it = ins_range.begin() ;
         nn_it != ins_range.end() ;
         ++nn_it)
     {
       std::size_t neighbor_point_idx = nn_it->first;
-      typename Kernel::FT sq_dist = nn_it->second;
-      // The neighbor is too close, we drop the neighbor
-      if (sq_dist < min_squared_dist)
+      // If the neighbor is too close, we drop the neighbor
+      if (nn_it->second < min_squared_dist)
+      {
+        // N.B.: If neighbor_point_idx < pt_idx, 
+        // dropped_points[neighbor_point_idx] is already true but adding a
+        // test doesn't make things faster, so why bother?
         dropped_points[neighbor_point_idx] = true;
+      }
       else
         break;
     }
@@ -208,92 +210,6 @@ sparsify_point_set(
 #endif
 
   return output;
-}
-
-template<
-  typename Kernel, typename OutputIteratorPoints>
-  bool load_points_from_file(
-  const std::string &filename,
-  OutputIteratorPoints points,
-  std::size_t only_first_n_points = std::numeric_limits<std::size_t>::max())
-{
-    typedef typename Kernel::Point_d    Point;
-
-    std::ifstream in(filename);
-    if (!in.is_open())
-    {
-      std::cerr << "Could not open '" << filename << "'" << std::endl;
-      return false;
-    }
-
-    Point p;
-    int num_ppints;
-    in >> num_ppints;
-
-    std::size_t i = 0;
-    while (i < only_first_n_points && in >> p)
-    {
-      *points++ = p;
-      ++i;
-    }
-
-#ifdef CGAL_TC_VERBOSE
-    std::cerr << "'" << filename << "' loaded." << std::endl;
-#endif
-
-    return true;
-  }
-
-template<
-  typename Kernel, typename Tangent_space_basis, 
-  typename OutputIteratorPoints, typename OutputIteratorTS>
-bool load_points_from_file(
-  const std::string &filename,
-  OutputIteratorPoints points,
-  OutputIteratorTS tangent_spaces,
-  std::size_t only_first_n_points = std::numeric_limits<std::size_t>::max())
-{
-  typedef typename Kernel::Point_d    Point;
-  typedef typename Kernel::Vector_d   Vector;
-
-  std::ifstream in(filename);
-  if (!in.is_open())
-  {
-    std::cerr << "Could not open '" << filename << "'" << std::endl;
-    return false;
-  }
-
-  bool contains_tangent_spaces =
-    (filename.substr(filename.size() - 3) == "pwt");
-
-  Kernel k;
-  Point p;
-  int num_ppints;
-  in >> num_ppints;
-
-  std::size_t i = 0;
-  while(i < only_first_n_points && in >> p)
-  {
-    *points++ = p;
-    if (contains_tangent_spaces)
-    {
-      Tangent_space_basis tsb(i);
-      for (int d = 0 ; d < 2 ; ++d) // CJTODO : pas toujours "2"
-      {
-        Vector v;
-        in >> v;
-        tsb.push_back(CGAL::Tangential_complex_::normalize_vector(v, k));
-      }
-      *tangent_spaces++ = tsb;
-    }
-    ++i;
-  }
-
-#ifdef CGAL_TC_VERBOSE
-  std::cerr << "'" << filename << "' loaded." << std::endl;
-#endif
-
-  return true;
 }
 
 template <typename Kernel>
