@@ -213,7 +213,10 @@ public:
   {
     for (std::size_t i = 0; i < size(); ++ i)
       if (i != m_indices[i])
-        m_base.swap (i, m_indices[i]);
+        {
+          m_base.swap (i, m_indices[i]);
+          -- i;
+        }
   }
   
   void reset_indices()
