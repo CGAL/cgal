@@ -58,6 +58,7 @@
 #include <vtkUnstructuredGrid.h>
 #include <vtkVersion.h>
 #include <vtkUnstructuredGridWriter.h>
+#include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
 #include <vtkType.h>
@@ -113,9 +114,9 @@ namespace CGAL{
     return true;
   }
 
-  template<typename PM>
-  void polygon_mesh_to_vtkPolyData(const PM& pmesh,
-                                   const char* filename) //PolygonMesh
+  template<typename VtkWriter, typename PM>
+  void polygon_mesh_to_vtkUnstructured(const PM& pmesh,//PolygonMesh
+                                       const char* filename)
   {
     typedef typename boost::graph_traits<PM>::vertex_descriptor   vertex_descriptor;
     typedef typename boost::graph_traits<PM>::face_descriptor     face_descriptor;
@@ -173,8 +174,8 @@ namespace CGAL{
     unstructuredGrid->ShallowCopy(appendFilter->GetOutput());
 
     // Write the unstructured grid
-    vtkSmartPointer<vtkUnstructuredGridWriter> writer =
-      vtkSmartPointer<vtkUnstructuredGridWriter>::New();
+    vtkSmartPointer<VtkWriter> writer =
+      vtkSmartPointer<VtkWriter>::New();
     writer->SetFileName(filename);
     writer->SetInputData(unstructuredGrid);
     writer->Write();
@@ -203,7 +204,8 @@ public:
   }
   bool save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
   {
-    if (fileinfo.suffix().toLower() != "vtk")
+    if (fileinfo.suffix().toLower() != "vtk"
+      && fileinfo.suffix().toLower() != "vtp")
       return false;
 
     std::string output_filename = fileinfo.absoluteFilePath().toStdString();
@@ -214,9 +216,17 @@ public:
     if (!poly_item)
       return false;
     else
-      CGAL::polygon_mesh_to_vtkPolyData(*poly_item->polyhedron(),
-                                        output_filename.data());
-
+    {
+      char last_char = output_filename.back();
+      if (last_char != 'p' && last_char != 'P')
+        CGAL::polygon_mesh_to_vtkUnstructured<vtkUnstructuredGridWriter>(
+          *poly_item->polyhedron(),
+          output_filename.data());
+      else
+        CGAL::polygon_mesh_to_vtkUnstructured<vtkXMLUnstructuredGridWriter>(
+        *poly_item->polyhedron(),
+        output_filename.data());
+    }
     return true;
   }
 
