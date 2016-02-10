@@ -28,16 +28,13 @@
 #include <QSettings>
 #include <QUrl>
 #include "Raw_image_dialog.h"
-
-#include <CGAL/glu.h>
-
 #include <CGAL/Surface_mesher/Standard_criteria.h>
 // #include <CGAL/Surface_mesher/Image_surface_oracle_3.h>
 #include <CGAL/Surface_mesher/Implicit_surface_oracle_3.h>
 #include <CGAL/Surface_mesher/Vertices_on_the_same_psc_element_criterion.h>
 #include <CGAL/IO/Complex_2_in_triangulation_3_file_writer.h>
-
 #include <CGAL/make_surface_mesh.h>
+#include <CGAL/Qt/debug.h>
 
 struct Threshold : public std::unary_function<FT, unsigned char> {
   double isovalue;
@@ -1518,8 +1515,9 @@ void Volume::gl_draw_marchingcube()
       list_draw_marching_cube_is_valid = (::glGetError() == GL_NO_ERROR);
     }
     if(!list_draw_marching_cube_is_valid)
-      std::cerr << boost::format("OpenGL error: %1%\n") 
-        % ::gluErrorString(::glGetError());
+    {
+     CGAL::Qt::opengl_check_errors();
+    }
   }
 }
 #endif // CGAL_SURFACE_MESH_DEMO_USE_MARCHING_CUBE

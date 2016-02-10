@@ -96,7 +96,7 @@ protected:
   int selected_edge;
   int selected_facet;
   bool is_dirty;
-  GLuint list_id;
+  GLint list_id;
   Connection_map connection_map;
 };
 
