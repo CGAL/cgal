@@ -476,12 +476,12 @@ private: //------------------------------------------------------ iterator types
     class Index_iterator
       : public boost::iterator_facade< Index_iterator<Index_>,
                                        Index_,
-                                       std::random_access_iterator_tag
+                                       std::bidirectional_iterator_tag
                                        >
     {
         typedef boost::iterator_facade< Index_iterator<Index_>,
                                         Index_,
-                                        std::random_access_iterator_tag
+                                        std::bidirectional_iterator_tag
                                         > Facade;
     public:
         Index_iterator() : hnd_(), mesh_(NULL) {}
@@ -1259,10 +1259,6 @@ public:
     }
     /// @endcond
 
-    void swap(Vertex_index v0, Vertex_index v1)
-    {
-      vprops_.swap(v0,v1);
-    }
     ///@}
 
     /// @cond CGAL_DOCUMENT_INTERNALS
