@@ -20,6 +20,7 @@ public:
 
   virtual void init() = 0;
 
+  virtual void setData(unsigned int adim, unsigned int bdim, unsigned int cdim, float xscale, float yscale, float zscale, std::vector<float> &colors) =0;
   virtual unsigned int aDim() const = 0;
   virtual unsigned int bDim() const = 0;
   virtual unsigned int cDim() const = 0;
