@@ -7,7 +7,18 @@
   <META HTTP-EQUIV="Content-Type" CONTENT="text/html; charset=utf-8">
   <LINK TITLE="CGAL style" REL=stylesheet TYPE="text/css" HREF="cgal.css">
   <style type="text/css">
-    h2 { margin-left: 0; }
+    h2 {
+      margin-left: 0;
+    }
+    code {
+      background-color: rgba(0, 0, 0, 0.04);
+      padding-bottom: 0.2em;
+      padding-top: 0.2em;
+    }
+    code::before, code::after {
+      content: " ";
+      letter-spacing: -0.2em;
+    }
   </style>
 
 <!--
@@ -117,142 +128,139 @@ and <code>src/</code> directories).
 <HR>
 <h2 id="release4.8">Release 4.8 </h2>
 <div>
-  <p>Release date:  </p>
-
-<!-- Installation (and general changes) -->
-
+  <p>Release date: March 2016 </p>
   <h3>General</h3>
   <ul>
     <li>The support for Qt3 is dropped and all demos using it got removed.
     </li>
   </ul>
-
   <h3>Installation</h3>
   <ul>
-    <li>Starting with Visual C++ 2015 we no longer require <code>Boost.Thread</code> 
-        as we use the keyword <code>threadlocal</code> and the class <code>mutex</code> 
-        from the header file <code><thread></code>.</li>
-    <li>The same holds for g++ 4.8 or later when the c++11 standard is used.</li>
+    <li>Starting with Visual C++ 2015 we no longer
+        require <code>Boost.Thread</code> as we use the C++11
+        keyword <code>thread_local</code> and the C+11
+        class <code>std::mutex</code> .</li>
+    <li>The same holds for g++ 4.8 or later when the C++11 standard is
+      used.</li>
   </ul>
-
-<!-- New packages -->
-
-<!-- gsoc2014-2d-reconstruction-ivovigan begin -->
-
   <h3>Reconstruction Simplification 2 (new package)</h3>
   <ul>
     <li>
-      This package implements a method to reconstruct and simplify 2D 
-      point sets. The input is a set of 2D points with mass attributes,
-      possibly hampered by noise and outliers. The output is a set of
-      line segments and isolated points which approximate the input points.
+      This package implements a method to reconstruct and simplify 2D point
+      sets. The input is a set of 2D points with mass attributes, possibly
+      hampered by noise and outliers. The output is a set of line segments
+      and isolated points which approximate the input points.
     </li>
   </ul>
-<!-- gsoc2014-2d-reconstruction-ivovigan end -->
-
-<!-- Major and breaking changes -->
-<!-- Arithmetic and Algebra -->
-<!-- Combinatorial Algorithms -->
-<!-- Geometry Kernels -->
-<!-- Convex Hull Algorithms -->
-<!-- Polygons -->
   <h3>2D Regularized Boolean Set-Operations</h3>
   <ul>
-    <li>Improve the performance of operations in some settings.
-        <b>Breaking change</b>: This improvement requires changes of the face and halfedge type of the underlying arrangement Dcel.
-        See the concepts `GeneralPolygonSetDcelHalfedge` and  `GeneralPolygonSetDcelFace` for more details.
-        If you use a different simplex types, inheriting your simplices from `CGAL::Gps_face_base` and `CGAL::Gps_halfedge_base`
-        is sufficient to accommodate for the update.
+    <li>Improve the performance of operations in some settings.<br />
+        <b>Breaking change</b>: This improvement requires changes of the
+        face and halfedge type of the underlying arrangement Dcel.  See the
+        concepts <code>GeneralPolygonSetDcelHalfedge</code> and
+        <code>GeneralPolygonSetDcelFace</code> for more details.  If you use a
+        different simplex types, inheriting your simplices from
+        <code>CGAL::Gps_face_base</code>
+        and <code>CGAL::Gps_halfedge_base</code> is sufficient to
+        accommodate for the update.
     </li>
   </ul>
-<!-- Cell Complexes and Polyhedra -->
   <h3>3D Boolean Operations on Nef Polyhedra</h3>
   <ul>
-    <li>Add 3 new constructors: from a point range, from a point, and from a segment.</li>
+    <li>Add 3 new constructors: from a point range, from a point, and from
+    a segment.</li>
   </ul>
   <h3>Combinatorial Maps</h3>
   <ul>
-    <li>Change the type of Boolean marks, old type is int, new type is size_type. If no more mark is available, get_new_mark throws an exception, instead of returning -1.</li>
+    <li><b>Breaking change</b>: Change the type of Boolean marks, old type
+    is int, new type is <code>size_type</code>. If no more mark is
+    available, <code>get_new_mark</code> throws an exception, instead of
+    returning <code>-1</code>.</li>
   </ul>
-<!-- Arrangements -->
   <h3>2D Arrangements</h3>
   <ul>
-    <li>Speed up the edge removal in case the incident faces contains many holes.</li>
+    <li>Speed up the edge removal in case the incident faces contains many
+    holes.</li>
   </ul>
-<!-- Triangulations and Delaunay Triangulations -->
-<!-- Voronoi Diagrams -->
-<!-- Mesh Generation -->
   <h3>3D Mesh Generation</h3>
   <ul>
-    <li>Add support of 3D gray level images as input for the tetrahedral mesh generation.</li>
+    <li>Add support of 3D gray level images as input for the tetrahedral
+    mesh generation.</li>
     <li><b>Breaking change:</b> All models of the
     concept <code>MeshDomain_3</code> must now provide a member
     function <code>bbox()</code>. </li>
   </ul>
-<!-- Surface Reconstruction -->
   <h3>Advancing Front Surface Reconstruction</h3>
   <ul>
     <li>Optional template functor <code>Filter</code> is replaced by
     another optional template functor <code>Priority</code>. This
     allows to change the way facets are prioritized by the algorithm
     instead of having a simple option to reject some
-    facets. <b>Breaking change</b>: Programs using the
+    facets.<br /><b>Breaking change</b>: Programs using the
     old <code>Filter</code> API will not compile anymore as it must be
     replaced with the <code>Priority</code> API as described in the
     manual. Codes using the default behavior are not impacted.</li>
   </ul>
-<!-- Geometry Processing -->
   <h3>Polygon Mesh Processing</h3>
   <ul>
-    <li>Add a new triangle-based isotropic remeshing algorithm for 
-    triangulated surface meshes, 
+    <li>Add a new triangle-based isotropic remeshing algorithm for
+    triangulated surface meshes,
     <code>CGAL::Polygon_mesh_processing::isotropic_remeshing()</code>
     and a helper function for isotropic remeshing :
     <code>CGAL::Polygon_mesh_processing::split_long_edges()</code></li>
-    <li>Add the function <code>CGAL::Polygon_mesh_processing::border_halfedges()</code>
+    <li>Add the
+    function <code>CGAL::Polygon_mesh_processing::border_halfedges()</code>
     to collect the border of a given face range</li>
-    <li>Add the function <code>CGAL::Polygon_mesh_processing::remove_isolated_vertices()</code>
+    <li>Add the
+    function <code>CGAL::Polygon_mesh_processing::remove_isolated_vertices()</code>
     to be used on any polygon mesh</li>
-    <li>Add the function <code>CGAL::Polygon_mesh_processing::triangulate_face()</code>
+    <li>Add the
+    function <code>CGAL::Polygon_mesh_processing::triangulate_face()</code>
     to triangulate a single face of a polygon mesh</li>
-    <li>Add an overload for <code>CGAL::Polygon_mesh_processing::triangulate_faces()</code>
-    to triangulate a range of faces of a polygon mesh</li>
+    <li>Add an overload
+    for <code>CGAL::Polygon_mesh_processing::triangulate_faces()</code> to
+    triangulate a range of faces of a polygon mesh</li>
   </ul>
   <h3>Surface Mesh Parameterization</h3>
   <ul>
-    <li><code>LSCM_parameterizer_3</code> now uses by default Eigen
-    instead of OpenNL as a model
-    of <code>SparseLinearAlgebraTraits_d</code>.</li>
+    <li><code>LSCM_parameterizer_3</code> now uses by default Eigen instead
+    of OpenNL as a model of <code>SparseLinearAlgebraTraits_d</code>.</li>
   </ul>
   <h3>Polygon Mesh Processing</h3>
   <ul>
     <li>Add function <code>keep_large_connected_components()</code></li>
-    <li>Add measuring functions for polygon meshes, to compute length, area,
-    and volume of simplices or group of simplices of a polygon mesh.</li>
-    <li>Add function bbox_3() to compute the bounding box of a polygon mesh.</li>
+    <li>Add measuring functions for polygon meshes, to compute length,
+    area, and volume of simplices or group of simplices of a polygon
+    mesh.</li>
+    <li>Add function <code>bbox_3()</code> to compute the bounding box of a
+    polygon mesh.</li>
   </ul>
   <h3>Point Set Processing</h3>
   <ul>
     <li> <b>Breaking change:</b> new template
-    parameter <code>Concurrency_tag</code> for the
-    functions <code>compute_average_spacing()</code>, <code>edge_aware_upsample_point_set()</code>,
-    <code>jet_estimate_normals()</code>, <code>jet_smooth_point_set()</code>,
-    and <code>pca_estimate_normals()</code>.
-    To update your code simply add as first template parameter <code>CGAL::Sequential_tag</code>
-    or <code>CGAL::Parallel_tag</code> when calling one of these functions.</li>
-    <li> <code>CGAL::Parallel_tag</code> can no longer be used in
-    Point Set Processing algorithms if TBB is not available.</li>
+      parameter <code>Concurrency_tag</code> for the
+      functions <code>compute_average_spacing()</code>,
+      <code>edge_aware_upsample_point_set()</code>,
+      <code>jet_estimate_normals()</code>,
+      <code>jet_smooth_point_set()</code>,
+      and <code>pca_estimate_normals()</code>.  To update your code simply
+      add as first template parameter <code>CGAL::Sequential_tag</code>
+      or <code>CGAL::Parallel_tag</code> when calling one of these
+      functions.</li>
+    <li> <code>CGAL::Parallel_tag</code> can no longer be used in Point Set
+      Processing algorithms if TBB is not available.</li>
     <li>
-    Add a new simplification algorithm based on hierarchical
+      Add a new simplification algorithm based on hierarchical
     clustering: <code>CGAL::hierarchy_simplify_point_set()</code>. It
-    allows either to uniformly simplify the point set or to
-    automatically adapt the local density of points to the local
-    variation of the input computed by principal component analysis.
+    allows either to uniformly simplify the point set or to automatically
+    adapt the local density of points to the local variation of the input
+    computed by principal component analysis.
     </li>
     <li> New IO functions for PLY format (Polygon File
       Format): <code>CGAL::read_ply_points()</code>,
-      <code>CGAL::read_ply_points_and_normals()</code>, <code>CGAL::write_ply_points()</code>
-    and <code>CGAL::write_ply_points_and_normals()</code>.</li>
+      <code>CGAL::read_ply_points_and_normals()</code>,
+      <code>CGAL::write_ply_points()</code>
+      and <code>CGAL::write_ply_points_and_normals()</code>.</li>
   </ul>
   <h3>Surface Mesh Parameterization</h3>
   <ul>
@@ -260,12 +268,11 @@ and <code>src/</code> directories).
     instead of OpenNL as a model
     of <code>SparseLinearAlgebraTraits_d</code>.</li>
   </ul>
-<!-- Spatial Searching and Sorting -->
   <h3>Spatial Searching</h3>
   <ul>
-    <li>Add function to find any point in a range query, that is neither all points, nor the closest one.</li>
+    <li>Add function to find any point in a range query, that is neither
+    all points, nor the closest one.</li>
   </ul>
-<!-- Geometric Optimization -->
   <h3>Principal Component Analysis</h3>
   <ul>
     <li>
@@ -279,9 +286,6 @@ and <code>src/</code> directories).
       select the diagonalizer, so the API is mostly preserved.
     </li>
   </ul>
-<!-- Interpolation -->
-<!-- Kinetic Data Structures -->
-<!-- Support Library -->
   <h3>CGAL and Solvers</h3>
   <ul>
     <li>
