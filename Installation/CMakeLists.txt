@@ -1030,7 +1030,7 @@ You must disable CGAL_ENABLE_CHECK_HEADERS.")
   endif()
 endif( CGAL_BRANCH_BUILD )
 
-if(NOT CGAL_BRANCH_BUILD)
+if(NOT CGAL_BRANCH_BUILD AND EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/doc")
   # in a non-branch build this is the top-level CMakeLists.txt
-  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/doc/")
+  add_subdirectory("${CMAKE_CURRENT_SOURCE_DIR}/doc")
 endif()
