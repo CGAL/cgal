@@ -51,7 +51,8 @@ public:
   // If perform_checks = true, the function:
   // - won't insert the simplex if it is already in a higher dim simplex
   // - will erase any lower-dim simplices that are faces of the new simplex
-  void add_simplex(
+  // Returns true if the simplex was added
+  bool add_simplex(
     const std::set<std::size_t> &s, bool perform_checks = true)
   {
     if (perform_checks)
@@ -71,7 +72,7 @@ public:
                            s.begin(), s.end()))
         {
           // No need to insert it, then
-          return;
+          return false;
         }
         // Check if the simplex includes some lower-dim simplices
         if (it_simplex->size() < num_pts 
@@ -89,7 +90,7 @@ public:
         m_complex.erase(*it);
       }
     }
-    m_complex.insert(s);
+    return m_complex.insert(s).second;
   }
 
   // Ignore the point coordinates
@@ -136,6 +137,11 @@ public:
   const Simplex_set &simplex_range() const
   {
     return m_complex;
+  }
+
+  bool empty()
+  {
+    return m_complex.empty();
   }
 
   void clear()
@@ -285,6 +291,7 @@ public:
   // verbose_level = 0, 1 or 2
   bool is_pure_pseudomanifold__do_not_check_if_stars_are_connected(
     int simplex_dim,
+    bool allow_borders = false,
     bool exit_at_the_first_problem = false,
     int verbose_level = 0,
     std::size_t *p_num_wrong_dim_simplices = NULL, 
@@ -331,7 +338,8 @@ public:
          it_map_elt != it_map_end ;
          ++it_map_elt)
     {
-      if (it_map_elt->second != 2)
+      if (it_map_elt->second != 2
+        && (!allow_borders || it_map_elt->second != 1))
       {
         if (verbose_level >= 2)
           std::cerr << "Found a k-1-face with "
@@ -424,6 +432,7 @@ public:
   bool is_pure_pseudomanifold(
     int simplex_dim,
     std::size_t num_vertices,
+    bool allow_borders = false,
     bool exit_at_the_first_problem = false, 
     int verbose_level = 0,
     std::size_t *p_num_wrong_dim_simplices = NULL, 
@@ -440,6 +449,7 @@ public:
         *p_num_unconnected_stars = 0;
       return is_pure_pseudomanifold__do_not_check_if_stars_are_connected(
         simplex_dim,
+        allow_borders,
         exit_at_the_first_problem,
         verbose_level,
         p_num_wrong_dim_simplices,
@@ -536,7 +546,8 @@ public:
           boost::add_edge(km1_gv, *kface_it, adj_graph);
         }
 
-        if (dm1_to_d_it->second.size() != 2)
+        if (dm1_to_d_it->second.size() != 2
+          && (!allow_borders || dm1_to_d_it->second.size() != 1))
         {
           ++num_wrong_number_of_cofaces;
           if (p_wrong_number_of_cofaces_simplices)
