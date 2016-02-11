@@ -1,23 +1,23 @@
-#ifndef CGAL_HYPERBOLIC_DIAMETRIC_TRANSLATIONS_2_H
-#define CGAL_HYPERBOLIC_DIAMETRIC_TRANSLATIONS_2_H
+#ifndef CGAL_HYPERBOLIC_CROSS_TRANSLATIONS_2_H
+#define CGAL_HYPERBOLIC_CROSS_TRANSLATIONS_2_H
 
 #include <CGAL/Hyperbolic_isometry_2.h>
 
 
 template<typename Gt>
-class Diametric_translations
+class Cross_translations
 {
 public:
 
   enum Direction {
     A = 0,  // 0
-    InvB,   // 1
-    C,      // 2
-    InvD,   // 3
-    InvA,   // 4
-    B,      // 5
+    B,      // 1
+    InvA,   // 2
+    InvB,   // 3
+    C,      // 4
+    D,      // 5
     InvC,   // 6
-    D       // 7
+    InvD    // 7
   };
 
   typedef typename Gt::FT FT;
@@ -27,7 +27,7 @@ public:
   typedef typename Vector::iterator Vector_iterator;
   
 
-  Diametric_translations() {
+  Cross_translations() {
     computed = false;
     compute();
   }
@@ -80,37 +80,29 @@ private:
   void compute_g()
   {
 
-    const FT k1 = FT(1) + CGAL::sqrt(2.);
-    const FT k2 = FT(0);
-        
-    std::complex<FT> m(k1, k2);
-        
-    // This is the multiplicative factor for all b's
-    const FT k3 = CGAL::sqrt(2.) * CGAL::sqrt( k1 );
-        
-    std::vector< std::complex<FT> > n;
-        
-    // Euler's identity: exp(i k \theta) = cos(k \theta) + i sin(k \theta)
-    for (int kk = 0; kk < 8; kk++) {
-        n.push_back( std::complex<FT>( k3 * cos( FT(kk) * CGAL_PI / FT(4)), k3 * sin( FT(kk) * CGAL_PI / FT(4) ) ) );
-    }
+    const FT k1 = (FT(2) + CGAL::sqrt(2.))/FT(2);
+    const FT k2 = CGAL::sqrt(CGAL::sqrt(2.));
+    const FT k3 = (CGAL::sqrt(2.)*k2)/FT(2);
+    
+    std::complex<FT> m(k1, k1);
+    std::complex<FT> n(k2*k1, -k3);
     
     g.resize(8);
     
     // a
-    g[A] = Hyperbolic_isometry(m, n[A]);
+    g[A] = Hyperbolic_isometry(conj(m), conj(n));
     g[InvA] = g[A].inverse();    
     
     // b
-    g[B] = Hyperbolic_isometry(m, n[B]);
+    g[B] = Hyperbolic_isometry(m, -n);
     g[InvB] = g[B].inverse();
 
     // c
-    g[C] = Hyperbolic_isometry(m, n[C]);
+    g[C] = Hyperbolic_isometry(conj(m), -conj(n));
     g[InvC] = g[C].inverse();
 
     // d
-    g[D] = Hyperbolic_isometry(m, n[D]);
+    g[D] = Hyperbolic_isometry(m, n);
     g[InvD] = g[D].inverse();
 
   }
@@ -130,4 +122,4 @@ private:
 };
 
  
-#endif // CGAL_HYPERBOLIC_DIAMETRIC_TRANSLATIONS_2_H
+#endif // CGAL_HYPERBOLIC_CROSS_TRANSLATIONS_2_H

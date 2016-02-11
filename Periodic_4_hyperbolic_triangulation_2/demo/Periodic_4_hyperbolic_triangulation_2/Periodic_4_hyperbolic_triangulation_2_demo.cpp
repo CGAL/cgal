@@ -34,7 +34,7 @@
 #include <CGAL/Qt/utility.h>
   
 // the two base classes
-#include "ui_Delaunay_triangulation_2.h"
+#include "ui_Periodic_4_hyperbolic_triangulation_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel R;
@@ -47,7 +47,7 @@ typedef CGAL::Periodic_2_Delaunay_hyperbolic_triangulation_2<K> Delaunay;
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
-  public Ui::Delaunay_triangulation_2
+  public Ui::Periodic_4_hyperbolic_triangulationo_2_demo
 {
   Q_OBJECT
   
@@ -84,6 +84,8 @@ public slots:
   void on_actionInsertPoint_toggled(bool checked);
   
   void on_actionInsertRandomPoints_triggered();
+
+  void on_actionModify_recursion_depth_triggered();
 
   void on_actionLoadPoints_triggered();
 
@@ -313,12 +315,31 @@ MainWindow::on_actionClear_triggered()
 
 
 void
+MainWindow::on_actionModify_recursion_depth_triggered()
+{
+    bool ok = false;
+    const int depth = 
+      QInputDialog::getInt(this, 
+                        tr("Recursion depth"),
+                        tr("Enter new value for recursion depth"),
+           0,
+           0,
+           std::numeric_limits<int>::max(),
+           1,
+           &ok);
+
+    if (!ok) {
+      return;
+    }
+
+    dt.Set_recursion_depth(depth);
+}
+
+
+void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
-  QRectF rect = CGAL::Qt::viewportsBbox(&scene);
-  CGAL::Qt::Converter<K> convert;  
-  Iso_rectangle_2 isor = convert(rect);
-  CGAL::Random_points_in_iso_rectangle_2<Point_2> pg(isor.min(), isor.max());
+  CGAL::Random_points_in_disc_2<Point_2, CGAL::Creator_uniform_2<int, Point_2> > pg(1.0);
   bool ok = false;
   const int number_of_points = 
     QInputDialog::getInt(this, 

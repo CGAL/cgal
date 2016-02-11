@@ -24,7 +24,11 @@
 #include <CGAL/Aff_transformation_2.h>
 
 // Added by Iordanov
+#if CLEARLY_MY_TYPE == 1
+#include <CGAL/Cross_translations.h>
+#else
 #include <CGAL/Diametric_translations.h>
+#endif
 
 namespace CGAL {
     
@@ -215,8 +219,6 @@ namespace CGAL {
         std::cout << "All points length: " << all_points.size() << std::endl;
         
         Base::insert(all_points.begin(), all_points.end());
-        
-        int recursion_depth = 3;
         
         Diametric_translations<GT> g;
         std::vector<Point_2> copies;

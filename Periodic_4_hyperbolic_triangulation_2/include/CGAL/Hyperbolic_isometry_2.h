@@ -41,6 +41,7 @@ public:
   Hyperbolic_isometry_2(const complex& m = complex(1, 0), const complex& n = complex(0, 0))
     : m_(m), n_(n)
   {
+    //std::cout << "Creating hyperbolic isometry with m = " << m << " and n = " << n << std::endl;
   }
   
   ~Hyperbolic_isometry_2()
@@ -49,6 +50,7 @@ public:
   
   complex DoAction(const complex& z) const
   {
+    //std::cout << "Hyperbolic isometry applied!" << std::endl;
     return (m_*z + n_)/(std::conj(n_)*z + std::conj(m_));
   }
   
