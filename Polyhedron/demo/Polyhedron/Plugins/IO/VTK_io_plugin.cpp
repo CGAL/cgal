@@ -45,6 +45,8 @@
 #include <vtkSmartPointer.h>
 #include <vtkPolyDataReader.h>
 #include <vtkXMLPolyDataReader.h>
+#include <vtkPolyDataWriter.h>
+#include <vtkXMLPolyDataWriter.h>
 #include <vtkPolyData.h>
 #include <vtkIdTypeArray.h>
 #include <vtkFieldData.h>
@@ -55,10 +57,7 @@
 #include <vtkIdList.h>
 #include <vtkAppendFilter.h>
 #include <vtkSphereSource.h>
-#include <vtkUnstructuredGrid.h>
 #include <vtkVersion.h>
-#include <vtkUnstructuredGridWriter.h>
-#include <vtkXMLUnstructuredGridWriter.h>
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
 #include <vtkType.h>
@@ -155,7 +154,8 @@ namespace CGAL{
       cell->Delete();
     }
 
-    vtkPolyData* polydata = vtkPolyData::New();
+    vtkSmartPointer<vtkPolyData> polydata =
+      vtkSmartPointer<vtkPolyData>::New();
 
     polydata->SetPoints(vtk_points);
     vtk_points->Delete();
@@ -164,20 +164,20 @@ namespace CGAL{
     vtk_cells->Delete();
 
     // Combine the two data sets
-    vtkSmartPointer<vtkAppendFilter> appendFilter =
-      vtkSmartPointer<vtkAppendFilter>::New();
-    appendFilter->AddInputData(polydata);
-    appendFilter->Update();
+    //vtkSmartPointer<vtkAppendFilter> appendFilter =
+    //  vtkSmartPointer<vtkAppendFilter>::New();
+    //appendFilter->AddInputData(polydata);
+    //appendFilter->Update();
 
-    vtkSmartPointer<vtkUnstructuredGrid> unstructuredGrid =
-      vtkSmartPointer<vtkUnstructuredGrid>::New();
-    unstructuredGrid->ShallowCopy(appendFilter->GetOutput());
+    //vtkSmartPointer<vtkPolyData> unstructuredGrid =
+    //  vtkSmartPointer<vtkPolyData>::New();
+    //unstructuredGrid->ShallowCopy(appendFilter->GetOutput());
 
     // Write the unstructured grid
     vtkSmartPointer<VtkWriter> writer =
       vtkSmartPointer<VtkWriter>::New();
     writer->SetFileName(filename);
-    writer->SetInputData(unstructuredGrid);
+    writer->SetInputData(polydata);
     writer->Write();
   }
 }//end namespace CGAL
@@ -195,7 +195,8 @@ public:
   typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 
-  QString nameFilters() const { return "VTK PolyData files (*.vtk, *.vtp)"; }
+  QString nameFilters() const { 
+    return "VTK PolyData files (*.vtk);; VTK XML PolyData (*.vtp)"; }
   QString name() const { return "vtk_plugin"; }
 
   bool canSave(const CGAL::Three::Scene_item* item)
@@ -219,11 +220,11 @@ public:
     {
       char last_char = output_filename.back();
       if (last_char != 'p' && last_char != 'P')
-        CGAL::polygon_mesh_to_vtkUnstructured<vtkUnstructuredGridWriter>(
+        CGAL::polygon_mesh_to_vtkUnstructured<vtkPolyDataWriter>(
           *poly_item->polyhedron(),
           output_filename.data());
       else
-        CGAL::polygon_mesh_to_vtkUnstructured<vtkXMLUnstructuredGridWriter>(
+        CGAL::polygon_mesh_to_vtkUnstructured<vtkXMLPolyDataWriter>(
         *poly_item->polyhedron(),
         output_filename.data());
     }
