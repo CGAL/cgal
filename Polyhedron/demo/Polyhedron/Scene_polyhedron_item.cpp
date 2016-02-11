@@ -475,25 +475,21 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
       else
       {
           int i=0;
+          Vector n = PMP::compute_face_normal(f, *poly);
           HF_circulator he = f->facet_begin();
           HF_circulator end = he;
           CGAL_For_all(he,end)
           {
-
                 // If Flat shading:1 normal per polygon added once per vertex
-
-                Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(f, *poly);
                 normals_flat.push_back(n.x());
                 normals_flat.push_back(n.y());
                 normals_flat.push_back(n.z());
 
-
                 //// If Gouraud shading: 1 normal per vertex
-
-                n = CGAL::Polygon_mesh_processing::compute_vertex_normal(he->vertex(), *poly);
-                normals_gouraud.push_back(n.x());
-                normals_gouraud.push_back(n.y());
-                normals_gouraud.push_back(n.z());
+                Vector nv = PMP::compute_vertex_normal(he->vertex(), *poly);
+                normals_gouraud.push_back(nv.x());
+                normals_gouraud.push_back(nv.y());
+                normals_gouraud.push_back(nv.z());
 
                 //position
                 const Point& p = he->vertex()->point();
