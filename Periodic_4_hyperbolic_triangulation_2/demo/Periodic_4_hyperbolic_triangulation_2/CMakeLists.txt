@@ -8,6 +8,7 @@ set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Instruct CMake to run moc automatically when needed.
 set(CMAKE_AUTOMOC ON)
+SET(CMAKE_AUTOUIC ON)  
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)

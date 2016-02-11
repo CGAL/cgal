@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <author>GeometryFactory</author>
- <class>Delaunay_triangulation_2</class>
- <widget class="QMainWindow" name="Delaunay_triangulation_2">
+ <class>Periodic_4_hyperbolic_triangulationo_2_demo</class>
+ <widget class="QMainWindow" name="Periodic_4_hyperbolic_triangulationo_2_demo">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -12,10 +12,10 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>CGAL Delaunay Triangulation</string>
+   <string>Periodic hyperbolic Delaunay triangulation</string>
   </property>
   <property name="windowIcon">
-   <iconset resource="../../../../CGAL-3.8/demo/resources/CGAL.qrc">
+   <iconset resource="icons/CGAL.qrc">
     <normaloff>:/cgal/logos/cgal_icon</normaloff>:/cgal/logos/cgal_icon</iconset>
   </property>
   <widget class="QWidget" name="centralwidget">
@@ -102,6 +102,7 @@
      <string>&amp;Edit</string>
     </property>
     <addaction name="actionInsertRandomPoints"/>
+    <addaction name="actionModify_recursion_depth"/>
    </widget>
    <widget class="QMenu" name="menuTools">
     <property name="title">
@@ -156,13 +157,18 @@
     <string>Ctrl+I</string>
    </property>
   </action>
+  <action name="actionChangeRecursionDepth">
+   <property name="text">
+    <string>&amp;Change recursion depth</string>
+   </property>
+  </action>
   <action name="actionMovingPoint">
    <property name="checkable">
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../CGAL-3.8/demo/Triangulation_2/Delaunay_triangulation_2.qrc">
-     <normaloff>:/cgal/Actions/icons/moving_point.png</normaloff>:/cgal/Actions/icons/moving_point.png</iconset>
+    <iconset resource="icons/Delaunay_triangulation_2.qrc">
+     <normaloff>:/cgal/Actions/moving_point.png</normaloff>:/cgal/Actions/moving_point.png</iconset>
    </property>
    <property name="text">
     <string>&amp;Simulate insertion</string>
@@ -185,7 +191,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../CGAL-3.8/demo/icons/Input.qrc">
+    <iconset resource="icons/Input.qrc">
      <normaloff>:/cgal/Input/inputPoint.png</normaloff>:/cgal/Input/inputPoint.png</iconset>
    </property>
    <property name="text">
@@ -200,7 +206,7 @@
   </action>
   <action name="actionClear">
    <property name="icon">
-    <iconset resource="../../../../CGAL-3.8/demo/icons/File.qrc">
+    <iconset resource="icons/File.qrc">
      <normaloff>:/cgal/fileToolbar/fileNew.png</normaloff>:/cgal/fileToolbar/fileNew.png</iconset>
    </property>
    <property name="text">
@@ -218,7 +224,7 @@
     <bool>false</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../CGAL-3.8/demo/icons/Triangulation_2.qrc">
+    <iconset resource="icons/Triangulation_2.qrc">
      <normaloff>:/cgal/Triangulation_2/Voronoi_diagram_2.png</normaloff>:/cgal/Triangulation_2/Voronoi_diagram_2.png</iconset>
    </property>
    <property name="text">
@@ -233,8 +239,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../CGAL-3.8/demo/Triangulation_2/Delaunay_triangulation_2.qrc">
-     <normaloff>:/cgal/Actions/icons/triangulation.png</normaloff>:/cgal/Actions/icons/triangulation.png</iconset>
+    <iconset resource="icons/Delaunay_triangulation_2.qrc">
+     <normaloff>:/cgal/Actions/triangulation.png</normaloff>:/cgal/Actions/triangulation.png</iconset>
    </property>
    <property name="text">
     <string>Show &amp;Delaunay Triangulation</string>
@@ -245,7 +251,7 @@
   </action>
   <action name="actionLoadPoints">
    <property name="icon">
-    <iconset resource="../../../../CGAL-3.8/demo/icons/File.qrc">
+    <iconset resource="icons/File.qrc">
      <normaloff>:/cgal/fileToolbar/fileOpen.png</normaloff>:/cgal/fileToolbar/fileOpen.png</iconset>
    </property>
    <property name="text">
@@ -257,7 +263,7 @@
   </action>
   <action name="actionSavePoints">
    <property name="icon">
-    <iconset resource="../../../../CGAL-3.8/demo/icons/File.qrc">
+    <iconset resource="icons/File.qrc">
      <normaloff>:/cgal/fileToolbar/fileSave.png</normaloff>:/cgal/fileToolbar/fileSave.png</iconset>
    </property>
    <property name="text">
@@ -272,7 +278,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../CGAL-3.8/demo/Triangulation_2/Delaunay_triangulation_2.qrc">
+    <iconset>
      <normaloff>:/cgal/Actions/icons/circumcenter.png</normaloff>:/cgal/Actions/icons/circumcenter.png</iconset>
    </property>
    <property name="text">
@@ -284,7 +290,7 @@
   </action>
   <action name="actionRecenter">
    <property name="icon">
-    <iconset resource="../../../../CGAL-3.8/demo/icons/Input.qrc">
+    <iconset resource="icons/Input.qrc">
      <normaloff>:/cgal/Input/zoom-best-fit</normaloff>:/cgal/Input/zoom-best-fit</iconset>
    </property>
    <property name="text">
@@ -299,7 +305,7 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../../../../CGAL-3.8/demo/Triangulation_2/Delaunay_triangulation_2.qrc">
+    <iconset>
      <normaloff>:/cgal/Actions/icons/conflict_zone.png</normaloff>:/cgal/Actions/icons/conflict_zone.png</iconset>
    </property>
    <property name="text">
@@ -311,8 +317,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../resources/Hyperbolic_translations_2.qrc">
-     <normaloff>:/cgal/Actions/icons/a.png</normaloff>:/cgal/Actions/icons/a.png</iconset>
+    <iconset resource="icons/Periodic_4_hyperbolic_triangulation_2.qrc">
+     <normaloff>:/cgal/Actions/a.png</normaloff>:/cgal/Actions/a.png</iconset>
    </property>
    <property name="text">
     <string>Do translation &quot;a&quot;</string>
@@ -323,8 +329,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../resources/Hyperbolic_translations_2.qrc">
-     <normaloff>:/cgal/Actions/icons/b.png</normaloff>:/cgal/Actions/icons/b.png</iconset>
+    <iconset resource="icons/Periodic_4_hyperbolic_triangulation_2.qrc">
+     <normaloff>:/cgal/Actions/b.png</normaloff>:/cgal/Actions/b.png</iconset>
    </property>
    <property name="text">
     <string>Do translation &quot;b&quot;</string>
@@ -335,8 +341,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../resources/Hyperbolic_translations_2.qrc">
-     <normaloff>:/cgal/Actions/icons/c.png</normaloff>:/cgal/Actions/icons/c.png</iconset>
+    <iconset resource="icons/Periodic_4_hyperbolic_triangulation_2.qrc">
+     <normaloff>:/cgal/Actions/c.png</normaloff>:/cgal/Actions/c.png</iconset>
    </property>
    <property name="text">
     <string>Do translation &quot;c&quot;</string>
@@ -347,8 +353,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../resources/Hyperbolic_translations_2.qrc">
-     <normaloff>:/cgal/Actions/icons/d.png</normaloff>:/cgal/Actions/icons/d.png</iconset>
+    <iconset resource="icons/Periodic_4_hyperbolic_triangulation_2.qrc">
+     <normaloff>:/cgal/Actions/d.png</normaloff>:/cgal/Actions/d.png</iconset>
    </property>
    <property name="text">
     <string>Do translation &quot;d&quot;</string>
@@ -359,8 +365,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../resources/Hyperbolic_translations_2.qrc">
-     <normaloff>:/cgal/Actions/icons/G.png</normaloff>:/cgal/Actions/icons/G.png</iconset>
+    <iconset resource="icons/Periodic_4_hyperbolic_triangulation_2.qrc">
+     <normaloff>:/cgal/Actions/G.png</normaloff>:/cgal/Actions/G.png</iconset>
    </property>
    <property name="text">
     <string>G</string>
@@ -371,8 +377,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../resources/Hyperbolic_translations_2.qrc">
-     <normaloff>:/cgal/Actions/icons/G2.png</normaloff>:/cgal/Actions/icons/G2.png</iconset>
+    <iconset resource="icons/Periodic_4_hyperbolic_triangulation_2.qrc">
+     <normaloff>:/cgal/Actions/G2.png</normaloff>:/cgal/Actions/G2.png</iconset>
    </property>
    <property name="text">
     <string>G2</string>
@@ -383,8 +389,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../resources/Hyperbolic_translations_2.qrc">
-     <normaloff>:/cgal/Actions/icons/G4.png</normaloff>:/cgal/Actions/icons/G4.png</iconset>
+    <iconset resource="icons/Periodic_4_hyperbolic_triangulation_2.qrc">
+     <normaloff>:/cgal/Actions/G4.png</normaloff>:/cgal/Actions/G4.png</iconset>
    </property>
    <property name="text">
     <string>G4</string>
@@ -395,8 +401,8 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../resources/Hyperbolic_translations_2.qrc">
-     <normaloff>:/cgal/Actions/icons/G8.png</normaloff>:/cgal/Actions/icons/G8.png</iconset>
+    <iconset resource="icons/Periodic_4_hyperbolic_triangulation_2.qrc">
+     <normaloff>:/cgal/Actions/G8.png</normaloff>:/cgal/Actions/G8.png</iconset>
    </property>
    <property name="text">
     <string>G8</string>
@@ -407,21 +413,26 @@
     <bool>true</bool>
    </property>
    <property name="icon">
-    <iconset resource="../resources/Hyperbolic_translations_2.qrc">
-     <normaloff>:/cgal/Actions/icons/G16.png</normaloff>:/cgal/Actions/icons/G16.png</iconset>
+    <iconset resource="icons/Periodic_4_hyperbolic_triangulation_2.qrc">
+     <normaloff>:/cgal/Actions/G16.png</normaloff>:/cgal/Actions/G16.png</iconset>
    </property>
    <property name="text">
     <string>G16</string>
    </property>
   </action>
+  <action name="actionModify_recursion_depth">
+   <property name="text">
+    <string>Modify recursion depth</string>
+   </property>
+  </action>
  </widget>
  <resources>
-  <include location="../../../../CGAL-3.8/demo/Triangulation_2/Delaunay_triangulation_2.qrc"/>
-  <include location="../../../../CGAL-3.8/demo/icons/File.qrc"/>
-  <include location="../resources/Hyperbolic_translations_2.qrc"/>
-  <include location="../../../../CGAL-3.8/demo/resources/CGAL.qrc"/>
-  <include location="../../../../CGAL-3.8/demo/icons/Triangulation_2.qrc"/>
-  <include location="../../../../CGAL-3.8/demo/icons/Input.qrc"/>
+  <include location="icons/Periodic_4_hyperbolic_triangulation_2.qrc"/>
+  <include location="icons/Delaunay_triangulation_2.qrc"/>
+  <include location="icons/Triangulation_2.qrc"/>
+  <include location="icons/Input.qrc"/>
+  <include location="icons/File.qrc"/>
+  <include location="icons/CGAL.qrc"/>
  </resources>
  <connections/>
 </ui>

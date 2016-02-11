@@ -1,0 +1,13 @@
+<RCC>
+  <qresource prefix="/cgal/Actions">
+    <file>G2.png</file>
+    <file>G4.png</file>
+    <file>G8.png</file>
+    <file>G16.png</file>
+    <file>G.png</file>
+    <file>a.png</file>
+    <file>b.png</file>
+    <file>c.png</file>
+    <file>d.png</file>
+  </qresource>
+</RCC>
