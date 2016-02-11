@@ -3,7 +3,7 @@
 #include <CGAL/Qt/CreateOpenGLContext.h>
 
 Viewer::Viewer(QWidget* parent, bool antialiasing)
-  : QGLViewer(CGAL::Qt::createOpenGLContext(parent), parent),
+  : QGLViewer(CGAL::Qt::createOpenGLContext(), parent),
     scene(0),
     antialiasing(antialiasing),
     twosides(false),
