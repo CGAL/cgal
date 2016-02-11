@@ -26,7 +26,7 @@ creationpath = args.creationpath
 
 doxystring = \
 r"""@INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
-PROJECT_NAME = "CGAL ${CGAL_CREATED_VERSION_NUM} - Put title of project here"
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Put title of project here"
 INPUT        = ${CMAKE_SOURCE_DIR}/PACKAGENAME/doc/PACKAGENAME/ \
                ${CMAKE_SOURCE_DIR}/PACKAGENAME/include
 """
