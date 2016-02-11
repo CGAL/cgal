@@ -167,32 +167,19 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
         if(ffit->info().is_external)
             continue;
 
-        double vertices[3][3];
-        vertices[0][0] = ffit->vertex(0)->point().x();
-        vertices[0][1] = ffit->vertex(0)->point().y();
-        vertices[0][2] = ffit->vertex(0)->point().z();
-
-        vertices[1][0] = ffit->vertex(1)->point().x();
-        vertices[1][1] = ffit->vertex(1)->point().y();
-        vertices[1][2] = ffit->vertex(1)->point().z();
-
-        vertices[2][0] = ffit->vertex(2)->point().x();
-        vertices[2][1] = ffit->vertex(2)->point().y();
-        vertices[2][2] = ffit->vertex(2)->point().z();
-
-        positions_facets.push_back( vertices[0][0]);
-        positions_facets.push_back( vertices[0][1]);
-        positions_facets.push_back( vertices[0][2]);
+        positions_facets.push_back(ffit->vertex(0)->point().x());
+        positions_facets.push_back(ffit->vertex(0)->point().y());
+        positions_facets.push_back(ffit->vertex(0)->point().z());
         positions_facets.push_back(1.0);
 
-        positions_facets.push_back( vertices[1][0]);
-        positions_facets.push_back( vertices[1][1]);
-        positions_facets.push_back( vertices[1][2]);
+        positions_facets.push_back(ffit->vertex(1)->point().x());
+        positions_facets.push_back(ffit->vertex(1)->point().y());
+        positions_facets.push_back(ffit->vertex(1)->point().z());
         positions_facets.push_back(1.0);
 
-        positions_facets.push_back( vertices[2][0]);
-        positions_facets.push_back( vertices[2][1]);
-        positions_facets.push_back( vertices[2][2]);
+        positions_facets.push_back(ffit->vertex(2)->point().x());
+        positions_facets.push_back(ffit->vertex(2)->point().y());
+        positions_facets.push_back(ffit->vertex(2)->point().z());
         positions_facets.push_back(1.0);
 
         typedef Kernel::Vector_3	    Vector;
