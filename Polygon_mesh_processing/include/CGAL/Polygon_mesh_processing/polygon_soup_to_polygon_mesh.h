@@ -93,8 +93,12 @@ public:
 
   /**
   * \ingroup PMP_repairing_grp
-  * returns `true` if the soup of polygons defines a valid polygon mesh
-  * that can be handled by `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`.
+  *
+  * returns `true` if the soup of polygons defines a valid polygon
+  * mesh that can be handled by
+  * `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`.
+  * This function does not require a range of points as an argument
+  * since the check is purely topological.
   *
   * @tparam Polygon a `std::vector<std::size_t>` containing the indices
   *         of the points of the polygon face
