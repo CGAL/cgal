@@ -28,7 +28,7 @@
 #include <QDebug>
 
 Viewer::Viewer(QWidget* parent)
-  : QGLViewer(CGAL::Qt::createOpenGLMSAAContext(),parent), wireframe(false),
+  : QGLViewer(CGAL::Qt::createOpenGLContext(),parent), wireframe(false),
     flatShading(true), edges(true), vertices(true),
     m_previous_scene_empty(true), are_buffers_initialized(false)
 {
