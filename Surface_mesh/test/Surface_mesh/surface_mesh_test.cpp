@@ -221,7 +221,7 @@ void properties () {
   Surface_fixture f;
   
 
-  Sm::Property_map<Sm::Vertex_index, int> prop;
+  CGAL::Properties::Property_map<Sm::Vertex_index, int> prop;
   bool created = false;
 
   boost::tie(prop,created) = f.m.add_property_map<Sm::Vertex_index, int>("illuminatiproperty", 23);
