@@ -27,6 +27,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/Kernel_traits.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -34,6 +35,16 @@
 namespace CGAL{
 
 namespace Polygon_mesh_processing{
+
+namespace internal {
+
+  template<typename Point>
+  typename CGAL::Kernel_traits<Point>::Kernel::Vector_3
+  triangle_normal(const Point& p0, const Point& p1, const Point& p2)
+  {
+    return CGAL::cross_product(p2 - p1, p0 - p1);
+  }
+}
 
 template<typename Point, typename PM, typename VertexPointMap, typename Vector>
 void sum_normals(const PM& pmesh,
@@ -49,12 +60,13 @@ void sum_normals(const PM& pmesh,
     const Point& prv = get(vpmap, target(prev(he, pmesh), pmesh));
     const Point& curr = get(vpmap, target(he, pmesh));
     const Point& nxt = get(vpmap, target(next(he, pmesh), pmesh));
-    Vector n = CGAL::cross_product(nxt - curr, prv - curr);
+    Vector n = internal::triangle_normal(prv, curr, nxt);
     sum = sum + n;
 
     he = next(he, pmesh);
   } while (he != end);
 }
+
 
 /**
 * \ingroup PMP_normal_grp
