@@ -32,8 +32,8 @@
 #include <QDialog>
 
 #include <boost/foreach.hpp>
-
-
+#include <boost/property_map/property_map.hpp>
+#include <boost/unordered_map.hpp>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -182,31 +182,29 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
         positions_facets.push_back(ffit->vertex(2)->point().z());
         positions_facets.push_back(1.0);
 
-        typedef Kernel::Vector_3	    Vector;
-        Vector n = CGAL::Polygon_mesh_processing::compute_face_normal(fit, *poly);
-        normals_flat.push_back(n.x());
-        normals_flat.push_back(n.y());
-        normals_flat.push_back(n.z());
+        normals_flat.push_back(normal.x());
+        normals_flat.push_back(normal.y());
+        normals_flat.push_back(normal.z());
 
-        normals_flat.push_back(n.x());
-        normals_flat.push_back(n.y());
-        normals_flat.push_back(n.z());
+        normals_flat.push_back(normal.x());
+        normals_flat.push_back(normal.y());
+        normals_flat.push_back(normal.z());
 
-        normals_flat.push_back(n.x());
-        normals_flat.push_back(n.y());
-        normals_flat.push_back(n.z());
+        normals_flat.push_back(normal.x());
+        normals_flat.push_back(normal.y());
+        normals_flat.push_back(normal.z());
 
-        normals_gouraud.push_back(n.x());
-        normals_gouraud.push_back(n.y());
-        normals_gouraud.push_back(n.z());
+        normals_gouraud.push_back(normal.x());
+        normals_gouraud.push_back(normal.y());
+        normals_gouraud.push_back(normal.z());
 
-        normals_gouraud.push_back(n.x());
-        normals_gouraud.push_back(n.y());
-        normals_gouraud.push_back(n.z());
+        normals_gouraud.push_back(normal.x());
+        normals_gouraud.push_back(normal.y());
+        normals_gouraud.push_back(normal.z());
 
-        normals_gouraud.push_back(n.x());
-        normals_gouraud.push_back(n.y());
-        normals_gouraud.push_back(n.z());
+        normals_gouraud.push_back(normal.x());
+        normals_gouraud.push_back(normal.y());
+        normals_gouraud.push_back(normal.z());
     }
 }
 
@@ -444,8 +442,20 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
     typedef Polyhedron::Traits	    Kernel;
     typedef Kernel::Point_3	    Point;
     typedef Kernel::Vector_3	    Vector;
+    typedef Kernel::FT              FT;
     typedef Polyhedron::Facet_iterator Facet_iterator;
     typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
+    typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
+    typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+
+    boost::unordered_map<face_descriptor, Vector> face_normals_map;
+    boost::associative_property_map< boost::unordered_map<face_descriptor, Vector> >
+      nf_pmap(face_normals_map);
+    boost::unordered_map<vertex_descriptor, Vector> vertex_normals_map;
+    boost::associative_property_map< boost::unordered_map<vertex_descriptor, Vector> >
+      nv_pmap(vertex_normals_map);
+
+    PMP::compute_normals(*poly, nv_pmap, nf_pmap);
 
     Facet_iterator f = poly->facets_begin();
     for(f = poly->facets_begin();
@@ -455,14 +465,10 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
       if (f == boost::graph_traits<Polyhedron>::null_face())
         continue;
 
-      if(!is_triangle(f->halfedge(),*poly))
-      {
-          triangulate_facet(f);
-      }
-      else
+      if(is_triangle(f->halfedge(),*poly))
       {
           int i=0;
-          Vector n = PMP::compute_face_normal(f, *poly);
+          Vector n = get(nf_pmap, f);
           HF_circulator he = f->facet_begin();
           HF_circulator end = he;
           CGAL_For_all(he,end)
@@ -473,7 +479,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
                 normals_flat.push_back(n.z());
 
                 //// If Gouraud shading: 1 normal per vertex
-                Vector nv = PMP::compute_vertex_normal(he->vertex(), *poly);
+                Vector nv = get(nv_pmap, he->vertex());
                 normals_gouraud.push_back(nv.x());
                 normals_gouraud.push_back(nv.y());
                 normals_gouraud.push_back(nv.z());
@@ -486,7 +492,114 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
                 positions_facets.push_back(1.0);
                 i = (i+1) %3;
             }
-        }
+      }
+      else if (is_quad(f->halfedge(), *poly))
+      {
+        Vector nf = get(nf_pmap, f);
+
+        //1st half-quad
+        Point p0 = f->halfedge()->vertex()->point();
+        Point p1 = f->halfedge()->next()->vertex()->point();
+        Point p2 = f->halfedge()->next()->next()->vertex()->point();
+        Vector n = PMP::internal::triangle_normal(p0, p1, p2);
+        n = n / FT(CGAL::sqrt(CGAL::to_double(n * n)));
+
+        positions_facets.push_back(p0.x());
+        positions_facets.push_back(p0.y());
+        positions_facets.push_back(p0.z());
+        positions_facets.push_back(1.0);
+
+        positions_facets.push_back(p1.x());
+        positions_facets.push_back(p1.y());
+        positions_facets.push_back(p1.z());
+        positions_facets.push_back(1.0);
+
+        positions_facets.push_back(p2.x());
+        positions_facets.push_back(p2.y());
+        positions_facets.push_back(p2.z());
+        positions_facets.push_back(1.0);
+
+        normals_flat.push_back(nf.x());
+        normals_flat.push_back(nf.y());
+        normals_flat.push_back(nf.z());
+
+        normals_flat.push_back(nf.x());
+        normals_flat.push_back(nf.y());
+        normals_flat.push_back(nf.z());
+
+        normals_flat.push_back(nf.x());
+        normals_flat.push_back(nf.y());
+        normals_flat.push_back(nf.z());
+
+        Vector nv = get(nv_pmap, f->halfedge()->vertex());
+        normals_gouraud.push_back(nv.x());
+        normals_gouraud.push_back(nv.y());
+        normals_gouraud.push_back(nv.z());
+
+        nv = get(nv_pmap, f->halfedge()->next()->vertex());
+        normals_gouraud.push_back(nv.x());
+        normals_gouraud.push_back(nv.y());
+        normals_gouraud.push_back(nv.z());
+
+        nv = get(nv_pmap, f->halfedge()->next()->next()->vertex());
+        normals_gouraud.push_back(nv.x());
+        normals_gouraud.push_back(nv.y());
+        normals_gouraud.push_back(nv.z());
+
+        //2nd half-quad
+        p0 = f->halfedge()->next()->next()->vertex()->point();
+        p1 = f->halfedge()->prev()->vertex()->point();
+        p2 = f->halfedge()->vertex()->point();
+        n = PMP::internal::triangle_normal(p0, p1, p2);
+        n = n / FT(CGAL::sqrt(CGAL::to_double(n * n)));
+
+        positions_facets.push_back(p0.x());
+        positions_facets.push_back(p0.y());
+        positions_facets.push_back(p0.z());
+        positions_facets.push_back(1.0);
+
+        positions_facets.push_back(p1.x());
+        positions_facets.push_back(p1.y());
+        positions_facets.push_back(p1.z());
+        positions_facets.push_back(1.0);
+
+        positions_facets.push_back(p2.x());
+        positions_facets.push_back(p2.y());
+        positions_facets.push_back(p2.z());
+        positions_facets.push_back(1.0);
+
+        normals_flat.push_back(nf.x());
+        normals_flat.push_back(nf.y());
+        normals_flat.push_back(nf.z());
+
+        normals_flat.push_back(nf.x());
+        normals_flat.push_back(nf.y());
+        normals_flat.push_back(nf.z());
+
+        normals_flat.push_back(nf.x());
+        normals_flat.push_back(nf.y());
+        normals_flat.push_back(nf.z());
+
+        nv = get(nv_pmap, f->halfedge()->next()->next()->vertex());
+        normals_gouraud.push_back(nv.x());
+        normals_gouraud.push_back(nv.y());
+        normals_gouraud.push_back(nv.z());
+
+        nv = get(nv_pmap, f->halfedge()->prev()->vertex());
+        normals_gouraud.push_back(nv.x());
+        normals_gouraud.push_back(nv.y());
+        normals_gouraud.push_back(nv.z());
+
+        nv = get(nv_pmap, f->halfedge()->vertex());
+        normals_gouraud.push_back(nv.x());
+        normals_gouraud.push_back(nv.y());
+        normals_gouraud.push_back(nv.z());
+      }
+      else
+      {
+        triangulate_facet(f);
+      }
+
     }
     //Lines
     typedef Kernel::Point_3		Point;
@@ -540,20 +653,41 @@ Scene_polyhedron_item::compute_colors() const
         f != poly->facets_end();
         f++)
     {
-        if(!is_triangle(f->halfedge(),*poly))
-            triangulate_facet_color(f);
-        else
+        if(is_triangle(f->halfedge(),*poly))
         {
+            const int this_patch_id = f->patch_id();
             HF_circulator he = f->facet_begin();
             HF_circulator end = he;
             CGAL_For_all(he,end)
             {
-                const int this_patch_id = f->patch_id();
                 color_facets.push_back(colors_[this_patch_id].redF());
                 color_facets.push_back(colors_[this_patch_id].greenF());
                 color_facets.push_back(colors_[this_patch_id].blueF());
             }
+        }
+        else if (is_quad(f->halfedge(), *poly))
+        {
+          const int this_patch_id = f->patch_id();
+          HF_circulator he = f->facet_begin();
+          HF_circulator end = he;
+          CGAL_For_all(he, end)
+          {
+            color_facets.push_back(colors_[this_patch_id].redF());
+            color_facets.push_back(colors_[this_patch_id].greenF());
+            color_facets.push_back(colors_[this_patch_id].blueF());
+          }
+          //two more for diagonal halfedges
+          color_facets.push_back(colors_[this_patch_id].redF());
+          color_facets.push_back(colors_[this_patch_id].greenF());
+          color_facets.push_back(colors_[this_patch_id].blueF());
 
+          color_facets.push_back(colors_[this_patch_id].redF());
+          color_facets.push_back(colors_[this_patch_id].greenF());
+          color_facets.push_back(colors_[this_patch_id].blueF());
+        }
+        else
+        {
+          triangulate_facet_color(f);
         }
     }
     //Lines
