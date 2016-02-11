@@ -501,8 +501,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
         Point p0 = f->halfedge()->vertex()->point();
         Point p1 = f->halfedge()->next()->vertex()->point();
         Point p2 = f->halfedge()->next()->next()->vertex()->point();
-        Vector n = PMP::internal::triangle_normal(p0, p1, p2);
-        n = n / FT(CGAL::sqrt(CGAL::to_double(n * n)));
 
         positions_facets.push_back(p0.x());
         positions_facets.push_back(p0.y());
@@ -550,8 +548,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
         p0 = f->halfedge()->next()->next()->vertex()->point();
         p1 = f->halfedge()->prev()->vertex()->point();
         p2 = f->halfedge()->vertex()->point();
-        n = PMP::internal::triangle_normal(p0, p1, p2);
-        n = n / FT(CGAL::sqrt(CGAL::to_double(n * n)));
 
         positions_facets.push_back(p0.x());
         positions_facets.push_back(p0.y());
