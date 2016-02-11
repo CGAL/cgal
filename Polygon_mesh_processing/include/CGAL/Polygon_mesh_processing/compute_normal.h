@@ -55,6 +55,8 @@ void sum_normals(const PM& pmesh,
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   halfedge_descriptor he = halfedge(f, pmesh);
   halfedge_descriptor end = he;
+  bool f_is_triangle = (he == next(next(next(he, pmesh), pmesh), pmesh));
+  /*it is useless to compute the normal 3 times on a triangle*/
   do
   {
     const Point& prv = get(vpmap, target(prev(he, pmesh), pmesh));
@@ -64,7 +66,7 @@ void sum_normals(const PM& pmesh,
     sum = sum + n;
 
     he = next(he, pmesh);
-  } while (he != end);
+  } while (he != end && !f_is_triangle);
 }
 
 
