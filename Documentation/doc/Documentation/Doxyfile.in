@@ -1,6 +1,6 @@
 # this package is a little peculiar and different from the other packages
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
-PROJECT_NAME        = "CGAL ${CGAL_FULL_VERSION} - Manual"
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Manual"
 PROJECT_BRIEF       =
 OUTPUT_DIRECTORY    = ${CGAL_DOC_OUTPUT_DIR}/Manual
 
@@ -29,4 +29,4 @@ SEARCHENGINE             = true
 
 ALIASES                 += "cgalPkgDescriptionBegin{2}=\subsection \2 \1"
 ALIASES                 += "cgalPkgManuals{2}=<div class=\"PkgManuals\"> <span> \ref \1 \"User Manual\" </span> <span style=\"padding-left: 20px;\">\ref \2 \"Reference Manual\" </span> </div>"
-ALIASES                 += "cgalReleaseNumber=${CGAL_FULL_VERSION}"
+ALIASES                 + = "cgalReleaseNumber =${CGAL_DOC_VERSION}"

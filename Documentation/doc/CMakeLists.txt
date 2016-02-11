@@ -200,6 +200,11 @@ else()
   set(CGAL_RELEASE_YEAR_ID "${CGAL_BUILD_YEAR2}a")
 endif()
 
+# Introduce our own version variable. This way we avoid tying this too
+# closely to the convoluted versioning code and can adapt without a
+# huge diff.
+set(CGAL_DOC_VERSION ${CGAL_CREATED_VERSION_NUM})
+
 ## generate how_to_cite files
 if(PYTHONINTERP_FOUND)
   execute_process(COMMAND ${PYTHON_EXECUTABLE}

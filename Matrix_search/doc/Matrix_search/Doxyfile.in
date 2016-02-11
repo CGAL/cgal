@@ -1,3 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_FULL_VERSION} - Monotone and Sorted Matrix Search"
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Monotone and Sorted Matrix Search"

@@ -1,5 +1,5 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
-PROJECT_NAME = "CGAL ${CGAL_FULL_VERSION} - Three"
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Three"
 INPUT        += ${CGAL_Polyhedron_DEMO_DIR}/Polyhedron/Scene.h \
                 ${CGAL_Polyhedron_DEMO_DIR}/Polyhedron/Viewer.h \
                 ${CGAL_Polyhedron_DEMO_DIR}/Polyhedron/MainWindow.h \

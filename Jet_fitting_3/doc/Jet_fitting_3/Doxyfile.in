@@ -1,3 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_FULL_VERSION} - Estimation of Local Differential Properties of Point-Sampled Surfaces"
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Estimation of Local Differential Properties of Point-Sampled Surfaces"

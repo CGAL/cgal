@@ -1,6 +1,6 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_FULL_VERSION} - Algebraic Kernel"
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Algebraic Kernel"
 SORT_GROUP_NAMES           =  true
 
 

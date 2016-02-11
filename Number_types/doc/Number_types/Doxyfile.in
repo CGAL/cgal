@@ -1,6 +1,6 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_FULL_VERSION} - Number Types"
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Number Types"
 INPUT += ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Exact_integer.h \
          ${CGAL_PACKAGE_INCLUDE_DIR}/CGAL/Exact_rational.h
 

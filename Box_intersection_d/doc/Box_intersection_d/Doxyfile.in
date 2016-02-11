@@ -1,3 +1,3 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_FULL_VERSION} - Intersecting Sequences of dD Iso-oriented Boxes"
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - Intersecting Sequences of dD Iso-oriented Boxes"

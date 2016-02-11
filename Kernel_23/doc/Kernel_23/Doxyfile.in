@@ -1,4 +1,4 @@
 @INCLUDE = ${CGAL_DOC_PACKAGE_DEFAULTS}
 
-PROJECT_NAME                       =  "CGAL ${CGAL_FULL_VERSION} - 2D and 3D Linear Geometry Kernel"
+PROJECT_NAME = "CGAL ${CGAL_DOC_VERSION} - 2D and 3D Linear Geometry Kernel"
 EXAMPLE_PATH              +=  ${CGAL_Filtered_kernel_EXAMPLE_DIR}
