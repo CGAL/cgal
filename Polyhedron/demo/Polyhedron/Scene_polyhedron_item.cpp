@@ -79,6 +79,15 @@ void delete_aabb_tree(Scene_polyhedron_item* item)
     }
 }
 
+template<typename TypeWithXYZ, typename ContainerWithPushBack>
+void push_back_xyz(const TypeWithXYZ& t,
+                   ContainerWithPushBack& vector)
+{
+  vector.push_back(t.x());
+  vector.push_back(t.y());
+  vector.push_back(t.z());
+}
+
 typedef Polyhedron::Traits Traits;
 typedef Polyhedron::Facet Facet;
 typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
@@ -173,47 +182,27 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit,
         if(ffit->info().is_external)
             continue;
 
-        positions_facets.push_back(ffit->vertex(0)->point().x());
-        positions_facets.push_back(ffit->vertex(0)->point().y());
-        positions_facets.push_back(ffit->vertex(0)->point().z());
+        push_back_xyz(ffit->vertex(0)->point(), positions_facets);
         positions_facets.push_back(1.0);
 
-        positions_facets.push_back(ffit->vertex(1)->point().x());
-        positions_facets.push_back(ffit->vertex(1)->point().y());
-        positions_facets.push_back(ffit->vertex(1)->point().z());
+        push_back_xyz(ffit->vertex(1)->point(), positions_facets);
         positions_facets.push_back(1.0);
 
-        positions_facets.push_back(ffit->vertex(2)->point().x());
-        positions_facets.push_back(ffit->vertex(2)->point().y());
-        positions_facets.push_back(ffit->vertex(2)->point().z());
+        push_back_xyz(ffit->vertex(3)->point(), positions_facets);
         positions_facets.push_back(1.0);
 
-        normals_flat.push_back(normal.x());
-        normals_flat.push_back(normal.y());
-        normals_flat.push_back(normal.z());
-
-        normals_flat.push_back(normal.x());
-        normals_flat.push_back(normal.y());
-        normals_flat.push_back(normal.z());
-
-        normals_flat.push_back(normal.x());
-        normals_flat.push_back(normal.y());
-        normals_flat.push_back(normal.z());
+        push_back_xyz(normal, normals_flat);
+        push_back_xyz(normal, normals_flat);
+        push_back_xyz(normal, normals_flat);
 
         Traits::Vector_3 ng = get(vnmap, v2v[ffit->vertex(0)]);
-        normals_gouraud.push_back(normal.x());
-        normals_gouraud.push_back(normal.y());
-        normals_gouraud.push_back(normal.z());
+        push_back_xyz(ng, normals_gouraud);
 
         ng = get(vnmap, v2v[ffit->vertex(1)]);
-        normals_gouraud.push_back(normal.x());
-        normals_gouraud.push_back(normal.y());
-        normals_gouraud.push_back(normal.z());
+        push_back_xyz(ng, normals_gouraud);
 
         ng = get(vnmap, v2v[ffit->vertex(2)]);
-        normals_gouraud.push_back(normal.x());
-        normals_gouraud.push_back(normal.y());
-        normals_gouraud.push_back(normal.z());
+        push_back_xyz(ng, normals_gouraud);
     }
 }
 
@@ -482,25 +471,19 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
           HF_circulator end = he;
           CGAL_For_all(he,end)
           {
-                // If Flat shading:1 normal per polygon added once per vertex
-                normals_flat.push_back(n.x());
-                normals_flat.push_back(n.y());
-                normals_flat.push_back(n.z());
+             // If Flat shading:1 normal per polygon added once per vertex
+            push_back_xyz(n, normals_flat);
 
-                //// If Gouraud shading: 1 normal per vertex
-                Vector nv = get(nv_pmap, he->vertex());
-                normals_gouraud.push_back(nv.x());
-                normals_gouraud.push_back(nv.y());
-                normals_gouraud.push_back(nv.z());
+            //// If Gouraud shading: 1 normal per vertex
+            Vector nv = get(nv_pmap, he->vertex());
+            push_back_xyz(nv, normals_gouraud);
 
-                //position
-                const Point& p = he->vertex()->point();
-                positions_facets.push_back(p.x());
-                positions_facets.push_back(p.y());
-                positions_facets.push_back(p.z());
-                positions_facets.push_back(1.0);
-                i = (i+1) %3;
-            }
+            //position
+            const Point& p = he->vertex()->point();
+            push_back_xyz(p, positions_facets);
+            positions_facets.push_back(1.0);
+            i = (i+1) %3;
+         }
       }
       else if (is_quad(f->halfedge(), *poly))
       {
@@ -511,94 +494,54 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
         Point p1 = f->halfedge()->next()->vertex()->point();
         Point p2 = f->halfedge()->next()->next()->vertex()->point();
 
-        positions_facets.push_back(p0.x());
-        positions_facets.push_back(p0.y());
-        positions_facets.push_back(p0.z());
+        push_back_xyz(p0, positions_facets);
         positions_facets.push_back(1.0);
 
-        positions_facets.push_back(p1.x());
-        positions_facets.push_back(p1.y());
-        positions_facets.push_back(p1.z());
+        push_back_xyz(p1, positions_facets);
         positions_facets.push_back(1.0);
 
-        positions_facets.push_back(p2.x());
-        positions_facets.push_back(p2.y());
-        positions_facets.push_back(p2.z());
+        push_back_xyz(p2, positions_facets);
         positions_facets.push_back(1.0);
 
-        normals_flat.push_back(nf.x());
-        normals_flat.push_back(nf.y());
-        normals_flat.push_back(nf.z());
-
-        normals_flat.push_back(nf.x());
-        normals_flat.push_back(nf.y());
-        normals_flat.push_back(nf.z());
-
-        normals_flat.push_back(nf.x());
-        normals_flat.push_back(nf.y());
-        normals_flat.push_back(nf.z());
+        push_back_xyz(nf, normals_flat);
+        push_back_xyz(nf, normals_flat);
+        push_back_xyz(nf, normals_flat);
 
         Vector nv = get(nv_pmap, f->halfedge()->vertex());
-        normals_gouraud.push_back(nv.x());
-        normals_gouraud.push_back(nv.y());
-        normals_gouraud.push_back(nv.z());
+        push_back_xyz(nv, normals_gouraud);
 
         nv = get(nv_pmap, f->halfedge()->next()->vertex());
-        normals_gouraud.push_back(nv.x());
-        normals_gouraud.push_back(nv.y());
-        normals_gouraud.push_back(nv.z());
+        push_back_xyz(nv, normals_gouraud);
 
         nv = get(nv_pmap, f->halfedge()->next()->next()->vertex());
-        normals_gouraud.push_back(nv.x());
-        normals_gouraud.push_back(nv.y());
-        normals_gouraud.push_back(nv.z());
+        push_back_xyz(nv, normals_gouraud);
 
         //2nd half-quad
         p0 = f->halfedge()->next()->next()->vertex()->point();
         p1 = f->halfedge()->prev()->vertex()->point();
         p2 = f->halfedge()->vertex()->point();
 
-        positions_facets.push_back(p0.x());
-        positions_facets.push_back(p0.y());
-        positions_facets.push_back(p0.z());
+        push_back_xyz(p0, positions_facets);
         positions_facets.push_back(1.0);
 
-        positions_facets.push_back(p1.x());
-        positions_facets.push_back(p1.y());
-        positions_facets.push_back(p1.z());
+        push_back_xyz(p1, positions_facets);
         positions_facets.push_back(1.0);
 
-        positions_facets.push_back(p2.x());
-        positions_facets.push_back(p2.y());
-        positions_facets.push_back(p2.z());
+        push_back_xyz(p2, positions_facets);
         positions_facets.push_back(1.0);
 
-        normals_flat.push_back(nf.x());
-        normals_flat.push_back(nf.y());
-        normals_flat.push_back(nf.z());
-
-        normals_flat.push_back(nf.x());
-        normals_flat.push_back(nf.y());
-        normals_flat.push_back(nf.z());
-
-        normals_flat.push_back(nf.x());
-        normals_flat.push_back(nf.y());
-        normals_flat.push_back(nf.z());
+        push_back_xyz(nf, normals_flat);
+        push_back_xyz(nf, normals_flat);
+        push_back_xyz(nf, normals_flat);
 
         nv = get(nv_pmap, f->halfedge()->next()->next()->vertex());
-        normals_gouraud.push_back(nv.x());
-        normals_gouraud.push_back(nv.y());
-        normals_gouraud.push_back(nv.z());
+        push_back_xyz(nv, normals_gouraud);
 
         nv = get(nv_pmap, f->halfedge()->prev()->vertex());
-        normals_gouraud.push_back(nv.x());
-        normals_gouraud.push_back(nv.y());
-        normals_gouraud.push_back(nv.z());
+        push_back_xyz(nv, normals_gouraud);
 
         nv = get(nv_pmap, f->halfedge()->vertex());
-        normals_gouraud.push_back(nv.x());
-        normals_gouraud.push_back(nv.y());
-        normals_gouraud.push_back(nv.z());
+        push_back_xyz(nv, normals_gouraud);
       }
       else
       {
@@ -618,27 +561,19 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
         const Point& b = he->opposite()->vertex()->point();
         if ( he->is_feature_edge())
         {
-            positions_feature_lines.push_back(a.x());
-            positions_feature_lines.push_back(a.y());
-            positions_feature_lines.push_back(a.z());
-            positions_feature_lines.push_back(1.0);
+          push_back_xyz(a, positions_feature_lines);
+          positions_feature_lines.push_back(1.0);
 
-            positions_feature_lines.push_back(b.x());
-            positions_feature_lines.push_back(b.y());
-            positions_feature_lines.push_back(b.z());
-            positions_feature_lines.push_back(1.0);
+          push_back_xyz(b, positions_feature_lines);
+          positions_feature_lines.push_back(1.0);
         }
         else
         {
-            positions_lines.push_back(a.x());
-            positions_lines.push_back(a.y());
-            positions_lines.push_back(a.z());
-            positions_lines.push_back(1.0);
+          push_back_xyz(a, positions_lines);
+          positions_lines.push_back(1.0);
 
-            positions_lines.push_back(b.x());
-            positions_lines.push_back(b.y());
-            positions_lines.push_back(b.z());
-            positions_lines.push_back(1.0);
+          push_back_xyz(b, positions_lines);
+          positions_lines.push_back(1.0);
         }
     }
     //set the colors
