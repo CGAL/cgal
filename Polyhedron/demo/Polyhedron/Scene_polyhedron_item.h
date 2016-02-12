@@ -176,7 +176,9 @@ private:
     void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;
     void compute_normals_and_vertices(void) const;
     void compute_colors() const;
-    void triangulate_facet(Facet_iterator ) const;
+    template<typename FaceNormalPmap, typename VertexNormalPmap>
+    void triangulate_facet(Facet_iterator,
+      const FaceNormalPmap&, const VertexNormalPmap&) const;
     void triangulate_facet_color(Facet_iterator ) const;
     double volume, area;
 

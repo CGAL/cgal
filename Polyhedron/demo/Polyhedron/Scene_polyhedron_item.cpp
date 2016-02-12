@@ -101,12 +101,15 @@ typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 
 //Make sure all the facets are triangles
 
+template<typename FaceNormalPmap, typename VertexNormalPmap>
 void
-Scene_polyhedron_item::triangulate_facet(Facet_iterator fit) const
+Scene_polyhedron_item::triangulate_facet(Facet_iterator fit,
+                                         const FaceNormalPmap& fnmap,
+                                         const VertexNormalPmap& vnmap) const
 {
     //Computes the normal of the facet
-    Traits::Vector_3 normal =
-            CGAL::Polygon_mesh_processing::compute_face_normal(fit,*poly);
+    Traits::Vector_3 normal = get(fnmap, fit);
+
     //check if normal contains NaN values
     if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
     {
@@ -593,7 +596,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(void) const
       }
       else
       {
-        triangulate_facet(f);
+        triangulate_facet(f, nf_pmap, nv_pmap);
       }
 
     }
