@@ -6,6 +6,9 @@
 # define TBB_USE_THREADING_TOOL
 #endif
 
+#include <cstddef>
+
+const std::size_t ONLY_LOAD_THE_FIRST_N_POINTS = 100000000;
 
 #include <CGAL/assertions_behaviour.h>
 #include <CGAL/Mesh_d.h>
@@ -160,7 +163,7 @@ void make_mesh(
   std::set<std::set<std::size_t> > wrong_number_of_cofaces_simplices;
   std::set<std::set<std::size_t> > unconnected_stars_simplices;
   bool is_pure_pseudomanifold = mesh.complex().is_pure_pseudomanifold(
-    intrinsic_dim, mesh.number_of_vertices(), false, 1,
+    intrinsic_dim, mesh.number_of_vertices(), false, false, 1,
     &num_wrong_dim_simplices, &num_wrong_number_of_cofaces, 
     &num_unconnected_stars,
     &wrong_dim_simplices, &wrong_number_of_cofaces_simplices, 
@@ -302,6 +305,7 @@ int main()
 #endif
 
             std::vector<Point> points;
+            Mesh::TS_container tangent_spaces;
 
             if (input == "generate_moment_curve")
             {
@@ -373,8 +377,10 @@ int main()
             }
             else
             {
-              load_points_from_file<Kernel>(
-                input, std::back_inserter(points)/*, 600*/);
+              load_points_from_file<Kernel, typename Mesh::Tangent_space_basis>(
+                input, std::back_inserter(points),
+                std::back_inserter(tangent_spaces),
+                ONLY_LOAD_THE_FIRST_N_POINTS);
             }
 
 #ifdef CGAL_MESH_D_PROFILING
