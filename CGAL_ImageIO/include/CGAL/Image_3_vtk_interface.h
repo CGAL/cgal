@@ -109,12 +109,12 @@ struct VTK_type_generator<boost::uint32_t> {
      data_array = array;
      );
 
-  vtk_image->SetDimensions(image.xdim(),
-                           image.ydim(),
-                           image.zdim());
-  vtk_image->SetExtent(0, image.xdim()-1,
-                       0, image.ydim()-1,
-                       0, image.zdim()-1);
+  vtk_image->SetDimensions((int)image.xdim(),
+                           (int)image.ydim(),
+                           (int)image.zdim());
+  vtk_image->SetExtent(0, (int)(image.xdim() - 1),
+                       0, (int)(image.ydim() - 1),
+                       0, (int)(image.zdim() - 1));
   vtk_image->SetSpacing(image.vx(),
                         image.vy(),
                         image.vz());
