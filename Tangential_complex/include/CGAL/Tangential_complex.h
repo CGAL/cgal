@@ -2669,6 +2669,7 @@ next_face:
   }
 
   // Project the point in the tangent space
+  // Resulting point coords are expressed in tsb's space
   Tr_bare_point project_point(const Point &p,
                               const Tangent_space_basis &tsb) const
   {
@@ -2703,6 +2704,7 @@ next_face:
 
   // Project the point in the tangent space
   // The weight will be the squared distance between p and the projection of p
+  // Resulting point coords are expressed in tsb's space
   Tr_point project_point_and_compute_weight(const Weighted_point &wp,
                                             const Tangent_space_basis &tsb,
                                             const Tr_traits &tr_traits) const
@@ -2715,11 +2717,15 @@ next_face:
       k_drop_w(wp), k_point_weight(wp), tsb, tr_traits);
   }
 
+  // Same as above, with slightly different parameters
   Tr_point project_point_and_compute_weight(const Point &p, const FT w,
                                             const Tangent_space_basis &tsb,
                                             const Tr_traits &tr_traits) const
   {
     const int point_dim = m_k.point_dimension_d_object()(p);
+
+    typename K::Construct_point_d constr_pt =
+      m_k.construct_point_d_object();
     typename K::Scalar_product_d scalar_pdct =
       m_k.scalar_product_d_object();
     typename K::Difference_of_points_d diff_points =
@@ -2739,7 +2745,7 @@ next_face:
     // Ambiant-space coords of the projected point
     std::vector<FT> p_proj(ccci(origin), ccci(origin, 0));
     coords.reserve(tsb.dimension());
-    for (std::size_t i = 0 ; i < m_intrinsic_dim ; ++i)
+    for (std::size_t i = 0 ; i < tsb.dimension() ; ++i)
     {
       // Local coords are given by the scalar product with the vectors of tsb
       FT c = scalar_pdct(v, tsb[i]);
@@ -2769,14 +2775,13 @@ next_face:
     FT sq_dist_to_proj_pt = 0;
     if (!same_dim)
     {
-      Point projected_pt(point_dim, p_proj.begin(), p_proj.end());
+      Point projected_pt = constr_pt(point_dim, p_proj.begin(), p_proj.end());
       sq_dist_to_proj_pt = m_k.squared_distance_d_object()(p, projected_pt);
     }
     
     return tr_traits.construct_weighted_point_d_object()
     (
-      tr_traits.construct_point_d_object()(
-        static_cast<int>(coords.size()), coords.begin(), coords.end()),
+      constr_pt(static_cast<int>(coords.size()), coords.begin(), coords.end()),
       w - sq_dist_to_proj_pt
     );
   }
@@ -3462,7 +3467,12 @@ next_face:
     typename K::Compute_coordinate_d coord =
       m_k.compute_coordinate_d_object();
 
+#ifdef CGAL_TC_EXPORT_ALL_COORDS_IN_OFF
+    int num_coords = m_ambient_dim;
+#else
     int num_coords = min(m_ambient_dim, 3);
+#endif
+
 #ifdef CGAL_TC_EXPORT_NORMALS
     OS_container::const_iterator it_os = m_orth_spaces.begin();
 #endif
