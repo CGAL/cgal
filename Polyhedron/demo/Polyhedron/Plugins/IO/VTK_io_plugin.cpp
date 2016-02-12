@@ -371,6 +371,27 @@ public:
       msgBox.setIcon(QMessageBox::Warning);
       msgBox.exec();
     }
+    if (errorObserver->GetError())
+    {
+      QMessageBox msgBox;
+      msgBox.setText("This type of data can't be opened");
+      msgBox.setInformativeText(QString("VTK error message :\n")
+        .append(QString(errorObserver->GetErrorMessage().data())));
+      msgBox.setStandardButtons(QMessageBox::Ok);
+      msgBox.setIcon(QMessageBox::Critical);
+      msgBox.exec();
+      return new Scene_polyhedron_item();
+    }
+    if (errorObserver->GetWarning())
+    {
+      QMessageBox msgBox;
+      msgBox.setText("This file generates a warning");
+      msgBox.setInformativeText(QString("VTK warning message :\n")
+        .append(QString(errorObserver->GetWarningMessage().data())));
+      msgBox.setStandardButtons(QMessageBox::Ok);
+      msgBox.setIcon(QMessageBox::Warning);
+      msgBox.exec();
+    }
 
     if (CGAL::vtkPointSet_to_polygon_mesh(data, poly))
     {
