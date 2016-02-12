@@ -141,11 +141,7 @@ public Q_SLOTS:
   }
 
   void setNormal(double x, double y, double z) {
-    QVector3D normal(x,y,z);
-    QVector3D origin(0,0,1);
-    QQuaternion q(CGAL::sqrt((normal.lengthSquared()) * (origin.lengthSquared())) + QVector3D::dotProduct(origin, normal),QVector3D::crossProduct(origin, normal));
-    q.normalize();
-    frame->setOrientation(q.x(), q.y(), q.z(), q.scalar());
+    setNormal((float)x, (float)y, (float)z);
   }
 
   void setClonable(bool b = true) {
