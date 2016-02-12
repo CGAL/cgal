@@ -33,7 +33,7 @@
 
 #include <boost/foreach.hpp>
 #include <boost/property_map/property_map.hpp>
-#include <boost/unordered_map.hpp>
+#include <boost/container/flat_map.hpp>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -135,7 +135,7 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit,
 
     // Iterates on the vector of facet handles
     typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
-    boost::unordered_map<CDT::Vertex_handle, vertex_descriptor> v2v;
+    boost::container::flat_map<CDT::Vertex_handle, vertex_descriptor> v2v;
     CDT::Vertex_handle previous, first;
     do {
         CDT::Vertex_handle vh = cdt.insert(he_circ->vertex()->point());
@@ -385,11 +385,11 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
     typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
     typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
-    boost::unordered_map<face_descriptor, Vector> face_normals_map;
-    boost::associative_property_map< boost::unordered_map<face_descriptor, Vector> >
+    boost::container::flat_map<face_descriptor, Vector> face_normals_map;
+    boost::associative_property_map< boost::container::flat_map<face_descriptor, Vector> >
       nf_pmap(face_normals_map);
-    boost::unordered_map<vertex_descriptor, Vector> vertex_normals_map;
-    boost::associative_property_map< boost::unordered_map<vertex_descriptor, Vector> >
+    boost::container::flat_map<vertex_descriptor, Vector> vertex_normals_map;
+    boost::associative_property_map< boost::container::flat_map<vertex_descriptor, Vector> >
       nv_pmap(vertex_normals_map);
 
     PMP::compute_normals(*poly, nv_pmap, nf_pmap);
