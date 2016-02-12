@@ -32,6 +32,8 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#include <boost/type_traits.hpp>
+
 namespace CGAL{
 
 namespace Polygon_mesh_processing{
@@ -187,6 +189,14 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
   typedef typename Kernel::FT FT;
 
+  typedef typename GetFaceNormalMap<PolygonMesh, NamedParameters>::type FaceNormalMap;
+  FaceNormalMap fnmap
+    = boost::choose_param(get_param(np, face_normal), FaceNormalMap());
+  bool fnmap_valid
+    = !boost::is_same<FaceNormalMap,
+                      typename GetFaceNormalMap<PolygonMesh, NamedParameters>::NoMap
+                     >::value;
+
   typedef typename Kernel::Vector_3 Vector;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
@@ -197,7 +207,8 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     {
     if (!is_border(he, pmesh))
     {
-      Vector n = compute_face_normal(face(he, pmesh), pmesh, np);
+      Vector n = fnmap_valid ? get(fnmap, face(he, pmesh))
+                             : compute_face_normal(face(he, pmesh), pmesh, np);
       normal = normal + n;
     }
     he = opposite(next(he, pmesh), pmesh);
@@ -279,8 +290,8 @@ compute_normals(const PolygonMesh& pmesh
                 , const NamedParameters& np
                 )
 {
-  compute_vertex_normals(pmesh, vnm, np);
   compute_face_normals(pmesh, fnm, np);
+  compute_vertex_normals(pmesh, vnm, np.face_normal_map(fnm));
 }
 
 ///\cond SKIP_IN_MANUAL

@@ -100,6 +100,32 @@ public:
   > ::type  type;
 };
 
+template<typename PolygonMesh, typename NamedParameters>
+class GetFaceNormalMap
+{
+  struct DummyNormalPmap
+  {
+    typedef typename boost::graph_traits<PolygonMesh>::face_descriptor key_type;
+    typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type::Vector_3 value_type;
+    typedef value_type& reference;
+    typedef boost::lvalue_property_map_tag category;
+
+    reference operator[](key_type&) const { return CGAL::NULL_VECTOR; }
+    typedef DummyNormalPmap Self;
+    friend const value_type& get(const Self&, const key_type&) { return CGAL::NULL_VECTOR; }
+    friend         reference get(const Self&, key_type&)       { return CGAL::NULL_VECTOR; }
+    friend void put(const Self&, key_type&, const value_type&) {}
+  };
+
+public:
+  typedef DummyNormalPmap NoMap;
+  typedef typename boost::lookup_named_param_def <
+    CGAL::face_normal_t,
+    NamedParameters,
+    DummyNormalPmap//default
+  > ::type  type;
+};
+
 template<typename NamedParameters, typename DefaultSolver>
 class GetSolver
 {
