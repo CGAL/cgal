@@ -124,9 +124,12 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit,
             he_circ_end(he_circ);
 
     // Iterates on the vector of facet handles
+    typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+    boost::unordered_map<CDT::Vertex_handle, vertex_descriptor> v2v;
     CDT::Vertex_handle previous, first;
     do {
         CDT::Vertex_handle vh = cdt.insert(he_circ->vertex()->point());
+        v2v.insert(std::make_pair(vh, he_circ->vertex()));
         if(first == 0) {
             first = vh;
         }
@@ -197,14 +200,17 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit,
         normals_flat.push_back(normal.y());
         normals_flat.push_back(normal.z());
 
+        Traits::Vector_3 ng = get(vnmap, v2v[ffit->vertex(0)]);
         normals_gouraud.push_back(normal.x());
         normals_gouraud.push_back(normal.y());
         normals_gouraud.push_back(normal.z());
 
+        ng = get(vnmap, v2v[ffit->vertex(1)]);
         normals_gouraud.push_back(normal.x());
         normals_gouraud.push_back(normal.y());
         normals_gouraud.push_back(normal.z());
 
+        ng = get(vnmap, v2v[ffit->vertex(2)]);
         normals_gouraud.push_back(normal.x());
         normals_gouraud.push_back(normal.y());
         normals_gouraud.push_back(normal.z());
