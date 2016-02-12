@@ -61,8 +61,55 @@
 #include <vtkPoints.h>
 #include <vtkCellArray.h>
 #include <vtkType.h>
+#include <vtkCommand.h>
 
 namespace CGAL{
+
+  class ErrorObserverVtk : public vtkCommand
+  {
+  public:
+    ErrorObserverVtk() :
+      Error(false),
+      Warning(false),
+      ErrorMessage(""),
+      WarningMessage("") {}
+    static ErrorObserverVtk *New() { return new ErrorObserverVtk; }
+
+    bool GetError() const          { return this->Error; }
+    bool GetWarning() const        { return this->Warning; }
+    std::string GetErrorMessage()   { return ErrorMessage; }
+    std::string GetWarningMessage() { return WarningMessage; }
+
+    void Clear()
+    {
+      this->Error = false;
+      this->Warning = false;
+      this->ErrorMessage = "";
+      this->WarningMessage = "";
+    }
+    virtual void Execute(vtkObject *vtkNotUsed(caller),
+                         unsigned long event,
+                         void *calldata)
+    {
+      switch (event)
+      {
+      case vtkCommand::ErrorEvent:
+        ErrorMessage = static_cast<char *>(calldata);
+        this->Error = true;
+        break;
+      case vtkCommand::WarningEvent:
+        WarningMessage = static_cast<char *>(calldata);
+        this->Warning = true;
+        break;
+      }
+    }
+
+  private:
+    bool        Error;
+    bool        Warning;
+    std::string ErrorMessage;
+    std::string WarningMessage;
+  };
 
   template <typename TM, typename VertexMap, typename FaceMap>
   bool vtkPolyData_to_polygon_mesh(vtkPolyData* poly_data,
@@ -238,13 +285,20 @@ public:
      && fileinfo.suffix().toLower() != "vtp")
       return 0;
 
+    std::string input_filename = fileinfo.absoluteFilePath().toStdString();
+
     Polyhedron poly;
     boost::unordered_map<vtkIdType, vertex_descriptor> vmap;
     boost::unordered_map<vtkIdType, face_descriptor>   fmap;
 
     // Try to read .vtk in a polyhedron
-    vtkSmartPointer<vtkPolyData> data;
-    std::string input_filename = fileinfo.absoluteFilePath().toStdString();
+    vtkSmartPointer<vtkPolyData> data
+      = vtkSmartPointer<vtkPolyData>::New();
+    vtkSmartPointer<CGAL::ErrorObserverVtk> errorObserver =
+      vtkSmartPointer<CGAL::ErrorObserverVtk>::New();
+
+    data->AddObserver(vtkCommand::ErrorEvent, errorObserver);
+    data->AddObserver(vtkCommand::WarningEvent, errorObserver);
 
     char last_char = input_filename[input_filename.size() - 1];
     if (last_char != 'p' && last_char != 'P')
@@ -262,6 +316,27 @@ public:
       reader->SetFileName(input_filename.data());
       reader->Update();
       data = reader->GetOutput();
+    }
+    if (errorObserver->GetError())
+    {
+      QMessageBox msgBox;
+      msgBox.setText("This type of data can't be opened");
+      msgBox.setInformativeText(QString("VTK error message :\n")
+        .append(QString(errorObserver->GetErrorMessage().data())));
+      msgBox.setStandardButtons(QMessageBox::Ok);
+      msgBox.setIcon(QMessageBox::Critical);
+      msgBox.exec();
+      return new Scene_polyhedron_item();
+    }
+    if (errorObserver->GetWarning())
+    {
+      QMessageBox msgBox;
+      msgBox.setText("This file generates a warning");
+      msgBox.setInformativeText(QString("VTK warning message :\n")
+        .append(QString(errorObserver->GetWarningMessage().data())));
+      msgBox.setStandardButtons(QMessageBox::Ok);
+      msgBox.setIcon(QMessageBox::Warning);
+      msgBox.exec();
     }
 
     if (CGAL::vtkPolyData_to_polygon_mesh(data, poly, vmap, fmap))
