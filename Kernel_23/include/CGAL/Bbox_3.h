@@ -45,11 +45,19 @@ public:
 
   typedef Simple_cartesian<double>  R;
 
-        Bbox_3() {}
+  Bbox_3()
+    : rep(CGAL::make_array( std::numeric_limits<double>::infinity(),
+                            std::numeric_limits<double>::infinity(),
+                            std::numeric_limits<double>::infinity(),
+                            - std::numeric_limits<double>::infinity(),
+                            - std::numeric_limits<double>::infinity(),
+                            - std::numeric_limits<double>::infinity() ))
+  {}
 
-        Bbox_3(double x_min, double y_min, double z_min,
-               double x_max, double y_max, double z_max)
-	  : rep(CGAL::make_array(x_min, y_min, z_min, x_max, y_max, z_max)) {}
+  Bbox_3(double x_min, double y_min, double z_min,
+         double x_max, double y_max, double z_max)
+    : rep(CGAL::make_array(x_min, y_min, z_min, x_max, y_max, z_max))
+  {}
 
   inline bool operator==(const Bbox_3 &b) const;
   inline bool operator!=(const Bbox_3 &b) const;
