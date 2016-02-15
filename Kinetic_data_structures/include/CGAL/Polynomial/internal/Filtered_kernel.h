@@ -22,13 +22,13 @@
 #define CGAL_POLYNOMIAL_FILTERED_POLYNOMIAL_KERNEL_H
 
 #include <CGAL/Polynomial/basic.h>
-#include <CGAL/Polynomial/Filtered_rational/Filtered_rational_traits.h>
-#include <CGAL/Polynomial/Filtered_kernel/Filtered_sign_at.h>
-#include <CGAL/Polynomial/Filtered_kernel/Filtered_root_multiplicity.h>
-#include <CGAL/Polynomial/Kernel/Root_container.h>
-#include <CGAL/Polynomial/Kernel/Is_even_multiplicity.h>
-#include <CGAL/Polynomial/Kernel/Is_rational.h>
-#include <CGAL/Polynomial/Kernel/To_rational.h>
+#include <CGAL/Polynomial/internal/Filtered_rational/Filtered_rational_traits.h>
+#include <CGAL/Polynomial/internal/Filtered_kernel/Filtered_sign_at.h>
+#include <CGAL/Polynomial/internal/Filtered_kernel/Filtered_root_multiplicity.h>
+#include <CGAL/Polynomial/internal/Kernel/Root_container.h>
+#include <CGAL/Polynomial/internal/Kernel/Is_even_multiplicity.h>
+#include <CGAL/Polynomial/internal/Kernel/Is_rational.h>
+#include <CGAL/Polynomial/internal/Kernel/To_rational.h>
 
 namespace CGAL { namespace POLYNOMIAL {
 

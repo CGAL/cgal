@@ -26,7 +26,6 @@
 #include <CGAL/Kinetic/internal/Triangulation_helper_3.h>
 #include <CGAL/Kinetic/internal/triangulation_helpers_3.h>
 #include <CGAL/Kinetic/Event_base.h>
-//#include <CGAL/Kinetic/internal/Delaunay_cache_3.h>
 
 // STL
 #include <map>

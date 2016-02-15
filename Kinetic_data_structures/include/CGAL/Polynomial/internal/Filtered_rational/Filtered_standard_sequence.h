@@ -22,7 +22,7 @@
 #define CGAL_FILTERED_STANDARD_SEQUENCE_H
 
 #include <CGAL/Polynomial/basic.h>
-#include <CGAL/Polynomial/Filtered_rational/Filtered_Sturm_sequence.h>
+#include <CGAL/Polynomial/internal/Filtered_rational/Filtered_Sturm_sequence.h>
 
 namespace CGAL { namespace POLYNOMIAL { namespace internal {
 

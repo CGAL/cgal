@@ -21,8 +21,6 @@
 #ifndef CGAL_STANDARD_SEQUENCE_H
 #define CGAL_STANDARD_SEQUENCE_H
 
-//#include <CGAL/Polynomial/utilities.h>
-//#include <CGAL/Polynomial/Rational/Sturm_sequence.h>
 
 namespace CGAL { namespace POLYNOMIAL { namespace internal {
 

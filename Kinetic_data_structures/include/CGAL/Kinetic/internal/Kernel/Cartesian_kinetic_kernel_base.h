@@ -255,5 +255,5 @@ protected:
 
 } } } //namespace CGAL::Kinetic::internal
 
-//#include <CGAL/Kinetic_internals/kernel_undefs.h>
+
 #endif

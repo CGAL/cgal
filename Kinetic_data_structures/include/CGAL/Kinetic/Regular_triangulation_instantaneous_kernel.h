@@ -28,7 +28,7 @@
 #include <iostream>
 #include <CGAL/Kinetic/Ref_counted.h>
 #include <CGAL/Kinetic/internal/To_static.h>
-//#include <CGAL/Kinetic/Cartesian_static_converter.h>
+
 
 /*#define CGAL_MSA(Pred, pred, Arg, d) typedef Instantaneous_adaptor<typename Static_kernel::Pred##_##d, Current_coordinates, Arg> Pred##_##d; \
   Pred##_##d pred##_##d##_object() const				\

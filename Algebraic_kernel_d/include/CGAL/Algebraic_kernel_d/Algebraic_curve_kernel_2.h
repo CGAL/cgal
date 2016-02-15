@@ -49,20 +49,11 @@
 #include <CGAL/Algebraic_kernel_d/Interval_evaluate_1.h>
 #include <CGAL/Algebraic_kernel_d/Interval_evaluate_2.h>
 
-#if CGAL_ACK_WITH_ROTATIONS
-#include <CGAL/Algebraic_curve_kernel_2/trigonometric_approximation.h>
-#endif
-
 #include <CGAL/Polynomial_type_generator.h>
 #include <CGAL/polynomial_utils.h>
 
-#if CGAL_ACK_USE_EXACUS
-#include <CGAL/Algebraic_curve_kernel_2/Curve_analysis_2_exacus.h>
-#include <CGAL/Algebraic_curve_kernel_2/Curve_pair_analysis_2_exacus.h>
-#else
 #include <CGAL/Algebraic_kernel_d/Curve_analysis_2.h>
 #include <CGAL/Algebraic_kernel_d/Curve_pair_analysis_2.h>
-#endif
 
 #include <boost/shared_ptr.hpp>
 
@@ -102,11 +93,7 @@ namespace CGAL {
  * when a kernel function deals with two polynomials,
  * implicitly or explicitly (e.g. \c Solve_2, \c Sign_at_2).
  */
-#if CGAL_ACK_USE_EXACUS
-template < class AlgebraicCurvePair_2, class AlgebraicKernel_d_1 >
-#else
 template < class AlgebraicKernel_d_1 >
-#endif
 class Algebraic_curve_kernel_2 : public AlgebraicKernel_d_1{
 
 // for each predicate functor defines a member function returning an instance
@@ -127,31 +114,14 @@ public:
     //! type of 1D algebraic kernel
     typedef AlgebraicKernel_d_1 Algebraic_kernel_d_1;
     
-#if CGAL_ACK_USE_EXACUS    
-    // type of an internal curve pair
-    typedef AlgebraicCurvePair_2 Internal_curve_pair_2;
-    
-    // type of an internal curve
-    typedef typename AlgebraicCurvePair_2::Algebraic_curve_2 Internal_curve_2;
-#endif
-
     //! type of x-coordinate
-#if CGAL_ACK_USE_EXACUS
-    typedef typename Internal_curve_2::X_coordinate Algebraic_real_1;
-#else
     typedef typename Algebraic_kernel_d_1::Algebraic_real_1 Algebraic_real_1;
-#endif
 
     //! type of polynomial coefficient
     typedef typename Algebraic_kernel_d_1::Coefficient Coefficient;
 
     // myself
-#if CGAL_ACK_USE_EXACUS
-    typedef Algebraic_curve_kernel_2<AlgebraicCurvePair_2, AlgebraicKernel_d_1>
-       Self;
-#else
     typedef Algebraic_curve_kernel_2<AlgebraicKernel_d_1> Self;
-#endif
 
     typedef Self Algebraic_kernel_d_2;
     
@@ -188,21 +158,13 @@ public:
      * type of the curve analysis, a model for the
      * \c AlgebraicKernelWithAnalysis_d_2::CurveAnalysis_2 concept
      */
-#if CGAL_ACK_USE_EXACUS
-    typedef internal::Curve_analysis_2<Self> Curve_analysis_2; 
-#else
     typedef CGAL::Curve_analysis_2<Self> Curve_analysis_2; 
-#endif
 
     /*! 
      * type of the curve pair analysis, a model for the
      * \c AlgebraicKernelWithAnalysis_d_2::CurvePairAnalysis_2 concept
      */
-#if CGAL_ACK_USE_EXACUS
-    typedef internal::Curve_pair_analysis_2<Self> Curve_pair_analysis_2;
-#else
     typedef CGAL::Curve_pair_analysis_2<Self> Curve_pair_analysis_2;
-#endif
 
     //! traits class used for approximations of y-coordinates
 
@@ -214,18 +176,11 @@ public:
     //!@}
     //! \name rebind operator
     //!@{
-#if CGAL_ACK_USE_EXACUS
-    template <class NewCurvePair, class NewAlgebraicKernel>
-    struct rebind {
-        typedef Algebraic_curve_kernel_2<NewCurvePair,NewAlgebraicKernel> 
-            Other;
-    };
-#else
+
     template <class NewAlgebraicKernel> 
     struct rebind { 
         typedef Algebraic_curve_kernel_2<NewAlgebraicKernel> Other;        
     };
-#endif
 
     //!@}
 protected:
@@ -461,58 +416,6 @@ public:
 
         Construct_curve_2(const Algebraic_kernel_d_2* kernel) : _m_kernel(kernel) {}
             
-#if CGAL_ACK_WITH_ROTATIONS
-
-        Curve_analysis_2 operator()(const Polynomial_2& f, 
-                                    Bound angle,
-                                    long final_prec) {
-            
-#if CGAL_ACK_DEBUG_FLAG
-            CGAL_ACK_DEBUG_PRINT << "angle=" << angle << std::endl;
-            CGAL_ACK_DEBUG_PRINT << "final_prec=" << final_prec << std::endl;
-#endif          
-            std::pair<Bound,Bound> sin_cos
-                = approximate_sin_and_cos_of_angle(angle,final_prec);
-
-            Bound sine = sin_cos.first, cosine = sin_cos.second;            
-
-            
-            typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
-                ::template Rebind<Bound,1>::Other::Type
-                Poly_rat_1;
-
-            typedef typename CGAL::Polynomial_traits_d<Polynomial_2>
-                ::template Rebind<Bound,2>::Other::Type
-                Poly_rat_2;
-
-            Poly_rat_2 
-                sub_x(Poly_rat_1(Bound(0), cosine), Poly_rat_1(sine)), 
-                    sub_y(Poly_rat_1(Bound(0), -sine), Poly_rat_1(cosine)), 
-                res;
-            
-            std::vector<Poly_rat_2> subs;
-            subs.push_back(sub_x);
-            subs.push_back(sub_y);
-            
-            res = typename CGAL::Polynomial_traits_d<Polynomial_2>
-                ::Substitute() (f, subs.begin(), subs.end());
-
-            CGAL::simplify(res);
-            
-            // integralize polynomial
-            typedef CGAL::Fraction_traits<Poly_rat_2> FT;
-            typename FT::Denominator_type dummy;
-            Polynomial_2 num;
-            typename FT::Decompose()(res, num, dummy);
-
-#if CGAL_ACK_DEBUG_FLAG
-            CGAL_ACK_DEBUG_PRINT << "integralized poly: " << num << std::endl; 
-#endif
-            
-            return _m_kernel->curve_cache_2()(num);
-        }
-
-#endif //CGAL_ACK_WITH_ROTATIONS
       Curve_analysis_2 operator()
         (const Polynomial_2& f) const {
         return _m_kernel->curve_cache_2()(f);
@@ -1737,33 +1640,7 @@ public:
 #else 
 
             Construct_curve_2 cc_2 = _m_kernel->construct_curve_2_object();
-#if CGAL_ACK_USE_EXACUS
-            typedef std::vector<Internal_curve_2> Curves;
-
-            Curves parts_f, parts_g;
-
-            if(Internal_curve_2::decompose(ca1._internal_curve(),
-                                           ca2._internal_curve(), 
-                                           std::back_inserter(parts_f),
-                                           std::back_inserter(parts_g))) {
-                typename Curves::const_iterator cit;
-                // this is temporary solution while curves are cached on
-                // AlciX level
-                CGAL_precondition(parts_f[0].polynomial_2() == 
-                                  parts_g[0].polynomial_2());
-                *oib++ = cc_2(parts_f[0].polynomial_2());
-                
-                if(parts_f.size() > 1)
-                    for(cit = parts_f.begin() + 1; cit != parts_f.end(); cit++)
-                        *oi1++ = cc_2(cit->polynomial_2());
-                if(parts_g.size() > 1)
-                    for(cit = parts_g.begin() + 1; cit != parts_g.end(); cit++)
-                        *oi2++ = cc_2(cit->polynomial_2());
-                return true;
-            }
-                
-                
-#else          
+          
 
             if (ca1.id() == ca2.id()) {
                 return false;
@@ -1808,7 +1685,6 @@ public:
                 return true;
             }
 
-#endif
                 
             // copy original curves to the output iterator:
             *oi1++ = ca1;

@@ -26,7 +26,6 @@
 #include <limits>
 #include <cfloat>
 
-//#include <CGAL/Polynomial/internal/Bisection.h>
 
 
 namespace CGAL { namespace POLYNOMIAL { namespace internal {

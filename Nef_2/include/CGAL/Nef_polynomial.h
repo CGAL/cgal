@@ -22,13 +22,6 @@
 #define CGAL_NEF_POLYNOMIAL_H
 
 #include <CGAL/Nef_2/Polynomial.h>
-//#include <CGAL/basic.h>
-//#include <CGAL/kernel_assertions.h>
-//#include <CGAL/Handle_for.h>
-//#include <CGAL/number_type_basic.h>
-//#include <CGAL/number_utils.h>
-//#include <CGAL/Number_type_traits.h>
-//#include <CGAL/IO/io.h>
 #include <cstddef>
 #undef CGAL_NEF_DEBUG
 #define CGAL_NEF_DEBUG 3

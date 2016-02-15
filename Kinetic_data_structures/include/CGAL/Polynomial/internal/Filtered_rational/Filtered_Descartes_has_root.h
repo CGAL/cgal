@@ -21,7 +21,7 @@
 #ifndef CGAL_POLYNOMIAL_FILTERED_DESCARTES_HAS_ROOT_H
 #define CGAL_POLYNOMIAL_FILTERED_DESCARTES_HAS_ROOT_H
 #include <CGAL/Polynomial/basic.h>
-#include <CGAL/Polynomial/Filtered_rational/Filtered_Descartes_root_counter.h>
+#include <CGAL/Polynomial/internal/Filtered_rational/Filtered_Descartes_root_counter.h>
 
 namespace CGAL { namespace POLYNOMIAL { namespace internal {;
 

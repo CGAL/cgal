@@ -30,7 +30,7 @@
 #include <CGAL/Eigen_svd.h>
 #else
 #ifdef CGAL_LAPACK_ENABLED
-#include <CGAL/Lapack/Linear_algebra_lapack.h>
+#include <CGAL/Lapack_svd.h>
 #endif
 #endif
 

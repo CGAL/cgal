@@ -23,7 +23,6 @@
 #include <CGAL/Kinetic/basic.h>
 #include <CGAL/determinant.h>
 
-//#include <CGAL/Kinetic/kernel/Cartesian_moving_sphere_3.h>
 
 namespace CGAL { namespace Kinetic { namespace internal {
 

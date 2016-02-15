@@ -22,7 +22,7 @@
 #define CGAL_POLYNOMIAL_DESCARTES_HAS_ROOT_H
 
 #include <CGAL/Polynomial/basic.h>
-#include <CGAL/Polynomial/Tools/Alternation_counter.h>
+#include <CGAL/Polynomial/internal/Alternation_counter.h>
 
 namespace CGAL { namespace POLYNOMIAL { namespace internal {;
 

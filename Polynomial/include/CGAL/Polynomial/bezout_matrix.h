@@ -33,11 +33,6 @@
 #include <CGAL/use.h>
 
 #include <vector>
-//#include <CGAL/Linear_algebraHd.h>
-
-
-//#include <CGAL/Linear_algebra.h>
-//#include <CGAL/number_type_utils.h>
 
 namespace CGAL {
 
