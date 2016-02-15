@@ -31,7 +31,7 @@
 
 #include <fstream>
 
-#if defined( __clang__ ) || (BOOST_GCC >= 40600 )
+#if ( defined( __clang__ ) || (BOOST_GCC >= 40600 ) ) && (BOOST_VERSION < 106000)
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Wunused-variable"
 #pragma GCC diagnostic ignored "-Wunused-parameter"
@@ -169,7 +169,7 @@ namespace CGAL
 } //end namespace CGAL
 
 //CGAL_PRAGMA_DIAG_POP
-#if defined( __clang__ ) || (BOOST_GCC >= 40600 )
+#if ( defined( __clang__ ) || (BOOST_GCC >= 40600 ) ) && (BOOST_VERSION < 106000)
 #pragma GCC diagnostic pop
 #endif
 
