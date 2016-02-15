@@ -32,7 +32,6 @@
 
 #include <CGAL/Curved_kernel_via_analysis_2/Arc_2.h>
 
-//#include <CGAL/IO/Qt_widget.h>
 
 namespace CGAL {
 
