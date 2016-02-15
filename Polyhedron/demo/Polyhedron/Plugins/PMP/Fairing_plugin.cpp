@@ -46,12 +46,12 @@ public:
     mw = mainWindow;
     scene = scene_interface;
     messages = m;
-    actionFairing = new QAction(tr("Fairing"), mw);
+    actionFairing = new QAction(tr("Refinement and Fairing"), mw);
     actionFairing->setProperty("subMenuName", "Polygon Mesh Processing");
 
     connect(actionFairing, SIGNAL(triggered()), this, SLOT(fairing_action()));
 
-    dock_widget = new QDockWidget("Fairing", mw);
+    dock_widget = new QDockWidget("Refinement and Fairing", mw);
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
