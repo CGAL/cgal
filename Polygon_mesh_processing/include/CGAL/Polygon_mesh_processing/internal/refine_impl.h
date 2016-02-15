@@ -303,20 +303,22 @@ public:
     std::map<vertex_descriptor, double> scale_attribute;
     calculate_scale_attribute(faces, interior_map, scale_attribute, accept_internal_facets);
 
-    std::vector<face_descriptor> new_faces;
+    std::vector<face_descriptor> all_faces(boost::begin(faces), boost::end(faces));
     CGAL::Timer total_timer; total_timer.start();
     for(int i = 0; i < 10; ++i)
     {
+      std::vector<face_descriptor> new_faces;
       CGAL::Timer timer; timer.start();
-      bool is_subdivided = subdivide(faces, border_edges, scale_attribute, vertex_out, facet_out, new_faces, alpha);
+      bool is_subdivided = subdivide(all_faces, border_edges, scale_attribute, vertex_out, facet_out, new_faces, alpha);
       CGAL_TRACE_STREAM << "**Timer** subdivide() :" << timer.time() << std::endl; timer.reset();
-      if(!is_subdivided) { 
-        break; }
+      if(!is_subdivided)
+        break;
 
       bool is_relaxed = relax(faces, new_faces, border_edges);
       CGAL_TRACE_STREAM << "**Timer** relax() :" << timer.time() << std::endl;
-      if(!is_relaxed) { 
-        break; }
+      if(!is_relaxed)
+        break;
+      all_faces.insert(all_faces.end(), new_faces.begin(), new_faces.end());
     }
 
     CGAL_TRACE_STREAM << "**Timer** TOTAL: " << total_timer.time() << std::endl;
