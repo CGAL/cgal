@@ -39,7 +39,8 @@ Scene::Scene(QObject* parent)
                                       double, double, double)),
             this, SLOT(setSelectionRay(double, double, double,
                                        double, double, double)));
-
+    connect(this, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)),
+            this, SLOT(s_itemAboutToBeDestroyed(CGAL::Three::Scene_item*)));
     if(ms_splatting==0)
         ms_splatting  = new GlSplat::SplatRenderer();
     ms_splattingCounter++;
@@ -127,11 +128,12 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
 Scene::Item_id
 Scene::erase(Scene::Item_id index)
 {
+  //clears the Scene_view
     clear();
     index_map.clear();
     if(index < 0 || index >= m_entries.size())
         return -1;
-
+//if it is a group, remove it from m_group_entries
     CGAL::Three::Scene_item* item = m_entries[index];
     CGAL::Three::Scene_group_item* group =
             qobject_cast<CGAL::Three::Scene_group_item*>(item);
@@ -139,6 +141,7 @@ Scene::erase(Scene::Item_id index)
   {
       m_group_entries.removeAll(group);
   }
+  //removes the item from all groups that contain it
     Q_FOREACH(CGAL::Three::Scene_group_item* group, m_group_entries)
     {
         if(group->getChildren().contains(item))
@@ -148,6 +151,7 @@ Scene::erase(Scene::Item_id index)
     delete item;
     m_entries.removeAll(item);
     selected_item = -1;
+    //re-creates the Scene_view
     Q_FOREACH(Scene_item* item, m_entries)
     {
         organize_items(item, invisibleRootItem(), 0);
@@ -299,6 +303,14 @@ void Scene::initializeGL()
     gl_init = true;
 }
 
+void Scene::s_itemAboutToBeDestroyed(CGAL::Three::Scene_item *rmv_itm)
+{
+ Q_FOREACH(CGAL::Three::Scene_item* item, m_entries)
+ {
+   if(item == rmv_itm)
+     item->itemAboutToBeDestroyed(item);
+ }
+}
 bool
 Scene::keyPressEvent(QKeyEvent* e){
     bool res=false;
@@ -1078,6 +1090,7 @@ void Scene::changeGroup(Scene_item *item, CGAL::Three::Scene_group_item *target_
  //add the item to the target group
  target_group->addChild(item);
  item->has_group = target_group->has_group +1;
+ group_added();
 }
 
 float Scene::get_bbox_length() const
@@ -1118,7 +1131,7 @@ void Scene::organize_items(Scene_item* item, QStandardItem* root, int loop)
 void Scene::setExpanded(QModelIndex id)
 {
     CGAL::Three::Scene_group_item* group =
-            qobject_cast<CGAL::Three::Scene_group_item*>(item(index_map.value(index(0, 0, id.parent()))));
+            qobject_cast<CGAL::Three::Scene_group_item*>(item(getIdFromModelIndex(id)));
     if(group)
     {
         group->setExpanded(true);

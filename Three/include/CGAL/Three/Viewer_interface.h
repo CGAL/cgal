@@ -136,6 +136,7 @@ Q_SIGNALS:
   void requestContextMenu(QPoint global_pos);
   //!Defined automatically in moc.
   void selectedPoint(double, double, double);
+  void pointSelected(QPoint p);
   //!Defined automatically in moc.
   void selectionRay(double, double, double, double, double, double);
 

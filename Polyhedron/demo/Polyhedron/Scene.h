@@ -251,6 +251,7 @@ private Q_SLOTS:
   //! Casts a selection ray and calls the item function select.
   void setSelectionRay(double, double, double, double, double, double);
   void callDraw(){  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin(); viewer->update();}
+  void s_itemAboutToBeDestroyed(CGAL::Three::Scene_item *);
 
 private:
   /*! Calls the drawing functions of each visible item according

@@ -18,6 +18,7 @@
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Scene_item.h>
 #include <CGAL/Three/Viewer_interface.h>
+#include <CGAL/Three/Scene_group_item.h>
 
 #include <QAction>
 #include <QMenu>
@@ -38,7 +39,6 @@
 
 #include <boost/type_traits.hpp>
 #include <boost/optional.hpp>
-
 // Covariant return types don't work for scalar types and we cannot
 // have templates here, hence this unfortunate hack.
 
@@ -65,8 +65,10 @@ struct DoubleConverter {
 class PixelReader : public QObject
 {
 Q_OBJECT
-
-
+public Q_SLOTS:
+  void update(const QPoint& p) {
+    getPixel(p);
+  }
 Q_SIGNALS:
   void x(int);
 
@@ -168,6 +170,9 @@ public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     this->scene = scene_interface;
     this->mw = mainWindow;
+    x_control = NULL;
+    y_control = NULL;
+    z_control = NULL;
     planeSwitch = new QAction("Add Volume Planes", mw);
     if(planeSwitch) {
       planeSwitch->setProperty("subMenuName", "3D Mesh Generation");
@@ -177,6 +182,7 @@ public:
     Viewer_interface* v = mw->findChild<Viewer_interface*>("viewer");
     CGAL_assertion(v != 0);
     pxr_.setViewer(v);
+    connect(v, SIGNAL(pointSelected(QPoint)), &pxr_, SLOT(update(QPoint)));
     createOrGetDockLayout();
 
   }
@@ -191,6 +197,74 @@ public:
   }
 public Q_SLOTS:
   void selectPlanes() {
+//Control widgets creation
+    QLayout* layout = createOrGetDockLayout();
+    if(x_control == NULL)
+    {
+      x_control = new QWidget;
+      x_box = new QHBoxLayout(x_control);
+      layout->addWidget(x_control);
+
+      QLabel* label = new QLabel(x_control);
+      label->setText("X Slice");
+
+      x_cubeLabel = new QLabel(x_control);
+
+      // Find the right width for the label to accommodate at least 9999
+      QFontMetrics metric = x_cubeLabel->fontMetrics();
+      x_cubeLabel->setFixedWidth(metric.width(QString("9999")));
+      x_cubeLabel->setNum(0);
+      x_slider = new QSlider(mw);
+
+      x_box->addWidget(label);
+      x_box->addWidget(x_slider);
+      x_box->addWidget(x_cubeLabel);
+    }
+
+    if(y_control == NULL)
+    {
+      y_control = new QWidget;
+      y_box = new QHBoxLayout(y_control);
+      layout->addWidget(y_control);
+
+      QLabel* label = new QLabel(y_control);
+      label->setText("Y Slice");
+
+      y_cubeLabel = new QLabel(y_control);
+
+      // Find the right width for the label to accommodate at least 9999
+      QFontMetrics metric = y_cubeLabel->fontMetrics();
+      y_cubeLabel->setFixedWidth(metric.width(QString("9999")));
+      y_cubeLabel->setNum(0);
+
+      y_slider = new QSlider(mw);
+
+      y_box->addWidget(label);
+      y_box->addWidget(y_slider);
+      y_box->addWidget(y_cubeLabel);
+    }
+
+    if(z_control == NULL)
+    {
+      z_control = new QWidget;
+      z_box = new QHBoxLayout(z_control);
+      layout->addWidget(z_control);
+
+      QLabel* label = new QLabel(z_control);
+      label->setText("X Slice");
+
+      z_cubeLabel = new QLabel(z_control);
+
+      // Find the right width for the label to accommodate at least 9999
+      QFontMetrics metric = z_cubeLabel->fontMetrics();
+      z_cubeLabel->setFixedWidth(metric.width(QString("9999")));
+      z_cubeLabel->setNum(0);
+      z_slider = new QSlider(mw);
+
+      z_box->addWidget(label);
+      z_box->addWidget(z_slider);
+      z_box->addWidget(z_cubeLabel);
+    }
     std::vector< Scene_segmented_image_item* > seg_items;
     Scene_segmented_image_item* seg_img = NULL;
     for(int i = 0; i < scene->numberOfEntries(); ++i) {
@@ -221,54 +295,82 @@ public Q_SLOTS:
     
     if(!(seg_img == NULL)) {
       const CGAL::Image_3* img = seg_img->image();
-      CGAL_IMAGE_IO_CASE(img->image(), this->launchAdders<Word>(img, seg_img->name()))
+      CGAL_IMAGE_IO_CASE(img->image(), this->launchAdders<Word>(seg_img, seg_img->name()))
 
       Volume_plane_intersection* i = new Volume_plane_intersection(img->xdim() * img->vx(), 
                                                                    img->ydim() * img->vy(), 
                                                                    img->zdim() * img->vz());
       this->intersectionId = scene->addItem(i);
+      scene->changeGroup(i, group);
     } else {
       QMessageBox::warning(mw, tr("Something went wrong"), tr("Selected a suitable Object but couldn't get an image pointer."));
       return;
     }
 
   }
-
   void addVP(Volume_plane_thread* thread) {
     Volume_plane_interface* plane = thread->getItem();
     plane->init();
+    QWidget* control;
+    if(thread->type() == 'x')
+    {
+      control = x_control;
+    }
+    else if(thread->type() == 'y')
+    {
+      control = y_control;
+    }
+    else if(thread->type() == 'z')
+    {
+      control = z_control;
+    }
+    else
+    {
+      qDebug()<<"Error : thread type undetected.";
+      return;
+    }
 
     // add the interface for this Volume_plane
     int id = scene->addItem(plane);
-    
-    QLayout* layout = createOrGetDockLayout();
-    
-    QWidget* controls = new QWidget;
-    QHBoxLayout* box = new QHBoxLayout(controls);
-    layout->addWidget(controls);
-
-    QLabel* label = new QLabel(controls);
-    label->setText(plane->name());
-
-    QLabel* cubeLabel = new QLabel(controls);
-    cubeLabel->setNum(static_cast<int>(plane->getCurrentCube()));
-    
-    // Find the right width for the label to accommodate at least 9999
-    QFontMetrics metric = cubeLabel->fontMetrics();
-    cubeLabel->setFixedWidth(metric.width(QString("9999")));
-
-    QSlider* slider = new Plane_slider(plane->translationVector(), id, scene, plane->manipulatedFrame(),
-                                       Qt::Horizontal, controls);
-    slider->setRange(0, (plane->cDim() - 1) * 100);
-
-    connect(slider, SIGNAL(realChange(int)), cubeLabel, SLOT(setNum(int)));
-    connect(plane, SIGNAL(manipulated(int)), cubeLabel, SLOT(setNum(int)));
-    
-    box->addWidget(label);
-    box->addWidget(slider);
-    box->addWidget(cubeLabel);
-    
-    connect(plane, SIGNAL(aboutToBeDestroyed()), controls, SLOT(deleteLater()));
+    scene->changeGroup(plane, group);
+    switch(thread->type())
+    {
+    case 'x':
+      delete x_slider;
+      x_slider = new Plane_slider(plane->translationVector(), id, scene, plane->manipulatedFrame(),
+                                         Qt::Horizontal, x_control);
+      x_slider->setRange(0, (plane->cDim() - 1) * 100);
+      connect(x_slider, SIGNAL(realChange(int)), x_cubeLabel, SLOT(setNum(int)));
+      connect(plane, SIGNAL(manipulated(int)), x_cubeLabel, SLOT(setNum(int)));
+      connect(plane, SIGNAL(aboutToBeDestroyed()), x_slider, SLOT(hide()));
+      x_box->addWidget(x_slider);
+      x_box->addWidget(x_cubeLabel);
+      break;
+    case 'y':
+      delete y_slider;
+      y_slider = new Plane_slider(plane->translationVector(), id, scene, plane->manipulatedFrame(),
+                                         Qt::Horizontal, y_control);
+      y_slider->setRange(0, (plane->cDim() - 1) * 100);
+      connect(y_slider, SIGNAL(realChange(int)), y_cubeLabel, SLOT(setNum(int)));
+      connect(plane, SIGNAL(manipulated(int)), y_cubeLabel, SLOT(setNum(int)));
+      connect(plane, SIGNAL(aboutToBeDestroyed()), y_slider, SLOT(hide()));
+      y_box->addWidget(y_slider);
+      y_box->addWidget(y_cubeLabel);
+      break;
+    case 'z':
+      delete z_slider;
+      z_slider = new Plane_slider(plane->translationVector(), id, scene, plane->manipulatedFrame(),
+                                         Qt::Horizontal, z_control);
+      z_slider->setRange(0, (plane->cDim() - 1) * 100);
+      connect(z_slider, SIGNAL(realChange(int)), z_cubeLabel, SLOT(setNum(int)));
+      connect(plane, SIGNAL(manipulated(int)), z_cubeLabel, SLOT(setNum(int)));
+      connect(plane, SIGNAL(aboutToBeDestroyed()), z_slider, SLOT(hide()));
+      z_box->addWidget(z_slider);
+      z_box->addWidget(z_cubeLabel);
+      break;
+    default:
+      break;
+    }
 
     std::vector<Volume_plane_thread*>::iterator it = std::find(threads.begin(), threads.end(), thread);
 
@@ -291,17 +393,23 @@ public Q_SLOTS:
       intersection->setY(p);
     } else if(Volume_plane<z_tag>* p = dynamic_cast< Volume_plane<z_tag>* >(plane)) {
       intersection->setZ(p);
-    }
-
+    }    
     connect(plane, SIGNAL(planeDestructionIncoming(Volume_plane_interface*)), 
             intersection, SLOT(planeRemoved(Volume_plane_interface*)));
   }
  
 private:
   QAction* planeSwitch;
+  QWidget *x_control, *y_control, *z_control;
+  QSlider *x_slider, *y_slider, *z_slider;
+  QLabel *x_cubeLabel, *y_cubeLabel, *z_cubeLabel;
+  QHBoxLayout *x_box, *y_box, *z_box;
   PixelReader pxr_;
-
+  CGAL::Three::Scene_group_item* group;
   std::vector<Volume_plane_thread*> threads;
+  QMap<CGAL::Three::Scene_item*, int> group_map;
+
+
   unsigned int intersectionId;
 
   QLayout* createOrGetDockLayout() {
@@ -341,7 +449,8 @@ private:
   }
 
   template<typename Word>
-  void launchAdders(const CGAL::Image_3* img, const QString& name) {
+  void launchAdders(Scene_segmented_image_item* seg_img, const QString& name) {
+    const CGAL::Image_3* img = seg_img->image();
     const Word* begin = (const Word*)img->data();
     const Word* end = (const Word*)img->data() + img->size();
 
@@ -350,15 +459,24 @@ private:
     Clamp_to_one_zero_range clamper = { minmax };
 
     switchReaderConverter< Word >(minmax);
-    
+
     Volume_plane<x_tag> *xitem = new Volume_plane<x_tag>();
     Volume_plane<y_tag> *yitem = new Volume_plane<y_tag>();
     Volume_plane<z_tag> *zitem = new Volume_plane<z_tag>();
 
+    scene->setSelectedItem(-1);
+    group = new Scene_group_item("Planes");
+    scene->addItem(group);
+    group_map[seg_img] = scene->item_id(group);
+
+    connect(seg_img, SIGNAL(aboutToBeDestroyed()),
+            this, SLOT(erase_group()));
+
     threads.push_back(new X_plane_thread<Word>(xitem, img, clamper, name));
+
     connect(threads.back(), SIGNAL(finished(Volume_plane_thread*)), this, SLOT(addVP(Volume_plane_thread*)));
     threads.back()->start();
-    
+
     threads.push_back(new Y_plane_thread<Word>(yitem,img, clamper, name));
     connect(threads.back(), SIGNAL(finished(Volume_plane_thread*)), this, SLOT(addVP(Volume_plane_thread*)));
     threads.back()->start();
@@ -366,7 +484,6 @@ private:
     threads.push_back(new Z_plane_thread<Word>(zitem,img, clamper, name));
     connect(threads.back(), SIGNAL(finished(Volume_plane_thread*)), this, SLOT(addVP(Volume_plane_thread*)));
     threads.back()->start();
-
   }
 
   template<typename T>
@@ -385,6 +502,27 @@ private:
     // IntConverter
     DoubleConverter x = { minmax }; pxr_.setFC(x);
   }
+
+private Q_SLOTS:
+  void erase_group()
+  {
+    CGAL::Three::Scene_item* img_itm = qobject_cast<CGAL::Three::Scene_item*>(sender());
+    if(!img_itm)
+    {
+      qDebug()<<"Error :  sender not recognized as scene_item.";
+      return;
+    }
+    if(group_map.contains(img_itm))
+    {
+      int iD = group_map[img_itm];
+      group_map.remove(img_itm);
+      CGAL::Three::Scene_group_item* group = qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(iD));
+      Q_FOREACH(CGAL::Three::Scene_item* child, group->getChildren())
+        scene->erase(scene->item_id(child));
+      scene->erase(iD);
+    }
+  }
 };
+
 
 #include "Volume_planes_plugin.moc"

@@ -20,7 +20,9 @@ CGAL::Three::Scene_item::~Scene_item() {
 
 void CGAL::Three::Scene_item::itemAboutToBeDestroyed(CGAL::Three::Scene_item* item) {
     if(this == item)
-    Q_EMIT aboutToBeDestroyed();
+    {
+      Q_EMIT aboutToBeDestroyed();
+    }
 }
 
 

@@ -25,7 +25,7 @@ public:
   virtual unsigned int bDim() const = 0;
   virtual unsigned int cDim() const = 0;
   virtual qglviewer::Vec translationVector() const = 0;
-  void itemAboutToBeDestroyed(Scene_item* item) {
+  void itemAboutToBeDestroyed(CGAL::Three::Scene_item* item) {
     if(this == item) {
       Q_EMIT planeDestructionIncoming(this);
       Q_EMIT aboutToBeDestroyed();
