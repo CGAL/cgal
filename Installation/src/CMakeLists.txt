@@ -40,7 +40,6 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp 
     ${rc_file}
     ${ADDITIONAL_FILES})
-#  add_library (${LIBRARY_NAME} ${CGAL_LIBRARY_SOURCE_FILES} ${rc_file} ${ADDITIONAL_FILES}) # builing not creating temporary all_files.cpp
   if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
     set_target_properties(${LIBRARY_NAME} PROPERTIES 
       VERSION "${CGAL_SOVERSION}" 
@@ -69,6 +68,13 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
   install(EXPORT ${LIBRARY_NAME}Exports
     DESTINATION "${CGAL_INSTALL_CMAKE_DIR}"
     NAMESPACE CGAL::)
+
+  # We have to call configure_file twice to force double expansion of variables.
+  configure_file("${CGAL_MODULES_DIR}/CGALLibConfig.cmake.in"
+    "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
+  configure_file("${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake"
+    "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
+  install(FILES "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
 endfunction()
 
 function( configure_component DIR COMPONENT )
