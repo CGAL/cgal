@@ -298,7 +298,7 @@ public Q_SLOTS:
   //!Must be overloaded.
   virtual void invalidateOpenGLBuffers();
   //!Setter for the color of the item. Calls invalidateOpenGLBuffers() so the new color is applied.
-  virtual void setColor(QColor c) { color_ = c; invalidateOpenGLBuffers(); }
+  virtual void setColor(QColor c) { color_ = c; if(!is_monochrome)invalidateOpenGLBuffers(); }
   //!Setter for the RGB color of the item. Calls setColor(QColor).
   //!@see setColor(QColor c)
   void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
