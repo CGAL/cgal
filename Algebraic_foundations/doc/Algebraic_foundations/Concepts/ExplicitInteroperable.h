@@ -9,7 +9,7 @@ such that both types are embeddable into this type.
 This type is \link CGAL::Coercion_traits::Type `CGAL::Coercion_traits<A,B>::Type`\endlink. 
 
 In this case 
-\link CGAL::Coercion_traits::Are_implicit_interoperable  `CGAL::Coercion_traits<A,B>::Are_implicit_interoperable`\endlink
+\link CGAL::Coercion_traits::Are_explicit_interoperable  `CGAL::Coercion_traits<A,B>::Are_explicit_interoperable`\endlink
 is `Tag_true`. 
 
 `A` and `B` are valid argument types for all binary functors in 
