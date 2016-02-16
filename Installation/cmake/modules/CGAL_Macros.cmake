@@ -294,62 +294,44 @@ if( NOT CGAL_MACROS_FILE_INCLUDED )
     else(WITH_CGAL_${component})
 
       # now we are talking about 3rd party libs
+      list( FIND CGAL_CONFIGURED_LIBRARIES "CGAL_${component}" POSITION )
+      if ( "${POSITION}" EQUAL "-1" ) # if component is not a CGAL_<lib>
 
-      if ( ${component} STREQUAL "ALL_PRECONFIGURED_LIBS" )
-
-        if (CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT)
-          message( STATUS "External libraries are all used")
-          foreach ( CGAL_3RD_PARTY_LIB ${CGAL_SUPPORTING_3RD_PARTY_LIBRARIES})
-            if (${CGAL_3RD_PARTY_LIB}_FOUND)
-              use_lib( ${CGAL_3RD_PARTY_LIB} ${${CGAL_3RD_PARTY_LIB}_USE_FILE})
-            endif()
-          endforeach()
-        else()
-          message( SEND_ERROR "Component ALL_PRECONFIGURED_LIBS only allow with CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT=ON")
+        if (NOT DEFINED CGAL_EXT_LIB_${component}_PREFIX)
+          set(CGAL_EXT_LIB_${component}_PREFIX ${component})
         endif()
 
-      else()
+        set( vlib "${CGAL_EXT_LIB_${component}_PREFIX}" )
 
-        list( FIND CGAL_CONFIGURED_LIBRARIES "CGAL_${component}" POSITION )
-        if ( "${POSITION}" EQUAL "-1" ) # if component is not a CGAL_<lib>
+        if ( NOT CGAL_IGNORE_PRECONFIGURED_${component} AND ${vlib}_FOUND)
 
-          if (NOT DEFINED CGAL_EXT_LIB_${component}_PREFIX)
-            set(CGAL_EXT_LIB_${component}_PREFIX ${component})
-          endif()
+          ####message( STATUS "External library ${component} has been preconfigured")
+          use_lib( ${component} ${${vlib}_USE_FILE})
 
-          set( vlib "${CGAL_EXT_LIB_${component}_PREFIX}" )
-
-          if ( NOT CGAL_IGNORE_PRECONFIGURED_${component} AND ${vlib}_FOUND)
-
-            ####message( STATUS "External library ${component} has been preconfigured")
-            use_lib( ${component} ${${vlib}_USE_FILE})
-
-          else()
-
-            ####message( STATUS "External library ${component} has not been preconfigured")
-      if (${component} STREQUAL "ImageIO")
-        find_package( OpenGL )
-        find_package( ZLIB )
-      endif()
-
-      if (${component} STREQUAL "Qt5")
-                set(CGAL_${component}_FOUND TRUE)
-                find_package( OpenGL )
-                find_package (Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools)
-      endif()
-            ####message( STATUS "External library ${vlib} after find")
-            if (${vlib}_FOUND)
-              ####message( STATUS "External library ${vlib} about to be used")
-              use_lib( ${component} ${${vlib}_USE_FILE})
-            endif()
-
-          endif()
         else()
 
-          if (NOT WITH_CGAL_${component}) 
-            message(STATUS "NOTICE: The CGAL_${component} library seems to be required but is not build. Thus, it is expected that some executables will not be compiled.")
+          ####message( STATUS "External library ${component} has not been preconfigured")
+          if (${component} STREQUAL "ImageIO")
+            find_package( OpenGL )
+            find_package( ZLIB )
           endif()
 
+          if (${component} STREQUAL "Qt5")
+            set(CGAL_${component}_FOUND TRUE)
+            find_package( OpenGL )
+            find_package (Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools)
+          endif()
+          ####message( STATUS "External library ${vlib} after find")
+          if (${vlib}_FOUND)
+            ####message( STATUS "External library ${vlib} about to be used")
+            use_lib( ${component} ${${vlib}_USE_FILE})
+          endif()
+
+        endif()
+      else()
+
+        if (NOT WITH_CGAL_${component}) 
+          message(STATUS "NOTICE: The CGAL_${component} library seems to be required but is not build. Thus, it is expected that some executables will not be compiled.")
         endif()
 
       endif()
