@@ -31,7 +31,6 @@ set(PROJECT CGAL) #`basename $PWD` # TODO set value based on dir/source dir
 set(SINGLE_SOURCE "Polygon_2")
 list(INSERT CGAL_COMPONENTS 0 Qt4 CoRe gmP MPFR Rs rs3 MPFI) # TODO default value
 set(WITH_QT4 FALSE)
-set(WITH_ALL_PRECONFIGURED_LIBS FALSE)
 list(INSERT BOOST_COMPONENTS 0 thread) # TODO default value
 set(WITH_TESTING FALSE)
 
@@ -150,11 +149,6 @@ foreach( component ${CGAL_COMPONENTS})
 endforeach()
 
 set(CGAL_COMPONENTS ${CGAL_REWROTE_COMPONENTS})
-
-if ( WITH_ALL_PRECONFIGURED_LIBS )
-  list(APPEND CGAL_COMPONENTS ALL_PRECONFIGURED_LIBS)
-endif()
-
 
 if ( ${CGAL_COMPONENTS} STREQUAL "")
   file(APPEND CMakeLists.txt "find_package( CGAL QUIET )\n\n")
