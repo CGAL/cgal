@@ -21,6 +21,8 @@
 #ifndef CGAL_LLOYD_OPTIMIZE_MESH_2_H
 #define CGAL_LLOYD_OPTIMIZE_MESH_2_H
 
+
+
 #include <CGAL/Mesh_2/Mesh_global_optimizer_2.h>
 #include <CGAL/Mesh_2/Lloyd_move_2.h>
 #include <CGAL/Mesh_2/Mesh_sizing_field.h>
@@ -28,6 +30,12 @@
 #include <CGAL/iterator.h>
 
 #include <fstream>
+
+#if ( defined( __clang__ ) || (BOOST_GCC >= 40600 ) ) && (BOOST_VERSION < 106000)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wunused-variable"
+#pragma GCC diagnostic ignored "-Wunused-parameter"
+#endif
 
 #ifdef BOOST_PARAMETER_MAX_ARITY
 #  if (BOOST_PARAMETER_MAX_ARITY < 8)
@@ -44,11 +52,7 @@ namespace CGAL
 {
 namespace parameters
 {
-#ifdef __clang__
-#pragma clang diagnostic push
-#pragma clang diagnostic ignored "-Wunused-variable"
-#pragma clang diagnostic ignored "-Wunused-parameter"
-#endif
+  
 
 BOOST_PARAMETER_NAME( cdt )
 BOOST_PARAMETER_NAME( (max_iteration_number, tag) max_iteration_number_ )
@@ -58,11 +62,6 @@ BOOST_PARAMETER_NAME( (freeze_bound, tag) freeze_bound_)
 BOOST_PARAMETER_NAME( (seeds_begin, tag) seeds_begin_)
 BOOST_PARAMETER_NAME( (seeds_end, tag) seeds_end_)
 BOOST_PARAMETER_NAME( (mark, tag) mark_)
-
-//CGAL_PRAGMA_DIAG_POP
-#ifdef __clang__
-#pragma clang diagnostic pop
-#endif
 
 }//end namespace parameters
 }//end namespace CGAL
@@ -168,5 +167,12 @@ namespace CGAL
   }
 
 } //end namespace CGAL
+
+//CGAL_PRAGMA_DIAG_POP
+#if ( defined( __clang__ ) || (BOOST_GCC >= 40600 ) ) && (BOOST_VERSION < 106000)
+#pragma GCC diagnostic pop
+#endif
+
+
 
 #endif
