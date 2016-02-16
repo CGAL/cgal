@@ -172,7 +172,7 @@ polygon, the hole is irrelevant for the computation of
 can be removed (that is, filled up) before the main computation starts.
 Theoretically, we can always fill up all the holes of at least one
 polygon, transforming it into a simple polygon, and still obtain
-exactly the same Minkowski sum. Practically, we remove all holesin one
+exactly the same Minkowski sum. Practically, we remove all holes in one
 polygon whose bounding boxes are, in \f$x \f$- or \f$y \f$-direction,
 smaller than, or as large as, the bounding box of the other polygon.
 Obliterating holes in the input summands speeds up the computation of

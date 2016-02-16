@@ -131,8 +131,8 @@ summand `P` using the given decomposition method `no_holes_decomp`,
 unless the result is a convex polygon, in which case the nop strategy is
 applied; namely, an instance of the class template
 `Polygon_nop_decomposition_2` is used. If `P` is a polygon without holes
-to start with, then only convexity is checked. (Checking whether the
-result is convex inccurs a small overhead though.) and thendepending on
+to start with, then only convexity is checked (checking whether the
+result is convex inccurs a small overhead though). Then depending on
 the result either `no_holes_decomp` or the nop strategy is applied.
 Similarly, if the summand `Q` is of type `Polygon_with_holes_2`, then
 the function first applies the hole filteration on `Q`. If the summand
