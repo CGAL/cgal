@@ -757,9 +757,6 @@ cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS)
 
 add_subdirectory(src)
 
-hide_variable(EXECUTABLE_OUTPUT_PATH)
-hide_variable(LIBRARY_OUTPUT_PATH)
-
 #
 # Repeat some problems
 #
