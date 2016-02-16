@@ -20,6 +20,7 @@
 #include <CGAL/Polygon_mesh_processing/repair.h>
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
+#include <CGAL/property_map.h>
 #include <CGAL/statistics_helpers.h>
 
 #include <list>
@@ -32,7 +33,6 @@
 #include <QDialog>
 
 #include <boost/foreach.hpp>
-#include <boost/property_map/property_map.hpp>
 #include <boost/container/flat_map.hpp>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
