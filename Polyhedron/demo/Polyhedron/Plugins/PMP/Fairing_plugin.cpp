@@ -92,6 +92,7 @@ public Q_SLOTS:
         selection_item->selected_vertices,
         CGAL::Polygon_mesh_processing::parameters::fairing_continuity(continuity));
     selection_item->changed_with_poly_item();
+    selection_item->invalidateOpenGLBuffers();
     QApplication::restoreOverrideCursor();
   }
 
@@ -116,6 +117,7 @@ public Q_SLOTS:
       selection_item->selected_facets.insert(*it);
     }
     selection_item->changed_with_poly_item();
+    selection_item->invalidateOpenGLBuffers();
     QApplication::restoreOverrideCursor();
   }
 
