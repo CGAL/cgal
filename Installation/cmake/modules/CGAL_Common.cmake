@@ -1,6 +1,3 @@
-# This allows else(), endif(), etc... (without repeating the expression)
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
 if ( "${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" )
   set( CGAL_IS_CURRENT_SCRIPT_TOP_LEVEL TRUE )
 else()
