@@ -43,7 +43,6 @@ Scripts/developer_scripts/autotest_cgal text eol=lf
 Scripts/developer_scripts/autotest_cgal_with_cmake text eol=lf
 Scripts/developer_scripts/cgal_build text eol=lf
 Scripts/developer_scripts/cgal_depend text eol=lf
-Scripts/developer_scripts/cgal_generate_cmake_script text eol=lf
 Scripts/developer_scripts/cgal_git_update_hooks_for_client text eol=lf
 Scripts/developer_scripts/cgal_test_with_cmake text eol=lf
 Scripts/developer_scripts/cgal2gml text eol=lf
