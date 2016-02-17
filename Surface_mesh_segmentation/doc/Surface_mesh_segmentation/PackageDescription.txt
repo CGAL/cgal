@@ -1,4 +1,4 @@
-/// \defgroup PkgSurfaceSegmentation 3D Surface Mesh Segmentation Reference
+/// \defgroup PkgSurfaceSegmentation Triangulated Surface Mesh Segmentation Reference
 
 /// \defgroup PkgSurfaceSegmentationConcepts Concepts
 /// \ingroup PkgSurfaceSegmentation
