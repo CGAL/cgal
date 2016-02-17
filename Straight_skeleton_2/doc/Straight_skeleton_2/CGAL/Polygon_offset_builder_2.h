@@ -16,7 +16,7 @@ its third template parameter must be a model of the
 
 \sa `VertexContainer_2` 
 \sa `PolygonOffsetBuilderTraits_2` 
-\sa `CGAL::Polygon_offset_builder_traits_2<Kernel>` 
+\sa `Polygon_offset_builder_traits_2`
 
 */
 template< typename StraightSkeleton_2, typename StraightSkeletonBuilderTraits_2, typename VertexContainer_2 >

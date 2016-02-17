@@ -19,7 +19,7 @@ This class can be used as a base class allowing users of the straight skeleton d
 \sa `StraightSkeletonVertex_2` 
 \sa `StraightSkeletonHalfedge_2` 
 \sa `StraightSkeleton_2` 
-\sa `CGAL::Straight_skeleton_halfedge_base_2<Refs>` 
+\sa `CGAL::Straight_skeleton_halfedge_base_2`
 
 */
 template< typename Refs, typename Point, typename FT >

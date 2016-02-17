@@ -14,7 +14,7 @@ All its methods are empty.
 \cgalModels `StraightSkeletonBuilder_2_Visitor`
 \cgalModels `DefaultConstructible`
 
-\sa `CGAL::Straight_skeleton_builder_2<Gt,Ss,Visitor>` 
+\sa `Straight_skeleton_builder_2`
 
 */
 template< typename Ss >
@@ -24,14 +24,11 @@ public:
 /// @}
 
 }; /* end Dummy_straight_skeleton_builder_2_visitor */
-} /* end namespace CGAL */
-
-namespace CGAL {
 
 /*!
 \ingroup PkgStraightSkeleton2Classes
 
-The class `Straight_skeleton_builder_2` encapsulates the construction of the 2D straight skeleton in the interior of a polygon with holes. Its first template parameter must be a model of the `StraightSkeletonBuilderTraits_2` concept, its second template parameter, must be a model of the `StraightSkeleton_2` concept, and its third template paramter must be a model of the `StraightSkeletonBuilder_2_Visitor` concept. If this last parameter is ommitted, the class `CGAL::Dummy_straight_skeleton_builder_2_visitor<Skel>` is used. 
+The class `Straight_skeleton_builder_2` encapsulates the construction of the 2D straight skeleton in the interior of a polygon with holes. Its first template parameter must be a model of the `StraightSkeletonBuilderTraits_2` concept, its second template parameter, must be a model of the `StraightSkeleton_2` concept, and its third template paramter must be a model of the `StraightSkeletonBuilder_2_Visitor` concept. If this last parameter is ommitted, the class `Dummy_straight_skeleton_builder_2_visitor` is used. 
 
 \cgalHeading{Algorithm}
 
@@ -74,10 +71,10 @@ A grassfire propagation picks the next unprocessed event (starting from the firs
 \sa `StraightSkeletonVertex_2` 
 \sa `StraightSkeletonHalfedge_2` 
 \sa `StraightSkeleton_2` 
-\sa `CGAL::Straight_skeleton_builder_traits_2<K>` 
-\sa `CGAL::Straight_skeleton_vertex_base_2<Refs,P,FT>` 
-\sa `CGAL::Straight_skeleton_halfedge_base_2<Refs>` 
-\sa `CGAL::Straight_skeleton_2<Traits,Items,Alloc>` 
+\sa `Straight_skeleton_builder_traits_2`
+\sa `Straight_skeleton_vertex_base_2`
+\sa `Straight_skeleton_halfedge_base_2`
+\sa `Straight_skeleton_2`
 
 */
 template< typename StraightSkeletonBuilderTraits_2 , typename StraightSkeleton_2, typename StraightSkeletonBuilder_2_Visitor >
@@ -126,7 +123,7 @@ It is an error to enter more than one outer contour or to enter a hole which is 
 
 The sequence [aBegin,aEnd) must iterate over each 2D point that corresponds to a vertex of the contour being entered. Vertices cannot be coincident (except consecutively since the method simply skip consecutive coincident vertices). Consecutive collinear edges are allowed. 
 
-InputPointIterator must be an <I>InputIterator</I> whose `value_type` is `Point_2`. 
+\tparam InputPointIterator  a model `InputIterator` whose `value_type` is `Point_2`. 
 */ 
 template<class InputPointIterator> Straight_skeleton_builder_2& enter_contour( InputPointIterator aBegin, InputPointIterator aEnd ); 
 

@@ -40,7 +40,7 @@ the kernel in which the type `InputIterator::value_type` is defined.
 \tparam Traits must be a model for `PolygonOffsetBuilderTraits_2`.
 
 \sa `PolygonOffsetBuilderTraits_2` 
-\sa `CGAL::Polygon_offset_builder_traits_2<Kernel>` 
+\sa `Polygon_offset_builder_traits_2` 
 
 
 */

@@ -27,8 +27,8 @@ polygons to be constructed.
 4. `Straight_skeleton` is `Straight_skeleton_2<K2>`. 
     If `K != K2` the straight skeleton is converted to `Straight_skeleton_2<K>`.
 
-\sa `create_exterior_straight_skeleton_2`
-\sa `Straight_skeleton_builder_2<Gt,Ss>` 
+\sa `create_exterior_straight_skeleton_2()`
+\sa `Straight_skeleton_builder_2`
 
 */
 template<class FT, class Polygon, class OffsettingK, class SkeletonK>
@@ -39,8 +39,6 @@ create_exterior_skeleton_and_offset_polygons_2
   , OffsettingK    ofk  = Exact_predicates_inexact_constructions_kernel
   , SkeletonK      ssk  = Exact_predicates_inexact_constructions_kernel
   ) ;
-
-}
 
 /*!
 \ingroup PkgStraightSkeleton2Functions
@@ -61,8 +59,8 @@ A temporary straight skeleton is constructed in the interior of the input polygo
 4. `HoleIterator::value_type` and `Polygon` are `CGAL::Polygon_2<OffsettingK>`
    or a standard container of `OffsettingK::Point_2` elements 
 
-\sa `create_exterior_straight_skeleton_2`
-\sa `Straight_skeleton_builder_2<Gt,Ss>` 
+\sa `create_exterior_straight_skeleton_2()`
+\sa `Straight_skeleton_builder_2`
 
 */
 template<class FT, class Polygon, class HoleIterator, class OffsettingK, class SkeletonK>
@@ -97,8 +95,8 @@ A temporary straight skeleton is constructed in the interior of the input polygo
 4. `HoleIterator::value_type` and `Polygon` are `CGAL::Polygon_2<OffsettingK>`
    or a standard container of `OffsettingK::Point_2` elements 
 
-\sa `create_exterior_straight_skeleton_2`
-\sa `Straight_skeleton_builder_2<Gt,Ss>` 
+\sa `create_exterior_straight_skeleton_2()`
+\sa `Straight_skeleton_builder_2` 
 
 */
 template<class FT, class Polygon, class OffsettingK, class SkeletonK>

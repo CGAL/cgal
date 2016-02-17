@@ -20,8 +20,8 @@ A %Cartesian converter is used to convert from `K2::Point_2` to `K::Point_2`
 <LI>`Polygon` is `Polygon_2<K>` or a standard container of `K2::Point_2` elements.
 </OL> 
 
-\sa `create_interior_straight_skeleton_2` 
-\sa `Straight_skeleton_builder_2<Gt,Ss,Visitor>` 
+\sa `create_interior_straight_skeleton_2()`
+\sa `Straight_skeleton_builder_2`
 
 
 */
@@ -52,8 +52,8 @@ A %Cartesian converter is used to convert from `K2::Point_2` to `K::Point_2`
 <LI>`Polygon` is `Polygon_2<K>` or a standard container of `K2::Point_2` elements.
 </OL> 
 
-\sa `create_interior_straight_skeleton_2` 
-\sa `Straight_skeleton_builder_2<Gt,Ss,Visitor>` 
+\sa `create_interior_straight_skeleton_2()` 
+\sa `Straight_skeleton_builder_2` 
 
 
 
@@ -86,10 +86,10 @@ If `K != K2` the straight skeleton is converted to `Straight_skeleton_2<K>`.
 If this first template parameter is omitted, `Polygon_2` is used. 
 </OL> 
 
-\sa `create_interior_straight_skeleton_2` 
-\sa `create_exterior_straight_skeleton_2` 
-\sa `create_interior_skeleton_and_offset_polygons_2` 
-\sa `create_exterior_skeleton_and_offset_polygons_2` 
+\sa `create_interior_straight_skeleton_2()`
+\sa `create_exterior_straight_skeleton_2()`
+\sa `create_interior_skeleton_and_offset_polygons_2()`
+\sa `create_exterior_skeleton_and_offset_polygons_2()`
 
 
 */
@@ -114,8 +114,8 @@ holes given by `[holes_begin,holes_end]`.
 3. `HoleIterator::value_type` and `Polygon` are `Polygon_2<K>`
    or a standard container of `K2::Point_2` elements.
 
-\sa `create_exterior_straight_skeleton_2`
-\sa `Straight_skeleton_builder_2<Gt,Ss>` 
+\sa `create_exterior_straight_skeleton_2()`
+\sa `Straight_skeleton_builder_2`
 
 */
 template<class PointIterator, class HoleIterator, class K>
@@ -140,8 +140,8 @@ polygon whose outer boundary is given by the point sequence
 3. `HoleIterator::value_type` and `Polygon` are `Polygon_2<K>`
    or a standard container of `K2::Point_2` elements.
 
-\sa `create_exterior_straight_skeleton_2`
-\sa `Straight_skeleton_builder_2<Gt,Ss>` 
+\sa `create_exterior_straight_skeleton_2()`
+\sa `Straight_skeleton_builder_2` 
 
 */
 template<class PointIterator, class K>
@@ -163,8 +163,8 @@ polygon `outer_contour`.
 3. `HoleIterator::value_type` and `Polygon` are `Polygon_2<K>`
    or a standard container of `K2::Point_2` elements. 
 
-\sa `create_exterior_straight_skeleton_2`
-\sa `Straight_skeleton_builder_2<Gt,Ss>` 
+\sa `create_exterior_straight_skeleton_2()`
+\sa `Straight_skeleton_builder_2`
 
 */
 template<class Polygon, class K>

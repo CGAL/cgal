@@ -22,8 +22,8 @@ bounded or unbounded side of `Q` (but not both).
 \tparam OtputPolygonWithHolesPtrIterator must be an output iterator whose `value_type` is a smart pointer 
 (such as `boost::shared_ptr`) whose `element_type` is `Polygon_with_holes_2<K>`.  
 
-\sa `create_exterior_straight_skeleton_2` 
-\sa `Straight_skeleton_builder_2<Gt,Ss>` 
+\sa `create_exterior_straight_skeleton_2()`
+\sa `Straight_skeleton_builder_2` 
 
 */
 template<class K, class InputPolygonPtrIterator, class OutputPolygonWithHolesPtrIterator>

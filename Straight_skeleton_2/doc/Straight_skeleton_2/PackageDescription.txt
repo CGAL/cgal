@@ -13,7 +13,6 @@
 
 /*!
 \addtogroup PkgStraightSkeleton2
-\todo check generated documentation
 \cgalPkgDescriptionBegin{2D Straight Skeleton and Polygon Offsetting,PkgStraightSkeleton2Summary}
 \cgalPkgPicture{Straight_skeleton_2/fig/StraightSkeletonTeaser.png}
 \cgalPkgSummaryBegin
@@ -44,24 +43,30 @@
 - `VertexContainer_2`
 
 ## Classes ##
-- `CGAL::Straight_skeleton_vertex_base_2<Refs,Point,FT>`
-- `CGAL::Straight_skeleton_halfedge_base_2<Refs>`
-- `CGAL::Straight_skeleton_face_base_2<Refs>`
-- `CGAL::Straight_skeleton_2<Traits,Items,Alloc>`
+- `CGAL::Straight_skeleton_vertex_base_2`
+- `CGAL::Straight_skeleton_halfedge_base_2`
+- `CGAL::Straight_skeleton_face_base_2`
+- `CGAL::Straight_skeleton_2`
 - `CGAL::create_interior_straight_skeleton_2`
 - `CGAL::create_exterior_straight_skeleton_2`
-- `CGAL::Straight_skeleton_builder_traits_2<Kernel>`
-- `CGAL::Straight_skeleton_builder_2<Gt,Ss,Visitor>`
-- `CGAL::Straight_skeleton_items_converter_2<SrcSs, TgtSs, NTConverter>`
-- `CGAL::Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsCvt>`
-- `CGAL::convert_straight_skeleton_2<TgtSs,SrcSs,ItemsCvt>`
-- `CGAL::create_offset_polygons_2`
-- `CGAL::arrange_offset_polygons_2`
-- `CGAL::create_interior_skeleton_and_offset_polygons_2`
-- `CGAL::create_exterior_skeleton_and_offset_polygons_2`
-- `CGAL::Polygon_offset_builder_traits_2<Kernel>`
-- `CGAL::Polygon_offset_builder_2<Ss,Gt,Container>`
-- `CGAL::Dummy_straight_skeleton_builder_2_visitor<Ss>`
+- `CGAL::Straight_skeleton_builder_traits_2`
+- `CGAL::Straight_skeleton_builder_2`
+- `CGAL::Straight_skeleton_items_converter_2`
+- `CGAL::Straight_skeleton_converter_2`
+- `CGAL::Polygon_offset_builder_traits_2`
+- `CGAL::Polygon_offset_builder_2`
+- `CGAL::Dummy_straight_skeleton_builder_2_visitor`
 
+## Functions ##
+- `CGAL::create_exterior_straight_skeleton_2()`
+- `CGAL::create_interior_straight_skeleton_2()`
+- `CGAL::create_offset_polygons_2()`
+- `CGAL::create_exterior_skeleton_and_offset_polygons_2()`
+- `CGAL::create_exterior_skeleton_and_offset_polygons_with_holes_2()`
+- `CGAL::create_interior_skeleton_and_offset_polygons_2()`
+- `CGAL::create_interior_skeleton_and_offset_polygons_with_holes_2()`
+- `CGAL::arrange_offset_polygons_2()`
+- `CGAL::compute_outer_frame_margin()`
+- `CGAL::convert_straight_skeleton_2()`
 */
 

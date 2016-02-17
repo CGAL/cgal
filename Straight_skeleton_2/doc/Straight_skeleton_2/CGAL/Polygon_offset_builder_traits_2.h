@@ -14,7 +14,7 @@ It is unspecified which subset of the kernel is used in this traits class (and b
 \cgalModels `DefaultConstructible`
 \cgalModels `CopyConstructible`
 
-\sa `CGAL::Polygon_offset_builder_2<Ss,Gt,Polygon_2>` 
+\sa `Polygon_offset_builder_2`
 
 */
 template< typename Kernel >

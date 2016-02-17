@@ -40,8 +40,8 @@ polygons without paying the runtime overhead of exact constructions for the stra
 skeleton itself. 
 
 \sa `StraightSkeletonItemsConverter_2` 
-\sa `Straight_skeleton_items_converter_2<SrcSs,TgtSs,NTConverter>` 
-\sa `convert_straight_skeleton_2<SrcSs,TgtSs,NTConverter>` 
+\sa `Straight_skeleton_items_converter_2` 
+\sa `convert_straight_skeleton_2()`
 
 */
 template< typename SrcSs, typename TgtSs, typename ItemsCvt >
@@ -109,9 +109,9 @@ provide `TgtSs:Traits::FT operator()(SrcSs::Traits::FT n)` that converts `n` to 
 \cgalModels `CopyConstructible`
 \cgalModels `Assignable`
 
-\sa `CGAL::Straight_skeleton_2<Traits,Items,Alloc>` 
-\sa `CGAL::Straight_skeleton_converter_2<SrcSs,TgtSs,ItemsCvt>` 
-\sa `CGAL::Straight_skeleton_builder_2<Gt,Ss,Visitor>` 
+\sa `Straight_skeleton_2`
+\sa `Straight_skeleton_converter_2`
+\sa `Straight_skeleton_builder_2`
 
 */
 template< typename SrcSs, typename TgtSs, typename NTConverter >
