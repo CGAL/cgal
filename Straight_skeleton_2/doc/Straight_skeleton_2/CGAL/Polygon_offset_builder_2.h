@@ -8,15 +8,13 @@ inward offset contours of a 2D simple polygon with holes. The
 construction is based on the straight skeleton of the interior of the
 polygon. 
 
-Its first template parameter must be a model of the
-`StraightSkeleton_2` concept, its second template parameter
-must be a model of the `StraightSkeletonBuilderTraits_2` concept, and
-its third template parameter must be a model of the
-`VertexContainer_2` concept.
+\tparam StraightSkeleton_2 a model of the `StraightSkeleton_2` concept
+\tparam StraightSkeletonBuilderTraits_2 a model of the `StraightSkeletonBuilderTraits_2` concept
+\tparam VertexContainer_2 a model of the `VertexContainer_2` concept.
 
 \sa `VertexContainer_2` 
 \sa `PolygonOffsetBuilderTraits_2` 
-\sa `CGAL::Polygon_offset_builder_traits_2<Kernel>` 
+\sa `Polygon_offset_builder_traits_2`
 
 */
 template< typename StraightSkeleton_2, typename StraightSkeletonBuilderTraits_2, typename VertexContainer_2 >
