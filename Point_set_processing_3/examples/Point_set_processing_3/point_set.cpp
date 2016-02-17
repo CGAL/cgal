@@ -1,7 +1,11 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Point_set_3.h>
 #include <CGAL/IO/read_xyz_points.h>
+#include <CGAL/IO/write_xyz_points.h>
+#include <CGAL/grid_simplify_point_set.h>
+
 #include <fstream>
+#include <limits>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef Kernel::FT FT;
@@ -9,47 +13,7 @@ typedef Kernel::Point_3 Point;
 typedef Kernel::Vector_3 Vector;
 
 typedef CGAL::Point_set_3<Kernel> Point_set;
-
-
-struct  Point_push_pmap {
-  Point_set& ps;
-  Point_set::Index ind;
-
-  Point_push_pmap(Point_set& ps, int ind=0)
-    : ps(ps), ind(ind)
-  {}
-
-  inline friend void put(Point_push_pmap& pm, Point_set::Index& i, Point& p)
-  {
-    if(! pm.ps.surface_mesh().has_valid_index(pm.ind)){
-      pm.ps.surface_mesh().add_vertex();
-    }
-    put(pm.ps.points(), pm.ind,p);
-    i = pm.ind;
-    ++pm.ind;
-  }
-};
-
-struct  Normal_push_pmap {
-  Point_set& ps;
-   Point_set::Index ind;
-
-  Normal_push_pmap(Point_set& ps, int ind=0)
-    : ps(ps), ind(ind)
-  {}
-
-  inline friend void put(Normal_push_pmap& pm, Point_set::Index& i  , Vector& v)
-  {
-    if(! pm.ps.surface_mesh().has_valid_index(pm.ind)){
-      pm.ps.surface_mesh().add_vertex();
-    }
-    put(pm.ps.normals(), pm.ind,v);
-    i = pm.ind;
-    ++pm.ind;
-  }
-};
-
-
+typedef CGAL::cpp11::array<unsigned char, 3> Color;
 
 
 int main (int argc, char** argv)
@@ -63,69 +27,75 @@ int main (int argc, char** argv)
 
   point_set.add_normal_property();
 
-  std::vector<Point_set::Index> indices;
+  std::vector<Point_set::Item> indices;
   std::ifstream f (argc > 1 ? argv[1] : "data/data.pwn");
   CGAL::read_xyz_points_and_normals(f,
-                                    std::back_inserter(indices),
-                                    Point_push_pmap(point_set),
-                                    Normal_push_pmap(point_set),
+                                    point_set.index_back_inserter(),
+                                    point_set.point_push_pmap(),
+                                    point_set.normal_push_pmap(),
                                     Kernel());
   f.close ();
 
-  for(std::size_t i =0; i < indices.size(); i++){
-    std::cerr << indices[i] << " ";
-  }
+  for (std::size_t i = 0; i < (std::min)(std::size_t(5), point_set.size()); ++ i)
+    std::cerr << "Item " << i << " = " << std::endl
+              << "  * Point = " << point_set[i] << std::endl
+              << "  * Normal = " << point_set.normal(i) << std::endl;
 
-  // we next swap two points with all their properties
-  Point_set::Index v0(0), v1(1);
-  std::cerr << point_set.normal(v0) << "  " << point_set.normal(v1) << std::endl;
-  point_set.surface_mesh().swap(v0,v1);
-  std::cerr << point_set.normal(v0) << "  " << point_set.normal(v1) << std::endl;
-  return 0;
-    
-  for (std::size_t i = 0; i < 10; ++ i)
-    point_set.push_back (Point (rand () / (FT)RAND_MAX,
-                                rand () / (FT)RAND_MAX,
-                                rand () / (FT)RAND_MAX));
+  
+  
+  Point_set::iterator
+    first_selected = CGAL::grid_simplify_point_set (point_set.begin (), point_set.end (),
+                                                    &(point_set[0]),
+                                                    0.1);
 
+  std::cerr << std::endl;
+  for (std::size_t i = 0; i < (std::min)(std::size_t(5), point_set.size()); ++ i)
+    std::cerr << "Item " << i << " = " << std::endl
+              << "  * Point = " << point_set[i] << std::endl
+              << "  * Normal = " << point_set.normal(i) << std::endl;
 
-  for (std::size_t i = 0; i < point_set.size(); ++ i)
-    std::cerr << "Point " << i << ": " << point_set[i] << std::endl;
+  std::cerr << std::endl;
+  std::size_t i = 0;
+  for (Point_set::iterator it = first_selected;
+       it != point_set.end() && i < 5; ++ i, ++ it)
+    std::cerr << "Index " << *it << " = " << std::endl
+              << "  * Point = " << point_set[*it] << std::endl
+              << "  * Normal = " << point_set.normal(*it) << std::endl;
 
-  if (point_set.has_normals())
-    std::cerr << "Point set has normals" << std::endl;
+  if (!(point_set.are_indices_up_to_date()))
+    std::cerr << "Indices not up to date" << std::endl;
+  std::cerr << "Size = " << point_set.size() << std::endl;
+  std::cerr << "Nb removed = " << std::distance (first_selected, point_set.end()) << std::endl;
+  point_set.erase (first_selected, point_set.end());
+  std::cerr << "Size = " << point_set.size() << std::endl;
+  if (!(point_set.are_indices_up_to_date()))
+    std::cerr << "Indices not up to date" << std::endl;
+
+  for (std::size_t i = 0; i < (std::min)(std::size_t(5), point_set.size()); ++ i)
+    std::cerr << "Item " << i << " = " << std::endl
+              << "  * Point = " << point_set[i] << std::endl
+              << "  * Normal = " << point_set.normal(i) << std::endl;
+
+  std::ofstream fout ("out.xyz");
+  CGAL::write_xyz_points (fout, point_set.begin(), point_set.end(), &(point_set[0]));
+  fout.close();
+
+  if (point_set.has_property<Color> ("color"))
+    std::cerr << "Point set has colors" << std::endl;
   else
-    std::cerr << "Point set doesn't have normals" << std::endl;
-
-  point_set.push_back (Point (rand() / (FT)RAND_MAX,
-                              rand() / (FT)RAND_MAX,
-                              rand() / (FT)RAND_MAX),
-                       Vector (rand() / (FT)RAND_MAX,
-                               rand() / (FT)RAND_MAX,
-                               rand() / (FT)RAND_MAX));
+    std::cerr << "Point set doesn't have colors" << std::endl;
   
-  for (std::size_t i = 0; i < point_set.size(); ++ i)
-    {
-      point_set.normal(i) = Vector (rand () / (FT)RAND_MAX,
-                                    rand () / (FT)RAND_MAX,
-                                    rand () / (FT)RAND_MAX);
-      std::cerr << "Normal " << i << ": " << point_set.normal(i) << std::endl;
-    }
+  point_set.add_property<Color> ("color");
 
-  point_set.remove_normal_property();
-  
-  if (point_set.has_normals())
-    std::cerr << "Point set has normals" << std::endl;
+  if (point_set.has_property<Color> ("color"))
+    std::cerr << "Point set has colors" << std::endl;
   else
-    std::cerr << "Point set doesn't have normals" << std::endl;
+    std::cerr << "Point set doesn't have colors" << std::endl;
 
-
-  Point_set::Point_pmap pm = point_set.points();
-  Point_set::Vector_pmap nm = point_set.normals();
-  
-  
-  std::cout << get(pm,Point_set::Index(0)) << std::endl;
-  std::cout << get(nm,Point_set::Index(0)) << std::endl;
+  for (std::size_t i = 0; i < (std::min)(std::size_t(5), point_set.size()); ++ i)
+    std::cerr << "Item " << i << " = " << std::endl
+              << "  * Point = " << point_set[i] << std::endl
+              << "  * Color = " << point_set.property<Color>("color", i)[0] << std::endl;
   
   
   return 0;
