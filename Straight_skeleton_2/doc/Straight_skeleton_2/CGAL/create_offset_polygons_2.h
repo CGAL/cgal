@@ -3,10 +3,10 @@ namespace CGAL {
 /*!
 \ingroup PkgStraightSkeleton2Functions
 
-The function `create_offset_polygons_2()` creates a straight skeleton in the interior of a 2D polygon with holes.
-The function returns a container with all the offset polygons at distance `offset` obtained from
-the straight skeleton `s`.
-
+returns a container with the offset polygons at distance `offset` obtained from
+the straight skeleton `s`. If `s` is the inner skeleton of a polygon with holes,
+the offset polygons will be generated in its interior. If `s` is the outer skeleton
+of a polygon with holes, the offset polygons will be generated in its exterior.
 
 <OL>
 <LI>`K` is any \cgal kernel.
