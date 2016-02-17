@@ -13,12 +13,10 @@ The outer boundary `F` is constructed by enlarging the bounding box of `P` a dis
 
 \cgalHeading{Requirements}
 
-<OL> 
-<LI>`K` is any \cgal kernel. 
-<LI>`PointIterator::value_type` is equivalent to `K2::Point_2`. 
-A %Cartesian converter is used to convert from `K2::Point_2` to `K::Point_2` 
-<LI>`Polygon` is `Polygon_2<K>` or a standard container of `K2::Point_2` elements.
-</OL> 
+\tparam FT a number type
+\tparam K is any \cgal Kernel
+\tparam PointIterator an `InputIterator` with `value_type` being equivalent to `K2::Point_2`
+`Cartesian_converter` is used to convert from `K2::Point_2` to `K::Point_2`
 
 \sa `create_interior_straight_skeleton_2()`
 \sa `Straight_skeleton_builder_2`
@@ -45,18 +43,12 @@ The outer boundary `F` is constructed by enlarging the bounding box of `P` a dis
 
 \cgalHeading{Requirements}
 
-<OL> 
-<LI>`K` is any \cgal kernel. 
-<LI>`PointIterator::value_type` is equivalent to `K2::Point_2`. 
-A %Cartesian converter is used to convert from `K2::Point_2` to `K::Point_2` 
-<LI>`Polygon` is `Polygon_2<K>` or a standard container of `K2::Point_2` elements.
-</OL> 
+\tparam FT a number type
+\tparam K is any \cgal kernel. 
+\tparam Polygon is `Polygon_2<K>` or a standard container of `K::Point_2` elements.
 
 \sa `create_interior_straight_skeleton_2()` 
 \sa `Straight_skeleton_builder_2` 
-
-
-
 */
 template<class FT, class Polygon, class K>
 boost::shared_ptr< Straight_skeleton_2<K> >
@@ -73,11 +65,12 @@ polygon with holes whose outer boundary is given by the point sequence
 `[outer_contour_vertices_begin,outer_contour_vertices_end]` and its
 holes given by `[holes_begin,holes_end]`.
 
-1. `K` is any \cgal kernel.
-2. `PointIterator::value_type` is equivalent to `K2::Point_2`.
-   A %Cartesian converter is used to convert from `K2::Point_2` to `K::Point_2`
-3. `HoleIterator::value_type` and `Polygon` are `Polygon_2<K>`
-   or a standard container of `K2::Point_2` elements.
+\tparam K is any \cgal Kernel
+\tparam PointIterator an `InputIterator` with `value_type` begin equivalent to `K2::Point_2`.
+        `Cartesian_converter` is used to convert from `K2::Point_2` to `K::Point_2`
+\tparam HoleIterator an `InputIterator` with `value_type` being `Polygon_2<K>`
+        or a standard container of `K2::Point_2` elements.
+
 
 \sa `create_exterior_straight_skeleton_2()`
 \sa `Straight_skeleton_builder_2`
@@ -99,11 +92,9 @@ returns a new `Straight_skeleton_2<K>` in the interior of the 2D
 polygon whose outer boundary is given by the point sequence
 `[outer_contour_vertices_begin,outer_contour_vertices_end]`.
 
-1. `K` is any \cgal kernel.
-2. `PointIterator::value_type` is equivalent to `K2::Point_2`.
-   A %Cartesian converter is used to convert from `K2::Point_2` to `K::Point_2`
-3. `HoleIterator::value_type` and `Polygon` are `Polygon_2<K>`
-   or a standard container of `K2::Point_2` elements.
+\tparam K is any \cgal Kernel
+\tparam PointIterator an `InputIterator` with `value_type` begin equivalent to `K2::Point_2`.
+        `Cartesian_converter` is used to convert from `K2::Point_2` to `K::Point_2`
 
 \sa `create_exterior_straight_skeleton_2()`
 \sa `Straight_skeleton_builder_2` 
@@ -122,11 +113,9 @@ create_interior_straight_skeleton_2 ( PointIterator outer_contour_vertices_begin
 returns a new `Straight_skeleton_2<K>` in the interior of the 2D
 polygon `outer_contour`.
 
-1. `K` is any \cgal kernel.
-2. `PointIterator::value_type` is equivalent to `K2::Point_2`.
-   A %Cartesian converter is used to convert from `K2::Point_2` to `K::Point_2`
-3. `HoleIterator::value_type` and `Polygon` are `Polygon_2<K>`
-   or a standard container of `K2::Point_2` elements. 
+\tparam K is any \cgal Kernel
+\tparam Polygon an `InputIterator` with `value_type` being `Polygon_2<K>`
+        or a standard container of `K2::Point_2` elements.
 
 \sa `create_exterior_straight_skeleton_2()`
 \sa `Straight_skeleton_builder_2`

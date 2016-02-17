@@ -6,7 +6,9 @@ namespace CGAL {
 The class `Dummy_straight_skeleton_builder_2_visitor` provides a model for the 
 `StraightSkeletonBuilder_2_Visitor` concept which is the visitor 
 type required by the `StraightSkeletonBuilder_2` 
-concept. The class `Dummy_straight_skeleton_builder_2_visitor` has only one template argument: a model of the `StraightSkeleton_2` concept. 
+concept.
+
+\tparam Ss a model of the `StraightSkeleton_2` concept. 
 
 This class is the default visitor parameter of the straight skeleton builder. 
 All its methods are empty. 
@@ -28,7 +30,11 @@ public:
 /*!
 \ingroup PkgStraightSkeleton2Classes
 
-The class `Straight_skeleton_builder_2` encapsulates the construction of the 2D straight skeleton in the interior of a polygon with holes. Its first template parameter must be a model of the `StraightSkeletonBuilderTraits_2` concept, its second template parameter, must be a model of the `StraightSkeleton_2` concept, and its third template paramter must be a model of the `StraightSkeletonBuilder_2_Visitor` concept. If this last parameter is ommitted, the class `Dummy_straight_skeleton_builder_2_visitor` is used. 
+The class `Straight_skeleton_builder_2` encapsulates the construction of the 2D straight skeleton in the interior of a polygon with holes. 
+
+\tparam StraightSkeletonBuilderTraits_2 a model of the `StraightSkeletonBuilderTraits_2` concept
+\tparam StraightSkeleton_2  a model of the `StraightSkeleton_2` concept
+\tparam StraightSkeletonBuilder_2_Visitor a model of the `StraightSkeletonBuilder_2_Visitor` concept
 
 \cgalHeading{Algorithm}
 
@@ -77,7 +83,7 @@ A grassfire propagation picks the next unprocessed event (starting from the firs
 \sa `Straight_skeleton_2`
 
 */
-template< typename StraightSkeletonBuilderTraits_2 , typename StraightSkeleton_2, typename StraightSkeletonBuilder_2_Visitor >
+template< typename StraightSkeletonBuilderTraits_2 , typename StraightSkeleton_2, typename StraightSkeletonBuilder_2_Visitor=Dummy_straight_skeleton_builder_2_visitor<StraightSkeleton_2> >
 class Straight_skeleton_builder_2 {
 public:
 

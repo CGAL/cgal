@@ -19,7 +19,7 @@ The input polygons must be simple.
 The set of input polygons are unique and interior disjoint. That is, given distinct polygons 
 `P` and `Q`, there are vertices of `P` which are not on the boundary of `Q` and are all on the 
 bounded or unbounded side of `Q` (but not both). 
-\tparam OtputPolygonWithHolesPtrIterator must be an output iterator whose `value_type` is a smart pointer 
+\tparam OutputPolygonWithHolesPtrIterator must be an output iterator whose `value_type` is a smart pointer 
 (such as `boost::shared_ptr`) whose `element_type` is `Polygon_with_holes_2<K>`.  
 
 \sa `create_exterior_straight_skeleton_2()`
