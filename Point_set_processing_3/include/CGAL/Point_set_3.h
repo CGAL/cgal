@@ -76,6 +76,7 @@ public:
 
 protected:
 
+  
   struct Index_back_inserter {
 
     typedef std::output_iterator_tag iterator_category;
@@ -158,13 +159,13 @@ public:
 
   void push_back (const Point& p)
   {
-    Item i = m_base.push_back();
-    m_points[i] = p;
+    add_item();
+    m_indices[size()-1] = size()-1;
+    m_points[size()-1] = p;
   }
   void push_back (const Point& p, const Vector& n)
   {
-    m_base.push_back();
-    m_points[size()-1] = p;
+    push_back (p);
     assert (has_normals());
     m_normals[size()-1] = n;
   }
@@ -190,7 +191,12 @@ public:
   const_iterator end() const { return m_indices.array().end(); }
   bool empty() const { return (m_base.size() == 0); }
   std::size_t size () const { return m_base.size(); }
-  void clear() { m_base.clear(); }
+  void clear()
+  {
+    m_base.clear();
+    m_indices = m_base.template add<std::size_t> ("index").first;
+    m_points = m_base.template add<Point> ("point").first;
+  }
   Point& operator[] (Item index) { return m_points[m_indices[index]]; }
   const Point& operator[] (Item index) const { return m_points[m_indices[index]]; }
   Point& point (Item index) { return m_points[m_indices[index]]; }
