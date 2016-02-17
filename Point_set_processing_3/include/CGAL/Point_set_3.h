@@ -74,7 +74,7 @@ public:
   typedef typename Index_pmap::Array::vector_type::iterator iterator;
   typedef typename Index_pmap::Array::vector_type::const_iterator const_iterator;
 
-private:
+protected:
 
   struct Index_back_inserter {
 
@@ -109,6 +109,8 @@ private:
   template <typename Property>
   struct Property_push_pmap
   {
+    typedef typename Property::value_type value_type;
+
     Point_set& ps;
     Property& prop;
     std::size_t ind;
@@ -159,6 +161,13 @@ public:
     Item i = m_base.push_back();
     m_points[i] = p;
   }
+  void push_back (const Point& p, const Vector& n)
+  {
+    m_base.push_back();
+    m_points[size()-1] = p;
+    assert (has_normals());
+    m_normals[size()-1] = n;
+  }
 
   Index_pmap& indices()
   {
@@ -182,8 +191,10 @@ public:
   bool empty() const { return (m_base.size() == 0); }
   std::size_t size () const { return m_base.size(); }
   void clear() { m_base.clear(); }
-  Point& operator[] (Item index) { return m_points[index]; }
-  const Point& operator[] (Item index) const { return (*this)[index]; }
+  Point& operator[] (Item index) { return m_points[m_indices[index]]; }
+  const Point& operator[] (Item index) const { return m_points[m_indices[index]]; }
+  Point& point (Item index) { return m_points[m_indices[index]]; }
+  const Point& point (Item index) const { return m_points[m_indices[index]]; }
 
   void erase (iterator first, iterator beyond)
   {
@@ -264,8 +275,8 @@ public:
   {
     m_base.remove (m_normals);
   }
-  Vector& normal (Item index) { return m_normals[index]; }
-  const Vector& normal (Item index) const { return this->normal(index); }
+  Vector& normal (Item index) { return m_normals[m_indices[index]]; }
+  const Vector& normal (Item index) const { return m_normals[m_indices[index]]; }
 
   template <typename T>
   bool has_property (const std::string& name) const
