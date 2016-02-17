@@ -221,12 +221,12 @@ inline
 std::istream&
 operator>>(std::istream &is, Bbox_3& b)
 {
-    double xmin = (std::numeric_limits<double>::min)();
-    double ymin = (std::numeric_limits<double>::min)();
-    double zmin = (std::numeric_limits<double>::min)();
-    double xmax = (std::numeric_limits<double>::max)();
-    double ymax = (std::numeric_limits<double>::max)();
-    double zmax = (std::numeric_limits<double>::max)();
+    double xmin = 0;
+    double ymin = 0;
+    double zmin = 0;
+    double xmax = 0;
+    double ymax = 0;
+    double zmax = 0;
 
   switch(get_mode(is))
   {

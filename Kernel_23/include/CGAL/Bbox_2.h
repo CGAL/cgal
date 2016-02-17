@@ -196,10 +196,10 @@ inline
 std::istream&
 operator>>(std::istream &is, Bbox_2 &b)
 {
-    double xmin = (std::numeric_limits<double>::min)();
-    double ymin = (std::numeric_limits<double>::min)();
-    double xmax = (std::numeric_limits<double>::max)();
-    double ymax = (std::numeric_limits<double>::max)();
+    double xmin = 0;
+    double ymin = 0;
+    double xmax = 0;
+    double ymax = 0;
     
     switch(get_mode(is)) {
     case IO::ASCII :
