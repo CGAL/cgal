@@ -632,6 +632,9 @@ This allows to remesh a surface, and is equivalent to the function `make_surface
 
 \cgalExample{Mesh_3/remesh_polyhedral_surface.cpp}
 
+\cgalFigureBegin{figureremeshing,remeshing.jpg}
+View of a remeshed surface. (i) input mesh (ii) output mesh. Code from subsection \ref Mesh_3RemeshingPolyhedralSurface generates the file."
+\cgalFigureEnd
 
 \subsection Mesh_3DomainsFromSegmented3DImages Domains From Segmented 3D Images
 
