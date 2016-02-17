@@ -11,7 +11,7 @@
 /*!
 \addtogroup PkgTriangulations
 \cgalPkgDescriptionBegin{dD Triangulations,PkgTriangulationsSummary}
-\cgalPkgPicture{detail.png}
+\cgalPkgPicture{Hypertriangle.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Samuel Hornus, Olivier Devillers and Clément Jamin}
 \cgalPkgDesc{This package provides classes for manipulating 
