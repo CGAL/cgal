@@ -1,4 +1,4 @@
-/// \defgroup PkgSurfaceParameterization 3D Surface Mesh Parameterization Reference
+/// \defgroup PkgSurfaceParameterization Triangulated Surface Mesh Parameterization Reference
 
 
 /*!
