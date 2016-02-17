@@ -316,11 +316,18 @@ bool Scene_points_with_normal_item::write_ply_point_set(std::ostream& stream) co
 {
   Q_ASSERT(m_points != NULL);
 
+  if (m_points->has_normals())
+    return stream &&
+      CGAL::write_ply_points_and_normals(stream,
+                                         m_points->begin(), m_points->end(),
+                                         m_points->points(), m_points->normals(),
+                                         Kernel());
+
   return stream &&
-         CGAL::write_ply_points_and_normals(stream,
-                                            m_points->begin(), m_points->end(),
-                                            m_points->points(), m_points->normals(),
-                                            Kernel());
+    CGAL::write_ply_points(stream,
+                           m_points->begin(), m_points->end(),
+                           m_points->points(),
+                           Kernel());
 }
 
 // Loads point set from .OFF file
@@ -345,11 +352,17 @@ bool Scene_points_with_normal_item::write_off_point_set(std::ostream& stream) co
 {
   Q_ASSERT(m_points != NULL);
 
+  if (m_points->has_normals())
+    return stream &&
+      CGAL::write_off_points_and_normals(stream,
+                                         m_points->begin(), m_points->end(),
+                                         m_points->points(), m_points->normals(),
+                                         Kernel());
   return stream &&
-         CGAL::write_off_points_and_normals(stream,
-                                            m_points->begin(), m_points->end(),
-                                            m_points->points(), m_points->normals(),
-                                            Kernel());
+    CGAL::write_off_points (stream,
+                            m_points->begin(), m_points->end(),
+                            m_points->points(),
+                            Kernel());
 }
 
 // Loads point set from .XYZ file
@@ -391,11 +404,18 @@ bool Scene_points_with_normal_item::write_xyz_point_set(std::ostream& stream) co
 {
   Q_ASSERT(m_points != NULL);
 
+  if (m_points->has_normals())
+    return stream &&
+      CGAL::write_xyz_points_and_normals(stream,
+                                         m_points->begin(), m_points->end(),
+                                         m_points->points(),
+                                         m_points->normals(),
+                                         Kernel());
   return stream &&
-         CGAL::write_xyz_points_and_normals(stream,
-                                            m_points->begin(), m_points->end(),
-                                            m_points->points(), m_points->normals(),
-                                            Kernel());
+    CGAL::write_xyz_points (stream,
+                            m_points->begin(), m_points->end(),
+                            m_points->points(),
+                            Kernel());
 }
 
 QString
