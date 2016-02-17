@@ -106,6 +106,7 @@ public:
   {
     m_bounding_box_is_valid = false;
     m_radii_are_uptodate = false;
+    m_nb_selected = 0;
   }
 
   // copy constructor 
@@ -116,6 +117,7 @@ public:
     m_barycenter = p.m_barycenter;
     m_diameter_standard_deviation = p.m_diameter_standard_deviation;
     m_radii_are_uptodate = p.m_radii_are_uptodate;
+    m_nb_selected = 0;
   }
 
 
