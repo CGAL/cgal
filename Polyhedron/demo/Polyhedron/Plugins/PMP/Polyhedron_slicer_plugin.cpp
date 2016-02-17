@@ -65,7 +65,7 @@ public Q_SLOTS:
   void on_Generate_button_clicked();
   bool on_Update_plane_button_clicked();
   void plane_manipulated_frame_modified();
-  void item_about_to_be_destroyed(Scene_item* scene_item);
+  void item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item);
   void dock_widget_closed();
 
 protected:
@@ -140,7 +140,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::slicer_widget_action(){
     this, SLOT(plane_manipulated_frame_modified()));
 
   if(Scene* scene_casted = dynamic_cast<Scene*>(scene)) 
-  { connect(scene_casted, SIGNAL(itemAboutToBeDestroyed(Scene_item*)), this, SLOT(item_about_to_be_destroyed(Scene_item*))); }
+  { connect(scene_casted, SIGNAL(itemAboutToBeDestroyed(CGAL::Three::Scene_item*)), this, SLOT(item_about_to_be_destroyed(CGAL::Three::Scene_item*))); }
   scene->addItem(plane_item);
 
   // set distance_with_planes = bbox_diagona / 30
@@ -316,7 +316,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
   }
 }
 
-void Polyhedron_demo_polyhedron_slicer_plugin::item_about_to_be_destroyed(Scene_item* scene_item) {
+void Polyhedron_demo_polyhedron_slicer_plugin::item_about_to_be_destroyed(CGAL::Three::Scene_item* scene_item) {
   if(plane_item == NULL) { return; }// which means this plugin erased plane_item
   Scene_plane_item* destroyed_plane = qobject_cast<Scene_plane_item*>(scene_item);
   if(destroyed_plane && destroyed_plane == plane_item) {
