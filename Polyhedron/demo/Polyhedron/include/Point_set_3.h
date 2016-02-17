@@ -52,7 +52,32 @@
 template <class Gt>
 class Point_set_3 : public CGAL::Point_set_3<Gt>
 {
+private:
+
+  // Base class
+  typedef CGAL::Point_set_3<Gt> Base;
+  
 public:
+
+  typedef typename Base::iterator iterator;
+  typedef typename Base::const_iterator const_iterator;
+  
+  // Classic CGAL geometric types
+  typedef Gt  Geom_traits; ///< Geometric traits class.
+  typedef typename Geom_traits::FT FT;
+  typedef typename Geom_traits::Point_3 Point;  ///< typedef to Geom_traits::Point_3
+  typedef typename Geom_traits::Vector_3 Vector; ///< typedef to Geom_traits::Vector_3
+  typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
+  typedef typename Geom_traits::Sphere_3 Sphere;
+
+
+  using Base::m_points;
+  using Base::begin;
+  using Base::end;
+  using Base::empty;
+  using Base::size;
+  using Base::clear;
+  using Base::erase;
   
 private:
   
@@ -77,14 +102,14 @@ private:
 
   
 public:
-  Point_set_3 () : CGAL::Point_set_3 ()
+  Point_set_3 ()
   {
     m_bounding_box_is_valid = false;
     m_radii_are_uptodate = false;
   }
 
   // copy constructor 
-  Point_set_3 (const Point_set_3& p) : CGAL::Point_set_3 ()
+  Point_set_3 (const Point_set_3& p) : Base ()
   {
     m_bounding_box_is_valid = p.m_bounding_box_is_valid;
     m_bounding_box = p.m_bounding_box;
@@ -156,10 +181,7 @@ public:
   /// Deletes selected points.
   void delete_selection()
   {
-    // Deletes selected points using erase-remove idiom
-    for (std::size_t i = size() - 1; i != 0; -- i)
-      m_base.remove_vertex (Index (i));
-
+    erase (first_selected(), end());
     m_nb_selected = 0;
     invalidate_bounds();
   }
@@ -268,7 +290,7 @@ private:
     typedef CGAL::Min_sphere_of_points_d_traits_3<Gt,FT> Traits;
     typedef CGAL::Min_sphere_of_spheres_d<Traits> Min_sphere;
 
-    Min_sphere ms(begin(),end());
+    Min_sphere ms(m_points.array().begin(), m_points.array().end());
 
     typename Min_sphere::Cartesian_const_iterator coord = ms.center_cartesian_begin();
     FT cx = *coord++;
