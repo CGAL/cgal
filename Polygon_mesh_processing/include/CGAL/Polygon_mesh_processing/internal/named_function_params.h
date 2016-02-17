@@ -244,7 +244,7 @@ namespace parameters{
   face_normal_map(const FaceNormalMap& m)
   {
     typedef pmp_bgl_named_params<FaceNormalMap, face_normal_t> Params;
-    return Params(p);
+    return Params(m);
   }
 
   //overload
