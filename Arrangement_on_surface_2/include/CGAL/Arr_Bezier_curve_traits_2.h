@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-//
-//
 // Author(s)     : Ron Wein     <wein@post.tau.ac.il>
 //                 Iddo Hanniel <iddoh@cs.technion.ac.il>
 //                 Waqar Khan   <wkhan@mpi-inf.mpg.de>
@@ -564,8 +560,10 @@ public:
       {
         // Create the x-monotone subcurves with approximate endpoints.
         typename std::list<Point_2>::const_iterator pit;
-        Point_2       p0(B, Rational(0)); // A rational start point.
         unsigned int  xid = 1;            // Serial number of the subcurve.
+        Point_2       p0(B, xid, Rational(0)); // A rational start point.
+        // Note: xid is needed in ctr of p0 (and of p1 below),
+        // for handling end case of start point == end point.
 
         for (pit = vpts.begin(); pit != vpts.end(); ++pit)
         {
@@ -576,8 +574,7 @@ public:
           p0 = *pit;
         }
 
-        Point_2    p1(B, Rational(1)); // A rational end point.
-
+        Point_2    p1(B, xid, Rational(1)); // A rational end point.
         *oi++ = CGAL::make_object (X_monotone_curve_2 (B, xid,
                                                        p0, p1,
                                                        *p_cache));
@@ -593,10 +590,11 @@ public:
                                                     B.x_norm());
 
       // Create the x-monotone subcurves.
-      Point_2                                        p0 (B, Rational(0));
       Point_2                                        p1;
       typename Bezier_cache::Vertical_tangency_iter  it;
       unsigned int  xid = 1;            // Serial number of the subcurve.
+      Point_2                                        p0 (B, xid, Rational(0));
+
 
       for (it = vt_list.begin(); it != vt_list.end(); ++it)
       {
@@ -609,7 +607,7 @@ public:
       }
 
       // Create the final subcurve.
-      p1 = Point_2 (B, Rational(1));
+      p1 = Point_2 (B, xid, Rational(1));
       *oi++ = CGAL::make_object (X_monotone_curve_2 (B, xid,
                                                      p0, p1,
                                                      *p_cache));
