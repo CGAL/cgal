@@ -98,7 +98,7 @@ init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface)
   this->scene = scene_interface;
   this->mw = mainWindow;
   
-  QAction* actionLoadFunction = new QAction("Load &implicit function", mw);
+  QAction* actionLoadFunction = new QAction("Load &Implicit Function", mw);
   if( NULL != actionLoadFunction )
   {
     connect(actionLoadFunction, SIGNAL(triggered()), this, SLOT(load_function()));

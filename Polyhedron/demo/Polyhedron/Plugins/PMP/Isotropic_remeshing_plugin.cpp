@@ -54,7 +54,7 @@ public:
     this->scene = scene_interface;
     this->mw = mainWindow;
 
-    actionIsotropicRemeshing_ = new QAction("Isotropic remeshing", mw);
+    actionIsotropicRemeshing_ = new QAction("Isotropic Remeshing", mw);
     actionIsotropicRemeshing_->setProperty("subMenuName", "Polygon Mesh Processing");
     if (actionIsotropicRemeshing_) {
       connect(actionIsotropicRemeshing_, SIGNAL(triggered()),

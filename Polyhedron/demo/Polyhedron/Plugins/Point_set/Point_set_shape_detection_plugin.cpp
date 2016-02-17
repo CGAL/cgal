@@ -40,7 +40,7 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
 
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
-    actionDetect = new QAction(tr("Point set shape detection"), mainWindow);
+    actionDetect = new QAction(tr("Point Set Shape Detection"), mainWindow);
     actionDetect->setObjectName("actionDetect");
 
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);

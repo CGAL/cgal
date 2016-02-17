@@ -34,7 +34,7 @@ void Camera_positions_list::setViewer(CGAL::Three::Viewer_interface* viewer)
 void Camera_positions_list::on_plusButton_pressed()
 {
   if(!m_viewer) return;
-  addItem(tr("Camera position #%1").arg(++counter),
+  addItem(tr("Camera Position #%1").arg(++counter),
           m_viewer->dumpCameraCoordinates());
 }
 

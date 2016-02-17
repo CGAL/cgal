@@ -36,7 +36,7 @@ class Polyhedron_demo_point_set_upsampling_plugin :
 
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
-    actionEdgeAwareUpsampling = new QAction(tr("Point set edge aware upsampling"), mainWindow);
+    actionEdgeAwareUpsampling = new QAction(tr("Point Set Edge Aware Upsampling"), mainWindow);
     actionEdgeAwareUpsampling->setObjectName("actionEdgeAwareUpsampling");
 
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);

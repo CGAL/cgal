@@ -24,7 +24,7 @@ public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionDetectFeatures; }
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface)
   {
-    actionDetectFeatures= new QAction(tr("VCM features estimation"), mainWindow);
+    actionDetectFeatures= new QAction(tr("VCM Features Estimation"), mainWindow);
     actionDetectFeatures->setObjectName("actionDetectFeatures");
 
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);

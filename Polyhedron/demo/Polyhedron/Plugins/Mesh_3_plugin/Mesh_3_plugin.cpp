@@ -54,9 +54,9 @@ public:
   {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    actionMesh_3 = new QAction("Create a tetrahedral mesh", mw);
+    actionMesh_3 = new QAction("Create a Tetrahedral Mesh", mw);
     if(actionMesh_3) {
-      actionMesh_3->setProperty("subMenuName", "3D Mesh Generation");
+      actionMesh_3->setProperty("subMenuName", "Tetrahedral Mesh Generation");
       connect(actionMesh_3, SIGNAL(triggered()),
               this, SLOT(mesh_3()));
     }

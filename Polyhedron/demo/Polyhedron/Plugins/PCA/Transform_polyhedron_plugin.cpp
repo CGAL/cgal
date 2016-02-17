@@ -39,7 +39,7 @@ public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    actionTransformPolyhedron = new QAction("Affine transformation of polyhedron", mw);
+    actionTransformPolyhedron = new QAction("Affine Transformation of Polyhedron", mw);
     if(actionTransformPolyhedron) {
       connect(actionTransformPolyhedron, SIGNAL(triggered()),this, SLOT(go()));
     }
