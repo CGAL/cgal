@@ -194,10 +194,8 @@ void Polyhedron_demo_xyz_plugin::addPointSetButton_clicked()
       {
           const Kernel::Point_3 p(coord[0], coord[1], coord[2]);
           Kernel::Vector_3 n(0,0,0);
-          UI_point point(p,n);
-          item->point_set()->push_back(point);
 
-
+          item->point_set()->push_back(p, n);
           counter =0;
       }
   }
