@@ -186,9 +186,9 @@ void Scene_points_with_normal_item::compute_normals_and_vertices() const
         // Draw *selected* points
       for (; i < m_points->size (); ++ i)
 	{
-	  positions_points.push_back(m_points->point(i).x());
-	  positions_points.push_back(m_points->point(i).y());
-	  positions_points.push_back(m_points->point(i).z());
+	  positions_selected_points.push_back(m_points->point(i).x());
+	  positions_selected_points.push_back(m_points->point(i).y());
+	  positions_selected_points.push_back(m_points->point(i).z());
 	}
     }
 
