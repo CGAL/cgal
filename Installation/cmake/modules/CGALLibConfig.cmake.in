@@ -8,7 +8,7 @@ if(NOT POLICY CMP0024 OR NOT CGAL_BUILDING_LIBS)
   if(NOT MSVC)
     get_property(@LIBRARY_NAME@_LIBRARY TARGET CGAL::@LIBRARY_NAME@ PROPERTY LOCATION)
   else()
-    set(@LIBRARY_NAME@ "")
+    set(@LIBRARY_NAME@_LIBRARY "")
   endif()
 else()
   # We are currently in a CGAL Build and CGALExports.cmake has not
