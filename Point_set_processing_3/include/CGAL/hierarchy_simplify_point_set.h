@@ -242,10 +242,15 @@ namespace CGAL {
 	    while (it != current_cluster->first.end ())
 	      {
 		typename std::list<Input_type>::iterator current = it ++;
+#ifdef CGAL_USE_PROPERTY_MAPS_API_V1
+                const Point& point = get(point_pmap, current);
+#else
+                const Point& point = get(point_pmap, *current);
+#endif
 
 		// Test if point is on negative side of plane and
 		// transfer it to the negative_side cluster if it is
-		if (Vector (current_cluster->second, *current) * v < 0)
+		if (Vector (current_cluster->second, point) * v < 0)
 		  negative_side->first.splice (negative_side->first.end (),
 					       current_cluster->first, current);
 		++ current_cluster_size;
