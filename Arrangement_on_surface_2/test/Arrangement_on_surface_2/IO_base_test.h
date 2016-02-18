@@ -1468,8 +1468,9 @@ template <typename InputStream_>
 bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
                                                  X_monotone_curve_2& xcv)
 {
-  std::list<CGAL::Object>                  x_objs;
-  std::list<CGAL::Object>::const_iterator  xoit;
+  std::cout << std::endl;
+  std::list<CGAL::Object> x_objs;
+  std::list<CGAL::Object>::const_iterator xoit;
   Curve_2 tmp_cv;
   is >> tmp_cv;
   Rational B_psx = Rational(tmp_cv.control_point(0).x());
@@ -1484,6 +1485,9 @@ bool IO_base_test<Base_geom_traits>::read_xcurve(InputStream_& is,
     this->m_geom_traits.make_x_monotone_2_object();
   make_x_monotone(tmp_cv, std::front_inserter (x_objs));
   xoit = x_objs.begin();
+  size_t id(0);
+  if (!is.eof()) is >> id;
+  std::advance(xoit, id);
   if (CGAL::assign(xcv, *xoit))
     return true;
   return false;
