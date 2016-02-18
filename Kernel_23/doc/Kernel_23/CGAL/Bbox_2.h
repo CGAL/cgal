@@ -22,7 +22,7 @@ introduces an \em empty bounding box with lower left
 corner point at \f$ (\infty, \infty) \f$
 and with upper right corner point at
 \f$ (-\infty, -\infty) \f$, \f$ \infty \f$ being
-`std::numeric<limits<double>::%infinity()`.
+`std::numeric_limits<double>::%infinity()`.
 */
   Bbox_2();
 /*!
