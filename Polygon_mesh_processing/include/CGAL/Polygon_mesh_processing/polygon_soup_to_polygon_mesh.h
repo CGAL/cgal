@@ -27,6 +27,10 @@
 #include <CGAL/property_map.h>
 #include <set>
 
+#include <boost/range/size.hpp>
+#include <boost/range/value_type.hpp>
+#include <boost/range/reference.hpp>
+
 namespace CGAL
 {
 namespace Polygon_mesh_processing
@@ -100,24 +104,29 @@ public:
   * This function does not require a range of points as an argument
   * since the check is purely topological.
   *
-  * @tparam Polygon a `std::vector<std::size_t>` containing the indices
-  *         of the points of the polygon face
+  * @tparam PolygonRange a model of the concept `SinglePassRange`
+  * whose value_type is a model of the concept `BidirectionalRange`
+  * whose value_type is `std::size_t`.
   *
-  * @param polygons each element in the vector describes a polygon using the index of the vertices
+  * @param polygons each element in the range describes a polygon
+  * using the index of the vertices.
   *
   */
-  template<class Polygon>
-  bool is_polygon_soup_a_polygon_mesh(const std::vector<Polygon>& polygons)
+  template<class PolygonRange>
+  bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
   {
-    typedef typename std::iterator_traits<
-              typename Polygon::iterator >::value_type                   V_ID;
+    typedef typename boost::range_value<
+      typename boost::range_value<
+        PolygonRange>::type >::type V_ID;
+    typedef typename boost::range_value<
+      PolygonRange>::type           Polygon;
 
     std::set< std::pair<V_ID, V_ID> > edge_set;
     BOOST_FOREACH(const Polygon& polygon, polygons)
     {
-      std::size_t nb_edges = polygon.size();
+      std::size_t nb_edges = boost::size(polygon);
       if (nb_edges<3) return false;
-      V_ID prev=polygon.back();
+      V_ID prev= *--boost::end(polygon);
       BOOST_FOREACH(V_ID id, polygon)
         if (! edge_set.insert(std::pair<V_ID, V_ID>(prev,id)).second )
           return false;
