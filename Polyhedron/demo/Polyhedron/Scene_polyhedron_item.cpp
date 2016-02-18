@@ -379,7 +379,6 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
     typedef Polyhedron::Traits	    Kernel;
     typedef Kernel::Point_3	    Point;
     typedef Kernel::Vector_3	    Vector;
-    typedef Kernel::FT              FT;
     typedef Polyhedron::Facet_iterator Facet_iterator;
     typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
     typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
