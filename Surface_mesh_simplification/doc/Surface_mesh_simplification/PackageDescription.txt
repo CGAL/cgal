@@ -5,7 +5,7 @@
 \addtogroup PkgSurfaceMeshSimplification
 \todo check generated documentation
 \cgalPkgDescriptionBegin{Triangulated Surface Mesh Simplification,PkgSurfaceMeshSimplificationSummary}
-\cgalPkgPicture{detail.png}
+\cgalPkgPicture{SMS-detail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthor{Fernando Cacciola}
 \cgalPkgDesc{This package provides an algorithm to simplify a triangulated surface mesh  by edge collapsing.  It is an implementation of the Turk/Lindstrom <I>memoryless</I>  surface mesh simplification algorithm.}
