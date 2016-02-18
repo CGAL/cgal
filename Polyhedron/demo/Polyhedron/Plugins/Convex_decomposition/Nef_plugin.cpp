@@ -38,7 +38,7 @@ public:
       scene = scene_interface;
       actions_map["actionConvexDecomposition"] = getActionFromMainWindow(mw, "actionConvexDecomposition");
       actions_map["actionConvexDecomposition"]->setProperty("subMenuName",
-                                                            "Convex Decomposition of Polyhedra");
+                                                            "Convex Decomposition");
 
       actions_map["actionToNef"] = getActionFromMainWindow(mw, "actionToNef");
       actions_map["actionToPoly"] = getActionFromMainWindow(mw, "actionToPoly");

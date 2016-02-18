@@ -29,7 +29,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label">
         <property name="text">
-         <string>Longest edge</string>
+         <string>Longest Edge</string>
         </property>
        </widget>
       </item>
@@ -43,14 +43,14 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_9">
         <property name="text">
-         <string>Radius ratio bound</string>
+         <string>Radius Ratio Bound</string>
         </property>
        </widget>
       </item>
       <item row="2" column="0">
        <widget class="QLabel" name="label_10">
         <property name="text">
-         <string>Beta angle</string>
+         <string>Beta Angle</string>
         </property>
        </widget>
       </item>
@@ -98,7 +98,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_2">
         <property name="text">
-         <string>Average neighborhood size</string>
+         <string>Average Neighborhood Size</string>
         </property>
        </widget>
       </item>
@@ -118,7 +118,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_4">
         <property name="text">
-         <string>Size of sample to estimate neighborhood</string>
+         <string>Size of Sample to Estimate Neighborhood</string>
         </property>
        </widget>
       </item>
@@ -188,7 +188,7 @@
    <item row="6" column="0">
     <widget class="QRadioButton" name="buttonPoisson">
      <property name="text">
-      <string>Poisson reconstruction</string>
+      <string>Poisson Reconstruction</string>
      </property>
     </widget>
    </item>
@@ -207,7 +207,7 @@
       <item row="0" column="0">
        <widget class="QLabel" name="label_5">
         <property name="text">
-         <string>Min triangle angle:</string>
+         <string>Min Triangle Angle:</string>
         </property>
        </widget>
       </item>
@@ -230,7 +230,7 @@
       <item row="1" column="0">
        <widget class="QLabel" name="label_7">
         <property name="text">
-         <string>Max triangle size:</string>
+         <string>Max Triangle Size:</string>
         </property>
        </widget>
       </item>
@@ -259,7 +259,7 @@
       <item row="2" column="0">
        <widget class="QLabel" name="label_6">
         <property name="text">
-         <string>Approximation error:</string>
+         <string>Approximation Error:</string>
         </property>
        </widget>
       </item>
@@ -302,7 +302,7 @@
       <item row="4" column="0">
        <widget class="QCheckBox" name="m_inputTwoPasses">
         <property name="text">
-         <string>Uses two passes</string>
+         <string>Perform two passes</string>
         </property>
        </widget>
       </item>
@@ -319,14 +319,14 @@
    <item row="2" column="0">
     <widget class="QRadioButton" name="buttonAdvancing">
      <property name="text">
-      <string>Advancing front reconstruction</string>
+      <string>Advancing Front Reconstruction</string>
      </property>
     </widget>
    </item>
    <item row="0" column="0">
     <widget class="QRadioButton" name="buttonAuto">
      <property name="text">
-      <string>Select method and parameters automatically</string>
+      <string>Select Method and Parameters Automatically</string>
      </property>
      <property name="checked">
       <bool>true</bool>
@@ -336,7 +336,7 @@
    <item row="4" column="0">
     <widget class="QRadioButton" name="buttonScaleSpace">
      <property name="text">
-      <string>Scale space reconstruction</string>
+      <string>Scale Space Reconstruction</string>
      </property>
     </widget>
    </item>

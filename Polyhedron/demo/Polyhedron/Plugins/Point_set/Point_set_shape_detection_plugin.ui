@@ -94,7 +94,7 @@
      <item>
       <widget class="QLabel" name="label">
        <property name="text">
-        <string>Normal tolerance:</string>
+        <string>Normal Tolerance:</string>
        </property>
       </widget>
      </item>
@@ -118,7 +118,7 @@
      <item>
       <widget class="QLabel" name="label_3">
        <property name="text">
-        <string>minimum no. of points:</string>
+        <string>Minimum Numbr of Points:</string>
        </property>
       </widget>
      </item>
@@ -145,7 +145,7 @@
      <item>
       <widget class="QLabel" name="label_4">
        <property name="text">
-        <string>Connectivity epsilon:</string>
+        <string>Connectivity Epsilon:</string>
        </property>
       </widget>
      </item>
@@ -175,7 +175,7 @@
      <item>
       <widget class="QLabel" name="label_5">
        <property name="text">
-        <string>Search rigorosity (probability):</string>
+        <string>Search Rigorosity (Probability):</string>
        </property>
       </widget>
      </item>
@@ -200,14 +200,14 @@
    <item>
     <widget class="QCheckBox" name="m_generate_alpha">
      <property name="text">
-      <string>Generate alpha shapes for planes</string>
+      <string>Generate Alpha Shapes for Planes</string>
      </property>
     </widget>
    </item>
    <item>
     <widget class="QCheckBox" name="m_do_not_generate_subset">
      <property name="text">
-      <string>Do not generate point subsets</string>
+      <string>Do Not Generate Point Subsets</string>
      </property>
     </widget>
    </item>

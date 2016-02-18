@@ -542,7 +542,7 @@
   </action>
   <action name="actionInsideOut">
    <property name="text">
-    <string>&amp;Inside-out</string>
+    <string>&amp;Inside-Out</string>
    </property>
   </action>
   <action name="actionRemeshing">
