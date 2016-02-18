@@ -156,7 +156,7 @@ init(QMainWindow* mainWindow,
   actionOdt = new QAction(tr("odt_optimize_mesh_3"), mw);
   if( NULL != actionOdt )
   {
-    actionOdt->setProperty("subMenuName", "3D Mesh Generation");
+    actionOdt->setProperty("subMenuName", "Tetrahedral Mesh Generation");
     connect(actionOdt, SIGNAL(triggered()), this, SLOT(odt()));
   }
 #endif
@@ -165,7 +165,7 @@ init(QMainWindow* mainWindow,
   actionLloyd = new QAction(tr("lloyd_optimize_mesh_3"), mw);
   if( NULL != actionLloyd )
   {
-    actionLloyd->setProperty("subMenuName", "3D Mesh Generation");
+    actionLloyd->setProperty("subMenuName", "Tetrahedral Mesh Generation");
     connect(actionLloyd, SIGNAL(triggered()), this, SLOT(lloyd()));
   }
 #endif
@@ -174,7 +174,7 @@ init(QMainWindow* mainWindow,
   actionPerturb = new QAction(tr("perturb_mesh_3"), mw);
   if( NULL != actionPerturb )
   {
-    actionPerturb->setProperty("subMenuName", "3D Mesh Generation");
+    actionPerturb->setProperty("subMenuName", "Tetrahedral Mesh Generation");
     connect(actionPerturb, SIGNAL(triggered()), this, SLOT(perturb()));
   }
 #endif
@@ -183,7 +183,7 @@ init(QMainWindow* mainWindow,
   actionExude =new QAction(tr("exude_mesh_3"), mw);
   if( NULL != actionExude )
   {
-    actionExude->setProperty("subMenuName", "3D Mesh Generation");
+    actionExude->setProperty("subMenuName", "Tetrahedral Mesh Generation");
     connect(actionExude, SIGNAL(triggered()), this, SLOT(exude()));
   }
 #endif
