@@ -48,15 +48,15 @@ public:
       scene = scene_interface;
       actions_map["actionMVC"] = new QAction("MVC", mw);
       actions_map["actionMVC"]->setProperty("subMenuName",
-        "Planar Parameterization of Triangulated Surface Meshes");
+        "Triangulated Surface Mesh Parameterization");
 
       actions_map["actionDCP"] = new QAction ("DCP", mw);
       actions_map["actionDCP"]->setProperty("subMenuName",
-        "Planar Parameterization of Triangulated Surface Meshes");
+        "Triangulated Surface Mesh Parameterization");
 
       actions_map["actionLSC"] = new QAction("LSC", mw);
       actions_map["actionLSC"]->setProperty("subMenuName",
-        "Planar Parameterization of Triangulated Surface Meshes");
+        "Triangulated Surface Mesh Parameterization");
 
       connect(actions_map["actionMVC"], SIGNAL(triggered()),
               this, SLOT(on_actionMVC_triggered()));

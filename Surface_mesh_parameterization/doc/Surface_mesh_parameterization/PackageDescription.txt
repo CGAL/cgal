@@ -1,9 +1,9 @@
-/// \defgroup PkgSurfaceParameterization Planar Parameterization of Triangulated Surface Meshes Reference
+/// \defgroup PkgSurfaceParameterization Triangulated Surface Mesh Parameterization Reference
 
 
 /*!
 \addtogroup PkgSurfaceParameterization
-\cgalPkgDescriptionBegin{Planar Parameterization of Triangulated Surface Meshes,PkgSurfaceParameterizationSummary}
+\cgalPkgDescriptionBegin{Triangulated Surface Mesh Parameterization,PkgSurfaceParameterizationSummary}
 \cgalPkgPicture{bimbaDetail.png}
 \cgalPkgSummaryBegin
 \cgalPkgAuthors{Laurent Saboret, Pierre Alliez and Bruno Lévy}
