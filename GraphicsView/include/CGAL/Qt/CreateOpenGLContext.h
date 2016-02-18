@@ -30,10 +30,8 @@ inline QGLContext* createOpenGLContext()
     format.setVersion(2,1);
     format.setProfile(QSurfaceFormat::CompatibilityProfile);
     context->setFormat(format);
-    context->create();
     QGLContext *result = QGLContext::fromOpenGLContext(context);
     result->create();
-    delete context;
     return result;
 }
 } // namespace Qt
