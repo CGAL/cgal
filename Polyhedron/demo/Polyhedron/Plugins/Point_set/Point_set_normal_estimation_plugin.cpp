@@ -152,6 +152,8 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
     Point_set* points = item->point_set();
     if(points == NULL)
         return;
+    if (!(points->has_normals()))
+      points->add_normal_property();
 
     // Gets options
     Point_set_demo_normal_estimation_dialog dialog;
@@ -208,23 +210,29 @@ void Polyhedron_demo_point_set_normal_estimation_plugin::on_actionNormalEstimati
           std::cerr << "Estimates Normals Direction using VCM (R="
                     << dialog.offset_radius() << " and r=" << dialog.convolution_radius() << ")...\n";
 
-          CGAL::vcm_estimate_normals<CGAL::Default_diagonalize_traits, Point_set::iterator,
-                                     Point_set::Point_pmap, Point_set::Vector_pmap, Kernel>
-            (points->begin(), points->end(),
+          CGAL::vcm_estimate_normals<CGAL::Default_diagonalize_traits<double, 3> >
+            (points->begin(),
+             points->end(),
              points->points(),
              points->normals(),
-             dialog.offset_radius(), dialog.convolution_radius(), k, -1);
+             dialog.offset_radius(),
+             dialog.convolution_radius(),
+             k,
+             -1);
         }
       else
         {
           std::cerr << "Estimates Normals Direction using VCM (R="
                     << dialog.offset_radius() << " and k=" << dialog.convolution_neighbors() << ")...\n";
-
-          CGAL::vcm_estimate_normals<CGAL::Default_diagonalize_traits>
-            (points->begin(), points->end(),
+          CGAL::vcm_estimate_normals<CGAL::Default_diagonalize_traits<double, 3> >
+            (points->begin(),
+             points->end(),
              points->points(),
              points->normals(),
-             dialog.offset_radius(), dialog.convolution_neighbors(), k, -1);
+             dialog.offset_radius(),
+             0,
+             k,
+             dialog.convolution_neighbors());
         }
 
       std::size_t memory = CGAL::Memory_sizer().virtual_size();
