@@ -92,7 +92,7 @@ QMenu* CGAL::Three::Scene_item::contextMenu()
     {
         if(!supportsRenderingMode(RenderingMode(mode))) continue;
         QString mName = modeName(RenderingMode(mode));
-        defaultContextMenu->addAction(tr("Set %1 mode")
+        defaultContextMenu->addAction(tr("Set %1 Mode")
                                       .arg(mName),
                                       this,
                                       slotName(RenderingMode(mode)));

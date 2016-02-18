@@ -290,7 +290,7 @@ MainWindow::MainWindow(QWidget* parent)
   debugger->setObjectName("qt script debugger");
   QAction* debuggerMenuAction = 
     menuBar()->addMenu(debugger->createStandardMenu());
-  debuggerMenuAction->setText(tr("Qt Script &debug"));
+  debuggerMenuAction->setText(tr("Qt Script &Debug"));
   for(unsigned int i = 0; i < 9; ++i)
   {
     QDockWidget* dock = new QDockWidget(debug_widgets_names[i], this);
@@ -343,7 +343,7 @@ MainWindow::MainWindow(QWidget* parent)
   this->readState("MainWindow", Size|State);
 
   //Manages the group_item creation
-  actionAddToGroup= new QAction("Add new group", this);
+  actionAddToGroup= new QAction("Add New Group", this);
 
   if(actionAddToGroup) {
     connect(actionAddToGroup, SIGNAL(triggered()),
@@ -1194,7 +1194,7 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
               this, SLOT(statistics_on_item()));
       menu->addSeparator();
       if(!item->property("source filename").toString().isEmpty()) {
-        QAction* reload = menu->addAction(tr("&Reload item from file"));
+        QAction* reload = menu->addAction(tr("&Reload Item from File"));
         reload->setData(qVariantFromValue(selectedItemIndex));
         connect(reload, SIGNAL(triggered()),
                 this, SLOT(reload_item()));
@@ -1203,7 +1203,7 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
       saveas->setData(qVariantFromValue(selectedItemIndex));
       connect(saveas,  SIGNAL(triggered()),
               this, SLOT(on_actionSaveAs_triggered()));
-      QAction* showobject = menu->addAction(tr("&Zoom to this object"));
+      QAction* showobject = menu->addAction(tr("&Zoom to this Object"));
       showobject->setData(qVariantFromValue(selectedItemIndex));
       connect(showobject, SIGNAL(triggered()),
               this, SLOT(viewerShowObject()));
@@ -1274,7 +1274,7 @@ void MainWindow::updateInfo() {
     if(item->getNbIsolatedvertices() > 0)
     item_text += QString("<br />Number of isolated vertices : %1<br />").arg(item->getNbIsolatedvertices());
     if(!item_filename.isEmpty()) {
-      item_text += QString("<br /><i>File: %1").arg(item_filename);
+      item_text += QString("<br />File:<i> %1").arg(item_filename);
     }
     ui->infoLabel->setText(item_text);
   }
