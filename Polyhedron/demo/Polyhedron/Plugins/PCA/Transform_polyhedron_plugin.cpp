@@ -94,6 +94,7 @@ void Polyhedron_demo_transform_polyhedron_plugin::start(Scene_polyhedron_item* p
   connect(transform_item, SIGNAL(stop()),this, SLOT(go()));
   connect(transform_item, SIGNAL(killed()),this, SLOT(transformed_killed()));
   tr_item_index=scene->addItem(transform_item);
+  scene->setSelectedItem(tr_item_index);
 }
 
 
