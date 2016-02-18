@@ -103,10 +103,11 @@ void Polyhedron_demo_point_set_bilateral_smoothing_plugin::on_actionBilateralSmo
 	CGAL::bilateral_smooth_point_set<Concurrency_tag>
 	  (points->begin(), 
 	   points->end(),
-	   CGAL::make_identity_property_map(Point_set::value_type()),
-	   CGAL::make_normal_of_point_with_normal_pmap(Point_set::value_type()),
+           points->points(),
+           points->normals(),
 	   dialog.neighborhood_size (),
-	   dialog.sharpness_angle ());
+	   dialog.sharpness_angle (),
+           Kernel());
       }
 
 
