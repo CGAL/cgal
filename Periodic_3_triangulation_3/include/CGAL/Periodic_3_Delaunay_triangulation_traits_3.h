@@ -115,6 +115,7 @@ class Periodic_3_Delaunay_triangulation_traits_3;
 // Partial specialization for Filtered_kernel<CK>.
 #include <CGAL/Filtered_kernel.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Periodic_3_Delaunay_triangulation_filtered_traits_3.h>
 
 namespace CGAL {
@@ -140,6 +141,12 @@ public:
 
 template < class Off >
 class Periodic_3_Delaunay_triangulation_traits_3<CGAL::Epick, Off>
+  : public Periodic_3_Delaunay_triangulation_filtered_traits_3<CGAL::Epick, Off>
+{
+  typedef CGAL::Epick Kernel;
+};
+template < class Off >
+class Periodic_3_Delaunay_triangulation_traits_3<CGAL::Epeck, Off>
   : public Periodic_3_Delaunay_triangulation_filtered_traits_3<CGAL::Epick, Off>
 {
   typedef CGAL::Epick Kernel;

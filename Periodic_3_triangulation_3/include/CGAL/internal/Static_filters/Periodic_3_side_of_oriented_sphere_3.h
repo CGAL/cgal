@@ -24,6 +24,7 @@
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
+#include <CGAL/internal/Static_filters/tools.h>
 
 #include <CGAL/Periodic_3_offset_3.h>
 
@@ -57,19 +58,20 @@ public:
   {
       CGAL_PROFILER("Periodic_3_side_of_oriented_sphere_3 calls");
 
-
+      Get_approx<Point_3> get_approx; // Identity functor for all points
+                                      // but lazy points.
       double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, tx, ty, tz;
 
-      if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
-          fit_in_double(p.z(), pz) &&
-          fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
-          fit_in_double(q.z(), qz) &&
-          fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry) &&
-          fit_in_double(r.z(), rz) &&
-          fit_in_double(s.x(), sx) && fit_in_double(s.y(), sy) &&
-          fit_in_double(s.z(), sz) &&
-          fit_in_double(t.x(), tx) && fit_in_double(t.y(), ty) &&
-          fit_in_double(t.z(), tz))
+      if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
+          fit_in_double(get_approx(p).z(), pz) &&
+          fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
+          fit_in_double(get_approx(q).z(), qz) &&
+          fit_in_double(get_approx(r).x(), rx) && fit_in_double(get_approx(r).y(), ry) &&
+          fit_in_double(get_approx(r).z(), rz) &&
+          fit_in_double(get_approx(s).x(), sx) && fit_in_double(get_approx(s).y(), sy) &&
+          fit_in_double(get_approx(s).z(), sz) &&
+          fit_in_double(get_approx(t).x(), tx) && fit_in_double(get_approx(t).y(), ty) &&
+          fit_in_double(get_approx(t).z(), tz))
       {
           CGAL_PROFILER("Periodic_3_side_of_oriented_sphere_3 semi-static attempts");
 
@@ -163,6 +165,8 @@ public:
 
     CGAL_PROFILER("Periodic_3_side_of_oriented_sphere_3 calls");
 
+    Get_approx<Point_3> get_approx; // Identity functor for all points
+                                    // but lazy points.
 
     double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, tx, ty, tz;
     double domxmax, domxmin, domymax, domymin, domzmax, domzmin;
@@ -170,16 +174,16 @@ public:
     int oty = o_t.y();
     int otz = o_t.z();
 
-    if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
-        fit_in_double(p.z(), pz) &&
-        fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
-        fit_in_double(q.z(), qz) &&
-        fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry) &&
-        fit_in_double(r.z(), rz) &&
-        fit_in_double(s.x(), sx) && fit_in_double(s.y(), sy) &&
-        fit_in_double(s.z(), sz) &&
-        fit_in_double(t.x(), tx) && fit_in_double(t.y(), ty) &&
-        fit_in_double(t.z(), tz) &&
+    if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
+        fit_in_double(get_approx(p).z(), pz) &&
+        fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
+        fit_in_double(get_approx(q).z(), qz) &&
+        fit_in_double(get_approx(r).x(), rx) && fit_in_double(get_approx(r).y(), ry) &&
+        fit_in_double(get_approx(r).z(), rz) &&
+        fit_in_double(get_approx(s).x(), sx) && fit_in_double(get_approx(s).y(), sy) &&
+        fit_in_double(get_approx(s).z(), sz) &&
+        fit_in_double(get_approx(t).x(), tx) && fit_in_double(get_approx(t).y(), ty) &&
+        fit_in_double(get_approx(t).z(), tz) &&
 	fit_in_double(_dom->xmax(), domxmax) &&
 	fit_in_double(_dom->xmin(), domxmin) &&
 	fit_in_double(_dom->ymax(), domymax) &&
