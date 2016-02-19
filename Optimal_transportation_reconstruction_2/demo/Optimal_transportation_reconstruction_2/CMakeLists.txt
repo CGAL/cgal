@@ -95,24 +95,24 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
 
 else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
 
-  set(RS2_MISSING_DEPS "")
+  set(OTR2_MISSING_DEPS "")
 
   if(NOT CGAL_FOUND)
-    set(RS2_MISSING_DEPS "the CGAL library, ${RS2_MISSING_DEPS}")
+    set(OTR2_MISSING_DEPS "the CGAL library, ${OTR2_MISSING_DEPS}")
   endif()
 
   if(NOT CGAL_Qt5_FOUND)
-    set(RS2_MISSING_DEPS "the CGAL Qt5 library, ${RS2_MISSING_DEPS}")
+    set(OTR2_MISSING_DEPS "the CGAL Qt5 library, ${OTR2_MISSING_DEPS}")
   endif()
 
   if(NOT Qt5_FOUND)
-    set(RS2_MISSING_DEPS "Qt5.4, ${RS2_MISSING_DEPS}")
+    set(OTR2_MISSING_DEPS "Qt5.4, ${OTR2_MISSING_DEPS}")
   endif()
 
   if(NOT OPENGL_FOUND)
-    set(RS2_MISSING_DEPS "OpenGL, ${RS2_MISSING_DEPS}")
+    set(OTR2_MISSING_DEPS "OpenGL, ${OTR2_MISSING_DEPS}")
   endif()
 
-  message(STATUS "NOTICE: This demo requires ${RS2_MISSING_DEPS}and will not be compiled.")
+  message(STATUS "NOTICE: This demo requires ${OTR2_MISSING_DEPS}and will not be compiled.")
 
 endif (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
