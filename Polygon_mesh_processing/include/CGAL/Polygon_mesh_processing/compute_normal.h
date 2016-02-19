@@ -270,7 +270,7 @@ compute_vertex_normals(const PolygonMesh& pmesh
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
     `Kernel::Vector_3` as value type.
-* @tparam FaceNormalMap a model of `WritablePropertyMap` with
+* @tparam FaceNormalMap a model of `ReadWritePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
     `Kernel::Vector_3` as value type.
 *
