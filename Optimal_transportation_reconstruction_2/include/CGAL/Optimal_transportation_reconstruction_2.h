@@ -17,11 +17,11 @@
 //
 // Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
 
-#ifndef CGAL_RECONSTRUCTION_SIMPLIFICATION_2_H_
-#define CGAL_RECONSTRUCTION_SIMPLIFICATION_2_H_
+#ifndef CGAL_OPTIMAL_TRANSPORTATION_RECONSTRUCTION_2_H_
+#define CGAL_OPTIMAL_TRANSPORTATION_RECONSTRUCTION_2_H_
 
-#include <CGAL/RS_2/Reconstruction_triangulation_2.h>
-#include <CGAL/RS_2/Reconstruction_edge_2.h>
+#include <CGAL/OTR_2/Reconstruction_triangulation_2.h>
+#include <CGAL/OTR_2/Reconstruction_edge_2.h>
 
 #include <CGAL/property_map.h>
 #include <CGAL/Real_timer.h>
@@ -43,7 +43,7 @@ namespace CGAL {
 
 
 /*!
-\ingroup PkgReconstructionSimplification2Classes
+\ingroup PkgOptimalTransportationReconstruction2Classes
 
 This class provides a means to reconstruct a 1-dimensional shape from a set of 2D points with masses.
 The algorithm computes an initial 2D Delaunay triangulation from the input points, 
@@ -70,7 +70,7 @@ The former simplifies the triangulation until n points remain, while the latter
 stops after `steps` edge collapse operators have been performed.
 Furthermore, we can relocate the vertices by calling `relocate_all_points()`.
 
-\tparam Traits a model of the concept `ReconstructionSimplificationTraits_2`.
+\tparam Traits a model of the concept `OptimalTransportationReconstructionTraits_2`.
 
 \tparam PointPMap a model of `ReadablePropertyMap` with value type `Traits::Point_2`.
         Defaults to <a href="http://www.boost.org/doc/libs/release/libs/property_map/doc/identity_property_map.html">`boost::typed_identity_property_map<Traits::Point_2>`</a> 
@@ -85,7 +85,7 @@ template<
   class Traits,
   class PointPMap = boost::typed_identity_property_map <typename Traits::Point_2>,
   class MassPMap  = boost::static_property_map <typename Traits::FT> >
-class Reconstruction_simplification_2
+class Optimal_transportation_reconstruction_2
 {
 public:
 
@@ -119,7 +119,7 @@ public:
   /*!
     The Output simplex.
    */
-  typedef RS_2::Reconstruction_triangulation_2<Traits>  Triangulation;
+  typedef OTR_2::Reconstruction_triangulation_2<Traits>  Triangulation;
 
   typedef typename Triangulation::Vertex                Vertex;
   typedef typename Triangulation::Vertex_handle         Vertex_handle;
@@ -188,7 +188,7 @@ public:
   /// @{
 
   /*!
-  Constructor of the reconstruction simplification class. 
+  Constructor of the optimal transportation reconstruction class. 
   It builds an initial simplicial complex 
   for a given range of point-mass pairs.
 
@@ -211,7 +211,7 @@ public:
   \param traits       The traits class.
    */
   template <class InputRange>
-  Reconstruction_simplification_2(
+  Optimal_transportation_reconstruction_2(
     const InputRange& input_range,
     PointPMap point_map = PointPMap(),
     MassPMap  mass_map = MassPMap(1),
@@ -325,14 +325,14 @@ public:
 
   /// \cond SKIP_IN_MANUAL
 
-  Reconstruction_simplification_2()
+  Optimal_transportation_reconstruction_2()
   : m_traits(m_dt.geom_traits())
   {
     initialize_parameters();
   }
 
 
-  ~Reconstruction_simplification_2() {
+  ~Optimal_transportation_reconstruction_2() {
     clear();
   }
 
@@ -351,7 +351,7 @@ public:
     m_ignore = 0;
   }
 
-  //Function if one wants to create a Reconstruction_simplification_2
+  //Function if one wants to create a Optimal_transportation_reconstruction_2
   //without yet specifying the input in the constructor.
   template <class InputIterator>
   void initialize(
@@ -1493,7 +1493,7 @@ public:
   /*!
     Writes the points and segments of the output simplex in an indexed format into output iterators.
         \tparam PointOutputIterator An output iterator with value type 
-                \link Reconstruction_simplification_2::Point Point \endlink.
+                \link Optimal_transportation_reconstruction_2::Point Point \endlink.
         \tparam IndexOutputIterator An output iterator with value type 
                 `std::size_t`.
         \tparam IndexPairOutputIterator An output iterator with value type 
@@ -1576,9 +1576,9 @@ public:
     isolated points and one for storing the edges of the reconstructed shape.
 
     \tparam PointOutputIterator An output iterator with value type 
-            \link Reconstruction_simplification_2::Point Point \endlink.
+            \link Optimal_transportation_reconstruction_2::Point Point \endlink.
     \tparam SegmentOutputIterator An output iterator with value type 
-            \link Reconstruction_simplification_2::Segment Segment \endlink.
+            \link Optimal_transportation_reconstruction_2::Segment Segment \endlink.
    */
   template<class PointOutputIterator, class SegmentOutputIterator>
   void list_output (PointOutputIterator v_it, SegmentOutputIterator e_it) const
@@ -1670,4 +1670,4 @@ public:
 };
 } // namespace
 
-#endif // CGAL_RECONSTRUCTION_SIMPLIFICATION_2_H_
+#endif // CGAL_OPTIMAL_TRANSPORTATION_RECONSTRUCTION_2_H_
