@@ -1,11 +1,11 @@
 // test_quality.cpp
 
 //----------------------------------------------------------
-// Tests the quality of the Reconstruction_simplification_2 process
+// Tests the quality of the Optimal_transportation_reconstruction_2 process
 //----------------------------------------------------------
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Reconstruction_simplification_2.h>
+#include <CGAL/Optimal_transportation_reconstruction_2.h>
 #include "testing_tools.h"
 
 #include <iostream>
@@ -35,15 +35,15 @@ int main ()
   Point_property_map point_pmap;
   Mass_property_map  mass_pmap;
 
-  CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map>
-    rs2(points, point_pmap, mass_pmap);
+  CGAL::Optimal_transportation_reconstruction_2<K, Point_property_map, Mass_property_map>
+    otr2(points, point_pmap, mass_pmap);
 
-  rs2.run_until(9);
+  otr2.run_until(9);
 
-  std::cout << "Total_edge_cost: "<< rs2.total_edge_cost() << std::endl;
+  std::cout << "Total_edge_cost: "<< otr2.total_edge_cost() << std::endl;
 
-  assert(rs2.total_edge_cost() < 0.3);
-  assert(0 < rs2.total_edge_cost());
+  assert(otr2.total_edge_cost() < 0.3);
+  assert(0 < otr2.total_edge_cost());
 
-  rs2.print_stats_debug();
+  otr2.print_stats_debug();
 }

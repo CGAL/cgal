@@ -1,11 +1,11 @@
 // test_reconstruction_until.cpp
 
 //----------------------------------------------------------
-// Test the cgal environment for Reconstruction_simplification_2
+// Test the cgal environment for Optimal_transportation_reconstruction_2
 //----------------------------------------------------------
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Reconstruction_simplification_2.h>
+#include <CGAL/Optimal_transportation_reconstruction_2.h>
 
 #include <fstream>
 #include <iostream>
@@ -26,14 +26,14 @@ int main ()
   //use the stair example for testing
   load_xy_file_points<Point>("data/stair-noise00.xy", points);
 
-  CGAL::Reconstruction_simplification_2<K> rs2(points);
-  rs2.run_until(9);
-  rs2.print_stats_debug();
+  CGAL::Optimal_transportation_reconstruction_2<K> otr2(points);
+  otr2.run_until(9);
+  otr2.print_stats_debug();
 
   std::vector<Point> isolated_points;
   std::vector<Segment> edges;
 
-  rs2.list_output(
+  otr2.list_output(
     std::back_inserter(isolated_points), std::back_inserter(edges));
 
   std::cout << "Isolated_points: " << isolated_points.size() << std::endl;

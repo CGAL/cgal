@@ -1,12 +1,12 @@
 // test_vertex_edge.cpp
 
 //----------------------------------------------------------
-// Test the cgal environment for Reconstruction_simplification_2
+// Test the cgal environment for Optimal_transportation_reconstruction_2
 //----------------------------------------------------------
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Reconstruction_simplification_2.h>
-#include <CGAL/RS_2/Reconstruction_triangulation_2.h>
+#include <CGAL/Optimal_transportation_reconstruction_2.h>
+#include <CGAL/OTR_2/Reconstruction_triangulation_2.h>
 
 #include "testing_tools.h"
 
@@ -29,7 +29,7 @@ typedef std::vector<PointMassPair> PointMassList;
 typedef CGAL::First_of_pair_property_map <PointMassPair> Point_property_map;
 typedef CGAL::Second_of_pair_property_map <PointMassPair> Mass_property_map;
 
-typedef CGAL::RS_2::Reconstruction_triangulation_2<K> Rt_2;
+typedef CGAL::OTR_2::Reconstruction_triangulation_2<K> Rt_2;
 typedef Rt_2::Finite_edges_iterator Finite_edges_iterator;
 
 typedef Rt_2::Edge Edge;
@@ -66,11 +66,11 @@ void test_edge_collapse()
   Point_property_map point_pmap;
   Mass_property_map  mass_pmap;
 
-  CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map>
-    rs2(points, point_pmap, mass_pmap);
+  CGAL::Optimal_transportation_reconstruction_2<K, Point_property_map, Mass_property_map>
+    otr2(points, point_pmap, mass_pmap);
 
   Rt_2 rt2;
-  rs2.extract_tds_output(rt2);
+  otr2.extract_tds_output(rt2);
 
   FT min_priority = 1000;
   R_edge_2 contract_edge;
@@ -78,7 +78,7 @@ void test_edge_collapse()
        ei != rt2.finite_edges_end(); ++ei) 
   {
     R_edge_2 cur_r_edge;
-    if(!rs2.create_pedge(*ei, cur_r_edge))
+    if(!otr2.create_pedge(*ei, cur_r_edge))
       continue;
 
     print_edge(cur_r_edge);
@@ -91,7 +91,7 @@ void test_edge_collapse()
   }
 
   R_edge_2 pedge;
-  rs2.pick_edge(0, pedge);
+  otr2.pick_edge(0, pedge);
 
   std::cout << "--------" << std::endl;
   print_edge(contract_edge);
@@ -105,7 +105,7 @@ void test_edge_collapse()
   // priority value.
   assert(CGAL::abs(pedge.priority() - contract_edge.priority())
          < pedge.priority()*1e-13);
-  rs2.do_collapse(contract_edge.edge());
+  otr2.do_collapse(contract_edge.edge());
 
   bool found = false;
   for (Finite_edges_iterator ei = rt2.finite_edges_begin();
@@ -130,17 +130,17 @@ void test_num_of_vertices_in_triangulation()
   PointMassList points;
   simple_point_set(points);
 
-  CGAL::Reconstruction_simplification_2<K, Point_property_map, Mass_property_map> rs2;
+  CGAL::Optimal_transportation_reconstruction_2<K, Point_property_map, Mass_property_map> otr2;
   int nb = 0;
   for (PointMassList::iterator it = points.begin(); it != points.end(); it++)
   {
     PointMassPair pmp = *it;
     Point point = pmp.first;
-    rs2.insert_point(point, false, nb++);
+    otr2.insert_point(point, false, nb++);
   }
 
   Rt_2 rt2;
-  rs2.extract_tds_output(rt2);
+  otr2.extract_tds_output(rt2);
 
   //test if vertices are indeed added to the Reconstruction_triangulation_2
   assert(points.size() == rt2.number_of_vertices());

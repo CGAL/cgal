@@ -1,11 +1,11 @@
 // test_output_modules.cpp
 
 //----------------------------------------------------------
-// Test the cgal environment for Reconstruction_simplification_2
+// Test the cgal environment for Optimal_transportation_reconstruction_2
 //----------------------------------------------------------
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Reconstruction_simplification_2.h>
+#include <CGAL/Optimal_transportation_reconstruction_2.h>
 
 #include <iostream>
 #include <cassert>
@@ -18,12 +18,12 @@ typedef K::FT                                               FT;
 typedef K::Point_2                                          Point;
 typedef K::Segment_2                                        Segment;
 
-typedef CGAL::Reconstruction_simplification_2<K>            Rs_2;
-typedef Rs_2::Vertex                                        Vertex;
-typedef Rs_2::Rec_edge_2                                    R_edge_2;
+typedef CGAL::Optimal_transportation_reconstruction_2<K>    Otr_2;
+typedef Otr_2::Vertex                                       Vertex;
+typedef Otr_2::Rec_edge_2                                   R_edge_2;
 
-void test_list_output(Rs_2& rs2);
-void test_index_output(Rs_2& rs2);
+void test_list_output(Otr_2& otr2);
+void test_index_output(Otr_2& otr2);
 
 int main ()
 {
@@ -31,22 +31,22 @@ int main ()
   //use the stair example for testing
   load_xy_file_points<Point>("data/stair-noise00.xy", points);
 
-  Rs_2 rs2(points);
-  rs2.run(100); //100 steps
+  Otr_2 otr2(points);
+  otr2.run(100); //100 steps
 
-  test_list_output(rs2);
-  test_index_output(rs2);
+  test_list_output(otr2);
+  test_index_output(otr2);
 }
 
 
-void test_index_output(Rs_2& rs2)
+void test_index_output(Otr_2& otr2)
 {
   std::cout <<"(-------------OFF OUTPUT---------- )" << std::endl;
 
   std::vector<Point> points;
   std::vector<std::size_t> isolated_points;
   std::vector<std::pair<std::size_t,std::size_t> > edges;
-  rs2.indexed_output(
+  otr2.indexed_output(
       std::back_inserter(points), 
       std::back_inserter(isolated_points),
       std::back_inserter(edges));
@@ -92,14 +92,14 @@ void test_index_output(Rs_2& rs2)
   }
 }
 
-void test_list_output(Rs_2& rs2) 
+void test_list_output(Otr_2& otr2) 
 {
   std::cout <<"(-------------List OUTPUT---------- )" << std::endl;
 
   std::vector<Point> isolated_points;
   std::vector<Segment> edges;
 
-  rs2.list_output(
+  otr2.list_output(
     std::back_inserter(isolated_points), std::back_inserter(edges));
 
   int vertex_count = 0;

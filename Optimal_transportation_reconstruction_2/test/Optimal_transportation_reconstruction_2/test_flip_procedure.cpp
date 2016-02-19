@@ -2,11 +2,11 @@
 // test_flip_procedure.cpp
 
 //----------------------------------------------------------
-// Test the cgal environment for Reconstruction_simplification_2
+// Test the cgal environment for Optimal_transportation_reconstruction_2
 //----------------------------------------------------------
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Reconstruction_simplification_2.h>
+#include <CGAL/Optimal_transportation_reconstruction_2.h>
 #include "testing_tools.h"
 
 #include <cassert>
@@ -24,9 +24,9 @@ int main ()
 
   for (std::size_t i = 1 ; i <= points.size() ; i += 20)
   {
-    CGAL::Reconstruction_simplification_2<K> rs2(points);
-    rs2.run_until(i);
-    rs2.print_stats_debug();
-    assert(rs2.number_of_vertices() == i);
+    CGAL::Optimal_transportation_reconstruction_2<K> otr2(points);
+    otr2.run_until(i);
+    otr2.print_stats_debug();
+    assert(otr2.number_of_vertices() == i);
   }
 }
