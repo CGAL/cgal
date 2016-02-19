@@ -1,4 +1,4 @@
-project( Reconstruction_simplification_2_example )
+project( Optimal_transportation_reconstruction_2_example )
 
 cmake_minimum_required(VERSION 2.6.2)
 if("${CMAKE_MAJOR_VERSION}.${CMAKE_MINOR_VERSION}" VERSION_GREATER 2.6)
@@ -21,10 +21,10 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "include")
 
-  create_single_source_cgal_program( "rs2_simplest_example.cpp" )
-  create_single_source_cgal_program( "rs2_list_output_example.cpp" )
-  create_single_source_cgal_program( "rs2_indexed_output_example.cpp" )
-  create_single_source_cgal_program( "rs2_mass_example.cpp" )
+  create_single_source_cgal_program( "otr2_simplest_example.cpp" )
+  create_single_source_cgal_program( "otr2_list_output_example.cpp" )
+  create_single_source_cgal_program( "otr2_indexed_output_example.cpp" )
+  create_single_source_cgal_program( "otr2_mass_example.cpp" )
 
 else()
   

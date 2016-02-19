@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Reconstruction_simplification_2.h>
+#include <CGAL/Optimal_transportation_reconstruction_2.h>
 
 #include <fstream>
 #include <iostream>
@@ -21,8 +21,8 @@ typedef std::vector<PointMassPair>                          PointMassList;
 typedef CGAL::First_of_pair_property_map <PointMassPair>    Point_property_map;
 typedef CGAL::Second_of_pair_property_map <PointMassPair>   Mass_property_map;
 
-typedef CGAL::Reconstruction_simplification_2<
-    K, Point_property_map, Mass_property_map>                 Rs_2;
+typedef CGAL::Optimal_transportation_reconstruction_2<
+    K, Point_property_map, Mass_property_map>                 Otr_2;
 
 void load_xym_file(const std::string& filename, PointMassList& points)
 {
@@ -46,14 +46,14 @@ int main ()
   Point_property_map point_pmap;
   Mass_property_map  mass_pmap;
 
-  Rs_2 rs2(points, point_pmap, mass_pmap);
+  Otr_2 otr2(points, point_pmap, mass_pmap);
 
-  rs2.run(100); // 100 steps
+  otr2.run(100); // 100 steps
 
   std::vector<Point> isolated_vertices;
   std::vector<Segment> edges;
 
-  rs2.list_output(
+  otr2.list_output(
     std::back_inserter(isolated_vertices), std::back_inserter(edges));
 
   std::cout << "Isolated vertices:" << std::endl;

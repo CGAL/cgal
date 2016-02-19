@@ -1,5 +1,5 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Reconstruction_simplification_2.h>
+#include <CGAL/Optimal_transportation_reconstruction_2.h>
 
 #include <fstream>
 #include <iostream>
@@ -11,7 +11,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::FT                                               FT;
 typedef K::Point_2                                          Point;
 
-typedef CGAL::Reconstruction_simplification_2<K>            Rs_2;
+typedef CGAL::Optimal_transportation_reconstruction_2<K>    Otr_2;
 
 void load_xy_file(const std::string& filename, std::vector<Point>& points)
 {
@@ -23,7 +23,7 @@ void load_xy_file(const std::string& filename, std::vector<Point>& points)
   ifs.close();
 }
 
-void indexed_output(Rs_2& rs2)
+void indexed_output(Otr_2& otr2)
 {  
   std::cout << "(-------------Off output---------- )" << std::endl;
 
@@ -31,7 +31,7 @@ void indexed_output(Rs_2& rs2)
   std::vector<std::size_t> isolated_vertices;
   std::vector<std::pair<std::size_t,std::size_t> > edges;
 
-  rs2.indexed_output(
+  otr2.indexed_output(
       std::back_inserter(points),
       std::back_inserter(isolated_vertices),
       std::back_inserter(edges));
@@ -60,9 +60,9 @@ int main ()
 
   load_xy_file("data/stair-noise00.xy", points);
 
-  Rs_2 rs2(points);
-  rs2.run(100); // 100 steps
-  indexed_output(rs2);
+  Otr_2 otr2(points);
+  otr2.run(100); // 100 steps
+  indexed_output(otr2);
 
   return 0;
 }
