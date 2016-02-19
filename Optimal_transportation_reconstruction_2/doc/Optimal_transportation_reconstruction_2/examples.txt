@@ -1,6 +1,6 @@
 /*!
-\example Reconstruction_simplification_2/rs2_simplest_example.cpp
-\example Reconstruction_simplification_2/rs2_list_output_example.cpp
-\example Reconstruction_simplification_2/rs2_indexed_output_example.cpp
-\example Reconstruction_simplification_2/rs2_mass_example.cpp
+\example Optimal_transportation_reconstruction_2/otr2_simplest_example.cpp
+\example Optimal_transportation_reconstruction_2/otr2_list_output_example.cpp
+\example Optimal_transportation_reconstruction_2/otr2_indexed_output_example.cpp
+\example Optimal_transportation_reconstruction_2/otr2_mass_example.cpp
 */

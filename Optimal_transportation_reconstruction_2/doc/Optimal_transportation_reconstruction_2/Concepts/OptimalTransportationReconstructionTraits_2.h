@@ -1,21 +1,21 @@
 
 /*!
-\ingroup PkgReconstructionSimplification2Concepts
+\ingroup PkgOptimalTransportationReconstruction2Concepts
 \cgalConcept
 
-The concept `ReconstructionSimplificationTraits_2` describes the requirements 
-for the traits class of `CGAL::Reconstruction_simplification_2`.
+The concept `OptimalTransportationReconstructionTraits_2` describes the requirements 
+for the traits class of `CGAL::Optimal_transportation_reconstruction_2`.
 
 \cgalRefines `DelaunayTriangulationTraits_2` 
 
 \cgalHasModel Any model of the `Kernel` concept
 \cgalHasModel `CGAL::Exact_predicates_inexact_constructions_kernel` (recommended)
 
-\sa `CGAL::Reconstruction_simplification_2`
+\sa `CGAL::Optimal_transportation_reconstruction_2`
 
 */
 
-class ReconstructionSimplificationTraits_2 {
+class OptimalTransportationReconstructionTraits_2 {
 public:
 
   /// \name Types 
@@ -129,19 +129,19 @@ public:
   /*!
   %Default constructor. 
   */ 
-  ReconstructionSimplificationTraits_2(); 
+  OptimalTransportationReconstructionTraits_2(); 
 
   /*!
   Copy constructor. 
   */ 
-  ReconstructionSimplificationTraits_2 ( 
-  const ReconstructionSimplificationTraits_2& ); 
+  OptimalTransportationReconstructionTraits_2 ( 
+  const OptimalTransportationReconstructionTraits_2& ); 
 
   /*!
   Assignment operator.
   */ 
-  ReconstructionSimplificationTraits_2& operator= 
-  (const ReconstructionSimplificationTraits_2& ); 
+  OptimalTransportationReconstructionTraits_2& operator= 
+  (const OptimalTransportationReconstructionTraits_2& ); 
 
   /// @} 
 
@@ -162,5 +162,5 @@ public:
 
   /// @}
 
-}; /* end ReconstructionSimplificationTraits_2 */
+}; /* end OptimalTransportationReconstructionTraits_2 */
 
