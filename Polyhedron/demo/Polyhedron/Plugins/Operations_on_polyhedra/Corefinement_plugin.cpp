@@ -41,7 +41,7 @@ public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    actionPolyhedronCorefinement_3 = new QAction("Polyhedra corefinement (A/B)", mw);
+    actionPolyhedronCorefinement_3 = new QAction("Polyhedra Corefinement (A/B)", mw);
     actionPolyhedronCorefinement_3->setProperty("subMenuName", "Operations on Polyhedra");
     if(actionPolyhedronCorefinement_3) {
       connect(actionPolyhedronCorefinement_3, SIGNAL(triggered()),

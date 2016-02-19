@@ -470,7 +470,7 @@ class Polyhedron_demo_surface_reconstruction_plugin :
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
 
-    actionSurfaceReconstruction = new QAction(tr("Surface reconstruction"), mainWindow);
+    actionSurfaceReconstruction = new QAction(tr("Surface Reconstruction"), mainWindow);
     actionSurfaceReconstruction->setObjectName("actionSurfaceReconstruction");
 
     CGAL::Three::Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);

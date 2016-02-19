@@ -27,7 +27,7 @@ public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface) {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    actionSharEdges = new QAction("Detect sharp features", mw);
+    actionSharEdges = new QAction("Detect Sharp Features", mw);
     actionSharEdges->setObjectName("detectSharpFeaturesAction");
     if(actionSharEdges) {
       connect(actionSharEdges, SIGNAL(triggered()),

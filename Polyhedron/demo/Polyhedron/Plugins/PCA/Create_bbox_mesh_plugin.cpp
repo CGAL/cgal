@@ -91,11 +91,11 @@ private:
 void Create_bbox_mesh_plugin::init(QMainWindow* mainWindow, Scene_interface* scene_interface)
 {
   scene = scene_interface;
-  actionBbox = new QAction(tr("Create &bbox mesh"), mainWindow);
+  actionBbox = new QAction(tr("Create &Bbox Mesh"), mainWindow);
   actionBbox->setObjectName("createBboxMeshAction");
   connect(actionBbox, SIGNAL(triggered()),
           this, SLOT(createBbox()));
-  actionExtendedBbox = new QAction(tr("Create &extended bbox mesh"), mainWindow);
+  actionExtendedBbox = new QAction(tr("Create &Extended Bbox Mesh"), mainWindow);
   actionExtendedBbox->setObjectName("createExtendedBboxMeshAction");
   connect(actionExtendedBbox, SIGNAL(triggered()),
           this, SLOT(createExtendedBbox()));

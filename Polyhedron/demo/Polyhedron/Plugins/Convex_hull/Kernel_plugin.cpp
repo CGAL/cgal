@@ -67,7 +67,7 @@ void Polyhedron_demo_kernel_plugin::on_actionKernel_triggered()
     get_triangles(*pMesh,std::back_inserter(triangles));
 
     // solve LP 
-    std::cout << "Solve linear program...";
+    std::cout << "Solve linear program..." << triangles.size();
     Polyhedron_kernel kernel;
     if(!kernel.solve(triangles.begin(),triangles.end()))
     {

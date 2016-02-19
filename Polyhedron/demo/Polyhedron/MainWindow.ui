@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>CGAL Polyhedron demo</string>
+   <string>CGAL Three</string>
   </property>
   <property name="windowIcon">
    <iconset resource="Polyhedron_3.qrc">
@@ -37,7 +37,7 @@
      <x>0</x>
      <y>0</y>
      <width>978</width>
-     <height>20</height>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
@@ -73,7 +73,7 @@
     </property>
     <widget class="QMenu" name="menu_Boolean_operations">
      <property name="title">
-      <string>&amp;Boolean operations</string>
+      <string>&amp;Boolean Operations</string>
      </property>
      <addaction name="actionToNef"/>
      <addaction name="actionToPoly"/>
@@ -99,7 +99,7 @@
     </property>
     <widget class="QMenu" name="menuDockWindows">
      <property name="title">
-      <string>&amp;Dock windows</string>
+      <string>&amp;Dock Windows</string>
      </property>
      <addaction name="dummyAction"/>
     </widget>
@@ -298,8 +298,8 @@
            <rect>
             <x>0</x>
             <y>0</y>
-            <width>541</width>
-            <height>175</height>
+            <width>534</width>
+            <height>174</height>
            </rect>
           </property>
           <layout class="QGridLayout" name="gridLayout">
@@ -390,17 +390,17 @@
   </action>
   <action name="actionFitPlane">
    <property name="text">
-    <string>Fit &amp;plane</string>
+    <string>Fit &amp;Plane</string>
    </property>
   </action>
   <action name="actionFitLine">
    <property name="text">
-    <string>Fit &amp;line</string>
+    <string>Fit &amp;Line</string>
    </property>
   </action>
   <action name="actionEstimateCurvature">
    <property name="text">
-    <string>&amp;Curvature estimation</string>
+    <string>&amp;Curvature Estimation</string>
    </property>
   </action>
   <action name="actionLoad">
@@ -459,12 +459,12 @@
   </action>
   <action name="actionConvexHull">
    <property name="text">
-    <string>&amp;Convex hull</string>
+    <string>&amp;Convex Hull</string>
    </property>
   </action>
   <action name="actionEraseAll">
    <property name="text">
-    <string>&amp;Erase all</string>
+    <string>&amp;Erase All</string>
    </property>
   </action>
   <action name="actionOptions">
@@ -489,12 +489,12 @@
   </action>
   <action name="actionSaveAll">
    <property name="text">
-    <string>Save a&amp;ll</string>
+    <string>Save A&amp;ll</string>
    </property>
   </action>
   <action name="actionMergeAll">
    <property name="text">
-    <string>Mer&amp;ge all</string>
+    <string>Mer&amp;ge All</string>
    </property>
   </action>
   <action name="actionMerge">
@@ -509,17 +509,17 @@
   </action>
   <action name="actionSelectAll">
    <property name="text">
-    <string>Select &amp;all</string>
+    <string>Select &amp;All</string>
    </property>
   </action>
   <action name="actionSelectNone">
    <property name="text">
-    <string>Select &amp;none</string>
+    <string>Select &amp;None</string>
    </property>
   </action>
   <action name="actionSelectInvert">
    <property name="text">
-    <string>&amp;Invert selection</string>
+    <string>&amp;Invert Selection</string>
    </property>
   </action>
   <action name="actionShowHide">
@@ -532,17 +532,17 @@
   </action>
   <action name="actionSetPolyhedronA">
    <property name="text">
-    <string>Set polyhedron A</string>
+    <string>Set Polyhedron A</string>
    </property>
   </action>
   <action name="actionSetPolyhedronB">
    <property name="text">
-    <string>Set polyhedron B</string>
+    <string>Set Polyhedron B</string>
    </property>
   </action>
   <action name="actionInsideOut">
    <property name="text">
-    <string>&amp;Inside-out</string>
+    <string>&amp;Inside-Out</string>
    </property>
   </action>
   <action name="actionRemeshing">
@@ -557,12 +557,12 @@
   </action>
   <action name="actionMVC">
    <property name="text">
-    <string>Mean &amp;value coordinates</string>
+    <string>Mean &amp;Value Coordinates</string>
    </property>
   </action>
   <action name="actionDCP">
    <property name="text">
-    <string>Discrete &amp;conformal maps</string>
+    <string>Discrete &amp;Conformal Maps</string>
    </property>
   </action>
   <action name="actionExplode">
@@ -572,12 +572,12 @@
   </action>
   <action name="actionToNef">
    <property name="text">
-    <string>Convert to nef polyhedron</string>
+    <string>Convert to Nef Polyhedron</string>
    </property>
   </action>
   <action name="actionToPoly">
    <property name="text">
-    <string>Convert to normal polyhedron</string>
+    <string>Convert to Normal Polyhedron</string>
    </property>
   </action>
   <action name="actionDraw_two_sides">
@@ -585,7 +585,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Draw &amp;two sides</string>
+    <string>Draw &amp;Two Sides</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+T</string>
@@ -593,7 +593,7 @@
   </action>
   <action name="actionRecenterScene">
    <property name="text">
-    <string>Re&amp;center scene</string>
+    <string>Re&amp;center Scene</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+C</string>
@@ -601,12 +601,12 @@
   </action>
   <action name="actionSetBackgroundColor">
    <property name="text">
-    <string>Change &amp;background color...</string>
+    <string>Change &amp;Background Color...</string>
    </property>
   </action>
   <action name="actionMinkowskiSum">
    <property name="text">
-    <string>&amp;Minkowski sum (A/B)</string>
+    <string>&amp;Minkowski Sum (A/B)</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+O, M</string>
@@ -619,27 +619,27 @@
   </action>
   <action name="actionSaveSnapshot">
    <property name="text">
-    <string>Save snapshot</string>
+    <string>Save Snapshot</string>
    </property>
   </action>
   <action name="actionDumpCamera">
    <property name="text">
-    <string>&amp;Dump camera coordinates</string>
+    <string>&amp;Dump Camera Coordinates</string>
    </property>
   </action>
   <action name="action_Copy_camera">
    <property name="text">
-    <string>&amp;Copy camera</string>
+    <string>&amp;Copy Camera</string>
    </property>
   </action>
   <action name="action_Paste_camera">
    <property name="text">
-    <string>&amp;Paste camera</string>
+    <string>&amp;Paste Camera</string>
    </property>
   </action>
   <action name="actionSelect_all_items">
    <property name="text">
-    <string>Select all items</string>
+    <string>Select All Items</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+A</string>
@@ -647,7 +647,7 @@
   </action>
   <action name="actionLoad_Script">
    <property name="text">
-    <string>Load &amp;script</string>
+    <string>Load &amp;Script</string>
    </property>
   </action>
   <action name="actionPreferences">
@@ -657,12 +657,12 @@
   </action>
   <action name="actionLSC">
    <property name="text">
-    <string>Least square conformal maps</string>
+    <string>Least Square Conformal Maps</string>
    </property>
   </action>
   <action name="actionLoad_plugin">
    <property name="text">
-    <string>Load plugin</string>
+    <string>Load Plugin</string>
    </property>
   </action>
   <action name="actionQuick_camera_mode">
@@ -673,7 +673,7 @@
     <bool>true</bool>
    </property>
    <property name="text">
-    <string>Quick camera mode</string>
+    <string>Quick Camera Mode</string>
    </property>
   </action>
  </widget>

@@ -36,7 +36,7 @@ public:
       this->scene = scene_interface;
       this->mw = mainWindow;
       //creates and link the actions
-      actionAdd_polylines= new QAction("Add polylines", mw);
+      actionAdd_polylines= new QAction("Add Polylines", mw);
       if(actionAdd_polylines) {
         connect(actionAdd_polylines, SIGNAL(triggered()),
                 this, SLOT(on_actionAdd_polylines_triggered()));
@@ -52,7 +52,7 @@ public:
         for ( QList<QAction*>::iterator it_action = menuFileActions.begin(),
              end = menuFileActions.end() ; it_action != end ; ++ it_action ) //Q_FOREACH( QAction* action, menuFileActions)
         {
-          if ( NULL != *it_action && (*it_action)->text().contains("Load plugin") )
+          if ( NULL != *it_action && (*it_action)->text().contains("Load Plugin") )
           {
             ++it_action;
             if ( it_action != end && NULL != *it_action )

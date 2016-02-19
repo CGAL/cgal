@@ -39,7 +39,7 @@ public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    actionTransformPolyhedron = new QAction("Affine transformation of polyhedron", mw);
+    actionTransformPolyhedron = new QAction("Affine Transformation", mw);
     if(actionTransformPolyhedron) {
       connect(actionTransformPolyhedron, SIGNAL(triggered()),this, SLOT(go()));
     }
@@ -76,7 +76,7 @@ void Polyhedron_demo_transform_polyhedron_plugin::go(){
 
 void Polyhedron_demo_transform_polyhedron_plugin::transformed_killed(){
     started=false;
-    actionTransformPolyhedron->setText("Affine transformation of polyhedron");
+    actionTransformPolyhedron->setText("Affine Transformation");
 }
 
 void Polyhedron_demo_transform_polyhedron_plugin::start(Scene_polyhedron_item* poly_item){
@@ -90,10 +90,11 @@ void Polyhedron_demo_transform_polyhedron_plugin::start(Scene_polyhedron_item* p
   transform_item = new Scene_polyhedron_transform_item(qglviewer::Vec(x,y,z),poly_item,scene);
   transform_item->setManipulatable(true);
   transform_item->setColor(Qt::green);
-  transform_item->setName(tr("Affine transformation of polyhedron"));
+  transform_item->setName(tr("Affine Transformation"));
   connect(transform_item, SIGNAL(stop()),this, SLOT(go()));
   connect(transform_item, SIGNAL(killed()),this, SLOT(transformed_killed()));
   tr_item_index=scene->addItem(transform_item);
+  scene->setSelectedItem(tr_item_index);
 }
 
 

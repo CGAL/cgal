@@ -11,7 +11,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>Camera positions</string>
+   <string>Camera Positions</string>
   </property>
   <widget class="QWidget" name="dockWidgetContents">
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -20,7 +20,7 @@
       <item>
        <widget class="QToolButton" name="openButton">
         <property name="text">
-         <string>&amp;Open list</string>
+         <string>&amp;Open List</string>
         </property>
         <property name="shortcut">
          <string>Ctrl+O</string>
@@ -30,7 +30,7 @@
       <item>
        <widget class="QToolButton" name="saveButton">
         <property name="text">
-         <string>&amp;Save list</string>
+         <string>&amp;Save List</string>
         </property>
         <property name="shortcut">
          <string>Ctrl+S</string>

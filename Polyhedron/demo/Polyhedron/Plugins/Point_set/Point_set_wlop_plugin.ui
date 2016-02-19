@@ -11,13 +11,13 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>WLOP simplification and regularization</string>
+   <string>WLOP Simplification and Regularization</string>
   </property>
   <layout class="QGridLayout">
    <item row="0" column="0">
     <widget class="QLabel" name="label_2">
      <property name="text">
-      <string>Retained percentage</string>
+      <string>Retained Percentage</string>
      </property>
     </widget>
    </item>
@@ -46,7 +46,7 @@
    <item row="1" column="0">
     <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>Neighborhood radius</string>
+      <string>Neighborhood Radius</string>
      </property>
     </widget>
    </item>

@@ -8,6 +8,6 @@ int main(int argc, char **argv)
 {
   Polyhedron_demo app(argc, argv,
                       "Polyhedron_3 demo",
-                      "CGAL Polyhedron demo");
+                      "CGAL Polyhedron Demo");
   return app.try_exec();
 }

@@ -50,8 +50,8 @@ public:
   using Polyhedron_demo_plugin_helper::init;
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* /* m */)
   {
-    actionDetectBorders= new QAction(tr("Detect polyhedron boundaries"), mainWindow);
-    actionStitchBorders= new QAction(tr("Stitch polyhedron duplicated boundaries"), mainWindow);
+    actionDetectBorders= new QAction(tr("Detect Boundaries"), mainWindow);
+    actionStitchBorders= new QAction(tr("Stitch Duplicated Boundaries"), mainWindow);
     actionDetectBorders->setObjectName("actionDetectBorders");
     actionStitchBorders->setObjectName("actionStitchBorders");
     actionStitchBorders->setProperty("subMenuName", "Polygon Mesh Processing");

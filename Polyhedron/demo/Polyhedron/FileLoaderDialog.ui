@@ -17,7 +17,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Select a loader</string>
+   <string>Select a Loader</string>
   </property>
   <property name="layoutDirection">
    <enum>Qt::LeftToRight</enum>

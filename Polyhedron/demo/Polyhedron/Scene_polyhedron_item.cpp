@@ -796,7 +796,7 @@ QMenu* Scene_polyhedron_item::contextMenu()
   if(!menuChanged) {
 
     QAction* actionShowOnlyFeatureEdges =
-        menu->addAction(tr("Show only &feature edges"));
+        menu->addAction(tr("Show Only &Feature Edges"));
     actionShowOnlyFeatureEdges->setCheckable(true);
     actionShowOnlyFeatureEdges->setChecked(show_only_feature_edges_m);
     actionShowOnlyFeatureEdges->setObjectName("actionShowOnlyFeatureEdges");
@@ -804,7 +804,7 @@ QMenu* Scene_polyhedron_item::contextMenu()
             this, SLOT(show_only_feature_edges(bool)));
 
     QAction* actionShowFeatureEdges =
-        menu->addAction(tr("Show feature edges"));
+        menu->addAction(tr("Show Feature Edges"));
     actionShowFeatureEdges->setCheckable(true);
     actionShowFeatureEdges->setChecked(show_feature_edges_m);
     actionShowFeatureEdges->setObjectName("actionShowFeatureEdges");
@@ -812,14 +812,14 @@ QMenu* Scene_polyhedron_item::contextMenu()
             this, SLOT(show_feature_edges(bool)));
 
     QAction* actionPickFacets =
-        menu->addAction(tr("Facets picking"));
+        menu->addAction(tr("Facets Picking"));
     actionPickFacets->setCheckable(true);
     actionPickFacets->setObjectName("actionPickFacets");
     connect(actionPickFacets, SIGNAL(toggled(bool)),
             this, SLOT(enable_facets_picking(bool)));
 
     QAction* actionEraseNextFacet =
-        menu->addAction(tr("Erase next picked facet"));
+        menu->addAction(tr("Erase Next Picked Facet"));
     actionEraseNextFacet->setCheckable(true);
     actionEraseNextFacet->setObjectName("actionEraseNextFacet");
     connect(actionEraseNextFacet, SIGNAL(toggled(bool)),

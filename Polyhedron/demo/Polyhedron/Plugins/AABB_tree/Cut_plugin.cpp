@@ -381,7 +381,7 @@ void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
 {
   scene = scene_interface;
   messages = m;
-  actionCreateCutPlane = new QAction(tr("Create cutting plane"), mainWindow);
+  actionCreateCutPlane = new QAction(tr("Create Cutting Plane"), mainWindow);
   actionCreateCutPlane->setProperty("subMenuName","3D Fast Intersection and Distance Computation");
   connect(actionCreateCutPlane, SIGNAL(triggered()),
           this, SLOT(createCutPlane()));
@@ -425,7 +425,7 @@ void Polyhedron_demo_cut_plugin::cut() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   if(!edges_item) {
     edges_item = new Scene_edges_item;
-    edges_item->setName("Edges of the cut");
+    edges_item->setName("Edges of the Cut");
     edges_item->setColor(Qt::red);
     edges_item->startTimer(0);
     connect(edges_item, SIGNAL(destroyed()),

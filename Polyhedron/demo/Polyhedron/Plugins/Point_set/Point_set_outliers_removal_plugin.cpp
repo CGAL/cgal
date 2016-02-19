@@ -30,7 +30,7 @@ private:
 
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
-    actionOutlierRemoval = new QAction(tr("Point set outliers selection"), mainWindow);
+    actionOutlierRemoval = new QAction(tr("Point Set Outliers Selection"), mainWindow);
     actionOutlierRemoval->setObjectName("actionOutlierRemoval");
 
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);

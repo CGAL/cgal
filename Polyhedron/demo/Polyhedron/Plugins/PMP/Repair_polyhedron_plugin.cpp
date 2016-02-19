@@ -37,13 +37,13 @@ public:
     this->mw = mainWindow;
     this->messages = m;
 
-    actionRemoveIsolatedVertices = new QAction(tr("Remove isolated vertices"), mw);
+    actionRemoveIsolatedVertices = new QAction(tr("Remove Isolated Vertices"), mw);
     if (actionRemoveIsolatedVertices){
       connect(actionRemoveIsolatedVertices, SIGNAL(triggered()),
               this, SLOT(on_actionRemoveIsolatedVertices_triggered()));
     }
 
-    actionRemoveDegenerateFaces = new QAction(tr("Remove degenerate faces"), mw);
+    actionRemoveDegenerateFaces = new QAction(tr("Remove Degenerate Faces"), mw);
     if (actionRemoveDegenerateFaces){
       connect(actionRemoveDegenerateFaces, SIGNAL(triggered()),
         this, SLOT(on_actionRemoveDegenerateFaces_triggered()));

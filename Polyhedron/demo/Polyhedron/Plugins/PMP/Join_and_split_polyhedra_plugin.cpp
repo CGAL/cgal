@@ -31,15 +31,15 @@ public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m)
   {
     msg_interface = m;
-    actionJoinPolyhedra= new QAction(tr("Join selected polyhedra"), mainWindow);
+    actionJoinPolyhedra= new QAction(tr("Join Selected Polyhedra"), mainWindow);
     actionJoinPolyhedra->setProperty("subMenuName", "Operations on Polyhedra");
     actionJoinPolyhedra->setObjectName("actionJoinPolyhedra");
 
-    actionSplitPolyhedra= new QAction(tr("Split selected polyhedra"), mainWindow);
+    actionSplitPolyhedra= new QAction(tr("Split Selected Polyhedra"), mainWindow);
     actionSplitPolyhedra->setProperty("subMenuName", "Operations on Polyhedra");
     actionSplitPolyhedra->setObjectName("actionSplitPolyhedra");
 
-    actionColorConnectedComponents = new QAction(tr("Color each connected component of selected polyhedra"), mainWindow);
+    actionColorConnectedComponents = new QAction(tr("Color Each Connected Component of Selected Polyhedra"), mainWindow);
     actionColorConnectedComponents ->setProperty("subMenuName", "Polygon Mesh Processing");
     actionColorConnectedComponents->setObjectName("actionColorConnectedComponents");
     Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);

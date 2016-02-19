@@ -46,15 +46,15 @@ public:
   {
       mw = mainWindow;
       scene = scene_interface;
-      actions_map["actionMVC"] = new QAction("MVC", mw);
+      actions_map["actionMVC"] = new QAction("Mean Value Coordinates", mw);
       actions_map["actionMVC"]->setProperty("subMenuName",
         "Triangulated Surface Mesh Parameterization");
 
-      actions_map["actionDCP"] = new QAction ("DCP", mw);
+      actions_map["actionDCP"] = new QAction ("Discrete Conformal Map", mw);
       actions_map["actionDCP"]->setProperty("subMenuName",
         "Triangulated Surface Mesh Parameterization");
 
-      actions_map["actionLSC"] = new QAction("LSC", mw);
+      actions_map["actionLSC"] = new QAction("Least Square Conformal Map", mw);
       actions_map["actionLSC"]->setProperty("subMenuName",
         "Triangulated Surface Mesh Parameterization");
 

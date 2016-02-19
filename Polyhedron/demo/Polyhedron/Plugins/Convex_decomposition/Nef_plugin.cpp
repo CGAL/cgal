@@ -38,7 +38,7 @@ public:
       scene = scene_interface;
       actions_map["actionConvexDecomposition"] = getActionFromMainWindow(mw, "actionConvexDecomposition");
       actions_map["actionConvexDecomposition"]->setProperty("subMenuName",
-                                                            "Convex Decomposition of Polyhedra");
+                                                            "Convex Decomposition");
 
       actions_map["actionToNef"] = getActionFromMainWindow(mw, "actionToNef");
       actions_map["actionToPoly"] = getActionFromMainWindow(mw, "actionToPoly");
@@ -64,11 +64,11 @@ public:
   }
 
 //   QList<QAction*> actions() const {
-//     QMenu* menu = new QMenu(tr("Boolean operations"), mw);
-//     QAction* action_to_nef = new QAction(tr("Convert to nef polyhedron"), mw);
+//     QMenu* menu = new QMenu(tr("Boolean Operations"), mw);
+//     QAction* action_to_nef = new QAction(tr("Convert to Nef Polyhedron"), mw);
 //     connect(action_to_nef, SIGNAL(triggered()),
 //             this, SLOT(convert_to_nef_polyhedron()));
-//     QAction* action_to_poly = new QAction(tr("Convert nef polyhedron to polyhedron"), mw);
+//     QAction* action_to_poly = new QAction(tr("Convert Nef Polyhedron to Polyhedron"), mw);
 //     connect(action_to_poly, SIGNAL(triggered()),
 //             this, SLOT(convert_to_polyhedron()));
 //     menu->addAction(action_to_nef);
@@ -243,7 +243,7 @@ void Polyhedron_demo_nef_plugin::boolean_operation(const Boolean_operation opera
                          tr("Boolean operation cannot be applied on normal polyhedron"),
                          tr("You need to call the operation \"%1\" in the menu \"%2\".")
                          .arg(actions_map["actionToNef"]->text())
-                         .arg(menu ? menu->title() : "Boolean operations"));
+                         .arg(menu ? menu->title() : "Boolean Operations"));
   }
   Scene_nef_polyhedron_item* itemA = 
     qobject_cast<Scene_nef_polyhedron_item*>(scene->item(indexA));

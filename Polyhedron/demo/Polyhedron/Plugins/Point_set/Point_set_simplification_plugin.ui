@@ -17,7 +17,7 @@
    <item row="7" column="0">
     <widget class="QLabel" name="label_4">
      <property name="text">
-      <string>Maximum cluster size</string>
+      <string>Maximum Cluster Size</string>
      </property>
     </widget>
    </item>
@@ -135,7 +135,7 @@
    <item row="8" column="0">
     <widget class="QLabel" name="label_5">
      <property name="text">
-      <string>Maximum surface variation</string>
+      <string>Maximum Surface Variation</string>
      </property>
     </widget>
    </item>
