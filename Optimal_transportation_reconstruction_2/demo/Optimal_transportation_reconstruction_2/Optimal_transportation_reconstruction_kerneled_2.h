@@ -7,7 +7,7 @@
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
 
-#include <CGAL/RS_2/Sample.h>
+#include <CGAL/OTR_2/Sample.h>
 #include <utility>      // std::pair
 #include <vector>
 
@@ -28,22 +28,22 @@ typedef CGAL::First_of_pair_property_map<PointMassPair> Point_property_map;
 typedef CGAL::Second_of_pair_property_map<PointMassPair> Mass_property_map;
 
 typedef CGAL::Optimal_transportation_reconstruction_2<K, Point_property_map,
-    Mass_property_map> Rs_2;
+    Mass_property_map> Otr_2;
 
 class Optimal_transportation_reconstruction_kerneled_2:
-    public Rs_2 {
+    public Otr_2 {
 
 public:
 
   template <typename InputRange>
   Optimal_transportation_reconstruction_kerneled_2(const InputRange& input_range,
       Point_property_map point_pmap, Mass_property_map mass_pmap) :
-      Rs_2(input_range, point_pmap,
+      Otr_2(input_range, point_pmap,
           mass_pmap) {
   }
 
   Optimal_transportation_reconstruction_kerneled_2() :
-    Rs_2() {
+    Otr_2() {
   }
 
   // RENDER //
