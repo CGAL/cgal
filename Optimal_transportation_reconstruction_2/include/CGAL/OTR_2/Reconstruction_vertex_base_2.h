@@ -21,10 +21,10 @@
 #define CGAL_RECONSTRUCTION_VERTEX_BASE_2_H_
 
 #include <CGAL/Triangulation_vertex_base_2.h>
-#include <CGAL/RS_2/Sample.h>
+#include <CGAL/OTR_2/Sample.h>
 
 namespace CGAL {
-namespace RS_2 {
+namespace OTR_2 {
 
 /// The Reconstruction_vertex_base_2 class is the default
 /// vertex class of the Reconstruction_triangulation_2 class.
@@ -42,7 +42,7 @@ class Reconstruction_vertex_base_2 : public Vb
 public:
   typedef Vb Base;
   typedef typename Traits_::FT        FT;
-  typedef RS_2::Sample<Traits_>       Sample_;
+  typedef OTR_2::Sample<Traits_>       Sample_;
   typedef typename Traits_::Point_2   Point;
   typedef typename Base::Face_handle  Face_handle;
 

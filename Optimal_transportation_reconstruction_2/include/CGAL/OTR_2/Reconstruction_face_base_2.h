@@ -20,8 +20,8 @@
 #ifndef CGAL_RECONSTRUCTION_FACE_BASE_2_H_
 #define CGAL_RECONSTRUCTION_FACE_BASE_2_H_
 
-#include <CGAL/RS_2/Cost.h>
-#include <CGAL/RS_2/Sample.h>
+#include <CGAL/OTR_2/Cost.h>
+#include <CGAL/OTR_2/Sample.h>
 #include <CGAL/Triangulation_face_base_2.h>
 
 #include <vector>
@@ -29,7 +29,7 @@
 /// \cond SKIP_IN_MANUAL
 
 namespace CGAL {
-namespace RS_2 {
+namespace OTR_2 {
 
 /// The Reconstruction_face_base_2 class is the default
 /// vertex class of the Reconstruction_face_base_2 class.
@@ -54,8 +54,8 @@ public:
   };
 
   typedef typename Traits_::FT    FT;
-  typedef RS_2::Cost<FT>          Cost_;
-  typedef RS_2::Sample<Traits_>   Sample_;
+  typedef OTR_2::Cost<FT>          Cost_;
+  typedef OTR_2::Sample<Traits_>   Sample_;
   typedef std::vector<Sample_*>   Sample_vector;
 
 private:

@@ -21,7 +21,7 @@
 #define CGAL_RECONSTRUCTION_EDGE_2_H_
 
 namespace CGAL {
-namespace RS_2 {
+namespace OTR_2 {
 
 template<class FT, class Edge, class Vertex_handle, class Face_handle>
 class Reconstruction_edge_2 {

@@ -21,11 +21,11 @@
 #define CGAL_RECONSTRUCTION_TRIANGULATION_2_H
 
 // local
-#include <CGAL/RS_2/Sample.h>
-#include <CGAL/RS_2/Reconstruction_edge_2.h>
-#include <CGAL/RS_2/Cost.h>
-#include <CGAL/RS_2/Reconstruction_vertex_base_2.h>
-#include <CGAL/RS_2/Reconstruction_face_base_2.h>
+#include <CGAL/OTR_2/Sample.h>
+#include <CGAL/OTR_2/Reconstruction_edge_2.h>
+#include <CGAL/OTR_2/Cost.h>
+#include <CGAL/OTR_2/Reconstruction_vertex_base_2.h>
+#include <CGAL/OTR_2/Reconstruction_face_base_2.h>
 
 // CGAL
 #include <CGAL/basic.h>
@@ -51,7 +51,7 @@
 #define EPS   1e-15
 
 namespace CGAL {
-namespace RS_2 {
+namespace OTR_2 {
 
 /// \internal
 ///  The Reconstruction_triangulation_2 class
@@ -112,14 +112,14 @@ public:
 
   typedef std::vector<Edge> Edge_vector;
 
-  typedef RS_2::Cost<FT> Cost_;
-  typedef RS_2::Sample<Traits_> Sample_;
+  typedef OTR_2::Cost<FT> Cost_;
+  typedef OTR_2::Sample<Traits_> Sample_;
   typedef std::vector<Sample_*> Sample_vector;
   typedef typename Sample_vector::const_iterator Sample_vector_const_iterator;
 
-  typedef RS_2::Sample_with_priority<Sample_> PSample;
+  typedef OTR_2::Sample_with_priority<Sample_> PSample;
   typedef std::priority_queue<PSample, std::vector<PSample>,
-      RS_2::greater_priority<PSample> > SQueue;
+      OTR_2::greater_priority<PSample> > SQueue;
 
   typedef Reconstruction_edge_2<FT, Edge, 
                                 Vertex_handle, Face_handle> Rec_edge_2;
