@@ -189,12 +189,19 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
   typedef typename Kernel::FT FT;
 
-  typedef typename GetFaceNormalMap<PolygonMesh, NamedParameters>::type FaceNormalMap;
+  typedef typename GetFaceNormalMap<PolygonMesh, NamedParameters>::NoMap DefaultMap;
+
+  typedef typename boost::lookup_named_param_def <
+    CGAL::face_normal_t,
+    NamedParameters,
+    DefaultMap> ::type FaceNormalMap;
+
   FaceNormalMap fnmap
-    = boost::choose_param(get_param(np, face_normal), FaceNormalMap());
+    = boost::choose_param(get_param(np, face_normal), DefaultMap());
+
   bool fnmap_valid
     = !boost::is_same<FaceNormalMap,
-                      typename GetFaceNormalMap<PolygonMesh, NamedParameters>::NoMap
+                      DefaultMap
                      >::value;
 
   typedef typename Kernel::Vector_3 Vector;
