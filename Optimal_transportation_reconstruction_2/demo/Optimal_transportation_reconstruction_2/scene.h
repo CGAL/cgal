@@ -10,8 +10,8 @@
 
 // local
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include "Reconstruction_simplification_kerneled_2.h"
-#include <CGAL/Reconstruction_simplification_2.h>
+#include "Optimal_transportation_reconstruction_kerneled_2.h"
+#include <CGAL/Optimal_transportation_reconstruction_2.h>
 
 
 #ifdef CGAL_USE_CIMG
@@ -37,7 +37,7 @@ public:
   typedef CGAL::First_of_pair_property_map<PointMassPair> Point_property_map;
   typedef CGAL::Second_of_pair_property_map<PointMassPair> Mass_property_map;
 
-  typedef CGAL::Reconstruction_simplification_2<K, Point_property_map,
+  typedef CGAL::Optimal_transportation_reconstruction_2<K, Point_property_map,
     Mass_property_map> R_s_2;
 
   typedef K::Segment_2 Segment;
@@ -80,7 +80,7 @@ private:
   // data
   std::vector<Sample_> m_samples;
 
-  Reconstruction_simplification_kerneled_2* m_pwsrec;
+  Optimal_transportation_reconstruction_kerneled_2* m_pwsrec;
   int m_ignore;
   bool m_init_done;
   double m_percentage;
@@ -100,7 +100,7 @@ public:
     m_bbox_y = 0.0;
     m_bbox_size = 1.0;
 
-    m_pwsrec = new Reconstruction_simplification_kerneled_2();
+    m_pwsrec = new Optimal_transportation_reconstruction_kerneled_2();
   }
 
   ~Scene() {

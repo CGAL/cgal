@@ -12,7 +12,7 @@
    </rect>
   </property>
   <property name="windowTitle">
-   <string>CGAL 2D Reconstruction and Simplification</string>
+   <string>CGAL 2D Optimal Transportation Curve Reconstruction</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <layout class="QGridLayout">

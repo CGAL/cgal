@@ -1,8 +1,8 @@
-#ifndef CGAL_RECONSTRUCTION_SIMPLIFICATION_KERNEL_2_H_
-#define CGAL_RECONSTRUCTION_SIMPLIFICATION_KERNEL_2_H_
+#ifndef CGAL_OPTIMAL_TRANSPORTATION_RECONSTRUCTION_KERNEL_2_H_
+#define CGAL_OPTIMAL_TRANSPORTATION_RECONSTRUCTION_KERNEL_2_H_
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Reconstruction_simplification_2.h>
+#include <CGAL/Optimal_transportation_reconstruction_2.h>
 
 #include <CGAL/property_map.h>
 #include <CGAL/value_type_traits.h>
@@ -27,22 +27,22 @@ typedef CGAL::value_type_traits<InputIterator>::type MassPoint;
 typedef CGAL::First_of_pair_property_map<PointMassPair> Point_property_map;
 typedef CGAL::Second_of_pair_property_map<PointMassPair> Mass_property_map;
 
-typedef CGAL::Reconstruction_simplification_2<K, Point_property_map,
+typedef CGAL::Optimal_transportation_reconstruction_2<K, Point_property_map,
     Mass_property_map> Rs_2;
 
-class Reconstruction_simplification_kerneled_2:
+class Optimal_transportation_reconstruction_kerneled_2:
     public Rs_2 {
 
 public:
 
   template <typename InputRange>
-  Reconstruction_simplification_kerneled_2(const InputRange& input_range,
+  Optimal_transportation_reconstruction_kerneled_2(const InputRange& input_range,
       Point_property_map point_pmap, Mass_property_map mass_pmap) :
       Rs_2(input_range, point_pmap,
           mass_pmap) {
   }
 
-  Reconstruction_simplification_kerneled_2() :
+  Optimal_transportation_reconstruction_kerneled_2() :
     Rs_2() {
   }
 

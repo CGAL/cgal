@@ -1,6 +1,6 @@
-# This is the CMake script for compiling the Reconstruction_simplification_2 demo.
+# This is the CMake script for compiling the Optimal_transportation_reconstruction_2 demo.
 
-project(Reconstruction_simplification_2_demo)
+project(Optimal_transportation_reconstruction_2_demo)
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
@@ -45,7 +45,7 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
   set(
   SRCS 
   glviewer.cpp 
-  Reconstruction_simplification_2_demo.cpp 
+  Optimal_transportation_reconstruction_2_demo.cpp 
   window.cpp 
   render.cpp 
   )
@@ -78,20 +78,20 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
 
   qt5_add_resources ( RESOURCE_FILES pwsrec.qrc )
 
-  add_executable  ( Reconstruction_simplification_2_demo ${SRCS} ${MOCS} ${UI_FILES} ${RESOURCE_FILES} ${CGAL_ADDITIONAL_FILES} ${CGAL_RESOURCE_FILES})
+  add_executable  ( Optimal_transportation_reconstruction_2_demo ${SRCS} ${MOCS} ${UI_FILES} ${RESOURCE_FILES} ${CGAL_ADDITIONAL_FILES} ${CGAL_RESOURCE_FILES})
   
-  qt5_use_modules(Reconstruction_simplification_2_demo OpenGL)
+  qt5_use_modules(Optimal_transportation_reconstruction_2_demo OpenGL)
 
   # Link with Qt libraries
-  target_link_libraries( Reconstruction_simplification_2_demo ${QT_LIBRARIES} )
+  target_link_libraries( Optimal_transportation_reconstruction_2_demo ${QT_LIBRARIES} )
 
   # Link with CGAL
-  target_link_libraries( Reconstruction_simplification_2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
+  target_link_libraries( Optimal_transportation_reconstruction_2_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
   # Link with OpenGL
-  target_link_libraries( Reconstruction_simplification_2_demo ${OPENGL_gl_LIBRARY} )
+  target_link_libraries( Optimal_transportation_reconstruction_2_demo ${OPENGL_gl_LIBRARY} )
     
-  add_to_cached_list( CGAL_EXECUTABLE_TARGETS Reconstruction_simplification_2_demo )
+  add_to_cached_list( CGAL_EXECUTABLE_TARGETS Optimal_transportation_reconstruction_2_demo )
 
 else (CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND )
 

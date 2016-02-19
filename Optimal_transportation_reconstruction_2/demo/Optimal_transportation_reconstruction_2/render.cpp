@@ -4,11 +4,11 @@
 #include <QtOpenGL>
 
 // local
-#include "Reconstruction_simplification_kerneled_2.h"
-#include <CGAL/Reconstruction_simplification_2.h>
+#include "Optimal_transportation_reconstruction_kerneled_2.h"
+#include <CGAL/Optimal_transportation_reconstruction_2.h>
 
-typedef Reconstruction_simplification_kerneled_2::Rec_edge_2 PEdge;
-typedef Reconstruction_simplification_kerneled_2 R_s_k_2;
+typedef Optimal_transportation_reconstruction_kerneled_2::Rec_edge_2 PEdge;
+typedef Optimal_transportation_reconstruction_kerneled_2 R_s_k_2;
 
 void R_s_k_2::print_stats() const
 {
