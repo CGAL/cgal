@@ -80,7 +80,7 @@ private:
 /// The class Mesh_d represents a d-dimensional mesh
 template <
   typename Kernel_, // ambiant kernel
-  typename DimensionTag, // intrinsic dimension
+  typename Local_kernel_, // local kernel (intrinsic dimension)
   typename Concurrency_tag = CGAL::Parallel_tag,
   typename Tr = Delaunay_triangulation
   <
@@ -98,16 +98,18 @@ class Mesh_d
   typedef Kernel_                                     K;
   typedef typename K::FT                              FT;
   typedef typename K::Point_d                         Point;
+  typedef typename K::Weighted_point_d                Weighted_point;
   typedef typename K::Vector_d                        Vector;
+
+  typedef Local_kernel_                               LK;
+  typedef typename LK::Point_d                        Local_point;
+  typedef typename LK::Weighted_point_d               Local_weighted_point;
 
   typedef Tr                                          Triangulation;
   typedef typename Triangulation::Vertex_handle       Tr_vertex_handle;
   typedef typename Triangulation::Full_cell_handle    Tr_full_cell_handle;
   typedef typename Triangulation::Finite_full_cell_const_iterator 
                                             Tr_finite_full_cell_const_iterator;
-
-  typedef Basis<K>                                    Tangent_space_basis;
-  typedef Basis<K>                                    Orthogonal_space_basis;
 
   typedef std::vector<Point>                          Points;
 
@@ -121,8 +123,11 @@ class Mesh_d
   typedef std::set<std::size_t>                       Indexed_simplex;
 
 public:
+  typedef Basis<K>                                    Tangent_space_basis;
+  typedef Basis<K>                                    Orthogonal_space_basis;
   typedef std::vector<Tangent_space_basis>            TS_container;
   typedef std::vector<Orthogonal_space_basis>         OS_container;
+
 private:
 
   // For transform_iterator
@@ -163,9 +168,11 @@ public:
 #ifdef CGAL_MESH_D_USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
          InputIterator first_for_tse, InputIterator last_for_tse,
 #endif
-         const K &k = K()
+         const K &k = K(),
+         const LK &lk = LK()
          )
   : m_k(k)
+  , m_lk(lk)
   , m_intrinsic_dim(intrinsic_dimension)
   , m_half_sparsity(0.5*sparsity)
   , m_sq_half_sparsity(m_half_sparsity*m_half_sparsity)
@@ -287,7 +294,7 @@ public:
       }
     }*/
 
-    Get_functor<Kernel, Sum_of_vectors_tag>::type sum_vecs(m_k);
+    Get_functor<K, Sum_of_vectors_tag>::type sum_vecs(m_k);
 
     // Extract complex
     // CJTODO: parallelize
@@ -311,7 +318,7 @@ public:
 
       bool keep_it = false;
       bool is_uncertain = false;
-#ifdef MESH_D_FILTER_BY_TESTING_ALL_VERTICES_TANGENT_PLANES
+#ifdef CGAL_MESH_D_FILTER_BY_TESTING_ALL_VERTICES_TANGENT_PLANES
       int num_intersections = 0;
       for (auto vh : kf) // CJTODO C++11
       {
@@ -331,34 +338,30 @@ public:
       }
 #else
       // Compute the intersection with all tangent planes of the vertices
-      // of the k-face
+      // of the k-face then compute a weighted barycenter
       FT sum_weights = 0;
       Vector weighted_sum_of_inters =
         m_k.construct_vector_d_object()(m_ambient_dim);
       for (auto vh : kf) // CJTODO C++11
       {
-        boost::optional<Point> intersection = 
+        Point intersection = 
           compute_aff_of_voronoi_face_and_tangent_subspace_intersection(
             boost::adaptors::transform(kf, vertex_handle_to_point),
+#ifdef CGAL_MESH_D_USE_LINEAR_PROG_TO_COMPUTE_INTERSECTION
             m_orth_spaces[vh->data()]);
+#else
+            m_tangent_spaces[vh->data()]);
+#endif
 
-        if (intersection)
-        {
-          FT weight = 
-            FT(1) / m_k.squared_distance_d_object()(vh->point(), *intersection);
-          sum_weights += weight;
-          weighted_sum_of_inters = sum_vecs(
-            weighted_sum_of_inters,
-            m_k.scaled_vector_d_object()(
-              m_k.point_to_vector_d_object()(*intersection), weight));
-        }
-        else
-        {
-          // CJTODO TEMP DEBUG
-          std::cerr << std::hex << (unsigned int)&k_face << std::dec
-            << red << "No intersection" << white << "\n";
-        }
+        FT weight = 
+          FT(1) / m_k.squared_distance_d_object()(vh->point(), intersection);
+        sum_weights += weight;
+        weighted_sum_of_inters = sum_vecs(
+          weighted_sum_of_inters,
+          m_k.scaled_vector_d_object()(
+            m_k.point_to_vector_d_object()(intersection), weight));
       }
+
       if (sum_weights > 0)
       {
         // Compute the weighted barycenter
@@ -674,6 +677,85 @@ private:
     return common_neighbors;
   }
 
+  Point unproject_point(const Local_point &lp,
+    const Tangent_space_basis &tsb) const
+  {
+    typename K::Translated_point_d k_transl =
+      m_k.translated_point_d_object();
+    typename K::Scaled_vector_d k_scaled_vec =
+      m_k.scaled_vector_d_object();
+    typename LK::Compute_coordinate_d coord =
+      m_lk.compute_coordinate_d_object();
+
+    Point global_point = m_points[tsb.origin()];
+    for (int i = 0 ; i < m_intrinsic_dim ; ++i)
+    {
+      global_point = k_transl(
+        global_point, k_scaled_vec(tsb[i], coord(lp, i)));
+    }
+
+    return global_point;
+  }
+
+  // Project the point in the tangent space
+  // The weight will be the squared distance between p and the projection of p
+  // Resulting point coords are expressed in tsb's space
+  Local_weighted_point project_point_and_compute_weight(
+    const Point &p, const FT w, const Tangent_space_basis &tsb) const
+  {
+    const int point_dim = m_k.point_dimension_d_object()(p);
+
+    typename K::Construct_point_d constr_pt =
+      m_k.construct_point_d_object();
+    typename K::Scalar_product_d scalar_pdct =
+      m_k.scalar_product_d_object();
+    typename K::Difference_of_points_d diff_points =
+      m_k.difference_of_points_d_object();
+    typename K::Compute_coordinate_d coord =
+      m_k.compute_coordinate_d_object();
+    typename K::Construct_cartesian_const_iterator_d ccci =
+      m_k.construct_cartesian_const_iterator_d_object();
+
+    typename LK::Construct_point_d local_constr_pt =
+      m_lk.construct_point_d_object();
+
+    Point const& origin = m_points[tsb.origin()];
+    Vector v = diff_points(p, origin);
+
+    // Same dimension? Then the weight is 0
+    bool same_dim = (point_dim == tsb.dimension());
+
+    std::vector<FT> coords;
+    // Ambiant-space coords of the projected point
+    std::vector<FT> p_proj(ccci(origin), ccci(origin, 0));
+    coords.reserve(tsb.dimension());
+    for (std::size_t i = 0 ; i < tsb.dimension() ; ++i)
+    {
+      // Local coords are given by the scalar product with the vectors of tsb
+      FT c = scalar_pdct(v, tsb[i]);
+      coords.push_back(c);
+
+      // p_proj += c * tsb[i]
+      for (int j = 0 ; j < point_dim ; ++j)
+        p_proj[j] += c * coord(tsb[i], j);
+    }
+    
+    // Same dimension? Then the weight is 0
+    FT sq_dist_to_proj_pt = 0;
+    if (!same_dim)
+    {
+      Point projected_pt = constr_pt(point_dim, p_proj.begin(), p_proj.end());
+      sq_dist_to_proj_pt = m_k.squared_distance_d_object()(p, projected_pt);
+    }
+
+    return m_lk.construct_weighted_point_d_object()
+    (
+      local_constr_pt(
+        static_cast<int>(coords.size()), coords.begin(), coords.end()),
+      w - sq_dist_to_proj_pt
+    );
+  }
+
   // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
   // Q: vertices which are common neighbors of all vertices of P
   // Note that the computation is made in global coordinates.
@@ -688,12 +770,9 @@ private:
     // Fv: Voronoi k-face
     // Fd: dual, (D-k)-face of Delaunay (p0, p1, ..., pn)
 
-    typename Kernel::Scalar_product_d scalar_pdct =
-      m_k.scalar_product_d_object();
-    typename Kernel::Point_to_vector_d pt_to_vec =
-      m_k.point_to_vector_d_object();
-    typename Kernel::Compute_coordinate_d coord =
-      m_k.compute_coordinate_d_object();
+    typename K::Scalar_product_d scalar_pdct = m_k.scalar_product_d_object();
+    typename K::Point_to_vector_d pt_to_vec = m_k.point_to_vector_d_object();
+    typename K::Compute_coordinate_d coord = m_k.compute_coordinate_d_object();
 
     std::size_t card_P = P.size();
     std::size_t card_Q = Q.size();
@@ -829,21 +908,52 @@ private:
     return ret;
   }
 
+#ifdef CGAL_MESH_D_USE_LINEAR_PROG_TO_COMPUTE_INTERSECTION
+  // CJTODO TEMP: this is the old slow code => remove this macro
+
   // Returns any point of the intersection between aff(voronoi_cell) and a
   // tangent space.
   // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
   // Return value: the point coordinates are expressed in the tsb base
   template <typename Point_range_a>
-  boost::optional<Point>
-    compute_aff_of_voronoi_face_and_tangent_subspace_intersection(
+  Point
+  compute_aff_of_voronoi_face_and_tangent_subspace_intersection(
     Point_range_a const& P,
     Orthogonal_space_basis const& orthogonal_subspace_basis) const
   {
-      // As we're only interested by aff(v), Q is empty
-      return compute_voronoi_face_and_tangent_subspace_intersection(
-        P, std::vector<typename Point_range_a::value_type>(),
-        orthogonal_subspace_basis);
+    // As we're only interested by aff(v), Q is empty
+    return *compute_voronoi_face_and_tangent_subspace_intersection(
+      P, std::vector<typename Point_range_a::value_type>(),
+      orthogonal_subspace_basis);
+  }
+
+#else 
+
+  // Returns any point of the intersection between aff(voronoi_cell) and a
+  // tangent space.
+  // P: dual face in Delaunay triangulation (p0, p1, ..., pn)
+  // Return value: the point coordinates are expressed in the tsb base
+  template <typename Point_range>
+  Point
+    compute_aff_of_voronoi_face_and_tangent_subspace_intersection(
+    Point_range const& P,
+    Tangent_space_basis const& tangent_subspace_basis) const
+  {
+    std::vector<Local_weighted_point> projected_pts;
+    for (auto const& p : P)
+    {
+      projected_pts.push_back(
+        project_point_and_compute_weight(p, FT(0), tangent_subspace_basis));
     }
+
+    Local_weighted_point power_center =
+      m_lk.power_center_d_object()(projected_pts.begin(), projected_pts.end());
+
+    return unproject_point(
+      m_lk.point_drop_weight_d_object()(power_center), tangent_subspace_basis);
+  }
+
+#endif
 
   std::map<Vertex_set, Vertex_set> get_k_faces_and_neighbor_vertices(Triangulation const& tr)
   {
@@ -1159,6 +1269,7 @@ public:
 
 private:
   const K                   m_k;
+  const LK                  m_lk;
   const int                 m_intrinsic_dim;
   const double              m_half_sparsity;
   const double              m_sq_half_sparsity;

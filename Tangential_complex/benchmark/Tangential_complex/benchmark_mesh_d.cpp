@@ -38,13 +38,13 @@ const char * const BENCHMARK_SCRIPT_FILENAME = "benchmark_script.txt";
 typedef CGAL::Epick_d<CGAL::Dynamic_dimension_tag>              Kernel;
 typedef Kernel::FT                                              FT;
 typedef Kernel::Point_d                                         Point;
-typedef CGAL::Mesh_d<
-  Kernel, CGAL::Dynamic_dimension_tag,
-  CGAL::Parallel_tag>                                           Mesh;
+typedef CGAL::Mesh_d<Kernel, Kernel, CGAL::Parallel_tag>        Mesh;
 
 //#define CHECK_IF_ALL_SIMPLICES_ARE_IN_THE_AMBIENT_DELAUNAY
 //#define MESH_D_INPUT_STRIDES 10 // only take one point every MESH_D_INPUT_STRIDES points
 //#define MESH_D_NO_EXPORT
+//#define CGAL_MESH_D_USE_LINEAR_PROG_TO_COMPUTE_INTERSECTION
+//#define CGAL_MESH_D_FILTER_BY_TESTING_ALL_VERTICES_TANGENT_PLANES
 
 
 template <typename Mesh, typename Indexed_simplex_range = void>
@@ -90,6 +90,7 @@ void make_mesh(
   const char *input_name = "mesh")
 {
   Kernel k;
+  Kernel lk; // local kernel (intrinsic dim)
 
   //===========================================================================
   // Init
@@ -131,9 +132,9 @@ void make_mesh(
 
 #ifdef CGAL_TC_USE_ANOTHER_POINT_SET_FOR_TANGENT_SPACE_ESTIM
   Mesh mesh(points.begin(), points.end(), sparsity, intrinsic_dim,
-    points_not_sparse.begin(), points_not_sparse.end(), k);
+    points_not_sparse.begin(), points_not_sparse.end(), k, lk);
 #else
-  Mesh mesh(points.begin(), points.end(), sparsity, intrinsic_dim, k);
+  Mesh mesh(points.begin(), points.end(), sparsity, intrinsic_dim, k, lk);
 #endif
 
   double init_time = t.elapsed(); t.reset();
