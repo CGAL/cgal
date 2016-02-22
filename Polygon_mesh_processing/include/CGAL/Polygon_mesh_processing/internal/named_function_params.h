@@ -38,6 +38,7 @@ namespace CGAL{
 
   //to be documented
   enum smooth_along_features_t      { smooth_along_features };
+  enum face_normal_t                { face_normal };
 
   //internal
   enum weight_calculator_t          { weight_calculator };
@@ -98,6 +99,14 @@ namespace CGAL{
     {
       typedef pmp_bgl_named_params<WeightCalc, weight_calculator_t, self> Params;
       return Params(w, *this);
+    }
+
+    template <typename FaceNormalMap>
+    pmp_bgl_named_params<FaceNormalMap, face_normal_t, self>
+    face_normal_map(const FaceNormalMap& m) const
+    {
+      typedef pmp_bgl_named_params<FaceNormalMap, face_normal_t, self> Params;
+      return Params(m, *this);
     }
 
     //overload
@@ -228,6 +237,14 @@ namespace parameters{
   {
     typedef pmp_bgl_named_params<WeightCalc, weight_calculator_t> Params;
     return Params(w);
+  }
+
+  template <typename FaceNormalMap>
+  pmp_bgl_named_params<FaceNormalMap, face_normal_t>
+  face_normal_map(const FaceNormalMap& m)
+  {
+    typedef pmp_bgl_named_params<FaceNormalMap, face_normal_t> Params;
+    return Params(m);
   }
 
   //overload

@@ -27,13 +27,26 @@
 #include <boost/graph/graph_traits.hpp>
 #include <CGAL/Origin.h>
 #include <CGAL/Kernel/global_functions_3.h>
+#include <CGAL/Kernel_traits.h>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#include <boost/type_traits.hpp>
+
 namespace CGAL{
 
 namespace Polygon_mesh_processing{
+
+namespace internal {
+
+  template<typename Point>
+  typename CGAL::Kernel_traits<Point>::Kernel::Vector_3
+  triangle_normal(const Point& p0, const Point& p1, const Point& p2)
+  {
+    return CGAL::cross_product(p2 - p1, p0 - p1);
+  }
+}
 
 template<typename Point, typename PM, typename VertexPointMap, typename Vector>
 void sum_normals(const PM& pmesh,
@@ -44,17 +57,20 @@ void sum_normals(const PM& pmesh,
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
   halfedge_descriptor he = halfedge(f, pmesh);
   halfedge_descriptor end = he;
+  bool f_is_triangle = (he == next(next(next(he, pmesh), pmesh), pmesh));
+  /*it is useless to compute the normal 3 times on a triangle*/
   do
   {
     const Point& prv = get(vpmap, target(prev(he, pmesh), pmesh));
     const Point& curr = get(vpmap, target(he, pmesh));
     const Point& nxt = get(vpmap, target(next(he, pmesh), pmesh));
-    Vector n = CGAL::cross_product(nxt - curr, prv - curr);
+    Vector n = internal::triangle_normal(prv, curr, nxt);
     sum = sum + n;
 
     he = next(he, pmesh);
-  } while (he != end);
+  } while (he != end && !f_is_triangle);
 }
+
 
 /**
 * \ingroup PMP_normal_grp
@@ -173,6 +189,21 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
   typedef typename Kernel::FT FT;
 
+  typedef typename GetFaceNormalMap<PolygonMesh, NamedParameters>::NoMap DefaultMap;
+
+  typedef typename boost::lookup_named_param_def <
+    CGAL::face_normal_t,
+    NamedParameters,
+    DefaultMap> ::type FaceNormalMap;
+
+  FaceNormalMap fnmap
+    = boost::choose_param(get_param(np, face_normal), DefaultMap());
+
+  bool fnmap_valid
+    = !boost::is_same<FaceNormalMap,
+                      DefaultMap
+                     >::value;
+
   typedef typename Kernel::Vector_3 Vector;
   typedef typename boost::graph_traits<PolygonMesh>::halfedge_descriptor halfedge_descriptor;
 
@@ -183,7 +214,8 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     {
     if (!is_border(he, pmesh))
     {
-      Vector n = compute_face_normal(face(he, pmesh), pmesh, np);
+      Vector n = fnmap_valid ? get(fnmap, face(he, pmesh))
+                             : compute_face_normal(face(he, pmesh), pmesh, np);
       normal = normal + n;
     }
     he = opposite(next(he, pmesh), pmesh);
@@ -238,7 +270,7 @@ compute_vertex_normals(const PolygonMesh& pmesh
 * @tparam VertexNormalMap a model of `WritablePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%vertex_descriptor` as key type and
     `Kernel::Vector_3` as value type.
-* @tparam FaceNormalMap a model of `WritablePropertyMap` with
+* @tparam FaceNormalMap a model of `ReadWritePropertyMap` with
     `boost::graph_traits<PolygonMesh>::%face_descriptor` as key type and
     `Kernel::Vector_3` as value type.
 *
@@ -265,8 +297,8 @@ compute_normals(const PolygonMesh& pmesh
                 , const NamedParameters& np
                 )
 {
-  compute_vertex_normals(pmesh, vnm, np);
   compute_face_normals(pmesh, fnm, np);
+  compute_vertex_normals(pmesh, vnm, np.face_normal_map(fnm));
 }
 
 ///\cond SKIP_IN_MANUAL
