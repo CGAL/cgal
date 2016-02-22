@@ -41,6 +41,7 @@ int main()
   
   // Get sharp features
   domain.detect_features();
+  domain.detect_borders();
 
   // Mesh criteria
   Mesh_criteria criteria(edge_size = 0.025,

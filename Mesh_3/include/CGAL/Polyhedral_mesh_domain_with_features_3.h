@@ -39,8 +39,11 @@
 
 #include <CGAL/enum.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/helpers.h>
 
 #include <boost/iterator/transform_iterator.hpp>
+#include <boost/foreach.hpp>
 
 #include <string>
 #include <vector>
@@ -126,6 +129,8 @@ public:
 
   void detect_features(FT angle_in_degree, Polyhedron& p);
   void detect_features(FT angle_in_degree = FT(60)) { detect_features(angle_in_degree, polyhedron_); }
+
+  void detect_borders();
 
 private:
   Polyhedron polyhedron_;
@@ -235,6 +240,39 @@ detect_features(FT angle_in_degree, Polyhedron& p)
     boost::make_transform_iterator(polylines.begin(),extractor),
     boost::make_transform_iterator(polylines.end(),extractor));
 }
+
+
+template < typename GT_, typename P_, typename TA_,
+           typename Tag_, typename E_tag_>
+void
+Polyhedral_mesh_domain_with_features_3<GT_,P_,TA_,Tag_,E_tag_>::
+detect_borders()
+{
+  typedef std::vector<Point_3> Polyline;
+  typedef std::vector<Polyline>Polylines;
+
+  Polylines polylines;
+  Polyline empty;
+  typedef boost::graph_traits<Polyhedron>::halfedge_descriptor halfedge_descriptor;
+  std::set<halfedge_descriptor> visited;
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(polyhedron_)){
+    if(visited.find(h) == visited.end()){
+      if(is_border(h,polyhedron_)){
+        polylines.push_back(empty);
+        Polyline&  polyline = polylines.back();
+        polyline.push_back(source(h,polyhedron_)->point());
+        BOOST_FOREACH(halfedge_descriptor h,halfedges_around_face(h,polyhedron_)){
+          polyline.push_back(target(h,polyhedron_)->point());
+          visited.insert(h);
+        }
+      } else {
+        visited.insert(h);
+      }
+    }
+  }
+  this->add_features(polylines.begin(), polylines.end());
+}
+
 
 } //namespace CGAL
 

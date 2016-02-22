@@ -85,6 +85,12 @@ those triangles is a feature edge.
 */ 
 void detect_features(FT angle_bound=120); 
 
+
+/*!
+Detects border edges of the bounding polyhedron and inserts them as features of the domain.
+*/
+   void detect_borders();
+
 /// @}
 
 }; /* end Polyhedral_mesh_domain_with_features_3 */
