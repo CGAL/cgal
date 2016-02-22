@@ -50,3 +50,4 @@ compare_y_at_x_left  0 0 6  EQUAL
 ##compare_y_at_x_left  0 7 5  SMALLER
 ##compare_y_at_x_left  7 0 5  LARGER
 ####################################
+compare_y_at_x_right 9 10 1 LARGER
