@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
+#include <CGAL/Timer.h>
 
 #include <CGAL/point_generators_3.h>
 
@@ -34,6 +35,10 @@ struct Convert_cell{
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
+  std::cerr << CGAL::get_default_random().get_seed() << std::endl;
+
   std::vector< EPIC::Point_3> points;
   CGAL::Random_points_in_sphere_3<EPIC::Point_3,Creator> g(1.0);
   CGAL::cpp11::copy_n( g, 600, std::back_inserter(points) );
@@ -44,4 +49,5 @@ int main()
     dt3_epec.tds().copy_tds( dt3_epic.tds(),dt3_epic.infinite_vertex(), Convert_vertex(), Convert_cell() ) );
 
   CGAL_assertion( dt3_epec.is_valid() );
+  std::cerr << timer.time() << " sec.\n";
 }

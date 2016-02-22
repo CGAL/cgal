@@ -3,6 +3,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <boost/iterator/zip_iterator.hpp>
 #include <vector>
+#include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned, K>    Vb;
@@ -13,6 +14,8 @@ typedef Delaunay::Point                                             Point;
 int main()
 {
 
+  CGAL::Timer timer;
+  timer.start();
   std::vector<unsigned> indices;
   indices.push_back(0);
   indices.push_back(1);
@@ -45,5 +48,6 @@ int main()
       exit(EXIT_FAILURE);
     }  
 
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }

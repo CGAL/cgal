@@ -2,6 +2,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <CGAL/IO/Color.h>
+#include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -13,6 +14,8 @@ typedef Delaunay::Point   Point;
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   Delaunay T;
 
   T.insert(Point(0,0,0));
@@ -28,5 +31,6 @@ int main()
       if (T.degree(vit) == 6)
           vit->info() = CGAL::RED;
 
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }

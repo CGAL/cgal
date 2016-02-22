@@ -25,6 +25,7 @@
 
 #include <CGAL/_test_cls_regular_euclidean_traits_3.h>
 
+#include <CGAL/Timer.h>
 //needs exact constructions as well to test the traits class
 
 typedef CGAL::Exact_predicates_exact_constructions_kernel K;
@@ -34,6 +35,9 @@ template class CGAL::Regular_triangulation_euclidean_traits_3<K>;
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   typedef CGAL::Regular_triangulation_euclidean_traits_3<K> Traits;
   _test_cls_regular_euclidean_traits_3(Traits() );
+  std::cerr << timer.time() << " sec.\n";
 }

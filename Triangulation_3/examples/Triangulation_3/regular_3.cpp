@@ -3,6 +3,7 @@
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
 #include <cassert>
 #include <vector>
+#include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -19,6 +20,8 @@ typedef Rt::Vertex_handle                                   Vertex_handle;
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   // generate points on a 3D grid
   std::vector<Weighted_point> P;
 
@@ -52,5 +55,6 @@ int main()
 
   assert( count == number_of_points );
 
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }

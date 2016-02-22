@@ -10,6 +10,7 @@
 #include <CGAL/Cartesian_converter.h>
 #include <CGAL/Random.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
+#include <CGAL/Timer.h>
 
 typedef CGAL::Simple_cartesian<double>                                    Double_kernel;
 typedef CGAL::Simple_cartesian<CGAL::Quotient<CGAL::MP_Float> >           Exact_kernel;
@@ -207,6 +208,8 @@ void test_power_test_3(){
 
 int main(int argc, char **argv)
 {
+  CGAL::Timer timer;
+  timer.start();
   assert(!   Exact_traits::Has_filtered_predicates);
   assert(    FTr_with_SF::Has_filtered_predicates);
   assert(    FTr_without_SF::Has_filtered_predicates);
@@ -242,6 +245,7 @@ int main(int argc, char **argv)
   for(int i=0; i<loops; ++i)
     test_power_test_3();  
 
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }
 

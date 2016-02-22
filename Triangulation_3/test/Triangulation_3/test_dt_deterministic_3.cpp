@@ -4,6 +4,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <iostream>
 #include <fstream>
+#include <CGAL/Timer.h>
 
 
 #define GRID_SIZE 10
@@ -14,6 +15,8 @@ typedef CGAL::Delaunay_triangulation_3<Kernel> DT3;
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   std::vector <Kernel::Point_3> points;
   points.reserve(GRID_SIZE*GRID_SIZE*GRID_SIZE);
   
@@ -47,6 +50,7 @@ int main()
     }
   }
   
+  std::cerr << timer.time() << " sec.\n";
   std::cout <<"Triangulations are identical"<< std::endl;
   return 0;
 }

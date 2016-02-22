@@ -4,6 +4,8 @@
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <vector>
 
+#include <CGAL/Timer.h>
+
 typedef CGAL::Exact_predicates_inexact_constructions_kernel            K;
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K>              Traits;
 typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned, Traits>  Vb;
@@ -171,12 +173,15 @@ void test_transform_iterator(){
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   test_iterator_on_pair<false>();
   test_iterator_on_pair<true>();
   test_zip_iterator<false>();
   test_zip_iterator<true>();
   test_transform_iterator<false>();
   test_transform_iterator<true>();
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }
 

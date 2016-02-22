@@ -3,6 +3,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <boost/iterator/transform_iterator.hpp>
 #include <vector>
+#include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned, K>    Vb;
@@ -23,6 +24,8 @@ struct Auto_count : public std::unary_function<const Point&,std::pair<Point,unsi
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   std::vector<Point> points;
   points.push_back(Point(0,0,0));
   points.push_back(Point(1,0,0));
@@ -46,5 +49,6 @@ int main()
     }
   std::cout << "OK" << std::endl;
   
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }

@@ -32,9 +32,12 @@ template class CGAL::Triangulation_3<K>;
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   typedef CGAL::Triangulation_3<K>                               Cls3;
 
   _test_cls_triangulation_simplex_3( Cls3() );
 
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }

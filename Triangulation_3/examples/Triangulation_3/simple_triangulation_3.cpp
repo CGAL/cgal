@@ -1,5 +1,6 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Triangulation_3.h>
+#include <CGAL/Timer.h>
 
 #include <iostream>
 #include <fstream>
@@ -18,6 +19,8 @@ typedef Triangulation::Point          Point;
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   // construction from a list of points :
   std::list<Point> L;
   L.push_front(Point(0,0,0));
@@ -68,5 +71,6 @@ int main()
   assert( T1.number_of_vertices() == T.number_of_vertices() );
   assert( T1.number_of_cells() == T.number_of_cells() );
 
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }
