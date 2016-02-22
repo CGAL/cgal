@@ -53,6 +53,18 @@ Release date: March 2016
 
   - Speed up the edge removal in case the incident faces contains many holes.
 
+  - Set the format of polylines and polycurves. The format of a general
+    polyline or polycurve consists of the sequence of subcurves that comprise
+    the original curve. The format of a polyline of linear segments consists of
+    the sequence of points that define the original curve. (The latter restores
+    the format used before polycurves were introduced in 4.7.) Fix the
+    extraction from istream and insertion into ostream operators of polylines
+    and polycurves accordingly.
+
+  - Fix the traits class that handles Bezier curves. In particular, fix the
+    case where the curve is closed (i.e, the first and last control points
+    coincide).
+
 
 * 3D Mesh Generation
 
