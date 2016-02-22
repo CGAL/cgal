@@ -39,6 +39,7 @@
 
 #include <boost/type_traits.hpp>
 #include <boost/optional.hpp>
+#include "Scene.h"
 // Covariant return types don't work for scalar types and we cannot
 // have templates here, hence this unfortunate hack.
 
@@ -166,7 +167,6 @@ public:
     return qobject_cast<Scene_segmented_image_item*>(scene->item(scene->mainSelectionIndex()));
   }
 
-
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     this->scene = scene_interface;
     this->mw = mainWindow;
@@ -178,6 +178,9 @@ public:
       planeSwitch->setProperty("subMenuName", "3D Mesh Generation");
       connect(planeSwitch, SIGNAL(triggered()),
               this, SLOT(selectPlanes()));
+      Scene* true_scene = dynamic_cast<Scene*>(scene);
+      connect(true_scene,SIGNAL(selectionChanged(int)),
+              this, SLOT(connect_controls(int)));
     }
     Viewer_interface* v = mw->findChild<Viewer_interface*>("viewer");
     CGAL_assertion(v != 0);
@@ -251,7 +254,7 @@ public Q_SLOTS:
       layout->addWidget(z_control);
 
       QLabel* label = new QLabel(z_control);
-      label->setText("X Slice");
+      label->setText("Z Slice");
 
       z_cubeLabel = new QLabel(z_control);
 
@@ -371,7 +374,6 @@ public Q_SLOTS:
     default:
       break;
     }
-
     std::vector<Volume_plane_thread*>::iterator it = std::find(threads.begin(), threads.end(), thread);
 
     // this slot has been connected to a thread that hasn't been
@@ -396,6 +398,7 @@ public Q_SLOTS:
     }    
     connect(plane, SIGNAL(planeDestructionIncoming(Volume_plane_interface*)), 
             intersection, SLOT(planeRemoved(Volume_plane_interface*)));
+
   }
  
 private:
@@ -407,9 +410,13 @@ private:
   PixelReader pxr_;
   CGAL::Three::Scene_group_item* group;
   std::vector<Volume_plane_thread*> threads;
-  QMap<CGAL::Three::Scene_item*, int> group_map;
-
-
+  struct controls{
+    CGAL::Three::Scene_item* group;
+    CGAL::Three::Scene_item* xitem;
+    CGAL::Three::Scene_item* yitem;
+    CGAL::Three::Scene_item* zitem;
+  };
+  QMap<CGAL::Three::Scene_item*, controls> group_map;
   unsigned int intersectionId;
 
   QLayout* createOrGetDockLayout() {
@@ -463,11 +470,17 @@ private:
     Volume_plane<x_tag> *xitem = new Volume_plane<x_tag>();
     Volume_plane<y_tag> *yitem = new Volume_plane<y_tag>();
     Volume_plane<z_tag> *zitem = new Volume_plane<z_tag>();
-
     scene->setSelectedItem(-1);
-    group = new Scene_group_item("Planes");
+    group = new Scene_group_item(QString("Planes for %1").arg(seg_img->name()));
+    connect(group, SIGNAL(aboutToBeDestroyed()),
+            this, SLOT(erase_group()));
     scene->addItem(group);
-    group_map[seg_img] = scene->item_id(group);
+    controls c;
+    c.group = group;
+    c.xitem = xitem;
+    c.yitem = yitem;
+    c.zitem = zitem;
+    group_map[seg_img] = c;
 
     connect(seg_img, SIGNAL(aboutToBeDestroyed()),
             this, SLOT(erase_group()));
@@ -484,6 +497,7 @@ private:
     threads.push_back(new Z_plane_thread<Word>(zitem,img, clamper, name));
     connect(threads.back(), SIGNAL(finished(Volume_plane_thread*)), this, SLOT(addVP(Volume_plane_thread*)));
     threads.back()->start();
+
   }
 
   template<typename T>
@@ -504,22 +518,97 @@ private:
   }
 
 private Q_SLOTS:
+  // Avoids the segfoult after the deletion of an item
   void erase_group()
   {
-    CGAL::Three::Scene_item* img_itm = qobject_cast<CGAL::Three::Scene_item*>(sender());
-    if(!img_itm)
+    Scene_segmented_image_item* img_itm = qobject_cast<Scene_segmented_image_item*>(sender());
+    if(img_itm)
     {
-      qDebug()<<"Error :  sender not recognized as scene_item.";
+      if(group_map.contains(img_itm))
+      {
+        int iD = scene->item_id(group_map[img_itm].group);
+        CGAL::Three::Scene_group_item* group = qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(iD));
+        if(!group)
+          return;
+        Q_FOREACH(CGAL::Three::Scene_item* child, group->getChildren())
+          scene->erase(scene->item_id(child));
+        scene->erase(iD);
+        group_map.remove(img_itm);
+      }
+    }
+    else
+    {
+      CGAL::Three::Scene_group_item* group_item = qobject_cast<CGAL::Three::Scene_group_item*>(sender());
+      if(group_item)
+      {
+
+        Q_FOREACH(CGAL::Three::Scene_item* key, group_map.keys())
+        {
+          if(group_map[key].group == group_item)
+          {
+            group_map[key].xitem = NULL;
+            group_map[key].yitem = NULL;
+            group_map[key].zitem = NULL;
+            group_map.remove(key);
+            break;
+          }
+        }
+      }
+    }
+  }
+  void connect_controls(int id)
+  {
+    CGAL::Three::Scene_item* sel_itm = scene->item(id);
+
+    if(!sel_itm || !group_map.contains(sel_itm)) //the planes are not yet created or the selected item is not a segmented_image
+    {
       return;
     }
-    if(group_map.contains(img_itm))
+    controls c = group_map[sel_itm];
+    // x line
+    if(c.xitem != NULL)
     {
-      int iD = group_map[img_itm];
-      group_map.remove(img_itm);
-      CGAL::Three::Scene_group_item* group = qobject_cast<CGAL::Three::Scene_group_item*>(scene->item(iD));
-      Q_FOREACH(CGAL::Three::Scene_item* child, group->getChildren())
-        scene->erase(scene->item_id(child));
-      scene->erase(iD);
+      Volume_plane_interface* x_plane = qobject_cast<Volume_plane_interface*>(c.xitem);
+      if(x_slider)
+        delete x_slider;
+      x_slider = new Plane_slider(x_plane->translationVector(), scene->item_id(x_plane), scene, x_plane->manipulatedFrame(),
+                                  Qt::Horizontal, x_control);
+      x_slider->setRange(0, (x_plane->cDim() - 1) * 100);
+      connect(x_slider, SIGNAL(realChange(int)), x_cubeLabel, SLOT(setNum(int)));
+      connect(x_plane, SIGNAL(manipulated(int)), x_cubeLabel, SLOT(setNum(int)));
+      connect(x_plane, SIGNAL(aboutToBeDestroyed()), x_slider, SLOT(hide()));
+      x_box->addWidget(x_slider);
+      x_box->addWidget(x_cubeLabel);
+    }
+    //y line
+    if(c.yitem)
+    {
+      Volume_plane_interface* y_plane = qobject_cast<Volume_plane_interface*>(c.yitem);
+      if(y_slider)
+        delete y_slider;
+      y_slider = new Plane_slider(y_plane->translationVector(), scene->item_id(y_plane), scene, y_plane->manipulatedFrame(),
+                                  Qt::Horizontal, z_control);
+      y_slider->setRange(0, (y_plane->cDim() - 1) * 100);
+      connect(y_slider, SIGNAL(realChange(int)), y_cubeLabel, SLOT(setNum(int)));
+      connect(y_plane, SIGNAL(manipulated(int)), y_cubeLabel, SLOT(setNum(int)));
+      connect(y_plane, SIGNAL(aboutToBeDestroyed()), y_slider, SLOT(hide()));
+      y_box->addWidget(y_slider);
+      y_box->addWidget(y_cubeLabel);
+    }
+    // z line
+    if(c.zitem)
+    {
+      Volume_plane_interface* z_plane = qobject_cast<Volume_plane_interface*>(c.zitem);
+      if(z_slider)
+        delete z_slider;
+      z_slider = new Plane_slider(z_plane->translationVector(), scene->item_id(z_plane), scene, z_plane->manipulatedFrame(),
+                                  Qt::Horizontal, z_control);
+      z_slider->setRange(0, (z_plane->cDim() - 1) * 100);
+      connect(z_slider, SIGNAL(realChange(int)), z_cubeLabel, SLOT(setNum(int)));
+      connect(z_plane, SIGNAL(manipulated(int)), z_cubeLabel, SLOT(setNum(int)));
+      connect(z_plane, SIGNAL(aboutToBeDestroyed()), z_slider, SLOT(hide()));
+      z_box->addWidget(z_slider);
+      z_box->addWidget(z_cubeLabel);
     }
   }
 };
