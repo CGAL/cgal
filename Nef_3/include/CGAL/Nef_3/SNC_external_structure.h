@@ -123,20 +123,63 @@ int sign_of(const CGAL::Plane_3<R>& h)
 }
 
 struct Plane_lt {
-  template <typename R>
-  bool operator()(const CGAL::Plane_3<R>& h1,
-                  const CGAL::Plane_3<R>& h2) const
-  { 
-    typedef typename R::RT     RT;
-    RT diff = h1.a()-h2.a();
-    if ( (diff) != 0 ) return CGAL_NTS sign(diff) < 0;
-    diff = h1.b()-h2.b();
-    if ( (diff) != 0 ) return CGAL_NTS sign(diff) < 0;
-    diff = h1.c()-h2.c();
-    if ( (diff) != 0 ) return CGAL_NTS sign(diff) < 0;
-    diff = h1.d()-h2.d(); return CGAL_NTS sign(diff) < 0;
-  }
+    template <typename R>
+    bool operator()(const CGAL::Plane_3<R>& h1,
+                    const CGAL::Plane_3<R>& h2) const
+    {
+        typedef typename R::RT     RT;
+        typedef typename R::FT     FT;
+
+        bool flag=false;
+        FT ratioa,ratiob,ratioc,ratiod;
+        FT a1,b1,c1,d1,a2,b2,c2,d2;
+        a1=h1.a();
+        a2=h2.a();
+        b1=h1.b();
+        b2=h2.b();
+        c1=h1.c();
+        c2=h2.c();
+        d1=h1.d();
+        d2=h2.d();
+        if(a2==0 || a1==0)
+        {
+            if(a2==a1) ratioa=1;
+            else flag=true;
+        }
+        else{ratioa=a1/a2;}
+        if(b2==0 || b1==0)
+        {
+            if(b2==b1) ratiob=ratioa;
+            else flag=true;
+        }
+        else{ ratiob=b1/b2;}
+        if(c2==0 || c1==0)
+        {
+            if(c2==c1) ratioc=ratioa;
+            else flag=true;
+        }
+        else{ ratioc=c1/c2;}
+        if(d2==0 || d1==0)
+        {
+            if(d2==d1) ratiod=ratioc;
+            else flag=true;
+        }
+        else{ ratiod=d1/d2;}
+        if(flag || !(ratioa==ratiob && ratioc==ratiod && ratioa==ratioc))
+        {
+            RT diff = h1.a()-h2.a();
+            if ( (diff) != 0 ) return CGAL_NTS sign(diff) < 0;
+            diff = h1.b()-h2.b();
+            if ( (diff) != 0 ) return CGAL_NTS sign(diff) < 0;
+            diff = h1.c()-h2.c();
+            if ( (diff) != 0 ) return CGAL_NTS sign(diff) < 0;
+            diff = h1.d()-h2.d();
+            if ( (diff) != 0 ) return CGAL_NTS sign(diff) < 0;
+        }
+        return 0;
+    }
 };
+
 
 struct Plane_RT_lt {
   template <typename R>
