@@ -52,7 +52,7 @@ Polyhedron_demo_off_to_xyz_plugin::load(QFileInfo fileinfo) {
     }
   }
 
-  item->setName(fileinfo.baseName());
+  item->setName(fileinfo.completeBaseName());
   return item;
 }
 
