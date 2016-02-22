@@ -41,10 +41,10 @@ namespace internal {
   // weight_calculator a function object to calculate weights, defaults to Cotangent weights and can be omitted
   template<typename SparseLinearSolver,
            typename WeightCalculator,
-           typename PolygonMesh,
+           typename TriangleMesh,
            typename VertexRange,
            typename VertexPointMap>
-  bool fair(PolygonMesh& pmesh,
+  bool fair(TriangleMesh& tmesh,
     const VertexRange& vertices,
     SparseLinearSolver solver,
     WeightCalculator weight_calculator,
@@ -52,8 +52,8 @@ namespace internal {
     VertexPointMap vpmap)
   {
     CGAL::Polygon_mesh_processing::internal::Fair_Polyhedron_3
-       <PolygonMesh, SparseLinearSolver, WeightCalculator, VertexPointMap>
-       fair_functor(pmesh, vpmap, weight_calculator);
+       <TriangleMesh, SparseLinearSolver, WeightCalculator, VertexPointMap>
+       fair_functor(tmesh, vpmap, weight_calculator);
     return fair_functor.fair(vertices, solver, continuity);
   }
 
@@ -61,7 +61,7 @@ namespace internal {
 
   /*!
   \ingroup PMP_meshing_grp
-  @brief fairs a region on a polygon mesh.
+  @brief fairs a region on a triangle mesh.
   The points of the selected vertices are
   relocated to yield an as-smooth-as-possible surface patch,
   based on solving a linear bi-Laplacian system with boundary constraints,
@@ -76,38 +76,42 @@ namespace internal {
   Fairing might fail if fixed vertices, which are used as boundary conditions,
   do not suffice to solve constructed linear system.
 
-  Note that if the vertex range to which fairing is applied contains all the vertices of the polygon mesh,
+  Note that if the vertex range to which fairing is applied contains all the vertices of the triangle mesh,
   fairing does not fail, but the mesh gets shrinked to `CGAL::ORIGIN`.
 
-  @tparam PolygonMesh a model of `FaceGraph` and `MutableFaceGraph`
+  @tparam TriangleMesh a model of `FaceGraph` and `MutableFaceGraph`
           that has an internal property map for `CGAL::vertex_point_t`
-  @tparam VertexRange a range of vertex descriptors of `PolygonMesh`, model of `Range`.
+  @tparam VertexRange a range of vertex descriptors of `TriangleMesh`, model of `Range`.
           Its iterator type is `InputIterator`.
   @tparam NamedParameters a sequence of \ref namedparameters
 
-  @param pmesh the polygon mesh with patches to be faired
+  @param tmesh the triangle mesh with patches to be faired
   @param vertices the vertices of the patches to be faired (the positions of only those vertices will be changed)
   @param np optional sequence of \ref namedparameters among the ones listed below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh` \cgalParamEnd
     \cgalParamBegin{fairing_continuity} tangential continuity of the output surface patch. The larger `fairing_continuity` gets, the more fixed vertices are required \cgalParamEnd
     \cgalParamBegin{sparse_linear_solver} an instance of the sparse linear solver used for fairing \cgalParamEnd
   \cgalNamedParamsEnd
   
   @return `true` if fairing is successful, otherwise no vertices are relocated
 
+  @pre `is_triangle_mesh(tmesh)`
+
   @todo accuracy of solvers are not good, for example when there is no boundary condition pre_factor should fail, but it does not.
   */
-  template<typename PolygonMesh,
+  template<typename TriangleMesh,
            typename VertexRange,
            typename NamedParameters>
-  bool fair(PolygonMesh& pmesh,
+  bool fair(TriangleMesh& tmesh,
             const VertexRange& vertices,
             const NamedParameters& np)
   {
     using boost::get_param;
     using boost::choose_param;
+
+    CGAL_precondition(is_triangle_mesh(tmesh));
 
 #if defined(CGAL_EIGEN3_ENABLED)
   #if EIGEN_VERSION_AT_LEAST(3,2,0)
@@ -133,27 +137,27 @@ namespace internal {
       "The function `fair` requires Eigen3 version 3.2 or later.");
 #endif
 
-    typedef typename GetVertexPointMap < PolygonMesh, NamedParameters>::type VPMap;
-    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<PolygonMesh, VPMap>
+    typedef typename GetVertexPointMap < TriangleMesh, NamedParameters>::type VPMap;
+    typedef CGAL::internal::Cotangent_weight_with_voronoi_area_fairing<TriangleMesh, VPMap>
       Default_Weight_calculator;
 
-    VPMap vpmap_ = choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, pmesh));
+    VPMap vpmap_ = choose_param(get_param(np, vertex_point), get(CGAL::vertex_point, tmesh));
 
-    return internal::fair(pmesh, vertices,
+    return internal::fair(tmesh, vertices,
       choose_param(get_param(np, sparse_linear_solver), Default_solver()),
-      choose_param(get_param(np, weight_calculator), Default_Weight_calculator(pmesh, vpmap_)),
+      choose_param(get_param(np, weight_calculator), Default_Weight_calculator(tmesh, vpmap_)),
       choose_param(get_param(np, fairing_continuity), 1),
       vpmap_
       );
   }
 
-  template<typename PolygonMesh, typename VertexRange>
-  bool fair(PolygonMesh& pmesh, const VertexRange& vertices)
+  template<typename TriangleMesh, typename VertexRange>
+  bool fair(TriangleMesh& tmesh, const VertexRange& vertices)
   {
-    return fair(pmesh, vertices,
+    return fair(tmesh, vertices,
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
-  
+
 } //end namespace Polygon_mesh_processing
 
 } //end namespace CGAL

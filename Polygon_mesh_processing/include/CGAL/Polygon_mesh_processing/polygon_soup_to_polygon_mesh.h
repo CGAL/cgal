@@ -21,11 +21,11 @@
 #ifndef CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH
 #define CGAL_POLYGON_MESH_PROCESSING_POLYGON_SOUP_TO_POLYGON_MESH
 
-#include <CGAL/Modifier_base.h>
 #include <CGAL/IO/generic_print_polyhedron.h>
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/property_map.h>
+#include <set>
 
 namespace CGAL
 {
@@ -37,12 +37,12 @@ template <typename PM
         , typename Point
         , typename Polygon>
 class Polygon_soup_to_polygon_mesh
-  : public CGAL::Modifier_base< PM >
 {
   const std::vector<Point>& _points;
   const std::vector<Polygon>& _polygons;
 
-  typedef typename PM::Point Point_3;
+  typedef typename boost::property_map<PM, CGAL::vertex_point_t>::type Vpmap;
+  typedef typename boost::property_traits<Vpmap>::value_type Point_3;
 
   typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
@@ -62,8 +62,7 @@ public:
 
   void operator()(PM& pmesh)
   {
-    typename boost::property_map<PM, CGAL::vertex_point_t>::type
-      vpmap = get(CGAL::vertex_point, pmesh);
+    Vpmap vpmap = get(CGAL::vertex_point, pmesh);
 
     std::vector<vertex_descriptor> vertices(_points.size());
     for (std::size_t i = 0, end = _points.size(); i < end; ++i)
@@ -133,7 +132,7 @@ public:
   * @pre the input polygon soup describes consistently oriented
   * polygon mesh.
   *
-  * @tparam PolygonMesh a model of `MutableFaceGraph`
+  * @tparam PolygonMesh a model of `MutableFaceGraph` with an internal point property map
   * @tparam Point a point type that has an operator `[]` to access coordinates
   * @tparam Polygon a `std::vector<std::size_t>` containing the indices
   *         of the points of the face

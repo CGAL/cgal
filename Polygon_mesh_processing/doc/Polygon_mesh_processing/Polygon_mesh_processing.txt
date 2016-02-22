@@ -72,7 +72,7 @@ The visual results of aforementioned steps are depicted by \cgalFigureRef{Mech_s
 
 \subsubsection Meshing
 
-Refinement and fairing functions can be applied to an arbitrary region on a mesh, using :
+Refinement and fairing functions can be applied to an arbitrary region on a triangle mesh, using :
 - `CGAL::Polygon_mesh_processing::refine()` : given a set of facets on a mesh, refines the region.
 - `CGAL::Polygon_mesh_processing::fair()` : given a set of vertices on a mesh, fairs the region.
 
@@ -124,10 +124,10 @@ Isotropic remeshing. (a) Triangulated input surface mesh.
 
 \subsection MeshingExamples Meshing Examples
 
-\subsubsection MeshingExample_1 Refine and Fair a Region on a Polygon Mesh
+\subsubsection MeshingExample_1 Refine and Fair a Region on a Triangle Mesh
 
 The following example calls the functions `CGAL::Polygon_mesh_processing::refine()`
-and `CGAL::Polygon_mesh_processing::fair()` for some selected regions on the input polygon mesh.
+and `CGAL::Polygon_mesh_processing::fair()` for some selected regions on the input triangle mesh.
 
 \cgalExample{Polygon_mesh_processing/refine_fair_example.cpp}
 
@@ -477,8 +477,8 @@ For each requirement, the table answers a question :
 <center>
 Function or Class                     | Pure Triangle  | Self-Intersection Free | Closed
 :------------------------------------ | :------------: | :--------------------: | :-------:
-`fair()`                              |     no         |        no              |   no
-`refine()`                            |     no         |        no              |   no
+`fair()`                              |     yes        |        no              |   no
+`refine()`                            |     yes        |        no              |   no
 `triangulate_faces()`                 |     no         |        no              |   no
 `isotropic_remeshing()`               |     no         |        no              |   no
 `split_long_edges()`                  |     no         |        no              |   no
@@ -494,7 +494,7 @@ Function or Class                     | Pure Triangle  | Self-Intersection Free 
 `stitch_borders()`                    |     no         |        no              |   no
 `polygon_soup_to_polygon_mesh()`      |     no         |        no              |   no
 `orient_polygon_soup()`               |     no         |        no              |   no
-`remove_isolated_vertices()`           |     no        |        no              |   no
+`remove_isolated_vertices()`          |     no         |        no              |   no
 `compute_face_normal()`               |     no         |        no              |   no
 `compute_face_normals()`              |     no         |        no              |   no
 `compute_vertex_normal()`             |     no         |        no              |   no

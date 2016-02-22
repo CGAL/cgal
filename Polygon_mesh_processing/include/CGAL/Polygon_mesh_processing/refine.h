@@ -32,28 +32,28 @@ namespace Polygon_mesh_processing {
 
   /*!
   \ingroup PMP_meshing_grp
-  @brief refines a region of a polygon mesh
+  @brief refines a region of a triangle mesh
 
-  @tparam PolygonMesh model of `MutableFaceGraph`
+  @tparam TriangleMesh model of `MutableFaceGraph`
           that has an internal property map for `CGAL::vertex_point_t`
   @tparam FaceRange range of face descriptors, model of `Range`.
           Its iterator type is `InputIterator`.
   @tparam FaceOutputIterator model of `OutputIterator`
-    holding `boost::graph_traits<PolygonMesh>::%face_descriptor` for patch faces
+    holding `boost::graph_traits<TriangleMesh>::%face_descriptor` for patch faces
   @tparam VertexOutputIterator model of `OutputIterator`
-    holding `boost::graph_traits<PolygonMesh>::%vertex_descriptor` for patch vertices
+    holding `boost::graph_traits<TriangleMesh>::%vertex_descriptor` for patch vertices
   @tparam NamedParameters a sequence of \ref namedparameters
 
-  @param pmesh polygon mesh with patches to be refined
+  @param tmesh triangle mesh with patches to be refined
   @param faces the range of faces defining the patches to refine
   @param faces_out output iterator into which descriptors of new faces are recorded
   @param vertices_out output iterator into which descriptors of new vertices are recorded
   @param np optional sequence of \ref namedparameters among the ones listed below
 
   \cgalNamedParamsBegin
-    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh`
+    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `tmesh`
       Instance of a class model of `ReadWritePropertyMap` \cgalParamEnd
-    \cgalParamBegin{density_control_factor} factor to control density of the ouput mesh,
+    \cgalParamBegin{density_control_factor} factor to control density of the output mesh,
       where larger values lead to denser refinements.
       The density of vertices of `faces_out` is this factor times higher than the vertices of `faces.` \cgalParamEnd
   \cgalNamedParamsEnd
@@ -61,15 +61,17 @@ namespace Polygon_mesh_processing {
 
   @return pair of `faces_out` and `vertices_out`
 
+  \pre `is_triangle_mesh(tmesh)`
+
   @todo current algorithm iterates 10 times at most, since (I guess) there is no termination proof.
   */
-  template<typename PolygonMesh,
+  template<typename TriangleMesh,
            typename FaceRange,
            typename FaceOutputIterator,
            typename VertexOutputIterator,
            typename NamedParameters>
   std::pair<FaceOutputIterator, VertexOutputIterator>
-    refine(PolygonMesh& pmesh,
+    refine(TriangleMesh& tmesh,
            const FaceRange& faces,
            FaceOutputIterator faces_out,
            VertexOutputIterator vertices_out,
@@ -79,12 +81,14 @@ namespace Polygon_mesh_processing {
     using boost::choose_param;
     using boost::get_param;
 
-    typedef typename GetVertexPointMap<PolygonMesh,NamedParameters>::type VPmap;
+    CGAL_precondition(is_triangle_mesh(tmesh) );
+
+    typedef typename GetVertexPointMap<TriangleMesh,NamedParameters>::type VPmap;
     VPmap vpm = choose_pmap(get_param(np, boost::vertex_point),
-                            pmesh,
+                            tmesh,
                             boost::vertex_point);
 
-    internal::Refine_Polyhedron_3<PolygonMesh, VPmap> refine_functor(pmesh, vpm);
+    internal::Refine_Polyhedron_3<TriangleMesh, VPmap> refine_functor(tmesh, vpm);
     refine_functor.refine(faces,
       faces_out,
       vertices_out,
@@ -93,18 +97,18 @@ namespace Polygon_mesh_processing {
   }
 
 ///\cond SKIP_IN_MANUAL
-  template<typename PolygonMesh,
+  template<typename TriangleMesh,
     typename FaceRange,
     typename FaceOutputIterator,
     typename VertexOutputIterator>
 
   std::pair<FaceOutputIterator, VertexOutputIterator>
-    refine(PolygonMesh& pmesh,
+    refine(TriangleMesh& tmesh,
            const FaceRange& faces,
            FaceOutputIterator faces_out,
            VertexOutputIterator vertices_out)
   {
-    return refine(pmesh, faces, faces_out, vertices_out,
+    return refine(tmesh, faces, faces_out, vertices_out,
       CGAL::Polygon_mesh_processing::parameters::all_default());
   }
 ///\endcond
