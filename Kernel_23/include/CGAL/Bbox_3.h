@@ -45,11 +45,19 @@ public:
 
   typedef Simple_cartesian<double>  R;
 
-        Bbox_3() {}
+  Bbox_3()
+    : rep(CGAL::make_array( std::numeric_limits<double>::infinity(),
+                            std::numeric_limits<double>::infinity(),
+                            std::numeric_limits<double>::infinity(),
+                            - std::numeric_limits<double>::infinity(),
+                            - std::numeric_limits<double>::infinity(),
+                            - std::numeric_limits<double>::infinity() ))
+  {}
 
-        Bbox_3(double x_min, double y_min, double z_min,
-               double x_max, double y_max, double z_max)
-	  : rep(CGAL::make_array(x_min, y_min, z_min, x_max, y_max, z_max)) {}
+  Bbox_3(double x_min, double y_min, double z_min,
+         double x_max, double y_max, double z_max)
+    : rep(CGAL::make_array(x_min, y_min, z_min, x_max, y_max, z_max))
+  {}
 
   inline bool operator==(const Bbox_3 &b) const;
   inline bool operator!=(const Bbox_3 &b) const;
@@ -213,12 +221,12 @@ inline
 std::istream&
 operator>>(std::istream &is, Bbox_3& b)
 {
-    double xmin = (std::numeric_limits<double>::min)();
-    double ymin = (std::numeric_limits<double>::min)();
-    double zmin = (std::numeric_limits<double>::min)();
-    double xmax = (std::numeric_limits<double>::max)();
-    double ymax = (std::numeric_limits<double>::max)();
-    double zmax = (std::numeric_limits<double>::max)();
+    double xmin = 0;
+    double ymin = 0;
+    double zmin = 0;
+    double xmax = 0;
+    double ymax = 0;
+    double zmax = 0;
 
   switch(get_mode(is))
   {

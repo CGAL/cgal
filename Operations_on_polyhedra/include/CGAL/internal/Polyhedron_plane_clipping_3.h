@@ -244,6 +244,7 @@ Polyhedron* clip_polyhedron(Polyhedron& P, Polyhedron& clipping_polyhedron)
 template <class Polyhedron, class Plane_3>
 Polyhedron* clip_polyhedron(const Polyhedron& P, const Plane_3& p)
 {
+  if(P.empty()) return new Polyhedron();
   CGAL::Bbox_3 bbox( CGAL::bbox_3(P.points_begin(), P.points_end()) );
   //extend the bbox a bit to avoid border cases
   double xd=(bbox.xmax()-bbox.xmin())/100;

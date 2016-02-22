@@ -18,9 +18,18 @@ public:
 /// @{
 
 /*!
+introduces an \em empty bounding box with lower left
+corner point at \f$ (\infty, \infty, \infty) \f$
+and with upper right corner point at
+\f$ (-\infty, -\infty, -\infty) \f$, \f$ \infty \f$ being
+`std::numeric_limits<double>::%infinity()`.
+*/
+  Bbox_3();
+
+/*!
 introduces a bounding box `b` with lexicographically 
 smallest corner point at `(xmin, ymin, zmin)` 
-lexicographically largest corner point at 
+and lexicographically largest corner point at
 `(xmax, ymax, zmax)`. 
 */ 
 Bbox_3(double x_min, double y_min, double z_min, 
