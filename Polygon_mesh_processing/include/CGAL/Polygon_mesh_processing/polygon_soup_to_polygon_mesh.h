@@ -96,22 +96,26 @@ public:
 
 
   /**
-  * \ingroup PMP_repairing_grp
-  *
-  * returns `true` if the soup of polygons defines a valid polygon
-  * mesh that can be handled by
-  * `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`.
-  * This function does not require a range of points as an argument
-  * since the check is purely topological.
-  *
-  * @tparam PolygonRange a model of the concept `SinglePassRange`
-  * whose value_type is a model of the concept `BidirectionalRange`
-  * whose value_type is `std::size_t`.
-  *
-  * @param polygons each element in the range describes a polygon
-  * using the index of the vertices.
-  *
-  */
+   * \ingroup PMP_repairing_grp
+   *
+   * returns `true` if the soup of polygons defines a valid polygon
+   * mesh that can be handled by
+   * `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
+   * (i.e. each edge has at most two incident faces and such an edge
+   * is visited in opposite direction along the two face boundaries).
+   * This function does not require a range of points as an argument
+   * since the check is purely topological. Each vertex of the mesh
+   * is associated an index that is used in the description of the
+   * boundaries of the polygons provided in `polygons`.
+   *
+   * @tparam PolygonRange a model of the concept `SinglePassRange`
+   * whose value_type is a model of the concept `BidirectionalRange`
+   * whose value_type is `std::size_t`.
+   *
+   * @param polygons each element in the range describes a polygon
+   * using the index of the vertices.
+   *
+   */
   template<class PolygonRange>
   bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
   {
