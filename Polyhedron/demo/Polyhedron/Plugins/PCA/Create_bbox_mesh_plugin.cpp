@@ -72,7 +72,10 @@ class Create_bbox_mesh_plugin :
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface);
   QList<QAction*> actions() const;
-  bool applicable(QAction*) const {return true;}
+  bool applicable(QAction*) const {
+    if(scene->mainSelectionIndex() != -1)
+      return true;
+  return false;}
 
 protected:
   void bbox(bool extended = false);

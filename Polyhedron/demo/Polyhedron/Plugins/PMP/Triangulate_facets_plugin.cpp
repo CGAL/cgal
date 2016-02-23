@@ -47,10 +47,8 @@ public:
   }
 
   bool applicable(QAction*) const { 
-    Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())  {
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
       if(!item) return false;
-    }
     return true;
   }
 
