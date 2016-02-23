@@ -173,6 +173,7 @@ public:
     x_control = NULL;
     y_control = NULL;
     z_control = NULL;
+    current_control = NULL;
     planeSwitch = new QAction("Add Volume Planes", mw);
     if(planeSwitch) {
       planeSwitch->setProperty("subMenuName", "3D Mesh Generation");
@@ -349,8 +350,9 @@ public Q_SLOTS:
                                          Qt::Horizontal, x_control);
       x_slider->setRange(0, (plane->cDim() - 1) * 100);
       connect(x_slider, SIGNAL(realChange(int)), x_cubeLabel, SLOT(setNum(int)));
+      connect(x_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
       connect(plane, SIGNAL(manipulated(int)), x_cubeLabel, SLOT(setNum(int)));
-      connect(plane, SIGNAL(aboutToBeDestroyed()), x_slider, SLOT(hide()));
+      connect(plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_x_item()));
       x_box->addWidget(x_slider);
       x_box->addWidget(x_cubeLabel);
       break;
@@ -360,8 +362,9 @@ public Q_SLOTS:
                                          Qt::Horizontal, y_control);
       y_slider->setRange(0, (plane->cDim() - 1) * 100);
       connect(y_slider, SIGNAL(realChange(int)), y_cubeLabel, SLOT(setNum(int)));
+      connect(y_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
       connect(plane, SIGNAL(manipulated(int)), y_cubeLabel, SLOT(setNum(int)));
-      connect(plane, SIGNAL(aboutToBeDestroyed()), y_slider, SLOT(hide()));
+      connect(plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_y_item()));
       y_box->addWidget(y_slider);
       y_box->addWidget(y_cubeLabel);
       break;
@@ -371,8 +374,9 @@ public Q_SLOTS:
                                          Qt::Horizontal, z_control);
       z_slider->setRange(0, (plane->cDim() - 1) * 100);
       connect(z_slider, SIGNAL(realChange(int)), z_cubeLabel, SLOT(setNum(int)));
+      connect(z_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
       connect(plane, SIGNAL(manipulated(int)), z_cubeLabel, SLOT(setNum(int)));
-      connect(plane, SIGNAL(aboutToBeDestroyed()), z_slider, SLOT(hide()));
+      connect(plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_z_item()));
       z_box->addWidget(z_slider);
       z_box->addWidget(z_cubeLabel);
       break;
@@ -422,7 +426,11 @@ private:
     CGAL::Three::Scene_item* xitem;
     CGAL::Three::Scene_item* yitem;
     CGAL::Three::Scene_item* zitem;
+    int xvalue;
+    int yvalue;
+    int zvalue;
   };
+  controls *current_control;
   QMap<CGAL::Three::Scene_item*, controls> group_map;
   unsigned int intersectionId;
 
@@ -443,14 +451,15 @@ private:
       layout->addWidget(vlabels);
       QHBoxLayout* vbox = new QHBoxLayout(vlabels);
       vbox->setAlignment(Qt::AlignJustify);
-
+      QLabel* help = new QLabel(vlabels);
+      help->setText("Cut planes for the \nselected image:");
       QLabel* text = new QLabel(vlabels);
       text->setText("Isovalue at point:");
       QLabel* x = new QLabel(vlabels);
 
       connect(&pxr_, SIGNAL(x(int)), x, SLOT(setNum(int)));
       
-      vbox->addWidget(text); vbox->addWidget(x);
+      layout->addWidget(help); vbox->addWidget(text); vbox->addWidget(x);
       controlDockWidget->setWidget(content);
       controlDockWidget->hide();
 
@@ -487,8 +496,11 @@ private:
     c.xitem = xitem;
     c.yitem = yitem;
     c.zitem = zitem;
+    c.xvalue = 0;
+    c.yvalue = 0;
+    c.zvalue = 0;
     group_map[seg_img] = c;
-
+    current_control = &group_map[seg_img];
     connect(seg_img, SIGNAL(aboutToBeDestroyed()),
             this, SLOT(erase_group()));
 
@@ -537,7 +549,7 @@ private Q_SLOTS:
       nbPlanes = 0;
     }
   }
-  // Avoids the segfoult after the deletion of an item
+  // Avoids the segfault after the deletion of an item
   void erase_group()
   {
     Scene_segmented_image_item* img_itm = qobject_cast<Scene_segmented_image_item*>(sender());
@@ -584,6 +596,7 @@ private Q_SLOTS:
       return;
     }
     controls c = group_map[sel_itm];
+    current_control = &group_map[sel_itm];
     // x line
     if(c.xitem != NULL)
     {
@@ -595,12 +608,15 @@ private Q_SLOTS:
       x_slider->setRange(0, (x_plane->cDim() - 1) * 100);
       connect(x_slider, SIGNAL(realChange(int)), x_cubeLabel, SLOT(setNum(int)));
       connect(x_plane, SIGNAL(manipulated(int)), x_cubeLabel, SLOT(setNum(int)));
-      connect(x_plane, SIGNAL(aboutToBeDestroyed()), x_slider, SLOT(hide()));
+      connect(x_plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_x_item()));
+      connect(x_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
+      x_slider->setValue(c.xvalue);
+
       x_box->addWidget(x_slider);
       x_box->addWidget(x_cubeLabel);
     }
     //y line
-    if(c.yitem)
+    if(c.yitem != NULL)
     {
       Volume_plane_interface* y_plane = qobject_cast<Volume_plane_interface*>(c.yitem);
       if(y_slider)
@@ -610,12 +626,14 @@ private Q_SLOTS:
       y_slider->setRange(0, (y_plane->cDim() - 1) * 100);
       connect(y_slider, SIGNAL(realChange(int)), y_cubeLabel, SLOT(setNum(int)));
       connect(y_plane, SIGNAL(manipulated(int)), y_cubeLabel, SLOT(setNum(int)));
-      connect(y_plane, SIGNAL(aboutToBeDestroyed()), y_slider, SLOT(hide()));
+      connect(y_plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_y_item()));
+      connect(y_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
+      y_slider->setValue(c.yvalue);
       y_box->addWidget(y_slider);
       y_box->addWidget(y_cubeLabel);
     }
     // z line
-    if(c.zitem)
+    if(c.zitem != NULL)
     {
       Volume_plane_interface* z_plane = qobject_cast<Volume_plane_interface*>(c.zitem);
       if(z_slider)
@@ -625,11 +643,37 @@ private Q_SLOTS:
       z_slider->setRange(0, (z_plane->cDim() - 1) * 100);
       connect(z_slider, SIGNAL(realChange(int)), z_cubeLabel, SLOT(setNum(int)));
       connect(z_plane, SIGNAL(manipulated(int)), z_cubeLabel, SLOT(setNum(int)));
-      connect(z_plane, SIGNAL(aboutToBeDestroyed()), z_slider, SLOT(hide()));
+      connect(z_plane, SIGNAL(aboutToBeDestroyed()), this, SLOT(destroy_z_item()));
+      connect(z_slider, SIGNAL(realChange(int)), this, SLOT(set_value()));
+      z_slider->setValue(c.zvalue);
       z_box->addWidget(z_slider);
       z_box->addWidget(z_cubeLabel);
     }
   }
+//Keeps the position of the planes for the next time
+  void set_value()
+  {
+    current_control->xvalue = x_slider->value();
+    current_control->yvalue = y_slider->value();
+    current_control->zvalue = z_slider->value();
+  }
+
+  void destroy_x_item()
+  {
+    current_control->xitem = NULL;
+    x_slider->hide();
+  }
+  void destroy_y_item()
+  {
+    current_control->yitem = NULL;
+    y_slider->hide();
+  }
+  void destroy_z_item()
+  {
+    current_control->zitem = NULL;
+    z_slider->hide();
+  }
+
 };
 
 
