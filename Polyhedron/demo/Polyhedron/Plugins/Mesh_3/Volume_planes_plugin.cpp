@@ -200,7 +200,8 @@ public:
   }
 public Q_SLOTS:
   void selectPlanes() {
-//Control widgets creation
+
+    //Control widgets creation
     QLayout* layout = createOrGetDockLayout();
     if(x_control == NULL)
     {
@@ -289,6 +290,10 @@ public Q_SLOTS:
       QString selected = QInputDialog::getItem(mw, tr("Select a dataset:"), tr("Items"), items, 0, false, &ok);
       if(!ok || selected.isEmpty())
         return;
+      // Opens a modal Dialog to prevent the user from manipulating things that could mess with the planes creation and cause a segfault.
+      msgBox.setText("Planes created : 0/3");
+      msgBox.setStandardButtons(QMessageBox::NoButton);
+      msgBox.show();
       for(std::vector< Scene_segmented_image_item*>::const_iterator it = seg_items.begin(); 
           it != seg_items.end(); ++it) { 
         if(selected == (*it)->name())
@@ -382,6 +387,7 @@ public Q_SLOTS:
     delete *it;
     threads.erase(it);
 
+    update_msgBox();
     Volume_plane_intersection* intersection = dynamic_cast<Volume_plane_intersection*>(scene->item(intersectionId));
     if(!intersection) {
       // the intersection is gone before it was initialized
@@ -402,6 +408,7 @@ public Q_SLOTS:
   }
  
 private:
+  QMessageBox msgBox;
   QAction* planeSwitch;
   QWidget *x_control, *y_control, *z_control;
   QSlider *x_slider, *y_slider, *z_slider;
@@ -518,6 +525,18 @@ private:
   }
 
 private Q_SLOTS:
+  //updates the msgBox
+  void update_msgBox()
+  {
+    static int nbPlanes =0;
+    nbPlanes ++;
+    msgBox.setText(QString("Planes created : %1/3").arg(nbPlanes));
+    if(nbPlanes == 3)
+    {
+      msgBox.hide();
+      nbPlanes = 0;
+    }
+  }
   // Avoids the segfoult after the deletion of an item
   void erase_group()
   {
