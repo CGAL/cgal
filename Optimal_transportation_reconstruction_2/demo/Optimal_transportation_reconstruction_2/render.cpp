@@ -4,7 +4,7 @@
 #include <QtOpenGL>
 
 // local
-#include "Optimal_transportation_reconstruction_kerneled_2.h"
+#include "Otr2_kerneled.h"
 #include <CGAL/Optimal_transportation_reconstruction_2.h>
 
 typedef Optimal_transportation_reconstruction_kerneled_2::Rec_edge_2 PEdge;

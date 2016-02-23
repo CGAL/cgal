@@ -45,7 +45,7 @@ if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND)
   set(
   SRCS 
   glviewer.cpp 
-  Optimal_transportation_reconstruction_2_demo.cpp 
+  Otr2_demo.cpp 
   window.cpp 
   render.cpp 
   )

@@ -10,7 +10,7 @@
 
 // local
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include "Optimal_transportation_reconstruction_kerneled_2.h"
+#include "Otr2_kerneled.h"
 #include <CGAL/Optimal_transportation_reconstruction_2.h>
 
 
