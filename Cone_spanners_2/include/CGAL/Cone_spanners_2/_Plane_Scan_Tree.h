@@ -230,7 +230,7 @@ class _Leaf : public _Node<Key, T, Comp, VComp> {
     }
 
   protected:
-    virtual void print(std::ostream& os, const size_t level) const {
+    virtual void print(std::ostream& os, const size_t /* level */) const {
       os << "\t\"" << this << "\"--\"" << &(values[0]->first) << "\" [style=bold];" << std::endl;
       os << "\t" << "{rank=same; \"" << &(values[0]->first) << "\"--\"" << &(values[0]->second) << "\" [style=dotted];}" << std::endl;
       os << "\t\"" << &(values[0]->first) << "\"--\"" << values[0]->first << "\";" << std::endl;
