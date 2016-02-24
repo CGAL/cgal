@@ -23,7 +23,7 @@ int main(int argc, char ** argv) {
         return 1;
     }
 
-    unsigned long k = atol(argv[1]);
+    unsigned int k = atoi(argv[1]);
     if (k<2) {
         std::cout << "The number of cones should be larger than 1!" << std::endl;
         return 1;
@@ -47,7 +47,7 @@ int main(int argc, char ** argv) {
 	cones(k, initial_direction, rays.begin());
 
 	// display the computed rays, starting from the initial direction, ccw order
-    for (int i=0; i<k; i++) 
+    for (unsigned int i=0; i<k; i++) 
 		std::cout << "Ray " << i << ": " << rays[i] << std::endl;
 
     return 0;
