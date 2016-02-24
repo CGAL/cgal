@@ -11,6 +11,7 @@
 #include <iterator>
 #include <string>
 #include <vector>
+#include <boost/lexical_cast.hpp>
 #include <boost/graph/adjacency_list.hpp>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Construct_theta_graph_2.h>
@@ -71,7 +72,7 @@ int main(int argc, char ** argv)
   // obtain the number of vertices in the constructed graph
   unsigned int n = boost::num_vertices(g);
   // generate gnuplot files for plotting this graph
-  std::string file_prefix = "t" + std::to_string(k) + "n" + std::to_string(n);
+  std::string file_prefix = "t" + boost::lexical_cast<std::string>(k) + "n" + boost::lexical_cast<std::string>(n);
   CGAL::gnuplot_output_2(g, file_prefix);
 
   return 0;
