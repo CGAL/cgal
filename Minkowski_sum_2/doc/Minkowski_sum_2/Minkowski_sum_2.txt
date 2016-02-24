@@ -249,7 +249,8 @@ Minkowski sum procedure.
 
 In order to compute Minkowski sums of two polygon \f$ P \f$ and
 \f$ Q \f$ using the decomposition method, issue the call
-`minkowski_sum_2(P, Q, decompP, decompQ)`, where each of \f$P \f$
+\link minkowski_sum_2()
+`minkowski_sum_2(P, Q, decompP, decompQ)`\endlink, where each of \f$P \f$
 and \f$Q \f$ is either a simple polygon or a polygon with holes.
 If \f$P \f$ is a simple polygon, `decompP` must be an object of
 a type that models the concept `PolygonConvexDecomposition_2`.
@@ -267,16 +268,16 @@ polygon, while the function operator of the model of the concept
 with holes. Both return a range of convex polygons that represents
 the convex decomposition of the input polygon. If the decomposition
 strategy that decomposes \f$P \f$ is the same as the strategy that
-decomposes \f$Q \f$, you can omit the forth argument, and
-issue the call `minkowski_sum_2(P, Q, decomp)`, where `decomp`
-is an object that represents the common strategy.
+decomposes \f$Q \f$, you can omit the forth argument, and issue the call
+\link minkowski_sum_2() `minkowski_sum_2(P, Q, decomp)`\endlink,
+where `decomp` is an object that represents the common strategy.
 The class template `Polygon_nop_decomposition_2`, which models the
 concept `PolygonConvexDecomposition_2`, is a trivial convex
-decomposition strategy referred to as the <I>nop</I> strategy; it
-merely passes the input polygon to the next stage intact; use it in
-cases you know that the corresponding input polygon is convex to
-start with. If both \f$P \f$ and \f$Q \f$ are known to be convex,
-you can issue the call `minkowski_sum_2(P, Q, nop)`, where `nop`
+decomposition strategy referred to as the <I>nop</I> strategy; it merely
+passes the input polygon to the next stage intact; use it in cases you
+know that the corresponding input polygon is convex to start with. If
+both \f$P \f$ and \f$Q \f$ are known to be convex, you can issue the call
+\link minkowski_sum_2() `minkowski_sum_2(P, Q, nop)`\endlink, where `nop`
 is an object that represents the nop strategy.
 
 The Minkowski-sum package includes four models of the concept
@@ -365,8 +366,8 @@ applied before the actual construction starts (be it convolution
 based or decomposition based). The filteration may result with a
 polygon that does not have holes, or even a convex polygon, but this
 is unkown at the time of the call. To this end, we introduce the
-overloaded function template
-`minkowski_sum_by_decomposition_2(P, Q, no_holes_decomp, with_holes_decomp)`,
+overloaded function template \link minkowski_sum_by_decomposition_2()
+`minkowski_sum_by_decomposition_2(P, Q, no_holes_decomp, with_holes_decomp)`\endlink,
 where `no_holes_decomp` and `with_holes_decomp` are objects that model
 the concepts `PolygonConvexDecomposition_2` and
 `PolygonWithHolesConvexDecomposition_2`, respectively. If after the
