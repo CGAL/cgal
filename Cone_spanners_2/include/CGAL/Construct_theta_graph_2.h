@@ -147,7 +147,7 @@ public:
 
     /*! \brief returns the number of cones.
      */
-    const unsigned int number_of_cones() const {
+    unsigned int number_of_cones() const {
         return cone_number;
     }
 
