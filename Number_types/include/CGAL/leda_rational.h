@@ -25,6 +25,7 @@
 #ifndef CGAL_LEDA_RATIONAL_H
 #define CGAL_LEDA_RATIONAL_H
 
+#include <CGAL/IO/io.h>
 #include <CGAL/number_type_basic.h>
 
 #include <CGAL/leda_coercion_traits.h>
@@ -278,6 +279,17 @@ public:
     }
 
 };
+
+  namespace internal {
+    template <typename ET>
+    void read_float_or_quotient(std::istream & is, ET& et);
+
+      template <>
+    void read_float_or_quotient(std::istream & is, leda_rational& et)
+    {
+      internal::read_float_or_quotient<leda_integer,leda_rational>(is, et);
+    }
+  }
 
 
 } //namespace CGAL
