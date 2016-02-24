@@ -3,8 +3,6 @@ namespace CGAL {
 /*!
 \ingroup PkgMinkowskiSum2
 
-\anchor mink_refnop_decomp
-
 The `Polygon_nop_decomposition_2` class implements a convex
 decompistion of a polygon, which merely passes the input polygon to
 the list of output convex polygons. It should be used when it is known
