@@ -36,6 +36,9 @@ bounds, in order to speed up the computation time.
 
 ## Functions ##
 - `CGAL::minkowski_sum_2()`
+- `CGAL::minkowski_sum_by_decomposition_2()`
+- `CGAL::minkowski_sum_full_convolution_2()`
+- `CGAL::minkowski_sum_reduced_convolution_2()`
 - `CGAL::approximated_offset_2()`
 - `CGAL::approximated_inset_2()`
 - `CGAL::offset_polygon_2()`
