@@ -34,7 +34,7 @@
 #include <CGAL/boost/graph/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/properties.h>
-#include <boost/property_map/property_map.hpp>
+#include <CGAL/property_map.h>
 
 namespace CGAL {
 

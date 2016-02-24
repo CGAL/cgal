@@ -25,7 +25,7 @@
 #ifndef CGAL_AABB_FILTERED_PROJECTION_TRAITS_H
 #define CGAL_AABB_FILTERED_PROJECTION_TRAITS_H
 
-#include <CGAL/internal/boost/property_map.h>
+#include <CGAL/property_map.h>
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/internal/AABB_tree/AABB_node.h>

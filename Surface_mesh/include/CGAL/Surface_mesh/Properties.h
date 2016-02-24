@@ -24,8 +24,7 @@
 #include <algorithm>
 #include <typeinfo>
 
-#include <boost/property_map/property_map.hpp>
-
+#include <CGAL/property_map.h>
 #include <CGAL/assertions.h>
 
 namespace CGAL {

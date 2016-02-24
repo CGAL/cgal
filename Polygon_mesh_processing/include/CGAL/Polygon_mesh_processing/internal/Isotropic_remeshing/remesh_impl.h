@@ -33,6 +33,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/AABB_filtered_projection_traits.h>
 
+#include <CGAL/property_map.h>
 #include <CGAL/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <boost/graph/graph_traits.hpp>
@@ -41,7 +42,6 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/bimap/set_of.hpp>
-#include <boost/property_map/property_map.hpp>
 #include <boost/range.hpp>
 #include <boost/unordered_map.hpp>
 

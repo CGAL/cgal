@@ -25,15 +25,8 @@
 #include <CGAL/Vector_3.h>
 #include <CGAL/Origin.h>
 #include <CGAL/value_type_traits.h>
-
 #include <CGAL/property_map.h>
 
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 104000
-  #include <boost/property_map/property_map.hpp>
-#else
-  #include <boost/property_map.hpp>
-#endif
 
 namespace CGAL {
 
