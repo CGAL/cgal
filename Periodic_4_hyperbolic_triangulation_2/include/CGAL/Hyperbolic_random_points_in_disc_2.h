@@ -42,8 +42,9 @@ void Hyperbolic_random_points_in_disc_2(std::vector<typename Gt::Point_2>& outpu
   if (seed != -1) {
     rand = CGAL::Random(seed);
   }
+  /* CGAL::Random_points_in_disc_2<Point_2, Creator> in_Euclidean_disk(rh, rand); */
   CGAL::Random_points_in_disc_2<Point_2, Creator> in_Euclidean_disk(rh, rand);
-  
+
   std::vector<Point_2> pts;
   pts.reserve(nb);
   for(int i = 0; i < nb ; i++) {
@@ -52,6 +53,7 @@ void Hyperbolic_random_points_in_disc_2(std::vector<typename Gt::Point_2>& outpu
   }
   
   for(int i = 0; i < nb ; i++) {
+    std::cout << "Adding!" << std::endl;
     Vector_2 v = Vector_2(Point_2(0, 0), pts[i]);
     
     FT sq_dist = v.squared_length();

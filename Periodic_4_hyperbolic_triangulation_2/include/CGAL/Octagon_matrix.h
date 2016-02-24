@@ -19,8 +19,8 @@ template<class Sqrt_field>
 class Octagon_matrix
 {
 public:
-  typedef Octagon_matrix<Sqrt_field> Self;  
-  typedef complex<Sqrt_field> Extended_field;
+  typedef Octagon_matrix<Sqrt_field>  Self;  
+  typedef complex<Sqrt_field>         Extended_field;
 
   Extended_field M11;
   Extended_field M12;
@@ -37,8 +37,8 @@ public:
 
   Self operator*(const Self& rh) const
   {
-    return Self( M11*rh.M11 + aux*M12*conj(rh.M12), 
-      M11*rh.M12 + M12*conj(rh.M11), merge_labels(rh) );
+    return Self(  M11*rh.M11 + factor*M12*conj(rh.M12), 
+                  M11*rh.M12 + M12*conj(rh.M11), merge_labels(rh) );
   }
   
   Self inverse() const
@@ -79,6 +79,7 @@ public:
     Sqrt_field BB2 = (B1 + B2)*k;
 
     assert(BB2.l % 2 == 0 && BB2.r % 2 == 0);
+
     BB1.l = BB1.l/2;
     BB1.r = BB1.r/2;
     BB2.l = BB2.l/2;
@@ -109,7 +110,7 @@ public:
   // determinant == 1
   Extended_field det() const
   {
-    return norm(M11) - aux * norm(M12);
+    return norm(M11) - factor * norm(M12);
   }
   
   static complex<double> toComplexDouble(Extended_field M) //const
@@ -126,7 +127,7 @@ public:
     Cmpl m11 = toComplexDouble(M11);
     Cmpl m12 = toComplexDouble(M12);
 
-    double ax = sqrt(aux.l + sqrt(2.)*aux.r);
+    double ax = sqrt(factor.l + sqrt(2.)*factor.r);
     
     Cmpl z(x, y);
     Cmpl res = (m11*z + ax*m12)/(ax*(conj(m12)*z) + conj(m11));
@@ -134,12 +135,12 @@ public:
   }
 
 //private:
-  static Sqrt_field aux;
+  static Sqrt_field factor;
 };
 
 
 template<class Sqrt_field>
-Sqrt_field Octagon_matrix<Sqrt_field>::aux = Sqrt_field(-1, 1);
+Sqrt_field Octagon_matrix<Sqrt_field>::factor = Sqrt_field(-1, 1);
 
 // just to give an order(ing)
 template<class Int>
@@ -191,24 +192,67 @@ ostream& operator<<(ostream& os, const Octagon_matrix<Sqrt_field>& m)
   return os;
 }
 
-typedef long long ll;
-typedef Sqrt_field<ll> SqrtField;
-typedef Octagon_matrix<SqrtField> OctagonMatrix;
-typedef OctagonMatrix::Extended_field Entry;
+typedef long long                       ll;
+typedef Sqrt_field<ll>                  SqrtField;
+typedef Octagon_matrix<SqrtField>       OctagonMatrix;
+typedef OctagonMatrix::Extended_field   Entry;
+
+
+enum Direction {
+  A = 0,  // 0
+  InvB,   // 1
+  C,      // 2
+  InvD,   // 3
+  InvA,   // 4
+  B,      // 5
+  InvC,   // 6
+  D       // 7
+};
+
 
 void get_generators(vector<OctagonMatrix>& gens)
 {
+  // This is a in the matrix, equal to sqrt(2) + 1
   Entry M11 = Entry(SqrtField(1, 1), SqrtField(0, 0));
 
+  // This vector should hold all other elements, results of the exponentials for various k
   vector<Entry> M12(8, Entry(SqrtField(0, 0), SqrtField(0, 0)));
-  M12[0] = M11 * Entry(SqrtField(0, 1), SqrtField(0, 0));
-  M12[1] = M11 * Entry(SqrtField(1, 0), SqrtField(1, 0));
-  M12[2] = M11 * Entry(SqrtField(0, 0), SqrtField(0, 1));
-  M12[3] = M11 * Entry(SqrtField(-1, 0), SqrtField(1, 0));
-  M12[4] = M11 * Entry(SqrtField(0, -1), SqrtField(0, 0));
-  M12[5] = M11 * Entry(SqrtField(-1, 0), SqrtField(-1, 0));
-  M12[6] = M11 * Entry(SqrtField(0, 0), SqrtField(0, -1));
-  M12[7] = M11 * Entry(SqrtField(1, 0), SqrtField(-1, 0));
+
+  // Set everything manually
+
+  /*
+  M12[A]    = M11 * Entry(SqrtField(0, 0),  SqrtField(-1, 0));
+  M12[InvA] = M11 * Entry(SqrtField(0, 0),  SqrtField(1, 0));
+  M12[B]    = M11 * Entry(SqrtField(0, -1), SqrtField(0, 1));
+  M12[InvB] = M11 * Entry(SqrtField(0, 1),  SqrtField(0, -1));
+  M12[C]    = M11 * Entry(SqrtField(1, 0),  SqrtField(0, 0));
+  M12[InvC] = M11 * Entry(SqrtField(-1, 0), SqrtField(0, 0));
+  M12[D]    = M11 * Entry(SqrtField(0, -1), SqrtField(0, -1));
+  M12[InvD] = M11 * Entry(SqrtField(0, 1),  SqrtField(0, 1)); 
+  */
+
+/*
+  Entry tmp =  Entry(SqrtField(2, 2),  SqrtField(0,0));
+  M12[A]    =  Entry(SqrtField(0, 0),  SqrtField(-1, 0));
+  M12[InvA] =  Entry(SqrtField(0, 0),  SqrtField(1, 0));
+  M12[B]    =  Entry(SqrtField(-1, 0), SqrtField(1, 0));
+  M12[InvB] =  Entry(SqrtField(1, 0),  SqrtField(-1, 0));
+  M12[C]    =  Entry(SqrtField(-1, 0), SqrtField(0, 0));
+  M12[InvC] =  Entry(SqrtField(1, 0),  SqrtField(0, 0));
+  M12[D]    =  Entry(SqrtField(-1, 0), SqrtField(-1, 0));
+  M12[InvD] =  Entry(SqrtField(1, 0),  SqrtField(1, 0)); 
+  */
+
+    
+  M12[A]    = M11 * Entry(SqrtField(0, 1),  SqrtField(0, 0));
+  M12[InvB] = M11 * Entry(SqrtField(1, 0),  SqrtField(1, 0));
+  M12[C]    = M11 * Entry(SqrtField(0, 0),  SqrtField(0, 1));
+  M12[InvD] = M11 * Entry(SqrtField(-1, 0), SqrtField(1, 0));
+  M12[InvA] = M11 * Entry(SqrtField(0, -1), SqrtField(0, 0));
+  M12[B]    = M11 * Entry(SqrtField(-1, 0), SqrtField(-1, 0));
+  M12[InvC] = M11 * Entry(SqrtField(0, 0),  SqrtField(0, -1));
+  M12[D]    = M11 * Entry(SqrtField(1, 0),  SqrtField(-1, 0));
+  
 
   string labels[8] = {string("a"), string("b^-1"), string("c"), string("d^-1"),
     string("a^-1"), string("b"), string("c^-1"), string("d")};
@@ -222,7 +266,7 @@ vector<OctagonMatrix> gens;
 
 bool IsCanonical(const OctagonMatrix& m);
 
-void generate_words( set<OctagonMatrix>& words, vector<OctagonMatrix>& prev, int depth  )
+void generate_words( set<OctagonMatrix>& words, vector<OctagonMatrix>& prev, int depth, double threshold  )
 {
   if (depth == 1) {
     for(int i = 0; i < 8; i++) {
@@ -233,7 +277,7 @@ void generate_words( set<OctagonMatrix>& words, vector<OctagonMatrix>& prev, int
   }
 
   vector<OctagonMatrix> els;
-  generate_words( words, els, depth - 1);
+  generate_words( words, els, depth - 1, threshold);
   
   OctagonMatrix temp = OctagonMatrix(Entry(), Entry());
   ll size = els.size();
@@ -242,7 +286,7 @@ void generate_words( set<OctagonMatrix>& words, vector<OctagonMatrix>& prev, int
     for(int i = 0; i < 8; i++) {
       temp = els[k]*gens[i];
 
-      if(temp.length() > 15.) {
+      if(temp.length() > threshold /*15.*/) {
         continue;
       }     
 
@@ -304,13 +348,13 @@ void dfs_with_info(const pair<OctagonMatrix, OctagonMatrix>& new_pair,
   visited.insert(new_pair);
   
   const OctagonMatrix& current = new_pair.first;
-  const OctagonMatrix& current_aux = new_pair.second;
-  OctagonMatrix candidate = current, candidate_aux = current_aux;
+  const OctagonMatrix& current_factor = new_pair.second;
+  OctagonMatrix candidate = current, candidate_factor = current_factor;
   for(int i = 0; i < 8; i++) {
     candidate = gens[i]*current*gens[(i + 4) % 8];
     if(IsCanonical(candidate) == true && visited.find(candidate) == visited.end()) {
-      candidate_aux = gens[i]*current_aux;
-      dfs_with_info(pair<OctagonMatrix, OctagonMatrix>(candidate, candidate_aux), visited);
+      candidate_factor = gens[i]*current_factor;
+      dfs_with_info(pair<OctagonMatrix, OctagonMatrix>(candidate, candidate_factor), visited);
     } 
   }
 }
@@ -418,20 +462,20 @@ bool haveIntersection(const OctagonMatrix& m1, const OctagonMatrix& m2) const
   
 void intersectWithInfinity(const OctagonMatrix& m, Point& p1, Point& p2) const
 {
-  Entry a = m.M11, b = m.M12, aux = m.aux;
+  Entry a = m.M11, b = m.M12, factor = m.factor;
   
   Entry four = Entry(SqrtField(4, 0), SqrtField(0, 0));
   Entry two = Entry(SqrtField(2, 0), SqrtField(0, 0));
   
   Entry D = (a - conj(a))*(a - conj(a));
-  D += four*b*conj(b)*aux;
+  D += four*b*conj(b)*factor;
   Entry T1 = conj(a) - a;
   Entry T2 = two*conj(b);
   
   complex<double> d = m.toComplexDouble(D);
   complex<double> t1 = m.toComplexDouble(T1);
   complex<double> t2 = m.toComplexDouble(T2);
-  complex<double> au = complex<double>(m.aux.l + sqrt(2.)*m.aux.r, 0);
+  complex<double> au = complex<double>(m.factor.l + sqrt(2.)*m.factor.r, 0);
   
   complex<double> z1 = (t1 + sqrt(d))/(t2*sqrt(au));
   complex<double> z2 = (t1 - sqrt(d))/(t2*sqrt(au));
@@ -471,7 +515,7 @@ void generate_unique_words(vector<OctagonMatrix>& output, double threshold = 10,
   
   set<OctagonMatrix> unique_words;
   vector<OctagonMatrix> temp;
-  generate_words(unique_words, temp, word_length);
+  generate_words(unique_words, temp, word_length, threshold);
   
   double l = 0;
   set<OctagonMatrix>::iterator uit;
@@ -531,4 +575,8 @@ void generate_words_union_1_cycles(vector<OctagonMatrix>& out)
   cout << counter << endl;
   
 }
+
+#endif
+
+
 

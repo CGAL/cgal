@@ -4,7 +4,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 //#include <CGAL/Delaunay_hyperbolic_triangulation_2.h>
-#include <Periodic_2_Delaunay_hyperbolic_triangulation_2.h>
+#include <CGAL/Periodic_4_Delaunay_hyperbolic_triangulation_2.h>
 #include <CGAL/Triangulation_hyperbolic_traits_2.h>
 
 // to be deleted
@@ -37,13 +37,13 @@
 #include "ui_Periodic_4_hyperbolic_triangulation_2.h"
 #include <CGAL/Qt/DemosMainWindow.h>
 
-typedef CGAL::Exact_predicates_inexact_constructions_kernel R;
-typedef CGAL::Triangulation_hyperbolic_traits_2<R> K;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel       R;
+typedef CGAL::Triangulation_hyperbolic_traits_2<R>                K;
 
-typedef K::Point_2 Point_2;
-typedef K::Iso_rectangle_2 Iso_rectangle_2;
+typedef K::Point_2                                                Point_2;
+typedef K::Iso_rectangle_2                                        Iso_rectangle_2;
  
-typedef CGAL::Periodic_2_Delaunay_hyperbolic_triangulation_2<K> Delaunay;
+typedef CGAL::Periodic_4_Delaunay_hyperbolic_triangulation_2<K>   Delaunay;
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -52,18 +52,18 @@ class MainWindow :
   Q_OBJECT
   
 private:  
-  Delaunay dt;
-  QGraphicsEllipseItem* disk;
-  QGraphicsScene scene;  
+  Delaunay                                                      dt;
+  QGraphicsEllipseItem*                                         disk;
+  QGraphicsScene                                                scene;  
 
-  CGAL::Qt::TriangulationGraphicsItem<Delaunay> * dgi;
-  CGAL::Qt::VoronoiGraphicsItem<Delaunay> * vgi;
+  CGAL::Qt::TriangulationGraphicsItem<Delaunay>               * dgi;
+  CGAL::Qt::VoronoiGraphicsItem<Delaunay>                     * vgi;
 
-  CGAL::Qt::TriangulationMovingPoint<Delaunay> * mp;
-  CGAL::Qt::TriangulationConflictZone<Delaunay> * cz;
-  CGAL::Qt::TriangulationRemoveVertex<Delaunay> * trv;
-  CGAL::Qt::TriangulationPointInputAndConflictZone<Delaunay> * pi;
-  CGAL::Qt::TriangulationCircumcircle<Delaunay> *tcc;
+  CGAL::Qt::TriangulationMovingPoint<Delaunay>                * mp;
+  CGAL::Qt::TriangulationConflictZone<Delaunay>               * cz;
+  CGAL::Qt::TriangulationRemoveVertex<Delaunay>               * trv;
+  CGAL::Qt::TriangulationPointInputAndConflictZone<Delaunay>  * pi;
+  CGAL::Qt::TriangulationCircumcircle<Delaunay>               *tcc;
 public:
   MainWindow();
 

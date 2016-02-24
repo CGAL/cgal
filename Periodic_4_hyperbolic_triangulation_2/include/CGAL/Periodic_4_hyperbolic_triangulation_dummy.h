@@ -17,18 +17,20 @@
 //
 // Author(s)     : Mikhail Bogdanov
 
-#ifndef CGAL_PERIODIC_2_HYPERBOLIC_TRIANGULATION_DUMMY_H
-#define CGAL_PERIODIC_2_HYPERBOLIC_TRIANGULATION_DUMMY_H
+#ifndef CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_DUMMY_H
+#define CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_DUMMY_H
 
 #include <CGAL/Regular_triangulation_filtered_traits_2.h>
 #include <CGAL/Aff_transformation_2.h>
 
 // Added by Iordanov
+/*
 #if CLEARLY_MY_TYPE == 1
 #include <CGAL/Cross_translations.h>
 #else
 #include <CGAL/Diametric_translations.h>
 #endif
+*/
 
 namespace CGAL {
     
@@ -114,7 +116,7 @@ namespace CGAL {
         const Point_2 a(cos(phi)*cos(phi + psi)/rho, sin(phi)*cos(phi + psi)/rho);
         const Point_2 b(a.x(), -a.y());
         
-        //inner_points.push_back(a);
+        inner_points.push_back(a);
         Point_2 c = Construct_reflection<K>()(a, b, o);
         Point_2 d = Construct_reflection<K>()(a, c, b);
         //inner_points.push_back(d);
@@ -124,22 +126,20 @@ namespace CGAL {
         int size = inner_points.size();
         for(int i = 0; i < 7; i++) {
             for(int j = 0; j < size; j++) {
-                //      inner_points.push_back(apply_rotation<K>(inner_points[i*size + j]));
+                inner_points.push_back(apply_rotation<K>(inner_points[i*size + j]));
             }
         }
         inner_points.push_back(o);
         
-        //points_on_boundary.push_back(c);
+        points_on_boundary.push_back(c);
         for(int i = 1; i < 4; i++) {
-            //  points_on_boundary.push_back(apply_rotation<K>(points_on_boundary[i-1]));
+           points_on_boundary.push_back(apply_rotation<K>(points_on_boundary[i-1]));
         }
         
-        // points_on_vertex.push_back(apply_rotation<K>(f));
-        
-        
+         points_on_vertex.push_back(apply_rotation<K>(f));
     }
     
-    
+    /*
 
     template<class GT>
     void recursive_translate(Diametric_translations<GT> g,
@@ -196,17 +196,17 @@ namespace CGAL {
         }
         
     }
-
+*/
     
     template < class GT, class TDS >
-    void Periodic_2_Delaunay_hyperbolic_triangulation_2<GT, TDS>::insert_dummy_points() {
-        clear();
+    void Delaunay_hyperbolic_triangulation_2<GT, TDS>::insert_dummy_points(std::vector<typename GT::Point_2>& all_points) {
+        //clear();
         
-        std::vector<Point_2> inner_points, points_on_boundary, points_on_vertex;
+        std::vector<typename GT::Point_2> inner_points, points_on_boundary, points_on_vertex;
         
         compute_dummy_points<GT>(inner_points, points_on_boundary, points_on_vertex);
         
-        std::vector<Point_2> all_points = inner_points;
+        /*std::vector<typename GT::Point_2>*/ all_points = inner_points;
         
         for (int i = 0; i < points_on_boundary.size(); i++) {
             all_points.push_back(points_on_boundary[i]);
@@ -218,8 +218,13 @@ namespace CGAL {
         
         std::cout << "All points length: " << all_points.size() << std::endl;
         
-        Base::insert(all_points.begin(), all_points.end());
+        //for (int i = 0; i < all_points.size(); i++) {
+        //  processInput(all_points[i]);
+        //}
+
+        //Base::insert(all_points.begin(), all_points.end());
         
+        /*
         Diametric_translations<GT> g;
         std::vector<Point_2> copies;
         for (int i = 0; i < all_points.size(); i++) {
@@ -228,10 +233,11 @@ namespace CGAL {
         
         std::cout << "Copies length: " << copies.size() << std::endl;
         Base::insert(copies.begin(), copies.end());
-            
+        */
+
         }
         
     } // namespace CGAL
     
-#endif // CGAL_PERIODIC_2_HYPERBOLIC_TRIANGULATION_DUMMY_H
+#endif // CGAL_PERIODIC_4_HYPERBOLIC_TRIANGULATION_DUMMY_H
     

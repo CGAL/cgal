@@ -87,8 +87,10 @@ public:
   typedef Delaunay_triangulation_2<Gt,Tds> Base;
   
   typedef Triangulation_face_base_with_info_2<Hyperbolic_face_info_2, Gt> Face_base;
-  typedef typename Face_base::Info     Face_info;
-  typedef typename Base::size_type     size_type;
+  typedef typename Face_base::Info Face_info;
+  
+  typedef typename Base::size_type             size_type;
+  
   typedef typename Base::Vertex_handle Vertex_handle;
   typedef typename Base::Face_handle   Face_handle;
   typedef typename Base::Edge          Edge;
@@ -493,8 +495,7 @@ public:
   class Finite_faces_iterator
   : public Filter_iterator<All_faces_iterator, Infinite_hyperbolic_tester> 
   {
-    typedef Filter_iterator<All_faces_iterator, 
-                            Infinite_hyperbolic_tester>     Base;
+    typedef Filter_iterator<All_faces_iterator, Infinite_hyperbolic_tester> Base;
     typedef Finite_faces_iterator                           Self;
   public:
     Finite_faces_iterator() : Base() {}
@@ -526,7 +527,8 @@ public:
   //Finite edges iterator
   
   typedef Filter_iterator<All_edges_iterator, 
-                          Infinite_hyperbolic_tester> Finite_edges_iterator;
+  Infinite_hyperbolic_tester>
+  Finite_edges_iterator;
   
   Finite_edges_iterator
   finite_edges_begin() const
@@ -587,7 +589,8 @@ public:
     // both faces are finite
     if(!is_infinite(f1) && !is_infinite(f2)) {
       
-      Segment s = this->geom_traits().construct_segment_2_object()(dual(f1),dual(f2));
+      Segment s = this->geom_traits().construct_segment_2_object()
+      (dual(f1),dual(f2));
       
       return make_object(s);
     }
@@ -610,8 +613,14 @@ public:
     Segment ray = this->geom_traits().construct_ray_2_object()(dual(finite_face), line);
     return make_object(ray);
   }
+
+public:
+  void insert_dummy_points(std::vector<typename Gt::Point_2>& );
+
 };
   
 } //namespace CGAL
+
+#include <CGAL/Periodic_4_hyperbolic_triangulation_dummy.h>
 
 #endif // CGAL_DELAUNAY_HYPERBOLIC_TRIANGULATION_2_H
