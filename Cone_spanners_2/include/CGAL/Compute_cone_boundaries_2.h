@@ -131,9 +131,9 @@ public:
     typedef  Exact_predicates_exact_constructions_kernel_with_root_of  Kernel_type;
 
 private:
-    typedef  typename Kernel_type::FT            FT;
-    typedef  typename Kernel_type::Direction_2   Direction_2;
-	typedef  typename Kernel_type::Aff_transformation_2   Transformation;
+    typedef Kernel_type::FT            FT;
+    typedef Kernel_type::Direction_2   Direction_2;
+    typedef Kernel_type::Aff_transformation_2   Transformation;
 
 public:
 	/* No member variables in this class, so a Constructor is not needed. */
