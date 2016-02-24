@@ -1,0 +1,7 @@
+<RCC>
+  <qresource prefix="/cgal/Input" >
+    <file>inputPoint.png</file>
+    <file alias="zoom-best-fit" >fit-page-32.png</file>
+    <file>inputPolyline.png</file>
+  </qresource>
+</RCC>

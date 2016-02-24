@@ -165,7 +165,7 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
   //delete
   QPen temp = painter->pen();
   QPen old = temp;
-  temp.setWidthF(/*0.0035*/0.0045);
+  temp.setWidthF(/*0.0035*/0.0025);
   painter->setPen(temp);
   //
   
@@ -175,7 +175,14 @@ TriangulationGraphicsItem<T>::drawAll(QPainter *painter)
     for(typename T::Finite_edges_iterator eit = t->finite_edges_begin();
         eit != t->finite_edges_end();
         ++eit){
-      painterostream << t->segment(*eit);
+
+    	//typename T::Vertex_handle vh = eit->first->finite_vertices_begin();
+    	//std::cout << vh << std::endl;
+
+    	//typename T::Geom_traits::Segment_2 sg = t->segment(*eit);
+    	//std::cout << sg(0) << std::endl;
+
+      	painterostream << t->segment(*eit);
     }
   }
   
@@ -200,59 +207,50 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
         it != t->finite_vertices_end();
         it++){
       
-      // draw vertices with color storing in their info
-      if(it->info().getColor() == 0) {
-        painter->setPen(QPen(::Qt::red, 3.));
-      }
-      
-      if(it->info().getColor() == 1) {
-        painter->setPen(QPen(::Qt::green, 3.));
-      }
-      
-      if(it->info().getColor() == 2) {
-        painter->setPen(QPen(::Qt::cyan, 3.));
-      }
-      
-      if(it->info().getColor() == 3) {
-        painter->setPen(QPen(::Qt::magenta, 3.));
-      }
-      
-      if(it->info().getColor() == 6) {
-        painter->setPen(QPen(::Qt::yellow, 3.));
-      }
-      
-      if(it->info().getColor() == 5) {
-        // brown
-        painter->setPen(QPen(QColor(139, 69, 19), 3.));
-      }
-      
-      if(it->info().getColor() == 4) {
-        painter->setPen(QPen(::Qt::blue, 3.));
-      }
-      
-      
-      if(it->info().getColor() == 7) {
-        // orange
-        QColor orange = QColor(255, 165, 0);
-        painter->setPen(QPen(orange, 3.));
-      }
-      
-      if(it->info().getColor() == 8) {
-        // dark green 
-        QColor blue = QColor(0, 102, 51);
-        painter->setPen(QPen(blue, 3.));
-      }
-      
-      if(it->info().getColor() == 9) {
-        // purple
-        QColor blue = QColor(102, 0, 102);
-        painter->setPen(QPen(blue, 3.));
-      }
-      
-      if(it->info().getColor() == 10) {
-        // close to blue
-        QColor blue = QColor(131, 111, 255);
-        painter->setPen(QPen(blue, 3.));
+
+      switch (it->info().getColor()) {
+        case 0:
+          painter->setPen(QPen(::Qt::red, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+          break;
+        case 1:
+          painter->setPen(QPen(::Qt::green, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+          break;
+        case 2:
+          painter->setPen(QPen(::Qt::blue, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+          break;
+        case 3:
+          painter->setPen(QPen(::Qt::magenta, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+          break;
+        case 4:
+          painter->setPen(QPen(::Qt::darkGreen, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+          break;
+        case 5:
+          painter->setPen(QPen(::Qt::darkRed, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+          break;
+        case 6:
+          painter->setPen(QPen(::Qt::darkBlue, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+          break;
+        case 7:
+          painter->setPen(QPen(::Qt::darkYellow, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+          break;
+        case 8:
+          painter->setPen(QPen(::Qt::darkCyan, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+          break;
+        case 9:
+          painter->setPen(QPen(::Qt::yellow, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+          break;
+        case 10:
+          painter->setPen(QPen(::Qt::cyan, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+          break;
+        case 11:
+          painter->setPen(QPen(::Qt::black, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+          break;
+        case 12:
+          painter->setPen(QPen(::Qt::lightGray, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+          break;
+        default:
+          painter->setPen(QPen(::Qt::gray, 3., ::Qt::SolidLine, ::Qt::RoundCap, ::Qt::RoundJoin));
+          break;
       }
       
       //
@@ -266,21 +264,21 @@ TriangulationGraphicsItem<T>::paintVertices(QPainter *painter)
       double py = to_double(it->point().y());
       double dist = px*px + py*py;
       if(dist > 0.25) {
-        temp.setWidth(8);//6
+        temp.setWidth(6);//6
       }
       if(dist > 0.64) {
-        temp.setWidth(7);//5
+        temp.setWidth(4);//5
       }
       if(dist > 0.81) {
-        temp.setWidth(5);//3
-      }
-      if(dist > 0.92) {
-        temp.setWidth(4);//3
-      }
-      if(dist > 0.98) {
         temp.setWidth(3);//3
       }
-      //painter->setPen(temp);
+      if(dist > 0.92) {
+        temp.setWidth(2);//3
+      }
+      if(dist > 0.98) {
+        temp.setWidth(1);//3
+      }
+      painter->setPen(temp);
       
       QPointF point = matrix.map(convert(it->point()));
       painter->drawPoint(point);
@@ -337,8 +335,10 @@ TriangulationGraphicsItem<T>::paint(QPainter *painter,
   painter->setPen(this->edgesPen());
 //   painter->drawRect(boundingRect());
   if ( t->dimension()<2 || option->exposedRect.contains(boundingRect()) ) {
+  	std::cout << "Drawing all!" << std::endl;
     drawAll(painter);
   } else {
+  	std::cout << "Else-ing!" << std::endl;
     m_painter = painter;
     painterostream = PainterOstream<Geom_traits>(painter);
     CGAL::apply_to_range (*t, 

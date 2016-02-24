@@ -7,8 +7,7 @@ project (Periodic_4_hyperbolic_triangulation_2_demo)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 
 # Instruct CMake to run moc automatically when needed.
-set(CMAKE_AUTOMOC ON)
-SET(CMAKE_AUTOUIC ON)  
+set(CMAKE_AUTOMOC ON) 
 
 cmake_minimum_required(VERSION 2.8.11)
 if(POLICY CMP0043)
@@ -30,9 +29,10 @@ qt5_add_resources ( RESOURCE_FILES resources/Periodic_4_hyperbolic_triangulation
 
 
 # cpp files
-add_executable ( Periodic_4_hyperbolic_triangulation_2_demo Periodic_4_hyperbolic_triangulation_2_demo.cpp )
-qt5_use_modules( Periodic_4_hyperbolic_triangulation_2_demo Widgets)
-add_to_cached_list( CGAL_EXECUTABLE_TARGETS Periodic_4_hyperbolic_triangulation_2_demo )
-target_link_libraries( Periodic_4_hyperbolic_triangulation_2_demo ${CGAL_LIBRARIES} ${QT_LIBRARIES} ${CGAL_QT_LIBRARIES} )
+
+add_executable ( Periodic_4_Dirichlet_region_demo Periodic_4_Dirichlet_region_demo.cpp )
+qt5_use_modules( Periodic_4_Dirichlet_region_demo Widgets)
+add_to_cached_list( CGAL_EXECUTABLE_TARGETS Periodic_4_Dirichlet_region_demo )
+target_link_libraries( Periodic_4_Dirichlet_region_demo ${CGAL_LIBRARIES} ${QT_LIBRARIES} ${CGAL_QT_LIBRARIES} )
 
 

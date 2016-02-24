@@ -38,44 +38,44 @@ namespace CGAL {
 template < class R >
 class Triangulation_hyperbolic_traits_2 {
 public:
-  typedef Triangulation_hyperbolic_traits_2<R> Self;
+  typedef Triangulation_hyperbolic_traits_2<R>      Self;
   
-  typedef R Kernel;
+  typedef R                                         Kernel;
   
-  typedef R Rep;
-  typedef typename R::RT          RT;
-  typedef typename R::Point_2     Point_2;
-  typedef typename R::Vector_2    Vector_2;
-  typedef typename R::Triangle_2  Triangle_2;
-  typedef typename R::Line_2      Line_2;
-  typedef typename R::Ray_2       Ray_2;
+  typedef R                                         Rep;
+  typedef typename R::RT                            RT;
+  typedef typename R::Point_2                       Point_2;
+  typedef typename R::Vector_2                      Vector_2;
+  typedef typename R::Triangle_2                    Triangle_2;
+  typedef typename R::Line_2                        Line_2;
+  typedef typename R::Ray_2                         Ray_2;
   
-  typedef typename R::Vector_3    Vector_3;
-  typedef typename R::Point_3     Point_3;
+  typedef typename R::Vector_3                      Vector_3;
+  typedef typename R::Point_3                       Point_3;
   
-  typedef typename R::Less_x_2                   Less_x_2;
-  typedef typename R::Less_y_2                   Less_y_2;
-  typedef typename R::Compare_x_2                Compare_x_2;
-  typedef typename R::Compare_y_2                Compare_y_2;
-  typedef typename R::Orientation_2              Orientation_2;
-  typedef typename R::Side_of_oriented_circle_2  Side_of_oriented_circle_2;
-  typedef typename R::Construct_bisector_2       Construct_bisector_2;
-  typedef typename R::Compare_distance_2         Compare_distance_2;
-  typedef typename R::Construct_triangle_2       Construct_triangle_2;
-  typedef typename R::Construct_direction_2      Construct_direction_2;
+  typedef typename R::Less_x_2                      Less_x_2;
+  typedef typename R::Less_y_2                      Less_y_2;
+  typedef typename R::Compare_x_2                   Compare_x_2;
+  typedef typename R::Compare_y_2                   Compare_y_2;
+  typedef typename R::Orientation_2                 Orientation_2;
+  typedef typename R::Side_of_oriented_circle_2     Side_of_oriented_circle_2;
+  typedef typename R::Construct_bisector_2          Construct_bisector_2;
+  typedef typename R::Compare_distance_2            Compare_distance_2;
+  typedef typename R::Construct_triangle_2          Construct_triangle_2;
+  typedef typename R::Construct_direction_2         Construct_direction_2;
   
   typedef typename R::Angle_2                       Angle_2;
   typedef typename R::Construct_midpoint_2          Construct_midpoint_2;
   typedef typename R::Compute_squared_distance_2    Compute_squared_distance_2;
   
-  typedef typename R::Iso_rectangle_2 Iso_rectangle_2;
-  typedef typename R::Circle_2 Circle_2;
+  typedef typename R::Iso_rectangle_2               Iso_rectangle_2;
+  typedef typename R::Circle_2                      Circle_2;
   
-  typedef boost::tuple<Circle_2, Point_2, Point_2> Arc_2;
-  typedef typename R::Segment_2 Line_segment_2;
-  typedef boost::variant<Arc_2, Line_segment_2> Segment_2;
+  typedef boost::tuple<Circle_2, Point_2, Point_2>  Arc_2;
+  typedef typename R::Segment_2                     Line_segment_2;
+  typedef boost::variant<Arc_2, Line_segment_2>     Segment_2;
   
-  typedef typename R::Line_2 Euclidean_line_2;
+  typedef typename R::Line_2                        Euclidean_line_2;
   
 private:
   // Poincaré disk

@@ -32,7 +32,7 @@ public:
     color = new_color;
   }
   
-  int getColor() const
+  int getColor() const 
   {
     return color;
   }

@@ -1,8 +1,7 @@
 #ifndef CGAL_HYPERBOLIC_DIAMETRIC_TRANSLATIONS_2_H
 #define CGAL_HYPERBOLIC_DIAMETRIC_TRANSLATIONS_2_H
 
-#include <CGAL/Hyperbolic_isometry_2.h>
-
+#include <CGAL/Hyperbolic_isometry_2.h>  
 
 template<typename Gt>
 class Diametric_translations
