@@ -146,7 +146,7 @@ Meshing_thread* cgal_code_mesh_3(const Image* pImage,
   p_new_item->set_scene(scene);
 
   Mesh_parameters param;
-  param.protect_features = false;
+  param.protect_features = protect_features;
   param.facet_angle = facet_angle;
   param.facet_sizing = facet_sizing;
   param.facet_approx = facet_approx;
