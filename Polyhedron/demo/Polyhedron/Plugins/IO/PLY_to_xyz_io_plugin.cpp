@@ -40,7 +40,7 @@ Polyhedron_demo_ply_to_xyz_plugin::load(QFileInfo fileinfo) {
       return 0;
     }
 
-  item->setName(fileinfo.baseName());
+  item->setName(fileinfo.completeBaseName());
   return item;
 }
 

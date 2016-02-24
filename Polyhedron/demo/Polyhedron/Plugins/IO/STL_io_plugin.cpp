@@ -67,14 +67,14 @@ Polyhedron_demo_stl_plugin::load(QFileInfo fileinfo) {
     }
     else{
       Scene_polyhedron_item* item = new Scene_polyhedron_item(P);
-      item->setName(fileinfo.baseName());
+      item->setName(fileinfo.completeBaseName());
       return item;
     }
   }
   catch(...){}
 
   Scene_polygon_soup_item* item = new Scene_polygon_soup_item();
-  item->setName(fileinfo.baseName());
+  item->setName(fileinfo.completeBaseName());
   item->load(points, triangles);
   return item;
 }

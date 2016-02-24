@@ -62,14 +62,14 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
 
   // Try to read .off in a polyhedron
   Scene_polyhedron_item* item = new Scene_polyhedron_item();
-  item->setName(fileinfo.baseName());
+  item->setName(fileinfo.completeBaseName());
   if(!item->load(in))
   {
     delete item;
 
     // Try to read .off in a polygon soup
     Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item;
-    soup_item->setName(fileinfo.baseName());
+    soup_item->setName(fileinfo.completeBaseName());
     in.close();
     std::ifstream in2(fileinfo.filePath().toUtf8());
     if(!soup_item->load(in2)) {
@@ -103,7 +103,7 @@ Polyhedron_demo_off_plugin::load_obj(QFileInfo fileinfo) {
 
   // Try to read .obj in a polyhedron
   Scene_polyhedron_item* item = new Scene_polyhedron_item();
-  item->setName(fileinfo.baseName());
+  item->setName(fileinfo.completeBaseName());
   if(!item->load_obj(in))
     {
       delete item;
