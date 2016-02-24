@@ -145,12 +145,8 @@ the nop strategy is applied. If `Q` is a polygon without holes to start
 with, then only convexity is checked and the decomposition strategy is
 chosen accordingly.
 
-\pre The type that substitutes the template parameter
-     `PolygonNoHolesConvexDecomposition_2_` must be an instance of a
-     class that models the concept `PolygonConvexDecomposition_2`.
-\pre The type thyat substitutes the template parameter
-     `PolygonWithHolesConvexDecomposition_2_` must be an instance of a
-     class that models the concept `PolygonWithHolesConvexDecomposition_2`.
+\tparam PolygonNoHolesConvexDecomposition_2_ a model of the concept `PolygonConvexDecomposition_2`.
+\tparam PolygonWithHolesConvexDecomposition_2_ a model of the concept `PolygonWithHolesConvexDecomposition_2`.
 */
   template <typename Kernel, typename Container,
             typename PolygonNoHolesConvexDecomposition_2_,
@@ -158,8 +154,8 @@ chosen accordingly.
 Polygon_with_holes_2<Kernel, Container>
 minkowski_sum_by_decomposition_2(const PolygonType1<Kernel, Container>& P,
                 const PolygonType2<Kernel, Container>& Q,
-                const PolygonNoHolesConvexDecomposition_2& no_holes_decomp,
-                const PolygonWithHolesConvexDecomposition_2& with_holes_decomp,
+                const PolygonNoHolesConvexDecomposition_2_& no_holes_decomp,
+                const PolygonWithHolesConvexDecomposition_2_& with_holes_decomp,
                 const Gps_segment_traits_2& traits = Gps_segment_traits_2<Kernel,Container, Arr_segment_traits>());
 
 } /* namespace CGAL */
