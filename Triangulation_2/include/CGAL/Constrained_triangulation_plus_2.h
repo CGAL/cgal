@@ -259,6 +259,10 @@ public:
   
   Constraint_id insert_constraint(Vertex_handle va, Vertex_handle vb)
   {
+    // protects against inserting a zero length constraint
+    if(va == vb){
+    return Constraint_id(NULL);
+    }
     // protects against inserting twice the same constraint
     Constraint_id cid = hierarchy.insert_constraint(va, vb);
     if (va != vb && (cid != Constraint_id(NULL)) )  insert_subconstraint(va,vb); 
@@ -591,6 +595,10 @@ public:
   typename Constrained_triangulation_plus_2<Tr>::Constraint_id
   insert_constraint(Vertex_handle va, Vertex_handle vb, OutputIterator out)
   {
+    // protects against inserting a zero length constraint
+    if(va == vb){
+    return Constraint_id(NULL);
+    }
     // protects against inserting twice the same constraint
     Constraint_id cid = hierarchy.insert_constraint(va, vb);
     if (va != vb && (cid != NULL) )  insert_subconstraint(va,vb,out); 
