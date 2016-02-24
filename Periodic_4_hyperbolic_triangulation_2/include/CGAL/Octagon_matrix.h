@@ -218,41 +218,27 @@ void get_generators(vector<OctagonMatrix>& gens)
   // This vector should hold all other elements, results of the exponentials for various k
   vector<Entry> M12(8, Entry(SqrtField(0, 0), SqrtField(0, 0)));
 
-  // Set everything manually
+  // Set everything manually  
 
   /*
-  M12[A]    = M11 * Entry(SqrtField(0, 0),  SqrtField(-1, 0));
-  M12[InvA] = M11 * Entry(SqrtField(0, 0),  SqrtField(1, 0));
-  M12[B]    = M11 * Entry(SqrtField(0, -1), SqrtField(0, 1));
-  M12[InvB] = M11 * Entry(SqrtField(0, 1),  SqrtField(0, -1));
-  M12[C]    = M11 * Entry(SqrtField(1, 0),  SqrtField(0, 0));
-  M12[InvC] = M11 * Entry(SqrtField(-1, 0), SqrtField(0, 0));
-  M12[D]    = M11 * Entry(SqrtField(0, -1), SqrtField(0, -1));
-  M12[InvD] = M11 * Entry(SqrtField(0, 1),  SqrtField(0, 1)); 
-  */
-
-/*
-  Entry tmp =  Entry(SqrtField(2, 2),  SqrtField(0,0));
-  M12[A]    =  Entry(SqrtField(0, 0),  SqrtField(-1, 0));
-  M12[InvA] =  Entry(SqrtField(0, 0),  SqrtField(1, 0));
-  M12[B]    =  Entry(SqrtField(-1, 0), SqrtField(1, 0));
-  M12[InvB] =  Entry(SqrtField(1, 0),  SqrtField(-1, 0));
-  M12[C]    =  Entry(SqrtField(-1, 0), SqrtField(0, 0));
-  M12[InvC] =  Entry(SqrtField(1, 0),  SqrtField(0, 0));
-  M12[D]    =  Entry(SqrtField(-1, 0), SqrtField(-1, 0));
-  M12[InvD] =  Entry(SqrtField(1, 0),  SqrtField(1, 0)); 
-  */
-
-    
-  M12[A]    = M11 * Entry(SqrtField(0, 1),  SqrtField(0, 0));
+  M12[A]    = M11 * Entry(SqrtField(1, 0),  SqrtField(-1, 0));
   M12[InvB] = M11 * Entry(SqrtField(1, 0),  SqrtField(1, 0));
-  M12[C]    = M11 * Entry(SqrtField(0, 0),  SqrtField(0, 1));
-  M12[InvD] = M11 * Entry(SqrtField(-1, 0), SqrtField(1, 0));
+  M12[C]    = M11 * Entry(SqrtField(-1, 0), SqrtField(1, 0));
+  M12[InvD] = M11 * Entry(SqrtField(0, 0),  SqrtField(0, -1));
   M12[InvA] = M11 * Entry(SqrtField(0, -1), SqrtField(0, 0));
-  M12[B]    = M11 * Entry(SqrtField(-1, 0), SqrtField(-1, 0));
-  M12[InvC] = M11 * Entry(SqrtField(0, 0),  SqrtField(0, -1));
-  M12[D]    = M11 * Entry(SqrtField(1, 0),  SqrtField(-1, 0));
-  
+  M12[B]    = M11 * Entry(SqrtField(0, 0),  SqrtField(0, 1));
+  M12[InvC] = M11 * Entry(SqrtField(0, 1),  SqrtField(0, 0));
+  M12[D]    = M11 * Entry(SqrtField(-1, 0), SqrtField(-1, 0));
+  */
+
+  M12[C]    = M11 * Entry(SqrtField(0, 1),  SqrtField(0, 0));
+  M12[D] = M11 * Entry(SqrtField(1, 0),  SqrtField(1, 0));
+  M12[InvA]    = M11 * Entry(SqrtField(0, 0),  SqrtField(0, 1));
+  M12[InvB] = M11 * Entry(SqrtField(-1, 0), SqrtField(1, 0));
+  M12[InvC] = M11 * Entry(SqrtField(0, -1), SqrtField(0, 0));
+  M12[InvD]    = M11 * Entry(SqrtField(-1, 0), SqrtField(-1, 0));
+  M12[A] = M11 * Entry(SqrtField(0, 0),  SqrtField(0, -1));
+  M12[B]    = M11 * Entry(SqrtField(1, 0),  SqrtField(-1, 0));
 
   string labels[8] = {string("a"), string("b^-1"), string("c"), string("d^-1"),
     string("a^-1"), string("b"), string("c^-1"), string("d")};

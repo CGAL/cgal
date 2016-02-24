@@ -105,8 +105,11 @@ struct PointsComparator {
 
 double PointsComparator::eps = 0.0001;
 
-void apply_unique_words(std::vector<Point>& points, Point input = Point(0, 0), double threshold = 20 , int word_length = 6, double d = .999)
+void apply_unique_words(std::vector<Point>& points, Point input = Point(0, 0), double threshold = 20, int word_length = 6, double d = .999)
 {
+
+  cout << "apply_unique_words called with threshold = " << threshold << ", word_length = " << word_length << ", d = " << d << endl;
+
   static vector<OctagonMatrix> unique_words;
   static bool generated = false;
   if(generated == false) {
@@ -278,7 +281,7 @@ MainWindow::MainWindow()
   
   // dt to form the octagon tessellation
   vector<Point> origin_orbit;
-  apply_unique_words(origin_orbit, origin);
+  apply_unique_words(origin_orbit, origin, 20, 6);
   origin_orbit.push_back(Point(0, 0));
   // for(long i = 0; i < origin_orbit.size(); i++) {
   //   cout << origin_orbit[i] << endl;
@@ -393,7 +396,7 @@ MainWindow::MainWindow()
   //this->graphicsView->centerOn(0.0, 0.0);
   //this->graphicsView->translate(1.0, -20.0);
   this->graphicsView->shear(230, 230);
-  this->graphicsView->rotate(90);
+  //this->graphicsView->rotate(90);
 
   // // The navigation adds zooming and translation functionality to the
   // // QGraphicsView
@@ -447,7 +450,7 @@ MainWindow::processInput(CGAL::Object o)
       
       //delete
       vector<Point> points;
-      apply_unique_words/*_G*/(points, p);;
+      apply_unique_words(points, p);
       points.push_back(p);
       Vertex_handle v;
       for(size_t j = 0; j < points.size(); j++) {
@@ -490,7 +493,7 @@ MainWindow::processInput(CGAL::Object o)
     
       // current_point_b <-> current_point_b
       Point current_point = current_point_a;
-      apply_unique_words/*_G*/(points, current_point, 6, 4);
+      apply_unique_words(points, current_point);
       points.push_back(current_point);
       dt.clear();
       dt.insert(points.begin(), points.end());
