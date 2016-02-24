@@ -28,20 +28,22 @@
 namespace CGAL {
 
 /*! \class
- * A class for computing the Minkowski sum of two simple polygons based on
- * their decomposition two convex sub-polygons, taking the pairwise sums and
+ * A class for computing the Minkowski sum of two polygons based on their
+ * decomposition to convex sub-polygons, taking the pairwise sums and
  * computing the union of the sub-sums.
  */
 
-template <class DecompStrategy_, class Container_>
+template <typename DecompStrategy1_, typename DecompStrategy2_,
+          typename Container_>
 class Minkowski_sum_by_decomposition_2 {
 public:
-  typedef DecompStrategy_                              Decomposition_strategy;
-  typedef Container_                                   Container;
+  typedef DecompStrategy1_                              Decomposition_strategy1;
+  typedef DecompStrategy2_                              Decomposition_strategy2;
+  typedef Container_                                    Container;
 
-  typedef typename Decomposition_strategy::Polygon_2     Polygon_2;
+  typedef typename Decomposition_strategy1::Polygon_2    Polygon_2;
 
-  typedef typename Decomposition_strategy::Kernel        Kernel;
+  typedef typename Decomposition_strategy1::Kernel       Kernel;
   typedef CGAL::Arr_segment_traits_2<Kernel>             Arr_segment_traits;
   typedef CGAL::Gps_segment_traits_2<Kernel, Container, Arr_segment_traits>
                                                          Traits_2;
@@ -73,8 +75,10 @@ private:
     Polygon_with_holes_list;
 
   // Data members:
-  const Decomposition_strategy* m_decomposition_strategy;
-  bool m_own_strategy;    // inidicates whether the stategy should be freed up.
+  const Decomposition_strategy1* m_decomposition_strategy1;
+  const Decomposition_strategy2* m_decomposition_strategy2;
+  bool m_own_strategy1;   // inidicates whether the stategy should be freed up.
+  bool m_own_strategy2;   // inidicates whether the stategy should be freed up.
 
   const Traits_2* m_traits;
   bool m_own_traits;      // inidicates whether the kernel should be freed up.
@@ -90,33 +94,43 @@ private:
 public:
   //! Default constructor.
   Minkowski_sum_by_decomposition_2() :
-    m_decomposition_strategy(NULL),
-    m_own_strategy(false),
+    m_decomposition_strategy1(NULL),
+    m_decomposition_strategy2(NULL),
+    m_own_strategy1(false),
+    m_own_strategy2(false),
     m_traits(NULL),
     m_own_traits(false)
   { init(); }
 
   //! Constructor.
-  Minkowski_sum_by_decomposition_2(const Decomposition_strategy& strategy,
+  Minkowski_sum_by_decomposition_2(const Decomposition_strategy1& strategy1,
+                                   const Decomposition_strategy2& strategy2,
                                    const Traits_2& traits) :
-    m_decomposition_strategy(&strategy),
-    m_own_strategy(false),
+    m_decomposition_strategy1(&strategy1),
+    m_decomposition_strategy2(&strategy2),
+    m_own_strategy1(false),
+    m_own_strategy2(false),
     m_traits(&traits),
     m_own_traits(false)
   { init(); }
 
   //! Constructor.
-  Minkowski_sum_by_decomposition_2(const Decomposition_strategy& strategy) :
-    m_decomposition_strategy(&strategy),
-    m_own_strategy(false),
+  Minkowski_sum_by_decomposition_2(const Decomposition_strategy1& strategy1,
+                                   const Decomposition_strategy2& strategy2) :
+    m_decomposition_strategy1(&strategy1),
+    m_decomposition_strategy2(&strategy2),
+    m_own_strategy1(false),
+    m_own_strategy2(false),
     m_traits(NULL),
     m_own_traits(false)
   { init(); }
 
   //! Constructor.
   Minkowski_sum_by_decomposition_2(const Traits_2& traits) :
-    m_decomposition_strategy(NULL),
-    m_own_strategy(false),
+    m_decomposition_strategy1(NULL),
+    m_decomposition_strategy2(NULL),
+    m_own_strategy1(false),
+    m_own_strategy2(false),
     m_traits(&traits),
     m_own_traits(false)
   { init(); }
@@ -132,12 +146,20 @@ public:
       m_own_traits = false;
     }
 
-    if (m_own_strategy) {
-      if (m_decomposition_strategy != NULL) {
-        delete m_decomposition_strategy;
-        m_decomposition_strategy = NULL;
+    if (m_own_strategy1) {
+      if (m_decomposition_strategy1 != NULL) {
+        delete m_decomposition_strategy1;
+        m_decomposition_strategy1 = NULL;
       }
-      m_own_strategy = false;
+      m_own_strategy1 = false;
+    }
+
+    if (m_own_strategy2) {
+      if (m_decomposition_strategy2 != NULL) {
+        delete m_decomposition_strategy2;
+        m_decomposition_strategy2 = NULL;
+      }
+      m_own_strategy2 = false;
     }
   }
 
@@ -150,10 +172,15 @@ public:
       m_own_traits = true;
     }
     // Allocate the strategy if not provided.
-    if (m_decomposition_strategy == NULL) {
-      m_decomposition_strategy = new Decomposition_strategy;
-      m_own_strategy = true;
+    if (m_decomposition_strategy1 == NULL) {
+      m_decomposition_strategy1 = new Decomposition_strategy1;
+      m_own_strategy1 = true;
     }
+    if (m_decomposition_strategy2 == NULL) {
+      m_decomposition_strategy2 = new Decomposition_strategy2;
+      m_own_strategy2 = true;
+    }
+
     // Obtain kernel functors.
     const Kernel* kernel = m_traits;
     f_compare_angle = kernel->compare_angle_with_x_axis_2_object();
@@ -175,8 +202,11 @@ public:
    * Obtain the decomposition strategy
    * \return the decomposition strategy
    */
-  const Decomposition_strategy* decomposition_strategy() const
-  { return m_decomposition_strategy; }
+  const Decomposition_strategy1* decomposition_strategy1() const
+  { return m_decomposition_strategy1; }
+
+  const Decomposition_strategy2* decomposition_strategy2() const
+  { return m_decomposition_strategy2; }
 
   /*!
    * Compute the Minkowski sum of two simple polygons.
@@ -195,8 +225,8 @@ public:
     Polygons_list sub_pgns1;
     Polygons_list sub_pgns2;
 
-    (*m_decomposition_strategy)(pgn1, std::back_inserter(sub_pgns1));
-    (*m_decomposition_strategy)(pgn2, std::back_inserter(sub_pgns2));
+    (*m_decomposition_strategy1)(pgn1, std::back_inserter(sub_pgns1));
+    (*m_decomposition_strategy2)(pgn2, std::back_inserter(sub_pgns2));
 
     return operator()(sub_pgns1.begin(), sub_pgns1.end(),
                       sub_pgns2.begin(), sub_pgns2.end());
@@ -217,8 +247,8 @@ public:
     Polygons_list sub_pgns1;
     Polygons_list sub_pgns2;
 
-    (*m_decomposition_strategy)(pgn1, std::back_inserter(sub_pgns1));
-    (*m_decomposition_strategy)(pgn2, std::back_inserter(sub_pgns2));
+    (*m_decomposition_strategy1)(pgn1, std::back_inserter(sub_pgns1));
+    (*m_decomposition_strategy2)(pgn2, std::back_inserter(sub_pgns2));
 
     return operator()(sub_pgns1.begin(), sub_pgns1.end(),
                       sub_pgns2.begin(), sub_pgns2.end());
@@ -240,8 +270,8 @@ public:
     Polygons_list sub_pgns1;
     Polygons_list sub_pgns2;
 
-    (*m_decomposition_strategy)(pgn1, std::back_inserter(sub_pgns1));
-    (*m_decomposition_strategy)(pgn2, std::back_inserter(sub_pgns2));
+    (*m_decomposition_strategy1)(pgn1, std::back_inserter(sub_pgns1));
+    (*m_decomposition_strategy2)(pgn2, std::back_inserter(sub_pgns2));
 
     return operator()(sub_pgns1.begin(), sub_pgns1.end(),
                       sub_pgns2.begin(), sub_pgns2.end());
