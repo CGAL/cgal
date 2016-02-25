@@ -419,7 +419,7 @@ void eat_white_space(std::istream &is)
    
     
 template <typename ET>
-void read_float_or_quotient(std::istream & is, ET& et)
+inline void read_float_or_quotient(std::istream & is, ET& et)
 {
   is >> et;
 }   
@@ -427,7 +427,7 @@ void read_float_or_quotient(std::istream & is, ET& et)
 
 
 template <typename Int, typename Rat>
-void read_float_or_quotient(std::istream& is, Rat &z)
+inline void read_float_or_quotient(std::istream& is, Rat &z)
 {
   // reads rational and floating point literals.
   const std::istream::char_type zero = '0';

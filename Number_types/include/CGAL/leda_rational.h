@@ -280,17 +280,17 @@ public:
 
 };
 
-  namespace internal {
-    template <typename ET>
-    void read_float_or_quotient(std::istream & is, ET& et);
+namespace internal {
+  // See: Stream_support/include/CGAL/IO/io.h
+  template <typename ET>
+  void read_float_or_quotient(std::istream & is, ET& et);
 
-      template <>
-    void read_float_or_quotient(std::istream & is, leda_rational& et)
-    {
-      internal::read_float_or_quotient<leda_integer,leda_rational>(is, et);
-    }
+  template <>
+  inline void read_float_or_quotient(std::istream & is, leda_rational& et)
+  {
+    internal::read_float_or_quotient<leda_integer,leda_rational>(is, et);
   }
-
+} // namespace internal
 
 } //namespace CGAL
 

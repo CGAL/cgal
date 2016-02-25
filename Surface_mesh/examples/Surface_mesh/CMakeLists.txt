@@ -17,7 +17,6 @@ if ( CGAL_FOUND )
 
   include_directories (BEFORE "../../include")
 
-  create_single_source_cgal_program( "read.cpp" )
   create_single_source_cgal_program( "sm_join.cpp" )
   create_single_source_cgal_program( "sm_aabbtree.cpp" )
   create_single_source_cgal_program( "sm_bgl.cpp" )
