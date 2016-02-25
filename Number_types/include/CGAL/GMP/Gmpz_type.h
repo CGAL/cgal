@@ -27,7 +27,7 @@
 #define CGAL_GMPZ_TYPE_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Io/io.h>
+#include <CGAL/IO/io.h>
 
 #include <CGAL/gmp.h>
 #include <mpfr.h>

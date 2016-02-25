@@ -27,7 +27,7 @@
 #define CGAL_GMPQ_TYPE_H
 
 #include <CGAL/basic.h>
-#include <CGAL/Io/io.h>
+#include <CGAL/IO/io.h>
 
 #include <CGAL/GMP/Gmpz_type.h>
 #include <CGAL/GMP/Gmpfr_type.h>

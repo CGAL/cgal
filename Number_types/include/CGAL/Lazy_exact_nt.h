@@ -48,7 +48,7 @@
 #include <CGAL/Sqrt_extension_fwd.h>
 #include <CGAL/Kernel/mpl.h>
 
-#include <CGAL/Io/io.h>
+#include <CGAL/IO/io.h>
 
 
 /*
