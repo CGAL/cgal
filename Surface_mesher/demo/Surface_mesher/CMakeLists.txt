@@ -44,7 +44,6 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
   find_package(Qt5 QUIET COMPONENTS OpenGL Xml Svg)
   find_package(QGLViewer )
   find_package(OpenGL    )
-  find_package(GLU       )
   
   if ( QGLVIEWER_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND OPENGL_GLU_FOUND )
 
