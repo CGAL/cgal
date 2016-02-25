@@ -21,10 +21,9 @@ sets of points.
 ## Some Definitions ##
 
 A <I>finite abstract simplicial complex</I> is built on a finite set of
-vertices \f$ V\f$ and consists of a collection \f$ S\f$ of subsets of \f$ V\f$ such that
-
-<CENTER>if \f$ s\f$ is a set of vertices in \f$ S\f$, then all the subsets of \f$ s\f$ are also
-in \f$ S\f$.</CENTER>
+vertices \f$ V\f$ and consists of a collection \f$ S\f$ of subsets of \f$ V\f$ such that,
+if \f$ s\f$ is a set of vertices in \f$ S\f$, then all the subsets of \f$ s\f$ are also
+in \f$ S\f$.
 
 The sets in \f$ S\f$ (which are subsets of \f$ V\f$) are called
 <I>faces</I> or <I>simplices</I> (the
