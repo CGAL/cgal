@@ -205,7 +205,7 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit,
         push_back_xyz(ffit->vertex(1)->point(), positions_facets);
         positions_facets.push_back(1.0);
 
-        push_back_xyz(ffit->vertex(3)->point(), positions_facets);
+        push_back_xyz(ffit->vertex(2)->point(), positions_facets);
         positions_facets.push_back(1.0);
 
         push_back_xyz(normal, normals_flat);
