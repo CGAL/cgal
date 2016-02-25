@@ -133,7 +133,7 @@ bool Polyhedron_demo_off_plugin::save(const CGAL::Three::Scene_item* item, QFile
     return false;
 
   std::ofstream out(fileinfo.filePath().toUtf8());
-
+  out.precision (std::numeric_limits<double>::digits10 + 1);
   return (poly_item && poly_item->save(out)) || 
     (soup_item && soup_item->save(out));
 }
