@@ -43,6 +43,7 @@ int main(int argc, char*argv[])
   input >> polyhedron;
   if(input.bad()){
     std::cerr << "Error: Cannot read file " <<  fname << std::endl;
+    return EXIT_FAILURE;
   }
   input.close();
    
