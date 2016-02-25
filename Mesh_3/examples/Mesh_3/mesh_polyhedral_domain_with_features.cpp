@@ -30,10 +30,11 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-int main()
+int main(int argc, char*argv[])
 {
+  const char* fname = (argc>1)?argv[1]:"data/fandisk.off";
   // Create domain
-  Mesh_domain domain("data/fandisk.off");
+  Mesh_domain domain(fname);
   
   // Get sharp features
   domain.detect_features();

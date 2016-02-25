@@ -30,11 +30,16 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-int main()
+int main(int argc, char* argv[])
 {
+  const char* fname = (argc>1)?argv[1]:"data/liver.inr.gz";
   // Domain
   CGAL::Image_3 image;
-  image.read("data/liver.inr.gz");
+  if(!image.read(fname)){
+    std::cerr << "Error: Cannot read file " <<  fname << std::endl;
+    return EXIT_FAILURE;
+  }
+
   Mesh_domain domain(image);
 
   // Mesh criteria
