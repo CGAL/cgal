@@ -316,18 +316,14 @@ Vertex_handle vertex(Full_cell_handle c, const int i) const;
 
 /*!
 Returns the index of `c` as a neighbor of its `i`-th neighbor.
-\pre \f$0 \leq i \leq \f$`tds`.`current_dimension`()
-
-and `c!=Full_cell_handle()`.
+\pre \f$0 \leq i \leq \f$`tds`.`current_dimension`() and `c!=Full_cell_handle()`.
 */
 int mirror_index(Full_cell_handle c, int i) const;
 
 /*!
 Returns the vertex of the `i`-th neighbor of `c`
 that is not vertex of `c`.
-\pre \f$0 \leq i \leq \f$`tds`.`current_dimension`()
-
-and `c!=Full_cell_handle()`.
+\pre \f$0 \leq i \leq \f$`tds`.`current_dimension`() and `c!=Full_cell_handle()`.
 */
 Vertex_handle mirror_vertex(Full_cell_handle c, int i) const;
 
@@ -357,9 +353,7 @@ Full_cell_handle full_cell(Vertex_handle v) const;
 /*!
 Returns a `Full_cell_handle` pointing to the `Full_cell`
 opposite to the `i`-th vertex of `c`.
-\pre \f$0 \leq i \leq \f$`tds`.`current_dimension()`
-
-and `c != Full_cell_handle()`
+\pre \f$0 \leq i \leq \f$`tds`.`current_dimension()` and `c != Full_cell_handle()`
 */
 Full_cell_handle neighbor(Full_cell_handle c, int i) const;
 
@@ -415,8 +409,7 @@ share the vertex `v`.
 Insertion in a full cell, \f$ d=2\f$
 \cgalFigureEnd
 
-\pre Current dimension is positive and `c` is a full cell of
-`tds`.
+\pre Current dimension is positive and `c` is a full cell of `tds`.
 */
 Vertex_handle insert_in_full_cell(Full_cell_handle c);
 
