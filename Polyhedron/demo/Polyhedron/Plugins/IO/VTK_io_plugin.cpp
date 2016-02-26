@@ -22,6 +22,7 @@
 
 #include "Polyhedron_type.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_polylines_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
@@ -120,7 +121,6 @@ namespace CGAL{
     typedef typename boost::property_map<TM, CGAL::vertex_point_t>::type VPMap;
     typedef typename boost::property_map_value<TM, CGAL::vertex_point_t>::type Point_3;
     typedef typename boost::graph_traits<TM>::vertex_descriptor vertex_descriptor;
-    typedef typename boost::graph_traits<TM>::face_descriptor   face_descriptor;
 
     VPMap vpmap = get(CGAL::vertex_point, tmesh);
 
@@ -146,10 +146,8 @@ namespace CGAL{
       vtkCell* cell_ptr = poly_data->GetCell(i);
 
       vtkIdType nb_vertices = cell_ptr->GetNumberOfPoints();
-      if (nb_vertices < 3){
-        std::cerr << "Error: found a cell with " << nb_vertices << "\n";
+      if (nb_vertices < 3)
         return false;
-      }
       std::vector<vertex_descriptor> vr(nb_vertices);
       for (vtkIdType k=0; k<nb_vertices; ++k)
         vr[k]=vertex_map[cell_ptr->GetPointId(k)];
@@ -157,6 +155,36 @@ namespace CGAL{
       CGAL::Euler::add_face(vr, tmesh);
     }
     return true;
+  }
+
+  template <class Point_3>
+  void extract_segments_from_vtkPointSet(vtkPointSet* poly_data,
+                                         std::vector< std::vector<Point_3> >& segments)
+  {
+    // get nb of points and cells
+    vtkIdType nb_points = poly_data->GetNumberOfPoints();
+    vtkIdType nb_cells = poly_data->GetNumberOfCells();
+
+    //extract points
+    std::vector<Point_3> point_map(nb_points);
+    for (vtkIdType i = 0; i<nb_points; ++i)
+    {
+      double coords[3];
+      poly_data->GetPoint(i, coords);
+      point_map[i]=Point_3(coords[0], coords[1], coords[2]);
+    }
+
+    //extract segments
+    for (vtkIdType i = 0; i<nb_cells; ++i)
+    {
+      vtkCell* cell_ptr = poly_data->GetCell(i);
+
+      vtkIdType nb_vertices = cell_ptr->GetNumberOfPoints();
+      if (nb_vertices !=2) continue;
+      segments.push_back( std::vector<Point_3>() );
+      segments.back().push_back(point_map[cell_ptr->GetPointId(0)]);
+      segments.back().push_back(point_map[cell_ptr->GetPointId(1)]);
+    }
   }
 
   template<typename VtkWriter, typename PM>
@@ -251,8 +279,8 @@ public:
   }
   bool save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
   {
-    if (fileinfo.suffix().toLower() != "vtk"
-      && fileinfo.suffix().toLower() != "vtp")
+    std::string extension = fileinfo.suffix().toLower().toStdString();
+    if ( extension != "vtk" && extension != "vtp")
       return false;
 
     std::string output_filename = fileinfo.absoluteFilePath().toStdString();
@@ -264,8 +292,7 @@ public:
       return false;
     else
     {
-      char last_char = output_filename[output_filename.size()-1];
-      if (last_char != 'p' && last_char != 'P')
+      if (extension != "vtp")
         CGAL::polygon_mesh_to_vtkUnstructured<vtkPolyDataWriter>(
           *poly_item->polyhedron(),
           output_filename.data());
@@ -301,7 +328,6 @@ public:
     std::string fname = fileinfo.absoluteFilePath().toStdString();
 
     Polyhedron poly;
-
     // Try to read .vtk in a polyhedron
     vtkSmartPointer<vtkPointSet> data;
     vtkSmartPointer<CGAL::ErrorObserverVtk> obs =
@@ -351,9 +377,19 @@ public:
       poly_item->setName(fileinfo.fileName());
       return poly_item;
     }
+    else{
+      // extract only segments
+      std::vector< std::vector<Polyhedron::Point> > segments;
+      extract_segments_from_vtkPointSet(data,segments);
+      if (segments.empty()) return NULL; /// TODO handle point sets
+      Scene_polylines_item* polyline_item = new Scene_polylines_item();
+      polyline_item->setName(fileinfo.fileName());
+      BOOST_FOREACH(const std::vector<Polyhedron::Point_3>& segment, segments)
+        polyline_item->polylines.push_back(segment);
+      return polyline_item;
+    }
     return NULL;
   }
-
 }; // end Polyhedron_demo_vtk_plugin
 
 

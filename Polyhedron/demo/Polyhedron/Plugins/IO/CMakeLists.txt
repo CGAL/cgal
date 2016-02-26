@@ -37,7 +37,7 @@ if (VTK_FOUND)
   if ("${VTK_VERSION_MAJOR}" GREATER "5")
     if(VTK_LIBRARIES)
       polyhedron_demo_plugin(vtk_plugin VTK_io_plugin)
-      target_link_libraries(vtk_plugin scene_polyhedron_item
+      target_link_libraries(vtk_plugin scene_polyhedron_item scene_polylines_item
                                         vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML
                                         vtkFiltersCore vtkFiltersSources)
     else()
