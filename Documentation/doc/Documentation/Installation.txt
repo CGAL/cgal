@@ -15,12 +15,18 @@ cmake . # configure \cgal
 make # build the \cgal libraries
 </PRE>
 
-Compiling an example shipped with \cgal is similar simple:
+Compiling an example or a demo shipped with \cgal is similarly simple:
 
 <PRE>
 cd examples/Straight_skeleton_2 # go to an example directory
 cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the examples
 make # build the examples 
+</PRE>
+
+<PRE>
+cd demo/Straight_skeleton_2 # go to a demo directory
+cmake -DCGAL_DIR=$HOME/CGAL-\cgalReleaseNumber . # configure the demos
+make # build the demos 
 </PRE>
 
 Compiling an own non-shipped program is also close:
