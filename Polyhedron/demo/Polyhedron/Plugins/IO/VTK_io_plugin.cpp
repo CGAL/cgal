@@ -43,7 +43,7 @@
 #include <CGAL/property_map.h>
 
 #include <vtkSmartPointer.h>
-#include <vtkPolyDataReader.h>
+#include <vtkDataSetReader.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
 #include <vtkUnstructuredGrid.h>
@@ -280,7 +280,7 @@ public:
   bool canLoad() const { return true; }
 
   template <class vtkReader>
-  vtkSmartPointer<vtkPointSet>
+  vtkSmartPointer<vtkReader>
   read_vtk_file(const std::string& input_filename,
                 vtkSmartPointer<CGAL::ErrorObserverVtk> errorObserver)
   {
@@ -289,7 +289,7 @@ public:
     reader->AddObserver(vtkCommand::WarningEvent, errorObserver);
     reader->SetFileName(input_filename.data());
     reader->Update();
-    return reader->GetOutput();
+    return reader;
   }
 
   CGAL::Three::Scene_item* load(QFileInfo fileinfo)
@@ -304,34 +304,42 @@ public:
 
     // Try to read .vtk in a polyhedron
     vtkSmartPointer<vtkPointSet> data;
-    vtkSmartPointer<CGAL::ErrorObserverVtk> errorObserver =
+    vtkSmartPointer<CGAL::ErrorObserverVtk> obs =
       vtkSmartPointer<CGAL::ErrorObserverVtk>::New();
 
     if (extension=="vtp")
-      data = read_vtk_file<vtkXMLPolyDataReader>(fname,errorObserver);
+      data = read_vtk_file<vtkXMLPolyDataReader>(fname,obs)
+              ->GetOutput();
     else
      if (extension=="vtu")
-       data = read_vtk_file<vtkXMLUnstructuredGridReader>(fname,errorObserver);
-     else
-       data = read_vtk_file<vtkPolyDataReader>(fname,errorObserver);
+       data = read_vtk_file<vtkXMLUnstructuredGridReader>(fname,obs)
+                ->GetOutput();
+     else{
+       //read non-XML data
+       vtkSmartPointer<vtkDataSetReader> reader =
+         read_vtk_file<vtkDataSetReader>(fname,obs);
+       data = vtkPolyData::SafeDownCast(reader->GetOutput());
+       if (!data)
+        data = vtkUnstructuredGrid::SafeDownCast(reader->GetOutput());
+     }
 
-    if (errorObserver->GetError())
+    if (obs->GetError())
     {
       QMessageBox msgBox;
       msgBox.setText("This type of data can't be opened");
       msgBox.setInformativeText(QString("VTK error message :\n")
-        .append(QString(errorObserver->GetErrorMessage().data())));
+        .append(QString(obs->GetErrorMessage().data())));
       msgBox.setStandardButtons(QMessageBox::Ok);
       msgBox.setIcon(QMessageBox::Critical);
       msgBox.exec();
       return NULL;
     }
-    if (errorObserver->GetWarning())
+    if (obs->GetWarning())
     {
       QMessageBox msgBox;
       msgBox.setText("This file generates a warning");
       msgBox.setInformativeText(QString("VTK warning message :\n")
-        .append(QString(errorObserver->GetWarningMessage().data())));
+        .append(QString(obs->GetWarningMessage().data())));
       msgBox.setStandardButtons(QMessageBox::Ok);
       msgBox.setIcon(QMessageBox::Warning);
       msgBox.exec();
