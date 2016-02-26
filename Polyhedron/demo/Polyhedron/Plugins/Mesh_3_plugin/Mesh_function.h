@@ -154,7 +154,7 @@ Mesh_function<D_>::
 
 
 CGAL::Mesh_facet_topology topology(int manifold) {
-  return manifold == 0 ? CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH :
+  return manifold == 0 ? CGAL::FACET_VERTICES_ON_SURFACE :
     static_cast<CGAL::Mesh_facet_topology>
     (CGAL::MANIFOLD |
      CGAL::FACET_VERTICES_ON_SAME_SURFACE_PATCH);
