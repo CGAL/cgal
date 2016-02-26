@@ -46,12 +46,13 @@ public:
                              << actionUnTriangulateFacets;
   }
 
-  bool applicable(QAction*) const { 
-      Scene_polyhedron_item* item = qobject_cast<Scene_polyhedron_item*>(scene->item(scene->mainSelectionIndex()));
-      if(!item) return false;
-    return true;
+  bool applicable(QAction*) const {
+    Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices()){
+      if ( qobject_cast<Scene_polyhedron_item*>(scene->item(index)) )
+        return true;
+    }
+    return false;
   }
-
 
 public Q_SLOTS:
   void untriangulate() {
