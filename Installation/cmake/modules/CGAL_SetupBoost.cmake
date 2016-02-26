@@ -18,12 +18,10 @@ if ( NOT CGAL_Boost_Setup )
     set ( CGAL_requires_Boost_libs FALSE )
   endif()
 
-  # In the documentation, we say we require Boost-1.48, but technically we
-  # require 1.39. Some packages may require more recent versions, though.
   if (CGAL_requires_Boost_libs)
-    find_package( Boost 1.39 REQUIRED thread system )
+    find_package( Boost 1.48 REQUIRED thread system )
   else()
-    find_package( Boost 1.39 REQUIRED )
+    find_package( Boost 1.48 REQUIRED )
   endif()
 
   if(Boost_FOUND)
