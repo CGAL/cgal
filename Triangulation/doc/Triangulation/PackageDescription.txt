@@ -73,8 +73,8 @@ is opposite to the vertex with the same index.
 ## Triangulation Data Structure ##
 
 - `TriangulationDataStructure`
-- `TriangulationDataStructure_2::FullCell`
-- `TriangulationDataStructure_2::Vertex`
+- `TriangulationDataStructure::FullCell`
+- `TriangulationDataStructure::Vertex`
 - `TriangulationDSVertex`
 - `TriangulationDSFullCell`
 - `TriangulationDSFace`
