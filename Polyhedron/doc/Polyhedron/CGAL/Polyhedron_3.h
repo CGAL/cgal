@@ -1489,7 +1489,7 @@ n  */
 
     \cgalAdvancedBegin
     Halfedges incident to a hole are called <I>border
-    halfedges</I>. An halfedge is a <I>border edge</I> if itself or its
+    halfedges</I>. A halfedge is a <I>border edge</I> if itself or its
     opposite halfedge are border halfedges. The only requirement to work
     with border halfedges is that the `Halfedge` class provides a member
     function `Halfedge::is_border()` returning a `bool`. Usually, the halfedge data
