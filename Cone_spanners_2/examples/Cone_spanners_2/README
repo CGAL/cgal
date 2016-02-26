@@ -8,11 +8,3 @@ theta_io.cpp: this example constructs a Theta graph exactly with an input file c
 dijkstra_theta.cpp: this example constructs Theta graph first and then calculates 
    the shortest paths on this graph by calling the Dijkstra's algorithm from BGL.
 
-[Compilation]
-In the examples, the function std::to_string() is used. Because this function is
-available since c++0x, please turn on '-std=gnu++0x' or '-std=c++0x' to compile. A recommended way 
-is to add the following codes into your 'CMakeLists.txt' file.
-
-if(UNIX)
-	    SET(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -std=gnu++0x")
-endif()
