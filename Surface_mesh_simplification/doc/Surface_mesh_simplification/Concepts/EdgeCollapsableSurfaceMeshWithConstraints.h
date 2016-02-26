@@ -41,7 +41,7 @@ public:
 
 /*!
 Collapses the undirected edge `(v0v1,v1v0)` replacing it with `v0` or `v1`,
-as described in the paragraph above and guarantees that an halfedge `he`, for which `get(edge_is_constrained_map, he)==true`, is not removed after the collapse.
+as described in the paragraph above and guarantees that a halfedge `he`, for which `get(edge_is_constrained_map, he)==true`, is not removed after the collapse.
 \tparam EdgeCollapsableSurfaceMeshWithConstraints a model of `HalfedgeGraph`
 \tparam EdgeIsConstrainedMap a model of `ReadablePropertyMap` with the edge descriptor of
        `EdgeCollapsableSurfaceMeshWithConstraints` as key type and a boolean as value type.
