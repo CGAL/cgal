@@ -27,6 +27,7 @@
 #include <boost/operators.hpp>
 #include <CGAL/Uncertain.h>
 #include <CGAL/tss.h>
+#include <CGAL/IO/io.h>
 
 #include <limits>
 #include <algorithm>
@@ -818,7 +819,7 @@ std::istream& operator>>(std::istream& is,Gmpfi &f){
         std::istream::int_type c;
         std::ios::fmtflags old_flags = is.flags();
         is.unsetf(std::ios::skipws);
-        gmpz_eat_white_space(is);
+        internal::eat_white_space(is);
         c=is.get();
         if(c!='['){
                 invalid_number:
@@ -826,13 +827,13 @@ std::istream& operator>>(std::istream& is,Gmpfi &f){
                 is.flags(old_flags);
                 return is;
         }
-        gmpz_eat_white_space(is);
+        internal::eat_white_space(is);
         is>>left;
         c=is.get();
         if(c!=',')
                 goto invalid_number;
         is>>right;
-        gmpz_eat_white_space(is);
+        internal::eat_white_space(is);
         c=is.get();
         if(c!=']')
                 goto invalid_number;
