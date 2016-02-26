@@ -37,7 +37,7 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/unordered_map.hpp>
 
-#include <CGAL/boost/graph/properties.h> 
+#include <CGAL/boost/graph/properties.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/property_map.h>
@@ -46,6 +46,8 @@
 #include <vtkPolyDataReader.h>
 #include <vtkXMLPolyDataReader.h>
 #include <vtkPolyDataWriter.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkXMLUnstructuredGridReader.h>
 #include <vtkXMLPolyDataWriter.h>
 #include <vtkPolyData.h>
 #include <vtkIdTypeArray.h>
@@ -111,11 +113,9 @@ namespace CGAL{
     std::string WarningMessage;
   };
 
-  template <typename TM, typename VertexMap, typename FaceMap>
-  bool vtkPolyData_to_polygon_mesh(vtkPolyData* poly_data,
-                                   TM& tmesh,
-                                   VertexMap& vertex_map,
-                                   FaceMap& face_map)
+  template <typename TM>
+  bool vtkPointSet_to_polygon_mesh(vtkPointSet* poly_data,
+                                   TM& tmesh)
   {
     typedef typename boost::property_map<TM, CGAL::vertex_point_t>::type VPMap;
     typedef typename boost::property_map_value<TM, CGAL::vertex_point_t>::type Point_3;
@@ -129,6 +129,7 @@ namespace CGAL{
     vtkIdType nb_cells = poly_data->GetNumberOfCells();
 
     //extract points
+    std::vector<vertex_descriptor> vertex_map(nb_points);
     for (vtkIdType i = 0; i<nb_points; ++i)
     {
       double coords[3];
@@ -136,7 +137,7 @@ namespace CGAL{
 
       vertex_descriptor v = add_vertex(tmesh);
       put(vpmap, v, Point_3(coords[0], coords[1], coords[2]));
-      vertex_map.insert(std::make_pair(i, v));
+      vertex_map[i]=v;
     }
 
     //extract cells
@@ -145,17 +146,15 @@ namespace CGAL{
       vtkCell* cell_ptr = poly_data->GetCell(i);
 
       vtkIdType nb_vertices = cell_ptr->GetNumberOfPoints();
-      if (nb_vertices != 3){
-        std::cerr << "Error a cell with " << nb_vertices << " found\n";
+      if (nb_vertices < 3){
+        std::cerr << "Error: found a cell with " << nb_vertices << "\n";
         return false;
       }
-      std::vector<vertex_descriptor> vr;
-      vr.push_back(vertex_map[cell_ptr->GetPointId(0)]);
-      vr.push_back(vertex_map[cell_ptr->GetPointId(1)]);
-      vr.push_back(vertex_map[cell_ptr->GetPointId(2)]);
+      std::vector<vertex_descriptor> vr(nb_vertices);
+      for (vtkIdType k=0; k<nb_vertices; ++k)
+        vr[k]=vertex_map[cell_ptr->GetPointId(k)];
 
-      face_descriptor f = CGAL::Euler::add_face(vr, tmesh);
-      face_map.insert(std::make_pair(i, f));
+      CGAL::Euler::add_face(vr, tmesh);
     }
     return true;
   }
@@ -242,7 +241,7 @@ public:
   typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<Polyhedron>::face_descriptor face_descriptor;
 
-  QString nameFilters() const { 
+  QString nameFilters() const {
     return "VTK PolyData files (*.vtk);; VTK XML PolyData (*.vtp)"; }
   QString name() const { return "vtk_plugin"; }
 
@@ -279,45 +278,43 @@ public:
   }
 
   bool canLoad() const { return true; }
+
+  template <class vtkReader>
+  vtkSmartPointer<vtkPointSet>
+  read_vtk_file(const std::string& input_filename,
+                vtkSmartPointer<CGAL::ErrorObserverVtk> errorObserver)
+  {
+    vtkSmartPointer<vtkReader> reader = vtkSmartPointer<vtkReader>::New();
+    reader->AddObserver(vtkCommand::ErrorEvent, errorObserver);
+    reader->AddObserver(vtkCommand::WarningEvent, errorObserver);
+    reader->SetFileName(input_filename.data());
+    reader->Update();
+    return reader->GetOutput();
+  }
+
   CGAL::Three::Scene_item* load(QFileInfo fileinfo)
   {
-    if (fileinfo.suffix().toLower() != "vtk"
-     && fileinfo.suffix().toLower() != "vtp")
+    std::string extension=fileinfo.suffix().toLower().toStdString();
+    if (extension != "vtk" && extension != "vtp" && extension != "vtu")
       return 0;
 
-    std::string input_filename = fileinfo.absoluteFilePath().toStdString();
+    std::string fname = fileinfo.absoluteFilePath().toStdString();
 
     Polyhedron poly;
-    boost::unordered_map<vtkIdType, vertex_descriptor> vmap;
-    boost::unordered_map<vtkIdType, face_descriptor>   fmap;
 
     // Try to read .vtk in a polyhedron
-    vtkSmartPointer<vtkPolyData> data
-      = vtkSmartPointer<vtkPolyData>::New();
+    vtkSmartPointer<vtkPointSet> data;
     vtkSmartPointer<CGAL::ErrorObserverVtk> errorObserver =
       vtkSmartPointer<CGAL::ErrorObserverVtk>::New();
 
-    char last_char = input_filename[input_filename.size() - 1];
-    if (last_char != 'p' && last_char != 'P')
-    {
-      vtkSmartPointer<vtkPolyDataReader> reader =
-        vtkSmartPointer<vtkPolyDataReader>::New();
-      reader->AddObserver(vtkCommand::ErrorEvent, errorObserver);
-      reader->AddObserver(vtkCommand::WarningEvent, errorObserver);
-      reader->SetFileName(input_filename.data());
-      reader->Update();
-      data = reader->GetOutput();
-    }
+    if (extension=="vtp")
+      data = read_vtk_file<vtkXMLPolyDataReader>(fname,errorObserver);
     else
-    {
-      vtkSmartPointer<vtkXMLPolyDataReader> reader =
-        vtkSmartPointer<vtkXMLPolyDataReader>::New();
-      reader->AddObserver(vtkCommand::ErrorEvent, errorObserver);
-      reader->AddObserver(vtkCommand::WarningEvent, errorObserver);
-      reader->SetFileName(input_filename.data());
-      reader->Update();
-      data = reader->GetOutput();
-    }
+     if (extension=="vtu")
+       data = read_vtk_file<vtkXMLUnstructuredGridReader>(fname,errorObserver);
+     else
+       data = read_vtk_file<vtkPolyDataReader>(fname,errorObserver);
+
     if (errorObserver->GetError())
     {
       QMessageBox msgBox;
@@ -340,7 +337,7 @@ public:
       msgBox.exec();
     }
 
-    if (CGAL::vtkPolyData_to_polygon_mesh(data, poly, vmap, fmap))
+    if (CGAL::vtkPointSet_to_polygon_mesh(data, poly))
     {
       Scene_polyhedron_item* poly_item = new Scene_polyhedron_item(poly);
       poly_item->setName(fileinfo.fileName());
