@@ -265,7 +265,7 @@ public:
       return false;
     else
     {
-      char last_char = output_filename.back();
+      char last_char = output_filename[output_filename.size()-1];
       if (last_char != 'p' && last_char != 'P')
         CGAL::polygon_mesh_to_vtkUnstructured<vtkPolyDataWriter>(
           *poly_item->polyhedron(),
@@ -297,14 +297,13 @@ public:
     vtkSmartPointer<CGAL::ErrorObserverVtk> errorObserver =
       vtkSmartPointer<CGAL::ErrorObserverVtk>::New();
 
-    data->AddObserver(vtkCommand::ErrorEvent, errorObserver);
-    data->AddObserver(vtkCommand::WarningEvent, errorObserver);
-
     char last_char = input_filename[input_filename.size() - 1];
     if (last_char != 'p' && last_char != 'P')
     {
       vtkSmartPointer<vtkPolyDataReader> reader =
         vtkSmartPointer<vtkPolyDataReader>::New();
+      reader->AddObserver(vtkCommand::ErrorEvent, errorObserver);
+      reader->AddObserver(vtkCommand::WarningEvent, errorObserver);
       reader->SetFileName(input_filename.data());
       reader->Update();
       data = reader->GetOutput();
@@ -313,6 +312,8 @@ public:
     {
       vtkSmartPointer<vtkXMLPolyDataReader> reader =
         vtkSmartPointer<vtkXMLPolyDataReader>::New();
+      reader->AddObserver(vtkCommand::ErrorEvent, errorObserver);
+      reader->AddObserver(vtkCommand::WarningEvent, errorObserver);
       reader->SetFileName(input_filename.data());
       reader->Update();
       data = reader->GetOutput();
@@ -326,7 +327,7 @@ public:
       msgBox.setStandardButtons(QMessageBox::Ok);
       msgBox.setIcon(QMessageBox::Critical);
       msgBox.exec();
-      return new Scene_polyhedron_item();
+      return NULL;
     }
     if (errorObserver->GetWarning())
     {
@@ -345,7 +346,7 @@ public:
       poly_item->setName(fileinfo.fileName());
       return poly_item;
     }
-    return new Scene_polyhedron_item();
+    return NULL;
   }
 
 }; // end Polyhedron_demo_vtk_plugin
