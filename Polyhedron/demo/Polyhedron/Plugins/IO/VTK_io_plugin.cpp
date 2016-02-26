@@ -380,7 +380,7 @@ public:
       msgBox.setStandardButtons(QMessageBox::Ok);
       msgBox.setIcon(QMessageBox::Critical);
       msgBox.exec();
-      return new Scene_polyhedron_item();
+      return NULL;
     }
     if (errorObserver->GetWarning())
     {
