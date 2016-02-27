@@ -406,7 +406,7 @@ public:
   Vertex_handle  nearest_neighbor(const Point_2& p,
 				  bool force_point = false) const;
 
-  Vertex_handle  nearest_neighbor(const Point_2& p, Vertex_handle)
+  Vertex_handle  nearest_neighbor(const Point_2& p, Vertex_handle) const
   {
     return nearest_neighbor(p);
   }
