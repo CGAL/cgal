@@ -66,6 +66,7 @@ public:
   // creation
   CGAL_EXPORT Random( );
   CGAL_EXPORT Random( unsigned int  seed);
+  CGAL_EXPORT Random(char*);
   
   // seed
   CGAL_EXPORT unsigned int get_seed ( ) const;
@@ -237,7 +238,8 @@ CGAL_EXPORT extern  Random  default_random;
 #ifdef CGAL_HEADER_ONLY
 inline Random& get_default_random()
 {
-  static Random default_random;
+  static Random default_random("default");
+  std::cerr << "get_default_random()" << std::endl;
   return default_random;
 }
 #else // CGAL_HEADER_ONLY
