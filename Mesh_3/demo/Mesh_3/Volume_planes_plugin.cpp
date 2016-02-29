@@ -11,6 +11,7 @@
 
 #include "Volume_plane_thread.h"
 #include "Volume_plane_intersection.h"
+<<<<<<< HEAD:Mesh_3/demo/Mesh_3/Volume_planes_plugin.cpp
 
 #include "Scene_segmented_image_item.h"
 #include <CGAL_demo/Plugin_helper.h>
@@ -19,6 +20,15 @@
 #include <CGAL_demo/Scene_interface.h>
 #include <CGAL_demo/Scene_item.h>
 #include <CGAL_demo/Viewer.h>
+=======
+#include "Scene_image_item.h"
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include "Messages_interface.h"
+#include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Viewer_interface.h>
+>>>>>>> Renaming:Polyhedron/demo/Polyhedron/Plugins/Mesh_3_plugin/Volume_planes_plugin.cpp
 
 #include <QAction>
 #include <QMenu>
@@ -164,11 +174,17 @@ public:
     {
     }
 
+<<<<<<< HEAD:Mesh_3/demo/Mesh_3/Volume_planes_plugin.cpp
   virtual void init(QMainWindow* mw, Scene_interface* sc) {
     assert(mw != NULL);
     assert(sc != NULL);
     this->sc = sc;
     this->mw = mw;
+=======
+  bool applicable(QAction*) const {
+    return qobject_cast<Scene_image_item*>(scene->item(scene->mainSelectionIndex()));
+  }
+>>>>>>> Renaming:Polyhedron/demo/Polyhedron/Plugins/Mesh_3_plugin/Volume_planes_plugin.cpp
 
     QList<QMenu*> menus = mw->findChildren<QMenu*>();
 
@@ -192,12 +208,20 @@ public:
 
 public Q_SLOTS:
   void selectPlanes() {
+<<<<<<< HEAD:Mesh_3/demo/Mesh_3/Volume_planes_plugin.cpp
     std::vector< Scene_segmented_image_item* > seg_items;
     Scene_segmented_image_item* seg_img = NULL;
 
     for(unsigned int i = 0; i < sc->numberOfEntries(); ++i) {
       Scene_segmented_image_item* tmp = qobject_cast<Scene_segmented_image_item*>(sc->item(i));
       if(tmp != NULL)
+=======
+    std::vector< Scene_image_item* > seg_items;
+    Scene_image_item* seg_img = NULL;
+    for(int i = 0; i < scene->numberOfEntries(); ++i) {
+      Scene_image_item* tmp = qobject_cast<Scene_image_item*>(scene->item(i));
+      if(tmp != NULL){
+>>>>>>> Renaming:Polyhedron/demo/Polyhedron/Plugins/Mesh_3_plugin/Volume_planes_plugin.cpp
         seg_items.push_back(tmp);
     }
     
@@ -206,7 +230,7 @@ public Q_SLOTS:
       return;
     } else {
       QList<QString> items;
-      for(std::vector< Scene_segmented_image_item* >::const_iterator it = seg_items.begin(); 
+      for(std::vector< Scene_image_item* >::const_iterator it = seg_items.begin(); 
           it != seg_items.end(); ++it) { 
         items << (*it)->name();
       }
@@ -216,8 +240,12 @@ public Q_SLOTS:
       
       if(!ok || selected.isEmpty())
         return;
+<<<<<<< HEAD:Mesh_3/demo/Mesh_3/Volume_planes_plugin.cpp
 
       for(std::vector< Scene_segmented_image_item*>::const_iterator it = seg_items.begin(); 
+=======
+      for(std::vector< Scene_image_item*>::const_iterator it = seg_items.begin(); 
+>>>>>>> Renaming:Polyhedron/demo/Polyhedron/Plugins/Mesh_3_plugin/Volume_planes_plugin.cpp
           it != seg_items.end(); ++it) { 
         if(selected == (*it)->name())
           seg_img = *it;

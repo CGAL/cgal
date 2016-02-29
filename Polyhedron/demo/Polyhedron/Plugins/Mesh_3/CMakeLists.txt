@@ -10,18 +10,18 @@ if ( Boost_VERSION GREATER 103400 )
     polyhedron_demo_plugin(mesh_3_plugin Mesh_3_plugin 
       Mesh_3_plugin_cgal_code.cpp Meshing_thread.cpp 
       ${meshingUI_FILES})
-    target_link_libraries(mesh_3_plugin scene_polyhedron_item scene_polygon_soup_item scene_polylines_item scene_implicit_function_item scene_segmented_image_item
+    target_link_libraries(mesh_3_plugin scene_polyhedron_item scene_polygon_soup_item scene_polylines_item scene_implicit_function_item scene_image_item
  scene_c3t3_item ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY})
     polyhedron_demo_plugin(mesh_3_volume_planes_plugin Volume_planes_plugin ${VOLUME_MOC_OUTFILES} Volume_plane_intersection.cpp)
-    target_link_libraries(mesh_3_volume_planes_plugin scene_segmented_image_item)
+    target_link_libraries(mesh_3_volume_planes_plugin scene_image_item)
     polyhedron_demo_plugin(mesh_3_optimization_plugin Optimization_plugin
       Optimization_plugin_cgal_code.cpp Optimizer_thread.cpp
       ${meshingUI_FILES})
-    target_link_libraries(mesh_3_optimization_plugin scene_c3t3_item scene_polyhedron_item scene_segmented_image_item scene_implicit_function_item )
+    target_link_libraries(mesh_3_optimization_plugin scene_c3t3_item scene_polyhedron_item scene_image_item scene_implicit_function_item )
 
   qt5_wrap_ui( imgUI_FILES Image_res_dialog.ui raw_image.ui)
   polyhedron_demo_plugin(io_image_plugin Io_image_plugin Raw_image_dialog.cpp ${imgUI_FILES})
-  target_link_libraries(io_image_plugin scene_segmented_image_item)
+  target_link_libraries(io_image_plugin scene_image_item)
   polyhedron_demo_plugin(c3t3_io_plugin C3t3_io_plugin)
   target_link_libraries(c3t3_io_plugin  scene_c3t3_item)
   else( Boost_VERSION GREATER 103400 )

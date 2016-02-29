@@ -4,7 +4,7 @@
 #include "Volume_plane.h"
 #include <CGAL/Image_3.h>
 
-#include "Scene_segmented_image_item.h"
+#include "Scene_image_item.h"
 
 #include <QApplication>
 #include <QThread>

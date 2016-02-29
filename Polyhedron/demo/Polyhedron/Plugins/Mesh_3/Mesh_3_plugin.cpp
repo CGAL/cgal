@@ -23,7 +23,7 @@
 #include "Scene_implicit_function_item.h"
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
-#include "Scene_segmented_image_item.h"
+#include "Scene_image_item.h"
 #endif
 
 #include "Meshing_thread.h"
@@ -73,7 +73,7 @@ public:
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
     Q_FOREACH(int ind, scene->selectionIndices()){
-      if( qobject_cast<Scene_segmented_image_item*>(scene->item(ind)))
+      if( qobject_cast<Scene_image_item*>(scene->item(ind)))
         return true;
     }
 #endif  
@@ -120,7 +120,7 @@ void Mesh_3_plugin::mesh_3()
 {
   Scene_polyhedron_item* poly_item = NULL;
   Scene_implicit_function_item* function_item = NULL;
-  Scene_segmented_image_item* image_item = NULL;
+  Scene_image_item* image_item = NULL;
   Scene_polylines_item* polylines_item = NULL;
 
   Q_FOREACH(int ind, scene->selectionIndices()) {
@@ -136,7 +136,7 @@ void Mesh_3_plugin::mesh_3()
 #endif
 #ifdef CGAL_MESH_3_DEMO_ACTIVATE_SEGMENTED_IMAGES
     if(image_item == NULL){
-      image_item = qobject_cast<Scene_segmented_image_item*>(scene->item(ind));
+      image_item = qobject_cast<Scene_image_item*>(scene->item(ind));
     }
 #endif
     if(polylines_item == NULL){

@@ -1,5 +1,5 @@
 #include "config.h"
-#include "Scene_segmented_image_item.h"
+#include "Scene_image_item.h"
 #include "Image_type.h"
 #include "ui_Image_res_dialog.h"
 
@@ -121,8 +121,8 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   // Get selected precision
   int voxel_scale = ui.precisionList->currentIndex() + 1;
 
-  Scene_segmented_image_item* image_item = 
-    new Scene_segmented_image_item(image,voxel_scale);
+  Scene_image_item* image_item =
+    new Scene_image_item(image,voxel_scale);
   image_item->setName(fileinfo.baseName());
 
   return image_item;
