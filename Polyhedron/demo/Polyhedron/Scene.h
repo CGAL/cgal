@@ -58,13 +58,13 @@ public:
   //!Sets item as the item at index and calls @ref Scene_item#changed().
   //!If emit_item_about_to_be_destroyed is set to true, emits
   //!an itemAboutToBeDestroyed signal.
-  CGAL::Three::Scene_item* replaceItem(int index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false);
+  CGAL::Three::Scene_item* replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emit_item_about_to_be_destroyed = false);
   /*! Deletes the item with the target index.
    * @returns  the index of the polyhedra just before the
    * one that is erased, or just after. -1 if
    * the list is empty.
    */
-  Q_INVOKABLE int erase(int);  
+  Q_INVOKABLE Item_id erase(Item_id);
 
   /*! Deletes the items with the target indexes.
    * @returns the index of the polyhedra just before the

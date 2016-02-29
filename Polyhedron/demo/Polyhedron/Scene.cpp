@@ -123,8 +123,8 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
     return item;
 }
 
-int
-Scene::erase(int index)
+Scene::Item_id
+Scene::erase(Scene::Item_id index)
 {
     clear();
     index_map.clear();
