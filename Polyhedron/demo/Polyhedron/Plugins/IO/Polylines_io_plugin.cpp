@@ -165,7 +165,7 @@ bool Polyhedron_demo_polylines_io_plugin::save(const CGAL::Three::Scene_item* it
 
   std::ofstream out(fileinfo.filePath().toUtf8());
 
-  out.precision(17);
+  out.precision (std::numeric_limits<double>::digits10 + 1);
 
   if(!out) {
     std::cerr << "Error! Cannot open file " << (const char*)fileinfo.filePath().toUtf8() << std::endl;
