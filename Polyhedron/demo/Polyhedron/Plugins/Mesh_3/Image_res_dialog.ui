@@ -1,3 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
  <class>ImagePrecisionDialog</class>
  <widget class="QDialog" name="ImagePrecisionDialog">
@@ -5,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>407</width>
-    <height>139</height>
+    <width>448</width>
+    <height>282</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -18,7 +19,7 @@
   <property name="windowTitle">
    <string>Image Drawing Precision</string>
   </property>
-  <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0">
+  <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0,0">
    <item row="0" column="0">
     <widget class="QLabel" name="label">
      <property name="lineWidth">
@@ -32,7 +33,23 @@
      </property>
     </widget>
    </item>
-   <item row="6" column="0" colspan="2">
+   <item row="2" column="0">
+    <widget class="QLabel" name="label_2">
+     <property name="font">
+      <font>
+       <pointsize>11</pointsize>
+       <italic>true</italic>
+      </font>
+     </property>
+     <property name="text">
+      <string>1:x means that x voxels of the original image are represented by 1 cube in the drawn image</string>
+     </property>
+     <property name="wordWrap">
+      <bool>true</bool>
+     </property>
+    </widget>
+   </item>
+   <item row="7" column="0" colspan="2">
     <widget class="QDialogButtonBox" name="buttonBox">
      <property name="orientation">
       <enum>Qt::Horizontal</enum>
@@ -50,20 +67,14 @@
     </widget>
    </item>
    <item row="1" column="0">
-    <widget class="QLabel" name="label_2">
-     <property name="font">
-      <font>
-       <pointsize>11</pointsize>
-       <italic>true</italic>
-      </font>
-     </property>
+    <widget class="QLabel" name="label_3">
      <property name="text">
-      <string>1:x means that x voxels of the original image are represented by 1 cube in the drawn image</string>
-     </property>
-     <property name="wordWrap">
-      <bool>true</bool>
+      <string>Please choose the image type</string>
      </property>
     </widget>
+   </item>
+   <item row="1" column="1">
+    <widget class="QComboBox" name="imageType"/>
    </item>
   </layout>
  </widget>

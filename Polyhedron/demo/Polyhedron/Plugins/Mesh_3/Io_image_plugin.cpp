@@ -107,6 +107,11 @@ Io_image_plugin::load(QFileInfo fileinfo) {
     QString s = tr("1:%1").arg(i*i*i);
     ui.precisionList->addItem(s);
   }
+
+  //Adds Image type
+  ui.imageType->addItem(QString("Segmented image"));
+  ui.imageType->addItem(QString("Gray-level image"));
+
   
   // Open window
   QApplication::restoreOverrideCursor();
@@ -121,11 +126,20 @@ Io_image_plugin::load(QFileInfo fileinfo) {
   // Get selected precision
   int voxel_scale = ui.precisionList->currentIndex() + 1;
 
+  //Get the image type
+  QString type = ui.imageType->currentText();
   Scene_image_item* image_item =
-    new Scene_image_item(image,voxel_scale);
-  image_item->setName(fileinfo.baseName());
+      new Scene_image_item(image,voxel_scale);
+  if(type != "Gray-level image")
+  {
+    image_item->setName(fileinfo.baseName());
 
-  return image_item;
+    return image_item;
+  }
+  //Create planes
+
+   delete image_item;
+  return 0;
 }
 
 bool Io_image_plugin::canSave(const CGAL::Three::Scene_item*)
