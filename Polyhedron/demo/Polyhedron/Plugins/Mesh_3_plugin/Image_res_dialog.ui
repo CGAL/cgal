@@ -16,7 +16,7 @@
    </sizepolicy>
   </property>
   <property name="windowTitle">
-   <string>Image drawing precision</string>
+   <string>Image Drawing Precision</string>
   </property>
   <layout class="QGridLayout" name="gridLayout" rowstretch="0,0,0,0,0,0,0">
    <item row="0" column="0">
