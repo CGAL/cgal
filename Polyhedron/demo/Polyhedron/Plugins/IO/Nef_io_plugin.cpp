@@ -72,7 +72,7 @@ bool Polyhedron_demo_io_nef_plugin::save(const CGAL::Three::Scene_item* item, QF
     return false;
 
   std::ofstream out(fileinfo.filePath().toUtf8());
-  out.precision (std::numeric_limits<double>::digits10 + 1);
+  out.precision (std::numeric_limits<double>::digits10 + 2);
   return (nef_item && nef_item->save(out));
 }
 

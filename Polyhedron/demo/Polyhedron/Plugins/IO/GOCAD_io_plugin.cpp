@@ -96,7 +96,7 @@ bool Polyhedron_demo_gocad_plugin::save(const CGAL::Three::Scene_item* item, QFi
     return false;
 
   std::ofstream out(fileinfo.filePath().toUtf8());
-  out.precision (std::numeric_limits<double>::digits10 + 1);
+  out.precision (std::numeric_limits<double>::digits10 + 2);
   Polyhedron* poly = const_cast<Polyhedron*>(poly_item->polyhedron());
 
   write_gocad(*poly, out, qPrintable(fileinfo.baseName()));
