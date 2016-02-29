@@ -239,7 +239,6 @@ CGAL_EXPORT extern  Random  default_random;
 inline Random& get_default_random()
 {
   static Random default_random("default");
-  std::cerr << "get_default_random()" << std::endl;
   return default_random;
 }
 #else // CGAL_HEADER_ONLY
