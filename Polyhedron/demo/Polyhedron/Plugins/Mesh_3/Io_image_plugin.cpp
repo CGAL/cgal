@@ -42,6 +42,7 @@ bool Io_image_plugin::canLoad() const {
 CGAL::Three::Scene_item*
 Io_image_plugin::load(QFileInfo fileinfo) {
   Image* image = new Image;
+  QApplication::restoreOverrideCursor();
   if(!image->read(fileinfo.filePath().toUtf8()))
     {
       QMessageBox qmb(QMessageBox::NoIcon,
@@ -53,7 +54,6 @@ Io_image_plugin::load(QFileInfo fileinfo) {
                       QMessageBox::Yes|QMessageBox::No);
 
       bool success = true;
-      QApplication::restoreOverrideCursor();
       if(qmb.exec() == QMessageBox::Yes) {
         Raw_image_dialog raw_dialog;
         raw_dialog.label_file_size->setText(QString("%1 B").arg(fileinfo.size()));
