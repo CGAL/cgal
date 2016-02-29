@@ -80,7 +80,7 @@ Segment_Delaunay_graph_2
 Segment_Delaunay_graph_Linf_2
 Straight_skeleton_2
 Visibility_2
-Reconstruction_simplification_2
+Optimal_transportation_reconstruction_2
 Voronoi_diagram_2
 Surface_mesh_simplification
 Subdivision_method_3
