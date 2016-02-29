@@ -1,12 +1,6 @@
-//******************************************************************************
-// File Description :
-//
-//******************************************************************************
-
 
 #include <CGAL/AABB_intersections.h>
 
-#include <debug.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Mesh_triangulation_3.h>
@@ -38,12 +32,17 @@ typedef Mesh_criteria::Facet_criteria Facet_criteria;
 typedef Mesh_criteria::Cell_criteria Cell_criteria;
 
 
-int main()
+int main(int argc, char*argv[])
 {
+  const char* fname = (argc>1)?argv[1]:"data/elephant.off";
   // Create and fill polyhedron
   Polyhedron polyhedron;
-  std::ifstream input("data/elephant.off");
+  std::ifstream input(fname);
   input >> polyhedron;
+  if(input.bad()){
+    std::cerr << "Error: Cannot read file " <<  fname << std::endl;
+    return EXIT_FAILURE;
+  }
   input.close();
 
   // Implicit function built by AABB_tree projection queries

@@ -1,26 +1,3 @@
-// Copyright (c) 2012 GeometryFactory (France).
-// All rights reserved.
-//
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
-//
-// Licensees holding a valid commercial license may use this file in
-// accordance with the commercial license agreement provided with the software.
-//
-// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
-// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
-//
-// $URL$
-// $Id$
-//
-//
-// Author(s)     : Laurent Rineau
-//
-//******************************************************************************
-// File Description :
-//***************************************************************************
 
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
@@ -50,12 +27,15 @@ typedef CGAL::Mesh_criteria_3<Tr> Mesh_criteria;
 // To avoid verbose function and named parameters call
 using namespace CGAL::parameters;
 
-int main()
+int main(int argc, char*argv[])
 {
-  // Loads image
+  const char* fname = (argc>1)?argv[1]:"data/skull_2.9.inr";
+  // Load image
   CGAL::Image_3 image;
-  if(!image.read("data/skull_2.9.inr")) return 1;
-
+  if(!image.read(fname)){
+    std::cerr << "Error: Cannot read file " <<  fname << std::endl;
+    return EXIT_FAILURE;
+  }
   // Domain
   Mesh_domain domain(image, 2.9f, 0.f);
 
