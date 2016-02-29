@@ -30,6 +30,7 @@
 #include <cstdio>
 #include <cctype>
 #include <string>
+#include <locale>
 #include <iostream>
 #include <CGAL/tags.h>
 #include <CGAL/IO/io_tags.h>
@@ -358,6 +359,170 @@ void swallow(std::istream &is, char d);
 
 CGAL_EXPORT
 void swallow(std::istream &is, const std::string& s );
+
+
+  namespace internal {
+inline
+void eat_white_space(std::istream &is)
+{
+  std::istream::int_type c;
+  do {
+    c= is.peek();
+    if (c== std::istream::traits_type::eof())
+      return;
+    else {
+      std::istream::char_type cc= c;
+      if ( std::isspace(cc, std::locale::classic()) ) {
+        is.get();
+        // since peek succeeded, this should too
+        CGAL_assertion(!is.fail());
+      } else {
+        return;
+      }
+    }
+  } while (true);
+}
+ 
+
+  inline
+  bool is_space (const std::istream& /*is*/, std::istream::int_type c)
+  {
+    std::istream::char_type cc= c;
+    return (c == std::istream::traits_type::eof()) ||
+           std::isspace(cc, std::locale::classic() );
+  }
+
+  inline
+  bool is_eof (const std::istream& /*is*/, std::istream::int_type c)
+  {
+    return c == std::istream::traits_type::eof();
+  }
+
+  inline
+  bool is_digit (const std::istream& /*is*/, std::istream::int_type c)
+  {
+    std::istream::char_type cc= c;
+    return std::isdigit(cc, std::locale::classic() );
+  }
+
+  inline std::istream::int_type peek(std::istream& is)
+  {
+    // Workaround for a bug in the version of libc++ that is shipped with
+    // Apple-clang-3.2. See the long comment in the function
+    // gmpz_new_read() in <CGAL/GMP/Gmpz_type.h>.
+
+    if(is.eof())
+      return std::istream::traits_type::eof();
+    else
+      return is.peek();
+  }
+   
+    
+template <typename ET>
+inline void read_float_or_quotient(std::istream & is, ET& et)
+{
+  is >> et;
+}   
+
+
+
+template <typename Int, typename Rat>
+inline void read_float_or_quotient(std::istream& is, Rat &z)
+{
+  // reads rational and floating point literals.
+  const std::istream::char_type zero = '0';
+  std::istream::int_type c;
+  std::ios::fmtflags old_flags = is.flags();
+
+  is.unsetf(std::ios::skipws);
+  internal::eat_white_space(is);
+
+  Int n(0);             // unsigned number before '/' or '.'
+  Int d(1);             // number after '/', or denominator (fp-case)
+  bool negative = false; // do we have a leading '-'?
+  bool digits = false;   // for fp-case: are there any digits at all?
+
+  c = internal::peek(is);
+  if (c != '.') {
+    // is there a sign?
+    if (c == '-' || c == '+') {
+      is.get();
+      negative = (c == '-');
+      internal::eat_white_space(is);
+      c=internal::peek(is);
+    }
+    // read n (could be empty)
+    while (!internal::is_eof(is, c) && internal::is_digit(is, c)) {
+      digits = true;
+      n = n*10 + (c-zero);
+      is.get();
+      c = internal::peek(is);
+    }
+    // are we done?
+    if (internal::is_eof(is, c) || internal::is_space(is, c)) {
+      is.flags(old_flags);
+      if (digits && !is.fail())
+        z = negative? Rat(-n,1): Rat(n,1);
+      return;
+    }
+  } else
+    n = 0;
+
+  // now we have read n, we are not done, and c is the next character
+  // in the stream
+  if (c == '/' || c == '.') {
+    is.get();
+    if (c == '/') {
+      // rational case
+      is >> d;
+      is.flags(old_flags);
+      if (!is.fail())
+        z = negative? Rat(-n,d): Rat(n,d);
+      return;
+    }
+
+    // floating point case; read number after '.' (may be empty)
+    while (true) {
+      c = internal::peek(is);
+      if (internal::is_eof(is, c) || !internal::is_digit(is, c))
+        break;
+      // now we have a digit
+      is.get();
+      digits = true;
+      d *= 10;
+      n = n*10 + (c-zero);
+    }
+  }
+
+  // now we have read all digits after '.', and c is the next character;
+  // read the exponential part (optional)
+  int e = 0;
+  if (c == 'e' || c == 'E') {
+    is.get();
+    is >> e;
+  }
+
+  // now construct the Gmpq
+  if (!digits) {
+    // illegal floating-point number
+    is.setstate(std::ios_base::failbit);
+    is.flags(old_flags);
+    return;
+  }
+
+  // handle e
+  if (e > 0)
+    while (e--) n *= 10;
+  else
+    while (e++) d *= 10;
+  is.flags(old_flags);
+  if (!is.fail())
+    z = (negative ? Rat(-n,d) : Rat(n,d));
+
+} 
+    
+    
+  } // namespace internal
 
 } //namespace CGAL
 

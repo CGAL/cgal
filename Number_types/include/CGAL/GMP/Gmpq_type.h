@@ -27,6 +27,8 @@
 #define CGAL_GMPQ_TYPE_H
 
 #include <CGAL/basic.h>
+#include <CGAL/IO/io.h>
+
 #include <CGAL/GMP/Gmpz_type.h>
 #include <CGAL/GMP/Gmpfr_type.h>
 
@@ -486,136 +488,16 @@ operator<<(std::ostream& os, const Gmpq &z)
 //   return is;
 // }
 
-namespace Gmpq_detail {
-  inline
-  bool is_space (const std::istream& /*is*/, std::istream::int_type c)
-  {
-    std::istream::char_type cc= c;
-    return (c == std::istream::traits_type::eof()) ||
-           std::isspace(cc, std::locale::classic() );
-  }
 
-  inline
-  bool is_eof (const std::istream& /*is*/, std::istream::int_type c)
-  {
-    return c == std::istream::traits_type::eof();
-  }
-
-  inline
-  bool is_digit (const std::istream& /*is*/, std::istream::int_type c)
-  {
-    std::istream::char_type cc= c;
-    return std::isdigit(cc, std::locale::classic() );
-  }
-
-  inline std::istream::int_type peek(std::istream& is)
-  {
-    // Workaround for a bug in the version of libc++ that is shipped with
-    // Apple-clang-3.2. See the long comment in the function
-    // gmpz_new_read() in <CGAL/GMP/Gmpz_type.h>.
-
-    if(is.eof())
-      return std::istream::traits_type::eof();
-    else
-      return is.peek();
-  }
-}
 
 inline
 std::istream&
 operator>>(std::istream& is, Gmpq &z)
 {
-  // reads rational and floating point literals.
-  const std::istream::char_type zero = '0';
-  std::istream::int_type c;
-  std::ios::fmtflags old_flags = is.flags();
-
-  is.unsetf(std::ios::skipws);
-  gmpz_eat_white_space(is);
-
-  Gmpz n(0);             // unsigned number before '/' or '.'
-  Gmpz d(1);             // number after '/', or denominator (fp-case)
-  bool negative = false; // do we have a leading '-'?
-  bool digits = false;   // for fp-case: are there any digits at all?
-
-  c = Gmpq_detail::peek(is);
-  if (c != '.') {
-    // is there a sign?
-    if (c == '-' || c == '+') {
-      is.get();
-      negative = (c == '-');
-      gmpz_eat_white_space(is);
-      c=Gmpq_detail::peek(is);
-    }
-    // read n (could be empty)
-    while (!Gmpq_detail::is_eof(is, c) && Gmpq_detail::is_digit(is, c)) {
-      digits = true;
-      n = n*10 + (c-zero);
-      is.get();
-      c = Gmpq_detail::peek(is);
-    }
-    // are we done?
-    if (Gmpq_detail::is_eof(is, c) || Gmpq_detail::is_space(is, c)) {
-      is.flags(old_flags);
-      if (digits && !is.fail())
-        z = negative? Gmpq(-n,1): Gmpq(n,1);
-      return is;
-    }
-  } else
-    n = 0;
-
-  // now we have read n, we are not done, and c is the next character
-  // in the stream
-  if (c == '/' || c == '.') {
-    is.get();
-    if (c == '/') {
-      // rational case
-      is >> d;
-      is.flags(old_flags);
-      if (!is.fail())
-        z = negative? Gmpq(-n,d): Gmpq(n,d);
-      return is;
-    }
-
-    // floating point case; read number after '.' (may be empty)
-    while (true) {
-      c = Gmpq_detail::peek(is);
-      if (Gmpq_detail::is_eof(is, c) || !Gmpq_detail::is_digit(is, c))
-        break;
-      // now we have a digit
-      is.get();
-      digits = true;
-      d *= 10;
-      n = n*10 + (c-zero);
-    }
-  }
-
-  // now we have read all digits after '.', and c is the next character;
-  // read the exponential part (optional)
-  int e = 0;
-  if (c == 'e' || c == 'E') {
-    is.get();
-    is >> e;
-  }
-
-  // now construct the Gmpq
-  if (!digits) {
-    // illegal floating-point number
-    is.setstate(std::ios_base::failbit);
-    is.flags(old_flags);
-    return is;
-  }
-
-  // handle e
-  if (e > 0)
-    while (e--) n *= 10;
-  else
-    while (e++) d *= 10;
-  is.flags(old_flags);
-  if (!is.fail())
-    z = (negative ? Gmpq(-n,d) : Gmpq(n,d));
+  internal::read_float_or_quotient<Gmpz,Gmpq>(is, z);
   return is;
 }
+
 
 inline Gmpq min BOOST_PREVENT_MACRO_SUBSTITUTION(const Gmpq& x,const Gmpq& y){
   return (x<=y)?x:y;
