@@ -120,6 +120,7 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
   Q_EMIT updated();
     itemChanged(index);
     Q_EMIT restoreCollapsedState();
+    group_added();
     return item;
 }
 
