@@ -170,6 +170,8 @@ public:
   Compare_squared_radius_3
   compare_squared_radius_3_object() const
   { return Compare_squared_radius_3(); }
+
+  enum { Has_static_filters = true };
 }; // end of class template Static_filters<K_base, false>
 
 
