@@ -107,49 +107,36 @@ public:
   }
 };
 
-template < typename K, typename Off = CGAL::Periodic_3_offset_3 >
+template < typename K,
+           typename Off = CGAL::Periodic_3_offset_3,
+           bool Has_filtered_predicates = K::Has_filtered_predicates >
 class Periodic_3_Delaunay_triangulation_traits_3;
 
 } //namespace CGAL
 
-// Partial specialization for Filtered_kernel<CK>.
-#include <CGAL/Filtered_kernel.h>
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+// Partial specialization for kernels with filtered predicates
 #include <CGAL/Periodic_3_Delaunay_triangulation_filtered_traits_3.h>
 
 namespace CGAL {
 
 // This declaration is needed to break the cyclic dependency.
-template < typename K, typename Off >
+template < typename K, typename Off, bool Has_static_filters >
 class Periodic_3_Delaunay_triangulation_filtered_traits_3;
 
 template < class K, class Off>
-class Periodic_3_Delaunay_triangulation_traits_3
+class Periodic_3_Delaunay_triangulation_traits_3<K, Off, false>
   : public Periodic_3_Delaunay_triangulation_traits_base_3<K, Off>
 {
+public:
+  typedef K Kernel;
 };
 
-template < typename CK, typename Off >
-class Periodic_3_Delaunay_triangulation_traits_3 < Filtered_kernel<CK>, Off>
-  : public Periodic_3_Delaunay_triangulation_filtered_traits_3 <
-  Filtered_kernel<CK>, Off >
+template < typename K, typename Off >
+class Periodic_3_Delaunay_triangulation_traits_3 <K, Off, true>
+  : public Periodic_3_Delaunay_triangulation_filtered_traits_3 < K, Off, K::Has_static_filters >
 {
 public:
-  typedef Filtered_kernel<CK>  Kernel;
-};
-
-template < class Off >
-class Periodic_3_Delaunay_triangulation_traits_3<CGAL::Epick, Off>
-  : public Periodic_3_Delaunay_triangulation_filtered_traits_3<CGAL::Epick, Off>
-{
-  typedef CGAL::Epick Kernel;
-};
-template < class Off >
-class Periodic_3_Delaunay_triangulation_traits_3<CGAL::Epeck, Off>
-  : public Periodic_3_Delaunay_triangulation_filtered_traits_3<CGAL::Epick, Off>
-{
-  typedef CGAL::Epick Kernel;
+  typedef K Kernel;
 };
 
 } //namespace CGAL

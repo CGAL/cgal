@@ -30,6 +30,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
+#include <CGAL/Filtered_predicate.h>
 
 namespace CGAL {
 
@@ -192,11 +193,16 @@ public:
 
 namespace CGAL {
 
-template < typename K, typename Off = typename CGAL::Periodic_3_offset_3 >
+template < typename K, typename Off = typename CGAL::Periodic_3_offset_3, bool Has_static_filters = K::Has_static_filters >
 class Periodic_3_triangulation_filtered_traits_3
   : public Periodic_3_triangulation_statically_filtered_traits_3<
   Periodic_3_triangulation_filtered_traits_base_3<K, Off> > {
 };
+
+template < typename K, typename Off >
+class Periodic_3_triangulation_filtered_traits_3<K, Off, false>
+  : public Periodic_3_triangulation_filtered_traits_base_3<K, Off>
+{};
 
 } //namespace CGAL
 
