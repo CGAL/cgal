@@ -316,44 +316,42 @@
      </spacer>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="4,1">
-      <item>
-       <widget class="QComboBox" name="operationsBox">
-        <item>
-         <property name="text">
-          <string>Create Point Set Item from Selected Vertices</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Create Polyline Item from Selected Edges</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Create Polyhedron Item from Selected Facets</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Erase Selected Facets from Polyhedron Item</string>
-         </property>
-        </item>
-        <item>
-         <property name="text">
-          <string>Keep connected components of Selected Facets</string>
-         </property>
-        </item>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="validateButton">
-        <property name="text">
-         <string>Validate</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
+     <widget class="QPushButton" name="Create_point_set_item_button">
+      <property name="text">
+       <string>Create Point Set Item from Selected Vertices</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Create_polyline_item_button">
+      <property name="text">
+       <string>Create Polyline Item from Selected Edges</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Create_polyhedron_item_button">
+      <property name="text">
+       <string>Create Polyhedron Item from Selected Facets</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Erase_selected_facets_button">
+      <property name="text">
+       <string>Erase Selected Facets from Polyhedron Item</string>
+      </property>
+     </widget>
+    </item>
+    <item>
+     <widget class="QPushButton" name="Keep_connected_components_button">
+      <property name="toolTip">
+       <string extracomment="from selected facets"/>
+      </property>
+      <property name="text">
+       <string>Keep connected components of Selected Facets</string>
+      </property>
+     </widget>
     </item>
     <item>
      <spacer name="verticalSpacer">

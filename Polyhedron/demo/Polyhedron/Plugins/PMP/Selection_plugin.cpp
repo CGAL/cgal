@@ -94,8 +94,11 @@ public:
     connect(ui_widget.Insertion_radio_button, SIGNAL(toggled(bool)), this, SLOT(on_Insertion_radio_button_toggled(bool)));
     connect(ui_widget.Brush_size_spin_box, SIGNAL(valueChanged(int)), this, SLOT(on_Brush_size_spin_box_changed(int)));
     connect(ui_widget.validateButton, SIGNAL(clicked()), this, SLOT(on_validateButton_clicked()));
+    connect(ui_widget.validate_editionButton, SIGNAL(clicked()), this, SLOT(on_validate_editionButton_clicked()));
     connect(ui_widget.Expand_reduce_button, SIGNAL(clicked()), this, SLOT(on_Expand_reduce_button_clicked()));
     connect(ui_widget.Select_sharp_edges_button, SIGNAL(clicked()), this, SLOT(on_Select_sharp_edges_button_clicked()));
+    connect(ui_widget.modeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_ModeBox_changed(int)));
+    connect(ui_widget.editionBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_editionBox_changed(int)));
 
     QObject* scene = dynamic_cast<QObject*>(scene_interface);
     if(scene) { 
@@ -107,6 +110,8 @@ public:
   {
     dock_widget->hide();
   }
+Q_SIGNALS:
+  void set_operation_mode(int);
 public Q_SLOTS:
   void selection_action() { 
     dock_widget->show();
@@ -115,6 +120,7 @@ public Q_SLOTS:
       Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
       if(!poly_item || selection_item_map.find(poly_item) != selection_item_map.end()) { return; }
       Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
+      connect(this, SIGNAL(set_operation_mode(int)),new_item, SIGNAL(setOperationMode(int)));
       int item_id = scene->addItem(new_item);
       QObject* scene_ptr = dynamic_cast<QObject*>(scene);
       if (scene_ptr)
@@ -195,6 +201,8 @@ public Q_SLOTS:
     // all other arrangements (putting inside selection_item_map), setting names etc,
     // other params (e.g. k_ring) will be set inside new_item_created
     Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
+    //To specify what action should be performed on shift+left-click
+    connect(this, SIGNAL(set_operation_mode(int)),new_item, SIGNAL(setOperationMode(int)));
     int item_id = scene->addItem(new_item);
     QObject* scene_ptr = dynamic_cast<QObject*>(scene);
     if (scene_ptr)
@@ -352,8 +360,80 @@ public Q_SLOTS:
     return;
   }
 
+  void on_ModeBox_changed(int index)
+  {
+    switch(index)
+    {
+    //Selection mode
+    case 0:
+      ui_widget.selection_groupBox->setEnabled(true);
+      ui_widget.validate_editionButton->setEnabled(true);
+      Q_EMIT set_operation_mode(-1);
+      break;
+      //Edition mode
+    case 1:
+      ui_widget.selection_groupBox->setEnabled(false);
+      ui_widget.validate_editionButton->setEnabled(false);
+      Q_EMIT set_operation_mode(ui_widget.editionBox->currentIndex());
+      break;
+    }
+  }
 
+  void on_validate_editionButton_clicked()
+  {
+   switch(ui_widget.editionBox->currentIndex())
+   {
+   //Join vertex
+   case 0:
+     break;
+     //Split vertex
+   case 1:
+     break;
+     //Split edge
+   case 2:
+     break;
+     //Join face
+   case 3:
+     break;
+     //Split face
+   case 4:
+     break;
+     //Add edge
+   case 5:
+     break;
+     //Collapse edge
+   case 6:
+     break;
+     //Flip edge
+   case 7:
+     break;
+     //Add center vertex
+   case 8:
+     break;
+     //Remove center vertex
+   case 9:
+     break;
+     //Add vertex and face to border
+   case 10:
+     break;
+     //Add face to border
+   case 11:
+     break;
+   }
+  }
 
+  void on_editionBox_changed(int mode )
+  {
+    if(ui_widget.modeBox->currentIndex() == 0)
+    {
+      Q_EMIT set_operation_mode(-1);
+    }
+    else
+    {
+      Q_EMIT set_operation_mode(mode);
+    }
+
+  }
   void on_Select_sharp_edges_button_clicked() {
     Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
     if (!selection_item) {

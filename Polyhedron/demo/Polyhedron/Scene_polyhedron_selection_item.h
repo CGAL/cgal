@@ -237,6 +237,8 @@ protected:
       SLOT(selected(const std::set<Polyhedron::Facet_handle>&)));
     connect(&k_ring_selector, SIGNAL(selected(const std::set<edge_descriptor>&)), this,
       SLOT(selected(const std::set<edge_descriptor>&)));
+
+    connect(this, SIGNAL(setOperationMode(int)), &k_ring_selector, SLOT(set_operation_mode(int)));
     connect(&k_ring_selector, SIGNAL(endSelection()), this,SLOT(endSelection()));
     connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
     k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
@@ -788,7 +790,8 @@ public:
 
 Q_SIGNALS:
   void simplicesSelected(CGAL::Three::Scene_item*);
-
+  //Transmits the type of operation to perform on shift + left-click to the k_ring_selector
+  void setOperationMode(int);
 public Q_SLOTS:
   void invalidateOpenGLBuffers() {
 
