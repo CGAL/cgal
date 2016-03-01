@@ -157,7 +157,7 @@ Side_of_oriented_sphere_3 side_of_oriented_sphere_3_object();
 /// @}
 
 /*! \name
-When using the `Fast_location` policy or the `CGAL::Delaunay_trioangulation_3::nearest_vertex()` function, the traits must provide:
+When using the `Fast_location` policy or the `CGAL::Delaunay_triangulation_3::nearest_vertex()` function, the traits must provide:
 */
 /// @{
 
