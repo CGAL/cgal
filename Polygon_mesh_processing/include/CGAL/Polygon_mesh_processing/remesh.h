@@ -218,6 +218,7 @@ void split_long_edges(const EdgeRange& edges
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
   using boost::choose_pmap;
+  using boost::choose_param;
   using boost::get_param;
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
@@ -226,13 +227,18 @@ void split_long_edges(const EdgeRange& edges
                             pmesh,
                             boost::vertex_point);
 
-  typedef std::vector<face_descriptor>                     FaceRange;
-  typedef internal::Border_constraint_pmap<PM, FaceRange>  ECMap;
-
+  typedef typename boost::lookup_named_param_def <
+        CGAL::edge_is_constrained_t,
+        NamedParameters,
+        internal::No_constraint_pmap<PM>//default
+      > ::type ECMap;
+  ECMap ecmap = choose_param(get_param(np, edge_is_constrained),
+                             internal::No_constraint_pmap<PM>());
+  
   typename internal::Incremental_remesher<PM, VPMap, ECMap, GT>
-    remesher(pmesh, vpmap, false/*protect constraints*/, ECMap(), false/*need aabb_tree*/);
+    remesher(pmesh, vpmap, false/*protect constraints*/, ecmap, false/*need aabb_tree*/);
 
-  remesher.split_long_edges(edges, max_length, Emptyset_iterator());
+  remesher.split_long_edges(edges, max_length);
 }
 
 template<typename PolygonMesh, typename EdgeRange>
@@ -244,37 +250,6 @@ void split_long_edges(const EdgeRange& edges
     max_length,
     pmesh,
     parameters::all_default());
-}
-
-//used in the Polyhedron demo
-template<typename PolygonMesh
-       , typename EdgeRange
-       , typename OutputIterator
-       , typename NamedParameters>
-void split_long_edges(
-          const EdgeRange& edge_range
-        , const double& max_length
-        , PolygonMesh& pmesh
-        , OutputIterator out//edges after splitting, all shorter than target_length
-        , const NamedParameters& np)
-{
-  typedef PolygonMesh PM;
-  typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
-  using boost::choose_pmap;
-  using boost::get_param;
-
-  typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
-  typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
-  VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
-                            pmesh,
-                            boost::vertex_point);
-  typedef std::vector<face_descriptor>                     FaceRange;
-  typedef internal::Border_constraint_pmap<PM, FaceRange>  ECMap;
-
-  typename internal::Incremental_remesher<PM, VPMap, ECMap, GT>
-    remesher(pmesh, vpmap, false/*protect constraints*/, ECMap(), false/*need aabb_tree*/);
-
-  remesher.split_long_edges(edge_range, max_length, out);
 }
 
 } //end namespace Polygon_mesh_processing

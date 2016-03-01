@@ -76,7 +76,26 @@ namespace internal {
     MESH_BORDER  //h belongs to the mesh, face(hopp, pmesh) == null_face()
   };
 
-  // A property map 
+  // A property map
+  template<typename PM>
+  struct No_constraint_pmap
+  {
+    typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
+
+  public:
+    typedef edge_descriptor                     key_type;
+    typedef bool                                value_type;
+    typedef value_type&                         reference;
+    typedef boost::read_write_property_map_tag  category;
+
+    friend bool get(const No_constraint_pmap& map, const edge_descriptor& e) {
+      return false;
+    }
+    friend void put(No_constraint_pmap& map, const edge_descriptor& e, const bool is){
+      ;
+    }
+  };
+
   template <typename PM, typename FaceRange>
   struct Border_constraint_pmap
   {
@@ -232,10 +251,9 @@ namespace internal {
     }
 
     // split edges of edge_range that have their length > high
-    template<typename EdgeRange, typename OutputIterator>
+    template<typename EdgeRange>
     void split_long_edges(const EdgeRange& edge_range,
-                          const double& high,
-                          OutputIterator out)//new edges, replacing edge_range
+                          const double& high)
     {
       typedef boost::bimap<
         boost::bimaps::set_of<halfedge_descriptor>,
@@ -254,9 +272,12 @@ namespace internal {
       {
         double sqlen = sqlength(e);
         if (sqlen > sq_high)
+        {
           long_edges.insert(long_edge(halfedge(e, mesh_), sqlen));
+          put(ecmap_, e, false);
+        }
         else
-          *out++ = e;
+          put(ecmap_, e, true);
       }
 
       //split long edges
@@ -292,8 +313,8 @@ namespace internal {
         }
         else
         {
-          *out++ = edge(hnew, mesh_);
-          *out++ = edge(next(hnew, mesh_), mesh_);
+          put(ecmap_, edge(hnew, mesh_), true);
+          put(ecmap_, edge(next(hnew, mesh_), mesh_), true);
         }
 
         //insert new edges to keep triangular faces, and update long_edges
@@ -1191,6 +1212,8 @@ private:
       typename boost::unordered_map <
         halfedge_descriptor, Halfedge_status >::const_iterator
           it = halfedge_status_map_.find(h);
+      if (it == halfedge_status_map_.end())
+        std::cout << "Something goes wrong with status function" << std::endl;
       CGAL_assertion(it != halfedge_status_map_.end());
       return it->second;
     }

@@ -142,7 +142,6 @@ public Q_SLOTS:
 
       if (selection_item)
       {
-        std::vector<edge_descriptor> updated_selected_edges;
         if (edges_only)
         {
           std::vector<edge_descriptor> edges;
@@ -163,12 +162,15 @@ public Q_SLOTS:
               edges.push_back(edge(he, pmesh));
             }
           }
-          CGAL::Polygon_mesh_processing::split_long_edges(
+          if (!edges.empty())
+            CGAL::Polygon_mesh_processing::split_long_edges(
               edges
-            , target_length
-            , *selection_item->polyhedron()
-            , std::back_inserter(updated_selected_edges)
-            , PMP::parameters::geom_traits(Kernel()));
+              , target_length
+              , *selection_item->polyhedron()
+              , PMP::parameters::geom_traits(Kernel())
+              .edge_is_constrained_map(selection_item->constrained_edges_pmap()));
+          else
+            std::cout << "No selected or boundary edges to be split" << std::endl;
         }
         else
         {
@@ -198,10 +200,14 @@ public Q_SLOTS:
           BOOST_FOREACH(halfedge_descriptor h, border)
             border_edges.push_back(edge(h, pmesh));
 
-          CGAL::Polygon_mesh_processing::split_long_edges(
+          if (!border_edges.empty())
+            CGAL::Polygon_mesh_processing::split_long_edges(
               border_edges
-            , target_length
-            , *poly_item->polyhedron());
+              , target_length
+              , *poly_item->polyhedron()
+              , PMP::parameters::geom_traits(Kernel()));
+          else
+            std::cout << "No border to be split" << std::endl;
         }
         else
         {
@@ -454,6 +460,8 @@ private:
     connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
             ui.protect_checkbox, SLOT(setDisabled(bool)));
     connect(ui.protect_checkbox, SIGNAL(toggled(bool)),
+            ui.smooth1D_checkbox, SLOT(setDisabled(bool)));
+    connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
             ui.smooth1D_checkbox, SLOT(setDisabled(bool)));
 
     //Set default parameters
