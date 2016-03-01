@@ -516,17 +516,17 @@ Io_image_plugin::load(QFileInfo fileinfo) {
 
   //Get the image type
   QString type = ui.imageType->currentText();
-  Scene_image_item* image_item =
-      new Scene_image_item(image,voxel_scale);
-  if(type != "Gray-level image")
+  Scene_image_item* image_item;
+  if(type == "Gray-level image")
   {
-    image_item->setName(fileinfo.baseName());
-    return image_item;
+    //Create planes
+    image_item = new Scene_image_item(image,voxel_scale, true);
+    createPlanes(image_item);
   }
-  //Create planes
-  createPlanes(image_item);
-  delete image_item;
-  return 0;
+  else
+    image_item = new Scene_image_item(image,voxel_scale, false);
+  image_item->setName(fileinfo.baseName());
+  return image_item;
 }
 
 bool Io_image_plugin::canSave(const CGAL::Three::Scene_item*)

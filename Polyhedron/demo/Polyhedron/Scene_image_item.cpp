@@ -402,15 +402,14 @@ vertex_index(std::size_t i, std::size_t j, std::size_t k) const
 // -----------------------------------
 // Scene_image_item
 // -----------------------------------
-Scene_image_item::Scene_image_item(Image* im,
-                                                       int display_scale)
+Scene_image_item::Scene_image_item(Image* im, int display_scale, bool hidden = false)
   : m_image(im)
   , m_initialized(false)
   , m_voxel_scale(display_scale)
 
 {
   CGAL_USE(display_scale);
-
+  is_hidden = hidden;
   v_box = new std::vector<float>();
   compile_shaders();
   initialize_buffers();
@@ -732,10 +731,12 @@ Scene_image_item::draw_gl(Viewer_interface* viewer) const
 {
   attrib_buffers(viewer);
   rendering_program.bind();
-  vao[0].bind();
-  viewer->glDrawElements(GL_TRIANGLES, m_ibo->size()/sizeof(GLuint), GL_UNSIGNED_INT, 0);
-  vao[0].release();
-
+  if(!is_hidden)
+  {
+    vao[0].bind();
+    viewer->glDrawElements(GL_TRIANGLES, m_ibo->size()/sizeof(GLuint), GL_UNSIGNED_INT, 0);
+    vao[0].release();
+  }
   vao[1].bind();
   viewer->glLineWidth(3);
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(v_box->size()/3));

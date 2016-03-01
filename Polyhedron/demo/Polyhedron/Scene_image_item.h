@@ -21,7 +21,7 @@ class SCENE_IMAGE_ITEM_EXPORT Scene_image_item
   Q_OBJECT
 public:
 
-  Scene_image_item(Image* im, int drawing_scale);
+  Scene_image_item(Image* im, int drawing_scale, bool hidden);
   ~Scene_image_item();
 
   bool isFinite() const { return true; }
@@ -57,6 +57,7 @@ public:
 
 private:
   bool m_initialized;
+  bool is_hidden;
 #ifdef SCENE_IMAGE_GL_BUFFERS_AVAILABLE
   int m_voxel_scale;
   static const int vaoSize = 2;
