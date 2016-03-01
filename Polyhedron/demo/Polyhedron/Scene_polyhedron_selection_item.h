@@ -552,6 +552,29 @@ public:
     }
   };
 
+  struct Is_constrained_map
+  {
+    Selection_set_edge& m_set;
+
+    typedef edge_descriptor                    key_type;
+    typedef bool                               value_type;
+    typedef bool                               reference;
+    typedef boost::read_write_property_map_tag category;
+
+    Is_constrained_map(Selection_set_edge& set_)
+      : m_set(set_)
+    {}
+    friend bool get(const Is_constrained_map& map, const key_type& k)
+    {
+      return map.m_set.count(k);
+    }
+    friend void put(Is_constrained_map& map, const key_type& k, const value_type b)
+    {
+      if (b)  map.m_set.insert(k);
+      else    map.m_set.erase(k);
+    }
+  };
+
   template <class Handle>
   struct Index_map
   {
@@ -854,6 +877,11 @@ public:
       mark[tr.id(e)] = true;
 
     return Is_selected_property_map<edge_descriptor>(mark);
+  }
+
+  Is_constrained_map constrained_edges_pmap()
+  {
+    return Is_constrained_map(selected_edges);
   }
 
 protected:

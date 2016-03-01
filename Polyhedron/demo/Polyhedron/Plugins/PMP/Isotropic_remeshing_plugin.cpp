@@ -172,33 +172,17 @@ public Q_SLOTS:
         }
         else
         {
-        std::vector<bool> selected(
-          selection_item->polyhedron()->size_of_halfedges()/2,
-          false);
-
-        if (selection_item->selected_edges.empty())
-          CGAL::Polygon_mesh_processing::isotropic_remeshing(
-            selection_item->selected_facets
-          , target_length
-          , *selection_item->polyhedron()
-          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
-          .protect_constraints(protect)
-          .smooth_along_features(smooth_features));
-        else
-          CGAL::Polygon_mesh_processing::isotropic_remeshing(
+         CGAL::Polygon_mesh_processing::isotropic_remeshing(
            selection_item->selected_facets
          , target_length
          , *selection_item->polyhedron()
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
-         .edge_is_constrained_map(selection_item->selected_edges_pmap(selected))
+         .edge_is_constrained_map(selection_item->constrained_edges_pmap())
          .smooth_along_features(smooth_features));
-
         }
         selection_item->poly_item_changed();
-        selection_item->clear_all();
-        selection_item->selected_edges.insert(updated_selected_edges.begin(),
-                                              updated_selected_edges.end());
+        selection_item->clear<face_descriptor>();
         selection_item->changed_with_poly_item();
       }
       else if (poly_item)

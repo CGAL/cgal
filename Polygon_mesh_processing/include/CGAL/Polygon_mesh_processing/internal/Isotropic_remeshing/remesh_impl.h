@@ -1178,6 +1178,8 @@ private:
           halfedge_descriptor hopp = opposite(h, mesh_);
           if (halfedge_status_map_[hopp] == PATCH)
             halfedge_status_map_[hopp] = PATCH_BORDER;
+
+          put(ecmap_, e, false);
         }
       }
 
@@ -1512,6 +1514,18 @@ private:
 
     const Patch_id_list& input_patch_ids() const {
       return input_patch_ids_;
+    }
+
+    void update_constraints_property_map()
+    {
+      BOOST_FOREACH(edge_descriptor e, edges(mesh_))
+      {
+        if (is_on_patch_border(halfedge(e, mesh_))
+          || is_on_patch_border(opposite(halfedge(e, mesh_), mesh_)))
+          put(ecmap_, e, true);
+        else
+          put(ecmap_, e, false);
+      }
     }
 
   private:
