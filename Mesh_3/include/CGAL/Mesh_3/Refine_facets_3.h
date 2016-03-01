@@ -1290,8 +1290,8 @@ conflicts_zone_impl(const Point& point
     if (p_facet != 0 && !facet_is_in_its_cz)
     {
 # ifdef CGAL_MESH_3_VERBOSE
-      std::cerr << "Info: the facet is not in its conflict zone. "
-        "Switching to exact computation." << std::endl;
+      std::cerr << "Info: the facet is not in the conflict zone of (" << point
+                << "). Switching to exact computation." << std::endl;
 # endif
       
       typename Rf_base::Facet_properties properties;

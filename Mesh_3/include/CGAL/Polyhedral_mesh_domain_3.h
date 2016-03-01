@@ -288,7 +288,7 @@ public:
       tree_.build();
       bounding_tree_ =
         bounding_polyhedron.empty() ?
-        &tree_ :
+        0 :
         new AABB_tree_(TriangleAccessor().triangles_begin(bounding_polyhedron),
                        TriangleAccessor().triangles_end(bounding_polyhedron));
       if(!bounding_polyhedron.empty()) {
