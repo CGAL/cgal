@@ -143,13 +143,6 @@ namespace internal {
       else
         map.border_edges_ptr->erase(e);
     }
-    friend void put(Border_constraint_pmap<PM, FaceRange>& map,
-                    const edge_descriptor& e,
-                    const bool is)
-    {
-      CGAL_assertion(map.pmesh_ptr_ != NULL);
-      map.border_edges[e] = is;
-    }
   };
 
   template<typename PM,
