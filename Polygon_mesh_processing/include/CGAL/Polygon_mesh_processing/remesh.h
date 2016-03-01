@@ -124,9 +124,9 @@ void isotropic_remeshing(const FaceRange& faces
       msg.c_str());
   }
 
-  typename internal::Incremental_remesher<PM, VPMap, GT>
-    remesher(pmesh, vpmap, protect);
-  remesher.init_remeshing(faces, ecmap);
+  typename internal::Incremental_remesher<PM, VPMap, ECMap, GT>
+    remesher(pmesh, vpmap, protect, ecmap);
+  remesher.init_remeshing(faces);
 
   unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
   bool smoothing_1d = choose_param(get_param(np, smooth_along_features), false);
@@ -214,6 +214,7 @@ void split_long_edges(const EdgeRange& edges
                     , const NamedParameters& np)
 {
   typedef PolygonMesh PM;
+  typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
   using boost::choose_pmap;
   using boost::get_param;
 
@@ -223,8 +224,11 @@ void split_long_edges(const EdgeRange& edges
                             pmesh,
                             boost::vertex_point);
 
-  typename internal::Incremental_remesher<PM, VPMap, GT>
-    remesher(pmesh, vpmap, false/*protect constraints*/, false/*need aabb_tree*/);
+  typedef std::vector<face_descriptor>                     FaceRange;
+  typedef internal::Border_constraint_pmap<PM, FaceRange>  ECMap;
+
+  typename internal::Incremental_remesher<PM, VPMap, ECMap, GT>
+    remesher(pmesh, vpmap, false/*protect constraints*/, ECMap(), false/*need aabb_tree*/);
 
   remesher.split_long_edges(edges, max_length, Emptyset_iterator());
 }
@@ -253,6 +257,7 @@ void split_long_edges(
         , const NamedParameters& np)
 {
   typedef PolygonMesh PM;
+  typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
   using boost::choose_pmap;
   using boost::get_param;
 
@@ -261,9 +266,11 @@ void split_long_edges(
   VPMap vpmap = choose_pmap(get_param(np, boost::vertex_point),
                             pmesh,
                             boost::vertex_point);
+  typedef std::vector<face_descriptor>                     FaceRange;
+  typedef internal::Border_constraint_pmap<PM, FaceRange>  ECMap;
 
-  typename internal::Incremental_remesher<PM, VPMap, GT>
-    remesher(pmesh, vpmap, false/*protect constraints*/, false/*need aabb_tree*/);
+  typename internal::Incremental_remesher<PM, VPMap, ECMap, GT>
+    remesher(pmesh, vpmap, false/*protect constraints*/, ECMap(), false/*need aabb_tree*/);
 
   remesher.split_long_edges(edge_range, max_length, out);
 }

@@ -33,6 +33,7 @@
 
 #include <CGAL/Polygon_mesh_processing/internal/Isotropic_remeshing/AABB_filtered_projection_traits.h>
 
+#include <CGAL/property_map.h>
 #include <CGAL/iterator.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <boost/graph/graph_traits.hpp>
@@ -84,7 +85,13 @@ namespace internal {
 
     std::map<edge_descriptor, bool> border_edges;
     const PM* pmesh_ptr_;
+
   public:
+    typedef edge_descriptor                     key_type;
+    typedef bool                                value_type;
+    typedef value_type&                         reference;
+    typedef boost::read_write_property_map_tag  category;
+
     Border_constraint_pmap():pmesh_ptr_(NULL) {}
     Border_constraint_pmap(const PM& pmesh, const FaceRange& faces)
       : pmesh_ptr_(&pmesh)
@@ -111,6 +118,13 @@ namespace internal {
       return it->second;
     }
 
+    friend void put(Border_constraint_pmap<PM, FaceRange>& map,
+                    const edge_descriptor& e,
+                    const bool is)
+    {
+      CGAL_assertion(map.pmesh_ptr_ != NULL);
+      map.border_edges[e] = is;
+    }
   };
 
   template<typename PM,
@@ -141,6 +155,7 @@ namespace internal {
 
   template<typename PolygonMesh
          , typename VertexPointMap
+         , typename EdgeIsConstrainedMap
          , typename GeomTraits
   >
   class Incremental_remesher
@@ -156,7 +171,7 @@ namespace internal {
     typedef typename GeomTraits::Plane_3    Plane_3;
     typedef typename GeomTraits::Triangle_3 Triangle_3;
 
-    typedef Incremental_remesher<PM, VertexPointMap, GeomTraits> Self;
+    typedef Incremental_remesher<PM, VertexPointMap, EdgeIsConstrainedMap, GeomTraits> Self;
 
   private:
     typedef std::size_t                                  Patch_id;
@@ -172,6 +187,7 @@ namespace internal {
     Incremental_remesher(PolygonMesh& pmesh
                        , VertexPointMap& vpmap
                        , const bool protect_constraints
+                       , EdgeIsConstrainedMap ecmap
                        , const bool own_tree = true)//built by the remesher
       : mesh_(pmesh)
       , vpmap_(vpmap)
@@ -181,6 +197,7 @@ namespace internal {
       , halfedge_status_map_()
       , protect_constraints_(protect_constraints)
       , patch_ids_map_()
+      , ecmap_(ecmap)
     {
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
     }
@@ -191,12 +208,10 @@ namespace internal {
         delete tree_ptr_;
     }
     
-    template<typename FaceRange
-           , typename EdgeIsConstrainedMap>
-    void init_remeshing(const FaceRange& face_range
-                      , const EdgeIsConstrainedMap& ecmap)
+    template<typename FaceRange>
+    void init_remeshing(const FaceRange& face_range)
     {
-      tag_halfedges_status(face_range, ecmap); //called first
+      tag_halfedges_status(face_range); //called first
       Constraint_property_map cpmap(*this);
 
       //build AABB tree of input surface
@@ -1124,9 +1139,8 @@ private:
         return PMP::compute_face_normal(f, mesh_);
     }
 
-    template<typename FaceRange, typename EdgeIsConstrainedMap>
-    void tag_halfedges_status(const FaceRange& face_range
-                            , const EdgeIsConstrainedMap& ecmap)
+    template<typename FaceRange>
+    void tag_halfedges_status(const FaceRange& face_range)
     {
       //tag MESH,        //h and hopp belong to the mesh, not the patch
       //tag MESH_BORDER  //h belongs to the mesh, face(hopp, pmesh) == null_face()
@@ -1154,7 +1168,7 @@ private:
       //tag PATCH_BORDER,//h belongs to the patch, hopp doesn't
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
-        if (get(ecmap, e) || get(border_map, e))
+        if (get(ecmap_, e) || get(border_map, e))
         {
           //deal with h and hopp for borders that are sharp edges to be preserved
           halfedge_descriptor h = halfedge(e, mesh_);
@@ -1510,6 +1524,7 @@ private:
     boost::unordered_map<halfedge_descriptor, Halfedge_status> halfedge_status_map_;
     bool protect_constraints_;
     boost::unordered_map<face_descriptor, Patch_id> patch_ids_map_;
+    EdgeIsConstrainedMap ecmap_;
 
   };//end class Incremental_remesher
 }//end namespace internal
