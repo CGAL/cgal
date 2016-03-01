@@ -1146,7 +1146,6 @@ void Scene_c3t3_item::compute_elements()
   if (isEmpty()){
     return;
   }
-
   for (Tr::Finite_facets_iterator
          fit = c3t3().triangulation().finite_facets_begin(),
          end = c3t3().triangulation().finite_facets_end();
@@ -1165,7 +1164,6 @@ void Scene_c3t3_item::compute_elements()
       }
     }
     tree.build();
-
 
   //The facets
   {  

@@ -58,6 +58,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
 
 
         if(item->load_binary(in)) {
+          item->c3t3_changed();
           item->changed();
           return item;
         }
@@ -65,6 +66,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
         item->c3t3().clear();
         in.seekg(0);
         if(try_load_other_binary_format(in, item->c3t3())) {
+          item->c3t3_changed();
           item->changed();
           return item;
         }
@@ -72,6 +74,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
         item->c3t3().clear();
         in.seekg(0);
         if(try_load_a_cdt_3(in, item->c3t3())) {
+          item->c3t3_changed();
           item->changed();
           return item;
         }
