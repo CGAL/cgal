@@ -11,6 +11,7 @@
 
 #include "Scene_polyhedron_item.h"
 #include "Scene_polylines_item.h"
+#include "Scene_points_with_normal_item.h"
 #include "Polyhedron_type.h"
 
 #include <CGAL/iterator.h>
@@ -84,7 +85,7 @@ mark_domains(CDT& ct,
 
 template <class CDT>
 void
-mark_domains(CDT& cdt)
+mark_nested_domains(CDT& cdt)
 {
   for(typename CDT::All_faces_iterator it = cdt.all_faces_begin(); it != cdt.all_faces_end(); ++it){
     it->info().nesting_level = -1;
@@ -112,7 +113,7 @@ void cdt2_to_face_graph(const CDT& cdt, TriangleMesh& tm)
                                            fit_end=cdt.finite_faces_end();
                                            fit!=fit_end; ++fit)
   {
-    if (!fit->info().in_domain()) continue;
+    if (!fit->is_in_domain()) continue;
     CGAL::cpp11::array<vertex_descriptor,3> vds;
     for(int i=0; i<3; ++i)
     {
@@ -169,7 +170,7 @@ public:
 
 private:
   Ui::mesh_2_dialog
-  create_dialog(QDialog* dialog, double diag_length)
+  create_dialog(QDialog* dialog, double diag_length, bool no_seeds)
   {
     Ui::mesh_2_dialog ui;
     ui.setupUi(dialog);
@@ -182,39 +183,62 @@ private:
     connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
             ui.edgeLength_dspinbox, SLOT(setEnabled(bool)));
 
-    //Set default parameters
+    //Set default parameter edge length
     ui.edgeLength_dspinbox->setDecimals(3);
     ui.edgeLength_dspinbox->setSingleStep(0.001);
     ui.edgeLength_dspinbox->setRange(1e-6 * diag_length, //min
                                      2.   * diag_length);//max
     ui.edgeLength_dspinbox->setValue(0.05 * diag_length);
-
-    std::ostringstream oss;
-    oss << "Diagonal length of the Bbox of the selection to mesh is ";
-    oss << diag_length << "." << std::endl;
-    oss << "Default is 5% of it" << std::endl;
     ui.edgeLength_dspinbox->setToolTip(
       "Diagonal length of the Bbox of the selection to mesh is "+
       QString::number(diag_length)+" - default is 5% of it");
 
+    //Set default for nb iterations
     ui.nbIterations_spinbox->setSingleStep(1);
     ui.nbIterations_spinbox->setRange(1/*min*/, 1000/*max*/);
     ui.nbIterations_spinbox->setValue(1);
 
+    // Run Mesh_2 by default, not Lloyd
     ui.runLloyd_checkbox->setChecked(false);
     ui.runMesh2_checkbox->setChecked(true);
 
+    // Domain definition and disabling all options if no Mesh_2 run
+    if (no_seeds){
+      ui.radioSeedsIn->setDisabled(true);
+      ui.radioSeedsOut->setDisabled(true);
+      ui.radioNesting->setChecked(true);
+    }
+    else{
+      ui.radioSeedsOut->setChecked(true);
+      connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
+              ui.radioSeedsOut, SLOT(setEnabled(bool)));
+      connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
+              ui.radioSeedsIn, SLOT(setEnabled(bool)));
+    }
+    connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
+            ui.radioNesting, SLOT(setEnabled(bool)));
+    connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
+            ui.radioAll, SLOT(setEnabled(bool)));
+    connect(ui.runMesh2_checkbox, SIGNAL(toggled(bool)),
+            ui.runLloyd_checkbox, SLOT(setEnabled(bool)));
     return ui;
   }
 
   template <class ProjectionTraits>
-  void mesh(std::vector<Scene_polylines_item*>& polylines_items,
+  void mesh(const std::vector<Scene_polylines_item*>& polylines_items,
+            const std::vector<Scene_points_with_normal_item*>& points_items,
             double diagonal_length)
   {
+    // extract seeds
+    std::vector<Kernel::Point_3> seeds;
+    Q_FOREACH(Scene_points_with_normal_item* points_item, points_items)
+      Q_FOREACH(UI_point_3<Kernel> pt, *points_item->point_set())
+        seeds.push_back(pt);
+
     // Create dialog box
     QDialog dialog(mw);
     Ui::mesh_2_dialog ui =
-      create_dialog(&dialog, diagonal_length);
+      create_dialog(&dialog, diagonal_length, seeds.empty());
 
     // Get values
     int i = dialog.exec();
@@ -270,7 +294,26 @@ private:
     if (runMesh2){
       ltime.restart();
       std::cout << " Running refine_Delaunay_mesh_2 ..." << std::flush;
-      CGAL::refine_Delaunay_mesh_2(cdt, Criteria(0.125, target_length));
+      Criteria criteria(0.125, target_length);
+      bool use_seeds=ui.radioSeedsOut->isChecked() ||
+                     ui.radioSeedsIn->isChecked();
+      if (!use_seeds){
+        bool use_nesting = ui.radioNesting->isChecked();
+        if (use_nesting){
+          mark_nested_domains(cdt);
+          for(typename CDT::All_faces_iterator fit=cdt.all_faces_begin(),
+                                               fit_end=cdt.all_faces_end();
+                                               fit!=fit_end;++fit)
+          {
+            fit->set_in_domain(fit->info().in_domain());
+          }
+        }
+        CGAL::refine_Delaunay_mesh_2(cdt, criteria, use_nesting);
+      }
+      else
+        CGAL::refine_Delaunay_mesh_2(cdt,
+                                     seeds.begin(), seeds.end(),
+                                     criteria, ui.radioSeedsIn->isChecked());
       std::cout << " done (" << ltime.elapsed() << " ms)" << std::endl;
     }
 
@@ -283,7 +326,6 @@ private:
     }
 
     // export result as a polyhedron item
-    mark_domains(cdt);
     QString iname =
       polylines_items.size()==1?
       polylines_items.front()->name()+QString("_meshed_"):
@@ -302,7 +344,8 @@ private:
   }
 
   int detect_constant_coordinate(
-    const std::vector<Scene_polylines_item*>& polylines_items)
+    const std::vector<Scene_polylines_item*>& polylines_items,
+    const std::vector<Scene_points_with_normal_item*>& points_items)
   {
     int res=-1;
     Kernel::Point_3 ref = polylines_items.front()->polylines.front().front();
@@ -325,6 +368,11 @@ private:
               if(res!=candidate) return -1;
           }
         }
+    if (res==-1) return res;
+    Q_FOREACH(Scene_points_with_normal_item* points_item, points_items)
+      Q_FOREACH(UI_point_3<Kernel> pt, *points_item->point_set())
+        if (pt[res]!=ref[res])
+          return -1;
     return res;
   }
 
@@ -334,6 +382,7 @@ public Q_SLOTS:
   {
     //collect input polylines
     std::vector<Scene_polylines_item*> polylines_items;
+    std::vector<Scene_points_with_normal_item*> points_items;
     double inf = std::numeric_limits<double>::infinity();
     CGAL::Three::Scene_interface::Bbox bbox(inf,inf,inf,-inf,-inf,-inf);
     Q_FOREACH(int index, scene->selectionIndices())
@@ -344,24 +393,33 @@ public Q_SLOTS:
         polylines_items.push_back(polylines_item);
         bbox=bbox+polylines_item->bbox();
       }
+      else{
+        Scene_points_with_normal_item* points_item =
+          qobject_cast<Scene_points_with_normal_item*>(scene->item(index));
+        if (points_item)
+          points_items.push_back(points_item);
+      }
     }
 
     double diag = bbox.diagonal_length();
-    switch( detect_constant_coordinate(polylines_items) )
+    switch( detect_constant_coordinate(polylines_items, points_items) )
     {
+      using namespace CGAL;
+      typedef Kernel K;
       case 0:
-        mesh<CGAL::Projection_traits_yz_3<Kernel> >(polylines_items, diag);
+        mesh<Projection_traits_yz_3<K> >(polylines_items, points_items, diag);
       break;
       case 1:
-        mesh<CGAL::Projection_traits_xz_3<Kernel> >(polylines_items, diag);
+        mesh<Projection_traits_xz_3<K> >(polylines_items, points_items, diag);
       break;
       case 2:
-        mesh<CGAL::Projection_traits_xy_3<Kernel> >(polylines_items, diag);
+        mesh<Projection_traits_xy_3<K> >(polylines_items, points_items, diag);
       break;
       default:
         QMessageBox::critical(mw,
                               "Invalid Input Data",
-                              "Polylines must all be in the xy, yz or xz plane");
+                              "Polylines and seed points must all be in "
+                              "the same xy, yz or xz plane");
     }
   }
 
