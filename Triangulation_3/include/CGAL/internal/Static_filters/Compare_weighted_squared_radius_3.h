@@ -24,6 +24,7 @@
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
+#include <CGAL/internal/Static_filters/tools.h>
 #include <cmath>
 
 
@@ -62,6 +63,9 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Compare_weighted_squared_radius_3 with 4 wpoints", tmp);
       
       double px, py, pz, pw, qx, qy, qz, qw, rx, ry, rz, rw, sx, sy, sz, sw, alpha;
+      init_double(px, py, pz, pw, qx, qy, qz, qw, (FT*)(0));
+      init_double(rx, ry, rz, rw, sx, sy, sz, sw, alpha, (FT*)(0));
+
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)      &&
           fit_in_double(p.z(), pz) && fit_in_double(p.weight(), pw) && 
           fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy)      &&
@@ -199,6 +203,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Compare_weighted_squared_radius_3 with 3 wpoints", tmp);
       
       double px, py, pz, pw, qx, qy, qz, qw, rx, ry, rz, rw, alpha;
+      init_double(px, py, pz, pw, qx, qy, qz, qw, rx, ry, rz, rw, alpha, (FT*)(0));
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)      &&
           fit_in_double(p.z(), pz) && fit_in_double(p.weight(), pw) && 
           fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy)      &&
@@ -314,6 +319,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Compare_weighted_squared_radius_3 with 2 wpoints", tmp);
       
       double px, py, pz, pw, qx, qy, qz, qw, alpha;
+      init_double(px, py, pz, pw, qx, qy, qz, qw, alpha, (FT*)(0));
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)      &&
           fit_in_double(p.z(), pz) && fit_in_double(p.weight(), pw) && 
           fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy)      &&

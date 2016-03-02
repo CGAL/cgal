@@ -24,6 +24,7 @@
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
+#include <CGAL/internal/Static_filters/tools.h>
 #include <cmath>
 
 
@@ -132,6 +133,8 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_test_3 with 4+1 wpoints", tmp);
       
       double px, py, pz, pwt, qx, qy, qz, qwt, rx, ry, rz, rwt, sx, sy, sz, swt, tx, ty, tz, twt;
+      init_double(px, py, pz, pwt, qx, qy, qz, qwt, rx, ry, rz, rwt, (FT*)(0));
+      init_double(sx, sy, sz, swt, tx, ty, tz, twt, (FT*)(0));
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)       &&
           fit_in_double(p.z(), pz) && fit_in_double(p.weight(), pwt) && 
           fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy)       &&
@@ -276,6 +279,8 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_test_3 with 3+1 wpoints", tmp);
 
       double px, py, pz, pwt, qx, qy, qz, qwt, rx, ry, rz, rwt, tx, ty, tz, twt;
+      init_double(px, py, pz, pwt, qx, qy, qz, qwt, (FT*)(0));
+      init_double( rx, ry, rz, rwt, tx, ty, tz, twt, (FT*)(0));
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)       &&
           fit_in_double(p.z(), pz) && fit_in_double(p.weight(), pwt) && 
           fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy)       &&
@@ -607,6 +612,7 @@ namespace CGAL { namespace internal { namespace Static_filters_predicates {
       CGAL_BRANCH_PROFILER_3("semi-static failures/attempts/calls to   : Power_test_3 with 2+1 wpoints", tmp);
       
       double px, py, pz, pwt, qx, qy, qz, qwt, tx, ty, tz, twt;
+      init_double(px, py, pz, pwt, qx, qy, qz, qwt, tx, ty, tz, twt, (FT*)(0));
       if( fit_in_double(p.x(), px) && fit_in_double(p.y(), py)       &&
           fit_in_double(p.z(), pz) && fit_in_double(p.weight(), pwt) && 
           fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy)       &&
