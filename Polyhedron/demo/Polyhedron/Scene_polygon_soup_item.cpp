@@ -665,6 +665,8 @@ Scene_polygon_soup_item::invalidateOpenGLBuffers()
 
 void Scene_polygon_soup_item::compute_bbox() const {
 
+  if (isEmpty())
+    return;
   const Point_3& p = *(soup->points.begin());
   CGAL::Bbox_3 bbox(p.x(), p.y(), p.z(), p.x(), p.y(), p.z());
   for(Polygon_soup::Points::const_iterator it = soup->points.begin();
