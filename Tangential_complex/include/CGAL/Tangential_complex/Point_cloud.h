@@ -21,21 +21,15 @@
 #ifndef POINT_CLOUD_H
 #define POINT_CLOUD_H
 
-#include <CGAL/basic.h>
-#include <CGAL/Dimension.h>
-
 #include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Orthogonal_incremental_neighbor_search.h>
 #include <CGAL/Search_traits.h>
 #include <CGAL/Search_traits_adapter.h>
-#include <CGAL/property_map.h>
 
-#include <boost/tuple/tuple.hpp>
-#include <boost/iterator/zip_iterator.hpp>
 #include <boost/iterator/counting_iterator.hpp>
-#include <boost/range/iterator_range.hpp>
 
-#include <utility>
+#include <cstddef>
+#include <vector>
 
 #ifdef CGAL_TC_ANN_IS_AVAILABLE
 # include <ANN/ANN.h>
@@ -188,9 +182,9 @@ template <typename K, typename Point_container_>
 class Point_cloud_adaptator__nanoflann
 {
 public:
-  typedef typename Point_container_::value_type     Point;
-  typedef typename CGAL::Kernel_traits<Point>::type Kernel;
-  typedef typename Kernel::FT                       FT;
+  typedef typename Point_container_::value_type         Point;
+  typedef K                                             Kernel;
+  typedef typename Kernel::FT                           FT;
 
   /// The constructor that sets the data set source
   Point_cloud_adaptator__nanoflann(Point_container_ const& points, Kernel const& k)
