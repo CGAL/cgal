@@ -576,8 +576,9 @@ namespace internal {
             break;
           }
         }
+        //before collapsing va into vb, check that it does not break a corner
         //if it is allowed, perform the collapse
-        if (collapse_ok)
+        if (collapse_ok && !is_corner(va))
         {
           //"collapse va into vb along e"
           // remove edges incident to va and vb, because their lengths will change
@@ -794,7 +795,10 @@ namespace internal {
 
           barycenters[v] = get(vpmap_, v) + move;
         }
-        else if (smooth_along_features && !protect_constraints_ && is_on_patch_border(v))
+        else if (smooth_along_features
+              && !protect_constraints_
+              && is_on_patch_border(v)
+              && !is_corner(v))
         {
           put(propmap_normals, v, CGAL::NULL_VECTOR);
 
@@ -1144,6 +1148,19 @@ private:
       //restore position
       put(vpmap_, vs, ps);
       return res;
+    }
+
+    bool is_corner(const vertex_descriptor& v) const
+    {
+      unsigned int nb_incident_features = 0;
+      BOOST_FOREACH(halfedge_descriptor h, halfedges_around_target(v, mesh_))
+      {
+        if (is_on_border(h) || is_on_patch_border(h))
+          ++nb_incident_features;
+        if (nb_incident_features > 2)
+          return true;
+      }
+      return false;
     }
 
     Vector_3 compute_normal(const face_descriptor& f) const
