@@ -215,6 +215,10 @@ public:
   AABB_primitive(Id id, ObjectPropertyMap obj_pmap=ObjectPropertyMap(), PointPropertyMap=PointPropertyMap())
     : Base(id), m_datum( get(obj_pmap,id) ) {}
 
+  AABB_primitive(Datum_reference tr, Id id, PointPropertyMap=PointPropertyMap())
+    : Base(id), m_datum(tr)  {}
+
+
   Datum_reference datum(Shared_data) const { return m_datum; }
 
   typename Base::Point_reference

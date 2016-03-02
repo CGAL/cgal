@@ -8,7 +8,7 @@
 
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
-#include <CGAL/AABB_face_graph_triangle_primitive.h>
+#include <CGAL/AABB_face_graph_triangulated_primitive.h>
 
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
@@ -41,31 +41,168 @@
 namespace PMP = CGAL::Polygon_mesh_processing;
 
 
-typedef CGAL::AABB_face_graph_triangle_primitive<Polyhedron> Primitive;
+typedef CGAL::AABB_face_graph_triangulated_primitive<Polyhedron> Primitive;
 typedef CGAL::AABB_traits<Kernel, Primitive> AABB_traits;
 typedef CGAL::AABB_tree<AABB_traits> Input_facets_AABB_tree;
 const char* aabb_property_name = "Scene_polyhedron_item aabb tree";
 
+typedef Polyhedron::Traits Traits;
+typedef Polyhedron::Facet Facet;
+typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
+typedef Polyhedron::Halfedge_handle Halfedge_handle;
+struct Face_info {
+    Polyhedron::Halfedge_handle e[3];
+    bool is_external;
+};
+typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
+P_traits>        Vb;
+typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
+P_traits>          Fb1;
+typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
+typedef CGAL::No_intersection_tag                                    Itag;
+typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
+TDS,
+Itag>             CDTbase;
+typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
+
+//Make sure all the facets are triangles
+typedef Polyhedron::Traits	    Kernel;
+typedef Kernel::Point_3	    Point;
+typedef Kernel::Vector_3	    Vector;
+typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
+typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
+QList<Kernel::Triangle_3> triangulate_primitive(Polyhedron::Facet_iterator fit,
+                                                const boost::associative_property_map< boost::container::flat_map<face_descriptor, Vector> >& fnmap)
+{
+  //The output list
+  QList<Kernel::Triangle_3> res;
+  //Computes the normal of the facet
+  Traits::Vector_3 normal = get(fnmap, fit);
+
+  //check if normal contains NaN values
+  if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
+  {
+    qDebug()<<"Warning : normal is not valid. Primitive not displayed";
+    return QList<Kernel::Triangle_3>();
+  }
+  P_traits cdt_traits(normal);
+  CDT cdt(cdt_traits);
+
+  Facet::Halfedge_around_facet_circulator
+      he_circ = fit->facet_begin(),
+      he_circ_end(he_circ);
+
+  // Iterates on the vector of facet handles
+  typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+  boost::container::flat_map<CDT::Vertex_handle, vertex_descriptor> v2v;
+  CDT::Vertex_handle previous, first;
+  do {
+    CDT::Vertex_handle vh = cdt.insert(he_circ->vertex()->point());
+    v2v.insert(std::make_pair(vh, he_circ->vertex()));
+    if(first == 0) {
+      first = vh;
+    }
+    vh->info() = he_circ;
+    if(previous != 0 && previous != vh) {
+      cdt.insert_constraint(previous, vh);
+    }
+    previous = vh;
+  } while( ++he_circ != he_circ_end );
+  cdt.insert_constraint(previous, first);
+  // sets mark is_external
+  for(CDT::All_faces_iterator
+      fit2 = cdt.all_faces_begin(),
+      end = cdt.all_faces_end();
+      fit2 != end; ++fit2)
+  {
+    fit2->info().is_external = false;
+  }
+  //check if the facet is external or internal
+  std::queue<CDT::Face_handle> face_queue;
+  face_queue.push(cdt.infinite_vertex()->face());
+  while(! face_queue.empty() ) {
+    CDT::Face_handle fh = face_queue.front();
+    face_queue.pop();
+    if(fh->info().is_external) continue;
+    fh->info().is_external = true;
+    for(int i = 0; i <3; ++i) {
+      if(!cdt.is_constrained(std::make_pair(fh, i)))
+      {
+        face_queue.push(fh->neighbor(i));
+      }
+    }
+  }
+  //iterates on the internal faces to add the vertices to the positions
+  //and the normals to the appropriate vectors
+  const int this_patch_id = fit->patch_id();
+  for(CDT::Finite_faces_iterator
+      ffit = cdt.finite_faces_begin(),
+      end = cdt.finite_faces_end();
+      ffit != end; ++ffit)
+  {
+    if(ffit->info().is_external)
+      continue;
+
+
+    res << Kernel::Triangle_3(ffit->vertex(0)->point(),
+    ffit->vertex(1)->point(),
+    ffit->vertex(2)->point());
+
+  }
+  return res;
+}
+
+
 Input_facets_AABB_tree* get_aabb_tree(Scene_polyhedron_item* item)
 {
-    QVariant aabb_tree_property = item->property(aabb_property_name);
-    if(aabb_tree_property.isValid()) {
-        void* ptr = aabb_tree_property.value<void*>();
-        return static_cast<Input_facets_AABB_tree*>(ptr);
-    }
-    else {
-        Polyhedron* poly = item->polyhedron();
-        if(poly) {
-            Input_facets_AABB_tree* tree =
-                    new Input_facets_AABB_tree(faces(*poly).first,
-                                               faces(*poly).second,
-                                               *poly);
-            item->setProperty(aabb_property_name,
-                              QVariant::fromValue<void*>(tree));
-            return tree;
+  QVariant aabb_tree_property = item->property(aabb_property_name);
+  if(aabb_tree_property.isValid()) {
+    void* ptr = aabb_tree_property.value<void*>();
+    return static_cast<Input_facets_AABB_tree*>(ptr);
+  }
+  else {
+    Polyhedron* poly = item->polyhedron();
+    if(poly) {
+      //creates an empty AABB_Tree
+      Input_facets_AABB_tree* tree =
+          new Input_facets_AABB_tree()/*faces(*poly).first,
+                                                               faces(*poly).second,
+                                                               *poly)*/;
+
+      typedef Polyhedron::Traits	    Kernel;
+      typedef Kernel::Point_3	    Point;
+      typedef Kernel::Vector_3	    Vector;
+      typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
+      typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
+      typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+
+      boost::container::flat_map<face_descriptor, Vector> face_normals_map;
+      boost::associative_property_map< boost::container::flat_map<face_descriptor, Vector> >
+        nf_pmap(face_normals_map);
+      boost::container::flat_map<vertex_descriptor, Vector> vertex_normals_map;
+      boost::associative_property_map< boost::container::flat_map<vertex_descriptor, Vector> >
+        nv_pmap(vertex_normals_map);
+
+      PMP::compute_normals(*poly, nv_pmap, nf_pmap);
+      Q_FOREACH( Polyhedron::Facet_iterator f, faces(*poly))
+      {
+        //triangulates the primitives
+        triangulate_primitive(f,nf_pmap);
+        Q_FOREACH(Kernel::Triangle_3 triangle, triangulate_primitive(f,nf_pmap))
+        {
+          //creates a Primitive
+          Primitive primitive(triangle, f, *poly);
+          //fills the AABB_Tree with it.
+          tree->insert(primitive);
         }
-        else return 0;
+      }
+      item->setProperty(aabb_property_name,
+                        QVariant::fromValue<void*>(tree));
+      return tree;
     }
+    else return 0;
+  }
 }
 
 void delete_aabb_tree(Scene_polyhedron_item* item)
@@ -99,20 +236,9 @@ struct Face_info {
     Polyhedron::Halfedge_handle e[3];
     bool is_external;
 };
-typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
-P_traits>        Vb;
-typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
-P_traits>          Fb1;
-typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
-typedef CGAL::No_intersection_tag                                    Itag;
-typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
-TDS,
-Itag>             CDTbase;
-typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
+
 
 //Make sure all the facets are triangles
-
 template<typename FaceNormalPmap, typename VertexNormalPmap>
 void
 Scene_polyhedron_item::triangulate_facet(Facet_iterator fit,
