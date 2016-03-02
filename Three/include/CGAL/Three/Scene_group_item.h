@@ -57,7 +57,7 @@ public :
     //!Returns an empty BBox to avoid disturbing the BBox of the scene.
     Bbox bbox() const;
     //!Not supported.
-    Scene_group_item* clone() const {return 0;}
+    Scene_item* clone() const {return 0;}
     //! Indicate if rendering mode is supported.
     bool supportsRenderingMode(RenderingMode m) const;
     //!Prints the number of children.
