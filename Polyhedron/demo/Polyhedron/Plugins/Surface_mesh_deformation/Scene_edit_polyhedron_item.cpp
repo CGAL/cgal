@@ -444,6 +444,29 @@ void Scene_edit_polyhedron_item::deform()
   Q_EMIT itemChanged();
 }
 
+struct ROI_border_pmap
+{
+  std::set<edge_descriptor>& m_set;
+
+  typedef edge_descriptor                    key_type;
+  typedef bool                               value_type;
+  typedef bool                               reference;
+  typedef boost::read_write_property_map_tag category;
+
+  ROI_border_pmap(std::set<edge_descriptor>& set_)
+    : m_set(set_)
+  {}
+  friend bool get(const ROI_border_pmap& map, const key_type& k)
+  {
+    return map.m_set.count(k);
+  }
+  friend void put(ROI_border_pmap& map, const key_type& k, const value_type b)
+  {
+    if (b)  map.m_set.insert(k);
+    else    map.m_set.erase(k);
+  }
+};
+
 void Scene_edit_polyhedron_item::remesh()
 {
   const Polyhedron& g = deform_mesh->halfedge_graph();
@@ -466,12 +489,12 @@ void Scene_edit_polyhedron_item::remesh()
 
   bool automatic_target_length = !ui_widget->remeshingEdgeLengthInput_checkBox->isChecked();
   double sum_len = 0.;
-  std::vector<halfedge_descriptor> roi_border;
+  std::set<edge_descriptor> roi_border;
   BOOST_FOREACH(halfedge_descriptor h, roi_halfedges)
   {
     if (roi_halfedges.find(opposite(h, g)) == roi_halfedges.end())
     {
-      roi_border.push_back(opposite(h, g));
+      roi_border.insert(edge(h, g));
       if (automatic_target_length)
         sum_len += CGAL::sqrt(CGAL::squared_distance(
                       get(vpmap, source(h, g)), get(vpmap, target(h, g))));
@@ -495,13 +518,15 @@ void Scene_edit_polyhedron_item::remesh()
     put(fim, f, id++);
 
   std::cout << "Remeshing...";
+  ROI_border_pmap border_pmap(roi_border);
   CGAL::Polygon_mesh_processing::isotropic_remeshing(
       roi_facets
     , target_length
     , *polyhedron()
     , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
-    .protect_constraints(false) //no edge_is_constrained_map
+    .protect_constraints(false)
     .vertex_point_map(vpmap)
+    .edge_is_constrained_map(border_pmap)
     );
   std::cout << "done." << std::endl;
 
@@ -519,6 +544,12 @@ void Scene_edit_polyhedron_item::remesh()
                                 Deform_mesh::Vertex_index_map(),
                                 Deform_mesh::Hedge_index_map(),
                                 vpmap);
+
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(*polyhedron()))
+  {
+    if (get(border_pmap, edge(h, *polyhedron())))
+      insert_roi_vertex(target(h, *polyhedron()));
+  }
 
   reset_drawing_data();
   compute_normals_and_vertices();

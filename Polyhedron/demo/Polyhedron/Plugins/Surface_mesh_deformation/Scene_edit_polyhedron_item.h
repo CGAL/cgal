@@ -34,6 +34,7 @@ typedef boost::graph_traits<Polyhedron>::vertex_descriptor		vertex_descriptor;
 typedef boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::face_descriptor      face_descriptor;
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor  halfedge_descriptor;
+typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
 
 struct Array_based_vertex_point_map
 {
