@@ -52,7 +52,6 @@ public:
     this->poly_item = poly_item;
     this->active_handle_type = aht;
     this->k_ring = k_ring;
-    this ->operation_mode = -1;
     poly_item->enable_facets_picking(true);
     poly_item->set_color_vector_read_only(true);
 
@@ -90,10 +89,6 @@ public Q_SLOTS:
     process_selection( edge(static_cast<Polyhedron::Halfedge*>(void_ptr)->opposite()->opposite(), *poly_item->polyhedron()) );
   }
 
-  void set_operation_mode(int mode)
-  {
-    operation_mode = mode;
-  }
 
 Q_SIGNALS:
   void selected(const std::set<Polyhedron::Vertex_handle>&);
@@ -197,98 +192,47 @@ protected:
      Q_EMIT toogle_insert(true);
     }
     //mouse events
-    event_dealing(event);
+    // mouse events
+    if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease) {
+      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+      if(mouse_event->button() == Qt::LeftButton) {
+        state.left_button_pressing = event->type() == QEvent::MouseButtonPress;
+        if (!state.left_button_pressing)
+          if (is_active)
+          {
+            Q_EMIT endSelection();
+            is_active=false;
+          }
+      }
+      //to avoid the contextual menu to mess up the states.
+      else if(mouse_event->button() == Qt::RightButton) {
+        state.left_button_pressing = false;
+        state.shift_pressing = false;
+      }
+    }
+    // use mouse move event for paint-like selection
+    if( (event->type() == QEvent::MouseMove
+         || (event->type() == QEvent::MouseButtonPress
+             && static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton))
+        && (state.shift_pressing && state.left_button_pressing) )
+    {
+      // paint with mouse move event
+      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      qglviewer::Camera* camera = viewer->camera();
+
+      bool found = false;
+      const qglviewer::Vec& point = camera->pointUnderPixel(mouse_event->pos(), found);
+      if(found)
+      {
+        const qglviewer::Vec& orig = camera->position();
+        const qglviewer::Vec& dir = point - orig;
+        poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
+      }
+    }//end MouseMove
     return false;
   }
 
-  void event_dealing(QEvent* event)
-  {
-
-    switch(operation_mode)
-    {
-    //classic selection
-    case -1:
-      // mouse events
-      if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease) {
-        QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
-        if(mouse_event->button() == Qt::LeftButton) {
-          state.left_button_pressing = event->type() == QEvent::MouseButtonPress;
-          if (!state.left_button_pressing)
-            if (is_active)
-            {
-              Q_EMIT endSelection();
-              is_active=false;
-            }
-        }
-        //to avoid the contextual menu to mess up the states.
-        else if(mouse_event->button() == Qt::RightButton) {
-          state.left_button_pressing = false;
-          state.shift_pressing = false;
-        }
-      }
-      // use mouse move event for paint-like selection
-      if( (event->type() == QEvent::MouseMove
-           || (event->type() == QEvent::MouseButtonPress
-               && static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton))
-          && (state.shift_pressing && state.left_button_pressing) )
-      {
-        // paint with mouse move event
-        QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
-        QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-        qglviewer::Camera* camera = viewer->camera();
-
-        bool found = false;
-        const qglviewer::Vec& point = camera->pointUnderPixel(mouse_event->pos(), found);
-        if(found)
-        {
-          const qglviewer::Vec& orig = camera->position();
-          const qglviewer::Vec& dir = point - orig;
-          poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
-        }
-      }//end MouseMove
-      break;
-      //Join vertex
-    case 0:
-      break;
-      //Split vertex
-    case 1:
-      break;
-      //Split edge
-    case 2:
-      break;
-      //Join face
-    case 3:
-      break;
-      //Split face
-    case 4:
-      break;
-      //Add edge
-    case 5:
-      break;
-      //Collapse edge
-    case 6:
-      break;
-      //Flip edge
-    case 7:
-      break;
-      //Add center vertex
-    case 8:
-      break;
-      //Remove center vertex
-    case 9:
-      break;
-      //Add vertex and face to border
-    case 10:
-      break;
-      //Add face to border
-    case 11:
-      break;
-    }
-  }
-
-private :
-  //Specifies Selection/edition mode
-  int operation_mode;
 };
 
 #endif

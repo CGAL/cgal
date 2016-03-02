@@ -120,7 +120,7 @@ public Q_SLOTS:
       Scene_polyhedron_item* poly_item = get_selected_item<Scene_polyhedron_item>();
       if(!poly_item || selection_item_map.find(poly_item) != selection_item_map.end()) { return; }
       Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
-      connect(this, SIGNAL(set_operation_mode(int)),new_item, SIGNAL(setOperationMode(int)));
+      connect(this, SIGNAL(set_operation_mode(int)),new_item, SLOT(set_operation_mode(int)));
       int item_id = scene->addItem(new_item);
       QObject* scene_ptr = dynamic_cast<QObject*>(scene);
       if (scene_ptr)
@@ -202,7 +202,7 @@ public Q_SLOTS:
     // other params (e.g. k_ring) will be set inside new_item_created
     Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
     //To specify what action should be performed on shift+left-click
-    connect(this, SIGNAL(set_operation_mode(int)),new_item, SIGNAL(setOperationMode(int)));
+    connect(this, SIGNAL(set_operation_mode(int)),new_item, SLOT(set_operation_mode(int)));
     int item_id = scene->addItem(new_item);
     QObject* scene_ptr = dynamic_cast<QObject*>(scene);
     if (scene_ptr)
@@ -385,6 +385,7 @@ public Q_SLOTS:
    {
    //Join vertex
    case 0:
+
      break;
      //Split vertex
    case 1:

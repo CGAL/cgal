@@ -184,6 +184,7 @@ public:
   Scene_polyhedron_selection_item() 
     : Scene_polyhedron_item_decorator(NULL, false)
     {
+        this ->operation_mode = -1;
         for(int i=0; i<3; i++)
         {
             addVaos(i);
@@ -203,6 +204,7 @@ public:
   Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
     : Scene_polyhedron_item_decorator(NULL, false)
     {
+        this ->operation_mode = -1;
         nb_facets = 0;
         nb_points = 0;
         nb_lines = 0;
@@ -238,7 +240,6 @@ protected:
     connect(&k_ring_selector, SIGNAL(selected(const std::set<edge_descriptor>&)), this,
       SLOT(selected(const std::set<edge_descriptor>&)));
 
-    connect(this, SIGNAL(setOperationMode(int)), &k_ring_selector, SLOT(set_operation_mode(int)));
     connect(&k_ring_selector, SIGNAL(endSelection()), this,SLOT(endSelection()));
     connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
     k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
@@ -790,9 +791,12 @@ public:
 
 Q_SIGNALS:
   void simplicesSelected(CGAL::Three::Scene_item*);
-  //Transmits the type of operation to perform on shift + left-click to the k_ring_selector
-  void setOperationMode(int);
+
 public Q_SLOTS:
+  void set_operation_mode(int mode)
+  {
+    operation_mode = mode;
+  }
   void invalidateOpenGLBuffers() {
 
     // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
@@ -851,25 +855,87 @@ protected:
       tr.container().insert(*it);
     }
   }
+  void join_vertex(Scene_polyhedron_selection_item::Vertex_handle vh)
+  {
+    std::cerr<<"Cannot join from a vertex. Please select an edge."<<std::endl;
+  }
+  void join_vertex(Scene_polyhedron_selection_item::edge_descriptor ed)
+  {
+    polyhedron()->join_vertex(halfedge(ed, *polyhedron()));
+  }
+  void join_vertex(Scene_polyhedron_selection_item::Facet_handle fh)
+  {
+    std::cerr<<" Please select a vertex or the operation \"Join face\"."<<std::endl;
+  }
 
   template<typename HandleRange>
   bool treat_selection(const HandleRange& selection)
   {
     typedef typename HandleRange::value_type HandleType;
     Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
+    switch(operation_mode)
+    {
+    //classic selection
+    case -1:
+    {
 
-    bool any_change = false;
-    if(is_insert) {
-      BOOST_FOREACH(HandleType h, selection)
-        any_change |= tr.container().insert(h).second;
+      bool any_change = false;
+      if(is_insert) {
+        BOOST_FOREACH(HandleType h, selection)
+            any_change |= tr.container().insert(h).second;
+      }
+      else{
+        BOOST_FOREACH(HandleType h, selection)
+            any_change |= (tr.container().erase(h)!=0);
+      }
+      if(any_change) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
+      return any_change;
+      break;
     }
-    else{
-      BOOST_FOREACH(HandleType h, selection)
-        any_change |= (tr.container().erase(h)!=0);
-    }
-    if(any_change) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
-    return any_change;
+      //Join vertex
+    case 0:
+//      qDebug()<<"Joining vertex";
+//      BOOST_FOREACH(HandleType h, selection)
+//      {
+//        join_vertex(h);
+//      }
+    break;
+    //Split vertex
+    case 1:
+      break;
+      //Split edge
+    case 2:
+      break;
+      //Join face
+    case 3:
+      break;
+      //Split face
+    case 4:
+      break;
+      //Add edge
+    case 5:
+      break;
+      //Collapse edge
+    case 6:
+      break;
+      //Flip edge
+    case 7:
+      break;
+      //Add center vertex
+    case 8:
+      break;
+      //Remove center vertex
+    case 9:
+      break;
+      //Add vertex and face to border
+    case 10:
+      break;
+      //Add face to border
+    case 11:
+      break;
   }
+
+}
 
   Facet_handle face(Facet_handle fh)
   { return fh; }
@@ -950,6 +1016,8 @@ public:
   QColor vertex_color, facet_color, edge_color;
 
 private:
+  //Specifies Selection/edition mode
+  int operation_mode;
 
   mutable std::vector<float> positions_facets;
   mutable std::vector<float> normals;
@@ -964,5 +1032,4 @@ private:
   void compute_elements() const;
 
 };
-
-#endif 
+#endif
