@@ -31,14 +31,15 @@ polyhedron_demo_plugin(stl_plugin STL_io_plugin)
 target_link_libraries(stl_plugin scene_polyhedron_item scene_polygon_soup_item)
 
 find_package(VTK QUIET COMPONENTS
-                         vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML)
+  vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML vtkFiltersCore vtkFiltersSources)
 if (VTK_FOUND)
   include(${VTK_USE_FILE})
   if ("${VTK_VERSION_MAJOR}" GREATER "5")
     if(VTK_LIBRARIES)
       polyhedron_demo_plugin(vtk_plugin VTK_io_plugin)
-      target_link_libraries(vtk_plugin scene_polyhedron_item
-                                        vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML)
+      target_link_libraries(vtk_plugin scene_polyhedron_item scene_polylines_item
+                                        vtkCommonCore vtkIOCore vtkIOLegacy vtkIOXML
+                                        vtkFiltersCore vtkFiltersSources)
     else()
       message(STATUS "NOTICE : the vtk IO plugin needs VTK libraries and will not be compiled.")
     endif()
