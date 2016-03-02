@@ -61,10 +61,13 @@
 #endif
 
 
-namespace PMP = CGAL::Polygon_mesh_processing;
+
 
 
 namespace CGAL {
+
+namespace PMP = Polygon_mesh_processing;
+
 namespace Polygon_mesh_processing {
 namespace internal {
 
