@@ -209,6 +209,8 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 
   Vector normal = CGAL::NULL_VECTOR;
   halfedge_descriptor he = halfedge(v, pmesh);
+  // handle isolated vertices
+  if (he==boost::graph_traits<PolygonMesh>::null_halfedge()) return normal;
   halfedge_descriptor end = he;
   do
     {
