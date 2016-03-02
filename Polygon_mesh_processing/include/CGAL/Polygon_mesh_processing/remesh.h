@@ -66,6 +66,10 @@ namespace Polygon_mesh_processing {
 *    Note that patch boundary edges (i.e. incident to only one face in the range)
 *    are always considered as constrained edges.
 *  \cgalParamEnd
+*  \cgalParamBegin{vertex_is_constrained_map} a property map containing the
+*    constrained-or-not status of each vertex of pmesh. A constrained vertex
+*    cannot be modified at all during remeshing
+*  \cgalParamEnd
 *  \cgalParamBegin{protect_constraints} If `true`, the edges set as constrained
 *     in `edge_is_constrained_map` (or by default the boundary edges)
 *     are not splitted nor collapsed during remeshing.
@@ -90,6 +94,7 @@ void isotropic_remeshing(const FaceRange& faces
                        , const NamedParameters& np)
 {
   typedef PolygonMesh PM;
+  typedef boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   using boost::choose_pmap;
   using boost::get_param;
   using boost::choose_param;
@@ -110,6 +115,14 @@ void isotropic_remeshing(const FaceRange& faces
     = choose_param(get_param(np, edge_is_constrained),
                    internal::Border_constraint_pmap<PM, FaceRange>(pmesh, faces));
 
+  typedef typename boost::lookup_named_param_def <
+      CGAL::vertex_is_constrained_t,
+      NamedParameters,
+      internal::No_constraint_pmap<vertex_descriptor>//default
+    > ::type VCMap;
+  VCMap vcmap = choose_param(get_param(np, vertex_is_constrained),
+                             internal::No_constraint_pmap<vertex_descriptor>());
+
   double low = 4. / 5. * target_edge_length;
   double high = 4. / 3. * target_edge_length;
 
@@ -124,8 +137,8 @@ void isotropic_remeshing(const FaceRange& faces
       msg.c_str());
   }
 
-  typename internal::Incremental_remesher<PM, VPMap, ECMap, GT>
-    remesher(pmesh, vpmap, protect, ecmap);
+  typename internal::Incremental_remesher<PM, VPMap, GT, ECMap, VCMap>
+    remesher(pmesh, vpmap, protect, ecmap, vcmap);
   remesher.init_remeshing(faces);
 
   unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
@@ -217,6 +230,8 @@ void split_long_edges(const EdgeRange& edges
 {
   typedef PolygonMesh PM;
   typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
+  typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
+  typedef typename boost::graph_traits<PM>::vertex_descriptor vertex_descriptor;
   using boost::choose_pmap;
   using boost::choose_param;
   using boost::get_param;
@@ -230,13 +245,16 @@ void split_long_edges(const EdgeRange& edges
   typedef typename boost::lookup_named_param_def <
         CGAL::edge_is_constrained_t,
         NamedParameters,
-        internal::No_constraint_pmap<PM>//default
+        internal::No_constraint_pmap<edge_descriptor>//default
       > ::type ECMap;
   ECMap ecmap = choose_param(get_param(np, edge_is_constrained),
-                             internal::No_constraint_pmap<PM>());
+                             internal::No_constraint_pmap<edge_descriptor>());
   
-  typename internal::Incremental_remesher<PM, VPMap, ECMap, GT>
-    remesher(pmesh, vpmap, false/*protect constraints*/, ecmap, false/*need aabb_tree*/);
+  typename internal::Incremental_remesher<PM, VPMap, GT, ECMap>
+    remesher(pmesh, vpmap, false/*protect constraints*/
+           , ecmap
+           , internal::No_constraint_pmap<vertex_descriptor>()
+           , false/*need aabb_tree*/);
 
   remesher.split_long_edges(edges, max_length);
 }

@@ -77,23 +77,19 @@ namespace internal {
   };
 
   // A property map
-  template<typename PM>
+  template<typename Descriptor>
   struct No_constraint_pmap
   {
-    typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
-
   public:
-    typedef edge_descriptor                     key_type;
+    typedef Descriptor                          key_type;
     typedef bool                                value_type;
     typedef value_type&                         reference;
     typedef boost::read_write_property_map_tag  category;
 
-    friend bool get(const No_constraint_pmap& map, const edge_descriptor& e) {
+    friend bool get(const No_constraint_pmap& map, const key_type& e) {
       return false;
     }
-    friend void put(No_constraint_pmap& map, const edge_descriptor& e, const bool is){
-      ;
-    }
+    friend void put(No_constraint_pmap& map, const key_type& e, const bool is) {}
   };
 
   template <typename PM, typename FaceRange>
@@ -174,8 +170,11 @@ namespace internal {
 
   template<typename PolygonMesh
          , typename VertexPointMap
-         , typename EdgeIsConstrainedMap
          , typename GeomTraits
+         , typename EdgeIsConstrainedMap = No_constraint_pmap<
+              typename boost::graph_traits<PolygonMesh>::edge_descriptor>
+         , typename VertexIsConstrainedMap = No_constraint_pmap<
+              typename boost::graph_traits<PolygonMesh>::vertex_descriptor>
   >
   class Incremental_remesher
   {
@@ -190,7 +189,11 @@ namespace internal {
     typedef typename GeomTraits::Plane_3    Plane_3;
     typedef typename GeomTraits::Triangle_3 Triangle_3;
 
-    typedef Incremental_remesher<PM, VertexPointMap, EdgeIsConstrainedMap, GeomTraits> Self;
+    typedef Incremental_remesher<PM, VertexPointMap
+                               , GeomTraits
+                               , EdgeIsConstrainedMap
+                               , VertexIsConstrainedMap
+                               > Self;
 
   private:
     typedef std::size_t                                  Patch_id;
@@ -206,7 +209,8 @@ namespace internal {
     Incremental_remesher(PolygonMesh& pmesh
                        , VertexPointMap& vpmap
                        , const bool protect_constraints
-                       , EdgeIsConstrainedMap ecmap
+                       , EdgeIsConstrainedMap ecmap = EdgeIsConstrainedMap()
+                       , VertexIsConstrainedMap vcmap = VertexIsConstrainedMap()
                        , const bool own_tree = true)//built by the remesher
       : mesh_(pmesh)
       , vpmap_(vpmap)
@@ -217,6 +221,7 @@ namespace internal {
       , protect_constraints_(protect_constraints)
       , patch_ids_map_()
       , ecmap_(ecmap)
+      , vcmap_(vcmap)
     {
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
     }
@@ -578,7 +583,7 @@ namespace internal {
         }
         //before collapsing va into vb, check that it does not break a corner
         //if it is allowed, perform the collapse
-        if (collapse_ok && !is_corner(va))
+        if (collapse_ok && !is_constrained(va) && !is_corner(va))
         {
           //"collapse va into vb along e"
           // remove edges incident to va and vb, because their lengths will change
@@ -776,7 +781,7 @@ namespace internal {
       // at each vertex, compute barycenter of neighbors
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
       {
-        if (is_on_patch(v))
+        if (is_on_patch(v) && !is_constrained(v))
         {
         Vector_3 vn = PMP::compute_vertex_normal(v, mesh_
                             , PMP::parameters::vertex_point_map(vpmap_)
@@ -798,7 +803,8 @@ namespace internal {
         else if (smooth_along_features
               && !protect_constraints_
               && is_on_patch_border(v)
-              && !is_corner(v))
+              && !is_corner(v)
+              && !is_constrained(v))
         {
           put(propmap_normals, v, CGAL::NULL_VECTOR);
 
@@ -884,8 +890,9 @@ namespace internal {
 
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
       {
-        if (!is_on_patch(v))
+        if (!is_on_patch(v) && !is_constrained(v))
           continue;
+        //note if v is constrained, it has not moved
 
         Patch_id_property_map pid_pmap(*this);
         internal::Filtered_projection_traits<typename AABB_tree::AABB_traits,
@@ -1148,6 +1155,11 @@ private:
       //restore position
       put(vpmap_, vs, ps);
       return res;
+    }
+
+    bool is_constrained(const vertex_descriptor& v) const
+    {
+      return get(vcmap_, v);
     }
 
     bool is_corner(const vertex_descriptor& v) const
@@ -1579,6 +1591,7 @@ private:
     bool protect_constraints_;
     boost::unordered_map<face_descriptor, Patch_id> patch_ids_map_;
     EdgeIsConstrainedMap ecmap_;
+    VertexIsConstrainedMap vcmap_;
 
   };//end class Incremental_remesher
 }//end namespace internal

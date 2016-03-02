@@ -181,7 +181,8 @@ public Q_SLOTS:
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
          .edge_is_constrained_map(selection_item->constrained_edges_pmap())
-         .smooth_along_features(smooth_features));
+         .smooth_along_features(smooth_features)
+         .vertex_is_constrained_map(selection_item->constrained_vertices_pmap()));
         }
         selection_item->poly_item_changed();
         selection_item->clear<face_descriptor>();
