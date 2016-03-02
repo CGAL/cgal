@@ -21,6 +21,7 @@
 #include <CGAL/Polygon_mesh_processing/polygon_soup_to_polygon_mesh.h>
 #include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <CGAL/Polygon_mesh_processing/orientation.h>
+#include <CGAL/Polygon_mesh_processing/repair.h>
 
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
@@ -534,7 +535,9 @@ Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
   orient();
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Polyhedron>(
     soup->points, soup->polygons, *out_polyhedron);
-
+  std::size_t rv = CGAL::Polygon_mesh_processing::remove_isolated_vertices(*out_polyhedron);
+  if(rv > 0)
+    std::cerr << "Ignore isolated vertices: " << rv << std::endl;
   if(out_polyhedron->size_of_vertices() > 0) {
     // Also check whether the consistent orientation is fine
     if(out_polyhedron->is_closed() &&
