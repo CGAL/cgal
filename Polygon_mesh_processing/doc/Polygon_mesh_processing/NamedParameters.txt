@@ -143,7 +143,7 @@ algorithm.\n
 
 \cgalNPBegin{ edge_is_constrained_map } \anchor PMP_edge_is_constrained_map
 the property map containing information about edges of the input polygon mesh being constrained or not.\n
-\b Type : a class model of `ReadablePropertyMap` with
+\b Type : a class model of `ReadWritePropertyMap` with
 `boost::graph_traits<PolygonMesh>::%edge_descriptor` as key type and
 `bool` as value type. It should be default constructible.\n
 \b Default : if this parameter is omitted,
