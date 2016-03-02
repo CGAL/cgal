@@ -86,10 +86,10 @@ namespace internal {
     typedef value_type&                         reference;
     typedef boost::read_write_property_map_tag  category;
 
-    friend bool get(const No_constraint_pmap& map, const key_type& e) {
+    friend bool get(const No_constraint_pmap& , const key_type& ) {
       return false;
     }
-    friend void put(No_constraint_pmap& map, const key_type& e, const bool is) {}
+    friend void put(No_constraint_pmap& , const key_type& , const bool ) {}
   };
 
   template <typename PM, typename FaceRange>
