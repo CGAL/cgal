@@ -93,9 +93,9 @@ private:
       }
       else { 
         typename boost::property_traits<VertexPointMap>::reference p = ppmap[v];
-        x += multiplier * - p.x(); 
-        y += multiplier * - p.y(); 
-        z += multiplier * - p.z(); 
+        x += multiplier * - to_double(p.x());
+        y += multiplier * - to_double(p.y());
+        z += multiplier * - to_double(p.z());
       }
     }
     else {
