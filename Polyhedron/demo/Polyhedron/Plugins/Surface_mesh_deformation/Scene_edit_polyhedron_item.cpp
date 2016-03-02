@@ -529,6 +529,7 @@ void Scene_edit_polyhedron_item::remesh()
   unsigned int nb_iter = ui_widget->remeshing_iterations_spinbox->value();
 
   std::cout << "Remeshing...";
+  ROI_border_pmap border_pmap(roi_border);
   CGAL::Polygon_mesh_processing::isotropic_remeshing(
       roi_facets
     , target_length
@@ -536,6 +537,7 @@ void Scene_edit_polyhedron_item::remesh()
     , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
     .protect_constraints(false)
     .vertex_point_map(vpmap)
+    .edge_is_constrained_map(border_pmap)
     );
   std::cout << "done." << std::endl;
 
@@ -553,6 +555,12 @@ void Scene_edit_polyhedron_item::remesh()
                                 Deform_mesh::Vertex_index_map(),
                                 Deform_mesh::Hedge_index_map(),
                                 vpmap);
+
+  BOOST_FOREACH(halfedge_descriptor h, halfedges(*polyhedron()))
+  {
+    if (get(border_pmap, edge(h, *polyhedron())))
+      insert_roi_vertex(target(h, *polyhedron()));
+  }
 
   reset_drawing_data();
   compute_normals_and_vertices();
