@@ -272,11 +272,11 @@ operator>>(std::istream &is, Mesh_vertex_base_3<GT,MD,Vb>& v)
   } else {
     CGAL::read(is, dimension);
   }
-  CGAL_assertion(dimension >= 0);
-  CGAL_assertion(dimension < 4);
-  typename Vertex::Index index = 
-    internal::Mesh_3::Read_mesh_domain_index<MD>()(dimension, is);
   v.set_dimension(dimension);
+  CGAL_assertion(v.in_dimension() >= -1);
+  CGAL_assertion(v.in_dimension() < 4);
+  typename Vertex::Index index =
+    internal::Mesh_3::Read_mesh_domain_index<MD>()(v.in_dimension(), is);
   v.set_index(index);
   return is;
 }
