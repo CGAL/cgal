@@ -1197,7 +1197,6 @@ Scene_polyhedron_item::select(double orig_x,
                                 nearest_v = v;
                             }
                         }
-                        //bottleneck
             Q_EMIT selected_vertex((void*)(&*nearest_v));
                     }
 

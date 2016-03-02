@@ -858,7 +858,7 @@ protected:
   }
   void join_vertex(Scene_polyhedron_selection_item::Vertex_handle vh)
   {
-    std::cerr<<"Cannot join from a vertex. Please select an edge."<<std::endl;
+    polyhedron()->join_vertex(vh->halfedge());
   }
   void join_vertex(Scene_polyhedron_selection_item::edge_descriptor ed)
   {
@@ -866,7 +866,7 @@ protected:
   }
   void join_vertex(Scene_polyhedron_selection_item::Facet_handle fh)
   {
-    std::cerr<<" Please select a vertex or the operation \"Join face\"."<<std::endl;
+    polyhedron()->join_vertex(fh->halfedge());
   }
 
   template<typename HandleRange>
@@ -895,11 +895,10 @@ protected:
     }
       //Join vertex
     case 0:
-//      qDebug()<<"Joining vertex";
-//      BOOST_FOREACH(HandleType h, selection)
-//      {
-//        join_vertex(h);
-//      }
+      BOOST_FOREACH(HandleType h, selection)
+      {
+        join_vertex(h);
+      }
     break;
     //Split vertex
     case 1:
@@ -935,7 +934,7 @@ protected:
     case 11:
       break;
   }
-
+polyhedron_item()->invalidateOpenGLBuffers();
 }
 
   Facet_handle face(Facet_handle fh)
