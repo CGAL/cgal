@@ -29,6 +29,8 @@ typedef boost::graph_traits<Mesh>::edge_descriptor      edge_descriptor;
 typedef boost::graph_traits<Mesh>::vertex_descriptor    vertex_descriptor;
 typedef boost::graph_traits<Mesh>::face_descriptor      face_descriptor;
 
+namespace PMP = CGAL::Polygon_mesh_processing;
+
 void collect_patch(const char* file,
                    const Mesh& m,
                    std::set<face_descriptor>& patch)
