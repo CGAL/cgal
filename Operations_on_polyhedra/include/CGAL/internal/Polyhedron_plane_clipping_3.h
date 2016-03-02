@@ -26,7 +26,7 @@
 #include <CGAL/Bbox_3.h>
 #include <CGAL/array.h>
 #include <CGAL/Delaunay_triangulation_2.h>
-#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
+#include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/convex_hull_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include <CGAL/convex_hull_3.h>
@@ -143,7 +143,7 @@ Polyhedron clip_to_bbox(const Bbox_3& bbox, const Plane_3& plane)
   if (intersection_points.size()<3) return P;
 
   //triangulate the set of intersection points (I know it's overkill)
-  typedef CGAL::Triangulation_2_filtered_projection_traits_3<Kernel>   P_traits;
+  typedef CGAL::Triangulation_2_projection_traits_3<Kernel>   P_traits;
   typedef CGAL::Delaunay_triangulation_2<P_traits> DT;
   DT dt(P_traits(plane.orthogonal_vector()));
   dt.insert(intersection_points.begin(),

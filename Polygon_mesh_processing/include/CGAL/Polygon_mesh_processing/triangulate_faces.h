@@ -29,7 +29,7 @@
 #include <CGAL/Triangulation_face_base_with_info_2.h>
 #include <CGAL/Constrained_Delaunay_triangulation_2.h>
 #include <CGAL/Constrained_triangulation_plus_2.h>
-#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
+#include <CGAL/Triangulation_2_projection_traits_3.h>
 
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
@@ -61,7 +61,7 @@ class Triangulate_modifier
   typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
   typedef typename Kernel::Point_3 Point;
 
-  typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
+  typedef CGAL::Triangulation_2_projection_traits_3<Traits>   P_traits;
 
   typedef CGAL::Triangulation_vertex_base_with_info_2<halfedge_descriptor,
                                                       P_traits>        Vb;
