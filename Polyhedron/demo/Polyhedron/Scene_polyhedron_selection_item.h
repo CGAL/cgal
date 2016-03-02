@@ -802,6 +802,7 @@ public Q_SLOTS:
     // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
       //  poly_item->invalidateOpenGLBuffers();
         are_buffers_filled = false;
+        poly = polyhedron();
         compute_bbox();
   }
   // slots are called by signals of polyhedron_k_ring_selector
@@ -1018,7 +1019,8 @@ public:
 private:
   //Specifies Selection/edition mode
   int operation_mode;
-
+  //Only needed for the triangulation
+  Polyhedron* poly;
   mutable std::vector<float> positions_facets;
   mutable std::vector<float> normals;
   mutable std::vector<float> positions_lines;
@@ -1031,5 +1033,8 @@ private:
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_elements() const;
 
+  template<typename FaceNormalPmap>
+  void triangulate_facet(Facet_handle,
+    const FaceNormalPmap&) const;
 };
 #endif

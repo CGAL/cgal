@@ -2,6 +2,18 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 
+
+
+
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
+#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
+#include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <boost/container/flat_map.hpp>
+
+
 void Scene_polyhedron_selection_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
 {
     //vao containing the data for the unselected facets
@@ -83,6 +95,126 @@ void Scene_polyhedron_selection_item::initialize_buffers(CGAL::Three::Viewer_int
 
     are_buffers_filled = true;
 }
+template<typename TypeWithXYZ, typename ContainerWithPushBack>
+void push_back_xyz(const TypeWithXYZ& t,
+                   ContainerWithPushBack& vector)
+{
+  vector.push_back(t.x());
+  vector.push_back(t.y());
+  vector.push_back(t.z());
+}
+
+typedef Polyhedron::Traits Traits;
+typedef Polyhedron::Facet Facet;
+typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
+typedef Polyhedron::Halfedge_handle Halfedge_handle;
+struct Face_info {
+    Polyhedron::Halfedge_handle e[3];
+    bool is_external;
+};
+typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
+P_traits>        Vb;
+typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
+P_traits>          Fb1;
+typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
+typedef CGAL::No_intersection_tag                                    Itag;
+typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
+TDS,
+Itag>             CDTbase;
+typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
+
+//Make sure all the facets are triangles
+typedef Polyhedron::Traits	    Kernel;
+typedef Kernel::Point_3	            Point;
+typedef Kernel::Vector_3	    Vector;
+typedef Polyhedron::Facet_iterator Facet_iterator;
+typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
+typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
+typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+
+
+template<typename FaceNormalPmap>
+void
+Scene_polyhedron_selection_item::triangulate_facet(Facet_handle fit,
+                                         const FaceNormalPmap& fnmap) const
+{
+    //Computes the normal of the facet
+    Traits::Vector_3 normal = get(fnmap, fit);
+
+    //check if normal contains NaN values
+    if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
+    {
+        qDebug()<<"Warning : normal is not valid. Facet not displayed";
+        return;
+    }
+    P_traits cdt_traits(normal);
+    CDT cdt(cdt_traits);
+
+    Facet::Halfedge_around_facet_circulator
+            he_circ = fit->facet_begin(),
+            he_circ_end(he_circ);
+
+    // Iterates on the vector of facet handles
+    typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
+    boost::container::flat_map<CDT::Vertex_handle, vertex_descriptor> v2v;
+    CDT::Vertex_handle previous, first;
+    do {
+        CDT::Vertex_handle vh = cdt.insert(he_circ->vertex()->point());
+        v2v.insert(std::make_pair(vh, he_circ->vertex()));
+        if(first == 0) {
+            first = vh;
+        }
+        vh->info() = he_circ;
+        if(previous != 0 && previous != vh) {
+            cdt.insert_constraint(previous, vh);
+        }
+        previous = vh;
+    } while( ++he_circ != he_circ_end );
+    cdt.insert_constraint(previous, first);
+    // sets mark is_external
+    for(CDT::All_faces_iterator
+        fit2 = cdt.all_faces_begin(),
+        end = cdt.all_faces_end();
+        fit2 != end; ++fit2)
+    {
+        fit2->info().is_external = false;
+    }
+    //check if the facet is external or internal
+    std::queue<CDT::Face_handle> face_queue;
+    face_queue.push(cdt.infinite_vertex()->face());
+    while(! face_queue.empty() ) {
+        CDT::Face_handle fh = face_queue.front();
+        face_queue.pop();
+        if(fh->info().is_external) continue;
+        fh->info().is_external = true;
+        for(int i = 0; i <3; ++i) {
+            if(!cdt.is_constrained(std::make_pair(fh, i)))
+            {
+                face_queue.push(fh->neighbor(i));
+            }
+        }
+    }
+    //iterates on the internal faces to add the vertices to the positions
+    //and the normals to the appropriate vectors
+    for(CDT::Finite_faces_iterator
+        ffit = cdt.finite_faces_begin(),
+        end = cdt.finite_faces_end();
+        ffit != end; ++ffit)
+    {
+        if(ffit->info().is_external)
+            continue;
+
+        push_back_xyz(ffit->vertex(0)->point(), positions_facets);
+        push_back_xyz(ffit->vertex(1)->point(), positions_facets);
+        push_back_xyz(ffit->vertex(2)->point(), positions_facets);
+
+        push_back_xyz(normal, normals);
+        push_back_xyz(normal, normals);
+        push_back_xyz(normal, normals);
+    }
+}
+
 
 void Scene_polyhedron_selection_item::compute_elements()const
 {
@@ -90,43 +222,89 @@ void Scene_polyhedron_selection_item::compute_elements()const
     positions_lines.clear();
     positions_points.clear();
     normals.clear();
-    //The facets
+    //The facet
+    boost::container::flat_map<face_descriptor, Vector> face_normals_map;
+    boost::associative_property_map< boost::container::flat_map<face_descriptor, Vector> >
+      nf_pmap(face_normals_map);
+    boost::container::flat_map<vertex_descriptor, Vector> vertex_normals_map;
+    boost::associative_property_map< boost::container::flat_map<vertex_descriptor, Vector> >
+      nv_pmap(vertex_normals_map);
+if(!poly)
+  return;
+    PMP::compute_normals(*poly, nv_pmap, nf_pmap);
+    for(Selection_set_facet::iterator
+        it = selected_facets.begin(),
+        end = selected_facets.end();
+        it != end; it++)
     {
+      Facet_handle f = (*it);
+      if (f == boost::graph_traits<Polyhedron>::null_face())
+        continue;
+
+      if(is_triangle(f->halfedge(),*poly))
+      {
+        const Kernel::Vector_3 n =
+            CGAL::Polygon_mesh_processing::compute_face_normal(f, *this->poly_item->polyhedron());
+
+        normals.push_back(n.x());
+        normals.push_back(n.y());
+        normals.push_back(n.z());
+
+        normals.push_back(n.x());
+        normals.push_back(n.y());
+        normals.push_back(n.z());
+
+        normals.push_back(n.x());
+        normals.push_back(n.y());
+        normals.push_back(n.z());
 
 
-        for(Selection_set_facet::iterator
-            it = selected_facets.begin(),
-            end = selected_facets.end();
-            it != end; ++it)
+        Polyhedron::Halfedge_around_facet_circulator
+            he = f->facet_begin(),
+            cend = he;
+
+        CGAL_For_all(he,cend)
         {
-            const Kernel::Vector_3 n =
-                    CGAL::Polygon_mesh_processing::compute_face_normal(*it, *this->poly_item->polyhedron());
-
-            normals.push_back(n.x());
-            normals.push_back(n.y());
-            normals.push_back(n.z());
-
-            normals.push_back(n.x());
-            normals.push_back(n.y());
-            normals.push_back(n.z());
-
-            normals.push_back(n.x());
-            normals.push_back(n.y());
-            normals.push_back(n.z());
-
-
-            Polyhedron::Halfedge_around_facet_circulator
-                    he = (*it)->facet_begin(),
-                    cend = he;
-
-            CGAL_For_all(he,cend)
-            {
-                const Kernel::Point_3& p = he->vertex()->point();
-                positions_facets.push_back(p.x());
-                positions_facets.push_back(p.y());
-                positions_facets.push_back(p.z());
-            }
+          const Kernel::Point_3& p = he->vertex()->point();
+          positions_facets.push_back(p.x());
+          positions_facets.push_back(p.y());
+          positions_facets.push_back(p.z());
         }
+      }
+      else if (is_quad(f->halfedge(), *poly))
+      {
+        Vector nf = get(nf_pmap, f);
+
+        //1st half-quad
+        Point p0 = f->halfedge()->vertex()->point();
+        Point p1 = f->halfedge()->next()->vertex()->point();
+        Point p2 = f->halfedge()->next()->next()->vertex()->point();
+
+        push_back_xyz(p0, positions_facets);
+        push_back_xyz(p1, positions_facets);
+        push_back_xyz(p2, positions_facets);
+
+        push_back_xyz(nf, normals);
+        push_back_xyz(nf, normals);
+        push_back_xyz(nf, normals);
+
+        //2nd half-quad
+        p0 = f->halfedge()->next()->next()->vertex()->point();
+        p1 = f->halfedge()->prev()->vertex()->point();
+        p2 = f->halfedge()->vertex()->point();
+
+        push_back_xyz(p0, positions_facets);
+        push_back_xyz(p1, positions_facets);
+        push_back_xyz(p2, positions_facets);
+
+        push_back_xyz(nf, normals);
+        push_back_xyz(nf, normals);
+        push_back_xyz(nf, normals);
+      }
+      else
+      {
+        triangulate_facet(f, nf_pmap);
+      }
     }
 
     //The Lines
