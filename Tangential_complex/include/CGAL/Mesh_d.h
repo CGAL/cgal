@@ -232,6 +232,15 @@ public:
     Wall_clock_timer t;
 #endif
 
+    typedef CGAL::Epick_d<Dynamic_dimension_tag>        Orth_K;
+    typedef typename Orth_K::Point_d                    Orth_K_point;
+    typedef typename Orth_K::Vector_d                   Orth_K_vector;
+
+    int orth_dim = m_ambient_dim - m_intrinsic_dim;
+    Orth_K orth_k(orth_dim);
+
+    Get_functor<Orth_K, Sum_of_vectors_tag>::type orth_k_sum_vecs(orth_k);
+
     // Tangent and orthogonal spaces
     for (std::size_t i = 0; i < m_points.size(); ++i)
     {
@@ -341,7 +350,7 @@ public:
       // of the k-face then compute a weighted barycenter
       FT sum_weights = 0;
       Vector weighted_sum_of_inters =
-        m_k.construct_vector_d_object()(m_ambient_dim);
+        orth_k.construct_vector_d_object()(m_ambient_dim);
       for (auto vh : kf) // CJTODO C++11
       {
         Point intersection = 
@@ -369,6 +378,67 @@ public:
           m_k.scaled_vector_d_object()(
             weighted_sum_of_inters, FT(1) / sum_weights));
 
+        //****************************************************************
+        // Translate the tangent plane to be closer to the surface
+        //****************************************************************
+
+        // Estimate the normal subspace at point "avg_inters"
+        Tangent_space_basis tsb;
+        Orthogonal_space_basis osb;
+        tsb = compute_tangent_space(
+          avg_inters, std::numeric_limits<std::size_t>::max(), 
+          true/*normalize*/, &osb);
+
+        unsigned int num_points_for_nghb_query = static_cast<unsigned int>(
+          std::pow(BASE_VALUE_FOR_PCA, m_intrinsic_dim));
+        KNS_range kns_range = m_points_ds.query_ANN(
+          avg_inters, num_points_for_nghb_query, false);
+
+        FT sum_weights_of_barycenter = 0;
+        Orth_K_vector weighted_sum_of_neighbors =
+          orth_k.construct_vector_d_object()(orth_dim);
+        KNS_iterator nn_it = kns_range.begin();
+        for (unsigned int j = 0 ;
+          j < num_points_for_nghb_query && nn_it != kns_range.end() ;
+          ++j, ++nn_it)
+        {
+          Point const& nghb = m_points[nn_it->first];
+
+          Orth_K_point proj_nghb = project_point(nghb, osb, orth_k, &avg_inters);
+
+          FT weight =
+            FT(1) / m_k.squared_distance_d_object()(nghb, avg_inters);
+          sum_weights_of_barycenter += weight;
+          weighted_sum_of_neighbors = orth_k_sum_vecs(
+            weighted_sum_of_neighbors,
+            orth_k.scaled_vector_d_object()(
+              orth_k.point_to_vector_d_object()(proj_nghb), weight));
+        }
+
+        //sum_weights_of_barycenter *= 8; // CJTODO TEMP
+
+        // Compute the weighted barycenter
+        Point translated_origin = unproject_point(
+          orth_k.vector_to_point_d_object()(
+            orth_k.scaled_vector_d_object()(
+              weighted_sum_of_neighbors, FT(1) / sum_weights_of_barycenter)),
+          osb,
+          orth_k,
+          &avg_inters);
+
+        Point translated_inters =
+          compute_aff_of_voronoi_face_and_tangent_subspace_intersection(
+            boost::adaptors::transform(kf, vertex_handle_to_point),
+            tsb, &translated_origin);
+
+        // CJTODO TEMP: exact intersection for the sphere of radius 1
+        //translated_inters = orth_k.vector_to_point_d_object()(
+        //  normalize_vector(orth_k.point_to_vector_d_object()(avg_inters), m_k));
+
+        //****************************************************************
+        // Keep the simplex or not?
+        //****************************************************************
+        
         keep_it = true;
         // Check if the averaged intersection "i" is inside the Voronoi cell, i.e.
         // for each common neighbor qi, (i - p0)² <= (i - qi)²
@@ -377,8 +447,8 @@ public:
         {
           // If a neighbor is closer than p0 to the average intersection, then
           // the average intersection is inside another Voronoi cell
-          if (m_k.squared_distance_d_object()(p0, avg_inters) >
-            m_k.squared_distance_d_object()(neighbor_vh->point(), avg_inters))
+          if (m_k.squared_distance_d_object()(p0, translated_inters) >
+            m_k.squared_distance_d_object()(neighbor_vh->point(), translated_inters))
           {
             keep_it = false;
             break;
@@ -436,9 +506,10 @@ private:
     return *s.rbegin() == std::numeric_limits<std::size_t>::max();
   }
 
+  // If i = std::numeric_limits<std::size_t>::max(), it is ignored
   Tangent_space_basis compute_tangent_space(
       const Point &p
-    , const std::size_t i
+    , const std::size_t i = std::numeric_limits<std::size_t>::max()
     , bool normalize_basis = true
     , Orthogonal_space_basis *p_orth_space_basis = NULL)
   {
@@ -454,7 +525,8 @@ private:
     Tangent_space_basis ts(i);
     ts.reserve(m_intrinsic_dim);
     ts.push_back(scaled_vec(t, FT(1)/CGAL::sqrt(sqlen(t))));
-    m_are_tangent_spaces_computed[i] = true;
+    if (i != std::numeric_limits<std::size_t>::max())
+      m_are_tangent_spaces_computed[i] = true;
 
     return ts;
 
@@ -476,7 +548,8 @@ private:
     ts.push_back(scaled_vec(t1, FT(1)/CGAL::sqrt(sqlen(t1))));
     ts.push_back(scaled_vec(t2, FT(1)/CGAL::sqrt(sqlen(t2))));
 
-    m_are_tangent_spaces_computed[i] = true;
+    if (i != std::numeric_limits<std::size_t>::max())
+      m_are_tangent_spaces_computed[i] = true;
 
     return ts;
 
@@ -493,7 +566,8 @@ private:
       ts.push_back(t);
     }
 
-    m_are_tangent_spaces_computed[i] = true;
+    if (i != std::numeric_limits<std::size_t>::max())
+      m_are_tangent_spaces_computed[i] = true;
     
     //return compute_gram_schmidt_basis(ts, m_k);
     return ts;
@@ -551,7 +625,7 @@ private:
     Eigen::MatrixXd cov = centered.adjoint() * centered;
     Eigen::SelfAdjointEigenSolver<Eigen::MatrixXd> eig(cov);
 
-    Tangent_space_basis tsb(i); // p = compute_perturbed_point(i) here
+    Tangent_space_basis tsb(i);
 
     // The eigenvectors are sorted in increasing order of their corresponding
     // eigenvalues
@@ -599,7 +673,8 @@ private:
       }
     }
 
-    m_are_tangent_spaces_computed[i] = true;
+    if (i != std::numeric_limits<std::size_t>::max())
+      m_are_tangent_spaces_computed[i] = true;
 
     //*************************************************************************
 
@@ -677,31 +752,66 @@ private:
     return common_neighbors;
   }
 
-  Point unproject_point(const Local_point &lp,
-    const Tangent_space_basis &tsb) const
+  template <typename Basis_, typename Projected_point, typename Projection_space_kernel>
+  Point unproject_point(Projected_point const& lp,
+    Basis_ const& basis, Projection_space_kernel const& lk,
+    Point const* origin = NULL) const
   {
     typename K::Translated_point_d k_transl =
       m_k.translated_point_d_object();
     typename K::Scaled_vector_d k_scaled_vec =
       m_k.scaled_vector_d_object();
-    typename LK::Compute_coordinate_d coord =
-      m_lk.compute_coordinate_d_object();
+    typename Projection_space_kernel::Compute_coordinate_d coord =
+      lk.compute_coordinate_d_object();
 
-    Point global_point = m_points[tsb.origin()];
-    for (int i = 0 ; i < m_intrinsic_dim ; ++i)
+    Point global_point = (origin ? *origin : m_points[basis.origin()]);
+    for (int i = 0 ; i < basis.dimension() ; ++i)
     {
       global_point = k_transl(
-        global_point, k_scaled_vec(tsb[i], coord(lp, i)));
+        global_point, k_scaled_vec(basis[i], coord(lp, i)));
     }
 
     return global_point;
   }
 
+  // Project the point on a subspace
+  // Resulting point coords are expressed in basis' space
+  template <typename Projection_space_kernel, typename Basis_>
+  typename Projection_space_kernel::Point_d project_point(
+    const Point &p, const Basis_ &basis, Projection_space_kernel const& psk,
+    Point const* origin = NULL) const
+  {
+    typename K::Scalar_product_d scalar_pdct =
+      m_k.scalar_product_d_object();
+    typename K::Difference_of_points_d diff_points =
+      m_k.difference_of_points_d_object();
+
+    Point const& orig = (origin ? *origin : m_points[basis.origin()]);
+    Vector v = diff_points(p, orig);
+
+    std::vector<FT> coords;
+    // Ambiant-space coords of the projected point
+    coords.reserve(basis.dimension());
+    for (std::size_t i = 0 ; i < basis.dimension() ; ++i)
+    {
+      // Local coords are given by the scalar product with the vectors of basis
+      FT coord = scalar_pdct(v, basis[i]);
+      coords.push_back(coord);
+    }
+
+    return psk.construct_point_d_object()(static_cast<int>(
+      coords.size()), coords.begin(), coords.end());
+  }
+
   // Project the point in the tangent space
   // The weight will be the squared distance between p and the projection of p
   // Resulting point coords are expressed in tsb's space
-  Local_weighted_point project_point_and_compute_weight(
-    const Point &p, const FT w, const Tangent_space_basis &tsb) const
+  template <typename Projection_space_kernel, typename Basis_>
+  typename Projection_space_kernel::Weighted_point_d 
+  project_point_and_compute_weight(
+    const Point &p, const FT w, const Basis_ &basis, 
+    Projection_space_kernel const& psk,
+    Point const* origin = NULL) const
   {
     const int point_dim = m_k.point_dimension_d_object()(p);
 
@@ -716,28 +826,28 @@ private:
     typename K::Construct_cartesian_const_iterator_d ccci =
       m_k.construct_cartesian_const_iterator_d_object();
 
-    typename LK::Construct_point_d local_constr_pt =
-      m_lk.construct_point_d_object();
+    typename Projection_space_kernel::Construct_point_d local_constr_pt =
+      psk.construct_point_d_object();
 
-    Point const& origin = m_points[tsb.origin()];
-    Vector v = diff_points(p, origin);
+    Point const& orig = (origin ? *origin : m_points[basis.origin()]);
+    Vector v = diff_points(p, orig);
 
     // Same dimension? Then the weight is 0
-    bool same_dim = (point_dim == tsb.dimension());
+    bool same_dim = (point_dim == basis.dimension());
 
     std::vector<FT> coords;
     // Ambiant-space coords of the projected point
-    std::vector<FT> p_proj(ccci(origin), ccci(origin, 0));
-    coords.reserve(tsb.dimension());
-    for (std::size_t i = 0 ; i < tsb.dimension() ; ++i)
+    std::vector<FT> p_proj(ccci(orig), ccci(orig, 0));
+    coords.reserve(basis.dimension());
+    for (std::size_t i = 0 ; i < basis.dimension() ; ++i)
     {
-      // Local coords are given by the scalar product with the vectors of tsb
-      FT c = scalar_pdct(v, tsb[i]);
+      // Local coords are given by the scalar product with the vectors of basis
+      FT c = scalar_pdct(v, basis[i]);
       coords.push_back(c);
 
-      // p_proj += c * tsb[i]
+      // p_proj += c * basis[i]
       for (int j = 0 ; j < point_dim ; ++j)
-        p_proj[j] += c * coord(tsb[i], j);
+        p_proj[j] += c * coord(basis[i], j);
     }
     
     // Same dimension? Then the weight is 0
@@ -748,7 +858,7 @@ private:
       sq_dist_to_proj_pt = m_k.squared_distance_d_object()(p, projected_pt);
     }
 
-    return m_lk.construct_weighted_point_d_object()
+    return psk.construct_weighted_point_d_object()
     (
       local_constr_pt(
         static_cast<int>(coords.size()), coords.begin(), coords.end()),
@@ -937,20 +1047,22 @@ private:
   Point
     compute_aff_of_voronoi_face_and_tangent_subspace_intersection(
     Point_range const& P,
-    Tangent_space_basis const& tangent_subspace_basis) const
+    Tangent_space_basis const& tangent_subspace_basis,
+    Point const* origin = NULL) const
   {
     std::vector<Local_weighted_point> projected_pts;
     for (auto const& p : P)
     {
-      projected_pts.push_back(
-        project_point_and_compute_weight(p, FT(0), tangent_subspace_basis));
+      projected_pts.push_back(project_point_and_compute_weight(
+        p, FT(0), tangent_subspace_basis, m_lk, origin));
     }
 
     Local_weighted_point power_center =
       m_lk.power_center_d_object()(projected_pts.begin(), projected_pts.end());
 
     return unproject_point(
-      m_lk.point_drop_weight_d_object()(power_center), tangent_subspace_basis);
+      m_lk.point_drop_weight_d_object()(power_center), 
+      tangent_subspace_basis, m_lk, origin);
   }
 
 #endif
