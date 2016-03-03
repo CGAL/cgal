@@ -184,6 +184,7 @@ public:
   Scene_polyhedron_selection_item() 
     : Scene_polyhedron_item_decorator(NULL, false)
     {
+        original_sel_mode = static_cast<Active_handle::Type>(0);
         this ->operation_mode = -1;
         for(int i=0; i<3; i++)
         {
@@ -204,6 +205,7 @@ public:
   Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
     : Scene_polyhedron_item_decorator(NULL, false)
     {
+        original_sel_mode = static_cast<Active_handle::Type>(0);
         this ->operation_mode = -1;
         nb_facets = 0;
         nb_points = 0;
@@ -793,8 +795,60 @@ Q_SIGNALS:
   void simplicesSelected(CGAL::Three::Scene_item*);
 
 public Q_SLOTS:
+  void save_handleType()
+  {
+    original_sel_mode = get_active_handle_type();
+  }
+
   void set_operation_mode(int mode)
   {
+    switch(mode)
+    {
+    case -1:
+      //restore original selection_type
+      set_active_handle_type(original_sel_mode);
+      break;
+      //Join vertex
+    case 0:
+      //set the selection type to Edges
+      set_active_handle_type(static_cast<Active_handle::Type>(2));
+    break;
+    //Split vertex
+    case 1:
+      break;
+      //Split edge
+    case 2:
+      break;
+      //Join face
+    case 3:
+      break;
+      //Split face
+    case 4:
+      break;
+      //Add edge
+    case 5:
+      break;
+      //Collapse edge
+    case 6:
+      break;
+      //Flip edge
+    case 7:
+      break;
+      //Add center vertex
+    case 8:
+      break;
+      //Remove center vertex
+    case 9:
+      break;
+      //Add vertex and face to border
+    case 10:
+      break;
+      //Add face to border
+    case 11:
+      break;
+    default:
+      break;
+  }
     operation_mode = mode;
   }
   void invalidateOpenGLBuffers() {
@@ -858,7 +912,7 @@ protected:
   }
   void join_vertex(Scene_polyhedron_selection_item::Vertex_handle vh)
   {
-    polyhedron()->join_vertex(vh->halfedge());
+    std::cerr<<"Cannot join from a vertex. Please select an edge."<<std::endl;
   }
   void join_vertex(Scene_polyhedron_selection_item::edge_descriptor ed)
   {
@@ -866,7 +920,7 @@ protected:
   }
   void join_vertex(Scene_polyhedron_selection_item::Facet_handle fh)
   {
-    polyhedron()->join_vertex(fh->halfedge());
+    std::cerr<<" Please select a vertex or the operation \"Join face\"."<<std::endl;
   }
 
   template<typename HandleRange>
@@ -895,6 +949,7 @@ protected:
     }
       //Join vertex
     case 0:
+      //set the selection type to Edges
       BOOST_FOREACH(HandleType h, selection)
       {
         join_vertex(h);
@@ -1018,6 +1073,7 @@ public:
 private:
   //Specifies Selection/edition mode
   int operation_mode;
+  Active_handle::Type original_sel_mode;
   //Only needed for the triangulation
   Polyhedron* poly;
   mutable std::vector<float> positions_facets;
