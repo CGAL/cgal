@@ -181,7 +181,7 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
     attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
-    program->setAttributeValue("colors",facet_color);
+    program->setAttributeValue("colors",this->color());
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_facets/3));
     program->release();
     vaos[0]->release();

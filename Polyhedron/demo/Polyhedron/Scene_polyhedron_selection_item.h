@@ -187,6 +187,7 @@ public:
         nb_facets = 0;
         nb_points = 0;
         nb_lines = 0;
+        this->setColor(facet_color);
     }
 
   Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
@@ -207,6 +208,7 @@ public:
             buffers[i].create();
         }
         init(poly_item, mw);
+        this->setColor(facet_color);
         invalidateOpenGLBuffers();
     }
 
