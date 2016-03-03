@@ -825,6 +825,8 @@ public Q_SLOTS:
       break;
       //Join face
     case 3:
+      //set the selection type to Edge
+      set_active_handle_type(static_cast<Active_handle::Type>(2));
       break;
       //Split face
     case 4:
@@ -927,6 +929,17 @@ protected:
     std::cerr<<" Please select a vertex or the operation \"Join face\"."<<std::endl;
   }
 
+  void join_face(Scene_polyhedron_selection_item::Vertex_handle vh)
+  {
+  }
+  void join_face(Scene_polyhedron_selection_item::edge_descriptor ed)
+  {
+    polyhedron()->join_facet(halfedge(ed, *polyhedron()));
+  }
+  void join_face(Scene_polyhedron_selection_item::Facet_handle fh)
+  {
+  }
+
   void split(Scene_polyhedron_selection_item::Vertex_handle vh)
   {
 
@@ -996,6 +1009,10 @@ protected:
       break;
       //Join face
     case 3:
+      BOOST_FOREACH(HandleType h, selection)
+      {
+        join_face(h);
+      }
       break;
       //Split face
     case 4:
