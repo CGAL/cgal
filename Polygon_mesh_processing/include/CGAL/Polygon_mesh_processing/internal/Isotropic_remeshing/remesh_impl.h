@@ -204,7 +204,7 @@ namespace internal {
         boost::make_assoc_property_map(patch_ids_map_),// set patch_id() for each face
         PMP::parameters::edge_is_constrained_map(cpmap));
 
-      BOOST_FOREACH(face_descriptor f, faces(mesh_))
+      BOOST_FOREACH(face_descriptor f, face_range)
       {
         input_triangles_.push_back(triangle(f));
         input_patch_ids_.push_back(get_patch_id(f));
