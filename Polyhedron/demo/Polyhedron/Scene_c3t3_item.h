@@ -42,7 +42,7 @@ public:
   Scene_c3t3_item();
   Scene_c3t3_item(const C3t3& c3t3);
   ~Scene_c3t3_item();
-
+  void setColor(QColor c);
   bool save_binary(std::ostream& os) const
   {
     return CGAL::Mesh_3::save_binary_file(os, c3t3());
@@ -85,7 +85,8 @@ public:
   bool isFinite() const { return true; }
   bool isEmpty() const {
     return c3t3().triangulation().number_of_vertices() == 0
-      || c3t3().number_of_cells() == 0;
+        || (    c3t3().number_of_facets_in_complex() == 0
+                && c3t3().number_of_cells_in_complex()  == 0  );
   }
 
   void compute_bbox() const;
