@@ -820,6 +820,8 @@ public Q_SLOTS:
       break;
       //Split edge
     case 2:
+      //set the selection type to Edge
+      set_active_handle_type(static_cast<Active_handle::Type>(2));
       break;
       //Join face
     case 3:
@@ -925,7 +927,7 @@ protected:
     std::cerr<<" Please select a vertex or the operation \"Join face\"."<<std::endl;
   }
 
-  void split_vertex(Scene_polyhedron_selection_item::Vertex_handle vh)
+  void split(Scene_polyhedron_selection_item::Vertex_handle vh)
   {
 
     Polyhedron::Point_3 a(vh->halfedge()->vertex()->point()),b(vh->halfedge()->opposite()->vertex()->point());
@@ -934,10 +936,15 @@ protected:
 
     hhandle->vertex()->point() = p;
   }
-  void split_vertex(Scene_polyhedron_selection_item::edge_descriptor)
+  void split(Scene_polyhedron_selection_item::edge_descriptor ed)
   {
+    Polyhedron::Point_3 a(halfedge(ed, *poly)->vertex()->point()),b(halfedge(ed, *poly)->opposite()->vertex()->point());
+    Polyhedron::Halfedge_handle hhandle = polyhedron()->split_edge(halfedge(ed, *poly));
+    Polyhedron::Point_3 p((b.x()+a.x())/2.0, (b.y()+a.y())/2.0,(b.z()+a.z())/2.0);
+
+    hhandle->vertex()->point() = p;
   }
-  void split_vertex(Scene_polyhedron_selection_item::Facet_handle)
+  void split(Scene_polyhedron_selection_item::Facet_handle)
   {
   }
 
@@ -977,11 +984,15 @@ protected:
     case 1:
       BOOST_FOREACH(HandleType h, selection)
       {
-        split_vertex(h);
+        split(h);
       }
       break;
       //Split edge
     case 2:
+      BOOST_FOREACH(HandleType h, selection)
+      {
+        split(h);
+      }
       break;
       //Join face
     case 3:
