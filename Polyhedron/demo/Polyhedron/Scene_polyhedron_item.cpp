@@ -184,7 +184,7 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit,
         if(ffit->info().is_external)
             continue;
 
-        if (colors_only)
+        if (!is_monochrome)
         {
           for (int i = 0; i<3; ++i)
           {
@@ -196,8 +196,9 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit,
             color_facets.push_back(colors_[this_patch_id].greenF());
             color_facets.push_back(colors_[this_patch_id].blueF());
           }
-          continue;
         }
+        if (colors_only)
+          continue;
 
         push_back_xyz(ffit->vertex(0)->point(), positions_facets);
         positions_facets.push_back(1.0);
@@ -409,15 +410,15 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
           HF_circulator end = he;
           CGAL_For_all(he,end)
           {
-            if (!is_monochrome || colors_only)
+            if (!is_monochrome)
             {
               color_facets.push_back(colors_[this_patch_id].redF());
               color_facets.push_back(colors_[this_patch_id].greenF());
               color_facets.push_back(colors_[this_patch_id].blueF());
-              if (colors_only)
-                continue;
             }
-            
+            if (colors_only)
+              continue;
+
             // If Flat shading:1 normal per polygon added once per vertex
             push_back_xyz(n, normals_flat);
 
@@ -433,7 +434,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
       }
       else if (is_quad(f->halfedge(), *poly))
       {
-        if (!is_monochrome || colors_only)
+        if (!is_monochrome)
         {
           const int this_patch_id = f->patch_id();
           for (unsigned int i = 0; i < 6; ++i)
@@ -442,9 +443,9 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
             color_facets.push_back(colors_[this_patch_id].greenF());
             color_facets.push_back(colors_[this_patch_id].blueF());
           }
-          if(colors_only)
-            continue;
         }
+        if (colors_only)
+          continue;
 
         Vector nf = get(nf_pmap, f);
 
@@ -531,7 +532,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
         }
         else
         {
-          if (!is_monochrome || colors_only)
+          if (!is_monochrome)
           {
             color_lines.push_back(this->color().lighter(50).redF());
             color_lines.push_back(this->color().lighter(50).greenF());
@@ -540,9 +541,9 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
             color_lines.push_back(this->color().lighter(50).redF());
             color_lines.push_back(this->color().lighter(50).greenF());
             color_lines.push_back(this->color().lighter(50).blueF());
-            if(colors_only)
-              continue;
           }
+          if (colors_only)
+            continue;
 
           push_back_xyz(a, positions_lines);
           positions_lines.push_back(1.0);
