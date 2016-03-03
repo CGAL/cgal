@@ -15,6 +15,8 @@ typedef CGAL::Surface_mesh<K::Point_3> Mesh;
 typedef boost::graph_traits<Mesh>::halfedge_descriptor halfedge_descriptor;
 typedef boost::graph_traits<Mesh>::edge_descriptor     edge_descriptor;
 
+namespace PMP = CGAL::Polygon_mesh_processing;
+
 struct halfedge2edge
 {
   halfedge2edge(const Mesh& m, std::vector<edge_descriptor>& edges)
