@@ -271,6 +271,8 @@ public:
   };
   //!Returns a Header_data struct containing the header information.
   virtual Header_data header()const;
+  //!Returns true if the item has statistics.
+  virtual bool has_stats()const{return false;}
   //!Returns a QString containing the requested value for the the table in the statistics dialog
   /*!
    * Example :
