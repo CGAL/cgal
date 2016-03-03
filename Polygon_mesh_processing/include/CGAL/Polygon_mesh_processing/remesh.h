@@ -39,6 +39,9 @@ namespace Polygon_mesh_processing {
 *
 * @tparam PolygonMesh model of `MutableFaceGraph` that 
 *         has an internal property map for `CGAL::vertex_point_t`.
+*         The descriptor types `boost::graph_traits<PolygonMesh>::%face_descriptor`
+*         and `boost::graph_traits<PolygonMesh>::%halfedge_descriptor` must be
+*         models of `Hashable`.
 * @tparam FaceRange range of `boost::graph_traits<PolygonMesh>::%face_descriptor`,
           model of `Range`. Its iterator type is `InputIterator`.
 * @tparam NamedParameters a sequence of \ref namedparameters
