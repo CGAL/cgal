@@ -35,6 +35,7 @@ namespace CGAL{
   enum geom_traits_t                { geom_traits };
   enum number_of_iterations_t       { number_of_iterations };
   enum protect_constraints_t        { protect_constraints };
+  enum vertex_is_constrained_t      { vertex_is_constrained };
 
   //to be documented
   enum smooth_along_features_t      { smooth_along_features };
@@ -148,6 +149,14 @@ namespace CGAL{
     {
       typedef pmp_bgl_named_params<Boolean, smooth_along_features_t, self> Params;
       return Params(b, *this);
+    }
+
+    template <typename VertexIsConstrained>
+    pmp_bgl_named_params<VertexIsConstrained, vertex_is_constrained_t, self>
+    vertex_is_constrained_map(const VertexIsConstrained& vm) const
+    {
+      typedef pmp_bgl_named_params<VertexIsConstrained, vertex_is_constrained_t, self> Params;
+      return Params(vm, *this);
     }
 
     //overload
@@ -286,6 +295,14 @@ namespace parameters{
   {
     typedef pmp_bgl_named_params<Boolean, smooth_along_features_t> Params;
     return Params(b);
+  }
+
+  template <typename VertexIsConstrained>
+  pmp_bgl_named_params<VertexIsConstrained, vertex_is_constrained_t>
+  vertex_is_constrained_map(const VertexIsConstrained& vm)
+  {
+    typedef pmp_bgl_named_params<VertexIsConstrained, vertex_is_constrained_t> Params;
+    return Params(vm);
   }
 
   //overload
