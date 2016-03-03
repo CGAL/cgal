@@ -26,7 +26,6 @@
 #include <CGAL/array.h>
 
 #include <boost/shared_ptr.hpp>
-#include <boost/foreach.hpp>
 #include <boost/format.hpp>
 #include <boost/unordered_set.hpp>
 #include <CGAL/ImageIO.h>
@@ -485,8 +484,9 @@ Image_3::labellized_trilinear_interpolation(const Coord_type& x,
   typedef ImageIO::Indicator<Image_word_type> Indicator;
   double best_value = 0.;
   Image_word_type best = 0;
-  BOOST_FOREACH(Image_word_type iwt, labels)
+  for(int i = 0; i < lc; ++i)
   {
+    Image_word_type iwt = labels[i];
     const double r = 
       trilinear_interpolation<Image_word_type,double,Coord_type, Indicator>(
         x, y, z, value_outside, Indicator(iwt));
