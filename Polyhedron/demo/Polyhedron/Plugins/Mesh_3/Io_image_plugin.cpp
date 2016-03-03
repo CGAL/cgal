@@ -42,6 +42,7 @@ bool Io_image_plugin::canLoad() const {
 CGAL::Three::Scene_item*
 Io_image_plugin::load(QFileInfo fileinfo) {
   Image* image = new Image;
+  QApplication::restoreOverrideCursor();
   if(!image->read(fileinfo.filePath().toUtf8()))
     {
       QMessageBox qmb(QMessageBox::NoIcon,
@@ -51,14 +52,13 @@ Io_image_plugin::load(QFileInfo fileinfo) {
                          "\n"
                          "Open it as a raw image?").arg(fileinfo.fileName()),
                       QMessageBox::Yes|QMessageBox::No);
-      
+
       bool success = true;
-      QApplication::restoreOverrideCursor();
       if(qmb.exec() == QMessageBox::Yes) {
-	Raw_image_dialog raw_dialog;
-	raw_dialog.label_file_size->setText(QString("%1 B").arg(fileinfo.size()));
+        Raw_image_dialog raw_dialog;
+        raw_dialog.label_file_size->setText(QString("%1 B").arg(fileinfo.size()));
         if( raw_dialog.exec() ){
-          QApplication::setOverrideCursor(Qt::WaitCursor); 
+          QApplication::setOverrideCursor(Qt::WaitCursor);
 
           if(image->read_raw(fileinfo.filePath().toUtf8(),
 			     raw_dialog.dim_x->value(),
@@ -67,7 +67,7 @@ Io_image_plugin::load(QFileInfo fileinfo) {
 			     raw_dialog.spacing_x->value(),
 			     raw_dialog.spacing_y->value(),
 			     raw_dialog.spacing_z->value(),
-			     raw_dialog.offset->value())){
+                             raw_dialog.offset->value())){
             QSettings settings;
             settings.beginGroup(QUrl::toPercentEncoding(fileinfo.absoluteFilePath()));
             settings.setValue("is_raw", true);
