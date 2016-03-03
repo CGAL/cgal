@@ -830,6 +830,8 @@ public Q_SLOTS:
       break;
       //Split face
     case 4:
+      //set the selection type to Face
+      set_active_handle_type(static_cast<Active_handle::Type>(1));
       break;
       //Add edge
     case 5:
@@ -957,8 +959,9 @@ protected:
 
     hhandle->vertex()->point() = p;
   }
-  void split(Scene_polyhedron_selection_item::Facet_handle)
+  void split(Scene_polyhedron_selection_item::Facet_handle fh)
   {
+     polyhedron()->split_facet(fh->halfedge(),fh->halfedge()->next()->next());
   }
 
 
@@ -1016,6 +1019,10 @@ protected:
       break;
       //Split face
     case 4:
+      BOOST_FOREACH(HandleType h, selection)
+      {
+        split(h);
+      }
       break;
       //Add edge
     case 5:
