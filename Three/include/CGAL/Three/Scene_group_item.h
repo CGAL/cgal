@@ -62,6 +62,15 @@ public :
     bool supportsRenderingMode(RenderingMode m) const;
     //!Prints the number of children.
     QString toolTip() const;
+
+    /// Draw functions
+    ///@{
+    virtual void draw(CGAL::Three::Viewer_interface*) const;
+    virtual void draw_edges(CGAL::Three::Viewer_interface*) const;
+    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
+    virtual void draw_splats(CGAL::Three::Viewer_interface*) const;
+    ///@}
+
     //!Adds a Scene_item* to the list of children.
     //!@see getChildren. @see removeChild.
     void addChild(Scene_item* new_item);

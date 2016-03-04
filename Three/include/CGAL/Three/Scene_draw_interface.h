@@ -33,10 +33,8 @@ class Scene_draw_interface {
 public:
   virtual ~Scene_draw_interface(){}
   virtual void initializeGL() = 0;
-  virtual void draw() = 0;
-  virtual void draw(CGAL::Three::Viewer_interface*) { draw(); };
-  virtual void drawWithNames() = 0;
-  virtual void drawWithNames(CGAL::Three::Viewer_interface*) { drawWithNames(); }
+  virtual void draw(CGAL::Three::Viewer_interface*) = 0;
+  virtual void drawWithNames(CGAL::Three::Viewer_interface*) = 0;
   virtual bool keyPressEvent(QKeyEvent* e) = 0;
   virtual float get_bbox_length() const = 0;
 };

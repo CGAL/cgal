@@ -312,24 +312,25 @@ Scene::keyPressEvent(QKeyEvent* e){
 }
 
 void
-Scene::draw()
-{
-    draw_aux(false, 0);
-}
-void
 Scene::draw(CGAL::Three::Viewer_interface* viewer)
 {
     draw_aux(false, viewer);
 }
 void
-Scene::drawWithNames()
-{
-    draw_aux(true, 0);
-}
-void
 Scene::drawWithNames(CGAL::Three::Viewer_interface* viewer)
 {
     draw_aux(true, viewer);
+}
+
+bool item_should_be_skipped_in_draw(Scene_item* item) {
+  if(!item->visible()) return true;
+  if(item->has_group == 0) return false;
+  Scene_group_item* group = item->parentGroup();
+  while(group != 0) {
+    if(!group->visible()) return false;
+    group = group->parentGroup();
+  }
+  return true;
 }
 
 void 
@@ -342,10 +343,12 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     // Flat/Gouraud OpenGL drawing
     for(int index = 0; index < m_entries.size(); ++index)
     {
+        CGAL::Three::Scene_item& item = *m_entries[index];
         if(with_names) {
             viewer->glPushName(index);
+        } else {
+          if(item_should_be_skipped_in_draw(&item)) continue;
         }
-        CGAL::Three::Scene_item& item = *m_entries[index];
         if(item.visible())
         {
             if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
@@ -378,14 +381,17 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
             viewer->glPopName();
         }
     }
-glDepthFunc(GL_LEQUAL);
+    glDepthFunc(GL_LEQUAL);
     // Wireframe OpenGL drawing
     for(int index = 0; index < m_entries.size(); ++index)
     {
+        CGAL::Three::Scene_item& item = *m_entries[index];
         if(with_names) {
             viewer->glPushName(index);
         }
-        CGAL::Three::Scene_item& item = *m_entries[index];
+        else {
+            if(item_should_be_skipped_in_draw(&item)) continue;
+        }
         if(item.visible())
         {
             if(item.renderingMode() == FlatPlusEdges || item.renderingMode() == Wireframe)
@@ -442,10 +448,12 @@ glDepthFunc(GL_LEQUAL);
     // Points OpenGL drawing
     for(int index = 0; index < m_entries.size(); ++index)
     {
+        CGAL::Three::Scene_item& item = *m_entries[index];
         if(with_names) {
             viewer->glPushName(index);
+        } else {
+          if(item_should_be_skipped_in_draw(&item)) continue;
         }
-        CGAL::Three::Scene_item& item = *m_entries[index];
         if(item.visible())
         {
             if(item.renderingMode() == Points  || item.renderingMode() == PointsPlusNormals)
@@ -474,6 +482,7 @@ glDepthFunc(GL_LEQUAL);
         for(int index = 0; index < m_entries.size(); ++index)
         {
             CGAL::Three::Scene_item& item = *m_entries[index];
+            if(item_should_be_skipped_in_draw(&item)) continue;
             if(item.visible() && item.renderingMode() == Splatting)
             {
 
@@ -486,9 +495,11 @@ glDepthFunc(GL_LEQUAL);
             }
 
         }
-       ms_splatting->beginAttributePass();
-         for(int index = 0; index < m_entries.size(); ++index)
-        {  CGAL::Three::Scene_item& item = *m_entries[index];
+        ms_splatting->beginAttributePass();
+        for(int index = 0; index < m_entries.size(); ++index)
+        {
+            CGAL::Three::Scene_item& item = *m_entries[index];
+            if(item_should_be_skipped_in_draw(&item)) continue;
             if(item.visible() && item.renderingMode() == Splatting)
             {
                 viewer->glColor4d(item.color().redF(), item.color().greenF(), item.color().blueF(), item.color().alphaF());
@@ -1077,7 +1088,7 @@ void Scene::changeGroup(Scene_item *item, CGAL::Three::Scene_group_item *target_
   }
  //add the item to the target group
  target_group->addChild(item);
- item->has_group = target_group->has_group +1;
+ item->moveToGroup(target_group);
 }
 
 float Scene::get_bbox_length() const
