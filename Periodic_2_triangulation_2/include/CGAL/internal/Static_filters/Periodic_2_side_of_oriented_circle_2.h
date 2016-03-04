@@ -24,6 +24,7 @@
 
 #include <CGAL/Profile_counter.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
+#include <CGAL/internal/Static_filters/tools.h>
 
 #include <CGAL/Periodic_2_offset_2.h>
 
@@ -39,7 +40,7 @@ class Periodic_2_side_of_oriented_circle_2
   : public K_base::Side_of_oriented_circle_2
 {
   typedef typename K_base::Side_of_oriented_circle_2    Base;
-
+  typedef typename K_base::FT                           FT;
   typedef typename K_base::Point_2                      Point_2;
   typedef typename K_base::Iso_rectangle_2              Iso_rectangle_2;
   typedef CGAL::Periodic_2_offset_2                     Offset;
@@ -66,7 +67,7 @@ public:
     // but lazy points.
 
     double px, py, qx, qy, rx, ry, tx, ty;
-
+    init_double(px, py, qx, qy, rx, ry, tx, ty, (FT*)(0));
     if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
         fit_in_double(get_approx(q).x(), qx) && fit_in_double(get_approx(q).y(), qy) &&
         fit_in_double(get_approx(r).x(), rx) && fit_in_double(get_approx(r).y(), ry) &&
@@ -149,7 +150,7 @@ public:
     double domxmax, domxmin, domymax, domymin;
     int osx = o_s.x();
     int osy = o_s.y();
-
+    init_double(px, py, qx, qy, rx, ry, sx, sy, domxmax, domxmin, domymax, domymin, (FT*)(0));
     if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
         fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
         fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry) &&

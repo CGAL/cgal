@@ -23,6 +23,7 @@
 #include <CGAL/Profile_counter.h>
 #include <CGAL/internal/Static_filters/Orientation_2.h>
 #include <CGAL/internal/Static_filters/Static_filter_error.h>
+#include <CGAL/internal/Static_filters/tools.h>
 
 #include <CGAL/Periodic_2_offset_2.h>
 
@@ -88,6 +89,7 @@ namespace Static_filters_predicates
 template < typename K_base >
 class Periodic_2_orientation_2 : public K_base::Orientation_2
 {
+  typedef typename K_base::FT FT;
   typedef typename K_base::Point_2          Point_2;
   typedef typename K_base::Vector_2         Vector_2;
   typedef typename K_base::Circle_2         Circle_2;
@@ -130,7 +132,7 @@ public:
     CGAL_PROFILER("Periodic_2_orientation_2 calls");
 
     double px, py, qx, qy, rx, ry;
-
+    init_double(px, py, qx, qy, rx, ry, (FT*)(0));
     if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
         fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
         fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry))
@@ -190,7 +192,7 @@ public:
     double domxmax, domxmin, domymax, domymin;
     int opx = o_p.x();
     int opy = o_p.y();
-
+    init_double(px, py, qx, qy, rx, ry, domxmax, domxmin, domymax, domymin, (FT*)(0));
     if (fit_in_double(p.x(), px) && fit_in_double(p.y(), py) &&
         fit_in_double(q.x(), qx) && fit_in_double(q.y(), qy) &&
         fit_in_double(r.x(), rx) && fit_in_double(r.y(), ry) &&
