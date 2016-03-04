@@ -206,6 +206,23 @@ public:
     return false;
   }
 
+  template <typename FacetHandle>
+  struct Patch_id_pmap
+  {
+    typedef FacetHandle                        key_type;
+    typedef Patch_id                           value_type;
+    typedef Patch_id                           reference;
+    typedef boost::read_write_property_map_tag category;
+
+    Patch_id_pmap() {}
+    friend bool get(const Patch_id_pmap&, const key_type& f){
+      return f->patch_id();
+    }
+    friend void put(Patch_id_pmap&, const key_type& f, const value_type i){
+      f->set_patch_id(i);
+    }
+  };
+
   void detect_and_split_duplicates(std::vector<Scene_polyhedron_item*>& selection,
                                    std::map<Polyhedron*,Edge_set>& edges_to_protect,
                                    double target_length)
@@ -351,15 +368,16 @@ public Q_SLOTS:
         }
         else
         {
-         CGAL::Polygon_mesh_processing::isotropic_remeshing(
-           selection_item->selected_facets
-         , target_length
-         , *selection_item->polyhedron()
-         , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
-         .protect_constraints(protect)
-         .edge_is_constrained_map(selection_item->constrained_edges_pmap())
-         .smooth_along_features(smooth_features)
-         .vertex_is_constrained_map(selection_item->constrained_vertices_pmap()));
+          CGAL::Polygon_mesh_processing::isotropic_remeshing(
+            selection_item->selected_facets
+            , target_length
+            , *selection_item->polyhedron()
+            , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+            .protect_constraints(protect)
+            .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+            .smooth_along_features(smooth_features)
+            .vertex_is_constrained_map(selection_item->constrained_vertices_pmap()));
+//         .facet_patch_map(Patch_id_pmap<face_descriptor>()));
         }
         selection_item->poly_item_changed();
         selection_item->clear<face_descriptor>();

@@ -126,6 +126,15 @@ void isotropic_remeshing(const FaceRange& faces
   VCMap vcmap = choose_param(get_param(np, vertex_is_constrained),
                              internal::No_constraint_pmap<vertex_descriptor>());
 
+  typedef typename boost::lookup_named_param_def <
+      CGAL::face_patch_t,
+      NamedParameters,
+      internal::Connected_components_pmap<PM, ECMap>//default
+    > ::type FPMap;
+  FPMap fpmap
+    = choose_param(get_param(np, face_patch),
+                   internal::Connected_components_pmap<PM, ECMap>(pmesh, ecmap));
+
   double low = 4. / 5. * target_edge_length;
   double high = 4. / 3. * target_edge_length;
 
@@ -140,8 +149,8 @@ void isotropic_remeshing(const FaceRange& faces
       msg.c_str());
   }
 
-  typename internal::Incremental_remesher<PM, VPMap, GT, ECMap, VCMap>
-    remesher(pmesh, vpmap, protect, ecmap, vcmap);
+  typename internal::Incremental_remesher<PM, VPMap, GT, ECMap, VCMap, FPMap>
+    remesher(pmesh, vpmap, protect, ecmap, vcmap, fpmap);
   remesher.init_remeshing(faces);
 
   unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
@@ -254,10 +263,14 @@ void split_long_edges(const EdgeRange& edges
   ECMap ecmap = choose_param(get_param(np, edge_is_constrained),
                              internal::No_constraint_pmap<edge_descriptor>());
   
-  typename internal::Incremental_remesher<PM, VPMap, GT, ECMap>
+  typename internal::Incremental_remesher<PM, VPMap, GT, ECMap,
+    internal::No_constraint_pmap<vertex_descriptor>,
+    internal::Connected_components_pmap<PM, ECMap>
+  >
     remesher(pmesh, vpmap, false/*protect constraints*/
            , ecmap
            , internal::No_constraint_pmap<vertex_descriptor>()
+           , internal::Connected_components_pmap<PM, ECMap>()
            , false/*need aabb_tree*/);
 
   remesher.split_long_edges(edges, max_length);
