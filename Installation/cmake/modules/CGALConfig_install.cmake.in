@@ -10,20 +10,6 @@ set(CGAL_CONFIG_LOADED TRUE)
 
 get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
-# Check for possible export files of our libraries and include them.
-file(GLOB CGAL_EXPORT_FILES LIST_DIRECTORIES false
-  RELATIVE "${CGAL_CONFIG_DIR}" "${CGAL_CONFIG_DIR}/*Exports.cmake")
-foreach(exportfile ${CGAL_EXPORT_FILES})
-  include("${CGAL_CONFIG_DIR}/${exportfile}")
-endforeach()
-
-# Check for possible config files of our libraries and include them.
-file(GLOB CGAL_CONFIG_FILES LIST_DIRECTORIES false
-  RELATIVE "${CGAL_CONFIG_DIR}" "${CGAL_CONFIG_DIR}/*LibConfig.cmake")
-foreach(configfile ${CGAL_CONFIG_FILES})
-  include("${CGAL_CONFIG_DIR}/${configfile}")
-endforeach()
-
 # CGAL_DIR is the directory where this CGALConfig.cmake is installed
 set(CGAL_INSTALL_PREFIX "@CMAKE_INSTALL_PREFIX@")
 
@@ -80,8 +66,18 @@ macro(check_cgal_component COMPONENT)
 
   if ( "${CGAL_LIB}" STREQUAL "CGAL" )
     set( CGAL_FOUND TRUE )
+    # include CGAL export file
+    include(${CGAL_CONFIG_DIR}/CGALExports.cmake)
+    # include config file
+    include(${CGAL_CONFIG_DIR}/CGALLibConfig.cmake)
     set( CHECK_CGAL_ERROR_TAIL "" )
   else() 
+    if (EXISTS ${CGAL_CONFIG_DIR}/${CGAL_LIB}LibConfig.cmake)
+      # include export files for requested component
+      include(${CGAL_CONFIG_DIR}/${CGAL_LIB}Exports.cmake)
+      # include config file (defining WITH_${CGAL_LIB})
+      include(${CGAL_CONFIG_DIR}/${CGAL_LIB}LibConfig.cmake)
+    endif()
     if ( WITH_${CGAL_LIB} )
       if(TARGET CGAL::${CGAL_LIB})
         set( ${CGAL_LIB}_FOUND TRUE )
