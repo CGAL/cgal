@@ -217,6 +217,12 @@ Scene_c3t3_item::c3t3_changed()
     max = (std::max)(max, cit->subdomain_index());
     indices_.insert(cit->subdomain_index());
   }
+  for (C3t3::Facets_in_complex_iterator fit = this->c3t3().facets_in_complex_begin(),
+    end = this->c3t3().facets_in_complex_end(); fit != end; ++fit)
+  {
+    max = (std::max)(max, fit->first->surface_patch_index(fit->second));
+    indices_.insert(fit->first->surface_patch_index(fit->second));
+  }
 
   d->colors.resize(max + 1);
   compute_color_map(color_);
@@ -1049,13 +1055,13 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)
 
 void Scene_c3t3_item::compute_intersection(const Primitive& facet)
 {  
-
   const Kernel::Point_3& pa = facet.id().first->vertex(0)->point();
   const Kernel::Point_3& pb = facet.id().first->vertex(1)->point();
   const Kernel::Point_3& pc = facet.id().first->vertex(2)->point();
   const Kernel::Point_3& pd = facet.id().first->vertex(3)->point();
- 
+
   QColor color = d->colors[facet.id().first->subdomain_index()].darker(150);
+
   for(int i=0; i < 12;i++){
     f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
   }
@@ -1068,6 +1074,7 @@ void Scene_c3t3_item::compute_intersection(const Primitive& facet)
   draw_triangle_edges(pa, pb, pd);
   draw_triangle_edges(pa, pd, pc);
   draw_triangle_edges(pb, pc, pd);
+
   {
     Tr::Cell_handle nh = facet.id().first->neighbor(facet.id().second);
     if(c3t3().is_in_complex(nh)){
@@ -1107,6 +1114,9 @@ void Scene_c3t3_item::compute_intersections()
 
 void Scene_c3t3_item::compute_elements()
 {
+  positions_poly.clear();
+  normals.clear();
+  f_colors.clear();
   positions_lines.clear();
   s_colors.resize(0);
   s_center.resize(0);
@@ -1177,18 +1187,10 @@ void Scene_c3t3_item::compute_elements()
       const Kernel::Point_3& pb = cell->vertex((index + 2) & 3)->point();
       const Kernel::Point_3& pc = cell->vertex((index + 3) & 3)->point();
 
-      if(cell->subdomain_index() == 0) {
-        QColor color = d->colors[cell->neighbor(index)->subdomain_index()];
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-      }
-      else {
-        QColor color = d->colors[cell->subdomain_index()];
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blue());
-      }
+      QColor color = d->colors[cell->surface_patch_index(index)];
+      f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+      f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+      f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
       if ((index % 2 == 1) == c3t3().is_in_complex(cell)) draw_triangle(pb, pa, pc, false);
       else draw_triangle(pa, pb, pc, false);
       draw_triangle_edges(pa, pb, pc);
@@ -1243,12 +1245,12 @@ void Scene_c3t3_item::compute_elements()
 bool Scene_c3t3_item::load_binary(std::istream& is)
 {
   if(!CGAL::Mesh_3::load_binary_file(is, c3t3())) return false;
-  // if(!c3t3().triangulation().is_valid()) std::cerr << "INVALID\n";
   if(is && frame == 0) {
     frame = new qglviewer::ManipulatedFrame();
   }
   reset_cut_plane();
   if(is.good()) {
+    c3t3_changed();
     changed();
     return true;
   }
@@ -1264,4 +1266,15 @@ Scene_c3t3_item::reset_cut_plane() {
   const float zcenter = static_cast<float>((bbox.zmax+bbox.zmin)/2.);
 
   frame->setPosition(qglviewer::Vec(xcenter, ycenter, zcenter));
+}
+
+void
+Scene_c3t3_item::setColor(QColor c)
+{
+  color_ = c;
+  compute_color_map(c);
+  invalidateOpenGLBuffers();
+// changed() doesn't work because the timerEvent delays it out of the draw
+// function and the intersection is not drawn before the next draw call
+  are_intersection_buffers_filled = false;
 }

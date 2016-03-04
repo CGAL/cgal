@@ -42,7 +42,7 @@ public:
   Scene_c3t3_item();
   Scene_c3t3_item(const C3t3& c3t3);
   ~Scene_c3t3_item();
-
+  void setColor(QColor c);
   bool save_binary(std::ostream& os) const
   {
     return CGAL::Mesh_3::save_binary_file(os, c3t3());
