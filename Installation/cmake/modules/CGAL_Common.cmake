@@ -1,12 +1,3 @@
-# This allows else(), endif(), etc... (without repeating the expression)
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
-if ( "${CMAKE_SOURCE_DIR}" STREQUAL "${PROJECT_SOURCE_DIR}" )
-  set( CGAL_IS_CURRENT_SCRIPT_TOP_LEVEL TRUE )
-else()
-  set( CGAL_IS_CURRENT_SCRIPT_TOP_LEVEL FALSE )
-endif()  
-
 include(CGAL_Macros)
 
 if(RUNNING_CGAL_AUTO_TEST)
@@ -60,8 +51,6 @@ if( NOT CGAL_COMMON_FILE_INCLUDED )
       message(STATUS "Visual Leak Detector (VLD) is not found.")
     endif()
   endif()
-
-  set(CMAKE_COLORMAKEFILE ON)
 
   # set minimal version of some optional libraries:
   set( Eigen3_FIND_VERSION "3.1.0")

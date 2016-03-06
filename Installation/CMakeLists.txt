@@ -761,9 +761,6 @@ cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS)
 
 add_subdirectory(src)
 
-hide_variable(EXECUTABLE_OUTPUT_PATH)
-hide_variable(LIBRARY_OUTPUT_PATH)
-
 #
 # Repeat some problems
 #
@@ -839,8 +836,6 @@ install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake   DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
-install(EXPORT    CGALExports                             DESTINATION ${CGAL_INSTALL_CMAKE_DIR}
-        NAMESPACE CGAL:: )
 
 if ( GMP_IN_AUXILIARY )
   install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )

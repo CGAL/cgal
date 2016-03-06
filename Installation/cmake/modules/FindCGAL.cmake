@@ -14,8 +14,6 @@
 set(CGAL_DIR_DESCRIPTION "directory containing CGALConfig.cmake. This is either the binary directory where CGAL was configured or PREFIX/lib/CGAL for an installation.")
 set(CGAL_DIR_MESSAGE     "CGAL not found.  Set the CGAL_DIR cmake variable or environment variable to the ${CGAL_DIR_DESCRIPTION}")
  
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
- 
 if ( NOT CGAL_DIR )
   
   # Get the system search path as a list.
