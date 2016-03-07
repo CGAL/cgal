@@ -33,7 +33,9 @@
 bool del=true;
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel FK;
-typedef CGAL::Regular_triangulation_euclidean_traits_3<FK> traits;
+// typedef CGAL::Regular_triangulation_euclidean_traits_3<FK> traits;
+
+typedef FK traits;
 
 // Explicit instantiation of the whole class :
 template class CGAL::Regular_triangulation_3<traits>;
@@ -43,9 +45,9 @@ void test_RT()
 {
   typedef RT                 Cls;
 
-  //  _test_cls_regular_3( Cls() );
-  typedef traits::Bare_point Point;
-  typedef traits::Weighted_point Weighted_point;
+  _test_cls_regular_3( Cls() );
+  typedef typename RT::Bare_point                    Point;
+  typedef typename RT::Weighted_point                Weighted_point;
 
   typedef typename Cls::Vertex_handle                Vertex_handle;
   typedef typename Cls::Cell_handle                  Cell_handle; 
@@ -447,7 +449,7 @@ int main()
   typedef CGAL::Spatial_lock_grid_3<
     CGAL::Tag_priority_blocking>                      Lock_ds;
   typedef CGAL::Triangulation_data_structure_3< 
-    CGAL::Triangulation_vertex_base_3<traits>, 
+    CGAL::Triangulation_vertex_base_3<CGAL::Weighted_point_triangulation_traits_3<traits> >, 
     CGAL::Regular_triangulation_cell_base_3<traits>, 
     CGAL::Parallel_tag >	                            Tds_parallel;
   typedef CGAL::Regular_triangulation_3<

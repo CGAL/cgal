@@ -25,19 +25,23 @@
 
 #include <list>
 #include <CGAL/Triangulation_cell_base_3.h>
+#include <CGAL/Weighted_point_triangulation_traits_3.h>
 
 namespace CGAL {
 
 template < typename GT,
-           typename Cb = Triangulation_cell_base_3<GT>,
+           typename Cb = Triangulation_cell_base_3<Weighted_point_triangulation_traits_3<GT> >,
            typename C = std::list<typename GT::Weighted_point_3> >
 class Regular_triangulation_cell_base_3
   : public Cb
 {
+private:
+  typedef Weighted_point_triangulation_traits_3<GT> Wptt_3;
 public:
   static const bool DO_HIDE_POINT = true;
   typedef typename Cb::Vertex_handle                   Vertex_handle;
   typedef typename Cb::Cell_handle                     Cell_handle;
+
 
   typedef GT                                           Geom_traits;
   typedef typename Geom_traits::Weighted_point_3       Point;
@@ -93,7 +97,7 @@ public:
          this->vertex(3)->point());
   }
 
-  typename Geom_traits::Bare_point
+  typename Wptt_3::Bare_point
   weighted_circumcenter(const Geom_traits& gt = Geom_traits()) const
   {
       return gt.construct_weighted_circumcenter_3_object()
