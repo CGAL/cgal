@@ -3,7 +3,7 @@
 \ingroup PkgCombinatorialMapsConcepts
 \cgalConcept
 
-The concept `Dart` defines a <I>d</I>-dimensional dart. A dart mainly
+The concept `Dart` defines a <I>d</I>-dimensional dart for combinatorial maps. A dart mainly
 stores handles to the darts linked with itself by \f$ \beta_i\f$, \f$ \forall\f$<I>i</I>,
 0\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>. Moreover, it stores also handles to each
 non void attribute associated with itself.
