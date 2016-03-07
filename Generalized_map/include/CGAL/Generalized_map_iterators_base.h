@@ -63,6 +63,7 @@ namespace CGAL {
 
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map Map;
+    typedef typename Base::size_type size_type;
 
     typedef Tag_true Use_mark;
 

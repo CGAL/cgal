@@ -2921,6 +2921,10 @@ namespace CGAL {
     /// Number of marked darts for each used marks.
     mutable size_type mnb_marked_darts[NB_MARKS];
 
+    /// Automatic management of the attributes:
+    /// true means attributes are always maintained updated during operations.
+    bool automatic_attributes_management;
+
     /// Tuple of unary and binary functors (for all non void attributes).
     typename Helper::Split_functors m_onsplit_functors;
     typename Helper::Merge_functors m_onmerge_functors;

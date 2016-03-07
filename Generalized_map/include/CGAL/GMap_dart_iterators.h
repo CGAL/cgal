@@ -560,6 +560,7 @@ namespace CGAL {
 
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map Map;
+    typedef typename Map::size_type size_type;
 
     typedef Tag_false Use_mark;      ///< True iff this iterator uses mark
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
@@ -599,6 +600,8 @@ namespace CGAL {
 
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map         Map;
+    typedef typename Map::size_type size_type;
+
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
 
     CGAL_static_assertion( Bi<Bj && Bj<Bk && Bk<=Map::dimension );
@@ -629,6 +632,8 @@ namespace CGAL {
 
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map Map;
+    typedef typename Map::size_type size_type;
+
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
 
   public:
@@ -650,6 +655,8 @@ namespace CGAL {
 
     typedef typename Map::Dart_handle Dart_handle;
     typedef typename Base::Use_mark Use_mark; ///< True iff this iterator uses mark
+    typedef typename Map::size_type size_type;
+
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
 
     /// Main constructor.
@@ -730,6 +737,7 @@ namespace CGAL {
 
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map Map;
+    typedef typename Map::size_type size_type;
 
     typedef Tag_true Use_mark; ///< True iff this iterator uses mark
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic

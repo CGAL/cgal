@@ -32,19 +32,19 @@ namespace CGAL
    */
 
   /** Test if an i-cell can be removed.
-   *  An i-cell can be removed if i==CMap::dimension or i==CMap::dimension-1,
+   *  An i-cell can be removed if i==GMap::dimension or i==GMap::dimension-1,
    *     or if there are at most two (i+1)-cell incident to it.
    * @param adart a dart of the i-cell.
    * @return true iff the i-cell can be removed.
    */
-  template <class CMap, unsigned int i, unsigned int nmi=CMap::dimension-i>
+  template <class GMap, unsigned int i, unsigned int nmi=GMap::dimension-i>
   struct Is_removable_functor
   {
-    static bool run(const CMap& amap, typename CMap::Dart_const_handle adart)
+    static bool run(const GMap& amap, typename GMap::Dart_const_handle adart)
     {
       // TODO? Optimisation for dim-2, and to not test all the darts of the cell?
       bool res = true;
-      for ( CGAL::GMap_dart_const_iterator_of_cell<CMap,i> it(amap, adart);
+      for ( CGAL::GMap_dart_const_iterator_of_cell<GMap,i> it(amap, adart);
             res && it.cont(); ++it )
       {
         if (amap.template alpha<i+2,i+1>(it)!=amap.template alpha<i+1,i+2>(it))
@@ -53,29 +53,29 @@ namespace CGAL
       return res;
     }
   };
-  // Specialization for i=CMap::dimension
-  template <class CMap, unsigned int i>
-  struct Is_removable_functor<CMap, i, 0>
+  // Specialization for i=GMap::dimension
+  template <class GMap, unsigned int i>
+  struct Is_removable_functor<GMap, i, 0>
   {
-    static bool run(const CMap&, typename CMap::Dart_const_handle)
+    static bool run(const GMap&, typename GMap::Dart_const_handle)
     { return true; }
   };
-  // Specialization for i=CMap::dimension-1
-  template <class CMap, unsigned int i>
-  struct Is_removable_functor<CMap, i, 1>
+  // Specialization for i=GMap::dimension-1
+  template <class GMap, unsigned int i>
+  struct Is_removable_functor<GMap, i, 1>
   {
-    static bool run(const CMap&, typename CMap::Dart_const_handle)
+    static bool run(const GMap&, typename GMap::Dart_const_handle)
     { return true; }
   };
   /** Test if an i-cell can be removed.
-   *  An i-cell can be removed if i==CMap::dimension or i==CMap::dimension-1,
+   *  An i-cell can be removed if i==GMap::dimension or i==GMap::dimension-1,
    *     or if there are at most two (i+1)-cell incident to it.
    * @param adart a dart of the i-cell.
    * @return true iff the i-cell can be removed.
    */
-  template < class CMap, unsigned int i >
-  bool is_removable(const CMap& amap, typename CMap::Dart_const_handle adart)
-  { return CGAL::Is_removable_functor<CMap, i>::run(amap,adart); }
+  template < class GMap, unsigned int i >
+  bool is_removable(const GMap& amap, typename GMap::Dart_const_handle adart)
+  { return CGAL::Is_removable_functor<GMap, i>::run(amap,adart); }
 
   /** Remove an i-cell, 0<=i<dimension, and merge eventually both incident
    *  (i+1)-cells.
@@ -83,26 +83,26 @@ namespace CGAL
    *  @param adart a dart of the i-cell to remove.
    *  @return the number of deleted darts.
    */
-  template<class CMap, unsigned int i, unsigned int nmi>
+  template<class GMap, unsigned int i, unsigned int nmi>
   struct Remove_cell_functor
   {
-    static size_t run(CMap& amap, typename CMap::Dart_handle adart)
+    static size_t run(GMap& amap, typename GMap::Dart_handle adart)
     {
-      CGAL_static_assertion ( i<CMap::dimension );
-      CGAL_assertion( (is_removable<CMap,i>(amap, adart)) );
+      CGAL_static_assertion ( i<GMap::dimension );
+      CGAL_assertion( (is_removable<GMap,i>(amap, adart)) );
 
       size_t res = 0;
 
-      typename CMap::Dart_handle d1, d2;
-      typename CMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
+      typename GMap::Dart_handle d1, d2;
+      typename GMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
-      typename CMap::size_type mark = amap.get_new_mark();
-      typename CMap::size_type mark_modified_darts = amap.get_new_mark();
+      typename GMap::size_type mark = amap.get_new_mark();
+      typename GMap::size_type mark_modified_darts = amap.get_new_mark();
 
-      std::deque<typename CMap::Dart_handle> to_erase;
+      std::deque<typename GMap::Dart_handle> to_erase;
 
       // First we store and mark all the darts of the i-cell to remove.
-      for ( CGAL::GMap_dart_iterator_basic_of_cell<CMap,i> it(amap,adart,mark);
+      for ( CGAL::GMap_dart_iterator_basic_of_cell<GMap,i> it(amap,adart,mark);
             it.cont(); ++it )
       {
         to_erase.push_back(it);
@@ -116,16 +116,16 @@ namespace CGAL
       {
         // We group the two (i+1)-cells incident if they exist.
         if ( dg1!=amap.null_handle )
-          CGAL::internal::Group_attribute_functor_run<CMap, i+1>::
+          CGAL::internal::Group_attribute_functor_run<GMap, i+1>::
               run(&amap, dg1, dg2);
       }
 
       // During the operation, we store in modified_darts the darts modified
       // to test after the loop the non void attributes that are split.
-      std::deque<typename CMap::Dart_handle> modified_darts;
+      std::deque<typename GMap::Dart_handle> modified_darts;
 
       // For each dart of the i-cell, we modify i-links of neighbors.
-      typename std::deque<typename CMap::Dart_handle>::iterator it =
+      typename std::deque<typename GMap::Dart_handle>::iterator it =
           to_erase.begin();
       for ( ; it!=to_erase.end(); ++it )
       {
@@ -159,8 +159,8 @@ namespace CGAL
       {
         // We test the split of all the incident cells for all the non
         // void attributes.
-        CMap::Helper::template Foreach_enabled_attributes_except
-          <CGAL::internal::Test_split_attribute_functor<CMap,i>, i>::
+        GMap::Helper::template Foreach_enabled_attributes_except
+          <CGAL::internal::Test_split_attribute_functor<GMap,i>, i>::
           run(&amap, modified_darts, mark_modified_darts);
       }
 
@@ -197,19 +197,19 @@ namespace CGAL
    *  @param adart a dart of the volume to remove.
    *  @return the number of deleted darts.
    */
-  template<class Gmap,unsigned int i>
-  struct Remove_cell_functor<Gmap,i,0>
+  template<class GMap,unsigned int i>
+  struct Remove_cell_functor<GMap,i,0>
   {
-    static size_t run(Gmap& amap, typename Gmap::Dart_handle adart)
+    static size_t run(GMap& amap, typename GMap::Dart_handle adart)
     {
-      typename CMap::size_type mark = amap.get_new_mark();
-      std::deque<typename Gmap::Dart_handle> to_erase;
+      typename GMap::size_type mark = amap.get_new_mark();
+      std::deque<typename GMap::Dart_handle> to_erase;
       size_t res = 0;
 
-      std::deque<typename Gmap::Dart_handle> modified_darts;
+      std::deque<typename GMap::Dart_handle> modified_darts;
 
       // We mark all the darts of the d-cell.
-      for ( CGAL::GMap_dart_iterator_basic_of_cell<Gmap,Gmap::dimension>
+      for ( CGAL::GMap_dart_iterator_basic_of_cell<GMap,GMap::dimension>
             it(amap,adart,mark); it.cont(); ++it )
       {
         to_erase.push_back(it);
@@ -218,18 +218,18 @@ namespace CGAL
       }
 
       // We unlink all the darts of the volume for alpha-d.
-      typename std::deque<typename Gmap::Dart_handle>::iterator
+      typename std::deque<typename GMap::Dart_handle>::iterator
         it = to_erase.begin();
       for ( it = to_erase.begin(); it != to_erase.end(); ++it )
       {
-        if ( !amap.template is_free<Gmap::dimension>(*it) &&
-             !amap.is_marked(amap.template alpha<Gmap::dimension>(*it), mark) )
+        if ( !amap.template is_free<GMap::dimension>(*it) &&
+             !amap.is_marked(amap.template alpha<GMap::dimension>(*it), mark) )
         {
           if (amap.are_attributes_automatically_managed())
           {
-            modified_darts.push_back(amap.template beta<CMap::dimension>(*it));
+            modified_darts.push_back(amap.template alpha<GMap::dimension>(*it));
           }
-          amap.template unlink_alpha<Gmap::dimension>(*it);
+          amap.template unlink_alpha<GMap::dimension>(*it);
         }
       }
 
@@ -237,9 +237,9 @@ namespace CGAL
       {
         // We test the split of all the incident cells for all the non
         // void attributes.
-        Gmap::Helper::template Foreach_enabled_attributes_except
-            <CGAL::internal::Test_split_attribute_functor<Gmap,i>,
-            Gmap::dimension>::run(&amap, modified_darts);
+        GMap::Helper::template Foreach_enabled_attributes_except
+            <CGAL::internal::Test_split_attribute_functor<GMap,i>,
+            GMap::dimension>::run(&amap, modified_darts);
       }
 
       // We remove all the darts of the d-cell.
@@ -262,11 +262,11 @@ namespace CGAL
    * @param adart a dart of the i-cell to remove.
    * @return the number of deleted darts.
    */
-  template< class Gmap, unsigned int i >
-  size_t remove_cell(Gmap& amap, typename Gmap::Dart_handle adart)
+  template< class GMap, unsigned int i >
+  size_t remove_cell(GMap& amap, typename GMap::Dart_handle adart)
   {
     return
-        CGAL::Remove_cell_functor<Gmap,i,Gmap::dimension-i>::run(amap,adart);
+        CGAL::Remove_cell_functor<GMap,i,GMap::dimension-i>::run(amap,adart);
   }
 
   /** Test if an i-cell can be contracted.
@@ -275,14 +275,14 @@ namespace CGAL
    * @param adart a dart of the i-cell.
    * @return true iff the i-cell can be contracted.
    */
-  template <class Gmap, unsigned int i>
+  template <class GMap, unsigned int i>
   struct Is_contractible_functor
   {
-    static bool run(const Gmap& amap, typename Gmap::Dart_const_handle adart)
+    static bool run(const GMap& amap, typename GMap::Dart_const_handle adart)
     {
       // TODO ? Optimisation possible to not test all the darts of the cell ?
       bool res = true;
-      for ( CGAL::GMap_dart_const_iterator_of_cell<Gmap,i> it(amap, adart);
+      for ( CGAL::GMap_dart_const_iterator_of_cell<GMap,i> it(amap, adart);
             res && it.cont(); ++it )
       {
         if (amap.template alpha<i-2,i-1>(it)!=amap.template alpha<i-1,i-2>(it))
@@ -292,17 +292,17 @@ namespace CGAL
     }
   };
   // Specialization for i=0
-  template <class Gmap>
-  struct Is_contractible_functor<Gmap, 0>
+  template <class GMap>
+  struct Is_contractible_functor<GMap, 0>
   {
-    static bool run(const Gmap&, typename Gmap::Dart_const_handle)
+    static bool run(const GMap&, typename GMap::Dart_const_handle)
     { return false; }
   };
   // Specialization for i=1
-  template <class Gmap>
-  struct Is_contractible_functor<Gmap, 1>
+  template <class GMap>
+  struct Is_contractible_functor<GMap, 1>
   {
-    static bool run(const Gmap&, typename Gmap::Dart_const_handle)
+    static bool run(const GMap&, typename GMap::Dart_const_handle)
     { return true; }
   };
   /** Test if an i-cell can be contracted.
@@ -311,9 +311,9 @@ namespace CGAL
    * @param adart a dart of the i-cell.
    * @return true iff the i-cell can be contracted.
    */
-  template < class Gmap, unsigned int i >
-  bool is_contractible(const Gmap& amap, typename Gmap::Dart_const_handle adart)
-  { return CGAL::Is_contractible_functor<Gmap, i>::run(amap,adart); }
+  template < class GMap, unsigned int i >
+  bool is_contractible(const GMap& amap, typename GMap::Dart_const_handle adart)
+  { return CGAL::Is_contractible_functor<GMap, i>::run(amap,adart); }
 
   /** Contract an i-cell, 1<=i<=dimension, and merge eventually both incident
    *  (i-1)-cells.
@@ -321,25 +321,25 @@ namespace CGAL
    * @param adart a dart of the i-cell to contract.
    * @return the number of deleted darts.
    */
-  template<class Gmap, unsigned int i>
+  template<class GMap, unsigned int i>
   struct Contract_cell_functor
   {
-    static size_t run(Gmap& amap, typename Gmap::Dart_handle adart)
+    static size_t run(GMap& amap, typename GMap::Dart_handle adart)
     {
-      CGAL_static_assertion ( 1<=i && i<=Gmap::dimension );
-      CGAL_assertion( (is_contractible<Gmap,i>(amap, adart)) );
+      CGAL_static_assertion ( 1<=i && i<=GMap::dimension );
+      CGAL_assertion( (is_contractible<GMap,i>(amap, adart)) );
 
       size_t res = 0;
 
-      typename Gmap::Dart_handle d1, d2;
-      typename Gmap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
+      typename GMap::Dart_handle d1, d2;
+      typename GMap::Dart_handle dg1=amap.null_handle, dg2=amap.null_handle;
 
-      typename CMap::size_type mark = amap.get_new_mark();
-      typename CMap::size_type mark_modified_darts = amap.get_new_mark();
+      typename GMap::size_type mark = amap.get_new_mark();
+      typename GMap::size_type mark_modified_darts = amap.get_new_mark();
 
       // First we store and mark all the darts of the i-cell to contract.
-      std::deque<typename Gmap::Dart_handle> to_erase;
-      for ( CGAL::GMap_dart_iterator_basic_of_cell<Gmap,i> it(amap,adart,mark);
+      std::deque<typename GMap::Dart_handle> to_erase;
+      for ( CGAL::GMap_dart_iterator_basic_of_cell<GMap,i> it(amap,adart,mark);
             it.cont(); ++it )
       {
         to_erase.push_back(it);
@@ -353,16 +353,16 @@ namespace CGAL
       {
          // We group the two (i-1)-cells incident if they exist.
         if ( dg1!=amap.null_handle )
-           CGAL::internal::Group_attribute_functor_run<Gmap,i-1>::
+           CGAL::internal::Group_attribute_functor_run<GMap,i-1>::
                run(&amap, dg1, dg2);
       }
 
       // During the operation, we store in modified_darts the darts modified
       // to test after the loop the non void attributes that are split.
-      std::deque<typename Gmap::Dart_handle> modified_darts;
+      std::deque<typename GMap::Dart_handle> modified_darts;
 
       // For each dart of the i-cell, we modify i-links of neighbors.
-      typename std::deque<typename Gmap::Dart_handle>::iterator it =
+      typename std::deque<typename GMap::Dart_handle>::iterator it =
           to_erase.begin();
       for ( ; it!=to_erase.end(); ++it )
       {
@@ -393,8 +393,8 @@ namespace CGAL
       {
         // We test the split of all the incident cells for all the non
         // void attributes.
-        Gmap::Helper::template Foreach_enabled_attributes_except
-          <CGAL::internal::Test_split_attribute_functor<Gmap,i>, i>::
+        GMap::Helper::template Foreach_enabled_attributes_except
+          <CGAL::internal::Test_split_attribute_functor<GMap,i>, i>::
           run(&amap, modified_darts, mark_modified_darts);
       }
 
@@ -430,9 +430,9 @@ namespace CGAL
    * @param adart a dart of the i-cell to remove.
    * @return the number of deleted darts.
    */
-  template < class Gmap, unsigned int i >
-  size_t contract_cell(Gmap& amap, typename Gmap::Dart_handle adart)
-  { return CGAL::Contract_cell_functor<Gmap,i>::run(amap,adart); }
+  template < class GMap, unsigned int i >
+  size_t contract_cell(GMap& amap, typename GMap::Dart_handle adart)
+  { return CGAL::Contract_cell_functor<GMap,i>::run(amap,adart); }
 
 } // namespace CGAL
 

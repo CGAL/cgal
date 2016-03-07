@@ -45,7 +45,7 @@ namespace CGAL {
  * n is the dimension of the space (2 for 2D, 3 for 3D...)
  * Refs the ref class
  */
-template <int d, typename Refs>
+template <unsigned int d, typename Refs>
 struct GMap_dart
 {
   template < unsigned int, class, class, class, class >
