@@ -323,7 +323,6 @@ if(!poly)
         }
 
     }
-
     //The points
     {
         for(Selection_set_vertex::iterator
@@ -410,6 +409,7 @@ void Scene_polyhedron_selection_item::draw_points(CGAL::Three::Viewer_interface*
 
 }
 
+
 void Scene_polyhedron_selection_item::inverse_selection()
 {
   switch(k_ring_selector.active_handle_type)
@@ -444,4 +444,359 @@ void Scene_polyhedron_selection_item::inverse_selection()
   invalidateOpenGLBuffers();
   QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
   v->update();
+}
+
+void Scene_polyhedron_selection_item::set_operation_mode(int mode)
+{
+  switch(mode)
+  {
+  case -1:
+    //restore original selection_type
+    set_active_handle_type(original_sel_mode);
+    break;
+    //Join vertex
+  case 0:
+    //set the selection type to Edge
+    set_active_handle_type(static_cast<Active_handle::Type>(2));
+    break;
+    //Split vertex
+  case 1:
+    //set the selection type to Vertex
+    set_active_handle_type(static_cast<Active_handle::Type>(0));
+    break;
+    //Split edge
+  case 2:
+    //set the selection type to Edge
+    set_active_handle_type(static_cast<Active_handle::Type>(2));
+    break;
+    //Join face
+  case 3:
+    //set the selection type to Edge
+    set_active_handle_type(static_cast<Active_handle::Type>(2));
+    break;
+    //Split face
+  case 4:
+    //set the selection type to Vertex
+    set_active_handle_type(static_cast<Active_handle::Type>(0));
+    break;
+    //Add edge
+  case 5:
+    //set the selection type to Vertex
+    set_active_handle_type(static_cast<Active_handle::Type>(0));
+    break;
+    //Collapse edge
+  case 6:
+    //set the selection type to Edge
+    set_active_handle_type(static_cast<Active_handle::Type>(2));
+    break;
+    //Flip edge
+  case 7:
+    //set the selection type to Edge
+    set_active_handle_type(static_cast<Active_handle::Type>(2));
+    break;
+    //Add center vertex
+  case 8:
+    //set the selection type to Facet
+    set_active_handle_type(static_cast<Active_handle::Type>(1));
+    break;
+    //Remove center vertex
+  case 9:
+    //set the selection type to vertex
+    set_active_handle_type(static_cast<Active_handle::Type>(0));
+    break;
+    //Add vertex and face to border
+  case 10:
+    //set the selection type to vertex
+    set_active_handle_type(static_cast<Active_handle::Type>(0));
+    break;
+    //Add face to border
+  case 11:
+    //set the selection type to vertex
+    set_active_handle_type(static_cast<Active_handle::Type>(0));
+    break;
+  default:
+    break;
+  }
+  operation_mode = mode;
+}
+
+bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron::Vertex_handle>& selection)
+{
+  static bool first_selected = false;
+  static Vertex_handle s;
+  static Polyhedron::Halfedge_handle t;
+  Selection_traits<Vertex_handle, Scene_polyhedron_selection_item> tr(this);
+  switch(operation_mode)
+  {
+  //classic selection
+  case -1:
+  {
+
+    bool any_change = false;
+    if(is_insert) {
+      BOOST_FOREACH(Vertex_handle vh, selection)
+          any_change |= tr.container().insert(vh).second;
+    }
+    else{
+      BOOST_FOREACH(Vertex_handle vh, selection)
+          any_change |= (tr.container().erase(vh)!=0);
+    }
+    if(any_change) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
+    return any_change;
+    break;
+  }
+  //Split vertex
+  case 1:
+    BOOST_FOREACH(Vertex_handle vh, selection)
+    {
+      Polyhedron::Halfedge_handle hhandle = polyhedron()->split_vertex(vh->halfedge(),vh->halfedge()->next()->opposite());
+
+      hhandle->vertex()->point() = vh->point();
+    }
+    break;
+    //Split face
+  case 4:
+    if(!first_selected)
+    {
+      BOOST_FOREACH(Vertex_handle vh, selection)
+      {
+        s = vh;
+      }
+      first_selected = true;
+      selected_vertices.insert(s);
+    }
+    else
+    {
+      BOOST_FOREACH(Vertex_handle vh, selection)
+      {
+        CGAL::Euler::split_face(s->halfedge(),vh->halfedge(), *poly);
+      }
+      first_selected = false;
+      selected_vertices.erase(s);
+    }
+    break;
+    //Add edge
+  case 5:
+    if(!first_selected)
+    {
+      BOOST_FOREACH(Vertex_handle vh, selection)
+      {
+        s = vh;
+        first_selected = true;
+      }
+      selected_vertices.insert(s);
+    }
+    else
+    {
+      BOOST_FOREACH(Vertex_handle vh, selection)
+      {
+       CGAL::Euler::add_edge(s,vh,*poly);
+      }
+      first_selected = false;
+      selected_vertices.erase(s);
+    }
+    break;
+    //Remove center vertex
+  case 9:
+    BOOST_FOREACH(Vertex_handle vh, selection)
+    {
+       CGAL::Euler::remove_center_vertex(vh->halfedge(),*poly);
+    }
+    //Avoids a segfault in Scene_polyhedron_item::select()
+    Q_EMIT skipEmits(true);
+    break;
+    //Add vertex and face to border
+  case 10:
+    if(!first_selected)
+    {
+      BOOST_FOREACH(Vertex_handle vh, selection)
+      {
+        Polyhedron::Halfedge_around_vertex_circulator hc = vh->vertex_begin();
+        Polyhedron::Halfedge_around_vertex_circulator end(hc);
+        CGAL_For_all(hc, end)
+        {
+          if(hc->is_border())
+          {
+            t = hc;
+            break;
+          }
+        }
+          first_selected = true;
+           selected_vertices.insert(t->vertex());
+        }
+      }
+    else
+    {
+      BOOST_FOREACH(Vertex_handle vh, selection)
+      {
+        Polyhedron::Halfedge_around_vertex_circulator hc = vh->vertex_begin();
+        Polyhedron::Halfedge_around_vertex_circulator end(hc);
+        CGAL_For_all(hc, end)
+        {
+         if(hc->is_border())
+         {
+          CGAL::Euler::add_vertex_and_face_to_border(t,hc, *poly);
+          break;
+         }
+        }
+      }
+      first_selected = false;
+      selected_vertices.erase(t->vertex());
+    }
+    break;
+    //Add face to border
+  case 11:
+    if(!first_selected)
+    {
+      BOOST_FOREACH(Vertex_handle vh, selection)
+      {
+        Polyhedron::Halfedge_around_vertex_circulator hc = vh->vertex_begin();
+        Polyhedron::Halfedge_around_vertex_circulator end(hc);
+        CGAL_For_all(hc, end)
+        {
+          if(hc->is_border())
+          {
+            t = hc;
+            break;
+          }
+        }
+          first_selected = true;
+          selected_vertices.insert(t->vertex());
+        }
+      }
+    else
+    {
+      BOOST_FOREACH(Vertex_handle vh, selection)
+      {
+        Polyhedron::Halfedge_around_vertex_circulator hc = vh->vertex_begin();
+        Polyhedron::Halfedge_around_vertex_circulator end(hc);
+        CGAL_For_all(hc, end)
+        {
+         if(hc->is_border())
+         {
+          CGAL::Euler::add_face_to_border(t,hc, *poly);
+          break;
+         }
+        }
+      }
+      first_selected = false;
+      selected_vertices.erase(t->vertex());
+    }
+    break;
+}
+polyhedron_item()->invalidateOpenGLBuffers();
+invalidateOpenGLBuffers();
+}
+
+bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descriptor>& selection)
+{
+Selection_traits<edge_descriptor, Scene_polyhedron_selection_item> tr(this);
+switch(operation_mode)
+{
+//classic selection
+case -1:
+{
+
+  bool any_change = false;
+  if(is_insert) {
+    BOOST_FOREACH(edge_descriptor ed, selection)
+        any_change |= tr.container().insert(ed).second;
+  }
+  else{
+    BOOST_FOREACH(edge_descriptor ed, selection)
+        any_change |= (tr.container().erase(ed)!=0);
+  }
+  if(any_change) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
+  return any_change;
+  break;
+}
+  //Join vertex
+case 0:
+  BOOST_FOREACH(edge_descriptor ed, selection)
+  {
+    polyhedron()->join_vertex(halfedge(ed, *polyhedron()));
+  }
+  break;
+  //Split edge
+case 2:
+  BOOST_FOREACH(edge_descriptor ed, selection)
+  {
+    Polyhedron::Point_3 a(halfedge(ed, *poly)->vertex()->point()),b(halfedge(ed, *poly)->opposite()->vertex()->point());
+    Polyhedron::Halfedge_handle hhandle = polyhedron()->split_edge(halfedge(ed, *poly));
+    Polyhedron::Point_3 p((b.x()+a.x())/2.0, (b.y()+a.y())/2.0,(b.z()+a.z())/2.0);
+
+    hhandle->vertex()->point() = p;
+
+  }
+  break;
+  //Join face
+case 3:
+  BOOST_FOREACH(edge_descriptor ed, selection)
+  {
+    polyhedron()->join_facet(halfedge(ed, *polyhedron()));
+  }
+  break;
+  //Collapse edge
+case 6:
+  BOOST_FOREACH(edge_descriptor ed, selection)
+  {
+    CGAL::Euler::collapse_edge(ed, *poly);
+  }
+  break;
+  //Flip edge
+case 7:
+  BOOST_FOREACH(edge_descriptor ed, selection)
+  {
+    polyhedron()->flip_edge(ed.halfedge());
+  }
+  break;
+}
+polyhedron_item()->invalidateOpenGLBuffers();
+}
+
+bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron::Facet_handle>& selection)
+{
+  Selection_traits<Facet_handle, Scene_polyhedron_selection_item> tr(this);
+  switch(operation_mode)
+  {
+  //classic selection
+  case -1:
+  {
+
+    bool any_change = false;
+    if(is_insert) {
+      BOOST_FOREACH(Facet_handle fh, selection)
+          any_change |= tr.container().insert(fh).second;
+    }
+    else{
+      BOOST_FOREACH(Facet_handle fh, selection)
+          any_change |= (tr.container().erase(fh)!=0);
+    }
+    if(any_change) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
+    return any_change;
+    break;
+  }
+    //Add center vertex
+  case 8:
+    BOOST_FOREACH(Facet_handle fh, selection)
+    {
+      Polyhedron::Halfedge_around_facet_circulator hafc = fh->facet_begin();
+      Polyhedron::Halfedge_around_facet_circulator end = hafc;
+
+      double x(0), y(0), z(0);
+      int total(0);
+      CGAL_For_all(hafc, end)
+      {
+        x+=hafc->vertex()->point().x(); y+=hafc->vertex()->point().y(); z+=hafc->vertex()->point().z();
+        total++;
+      }
+      Polyhedron::Halfedge_handle hhandle = CGAL::Euler::add_center_vertex(fh->facet_begin(), *poly);
+      if(total !=0)
+        hhandle->vertex()->point() = Polyhedron::Point_3(x/(double)total, y/(double)total, z/(double)total);
+
+
+    }
+    break;
+  }
+  polyhedron_item()->invalidateOpenGLBuffers();
 }

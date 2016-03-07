@@ -26,6 +26,7 @@
 
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
+#include <CGAL/boost/graph/Euler_operations.h>
 
 namespace PMP = CGAL::Polygon_mesh_processing;
 
@@ -241,6 +242,7 @@ protected:
       SLOT(selected(const std::set<Polyhedron::Facet_handle>&)));
     connect(&k_ring_selector, SIGNAL(selected(const std::set<edge_descriptor>&)), this,
       SLOT(selected(const std::set<edge_descriptor>&)));
+    connect(this, SIGNAL(skipEmits(bool)), poly_item, SLOT(set_skip_emits(bool)));
 
     connect(&k_ring_selector, SIGNAL(endSelection()), this,SLOT(endSelection()));
     connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
@@ -792,6 +794,7 @@ public:
   }
 
 Q_SIGNALS:
+  void skipEmits(bool);
   void simplicesSelected(CGAL::Three::Scene_item*);
 
 public Q_SLOTS:
@@ -800,65 +803,8 @@ public Q_SLOTS:
     original_sel_mode = get_active_handle_type();
   }
 
-  void set_operation_mode(int mode)
-  {
-    switch(mode)
-    {
-    case -1:
-      //restore original selection_type
-      set_active_handle_type(original_sel_mode);
-      break;
-      //Join vertex
-    case 0:
-      //set the selection type to Edge
-      set_active_handle_type(static_cast<Active_handle::Type>(2));
-    break;
-    //Split vertex
-    case 1:
-      //set the selection type to Vertex
-      set_active_handle_type(static_cast<Active_handle::Type>(0));
-      break;
-      //Split edge
-    case 2:
-      //set the selection type to Edge
-      set_active_handle_type(static_cast<Active_handle::Type>(2));
-      break;
-      //Join face
-    case 3:
-      //set the selection type to Edge
-      set_active_handle_type(static_cast<Active_handle::Type>(2));
-      break;
-      //Split face
-    case 4:
-      //set the selection type to Face
-      set_active_handle_type(static_cast<Active_handle::Type>(1));
-      break;
-      //Add edge
-    case 5:
-      break;
-      //Collapse edge
-    case 6:
-      break;
-      //Flip edge
-    case 7:
-      break;
-      //Add center vertex
-    case 8:
-      break;
-      //Remove center vertex
-    case 9:
-      break;
-      //Add vertex and face to border
-    case 10:
-      break;
-      //Add face to border
-    case 11:
-      break;
-    default:
-      break;
-  }
-    operation_mode = mode;
-  }
+  void set_operation_mode(int mode);
+
   void invalidateOpenGLBuffers() {
 
     // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
@@ -918,136 +864,21 @@ protected:
       tr.container().insert(*it);
     }
   }
-  void join_vertex(Scene_polyhedron_selection_item::Vertex_handle vh)
-  {
-    std::cerr<<"Cannot join from a vertex. Please select an edge."<<std::endl;
-  }
-  void join_vertex(Scene_polyhedron_selection_item::edge_descriptor ed)
-  {
-    polyhedron()->join_vertex(halfedge(ed, *polyhedron()));
-  }
-  void join_vertex(Scene_polyhedron_selection_item::Facet_handle fh)
-  {
-    std::cerr<<" Please select a vertex or the operation \"Join face\"."<<std::endl;
-  }
-
-  void join_face(Scene_polyhedron_selection_item::Vertex_handle vh)
-  {
-  }
-  void join_face(Scene_polyhedron_selection_item::edge_descriptor ed)
-  {
-    polyhedron()->join_facet(halfedge(ed, *polyhedron()));
-  }
-  void join_face(Scene_polyhedron_selection_item::Facet_handle fh)
-  {
-  }
-
-  void split(Scene_polyhedron_selection_item::Vertex_handle vh)
-  {
-
-    Polyhedron::Point_3 a(vh->halfedge()->vertex()->point()),b(vh->halfedge()->opposite()->vertex()->point());
-    Polyhedron::Halfedge_handle hhandle = polyhedron()->split_vertex(vh->halfedge(),vh->halfedge()->next()->opposite());
-    Polyhedron::Point_3 p((b.x()+a.x())/2.0, (b.y()+a.y())/2.0,(b.z()+a.z())/2.0);
-
-    hhandle->vertex()->point() = p;
-  }
-  void split(Scene_polyhedron_selection_item::edge_descriptor ed)
-  {
-    Polyhedron::Point_3 a(halfedge(ed, *poly)->vertex()->point()),b(halfedge(ed, *poly)->opposite()->vertex()->point());
-    Polyhedron::Halfedge_handle hhandle = polyhedron()->split_edge(halfedge(ed, *poly));
-    Polyhedron::Point_3 p((b.x()+a.x())/2.0, (b.y()+a.y())/2.0,(b.z()+a.z())/2.0);
-
-    hhandle->vertex()->point() = p;
-  }
-  void split(Scene_polyhedron_selection_item::Facet_handle fh)
-  {
-     polyhedron()->split_facet(fh->halfedge(),fh->halfedge()->next()->next());
-  }
 
 
+//Generic class
   template<typename HandleRange>
   bool treat_selection(const HandleRange& selection)
   {
-    typedef typename HandleRange::value_type HandleType;
-    Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
-    switch(operation_mode)
-    {
-    //classic selection
-    case -1:
-    {
-
-      bool any_change = false;
-      if(is_insert) {
-        BOOST_FOREACH(HandleType h, selection)
-            any_change |= tr.container().insert(h).second;
-      }
-      else{
-        BOOST_FOREACH(HandleType h, selection)
-            any_change |= (tr.container().erase(h)!=0);
-      }
-      if(any_change) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
-      return any_change;
-      break;
-    }
-      //Join vertex
-    case 0:
-      BOOST_FOREACH(HandleType h, selection)
-      {
-        join_vertex(h);
-      }
-    break;
-    //Split vertex
-    case 1:
-      BOOST_FOREACH(HandleType h, selection)
-      {
-        split(h);
-      }
-      break;
-      //Split edge
-    case 2:
-      BOOST_FOREACH(HandleType h, selection)
-      {
-        split(h);
-      }
-      break;
-      //Join face
-    case 3:
-      BOOST_FOREACH(HandleType h, selection)
-      {
-        join_face(h);
-      }
-      break;
-      //Split face
-    case 4:
-      BOOST_FOREACH(HandleType h, selection)
-      {
-        split(h);
-      }
-      break;
-      //Add edge
-    case 5:
-      break;
-      //Collapse edge
-    case 6:
-      break;
-      //Flip edge
-    case 7:
-      break;
-      //Add center vertex
-    case 8:
-      break;
-      //Remove center vertex
-    case 9:
-      break;
-      //Add vertex and face to border
-    case 10:
-      break;
-      //Add face to border
-    case 11:
-      break;
-  }
-polyhedron_item()->invalidateOpenGLBuffers();
+    qDebug()<<"ERROR : unknown range";
+return false;
 }
+
+
+//Specialization for set<Vertex_handle>
+  bool treat_selection(const std::set<Polyhedron::Vertex_handle>& selection);
+  bool treat_selection(const std::set<edge_descriptor>& selection);
+  bool treat_selection(const std::set<Polyhedron::Facet_handle>& selection);
 
   Facet_handle face(Facet_handle fh)
   { return fh; }
@@ -1084,6 +915,7 @@ polyhedron_item()->invalidateOpenGLBuffers();
       treat_selection(selection);
     }
   }
+
 
 public:
   Is_selected_property_map<edge_descriptor>

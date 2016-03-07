@@ -702,6 +702,8 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     nb_lines = 0;
     nb_f_lines = 0;
     invalidate_stats();
+    skip_emits = false;
+    init();
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
@@ -718,6 +720,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     nb_facets = 0;
     nb_lines = 0;
     nb_f_lines = 0;
+    skip_emits = false;
     init();
     invalidateOpenGLBuffers();
 }
@@ -738,6 +741,7 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     nb_facets = 0;
     nb_lines = 0;
     nb_f_lines = 0;
+    skip_emits = false;
     invalidateOpenGLBuffers();
 }
 
@@ -1137,106 +1141,110 @@ Scene_polyhedron_item::select(double orig_x,
                               double dir_y,
                               double dir_z)
 {
-    if(facet_picking_m) {
-        typedef Input_facets_AABB_tree Tree;
-        typedef Tree::Object_and_primitive_id Object_and_primitive_id;
+  if(facet_picking_m) {
+    typedef Input_facets_AABB_tree Tree;
+    typedef Tree::Object_and_primitive_id Object_and_primitive_id;
 
-        Tree* aabb_tree = get_aabb_tree(this);
-        if(aabb_tree) {
-            const Kernel::Point_3 ray_origin(orig_x, orig_y, orig_z);
-            const Kernel::Vector_3 ray_dir(dir_x, dir_y, dir_z);
-            const Kernel::Ray_3 ray(ray_origin, ray_dir);
-            typedef std::list<Object_and_primitive_id> Intersections;
-            Intersections intersections;
-            aabb_tree->all_intersections(ray, std::back_inserter(intersections));
-            Intersections::iterator closest = intersections.begin();
-            if(closest != intersections.end()) {
-                const Kernel::Point_3* closest_point =
-                        CGAL::object_cast<Kernel::Point_3>(&closest->first);
-                for(Intersections::iterator
-                    it = boost::next(intersections.begin()),
-                    end = intersections.end();
-                    it != end; ++it)
-                {
-                    if(! closest_point) {
-                        closest = it;
-                    }
-                    else {
-                        const Kernel::Point_3* it_point =
-                                CGAL::object_cast<Kernel::Point_3>(&it->first);
-                        if(it_point &&
-                                (ray_dir * (*it_point - *closest_point)) < 0)
-                        {
-                            closest = it;
-                            closest_point = it_point;
-                        }
-                    }
-                }
-                if(closest_point) {
-                    Polyhedron::Facet_handle selected_fh = closest->second;
+    Tree* aabb_tree = get_aabb_tree(this);
+    if(aabb_tree) {
+      const Kernel::Point_3 ray_origin(orig_x, orig_y, orig_z);
+      const Kernel::Vector_3 ray_dir(dir_x, dir_y, dir_z);
+      const Kernel::Ray_3 ray(ray_origin, ray_dir);
+      typedef std::list<Object_and_primitive_id> Intersections;
+      Intersections intersections;
+      aabb_tree->all_intersections(ray, std::back_inserter(intersections));
+      Intersections::iterator closest = intersections.begin();
+      if(closest != intersections.end()) {
+        const Kernel::Point_3* closest_point =
+            CGAL::object_cast<Kernel::Point_3>(&closest->first);
+        for(Intersections::iterator
+            it = boost::next(intersections.begin()),
+            end = intersections.end();
+            it != end; ++it)
+        {
+          if(! closest_point) {
+            closest = it;
+          }
+          else {
+            const Kernel::Point_3* it_point =
+                CGAL::object_cast<Kernel::Point_3>(&it->first);
+            if(it_point &&
+               (ray_dir * (*it_point - *closest_point)) < 0)
+            {
+              closest = it;
+              closest_point = it_point;
+            }
+          }
+        }
+        if(closest_point) {
+          Polyhedron::Facet_handle selected_fh = closest->second;
 
-                    // The computation of the nearest vertex may be costly.  Only
-                    // do it if some objects are connected to the signal
-                    // 'selected_vertex'.
-                    if(QObject::receivers(SIGNAL(selected_vertex(void*))) > 0)
-                    {
-                        Polyhedron::Halfedge_around_facet_circulator
-                                he_it = selected_fh->facet_begin(),
-                                around_end = he_it;
+          // The computation of the nearest vertex may be costly.  Only
+          // do it if some objects are connected to the signal
+          // 'selected_vertex'.
+          if(QObject::receivers(SIGNAL(selected_vertex(void*))) > 0)
+          {
+            Polyhedron::Halfedge_around_facet_circulator
+                he_it = selected_fh->facet_begin(),
+                around_end = he_it;
 
-                        Polyhedron::Vertex_handle v = he_it->vertex(), nearest_v = v;
+            Polyhedron::Vertex_handle v = he_it->vertex(), nearest_v = v;
 
-                        Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
-                                                                    v->point());
-                        while(++he_it != around_end) {
-                            v = he_it->vertex();
-                            Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
-                                                                            v->point());
-                            if(new_sq_dist < sq_dist) {
-                                sq_dist = new_sq_dist;
-                                nearest_v = v;
-                            }
-                        }
+            Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
+                                                        v->point());
+            while(++he_it != around_end) {
+              v = he_it->vertex();
+              Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
+                                                              v->point());
+              if(new_sq_dist < sq_dist) {
+                sq_dist = new_sq_dist;
+                nearest_v = v;
+              }
+            }
             Q_EMIT selected_vertex((void*)(&*nearest_v));
-                    }
+          }
 
-                    if(QObject::receivers(SIGNAL(selected_edge(void*))) > 0
-                            || QObject::receivers(SIGNAL(selected_halfedge(void*))) > 0)
-                    {
-                        Polyhedron::Halfedge_around_facet_circulator
-                                he_it = selected_fh->facet_begin(),
-                                around_end = he_it;
+          if(!skip_emits &&(QObject::receivers(SIGNAL(selected_edge(void*))) > 0
+                            || QObject::receivers(SIGNAL(selected_halfedge(void*))) > 0))
+          {
+            Polyhedron::Halfedge_around_facet_circulator
+                he_it = selected_fh->facet_begin(),
+                around_end = he_it;
 
-                        Polyhedron::Halfedge_handle nearest_h = he_it;
-                        Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
-                                                                    Kernel::Segment_3(he_it->vertex()->point(), he_it->opposite()->vertex()->point()));
+            Polyhedron::Halfedge_handle nearest_h = he_it;
+            //segfault when performing "remove_center_vertex
+            Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
+                                                        Kernel::Segment_3(he_it->vertex()->point(), he_it->opposite()->vertex()->point()));
 
-                        while(++he_it != around_end) {
-                            Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
-                                                                            Kernel::Segment_3(he_it->vertex()->point(), he_it->opposite()->vertex()->point()));
-                            if(new_sq_dist < sq_dist) {
-                                sq_dist = new_sq_dist;
-                                nearest_h = he_it;
-                            }
-                        }
+            while(++he_it != around_end)
+            {
+
+              Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
+                                                              Kernel::Segment_3(he_it->vertex()->point(), he_it->opposite()->vertex()->point()));
+              if(new_sq_dist < sq_dist) {
+                sq_dist = new_sq_dist;
+                nearest_h = he_it;
+              }
+            }
 
             Q_EMIT selected_halfedge((void*)(&*nearest_h));
             Q_EMIT selected_edge((void*)(std::min)(&*nearest_h, &*nearest_h->opposite()));
-                    }
+          }
+          set_skip_emits(false);
 
           Q_EMIT selected_facet((void*)(&*selected_fh));
-                    if(erase_next_picked_facet_m) {
-                        polyhedron()->erase_facet(selected_fh->halfedge());
-                        polyhedron()->normalize_border();
-                        //set_erase_next_picked_facet(false);
-                        invalidateOpenGLBuffers();
+          if(erase_next_picked_facet_m) {
+            polyhedron()->erase_facet(selected_fh->halfedge());
+            polyhedron()->normalize_border();
+            //set_erase_next_picked_facet(false);
+            invalidateOpenGLBuffers();
             Q_EMIT itemChanged();
-                    }
-                }
-            }
+          }
         }
+      }
     }
-    Base::select(orig_x, orig_y, orig_z, dir_x, dir_y, dir_z);
+  }
+  Base::select(orig_x, orig_y, orig_z, dir_x, dir_y, dir_z);
 }
 
 void Scene_polyhedron_item::update_vertex_indices()
@@ -1418,4 +1426,9 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
   data.titles.append(QString("Maximum"));
   data.titles.append(QString("Average"));
   return data;
+}
+
+void Scene_polyhedron_item::set_skip_emits(bool b)
+{
+  skip_emits = b;
 }

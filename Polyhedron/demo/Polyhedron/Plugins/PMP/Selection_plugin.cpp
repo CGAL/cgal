@@ -385,11 +385,16 @@ public Q_SLOTS:
 
   void on_validate_editionButton_clicked()
   {
+
+    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    if (!selection_item) {
+      print_message("Error: there is no selected polyhedron selection item!");
+      return;
+    }
    switch(ui_widget.editionBox->currentIndex())
    {
    //Join vertex
    case 0:
-
      break;
      //Split vertex
    case 1:
