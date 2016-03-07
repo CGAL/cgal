@@ -7,7 +7,7 @@ project( Jet_fitting_3_example )
 cmake_minimum_required(VERSION 2.8.11)
 
 
-find_package(CGAL QUIET COMPONENTS Core )
+find_package(CGAL QUIET)
 
 if ( CGAL_FOUND )
 

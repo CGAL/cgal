@@ -15,7 +15,7 @@ endif()
 # include("CMakeLCCViewerQt.inc")
 
 # If you don't want to visualize, use the following line (otherwise comment it)
-find_package(CGAL QUIET COMPONENTS Core)
+find_package(CGAL QUIET)
 
 # For Gprof.
 # ADD_DEFINITIONS("-pg")
