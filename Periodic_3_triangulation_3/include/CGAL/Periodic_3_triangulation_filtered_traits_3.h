@@ -30,6 +30,7 @@
 #include <CGAL/Interval_nt.h>
 #include <CGAL/Uncertain.h>
 #include <CGAL/Profile_counter.h>
+#include <CGAL/Filtered_predicate.h>
 
 namespace CGAL {
 

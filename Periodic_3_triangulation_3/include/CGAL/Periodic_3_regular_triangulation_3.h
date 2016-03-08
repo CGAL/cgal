@@ -25,7 +25,7 @@
 #include <CGAL/spatial_sort.h>
 
 // Needed by remove to fill the hole.
-#include <CGAL/Periodic_3_regular_triangulation_remove_traits_3.h>
+#include <CGAL/internal/Periodic_3_regular_triangulation_remove_traits_3.h>
 #include <CGAL/Regular_triangulation_3.h>
 
 #include <boost/unordered_set.hpp>
