@@ -150,7 +150,7 @@ public:
 
 namespace CGAL {
 
-template < typename K, typename Off = typename CGAL::Periodic_3_offset_3, bool Has_static_filters = K::Has_static_filters >
+template < typename K, typename Off = typename CGAL::Periodic_3_offset_3, bool Has_static_filters = internal::Has_static_filters<K>::value >
 class Periodic_3_Delaunay_triangulation_filtered_traits_3
   : public Periodic_3_Delaunay_triangulation_statically_filtered_traits_3<
   Periodic_3_Delaunay_triangulation_filtered_traits_base_3<K, Off> > {

@@ -27,6 +27,7 @@
 #include <CGAL/Traits_with_offsets_adaptor.h>
 #include <CGAL/Periodic_3_construct_point_3.h>
 #include <CGAL/triangulation_assertions.h>
+#include <CGAL/internal/Has_boolean_tags.h>
 #include <CGAL/Periodic_3_triangulation_traits_3.h>
 
 
@@ -109,7 +110,7 @@ public:
 
 template < typename K,
            typename Off = CGAL::Periodic_3_offset_3,
-           bool Has_filtered_predicates = K::Has_filtered_predicates >
+           bool Has_filtered_predicates = internal::Has_filtered_predicates<K>::value >
 class Periodic_3_Delaunay_triangulation_traits_3;
 
 } //namespace CGAL
@@ -133,7 +134,7 @@ public:
 
 template < typename K, typename Off >
 class Periodic_3_Delaunay_triangulation_traits_3 <K, Off, true>
-  : public Periodic_3_Delaunay_triangulation_filtered_traits_3 < K, Off, K::Has_static_filters >
+  : public Periodic_3_Delaunay_triangulation_filtered_traits_3 < K, Off, internal::Has_static_filters<K>::value >
 {
 public:
   typedef K Kernel;

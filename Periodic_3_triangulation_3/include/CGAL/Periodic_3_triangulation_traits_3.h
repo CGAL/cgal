@@ -27,7 +27,7 @@
 #include <CGAL/Periodic_3_construct_point_3.h>
 #include <CGAL/triangulation_assertions.h>
 #include <CGAL/Traits_with_offsets_adaptor.h>
-
+#include <CGAL/internal/Has_boolean_tags.h>
 
 namespace CGAL { 
 
@@ -113,7 +113,7 @@ protected:
 
 namespace future_release
 {
-template < typename K, typename Off = CGAL::Periodic_3_offset_3, bool Has_filtered_predicates = K::Has_filtered_predicates >
+template < typename K, typename Off = CGAL::Periodic_3_offset_3, bool Has_filtered_predicates = internal::Has_filtered_predicates<K>::value >
 class Periodic_3_triangulation_traits_3;
 }
 
@@ -135,7 +135,7 @@ class Periodic_3_triangulation_traits_3
 
 template < typename K, typename Off >
 class Periodic_3_triangulation_traits_3 < K, Off, true>
-  : public Periodic_3_triangulation_filtered_traits_3 < K, Off, K::Has_static_filters >
+  : public Periodic_3_triangulation_filtered_traits_3 < K, Off, internal::Has_static_filters<K>::value >
 {
 public:
   typedef K Kernel;
@@ -154,7 +154,7 @@ class Periodic_3_Delaunay_triangulation_traits_3;
 
 // Periodic_3_triangulation_traits_3 should not be used as traits for Periodic_3_Delaunay_triangulation_3 anymore.
 template < class Kernel, class Off = typename CGAL::Periodic_3_offset_3 >
-class CGAL_DEPRECATED Periodic_3_triangulation_traits_3 : public Periodic_3_Delaunay_triangulation_traits_3<Kernel, Off, Kernel::Has_filtered_predicates>
+class CGAL_DEPRECATED Periodic_3_triangulation_traits_3 : public Periodic_3_Delaunay_triangulation_traits_3<Kernel, Off, internal::Has_filtered_predicates<Kernel>::value>
 {
 };
 }
