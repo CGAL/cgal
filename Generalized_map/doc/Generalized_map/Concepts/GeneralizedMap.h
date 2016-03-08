@@ -185,7 +185,7 @@ Returns true iff the generalized map is valid.
 A generalized map is valid (see Sections \ref sseccombimapanddarts and \ref sseccombimapvalidity) if for all its darts `d` \f$\in\f$`darts()`:
 
 - \f$ \forall\f$<I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension": \f$ \alpha_i(\alpha_i(d))=d\f$;
-- \f$ \forall\f$<I>i</I>, <I>j</I>, 0\f$ \leq\f$<I>i</I>\f$ <\f$<I>i</I>+2\f$ \leq\f$<I>j</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" such that <I>j</I>\f$ \geq\f$ 3: \f$ \f$ \alpha_j(\alpha_i(\alpha_j(\alpha_i(d))))=d\f$;
+- \f$ \forall\f$<I>i</I>, <I>j</I>, 0\f$ \leq\f$<I>i</I>\f$ <\f$<I>i</I>+2\f$ \leq\f$<I>j</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" such that <I>j</I>\f$ \geq\f$ 3: \f$ \alpha_j(\alpha_i(\alpha_j(\alpha_i(d))))=d\f$;
 - \f$ \forall\f$<I>i</I>, 0\f$ \leq\f$<I>i</I>\f$ \leq\f$\ref GeneralizedMap::dimension "dimension" such that <I>i</I>-attributes are non void:
   + \f$ \forall\f$<I>d2</I> in the same <I>i</I>-cell than <I>d</I>: <I>d</I> and <I>d2</I> have the same <I>i</I>-attribute;
   + \f$ \forall\f$<I>d2</I>  in a different <I>i</I>-cell than <I>d</I>: <I>d</I> and <I>d2</I> have different <I>i</I>-attributes.
@@ -273,12 +273,12 @@ Returns the highest dimension <I>i</I> such that dart `*dh` is not <I>i</I>-free
 int highest_nonfree_dimension(Dart_const_handle dh) const;
 
 /*!
-Returns \f$ \alpha_0(dh)\f) i.e. a handle to a dart belonging to the same edge than dart `*dh`, and not to the same vertex. `NULL` if such a dart does not exist.
+Returns \f$ \alpha_0(dh)\f$ i.e. a handle to a dart belonging to the same edge than dart `*dh`, and not to the same vertex. `NULL` if such a dart does not exist.
 */
 Dart_handle  other_extremity(Dart_handle dh);
 
 /*!
-Returns \f$ \alpha_0(dh)\f) i.e. a const handle to a dart belonging to the same edge than dart `*dh`, and not to the same vertex, when the dart is const. `NULL` if such a dart does not exist.
+Returns \f$ \alpha_0(dh)\f$ i.e. a const handle to a dart belonging to the same edge than dart `*dh`, and not to the same vertex, when the dart is const. `NULL` if such a dart does not exist.
 */
 Dart_const_handle  other_extremity(Dart_const_handle dh) const;
 
