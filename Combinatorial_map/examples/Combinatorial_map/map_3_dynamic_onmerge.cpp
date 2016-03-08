@@ -1,6 +1,5 @@
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Combinatorial_map_constructors.h>
-#include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Cell_attribute.h>
 #include <iostream>
 #include <cstdlib>
@@ -115,7 +114,7 @@ int main()
 
   // 6) Insert a vertex in the face between the two hexahedra.
   //    This calls 4 onsplit.
-  Dart_handle resdart=CGAL::insert_cell_0_in_cell_2(cm, dh2);
+  Dart_handle resdart=cm.insert_cell_0_in_cell_2(dh2);
 
   // 7) Display all the values of 2-attributes.
   display_map_and_2attributes(cm);
@@ -126,7 +125,7 @@ int main()
 
   // 9) Remove one edge: this merges two faces, however no dynamic
   //    functor is called (because it was removed).
-  CGAL::remove_cell<CMap_3, 1>(cm, resdart);
+  cm.remove_cell<1>(resdart);
 
   // 10) Display all the values of 2-attributes.
   display_map_and_2attributes(cm);

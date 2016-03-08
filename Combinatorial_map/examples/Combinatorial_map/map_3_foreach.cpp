@@ -1,5 +1,4 @@
 #include <CGAL/Combinatorial_map.h>
-#include <CGAL/Combinatorial_map_operations.h>
 #include <CGAL/Combinatorial_map_constructors.h>
 #include <iostream>
 #include <algorithm>
@@ -48,7 +47,7 @@ struct Remove_face : public std::unary_function<CMap, void>
 
   void operator() (typename CMap::Dart* d)
   {
-    CGAL::remove_cell<CMap,2>(cmap, cmap.dart_handle(*d));
+    cmap.template remove_cell<2>(cmap.dart_handle(*d));
     std::cout<<"CMap characteristics: ";
     cmap.display_characteristics(std::cout) << ", valid=" << cmap.is_valid() 
                                             << std::endl;

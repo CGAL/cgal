@@ -1,6 +1,5 @@
 #include <CGAL/Combinatorial_map.h>
 #include <CGAL/Combinatorial_map_constructors.h>
-#include <CGAL/Combinatorial_map_operations.h>
 #include <iostream>
 #include <cstdlib>
 
@@ -37,9 +36,9 @@ int main()
           itend(cm.darts_of_cell<3>(dh1).end()); it!=itend; ++it)
     cm.mark(it, amark);
 
-  // 4) Remove the common 2-cell between the two cubes:
-  // the two tetrahedra are merged.
-  CGAL::remove_cell<CMap_3, 2>(cm, dh1);
+  // 4) Remove the common 2-cell between the two cubes: 
+  //    the two tetrahedra are merged.
+  cm.remove_cell<2>(dh1);
 
   // 5) Thanks to the mark, we know which darts come from the first tetrahedron.
   unsigned int res=0;
