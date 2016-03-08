@@ -117,7 +117,7 @@ class Periodic_3_triangulation_traits_3;
 
 } //namespace CGAL
 
-#include <CGAL/Periodic_3_triangulation_filtered_traits_3.h>
+#include <CGAL/internal/Periodic_3_triangulation_filtered_traits_3.h>
 
 namespace CGAL {
 // This declaration is needed to break the cyclic dependency.

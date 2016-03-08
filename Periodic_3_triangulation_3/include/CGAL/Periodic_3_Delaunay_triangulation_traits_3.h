@@ -116,7 +116,7 @@ class Periodic_3_Delaunay_triangulation_traits_3;
 } //namespace CGAL
 
 // Partial specialization for kernels with filtered predicates
-#include <CGAL/Periodic_3_Delaunay_triangulation_filtered_traits_3.h>
+#include <CGAL/internal/Periodic_3_Delaunay_triangulation_filtered_traits_3.h>
 
 namespace CGAL {
 
