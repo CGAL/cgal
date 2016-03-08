@@ -3767,7 +3767,7 @@ namespace CGAL {
       for ( unsigned int nb=1; nb<alg; ++nb )
       {
         Dart_handle cur = create_dart();
-        amap.basic_link_beta_1(prev, cur);
+        basic_link_beta_1(prev, cur);
         prev=cur;
       }
   
@@ -3791,7 +3791,7 @@ namespace CGAL {
       {
         ++nb;
         if ( cur==null_dart_handle ) return false; // Open face
-        cur = amap.beta(cur,1);
+        cur = beta(cur,1);
       }
       while( cur!=adart );
       return (nb==alg);
@@ -3838,12 +3838,12 @@ namespace CGAL {
            !is_face_combinatorial_polygon(d4, 3) ) return false;
 
       // TODO do better with marks (?).
-      if ( belong_to_same_cell<Map,2,1>(amap, d1, d2) ||
-           belong_to_same_cell<Map,2,1>(amap, d1, d3) ||
-           belong_to_same_cell<Map,2,1>(amap, d1, d4) ||
-           belong_to_same_cell<Map,2,1>(amap, d2, d3) ||
-           belong_to_same_cell<Map,2,1>(amap, d2, d4) ||
-           belong_to_same_cell<Map,2,1>(amap, d3, d4) ) return false;
+      if ( belong_to_same_cell<Self,2,1>(amap, d1, d2) ||
+           belong_to_same_cell<Self,2,1>(amap, d1, d3) ||
+           belong_to_same_cell<Self,2,1>(amap, d1, d4) ||
+           belong_to_same_cell<Self,2,1>(amap, d2, d3) ||
+           belong_to_same_cell<Self,2,1>(amap, d2, d4) ||
+           belong_to_same_cell<Self,2,1>(amap, d3, d4) ) return false;
       
       if ( beta(d1,1,2)!=beta(d3,0) ||
            beta(d4,0,2)!=beta(d3,1) ||
@@ -3936,21 +3936,21 @@ namespace CGAL {
           !is_face_combinatorial_polygon(d6, 4) ) return false;
 
       // TODO do better with marks.
-      if ( belong_to_same_cell<Map,2,1>(amap, d1, d2) ||
-           belong_to_same_cell<Map,2,1>(amap, d1, d3) ||
-           belong_to_same_cell<Map,2,1>(amap, d1, d4) ||
-           belong_to_same_cell<Map,2,1>(amap, d1, d5) ||
-           belong_to_same_cell<Map,2,1>(amap, d1, d6) ||
-           belong_to_same_cell<Map,2,1>(amap, d2, d3) ||
-           belong_to_same_cell<Map,2,1>(amap, d2, d4) ||
-           belong_to_same_cell<Map,2,1>(amap, d2, d5) ||
-           belong_to_same_cell<Map,2,1>(amap, d2, d6) ||
-           belong_to_same_cell<Map,2,1>(amap, d3, d4) ||
-           belong_to_same_cell<Map,2,1>(amap, d3, d5) ||
-           belong_to_same_cell<Map,2,1>(amap, d3, d6) ||
-           belong_to_same_cell<Map,2,1>(amap, d4, d5) ||
-           belong_to_same_cell<Map,2,1>(amap, d4, d6) ||
-           belong_to_same_cell<Map,2,1>(amap, d5, d6) )
+      if ( belong_to_same_cell<Self,2,1>(amap, d1, d2) ||
+           belong_to_same_cell<Self,2,1>(amap, d1, d3) ||
+           belong_to_same_cell<Self,2,1>(amap, d1, d4) ||
+           belong_to_same_cell<Self,2,1>(amap, d1, d5) ||
+           belong_to_same_cell<Self,2,1>(amap, d1, d6) ||
+           belong_to_same_cell<Self,2,1>(amap, d2, d3) ||
+           belong_to_same_cell<Self,2,1>(amap, d2, d4) ||
+           belong_to_same_cell<Self,2,1>(amap, d2, d5) ||
+           belong_to_same_cell<Self,2,1>(amap, d2, d6) ||
+           belong_to_same_cell<Self,2,1>(amap, d3, d4) ||
+           belong_to_same_cell<Self,2,1>(amap, d3, d5) ||
+           belong_to_same_cell<Self,2,1>(amap, d3, d6) ||
+           belong_to_same_cell<Self,2,1>(amap, d4, d5) ||
+           belong_to_same_cell<Self,2,1>(amap, d4, d6) ||
+           belong_to_same_cell<Self,2,1>(amap, d5, d6) )
         return false;
 
       if ( beta(d1,2)    !=beta(d4,1,1) ||
