@@ -110,11 +110,11 @@ class Periodic_3_triangulation_filtered_traits_base_3
   typedef Periodic_3_triangulation_traits_base_3<K, Off> Base;
 
   // Exact traits is based on the exact kernel.
-  typedef future_release::Periodic_3_triangulation_traits_3<typename K::Exact_kernel,
+  typedef Periodic_3_triangulation_traits_3<typename K::Exact_kernel,
                                             Off>
                                                    Exact_traits;
   // Filtering traits is based on the filtering kernel.
-  typedef future_release::Periodic_3_triangulation_traits_3<typename K::Approximate_kernel,
+  typedef Periodic_3_triangulation_traits_3<typename K::Approximate_kernel,
                                             Off>
                                                    Filtering_traits;
 private:
