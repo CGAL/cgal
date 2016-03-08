@@ -3736,6 +3736,249 @@ namespace CGAL {
       this->automatic_attributes_management = newval;
     }
 
+  /** @file Combinatorial_map_constructors.h
+   * Basic creation operations  for a combinatorial map.
+   * Create edge, triangle, quadrilateral, tetrahedron, hexahedron.
+   */
+
+  /** Create an edge.
+   * @param amap the used combinatorial map.
+   * @return a dart of the new edge.
+   */
+  template < class Map >
+  typename Map::Dart_handle make_edge(Map& amap)
+  {
+    typename Map::Dart_handle d1 = amap.create_dart();
+    typename Map::Dart_handle d2 = amap.create_dart();
+    amap.basic_link_beta_for_involution(d1, d2, 2);
+    return d1;
+  }
+
+  /** Create a combinatorial polygon of length alg 
+   * (a cycle of alg darts beta1 links together).
+   * @return a new dart.
+   */
+    Dart_handle make_combinatorial_polygon(unsigned int alg)
+    {
+      CGAL_assertion(alg>0);
+  
+      Dart_handle start = create_dart();
+      Dart_handle prev = start;
+      for ( unsigned int nb=1; nb<alg; ++nb )
+      {
+        Dart_handle cur = create_dart();
+        amap.basic_link_beta_1(prev, cur);
+        prev=cur;
+      }
+  
+      basic_link_beta_1(prev, start);
+      return start;
+    }
+
+    /** Test if a face is a combinatorial polygon of length alg
+     *  (a cycle of alg darts beta1 links together).
+     * @param adart an intial dart
+     * @return true iff the face containing adart is a polygon of length alg.
+     */
+    bool is_face_combinatorial_polygon(Dart_const_handle adart,
+                                       unsigned int alg)
+    {
+      CGAL_assertion(alg>0);
+      
+      unsigned int nb = 0;
+      Dart_const_handle cur = adart;
+      do
+      {
+        ++nb;
+        if ( cur==null_dart_handle ) return false; // Open face
+        cur = amap.beta(cur,1);
+      }
+      while( cur!=adart );
+      return (nb==alg);
+    }
+
+    /** Create a combinatorial tetrahedron from 4 triangles.
+     * @param d1 a dart onto a first triangle.
+     * @param d2 a dart onto a second triangle.
+     * @param d3 a dart onto a third triangle.
+     * @param d4 a dart onto a fourth triangle.
+     * @return a new dart.
+     */
+    Dart_handle make_combinatorial_tetrahedron(Dart_handle d1,
+                                               Dart_handle d2,
+                                               Dart_handle d3,
+                                               Dart_handle d4)
+    {
+      basic_link_beta_for_involution(d1, d2, 2);
+      basic_link_beta_for_involution(d3, beta(d2, 0), 2);
+      basic_link_beta_for_involution(beta(d1, 1), beta(d3, 0), 2);
+      basic_link_beta_for_involution(d4, beta(d2, 1), 2);
+      basic_link_beta_for_involution(beta(d4, 0), beta(d3, 1), 2);
+      basic_link_beta_for_involution(beta(d4, 1), beta(d1, 0), 2);
+      
+      return d1;
+    }
+
+    /** Test if a volume is a combinatorial tetrahedron.
+     * @param adart an intial dart
+     * @return true iff the volume containing adart is a combinatorial tetrahedron.
+     */
+    bool is_volume_combinatorial_tetrahedron(Dart_const_handle d1)
+    {
+      Dart_const_handle d2 = beta(d1, 2);
+      Dart_const_handle d3 = beta(d2, 0, 2);
+      Dart_const_handle d4 = beta(d2, 1, 2);
+
+      if ( d1==null_dart_handle || d2==null_dart_handle ||
+           d3==null_dart_handle || d4==null_dart_handle ) return false;
+      
+      if ( !is_face_combinatorial_polygon(d1, 3) ||
+           !is_face_combinatorial_polygon(d2, 3) ||
+           !is_face_combinatorial_polygon(d3, 3) ||
+           !is_face_combinatorial_polygon(d4, 3) ) return false;
+
+      // TODO do better with marks (?).
+      if ( belong_to_same_cell<Map,2,1>(amap, d1, d2) ||
+           belong_to_same_cell<Map,2,1>(amap, d1, d3) ||
+           belong_to_same_cell<Map,2,1>(amap, d1, d4) ||
+           belong_to_same_cell<Map,2,1>(amap, d2, d3) ||
+           belong_to_same_cell<Map,2,1>(amap, d2, d4) ||
+           belong_to_same_cell<Map,2,1>(amap, d3, d4) ) return false;
+      
+      if ( beta(d1,1,2)!=beta(d3,0) ||
+           beta(d4,0,2)!=beta(d3,1) ||
+           beta(d4,1,2)!=beta(d1,0) ) return false;
+
+      return true;
+    }
+
+    /** Create a new combinatorial tetrahedron.
+     * @return a new dart.
+     */
+    Dart_handle make_combinatorial_tetrahedron()
+    {
+      Dart_handle d1 = make_combinatorial_polygon(3);
+      Dart_handle d2 = make_combinatorial_polygon(3);
+      Dart_handle d3 = make_combinatorial_polygon(3);
+      Dart_handle d4 = make_combinatorial_polygon(3);
+
+      return make_combinatorial_tetrahedron(d1, d2, d3, d4);
+    }
+
+    /** Create a combinatorial hexahedron from 6 quadrilaterals.
+     * @param d1 a dart onto a first quadrilateral.
+     * @param d2 a dart onto a second quadrilateral.
+     * @param d3 a dart onto a third quadrilateral.
+     * @param d4 a dart onto a fourth quadrilateral.
+     * @param d5 a dart onto a fifth quadrilateral.
+     * @param d6 a dart onto a sixth quadrilateral.
+     * @return a dart of the new cuboidal_cell. 
+     */
+    Dart_handle make_combinatorial_hexahedron(Dart_handle d1,
+                                              Dart_handle d2,
+                                              Dart_handle d3,
+                                              Dart_handle d4,
+                                              Dart_handle d5,
+                                              Dart_handle d6)
+    {
+      basic_link_beta_for_involution(d1,
+                                     beta(d4, 1, 1), 2);
+      basic_link_beta_for_involution(beta(d1, 1),
+                                     beta(d6, 0)   , 2);
+      basic_link_beta_for_involution(beta(d1, 1, 1),
+                                     d2            , 2);
+      basic_link_beta_for_involution(beta(d1, 0),
+                                     d5            , 2);
+      
+      basic_link_beta_for_involution(d3,
+                                     beta(d2, 1, 1), 2);
+      basic_link_beta_for_involution(beta(d3, 1),
+                                     beta(d6, 1)   , 2);
+      basic_link_beta_for_involution(beta(d3, 1, 1),
+                                     d4            , 2);
+      basic_link_beta_for_involution(beta(d3, 0),
+                                     beta(d5, 1, 1), 2);
+      
+      basic_link_beta_for_involution(d6,
+                                     beta(d4, 1)   , 2);
+      basic_link_beta_for_involution(beta(d6, 1, 1),
+                                     beta(d2, 1)   , 2);
+      
+      basic_link_beta_for_involution(beta(d5, 0),
+                                     beta(d4, 0)   , 2);
+      basic_link_beta_for_involution(beta(d5, 1),
+                                     beta(d2, 0)   , 2);
+      
+      return d1;
+  }
+
+    /** Test if a volume is a combinatorial hexahedron.
+     * @param adart an intial dart
+     * @return true iff the volume containing adart is a combinatorial hexahedron.
+     */
+    bool is_volume_combinatorial_hexahedron(Dart_const_handle d1)
+    {
+      Dart_const_handle d2 = beta(d1, 1, 1, 2);
+      Dart_const_handle d3 = beta(d2, 1, 1, 2);
+      Dart_const_handle d4 = beta(d3, 1, 1, 2);
+      Dart_const_handle d5 = beta(d1, 0, 2);
+      Dart_const_handle d6 = beta(d4, 1, 2);
+
+      if ( d1==null_dart_handle || d2==null_dart_handle ||
+           d3==null_dart_handle || d4==null_dart_handle ||
+           d5==null_dart_handle || d6==null_dart_handle ) return false;
+      
+      if (!is_face_combinatorial_polygon(d1, 4) ||
+          !is_face_combinatorial_polygon(d2, 4) ||
+          !is_face_combinatorial_polygon(d3, 4) ||
+          !is_face_combinatorial_polygon(d4, 4) ||
+          !is_face_combinatorial_polygon(d5, 4) ||
+          !is_face_combinatorial_polygon(d6, 4) ) return false;
+
+      // TODO do better with marks.
+      if ( belong_to_same_cell<Map,2,1>(amap, d1, d2) ||
+           belong_to_same_cell<Map,2,1>(amap, d1, d3) ||
+           belong_to_same_cell<Map,2,1>(amap, d1, d4) ||
+           belong_to_same_cell<Map,2,1>(amap, d1, d5) ||
+           belong_to_same_cell<Map,2,1>(amap, d1, d6) ||
+           belong_to_same_cell<Map,2,1>(amap, d2, d3) ||
+           belong_to_same_cell<Map,2,1>(amap, d2, d4) ||
+           belong_to_same_cell<Map,2,1>(amap, d2, d5) ||
+           belong_to_same_cell<Map,2,1>(amap, d2, d6) ||
+           belong_to_same_cell<Map,2,1>(amap, d3, d4) ||
+           belong_to_same_cell<Map,2,1>(amap, d3, d5) ||
+           belong_to_same_cell<Map,2,1>(amap, d3, d6) ||
+           belong_to_same_cell<Map,2,1>(amap, d4, d5) ||
+           belong_to_same_cell<Map,2,1>(amap, d4, d6) ||
+           belong_to_same_cell<Map,2,1>(amap, d5, d6) )
+        return false;
+
+      if ( beta(d1,2)    !=beta(d4,1,1) ||
+           beta(d1,1,2)  !=beta(d6,0)   ||
+           beta(d3,1,2)  !=beta(d6,1)   ||
+           beta(d3,0,2)  !=beta(d5,1,1) ||
+           beta(d6,1,1,2)!=beta(d2,1)   ||
+           beta(d5,0,2)  !=beta(d4,0)   ||
+           beta(d5,1,2)  !=beta(d2,0) ) return false;
+
+      return true;
+    }
+
+    /** Create a new combinatorial hexahedron.
+     * @return a new dart. 
+     */
+    Dart_handle make_combinatorial_hexahedron()
+    {
+      Dart_handle d1 = make_combinatorial_polygon(4);
+      Dart_handle d2 = make_combinatorial_polygon(4);
+      Dart_handle d3 = make_combinatorial_polygon(4);
+      Dart_handle d4 = make_combinatorial_polygon(4);
+      Dart_handle d5 = make_combinatorial_polygon(4);
+      Dart_handle d6 = make_combinatorial_polygon(4);
+
+      return make_combinatorial_hexahedron(d1, d2, d3, d4, d5, d6);
+    }
+    
     /** Test if an i-cell can be removed.
      *  An i-cell can be removed if i==dimension or i==dimension-1,
      *     or if there are at most two (i+1)-cell incident to it.
