@@ -78,7 +78,7 @@ TriangulationDSFace(const int md);
 
 /// @}
 
-/// \name Access functions
+/// \name Access Functions
 /// @{
 
 /*!
@@ -109,7 +109,7 @@ Vertex_handle vertex(int i) const;
 
 /// @}
 
-/// \name Update functions
+/// \name Update Functions
 /// @{
 
 /*!

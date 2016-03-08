@@ -16,14 +16,12 @@ Each infinite \f$ i\f$-simplex is
 incident to the infinite vertex and to an \f$ (i-1)\f$-simplex of the 
 convex hull boundary.
 
-Parameters
---------------
 
-`TriangulationTraits` is the geometric traits class that provides the geometric types
+\tparam TriangulationTraits is the geometric traits class that provides the geometric types
 and predicates needed by triangulations. `TriangulationTraits` must be a model of the
 concept `TriangulationTraits`.
 
-The parameter `TriangulationDataStructure` must be a model of the concept
+\tparam TriangulationDataStructure must be a model of the concept
 `TriangulationDataStructure`. This model is used to store 
 the faces of the triangulation. The parameter `TriangulationDataStructure` defaults to
 `Triangulation_data_structure` whose template parameters are instantiated as
@@ -246,7 +244,7 @@ Triangulation(const Triangulation & t2);
 
 /// @}
 
-/// \name Access functions
+/// \name Access Functions
 /// @{
 
 /*!
@@ -307,7 +305,7 @@ Full_cell_handle infinite_full_cell() const;
 
 /// @}
 
-/// \name Non-constant-time access functions
+/// \name Non-Constant-Time Access Functions
 /// @{
 
 /*!
@@ -318,7 +316,7 @@ size_type number_of_finite_full_cells() const;
 
 /// @}
 
-/// \name Tests for finite and infinite elements
+/// \name Tests for Finite and Infinite Elements
 /// @{
 
 /*!
@@ -364,7 +362,7 @@ int index_of_covertex(const Facet & f) const;
 
 /// @}
 
-/// \name Triangulation traversal
+/// \name Triangulation Traversal
 /// @{
 
 /*!
@@ -429,7 +427,7 @@ Finite_facet_iterator finite_facets_end();
 
 /// @}
 
-/// \name Point location
+/// \name Point Location
 /// The class `Triangulation` provides methods to locate a query point
 /// with respect to the triangulation:
 /// @{
@@ -527,7 +525,7 @@ Vertex_handle collapse_face(const Point & p, const Face & f);
 
 /// @}
 
-/// \name Point insertion
+/// \name Point Insertion
 /// The class `Triangulation` provides functions to insert a given point in the triangulation:
 /// @{
 
@@ -645,7 +643,7 @@ Vertex_handle insert_outside_affine_hull(const Point &);
 
 /// @}
 
-/// \name Validity check
+/// \name Validity Check
 /// @{
 
 /*!
@@ -675,7 +673,7 @@ verbose = false) const;
 
 /// @}
 
-/// \name Input/output
+/// \name Input/Output
 /// @{
 
 /*!

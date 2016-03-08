@@ -36,8 +36,8 @@ of `CGAL::Triangulation_data_structure::Vertex`.
 
 \cgalRefines `TriangulationDataStructure::FullCell`
 
-\cgalHasModel CGAL::Triangulation_ds_full_cell<TriangulationDataStructure,DSFullCellStoragePolicy>
-\cgalHasModel CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>
+\cgalHasModel ` CGAL::Triangulation_ds_full_cell<TriangulationDataStructure,DSFullCellStoragePolicy>`
+\cgalHasModel `CGAL::Triangulation_full_cell<TriangulationTraits, Data, TriangulationDSFullCell>`
 
 \sa `TriangulationDSVertex`
 \sa `TriangulationDSFace`
@@ -92,7 +92,7 @@ TriangulationDSFullCell(const TriangulationDSFullCell & fc);
 
 /// @}
 
-/// \name Memory management
+/// \name Memory Management
 /// These member functions are required by
 /// `Triangulation_data_structure` because it uses `Compact_container`
 /// to store its cells. See the documentation of `Compact_container`
