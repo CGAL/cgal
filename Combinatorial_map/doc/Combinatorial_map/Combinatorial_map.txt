@@ -696,10 +696,10 @@ a custom item class.
 
 \subsection ssecattributes Cell Attributes
 
-The class `Cell_attribute<CMap,Info_,Tag,OnMerge,OnSplit>`, a model of
+The class `Cell_attribute<Map,Info_,Tag,OnMerge,OnSplit>`, a model of
 the `CellAttribute` concept, represents an attribute associated with a
-cell of a combinatorial map. The  template parameter `CMap` must be a
-model of the `CombinatorialMap` concept. The attribute stores a handle
+cell of a combinatorial map or a generalized map. The  template parameter `Map` must be a
+model of the `CombinatorialMap` or the `GeneralizedMap` concept. The attribute stores a handle
 to one dart of its associated cell when the template parameter `Tag`
 is \link CGAL::Tag_true `Tag_true` \endlink.  `Info_` is the type of information stored in the
 attribute. It may be `void`. `OnMerge` and `OnSplit` must be either
