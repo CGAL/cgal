@@ -9,7 +9,7 @@ The class `Cell_attribute` represents an attribute containing (or not) an inform
 \cgalModels `CellAttribute`
 
 
-\tparam CMap must be a model of the `CombinatorialMap`.
+\tparam Map must be a model of the `CombinatorialMap` or of the `GeneralizedMap`.
 
 \tparam Info_ is the type of the information contained in the attribute.
 
@@ -19,14 +19,13 @@ The class `Cell_attribute` represents an attribute containing (or not) an inform
 
 \tparam OnSplit is the type of the functor called after one attribute is split in two.
 
-By default, `OnMerge` and `OnSplit` are equal to
-`Null_functor`; `Tag` is equal to
-`::Tag_true`; and `Info_` is equal to `void`.
+By default, `OnMerge` and `OnSplit` are equal to `Null_functor`; `Tag` is equal to `::Tag_true`; and `Info_` is equal to `void`.
 
 \sa `CGAL::Combinatorial_map<d,Items,Alloc>`
+\sa `CGAL::Generalized_map<d,Items,Alloc>`
 
 */
-template< typename CMap, typename Info_, typename Tag, typename OnMerge, typename OnSplit >
+template< typename Map, typename Info_, typename Tag, typename OnMerge, typename OnSplit >
 class Cell_attribute {
 public:
 

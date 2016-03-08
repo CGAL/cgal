@@ -4,7 +4,7 @@ namespace CGAL {
 /*!
 \ingroup PkgCombinatorialMapsClasses
 
-The class `Dart` represents a <I>d</I>D dart.
+The class `Dart` represents a <I>d</I>D dart in a combinatorial map.
 
 \f$ \beta_i\f$ pointers are coded in a array of <I>d+1</I> \ref Dart::Dart_handle "Dart_handle"
 (because we describe also the \f$ \beta_0\f$ link). Attributes are
