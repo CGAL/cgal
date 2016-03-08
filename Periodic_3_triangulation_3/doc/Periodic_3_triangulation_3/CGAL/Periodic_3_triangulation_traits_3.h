@@ -12,11 +12,11 @@ class `Periodic_3_triangulation_3<Periodic_3TriangulationTraits_3,TriangulationD
 \tparam Traits must be a model of the `TriangulationTraits_3` concept.
 \tparam Periodic_3Offset_3 must be a model of the concept `Periodic_3Offset_3` and defaults to `Periodic_3_offset_3`. 
 
-Note that this template class is specialized for 
-`CGAL::Filtered_kernel`, so that it automatically provides 
-filtered predicates. This holds implicitly for 
-`CGAL::Exact_predicates_inexact_constructions_kernel`, as it is an 
-instantiation of `CGAL::Filtered_kernel`. 
+If `Traits` is a `CGAL::Filtered_kernel` (detected when `Traits::Has_filtered_predicates` exists
+and is `true`), this class automatically provides filtered predicates. Similarly statically filtered predicates
+will be used if the flag `Traits::Has_static_filters` exists and is `true`.
+By default, this holds for `CGAL::Exact_predicates_inexact_constructions_kernel` and
+`CGAL::Exact_predicates_exact_constructions_kernel`.
 
 \cgalModels Periodic_3TriangulationTraits_3
 */
