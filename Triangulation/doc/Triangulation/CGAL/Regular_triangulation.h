@@ -13,31 +13,8 @@ section in the user manual for what reasonable means.
 
 \warning The removal of points is not supported yet.
 
-A regular triangulation is defined as follows.
-
-Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^D\f$. Let
-\f$ {p}^{(w)}=(p,w_p), p\in\mathbb{R}^D, w_p\in\mathbb{R}\f$ and
-\f$ {z}^{(w)}=(z,w_z), z\in\mathbb{R}^D, w_z\in\mathbb{R}\f$ 
-be two weighted points.
-A weighted point
-\f$ {p}^{(w)}=(p,w_p)\f$ can also be seen as a sphere of center \f$ p\f$ and
-radius \f$ \sqrt{w_p}\f$.
-The <I>power product</I> (or <I>power distance</I> )
-between \f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$ is
-defined as
-\f[ \Pi({p}^{(w)},{z}^{(w)}) = {\|{p-z}\|^2-w_p-w_z} \f]
-where \f$ \|{p-z}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ z\f$.
-\f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$
-are said to be <I>orthogonal</I> if \f$ \Pi{({p}^{(w)}-{z}^{(w)})}
-= 0\f$.
-
-\f$D + 1\f$ weighted points have a unique common orthogonal weighted point 
-called the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be
-<I>regular</I> if \f$ \forall {p}^{(w)}\in{S}^{(w)},
-\Pi{({p}^{(w)}-{z}^{(w)})}\geq 0\f$.
-
-A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres
-of all simplices are regular.
+A comprehensive definition of regular triangulations is available in the
+User Manual.
 
 Parameters
 --------------
