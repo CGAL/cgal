@@ -51,7 +51,7 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
    endif()
 
   if(CGAL_AUTO_LINK_ENABLED)
-    if (NOT CGAL_HEADERS_ONLY)
+    if (NOT CGAL_HEADER_ONLY)
       set_target_properties( ${LIBRARY_NAME} PROPERTIES
         OUTPUT_NAME_DEBUG          "${DEBUG_MANGLED_NAME}"
         OUTPUT_NAME_RELEASE        "${RELEASE_MANGLED_NAME}"
@@ -194,7 +194,7 @@ CGAL_add_if_target(CGAL_Core)
 CGAL_add_if_target(CGAL_ImageIO)
 CGAL_add_if_target(CGAL_Qt5)
 
-#if (NOT CGAL_HEADERS_ONLY) # TODO Check on windows these exports
+#if (NOT CGAL_HEADER_ONLY) # TODO Check on windows these exports
   export(TARGETS ${CGAL_ACTUAL_CONFIGURED_LIBRARIES} NAMESPACE CGAL:: FILE "${CMAKE_BINARY_DIR}/CGALExports.cmake")
 #endif()
 

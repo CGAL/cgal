@@ -32,12 +32,12 @@ endif()
 #                                    -= HEADER ONLY =-
 #
 #--------------------------------------------------------------------------------------------------
-option(CGAL_HEADERS_ONLY "Enable the header only version of CGAL" OFF )
+option(CGAL_HEADER_ONLY "Enable the header only version of CGAL" OFF )
 
-if (CGAL_HEADERS_ONLY)
-  set(CGAL_HEADERS_ONLY TRUE CACHE BOOL "Enable cgal header only" FORCE)
+if (CGAL_HEADER_ONLY)
+  set(CGAL_HEADER_ONLY TRUE CACHE BOOL "Enable cgal header only" FORCE)
   add_definitions(-DCGAL_HEADER_ONLY)
-endif (CGAL_HEADERS_ONLY)
+endif (CGAL_HEADER_ONLY)
  
 #--------------------------------------------------------------------------------------------------
 #
@@ -848,9 +848,9 @@ install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake   DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 
-if (NOT ENABLE_HEADER_ONLY)
-  install(EXPORT  CGALExports                             DESTINATION ${CGAL_INSTALL_CMAKE_DIR}
-             NAMESPACE CGAL:: )
+if (NOT CGAL_HEADER_ONLY)
+   install(EXPORT    CGALExports                             DESTINATION ${CGAL_INSTALL_CMAKE_DIR}
+           NAMESPACE CGAL:: )
 endif()
 
 if ( GMP_IN_AUXILIARY )

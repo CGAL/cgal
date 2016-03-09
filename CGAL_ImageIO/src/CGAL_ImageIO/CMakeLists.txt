@@ -3,18 +3,9 @@ message("Configuring libCGAL_ImageIO")
 find_package( OpenGL )
 find_package( ZLIB )
 
-<<<<<<< HEAD
-=======
-#option(WITH_VTK "Add VTK support to libCGAL_ImageIO." OFF)
-
-if (CGAL_HEADERS_ONLY)
+if (CGAL_HEADER_ONLY)
   cache_set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS ${CMAKE_CURRENT_SOURCE_DIR})
 endif()
-
-if(WITH_VTK)
-  find_package(VTK COMPONENTS vtkImagingCore vtkIOImage vtkFiltersImaging NO_MODULE REQUIRED)
-endif(WITH_VTK)
->>>>>>> Add src/CGAL_ImageIO/ in include dirs in header mode
 
 if(OPENGL_FOUND)
   message( STATUS "OpenGL include:     ${OPENGL_INCLUDE_DIR}" )
@@ -62,7 +53,7 @@ if(OPENGL_FOUND)
 
   add_definitions( ${CGAL_3RD_PARTY_DEFINITIONS} ${CGAL_ImageIO_3RD_PARTY_DEFINITIONS} )
 
-  if (NOT CGAL_HEADERS_ONLY)
+  if (NOT CGAL_HEADER_ONLY)
       add_dependencies( CGAL_ImageIO CGAL )
 
       # CGAL_ImageIO only depends on CGAL in DEBUG, but we still link it

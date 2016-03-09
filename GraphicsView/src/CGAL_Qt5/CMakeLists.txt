@@ -79,7 +79,7 @@ link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
 
 collect_cgal_library( CGAL_Qt5 "${additional_files}")
 
-if(CGAL_HEADERS_ONLY)
+if(CGAL_HEADER_ONLY)
    set(CGAL_QT5_QTMOCCMAKE_FILES ${QTMOCCMAKE_FILES} CACHE INTERNAL "CGAL qt5 qtmoc cmake files")
 else()
    qt5_use_modules(CGAL_Qt5 OpenGL Svg)
