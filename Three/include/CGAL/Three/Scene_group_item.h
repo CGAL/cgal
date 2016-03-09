@@ -58,7 +58,7 @@ public :
     Bbox bbox() const;
     //!Not supported.
     Scene_item* clone() const {return 0;}
-    //! Indicate if rendering mode is supported.
+    //! Indicates if the rendering mode is supported.
     bool supportsRenderingMode(RenderingMode m) const;
     //!Prints the number of children.
     QString toolTip() const;
@@ -116,7 +116,7 @@ public :
     void setSplattingMode(){
       setRenderingMode(Splatting);
     }
-    //!Returns a list of all the children.
+    //!Returns a list of all the direct children.
     QList<Scene_item*> getChildren() const {return children;}
     //!Removes a Scene_item from the list of children.
     //!@see getChildren @see addChild

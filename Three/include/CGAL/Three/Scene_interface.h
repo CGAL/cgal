@@ -18,6 +18,7 @@
 //
 // Author(s)     : Laurent RINEAU
 
+//! \file Scene_interface.h
 #ifndef SCENE_INTERFACE_H
 #define SCENE_INTERFACE_H
 
@@ -31,7 +32,7 @@ class Scene_item;
 class Scene_group_item;
     }}
 // OpenGL rendering mode
-/** \file Scene_interface.h
+/*!
  * Contains the class Scene_interface and the enum RenderingMode.
  */
 /*!
