@@ -183,4 +183,11 @@ bool operator == ( Random const& random2) const;
 */
 Random &get_default_random();
 
+/*!
+  \ingroup PkgGenerators
+  \deprecated The variable `default_random` is the default random numbers generator used for
+  the generator functions and classes.
+*/
+extern CGAL::Random default_random;
+
 } /* end namespace CGAL */
