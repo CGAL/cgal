@@ -32,7 +32,7 @@
 #include <CGAL/Robust_construction.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Regular_triangulation_euclidean_traits_3.h>
-#include <CGAL/constructions/constructions_on_weighted_points_cartesian_3.h>
+#include <CGAL/constructions/kernel_ftC3.h>
 
 namespace CGAL {
 

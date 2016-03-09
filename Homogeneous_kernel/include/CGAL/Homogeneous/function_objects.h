@@ -29,7 +29,7 @@
 #include <CGAL/Cartesian/function_objects.h>
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/predicates/sign_of_determinant.h>
-#include <CGAL/predicates/Regular_triangulation_rtH3.h>
+#include <CGAL/Homogeneous/Regular_triangulation_rtH3.h>
 
 namespace CGAL {
 

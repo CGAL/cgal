@@ -1,10 +1,10 @@
 // Copyright (c) 1999  INRIA Sophia-Antipolis (France).
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -24,7 +24,7 @@
 // This file contains the low level homogeneous predicates
 // used by the 3D regular triangulation.
 
-#include <CGAL/predicates/Regular_triangulation_ftC3.h>
+#include <CGAL/predicates/kernel_ftC3.h>
 
 namespace CGAL {
 

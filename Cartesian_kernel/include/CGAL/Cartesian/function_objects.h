@@ -30,7 +30,6 @@
 #include <CGAL/predicates/kernel_ftC3.h>
 #include <CGAL/constructions/kernel_ftC2.h>
 #include <CGAL/constructions/kernel_ftC3.h>
-#include <CGAL/predicates/Regular_triangulation_ftC3.h>
 #include <CGAL/Cartesian/solve_3.h>
 
 namespace CGAL {
