@@ -63,7 +63,7 @@ public:
    * throws std::invalid_argument if no loader with that argument can be found
    @returns the IO plugin associated with `loader_name`*/
   CGAL::Three::Polyhedron_demo_io_plugin_interface* find_loader(const QString& loader_name) const;
-  
+
   /*! \brief Load an item with a given loader.
    * throws `std::logic_error` if loading does not succeed or
    * `std::invalid_argument` if `fileinfo` specifies an invalid file*/
@@ -85,7 +85,6 @@ public Q_SLOTS:
   void restoreCollapseState();
   void setExpanded(QModelIndex);
   void setCollapsed(QModelIndex);
-  /// given a file extension file, returns true if `filename` matches the filter
   bool file_matches_filter(const QString& filters, const QString& filename);
   //!Prints a dialog containing statistics on the selected polyhedrons.
   void statistics_on_item();

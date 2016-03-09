@@ -691,11 +691,11 @@ private:
 
     ui.objectNameSize->setText(
       tr("Object bbox size (w,h,d):  <b>%1</b>,  <b>%2</b>,  <b>%3</b>")
-      .arg(bbox.width(), 0, 'g', 3)
-      .arg(bbox.height(), 0, 'g', 3)
-      .arg(bbox.depth(), 0, 'g', 3));
+      .arg(bbox.xmax()-bbox.xmin(), 0, 'g', 3)
+      .arg(bbox.xmax()-bbox.xmin(), 0, 'g', 3)
+      .arg(bbox.xmax()-bbox.xmin(), 0, 'g', 3));
 
-    double diago_length = bbox.diagonal_length();
+    double diago_length = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
     ui.edgeLength_dspinbox->setDecimals(3);
     ui.edgeLength_dspinbox->setSingleStep(0.001);
     ui.edgeLength_dspinbox->setRange(1e-6 * diago_length, //min

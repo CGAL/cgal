@@ -29,6 +29,7 @@
 #include <QOpenGLShader>
 #include <QOpenGLVertexArrayObject>
 #include <vector>
+#include <CGAL/Bbox_3.h>
 namespace CGAL {
 namespace Three {
   class Viewer_interface;
@@ -76,7 +77,7 @@ public:
   PROGRAM_SPHERES,             /** Used to render one or several spheres.*/
   NB_OF_PROGRAMS               /** Holds the number of different programs in this enum.*/
  };
-  typedef CGAL::Three::Scene_interface::Bbox Bbox;
+  typedef CGAL::Bbox_3 Bbox;
   typedef qglviewer::ManipulatedFrame ManipulatedFrame;
   //! The default color of a scene_item.
   static const QColor defaultColor; // defined in Scene_item.cpp
@@ -87,13 +88,13 @@ public:
    */
   Scene_item(int buffers_size = 20, int vaos_size = 10);
 
-  //! Setter for the number of isolated vertices.
+  //! Sets the number of isolated vertices.
   void setNbIsolatedvertices(std::size_t nb) { nb_isolated_vertices = nb;}
   //! Getter for the number of isolated vertices.
   std::size_t getNbIsolatedvertices() const {return nb_isolated_vertices;}
   //!The destructor. It is virtual as the item is virtual.
   virtual ~Scene_item();
-  //! Creates a new item as a copy of the sender. Must be overloaded.
+  //! Creates a new item as a copy of the sender.
   virtual Scene_item* clone() const = 0;
 
   //! Indicates if rendering mode is supported
@@ -134,18 +135,19 @@ public:
   //! Draws the splats of the item in the viewer using GLSplat functions.
   virtual void draw_splats(CGAL::Three::Viewer_interface*) const {draw_splats();}
 
-  //! Specifies which data must be updated when selection has changed.
-  //! Must be overloaded.
-  virtual void selection_changed(bool);
+  //! Called by the scene. If b is true, then this item is currently selected.
+  virtual void selection_changed(bool b);
 
   // Functions for displaying meta-data of the item
-  //! @returns a QString containing meta-data about the item.
-  //! Must be overloaded.
+  //!\brief Contains meta-data about the item.
   //! Data is :Number of vertices, Number of edges, Number of facets,
   //! Volume, Area, Bounding box limits and Number of isolated points.
+  //! @returns a QString containing meta-data about the item.
   virtual QString toolTip() const = 0;
+  //! \brief contains graphical meta-data about the item.
   //! @returns a QPixmap containing graphical meta-data about the item.
   virtual QPixmap graphicalToolTip() const { return QPixmap(); }
+  //! \brief contains the font used for the data of the item.
   //! @returns a QFont containing the font used for the data of the item.
   virtual QFont font() const { return QFont(); }
 
@@ -154,6 +156,7 @@ public:
   virtual bool isFinite() const { return true; }
   //! Specifies if the item is empty or null.
   virtual bool isEmpty() const { return true; }
+  //! \brief the item's bounding box.
   //!@returns the item's bounding box.
   virtual Bbox bbox() const {
       if(!is_bbox_computed)
@@ -162,7 +165,7 @@ public:
       return _bbox;
   }
   // Function about manipulation
-  //! Decides if the item can have a ManipulatedFrame.
+  //! returns true  if the item can have a ManipulatedFrame.
   virtual bool manipulatable() const { return false; }
   //!@returns the manipulatedFrame of the item.
   virtual ManipulatedFrame* manipulatedFrame() { return 0; }
@@ -194,20 +197,20 @@ public:
    * A header data is composed of 2 columns : the Categories and the titles.
    * A category is the name given to an association of titles.
    * A title is the name of a line.
-   *
+   *\verbatim
    * For example,
    * Category :    | Titles| Values
    * 2 lines       |       |
    *  ____________________________
    * |             |Name   |Cube |
    * |             |_______|_____|
-   * |General Info |\#Edges|12   |
+   * |General Info | #Edges|12   |
    * |_____________|_______|_____|
    *
    *  would be stored as follows :
    * categories = std::pair<QString,int>(QString("General Info"),2)
    * titles.append("Name");
-   * titles.append("#Edges");
+   * titles.append("#Edges");\endverbatim
    */
   struct Header_data{
    //!Contains the name of the category of statistics and the number of lines it will contain
@@ -220,16 +223,16 @@ public:
   //!Returns true if the item has statistics.
   virtual bool has_stats()const{return false;}
   //!Returns a QString containing the requested value for the the table in the statistics dialog
-  /*!
+  /*! \verbatim
    * Example :
    *  ____________________________
    * |             |Name   |Cube |
    * |             |_______|_____|
-   * |General Info |\#Edges|12   |
+   * |General Info | #Edges|12   |
    * |_____________|_______|_____|
    * compute stats(0) should return "Cube" and compute_stats(1) should return QString::number(12);
    * The numbers must be coherent with the order of declaration of the titles in the header.
-   *
+   * \endverbatim
    *
    */
   virtual QString compute_stats(int i);
@@ -240,41 +243,40 @@ public:
 public Q_SLOTS:
 
   //! Notifies the program that the internal data or the properties of
-  //! an item has changed, and that it must be computed again.It is
+  //! an item has changed, and that it must be computed again. It is
   //! important to call this function whenever the internal data is changed,
   //! or the displayed item will not be updated.
-  //!Must be overloaded.
   virtual void invalidateOpenGLBuffers();
-  //!Setter for the color of the item. Calls invalidateOpenGLBuffers() so the new color is applied.
-  virtual void setColor(QColor c) { color_ = c; if(!is_monochrome)invalidateOpenGLBuffers(); }
-  //!Setter for the RGB color of the item. Calls setColor(QColor).
+  //!Sets the color of the item. If the item is multi color, calls invalidateOpenGLBuffers() so the new color is applied.
+  virtual void setColor(QColor c) { color_ = c; if(!is_monochrome) invalidateOpenGLBuffers(); }
+  //!Sets the RGB color of the item. Calls setColor(QColor).
   //!@see setColor(QColor c)
   void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
-  //!Setter for the name of the item.
+  //!Sets the name of the item.
   virtual void setName(QString n) { name_ = n; }
-  //!Setter for the visibility of the item.
+    //!Sets the visibility of the item.
   virtual void setVisible(bool b);
   //!Set the parent group. If `group==0`, then the item has no parent.
   //!This function is called by `Scene::changeGroup` and should not be
   //!called manually.
   virtual void moveToGroup(Scene_group_item* group);
-  //!Setter for the rendering mode of the item.
+  //!Sets the rendering mode of the item.
   //!@see RenderingMode
   virtual void setRenderingMode(RenderingMode m) { 
     if (supportsRenderingMode(m))
       rendering_mode = m; 
     Q_EMIT redraw();
   }
-  //!Set the RenderingMode to Points.
+  //!Sets the RenderingMode to Points.
   void setPointsMode() {
     setRenderingMode(Points);
   }
-  //!Set the RenderingMode to Wireframe.
+  //!Sets the RenderingMode to Wireframe.
   void setWireframeMode() {
     setRenderingMode(Wireframe);
   }
 
-  //!Set the RenderingMode to Flat.
+  //!Sets the RenderingMode to Flat.
   void setFlatMode() {
     setRenderingMode(Flat);
   }
@@ -282,15 +284,15 @@ public Q_SLOTS:
   void setFlatPlusEdgesMode() {
     setRenderingMode(FlatPlusEdges);
   }
-  //!Set the RenderingMode to Gouraud.
+  //!Sets the RenderingMode to Gouraud.
   void setGouraudMode() {
     setRenderingMode(Gouraud);
   }
-  //!Set the RenderingMode to PointsPlusNormals.
+  //!Sets the RenderingMode to PointsPlusNormals.
   void setPointsPlusNormalsMode(){
     setRenderingMode(PointsPlusNormals);
   }
-  //!Set the RenderingMode to Splatting.
+  //!Sets the RenderingMode to Splatting.
   void setSplattingMode(){
     setRenderingMode(Splatting);
   }
@@ -314,8 +316,11 @@ public Q_SLOTS:
                       double dir_z);
 
 Q_SIGNALS:
+  //! Is emitted to notify a change in the item's data.
   void itemChanged();
+  //! Is emitted to notify that the item is about to be deleted.
   void aboutToBeDestroyed();
+  //! Is emitted to require a new display.
   void redraw();
 
 protected:

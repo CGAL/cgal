@@ -1148,7 +1148,7 @@ void Scene::changeGroup(Scene_item *item, CGAL::Three::Scene_group_item *target_
 
 float Scene::get_bbox_length() const
 {
-    return bbox().height();
+    return bbox().ymax()-bbox().ymin();
 }
 
 

@@ -34,16 +34,15 @@ public:
   ~Viewer();
 
   // overload several QGLViewer virtual functions
-  //! Deprecated and does nothing.
+  //! Draws the scene.
   void draw();
-  //!This step happens after draw(). It is here that the axis system is
-  //!displayed.
+  //!This step happens after draw(). It is here that all the useful information is displayed, like the axis system or the informative text.
   void drawVisualHints();
   //! Deprecated. Does the same as draw().
   void fastDraw();
   //! Initializes the OpenGL functions and sets the backGround color.
   void initializeGL();
-  //! Deprecated and does nothing.
+  //! Draws the scene "with names" to allow picking.
   void drawWithNames();
   /*! Uses the parameter pixel's coordinates to get the corresponding point
    * in the World frame. If this point is found, emits selectedPoint, selected,
@@ -76,7 +75,7 @@ public Q_SLOTS:
   //! If b is true, some items are displayed in a simplified version when moving the camera.
   //! If b is false, items display is never altered, even when moving.
   void setFastDrawing(bool b);
-  //! Make the camera turn around.
+  //! Makes the camera turn around.
   void turnCameraBy180Degres();
   //! @returns a QString containing the position and orientation of the camera.
   QString dumpCameraCoordinates();

@@ -128,9 +128,9 @@ void Polyhedron_demo_polyhedron_slicer_plugin::slicer_widget_action(){
 
   plane_item = new Scene_plane_item(scene);
   const CGAL::Three::Scene_interface::Bbox& bbox = scene->bbox();
-  plane_item->setPosition((bbox.xmin + bbox.xmax)/2.f,
-    (bbox.ymin+bbox.ymax)/2.f,
-    (bbox.zmin+bbox.zmax)/2.f);
+  plane_item->setPosition((bbox.xmin() + bbox.xmax())/2.f,
+    (bbox.ymin()+bbox.ymax())/2.f,
+    (bbox.zmin()+bbox.zmax())/2.f);
   plane_item->setNormal(0., 0., 1.);
   plane_item->setManipulatable(true);
   plane_item->setClonable(false);
@@ -145,7 +145,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::slicer_widget_action(){
 
   // set distance_with_planes = bbox_diagona / 30
   double diagonal = std::sqrt(
-    CGAL::squared_distanceC3( bbox.xmin, bbox.ymin, bbox.zmin, bbox.xmax, bbox.ymax, bbox.zmax) );
+    CGAL::squared_distanceC3( bbox.xmin(), bbox.ymin(), bbox.zmin(), bbox.xmax(), bbox.ymax(), bbox.zmax()) );
   ui_widget.Distance_with_planes->setText(QString::number(diagonal / 30.0));
 
   plane_manipulated_frame_modified(); // update text boxes
@@ -246,8 +246,8 @@ void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
 
   // construct a bbox for selected polyhedron
   const CGAL::Three::Scene_interface::Bbox& bbox = item->bbox();
-  CGAL::Bbox_3 cgal_bbox(bbox.xmin, bbox.ymin, bbox.zmin,
-    bbox.xmax, bbox.ymax, bbox.zmax);
+  CGAL::Bbox_3 cgal_bbox(bbox.xmin(), bbox.ymin(), bbox.zmin(),
+    bbox.xmax(), bbox.ymax(), bbox.zmax());
   Polyhedron* poly = item->polyhedron();
 
   // continue generating planes while inside bbox

@@ -369,11 +369,11 @@ void Scene_polylines_item::change_corner_radii() {
     double proposed_radius = d->spheres_drawn_radius;
     if(proposed_radius == 0) {
         CGAL::Three::Scene_interface::Bbox b = bbox();
-        proposed_radius = (std::max)(b.xmax - b.xmin,
+        proposed_radius = (std::max)(b.xmax() - b.xmin(),
                                      proposed_radius);
-        proposed_radius = (std::max)(b.ymax - b.ymin,
+        proposed_radius = (std::max)(b.ymax() - b.ymin(),
                                      proposed_radius);
-        proposed_radius = (std::max)(b.zmax - b.zmin,
+        proposed_radius = (std::max)(b.zmax() - b.zmin(),
                                      proposed_radius);
         proposed_radius /= 100;
     }

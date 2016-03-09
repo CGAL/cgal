@@ -334,6 +334,7 @@ public:
 
 
 
+  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface){}
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* m);
   QList<QAction*> actions() const;
@@ -395,9 +396,9 @@ QList<QAction*> Polyhedron_demo_cut_plugin::actions() const {
 void Polyhedron_demo_cut_plugin::createCutPlane() {
   plane_item = new Scene_plane_item(scene);
   const CGAL::Three::Scene_interface::Bbox& bbox = scene->bbox();
-  plane_item->setPosition((bbox.xmin+bbox.xmax)/2.f,
-                          (bbox.ymin+bbox.ymax)/2.f,
-                          (bbox.zmin+bbox.zmax)/2.f);
+  plane_item->setPosition((bbox.xmin()+bbox.xmax())/2.f,
+                          (bbox.ymin()+bbox.ymax())/2.f,
+                          (bbox.zmin()+bbox.zmax())/2.f);
   plane_item->setNormal(0., 0., 1.);
   connect(plane_item, SIGNAL(destroyed()),
           this, SLOT(enableAction()));

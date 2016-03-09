@@ -40,7 +40,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
                                 Deform_mesh::Hedge_index_map(),
                                 Array_based_vertex_point_map(&positions));
 
-  length_of_axis = bbox().diagonal_length() / 15.0;
+  length_of_axis = (CGAL::sqrt((bbox().xmax()-bbox().xmin())*(bbox().xmax()-bbox().xmin()) + (bbox().ymax()-bbox().ymin())*(bbox().ymax()-bbox().ymin()) + (bbox().zmax()-bbox().zmin())*(bbox().zmax()-bbox().zmin()))) / 15.0;
 
   // interleave events of viewer (there is only one viewer) 
   QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
@@ -753,35 +753,35 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
 void Scene_edit_polyhedron_item::compute_bbox(const CGAL::Three::Scene_interface::Bbox& bb){
     pos_bbox.resize(24*3);
 
-    pos_bbox[0]=bb.xmin; pos_bbox[1]=bb.ymin; pos_bbox[2]=bb.zmin;
-    pos_bbox[3]=bb.xmax; pos_bbox[4]=bb.ymin; pos_bbox[5]=bb.zmin;
-    pos_bbox[6]=bb.xmin; pos_bbox[7]=bb.ymin; pos_bbox[8]=bb.zmin;
-    pos_bbox[9]=bb.xmin; pos_bbox[10]=bb.ymax; pos_bbox[11]=bb.zmin;
+    pos_bbox[0]=bb.xmin(); pos_bbox[1]=bb.ymin(); pos_bbox[2]=bb.zmin();
+    pos_bbox[3]=bb.xmax(); pos_bbox[4]=bb.ymin(); pos_bbox[5]=bb.zmin();
+    pos_bbox[6]=bb.xmin(); pos_bbox[7]=bb.ymin(); pos_bbox[8]=bb.zmin();
+    pos_bbox[9]=bb.xmin(); pos_bbox[10]=bb.ymax(); pos_bbox[11]=bb.zmin();
     
-    pos_bbox[12]=bb.xmin; pos_bbox[13]=bb.ymin; pos_bbox[14]=bb.zmin;
-    pos_bbox[15]=bb.xmin; pos_bbox[16]=bb.ymin; pos_bbox[17]=bb.zmax;
-    pos_bbox[18]= bb.xmax; pos_bbox[19]=bb.ymin; pos_bbox[20]=bb.zmin;
-    pos_bbox[21]= bb.xmax; pos_bbox[22]=bb.ymax; pos_bbox[23]=bb.zmin;
+    pos_bbox[12]=bb.xmin(); pos_bbox[13]=bb.ymin(); pos_bbox[14]=bb.zmin();
+    pos_bbox[15]=bb.xmin(); pos_bbox[16]=bb.ymin(); pos_bbox[17]=bb.zmax();
+    pos_bbox[18]= bb.xmax(); pos_bbox[19]=bb.ymin(); pos_bbox[20]=bb.zmin();
+    pos_bbox[21]= bb.xmax(); pos_bbox[22]=bb.ymax(); pos_bbox[23]=bb.zmin();
     
-    pos_bbox[24]= bb.xmax; pos_bbox[25]=bb.ymin; pos_bbox[26]=bb.zmin;
-    pos_bbox[27]= bb.xmax; pos_bbox[28]=bb.ymin; pos_bbox[29]=bb.zmax;
-    pos_bbox[30]=bb.xmin; pos_bbox[31]=bb.ymax; pos_bbox[32]=bb.zmin;
-    pos_bbox[33]=bb.xmax; pos_bbox[34]=bb.ymax; pos_bbox[35]=bb.zmin;
+    pos_bbox[24]= bb.xmax(); pos_bbox[25]=bb.ymin(); pos_bbox[26]=bb.zmin();
+    pos_bbox[27]= bb.xmax(); pos_bbox[28]=bb.ymin(); pos_bbox[29]=bb.zmax();
+    pos_bbox[30]=bb.xmin(); pos_bbox[31]=bb.ymax(); pos_bbox[32]=bb.zmin();
+    pos_bbox[33]=bb.xmax(); pos_bbox[34]=bb.ymax(); pos_bbox[35]=bb.zmin();
     
-    pos_bbox[36]=bb.xmin; pos_bbox[37]=bb.ymax; pos_bbox[38]=bb.zmin;
-    pos_bbox[39]=bb.xmin; pos_bbox[40]=bb.ymax; pos_bbox[41]=bb.zmax;
-    pos_bbox[42]=bb.xmin; pos_bbox[43]=bb.ymin; pos_bbox[44]=bb.zmax;
-    pos_bbox[45]=bb.xmax; pos_bbox[46]=bb.ymin; pos_bbox[47]=bb.zmax;
+    pos_bbox[36]=bb.xmin(); pos_bbox[37]=bb.ymax(); pos_bbox[38]=bb.zmin();
+    pos_bbox[39]=bb.xmin(); pos_bbox[40]=bb.ymax(); pos_bbox[41]=bb.zmax();
+    pos_bbox[42]=bb.xmin(); pos_bbox[43]=bb.ymin(); pos_bbox[44]=bb.zmax();
+    pos_bbox[45]=bb.xmax(); pos_bbox[46]=bb.ymin(); pos_bbox[47]=bb.zmax();
 
-    pos_bbox[48]=bb.xmin; pos_bbox[49]=bb.ymin; pos_bbox[50]=bb.zmax;
-    pos_bbox[51]=bb.xmin; pos_bbox[52]=bb.ymax; pos_bbox[53]=bb.zmax;
-    pos_bbox[54]=bb.xmax; pos_bbox[55]=bb.ymax; pos_bbox[56]=bb.zmax;
-    pos_bbox[57]=bb.xmin; pos_bbox[58]=bb.ymax; pos_bbox[59]=bb.zmax;
+    pos_bbox[48]=bb.xmin(); pos_bbox[49]=bb.ymin(); pos_bbox[50]=bb.zmax();
+    pos_bbox[51]=bb.xmin(); pos_bbox[52]=bb.ymax(); pos_bbox[53]=bb.zmax();
+    pos_bbox[54]=bb.xmax(); pos_bbox[55]=bb.ymax(); pos_bbox[56]=bb.zmax();
+    pos_bbox[57]=bb.xmin(); pos_bbox[58]=bb.ymax(); pos_bbox[59]=bb.zmax();
 
-    pos_bbox[60]=bb.xmax; pos_bbox[61]=bb.ymax; pos_bbox[62]=bb.zmax;
-    pos_bbox[63]=bb.xmax; pos_bbox[64]=bb.ymin; pos_bbox[65]=bb.zmax;
-    pos_bbox[66]=bb.xmax; pos_bbox[67]=bb.ymax; pos_bbox[68]=bb.zmax;
-    pos_bbox[69]=bb.xmax; pos_bbox[70]=bb.ymax; pos_bbox[71]=bb.zmin;
+    pos_bbox[60]=bb.xmax(); pos_bbox[61]=bb.ymax(); pos_bbox[62]=bb.zmax();
+    pos_bbox[63]=bb.xmax(); pos_bbox[64]=bb.ymin(); pos_bbox[65]=bb.zmax();
+    pos_bbox[66]=bb.xmax(); pos_bbox[67]=bb.ymax(); pos_bbox[68]=bb.zmax();
+    pos_bbox[69]=bb.xmax(); pos_bbox[70]=bb.ymax(); pos_bbox[71]=bb.zmin();
     
 }
 

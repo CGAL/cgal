@@ -241,15 +241,15 @@ public Q_SLOTS:
     point_item->setName(QString("sample-%1").arg(nb_points));
     CGAL::Random rg(1340818006);
 
-    double grid_dx = bbox->xmax - bbox->xmin;
-    double grid_dy = bbox->ymax - bbox->ymin;
-    double grid_dz = bbox->zmax - bbox->zmin;
+    double grid_dx = bbox->xmax() - bbox->xmin();
+    double grid_dy = bbox->ymax() - bbox->ymin();
+    double grid_dz = bbox->zmax() - bbox->zmin();
 
     for(int i=0; i < nb_points; i++){
       point_item->point_set()->push_back(
-      Epic_kernel::Point_3(bbox->xmin + rg.get_double()* grid_dx, 
-        bbox->ymin + rg.get_double()* grid_dy,
-        bbox->zmin + rg.get_double()* grid_dz)
+      Epic_kernel::Point_3(bbox->xmin ()+ rg.get_double()* grid_dx,
+        bbox->ymin() + rg.get_double()* grid_dy,
+        bbox->zmin() + rg.get_double()* grid_dz)
       );
     }
 
