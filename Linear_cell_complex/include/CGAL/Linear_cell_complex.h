@@ -530,7 +530,7 @@ namespace CGAL {
                               Vertex_attribute_handle h1,
                               Vertex_attribute_handle h2)
     {
-      Dart_handle d1 = make_combinatorial_polygon(*this,3);
+      Dart_handle d1 = this->make_combinatorial_polygon(3);
 
       set_vertex_attribute_of_dart(d1,h0);
       set_vertex_attribute_of_dart(beta(d1, 1),h1);
@@ -566,7 +566,7 @@ namespace CGAL {
                                 Vertex_attribute_handle h2,
                                 Vertex_attribute_handle h3)
     {
-      Dart_handle d1 = make_combinatorial_polygon(*this,4);
+      Dart_handle d1 = this->make_combinatorial_polygon(4);
 
       set_vertex_attribute_of_dart(d1,h0);
       set_vertex_attribute_of_dart(beta(d1, 1),h1);
@@ -613,7 +613,7 @@ namespace CGAL {
       Dart_handle d3 = make_triangle(h1, h3, h2);
       Dart_handle d4 = make_triangle(h3, h0, h2);
 
-      return make_combinatorial_tetrahedron(*this, d1, d2, d3, d4);
+      return this->make_combinatorial_tetrahedron(d1, d2, d3, d4);
     }
 
     /** Create a tetrahedron given 4 points.
@@ -672,7 +672,7 @@ namespace CGAL {
       Dart_handle d5 = make_quadrangle(h0, h1, h2, h3);
       Dart_handle d6 = make_quadrangle(h5, h4, h7, h6);
 
-      return make_combinatorial_hexahedron(*this, d1, d2, d3, d4, d5, d6);
+      return this->make_combinatorial_hexahedron(d1, d2, d3, d4, d5, d6);
     }
 
     /** Create an hexahedron given 8 points.
@@ -731,9 +731,10 @@ namespace CGAL {
      * @param update_attributes a boolean to update the enabled attributes
      * @return a dart handle to the new vertex containing p.
      */
-    Dart_handle insert_point_in_cell_1(Dart_handle dh, const Point& p, bool update_attributes)
+    Dart_handle insert_point_in_cell_1(Dart_handle dh, const Point& p,
+                                       bool update_attributes)
     {
-      return CGAL::insert_cell_0_in_cell_1(*this, dh,
+      return this->insert_cell_0_in_cell_1(dh,
                                            create_vertex_attribute(p),
                                            update_attributes);
     }
@@ -744,11 +745,12 @@ namespace CGAL {
      * @param update_attributes a boolean to update the enabled attributes
      * @return a dart handle to the new vertex containing p.
      */
-    Dart_handle insert_point_in_cell_2(Dart_handle dh, const Point& p, bool update_attributes)
+    Dart_handle insert_point_in_cell_2(Dart_handle dh, const Point& p,
+                                       bool update_attributes)
     {
       Vertex_attribute_handle v = create_vertex_attribute(p);
 
-      Dart_handle first = CGAL::insert_cell_0_in_cell_2(*this, dh, v, update_attributes);
+      Dart_handle first = this->insert_cell_0_in_cell_2(dh, v, update_attributes);
 
       if ( first==null_handle ) // If the triangulated facet was made of one dart
         erase_vertex_attribute(v);
@@ -784,8 +786,8 @@ namespace CGAL {
                                                  const Point& p,
                                                  bool update_attributes = true)
     {
-      return CGAL::insert_dangling_cell_1_in_cell_2
-          (*this, dh, create_vertex_attribute(p), update_attributes);
+      return this->insert_dangling_cell_1_in_cell_2
+          (dh, create_vertex_attribute(p), update_attributes);
     }
 
     /** Insert a point in a given i-cell.
