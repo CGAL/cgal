@@ -231,7 +231,7 @@ public:
 #ifndef CGAL_HEADER_ONLY
 // Global variables
 // ================
-CGAL_EXPORT extern  Random  default_random;
+CGAL_EXPORT extern CGAL_DEPRECATED Random default_random;
 #endif // CGAL_HEADER_ONLY
 
 #ifdef CGAL_HEADER_ONLY
