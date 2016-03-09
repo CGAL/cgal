@@ -198,11 +198,11 @@ void Mesh_3_plugin::mesh_3()
   CGAL::Three::Scene_interface::Bbox bbox = item->bbox();
   ui.objectName->setText(item->name());
   ui.objectNameSize->setText(tr("Object bbox size (w,h,d):  <b>%1</b>,  <b>%2</b>,  <b>%3</b>")
-                             .arg(bbox.width(),0,'g',3)
-                             .arg(bbox.height(),0,'g',3)
-                             .arg(bbox.depth(),0,'g',3) );
+                             .arg(bbox.xmax() - bbox.xmin(),0,'g',3)
+                             .arg(bbox.ymax() - bbox.ymin(),0,'g',3)
+                             .arg(bbox.zmax() - bbox.zmin(),0,'g',3) );
 
-  double diag = bbox.diagonal_length();
+  double diag = CGAL::sqrt((bbox.xmax()-bbox.xmin())*(bbox.xmax()-bbox.xmin()) + (bbox.ymax()-bbox.ymin())*(bbox.ymax()-bbox.ymin()) + (bbox.zmax()-bbox.zmin())*(bbox.zmax()-bbox.zmin()));
   int decimals = 0;
   double sizing_default = get_approximate(diag * 0.05, 2, decimals);
   ui.facetSizing->setDecimals(-decimals+2);
@@ -395,12 +395,12 @@ meshing_done(Meshing_thread* thread)
   Scene_c3t3_item* result_item = thread->item();
   const Scene_item::Bbox& bbox = result_item->bbox();
   str.append(QString("BBox (x,y,z): [ %1, %2 ], [ %3, %4 ], [ %5, %6 ], <br>")
-    .arg(bbox.xmin)
-    .arg(bbox.xmax)
-    .arg(bbox.ymin)
-    .arg(bbox.ymax)
-    .arg(bbox.zmin)
-    .arg(bbox.zmax));
+    .arg(bbox.xmin())
+    .arg(bbox.xmax())
+    .arg(bbox.ymin())
+    .arg(bbox.ymax())
+    .arg(bbox.zmin())
+    .arg(bbox.zmax()));
 
   msg->information(qPrintable(str));
 
@@ -427,9 +427,9 @@ treat_result(Scene_item& source_item,
   result_item.c3t3_changed();
 
   const Scene_item::Bbox& bbox = result_item.bbox();
-  result_item.setPosition((bbox.xmin + bbox.xmax)/2.f,
-                          (bbox.ymin + bbox.ymax)/2.f,
-                          (bbox.zmin + bbox.zmax)/2.f);
+  result_item.setPosition((bbox.xmin() + bbox.xmax())/2.f,
+                          (bbox.ymin() + bbox.ymax())/2.f,
+                          (bbox.zmin() + bbox.zmax())/2.f);
 
   result_item.setColor(default_mesh_color);
   result_item.setRenderingMode(source_item.renderingMode());

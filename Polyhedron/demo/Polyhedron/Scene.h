@@ -130,9 +130,9 @@ public:
   double len_diagonal() const
   {
     Bbox box = bbox();
-    double dx = box.xmax - box.xmin;
-    double dy = box.ymax - box.ymin;
-    double dz = box.zmax - box.zmin;
+    double dx = box.xmax() - box.xmin();
+    double dy = box.ymax() - box.ymin();
+    double dz = box.zmax() - box.zmin();
     return std::sqrt(dx*dx + dy*dy + dz*dz);
   }
 
@@ -162,10 +162,10 @@ public Q_SLOTS:
   void setExpanded(QModelIndex);
   //!Specifies a group as Collapsed for the view
   void setCollapsed(QModelIndex);
-  /*! This is an overloaded function.
-   * Notifies the scene that the sender item was modified.
-   * Called by the items. Calls @ref Scene_item#changed().
-   * This function is called by the items.*/
+  /*!
+   *Calls itemChanged() on the sender if it's an item.
+
+*/
   void itemChanged();
   /*! Notifies the scene that the item at index i was modified.
    * Called by the items. Calls @ref Scene_item#changed().

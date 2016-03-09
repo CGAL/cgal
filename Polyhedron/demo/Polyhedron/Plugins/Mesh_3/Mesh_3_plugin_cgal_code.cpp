@@ -82,12 +82,12 @@ Meshing_thread* cgal_code_mesh_3(const Implicit_function_interface* pfunction,
 {
   if (pfunction == NULL) { return NULL; }
 
-  CGAL::Bbox_3 domain_bbox(pfunction->bbox().xmin,
-                           pfunction->bbox().ymin,
-                           pfunction->bbox().zmin,
-                           pfunction->bbox().xmax,
-                           pfunction->bbox().ymax,
-                           pfunction->bbox().zmax);
+  CGAL::Bbox_3 domain_bbox(pfunction->bbox().xmin(),
+                           pfunction->bbox().ymin(),
+                           pfunction->bbox().zmin(),
+                           pfunction->bbox().xmax(),
+                           pfunction->bbox().ymax(),
+                           pfunction->bbox().zmax());
 
   Function_mesh_domain* p_domain =
     new Function_mesh_domain(Function_wrapper(*pfunction), domain_bbox, 1e-7);

@@ -828,12 +828,12 @@ void MainWindow::error(QString text) {
 void MainWindow::updateViewerBBox()
 {
   const Scene::Bbox bbox = scene->bbox();
-  const double xmin = bbox.xmin;
-  const double ymin = bbox.ymin;
-  const double zmin = bbox.zmin;
-  const double xmax = bbox.xmax;
-  const double ymax = bbox.ymax;
-  const double zmax = bbox.zmax;
+  const double xmin = bbox.xmin();
+  const double ymin = bbox.ymin();
+  const double zmin = bbox.zmin();
+  const double xmax = bbox.xmax();
+  const double ymax = bbox.ymax();
+  const double zmax = bbox.zmax();
    //qDebug() << QString("Bounding box: (%1, %2, %3) - (%4, %5, %6)\n")
    //.arg(xmin).arg(ymin).arg(zmin).arg(xmax).arg(ymax).arg(zmax);
   qglviewer::Vec 
@@ -1625,8 +1625,8 @@ void MainWindow::viewerShowObject()
   }
   if(index >= 0) {
     const Scene::Bbox bbox = scene->item(index)->bbox();
-    viewerShow((float)bbox.xmin, (float)bbox.ymin, (float)bbox.zmin,
-               (float)bbox.xmax, (float)bbox.ymax, (float)bbox.zmax);
+    viewerShow((float)bbox.xmin(), (float)bbox.ymin(), (float)bbox.zmin(),
+               (float)bbox.xmax(), (float)bbox.ymax(), (float)bbox.zmax());
   }
 }
 

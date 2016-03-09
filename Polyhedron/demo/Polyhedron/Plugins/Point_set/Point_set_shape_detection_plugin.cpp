@@ -104,7 +104,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
   Scene_points_with_normal_item::Bbox bb = item->bbox();
  
-  double diam = bb.diagonal_length();
+  double diam = CGAL::sqrt((bb.xmax()-bb.xmin())*(bb.xmax()-bb.xmin()) + (bb.ymax()-bb.ymin())*(bb.ymax()-bb.ymin()) + (bb.zmax()-bb.zmin())*(bb.zmax()-bb.zmin()));
 
   if(item)
   {

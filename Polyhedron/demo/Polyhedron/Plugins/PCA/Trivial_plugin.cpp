@@ -37,9 +37,9 @@ public:
                        "<p>x range: (%1, %2)<br />"
                        "y range: (%3, %4)<br />"
                        "z range: (%5, %6)</p>")
-                .arg(bb.xmin).arg(bb.xmax)
-                .arg(bb.ymin).arg(bb.ymax)
-                .arg(bb.zmin).arg(bb.zmax);
+                .arg(bb.xmin()).arg(bb.xmax())
+                .arg(bb.ymin()).arg(bb.ymax())
+                .arg(bb.zmin()).arg(bb.zmax());
     }
 
     // Indicate if rendering mode is supported
@@ -101,34 +101,34 @@ private:
     {
         positions_lines.clear();
         const Bbox& bb = scene->bbox();
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmax());
 
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmax());
 
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmin());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmax());
 
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmax());
 
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmin); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymin); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmax);
-        positions_lines.push_back(bb.xmax); positions_lines.push_back(bb.ymax); positions_lines.push_back(bb.zmin);
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmin()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymin()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmax());
+        positions_lines.push_back(bb.xmax()); positions_lines.push_back(bb.ymax()); positions_lines.push_back(bb.zmin());
     }
 
     const CGAL::Three::Scene_interface* scene;

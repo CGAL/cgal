@@ -83,9 +83,9 @@ void Polyhedron_demo_transform_polyhedron_plugin::start(Scene_polyhedron_item* p
   QApplication::setOverrideCursor(Qt::PointingHandCursor);
   
   Scene_polyhedron_item::Bbox bbox = poly_item->bbox();
-  double x=(bbox.xmin+bbox.xmax)/2;
-  double y=(bbox.ymin+bbox.ymax)/2;
-  double z=(bbox.zmin+bbox.zmax)/2;
+  double x=(bbox.xmin()+bbox.xmax())/2;
+  double y=(bbox.ymin()+bbox.ymax())/2;
+  double z=(bbox.zmin()+bbox.zmax())/2;
   
   transform_item = new Scene_polyhedron_transform_item(qglviewer::Vec(x,y,z),poly_item,scene);
   transform_item->setManipulatable(true);

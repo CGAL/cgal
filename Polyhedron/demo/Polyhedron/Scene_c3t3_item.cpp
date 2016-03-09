@@ -120,9 +120,9 @@ void Scene_c3t3_item::compile_shaders()
 }
 double complex_diag(const Scene_item* item) {
   const Scene_item::Bbox& bbox = item->bbox();
-  const double& xdelta = bbox.xmax-bbox.xmin;
-  const double& ydelta = bbox.ymax-bbox.ymin;
-  const double& zdelta = bbox.zmax-bbox.zmin;
+  const double& xdelta = bbox.xmax()-bbox.xmin();
+  const double& ydelta = bbox.ymax()-bbox.ymin();
+  const double& zdelta = bbox.zmax()-bbox.zmin();
   const double diag = std::sqrt(xdelta*xdelta +
                                 ydelta*ydelta +
                                 zdelta*zdelta);
@@ -804,9 +804,9 @@ void Scene_c3t3_item::draw_triangle_edges(const Kernel::Point_3& pa,
 
 double Scene_c3t3_item::complex_diag() const {
   const Bbox& bbox = this->bbox();
-  const double& xdelta = bbox.xmax - bbox.xmin;
-  const double& ydelta = bbox.ymax - bbox.ymin;
-  const double& zdelta = bbox.zmax - bbox.zmin;
+  const double& xdelta = bbox.xmax() - bbox.xmin();
+  const double& ydelta = bbox.ymax() - bbox.ymin();
+  const double& zdelta = bbox.zmax() - bbox.zmin();
   const double diag = std::sqrt(xdelta*xdelta +
     ydelta*ydelta +
     zdelta*zdelta);
@@ -1312,9 +1312,9 @@ bool Scene_c3t3_item::load_binary(std::istream& is)
 void
 Scene_c3t3_item::reset_cut_plane() {
   const Bbox& bbox = this->bbox();
-  const float xcenter = static_cast<float>((bbox.xmax+bbox.xmin)/2.);
-  const float ycenter = static_cast<float>((bbox.ymax+bbox.ymin)/2.);
-  const float zcenter = static_cast<float>((bbox.zmax+bbox.zmin)/2.);
+  const float xcenter = static_cast<float>((bbox.xmax()+bbox.xmin())/2.);
+  const float ycenter = static_cast<float>((bbox.ymax()+bbox.ymin())/2.);
+  const float zcenter = static_cast<float>((bbox.zmax()+bbox.zmin())/2.);
 
   frame->setPosition(qglviewer::Vec(xcenter, ycenter, zcenter));
 }

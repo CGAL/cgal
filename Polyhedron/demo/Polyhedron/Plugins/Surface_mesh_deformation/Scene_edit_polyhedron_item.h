@@ -763,9 +763,9 @@ protected:
   }
 
   double scene_diag() const {
-    const double& xdelta = bbox().xmax - bbox().xmin;
-    const double& ydelta = bbox().ymax - bbox().ymin;
-    const double& zdelta = bbox().zmax - bbox().zmin;
+    const double& xdelta = bbox().xmax() - bbox().xmin();
+    const double& ydelta = bbox().ymax() - bbox().ymin();
+    const double& zdelta = bbox().zmax() - bbox().zmin();
     const double diag = std::sqrt(xdelta*xdelta +
       ydelta*ydelta +
       zdelta*zdelta);
