@@ -22,9 +22,9 @@
 
 #include <vector>
 
-// I needed to use a non-reserved word for this thing, there were problems when I (stupidly) used TYPE
+// I needed to use a non-reserved word for this thing, there were problems when I (iiordano) (stupidly) used TYPE
 #define CLEARLY_MY_TYPE 2 // 1 = Cross, 2 = Diametric
-#define USE_TEST_THINGS 1 // 1 = True, 0 = False
+#define USE_TEST_THINGS 0 // 1 = True, 0 = False
 
 #if USE_TEST_THINGS == 1
 #include <CGAL/Periodic_4_hyperbolic_triangulation_2.h>
