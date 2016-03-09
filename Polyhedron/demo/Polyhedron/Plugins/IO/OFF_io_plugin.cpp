@@ -135,24 +135,28 @@ bool Polyhedron_demo_off_plugin::canSave(const CGAL::Three::Scene_item* item)
 {
   // This plugin supports polyhedrons and polygon soups
   return qobject_cast<const Scene_polyhedron_item*>(item) ||
-    qobject_cast<const Scene_polygon_soup_item*>(item);
+    qobject_cast<const Scene_polygon_soup_item*>(item) ||
+    qobject_cast<const Scene_points_with_normal_item*>(item);
 }
 
 bool Polyhedron_demo_off_plugin::save(const CGAL::Three::Scene_item* item, QFileInfo fileinfo)
 {
-  // This plugin supports polyhedrons and polygon soups
+  // This plugin supports point sets, polyhedrons and polygon soups
+  const Scene_points_with_normal_item* points_item =
+    qobject_cast<const Scene_points_with_normal_item*>(item);
   const Scene_polyhedron_item* poly_item = 
     qobject_cast<const Scene_polyhedron_item*>(item);
   const Scene_polygon_soup_item* soup_item = 
     qobject_cast<const Scene_polygon_soup_item*>(item);
 
-  if(!poly_item && !soup_item)
+  if(!poly_item && !soup_item && !points_item)
     return false;
 
   std::ofstream out(fileinfo.filePath().toUtf8());
   out.precision (std::numeric_limits<double>::digits10 + 2);
   return (poly_item && poly_item->save(out)) || 
-    (soup_item && soup_item->save(out));
+    (soup_item && soup_item->save(out)) ||
+    (points_item && points_item->write_off_point_set(out));
 }
 
 #include "OFF_io_plugin.moc"
