@@ -1,5 +1,6 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_polygon_soup_item.h"
+#include "Scene_points_with_normal_item.h"
 #include "Polyhedron_type.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
@@ -55,8 +56,24 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
     return NULL;
   }
 
-  // to detect isolated vertices
+
   CGAL::File_scanner_OFF scanner( in, false);
+
+  // Try to read .off in a point set
+  if (scanner.size_of_facets() == 0)
+    {
+      in.seekg(0);
+      Scene_points_with_normal_item* item = new Scene_points_with_normal_item();
+      if(!item->read_off_point_set(in))
+        {
+          delete item;
+          return 0;
+        }
+
+      return item;
+    }
+  
+  // to detect isolated vertices
   std::size_t total_nb_of_vertices = scanner.size_of_vertices();
   in.seekg(0);
 
