@@ -848,11 +848,6 @@ install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake   DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 
-if (NOT CGAL_HEADER_ONLY)
-   install(EXPORT    CGALExports                             DESTINATION ${CGAL_INSTALL_CMAKE_DIR}
-           NAMESPACE CGAL:: )
-endif()
-
 if ( GMP_IN_AUXILIARY )
   install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )
   install(DIRECTORY auxiliary/gmp/lib/     DESTINATION ${CGAL_INSTALL_LIB_DIR} )
