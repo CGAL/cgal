@@ -62,10 +62,10 @@ foreach (package ${CGAL_CONFIGURED_PACKAGES} )
   list(APPEND QTMOCCMAKE_FILES ${PACKAGE_QTMOC_FILES})
 endforeach()
 
-foreach(mocfile ${mocfiles})
+foreach(mocfile ${CGAL_Qt5_MOC_FILES})
   list(APPEND additional_files ${mocfile})
 endforeach()
-foreach(resfile ${RESOURCE_FILES})
+foreach(resfile ${CGAL_Qt5_RESOURCE_FILES})
   list(APPEND additional_files ${resfile})
 endforeach()
 
