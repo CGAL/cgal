@@ -569,8 +569,6 @@ CGAL_Kernel_pred(In_smallest_orthogonal_sphere_3,
                  in_smallest_orthogonal_sphere_3_object)
 CGAL_Kernel_pred(Side_of_bounded_orthogonal_sphere_3,
                  side_of_bounded_orthogonal_sphere_3_object)
-CGAL_Kernel_pred(Does_simplex_intersect_dual_support_3,
-                 does_simplex_intersect_dual_support_3_object)
 CGAL_Kernel_pred(Oriented_side_2,
 		 oriented_side_2_object)
 CGAL_Kernel_pred(Oriented_side_3,

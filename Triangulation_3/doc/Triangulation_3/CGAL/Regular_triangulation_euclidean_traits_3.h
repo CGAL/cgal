@@ -121,28 +121,6 @@ corresponding respectively to
 */ 
 typedef unspecified_type Side_of_bounded_orthogonal_sphere_3; 
 
-/*!
-A predicate type. The operator() 
-takes weighted points as arguments, 
-considers the subspace of points with equal power distance 
-with respect to its arguments 
-and the intersection of this subspace with the affine hull of the bare 
-points associated to the arguments. 
-The operator() returns `ON_BOUNDED_SIDE`, 
-`ON_BOUNDARY` or `ON_UNBOUNDED_SIDE` 
-according to the position of this intersection 
-with respect to the simplex formed by the bare 
-points. 
-This predicate is useful for flow computations. 
-
-`Bounded_side operator()( Weighted_point_3 p, 		 Weighted_point_3 q, 		 Weighted_point_3 r, 		 Weighted_point_3 s) ; ` 
-
-`Bounded_side operator()( Weighted_point_3 p, 		 Weighted_point_3 q, 		 Weighted_point_3 r) ; ` 
-
-`Bounded_side operator()( Weighted_point_3 p, 		 Weighted_point_3 q) ; ` 
-
-*/ 
-typedef unspecified_type Does_simplex_intersect_dual_support_3; 
 
 /// @} 
 
@@ -236,11 +214,6 @@ in_smallest_orthogonal_sphere_3_object();
 Side_of_bounded_orthogonal_sphere_3 
 side_of_bounded_orthogonal_sphere_3_object(); 
 
-/*!
-
-*/ 
-Does_simplex_intersect_dual_support_3 
-does_simplex_intersect_dual_support_3_object(); 
 
 /*!
 

@@ -473,49 +473,6 @@ public :
 };
 
 
-// operator() returns true if the affine hull of the dual
-// to the given weighted points
-// intersect  the simplex formed by the bare points
-template < typename K >
-class Does_simplex_intersect_dual_support_3
-{
-public:
-  typedef typename K::Weighted_point_3               Weighted_point_3;
-  typedef typename K::Bounded_side                   Bounded_side;
-
-  typedef Bounded_side     result_type;
-
-  Bounded_side operator()(const Weighted_point_3 & p,
-		          const Weighted_point_3 & q,
-		          const Weighted_point_3 & r,
-		          const Weighted_point_3 & s) const
-  {
-    return does_simplex_intersect_weighted_dual_supportC3(
-                                        p.x(), p.y(), p.z(), p.weight(),
-					q.x(), q.y(), q.z(), q.weight(),
-					r.x(), r.y(), r.z(), r.weight(),
-					s.x(), s.y(), s.z(), s.weight());
-  }
-
-  Bounded_side operator()(const Weighted_point_3 & p,
-		          const Weighted_point_3 & q,
-		          const Weighted_point_3 & r) const
-  {
-    return does_simplex_intersect_weighted_dual_supportC3(
-                                        p.x(), p.y(), p.z(), p.weight(),
-					q.x(), q.y(), q.z(), q.weight(),
-					r.x(), r.y(), r.z(), r.weight());
-  }
-
-  Bounded_side operator()(const Weighted_point_3 & p,
-		          const Weighted_point_3 & q) const
-  {
-    return does_simplex_intersect_weighted_dual_supportC3(
-                                        p.x(), p.y(), p.z(), p.weight(),
-					q.x(), q.y(), q.z(), q.weight());
-  }
-};
-
 
 template < typename K >
 class Compute_weight_3
