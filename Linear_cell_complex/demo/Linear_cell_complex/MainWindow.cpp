@@ -556,8 +556,8 @@ void MainWindow::on_actionCreate2Volumes_triggered ()
   scene.lcc->sew<3>(scene.lcc->beta(d3,1,1,2), scene.lcc->beta(d4,2));
   scene.lcc->sew<3>(scene.lcc->beta(d2,2,1,1,2), d4);
 
-  CGAL::remove_cell<LCC,2>(*scene.lcc, d3);
-  CGAL::remove_cell<LCC,2>(*scene.lcc, scene.lcc->beta(d2,2));
+  scene.lcc->remove_cell<2>(d3);
+  scene.lcc->remove_cell<2>(scene.lcc->beta(d2,2));
 
   on_new_volume(d1);
   on_new_volume(d4);
@@ -741,7 +741,7 @@ void MainWindow::on_actionCompute_Voronoi_3D_triggered ()
     }
     while( !toremove.empty() )
     {
-      CGAL::remove_cell<LCC, 3>(*scene.lcc, toremove.top());
+      scene.lcc->remove_cell<3>(toremove.top());
       toremove.pop();
     }
     CGAL_assertion(scene.lcc->is_whole_map_unmarked(mark_toremove));
@@ -916,7 +916,7 @@ void MainWindow::on_actionRemove_filled_volumes_triggered()
     LCC::Attribute_handle<3>::type cur = it++;
     if( scene.lcc->get_attribute<3>(cur).info().is_filled_and_visible() )
     {
-      CGAL::remove_cell<LCC,3>(*scene.lcc,scene.lcc->get_attribute<3>(cur).dart());
+      scene.lcc->remove_cell<3>(scene.lcc->get_attribute<3>(cur).dart());
       ++count;
     }
   }
@@ -999,7 +999,7 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
   {
     if (!scene.lcc->is_marked(it, treated) )
     {
-      if ( CGAL::is_removable<LCC, 1>(*scene.lcc, it) )
+      if ( scene.lcc->is_removable<1>(it) )
       {
         LCC::Vector normal1 = CGAL::compute_normal_of_cell_2(*scene.lcc,it);
         LCC::Vector normal2 = CGAL::compute_normal_of_cell_2(*scene.lcc, scene.lcc->beta<2>(it) );
@@ -1032,7 +1032,7 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
         if (scene.lcc->is_marked(actu, treated2) &&
             (scene.lcc->beta<0, 2>(actu)!=actu || scene.lcc->beta<1, 2>(actu)!=actu) )
         {
-          CGAL::remove_cell<LCC, 1>(*scene.lcc, actu);
+          scene.lcc->remove_cell<1>(actu);
           actu = prev;
         }
         else
@@ -1042,7 +1042,7 @@ void MainWindow::on_actionMerge_coplanar_faces_triggered()
     }
     else if ( !CGAL::belong_to_same_cell<LCC, 2>(*scene.lcc, *it,
                                                  scene.lcc->beta<2>(*it)) )
-      CGAL::remove_cell<LCC, 1>(*scene.lcc, *it);
+      scene.lcc->remove_cell<1>(*it);
   }
 
   assert(scene.lcc->is_whole_map_marked(treated));
@@ -1085,7 +1085,7 @@ void MainWindow::on_actionMerge_all_volumes_triggered()
          scene.lcc->info<3>(scene.lcc->beta(it,3))
           .is_filled_and_visible())
     {
-      CGAL::remove_cell<LCC,2>(*scene.lcc,it);
+      scene.lcc->remove_cell<2>(it);
       itend=scene.lcc->darts().end();
       if ( prev==scene.lcc->null_handle ) it=scene.lcc->darts().begin();
       else { it=prev; if ( it!=itend ) ++it; }
@@ -1279,7 +1279,7 @@ void constrained_delaunay_triangulation(LCC &lcc, Dart_handle d1)
        
        //       assert(((lcc.beta<0,0>(dd1)==dd2) || lcc.beta<1,1>(dd1)==dd2));
        
-       Dart_handle ndart=CGAL::insert_cell_1_in_cell_2(lcc, dd1, dd2);
+       Dart_handle ndart=lcc.insert_cell_1_in_cell_2(dd1, dd2);
        va->info().dh=lcc.beta<2>(ndart);
 
        fh->info().exist_edge[index]=true;
@@ -1678,7 +1678,7 @@ void MainWindow::onMengerCancel()
   for(std::vector<Dart_handle>::iterator it=mengerVolumes.begin();
       it!=mengerVolumes.end(); ++it)
   {
-    CGAL::remove_cell<LCC,3>(*scene.lcc, *it);
+    scene.lcc->remove_cell<3>(*it);
   }
 
   recreate_whole_volume_list();
@@ -1847,21 +1847,20 @@ void MainWindow::split_edge_in_three(Dart_handle dh)
 
 void MainWindow::split_face_in_three(Dart_handle dh)
 {
-  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),scene.lcc->beta(dh,1,1,1),
-                                scene.lcc->beta(dh,0,0));
-  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),scene.lcc->beta(dh,1,1),
-                                scene.lcc->beta(dh,0));
+  scene.lcc->insert_cell_1_in_cell_2(scene.lcc->beta(dh,1,1,1),
+                                     scene.lcc->beta(dh,0,0));
+  scene.lcc->insert_cell_1_in_cell_2(scene.lcc->beta(dh,1,1),
+                                     scene.lcc->beta(dh,0));
 }
 
 void MainWindow::split_face_in_nine(Dart_handle dh)
 {
   Dart_handle d2 = scene.lcc->beta(dh,1,1,1,1,1,1,1);
 
-  Dart_handle e2= CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
-                                                scene.lcc->beta(dh,1,1),d2);
-  Dart_handle e1= CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
-                                                scene.lcc->beta(dh,1),
-                                                scene.lcc->beta(d2,1));
+  Dart_handle e2= scene.lcc->insert_cell_1_in_cell_2
+    (scene.lcc->beta(dh,1,1),d2);
+  Dart_handle e1= scene.lcc->insert_cell_1_in_cell_2
+    (scene.lcc->beta(dh,1),scene.lcc->beta(d2,1));
 
   split_edge_in_three(e1);
   split_edge_in_three(e2);
@@ -1894,10 +1893,10 @@ void MainWindow::split_vol_in_three(Dart_handle dh, bool removecenter)
                   scene.lcc->beta(dh,2,1,1,2,1,1,2) );
 
   Dart_handle f1=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
+      scene.lcc->insert_cell_2_in_cell_3(edges1.begin(),edges1.end());
 
   Dart_handle f2=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end());
+      scene.lcc->insert_cell_2_in_cell_3(edges2.begin(),edges2.end());
 
   if (scene.lcc->are_attributes_automatically_managed())
   {
@@ -1914,7 +1913,7 @@ void MainWindow::split_vol_in_three(Dart_handle dh, bool removecenter)
   }
 
   if ( removecenter )
-    CGAL::remove_cell<LCC,3>(*scene.lcc,f1);
+    scene.lcc->remove_cell<3>(f1);
   else
   {
     mengerVolumes.push_back(f1);
@@ -1948,10 +1947,10 @@ void MainWindow::split_vol_in_nine(Dart_handle dh, bool removecenter)
   CGAL_assertion( curd==scene.lcc->beta(dh,1,2,1,1,2) );
 
   Dart_handle f1=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
+      scene.lcc->insert_cell_2_in_cell_3(edges1.begin(),edges1.end());
 
   Dart_handle f2=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end());
+      scene.lcc->insert_cell_2_in_cell_3(edges2.begin(),edges2.end());
 
   if (scene.lcc->are_attributes_automatically_managed())
   {
@@ -1978,7 +1977,7 @@ void MainWindow::split_vol_in_nine(Dart_handle dh, bool removecenter)
   split_vol_in_three(scene.lcc->beta(f2,2,1),removecenter);
 
   if ( removecenter )
-    CGAL::remove_cell<LCC,3>(*scene.lcc,f1);
+    scene.lcc->remove_cell<3>(f1);
   else
   {
     mengerVolumes.push_back(scene.lcc->beta(f1,2,1));
@@ -2008,10 +2007,10 @@ void MainWindow::split_vol_in_twentyseven(Dart_handle dh)
   CGAL_assertion( curd==scene.lcc->beta(dh,1,1,2,1,1,2) );
 
   Dart_handle f1=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges1.begin(),edges1.end());
+      scene.lcc->insert_cell_2_in_cell_3(edges1.begin(),edges1.end());
 
   Dart_handle f2=
-      insert_cell_2_in_cell_3(*(scene.lcc),edges2.begin(),edges2.end());
+      scene.lcc->insert_cell_2_in_cell_3(edges2.begin(),edges2.end());
 
   if (scene.lcc->are_attributes_automatically_managed())
   {
@@ -2157,7 +2156,7 @@ void MainWindow::onMengerDec()
 
   for(std::size_t i = 0; i < faces.size(); i++)
   {
-    CGAL::remove_cell<LCC,2>(*scene.lcc, faces[i],mengerUpdateAttributes);
+    scene.lcc->remove_cell<2>(faces[i],mengerUpdateAttributes);
   }
   faces.clear();
 
@@ -2183,9 +2182,9 @@ void MainWindow::onMengerDec()
 
   for(std::size_t i = 0; i < edges.size(); i++)
   {
-    CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],0),mengerUpdateAttributes);
-    CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],1),mengerUpdateAttributes);
-    CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i],mengerUpdateAttributes);
+    scene.lcc->remove_cell<1>(scene.lcc->beta(edges[i],0),mengerUpdateAttributes);
+    scene.lcc->remove_cell<1>(scene.lcc->beta(edges[i],1),mengerUpdateAttributes);
+    scene.lcc->remove_cell<1>(edges[i],mengerUpdateAttributes);
   }
   edges.clear();
 
@@ -2201,7 +2200,7 @@ void MainWindow::onMengerDec()
     {
       if ( !(scene.lcc)->is_marked(it, markVertices) )
       {
-        if ( CGAL::is_removable<LCC, 0>(*scene.lcc, it) )
+        if ( scene.lcc->is_removable<0>(it) )
           vertices.push_back(it);
         CGAL::mark_cell<LCC, 0>(*scene.lcc, it, markVertices);
       }
@@ -2229,7 +2228,7 @@ void MainWindow::onMengerDec()
 
   for(std::size_t i = 0; i < vertices.size(); i++)
   {
-    CGAL::remove_cell<LCC,0>(*scene.lcc, vertices[i],mengerUpdateAttributes);
+    scene.lcc->remove_cell<0>(vertices[i],mengerUpdateAttributes);
   }
   vertices.clear();
 
@@ -2319,7 +2318,7 @@ void MainWindow::onSierpinskiCarpetCancel()
   for(std::vector<Dart_handle>::iterator it=sierpinskiCarpetSurfaces.begin();
       it!=sierpinskiCarpetSurfaces.end(); ++it)
   {
-    CGAL::remove_cell<LCC,2>(*scene.lcc, *it);
+    scene.lcc->remove_cell<2>(*it);
   }
 
   recreate_whole_volume_list();
@@ -2789,10 +2788,8 @@ void MainWindow::sierpinski_carpet_split_edge_in_three(Dart_handle dh)
     }*/
 
     //    Dart_handle d1=
-        CGAL::insert_cell_0_in_cell_1(*(scene.lcc),
-                                      dh,
-                                      LCC::null_handle,
-                                      false);
+        scene.lcc->insert_cell_0_in_cell_1
+          (dh, LCC::null_handle, false);
 
     /*if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
     {
@@ -2805,10 +2802,8 @@ void MainWindow::sierpinski_carpet_split_edge_in_three(Dart_handle dh)
     }*/
 
     //    Dart_handle d2=
-        CGAL::insert_cell_0_in_cell_1(*(scene.lcc),
-                                      dh,
-                                      LCC::null_handle,
-                                      false);
+        scene.lcc->insert_cell_0_in_cell_1
+          (dh,LCC::null_handle,false);
 
     /*if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
     {
@@ -2826,19 +2821,17 @@ void MainWindow::sierpinski_carpet_split_face_in_three(Dart_handle dh,
                                                        bool removecenter)
 {
   Dart_handle d1=
-  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
-                                scene.lcc->beta(dh,1,1,1),
-                                scene.lcc->beta(dh,0,0),
-                                sierpinskiCarpetUpdateAttributes);
+  scene.lcc->insert_cell_1_in_cell_2
+    (scene.lcc->beta(dh,1,1,1),scene.lcc->beta(dh,0,0),
+     sierpinskiCarpetUpdateAttributes);
   Dart_handle d2=
-  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
-                                scene.lcc->beta(dh,1,1),
-                                scene.lcc->beta(dh,0),
-                                sierpinskiCarpetUpdateAttributes);
+  scene.lcc->insert_cell_1_in_cell_2
+    (scene.lcc->beta(dh,1,1),scene.lcc->beta(dh,0),
+     sierpinskiCarpetUpdateAttributes);
 
   if ( removecenter )
   {
-    CGAL::remove_cell<LCC,2>(*scene.lcc,d2,sierpinskiCarpetUpdateAttributes);
+    scene.lcc->remove_cell<2>(d2,sierpinskiCarpetUpdateAttributes);
   }
   else
   {
@@ -2856,10 +2849,8 @@ void MainWindow::sierpinski_carpet_split_face_in_nine(Dart_handle dh)
   Dart_handle d4 = scene.lcc->beta(d2,1);
 
   Dart_handle e2=
-  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
-                                d1,
-                                d2,
-                                sierpinskiCarpetUpdateAttributes);
+  scene.lcc->insert_cell_1_in_cell_2
+    (d1,d2,sierpinskiCarpetUpdateAttributes);
 
   /*if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
   {
@@ -2868,10 +2859,8 @@ void MainWindow::sierpinski_carpet_split_face_in_nine(Dart_handle dh)
   }*/
 
   Dart_handle e1=
-  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
-                                d3,
-                                d4,
-                                sierpinskiCarpetUpdateAttributes);
+  scene.lcc->insert_cell_1_in_cell_2
+    (d3,d4,sierpinskiCarpetUpdateAttributes);
 
   /*if (afterConstructionUpdateAttributes && updateAttributesMethodStdMap)
   {
@@ -2931,11 +2920,11 @@ void MainWindow::onSierpinskiCarpetDec()
 
   for(std::size_t i = 0; i < edges.size(); i++)
   {
-    CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],0),
+    scene.lcc->remove_cell<1>(scene.lcc->beta(edges[i],0),
                              sierpinskiCarpetUpdateAttributes);
-    CGAL::remove_cell<LCC,1>(*scene.lcc, scene.lcc->beta(edges[i],1),
+    scene.lcc->remove_cell<1>(scene.lcc->beta(edges[i],1),
                              sierpinskiCarpetUpdateAttributes);
-    CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i],
+    scene.lcc->remove_cell<1>(edges[i],
                              sierpinskiCarpetUpdateAttributes);
   }
   edges.clear();
@@ -2987,8 +2976,8 @@ void MainWindow::onSierpinskiCarpetDec()
 
   for(std::size_t i = 0; i < vertices.size(); i++)
   {
-    CGAL::remove_cell<LCC,0>(*scene.lcc, vertices[i],
-                             sierpinskiCarpetUpdateAttributes);
+    scene.lcc->remove_cell<0>(vertices[i],
+                              sierpinskiCarpetUpdateAttributes);
   }
   vertices.clear();
 
@@ -3067,7 +3056,7 @@ void MainWindow::onSierpinskiTriangleCancel()
   for(std::vector<Dart_handle>::iterator it=sierpinskiTriangleSurfaces.begin();
       it!=sierpinskiTriangleSurfaces.end(); ++it)
   {
-    CGAL::remove_cell<LCC,2>(*scene.lcc, *it);
+    scene.lcc->remove_cell<2>(*it);
   }
 
   recreate_whole_volume_list();
@@ -3213,22 +3202,19 @@ void MainWindow::sierpinski_triangle_split_edge_in_two(Dart_handle dh)
 void MainWindow::sierpinski_triangle_split_face_in_four(Dart_handle dh, bool removecenter)
 {
   Dart_handle d1=
-  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
-                                scene.lcc->beta(dh,1),
-                                scene.lcc->beta(dh,1,1,1),
-                                sierpinskiTriangleUpdateAttributes);
+  scene.lcc->insert_cell_1_in_cell_2
+    (scene.lcc->beta(dh,1),scene.lcc->beta(dh,1,1,1),
+     sierpinskiTriangleUpdateAttributes);
 
   Dart_handle d2=
-  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
-                                scene.lcc->beta(d1,2,1),
-                                scene.lcc->beta(d1,2,1,1,1),
-                                sierpinskiTriangleUpdateAttributes);
+  scene.lcc->insert_cell_1_in_cell_2
+    (scene.lcc->beta(d1,2,1),scene.lcc->beta(d1,2,1,1,1),
+     sierpinskiTriangleUpdateAttributes);
 
   Dart_handle d3=
-  CGAL::insert_cell_1_in_cell_2(*(scene.lcc),
-                                scene.lcc->beta(d2,2,1),
-                                scene.lcc->beta(d2,2,1,1,1),
-                                sierpinskiTriangleUpdateAttributes);
+  scene.lcc->insert_cell_1_in_cell_2
+    (scene.lcc->beta(d2,2,1),scene.lcc->beta(d2,2,1,1,1),
+     sierpinskiTriangleUpdateAttributes);
   if ( removecenter )
   {
     Triplet <Dart_handle, Dart_handle, Dart_handle> triplet(d1,d2,d3);
@@ -3236,8 +3222,7 @@ void MainWindow::sierpinski_triangle_split_face_in_four(Dart_handle dh, bool rem
 
     // at this step, the map is correctly 0-embedded, any other attribute is set
     //  (call of insert_point_in_cell<1> with update_attributes set to true)
-
-    CGAL::remove_cell<LCC,2>(*scene.lcc,scene.lcc->beta(d3,2),sierpinskiTriangleUpdateAttributes);
+    scene.lcc->remove_cell<2>(scene.lcc->beta(d3,2),sierpinskiTriangleUpdateAttributes);
 
     if (sierpinskiTriangleUpdateAttributes)
     {
@@ -3316,8 +3301,8 @@ void MainWindow::onSierpinskiTriangleDec()
 
   for(std::size_t i = 0; i < edges.size(); i++)
   {
-    CGAL::remove_cell<LCC,1>(*scene.lcc, edges[i],
-                             sierpinskiTriangleUpdateAttributes);
+    scene.lcc->remove_cell<1>(edges[i],
+                              sierpinskiTriangleUpdateAttributes);
   }
   edges.clear();
 
@@ -3368,8 +3353,8 @@ void MainWindow::onSierpinskiTriangleDec()
 
   for(std::size_t i = 0; i < vertices.size(); i++)
   {
-    CGAL::remove_cell<LCC,0>(*scene.lcc, vertices[i],
-                             sierpinskiTriangleUpdateAttributes);
+    scene.lcc->remove_cell<0>(vertices[i],
+                              sierpinskiTriangleUpdateAttributes);
   }
   vertices.clear();
 
