@@ -27,14 +27,12 @@ find_package(OpenGL)
 
 # Find QGLViewer
 if(Qt5_FOUND)
-  find_package(QGLViewer )
+  find_package(QGLViewer)
 endif(Qt5_FOUND)
 
 if(CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
 
   include_directories ( ${QGLVIEWER_INCLUDE_DIR} )
-
-#  cgal_include_moc_files()
 
   qt5_wrap_ui( UI_FILES MainWindow.ui )
 
