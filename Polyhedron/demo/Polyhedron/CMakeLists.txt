@@ -135,7 +135,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   include( ${CMAKE_CURRENT_SOURCE_DIR}/polyhedron_demo_macros.cmake )
 
 
-  qt5_add_resources ( RESOURCE_FILES Polyhedron_3.qrc )
+  qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES Polyhedron_3.qrc )
   qt5_add_resources(gl_splat_rc GlSplat/glsplat.qrc)
   add_library(gl_splat SHARED
       GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
@@ -293,7 +293,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     MainWindow.cpp
     Polyhedron_demo.cpp
     File_loader_dialog_moc.cpp
-    ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${RESOURCE_FILES} ${statisticsUI_FILES})
+    ${FileLoaderDialogUI_files} ${MainWindowUI_files} ${PreferencesUI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${statisticsUI_FILES} ${CGAL_Qt5_MOC_FILES})
   target_link_libraries(polyhedron_demo demo_framework point_dialog)
   qt5_use_modules(polyhedron_demo Gui OpenGL Xml Widgets Script Svg )
   add_executable  ( Polyhedron_3 Polyhedron_3.cpp )

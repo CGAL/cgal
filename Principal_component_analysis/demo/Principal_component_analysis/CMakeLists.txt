@@ -44,11 +44,11 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   qt5_generate_moc( "Viewer.h" "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
   add_file_dependencies( Viewer_moc.cpp "${CMAKE_CURRENT_SOURCE_DIR}/Viewer.h" )
 
-  qt5_add_resources ( RESOURCE_FILES PCA_demo.qrc )
+  qt5_add_resources ( CGAL_Qt5_RESOURCE_FILES PCA_demo.qrc )
 
     add_file_dependencies( PCA_demo.cpp "${CMAKE_CURRENT_BINARY_DIR}/MainWindow_moc.cpp"
                                          "${CMAKE_CURRENT_BINARY_DIR}/Viewer_moc.cpp" )
-    add_executable  ( PCA_demo PCA_demo.cpp ${UI_FILES} ${RESOURCE_FILES} )
+    add_executable  ( PCA_demo PCA_demo.cpp ${UI_FILES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
     qt5_use_modules( PCA_demo Xml Script OpenGL)
   # Link with Qt libraries
   target_link_libraries( PCA_demo ${QT_LIBRARIES} )
