@@ -3,8 +3,8 @@
 // CGAL headers
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-//#include <CGAL/Delaunay_hyperbolic_triangulation_2.h>
-#include <CGAL/Periodic_4_Delaunay_hyperbolic_triangulation_2.h>
+#include <CGAL/Delaunay_hyperbolic_triangulation_2.h>
+//#include <CGAL/Periodic_4_Delaunay_hyperbolic_triangulation_2.h>
 #include <CGAL/Triangulation_hyperbolic_traits_2.h>
 
 // to be deleted
@@ -43,7 +43,8 @@ typedef CGAL::Triangulation_hyperbolic_traits_2<R>                K;
 typedef K::Point_2                                                Point_2;
 typedef K::Iso_rectangle_2                                        Iso_rectangle_2;
  
-typedef CGAL::Periodic_4_Delaunay_hyperbolic_triangulation_2<K>   Delaunay;
+//typedef CGAL::Periodic_4_Delaunay_hyperbolic_triangulation_2<K>   Delaunay;
+typedef CGAL::Delaunay_hyperbolic_triangulation_2<K>              Delaunay;
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
@@ -332,7 +333,7 @@ MainWindow::on_actionModify_recursion_depth_triggered()
       return;
     }
 
-    dt.Set_recursion_depth(depth);
+    //dt.Set_recursion_depth(depth);
 }
 
 

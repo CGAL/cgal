@@ -6,9 +6,7 @@
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
 #include <CGAL/Delaunay_hyperbolic_triangulation_2.h> 
 
-/* #include <CGAL/Periodic_4_Delaunay_hyperbolic_triangulation_2.h> */
-
-#include <CGAL/Triangulation_hyperbolic_traits_2.h>
+#include <CGAL/Periodic_4_hyperbolic_triangulation_traits_2.h>
 
 // to be deleted
 #include <CGAL/Qt/HyperbolicPainterOstream.h>
@@ -43,8 +41,8 @@
 
 // unique words
 //#include <temp.h>
-#include <CGAL/Sqrt_field.h>
-#include <CGAL/Octagon_matrix.h>
+#include <CGAL/Square_root_2_field.h>
+#include <CGAL/Hyperbolic_octagon_group.h>
 
 #include <CGAL/Hyperbolic_random_points_in_disc_2.h>
 
@@ -67,24 +65,19 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   InR;
 typedef CGAL::Exact_predicates_exact_constructions_kernel     R;
 typedef CGAL::Triangulation_hyperbolic_traits_2<R>            K;
-
 typedef K::Point_2                                            Point;
 // keep color
 typedef TranslationInfo<std::string>                          Vb_info;
-
 typedef CGAL::Triangulation_vertex_base_with_info_2< Vb_info, K > 
                                                               Vb;
-
 typedef CGAL::Triangulation_face_base_with_info_2 <CGAL::Hyperbolic_face_info_2, K > 
                                                               Fb;
-
 typedef CGAL::Delaunay_hyperbolic_triangulation_2< K, CGAL::Triangulation_data_structure_2<Vb, Fb> > 
-/* typedef CGAL::Periodic_4_Delaunay_hyperbolic_triangulation_2< K, CGAL::Triangulation_data_structure_2<Vb, Fb> > */
                                                               Delaunay;
-
 typedef Delaunay::Vertex_handle                               Vertex_handle;
  
-//typedef CGAL::Delaunay_hyperbolic_triangulation_2<K> Delaunay;
+
+
 
 struct PointsComparator {
   static double eps; 
@@ -105,12 +98,64 @@ struct PointsComparator {
 
 double PointsComparator::eps = 0.0001;
 
-void apply_unique_words(std::vector<Point>& points, Point input = Point(0, 0), double threshold = 20, int word_length = 6, double d = .999)
+string glabels[] = { "a", "\\bar{b}", "c", "\\bar{d}", "\\bar{a}", "b", "\\bar{c}", "d" };
+
+
+void recurr(vector<HyperbolicOctagonGroup>& v, vector<HyperbolicOctagonGroup> g, int depth = 1) {
+  if (depth > 1) {
+    
+    recurr(v, g, depth-1);
+
+    vector<HyperbolicOctagonGroup> tmp;
+    vector<string> tmpw;
+    for (int i = 0; i < v.size(); i++) {
+      tmp.push_back(v[i]);
+    }
+
+    for (int i = 0; i < tmp.size(); i++) {
+      for (int j = 0; j < g.size(); j++) {
+        v.push_back(tmp[i]*g[j]);
+      }
+    }
+  } else {
+    for (int i = 0; i < g.size(); i++) {
+      v.push_back(g[i]);
+    }
+  }
+}
+
+
+void my_unique_words(std::vector<Point>& p, Point input, int length) {
+  std::vector<HyperbolicOctagonGroup> g;
+  get_generators(g);
+  std::vector<HyperbolicOctagonGroup> v;
+  recurr(v, g, length);
+  std::set<HyperbolicOctagonGroup> s;
+
+  for (int i = 0; i < v.size(); i++) {
+    s.insert( v[i] );
+  }
+
+  cout << "Original point and images: " << endl;
+  cout << input.x() << ", " << input.y() << endl;
+  for (set<HyperbolicOctagonGroup>::iterator it = s.begin(); it != s.end(); it++) {
+    HyperbolicOctagonGroup m = *it;
+    pair<double, double> res;
+    res = m.apply(to_double(input.x()), to_double(input.y()));
+    cout << res.first << ", " << res.second << endl;
+    p.push_back( Point(res.first, res.second) );
+  }
+
+}
+
+
+
+void apply_unique_words(std::vector<Point>& points, Point input = Point(0, 0), double threshold = 10, int word_length = 6, double d = .998)
 {
 
   cout << "apply_unique_words called with threshold = " << threshold << ", word_length = " << word_length << ", d = " << d << endl;
 
-  static vector<OctagonMatrix> unique_words;
+  static vector<HyperbolicOctagonGroup> unique_words;
   static bool generated = false;
   if(generated == false) {
     generate_unique_words(unique_words, threshold, word_length);
@@ -132,7 +177,7 @@ void apply_unique_words(std::vector<Point>& points, Point input = Point(0, 0), d
 
 void apply_unique_words_G(std::vector<Point>& points, Point input = Point(0, 0), double threshold = 6/*13.5*/, int word_length = 6/*20*/)
 {
-  static vector<OctagonMatrix> unique_words;
+  static vector<HyperbolicOctagonGroup> unique_words;
   static bool generated = false;
   if(generated == false) {
     generate_unique_words(unique_words, threshold, word_length);
@@ -281,7 +326,7 @@ MainWindow::MainWindow()
   
   // dt to form the octagon tessellation
   vector<Point> origin_orbit;
-  apply_unique_words(origin_orbit, origin, 20, 6);
+  apply_unique_words(origin_orbit, origin, 10, 6);
   origin_orbit.push_back(Point(0, 0));
   // for(long i = 0; i < origin_orbit.size(); i++) {
   //   cout << origin_orbit[i] << endl;
@@ -372,36 +417,11 @@ MainWindow::MainWindow()
   scene.setSceneRect(left_top_corner_x, left_top_corner_y, width, height);
   this->graphicsView->setScene(&scene);
   this->graphicsView->setMouseTracking(true);
-  
-  // // we want to adjust the coordinates of QGraphicsView to the coordinates of QGraphicsScene
-  // // the following line must do this:
-  //this->graphicsView->fitInView( scene.sceneRect(), Qt::KeepAspectRatio);
-  // // It does not do this sufficiently well.
-  // // Current solution:
-  
-  // QRect viewerRect = graphicsView->mapFromScene(scene.sceneRect()).boundingRect();
-  // std::cout << "resolution before " << viewerRect.width() << " " << viewerRect.height() << std::endl;
-  
-  // // shear 230 230
-  //this->graphicsView->shear(407, 407);
-  //this->graphicsView->shear(10, 10);
-  
-  // viewerRect = graphicsView->mapFromSthis->graphicsView->rotate(90);cene(scene.sceneRect()).boundingRect();
-  // std::cout << "resolution after " << viewerRect.width() << " " << viewerRect.height() << std::endl;
-  
-  // // Turn the vertical axis upside down
-  //this->graphicsView->matrix().scale(1, -1);
-
-  //this->graphicsView->scale(10, 10);
-  //this->graphicsView->centerOn(0.0, 0.0);
-  //this->graphicsView->translate(1.0, -20.0);
   this->graphicsView->shear(230, 230);
-  //this->graphicsView->rotate(90);
 
   // // The navigation adds zooming and translation functionality to the
   // // QGraphicsView
   this->addNavigation(this->graphicsView);
-
   this->setupStatusBar();
   this->setupOptionsMenu();
   this->addAboutDemo(":/cgal/help/about_Delaunay_triangulation_2.html");
@@ -450,10 +470,12 @@ MainWindow::processInput(CGAL::Object o)
       
       //delete
       vector<Point> points;
-      apply_unique_words(points, p);
+      //apply_unique_words(points, p, 4, 1, .998);
+      my_unique_words(points, p, 1);
+
       points.push_back(p);
       Vertex_handle v;
-      for(size_t j = 0; j < points.size(); j++) {
+      for(size_t j = 0; j < points.size() ; j++) {
         v = dt.insert(points[j]);
         v->info().setColor(ccol[cidx]);
       }
@@ -715,7 +737,7 @@ MainWindow::on_actionRecenter_triggered()
 }
 
 
-#include "Periodic_4_Dirichlet_region_demo.moc"
+#include "Periodic_4_hyperbolic_triangulation_2_demo.moc"
 
 int main(int argc, char **argv)
 {

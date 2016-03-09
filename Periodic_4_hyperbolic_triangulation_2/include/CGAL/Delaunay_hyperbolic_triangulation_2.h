@@ -134,7 +134,6 @@ public:
        : Delaunay_triangulation_2<Gt,Tds>(tr)
   {   CGAL_triangulation_postcondition( this->is_valid() );}
 
-  
   void mark_star(Vertex_handle v) const
   {
     if(!is_star_bounded(v)) {

@@ -20,7 +20,7 @@ include(${CGAL_USE_FILE})
 
 find_package(Qt5 QUIET COMPONENTS Widgets)
 
-include_directories (BEFORE ../../include include)
+include_directories (BEFORE ../../include include ../../../Hyperbolic_triangulation_2/include)
 
 # ui files, created with Qt Designer
 qt5_wrap_ui( uis Periodic_4_hyperbolic_triangulation_2.ui )
