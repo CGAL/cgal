@@ -76,7 +76,7 @@ typedef unspecified_type Construct_tetrahedron_3;
 /*!
 A predicate object that must provide the function operator 
 
-`Comparison_result operator()(Point p, Point q)`, 
+`Comparison_result operator()(Point_3 p, Point_3 q)`, 
 
 which returns `EQUAL` if the two points are equal. Otherwise it must 
 return a consistent order for any two points chosen in a same line. 
@@ -86,7 +86,7 @@ typedef unspecified_type Compare_xyz_3;
 /*!
 A predicate object that must provide the function operator 
 
-`Orientation operator()(Point p, Point q, Point r)`, 
+`Orientation operator()(Point_3 p, Point_3 q, Point_3 r)`, 
 
 which returns `COLLINEAR` if the points are collinear. Otherwise it must 
 return a consistent orientation for any three points chosen in a same plane. 
@@ -97,7 +97,7 @@ typedef unspecified_type Coplanar_orientation_3;
 /*!
 A predicate object that must provide the function operator 
 
-`Orientation operator()(Point p, Point q, Point r, Point s)`, 
+`Orientation operator()(Point_3 p, Point_3 q, Point_3 r, Point_3 s)`, 
 
 which returns POSITIVE, if `s` lies on the positive side of the oriented 
 plane `h` defined by `p`, `q`, and `r`, returns NEGATIVE if 
