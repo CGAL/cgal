@@ -4031,7 +4031,7 @@ namespace CGAL {
                                          bool update_attributes=true )
     {
       Dart_handle d1, d2;
-      size_type  mark=get_new_mark();
+      size_type amark=get_new_mark();
       
       // 1) We store all the darts of the edge.
       std::deque<Dart_handle> vect;
@@ -4049,12 +4049,12 @@ namespace CGAL {
       {
         d1 = create_dart();
         
-        if (!is_free<1>(*it))
-        { basic_link_beta_1(d1, beta<1>(*it)); }
+        if (!this->template is_free<1>(*it))
+        { basic_link_beta_1(d1, this->template beta<1>(*it)); }
 
         for ( unsigned int dim=2; dim<=dimension; ++dim )
         {
-          if (!is_free(*it, dim) && is_marked(beta(*it, dim), mark))
+          if (!is_free(*it, dim) && is_marked(beta(*it, dim), amark))
           {
             basic_link_beta_for_involution(beta(*it, dim), d1, dim);
             basic_link_beta_for_involution(*it, beta(*it, dim, 1), dim);
@@ -4076,32 +4076,32 @@ namespace CGAL {
           internal::Set_i_attribute_of_dart_functor<Self, 0>::
             run(this, d1, ah);
         }
-        mark(*it, mark);
+        mark(*it, amark);
       }
       
       for (it = vect.begin(); it != vect.end(); ++it)
       {
         unmark(*it, m);
-        unmark(*it, mark);
+        unmark(*it, amark);
       }
 
       CGAL_assertion(is_whole_map_unmarked(m));
-      CGAL_assertion(is_whole_map_unmarked(mark));
+      CGAL_assertion(is_whole_map_unmarked(amark));
 
       free_mark(m);
-      free_mark(mark);
+      free_mark(amark);
 
       if (are_attributes_automatically_managed() && update_attributes)
       {
         internal::Degroup_attribute_functor_run<Self, 1>::
-          run(this, adart, beta<1>(adart));
+          run(this, adart, this->template beta<1>(adart));
       }
 
 #ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
       CGAL_assertion( is_valid() );
 #endif
 
-      return beta<1>(adart);
+      return this->template beta<1>(adart);
     }
 
     /** Insert a vertex in the given 2-cell which is splitted in triangles,
@@ -4124,7 +4124,8 @@ namespace CGAL {
         nn1=null_handle, nn2=null_handle;
       
       // If the facet is open, we search the dart 0-free
-      while ( !this->template is_free<0>(first) && beta<0>(first)!=adart )
+      while ( !this->template is_free<0>(first) &&
+              this->template beta<0>(first)!=adart )
         first = this->template beta<0>(first);
 
       // Mark used to mark darts already treated.
