@@ -88,9 +88,9 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND CGAL_ImageIO_FOUND)
     
     qt5_wrap_ui( uis ui/values_list.ui ui/mainwindow.ui ui/optionsdialog.ui ui/raw_image.ui )
     
-    qt5_add_resources( qrc_sources values_list.qrc surface_mesher.qrc  )
+    qt5_add_resources( CGAL_Qt5_RESOURCE_FILES values_list.qrc surface_mesher.qrc  )
 
-    add_executable  ( ${prj}  ${sources} ${uis} ${qrc_sources} )
+    add_executable  ( ${prj}  ${sources} ${uis} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
     qt5_use_modules(${prj} OpenGL Xml Svg)
     
