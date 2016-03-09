@@ -122,12 +122,11 @@ public :
     //!@see getChildren @see addChild
     void removeChild( Scene_item* item)
     {
+     item->has_group=0;
       Scene_group_item* group =
               qobject_cast<Scene_group_item*>(item);
       if(group)
-        Q_FOREACH(Scene_item* child, group->getChildren())
-            removeChild(child);
-      item->has_group=0;
+            resetHasGroup(group);
       children.removeOne(item);
     }
     //!Moves a child up in the list.
@@ -136,11 +135,23 @@ public :
     void moveDown(int);
 
 private:
-    //!Contains a reference to all the children of this group.
+    //Contains a reference to all the children of this group.
     QList<Scene_item*> children;
-    //!Updates the property has_group for each group and sub-groups containing new_item.
+    //Updates the property has_group for each group and sub-groups containing new_item.
     void add_group_number(Scene_item*new_item);
     bool expanded;
+    //Recompute has_group of all children of a group
+    void resetHasGroup(Scene_item* item)
+    {
+     Scene_group_item* group =
+             qobject_cast<Scene_group_item*>(item);
+     if(group)
+       Q_FOREACH(Scene_item* child, group->getChildren())
+       {
+        child->has_group=group->has_group + 1;
+        resetHasGroup(child);
+       }
+    }
 
 }; //end of class Scene_group_item
 
