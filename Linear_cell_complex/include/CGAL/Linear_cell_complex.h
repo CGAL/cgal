@@ -122,6 +122,12 @@ namespace CGAL {
     using Base::free_mark;
     using Base::get_new_mark;
 
+    using Base::insert_cell_0_in_cell_1;
+    using Base::insert_cell_0_in_cell_2;
+    using Base::insert_dangling_cell_1_in_cell_2;
+    using Base::insert_cell_1_in_cell_2;
+    using Base::insert_cell_2_in_cell_3;
+    
     Linear_cell_complex_base() : Base()
     {}
 
@@ -502,7 +508,7 @@ namespace CGAL {
     Dart_handle make_segment(Vertex_attribute_handle h0,
                              Vertex_attribute_handle h1)
     {
-      Dart_handle d1 = make_edge(*this);
+      Dart_handle d1 = this->make_edge();
       set_vertex_attribute_of_dart(d1,h0);
       set_vertex_attribute_of_dart(beta(d1, 2),h1);
 
@@ -769,7 +775,8 @@ namespace CGAL {
      * @return a dart handle to the new vertex containing p.
      */
     template <unsigned int i>
-    Dart_handle insert_point_in_cell(Dart_handle dh, const Point& p, bool update_attributes = true)
+    Dart_handle insert_point_in_cell(Dart_handle dh, const Point& p,
+                                     bool update_attributes = true)
     {
       CGAL_static_assertion(1<=i && i<=2);
       if (i==1) return insert_point_in_cell_1(dh, p, update_attributes);
