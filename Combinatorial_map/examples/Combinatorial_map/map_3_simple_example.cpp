@@ -11,8 +11,8 @@ typedef CMap_3::Dart_const_handle Dart_const_handle;
     CMap_3 cm;
 
     // Create two tetrahedra.  
-    Dart_const_handle dh1 = CGAL::make_combinatorial_tetrahedron(cm); 
-    Dart_const_handle dh2 = CGAL::make_combinatorial_tetrahedron(cm);
+    Dart_const_handle dh1 = cm.make_combinatorial_tetrahedron(); 
+    Dart_const_handle dh2 = cm.make_combinatorial_tetrahedron();
   
     // Display the combinatorial map characteristics.
     cm.display_characteristics(std::cout); 

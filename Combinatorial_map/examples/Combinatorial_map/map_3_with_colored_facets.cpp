@@ -41,8 +41,8 @@ int main()
   CMap_3 cm;
 
   // Create 2 hexahedra.
-  Dart_handle dh1 = CGAL::make_combinatorial_hexahedron(cm);
-  Dart_handle dh2 = CGAL::make_combinatorial_hexahedron(cm);
+  Dart_handle dh1 = cm.make_combinatorial_hexahedron();
+  Dart_handle dh2 = cm.make_combinatorial_hexahedron();
 
   // 1) Create all 2-attributes and associated them to darts.
   for (CMap_3::Dart_range::iterator

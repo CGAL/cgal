@@ -11,11 +11,11 @@ int main()
   CMap_3 cm;
 
   // Create one combinatorial hexahedron.
-  Dart_handle dh1 = CGAL::make_combinatorial_hexahedron(cm);
+  Dart_handle dh1 = cm.make_combinatorial_hexahedron();
 
   // Add two edges along two opposite facets.
-  CGAL_assertion( CGAL::is_insertable_cell_1_in_cell_2
-                        (cm,cm.beta(dh1,1),cm.beta(dh1,0)) );
+  CGAL_assertion( cm.is_insertable_cell_1_in_cell_2
+                        (cm.beta(dh1,1),cm.beta(dh1,0)) );
 
   cm.insert_cell_1_in_cell_2(cm.beta(dh1,1), cm.beta(dh1,0));
   CGAL_assertion( cm.is_valid() );

@@ -263,24 +263,24 @@ bool test2D()
     d1 = map.create_dart ();
     map.display_characteristics ( cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove vertex1: " << flush;
-    map.remove_cell<0> ( d1 );
+    map.template remove_cell<0> ( d1 );
     map.display_characteristics (cout)<<", valid=" << map.is_valid() << endl;
 
     d1 = map.create_dart ();
     map.template sew<1> ( d1, d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove vertex2: " << flush;
-    map.remove_cell<0> ( d1 );
+    map.template remove_cell<0> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     d1 = map.make_edge();
     d2 = map.beta(d1, 2);
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove vertex3: " << flush;
-    map.remove_cell<0> ( d1 );
+    map.template remove_cell<0> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove vertex4: " << flush;
-    map.remove_cell<0> ( d2 );
+    map.template remove_cell<0> ( d2 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     d1 = map.make_edge();
@@ -288,7 +288,7 @@ bool test2D()
     map.template sew<1>( map.beta(d1, 2), map.beta (d1, 2) );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove vertex5: " << flush;
-    map.remove_cell<0> ( d1 );
+    map.template remove_cell<0> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     d1 = map.make_combinatorial_polygon(3);
@@ -297,15 +297,15 @@ bool test2D()
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove vertex6: " << flush;
-    map.remove_cell<0> ( d1 );
+    map.template remove_cell<0> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove vertex7: " << flush;
-    map.remove_cell<0> ( d2 );
+    map.template remove_cell<0> ( d2 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove vertex8: " << flush;
-    map.remove_cell<0> ( d3 );
+    map.template remove_cell<0> ( d3 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     d1 = map.make_combinatorial_polygon(3);
@@ -315,7 +315,7 @@ bool test2D()
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove vertex9: " << flush;
-    map.remove_cell<0> ( d1 );
+    map.template remove_cell<0> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     map.clear();
@@ -329,20 +329,20 @@ bool test2D()
     d1 = map.create_dart ();
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge1: " << flush;
-    map.remove_cell<1> ( d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     d1 = map.create_dart ();
     map.template sew<1> ( d1, d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge2: " << flush;
-    map.remove_cell<1> ( d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     d1 = map.make_edge();
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge3: " << flush;
-    map.remove_cell<1> ( d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     d1 = map.make_edge();
@@ -350,14 +350,14 @@ bool test2D()
     map.template sew<1> ( map.beta(d1, 2), map.beta (d1, 2) );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge4: " << flush;
-    map.remove_cell<1> ( d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     d1 = map.make_edge();
     map.template sew<1> ( d1, d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge5: " << flush;
-    map.remove_cell<1> ( d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     d1 = map.make_combinatorial_polygon(3);
@@ -366,15 +366,15 @@ bool test2D()
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove edge6: " << flush;
-    map.remove_cell<1> ( d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove edge7: " << flush;
-    map.remove_cell<1> ( d2 );
+    map.template remove_cell<1> ( d2 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove edge8: " << flush;
-    map.remove_cell<1> ( d3 );
+    map.template remove_cell<1> ( d3 );
     map.display_characteristics ( cout)<<", valid=" << map.is_valid() << endl;
 
     d1 = map.make_combinatorial_polygon(3);
@@ -385,15 +385,15 @@ bool test2D()
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove edge9: " << flush;
-    map.remove_cell<1> ( d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove edge10: " << flush;
-    map.remove_cell<1> ( d2 );
+    map.template remove_cell<1> ( d2 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     cout << "remove edge11: " << flush;
-    map.remove_cell<1> ( d3 );
+    map.template remove_cell<1> ( d3 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     d1 = map.make_combinatorial_polygon(3);
@@ -401,7 +401,7 @@ bool test2D()
     map.template sew<2> ( d1, d2 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge12: " << flush;
-    map.remove_cell<1> ( d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     d1 = map.make_combinatorial_polygon(3);
@@ -409,10 +409,10 @@ bool test2D()
     map.template sew<2> ( d1, d2 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge13: " << flush;
-    map.remove_cell<1> ( map.beta (d1, 1) );
+    map.template remove_cell<1> ( map.beta (d1, 1) );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
     cout << "remove edge14: " << flush;
-    map.remove_cell<1> ( d1 );
+    map.template remove_cell<1> ( d1 );
     map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
 
     d1 = map.make_combinatorial_hexahedron();
@@ -434,7 +434,7 @@ bool test2D()
         for ( vector_iterator it = V.begin(); it != V.end(); ++it )
         {
             cout << "remove edge15: " << flush;
-            map.remove_cell<1> ( *it );
+            map.template remove_cell<1> ( *it );
             map.display_characteristics (  cout ) << ", valid=" << map.is_valid() << endl;
         }
     }
