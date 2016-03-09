@@ -4,7 +4,9 @@ if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
 
-if(NOT CGAL_HEADER_ONLY)
+if(CGAL_HEADER_ONLY)
+  cache_set(CGAL_Qt5_3RD_PARTY_LIBRARIES Qt5::OpenGL Qt5::Svg )
+else(CGAL_HEADER_ONLY)
   find_package(Qt5 QUIET COMPONENTS OpenGL Svg QUIET)
   find_package(OpenGL QUIET)
 
@@ -40,6 +42,7 @@ if(NOT CGAL_HEADER_ONLY)
   message( STATUS "OpenGL libraries:    ${OPENGL_LIBRARIES}" )
   message( STATUS "OpenGL definitions:  ${OPENGL_DEFINITIONS}" )
   message( STATUS "Qt5Core include:     ${Qt5Core_INCLUDE_DIRS}" )
+  message( STATUS "QT_LIBRARIES:        ${QT_LIBRARIES}" )
   message( STATUS "Qt5 libraries:       ${Qt5Core_LIBRARIES} ${Qt5Gui_LIBRARIES} ${Qt5Svg_LIBRARIES} ${Qt5OpenGL_LIBRARIES}" )
   message( STATUS "Qt5Core definitions: ${Qt5Core_DEFINITIONS}" )
   message( STATUS "moc executable:      ${QT_MOC_EXECUTABLE}" )
@@ -81,7 +84,7 @@ if(NOT CGAL_HEADER_ONLY)
   include_directories( SYSTEM ${CGAL_3RD_PARTY_INCLUDE_DIRS} ${CGAL_Qt5_3RD_PARTY_INCLUDE_DIRS} )
 
   link_directories    ( ${CGAL_LIBRARIES_DIR} ${CGAL_3RD_PARTY_LIBRARIES_DIRS} )
-endif(NOT CGAL_HEADER_ONLY)
+endif(CGAL_HEADER_ONLY)
 
 collect_cgal_library( CGAL_Qt5 "${additional_files}")
 
