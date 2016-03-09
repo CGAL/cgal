@@ -38,7 +38,6 @@
 
 #include <CGAL/Triangulation_3.h>
 #include <CGAL/Regular_triangulation_cell_base_3.h>
-#include <CGAL/Weighted_point_triangulation_traits_3.h>
 #include <boost/bind.hpp>
 
 #ifndef CGAL_TRIANGULATION_3_DONT_INSERT_RANGE_OF_POINTS_WITH_INFO
@@ -72,25 +71,25 @@ namespace CGAL {
   template < class Gt, class Tds_ = Default, class Lock_data_structure_ = Default >
   class Regular_triangulation_3
   : public Triangulation_3<
-    Weighted_point_triangulation_traits_3<Gt>,
+    Gt,
       typename Default::Get<Tds_, Triangulation_data_structure_3 <
-                                    Triangulation_vertex_base_3<Weighted_point_triangulation_traits_3<Gt> >,
-                                    Regular_triangulation_cell_base_3<Weighted_point_triangulation_traits_3<Gt> > > >::type,
+                                    Triangulation_vertex_base_3<Gt>,
+                                    Regular_triangulation_cell_base_3<Gt> > >::type,
       Lock_data_structure_>
   {
-    typedef Weighted_point_triangulation_traits_3<Gt> Wptt_3;
+
     typedef Regular_triangulation_3<Gt, Tds_, Lock_data_structure_> Self;
 
     typedef typename Default::Get<Tds_, Triangulation_data_structure_3 <
-      Triangulation_vertex_base_3<Wptt_3>,
-      Regular_triangulation_cell_base_3<Wptt_3> > >::type Tds;
+      Triangulation_vertex_base_3<Gt>,
+      Regular_triangulation_cell_base_3<Gt> > >::type Tds;
 
-    typedef Triangulation_3<Wptt_3,Tds,Lock_data_structure_> Tr_Base;
+    typedef Triangulation_3<Gt,Tds,Lock_data_structure_> Tr_Base;
 
   public:
 
     typedef Tds                                   Triangulation_data_structure;
-    typedef Wptt_3                                Geom_traits;
+    typedef Gt                                    Geom_traits;
     typedef Geom_traits                           Traits;
     typedef typename Tr_Base::Concurrency_tag     Concurrency_tag;
     typedef typename Tr_Base::Lock_data_structure Lock_data_structure;
@@ -115,8 +114,8 @@ namespace CGAL {
     typedef typename Tr_Base::Finite_edges_iterator    Finite_edges_iterator;
     typedef typename Tr_Base::All_cells_iterator       All_cells_iterator;
 
-    typedef typename Wptt_3::Weighted_point_3        Weighted_point;
-    typedef typename Wptt_3::Bare_point              Bare_point;
+    typedef typename Gt::Weighted_point_3            Weighted_point;
+    typedef typename Gt::Bare_point                  Bare_point;
     typedef typename Gt::Segment_3                   Segment;
     typedef typename Gt::Triangle_3                  Triangle;
     typedef typename Gt::Tetrahedron_3               Tetrahedron;
@@ -166,11 +165,11 @@ namespace CGAL {
     using Tr_Base::is_valid;
 
     Regular_triangulation_3(const Gt & gt = Gt(), Lock_data_structure *lock_ds = NULL)
-      : Tr_Base(Wptt_3(gt), lock_ds), hidden_point_visitor(this)
+      : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
     {}
 
     Regular_triangulation_3(Lock_data_structure *lock_ds, const Gt & gt = Gt())
-      : Tr_Base(lock_ds, Wptt_3(gt)), hidden_point_visitor(this)
+      : Tr_Base(lock_ds, gt), hidden_point_visitor(this)
     {}
 
     Regular_triangulation_3(const Regular_triangulation_3 & rt)
@@ -183,7 +182,7 @@ namespace CGAL {
     template < typename InputIterator >
     Regular_triangulation_3(InputIterator first, InputIterator last,
       const Gt & gt = Gt(), Lock_data_structure *lock_ds = NULL)
-      : Tr_Base(Wptt_3(gt), lock_ds), hidden_point_visitor(this)
+      : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
     {
       insert(first, last);
     }
@@ -191,7 +190,7 @@ namespace CGAL {
     template < typename InputIterator >
     Regular_triangulation_3(InputIterator first, InputIterator last,
       Lock_data_structure *lock_ds, const Gt & gt = Gt())
-      : Tr_Base(Wptt_3(gt), lock_ds), hidden_point_visitor(this)
+      : Tr_Base(gt, lock_ds), hidden_point_visitor(this)
     {
       insert(first, last);
     }
@@ -1557,8 +1556,10 @@ dual(Cell_handle c) const
     // dimension() == 3
     Cell_handle n = c->neighbor(i);
     Bare_point bp = dual(c);
-    if ( ! is_infinite(c) && ! is_infinite(n) )
-      return construct_object(construct_segment( dual(c), dual(n) ));
+    if ( ! is_infinite(c) && ! is_infinite(n) ){
+      Bare_point np = dual(n);
+      return construct_object(construct_segment(bp, np));
+    }
 
     // either n or c is infinite
     int in;
