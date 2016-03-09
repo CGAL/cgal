@@ -343,6 +343,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     TARGETS
     demo_framework
     scene_polyhedron_item
+    scene_basic_objects
     scene_points_with_normal_item
     scene_implicit_function_item
     scene_polylines_item

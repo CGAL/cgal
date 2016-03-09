@@ -24,148 +24,327 @@ A plugin usually defines an object that inherits from `Scene_item` or uses some 
 
 \subsection examplePluginItself The Plugin Itself
 
-A basic plugin will inherit from `Polyhedron_demo_plugin_interface`. It can also inherits from the `Polyhedron_demo_plugin_helper` instead, for a more detailed model of plugin.
-It must be created in a folder named Xxxx_yyyy_plugin containing all the files created for it, and a CMakeLists.txt file. This file contains the following line:
-Its name must be of the form Polyhedron_demo_xxxx_yyyy_plugin. \n
-<b>In the CMakeList.txt file, in the section Plugins, add the following lines :</b>
+A basic plugin will inherit from `Polyhedron_demo_plugin_interface`. It must be created in a folder named Xxxx_yyyy_plugin containing all the files created for it, and a CMakeLists.txt file.
+Its name must be of the form Xxxx_yyyy_plugin. \n
 
-    include( polyhedron_demo_macros )
-    #if the plugin has a UI file
-    qt5_wrap_ui( xxxx_yyyyUI_FILES Polyhedron_demo_xxxx_yyyy_plugin.ui)
-    polyhedron_demo_plugin(xxx_yyyy_plugin Polyhedron_demo_xxx_yyyy_plugin ${xxx_yyyyUI_FILES})
-    #if the plugin uses external libraries like scene_items
-    target_link_libraries(xxx_yyyy_plugin scene_polygon_xxxx_yyyy_item scene_xxxx_zzzz_item)
-
-  [init]: @ref CGAL::Three::Polyhedron_demo_plugin_helper#init(QMainWindow *, Scene_interface *)
+  [init]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#init(QMainWindow *, Scene_interface *)
+  [applicable]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#applicable()
+  [actions]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#actions()
   The class must contain the following lines :\n
 
     Q_OBJECT\n
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)\n
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")\n
 
-In the function [init], get a reference to the `Scene`  and to the `MainWindow`. Then, create and link the actions of the plugin.\n
-Create a list of `QActions` containing the actions of the plugin.\n
-Add the following line:
-~~~~~~~~~~~~~{.cpp}
-    actionName->setProperty("submenuName", "Name_you_want_for_your_submenu");
-~~~~~~~~~~~~~
-to place your action in a submenu in the Operation Menu.\n
-If the plugin implements a new `Scene_item`, please notice that a Scene_item has a number of functions that will need a reference to the `Viewer` through the `Viewer_interface` type.
+Your plugin must override the three pure virtual functions inherited from Polyhedron_demo_plugin_interface : \n
+- [actions] that will hold the actions of the plugin
+- [applicable] that will decide if the plugin can be used with the current selection of items
+- [init] that will declare and link the actions of the plugin
 
-A plugin must always contain
-~~~~~~~~~~~~~{.cpp}
-#include "Polyhedron_demo_xxxx_yyyy_plugin.moc"
-~~~~~~~~~~~~~
-\subsection examplePluginDialog Adding a Dialog
+The function [init] is used just like a constructor. This is where you will connect all the actions, signals and slots of your plugin. \n
+This is also where you will declare the submenu of Operations in which your actions will be displayed.
 
-This section describes how to add a dialog on the use of an action.
+As a plugin is a QObject, it uses automoc and therefore must contain the line:
 
-For a minimalist dialog, intended to get a single parameter for instance you can create a `QInputDialog`:
 ~~~~~~~~~~~~~{.cpp}
-    const unsigned int parameter =
-      QInputDialog::getInt((QWidget*)mw,
-                           tr("Title"), // dialog title
-                           tr("Parameter's value:"), // field label
-                           10, // default value = fast
-                           0, // min
-                           100, // max
-                           1, // step
-                           &ok);
-    if(!ok) return;
+#include "Xxxx_yyyy_plugin.moc"
 ~~~~~~~~~~~~~
+
+<b>Example : </b>
+\snippet Three/Example_plugin/Basic_plugin.cpp headers_plugin
+\snippet Three/Example_plugin/Basic_plugin.cpp opening_plugin
+\snippet Three/Example_plugin/Basic_plugin.cpp basic_plugin
+\snippet Three/Example_plugin/Basic_plugin.cpp ending_plugin
+
+Once you have written your plugin, you must add it to the project using the CMakeLists.txt file. \n
+If you created your plugin in an existing directory, the CMakeLists.txt file already exists. If you created a new directory, you must create it.
+
+<b>The CMakeLists.txt file :</b>
+
+    include( polyhedron_demo_macros )
+    polyhedron_demo_plugin(basic_plugin Basic_plugin)
+
+
+\subsection basicPluginDialog Adding a Dialog to your plugin
+
+This section describes how to add a dialog when an action is triggered.
+
+For a minimalist dialog intended, for instance, to get a single parameter, you can create a `QInputDialog`:
+
+\snippet Three/Example_plugin/Basic_plugin.cpp basic_dialog_plugin
     
 
-For a more elaborate interface, you will have to use the designer tool of QtCreator. Create a new Qt Designer form (file->New file or Project->Qt->), and select among the template/form choices. 
-Name it Polyhedron_demo_your_plugin_name_plugin_dialog.ui (you may have to rename it once it is created as QtCreator tends to forget the capital letters), and add it to the project in the CMakeList :
+For a more elaborate interface, you will have to use the designer tool of QtCreator. Create a new Qt Designer form (file->New file or Project->Qt->).
+*  \image html menu_1.png
+*  \image html menu_2.png
+Then select among the template/form choices.
+*  \image html menu_3.png
+Name it Xxxx_yyyy_plugin_dialog.ui (you may have to rename it once it is created as QtCreator tends to forget the capital letters), and add it to the project in the CMakeLists :
 
-    qt5_wrap_ui( exampleUI_FILES Polyhedron_demo_example_plugin.ui )
-    polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES})
-    target_link_libraries(example_plugin scene_polyhedron_item)
+    qt5_wrap_ui( basicUI_FILES Basic_dialog_plugin.ui )
+    polyhedron_demo_plugin(basic_plugin Basic_plugin ${basicUI_FILES})
 
-Edit the ui file with the editor, then add the following line to your plugin file:
+Add a layout to the dialog with a drag and drop and lay it out.
+*  \image html menu_4.png
+
+Edit the ui file with the editor.
+*  \image html menu_5.png
+then add the following line to your plugin file:
 ~~~~~~~~~~~~~{.cpp}
-#include "ui_Polyhedron_demo_your_plugin_name_plugin.h"
+#include "ui_Xxxx_yyyy_plugin.h"
 ~~~~~~~~~~~~~
 
-You can then add a new class inheriting from `QDialog` and your own dialog, accessible with "Ui::". Add the macro `Q_OBJECT` and the line 
+You can then add a new class to your cpp file, inheriting from `QDialog` and your own dialog, accessible with "Ui::".
+Add the macro `Q_OBJECT` and the line
     `setupUi(this)` 
-in your constructor. You can populate the dialog in the action, using `dialog.show()` or `dialog.exec()`.
+in your constructor.
+\snippet Three/Example_plugin/Basic_plugin.cpp dialog_plugin
+
+You can populate the dialog in the action, using `dialog.show()` or `dialog.exec()`.
+
+\snippet Three/Example_plugin/Basic_plugin.cpp complex_dialog_plugin
+
+\subsection WarningBoxDialog Adding a Warning/error box to your plugin
+
+It is really simple to add a pop-up box with Qt. Use a QMessageBox and give it some arguments :
+\snippet Three/Example_plugin/Basic_plugin.cpp warningbox
 
 \subsection examplePluginDockWidget Adding a Dock Widget
 
 This section describes how to add a dock widget to the application.
-Just like with the Dialog, create a new Qt Designer form (file->New file or Project->Qt->Qt Designer Form), choose `QDockWidget in Widgets, and add it to the project in the CMakeLists.txt :
+Just like with the Dialog, create a new Qt Designer form (file->New file or Project->Qt->Qt Designer Form), choose `QDockWidget in Widgets
+*  \image html menu_6.png
+Add it to the project in the CMakeLists.txt :
 
-    qt5_wrap_ui( exampleUI_FILES dock_example.ui )
-    polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES})
-    target_link_libraries(example_plugin scene_polyhedron_item)
+    qt5_wrap_ui( dockUI_FILES Basic_dock_widget.ui )
+    polyhedron_demo_plugin(dock_widget_plugin Dock_widget_plugin ${dockUI_FILES})
 
 Edit the ui file with the editor, then add the following line to your plugin file:
 ~~~~~~~~~~~~~{.cpp}
-    #include "ui_dock_example.h"
+    #include "ui_Basic_dock_widget.h"
 ~~~~~~~~~~~~~
- Add a `DockQWidget*` and a `Ui::your_dock_widget` as private members of your plugin:
-~~~~~~~~~~~~~{.cpp}
-    private:
-    Ui::Dock_example ui_widget;
-    QDockWidget* dock_widget;
-~~~~~~~~~~~~~
-and initialize them in the init fucntion :
-~~~~~~~~~~~~~{.cpp}
-  dock_widget = new QDockWidget("Mesh Deformation", mw);
-  dock_widget->setVisible(false); // do not show at the beginning
+As for the Dialog, create a new class for your widget
+\snippet Three/Example_plugin/Dock_widget_plugin.cpp dock
 
-  ui_widget.setupUi(dock_widget);
-  mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+and add a reference to an object of this type as private members of your plugin:
+~~~~~~~~~~~~~{.cpp}
+private:
+  DockWidget* dock_widget;
 ~~~~~~~~~~~~~
+and initialize it in the init function, where you will also use signal/slots to connect it to the plugin:
 
-Use signal/slots to connect the dock widget to the plugin, and connect them in the `init()` function, and use the functions `show()`/`hide()` to make your 
-dock widget visible or not. By default, a dock widget will remain visible next time the demo is launched if it has not been closed. If you want to avoid that behavior, override the
+\snippet Three/Example_plugin/Dock_widget_plugin.cpp init
+
+
+You can use the functions `show()`/`hide()` to make your
+dock widget visible or not.
+\snippet Three/Example_plugin/Dock_widget_plugin.cpp action
+
+By default, a dock widget will remain visible next time the demo is launched if it has not been closed. If you want to avoid that behavior, override the
 function `closure()` in you plugin, and simply call `hide()` on your dock widget in it.
+\snippet Three/Example_plugin/Dock_widget_plugin.cpp closure
+
+\subsection exampleUsingAnItem Using a Scene_item
+\subsubsection exampleUsingASelectedItem Using an existing item
+[mainSelectionIndex]: @ref CGAL::Three::Scene_interface#mainSelectionIndex()
+[selectionIndices]: @ref CGAL::Three::Scene_interface#selectionIndices()
+[item]: @ref CGAL::Three::Scene_interface#item
+[item_id]: @ref CGAL::Three::Scene_interface#item_id
+You can get a reference to the items present in the scene in your plugin. To do so, you will need to use the reference to the scene that you can get in the [init] function :
+~~~~~~~~~~~~~{.cpp}
+void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* sc  )
+{
+  //get the references
+  this->scene = sc;
+}
+~~~~~~~~~~~~~
+This Scene_interface will give you access to the following functions :
+- [mainSelectionIndex]
+- [selectionIndices]
+- [item]
+- [item_id]
+
+that give you access to any item in the scene. Example of use :
+\snippet Three/Example_plugin/Basic_item_plugin.cpp use
+
+Don't forget to adapt your [applicable] function :
+\snippet Three/Example_plugin/Basic_item_plugin.cpp applicable
+
+\subsubsection exampleCreatingAnItem Creating an item of an existing type
+
+You might want your plugin to create a new item. This is possible thanks to the scene.
+
+~~~~~~~~~~~~~{.cpp}
+void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* sc  )
+{
+  //get the references
+  this->scene = sc;
+}
+~~~~~~~~~~~~~
+
+Simply create a new instance of the item you want and call the function CGAL::Three::Scene_interface#addItem :
+
+\snippet Three/Example_plugin/Basic_item_plugin.cpp additem
+
+
+
+Once your code is written, you will need to link the item's library to your plugin thanks to the CMakeLists, using the command <b>target_link_library</b> :
+
+    polyhedron_demo_plugin(basic_item_plugin Basic_item_plugin)
+    #  links the library containin the scene_plane_item with the plugin
+    target_link_libraries(basic_item_plugin scene_basic_objects)
+
+\subsubsection exampleCreatingANewTypeItem Creating a new type of item
+
+If you cannot use an existing type of item, like the Scene_polyhedron_item or the Scene_c3t3_item for your plugin, you will have to create one, by deriving CGAL::Three::Scene_item.\n
+An item is simply a graphic representation of a geometric data set. You need to compute this data, and to display it in CGAL::Three::Scene_item#draw.
+
+\snippet Three/Example_plugin/Example_plugin.cpp itemdeclaration
+
+The minimalist item above is designed to draw a simple triangle. There are several steps that need to be followed when creating an item :
+<b> - Computing the data </b>
+
+One way to store the data you computed is to use member std::vectors. It must be done every time a change occurs in the item's geometry, using the function invalidateOpenGLBuffers.
+
+\snippet Three/Example_plugin/Example_plugin.cpp computeelements
+
+<b>  - Filling the openGL buffers </b>
+
+The application uses OpenGL VBOs to display the geometry. Those are buffers that will stream their data to the GPU. This step consists to put the data stored in the std::vectors in those buffers.
+In this exemple, we only need one VBO and one VAO, as we are only storing one kind of data. But if we wanted to store normals and colors, for instance, we would need as much VBOs, and if there were
+several types of display, let's say multiple RenderingMode, we would need as much VAOs. (See OpenGL doc about VBOs/VAOs for more details).
+
+
+\snippet Three/Example_plugin/Example_plugin.cpp fillbuffers
+
+The code above gets a ShaderProgram, that holds the characteristics of the display (here a basic lighting), binds its VAO and VBO and gives it the data.
+
+<b>  - Displaying the data </b>
+
+[draw]: @ref CGAL::Three::Scene_item#draw
+[draw_points]: @ref CGAL::Three::Scene_item#draw_points
+[draw_edges]: @ref CGAL::Three::Scene_item#draw_edges
+Originally, it's the viewer that requires displaying. It calls the scene, that calls each visible item's [draw],[draw_edges] and [draw_points] functions individually.
+Therefore, this is in those functions that the display of the data must be handled :
+
+\snippet Three/Example_plugin/Example_plugin.cpp draw
+
+to display, you need to call the same program that got configured previously, and to bind it before you call the OpenGL drawing function.
+
 
 \subsection exampleUsingAGroupItem Using a Scene_group_item
 
 This section will explain how to use a group item in a plugin. 
+
 A group item is a virtual item that is not seen in the viewer, nor drawn, but acts as a parent for a list of actual items. Its main goal lies within the 
-interaction with the `SceneView` (which is the list of items on the left of the viewer). With group items, this view becomes hierarchic, which allows to interact with several objects at the same time, and organize this view.
+interaction with the `SceneView` (which is the list of items on the left of the viewer). With group items, this view becomes hierarchic, which allows to interact
+with several objects at the same time, and organize this view.
 
-To use a group item in your plugin, you will need a `CGAL::Three::Scene_group_item`, of course, and a `CGAL::Three::Scene_interface`. As a group item will automatically contain all the selected items of the scene when it is created, 
-the first thing to do is to clear the selection with `CGAL::Three::Scene_interface::setSelectedItem(-1)`. Then you can create a new `Scene_group_item` and give the items you want to regroup to it with `CGAL::Three::Scene_interface::changeGroup()`.
+To use a group item in your plugin, you will need a `CGAL::Three::Scene_group_item`, of course, and a `CGAL::Three::Scene_interface`.\n As a group item will automatically
+contain all the selected items of the scene when it is created,
+the first thing to do is to clear the selection with `CGAL::Three::Scene_interface::setSelectedItem(-1)`.
+
+Then you can create a new `Scene_group_item` and give the
+items you want to regroup to it with `CGAL::Three::Scene_interface::changeGroup()`. Keep in mind that you must pass items to a group only if those
+items are already in the scene.\n
 Once it is done, add the group to the scene with `CGAL::Three::Scene_interface::add_group()`. 
-~~~~~~~~~~~~~{.cpp}
-    //clears the selection to avoid adding unwanted items to the group.
-    scene->setSelectedItem(-1);
-    //Creates a new group
-    Scene_group_item *group = new Scene_group_item("New group");
-    //Then gives it its children
-    for(int i =0; i<3; i++)
-    scene->changeGroup(items[i], group);
-    //adds it to the scene
-    scene->add_group(group);
-~~~~~~~~~~~~~
 
-\section usefulItems List of Useful Classes:
-- `MainWindow`
-- `CGAL::Three::Viewer_interface`
-- `CGAL::Three::Scene_interface`
-- `CGAL::Three::Scene_item`
-- `CGAL::Three::Scene_group_item`
-- `CGAL::Three::Polyhedron_demo_plugin_helper`
-- `CGAL::Three::Polyhedron_demo_plugin_interface`
+\snippet Three/Example_plugin/Basic_item_plugin.cpp group
+
+\section exampleIOPlugin Creating an IO Plugin
+
+An IO pluin is a plugin desined to load from  and save to a certain type of file. \n
+It inherits from the CGAL::Three::Polyhedron_demo_io_plugin_interface. It must implement the following functions :
+- CGAL::Three::Polyhedron_demo_io_plugin_interface#name which returns the plugin's name.
+~~~~~~~~~~~~~{.cpp}
+QString name() const { return "selection_io_plugin"; }
+~~~~~~~~~~~~~
+- CGAL::Three::Polyhedron_demo_io_plugin_interface#nameFilters which returns a list of extensions of the files the plugin can read :
+~~~~~~~~~~~~~{.cpp}
+ QString nameFilters() const { return "Selection files (*.selection.txt)"; }
+~~~~~~~~~~~~~
+- CGAL::Three::Polyhedron_demo_io_plugin_interface#canLoad which returns true if the plugin is able to load :
+~~~~~~~~~~~~~{.cpp}
+bool canLoad() const { return true; }
+~~~~~~~~~~~~~
+- CGAL::Three::Polyhedron_demo_io_plugin_interface#load : which fills the data of an object from a file :
+~~~~~~~~~~~~~{.cpp}
+CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
+    if(fileinfo.suffix().toLower() != "txt") return 0;
+    // There will be no actual loading at this step.
+    // Polyhedron_demo_selection_plugin will trigger load when item in new_item_created
+    Scene_polyhedron_selection_item* item = new Scene_polyhedron_selection_item();
+    if(!item->load(fileinfo.filePath().toStdString())) {
+        delete item;
+        return NULL;
+    }
+    return item;
+}
+~~~~~~~~~~~~~
+- CGAL::Three::Polyhedron_demo_io_plugin_interface#canSave which returns true if the plugin is able to save :
+~~~~~~~~~~~~~{.cpp}
+bool canSave(const CGAL::Three::Scene_item* scene_item) {
+    return qobject_cast<const Scene_polyhedron_selection_item*>(scene_item);
+}
+~~~~~~~~~~~~~
+- CGAL::Three::Polyhedron_demo_io_plugin_interface#save which fills a file with the data of an item
+~~~~~~~~~~~~~{.cpp}
+bool save(const CGAL::Three::Scene_item* scene_item, QFileInfo fileinfo) {
+    const Scene_polyhedron_selection_item* item = qobject_cast<const Scene_polyhedron_selection_item*>(scene_item);
+    if(item == NULL) { return false; }
+
+    return item->save(fileinfo.filePath().toStdString());
+}
+~~~~~~~~~~~~~
 
 \section exampleexternalPlugin Creating an External Plugin
 
-To create an external plugin, you must make a new Cmake project.
-In the CMakeLists.txt you must fetch the exported targets of the polyhedron demo (polyhedron_demo_macros.cmake).
-An external plugin will not be automatically loaded in the Polyhedron demo. It must be built in its own project.
+To create an external plugin, you must make a new Cmake project.\n
 
-\section example Examples 
-\subsection example1 Creating a Simple Plugin
-The following code will create a plugin that adds an action to the `MainWindow`. This action is called "Draw Triangle" and adds a triangle to the scene.
-\cgalExample{Three/Example_plugin/Polyhedron_demo_example_plugin.cpp}
+    project( Example_plugin )
 
-\subsection example2 Creating an External Plugin
-The following code makes the same thing as the previous example, only the plugin is external.
+Configure CMake as you desire and fetch the right Qt5 packages :
+
+    # Find includes in corresponding build directories
+    set(CMAKE_INCLUDE_CURRENT_DIR ON)
+    # Instruct CMake to run moc automatically when needed.
+    set(CMAKE_AUTOMOC ON)
+    cmake_minimum_required(VERSION 2.8.11)
+    if(POLICY CMP0043)
+      cmake_policy(SET CMP0043 OLD)
+    endif()
+
+    # Compatibility with CMake 3.0
+    if(POLICY CMP0042)
+      # Do not enable the use of MACOSX_RPATH
+      # http://www.cmake.org/cmake/help/v3.0/policy/CMP0042.html
+      cmake_policy(SET CMP0042 OLD)
+    endif()
+    #Find CGAL
+    find_package(CGAL COMPONENTS Qt5)
+    include( ${CGAL_USE_FILE} )
+    # Find Qt5 itself
+    find_package(Qt5
+                 QUIET
+                 COMPONENTS            OpenGL Script Svg Xml
+                 OPTIONAL_COMPONENTS   ScriptTools)
+
+You will probably have to fetch the libraries exported by the polyhedron_demo, like the scene_items.
+
+    find_package(CGAL_polyhedron_demo
+    HINTS "${CGAL_DIR}" "${CGAL_DIR}/Polyhedron/demo/Polyhedron-build"
+    )
+    include( ${CGAL_POLYHEDRON_DEMO_USE_FILE} )
+
+Finally, you can declare your plugin
+
+    polyhedron_demo_plugin(example_plugin Example_plugin)
+
+Notice that an external plugin will not be automatically loaded in the Polyhedron demo. It must be built in its own project.
+
+<b> Complete CMakeLists </b>
+
+
 
     project( Example_plugin )
     # Find includes in corresponding build directories
@@ -193,21 +372,28 @@ The following code makes the same thing as the previous example, only the plugin
                  OPTIONAL_COMPONENTS   ScriptTools)
 
     if(Qt5_FOUND AND CGAL_FOUND)
-      find_package(CGAL_polyhedron_demo
-      HINTS "${CGAL_DIR}" "${CGAL_DIR}/Polyhedron/demo/Polyhedron-build"
-      )
+      find_package(CGAL_polyhedron_demo)
 
     include( ${CGAL_POLYHEDRON_DEMO_USE_FILE} )
     # Let plugins be compiled in the same directory as the executable.
     set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 
-      #include( ${CMAKE_CURRENT_SOURCE_DIR}/../../Polyhedron/demo/Polyhedron/polyhedron_demo_macros.cmake )
-      qt5_wrap_ui( exampleUI_FILES Polyhedron_demo_example_plugin.ui dock_example.ui)
-      qt5_wrap_ui( example_dockUI_FILES dock_example.ui)
-      polyhedron_demo_plugin(example_plugin Polyhedron_demo_example_plugin ${exampleUI_FILES} ${example_dockUI_FILES})
-      target_link_libraries(example_plugin scene_polyhedron_item)
+      polyhedron_demo_plugin(example_plugin Example_plugin)
+
     endif()
 
-*/
+
+\section example Examples 
+\subsection example1 Creating a Basic Plugin
+\cgalExample{Three/Example_plugin/Basic_plugin.cpp}
+
+\subsection example2 Creating a dockwidget
+\cgalExample{Three/Example_plugin/Dock_widget_plugin.cpp}
+
+\subsection example3 Using an existing item and create a new item of an existing type
+\cgalExample{Three/Example_plugin/Basic_item_plugin.cpp}
+
+\subsection example4 Creating a new type of item
+\cgalExample{Three/Example_plugin/Example_plugin.cpp}
 } /* namespace CGAL */

@@ -1,3 +1,6 @@
 /*!
-\example Three/Example_plugin/Polyhedron_demo_example_plugin.cpp 
+\example Three/Example_plugin/Example_plugin.cpp 
+\example Three/Example_plugin/Basic_item_plugin.cpp
+\example Three/Example_plugin/Dock_widget_plugin.cpp
+\example Three/Example_plugin/Basic_plugin.cpp
 */
