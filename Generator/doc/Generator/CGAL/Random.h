@@ -185,8 +185,9 @@ Random &get_default_random();
 
 /*!
   \ingroup PkgGenerators
-  \deprecated The variable `default_random` is the default random numbers generator used for
-  the generator functions and classes.
+  \deprecated The variable `default_random` is the default random
+  numbers generator used for the generator functions and
+  classes. Deprecated. Use `get_default_random()` instead.
 */
 extern CGAL::Random default_random;
 
