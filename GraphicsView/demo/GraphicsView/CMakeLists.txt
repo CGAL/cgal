@@ -17,7 +17,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
 
   add_definitions(-DQT_NO_KEYWORDS)
 
-  add_executable  ( min min.cpp )
+  add_executable  ( min min.cpp  ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
 
   qt5_use_modules(min Xml Script OpenGL Svg)
 
@@ -26,7 +26,7 @@ if ( CGAL_FOUND AND CGAL_Qt5_FOUND AND Qt5_FOUND )
   # Link with Qt libraries
   target_link_libraries( min ${QT_LIBRARIES} )
   # Link with CGAL
-  target_link_libraries( min ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES} ${CGAL_Qt5_RESOURCE_FILES} ${CGAL_Qt5_MOC_FILES})
+  target_link_libraries( min ${CGAL_LIBRARIES}  ${CGAL_3RD_PARTY_LIBRARIES})
 
 else()
 
