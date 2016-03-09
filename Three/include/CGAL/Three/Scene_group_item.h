@@ -141,9 +141,14 @@ public :
     //!@see getChildren @see addChild
     void removeChild( Scene_item* item)
     {
-     if(isChildLocked(item))
-      return;
+      if(isChildLocked(item))
+        return;
       update_group_number(item,0);
+      item->has_group=0;
+      Scene_group_item* group =
+         qobject_cast<Scene_group_item*>(item);
+      if(group)
+        resetHasGroup(group);
       children.removeOne(item);
     }
     //!Moves a child up in the list.
@@ -163,7 +168,6 @@ protected:
     Scene_interface *scene;
     //!Contains a reference to all the children of this group.
     QList<Scene_item*> children;
-
 
 }; //end of class Scene_group_item
 
