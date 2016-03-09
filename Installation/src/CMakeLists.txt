@@ -58,12 +58,12 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
         OUTPUT_NAME_MINSIZEREL     "${RELEASE_MANGLED_NAME}"
         OUTPUT_NAME_RELWITHDEBINFO "${RELEASE_MANGLED_NAME}"
         )
-    endif()
 
-    if ( HAS_CFG_INTDIR )
-      add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(TargetDir)$(TargetName).dll\" copy /Y \"$(TargetDir)$(TargetName).dll\" \"$(TargetDir)..\" )
-      add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(TargetDir)$(TargetName).pdb\" copy /Y \"$(TargetDir)$(TargetName).pdb\" \"$(TargetDir)..\" )
-      add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" copy /Y \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" \"$(SolutionDir)lib\" )
+      if ( HAS_CFG_INTDIR )
+        add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(TargetDir)$(TargetName).dll\" copy /Y \"$(TargetDir)$(TargetName).dll\" \"$(TargetDir)..\" )
+        add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(TargetDir)$(TargetName).pdb\" copy /Y \"$(TargetDir)$(TargetName).pdb\" \"$(TargetDir)..\" )
+        add_custom_command(TARGET ${LIBRARY_NAME} POST_BUILD COMMAND if exist \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" copy /Y \"$(SolutionDir)lib\\$(ConfigurationName)\\$(TargetName).lib\" \"$(SolutionDir)lib\" )
+      endif()
     endif()
   endif()
 
@@ -75,15 +75,15 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     install(EXPORT ${LIBRARY_NAME}Exports
       DESTINATION "${CGAL_INSTALL_CMAKE_DIR}"
       NAMESPACE CGAL::)
-    
-    # We have to call configure_file twice to force double expansion of variables.
-    configure_file("${CGAL_MODULES_DIR}/CGALLibConfig.cmake.in"
-      "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
-    configure_file("${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake"
-      "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
-    install(FILES "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
   endif()
-  
+
+  # We have to call configure_file twice to force double expansion of variables.
+  configure_file("${CGAL_MODULES_DIR}/CGALLibConfig.cmake.in"
+    "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
+  configure_file("${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake"
+    "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
+  install(FILES "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
+
 endfunction()
 
 function( configure_component DIR COMPONENT )

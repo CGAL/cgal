@@ -80,7 +80,7 @@ macro(check_cgal_component COMPONENT)
     endif()
 
     if ( WITH_${CGAL_LIB} )
-      if(TARGET CGAL::${CGAL_LIB} OR CGAL_HEADERS_ONLY )
+      if(TARGET CGAL::${CGAL_LIB} OR CGAL_HEADER_ONLY )
         set( ${CGAL_LIB}_FOUND TRUE )
       else()
         set( ${CGAL_LIB}_FOUND FALSE )

@@ -3,7 +3,7 @@ if ( NOT CGAL_GENERATOR_SPECIFIC_SETTINGS_FILE_INCLUDED )
 
   message( STATUS "Targetting ${CMAKE_GENERATOR}")
 
-  if ( MSVC AND NOT CGAL_HEADERS_ONLY )
+  if ( MSVC AND NOT CGAL_HEADER_ONLY )
     message( STATUS "Target build enviroment supports auto-linking" )
     set(CGAL_AUTO_LINK_ENABLED TRUE)
   endif()

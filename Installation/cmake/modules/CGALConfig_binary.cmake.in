@@ -4,11 +4,14 @@
 # This file is loaded by cmake via the command "find_package(CGAL)"
 #
 # This file correspond to a possibly out-of-sources CGAL configuration, thus the actual location
-# must be given by the cmake variable or enviroment variable CGAL_DIR. 
+# must be given by the cmake variable or enviroment variable CGAL_DIR.
 
 set(CGAL_CONFIG_LOADED TRUE)
 
 get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+
+set(CGAL_HEADER_ONLY "@CGAL_HEADER_ONLY@" )
+set(CGAL_QT5_QTMOCCMAKE_FILES "@CGAL_QT5_QTMOCCMAKE_FILES@")
 
 # The code for including exported targets is different from
 # CGAL_Config_install.cmake. We do not have separate export files in
@@ -92,9 +95,6 @@ set(CGAL_INCLUDE_DIRS      "@CGAL_INCLUDE_DIRS@" )
 set(CGAL_MODULES_DIR       "@CGAL_MODULES_DIR@" )
 set(CGAL_LIBRARIES_DIR     "@CGAL_LIBRARIES_DIR@" )
 
-set(CGAL_HEADER_ONLY "@CGAL_HEADER_ONLY@" )
-set(CGAL_QT5_QTMOCCMAKE_FILES "@CGAL_QT5_QTMOCCMAKE_FILES@")
-
 set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}")
 
 set(CGAL_USE_FILE "${CGAL_MODULES_DIR}/UseCGAL.cmake" )
@@ -110,7 +110,7 @@ else()
     set( CHECK_CGAL_COMPONENT_MSG_ON_ERROR TRUE      )
     set( CHECK_CGAL_COMPONENT_ERROR_TYPE   STATUS    )
     set( CHECK_CGAL_COMPONENT_ERROR_TITLE "NOTICE:" )
-  else()  
+  else()
     set( CHECK_CGAL_COMPONENT_MSG_ON_ERROR FALSE )
   endif()
 endif()
@@ -125,22 +125,39 @@ macro(check_cgal_component COMPONENT)
   if ( "${CGAL_LIB}" STREQUAL "CGAL" )
     set( CGAL_FOUND TRUE )
     set( CHECK_CGAL_ERROR_TAIL "" )
-  else() 
+  else()
     if ( WITH_${CGAL_LIB} )
-      if(TARGET CGAL::${CGAL_LIB} OR CGAL_HEADERS_ONLY)
-        set( ${CGAL_LIB}_FOUND TRUE )
-        if ("${CGAL_LIB}" STREQUAL "CGAL_Qt5" AND CGAL_HEADERS_ONLY)
-          if ("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
+
+      if(CGAL_HEADER_ONLY OR TARGET CGAL::${CGAL_LIB})
+        if ("${CGAL_LIB}" STREQUAL "CGAL_Qt5")
+          find_package( OpenGL )
+          find_package(Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools)
+
+          if(Qt5_FOUND AND OPENGL_FOUND)
+            set( ${CGAL_LIB}_FOUND TRUE )
+            if (CGAL_HEADER_ONLY)
+              foreach(qtmoc_file ${CGAL_QT5_QTMOCCMAKE_FILES})
+                include(${qtmoc_file})
+              endforeach()
+            endif()
+          else(Qt5_FOUND AND OPENGL_FOUND)
+            set( ${CGAL_LIB}_FOUND FALSE )
+            message(STATUS "Notice: CGAL_Qt5 disabled because it requires Qt5 and OpenGL.")
+          endif(Qt5_FOUND AND OPENGL_FOUND)
+        else()
+          if ("${CGAL_LIB}" STREQUAL "CGAL_ImageIO")
             find_package( OpenGL )
-            find_package (Qt5 COMPONENTS OpenGL Gui Core Script ScriptTools)
+
+            if(OPENGL_FOUND)
+              set( ${CGAL_LIB}_FOUND TRUE )
+            else(OPENGL_FOUND)
+              set( ${CGAL_LIB}_FOUND FALSE )
+              message(STATUS "Notice: ImageIO disabled because it requires OpenGL.")
+            endif(OPENGL_FOUND)
+          else()
+            # Librairies that have no dependencies
+            set( ${CGAL_LIB}_FOUND TRUE )
           endif()
-          if(Qt5_FOUND)
-            foreach(qtmoc_file ${CGAL_QT5_QTMOCCMAKE_FILES})
-              include(${qtmoc_file})
-            endforeach()
-          else(Qt5_FOUND)
-            message(FATAL_ERROR "You need to find package Qt5 before to find package CGAL to compile demo in header only mode.")
-          endif(Qt5_FOUND)
         endif()
       else()
         set( ${CGAL_LIB}_FOUND FALSE )
@@ -150,12 +167,12 @@ macro(check_cgal_component COMPONENT)
       set( ${CGAL_LIB}_FOUND FALSE )
       set( CHECK_${CGAL_LIB}_ERROR_TAIL " Please configure CGAL using WITH_${CGAL_LIB}=ON." )
     endif()
-  endif()  
+  endif()
 
   if ( NOT ${CGAL_LIB}_FOUND AND CHECK_CGAL_COMPONENT_MSG_ON_ERROR )
     message( ${CHECK_CGAL_COMPONENT_ERROR_TYPE} "${CHECK_CGAL_COMPONENT_ERROR_TITLE} The ${CGAL_LIB} library was not configured.${CHECK_${CGAL_LIB}_ERROR_TAIL}" )
   endif()
-  
+
 endmacro()
 
 check_cgal_component("CGAL")
