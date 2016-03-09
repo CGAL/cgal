@@ -25,18 +25,15 @@
 
 #include <list>
 #include <CGAL/Triangulation_cell_base_3.h>
-#include <CGAL/Weighted_point_triangulation_traits_3.h>
 
 namespace CGAL {
 
 template < typename GT,
-           typename Cb = Triangulation_cell_base_3<Weighted_point_triangulation_traits_3<GT> >,
+           typename Cb = Triangulation_cell_base_3<GT >,
            typename C = std::list<typename GT::Weighted_point_3> >
 class Regular_triangulation_cell_base_3
   : public Cb
 {
-private:
-  typedef Weighted_point_triangulation_traits_3<GT> Wptt_3;
 public:
   static const bool DO_HIDE_POINT = true;
   typedef typename Cb::Vertex_handle                   Vertex_handle;
