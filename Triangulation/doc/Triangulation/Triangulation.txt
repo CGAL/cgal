@@ -58,7 +58,7 @@ entry</A> for more about simplicial complexes.
 
 ## What's in this Package? ##
 
-This \cgal package provides three main classes
+This \cgal package provides four main classes
 for creating and manipulating triangulations.
 
 The class `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>` 
@@ -115,11 +115,10 @@ which \cgal provides one model class:
 A `TriangulationDataStructure` can represent an abstract pure complex
 such that any facet is incident to exactly two full cells.
  
-A `TriangulationDataStructure` has a <!--- property called the --->
-<I>maximal dimension</I> which is a 
+A `TriangulationDataStructure` has a <I>maximal dimension</I> which is a 
 positive integer equal to the maximum dimension a full cell can have.
 This maximal dimension can be chosen by the user at the creation of a 
-TriangulationDataStructure` and can then be queried using the method `tds.maximal_dimension()`.
+`TriangulationDataStructure` and can then be queried using the method `tds.maximal_dimension()`.
 A `TriangulationDataStructure` also knows the <I>current dimension</I> of its full cells,
 which can be queried with `tds.current_dimension()`. In the sequel, let
 us denote the maximal dimension with \f$ D \f$ and the current dimension with \f$ d \f$.
@@ -241,7 +240,8 @@ some nested types in `TriangulationDataStructure`.
 
 The default values are `CGAL::Triangulation_ds_vertex<TDS>`
 and `CGAL::Triangulation_ds_full_cell<TDS>`
-where `TDS` is the current class `Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
+where `TDS` is the current class 
+`Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`.
 <I>This creates a circular dependency</I>, which we resolve in the same way
 as in the \cgal `Triangulation_2` and `Triangulation_3` packages (see
 Chapters \ref Chapter_2D_Triangulation_Data_Structure, \ref Chapter_2D_Triangulations, 
@@ -463,7 +463,7 @@ Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^D\f$. Let
 \f$ {p}^{(w)}=(p,w_p), p\in\mathbb{R}^D, w_p\in\mathbb{R}\f$ and
 \f$ {z}^{(w)}=(z,w_z), z\in\mathbb{R}^D, w_z\in\mathbb{R}\f$ 
 be two weighted points.
-A weighted point
+If all weights are positive, a weighted point
 \f$ {p}^{(w)}=(p,w_p)\f$ can also be seen as a sphere of center \f$ p\f$ and
 radius \f$ \sqrt{w_p}\f$.
 The <I>power product</I> (or <I>power distance</I> )
