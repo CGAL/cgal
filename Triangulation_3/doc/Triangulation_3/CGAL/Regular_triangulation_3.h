@@ -287,7 +287,7 @@ int remove(InputIterator first, InputIterator beyond);
 Let us remark that \f$ \Pi({p}^{(w)}-{z}^{(w)}) > 0 \f$ is equivalent to `p` lies outside the sphere with center `z` and radius \f$ \sqrt{w_p^2+w_z^2}\f$. This remark helps provide an intuition about the following predicates.
 
 \anchor Triangulation3figsidedim2
-\image html sidedim2.png side_of_power_circle
+\image html sidedim2.svg side_of_power_circle
 \image latex sidedim2.png side_of_power_circle
 */
 

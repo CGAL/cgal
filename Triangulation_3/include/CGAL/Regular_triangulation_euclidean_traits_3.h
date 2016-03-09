@@ -56,8 +56,6 @@ public:
                                 In_smallest_orthogonal_sphere_3;
   typedef typename K::Side_of_bounded_orthogonal_sphere_3 
                                 Side_of_bounded_orthogonal_sphere_3;
-  typedef typename K::Does_simplex_intersect_dual_support_3 
-                                Does_simplex_intersect_dual_support_3;
   typedef typename K::Compute_squared_radius_smallest_orthogonal_sphere_3 
                 Compute_squared_radius_smallest_orthogonal_sphere_3;
   typedef typename K::Compute_power_product_3     Compute_power_product_3;
@@ -85,10 +83,6 @@ public:
   Side_of_bounded_orthogonal_sphere_3
   side_of_bounded_orthogonal_sphere_3_object() const
   { return K().side_of_bounded_orthogonal_sphere_3_object(); }
-
-  Does_simplex_intersect_dual_support_3
-  does_simplex_intersect_dual_support_3_object() const
-  { return K().does_simplex_intersect_dual_support_3_object(); }
 
   Compute_power_product_3
   compute_power_product_3_object() const

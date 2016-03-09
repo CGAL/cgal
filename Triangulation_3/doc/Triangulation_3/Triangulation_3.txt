@@ -157,7 +157,7 @@ where \f$ \|{p-z}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ z\f$.
 are said to be <I>orthogonal</I> iff \f$ \Pi{({p}^{(w)},{z}^{(w)})}
 = 0\f$ (see \cgalFigureRef{Triangulation3figortho)}.
 
-\cgalFigureBegin{Triangulation3figortho,ortho.png}
+\cgalFigureBegin{Triangulation3figortho,ortho.svg}
 Orthogonal weighted points (picture in 2D).
 \cgalFigureEnd
 

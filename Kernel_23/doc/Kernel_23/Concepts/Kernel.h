@@ -772,6 +772,11 @@ public:
   typedef unspecified_type Point_3; 
 
   /*!
+    a model of `Kernel::Weighted_point_3` 
+  */ 
+  typedef unspecified_type Weighted_point_3; 
+
+  /*!
     a model of `Kernel::Vector_3` 
   */ 
   typedef unspecified_type Vector_3; 

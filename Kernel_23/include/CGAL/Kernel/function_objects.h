@@ -38,7 +38,7 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/Kernel/global_functions_3.h>
 #include <CGAL/predicates/predicates_on_weighted_points_cartesian_3.h>
-#include <CGAL/constructions/constructions_on_weighted_points_cartesian_3.h>
+
 
 #include <cmath> // for Compute_dihedral_angle
 

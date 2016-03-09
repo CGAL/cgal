@@ -4,7 +4,7 @@ namespace CGAL {
 \ingroup kernel_classes3
 
 An object of the class `Point_3` is a point in the three-dimensional 
-Euclidean space \f$ \E^3\f$. 
+Euclidean space \f$ \E^3\f$.
 
 Remember that `Kernel::RT` and `Kernel::FT` denote a 
 RingNumberType and a FieldNumberType, respectively. For the kernel 

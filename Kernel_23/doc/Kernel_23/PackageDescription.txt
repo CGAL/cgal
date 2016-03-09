@@ -110,6 +110,8 @@
 - `CGAL::Tetrahedron_3<Kernel>`
 - `CGAL::Triangle_3<Kernel>`
 - `CGAL::Vector_3<Kernel>`
+- `CGAL::Weighted_point_3<Kernel>`
+
 
 ## Constants and Enumerations ##
 
@@ -270,6 +272,7 @@
 - `Kernel::CompareDistance_2`
 - `Kernel::CompareDistance_3`
 - `Kernel::CompareSlope_2`
+- `Kernel::ComparePowerDistance_3`
 - `Kernel::CompareSquaredDistance_2`
 - `Kernel::CompareSquaredDistance_3`
 - `Kernel::CompareSquaredRadius_3`
@@ -412,6 +415,7 @@
 - `Kernel::ConstructVector_3`
 - `Kernel::ConstructVertex_2`
 - `Kernel::ConstructVertex_3`
+- `Kernel::ConstructWeightedCircumcenter_3`
 - `Kernel::CartesianConstIterator_2`
 - `Kernel::CartesianConstIterator_3`
 - `Kernel::CoplanarOrientation_3`
@@ -465,6 +469,7 @@
 - `Kernel::Orientation_3`
 - `Kernel::OrientedSide_2`
 - `Kernel::OrientedSide_3`
+- `Kernel::Power_test_3`
 - `Kernel::SideOfBoundedCircle_2`
 - `Kernel::SideOfBoundedSphere_3`
 - `Kernel::SideOfOrientedCircle_2`

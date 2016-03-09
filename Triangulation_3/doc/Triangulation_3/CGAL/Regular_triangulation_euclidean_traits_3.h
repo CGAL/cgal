@@ -5,13 +5,12 @@ namespace CGAL {
 \ingroup PkgTriangulation3TraitsClasses
 
 The class `Regular_triangulation_euclidean_traits_3` is designed as a default traits class for the 
-class `Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>`. 
-It provides `Weighted_point_3`, a class for weighted points, which derives 
-from the three dimensional point class `K::Point_3`. 
+class `Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>`
+and uses the type `K::Weighted_point_3` for weighted points`. 
 
 \tparam K must be a model of the `Kernel` concept. 
 
-\tparam Weight is optional. If is it not provided, `K::RT` will be used. 
+\tparam Weight is ignored, as  `K::Weighted_point_3` uses the type `K::RT`. 
 
 The class is a model of the concept `RegularTriangulationTraits_3` 
 but it also contains predicates and constructors on weighted points 
@@ -45,14 +44,12 @@ typedef K::Point_3 Bare_point;
 /*!
 The type for weighted points. 
 */ 
-typedef Weighted_point <Bare_point, Weight> 
-Weighted_point_3; 
+  typedef K::Weighted_point_3 Weighted_point_3; 
 
 /*!
 The type for points. 
 */ 
-typedef Weighted_point <Bare_point, Weight> 
-Point_3; 
+  typedef K::Weighted_point_3 Point_3; 
 
 /// @} 
 
