@@ -377,9 +377,8 @@ the intersection of their two sets of darts is non empty (whatever the
 dimension of the two cells). Two <I>i</I>-cells <I>c1</I> and
 <I>c2</I>,  1\f$ \leq\f$<I>i</I>\f$ \leq\f$<I>d</I>, are
 <I>adjacent</I> if there is  <I>d1</I>\f$ \in\f$<I>c1</I> and
-<I>d2</I>\f$ \in\f$<I>c2</I> such that <I>d1</I>=\f$
-\beta_i\f$(<I>d2</I>) (or <I>d2</I>=\f$ \beta_i\f$(<I>d1</I>)  for
-<I>i</I>=1).
+<I>d2</I>\f$ \in\f$<I>c2</I> such that <I>d1</I> and <I>d2</I>
+belong to the same <I>(i-1)</I>-cell.
 
 In the example of \cgalFigureRef{figexemplecarte3d}, vertex <I>v</I> and
 edge <I>e</I> are incident since the intersection of the two
@@ -390,7 +389,7 @@ intersection of the two corresponding sets of darts is {1,6}\f$
 incident since the intersection of the two corresponding sets of darts
 is {10}\f$ \neq\f$\f$ \emptyset\f$. Finally, facets <I>f1</I> and
 <I>f2</I> are adjacent because 10\f$ \in\f$<I>f1</I>, 1\f$
-\in\f$<I>f2</I> and 10=\f$ \beta_2\f$(1).
+\in\f$<I>f2</I> and 1 and 10 belong to the same edge.
 
 We can consider <I>i</I>-cells in a dimension <I>d'</I> with
 <I>i</I>\f$ \leq\f$<I>d'</I>\f$ \leq\f$ <I>d</I>. The idea is to
