@@ -71,12 +71,6 @@
     <property name="title">
      <string>&amp;Operations</string>
     </property>
-    <addaction name="actionEstimateCurvature"/>
-    <addaction name="actionSelfIntersection"/>
-    <addaction name="actionSimplify"/>
-    <addaction name="actionRemeshing"/>
-    <addaction name="actionConvexDecomposition"/>
-    <addaction name="actionInsideOut"/>
    </widget>
    <widget class="QMenu" name="menuView">
     <property name="title">

@@ -31,23 +31,11 @@ void init(QMainWindow* mw,
                                            "Convex Decomposition");
 
     QAction *actionToNef = new QAction("Convert to Nef Polyhedron", mw);
-    actionToNef->setProperty("subMenuName",
-                             "Boolean Operations");
     QAction *actionToPoly = new QAction("Convert to Normal Polyhedron", mw);
-    actionToPoly->setProperty("subMenuName",
-                              "Boolean Operations");
     QAction *actionUnion = new QAction("Union (A/B)", mw);
-    actionUnion->setProperty("subMenuName",
-                             "Boolean Operations");
     QAction *actionIntersection = new QAction("Intersection (A/B)", mw);
-    actionIntersection->setProperty("subMenuName",
-                                    "Boolean Operations");
     QAction *actionDifference = new QAction("&Difference (A/B)", mw);
-    actionDifference->setProperty("subMenuName",
-                                  "Boolean Operations");
     QAction *actionMinkowskiSum = new QAction("&Minkowski Sum (A/B)", mw);
-    actionMinkowskiSum->setProperty("subMenuName",
-                                    "Boolean Operations");
 
     connect(actionToNef       , SIGNAL(triggered()), this, SLOT(on_actionToNef_triggered()));
     connect(actionToPoly      , SIGNAL(triggered()), this, SLOT(on_actionToPoly_triggered()));
@@ -57,13 +45,17 @@ void init(QMainWindow* mw,
     connect(actionMinkowskiSum, SIGNAL(triggered()), this, SLOT(on_actionMinkowskiSum_triggered()));
 
 
-    _actions<< actionConvexDecomposition
-            << actionToNef
+    _actions<< actionToNef
             << actionToPoly
             << actionUnion
             << actionIntersection
             << actionDifference
             << actionMinkowskiSum;
+    Q_FOREACH(QAction * action, _actions)
+      action->setProperty("subMenuName",
+                          "Boolean Operations");
+    _actions<< actionConvexDecomposition;
+
 }
 
   bool applicable(QAction*) const {

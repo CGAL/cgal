@@ -4,7 +4,6 @@
 
 #include <QtCore/qglobal.h>
 
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include "Scene_polyhedron_item.h"
@@ -158,7 +157,7 @@ void split_long_duplicated_edge(const HedgeRange& hedge_range,
 using namespace CGAL::Three;
 class Polyhedron_demo_isotropic_remeshing_plugin :
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
@@ -532,6 +531,8 @@ public Q_SLOTS:
   }
 
 private:
+  Scene_interface *scene;
+  QMainWindow* mw;
   struct Remesh_polyhedron_item
   {
     typedef boost::graph_traits<Polyhedron>::edge_descriptor     edge_descriptor;

@@ -12,7 +12,6 @@
 #include "Volume_plane_thread.h"
 #include "Volume_plane_intersection.h"
 #include "Scene_segmented_image_item.h"
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "Messages_interface.h"
 #include <CGAL/Three/Scene_interface.h>
@@ -153,7 +152,7 @@ const unsigned int Plane_slider::scale = 100;
 
 class Volume_plane_plugin :
   public QObject,
-  public CGAL::Three::Polyhedron_demo_plugin_helper
+  public CGAL::Three::Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
@@ -402,6 +401,8 @@ private:
   QHBoxLayout *x_box, *y_box, *z_box;
   PixelReader pxr_;
   CGAL::Three::Scene_group_item* group;
+  CGAL::Three::Scene_interface* scene;
+  QMainWindow* mw;
   std::vector<Volume_plane_thread*> threads;
   struct controls{
     CGAL::Three::Scene_item* group;
