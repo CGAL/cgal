@@ -25,9 +25,7 @@ class Polyhedron_demo_xyz_plugin :
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.IOPluginInterface/1.0")
 
 public:
-    // To silent a warning -Woverloaded-virtual
-    // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
-    using Polyhedron_demo_plugin_helper::init;
+
     //! Adds an action to the menu and configures the widget
     void init(QMainWindow* mainWindow,
               CGAL::Three::Scene_interface* scene_interface) {

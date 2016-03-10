@@ -24,10 +24,10 @@ public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionDetectFeatures; }
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface)
   {
+    scene = scene_interface;
     actionDetectFeatures= new QAction(tr("VCM Features Estimation"), mainWindow);
     actionDetectFeatures->setObjectName("actionDetectFeatures");
 
-    Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 
   bool applicable(QAction*) const {
@@ -36,7 +36,8 @@ public:
 
 public Q_SLOTS:
   void on_actionDetectFeatures_triggered();
-
+private:
+  Scene_interface* scene;
 }; // end Polyhedron_demo_features_detection_plugin
 
 class Polyhedron_demo_features_detection_dialog : public QDialog, private Ui::VCMFeaturesDetectionDialog

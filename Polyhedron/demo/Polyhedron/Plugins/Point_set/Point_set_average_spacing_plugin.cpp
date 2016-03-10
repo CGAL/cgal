@@ -35,10 +35,11 @@ private:
   
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
+    scene = scene_interface;
+    mw = mainWindow;
     actionAverageSpacing = new QAction(tr("Point Set Average Spacing"), mainWindow);
     actionAverageSpacing->setObjectName("actionAverageSpacing");
 
-    Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 
   QList<QAction*> actions() const {
