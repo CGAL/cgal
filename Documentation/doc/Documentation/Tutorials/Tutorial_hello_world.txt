@@ -11,7 +11,7 @@ namespace CGAL {
 
 /*!
 
-\page introduction Hello World
+\page tutorial_hello_world Hello World
 \cgalAutoToc
 \author %CGAL Editorial Board
 
