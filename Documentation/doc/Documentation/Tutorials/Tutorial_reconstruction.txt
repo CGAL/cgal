@@ -84,34 +84,7 @@ provide functions:
 Using these functions is pretty straightforward, as can be seen on the
 following example:
 
-\code{.cpp}
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/read_xyz_points.h>
-
-#include <vector>
-#include <fstream>
-
-// types
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::Point_3 Point;
-
-int main(int argc, char*argv[])
-{
-  std::vector<Point> points;
-
-  char* filename = "my_file.xyz";
-  std::ifstream stream(filename);
-  
-  if (!stream ||
-      !CGAL::read_xyz_points(stream, std::back_inserter(points)))
-  {
-    std::cerr << "Error: cannot read file " << filename << std::endl;
-    return -1;
-  }
-  
-  std::cout << "Read " << points.size () << " point(s)" << std::endl;
-\endcode
-
+% TODO: snippet Reading Input
 
 \section TutorialsReconstruction_preprocessing Preprocessing
 
@@ -132,22 +105,7 @@ on outlier-ridden point clouds produce overly distorted output, it is
 therefore strongly advised to filter these outliers _before_
 performing reconstruction.
 
-\code{.cpp}
-  // Identify outliers
-  std::vector<Point>::iterator it
-   = CGAL::remove_outliers (points.begin(), points.end(),
-                            24, // Number of neighbors considered for evaluation
-                            5.0); // Percentage of points to remove
-
-  // Outlier removal function changes the order of the point container
-  // and returns an iterator to the first point considered as outlier.
-  // These points can either be ignored or removed.
-  std::cout << std::distance (points.begin (), it)
-	    << " point(s) are inliers." << std::endl;
-
-  points.erase (it, points.end());
-\endcode
-
+% TODO snippet Outlier removal
 
 \subsection TutorialsReconstruction_preprocessing_simplification Simplification
 
@@ -163,22 +121,7 @@ time, some of them can help making the input more uniform. This is the
 case of the function `grid_simplify_point_set()` which defines a grid
 of a user-specified size and only keeps one point per cell.
 
-\code{.cpp}
-  // Compute average spacing using neighborhood of 6 points
-  double spacing = CGAL::average_spacing (points.begin (), points.end (), 6);
-
-  // Simplify using a grid of size 2 * average spacing
-  std::vector<Point>::iterator it
-    = CGAL::grid_simplify_point_set (points.begin (), points.end (), 2. * spacing);
-
-  // Simplification functions change the order of the point container
-  // and return an iterator to the first point that is not part of the
-  // simplified point set. These points can either be ignored or removed.
-  std::cout << std::distance (points.begin (), it)
-	    << " point(s) remaining after simplification." << std::endl;
-
-  points.erase (it, points.end());
-\endcode
+% TODO snippet Simplification
 
 
 \subsection TutorialsReconstruction_preprocessing_smoothing Smoothing
@@ -198,10 +141,8 @@ approximation (i.e. without degrading curvature, for example):
 
 These functions directly modify the container:
 
-\code{.cpp}
-  // Jet smoothing takes advantage of a larger neighborhood
-  CGAL::jet_smooth_point_set (points.begin(), points.end(), 24);
-\endcode
+% TODO snippet Smoothing
+
 
 \subsection TutorialsReconstruction_preprocessing_normal Normal Estimation
 
@@ -221,30 +162,7 @@ function `mst_orient_normals()` can be used. Notice that it can also
 be used directly on input normals if their orientation is not
 consistent.
 
-\code{.cpp}
-  // Point with normal vector stored in a std::pair.
-  typedef std::pair<Point, Vector> PointVectorPair;
-
-  // Use a container with normals
-  std::vector<PointVectorPair> points_with_normals;
-  for (std::vector<Point>::iterator it = points.begin (); it != points.end (); ++ i)
-    points_with_normals.push_back (std::make_pair (*it, Vector (0., 0., 0.)));
-
-  CGAL::jet_estimate_normals(points_with_normals.begin(), points_with_normals.end(),
-			     CGAL::First_of_pair_property_map<PointVectorPair>(),
-			     CGAL::Second_of_pair_property_map<PointVectorPair>(),
-			     24); // Use 24 neighbors
-
-  // Orientation of normals, returns iterator to first unoriented point
-  // (can be deleted
-  std::vector<PointVectorPair>::iterator unoriented_points_begin =
-    CGAL::mst_orient_normals(points_with_normals.begin(), points_with_normals.end(),
-			     CGAL::First_of_pair_property_map<PointVectorPair>(),
-			     CGAL::Second_of_pair_property_map<PointVectorPair>(),
-			     24); // Use 24 neighbors
-
-  points_with_normals.erase (unoriented_points_begin, points_with_normals.end ());
-\endcode
+% TODO snippet Normal estimation
 
 
 \section TutorialsReconstruction_reconstruction Reconstruction
@@ -263,50 +181,13 @@ cloud with a smooth surface.
 Notice that it does not generate directly a mesh but computes an
 _implicit function_ (which can later be used to generate a mesh):
 
-\code{.cpp}
-CGAL::Poisson_reconstruction_function<Kernel> function
-  (points_with_normals.begin(), points_with_normals.end(),
-   CGAL::make_first_of_pair_property_map(PointVectorPair()),
-   CGAL::make_second_of_pair_property_map(PointVectorPair()));
-
-if ( ! function.compute_implicit_function() ) 
-  return -1;
-\endcode
+% TODO snippet Poisson
 
 To produce a mesh out of this implicit function, the
 \ref Chapter_3D_Surface_Mesh_Generation "CGAL Surface Mesh Generator"
 \cgalCite{cgal:ry-gsddrm-06} can be used:
 
-\code{.cpp}
-    // Gets one point inside the implicit surface
-    // and computes implicit function bounding sphere radius.
-    Point inner_point = function.get_inner_point();
-    Sphere bsphere = function.bounding_sphere();
-    FT radius = std::sqrt(bsphere.squared_radius());
-
-    // Defines the implicit surface: requires defining a
-    // conservative bounding sphere centered at inner point.
-    FT sm_sphere_radius = 1.5 * radius;
-    FT sm_dichotomy_error = sm_distance*average_spacing/1000.0; // Dichotomy error must be << sm_distance
-    Surface_3 surface(function,
-                      Sphere(inner_point,sm_sphere_radius*sm_sphere_radius),
-                      sm_dichotomy_error/sm_sphere_radius);
-
-    // Defines surface mesh generation criteria
-    CGAL::Surface_mesh_default_criteria_3<STr> criteria(sm_angle,  // Min triangle angle (degrees)
-                                                        sm_radius*average_spacing,  // Max triangle size
-                                                        sm_distance*average_spacing); // Approximation error
-
-
-    // Generates surface mesh with manifold option
-    STr tr; // 3D Delaunay triangulation for surface mesh generation
-    C2t3 c2t3(tr); // 2D complex in 3D Delaunay triangulation
-    CGAL::make_surface_mesh(c2t3,                                 // reconstructed mesh
-                            surface,                              // implicit surface
-                            criteria,                             // meshing criteria
-                            CGAL::Manifold_with_boundary_tag());  // require manifold mesh
-
-\endcode
+% TODO snippet Surface mesh generation
 
 
 \subsection TutorialsReconstruction_reconstruction_advancing Advancing Front
@@ -325,13 +206,7 @@ The \ref Chapter_Advancing_Front_Surface_Reconstruction "Advancing Front"
 package provides several ways of constructing the function. Here is
 a simple example:
 
-\code{.cpp}
-typedef CGAL::cpp11::array<std::size_t,3> Facet; // Triple of indices
-std::vector<Facet> facets;
-CGAL::advancing_front_surface_reconstruction(points.begin(),
-                                             points.end(),
-                                             std::back_inserter(facets));
-\endcode
+% TODO snippet Advancing front
 
 \subsection TutorialsReconstruction_reconstruction_scale_space Scale Space
 
@@ -349,16 +224,8 @@ Notice that although there is an option to force the output to be
 manifold, it is not guaranteed to be orientable (contrary to _Poisson_
 and _Advancing front_).
 
-\code{.cpp}
-CGAL::Scale_space_surface_reconstruction_3<Kernel> reconstruct
-  (10, // Number of neighborhood points
-   300); // Number of samples used to estimate neighborhood radius
+% TODO snippet Scale space
 
-reconstruct.reconstruct_surface(points.begin (), points.end (),
-                                4, // Number of iterations
-                                false, // Do not separate connected components
-                                true); // Force manifold output
-\endcode
 
 
 \section TutorialsReconstruction_postprocessing Output and Postprocessing
@@ -374,151 +241,18 @@ user's expectations on the output mesh.
 
 The mesh (postprocessed or not) can easily be saved in the OFF format:
 
-\code{.cpp}
-// Poisson
-std::ofstream f ("out.off");
-CGAL::output_facet_to_off(f, c2t3);
-f.close ();
-\endcode
+% TODO snippet Output poisson
 
-\code{.cpp}
-// Advancing Front
-std::ofstream f ("out.off");
-f << "OFF" << std::endl << points.size () << " " << facets.size () << " 0" << std::endl;
+% TODO snippet Output advancing front
 
-for (std::size_t i = 0; i < points.size (); ++ i) 
-  f << points[i] << std::endl;
-
-for (std::size_t i = 0; i < facets.size (); ++ i)
-  {
-    f << "3";
-    for (std::size_t j = 0; j < 3; ++ j)
-      f << " " << facets[i][j];
-    f << std::endl;
-  }
-
-f.close ();
-\endcode
-
-\code{.cpp}
-// Scale space
-std::ofstream f ("out.off");
-f << "OFF" << std::endl << points.size () << " " << facets.size () << " 0" << std::end;
-
-for (std::size_t i = 0; i < points.size (); ++ i) 
-  f << points[i] << std::endl;
-
-typedef typename Scale_space_surface_reconstruction_3<Kernel>::Triple_iterator Triple_iterator;
-for (Triple_iterator it = reconstruct.shell_begin (shell); it != reconstruct.shell_end (shell); ++it)
-  out << "3 "<< *it << std::endl;
-
-f.close ();
-\endcode
+% TODO snippet Ouput scale space
 
 \section TutorialsReconstruction_recap Full Code Example
 
 All the code snippets used in this tutorial can be assembled to create
 a full algorithm pipeline (provided the correct _includes_ are
-used). We give a full code example which achieves the following steps:
+used). We give a full code example which achieves all the steps
+described in this tutorial. The reconstruction method can be selected
+by the user at runtime with the second argument.
 
-- Reading a point cloud (from a .xyz file)
-- Simplifying it
-- Smoothing it
-- Reconstructing it by advancing front
-- Writing the output surface (in an .off file)
-
-\code{.cpp}
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
-#include <CGAL/IO/read_xyz_points.h>
-#include <CGAL/compute_average_spacing.h>
-#include <CGAL/grid_simplify_point_set.h>
-#include <CGAL/jet_smooth_point_set.h>
-#include <CGAL/Advancing_front_surface_reconstruction.h>
-
-#include <vector>
-#include <fstream>
-
-// types
-typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
-typedef Kernel::Point_3 Point;
-typedef CGAL::cpp11::array<std::size_t,3> Facet; // Triple of indices
-
-
-int main(int argc, char*argv[])
-{
-  std::vector<Point> points;
-
-  if (argc < 2)
-    {
-      std::cerr << "Usage: " << argv[0] << " [input.xyz] (output.off)" << std::endl;
-      return -1;
-    }
-
-  const char* input_file = argv[1];
-  std::ifstream stream (input_file);
-  if (!stream ||
-      !CGAL::read_xyz_points(stream, std::back_inserter(points)))
-    {
-      std::cerr << "Error: cannot read file " << input_file << std::endl;
-      return -1;
-    }
-  
-  std::cout << "Read " << points.size () << " point(s)" << std::endl;
-
-  // Compute average spacing using neighborhood of 6 points
-  double spacing = CGAL::compute_average_spacing (points.begin (), points.end (), 6);
-
-  // Simplify using a grid of size 2 * average spacing
-  std::vector<Point>::iterator it
-    = CGAL::grid_simplify_point_set (points.begin (), points.end (), 2. * spacing);
-
-  // Simplification functions change the order of the point container
-  // and return an iterator to the first point that is not part of the
-  // simplified point set. These points can either be ignored or removed.
-  std::cout << std::distance (points.begin (), it)
-	    << " point(s) remaining after simplification." << std::endl;
-
-  points.erase (it, points.end());
-
-  // Smoothing
-  CGAL::jet_smooth_point_set (points.begin(), points.end(), 24);
-
-
-  std::vector<Facet> facets;
-
-  // Reconstruction
-  CGAL::advancing_front_surface_reconstruction(points.begin(),
-					       points.end(),
-					       std::back_inserter(facets));
-  std::cout << facets.size ()
-	    << " facet(s) generated by reconstruction." << std::endl;
-  
-
-  const char* output_file = (argc > 2) ? argv[2] : "out.off";
-  
-  std::ofstream f (output_file);
-  
-  f << "OFF" << std::endl << points.size () << " " << facets.size () << " 0" << std::endl;
-
-  for (std::size_t i = 0; i < points.size (); ++ i) 
-    f << points[i] << std::endl;
-
-  for (std::size_t i = 0; i < facets.size (); ++ i)
-    {
-      f << "3";
-      for (std::size_t j = 0; j < 3; ++ j)
-	f << " " << facets[i][j];
-      f << std::endl;
-    }
-
-  f.close ();
-
-  
-  return 0;
-}
-\endcode
-
-
-
-
-*/
+% TODO full example
