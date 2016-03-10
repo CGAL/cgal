@@ -478,6 +478,9 @@ and Mariette Yvinec (`Triangulation_2`).
 The first version was written by Samuel Hornus. The final version is a joint 
 work by Samuel Hornus, Olivier Devillers and Clément Jamin.
 
+Clément Jamin's work was supported by the Advanced Grant of the European Research 
+Council GUDHI (Geometric Understanding in Higher Dimensions).
+
 Starting with the version 2.3 of \cgal, a package written by Susan Hert and Michael Seel
 was the first able to deal with triangulation and convex hulls in arbitrary
 dimension. It is deprecated since the version 4.6 of \cgal and this package should be used
