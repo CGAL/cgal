@@ -94,7 +94,7 @@ The latter two concepts are also abbreviated respectively as `TrVertex` and `TrF
 
 ## Triangulation Data Structure ##
 
-- `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex, TriangulationDSFullCell>`
+- `CGAL::Triangulation_data_structure<Dimensionality, TriangulationDSVertex_, TriangulationDSFullCell_>`
 - `CGAL::Triangulation_ds_vertex<TriangulationDataStructure>`
 - `CGAL::Triangulation_ds_full_cell<TriangulationDataStructure, TriangulationDSFullCellStoragePolicy>`
 - `CGAL::Triangulation_face<TriangulationDataStructure>`
