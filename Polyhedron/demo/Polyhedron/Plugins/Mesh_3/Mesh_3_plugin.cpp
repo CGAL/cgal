@@ -2,7 +2,6 @@
 #include "config_mesh_3.h"
 
 #ifdef CGAL_POLYHEDRON_DEMO_USE_SURFACE_MESHER
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "Messages_interface.h"
 
@@ -40,14 +39,16 @@ const QColor default_mesh_color(45,169,70);
 
 class Mesh_3_plugin :
   public QObject,
-  protected Polyhedron_demo_plugin_helper
+  protected Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  using Polyhedron_demo_plugin_helper::init;
+  void init(QMainWindow* mainWindow,
+            CGAL::Three::Scene_interface* scene_interface){}
+
   void init(QMainWindow* mainWindow,
             CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* msg_interface)
@@ -100,6 +101,8 @@ private:
   Messages_interface* msg;
   QMessageBox* message_box_;
   Scene_item* source_item_;
+  CGAL::Three::Scene_interface* scene;
+  QMainWindow* mw;
 }; // end class Mesh_3_plugin
 
 double

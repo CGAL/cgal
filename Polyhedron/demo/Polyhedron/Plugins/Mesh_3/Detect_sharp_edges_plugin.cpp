@@ -9,7 +9,6 @@
 #include "Scene_polygon_soup_item.h"
 #include "Polyhedron_type.h"
 
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include "Polyhedron_demo_detect_sharp_edges.h"
@@ -17,7 +16,7 @@
 using namespace CGAL::Three;
 class Polyhedron_demo_detect_sharp_edges_plugin :
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
@@ -45,7 +44,6 @@ public:
     return false;
   }
   
-  // used by Polyhedron_demo_plugin_helper
   QList<QAction*> actions() const {
     return QList<QAction*>() << actionSharEdges;
   }
@@ -60,6 +58,8 @@ protected:
 
 private:
   QAction* actionSharEdges;
+  CGAL::Three::Scene_interface* scene;
+  QMainWindow* mw;
 }; // end Polyhedron_demo_detect_sharp_edges_plugin
 
 void Polyhedron_demo_detect_sharp_edges_plugin::detectSharpEdgesWithInputDialog()
