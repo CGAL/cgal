@@ -148,7 +148,7 @@ insert_cell_2_in_cell_3(CMap& amap, InputIterator afirst, InputIterator alast,
 }
 
 #endif // CGAL_NO_DEPRECATED_CODE
-  
+
 } // namespace CGAL
 
 #endif // CGAL_COMBINATORIAL_MAP_INSERTIONS_H

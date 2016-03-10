@@ -39,13 +39,13 @@ namespace CGAL {
   CGAL_DEPRECATED typename Map::Dart_handle make_edge(Map& amap)
   { return amap.make_edge(); }
 
-  /** Create a combinatorial polygon of length alg 
+  /** Create a combinatorial polygon of length alg
    * (a cycle of alg darts beta1 links together).
    * @param amap the used combinatorial map.
    * @return a new dart.
    */
   template < class Map >
-  CGAL_DEPRECATED typename Map::Dart_handle make_combinatorial_polygon(Map& amap, 
+  CGAL_DEPRECATED typename Map::Dart_handle make_combinatorial_polygon(Map& amap,
                                                        unsigned int alg)
   { return amap.make_combinatorial_polygon(alg); }
 
@@ -60,7 +60,7 @@ namespace CGAL {
                                      typename Map::Dart_const_handle adart,
                                      unsigned int alg)
   { return amap.is_face_combinatorial_polygon(adart, alg); }
-  
+
   /** Create a combinatorial tetrahedron from 4 triangles.
    * @param amap the used combinatorial map.
    * @param d1 a dart onto a first triangle.
@@ -70,7 +70,7 @@ namespace CGAL {
    * @return a new dart.
    */
   template < class Map >
-  typename Map::Dart_handle 
+  typename Map::Dart_handle
   CGAL_DEPRECATED make_combinatorial_tetrahedron(Map& amap,
                                  typename Map::Dart_handle d1,
                                  typename Map::Dart_handle d2,
@@ -104,10 +104,10 @@ namespace CGAL {
    * @param d4 a dart onto a fourth quadrilateral.
    * @param d5 a dart onto a fifth quadrilateral.
    * @param d6 a dart onto a sixth quadrilateral.
-   * @return a dart of the new cuboidal_cell. 
+   * @return a dart of the new cuboidal_cell.
    */
   template < class Map >
-  typename Map::Dart_handle 
+  typename Map::Dart_handle
   CGAL_DEPRECATED make_combinatorial_hexahedron(Map& amap,
                                 typename Map::Dart_handle d1,
                                 typename Map::Dart_handle d2,
@@ -129,12 +129,12 @@ namespace CGAL {
 
   /** Create a new combinatorial hexahedron.
    * @param amap the used combinatorial map.
-   * @return a new dart. 
+   * @return a new dart.
    */
   template < class Map >
   CGAL_DEPRECATED typename Map::Dart_handle make_combinatorial_hexahedron(Map& amap)
   { return amap.make_combinatorial_hexahedron(); }
-  
+
 } // namespace CGAL
 
 #endif // CGAL_NO_DEPRECATED_CODE

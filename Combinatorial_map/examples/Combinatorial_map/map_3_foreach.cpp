@@ -32,7 +32,7 @@ struct Display_vertices_of_cell : public std::unary_function<CMap, void>
 
   void operator() (const typename CMap::Dart* ptr)
   { operator() (*ptr); }
-  
+
 private:
   const CMap& cmap;
   unsigned int nb_cell;
@@ -49,10 +49,10 @@ struct Remove_face : public std::unary_function<CMap, void>
   {
     cmap.template remove_cell<2>(cmap.dart_handle(*d));
     std::cout<<"CMap characteristics: ";
-    cmap.display_characteristics(std::cout) << ", valid=" << cmap.is_valid() 
+    cmap.display_characteristics(std::cout) << ", valid=" << cmap.is_valid()
                                             << std::endl;
   }
-  
+
 private:
   CMap& cmap;
 };
@@ -79,7 +79,7 @@ int main()
   std::for_each(cmap.one_dart_per_cell<3>().begin(),
                 cmap.one_dart_per_cell<3>().end(),
                 Display_vertices_of_cell<CMap_3,3>(cmap));
-  
+
   // 3-Sew the 2 tetrahedra along one facet
   cmap.sew<3>(d1, d2);
 
@@ -91,7 +91,7 @@ int main()
 
     // We display the map characteristics.
   std::cout<<"CMap characteristics: ";
-  cmap.display_characteristics(std::cout) << ", valid=" << cmap.is_valid() 
+  cmap.display_characteristics(std::cout) << ", valid=" << cmap.is_valid()
                                           << std::endl << std::endl;
 
   std::vector<CMap_3::Dart*> toremove;
@@ -106,9 +106,9 @@ int main()
             (cmap.one_dart_per_cell<2>().end(),
              Take_adress<CMap_3::Dart>()),
             back_inserter(toremove));
-  
+
   // Remove each face sequentially.
   std::for_each(toremove.begin(), toremove.end(), Remove_face<CMap_3>(cmap));
-  
+
   return EXIT_SUCCESS;
 }

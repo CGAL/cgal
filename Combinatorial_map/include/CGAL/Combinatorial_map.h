@@ -3752,14 +3752,14 @@ namespace CGAL {
       return d1;
     }
 
-  /** Create a combinatorial polygon of length alg 
+  /** Create a combinatorial polygon of length alg
    * (a cycle of alg darts beta1 links together).
    * @return a new dart.
    */
     Dart_handle make_combinatorial_polygon(unsigned int alg)
     {
       CGAL_assertion(alg>0);
-  
+
       Dart_handle start = create_dart();
       Dart_handle prev = start;
       for ( unsigned int nb=1; nb<alg; ++nb )
@@ -3768,7 +3768,7 @@ namespace CGAL {
         basic_link_beta_1(prev, cur);
         prev=cur;
       }
-  
+
       basic_link_beta_1(prev, start);
       return start;
     }
@@ -3782,7 +3782,7 @@ namespace CGAL {
                                        unsigned int alg)
     {
       CGAL_assertion(alg>0);
-      
+
       unsigned int nb = 0;
       Dart_const_handle cur = adart;
       do
@@ -3813,7 +3813,7 @@ namespace CGAL {
       basic_link_beta_for_involution(d4, beta(d2, 1), 2);
       basic_link_beta_for_involution(beta(d4, 0), beta(d3, 1), 2);
       basic_link_beta_for_involution(beta(d4, 1), beta(d1, 0), 2);
-      
+
       return d1;
     }
 
@@ -3829,7 +3829,7 @@ namespace CGAL {
 
       if ( d1==null_dart_handle || d2==null_dart_handle ||
            d3==null_dart_handle || d4==null_dart_handle ) return false;
-      
+
       if ( !is_face_combinatorial_polygon(d1, 3) ||
            !is_face_combinatorial_polygon(d2, 3) ||
            !is_face_combinatorial_polygon(d3, 3) ||
@@ -3842,7 +3842,7 @@ namespace CGAL {
            belong_to_same_cell<Self,2,1>(this, d2, d3) ||
            belong_to_same_cell<Self,2,1>(this, d2, d4) ||
            belong_to_same_cell<Self,2,1>(this, d3, d4) ) return false;
-      
+
       if ( beta(d1,1,2)!=beta(d3,0) ||
            beta(d4,0,2)!=beta(d3,1) ||
            beta(d4,1,2)!=beta(d1,0) ) return false;
@@ -3870,7 +3870,7 @@ namespace CGAL {
      * @param d4 a dart onto a fourth quadrilateral.
      * @param d5 a dart onto a fifth quadrilateral.
      * @param d6 a dart onto a sixth quadrilateral.
-     * @return a dart of the new cuboidal_cell. 
+     * @return a dart of the new cuboidal_cell.
      */
     Dart_handle make_combinatorial_hexahedron(Dart_handle d1,
                                               Dart_handle d2,
@@ -3887,7 +3887,7 @@ namespace CGAL {
                                      d2            , 2);
       basic_link_beta_for_involution(beta(d1, 0),
                                      d5            , 2);
-      
+
       basic_link_beta_for_involution(d3,
                                      beta(d2, 1, 1), 2);
       basic_link_beta_for_involution(beta(d3, 1),
@@ -3896,17 +3896,17 @@ namespace CGAL {
                                      d4            , 2);
       basic_link_beta_for_involution(beta(d3, 0),
                                      beta(d5, 1, 1), 2);
-      
+
       basic_link_beta_for_involution(d6,
                                      beta(d4, 1)   , 2);
       basic_link_beta_for_involution(beta(d6, 1, 1),
                                      beta(d2, 1)   , 2);
-      
+
       basic_link_beta_for_involution(beta(d5, 0),
                                      beta(d4, 0)   , 2);
       basic_link_beta_for_involution(beta(d5, 1),
                                      beta(d2, 0)   , 2);
-      
+
       return d1;
   }
 
@@ -3925,7 +3925,7 @@ namespace CGAL {
       if ( d1==null_dart_handle || d2==null_dart_handle ||
            d3==null_dart_handle || d4==null_dart_handle ||
            d5==null_dart_handle || d6==null_dart_handle ) return false;
-      
+
       if (!is_face_combinatorial_polygon(d1, 4) ||
           !is_face_combinatorial_polygon(d2, 4) ||
           !is_face_combinatorial_polygon(d3, 4) ||
@@ -3963,7 +3963,7 @@ namespace CGAL {
     }
 
     /** Create a new combinatorial hexahedron.
-     * @return a new dart. 
+     * @return a new dart.
      */
     Dart_handle make_combinatorial_hexahedron()
     {
@@ -3976,7 +3976,7 @@ namespace CGAL {
 
       return make_combinatorial_hexahedron(d1, d2, d3, d4, d5, d6);
     }
-    
+
     /** Test if an i-cell can be removed.
      *  An i-cell can be removed if i==dimension or i==dimension-1,
      *     or if there are at most two (i+1)-cell incident to it.
@@ -3998,7 +3998,7 @@ namespace CGAL {
       return CGAL::Remove_cell_functor<Self,i,Self::dimension-i>::
         run(*this,adart,update_attributes);
     }
-    
+
     /** Test if an i-cell can be contracted.
      *  An i-cell can be contracted if i==1
      *     or if there are at most two (i-1)-cell incident to it.
@@ -4032,7 +4032,7 @@ namespace CGAL {
     {
       Dart_handle d1, d2;
       size_type amark=get_new_mark();
-      
+
       // 1) We store all the darts of the edge.
       std::deque<Dart_handle> vect;
       size_type m=get_new_mark();
@@ -4048,7 +4048,7 @@ namespace CGAL {
       for (; it != vect.end(); ++it)
       {
         d1 = create_dart();
-        
+
         if (!this->template is_free<1>(*it))
         { basic_link_beta_1(d1, this->template beta<1>(*it)); }
 
@@ -4060,7 +4060,7 @@ namespace CGAL {
             basic_link_beta_for_involution(*it, beta(*it, dim, 1), dim);
           }
         }
-        
+
         basic_link_beta_1(*it, d1);
 
         if (are_attributes_automatically_managed() && update_attributes)
@@ -4078,7 +4078,7 @@ namespace CGAL {
         }
         mark(*it, amark);
       }
-      
+
       for (it = vect.begin(); it != vect.end(); ++it)
       {
         unmark(*it, m);
@@ -4122,7 +4122,7 @@ namespace CGAL {
         cur=null_handle, next=null_handle,
         n1=null_handle, n2=null_handle,
         nn1=null_handle, nn2=null_handle;
-      
+
       // If the facet is open, we search the dart 0-free
       while ( !this->template is_free<0>(first) &&
               this->template beta<0>(first)!=adart )
@@ -4130,7 +4130,7 @@ namespace CGAL {
 
       // Mark used to mark darts already treated.
       size_type treated = get_new_mark();
-      
+
       // Stack of marked darts
       std::deque<Dart_handle> tounmark;
 
@@ -4141,21 +4141,21 @@ namespace CGAL {
         next = this->template beta<1>(cur);
         mark(cur, treated);
         tounmark.push_back(cur);
-        
+
         if (!this->template is_free<0>(cur))
         {
           n1=create_dart();
           link_beta_0(cur, n1);
         }
         else n1 = null_handle;
-        
+
         if (!this->template is_free<1>(cur))
         {
           n2 = create_dart();
           link_beta_1(cur, n2);
         }
         else n2 = null_handle;
-        
+
         if ( n1!=null_handle )
         {
           if ( n2!=null_handle )
@@ -4163,14 +4163,14 @@ namespace CGAL {
 
           if ( prev!=null_handle )
             this->template basic_link_beta_for_involution<2>(prev, n1);
-          
+
           if (are_attributes_automatically_managed() && update_attributes)
           {
             internal::Set_i_attribute_of_dart_functor<Self, 0>::
               run(this, n1, ah);
           }
         }
-        
+
         for (unsigned int dim=3; dim<=dimension; ++dim)
         {
           if ( !is_free(adart, dim) )
@@ -4184,7 +4184,7 @@ namespace CGAL {
                 basic_link_beta_for_involution(n1, nn1, dim);
               }
               else nn1=null_handle;
-              
+
               if (n2!=null_handle)
               {
                 nn2=create_dart();
@@ -4197,10 +4197,10 @@ namespace CGAL {
                 }
               }
               else nn2=null_handle;
-              
+
               if (nn1 != null_handle && nn2 != null_handle)
                 basic_link_beta_1(nn1, nn2);
-              
+
               if (nn1 != null_handle && prev != null_handle)
                 this->template basic_link_beta_for_involution<2>(nn1, beta(prev, dim));
 
@@ -4217,12 +4217,12 @@ namespace CGAL {
             }
           }
         }
-        
+
         prev = n2;
         cur = next;
       }
       while(cur!=first && cur!=null_dart_handle);
-      
+
       if (n2 != null_handle)
       {
         this->template basic_link_beta_for_involution<2>
@@ -4290,19 +4290,19 @@ namespace CGAL {
       Dart_handle d1 = null_handle;
       Dart_handle d2 = null_handle;
       unsigned int s1 = 0;
-      
+
       size_type treated=get_new_mark();
-      
+
       CMap_dart_iterator_basic_of_involution<Self,1> it1(*this, adart1, treated);
 
       for ( ; it1.cont(); ++it1)
       {
         d1 = create_dart();
         d2 = create_dart();
-        
+
         if ( is_marked(it1, mark1) ) s1 = 0;
         else s1 = 1;
-        
+
         if ( !is_free(it1, s1) )
         {
           if ( s1==0 )
@@ -4321,9 +4321,9 @@ namespace CGAL {
           link_beta_1(it1, d1);
           link_beta_1(d1, d2);
         }
-        
+
         basic_link_beta_for_involution<2>(d1, d2);
-        
+
         for ( unsigned int dim=3; dim<=dimension; ++dim)
         {
           if ( !is_free(it1, dim) &&
@@ -4341,25 +4341,25 @@ namespace CGAL {
         }
         mark(it1, treated);
       }
-      
+
       negate_mark(treated);
       for ( it1.rewind(); it1.cont(); ++it1 )
       { mark(it1, treated); }
 
       CGAL_assertion( is_whole_map_marked(treated) );
       free_mark(treated);
-      
+
       for ( typename std::deque<Dart_handle>::iterator it=to_unmark.begin();
             it!=to_unmark.end(); ++it)
       { unmark(*it, mark1); }
 
       CGAL_assertion( is_whole_map_unmarked(mark1) );
       free_mark(mark1);
-      
+
 #ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
       CGAL_assertion( is_valid() );
 #endif
-      
+
       return this->template beta<0>(adart1);
     }
 
@@ -4367,7 +4367,7 @@ namespace CGAL {
      * @param adart1 a first dart.
      * @param adart2 a second dart.
      * @return true iff an edge can be inserted between adart1 and adart2.
-     */    
+     */
     bool is_insertable_cell_1_in_cell_2(Dart_const_handle adart1,
                                         Dart_const_handle adart2) const
     {
@@ -4399,10 +4399,10 @@ namespace CGAL {
 
       size_type m1=get_new_mark();
       CMap_dart_iterator_basic_of_involution<Self,1> it1(*this, adart1, m1);
-      
+
       size_type m2=get_new_mark();
       CMap_dart_iterator_basic_of_involution<Self,1> it2(*this, adart2, m2);
-      
+
       size_type mark1=get_new_mark();
       std::deque<Dart_handle> to_unmark;
       {
@@ -4413,34 +4413,34 @@ namespace CGAL {
           mark(it, mark1);
         }
       }
-      
+
       Dart_handle d1=null_handle;
       Dart_handle d2=null_handle;
       unsigned int s1=0;
-      
+
       size_type treated=get_new_mark();
-      
+
       for ( ; it1.cont(); ++it1, ++it2)
       {
         CGAL_assertion ( it2.cont() );
         d1 = create_dart();
         d2 = create_dart();
-        
+
         if ( is_marked(it1, mark1) ) s1 = 0;
         else s1 = 1;
-        
+
         if ( !is_free(it1, s1) )
         {
           if ( s1==0 ) link_beta_1(this->template beta<0>(it1), d2);
           else link_beta_0(this->template beta<1>(it1), d2);
         }
-        
+
         if ( !is_free(it2, s1) )
         {
           if ( s1==0 ) link_beta_1(this->template beta<0>(it2), d1);
           else link_beta_0(this->template beta<1>(it2), d1);
         }
-        
+
         if ( s1==0 )
         {
           link_beta_0(it1, d1);
@@ -4452,7 +4452,7 @@ namespace CGAL {
           link_beta_1(it2, d2);
         }
         this->template basic_link_beta_for_involution<2>(d2, d1);
-        
+
         for ( unsigned int dim=3; dim<=dimension; ++dim)
         {
           if ( !is_free(it1, dim) &&
@@ -4464,15 +4464,15 @@ namespace CGAL {
               (beta(it1, dim, CGAL_BETAINV(s1), 2), d2, dim);
           }
         }
-        
+
         mark(it1,treated);
       }
-      
+
       if (are_attributes_automatically_managed() && update_attributes)
       {
         internal::Degroup_attribute_functor_run<Self, 2>::run(this, d1, d2);
       }
-      
+
       negate_mark(m1);
       negate_mark(m2);
       it1.rewind(); it2.rewind();
@@ -4490,17 +4490,17 @@ namespace CGAL {
       free_mark(m1);
       free_mark(m2);
       free_mark(treated);
-      
+
       typename std::deque<Dart_handle>::iterator it = to_unmark.begin();
       for (; it != to_unmark.end(); ++it)
       { unmark(*it, mark1); }
       CGAL_assertion( is_whole_map_unmarked(mark1) );
       free_mark(mark1);
-      
+
 #ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
       CGAL_assertion( is_valid() );
 #endif
-      
+
       return this->template beta<0>(adart1);
     }
 
@@ -4515,7 +4515,7 @@ namespace CGAL {
                                         InputIterator alast) const
     {
       CGAL_assertion( dimension>= 3 );
-      
+
       // The path must have at least one dart.
       if (afirst==alast) return false;
       Dart_const_handle prec = null_handle;
@@ -4525,28 +4525,28 @@ namespace CGAL {
       {
         // The path must contain only non empty darts.
         if (*it == null_handle || *it==null_dart_handle) return false;
-        
+
         // Two consecutive darts of the path must belong to two edges
         // incident to the same vertex of the same volume.
         if (prec != null_handle)
         {
           od = other_extremity(prec);
           if ( od==null_handle ) return false;
-          
+
           // of and *it must belong to the same vertex of the same volume
           if ( !belong_to_same_cell<Self, 0, 2>(*this, od, *it) )
             return false;
         }
         prec = *it;
       }
-      
+
       // The path must be closed.
       od = other_extremity(prec);
       if ( od==null_handle ) return false;
-      
+
       if (!belong_to_same_cell<Self, 0, 2>(*this, od, *afirst))
         return false;
-      
+
       return true;
     }
 
@@ -4561,25 +4561,25 @@ namespace CGAL {
                                         bool update_attributes=true)
     {
       CGAL_assertion(is_insertable_cell_2_in_cell_3(afirst,alast));
-      
+
       Dart_handle prec = null_handle, d = null_handle,
         dd = null_handle, first = null_handle;
       bool withBeta3 = false;
-      
+
       {
         for (InputIterator it(afirst); !withBeta3 && it!=alast; ++it)
         {
           if (!this->template is_free<2>(*it)) withBeta3 = true;
         }
       }
-      
+
       {
         for (InputIterator it(afirst); it!=alast; ++it)
         {
           d = create_dart();
           if ( withBeta3 )
             dd = create_dart();
-          
+
           if (prec != null_handle)
           {
             basic_link_beta_0(prec, d);
@@ -4587,7 +4587,7 @@ namespace CGAL {
               basic_link_beta_1(this->template beta<3>(prec), dd);
           }
           else first = d;
-          
+
           if ( !this->template is_free<2>((*it)) )
             basic_link_beta_for_involution<2>(this->template beta<2>(*it), dd);
 
@@ -4598,7 +4598,7 @@ namespace CGAL {
           prec = d;
         }
       }
-      
+
       basic_link_beta_0(prec, first);
       if ( withBeta3 )
       {
@@ -4633,7 +4633,7 @@ namespace CGAL {
               }
             }
             else first2 = prec;
-            
+
             // We consider dim2=2 out of the loop to use link_beta instead of
             // basic _link_beta (to modify non void attributes only once).
             if ( !this->template is_free<2>(it) && is_free(this->template beta<2>(it), dim) )
@@ -4664,7 +4664,7 @@ namespace CGAL {
           }
         }
       }
-      
+
       // Degroup the attributes
       if ( withBeta3 )
       { // Here we cannot use Degroup_attribute_functor_run as new darts do not
@@ -4675,14 +4675,14 @@ namespace CGAL {
             run(this, first, this->template beta<3>(first));
         }
       }
-      
+
 #ifdef CGAL_CMAP_TEST_VALID_INSERTIONS
       CGAL_assertion( is_valid() );
 #endif
-      
+
       return first;
     }
-    
+
   protected:
     /// Number of times each mark is reserved. 0 if the mark is free.
     mutable size_type mnb_times_reserved_marks[NB_MARKS];

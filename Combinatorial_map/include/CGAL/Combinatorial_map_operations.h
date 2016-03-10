@@ -80,7 +80,7 @@ namespace CGAL
                                     typename CMap::Dart_const_handle adart)
   { return CGAL::Is_removable_functor<CMap, i>::run(amap,adart); }
 #endif // CGAL_NO_DEPRECATED_CODE
-  
+
   /** Remove an i-cell, 0<i<dimension, and merge eventually both incident
    *  (i+1)-cells.
    *  @param amap the used combinatorial map.
