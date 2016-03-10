@@ -15,7 +15,7 @@
 // $URL$
 // $Id$
 //
-// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, Clément Jamin
+// Author(s)     : Fernando de Goes, Pierre Alliez, Ivo Vigan, ClÃ©ment Jamin
 
 #ifndef CGAL_OTR2_SAMPLE_H
 #define CGAL_OTR2_SAMPLE_H
@@ -140,5 +140,7 @@ struct greater_priority
 };
 
 } } //end namespaces
+
+/// \endcond
 
 #endif // CGAL_OTR2_SAMPLE_H
