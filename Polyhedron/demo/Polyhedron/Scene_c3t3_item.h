@@ -106,8 +106,8 @@ public:
   }
 
   void draw(CGAL::Three::Viewer_interface* viewer) const;
-  void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
-  void draw_points(CGAL::Three::Viewer_interface * viewer) const;
+  void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
+  void drawPoints(CGAL::Three::Viewer_interface * viewer) const;
 private:
 
   bool need_changed;
@@ -228,10 +228,10 @@ private:
   mutable QOpenGLShaderProgram *program;
   mutable QOpenGLShaderProgram *program_sphere;
 
-  using Scene_item::initialize_buffers;
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer);
+  using Scene_item::initializeBuffers;
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer);
   void initialize_intersection_buffers(CGAL::Three::Viewer_interface *viewer);
-  void compute_elements();
+  void computeElements();
   void compute_intersections();
   void compile_shaders();
 };

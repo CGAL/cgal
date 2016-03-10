@@ -47,13 +47,13 @@ public:
         return (m == Wireframe);
     }
 
-    void draw_edges(CGAL::Three::Viewer_interface* viewer) const
+    void drawEdges(CGAL::Three::Viewer_interface* viewer) const
     {
         if(!are_buffers_filled)
-            initialize_buffers(viewer);
+            initializeBuffers(viewer);
         vaos[0]->bind();
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-        attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+        attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program->bind();
         program->setAttributeValue("colors", this->color());
         viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
@@ -64,7 +64,7 @@ public:
 
     void invalidateOpenGLBuffers()
     {
-        compute_elements();
+        computeElements();
         are_buffers_filled = false;
         compute_bbox();
     }
@@ -73,8 +73,8 @@ private:
 
     mutable std::vector<float> positions_lines;
     mutable QOpenGLShaderProgram *program;
-    using CGAL::Three::Scene_item::initialize_buffers;
-    void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
+    using CGAL::Three::Scene_item::initializeBuffers;
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
     {
 
         //vao containing the data for the lines
@@ -97,7 +97,7 @@ private:
         are_buffers_filled = true;
     }
 
-    void compute_elements() const
+    void computeElements() const
     {
         positions_lines.clear();
         const Bbox& bb = scene->bbox();

@@ -109,7 +109,7 @@ void Polyhedron_demo_polyhedron_slicer_plugin::init(QMainWindow* mainWindow,
   dock_widget->installEventFilter(this);
   ui_widget.setupUi(dock_widget);
 
-  add_dock_widget(dock_widget);
+  addDockWidget(dock_widget);
 
   connect(ui_widget.Generate_button,  SIGNAL(clicked()), this, SLOT(on_Generate_button_clicked()));   
   connect(ui_widget.Update_plane_button,  SIGNAL(clicked()), this, SLOT(on_Update_plane_button_clicked())); 
@@ -213,7 +213,7 @@ bool Polyhedron_demo_polyhedron_slicer_plugin::on_Update_plane_button_clicked() 
 // generate multiple cuts, until any cut does not intersect with bbox
 void Polyhedron_demo_polyhedron_slicer_plugin::on_Generate_button_clicked()
 {
-  Scene_polyhedron_item* item = get_selected_item<Scene_polyhedron_item>();
+  Scene_polyhedron_item* item = getSelectedItem<Scene_polyhedron_item>();
   if(!item) { 
     print_message("Error: There is no selected Scene_polyhedron_item!");
     return; 

@@ -45,9 +45,9 @@ class VIEWER_EXPORT Viewer_interface : public QGLViewer, public QOpenGLFunctions
 public:
  /*!
    * \brief The OpenGL_program_IDs enum
-   * This enum holds the OpenGL programs IDs that are given to getShaderProgram() and attrib_buffers().
+   * This enum holds the OpenGL programs IDs that are given to getShaderProgram() and attribBuffers().
    *@see getShaderProgram
-   * @see attrib_buffers
+   * @see attribBuffers
    */
   enum OpenGL_program_IDs
   {
@@ -87,7 +87,7 @@ public:
    * According to program_name, this data may change.
    * @see OpenGL_program_IDs
    */
-  virtual void attrib_buffers(int program_name) const = 0;
+  virtual void attribBuffers(int program_name) const = 0;
 
   /*! Returns a program according to name.
    * If the program does not exist yet, it is created and stored in shader_programs.

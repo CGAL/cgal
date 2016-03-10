@@ -27,10 +27,10 @@ public:
   void draw(CGAL::Three::Viewer_interface* viewer)const
   {
     if(!are_buffers_filled)
-      initialize_buffers(viewer);
+      initializeBuffers(viewer);
     vaos[Facets]->bind();
     program = getShaderProgram(PROGRAM_PLANE_TWO_FACES);
-    attrib_buffers(viewer, PROGRAM_PLANE_TWO_FACES);
+    attribBuffers(viewer, PROGRAM_PLANE_TWO_FACES);
     QMatrix4x4 f_matrix;
     for(int i=0; i<16; i++)
       f_matrix.data()[i] = (float)frame->matrix()[i];
@@ -54,7 +54,7 @@ public:
   void selection_changed(bool b){is_selected = b;}
 
 private:
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const
   {
     program = getShaderProgram(PROGRAM_PLANE_TWO_FACES, viewer);
     program->bind();

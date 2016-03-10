@@ -16,7 +16,7 @@ bool is_nan(double d)
     return !CGAL::Is_valid<double>()( d );
 }
 
-void Scene_implicit_function_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const
+void Scene_implicit_function_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const
 {
     if(GLuint(-1) == textureId) {
         viewer->glGenTextures(1, &textureId);
@@ -386,7 +386,7 @@ void
 Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
 
     if(frame_->isManipulated()) {
         if(need_update_) {
@@ -397,7 +397,7 @@ Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
     vaos[Plane]->bind();
     viewer->glActiveTexture(GL_TEXTURE0);
     viewer->glBindTexture(GL_TEXTURE_2D, textureId);
-    attrib_buffers(viewer, PROGRAM_WITH_TEXTURE);
+    attribBuffers(viewer, PROGRAM_WITH_TEXTURE);
     QMatrix4x4 f_mat;
     GLdouble d_mat[16];
     frame_->getMatrix(d_mat);
@@ -417,13 +417,13 @@ Scene_implicit_function_item::draw(CGAL::Three::Viewer_interface* viewer) const
 }
 
 void
-Scene_implicit_function_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
+Scene_implicit_function_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
     //  draw_aux(viewer, true);
     vaos[BBox]->bind();
-    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     program->setAttributeValue("colors", QVector3D(0.f,0.f,0.f));

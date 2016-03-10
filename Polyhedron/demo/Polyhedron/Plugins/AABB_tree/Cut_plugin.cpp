@@ -84,7 +84,7 @@ public:
   // Wireframe OpenGL drawing in a display list
   void invalidateOpenGLBuffers()
   {
-      compute_elements();
+      computeElements();
       are_buffers_filled = false;
       compute_bbox();
   }
@@ -95,8 +95,8 @@ private:
 
     mutable QOpenGLShaderProgram *program;
 
-    using CGAL::Three::Scene_item::initialize_buffers;
-    void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
+    using CGAL::Three::Scene_item::initializeBuffers;
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
     {
         program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
@@ -114,7 +114,7 @@ private:
         are_buffers_filled = true;
     }
 
-    void compute_elements() const
+    void computeElements() const
     {
        positions_lines.clear();
 
@@ -123,13 +123,13 @@ private:
 
        tree.traversal(0, traits);
     }
-    void draw_edges(CGAL::Three::Viewer_interface* viewer) const
+    void drawEdges(CGAL::Three::Viewer_interface* viewer) const
     {
         if(!are_buffers_filled)
-            initialize_buffers(viewer);
+            initializeBuffers(viewer);
         vaos[0]->bind();
         program = getShaderProgram(PROGRAM_NO_SELECTION);
-        attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+        attribBuffers(viewer, PROGRAM_NO_SELECTION);
         program->bind();
         program->setAttributeValue("colors",this->color());
         viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));
@@ -169,7 +169,7 @@ public:
   }
   void invalidateOpenGLBuffers()
   {
-      compute_elements();
+      computeElements();
       are_buffers_filled = false;
       compute_bbox();
   }
@@ -220,8 +220,8 @@ private:
 
   mutable QOpenGLShaderProgram *program;
 
-    using CGAL::Three::Scene_item::initialize_buffers;
-    void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
+    using CGAL::Three::Scene_item::initializeBuffers;
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
     {
         program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
         program->bind();
@@ -238,7 +238,7 @@ private:
         vaos[0]->release();
         are_buffers_filled = true;
     }
-    void compute_elements() const
+    void computeElements() const
     {
        positions_lines.clear();
 
@@ -251,13 +251,13 @@ private:
          positions_lines.push_back(b.x()); positions_lines.push_back(b.y()); positions_lines.push_back(b.z());
        }
     }
-    void draw_edges(CGAL::Three::Viewer_interface* viewer) const
+    void drawEdges(CGAL::Three::Viewer_interface* viewer) const
     {
         if(!are_buffers_filled)
-            initialize_buffers(viewer);
+            initializeBuffers(viewer);
         vaos[0]->bind();
         program = getShaderProgram(PROGRAM_NO_SELECTION);
-        attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+        attribBuffers(viewer, PROGRAM_NO_SELECTION);
         program->bind();
         program->setAttributeValue("colors",this->color());
         viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size()/3));

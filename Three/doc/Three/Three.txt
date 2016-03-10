@@ -6,9 +6,9 @@ namespace CGAL {
 \cgalAutoToc
 \author Laurent Rineau, Sebastien Loriot, Andreas Fabri, Maxime Gimeno
 
+This package regroups the files making the API for creating and adding a new plugin to the Polyhedron_demo. \n
 \section intro Understanding the Polyhedron Demo
 
-These pages are not documenting the whole Polyhedron demo but only the API that is useful to create and add a new plugin.
 
 There are several levels in this demo.
 
@@ -16,15 +16,15 @@ There are several levels in this demo.
 
 - Among these elements is the `Viewer`, which is the drawable surface that handles all the drawing and all the keyboard and mouse events.
 
-- The `Viewer` has a reference to the `Scene`, which contains the `Scene_item` list, which is a list of the drawn elements.
+- The `Viewer` has a reference to a `CGAL::Three::Scene_interface`, which contains a list of all the items (the drawn elements).
 
-A plugin usually defines an object that inherits from `Scene_item` or uses some of them to demonstrate a \cgal feature, so it might have to deal with the above elements.
+A plugin usually defines an object that inherits from `CGAL::Three::Scene_item` or uses some of them to demonstrate a \cgal feature, so it might have to deal with the above elements.
 
 \section examplePlugin Creating a Simple Plugin
 
 \subsection examplePluginItself The Plugin Itself
 
-A basic plugin will inherit from `Polyhedron_demo_plugin_interface`. It must be created in a folder named Xxxx_yyyy_plugin containing all the files created for it, and a CMakeLists.txt file.
+A basic plugin will inherit from `CGAL::Three::Polyhedron_demo_plugin_interface`. It must be created in a folder named Xxxx_yyyy_plugin containing all the files created for it, and a CMakeLists.txt file.
 Its name must be of the form Xxxx_yyyy_plugin. \n
 
   [init]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#init(QMainWindow *, Scene_interface *)
@@ -32,9 +32,11 @@ Its name must be of the form Xxxx_yyyy_plugin. \n
   [actions]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#actions()
   The class must contain the following lines :\n
 
-    Q_OBJECT\n
-    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)\n
-    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")\n
+~~~~~~~~~~~~~{.cpp}
+    Q_OBJECT
+    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
+    Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+~~~~~~~~~~~~~
 
 Your plugin must override the three pure virtual functions inherited from Polyhedron_demo_plugin_interface : \n
 - [actions] that will hold the actions of the plugin
@@ -94,7 +96,7 @@ then add the following line to your plugin file:
 #include "ui_Xxxx_yyyy_plugin.h"
 ~~~~~~~~~~~~~
 
-You can then add a new class to your cpp file, inheriting from `QDialog` and your own dialog, accessible with "Ui::".
+You can then add a new class to your cpp file, inheriting from `QDialog` and your own dialog, accessible with "Ui::". \n
 Add the macro `Q_OBJECT` and the line
     `setupUi(this)`
 in your constructor.
@@ -111,7 +113,9 @@ It is really simple to add a pop-up box with Qt. Use a QMessageBox and give it s
 
 \subsection examplePluginDockWidget Adding a Dock Widget
 
-This section describes how to add a dock widget to the application.
+This section describes how to add a dock widget to the application.\n
+You can make your plugin inherit from CGAL::Three::Polyhedron_demo_plugin_helper, which gives acces to the function CGAL::Three::Polyhedron_demo_plugin_helper#addDockWidget.
+This will manage automatically the position and tabification of a dock widget. \n
 Just like with the Dialog, create a new Qt Designer form (file->New file or Project->Qt->Qt Designer Form), choose `QDockWidget in Widgets
 *  \image html menu_6.png
 Add it to the project in the CMakeLists.txt :
@@ -164,7 +168,9 @@ This Scene_interface will give you access to the following functions :
 - [item]
 - [item_id]
 
-that give you access to any item in the scene. Example of use :
+that give you access to any item in the scene.
+
+Example of use :
 \snippet Three/Example_plugin/Basic_item_plugin.cpp use
 
 Don't forget to adapt your [applicable] function :
@@ -202,13 +208,14 @@ An item is simply a graphic representation of a geometric data set. You need to 
 \snippet Three/Example_plugin/Example_plugin.cpp itemdeclaration
 
 The minimalist item above is designed to draw a simple triangle. There are several steps that need to be followed when creating an item :
+
 <b> - Computing the data </b>
 
-One way to store the data you computed is to use member std::vectors. It must be done every time a change occurs in the item's geometry, using the function invalidateOpenGLBuffers.
+One way to store the data you computed is to use member std::vectors. It must be done every time a change occurs in the item's geometry (usually done in a function called invalidateOpenGLBuffers).
 
 \snippet Three/Example_plugin/Example_plugin.cpp computeelements
 
-<b>  - Filling the openGL buffers </b>
+<b>  - Filling the OpenGL buffers </b>
 
 The application uses OpenGL VBOs to display the geometry. Those are buffers that will stream their data to the GPU. This step consists to put the data stored in the std::vectors in those buffers.
 In this exemple, we only need one VBO and one VAO, as we are only storing one kind of data. But if we wanted to store normals and colors, for instance, we would need as much VBOs, and if there were
@@ -222,14 +229,14 @@ The code above gets a ShaderProgram, that holds the characteristics of the displ
 <b>  - Displaying the data </b>
 
 [draw]: @ref CGAL::Three::Scene_item#draw
-[draw_points]: @ref CGAL::Three::Scene_item#draw_points
-[draw_edges]: @ref CGAL::Three::Scene_item#draw_edges
-Originally, it's the viewer that requires displaying. It calls the scene, that calls each visible item's [draw],[draw_edges] and [draw_points] functions individually.
+[drawPoints]: @ref CGAL::Three::Scene_item#drawPoints
+[drawEdges]: @ref CGAL::Three::Scene_item#drawEdges
+Originally, it's the viewer that requires displaying. It calls the scene, that calls each visible item's [draw],[drawEdges] and [drawPoints] functions individually.
 Therefore, this is in those functions that the display of the data must be handled :
 
 \snippet Three/Example_plugin/Example_plugin.cpp draw
 
-to display, you need to call the same program that got configured previously, and to bind it before you call the OpenGL drawing function.
+To display, you need to call the same program that got configured previously, and to bind it before you call the OpenGL drawing function.
 
 
 \subsection exampleUsingAGroupItem Using a Scene_group_item
@@ -329,7 +336,7 @@ Configure CMake as you desire and fetch the right Qt5 packages :
                  COMPONENTS            OpenGL Script Svg Xml
                  OPTIONAL_COMPONENTS   ScriptTools)
 
-You will probably have to fetch the libraries exported by the polyhedron_demo, like the scene_items.
+You will probably have to fetch the libraries exported by the Polyhedron_demo, like the Scene_items.
 
     find_package(CGAL_polyhedron_demo
     HINTS "${CGAL_DIR}" "${CGAL_DIR}/Polyhedron/demo/Polyhedron-build"
@@ -342,7 +349,7 @@ Finally, you can declare your plugin
 
 Notice that an external plugin will not be automatically loaded in the Polyhedron demo. It must be built in its own project.
 
-<b> Complete CMakeLists </b>
+<b> Complete CMakeLists :</b>
 
 
 

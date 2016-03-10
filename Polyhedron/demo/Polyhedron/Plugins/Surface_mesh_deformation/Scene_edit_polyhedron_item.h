@@ -218,7 +218,7 @@ public:
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
   void draw() const{}
   void draw(CGAL::Three::Viewer_interface*) const;
-  void draw_edges(CGAL::Three::Viewer_interface*) const;
+  void drawEdges(CGAL::Three::Viewer_interface*) const;
   void draw_bbox(const CGAL::Three::Scene_interface::Bbox&) const;
   void draw_ROI_and_control_vertices(CGAL::Three::Viewer_interface *viewer) const;
   void draw_frame_plane(QGLViewer *) const;
@@ -337,8 +337,8 @@ private:
       NumberOfVaos
   };
   mutable QOpenGLBuffer *in_bu;
-  using CGAL::Three::Scene_item::initialize_buffers;
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
+  using CGAL::Three::Scene_item::initializeBuffers;
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void);
   void compute_bbox(const CGAL::Three::Scene_interface::Bbox&);
   void create_Sphere(double);

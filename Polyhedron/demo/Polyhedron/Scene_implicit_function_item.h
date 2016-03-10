@@ -66,7 +66,7 @@ public:
   // actually draw() is also overloaded to detect when the cut plane is moved
   virtual void draw()const {}
   virtual void draw(CGAL::Three::Viewer_interface*) const;
-  virtual void draw_edges(CGAL::Three::Viewer_interface*) const;
+  virtual void drawEdges(CGAL::Three::Viewer_interface*) const;
 
   virtual QString toolTip() const;
   virtual void invalidateOpenGLBuffers();
@@ -121,8 +121,8 @@ private:
 
   GLuint vao;
   GLuint buffer[4];
-  using CGAL::Three::Scene_item::initialize_buffers;
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
+  using CGAL::Three::Scene_item::initializeBuffers;
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_vertices_and_texmap(void);
   void compute_texture(int, int);
 };

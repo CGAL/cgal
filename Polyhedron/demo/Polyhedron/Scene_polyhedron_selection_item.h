@@ -268,9 +268,9 @@ public:
 
     using Scene_polyhedron_item_decorator::draw;
     virtual void draw(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_edges() const { }
-    virtual void draw_edges(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
+    virtual void drawEdges() const { }
+    virtual void drawEdges(CGAL::Three::Viewer_interface*) const;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
 
   bool supportsRenderingMode(RenderingMode m) const { return (m==Flat); }
 
@@ -922,9 +922,9 @@ private:
   mutable std::size_t nb_points;
   mutable std::size_t nb_lines;
   mutable QOpenGLShaderProgram *program;
-  using CGAL::Three::Scene_item::initialize_buffers;
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
-  void compute_elements() const;
+  using CGAL::Three::Scene_item::initializeBuffers;
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
+  void computeElements() const;
 
 };
 

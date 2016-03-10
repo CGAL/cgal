@@ -424,9 +424,9 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 
 
                 if(viewer)
-                    item.draw_edges(viewer);
+                    item.drawEdges(viewer);
                 else
-                    item.draw_edges();
+                    item.drawEdges();
             }
             else{
                 if( item.renderingMode() == PointsPlusNormals ){
@@ -445,9 +445,9 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                         item.selection_changed(false);
                     }
                     if(viewer)
-                        item.draw_edges(viewer);
+                        item.drawEdges(viewer);
                     else
-                        item.draw_edges();
+                        item.drawEdges();
                 }
             }
             if((item.renderingMode() == Wireframe || item.renderingMode() == PointsPlusNormals )
@@ -485,9 +485,9 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                 viewer->glLineWidth(1.0f);
 
                 if(viewer)
-                    item.draw_points(viewer);
+                    item.drawPoints(viewer);
                 else
-                    item.draw_points();
+                    item.drawPoints();
             }
             if(item.renderingMode() == Points && with_names) {
                 //    read depth buffer at pick location;
@@ -529,12 +529,10 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
             {  CGAL::Three::Scene_item& item = *m_entries[index];
                 if(item.visible() && item.renderingMode() == Splatting)
                 {
-                    viewer->glColor4d(item.color().redF(), item.color().greenF(), item.color().blueF(), item.color().alphaF());
-                    if(viewer)
-                        item.draw_splats(viewer);
-                    else
-                        item.draw_splats();
+                    item.drawSplats(viewer);
                 }
+                else
+                    item.drawSplats();
             }
             ms_splatting->finalize();
 
@@ -1196,7 +1194,7 @@ QList<QModelIndex> Scene::getModelIndexFromId(int id) const
     return index_map.keys(id);
 }
 
-void Scene::add_group(Scene_group_item* group)
+void Scene::addGroup(Scene_group_item* group)
 {
     //Find the indices of the selected items
     QList<int> indices;

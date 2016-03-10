@@ -70,7 +70,7 @@ private Q_SLOTS:
     //Then gives it its children
     scene->changeGroup(child, group);
     //adds it to the scene
-    scene->add_group(group);
+    scene->addGroup(group);
 
   }
 

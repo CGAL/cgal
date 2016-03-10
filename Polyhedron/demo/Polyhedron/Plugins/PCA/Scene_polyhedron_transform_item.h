@@ -18,7 +18,7 @@ public:
     Scene_polyhedron_transform_item(const qglviewer::Vec& pos,const Scene_polyhedron_item* poly_item,const CGAL::Three::Scene_interface* scene_interface);
     Scene_item* clone() const{return NULL;}
     QString toolTip() const;
-    void draw_edges(CGAL::Three::Viewer_interface*) const;
+    void drawEdges(CGAL::Three::Viewer_interface*) const;
     void compute_bbox() const;
     ~Scene_polyhedron_transform_item() {delete frame; Q_EMIT killed();}
     bool manipulatable() const { return manipulable; }
@@ -49,9 +49,9 @@ private:
     mutable QOpenGLShaderProgram *program;
     mutable std::vector<float> positions_lines;
     mutable std::size_t nb_lines;
-    using CGAL::Three::Scene_item::initialize_buffers;
-    void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
-    void compute_elements() const;
+    using CGAL::Three::Scene_item::initializeBuffers;
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
+    void computeElements() const;
 
 Q_SIGNALS:
     void stop();

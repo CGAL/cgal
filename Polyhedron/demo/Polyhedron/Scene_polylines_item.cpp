@@ -32,7 +32,7 @@ Scene_polylines_item::create_Sphere(float R) const
 }
 
 void
-Scene_polylines_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const
+Scene_polylines_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const
 {
     QOpenGLShaderProgram *program;
    //vao for the lines
@@ -176,7 +176,7 @@ Scene_polylines_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer =
 
 }
 void
-Scene_polylines_item::compute_elements() const
+Scene_polylines_item::computeElements() const
 {
     positions_spheres.resize(0);
     positions_wire_spheres.resize(0);
@@ -425,8 +425,8 @@ Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
     if(!are_buffers_filled)
     {
-        compute_elements();
-        initialize_buffers(viewer);
+        computeElements();
+        initializeBuffers(viewer);
     }
     if(d->draw_extremities)
     {
@@ -434,7 +434,7 @@ Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
         {
             vaos[Spheres]->bind();
             QOpenGLShaderProgram* program = getShaderProgram(PROGRAM_INSTANCED);
-            attrib_buffers(viewer, PROGRAM_INSTANCED);
+            attribBuffers(viewer, PROGRAM_INSTANCED);
             program->bind();
             viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                           static_cast<GLsizei>(nb_spheres/3), nbSpheres);
@@ -445,7 +445,7 @@ Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
         {
             vaos[Spheres]->bind();
             QOpenGLShaderProgram* program = getShaderProgram(PROGRAM_NO_SELECTION);
-            attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+            attribBuffers(viewer, PROGRAM_NO_SELECTION);
             glPointSize(8.0f);
             glEnable(GL_POINT_SMOOTH);
             program->bind();
@@ -459,15 +459,15 @@ Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
 // Wireframe OpenGL drawing
 void 
-Scene_polylines_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
+Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        compute_elements();
-        initialize_buffers(viewer);
+        computeElements();
+        initializeBuffers(viewer);
     }
 
     vaos[Edges]->bind();
-    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
     QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", this->color());
@@ -479,7 +479,7 @@ Scene_polylines_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
         if(viewer->extension_is_found)
         {
             vaos[Wired_Spheres]->bind();
-            attrib_buffers(viewer, PROGRAM_INSTANCED_WIRE);
+            attribBuffers(viewer, PROGRAM_INSTANCED_WIRE);
             program = getShaderProgram(PROGRAM_INSTANCED_WIRE);
             program->bind();
             viewer->glDrawArraysInstanced(GL_LINES, 0,
@@ -492,15 +492,15 @@ Scene_polylines_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
 }
 
 void 
-Scene_polylines_item::draw_points(CGAL::Three::Viewer_interface* viewer) const {
+Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        compute_elements();
-        initialize_buffers(viewer);
+        computeElements();
+        initializeBuffers(viewer);
     }
 
     vaos[Edges]->bind();
-    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
     QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
     program->bind();
     QColor temp = this->color();

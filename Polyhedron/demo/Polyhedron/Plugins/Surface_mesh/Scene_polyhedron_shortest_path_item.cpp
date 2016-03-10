@@ -31,7 +31,7 @@ Scene_polyhedron_shortest_path_item::~Scene_polyhedron_shortest_path_item()
   deinitialize();
 }
 
-void Scene_polyhedron_shortest_path_item::compute_elements() const
+void Scene_polyhedron_shortest_path_item::computeElements() const
 {
 
     vertices.resize(0);
@@ -48,7 +48,7 @@ void Scene_polyhedron_shortest_path_item::compute_elements() const
 
 }
 
-void Scene_polyhedron_shortest_path_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)const
+void Scene_polyhedron_shortest_path_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
 {
     //vao containing the data for the selected lines
     {
@@ -89,20 +89,20 @@ void Scene_polyhedron_shortest_path_item::draw(CGAL::Three::Viewer_interface* vi
 {
     if (supportsRenderingMode(renderingMode()))
     {
-      draw_points(viewer);
+      drawPoints(viewer);
     }
 }
 
 
-void Scene_polyhedron_shortest_path_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
+void Scene_polyhedron_shortest_path_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const
 {
     if(!are_buffers_filled)
     {
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
     }
    glPointSize(4.0f);
    program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
-   attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+   attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
    vaos[Selected_Edges]->bind();
    program->bind();
    program->setAttributeValue("colors", QColor(Qt::green));
@@ -183,7 +183,7 @@ void Scene_polyhedron_shortest_path_item::poly_item_changed()
   
 void Scene_polyhedron_shortest_path_item::invalidateOpenGLBuffers()
 {
-  compute_elements();
+  computeElements();
   compute_bbox();
   are_buffers_filled = false;
 

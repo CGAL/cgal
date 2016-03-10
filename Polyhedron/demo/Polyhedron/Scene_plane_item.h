@@ -95,7 +95,7 @@ public:
     return (m == Wireframe || m == Flat || m == FlatPlusEdges);
   }
   virtual void draw(CGAL::Three::Viewer_interface*) const;
- virtual void draw_edges(CGAL::Three::Viewer_interface* viewer)const;
+ virtual void drawEdges(CGAL::Three::Viewer_interface* viewer)const;
   Plane_3 plane() const {
     const qglviewer::Vec& pos = frame->position();
     const qglviewer::Vec& n =
@@ -189,8 +189,8 @@ protected:
   mutable bool smooth_shading;
   mutable QOpenGLShaderProgram *program;
 
-  using CGAL::Three::Scene_item::initialize_buffers;
-  void initialize_buffers(CGAL::Three::Viewer_interface*)const;
+  using CGAL::Three::Scene_item::initializeBuffers;
+  void initializeBuffers(CGAL::Three::Viewer_interface*)const;
   void compute_normals_and_vertices(void);
 };
 

@@ -36,10 +36,10 @@ public:
   // draw
   virtual void direct_draw(CGAL::Three::Viewer_interface* viewer) const
   { draw(viewer); }
-  virtual void direct_draw_edges(CGAL::Three::Viewer_interface* viewer) const
-  { draw_edges(viewer); }
+  virtual void direct_drawEdges(CGAL::Three::Viewer_interface* viewer) const
+  { drawEdges(viewer); }
   virtual void draw(CGAL::Three::Viewer_interface*) const;
-  virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const
+  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const
   { draw_gl(viewer); }
   
   virtual QString toolTip() const;
@@ -49,7 +49,7 @@ public:
 private:
   void draw_gl(CGAL::Three::Viewer_interface* viewer) const;
   
-  void initialize_buffers();
+  void initializeBuffers();
   GLint ibo_size() const;
   
 public:
@@ -78,7 +78,7 @@ private:
   mutable QOpenGLVertexArrayObject vao[vaoSize];
   mutable QOpenGLShaderProgram rendering_program;
   void draw_bbox();
-  void attrib_buffers(CGAL::Three::Viewer_interface*) const;
+  void attribBuffers(CGAL::Three::Viewer_interface*) const;
   void compile_shaders();
   void draw_Bbox(Bbox bbox, std::vector<float> *vertices);
 public Q_SLOTS:

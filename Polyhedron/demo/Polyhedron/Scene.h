@@ -178,7 +178,7 @@ public Q_SLOTS:
   //!Removes item from all the groups of the scene.
   void remove_item_from_groups(CGAL::Three::Scene_item* item);
 
-  void add_group(Scene_group_item* group);
+  void addGroup(Scene_group_item* group);
   //!Re-organizes the sceneView.
   void group_added();
   //! Sets the selected item to the target index.

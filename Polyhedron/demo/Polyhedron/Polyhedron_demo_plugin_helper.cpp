@@ -3,7 +3,7 @@
 #include <QDockWidget>
 
 
-void CGAL::Three::Polyhedron_demo_plugin_helper::add_dock_widget(QDockWidget* dock_widget)
+void CGAL::Three::Polyhedron_demo_plugin_helper::addDockWidget(QDockWidget* dock_widget)
 {
   mw->addDockWidget(::Qt::LeftDockWidgetArea, dock_widget);
 

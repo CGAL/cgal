@@ -32,8 +32,8 @@ public:
   // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
    void draw() const {}
   virtual void draw(CGAL::Three::Viewer_interface*) const;
-   virtual void draw_edges() const {}
-   virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
+   virtual void drawEdges() const {}
+   virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
 
   // Get wrapped textured_polyhedron
   Textured_polyhedron*       textured_polyhedron();
@@ -78,8 +78,8 @@ private:
 
   bool smooth_shading;
 
-  using CGAL::Three::Scene_item::initialize_buffers;
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
+  using CGAL::Three::Scene_item::initializeBuffers;
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_normals_and_vertices(void) const;
 
 

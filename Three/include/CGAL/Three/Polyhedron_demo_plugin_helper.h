@@ -54,7 +54,7 @@ public:
    * \return NULL if none is found
    */
   template<class SceneType>
-  SceneType* get_selected_item() const{
+  SceneType* getSelectedItem() const{
    int item_id = scene->mainSelectionIndex();
    SceneType* scene_item = qobject_cast<SceneType*>(scene->item(item_id));
    if(!scene_item) {
@@ -78,7 +78,7 @@ public:
    *
    * Adds a dock widget in the left section of the MainWindow. If the slot is already taken, the dock widgets will be tabified.
    */
-  void add_dock_widget(QDockWidget* dock);
+  void addDockWidget(QDockWidget* dock);
   
 protected:
   //!The reference to the scene
