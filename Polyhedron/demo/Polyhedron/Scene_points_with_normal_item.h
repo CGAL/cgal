@@ -51,10 +51,10 @@ public:
   // Indicate if rendering mode is supported
   virtual bool supportsRenderingMode(RenderingMode m) const;
 
-  virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
-  virtual void draw_points(CGAL::Three::Viewer_interface*) const;
+  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
+  virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
 
-  virtual void draw_splats(CGAL::Three::Viewer_interface*) const;
+  virtual void drawSplats(CGAL::Three::Viewer_interface*) const;
   
   // Gets wrapped point set
   Point_set*       point_set();
@@ -116,8 +116,8 @@ private:
 
   mutable QOpenGLShaderProgram *program;
 
-  using CGAL::Three::Scene_item::initialize_buffers;
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
+  using CGAL::Three::Scene_item::initializeBuffers;
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
 
   void compute_normals_and_vertices() const;
 

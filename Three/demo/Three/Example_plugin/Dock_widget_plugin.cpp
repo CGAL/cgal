@@ -1,5 +1,5 @@
 #include "ui_Basic_dock_widget.h"
-#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <QApplication>
 #include <QObject>
 #include <QAction>
@@ -22,7 +22,7 @@ public:
 //This plugin crates an action in Operations that displays "Hello World" in the 'console' dockwidet.
 class BasicPlugin :
     public QObject,
-    public CGAL::Three::Polyhedron_demo_plugin_interface
+    public CGAL::Three::Polyhedron_demo_plugin_helper
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
@@ -60,7 +60,7 @@ public:
     dock_widget = new DockWidget("Print a number", mw);
     dock_widget->setVisible(false); // do not show at the beginning
 
-    mw->addDockWidget(Qt::LeftDockWidgetArea, dock_widget);
+    add_dock_widget(dock_widget);
 
     connect(dock_widget->pushButton, SIGNAL(clicked(bool)),
             this, SLOT(on_dock_button_clicked()));
@@ -99,10 +99,6 @@ private:
   QList<QAction*> _actions;
   Messages_interface* messageInterface;
   DockWidget* dock_widget;
-  //The reference to the scene
-  CGAL::Three::Scene_interface* scene;
-  //The reference to the main window
-  QMainWindow* mw;
 };
 
 #include "Dock_widget_plugin.moc"

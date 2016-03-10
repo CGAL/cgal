@@ -61,8 +61,8 @@ public:
   bool inFastDrawing() const;
   //! Implementation of `Viewer_interface::inDrawWithNames()`
   bool inDrawWithNames() const;
-  //! Implementation of `Viewer_interface::attrib_buffers()`
-  void attrib_buffers(int program_name) const;
+  //! Implementation of `Viewer_interface::attribBuffers()`
+  void attribBuffers(int program_name) const;
   //! Implementation of `Viewer_interface::getShaderProgram()`
   QOpenGLShaderProgram* getShaderProgram(int name) const;
 
@@ -112,6 +112,7 @@ protected:
   void keyPressEvent(QKeyEvent*);
   //!Deal with context menu events
   void contextMenuEvent(QContextMenuEvent*);
+
   /*!
    * \brief makeArrow creates an arrow and stores it in a struct of vectors.
    * \param R the radius of the arrow.

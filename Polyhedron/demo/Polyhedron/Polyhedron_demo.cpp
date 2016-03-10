@@ -76,7 +76,7 @@ Polyhedron_demo::Polyhedron_demo(int& argc, char **argv,
   }
   QFileInfo autostart_js("autostart.js");
   if(!parser.isSet(no_autostart) && autostart_js.exists()) {
-    mainWindow.load_script(autostart_js);
+    mainWindow.loadScript(autostart_js);
   }
 #endif
   Q_FOREACH(QString filename, parser.positionalArguments()) {

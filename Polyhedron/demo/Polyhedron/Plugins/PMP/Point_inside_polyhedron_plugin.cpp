@@ -71,7 +71,7 @@ public:
     dock_widget->setVisible(false);
     ui_widget.setupUi(dock_widget);
 
-    add_dock_widget(dock_widget);
+    addDockWidget(dock_widget);
 
     connect(ui_widget.Select_button,  SIGNAL(clicked()), this, SLOT(on_Select_button())); 
     connect(ui_widget.Sample_random_points_from_bbox,  SIGNAL(clicked()), this, SLOT(on_Sample_random_points_from_bbox())); 

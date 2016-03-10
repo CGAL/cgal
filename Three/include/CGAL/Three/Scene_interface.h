@@ -185,7 +185,7 @@ public:
    * moment this function is called, they are added to the group.
    * If all the selected items were in the same group, the new group
    * is added as a sub-group of this group.*/
-  virtual void add_group(Scene_group_item* group) = 0;
+  virtual void addGroup(Scene_group_item* group) = 0;
   
 }; // end interface Scene_interface
 }

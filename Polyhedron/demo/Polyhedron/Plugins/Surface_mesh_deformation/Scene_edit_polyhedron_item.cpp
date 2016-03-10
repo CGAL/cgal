@@ -110,7 +110,7 @@ Scene_edit_polyhedron_item::~Scene_edit_polyhedron_item()
 }
 /////////////////////////////
 /// For the Shader gestion///
-void Scene_edit_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer =0) const
+void Scene_edit_polyhedron_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer =0) const
 {
     //vao for the facets
     {
@@ -580,12 +580,12 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 }
 
 #include "opengl_tools.h"
-void Scene_edit_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
+void Scene_edit_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
     vaos[Edges]->bind();
     program = getShaderProgram(PROGRAM_NO_SELECTION);
-    attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+    attribBuffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", QColor(0,0,0));
     viewer->glDrawElements(GL_LINES, (GLsizei) edges.size(), GL_UNSIGNED_INT, edges.data());
@@ -595,7 +595,7 @@ void Scene_edit_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewe
 
     vaos[Frame_plane]->bind();
     program = getShaderProgram(PROGRAM_NO_SELECTION);
-    attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+    attribBuffers(viewer,PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", QColor(0,0,0));
     viewer->glDrawArrays(GL_LINE_LOOP, 0, (GLsizei)pos_frame_plane.size()/3);
@@ -609,17 +609,17 @@ void Scene_edit_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewe
 }
 void Scene_edit_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
     vaos[Facets]->bind();
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
-    attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
+    attribBuffers(viewer,PROGRAM_WITH_LIGHT);
     program->bind();
     QColor color = this->color();
     program->setAttributeValue("colors", color);
     viewer->glDrawElements(GL_TRIANGLES, (GLsizei) tris.size(), GL_UNSIGNED_INT, tris.data());
     program->release();
     vaos[Facets]->release();
-    draw_edges(viewer);
+    drawEdges(viewer);
     draw_ROI_and_control_vertices(viewer);
 
 }
@@ -661,7 +661,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
 
             vaos[Roi_points]->bind();
             program = getShaderProgram(PROGRAM_NO_SELECTION);
-            attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+            attribBuffers(viewer,PROGRAM_NO_SELECTION);
             program->bind();
             program->setAttributeValue("colors", QColor(0,255,0));
             viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_ROI/3));
@@ -676,12 +676,24 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
     if(!ui_widget->ShowAsSphereCheckBox->isChecked() || !viewer->extension_is_found) {
         vaos[Control_points]->bind();
         program = getShaderProgram(PROGRAM_NO_SELECTION);
-        attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+        attribBuffers(viewer,PROGRAM_NO_SELECTION);
         program->bind();
         program->setAttributeValue("colors", QColor(255,0,0));
         viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(nb_control/3));
         program->release();
         vaos[Control_points]->release();
+    }
+    else{
+        vaos[Control_spheres]->bind();
+        program = getShaderProgram(PROGRAM_INSTANCED);
+        attribBuffers(viewer,PROGRAM_INSTANCED);
+        program->bind();
+        program->setAttributeValue("colors", QColor(255,0,0));
+        viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
+                                    static_cast<GLsizei>(nb_sphere/3),
+                                    static_cast<GLsizei>(nb_control/3));
+        program->release();
+        vaos[Control_spheres]->release();
     }
 
     QGLViewer* viewerB = *QGLViewer::QGLViewerPool().begin();
@@ -697,7 +709,7 @@ void Scene_edit_polyhedron_item::draw_ROI_and_control_vertices(CGAL::Three::View
                     f_mat.data()[i] = (float)f_matrix[i];
             vaos[Axis]->bind();
             program = getShaderProgram(PROGRAM_NO_SELECTION);
-            attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+            attribBuffers(viewer, PROGRAM_NO_SELECTION);
             program->bind();
             program->setUniformValue("f_matrix", f_mat);
             viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(nb_axis/3));

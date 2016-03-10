@@ -234,7 +234,7 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit,
 
 
 void
-Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer) const
+Scene_polyhedron_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer) const
 {
     //vao containing the data for the facets
     {
@@ -846,7 +846,7 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
         compute_normals_and_vertices();
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
         compute_bbox();
     }
 
@@ -856,7 +856,7 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     {
         vaos[Gouraud_Facets]->bind();
     }
-    attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
+    attribBuffers(viewer, PROGRAM_WITH_LIGHT);
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
     program->bind();
     if(is_monochrome)
@@ -876,12 +876,12 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 }
 
 // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
-void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
+void Scene_polyhedron_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const
 {
     if (!are_buffers_filled)
     {
         compute_normals_and_vertices();
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
         compute_bbox();
     }
 
@@ -889,7 +889,7 @@ void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) co
     {
         vaos[Edges]->bind();
 
-        attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+        attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
         program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         program->bind();
         //draw the edges
@@ -908,7 +908,7 @@ void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) co
 
     //draw the feature edges
     vaos[Feature_edges]->bind();
-    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
     program = getShaderProgram(PROGRAM_NO_SELECTION);
     program->bind();
     if(show_feature_edges_m || show_only_feature_edges_m)
@@ -926,16 +926,16 @@ void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) co
     }
 
 void
-Scene_polyhedron_item::draw_points(CGAL::Three::Viewer_interface* viewer) const {
+Scene_polyhedron_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
         compute_normals_and_vertices();
-        initialize_buffers(viewer);
+        initializeBuffers(viewer);
         compute_bbox();
     }
 
     vaos[Edges]->bind();
-    attrib_buffers(viewer, PROGRAM_WITHOUT_LIGHT);
+    attribBuffers(viewer, PROGRAM_WITHOUT_LIGHT);
     program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
     program->bind();
     //draw the points
@@ -1145,7 +1145,7 @@ void Scene_polyhedron_item::invalidate_aabb_tree()
 {
   delete_aabb_tree(this);
 }
-QString Scene_polyhedron_item::compute_stats(int type)
+QString Scene_polyhedron_item::computeStats(int type)
 {
   double minl, maxl, meanl, midl;
   switch (type)

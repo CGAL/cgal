@@ -127,7 +127,7 @@ public:
                           | QDockWidget::DockWidgetFloatable
                           | QDockWidget::DockWidgetClosable);
     dockWidget->setWindowTitle("Mean Curvature Flow Skeleton");
-    add_dock_widget(dockWidget);
+    addDockWidget(dockWidget);
 
     connect(ui->pushButton_contract, SIGNAL(clicked()),
             this, SLOT(on_actionContract()));

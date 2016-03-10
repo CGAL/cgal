@@ -111,9 +111,9 @@ private:
   mutable std::vector<float> vertices;
   mutable QOpenGLShaderProgram *program;
 
-  using Scene_polyhedron_item_decorator::initialize_buffers;
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;
-  void compute_elements(void) const;
+  using Scene_polyhedron_item_decorator::initializeBuffers;
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const;
+  void computeElements(void) const;
   
   
 public:
@@ -131,7 +131,7 @@ public:
   using Scene_polyhedron_item_decorator::draw;
   virtual void draw(CGAL::Three::Viewer_interface*) const;
   // Points OpenGL drawing
-  virtual void draw_points(CGAL::Three::Viewer_interface*) const;
+  virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
   
   virtual Scene_polyhedron_shortest_path_item* clone() const;
   

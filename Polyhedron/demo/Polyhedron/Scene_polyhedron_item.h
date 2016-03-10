@@ -43,8 +43,9 @@ public:
       MAX_ANGLE,
       MEAN_ANGLE
     };
-    QString compute_stats(int type);
-     bool has_stats()const {return true;}
+
+    bool has_stats()const {return true;}
+    QString computeStats(int type);
     CGAL::Three::Scene_item::Header_data header() const;
     Scene_polyhedron_item();
     //   Scene_polyhedron_item(const Scene_polyhedron_item&);
@@ -71,9 +72,9 @@ public:
     // Points/Wireframe/Flat/Gouraud OpenGL drawing in a display list
     void draw() const {}
     virtual void draw(CGAL::Three::Viewer_interface*) const;
-    virtual void draw_edges() const {}
-    virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const;
-    virtual void draw_points(CGAL::Three::Viewer_interface*) const;
+    virtual void drawEdges() const {}
+    virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const;
+    virtual void drawPoints(CGAL::Three::Viewer_interface*) const;
 
     // Get wrapped polyhedron
     Polyhedron*       polyhedron();
@@ -173,8 +174,8 @@ private:
     mutable unsigned int number_of_degenerated_faces;
     mutable bool self_intersect;
 
-    using CGAL::Three::Scene_item::initialize_buffers;
-    void initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const;
+    using CGAL::Three::Scene_item::initializeBuffers;
+    void initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const;
     void compute_normals_and_vertices(const bool colors_only = false) const;
     template<typename FaceNormalPmap, typename VertexNormalPmap>
     void triangulate_facet(Facet_iterator,

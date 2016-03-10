@@ -57,9 +57,9 @@ class SCENE_ITEM_EXPORT Scene_item : public QObject {
 public:
  /*!
    * \brief The OpenGL_program_IDs enum
-   * This enum holds the OpenGL programs IDs that are given to getShaderProgram() and attrib_buffers().
+   * This enum holds the OpenGL programs IDs that are given to getShaderProgram() and attribBuffers().
    *@see getShaderProgram
-   * @see attrib_buffers
+   * @see attribBuffers
    */
  enum OpenGL_program_IDs
  {
@@ -103,37 +103,37 @@ public:
   virtual void draw() const {}
   /*! \brief The drawing function.
    * Draws the facets of the item in the viewer using OpenGL functions. The data
-   * for the drawing is gathered in compute_elements(), and is sent
-   * to buffers in initialize_buffers().
-   * @see compute_elements()
-   * @see initialize_buffers()
+   * for the drawing is gathered in computeElements(), and is sent
+   * to buffers in initializeBuffers().
+   * @see computeElements()
+   * @see initializeBuffers()
    */
   virtual void draw(CGAL::Three::Viewer_interface*) const  { draw(); }
   //! Deprecated. Does nothing.
-  virtual void draw_edges() const { draw(); }
+  virtual void drawEdges() const { draw(); }
   /*! \brief The drawing function.
    * Draws the edges and lines of the item in the viewer using OpenGL functions. The data
-   * for the drawing is gathered in compute_elements(), and is sent
-   * to buffers in initialize_buffers().
-   * @see compute_elements()
-   * @see initialize_buffers()
+   * for the drawing is gathered in computeElements(), and is sent
+   * to buffers in initializeBuffers().
+   * @see computeElements()
+   * @see initializeBuffers()
    */
-  virtual void draw_edges(CGAL::Three::Viewer_interface* viewer) const { draw(viewer); }
+  virtual void drawEdges(CGAL::Three::Viewer_interface* viewer) const { draw(viewer); }
   //! Deprecated. Does nothing.
-  virtual void draw_points() const { draw(); }
+  virtual void drawPoints() const { draw(); }
   /*! \brief The drawing function.
    * Draws the points of the item in the viewer using OpenGL functions. The data
-   * for the drawing is gathered in compute_elements(), and is sent
-   * to buffers in initialize_buffers().
-   * @see compute_elements()
-   * @see initialize_buffers()
+   * for the drawing is gathered in computeElements(), and is sent
+   * to buffers in initializeBuffers().
+   * @see computeElements()
+   * @see initializeBuffers()
    */
-  virtual void draw_points(CGAL::Three::Viewer_interface*) const { draw_points(); }
+  virtual void drawPoints(CGAL::Three::Viewer_interface*) const { drawPoints(); }
 
   //! Draws the splats of the item in the viewer using GLSplat functions.
-  virtual void draw_splats() const {}
+  virtual void drawSplats() const {}
   //! Draws the splats of the item in the viewer using GLSplat functions.
-  virtual void draw_splats(CGAL::Three::Viewer_interface*) const {draw_splats();}
+  virtual void drawSplats(CGAL::Three::Viewer_interface*) const {drawSplats();}
 
   //! Called by the scene. If b is true, then this item is currently selected.
   virtual void selection_changed(bool b);
@@ -230,12 +230,12 @@ public:
    * |             |_______|_____|
    * |General Info | #Edges|12   |
    * |_____________|_______|_____|
-   * compute stats(0) should return "Cube" and compute_stats(1) should return QString::number(12);
+   * compute stats(0) should return "Cube" and computeStats(1) should return QString::number(12);
    * The numbers must be coherent with the order of declaration of the titles in the header.
    * \endverbatim
    *
    */
-  virtual QString compute_stats(int i);
+  virtual QString computeStats(int i);
 
   //!Contains the number of group and subgroups containing this item.
   int has_group;
@@ -345,11 +345,11 @@ protected:
   //! Holds the number of vertices that are not linked to the polyhedron from the OFF
   //! file.
   std::size_t nb_isolated_vertices;
-  /*! Decides if the draw function must call initialize_buffers() or not. It is set
-   * to true in the end of initialize_buffers() and to false in invalidateOpenGLBuffers(). The need of
+  /*! Decides if the draw function must call initializeBuffers() or not. It is set
+   * to true in the end of initializeBuffers() and to false in invalidateOpenGLBuffers(). The need of
    * this boolean comes from the need of a context from the OpenGLFunctions used in
-   * initialize_buffers().
-   * @see initialize_buffers()
+   * initializeBuffers().
+   * @see initializeBuffers()
    * @see invalidateOpenGLBuffers()
    */
   mutable bool are_buffers_filled;
@@ -386,20 +386,27 @@ protected:
       vaos[i] = n_vao;
   }
 
-
   /*! Fills the VBOs with data. Must be called after each call to #compute_elements().
    * @see compute_elements()
+  //! Used pass data to the shader.
+  int vertexLoc;
+  //! Used pass data to the shader.
+  int normalLoc;
+  //! Used pass data to the shader.
+  int colorLoc;
+  /*! Fills the VBOs with data. Must be called after each call to #computeElements().
+   * @see computeElements()
    */
-  void initialize_buffers(){}
+  void initializeBuffers(){}
 
   /*! Collects all the data for the shaders. Must be called in #invalidateOpenGLBuffers().
    * @see invalidateOpenGLBuffers().
    */
-  void compute_elements(){}
+  void computeElements(){}
   /*! Passes all the uniform data to the shaders.
    * According to program_name, this data may change.
    */
-  void attrib_buffers(CGAL::Three::Viewer_interface*, int program_name) const;
+  void attribBuffers(CGAL::Three::Viewer_interface*, int program_name) const;
 
   /*! Compatibility function. Calls `viewer->getShaderProgram()`. */
   virtual QOpenGLShaderProgram* getShaderProgram(int name , CGAL::Three::Viewer_interface *viewer = 0) const;

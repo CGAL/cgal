@@ -84,7 +84,7 @@ public:
     dock_widget->setVisible(false);
 
     ui_widget.setupUi(dock_widget);
-    add_dock_widget(dock_widget);
+    addDockWidget(dock_widget);
 
     connect(ui_widget.Selection_type_combo_box, SIGNAL(currentIndexChanged(int)),  this, SLOT(on_Selection_type_combo_box_changed(int)));
     connect(ui_widget.Primitives_type_combo_box, SIGNAL(currentIndexChanged(int)), this, SLOT(on_Primitives_type_combo_box_changed(int)));
@@ -180,7 +180,7 @@ void Polyhedron_demo_shortest_path_plugin::new_item(int itemIndex)
 
   if(item->polyhedron_item() == NULL)
   {
-    Scene_polyhedron_item* polyhedronItem = get_selected_item<Scene_polyhedron_item>();
+    Scene_polyhedron_item* polyhedronItem = getSelectedItem<Scene_polyhedron_item>();
 
     if(!polyhedronItem)
     {
@@ -224,7 +224,7 @@ void Polyhedron_demo_shortest_path_plugin::new_item(int itemIndex)
 
 void Polyhedron_demo_shortest_path_plugin::on_actionMakeShortestPaths_triggered()
 {
-  Scene_polyhedron_item* polyhedronItem = get_selected_item<Scene_polyhedron_item>();
+  Scene_polyhedron_item* polyhedronItem = getSelectedItem<Scene_polyhedron_item>();
   if (polyhedronItem)
   {
     if (m_shortestPathsMap.find(polyhedronItem) == m_shortestPathsMap.end())

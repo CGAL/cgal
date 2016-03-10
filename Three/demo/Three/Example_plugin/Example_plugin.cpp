@@ -32,7 +32,7 @@ public :
   void invalidateOpenGLBuffers();
 
   //fills the std::vector
-  void compute_elements(double ax,double ay, double az,
+  void computeElements(double ax,double ay, double az,
                         double bx,double by, double bz,
                         double cx,double cy, double cz) const;
 
@@ -45,9 +45,9 @@ private:
   mutable std::vector<float> vertices;
   mutable int nb_pos;
   mutable QOpenGLShaderProgram *program;
-  using CGAL::Three::Scene_item::initialize_buffers;
+  using CGAL::Three::Scene_item::initializeBuffers;
   //Fills the buffers with data. The buffers allow us to give data to the shaders.
-  void initialize_buffers(CGAL::Three::Viewer_interface *viewer)const;
+  void initializeBuffers(CGAL::Three::Viewer_interface *viewer)const;
 }; //end of class Scene_triangle_item
 //! [itemdeclaration]
 Scene_triangle_item::Scene_triangle_item(double ax,double ay, double az,
@@ -60,7 +60,7 @@ Scene_triangle_item::Scene_triangle_item(double ax,double ay, double az,
   is_monochrome = true;
   nb_pos = 0;
   are_buffers_filled = false;
-  compute_elements(ax, ay, az,
+  computeElements(ax, ay, az,
                    bx, by, bz,
                    cx, cy, cz);
   invalidateOpenGLBuffers();
@@ -68,7 +68,7 @@ Scene_triangle_item::Scene_triangle_item(double ax,double ay, double az,
 
 //! [computeelements]
 //Fills the position vector with data.
-void Scene_triangle_item::compute_elements(double ax, double ay, double az,
+void Scene_triangle_item::computeElements(double ax, double ay, double az,
                                            double bx, double by, double bz,
                                            double cx, double cy, double cz)const
 {
@@ -86,10 +86,10 @@ void Scene_triangle_item::draw(CGAL::Three::Viewer_interface* viewer) const
   //The filling of the buffers should be performed in this function, because it needs a valid openGL context, and we are certain to have one in this function.
   if(!are_buffers_filled)
   {
-    compute_elements(0, 0, 0,
+    computeElements(0, 0, 0,
                      1, 0, 0,
                      0.5, 0.5, 0);
-    initialize_buffers(viewer);
+    initializeBuffers(viewer);
   }
   //Binds the vao corresponding to the type of data we are drawing.
   vaos[0]->bind();
@@ -97,7 +97,7 @@ void Scene_triangle_item::draw(CGAL::Three::Viewer_interface* viewer) const
   //Here we want triangles with light effects.
   program = getShaderProgram(PROGRAM_WITH_LIGHT);
   //Gives most of the uniform values to the shaders.
-  attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
+  attribBuffers(viewer, PROGRAM_WITH_LIGHT);
   //Binds the program chosen before to use the right shaders.
   program->bind();
   //Gives the wanted color to the fragment shader as uniform value.
@@ -119,7 +119,7 @@ void Scene_triangle_item::invalidateOpenGLBuffers()
 
 
 //! [fillbuffers]
-void Scene_triangle_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
+void Scene_triangle_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer)const
 {
 
   //vao containing the data for the facets

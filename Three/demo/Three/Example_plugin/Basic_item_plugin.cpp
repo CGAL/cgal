@@ -80,7 +80,7 @@ private Q_SLOTS:
     scene->changeGroup(item, group);
     scene->changeGroup(new_item,group);
     //adds it to the scene
-    scene->add_group(group);
+    scene->addGroup(group);
     //! [group]
   }
 

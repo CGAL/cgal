@@ -23,7 +23,7 @@ public:
 
 
 void
-Scene_polylines_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer = 0) const
+Scene_polylines_item::initializeBuffers(CGAL::Three::Viewer_interface *viewer = 0) const
 {
     QOpenGLShaderProgram *program;
    //vao for the lines
@@ -48,7 +48,7 @@ Scene_polylines_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer =
    are_buffers_filled = true;
 }
 void
-Scene_polylines_item::compute_elements() const
+Scene_polylines_item::computeElements() const
 {
     positions_lines.resize(0);
     //Fills the VBO with the lines
@@ -76,7 +76,7 @@ Scene_polylines_item::compute_elements() const
 }
 
 void
-Scene_polylines_item::compute_spheres()
+Scene_polylines_item::compute_Spheres()
 {
       // FIRST, count the number of incident cycles and polylines
       // for all extremities.
@@ -273,8 +273,8 @@ Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
     if(!are_buffers_filled)
     {
-        compute_elements();
-        initialize_buffers(viewer);
+        computeElements();
+        initializeBuffers(viewer);
     }
     if(d->draw_extremities)
     {
@@ -284,15 +284,15 @@ Scene_polylines_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 
 // Wireframe OpenGL drawing
 void 
-Scene_polylines_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
+Scene_polylines_item::drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        compute_elements();
-        initialize_buffers(viewer);
+        computeElements();
+        initializeBuffers(viewer);
     }
 
     vaos[Edges]->bind();
-    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
     QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
     program->bind();
     program->setAttributeValue("colors", this->color());
@@ -307,15 +307,15 @@ Scene_polylines_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
 }
 
 void 
-Scene_polylines_item::draw_points(CGAL::Three::Viewer_interface* viewer) const {
+Scene_polylines_item::drawPoints(CGAL::Three::Viewer_interface* viewer) const {
     if(!are_buffers_filled)
     {
-        compute_elements();
-        initialize_buffers(viewer);
+        computeElements();
+        initializeBuffers(viewer);
     }
 
     vaos[Edges]->bind();
-    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    attribBuffers(viewer, PROGRAM_NO_SELECTION);
     QOpenGLShaderProgram *program = getShaderProgram(PROGRAM_NO_SELECTION);
     program->bind();
     QColor temp = this->color();
@@ -403,7 +403,7 @@ void Scene_polylines_item::change_corner_radii(double r) {
           scene->addItem(spheres);
           scene->changeGroup(spheres, this);
           lockChild(spheres);
-          compute_spheres();
+          compute_Spheres();
           spheres->invalidateOpenGLBuffers();
         }
         else if (r<=0 && spheres!=NULL)
