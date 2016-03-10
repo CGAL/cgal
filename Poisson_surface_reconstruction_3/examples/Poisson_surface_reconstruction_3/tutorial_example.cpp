@@ -28,9 +28,8 @@ typedef Kernel::Sphere_3 Sphere;
 
 int main(int argc, char*argv[])
 {
-  /******************************************************************
-   * Reading Input
-   ******************************************************************/
+  ///////////////////////////////////////////////////////////////////
+  //! [Reading input]
   
   std::vector<Point> points;
 
@@ -51,9 +50,12 @@ int main(int argc, char*argv[])
   
   std::cout << "Read " << points.size () << " point(s)" << std::endl;
 
-  /******************************************************************
-   * Outlier removal
-   ******************************************************************/
+  //! [Reading input]
+  ///////////////////////////////////////////////////////////////////
+
+  
+  ///////////////////////////////////////////////////////////////////
+  //! [Outlier removal]
 
   std::vector<Point>::iterator first_outlier
    = CGAL::remove_outliers (points.begin(), points.end(),
@@ -68,9 +70,12 @@ int main(int argc, char*argv[])
 
   points.erase (first_outlier, points.end());
 
-  /******************************************************************
-   * Simplification
-   ******************************************************************/
+  //! [Outlier removal]
+  ///////////////////////////////////////////////////////////////////
+  
+
+  ///////////////////////////////////////////////////////////////////
+  //! [Simplification]
   
   // Compute average spacing using neighborhood of 6 points
   double spacing = CGAL::compute_average_spacing<CGAL::Sequential_tag>
@@ -88,11 +93,17 @@ int main(int argc, char*argv[])
 
   points.erase (first_simplified, points.end());
 
-  /******************************************************************
-   * Smoothing
-   ******************************************************************/
+  //! [Simplification]
+  ///////////////////////////////////////////////////////////////////
+  
+
+  ///////////////////////////////////////////////////////////////////
+  //! [Smoothing]
 
   CGAL::jet_smooth_point_set<CGAL::Sequential_tag> (points.begin(), points.end(), 24);
+
+  //! [Smoothing]
+  ///////////////////////////////////////////////////////////////////
 
   unsigned int reconstruction_choice
     = (argc < 3 ? 0 : atoi(argv[2]));
@@ -100,9 +111,8 @@ int main(int argc, char*argv[])
   if (reconstruction_choice == 0) // Poisson
     {
   
-      /******************************************************************
-       * Normal estimation
-       ******************************************************************/
+      ///////////////////////////////////////////////////////////////////
+      //! [Normal estimation]
 
       // Point with normal vector stored in a std::pair.
       typedef std::pair<Point, Vector> PointVectorPair;
@@ -129,9 +139,12 @@ int main(int argc, char*argv[])
 
       points_with_normals.erase (unoriented_points_begin, points_with_normals.end ());
 
-      /******************************************************************
-       * Poisson reconstruction
-       ******************************************************************/
+      //! [Normal estimation]
+      ///////////////////////////////////////////////////////////////////
+      
+      ///////////////////////////////////////////////////////////////////
+      //! [Poisson reconstruction]
+      
       typedef CGAL::Poisson_reconstruction_function<Kernel> Poisson_reconstruction_function;      
       Poisson_reconstruction_function function
         (points_with_normals.begin(), points_with_normals.end(),
@@ -144,9 +157,13 @@ int main(int argc, char*argv[])
           return EXIT_FAILURE;
         }
 
-      /******************************************************************
-       * Surface mesh generation
-       ******************************************************************/
+
+      //! [Poisson reconstruction]
+      ///////////////////////////////////////////////////////////////////
+
+
+      ///////////////////////////////////////////////////////////////////
+      //! [Surface mesh generation]
       
       typedef CGAL::Surface_mesh_default_triangulation_3 STr;
       typedef CGAL::Surface_mesh_complex_2_in_triangulation_3<STr> C2t3;
@@ -186,9 +203,12 @@ int main(int argc, char*argv[])
                               criteria,                             // meshing criteria
                               CGAL::Manifold_with_boundary_tag());  // require manifold mesh
 
-      /******************************************************************
-       * Output
-       ******************************************************************/
+      //! [Surface mesh generation]
+      ///////////////////////////////////////////////////////////////////
+
+      
+      ///////////////////////////////////////////////////////////////////      
+      //! [Output poisson]
 
       CGAL::Polyhedron_3<Kernel> output_mesh;
       // Convert to Polyhedron
@@ -198,12 +218,13 @@ int main(int argc, char*argv[])
       f << output_mesh;
       f.close ();
 
+      //! [Output poisson]
+      ///////////////////////////////////////////////////////////////////      
     }
   else if (reconstruction_choice == 1) // Advancing front
     {
-      /******************************************************************
-       * Advancing front reconstruction
-       ******************************************************************/
+      ///////////////////////////////////////////////////////////////////      
+      //! [Advancing front reconstruction]
       
       typedef CGAL::cpp11::array<std::size_t,3> Facet; // Triple of indices
 
@@ -215,9 +236,12 @@ int main(int argc, char*argv[])
       std::cout << facets.size ()
                 << " facet(s) generated by reconstruction." << std::endl;
 
-      /******************************************************************
-       * Output
-       ******************************************************************/
+      //! [Advancing front reconstruction]
+      ///////////////////////////////////////////////////////////////////      
+
+      
+      ///////////////////////////////////////////////////////////////////      
+      //! [Output advancing front]
       
       std::ofstream f ("out.off");
   
@@ -235,13 +259,14 @@ int main(int argc, char*argv[])
         }
 
       f.close ();
-      
+
+      //! [Output advancing front]
+      ///////////////////////////////////////////////////////////////////      
     }
   else if (reconstruction_choice == 2) // Scale space
     {
-      /******************************************************************
-       * Scale space
-       ******************************************************************/
+      ///////////////////////////////////////////////////////////////////
+      //! [Scale space reconstruction]
 
       CGAL::Scale_space_surface_reconstruction_3<Kernel> reconstruct
         (10, // Number of neighborhood points
@@ -251,9 +276,13 @@ int main(int argc, char*argv[])
                                       4, // Number of iterations
                                       false, // Do not separate connected components
                                       true); // Force manifold output
-      /******************************************************************
-       * Output
-       ******************************************************************/
+
+      //! [Scale space reconstruction]
+      ///////////////////////////////////////////////////////////////////
+      
+
+      ///////////////////////////////////////////////////////////////////
+      //! [Output scale space]
       
       std::ofstream f ("out.off");
       f << "OFF" << std::endl << points.size () << " "
@@ -269,6 +298,8 @@ int main(int argc, char*argv[])
 
       f.close ();
 
+      //! [Output scale space]
+      ///////////////////////////////////////////////////////////////////
     }
   else // Handle error
     {

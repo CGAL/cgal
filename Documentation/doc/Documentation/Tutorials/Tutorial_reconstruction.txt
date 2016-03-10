@@ -84,7 +84,7 @@ provide functions:
 Using these functions is pretty straightforward, as can be seen on the
 following example:
 
-% TODO: snippet Reading Input
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Reading input
 
 \section TutorialsReconstruction_preprocessing Preprocessing
 
@@ -105,7 +105,7 @@ on outlier-ridden point clouds produce overly distorted output, it is
 therefore strongly advised to filter these outliers _before_
 performing reconstruction.
 
-% TODO snippet Outlier removal
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Outlier removal
 
 \subsection TutorialsReconstruction_preprocessing_simplification Simplification
 
@@ -121,7 +121,7 @@ time, some of them can help making the input more uniform. This is the
 case of the function `grid_simplify_point_set()` which defines a grid
 of a user-specified size and only keeps one point per cell.
 
-% TODO snippet Simplification
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Simplification
 
 
 \subsection TutorialsReconstruction_preprocessing_smoothing Smoothing
@@ -141,7 +141,7 @@ approximation (i.e. without degrading curvature, for example):
 
 These functions directly modify the container:
 
-% TODO snippet Smoothing
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Smoothing
 
 
 \subsection TutorialsReconstruction_preprocessing_normal Normal Estimation
@@ -162,7 +162,7 @@ function `mst_orient_normals()` can be used. Notice that it can also
 be used directly on input normals if their orientation is not
 consistent.
 
-% TODO snippet Normal estimation
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Normal estimation
 
 
 \section TutorialsReconstruction_reconstruction Reconstruction
@@ -181,13 +181,13 @@ cloud with a smooth surface.
 Notice that it does not generate directly a mesh but computes an
 _implicit function_ (which can later be used to generate a mesh):
 
-% TODO snippet Poisson
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Poisson reconstruction
 
 To produce a mesh out of this implicit function, the
 \ref Chapter_3D_Surface_Mesh_Generation "CGAL Surface Mesh Generator"
 \cgalCite{cgal:ry-gsddrm-06} can be used:
 
-% TODO snippet Surface mesh generation
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Surface mesh generation
 
 
 \subsection TutorialsReconstruction_reconstruction_advancing Advancing Front
@@ -206,7 +206,7 @@ The \ref Chapter_Advancing_Front_Surface_Reconstruction "Advancing Front"
 package provides several ways of constructing the function. Here is
 a simple example:
 
-% TODO snippet Advancing front
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Advancing front reconstruction
 
 \subsection TutorialsReconstruction_reconstruction_scale_space Scale Space
 
@@ -224,7 +224,7 @@ Notice that although there is an option to force the output to be
 manifold, it is not guaranteed to be orientable (contrary to _Poisson_
 and _Advancing front_).
 
-% TODO snippet Scale space
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Scale space reconstruction
 
 
 
@@ -241,11 +241,11 @@ user's expectations on the output mesh.
 
 The mesh (postprocessed or not) can easily be saved in the OFF format:
 
-% TODO snippet Output poisson
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Output poisson
 
-% TODO snippet Output advancing front
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Output advancing front
 
-% TODO snippet Ouput scale space
+\snippet Poisson_surface_reconstruction_3/tutorial_example.cpp Output scale space
 
 \section TutorialsReconstruction_recap Full Code Example
 
@@ -255,4 +255,7 @@ used). We give a full code example which achieves all the steps
 described in this tutorial. The reconstruction method can be selected
 by the user at runtime with the second argument.
 
-% TODO full example
+\include Poisson_surface_reconstruction_3/tutorial_example.cpp
+
+
+*/

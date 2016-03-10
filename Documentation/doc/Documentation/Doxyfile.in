@@ -11,7 +11,8 @@ HTML_HEADER         = ${CGAL_DOC_HEADER}
 LAYOUT_FILE         = ${CMAKE_SOURCE_DIR}/Documentation/DoxygenLayout.xml
 GENERATE_TAGFILE    = ${CGAL_DOC_TAG_GEN_DIR}/Manual.tag
 EXAMPLE_PATH        = ${CMAKE_SOURCE_DIR}/Convex_hull_2/examples \
-                      ${CMAKE_SOURCE_DIR}/Kernel_23/examples
+                      ${CMAKE_SOURCE_DIR}/Kernel_23/examples \
+                      ${CMAKE_SOURCE_DIR}/Poisson_surface_reconstruction_3/examples
 FILTER_PATTERNS     = *.txt=${CMAKE_BINARY_DIR}/pkglist_filter
 
 HTML_EXTRA_FILES += ${CMAKE_SOURCE_DIR}/Documentation/hacks.js \
