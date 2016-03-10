@@ -28,7 +28,7 @@
 namespace CGAL { 
 namespace internal {
 
-CGAL_EXPORT const int primes[2000] = {
+const int primes[2000] = {
   /*
   * Generated in SAGE with:
   *
