@@ -1,7 +1,6 @@
 
 namespace CGAL {
 /*!
-
 \mainpage User Manual
 \anchor Chapter_Three
 \cgalAutoToc
@@ -11,13 +10,13 @@ namespace CGAL {
 
 These pages are not documenting the whole Polyhedron demo but only the API that is useful to create and add a new plugin.
 
-There are several levels in this demo. 
+There are several levels in this demo.
 
-- The `MainWindow`, which contains the UI elements. 
+- The `MainWindow`, which contains the UI elements.
 
-- Among these elements is the `Viewer`, which is the drawable surface that handles all the drawing and all the keyboard and mouse events. 
+- Among these elements is the `Viewer`, which is the drawable surface that handles all the drawing and all the keyboard and mouse events.
 
-- The `Viewer` has a reference to the `Scene`, which contains the `Scene_item` list, which is a list of the drawn elements. 
+- The `Viewer` has a reference to the `Scene`, which contains the `Scene_item` list, which is a list of the drawn elements.
 
 A plugin usually defines an object that inherits from `Scene_item` or uses some of them to demonstrate a \cgal feature, so it might have to deal with the above elements.
 
@@ -386,6 +385,7 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
 
 
 \section example Examples
+All the examples have been constructed as external plugins in CGAL/Three/demo/Three/Example_plugin. You will have to use "Load plugin" in the File menu if you want to test it.
 \subsection example1 Creating a Basic Plugin
 \cgalExample{Three/Example_plugin/Basic_plugin.cpp}
 
@@ -398,6 +398,6 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
 \subsection example4 Creating a new type of item
 \cgalExample{Three/Example_plugin/Example_plugin.cpp}
 
-
+*/
 } /* namespace CGAL */
 
