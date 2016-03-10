@@ -6,7 +6,7 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_plane_item.h"
 #include <CGAL/Three/Viewer_interface.h>
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/internal/Polyhedron_plane_clipping_3.h>
 #include "ui_Clip_polyhedron_plugin.h"
 #include "Viewer.h"
@@ -87,23 +87,22 @@ private:
 
 class Q_DECL_EXPORT Clip_polyhedron_plugin :
     public QObject,
-    public CGAL::Three::Polyhedron_demo_plugin_helper
+    public CGAL::Three::Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public :
-  // To silent a warning -Woverloaded-virtual
-  // See http://stackoverflow.com/questions/9995421/gcc-woverloaded-virtual-warnings
-  using Polyhedron_demo_plugin_helper::init;
+
+  void init(QMainWindow*,
+            CGAL::Three::Scene_interface*) {}
   // Adds an action to the menu and configures the widget
-  void init(QMainWindow* mainWindow,
+  void init(QMainWindow* mw,
             CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* mi) {
     //get the references
     this->scene = scene_interface;
-    this->mw = mainWindow;
     this->messages = mi;
     plane = NULL;
     //creates and link the actions
@@ -294,5 +293,6 @@ private:
   QDockWidget* dock_widget;
   Scene_clipping_plane_item* plane;
   Messages_interface* messages;
+  Scene_interface* scene;
 }; //end of plugin class
 #include "Clip_polyhedron_plugin.moc"

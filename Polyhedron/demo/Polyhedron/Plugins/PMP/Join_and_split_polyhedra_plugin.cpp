@@ -7,8 +7,7 @@
 #include "Scene_polylines_item.h"
 #include "Messages_interface.h"
 
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
-#include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/Polyhedron_copy_3.h>
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
@@ -18,7 +17,7 @@
 using namespace CGAL::Three;
 class Polyhedron_demo_join_and_split_polyhedra_plugin:
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
@@ -27,9 +26,11 @@ class Polyhedron_demo_join_and_split_polyhedra_plugin:
   Messages_interface* msg_interface;
 public:
   QList<QAction*> actions() const { return QList<QAction*>() << actionJoinPolyhedra << actionSplitPolyhedra << actionColorConnectedComponents; }
-  using Polyhedron_demo_plugin_helper::init;
+
+  void init(QMainWindow*, CGAL::Three::Scene_interface*){}
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface, Messages_interface* m)
   {
+    scene = scene_interface;
     msg_interface = m;
     actionJoinPolyhedra= new QAction(tr("Join Selected Polyhedra"), mainWindow);
     actionJoinPolyhedra->setProperty("subMenuName", "Operations on Polyhedra");
@@ -42,7 +43,6 @@ public:
     actionColorConnectedComponents = new QAction(tr("Color Each Connected Component of Selected Polyhedra"), mainWindow);
     actionColorConnectedComponents ->setProperty("subMenuName", "Polygon Mesh Processing");
     actionColorConnectedComponents->setObjectName("actionColorConnectedComponents");
-    Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 
   bool applicable(QAction*) const {
@@ -59,6 +59,8 @@ public Q_SLOTS:
   void on_actionSplitPolyhedra_triggered();
   void on_actionColorConnectedComponents_triggered();
 
+private :
+  CGAL::Three::Scene_interface* scene;
 }; // end Polyhedron_demo_polyhedron_stitching_plugin
 
 void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionJoinPolyhedra_triggered()

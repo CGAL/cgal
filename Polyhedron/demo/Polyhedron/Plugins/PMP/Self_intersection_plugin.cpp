@@ -8,7 +8,6 @@
 #include "Scene_polyhedron_item.h"
 #include "Scene_polyhedron_selection_item.h"
 
-#include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 
 #include <CGAL/intersections.h>
@@ -22,16 +21,16 @@ typedef Kernel::Triangle_3 Triangle;
 using namespace CGAL::Three;
 class Polyhedron_demo_self_intersection_plugin : 
   public QObject,
-  public Polyhedron_demo_plugin_helper
+  public Polyhedron_demo_plugin_interface
 {
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
-  // used by Polyhedron_demo_plugin_helper
-  QStringList actionsNames() const {
-    return QStringList() << "actionSelfIntersection";
+
+  QList<QAction*> actions() const {
+    return _actions;
   }
 
   void init(QMainWindow* mainWindow,
@@ -39,9 +38,10 @@ public:
   {
       mw = mainWindow;
       scene = scene_interface;
-      actions_map["actionSelfIntersection"] = getActionFromMainWindow(mw, "actionSelfIntersection");
-      actions_map["actionSelfIntersection"]->setProperty("subMenuName", "Polygon Mesh Processing");
-      autoConnectActions();
+      QAction *actionSelfIntersection = new QAction(tr("Self-&intersection"), mw);
+      actionSelfIntersection->setProperty("subMenuName", "Polygon Mesh Processing");
+      connect(actionSelfIntersection, SIGNAL(triggered()), this, SLOT(on_actionSelfIntersection_triggered()));
+      _actions <<actionSelfIntersection;
 
   }
 
@@ -51,6 +51,10 @@ public:
 
 public Q_SLOTS:
   void on_actionSelfIntersection_triggered();
+private:
+  QList<QAction*> _actions;
+  Scene_interface *scene;
+  QMainWindow *mw;
 
 }; // end Polyhedron_demo_self_intersection_plugin
 

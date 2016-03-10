@@ -1,3 +1,4 @@
+
 namespace CGAL {
 /*!
 
@@ -72,7 +73,7 @@ This section describes how to add a dialog when an action is triggered.
 For a minimalist dialog intended, for instance, to get a single parameter, you can create a `QInputDialog`:
 
 \snippet Three/Example_plugin/Basic_plugin.cpp basic_dialog_plugin
-    
+
 
 For a more elaborate interface, you will have to use the designer tool of QtCreator. Create a new Qt Designer form (file->New file or Project->Qt->).
 *  \image html menu_1.png
@@ -96,7 +97,7 @@ then add the following line to your plugin file:
 
 You can then add a new class to your cpp file, inheriting from `QDialog` and your own dialog, accessible with "Ui::".
 Add the macro `Q_OBJECT` and the line
-    `setupUi(this)` 
+    `setupUi(this)`
 in your constructor.
 \snippet Three/Example_plugin/Basic_plugin.cpp dialog_plugin
 
@@ -234,9 +235,9 @@ to display, you need to call the same program that got configured previously, an
 
 \subsection exampleUsingAGroupItem Using a Scene_group_item
 
-This section will explain how to use a group item in a plugin. 
+This section will explain how to use a group item in a plugin.
 
-A group item is a virtual item that is not seen in the viewer, nor drawn, but acts as a parent for a list of actual items. Its main goal lies within the 
+A group item is a virtual item that is not seen in the viewer, nor drawn, but acts as a parent for a list of actual items. Its main goal lies within the
 interaction with the `SceneView` (which is the list of items on the left of the viewer). With group items, this view becomes hierarchic, which allows to interact
 with several objects at the same time, and organize this view.
 
@@ -247,7 +248,7 @@ the first thing to do is to clear the selection with `CGAL::Three::Scene_interfa
 Then you can create a new `Scene_group_item` and give the
 items you want to regroup to it with `CGAL::Three::Scene_interface::changeGroup()`. Keep in mind that you must pass items to a group only if those
 items are already in the scene.\n
-Once it is done, add the group to the scene with `CGAL::Three::Scene_interface::add_group()`. 
+Once it is done, add the group to the scene with `CGAL::Three::Scene_interface::add_group()`.
 
 \snippet Three/Example_plugin/Basic_item_plugin.cpp group
 
@@ -384,7 +385,7 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
     endif()
 
 
-\section example Examples 
+\section example Examples
 \subsection example1 Creating a Basic Plugin
 \cgalExample{Three/Example_plugin/Basic_plugin.cpp}
 
@@ -396,4 +397,7 @@ Notice that an external plugin will not be automatically loaded in the Polyhedro
 
 \subsection example4 Creating a new type of item
 \cgalExample{Three/Example_plugin/Example_plugin.cpp}
+
+
 } /* namespace CGAL */
+
