@@ -48,13 +48,13 @@ class Polyhedron_demo_point_set_normal_estimation_plugin :
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
 
+    scene = scene_interface;
     actionNormalEstimation = new QAction(tr("Point Set Normal Estimation"), mainWindow);
     actionNormalEstimation->setObjectName("actionNormalEstimation");
 
     actionNormalInversion = new QAction(tr("Point Set Inverse Normal Orientations"), mainWindow);
     actionNormalInversion->setObjectName("actionNormalInversion");
     
-    Polyhedron_demo_plugin_helper::init(mainWindow, scene_interface);
   }
 
   QList<QAction*> actions() const {

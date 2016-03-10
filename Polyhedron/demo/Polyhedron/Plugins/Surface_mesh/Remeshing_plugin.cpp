@@ -33,7 +33,7 @@ public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
     this->scene = scene_interface;
     this->mw = mainWindow;
-    actionRemeshing = new QAction(tr("actionRemeshing"), mw);
+    actionRemeshing = new QAction(tr("Remeshing"), mw);
     actionRemeshing->setProperty("subMenuName", "3D Surface Mesh Generation");
     if(actionRemeshing) {
       connect(actionRemeshing, SIGNAL(triggered()),
