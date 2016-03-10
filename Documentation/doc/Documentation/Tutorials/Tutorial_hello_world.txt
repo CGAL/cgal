@@ -15,7 +15,7 @@ namespace CGAL {
 \cgalAutoToc
 \author %CGAL Editorial Board
 
-This chapter is for the %CGAL newbie, who knows C++ and has 
+This tutorial is for the %CGAL newbie, who knows C++ and has 
 a basic knowledge of geometric algorithms. The first section
 shows how to define a point and segment class, and how to
 apply geometric predicates on them. The section further raises
@@ -333,8 +333,8 @@ Tutorial and Reference" by Nicolai M. Josuttis from Addison-Wesley, or
 "Generic Programming and the STL" by Matthew H. Austern for the \stl
 and its notion of *concepts* and *models*.
 
-Other resources for \cgal are the tutorials at
-http://www.cgal.org/Tutorials/ and the user support page at
+Other resources for \cgal are the rest of the \ref tutorials "tutorials" 
+ and the user support page at
 http://www.cgal.org/.
 
 */
