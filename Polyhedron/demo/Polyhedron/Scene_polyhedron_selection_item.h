@@ -201,6 +201,7 @@ public:
         nb_points = 0;
         nb_lines = 0;
         this->setColor(facet_color);
+        is_treated = false;
     }
 
   Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
@@ -225,6 +226,7 @@ public:
         init(poly_item, mw);
         this->setColor(facet_color);
         invalidateOpenGLBuffers();
+        is_treated = false;
     }
 
    ~Scene_polyhedron_selection_item()
@@ -247,6 +249,7 @@ protected:
     connect(&k_ring_selector, SIGNAL(endSelection()), this,SLOT(endSelection()));
     connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
     k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
+    connect(&k_ring_selector, SIGNAL(resetIsTreated()), this, SLOT(resetIsTreated()));
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
@@ -794,10 +797,13 @@ public:
   }
 
 Q_SIGNALS:
+  void updateInstructions(QString);
   void skipEmits(bool);
   void simplicesSelected(CGAL::Three::Scene_item*);
 
 public Q_SLOTS:
+  void emitTempInstruct();
+  void resetIsTreated() { is_treated = false;}
   void save_handleType()
   {
     original_sel_mode = get_active_handle_type();
@@ -962,6 +968,9 @@ public:
 private:
   //Specifies Selection/edition mode
   int operation_mode;
+  QString m_temp_instructs;
+  bool is_treated;
+  Polyhedron::Vertex_handle to_split_vh;
   Active_handle::Type original_sel_mode;
   //Only needed for the triangulation
   Polyhedron* poly;
@@ -980,5 +989,6 @@ private:
   template<typename FaceNormalPmap>
   void triangulate_facet(Facet_handle,
     const FaceNormalPmap&) const;
+  void tempInstructions(QString s1, QString s2);
 };
 #endif
