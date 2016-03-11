@@ -201,12 +201,12 @@ Construct_triangle_2 construct_triangle_2_object();
 /*!
 
 */ 
-Comparison_x_2 compare_x_2_object(); 
+Compare_x_2 compare_x_2_object(); 
 
 /*!
 
 */ 
-Comparison_y_2 compare_y_2_object(); 
+Compare_y_2 compare_y_2_object(); 
 
 /*!
 
