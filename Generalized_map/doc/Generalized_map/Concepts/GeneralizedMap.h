@@ -20,7 +20,7 @@ public:
 GeneralizedMap();
 
 /*!
-Construct a new generalized map from another one. The new generalized map is created by copying the darts and the non void attributes of gmap. GMap must be a model of `GeneralizedMap` concept, which can be defined with a different dimension and/or different attributes than `*this`. In this case, only permutations that are common to `gmap` and `*this`, and only non void i-attributes of `gmap` whose info type is the same to the info of non void i-attributes of `*this`, are copied.
+Construct a new generalized map from another one. The new generalized map is created by copying the darts and the non void attributes of gmap. GMap must be a model of `GeneralizedMap` concept, which can be defined with a different dimension and/or different attributes than `*this`. In this case, only involutions that are common to `gmap` and `*this`, and only non void i-attributes of `gmap` whose info type is the same to the info of non void i-attributes of `*this`, are copied.
 */
 template<typename GMap>
 GeneralizedMap(const GMap& gmap);
