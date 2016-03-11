@@ -3435,22 +3435,11 @@ Comparison_result
 Triangulation_2<Gt, Tds>::
 compare_xy(const Point& p, const Point& q) const
 {
-  // We do not use geom_traits().compare_x_2_object()(p,q)
-  // as it uses interval arithmetic
-  return geom_traits().compare_xy_2_object()(p,q);
-  if(geom_traits().less_x_2_object()(p,q)){
-    return SMALLER;
+  Comparison_result res = geom_traits().compare_x_2_object()(p,q);
+  if(res == EQUAL){
+    return geom_traits().compare_y_2_object()(p,q);
   }
-  if(geom_traits().less_x_2_object()(q,p)){
-    return LARGER;
-  }
-  if(geom_traits().less_y_2_object()(p,q)){
-    return SMALLER;
-  }
-  if(geom_traits().less_y_2_object()(q,p)){
-    return LARGER;
-  }
-  return EQUAL;
+  return res;
 }
 
 template <class Gt, class Tds >
