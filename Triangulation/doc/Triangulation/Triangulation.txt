@@ -422,14 +422,14 @@ than inserting the points one by one.
 
 The class `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>` derives from
 `CGAL::Triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`. It thus stores a model of
-the concept `TriangulationDataStructure` which is instantiated with a vertex
+the concept `TriangulationDataStructure`, which is instantiated with a vertex
 type that stores a geometric point and allows its retrieval.
 
 The template parameter `DelaunayTriangulationTraits` must be a model of the concept
 `DelaunayTriangulationTraits` which provides the geometric `Point` type as
 well as various geometric predicates used by the `Delaunay_triangulation` class.
 The concept `DelaunayTriangulationTraits` refines the concept
-`TriangulationTraits` by requiring a few other geometric predicates, necessary
+`TriangulationTraits` by requiring a few additional geometric predicates, necessary
 for the computation of Delaunay triangulations.
 
 ## Examples ##
@@ -478,7 +478,7 @@ called the <I>power sphere</I>. A sphere \f$ {z}^{(w)}\f$ is said to be
 A triangulation of \f$ {S}^{(w)}\f$ is <I>regular</I> if the power spheres
 of all simplices are regular.
 
-Regular triangulations support insertion of points, 
+Regular triangulations support insertion of weighted points, 
 and location of a query point inside the triangulation.
 Note that inserting a set of points at once is much faster
 than inserting the points one by one.
@@ -493,7 +493,7 @@ the concept `TriangulationDataStructure` which is instantiated with a vertex
 type that stores a weighted point and allows its retrieval.
 
 The template parameter `RegularTriangulationTraits` must be a model of the concept
-`RegularTriangulationTraits` which provides the and `%Weighted_point` 
+`RegularTriangulationTraits`. It must provide the `%Weighted_point` 
 type as well as various geometric predicates used by the 
 `Regular_triangulation` class.
 The concept `RegularTriangulationTraits` refines the concept
