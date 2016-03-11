@@ -173,7 +173,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     qt5_generate_moc( "${CGAL_THREE_SCENE_ITEM_H_PATH}/CGAL/Three/Scene_item.h"
       "${CMAKE_CURRENT_BINARY_DIR}/Scene_item_moc.cpp" )
   else()
-    message(FATAL_ERROR "Cannot find <CGAL/Three/Viewer_interface.h>")
+    message(FATAL_ERROR "Cannot find <CGAL/Three/Scene_item.h>")
   endif()
 
   if(CGAL_THREE_SCENE_GROUP_ITEM_H_PATH)
