@@ -140,6 +140,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   add_library(gl_splat SHARED
       GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
   qt5_use_modules(gl_splat OpenGL Gui Xml)
+  target_link_libraries(gl_splat ${OPENGL_gl_LIBRARY})
 
   find_path(CGAL_THREE_VIEWER_INTERFACE_H_PATH
     NAME CGAL/Three/Viewer_interface.h
@@ -216,6 +217,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     ${QGLVIEWER_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
     ${OPENGL_glu_LIBRARY}
+    gl_splat
     )
   qt5_use_modules(scene_basic_objects OpenGL Gui Xml Script Widgets)
   add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES})
