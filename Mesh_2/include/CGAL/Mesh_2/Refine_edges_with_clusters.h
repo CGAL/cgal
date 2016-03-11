@@ -123,7 +123,7 @@ public:
       return split_cluster_point(this->vb,this->va,cb);
     }else{
       // no cluster
-      return midpoint(this->va->point(), this->vb->point());
+      return Super::refinement_point_impl(edge);
     }
   };
 

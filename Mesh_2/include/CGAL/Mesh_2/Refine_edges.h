@@ -106,20 +106,50 @@ namespace Mesh_2 {
     /** Operator that takes an edge (\c fh, \c index). */
     bool operator()(const Tr& tr,
                     const Face_handle& fh,
-                    const int i) const
+                    const int i,
+		    Vertex_handle* out_v = 0) const
     {
+      bool already_false = false;
       const Vertex_handle& va = fh->vertex(tr. cw(i));
       const Vertex_handle& vb = fh->vertex(tr.ccw(i));
 
       const Vertex_handle& vi = fh->vertex(i);
       const Vertex_handle& mvi = tr.tds().mirror_vertex(fh, i);
 
-      return( ( tr.is_infinite(vi) || 
-                this->operator()(tr, va, vb, vi->point()) )
-              &&
-              ( tr.is_infinite(mvi) || 
-                this->operator()(tr, va, vb, mvi->point()) )
-              );
+      if(!tr.is_infinite(vi)) {
+	if(!this->operator()(tr, va, vb, vi->point()))
+	{
+	  if(out_v) {
+	    *out_v = vi;
+	    already_false = true;
+	  }
+	  else return false;
+	}
+      }
+      if(!tr.is_infinite(mvi)) {
+	if(!this->operator()(tr, va, vb, mvi->point()))
+	{
+	  if(out_v) {
+	    if(already_false) {
+	      typename Geom_traits::Compare_distance_2 comp_dist =
+		tr.geom_traits().compare_distance_2_object();
+	      typename Geom_traits::Construct_segment_2 segment =
+		tr.geom_traits().construct_segment_2_object();
+	      if(comp_dist(segment(va->point(), vb->point()),
+			   mvi->point(),
+			   (*out_v)->point()) == SMALLER)
+	      {
+		*out_v = mvi;
+		return false;
+	      }
+	    }
+	    else *out_v = mvi;
+	  }
+	  return false;
+	}
+      }
+      if(already_false) return false;
+      return true;
     }
 
     /** Operator that takes an edge (\c va, \c vb). */
@@ -187,7 +217,8 @@ namespace Mesh_2 {
     /** Operator that takes an edge (\c fh, \c index). */
     bool operator()(const Tr& tr,
                     const Face_handle& fh,
-                    const int i) const
+                    const int i,
+		    Vertex_handle* out_v = 0) const
     {
       Vertex_handle vi;
       Vertex_handle mvi;
@@ -199,13 +230,19 @@ namespace Mesh_2 {
       const Vertex_handle& va = fh->vertex(tr. cw(i));
       const Vertex_handle& vb = fh->vertex(tr.ccw(i));
 
-      return aux_outside_of_circle(tr, vi, vb, va, mvi);
+      if(!aux_outside_of_circle(tr, vi, vb, va, mvi)) {
+	if(out_v) *out_v = vi;
+	return false;
+      } else {
+	return true;
+      }
     }
 
     /** Operator that takes an edge (\c va, \c vb). */
     bool operator()(const Tr& tr,
                     const Vertex_handle& va,
-                    const Vertex_handle& vb) const
+                    const Vertex_handle& vb,
+		    Vertex_handle* out_v = 0) const
     {
       Face_handle fh;
       int i;
@@ -220,7 +257,12 @@ namespace Mesh_2 {
         return true;
       }
 
-      return aux_outside_of_circle(tr, vi, vb, va, mvi);
+      if(!aux_outside_of_circle(tr, vi, vb, va, mvi)) {
+	if(out_v) *out_v = vi;
+	return false;
+      } else {
+	return true;
+      }
     }
 
   private:
@@ -425,7 +467,11 @@ public:
 
     const Face_handle n = f->neighbor(i);
 
-    const bool f_does_conflict = (zone.locate_type == Tr::EDGE) ||
+    const bool f_does_conflict = (zone.locate_type == Tr::EDGE)
+      ||
+      (zone.locate_type == Tr::VERTEX &&
+       f->has_vertex(zone.fh->vertex(zone.i)))
+      ||
       triangulation_ref_impl().test_conflict(p, f);
 
     if(f_does_conflict) {
@@ -434,7 +480,11 @@ public:
       CGAL_assertion(n == zone.fh);
     }
 
-    const bool n_does_conflict = (zone.locate_type == Tr::EDGE) ||
+    const bool n_does_conflict = (zone.locate_type == Tr::EDGE)
+      ||
+      (zone.locate_type == Tr::VERTEX &&
+       n->has_vertex(zone.fh->vertex(zone.i)))
+      ||
       triangulation_ref_impl().test_conflict(p, n);
 
     CGAL_assertion(f_does_conflict || 
@@ -469,6 +519,7 @@ public:
 
   Vertex_handle insert_impl(const Point& p, Zone& zone)
   {
+    if(zone.locate_type == Tr::VERTEX) return zone.fh->vertex(zone.i);
     return triangulation_ref_impl().star_hole(p,
 					      zone.boundary_edges.begin(),
 					      zone.boundary_edges.end(),
@@ -503,13 +554,51 @@ public:
   */
   Point refinement_point_impl(const Edge& edge) 
   {
-    typename Geom_traits::Construct_midpoint_2
-      midpoint = tr.geom_traits().construct_midpoint_2_object();
-
     va = edge.first->vertex(tr.cw (edge.second));
     vb = edge.first->vertex(tr.ccw(edge.second));
 
-    return midpoint(va->point(), vb->point());
+    typename Geom_traits::Construct_midpoint_2
+      midpoint = tr.geom_traits().construct_midpoint_2_object();
+
+    const Point m = midpoint(va->point(), vb->point());
+
+    Vertex_handle nearest_v;
+    if(!is_locally_conform(tr, edge.first, edge.second, &nearest_v))
+    {
+      typename Geom_traits::Construct_line_2 line =
+	tr.geom_traits().construct_line_2_object();
+      typename Geom_traits::Construct_projected_point_2 project =
+	tr.geom_traits().construct_projected_point_2_object();
+      typename Geom_traits::Angle_2 angle =
+	tr.geom_traits().angle_2_object();
+
+      const Point proj = project(line(va->point(), vb->point()),
+				 nearest_v->point());
+      typename Geom_traits::Compare_distance_2 comp_dist =
+	tr.geom_traits().compare_distance_2_object();
+      typename Geom_traits::Construct_segment_2 segment =
+	tr.geom_traits().construct_segment_2_object();
+
+      if(comp_dist(segment(va->point(), vb->point()),
+		   nearest_v->point(),
+		   proj) == SMALLER
+	 ||
+	 angle(va->point(),
+	       nearest_v->point(),
+	       proj) == OBTUSE
+	 ||
+	 angle(vb->point(),
+	       nearest_v->point(),
+	       proj) == OBTUSE)
+      {
+	return nearest_v->point();
+      }
+      else {
+	return proj;
+      }
+    }
+
+    return m;
   }
 
   /** Does nothing. */
