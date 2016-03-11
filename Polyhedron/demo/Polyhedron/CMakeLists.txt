@@ -141,7 +141,8 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
       GlSplat/GlSplat.cpp GlSplat/Shader.cpp ${gl_splat_rc})
   qt5_use_modules(gl_splat OpenGL Gui Xml)
   target_link_libraries(gl_splat ${OPENGL_gl_LIBRARY})
-
+  
+  unset(CGAL_THREE_VIEWER_INTERFACE_H_PATH CACHE)
   find_path(CGAL_THREE_VIEWER_INTERFACE_H_PATH
     NAME CGAL/Three/Viewer_interface.h
     PATHS ${CGAL_INCLUDE_DIRS}
@@ -155,13 +156,15 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     message(FATAL_ERROR "Cannot find <CGAL/Three/Viewer_interface.h>")
   endif()
 
+  unset(CGAL_THREE_SCENE_ITEM_H_PATH CACHE)
   find_path(CGAL_THREE_SCENE_ITEM_H_PATH
     NAME CGAL/Three/Scene_item.h
     PATHS ${CGAL_INCLUDE_DIRS}
     NO_DEFAULT_PATH
     DOC "Path to CGAL/Three/Scene_item.h")
   hide_variable(CGAL_THREE_SCENE_ITEM_H_PATH)
-
+  
+  unset(CGAL_THREE_SCENE_GROUP_ITEM_H_PATH CACHE)
   find_path(CGAL_THREE_SCENE_GROUP_ITEM_H_PATH
     NAME CGAL/Three/Scene_group_item.h
     PATHS ${CGAL_INCLUDE_DIRS}
