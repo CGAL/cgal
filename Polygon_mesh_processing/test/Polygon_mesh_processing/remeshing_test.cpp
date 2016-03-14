@@ -111,7 +111,7 @@ struct halfedge2edge
 
 struct Constrained_edges_pmap
 {
-  std::set<edge_descriptor>& edge_set_;
+  std::set<edge_descriptor>* edge_set_ptr;
 
 struct Constraints_pmap
 {
