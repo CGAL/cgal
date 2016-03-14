@@ -18,7 +18,7 @@ There are several levels in this demo.
 
 - The `Viewer` has a reference to a `CGAL::Three::Scene_interface`, which contains a list of all the items (the drawn elements).
 
-A plugin usually defines an object that inherits from `CGAL::Three::Scene_item` or uses some of them to demonstrate a \cgal feature, so it might have to deal with the above elements.
+A plugin usually make use of objects that inherit from `CGAL::Three::Scene_item` or uses some of them to demonstrate a \cgal feature, so it might have to deal with the above elements.
 
 \section examplePlugin Creating a Simple Plugin
 
@@ -27,9 +27,9 @@ A plugin usually defines an object that inherits from `CGAL::Three::Scene_item` 
 A basic plugin will inherit from `CGAL::Three::Polyhedron_demo_plugin_interface`. It must be created in a folder named Xxxx_yyyy_plugin containing all the files created for it, and a CMakeLists.txt file.
 Its name must be of the form Xxxx_yyyy_plugin. \n
 
-  [init]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#init(QMainWindow *, Scene_interface *)
-  [applicable]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#applicable()
-  [actions]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#actions()
+  [init()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#init(QMainWindow *, Scene_interface *)
+  [applicable()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#applicable()
+  [actions()]: @ref CGAL::Three::Polyhedron_demo_plugin_interface#actions()
   The class must contain the following lines :\n
 
 ~~~~~~~~~~~~~{.cpp}
@@ -39,11 +39,11 @@ Its name must be of the form Xxxx_yyyy_plugin. \n
 ~~~~~~~~~~~~~
 
 Your plugin must override the three pure virtual functions inherited from Polyhedron_demo_plugin_interface : \n
-- [actions] that will hold the actions of the plugin
-- [applicable] that will decide if the plugin can be used with the current selection of items
-- [init] that will declare and link the actions of the plugin
+- [actions()] that will hold the actions of the plugin
+- [applicable()] that will decide if the plugin can be used with the current selection of items
+- [init()] that will declare and link the actions of the plugin
 
-The function [init] is used just like a constructor. This is where you will connect all the actions, signals and slots of your plugin. \n
+The function [init()] is used just like a constructor. This is where you will connect all the actions, signals and slots of your plugin. \n
 This is also where you will declare the submenu of Operations in which your actions will be displayed.
 
 As a plugin is a QObject, it uses automoc and therefore must contain the line:
@@ -67,7 +67,7 @@ If you created your plugin in an existing directory, the CMakeLists.txt file alr
     polyhedron_demo_plugin(basic_plugin Basic_plugin)
 
 
-\subsection basicPluginDialog Adding a Dialog to your plugin
+\subsection basicPluginDialog Adding a Dialog to Your Plugin
 
 This section describes how to add a dialog when an action is triggered.
 
@@ -106,7 +106,7 @@ You can populate the dialog in the action, using `dialog.show()` or `dialog.exec
 
 \snippet Three/Example_plugin/Basic_plugin.cpp complex_dialog_plugin
 
-\subsection WarningBoxDialog Adding a Warning/error box to your plugin
+\subsection WarningBoxDialog Adding a Warning/Error Box to Your Plugin
 
 It is really simple to add a pop-up box with Qt. Use a QMessageBox and give it some arguments :
 \snippet Three/Example_plugin/Basic_plugin.cpp warningbox
@@ -150,11 +150,11 @@ function `closure()` in you plugin, and simply call `hide()` on your dock widget
 
 \subsection exampleUsingAnItem Using a Scene_item
 \subsubsection exampleUsingASelectedItem Using an existing item
-[mainSelectionIndex]: @ref CGAL::Three::Scene_interface#mainSelectionIndex()
-[selectionIndices]: @ref CGAL::Three::Scene_interface#selectionIndices()
-[item]: @ref CGAL::Three::Scene_interface#item
-[item_id]: @ref CGAL::Three::Scene_interface#item_id
-You can get a reference to the items present in the scene in your plugin. To do so, you will need to use the reference to the scene that you can get in the [init] function :
+[mainSelectionIndex()]: @ref CGAL::Three::Scene_interface#mainSelectionIndex()
+[selectionIndices()]: @ref CGAL::Three::Scene_interface#selectionIndices()
+[item()]: @ref CGAL::Three::Scene_interface#item()
+[item_id()]: @ref CGAL::Three::Scene_interface#item_id()
+You can get a reference to the items present in the scene in your plugin. To do so, you will need to use the reference to the scene that you can get in the [init()] function :
 ~~~~~~~~~~~~~{.cpp}
 void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* sc  )
 {
@@ -163,17 +163,17 @@ void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* sc  )
 }
 ~~~~~~~~~~~~~
 This Scene_interface will give you access to the following functions :
-- [mainSelectionIndex]
-- [selectionIndices]
-- [item]
-- [item_id]
+- [mainSelectionIndex()]
+- [selectionIndices()]
+- [item()]
+- [item_id()]
 
 that give you access to any item in the scene.
 
 Example of use :
 \snippet Three/Example_plugin/Basic_item_plugin.cpp use
 
-Don't forget to adapt your [applicable] function :
+Don't forget to adapt your [applicable()] function :
 \snippet Three/Example_plugin/Basic_item_plugin.cpp applicable
 
 \subsubsection exampleCreatingAnItem Creating an item of an existing type
@@ -211,13 +211,13 @@ The minimalist item above is designed to draw a simple triangle. There are sever
 
 <b> - Computing the data </b>
 
-One way to store the data you computed is to use member std::vectors. It must be done every time a change occurs in the item's geometry (usually done in a function called invalidateOpenGLBuffers).
+One way to store the data you computed is to use member std::vector. It must be done every time a change occurs in the item's geometry (usually done in a function called invalidateOpenGLBuffers).
 
 \snippet Three/Example_plugin/Example_plugin.cpp computeelements
 
 <b>  - Filling the OpenGL buffers </b>
 
-The application uses OpenGL VBOs to display the geometry. Those are buffers that will stream their data to the GPU. This step consists to put the data stored in the std::vectors in those buffers.
+The application uses OpenGL VBOs to display the geometry. Those are buffers that will stream their data to the GPU. This step consists to put the data stored in the std::vector in those buffers.
 In this exemple, we only need one VBO and one VAO, as we are only storing one kind of data. But if we wanted to store normals and colors, for instance, we would need as much VBOs, and if there were
 several types of display, let's say multiple RenderingMode, we would need as much VAOs. (See OpenGL doc about VBOs/VAOs for more details).
 
@@ -228,10 +228,10 @@ The code above gets a ShaderProgram, that holds the characteristics of the displ
 
 <b>  - Displaying the data </b>
 
-[draw]: @ref CGAL::Three::Scene_item#draw
-[drawPoints]: @ref CGAL::Three::Scene_item#drawPoints
-[drawEdges]: @ref CGAL::Three::Scene_item#drawEdges
-Originally, it's the viewer that requires displaying. It calls the scene, that calls each visible item's [draw],[drawEdges] and [drawPoints] functions individually.
+[draw()]: @ref CGAL::Three::Scene_item#draw
+[drawPoints()]: @ref CGAL::Three::Scene_item#drawPoints
+[drawEdges()]: @ref CGAL::Three::Scene_item#drawEdges
+Originally, it's the viewer that requires displaying. It calls the scene, that calls each visible item's [draw()],[drawEdges()] and [drawPoints()] functions individually.
 Therefore, this is in those functions that the display of the data must be handled :
 
 \snippet Three/Example_plugin/Example_plugin.cpp draw
@@ -305,7 +305,7 @@ bool save(const CGAL::Three::Scene_item* scene_item, QFileInfo fileinfo) {
 ~~~~~~~~~~~~~
 
 \section exampleexternalPlugin Creating an External Plugin
-
+An external plugin is a plugin that is written in any directory but the official Plugin directory, and which will not be automatically loaded along with the others.
 To create an external plugin, you must make a new Cmake project.\n
 
     project( Example_plugin )
@@ -396,13 +396,13 @@ All the examples have been constructed as external plugins in CGAL/Three/demo/Th
 \subsection example1 Creating a Basic Plugin
 \cgalExample{Three/Example_plugin/Basic_plugin.cpp}
 
-\subsection example2 Creating a dockwidget
+\subsection example2 Creating a DockWidget
 \cgalExample{Three/Example_plugin/Dock_widget_plugin.cpp}
 
-\subsection example3 Using an existing item and create a new item of an existing type
+\subsection example3 Using an Existing Item and Create a New Item of an Existing Type
 \cgalExample{Three/Example_plugin/Basic_item_plugin.cpp}
 
-\subsection example4 Creating a new type of item
+\subsection example4 Creating a new Type of Item
 \cgalExample{Three/Example_plugin/Example_plugin.cpp}
 
 */
