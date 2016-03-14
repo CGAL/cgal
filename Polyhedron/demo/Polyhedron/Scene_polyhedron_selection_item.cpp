@@ -459,6 +459,7 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     break;
     //Join vertex
   case 0:
+    Q_EMIT updateInstructions("Select the edge with extremities you want to join.");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
     break;
@@ -475,6 +476,7 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     break;
     //Join face
   case 3:
+    Q_EMIT updateInstructions("Select the edge separating the faces you want to join.");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
     break;
@@ -795,7 +797,15 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
     case 0:
       BOOST_FOREACH(edge_descriptor ed, selection)
       {
-        polyhedron()->join_vertex(halfedge(ed, *polyhedron()));
+        if(halfedge(ed, *polyhedron())->facet()->facet_degree()<4
+          ||
+          opposite(halfedge(ed, *polyhedron()), *polyhedron())->facet()->facet_degree()<4)
+        {
+          tempInstructions("Vertices not joined : the incident facets must have a degree of at least 4.",
+                           "Select the edge with extremities you want to join.");
+        }
+        else
+          polyhedron()->join_vertex(halfedge(ed, *polyhedron()));
       }
       break;
       //Split edge
@@ -814,7 +824,12 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
     case 3:
       BOOST_FOREACH(edge_descriptor ed, selection)
       {
-        polyhedron()->join_facet(halfedge(ed, *polyhedron()));
+        if(out_degree(source(halfedge(ed,*polyhedron()),*polyhedron()),*polyhedron())<3 ||
+           out_degree(target(halfedge(ed,*polyhedron()),*polyhedron()),*polyhedron())<3)
+          tempInstructions("Faces not joined : the two ends of the edge must have a degree of at least 3.",
+                           "Select the edge separating the faces you want to join.");
+        else
+          polyhedron()->join_facet(halfedge(ed, *polyhedron()));
       }
       break;
       //Collapse edge
