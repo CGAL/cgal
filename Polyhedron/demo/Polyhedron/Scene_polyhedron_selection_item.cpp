@@ -491,6 +491,7 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     //Collapse edge
   case 6:
     //set the selection type to Edge
+    Q_EMIT updateInstructions("Select the edge you want to collapse.");
     set_active_handle_type(static_cast<Active_handle::Type>(2));
     break;
     //Flip edge
@@ -820,7 +821,22 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
     case 6:
       BOOST_FOREACH(edge_descriptor ed, selection)
       {
-        CGAL::Euler::collapse_edge(ed, *poly);
+        if(!is_triangle_mesh(*polyhedron()))
+        {
+          tempInstructions("Edge not collapsed : the graph must be triangulated.",
+                                   "Select the edge you want to collapse.");
+        }
+           else if(!CGAL::Euler::does_satisfy_link_condition(ed, *polyhedron()))
+        {
+          tempInstructions("Edge not collapsed : link condition not satidfied.",
+                                   "Select the edge you want to collapse.");
+        }
+        else
+        {
+          CGAL::Euler::collapse_edge(ed, *poly);
+          tempInstructions("Edge collapsed.",
+                                   "Select the edge you want to collapse.");
+        }
       }
       break;
       //Flip edge
