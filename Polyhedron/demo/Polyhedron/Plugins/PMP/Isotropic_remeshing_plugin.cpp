@@ -367,6 +367,8 @@ public Q_SLOTS:
         }
         else
         {
+          selection_item->setItemIsMulticolor(true);
+
           CGAL::Polygon_mesh_processing::isotropic_remeshing(
             selection_item->selected_facets
             , target_length

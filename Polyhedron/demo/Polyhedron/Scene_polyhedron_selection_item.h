@@ -757,6 +757,10 @@ public:
     Q_EMIT itemChanged();
   }
 
+  void setItemIsMulticolor(bool b) {
+    poly_item->setItemIsMulticolor(b);
+  }
+
 Q_SIGNALS:
   void simplicesSelected(CGAL::Three::Scene_item*);
 
