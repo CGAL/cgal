@@ -149,9 +149,9 @@ namespace internal {
             typename EdgeIsConstrainedMap>
   struct Connected_components_pmap
   {
-    typedef typename boost::graph_traits<PM>::face_descriptor face_descriptor;
+    typedef typename boost::graph_traits<PM>::face_descriptor   face_descriptor;
+    typedef std::size_t                                         Patch_id;
     typedef Connected_components_pmap<PM, EdgeIsConstrainedMap> CCMap;
-    typedef std::size_t Patch_id;//default Patch_id
 
     boost::unordered_map<face_descriptor, Patch_id> patch_ids_map;
 
@@ -162,9 +162,10 @@ namespace internal {
     typedef boost::read_write_property_map_tag  category;
 
     Connected_components_pmap()
-//      : patch_ids_map()
+      : patch_ids_map()
     {}
     Connected_components_pmap(const PM& pmesh, EdgeIsConstrainedMap ecmap)
+      : patch_ids_map()
     {
       PMP::connected_components(pmesh,
         boost::make_assoc_property_map(patch_ids_map),
@@ -173,11 +174,10 @@ namespace internal {
 
     friend value_type get(const CCMap& m, const key_type& f)
     {
-      if (m.patch_ids_map.empty()
-       || m.patch_ids_map.find(f) == m.patch_ids_map.end())
-        return -1;
-      else
-        return m.patch_ids_map.at(f);
+      CGAL_assertion(!m.patch_ids_map.empty());
+      CGAL_assertion(m.patch_ids_map.find(f) != m.patch_ids_map.end());
+
+      return m.patch_ids_map.at(f);
     }
     friend void put(CCMap& m, const key_type& f, const value_type i)
     {

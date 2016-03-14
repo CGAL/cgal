@@ -109,6 +109,9 @@ struct halfedge2edge
   std::set<edge_descriptor>& m_edges;
 };
 
+struct Constrained_edges_pmap
+{
+  std::set<edge_descriptor>& edge_set_;
 
 struct Constraints_pmap
 {
@@ -181,6 +184,10 @@ int main(int argc, char* argv[])
       boost::make_function_output_iterator(halfedge2edge(m, border)));
     PMP::split_long_edges(border, target_edge_length, m
       , PMP::parameters::edge_is_constrained_map(ecmap));
+    Constrained_edges_pmap ecmap(border);
+    PMP::split_long_edges(border, target_edge_length, m
+      , PMP::parameters::edge_is_constrained_map(ecmap));
+
   std::cout << "done." << std::endl;
 
   std::cout << "Collect patch...";
@@ -215,6 +222,7 @@ int main(int argc, char* argv[])
     m,
     PMP::parameters::number_of_iterations(nb_iter)
     .protect_constraints(true) //only borders. they have been refined by previous remeshing
+    .edge_is_constrained_map(ecmap)
     );
   t.stop();
   std::cout << "Remeshing all took " << t.time() << std::endl;
