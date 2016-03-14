@@ -32,8 +32,6 @@ bool test_scene() {
   typedef CGAL::Shape_detection_3::Sphere<Traits>             Sphere;
   typedef CGAL::Shape_detection_3::Torus<Traits>              Torus;
 
-  typedef CGAL::Plane_regularization<Traits>                  Regularization;
-  
   Pwn_vector points;
 
   // Loads point set from a file. 
@@ -130,8 +128,8 @@ bool test_scene() {
   }
 
   // Test regularization
-  Regularization regularization (points, ransac);
-  regularization.run ((FT)50., (FT)0.01f, true, typename K::Vector_3(1., 0., 0.));
+  CGAL::regularize_planes (points.begin(), points.end(), ransac,
+                           (FT)50., (FT)0.01f, true, typename K::Vector_3(1., 0., 0.));
   
   Point_index_range pts = ransac.indices_of_unassigned_points();
 
