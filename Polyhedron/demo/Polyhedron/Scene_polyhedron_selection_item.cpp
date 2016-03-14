@@ -466,7 +466,7 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
   case 1:
     //set the selection type to Vertex
     set_active_handle_type(static_cast<Active_handle::Type>(0));
-    Q_EMIT updateInstructions("Select the vertex you want splitted");
+    Q_EMIT updateInstructions("Select the vertex you want to split.");
     break;
     //Split edge
   case 2:
@@ -497,6 +497,7 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
   case 7:
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
+    Q_EMIT updateInstructions("Select the edge you want to flip.");
     break;
     //Add center vertex
   case 8:
@@ -515,6 +516,7 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     break;
     //Add face to border
   case 11:
+    Q_EMIT updateInstructions("Select a vertex on a border.");
     //set the selection type to vertex
     set_active_handle_type(static_cast<Active_handle::Type>(0));
     break;
@@ -638,10 +640,10 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       {
         BOOST_FOREACH(Vertex_handle vh, selection)
         {
-          Polyhedron::Halfedge_around_vertex_circulator hc = vh->vertex_begin();
-          Polyhedron::Halfedge_around_vertex_circulator end(hc);
-          CGAL_For_all(hc, end)
-          {
+
+            Q_FOREACH( boost::graph_traits<Polyhedron>::halfedge_descriptor hc,
+                         CGAL::halfedges_around_source(vh->halfedge(), *polyhedron()))
+            {
             if(hc->is_border())
             {
               CGAL::Euler::add_vertex_and_face_to_border(t,hc, *poly);
@@ -659,37 +661,102 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       {
         BOOST_FOREACH(Vertex_handle vh, selection)
         {
-          Polyhedron::Halfedge_around_vertex_circulator hc = vh->vertex_begin();
-          Polyhedron::Halfedge_around_vertex_circulator end(hc);
-          CGAL_For_all(hc, end)
+          bool found = false;
+          Q_FOREACH( boost::graph_traits<Polyhedron>::halfedge_descriptor hc,
+                     CGAL::halfedges_around_target(vh, *polyhedron()))
           {
             if(hc->is_border())
             {
               t = hc;
+              found = true;
               break;
             }
           }
-          first_selected = true;
-          selected_vertices.insert(t->vertex());
+          if(found)
+          {
+            first_selected = true;
+            selected_vertices.insert(t->vertex());
+            selected_edges.insert(edge(t,*polyhedron()));
+            Q_EMIT updateInstructions("Select second facet.");
+          }
+          else
+          {
+            tempInstructions("Vertex not selected : no border found.",
+                             "Select a vertex on a border.");
+          }
         }
       }
       else
       {
+
+        bool found(false), is_equal(true), is_next(true), is_border(false);
         BOOST_FOREACH(Vertex_handle vh, selection)
         {
-          Polyhedron::Halfedge_around_vertex_circulator hc = vh->vertex_begin();
-          Polyhedron::Halfedge_around_vertex_circulator end(hc);
-          CGAL_For_all(hc, end)
+          Q_FOREACH( boost::graph_traits<Polyhedron>::halfedge_descriptor hc,
+                     CGAL::halfedges_around_target(vh, *polyhedron()))
           {
-            if(hc->is_border())
+            //if the selected halfedge is not a border, stop and signal it.
+            if(!hc->is_border())
             {
-              CGAL::Euler::add_face_to_border(t,hc, *poly);
-              break;
+              is_border = false;
+              continue;
             }
+            is_border = true;
+            //if the halfedges are the same, stop and signal it.
+            if(hc == t)
+            {
+              is_equal = true;
+              continue;
+            }
+            is_equal = false;
+            //if the halfedges are adjacent, stop and signal it.
+            if(next(t, *polyhedron()) == hc || next(hc, *polyhedron()) == t)
+            {
+              is_next = true;
+              continue;
+            }
+            is_next = false;
+            //if the halfedges are not on the same border, stop and signal it.
+            boost::graph_traits<Polyhedron>::halfedge_descriptor iterator = next(t, *polyhedron());
+            while(iterator != t)
+            {
+              if(iterator == hc)
+              {
+                found = true;
+                CGAL::Euler::add_face_to_border(t,hc, *poly);
+                break;
+              }
+              iterator = next(iterator, *polyhedron());
+            }
+            //if an  halfedges pass all the testes, stop and keep it.
+            if(found)
+              break;
           }
         }
-        first_selected = false;
-        selected_vertices.erase(t->vertex());
+        if(is_equal)
+        {
+          tempInstructions("Vertex not selected : halfedges must be different.",
+                           "Select the second vertex.");
+        }
+
+        else if(is_next)
+        {
+          tempInstructions("Vertex not selected : halfedges must not be adjacent.",
+                           "Select the second vertex.");
+        }
+        else if(!is_border or !found)
+        {
+          tempInstructions("Vertex not selected : no shared border found.",
+                           "Select the second vertex.");
+        }
+        else
+        {
+          first_selected = false;
+          selected_vertices.erase(t->vertex());
+          selected_edges.erase(edge(t,*polyhedron()));
+          tempInstructions("Face added.",
+                           "Select a vertex on a border.");
+        }
       }
       break;
     }
@@ -757,15 +824,24 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
       }
       break;
       //Flip edge
-      //TO DO : add a faccet selection to distinguish the halfedge;
     case 7:
       BOOST_FOREACH(edge_descriptor ed, selection)
       {
-        polyhedron()->flip_edge(ed.halfedge());
+      //check preconditions
+        if(halfedge(ed, *polyhedron())->facet()->facet_degree() == 3 && halfedge(ed, *polyhedron())->opposite()->facet()->facet_degree() == 3)
+        {
+          CGAL::Euler::flip_edge(halfedge(ed, *polyhedron()), *polyhedron());
+        }
+        else
+        {
+          tempInstructions("Edge not selected : incident facets must be triangles.",
+                                   "Select the edge you want to flip.");
+        }
       }
       break;
     }
     polyhedron_item()->invalidateOpenGLBuffers();
+    invalidateOpenGLBuffers();
   }
   is_treated = true;
 }
@@ -798,7 +874,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     {
       static bool first_selected = false;
       static Polyhedron::Halfedge_handle h1;
-      //stocke first fh and emit change label
+      //stores first fh and emit change label
       if(!first_selected)
       {
         BOOST_FOREACH(Facet_handle fh, selection)
@@ -904,7 +980,7 @@ void Scene_polyhedron_selection_item::tempInstructions(QString s1, QString s2)
   m_temp_instructs = s2;
   Q_EMIT updateInstructions(s1);
   QTimer timer;
-  timer.singleShot(1500, this, SLOT(emitTempInstruct()));
+  timer.singleShot(3000, this, SLOT(emitTempInstruct()));
 }
 void Scene_polyhedron_selection_item::emitTempInstruct()
 {

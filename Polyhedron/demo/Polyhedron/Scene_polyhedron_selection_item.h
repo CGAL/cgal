@@ -970,7 +970,7 @@ private:
   int operation_mode;
   QString m_temp_instructs;
   bool is_treated;
-  Polyhedron::Vertex_handle to_split_vh;
+  Vertex_handle to_split_vh;
   Active_handle::Type original_sel_mode;
   //Only needed for the triangulation
   Polyhedron* poly;
