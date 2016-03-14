@@ -21,13 +21,13 @@
 
 /**
  * \ingroup PkgPointSetShapeDetection3
- * \file CGAL/Plane_regularization.h
+ * \file CGAL/regularize_planes.h
  *
  */
 
 
-#ifndef CGAL_PLANE_REGULARIZATION_H
-#define CGAL_PLANE_REGULARIZATION_H
+#ifndef CGAL_REGULARIZE_PLANES_H
+#define CGAL_REGULARIZE_PLANES_H
 
 #include <CGAL/Shape_detection_3.h>
 #include <CGAL/centroid.h>
@@ -745,4 +745,4 @@ void regularize_planes (RandomAccessIterator input_begin,
 
 } // namespace CGAL
 
-#endif // CGAL_PLANE_REGULARIZATION_H
+#endif // CGAL_REGULARIZE_PLANES_H

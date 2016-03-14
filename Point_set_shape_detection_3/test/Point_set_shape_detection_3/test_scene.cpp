@@ -5,7 +5,7 @@
 #include <CGAL/Simple_cartesian.h>
 
 #include <CGAL/Shape_detection_3.h>
-#include <CGAL/Plane_regularization.h>
+#include <CGAL/regularize_planes.h>
 #include <CGAL/Point_with_normal_3.h>
 #include <CGAL/property_map.h>
 
