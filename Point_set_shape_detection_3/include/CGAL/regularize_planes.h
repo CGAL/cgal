@@ -563,18 +563,18 @@ void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
   \return The number of clusters of parallel planes found.
 */ 
 
-template <typename RandomAccessIterator,
-          typename EfficientRANSACTraits>
-void regularize_planes (RandomAccessIterator input_begin,
-                        RandomAccessIterator /*input_end*/,
-                        const Shape_detection_3::Efficient_RANSAC<EfficientRANSACTraits>& shape_detection,
+template <typename EfficientRANSACTraits>
+void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSACTraits>& shape_detection,
+                        bool regularize_parallelism,
+                        bool regularize_orthogonality,
+                        bool regularize_coplanarity,
+                        bool regularize_axis_symmetry,
                         typename EfficientRANSACTraits::FT tolerance_angle
                         = (typename EfficientRANSACTraits::FT)25.0,
                         typename EfficientRANSACTraits::FT tolerance_coplanarity
-                        = (typename EfficientRANSACTraits::FT)0.0,
-                        bool regularize_orthogonality = true,
+                        = (typename EfficientRANSACTraits::FT)0.01,
                         typename EfficientRANSACTraits::Vector_3 symmetry_direction
-                        = CGAL::NULL_VECTOR)
+                        = typename EfficientRANSACTraits::Vector_3 (0., 0., 1.))
 {
   typedef typename EfficientRANSACTraits::FT FT;
   typedef typename EfficientRANSACTraits::Point_3 Point;
@@ -587,6 +587,8 @@ void regularize_planes (RandomAccessIterator input_begin,
 
   typedef typename internal::PlaneRegularization::Plane_cluster<EfficientRANSACTraits>
     Plane_cluster;
+
+  typename EfficientRANSACTraits::Input_range::iterator input_begin = shape_detection.input_iterator_first();
 
   std::vector<boost::shared_ptr<Plane_shape> > planes;
     
@@ -617,7 +619,9 @@ void regularize_planes (RandomAccessIterator input_begin,
   // direction of each cluster
   std::vector<Plane_cluster> clusters;
   internal::PlaneRegularization::compute_parallel_clusters<EfficientRANSACTraits>
-    (planes, clusters, areas, tolerance_cosangle, symmetry_direction);
+    (planes, clusters, areas,
+     (regularize_parallelism ? tolerance_cosangle : (FT)0.0),
+     (regularize_axis_symmetry ? symmetry_direction : CGAL::NULL_VECTOR));
 
   if (regularize_orthogonality)
     {
@@ -636,19 +640,20 @@ void regularize_planes (RandomAccessIterator input_begin,
         }
     }
       
-  //clustering the symmetry cosangle and store their centroids in
-  //cosangle_centroids and the centroid index of each cluster in
-  //list_cluster_index
-  if (symmetry_direction != CGAL::NULL_VECTOR)
-    internal::PlaneRegularization::cluster_symmetric_cosangles<EfficientRANSACTraits>
-      (clusters, tolerance_cosangle);
-
+  if (regularize_axis_symmetry)
+    {
+      //clustering the symmetry cosangle and store their centroids in
+      //cosangle_centroids and the centroid index of each cluster in
+      //list_cluster_index
+      internal::PlaneRegularization::cluster_symmetric_cosangles<EfficientRANSACTraits>
+        (clusters, tolerance_cosangle);
+    }
+  
   //find subgraphs of mutually orthogonal clusters (store index of
   //clusters in subgraph_clusters), and select the cluster of
   //largest area
-  if (regularize_orthogonality)
-    internal::PlaneRegularization::subgraph_mutually_orthogonal_clusters<EfficientRANSACTraits>
-      (clusters, symmetry_direction);
+  internal::PlaneRegularization::subgraph_mutually_orthogonal_clusters<EfficientRANSACTraits>
+    (clusters, symmetry_direction);
       
   //recompute optimal plane for each primitive after normal regularization
   for (std::size_t i=0; i < clusters.size(); ++ i)
@@ -670,75 +675,77 @@ void regularize_planes (RandomAccessIterator input_begin,
     }
 
 
-  //detecting co-planarity and store in list_coplanar_prim
-  for (std::size_t i = 0; i < clusters.size(); ++ i)
+  if (regularize_coplanarity)
     {
-      Vector vec_reg = clusters[i].normal;
-
-      for (std::size_t ip = 0; ip < clusters[i].planes.size(); ++ ip)
-        clusters[i].coplanar_group.push_back (static_cast<std::size_t>(-1));
-
-      std::size_t cop_index=0;
-
-      for (std::size_t j = 0; j < clusters[i].planes.size(); ++ j)
+      //detecting co-planarity and store in list_coplanar_prim
+      for (std::size_t i = 0; i < clusters.size(); ++ i)
         {
-          std::size_t index_prim = clusters[i].planes[j];
+          Vector vec_reg = clusters[i].normal;
 
-          if (clusters[i].coplanar_group[j] == static_cast<std::size_t>(-1))
+          for (std::size_t ip = 0; ip < clusters[i].planes.size(); ++ ip)
+            clusters[i].coplanar_group.push_back (static_cast<std::size_t>(-1));
+
+          std::size_t cop_index=0;
+
+          for (std::size_t j = 0; j < clusters[i].planes.size(); ++ j)
             {
-              clusters[i].coplanar_group[j] = cop_index;
-			
-              Point pt_reg = planes[index_prim]->projection(centroids[index_prim]);
-              Plane plan_reg(pt_reg,vec_reg);
+              std::size_t index_prim = clusters[i].planes[j];
 
-              for (std::size_t k = j + 1; k < clusters[i].planes.size(); ++ k)
+              if (clusters[i].coplanar_group[j] == static_cast<std::size_t>(-1))
                 {
-                  if (clusters[i].coplanar_group[k] == static_cast<std::size_t>(-1))
+                  clusters[i].coplanar_group[j] = cop_index;
+			
+                  Point pt_reg = planes[index_prim]->projection(centroids[index_prim]);
+                  Plane plan_reg(pt_reg,vec_reg);
+
+                  for (std::size_t k = j + 1; k < clusters[i].planes.size(); ++ k)
                     {
-                      std::size_t index_prim_next = clusters[i].planes[k];
-                      Point pt_reg_next = planes[index_prim_next]->projection(centroids[index_prim_next]);
-                      Point pt_proj=plan_reg.projection(pt_reg_next);
-                      FT distance = std::sqrt (CGAL::squared_distance(pt_reg_next,pt_proj));
+                      if (clusters[i].coplanar_group[k] == static_cast<std::size_t>(-1))
+                        {
+                          std::size_t index_prim_next = clusters[i].planes[k];
+                          Point pt_reg_next = planes[index_prim_next]->projection(centroids[index_prim_next]);
+                          Point pt_proj=plan_reg.projection(pt_reg_next);
+                          FT distance = std::sqrt (CGAL::squared_distance(pt_reg_next,pt_proj));
 					
-                      if (distance < tolerance_coplanarity)
-                        clusters[i].coplanar_group[k] = cop_index;
+                          if (distance < tolerance_coplanarity)
+                            clusters[i].coplanar_group[k] = cop_index;
+                        }
                     }
+                  cop_index++; 
                 }
-              cop_index++; 
+            }
+
+          //regularize primitive position by computing barycenter of cplanar planes
+          std::vector<Point> pt_bary (cop_index, Point ((FT)0., (FT)0., (FT)0.));
+          std::vector<FT> area (cop_index, 0.);
+      
+          for (std::size_t j = 0; j < clusters[i].planes.size (); ++ j)
+            {
+              std::size_t index_prim = clusters[i].planes[j];
+              std::size_t group = clusters[i].coplanar_group[j];
+              
+              Point pt_reg = planes[index_prim]->projection(centroids[index_prim]);
+
+              pt_bary[group] = CGAL::barycenter (pt_bary[group], area[group], pt_reg, areas[index_prim]); 
+              area[group] += areas[index_prim];
+            }
+
+
+          for (std::size_t j = 0; j < clusters[i].planes.size (); ++ j)
+            {
+              std::size_t index_prim = clusters[i].planes[j];
+              std::size_t group = clusters[i].coplanar_group[j];
+              
+              Plane plane_reg (pt_bary[group], vec_reg);
+              
+              if (planes[index_prim]->plane_normal ()
+                  * plane_reg.orthogonal_vector() < 0)
+                planes[index_prim]->update (plane_reg.opposite());
+              else
+                planes[index_prim]->update (plane_reg);
             }
         }
-
-      //regularize primitive position by computing barycenter of cplanar planes
-      std::vector<Point> pt_bary (cop_index, Point ((FT)0., (FT)0., (FT)0.));
-      std::vector<FT> area (cop_index, 0.);
-      
-      for (std::size_t j = 0; j < clusters[i].planes.size (); ++ j)
-        {
-          std::size_t index_prim = clusters[i].planes[j];
-          std::size_t group = clusters[i].coplanar_group[j];
-              
-          Point pt_reg = planes[index_prim]->projection(centroids[index_prim]);
-
-          pt_bary[group] = CGAL::barycenter (pt_bary[group], area[group], pt_reg, areas[index_prim]); 
-          area[group] += areas[index_prim];
-        }
-
-
-      for (std::size_t j = 0; j < clusters[i].planes.size (); ++ j)
-        {
-          std::size_t index_prim = clusters[i].planes[j];
-          std::size_t group = clusters[i].coplanar_group[j];
-              
-          Plane plane_reg (pt_bary[group], vec_reg);
-              
-          if (planes[index_prim]->plane_normal ()
-              * plane_reg.orthogonal_vector() < 0)
-            planes[index_prim]->update (plane_reg.opposite());
-          else
-            planes[index_prim]->update (plane_reg);
-        }
-    }
-      
+    } 
 }
   /// @}
 

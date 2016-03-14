@@ -128,8 +128,8 @@ bool test_scene() {
   }
 
   // Test regularization
-  CGAL::regularize_planes (points.begin(), points.end(), ransac,
-                           (FT)50., (FT)0.01f, true, typename K::Vector_3(1., 0., 0.));
+  CGAL::regularize_planes (ransac, true, true, true, true,
+                           (FT)50., (FT)0.01f);
   
   Point_index_range pts = ransac.indices_of_unassigned_points();
 
