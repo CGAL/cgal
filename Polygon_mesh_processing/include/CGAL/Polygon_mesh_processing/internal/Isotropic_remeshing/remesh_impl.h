@@ -921,7 +921,7 @@ namespace internal {
           continue;
         //note if v is constrained, it has not moved
 
-        Patch_id_property_map pid_pmap(this);
+        Patch_id_property_map pid_pmap(*this);
         internal::Filtered_projection_traits<typename AABB_tree::AABB_traits,
                                              Patch_id_property_map,
                                              true> /* keep primitives with matching IDs */
@@ -975,8 +975,8 @@ private:
 
     Patch_id_property_map()
       : remesher_ptr_(NULL) {}
-    Patch_id_property_map(const Self* remesher_ptr)
-      : remesher_ptr_(remesher_ptr) {}
+    Patch_id_property_map(const Self& remesher)
+      : remesher_ptr_(&remesher) {}
 
     friend Patch_id get(const Patch_id_property_map& m, key_type tr_it)
     {
