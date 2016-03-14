@@ -48,7 +48,7 @@
 - `CGAL::Shape_detection_3::Cone<Traits>`
 - `CGAL::Shape_detection_3::Torus<Traits>`
 
-## Regularization Classes ##
-- `CGAL::Plane_regularization<Traits>`
+## Functions ##
+- `CGAL::regularize_planes()`
 */
 

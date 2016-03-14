@@ -37,6 +37,10 @@
 
 namespace CGAL {
   
+// ----------------------------------------------------------------------------
+// Private section
+// ----------------------------------------------------------------------------
+/// \cond SKIP_IN_MANUAL
 namespace internal {
 namespace PlaneRegularization {
 
@@ -510,23 +514,28 @@ void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
 
 } // namespace PlaneRegularization
 } // namespace internal
+/// \endcond
 
+
+// ----------------------------------------------------------------------------
+// Public section
+// ----------------------------------------------------------------------------
+
+/// \ingroup PkgPointSetShapeDetection3
   
   /*! 
 
     Given a set of detected planes with their respective inlier sets,
-    this function enables to regularize the planes: planes almost
-    parallel are made exactly parallel. In addition, some additional
-    regularization can be performed:
+    this function enables to regularize the planes: 
 
-    - Plane clusters that are almost orthogonal can be made exactly
-    orthogonal.
+    - Planes near parallel can be made exactly parallel.
 
-    - Planes that are parallel and almost coplanar can be made exactly
-    coplanar.
+    - Planes near orthogonal can be made exactly orthogonal.
 
-    - Planes that are almost symmetrical with a user-defined axis can be
-    made exactly symmetrical.
+    - Planes parallel and near coplanar can be made exactly coplanar.
+
+    - Planes near symmetrical with a user-defined axis can be made
+    exactly symmetrical.
 
     Planes are directly modified. Points are left unaltered, as well as
     their relationships to planes (no transfer of point from a primitive
@@ -536,31 +545,36 @@ void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
 
     \tparam Traits a model of `EfficientRANSACTraits`
 
-    \param shape_detection Shape detection engine used to detect
+    \param shape_detection Shape detection object used to detect
     shapes from the input data. This engine may handle any types of
-    primitive shapes but only planes will be regularized.
+    primitive shapes but only planes will be regularized. 
 
     \warning The `shape_detection` parameter must have already
-    detected shapes and must have been using `input_range` as input.
+    detected shapes. If no plane exists in it, the regularization
+    function doesn't do anything.
+
+    \param regularize_parallelism Select whether parallelism is
+    regularized or not.
+
+    \param regularize_orthogonality Select whether orthogonality is
+    regularized or not.
+
+    \param regularize_coplanarity Select whether coplanarity is
+    regularized or not.
+
+    \param regularize_axis_symmetry Select whether axis symmetry is
+    regularized or not.
 
     \param tolerance_angle Tolerance of deviation between normal
-    vectors of planes so that they are considered parallel (in
-    degrees).
+    vectors of planes (in degrees) used for parallelism, orthogonality
+    and axis symmetry. Default value is 25 degrees.
 
-    \param tolerance_coplanarity Maximal distance between two
-    parallel planes such that they are considered coplanar. The
-    default value is 0, meaning that coplanarity is not taken into
-    account for regularization.
+    \param tolerance_coplanarity Maximal distance between two parallel
+    planes such that they are considered coplanar. Default value is
+    0.01.
 
-    \param regularize_orthogonality Make almost orthogonal clusters
-    of plane exactly orthogonal.
-
-    \param symmetry_direction Make clusters that are almost
-    symmetrical in the symmetry direction exactly symmetrical. This
-    parameter is ignored if it is equal to `CGAL::NULL_VECTOR`
-  (default value).
-
-  \return The number of clusters of parallel planes found.
+    \param symmetry_direction Chosen axis for symmetry
+    regularization. Default value is the Z axis.
 */ 
 
 template <typename EfficientRANSACTraits>
@@ -747,7 +761,6 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
         }
     } 
 }
-  /// @}
 
 
 } // namespace CGAL

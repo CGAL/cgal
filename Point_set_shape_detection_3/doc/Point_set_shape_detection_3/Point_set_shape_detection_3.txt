@@ -109,17 +109,17 @@ which is used by the example  \ref Point_set_shape_detection_3/efficient_RANSAC_
 
 Shape detection is very suited for man-made shapes such as urban scenes or scans of mechanical pieces. In such input data, shapes often come with specific relationships between them: parallelism, coplanarity or orthogonality, for example. \cgal provides a tool to regularize planes detected on a point set.
 
-The class `CGAL::Plane_regularization<Traits>` can be used to postprocess the planes detected by `CGAL::Shape_detection_3<Traits>` (other primitives are left unchanged). More specifically:
+The function `CGAL::regularize_planes()` can be used to postprocess the planes detected by `CGAL::Shape_detection_3<Traits>` (other primitives are left unchanged). More specifically:
 
-- Planes that are almost parallel are made parallel: normal vectors of planes that form angles smaller than a user-defined threshold are made equal.
+- Planes that are near parallel are made parallel: normal vectors of planes that form angles smaller than a user-defined threshold are made equal.
 
-- Planes that are almost coplanar are made coplanar.
+- Planes that are near coplanar are made coplanar.
 
-- Planes that are almost orthogonal are made exactly orthogonal.
+- Planes that are near orthogonal are made exactly orthogonal.
 
-- Planes that are almost symmetrical with respect to a user-defined axis are made symmetrical.
+- Planes that are near symmetrical with respect to a user-defined axis are made symmetrical.
 
-The user can choose to only regularize one or several of these 4 properties depending on the chosen parameters (see reference manual).
+The user can choose to only regularize one or several of these 4 properties (see reference manual).
 
 
 
