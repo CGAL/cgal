@@ -562,24 +562,29 @@ public:
   template <typename SelectionSet>
   struct Is_constrained_map
   {
-    SelectionSet& m_set;
+    SelectionSet* m_set_ptr;
 
     typedef typename SelectionSet::key_type    key_type;
     typedef bool                               value_type;
     typedef bool                               reference;
     typedef boost::read_write_property_map_tag category;
 
-    Is_constrained_map(SelectionSet& set_)
-      : m_set(set_)
+    Is_constrained_map()
+      : m_set_ptr(NULL)
+    {}
+    Is_constrained_map(SelectionSet* set_)
+      : m_set_ptr(set_)
     {}
     friend bool get(const Is_constrained_map& map, const key_type& k)
     {
-      return map.m_set.count(k);
+      CGAL_assertion(map.m_set_ptr != NULL);
+      return map.m_set_ptr->count(k);
     }
     friend void put(Is_constrained_map& map, const key_type& k, const value_type b)
     {
-      if (b)  map.m_set.insert(k);
-      else    map.m_set.erase(k);
+      CGAL_assertion(map.m_set_ptr != NULL);
+      if (b)  map.m_set_ptr->insert(k);
+      else    map.m_set_ptr->erase(k);
     }
   };
 
@@ -889,12 +894,12 @@ public:
 
   Is_constrained_map<Selection_set_edge> constrained_edges_pmap()
   {
-    return Is_constrained_map<Selection_set_edge>(selected_edges);
+    return Is_constrained_map<Selection_set_edge>(&selected_edges);
   }
 
   Is_constrained_map<Selection_set_vertex> constrained_vertices_pmap()
   {
-    return Is_constrained_map<Selection_set_vertex>(selected_vertices);
+    return Is_constrained_map<Selection_set_vertex>(&selected_vertices);
   }
 
 protected:
