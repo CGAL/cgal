@@ -214,7 +214,6 @@ public:
     typedef Patch_id                           reference;
     typedef boost::read_write_property_map_tag category;
 
-    Patch_id_pmap() {}
     friend bool get(const Patch_id_pmap&, const key_type& f){
       return f->patch_id();
     }
@@ -376,8 +375,8 @@ public Q_SLOTS:
             .protect_constraints(protect)
             .edge_is_constrained_map(selection_item->constrained_edges_pmap())
             .smooth_along_features(smooth_features)
-            .vertex_is_constrained_map(selection_item->constrained_vertices_pmap()));
-//         .facet_patch_map(Patch_id_pmap<face_descriptor>()));
+            .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+            .face_patch_map(Patch_id_pmap<face_descriptor>()));
         }
         selection_item->poly_item_changed();
         selection_item->clear<face_descriptor>();
