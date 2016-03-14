@@ -1240,7 +1240,10 @@ private:
       //tag PATCH_BORDER,//h belongs to the patch, hopp doesn't
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
       {
-        if (get(ecmap_, e) || get(border_map, e))
+        if (get(ecmap_, e)
+          || get(border_map, e)
+          || get_patch_id(face(halfedge(e, mesh_), mesh_))
+              != get_patch_id(face(opposite(halfedge(e, mesh_), mesh_), mesh_)))
         {
           //deal with h and hopp for borders that are sharp edges to be preserved
           halfedge_descriptor h = halfedge(e, mesh_);
