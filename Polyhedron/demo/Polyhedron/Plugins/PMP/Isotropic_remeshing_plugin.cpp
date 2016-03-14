@@ -429,6 +429,8 @@ public Q_SLOTS:
          , *poly_item->polyhedron()
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
+         .smooth_along_features(smooth_features));
+         .face_patch_map(Patch_id_pmap<face_descriptor>())
          .edge_is_constrained_map(ecm)
          .smooth_along_features(smooth_features));
         }
