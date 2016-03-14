@@ -241,6 +241,7 @@ namespace internal {
                                , GeomTraits
                                , EdgeIsConstrainedMap
                                , VertexIsConstrainedMap
+                               , FacePatchMap
                                > Self;
 
   private:
