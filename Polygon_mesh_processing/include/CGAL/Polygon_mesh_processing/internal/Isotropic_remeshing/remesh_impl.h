@@ -257,9 +257,9 @@ namespace internal {
     Incremental_remesher(PolygonMesh& pmesh
                        , VertexPointMap& vpmap
                        , const bool protect_constraints
-                       , EdgeIsConstrainedMap ecmap = EdgeIsConstrainedMap()
-                       , VertexIsConstrainedMap vcmap = VertexIsConstrainedMap()
-                       , FacePatchMap fpmap = FacePatchMap()
+                       , EdgeIsConstrainedMap ecmap
+                       , VertexIsConstrainedMap vcmap
+                       , FacePatchMap fpmap
                        , const bool own_tree = true)//built by the remesher
       : mesh_(pmesh)
       , vpmap_(vpmap)
@@ -273,8 +273,6 @@ namespace internal {
       , vcmap_(vcmap)
     {
       CGAL_assertion(CGAL::is_triangle_mesh(mesh_));
-
-      fpmap = FacePatchMap(mesh_, ecmap_);
     }
 
     ~Incremental_remesher()
