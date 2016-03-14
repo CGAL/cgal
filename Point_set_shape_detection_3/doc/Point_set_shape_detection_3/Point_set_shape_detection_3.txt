@@ -119,8 +119,9 @@ Among all these possibilities, \cgal provides a means to regularize four propert
 
 - Planes that are near __symmetrical__ with respect to a user-defined axis are made symmetrical.
 
-The user can choose to only regularize one or several of these 4 properties (see reference manual).
+The user can choose to only regularize one or several of these 4 properties (see reference manual). The process is greedy and based on a hierarchical decomposition (coplanar clusters are subgroups of parallel clusters which are subgroups of axis-symmetric and orthogonal clusters) as described by Verdie et al. \cgalCite{cgal:vla-lod-15}
 
+\cgalExample{Point_set_shape_detection_3/plane_regularization.cpp}
 
 \section Point_set_shape_detection_3Performance Performance
  
