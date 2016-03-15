@@ -36,14 +36,14 @@ template <typename P>
 void
 fct(const P& )
 {
-  typedef typename boost::graph_traits<P>::vertex_descriptor vertex_descriptor;
+  typedef typename boost::graph_traits<P>::edge_descriptor edge_descriptor;
 
-  std::map<vertex_descriptor,int> M;
-  vertex_descriptor vd;
-  M.find(vd);
+  std::map<edge_descriptor,int> M;
+  edge_descriptor ed;
+  M.find(ed);
 
-  boost::unordered_map<vertex_descriptor, int> U;
-  U[vd] = 12;
+  boost::unordered_map<edge_descriptor, int> U;
+  U[ed] = 12;
 }
 
 void fct2()
