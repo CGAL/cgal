@@ -92,6 +92,9 @@ set(CGAL_INCLUDE_DIRS      "@CGAL_INCLUDE_DIRS@" )
 set(CGAL_MODULES_DIR       "@CGAL_MODULES_DIR@" )
 set(CGAL_LIBRARIES_DIR     "@CGAL_LIBRARIES_DIR@" )
 
+# If CGAL_ImageIO is built, tell if it was linked with Zlib.
+set(CGAL_ImageIO_USE_ZLIB                 "@CGAL_ImageIO_USE_ZLIB@" )
+
 set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}")
 
 set(CGAL_USE_FILE "${CGAL_MODULES_DIR}/UseCGAL.cmake" )
