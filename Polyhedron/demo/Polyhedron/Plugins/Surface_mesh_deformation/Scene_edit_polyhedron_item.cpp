@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <QTime>
 
+#include <CGAL/Polygon_mesh_processing/border.h>
+
 Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
 (Scene_polyhedron_item* poly_item,
  Ui::DeformMesh* ui_widget,
@@ -446,24 +448,27 @@ void Scene_edit_polyhedron_item::deform()
 
 struct ROI_border_pmap
 {
-  std::set<edge_descriptor>& m_set;
+  std::set<edge_descriptor>* m_set_ptr;
 
   typedef edge_descriptor                    key_type;
   typedef bool                               value_type;
   typedef bool                               reference;
   typedef boost::read_write_property_map_tag category;
 
-  ROI_border_pmap(std::set<edge_descriptor>& set_)
-    : m_set(set_)
+  ROI_border_pmap() : m_set_ptr(NULL) {}
+  ROI_border_pmap(std::set<edge_descriptor>* set_)
+    : m_set_ptr(set_)
   {}
   friend bool get(const ROI_border_pmap& map, const key_type& k)
   {
-    return map.m_set.count(k);
+    CGAL_assertion(map.m_set_ptr != NULL);
+    return map.m_set_ptr->count(k);
   }
   friend void put(ROI_border_pmap& map, const key_type& k, const value_type b)
   {
-    if (b)  map.m_set.insert(k);
-    else    map.m_set.erase(k);
+    CGAL_assertion(map.m_set_ptr != NULL);
+    if (b)              map.m_set_ptr->insert(k);
+    else if(get(map,k)) map.m_set_ptr->erase(k);
   }
 };
 
@@ -472,33 +477,32 @@ void Scene_edit_polyhedron_item::remesh()
   const Polyhedron& g = deform_mesh->halfedge_graph();
   Array_based_vertex_point_map vpmap(&positions);
 
+  // set face_index map for border_halfedges
+  boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
+    = get(CGAL::face_index, *polyhedron());
+  unsigned int id = 0;
+  BOOST_FOREACH(face_descriptor f, faces(*polyhedron()))
+    put(fim, f, id++);
+
   std::set<face_descriptor> roi_facets;
-  std::set<halfedge_descriptor> roi_halfedges;
+  std::set<halfedge_descriptor> roi_border_halfedges;
   BOOST_FOREACH(vertex_descriptor v, deform_mesh->roi_vertices())
   {
     BOOST_FOREACH(face_descriptor fv, CGAL::faces_around_target(halfedge(v, g), g))
-    {
       roi_facets.insert(fv);
-      BOOST_FOREACH(halfedge_descriptor h, CGAL::halfedges_around_face(halfedge(fv, g), g))
-      {
-        if (roi_halfedges.find(opposite(h, g)) == roi_halfedges.end()) //not already computed
-          roi_halfedges.insert(h);
-      }
-    }
   }
+  CGAL::Polygon_mesh_processing::border_halfedges(roi_facets, g,
+    std::inserter(roi_border_halfedges, roi_border_halfedges.begin()));
 
   bool automatic_target_length = !ui_widget->remeshingEdgeLengthInput_checkBox->isChecked();
   double sum_len = 0.;
   std::set<edge_descriptor> roi_border;
-  BOOST_FOREACH(halfedge_descriptor h, roi_halfedges)
+  BOOST_FOREACH(halfedge_descriptor h, roi_border_halfedges)
   {
-    if (roi_halfedges.find(opposite(h, g)) == roi_halfedges.end())
-    {
-      roi_border.insert(edge(h, g));
-      if (automatic_target_length)
-        sum_len += CGAL::sqrt(CGAL::squared_distance(
-                      get(vpmap, source(h, g)), get(vpmap, target(h, g))));
-    }
+    roi_border.insert(edge(h, g));
+    if (automatic_target_length)
+      sum_len += CGAL::sqrt(CGAL::squared_distance(
+                    get(vpmap, source(h, g)), get(vpmap, target(h, g))));
   }
 
   if (roi_border.empty())
@@ -510,15 +514,8 @@ void Scene_edit_polyhedron_item::remesh()
 
   unsigned int nb_iter = ui_widget->remeshing_iterations_spinbox->value();
 
-  // set face_index map for border_halfedges
-  boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
-    = get(CGAL::face_index, *polyhedron());
-  unsigned int id = 0;
-  BOOST_FOREACH(face_descriptor f, faces(*polyhedron()))
-    put(fim, f, id++);
-
   std::cout << "Remeshing...";
-  ROI_border_pmap border_pmap(roi_border);
+  ROI_border_pmap border_pmap(&roi_border);
   CGAL::Polygon_mesh_processing::isotropic_remeshing(
       roi_facets
     , target_length
