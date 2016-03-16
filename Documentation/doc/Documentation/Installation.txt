@@ -324,6 +324,21 @@ variable `BUILD_SHARED_LIBS` to `FALSE`. If you use
 These setting affect the variants of third-party libraries (see next
 section) selected whenever the choice is available.
 
+\subsection subsection_headeronly Header only option
+
+Since \cgal 4.X, \cgal can be used in headers only mode, i.e. without compiling the \cgal libraries and linking with these libraries when compiling examples, tests and demo. This possibility can be enabled by setting the value of the CMake variable `CGAL_HEADERS_ONLY` to `ON`.
+
+One advantage of using \cgal in header only mode is that you do not need to compile and install \cgal libraries before to compile a given example or demo. Note that even in header only mode we still need to run cmake on \cgal in order to generate different configuration files. So, setting up \cgal becomes now:
+
+<PRE>
+cd CGAL-\cgalReleaseNumber # go to \cgal directory
+cmake . # configure \cgal
+</PRE>
+
+and we do not need to run make anymore.
+
+There is one possible problem when using \cgal in header only mode on a Windows operating system when compiling a program using several modules (executable programs or dynamic-link libraries DLL). If two different modules use the same static variable, this variable is defined independently in each of these modules. If one module modifies the value of this variable, it will not be modified in the other module, which could induce an unexpected behavior. In \cgal, this concerns only a few specific variables: the <A HREF="http://doc.cgal.org/latest/Generator/classCGAL_1_1Random.html">default random</A>, the <A HREF="http://doc.cgal.org/latest/STL_Extension/group__PkgStlExtensionAssertions.html">failure behavior</A>, <A HREF="http://doc.cgal.org/latest/Stream_support/group__PkgIOstreams.html">IO mode</A>. One example is the following: if you change the default random in one DLL, then if you use the default random in another DLL, you will not obtain the modified default random but the original one.
+
 \section secessential3rdpartysoftware Essential Third Party Libraries 
 
 The focus of \cgal is on geometry, and we rely on other
