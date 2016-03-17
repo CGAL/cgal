@@ -7,7 +7,11 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
   # THEN collect *.cpp
   foreach (package ${CGAL_CONFIGURED_PACKAGES} )
     file(GLOB CGAL_LIBRARY_SOURCE_FILES_TMP ${package}/src/${LIBRARY_NAME}/*.cpp)
-    list(APPEND CGAL_LIBRARY_SOURCE_FILES ${CGAL_LIBRARY_SOURCE_FILES_TMP})
+    foreach(file ${CGAL_LIBRARY_SOURCE_FILES_TMP})
+      if(NOT ${file} MATCHES "/qrc_.*")
+        list(APPEND CGAL_LIBRARY_SOURCE_FILES ${file})
+      endif()
+    endforeach()
   endforeach()
 
   foreach(source ${CGAL_LIBRARY_SOURCE_FILES})
