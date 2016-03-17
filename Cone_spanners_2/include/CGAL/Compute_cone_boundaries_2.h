@@ -106,10 +106,11 @@ public:
 
         const double cone_angle = 2*CGAL_PI/cone_number;
         double sin_value, cos_value;
+	Direction_2 ray;
         for (unsigned int i = 1; i < cone_number; i++) {
             sin_value = std::sin(i*cone_angle);
             cos_value = std::cos(i*cone_angle);
-            Direction_2 ray = Transformation(cos_value, -sin_value, sin_value, cos_value)(initial_direction);
+            ray = Transformation(cos_value, -sin_value, sin_value, cos_value)(initial_direction);
             *result++ = ray;
         }
 
