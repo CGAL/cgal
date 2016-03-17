@@ -471,6 +471,7 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     break;
     //Split edge
   case 2:
+        Q_EMIT updateInstructions("Select the edge you want to split.");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
     break;
@@ -482,8 +483,9 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     break;
     //Split face
   case 4:
-    //set the selection type to Vertex
-    set_active_handle_type(static_cast<Active_handle::Type>(0));
+    Q_EMIT updateInstructions("Select the facet you want to split.");
+    //set the selection type to Facet
+    set_active_handle_type(static_cast<Active_handle::Type>(1));
     break;
     //Add edge
   case 5:
@@ -571,26 +573,96 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     }
       //Split face
     case 4:
+    {
+      static Polyhedron::Halfedge_handle h1,h2;
+      static bool found_h1(false), found_h2(false);
       if(!first_selected)
       {
         BOOST_FOREACH(Vertex_handle vh, selection)
         {
-          s = vh;
+          //Is the vertex on the face ?
+          Polyhedron::Halfedge_around_facet_circulator hafc = to_split_fh->facet_begin();
+          Polyhedron::Halfedge_around_facet_circulator end = hafc;
+          CGAL_For_all(hafc, end)
+          {
+            if(hafc->vertex()==vh)
+            {
+              h1 = hafc;
+              s = vh;
+              found_h1 = true;
+                break;
+            }
+          }
+          if(!found_h1)
+          {
+            tempInstructions("Vertex not selected : The vertex is not on the face.",
+                             "Select the first vertex .");
+          }
+          else
+          {
+            first_selected = true;
+            selected_vertices.insert(s);
+            Q_EMIT updateInstructions("Select the second vertex");
+          }
         }
-        first_selected = true;
-        selected_vertices.insert(s);
       }
       else
       {
+        bool is_same(false), are_next(false);
+        Polyhedron::Halfedge_around_facet_circulator hafc = to_split_fh->facet_begin();
+        Polyhedron::Halfedge_around_facet_circulator end = hafc;
+
         BOOST_FOREACH(Vertex_handle vh, selection)
         {
-          CGAL::Euler::split_face(s->halfedge(),vh->halfedge(), *poly);
+          //Is the vertex on the face ?
+          CGAL_For_all(hafc, end)
+
+              if(hafc->vertex()==vh)
+          {
+            h2 = hafc;
+            found_h2 = true;
+            break;
+          }
         }
-        first_selected = false;
-        selected_vertices.erase(s);
+        if(!found_h2)
+        {
+          break;
+        }
+        //Are they different ?
+        if(h1 == h2)
+        {
+          is_same = true;
+          break;
+        }
+        is_same = false;
+        //Are they directly following each other?
+        if(next(h1, *polyhedron()) == h2 ||
+           next(h2, *polyhedron()) == h1)
+        {
+          are_next = true;
+          break;
+        }
+        are_next = false;
+        if(!found_h2)
+          tempInstructions("Vertex not selected : The vertex is not on the face.",
+                           "Select the second vertex .");
+        else if(is_same)
+          tempInstructions("Vertex not selected : The vertices must be different.",
+                           "Select the second vertex .");
+        else if(are_next)
+          tempInstructions("Vertex not selected : The vertices must not directly follow each other.",
+                           "Select the second vertex .");
+        else
+        {
+          CGAL::Euler::split_face(h1,h2, *poly);
+          first_selected = false;
+          selected_vertices.erase(s);
+          selected_facets.erase(to_split_fh);
+        }
       }
       break;
-      //Add edge
+    }
+    //Add edge
     case 5:
       if(!first_selected)
       {
@@ -835,7 +907,6 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
         Polyhedron::Point_3 p((b.x()+a.x())/2.0, (b.y()+a.y())/2.0,(b.z()+a.z())/2.0);
 
         hhandle->vertex()->point() = p;
-
       }
       break;
       //Join face
@@ -996,6 +1067,18 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       }
       break;
     }
+      //Split face
+    case 4:
+      BOOST_FOREACH(Facet_handle fh, selection)
+      {
+        to_split_fh = fh;
+        selected_facets.insert(to_split_fh);
+        //set to select vertex
+        set_active_handle_type(static_cast<Active_handle::Type>(0));
+        Q_EMIT updateInstructions("Select first vertex.");
+        break;
+      }
+      break;
       //Add center vertex
     case 8:
       BOOST_FOREACH(Facet_handle fh, selection)

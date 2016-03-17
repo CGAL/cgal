@@ -971,6 +971,7 @@ private:
   QString m_temp_instructs;
   bool is_treated;
   Vertex_handle to_split_vh;
+  Facet_handle to_split_fh;
   Active_handle::Type original_sel_mode;
   //Only needed for the triangulation
   Polyhedron* poly;
