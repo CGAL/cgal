@@ -857,7 +857,7 @@ public:
   /**
    * Returns the range of vertices in the region-of-interest.
    */
-  Roi_vertex_range roi_vertices() const
+  const Roi_vertex_range& roi_vertices() const
   {
     return roi;
   }
