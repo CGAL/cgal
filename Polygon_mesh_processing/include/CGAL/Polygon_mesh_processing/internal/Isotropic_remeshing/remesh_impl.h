@@ -101,7 +101,7 @@ namespace internal {
     typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
 
-    std::map<edge_descriptor, bool> border_edges;
+    std::set<edge_descriptor> border_edges;
     const PM* pmesh_ptr_;
 
   public:
@@ -117,23 +117,15 @@ namespace internal {
       std::vector<halfedge_descriptor> border;
       PMP::border_halfedges(faces, *pmesh_ptr_, std::back_inserter(border));
 
-      BOOST_FOREACH(edge_descriptor e, edges(*pmesh_ptr_))
-        border_edges.insert(std::make_pair(e, false));
-
       BOOST_FOREACH(halfedge_descriptor h, border)
-        border_edges[edge(h, *pmesh_ptr_)] = true;
+        border_edges.insert(edge(h, *pmesh_ptr_));
     }
 
     friend bool get(const Border_constraint_pmap<PM, FaceRange>& map,
                     const edge_descriptor& e)
     {
       CGAL_assertion(map.pmesh_ptr_!=NULL);
-      CGAL_assertion(!map.border_edges.empty());
-      typename std::map<edge_descriptor, bool>::const_iterator it
-        = map.border_edges.find(e);
-
-      CGAL_assertion(it != map.border_edges.end());
-      return it->second;
+      return map.border_edges.count(e)!=0;
     }
 
     friend void put(Border_constraint_pmap<PM, FaceRange>& map,
@@ -141,7 +133,10 @@ namespace internal {
                     const bool is)
     {
       CGAL_assertion(map.pmesh_ptr_ != NULL);
-      map.border_edges[e] = is;
+      if (is)
+        map.border_edges.insert(e);
+      else
+        map.border_edges.erase(e);
     }
   };
 
