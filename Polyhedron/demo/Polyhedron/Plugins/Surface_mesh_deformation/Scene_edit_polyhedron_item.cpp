@@ -486,11 +486,23 @@ void Scene_edit_polyhedron_item::remesh()
 
   std::set<face_descriptor> roi_facets;
   std::set<halfedge_descriptor> roi_border_halfedges;
+
+  std::set<vertex_descriptor> roi_vertices(
+    deform_mesh->roi_vertices().begin(),deform_mesh->roi_vertices().end());
+
   BOOST_FOREACH(vertex_descriptor v, deform_mesh->roi_vertices())
   {
     BOOST_FOREACH(face_descriptor fv, CGAL::faces_around_target(halfedge(v, g), g))
-      roi_facets.insert(fv);
+    {
+      bool add_face=true;
+      BOOST_FOREACH(vertex_descriptor vfd, CGAL::vertices_around_face(halfedge(fv,g),g))
+        if (roi_vertices.count(vfd)==0)
+          add_face=false;
+      if(add_face)
+        roi_facets.insert(fv);
+    }
   }
+
   CGAL::Polygon_mesh_processing::border_halfedges(roi_facets, g,
     std::inserter(roi_border_halfedges, roi_border_halfedges.begin()));
 
