@@ -507,6 +507,7 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     //Add center vertex
   case 8:
     //set the selection type to Facet
+    Q_EMIT updateInstructions("Select a facet.");
     set_active_handle_type(static_cast<Active_handle::Type>(1));
     break;
     //Remove center vertex
@@ -1083,21 +1084,28 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     case 8:
       BOOST_FOREACH(Facet_handle fh, selection)
       {
-        Polyhedron::Halfedge_around_facet_circulator hafc = fh->facet_begin();
-        Polyhedron::Halfedge_around_facet_circulator end = hafc;
-
-        double x(0), y(0), z(0);
-        int total(0);
-        CGAL_For_all(hafc, end)
+        if(fh->halfedge()->is_border())
         {
-          x+=hafc->vertex()->point().x(); y+=hafc->vertex()->point().y(); z+=hafc->vertex()->point().z();
-          total++;
+          tempInstructions("Facet not selected : Facet must not be null.",
+                           "Select a Facet.");
         }
-        Polyhedron::Halfedge_handle hhandle = CGAL::Euler::add_center_vertex(fh->facet_begin(), *poly);
-        if(total !=0)
-          hhandle->vertex()->point() = Polyhedron::Point_3(x/(double)total, y/(double)total, z/(double)total);
+        else
+        {
+          Polyhedron::Halfedge_around_facet_circulator hafc = fh->facet_begin();
+          Polyhedron::Halfedge_around_facet_circulator end = hafc;
 
+          double x(0), y(0), z(0);
+          int total(0);
+          CGAL_For_all(hafc, end)
+          {
+            x+=hafc->vertex()->point().x(); y+=hafc->vertex()->point().y(); z+=hafc->vertex()->point().z();
+            total++;
+          }
+          Polyhedron::Halfedge_handle hhandle = CGAL::Euler::add_center_vertex(fh->facet_begin(), *poly);
+          if(total !=0)
+            hhandle->vertex()->point() = Polyhedron::Point_3(x/(double)total, y/(double)total, z/(double)total);
 
+        }
       }
       break;
     }
