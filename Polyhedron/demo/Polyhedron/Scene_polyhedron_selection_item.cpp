@@ -562,6 +562,35 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       return any_change;
       break;
     }
+      //Join vertex
+    case 0:
+      BOOST_FOREACH(Vertex_handle vh, selection)
+      {
+        bool belong = false;
+        Halfedge_handle target = halfedge(to_join_ed, *polyhedron());
+        if(halfedge(to_join_ed, *polyhedron())->vertex() == vh)
+          belong = true;
+        if(halfedge(to_join_ed, *polyhedron())->opposite()->vertex() == vh)
+        {
+          belong = true;
+          target = halfedge(to_join_ed, *polyhedron())->opposite();
+        }
+        if(!belong)
+        {
+          tempInstructions("Vertices not joined : the vertex must belong to the selected edge.",
+                           "Select the vertex that will remain.");
+        }
+        else
+        {
+
+          CGAL::Euler::join_vertex(target, *polyhedron());
+          selected_edges.erase(to_join_ed);
+          //set to select vertex
+          set_active_handle_type(static_cast<Active_handle::Type>(0));
+          tempInstructions("Vertices joined.",
+                            "Select the edge with extremities you want to join.");        }
+      }
+      break;
       //Split vertex
     case 1:
     {
@@ -657,7 +686,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
                            "Select the second vertex .");
         else
         {
-          CGAL::Euler::split_face(h1,h2, *poly);
+          CGAL::Euler::split_face(h1,h2, *polyhedron());
           first_selected = false;
           selected_vertices.erase(s);
           selected_facets.erase(to_split_fh);
@@ -684,7 +713,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       {
         BOOST_FOREACH(Vertex_handle vh, selection)
         {
-          CGAL::Euler::add_edge(s,vh,*poly);
+          CGAL::Euler::add_edge(s,vh,*polyhedron());
         }
         first_selected = false;
         selected_vertices.erase(s);
@@ -706,7 +735,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           }
         }
         if(!has_hole)
-          CGAL::Euler::remove_center_vertex(vh->halfedge(),*poly);
+          CGAL::Euler::remove_center_vertex(vh->halfedge(),*polyhedron());
         else
         {
           tempInstructions("Vertex not selected : There must be no hole incident to the selection.",
@@ -753,23 +782,32 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
     case 0:
       BOOST_FOREACH(edge_descriptor ed, selection)
       {
-        if(halfedge(ed, *polyhedron())->facet()->facet_degree()<4
+        if((!halfedge(ed, *polyhedron())->is_border() &&
+            halfedge(ed, *polyhedron())->facet()->facet_degree()<4)
            ||
-           opposite(halfedge(ed, *polyhedron()), *polyhedron())->facet()->facet_degree()<4)
+           (!opposite(halfedge(ed, *polyhedron()), *polyhedron())->is_border() &&
+            opposite(halfedge(ed, *polyhedron()), *polyhedron())->facet()->facet_degree()<4)
+           )
         {
-          tempInstructions("Vertices not joined : the incident facets must have a degree of at least 4.",
+          tempInstructions("Edge not selected: the incident facets must have a degree of at least 4.",
                            "Select the edge with extremities you want to join.");
         }
         else
-          polyhedron()->join_vertex(halfedge(ed, *polyhedron()));
+        {
+          to_join_ed = ed;
+          selected_edges.insert(to_join_ed);
+          //set to select vertex
+          set_active_handle_type(static_cast<Active_handle::Type>(0));
+          Q_EMIT updateInstructions("Select the vertex that will remain.");
+        }
       }
       break;
       //Split edge
     case 2:
       BOOST_FOREACH(edge_descriptor ed, selection)
       {
-        Polyhedron::Point_3 a(halfedge(ed, *poly)->vertex()->point()),b(halfedge(ed, *poly)->opposite()->vertex()->point());
-        Polyhedron::Halfedge_handle hhandle = polyhedron()->split_edge(halfedge(ed, *poly));
+        Polyhedron::Point_3 a(halfedge(ed, *polyhedron())->vertex()->point()),b(halfedge(ed, *polyhedron())->opposite()->vertex()->point());
+        Polyhedron::Halfedge_handle hhandle = polyhedron()->split_edge(halfedge(ed, *polyhedron()));
         Polyhedron::Point_3 p((b.x()+a.x())/2.0, (b.y()+a.y())/2.0,(b.z()+a.z())/2.0);
 
         hhandle->vertex()->point() = p;
@@ -803,7 +841,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
         }
         else
         {
-          CGAL::Euler::collapse_edge(ed, *poly);
+          CGAL::Euler::collapse_edge(ed, *polyhedron());
           tempInstructions("Edge collapsed.",
                            "Select the edge you want to collapse.");
         }
@@ -1008,7 +1046,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
             if(iterator == hc)
             {
               found = true;
-              CGAL::Euler::add_face_to_border(t,hc, *poly);
+              CGAL::Euler::add_face_to_border(t,hc, *polyhedron());
               break;
             }
             iterator = next(iterator, *polyhedron());
@@ -1186,7 +1224,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
             x+=hafc->vertex()->point().x(); y+=hafc->vertex()->point().y(); z+=hafc->vertex()->point().z();
             total++;
           }
-          Polyhedron::Halfedge_handle hhandle = CGAL::Euler::add_center_vertex(fh->facet_begin(), *poly);
+          Polyhedron::Halfedge_handle hhandle = CGAL::Euler::add_center_vertex(fh->facet_begin(), *polyhedron());
           if(total !=0)
             hhandle->vertex()->point() = Polyhedron::Point_3(x/(double)total, y/(double)total, z/(double)total);
 

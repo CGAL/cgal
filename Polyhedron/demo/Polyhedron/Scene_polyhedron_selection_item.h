@@ -972,10 +972,7 @@ private:
   bool is_treated;
   Vertex_handle to_split_vh;
   Facet_handle to_split_fh;
-  edge_descriptor ed_for_add_1;
-  edge_descriptor ed_for_add_2;
-  Vertex_handle vh_for_add_1;
-  Vertex_handle vh_for_add_2;
+  edge_descriptor to_join_ed;
   Active_handle::Type original_sel_mode;
   //Only needed for the triangulation
   Polyhedron* poly;
