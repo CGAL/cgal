@@ -509,6 +509,7 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     break;
     //Remove center vertex
   case 9:
+    Q_EMIT updateInstructions("Select the vertex you want to remove.");
     //set the selection type to vertex
     set_active_handle_type(static_cast<Active_handle::Type>(0));
     break;
@@ -614,7 +615,24 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     case 9:
       BOOST_FOREACH(Vertex_handle vh, selection)
       {
-        CGAL::Euler::remove_center_vertex(vh->halfedge(),*poly);
+        bool has_hole = false;
+        Polyhedron::Halfedge_around_vertex_circulator hc = vh->vertex_begin();
+        Polyhedron::Halfedge_around_vertex_circulator end(hc);
+        CGAL_For_all(hc, end)
+        {
+          if(hc->is_border())
+          {
+            has_hole = true;
+            break;
+          }
+        }
+        if(!has_hole)
+          CGAL::Euler::remove_center_vertex(vh->halfedge(),*poly);
+        else
+        {
+          tempInstructions("Vertex not selected : There must be no hole incident to the selection.",
+                           "Select the vertex you want to remove.");
+        }
       }
       //Avoids a segfault in Scene_polyhedron_item::select()
       Q_EMIT skipEmits(true);
