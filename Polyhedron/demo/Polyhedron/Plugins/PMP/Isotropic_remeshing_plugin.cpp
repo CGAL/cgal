@@ -548,6 +548,10 @@ private:
             ui.smooth1D_checkbox, SLOT(setDisabled(bool)));
     connect(ui.splitEdgesOnly_checkbox, SIGNAL(toggled(bool)),
             ui.smooth1D_checkbox, SLOT(setDisabled(bool)));
+    connect(ui.constrainDuplicates_checkbox, SIGNAL(toggled(bool)),
+            ui.protect_checkbox, SLOT(setChecked(bool)));
+    connect(ui.constrainDuplicates_checkbox, SIGNAL(toggled(bool)),
+            ui.protect_checkbox, SLOT(setDisabled(bool)));
 
     //Set default parameters
     Scene_interface::Bbox bbox = poly_item != NULL ? poly_item->bbox()
