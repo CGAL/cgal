@@ -26,6 +26,10 @@
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+#include <CGAL/Timer.h>
+#endif
+
 namespace CGAL {
 
 namespace Polygon_mesh_processing {
@@ -102,6 +106,13 @@ void isotropic_remeshing(const FaceRange& faces
   using boost::get_param;
   using boost::choose_param;
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+  std::cout << std::endl;
+  CGAL::Timer t;
+  std::cout << "Remeshing parameters...";
+  std::cout.flush();
+#endif
+
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
 
   typedef typename GetVertexPointMap<PM, NamedParameters>::type VPMap;
@@ -149,9 +160,22 @@ void isotropic_remeshing(const FaceRange& faces
       msg.c_str());
   }
 
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+  t.stop();
+  std::cout << "\rRemeshing parameters done ("<< t.time() <<" sec)" << std::endl;
+  std::cout << "Remesher construction...";
+  std::cout.flush();
+  t.reset(); t.start();
+#endif
+
   typename internal::Incremental_remesher<PM, VPMap, GT, ECMap, VCMap, FPMap>
     remesher(pmesh, vpmap, protect, ecmap, vcmap, fpmap);
   remesher.init_remeshing(faces);
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+  t.stop();
+  std::cout << " done ("<< t.time() <<" sec)." << std::endl;
+#endif
 
   unsigned int nb_iterations = choose_param(get_param(np, number_of_iterations), 1);
   bool smoothing_1d = choose_param(get_param(np, smooth_along_features), false);
@@ -160,6 +184,7 @@ void isotropic_remeshing(const FaceRange& faces
   std::cout << std::endl;
   std::cout << "Remeshing (size = " << target_edge_length;
   std::cout << ", #iter = " << nb_iterations << ")..." << std::endl;
+  t.reset(); t.start();
 #endif
 
   for (unsigned int i = 0; i < nb_iterations; ++i)
@@ -182,8 +207,10 @@ void isotropic_remeshing(const FaceRange& faces
   remesher.update_constraints_property_map();
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
+  t.stop();
   std::cout << "Remeshing done (size = " << target_edge_length;
-  std::cout << ", #iter = " << nb_iterations << ")." << std::endl;
+  std::cout << ", #iter = " << nb_iterations;
+  std::cout << ", " << t.time() << " sec )." << std::endl;
 #endif
 }
 
