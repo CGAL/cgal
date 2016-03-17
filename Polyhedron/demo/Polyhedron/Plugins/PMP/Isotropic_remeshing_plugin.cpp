@@ -16,6 +16,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
 #include <boost/graph/graph_traits.hpp>
+#include <boost/unordered_set.hpp>
 #include <CGAL/property_map.h>
 
 #include <QTime>
@@ -49,6 +50,9 @@ class Polyhedron_demo_isotropic_remeshing_plugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
   typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
+
+  typedef boost::unordered_set<edge_descriptor, CGAL::Handle_hash_function>    Edge_set;
+  typedef Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> Edge_constrained_pmap;
 
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface)
@@ -85,6 +89,56 @@ public:
     return false;
   }
 
+
+
+  void detect_duplicates(const Polyhedron& pmesh,
+                         Edge_set& edges_to_protect)
+  {
+    typedef Polyhedron::Point_3 Point_3;
+    typedef std::pair<Point_3,Point_3> Segment_3;
+
+    std::map<Segment_3 ,edge_descriptor> duplicates;
+
+    BOOST_FOREACH(edge_descriptor ed, edges(pmesh)){
+      Point_3 p = source(ed,pmesh)->point(), q = target(ed,pmesh)->point();
+      Segment_3 s = (p < q)? std::make_pair(p,q): std::make_pair(q,p);
+
+      std::map<Segment_3 ,edge_descriptor>::iterator
+        it = duplicates.find(s);
+      if(it == duplicates.end()){
+        duplicates[s] = ed;
+      }else{
+        edges_to_protect.insert(it->second);
+        edges_to_protect.insert(ed);
+      }
+    }
+  }
+
+  void detect_duplicates(std::vector<Scene_polyhedron_item*>& selection,
+                         std::map<Scene_polyhedron_item*,Edge_set>& edges_to_protect)
+  {
+    typedef Polyhedron::Point_3 Point_3;
+    typedef std::pair<Point_3,Point_3> Segment_3;
+
+    std::map<Segment_3 ,std::pair<Scene_polyhedron_item*, edge_descriptor> > duplicates;
+
+    BOOST_FOREACH(Scene_polyhedron_item* poly_item, selection){
+      const Polyhedron& pmesh = *poly_item->polyhedron();
+      BOOST_FOREACH(edge_descriptor ed, edges(pmesh)){
+        Point_3 p = source(ed,pmesh)->point(), q = target(ed,pmesh)->point();
+        Segment_3 s = (p < q)? std::make_pair(p,q): std::make_pair(q,p);
+        std::map<Segment_3 ,std::pair<Scene_polyhedron_item*, edge_descriptor> >::iterator
+          it = duplicates.find(s);
+        if(it == duplicates.end()){
+          duplicates[s] = std::make_pair(poly_item,ed);
+        }else{
+          edges_to_protect[it->second.first].insert(it->second.second);
+          edges_to_protect[poly_item].insert(ed);
+        }
+      }
+    }
+  }
+
 public Q_SLOTS:
   void isotropic_remeshing()
   {
@@ -116,6 +170,7 @@ public Q_SLOTS:
         return;
       }
       bool edges_only = ui.splitEdgesOnly_checkbox->isChecked();
+      bool constrain_duplicates = ui.constrainDuplicates_checkbox->isChecked();
       double target_length = ui.edgeLength_dspinbox->value();
       unsigned int nb_iter = ui.nbIterations_spinbox->value();
       bool protect = ui.protect_checkbox->isChecked();
@@ -134,6 +189,12 @@ public Q_SLOTS:
       const Polyhedron& pmesh = (poly_item != NULL)
         ? *poly_item->polyhedron()
         : *selection_item->polyhedron();
+
+      Edge_set edges_to_protect;
+      if(constrain_duplicates){
+        detect_duplicates(pmesh, edges_to_protect);
+      }
+ 
       boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
         = get(CGAL::face_index, pmesh);
       unsigned int id = 0;
@@ -176,13 +237,16 @@ public Q_SLOTS:
         }
         else
         {
+     Edge_constrained_pmap ecm(edges_to_protect);
+     CGAL::OR_property_map<Edge_constrained_pmap, Edge_constrained_pmap> etp(ecm, selection_item->constrained_edges_pmap());
+
          CGAL::Polygon_mesh_processing::isotropic_remeshing(
            selection_item->selected_facets
          , target_length
          , *selection_item->polyhedron()
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
-         .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+         .edge_is_constrained_map(etp)
          .smooth_along_features(smooth_features)
          .vertex_is_constrained_map(selection_item->constrained_vertices_pmap()));
         }
@@ -214,12 +278,14 @@ public Q_SLOTS:
         }
         else
         {
+        Scene_polyhedron_selection_item::Is_constrained_map<Edge_set > ecm(edges_to_protect);
         CGAL::Polygon_mesh_processing::isotropic_remeshing(
            faces(*poly_item->polyhedron())
          , target_length
          , *poly_item->polyhedron()
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
+          .edge_is_constrained_map(ecm)
          .smooth_along_features(smooth_features));
         }
         poly_item->invalidateOpenGLBuffers();
@@ -238,7 +304,7 @@ public Q_SLOTS:
   void isotropic_remeshing_of_several_polyhedra()
   {
     // Remeshing parameters
-    bool edges_only = false;
+    bool edges_only = false, constrain_duplicates = false;
     double target_length = 0.;
     unsigned int nb_iter = 1;
     bool protect = false;
@@ -274,6 +340,7 @@ public Q_SLOTS:
         }
 
         edges_only = ui.splitEdgesOnly_checkbox->isChecked();
+        constrain_duplicates = ui.constrainDuplicates_checkbox->isChecked();
         target_length = ui.edgeLength_dspinbox->value();
         nb_iter = ui.nbIterations_spinbox->value();
         protect = ui.protect_checkbox->isChecked();
@@ -293,31 +360,11 @@ public Q_SLOTS:
     int total_time = 0;
 
 
-     typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
-      std::map<Scene_polyhedron_item*,std::set<edge_descriptor> > edges_to_protect;
+    //     typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
+      std::map<Scene_polyhedron_item*,Edge_set > edges_to_protect;
 
-    if(selection.size()>1){
-      typedef Polyhedron::Point_3 Point_3;
-      typedef std::pair<Point_3,Point_3> Segment_3;
-
-      std::map<Segment_3 ,std::pair<Scene_polyhedron_item*, edge_descriptor> > duplicates;
-
-      BOOST_FOREACH(Scene_polyhedron_item* poly_item, selection){
-        const Polyhedron& pmesh = *poly_item->polyhedron();
-        BOOST_FOREACH(edge_descriptor ed, edges(pmesh)){
-          Point_3 p = source(ed,pmesh)->point(), q = target(ed,pmesh)->point();
-          Segment_3 s = (p < q)? std::make_pair(p,q): std::make_pair(q,p); 
-          
-          std::map<Segment_3 ,std::pair<Scene_polyhedron_item*, edge_descriptor> >::iterator 
-            it = duplicates.find(s);
-          if(it == duplicates.end()){
-            duplicates[s] = std::make_pair(poly_item,ed);
-          }else{
-            edges_to_protect[it->second.first].insert(it->second.second); 
-            edges_to_protect[poly_item].insert(ed);
-          }
-        }
-      }
+    if(constrain_duplicates){
+      detect_duplicates(selection, edges_to_protect);
     }
 
 #ifdef CGAL_LINKED_WITH_TBB
@@ -375,7 +422,7 @@ private:
 
   protected:
     void remesh(Scene_polyhedron_item* poly_item,
-                std::set<edge_descriptor>& edges_to_protect) const
+                Edge_set& edges_to_protect) const
     {
       //fill face_index property map
       boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
@@ -402,14 +449,14 @@ private:
       }
       else
       {
-        Scene_polyhedron_selection_item::Is_constrained_map<std::set<edge_descriptor> > ecm(edges_to_protect);
+        Scene_polyhedron_selection_item::Is_constrained_map<Edge_set > ecm(edges_to_protect);
         CGAL::Polygon_mesh_processing::isotropic_remeshing(
             faces(*poly_item->polyhedron())
           , target_length_
           , *poly_item->polyhedron()
           , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter_)
           .protect_constraints(protect_)
-            .edge_is_constrained_map(ecm)
+          .edge_is_constrained_map(ecm)
           .smooth_along_features(smooth_features_));
       }
     }
@@ -437,7 +484,7 @@ private:
     {}
 
     void operator()(Scene_polyhedron_item* poly_item,
-                    std::set<edge_descriptor>& edges_to_protect) const
+                    Edge_set& edges_to_protect) const
     {
       remesh(poly_item, edges_to_protect);
     }
@@ -449,13 +496,13 @@ private:
     : RemeshFunctor
   {
     const std::vector<Scene_polyhedron_item*>& selection_;
-    std::map<Scene_polyhedron_item*,std::set<edge_descriptor> >& edges_to_protect_;
+    std::map<Scene_polyhedron_item*,Edge_set >& edges_to_protect_;
 
   public:
     // Constructor
     Remesh_polyhedron_item_for_parallel_for(
       const std::vector<Scene_polyhedron_item*>& selection,
-      std::map<Scene_polyhedron_item*,std::set<edge_descriptor> >& edges_to_protect,
+      std::map<Scene_polyhedron_item*,Edge_set >& edges_to_protect,
       const bool edges_only,
       const double target_length,
       const unsigned int nb_iter,
