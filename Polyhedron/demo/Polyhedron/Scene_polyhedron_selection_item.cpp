@@ -659,6 +659,10 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           first_selected = false;
           selected_vertices.erase(s);
           selected_facets.erase(to_split_fh);
+          //reset selection type to Facet
+          set_active_handle_type(static_cast<Active_handle::Type>(1));
+          tempInstructions("Face split.",
+                           "Select a facet.");
         }
       }
       break;
