@@ -30,7 +30,7 @@
 #include <algorithm>
 #include <queue>
 #include <sstream>
-#undef CGAL_LINKED_WITH_TBB
+
 #ifdef CGAL_LINKED_WITH_TBB
 #include "tbb/parallel_for.h"
 #include "tbb/blocked_range.h"
@@ -47,6 +47,8 @@ class Polyhedron_demo_isotropic_remeshing_plugin :
   Q_OBJECT
   Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
+
+  typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
 
 public:
   void init(QMainWindow* mainWindow, Scene_interface* scene_interface)
@@ -290,19 +292,8 @@ public Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     int total_time = 0;
 
-#ifdef CGAL_LINKED_WITH_TBB
-    QTime time;
-    time.start();
 
-      tbb::parallel_for(
-        tbb::blocked_range<std::size_t>(0, selection.size()),
-        Remesh_polyhedron_item_for_parallel_for<Remesh_polyhedron_item>(
-          selection, edges_only, target_length, nb_iter, protect, smooth_features));
-
-    total_time = time.elapsed();
-
-#else
-      typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
+     typedef boost::graph_traits<Polyhedron>::edge_descriptor edge_descriptor;
       std::map<Scene_polyhedron_item*,std::set<edge_descriptor> > edges_to_protect;
 
     if(selection.size()>1){
@@ -322,7 +313,6 @@ public Q_SLOTS:
           if(it == duplicates.end()){
             duplicates[s] = std::make_pair(poly_item,ed);
           }else{
-            std::cerr << p << "   "<<   q  << std::endl;
             edges_to_protect[it->second.first].insert(it->second.second); 
             edges_to_protect[poly_item].insert(ed);
           }
@@ -330,6 +320,19 @@ public Q_SLOTS:
       }
     }
 
+#ifdef CGAL_LINKED_WITH_TBB
+    QTime time;
+    time.start();
+
+      tbb::parallel_for(
+        tbb::blocked_range<std::size_t>(0, selection.size()),
+        Remesh_polyhedron_item_for_parallel_for<Remesh_polyhedron_item>(
+                                                                        selection, edges_to_protect, edges_only, target_length, nb_iter, protect, smooth_features));
+
+    total_time = time.elapsed();
+
+#else
+ 
     Remesh_polyhedron_item remesher(edges_only,
       target_length, nb_iter, protect, smooth_features);
     BOOST_FOREACH(Scene_polyhedron_item* poly_item, selection)
@@ -399,7 +402,6 @@ private:
       }
       else
       {
-        std::cerr << edges_to_protect.size() << " edges to protect" <<std::endl;
         Scene_polyhedron_selection_item::Is_constrained_map<std::set<edge_descriptor> > ecm(edges_to_protect);
         CGAL::Polygon_mesh_processing::isotropic_remeshing(
             faces(*poly_item->polyhedron())
@@ -447,34 +449,35 @@ private:
     : RemeshFunctor
   {
     const std::vector<Scene_polyhedron_item*>& selection_;
+    std::map<Scene_polyhedron_item*,std::set<edge_descriptor> >& edges_to_protect_;
 
   public:
     // Constructor
     Remesh_polyhedron_item_for_parallel_for(
       const std::vector<Scene_polyhedron_item*>& selection,
+      std::map<Scene_polyhedron_item*,std::set<edge_descriptor> >& edges_to_protect,
       const bool edges_only,
       const double target_length,
       const unsigned int nb_iter,
       const bool protect,
       const bool smooth_features)
       : RemeshFunctor(edges_only, target_length, nb_iter, protect, smooth_features)
-      , selection_(selection)
-    {
-      ;
-    }
+      , selection_(selection), edges_to_protect_(edges_to_protect)
+    {}
 
     // Constructor
     Remesh_polyhedron_item_for_parallel_for(
       const Remesh_polyhedron_item_for_parallel_for &remesh)
       : RemeshFunctor(remesh)
       , selection_(remesh.selection_)
+      , edges_to_protect_(remesh.edges_to_protect_)
     {}
 
     // operator()
     void operator()(const tbb::blocked_range<size_t>& r) const
     {
       for (size_t i = r.begin(); i != r.end(); ++i)
-        RemeshFunctor::remesh(selection_[i]);
+        RemeshFunctor::remesh(selection_[i], edges_to_protect_[selection_[i]]);
     }
   };
 #endif
