@@ -613,7 +613,9 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
     const QPoint& p = viewer->mapFromGlobal(QCursor::pos());
     bool need_repaint = activate_closest_manipulated_frame(p.x(), p.y());
 
-    if (ctrl_released_now && ui_widget->RemeshingCheckBox->isChecked()){
+    if (!ui_widget->ActivatePivotingCheckBox->isChecked() &&
+        ctrl_released_now && ui_widget->RemeshingCheckBox->isChecked())
+    {
       remesh();
     }
 
