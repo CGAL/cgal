@@ -83,7 +83,7 @@ QList<Kernel::Triangle_3> triangulate_primitive(Polyhedron::Facet_iterator fit,
   //check if normal contains NaN values
   if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
   {
-    qDebug()<<"Warning : normal is not valid. Primitive not displayed";
+    qDebug()<<"Warning in triangulation of the selection item: normal contains NaN values and is not valid.";
     return QList<Kernel::Triangle_3>();
   }
   P_traits cdt_traits(normal);

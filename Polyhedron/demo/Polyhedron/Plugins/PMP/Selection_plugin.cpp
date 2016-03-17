@@ -94,7 +94,6 @@ public:
     connect(ui_widget.Insertion_radio_button, SIGNAL(toggled(bool)), this, SLOT(on_Insertion_radio_button_toggled(bool)));
     connect(ui_widget.Brush_size_spin_box, SIGNAL(valueChanged(int)), this, SLOT(on_Brush_size_spin_box_changed(int)));
     connect(ui_widget.validateButton, SIGNAL(clicked()), this, SLOT(on_validateButton_clicked()));
-    connect(ui_widget.validate_editionButton, SIGNAL(clicked()), this, SLOT(on_validate_editionButton_clicked()));
     connect(ui_widget.Expand_reduce_button, SIGNAL(clicked()), this, SLOT(on_Expand_reduce_button_clicked()));
     connect(ui_widget.Select_sharp_edges_button, SIGNAL(clicked()), this, SLOT(on_Select_sharp_edges_button_clicked()));
     connect(ui_widget.modeBox, SIGNAL(currentIndexChanged(int)), this, SLOT(on_ModeBox_changed(int)));
@@ -378,13 +377,13 @@ public Q_SLOTS:
     //Selection mode
     case 0:
       ui_widget.selection_groupBox->setEnabled(true);
-      ui_widget.validate_editionButton->setEnabled(true);
+      ui_widget.edition_groupBox->setEnabled(false);
       Q_EMIT set_operation_mode(-1);
       break;
       //Edition mode
     case 1:
       ui_widget.selection_groupBox->setEnabled(false);
-      ui_widget.validate_editionButton->setEnabled(false);
+      ui_widget.edition_groupBox->setEnabled(true);
       Q_EMIT save_handleType();
       Q_EMIT set_operation_mode(ui_widget.editionBox->currentIndex());
       break;
