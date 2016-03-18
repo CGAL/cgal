@@ -605,13 +605,13 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     break;
     //Join vertex
   case 0:
-    Q_EMIT updateInstructions("Select the edge with extremities you want to join.");
+    Q_EMIT updateInstructions("Select the edge with extremities you want to join. (1/2)");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
     break;
     //Split vertex
   case 1:
-    Q_EMIT updateInstructions("Select the vertex you want to split.");
+    Q_EMIT updateInstructions("Select the vertex you want to split. (1/3)");
     //set the selection type to Vertex
     set_active_handle_type(static_cast<Active_handle::Type>(0));
     break;
@@ -629,7 +629,7 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     break;
     //Split face
   case 4:
-    Q_EMIT updateInstructions("Select the facet you want to split.");
+    Q_EMIT updateInstructions("Select the facet you want to split. (1/3)");
     //set the selection type to Facet
     set_active_handle_type(static_cast<Active_handle::Type>(1));
     break;
@@ -659,13 +659,13 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     break;
     //Add vertex and face to border
   case 9:
-    Q_EMIT updateInstructions("Select a border edge.");
+    Q_EMIT updateInstructions("Select a border edge. (1/2)");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
     break;
     //Add face to border
   case 10:
-    Q_EMIT updateInstructions("Select a border edge.");
+    Q_EMIT updateInstructions("Select a border edge. (1/2)");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
     break;
@@ -715,7 +715,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
         if(!belong)
         {
           tempInstructions("Vertices not joined : the vertex must belong to the selected edge.",
-                           "Select the vertex that will remain.");
+                           "Select the vertex that will remain. (2/2)");
         }
         else
         {
@@ -726,7 +726,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           //set to select edge
           set_active_handle_type(static_cast<Active_handle::Type>(2));
           tempInstructions("Vertices joined.",
-                            "Select the edge with extremities you want to join.");
+                            "Select the edge with extremities you want to join. (1/2)");
           invalidateOpenGLBuffers();
           polyhedron_item()->invalidateOpenGLBuffers();
         }
@@ -742,7 +742,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       //set to select facet
       set_active_handle_type(static_cast<Active_handle::Type>(1));
       invalidateOpenGLBuffers();
-      Q_EMIT updateInstructions("Select first facet.");
+      Q_EMIT updateInstructions("Select first facet. (2/3)");
       break;
     }
       //Split face
@@ -771,14 +771,14 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           if(!found_h1)
           {
             tempInstructions("Vertex not selected : The vertex is not on the face.",
-                             "Select the first vertex .");
+                             "Select the first vertex. (2/3)");
           }
           else
           {
             first_selected = true;
             temp_selected_vertices.insert(s);
             invalidateOpenGLBuffers();
-            Q_EMIT updateInstructions("Select the second vertex");
+            Q_EMIT updateInstructions("Select the second vertex (3/3)");
           }
         }
       }
@@ -1040,12 +1040,12 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
             temp_selected_edges.insert(edge(t, *polyhedron()));
             temp_selected_vertices.insert(t->vertex());
             invalidateOpenGLBuffers();
-            Q_EMIT updateInstructions("Select second edge.");
+            Q_EMIT updateInstructions("Select second edge. (2/2)");
           }
           else
           {
             tempInstructions("Edge not selected : no border found.",
-                             "Select a border edge.");
+                             "Select a border edge. (1/2)");
           }
         }
       }
@@ -1153,7 +1153,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
             first_selected = true;
             temp_selected_edges.insert(edge(t, *polyhedron()));
             invalidateOpenGLBuffers();
-            Q_EMIT updateInstructions("Select second edge.");
+            Q_EMIT updateInstructions("Select second edge. (2/2)");
           }
           else
           {
@@ -1213,18 +1213,18 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
         if(is_equal)
         {
           tempInstructions("Edge not selected : halfedges must be different.",
-                           "Select the second edge.");
+                           "Select the second edge. (2/2)");
         }
 
         else if(is_next)
         {
           tempInstructions("Edge not selected : halfedges must not be adjacent.",
-                           "Select the second edge.");
+                           "Select the second edge. (2/2)");
         }
         else if(!is_border or !found)
         {
           tempInstructions("Edge not selected : no shared border found.",
-                           "Select the second edge.");
+                           "Select the second edge. (2/2)");
         }
         else
         {
@@ -1234,7 +1234,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           invalidateOpenGLBuffers();
           polyhedron_item()->invalidateOpenGLBuffers();
           tempInstructions("Face added.",
-                           "Select a border edge.");
+                           "Select a border edge. (1/2)");
         }
       }
       break;
@@ -1295,11 +1295,11 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
             first_selected = true;
             temp_selected_facets.insert(fh);
             invalidateOpenGLBuffers();
-            Q_EMIT updateInstructions("Select second facet.");
+            Q_EMIT updateInstructions("Select second facet. (3/3)");
           }
           else
             tempInstructions("Facet not selected : no valid halfedge",
-                             "Select first facet");
+                             "Select first facet(2/3)");
         }
       }
       //call the function with point and facets.
@@ -1339,7 +1339,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
             //reset selection mode
             set_active_handle_type(static_cast<Active_handle::Type>(0));
             poly_item->invalidateOpenGLBuffers();
-            tempInstructions("Vertex splitted.", "Select the vertex you want splitted");
+            tempInstructions("Vertex splitted.", "Select the vertex you want splitted (1/3)");
           }
           else if(h1 == h2)
           {
@@ -1362,7 +1362,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
         invalidateOpenGLBuffers();
         //set to select vertex
         set_active_handle_type(static_cast<Active_handle::Type>(0));
-        Q_EMIT updateInstructions("Select first vertex.");
+        Q_EMIT updateInstructions("Select first vertex. (2/3)");
         break;
       }
       break;
@@ -1373,7 +1373,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
         if(fh->halfedge()->is_border())
         {
           tempInstructions("Facet not selected : Facet must not be null.",
-                           "Select a Facet.");
+                           "Select a Facet. (1/3)");
         }
         else
         {
