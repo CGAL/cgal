@@ -415,26 +415,23 @@ public Q_SLOTS:
      //Split face
    case 4:
      break;
-     //Add edge
+     //Collapse edge
    case 5:
      break;
-     //Collapse edge
+     //Flip edge
    case 6:
      break;
-     //Flip edge
+     //Add center vertex
    case 7:
      break;
-     //Add center vertex
+     //Remove center vertex
    case 8:
      break;
-     //Remove center vertex
+     //Add vertex and face to border
    case 9:
      break;
-     //Add vertex and face to border
-   case 10:
-     break;
      //Add face to border
-   case 11:
+   case 10:
      break;
    }
   }

@@ -633,44 +633,38 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     //set the selection type to Facet
     set_active_handle_type(static_cast<Active_handle::Type>(1));
     break;
-    //Add edge
-  case 5:
-    Q_EMIT updateInstructions("Select the first vertex.");
-    //set the selection type to Vertex
-    set_active_handle_type(static_cast<Active_handle::Type>(0));
-    break;
     //Collapse edge
-  case 6:
+  case 5:
     Q_EMIT updateInstructions("Select the edge you want to collapse.");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
     break;
     //Flip edge
-  case 7:
+  case 6:
     Q_EMIT updateInstructions("Select the edge you want to flip.");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
     break;
     //Add center vertex
-  case 8:
+  case 7:
     Q_EMIT updateInstructions("Select a facet.");
     //set the selection type to Facet
     set_active_handle_type(static_cast<Active_handle::Type>(1));
     break;
     //Remove center vertex
-  case 9:
+  case 8:
     Q_EMIT updateInstructions("Select the vertex you want to remove.");
     //set the selection type to vertex
     set_active_handle_type(static_cast<Active_handle::Type>(0));
     break;
     //Add vertex and face to border
-  case 10:
+  case 9:
     Q_EMIT updateInstructions("Select a border edge.");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
     break;
     //Add face to border
-  case 11:
+  case 10:
     Q_EMIT updateInstructions("Select a border edge.");
     //set the selection type to Edge
     set_active_handle_type(static_cast<Active_handle::Type>(2));
@@ -850,34 +844,8 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       }
       break;
     }
-    //Add edge
-    case 5:
-    {
-      static Vertex_handle s;
-      if(!first_selected)
-      {
-        BOOST_FOREACH(Vertex_handle vh, selection)
-        {
-          s = vh;
-          first_selected = true;
-        }
-        temp_selected_vertices.insert(s);
-      }
-      else
-      {
-        BOOST_FOREACH(Vertex_handle vh, selection)
-        {
-          CGAL::Euler::add_edge(s,vh,*polyhedron());
-          polyhedron_item()->invalidateOpenGLBuffers();
-        }
-        first_selected = false;
-        temp_selected_vertices.erase(s);
-      }
-      invalidateOpenGLBuffers();
-      break;
-    }
       //Remove center vertex
-    case 9:
+    case 8:
       BOOST_FOREACH(Vertex_handle vh, selection)
       {
         bool has_hole = false;
@@ -903,7 +871,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
         }
       }
       break;
-      //Add vertex and face to border
 
     }
   }
@@ -1008,7 +975,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
       }
       break;
       //Collapse edge
-    case 6:
+    case 5:
       BOOST_FOREACH(edge_descriptor ed, selection)
       {
         if(!is_triangle_mesh(*polyhedron()))
@@ -1031,7 +998,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
       }
       break;
       //Flip edge
-    case 7:
+    case 6:
       BOOST_FOREACH(edge_descriptor ed, selection)
       {
         //check preconditions
@@ -1047,7 +1014,8 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
         }
       }
       break;
-    case 10:
+      //Add vertex and face to border
+    case 9:
     {
       static Halfedge_handle t;
       if(!first_selected)
@@ -1161,7 +1129,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
       break;
     }
       //Add face to border
-    case 11:
+    case 10:
     {
       static Halfedge_handle t;
       if(!first_selected)
@@ -1399,7 +1367,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       }
       break;
       //Add center vertex
-    case 8:
+    case 7:
       BOOST_FOREACH(Facet_handle fh, selection)
       {
         if(fh->halfedge()->is_border())
