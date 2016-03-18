@@ -146,6 +146,8 @@ join_vertex(typename boost::graph_traits<Graph>::halfedge_descriptor h,
   set_halfedge(v, gprev, g);
   // internal::set_constant_vertex_is_border(g, v);
 
+  set_halfedge(face(gprev,g),gprev,g);
+  set_halfedge(face(hprev,g),hprev,g);
   remove_edge(edge(h, g), g);
   remove_vertex(v_to_remove, g);
 
