@@ -101,7 +101,7 @@ struct property_map<OpenMesh::TriMesh_ArrayKernelT<K>, boost::vertex_point_t >
 
 } // namespace boost
 
-namespace boost {
+namespace OpenMesh {
 
 
 template <typename K>
@@ -188,7 +188,7 @@ put(boost::vertex_point_t p, OpenMesh::TriMesh_ArrayKernelT<K>& g,
 }
 
 
-} // namespace boost
+} // namespace OpenMesh
 
 
 
