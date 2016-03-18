@@ -1420,4 +1420,5 @@ void Scene_polyhedron_selection_item::on_Ctrlz_pressed()
   temp_selected_facets.clear();
   are_temp_buffers_filled = false;
   set_operation_mode(operation_mode);
+  Q_EMIT itemChanged();
 }
