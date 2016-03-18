@@ -187,13 +187,13 @@ public:
     {
         original_sel_mode = static_cast<Active_handle::Type>(0);
         this ->operation_mode = -1;
-        for(int i=0; i<3; i++)
+        for(int i=0; i<6; i++)
         {
             addVaos(i);
             vaos[i]->create();
         }
 
-        for(int i=0; i<7; i++)
+        for(int i=0; i<10; i++)
         {
             buffers[i].create();
         }
@@ -201,7 +201,9 @@ public:
         nb_points = 0;
         nb_lines = 0;
         this->setColor(facet_color);
+        first_selected = false;
         is_treated = false;
+        poly_need_update = false;
     }
 
   Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
@@ -213,20 +215,22 @@ public:
         nb_points = 0;
         nb_lines = 0;
 
-        for(int i=0; i<3; i++)
+        for(int i=0; i<6; i++)
         {
             addVaos(i);
             vaos[i]->create();
         }
 
-        for(int i=0; i<7; i++)
+        for(int i=0; i<8; i++)
         {
             buffers[i].create();
         }
         init(poly_item, mw);
         this->setColor(facet_color);
         invalidateOpenGLBuffers();
+        first_selected = false;
         is_treated = false;
+        poly_need_update = false;
     }
 
    ~Scene_polyhedron_selection_item()
@@ -244,7 +248,7 @@ protected:
       SLOT(selected(const std::set<Polyhedron::Facet_handle>&)));
     connect(&k_ring_selector, SIGNAL(selected(const std::set<edge_descriptor>&)), this,
       SLOT(selected(const std::set<edge_descriptor>&)));
-    connect(this, SIGNAL(skipEmits(bool)), poly_item, SLOT(set_skip_emits(bool)));
+    connect(poly_item, SIGNAL(selection_done()), this, SLOT(update_poly()));
 
     connect(&k_ring_selector, SIGNAL(endSelection()), this,SLOT(endSelection()));
     connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
@@ -798,10 +802,15 @@ public:
 
 Q_SIGNALS:
   void updateInstructions(QString);
-  void skipEmits(bool);
   void simplicesSelected(CGAL::Three::Scene_item*);
 
 public Q_SLOTS:
+  void update_poly()
+  {
+    if(poly_need_update)
+      poly_item->invalidateOpenGLBuffers();
+  }
+  void on_Ctrlz_pressed();
   void emitTempInstruct();
   void resetIsTreated() { is_treated = false;}
   void save_handleType()
@@ -816,6 +825,7 @@ public Q_SLOTS:
     // do not use decorator function, which calls changed on poly_item which cause deletion of AABB
       //  poly_item->invalidateOpenGLBuffers();
         are_buffers_filled = false;
+        are_temp_buffers_filled = false;
         poly = polyhedron();
         compute_bbox();
   }
@@ -842,6 +852,14 @@ public Q_SLOTS:
 protected:
   bool eventFilter(QObject* /*target*/, QEvent * gen_event)
   {
+    if(gen_event->type() == QEvent::KeyPress
+            && static_cast<QKeyEvent*>(gen_event)->key()==Qt::Key_Z)
+    {
+      QKeyEvent *keyEvent = static_cast<QKeyEvent*>(gen_event);
+      if(keyEvent->modifiers().testFlag(Qt::ControlModifier))
+        on_Ctrlz_pressed();
+    }
+
     if(!visible() || !k_ring_selector.state.shift_pressing) { return false; }
     if(gen_event->type() == QEvent::Wheel)
     {
@@ -962,11 +980,18 @@ public:
   Selection_set_vertex selected_vertices;
   Selection_set_facet  selected_facets;
   Selection_set_edge   selected_edges; // stores one halfedge for each pair (halfedge with minimum address)
+
+  Selection_set_vertex temp_selected_vertices;
+  Selection_set_facet  temp_selected_facets;
+  Selection_set_edge   temp_selected_edges; // stores one halfedge for each pair (halfedge with minimum address)
 // 
   QColor vertex_color, facet_color, edge_color;
 
 private:
+  bool poly_need_update;
+  mutable bool are_temp_buffers_filled;
   //Specifies Selection/edition mode
+  bool first_selected;
   int operation_mode;
   QString m_temp_instructs;
   bool is_treated;
@@ -983,14 +1008,28 @@ private:
   mutable std::size_t nb_facets;
   mutable std::size_t nb_points;
   mutable std::size_t nb_lines;
+
+  mutable std::vector<float> positions_temp_facets;
+  mutable std::vector<float> temp_normals;
+  mutable std::vector<float> positions_temp_lines;
+  mutable std::vector<float> positions_temp_points;
+  mutable std::size_t nb_temp_facets;
+  mutable std::size_t nb_temp_points;
+  mutable std::size_t nb_temp_lines;
+
   mutable QOpenGLShaderProgram *program;
   using CGAL::Three::Scene_item::initialize_buffers;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
+  void initialize_temp_buffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_elements() const;
+  void compute_any_elements(std::vector<float> &p_facets, std::vector<float> &p_lines, std::vector<float> &p_points, std::vector<float> &p_normals,
+                            const Selection_set_vertex& p_sel_vertex, const Selection_set_facet &p_sel_facet, const Selection_set_edge &p_sel_edges) const;
+  void compute_temp_elements() const;
 
   template<typename FaceNormalPmap>
-  void triangulate_facet(Facet_handle,
-    const FaceNormalPmap&) const;
+  void triangulate_facet(Facet_handle, const FaceNormalPmap&,
+                         std::vector<float> &p_facets,std::vector<float> &p_normals) const;
   void tempInstructions(QString s1, QString s2);
 };
+
 #endif

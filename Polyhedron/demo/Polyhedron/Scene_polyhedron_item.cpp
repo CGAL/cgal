@@ -169,7 +169,6 @@ Input_facets_AABB_tree* get_aabb_tree(Scene_polyhedron_item* item)
           new Input_facets_AABB_tree()/*faces(*poly).first,
                                                                faces(*poly).second,
                                                                *poly)*/;
-
       typedef Polyhedron::Traits	    Kernel;
       typedef Kernel::Point_3	    Point;
       typedef Kernel::Vector_3	    Vector;
@@ -720,7 +719,6 @@ Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
     nb_facets = 0;
     nb_lines = 0;
     nb_f_lines = 0;
-    skip_emits = false;
     init();
     invalidateOpenGLBuffers();
 }
@@ -741,7 +739,6 @@ Scene_polyhedron_item::Scene_polyhedron_item(const Polyhedron& p)
     nb_facets = 0;
     nb_lines = 0;
     nb_f_lines = 0;
-    skip_emits = false;
     invalidateOpenGLBuffers();
 }
 
@@ -1141,6 +1138,7 @@ Scene_polyhedron_item::select(double orig_x,
                               double dir_y,
                               double dir_z)
 {
+  void* vertex_to_emit;
   if(facet_picking_m) {
     typedef Input_facets_AABB_tree Tree;
     typedef Tree::Object_and_primitive_id Object_and_primitive_id;
@@ -1178,7 +1176,6 @@ Scene_polyhedron_item::select(double orig_x,
         }
         if(closest_point) {
           Polyhedron::Facet_handle selected_fh = closest->second;
-
           // The computation of the nearest vertex may be costly.  Only
           // do it if some objects are connected to the signal
           // 'selected_vertex'.
@@ -1201,26 +1198,30 @@ Scene_polyhedron_item::select(double orig_x,
                 nearest_v = v;
               }
             }
-            Q_EMIT selected_vertex((void*)(&*nearest_v));
+          vertex_to_emit = (void*)(&*nearest_v);
           }
 
-          if(!skip_emits &&(QObject::receivers(SIGNAL(selected_edge(void*))) > 0
-                            || QObject::receivers(SIGNAL(selected_halfedge(void*))) > 0))
+          if(QObject::receivers(SIGNAL(selected_edge(void*))) > 0
+                            || QObject::receivers(SIGNAL(selected_halfedge(void*))) > 0)
           {
             Polyhedron::Halfedge_around_facet_circulator
                 he_it = selected_fh->facet_begin(),
                 around_end = he_it;
 
             Polyhedron::Halfedge_handle nearest_h = he_it;
-            //segfault when performing "remove_center_vertex
             Kernel::FT sq_dist = CGAL::squared_distance(*closest_point,
-                                                        Kernel::Segment_3(he_it->vertex()->point(), he_it->opposite()->vertex()->point()));
+                                                        Kernel::Segment_3(he_it->vertex()->point(),
+                                                                          he_it->opposite()->
+                                                                          vertex()->
+                                                                          point()));
 
             while(++he_it != around_end)
             {
-
               Kernel::FT new_sq_dist = CGAL::squared_distance(*closest_point,
-                                                              Kernel::Segment_3(he_it->vertex()->point(), he_it->opposite()->vertex()->point()));
+                                                              Kernel::Segment_3(he_it->vertex()->point(),
+                                                                                he_it->opposite()->
+                                                                                vertex()->
+                                                                                point()));
               if(new_sq_dist < sq_dist) {
                 sq_dist = new_sq_dist;
                 nearest_h = he_it;
@@ -1230,9 +1231,9 @@ Scene_polyhedron_item::select(double orig_x,
             Q_EMIT selected_halfedge((void*)(&*nearest_h));
             Q_EMIT selected_edge((void*)(std::min)(&*nearest_h, &*nearest_h->opposite()));
           }
-          set_skip_emits(false);
-
+            Q_EMIT selected_vertex(vertex_to_emit);
           Q_EMIT selected_facet((void*)(&*selected_fh));
+
           if(erase_next_picked_facet_m) {
             polyhedron()->erase_facet(selected_fh->halfedge());
             polyhedron()->normalize_border();
@@ -1245,6 +1246,7 @@ Scene_polyhedron_item::select(double orig_x,
     }
   }
   Base::select(orig_x, orig_y, orig_z, dir_x, dir_y, dir_z);
+  Q_EMIT selection_done();
 }
 
 void Scene_polyhedron_item::update_vertex_indices()
@@ -1426,9 +1428,4 @@ CGAL::Three::Scene_item::Header_data Scene_polyhedron_item::header() const
   data.titles.append(QString("Maximum"));
   data.titles.append(QString("Average"));
   return data;
-}
-
-void Scene_polyhedron_item::set_skip_emits(bool b)
-{
-  skip_emits = b;
 }

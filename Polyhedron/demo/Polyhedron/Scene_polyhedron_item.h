@@ -108,13 +108,13 @@ public Q_SLOTS:
                 double dir_x,
                 double dir_y,
                 double dir_z);
-    void set_skip_emits(bool b);
     void update_vertex_indices();
     void update_facet_indices();
     void update_halfedge_indices();
     void invalidate_aabb_tree();
 
 Q_SIGNALS:
+    void selection_done();
     void selected_vertex(void*);
     void selected_facet(void*);
     void selected_edge(void*);
@@ -136,7 +136,6 @@ private:
 
 
     Color_vector colors_;
-    bool skip_emits;
     bool show_only_feature_edges_m;
     bool show_feature_edges_m;
     bool facet_picking_m;
