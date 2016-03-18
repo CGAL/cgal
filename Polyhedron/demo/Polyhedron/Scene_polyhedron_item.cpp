@@ -188,13 +188,13 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit,
         {
           for (int i = 0; i<3; ++i)
           {
-            color_facets.push_back(colors_[this_patch_id].redF());
-            color_facets.push_back(colors_[this_patch_id].greenF());
-            color_facets.push_back(colors_[this_patch_id].blueF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].redF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
 
-            color_facets.push_back(colors_[this_patch_id].redF());
-            color_facets.push_back(colors_[this_patch_id].greenF());
-            color_facets.push_back(colors_[this_patch_id].blueF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].redF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
           }
         }
         if (colors_only)
@@ -412,9 +412,9 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
           {
             if (!is_monochrome)
             {
-              color_facets.push_back(colors_[this_patch_id].redF());
-              color_facets.push_back(colors_[this_patch_id].greenF());
-              color_facets.push_back(colors_[this_patch_id].blueF());
+              color_facets.push_back(colors_[this_patch_id-m_min_patch_id].redF());
+              color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
+              color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
             }
             if (colors_only)
               continue;
@@ -439,9 +439,9 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
           const int this_patch_id = f->patch_id();
           for (unsigned int i = 0; i < 6; ++i)
           { //6 "halfedges" for the quad, because it is 2 triangles
-            color_facets.push_back(colors_[this_patch_id].redF());
-            color_facets.push_back(colors_[this_patch_id].greenF());
-            color_facets.push_back(colors_[this_patch_id].blueF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].redF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
           }
         }
         if (colors_only)
