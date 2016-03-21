@@ -568,7 +568,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     nb_facets = 0;
     nb_lines = 0;
     nb_f_lines = 0;
-    init();
+    invalidate_stats();
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
