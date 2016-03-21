@@ -866,6 +866,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     }
   }
   is_treated = true;
+  return false;
 }
 
 //returns true if halfedge's facet's degree >= degree
@@ -1080,7 +1081,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           tempInstructions("Edge not selected : halfedges must be different.",
                            "Select the second edge.");
         }
-        else if(!is_border or !found)
+        else if(!is_border || !found)
         {
           tempInstructions("Edge not selected : no shared border found.",
                            "Select the second edge.");
@@ -1205,6 +1206,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
     }
   }
   is_treated = true;
+  return false;
 }
 
 bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron::Facet_handle>& selection)
@@ -1349,6 +1351,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     }
   }
   is_treated = true;
+  return false;
 }
 
 void Scene_polyhedron_selection_item::tempInstructions(QString s1, QString s2)

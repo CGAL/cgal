@@ -50,7 +50,7 @@ public:
 
   void setEditMode(bool b) { is_edit_mode = b; }
 
-  void init(Scene_polyhedron_item* poly_item, QMainWindow* /*mw*/, Active_handle::Type aht, int k_ring) {
+  void init(Scene_polyhedron_item* poly_item, QMainWindow* mw, Active_handle::Type aht, int k_ring) {
     this->poly_item = poly_item;
     this->active_handle_type = aht;
     this->k_ring = k_ring;
@@ -59,6 +59,7 @@ public:
 
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
+    mw->installEventFilter(this);
 #if QGLVIEWER_VERSION >= 0x020501
     viewer->setMouseBindingDescription(Qt::Key_D, Qt::ShiftModifier, Qt::LeftButton, "(When in selection plugin) Removes the clicked primitive from the selection. ");
 #else
@@ -227,10 +228,9 @@ protected:
     }
 
     // if not in edit mode, use mouse move event for paint-like selection
-    if(( ( !is_edit_mode && event->type() == QEvent::MouseMove)
-         || (event->type() == QEvent::MouseButtonPress
-             && static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton))
-        && (state.shift_pressing && state.left_button_pressing) )
+    if( (!is_edit_mode && event->type() == QEvent::MouseMove && state.shift_pressing && state.left_button_pressing)
+         ||
+         (event->type() == QEvent::MouseButtonPress && static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton && state.shift_pressing ))
     {
       // paint with mouse move event
       QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);

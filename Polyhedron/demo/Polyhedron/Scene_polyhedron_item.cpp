@@ -135,7 +135,6 @@ QList<Kernel::Triangle_3> triangulate_primitive(Polyhedron::Facet_iterator fit,
   }
   //iterates on the internal faces to add the vertices to the positions
   //and the normals to the appropriate vectors
-  const int this_patch_id = fit->patch_id();
   for(CDT::Finite_faces_iterator
       ffit = cdt.finite_faces_begin(),
       end = cdt.finite_faces_end();
@@ -170,9 +169,7 @@ Input_facets_AABB_tree* get_aabb_tree(Scene_polyhedron_item* item)
                                                                faces(*poly).second,
                                                                *poly)*/;
       typedef Polyhedron::Traits	    Kernel;
-      typedef Kernel::Point_3	    Point;
       typedef Kernel::Vector_3	    Vector;
-      typedef Polyhedron::Halfedge_around_facet_circulator HF_circulator;
       typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
       typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 

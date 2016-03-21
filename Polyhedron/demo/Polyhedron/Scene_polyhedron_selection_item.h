@@ -892,7 +892,7 @@ protected:
 
 //Generic class
   template<typename HandleRange>
-  bool treat_selection(const HandleRange& selection)
+  bool treat_selection(const HandleRange&)
   {
     qDebug()<<"ERROR : unknown range";
 return false;
