@@ -214,7 +214,7 @@ public:
     typedef Patch_id                           reference;
     typedef boost::read_write_property_map_tag category;
 
-    friend bool get(const Patch_id_pmap&, const key_type& f){
+    friend value_type get(const Patch_id_pmap&, const key_type& f){
       return f->patch_id();
     }
     friend void put(Patch_id_pmap&, const key_type& f, const value_type i){
