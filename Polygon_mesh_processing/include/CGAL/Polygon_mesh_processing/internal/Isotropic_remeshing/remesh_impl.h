@@ -918,7 +918,7 @@ namespace internal {
 
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
       {
-        if (!is_on_patch(v) || is_constrained(v))
+        if (is_constrained(v) || !is_on_patch(v))
           continue;
         //note if v is constrained, it has not moved
 
