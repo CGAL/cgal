@@ -1398,7 +1398,7 @@ template <typename OutputIterator,
 OutputIterator
 structure_point_set (InputIterator first,  ///< iterator over the first input point.
                      InputIterator beyond, ///< past-the-end iterator over the input points.
-                     OutputIterator output, ///< output iterator where output points are put
+                     OutputIterator output, ///< output iterator where output points are written
                      Shape_detection_3::Efficient_RANSAC<Traits>&
                      shape_detection, ///< shape detection engine
                      double epsilon) ///< size parameter

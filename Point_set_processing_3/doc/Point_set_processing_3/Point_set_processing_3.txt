@@ -392,10 +392,17 @@ input point set. It requires that a shape detection algorithm is first applied
 to the point set (see \ref Chapter_Point_Set_Shape_Detection). It is based on
 the article \cgalCite{cgal:la-srpss-13}.
 
-Each detected plane is regularly resampled at a given density. In
-addition, edges and corners are estimated and sampled. This algorithm
-is particularly suited for point sets sampled on surfaces with planar
-sections and sharp edges. 
+Inliers of each detected plane are replaced by sets of noise-free
+points sampled at the vertices of a regular grid: this is achieved by
+filling an occupancy grid aligned on the principal components of the
+inlier sets with a user defined spacing. In addition, adjacencies
+between 2 planes are detected an regularly resample on an occupancy
+array along the edge. Finally, adjacencies between 3 planes are
+sampled using the exact intersection point of the 3 planes (provided
+it exists and remains in the given tolerance).
+
+This algorithm is well suited to point sets sampled on surfaces with
+planar sections and sharp edges.
 
 \cgalFigureBegin{Point_set_processing_3figstructuring,structuring.png}
 Point set structuring. Left: input raw point set. Right: structured point set.
