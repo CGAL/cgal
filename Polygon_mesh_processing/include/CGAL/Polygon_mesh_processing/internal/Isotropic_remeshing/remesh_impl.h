@@ -433,6 +433,10 @@ namespace internal {
         if (protect_constraints_ && !is_longest_on_faces(edge(he, mesh_)))
           continue;
 
+        //collect patch_ids
+        Patch_id patch_id = get_patch_id(face(he, mesh_));
+        Patch_id patch_id_opp = get_patch_id(face(opposite(he, mesh_), mesh_));
+
         //split edge
         Point refinement_point = this->midpoint(he);
         halfedge_descriptor hnew = CGAL::Euler::split_edge(he, mesh_);
@@ -463,7 +467,6 @@ namespace internal {
         //insert new edges to keep triangular faces, and update long_edges
         if (!is_on_border(hnew))
         {
-          Patch_id patch_id = get_patch_id(face(hnew, mesh_));
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(hnew,
                                                               next(next(hnew, mesh_), mesh_),
                                                               mesh_);
@@ -486,7 +489,6 @@ namespace internal {
         //do it again on the other side if we're not on boundary
         if (!is_on_border(hnew_opp))
         {
-          Patch_id patch_id = get_patch_id(face(hnew_opp, mesh_));
           halfedge_descriptor hnew2 = CGAL::Euler::split_face(prev(hnew_opp, mesh_),
                                                               next(hnew_opp, mesh_),
                                                               mesh_);
@@ -495,8 +497,8 @@ namespace internal {
             : MESH;
           halfedge_added(hnew2,                  snew);
           halfedge_added(opposite(hnew2, mesh_), snew);
-          set_patch_id(face(hnew2, mesh_), patch_id);
-          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id);
+          set_patch_id(face(hnew2, mesh_), patch_id_opp);
+          set_patch_id(face(opposite(hnew2, mesh_), mesh_), patch_id_opp);
 
           if (snew == PATCH)
           {
@@ -740,6 +742,8 @@ namespace internal {
         CGAL_assertion_code(Halfedge_status s1 = status(he));
         CGAL_assertion_code(Halfedge_status s1o = status(opposite(he, mesh_)));
 
+        Patch_id pid = get_patch_id(face(he, mesh_));
+
         CGAL::Euler::flip_edge(he, mesh_);
         ++nb_flips;
 
@@ -784,6 +788,9 @@ namespace internal {
                (va == source(he, mesh_) && vb == target(he, mesh_))
             || (vb == source(he, mesh_) && va == target(he, mesh_)));
         }
+
+        set_patch_id(face(he, mesh_), pid);
+        set_patch_id(face(opposite(he, mesh_), mesh_), pid);
       }
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
@@ -957,6 +964,8 @@ namespace internal {
 private:
   Patch_id get_patch_id(const face_descriptor& f) const
   {
+    if (f == boost::graph_traits<PM>::null_face())
+      return Patch_id();
     return get(patch_ids_map_, f);
   }
 
