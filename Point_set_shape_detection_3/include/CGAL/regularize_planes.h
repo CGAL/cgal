@@ -588,7 +588,10 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
                         typename EfficientRANSACTraits::FT tolerance_coplanarity
                         = (typename EfficientRANSACTraits::FT)0.01,
                         typename EfficientRANSACTraits::Vector_3 symmetry_direction
-                        = typename EfficientRANSACTraits::Vector_3 (0., 0., 1.))
+                        = typename EfficientRANSACTraits::Vector_3
+                        ((typename EfficientRANSACTraits::FT)0.,
+                         (typename EfficientRANSACTraits::FT)0.,
+                         (typename EfficientRANSACTraits::FT)1.))
 {
   typedef typename EfficientRANSACTraits::FT FT;
   typedef typename EfficientRANSACTraits::Point_3 Point;

@@ -129,7 +129,7 @@ bool test_scene() {
 
   // Test regularization
   CGAL::regularize_planes (ransac, true, true, true, true,
-                           (FT)50., (FT)0.01f);
+                           (FT)50., (FT)0.01);
   
   Point_index_range pts = ransac.indices_of_unassigned_points();
 
