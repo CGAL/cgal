@@ -265,6 +265,47 @@ Polyhedron* clip_polyhedron(const Polyhedron& P, const Plane_3& p)
   return clip_polyhedron(copy, clipping_polyhedron);
 }
 
+template <class Polyhedron, class Plane_3>
+std::pair<Polyhedron*,Polyhedron*> split_polyhedron(const Polyhedron& P, const Plane_3& p)
+{
+ std::pair<Polyhedron*, Polyhedron*> res;
+  if(P.empty()) {res.first=res.second= new Polyhedron(); return res;}
+  CGAL::Bbox_3 bbox( CGAL::bbox_3(P.points_begin(), P.points_end()) );
+  //extend the bbox a bit to avoid border cases
+  double xd=(bbox.xmax()-bbox.xmin())/100;
+  double yd=(bbox.ymax()-bbox.ymin())/100;
+  double zd=(bbox.zmax()-bbox.zmin())/100;
+  bbox=CGAL::Bbox_3(bbox.xmin()-xd, bbox.ymin()-yd, bbox.zmin()-zd,
+                    bbox.xmax()+xd, bbox.ymax()+yd, bbox.zmax()+zd);
+  //First Polyhedron
+  Polyhedron clipping_polyhedron=clip_bbox<Polyhedron>(bbox, p);
+
+
+  if (clipping_polyhedron.empty()) //no intersection, result is all or nothing
+  {
+    if (p.oriented_side(*P.points_begin())==ON_POSITIVE_SIDE)
+    {
+      res.first = new Polyhedron(); res.second = new Polyhedron(P);
+    }
+    else
+    {
+      res.first = new Polyhedron(P); res.second = new Polyhedron();
+    }
+    return res;
+  }
+
+  Polyhedron copy(P);
+  res.first = clip_polyhedron(copy, clipping_polyhedron);
+  //Second Polyhedron
+  Plane_3 p_op = p.opposite();
+  clipping_polyhedron=clip_bbox<Polyhedron>(bbox, p_op);
+
+  copy = P;
+  res.second = clip_polyhedron(copy, clipping_polyhedron);
+  return res;
+
+}
+
 namespace internal{
 
 template<class Polyhedron>
