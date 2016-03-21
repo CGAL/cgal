@@ -323,7 +323,33 @@ namespace internal {
     void get_output (OutputIterator pts) const
     {
       for (std::size_t i = 0; i < m_points.size (); ++ i)
-        *(pts ++) = std::make_pair (m_points[i], m_normals[i]);
+        if (m_status[i] != SKIPPED)
+          *(pts ++) = std::make_pair (m_points[i], m_normals[i]);
+    }
+
+    template <typename OutputIterator>
+    void get_adjacency (OutputIterator adj) const
+    {
+      for (std::size_t i = 0; i < m_points.size (); ++ i)
+        {
+          std::vector<boost::shared_ptr<Plane_shape> > pls;
+
+          if (m_status[i] == SKIPPED)
+            continue;
+          else if (m_status[i] == PLANE || m_status[i] == RESIDUS)
+            pls.push_back (m_planes[m_indices[i]]);
+          else if (m_status[i] == EDGE)
+            {
+              pls.push_back (m_planes[m_edges[m_indices[i]].planes[0]]);
+              pls.push_back (m_planes[m_edges[m_indices[i]].planes[1]]);
+            }
+          else if (m_status[i] == CORNER)
+            {
+              pls.push_back (m_planes[m_corners[m_indices[i]].planes[0]]);
+              pls.push_back (m_planes[m_corners[m_indices[i]].planes[1]]);
+            }
+          *(adj ++) = pls;
+        }
     }
 
     template <typename OutputIterator>
@@ -1411,6 +1437,32 @@ structure_point_set (InputIterator first,  ///< iterator over the first input po
   pss.get_output (output);
 
   return output;
+}
+
+
+
+template <typename OutputIterator,
+          typename OutputIteratorAdjacency,
+          typename InputIterator,
+          typename Traits
+>
+void
+structure_point_set (InputIterator first,  ///< iterator over the first input point.
+                     InputIterator beyond, ///< past-the-end iterator over the input points.
+                     OutputIterator output, ///< output iterator where output points are written
+                     OutputIteratorAdjacency adjacency, ///< output iterator where adjacency is stored. 
+                     Shape_detection_3::Efficient_RANSAC<Traits>&
+                     shape_detection, ///< shape detection engine
+                     double epsilon) ///< size parameter
+{
+  internal::Point_set_structuring<Traits> pss
+    (first, beyond, shape_detection);
+
+  pss.run (epsilon);
+
+  pss.get_output (output);
+
+  pss.get_adjacency (adjacency);
 }
 
 
