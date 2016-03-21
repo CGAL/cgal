@@ -8,7 +8,7 @@
 #include <CGAL/Random.h>
 
 #include <CGAL/Shape_detection_3.h>
-#include <CGAL/Plane_regularization.h>
+#include <CGAL/regularize_planes.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
 
@@ -44,8 +44,6 @@ class Polyhedron_demo_point_set_shape_detection_plugin :
 
   typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Epic_kernel, Point_set, PointPMap, NormalPMap> Traits;
   typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits> Shape_detection;
-  typedef CGAL::Plane_regularization<Traits>                   Regularization;
-
   
 public:
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface) {
@@ -170,9 +168,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
     if (dialog.regularize ())
       {
         std::cerr << "Regularization of planes... " << std::endl;
-        Regularization regularization (*points, shape_detection);
-
-        regularization.run (180 * std::acos (op.normal_threshold) / M_PI, op.epsilon);
+        CGAL::regularize_planes (shape_detection, true, true, true, true,
+                                 180 * std::acos (op.normal_threshold) / M_PI, op.epsilon);
     
         std::cerr << "done" << std::endl;
       }
