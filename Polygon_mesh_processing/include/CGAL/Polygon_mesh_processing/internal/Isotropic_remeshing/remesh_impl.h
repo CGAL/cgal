@@ -1253,8 +1253,6 @@ private:
           halfedge_descriptor hopp = opposite(h, mesh_);
           if (halfedge_status_map_[hopp] == PATCH)
             halfedge_status_map_[hopp] = PATCH_BORDER;
-
-          put(ecmap_, e, false);
         }
       }
 
