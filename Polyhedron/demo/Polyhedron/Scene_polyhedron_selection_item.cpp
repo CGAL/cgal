@@ -679,6 +679,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
 {
   if(!is_treated)
   {
+    Vertex_handle vh = *selection.begin();
     Selection_traits<Vertex_handle, Scene_polyhedron_selection_item> tr(this);
     switch(operation_mode)
     {
@@ -701,43 +702,41 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     }
       //Join vertex
     case 0:
-      BOOST_FOREACH(Vertex_handle vh, selection)
+    {
+      bool belong = false;
+      Halfedge_handle target = halfedge(to_join_ed, *polyhedron());
+      if(halfedge(to_join_ed, *polyhedron())->vertex() == vh)
+        belong = true;
+      if(halfedge(to_join_ed, *polyhedron())->opposite()->vertex() == vh)
       {
-        bool belong = false;
-        Halfedge_handle target = halfedge(to_join_ed, *polyhedron());
-        if(halfedge(to_join_ed, *polyhedron())->vertex() == vh)
-          belong = true;
-        if(halfedge(to_join_ed, *polyhedron())->opposite()->vertex() == vh)
-        {
-          belong = true;
-          target = halfedge(to_join_ed, *polyhedron())->opposite();
-        }
-        if(!belong)
-        {
-          tempInstructions("Vertices not joined : the vertex must belong to the selected edge.",
-                           "Select the vertex that will remain. (2/2)");
-        }
-        else
-        {
+        belong = true;
+        target = halfedge(to_join_ed, *polyhedron())->opposite();
+      }
+      if(!belong)
+      {
+        tempInstructions("Vertices not joined : the vertex must belong to the selected edge.",
+                         "Select the vertex that will remain. (2/2)");
+      }
+      else
+      {
 
-          polyhedron()->join_vertex(target);
+        polyhedron()->join_vertex(target);
 
-          temp_selected_edges.erase(to_join_ed);
-          //set to select edge
-          set_active_handle_type(static_cast<Active_handle::Type>(2));
-          tempInstructions("Vertices joined.",
-                            "Select the edge with extremities you want to join. (1/2)");
-          invalidateOpenGLBuffers();
-          polyhedron_item()->invalidateOpenGLBuffers();
-        }
+        temp_selected_edges.erase(to_join_ed);
+        //set to select edge
+        set_active_handle_type(static_cast<Active_handle::Type>(2));
+        tempInstructions("Vertices joined.",
+                         "Select the edge with extremities you want to join. (1/2)");
+        invalidateOpenGLBuffers();
+        polyhedron_item()->invalidateOpenGLBuffers();
       }
       break;
+    }
       //Split vertex
     case 1:
     {
       //save VH
-      BOOST_FOREACH(Vertex_handle vh, selection)
-          to_split_vh = vh;
+      to_split_vh = vh;
       temp_selected_vertices.insert(to_split_vh);
       //set to select facet
       set_active_handle_type(static_cast<Active_handle::Type>(1));
@@ -753,8 +752,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       static bool found_h1(false), found_h2(false);
       if(!first_selected)
       {
-        BOOST_FOREACH(Vertex_handle vh, selection)
-        {
           //Is the vertex on the face ?
           Polyhedron::Halfedge_around_facet_circulator hafc = to_split_fh->facet_begin();
           Polyhedron::Halfedge_around_facet_circulator end = hafc;
@@ -780,7 +777,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
             invalidateOpenGLBuffers();
             Q_EMIT updateInstructions("Select the second vertex (3/3)");
           }
-        }
       }
       else
       {
@@ -788,8 +784,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
         Polyhedron::Halfedge_around_facet_circulator hafc = to_split_fh->facet_begin();
         Polyhedron::Halfedge_around_facet_circulator end = hafc;
 
-        BOOST_FOREACH(Vertex_handle vh, selection)
-        {
           //Is the vertex on the face ?
           CGAL_For_all(hafc, end)
 
@@ -799,7 +793,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
             found_h2 = true;
             break;
           }
-        }
         if(!found_h2)
         {
           break;
@@ -846,8 +839,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     }
       //Remove center vertex
     case 8:
-      BOOST_FOREACH(Vertex_handle vh, selection)
-      {
+
         bool has_hole = false;
         Polyhedron::Halfedge_around_vertex_circulator hc = vh->vertex_begin();
         Polyhedron::Halfedge_around_vertex_circulator end(hc);
@@ -869,7 +861,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           tempInstructions("Vertex not selected : There must be no hole incident to the selection.",
                            "Select the vertex you want to remove.");
         }
-      }
       break;
 
     }
@@ -899,6 +890,7 @@ int facet_degree(Halfedge_handle h)
 
 bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descriptor>& selection)
 {
+  edge_descriptor ed =  *selection.begin();
   if(!is_treated)
   {
     Selection_traits<edge_descriptor, Scene_polyhedron_selection_item> tr(this);
@@ -923,8 +915,6 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
     }
       //Join vertex
     case 0:
-      BOOST_FOREACH(edge_descriptor ed, selection)
-      {
         if(facet_degree(halfedge(ed, *polyhedron())) < 4
            ||
            facet_degree(halfedge(ed, *polyhedron())->opposite())< 4)
@@ -941,12 +931,10 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           set_active_handle_type(static_cast<Active_handle::Type>(0));
           Q_EMIT updateInstructions("Select the vertex that will remain.");
         }
-      }
       break;
       //Split edge
     case 2:
-      BOOST_FOREACH(edge_descriptor ed, selection)
-      {
+    {
         Polyhedron::Point_3 a(halfedge(ed, *polyhedron())->vertex()->point()),b(halfedge(ed, *polyhedron())->opposite()->vertex()->point());
         Polyhedron::Halfedge_handle hhandle = polyhedron()->split_edge(halfedge(ed, *polyhedron()));
         Polyhedron::Point_3 p((b.x()+a.x())/2.0, (b.y()+a.y())/2.0,(b.z()+a.z())/2.0);
@@ -955,14 +943,12 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
         selected_vertices.insert(hhandle->vertex());
         invalidateOpenGLBuffers();
         poly_item->invalidateOpenGLBuffers();
-      }
       tempInstructions("Edge splitted.",
                        "Select the edge you want to split.");
       break;
+    }
       //Join face
     case 3:
-      BOOST_FOREACH(edge_descriptor ed, selection)
-      {
         if(out_degree(source(halfedge(ed,*polyhedron()),*polyhedron()),*polyhedron())<3 ||
            out_degree(target(halfedge(ed,*polyhedron()),*polyhedron()),*polyhedron())<3)
           tempInstructions("Faces not joined : the two ends of the edge must have a degree of at least 3.",
@@ -972,12 +958,9 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           polyhedron()->join_facet(halfedge(ed, *polyhedron()));
           poly_item->invalidateOpenGLBuffers();
         }
-      }
       break;
       //Collapse edge
     case 5:
-      BOOST_FOREACH(edge_descriptor ed, selection)
-      {
         if(!is_triangle_mesh(*polyhedron()))
         {
           tempInstructions("Edge not collapsed : the graph must be triangulated.",
@@ -995,12 +978,10 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           tempInstructions("Edge collapsed.",
                            "Select the edge you want to collapse.");
         }
-      }
       break;
       //Flip edge
     case 6:
-      BOOST_FOREACH(edge_descriptor ed, selection)
-      {
+
         //check preconditions
         if(facet_degree(halfedge(ed, *polyhedron())) == 3 && facet_degree(halfedge(ed, *polyhedron())->opposite()) == 3)
         {
@@ -1012,7 +993,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           tempInstructions("Edge not selected : incident facets must be triangles.",
                            "Select the edge you want to flip.");
         }
-      }
+
       break;
       //Add vertex and face to border
     case 9:
@@ -1020,8 +1001,6 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
       static Halfedge_handle t;
       if(!first_selected)
       {
-        BOOST_FOREACH(edge_descriptor ed, selection)
-        {
           bool found = false;
           Halfedge_handle hc = halfedge(ed, *polyhedron());
           if(hc->is_border())
@@ -1047,14 +1026,11 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
             tempInstructions("Edge not selected : no border found.",
                              "Select a border edge. (1/2)");
           }
-        }
       }
       else
       {
 
         bool found(false), is_equal(true), is_border(false);
-        BOOST_FOREACH(edge_descriptor ed, selection)
-        {
           Halfedge_handle hc = halfedge(ed, *polyhedron());
           //if the selected halfedge is not a border, stop and signal it.
           if(hc->is_border())
@@ -1098,11 +1074,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
             }
             iterator = next(iterator, *polyhedron());
           }
-          //if an halfedge passes all the tests, stop and keep it.
-          if(found)
-            break;
 
-        }
         if(is_equal)
         {
           tempInstructions("Edge not selected : halfedges must be different.",
@@ -1134,8 +1106,6 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
       static Halfedge_handle t;
       if(!first_selected)
       {
-        BOOST_FOREACH(edge_descriptor ed, selection)
-        {
           bool found = false;
           Halfedge_handle hc = halfedge(ed, *polyhedron());
           if(hc->is_border())
@@ -1160,14 +1130,11 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
             tempInstructions("Edge not selected : no border found.",
                              "Select a border edge.");
           }
-        }
       }
       else
       {
 
         bool found(false), is_equal(true), is_next(true), is_border(false);
-        BOOST_FOREACH(edge_descriptor ed, selection)
-        {
           Halfedge_handle hc = halfedge(ed, *polyhedron());
           //if the selected halfedge is not a border, stop and signal it.
           if(hc->is_border())
@@ -1205,11 +1172,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
             }
             iterator = next(iterator, *polyhedron());
           }
-          //if an halfedge passes all the tests, stop and keep it.
-          if(found)
-            break;
 
-        }
         if(is_equal)
         {
           tempInstructions("Edge not selected : halfedges must be different.",
@@ -1248,6 +1211,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
 {
   if(!is_treated)
   {
+    Facet_handle fh = *selection.begin();
     Selection_traits<Facet_handle, Scene_polyhedron_selection_item> tr(this);
     switch(operation_mode)
     {
@@ -1275,8 +1239,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
       //stores first fh and emit change label
       if(!first_selected)
       {
-        BOOST_FOREACH(Facet_handle fh, selection)
-        {
           bool found = false;
           //test preco
           Polyhedron::Halfedge_around_facet_circulator hafc = fh->facet_begin();
@@ -1300,13 +1262,10 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           else
             tempInstructions("Facet not selected : no valid halfedge",
                              "Select first facet(2/3)");
-        }
       }
       //call the function with point and facets.
       else
       {
-        BOOST_FOREACH(Facet_handle fh, selection)
-        {
           //get the right halfedges
           Polyhedron::Halfedge_handle h2;
           bool found = false;
@@ -1349,27 +1308,20 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           {
             tempInstructions("Facet not selected : no valid halfedge.", "Select the second facet.");
           }
-        }
       }
       break;
     }
       //Split face
     case 4:
-      BOOST_FOREACH(Facet_handle fh, selection)
-      {
         to_split_fh = fh;
         temp_selected_facets.insert(to_split_fh);
         invalidateOpenGLBuffers();
         //set to select vertex
         set_active_handle_type(static_cast<Active_handle::Type>(0));
         Q_EMIT updateInstructions("Select first vertex. (2/3)");
-        break;
-      }
       break;
       //Add center vertex
     case 7:
-      BOOST_FOREACH(Facet_handle fh, selection)
-      {
         if(fh->halfedge()->is_border())
         {
           tempInstructions("Facet not selected : Facet must not be null.",
@@ -1393,7 +1345,6 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           poly_item->invalidateOpenGLBuffers();
 
         }
-      }
       break;
     }
   }

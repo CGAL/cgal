@@ -134,6 +134,7 @@ public Q_SLOTS:
       scene->setSelectedItem(item_id);
       on_ModeBox_changed(ui_widget.modeBox->currentIndex());
     }
+    on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
   }
   // Select all
   void on_Select_all_button_clicked() {
@@ -218,6 +219,7 @@ public Q_SLOTS:
       connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
     scene->setSelectedItem(item_id);
     on_ModeBox_changed(ui_widget.modeBox->currentIndex());
+    on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
   }
   void on_Selection_type_combo_box_changed(int index) {
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;
