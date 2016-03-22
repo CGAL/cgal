@@ -231,3 +231,39 @@ void Scene_polyhedron_selection_item::draw_points(CGAL::Three::Viewer_interface*
     viewer->glPointSize(1.f);
 
 }
+
+void Scene_polyhedron_selection_item::inverse_selection()
+{
+  switch(k_ring_selector.active_handle_type)
+  {
+  case Active_handle::VERTEX:
+  {
+    Selection_set_vertex temp_select = selected_vertices;
+    select_all();
+    Q_FOREACH(Vertex_handle vh, temp_select)
+    {
+      selected_vertices.erase(vh);
+    }
+    break;
+  }
+  case Active_handle::EDGE:
+  {
+    Selection_set_edge temp_select = selected_edges;
+    select_all();
+    Q_FOREACH(edge_descriptor ed , temp_select)
+      selected_edges.erase(ed);
+    break;
+  }
+  default:
+  {
+    Selection_set_facet temp_select = selected_facets;
+    select_all();
+    Q_FOREACH(Facet_handle fh, temp_select)
+      selected_facets.erase(fh);
+    break;
+  }
+  }
+  invalidateOpenGLBuffers();
+  QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
+  v->update();
+}

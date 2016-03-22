@@ -141,17 +141,11 @@
     <item>
      <layout class="QHBoxLayout" name="horizontalLayout_9" stretch="1,1">
       <item>
-       <spacer name="horizontalSpacer">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
+       <widget class="QPushButton" name="Inverse_selection_button">
+        <property name="text">
+         <string>Inverse selection</string>
         </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
+       </widget>
       </item>
       <item>
        <widget class="QPushButton" name="Clear_all_button">

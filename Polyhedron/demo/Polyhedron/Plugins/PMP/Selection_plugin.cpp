@@ -85,6 +85,7 @@ public:
     connect(ui_widget.Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
     connect(ui_widget.Clear_button,  SIGNAL(clicked()), this, SLOT(on_Clear_button_clicked()));
     connect(ui_widget.Clear_all_button,  SIGNAL(clicked()), this, SLOT(on_Clear_all_button_clicked()));
+    connect(ui_widget.Inverse_selection_button,  SIGNAL(clicked()), this, SLOT(on_Inverse_selection_button_clicked()));
     connect(ui_widget.Select_isolated_components_button,  SIGNAL(clicked()), this, SLOT(on_Select_isolated_components_button_clicked()));
     connect(ui_widget.Get_minimum_button,  SIGNAL(clicked()), this, SLOT(on_Get_minimum_button_clicked()));
     connect(ui_widget.Create_selection_item_button,  SIGNAL(clicked()), this, SLOT(on_Create_selection_item_button_clicked()));    
@@ -153,6 +154,15 @@ public Q_SLOTS:
     }
 
     selection_item->clear_all();
+  }
+  void on_Inverse_selection_button_clicked()
+  {
+    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    if(!selection_item) {
+      print_message("Error: there is no selected polyhedron selection item!");
+      return;
+    }
+    selection_item->inverse_selection();
   }
   // Isolated component related functions
   void on_Select_isolated_components_button_clicked() {
