@@ -2,6 +2,7 @@
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <vector>
+#include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel         K;
 typedef CGAL::Triangulation_vertex_base_with_info_3<unsigned, K>    Vb;
@@ -12,6 +13,8 @@ typedef Delaunay::Point                                             Point;
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   std::vector< std::pair<Point,unsigned> > points;
   points.push_back( std::make_pair(Point(0,0,0),0) );
   points.push_back( std::make_pair(Point(1,0,0),1) );
@@ -34,5 +37,6 @@ int main()
     }
   std::cout << "OK" << std::endl;
 
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }

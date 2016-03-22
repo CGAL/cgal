@@ -37,6 +37,8 @@ template class CGAL::Delaunay_triangulation_3<K>;
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   typedef CGAL::Delaunay_triangulation_3<EPIC>  Cls;
   typedef CGAL::Delaunay_triangulation_3<EPEC>  Cls_with_epec;
   
@@ -75,5 +77,6 @@ int main()
 
   _test_cls_delaunay_3( Cls_circumcenter() );
 
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }

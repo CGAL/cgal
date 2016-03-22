@@ -368,6 +368,9 @@ void test_set_vertices_with_parameters ()
 
 int main()
 {
+  
+  CGAL::Timer timer;
+  timer.start();
   test_default_constructor();
   test_constructor_1();
   test_constructor_2();
@@ -380,6 +383,7 @@ int main()
   test_set_vertices();
   test_set_vertices_with_parameters();
 
+  std::cerr << timer.time() << " sec.\n";
   std::cout << "EXIT_SUCCESS" << std::endl;
   return EXIT_SUCCESS;
 }

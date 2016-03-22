@@ -31,10 +31,13 @@ typedef CGAL::Regular_triangulation_euclidean_traits_3<K>        Traits;
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   typedef CGAL::Regular_triangulation_3<Traits>    Cls;
 
   _test_cls_delaunay_3( Cls() );
 
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }
 

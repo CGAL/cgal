@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/point_generators_3.h>
+#include <CGAL/Timer.h>
 
 #include <vector>
 #include <cassert>
@@ -14,6 +15,9 @@ typedef Delaunay::Facet                          Facet;
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
+  std::cerr << CGAL::get_default_random().get_seed() << std::endl;
   Delaunay T;
   CGAL::Random_points_in_sphere_3<Point> rnd;
 
@@ -54,5 +58,6 @@ int main()
   std::cout << "Final triangulation has " << T.number_of_vertices()
             << " vertices." << std::endl;
 
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }

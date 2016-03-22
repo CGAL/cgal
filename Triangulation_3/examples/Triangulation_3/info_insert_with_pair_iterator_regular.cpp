@@ -4,6 +4,7 @@
 #include <CGAL/Triangulation_vertex_base_with_info_3.h>
 #include <cassert>
 #include <vector>
+#include <CGAL/Timer.h>
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel                     K;
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K>                       Traits;
@@ -19,6 +20,8 @@ typedef Traits::Weighted_point_3                                                
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   std::vector< std::pair<Wpoint,unsigned> > points;
   points.push_back( std::make_pair(Wpoint(Point(0,0,0),2),0) );
   points.push_back( std::make_pair(Wpoint(Point(1,0,0),2),1) );
@@ -40,5 +43,6 @@ int main()
     }
   std::cout << "OK" << std::endl;
 
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }

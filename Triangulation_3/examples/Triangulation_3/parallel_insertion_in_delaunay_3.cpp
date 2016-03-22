@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/point_generators_3.h>
+#include <CGAL/Timer.h>
 
 #include <iostream>
 #include <fstream>
@@ -8,6 +9,9 @@
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
+  std::cerr << CGAL::get_default_random().get_seed() << std::endl;
 #ifdef CGAL_LINKED_WITH_TBB
   typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
@@ -40,5 +44,6 @@ int main()
 
 #endif //CGAL_LINKED_WITH_TBB
 
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }

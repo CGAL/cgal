@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Random.h>
+#include <CGAL/Timer.h>
 
 #include <vector>
 #include <cassert>
@@ -11,6 +12,9 @@ typedef Delaunay::Point Point;
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
+  std::cerr << CGAL::get_default_random().get_seed() << std::endl;
   // generating points on a grid.
   std::vector<Point> P;
 
@@ -30,6 +34,6 @@ int main()
     T.nearest_vertex(Point(CGAL::get_default_random().get_double(0, 20),
 			   CGAL::get_default_random().get_double(0, 20),
 			   CGAL::get_default_random().get_double(0, 20)));
-
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }

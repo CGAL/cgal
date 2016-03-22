@@ -1,6 +1,7 @@
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Delaunay_triangulation_3.h>
 #include <CGAL/Triangulation_vertex_base_3.h>
+#include <CGAL/Timer.h>
 
 template < class GT, class Vb = CGAL::Triangulation_vertex_base_3<GT> >
 class My_vertex_base
@@ -40,6 +41,8 @@ typedef Delaunay::Point            Point;
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   Delaunay T;
 
   Vertex_handle v0 = T.insert(Point(0,0,0));
@@ -57,5 +60,6 @@ int main()
   v4->vh = v5;
   v5->vh = v0;
 
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }

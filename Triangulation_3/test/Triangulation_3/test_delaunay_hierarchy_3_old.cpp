@@ -30,6 +30,8 @@ bool del=true;
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   typedef CGAL::Triangulation_vertex_base_3<K>             Vbb;
   typedef CGAL::Triangulation_hierarchy_vertex_base_3<Vbb> Vb;
   typedef CGAL::Triangulation_data_structure_3<Vb>         Tds;
@@ -38,5 +40,6 @@ int main()
 
   _test_cls_delaunay_3( Dh() );
 
+  std::cerr << timer.time() << " sec.\n";
   return 0;
 }

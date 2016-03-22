@@ -438,6 +438,8 @@ void test_RT()
 
 int main()
 {
+  CGAL::Timer timer;
+  timer.start();
   std::cout << " with CGAL::Regular_triangulation_euclidean_traits_3: "
             << std::endl;
 
@@ -459,6 +461,7 @@ int main()
   _test_cls_parallel_triangulation_3( RT_parallel() );
 #endif
 
+  std::cerr << timer.time() << " sec.\n";
   std::cout << " quit " << std::endl;
   return 0;
 }
