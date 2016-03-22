@@ -6,9 +6,15 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>364</width>
-    <height>273</height>
+    <width>346</width>
+    <height>340</height>
    </rect>
+  </property>
+  <property name="sizePolicy">
+   <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+    <horstretch>0</horstretch>
+    <verstretch>0</verstretch>
+   </sizepolicy>
   </property>
   <property name="windowTitle">
    <string>Clip polyhedra</string>
@@ -19,6 +25,12 @@
      <layout class="QVBoxLayout" name="verticalLayout">
       <item>
        <widget class="QLabel" name="label">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Fixed" vsizetype="Fixed">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="text">
          <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This function allows to clip all the selected polyhedra by an half-space. The blue side of the clipping plane will be clipped out, and the yellow side will be kept.&lt;br/&gt;&lt;br/&gt;If the option &lt;span style=&quot; font-style:italic;&quot;&gt;keep closed&lt;/span&gt; is checked, the clipped part of each polyhedron will be closed. Otherwise, it will be left open.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
@@ -42,6 +54,12 @@
       </item>
       <item>
        <widget class="QGroupBox" name="groupBox">
+        <property name="sizePolicy">
+         <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+          <horstretch>0</horstretch>
+          <verstretch>0</verstretch>
+         </sizepolicy>
+        </property>
         <property name="title">
          <string>Behavior</string>
         </property>
@@ -100,6 +118,12 @@
            </item>
            <item>
             <widget class="QPushButton" name="clipButton">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>&amp;Apply</string>
              </property>
@@ -109,6 +133,9 @@
          </item>
          <item>
           <layout class="QHBoxLayout" name="horizontalLayout_4">
+           <property name="sizeConstraint">
+            <enum>QLayout::SetDefaultConstraint</enum>
+           </property>
            <item>
             <spacer name="horizontalSpacer_2">
              <property name="orientation">
@@ -124,6 +151,12 @@
            </item>
            <item>
             <widget class="QPushButton" name="flip_Button">
+             <property name="sizePolicy">
+              <sizepolicy hsizetype="Minimum" vsizetype="Preferred">
+               <horstretch>0</horstretch>
+               <verstretch>0</verstretch>
+              </sizepolicy>
+             </property>
              <property name="text">
               <string>Flip plane</string>
              </property>
@@ -133,9 +166,6 @@
          </item>
         </layout>
        </widget>
-      </item>
-      <item>
-       <layout class="QHBoxLayout" name="horizontalLayout_2"/>
       </item>
      </layout>
     </item>
