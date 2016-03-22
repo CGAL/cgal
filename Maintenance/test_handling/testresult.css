@@ -4,7 +4,7 @@ P {
 width: 80ex
 }
 
-TABLE.result { font-weight: bold; background-color: white; padding: 1em; }
+TABLE.result { font-weight: bold; background-color: white; padding: 1em; table-layout: fixed;}
 
 TABLE.summary TD { white-space: nowrap }
 
