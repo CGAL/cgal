@@ -396,7 +396,7 @@ Inliers of each detected plane are replaced by sets of noise-free
 points sampled at the vertices of a regular grid: this is achieved by
 filling an occupancy grid aligned on the principal components of the
 inlier sets with a user defined spacing. In addition, adjacencies
-between 2 planes are detected an regularly resample on an occupancy
+between 2 planes are detected and regularly resample on an occupancy
 array along the edge. Finally, adjacencies between 3 planes are
 sampled using the exact intersection point of the 3 planes (provided
 it exists and remains in the given tolerance).
