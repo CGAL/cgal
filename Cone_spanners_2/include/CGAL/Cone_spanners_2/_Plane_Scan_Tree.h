@@ -205,7 +205,7 @@ class _Leaf : public _Node<Key, T, Comp, VComp> {
         }
 
         // Update pointer to max leaf (for reverse iterator)
-        if (this->tree->max == this) this->tree->max = split;
+        if (this->tree->m_max == this) this->tree->m_max = split;
 
         // Create new parent node current node is not root
         if (NULL == this->parent) {
