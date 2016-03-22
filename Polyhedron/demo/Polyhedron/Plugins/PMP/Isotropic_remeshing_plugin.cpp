@@ -369,16 +369,29 @@ public Q_SLOTS:
         {
           selection_item->setItemIsMulticolor(true);
 
-          CGAL::Polygon_mesh_processing::isotropic_remeshing(
-            selection_item->selected_facets
-            , target_length
-            , *selection_item->polyhedron()
-            , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
-            .protect_constraints(protect)
-            .edge_is_constrained_map(selection_item->constrained_edges_pmap())
-            .smooth_along_features(smooth_features)
-            .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
-            .face_patch_map(Patch_id_pmap<face_descriptor>()));
+          if (selection_item->selected_facets.empty() &&
+            (!selection_item->selected_edges.empty() || !selection_item->selected_vertices.empty()))
+            CGAL::Polygon_mesh_processing::isotropic_remeshing(
+              faces(*selection_item->polyhedron())
+              , target_length
+              , *selection_item->polyhedron()
+              , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+              .protect_constraints(protect)
+              .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+              .smooth_along_features(smooth_features)
+              .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+              .face_patch_map(Patch_id_pmap<face_descriptor>()));
+          else
+            CGAL::Polygon_mesh_processing::isotropic_remeshing(
+              selection_item->selected_facets
+              , target_length
+              , *selection_item->polyhedron()
+              , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
+              .protect_constraints(protect)
+              .edge_is_constrained_map(selection_item->constrained_edges_pmap())
+              .smooth_along_features(smooth_features)
+              .vertex_is_constrained_map(selection_item->constrained_vertices_pmap())
+              .face_patch_map(Patch_id_pmap<face_descriptor>()));
         }
         selection_item->poly_item_changed();
         selection_item->clear<face_descriptor>();
