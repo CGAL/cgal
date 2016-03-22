@@ -36,7 +36,7 @@ template < class K, class Functor_ >
   typedef K Kernel;
   typedef Functor_ Functor;
 
-  typedef typename Kernel::Point_3                        Point;
+  typedef typename Kernel::Point_2                        Point;
   typedef HyperbolicOctagonGroup                          Offset;
 
 public:
@@ -86,7 +86,7 @@ public:
 
 protected:
   Point pp(const Point &p, const Offset &o) const {
-    return Construct_point_3(*_domain)(p,o);
+    return Construct_point_2(*_domain)(p,o);
   }
  public:
   const Circle_2* _domain;

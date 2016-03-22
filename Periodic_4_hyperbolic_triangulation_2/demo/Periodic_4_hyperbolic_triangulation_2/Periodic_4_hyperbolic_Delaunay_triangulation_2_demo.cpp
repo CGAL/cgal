@@ -4,15 +4,17 @@
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Exact_predicates_exact_constructions_kernel.h>
-#include <CGAL/Delaunay_hyperbolic_triangulation_2.h> 
-
+#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_2.h> 
 #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
-
-// to be deleted
-#include <CGAL/Qt/HyperbolicPainterOstream.h>
-//
-
 #include <CGAL/point_generators_2.h>
+// unique words
+#include <CGAL/Square_root_2_field.h>
+#include <CGAL/Hyperbolic_octagon_group.h>
+#include <CGAL/Hyperbolic_random_points_in_disc_2.h>
+// to be deleted (iiordano: why?)
+#include <CGAL/Qt/HyperbolicPainterOstream.h>
+// for viewportsBbox
+#include <CGAL/Qt/utility.h>
 
 // Qt headers
 #include <QtGui>
@@ -22,50 +24,42 @@
 #include <QInputDialog>
 #include <QGraphicsEllipseItem>
 
+// for filtering
+#include <set>
 #include <string>
 
 // GraphicsView items and event filters (input classes)
 #include "CGAL/Qt/TriangulationCircumcircle.h"
-
 #include "CGAL/Qt/TriangulationMovingPoint.h"
 #include "CGAL/Qt/TriangulationConflictZone.h"
 #include "CGAL/Qt/TriangulationRemoveVertex.h"
 #include "CGAL/Qt/TriangulationPointInputAndConflictZone.h"
-//#include <CGAL/Qt/TriangulationGraphicsItem.h>
 #include <CGAL/Qt/VoronoiGraphicsItem.h>
-
-// store color
-#include <CGAL/TranslationInfo.h>
-// visualise color
-#include <CGAL/Qt/TriangulationGraphicsItemWithColorInfo.h>
-
-// unique words
-//#include <temp.h>
-#include <CGAL/Square_root_2_field.h>
-#include <CGAL/Hyperbolic_octagon_group.h>
-
-#include <CGAL/Hyperbolic_random_points_in_disc_2.h>
-
-// dummy points
-//#include <CGAL/Periodic_2_hyperbolic_triangulation_dummy.h>
-
-// for filtering
-#include <set>
-
-// for viewportsBbox
-#include <CGAL/Qt/utility.h>
-  
-// the two base classes
-#include "ui_Delaunay_triangulation_2.h"
+#include <CGAL/Qt/TriangulationGraphicsItemWithColorInfo.h>     // Visualise color
+#include <CGAL/TranslationInfo.h>                               // Store color
 #include <CGAL/Qt/DemosMainWindow.h>
 
-#define OPTION_INSERT_DUMMY_POINTS        0
-#define OPTION_INSERT_FIELD_DUMMY_POINTS  0
+
+#define OPTION_INSERT_DUMMY_POINTS 0
+
+
+// dummy points
+#if OPTION_INSERT_DUMMY_POINTS == 1
+  #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_dummy.h>
+#endif
+  
+// the two base classes
+#include "ui_Periodic_4_hyperbolic_Delaunay_triangulation_2.h"
+
+
 
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel   InR;
 typedef CGAL::Exact_predicates_exact_constructions_kernel     R;
-typedef CGAL::Triangulation_hyperbolic_traits_2<R>            K;
+
+typedef CGAL::Triangulation_hyperbolic_traits_2<R>            THT2;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<R> 
+                                                              K;
 typedef K::Point_2                                            Point;
 // keep color
 typedef TranslationInfo<std::string>                          Vb_info;
@@ -73,12 +67,9 @@ typedef CGAL::Triangulation_vertex_base_with_info_2< Vb_info, K >
                                                               Vb;
 typedef CGAL::Triangulation_face_base_with_info_2 <CGAL::Hyperbolic_face_info_2, K > 
                                                               Fb;
-typedef CGAL::Delaunay_hyperbolic_triangulation_2< K, CGAL::Triangulation_data_structure_2<Vb, Fb> > 
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2< K, CGAL::Triangulation_data_structure_2<Vb, Fb> > 
                                                               Delaunay;
 typedef Delaunay::Vertex_handle                               Vertex_handle;
- 
-
-
 
 
 struct PointsComparator {
@@ -103,12 +94,12 @@ double PointsComparator::eps = 0.0001;
 string glabels[] = { "a", "\\bar{b}", "c", "\\bar{d}", "\\bar{a}", "b", "\\bar{c}", "d" };
 
 
-void recurr(vector<HyperbolicOctagonGroup>& v, vector<HyperbolicOctagonGroup> g, int depth = 1) {
+void recurr(vector<Octagon_group>& v, vector<Octagon_group> g, int depth = 1) {
   if (depth > 1) {
     
     recurr(v, g, depth-1);
 
-    vector<HyperbolicOctagonGroup> tmp;
+    vector<Octagon_group> tmp;
     vector<string> tmpw;
     for (int i = 0; i < v.size(); i++) {
       tmp.push_back(v[i]);
@@ -127,24 +118,24 @@ void recurr(vector<HyperbolicOctagonGroup>& v, vector<HyperbolicOctagonGroup> g,
 }
 
 
-void my_unique_words(std::vector<Point>& p, Point input, int length) {
-  std::vector<HyperbolicOctagonGroup> g;
+void my_unique_words(std::vector<Point>& p, Point input, int depth) {
+  std::vector<Octagon_group> g;
   get_generators(g);
-  std::vector<HyperbolicOctagonGroup> v;
-  recurr(v, g, length);
-  std::set<HyperbolicOctagonGroup> s;
+  std::vector<Octagon_group> v;
+  recurr(v, g, depth);
+  std::set<Octagon_group> s;
 
   for (int i = 0; i < v.size(); i++) {
     s.insert( v[i] );
   }
 
-  cout << "Original point and images: " << endl;
-  cout << input.x() << ", " << input.y() << endl;
-  for (set<HyperbolicOctagonGroup>::iterator it = s.begin(); it != s.end(); it++) {
-    HyperbolicOctagonGroup m = *it;
+  //cout << "Original point and images: " << endl;
+  //cout << input.x() << ", " << input.y() << endl;
+  for (set<Octagon_group>::iterator it = s.begin(); it != s.end(); it++) {
+    Octagon_group m = *it;
     pair<double, double> res;
     res = m.apply(to_double(input.x()), to_double(input.y()));
-    cout << res.first << ", " << res.second << endl;
+    //cout << res.first << ", " << res.second << endl;
     p.push_back( Point(res.first, res.second) );
   }
 
@@ -157,7 +148,7 @@ void apply_unique_words(std::vector<Point>& points, Point input = Point(0, 0), d
 
   cout << "apply_unique_words called with threshold = " << threshold << ", word_length = " << word_length << ", d = " << d << endl;
 
-  static vector<HyperbolicOctagonGroup> unique_words;
+  static vector<Octagon_group> unique_words;
   static bool generated = false;
   if(generated == false) {
     generate_unique_words(unique_words, threshold, word_length);
@@ -179,7 +170,7 @@ void apply_unique_words(std::vector<Point>& points, Point input = Point(0, 0), d
 
 void apply_unique_words_G(std::vector<Point>& points, Point input = Point(0, 0), double threshold = 6/*13.5*/, int word_length = 6/*20*/)
 {
-  static vector<HyperbolicOctagonGroup> unique_words;
+  static vector<Octagon_group> unique_words;
   static bool generated = false;
   if(generated == false) {
     generate_unique_words(unique_words, threshold, word_length);
@@ -221,12 +212,13 @@ void apply_unique_words_G(std::vector<Point>& points, Point input = Point(0, 0),
 
 class MainWindow :
   public CGAL::Qt::DemosMainWindow,
-  public Ui::Delaunay_triangulation_2
+  public Ui::Periodic_4_hyperbolic_Delaunay_triangulation_2
 {
   Q_OBJECT
   
 private:  
 
+  int              recursion_depth;
   int              cidx;
   std::vector<int> ccol;
 
@@ -266,6 +258,8 @@ public slots:
   
   void on_actionInsertRandomPoints_triggered();
 
+  void on_actionModifyDepth_triggered();
+
   void on_actionLoadPoints_triggered();
 
   void on_actionSavePoints_triggered();
@@ -284,7 +278,7 @@ signals:
 MainWindow::MainWindow()
   : DemosMainWindow(), dt(K(1))
 {
-
+  recursion_depth = 1;
   cidx = 0;
   for (int i = 0; i < 10; i++)
     ccol.push_back(i);
@@ -424,7 +418,6 @@ MainWindow::MainWindow()
   // // The navigation adds zooming and translation functionality to the
   // // QGraphicsView
   this->addNavigation(this->graphicsView);
-
   this->setupStatusBar();
   this->setupOptionsMenu();
   this->addAboutDemo(":/cgal/help/about_Delaunay_triangulation_2.html");
@@ -445,15 +438,6 @@ MainWindow::MainWindow()
   }
   cout << "Dummy points inserted! " << endl;
   emit(changed());
-
-#endif
-
-
-#if OPTION_INSERT_FIELD_DUMMY_POINTS == 1
-
-Point mypt(1. - sqrt(2.), 1. - sqrt(2.));
-processInput(make_object(mypt));
-emit(changed());
 
 #endif
 
@@ -483,7 +467,7 @@ MainWindow::processInput(CGAL::Object o)
       //delete
       vector<Point> points;
       //apply_unique_words(points, p, 4, 1, .998);
-      my_unique_words(points, p, 1);
+      my_unique_words(points, p, recursion_depth);
 
       points.push_back(p);
       Vertex_handle v;
@@ -626,10 +610,6 @@ MainWindow::on_actionClear_triggered()
 void
 MainWindow::on_actionInsertRandomPoints_triggered()
 {
-  QRectF rect = CGAL::Qt::viewportsBbox(&scene);
-  CGAL::Qt::Converter<K> convert;  
-  //Circle_2 isor = convert(rect);
-  //CGAL::Random_points_in_disc_2<Point> pg(1.0);
   bool ok = false;
   const int number_of_points = 
     QInputDialog::getInt(this, 
@@ -647,8 +627,6 @@ MainWindow::on_actionInsertRandomPoints_triggered()
 
   // wait cursor
   QApplication::setOverrideCursor(Qt::WaitCursor);
-  //std::vector<Point> points;
-  //points.reserve(number_of_points);
 
   typedef CGAL::Exact_predicates_inexact_constructions_kernel GT;
   typedef GT::Point_2 Point_2;
@@ -658,13 +636,32 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   Hyperbolic_random_points_in_disc_2<GT>(pts, number_of_points);
 
   for(int i = 0; i < number_of_points; ++i){
-	processInput(make_object(pts[i]));
-    //points.push_back(*pg++);
+    processInput(make_object(pts[i]));
   }
-  //dt.insert(points.begin(), points.end());
-  // default cursor
   QApplication::restoreOverrideCursor();
   emit(changed());
+}
+
+
+void
+MainWindow::on_actionModifyDepth_triggered()
+{
+  bool ok = false;
+  const int result = 
+    QInputDialog::getInt(this, 
+                        tr("Modify recursion depth"),
+                        tr("Enter new recursion depth"),
+           recursion_depth,
+           0,
+           10,
+           1,
+           &ok);
+
+  if(!ok) {
+    return;
+  }
+
+  recursion_depth = result;
 }
 
 
@@ -757,7 +754,7 @@ int main(int argc, char **argv)
 
   app.setOrganizationDomain("geometryfactory.com");
   app.setOrganizationName("GeometryFactory");
-  app.setApplicationName("Delaunay_triangulation_2 demo");
+  app.setApplicationName("Periodic_4_hyperbolic_Delaunay_triangulation_2 demo");
 
   // Import resources from libCGALQt4.
   // See http://doc.trolltech.com/4.4/qdir.html#Q_INIT_RESOURCE

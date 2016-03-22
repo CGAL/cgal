@@ -22,19 +22,19 @@
 
 #include <CGAL/Qt/PainterOstream.h>
 
-#include <CGAL/Triangulation_hyperbolic_traits_2.h>
+#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
 
 namespace CGAL{
 
 namespace Qt {
   
   template <typename K>
-  class PainterOstream<Triangulation_hyperbolic_traits_2<K> > : public PainterOstream<K> {
+  class PainterOstream<Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K> > : public PainterOstream<K> {
   public:
     typedef PainterOstream<K> Base;
-    typedef PainterOstream<Triangulation_hyperbolic_traits_2<K> > Self;
+    typedef PainterOstream<Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K> > Self;
     
-    typedef Triangulation_hyperbolic_traits_2<K> Gt;
+    typedef Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<K> Gt;
     
   private:
     typedef typename Gt::Segment_2      Segment_2;

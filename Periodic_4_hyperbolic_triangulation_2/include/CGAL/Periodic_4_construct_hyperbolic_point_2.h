@@ -37,7 +37,7 @@ class Periodic_4_construct_hyperbolic_point_2 : public Construct_point_2_base
 
 public:
   typedef typename Kernel::Point_2            Point;
-  typedef HyperbolicOctagonGroup     Offset;
+  typedef HyperbolicOctagonGroup              Offset;
   typedef typename Kernel::Circle_2           Circle_2;
 
   typedef Point                               result_type;
@@ -45,10 +45,6 @@ public:
   Periodic_4_construct_hyperbolic_point_2(const Circle_2 & dom) : _dom(dom) { }
 
   Point operator() ( const Point& p, const Offset& o ) const {
-    /*
-    return Point( p.x()+(_dom.xmax()-_dom.xmin())*o.x(),
-                  p.y()+(_dom.ymax()-_dom.ymin())*o.y(),
-                  p.z()+(_dom.zmax()-_dom.zmin())*o.z()); */
     pair<double, double> pt = o.apply(to_double(p.x()), to_double(p.y()));
     Point r = Point(pt.first, pt.second);
 
