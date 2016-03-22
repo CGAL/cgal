@@ -50,8 +50,8 @@ public:
     viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_quad.size()/3));
     program->release();
     vaos[Facets]->release();
-
   }
+  void selection_changed(bool b){is_selected = b;}
 
 private:
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const
@@ -163,6 +163,8 @@ public Q_SLOTS:
       plane->setName(tr("Clipping plane"));
       connect(plane, SIGNAL(destroyed()),
               this, SLOT(on_plane_destroyed()));
+      connect(ui_widget.flip_Button, SIGNAL(clicked()),
+              plane, SLOT(flipPlane()));
       scene->addItem(plane);
     }
   }

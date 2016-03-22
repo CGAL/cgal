@@ -128,3 +128,17 @@ void Scene_plane_item::draw_edges(CGAL::Three::Viewer_interface* viewer)const
     program->release();
     vaos[Edges]->release();
 }
+
+void Scene_plane_item::flipPlane()
+{
+  qglviewer::Quaternion q;
+  qglviewer::Vec axis(0,1,0);
+  if(frame->orientation().axis() == axis)
+    q.setAxisAngle(qglviewer::Vec(1,0,0), M_PI);
+  else
+    q.setAxisAngle(axis, M_PI);
+  frame->rotate(q.normalized());
+  invalidateOpenGLBuffers();
+  Q_EMIT itemChanged();
+
+}
