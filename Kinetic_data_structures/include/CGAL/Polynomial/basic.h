@@ -205,3 +205,4 @@ struct Bezier_tag {};
 
 #include <limits>
 
+#endif // CGAL_POLYNOMIAL_BASIC_H
