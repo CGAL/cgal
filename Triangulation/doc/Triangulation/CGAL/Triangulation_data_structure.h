@@ -7,21 +7,17 @@ namespace CGAL {
 This class is a data structure used for storing a triangulation 
 of dimension \f$ d\leq D\f$ (`D` is the maximal dimension).
 
-Parameters 
--------------- 
 
-`Dimensionality` can be either <UL> 
-
+\tparam Dimensionality can be either <UL> 
 <LI>CGAL::`Dimension_tag<D>` for some integer `D`. This 
 indicates that the triangulation data structure can store simplices (full cells) of dimension at most 
 `D`. The maximal dimension `D` is known by the compiler, which 
 triggers some optimizations. Or 
-
 <LI>CGAL::`Dynamic_dimension_tag`. In this case, the maximum 
 dimension of the simplices (full cells) is passed as an integer argument to an instance 
 constructor (see `TriangulationDataStructure`).</UL> 
 
-The template parameter `TriangulationDSVertex` stands for a class to
+\tparam TriangulationDSVertex stands for a class to
 be used as the base `Vertex` type in the triangulation data structure. 
 It must be a model of the concept 
 `TriangulationDSVertex`. The class template `Triangulation_data_structure` can be 
@@ -30,7 +26,7 @@ only the first parameter. It also accepts the tag `CGAL::Default` as
 second parameter. In both cases, `TriangulationDSVertex` defaults to 
 `CGAL::Triangulation_ds_vertex<>`. 
 
-The template parameter `TriangulationDSFullCell` stands for a class to
+\tparam TriangulationDSFullCell stands for a class to
 be used as the base `Full_cell` type in the triangulation data structure. 
 It must be a model of the concept 
 `TriangulationDSFullCell`. The class template `Triangulation_data_structure` accepts that no 

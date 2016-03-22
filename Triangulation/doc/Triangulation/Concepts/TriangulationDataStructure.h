@@ -305,7 +305,7 @@ out);
 
 /// @}
 
-/// \name Accessing the vertices
+/// \name Accessing the Vertices
 /// @{
 
 /*!
@@ -339,7 +339,7 @@ Vertex_iterator vertices_end();
 
 /// @}
 
-/// \name Accessing the full cells
+/// \name Accessing the Full Cells
 /// @{
 
 /*!
@@ -395,7 +395,7 @@ int index_of_covertex(const Facet & f) const;
 
 /// @}
 
-/// \name Vertex insertion
+/// \name Vertex Insertion
 /// @{
 
 /*!
@@ -524,7 +524,7 @@ void set_current_dimension(int d);
 
 /// @}
 
-/// \name Vertex removal
+/// \name Vertex Removal
 /// @{
 
 /*!
@@ -592,7 +592,7 @@ delete_full_cells(ForwardIterator start, ForwardIterator end);
 
 /// @}
 
-/// \name Validity check
+/// \name Validity Check
 /// @{
 
 /*!
@@ -695,7 +695,7 @@ Full_cell_handle full_cell() const;
 
 /// @}
 
-/// \name Validity check
+/// \name Validity Check
 /// @{
 
 /*!
@@ -803,7 +803,7 @@ TDS_data;
 
 /// @}
 
-/// \name Access functions
+/// \name Access Functions
 /// @{
 
 /*!
@@ -898,7 +898,7 @@ Vertex_handle mirror_vertex(const int i, const int cur_dim) const;
 
 /// @}
 
-/// \name Update functions
+/// \name Update Functions
 /// @{
 
 /*!
@@ -969,7 +969,7 @@ bool has_neighbor(Full_cell_handle n, int & ret) const;
 
 /// @}
 
-/// \name Validity check
+/// \name Validity Check
 /// @{
 
 /*!

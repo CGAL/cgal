@@ -17,15 +17,13 @@ This class can be used directly or can serve as a base to derive other classes
 with some additional attributes tuned for a specific application (a color for 
 example). 
 
-Parameters 
--------------- 
 
-The template parameter `TriangulationDataStructure` must be a model of the 
+\tparam TriangulationDataStructure must be a model of the 
 `TriangulationDataStructure` concept. 
 
-\cgalModels ::TriangulationDSVertex 
+\cgalModels `TriangulationDSVertex`
 
-Rebind mechanism 
+Rebind Mechanism 
 -------------- 
 
 In case of derivation from that class, the nested class 
@@ -39,7 +37,7 @@ template< typename TriangulationDataStructure >
 class Triangulation_ds_vertex {
 public:
 
-/// \name Validity check 
+/// \name Validity Check 
 /// @{
 
 /*! 

@@ -7,7 +7,7 @@ This concept describes the geometric types and predicates required to build
 a Delaunay triangulation. It corresponds to the first template parameter of the class 
 `CGAL::Delaunay_triangulation<DelaunayTriangulationTraits, TriangulationDataStructure>`.
 
-\cgalRefines ::TriangulationTraits.
+\cgalRefines `TriangulationTraits`
 
 \cgalHasModel `CGAL::Epick_d<Dim>`
 
