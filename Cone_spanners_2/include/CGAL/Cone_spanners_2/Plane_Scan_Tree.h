@@ -94,16 +94,16 @@ class Plane_Scan_Tree {
     /* Explicit Constructor. */
     explicit Plane_Scan_Tree (const key_compare& comp = key_compare(),
                             const value_compare& vcomp = value_compare())
-        : less (comp), vless (vcomp), root (NULL), min (NULL),
-          max (NULL), _size (0) {}
+        : less (comp), vless (vcomp), root (NULL), m_min (NULL),
+          m_max (NULL), _size (0) {}
 
 	/* Constructor */
     template <typename InputIterator>
     Plane_Scan_Tree (InputIterator first, InputIterator last,
                     const key_compare& comp = key_compare(),
                     const value_compare& vcomp = value_compare())
-        : less (comp), vless (vcomp), root (NULL), min (NULL),
-          max (NULL), _size (0) 
+        : less (comp), vless (vcomp), root (NULL), m_min (NULL),
+          m_max (NULL), _size (0) 
 	{
       // TODO - Inplement a more efficient algorithm that builds the tree bottom up
       for (;first != last; ++first)
@@ -116,8 +116,8 @@ class Plane_Scan_Tree {
     ~Plane_Scan_Tree () {
       delete root;
       root = NULL;
-      min = NULL;
-      max = NULL;
+      m_min = NULL;
+      m_max = NULL;
       _size = 0;;
     }
 
@@ -128,11 +128,11 @@ class Plane_Scan_Tree {
       root = x.root;
       x.root = NULL;
 
-      min = x.min;
-      x.min = NULL;
+      m_min = x.m_min;
+      x.m_min = NULL;
 
-      max = x.max;
-      x.max = NULL;
+      m_max = x.m_max;
+      x.m_max = NULL;
     }
 #endif
 */
@@ -151,9 +151,9 @@ class Plane_Scan_Tree {
      */
     void add (const key_type& k, const mapped_type& v) {
       if (NULL == root) {
-        min = new _leaf_type (less, vless, this);
-        max = min;
-        root = min;
+        m_min = new _leaf_type (less, vless, this);
+        m_max = m_min;
+        root = m_min;
       }
       _leaf_type* l = root->leafNode(k);
       l->add(k, v);
@@ -185,12 +185,12 @@ class Plane_Scan_Tree {
 
     /* Begin  Iterator */
     inline iterator begin() {
-      return iterator (this->min);
+      return iterator (this->m_min);
     }
 
     /* Const Begin  Iterator */
     inline const_iterator begin() const {
-      return const_iterator (this->min);
+      return const_iterator (this->m_min);
     }
 
     /* End  Iterator */
@@ -209,12 +209,12 @@ class Plane_Scan_Tree {
 
     /* Reverse order Begin Iterator */
     inline reverse_iterator rbegin() {
-      return reverse_iterator (this->max);
+      return reverse_iterator (this->m_max);
     }
 
     /* Constant Reverse order Begin Iterator */
     const_reverse_iterator rbegin() const {
-      return const_reverse_iterator (this->max);
+      return const_reverse_iterator (this->m_max);
     }
 
     /* Reverse order End Iterator */
@@ -251,11 +251,11 @@ class Plane_Scan_Tree {
 	/* pointer to root */
     _node_type* root;
 
-	/* pointer to min */
-    _leaf_type* min;
+	/* pointer to m_min */
+    _leaf_type* m_min;
 
-	/* pointer to max */
-    _leaf_type* max;
+	/* pointer to m_max */
+    _leaf_type* m_max;
 
 	/* size of the tree */
     size_t _size;
