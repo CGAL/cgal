@@ -345,8 +345,8 @@ namespace internal {
             }
           else if (m_status[i] == CORNER)
             {
-              pls.push_back (m_planes[m_corners[m_indices[i]].planes[0]]);
-              pls.push_back (m_planes[m_corners[m_indices[i]].planes[1]]);
+              for (std::size_t j = 0; j < m_corners[m_indices[i]].planes.size(); ++ j)
+                pls.push_back (m_planes[m_corners[m_indices[i]].planes[j]]);
             }
           *(adj ++) = pls;
         }
