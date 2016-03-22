@@ -25,7 +25,7 @@
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup measure_grp Geometric Measure Functions
-/// Functions to compute lengths of edges and borders, areas of faces and patches, as well as volunes of closed meshes.
+/// Functions to compute lengths of edges and borders, areas of faces and patches, as well as volumes of closed meshes.
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup PMP_orientation_grp Orientation Functions
