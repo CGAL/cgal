@@ -104,6 +104,27 @@ sqrt( const AS& x ) {
 }
 
 
+template <typename NT>
+NT approximate_sqrt(const NT& nt, CGAL::Field_tag)
+{
+  return NT(sqrt(CGAL::to_double(nt)));
+}
+
+template <typename NT>
+NT approximate_sqrt(const NT& nt, CGAL::Field_with_sqrt_tag)
+{
+  return sqrt(nt);
+}
+
+template <typename NT>
+NT approximate_sqrt(const NT& nt)
+{
+  typedef CGAL::Algebraic_structure_traits<NT> AST;
+  typedef typename AST::Algebraic_category Algebraic_category; 
+  return approximate_sqrt(nt, Algebraic_category());
+}
+
+
 
 // AST-Functor adapting functions BINARY
 

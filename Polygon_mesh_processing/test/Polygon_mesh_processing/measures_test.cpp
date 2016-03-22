@@ -22,6 +22,7 @@
 
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef K::Point_3 Point;
+typedef K::FT FT;
 
 typedef CGAL::Polyhedron_3<K>       Polyhedron;
 typedef CGAL::Surface_mesh<Point>   Surface_mesh;
@@ -43,7 +44,7 @@ void test(const Mesh& pmesh)
       break;
     }
   }
-  double border_l = PMP::face_border_length(border_he, pmesh);
+  FT border_l = PMP::face_border_length(border_he, pmesh);
   std::cout << "length of hole border = " << border_l << std::endl;
 
   face_descriptor valid_patch_face;
@@ -54,7 +55,7 @@ void test(const Mesh& pmesh)
       continue;
     else
     {
-      double face_area = PMP::face_area(face(h, pmesh), pmesh);
+      FT face_area = PMP::face_area(face(h, pmesh), pmesh);
       std::cout << "face area = " << face_area << std::endl;
 
       if(++count == 20)
@@ -81,13 +82,13 @@ void test(const Mesh& pmesh)
       break;//back to starting point
   }
 
-  double patch_area = PMP::area(patch, pmesh);
+  FT patch_area = PMP::area(patch, pmesh);
   std::cout << "patch area = " << patch_area << std::endl;
-
-  double mesh_area = PMP::area(pmesh);
+  
+  FT mesh_area = PMP::area(pmesh);
   std::cout << "mesh area = " << mesh_area << std::endl;
-
-  double mesh_area_np = PMP::area(pmesh,
+  
+  FT mesh_area_np = PMP::area(pmesh,
     PMP::parameters::geom_traits(K()));
   std::cout << "mesh area (NP) = " << mesh_area_np << std::endl;
 
@@ -131,7 +132,7 @@ void test_closed_surface_mesh(const char* filename)
 
   test(sm);
 
-  double vol = PMP::volume(sm);
+  FT vol = PMP::volume(sm);
   std::cout << "volume = " << vol << std::endl;
 }
 

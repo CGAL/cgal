@@ -53,12 +53,17 @@ namespace Polygon_mesh_processing {
   *
   * \cgalNamedParamsBegin
   *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+  *    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
   * \cgalNamedParamsEnd
   *
   * @return the length of `h`. The return type `FT` is a number type. It is
   * either deduced from the `geom_traits` \ref namedparameters if provided,
   * or the geometric traits class deduced from the point property map
   * of `pmesh`.
+  *
+  * \warning This function involves a square root computation.
+  * If `FT` does not have a `sqrt()` operation, the square root computation
+  * will be done approximately.
   *
   * @sa `face_border_length()`
   */
@@ -81,8 +86,8 @@ namespace Polygon_mesh_processing {
                             pmesh,
                             CGAL::vertex_point);
 
-    return CGAL::sqrt(CGAL::squared_distance(get(vpm, source(h, pmesh)),
-                                             get(vpm, target(h, pmesh))));
+    return CGAL::approximate_sqrt(CGAL::squared_distance(get(vpm, source(h, pmesh)),
+                                                         get(vpm, target(h, pmesh))));
   }
 
   template<typename PolygonMesh>
@@ -129,6 +134,7 @@ namespace Polygon_mesh_processing {
   *
   * \cgalNamedParamsBegin
   *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
+*    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
   * \cgalNamedParamsEnd
   *
   * @return the length of the sequence of border edges of `face(h, pmesh)`.
@@ -136,6 +142,10 @@ namespace Polygon_mesh_processing {
   * either deduced from the `geom_traits` \ref namedparameters if provided,
   * or the geometric traits class deduced from the point property map
   * of `pmesh`.
+  *
+  * \warning This function involves a square root computation.
+  * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
+  * will be done approximately.
   *
   * @sa `edge_length()`
   */
@@ -151,7 +161,7 @@ namespace Polygon_mesh_processing {
               , const PolygonMesh& pmesh
               , const NamedParameters& np)
   {
-    double result = 0.;
+    typename GetGeomTraits<PolygonMesh, NamedParameters>::type::FT result = 0.;
     BOOST_FOREACH(typename boost::graph_traits<PolygonMesh>::halfedge_descriptor haf,
                   halfedges_around_face(h, pmesh))
     {
@@ -187,7 +197,7 @@ namespace Polygon_mesh_processing {
   *
   * \cgalNamedParamsBegin
   *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-  *  \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+  *  \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
   * \cgalNamedParamsEnd
   *
   *@pre `f != boost::graph_traits<TriangleMesh>::%null_face()`
@@ -227,9 +237,10 @@ namespace Polygon_mesh_processing {
 
     typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type traits;
 
-    return traits.compute_area_3_object()(get(vpm, source(hd, tmesh)),
-                                          get(vpm, target(hd, tmesh)),
-                                          get(vpm, target(nhd, tmesh)));
+    return approximate_sqrt(
+             traits.compute_squared_area_3_object()(get(vpm, source(hd, tmesh)),
+                                                    get(vpm, target(hd, tmesh)),
+                                                    get(vpm, target(nhd, tmesh))));
   }
 
   template<typename TriangleMesh>
@@ -260,7 +271,7 @@ namespace Polygon_mesh_processing {
   *
   * \cgalNamedParamsBegin
   *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-  *  \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+  *  \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel` \cgalParamEnd
   * \cgalNamedParamsEnd
   *
   * @return sum of face areas of `faces`.
@@ -268,6 +279,10 @@ namespace Polygon_mesh_processing {
   * either deduced from the `geom_traits` \ref namedparameters if provided,
   * or the geometric traits class deduced from the point property map
   * of `tmesh`.
+  *
+  * \warning This function involves a square root computation.
+  * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
+  * will be done approximately.
   *
   * @sa `face_area()`
   */
@@ -284,7 +299,7 @@ namespace Polygon_mesh_processing {
      , const CGAL_PMP_NP_CLASS& np)
   {
     typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
-    double result = 0.;
+    typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::FT result = 0.;
     BOOST_FOREACH(face_descriptor f, face_range)
     {
       result += face_area(f, tmesh, np);
@@ -292,11 +307,16 @@ namespace Polygon_mesh_processing {
     return result;
   }
 
-  template<typename FaceRange, typename TriangleMesh>
-  double area(FaceRange face_range, const TriangleMesh& tmesh)
+  template<typename FaceRange, typename TriangleMesh > 
+  /* AF   what is wrong here???
+   typename CGAL::Kernel_traits<typename property_map_value<TriangleMesh,
+                                                            CGAL::vertex_point_t>::type>::Kernel::FT
+  */
+     double 
+area(FaceRange face_range, const TriangleMesh& tmesh)
   {
-    return area(face_range, tmesh,
-      CGAL::Polygon_mesh_processing::parameters::all_default());
+    return to_double(area(face_range, tmesh,
+                          CGAL::Polygon_mesh_processing::parameters::all_default()));
   }
 
   /**
@@ -312,7 +332,7 @@ namespace Polygon_mesh_processing {
   *
   * \cgalNamedParamsBegin
   *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-  *  \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+  *  \cgalParamBegin{geom_traits}an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
   * \cgalNamedParamsEnd
   *
   * @return the surface area of `tmesh`.
@@ -320,6 +340,10 @@ namespace Polygon_mesh_processing {
   * either deduced from the `geom_traits` \ref namedparameters if provided,
   * or the geometric traits class deduced from the point property map
   * of `tmesh`.
+  *
+  * \warning This function involves a square root computation.
+  * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
+  * will be done approximately.
   *
   * @sa `face_area()`
   */
@@ -359,7 +383,7 @@ namespace Polygon_mesh_processing {
   *
   * \cgalNamedParamsBegin
   *  \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-  *  \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+  *  \cgalParamBegin{geom_traits}an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
   * \cgalNamedParamsEnd
   *
   * @return the volume bounded by `tmesh`.
@@ -392,7 +416,7 @@ namespace Polygon_mesh_processing {
 
     typedef typename boost::graph_traits<TriangleMesh>::face_descriptor face_descriptor;
 
-    double volume = 0.;
+    typename GetGeomTraits<TriangleMesh, CGAL_PMP_NP_CLASS>::type::FT volume = 0.;
     BOOST_FOREACH(face_descriptor f, faces(tmesh))
     {
       volume += CGAL::volume(origin,

@@ -86,13 +86,17 @@ void sum_normals(const PM& pmesh,
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+*    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
 * \cgalNamedParamsEnd
 *
 * @return the computed normal. The return type is a 3D vector type. It is
 * either deduced from the `geom_traits` \ref namedparameters if provided,
 * or from the geometric traits class deduced from the point property map
 * of `pmesh`.
+*
+* \warning This function involves a square root computation.
+* If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
+* will be done approximately.
 */
 template <typename PolygonMesh, typename NamedParameters>
 #ifdef DOXYGEN_RUNNING
@@ -138,9 +142,13 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+*    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
 * \cgalNamedParamsEnd
 *
+* \warning This function involves a square root computation.
+* If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
+* will be done approximately.
+*/
 */
 template <typename PolygonMesh
           , typename FaceNormalMap
@@ -171,13 +179,18 @@ compute_face_normals(const PolygonMesh& pmesh
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+*    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
 * \cgalNamedParamsEnd
 *
 * @return the computed normal. The return type is a 3D vector type. It is
 * either deduced from the `geom_traits` \ref namedparameters if provided,
 * or the geometric traits class deduced from the point property map
 * of `pmesh`.
+*
+* \warning This function involves a square root computation.
+* If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
+* will be done approximately.
+*/
 */
 template<typename PolygonMesh, typename NamedParameters>
 #ifdef DOXYGEN_RUNNING
@@ -248,8 +261,13 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+*    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
 * \cgalNamedParamsEnd
+*
+* \warning This function involves a square root computation.
+* If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
+* will be done approximately.
+*/
 *
 */
 template <typename PolygonMesh
@@ -290,9 +308,13 @@ compute_vertex_normals(const PolygonMesh& pmesh
 *
 * \cgalNamedParamsBegin
 *    \cgalParamBegin{vertex_point_map} the property map with the points associated to the vertices of `pmesh` \cgalParamEnd
-*    \cgalParamBegin{geom_traits} a geometric traits class instance \cgalParamEnd
+*    \cgalParamBegin{geom_traits} an instance of a geometric traits class, model of `Kernel`\cgalParamEnd
 * \cgalNamedParamsEnd
 *
+* \warning This function involves a square root computation.
+* If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
+* will be done approximately.
+*/
 */
 template <typename PolygonMesh
           , typename VertexNormalMap
