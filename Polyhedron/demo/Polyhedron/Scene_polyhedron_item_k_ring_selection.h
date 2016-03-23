@@ -188,8 +188,14 @@ protected:
 
   bool eventFilter(QObject* /*target*/, QEvent *event)
   {
-    // This filter is both filtering events from 'viewer' and 'main window'
-    // key events
+    // This filter is both filtering events from 'viewer' and 'main window' so we can get the clic event when the mainwindow has the focus
+    //But we don't want it to interfere.
+    if(target == mainwindow)
+    {
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      viewer->setFocus();
+      return false;
+    }
       if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)  {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
       Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
