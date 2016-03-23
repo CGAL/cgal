@@ -66,7 +66,6 @@ public:
   // creation
   CGAL_EXPORT Random( );
   CGAL_EXPORT Random( unsigned int  seed);
-  CGAL_EXPORT Random(char*);
   
   // seed
   CGAL_EXPORT unsigned int get_seed ( ) const;
