@@ -377,6 +377,30 @@ public:
         }
     }
 
+    void scan_color( u_char& r, u_char& g, u_char& b) {
+        if ( has_colors()) {
+            if ( binary()) {
+                float fr, fg, fb;
+                I_Binary_read_big_endian_float32( m_in, fr);
+                I_Binary_read_big_endian_float32( m_in, fg);
+                I_Binary_read_big_endian_float32( m_in, fb);
+                r = u_char(fr);
+                g = u_char(fg);
+                b = u_char(fb);
+
+            } else {
+             double d;
+             m_in >> iformat(d);
+             r = u_char(d);
+             m_in >> iformat(d);
+             g = u_char(d);
+             m_in >> iformat(d);
+             b = u_char(d);
+
+            }
+        }
+    }
+
   void skip_to_next_vertex( std::size_t current_vertex);
 
   void scan_facet( std::size_t& size, std::size_t CGAL_assertion_code(current_facet)) {
@@ -444,6 +468,15 @@ file_scan_vertex( File_scanner_OFF& scanner, Point& p) {
     else
         p = Point( RT(x), RT(y), RT(z), RT(w));
     return p;
+}
+
+template < class T_Color> inline
+T_Color&
+file_scan_color( File_scanner_OFF& scanner, T_Color& c) {
+    u_char r, g, b;
+    scanner.scan_color(r,g,b);
+        c = T_Color(r,g,b);
+    return c;
 }
 
 template < class Vector> inline
