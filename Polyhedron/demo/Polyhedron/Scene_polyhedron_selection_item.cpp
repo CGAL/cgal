@@ -674,6 +674,23 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
   }
   operation_mode = mode;
 }
+template<typename HandleRange>
+bool Scene_polyhedron_selection_item::treat_classic_selection(const HandleRange& selection)
+{
+  typedef typename HandleRange::value_type HandleType;
+  Selection_traits<HandleType, Scene_polyhedron_selection_item> tr(this);
+  bool any_change = false;
+  if(is_insert) {
+    BOOST_FOREACH(HandleType h, selection)
+        any_change |= tr.container().insert(h).second;
+  }
+  else{
+    BOOST_FOREACH(HandleType h, selection)
+        any_change |= (tr.container().erase(h)!=0);
+  }
+  if(any_change) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
+  return any_change;
+}
 
 bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron::Vertex_handle>& selection)
 {
@@ -686,18 +703,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     //classic selection
     case -1:
     {
-
-      bool any_change = false;
-      if(is_insert) {
-        BOOST_FOREACH(Vertex_handle vh, selection)
-            any_change |= tr.container().insert(vh).second;
-      }
-      else{
-        BOOST_FOREACH(Vertex_handle vh, selection)
-            any_change |= (tr.container().erase(vh)!=0);
-      }
-      if(any_change) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
-      return any_change;
+      return treat_classic_selection(selection);
       break;
     }
       //Join vertex
@@ -900,18 +906,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
     //classic selection
     case -1:
     {
-
-      bool any_change = false;
-      if(is_insert) {
-        BOOST_FOREACH(edge_descriptor ed, selection)
-            any_change |= tr.container().insert(ed).second;
-      }
-      else{
-        BOOST_FOREACH(edge_descriptor ed, selection)
-            any_change |= (tr.container().erase(ed)!=0);
-      }
-      if(any_change) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
-      return any_change;
+      return treat_classic_selection(selection);
       break;
     }
       //Join vertex
@@ -1209,6 +1204,11 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
   return false;
 }
 
+bool Scene_polyhedron_selection_item::treat_selection(const std::vector<Polyhedron::Facet_handle>& selection)
+{
+  return treat_classic_selection(selection);
+}
+
 bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron::Facet_handle>& selection)
 {
   if(!is_treated)
@@ -1220,18 +1220,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     //classic selection
     case -1:
     {
-
-      bool any_change = false;
-      if(is_insert) {
-        BOOST_FOREACH(Facet_handle fh, selection)
-            any_change |= tr.container().insert(fh).second;
-      }
-      else{
-        BOOST_FOREACH(Facet_handle fh, selection)
-            any_change |= (tr.container().erase(fh)!=0);
-      }
-      if(any_change) { invalidateOpenGLBuffers(); Q_EMIT itemChanged(); }
-      return any_change;
+      return treat_classic_selection(selection);
       break;
     }
     //Split vertex

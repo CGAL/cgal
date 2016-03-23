@@ -894,15 +894,18 @@ protected:
   template<typename HandleRange>
   bool treat_selection(const HandleRange&)
   {
-    qDebug()<<"ERROR : unknown range";
+    qDebug()<<"ERROR : unknown HandleRange";
 return false;
 }
-
+template<typename HandleRange>
+  bool treat_classic_selection(const HandleRange& selection);
 
 //Specialization for set<Vertex_handle>
   bool treat_selection(const std::set<Polyhedron::Vertex_handle>& selection);
   bool treat_selection(const std::set<edge_descriptor>& selection);
   bool treat_selection(const std::set<Polyhedron::Facet_handle>& selection);
+  bool treat_selection(const std::vector<Polyhedron::Facet_handle>& selection);
+
 
   Facet_handle face(Facet_handle fh)
   { return fh; }
