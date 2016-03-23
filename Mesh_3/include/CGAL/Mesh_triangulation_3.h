@@ -56,7 +56,7 @@ namespace CGAL {
 // Struct Mesh_triangulation_3
 //
 template<class MD,
-         class K = Default,
+         class K_ = Default,
          class Concurrency_tag = Sequential_tag,
          class Vertex_base_ = Default,
          class Cell_base_   = Default>
