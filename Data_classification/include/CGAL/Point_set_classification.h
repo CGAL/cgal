@@ -21,79 +21,68 @@
 #define CGAL_POINT_SET_CLASSIFICATION_H
 
 #include <cstdio>
-#include <cstring>
 #include <cassert>
 #include <vector>
 #include <list>
 #include <set>
+#include <string>
 
+#include <CGAL/bounding_box.h>
+#include <CGAL/Search_traits_3.h>
+#include <CGAL/Fuzzy_sphere.h>
 #include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/centroid.h>
 #include <CGAL/compute_average_spacing.h>
+#include <CGAL/linear_least_squares_fitting_3.h>
+
+//#define CGAL_CLASSIFICATION_VERBOSE
+#if defined(CGAL_CLASSIFICATION_VERBOSE)
+#define CGAL_CLASSIFICATION_CERR std::cerr
+#else
+#define CGAL_CLASSIFICATION_CERR std::ostream(0)
+#endif
 
 
 namespace CGAL {
 
-using std::vector;
-using std::cout;
-using std::cerr;
-using std::endl;
-using std::string;
-using I::misc::Ply;
-typedef unsigned char byte;
+namespace internal {
 
-//#define VERBOSE
-#if defined(VERBOSE)
-#define DEBUG_CERR std::cerr
-#else
-#define DEBUG_CERR std::ostream(0)
-#endif
+namespace Classification {
 
-#if defined(VERBOSE)
-inline void display_vect_stat (std::string name, std::vector<double> vect)
+
+template <typename Type>
+class Image
 {
-  std::sort (vect.begin(), vect.end());
+  std::size_t m_width;
+  std::size_t m_height;
+  std::vector<Type> m_raw;
+
+
+public:
+
+  Image () { }
   
-  std::cerr << name << std::endl
-            << " * Min = " << vect.front() << std::endl
-            << " * 10% = " << vect[vect.size()/10] << std::endl
-            << " * 50% = " << vect[vect.size()/2] << std::endl
-            << " * 90% = " << vect[9 * vect.size()/10] << std::endl
-            << " * Max = " << vect.back() << std::endl;
+  Image (std::size_t width, std::size_t height) : m_width (width), m_height (height)
+  {
+    m_raw.resize (width * height);
+  }
 
-  double mean = 0.;
-  for (std::size_t i = 0; i < vect.size(); ++ i)
-    mean += vect[i];
-  mean /= vect.size();
-  std::cerr << " -> Mean = " << mean << std::endl;
+  std::size_t width() const { return m_width; }
+  std::size_t height() const { return m_height; }
 
-  double standard_dev = 0.;
-  for (std::size_t i = 0; i < vect.size(); ++ i)
-    standard_dev += (vect[i] - mean) * (vect[i] - mean);
-  standard_dev = std::sqrt (standard_dev / vect.size());
-  std::cerr << " -> Standard deviation " << standard_dev << std::endl;
-
-}
-#else
-inline void display_vect_stat (std::string, std::vector<double>) { }
-#endif
-
-inline void normalize (std::vector<double>& vect)
-{
-  // double mean = 0.;
-  // for (std::size_t i = 0; i < vect.size(); ++ i)
-  //   mean += vect[i];
-  // mean /= vect.size();
-
-  // double standard_dev = 0.;
-  // for (std::size_t i = 0; i < vect.size(); ++ i)
-  //   standard_dev += (vect[i] - mean) * (vect[i] - mean);
-  // standard_dev = std::sqrt (standard_dev / vect.size());
+  Type& operator() (const std::size_t& x, const std::size_t& y)
+  {
+    return m_raw[y * m_width + x];
+  }
+  const Type& operator() (const std::size_t& x, const std::size_t& y) const
+  {
+    return m_raw[y * m_width + x];
+  }
   
-  // for (std::size_t i = 0; i < vect.size(); ++ i)
-  //   vect[i] = (vect[i] - mean) / (1.5 * standard_dev) + 1.5;
-}
 
+};
+
+  
 inline void compute_mean_max (std::vector<double>& vect, double& mean, double& max)
 {
   mean = 0.;
@@ -110,7 +99,8 @@ inline void compute_mean_max (std::vector<double>& vect, double& mean, double& m
 }
 
 
-HSV_Color rgb_to_hsv (const Color& c)
+template <typename RGB_Color, typename HSV_Color>
+HSV_Color rgb_to_hsv (const RGB_Color& c)
 {
   double r = (double)(c[0]) / 255.;
   double g = (double)(c[1]) / 255.;
@@ -132,14 +122,18 @@ HSV_Color rgb_to_hsv (const Color& c)
   if (H < 0.) H += 360.;
   double S = (Cmax == 0. ? 0. : 100. * (delta / Cmax));
   double V = 100. * Cmax;
-  return {{ H, S, V }};
+  HSV_Color out = {{ H, S, V }};
+  return out;
 }
 
+} // namespace internal
 
+} // namespace Classification
 
-class ScanLidar;
+template <typename Kernel>
+class Point_set_classification;
 
-class Abstract_segmentation_class
+class Abstract_classification_type
 {
 public:
 
@@ -147,10 +141,33 @@ public:
 
 };
 
-class ScanLidar
+
+template <typename Kernel>
+class Point_set_classification
 {
+  typedef typename Kernel::Point_3 Point;
+  typedef typename Kernel::Segment_3 Segment;
+  typedef typename Kernel::FT FT;
+  typedef typename Kernel::Line_3 Line;
+  typedef typename Kernel::Plane_3 Plane;
+  typedef typename Kernel::Vector_3 Vector;
+
+  typedef CGAL::cpp11::array<double, 3> Eigenvalues;
+
+  typedef CGAL::Search_traits_3<Kernel> SearchTraits_3;
+  typedef CGAL::Kd_tree<SearchTraits_3> Tree;
+  typedef CGAL::Fuzzy_sphere<SearchTraits_3> Fuzzy_sphere;
+  typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
+
+  typedef CGAL::cpp11::array<unsigned char, 3> Color;
+  typedef CGAL::cpp11::array<double, 3> HSV_Color;
+
+  typedef internal::Classification::Image<std::vector<int> > Image_indices;
+  typedef internal::Classification::Image<bool> Image_bool;
+  typedef internal::Classification::Image<float> Image_float;
+  
   struct HPoint {
-    Point_d position;
+    Point position;
     unsigned char echo; 
     int ind_x;
     int ind_y;
@@ -161,25 +178,24 @@ class ScanLidar
 
 public:
 
-  std::vector<Abstract_segmentation_class*> segmentation_classes;
+  std::vector<Abstract_classification_type*> segmentation_classes;
   
   bool is_echo_given;
   bool is_normal_given;
-  bounding_3 BBox_scan;
+  Iso_cuboid_3 BBox_scan;
 
-  vector<HPoint> HPS;
-  Image< std::vector < int > ,2> grid_HPS;
+  std::vector<HPoint> HPS;
+  Image_indices grid_HPS;
 
   //Hpoints attributes
-  vector < Vector_3 > normal;
-  vector < CGAL::cpp11::array<double,3> > eigenvalues;
-  std::vector<Plane_3> planes;
-  std::vector < std::vector < int > > spherical_neighborhood;
-  std::vector < std::vector < int > > cylindrical_neighborhood;
+  std::vector<Vector> normal;
+  std::vector<Eigenvalues> eigenvalues;
+  std::vector<Plane> planes;
+  std::vector<std::vector<int> > spherical_neighborhood;
+  std::vector<std::vector<int> > cylindrical_neighborhood;
 
-
-  Image<bool,2> Mask;                     //imagg
-  Image<float,2> DTM; //a enregistrer ?   //imagg           
+  Image_bool Mask;                     //imagg
+  Image_float DTM; //a enregistrer ?   //imagg           
 
   /////    General parameters   //////
   double OUTLIER_PERCENTAGE_RM; 
@@ -200,9 +216,8 @@ public:
   bool SAVE_POINT_ATTRIBUTES;
   bool SAVE_LABELING;
 
-
-
-  double potts_computation(int l1, int l2) const{	
+  double potts_computation(int l1, int l2) const
+  {
 		
     double res=0;
     double smooth_seg=SEGMENTATION_SMOOTH_COEFFICIENT;
@@ -213,14 +228,12 @@ public:
 		
   }
 
-
-
   class Edge_score
   {
-    const ScanLidar& M;
+    const Point_set_classification& M;
 
   public:
-    Edge_score(const ScanLidar& _M) : M(_M) {}
+    Edge_score(const Point_set_classification& _M) : M(_M) {}
 
     float compute(int, int, int l1, int l2)
     {
@@ -231,10 +244,10 @@ public:
 
   class Facet_score
   {
-    const ScanLidar& M;
+    const Point_set_classification& M;
 
   public:
-    Facet_score(const ScanLidar& _M) : M(_M) {}
+    Facet_score(const Point_set_classification& _M) : M(_M) {}
 
     double compute(int s, int l)
     {
@@ -243,183 +256,9 @@ public:
   };
 
 
-  void load_parameters(std::map<std::string, double>& values)
-  {
-    GRID_RESOLUTION = values[std::string("GRID_RESOLUTION")];
-
-    OUTLIER_PERCENTAGE_RM = values[std::string("OUTLIER_PERCENTAGE_RM")];
-    //energy weights
-    SIGMA_NON_PLANARITY = values[std::string("SIGMA_NON_PLANARITY")];
-        
-    SIGMA_GROUPING_1 = values[std::string("SIGMA_GROUPING_1")];
-    SIGMA_GROUPING_2 = values[std::string("SIGMA_GROUPING_2")];
-    SEGMENTATION_SMOOTH_COEFFICIENT = values[std::string("SEGMENTATION_SMOOTH_COEFFICIENT")];
-    //others
-    RADIUS_DTM = values[std::string("RADIUS_DTM")];
-    SCATTER_REGULARIZATION_VALUE = values[std::string("SCATTER_REGULARIZATION_VALUE")];
-    //saving
-    SAVE_POINT_ATTRIBUTES = values[std::string("SAVE_POINT_ATTRIBUTES")];
-    SAVE_LABELING = values[std::string("SAVE_LABELING")];
-
-    RADIUS_NEIGHBORS_MAX = values[std::string("RADIUS_NEIGHBORS_MAX")];
-    NB_LOCAL_NEIGHBORS = values[std::string("NB_LOCAL_NEIGHBORS")];
-  }
-
-  
-  bool load_points(string filename)
-  {
-
-    clock_t t;
-    t = clock();
-
-    is_normal_given=false;
-    DEBUG_CERR << endl<<"Loading point cloud from '" << filename;
-    /*if (binary) DEBUG_CERR << "' (bin,"; 
-      else DEBUG_CERR << "' (ascii,"; 
-      DEBUG_CERR.flush();*/
-
-    HPS.clear();
-    std::vector< Vector_3 > normals_temp;
-    std::vector< HPoint > points_temp;
-    Ply ply;
-
-    if (!ply.open(filename)){ DEBUG_CERR << "Cannot read '" << filename << "'" << endl; return false;}
-
-    for (Ply::ElementsIterator it = ply.elements_begin(); it != ply.elements_end(); ++it){
-      const Ply::Element& element = *it;
-
-      if (element.name() != "vertex"){
-        if (!ply.skip(element)){ ply.close(); return false;}
-        continue;
-      }
-
-      /* Check if the echo is available */
-      if (element.num_properties()>3){
-        if ((element.property(3).name() == "echo")){is_echo_given=true; DEBUG_CERR<<" with echo number) ";}else{is_echo_given=false; DEBUG_CERR<<" (WITHOUT ECHO NUMBER) ";}
-      }else{is_echo_given=false; DEBUG_CERR<<" without echo number) ";}
-
-
-      /* Check the properties are what we expect */
-      if ((element.property(0).name() != "x")||(element.property(1).name() != "y")||(element.property(2).name() != "z")){DEBUG_CERR << "Unexpected vertex properties in the PLY file" << endl; ply.close(); return false;}
-
-
-      size_t num_vertices = element.count();
-      points_temp.resize(num_vertices);
-	
-      if (element.num_properties() == 3) {
-        for (size_t i=0; i<num_vertices; i++){
-          double x,y,z;
-
-          if ((!ply.read(element.property(0), x))||(!ply.read(element.property(1), y))||(!ply.read(element.property(2), z))){DEBUG_CERR << "error while reading (pos) vertex " << i+1 << endl; ply.close(); return false;}	
-				
-          points_temp[i].position = Point_d(x,y,z);
-          points_temp[i].echo = 1;
-        }
-      }
-
-      else if (element.num_properties() == 4) {
-        for (size_t i=0; i<num_vertices; i++){
-          double x,y,z;
-          double echo;
-
-          if ((!ply.read(element.property(0), x))||(!ply.read(element.property(1), y))||(!ply.read(element.property(2), z))){DEBUG_CERR << "error while reading (pos) vertex " << i+1 << endl; ply.close(); return false;}	
-          if (!ply.read(element.property(3), echo)){DEBUG_CERR << "error while reading attribut " << i+1 << endl; ply.close(); return false;}
-				
-          points_temp[i].position = Point_d(x,y,z);
-          points_temp[i].echo = echo;
-        }
-      }
-
-      else if (element.num_properties() == 5) {
-        for (size_t i=0; i<num_vertices; i++){
-          double x,y,z;
-          double ampli;
-          int echo;
-
-          if ((!ply.read(element.property(0), x))||(!ply.read(element.property(1), y))||(!ply.read(element.property(2), z))){DEBUG_CERR << "error while reading (pos) vertex " << i+1 << endl; ply.close(); return false;}
-          if ((!ply.read(element.property(3), ampli))||(!ply.read(element.property(4), echo))){DEBUG_CERR << "error while reading attribut " << i+1 << endl; ply.close(); return false;}
-				
-          points_temp[i].position = Point_d(x,y,z);
-          points_temp[i].echo = echo;
-        }
-      }
-		
-      else if (element.num_properties() == 6) {
-        for (size_t i=0; i<num_vertices; i++){
-          double x,y,z;
-          double nx,ny,nz;
-
-          if ((!ply.read(element.property(0), x))||(!ply.read(element.property(1), y))||(!ply.read(element.property(2), z))){DEBUG_CERR << "error while reading (pos) vertex " << i+1 << endl; ply.close(); return false;}	
-          if ((!ply.read(element.property(3), nx))||(!ply.read(element.property(4), ny))||(!ply.read(element.property(5), nz))){DEBUG_CERR << "error while reading attribut " << i+1 << endl; ply.close(); return false; }
-				
-          points_temp[i].position = Point_d(x,y,z);
-          normals_temp.push_back(Vector_3(nx,ny,nz));
-        }
-        is_normal_given=true;
-      }
-
-      else if (element.num_properties()>6) {
-        for (size_t i=0; i<num_vertices; i++){
-          double x,y,z;
-          double echo;
-          double r, g, b;
-
-          if ((!ply.read(element.property(0), x))||(!ply.read(element.property(1), y))||(!ply.read(element.property(2), z))){DEBUG_CERR << "error while reading (pos) vertex " << i+1 << endl; ply.close(); return false;}	
-          if (!ply.read(element.property(3), echo)){DEBUG_CERR << "error while reading attribut " << i+1 << endl; ply.close(); return false;}
-          if ((!ply.read(element.property(4), r))||(!ply.read(element.property(5), g))||(!ply.read(element.property(6), b))){DEBUG_CERR << "error while reading (color) vertex " << i+1 << endl; ply.close(); return false;}	
-				
-          points_temp[i].position = Point_d(x,y,z);
-          points_temp[i].echo = echo;
-          points_temp[i].color = {{ (unsigned char)r, (unsigned char)g, (unsigned char)b }};
-        }
-      }
-
-      else {DEBUG_CERR << "Unexpected vertex properties in the PLY file" << endl; ply.close(); return false;}
-    }
-
-
-    /* Remove outliers */
-    double Zmean=0; 
-    double echo_mean=0;
-    for(int i=0;i<(int)points_temp.size();i++){
-      Zmean+=(double)points_temp[i].position.z(); 
-      echo_mean+=(double)points_temp[i].echo;
-    }
-    Zmean/=(double)points_temp.size();
-    DEBUG_CERR<<"echo: "<<echo_mean/points_temp.size()<<endl;
-	
-    double StDev=0;
-    for(int i=0;i<(int)points_temp.size();i++) StDev+=pow((double)points_temp[i].position.z()-Zmean,2);
-    StDev=sqrt(StDev/(double)points_temp.size());
-
-    int count=0;
-    double threshold_StDev=3;
-    do {
-      count=0;
-      threshold_StDev+=0.5;
-      for(std::size_t i=0;i<points_temp.size();i++){
-        if(std::fabs((double)points_temp[i].position.z()-Zmean)>threshold_StDev*StDev) count++;
-      }
-    }while((double)count/points_temp.size()>OUTLIER_PERCENTAGE_RM);
-
-    for(std::size_t i=0;i<points_temp.size();i++){
-      if(std::fabs((double)points_temp[i].position.z()-Zmean)<=threshold_StDev*StDev){
-        HPS.push_back(points_temp[i]);
-        if(is_normal_given) normal.push_back(normals_temp[i]);
-      }
-    }
-    DEBUG_CERR <<points_temp.size() << " initial points: "<<HPS.size()<<" inliers and " <<points_temp.size()-HPS.size()<<" outliers"<< endl<<"-> OK ( "<<((float)clock()-t)/CLOCKS_PER_SEC<<" sec )"<< endl;
-
-    points_temp.clear();
-    ply.close();
-
-    return true;
-  }
-
-
   double average_spacing () const
   {
-    std::vector<Point_d> pts;
+    std::vector<Point> pts;
     for (std::size_t i = 0; i < HPS.size(); ++ i)
       pts.push_back (HPS[i].position);
     return CGAL::compute_average_spacing<CGAL::Sequential_tag> (pts.begin(), pts.end(), 6);
@@ -432,24 +271,24 @@ public:
     t = clock();
 
 
-    DEBUG_CERR<<endl<<"Initialization: ";
+    CGAL_CLASSIFICATION_CERR << std::endl << "Initialization: ";
 
     //1-Neighborhood computation and reset the attributes of the structure points
-    DEBUG_CERR<<"spherical neighborhood..";
+    CGAL_CLASSIFICATION_CERR<<"spherical neighborhood..";
     spherical_neighborhood.clear();
     eigenvalues.clear();
     planes.clear();
     
-    std::map<Point_d,int> map_indice_point;
+    std::map<Point,int> map_indice_point;
     for(std::size_t i=0;i<HPS.size();i++){
-      Point_d pt=HPS[i].position;
+      Point pt=HPS[i].position;
       map_indice_point[pt]=i;
 	
     }
 
-    std::vector<Point_d> list_points;
+    std::vector<Point> list_points;
     for(int i=0;i<(int)HPS.size();i++){
-      Point_d pt=HPS[i].position;
+      Point pt=HPS[i].position;
       list_points.push_back(pt);
     }
 
@@ -457,8 +296,8 @@ public:
 
     std::size_t nb_neigh = 0;
     for(int i=0;i<(int)HPS.size();i++){
-      const Point_d& query=HPS[i].position;
-      std::vector<Point_d> neighbors;
+      const Point& query=HPS[i].position;
+      std::vector<Point> neighbors;
       
       if (phase == 1 && HPS[i].echo == 0)
         {
@@ -473,19 +312,20 @@ public:
       compute_principal_curvature (query, neighbors);
     }
 
-    DEBUG_CERR<<"ok";
+    CGAL_CLASSIFICATION_CERR<<"ok";
 
     if (phase == 1)
       return true;
 
     //2-creation of the bounding box
-    DEBUG_CERR<<", bounding box..";
+    CGAL_CLASSIFICATION_CERR<<", bounding box..";
     BBox_scan = CGAL::bounding_box(list_points.begin(), list_points.end());
-    DEBUG_CERR<<"ok";
+    CGAL_CLASSIFICATION_CERR<<"ok";
 
     //3-creation grille_points
-    DEBUG_CERR<<", planimetric grid of HPS..";
-    Image< std::vector < int > ,2> tess((int)((BBox_scan.xmax()-BBox_scan.xmin())/GRID_RESOLUTION)+1,(int)((BBox_scan.ymax()-BBox_scan.ymin())/GRID_RESOLUTION)+1);
+    CGAL_CLASSIFICATION_CERR<<", planimetric grid of HPS..";
+    Image_indices tess((std::size_t)((BBox_scan.xmax()-BBox_scan.xmin())/GRID_RESOLUTION)+1,
+                       (std::size_t)((BBox_scan.ymax()-BBox_scan.ymin())/GRID_RESOLUTION)+1);
     grid_HPS=tess;
 
     for(int i=0;i<(int)HPS.size();i++){
@@ -500,15 +340,16 @@ public:
       temp.push_back(i);
       grid_HPS(HPS[i].ind_x,HPS[i].ind_y)=temp;
     }
-    DEBUG_CERR<<"ok";
+    CGAL_CLASSIFICATION_CERR<<"ok";
 
 
     //4-Mask creation
-    DEBUG_CERR<<", planimetric mask..";
-    Image< bool ,2> masktp((int)((BBox_scan.xmax()-BBox_scan.xmin())/GRID_RESOLUTION)+1,(int)((BBox_scan.ymax()-BBox_scan.ymin())/GRID_RESOLUTION)+1);
+    CGAL_CLASSIFICATION_CERR<<", planimetric mask..";
+    Image_bool masktp((std::size_t)((BBox_scan.xmax()-BBox_scan.xmin())/GRID_RESOLUTION)+1,
+                      (std::size_t)((BBox_scan.ymax()-BBox_scan.ymin())/GRID_RESOLUTION)+1);
     Mask=masktp;
 
-    DEBUG_CERR << "(" << Mask.height() << "x" << Mask.width() << ")" << std::endl;
+    CGAL_CLASSIFICATION_CERR << "(" << Mask.height() << "x" << Mask.width() << ")" << std::endl;
     int square=(int)16*(RADIUS_NEIGHBORS_MAX/GRID_RESOLUTION)+1;
     int nb_true = 0;
     for (int j=0;j<(int)Mask.height();j++){	
@@ -519,7 +360,8 @@ public:
       }
     }
 
-    Image< bool ,2> Mask_tmp ((int)((BBox_scan.xmax()-BBox_scan.xmin())/GRID_RESOLUTION)+1,(int)((BBox_scan.ymax()-BBox_scan.ymin())/GRID_RESOLUTION)+1);
+    Image_bool Mask_tmp ((std::size_t)((BBox_scan.xmax()-BBox_scan.xmin())/GRID_RESOLUTION)+1,
+                         (std::size_t)((BBox_scan.ymax()-BBox_scan.ymin())/GRID_RESOLUTION)+1);
 
     for (std::size_t i = 0; i < Mask.width(); ++ i)
       for (std::size_t j = 0; j < Mask.height(); ++ j)
@@ -563,9 +405,9 @@ public:
 
 
     //5-normal computation
-    //    if(!is_normal_given){DEBUG_CERR<<", normals.."; compute_normal(); DEBUG_CERR<<"ok";}
+    //    if(!is_normal_given){CGAL_CLASSIFICATION_CERR<<", normals.."; compute_normal(); CGAL_CLASSIFICATION_CERR<<"ok";}
 
-    DEBUG_CERR<<endl<<"-> OK ( "<<((float)clock()-t)/CLOCKS_PER_SEC<<" sec )"<< endl;
+    CGAL_CLASSIFICATION_CERR<<std::endl<<"-> OK ( "<<((float)clock()-t)/CLOCKS_PER_SEC<<" sec )"<< std::endl;
 
     return true;
   }
@@ -577,20 +419,20 @@ public:
 
     for(int k=0;k<(int)HPS.size();k++){
 
-      std::list<Point_d> list_pts;
+      std::list<Point> list_pts;
       for(int n=0;n<(int)spherical_neighborhood[k].size();n++){
 				
         if(n<NB_LOCAL_NEIGHBORS){
-          Point_d pt_temp=HPS[spherical_neighborhood[k][n]].position;
+          Point pt_temp=HPS[spherical_neighborhood[k][n]].position;
           list_pts.push_back(pt_temp);
         }
         else break;
       }
 			
-      Plane_3 plane_temp;
+      Plane plane_temp;
       linear_least_squares_fitting_3(list_pts.begin(),list_pts.end(),plane_temp, CGAL::Dimension_tag<0>());
 
-      Vector_3 normal_temp=plane_temp.orthogonal_vector();
+      Vector normal_temp=plane_temp.orthogonal_vector();
 
       for(int n=0;n<(int)spherical_neighborhood[k].size();n++){
         if(k>spherical_neighborhood[k][n] && n<NB_LOCAL_NEIGHBORS){
@@ -612,21 +454,22 @@ public:
 
 
 
-  void compute_principal_curvature(const Point_d& point, std::vector<Point_d>& neighborhood)
+  void compute_principal_curvature(const Point& point, std::vector<Point>& neighborhood)
   {
     if (neighborhood.size() == 0)
       {
-        eigenvalues.push_back ({{ 0., 0., 0. }});
-        planes.push_back (Plane_3 (point, Vector_3 (0., 0., 1.)));
+        Eigenvalues v = {{ 0., 0., 0. }};
+        eigenvalues.push_back (v);
+        planes.push_back (Plane (point, Vector (0., 0., 1.)));
         return;
       }
-    Point_d centroid = CGAL::centroid (neighborhood.begin(), neighborhood.end());
+    Point centroid = CGAL::centroid (neighborhood.begin(), neighborhood.end());
 
     CGAL::cpp11::array<double, 6> covariance = {{ 0., 0., 0., 0., 0., 0. }};
       
     for (std::size_t i = 0; i < neighborhood.size(); ++ i)
       {
-        Vector_3 d = neighborhood[i] - centroid;
+        Vector d = neighborhood[i] - centroid;
         covariance[0] += d.x () * d.x ();
         covariance[1] += d.x () * d.y ();
         covariance[2] += d.x () * d.z ();
@@ -635,150 +478,27 @@ public:
         covariance[5] += d.z () * d.z ();
       }
 
-
-    eigenvalues.push_back ({{ 0., 0., 0. }});
+    Eigenvalues evalues = {{ 0., 0., 0. }};
     CGAL::cpp11::array<double, 9> eigenvectors = {{ 0., 0., 0.,
                                                     0., 0., 0.,
                                                     0., 0., 0. }};
 
     CGAL::Default_diagonalize_traits<double,3>::diagonalize_selfadjoint_covariance_matrix
-      (covariance, eigenvalues.back(), eigenvectors);
+      (covariance, evalues, eigenvectors);
+    eigenvalues.push_back (evalues);
 
-    Plane_3 plane;
+    Plane plane;
     CGAL::linear_least_squares_fitting_3 (neighborhood.begin(),neighborhood.end(),plane, CGAL::Dimension_tag<0>());
     planes.push_back (plane);
   }
 
 
 
-  bool labeling_PC(){
-
-    int number_of_alpha_expansions = 2;
-	
-    // graph description
-    DEBUG_CERR << "Graph description... ";
-    GCoptimizationGeneralGraph<float, float> *gc= new GCoptimizationGeneralGraph<float, float>
-      ((int)HPS.size(),(int)(segmentation_classes.size()));
-	
-    for(int k=0;k<(int)HPS.size();k++){
-      vector < int > index_of_neighboring_points;
-      for(int n=0;n<(int)spherical_neighborhood[k].size();n++)
-        if(n<NB_LOCAL_NEIGHBORS) index_of_neighboring_points.push_back(spherical_neighborhood[k][n]);
-		
-      for(int k_vois=0; k_vois<(int)index_of_neighboring_points.size(); k_vois++)
-        gc->setNeighbors(k, index_of_neighboring_points[k_vois]);
-    }
-
-    gc->specializeDataCostFunctor(Facet_score(*this));
-    gc->specializeSmoothCostFunctor(Edge_score(*this));
-	
-    
-    // data term initialisation
-    DEBUG_CERR << "Data term initialization... ";
-    for(int s=0;s<(int)HPS.size();s++){
-			
-      int nb_class_best=0; 
-
-      double val_class_best= segmentation_classes[0]->data_term_computation(s);
-
-      for(std::size_t k = 1; k < segmentation_classes.size(); ++ k)
-        {
-          double value = segmentation_classes[k]->data_term_computation(s);
-          if(val_class_best > value)
-            {
-              val_class_best = value;
-              nb_class_best=k;
-            }
-        }
-      gc->setLabel(s,nb_class_best);
-
-    }
-
-    // Optimize labeling
-    DEBUG_CERR << "Optimize labeling... ";
-    for (int iter=0; iter<number_of_alpha_expansions; iter++){
-			
-      for (std::size_t i=0; i< segmentation_classes.size();i++){
-				
-        // Compute vector of active sites
-        vector<int> sites;
-        for(int s=0;s<(int)HPS.size();s++) sites.push_back(s);
-			
-        // Compute alpha expansion for this label on these sites
-        gc->alpha_expansion((int)i, &(sites[0]), sites.size());
-      }
-    }
-
-    // Store labeling
-    DEBUG_CERR << "Store labeling... ";
-    int count1=0; 
-    int count2=0; 
-    int count3=0; 
-    int count4=0;
-    for(int s=0;s<(int)HPS.size();s++){
-      HPS[s].AE_label=gc->whatLabel(s); 
-      if(gc->whatLabel(s)==0) count1++;
-      else if(gc->whatLabel(s)==1) count2++;
-      else if(gc->whatLabel(s)==2) count3++;
-      else count4++;
-    }
-
-    delete gc;
-
-    DEBUG_CERR<<" "<<(double)100*count1/HPS.size()<<"% vegetation, "<<(double)100*count2/HPS.size()<<"% ground, "<<(double)100*count3/HPS.size()<<"% building, "<<(double)100*count4/HPS.size()<<"% clutter"<<endl;
-    
-    if(SAVE_LABELING)
-      {
-        CGAL::Color bblue(130,130,255);
-        CGAL::Color rred(220,140,140);
-        CGAL::Color orange(226,247,130);
-        CGAL::Color white(225,225,225);
-
-        std::vector < CGAL::Color > vecteur_col; 
-        vecteur_col.push_back(rred);
-        vecteur_col.push_back(orange);
-        vecteur_col.push_back(bblue);
-        vecteur_col.push_back(white);
-
-
-        std::string nom_classif("PC_class_all.ply");
-        std::string nom_classif1("PC_class_vegetation.ply");
-        std::string nom_classif2("PC_class_ground.ply");
-        std::string nom_classif3("PC_class_building.ply");
-        std::string nom_classif4("PC_class_clutter.ply");
-
-        std::vector< Point_d > pointtts0; std::vector< CGAL::Color > colors000; 
-        std::vector< Point_d > pointAE1; std::vector< CGAL::Color > colorsAE1;
-        std::vector< Point_d > pointAE2; std::vector< CGAL::Color > colorsAE2;
-        std::vector< Point_d > pointAE3; std::vector< CGAL::Color > colorsAE3;
-        std::vector< Point_d > pointAE4; std::vector< CGAL::Color > colorsAE4;
-
-        for(int i=0; i<(int)HPS.size();i++){
-          Point_d pt=HPS[i].position; 
-          pointtts0.push_back(pt); 
-          colors000.push_back(vecteur_col[HPS[i].AE_label]);
-
-          if(HPS[i].AE_label==0){pointAE1.push_back(pt); colorsAE1.push_back(vecteur_col[HPS[i].AE_label]);}
-          else if(HPS[i].AE_label==1){pointAE2.push_back(pt); colorsAE2.push_back(vecteur_col[HPS[i].AE_label]);}
-          else if(HPS[i].AE_label==2){pointAE3.push_back(pt); colorsAE3.push_back(vecteur_col[HPS[i].AE_label]);}
-          else{pointAE4.push_back(pt); colorsAE4.push_back(vecteur_col[HPS[i].AE_label]);}
-        }
-        colorpointset2ply(nom_classif.c_str(),pointtts0,colors000);
-        colorpointset2ply(nom_classif1.c_str(),pointAE1,colorsAE1);
-        colorpointset2ply(nom_classif2.c_str(),pointAE2,colorsAE2);
-        colorpointset2ply(nom_classif3.c_str(),pointAE3,colorsAE3);
-        colorpointset2ply(nom_classif4.c_str(),pointAE4,colorsAE4);
-      }
-	
-    return true;
-  }
-
-
   bool quick_labeling_PC(bool log = false)
   {
 
     // data term initialisation
-    DEBUG_CERR << "Labeling... ";
+    CGAL_CLASSIFICATION_CERR << "Labeling... ";
 
     std::vector<std::vector<double> > values;
     if (log)
@@ -832,7 +552,7 @@ public:
           }
       }
     
-    DEBUG_CERR<<" "<<(double)100*count1/HPS.size()<<"% vegetation, "<<(double)100*count2/HPS.size()<<"% ground, "<<(double)100*count3/HPS.size()<<"% roof, "<<(double)100*count4/HPS.size()<<"% clutter"<<endl;
+    CGAL_CLASSIFICATION_CERR<<" "<<(double)100*count1/HPS.size()<<"% vegetation, "<<(double)100*count2/HPS.size()<<"% ground, "<<(double)100*count3/HPS.size()<<"% roof, "<<(double)100*count4/HPS.size()<<"% clutter"<<std::endl;
     
     if(SAVE_LABELING)
       {
@@ -854,14 +574,14 @@ public:
         std::string nom_classif3("PC_class_roof.ply");
         std::string nom_classif4("PC_class_facade.ply");
 
-        std::vector< Point_d > pointtts0; std::vector< CGAL::Color > colors000; 
-        std::vector< Point_d > pointAE1; std::vector< CGAL::Color > colorsAE1;
-        std::vector< Point_d > pointAE2; std::vector< CGAL::Color > colorsAE2;
-        std::vector< Point_d > pointAE3; std::vector< CGAL::Color > colorsAE3;
-        std::vector< Point_d > pointAE4; std::vector< CGAL::Color > colorsAE4;
+        std::vector< Point > pointtts0; std::vector< CGAL::Color > colors000; 
+        std::vector< Point > pointAE1; std::vector< CGAL::Color > colorsAE1;
+        std::vector< Point > pointAE2; std::vector< CGAL::Color > colorsAE2;
+        std::vector< Point > pointAE3; std::vector< CGAL::Color > colorsAE3;
+        std::vector< Point > pointAE4; std::vector< CGAL::Color > colorsAE4;
 
         for(int i=0; i<(int)HPS.size();i++){
-          Point_d pt=HPS[i].position; 
+          Point pt=HPS[i].position; 
           pointtts0.push_back(pt); 
           colors000.push_back(vecteur_col[HPS[i].AE_label]);
 
@@ -900,14 +620,14 @@ public:
   template <typename SegmentationAttribute>
   bool save_PC_attribute (SegmentationAttribute& att)
   {
-    std::vector< Point_d > pointtts;
+    std::vector< Point > pointtts;
     std::vector< CGAL::Color > colors;
 
     std::stringstream ss;
     ss << "F_" << att.id() << ".ply";
 
     for(int i=0; i<(int)HPS.size();i++){
-      Point_d pt=HPS[i].position; pointtts.push_back(pt);
+      Point pt=HPS[i].position; pointtts.push_back(pt);
       double v = att.value(i);
       double cc = std::max (0., std::min(1., v))*255;
       CGAL::Color colo (255-(int)cc, 255-(int)cc, 255); 
@@ -921,14 +641,14 @@ public:
 
   bool save_PC_attribute (std::string name, std::vector<double>& val)
   {
-    std::vector< Point_d > pointtts;
+    std::vector< Point > pointtts;
     std::vector< CGAL::Color > colors;
 
     std::stringstream ss;
     ss << "PROBA_" << name << ".ply";
 
     for(int i=0; i<(int)HPS.size();i++){
-      Point_d pt=HPS[i].position; pointtts.push_back(pt);
+      Point pt=HPS[i].position; pointtts.push_back(pt);
       double v = val[i];
       double cc = std::max (0., std::min(1., v))*255;
       CGAL::Color colo (255-(int)cc, 255-(int)cc, 255); 
@@ -943,13 +663,13 @@ public:
   {
 
     // data term initialisation
-    DEBUG_CERR << "Labeling... ";
+    CGAL_CLASSIFICATION_CERR << "Labeling... ";
 
     std::vector<std::vector<double> > values;
     values.resize (segmentation_classes.size());
     
-    std::map<Point_d, std::size_t> map_p2i;
-    std::vector<Point_d> list_points;    
+    std::map<Point, std::size_t> map_p2i;
+    std::vector<Point> list_points;    
     for(int s=0;s<(int)HPS.size();s++)
       {
         map_p2i[HPS[s].position] = s;
@@ -965,8 +685,8 @@ public:
 
     for(int s=0;s<(int)HPS.size();s++)
       {
-        const Point_d& query=HPS[s].position;
-        std::vector<Point_d> neighbors;
+        const Point& query=HPS[s].position;
+        std::vector<Point> neighbors;
       
         Fuzzy_sphere fs(query, RADIUS_NEIGHBORS_MAX, 0);
         tree.search(std::back_inserter(neighbors), fs);
@@ -1020,7 +740,7 @@ public:
         save_PC_attribute (name, smoothed_values[i]);
       }
 
-    DEBUG_CERR<<" "<<(double)100*count1/HPS.size()<<"% vegetation, "<<(double)100*count2/HPS.size()<<"% ground, "<<(double)100*count3/HPS.size()<<"% roof, "<<(double)100*count4/HPS.size()<<"% clutter"<<endl;
+    CGAL_CLASSIFICATION_CERR<<" "<<(double)100*count1/HPS.size()<<"% vegetation, "<<(double)100*count2/HPS.size()<<"% ground, "<<(double)100*count3/HPS.size()<<"% roof, "<<(double)100*count4/HPS.size()<<"% clutter"<<std::endl;
     
     if(SAVE_LABELING)
       {
@@ -1042,14 +762,14 @@ public:
         std::string nom_classif3("PC_class_roof.ply");
         std::string nom_classif4("PC_class_facade.ply");
 
-        std::vector< Point_d > pointtts0; std::vector< CGAL::Color > colors000; 
-        std::vector< Point_d > pointAE1; std::vector< CGAL::Color > colorsAE1;
-        std::vector< Point_d > pointAE2; std::vector< CGAL::Color > colorsAE2;
-        std::vector< Point_d > pointAE3; std::vector< CGAL::Color > colorsAE3;
-        std::vector< Point_d > pointAE4; std::vector< CGAL::Color > colorsAE4;
+        std::vector< Point > pointtts0; std::vector< CGAL::Color > colors000; 
+        std::vector< Point > pointAE1; std::vector< CGAL::Color > colorsAE1;
+        std::vector< Point > pointAE2; std::vector< CGAL::Color > colorsAE2;
+        std::vector< Point > pointAE3; std::vector< CGAL::Color > colorsAE3;
+        std::vector< Point > pointAE4; std::vector< CGAL::Color > colorsAE4;
 
         for(int i=0; i<(int)HPS.size();i++){
-          Point_d pt=HPS[i].position; 
+          Point pt=HPS[i].position; 
           pointtts0.push_back(pt); 
           colors000.push_back(vecteur_col[HPS[i].AE_label]);
 
@@ -1090,10 +810,9 @@ public:
     clock_t t;
     t = clock();
 	
-    DEBUG_CERR<<endl<<"Classification of the point cloud: ";
-    if (method == 0)
-      labeling_PC();
-    else if (method == 1)
+    CGAL_CLASSIFICATION_CERR<<std::endl<<"Classification of the point cloud: ";
+    
+    if (method == 1)
       quick_labeling_PC(log);
     else if (method == 2)
       smoothed_labeling_PC();
@@ -1103,7 +822,7 @@ public:
         abort();
       }
 
-    DEBUG_CERR<<"-> OK ( "<<((float)clock()-t)/CLOCKS_PER_SEC<<" sec )"<< endl;
+    CGAL_CLASSIFICATION_CERR<<"-> OK ( "<<((float)clock()-t)/CLOCKS_PER_SEC<<" sec )"<< std::endl;
 
     return true;
   }
@@ -1117,8 +836,13 @@ protected:
 };
 
 
+template <typename Kernel>
 class Scatter_segmentation_attribute
 {
+  typedef Point_set_classification<Kernel> PSC;
+  typedef typename PSC::Image_float Image_float;
+  typedef typename PSC::HSV_Color HSV_Color;
+  
   std::vector<double> vegetation_attribute;
   
 public:
@@ -1126,9 +850,10 @@ public:
   double mean;
   double max;
 
-  Scatter_segmentation_attribute (ScanLidar& M, double weight, bool colors = false) : weight (weight)
+  Scatter_segmentation_attribute (PSC& M,
+                                  double weight, bool colors = false) : weight (weight)
   {
-    Image<float,2> Vegetation(M.grid_HPS.width(), M.grid_HPS.height());
+    Image_float Vegetation(M.grid_HPS.width(), M.grid_HPS.height());
 
     for (int j=0;j<(int)M.DTM.height();j++)	
       for (int i=0;i<(int)M.DTM.width();i++)
@@ -1209,9 +934,8 @@ public:
                                           * std::exp (-(c[2] - 37) * (c[2] - 37) / (2 * 10 * 10)));
         }
       }
-    normalize (vegetation_attribute);
-    display_vect_stat ("Distance to plane:", vegetation_attribute);
-    compute_mean_max (vegetation_attribute, mean, max);
+
+    internal::Classification::compute_mean_max (vegetation_attribute, mean, max);
     max *= 2;
   }
 
@@ -1223,8 +947,11 @@ public:
   const char* id() { return "scatter"; }
 };
 
+
+template <typename Kernel>
 class Distance_to_plane_segmentation_attribute
 {
+  typedef Point_set_classification<Kernel> PSC;
 
   std::vector<double> distance_to_plane_attribute;
   
@@ -1233,14 +960,12 @@ public:
   double mean;
   double max;
   
-  Distance_to_plane_segmentation_attribute (ScanLidar& M, double weight) : weight (weight)
+  Distance_to_plane_segmentation_attribute (PSC& M, double weight) : weight (weight)
   {
     for(int i=0; i<(int)M.HPS.size(); i++)
       distance_to_plane_attribute.push_back (std::sqrt (CGAL::squared_distance (M.HPS[i].position, M.planes[i])));
 
-    normalize (distance_to_plane_attribute);
-    display_vect_stat ("Distance to plane:", distance_to_plane_attribute);
-    compute_mean_max (distance_to_plane_attribute, mean, max);
+    internal::Classification::compute_mean_max (distance_to_plane_attribute, mean, max);
     max *= 2;
   }
 
@@ -1252,9 +977,12 @@ public:
   const char* id() { return "planimetry"; }
 };
 
+template <typename Kernel>
 class Elevation_segmentation_attribute
 {
-
+  typedef Point_set_classification<Kernel> PSC;
+  typedef typename PSC::Image_float Image_float;
+  
   std::vector<double> elevation_attribute;
   
 public:
@@ -1262,11 +990,11 @@ public:
   double mean;
   double max;
   
-  Elevation_segmentation_attribute (ScanLidar& M, double weight) : weight (weight)
+  Elevation_segmentation_attribute (PSC& M, double weight) : weight (weight)
   {
     //DEM
-    Image<float,2> DEM(M.grid_HPS.width(),M.grid_HPS.height());
-    Image<float,2> DEMtemp(M.grid_HPS.width(),M.grid_HPS.height());
+    Image_float DEM(M.grid_HPS.width(),M.grid_HPS.height());
+    Image_float DEMtemp(M.grid_HPS.width(),M.grid_HPS.height());
 
     for (int j=0;j<(int)DEM.height();j++){	
       for (int i=0;i<(int)DEM.width();i++){
@@ -1348,8 +1076,8 @@ public:
     //DTM computation
     int step=15;
     square=(int)(M.RADIUS_DTM/M.GRID_RESOLUTION)+1;
-    Image<float,2> toto(M.grid_HPS.width(),M.grid_HPS.height());
-    Image<float,2> im_Zfront(M.grid_HPS.width(),M.grid_HPS.height());
+    Image_float toto(M.grid_HPS.width(),M.grid_HPS.height());
+    Image_float im_Zfront(M.grid_HPS.width(),M.grid_HPS.height());
     M.DTM=toto;
 
     //round 1
@@ -1580,9 +1308,8 @@ public:
       int J=M.HPS[i].ind_y;
       elevation_attribute.push_back ((double)(M.HPS[i].position.z()-M.DTM(I,J)));
     }
-    normalize (elevation_attribute);
-    display_vect_stat ("Elevation:", elevation_attribute);
-    compute_mean_max (elevation_attribute, mean, max);
+
+    internal::Classification::compute_mean_max (elevation_attribute, mean, max);
     max *= 5;
   }
 
@@ -1596,16 +1323,17 @@ public:
 };
 
 
-class Vegetation_segmentation_class : public Abstract_segmentation_class
+template <typename Kernel>
+class Vegetation_classification_type : public Abstract_classification_type
 {
-  Scatter_segmentation_attribute& scat_att;
-  Distance_to_plane_segmentation_attribute& d2p_att;
-  Elevation_segmentation_attribute& elev_att;
+  Scatter_segmentation_attribute<Kernel>& scat_att;
+  Distance_to_plane_segmentation_attribute<Kernel>& d2p_att;
+  Elevation_segmentation_attribute<Kernel>& elev_att;
 public:
 
-  Vegetation_segmentation_class (Scatter_segmentation_attribute& scat_att,
-                                 Distance_to_plane_segmentation_attribute& d2p_att,
-                                 Elevation_segmentation_attribute& elev_att)
+  Vegetation_classification_type (Scatter_segmentation_attribute<Kernel>& scat_att,
+                                  Distance_to_plane_segmentation_attribute<Kernel>& d2p_att,
+                                  Elevation_segmentation_attribute<Kernel>& elev_att)
     : scat_att (scat_att)
     , d2p_att (d2p_att)
     , elev_att (elev_att)
@@ -1620,16 +1348,17 @@ public:
 
 };
 
-class Ground_segmentation_class : public Abstract_segmentation_class
+template <typename Kernel>
+class Ground_classification_type : public Abstract_classification_type
 {
-  Scatter_segmentation_attribute& scat_att;
-  Distance_to_plane_segmentation_attribute& d2p_att;
-  Elevation_segmentation_attribute& elev_att;
+  Scatter_segmentation_attribute<Kernel>& scat_att;
+  Distance_to_plane_segmentation_attribute<Kernel>& d2p_att;
+  Elevation_segmentation_attribute<Kernel>& elev_att;
 public:
 
-  Ground_segmentation_class (Scatter_segmentation_attribute& scat_att,
-                             Distance_to_plane_segmentation_attribute& d2p_att,
-                             Elevation_segmentation_attribute& elev_att)
+  Ground_classification_type (Scatter_segmentation_attribute<Kernel>& scat_att,
+                              Distance_to_plane_segmentation_attribute<Kernel>& d2p_att,
+                              Elevation_segmentation_attribute<Kernel>& elev_att)
     : scat_att (scat_att)
     , d2p_att (d2p_att)
     , elev_att (elev_att)
@@ -1643,15 +1372,16 @@ public:
   }
 };
 
-class Roof_segmentation_class : public Abstract_segmentation_class
+template <typename Kernel>
+class Roof_classification_type : public Abstract_classification_type
 {
-  Scatter_segmentation_attribute& scat_att;
-  Distance_to_plane_segmentation_attribute& d2p_att;
-  Elevation_segmentation_attribute& elev_att;
+  Scatter_segmentation_attribute<Kernel>& scat_att;
+  Distance_to_plane_segmentation_attribute<Kernel>& d2p_att;
+  Elevation_segmentation_attribute<Kernel>& elev_att;
 public:
-  Roof_segmentation_class (Scatter_segmentation_attribute& scat_att,
-                           Distance_to_plane_segmentation_attribute& d2p_att,
-                           Elevation_segmentation_attribute& elev_att)
+  Roof_classification_type (Scatter_segmentation_attribute<Kernel>& scat_att,
+                           Distance_to_plane_segmentation_attribute<Kernel>& d2p_att,
+                           Elevation_segmentation_attribute<Kernel>& elev_att)
     : scat_att (scat_att)
     , d2p_att (d2p_att)
     , elev_att (elev_att)
@@ -1665,15 +1395,16 @@ public:
   }
 };
 
-class Facade_segmentation_class : public Abstract_segmentation_class
+template <typename Kernel>
+class Facade_classification_type : public Abstract_classification_type
 {
-  Scatter_segmentation_attribute& scat_att;
-  Distance_to_plane_segmentation_attribute& d2p_att;
-  Elevation_segmentation_attribute& elev_att;
+  Scatter_segmentation_attribute<Kernel>& scat_att;
+  Distance_to_plane_segmentation_attribute<Kernel>& d2p_att;
+  Elevation_segmentation_attribute<Kernel>& elev_att;
 public:
-  Facade_segmentation_class (Scatter_segmentation_attribute& scat_att,
-                             Distance_to_plane_segmentation_attribute& d2p_att,
-                             Elevation_segmentation_attribute& elev_att)
+  Facade_classification_type (Scatter_segmentation_attribute<Kernel>& scat_att,
+                              Distance_to_plane_segmentation_attribute<Kernel>& d2p_att,
+                              Elevation_segmentation_attribute<Kernel>& elev_att)
     : scat_att (scat_att)
     , d2p_att (d2p_att)
     , elev_att (elev_att)
@@ -1688,15 +1419,16 @@ public:
 };
 
 
-class Building_segmentation_class : public Abstract_segmentation_class
+template <typename Kernel>
+class Building_classification_type : public Abstract_classification_type
 {
-  Scatter_segmentation_attribute& scat_att;
-  Distance_to_plane_segmentation_attribute& d2p_att;
-  Elevation_segmentation_attribute& elev_att;
+  Scatter_segmentation_attribute<Kernel>& scat_att;
+  Distance_to_plane_segmentation_attribute<Kernel>& d2p_att;
+  Elevation_segmentation_attribute<Kernel>& elev_att;
 public:
-  Building_segmentation_class (Scatter_segmentation_attribute& scat_att,
-                               Distance_to_plane_segmentation_attribute& d2p_att,
-                               Elevation_segmentation_attribute& elev_att)
+  Building_classification_type (Scatter_segmentation_attribute<Kernel>& scat_att,
+                                Distance_to_plane_segmentation_attribute<Kernel>& d2p_att,
+                                Elevation_segmentation_attribute<Kernel>& elev_att)
     : scat_att (scat_att)
     , d2p_att (d2p_att)
     , elev_att (elev_att)
@@ -1710,20 +1442,6 @@ public:
 };
 
 
-class Clutter_segmentation_class : public Abstract_segmentation_class
-{
-public:
-
-  virtual double data_term_computation (int pt_index)
-  {
-    // double PD=std::min(1., scan.distance_to_plane_attribute[pt_index] / scan.SIGMA_NON_PLANARITY); 
-    // double PNB=0.; if(scan.spherical_neighborhood[pt_index].size() < scan.SIGMA_GROUPING_1) PNB=1;
-    // double PZ2=0; if(scan.elevation_attribute[pt_index]<-10){PZ2=1;} 
-    // double PDL=scan.distance_to_line_attribute[pt_index]; if(PDL<scan.SIGMA_GROUPING_2){PDL=1;} else{PDL=0;}
-    // double result=std::max(PNB,PD*PZ2); result=std::max(result,PDL);
-    return 0;
-  }
-};
 
 
 } // namespace CGAL
