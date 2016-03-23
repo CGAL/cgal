@@ -40,10 +40,8 @@ struct Exact_predicates_tag{}; // to be used with filtered exact number
 
 
 template < class Gt, 
-           class Tds_ = Triangulation_data_structure_2 <
-                          Triangulation_vertex_base_2<Gt>,
-                          Constrained_triangulation_face_base_2<Gt> >, 
-           class Itag = No_intersection_tag >
+           class Tds_ = Default,
+           class Itag_ = Default>
 class Constrained_triangulation_2  
   : public Triangulation_2<Gt,typename Default::Get< Tds_,
                                                      Triangulation_data_structure_2 <
@@ -55,6 +53,8 @@ public:
   typedef typename Default::Get<Tds_, Triangulation_data_structure_2 <
                                         Triangulation_vertex_base_2<Gt>,
                                         Constrained_triangulation_face_base_2<Gt> > >::type Tds;
+  typedef typename Default::Get<Itag_, No_intersection_tag>::type Itag;
+
   typedef Triangulation_2<Gt,Tds> Triangulation;
   typedef Constrained_triangulation_2<Gt,Tds_,Itag>  Constrained_triangulation;
   
