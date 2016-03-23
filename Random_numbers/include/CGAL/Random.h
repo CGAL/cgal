@@ -244,9 +244,7 @@ inline Random& get_default_random()
 
 // Global variables
 // ================
-#ifndef CGAL_NO_DEPRECATED_CODE
-  CGAL_EXPORT extern Random default_random;
-#endif // CGAL_NO_DEPRECATED_CODE
+CGAL_EXPORT extern Random default_random;
 
 inline Random& get_default_random()
 { return default_random; }
