@@ -228,21 +228,29 @@ public:
     boost::rand48 rng;
 };
 
-#ifndef CGAL_HEADER_ONLY
-// Global variables
-// ================
-CGAL_EXPORT extern Random default_random;
-#endif // CGAL_HEADER_ONLY
-
 #ifdef CGAL_HEADER_ONLY
+
 inline Random& get_default_random()
 {
   static Random default_random;
   return default_random;
 }
+
+#ifndef CGAL_NO_DEPRECATED_CODE
+  namespace { CGAL_DEPRECATED CGAL::Random& default_random = get_default_random(); }
+#endif // CGAL_NO_DEPRECATED_CODE
+
 #else // CGAL_HEADER_ONLY
+
+// Global variables
+// ================
+#ifndef CGAL_NO_DEPRECATED_CODE
+  CGAL_EXPORT extern Random default_random;
+#endif // CGAL_NO_DEPRECATED_CODE
+
 inline Random& get_default_random()
 { return default_random; }
+
 #endif // CGAL_HEADER_ONLY
 
 } //namespace CGAL
