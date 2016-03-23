@@ -197,73 +197,40 @@ public:
   Image_bool Mask;                     //imagg
   Image_float DTM; //a enregistrer ?   //imagg           
 
-  /////    General parameters   //////
-  double OUTLIER_PERCENTAGE_RM; 
-  double RADIUS_NEIGHBORS_MAX; 
-  double GRID_RESOLUTION;
+  double m_grid_resolution;
+  double m_radius_neighbors; 
+  double m_radius_dtm; 
 
-  ////   Point cloud classification   /////
-  double RADIUS_DTM; 
-  double RADIUS_FILLING; 
-  double SIGMA_NON_PLANARITY;  
-  double SIGMA_GROUPING_1; 
-  double SIGMA_GROUPING_2;
-  double SEGMENTATION_SMOOTH_COEFFICIENT;
-  double SCATTER_REGULARIZATION_VALUE; 
-  int NB_LOCAL_NEIGHBORS; 
-
-  ///////     file saving      ////////
-  bool SAVE_POINT_ATTRIBUTES;
-  bool SAVE_LABELING;
-
-  double potts_computation(int l1, int l2) const
+  template <typename InputIterator>
+  Point_set_classification (InputIterator begin, InputIterator end,
+                            double grid_resolution = -1.,
+                            double radius_neighbors = -1.,
+                            double radius_dtm = -1.)
+    : m_grid_resolution (grid_resolution),
+      m_radius_neighbors (radius_neighbors),
+      m_radius_dtm (radius_dtm)
   {
-		
-    double res=0;
-    double smooth_seg=SEGMENTATION_SMOOTH_COEFFICIENT;
+    if (m_grid_resolution < 0.)
+      m_grid_resolution = CGAL::compute_average_spacing<CGAL::Sequential_tag> (begin, end, 6);
+    if (m_radius_neighbors < 0.)
+      m_radius_neighbors = 5. * m_grid_resolution;
+    if (m_radius_dtm < 0.)
+      m_radius_dtm = 5 * m_grid_resolution;
 
-    if(l1!=l2) res=1; 
-
-    return smooth_seg*res;
-		
+    for (InputIterator it = begin; it != end; ++ it)
+      {
+        HPS.push_back (HPoint());
+        HPS.back().position = *it;
+        HPS.back().echo = -1;
+        HPS.back().ind_x = -1;
+        HPS.back().ind_y = -1;
+        HPS.back().ultimate_label = -1;
+        HPS.back().AE_label = -1;
+        Color c = {{ 0, 0, 0 }};
+        HPS.back().color = c;
+      }
   }
 
-  class Edge_score
-  {
-    const Point_set_classification& M;
-
-  public:
-    Edge_score(const Point_set_classification& _M) : M(_M) {}
-
-    float compute(int, int, int l1, int l2)
-    {
-      return M.potts_computation(l1,l2); 
-    }
-  };
-
-
-  class Facet_score
-  {
-    const Point_set_classification& M;
-
-  public:
-    Facet_score(const Point_set_classification& _M) : M(_M) {}
-
-    double compute(int s, int l)
-    {
-      return M.segmentation_classes[l]->data_term_computation(s);
-    }
-  };
-
-
-  double average_spacing () const
-  {
-    std::vector<Point> pts;
-    for (std::size_t i = 0; i < HPS.size(); ++ i)
-      pts.push_back (HPS[i].position);
-    return CGAL::compute_average_spacing<CGAL::Sequential_tag> (pts.begin(), pts.end(), 6);
-  }
-  
 
   bool initialization(int phase = 0) // for training
   {
@@ -305,7 +272,7 @@ public:
           continue;
         }
       
-      Fuzzy_sphere fs(query, RADIUS_NEIGHBORS_MAX, 0);
+      Fuzzy_sphere fs(query, m_radius_neighbors, 0);
       tree.search(std::back_inserter(neighbors), fs);
       nb_neigh += neighbors.size();
 
@@ -324,15 +291,15 @@ public:
 
     //3-creation grille_points
     CGAL_CLASSIFICATION_CERR<<", planimetric grid of HPS..";
-    Image_indices tess((std::size_t)((BBox_scan.xmax()-BBox_scan.xmin())/GRID_RESOLUTION)+1,
-                       (std::size_t)((BBox_scan.ymax()-BBox_scan.ymin())/GRID_RESOLUTION)+1);
+    Image_indices tess((std::size_t)((BBox_scan.xmax()-BBox_scan.xmin())/m_grid_resolution)+1,
+                       (std::size_t)((BBox_scan.ymax()-BBox_scan.ymin())/m_grid_resolution)+1);
     grid_HPS=tess;
 
     for(int i=0;i<(int)HPS.size();i++){
 
       //for each 3D point, its coordinates in the grid are inserted in its Hpoint structure
-      HPS[i].ind_x=(int)((HPS[i].position.x()-BBox_scan.xmin())/GRID_RESOLUTION);
-      HPS[i].ind_y=(int)((HPS[i].position.y()-BBox_scan.ymin())/GRID_RESOLUTION);
+      HPS[i].ind_x=(int)((HPS[i].position.x()-BBox_scan.xmin())/m_grid_resolution);
+      HPS[i].ind_y=(int)((HPS[i].position.y()-BBox_scan.ymin())/m_grid_resolution);
 
       //index of points are collected in grid_HPS
       std::vector < int > temp;
@@ -345,12 +312,12 @@ public:
 
     //4-Mask creation
     CGAL_CLASSIFICATION_CERR<<", planimetric mask..";
-    Image_bool masktp((std::size_t)((BBox_scan.xmax()-BBox_scan.xmin())/GRID_RESOLUTION)+1,
-                      (std::size_t)((BBox_scan.ymax()-BBox_scan.ymin())/GRID_RESOLUTION)+1);
+    Image_bool masktp((std::size_t)((BBox_scan.xmax()-BBox_scan.xmin())/m_grid_resolution)+1,
+                      (std::size_t)((BBox_scan.ymax()-BBox_scan.ymin())/m_grid_resolution)+1);
     Mask=masktp;
 
     CGAL_CLASSIFICATION_CERR << "(" << Mask.height() << "x" << Mask.width() << ")" << std::endl;
-    int square=(int)16*(RADIUS_NEIGHBORS_MAX/GRID_RESOLUTION)+1;
+    int square=(int)16*(m_radius_neighbors/m_grid_resolution)+1;
     int nb_true = 0;
     for (int j=0;j<(int)Mask.height();j++){	
       for (int i=0;i<(int)Mask.width();i++){	
@@ -360,8 +327,8 @@ public:
       }
     }
 
-    Image_bool Mask_tmp ((std::size_t)((BBox_scan.xmax()-BBox_scan.xmin())/GRID_RESOLUTION)+1,
-                         (std::size_t)((BBox_scan.ymax()-BBox_scan.ymin())/GRID_RESOLUTION)+1);
+    Image_bool Mask_tmp ((std::size_t)((BBox_scan.xmax()-BBox_scan.xmin())/m_grid_resolution)+1,
+                         (std::size_t)((BBox_scan.ymax()-BBox_scan.ymin())/m_grid_resolution)+1);
 
     for (std::size_t i = 0; i < Mask.width(); ++ i)
       for (std::size_t j = 0; j < Mask.height(); ++ j)
@@ -408,44 +375,6 @@ public:
     //    if(!is_normal_given){CGAL_CLASSIFICATION_CERR<<", normals.."; compute_normal(); CGAL_CLASSIFICATION_CERR<<"ok";}
 
     CGAL_CLASSIFICATION_CERR<<std::endl<<"-> OK ( "<<((float)clock()-t)/CLOCKS_PER_SEC<<" sec )"<< std::endl;
-
-    return true;
-  }
-
-
-
-  bool compute_normal()
-  {
-
-    for(int k=0;k<(int)HPS.size();k++){
-
-      std::list<Point> list_pts;
-      for(int n=0;n<(int)spherical_neighborhood[k].size();n++){
-				
-        if(n<NB_LOCAL_NEIGHBORS){
-          Point pt_temp=HPS[spherical_neighborhood[k][n]].position;
-          list_pts.push_back(pt_temp);
-        }
-        else break;
-      }
-			
-      Plane plane_temp;
-      linear_least_squares_fitting_3(list_pts.begin(),list_pts.end(),plane_temp, CGAL::Dimension_tag<0>());
-
-      Vector normal_temp=plane_temp.orthogonal_vector();
-
-      for(int n=0;n<(int)spherical_neighborhood[k].size();n++){
-        if(k>spherical_neighborhood[k][n] && n<NB_LOCAL_NEIGHBORS){
-          if(normal[spherical_neighborhood[k][n]] * normal_temp <0 ) normal_temp=-normal_temp;
-          break;
-        }
-        else break;
-      }
-
-      FT normal_temp_norm=1/sqrt(normal_temp.squared_length());
-      if(normal_temp.z()>0) normal.push_back(normal_temp_norm*normal_temp);
-      else normal.push_back(-normal_temp_norm*normal_temp);
-    }
 
     return true;
   }
@@ -553,65 +482,6 @@ public:
       }
     
     CGAL_CLASSIFICATION_CERR<<" "<<(double)100*count1/HPS.size()<<"% vegetation, "<<(double)100*count2/HPS.size()<<"% ground, "<<(double)100*count3/HPS.size()<<"% roof, "<<(double)100*count4/HPS.size()<<"% clutter"<<std::endl;
-    
-    if(SAVE_LABELING)
-      {
-        CGAL::Color green(165, 226, 104);
-        CGAL::Color grey(169, 152, 126);
-        CGAL::Color yellow(255, 254, 106);
-        CGAL::Color orange(255, 135, 77);
-
-        std::vector < CGAL::Color > vecteur_col; 
-        vecteur_col.push_back(green);
-        vecteur_col.push_back(grey);
-        vecteur_col.push_back(orange);
-        vecteur_col.push_back(yellow);
-
-
-        std::string nom_classif("PC_class_all.ply");
-        std::string nom_classif1("PC_class_vegetation.ply");
-        std::string nom_classif2("PC_class_ground.ply");
-        std::string nom_classif3("PC_class_roof.ply");
-        std::string nom_classif4("PC_class_facade.ply");
-
-        std::vector< Point > pointtts0; std::vector< CGAL::Color > colors000; 
-        std::vector< Point > pointAE1; std::vector< CGAL::Color > colorsAE1;
-        std::vector< Point > pointAE2; std::vector< CGAL::Color > colorsAE2;
-        std::vector< Point > pointAE3; std::vector< CGAL::Color > colorsAE3;
-        std::vector< Point > pointAE4; std::vector< CGAL::Color > colorsAE4;
-
-        for(int i=0; i<(int)HPS.size();i++){
-          Point pt=HPS[i].position; 
-          pointtts0.push_back(pt); 
-          colors000.push_back(vecteur_col[HPS[i].AE_label]);
-
-          if(HPS[i].AE_label==0)
-            {
-              pointAE1.push_back(pt);
-              colorsAE1.push_back(vecteur_col[HPS[i].AE_label]);
-            }
-          else if(HPS[i].AE_label==1)
-            {
-              pointAE2.push_back(pt);
-              colorsAE2.push_back(vecteur_col[HPS[i].AE_label]);
-            }
-          else if(HPS[i].AE_label==2)
-            {
-              pointAE3.push_back(pt);
-              colorsAE3.push_back(vecteur_col[HPS[i].AE_label]);
-            }
-          else
-            {
-              pointAE4.push_back(pt);
-              colorsAE4.push_back(vecteur_col[HPS[i].AE_label]);
-            }
-        }
-        colorpointset2ply(nom_classif.c_str(),pointtts0,colors000);
-        colorpointset2ply(nom_classif1.c_str(),pointAE1,colorsAE1);
-        colorpointset2ply(nom_classif2.c_str(),pointAE2,colorsAE2);
-        colorpointset2ply(nom_classif3.c_str(),pointAE3,colorsAE3);
-        colorpointset2ply(nom_classif4.c_str(),pointAE4,colorsAE4);
-      }
 	
     return true;
   }
@@ -688,7 +558,7 @@ public:
         const Point& query=HPS[s].position;
         std::vector<Point> neighbors;
       
-        Fuzzy_sphere fs(query, RADIUS_NEIGHBORS_MAX, 0);
+        Fuzzy_sphere fs(query, m_radius_neighbors, 0);
         tree.search(std::back_inserter(neighbors), fs);
 
         std::vector<double> mean (values.size(), 0.);
@@ -742,64 +612,6 @@ public:
 
     CGAL_CLASSIFICATION_CERR<<" "<<(double)100*count1/HPS.size()<<"% vegetation, "<<(double)100*count2/HPS.size()<<"% ground, "<<(double)100*count3/HPS.size()<<"% roof, "<<(double)100*count4/HPS.size()<<"% clutter"<<std::endl;
     
-    if(SAVE_LABELING)
-      {
-        CGAL::Color green(165, 226, 104);
-        CGAL::Color grey(169, 152, 126);
-        CGAL::Color yellow(255, 254, 106);
-        CGAL::Color orange(255, 135, 77);
-
-        std::vector < CGAL::Color > vecteur_col; 
-        vecteur_col.push_back(green);
-        vecteur_col.push_back(grey);
-        vecteur_col.push_back(orange);
-        vecteur_col.push_back(yellow);
-
-
-        std::string nom_classif("PC_class_all.ply");
-        std::string nom_classif1("PC_class_vegetation.ply");
-        std::string nom_classif2("PC_class_ground.ply");
-        std::string nom_classif3("PC_class_roof.ply");
-        std::string nom_classif4("PC_class_facade.ply");
-
-        std::vector< Point > pointtts0; std::vector< CGAL::Color > colors000; 
-        std::vector< Point > pointAE1; std::vector< CGAL::Color > colorsAE1;
-        std::vector< Point > pointAE2; std::vector< CGAL::Color > colorsAE2;
-        std::vector< Point > pointAE3; std::vector< CGAL::Color > colorsAE3;
-        std::vector< Point > pointAE4; std::vector< CGAL::Color > colorsAE4;
-
-        for(int i=0; i<(int)HPS.size();i++){
-          Point pt=HPS[i].position; 
-          pointtts0.push_back(pt); 
-          colors000.push_back(vecteur_col[HPS[i].AE_label]);
-
-          if(HPS[i].AE_label==0)
-            {
-              pointAE1.push_back(pt);
-              colorsAE1.push_back(vecteur_col[HPS[i].AE_label]);
-            }
-          else if(HPS[i].AE_label==1)
-            {
-              pointAE2.push_back(pt);
-              colorsAE2.push_back(vecteur_col[HPS[i].AE_label]);
-            }
-          else if(HPS[i].AE_label==2)
-            {
-              pointAE3.push_back(pt);
-              colorsAE3.push_back(vecteur_col[HPS[i].AE_label]);
-            }
-          else
-            {
-              pointAE4.push_back(pt);
-              colorsAE4.push_back(vecteur_col[HPS[i].AE_label]);
-            }
-        }
-        colorpointset2ply(nom_classif.c_str(),pointtts0,colors000);
-        colorpointset2ply(nom_classif1.c_str(),pointAE1,colorsAE1);
-        colorpointset2ply(nom_classif2.c_str(),pointAE2,colorsAE2);
-        colorpointset2ply(nom_classif3.c_str(),pointAE3,colorsAE3);
-        colorpointset2ply(nom_classif4.c_str(),pointAE4,colorsAE4);
-      }
 	
     return true;
   }
@@ -859,7 +671,7 @@ public:
       for (int i=0;i<(int)M.DTM.width();i++)
         Vegetation(i,j)=0;
 		
-    int square = (int)0.5 * M.RADIUS_NEIGHBORS_MAX / M.GRID_RESOLUTION + 1;
+    int square = (int)0.5 * M.m_radius_neighbors / M.m_grid_resolution + 1;
 
     if(M.is_echo_given){
 				
@@ -879,7 +691,7 @@ public:
             for(int k=squareXmin; k<=squareXmax; k++){
               for(int l=squareYmin; l<=squareYmax; l++){
 									
-                if(sqrt(pow((double)k-i,2)+pow((double)l-j,2))<=(double)0.5*M.RADIUS_NEIGHBORS_MAX/M.GRID_RESOLUTION){
+                if(sqrt(pow((double)k-i,2)+pow((double)l-j,2))<=(double)0.5*M.m_radius_neighbors/M.m_grid_resolution){
 										
                   if(M.grid_HPS(k,l).size()>0){
 									
@@ -1016,7 +828,7 @@ public:
       }
     }
 
-    int square=(int)M.RADIUS_NEIGHBORS_MAX/M.GRID_RESOLUTION+1;
+    int square=(int)M.m_radius_neighbors/M.m_grid_resolution+1;
 
     for (int j=0;j<DEM.height();j++){	
       for (int i=0;i<DEM.width();i++){
@@ -1033,9 +845,9 @@ public:
           for(int k=squareXmin; k<=squareXmax; k++){
             for(int l=squareYmin; l<=squareYmax; l++){
 					
-              double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*M.GRID_RESOLUTION;
+              double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*M.m_grid_resolution;
 					
-              if((distance<=M.RADIUS_NEIGHBORS_MAX)&&(DEM(k,l)>0)&&(distance!=0)){
+              if((distance<=M.m_radius_neighbors)&&(DEM(k,l)>0)&&(distance!=0)){
                 double dista=distance*distance;
                 val=val+DEM(k,l)/dista;
                 distance_tot=distance_tot+1/dista;
@@ -1075,7 +887,7 @@ public:
 
     //DTM computation
     int step=15;
-    square=(int)(M.RADIUS_DTM/M.GRID_RESOLUTION)+1;
+    square=(int)(M.m_radius_dtm/M.m_grid_resolution)+1;
     Image_float toto(M.grid_HPS.width(),M.grid_HPS.height());
     Image_float im_Zfront(M.grid_HPS.width(),M.grid_HPS.height());
     M.DTM=toto;
@@ -1102,8 +914,8 @@ public:
         for(int k=squareXmin; k<=squareXmax; k++){
           for(int l=squareYmin; l<=squareYmax; l++){
 			
-            double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*M.GRID_RESOLUTION;
-            if(distance<=M.RADIUS_DTM){
+            double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*M.m_grid_resolution;
+            if(distance<=M.m_radius_dtm){
               for(int nb=0;nb<(int)M.grid_HPS(k,l).size();nb++) list_pointsZ.push_back(M.HPS[M.grid_HPS(k,l)[nb]].position.z());
             }
           }
@@ -1219,9 +1031,9 @@ public:
         for(int k=squareXmin; k<=squareXmax; k++){
           for(int l=squareYmin; l<=squareYmax; l++){
 				
-            double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*M.GRID_RESOLUTION;
+            double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*M.m_grid_resolution;
 				
-            if(distance<=M.RADIUS_DTM){
+            if(distance<=M.m_radius_dtm){
 					
               for(int nb=0;nb<(int)M.grid_HPS(k,l).size();nb++){
                 if(test_ground[M.grid_HPS(k,l)[nb]]) list_pointsZ.push_back(M.HPS[M.grid_HPS(k,l)[nb]].position.z());
