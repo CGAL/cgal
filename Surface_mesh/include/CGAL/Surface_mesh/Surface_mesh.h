@@ -33,8 +33,8 @@
 #include <boost/array.hpp>
 #include <boost/iterator/iterator_facade.hpp>
 #include <boost/foreach.hpp>
-#include <boost/property_map/property_map.hpp>
 
+#include <CGAL/property_map.h>
 #include <CGAL/Iterator_range.h>
 #include <CGAL/circulator.h>
 #include <CGAL/assertions.h>

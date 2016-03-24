@@ -42,7 +42,6 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/bimap/set_of.hpp>
-#include <boost/property_map/property_map.hpp>
 #include <boost/range.hpp>
 #include <boost/unordered_map.hpp>
 #include <boost/shared_ptr.hpp>
