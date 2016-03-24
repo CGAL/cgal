@@ -23,12 +23,6 @@
 
 #include <CGAL/basic.h>
 #include <CGAL/Nef_3/SNC_intersection.h>
-#ifdef CGAL_NEF3_POINT_LOCATOR_NAIVE
-#include <CGAL/Nef_3/SNC_ray_shooter.h>
-#endif
-#ifdef CGAL_NEF3_LAZY_KDTREE
-#include <CGAL/Nef_3/Lazy_k3_tree.h>
-#endif
 #include <CGAL/Nef_3/SNC_k3_tree_traits.h>
 #include <CGAL/Nef_3/K3_tree.h>
 #include <CGAL/Unique_hash_map.h>
@@ -169,11 +163,8 @@ class SNC_point_locator_by_spatial_subdivision :
 
 public:
   typedef typename CGAL::SNC_k3_tree_traits<SNC_decorator> K3_tree_traits;
-#ifdef CGAL_NEF3_LAZY_KDTREE
-  typedef typename CGAL::Lazy_k3_tree<K3_tree_traits> K3_tree;
-#else
+
   typedef typename CGAL::K3_tree<K3_tree_traits> K3_tree;
-#endif
   typedef K3_tree SNC_candidate_provider;
   
   typedef typename SNC_structure::Object_handle Object_handle;
@@ -408,12 +399,10 @@ public:
     }
     if(initialized)
       delete candidate_provider;
-#ifdef CGAL_NEF3_LAZY_KDTREE
-    candidate_provider = new SNC_candidate_provider(objects,v_end);
-#else
+
     Object_list_iterator oli=objects.begin()+v_end;
     candidate_provider = new SNC_candidate_provider(objects,oli);
-#endif
+
     // CGAL_NEF_TRACEN(*candidate_provider);
     CGAL_NEF_TIMER(ct_t.stop());
 #endif // CGAL_NEF_LIST_OF_TRIANGLES

@@ -48,15 +48,6 @@
 #include <CGAL/Modifier_base.h>
 #include <CGAL/Nef_3/Mark_bounded_volumes.h>
 
-
-#ifdef CGAL_NEF3_CGAL_NEF3_SM_VISUALIZOR
-#include <CGAL/Nef_3/SNC_SM_visualizor.h>
-#endif // CGAL_NEF3_SM_VISUALIZOR
-
-#ifdef CGAL_NEF3_OLD_VISUALIZATION 
-#include <CGAL/Nef_3/Visualizor_OpenGL_3.h>
-#endif // CGAL_NEF3_OLD_VISUALIZATION 
-
 #include <CGAL/IO/Verbose_ostream.h>
 #include <CGAL/Nef_3/polyhedron_3_to_nef_3.h>
 #include <CGAL/Nef_3/shell_to_nef_3.h>
@@ -119,10 +110,6 @@ class Nef_polyhedron_3_rep
   typedef CGAL::SM_const_decorator<Sphere_map>     SM_const_decorator;
   typedef CGAL::SNC_SM_overlayer<I, SM_decorator>  SM_overlayer;
   typedef CGAL::SM_point_locator<SNC_structure>    SM_point_locator;
-
-#ifdef CGAL_NEF3_SM_VISUALIZOR
-  typedef CGAL::SNC_SM_visualizor<SNC_structure>       SM_visualizor;
-#endif // CGAL_NEF3_SM_VISUALIZOR
 
  private:
   SNC_structure snc_;
@@ -238,12 +225,6 @@ protected:
   typedef typename Nef_rep::SM_overlayer        SM_overlayer;
   typedef typename Nef_rep::SM_point_locator    SM_point_locator;
   typedef typename Nef_rep::SNC_simplify        SNC_simplify;
-#ifdef CGAL_NEF3_SM_VISUALIZOR
-  typedef typename Nef_rep::SM_visualizor       SM_visualizor;
-#endif // CGAL_NEF3_SM_VISUALIZOR
-#ifdef CGAL_NEF3_OLD_VISUALIZATION 
-  typedef CGAL::Nef_Visualizor_OpenGL_3<Nef_polyhedron_3> Visualizor;
-#endif // CGAL_NEF3_OLD_VISUALIZATION 
 
  typedef typename Nef_rep::Sphere_map                Sphere_map;
  public:
@@ -1228,15 +1209,7 @@ protected:
   }
 
  public:
-#ifdef CGAL_NEF3_OLD_VISUALIZATION   
-  void visualize() { 
-    Visualizor sncv(*this);
-    sncv.draw();
-    //OGL::polyhedra_.back().debug();
-    OLDOGL::start_viewer();
-  }
-#endif // CGAL_NEF3_OLD_VISUALIZATION   
-   
+ 
   void clear(Content space = EMPTY)
     { *this = Nef_polyhedron_3(space); }
   /*{\Mop makes |\Mvar| the empty set if |space == EMPTY| and the

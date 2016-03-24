@@ -868,6 +868,5 @@ namespace std {
 
 } // namespace std
 
-//#include <CGAL/graph_traits_Delaunay_triangulation_2.h>
 
 #endif // CGAL_GRAPH_TRAITS_TRIANGULATION_2_H
