@@ -293,8 +293,8 @@ CGAL_Kernel_cons(Compute_power_product_3,
                  compute_power_product_3_object)
 CGAL_Kernel_cons(Compute_squared_radius_smallest_orthogonal_sphere_3,
                  compute_squared_radius_smallest_orthogonal_sphere_3_object)
-CGAL_Kernel_cons(Compute_critical_squared_radius_3,
-                 compute_critical_squared_radius_3_object)
+CGAL_Kernel_cons(Compute_power_distance_to_power_sphere_3,
+                 compute_power_distance_to_power_sphere_3_object)
 CGAL_Kernel_cons(Construct_cross_product_vector_3,
 		 construct_cross_product_vector_3_object)
 CGAL_Kernel_cons(Construct_direction_2,

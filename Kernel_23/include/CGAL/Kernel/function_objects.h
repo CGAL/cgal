@@ -560,7 +560,7 @@ public:
 // Compute the square radius of the circle centered in t
 // and orthogonal to  the circle orthogonal to p,q,r,s
 template< typename K>
-class Compute_critical_squared_radius_3
+class Compute_power_distance_to_power_sphere_3
 {
  public:
   typedef typename K::Weighted_point_3                  Weighted_point_3;
@@ -574,7 +574,7 @@ class Compute_critical_squared_radius_3
 			  const Weighted_point_3 & s,
 			  const Weighted_point_3 & t) const
   {
-    return critical_squared_radiusC3 (p.x(),p.y(),p.z(),FT(p.weight()),
+    return power_distance_to_power_sphereC3 (p.x(),p.y(),p.z(),FT(p.weight()),
 				      q.x(),q.y(),q.z(),FT(q.weight()),
 				      r.x(),r.y(),r.z(),FT(r.weight()),
 				      s.x(),s.y(),s.z(),FT(s.weight()),

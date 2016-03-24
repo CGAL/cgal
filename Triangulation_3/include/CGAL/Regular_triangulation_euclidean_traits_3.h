@@ -59,8 +59,8 @@ public:
   typedef typename K::Compute_squared_radius_smallest_orthogonal_sphere_3 
                 Compute_squared_radius_smallest_orthogonal_sphere_3;
   typedef typename K::Compute_power_product_3     Compute_power_product_3;
-  typedef typename K::Compute_critical_squared_radius_3 
-                                       Compute_critical_squared_radius_3;
+  typedef typename K::Compute_power_distance_to_power_sphere_3 
+                                       Compute_power_distance_to_power_sphere_3;
   typedef typename K::Compare_weighted_squared_radius_3 
                                        Compare_weighted_squared_radius_3;
 
@@ -92,9 +92,9 @@ public:
   compute_squared_radius_smallest_orthogonal_sphere_3_object() const
   { return K().compute_squared_radius_smallest_orthogonal_sphere_3_object(); }
 
-  Compute_critical_squared_radius_3
-  compute_critical_squared_radius_3_object() const
-  {return  K().compute_critical_squared_radius_3_object(); }
+  Compute_power_distance_to_power_sphere_3
+  compute_power_distance_to_power_sphere_3_object() const
+  {return  K().compute_power_distance_to_power_sphere_3_object(); }
   
   Compare_weighted_squared_radius_3
   compare_weighted_squared_radius_3_object() const
