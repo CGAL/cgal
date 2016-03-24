@@ -35,7 +35,7 @@
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 
-//#define CGAL_CLASSIFICATION_VERBOSE
+#define CGAL_CLASSIFICATION_VERBOSE
 #if defined(CGAL_CLASSIFICATION_VERBOSE)
 #define CGAL_CLASSIFICATION_CERR std::cerr
 #else
@@ -55,18 +55,60 @@ class Image
 {
   std::size_t m_width;
   std::size_t m_height;
-  std::vector<Type> m_raw;
+  Type* m_raw;
 
 
 public:
 
-  Image () { }
-  
-  Image (std::size_t width, std::size_t height) : m_width (width), m_height (height)
+  Image () : m_width(0), m_height(0), m_raw (NULL)
   {
-    m_raw.resize (width * height);
+  }
+  
+  Image (std::size_t width, std::size_t height)
+    : m_width (width),
+      m_height (height)
+  {
+    if (m_width * m_height > 0)
+      m_raw = new Type[width * height];
+    else
+      m_raw = NULL;
+  }
+  
+  ~Image ()
+  {
+    if (m_raw != NULL)
+      delete[] m_raw;
   }
 
+  Image (const Image& other)
+    : m_width (other.width()),
+      m_height (other.height())
+
+  {
+    if (m_width * m_height > 0)
+      {
+        m_raw = new Type[width * height];
+        std::copy (other.m_raw, other.m_raw + (m_width * m_height), this->m_raw);
+      }
+    else
+      m_raw = NULL;
+  }
+  Image& operator= (const Image& other)
+  {
+    if (m_raw != NULL)
+      delete m_raw;
+    m_raw = NULL;
+    m_width = other.width();
+    m_height = other.height();
+    if (m_width * m_height > 0)
+      {
+        m_raw = new Type[m_width * m_height];
+        std::copy (other.m_raw, other.m_raw + (m_width * m_height), this->m_raw);
+      }
+    
+    return *this;
+  }
+  
   std::size_t width() const { return m_width; }
   std::size_t height() const { return m_height; }
 
@@ -99,7 +141,7 @@ inline void compute_mean_max (std::vector<double>& vect, double& mean, double& m
 }
 
 
-template <typename RGB_Color, typename HSV_Color>
+template <typename HSV_Color, typename RGB_Color>
 HSV_Color rgb_to_hsv (const RGB_Color& c)
 {
   double r = (double)(c[0]) / 255.;
@@ -145,6 +187,7 @@ public:
 template <typename Kernel>
 class Point_set_classification
 {
+public:
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Segment_3 Segment;
   typedef typename Kernel::FT FT;
@@ -175,8 +218,6 @@ class Point_set_classification
     unsigned char AE_label;
     Color color;
   };
-
-public:
 
   std::vector<Abstract_classification_type*> segmentation_classes;
   
@@ -232,11 +273,17 @@ public:
   }
 
 
+  void set_parameters (double grid_resolution, double radius_neighbors, double radius_dtm)
+  {
+    m_grid_resolution = grid_resolution;
+    m_radius_neighbors = radius_neighbors;
+    m_radius_dtm = radius_dtm;
+  }
+  
   bool initialization(int phase = 0) // for training
   {
     clock_t t;
     t = clock();
-
 
     CGAL_CLASSIFICATION_CERR << std::endl << "Initialization: ";
 
@@ -423,17 +470,13 @@ public:
 
 
 
-  bool quick_labeling_PC(bool log = false)
+  bool quick_labeling_PC()
   {
 
     // data term initialisation
     CGAL_CLASSIFICATION_CERR << "Labeling... ";
 
-    std::vector<std::vector<double> > values;
-    if (log)
-      values.resize (segmentation_classes.size());
 
-    
     int count1 = 0, count2 = 0, count3 = 0, count4 = 0;
     for(int s=0;s<(int)HPS.size();s++){
 			
@@ -445,9 +488,6 @@ public:
         {
           double value = segmentation_classes[k]->data_term_computation(s);
           
-          if (log)
-            values[k].push_back(value);
-              
           if(val_class_best > value)
             {
               val_class_best = value;
@@ -463,71 +503,12 @@ public:
       else count4++;
 
     }
-
-    if (log)
-      {
-        for (std::size_t i = 0; i < values.size(); ++ i)
-          {
-            std::string name;
-            if (i == 0)
-              name = "vegetation";
-            else if (i == 1)
-              name = "ground";
-            else if (i == 2)
-              name = "roof";
-            else if (i == 3)
-              name = "facade";
-            save_PC_attribute (name, values[i]);
-          }
-      }
     
     CGAL_CLASSIFICATION_CERR<<" "<<(double)100*count1/HPS.size()<<"% vegetation, "<<(double)100*count2/HPS.size()<<"% ground, "<<(double)100*count3/HPS.size()<<"% roof, "<<(double)100*count4/HPS.size()<<"% clutter"<<std::endl;
 	
     return true;
   }
 
-
-  template <typename SegmentationAttribute>
-  bool save_PC_attribute (SegmentationAttribute& att)
-  {
-    std::vector< Point > pointtts;
-    std::vector< CGAL::Color > colors;
-
-    std::stringstream ss;
-    ss << "F_" << att.id() << ".ply";
-
-    for(int i=0; i<(int)HPS.size();i++){
-      Point pt=HPS[i].position; pointtts.push_back(pt);
-      double v = att.value(i);
-      double cc = std::max (0., std::min(1., v))*255;
-      CGAL::Color colo (255-(int)cc, 255-(int)cc, 255); 
-      colors.push_back(colo);
-    }
-
-    colorpointset2ply(ss.str().c_str(),pointtts,colors);
-    return true;
-  }
-
-
-  bool save_PC_attribute (std::string name, std::vector<double>& val)
-  {
-    std::vector< Point > pointtts;
-    std::vector< CGAL::Color > colors;
-
-    std::stringstream ss;
-    ss << "PROBA_" << name << ".ply";
-
-    for(int i=0; i<(int)HPS.size();i++){
-      Point pt=HPS[i].position; pointtts.push_back(pt);
-      double v = val[i];
-      double cc = std::max (0., std::min(1., v))*255;
-      CGAL::Color colo (255-(int)cc, 255-(int)cc, 255); 
-      colors.push_back(colo);
-    }
-
-    colorpointset2ply(ss.str().c_str(),pointtts,colors);
-    return true;
-  }
 
   bool smoothed_labeling_PC()
   {
@@ -596,27 +577,14 @@ public:
       else count4++;
     }
 
-    for (std::size_t i = 0; i < values.size(); ++ i)
-      {
-        std::string name;
-        if (i == 0)
-          name = "vegetation";
-        else if (i == 1)
-          name = "ground";
-        else if (i == 2)
-          name = "roof";
-        else if (i == 3)
-          name = "facade";
-        save_PC_attribute (name, smoothed_values[i]);
-      }
-
     CGAL_CLASSIFICATION_CERR<<" "<<(double)100*count1/HPS.size()<<"% vegetation, "<<(double)100*count2/HPS.size()<<"% ground, "<<(double)100*count3/HPS.size()<<"% roof, "<<(double)100*count4/HPS.size()<<"% clutter"<<std::endl;
     
 	
     return true;
   }
 
-  bool point_cloud_classification(int method = 1, bool log = false){
+  bool point_cloud_classification(int method = 1)
+  {
 
 
     clock_t t;
@@ -625,7 +593,7 @@ public:
     CGAL_CLASSIFICATION_CERR<<std::endl<<"Classification of the point cloud: ";
     
     if (method == 1)
-      quick_labeling_PC(log);
+      quick_labeling_PC();
     else if (method == 2)
       smoothed_labeling_PC();
     else
@@ -653,6 +621,7 @@ class Scatter_segmentation_attribute
 {
   typedef Point_set_classification<Kernel> PSC;
   typedef typename PSC::Image_float Image_float;
+  typedef typename PSC::Color Color;
   typedef typename PSC::HSV_Color HSV_Color;
   
   std::vector<double> vegetation_attribute;
@@ -663,7 +632,8 @@ public:
   double max;
 
   Scatter_segmentation_attribute (PSC& M,
-                                  double weight, bool colors = false) : weight (weight)
+                                  double weight,
+                                  std::vector<Color> colors = std::vector<Color>()) : weight (weight)
   {
     Image_float Vegetation(M.grid_HPS.width(), M.grid_HPS.height());
 
@@ -671,25 +641,25 @@ public:
       for (int i=0;i<(int)M.DTM.width();i++)
         Vegetation(i,j)=0;
 		
-    int square = (int)0.5 * M.m_radius_neighbors / M.m_grid_resolution + 1;
+    std::size_t square = (std::size_t)(0.5 * M.m_radius_neighbors / M.m_grid_resolution) + 1;
 
     if(M.is_echo_given){
 				
-      for (int j=0;j<(int)M.grid_HPS.height();j++){	
-        for (int i=0;i<(int)M.grid_HPS.width();i++){
+      for (std::size_t j = 0; j < M.grid_HPS.height(); j++){	
+        for (std::size_t i = 0; i < M.grid_HPS.width(); i++){
 						
           if(M.Mask(i,j)){
 
-            int squareXmin=std::max(0,i-square);
-            int squareXmax=std::min(M.grid_HPS.width()-1,i+square);
-            int squareYmin=std::max(0,j-square);
-            int squareYmax=std::min(M.grid_HPS.height()-1,j+square);
+            std::size_t squareXmin = (i < square ? 0 : i - square);
+            std::size_t squareXmax = std::min (M.grid_HPS.width()-1, i + square);
+            std::size_t squareYmin = (j < square ? 0 : j - square);
+            std::size_t squareYmax = std::min (M.grid_HPS.height()-1, j + square);
 			
             int NB_echo_sup=0;
             int NB_echo_total=0;
 
-            for(int k=squareXmin; k<=squareXmax; k++){
-              for(int l=squareYmin; l<=squareYmax; l++){
+            for(std::size_t k = squareXmin; k <= squareXmax; k++){
+              for(std::size_t l = squareYmin; l <= squareYmax; l++){
 									
                 if(sqrt(pow((double)k-i,2)+pow((double)l-j,2))<=(double)0.5*M.m_radius_neighbors/M.m_grid_resolution){
 										
@@ -725,10 +695,8 @@ public:
       }
 	
     }
-    else if (!colors){
+    else if (colors.empty()){
       for(int i=0;i<(int)M.HPS.size();i++){
-        int I= M.HPS[i].ind_x;
-        int J= M.HPS[i].ind_y;
         if (M.eigenvalues[i][2] == 0)
           vegetation_attribute.push_back(0);
         else
@@ -740,7 +708,7 @@ public:
         std::cerr << "Using colors" << std::endl;
       for(int i=0;i<(int)M.HPS.size();i++)
         {
-          HSV_Color c = rgb_to_hsv (M.HPS[i].color);
+          HSV_Color c = internal::Classification::rgb_to_hsv<HSV_Color> (colors[i]);
           vegetation_attribute.push_back (std::exp (-(c[0] - 120) * (c[0] - 120) / (2 * 60 * 60))
                                           * std::exp (-(c[1] - 25) * (c[1] - 25) / (2 * 20 * 20))
                                           * std::exp (-(c[2] - 37) * (c[2] - 37) / (2 * 10 * 10)));
@@ -828,22 +796,22 @@ public:
       }
     }
 
-    int square=(int)M.m_radius_neighbors/M.m_grid_resolution+1;
+    std::size_t square = (std::size_t)(M.m_radius_neighbors / M.m_grid_resolution) + 1;
 
-    for (int j=0;j<DEM.height();j++){	
-      for (int i=0;i<DEM.width();i++){
+    for (std::size_t j = 0; j < DEM.height(); j++){	
+      for (std::size_t i = 0; i < DEM.width(); i++){
 		
         if((M.Mask(i,j))&&(DEM(i,j)==0)){
 				
           double distance_tot=0;	
           double val=0;
-          int squareXmin=std::max(0,i-square);
-          int squareXmax=std::min(DEM.width()-1,i+square);
-          int squareYmin=std::max(0,j-square);
-          int squareYmax=std::min(DEM.height()-1,j+square);
+          std::size_t squareXmin = (i < square ? 0 : i - square);
+          std::size_t squareXmax = std::min(DEM.width() - 1, i + square);
+          std::size_t squareYmin = (j < square ? 0 : j - square);
+          std::size_t squareYmax = std::min(DEM.height() - 1, j + square);
 			
-          for(int k=squareXmin; k<=squareXmax; k++){
-            for(int l=squareYmin; l<=squareYmax; l++){
+          for(std::size_t k = squareXmin; k <= squareXmax; k++){
+            for(std::size_t l = squareYmin; l <= squareYmax; l++){
 					
               double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*M.m_grid_resolution;
 					
@@ -864,8 +832,8 @@ public:
     float scale_byte_min_dem = M.BBox_scan.zmax();
     float scale_byte_max_dem = M.BBox_scan.zmin();
 
-    for (int j=0;j<DEM.height();j++){	
-      for (int i=0;i<DEM.width();i++){
+    for (std::size_t j = 0; j < DEM.height(); j++){	
+      for (std::size_t i = 0; i < DEM.width(); i++){
 		
         DEM(i,j)=DEMtemp(i,j);
 
@@ -877,8 +845,8 @@ public:
     }
 
     //TODO: smooth the DEM
-    for (int j=1;j<DEM.height()-1;j++){	
-      for (int i=1;i<DEM.width()-1;i++){
+    for (std::size_t j = 1; j < DEM.height()-1; j++){	
+      for (std::size_t i = 1; i < DEM.width()-1; i++){
         if(M.Mask(i,j)){
           //DEM(i,j)=
         }
@@ -886,33 +854,33 @@ public:
     }
 
     //DTM computation
-    int step=15;
-    square=(int)(M.m_radius_dtm/M.m_grid_resolution)+1;
+    std::size_t step=15;
+    square = (std::size_t)(M.m_radius_dtm/M.m_grid_resolution)+1;
     Image_float toto(M.grid_HPS.width(),M.grid_HPS.height());
     Image_float im_Zfront(M.grid_HPS.width(),M.grid_HPS.height());
     M.DTM=toto;
 
     //round 1
-    for (int j=0;j<(int)M.DTM.height();j++){	
-      for (int i=0;i<(int)M.DTM.width();i++){
+    for (std::size_t j = 0; j < M.DTM.height(); j++){	
+      for (std::size_t i = 0; i < M.DTM.width(); i++){
         M.DTM(i,j)=0;
         im_Zfront(i,j)=0;
       }
     }
 
 
-    for (int j=step/2+1;j<(int)M.DTM.height();j=j+step){	
-      for (int i=step+1/2;i<(int)M.DTM.width();i=i+step){
+    for (std::size_t j = step/2+1; j < M.DTM.height(); j = j+step){	
+      for (std::size_t i = step+1/2; i < M.DTM.width(); i = i+step){
 		
         //storage of the points in the disk
-        std::vector < float > list_pointsZ;
-        int squareXmin=std::max(0,i-square);
-        int squareXmax=std::min(M.DTM.width()-1,i+square);
-        int squareYmin=std::max(0,j-square);
-        int squareYmax=std::min(M.DTM.height()-1,j+square);
+        std::vector<float> list_pointsZ;
+        std::size_t squareXmin = (i < square ? 0 : i - square);
+        std::size_t squareXmax = std::min(M.DTM.width() - 1, i + square);
+        std::size_t squareYmin = (j < square ? 0 : j - square);
+        std::size_t squareYmax = std::min(M.DTM.height() - 1, j + square);
 
-        for(int k=squareXmin; k<=squareXmax; k++){
-          for(int l=squareYmin; l<=squareYmax; l++){
+        for(std::size_t k = squareXmin; k <= squareXmax; k++){
+          for(std::size_t l = squareYmin; l <= squareYmax; l++){
 			
             double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*M.m_grid_resolution;
             if(distance<=M.m_radius_dtm){
@@ -958,18 +926,18 @@ public:
         im_Zfront(i,j)=Gfront;
 
         //extension by duplication
-        int IsquareXmin=std::max(0,i-step/2);
-        int IsquareXmax=std::min(M.DTM.width()-1,i+step/2);
-        int JsquareYmin=std::max(0,j-step/2);
-        int JsquareYmax=std::min(M.DTM.height()-1,j+step/2);
+        std::size_t IsquareXmin = (i < step/2 ? 0 : i-step/2);
+        std::size_t IsquareXmax = std::min(M.DTM.width()-1,i+step/2);
+        std::size_t JsquareYmin = (j < step/2 ? 0 : j-step/2);
+        std::size_t JsquareYmax = std::min(M.DTM.height()-1,j+step/2);
 		
         if(M.DTM.width()-1-IsquareXmax<step) IsquareXmax=M.DTM.width()-1;
         if(M.DTM.height()-1-JsquareYmax<step) JsquareYmax=M.DTM.height()-1;
         if(IsquareXmin<step) IsquareXmin=0;
         if(JsquareYmin<step) JsquareYmin=0;
 
-        for(int k=IsquareXmin; k<=IsquareXmax; k++){
-          for(int l=JsquareYmin; l<=JsquareYmax; l++){
+        for(std::size_t k = IsquareXmin; k <= IsquareXmax; k++){
+          for(std::size_t l = JsquareYmin; l <= JsquareYmax; l++){
             if(M.Mask(k,l)){
               M.DTM(k,l)=G1;
               im_Zfront(k,l)=Gfront;
@@ -980,18 +948,18 @@ public:
     }
 
     //Gaussian smoothness
-    for(int ik=0;ik<10;ik++) {
-      for(int j=0;j<(int)M.DTM.height();j++){ 
-        for (int i=0;i<(int)M.DTM.width();i++) {
+    for(std::size_t ik = 0; ik < 10; ik++) {
+      for(std::size_t j = 0; j < M.DTM.height(); j++){ 
+        for (std::size_t i = 0; i < M.DTM.width(); i++) {
 		
-          int IsquareXmin=std::max(0,i-1); 
-          int IsquareXmax=std::min(M.DTM.width()-1,i+1); 
-          int JsquareYmin=std::max(0,j-1); 
-          int JsquareYmax=std::min(M.DTM.height()-1,j+1); 
+          std::size_t IsquareXmin = (i < 1 ? 0 : i-1);
+          std::size_t IsquareXmax = std::min(M.DTM.width()-1,i+1); 
+          std::size_t JsquareYmin = (j < 1 ? 0 : j-1);
+          std::size_t JsquareYmax = std::min(M.DTM.height()-1,j+1); 
           int count=0; 
 
-          for(int k=IsquareXmin; k<=IsquareXmax; k++){ 
-            for(int l=JsquareYmin; l<=JsquareYmax; l++){ 
+          for(std::size_t k = IsquareXmin; k <= IsquareXmax; k++){ 
+            for(std::size_t l = JsquareYmin; l <= JsquareYmax; l++){ 
               if(M.Mask(k,l)) count++;
             }
           }	
@@ -1018,18 +986,18 @@ public:
       }
     }
 
-    for (int j=step/2+1;j<(int)M.DTM.height();j=j+step){	
-      for (int i=step/2+1;i<(int)M.DTM.width();i=i+step){
+    for (std::size_t j = step/2+1; j < M.DTM.height(); j = j+step){	
+      for (std::size_t i = step/2+1; i < M.DTM.width(); i = i+step){
 		
         //stockage des nouveaux points
         std::vector < float > list_pointsZ;
-        int squareXmin=std::max(0,i-square);
-        int squareXmax=std::min(M.DTM.width()-1,i+square);
-        int squareYmin=std::max(0,j-square);
-        int squareYmax=std::min(M.DTM.height()-1,j+square);
+        std::size_t squareXmin = (i < square ? 0 : i-square);
+        std::size_t squareXmax = std::min(M.DTM.width()-1,i+square);
+        std::size_t squareYmin = (j < square ? 0 : j-square);
+        std::size_t squareYmax = std::min(M.DTM.height()-1,j+square);
 
-        for(int k=squareXmin; k<=squareXmax; k++){
-          for(int l=squareYmin; l<=squareYmax; l++){
+        for(std::size_t k = squareXmin; k <= squareXmax; k++){
+          for(std::size_t l = squareYmin; l <= squareYmax; l++){
 				
             double distance=sqrt(pow((double)i-k,2)+pow((double)j-l,2))*M.m_grid_resolution;
 				
@@ -1072,18 +1040,18 @@ public:
         im_Zfront(i,j)=Gfront;
 
         //extension by duplication
-        int IsquareXmin=std::max(0,i-step/2);
-        int IsquareXmax=std::min(M.DTM.width()-1,i+step/2);
-        int JsquareYmin=std::max(0,j-step/2);
-        int JsquareYmax=std::min(M.DTM.height()-1,j+step/2);
+        std::size_t IsquareXmin = (i < step/2 ? 0 : i-step/2);
+        std::size_t IsquareXmax = std::min(M.DTM.width()-1,i+step/2);
+        std::size_t JsquareYmin = (j < step/2 ? 0 : j-step/2);
+        std::size_t JsquareYmax = std::min(M.DTM.height()-1,j+step/2);
 		
         if(M.DTM.width()-1-IsquareXmax<step) IsquareXmax=M.DTM.width()-1;
         if(M.DTM.height()-1-JsquareYmax<step) JsquareYmax=M.DTM.height()-1;
         if(IsquareXmin<step) IsquareXmin=0;
         if(JsquareYmin<step) JsquareYmin=0;
 
-        for(int k=IsquareXmin; k<=IsquareXmax; k++){
-          for(int l=JsquareYmin; l<=JsquareYmax; l++){
+        for(std::size_t k = IsquareXmin; k <= IsquareXmax; k++){
+          for(std::size_t l = JsquareYmin; l <= JsquareYmax; l++){
             if(M.Mask(k,l)){
               M.DTM(k,l)=G1; 
               im_Zfront(k,l)=Gfront;
@@ -1094,18 +1062,18 @@ public:
     }
 
     //Gaussian smoothness
-    for(int ik=0;ik<10;ik++) {
-      for(int j=0;j<(int)M.DTM.height();j++){ 
-        for (int i=0;i<(int)M.DTM.width();i++) {
+    for(std::size_t ik = 0; ik < 10; ik++) {
+      for(std::size_t j = 0; j < M.DTM.height(); j++){ 
+        for (std::size_t i = 0; i < M.DTM.width(); i++) {
 		
-          int IsquareXmin=std::max(0,i-1); 
-          int IsquareXmax=std::min(M.DTM.width()-1,i+1); 
-          int JsquareYmin=std::max(0,j-1); 
-          int JsquareYmax=std::min(M.DTM.height()-1,j+1); 
+          std::size_t IsquareXmin = (i < 1 ? 0 : i - 1);
+          std::size_t IsquareXmax = std::min(M.DTM.width()-1,i+1); 
+          std::size_t JsquareYmin = (j < 1 ? 0 : j - 1);
+          std::size_t JsquareYmax = std::min(M.DTM.height()-1,j+1); 
           int count=0; 
 
-          for(int k=IsquareXmin; k<=IsquareXmax; k++){ 
-            for(int l=JsquareYmin; l<=JsquareYmax; l++){ 
+          for(std::size_t k=IsquareXmin; k<=IsquareXmax; k++){ 
+            for(std::size_t l=JsquareYmin; l<=JsquareYmax; l++){ 
               if(M.Mask(k,l)) count++;
             }
           }	
@@ -1259,3 +1227,4 @@ public:
 } // namespace CGAL
 
 #endif // CGAL_POINT_SET_CLASSIFICATION_H
+
