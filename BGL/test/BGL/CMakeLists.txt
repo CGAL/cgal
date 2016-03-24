@@ -87,7 +87,9 @@ create_single_source_cgal_program( "test_Has_member_id.cpp" )
 
 create_single_source_cgal_program( "test_cgal_bgl_named_params.cpp" )
 
+create_single_source_cgal_program( "graph_concept_Linear_cell_complex.cpp" )
 
+create_single_source_cgal_program( "simplification_Linear_cell_complex.cpp" )
 
 if(OpenMesh_FOUND)
   target_link_libraries( test_clear ${OPENMESH_LIBRARIES})
