@@ -634,8 +634,6 @@ option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external l
 # this; e.g. in MPFI/RS in Algebraic_kernel_d. For these cases CGAL
 # and the example/test must be configured with MPFI (just one is not sufficient)
 
-option( CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT "Select to allow to use all preconfigured external libraries" OFF)
- 
 include(CGAL_SetupDependencies)
 
 message("== Detect external libraries (DONE) ==\n")
