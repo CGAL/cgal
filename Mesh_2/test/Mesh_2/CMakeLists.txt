@@ -6,7 +6,7 @@ project( Mesh_2_ )
 
 cmake_minimum_required(VERSION 2.8.10)
 
-find_package(CGAL QUIET)
+find_package(CGAL QUIET COMPONENTS Core)
 
 if ( CGAL_FOUND )
 
