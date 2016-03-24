@@ -27,6 +27,8 @@ if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
 
+# Use GNUInstallDirst to get canonical paths
+include(GNUInstallDirs)
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -707,28 +709,28 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
-set ( CGAL_INSTALL_INC_DIR "include" CACHE STRING "The folder where CGAL header files will be installed, relative to CMAKE_INSTALL_PREFIX" )
-set ( CGAL_INSTALL_LIB_DIR "lib"     CACHE STRING "The folder where CGAL libraries will be installed, relative to CMAKE_INSTALL_PREFIX" )
+set ( CGAL_INSTALL_INC_DIR "${CMAKE_INSTALL_INCLUDEDIR}" CACHE STRING "The folder where CGAL header files will be installed, relative to CMAKE_INSTALL_PREFIX" )
+set ( CGAL_INSTALL_LIB_DIR "${CMAKE_INSTALL_LIBDIR}"     CACHE STRING "The folder where CGAL libraries will be installed, relative to CMAKE_INSTALL_PREFIX" )
 
 if ( CGAL_WIN32_CMAKE_ON_CYGWIN )
   exec_program(cygpath ARGS -w "${CMAKE_INSTALL_PREFIX}" OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2 )
   file ( TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX2} CMAKE_INSTALL_PREFIX )
 endif()
 
-set ( CGAL_INSTALL_BIN_DIR    "bin"                     
-  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
+set ( CGAL_INSTALL_BIN_DIR   "${CMAKE_INSTALL_BINDIR}"
+  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
 set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_INSTALL_LIB_DIR}/CGAL"
   CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
   )
 
-set ( CGAL_INSTALL_DOC_DIR "share/doc/${CGAL_VERSION_DIR}"  
-  CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
+set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/doc/${CGAL_VERSION_DIR}"
+  CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
-set ( CGAL_INSTALL_MAN_DIR "share/man/man1"  
-  CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
+set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/man/man1"
+  CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
 message("== Write compiler_config.h (DONE) ==\n")
