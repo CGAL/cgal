@@ -233,7 +233,7 @@ namespace CGAL {
 	if (node->size()>0) 
 	  for (iterator i=node->begin(); i != node->end(); i++) 
 	    if (q.contains(*i)) 
-	      { result = boost::make_optional(*i);}
+	      { result = *i; break; }
       }
       else {
          Internal_node_const_handle node = 
