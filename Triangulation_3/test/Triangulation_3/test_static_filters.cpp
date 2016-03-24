@@ -49,7 +49,7 @@ public:
 public:
   
   CGAL_Kernel_pred(Compare_weighted_squared_radius_3,compare_weighted_squared_radius_3_object)
-  CGAL_Kernel_pred(Power_test_3,power_test_3_object)
+  CGAL_Kernel_pred(Power_side_of_power_sphere_3,power_side_of_power_sphere_3_object)
 };
 
 
@@ -149,7 +149,7 @@ Weighted_point_3 convert_to_pair(const Exact_traits::Weighted_point_3& wp)
   return Weighted_point_3(wp_with_sf, wp_without_sf);
 }
 
-void test_power_test_3(){
+void test_power_side_of_power_sphere_3(){
   CGAL::Cartesian_converter<FK_without_SF,Exact_kernel> convert_to_exact;
   
   Weighted_point_3 p=my_rand_wp3();
@@ -159,10 +159,10 @@ void test_power_test_3(){
   Weighted_point_3 query_pt=my_rand_wp3();  
 
   //test with random points
-  K3().power_test_3_object()(p,q,r,s,query_pt);  
-  K3().power_test_3_object()(p,q,r,query_pt);  
-  K3().power_test_3_object()(p,q,query_pt);  
-  K3().power_test_3_object()(p,query_pt);
+  K3().power_side_of_power_sphere_3_object()(p,q,r,s,query_pt);  
+  K3().power_side_of_power_sphere_3_object()(p,q,r,query_pt);  
+  K3().power_side_of_power_sphere_3_object()(p,q,query_pt);  
+  K3().power_side_of_power_sphere_3_object()(p,query_pt);
   
   //test in degenerate case
   Exact_traits::Weighted_point_3::Point origin(0,0,0);
@@ -176,32 +176,32 @@ void test_power_test_3(){
       CGAL::squared_distance(origin,Exact_traits().construct_weighted_circumcenter_3_object()(p_e,q_e,r_e,s_e))-
       Exact_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object()(p_e,q_e,r_e,s_e)
   );
-  assert(Exact_traits().power_test_3_object()(p_e,q_e,r_e,s_e,tmp)==CGAL::ON_ORIENTED_BOUNDARY);
+  assert(Exact_traits().power_side_of_power_sphere_3_object()(p_e,q_e,r_e,s_e,tmp)==CGAL::ON_ORIENTED_BOUNDARY);
   
   Weighted_point_3 ortho_pqrs = convert_to_pair(tmp);
   tmp=Exact_traits::Weighted_point_3(
       Exact_traits().construct_weighted_circumcenter_3_object()(p_e,q_e,r_e),
       -Exact_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object()(p_e,q_e,r_e)
     );
-  assert(Exact_traits().power_test_3_object()(p_e,q_e,r_e,tmp)==CGAL::ON_ORIENTED_BOUNDARY);    
+  assert(Exact_traits().power_side_of_power_sphere_3_object()(p_e,q_e,r_e,tmp)==CGAL::ON_ORIENTED_BOUNDARY);    
   Weighted_point_3 ortho_pqr = convert_to_pair(tmp);
   tmp=Exact_traits::Weighted_point_3(
       Exact_traits().construct_weighted_circumcenter_3_object()(p_e,q_e),
       -Exact_traits().compute_squared_radius_smallest_orthogonal_sphere_3_object()(p_e,q_e)
     );
-  assert(Exact_traits().power_test_3_object()(p_e,q_e,tmp)==CGAL::ON_ORIENTED_BOUNDARY);        
+  assert(Exact_traits().power_side_of_power_sphere_3_object()(p_e,q_e,tmp)==CGAL::ON_ORIENTED_BOUNDARY);        
   Weighted_point_3 ortho_pq = convert_to_pair(tmp);
   
   
-  K3().power_test_3_object()(p,q,r,s,ortho_pqrs);
-  K3().power_test_3_object()(p,q,r  ,ortho_pqr);
-  K3().power_test_3_object()(p,q    ,ortho_pq);
+  K3().power_side_of_power_sphere_3_object()(p,q,r,s,ortho_pqrs);
+  K3().power_side_of_power_sphere_3_object()(p,q,r  ,ortho_pqr);
+  K3().power_side_of_power_sphere_3_object()(p,q    ,ortho_pq);
   // Then with some perturbation on coordinates and weight.
   perturb(p, 1.0/(1<<25)/(1<<20)); // 2^-45
   
-  K3().power_test_3_object()(p,q,r,s,ortho_pqrs);
-  K3().power_test_3_object()(p,q,r  ,ortho_pqr);
-  K3().power_test_3_object()(p,q    ,ortho_pq);
+  K3().power_side_of_power_sphere_3_object()(p,q,r,s,ortho_pqrs);
+  K3().power_side_of_power_sphere_3_object()(p,q,r  ,ortho_pqr);
+  K3().power_side_of_power_sphere_3_object()(p,q    ,ortho_pq);
 }
 
 
@@ -238,9 +238,9 @@ int main(int argc, char **argv)
   for(int i=0; i<loops; ++i)
     test_compare_weighted_squared_radius_3();  
 
-  std::cout << "Testing Power_test_3" << std::endl;
+  std::cout << "Testing power_side_of_power_sphere_3" << std::endl;
   for(int i=0; i<loops; ++i)
-    test_power_test_3();  
+    test_power_side_of_power_sphere_3();  
 
   return 0;
 }

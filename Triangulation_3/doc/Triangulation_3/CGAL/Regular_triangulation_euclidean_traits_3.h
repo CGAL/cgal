@@ -60,7 +60,7 @@ The type for points.
 A predicate type for power test. Belongs to the 
 `RegularTriangulationTraits_3` concept. 
 */ 
-typedef unspecified_type Power_test_3; 
+typedef unspecified_type Power_side_of_power_sphere_3; 
 
 /*!
 A predicate type to compare power distance. Belongs to the 
@@ -175,7 +175,7 @@ for a given last point should be needed.
 `FT operator() ( Weighted_point_3 p, 			 Weighted_point_3 q, 			 Weighted_point_3 r, 			 Weighted_point_3 s, 			 Weighted_point_3 t);` 
 
 */ 
-typedef unspecified_type Compute_critical_squared_radius_3; 
+  typedef unspecified_type Compute_power_distance_to_power_sphere_3;
 
 /// @} 
 
@@ -185,7 +185,7 @@ typedef unspecified_type Compute_critical_squared_radius_3;
 /*!
 
 */ 
-Power_test_3 power_test_3_object(); 
+Power_side_of_power_sphere_3 power_side_of_power_sphere_3_object(); 
 
 /*!
 
@@ -233,8 +233,8 @@ compute_squared_radius_smallest_orthogonal_sphere_3_object() ;
 /*!
 
 */ 
-Compute_critical_squared_radius_3 
-compute_critical_squared_radius_3_object(); 
+Compute_power_distance_to_power_sphere_3
+compute_power_distance_to_power_sphere_3_object(); 
 
 /// @}
 

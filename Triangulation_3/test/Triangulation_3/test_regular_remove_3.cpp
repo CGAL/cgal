@@ -42,9 +42,9 @@ int degeneracy_counter = 0;
 // This gives a rough idea of how degenerate a data set is.
 struct traits : public bare_traits
 {
-    struct Power_test_3 : public bare_traits::Power_test_3
+    struct Power_side_of_power_sphere_3 : public bare_traits::Power_side_of_power_sphere_3
     {
-        typedef bare_traits::Power_test_3 P3;
+        typedef bare_traits::Power_side_of_power_sphere_3 P3;
         Oriented_side operator() (const Weighted_point &p0,
                                   const Weighted_point &p) const
         {
@@ -81,8 +81,8 @@ struct traits : public bare_traits
         }
     };
 
-    Power_test_3 power_test_3_object() const
-    { return Power_test_3(); }
+    Power_side_of_power_sphere_3 power_side_of_power_sphere_3_object() const
+    { return Power_side_of_power_sphere_3(); }
 };
 
 

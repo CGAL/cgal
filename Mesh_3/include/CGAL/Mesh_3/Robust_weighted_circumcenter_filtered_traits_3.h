@@ -170,9 +170,9 @@ public:
   {
     CGAL_precondition(Rt().orientation_3_object()(p,q,r,s) == CGAL::POSITIVE);
    
-    // We use Power_test_3: it is static filtered and
+    // We use power_side_of_power_sphere_3: it is static filtered and
     // we know that p,q,r,s are positive oriented
-    typename Rt::Power_test_3 power_test = Rt().power_test_3_object();
+    typename Rt::power_side_of_power_sphere_3 power_side_of_power_sphere = Rt().power_side_of_power_sphere_3_object();
 
     // Compute denominator to swith to exact if it is 0
     FT num_x, num_y, num_z, den;

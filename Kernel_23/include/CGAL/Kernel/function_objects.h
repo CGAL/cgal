@@ -394,7 +394,7 @@ public:
   {
     K traits;
     typename K::Orientation_3  orientation = traits.orientation_3_object();
-    typename K::Power_test_3 power_test = traits.power_test_3_object();
+    typename K::Power_side_of_power_sphere_3 power_test = traits.power_side_of_power_sphere_3_object();
     typename K::Orientation o = orientation(p,q,r,s);
     typename K::Oriented_side os = power_test(p,q,r,s,t);
     CGAL_assertion( o != COPLANAR);

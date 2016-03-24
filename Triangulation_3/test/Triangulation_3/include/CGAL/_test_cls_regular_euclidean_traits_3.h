@@ -26,15 +26,14 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
   typedef typename Traits::Bare_point      Bare_point;
 
   typedef typename Traits::Segment_3       Segment_3;
-  typedef typename Traits::Power_test_3    Power_test_3;
+  typedef typename Traits::Power_side_of_power_sphere_3
+                                  Power_side_of_power_sphere_3;
   typedef typename Traits::Compare_power_distance_3
                                   Compare_power_distance_3;
   typedef typename Traits::In_smallest_orthogonal_sphere_3
                                   In_smallest_orthogonal_sphere_3;
   typedef typename Traits::Side_of_bounded_orthogonal_sphere_3
                                   Side_of_bounded_orthogonal_sphere_3;
-  typedef typename Traits::Does_simplex_intersect_dual_support_3 
-                                  Does_simplex_intersect_dual_support_3;
   typedef typename Traits::Construct_weighted_circumcenter_3
                                   Construct_weighted_circumcenter_3;
   typedef typename Traits::Compute_power_product_3
@@ -44,19 +43,18 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
                    Compute_squared_radius_smallest_orthogonal_sphere_3;
 
   typedef typename Traits::
-                   Compute_critical_squared_radius_3
-                   Compute_critical_squared_radius_3;        
+                   Compute_power_distance_to_power_sphere_3
+                   Compute_power_distance_to_power_sphere_3;        
 
   Traits traits;
-  Power_test_3 power_test =  traits.power_test_3_object();
+  Power_side_of_power_sphere_3 power_test =  
+    traits.power_side_of_power_sphere_3_object();
   Compare_power_distance_3 compare_power_distance =
     traits.compare_power_distance_3_object();
   In_smallest_orthogonal_sphere_3 in_smallest_orthogonal_sphere =
     traits.in_smallest_orthogonal_sphere_3_object();
   Side_of_bounded_orthogonal_sphere_3 side_of_bounded_orthogonal_sphere =
     traits.side_of_bounded_orthogonal_sphere_3_object();
-  Does_simplex_intersect_dual_support_3 does_simplex_intersect_dual_support =
-    traits.does_simplex_intersect_dual_support_3_object();
   Construct_weighted_circumcenter_3 weighted_circumcenter =
     traits.construct_weighted_circumcenter_3_object();
   Compute_power_product_3 power_product =
@@ -64,8 +62,8 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
   Compute_squared_radius_smallest_orthogonal_sphere_3
     squared_radius_smallest_orthogonal_sphere =
     traits.compute_squared_radius_smallest_orthogonal_sphere_3_object();
-  Compute_critical_squared_radius_3  critical_squared_radius =
-    traits.compute_critical_squared_radius_3_object();
+  Compute_power_distance_to_power_sphere_3  compute_power_distance_to_power_sphere_3 =
+    traits.compute_power_distance_to_power_sphere_3_object();
   
 
   // test of Does_simplex_intersect_dual_support_3
@@ -84,45 +82,6 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
   Weighted_point wp04(p0,18.);
   Weighted_point wp05(p0,24.);
 
-  assert(does_simplex_intersect_dual_support(wp0,wp1,wp2,wp3) 
-	 == CGAL::ON_UNBOUNDED_SIDE);
-
-  assert(does_simplex_intersect_dual_support(wp1,wp0,wp2,wp3) 
-	 == CGAL::ON_UNBOUNDED_SIDE);
-  assert(does_simplex_intersect_dual_support(wp01,wp1,wp2,wp3) 
-	 ==  CGAL::ON_BOUNDARY);
-  assert(does_simplex_intersect_dual_support(wp01,wp2,wp1,wp3) 
-	 ==  CGAL::ON_BOUNDARY);
-  assert(does_simplex_intersect_dual_support(wp02,wp1,wp2,wp3) 
-	 ==  CGAL::ON_BOUNDED_SIDE);
-  assert(does_simplex_intersect_dual_support(wp2,wp1,wp02,wp3) 
-	 ==  CGAL::ON_BOUNDED_SIDE);
-
-  assert(does_simplex_intersect_dual_support(wp0,wp1,wp2)
-	 == CGAL::ON_BOUNDARY);
-  assert(does_simplex_intersect_dual_support(wp1,wp0,wp2)
-	 == CGAL::ON_BOUNDARY);
-  assert(does_simplex_intersect_dual_support(wp01,wp1,wp2)
-	 ==  CGAL::ON_BOUNDED_SIDE);
-  assert(does_simplex_intersect_dual_support(wp01,wp2,wp1)
-	 ==  CGAL::ON_BOUNDED_SIDE);
-  assert(does_simplex_intersect_dual_support(wp03,wp1,wp2)
-	 ==  CGAL::ON_UNBOUNDED_SIDE);
-  assert(does_simplex_intersect_dual_support(wp2,wp1,wp03)
-	 ==  CGAL::ON_UNBOUNDED_SIDE);
-
-  assert(does_simplex_intersect_dual_support(wp0,wp1)
-	 == CGAL::ON_BOUNDED_SIDE);
-  assert(does_simplex_intersect_dual_support(wp1,wp0)
-	 == CGAL::ON_BOUNDED_SIDE);
-  assert(does_simplex_intersect_dual_support(wp04,wp1)
-	 ==  CGAL::ON_BOUNDARY);
-  assert(does_simplex_intersect_dual_support(wp1,wp04)
-	 ==  CGAL::ON_BOUNDARY);
-  assert(does_simplex_intersect_dual_support(wp05,wp1)
-	 ==  CGAL::ON_UNBOUNDED_SIDE);
-  assert(does_simplex_intersect_dual_support(wp1,wp05)
-	 ==  CGAL::ON_UNBOUNDED_SIDE);
 
   // test of Construct_weighted_circumcenter_3 and compare_power_distance
    std::cout << "test of Construct_weighted_circumcenter_3" << std::endl;
@@ -233,19 +192,19 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
   Weighted_point wt(Bare_point(1.,1.,1.), 0.);
   // this test requires a weighted point with a zero weight 
   assert( power_product(wc,wt) == 
-	  critical_squared_radius(wq11,wq21,wq31,wq41,wt));
+	  compute_power_distance_to_power_sphere_3(wq11,wq21,wq31,wq41,wt));
 
   wc = Weighted_point(
            weighted_circumcenter(wp0,wp1,wp2,wp3),
 	   squared_radius_smallest_orthogonal_sphere(wp0,wp1,wp2,wp3));
   assert( power_product(wc,wt) == 
-	  critical_squared_radius(wp0,wp1,wp2,wp3,wt));
+	  compute_power_distance_to_power_sphere_3(wp0,wp1,wp2,wp3,wt));
 
   wc = Weighted_point(
            weighted_circumcenter(wp01,wp1,wp2,wp3),
 	   squared_radius_smallest_orthogonal_sphere(wp01,wp1,wp2,wp3));
   assert( power_product(wc,wt) == 
-	  critical_squared_radius(wp01,wp1,wp2,wp3,wt));
+	  compute_power_distance_to_power_sphere_3(wp01,wp1,wp2,wp3,wt));
   
   // test power_test
   // null weights

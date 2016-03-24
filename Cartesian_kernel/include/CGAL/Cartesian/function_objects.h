@@ -3971,7 +3971,7 @@ namespace CartesianKernelFunctors {
   };
 
 template < typename K >
-class Power_test_3
+class Power_side_of_power_sphere_3
 {
 public:
   typedef typename K::Weighted_point_3                  Weighted_point_3;

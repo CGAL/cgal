@@ -47,7 +47,7 @@ public:
   // Before this type was Point
   typedef Point_3 Point;
 
-  typedef typename K::Power_test_3                 Power_test_3;
+  typedef typename K::Power_side_of_power_sphere_3                 Power_side_of_power_sphere_3;
   typedef typename K::Compare_power_distance_3     Compare_power_distance_3;
   typedef typename K::Construct_weighted_circumcenter_3 Construct_weighted_circumcenter_3;
 
@@ -65,8 +65,8 @@ public:
                                        Compare_weighted_squared_radius_3;
 
 
-  Power_test_3   power_test_3_object() const
-  { return K().power_test_3_object(); }
+  Power_side_of_power_sphere_3   power_side_of_power_sphere_3_object() const
+  { return K().power_side_of_power_sphere_3_object(); }
 
   Compare_power_distance_3 compare_power_distance_3_object() const
   { return K().compare_power_distance_3_object(); }

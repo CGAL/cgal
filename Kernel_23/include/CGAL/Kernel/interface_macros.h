@@ -559,8 +559,8 @@ CGAL_Kernel_pred_RT(Orientation_2,
 		    orientation_2_object)
 CGAL_Kernel_pred_RT(Orientation_3,
 		    orientation_3_object)
-CGAL_Kernel_pred_RT(Power_test_3,
-		    power_test_3_object)
+CGAL_Kernel_pred_RT(Power_side_of_power_sphere_3,
+		    power_side_of_power_sphere_3_object)
 CGAL_Kernel_pred_RT(Compare_power_distance_3,
 		    compare_power_distance_3_object)
 CGAL_Kernel_pred_RT(Compare_weighted_squared_radius_3,
