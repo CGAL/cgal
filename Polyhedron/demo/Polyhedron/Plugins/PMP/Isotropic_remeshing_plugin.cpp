@@ -90,8 +90,6 @@ split_identical_edges(
   typedef boost::graph_traits<TriangleMesh> GT;
   typedef typename GT::halfedge_descriptor halfedge_descriptor;
 
-  halfedge_descriptor opposite_hd=opposite(hd, tm);
-
   BOOST_FOREACH(const Point_3& p, points)
   {
     // split the edge
@@ -123,7 +121,6 @@ void split_long_duplicated_edge(const HedgeRange& hedge_range,
     CGAL::vertex_point_t>::type PointPMap;
   typedef typename boost::property_traits<PointPMap>::value_type Point_3;
   typedef boost::graph_traits<TriangleMesh> GT;
-  typedef typename GT::face_descriptor face_descriptor;
 
   if (hedge_range.empty()) return;
 
