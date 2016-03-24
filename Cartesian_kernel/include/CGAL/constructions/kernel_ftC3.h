@@ -860,7 +860,7 @@ power_to_orthogonal_sphereC3(
 // where weighted point t is orthogonal to weighted points p, q,r,s
 template < class FT>
 FT
-critical_squared_radiusC3(
+power_distance_to_power_sphereC3(
                 const FT &px, const FT &py, const FT &pz, const FT &pw,
                 const FT &qx, const FT &qy, const FT &qz, const FT &qw,
                 const FT &rx, const FT &ry, const FT &rz, const FT &rw,
