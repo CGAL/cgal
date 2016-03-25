@@ -33,6 +33,7 @@
 #include <QMessageBox>
 #include <QString>
 #include <QFontMetrics>
+#include <QMouseEvent>
 
 #include <cassert>
 #include <iostream>
@@ -67,8 +68,8 @@ class PixelReader : public QObject
 {
 Q_OBJECT
 public Q_SLOTS:
-  void update(const QPoint& p) {
-    getPixel(p);
+  void update(const QMouseEvent *e) {
+    getPixel(e->pos());
   }
 Q_SIGNALS:
   void x(int);
@@ -186,7 +187,7 @@ public:
     Viewer_interface* v = mw->findChild<Viewer_interface*>("viewer");
     CGAL_assertion(v != 0);
     pxr_.setViewer(v);
-    connect(v, SIGNAL(pointSelected(QPoint)), &pxr_, SLOT(update(QPoint)));
+    connect(v, SIGNAL(pointSelected(const QMouseEvent *)), &pxr_, SLOT(update(const QMouseEvent *)));
     createOrGetDockLayout();
 
   }
