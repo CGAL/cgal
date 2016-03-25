@@ -75,22 +75,18 @@ public:
   CMap_dart_index_map_external(CMap const& cm) 
   {
     CMap &cmap = const_cast<CMap&>(cm);
-    typedef typename CMap::template One_dart_per_cell_range<1>::iterator Iter;
-    Iter b=cmap.template one_dart_per_cell<1>().begin();
-    Iter e=cmap.template one_dart_per_cell<1>().end();
+    typedef typename CMap::Dart_range::iterator Iter;
+    Iter b=cmap.template darts().begin();
+    Iter e=cmap.template darts().end();
     for(value_type i=0; b != e; ++b, ++i)
     {
       map[b] = i;
-      ++i;
-      map[cmap.template beta<2>(b)] = i;
     }
-    typedef typename CMap::Dart_range::iterator DIter;
-    DIter bi = cmap.darts().begin();
-    DIter ei = cmap.darts().end();
-    for(; bi != ei; ++bi)
+    b=cmap.template darts().begin();
+    for(; b != e; ++b)
     {
-      value_type v1 = map[bi];
-      value_type v2 = map[cmap.template beta<2>(bi)];
+      value_type v1 = map[b];
+      value_type v2 = map[cmap.template beta<2>(b)];
       CGAL_assertion(v1 - v2 == 1 || v1 - v2 == -1);
     }
   }
