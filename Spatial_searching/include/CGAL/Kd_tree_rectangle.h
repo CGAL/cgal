@@ -244,9 +244,9 @@ namespace CGAL {
     
   private:
     
-    int dim;
     T* lower_;
     T* upper_;
+    int dim;
     int max_span_coord_;
     
   public:
@@ -284,21 +284,21 @@ namespace CGAL {
     }
     
     Kd_tree_rectangle(int d) 
-      : dim(d), lower_(new FT[d]), upper_(new FT[d]), max_span_coord_(0)
+      : lower_(new FT[d]), upper_(new FT[d]), dim(d), max_span_coord_(0)
     {
       std::fill(lower_, lower_ + dim, FT(0));
       std::fill(upper_, upper_ + dim, FT(0));
     }
 
     Kd_tree_rectangle() 
-      : dim(0), lower_(0), upper_(0) 
+      : lower_(0), upper_(0), dim(0)
     {
 }
     
     
     explicit 
     Kd_tree_rectangle(const Kd_tree_rectangle<FT,Dynamic_dimension_tag>& r) 
-      : dim(r.dim), lower_(new FT[dim]), upper_(new FT[dim]), 
+      : lower_(new FT[r.dim]), upper_(new FT[r.dim]), dim(r.dim), 
 	max_span_coord_(r.max_span_coord_) 
     {
       std::copy(r.lower_, r.lower_+dim, lower_);
@@ -327,7 +327,7 @@ namespace CGAL {
     
     template <class Construct_cartesian_const_iterator_d,class PointPointerIter> // was PointIter
     Kd_tree_rectangle(int d,  PointPointerIter begin,  PointPointerIter end,const Construct_cartesian_const_iterator_d& construct_it)
-      : dim(d), lower_(new FT[d]), upper_(new FT[d])
+      : lower_(new FT[d]), upper_(new FT[d]), dim(d)
     {
       update_from_point_pointers<Construct_cartesian_const_iterator_d>(begin,end,construct_it);
     }
