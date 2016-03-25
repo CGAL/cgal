@@ -45,6 +45,7 @@
 #include <boost/property_map/property_map.hpp>
 #include <boost/range.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
 #include <boost/shared_ptr.hpp>
 
 #include <map>
@@ -1280,19 +1281,23 @@ private:
                               const double& sq_low)
     {
       CGAL_assertion_code(std::size_t nb_done = 0);
-      std::vector<halfedge_descriptor> degenerate_faces;
+      boost::unordered_set<halfedge_descriptor> degenerate_faces;
       BOOST_FOREACH(halfedge_descriptor h,
                     halfedges_around_target(halfedge(v, mesh_), mesh_))
       {
         if (is_border(h, mesh_))
           continue;
         if (PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()))
-          degenerate_faces.push_back(h);
+          degenerate_faces.insert(h);
       }
       while(!degenerate_faces.empty())
       {
-        halfedge_descriptor h = degenerate_faces.back();
-        degenerate_faces.pop_back();
+        halfedge_descriptor h = *(degenerate_faces.begin());
+        degenerate_faces.erase(degenerate_faces.begin());
+
+        //check that opposite is not also degenerate
+        if (degenerate_faces.find(opposite(h, mesh_)) != degenerate_faces.end())
+          degenerate_faces.erase(opposite(h, mesh_));
 
         CGAL_assertion(PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()));
         if (face(h, mesh_) == boost::graph_traits<PM>::null_face())
@@ -1338,13 +1343,22 @@ private:
                 short_edges.insert(typename Bimap::value_type(hf, sqlen));
             }
 
+            std::size_t nb_degen = degenerate_faces.size();
             if (!is_border(hf, mesh_)
               && PMP::is_degenerated(hf, mesh_, vpmap_, GeomTraits()))
-              degenerate_faces.push_back(hf);
+              degenerate_faces.insert(hf);
             if (!is_border(hfo, mesh_)
               && PMP::is_degenerated(hfo, mesh_, vpmap_, GeomTraits()))
-              degenerate_faces.push_back(hfo);
+              degenerate_faces.insert(hfo);
 
+            if (degenerate_faces.size() == nb_degen + 2)
+            {
+              //process has failed to remove degeneracies
+              degenerate_faces.erase(hf);
+              degenerate_faces.erase(hfo);
+              std::cerr << "Warning : possible degeneracies remaining "
+                        << "after the edge collapse step" << std::endl;
+            }
             break;
           }
         }
