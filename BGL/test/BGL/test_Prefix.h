@@ -15,6 +15,11 @@
 
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 
+#include <CGAL/Linear_cell_complex.h>
+#include <CGAL/Linear_cell_complex_constructors.h>
+#include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
+#include <CGAL/boost/graph/properties_Linear_cell_complex.h>
+
 #ifdef CGAL_USE_SURFACE_MESH
 #include <CGAL/Surface_mesh.h>
 #include <CGAL/Surface_mesh/IO.h>
@@ -32,6 +37,23 @@ typedef Kernel::Point_3  Point_3;
 typedef Kernel::Vector_3 Vector_3;
 typedef Kernel::Triangle_3 Triangle_3;
 typedef Kernel::Iso_cuboid_3 Iso_cuboid_3;
+
+typedef CGAL::Linear_cell_complex_traits<3, Kernel> MyTraits;
+
+struct Myitem
+{
+  template<class Refs>
+  struct Dart_wrapper
+  {
+    typedef CGAL::Dart<2, Refs > Dart;
+    typedef CGAL::Cell_attribute_with_point< Refs > Vertex_attribute;
+    typedef CGAL::Cell_attribute< Refs > Face_attribute;
+    typedef CGAL::cpp11::tuple<Vertex_attribute, void, Face_attribute> Attributes;
+  };
+};
+
+typedef CGAL::Linear_cell_complex<2, 3, MyTraits, Myitem> LCC;
+
 
 #ifdef CGAL_USE_SURFACE_MESH
 typedef CGAL::Surface_mesh<Point_3> SM;
@@ -116,6 +138,14 @@ bool read_a_mesh(Polyhedron& p, const std::string& str) {
   bool success = in.good();
   if(success)
     set_halfedgeds_items_id(p);
+  return success;
+}
+
+bool read_a_mesh(LCC& lcc, const std::string& str) {
+  std::ifstream in(str.c_str());
+  bool success = in.good();
+  if(success)
+    CGAL::load_off(lcc, in);
   return success;
 }
 
