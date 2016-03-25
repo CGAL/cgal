@@ -255,8 +255,8 @@ namespace CGAL {
     set_upper_bound(int i, const FT& x) 
     {
       CGAL_assertion(i >= 0 && i < dim);
-      CGAL_assertion(x >= lower_[i]);
-      upper_[i] = x;
+      CGAL_assertion(x >= lower()[i]);
+      upper()[i] = x;
       set_max_span();
     }
 
@@ -264,18 +264,18 @@ namespace CGAL {
     set_lower_bound(int i, const FT& x) 
     {
       CGAL_assertion(i >= 0 && i < dim);
-      CGAL_assertion(x <= upper_[i]);
-      lower_[i] = x;
+      CGAL_assertion(x <= upper()[i]);
+      lower()[i] = x;
       set_max_span();
     }
 
     inline void 
     set_max_span() 
     {
-      FT span = upper_[0]-lower_[0];
+      FT span = upper()[0]-lower()[0];
       max_span_coord_ = 0;
       for (int i = 1; i < dim; ++i) {
-	FT tmp = upper_[i] - lower_[i];
+	FT tmp = upper()[i] - lower()[i];
 	if (span < tmp) {
 	  span = tmp;
 	  max_span_coord_ = i;
@@ -286,8 +286,8 @@ namespace CGAL {
     Kd_tree_rectangle(int d) 
       : lower_(new FT[d]), upper_(new FT[d]), dim(d), max_span_coord_(0)
     {
-      std::fill(lower_, lower_ + dim, FT(0));
-      std::fill(upper_, upper_ + dim, FT(0));
+      std::fill(lower(), lower() + dim, FT(0));
+      std::fill(upper(), upper() + dim, FT(0));
     }
 
     Kd_tree_rectangle() 
@@ -301,8 +301,8 @@ namespace CGAL {
       : lower_(new FT[r.dim]), upper_(new FT[r.dim]), dim(r.dim), 
 	max_span_coord_(r.max_span_coord_) 
     {
-      std::copy(r.lower_, r.lower_+dim, lower_);
-      std::copy(r.upper_, r.upper_+dim, upper_);
+      std::copy(r.lower(), r.lower()+dim, lower());
+      std::copy(r.upper(), r.upper()+dim, upper());
     }
 
     template <class Construct_cartesian_const_iterator_d,class PointPointerIter>
@@ -317,11 +317,11 @@ namespace CGAL {
       typename Construct_cartesian_const_iterator_d::result_type bit = construct_it(**begin);
       
       for (int i=0; i < dim; ++i, ++bit) {
-        lower_[i]= *bit; upper_[i]=lower_[i];
+        lower()[i]= *bit; upper()[i]=lower()[i];
       }
       begin++;
       typedef typename std::iterator_traits<PointPointerIter>::value_type P;
-      std::for_each(begin, end,set_bounds_from_pointer<Construct_cartesian_const_iterator_d,P,T>(dim, lower_, upper_,construct_it));
+      std::for_each(begin, end,set_bounds_from_pointer<Construct_cartesian_const_iterator_d,P,T>(dim, lower(), upper(),construct_it));
       set_max_span();
     }
     
@@ -341,20 +341,20 @@ namespace CGAL {
     inline FT 
     max_span() const 
     {
-      return upper_[max_span_coord_] - lower_[max_span_coord_];
+      return upper()[max_span_coord_] - lower()[max_span_coord_];
     }
 
     inline FT 
     min_coord(int i) const 
     {
-      CGAL_assertion(lower_ != NULL);
-      return lower_[i];
+      CGAL_assertion(lower() != NULL);
+      return lower()[i];
     }
     
     inline FT 
     max_coord(int i) const 
     {
-      return upper_[i];
+      return upper()[i];
     }
     
     std::ostream& 
@@ -363,13 +363,13 @@ namespace CGAL {
       s << "Rectangle dimension = " << dim;
       s << "\n lower: ";
       for (int i=0; i < dim; ++i)
-	s << lower_[i] << " ";
-      // std::copy(lower_, lower_ + dim,
+	s << lower()[i] << " ";
+      // std::copy(lower(), lower() + dim,
       // 	      std::ostream_iterator<FT>(s," "));
       s << "\n upper: ";
       for (int j=0; j < dim; ++j)
-	s << upper_[j] << " ";
-      // std::copy(upper_, upper_ + dim,
+	s << upper()[j] << " ";
+      // std::copy(upper(), upper() + dim,
       //	      std::ostream_iterator<FT>(s," "));
       s << "\n maximum span " << max_span() <<
 	" at coordinate " << max_span_coord() << std::endl;
@@ -383,11 +383,11 @@ namespace CGAL {
     split(Kd_tree_rectangle& r, int d, FT value)
     {
       CGAL_assertion(d >= 0 && d < dim);
-      CGAL_assertion(lower_[d] <= value && value <= upper_[d]);
+      CGAL_assertion(lower()[d] <= value && value <= upper()[d]);
       
       //Kd_tree_rectangle* r = new Kd_tree_rectangle(*this);
-      upper_[d]=value;
-      r.lower_[d]=value;
+      upper()[d]=value;
+      r.lower()[d]=value;
       //return r;
     }
     
@@ -406,6 +406,8 @@ namespace CGAL {
       return dim;
     }
 
+    T* lower() {return lower_;}
+    T* upper() {return upper_;}
     const T* lower() const {return lower_;}
     const T* upper() const {return upper_;}    
  
@@ -414,8 +416,8 @@ namespace CGAL {
     {
       CGAL_assertion(dimension() == r.dimension());
       if (this != &r) {
-        std::copy(r.lower_, r.lower_+dim, lower_);
-	std::copy(r.upper_, r.upper_+dim, upper_);
+        std::copy(r.lower(), r.lower()+dim, lower());
+	std::copy(r.upper(), r.upper()+dim, upper());
 	set_max_span();
       }
       return *this;
