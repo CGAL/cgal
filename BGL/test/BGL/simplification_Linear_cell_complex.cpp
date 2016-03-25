@@ -2,7 +2,7 @@
 #include <fstream>
 #include <CGAL/Linear_cell_complex.h>
 #include <CGAL/Linear_cell_complex_constructors.h>
-#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/Linear_cell_complex_incremental_builder_v2.h>
 #include <CGAL/boost/graph/graph_traits_Linear_cell_complex.h>
 // Simplification function
 #include <CGAL/Surface_mesh_simplification/edge_collapse.h>
@@ -31,23 +31,19 @@ namespace SMS = CGAL::Surface_mesh_simplification ;
 
 int main( int argc, char** argv )
 {
+  if (argc!=2)
+  {
+    std::cout<<"Usage: simplification_Linear_cell_complex inofffile [outofffile]"<<std::endl;
+    return EXIT_FAILURE;
+  }
+
   LCC lcc;
   std::ifstream is(argv[1]);
-  CGAL::load_off(lcc, is);
+  CGAL::load_off_v2(lcc, is);
 
-   for(typename LCC::template One_dart_per_cell_range<2>::iterator
-         it=lcc.template one_dart_per_cell<2>().begin(),
-         itend=lcc.template one_dart_per_cell<2>().end();
-       it!=itend; ++it )
-   {
-     if(it->template attribute<2>()==NULL)
-     {
-       lcc.template set_attribute<2>
-           (it, lcc.template create_attribute<2>());
-     }
-   }
-  
-   // This is a stop predicate (defines when the algorithm terminates).
+  lcc.display_characteristics(std::cout)<<", is_valid="<<lcc.is_valid()<<std::endl;
+
+  // This is a stop predicate (defines when the algorithm terminates).
   // In this example, the simplification stops when the number of undirected edges
   // left in the surface mesh drops below the specified number (1000)
   SMS::Count_stop_predicate<LCC> stop(1000);
@@ -58,16 +54,19 @@ int main( int argc, char** argv )
   int r = SMS::edge_collapse
     (lcc
      ,stop
-     ,CGAL::parameter::vertex_index_map(get(CGAL::vertex_external_index,lcc))
-     .halfedge_index_map (get(CGAL::halfedge_external_index ,lcc))
-     .get_cost (SMS::Edge_length_cost <LCC>())
-     .get_placement(SMS::Midpoint_placement<LCC>())
+     ,CGAL::parameters::halfedge_index_map(get(CGAL::halfedge_external_index, lcc))
+          .vertex_index_map(get(CGAL::vertex_external_index,lcc))
+          .get_cost(SMS::Edge_length_cost<LCC>())
+          .get_placement(SMS::Midpoint_placement<LCC>())
      );
+
   std::cout << "\nFinished...\n" << r << " edges removed.\n"
             << (lcc.number_of_darts()/2) << " final edges.\n" ;
 
+  lcc.display_characteristics(std::cout)<<", is_valid="<<lcc.is_valid()<<std::endl;
+
   std::ofstream os(argc > 2 ? argv[2] : "out.off");
   CGAL::write_off(lcc, os);
-  return 0 ;
+  return EXIT_SUCCESS;
 }
 // EOF //

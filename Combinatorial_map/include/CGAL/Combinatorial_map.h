@@ -38,6 +38,7 @@
 #include <CGAL/Generic_map_min_items.h>
 #endif
 
+#include <CGAL/Combinatorial_map_save_load.h>
 #include <CGAL/Dart_const_iterators.h>
 #include <CGAL/Cell_const_iterators.h>
 
