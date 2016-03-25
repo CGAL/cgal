@@ -18,7 +18,7 @@ class BasicItemPlugin :
   Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 public:
   //! [applicable]
-  //This plugin is only applicable if there is at exactly one selected item.
+  //This plugin is only applicable if there is exactly one selected item.
   bool applicable(QAction*) const
   {
     return scene->selectionIndices().size() ==1;

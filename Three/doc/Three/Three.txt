@@ -197,7 +197,7 @@ Simply create a new instance of the item you want and call the function CGAL::Th
 Once your code is written, you will need to link the item's library to your plugin thanks to the CMakeLists, using the command <b>target_link_library</b> :
 
     polyhedron_demo_plugin(basic_item_plugin Basic_item_plugin)
-    #  links the library containin the scene_plane_item with the plugin
+    #  links the library containing the scene_plane_item with the plugin
     target_link_libraries(basic_item_plugin scene_basic_objects)
 
 \subsubsection exampleCreatingANewTypeItem Creating a new type of item
@@ -236,8 +236,11 @@ Therefore, this is in those functions that the display of the data must be handl
 
 \snippet Three/Example_plugin/Example_plugin.cpp draw
 
-To display, you need to call the same program that got configured previously, and to bind it before you call the OpenGL drawing function.
+To display, you need to call the same program that got configured previously, and to bind it before you call the OpenGL drawing function. \n
+If you created your item in a specific file and you need to use it outside your plugin (like in another plugin), it is recommended to put it in the demo's root directory, and you will have to define your item in the general Polyhedron_demo's CMakeLists.txt by using the macro add_item :
 
+    add_item(scene_trivial_item Scene_trivial_item.cpp)
+    target_link_libraries(scene_trivial_item scene_dependances_item)
 
 \subsection exampleUsingAGroupItem Using a Scene_group_item
 
@@ -260,15 +263,15 @@ Once it is done, add the group to the scene with `CGAL::Three::Scene_interface::
 
 \section exampleIOPlugin Creating an IO Plugin
 
-An IO pluin is a plugin desined to load from  and save to a certain type of file. \n
+An IO plugin is a plugin desined to load from  and save to a certain type of file. Its name is generally of the form Xxxx_yyyy_io_plugin \n
 It inherits from the CGAL::Three::Polyhedron_demo_io_plugin_interface. It must implement the following functions :
 - CGAL::Three::Polyhedron_demo_io_plugin_interface#name which returns the plugin's name.
 ~~~~~~~~~~~~~{.cpp}
-QString name() const { return "selection_io_plugin"; }
+QString name() const { return "Xxxx_yyyy_io_plugin"; }
 ~~~~~~~~~~~~~
 - CGAL::Three::Polyhedron_demo_io_plugin_interface#nameFilters which returns a list of extensions of the files the plugin can read :
 ~~~~~~~~~~~~~{.cpp}
- QString nameFilters() const { return "Selection files (*.selection.txt)"; }
+ QString nameFilters() const { return "Text files (*.txt)"; }
 ~~~~~~~~~~~~~
 - CGAL::Three::Polyhedron_demo_io_plugin_interface#canLoad which returns true if the plugin is able to load :
 ~~~~~~~~~~~~~{.cpp}
@@ -278,9 +281,7 @@ bool canLoad() const { return true; }
 ~~~~~~~~~~~~~{.cpp}
 CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
     if(fileinfo.suffix().toLower() != "txt") return 0;
-    // There will be no actual loading at this step.
-    // Polyhedron_demo_selection_plugin will trigger load when item in new_item_created
-    Scene_polyhedron_selection_item* item = new Scene_polyhedron_selection_item();
+    Scene_trivial_item* item = new Scene_trivial_item();
     if(!item->load(fileinfo.filePath().toStdString())) {
         delete item;
         return NULL;
@@ -291,13 +292,13 @@ CGAL::Three::Scene_item* load(QFileInfo fileinfo) {
 - CGAL::Three::Polyhedron_demo_io_plugin_interface#canSave which returns true if the plugin is able to save :
 ~~~~~~~~~~~~~{.cpp}
 bool canSave(const CGAL::Three::Scene_item* scene_item) {
-    return qobject_cast<const Scene_polyhedron_selection_item*>(scene_item);
+    return qobject_cast<const Scene_trivial_item*>(scene_item);
 }
 ~~~~~~~~~~~~~
 - CGAL::Three::Polyhedron_demo_io_plugin_interface#save which fills a file with the data of an item
 ~~~~~~~~~~~~~{.cpp}
 bool save(const CGAL::Three::Scene_item* scene_item, QFileInfo fileinfo) {
-    const Scene_polyhedron_selection_item* item = qobject_cast<const Scene_polyhedron_selection_item*>(scene_item);
+    const Scene_trivial_item* item = qobject_cast<const Scene_trivial_item*>(scene_item);
     if(item == NULL) { return false; }
 
     return item->save(fileinfo.filePath().toStdString());
