@@ -29,11 +29,6 @@
 #include <CGAL/Kernel_traits.h>
 #include <CGAL/representation_tags.h>
 
-#include <CGAL/predicates/Regular_triangulation_ftC2.h>
-#include <CGAL/constructions_on_weighted_points_cartesian_2.h>
-
-#include <CGAL/predicates/Regular_triangulation_rtH2.h>
-#include <CGAL/constructions_on_weighted_points_homogeneous_2.h>
 
 namespace CGAL { 
 

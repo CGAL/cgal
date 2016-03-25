@@ -69,6 +69,7 @@
 #include <CGAL/Homogeneous/distance_predicatesH3.h>
 #include <CGAL/Homogeneous/predicates_on_pointsH3.h>
 #include <CGAL/Homogeneous/predicates_on_pointsH2.h>
+#include <CGAL/Homogeneous/constructions_on_weighted_points_homogeneous_2.h>
 
 #include <CGAL/representation_tags.h>
 #include <CGAL/Homogeneous/function_objects.h>

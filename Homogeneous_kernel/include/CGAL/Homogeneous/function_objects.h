@@ -30,6 +30,7 @@
 #include <CGAL/Kernel/Return_base_tag.h>
 #include <CGAL/predicates/sign_of_determinant.h>
 #include <CGAL/Homogeneous/Regular_triangulation_rtH3.h>
+#include <CGAL/Homogeneous/Regular_triangulation_rtH2.h>
 
 namespace CGAL {
 
@@ -4285,6 +4286,9 @@ namespace HomogeneousKernelFunctors {
       return s.rep().orientation();
     }
   };
+
+
+
 template < typename K >
 class Power_side_of_power_sphere_3
 {
