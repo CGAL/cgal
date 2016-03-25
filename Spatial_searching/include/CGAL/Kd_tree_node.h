@@ -520,22 +520,6 @@ namespace CGAL {
       return cut_dim;
     }
 
-    // members for extended internal node only
-    inline 
-    FT
-    low_value() const 
-    { 
-      return this->low_val;
-    }
-    
-    inline 
-    FT
-    high_value() const 
-    {
-      return this->high_val;
-    }
-       
-
    /* Separator& 
     separator() 
     {
