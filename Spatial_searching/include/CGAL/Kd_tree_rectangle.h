@@ -114,7 +114,7 @@ namespace CGAL {
     
     
     explicit 
-    Kd_tree_rectangle(const Kd_tree_rectangle<FT,D>& r) 
+    Kd_tree_rectangle(const Kd_tree_rectangle& r)
     : max_span_coord_(r.max_span_coord_) 
     {
       lower_ = r.lower_;
@@ -216,8 +216,8 @@ namespace CGAL {
     const T* lower() const {return lower_;}
     const T* upper() const {return upper_;}    
  
-    Kd_tree_rectangle<FT,D>& 
-    operator=(const Kd_tree_rectangle<FT,D>& r) 
+    Kd_tree_rectangle&
+    operator=(const Kd_tree_rectangle& r)
     {
       CGAL_assertion(dimension() == r.dimension());
       if (this != &r) {
@@ -295,7 +295,7 @@ namespace CGAL {
     
     
     explicit 
-    Kd_tree_rectangle(const Kd_tree_rectangle<FT,Dynamic_dimension_tag>& r) 
+    Kd_tree_rectangle(const Kd_tree_rectangle& r)
       : coords_(new FT[2*r.dim]), dim(r.dim),
 	max_span_coord_(r.max_span_coord_) 
     {
@@ -407,8 +407,8 @@ namespace CGAL {
     const T* lower() const {return coords_;}
     const T* upper() const {return coords_ + dim;}
  
-    Kd_tree_rectangle<FT,Dynamic_dimension_tag>& 
-    operator=(const Kd_tree_rectangle<FT,Dynamic_dimension_tag>& r) 
+    Kd_tree_rectangle&
+    operator=(const Kd_tree_rectangle& r)
     {
       CGAL_assertion(dimension() == r.dimension());
       if (this != &r) {
