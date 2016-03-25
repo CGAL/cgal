@@ -115,7 +115,7 @@ struct Read_mesh_domain_index<Mesh_domain, false> {
     switch(dimension) {
     case 2: {
       typename MT::Surface_patch_index spi;
-      if(is_ascii(is)) is >> spi;
+      if(is_ascii(is)) is >> iformat(spi);
       else CGAL::read(is, spi);
       return  spi;
     }

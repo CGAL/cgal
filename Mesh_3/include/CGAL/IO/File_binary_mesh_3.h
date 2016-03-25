@@ -23,6 +23,7 @@
 
 #include <iostream>
 #include <string>
+#include <limits>
 #include <CGAL/Mesh_3/io_signature.h>
 
 namespace CGAL {
@@ -32,10 +33,18 @@ namespace Mesh_3 {
 template <class C3T3>
 bool
 save_binary_file(std::ostream& os,
-                 const C3T3& c3t3)
+                 const C3T3& c3t3,
+                 bool binary = true)
 {
-  os << "binary CGAL c3t3 " << CGAL::Get_io_signature<C3T3>()() << "\n";
-  CGAL::set_binary_mode(os);
+  typedef typename C3T3::Triangulation::Geom_traits::FT FT;
+  if(binary) os << "binary ";
+  os << "CGAL c3t3 " << CGAL::Get_io_signature<C3T3>()() << "\n";
+  if(binary) {
+    CGAL::set_binary_mode(os);
+  } else {
+    CGAL::set_ascii_mode(os);
+    os.precision(std::numeric_limits<FT>::digits10+2);
+  }
   return !!(os << c3t3);
   // call operator!() twice, because operator bool() is C++11
 }
