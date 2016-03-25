@@ -244,8 +244,7 @@ namespace CGAL {
     
   private:
     
-    T* lower_;
-    T* upper_;
+    T* coords_;
     int dim;
     int max_span_coord_;
     
@@ -284,25 +283,23 @@ namespace CGAL {
     }
     
     Kd_tree_rectangle(int d) 
-      : lower_(new FT[d]), upper_(new FT[d]), dim(d), max_span_coord_(0)
+      : coords_(new FT[2*d]), dim(d), max_span_coord_(0)
     {
-      std::fill(lower(), lower() + dim, FT(0));
-      std::fill(upper(), upper() + dim, FT(0));
+      std::fill(coords_, coords_ + 2*dim, FT(0));
     }
 
     Kd_tree_rectangle() 
-      : lower_(0), upper_(0), dim(0)
+      : coords_(0), dim(0)
     {
 }
     
     
     explicit 
     Kd_tree_rectangle(const Kd_tree_rectangle<FT,Dynamic_dimension_tag>& r) 
-      : lower_(new FT[r.dim]), upper_(new FT[r.dim]), dim(r.dim), 
+      : coords_(new FT[2*r.dim]), dim(r.dim),
 	max_span_coord_(r.max_span_coord_) 
     {
-      std::copy(r.lower(), r.lower()+dim, lower());
-      std::copy(r.upper(), r.upper()+dim, upper());
+      std::copy(r.coords_, r.coords_+2*dim, lower());
     }
 
     template <class Construct_cartesian_const_iterator_d,class PointPointerIter>
@@ -327,7 +324,7 @@ namespace CGAL {
     
     template <class Construct_cartesian_const_iterator_d,class PointPointerIter> // was PointIter
     Kd_tree_rectangle(int d,  PointPointerIter begin,  PointPointerIter end,const Construct_cartesian_const_iterator_d& construct_it)
-      : lower_(new FT[d]), upper_(new FT[d]), dim(d)
+      : coords_(new FT[2*d]), dim(d)
     {
       update_from_point_pointers<Construct_cartesian_const_iterator_d>(begin,end,construct_it);
     }
@@ -347,7 +344,7 @@ namespace CGAL {
     inline FT 
     min_coord(int i) const 
     {
-      CGAL_assertion(lower() != NULL);
+      CGAL_assertion(coords_ != NULL);
       return lower()[i];
     }
     
@@ -395,8 +392,7 @@ namespace CGAL {
     ~Kd_tree_rectangle() 
     {
       if (dim) {
-	if (lower_) delete [] lower_;
-	if (upper_) delete [] upper_;
+	if (coords_) delete [] coords_;
       }
     }
     
@@ -406,18 +402,17 @@ namespace CGAL {
       return dim;
     }
 
-    T* lower() {return lower_;}
-    T* upper() {return upper_;}
-    const T* lower() const {return lower_;}
-    const T* upper() const {return upper_;}    
+    T* lower() {return coords_;}
+    T* upper() {return coords_ + dim;}
+    const T* lower() const {return coords_;}
+    const T* upper() const {return coords_ + dim;}
  
     Kd_tree_rectangle<FT,Dynamic_dimension_tag>& 
     operator=(const Kd_tree_rectangle<FT,Dynamic_dimension_tag>& r) 
     {
       CGAL_assertion(dimension() == r.dimension());
       if (this != &r) {
-        std::copy(r.lower(), r.lower()+dim, lower());
-	std::copy(r.upper(), r.upper()+dim, upper());
+        std::copy(r.coords_, r.coords_+2*dim, coords_);
 	set_max_span();
       }
       return *this;
