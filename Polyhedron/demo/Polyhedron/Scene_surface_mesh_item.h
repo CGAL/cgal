@@ -71,7 +71,10 @@ private:
   std::vector<unsigned int> idx_edge_data_;
   mutable std::vector<gl_data> flat_vertices;
   mutable std::vector<gl_data> flat_normals;
+  mutable std::vector<gl_data> f_colors;
   mutable QOpenGLShaderProgram *program;
+
+  QMap<int, QColor> colormap;
 
 };
 

@@ -52,6 +52,20 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
     idx_edge_data_.push_back(im[source(ed, *smesh_)]);
     idx_edge_data_.push_back(im[target(ed, *smesh_)]);
   }
+
+  //Temporary test colormap
+  colormap.insert(0, QColor( 0, 0, 0));
+  colormap.insert(1, QColor( 255, 255, 255));
+  colormap.insert(2, QColor( 255, 0, 0));
+  colormap.insert(3, QColor( 0, 255, 255));
+  colormap.insert(4, QColor( 0, 0, 255));
+  colormap.insert(5, QColor( 255, 0, 255));
+  colormap.insert(6, QColor( 255, 255, 0));
+  colormap.insert(7, QColor( 0, 255 ,255));
+  colormap.insert(8, QColor( 125, 255 ,255));
+  colormap.insert(9, QColor( 255, 125 ,255));
+  colormap.insert(10,QColor( 255, 255 ,125));
+
 }
 
 Scene_surface_mesh_item*
@@ -71,8 +85,15 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
   SMesh::Property_map<face_descriptor, Kernel::Vector_3 > fnormals =
       smesh_->add_property_map<face_descriptor, Kernel::Vector_3 >("v:normal").first;
   CGAL::Polygon_mesh_processing::compute_face_normals(*smesh_,fnormals);
+
+  SMesh::Property_map<vertex_descriptor, int> vcolors =
+    smesh_->property_map<vertex_descriptor, int >("v:color").first;
+
   assert(positions.data() != NULL);
   assert(vnormals.data() != NULL);
+  assert(vcolors.data() != NULL);
+
+
 
 //compute the Flat data
   flat_vertices.clear();
@@ -89,6 +110,11 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
       flat_normals.push_back((gl_data)n.x());
       flat_normals.push_back((gl_data)n.y());
       flat_normals.push_back((gl_data)n.z());
+
+      int i = vcolors[source(hd, *smesh_)];
+      f_colors.push_back(colormap[i].redF());
+      f_colors.push_back(colormap[i].greenF());
+      f_colors.push_back(colormap[i].blueF());
     }
   }
 
@@ -106,6 +132,12 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
   program->setAttributeBuffer("vertex",GL_DATA,0,3);
   buffers[Flat_vertices].release();
 
+  buffers[Colors].bind();
+  buffers[Colors].allocate(f_colors.data(),
+                            static_cast<int>(f_colors.size()*sizeof(gl_data)));
+  program->enableAttributeArray("colors");
+  program->setAttributeBuffer("colors",GL_DATA,0,3);
+  buffers[Colors].release();
 
 
   buffers[Flat_normals].bind();
@@ -117,7 +149,6 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
   vaos[Flat_facets]->release();
 
   //vao containing the data for the smooth facets
-
   vaos[Smooth_facets]->bind();
   buffers[Smooth_vertices].bind();
   buffers[Smooth_vertices].allocate(positions.data(),
@@ -127,13 +158,15 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
   buffers[Smooth_vertices].release();
 
 
-
   buffers[Smooth_normals].bind();
   buffers[Smooth_normals].allocate(vnormals.data(),
                             static_cast<int>(num_vertices(*smesh_)*3*sizeof(gl_data)));
   program->enableAttributeArray("normals");
   program->setAttributeBuffer("normals",GL_DATA,0,3);
   buffers[Smooth_normals].release();
+
+
+
   vaos[Smooth_facets]->release();
   program->release();
 
@@ -168,7 +201,6 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
   else
   {
     vaos[Flat_facets]->bind();
-    program->setAttributeValue("colors", this->color());
     glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(flat_vertices.size()/3));
     vaos[Flat_facets]->release();
   }

@@ -2512,31 +2512,68 @@ private: //------------------------------------------------------- private data
 
 
   /// \relates Surface_mesh
-  /// Extracts the surface mesh from an input stream in Ascii OFF format.
-  /// The operator only reads the point property and does not read files 
-  /// with vertex normals or textures.
+
+  /// \relates Surface_mesh
+  /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF format.
+  /// The operator reads the point property as well as "v:normal", "v:color", and "f:color".
+  /// For the colors only the color map version is supported, that is an integer index.
+  /// Vertex texture coordinates are ignored.
   /// \pre `operator>>(std::istream&,const P&)` must be defined.
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {
     typedef Surface_mesh<P> Mesh;
+    typedef typename Kernel_traits<P>::Kernel K;
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename Mesh::Face_index Face_index;
+    typedef typename Mesh::Vertex_index Vertex_index;
     typedef typename Mesh::size_type size_type;
     sm.clear();
     int n, f, e;
     std::string off;
     is >> off;
-    CGAL_assertion(off == "OFF" || off == "COFF");
+    assert( (off == "OFF") || (off == "COFF") || (off == "NOFF") || (off == "CNOFF"));
+
     is >> n >> f >> e;
+
     sm.reserve(n,2*f,e);
     P p;
+    Vector_3 v;
+    typename Mesh::template Property_map<Vertex_index,int> vcolor;
+    typename Mesh::template Property_map<Vertex_index,Vector_3> vnormal;
+    bool vcolored = false, v_has_normals = false;
+
+    if((off == "COFF") || (off == "CNOFF")){
+      bool created;
+      boost::tie(vcolor, created) = sm.template add_property_map<Vertex_index,int>("v:color",0);
+      vcolored = true;
+    }
+    if((off == "NOFF") || (off == "CNOFF")){
+      bool created;
+      boost::tie(vnormal, created) = sm.template add_property_map<Vertex_index,Vector_3>("v:normal",Vector_3(0,0,0));
+      v_has_normals = true;
+    }
+    int ci;
+
     for(int i=0; i < n; i++){
       is >> sm_skip_comments;
       is >> p;
-      sm.add_vertex(p);
-      is.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
+      Vertex_index vi= sm.add_vertex(p);
+      if(v_has_normals){
+        is >> v;
+        vnormal[vi] = v;
+      }
+      if(vcolored){
+        is >> ci;
+        vcolor[vi] = ci;
+      }
     }
     std::vector<size_type> vr;
     std::size_t d;
+
+    bool fcolored = false;
+    typename Mesh::template Property_map<Face_index,int> fcolor;
+
     for(int i=0; i < f; i++){
       is >> sm_skip_comments;
       is >> d;
@@ -2544,7 +2581,26 @@ private: //------------------------------------------------------- private data
       for(std::size_t j=0; j<d; j++){
         is >> vr[j];
       }
-      sm.add_face(vr);
+
+      Face_index fi = sm.add_face(vr);
+      // the first face will tell us if faces have a color map
+      // TODO: extend this to RGBA
+      if(i == 0){
+        std::string col;
+        std::getline(is, col);
+        std::istringstream iss(col);
+        if(iss >> ci){
+          bool created;
+          boost::tie(fcolor, created) = sm.template add_property_map<Face_index,int>("f:color",0);
+          fcolored = true;
+          fcolor[fi] = ci;
+        }
+      } else {
+        if(fcolored){
+          is >> ci;
+          fcolor[fi] = ci;
+        }
+      }
     }
     return is;
   }
