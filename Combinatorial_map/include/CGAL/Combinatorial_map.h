@@ -27,6 +27,7 @@
 #include <CGAL/internal/Combinatorial_map_sewable.h>
 #include <CGAL/Combinatorial_map_functors.h>
 #include <CGAL/Combinatorial_map_min_items.h>
+#include <CGAL/Combinatorial_map_save_load.h>
 #include <CGAL/Dart_const_iterators.h>
 #include <CGAL/Cell_const_iterators.h>
 #include <CGAL/Combinatorial_map_basic_operations.h>
