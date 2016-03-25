@@ -60,7 +60,7 @@ public:
     dock_widget = new DockWidget("Print a number", mw);
     dock_widget->setVisible(false); // do not show at the beginning
 
-    add_dock_widget(dock_widget);
+    addDockWidget(dock_widget);
 
     connect(dock_widget->pushButton, SIGNAL(clicked(bool)),
             this, SLOT(on_dock_button_clicked()));
