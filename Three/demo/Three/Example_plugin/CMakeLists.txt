@@ -27,6 +27,7 @@ if(Qt5_FOUND AND CGAL_FOUND)
   find_package(CGAL_polyhedron_demo)
 
 include( ${CGAL_POLYHEDRON_DEMO_USE_FILE} )
+
 # Let plugins be compiled in the same directory as the executable.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
            
@@ -43,6 +44,5 @@ set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
 
 #  links the library containing the scene_plane_item with the plugin
   target_link_libraries(basic_item_plugin Polyhedron_scene_basic_objects)
-
 
 endif()
