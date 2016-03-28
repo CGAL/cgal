@@ -85,6 +85,9 @@ namespace CGAL {
     template<typename, unsigned int, typename>
     friend struct internal::Decrease_attribute_functor_run;
 
+    template<typename, unsigned int, typename>
+    friend struct internal::Restricted_decrease_attribute_functor_run;
+
     template <typename, typename>
     friend struct internal::Reverse_orientation_of_map_functor;
 
@@ -196,6 +199,9 @@ namespace CGAL {
 
     template<typename, unsigned int, typename>
     friend struct internal::Decrease_attribute_functor_run;
+
+    template<typename, unsigned int, typename>
+    friend struct internal::Restricted_decrease_attribute_functor_run;
 
     template <typename, typename>
     friend struct internal::Reverse_orientation_of_map_functor;

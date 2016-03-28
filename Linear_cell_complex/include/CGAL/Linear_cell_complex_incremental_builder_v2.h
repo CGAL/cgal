@@ -74,8 +74,8 @@ namespace CGAL {
 
         if (cur==lcc.null_handle)
         {
-          cur = lcc.create_dart(vertex_map[prev_vertex]);
-          Dart_handle opposite=lcc.create_dart(vertex_map[i]);
+          cur = lcc.create_dart(vertex_map[i]);
+          Dart_handle opposite=lcc.create_dart(vertex_map[prev_vertex]);
           lcc.template basic_link_beta_for_involution<2>(cur, opposite);
           add_dart_in_vertex_to_dart_map( opposite, i );
         }
@@ -126,7 +126,6 @@ namespace CGAL {
     // End of the surface. Return one dart of the created surface.
     Dart_handle end_surface()
     {
-      std::cout<<"******************";lcc.display_characteristics(std::cout)<<std::endl;
       unsigned int nb=0;
 
       for (typename LCC::Dart_range::iterator it=lcc.darts().begin(),
@@ -143,12 +142,13 @@ namespace CGAL {
           while (lcc.template attribute<2>(lcc.template beta<2>(other))!=NULL);
           assert(lcc.template is_free<0>(lcc.template beta<2>(other)));
           lcc.basic_link_beta_1(it, lcc.template beta<2>(other));
+
+          // For BGL halfedge graph, darts of border vertices must be border darts.
+          lcc.template set_dart_of_attribute<0>(lcc.vertex_attribute(it), it);
           ++nb;
         }
       }
 
-      std::cout<<"****************** nb sew="<<nb<<std::endl;
-      std::cout<<"******************";lcc.display_characteristics(std::cout)<<std::endl;
       return first_dart;
     }
 
@@ -166,7 +166,7 @@ namespace CGAL {
       Vertex_attribute_handle vh = vertex_map[j];
       for ( ; it!=itend; ++it )
       {
-        if ( lcc.temp_vertex_attribute(lcc.template beta<2>(*it))==vh )
+        if ( lcc.temp_vertex_attribute(*it)==vh )
           return (*it);
       }
       return lcc.null_handle;

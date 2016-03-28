@@ -490,6 +490,27 @@ namespace CGAL {
       mdarts.erase(adart);
     }
 
+    /** Erase a dart from the list of darts. Restricted version
+     *  which do not delete attribute having no more dart associated.
+     * @param adart the dart to erase.
+     */
+    void restricted_erase_dart(Dart_handle adart)
+    {
+      // 1) We update the number of marked darts.
+      for ( size_type i = 0; i < mnb_used_marks; ++i)
+      {
+        if (is_marked(adart, mused_marks_stack[i]))
+          --mnb_marked_darts[mused_marks_stack[i]];
+      }
+
+      // 2) We update the attribute_ref_counting.
+      Helper::template Foreach_enabled_attributes
+        <internal::Restricted_decrease_attribute_functor<Self> >::run(this,adart);
+
+      // 3) We erase the dart.
+      mdarts.erase(adart);
+    }
+
     /// @return true if dh points to a used dart (i.e. valid).
     bool is_dart_used(Dart_const_handle dh) const
     { return mdarts.is_used(dh); }
@@ -563,6 +584,32 @@ namespace CGAL {
       for (unsigned int i = 1; i <= dimension; ++i)
         if (!is_free(dh, i)) return beta(dh, i);
       return null_handle;
+    }
+
+    // Set the handle on the i th attribute
+    // Restricted version which do not use delete attributes when their ref
+    // counting become null, nor that update the dart of attribute.
+    template<unsigned int i>
+    void restricted_set_dart_attribute(Dart_handle dh,
+                                       typename Attribute_handle<i>::type ah)
+    {
+      CGAL_static_assertion_msg(Helper::template Dimension_index<i>::value>=0,
+                     "set_dart_attribute<i> called but i-attributes are disabled.");
+
+      if ( this->template attribute<i>(dh)==ah ) return;
+
+      if ( this->template attribute<i>(dh)!=null_handle )
+      {
+        this->template get_attribute<i>(this->template attribute<i>(dh)).
+          dec_nb_refs();
+      }
+
+      Base::template basic_set_dart_attribute<i>(dh, ah);
+
+      if ( ah!=null_handle )
+      {
+        this->template get_attribute<i>(ah).inc_nb_refs();
+      }
     }
 
     // Set the handle on the i th attribute
@@ -1093,9 +1140,13 @@ namespace CGAL {
     }
 
     /** Test if the map is valid.
+     * @param reverseextremity to inverse the convention between source and
+     *        target of a dart. With false (default), a dart is associated with
+     *        a 0-attribute for its source (origin);
+     *        with true this is for its target (as in hds or surface mesh).
      * @return true iff the map is valid.
      */
-    bool is_valid() const
+    bool is_valid(bool reverseextremity=false) const
     {
       bool valid = true;
       unsigned int i = 0, j = 0;
@@ -1113,7 +1164,10 @@ namespace CGAL {
         if ( !valid )
         { // We continue the traversal to mark all the darts.
           for ( i=0; i<=dimension; ++i)
-            if (marks[i]!=INVALID_MARK) mark(it,marks[i]);
+            if (marks[i]!=INVALID_MARK)
+            {
+              mark(it,marks[i]);
+            }
         }
         else
         {
@@ -1182,7 +1236,7 @@ namespace CGAL {
           }
           Helper::template Foreach_enabled_attributes
             <internal::Test_is_valid_attribute_functor<Self> >::
-            run(this,it,&marks,&valid);
+            run(this,it,&marks,&valid, reverseextremity);
         }
       }
       for ( i=0; i<=dimension; ++i)
@@ -1247,7 +1301,7 @@ namespace CGAL {
         for ( unsigned int i=0; i<=dimension; ++i)
         {
           os << &(*it->beta(i)) << ",\t";
-          if (it->is_free(i)) os << "\t";
+          if (is_free(it, i)) os << "\t";
         }
         if ( attribs )
         {

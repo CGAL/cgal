@@ -338,11 +338,15 @@ namespace CGAL {
     /** Test if the lcc is valid.
      * A Linear_cell_complex is valid if it is a valid Combinatorial_map with
      * an attribute associated to each dart.
+     * @param reverseextremity to inverse the convention between source and
+     *        target of a dart. With false (default), a dart is associated with
+     *        a 0-attribute for its source (origin);
+     *        with true this is for its target (as in hds or surface mesh).
      * @return true iff the map is valid.
      */
-    bool is_valid() const
+    bool is_valid(bool reverseextremity=false) const
     {
-      bool valid = Base::is_valid();
+      bool valid = Base::is_valid(reverseextremity);
       for (typename Dart_range::const_iterator it(this->darts().begin()),
              itend(this->darts().end()); valid && it != itend; ++it)
       {
