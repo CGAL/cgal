@@ -237,7 +237,7 @@ CGAL_EXPORT extern  Random  default_random;
 #ifdef CGAL_HEADER_ONLY
 inline Random& get_default_random()
 {
-  static Random default_random("default");
+  static Random default_random;
   return default_random;
 }
 #else // CGAL_HEADER_ONLY
