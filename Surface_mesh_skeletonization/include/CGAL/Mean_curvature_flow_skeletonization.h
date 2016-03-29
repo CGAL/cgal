@@ -42,7 +42,7 @@
 #include <CGAL/Polygon_mesh_processing/Weights.h>
 
 // Compute the vertex normal
-#include <CGAL/internal/Surface_mesh_skeletonization/get_normal.h>
+#include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 // Simplification function
 #include <CGAL/boost/graph/Euler_operations.h>
@@ -1114,8 +1114,7 @@ private:
 
   void normalize(Vector& v)
   {
-    double norm = std::sqrt(m_traits.compute_squared_length_3_object()(v));
-    v = m_traits.construct_divided_vector_3_object()(v, norm);
+    CGAL::Polygon_mesh_processing::internal::normalize(v, m_traits);
   }
 
   /// Project the vertex `vk` to the line of `vs` and `vt`.
@@ -1320,12 +1319,16 @@ private:
   /// Compute an approximate vertex normal for all vertices.
   void compute_vertex_normal()
   {
+    namespace PMP = CGAL::Polygon_mesh_processing;
+
     m_normals.resize(num_vertices(m_tmesh));
 
     BOOST_FOREACH(vertex_descriptor v, vertices(m_tmesh))
     {
       int vid = static_cast<int>(get(m_vertex_id_pmap, v));
-      m_normals[vid] = internal::get_vertex_normal(*v, m_traits);
+      m_normals[vid] = PMP::compute_vertex_normal(v
+                          , m_tmesh
+                          , PMP::parameters::geom_traits(m_traits));
     }
   }
 
