@@ -41,7 +41,7 @@ int main( int argc, char** argv )
   std::ifstream is(argv[1]);
   CGAL::load_off_v2(lcc, is);
 
-  lcc.display_characteristics(std::cout)<<", is_valid="<<lcc.is_valid()<<std::endl;
+  lcc.display_characteristics(std::cout)<<", is_valid="<<CGAL::is_valid(lcc)<<std::endl;
 
   // This is a stop predicate (defines when the algorithm terminates).
   // In this example, the simplification stops when the number of undirected edges
@@ -63,7 +63,7 @@ int main( int argc, char** argv )
   std::cout << "\nFinished...\n" << r << " edges removed.\n"
             << (lcc.number_of_darts()/2) << " final edges.\n" ;
 
-  lcc.display_characteristics(std::cout)<<", is_valid="<<lcc.is_valid()<<std::endl;
+  lcc.display_characteristics(std::cout)<<", is_valid="<<CGAL::is_valid(lcc)<<std::endl;
 
   std::ofstream os(argc > 2 ? argv[2] : "out.off");
   CGAL::write_off(lcc, os);
