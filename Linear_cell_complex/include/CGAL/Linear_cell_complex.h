@@ -876,6 +876,8 @@ namespace CGAL {
       typedef Items_  Items;
       typedef Alloc_  Alloc;
 
+      typedef typename Traits_::Kernel Kernel;
+
       static const unsigned int ambient_dimension = Base::ambient_dimension;
       static const unsigned int dimension = Base::dimension;
 

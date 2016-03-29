@@ -40,11 +40,12 @@ namespace CGAL {
    *  dD version (for the moment there is only one dD kernel in CGAL).
    */
   template <unsigned int d_,
-            class Kernel=typename LCC_default_kernel<d_>::type >
-  struct Linear_cell_complex_traits : public Kernel
+            class Kernel_=typename LCC_default_kernel<d_>::type >
+  struct Linear_cell_complex_traits : public Kernel_
   {
     static const unsigned int ambient_dimension = d_;
-    
+
+    typedef Kernel_                      Kernel;
     typedef typename Kernel::FT          FT;
     typedef typename Kernel::Point_d     Point;
     typedef typename Kernel::Vector_d    Vector;
@@ -88,11 +89,12 @@ namespace CGAL {
   /** Trait class for Linear_cell_complex class.
    *  2D version specialization.
    */
-  template <class Kernel>
-  struct Linear_cell_complex_traits<2,Kernel> : public Kernel
+  template <class Kernel_>
+  struct Linear_cell_complex_traits<2,Kernel_> : public Kernel_
   {
     static const unsigned int ambient_dimension = 2;
-    
+
+    typedef Kernel_                      Kernel;
     typedef typename Kernel::FT          FT;
     typedef typename Kernel::Point_2     Point;
     typedef typename Kernel::Vector_2    Vector;
@@ -116,11 +118,12 @@ namespace CGAL {
   /** Trait class for Linear_cell_complex class.
    *  3D version specialization.
    */
-  template <class Kernel>
-  struct Linear_cell_complex_traits<3,Kernel> : public Kernel
+  template <class Kernel_>
+  struct Linear_cell_complex_traits<3,Kernel_> : public Kernel_
   {
     static const unsigned int ambient_dimension = 3;
 
+    typedef Kernel_                      Kernel;
     typedef typename Kernel::FT          FT;
     typedef typename Kernel::Point_3     Point;
     typedef typename Kernel::Vector_3    Vector;
