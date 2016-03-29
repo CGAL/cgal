@@ -40,19 +40,48 @@ namespace Polygon_mesh_processing{
 
 namespace internal {
 
-  template<typename Point>
-  typename CGAL::Kernel_traits<Point>::Kernel::Vector_3
-  triangle_normal(const Point& p0, const Point& p1, const Point& p2)
+  template <class GT>
+  void normalize(typename GT::Vector_3& v, const GT& traits)
   {
-    return CGAL::cross_product(p2 - p1, p0 - p1);
+    double norm = CGAL::approximate_sqrt(
+        traits.compute_squared_length_3_object()(v));
+    v = traits.construct_divided_vector_3_object()(v, norm);
+  }
+
+  template<typename Point
+         , typename GT = typename CGAL::Kernel_traits<Point>::Kernel>
+  typename GT::Vector_3
+  triangle_normal(const Point& p0, const Point& p1, const Point& p2
+                , const GT& traits)
+  {
+    typedef typename GT::Vector_3 Vector;
+
+    Vector v1 = traits.construct_vector_3_object()(p1, p2);
+    normalize(v1, traits);
+    Vector v2 = traits.construct_vector_3_object()(p1, p0);
+    normalize(v2, traits);
+
+    double cosine = traits.compute_scalar_product_3_object()(v1, v2);
+    if (cosine < -1.0)      cosine = -1.0;
+    else if (cosine >  1.0) cosine = 1.0;
+    double angle = acos(cosine);
+
+    Vector n = traits.construct_cross_product_vector_3_object()(
+      traits.construct_vector_3_object()(p1, p2),
+      traits.construct_vector_3_object()(p1, p0));
+    normalize(n, traits);
+
+    return traits.construct_scaled_vector_3_object()(n, angle);
   }
 }
 
-template<typename Point, typename PM, typename VertexPointMap, typename Vector>
+template<typename Point, typename PM, typename VertexPointMap, typename Vector
+       , typename GT>
 void sum_normals(const PM& pmesh,
                  typename boost::graph_traits<PM>::face_descriptor f,
                  VertexPointMap vpmap,
-                 Vector& sum)
+                 Vector& sum,
+                 const GT& traits)
 {
   typedef typename boost::graph_traits<PM>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
@@ -67,6 +96,9 @@ void sum_normals(const PM& pmesh,
 
     Vector n = internal::triangle_normal(pv, pvn, pvnn);
     sum = sum + n;
+
+    Vector n = internal::triangle_normal(prv, curr, nxt, traits);
+    traits.construct_sum_of_vectors_3_object()(sum, n);
 
     he = next(he, pmesh);
   }
@@ -108,15 +140,18 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
                     , const PolygonMesh& pmesh
                     , const NamedParameters& np)
 {
-  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type Kernel;
+  typedef typename GetGeomTraits<PolygonMesh, NamedParameters>::type GT;
   typedef typename Kernel::FT FT;
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Vector_3 Vector;
 
+  using boost::choose_param;
   using boost::get_param;
   using boost::choose_const_pmap;
 
-  Vector normal = CGAL::NULL_VECTOR;
+  GT traits = choose_param(get_param(np, CGAL::geom_traits), GT());
+
+  Vector normal = traits.construct_vector_3_object()(CGAL::NULL_VECTOR);
   sum_normals<Point>(pmesh, f
     , choose_const_pmap(get_param(np, CGAL::vertex_point), pmesh, CGAL::vertex_point)
     , normal);
