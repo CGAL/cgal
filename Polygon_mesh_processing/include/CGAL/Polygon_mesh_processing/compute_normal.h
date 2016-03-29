@@ -149,7 +149,6 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
 * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
 * will be done approximately.
 */
-*/
 template <typename PolygonMesh
           , typename FaceNormalMap
           , typename NamedParameters>
@@ -190,7 +189,6 @@ compute_face_normals(const PolygonMesh& pmesh
 * \warning This function involves a square root computation.
 * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
 * will be done approximately.
-*/
 */
 template<typename PolygonMesh, typename NamedParameters>
 #ifdef DOXYGEN_RUNNING
@@ -268,8 +266,6 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
 * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
 * will be done approximately.
 */
-*
-*/
 template <typename PolygonMesh
           , typename VertexNormalMap
           , typename NamedParameters
@@ -314,7 +310,6 @@ compute_vertex_normals(const PolygonMesh& pmesh
 * \warning This function involves a square root computation.
 * If `Kernel::FT` does not have a `sqrt()` operation, the square root computation
 * will be done approximately.
-*/
 */
 template <typename PolygonMesh
           , typename VertexNormalMap
