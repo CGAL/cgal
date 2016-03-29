@@ -283,8 +283,7 @@ degree(typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_descriptor v,
 // Expression required by the boost::VertexListGraph concept.
 
 CGAL_LCC_TEMPLATE_ARGS
-std::pair<typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_iterator,
-          typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_iterator>
 vertices(const CGAL_LCC_TYPE& cm)
 {
   typedef typename boost::graph_traits<CGAL_LCC_TYPE >::vertex_iterator
@@ -292,8 +291,8 @@ vertices(const CGAL_LCC_TYPE& cm)
 
   CGAL_LCC_TYPE& cmap = const_cast<CGAL_LCC_TYPE&>(cm);
 
-  return std::make_pair(iter_type(cmap.template attributes<0>().begin()),
-                        iter_type(cmap.template attributes<0>().end()));
+  return CGAL::make_range(iter_type(cmap.template attributes<0>().begin()),
+                          iter_type(cmap.template attributes<0>().end()));
 }
 
 CGAL_LCC_TEMPLATE_ARGS
@@ -469,14 +468,13 @@ edge(typename boost::graph_traits<CGAL_LCC_TYPE>::halfedge_descriptor h,
       <typename boost::graph_traits<CGAL_LCC_TYPE>::halfedge_descriptor>(h); }
 
 CGAL_LCC_TEMPLATE_ARGS
-std::pair<typename boost::graph_traits<CGAL_LCC_TYPE>::face_iterator,
-          typename boost::graph_traits<CGAL_LCC_TYPE>::face_iterator>
+CGAL::Iterator_range<typename boost::graph_traits<CGAL_LCC_TYPE>::face_iterator>
 faces(const CGAL_LCC_TYPE& cm)
 {
   typedef typename boost::graph_traits<CGAL_LCC_TYPE >::face_iterator iter_type;
   CGAL_LCC_TYPE& cmap = const_cast<CGAL_LCC_TYPE&>(cm);
-  return std::make_pair(iter_type(cmap.template attributes<2>().begin()),
-                        iter_type(cmap.template attributes<2>().end()));
+  return CGAL::make_range(iter_type(cmap.template attributes<2>().begin()),
+                         iter_type(cmap.template attributes<2>().end()));
 }
 
 CGAL_LCC_TEMPLATE_ARGS
@@ -508,7 +506,7 @@ halfedges(const CGAL_LCC_TYPE& cm)
 {
   typedef typename boost::graph_traits<CGAL_LCC_TYPE>::halfedge_iterator Iter;
   CGAL_LCC_TYPE& cmap = const_cast<CGAL_LCC_TYPE&>(cm);
-  return make_range(Iter(cmap.darts().begin()), Iter(cmap.darts().end()));
+  return CGAL::make_range(Iter(cmap.darts().begin()), Iter(cmap.darts().end()));
 }
 
 CGAL_LCC_TEMPLATE_ARGS
