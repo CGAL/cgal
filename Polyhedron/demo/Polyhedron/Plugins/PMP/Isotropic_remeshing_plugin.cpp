@@ -369,6 +369,8 @@ private:
       }
       else
       {
+        std::cout << "Isotropic remeshing of "
+          << poly_item->name().toStdString() << " started..." << std::endl;
         CGAL::Polygon_mesh_processing::isotropic_remeshing(
             faces(*poly_item->polyhedron())
           , target_length_
@@ -376,6 +378,8 @@ private:
           , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter_)
           .protect_constraints(protect_)
           .smooth_along_features(smooth_features_));
+        std::cout << "Isotropic remeshing of "
+          << poly_item->name().toStdString() << " done." << std::endl;
       }
     }
 
