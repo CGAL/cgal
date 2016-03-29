@@ -18,6 +18,7 @@
 #include <CGAL/Constrained_voronoi_diagram_2.h>
 #include <CGAL/Triangulation_conformer_2.h>
 #include <CGAL/lloyd_optimize_mesh_2.h>
+#include <CGAL/IO/File_poly.h>
 #include <CGAL/Random.h>
 #include <CGAL/point_generators_2.h>
 #include <CGAL/Timer.h>
@@ -224,6 +225,8 @@ public Q_SLOTS:
   void on_actionLoadConstraints_triggered();
 
   void loadFile(QString);
+
+  void loadPolyConstraints(QString);
 
   void loadPolygonConstraints(QString);
 
@@ -518,6 +521,9 @@ MainWindow::open(QString fileName)
     } else if(fileName.endsWith(".edg")){
       loadEdgConstraints(fileName);
       this->addToRecentFiles(fileName);
+    } else if(fileName.endsWith(".poly")){
+      loadPolyConstraints(fileName);
+      this->addToRecentFiles(fileName);
     }
   }
   Q_EMIT(changed());
@@ -531,7 +537,8 @@ MainWindow::on_actionLoadConstraints_triggered()
 						  tr("Open Constraint File"),
 						  ".",
 						  tr("Edge files (*.edg);;"
-						     "Poly files (*.plg)"));
+                                                     "Plg files (*.plg);;"
+						     "Poly files (*.poly)"));
   open(fileName);
 }
 
@@ -545,6 +552,17 @@ MainWindow::loadFile(QString fileName)
   Q_EMIT( changed());
   actionRecenter->trigger();
 }
+
+void
+MainWindow::loadPolyConstraints(QString fileName)
+{
+  std::ifstream ifs(qPrintable(fileName));
+  read_triangle_poly_file(cdt,ifs);
+  discoverComponents(cdt, m_seeds);
+  Q_EMIT( changed());
+  actionRecenter->trigger();
+}
+
 
 void
 MainWindow::loadPolygonConstraints(QString fileName)
