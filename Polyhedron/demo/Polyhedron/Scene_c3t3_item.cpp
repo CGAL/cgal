@@ -461,22 +461,13 @@ void Scene_c3t3_item::compute_bbox() const {
 }
 
 QString Scene_c3t3_item::toolTip() const {
-  int number_of_tets = 0;
-  for (Tr::Finite_cells_iterator
-    cit = c3t3().triangulation().finite_cells_begin(),
-    end = c3t3().triangulation().finite_cells_end();
-    cit != end; ++cit)
-  {
-    if (c3t3().is_in_complex(cit))
-      ++number_of_tets;
-  }
   return tr("<p><b>3D complex in a 3D triangulation</b></p>"
     "<p>Number of vertices: %1<br />"
     "Number of surface facets: %2<br />"
     "Number of volume tetrahedra: %3</p>")
     .arg(c3t3().triangulation().number_of_vertices())
-    .arg(c3t3().number_of_facets())
-    .arg(number_of_tets);
+    .arg(c3t3().number_of_facets_in_complex())
+    .arg(c3t3().number_of_cells_in_complex());
 }
 
 void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
