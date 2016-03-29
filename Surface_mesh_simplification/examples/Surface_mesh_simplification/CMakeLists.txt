@@ -71,6 +71,8 @@ create_single_source_cgal_program( "edge_collapse_polyhedron.cpp" )
 create_single_source_cgal_program( "edge_collapse_surface_mesh.cpp" )
 create_single_source_cgal_program( "edge_collapse_constrained_border_surface_mesh.cpp" )
 
+create_single_source_cgal_program( "edge_collapse_linear_cell_complex.cpp" )
+
 if(OpenMesh_FOUND)
 create_single_source_cgal_program( "edge_collapse_OpenMesh.cpp" )
 
