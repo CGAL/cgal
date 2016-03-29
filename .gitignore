@@ -1098,6 +1098,8 @@ semantic.cache
 ui_*.h
 qrc_*.cxx
 *.qrc.depends
+moc_*.cpp
+*automoc.cpp
 
 # Emacs file
 .dir-locals.el
