@@ -21,6 +21,9 @@
 #define CGAL_LINEAR_CELL_COMPLEX_INCREMENTAL_BUILDER_V2_H 1
 
 #include <CGAL/Linear_cell_complex.h>
+#include <CGAL/IO/Polyhedron_iostream.h>
+#include <CGAL/IO/File_header_OFF.h>
+#include <CGAL/IO/File_scanner_OFF.h>
 #include <vector>
 #include <cstddef>
 
