@@ -38,6 +38,8 @@ following:
 - `Segment_3`
 - `Plane_3`
 
+as well as the combination `Point_3`/`Triangle_3`.
+
 \sa `compare_distance_to_point_grp`
 \sa `compare_signed_distance_to_line_grp`
 \sa `compare_signed_distance_to_plane_grp`
