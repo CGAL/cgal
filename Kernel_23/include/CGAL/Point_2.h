@@ -52,6 +52,7 @@ public:
   typedef Dimension_tag<2>  Ambient_dimension;
   typedef Dimension_tag<0>  Feature_dimension;
 
+  typedef typename R_::Weighted_point_2 Weighted_point_2;
   typedef RPoint_2 Rep;
   typedef typename R_::Cartesian_const_iterator_2 Cartesian_const_iterator;
 
@@ -75,6 +76,10 @@ public:
 
   Point_2(const RPoint_2& p)
     : RPoint_2(p)
+  {}
+
+  Point_2(const Weighted_point_2& wp)
+    : Rep(wp.point())
   {}
 
   template < typename T1, typename T2 >

@@ -49,6 +49,7 @@
 #endif
 
 CGAL_Kernel_obj(Point_2)
+CGAL_Kernel_obj(Weighted_point_2)
 CGAL_Kernel_obj(Vector_2)
 CGAL_Kernel_obj(Direction_2)
 CGAL_Kernel_obj(Segment_2)
@@ -259,6 +260,8 @@ CGAL_Kernel_cons(Compute_zmin_3,
 		 compute_zmin_3_object)
 CGAL_Kernel_cons(Compute_zmax_3,
 		 compute_zmax_3_object)
+CGAL_Kernel_cons(Compute_weight_2,
+                 compute_weight_2_object)
 CGAL_Kernel_cons(Compute_weight_3,
                  compute_weight_3_object)
 CGAL_Kernel_cons(Construct_barycenter_2,
@@ -285,6 +288,8 @@ CGAL_Kernel_cons(Construct_circle_3,
 		 construct_circle_3_object)
 CGAL_Kernel_cons(Construct_circumcenter_2,
 		 construct_circumcenter_2_object)
+CGAL_Kernel_cons(Construct_weighted_circumcenter_2,
+		 construct_weighted_circumcenter_2_object)
 CGAL_Kernel_cons(Construct_circumcenter_3,
 		 construct_circumcenter_3_object)
 CGAL_Kernel_cons(Construct_weighted_circumcenter_3,
@@ -387,6 +392,10 @@ CGAL_Kernel_cons(Construct_point_on_3,
 		 construct_point_on_3_object)
 CGAL_Kernel_cons(Construct_point_2,
 		 construct_point_2_object)
+CGAL_Kernel_cons(Construct_radical_axis_2,
+		 construct_radical_axis_2_object)
+CGAL_Kernel_cons(Construct_weighted_point_2,
+		 construct_weighted_point_2_object)
 CGAL_Kernel_cons(Construct_point_3,
 		 construct_point_3_object)
 CGAL_Kernel_cons(Construct_weighted_point_3,
@@ -398,7 +407,7 @@ CGAL_Kernel_cons(Construct_projected_point_3,
 CGAL_Kernel_cons(Construct_projected_xy_point_2,
 		 construct_projected_xy_point_2_object)
 CGAL_Kernel_cons(Construct_radical_line_2,
-     construct_radical_line_2_object)		
+                 construct_radical_line_2_object)		
 CGAL_Kernel_cons(Construct_radical_plane_3,
                  construct_radical_plane_3_object)
 CGAL_Kernel_cons(Construct_ray_2,
@@ -557,10 +566,14 @@ CGAL_Kernel_pred(Less_z_3,
 		 less_z_3_object)
 CGAL_Kernel_pred_RT(Orientation_2,
 		    orientation_2_object)
+CGAL_Kernel_pred_RT(Power_side_of_power_circle_2,
+		    power_side_of_power_circle_2_object)
 CGAL_Kernel_pred_RT(Orientation_3,
 		    orientation_3_object)
 CGAL_Kernel_pred_RT(Power_side_of_power_sphere_3,
 		    power_side_of_power_sphere_3_object)
+CGAL_Kernel_pred_RT(Compare_power_distance_2,
+		    compare_power_distance_2_object)
 CGAL_Kernel_pred_RT(Compare_power_distance_3,
 		    compare_power_distance_3_object)
 CGAL_Kernel_pred_RT(Compare_weighted_squared_radius_3,

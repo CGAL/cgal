@@ -62,24 +62,28 @@ weighted_circumcenterH2( const RT &phx, const RT &phy, const RT &phw,
 }
 
 
-template < class RT , class We>
+
+
+template < class RT , class FT>
 void
-radical_axisH2(const RT &phx, const RT &phy, const RT &phw, const We &pwt,
-	       const RT &qhx, const RT &qhy, const RT &qhw, const We &qwt,
+radical_axisH2(const RT &phx, const RT &phy, const RT &phw, const FT &pwt,
+	       const RT &qhx, const RT &qhy, const RT &qhw, const FT &qwt,
 	       RT &a, RT &b, RT &c )
 {
-//   a = RT(2) * ( qhx*qhw*phw*phw - phx*phw*qhw*qhw );
-//   b = RT(2) * ( qhy*qhw*phw*phw - phy*phw*qhw*qhw );
-//   c = phx*phx*qhw*qhw + phy*phy*qhw*qhw - qhx*qhx*phw*phw 
-//     - qhy*qhy*phw*phw- RT(pwt*pwt) + RT(qwt*qwt); 
+  Rational_traits<FT> rt;
+  RT npwt = rt.numerator(pwt);
+  RT dpwt = rt.denominator(pwt);
+  RT nqwt = rt.numerator(qwt);
+  RT dqwt = rt.denominator(qwt);
 
   a =  RT(2) * ( phx*phw*qhw*qhw - qhx*qhw*phw*phw );
   b =  RT(2) * ( phy*phw*qhw*qhw - qhy*qhw*phw*phw );
-  c = - phx*phx*qhw*qhw - phy*phy*qhw*qhw 
-      + qhx*qhx*phw*phw + qhy*qhy*phw*phw 
-      + RT(pwt)*phw*phw*qhw*qhw - RT(qwt)*phw*phw*qhw*qhw; 
+  c = (- phx*phx*qhw*qhw - phy*phy*qhw*qhw 
+       + qhx*qhx*phw*phw + qhy*qhy*phw*phw) * dpwt * dqwt 
+      + npwt*dqwt*phw*phw*qhw*qhw - nqwt*dpwt*phw*phw*qhw*qhw; 
 
 }
+
 
 
 

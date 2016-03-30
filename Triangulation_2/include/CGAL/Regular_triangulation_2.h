@@ -795,7 +795,7 @@ power_test(const Weighted_point &p0,
 
     using namespace boost;
 
-    Oriented_side os = geom_traits().power_test_2_object()(p0, p1, p2, p);
+    Oriented_side os = geom_traits().power_side_of_power_circle_2_object()(p0, p1, p2, p);
 
     if ( (os != ON_ORIENTED_BOUNDARY) || (! perturb))
         return os;
@@ -841,7 +841,7 @@ power_test(const Weighted_point &p,
 	   const Weighted_point &q,
 	   const Weighted_point &r) const
 {
-  return geom_traits().power_test_2_object()(p,q,r);
+  return geom_traits().power_side_of_power_circle_2_object()(p,q,r);
 }
 
 template < class Gt, class Tds >
@@ -851,7 +851,7 @@ Regular_triangulation_2<Gt,Tds>::
 power_test(const Weighted_point &p,
 	   const Weighted_point &r) const
 {
-  return geom_traits().power_test_2_object()(p,r);
+  return geom_traits().power_side_of_power_circle_2_object()(p,r);
 }
 
 template < class Gt, class Tds >

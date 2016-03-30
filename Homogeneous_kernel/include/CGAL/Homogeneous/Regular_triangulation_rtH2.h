@@ -27,12 +27,12 @@
 
 namespace CGAL {
 
-template <class RT>
+  template <class RT, class FT>
 Comparison_result
 compare_power_distanceH2(const RT& phx, const RT& phy, const RT& phw,
-			 const RT& pwt,
+			 const FT& pwt,
 			 const RT& qhx, const RT& qhy, const RT& qhw,
-			 const RT& qwt,
+			 const FT& qwt,
 			 const RT& rhx, const RT& rhy, const RT& rhw)
 {
   // returns SMALLER if r is closer to p w.r.t. the power metric
@@ -44,9 +44,16 @@ compare_power_distanceH2(const RT& phx, const RT& phy, const RT& phw,
   RT dqhw = CGAL_NTS square(qhw);
   RT drhw = CGAL_NTS square(rhw);
 
-  RT dh1 = CGAL_NTS square(dphx) + CGAL_NTS square(dphy) - pwt * dphw * drhw;
-  RT dh2 = CGAL_NTS square(dqhx) + CGAL_NTS square(dqhy) - qwt * dqhw * drhw;
-  return CGAL_NTS compare(dh1, dh2);
+  Rational_traits<FT> rt;
+  RT npwt = rt.numerator(pwt);
+  RT dpwt = rt.denominator(pwt);
+  RT nqwt = rt.numerator(qwt);
+  RT dqwt = rt.denominator(qwt);
+
+
+  RT dh1 = (CGAL_NTS square(dphx) + CGAL_NTS square(dphy))*dpwt - npwt * dphw * drhw;
+  RT dh2 = (CGAL_NTS square(dqhx) + CGAL_NTS square(dqhy))*dqwt - nqwt * dqhw * drhw;
+  return CGAL_NTS compare(Quotient<RT>(dh1, dpwt), Quotient<RT>(dh2,dqwt));
 }
 
 

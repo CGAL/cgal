@@ -22,7 +22,6 @@
 // ============================================================================
 
 #include <CGAL/_test_types.h>
-#include <CGAL/Weighted_point.h>
 
 #include <CGAL/Regular_triangulation_euclidean_traits_2.h>
 #include <CGAL/Regular_triangulation_2.h>
@@ -48,12 +47,13 @@ int main()
   std::cout << "Testing Regular_triangulation_2" <<std::endl;
   std::cout << " with CGAL::Regular_triangulation_euclidean_traits_2 : "
 	    <<std::endl;
+  
   std::cout << "using  Homogeneous points "<< std::endl;
   typedef CGAL::Regular_triangulation_euclidean_traits_2
                              <Test_rep_homogeneous, Rtype>        RGt2;
   typedef CGAL::Regular_triangulation_2<RGt2>                    RCls2;
   _test_cls_regular_triangulation_2( RCls2() );
-
+  
   std::cout << "done" << std::endl;
   return 0;
 }

@@ -93,6 +93,7 @@
 - `CGAL::Segment_2<Kernel>`
 - `CGAL::Triangle_2<Kernel>`
 - `CGAL::Vector_2<Kernel>`
+- `CGAL::Weighted_point_2<Kernel>`
 
 ### Three-dimensional Objects ###
 
@@ -272,6 +273,7 @@
 - `Kernel::CompareDistance_2`
 - `Kernel::CompareDistance_3`
 - `Kernel::CompareSlope_2`
+- `Kernel::ComparePowerDistance_2`
 - `Kernel::ComparePowerDistance_3`
 - `Kernel::CompareSquaredDistance_2`
 - `Kernel::CompareSquaredDistance_3`
@@ -302,6 +304,7 @@
 - `Kernel::ComputeDy_2`
 - `Kernel::ComputeHx_2`
 - `Kernel::ComputeHy_2`
+- `Kernel::ComputePowerDistanceToPowerSphere_3`
 - `Kernel::ComputeScalarProduct_2`
 - `Kernel::ComputeScalarProduct_3`
 - `Kernel::ComputeSquaredArea_3`
@@ -390,6 +393,7 @@
 - `Kernel::ConstructProjectedPoint_2`
 - `Kernel::ConstructProjectedPoint_3`
 - `Kernel::ConstructProjectedXYPoint_2`
+- `Kernel::ConstructRadicalAxis_2`
 - `Kernel::ConstructRadicalLine_2`
 - `Kernel::ConstructRadicalPlane_3`
 - `Kernel::ConstructRay_2`
@@ -469,7 +473,8 @@
 - `Kernel::Orientation_3`
 - `Kernel::OrientedSide_2`
 - `Kernel::OrientedSide_3`
-- `Kernel::Power_test_3`
+- `Kernel::Power_side_of_power_circle_2`
+- `Kernel::Power_side_of_power_sphere_3`
 - `Kernel::SideOfBoundedCircle_2`
 - `Kernel::SideOfBoundedSphere_3`
 - `Kernel::SideOfOrientedCircle_2`

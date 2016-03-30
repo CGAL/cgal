@@ -19,8 +19,8 @@
 // Author(s)     : Mariette Yvinec
 //                 Sylvain Pion
 
-#ifndef CGAL_HOMOGENEOUS_WEIGHTED_POINT_3_H
-#define CGAL_HOMOGENEOUS_WEIGHTED_POINT_3_H
+#ifndef CGAL_CARTESIAN_WEIGHTED_POINT_2_H
+#define CGAL_CARTESIAN_WEIGHTED_POINT_2_H
 
 #include <iostream>
 #include <CGAL/Kernel_traits.h>
@@ -34,43 +34,41 @@
 namespace CGAL {
 
 template < class R_ >
-class Weighted_pointH3 : public R_::Point_3
+class Weighted_pointC2 : public R_::Point_2
 {
-  typedef typename R_::RT RT;
   typedef typename R_::FT FT;
 public:
-  typedef RT Weight;
-  typedef typename R_::Point_3 Point;
+  typedef FT Weight;
+  typedef typename R_::Point_2 Point;
 
-  Weighted_pointH3 ()
+  Weighted_pointC2 ()
       : Point(), _weight(0) {}
 
   //explicit
-  Weighted_pointH3 (const Point &p)
+  Weighted_pointC2 (const Point &p)
       : Point(p), _weight(0)
   {
     // CGAL_error_msg( "Warning : truncated weight !!!");
   }
 
-  Weighted_pointH3 (const Point &p, const Weight &w)
+  Weighted_pointC2 (const Point &p, const Weight &w)
       : Point(p), _weight(w) {}
 
 
   // Constructors from coordinates are also provided for convenience, except
-  // that they are only from Homogeneous coordinates, and with no weight, so as
+  // that they are only from Cartesian coordinates, and with no weight, so as
   // to avoid any potential ambiguity between the homogeneous weight and the
   // power weight (it should be easy enough to pass a Point explicitly in those
   // cases).
   // The enable_if complexity comes from the fact that we separate dimension 2 and 3.
 
 
-  template < typename Tx, typename Ty, typename Tz >
-  Weighted_pointH3 (const Tx &x, const Ty &y, const Tz &z,
+  template < typename Tx, typename Ty>
+  Weighted_pointC2 (const Tx &x, const Ty &y,
 	          typename boost::enable_if< boost::mpl::and_<boost::is_convertible<Tx, FT>,
 					                      boost::is_convertible<Ty, FT>,
-					                      boost::is_convertible<Tz, FT>,
-							      boost::mpl::bool_<CGAL::Ambient_dimension<Point>::value == 3> > >::type* = 0)
-      : Point(x, y, z), _weight(0) {}
+							      boost::mpl::bool_<CGAL::Ambient_dimension<Point>::value == 2> > >::type* = 0)
+      : Point(x, y), _weight(0) {}
 
   const Point & point() const
   {
@@ -90,7 +88,7 @@ private:
 
 template < class R_ >
 std::ostream &
-operator<<(std::ostream &os, const Weighted_pointH3<R_> &p)
+operator<<(std::ostream &os, const Weighted_pointC2<R_> &p)
 {
   switch(get_mode(os))
   {
@@ -107,10 +105,10 @@ operator<<(std::ostream &os, const Weighted_pointH3<R_> &p)
 
 template < class R_ >
 std::istream &
-operator>>(std::istream &is, Weighted_pointH3<R_> &wp)
+operator>>(std::istream &is, Weighted_pointC2<R_> &wp)
 {
-  typename Weighted_pointH3<R_>::Weight w;
-  typename Weighted_pointH3<R_>::Point p;
+  typename Weighted_pointC2<R_>::Weight w;
+  typename Weighted_pointC2<R_>::Point p;
   is >> p;
   if(!is) return is;
   if(is_ascii(is))
@@ -118,10 +116,10 @@ operator>>(std::istream &is, Weighted_pointH3<R_> &wp)
   else
     read(is, w);
   if (is)
-    wp = Weighted_point_3<R_>(p,w);
+    wp = Weighted_point_2<R_>(p,w);
   return is;
 }
 
 } // namespace CGAL
 
-#endif // CGAL_HOMOGENEOUS_WEIGHTED_POINT_3_H
+#endif // CGAL_CARTESIAN_WEIGHTED_POINT_2_H

@@ -154,7 +154,6 @@ _test_cls_regular_triangulation_2( const Triangulation & )
   {
     Weighted_point p15_bis(p15.x(), p15.y());
     assert(p15_bis == p15);
-    CGAL::Weighted_point<CGAL::Simple_cartesian<double>::Point_3, double> w3(0, 0, 0);
   }
 
   Cls T;

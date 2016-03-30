@@ -475,15 +475,32 @@ public :
 
 
 template < typename K >
+class Compute_weight_2
+{
+public:
+  typedef typename K::Weighted_point_2               Weighted_point_2;
+  typedef typename Weighted_point_2::Weight Weight;
+
+  typedef const Weight&     result_type;
+
+  const Weight& operator()(const Weighted_point_2 & p) const
+  {
+    return p.rep().weight();
+  }
+};
+
+   
+
+template < typename K >
 class Compute_weight_3
 {
 public:
   typedef typename K::Weighted_point_3               Weighted_point_3;
-  typedef typename K::RT                             RT;
+  typedef typename Weighted_point_3::Weight          Weight;
 
-  typedef const RT&     result_type;
+  typedef const Weight&     result_type;
 
-  const RT& operator()(const Weighted_point_3 & p) const
+  const Weight& operator()(const Weighted_point_3 & p) const
   {
     return p.rep().weight();
   }
@@ -3431,6 +3448,74 @@ public:
     operator()( const Tetrahedron_3& t, const Point_3& p) const
     { return t.rep().oriented_side(p); }
   };
+
+
+template < typename K >
+class Power_side_of_power_circle_2
+{
+public:
+  typedef typename K::Weighted_point_2         Weighted_point_2;
+  typedef typename K::Oriented_side            Oriented_side;
+
+  typedef Oriented_side    result_type;
+
+  Oriented_side operator() ( const Weighted_point_2 & p,
+			     const Weighted_point_2 & q,
+			     const Weighted_point_2 & r,
+			     const Weighted_point_2 & t) const
+    {
+      //CGAL_kernel_precondition( ! collinear(p, q, r) );
+      return power_testC2(p.x(), p.y(), p.weight(),
+		      q.x(), q.y(), q.weight(),
+		      r.x(), r.y(), r.weight(),
+		      t.x(), t.y(), t.weight());
+    }
+
+  Oriented_side operator() ( const Weighted_point_2 & p,
+			     const Weighted_point_2 & q,
+			     const Weighted_point_2 & t) const
+    {
+      //CGAL_kernel_precondition( collinear(p, q, r) );
+      //CGAL_kernel_precondition( p.point() != q.point() );
+      return power_testC2(p.x(), p.y(), p.weight(),
+                        q.x(), q.y(), q.weight(),
+                        t.x(), t.y(), t.weight());
+    }  
+
+  Oriented_side operator() ( const Weighted_point_2 & p,
+			     const Weighted_point_2 & t) const
+    {
+      //CGAL_kernel_precondition( p.point() == r.point() );
+      Comparison_result r = CGAL::compare(p.weight(), t.weight());
+      if(r == LARGER)    return ON_NEGATIVE_SIDE;
+      else if (r == SMALLER) return ON_POSITIVE_SIDE;
+      return ON_ORIENTED_BOUNDARY;
+    }
+};
+template < typename K >
+class Construct_weighted_circumcenter_2
+{
+public:
+  typedef typename K::Weighted_point_2         Weighted_point_2;
+  typedef typename K::Point_2                  Point_2;
+  typedef typename K::FT                       FT;
+
+  typedef Point_2       result_type;
+
+  result_type operator() (const Weighted_point_2 & p,
+                          const Weighted_point_2 & q,
+		          const Weighted_point_2 & r) const
+  {
+    CGAL_kernel_precondition( ! collinear(p, q, r) ); 
+    FT x,y;
+    weighted_circumcenterC2(p.x(),p.y(),p.weight(),
+                            q.x(),q.y(),q.weight(),
+                            r.x(),r.y(),r.weight(),x,y);
+    return Point_2(x,y);
+  }
+};
+ 
+
 
 } // namespace CommonKernelFunctors
 } //namespace CGAL

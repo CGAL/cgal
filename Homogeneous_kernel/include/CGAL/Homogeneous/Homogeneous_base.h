@@ -38,6 +38,7 @@
 #include <CGAL/Homogeneous/Iso_rectangleH2.h>
 #include <CGAL/Homogeneous/LineH2.h>
 #include <CGAL/Homogeneous/PointH2.h>
+#include <CGAL/Homogeneous/Weighted_point_2.h>
 #include <CGAL/Cartesian/Ray_2.h>
 #include <CGAL/Cartesian/Segment_2.h>
 #include <CGAL/Cartesian/Triangle_2.h>
@@ -129,6 +130,7 @@ struct Homogeneous_base
     typedef TriangleC2<Kernel>                      Triangle_2;
     typedef Iso_rectangleH2<Kernel>                 Iso_rectangle_2;
     typedef Aff_transformationH2<Kernel>            Aff_transformation_2;
+    typedef Weighted_pointH2<Kernel>                Weighted_point_2;
 
     typedef PointH3<Kernel>                         Point_3;
     typedef VectorH3<Kernel>                        Vector_3;

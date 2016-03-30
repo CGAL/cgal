@@ -30,6 +30,7 @@
 #include <CGAL/Kernel/global_functions.h>
 
 #include <CGAL/Cartesian/Point_2.h>
+#include <CGAL/Cartesian/Weighted_point_2.h>
 #include <CGAL/Cartesian/Vector_2.h>
 #include <CGAL/Cartesian/Direction_2.h>
 #include <CGAL/Cartesian/Line_2.h>
@@ -124,6 +125,7 @@ struct Cartesian_base
     typedef CircleC2<Kernel>                            Circle_2;
     typedef Iso_rectangleC2<Kernel>                     Iso_rectangle_2;
     typedef Aff_transformationC2<Kernel>                Aff_transformation_2;
+    typedef Weighted_pointC2<Kernel>                    Weighted_point_2;
 
     typedef PointC3<Kernel>                             Point_3;
     typedef VectorC3<Kernel>                            Vector_3;

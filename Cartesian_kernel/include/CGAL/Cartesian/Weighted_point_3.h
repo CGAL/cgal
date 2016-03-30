@@ -19,8 +19,8 @@
 // Author(s)     : Mariette Yvinec
 //                 Sylvain Pion
 
-#ifndef CGAL_CARTESIAN_WEIGHTED_POINT_H
-#define CGAL_CARTESIAN_WEIGHTED_POINT_H
+#ifndef CGAL_CARTESIAN_WEIGHTED_POINT_3_H
+#define CGAL_CARTESIAN_WEIGHTED_POINT_3_H
 
 #include <iostream>
 #include <CGAL/Kernel_traits.h>
@@ -37,8 +37,9 @@ template < class R_ >
 class Weighted_pointC3 : public R_::Point_3
 {
   typedef typename R_::FT FT;
+  typedef typename R_::RT RT;
 public:
-  typedef FT Weight;
+  typedef RT Weight;
   typedef typename R_::Point_3 Point;
 
   Weighted_pointC3 ()
@@ -123,4 +124,4 @@ operator>>(std::istream &is, Weighted_pointC3<R_> &wp)
 
 } // namespace CGAL
 
-#endif // CGAL_CARTESIAN_WEIGHTED_POINT_H
+#endif // CGAL_CARTESIAN_WEIGHTED_POINT_3_H

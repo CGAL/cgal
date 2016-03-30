@@ -507,6 +507,29 @@ namespace CartesianKernelFunctors {
     }
   };
 
+
+
+  template < typename K >
+  class Compare_power_distance_2
+  {
+  public:
+    typedef typename K::Weighted_point_2         Weighted_point_2;
+    typedef typename K::Point_2                  Point_2;
+    typedef typename K::Comparison_result        Comparison_result;
+    
+    typedef Comparison_result   result_type;
+    
+    Comparison_result operator()(const Point_2& r,
+                                 const Weighted_point_2& q,
+                                 const Weighted_point_2& p) const
+    {
+      return CGAL::compare_power_distanceC2(p.x(), p.y(), p.weight(),
+                                            q.x(), q.y(), q.weight(),
+                                            r.x(), r.y());
+    }
+  };
+
+
   template <typename K>
   class Compare_squared_radius_3
   {
@@ -2742,6 +2765,29 @@ namespace CartesianKernelFunctors {
     { return Vector_3(v.x()-w.x(), v.y()-w.y(), v.z()-w.z()); }
   };
 
+
+  template < typename K >
+  class Construct_radical_axis_2
+  {
+  public:
+    typedef typename K::Weighted_point_2                Weighted_point_2;
+    typedef typename K::Line_2                          Line_2;
+    
+    typedef Line_2           result_type;
+    
+    Line_2
+    operator() ( const Weighted_point_2 & p, const Weighted_point_2 & q) const
+    { 
+      typedef typename K::RT RT;
+      RT a,b,c;
+      radical_axisC2(p.x(),p.y(),p.weight(),q.x(),q.y(),q.weight(),a,b,c);
+      return Line_2(a,b,c);
+    }
+  };
+  
+
+
+
   template <typename K>
   class Construct_sum_of_vectors_2
   {
@@ -2871,6 +2917,7 @@ namespace CartesianKernelFunctors {
   {
     typedef typename K::RT         RT;
     typedef typename K::Point_2    Point_2;
+    typedef typename K::Weighted_point_2 Weighted_point_2;
     typedef typename K::Line_2     Line_2;
     typedef typename Point_2::Rep  Rep;
   public:
@@ -2906,6 +2953,9 @@ namespace CartesianKernelFunctors {
       return construct_point_2(x,y);
     }
 
+    const Point_2& 
+    operator()(const Weighted_point_2 & p) const
+    { return p.rep().point(); }
 
     Point_2
     operator()(Origin o) const
@@ -2959,6 +3009,25 @@ namespace CartesianKernelFunctors {
     { return Point_3(x, y, z, w); }
   };
 
+
+  template <typename K>
+  class Construct_weighted_point_2
+  {
+    typedef typename K::RT         RT;
+    typedef typename K::Point_2    Point_2;
+    typedef typename K::Weighted_point_2   Weighted_point_2;
+    typedef typename Weighted_point_2::Rep  Rep;
+  public:
+    typedef Weighted_point_2          result_type;
+
+    Rep
+    operator()(Return_base_tag, const Point_2& p, const RT& w) const
+    { return Rep(p,w); }
+
+    Rep
+    operator()(Return_base_tag, const RT& x, const RT& y) const
+    { return Rep(x,y); }
+  };
 
   template <typename K>
   class Construct_weighted_point_3
@@ -4018,6 +4087,8 @@ public:
     }
 };
 
+
+
   template <typename K>
   class Oriented_side_2
   {
@@ -4160,6 +4231,7 @@ public:
 				       test.x(), test.y(), test.z());
     }
   };
+
 
 } // namespace CartesianKernelFunctors
 
