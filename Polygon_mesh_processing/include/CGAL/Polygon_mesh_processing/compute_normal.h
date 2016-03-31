@@ -115,7 +115,10 @@ compute_face_normal(typename boost::graph_traits<PolygonMesh>::face_descriptor f
   sum_normals<Point>(pmesh, f
     , choose_const_pmap(get_param(np, CGAL::vertex_point), pmesh, CGAL::vertex_point)
     , normal);
- 
+
+  if (normal == CGAL::NULL_VECTOR)
+    return normal;
+  else
   return normal / FT( std::sqrt( to_double(normal * normal) ) );
 }
 
@@ -214,12 +217,8 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   halfedge_descriptor end = he;
   do
     {
-      if (!is_border(he, pmesh)
-          && !PMP::is_degenerated(he, pmesh
-                , choose_const_pmap(get_param(np, CGAL::vertex_point), pmesh, CGAL::vertex_point)
-                , Kernel())
-          )
-      {
+    if (!is_border(he, pmesh))
+    {
       Vector n = fnmap_valid ? get(fnmap, face(he, pmesh))
                              : compute_face_normal(face(he, pmesh), pmesh, np);
       normal = normal + n;
@@ -227,6 +226,9 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
     he = opposite(next(he, pmesh), pmesh);
   } while (he != end);
 
+  if (normal == CGAL::NULL_VECTOR)
+    return normal;
+  else
   return normal / FT( std::sqrt( to_double(normal * normal)  ) );
 }
 
