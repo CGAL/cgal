@@ -309,16 +309,6 @@ public Q_SLOTS:
         ? *poly_item->polyhedron()
         : *selection_item->polyhedron();
 
-      // tricks to use the function detect_and_split_duplicates
-      // that uses several poly items
-
-      std::map<Polyhedron*,Edge_set > edges_to_protect_map;
-      std::vector<Scene_polyhedron_item*> poly_items(1,
-        (NULL != poly_item) ? poly_item : selection_item->polyhedron_item());
-      Edge_set& edges_to_protect = edges_to_protect_map[poly_items[0]->polyhedron()];
-      if(preserve_duplicates)
-        detect_and_split_duplicates(poly_items, edges_to_protect_map, target_length);
-
       boost::property_map<Polyhedron, CGAL::face_index_t>::type fim
         = get(CGAL::face_index, pmesh);
       unsigned int id = 0;
@@ -361,16 +351,13 @@ public Q_SLOTS:
         }
         else
         {
-     Edge_constrained_pmap ecm(edges_to_protect);
-     CGAL::OR_property_map<Edge_constrained_pmap, Edge_constrained_pmap> etp(ecm, selection_item->constrained_edges_pmap());
-
          CGAL::Polygon_mesh_processing::isotropic_remeshing(
            selection_item->selected_facets
          , target_length
          , *selection_item->polyhedron()
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
-         .edge_is_constrained_map(etp)
+         .edge_is_constrained_map(selection_item->constrained_edges_pmap())
          .smooth_along_features(smooth_features)
          .vertex_is_constrained_map(selection_item->constrained_vertices_pmap()));
         }
@@ -380,6 +367,14 @@ public Q_SLOTS:
       }
       else if (poly_item)
       {
+        // tricks to use the function detect_and_split_duplicates
+        // that uses several poly items
+        std::map<Polyhedron*, Edge_set > edges_to_protect_map;
+        std::vector<Scene_polyhedron_item*> poly_items(1, poly_item);
+        Edge_set& edges_to_protect = edges_to_protect_map[poly_item->polyhedron()];
+        if (preserve_duplicates)
+          detect_and_split_duplicates(poly_items, edges_to_protect_map, target_length);
+
         if (edges_only)
         {
           std::vector<halfedge_descriptor> border;
@@ -709,6 +704,13 @@ private:
 
     ui.protect_checkbox->setChecked(false);
     ui.smooth1D_checkbox->setChecked(true);
+
+    if (NULL != selection_item)
+    {
+      //do not preserve duplicates in selection mode
+      ui.preserveDuplicates_checkbox->setDisabled(true);
+      ui.preserveDuplicates_checkbox->setChecked(false);
+    }
 
     return ui;
   }
