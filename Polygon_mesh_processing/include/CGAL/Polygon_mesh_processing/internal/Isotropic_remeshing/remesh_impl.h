@@ -699,8 +699,6 @@ namespace internal {
 
         CGAL_assertion_code(Halfedge_status s1 = status(he));
         CGAL_assertion_code(Halfedge_status s1o = status(opposite(he, mesh_)));
-        CGAL_assertion(!incident_to_degenerate(he));
-        CGAL_assertion(!incident_to_degenerate(opposite(he, mesh_)));
 
         CGAL::Euler::flip_edge(he, mesh_);
         ++nb_flips;
@@ -1298,12 +1296,15 @@ private:
         halfedge_descriptor h = *(degenerate_faces.begin());
         degenerate_faces.erase(degenerate_faces.begin());
 
+        if (!PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()))
+          //this can happen when flipping h has consequences further in the mesh
+          continue;
+
         //check that opposite is not also degenerate
         if (degenerate_faces.find(opposite(h, mesh_)) != degenerate_faces.end())
           degenerate_faces.erase(opposite(h, mesh_));
 
-        CGAL_assertion(PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()));
-        if (face(h, mesh_) == boost::graph_traits<PM>::null_face())
+        if(is_border(h, mesh_))
           continue;
 
         BOOST_FOREACH(halfedge_descriptor hf,
@@ -1354,14 +1355,6 @@ private:
               && PMP::is_degenerated(hfo, mesh_, vpmap_, GeomTraits()))
               degenerate_faces.insert(hfo);
 
-            if (degenerate_faces.size() == nb_degen + 2)
-            {
-              //process has failed to remove degeneracies
-              degenerate_faces.erase(hf);
-              degenerate_faces.erase(hfo);
-              std::cerr << "Warning : possible degeneracies remaining "
-                        << "after the edge collapse step" << std::endl;
-            }
             break;
           }
         }
