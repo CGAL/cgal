@@ -311,9 +311,11 @@ public Q_SLOTS:
 
       // tricks to use the function detect_and_split_duplicates
       // that uses several poly items
+
       std::map<Polyhedron*,Edge_set > edges_to_protect_map;
-      std::vector<Scene_polyhedron_item*> poly_items(1,poly_item);
-      Edge_set& edges_to_protect=edges_to_protect_map[poly_item->polyhedron()];
+      std::vector<Scene_polyhedron_item*> poly_items(1,
+        (NULL != poly_item) ? poly_item : selection_item->polyhedron_item());
+      Edge_set& edges_to_protect = edges_to_protect_map[poly_items[0]->polyhedron()];
       if(preserve_duplicates)
         detect_and_split_duplicates(poly_items, edges_to_protect_map, target_length);
 
