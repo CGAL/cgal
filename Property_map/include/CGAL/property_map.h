@@ -38,6 +38,40 @@ namespace CGAL {
 
 
 /// \cond SKIP_DOXYGEN
+
+
+template <typename PM1, typename PM2>
+class OR_property_map {
+  typedef typename PM1::key_type key_type;
+  typedef typename PM1::value_type value_type;
+  typedef typename PM1::reference reference;
+  typedef boost::read_write_property_map_tag category;
+
+  PM1 pm1;
+  PM2 pm2;
+
+ public:
+  OR_property_map(PM1 pm1, PM2 pm2)
+    : pm1(pm1),pm2(pm2)
+  {}
+
+  inline friend
+    value_type
+    get(const OR_property_map& pm, const key_type& k)
+  {
+    return get(pm.pm1,k) || get(pm.pm2,k);
+  }
+
+  inline friend
+    void
+  put(OR_property_map& pm, const key_type& k, const value_type& v)
+  {
+    put(pm.pm1,k, v);
+    put(pm.pm2,k, v);
+  }
+
+};
+
 /// Property map that accesses a value from an iterator
 ///
 /// \cgalModels `ReadablePropertyMap`

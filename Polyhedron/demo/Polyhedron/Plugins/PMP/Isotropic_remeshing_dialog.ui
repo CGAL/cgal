@@ -162,6 +162,23 @@
         </property>
        </widget>
       </item>
+      <item row="4" column="1">
+       <widget class="QCheckBox" name="preserveDuplicates_checkbox">
+        <property name="text">
+         <string/>
+        </property>
+       </widget>
+      </item>
+      <item row="4" column="0">
+       <widget class="QLabel" name="preserveDuplicates_label">
+        <property name="text">
+         <string>Preserve duplicated edges</string>
+        </property>
+        <property name="alignment">
+         <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+        </property>
+       </widget>
+      </item>
      </layout>
     </widget>
    </item>
