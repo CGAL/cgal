@@ -367,14 +367,6 @@ public Q_SLOTS:
       }
       else if (poly_item)
       {
-        // tricks to use the function detect_and_split_duplicates
-        // that uses several poly items
-        std::map<Polyhedron*, Edge_set > edges_to_protect_map;
-        std::vector<Scene_polyhedron_item*> poly_items(1, poly_item);
-        Edge_set& edges_to_protect = edges_to_protect_map[poly_item->polyhedron()];
-        if (preserve_duplicates)
-          detect_and_split_duplicates(poly_items, edges_to_protect_map, target_length);
-
         if (edges_only)
         {
           std::vector<halfedge_descriptor> border;
@@ -397,14 +389,28 @@ public Q_SLOTS:
         }
         else
         {
-        Scene_polyhedron_selection_item::Is_constrained_map<Edge_set > ecm(edges_to_protect);
-        CGAL::Polygon_mesh_processing::isotropic_remeshing(
+          // tricks to use the function detect_and_split_duplicates
+          // that uses several poly items
+          std::map<Polyhedron*, Edge_set > edges_to_protect_map;
+          std::vector<Scene_polyhedron_item*> poly_items(1, poly_item);
+          Edge_set& edges_to_protect = edges_to_protect_map[poly_item->polyhedron()];
+          if (preserve_duplicates)
+          {
+            detect_and_split_duplicates(poly_items, edges_to_protect_map, target_length);
+            boost::property_map<Polyhedron, CGAL::face_index_t>::type fim = get(CGAL::face_index, pmesh);
+            unsigned int id = 0;
+            BOOST_FOREACH(face_descriptor f, faces(pmesh))
+              put(fim, f, id++);
+          }
+          Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> ecm(edges_to_protect);
+
+          CGAL::Polygon_mesh_processing::isotropic_remeshing(
            faces(*poly_item->polyhedron())
          , target_length
          , *poly_item->polyhedron()
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
-          .edge_is_constrained_map(ecm)
+         .edge_is_constrained_map(ecm)
          .smooth_along_features(smooth_features));
         }
         poly_item->invalidateOpenGLBuffers();
