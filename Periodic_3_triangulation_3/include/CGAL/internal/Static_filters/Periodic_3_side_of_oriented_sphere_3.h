@@ -35,7 +35,7 @@ class Periodic_3_side_of_oriented_sphere_3
   : public K_base::Side_of_oriented_sphere_3
 {
   typedef typename K_base::Side_of_oriented_sphere_3    Base;
-
+  typedef typename K_base::FT                           FT;
   typedef typename K_base::Point_3                      Point_3;
   typedef typename K_base::Iso_cuboid_3                 Iso_cuboid_3;
   typedef CGAL::Periodic_3_offset_3                     Offset;
@@ -61,6 +61,7 @@ public:
       Get_approx<Point_3> get_approx; // Identity functor for all points
                                       // but lazy points.
       double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, tx, ty, tz;
+      init_double(px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, tx, ty, tz, (FT*)(0));
 
       if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
           fit_in_double(get_approx(p).z(), pz) &&
@@ -170,6 +171,7 @@ public:
 
     double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, tx, ty, tz;
     double domxmax, domxmin, domymax, domymin, domzmax, domzmin;
+    init_double(px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, tx, ty, tz, (FT*)(0));
     int otx = o_t.x();
     int oty = o_t.y();
     int otz = o_t.z();

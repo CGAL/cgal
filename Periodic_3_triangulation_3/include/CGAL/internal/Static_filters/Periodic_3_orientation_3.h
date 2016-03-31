@@ -37,7 +37,7 @@ class Periodic_3_orientation_3
   : public K_base::Orientation_3
 {
   typedef typename K_base::Orientation_3    Base;
-  
+  typedef typename K_base::FT               FT;
   typedef typename K_base::Point_3          Point_3;
   typedef typename K_base::Vector_3         Vector_3;
   typedef typename K_base::Iso_cuboid_3     Iso_cuboid_3;
@@ -79,6 +79,7 @@ public:
       Get_approx<Point_3> get_approx; // Identity functor for all points
                                       // but lazy points.
       double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz;
+      init_double(px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, (FT*)(0));
 
       if (fit_in_double(get_approx(p).x(), px) && fit_in_double(get_approx(p).y(), py) &&
           fit_in_double(get_approx(p).z(), pz) &&
@@ -162,6 +163,8 @@ public:
                                       // but lazy points.
       double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz;
       double domxmax, domxmin, domymax, domymin, domzmax, domzmin;
+      init_double(px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, (FT*)(0));
+      init_double(domxmax, domxmin, domymax, domymin, domzmax, domzmin, (FT*)(0));
       int opx = o_p.x();
       int opy = o_p.y();
       int opz = o_p.z();
