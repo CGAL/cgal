@@ -677,8 +677,7 @@ namespace internal {
     void equalize_valences()
     {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "Equalize valences...";
-      std::cout.flush(); 
+      std::cout << "Equalize valences..." << std::endl;
 #endif
       unsigned int nb_flips = 0;
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
@@ -705,7 +704,11 @@ namespace internal {
 
         CGAL::Euler::flip_edge(he, mesh_);
         ++nb_flips;
-        
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout << "\r\t(" << nb_flips << " flips)";
+        std::cout.flush();
+#endif
         CGAL_assertion_code(Halfedge_status s2 = status(he));
         CGAL_assertion_code(Halfedge_status s2o = status(opposite(he, mesh_)));
         CGAL_assertion(s1 == s2   && s1 == PATCH);
@@ -746,7 +749,7 @@ namespace internal {
       }
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "done. ("<< nb_flips << " flips)" << std::endl;
+      std::cout << "\r\tdone ("<< nb_flips << " flips)" << std::endl;
 #endif
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
