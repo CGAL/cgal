@@ -214,8 +214,12 @@ compute_vertex_normal(typename boost::graph_traits<PolygonMesh>::vertex_descript
   halfedge_descriptor end = he;
   do
     {
-    if (!is_border(he, pmesh))
-    {
+      if (!is_border(he, pmesh)
+          && !PMP::is_degenerated(he, pmesh
+                , choose_const_pmap(get_param(np, CGAL::vertex_point), pmesh, CGAL::vertex_point)
+                , Kernel())
+          )
+      {
       Vector n = fnmap_valid ? get(fnmap, face(he, pmesh))
                              : compute_face_normal(face(he, pmesh), pmesh, np);
       normal = normal + n;
