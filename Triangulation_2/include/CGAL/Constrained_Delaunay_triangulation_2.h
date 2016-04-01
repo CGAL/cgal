@@ -56,24 +56,17 @@ namespace CGAL {
 
 
 template <class Gt,
-          class Tds_ = Triangulation_data_structure_2 <
-                                                       Triangulation_vertex_base_2<Gt>,
-                                                       Constrained_triangulation_face_base_2<Gt> >,
-	  class Itag_ = No_intersection_tag>
+          class Tds_ = Default ,
+	  class Itag_ = Default>
 class Constrained_Delaunay_triangulation_2
-  : public  Constrained_triangulation_2<Gt, typename Default::Get< Tds_,
-                                                     Triangulation_data_structure_2 <
-                                                       Triangulation_vertex_base_2<Gt>,
-                                                       Constrained_triangulation_face_base_2<Gt> > >::type, Itag_>
+  : public  Constrained_triangulation_2<Gt, Tds_, Itag_>
 {
-public:  typedef typename Default::Get<Tds_, Triangulation_data_structure_2 <
-                                        Triangulation_vertex_base_2<Gt>,
-                                        Constrained_triangulation_face_base_2<Gt> > >::type Tds;
-  typedef typename Default::Get<Itag_, No_intersection_tag>::type Itag;
+public:
+  typedef Constrained_triangulation_2<Gt,Tds_,Itag_>            Ctr;
+  typedef typename Ctr::Tds Tds;
+  typedef typename Ctr::Itag Itag;
 
-  typedef Constrained_triangulation_2<Gt,Tds,Itag>            Ctr;
-
-  typedef Constrained_Delaunay_triangulation_2<Gt,Tds,Itag>    CDt;
+  typedef Constrained_Delaunay_triangulation_2<Gt,Tds_,Itag_>    CDt;
   typedef typename Ctr::Geom_traits      Geom_traits;
   typedef typename Ctr::Intersection_tag Intersection_tag;
 
