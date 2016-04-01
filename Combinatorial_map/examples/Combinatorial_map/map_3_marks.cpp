@@ -24,8 +24,8 @@ int main()
   }
 
   // 2) Create two tetrahedra.
-  Dart_handle dh1 = CGAL::make_combinatorial_tetrahedron(cm);
-  Dart_handle dh2 = CGAL::make_combinatorial_tetrahedron(cm);
+  Dart_handle dh1 = cm.make_combinatorial_tetrahedron();
+  Dart_handle dh2 = cm.make_combinatorial_tetrahedron();
 
   // 3) 3-sew them.
   cm.sew<3>(dh1, dh2);
