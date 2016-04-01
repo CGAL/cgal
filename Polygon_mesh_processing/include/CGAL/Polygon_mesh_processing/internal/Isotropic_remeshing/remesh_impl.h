@@ -1347,7 +1347,6 @@ private:
                 short_edges.insert(typename Bimap::value_type(hf, sqlen));
             }
 
-            std::size_t nb_degen = degenerate_faces.size();
             if (!is_border(hf, mesh_)
               && PMP::is_degenerated(hf, mesh_, vpmap_, GeomTraits()))
               degenerate_faces.insert(hf);
