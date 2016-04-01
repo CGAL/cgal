@@ -30,7 +30,7 @@ struct Scene_c3t3_item_priv {
 
 void Scene_c3t3_item::compile_shaders()
 {
-    program_sphere = new QOpenGLShaderProgram();
+    program_sphere = new QOpenGLShaderProgram(this);
 
     if(!program_sphere->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_c3t3_spheres.v"))
     {
