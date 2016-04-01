@@ -48,7 +48,7 @@ Random( )
     seed = (unsigned int)s;
 #if defined( CGAL_TEST_SUITE ) || defined( CGAL_PRINT_SEED )
     if(this == & get_default_random()){
-      std::cerr << "default_random::get_seed() = " << seed << std::endl;
+      std::cerr << "CGAL::get_default_random()::get_seed() = " << seed << std::endl;
     }
 #endif
     // initialize random numbers generator
