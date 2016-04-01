@@ -112,6 +112,7 @@ void isotropic_remeshing(const FaceRange& faces
   CGAL::Timer t;
   std::cout << "Remeshing parameters...";
   std::cout.flush();
+  t.start();
 #endif
 
   typedef typename GetGeomTraits<PM, NamedParameters>::type GT;
