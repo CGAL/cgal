@@ -3779,7 +3779,7 @@ namespace CGAL {
      * @return true iff the face containing adart is a polygon of length alg.
      */
     bool is_face_combinatorial_polygon(Dart_const_handle adart,
-                                       unsigned int alg)
+                                       unsigned int alg) const
     {
       CGAL_assertion(alg>0);
 
@@ -3821,7 +3821,7 @@ namespace CGAL {
      * @param adart an intial dart
      * @return true iff the volume containing adart is a combinatorial tetrahedron.
      */
-    bool is_volume_combinatorial_tetrahedron(Dart_const_handle d1)
+    bool is_volume_combinatorial_tetrahedron(Dart_const_handle d1) const
     {
       Dart_const_handle d2 = beta(d1, 2);
       Dart_const_handle d3 = beta(d2, 0, 2);
@@ -3836,12 +3836,12 @@ namespace CGAL {
            !is_face_combinatorial_polygon(d4, 3) ) return false;
 
       // TODO do better with marks (?).
-      if ( belong_to_same_cell<Self,2,1>(this, d1, d2) ||
-           belong_to_same_cell<Self,2,1>(this, d1, d3) ||
-           belong_to_same_cell<Self,2,1>(this, d1, d4) ||
-           belong_to_same_cell<Self,2,1>(this, d2, d3) ||
-           belong_to_same_cell<Self,2,1>(this, d2, d4) ||
-           belong_to_same_cell<Self,2,1>(this, d3, d4) ) return false;
+      if ( belong_to_same_cell<Self,2,1>(*this, d1, d2) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d3) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d4) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d3) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d4) ||
+           belong_to_same_cell<Self,2,1>(*this, d3, d4) ) return false;
 
       if ( beta(d1,1,2)!=beta(d3,0) ||
            beta(d4,0,2)!=beta(d3,1) ||
@@ -3914,7 +3914,7 @@ namespace CGAL {
      * @param adart an intial dart
      * @return true iff the volume containing adart is a combinatorial hexahedron.
      */
-    bool is_volume_combinatorial_hexahedron(Dart_const_handle d1)
+    bool is_volume_combinatorial_hexahedron(Dart_const_handle d1) const
     {
       Dart_const_handle d2 = beta(d1, 1, 1, 2);
       Dart_const_handle d3 = beta(d2, 1, 1, 2);
@@ -3934,21 +3934,21 @@ namespace CGAL {
           !is_face_combinatorial_polygon(d6, 4) ) return false;
 
       // TODO do better with marks.
-      if ( belong_to_same_cell<Self,2,1>(this, d1, d2) ||
-           belong_to_same_cell<Self,2,1>(this, d1, d3) ||
-           belong_to_same_cell<Self,2,1>(this, d1, d4) ||
-           belong_to_same_cell<Self,2,1>(this, d1, d5) ||
-           belong_to_same_cell<Self,2,1>(this, d1, d6) ||
-           belong_to_same_cell<Self,2,1>(this, d2, d3) ||
-           belong_to_same_cell<Self,2,1>(this, d2, d4) ||
-           belong_to_same_cell<Self,2,1>(this, d2, d5) ||
-           belong_to_same_cell<Self,2,1>(this, d2, d6) ||
-           belong_to_same_cell<Self,2,1>(this, d3, d4) ||
-           belong_to_same_cell<Self,2,1>(this, d3, d5) ||
-           belong_to_same_cell<Self,2,1>(this, d3, d6) ||
-           belong_to_same_cell<Self,2,1>(this, d4, d5) ||
-           belong_to_same_cell<Self,2,1>(this, d4, d6) ||
-           belong_to_same_cell<Self,2,1>(this, d5, d6) )
+      if ( belong_to_same_cell<Self,2,1>(*this, d1, d2) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d3) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d4) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d5) ||
+           belong_to_same_cell<Self,2,1>(*this, d1, d6) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d3) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d4) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d5) ||
+           belong_to_same_cell<Self,2,1>(*this, d2, d6) ||
+           belong_to_same_cell<Self,2,1>(*this, d3, d4) ||
+           belong_to_same_cell<Self,2,1>(*this, d3, d5) ||
+           belong_to_same_cell<Self,2,1>(*this, d3, d6) ||
+           belong_to_same_cell<Self,2,1>(*this, d4, d5) ||
+           belong_to_same_cell<Self,2,1>(*this, d4, d6) ||
+           belong_to_same_cell<Self,2,1>(*this, d5, d6) )
         return false;
 
       if ( beta(d1,2)    !=beta(d4,1,1) ||
@@ -4006,7 +4006,7 @@ namespace CGAL {
      * @return true iff the i-cell can be contracted.
      */
     template < unsigned int i >
-    bool is_contractible(Dart_const_handle adart)
+    bool is_contractible(Dart_const_handle adart) const
     { return CGAL::Is_contractible_functor<Self, i>::run(*this,adart); }
 
     /** Contract an i-cell, 1<=i<=dimension.
