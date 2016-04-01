@@ -226,7 +226,7 @@ struct Surface_fixture_2 {
     bool found;
     boost::tie(h, found) = halfedge(x, v, m);
     assert(found);
-    assert(! CGAL::CGAL::is_border(h,m));
+    assert(! CGAL::is_border(h,m));
     f1 = face(h, m);
     assert(f1 != boost::graph_traits<Graph>::null_face());
 
