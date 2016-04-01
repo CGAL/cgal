@@ -32,43 +32,7 @@ void Scene_c3t3_item::compile_shaders()
 {
     program_sphere = new QOpenGLShaderProgram();
 
-    //Source code
-    const char vertex_source[] =
-    {
-        "#version 120                                                                                             \n"
-        "attribute highp vec4 vertex;                                                                             \n"
-        "attribute highp vec3 normals;                                                                            \n"
-        "attribute highp vec3 colors;                                                                             \n"
-        "attribute highp vec3 center;                                                                             \n"
-        "attribute highp float radius;                                                                            \n"
-        "uniform highp vec4 cutplane;                                                                             \n"
-        "uniform highp mat4 mvp_matrix;                                                                           \n"
-        "uniform highp mat4 mv_matrix;                                                                            \n"
-        "varying highp vec4 fP;                                                                                   \n"
-        "varying highp vec3 fN;                                                                                   \n"
-        "varying highp vec4 color;                                                                                \n"
-        "                                                                                                         \n"
-        "                                                                                                         \n"
-        "void main(void)                                                                                          \n"
-        "{                                                                                                        \n"
-        " if(center.x * cutplane.x  + center.y * cutplane.y  + center.z * cutplane.z  +  cutplane.w > 0){         \n"
-        "    color = vec4(colors,0.0);                                                                            \n"
-        " }else{                                                                                                  \n"
-        "  color = vec4(colors,1.0);}                                                                             \n"
-        "  fP = mv_matrix * vertex;                                                                               \n"
-        "  fN = mat3(mv_matrix)* normals;                                                                         \n"
-        "  gl_Position =  mvp_matrix *                                                                            \n"
-        "  vec4(radius*vertex.x + center.x, radius* vertex.y + center.y, radius*vertex.z + center.z, 1.0) ;       \n"
-        "}                                                                                                        \n"
-    };
-    QOpenGLShader *vertex_shader = new QOpenGLShader(QOpenGLShader::Vertex);
-    if(!vertex_shader->compileSourceCode(vertex_source))
-    {
-        std::cerr<<"Compiling vertex source FAILED"<<std::endl;
-    }
-
-
-    if(!program_sphere->addShader(vertex_shader))
+    if(!program_sphere->addShaderFromSourceFile(QOpenGLShader::Vertex,":/cgal/Polyhedron_3/resources/shader_c3t3_spheres.v"))
     {
         std::cerr<<"adding vertex shader FAILED"<<std::endl;
     }
@@ -570,6 +534,12 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
 }
 
 void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
+  if(renderingMode() == FlatPlusEdges)
+  {
+    GLint renderMode;
+    glGetIntegerv(GL_RENDER_MODE, &renderMode);
+    if(renderMode == GL_SELECT) return;
+  }
   Scene_c3t3_item* ncthis = const_cast<Scene_c3t3_item*>(this);
   if (!are_buffers_filled)
   {

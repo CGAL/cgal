@@ -930,6 +930,7 @@ template <typename Tr, typename Ct>
 void
 Mesh_complex_3_in_triangulation_3_base<Tr,Ct>::
 rescan_after_load_of_triangulation() {
+  this->number_of_facets_ = 0;
   for(typename Tr::Finite_facets_iterator
         fit = this->triangulation().finite_facets_begin(),
         end = this->triangulation().finite_facets_end();
@@ -940,6 +941,7 @@ rescan_after_load_of_triangulation() {
     }
   }
 
+  this->number_of_cells_ = 0;
   for(typename Tr::Finite_cells_iterator
         cit = this->triangulation().finite_cells_begin(),
         end = this->triangulation().finite_cells_end();
