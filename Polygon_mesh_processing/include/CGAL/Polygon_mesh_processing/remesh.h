@@ -146,9 +146,11 @@ void isotropic_remeshing(const FaceRange& faces
       NamedParameters,
       internal::Connected_components_pmap<PM, ECMap>//default
     > ::type FPMap;
-  FPMap fpmap
-    = choose_param(get_param(np, face_patch),
-                   internal::Connected_components_pmap<PM, ECMap>(pmesh, ecmap));
+  FPMap fpmap = (boost::is_same<ECMap, internal::Connected_components_pmap<PM, ECMap> >::value)
+    ? choose_param(get_param(np, face_patch),
+                   internal::Connected_components_pmap<PM, ECMap>(pmesh, ecmap))
+    : choose_param(get_param(np, face_patch),
+                   internal::Connected_components_pmap<PM, ECMap>());//do not compute cc's
 
   double low = 4. / 5. * target_edge_length;
   double high = 4. / 3. * target_edge_length;
