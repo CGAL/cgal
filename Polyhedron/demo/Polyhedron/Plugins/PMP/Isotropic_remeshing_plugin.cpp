@@ -570,6 +570,8 @@ private:
       }
       else
       {
+        std::cout << "Isotropic remeshing of "
+          << poly_item->name().toStdString() << " started..." << std::endl;
         Scene_polyhedron_selection_item::Is_constrained_map<Edge_set > ecm(edges_to_protect);
         CGAL::Polygon_mesh_processing::isotropic_remeshing(
             faces(*poly_item->polyhedron())
@@ -579,6 +581,8 @@ private:
           .protect_constraints(protect_)
           .edge_is_constrained_map(ecm)
           .smooth_along_features(smooth_features_));
+        std::cout << "Isotropic remeshing of "
+          << poly_item->name().toStdString() << " done." << std::endl;
       }
     }
 
