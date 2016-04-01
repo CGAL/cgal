@@ -1,3 +1,9 @@
+
+// Needed for lloyd_optimize_mesh_2 which does it too late
+// (and we don't want to spend the time on finding out who
+// includes the header file that sets it too a value too low
+#define  BOOST_PARAMETER_MAX_ARITY 8
+
 #include <stdexcept>
 
 #define CGAL_CT2_WANTS_TO_HAVE_EXTRA_ACTION_FOR_INTERSECTING_CONSTRAINTS
