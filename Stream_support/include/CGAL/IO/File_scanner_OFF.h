@@ -377,25 +377,25 @@ public:
         }
     }
 
-    void scan_color( u_char& r, u_char& g, u_char& b) {
+    void scan_color( unsigned char& r, unsigned char& g, unsigned char& b) {
         if ( has_colors()) {
             if ( binary()) {
                 float fr, fg, fb;
                 I_Binary_read_big_endian_float32( m_in, fr);
                 I_Binary_read_big_endian_float32( m_in, fg);
                 I_Binary_read_big_endian_float32( m_in, fb);
-                r = u_char(fr);
-                g = u_char(fg);
-                b = u_char(fb);
+                r = unsigned char(fr);
+                g = unsigned char(fg);
+                b = unsigned char(fb);
 
             } else {
              double d;
              m_in >> iformat(d);
-             r = u_char(d);
+             r = unsigned char(d);
              m_in >> iformat(d);
-             g = u_char(d);
+             g = unsigned char(d);
              m_in >> iformat(d);
-             b = u_char(d);
+             b = unsigned char(d);
 
             }
         }
@@ -473,7 +473,7 @@ file_scan_vertex( File_scanner_OFF& scanner, Point& p) {
 template < class T_Color> inline
 T_Color&
 file_scan_color( File_scanner_OFF& scanner, T_Color& c) {
-    u_char r, g, b;
+    unsigned char r, g, b;
     scanner.scan_color(r,g,b);
         c = T_Color(r,g,b);
     return c;

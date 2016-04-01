@@ -28,7 +28,7 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
 
 
   boost::property_map< SMesh, boost::vertex_index_t >::type
-    im = boost::get(boost::vertex_index, *smesh_);
+    im = get(boost::vertex_index, *smesh_);
 
   idx_data_.reserve(num_faces(*smesh_) * 3);
 
