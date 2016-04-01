@@ -246,6 +246,18 @@ void Viewer::mousePressEvent(QMouseEvent* event)
   }
 }
 
+#include <QContextMenuEvent>
+void Viewer::contextMenuEvent(QContextMenuEvent* event)
+{
+  if(event->reason() != QContextMenuEvent::Mouse) {
+    requestContextMenu(event->globalPos());
+    event->accept();
+  }
+  else {
+    QGLViewer::contextMenuEvent(event);
+  }
+}
+
 void Viewer::keyPressEvent(QKeyEvent* e)
 {
   if(!e->modifiers()) {

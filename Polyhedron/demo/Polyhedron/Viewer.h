@@ -21,6 +21,7 @@ class Scene_draw_interface;
 }
 class QMouseEvent;
 class QKeyEvent;
+class QContextMenuEvent;
 
 class Viewer_impl;
 //!The viewer class. Deals with all the openGL rendering and the mouse/keyboard events.
@@ -108,6 +109,8 @@ protected:
   void wheelEvent(QWheelEvent *);
   //!Defines the behaviour for the key press events
   void keyPressEvent(QKeyEvent*);
+  //!Deal with context menu events
+  void contextMenuEvent(QContextMenuEvent*);
   /*! \brief Encapsulates the pickMatrix.
   * Source code of gluPickMatrix slightly modified : instead of multiplying the current matrix by this value,
   * sets the viewer's pickMatrix_ so that the drawing area is only around the cursor. This is because since CGAL 4.7,
