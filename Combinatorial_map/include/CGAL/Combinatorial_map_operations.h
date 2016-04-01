@@ -528,9 +528,11 @@ namespace CGAL
    * @param adart a dart of the i-cell.
    * @return true iff the i-cell can be contracted.
    */
+#ifndef CGAL_NO_DEPRECATED_CODE
   template < class CMap, unsigned int i >
-  bool is_contractible(const CMap& amap, typename CMap::Dart_const_handle adart)
+  CGAL_DEPRECATED bool is_contractible(const CMap& amap, typename CMap::Dart_const_handle adart)
   { return CGAL::Is_contractible_functor<CMap, i>::run(amap,adart); }
+#endif // CGAL_NO_DEPRECATED_CODE
 
   /** Contract an i-cell, 1<i<=dimension, and merge eventually both incident
    *  (i-1)-cells.
@@ -545,7 +547,7 @@ namespace CGAL
                       bool update_attributes)
     {
       CGAL_static_assertion ( 2<=i && i<=CMap::dimension );
-      CGAL_assertion( (is_contractible<CMap,i>(amap, adart)) );
+      CGAL_assertion( (amap.is_contractible<i>(adart)) );
 
       size_t res = 0;
 
@@ -701,7 +703,7 @@ namespace CGAL
     static size_t run(CMap& amap, typename CMap::Dart_handle adart,
                       bool update_attributes)
     {
-      CGAL_assertion( (is_contractible<CMap,1>(amap,adart)) );
+      CGAL_assertion( (amap.is_contractible<1>(adart)) );
 
       size_t res = 0;
 
