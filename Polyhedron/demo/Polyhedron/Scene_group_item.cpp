@@ -86,14 +86,14 @@ void Scene_group_item::setRenderingMode(RenderingMode m)
   }
 }
 
-void Scene_group_item::setVisible(bool b, bool does_emit)
+void Scene_group_item::setVisible(bool b)
 {
   Scene_item::setVisible(b);
   Q_FOREACH(Scene_item* child, children)
   {
-    child->setVisible(b, true);
+    child->setVisible(b);
+    child->itemChanged();
   }
-  if(does_emit)
     Q_EMIT itemChanged();
 }
 

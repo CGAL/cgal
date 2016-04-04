@@ -305,7 +305,7 @@ public Q_SLOTS:
   //!Setter for the name of the item.
   virtual void setName(QString n) { name_ = n; }
   //!Setter for the visibility of the item.
-  virtual void setVisible(bool b, bool does_emit = false);
+  virtual void setVisible(bool b);
   //!Setter for the rendering mode of the item.
   //!@see RenderingMode
   virtual void setRenderingMode(RenderingMode m) { 

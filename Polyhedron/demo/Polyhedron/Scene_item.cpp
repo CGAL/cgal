@@ -104,13 +104,9 @@ QMenu* CGAL::Three::Scene_item::contextMenu()
 void CGAL::Three::Scene_item::invalidateOpenGLBuffers() {}
 
 void CGAL::Three::Scene_item::selection_changed(bool) {}
-void CGAL::Three::Scene_item::setVisible(bool b, bool does_emit)
+void CGAL::Three::Scene_item::setVisible(bool b)
 {
   visible_ = b;
-  if(does_emit)
-  {
-    Q_EMIT itemChanged();
-  }
 }
 
 
