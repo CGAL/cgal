@@ -271,19 +271,6 @@ namespace CGAL
 
   } //namespace internal_IOP
 
-template<class Polyhedron>
-struct Dummy_edge_mark_property_map{
-  typedef bool value_type;
-  typedef value_type reference;
-  typedef std::pair<typename Polyhedron::Halfedge_handle,Polyhedron*> key_type;
-  typedef boost::read_write_property_map_tag category;  
-
-  Dummy_edge_mark_property_map(){}
-
-  friend reference get(Dummy_edge_mark_property_map,key_type) {return false;}
-  friend void put(Dummy_edge_mark_property_map,key_type,value_type) {}
-};
-
 template <class Polyhedron>
 struct Default_facet_construct{
   typename Polyhedron::Facet operator()( const typename Polyhedron::Facet& f)
@@ -319,7 +306,7 @@ template< class Polyhedron,
 class Node_visitor_refine_polyhedra{
 //Default typedefs  
   typedef typename Default::Get<OutputBuilder_, Default_output_builder >::type OutputBuilder;
-  typedef typename Default::Get<EdgeMarkPropertyMap_, Dummy_edge_mark_property_map<Polyhedron> >::type EdgeMarkPropertyMap;
+  typedef typename Default::Get<EdgeMarkPropertyMap_, Corefinement::Dummy_edge_mark_property_map<Polyhedron> >::type EdgeMarkPropertyMap;
   typedef typename Default::Get<NestedFacetConstruct_, Default_facet_construct<Polyhedron > >::type NestedFacetConstruct;
   typedef typename Default::Get<NewNodeVertexVisitor_, Default_node_vertex_visitor<Polyhedron> >::type NewNodeVertexVisitor;
   typedef typename Default::Get<PolyhedronPointPMap_, Default_polyhedron_ppmap<Polyhedron> >::type PolyhedronPointPMap;

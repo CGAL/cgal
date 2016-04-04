@@ -155,7 +155,7 @@ public:
 };
 #endif //DEFINE_UNUSED_CLASSES
 
-template < class Polyhedron, class PolyhedronPointPMap >
+template < class Polyhedron, class PolyhedronPointPMap, class HalfedgeOutputIterator >
 struct Import_polyline
   : public CGAL::Modifier_base<typename Polyhedron::HalfedgeDS>
 {
@@ -185,6 +185,7 @@ struct Import_polyline
   const std::map< Halfedge_const_handle,
                   std::pair<int,int>,Cmp_unik_ad >& border_halfedges;
   PolyhedronPointPMap ppmap;
+  HalfedgeOutputIterator output;
 
   Import_polyline(
     Vertex_map& vertex_map_,
@@ -195,7 +196,8 @@ struct Import_polyline
     Halfedge_handle Q_first_halfedge_,
     const std::map< Halfedge_const_handle,
                     std::pair<int,int>,Cmp_unik_ad >& border_halfedges_,
-    PolyhedronPointPMap ppmap_)
+    PolyhedronPointPMap ppmap_,
+    HalfedgeOutputIterator output_)
   : vertex_map( vertex_map_ )
   , P_to_O_hedge( P_to_O_hedge_ )
   , Q_to_O_hedge( Q_to_O_hedge_ )
@@ -204,6 +206,7 @@ struct Import_polyline
   , Q_first_halfedge( Q_first_halfedge_ )
   , border_halfedges( border_halfedges_ )
   , ppmap( ppmap_ )
+  , output(output_)
   {}
 
   void operator()(HDS& hds)
@@ -212,6 +215,7 @@ struct Import_polyline
 
     typename HDS::Halfedge dummy_hedge; //dummy default constructed halfedge
     O_first_halfedge=hds.edges_push_back(dummy_hedge, dummy_hedge);
+    *output++=O_first_halfedge;
 
     //make sure the first vertex does not already exist
     Vertex_handle source;
@@ -270,6 +274,7 @@ struct Import_polyline
     {
       //create new edge
       Halfedge_handle O_hedge = hds.edges_push_back(dummy_hedge, dummy_hedge);
+      *output++=O_hedge;
       //get the new edge
       Halfedge_handle P_hedge = next_marked_halfedge_around_target_vertex(P_previous, border_halfedges);
       Halfedge_handle Q_hedge = next_marked_halfedge_around_target_vertex(Q_previous, border_halfedges);
@@ -973,7 +978,8 @@ namespace Corefinement
 template <class Polyhedron,
           class Facet_id_pmap_=Default,
           class Kernel_=Default,
-          class PolyhedronPointPMap_=Default >
+          class PolyhedronPointPMap_=Default,
+          class EdgeMarkPropertyMap_=Default >
 class Polyhedra_output_builder
 {
 //Default typedefs
@@ -988,6 +994,11 @@ class Polyhedra_output_builder
   typedef typename Default::Get<
     Facet_id_pmap_,
     Default_facet_id_pmap<Polyhedron> >::type                     Facet_id_pmap;
+  typedef typename Default::Get<EdgeMarkPropertyMap_,
+    Corefinement::Dummy_edge_mark_property_map<Polyhedron> >::type
+                                                            EdgeMarkPropertyMap;
+
+
 public:
 //Boolean operation indices
   enum {P_UNION_Q = 0, P_INTER_Q, P_MINUS_Q, Q_MINUS_P };
@@ -997,6 +1008,7 @@ private:
   cpp11::array<boost::optional<Polyhedron*>, 4 > desired_output;
   Facet_id_pmap P_facet_id_pmap, Q_facet_id_pmap;
   PolyhedronPointPMap ppmap;
+  EdgeMarkPropertyMap edge_mark_pmap;
   // bitset containing information about operations that cannot be
   // performed because of non-manifoldness or that is ambiguous
   // 0 = P+Q
@@ -1165,6 +1177,7 @@ private:
     //CGAL_assertion( P_ptr->is_valid() );
   }
 
+  template < class HalfedgeOutputIterator >
   void
   import_polyline(
     Polyhedron& O,
@@ -1181,12 +1194,13 @@ private:
             > & Q_to_O_hedge,
     std::map<Vertex_handle, Vertex_handle>& vertex_map,
     const std::map< Halfedge_const_handle,
-                    std::pair<int,int>,Cmp_unik_ad >& border_halfedges)
+                    std::pair<int,int>,Cmp_unik_ad >& border_halfedges,
+    HalfedgeOutputIterator output)
   {
-    internal_IOP::Import_polyline<Polyhedron, PolyhedronPointPMap>
+    internal_IOP::Import_polyline<Polyhedron, PolyhedronPointPMap, HalfedgeOutputIterator>
       modifier( vertex_map, P_to_O_hedge, Q_to_O_hedge, nb_segments,
                 P_first_polyline_hedge, Q_first_polyline_hedge,
-                border_halfedges, ppmap);
+                border_halfedges, ppmap, output);
 
     O.delegate( modifier );
   }
@@ -1342,6 +1356,7 @@ private:
     }
   }
 
+  template < class HalfedgeOutputIterator >
   void fill_new_polyhedron(
     Polyhedron& O, // output
     const boost::dynamic_bitset<>& patches_of_P_to_import,
@@ -1350,7 +1365,8 @@ private:
     Patch_container& patches_of_Q,
     const Intersection_polylines& polylines,
     const std::map< Halfedge_const_handle,
-                    std::pair<int,int>,Cmp_unik_ad >& border_halfedges
+                    std::pair<int,int>,Cmp_unik_ad >& border_halfedges,
+    HalfedgeOutputIterator shared_halfedge_output // new shared halfedges
   )
   {
     //add a polyline inside O for each intersection polyline
@@ -1364,7 +1380,7 @@ private:
         import_polyline(O, polylines.P[i], polylines.Q[i],
                         polylines.lengths[i],
                         P_to_O_hedge, Q_to_O_hedge,
-                        P_to_O_vertex, border_halfedges);
+                        P_to_O_vertex, border_halfedges, shared_halfedge_output);
 
     //import patches of P
     append_Q_patches_to_P<false>(&O, patches_of_P_to_import, patches_of_P, P_to_O_hedge);
@@ -1386,13 +1402,15 @@ public:
     cpp11::array<boost::optional<Polyhedron*>, 4 > desired_output_,
     Facet_id_pmap P_facet_id_pmap_,
     Facet_id_pmap Q_facet_id_pmap_,
-    PolyhedronPointPMap point_pmap = PolyhedronPointPMap()
+    PolyhedronPointPMap point_pmap = PolyhedronPointPMap(),
+    EdgeMarkPropertyMap edge_pmap = EdgeMarkPropertyMap()
   ) : P_ptr(&P)
     , Q_ptr(&Q)
     , desired_output( desired_output_ )
     , P_facet_id_pmap(P_facet_id_pmap_)
     , Q_facet_id_pmap(Q_facet_id_pmap_)
     , ppmap(point_pmap)
+    , edge_mark_pmap(edge_pmap)
     , is_P_inside_out( !Polygon_mesh_processing::is_outward_oriented(*P_ptr) )
     , is_Q_inside_out( !Polygon_mesh_processing::is_outward_oriented(*Q_ptr) )
     {}
@@ -1401,11 +1419,13 @@ public:
     Polyhedron& P,
     Polyhedron& Q,
     cpp11::array<boost::optional<Polyhedron*>, 4 > desired_output_,
-    PolyhedronPointPMap point_pmap = PolyhedronPointPMap()
+    PolyhedronPointPMap point_pmap = PolyhedronPointPMap(),
+    EdgeMarkPropertyMap edge_pmap = EdgeMarkPropertyMap()
   ) : P_ptr(&P)
     , Q_ptr(&Q)
     , desired_output( desired_output_ )
     , ppmap(point_pmap)
+    , edge_mark_pmap(edge_pmap)
     , is_P_inside_out( !Polygon_mesh_processing::is_outward_oriented(*P_ptr) )
     , is_Q_inside_out( !Polygon_mesh_processing::is_outward_oriented(*Q_ptr) )
     {}
@@ -1922,6 +1942,7 @@ public:
       is_patch_outside_P.flip();
       is_patch_outside_P-=coplanar_patches_of_Q;
 
+      std::vector<Halfedge_handle> shared_halfedges;
       fill_new_polyhedron(
         *union_ptr,
         is_patch_outside_Q, is_patch_outside_P,
@@ -1929,8 +1950,13 @@ public:
         Intersection_polylines( P_polylines,
                                 Q_polylines,
                                 polyline_lengths),
-        border_halfedges
+        border_halfedges,
+        std::back_inserter(shared_halfedges)
       );
+      BOOST_FOREACH(Halfedge_handle h, shared_halfedges){
+        put(edge_mark_pmap, std::make_pair(h,union_ptr),true);
+        put(edge_mark_pmap, std::make_pair(h->opposite(),union_ptr),true);
+      }
     }
 
     /// compute the intersection
@@ -1940,6 +1966,7 @@ public:
       Polyhedron* inter_ptr = *desired_output[P_INTER_Q];
       CGAL_assertion(P_ptr!=inter_ptr && Q_ptr!=inter_ptr); //tmp
 
+      std::vector<Halfedge_handle> shared_halfedges;
       fill_new_polyhedron(
         *inter_ptr,
         coplanar_patches_of_P.any() ? is_patch_inside_Q
@@ -1950,8 +1977,13 @@ public:
         Intersection_polylines( P_polylines,
                                 Q_polylines,
                                 polyline_lengths),
-        border_halfedges
+        border_halfedges,
+        std::back_inserter(shared_halfedges)
       );
+      BOOST_FOREACH(Halfedge_handle h, shared_halfedges){
+        put(edge_mark_pmap, std::make_pair(h,inter_ptr),true);
+        put(edge_mark_pmap, std::make_pair(h->opposite(),inter_ptr),true);
+      }
     }
 
     Edge_map disconnected_patches_hedge_to_Qhedge;

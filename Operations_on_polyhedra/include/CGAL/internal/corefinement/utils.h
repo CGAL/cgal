@@ -81,6 +81,20 @@ public:
 
 namespace Corefinement{
 
+template<class Polyhedron>
+struct Dummy_edge_mark_property_map{
+  typedef bool value_type;
+  typedef value_type reference;
+  typedef std::pair<typename Polyhedron::Halfedge_handle,Polyhedron*> key_type;
+  typedef boost::read_write_property_map_tag category;
+
+  Dummy_edge_mark_property_map(){}
+
+  friend reference get(Dummy_edge_mark_property_map,key_type) {return false;}
+  friend void put(Dummy_edge_mark_property_map,key_type,value_type) {}
+};
+
+
 template <class Halfedge_const_handle, class Border_halfedges_map>
 int node_index_of_incident_vertex(Halfedge_const_handle h,
                                   const Border_halfedges_map& border_halfedges)
