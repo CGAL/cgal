@@ -70,7 +70,7 @@ public :
     //!Sets all the children in the specified rendering mode.
     void setRenderingMode(RenderingMode m);
     //!Sets all the children to the specified visibility.
-    void setVisible(bool b);
+    void setVisible(bool b, bool does_emit = false);
     //!Sets all the children in points mode.
     void setPointsMode() {
       setRenderingMode(Points);

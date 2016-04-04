@@ -86,13 +86,15 @@ void Scene_group_item::setRenderingMode(RenderingMode m)
   }
 }
 
-void Scene_group_item::setVisible(bool b)
+void Scene_group_item::setVisible(bool b, bool does_emit)
 {
   Scene_item::setVisible(b);
   Q_FOREACH(Scene_item* child, children)
   {
-    child->setVisible(b);
+    child->setVisible(b, true);
   }
+  if(does_emit)
+    Q_EMIT itemChanged();
 }
 
 bool Scene_group_item::isExpanded() const
