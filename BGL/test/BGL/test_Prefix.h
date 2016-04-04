@@ -8,7 +8,7 @@
 
 #include <CGAL/boost/graph/properties.h>
 
-#include <CGAL/Simple_cartesian.h>
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 
 #include <CGAL/Polyhedron_items_with_id_3.h>
 #include <CGAL/IO/Polyhedron_iostream.h>
@@ -25,7 +25,7 @@
 
 // ATTN: If you change this kernel remember to also hack
 // properties_PolyMesh_ArrayKernelT.h accordingly
-typedef CGAL::Simple_cartesian<double> Kernel;
+typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
 typedef CGAL::Polyhedron_3<Kernel, CGAL::Polyhedron_items_with_id_3> Polyhedron;
 
 typedef Kernel::Point_3  Point_3;
@@ -173,12 +173,12 @@ struct Surface_fixture_1 {
     assert(x != boost::graph_traits<Graph>::null_vertex());
     assert(y != boost::graph_traits<Graph>::null_vertex());
 
-    f1 = is_border(halfedge(u, m),m) ? face(opposite(halfedge(u, m), m), m) : face(halfedge(u, m), m);
+    f1 = CGAL::is_border(halfedge(u, m),m) ? face(opposite(halfedge(u, m), m), m) : face(halfedge(u, m), m);
     assert(f1 != boost::graph_traits<Graph>::null_face());
     CGAL::Halfedge_around_face_iterator<Graph> hafib, hafie;
-    for(boost::tie(hafib, hafie) = halfedges_around_face(halfedge(f1, m), m); hafib != hafie; ++hafib) 
+    for(boost::tie(hafib, hafie) = CGAL::halfedges_around_face(halfedge(f1, m), m); hafib != hafie; ++hafib) 
     {
-      if(! is_border(opposite(*hafib, m), m))
+      if(! CGAL::is_border(opposite(*hafib, m), m))
         f2 = face(opposite(*hafib, m), m);
     }
     typename boost::graph_traits<Graph>::face_iterator fb, fe;
@@ -226,25 +226,25 @@ struct Surface_fixture_2 {
     bool found;
     boost::tie(h, found) = halfedge(x, v, m);
     assert(found);
-    assert(! is_border(h,m));
+    assert(! CGAL::is_border(h,m));
     f1 = face(h, m);
     assert(f1 != boost::graph_traits<Graph>::null_face());
 
     boost::tie(h, found) = halfedge(v, u, m);
     assert(found);
-    assert(!is_border(h,m));
+    assert(!CGAL::is_border(h,m));
     f2 = face(h, m);
     assert(f2 != boost::graph_traits<Graph>::null_face());
 
     boost::tie(h, found) = halfedge(u, w, m);
     assert(found);
-    assert(!is_border(h,m));
+    assert(!CGAL::is_border(h,m));
     f3 = face(h, m);
     assert(f3 != boost::graph_traits<Graph>::null_face());
 
     boost::tie(h, found) = halfedge(w, x, m);
     assert(found);
-    assert(!is_border(h,m));
+    assert(!CGAL::is_border(h,m));
     f4 = face(h, m);
     assert(f4 != boost::graph_traits<Graph>::null_face());
   }
@@ -287,8 +287,8 @@ struct Surface_fixture_3 {
     assert(y != boost::graph_traits<Graph>::null_vertex());
     assert(z != boost::graph_traits<Graph>::null_vertex());
 
-    f1 = is_border(halfedge(u, m),m) ? face(opposite(halfedge(u, m), m), m) : face(halfedge(u, m), m);
-    f2 = is_border(halfedge(u, m),m) ? face(opposite(halfedge(z, m), m), m) : face(halfedge(z, m), m);
+    f1 = CGAL::is_border(halfedge(u, m),m) ? face(opposite(halfedge(u, m), m), m) : face(halfedge(u, m), m);
+    f2 = CGAL::is_border(halfedge(u, m),m) ? face(opposite(halfedge(z, m), m), m) : face(halfedge(z, m), m);
 
     assert(f1 != boost::graph_traits<Graph>::null_face());
     assert(f2 != boost::graph_traits<Graph>::null_face());
@@ -314,7 +314,7 @@ struct Surface_fixture_4 {
     int found = 0;
     typename boost::graph_traits<Graph>::halfedge_iterator hb, he;
     for(boost::tie(hb, he) = halfedges(m); hb != he; ++hb) {
-      if(is_border(*hb,m)){
+      if(CGAL::is_border(*hb,m)){
         if(get(pm, target(*hb,m)) == Point_3(0,0,0)){
           if(found == 0){
             h1 = *hb;
@@ -349,7 +349,7 @@ struct Surface_fixture_5 {
     int found = 0;
     typename boost::graph_traits<Graph>::halfedge_iterator hb, he;
     for(boost::tie(hb, he) = halfedges(m); hb != he; ++hb) {
-      if(is_border(*hb,m)){
+      if(CGAL::is_border(*hb,m)){
         if(get(pm, target(*hb,m)) == Point_3(2,1,0)){
           h1 = *hb;
           found++;

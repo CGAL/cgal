@@ -24,7 +24,7 @@ join_face_test()
   assert(CGAL::internal::exact_num_edges(f.m) == 6);
   
   CGAL::Halfedge_around_face_iterator<T> begin, end;
-  boost::tie(begin, end) = halfedges_around_face(halfedge(f.f1, f.m), f.m);
+  boost::tie(begin, end) = CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m);
   assert(std::distance(begin, end) == 4);
   for(; begin != end; ++begin)
   {
@@ -163,8 +163,8 @@ join_vertex_interior_test()
   assert(CGAL::internal::exact_num_faces(f.m) == 2);
   assert(CGAL::internal::exact_num_vertices(f.m) == 5);
   assert(CGAL::internal::exact_num_edges(f.m) == 6);
-  assert(boost::distance(halfedges_around_face(halfedge(f.f1, f.m), f.m)) == 3);
-  assert(boost::distance(halfedges_around_face(halfedge(f.f2, f.m), f.m)) == 3);
+  assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m)) == 3);
+  assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f2, f.m), f.m)) == 3);
   assert(degree(f.x, f.m) == 4);
   assert(CGAL::is_valid(f.m));
 }
@@ -188,8 +188,8 @@ join_vertex_exterior_test()
     assert(CGAL::internal::exact_num_faces(f.m) == 2);
     assert(CGAL::internal::exact_num_vertices(f.m) == 5);
     assert(CGAL::internal::exact_num_edges(f.m) == 6);
-    assert(boost::distance(halfedges_around_face(halfedge(f.f1, f.m), f.m)) == 4);
-    assert(boost::distance(halfedges_around_face(halfedge(f.f2, f.m), f.m)) == 3);
+    assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m)) == 4);
+    assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f2, f.m), f.m)) == 3);
     assert(degree(f.y, f.m) == 3);
     assert(CGAL::is_valid(f.m));
   }
@@ -207,8 +207,8 @@ join_vertex_exterior_test()
     assert(CGAL::internal::exact_num_faces(f.m) == 2);
     assert(CGAL::internal::exact_num_vertices(f.m) == 5);
     assert(CGAL::internal::exact_num_edges(f.m) == 6);
-    assert(boost::distance(halfedges_around_face(halfedge(f.f1, f.m), f.m)) == 4);
-    assert(boost::distance(halfedges_around_face(halfedge(f.f2, f.m), f.m)) == 3);
+    assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f1, f.m), f.m)) == 4);
+    assert(boost::distance(CGAL::halfedges_around_face(halfedge(f.f2, f.m), f.m)) == 3);
  
     assert(CGAL::is_valid(f.m));
     assert(degree(f.w, f.m) == 3);
@@ -237,8 +237,8 @@ split_vertex()
   assert(CGAL::is_valid(f.m));
   assert(CGAL::internal::exact_num_vertices(f.m) == 7);
   assert(CGAL::internal::exact_num_edges(f.m) == 8);
-  assert(boost::distance(halfedges_around_face(h1, f.m)) == 5);
-  assert(boost::distance(halfedges_around_face(h2, f.m)) == 7);
+  assert(boost::distance(CGAL::halfedges_around_face(h1, f.m)) == 5);
+  assert(boost::distance(CGAL::halfedges_around_face(h2, f.m)) == 7);
 }
 
 template <typename T> 
@@ -264,8 +264,8 @@ split_join_vertex_inverse()
   assert(CGAL::internal::exact_num_faces(f.m) == 2);
   assert(CGAL::internal::exact_num_edges(f.m) == 6);
   assert(CGAL::internal::exact_num_halfedges(f.m) == 12);
-  assert(boost::distance(halfedges_around_face(h1, f.m)) == 3);
-  assert(boost::distance(halfedges_around_face(h2, f.m)) == 3);
+  assert(boost::distance(CGAL::halfedges_around_face(h1, f.m)) == 3);
+  assert(boost::distance(CGAL::halfedges_around_face(h2, f.m)) == 3);
 }
 
 
@@ -383,7 +383,7 @@ int main()
   test_Euler_operations<SM>();
 
 #ifdef CGAL_USE_OPENMESH
-  test_Euler_operations<SM>();
+  test_Euler_operations<OMesh>();
 #endif
 
   std::cerr << "done\n";
