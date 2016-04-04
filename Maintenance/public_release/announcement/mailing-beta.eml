@@ -10,8 +10,8 @@ a solid ground to report bugs that need to be tackled before the
 release of the final version of CGAL 4.8 later in March.
 
 That is the second "beta" release for CGAL-4.8. The reason is that there
-was important bugs in our CMake scripts for some use cases. See the details
-on GitHub:
+were important bugs in our CMake scripts for some use cases. See the
+details on GitHub:
 
   https://github.com/CGAL/cgal/issues?q=milestone%3A4.8-beta2+label%3A%22CMake+scripts%22
 
