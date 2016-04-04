@@ -46,9 +46,11 @@ struct Edge_mark_property_map{
   typedef bool value_type;
   typedef value_type reference;
   typedef typename boost::graph_traits<Polyhedron>::edge_descriptor key_type;
-  typedef boost::readable_property_map_tag category;
+  typedef boost::read_write_property_map_tag category;
 
   friend reference get(Edge_mark_property_map,const key_type& key) {return key.halfedge()->m;}
+  friend void put(Edge_mark_property_map,key_type key,value_type v) {key.halfedge()->m=v;}
+
 };
 
 // An items type using my halfedge.
@@ -63,11 +65,6 @@ struct Items_with_mark_on_hedge : public CGAL::Polyhedron_items_3
   struct Face_wrapper {
       typedef CGAL::HalfedgeDS_face_max_base_with_id< Refs, CGAL::Tag_false, std::size_t>  Face;
   };
-  //~ template < class Refs, class Traits>
-  //~ struct Vertex_wrapper {
-      //~ typedef typename Traits::Point_3 Point;
-      //~ typedef CGAL::HalfedgeDS_vertex_max_base_with_id< Refs, Point, std::size_t> Vertex;
-  //~ };
 };
 
 
