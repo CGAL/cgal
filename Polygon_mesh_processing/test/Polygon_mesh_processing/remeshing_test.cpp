@@ -98,17 +98,43 @@ void test_precondition(const char* filename,
 
 struct halfedge2edge
 {
-  halfedge2edge(const Mesh& m, std::vector<edge_descriptor>& edges)
+  halfedge2edge(const Mesh& m, std::set<edge_descriptor>& edges)
     : m_mesh(m), m_edges(edges)
   {}
   void operator()(const halfedge_descriptor& h) const
   {
-    m_edges.push_back(edge(h, m_mesh));
+    m_edges.insert(edge(h, m_mesh));
   }
   const Mesh& m_mesh;
-  std::vector<edge_descriptor>& m_edges;
+  std::set<edge_descriptor>& m_edges;
 };
 
+
+struct Constraints_pmap
+{
+  std::set<edge_descriptor>* set_ptr_;
+
+  typedef edge_descriptor                     key_type;
+  typedef bool                                value_type;
+  typedef value_type&                         reference;
+  typedef boost::read_write_property_map_tag  category;
+
+public:
+  Constraints_pmap(std::set<edge_descriptor>* set_ptr)
+    : set_ptr_(set_ptr)
+  {}
+  friend bool get(const Constraints_pmap& map, const edge_descriptor& e)
+  {
+    CGAL_assertion(map.set_ptr_ != NULL);
+    return map.set_ptr_->count(e) != 0;
+  }
+  friend void put(Constraints_pmap& map, const edge_descriptor& e, const bool is)
+  {
+    CGAL_assertion(map.set_ptr_ != NULL);
+    if (is)                map.set_ptr_->insert(e);
+    else if(get(map, e))   map.set_ptr_->erase(e);
+  }
+};
 
 int main(int argc, char* argv[])
 {
@@ -148,37 +174,47 @@ int main(int argc, char* argv[])
     std::cout << "OK." << std::endl;
 
   std::cout << "Split border...";
-
-    std::vector<edge_descriptor> border;
+    std::set<edge_descriptor> border;
+    Constraints_pmap ecmap(&border);
     PMP::border_halfedges(pre_patch,
       m,
       boost::make_function_output_iterator(halfedge2edge(m, border)));
-    PMP::split_long_edges(border, target_edge_length, m);
-
+    PMP::split_long_edges(border, target_edge_length, m
+      , PMP::parameters::edge_is_constrained_map(ecmap));
   std::cout << "done." << std::endl;
 
-  //std::cout << "Start remeshing of " << selection_file
-  //  << " (" << patch.size() << " faces)..." << std::endl;
+  std::cout << "Collect patch...";
+    std::vector<face_descriptor> patch;
+    face_descriptor seed = face(halfedge(*border.begin(), m), m);
+    if (is_border(halfedge(*border.begin(), m), m))
+      seed = face(opposite(halfedge(*border.begin(), m), m), m);
+    PMP::connected_component(seed, m, std::back_inserter(patch),
+      PMP::parameters::edge_is_constrained_map(ecmap));
+  std::cout << " done." << std::endl;
+
+  std::cout << "Start remeshing of " << selection_file
+    << " (" << patch.size() << " faces)..." << std::endl;
 
   CGAL::Timer t;
-  //t.start();
+  t.start();
 
-  //PMP::isotropic_remeshing(
-  //  patch,
-  //  target_edge_length,
-  //  m,
-  //  PMP::parameters::number_of_iterations(nb_iter)
-  //  .protect_constraints(false)
-  //  );
-  //t.stop();
-  //std::cout << "Remeshing patch took " << t.time() << std::endl;
+  PMP::isotropic_remeshing(
+    patch,
+    target_edge_length,
+    m,
+    PMP::parameters::number_of_iterations(nb_iter)
+    .protect_constraints(false)
+  );
+  t.stop();
+  std::cout << "Remeshing patch took " << t.time() << std::endl;
 
+  t.reset();
   t.start();
   PMP::isotropic_remeshing(faces(m),
     2.*target_edge_length,
     m,
     PMP::parameters::number_of_iterations(nb_iter)
-    .protect_constraints(true) //they have been refined by previous remeshing
+    .protect_constraints(true) //only borders. they have been refined by previous remeshing
     );
   t.stop();
   std::cout << "Remeshing all took " << t.time() << std::endl;

@@ -676,8 +676,7 @@ namespace internal {
     void equalize_valences()
     {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "Equalize valences...";
-      std::cout.flush(); 
+      std::cout << "Equalize valences..." << std::endl;
 #endif
       unsigned int nb_flips = 0;
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
@@ -699,12 +698,14 @@ namespace internal {
 
         CGAL_assertion_code(Halfedge_status s1 = status(he));
         CGAL_assertion_code(Halfedge_status s1o = status(opposite(he, mesh_)));
-        CGAL_assertion(!incident_to_degenerate(he));
-        CGAL_assertion(!incident_to_degenerate(opposite(he, mesh_)));
 
         CGAL::Euler::flip_edge(he, mesh_);
         ++nb_flips;
-        
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout << "\r\t(" << nb_flips << " flips)";
+        std::cout.flush();
+#endif
         CGAL_assertion_code(Halfedge_status s2 = status(he));
         CGAL_assertion_code(Halfedge_status s2o = status(opposite(he, mesh_)));
         CGAL_assertion(s1 == s2   && s1 == PATCH);
@@ -745,7 +746,7 @@ namespace internal {
       }
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "done. ("<< nb_flips << " flips)" << std::endl;
+      std::cout << "\r\tdone ("<< nb_flips << " flips)" << std::endl;
 #endif
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -893,7 +894,7 @@ namespace internal {
 
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
       {
-        if (!is_on_patch(v) && !is_constrained(v))
+        if (!is_on_patch(v) || is_constrained(v))
           continue;
         //note if v is constrained, it has not moved
 
@@ -1294,12 +1295,15 @@ private:
         halfedge_descriptor h = *(degenerate_faces.begin());
         degenerate_faces.erase(degenerate_faces.begin());
 
+        if (!PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()))
+          //this can happen when flipping h has consequences further in the mesh
+          continue;
+
         //check that opposite is not also degenerate
         if (degenerate_faces.find(opposite(h, mesh_)) != degenerate_faces.end())
           degenerate_faces.erase(opposite(h, mesh_));
 
-        CGAL_assertion(PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()));
-        if (face(h, mesh_) == boost::graph_traits<PM>::null_face())
+        if(is_border(h, mesh_))
           continue;
 
         BOOST_FOREACH(halfedge_descriptor hf,
@@ -1342,7 +1346,6 @@ private:
                 short_edges.insert(typename Bimap::value_type(hf, sqlen));
             }
 
-            std::size_t nb_degen = degenerate_faces.size();
             if (!is_border(hf, mesh_)
               && PMP::is_degenerated(hf, mesh_, vpmap_, GeomTraits()))
               degenerate_faces.insert(hf);
@@ -1350,14 +1353,6 @@ private:
               && PMP::is_degenerated(hfo, mesh_, vpmap_, GeomTraits()))
               degenerate_faces.insert(hfo);
 
-            if (degenerate_faces.size() == nb_degen + 2)
-            {
-              //process has failed to remove degeneracies
-              degenerate_faces.erase(hf);
-              degenerate_faces.erase(hfo);
-              std::cerr << "Warning : possible degeneracies remaining "
-                        << "after the edge collapse step" << std::endl;
-            }
             break;
           }
         }
