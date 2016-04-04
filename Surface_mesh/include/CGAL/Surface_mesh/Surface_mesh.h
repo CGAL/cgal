@@ -2539,13 +2539,13 @@ private: //------------------------------------------------------- private data
     sm.reserve(n,2*f,e);
     P p;
     Vector_3 v;
-    typename Mesh::template Property_map<Vertex_index,int> vcolor;
+    typename Mesh::template Property_map<Vertex_index,CGAL::Color> vcolor;
     typename Mesh::template Property_map<Vertex_index,Vector_3> vnormal;
     bool vcolored = false, v_has_normals = false;
 
     if((off == "COFF") || (off == "CNOFF")){
       bool created;
-      boost::tie(vcolor, created) = sm.template add_property_map<Vertex_index,int>("v:color",0);
+      boost::tie(vcolor, created) = sm.template add_property_map<Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0,0));
       vcolored = true;
     }
     if((off == "NOFF") || (off == "CNOFF")){
@@ -2564,8 +2564,81 @@ private: //------------------------------------------------------- private data
         vnormal[vi] = v;
       }
       if(vcolored){
-        is >> ci;
-        vcolor[vi] = ci;
+       std::string color_info;
+       bool is_float = false;
+       // stores every not commented char until the end of the line
+       char c;
+       bool is_comment = false;
+       do{
+        is.get(c);
+        if(c == '#')
+        {
+         is_comment = true;
+        }
+        if(c == '.' && !is_comment)
+         is_float = true;
+        if(c != '\n' && !is_comment)
+         color_info.append(1,c);
+       }while(c != '\n');
+
+
+       // Counts the number of effective spaces
+
+       //holds the number of spaces in the end of the line
+       int nb_numbers = 0;
+       // helps to keep the number of spaces below 3 if there is only one int in the color info
+       bool prec_is_empty = false;
+
+       for(int i=0; i<static_cast<int>(color_info.length()); i++)
+       {
+        if(color_info.at(i) == ' ')
+        {
+         if(!prec_is_empty)
+          nb_numbers ++;
+         prec_is_empty = true;
+        }
+        else
+        {
+         prec_is_empty = false;
+        }
+       }
+       CGAL::Color color;
+       //colormap
+       if(nb_numbers < 3)
+       {
+        //converts the index into an RGB value
+        //vcolor[vi] = ci;
+       }
+       //extracts RGB value from color_info
+       else
+       {
+
+        std::string rgb[3];
+        int j = 0;
+        for(int i = 1; i<static_cast<int>(color_info.length()); i++)
+        {
+         if(color_info.at(i) != ' ')
+          rgb[j].append(1,color_info.at(i));
+         else
+         {
+          if(j<2)
+           j++;
+          else
+           break;
+         }
+        }
+
+        if(is_float)
+        {
+         color = CGAL::Color(atof(rgb[0].c_str()),atof(rgb[1].c_str()),atof(rgb[2].c_str()) );
+        }
+        else
+        {
+         color = CGAL::Color(atoi(rgb[0].c_str())/255,atoi(rgb[1].c_str())/255,atoi(rgb[2].c_str())/255 );
+        }
+       }
+       //stores the RGB value
+       vcolor[vi] = color;
       }
     }
     std::vector<size_type> vr;

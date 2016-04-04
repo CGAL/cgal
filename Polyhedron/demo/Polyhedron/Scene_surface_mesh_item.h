@@ -67,6 +67,7 @@ public:
 public Q_SLOTS:
   virtual void selection_changed(bool);
 private:
+  mutable bool has_colors;
   SMesh* smesh_;
   void initializeBuffers(CGAL::Three::Viewer_interface *) const;
   std::vector<unsigned int> idx_data_;

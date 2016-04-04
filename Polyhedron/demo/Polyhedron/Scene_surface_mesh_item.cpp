@@ -65,6 +65,7 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
   colormap.insert(8, QColor( 125, 255 ,255));
   colormap.insert(9, QColor( 255, 125 ,255));
   colormap.insert(10,QColor( 255, 255 ,125));
+  has_colors = false;
 
 }
 
@@ -86,12 +87,14 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
       smesh_->add_property_map<face_descriptor, Kernel::Vector_3 >("v:normal").first;
   CGAL::Polygon_mesh_processing::compute_face_normals(*smesh_,fnormals);
 
-  SMesh::Property_map<vertex_descriptor, int> vcolors =
-    smesh_->property_map<vertex_descriptor, int >("v:color").first;
+  SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
+    smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
 
   assert(positions.data() != NULL);
   assert(vnormals.data() != NULL);
-  assert(vcolors.data() != NULL);
+
+  if(smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").second)
+    has_colors = true;
 
 
 
@@ -111,10 +114,14 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
       flat_normals.push_back((gl_data)n.y());
       flat_normals.push_back((gl_data)n.z());
 
-      int i = vcolors[source(hd, *smesh_)];
-      f_colors.push_back(colormap[i].redF());
-      f_colors.push_back(colormap[i].greenF());
-      f_colors.push_back(colormap[i].blueF());
+      if(has_colors)
+      {
+        CGAL::Color c = vcolors[source(hd, *smesh_)];
+       // qDebug()<<c.red()<<", "<<c.green()<<", "<<c.blue();
+        f_colors.push_back(c.red());
+        f_colors.push_back(c.green());
+        f_colors.push_back(c.blue());
+      }
     }
   }
 
@@ -131,14 +138,15 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
   program->enableAttributeArray("vertex");
   program->setAttributeBuffer("vertex",GL_DATA,0,3);
   buffers[Flat_vertices].release();
-
-  buffers[Colors].bind();
-  buffers[Colors].allocate(f_colors.data(),
-                            static_cast<int>(f_colors.size()*sizeof(gl_data)));
-  program->enableAttributeArray("colors");
-  program->setAttributeBuffer("colors",GL_DATA,0,3);
-  buffers[Colors].release();
-
+  if(has_colors)
+  {
+    buffers[Colors].bind();
+    buffers[Colors].allocate(f_colors.data(),
+                             static_cast<int>(f_colors.size()*sizeof(gl_data)));
+    program->enableAttributeArray("colors");
+    program->setAttributeBuffer("colors",GL_DATA,0,3);
+    buffers[Colors].release();
+  }
 
   buffers[Flat_normals].bind();
   buffers[Flat_normals].allocate(flat_normals.data(),
@@ -183,7 +191,7 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
 
 void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
 {
-
+  glShadeModel(GL_SMOOTH);
   if(!are_buffers_filled)
     initializeBuffers(viewer);
   attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
@@ -209,6 +217,8 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
       program->setAttributeValue("is_selected", true);
     else
       program->setAttributeValue("is_selected", false);
+    if(!has_colors)
+      program->setAttributeValue("colors", this->color());
     glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(flat_vertices.size()/3));
     vaos[Flat_facets]->release();
   }
