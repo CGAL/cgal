@@ -1516,7 +1516,7 @@ void MainWindow::on_actionShowHide_triggered()
 {
   Q_FOREACH(QModelIndex index, sceneView->selectionModel()->selectedRows())
   {
-    int i = proxyModel->mapToSource(index).row();
+    int i = scene->getIdFromModelIndex(proxyModel->mapToSource(index));
     CGAL::Three::Scene_item* item = scene->item(i);
     item->setVisible(!item->visible());
     scene->itemChanged(i);
