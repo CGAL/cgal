@@ -194,6 +194,10 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
   {
     vaos[Smooth_facets]->bind();
     program->setAttributeValue("colors", this->color());
+    if(is_selected)
+      program->setAttributeValue("is_selected", true);
+    else
+      program->setAttributeValue("is_selected", false);
     glDrawElements(GL_TRIANGLES, idx_data_.size(),
                    GL_UNSIGNED_INT, idx_data_.data());
     vaos[Smooth_facets]->release();
@@ -201,6 +205,10 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
   else
   {
     vaos[Flat_facets]->bind();
+    if(is_selected)
+      program->setAttributeValue("is_selected", true);
+    else
+      program->setAttributeValue("is_selected", false);
     glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(flat_vertices.size()/3));
     vaos[Flat_facets]->release();
   }
@@ -217,6 +225,10 @@ void Scene_surface_mesh_item::draw_edges(CGAL::Three::Viewer_interface *viewer) 
  program->bind();
  vaos[Edges]->bind();
  program->setAttributeValue("colors", QColor(0,0,0));
+ if(is_selected)
+   program->setAttributeValue("is_selected", true);
+ else
+   program->setAttributeValue("is_selected", false);
  glDrawElements(GL_LINES, idx_edge_data_.size(),
                 GL_UNSIGNED_INT, idx_edge_data_.data());
  vaos[Edges]->release();
@@ -226,6 +238,15 @@ void Scene_surface_mesh_item::draw_edges(CGAL::Three::Viewer_interface *viewer) 
 void Scene_surface_mesh_item::draw_points(CGAL::Three::Viewer_interface *) const
 {
 
+}
+
+void
+Scene_surface_mesh_item::selection_changed(bool p_is_selected)
+{
+  if(p_is_selected != is_selected)
+  {
+    is_selected = p_is_selected;
+  }
 }
 
 bool

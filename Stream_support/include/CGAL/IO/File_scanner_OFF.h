@@ -384,18 +384,18 @@ public:
                 I_Binary_read_big_endian_float32( m_in, fr);
                 I_Binary_read_big_endian_float32( m_in, fg);
                 I_Binary_read_big_endian_float32( m_in, fb);
-                r = unsigned char(fr);
-                g = unsigned char(fg);
-                b = unsigned char(fb);
+                r = (unsigned char)(fr);
+                g = (unsigned char)(fg);
+                b = (unsigned char)(fb);
 
             } else {
              double d;
              m_in >> iformat(d);
-             r = unsigned char(d);
+             r = (unsigned char)(d);
              m_in >> iformat(d);
-             g = unsigned char(d);
+             g = (unsigned char)(d);
              m_in >> iformat(d);
-             b = unsigned char(d);
+             b = (unsigned char)(d);
 
             }
         }

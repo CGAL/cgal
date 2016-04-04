@@ -64,6 +64,8 @@ public:
 
   SMesh* polyhedron() { return smesh_; }
   const SMesh* polyhedron() const { return smesh_; }
+public Q_SLOTS:
+  virtual void selection_changed(bool);
 private:
   SMesh* smesh_;
   void initializeBuffers(CGAL::Three::Viewer_interface *) const;
