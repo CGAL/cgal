@@ -1,3 +1,5 @@
+#ifndef CGAL_NO_DEPRECATED_CODE
+
 #define CGAL_NO_DEPRECATION_WARNINGS 1
 
 #include <CGAL/Combinatorial_map.h>
@@ -71,3 +73,12 @@ int main()
   std::cout<<" Success."<<std::endl;
   return EXIT_SUCCESS;
 }
+
+#else // CGAL_NO_DEPRECATED_CODE
+
+int main()
+{
+  return EXIT_SUCCESS;
+}
+
+#endif // CGAL_NO_DEPRECATED_CODE
