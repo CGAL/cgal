@@ -28,7 +28,6 @@ class SCENE_COMBINATORIAL_MAP_ITEM_EXPORT Scene_combinatorial_map_item
     Q_OBJECT
 public:  
     Scene_combinatorial_map_item(CGAL::Three::Scene_interface*,void* ad_A=NULL);
-    ~Scene_combinatorial_map_item();
 
     Scene_combinatorial_map_item* clone() const;
     // Function to override the context menu
@@ -64,7 +63,7 @@ public:
         return *m_combinatorial_map;
     }
 
-    Combinatorial_map_3* m_combinatorial_map;
+    boost::shared_ptr<Combinatorial_map_3> m_combinatorial_map;
 
 private:
     Kernel::Vector_3 compute_face_normal(Combinatorial_map_3::Dart_const_handle adart) const;
