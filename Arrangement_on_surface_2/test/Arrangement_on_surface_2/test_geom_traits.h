@@ -58,7 +58,6 @@
 //#include <CGAL/Arr_rational_arc_traits_2.h>
 #include <CGAL/Arr_rational_function_traits_2.h>
 
-
 #elif TEST_GEOM_TRAITS == ALGEBRAIC_GEOM_TRAITS
 #include <CGAL/Arr_algebraic_segment_traits_2.h>
 
@@ -276,6 +275,10 @@ typedef Base_geom_traits::X_monotone_subcurve_2         X_monotone_subcurve_2;
 
 
 #define GEOM_TRAITS_TYPE "polycurve_bezier"
+
+#elif TEST_GEOM_TRAITS == FLAT_TORUS_GEOM_TRAITS
+typedef CGAL::Arr_flat_torus_traits_2<Kernel>                 Base_geom_traits;
+#define GEOM_TRAITS_TYPE "Arc on flat torus"
 
 #else
 #error No geometry traits (GEOM_TRAITS) specified!

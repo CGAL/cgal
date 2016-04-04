@@ -1,0 +1,6 @@
+are_mergeable 3 29 TRUE
+are_mergeable 29 3 TRUE
+are_mergeable 22 28 TRUE
+are_mergeable 28 22 TRUE
+are_mergeable 3 26 FALSE  # underlying lines not equal
+are_mergeable 36 29 FALSE # no common endpoint

@@ -58,6 +58,7 @@ FLAT_TORUS_GEOM_TRAITS=17
 PLANAR_BOUNDED_TOPOL_TRAITS=0
 PLANAR_UNBOUNDED_TOPOL_TRAITS=1
 SPHERICAL_TOPOL_TRAITS=2
+TOROIDAL_TOPOL_TRAITS=3
 
 DOUBLE_NT=0
 MP_FLOAT_NT=1
@@ -1507,6 +1508,42 @@ test_spherical_arc_traits()
 }
 
 #---------------------------------------------------------------------#
+# flat torus traits
+#---------------------------------------------------------------------#
+test_flat_torus_traits()
+{
+  local nt=$CGAL_GMPQ_NT;
+  local kernel=$CARTESIAN_KERNEL;
+  local geom_traits=$FLAT_TORUS_GEOM_TRAITS;
+  local flags="-DTEST_NT=$nt -DTEST_KERNEL=$kernel -DTEST_GEOM_TRAITS=$geom_traits";
+
+  compile_test_with_flags test_traits flat_torus "$flags"
+  if [ -n "${SUCCESS}" ] ; then
+    # execute_commands_old_structure flat_torus flat_torus_traits \
+    #   COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT INTERSECT \
+    #   CONSTRUCTOR \
+    #   COMPARE MAKE_X_MONOTONE SPLIT MERGE ASSERTIONS ARE_MERGEABLE
+
+    execute_commands_new_structure flat_torus flat_torus_traits \
+	COMPARE VERTEX IS_VERTICAL \
+        COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT COMPARE_Y_AT_X_RIGHT \
+	MAKE_X_MONOTONE \
+        INTERSECT \
+	SPLIT ARE_MERGEABLE MERGE \
+	PARAMETER_SPACE_X PARAMETER_SPACE_Y \
+	COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY \
+	COMPARE_Y_NEAR_BOUNDARY
+
+    # run_trapped_test test_traits \
+    #   data/flat_torus/compare.pt data/flat_torus/compare.xcv \
+    #   data/empty.zero data/flat_torus/compare flat_torus_traits
+  else
+    echo "   ERROR:    not executed   test_traits flat_torus_traits" >> $ERRORFILE
+  fi
+  clean_tests
+}
+
+#---------------------------------------------------------------------#
 # rational arc traits
 #---------------------------------------------------------------------#
 test_rational_arc_traits()
@@ -1656,6 +1693,7 @@ test_circle_segments_traits
 test_bezier_traits
 
 test_spherical_arc_traits
+test_flat_torus_traits
 
 test_rational_arc_traits
 
@@ -1692,7 +1730,7 @@ test_batched_point_location_spherical_arcs
 
 test_vertical_decomposition_segments
 test_vertical_decomposition_linear
-# test_vertical_decomposition_spherical_arcs
+test_vertical_decomposition_spherical_arcs
 
 compile_and_run test_dual
 compile_and_run test_do_intersect

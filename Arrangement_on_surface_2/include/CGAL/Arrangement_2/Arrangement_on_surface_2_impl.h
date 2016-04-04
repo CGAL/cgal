@@ -2274,6 +2274,8 @@ _insert_in_face_interior(DFace* f,
     std::cout << "v2->point: " << v2->point() << std::endl;
 #endif
 
+  CGAL_precondition(0 != f);
+
   // Notify the observers that we are about to create a new edge.
   _notify_before_create_edge(cv, Vertex_handle(v1), Vertex_handle(v2));
 
