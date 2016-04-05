@@ -26,7 +26,7 @@
 #define CGAL_PERIODIC_4_CONSTRUCT_HYPERBOLIC_POINT_2_H
 
 #include <CGAL/Square_root_2_field.h>
-#include <CGAL/Hyperbolic_octagon_group.h>
+#include <CGAL/Hyperbolic_octagon_translation.h>
 
 namespace CGAL
 {
@@ -37,15 +37,15 @@ class Periodic_4_construct_hyperbolic_point_2 : public Construct_point_2_base
 
 public:
   typedef typename Kernel::Point_2            Point;
-  typedef HyperbolicOctagonGroup              Offset;
+  typedef std::vector<int>                    Word;
   typedef typename Kernel::Circle_2           Circle_2;
 
   typedef Point                               result_type;
 
   Periodic_4_construct_hyperbolic_point_2(const Circle_2 & dom) : _dom(dom) { }
 
-  Point operator() ( const Point& p, const Offset& o ) const {
-    pair<double, double> pt = o.apply(to_double(p.x()), to_double(p.y()));
+  Point operator() ( const Point& p, const Word& w ) const {
+    pair<double, double> pt = w.apply(to_double(p.x()), to_double(p.y()));
     Point r = Point(pt.first, pt.second);
 
     // Do we need this? I (iiordano) think it's a good idea...
