@@ -185,6 +185,7 @@ public:
   Scene_polyhedron_selection_item() 
     : Scene_polyhedron_item_decorator(NULL, false)
     {
+        is_active = true;
         original_sel_mode = static_cast<Active_handle::Type>(0);
         this ->operation_mode = -1;
         for(int i=0; i<6; i++)
@@ -209,6 +210,7 @@ public:
   Scene_polyhedron_selection_item(Scene_polyhedron_item* poly_item, QMainWindow* mw) 
     : Scene_polyhedron_item_decorator(NULL, false)
     {
+        is_active = true;
         original_sel_mode = static_cast<Active_handle::Type>(0);
         this ->operation_mode = -1;
         nb_facets = 0;
@@ -236,6 +238,7 @@ public:
    ~Scene_polyhedron_selection_item()
     {
     }
+
   void inverse_selection();
 
   void setPathSelection(bool b) {
@@ -249,6 +252,7 @@ public:
     }
   }
 
+  void setActive(bool b){ is_active = b; }
 protected: 
   void init(Scene_polyhedron_item* poly_item, QMainWindow* mw)
   {
@@ -264,6 +268,8 @@ protected:
 
     connect(&k_ring_selector, SIGNAL(endSelection()), this,SLOT(endSelection()));
     connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
+    connect(&k_ring_selector, SIGNAL(selection_request(QEvent*)), this,
+      SIGNAL(selection_request(QEvent*)));
     k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
     connect(&k_ring_selector, SIGNAL(resetIsTreated()), this, SLOT(resetIsTreated()));
 
@@ -466,6 +472,10 @@ public:
     v->update();
     tempInstructions("Path added to selection.",
                      "Select two vertices to create the path between them. (1/2)");
+
+  void processEvent(QEvent *event)
+  {
+    k_ring_selector.processEvent(event);
   }
   // select all of `active_handle_type`(vertex, facet or edge)
   void select_all() {
@@ -683,6 +693,8 @@ public:
   template <class Handle>
   void expand_selection(unsigned int steps)
   {
+    if(!is_active)
+      return;
     typedef Selection_traits<Handle, Scene_polyhedron_selection_item> Tr;
     Tr tr(this);
 
@@ -838,7 +850,7 @@ public:
 Q_SIGNALS:
   void updateInstructions(QString);
   void simplicesSelected(CGAL::Three::Scene_item*);
-
+  void selection_request(QEvent*);
 public Q_SLOTS:
   void update_poly()
   {
@@ -1027,6 +1039,7 @@ public:
   QColor vertex_color, facet_color, edge_color;
 
 private:
+
   struct vertex_on_path
   {
     Vertex_handle vertex;
@@ -1069,6 +1082,7 @@ private:
   mutable std::size_t nb_fixed_points;
 
   mutable QOpenGLShaderProgram *program;
+  bool is_active;
 
   using CGAL::Three::Scene_item::initializeBuffers;
   void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;

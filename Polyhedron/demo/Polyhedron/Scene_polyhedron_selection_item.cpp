@@ -751,6 +751,8 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
     case -2:
     case -1:
     {
+      if(!is_active)
+        return false;
       if(!is_path_selecting)
       {
         return treat_classic_selection(selection);

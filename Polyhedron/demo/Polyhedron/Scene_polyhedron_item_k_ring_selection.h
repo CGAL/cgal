@@ -96,8 +96,22 @@ public Q_SLOTS:
       process_selection( edge(static_cast<Polyhedron::Halfedge*>(void_ptr)->opposite()->opposite(), *poly_item->polyhedron()) );
     updateIsTreated();
   }
+  void processEvent(QEvent* event)
+  {
+    // paint with mouse move event
+    QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    qglviewer::Camera* camera = viewer->camera();
 
-
+    bool found = false;
+    const qglviewer::Vec& point = camera->pointUnderPixel(mouse_event->pos(), found);
+    if(found)
+    {
+      const qglviewer::Vec& orig = camera->position();
+      const qglviewer::Vec& dir = point - orig;
+      poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
+    }
+  }
 Q_SIGNALS:
   void selected(const std::set<Polyhedron::Vertex_handle>&);
   void selected(const std::set<Polyhedron::Facet_handle>&);
@@ -105,6 +119,7 @@ Q_SIGNALS:
   void toogle_insert(const bool);
   void endSelection();
   void resetIsTreated();
+  void selection_request(QEvent *);
 
 protected:
 
@@ -247,6 +262,7 @@ protected:
         viewer->setFocus();
         return false;
       }
+      Q_EMIT selection_request(event);
       // paint with mouse move event
       QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
