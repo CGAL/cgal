@@ -4368,10 +4368,10 @@ public:
 			     const Weighted_point_3 & r,
 			     const Weighted_point_3 & s) const
     {
-      return power_testC3(p.x(), p.y(), p.z(), p.weight(),
-                          q.x(), q.y(), q.z(), q.weight(),
-                          r.x(), r.y(), r.z(), r.weight(),
-                          s.x(), s.y(), s.z(), s.weight());
+      return power_testH3(p.hx(), p.hy(), p.hz(), p.weight(),
+                          q.hx(), q.hy(), q.hz(), q.weight(),
+                          r.hx(), r.hy(), r.hz(), r.weight(),
+                          s.hx(), s.hy(), s.hz(), s.weight());
     }
 
   Oriented_side operator() ( const Weighted_point_3 & p,
@@ -4387,6 +4387,50 @@ public:
 			     const Weighted_point_3 & q) const
     {
       return power_test_3(p.weight(),q.weight());
+    }
+};
+
+
+template < typename K >
+class Power_side_of_power_circle_2
+{
+public:
+  typedef typename K::Weighted_point_2         Weighted_point_2;
+  typedef typename K::Oriented_side            Oriented_side;
+
+  typedef Oriented_side    result_type;
+
+  Oriented_side operator() ( const Weighted_point_2 & p,
+			     const Weighted_point_2 & q,
+			     const Weighted_point_2 & r,
+			     const Weighted_point_2 & t) const
+    {
+      //CGAL_kernel_precondition( ! collinear(p, q, r) );
+      return power_testH2(p.hx(), p.hy(), p.hw(), p.weight(),
+		      q.hx(), q.hy(), q.hw(), q.weight(),
+		      r.hx(), r.hy(), r.hw(), r.weight(),
+		      t.hx(), t.hy(), t.hw(), t.weight());
+    }
+
+  Oriented_side operator() ( const Weighted_point_2 & p,
+			     const Weighted_point_2 & q,
+			     const Weighted_point_2 & t) const
+    {
+      //CGAL_kernel_precondition( collinear(p, q, r) );
+      //CGAL_kernel_precondition( p.point() != q.point() );
+      return power_testH2(p.hx(), p.hy(), p.hw(), p.weight(),
+                        q.hx(), q.hy(), q.hw(), q.weight(),
+                        t.hx(), t.hy(), t.hw(), t.weight());
+    }  
+
+  Oriented_side operator() ( const Weighted_point_2 & p,
+			     const Weighted_point_2 & t) const
+    {
+      //CGAL_kernel_precondition( p.point() == r.point() );
+      Comparison_result r = CGAL::compare(p.weight(), t.weight());
+      if(r == LARGER)    return ON_NEGATIVE_SIDE;
+      else if (r == SMALLER) return ON_POSITIVE_SIDE;
+      return ON_ORIENTED_BOUNDARY;
     }
 };
 

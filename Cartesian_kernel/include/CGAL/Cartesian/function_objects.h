@@ -4088,6 +4088,48 @@ public:
 };
 
 
+template < typename K >
+class Power_side_of_power_circle_2
+{
+public:
+  typedef typename K::Weighted_point_2         Weighted_point_2;
+  typedef typename K::Oriented_side            Oriented_side;
+
+  typedef Oriented_side    result_type;
+
+  Oriented_side operator() ( const Weighted_point_2 & p,
+			     const Weighted_point_2 & q,
+			     const Weighted_point_2 & r,
+			     const Weighted_point_2 & t) const
+    {
+      //CGAL_kernel_precondition( ! collinear(p, q, r) );
+      return power_testC2(p.x(), p.y(), p.weight(),
+                          q.x(), q.y(), q.weight(),
+                          r.x(), r.y(), r.weight(),
+                          t.x(), t.y(), t.weight());
+    }
+
+  Oriented_side operator() ( const Weighted_point_2 & p,
+			     const Weighted_point_2 & q,
+			     const Weighted_point_2 & t) const
+    {
+      //CGAL_kernel_precondition( collinear(p, q, r) );
+      //CGAL_kernel_precondition( p.point() != q.point() );
+      return power_testC2(p.x(), p.y(), p.weight(),
+                          q.x(), q.y(), q.weight(),
+                          t.x(), t.y(), t.weight());
+    }  
+
+  Oriented_side operator() ( const Weighted_point_2 & p,
+			     const Weighted_point_2 & t) const
+    {
+      //CGAL_kernel_precondition( p.point() == r.point() );
+      Comparison_result r = CGAL::compare(p.weight(), t.weight());
+      if(r == LARGER)    return ON_NEGATIVE_SIDE;
+      else if (r == SMALLER) return ON_POSITIVE_SIDE;
+      return ON_ORIENTED_BOUNDARY;
+    }
+};
 
   template <typename K>
   class Oriented_side_2
