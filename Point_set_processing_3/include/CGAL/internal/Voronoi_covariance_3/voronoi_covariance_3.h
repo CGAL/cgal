@@ -148,6 +148,8 @@ namespace CGAL {
                     for(typename std::list<Vertex_handle>::iterator it = vertices.begin();
                         it != vertices.end(); ++it)
                     {
+                        if (dt.is_infinite(*it))
+                          continue;
                         Vector p = ((*it)->point() - v->point())/2;
                         planes.push_back (Plane(CGAL::ORIGIN+p, p));
                     }
