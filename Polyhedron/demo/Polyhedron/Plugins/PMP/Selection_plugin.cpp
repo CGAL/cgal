@@ -81,7 +81,8 @@ public:
 
     ui_widget.setupUi(dock_widget);
     add_dock_widget(dock_widget);
-
+    connect(dock_widget, SIGNAL(visibilityChanged(bool)),
+            this, SLOT(setItemsActive(bool)));
     connect(ui_widget.Select_all_button,  SIGNAL(clicked()), this, SLOT(on_Select_all_button_clicked()));
     connect(ui_widget.Clear_button,  SIGNAL(clicked()), this, SLOT(on_Clear_button_clicked()));
     connect(ui_widget.Clear_all_button,  SIGNAL(clicked()), this, SLOT(on_Clear_all_button_clicked()));
@@ -112,7 +113,59 @@ public:
     dock_widget->hide();
   }
 public Q_SLOTS:
-  void selection_action() { 
+  void setItemsActive(bool b)
+  {
+    for(int i=0; i<scene->numberOfEntries(); i++)
+    {
+      Scene_polyhedron_selection_item* sel_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(i));
+      if(sel_item)
+        sel_item->setActive(b);
+    }
+  }
+  //This slot is called when a shift+click is got by a k-ring selector.
+  /*
+   * It checks if the selected poly_item has an associated selection_item.
+   * If not, it creates one and gives it the QEvent to process.
+   */
+  void checkSelectionItem(QEvent* event)
+  {
+    QGLViewer* v = *QGLViewer::QGLViewerPool().begin();
+    CGAL::Three::Viewer_interface* viewer = dynamic_cast<CGAL::Three::Viewer_interface*>(v);
+    //If the dock widget is not visible, re-bind the viewer's selection and stop here.
+    if(!dock_widget->isVisible())
+    {
+      if(!viewer)
+          return;
+        viewer->setBindingSelect();
+      return;
+    }
+    //else unbind the viewer's selection.
+    viewer->setNoBinding();
+    int item_id = scene->mainSelectionIndex();
+    Scene_polyhedron_item* poly_item = qobject_cast<Scene_polyhedron_item*>(scene->item(item_id));
+    if(!poly_item)
+    {
+      Scene_polyhedron_selection_item* selection_item = qobject_cast<Scene_polyhedron_selection_item*>(scene->item(item_id));
+      if(!selection_item)
+        return;
+      poly_item = selection_item->polyhedron_item();
+    }
+    if(selection_item_map.find(poly_item) != selection_item_map.end())
+    {
+     selection_item_map.find(poly_item)->second->processEvent(event);
+    }
+    else{
+      Scene_polyhedron_selection_item* new_item = new Scene_polyhedron_selection_item(poly_item, mw);
+      int item_id = scene->addItem(new_item);
+      QObject* scene_ptr = dynamic_cast<QObject*>(scene);
+      if (scene_ptr)
+        connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
+      connect(new_item,SIGNAL(selection_request(QEvent*)), this, SLOT(checkSelectionItem(QEvent* )));
+      scene->setSelectedItem(item_id);
+      new_item->processEvent(event);
+    }
+  }
+  void selection_action() {
     dock_widget->show();
     dock_widget->raise();
     if(scene->numberOfEntries() < 2) {
@@ -123,6 +176,7 @@ public Q_SLOTS:
       QObject* scene_ptr = dynamic_cast<QObject*>(scene);
       if (scene_ptr)
         connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
+      connect(new_item,SIGNAL(selection_request(QEvent*)), this, SLOT(checkSelectionItem(QEvent* )));
       scene->setSelectedItem(item_id);
     }
   }
@@ -203,6 +257,7 @@ public Q_SLOTS:
     QObject* scene_ptr = dynamic_cast<QObject*>(scene);
     if (scene_ptr)
       connect(new_item,SIGNAL(simplicesSelected(CGAL::Three::Scene_item*)), scene_ptr, SLOT(setSelectedItem(CGAL::Three::Scene_item*)));
+      connect(new_item,SIGNAL(selection_request(QEvent*)), this, SLOT(checkSelectionItem(QEvent* )));
     scene->setSelectedItem(item_id);
   }
   void on_Selection_type_combo_box_changed(int index) {

@@ -89,13 +89,29 @@ public Q_SLOTS:
     if(active_handle_type != Active_handle::EDGE) { return; }
     process_selection( edge(static_cast<Polyhedron::Halfedge*>(void_ptr)->opposite()->opposite(), *poly_item->polyhedron()) );
   }
+  void processEvent(QEvent* event)
+  {
+    // paint with mouse move event
+    QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    qglviewer::Camera* camera = viewer->camera();
 
+    bool found = false;
+    const qglviewer::Vec& point = camera->pointUnderPixel(mouse_event->pos(), found);
+    if(found)
+    {
+      const qglviewer::Vec& orig = camera->position();
+      const qglviewer::Vec& dir = point - orig;
+      poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
+    }
+  }
 Q_SIGNALS:
   void selected(const std::set<Polyhedron::Vertex_handle>&);
   void selected(const std::set<Polyhedron::Facet_handle>&);
   void selected(const std::set<edge_descriptor>&);
   void toogle_insert(const bool);
   void endSelection();
+  void selection_request(QEvent *);
 
 protected:
 
@@ -169,6 +185,7 @@ protected:
   }
 
 
+
   bool eventFilter(QObject* /*target*/, QEvent *event)
   {
     // This filter is both filtering events from 'viewer' and 'main window'
@@ -215,19 +232,9 @@ protected:
              && static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton))
       && (state.shift_pressing && state.left_button_pressing) )
     {
-      // paint with mouse move event
-      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-      qglviewer::Camera* camera = viewer->camera();
+      Q_EMIT selection_request(event);
+      //processEvent(event);
 
-      bool found = false;
-      const qglviewer::Vec& point = camera->pointUnderPixel(mouse_event->pos(), found);
-      if(found)
-      {
-        const qglviewer::Vec& orig = camera->position();
-        const qglviewer::Vec& dir = point - orig;
-        poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
-      }
     }//end MouseMove
     return false;
   }
