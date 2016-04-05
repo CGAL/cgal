@@ -25,7 +25,7 @@
 
 #include <CGAL/property_map.h>
 #include <CGAL/Real_timer.h>
-#include <CGAl/Random.h>
+#include <CGAL/Random.h>
 
 #include <iterator>
 #include <iostream>
