@@ -112,6 +112,8 @@ public:
   void initializeGL();
   /*! Is called by Viewer::draw(). Is deprecated and does nothing.*/
   void draw();
+  /*! Sets the screen coordinates of the currently picked point.*/
+  void setPickedPixel(const QPoint &p) {picked_pixel = p;}
   /*! Is deprecated and does nothing.*/
   void drawWithNames();
   /*! Is called by Viewer::draw(Viewer_interface*). Calls draw_aux(false, viewer).
@@ -274,6 +276,7 @@ private:
   //!Index of the item_B.
   int item_B;
   bool picked;
+  QPoint picked_pixel;
   bool gl_init;
   static GlSplat::SplatRenderer* ms_splatting;
   static int ms_splattingCounter;

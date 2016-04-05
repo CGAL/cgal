@@ -114,7 +114,7 @@ protected:
   * the drawing system changed to use shaders, and these need this value. pickMatrix_ is passed to the shaders in
   * Scene_item::attrib_buffers(CGAL::Three::Viewer_interface* viewer, int program_name).*/
   void pickMatrix(GLdouble x, GLdouble y, GLdouble width, GLdouble height,
-                  GLint viewport[4]);
+                  GLint viewport[4]) const;
   /*!
    * \brief makeArrow creates an arrow and stores it in a struct of vectors.
    * \param R the radius of the arrow.

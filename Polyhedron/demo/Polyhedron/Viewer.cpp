@@ -237,6 +237,7 @@ void Viewer::mousePressEvent(QMouseEvent* event)
   if(event->button() == Qt::RightButton &&
      event->modifiers().testFlag(Qt::ShiftModifier)) 
   {
+
     select(event->pos());
     requestContextMenu(event->globalPos());
     event->accept();
@@ -435,7 +436,6 @@ void Viewer::attrib_buffers(int program_name) const {
         mv_mat.data()[i] = GLfloat(d_mat[i]);
     for (int i=0; i<16; ++i)
         pick_mat.data()[i] = this->pickMatrix_[i];
-
     mvp_mat = pick_mat * mvp_mat;
 
     const_cast<Viewer*>(this)->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE,
@@ -546,7 +546,7 @@ void Viewer::attrib_buffers(int program_name) const {
 
 
 void Viewer::pickMatrix(GLdouble x, GLdouble y, GLdouble width, GLdouble height,
-GLint viewport[4])
+GLint viewport[4]) const
 {
  //GLfloat m[16];
  GLfloat sx, sy;
@@ -575,21 +575,25 @@ GLint viewport[4])
   M(3, 2) = 0.0;
   M(3, 3) = 1.0;
  #undef M
-
- //pickMatrix_[i] = m[i];
 }
 void Viewer::beginSelection(const QPoint &point)
 {
-    QGLViewer::beginSelection(point);
+   // QGLViewer::beginSelection(point);
+    makeCurrent();
     //set the picking matrix to allow the picking
     static GLint viewport[4];
     camera()->getViewport(viewport);
-    pickMatrix(point.x(), point.y(), selectRegionWidth(), selectRegionHeight(), viewport);
+    pickMatrix(point.x(), point.y(), 1, 1, viewport);
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(point.x(), point.y(), 1, 1);
+    d->scene->setPickedPixel(point);
 
 }
-void Viewer::endSelection(const QPoint& point)
+void Viewer::endSelection(const QPoint&)
 {
-  QGLViewer::endSelection(point);
+    //QGLViewer::endSelection(point);
+    glDisable(GL_SCISSOR_TEST);
+
    //set the pick matrix to Identity
     for(int i=0; i<16; i++)
         pickMatrix_[i]=0;
