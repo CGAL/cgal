@@ -14,8 +14,8 @@
 //
 // Author(s)     : Mikhail Bogdanov
 
-#ifndef CGAL_HYPERBOLIC_OCTAGON_GROUP_H
-#define CGAL_HYPERBOLIC_OCTAGON_GROUP_H
+#ifndef CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_MATRIX_H
+#define CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_MATRIX_H
 
 
 #include <complex>
@@ -30,22 +30,25 @@
 
 
 template<class Square_root_2_field>
-class Hyperbolic_octagon_group
+class Hyperbolic_octagon_translation_matrix_base
 {
 
 public:
   static Square_root_2_field factor;    // The multiplicative factor present in the general formula: sqrt(2) - 1
 
-  typedef Hyperbolic_octagon_group<Square_root_2_field>   Self;  
-  typedef complex<Square_root_2_field>                    Matrix_element;
+  typedef Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>   Self;  
+  typedef complex<Square_root_2_field>                                      Matrix_element;
 
   Matrix_element  A;
   Matrix_element  B;
   string          label;  
 
-  Hyperbolic_octagon_group(const Matrix_element& A_, const Matrix_element& B_, 
+  Hyperbolic_octagon_translation_matrix_base(const Matrix_element& A_, const Matrix_element& B_, 
     const string& label_ = string("") ) :
-  A(A_), B(B_), label(label_) {}
+  A( A_ ), B( B_ ), label( label_ ) {}
+
+  Hyperbolic_octagon_translation_matrix_base() :
+  A( Matrix_element(1,0) ), B( Matrix_element(0,0) ), label( string("") ) {}
 
   string merge_labels(const Self& rh) const
   {
@@ -64,10 +67,13 @@ public:
     string inv_label;
     for(long i = label.size() - 1; i >= 0; i--) {
       if(label[i] >= 'a' && label[i] <= 'd') {
+        inv_label.push_back('\\');
+        inv_label.push_back('b');
+        inv_label.push_back('a');
+        inv_label.push_back('r');
+        inv_label.push_back('{');
         inv_label.push_back(label[i]);
-        inv_label.push_back('^');
-        inv_label.push_back('-');
-        inv_label.push_back('1');
+        inv_label.push_back('}');
       }
       if(label[i] == '*') {
         inv_label.push_back('*');
@@ -84,7 +90,7 @@ public:
   }
 
   // rotation \pi/4
-  Hyperbolic_octagon_group rotate() const
+  Hyperbolic_octagon_translation_matrix_base rotate() const
   {
     Square_root_2_field B1 = real(B);
     Square_root_2_field B2 = imag(B);
@@ -102,7 +108,7 @@ public:
     BB2.l = BB2.l/2;
     BB2.r = BB2.r/2;
 
-    return Hyperbolic_octagon_group(A, Matrix_element(BB1, BB2)); 
+    return Hyperbolic_octagon_translation_matrix_base(A, Matrix_element(BB1, BB2)); 
   }
 
   Square_root_2_field trace() const 
@@ -156,7 +162,7 @@ public:
 
 
 template<class Square_root_2_field>
-Square_root_2_field Hyperbolic_octagon_group<Square_root_2_field>::factor = Square_root_2_field(-1, 1); /*Square_root_2_field(-1, 1);*/
+Square_root_2_field Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>::factor = Square_root_2_field(-1, 1); 
 
 // just to give an order(ing)
 template<class Int>
@@ -178,8 +184,8 @@ bool operator < (const complex<Square_root_2_field<Int> >& lh,
 
 // just to order octagon_matrices 
 template<class Square_root_2_field>
-bool operator < (const Hyperbolic_octagon_group<Square_root_2_field>& lh, 
-  const Hyperbolic_octagon_group<Square_root_2_field>& rh)
+bool operator < (const Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>& lh, 
+  const Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>& rh)
 {
   if (lh.A < rh.A) {
     return true;
@@ -195,24 +201,23 @@ bool operator < (const Hyperbolic_octagon_group<Square_root_2_field>& lh,
 }
 
 template<class Square_root_2_field>
-bool operator == (const Hyperbolic_octagon_group<Square_root_2_field>& lh, 
-  const Hyperbolic_octagon_group<Square_root_2_field>& rh)
+bool operator == (const Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>& lh, 
+  const Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>& rh)
 {
   return (lh.A == rh.A && lh.B == rh.B);
 }
 
 template<class Square_root_2_field>
-ostream& operator<<(ostream& os, const Hyperbolic_octagon_group<Square_root_2_field>& m)
+ostream& operator<<(ostream& os, const Hyperbolic_octagon_translation_matrix_base<Square_root_2_field>& m)
 {
   os << m.A << " " << m.B;
   return os;
 }
 
-typedef long long                                   ll;
-typedef Square_root_2_field<ll>                     Sqrt_field;
-typedef Hyperbolic_octagon_group<Sqrt_field>        Octagon_group;
-typedef pair<Octagon_group, int>         Octagon_group_with_index;
-typedef Octagon_group::Matrix_element    Element;
+typedef long long                                                     ll;
+typedef Square_root_2_field<ll>                                       Sqrt_field;
+typedef Hyperbolic_octagon_translation_matrix_base<Sqrt_field>        Hyperbolic_octagon_translation_matrix;
+typedef Hyperbolic_octagon_translation_matrix::Matrix_element         Matrix_element;
 
 
 enum Direction {
@@ -229,30 +234,28 @@ enum Direction {
 
 
 
-void get_generators(vector<Octagon_group>& gens)
+void get_generators(vector<Hyperbolic_octagon_translation_matrix>& gens)
 {
   // This is a in the matrix, equal to sqrt(2) + 1
-  Element A = Element(Sqrt_field(1, 1), Sqrt_field(0, 0));
+  Matrix_element A = Matrix_element(Sqrt_field(1, 1), Sqrt_field(0, 0));
 
-  // This vector holds all other elements, results of the exponentials for various k
-  vector<Element> B(8, Element(Sqrt_field(0, 0), Sqrt_field(0, 0)));
+  // This vector holds all other Matrix_elements, results of the exponentials for various k
+  vector<Matrix_element> B(8, Matrix_element(Sqrt_field(0, 0), Sqrt_field(0, 0)));
 
   // Corrected ordering (initial ordering is present in backup file)
-  
-  /* This here produces the correct ordering, and identity is given by g[G_A]*g[G_B]*g[G_C]*g[G_D]*g[G_InvA]*g[G_InvB]*g[G_InvC]*g[G_InvD] */
-  B[DIRECTION_A]     = A * Element(Sqrt_field( 0,  1), Sqrt_field( 0,  0));
-  B[DIRECTION_B]     = A * Element(Sqrt_field(-1,  0), Sqrt_field(-1,  0));
-  B[DIRECTION_C]     = A * Element(Sqrt_field( 0,  0), Sqrt_field( 0,  1));
-  B[DIRECTION_D]     = A * Element(Sqrt_field( 1,  0), Sqrt_field(-1,  0));
-  B[DIRECTION_A_BAR] = A * Element(Sqrt_field( 0, -1), Sqrt_field( 0,  0));
-  B[DIRECTION_B_BAR] = A * Element(Sqrt_field( 1,  0), Sqrt_field( 1,  0));
-  B[DIRECTION_C_BAR] = A * Element(Sqrt_field( 0,  0), Sqrt_field( 0, -1));
-  B[DIRECTION_D_BAR] = A * Element(Sqrt_field(-1,  0), Sqrt_field( 1,  0));
+  B[DIRECTION_A]     = A * Matrix_element(Sqrt_field( 0,  1), Sqrt_field( 0,  0));
+  B[DIRECTION_B]     = A * Matrix_element(Sqrt_field(-1,  0), Sqrt_field(-1,  0));
+  B[DIRECTION_C]     = A * Matrix_element(Sqrt_field( 0,  0), Sqrt_field( 0,  1));
+  B[DIRECTION_D]     = A * Matrix_element(Sqrt_field( 1,  0), Sqrt_field(-1,  0));
+  B[DIRECTION_A_BAR] = A * Matrix_element(Sqrt_field( 0, -1), Sqrt_field( 0,  0));
+  B[DIRECTION_B_BAR] = A * Matrix_element(Sqrt_field( 1,  0), Sqrt_field( 1,  0));
+  B[DIRECTION_C_BAR] = A * Matrix_element(Sqrt_field( 0,  0), Sqrt_field( 0, -1));
+  B[DIRECTION_D_BAR] = A * Matrix_element(Sqrt_field(-1,  0), Sqrt_field( 1,  0));
   
   string labels[8] = {string("a"), string("\\bar{b}"), string("c"), string("\\bar{d}"),
   string("\\bar{a}"), string("b"), string("\\bar{c}"), string("d")};
   for(int i = 0; i < 8; i++) {
-    gens.push_back(Octagon_group(A, B[i], labels[i]));
+    gens.push_back(Hyperbolic_octagon_translation_matrix(A, B[i], labels[i]));
   }
 }
 
@@ -264,38 +267,38 @@ void get_generators(vector<Octagon_group>& gens)
 
 
 
-  // Check whether two elements of the group are inverse of each other
-  bool Are_inverse(Octagon_group_with_index x, Octagon_group_with_index y) {
-    int idx = x.second % 4;
-    int idy = y.second % 4;
-    bool r = ((idx == idy) && (x.second != y.second));
+  // Check whether two Matrix_elements of the group are inverse of each other
+  bool Dehn_are_inverse(int x, int y) {
+    int idx = x % 4;
+    int idy = y % 4;
+    bool r = ((idx == idy) && (x != y));
     return r;
   }
 
 
 
-  // Recursively eliminate neighboring inverse elements present in the word
-  void Simplify_word(vector<Octagon_group_with_index>& w) {
-    vector<Octagon_group_with_index> t;
+  // Recursively eliminate neighboring inverse Matrix_elements present in the word
+  void Dehn_simplify_adjacent_inverses(vector<int>& w) {
+    vector<int> t;
     bool reduced = false;
     int N = w.size();
-    if (N > 0) {
+    if (N > 1) {
       for (int i = 0; i < N-1; i++) {
-        if (!Are_inverse(w[i], w[i+1])) {
+        if (!Dehn_are_inverse(w[i], w[i+1])) {
           t.push_back(w[i]);
         } else {
           reduced = true;
           i++;
         }
       }
-      if (!Are_inverse(w[N-2], w[N-1])) {
+      if (!Dehn_are_inverse(w[N-2], w[N-1])) {
         t.push_back(w[N-1]);
       } else {
         reduced = true;
       }
     
       if (reduced) {
-        Simplify_word(t);
+        Dehn_simplify_adjacent_inverses(t);
       }
 
       w = t;
@@ -303,25 +306,31 @@ void get_generators(vector<Octagon_group>& gens)
   }
 
 
-  // Checks whether y is the next element from x
-  bool Is_next(Octagon_group_with_index x, Octagon_group_with_index y) {
-    return (((y.second + 5) % 8) == x.second);
+  // Computes and returns the next index in the identity Matrix_element chain
+  int Dehn_next_identity_index(int idx) {
+    return ( (idx + 5) % 8 );
   }
 
 
-  // Given a word, find the largest subsequence of consecutive elements it contains.
+  // Checks whether y is the next Matrix_element from x
+  bool Dehn_is_next_identity_index(int x, int y) {
+    return ( Dehn_next_identity_index(y) == x);
+  }
+
+
+  // Given a word, find the largest subsequence of consecutive Matrix_elements it contains.
   // The sequence itself is placed in 'seq', while the index at which it starts is
   // the return argument of the function.
-  int Longest_sequence(vector<Octagon_group_with_index>& seq, vector<Octagon_group_with_index> const w) {
+  int Dehn_longest_identity_subsequence(vector<int>& seq, vector<int> const w) {
     int start = 0; 
     int mstart = 0;
     int end = 1;
     int max = 1;
     int len = 1;
-    vector<Octagon_group_with_index> tmp, mvec;
+    vector<int> tmp, mvec;
     tmp.push_back(w[0]);
     for (int i = 1; i < w.size(); i++) {
-      if ( Is_next( w[i], w[i-1] ) ) {
+      if ( Dehn_is_next_identity_index( w[i], w[i-1] ) ) {
         end++;
         len++;
         tmp.push_back(w[i]);
@@ -343,34 +352,26 @@ void get_generators(vector<Octagon_group>& gens)
   }
 
 
-
-  Octagon_group_with_index Invert(Octagon_group_with_index x) {
-    Octagon_group y = x.first.inverse();
-    int idx = (x.second + 4) % 8;
-    return Octagon_group_with_index(y, idx);
+  int Dehn_identity_index_of_inverse(int x) {
+    return ((x + 4) % 8);
   }
 
 
   // Given a word, construct its inverse
-  void Invert(vector<Octagon_group_with_index>& w, vector<Octagon_group_with_index> const original) {
+  void Dehn_invert_word(vector<int>& w, vector<int> const original) {
     w.clear();
     for (int i = original.size() - 1; i >= 0; i--) {
-      w.push_back( Invert(original[i]) );
+      w.push_back( Dehn_identity_index_of_inverse(original[i]) );
     }
   }
 
 
-  // Computes and returns the next index in the identity element chain
-  int Next_index(int idx) {
-    return ( (idx + 5) % 8 );
-  }
-
 
   // Given a sequence of consecutive indices, return the complementary set of consecutive indices in mod 8.
   // For instance, if start = 5 and end = 1, the output is the sequence 2, 3, 4
-  void Get_complement_indices(vector<int>& v, int begin, int end) {
+  void Dehn_complementary_identity_indices(vector<int>& v, int begin, int end) {
     vector<int> tmp;
-    for (int i = Next_index(end); i != begin; i = Next_index(i)) {
+    for (int i = Dehn_next_identity_index(end); i != begin; i = Dehn_next_identity_index(i)) {
       tmp.push_back(i);
     }
 
@@ -380,42 +381,19 @@ void get_generators(vector<Octagon_group>& gens)
   }
 
 
-  int Inverse(int idx) {
-    return ((idx + 4) % 8);
-  }
-
-
-  // Given the start and end indices of a sequence of consecutive elements, construct the complementary sequence of elements
-  void Get_complement_word(vector<Octagon_group_with_index>& c, int start, int end) {
-    vector<int> idx;
-    vector<Octagon_group> gens;
-    get_generators(gens);
-
-    Get_complement_indices(idx, start, end);    
-
-    for (int i = idx.size()-1; i >= 0; i--) {
-      int ii = idx[i]; 
-      c.push_back(Octagon_group_with_index(gens[ii], ii));
+  void Dehn_complementary_identity_indices(vector<int>& v, vector<int> const original) {
+    std::vector<int> tmp;
+    Dehn_complementary_identity_indices(tmp, original[0], original[original.size() - 1]);
+    for (int i = tmp.size() - 1; i >= 0; i--) {
+      v.push_back(tmp[i]);
     }
   }
 
 
-  // Given a word consisting of consecutive elements, construct its complementary word
-  void Get_complement_word(vector<Octagon_group_with_index>& c, vector<Octagon_group_with_index> w) {
-    if (w.size() > 0) {
-      Get_complement_word(c, w[0].second, w[w.size()-1].second);
-    } else {
-      c = w;
-    }
-  }
-
-
-
-
-  // Given a word, identifies the longest subword consisting of consecutive elements and substitutes 
+  // Given a word, identifies the longest subword consisting of consecutive Matrix_elements and substitutes 
   // it with its equivalent shorter word. The search is executed in both the original word and its
   // inverse, and the substitution is made considering the longest subword from both cases.
-  bool Replace_subword(vector<Octagon_group_with_index>& w, vector<Octagon_group_with_index> original) {
+  bool Dehn_replace_identity_subword(vector<int>& w, const vector<int> original) {
 
     bool replaced = false;
 
@@ -425,21 +403,21 @@ void get_generators(vector<Octagon_group>& gens)
     }
 
     // Look for longest subword forward
-    vector<Octagon_group_with_index> lfwd;
-    int idxf = Longest_sequence(lfwd, original);
+    vector<int> lfwd;
+    int idxf = Dehn_longest_identity_subsequence(lfwd, original);
     int Nf = lfwd.size();
 
     // Get inverse of the original word
-    vector<Octagon_group_with_index> inv;
-    Invert(inv, original);
+    vector<int> inv;
+    Dehn_invert_word(inv, original);
 
     // Look for longest subword backwards
-    vector<Octagon_group_with_index> lbwd;
-    int idxb = Longest_sequence(lbwd, inv);
+    vector<int> lbwd;
+    int idxb = Dehn_longest_identity_subsequence(lbwd, inv);
     int Nb = lbwd.size();
 
     // Assign parameters based on results to homogenise the logic
-    vector<Octagon_group_with_index> word, sub;
+    vector<int> word, sub;
     bool is_inverse;
     int N, idx;
     //cout << "Nb = " << Nb << ", Nf = " << Nf << endl;
@@ -458,10 +436,10 @@ void get_generators(vector<Octagon_group>& gens)
     }
 
     // Take care of sequences with length greater or equal to 8 -- each chain of length 8
-    // is by default equal to the identity element and can be directly eliminated.
+    // is by default equal to the identity Matrix_element and can be directly eliminated.
     while (N >= 8) {
       replaced = true;
-      vector<Octagon_group_with_index> ttt = word;
+      vector<int> ttt = word;
       word.clear();
       for (int i = 0; i < idx; i++) {
         word.push_back(ttt[i]);
@@ -485,12 +463,14 @@ void get_generators(vector<Octagon_group>& gens)
     // substitution becomes cyclic.
     if (N > 4) {
       replaced = true;
-      vector<Octagon_group_with_index> cmpl;
-      Get_complement_word(cmpl, sub);
+      vector<int> cmpl;
+      Dehn_complementary_identity_indices(cmpl, sub);
 
-      vector<Octagon_group_with_index> tmp;
-      Invert(tmp, cmpl);
-      cmpl = tmp;
+      if(is_inverse) {
+        vector<int> tmp;
+        Dehn_invert_word(tmp, cmpl);
+        cmpl = tmp;
+      }
 
       for (int i = 0; i < idx; i++) {
         w.push_back(word[i]);
@@ -501,12 +481,19 @@ void get_generators(vector<Octagon_group>& gens)
       for (int i = N + idx; i < word.size(); i++) {
         w.push_back(word[i]);
       }
+    } else if (N == 4) {
+      if (is_inverse) {
+        vector<int> tmp;
+        Dehn_invert_word(tmp, w);
+        w = tmp;
+        replaced = true;
+      }
     }
 
     // If we have been working with the inverse of the original, the result has to be inverted.
     if (is_inverse) {
-      vector<Octagon_group_with_index> tmp;
-      Invert(tmp, w);
+      vector<int> tmp;
+      Dehn_invert_word(tmp, w);
       w = tmp;
     }
 
@@ -517,16 +504,16 @@ void get_generators(vector<Octagon_group>& gens)
 
   // Applies Dehn's algorithm to a given word. The result is the equivalent ireducible word
   // of the original. The boolean return argument of the function indicates whether the
-  // resulting equivalent irreducible word is the identity element or not.
-  bool Apply_Dehn(vector<Octagon_group_with_index>& w, vector<Octagon_group_with_index> const original) {
+  // resulting equivalent irreducible word is the identity Matrix_element or not.
+  bool Dehn_reduce_word(vector<int>& w, vector<int> const original) {
     bool is_identity = false;
-    vector<Octagon_group_with_index> tmp;
+    vector<int> tmp;
     tmp = original;
-
     while (tmp.size() > 0) {
-      Simplify_word(tmp);
-      vector<Octagon_group_with_index> sub;
-      bool replaced = Replace_subword(sub, tmp);
+      Dehn_simplify_adjacent_inverses(tmp);
+      vector<int> sub;
+      bool replaced = Dehn_replace_identity_subword(sub, tmp);
+
       if (!replaced) {
         w = tmp;
         return false;
@@ -546,11 +533,11 @@ void get_generators(vector<Octagon_group>& gens)
 
 
 // a, \bar{b}, c, \bar{d}, \bar{a}, b, \bar{c}, d
-vector<Octagon_group> gens;
+vector<Hyperbolic_octagon_translation_matrix> gens;
 
-bool IsCanonical(const Octagon_group& m);
+bool IsCanonical(const Hyperbolic_octagon_translation_matrix& m);
 
-void generate_words( set<Octagon_group>& words, vector<Octagon_group>& prev, int depth, double threshold  )
+void generate_words( set<Hyperbolic_octagon_translation_matrix>& words, vector<Hyperbolic_octagon_translation_matrix>& prev, int depth, double threshold  )
 {
   if (depth == 1) {
     for(int i = 0; i < 8; i++) {
@@ -560,10 +547,10 @@ void generate_words( set<Octagon_group>& words, vector<Octagon_group>& prev, int
     return;
   }
 
-  vector<Octagon_group> els;
+  vector<Hyperbolic_octagon_translation_matrix> els;
   generate_words( words, els, depth - 1, threshold);
   
-  Octagon_group temp = Octagon_group(Element(), Element());
+  Hyperbolic_octagon_translation_matrix temp = Hyperbolic_octagon_translation_matrix(Matrix_element(), Matrix_element());
   ll size = els.size();
   bool is_new = false;
   for(ll k = 0; k < size; k++) {
@@ -583,9 +570,9 @@ void generate_words( set<Octagon_group>& words, vector<Octagon_group>& prev, int
 }
 
 // does the axis of a given matrix go through the fundamental octagon 
-bool IsCanonical(const Octagon_group& m)
+bool IsCanonical(const Hyperbolic_octagon_translation_matrix& m)
 {
-  Octagon_group temp = m;
+  Hyperbolic_octagon_translation_matrix temp = m;
   
   // rotate while |B1| < |B2|
   Sqrt_field B1, B2;
@@ -610,12 +597,12 @@ bool IsCanonical(const Octagon_group& m)
   return C == C.abs();
 }
 
-void dfs(const Octagon_group& m, set<Octagon_group>& visited)
+void dfs(const Hyperbolic_octagon_translation_matrix& m, set<Hyperbolic_octagon_translation_matrix>& visited)
 {
   assert(IsCanonical(m));
   visited.insert(m);
 
-  Octagon_group candidate = m;
+  Hyperbolic_octagon_translation_matrix candidate = m;
   for(int i = 0; i < 8; i++) {
     candidate = gens[i]*m*gens[(i + 4) % 8];
     if(IsCanonical(candidate) == true && visited.find(candidate) == visited.end()) {
@@ -624,33 +611,33 @@ void dfs(const Octagon_group& m, set<Octagon_group>& visited)
   }
 }
 
-// map<Octagon_group m, Octagon_group Aux>, m = Aux * origin * Aux^{-1} 
-void dfs_with_info(const pair<Octagon_group, Octagon_group>& new_pair, 
- map <Octagon_group, Octagon_group>& visited)
+// map<Hyperbolic_octagon_translation_matrix m, Hyperbolic_octagon_translation_matrix Aux>, m = Aux * origin * Aux^{-1} 
+void dfs_with_info(const pair<Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix>& new_pair, 
+ map <Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix>& visited)
 {
   assert(IsCanonical(new_pair.first));  
   visited.insert(new_pair);
   
-  const Octagon_group& current = new_pair.first;
-  const Octagon_group& current_factor = new_pair.second;
-  Octagon_group candidate = current, candidate_factor = current_factor;
+  const Hyperbolic_octagon_translation_matrix& current = new_pair.first;
+  const Hyperbolic_octagon_translation_matrix& current_factor = new_pair.second;
+  Hyperbolic_octagon_translation_matrix candidate = current, candidate_factor = current_factor;
   for(int i = 0; i < 8; i++) {
     candidate = gens[i]*current*gens[(i + 4) % 8];
     if(IsCanonical(candidate) == true && visited.find(candidate) == visited.end()) {
       candidate_factor = gens[i]*current_factor;
-      dfs_with_info(pair<Octagon_group, Octagon_group>(candidate, candidate_factor), visited);
+      dfs_with_info(pair<Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix>(candidate, candidate_factor), visited);
     } 
   }
 }
 
 
-void dfs_with_info(const               Octagon_group& origin,
- map<Octagon_group, Octagon_group>& visited)
+void dfs_with_info(const               Hyperbolic_octagon_translation_matrix& origin,
+ map<Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix>& visited)
 {
   assert(IsCanonical(origin));
-  Octagon_group id = Octagon_group(Element(Sqrt_field(1, 0), Sqrt_field(0, 0)), 
-   Element(Sqrt_field(0, 0), Sqrt_field(0, 0)));
-  pair<Octagon_group, Octagon_group> new_pair(origin, id);
+  Hyperbolic_octagon_translation_matrix id = Hyperbolic_octagon_translation_matrix(Matrix_element(Sqrt_field(1, 0), Sqrt_field(0, 0)), 
+   Matrix_element(Sqrt_field(0, 0), Sqrt_field(0, 0)));
+  pair<Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix> new_pair(origin, id);
   
   dfs_with_info(new_pair, visited);
 }
@@ -667,21 +654,21 @@ public:
     double x, y;
   };
   
-  Octagon_group m;
+  Hyperbolic_octagon_translation_matrix m;
 
-  IntersectionNumber(const Octagon_group& m_) : m(m_)
+  IntersectionNumber(const Hyperbolic_octagon_translation_matrix& m_) : m(m_)
   {}
   
   long operator() () const
   {
-    set<Octagon_group> visited;
-    set<Octagon_group>::iterator it, it2;
+    set<Hyperbolic_octagon_translation_matrix> visited;
+    set<Hyperbolic_octagon_translation_matrix>::iterator it, it2;
     map<long, long> nb_map;
     map<long, long>::iterator mit;
 
     dfs(m, visited);
 
-    set<pair< Octagon_group, Octagon_group> > common;
+    set<pair< Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix> > common;
     for(it = visited.begin(); it != visited.end(); ++it) {
       for(it2 = it; it2 != visited.end(); ++it2) {
         if(*it == *it2) {
@@ -710,12 +697,12 @@ public:
   }
   
   
-  void count_nb(const Octagon_group& m1, const Octagon_group& m2, set<pair< Octagon_group, Octagon_group> >& visited) const
+  void count_nb(const Hyperbolic_octagon_translation_matrix& m1, const Hyperbolic_octagon_translation_matrix& m2, set<pair< Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix> >& visited) const
   {
-    typedef pair<Octagon_group, Octagon_group> matrix_pair;
+    typedef pair<Hyperbolic_octagon_translation_matrix, Hyperbolic_octagon_translation_matrix> matrix_pair;
     visited.insert(matrix_pair(m1, m2));
 
-    Octagon_group c1 = m1, c2 = m2;
+    Hyperbolic_octagon_translation_matrix c1 = m1, c2 = m2;
     for(int i = 0; i < 8; i++) {
       c1 = gens[i]*m1*gens[(i + 4) % 8];
       c2 = gens[i]*m2*gens[(i + 4) % 8];
@@ -728,7 +715,7 @@ public:
 //private:
 
 // check whether two axis have intersection
-  bool haveIntersection(const Octagon_group& m1, const Octagon_group& m2) const
+  bool haveIntersection(const Hyperbolic_octagon_translation_matrix& m1, const Hyperbolic_octagon_translation_matrix& m2) const
   {
     Point p1, p2;
     intersectWithInfinity(m1, p1, p2);
@@ -744,17 +731,17 @@ public:
     return (sign1 * sign2 < 0);
   }
   
-  void intersectWithInfinity(const Octagon_group& m, Point& p1, Point& p2) const
+  void intersectWithInfinity(const Hyperbolic_octagon_translation_matrix& m, Point& p1, Point& p2) const
   {
-    Element a = m.A, b = m.B, factor = m.factor;
+    Matrix_element a = m.A, b = m.B, factor = m.factor;
 
-    Element four = Element(Sqrt_field(4, 0), Sqrt_field(0, 0));
-    Element two = Element(Sqrt_field(2, 0), Sqrt_field(0, 0));
+    Matrix_element four = Matrix_element(Sqrt_field(4, 0), Sqrt_field(0, 0));
+    Matrix_element two = Matrix_element(Sqrt_field(2, 0), Sqrt_field(0, 0));
 
-    Element D = (a - conj(a))*(a - conj(a));
+    Matrix_element D = (a - conj(a))*(a - conj(a));
     D += four*b*conj(b)*factor;
-    Element T1 = conj(a) - a;
-    Element T2 = two*conj(b);
+    Matrix_element T1 = conj(a) - a;
+    Matrix_element T2 = two*conj(b);
 
     complex<double> d = m.toComplexDouble(D);
     complex<double> t1 = m.toComplexDouble(T1);
@@ -774,17 +761,17 @@ public:
   
 };
 
-void Delete(const set<Octagon_group>& canonical_set, vector<Octagon_group>& output)
+void Delete(const set<Hyperbolic_octagon_translation_matrix>& canonical_set, vector<Hyperbolic_octagon_translation_matrix>& output)
 {
-  set<Octagon_group> redundant;
+  set<Hyperbolic_octagon_translation_matrix> redundant;
 
-  set<Octagon_group>::iterator it;
+  set<Hyperbolic_octagon_translation_matrix>::iterator it;
   for(it = canonical_set.begin(); it != canonical_set.end(); ++it) {
     if(redundant.find(*it) != redundant.end()) { 
       continue;
     }
 
-    set<Octagon_group> visited;
+    set<Hyperbolic_octagon_translation_matrix> visited;
     dfs(*it, visited);
     visited.erase(*it);
     
@@ -793,16 +780,16 @@ void Delete(const set<Octagon_group>& canonical_set, vector<Octagon_group>& outp
   }
 }
 
-void generate_unique_words(vector<Octagon_group>& output, double threshold = 10, int word_length = 13)
+void generate_unique_words(vector<Hyperbolic_octagon_translation_matrix>& output, double threshold = 10, int word_length = 13)
 {
   get_generators(gens);
   
-  set<Octagon_group> unique_words;
-  vector<Octagon_group> temp;
+  set<Hyperbolic_octagon_translation_matrix> unique_words;
+  vector<Hyperbolic_octagon_translation_matrix> temp;
   generate_words(unique_words, temp, word_length, threshold);
   
   double l = 0;
-  set<Octagon_group>::iterator uit;
+  set<Hyperbolic_octagon_translation_matrix>::iterator uit;
   for(uit = unique_words.begin(); uit != unique_words.end(); ++uit) {
     l = uit->length();
     if(0. < l && l < threshold) {
@@ -814,14 +801,14 @@ void generate_unique_words(vector<Octagon_group>& output, double threshold = 10,
 }
 
 // words that correspond to union of 1-cycles
-void generate_words_union_1_cycles(vector<Octagon_group>& out)
+void generate_words_union_1_cycles(vector<Hyperbolic_octagon_translation_matrix>& out)
 {
   if(gens.size() == 0) {
     get_generators(gens);
   }
-  Octagon_group f[4] = {gens[0], gens[5], gens[2], gens[7]};
+  Hyperbolic_octagon_translation_matrix f[4] = {gens[0], gens[5], gens[2], gens[7]};
   
-  Octagon_group F[8] = {
+  Hyperbolic_octagon_translation_matrix F[8] = {
     f[0]*f[0].inverse(),
     f[0],
     f[0]*f[1],
@@ -848,7 +835,7 @@ void generate_words_union_1_cycles(vector<Octagon_group>& out)
         }
         counter++;
         
-        Octagon_group Tr = F[i]*F[k].inverse()*F[j];
+        Hyperbolic_octagon_translation_matrix Tr = F[i]*F[k].inverse()*F[j];
         // check that Tr != Id
         if(Tr.length() > 2.) {
           out.push_back(Tr);
@@ -862,7 +849,7 @@ void generate_words_union_1_cycles(vector<Octagon_group>& out)
 
 
 
-#endif  // CGAL_HYPERBOLIC_OCTAGON_GROUP_H
+#endif  // CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_MATRIX_H
 
 
 

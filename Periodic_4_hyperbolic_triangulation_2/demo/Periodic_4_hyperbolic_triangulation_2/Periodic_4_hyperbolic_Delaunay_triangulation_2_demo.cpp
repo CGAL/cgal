@@ -9,7 +9,7 @@
 #include <CGAL/point_generators_2.h>
 // unique words
 #include <CGAL/Square_root_2_field.h>
-#include <CGAL/Hyperbolic_octagon_group.h>
+#include <CGAL/Hyperbolic_octagon_translation_matrix.h>
 #include <CGAL/Hyperbolic_random_points_in_disc_2.h>
 // to be deleted (iiordano: why?)
 #include <CGAL/Qt/HyperbolicPainterOstream.h>
@@ -40,17 +40,13 @@
 #include <CGAL/Qt/DemosMainWindow.h>
 
 
-#define OPTION_INSERT_DUMMY_POINTS 0
-
+#define INITIAL_RECURSION_DEPTH 4
 
 // dummy points
-#if OPTION_INSERT_DUMMY_POINTS == 1
-  #include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_dummy.h>
-#endif
-  
+#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_dummy.h>
+
 // the two base classes
 #include "ui_Periodic_4_hyperbolic_Delaunay_triangulation_2.h"
-
 
 
 
@@ -94,12 +90,12 @@ double PointsComparator::eps = 0.0001;
 string glabels[] = { "a", "\\bar{b}", "c", "\\bar{d}", "\\bar{a}", "b", "\\bar{c}", "d" };
 
 
-void recurr(vector<Octagon_group>& v, vector<Octagon_group> g, int depth = 1) {
+void recurr(vector<Hyperbolic_octagon_translation_matrix>& v, vector<Hyperbolic_octagon_translation_matrix> g, int depth = 1) {
   if (depth > 1) {
     
     recurr(v, g, depth-1);
 
-    vector<Octagon_group> tmp;
+    vector<Hyperbolic_octagon_translation_matrix> tmp;
     vector<string> tmpw;
     for (int i = 0; i < v.size(); i++) {
       tmp.push_back(v[i]);
@@ -110,20 +106,20 @@ void recurr(vector<Octagon_group>& v, vector<Octagon_group> g, int depth = 1) {
         v.push_back(tmp[i]*g[j]);
       }
     }
-  } else {
+  } else if (depth == 1) {
     for (int i = 0; i < g.size(); i++) {
       v.push_back(g[i]);
     }
-  }
+  } 
 }
 
 
 void my_unique_words(std::vector<Point>& p, Point input, int depth) {
-  std::vector<Octagon_group> g;
+  std::vector<Hyperbolic_octagon_translation_matrix> g;
   get_generators(g);
-  std::vector<Octagon_group> v;
+  std::vector<Hyperbolic_octagon_translation_matrix> v;
   recurr(v, g, depth);
-  std::set<Octagon_group> s;
+  std::set<Hyperbolic_octagon_translation_matrix> s;
 
   for (int i = 0; i < v.size(); i++) {
     s.insert( v[i] );
@@ -131,13 +127,15 @@ void my_unique_words(std::vector<Point>& p, Point input, int depth) {
 
   //cout << "Original point and images: " << endl;
   //cout << input.x() << ", " << input.y() << endl;
-  for (set<Octagon_group>::iterator it = s.begin(); it != s.end(); it++) {
-    Octagon_group m = *it;
+  cout << "Translating... " << endl;
+  for (set<Hyperbolic_octagon_translation_matrix>::iterator it = s.begin(); it != s.end(); it++) {
+    Hyperbolic_octagon_translation_matrix m = *it;
     pair<double, double> res;
     res = m.apply(to_double(input.x()), to_double(input.y()));
     //cout << res.first << ", " << res.second << endl;
     p.push_back( Point(res.first, res.second) );
   }
+  cout << "Done! Now I need to draw " << p.size() << " points..." << endl;
 
 }
 
@@ -148,7 +146,7 @@ void apply_unique_words(std::vector<Point>& points, Point input = Point(0, 0), d
 
   cout << "apply_unique_words called with threshold = " << threshold << ", word_length = " << word_length << ", d = " << d << endl;
 
-  static vector<Octagon_group> unique_words;
+  static vector<Hyperbolic_octagon_translation_matrix> unique_words;
   static bool generated = false;
   if(generated == false) {
     generate_unique_words(unique_words, threshold, word_length);
@@ -170,7 +168,7 @@ void apply_unique_words(std::vector<Point>& points, Point input = Point(0, 0), d
 
 void apply_unique_words_G(std::vector<Point>& points, Point input = Point(0, 0), double threshold = 6/*13.5*/, int word_length = 6/*20*/)
 {
-  static vector<Octagon_group> unique_words;
+  static vector<Hyperbolic_octagon_translation_matrix> unique_words;
   static bool generated = false;
   if(generated == false) {
     generate_unique_words(unique_words, threshold, word_length);
@@ -218,9 +216,10 @@ class MainWindow :
   
 private:  
 
-  int              recursion_depth;
-  int              cidx;
-  std::vector<int> ccol;
+  int               recursion_depth;
+  int               cidx;
+  std::vector<int>  ccol;
+  bool              dummy_mode;
 
   Delaunay                                                      dt;
   QGraphicsEllipseItem                                        * disk;
@@ -258,6 +257,10 @@ public slots:
   
   void on_actionInsertRandomPoints_triggered();
 
+  void on_actionInsertOrigin_triggered();
+
+  void on_actionInsertDummyPoints_triggered();
+
   void on_actionModifyDepth_triggered();
 
   void on_actionLoadPoints_triggered();
@@ -278,9 +281,10 @@ signals:
 MainWindow::MainWindow()
   : DemosMainWindow(), dt(K(1))
 {
-  recursion_depth = 1;
+  dummy_mode = false;
+  recursion_depth = INITIAL_RECURSION_DEPTH;
   cidx = 0;
-  for (int i = 0; i < 10; i++)
+  for (int i = 0; i < 14; i++)
     ccol.push_back(i);
   
   setupUi(this);
@@ -428,19 +432,6 @@ MainWindow::MainWindow()
 	        this, SLOT(open(QString)));
 
 
-#if OPTION_INSERT_DUMMY_POINTS == 1
-
-  std::vector<Point> pts;
-  cout << "Inserting dummy points now! " << endl;
-  dt.insert_dummy_points(pts);
-  for (int i = 0; i < pts.size(); i++) {
-    processInput(make_object(pts[i]));
-  }
-  cout << "Dummy points inserted! " << endl;
-  emit(changed());
-
-#endif
-
 }
 
 
@@ -473,9 +464,15 @@ MainWindow::processInput(CGAL::Object o)
       Vertex_handle v;
       for(size_t j = 0; j < points.size() ; j++) {
         v = dt.insert(points[j]);
-        v->info().setColor(ccol[cidx]);
+        if (!dummy_mode) {
+          v->info().setColor(ccol[cidx]);
+        } else {
+          v->info().setColor(-1);  // This will default to gray
+        }
       }
-      cidx = (cidx + 1) % ccol.size();
+      if (!dummy_mode) {
+        cidx = (cidx + 1) % ccol.size();
+      }
       //
     }
     // delete
@@ -641,6 +638,46 @@ MainWindow::on_actionInsertRandomPoints_triggered()
   QApplication::restoreOverrideCursor();
   emit(changed());
 }
+
+
+
+void
+MainWindow::on_actionInsertOrigin_triggered()
+{
+
+  std::vector<Point> pts;
+  cout << "Inserting Origin now! " << endl;
+
+  processInput(make_object(Point(0,0)));
+
+  cout << "Origin inserted! " << endl;
+  emit(changed());
+
+}
+
+
+
+void
+MainWindow::on_actionInsertDummyPoints_triggered()
+{
+
+  std::vector<Point> pts;
+  cout << "Inserting dummy points now! " << endl;
+  
+  dummy_mode = true;
+
+  dt.insert_dummy_points(pts);
+  for (int i = 0; i < pts.size(); i++) {
+    processInput(make_object(pts[i]));
+  }
+
+  dummy_mode = false;
+
+  cout << "Dummy points inserted! " << endl;
+  emit(changed());
+
+}
+
 
 
 void
