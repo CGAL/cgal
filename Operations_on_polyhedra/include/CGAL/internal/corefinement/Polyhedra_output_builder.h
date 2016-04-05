@@ -1493,12 +1493,6 @@ public:
         ++epp_it;
     }
 
-    cpp11::array< boost::optional<Polyhedron*>, 4 > results;
-    // if (results[0]), it will hold P + Q
-    // if (results[1]), it will hold P inter Q
-    // if (results[2]), it will hold P - Q
-    // if (results[3]), it will hold Q - P
-
     // (1) Assign a patch id to each facet indicating in which connected
     // component limited by intersection edges of the surface they are.
     internal_IOP::Non_intersection_halfedge<Polyhedron> is_not_marked(border_halfedges);
@@ -1518,7 +1512,7 @@ public:
 
     /// \todo I need a property map indicating if an edge is an intersection edge
     internal::corefinement::init_facet_indices(*P_ptr, P_facet_id_pmap);
-    std::size_t P_nb_cc = internal::corefinement::
+    std::size_t P_nb_patches = internal::corefinement::
       mark_connected_components_v2(*P_ptr,
                                    is_not_marked,
                                    P_facet_id_pmap,
@@ -1526,25 +1520,25 @@ public:
                                    P_patch_sizes);
 
     internal::corefinement::init_facet_indices(*Q_ptr, Q_facet_id_pmap);
-    std::size_t Q_nb_cc = internal::corefinement::
+    std::size_t Q_nb_patches = internal::corefinement::
       mark_connected_components_v2(*Q_ptr,
                                    is_not_marked,
                                    Q_facet_id_pmap,
                                    Q_patch_ids,
                                    Q_patch_sizes);
 
-    CGAL_assertion ( P_nb_cc==P_patch_sizes.size() );
-    CGAL_assertion ( Q_nb_cc==Q_patch_sizes.size() );
+    CGAL_assertion ( P_nb_patches==P_patch_sizes.size() );
+    CGAL_assertion ( Q_nb_patches==Q_patch_sizes.size() );
 
     // (2-a) Use the orientation around an edge to classify a patch
-    boost::dynamic_bitset<> is_patch_inside_Q(P_nb_cc, false);
-    boost::dynamic_bitset<> is_patch_inside_P(Q_nb_cc, false);
-    boost::dynamic_bitset<> patch_status_not_set_P(P_nb_cc,true);
-    boost::dynamic_bitset<> patch_status_not_set_Q(Q_nb_cc,true);
-    boost::dynamic_bitset<> coplanar_patches_of_P(P_nb_cc,false);
-    boost::dynamic_bitset<> coplanar_patches_of_Q(Q_nb_cc,false);
-    boost::dynamic_bitset<> coplanar_patches_of_P_for_union_and_intersection(P_nb_cc,false);
-    boost::dynamic_bitset<> coplanar_patches_of_Q_for_difference(Q_nb_cc,false);
+    boost::dynamic_bitset<> is_patch_inside_Q(P_nb_patches, false);
+    boost::dynamic_bitset<> is_patch_inside_P(Q_nb_patches, false);
+    boost::dynamic_bitset<> patch_status_not_set_P(P_nb_patches,true);
+    boost::dynamic_bitset<> patch_status_not_set_Q(Q_nb_patches,true);
+    boost::dynamic_bitset<> coplanar_patches_of_P(P_nb_patches,false);
+    boost::dynamic_bitset<> coplanar_patches_of_Q(Q_nb_patches,false);
+    boost::dynamic_bitset<> coplanar_patches_of_P_for_union_and_intersection(P_nb_patches,false);
+    boost::dynamic_bitset<> coplanar_patches_of_Q_for_difference(Q_nb_patches,false);
 
     /// \todo handle the case when an_edge_per_polyline is empty or similarly there is an isolated cc without intersecting edges
     ///       Note that could be the case of a cc that is identical (coplanar patch) in P and Q
@@ -1921,8 +1915,8 @@ public:
     }
 
     //store the patch description in a container to avoid recomputing it several times
-    Patch_container patches_of_P( P_ptr, P_patch_ids, P_facet_id_pmap, border_halfedges, P_nb_cc),
-                    patches_of_Q( Q_ptr, Q_patch_ids, Q_facet_id_pmap, border_halfedges, Q_nb_cc);
+    Patch_container patches_of_P( P_ptr, P_patch_ids, P_facet_id_pmap, border_halfedges, P_nb_patches),
+                    patches_of_Q( Q_ptr, Q_patch_ids, Q_facet_id_pmap, border_halfedges, Q_nb_patches);
 
     /// compute the union
     if ( !impossible_operation.test(P_UNION_Q) && desired_output[P_UNION_Q] )
