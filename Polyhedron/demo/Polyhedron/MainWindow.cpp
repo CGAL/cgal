@@ -1002,9 +1002,7 @@ void MainWindow::open(QString filename)
   settings.setValue("OFF open directory",
                     fileinfo.absoluteDir().absolutePath());
 
-  QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Three::Scene_item* scene_item = load_item(fileinfo, find_loader(load_pair.first));
-  QApplication::restoreOverrideCursor();
 
   if(scene_item != 0) {
     this->addToRecentFiles(fileinfo.absoluteFilePath());
