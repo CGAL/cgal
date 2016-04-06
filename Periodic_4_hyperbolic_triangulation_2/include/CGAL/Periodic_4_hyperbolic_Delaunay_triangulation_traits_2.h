@@ -29,7 +29,7 @@
 #include <CGAL/predicates_on_points_2.h>
 #include <CGAL/basic_constructions_2.h>
 #include <CGAL/distance_predicates_2.h>
-
+#include <CGAL/Aff_transformation_2.h>
 #include <CGAL/Regular_triangulation_filtered_traits_2.h>
 #include <CGAL/Triangulation_hyperbolic_traits_2.h>
 #include "boost/tuple/tuple.hpp"
@@ -43,6 +43,8 @@ class Periodic_4_hyperbolic_Delaunay_triangulation_traits_2 {
 public:
 
   typedef R                                               Kernel;
+  typedef typename R::Kernel_base                         Kernel_base;
+  typedef typename R::Direction_2                         Direction_2;
 
   typedef Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<R>
                                                           Self;
@@ -190,6 +192,68 @@ public:
   	Is_hyperbolic_object() const { 
   		return Is_hyperbolic(); 
   	}
+
+
+    class Side_of_fundamental_octagon {
+    public:
+      Side_of_fundamental_octagon() {}
+
+      CGAL::Bounded_side operator()(Point_2 p) {
+
+        CGAL::Aff_transformation_2<Kernel> rotate(CGAL::ROTATION, std::sqrt(0.5), std::sqrt(0.5));
+        Point_2  CenterA ( FT( sqrt((sqrt(2.) + 1.) / 2.) ), FT(0.) );
+        FT       Radius2 ( (sqrt(2.) - 1.) / 2. );
+
+        Circle_2 Poincare( Point(0, 0),       1*1 );
+        Circle_2 DomainA ( CenterA,           Radius2 );
+        Circle_2 DomainBb( rotate(CenterA),   Radius2 );
+
+        FT x(FT(p.x()) > FT(0) ? p.x() : -p.x());
+        FT y(FT(p.y()) > FT(0) ? p.y() : -p.y());
+
+        if (y > x) {
+          FT tmp = x;
+          x = y;
+          y = tmp;
+        }
+
+        Point t(x, y);
+
+        CGAL::Bounded_side bs1 = Poincare.bounded_side(t);
+        CGAL::Bounded_side bs2 = DomainA.bounded_side(t);
+        CGAL::Bounded_side bs3 = DomainBb.bounded_side(t);
+
+        if (  (bs1 != CGAL::ON_UNBOUNDED_SIDE) &&
+              (bs2 != CGAL::ON_BOUNDED_SIDE)   &&
+              (bs3 != CGAL::ON_BOUNDED_SIDE)      ) {
+          return CGAL::ON_BOUNDED_SIDE;
+        } 
+        else if ( (bs1 == CGAL::ON_UNBOUNDED_SIDE) ||
+                  (bs2 == CGAL::ON_BOUNDED_SIDE)   ||
+                  (bs3 == CGAL::ON_BOUNDED_SIDE)      ) {
+          return CGAL::ON_UNBOUNDED_SIDE;
+        }
+       
+        return CGAL::ON_BOUNDARY;
+
+      }
+
+    };
+
+
+    Side_of_fundamental_octagon
+    side_of_fundamental_octagon_object() const {
+      return Side_of_fundamental_octagon();
+    }
+
+
+
+
+
+
+
+
+
 
 
 }; // class Periodic_4_hyperbolic_Delaunay_triangulation_traits_2
