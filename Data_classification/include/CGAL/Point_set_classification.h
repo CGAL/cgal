@@ -30,6 +30,7 @@
 #include <CGAL/bounding_box.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Fuzzy_sphere.h>
+#include <CGAL/Orthogonal_k_neighbor_search.h>
 #include <CGAL/Default_diagonalize_traits.h>
 #include <CGAL/centroid.h>
 #include <CGAL/compute_average_spacing.h>
@@ -40,6 +41,13 @@
 #define CGAL_CLASSIFICATION_CERR std::cerr
 #else
 #define CGAL_CLASSIFICATION_CERR std::ostream(0)
+#endif
+
+//#define CGAL_CLASSIFICATION_IMAGE_VERBOSE
+#if defined(CGAL_CLASSIFICATION_IMAGE_VERBOSE)
+#define CGAL_CLASSIFICATION_IMAGE_CERR std::cerr
+#else
+#define CGAL_CLASSIFICATION_IMAGE_CERR std::ostream(0)
 #endif
 
 
@@ -62,12 +70,14 @@ public:
 
   Image () : m_width(0), m_height(0), m_raw (NULL)
   {
+    CGAL_CLASSIFICATION_IMAGE_CERR << "++ Empty construction of " << this << std::endl;
   }
   
   Image (std::size_t width, std::size_t height)
     : m_width (width),
       m_height (height)
   {
+    CGAL_CLASSIFICATION_IMAGE_CERR << "++ Construction of " << this << std::endl;
     if (m_width * m_height > 0)
       m_raw = new Type[width * height];
     else
@@ -76,6 +86,7 @@ public:
   
   ~Image ()
   {
+    CGAL_CLASSIFICATION_IMAGE_CERR << "-- Destruction of " << this << std::endl;
     if (m_raw != NULL)
       delete[] m_raw;
   }
@@ -85,9 +96,10 @@ public:
       m_height (other.height())
 
   {
+    CGAL_CLASSIFICATION_IMAGE_CERR << "++ Copy construction of " << this << " from " << &other << std::endl;
     if (m_width * m_height > 0)
       {
-        m_raw = new Type[width * height];
+        m_raw = new Type[m_width * m_height];
         std::copy (other.m_raw, other.m_raw + (m_width * m_height), this->m_raw);
       }
     else
@@ -95,8 +107,10 @@ public:
   }
   Image& operator= (const Image& other)
   {
+    CGAL_CLASSIFICATION_IMAGE_CERR << "++ Assignement of " << this << " from " << &other << std::endl;
     if (m_raw != NULL)
-      delete m_raw;
+      delete[] m_raw;
+
     m_raw = NULL;
     m_width = other.width();
     m_height = other.height();
@@ -168,6 +182,62 @@ HSV_Color rgb_to_hsv (const RGB_Color& c)
   return out;
 }
 
+template <typename RGB_Color, typename HSV_Color>
+RGB_Color hsv_to_rgb (const HSV_Color& c)
+{
+  double h = c[0];
+  double s = c[1];
+  double v = c[2];
+  
+  s /= 100.;
+  v /= 100.;
+  double C = v*s;
+  std::size_t hh = (std::size_t)(h/60.);
+  double X = C * (1-std::fabs (hh % 2 - 1));
+  double r = 0, g = 0, b = 0;
+  
+  if( hh>=0 && hh<1 )
+    {
+      r = C;
+      g = X;
+    }
+  else if( hh>=1 && hh<2 )
+    {
+      r = X;
+      g = C;
+    }
+  else if( hh>=2 && hh<3 )
+    {
+      g = C;
+      b = X;
+    }
+  else if( hh>=3 && hh<4 )
+    {
+      g = X;
+      b = C;
+    }
+  else if( hh>=4 && hh<5 )
+    {
+      r = X;
+      b = C;
+    }
+  else
+    {
+      r = C;
+      b = X;
+    }
+  double m = v-C;
+  r += m;
+  g += m;
+  b += m;
+  r *= 255.0;
+  g *= 255.0;
+  b *= 255.0;
+
+  RGB_Color out = {{ (unsigned char)r, (unsigned char)g, (unsigned char)b }};
+  return out;
+}
+
 } // namespace internal
 
 } // namespace Classification
@@ -200,6 +270,7 @@ public:
   typedef CGAL::Search_traits_3<Kernel> SearchTraits_3;
   typedef CGAL::Kd_tree<SearchTraits_3> Tree;
   typedef CGAL::Fuzzy_sphere<SearchTraits_3> Fuzzy_sphere;
+  typedef CGAL::Orthogonal_k_neighbor_search<SearchTraits_3> Neighbor_search;
   typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
   typedef CGAL::cpp11::array<unsigned char, 3> Color;
@@ -214,15 +285,16 @@ public:
     unsigned char echo; 
     int ind_x;
     int ind_y;
-    int ultimate_label; 
+    std::size_t group; 
     unsigned char AE_label;
+    double confidence;
     Color color;
   };
 
   std::vector<Abstract_classification_type*> segmentation_classes;
-  
+
+  bool has_colors;
   bool is_echo_given;
-  bool is_normal_given;
   Iso_cuboid_3 BBox_scan;
 
   std::vector<HPoint> HPS;
@@ -265,11 +337,24 @@ public:
         HPS.back().echo = -1;
         HPS.back().ind_x = -1;
         HPS.back().ind_y = -1;
-        HPS.back().ultimate_label = -1;
+        HPS.back().group = (std::size_t)(-1);
         HPS.back().AE_label = -1;
+        HPS.back().confidence = 0;
         Color c = {{ 0, 0, 0 }};
         HPS.back().color = c;
       }
+    has_colors = false;
+    is_echo_given = false;
+  }
+
+
+  void change_hue (Color& color, const Color& hue)
+  {
+    HSV_Color hcolor = internal::Classification::rgb_to_hsv<HSV_Color> (color);
+    HSV_Color hhue = internal::Classification::rgb_to_hsv<HSV_Color> (hue);
+    hcolor[0] = hhue[0];
+    //    hcolor[1] = hhue[1];
+    color = internal::Classification::hsv_to_rgb<Color> (hcolor);
   }
 
 
@@ -429,7 +514,6 @@ public:
 
 
 
-
   void compute_principal_curvature(const Point& point, std::vector<Point>& neighborhood)
   {
     if (neighborhood.size() == 0)
@@ -483,10 +567,12 @@ public:
       int nb_class_best=0; 
 
       double val_class_best = std::numeric_limits<double>::max();
-
+      std::vector<double> values;
+      
       for(std::size_t k = 0; k < segmentation_classes.size(); ++ k)
         {
           double value = segmentation_classes[k]->data_term_computation(s);
+          values.push_back (value);
           
           if(val_class_best > value)
             {
@@ -496,6 +582,9 @@ public:
         }
 
       HPS[s].AE_label = nb_class_best;
+
+      std::sort (values.begin(), values.end());
+      HPS[s].confidence = values[1] - values[0];
 
       if(nb_class_best==0) count1++;
       else if(nb_class_best==1) count2++;
@@ -559,9 +648,11 @@ public:
       int nb_class_best=0; 
 
       double val_class_best = std::numeric_limits<double>::max();
-
+      std::vector<double> vvalues;
       for(std::size_t k = 0; k < smoothed_values.size(); ++ k)
         {
+
+          vvalues.push_back (smoothed_values[k][s]);
           if(val_class_best > smoothed_values[k][s])
             {
               val_class_best = smoothed_values[k][s];
@@ -570,6 +661,9 @@ public:
         }
 
       HPS[s].AE_label = nb_class_best;
+
+      std::sort (vvalues.begin(), vvalues.end());
+      HPS[s].confidence = vvalues[1] - vvalues[0];      
 
       if(nb_class_best==0) count1++;
       else if(nb_class_best==1) count2++;
@@ -583,19 +677,140 @@ public:
     return true;
   }
 
-  bool point_cloud_classification(int method = 1)
+  void reset_groups()
   {
+    for (std::size_t i = 0; i < HPS.size(); ++ i)
+      HPS[i].group = (std::size_t)(-1);
+  }
 
+  bool regularized_labeling_PC()
+  {
+    std::vector<Point> list_points;
+    std::vector<std::vector<std::size_t> > groups;
+    for (std::size_t i = 0; i < HPS.size(); ++ i)
+      {
+        list_points.push_back(HPS[i].position);
+        std::size_t index = HPS[i].group;
+        if (index == (std::size_t)(-1))
+          continue;
+
+        if (groups.size() <= index)
+          groups.resize (index + 1);
+        
+        groups[index].push_back (i);
+      }
+
+    if (groups.empty())
+      return false;
+        
+    // data term initialisation
+    CGAL_CLASSIFICATION_CERR << "Labeling... ";
+
+    std::vector<std::vector<double> > values;
+    values.resize (segmentation_classes.size());
+    
+    std::map<Point, std::size_t> map_p2i;
+    for(int s=0;s<(int)HPS.size();s++)
+      {
+        map_p2i[HPS[s].position] = s;
+
+        int nb_class_best=0; 
+        double val_class_best = std::numeric_limits<double>::max();
+        for(std::size_t k = 0; k < segmentation_classes.size(); ++ k)
+          {
+            double v = segmentation_classes[k]->data_term_computation(s);
+            values[k].push_back(v);
+            if (v < val_class_best)
+              {
+                nb_class_best = k;
+                val_class_best = v;
+              }
+          }
+        HPS[s].AE_label = nb_class_best;
+      }
+
+    for(std::size_t i = 0; i < groups.size(); ++ i)
+      {
+        std::vector<double> mean (values.size(), 0.);
+
+        for (std::size_t n = 0; n < groups[i].size(); ++ n)
+          {
+            for (std::size_t j = 0; j < values.size(); ++ j)
+              mean[j] += values[j][groups[i][n]];
+          }
+        
+        int nb_class_best=0; 
+
+        double val_class_best = std::numeric_limits<double>::max();
+
+        for (std::size_t j = 0; j < mean.size(); ++ j)
+          if (mean[j] < val_class_best)
+            {
+              nb_class_best = j;
+              val_class_best = mean[j];
+            }
+
+        for (std::size_t n = 0; n < groups[i].size(); ++ n)
+          {
+            HPS[groups[i][n]].AE_label = nb_class_best;
+            for (std::size_t j = 0; j < mean.size(); ++ j)
+              values[j][groups[i][n]] = mean[j] / groups[i].size();
+          }
+      }
+
+    Tree tree(list_points.begin(), list_points.end());
+
+    for (std::size_t i = 0; i < HPS.size(); ++ i)
+      {
+        if (HPS[i].group != (std::size_t)(-1))
+          continue;
+        
+        const Point& query=HPS[i].position;
+        std::vector<Point> neighbors;
+      
+        Fuzzy_sphere fs(query, m_radius_neighbors, 0);
+        tree.search(std::back_inserter(neighbors), fs);
+
+        std::vector<double> mean (values.size(), 0.);
+        for (std::size_t n = 0; n < neighbors.size(); ++ n)
+          {
+            std::size_t index = map_p2i[neighbors[n]];
+            for (std::size_t j = 0; j < values.size(); ++ j)
+              mean[j] += values[j][index];
+          }
+        int nb_class_best=0; 
+
+        double val_class_best = std::numeric_limits<double>::max();
+
+        for (std::size_t j = 0; j < mean.size(); ++ j)
+          if (mean[j] < val_class_best)
+            {
+              nb_class_best = j;
+              val_class_best = mean[j];
+            }
+
+        HPS[i].AE_label = nb_class_best;
+
+      }
+    
+	
+    return true;
+  }
+
+  bool point_cloud_classification(int method)
+  {
 
     clock_t t;
     t = clock();
 	
     CGAL_CLASSIFICATION_CERR<<std::endl<<"Classification of the point cloud: ";
     
-    if (method == 1)
+    if (method == 0)
       quick_labeling_PC();
-    else if (method == 2)
+    else if (method == 1)
       smoothed_labeling_PC();
+    else if (method == 2)
+      regularized_labeling_PC();
     else
       {
         std::cerr << "Unknown method number." << std::endl;
@@ -632,8 +847,7 @@ public:
   double max;
 
   Scatter_segmentation_attribute (PSC& M,
-                                  double weight,
-                                  std::vector<Color> colors = std::vector<Color>()) : weight (weight)
+                                  double weight) : weight (weight)
   {
     Image_float Vegetation(M.grid_HPS.width(), M.grid_HPS.height());
 
@@ -644,7 +858,7 @@ public:
     std::size_t square = (std::size_t)(0.5 * M.m_radius_neighbors / M.m_grid_resolution) + 1;
 
     if(M.is_echo_given){
-				
+      std::cerr << "Echo given" << std::endl;				
       for (std::size_t j = 0; j < M.grid_HPS.height(); j++){	
         for (std::size_t i = 0; i < M.grid_HPS.width(); i++){
 						
@@ -695,34 +909,101 @@ public:
       }
 	
     }
-    else if (colors.empty()){
-      for(int i=0;i<(int)M.HPS.size();i++){
-        if (M.eigenvalues[i][2] == 0)
-          vegetation_attribute.push_back(0);
-        else
-          vegetation_attribute.push_back(std::fabs(M.eigenvalues[i][0] / M.eigenvalues[i][2]));
-      }
-    }
-    else
+    else //if (!(M.has_colors))
       {
-        std::cerr << "Using colors" << std::endl;
-      for(int i=0;i<(int)M.HPS.size();i++)
-        {
-          HSV_Color c = internal::Classification::rgb_to_hsv<HSV_Color> (colors[i]);
-          vegetation_attribute.push_back (std::exp (-(c[0] - 120) * (c[0] - 120) / (2 * 60 * 60))
-                                          * std::exp (-(c[1] - 25) * (c[1] - 25) / (2 * 20 * 20))
-                                          * std::exp (-(c[2] - 37) * (c[2] - 37) / (2 * 10 * 10)));
+        std::cerr << "No colors" << std::endl;
+        typename Kernel::Vector_3 verti (0., 0., 1.);
+        
+        for (std::size_t j = 0; j < M.grid_HPS.height(); j++){	
+          for (std::size_t i = 0; i < M.grid_HPS.width(); i++){
+						
+            if(!(M.Mask(i,j)))
+              continue;
+            std::vector<double> hori;
+            
+            std::size_t squareXmin = (i < square ? 0 : i - square);
+            std::size_t squareXmax = std::min (M.grid_HPS.width()-1, i + square);
+            std::size_t squareYmin = (j < square ? 0 : j - square);
+            std::size_t squareYmax = std::min (M.grid_HPS.height()-1, j + square);
+
+            for(std::size_t k = squareXmin; k <= squareXmax; k++)
+              for(std::size_t l = squareYmin; l <= squareYmax; l++)
+                if(sqrt(pow((double)k-i,2)+pow((double)l-j,2))
+                   <=(double)0.5*M.m_radius_neighbors/M.m_grid_resolution
+                   && (M.grid_HPS(k,l).size()>0))
+                  for(int t=0; t<(int)M.grid_HPS(k,l).size();t++)
+                    {
+                      int ip = M.grid_HPS(k,l)[t];
+                      hori.push_back (M.HPS[ip].position.z());
+                    }
+            if (hori.empty())
+              continue;
+              
+            std::sort (hori.begin(), hori.end());
+
+
+            std::size_t nb_layers = 1;
+
+            std::vector<bool> occupy (1 + (std::size_t)((hori.back() - hori.front()) / M.m_grid_resolution), false);
+              
+            std::size_t last_index = 0;
+            for (std::size_t k = 0; k < hori.size(); ++ k)
+              {
+                std::size_t index = (std::size_t)((hori[k] - hori.front()) / M.m_grid_resolution);
+                occupy[index] = true;
+                if (index > last_index + 1)
+                  ++ nb_layers;
+                last_index = index;
+              }
+
+            std::size_t nb_occ = 0;
+            for (std::size_t k = 0; k < occupy.size(); ++ k)
+              if (occupy[k])
+                ++ nb_occ;
+					
+            //              Vegetation(i,j)= (float)(1. - (1. / (float)nb_layers));
+            Vegetation(i,j)= 1.f - (nb_occ / (float)(occupy.size()));
+			
+          }
+		
         }
-      }
+        for(int i=0;i<(int)M.HPS.size();i++){
+          int I= M.HPS[i].ind_x;
+          int J= M.HPS[i].ind_y;
+          vegetation_attribute.push_back((double)Vegetation(I,J));
+        }
+	
+        // for(int i=0;i<(int)M.HPS.size();i++){
+        //   if (M.eigenvalues[i][2] == 0)
+        //     vegetation_attribute.push_back(0);
+        //   else
+        //     vegetation_attribute.push_back(std::fabs(M.eigenvalues[i][0] / M.eigenvalues[i][2]));
+        // }
+    }
+    // else
+    //   {
+    //     std::cerr << "Using colors" << std::endl;
+    //     for(int i=0;i<(int)M.HPS.size();i++)
+    //       {
+    //         HSV_Color c = internal::Classification::rgb_to_hsv<HSV_Color> (M.HPS[i].color);
+    //         vegetation_attribute.push_back (std::exp (-(c[0] - 120) * (c[0] - 120) / (2 * 60 * 60))
+    //                                         * std::exp (-(c[1] - 25) * (c[1] - 25) / (2 * 20 * 20))
+    //                                         * std::exp (-(c[2] - 37) * (c[2] - 37) / (2 * 10 * 10)));
+    //       }
+    //   }
 
     internal::Classification::compute_mean_max (vegetation_attribute, mean, max);
-    max *= 2;
+    //    max *= 2;
   }
 
   double value (int pt_index)
   {
     return std::max (0., std::min (1., vegetation_attribute[pt_index] / weight));
   }
+
+  double favored (int pt_index) { return (1. - value (pt_index)); }
+  double penalized (int pt_index) { return value (pt_index); }
+  double ignored (int pt_index) { return std::min (value (pt_index), 1. - value (pt_index)); }
 
   const char* id() { return "scatter"; }
 };
@@ -746,13 +1027,56 @@ public:
       distance_to_plane_attribute.push_back (std::sqrt (CGAL::squared_distance (M.HPS[i].position, M.planes[i])));
 
     internal::Classification::compute_mean_max (distance_to_plane_attribute, mean, max);
-    max *= 2;
+    //    max *= 2;
   }
 
   double value (int pt_index)
   {
     return std::max (0., std::min (1., distance_to_plane_attribute[pt_index] / weight));
   }
+
+  double favored (int pt_index) { return (1. - value (pt_index)); }
+  double penalized (int pt_index) { return value (pt_index); }
+  double ignored (int pt_index) { return std::min (value (pt_index), 1. - value (pt_index)); }
+
+  const char* id() { return "planimetry"; }
+};
+
+template <typename Kernel>
+class Horizontality_segmentation_attribute
+{
+  typedef Point_set_classification<Kernel> PSC;
+
+  std::vector<double> horizontality_attribute;
+  
+public:
+  double weight;
+  double mean;
+  double max;
+  
+  Horizontality_segmentation_attribute (PSC& M, double weight) : weight (weight)
+  {
+    typename Kernel::Vector_3 vertical (0., 0., 1.);
+    
+    for(int i=0; i<(int)M.HPS.size(); i++)
+      {
+        typename Kernel::Vector_3 normal = M.planes[i].orthogonal_vector();
+        normal = normal / std::sqrt (normal * normal);
+        horizontality_attribute.push_back (1. - std::fabs(normal * vertical));
+      }
+    
+    internal::Classification::compute_mean_max (horizontality_attribute, mean, max);
+    //    max *= 2;
+  }
+
+  double value (int pt_index)
+  {
+    return std::max (0., std::min (1., horizontality_attribute[pt_index] / weight));
+  }
+
+  double favored (int pt_index) { return (1. - value (pt_index)); }
+  double penalized (int pt_index) { return value (pt_index); }
+  double ignored (int pt_index) { return std::min (value (pt_index), 1. - value (pt_index)); }
 
   const char* id() { return "planimetry"; }
 };
@@ -1090,7 +1414,7 @@ public:
     }
 
     internal::Classification::compute_mean_max (elevation_attribute, mean, max);
-    max *= 5;
+    //    max *= 5;
   }
 
   double value (int pt_index)
@@ -1098,32 +1422,48 @@ public:
     return std::max (0., std::min (1., elevation_attribute[pt_index] / weight));
   }
 
+  double favored (int pt_index) { return (1. - value (pt_index)); }
+  double penalized (int pt_index) { return value (pt_index); }
+  double ignored (int pt_index) { return std::min (value (pt_index), 1. - value (pt_index)); }
+
   const char* id() { return "elevetation"; }
 
 };
 
+#define NORMALIZED_WEIGHTS
 
+  
 template <typename Kernel>
 class Vegetation_classification_type : public Abstract_classification_type
 {
   Scatter_segmentation_attribute<Kernel>& scat_att;
   Distance_to_plane_segmentation_attribute<Kernel>& d2p_att;
+  Horizontality_segmentation_attribute<Kernel>& hori_att;
   Elevation_segmentation_attribute<Kernel>& elev_att;
 public:
 
   Vegetation_classification_type (Scatter_segmentation_attribute<Kernel>& scat_att,
                                   Distance_to_plane_segmentation_attribute<Kernel>& d2p_att,
+                                  Horizontality_segmentation_attribute<Kernel>& hori_att,
                                   Elevation_segmentation_attribute<Kernel>& elev_att)
     : scat_att (scat_att)
     , d2p_att (d2p_att)
+    , hori_att (hori_att)
     , elev_att (elev_att)
   { }
   
   virtual double data_term_computation (int pt_index)
   {
+#if defined(NORMALIZED_WEIGHTS)
+    return scat_att.favored (pt_index)
+      + d2p_att.favored (pt_index)
+      + hori_att.ignored (pt_index)
+      + elev_att.favored (pt_index);
+#else
     return (1. - scat_att.value (pt_index))
       + (1. - d2p_att.value (pt_index))
       + (1. - elev_att.value (pt_index));
+#endif
   }
 
 };
@@ -1133,22 +1473,32 @@ class Ground_classification_type : public Abstract_classification_type
 {
   Scatter_segmentation_attribute<Kernel>& scat_att;
   Distance_to_plane_segmentation_attribute<Kernel>& d2p_att;
+  Horizontality_segmentation_attribute<Kernel>& hori_att;
   Elevation_segmentation_attribute<Kernel>& elev_att;
 public:
 
   Ground_classification_type (Scatter_segmentation_attribute<Kernel>& scat_att,
                               Distance_to_plane_segmentation_attribute<Kernel>& d2p_att,
+                              Horizontality_segmentation_attribute<Kernel>& hori_att,
                               Elevation_segmentation_attribute<Kernel>& elev_att)
     : scat_att (scat_att)
     , d2p_att (d2p_att)
+    , hori_att (hori_att)
     , elev_att (elev_att)
   { }
 
   virtual double data_term_computation (int pt_index)
   {
-    return scat_att.value (pt_index)
+#if defined(NORMALIZED_WEIGHTS)
+    return scat_att.penalized (pt_index)
+      + d2p_att.penalized (pt_index)
+      + hori_att.penalized (pt_index)
+      + elev_att.penalized (pt_index);
+#else
+    return hori_att.value (pt_index)
       + d2p_att.value (pt_index)
       + elev_att.value (pt_index);
+#endif
   }
 };
 
@@ -1157,21 +1507,32 @@ class Roof_classification_type : public Abstract_classification_type
 {
   Scatter_segmentation_attribute<Kernel>& scat_att;
   Distance_to_plane_segmentation_attribute<Kernel>& d2p_att;
+  Horizontality_segmentation_attribute<Kernel>& hori_att;
   Elevation_segmentation_attribute<Kernel>& elev_att;
 public:
   Roof_classification_type (Scatter_segmentation_attribute<Kernel>& scat_att,
                            Distance_to_plane_segmentation_attribute<Kernel>& d2p_att,
+                            Horizontality_segmentation_attribute<Kernel>& hori_att,
                            Elevation_segmentation_attribute<Kernel>& elev_att)
     : scat_att (scat_att)
     , d2p_att (d2p_att)
+    , hori_att (hori_att)
     , elev_att (elev_att)
   { }
 
   virtual double data_term_computation (int pt_index)
   {
-    return scat_att.value (pt_index)
+#if defined(NORMALIZED_WEIGHTS)
+    return scat_att.penalized (pt_index)
+      + d2p_att.ignored (pt_index)
+      + hori_att.penalized (pt_index)
+      + elev_att.favored (pt_index);
+#else
+    return
+       hori_att.value (pt_index)
       + (1. - d2p_att.value (pt_index))
       + (1. - elev_att.value (pt_index));
+#endif
   }
 };
 
@@ -1180,21 +1541,31 @@ class Facade_classification_type : public Abstract_classification_type
 {
   Scatter_segmentation_attribute<Kernel>& scat_att;
   Distance_to_plane_segmentation_attribute<Kernel>& d2p_att;
+  Horizontality_segmentation_attribute<Kernel>& hori_att;
   Elevation_segmentation_attribute<Kernel>& elev_att;
 public:
   Facade_classification_type (Scatter_segmentation_attribute<Kernel>& scat_att,
                               Distance_to_plane_segmentation_attribute<Kernel>& d2p_att,
+                              Horizontality_segmentation_attribute<Kernel>& hori_att,
                               Elevation_segmentation_attribute<Kernel>& elev_att)
     : scat_att (scat_att)
     , d2p_att (d2p_att)
+    , hori_att (hori_att)
     , elev_att (elev_att)
   { }
 
   virtual double data_term_computation (int pt_index)
   {
-    return scat_att.value (pt_index)
+#if defined(NORMALIZED_WEIGHTS)
+    return scat_att.ignored (pt_index)
+      + d2p_att.penalized (pt_index)
+      + hori_att.favored (pt_index)
+      + elev_att.favored (pt_index);
+#else
+    return (1. - hori_att.value (pt_index))
       + d2p_att.value (pt_index)
       + (1. - elev_att.value (pt_index));
+#endif
   }
 };
 
@@ -1204,20 +1575,30 @@ class Building_classification_type : public Abstract_classification_type
 {
   Scatter_segmentation_attribute<Kernel>& scat_att;
   Distance_to_plane_segmentation_attribute<Kernel>& d2p_att;
+  Horizontality_segmentation_attribute<Kernel>& hori_att;
   Elevation_segmentation_attribute<Kernel>& elev_att;
 public:
   Building_classification_type (Scatter_segmentation_attribute<Kernel>& scat_att,
                                 Distance_to_plane_segmentation_attribute<Kernel>& d2p_att,
+                                Horizontality_segmentation_attribute<Kernel>& hori_att,
                                 Elevation_segmentation_attribute<Kernel>& elev_att)
     : scat_att (scat_att)
     , d2p_att (d2p_att)
+    , hori_att (hori_att)
     , elev_att (elev_att)
   { }
 
   virtual double data_term_computation (int pt_index)
   {
+#if defined(NORMALIZED_WEIGHTS)
+    return scat_att.penalized (pt_index)
+      + d2p_att.ignored (pt_index)
+      + hori_att.ignored (pt_index)
+      + elev_att.favored (pt_index);
+#else
     return scat_att.value (pt_index)
       + (1. - elev_att.value (pt_index));
+#endif
   }
 };
 
