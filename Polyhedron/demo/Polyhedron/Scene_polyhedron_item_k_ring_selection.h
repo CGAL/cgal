@@ -54,6 +54,7 @@ public:
     this->poly_item = poly_item;
     this->active_handle_type = aht;
     this->k_ring = k_ring;
+      mainwindow = mw;
     poly_item->enable_facets_picking(true);
     poly_item->set_color_vector_read_only(true);
 
@@ -263,6 +264,7 @@ protected:
   }
 
   bool is_edit_mode;
+  QMainWindow *mainwindow;
 };
 
 #endif
