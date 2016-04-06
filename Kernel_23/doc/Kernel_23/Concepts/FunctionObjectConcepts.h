@@ -6715,7 +6715,7 @@ public:
   \cgalConcept
 
 */
-  class PowerTest_3 {
+  class PowerSideOfPowerSphere_3 {
   public:
      /*!
 Let \f$ {z(p,q,r,s)}^{(w)}\f$ be the power sphere of the weighted points 
@@ -6733,7 +6733,7 @@ Let \f$ {z(p,q,r,s)}^{(w)}\f$ be the power sphere of the weighted points
 \pre `p, q, r, s` are not coplanar. 
 Note that with this definition, if all the points have a weight equal 
 to 0, then 
-`power_test_3(p,q,r,s,t)` = `side_of_oriented_sphere(p,q,r,s,t)`. 
+`power_side_of_power_sphere_3(p,q,r,s,t)` = `side_of_oriented_sphere(p,q,r,s,t)`. 
  
       */ 
     Oriented_side operator()( const Kernel::Weighted_point_3& p, const Kernel::Weighted_point_3& q, const Kernel::Weighted_point_3& r, const Kernel::Weighted_point_3& s, const Kernel::Weighted_point_3& t) const;
@@ -6753,7 +6753,7 @@ to 0, then
     power segment of `p` and `q`. 
     \pre `p` and `q` have different bare points, and `p, q, t` are collinear. 
     If all points have a weight equal to 0, then 
-    `power_test_3(p,q,t)` gives the same answer as the kernel predicate 
+    `power_side_of_power_sphere_3(p,q,t)` gives the same answer as the kernel predicate 
     `s(p,q).has_on(t)` would give, where `s(p,q)` denotes the 
     segment with endpoints `p` and `q`.
   */
