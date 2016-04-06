@@ -4,6 +4,7 @@
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/IO/File_avizo.h>
+#include <CGAL/Real_timer.h>
 #include <iostream>
 #include <fstream>
 
@@ -476,10 +477,58 @@ try_load_other_binary_format(std::istream& is, C3t3& c3t3)
   if(binary) CGAL::set_binary_mode(is);
   else CGAL::set_ascii_mode(is);
   std::istream& f_is = CGAL::file_input<
-                         Fake_c3t3::Triangulation,
-                         C3t3::Triangulation,
-                         Update_vertex<Fake_c3t3::Triangulation, C3t3::Triangulation>,
-                         Update_cell>(is, c3t3.triangulation());
+    Fake_c3t3::Triangulation,
+    C3t3::Triangulation,
+      Update_vertex<Fake_c3t3::Triangulation, C3t3::Triangulation>,
+    Update_cell>(is, c3t3.triangulation(),
+                 Update_vertex(),
+                 Update_cell()
+#ifdef CGAL_CXX11
+                 ,
+                 /* call_back: a C++11 lambda */
+                 [](std::istream& is,
+                    const C3t3::Triangulation::Triangulation_data_structure& tds,
+                    const char* text = 0)
+                 {
+                   static CGAL::Real_timer timer;
+                   static double last_time = 0;
+
+                   if(!timer.is_running()) {
+                     std::cerr << "Start loading...\n";
+                     timer.start();
+                   }
+                   if(text != 0) { std::cerr << text; return; }
+                   const double current_time = timer.time();
+                   if(current_time > last_time + 1.) {
+                     std::cerr << current_time << ": ";
+                     std::cerr << "Loaded " << tds.number_of_vertices()
+                               << " vertices, " << tds.number_of_cells()
+                               << " cells";
+                     typedef std::istream::pos_type pos_type;
+                     static pos_type last_pos = 0;
+                     const pos_type curr = is.tellg();
+                     is.seekg(0, std::ios_base::end);
+                     const pos_type end = is.tellg();
+                     is.seekg(curr);
+                     const std::streamoff divider =
+                       end > 500000000 ? 1000000 : 1000;
+                     const char unit =
+                       end > 500000000 ? 'M' : 'k';
+                     if(curr != pos_type(-1) && end != pos_type(-1)) {
+                       std::cerr << " (" << (curr/divider) << " "
+                                 << unit << "B/"
+                                 << (end/divider) << " "
+                                 << unit << "B, "
+                                 << ((curr-last_pos) / divider)
+                                 << unit << "B/s)\n";
+                     } else std::cerr << "\n";
+                     last_time = current_time;
+                     last_pos = curr;
+                   }
+                 }
+#endif // CGAL_CXX11
+                 );
+  std::cerr << "DONE.\n";
 
   c3t3.rescan_after_load_of_triangulation();
   return f_is.good();
