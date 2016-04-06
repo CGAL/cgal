@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 
@@ -32,7 +32,7 @@
 ////////////////////////////////////////////////////////////////////////////
 
 
-template <class Tr, class Visit, class Crv, class Evnt, class Alloc> 
+template <class Tr, class Visit, class Crv, class Evnt, class Alloc>
 void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintEventQueue()
 {
   CGAL_SL_DEBUG(std::cout << std::endl << "Event queue: " << std::endl;)
@@ -46,7 +46,7 @@ void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintEventQueue()
   CGAL_SL_DEBUG(std::cout << "--------------------------------" << std::endl;)
 }
 
-template <class Tr, class Visit, class Crv, class Evnt, class Alloc> 
+template <class Tr, class Visit, class Crv, class Evnt, class Alloc>
 void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintSubCurves()
 {
   CGAL_SL_DEBUG(std::cout << std::endl << "Sub curves: " << std::endl;)
@@ -56,7 +56,7 @@ void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintSubCurves()
   }
 }
 
-template <class Tr, class Visit, class Crv, class Evnt, class Alloc> 
+template <class Tr, class Visit, class Crv, class Evnt, class Alloc>
 void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintStatusLine()
 {
   if ( m_statusLine.size() == 0) {
@@ -82,38 +82,24 @@ void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::PrintStatusLine()
   std::cout << "Status line - end" << std::endl;
 }
 
-template <class Tr, class Visit, class Crv, class Evnt, class Alloc> 
+template <class Tr, class Visit, class Crv, class Evnt, class Alloc>
 void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::
 PrintOpenBoundaryType (Arr_parameter_space ps_x, Arr_parameter_space ps_y)
 {
-  switch (ps_x) {
-   case ARR_LEFT_BOUNDARY:  std::cout << "left boundary"; return;
-   case ARR_RIGHT_BOUNDARY: std::cout << "right boundary"; return;
-   case ARR_INTERIOR:
-   default: break;
-  }
-
-  switch (ps_y) {
-   case ARR_BOTTOM_BOUNDARY: std::cout << "bottom boundary"; return;
-   case ARR_TOP_BOUNDARY:    std::cout << "top boundary"; return;
-   case ARR_INTERIOR:
-   default: CGAL_error();
-  }
+  std::cout << "[" << ps_x << "," << ps_y << "]";
 }
 
-template <class Tr, class Visit, class Crv, class Evnt, class Alloc> 
+template <class Tr, class Visit, class Crv, class Evnt, class Alloc>
 void Basic_sweep_line_2<Tr, Visit, Crv, Evnt, Alloc>::
 PrintEvent(const Event* e)
 {
-  if (e->is_closed())
-    std::cout << e->point();
-  else
-  {
-    Arr_parameter_space x = e->parameter_space_in_x();
-    Arr_parameter_space y = e->parameter_space_in_y();
-    PrintOpenBoundaryType(x, y);
-    std::cout << " with open curve: " << e->curve();
-  } 
+  Arr_parameter_space x = e->parameter_space_in_x();
+  Arr_parameter_space y = e->parameter_space_in_y();
+  PrintOpenBoundaryType(x, y);
+  if (e->is_closed()) {
+    std::cout << " " << e->point();
+  }
+  std::cout << " [left: " << e->number_of_left_curves() << ", right: " << e->number_of_right_curves() << "]";
 }
 
 #endif

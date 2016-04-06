@@ -12,10 +12,6 @@
 // This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
-// $URL$
-// $Id$
-// 
-//
 // Author(s)     : Ron Wein          <wein@post.tau.ac.il>
 
 #ifndef CGAL_ARR_RATIONAL_ARC_TRAITS_2_H
@@ -26,7 +22,7 @@
 #include <CGAL/internal/deprecation_warning.h>
 
 /*! \file
- * Definition of the Arr_rational_arc_traits_2 class. 
+ * Definition of the Arr_rational_arc_traits_2 class.
  */
 #include <CGAL/config.h>
 
@@ -42,15 +38,15 @@ namespace CGAL {
  * A traits class for maintaining an arrangement of bounded arcs (segments) of
  * rational functions of arbitrary degree.
  *
- * The class is templated with two parameters: 
+ * The class is templated with two parameters:
  * Alg_kernel A geometric kernel, where Alg_kernel::FT is the number type
  *            for the coordinates of arrangement vertices, which are algebraic
  *            numbers (defined by Nt_traits::Algebraic).
  * Nt_traits A traits class for performing various operations on the integer,
- *           rational and algebraic types. 
+ *           rational and algebraic types.
  */
 template <class Alg_kernel_, class Nt_traits_>
-class Arr_rational_arc_traits_2 
+class Arr_rational_arc_traits_2
 {
 public:
 
@@ -264,7 +260,7 @@ public:
       );
       CGAL_precondition ((cv1.left_infinite_in_x() != ARR_INTERIOR ||
                           cv1.left_infinite_in_y() != ARR_INTERIOR ||
-                          ker.compare_xy_2_object() (p, 
+                          ker.compare_xy_2_object() (p,
                                                      cv1.left()) == LARGER) &&
                          (cv2.left_infinite_in_x() != ARR_INTERIOR ||
                           cv2.left_infinite_in_y() != ARR_INTERIOR ||
@@ -274,10 +270,10 @@ public:
       // Compare the slopes of the two arcs.
       Comparison_result        res;
       unsigned int             mult;
-    
+
       res = cv1.compare_slopes (cv2, p, mult);
 
-      // The comparison result is to the right of p. In case the multiplicity 
+      // The comparison result is to the right of p. In case the multiplicity
       // of the intersection point p is odd, reverse this result.
       if (mult % 2 == 1)
       {
@@ -328,7 +324,7 @@ public:
       );
       CGAL_precondition((cv1.right_infinite_in_x() != ARR_INTERIOR ||
                          cv1.right_infinite_in_y() != ARR_INTERIOR ||
-                         ker.compare_xy_2_object() (p, 
+                         ker.compare_xy_2_object() (p,
                                                     cv1.right()) == SMALLER) &&
                         (cv2.right_infinite_in_x() != ARR_INTERIOR ||
                          cv2.right_infinite_in_y() != ARR_INTERIOR ||
@@ -396,7 +392,7 @@ public:
   public:
 
     /*!
-     * Cut the given conic curve (or conic arc) into x-monotone subcurves 
+     * Cut the given conic curve (or conic arc) into x-monotone subcurves
      * and insert them to the given output iterator.
      * \param cv The curve.
      * \param oi The output iterator, whose value-type is Object. The returned
@@ -519,14 +515,14 @@ public:
 
     /*! The traits (in case it has state) */
     const Traits* m_traits;
-    
+
     /*! Constructor
      * \param traits the traits (in case it has state)
      */
     Merge_2(const Traits* traits) : m_traits(traits) {}
 
     friend class Arr_rational_arc_traits_2<Kernel>;
-    
+
   public:
     /*!
      * Merge two given x-monotone curves into a single curve (segment).
@@ -594,7 +590,7 @@ public:
   /*! Obtain a Parameter_space_in_x_2 function object */
   Parameter_space_in_x_2 parameter_space_in_x_2_object() const
   { return Parameter_space_in_x_2(); }
-  
+
   /*! A function object that obtains the parameter space of a geometric
    * entity along the y-axis
    */
@@ -642,7 +638,7 @@ public:
  /*! A function object that compares the x-limits of arc ends on the
    * boundary of the parameter space
    */
-  class Compare_x_at_limit_2 {
+  class Compare_x_on_boundary_2 {
   public:
     /*! Compare the x-coordinate of a point and the x-coordinate of the limit
      * of a rational arc at its specificed end at y = +/- oo.
@@ -654,7 +650,7 @@ public:
      * \return the comparison result:
      *         SMALLER - x(p) < x(xc, ce);
      *         EQUAL   - x(p) = x(xc, ce);
-     *         LARGER  - x(p) > x(xc, ce).     
+     *         LARGER  - x(p) > x(xc, ce).
      * \pre p lies in the interior of the parameter space.
      * \pre the ce end of the curve xcv lies on a boundary, implying that xcv
      *      is either a vertical line or a curve with a vertical asymptote.
@@ -696,16 +692,16 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_at_limit_2 function object */
-  Compare_x_at_limit_2 compare_x_at_limit_2_object() const
-  { return Compare_x_at_limit_2(); }
-    
+  /*! Obtain a Compare_x_on_boundary_2 function object */
+  Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
+  { return Compare_x_on_boundary_2(); }
+
   /*! A function object that compares the x-coordinates of arc ends near the
    * boundary of the parameter space
    */
-  class Compare_x_near_limit_2 {
+  class Compare_x_near_boundary_2 {
   public:
-    
+
     /*! Compare the x-coordinates of 2 arcs ends near the boundary of the
      * parameter space at y = +/- oo.
      * \param xcv1 the first arc.
@@ -729,10 +725,10 @@ public:
     }
   };
 
-  /*! Obtain a Compare_x_near_limit_2 function object */
-  Compare_x_near_limit_2 compare_x_near_limit_2_object() const
-  { return Compare_x_near_limit_2(); }
-    
+  /*! Obtain a Compare_x_near_boundary_2 function object */
+  Compare_x_near_boundary_2 compare_x_near_boundary_2_object() const
+  { return Compare_x_near_boundary_2(); }
+
 
   /*! A function object that compares the y-coordinates of arc ends near the
    * boundary of the parameter space.
@@ -763,10 +759,10 @@ public:
   { return Compare_y_near_boundary_2(); }
 
   //@}
-  
+
   /// \name Functor definitions for the Boolean set-operation traits.
   //@{
- 
+
   class Compare_endpoints_xy_2
   {
   public:

@@ -138,8 +138,8 @@ implemented as peripheral classes or as free (global) functions.
 - `ArrTraits::Equal_2`
 - `ArrTraits::ParameterSpaceInX_2`
 - `ArrTraits::ParameterSpaceInY_2`
-- `ArrTraits::CompareXAtLimit_2`
-- `ArrTraits::CompareXNearLimit_2`
+- `ArrTraits::CompareXOnBoundary_2`
+- `ArrTraits::CompareXNearBoundary_2`
 - `ArrTraits::CompareYNearBoundary_2`
 - `ArrTraits::Intersect_2`
 - `ArrTraits::Split_2`

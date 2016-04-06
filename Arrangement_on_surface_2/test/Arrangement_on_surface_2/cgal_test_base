@@ -485,8 +485,6 @@ execute_commands_new_structure()
     commands_indicator[COMPARE]=0
     commands_indicator[VERTEX]=0
     commands_indicator[IS_VERTICAL]=0
-    commands_indicator[COMPARE_X_AT_LIMIT]=0
-    commands_indicator[COMPARE_X_NEAR_LIMIT]=0
     commands_indicator[COMPARE_X_ON_BOUNDARY]=0
     commands_indicator[COMPARE_X_NEAR_BOUNDARY]=0
     commands_indicator[COMPARE_Y_NEAR_BOUNDARY]=0
@@ -529,14 +527,6 @@ execute_commands_new_structure()
     if [ ${commands_indicator[$IS_VERTICAL]} -ne 0 ] ; then
 	run_trapped_test test_traits data/$1/points \
 	    data/$1/xcurves data/$1/curves data/$1/is_vertical $2
-    fi
-    if [ ${commands_indicator[$COMPARE_X_AT_LIMIT]} -ne 0 ] ; then
-	run_trapped_test test_traits data/$1/points \
-	    data/$1/xcurves data/$1/curves data/$1/compare_x_at_limit $2
-    fi
-    if [ ${commands_indicator[$COMPARE_X_NEAR_LIMIT]} -ne 0 ] ; then
-	run_trapped_test test_traits data/$1/points \
-	    data/$1/xcurves data/$1/curves data/$1/compare_x_near_limit $2
     fi
     if [ ${commands_indicator[$COMPARE_X_ON_BOUNDARY]} -ne 0 ] ; then
 	run_trapped_test test_traits data/$1/points \
@@ -636,8 +626,6 @@ execute_commands_traits_adaptor()
 
     commands_indicator[PARAMETER_SPACE_X]=0
     commands_indicator[PARAMETER_SPACE_Y]=0
-    commands_indicator[COMPARE_X_AT_LIMIT]=0
-    commands_indicator[COMPARE_X_NEAR_LIMIT]=0
     commands_indicator[COMPARE_X_ON_BOUNDARY]=0
     commands_indicator[COMPARE_X_NEAR_BOUNDARY]=0
     commands_indicator[COMPARE_Y_NEAR_BOUNDARY]=0
@@ -672,17 +660,6 @@ execute_commands_traits_adaptor()
 	    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
 	    data/test_adaptor/$1/parameter_space_y $2
     fi
-    if [ ${commands_indicator[$COMPARE_X_AT_LIMIT]} -ne 0 ] ; then
-	run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-	    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
-	    data/test_adaptor/$1/compare_x_at_limit $2
-    fi
-    if [ ${commands_indicator[$COMPARE_X_NEAR_LIMIT]} -ne 0 ] ; then
-	run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
-	    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
-	    data/test_adaptor/$1/compare_x_near_limit $2
-    fi
-
     if [ ${commands_indicator[$COMPARE_X_ON_BOUNDARY]} -ne 0 ] ; then
 	run_trapped_test test_traits_adaptor data/test_adaptor/$1/points \
 	    data/test_adaptor/$1/xcurves data/test_adaptor/$1/curves \
@@ -1294,7 +1271,7 @@ test_linear_traits()
       IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT INTERSECT \
       SPLIT MERGE \
       PARAMETER_SPACE_X PARAMETER_SPACE_Y \
-      COMPARE_X_AT_LIMIT COMPARE_X_NEAR_LIMIT COMPARE_Y_NEAR_BOUNDARY
+      COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY COMPARE_Y_NEAR_BOUNDARY
   else
     echo "   ERROR:    not executed   test_traits linear_traits" >> $ERRORFILE
   fi
@@ -1524,7 +1501,7 @@ test_rational_arc_traits()
 
     execute_commands_new_structure rational_arcs rational_arc_traits \
       VERTEX IS_VERTICAL COMPARE_Y_AT_X COMPARE_Y_AT_X_LEFT SPLIT MERGE \
-      COMPARE_X_AT_LIMIT COMPARE_X_NEAR_LIMIT COMPARE_Y_NEAR_BOUNDARY
+      COMPARE_X_ON_BOUNDARY COMPARE_X_NEAR_BOUNDARY COMPARE_Y_NEAR_BOUNDARY
   else
     echo "   ERROR:    not executed   test_traits rational_arc_traits" >> $ERRORFILE
   fi

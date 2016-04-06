@@ -14,7 +14,7 @@
 //
 // $URL$
 // $Id$ $Date$
-// 
+//
 //
 // Author(s)     : Baruch Zukerman <baruchzu@post.tau.ac.il>
 //                 Ophir Setter    <ophir.setter@cs.tau.ac.il>
@@ -24,10 +24,10 @@
 
 /*!
   \file   Gps_agg_op.h
-  \brief  The class Gps_agg_op is responsible for aggregated Boolean set 
+  \brief  The class Gps_agg_op is responsible for aggregated Boolean set
           operations depending on a visitor template parameter.
           It uses the sweep-line algorithm from the arrangement packages
-          to overlay all the polygon sets, and then it uses a BFS that 
+          to overlay all the polygon sets, and then it uses a BFS that
           determines which of the faces is contained in the result using
           the visitor.
 */
@@ -41,9 +41,9 @@
 #include <CGAL/Boolean_set_operations_2/Gps_agg_op_visitor.h>
 #include <CGAL/Boolean_set_operations_2/Gps_bfs_scanner.h>
 //#include <CGAL/Boolean_set_operations_2/Gps_insertion_meta_traits.h>
-#include <CGAL/Unique_hash_map.h> 
+#include <CGAL/Unique_hash_map.h>
 #include <CGAL/Arr_accessor.h>
-#include <CGAL/iterator.h> 
+#include <CGAL/iterator.h>
 
 namespace CGAL {
 
@@ -89,14 +89,14 @@ class Gps_agg_op
                                   Subcurve,
                                   Event>              Sweep_line_2;
 
-  typedef Unique_hash_map<Halfedge_handle, 
+  typedef Unique_hash_map<Halfedge_handle,
                           unsigned int>               Edges_hash;
 
-  typedef Unique_hash_map<Face_handle, 
+  typedef Unique_hash_map<Face_handle,
                           unsigned int>               Faces_hash;
   typedef Bfs_visitor_                                Bfs_visitor;
   typedef Gps_bfs_scanner<Arrangement_2, Bfs_visitor> Bfs_scanner;
- 
+
 protected:
   Arrangement_2*       m_arr;
   Meta_traits*         m_traits;
@@ -104,7 +104,7 @@ protected:
   Sweep_line_2         m_sweep_line;
   Edges_hash           m_edges_hash; // maps halfedge to its BC (boundary counter)
   Faces_hash           m_faces_hash;  // maps face to its IC (inside count)
-  
+
 public:
 
   /*! Constructor. */
@@ -123,7 +123,7 @@ public:
   {
     std::list<Meta_X_monotone_curve_2> curves_list;
 
-    unsigned int n_inf_pgn = 0; // number of infinte polygons (arrangement 
+    unsigned int n_inf_pgn = 0; // number of infinte polygons (arrangement
                                 // with a contained unbounded face
     unsigned int n_pgn = 0;     // number of polygons (arrangements)
     unsigned int i;
@@ -139,7 +139,7 @@ public:
       Edge_iterator  itr = arr->edges_begin();
       for(; itr != arr->edges_end(); ++itr)
       {
-        // take only relevant edges (which seperate between contained and 
+        // take only relevant edges (which seperate between contained and
         // non-contained faces.
         Halfedge_iterator he = itr;
         if(he->face()->contained() == he->twin()->face()->contained())
@@ -156,7 +156,7 @@ public:
                         lower, upper, jump,
                         arr_vec);
 
-    m_faces_hash[m_arr->reference_face()] = n_inf_pgn; 
+    m_faces_hash[m_arr->reference_face()] = n_inf_pgn;
     Bfs_visitor visitor(&m_edges_hash, &m_faces_hash, n_pgn);
     visitor.visit_ubf(m_arr->faces_begin(), n_inf_pgn);
     Bfs_scanner scanner(visitor);

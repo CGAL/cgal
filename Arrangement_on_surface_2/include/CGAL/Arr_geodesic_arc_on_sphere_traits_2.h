@@ -1,4 +1,4 @@
-// Copyright (c) 2006,2007,2008,2009,2010,2011 Tel-Aviv University (Israel).
+// Copyright (c) 2006,2007,2008,2009,2010,2011,2014 Tel-Aviv University (Israel).
 // All rights reserved.
 //
 // This file is part of CGAL (www.cgal.org).
@@ -13,6 +13,7 @@
 // WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
 //
 // Author(s)     : Efi Fogel         <efif@post.tau.ac.il>
+//                 Eric Berberich    <eric.berberich@cgal.org>
 
 #ifndef CGAL_ARR_GEODESIC_ARC_ON_SPHERE_TRAITS_2_H
 #define CGAL_ARR_GEODESIC_ARC_ON_SPHERE_TRAITS_2_H
@@ -707,8 +708,10 @@ public:
       const Kernel* kernel = m_traits;
       typename Kernel::Construct_opposite_direction_3 opposite_3 =
         kernel->construct_opposite_direction_3_object();
-      Point_2 tmp1 = opposite_3(p);     // pacify msvc 10
-      if (!kernel->equal_3_object()(tmp1, r1)) return EQUAL;
+      // VC 10 does not like the following:
+      // if (!kernel->equal_3_object()(opposite_3(p), r1)) return EQUAL;
+      Point_2 ops = opposite_3(p);
+      if (!kernel->equal_3_object()(ops, r1)) return EQUAL;
 
       Sign xsign = Traits::x_sign(p);
       Sign ysign = Traits::y_sign(p);
@@ -803,50 +806,48 @@ public:
    */
   class Parameter_space_in_x_2 {
   public:
-    /*! Obtains the parameter space at the end of an arc along the x-axis .
-     * Note that if the arc end coincides with a pole, then unless the arc
-     * coincides with the identification arc, the arc end is considered to
-     * be approaching the boundary, but not on the boundary.
-     * If the arc coincides with the identification arc, it is assumed to
-     * be smaller than any other object.
+    /*! Obtains the parameter space at the end of an arc along the x-axis.
+     * Only called for arcs whose interior lie in the interior of the
+     * parameter space, that is, the arc does not coincide with the
+     * identification. Thus, it returns ARR_LEFT_BOUNDARY or ARR_RIGHT_BOUNDARY
+     * for non-vertical arcs and ARR_INTERIOR for (vertical) arcs whose end
+     * might even reach one of the poles.
      * \param xcv the arc
      * \param ce the arc end indicator:
      *     ARR_MIN_END - the minimal end of xc or
      *     ARR_MAX_END - the maximal end of xc
      * \return the parameter space at the ce end of the arc xcv.
      *   ARR_LEFT_BOUNDARY  - the arc approaches the identification arc from
-     *                        the right at the arc left end.
-     *   ARR_INTERIOR       - the arc does not approache the identification arc.
+     *                        the right at the minimal arc end.
+     *   ARR_INTERIOR       - the arc does not approach the identification arc.
      *   ARR_RIGHT_BOUNDARY - the arc approaches the identification arc from
-     *                        the left at the arc right end.
-     * \pre xcv does not coincide with the vertical identification arc.
+     *                        the left at the maximal arc end.
+     * \pre xcv does not coincide with the identification
      */
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
                                    Arr_curve_end ce) const
     {
+      CGAL_precondition(!xcv.is_on_boundary());
+      // vertical, but not on identification!
       if (xcv.is_vertical()) {
-        CGAL_precondition(!xcv.is_on_boundary());
         return ARR_INTERIOR;
       }
-
       return (ce == ARR_MIN_END) ?
         ((xcv.left().is_no_boundary()) ? ARR_INTERIOR : ARR_LEFT_BOUNDARY) :
         ((xcv.right().is_no_boundary()) ? ARR_INTERIOR : ARR_RIGHT_BOUNDARY);
     }
 
     /*! Obtains the parameter space at a point along the x-axis.
+     * Every non-interior point is assumed to lie on the left-right
+     * identification.
+     * Points at the poles additionally lie on the bottom or top boundary.
      * \param p the point.
      * \return the parameter space at p.
-     * \pre p does not lie on the vertical identification curve.
      */
-    Arr_parameter_space operator()(const Point_2 p) const
+    Arr_parameter_space operator()(const Point_2& p) const
     {
-      /*! \todo For now the precondition is not applied. Instead, and as
-       * a convention, if the point lies on the vertical identification
-       * curve it is assumed to be smaller than anything else. Thus,
-       * ARR_LEFT_BOUNDARY is returned.
-       */
-      return (p.is_mid_boundary()) ? ARR_LEFT_BOUNDARY : ARR_INTERIOR;
+      CGAL_precondition(p.is_no_boundary());
+      return ARR_INTERIOR;
     }
   };
 
@@ -859,23 +860,22 @@ public:
    */
   class Parameter_space_in_y_2 {
   public:
-    /*! Obtains the parameter space at the end of an arc along the y-axis .
-     * Note that if the arc end coincides with a pole, then unless the arc
-     * coincides with the identification arc, the arc end is considered to
-     * be approaching the boundary, but not on the boundary.
-     * If the arc coincides with the identification arc, it is assumed to
-     * be smaller than any other object.
+    /*! Obtains the parameter space at the end of an arc along the y-axis.
+     * Only called for arcs whose interior lie in the interior of the
+     * parameter space, that is, the arc does not coincide with the
+     * identification. Thus, it returns ARR_BOTTOM_BOUNDARY or ARR_TOP_BOUNDARY
+     * for arcs ends that reach the poles (such arc are vertical) and
+     * ARR_INTERIOR for all other arc ends.
      * \param xcv the arc
      * \param ce the arc end indicator:
      *     ARR_MIN_END - the minimal end of xc or
      *     ARR_MAX_END - the maximal end of xc
      * \return the parameter space at the ce end of the arc xcv.
      *   ARR_BOTTOM_BOUNDARY  - the arc approaches the south pole at the arc
-     *                          left end.
+     *                          minimal end.
      *   ARR_INTERIOR         - the arc does not approache a contraction point.
      *   ARR_TOP_BOUNDARY     - the arc approaches the north pole at the arc
-     *                          right end.
-     * There are no horizontal identification arcs!
+     *                          maximal end.
      */
     Arr_parameter_space operator()(const X_monotone_curve_2& xcv,
                                    Arr_curve_end ce) const
@@ -885,13 +885,14 @@ public:
         ((xcv.right().is_max_boundary()) ? ARR_TOP_BOUNDARY : ARR_INTERIOR);
     }
 
-    /*! Obtains the parameter space at a point along the y-axis.
+    /*! Obtains the parameter space of a point along the y-axis.
+     * That is, ARR_BOTTOM_BOUNDARY is returned if p coincides with the
+     * south pole and ARR_TOP_BOUNDARY if p coincides with the north pole.
+     * Otherwise ARR_INTERIOR is returned.
      * \param p the point.
      * \return the parameter space at p.
-     * \pre p does not lie on the horizontal identification curve.
-     * There are no horizontal identification arcs!
      */
-    Arr_parameter_space operator()(const Point_2 p) const
+    Arr_parameter_space operator()(const Point_2& p) const
     {
       return
         (p.is_min_boundary()) ? ARR_BOTTOM_BOUNDARY :
@@ -922,8 +923,8 @@ public:
     friend class Arr_geodesic_arc_on_sphere_traits_2<Kernel>;
 
   public:
-    /*! Compare the x-limit of a direction with the x-coordinate of an
-     * arc end on the boundary.
+    /*! Compare the x-coordinate of a direction with the x-coordinate of an
+     * arc end projected onto the boundary.
      * \param point the point direction.
      * \param xcv the arc, the endpoint of which is compared.
      * \param ce the arc-end indicator -
@@ -960,8 +961,8 @@ public:
       return m_traits->compare_x(p, q);
     }
 
-    /*! Compare the x-coordinates of 2 arc ends near the boundary of the
-     * parameter space.
+    /*! Compare the x-coordinates of two arc ends projected onto the boundary
+     * of the parameter space.
      * \param xcv1 the first arc.
      * \param ce1 the first arc end indicator -
      *            ARR_MIN_END - the minimal end of xcv1 or
@@ -970,16 +971,17 @@ public:
      * \param ce2 the second arc end indicator -
      *            ARR_MIN_END - the minimal end of xcv2 or
      *            ARR_MAX_END - the maximal end of xcv2.
-     * \return the second comparison result:
+     * The respective closed endpoint may coincide with a pole.
+     * \return the comparison result:
      *         SMALLER - x(xcv1, ce1) < x(xcv2, ce2);
      *         EQUAL   - x(xcv1, ce1) = x(xcv2, ce2);
      *         LARGER  - x(xcv1, ce1) > x(xcv2, ce2).
+     * \pre xcv1 does not coincide with the vertical identification curve.
+     * \pre xcv2 does not coincide with the vertical identification curve.
      * \pre the ce1 end of the arc xcv1 lies on a pole (implying ce1 is
      *      vertical).
      * \pre the ce2 end of the arc xcv2 lies on a pole (implying ce2 is
      *      vertical).
-     * \pre xcv1 does not coincide with the vertical identification curve.
-     * \pre xcv2 does not coincide with the vertical identification curve.
      */
     Comparison_result operator()(const X_monotone_curve_2& xcv1,
                                  Arr_curve_end CGAL_precondition_code(ce1),
@@ -999,7 +1001,7 @@ public:
       CGAL_precondition(!xcv1.is_on_boundary());
       CGAL_precondition(!xcv2.is_on_boundary());
 
-      // Non of the arcs coincide with the discontinuity arc:
+      // Non of the arcs coincide with the identification arc:
       // Obtain the directions contained in the underlying planes, which are
       // also on the xy-plane:
       Direction_3 normal1 = xcv1.normal();
@@ -1013,23 +1015,21 @@ public:
       return m_traits->compare_x(p, q);
     }
 
-    /*! Compare the x-coordinate of two given points that lie on the
-     * horizontal identification arc.
-     * \param p1 the first point.
-     * \param p2 the second point.
-     * There is no horizontal identification arc!
+    /*! \todo This operator should be removed! The general code should never
+     * call this operator for this traits!
+     * Once we do a better dispatching of the functors (LR-ident + TB-contraction),
+     * an implementation of this signature becomes obsolete.
      */
-    Comparison_result operator()(const Point_2&, const Point_2&) const
+    Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
-      CGAL_error_msg("There is no horizontal identification arc!");
-      return SMALLER;
+      CGAL_error(); return EQUAL;
     }
   };
 
-  /*! Obtain a Compare_x_on_boundary_2 function object */
+  /*! Obtain a Compare_x_on_boundary_2 function object.
+   */
   Compare_x_on_boundary_2 compare_x_on_boundary_2_object() const
   { return Compare_x_on_boundary_2(this); }
-
 
   /*! A functor that compares the x-coordinates of arc ends near the
    * boundary of the parameter space.
@@ -1235,42 +1235,6 @@ public:
   { return Compare_y_near_boundary_2(this); }
 
   /*! A functor that indicates whether a geometric object lies on the
-   * horizontal identification arc. In this setup there is no such entity.
-   */
-  class Is_on_x_identification_2 {
-  protected:
-    typedef Arr_geodesic_arc_on_sphere_traits_2<Kernel> Traits;
-
-  public:
-    /*! Determine whether a point lies on the horizontal identification arc.
-     * \param p the point.
-     * \return a Boolean indicating whether p lies on the horizontal
-     * identification arc.
-     */
-    bool operator()(const Point_2&) const
-    {
-      CGAL_error_msg("There is no horizontal identification arc!");
-      return false;
-    }
-
-    /*! Determine whether an arc coincides with the horizontal identification
-     * arc.
-     * \param xcv the arc.
-     * \return a Boolean indicating whether xcv coincides with the horizontal
-     * identification arc.
-     */
-    bool operator()(const X_monotone_curve_2&) const
-    {
-      CGAL_error_msg("There is no horizontal identification arc!");
-      return false;
-    }
-  };
-
-  /*! Obtain a Is_on_x_identification_2 function object */
-  Is_on_x_identification_2 is_on_x_identification_2_object() const
-  { return Is_on_x_identification_2(); }
-
-  /*! A functor that indicates whether a geometric object lies on the
    * vertical identification arc.
    */
   class Is_on_y_identification_2 {
@@ -1291,9 +1255,9 @@ public:
     /*! Determine whether a point lies on the vertical identification arc.
      * \param p the point.
      * \return a Boolean indicating whether p lies on the vertical
-     * identification arc.
+     * identification arc (including the poles)
      */
-    bool operator()(const Point_2& p) const { return p.is_mid_boundary(); }
+    bool operator()(const Point_2& p) const { return !p.is_no_boundary(); }
 
     /*! Determine whether an arc coincides with the vertical identification
      * arc.
@@ -1331,18 +1295,42 @@ public:
      * identification curve.
      * \param p1 the first point.
      * \param p2 the second point.
-     * \return SMALLER - p1 is lexicographically smaller than p2;
+     * \return SMALLER - p1 is smaller than p2;
      *         EQUAL   - p1 and p2 coincides;
-     *         LARGER  - p1 is lexicographically larger than p2;
-     * \pre p1 lies on the vertical identification arc.
-     * \pre p2 lies on the vertical identification arc.
+     *         LARGER  - p1 is larger than p2;
+     * \pre p1 lies on the vertical identification arc including the poles!
+     * \pre p2 lies on the vertical identification arc including the poles!
      */
     Comparison_result operator()(const Point_2& p1, const Point_2& p2) const
     {
-      CGAL_precondition(!p1.is_no_boundary());
-      CGAL_precondition(!p2.is_no_boundary());
+      // first deal with the 'degenerate' case of poles!
+      if (p1.is_min_boundary()) {
+        if (p2.is_min_boundary()) {
+          return EQUAL;
+        } else {
+          return SMALLER;
+        }
+      } else if (p1.is_max_boundary()) {
+        if (p2.is_max_boundary()) {
+          return EQUAL;
+        } else {
+          return LARGER;
+        }
+      } else if (p2.is_min_boundary()) {
+        return LARGER;
+      } else if (p2.is_max_boundary()) {
+        return SMALLER;
+      }
+
+      // this is the default for points on the identification arc
+      CGAL_assertion(!p1.is_no_boundary());
+      CGAL_assertion(!p2.is_no_boundary());
       return m_traits->compare_y(p1, p2);
     }
+
+    // THERE ARE NO OTHER SIGNATURES AS WE HAVE IT FOR COMPARE_X_ON_BOUNDARY,
+    // namely (ce1,pt2) and (ce1, ce2)
+
   };
 
   /*! Obtain a Compare_y_on_boundary_2 function object */
@@ -3093,7 +3081,7 @@ public:
         return;
       }
 
-      /* Non of the endpoints coincide with a pole.
+      /* None of the endpoints coincide with a pole.
        * The projections of both endpoints lie on the same hemi-circle.
        * Thus, either the arc is x-monotone, or it includes both poles.
        * This means that it is sufficient to check whether one pole lies
