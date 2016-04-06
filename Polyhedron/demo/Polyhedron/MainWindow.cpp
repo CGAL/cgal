@@ -776,11 +776,6 @@ void MainWindow::viewerShow(float xmin,
 }
 
 void MainWindow::viewerShow(float x, float y, float z) {
-#if QGLVIEWER_VERSION >= 0x020502
-  viewer->camera()->setPivotPoint(qglviewer::Vec(x, y, z));
-#else
-  viewer->camera()->setRevolveAroundPoint(qglviewer::Vec(x, y, z));
-#endif
   // viewer->camera()->lookAt(qglviewer::Vec(x, y, z));
 
   qglviewer::ManipulatedCameraFrame backup_frame(*viewer->camera()->frame());
@@ -790,6 +785,12 @@ void MainWindow::viewerShow(float x, float y, float z) {
   *viewer->camera()->frame() = backup_frame;
   viewer->camera()->interpolateTo(new_frame, 1.f);
   viewer->setVisualHintsMask(1);
+
+#if QGLVIEWER_VERSION >= 0x020502
+  viewer->camera()->setPivotPoint(qglviewer::Vec(x, y, z));
+#else
+  viewer->camera()->setRevolveAroundPoint(qglviewer::Vec(x, y, z));
+#endif
 }
 
 void MainWindow::message(QString message, QString colorName, QString font) {
