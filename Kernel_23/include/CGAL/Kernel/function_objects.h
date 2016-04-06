@@ -574,8 +574,8 @@ public:
 };
 
 
-// Compute the square radius of the circle centered in t
-// and orthogonal to  the circle orthogonal to p,q,r,s
+// Compute the square radius of the sphere centered in t
+// and orthogonal to  the sphere orthogonal to p,q,r,s
 template< typename K>
 class Compute_power_distance_to_power_sphere_3
 {

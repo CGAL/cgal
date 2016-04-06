@@ -126,7 +126,7 @@ public:
   typedef unspecified_type Point_2; 
 
   /*!
-    a model of `Kernel::Weighted_point_2` 
+    a model of `Kernel::WeightedPoint_2` 
   */ 
   typedef unspecified_type Weighted_point_2; 
 
@@ -777,7 +777,7 @@ public:
   typedef unspecified_type Point_3; 
 
   /*!
-    a model of `Kernel::Weighted_point_3` 
+    a model of `Kernel::WeightedPoint_3` 
   */ 
   typedef unspecified_type Weighted_point_3; 
 

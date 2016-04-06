@@ -3,7 +3,7 @@ namespace CGAL {
 /*!
 \ingroup kernel_classes2
 
-An object of the class `Weighted_point_2` is .... 
+An object of the class `Weighted_point_2` is a tuple of a 2D point and a scalar weight. 
 
 
 \cgalHeading{Operators}
@@ -15,7 +15,7 @@ The following operations can be applied on points:
 
 */
 template< typename Kernel >
-class Weighted_point_2 : public Point_2<Kernel> {
+class Weighted_point_2 {
 public:
 
 
@@ -43,11 +43,16 @@ introduces a weighted point from point `p` and  weight `w`.
 /// \name Operations 
 /// @{
 
+/*!
+returns the weight of the weighted point.
+*/ 
+  Point_2<Kernel> point() const;
+
 
 /*!
 returns the weight of the weighted point.
 */ 
-  FT weight() const;
+  Kernel::FT weight() const;
 /// @}
 
 };

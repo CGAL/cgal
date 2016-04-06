@@ -775,4 +775,52 @@ public:
 
 }; /* end Kernel::Vector_3 */
 
+
+/*!
+  \ingroup PkgKernel23ConceptsGeomObject
+\cgalConcept
+
+A type representing weighted points in two dimensions. 
+
+\cgalRefines CopyConstructible
+\cgalRefines Assignable
+\cgalRefines DefaultConstructible
+
+\sa `CGAL::Weighted_point_3<Kernel>` 
+
+\sa `ComparePowerDistance_2`
+\sa `ConstructWeightedCircumcenter_2`
+\sa `PowerSideOfPowerCircle_2`
+
+*/
+class WeightedPoint_2 {
+public:
+
+}; /* end Kernel::WeightedPoint_3 */
+
+/*!
+  \ingroup PkgKernel23ConceptsGeomObject
+\cgalConcept
+
+A type representing weighted points in three dimensions. 
+
+\cgalRefines CopyConstructible
+\cgalRefines Assignable
+\cgalRefines DefaultConstructible
+
+\sa `CGAL::Weighted_point_3<Kernel>` 
+
+\sa `ComparePowerDistance_3`
+\sa `ComputePowerDistanceToPowerSphere_3`
+\sa `ComputePowerProduct_3`
+\sa `ConstructWeightedCircumcenter_3`
+\sa `InSmallestOrthogonalSphere_3`
+\sa `PowerSideOfPowerSphere_3`
+
+*/
+class WeightedPoint_3 {
+public:
+
+}; /* end Kernel::WeightedPoint_3 */
+
 } /* end namespace Kernel */
