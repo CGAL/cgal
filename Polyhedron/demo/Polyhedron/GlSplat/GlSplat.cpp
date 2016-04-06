@@ -57,7 +57,7 @@ QString SplatRenderer::loadSource(const QString& func,const QString& filename)
     std::cerr << "failed to load shader file " << filename.toLatin1().data() << "\n";
     return res;
   }
-  else qDebug("Succesfully loaded shader func '%s' in file '%s'",qPrintable(func),qPrintable(filename));
+  else qDebug("Successfully loaded shader func '%s' in file '%s'",qPrintable(func),qPrintable(filename));
   QTextStream stream(&f);
   res = stream.readAll();
   f.close();
