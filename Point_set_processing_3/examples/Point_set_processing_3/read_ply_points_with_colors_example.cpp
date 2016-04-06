@@ -34,15 +34,15 @@ public:
   // Init and test if input file contains the right properties
   bool is_applicable (CGAL::Ply_reader& reader)
   {
-    return reader.does_tag_exist ("x")
-      && reader.does_tag_exist ("y")
-      && reader.does_tag_exist ("z")
-      && reader.does_tag_exist ("nx")
-      && reader.does_tag_exist ("ny")
-      && reader.does_tag_exist ("nz")
-      && reader.does_tag_exist ("red")
-      && reader.does_tag_exist ("green")
-      && reader.does_tag_exist ("blue");
+    return reader.does_tag_exist<FT> ("x")
+      && reader.does_tag_exist<FT> ("y")
+      && reader.does_tag_exist<FT> ("z")
+      && reader.does_tag_exist<FT> ("nx")
+      && reader.does_tag_exist<FT> ("ny")
+      && reader.does_tag_exist<FT> ("nz")
+      && reader.does_tag_exist<unsigned char> ("red")
+      && reader.does_tag_exist<unsigned char> ("green")
+      && reader.does_tag_exist<unsigned char> ("blue");
   }
 
   // Describes how to process one line (= one point object)

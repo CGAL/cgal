@@ -327,14 +327,17 @@ public:
   /// \endcond
   
   /*!
+    \tparam Type type of the property (ex: double, float, unsigned char, etc.)
     \param tag name of the property (ex: _nx_ for x normal coordinate)
-    \return true if points inside the PLY input contain the property `tag`
+    \return true if points inside the PLY input contain the property `tag` with type `Type`
   */
+  template <typename Type>
   bool does_tag_exist (const char* tag)
   {
     for (std::size_t i = 0; i < m_readers.size (); ++ i)
       if (m_readers[i]->name () == tag)
-        return true;
+        return dynamic_cast<internal::Ply_read_typed_number<Type>*>(m_readers[i]);
+
     return false;
   }
 
@@ -342,14 +345,14 @@ public:
     \param t reference to store last read value of the property `tag`
     \param tag name of the required property
   */
-  template <typename T>
-  void assign (T& t, const char* tag)
+  template <typename Type>
+  void assign (Type& t, const char* tag)
   {
     for (std::size_t i = 0; i < m_readers.size (); ++ i)
       if (m_readers[i]->name () == tag)
         {
-          internal::Ply_read_typed_number<T>*
-            reader = dynamic_cast<internal::Ply_read_typed_number<T>*>(m_readers[i]);
+          internal::Ply_read_typed_number<Type>*
+            reader = dynamic_cast<internal::Ply_read_typed_number<Type>*>(m_readers[i]);
           assert (reader != NULL);
           t = reader->buffer();
           return;
@@ -408,9 +411,9 @@ public:
 
   bool is_applicable (Ply_reader& reader)
   {
-    return reader.does_tag_exist ("x")
-      && reader.does_tag_exist ("y")
-      && reader.does_tag_exist ("z");
+    return reader.does_tag_exist<FT> ("x")
+      && reader.does_tag_exist<FT> ("y")
+      && reader.does_tag_exist<FT> ("z");
   }
   
   void process_line (Ply_reader& reader)
