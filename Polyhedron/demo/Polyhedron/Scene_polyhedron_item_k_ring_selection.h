@@ -186,16 +186,11 @@ protected:
   }
 
 
-  bool eventFilter(QObject* /*target*/, QEvent *event)
+  bool eventFilter(QObject* target, QEvent *event)
   {
-    // This filter is both filtering events from 'viewer' and 'main window' so we can get the clic event when the mainwindow has the focus
-    //But we don't want it to interfere.
-    if(target == mainwindow)
-    {
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-      viewer->setFocus();
-      return false;
-    }
+    // This filter is both filtering events from 'viewer' and 'main window'
+
+    // key events
       if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)  {
       QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
       Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
@@ -216,6 +211,12 @@ protected:
     }
     // mouse events
     if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease) {
+      if(!state.shift_pressing && target == mainwindow)
+      {
+        QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+        viewer->setFocus();
+        return false;
+      }
       QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
       if(mouse_event->button() == Qt::LeftButton) {
         state.left_button_pressing = event->type() == QEvent::MouseButtonPress;
@@ -238,6 +239,12 @@ protected:
          ||
          (event->type() == QEvent::MouseButtonPress && static_cast<QMouseEvent*>(event)->button() == Qt::LeftButton && state.shift_pressing ))
     {
+      if(target == mainwindow)
+      {
+        QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+        viewer->setFocus();
+        return false;
+      }
       // paint with mouse move event
       QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
       QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
