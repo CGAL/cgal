@@ -681,6 +681,7 @@ power_testC2( const FT &px, const FT &py, const FT &pwt,
 	      const FT &qx, const FT &qy, const FT &qwt,
 	      const FT &tx, const FT &ty, const FT &twt)
 {
+  std::cerr << px << "  " <<  py << "  "  << pwt << std::endl;
     // Same translation as above.
     FT dpx = px - tx;
     FT dpy = py - ty;

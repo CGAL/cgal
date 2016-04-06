@@ -23,36 +23,34 @@
 #define CGAL_CARTESIAN_WEIGHTED_POINT_2_H
 
 #include <iostream>
-#include <CGAL/Kernel_traits.h>
-#include <CGAL/Dimension.h>
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_convertible.hpp>
-#include <boost/mpl/and.hpp>
-#include <boost/mpl/bool.hpp>
-#include <boost/mpl/logical.hpp>
+#include <boost/tuple/tuple.hpp>
 
 namespace CGAL {
 
 template < class R_ >
-class Weighted_pointC2 : public R_::Point_2
+class Weighted_pointC2
 {
+  typedef typename R_::Point_2 Point_2;
   typedef typename R_::FT FT;
+  typedef typename R_::FT Weight;
+  typedef boost::tuple<Point_2, Weight>   Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
+
+  Base base;
+
 public:
-  typedef FT Weight;
-  typedef typename R_::Point_2 Point;
 
   Weighted_pointC2 ()
-      : Point(), _weight(0) {}
+  {}
 
   //explicit
-  Weighted_pointC2 (const Point &p)
-      : Point(p), _weight(0)
-  {
-    // CGAL_error_msg( "Warning : truncated weight !!!");
-  }
+  Weighted_pointC2 (const Point_2 &p)
+    : base(p,0)
+  {}
 
-  Weighted_pointC2 (const Point &p, const Weight &w)
-      : Point(p), _weight(w) {}
+  Weighted_pointC2 (const Point_2 &p, const Weight &w)
+    : base(p,w)
+  {}
 
 
   // Constructors from coordinates are also provided for convenience, except
@@ -60,29 +58,22 @@ public:
   // to avoid any potential ambiguity between the homogeneous weight and the
   // power weight (it should be easy enough to pass a Point explicitly in those
   // cases).
-  // The enable_if complexity comes from the fact that we separate dimension 2 and 3.
 
+  Weighted_pointC2(const FT& x, const FT& y)
+    : base(Point_2(x,y),0)
+  {}
 
-  template < typename Tx, typename Ty>
-  Weighted_pointC2 (const Tx &x, const Ty &y,
-	          typename boost::enable_if< boost::mpl::and_<boost::is_convertible<Tx, FT>,
-					                      boost::is_convertible<Ty, FT>,
-							      boost::mpl::bool_<CGAL::Ambient_dimension<Point>::value == 2> > >::type* = 0)
-      : Point(x, y), _weight(0) {}
-
-  const Point & point() const
+  const Point_2 & point() const
   {
-      return *this;
+      return get_pointee_or_identity(base).template get<0>();
   }
 
   const Weight & weight() const
   {
-      return _weight;
+      return get_pointee_or_identity(base).template get<1>();
   }
 
-
-private:
-  Weight _weight;
+  
 };
 
 

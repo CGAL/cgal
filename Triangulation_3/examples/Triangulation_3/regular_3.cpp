@@ -8,7 +8,7 @@ typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 
 typedef CGAL::Regular_triangulation_euclidean_traits_3<K>  Traits;
 
-typedef Traits::RT                                          Weight;
+typedef Traits::FT                                          Weight;
 typedef Traits::Bare_point                                  Point;
 typedef Traits::Weighted_point                              Weighted_point;
 

@@ -91,14 +91,8 @@ public:
   Weighted_point_2(const FT& x, const FT& y)
     : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), x, y))
   {}
-  
-  /*
-  template < typename T1, typename T2>
-  Weighted_point_2(const T1& x, const T2& y)
-    : Rep(typename R::Construct_weighted_point_2()(Return_base_tag(), x, y))
-  {}
-  */
-  typename cpp11::result_of<typename R::Construct_point_2( Weighted_point_2)>::type 
+
+  typename cpp11::result_of<typename R::Construct_point_2( Weighted_point_2)>::type
   point() const
   {
     return typename R::Construct_point_2()(*this);
@@ -111,37 +105,37 @@ public:
   }
 
 
-  typename cpp11::result_of<typename R::Compute_x_2( Weighted_point_2)>::type
+  typename cpp11::result_of<typename R::Compute_x_2( Point_2)>::type
   x() const
   {
-    return typename R::Compute_x_2()(*this);
+    return typename R::Compute_x_2()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_y_2( Weighted_point_2)>::type
+  typename cpp11::result_of<typename R::Compute_y_2( Point_2)>::type
   y() const
   {
-    return typename R::Compute_y_2()(*this);
+    return typename R::Compute_y_2()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hx_2( Weighted_point_2)>::type
+  typename cpp11::result_of<typename R::Compute_hx_2( Point_2)>::type
   hx() const
   {
-    return R().compute_hx_2_object()(*this);
+    return R().compute_hx_2_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hy_2( Weighted_point_2)>::type
+  typename cpp11::result_of<typename R::Compute_hy_2( Point_2)>::type
   hy() const
   {
-    return R().compute_hy_2_object()(*this);
+    return R().compute_hy_2_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_hw_2( Weighted_point_2)>::type
+  typename cpp11::result_of<typename R::Compute_hw_2( Point_2)>::type
   hw() const
   {
-    return R().compute_hw_2_object()(*this);
+    return R().compute_hw_2_object()(point());
   }
 
-  typename cpp11::result_of<typename R::Compute_x_2( Weighted_point_2)>::type
+  typename cpp11::result_of<typename R::Compute_x_2( Point_2)>::type
   cartesian(int i) const
   {
     CGAL_kernel_precondition( (i == 0) || (i == 1) );
@@ -158,7 +152,7 @@ public:
     return hz();
   }
 
-  typename cpp11::result_of<typename R::Compute_x_2(Weighted_point_2)>::type
+  typename cpp11::result_of<typename R::Compute_x_2(Point_2)>::type
   operator[](int i) const
   {
       return cartesian(i);
@@ -166,12 +160,12 @@ public:
 
   Cartesian_const_iterator cartesian_begin() const
   {
-    return typename R::Construct_cartesian_const_iterator_2()(*this);
+    return typename R::Construct_cartesian_const_iterator_2()(point());
   }
 
   Cartesian_const_iterator cartesian_end() const
   {
-    return typename R::Construct_cartesian_const_iterator_2()(*this,3);
+    return typename R::Construct_cartesian_const_iterator_2()(point(),3);
   }
 
   int dimension() const
@@ -181,12 +175,12 @@ public:
 
   Bbox_2 bbox() const
   {
-    return R().construct_bbox_2_object()(*this);
+    return R().construct_bbox_2_object()(point());
   }
 
   Weighted_point_2 transform(const Aff_transformation_2 &t) const
   {
-    return t.transform(*this);
+    return Weighted_point_2(t.transform(point(),weight()));
   }
 
 };
@@ -202,6 +196,25 @@ inline
 bool
 operator!=(const Origin& o, const Weighted_point_2<R>& p)
 { return p != o; }
+
+
+template <class R>
+inline
+bool
+operator==(const Point_2<R>& bp, const Weighted_point_2<R>& p)
+{ return bp == p.point(); }
+
+template <class R>
+inline
+bool
+operator==(const Weighted_point_2<R>& p, const Point_2<R>& bp)
+{ return bp == p.point(); }
+
+template <class R>
+inline
+bool
+operator==(const Weighted_point_2<R>& p, const Weighted_point_2<R>& p2)
+{ return p.point() == p2.point(); }
 
 
 template <class R>

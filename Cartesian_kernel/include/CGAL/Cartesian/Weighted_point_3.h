@@ -23,68 +23,61 @@
 #define CGAL_CARTESIAN_WEIGHTED_POINT_3_H
 
 #include <iostream>
-#include <CGAL/Kernel_traits.h>
-#include <CGAL/Dimension.h>
-#include <boost/utility/enable_if.hpp>
-#include <boost/type_traits/is_convertible.hpp>
-#include <boost/mpl/and.hpp>
-#include <boost/mpl/bool.hpp>
-#include <boost/mpl/logical.hpp>
+#include <boost/tuple/tuple.hpp>
 
 namespace CGAL {
 
 template < class R_ >
-class Weighted_pointC3 : public R_::Point_3
+class Weighted_pointC3
 {
+  typedef typename R_::Point_3 Point_3;
+
   typedef typename R_::FT FT;
-  typedef typename R_::RT RT;
+  typedef FT Weight;
+  typedef boost::tuple<Point_3, Weight>   Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
+
+  Base base;
+
 public:
-  typedef RT Weight;
-  typedef typename R_::Point_3 Point;
+
+
 
   Weighted_pointC3 ()
-      : Point(), _weight(0) {}
+  {}
 
   //explicit
-  Weighted_pointC3 (const Point &p)
-      : Point(p), _weight(0)
-  {
-    // CGAL_error_msg( "Warning : truncated weight !!!");
-  }
+  Weighted_pointC3 (const Point_3 &p)
+    : base(p,0)
+  {}
 
-  Weighted_pointC3 (const Point &p, const Weight &w)
-      : Point(p), _weight(w) {}
+  Weighted_pointC3 (const Point_3 &p, const Weight &w)
+    : base(p,w)
+  {}
 
 
   // Constructors from coordinates are also provided for convenience, except
   // that they are only from Cartesian coordinates, and with no weight, so as
   // to avoid any potential ambiguity between the homogeneous weight and the
-  // power weight (it should be easy enough to pass a Point explicitly in those
+  // power weight (it should be easy enough to pass a Point_3 explicitly in those
   // cases).
-  // The enable_if complexity comes from the fact that we separate dimension 2 and 3.
 
 
-  template < typename Tx, typename Ty, typename Tz >
-  Weighted_pointC3 (const Tx &x, const Ty &y, const Tz &z,
-	          typename boost::enable_if< boost::mpl::and_<boost::is_convertible<Tx, FT>,
-					                      boost::is_convertible<Ty, FT>,
-					                      boost::is_convertible<Tz, FT>,
-							      boost::mpl::bool_<CGAL::Ambient_dimension<Point>::value == 3> > >::type* = 0)
-      : Point(x, y, z), _weight(0) {}
 
-  const Point & point() const
+  Weighted_pointC3 (const FT &x, const FT &y, const FT &z)
+    : base(Point_3(x, y, z), 0)
+  {}
+
+  const Point_3 & point() const
   {
-      return *this;
+    return get_pointee_or_identity(base).template get<0>();
   }
 
   const Weight & weight() const
   {
-      return _weight;
+    return get_pointee_or_identity(base).template get<1>();
   }
 
-
-private:
-  Weight _weight;
 };
 
 
@@ -101,7 +94,7 @@ operator<<(std::ostream &os, const Weighted_pointC3<R_> &p)
     write(os, p.weight());
     return os;
   default:
-    return os << "Weighted_point(" << p.point() << ", " << p.weight() << ")";
+    return os << "Weighted_point_3(" << p.point() << ", " << p.weight() << ")";
   }
 }
 
@@ -110,7 +103,7 @@ std::istream &
 operator>>(std::istream &is, Weighted_pointC3<R_> &wp)
 {
   typename Weighted_pointC3<R_>::Weight w;
-  typename Weighted_pointC3<R_>::Point p;
+  typename Weighted_pointC3<R_>::Point_3 p;
   is >> p;
   if(!is) return is;
   if(is_ascii(is))

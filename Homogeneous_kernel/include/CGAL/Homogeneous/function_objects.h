@@ -3054,7 +3054,16 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Line_2     Line_2;
     typedef typename Point_2::Rep  Rep;
   public:
-    typedef Point_2          result_type;
+
+    template<typename>
+    struct result {
+      typedef Point_2 type;
+    };
+
+    template<typename F>
+    struct result<F(Weighted_point_2)> {
+      typedef const Point_2& type;
+    };
 
     Rep // Point_2
     operator()(Return_base_tag, Origin o) const
@@ -3117,8 +3126,18 @@ namespace HomogeneousKernelFunctors {
     typedef typename K::Point_3    Point_3;
     typedef typename K::Weighted_point_3 Weighted_point_3;
     typedef typename Point_3::Rep  Rep;
+
   public:
-    typedef Point_3          result_type;
+
+  template<typename>
+    struct result {
+      typedef Point_3 type;
+    };
+
+    template<typename F>
+    struct result<F(Weighted_point_3)> {
+      typedef const Point_3& type;
+    };
 
     Rep // Point_3
     operator()(Return_base_tag, Origin o) const

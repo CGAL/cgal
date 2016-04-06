@@ -479,7 +479,7 @@ class Compute_weight_2
 {
 public:
   typedef typename K::Weighted_point_2               Weighted_point_2;
-  typedef typename Weighted_point_2::Weight Weight;
+  typedef typename K::FT                             Weight;
 
   typedef const Weight&     result_type;
 
@@ -496,7 +496,7 @@ class Compute_weight_3
 {
 public:
   typedef typename K::Weighted_point_3               Weighted_point_3;
-  typedef typename Weighted_point_3::Weight          Weight;
+  typedef typename K::FT                             Weight;
 
   typedef const Weight&     result_type;
 
@@ -3464,7 +3464,7 @@ public:
                           const Weighted_point_2 & q,
 		          const Weighted_point_2 & r) const
   {
-    CGAL_kernel_precondition( ! collinear(p, q, r) ); 
+    CGAL_kernel_precondition( ! collinear(p.point(), q.point(), r.point()) ); 
     FT x,y;
     weighted_circumcenterC2(p.x(),p.y(),p.weight(),
                             q.x(),q.y(),q.weight(),

@@ -2921,7 +2921,16 @@ namespace CartesianKernelFunctors {
     typedef typename K::Line_2     Line_2;
     typedef typename Point_2::Rep  Rep;
   public:
-    typedef Point_2                result_type;
+
+    template<typename>
+    struct result {
+      typedef Point_2 type;
+    };
+
+    template<typename F>
+    struct result<F(Weighted_point_2)> {
+      typedef const Point_2& type;
+    };
 
     Rep // Point_2
     operator()(Return_base_tag, Origin o) const
@@ -2977,8 +2986,19 @@ namespace CartesianKernelFunctors {
     typedef typename K::Point_3          Point_3;
     typedef typename K::Weighted_point_3 Weighted_point_3;
     typedef typename Point_3::Rep        Rep;
+
   public:
-    typedef Point_3          result_type;
+
+    template<typename>
+    struct result {
+      typedef Point_3 type;
+    };
+
+    template<typename F>
+    struct result<F(Weighted_point_3)> {
+      typedef const Point_3& type;
+    };
+
 
     Rep // Point_3
     operator()(Return_base_tag, Origin o) const
@@ -3033,6 +3053,7 @@ namespace CartesianKernelFunctors {
   class Construct_weighted_point_3
   {
     typedef typename K::RT         RT;
+    typedef typename K::FT         FT;
     typedef typename K::Point_3    Point_3;
     typedef typename K::Weighted_point_3   Weighted_point_3;
     typedef typename Weighted_point_3::Rep  Rep;
@@ -3044,7 +3065,7 @@ namespace CartesianKernelFunctors {
     { return Rep(p,w); }
 
     Rep
-    operator()(Return_base_tag, const RT& x, const RT& y, const RT& z) const
+    operator()(Return_base_tag, const FT& x, const FT& y, const FT& z) const
     { return Rep(x,y,z); }
   };
 
@@ -4115,7 +4136,7 @@ public:
     {
       //CGAL_kernel_precondition( collinear(p, q, r) );
       //CGAL_kernel_precondition( p.point() != q.point() );
-      return power_testC2(p.x(), p.y(), p.weight(),
+      return power_testC2(p.point().x(), p.y(), p.weight(),
                           q.x(), q.y(), q.weight(),
                           t.x(), t.y(), t.weight());
     }  

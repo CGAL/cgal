@@ -6135,7 +6135,7 @@ _remove_cluster_3D(InputIterator first, InputIterator beyond, VertexRemover &rem
           mp_vps[vv->point()] = vv;
         } else inf = true;
       }
-      spatial_sort(vps.begin(), vps.end());
+      spatial_sort(vps.begin(), vps.end(),geom_traits());
 
       std::size_t svps = vps.size();
 

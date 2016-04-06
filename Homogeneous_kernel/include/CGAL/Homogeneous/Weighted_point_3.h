@@ -34,59 +34,57 @@
 namespace CGAL {
 
 template < class R_ >
-class Weighted_pointH3 : public R_::Point_3
+class Weighted_pointH3
 {
-  typedef typename R_::RT RT;
+  typedef typename R_::Point_3 Point_3;
+
   typedef typename R_::FT FT;
+  typedef FT Weight;
+  typedef boost::tuple<Point_3, Weight>   Rep;
+  typedef typename R_::template Handle<Rep>::type  Base;
+
+  Base base;
+
 public:
-  typedef RT Weight;
-  typedef typename R_::Point_3 Point;
+
+
 
   Weighted_pointH3 ()
-      : Point(), _weight(0) {}
+  {}
 
   //explicit
-  Weighted_pointH3 (const Point &p)
-      : Point(p), _weight(0)
-  {
-    // CGAL_error_msg( "Warning : truncated weight !!!");
-  }
+  Weighted_pointH3 (const Point_3 &p)
+    : base(p,0)
+  {}
 
-  Weighted_pointH3 (const Point &p, const Weight &w)
-      : Point(p), _weight(w) {}
+  Weighted_pointH3 (const Point_3 &p, const Weight &w)
+    : base(p,w)
+  {}
 
 
   // Constructors from coordinates are also provided for convenience, except
-  // that they are only from Homogeneous coordinates, and with no weight, so as
+  // that they are only from Cartesian coordinates, and with no weight, so as
   // to avoid any potential ambiguity between the homogeneous weight and the
-  // power weight (it should be easy enough to pass a Point explicitly in those
+  // power weight (it should be easy enough to pass a Point_3 explicitly in those
   // cases).
-  // The enable_if complexity comes from the fact that we separate dimension 2 and 3.
 
 
-  template < typename Tx, typename Ty, typename Tz >
-  Weighted_pointH3 (const Tx &x, const Ty &y, const Tz &z,
-	          typename boost::enable_if< boost::mpl::and_<boost::is_convertible<Tx, FT>,
-					                      boost::is_convertible<Ty, FT>,
-					                      boost::is_convertible<Tz, FT>,
-							      boost::mpl::bool_<CGAL::Ambient_dimension<Point>::value == 3> > >::type* = 0)
-      : Point(x, y, z), _weight(0) {}
 
-  const Point & point() const
+  Weighted_pointH3 (const FT &x, const FT &y, const FT &z)
+    : base(Point_3(x, y, z), 0)
+  {}
+
+  const Point_3 & point() const
   {
-      return *this;
+    return get_pointee_or_identity(base).template get<0>();
   }
 
   const Weight & weight() const
   {
-      return _weight;
+    return get_pointee_or_identity(base).template get<1>();
   }
 
-
-private:
-  Weight _weight;
 };
-
 
 template < class R_ >
 std::ostream &
