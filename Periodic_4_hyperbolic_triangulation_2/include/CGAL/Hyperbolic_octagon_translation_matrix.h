@@ -17,6 +17,8 @@
 #ifndef CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_MATRIX_H
 #define CGAL_HYPERBOLIC_OCTAGON_TRANSLATION_MATRIX_H
 
+#include <CGAL/Exact_predicates_exact_constructions_kernel.h>
+#include <CGAL/Periodic_4_hyperbolic_Delaunay_triangulation_traits_2.h>
 
 #include <complex>
 #include <iostream>
@@ -28,6 +30,10 @@
 #include <string>
 #include <fstream>
 
+typedef CGAL::Exact_predicates_exact_constructions_kernel                   R;
+typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_traits_2<R>      K;
+typedef K::FT                                                               FT;
+typedef K::Point_2                                                          Point;
 
 template<class Square_root_2_field>
 class Hyperbolic_octagon_translation_matrix_base
@@ -155,6 +161,11 @@ public:
     Cmpl z(x, y);
     Cmpl res = (Aa*z + ax*Bb)/(ax*(conj(Bb)*z) + conj(Aa));
     return pair<double, double>(real(res), imag(res)); 
+  }
+
+  Point apply(Point p) {
+    pair<double, double> arg = apply(to_double(p.x()), to_double(p.y()));
+    return Point(FT(arg.first), FT(arg.second));
   }
 
 };

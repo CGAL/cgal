@@ -66,6 +66,7 @@ typedef CGAL::Triangulation_face_base_with_info_2 <CGAL::Hyperbolic_face_info_2,
 typedef CGAL::Periodic_4_hyperbolic_Delaunay_triangulation_2< K, CGAL::Triangulation_data_structure_2<Vb, Fb> > 
                                                               Delaunay;
 typedef Delaunay::Vertex_handle                               Vertex_handle;
+typedef K::Side_of_fundamental_octagon                        Side_of_fundamental_octagon;
 
 
 struct PointsComparator {
@@ -451,8 +452,12 @@ MainWindow::processInput(CGAL::Object o)
   if(CGAL::assign(p, o)){
     QPointF qp(CGAL::to_double(p.x()), CGAL::to_double(p.y()));
     
+    Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
+
     // note that if the point is on the boundary then the disk contains the point
-    if(disk->contains(qp)){
+    //if(disk->contains(qp)){
+
+    if(check(p) != CGAL::ON_UNBOUNDED_SIDE) {
       //dt.insert(p);
       
       //delete
@@ -476,6 +481,7 @@ MainWindow::processInput(CGAL::Object o)
       //
     }
     // delete
+    /*
     else {
       static double phi = CGAL_PI / 8.;
       static double psi = CGAL_PI / 3.;
@@ -513,7 +519,7 @@ MainWindow::processInput(CGAL::Object o)
       dt.clear();
       dt.insert(points.begin(), points.end());
       
-    }
+    } */
     
   }
   emit(changed());
