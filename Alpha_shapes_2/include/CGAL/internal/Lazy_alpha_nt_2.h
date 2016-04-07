@@ -22,6 +22,7 @@
 #define CGAL_INTERNAL_LAZY_ALPHA_NT_2_H
 #include <CGAL/assertions.h>
 #include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
+#include <CGAL/Cartesian_converter.h>
 #include <boost/shared_ptr.hpp>
 #include <boost/mpl/has_xxx.hpp>
 #include <boost/type_traits.hpp>
@@ -55,8 +56,8 @@ template <class Input_traits,class Kernel_input,class Kernel_approx,class Kernel
 struct Types_for_alpha_nt_2< ::CGAL::Tag_true,Input_traits,Kernel_input,Kernel_approx,Kernel_exact>
 {
 //Converter types
-  typedef CGAL::Weighted_converter_2< CGAL::Cartesian_converter<Kernel_input,Kernel_approx> >  To_approx;
-  typedef CGAL::Weighted_converter_2< CGAL::Cartesian_converter<Kernel_input,Kernel_exact> >   To_exact;
+  typedef CGAL::Cartesian_converter<Kernel_input,Kernel_approx>   To_approx;
+  typedef CGAL::Cartesian_converter<Kernel_input,Kernel_exact>   To_exact;
 //Traits types
   typedef ::CGAL::Weighted_alpha_shape_euclidean_traits_2<Kernel_approx>                       Approx_traits;
   typedef ::CGAL::Weighted_alpha_shape_euclidean_traits_2<Kernel_exact>                        Exact_traits;
