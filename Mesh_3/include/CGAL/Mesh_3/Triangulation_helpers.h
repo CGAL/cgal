@@ -339,7 +339,7 @@ inside_protecting_balls(const Tr& tr,
 {
   Vertex_handle nv = tr.nearest_power_vertex(p, v->cell());
   if(nv->point().weight() > 0)
-    return CGAL::compare_squared_distance(p, nv->point(),
+    return Gt().compare_squared_distance_3_object()(p, nv->point(),
                          nv->point().weight()) != CGAL::LARGER;
   return false;
 }
@@ -353,6 +353,8 @@ Triangulation_helpers<Tr>::
 well_oriented(const Tr& tr,
               const Cell_vector& cells_tos) const
 {
+  typedef typename Tr::Geom_traits Gt;
+  typename Gt::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
   typename Cell_vector::const_iterator it = cells_tos.begin();
   for( ; it != cells_tos.end() ; ++it)
   {
@@ -362,16 +364,16 @@ well_oriented(const Tr& tr,
       int iv = c->index(tr.infinite_vertex());
       Cell_handle cj = c->neighbor(iv);
       int mj = tr.mirror_index(c, iv);
-      if(CGAL::orientation(cj->vertex(mj)->point(),
-                           c->vertex((iv+1)&3)->point(),
-                           c->vertex((iv+2)&3)->point(),
-                           c->vertex((iv+3)&3)->point()) != CGAL::NEGATIVE)
+      if(orientation(cj->vertex(mj)->point(),
+                     c->vertex((iv+1)&3)->point(),
+                     c->vertex((iv+2)&3)->point(),
+                     c->vertex((iv+3)&3)->point()) != CGAL::NEGATIVE)
         return false;
     }
-    else if(CGAL::orientation(c->vertex(0)->point(),
-                              c->vertex(1)->point(),
-                              c->vertex(2)->point(),
-                              c->vertex(3)->point()) != CGAL::POSITIVE)
+    else if(orientation(c->vertex(0)->point(),
+                        c->vertex(1)->point(),
+                        c->vertex(2)->point(),
+                        c->vertex(3)->point()) != CGAL::POSITIVE)
       return false;
   }
   return true;
@@ -387,6 +389,8 @@ well_oriented(const Tr& tr,
               const Cell_vector& cells_tos,
               const Point_getter& pg) const
 {
+  typedef typename Tr::Geom_traits Gt;
+  typename Gt::Orientation_3 orientation = tr.geom_traits().orientation_3_object();
   typename Cell_vector::const_iterator it = cells_tos.begin();
   for( ; it != cells_tos.end() ; ++it)
   {
@@ -396,16 +400,16 @@ well_oriented(const Tr& tr,
       int iv = c->index(tr.infinite_vertex());
       Cell_handle cj = c->neighbor(iv);
       int mj = tr.mirror_index(c, iv);
-      if(CGAL::orientation(pg(cj->vertex(mj)),
-                           pg(c->vertex((iv+1)&3)),
-                           pg(c->vertex((iv+2)&3)),
-                           pg(c->vertex((iv+3)&3))) != CGAL::NEGATIVE)
+      if(orientation(pg(cj->vertex(mj)),
+                     pg(c->vertex((iv+1)&3)),
+                     pg(c->vertex((iv+2)&3)),
+                     pg(c->vertex((iv+3)&3))) != CGAL::NEGATIVE)
         return false;
     }
-    else if(CGAL::orientation(pg(c->vertex(0)),
-                              pg(c->vertex(1)),
-                              pg(c->vertex(2)),
-                              pg(c->vertex(3))) != CGAL::POSITIVE)
+    else if(orientation(pg(c->vertex(0)),
+                        pg(c->vertex(1)),
+                        pg(c->vertex(2)),
+                        pg(c->vertex(3))) != CGAL::POSITIVE)
       return false;
   }
   return true;

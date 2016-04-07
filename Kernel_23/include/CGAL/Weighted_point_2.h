@@ -290,7 +290,7 @@ extract(std::istream& is, Weighted_point_2<R>& p, const Cartesian_tag&)
         break;
     }
     if (is)
-      p = Weighted_point_2<R>(x, y,weight);
+      p = Weighted_point_2<R>(typename R::Point_2(x, y),weight);
     return is;
 }
 

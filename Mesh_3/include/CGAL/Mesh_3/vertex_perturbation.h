@@ -447,6 +447,9 @@ protected:
     typename Gt::Compute_squared_length_3 sq_length =
       Gt().compute_squared_length_3_object();
     
+    typename Gt::Construct_translated_point_3 translate =
+      Gt().construct_translated_point_3_object();
+    
     // create a helper
     typedef C3T3_helpers<C3T3,MeshDomain> C3T3_helpers;
     C3T3_helpers helper(c3t3, domain);
@@ -456,7 +459,7 @@ protected:
     // norm depends on the local size of the mesh
     FT sq_norm = this->compute_perturbation_sq_amplitude(v, c3t3, sq_step_size_);
     FT step_length = CGAL::sqrt(sq_norm/sq_length(gradient_vector));
-    Point_3 new_loc = v->point() + step_length * gradient_vector;
+    Point_3 new_loc = translate(v->point(), step_length * gradient_vector);
     
     Point_3 final_loc = new_loc;
     if ( c3t3.in_dimension(v) < 3 )
@@ -471,7 +474,7 @@ protected:
                                                           v, final_loc) 
             && (++i <= max_step_nb_) )
       {
-        new_loc = new_loc + step_length * gradient_vector;
+        new_loc = translate(new_loc, step_length * gradient_vector);
       
         if ( c3t3.in_dimension(v) == 3 )
           final_loc = new_loc;
@@ -484,7 +487,7 @@ protected:
       while( Th().no_topological_change(c3t3.triangulation(), v, final_loc) 
             && (++i <= max_step_nb_) )
       {
-        new_loc = new_loc + step_length * gradient_vector;
+        new_loc = translate(new_loc, step_length * gradient_vector);
       
         if ( c3t3.in_dimension(v) == 3 )
           final_loc = new_loc;
@@ -532,7 +535,7 @@ protected:
   typedef typename C3T3::Triangulation::Geom_traits Gt;
   typedef typename Gt::Vector_3 Vector_3;
   typedef typename Gt::Point_3 Point_3;
-  
+  typedef typename Gt::Construct_point_3 Construct_point_3;
 public:
   /**
    * @brief Constructor
@@ -624,12 +627,16 @@ private:
   Vector_3 compute_gradient_vector(const Cell_handle& cell,
                                    const Vertex_handle& v) const
   {
+    typedef typename C3T3::Triangulation::Geom_traits Gt;
+    typename Gt::Construct_translated_point_3 translate =
+      Gt().construct_translated_point_3_object();
+    
     // translate the tet so that cell->vertex((i+3)&3) is 0_{R^3}
     unsigned int index = cell->index(v);
     Vector_3 translate_to_origin(CGAL::ORIGIN, cell->vertex((index+3)&3)->point()); //p4
-    const Point_3& p1 = v->point() - translate_to_origin;
-    const Point_3& p2 = cell->vertex((index+1)&3)->point() - translate_to_origin;
-    const Point_3& p3 = cell->vertex((index+2)&3)->point() - translate_to_origin;
+    const Point_3& p1 = translate(v->point(), - translate_to_origin);
+    const Point_3& p2 = translate(cell->vertex((index+1)&3)->point(), - translate_to_origin);
+                                  const Point_3& p3 = translate(cell->vertex((index+2)&3)->point(), - translate_to_origin);
     
     // pre-compute everything
     FT sq_p1 = p1.x()*p1.x() + p1.y()*p1.y() + p1.z()*p1.z();
@@ -831,7 +838,8 @@ protected:
   typedef typename C3T3::Triangulation::Geom_traits Gt;
   typedef typename Gt::Vector_3 Vector_3;
   typedef typename Gt::Point_3 Point_3;
-  
+  typedef typename Gt::Construct_point_3 Construct_point_3;
+
 public:
   /**
    * @brief constructor
@@ -1012,7 +1020,8 @@ private:
     const Point_3& p3 = ch->vertex(k3)->point();
     
     // compute normal and return it
-    return normal(p1,p2,p3);
+    Construct_point_3 cp;
+    return normal(cp(p1),cp(p2),cp(p3));
   }
 };  
   
@@ -1225,7 +1234,11 @@ private:
                      bool *could_lock_zone = NULL) const
   {
     typedef Triangulation_helpers<typename C3T3::Triangulation> Th;
+    typedef typename C3T3::Triangulation::Geom_traits Gt;
 
+    typename Gt::Construct_translated_point_3 translate =
+      Gt().construct_translated_point_3_object();
+    
     modified_vertices.clear();
 
     // Create an helper
@@ -1249,7 +1262,7 @@ private:
       Vector_3 delta = this->random_vector(sq_norm,on_sphere_);
       
       // always from initial_location!
-      Point_3 new_location = initial_location + delta;
+      Point_3 new_location = translate(initial_location,delta);
       
       if ( c3t3.in_dimension(moving_vertex) < 3 )
         new_location = helper.project_on_surface(new_location, moving_vertex);

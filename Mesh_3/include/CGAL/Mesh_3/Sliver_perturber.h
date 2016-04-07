@@ -1304,9 +1304,9 @@ perturb_vertex( PVertex pv
   {
     return;
   }
-
+  
   Point_3 p = pv.vertex()->point();
-  if (!helper_.try_lock_point_no_spin(p) || p != pv.vertex()->point())
+  if (!helper_.try_lock_point_no_spin(p) || ! Gt().equal_3_object()(p,pv.vertex()->point()))
   {
 #ifdef CGAL_CONCURRENT_MESH_3_PROFILING
     bcounter.increment_branch_2(); // THIS is an early withdrawal!

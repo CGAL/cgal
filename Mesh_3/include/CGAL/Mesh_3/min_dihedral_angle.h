@@ -85,10 +85,10 @@ minimum_dihedral_angle(
 template <typename K>
 typename K::FT
 minimum_dihedral_angle(
-     const typename K::Point_3& p0,
-     const typename K::Point_3& p1,
-     const typename K::Point_3& p2,
-     const typename K::Point_3& p3,
+     const typename K::Bare_point& p0,
+     const typename K::Bare_point& p1,
+     const typename K::Bare_point& p2,
+     const typename K::Bare_point& p3,
      K k = K())
 {
   typedef typename K::FT FT;

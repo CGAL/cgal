@@ -3008,6 +3008,11 @@ namespace CartesianKernelFunctors {
       typedef const Point_3& type;
     };
 
+    template<typename F>
+    struct result<F(Point_3)> {
+      typedef const Point_3& type;
+    };
+
 
     Rep // Point_3
     operator()(Return_base_tag, Origin o) const
@@ -3020,6 +3025,10 @@ namespace CartesianKernelFunctors {
     Rep // Point_3
     operator()(Return_base_tag, const RT& x, const RT& y, const RT& z, const RT& w) const
     { return Rep(x, y, z, w); }
+
+    const Point_3& 
+    operator()(const Point_3 & p) const
+    { return p; }
 
     const Point_3& 
     operator()(const Weighted_point_3 & p) const
