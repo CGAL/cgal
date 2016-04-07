@@ -1,6 +1,7 @@
 #include "Scene_polyhedron_transform_item.h"
 #include "Kernel_type.h"
 #include "Polyhedron_type.h"
+#include <CGAL/Three/Viewer_interface.h>
 
 Scene_polyhedron_transform_item::Scene_polyhedron_transform_item(const qglviewer::Vec& pos,const Scene_polyhedron_item* poly_item_,const CGAL::Three::Scene_interface*):
     Scene_item(NbOfVbos,NbOfVaos),
