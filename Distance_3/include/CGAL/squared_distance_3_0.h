@@ -31,6 +31,7 @@
 #include <CGAL/wmult.h>
 
 #include <CGAL/Point_3.h>
+#include <CGAL/Weighted_point_3.h>
 #include <CGAL/Vector_3.h>
 #include <CGAL/number_utils.h>
 
