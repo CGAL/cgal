@@ -320,6 +320,13 @@ namespace CGAL {
       return data + n;
     }
  
+    inline
+    void
+    drop_last_point()
+    {
+      --n;
+    }
+
   }; //leaf node
 
 
@@ -389,6 +396,20 @@ namespace CGAL {
       return upper_ch; 
     }
   	
+    inline
+    void
+    set_lower(Node_handle nh)
+    {
+      lower_ch = nh;
+    }
+
+    inline
+    void
+    set_upper(Node_handle nh)
+    {
+      upper_ch = nh;
+    }
+
     // inline Separator& separator() {return sep; }
     // use instead
     inline

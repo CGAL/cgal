@@ -103,6 +103,7 @@ private:
   mutable CGAL_MUTEX building_mutex;//mutex used to protect const calls inducing build()
   #endif
   bool built_;
+  bool removed_;
 
   // protected copy constructor
   Kd_tree(const Tree& tree)
@@ -311,11 +312,13 @@ public:
   {
     invalidate_built();
     pts.clear();
+    removed_ = false;
   }
 
   void
   insert(const Point_d& p)
   {
+    if (removed_) throw std::logic_error("Once you start removing points, you cannot insert anymore, you need to start again from scratch.");
     invalidate_built();
     pts.push_back(p);
   }
@@ -324,8 +327,62 @@ public:
   void
   insert(InputIterator first, InputIterator beyond)
   {
+    if (removed_ && first != beyond) throw std::logic_error("Once you start removing points, you cannot insert anymore, you need to start again from scratch.");
     invalidate_built();
     pts.insert(pts.end(),first, beyond);
+  }
+
+  void
+  remove(const Point_d& p)
+  {
+#if 0
+    // This code could have quadratic runtime.
+    if (!is_built()) {
+      std::vector<Point_d>::iterator pi = std::find(pts.begin(), pts.end(), p);
+      // Precondition: the point must be there.
+      CGAL_assertion (pi != pts.end());
+      pts.erase(pi);
+      return;
+    }
+#endif
+    // This does not actually remove points, and further insertions
+    // would make the points reappear, so we disallow it.
+    removed_ = true;
+    // Locate the point
+    Node_handle grandparent = 0;
+    Node_handle parent = 0;
+    bool islower = false, islower2;
+    Node_handle node = root(); // Calls build() if needed.
+    while (!node->is_leaf()) {
+      grandparent = parent; islower2 = islower;
+      parent = node;
+      Internal_node_handle inode = static_cast<Internal_node_handle>(node);
+      islower = traits().construct_cartesian_const_iterator_d_object()(p)[inode->cutting_dimension()] < inode->cutting_value();
+      if (islower) {
+	node = node->lower();
+      } else {
+	node = node->upper();
+      }
+    }
+    Leaf_node_handle lnode = static_cast<Leaf_node_handle>(node);
+    if (lnode->size() > 1) {
+      iterator pi = std::find(lnode->begin(), lnode->end(), p);
+      CGAL_assertion (pi != lnode->end());
+      iterator lasti = lnode->end() - 1;
+      if (pi != lasti)
+	std::iter_swap(pi, lasti);
+      lnode->drop_last_point();
+    } else if (grandparent) {
+      Node_handle brother = islower ? parent->upper() : parent->lower();
+      if (islower2)
+	grandparent->set_lower(brother);
+      else
+	grandparent->set_upper(brother);
+    } else if (parent) {
+      tree_root = islower ? parent->upper() : parent->lower();
+    } else {
+      clear();
+    }
   }
 
   //For efficiency; reserve the size of the points vectors in advance (if the number of points is already known).
