@@ -342,15 +342,15 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     // Flat/Gouraud OpenGL drawing
     for(int index = 0; index < m_entries.size(); ++index)
     {
-        if(with_names) {
-            glClearDepth(1.0);
-            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-        }
         CGAL::Three::Scene_item& item = *m_entries[index];
         if(item.visible())
         {
             if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
             {
+                if(with_names) {
+                    glClearDepth(1.0);
+                    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                }
                 viewer->glEnable(GL_LIGHTING);
                 viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
                 viewer->glPointSize(2.f);
@@ -373,97 +373,131 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                     item.draw(viewer);
                 else
                     item.draw();
-            }
-        }
-        if(with_names) {
 
-            //    read depth buffer at pick location;
-            float depth = 1.0;
-            glReadPixels(picked_pixel.x(),picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
-            if (depth != 1.0)
-            {
-                //add object to list of picked objects;
-                picked_item_IDs[depth] = index;
+                if(with_names) {
+
+                    //    read depth buffer at pick location;
+                    float depth = 1.0;
+                    glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+                    if (depth != 1.0)
+                    {
+                        //add object to list of picked objects;
+                        picked_item_IDs[depth] = index;
+                    }
+                }
             }
         }
     }
-    if(!with_names)
+    glDepthFunc(GL_LEQUAL);
+    // Wireframe OpenGL drawing
+    for(int index = 0; index < m_entries.size(); ++index)
     {
-        glDepthFunc(GL_LEQUAL);
-        // Wireframe OpenGL drawing
-        for(int index = 0; index < m_entries.size(); ++index)
+        CGAL::Three::Scene_item& item = *m_entries[index];
+        if(item.visible())
         {
-            CGAL::Three::Scene_item& item = *m_entries[index];
-            if(item.visible())
+            if((item.renderingMode() == Wireframe || item.renderingMode() == PointsPlusNormals )
+                    && with_names)
             {
-                if(item.renderingMode() == FlatPlusEdges || item.renderingMode() == Wireframe)
+                glClearDepth(1.0);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            }
+            if((!with_names && item.renderingMode() == FlatPlusEdges )
+                    || item.renderingMode() == Wireframe)
+            {
+                viewer->glDisable(GL_LIGHTING);
+                viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
+                viewer->glPointSize(2.f);
+                viewer->glLineWidth(1.0f);
+                if(index == selected_item || selected_items_list.contains(index))
                 {
+                    item.selection_changed(true);
+                }
+                else
+                {
+                    item.selection_changed(false);
+                }
+
+
+
+                if(viewer)
+                    item.draw_edges(viewer);
+                else
+                    item.draw_edges();
+            }
+            else{
+                if( item.renderingMode() == PointsPlusNormals ){
                     viewer->glDisable(GL_LIGHTING);
                     viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
                     viewer->glPointSize(2.f);
                     viewer->glLineWidth(1.0f);
                     if(index == selected_item || selected_items_list.contains(index))
                     {
+
                         item.selection_changed(true);
                     }
                     else
                     {
+
                         item.selection_changed(false);
                     }
-
-
-
                     if(viewer)
                         item.draw_edges(viewer);
                     else
                         item.draw_edges();
                 }
-                else{
-                    if( item.renderingMode() == PointsPlusNormals ){
-                        viewer->glDisable(GL_LIGHTING);
-                        viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
-                        viewer->glPointSize(2.f);
-                        viewer->glLineWidth(1.0f);
-                        if(index == selected_item || selected_items_list.contains(index))
-                        {
-
-                            item.selection_changed(true);
-                        }
-                        else
-                        {
-
-                            item.selection_changed(false);
-                        }
-                        if(viewer)
-                            item.draw_edges(viewer);
-                        else
-                            item.draw_edges();
-                    }
-                }
             }
-        }
-
-
-        // Points OpenGL drawing
-        for(int index = 0; index < m_entries.size(); ++index)
-        {
-            CGAL::Three::Scene_item& item = *m_entries[index];
-            if(item.visible())
+            if((item.renderingMode() == Wireframe || item.renderingMode() == PointsPlusNormals )
+                    && with_names)
             {
-                if(item.renderingMode() == Points  || item.renderingMode() == PointsPlusNormals)
-                {
-                    viewer->glDisable(GL_LIGHTING);
-                    viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
-                    viewer->glPointSize(2.f);
-                    viewer->glLineWidth(1.0f);
 
-                    if(viewer)
-                        item.draw_points(viewer);
-                    else
-                        item.draw_points();
+                //    read depth buffer at pick location;
+                float depth = 1.0;
+                glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+                if (depth != 1.0)
+                {
+                    //add object to list of picked objects;
+                    picked_item_IDs[depth] = index;
                 }
             }
         }
+    }
+    // Points OpenGL drawing
+    for(int index = 0; index < m_entries.size(); ++index)
+    {
+        CGAL::Three::Scene_item& item = *m_entries[index];
+        if(item.visible())
+        {
+            if(item.renderingMode() == Points && with_names) {
+                glClearDepth(1.0);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            }
+            if(item.renderingMode() == Points  ||
+                    (!with_names && item.renderingMode() == PointsPlusNormals))
+            {
+                viewer->glDisable(GL_LIGHTING);
+                viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
+                viewer->glPointSize(2.0f);
+                viewer->glLineWidth(1.0f);
+
+                if(viewer)
+                    item.draw_points(viewer);
+                else
+                    item.draw_points();
+            }
+            if(item.renderingMode() == Points && with_names) {
+                //    read depth buffer at pick location;
+                float depth = 1.0;
+                glReadPixels(picked_pixel.x(),viewer->camera()->screenHeight()-1-picked_pixel.y(),1,1,GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+                if (depth != 1.0)
+                {
+                    //add object to list of picked objects;
+                    picked_item_IDs[depth] = index;
+                }
+            }
+        }
+    }
+    if(!with_names)
+    {
         glDepthFunc(GL_LESS);
         // Splatting
         if(!with_names && ms_splatting->isSupported())
@@ -510,6 +544,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
             int id = picked_item_IDs[depths.first()];
             setSelectedItemIndex(id);
             viewer->setSelectedName(id);
+
         }
     }
     if(with_names)
