@@ -741,6 +741,7 @@ rescan_after_load_of_triangulation() {
       add_to_complex(vit, Corner_index(1));
     }
   }
+  Base::rescan_after_load_of_triangulation();
 }
 
 template <typename Tr, typename CI_, typename CSI_>
