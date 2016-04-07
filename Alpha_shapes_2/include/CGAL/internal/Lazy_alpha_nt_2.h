@@ -20,6 +20,8 @@
 
 #ifndef CGAL_INTERNAL_LAZY_ALPHA_NT_2_H
 #define CGAL_INTERNAL_LAZY_ALPHA_NT_2_H
+#include <CGAL/number_type_basic.h>
+#include <CGAL/internal/Exact_type_selector.h>
 #include <CGAL/assertions.h>
 #include <CGAL/Weighted_alpha_shape_euclidean_traits_2.h>
 #include <CGAL/Cartesian_converter.h>
