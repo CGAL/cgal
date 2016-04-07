@@ -200,6 +200,9 @@ polylines_to_protect(const CGAL::Image_3& cgal_image,
     case31 = 0, case22 = 0, // 2 colors
     case1 = 0; // 1 color
 
+  typename K::Construct_midpoint_3 midpoint =
+    K().construct_midpoint_3_object();
+
   for(int axis = 0; axis < 3; ++axis)
   {
     for(int i = 0; i < xdim; i+= (axis == 0 ? (xdim-1) : 1 ) )
