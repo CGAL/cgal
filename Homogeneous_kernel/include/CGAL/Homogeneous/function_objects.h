@@ -3065,6 +3065,11 @@ namespace HomogeneousKernelFunctors {
       typedef const Point_2& type;
     };
 
+    template<typename F>
+    struct result<F(Point_2)> {
+      typedef const Point_2& type;
+    };
+
     Rep // Point_2
     operator()(Return_base_tag, Origin o) const
     { return Rep(o); }
@@ -3099,6 +3104,10 @@ namespace HomogeneousKernelFunctors {
                  (p, K().construct_scaled_vector_2_object()(v, RT(i)));
     }
 
+
+    const Point_2& 
+    operator()(const Point_2 & p) const
+    { return p; }
 
     const Point_2& 
     operator()(const Weighted_point_2 & p) const

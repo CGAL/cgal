@@ -65,7 +65,10 @@ create_single_source_cgal_program( "range.cpp" )
 
 create_single_source_cgal_program( "transform_iterator.cpp" )
 
+create_single_source_cgal_program( "change.cpp" )
+
 create_single_source_cgal_program( "copy_polyhedron.cpp" )
+
 
 if(OpenMesh_FOUND)
   target_link_libraries( copy_polyhedron ${OPENMESH_LIBRARIES} )

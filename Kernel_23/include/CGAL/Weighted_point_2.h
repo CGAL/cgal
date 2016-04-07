@@ -149,7 +149,7 @@ public:
     CGAL_kernel_precondition( (i >= 0) || (i <= 2) );
     if (i==0) return hx();
     if (i==1) return hy();
-    return hz();
+    return hw();
   }
 
   typename cpp11::result_of<typename R::Compute_x_2(Point_2)>::type
