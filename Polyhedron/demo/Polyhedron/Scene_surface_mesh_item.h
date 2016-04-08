@@ -77,8 +77,6 @@ private:
   mutable std::vector<gl_data> f_colors;
   mutable QOpenGLShaderProgram *program;
 
-  QMap<int, QColor> colormap;
-
 };
 
 

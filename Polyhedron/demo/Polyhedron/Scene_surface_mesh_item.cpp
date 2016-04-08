@@ -53,18 +53,6 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
     idx_edge_data_.push_back(im[target(ed, *smesh_)]);
   }
 
-  //Temporary test colormap
-  colormap.insert(0, QColor( 0, 0, 0));
-  colormap.insert(1, QColor( 255, 255, 255));
-  colormap.insert(2, QColor( 255, 0, 0));
-  colormap.insert(3, QColor( 0, 255, 255));
-  colormap.insert(4, QColor( 0, 0, 255));
-  colormap.insert(5, QColor( 255, 0, 255));
-  colormap.insert(6, QColor( 255, 255, 0));
-  colormap.insert(7, QColor( 0, 255 ,255));
-  colormap.insert(8, QColor( 125, 255 ,255));
-  colormap.insert(9, QColor( 255, 125 ,255));
-  colormap.insert(10,QColor( 255, 255 ,125));
   has_colors = false;
 
 }
@@ -118,9 +106,9 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
       {
         CGAL::Color c = vcolors[source(hd, *smesh_)];
        // qDebug()<<c.red()<<", "<<c.green()<<", "<<c.blue();
-        f_colors.push_back(c.red());
-        f_colors.push_back(c.green());
-        f_colors.push_back(c.blue());
+        f_colors.push_back((float)c.red()/255);
+        f_colors.push_back((float)c.green()/255);
+        f_colors.push_back((float)c.blue()/255);
       }
     }
   }
