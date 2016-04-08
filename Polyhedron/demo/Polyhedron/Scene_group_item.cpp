@@ -92,7 +92,9 @@ void Scene_group_item::setVisible(bool b)
   Q_FOREACH(Scene_item* child, children)
   {
     child->setVisible(b);
+    child->itemChanged();
   }
+    Q_EMIT itemChanged();
 }
 
 bool Scene_group_item::isExpanded() const
