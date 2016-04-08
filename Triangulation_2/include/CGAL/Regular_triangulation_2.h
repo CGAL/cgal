@@ -1796,10 +1796,10 @@ update_hidden_points_2_2(const Face_handle& f1, const Face_handle& f2)
     const Weighted_point& a1 = f1->vertex(f1->index(f2))->point();
     const Weighted_point& a  = f1->vertex(1-f1->index(f2))->point();
     while ( ! p_list.empty() ) {
-      if ( compare_x(a, p_list.front()->point()) == 
-	   compare_x(a, a1)  &&
-	   compare_y(a, p_list.front()->point()) == 
-	   compare_y(a, a1))
+      if ( this->compare_x(a, p_list.front()->point()) ==
+	   this->compare_x(a, a1)  &&
+	   this->compare_y(a, p_list.front()->point()) ==
+	   this->compare_y(a, a1))
 	{
 	  hide_vertex(f1, p_list.front());
 	} else {
