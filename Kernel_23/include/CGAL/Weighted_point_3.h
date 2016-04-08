@@ -220,14 +220,32 @@ operator==(const Point_3<R>& bp, const Weighted_point_3<R>& p)
 template <class R>
 inline
 bool
+operator!=(const Point_3<R>& bp, const Weighted_point_3<R>& p)
+{ return bp != p.point(); }
+
+template <class R>
+inline
+bool
 operator==(const Weighted_point_3<R>& p, const Point_3<R>& bp)
 { return bp == p.point(); }
 
 template <class R>
 inline
 bool
+operator!=(const Weighted_point_3<R>& p, const Point_3<R>& bp)
+{ return bp != p.point(); }
+
+template <class R>
+inline
+bool
 operator==(const Weighted_point_3<R>& p, const Weighted_point_3<R>& p2)
 { return p.point() == p2.point(); }
+
+template <class R>
+inline
+bool
+operator!=(const Weighted_point_3<R>& p, const Weighted_point_3<R>& p2)
+{ return p.point() != p2.point(); }
 
 
 template <class R>
