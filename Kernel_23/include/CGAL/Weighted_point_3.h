@@ -270,7 +270,7 @@ insert(std::ostream& os, const Weighted_point_3<R>& p,const Cartesian_tag&)
         return os;
     default:
         return os << "Weighted_pointC3(" << p.x() << ", " << p.y()
-                  << ", " << p.z() << p.weight() << ')';
+                  << ", " << p.z() << ", " << p.weight() << ')';
     }
 }
 
@@ -286,8 +286,8 @@ insert(std::ostream& os, const Weighted_point_3<R>& p,const Homogeneous_tag&)
         write(os, p.hx());
         write(os, p.hy());
         write(os, p.hz());
-        write(os, p.hw())
-;        write(os, p.weight());
+        write(os, p.hw());
+        write(os, p.weight());
         return os;
     default:
         return os << "Weighted_pointH3(" << p.hx() << ", "
@@ -327,7 +327,7 @@ extract(std::istream& is, Weighted_point_3<R>& p, const Cartesian_tag&)
         break;
     }
     if (is)
-      p = Weighted_point_3<R>(Point_3<R>(x, y,z), z);
+      p = Weighted_point_3<R>(Point_3<R>(x, y, z), weight);
     return is;
 }
 
@@ -356,7 +356,7 @@ extract(std::istream& is, Weighted_point_3<R>& p, const Homogeneous_tag&)
         break;
   }
   if (is)
-    p = Weighted_point_3<R>(Point_3<R>(hx, hy, hz), hw);
+    p = Weighted_point_3<R>(Point_3<R>(hx, hy, hz, hw), weight);
   return is;
 }
 
