@@ -183,7 +183,7 @@ _test_cls_regular_3(const Triangulation &)
 					   a-b+d +5*b,
 					   a*a-d*d+b),
 				     a*b-a*d) );
-  list_point::iterator it;
+  typename list_point::iterator it;
   count = 0 ;
   std::cout << " number of inserted points : " ;
   for (it=lp.begin(); it!=lp.end();it++){
