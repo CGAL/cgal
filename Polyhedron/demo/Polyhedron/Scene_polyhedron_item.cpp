@@ -60,7 +60,7 @@ typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
 P_traits>          Fb1;
 typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
-typedef CGAL::No_intersection_tag                                    Itag;
+typedef CGAL::Exact_predicates_tag                                    Itag;
 typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
 TDS,
 Itag>             CDTbase;
@@ -1135,7 +1135,7 @@ Scene_polyhedron_item::select(double orig_x,
                               double dir_y,
                               double dir_z)
 {
-  void* vertex_to_emit;
+  void* vertex_to_emit = 0;
   if(facet_picking_m) {
     typedef Input_facets_AABB_tree Tree;
     typedef Tree::Object_and_primitive_id Object_and_primitive_id;
