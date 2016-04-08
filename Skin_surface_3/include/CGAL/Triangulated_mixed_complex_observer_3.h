@@ -114,7 +114,8 @@ public:
                              Construct_weighted_circumcenter_3()(p0,p1),
                              typename Surface_regular_traits::
                              Compute_squared_radius_smallest_orthogonal_sphere_3()(p0,p1),
-                             p0 - p1,
+                             typename Surface_regular_traits::
+                             Construct_vector_3()(p1,p0),
                              r2s_converter(shrink),
                              1);
           break;
