@@ -56,7 +56,8 @@ public:
     Smooth_vertices,
     Flat_normals,
     Smooth_normals,
-    Colors,
+    VColors,
+    FColors,
     NbOfVbos
   };
 
@@ -67,7 +68,8 @@ public:
 public Q_SLOTS:
   virtual void selection_changed(bool);
 private:
-  mutable bool has_colors;
+  mutable bool has_vcolors;
+  mutable bool has_fcolors;
   SMesh* smesh_;
   void initializeBuffers(CGAL::Three::Viewer_interface *) const;
   std::vector<unsigned int> idx_data_;
@@ -75,6 +77,7 @@ private:
   mutable std::vector<gl_data> flat_vertices;
   mutable std::vector<gl_data> flat_normals;
   mutable std::vector<gl_data> f_colors;
+  mutable std::vector<gl_data> v_colors;
   mutable QOpenGLShaderProgram *program;
 
 };

@@ -2669,6 +2669,91 @@ private: //------------------------------------------------------- private data
 /// @endcond
 
 
+  inline CGAL::Color get_color_from_line(std::istream &is)
+  {
+   std::string color_info;
+   bool is_float = false;
+   // stores every not commented char until the end of the line
+   char c;
+   bool is_comment = false;
+   do{
+    is.get(c);
+    if(c == '#')
+    {
+     is_comment = true;
+    }
+    if(c == '.' && !is_comment)
+     is_float = true;
+    if(c != '\n' && !is_comment)
+     color_info.append(1,c);
+   }while(c != '\n');
+   // Counts the number of effective spaces
+
+   //holds the number of spaces in the end of the line
+   int nb_numbers = 0;
+   // helps to keep the number of spaces below 3 if there is only one int in the color info
+   bool prec_is_empty = false;
+
+   for(int i=0; i<static_cast<int>(color_info.length()); i++)
+   {
+    if(color_info.at(i) == ' ')
+    {
+     if(!prec_is_empty)
+      nb_numbers ++;
+     prec_is_empty = true;
+    }
+    else
+    {
+     prec_is_empty = false;
+    }
+   }
+   CGAL::Color color;
+   //colormap
+   if(nb_numbers < 3)
+   {
+    std::string id;
+    //converts the index into an RGB value
+    for(int i = 1; i<static_cast<int>(color_info.length()); i++)
+    {
+     if(color_info.at(i) != ' ')
+      id.append(1,color_info.at(i));
+     else
+     {
+       break;
+     }
+    }
+    color = getIndexColor(atoi(id.c_str()));
+   }
+   //extracts RGB value from color_info
+   else
+   {
+
+    std::string rgb[3];
+    int j = 0;
+    for(int i = 1; i<static_cast<int>(color_info.length()); i++)
+    {
+     if(color_info.at(i) != ' ')
+      rgb[j].append(1,color_info.at(i));
+     else
+     {
+      if(j<2)
+       j++;
+      else
+       break;
+     }
+    }
+
+    if(is_float)
+    {
+     color = CGAL::Color(atoi(rgb[0].c_str())*255,atoi(rgb[1].c_str())*255,atoi(rgb[2].c_str())*255 );
+    }
+    else
+    {
+     color = CGAL::Color(atoi(rgb[0].c_str()),atoi(rgb[1].c_str()),atoi(rgb[2].c_str()) );
+    }
+   }
+   return color;
+  }
   /// \relates Surface_mesh
 
   /// \relates Surface_mesh
@@ -2680,12 +2765,12 @@ private: //------------------------------------------------------- private data
   template <typename P>
   std::istream& operator>>(std::istream& is, Surface_mesh<P>& sm)
   {
-    typedef Surface_mesh<P> Mesh;
-    typedef typename Kernel_traits<P>::Kernel K;
-    typedef typename K::Vector_3 Vector_3;
-    typedef typename Mesh::Face_index Face_index;
-    typedef typename Mesh::Vertex_index Vertex_index;
-    typedef typename Mesh::size_type size_type;
+   typedef Surface_mesh<P> Mesh;
+   typedef typename Kernel_traits<P>::Kernel K;
+   typedef typename K::Vector_3 Vector_3;
+   typedef typename Mesh::Face_index Face_index;
+   typedef typename Mesh::Vertex_index Vertex_index;
+   typedef typename Mesh::size_type size_type;
     sm.clear();
     int n, f, e;
     std::string off;
@@ -2701,11 +2786,6 @@ private: //------------------------------------------------------- private data
     typename Mesh::template Property_map<Vertex_index,Vector_3> vnormal;
     bool vcolored = false, v_has_normals = false;
 
-    if((off == "COFF") || (off == "CNOFF")){
-      bool created;
-      boost::tie(vcolor, created) = sm.template add_property_map<Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0,0));
-      vcolored = true;
-    }
     if((off == "NOFF") || (off == "CNOFF")){
       bool created;
       boost::tie(vnormal, created) = sm.template add_property_map<Vertex_index,Vector_3>("v:normal",Vector_3(0,0,0));
@@ -2721,99 +2801,31 @@ private: //------------------------------------------------------- private data
         is >> v;
         vnormal[vi] = v;
       }
+
+
+      if(i == 0 && ((off == "COFF") || (off == "CNOFF"))){
+        std::string col;
+        std::streampos pos = is.tellg();
+        std::getline(is, col);
+        std::istringstream iss(col);
+        if(iss >> ci){
+         bool created;
+         boost::tie(vcolor, created) = sm.template add_property_map<Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
+         vcolored = true;
+        }
+        is.seekg(pos);
+      }
+
       if(vcolored){
-       std::string color_info;
-       bool is_float = false;
-       // stores every not commented char until the end of the line
-       char c;
-       bool is_comment = false;
-       do{
-        is.get(c);
-        if(c == '#')
-        {
-         is_comment = true;
-        }
-        if(c == '.' && !is_comment)
-         is_float = true;
-        if(c != '\n' && !is_comment)
-         color_info.append(1,c);
-       }while(c != '\n');
-
-
-       // Counts the number of effective spaces
-
-       //holds the number of spaces in the end of the line
-       int nb_numbers = 0;
-       // helps to keep the number of spaces below 3 if there is only one int in the color info
-       bool prec_is_empty = false;
-
-       for(int i=0; i<static_cast<int>(color_info.length()); i++)
-       {
-        if(color_info.at(i) == ' ')
-        {
-         if(!prec_is_empty)
-          nb_numbers ++;
-         prec_is_empty = true;
-        }
-        else
-        {
-         prec_is_empty = false;
-        }
-       }
-       CGAL::Color color;
-       //colormap
-       if(nb_numbers < 3)
-       {
-        std::string id;
-        //converts the index into an RGB value
-        for(int i = 1; i<static_cast<int>(color_info.length()); i++)
-        {
-         if(color_info.at(i) != ' ')
-          id.append(1,color_info.at(i));
-         else
-         {
-           break;
-         }
-        }
-        color = getIndexColor(atoi(id.c_str()));
-       }
-       //extracts RGB value from color_info
-       else
-       {
-
-        std::string rgb[3];
-        int j = 0;
-        for(int i = 1; i<static_cast<int>(color_info.length()); i++)
-        {
-         if(color_info.at(i) != ' ')
-          rgb[j].append(1,color_info.at(i));
-         else
-         {
-          if(j<2)
-           j++;
-          else
-           break;
-         }
-        }
-
-        if(is_float)
-        {
-         color = CGAL::Color(atoi(rgb[0].c_str())*255,atoi(rgb[1].c_str())*255,atoi(rgb[2].c_str())*255 );
-        }
-        else
-        {
-         color = CGAL::Color(atoi(rgb[0].c_str()),atoi(rgb[1].c_str()),atoi(rgb[2].c_str()) );
-        }
-       }
        //stores the RGB value
-       vcolor[vi] = color;
+       vcolor[vi] = get_color_from_line(is);
       }
     }
     std::vector<size_type> vr;
     std::size_t d;
 
     bool fcolored = false;
-    typename Mesh::template Property_map<Face_index,int> fcolor;
+    typename Mesh::template Property_map<Face_index,CGAL::Color> fcolor;
 
     for(int i=0; i < f; i++){
       is >> sm_skip_comments;
@@ -2826,22 +2838,23 @@ private: //------------------------------------------------------- private data
       Face_index fi = sm.add_face(vr);
       // the first face will tell us if faces have a color map
       // TODO: extend this to RGBA
-      if(i == 0){
+      if(i == 0 && ((off == "COFF") || (off == "CNOFF"))){
         std::string col;
+        std::streampos pos = is.tellg();
         std::getline(is, col);
         std::istringstream iss(col);
         if(iss >> ci){
           bool created;
-          boost::tie(fcolor, created) = sm.template add_property_map<Face_index,int>("f:color",0);
+          boost::tie(fcolor, created) = sm.template add_property_map<Face_index,CGAL::Color>("f:color",CGAL::Color(0,0,0));
           fcolored = true;
-          fcolor[fi] = ci;
         }
-      } else {
-        if(fcolored){
-          is >> ci;
-          fcolor[fi] = ci;
-        }
+        is.seekg(pos);
       }
+
+      if(fcolored){
+       fcolor[fi] = get_color_from_line(is);
+      }
+
     }
     return is;
   }

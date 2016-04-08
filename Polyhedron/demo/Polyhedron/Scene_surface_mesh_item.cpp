@@ -53,7 +53,8 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
     idx_edge_data_.push_back(im[target(ed, *smesh_)]);
   }
 
-  has_colors = false;
+  has_vcolors = false;
+  has_fcolors = false;
 
 }
 
@@ -78,13 +79,16 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
   SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
     smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
 
+  SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
+      smesh_->property_map<face_descriptor, CGAL::Color >("f:color").first;
+
   assert(positions.data() != NULL);
   assert(vnormals.data() != NULL);
 
   if(smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").second)
-    has_colors = true;
-
-
+    has_vcolors = true;
+  if(smesh_->property_map<face_descriptor, CGAL::Color >("f:color").second)
+    has_fcolors = true;
 
 //compute the Flat data
   flat_vertices.clear();
@@ -102,16 +106,28 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
       flat_normals.push_back((gl_data)n.y());
       flat_normals.push_back((gl_data)n.z());
 
-      if(has_colors)
+      if(has_fcolors)
       {
-        CGAL::Color c = vcolors[source(hd, *smesh_)];
-       // qDebug()<<c.red()<<", "<<c.green()<<", "<<c.blue();
+        CGAL::Color c = fcolors[fd];
         f_colors.push_back((float)c.red()/255);
         f_colors.push_back((float)c.green()/255);
         f_colors.push_back((float)c.blue()/255);
       }
     }
   }
+
+  if(has_vcolors)
+  {
+    BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh_))
+    {
+      CGAL::Color c = vcolors[vd];
+      v_colors.push_back((float)c.red()/255);
+      v_colors.push_back((float)c.green()/255);
+      v_colors.push_back((float)c.blue()/255);
+    }
+  }
+
+
 
 
   //vao containing the data for the flat facets
@@ -126,15 +142,6 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
   program->enableAttributeArray("vertex");
   program->setAttributeBuffer("vertex",GL_DATA,0,3);
   buffers[Flat_vertices].release();
-  if(has_colors)
-  {
-    buffers[Colors].bind();
-    buffers[Colors].allocate(f_colors.data(),
-                             static_cast<int>(f_colors.size()*sizeof(gl_data)));
-    program->enableAttributeArray("colors");
-    program->setAttributeBuffer("colors",GL_DATA,0,3);
-    buffers[Colors].release();
-  }
 
   buffers[Flat_normals].bind();
   buffers[Flat_normals].allocate(flat_normals.data(),
@@ -142,6 +149,15 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
   program->enableAttributeArray("normals");
   program->setAttributeBuffer("normals",GL_DATA,0,3);
   buffers[Flat_normals].release();
+  if(has_fcolors)
+  {
+    buffers[FColors].bind();
+    buffers[FColors].allocate(f_colors.data(),
+                             static_cast<int>(f_colors.size()*sizeof(gl_data)));
+    program->enableAttributeArray("colors");
+    program->setAttributeBuffer("colors",GL_DATA,0,3);
+    buffers[FColors].release();
+  }
   vaos[Flat_facets]->release();
 
   //vao containing the data for the smooth facets
@@ -160,9 +176,15 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
   program->enableAttributeArray("normals");
   program->setAttributeBuffer("normals",GL_DATA,0,3);
   buffers[Smooth_normals].release();
-
-
-
+  if(has_vcolors)
+  {
+    buffers[VColors].bind();
+    buffers[VColors].allocate(v_colors.data(),
+                             static_cast<int>(v_colors.size()*sizeof(gl_data)));
+    program->enableAttributeArray("colors");
+    program->setAttributeBuffer("colors",GL_DATA,0,3);
+    buffers[VColors].release();
+  }
   vaos[Smooth_facets]->release();
   program->release();
 
@@ -189,11 +211,12 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
   if(renderingMode() == Gouraud)
   {
     vaos[Smooth_facets]->bind();
-    program->setAttributeValue("colors", this->color());
     if(is_selected)
       program->setAttributeValue("is_selected", true);
     else
       program->setAttributeValue("is_selected", false);
+      if(!has_vcolors)
+        program->setAttributeValue("colors", this->color());
     glDrawElements(GL_TRIANGLES, idx_data_.size(),
                    GL_UNSIGNED_INT, idx_data_.data());
     vaos[Smooth_facets]->release();
@@ -201,11 +224,12 @@ void Scene_surface_mesh_item::draw(CGAL::Three::Viewer_interface *viewer) const
   else
   {
     vaos[Flat_facets]->bind();
+    program->setAttributeValue("colors", this->color());
     if(is_selected)
       program->setAttributeValue("is_selected", true);
     else
       program->setAttributeValue("is_selected", false);
-    if(!has_colors)
+    if(!has_fcolors)
       program->setAttributeValue("colors", this->color());
     glDrawArrays(GL_TRIANGLES,0,static_cast<GLsizei>(flat_vertices.size()/3));
     vaos[Flat_facets]->release();
