@@ -229,13 +229,13 @@ private:
 public:
 
   Kd_tree(Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
-    : traits_(traits),split(s), built_(false)
+    : traits_(traits),split(s), built_(false), removed_(false)
   {}
 
   template <class InputIterator>
   Kd_tree(InputIterator first, InputIterator beyond,
 	  Splitter s = Splitter(),const SearchTraits traits=SearchTraits())
-    : traits_(traits),split(s), built_(false)
+    : traits_(traits),split(s), built_(false), removed_(false)
   {
     pts.insert(pts.end(), first, beyond);
   }
@@ -349,19 +349,18 @@ public:
     // would make the points reappear, so we disallow it.
     removed_ = true;
     // Locate the point
-    Node_handle grandparent = 0;
-    Node_handle parent = 0;
+    Internal_node_handle grandparent = 0;
+    Internal_node_handle parent = 0;
     bool islower = false, islower2;
     Node_handle node = root(); // Calls build() if needed.
     while (!node->is_leaf()) {
       grandparent = parent; islower2 = islower;
-      parent = node;
-      Internal_node_handle inode = static_cast<Internal_node_handle>(node);
-      islower = traits().construct_cartesian_const_iterator_d_object()(p)[inode->cutting_dimension()] < inode->cutting_value();
+      parent = static_cast<Internal_node_handle>(node);
+      islower = traits().construct_cartesian_const_iterator_d_object()(p)[parent->cutting_dimension()] < parent->cutting_value();
       if (islower) {
-	node = node->lower();
+	node = parent->lower();
       } else {
-	node = node->upper();
+	node = parent->upper();
       }
     }
     Leaf_node_handle lnode = static_cast<Leaf_node_handle>(node);
@@ -369,8 +368,10 @@ public:
       iterator pi = std::find(lnode->begin(), lnode->end(), p);
       CGAL_assertion (pi != lnode->end());
       iterator lasti = lnode->end() - 1;
-      if (pi != lasti)
-	std::iter_swap(pi, lasti);
+      if (pi != lasti) {
+	// Hack to get a non-const iterator
+	std::iter_swap(pts.begin()+(pi-pts.begin()), pts.begin()+(lasti-pts.begin()));
+      }
       lnode->drop_last_point();
     } else if (grandparent) {
       Node_handle brother = islower ? parent->upper() : parent->lower();
