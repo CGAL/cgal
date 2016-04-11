@@ -1136,14 +1136,14 @@ Returns true iff the <I>i</I>-cell containing `dh` can be removed.
 An <I>i</I>-cell can be removed if `i`==\ref CombinatorialMap::dimension "dimension" or if `i`==\ref CombinatorialMap::dimension "dimension"-1 or if `i`\f$ <\f$\ref CombinatorialMap::dimension "dimension"-1 and the <I>i</I>-cell containing `dh` is incident to at most two (<I>i+1</I>)-cells.
 \pre 0\f$ \leq\f$`i`\f$ \leq\f$\ref CombinatorialMap::dimension "dimension" and `*dh`\f$ \in\f$\ref CombinatorialMap::darts "darts()".
 
-\sa `CGAL::remove_cell<i>`
+\sa `remove_cell<i>`
 */
 template <unsigned int i>
 bool is_removable(Dart_const_handle dh);
 
 /*!
 Removes the <I>i</I>-cell containing `dh`. Returns the number of darts removed from the combinatorial map.
-\pre `::is_removable<i>(dh)`.
+\pre `is_removable<i>(dh)`.
 
 See examples in \cgalFigureRef{figinsertvertex}, \cgalFigureRef{figinsertedge} and \cgalFigureRef{figinsertface}.
 
