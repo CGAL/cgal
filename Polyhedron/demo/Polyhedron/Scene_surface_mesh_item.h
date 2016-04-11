@@ -72,6 +72,7 @@ private:
   mutable bool has_fcolors;
   SMesh* smesh_;
   void initializeBuffers(CGAL::Three::Viewer_interface *) const;
+  void addFlatData(Point, Kernel::Vector_3, CGAL::Color) const;
   std::vector<unsigned int> idx_data_;
   std::vector<unsigned int> idx_edge_data_;
   mutable std::vector<gl_data> flat_vertices;

@@ -40,9 +40,29 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
 
   BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
   {
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
+    if(is_triangle(halfedge(fd,*smesh_),*smesh_))
     {
-      idx_data_.push_back(im[source(hd, *smesh_)]);
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
+      {
+        idx_data_.push_back(im[source(hd, *smesh_)]);
+      }
+    }
+    else if(is_quad(halfedge(fd,*smesh_),*smesh_))
+    {
+      halfedge_descriptor hd = halfedge(fd,*smesh_);
+      //1st half
+        idx_data_.push_back(im[source(hd, *smesh_)]);
+        idx_data_.push_back(im[source(next(hd, *smesh_), *smesh_)]);
+        idx_data_.push_back(im[source(next(next(hd, *smesh_), *smesh_), *smesh_)]);
+
+        //2nd half
+        idx_data_.push_back(im[source(hd, *smesh_)]);
+        idx_data_.push_back(im[source(next(next(hd, *smesh_), *smesh_), *smesh_)]);
+        idx_data_.push_back(im[source(prev(hd, *smesh_), *smesh_)]);
+    }
+    else
+    {
+      qDebug()<<"not triangle";
     }
   }
 
@@ -62,7 +82,24 @@ Scene_surface_mesh_item*
 Scene_surface_mesh_item::clone() const
 { return new Scene_surface_mesh_item(*this); }
 
+void Scene_surface_mesh_item::addFlatData(Point p, Kernel::Vector_3 n, CGAL::Color c) const
+{
 
+  flat_vertices.push_back((gl_data)p.x());
+  flat_vertices.push_back((gl_data)p.y());
+  flat_vertices.push_back((gl_data)p.z());
+
+  flat_normals.push_back((gl_data)n.x());
+  flat_normals.push_back((gl_data)n.y());
+  flat_normals.push_back((gl_data)n.z());
+
+  if(has_fcolors)
+  {
+    f_colors.push_back((float)c.red()/255);
+    f_colors.push_back((float)c.green()/255);
+    f_colors.push_back((float)c.blue()/255);
+  }
+}
 void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
 {
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
@@ -95,24 +132,65 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
   flat_normals.clear();
   BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
   {
-    BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
+    if(is_triangle(halfedge(fd,*smesh_),*smesh_))
     {
-      Point p = positions[source(hd, *smesh_)];
-      flat_vertices.push_back((gl_data)p.x());
-      flat_vertices.push_back((gl_data)p.y());
-      flat_vertices.push_back((gl_data)p.z());
-      Kernel::Vector_3 n = fnormals[fd];
-      flat_normals.push_back((gl_data)n.x());
-      flat_normals.push_back((gl_data)n.y());
-      flat_normals.push_back((gl_data)n.z());
-
-      if(has_fcolors)
+      BOOST_FOREACH(halfedge_descriptor hd, halfedges_around_face(halfedge(fd, *smesh_),*smesh_))
       {
-        CGAL::Color c = fcolors[fd];
-        f_colors.push_back((float)c.red()/255);
-        f_colors.push_back((float)c.green()/255);
-        f_colors.push_back((float)c.blue()/255);
+        Point p = positions[source(hd, *smesh_)];
+        flat_vertices.push_back((gl_data)p.x());
+        flat_vertices.push_back((gl_data)p.y());
+        flat_vertices.push_back((gl_data)p.z());
+        Kernel::Vector_3 n = fnormals[fd];
+        flat_normals.push_back((gl_data)n.x());
+        flat_normals.push_back((gl_data)n.y());
+        flat_normals.push_back((gl_data)n.z());
+
+        if(has_fcolors)
+        {
+          CGAL::Color c = fcolors[fd];
+          f_colors.push_back((float)c.red()/255);
+          f_colors.push_back((float)c.green()/255);
+          f_colors.push_back((float)c.blue()/255);
+        }
       }
+    }
+    else if(is_quad(halfedge(fd, *smesh_), *smesh_))
+    {
+      //1st half
+      halfedge_descriptor hd = halfedge(fd, *smesh_);
+      Point p = positions[source(hd, *smesh_)];
+      Kernel::Vector_3 n = fnormals[fd];
+      CGAL::Color c = fcolors[fd];
+      addFlatData(p,n,c);
+
+      hd = halfedge(next(halfedge(fd, *smesh_),*smesh_), *smesh_);
+      addFlatData(positions[source(hd, *smesh_)]
+          ,fnormals[fd]
+          ,fcolors[fd]);
+
+      hd = halfedge(next(next(halfedge(fd, *smesh_),*smesh_), *smesh_), *smesh_);
+      addFlatData(positions[source(hd, *smesh_)]
+          ,fnormals[fd]
+          ,fcolors[fd]);
+      //2nd half
+      hd = halfedge(fd, *smesh_);
+      addFlatData(positions[source(hd, *smesh_)]
+          ,fnormals[fd]
+          ,fcolors[fd]);
+
+      hd = halfedge(next(next(halfedge(fd, *smesh_),*smesh_), *smesh_), *smesh_);
+      addFlatData(positions[source(hd, *smesh_)]
+          ,fnormals[fd]
+          ,fcolors[fd]);
+
+      hd = halfedge(prev(halfedge(fd, *smesh_), *smesh_), *smesh_);
+      addFlatData(positions[source(hd, *smesh_)]
+          ,fnormals[fd]
+          ,fcolors[fd]);
+    }
+    else
+    {
+
     }
   }
 
