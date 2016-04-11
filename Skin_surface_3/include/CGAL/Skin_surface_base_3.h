@@ -571,8 +571,6 @@ construct_surface(const Simplex &sim, const Traits &) const {
   typedef Skin_surface_quadratic_surface_3<Traits>      Quadratic_surface;
   typedef Cartesian_converter<
     typename Geometric_traits::Bare_point::R, Traits>  Converter;
-  typedef typename Traits::Point_3                      Point;
-  typedef typename Traits::FT                           FT;
   typedef typename Traits::Weighted_point_3           Weighted_point;
 
   Converter conv;
