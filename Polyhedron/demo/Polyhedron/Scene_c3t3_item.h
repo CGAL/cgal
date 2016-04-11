@@ -85,8 +85,9 @@ public:
   bool isFinite() const { return true; }
   bool isEmpty() const {
     return c3t3().triangulation().number_of_vertices() == 0
-      || (    c3t3().number_of_facets_in_complex() == 0
-           && c3t3().number_of_cells_in_complex()  == 0  );
+      || (    c3t3().number_of_vertices_in_complex() == 0
+           && c3t3().number_of_facets_in_complex()   == 0
+           && c3t3().number_of_cells_in_complex()    == 0  );
   }
 
   void compute_bbox() const;

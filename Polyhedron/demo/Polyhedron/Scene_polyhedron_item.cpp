@@ -1,4 +1,5 @@
 #include "Scene_polyhedron_item.h"
+#include <CGAL/Three/Viewer_interface.h>
 #include <CGAL/AABB_intersections.h>
 #include "Kernel_type.h"
 #include <CGAL/IO/Polyhedron_iostream.h>

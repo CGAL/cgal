@@ -5,7 +5,6 @@
 #include  <CGAL/Three/Scene_item.h> //<- modif ?
 #include "Polyhedron_type_fwd.h"
 #include "Polyhedron_type.h"
-#include "Viewer.h"
 #include <iostream>
 #include <QOpenGLVertexArrayObject>
 #include <QOpenGLBuffer>

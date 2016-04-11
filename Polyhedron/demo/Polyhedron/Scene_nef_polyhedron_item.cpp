@@ -1,4 +1,5 @@
 #include "Scene_nef_polyhedron_item.h"
+#include <CGAL/Three/Viewer_interface.h>
 #include "Scene_polyhedron_item.h"
 #include "Nef_type.h"
 #include "Polyhedron_type.h"

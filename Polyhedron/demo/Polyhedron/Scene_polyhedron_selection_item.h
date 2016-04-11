@@ -14,6 +14,11 @@
 #include <CGAL/Polygon_mesh_processing/connected_components.h>
 #include "Polyhedron_demo_detect_sharp_edges.h"
 
+// Laurent Rineau, 2016/04/07: that header should not be included here, but
+// only in the .cpp file. But that header file does contain the body of a
+// few member functions.
+#include <CGAL/Three/Viewer_interface.h>
+
 #include <fstream>
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>

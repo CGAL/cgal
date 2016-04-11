@@ -3,6 +3,7 @@
 #include "opengl_tools.h"
 #include "create_sphere.h"
 #include "Scene_edit_polyhedron_item.h"
+#include <CGAL/Three/Viewer_interface.h>
 #include <boost/foreach.hpp>
 #include <algorithm>
 #include <QTime>

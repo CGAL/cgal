@@ -2,7 +2,6 @@
 #define SCENE_POLYGON_SOUP_ITEM_H
 #include "Scene_polygon_soup_item_config.h"
 #include  <CGAL/Three/Scene_item.h>
-#include "Viewer.h"
 #include "Polyhedron_type.h"
 
 #include <boost/foreach.hpp>

@@ -246,6 +246,18 @@ void Viewer::mousePressEvent(QMouseEvent* event)
   }
 }
 
+#include <QContextMenuEvent>
+void Viewer::contextMenuEvent(QContextMenuEvent* event)
+{
+  if(event->reason() != QContextMenuEvent::Mouse) {
+    requestContextMenu(event->globalPos());
+    event->accept();
+  }
+  else {
+    QGLViewer::contextMenuEvent(event);
+  }
+}
+
 void Viewer::keyPressEvent(QKeyEvent* e)
 {
   if(!e->modifiers()) {
@@ -307,7 +319,7 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
   else
     viewer->glLightModeli(GL_LIGHT_MODEL_TWO_SIDE, GL_FALSE);
 
-  if(antialiasing)
+  if(!with_names && antialiasing)
   {
     viewer->glEnable(GL_BLEND);
     viewer->glEnable(GL_LINE_SMOOTH);
