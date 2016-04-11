@@ -2660,10 +2660,12 @@ private: //------------------------------------------------------- private data
   inline std::istream& sm_skip_comments( std::istream& in) {
       char c;
       in >> c;
-      if (c == '#')
-        in.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
-      else
-        in.putback(c);
+      while(c == '#')
+      {
+       in.ignore((std::numeric_limits<std::streamsize>::max)(), '\n');
+       in >> c;
+      }
+      in.putback(c);
       return in;
   }
 /// @endcond
@@ -2671,87 +2673,48 @@ private: //------------------------------------------------------- private data
 
   inline CGAL::Color get_color_from_line(std::istream &is)
   {
+
    std::string color_info;
    bool is_float = false;
-   // stores every not commented char until the end of the line
-   char c;
-   bool is_comment = false;
-   do{
-    is.get(c);
-    if(c == '#')
-    {
-     is_comment = true;
-    }
-    if(c == '.' && !is_comment)
-     is_float = true;
-    if(c != '\n' && !is_comment)
-     color_info.append(1,c);
-   }while(c != '\n');
-   // Counts the number of effective spaces
 
-   //holds the number of spaces in the end of the line
-   int nb_numbers = 0;
-   // helps to keep the number of spaces below 3 if there is only one int in the color info
-   bool prec_is_empty = false;
-
-   for(int i=0; i<static_cast<int>(color_info.length()); i++)
-   {
-    if(color_info.at(i) == ' ')
+   std::string col;
+   //get the line content
+   std::getline(is, col);
+   //split it into strings
+   std::istringstream iss(col);
+   //holds the rgb values
+   int rgb[3];
+   int index =0;
+//split the string into numbers
+   while(iss>>color_info){
+    //stop if comment is read
+    if(color_info.at(0) == '#')
+     break;
+    //detect if the value is float
+    for(int c = 0; c<static_cast<int>(color_info.length()); c++)
     {
-     if(!prec_is_empty)
-      nb_numbers ++;
-     prec_is_empty = true;
+     if(color_info.at(c) == '.')
+     {
+      is_float = true;
+      break;
+     }
     }
+    //if the value is of float type, convert it into an int
+    if(is_float)
+     rgb[index] = (int)(atof(color_info.c_str())*255);
+    //else stores the value
     else
-    {
-     prec_is_empty = false;
-    }
+     rgb[index] = atoi(color_info.c_str());
+
+    index++;
    }
    CGAL::Color color;
-   //colormap
-   if(nb_numbers < 3)
-   {
-    std::string id;
-    //converts the index into an RGB value
-    for(int i = 1; i<static_cast<int>(color_info.length()); i++)
-    {
-     if(color_info.at(i) != ' ')
-      id.append(1,color_info.at(i));
-     else
-     {
-       break;
-     }
-    }
-    color = getIndexColor(atoi(id.c_str()));
-   }
-   //extracts RGB value from color_info
+   //if there were only one number, fetch the color in the color map
+   if(index<2)
+    color = getIndexColor(rgb[0]);
+   //else create the coor with the 3 values;
    else
-   {
-
-    std::string rgb[3];
-    int j = 0;
-    for(int i = 1; i<static_cast<int>(color_info.length()); i++)
-    {
-     if(color_info.at(i) != ' ')
-      rgb[j].append(1,color_info.at(i));
-     else
-     {
-      if(j<2)
-       j++;
-      else
-       break;
-     }
-    }
-
-    if(is_float)
-    {
-     color = CGAL::Color(atoi(rgb[0].c_str())*255,atoi(rgb[1].c_str())*255,atoi(rgb[2].c_str())*255 );
-    }
-    else
-    {
-     color = CGAL::Color(atoi(rgb[0].c_str()),atoi(rgb[1].c_str()),atoi(rgb[2].c_str()) );
-    }
-   }
+    color = CGAL::Color(rgb[0], rgb[1], rgb[2]);
    return color;
   }
   /// \relates Surface_mesh
@@ -2774,6 +2737,7 @@ private: //------------------------------------------------------- private data
     sm.clear();
     int n, f, e;
     std::string off;
+    is >> sm_skip_comments;
     is >> off;
     assert( (off == "OFF") || (off == "COFF") || (off == "NOFF") || (off == "CNOFF"));
 
@@ -2791,7 +2755,7 @@ private: //------------------------------------------------------- private data
       boost::tie(vnormal, created) = sm.template add_property_map<Vertex_index,Vector_3>("v:normal",Vector_3(0,0,0));
       v_has_normals = true;
     }
-    int ci;
+    char ci;
 
     for(int i=0; i < n; i++){
       is >> sm_skip_comments;
@@ -2834,11 +2798,16 @@ private: //------------------------------------------------------- private data
       for(std::size_t j=0; j<d; j++){
         is >> vr[j];
       }
-
       Face_index fi = sm.add_face(vr);
+      if(fi == sm.null_face())
+      {
+       std::cout<< "Warning: Face cannot be added."<<std::endl;
+       continue;
+      }
+
       // the first face will tell us if faces have a color map
       // TODO: extend this to RGBA
-      if(i == 0 && ((off == "COFF") || (off == "CNOFF"))){
+      if(i == 0 ){
         std::string col;
         std::streampos pos = is.tellg();
         std::getline(is, col);
