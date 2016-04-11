@@ -22,9 +22,9 @@ bool test()
   
   for ( int i=0; i<20; ++i )
   {
-    typename CMap::Dart_handle d1=map.darts().begin();
+    CMap::Dart_handle d1=map.darts().begin();
     while ( !map.template is_free<3>(d1) ) ++d1;
-    typename CMap::Dart_handle d2=map.darts().begin();
+    CMap::Dart_handle d2=map.darts().begin();
     while ( !map.template is_sewable<3>(d1, d2) ) ++d2;
     map.template sew<3>(d1,d2);
 
@@ -40,7 +40,7 @@ bool test()
     else if (CGAL::is_contractible<CMap, 1>(map, d1))
       CGAL::contract_cell<CMap, 1>(map, d1, true);
 
-    typename CMap::Dart_handle d3=CGAL::insert_cell_0_in_cell_1<CMap>(map, d2);
+    CMap::Dart_handle d3=CGAL::insert_cell_0_in_cell_1<CMap>(map, d2);
     CGAL::insert_cell_0_in_cell_2<CMap>(map, d2);
 
     CGAL::insert_dangling_cell_1_in_cell_2<CMap>(map, d2);

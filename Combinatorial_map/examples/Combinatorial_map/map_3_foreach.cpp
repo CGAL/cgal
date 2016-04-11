@@ -71,8 +71,8 @@ int main()
   CMap_3 cmap;
 
   // Create two tetrahedra.
-  Dart_handle d1 = CGAL::make_combinatorial_tetrahedron(cmap);
-  Dart_handle d2 = CGAL::make_combinatorial_tetrahedron(cmap);
+  Dart_handle d1 = cmap.make_combinatorial_tetrahedron();
+  Dart_handle d2 = cmap.make_combinatorial_tetrahedron();
 
   // Display the vertices of each volume by iterating on darts.
   std::cout<<"********Volumes********"<<std::endl;
