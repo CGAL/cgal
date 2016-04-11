@@ -105,12 +105,12 @@ in pairs and accessed through property maps.
 
 \subsection Point_set_processing_3Example_ply Example of custom PLY reader
 
-PLY files are designed to embed any number of additional properties:
-more specifically, point sets may contain normal vectors, visibility
-vectors, RGB colors, intensity, etc. As it is not possible to provide
-dedicated functions to every possible combination of PLY properties,
-\cgal provides a simple way to write custom PLY readers so that the
-user can adapt its programs to its PLY input.
+PLY files are designed to embed an arbitrary number of additional
+attributes. More specifically, point sets may contain normal vectors,
+visibility vectors, RGB colors, intensity, etc. As it is not possible
+to provide dedicated functions to every possible combination of PLY
+properties, \cgal provides a simple way to write custom PLY readers so
+that the user can adapt its programs to its PLY input.
 
 The function `read_ply_custom_points()` uses the concept `PlyInterpreter`
 to read specific properties defined by the user. \cgal provides, for this

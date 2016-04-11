@@ -72,7 +72,7 @@ public:
 
 int main(int argc, char*argv[])
 {
-  const char* fname = (argc>1)?argv[1]:"data/colors.ply";
+  const char* fname = (argc>1) ? argv[1] : "data/colors.ply";
     // Reads a .ply point set file with normal vectors and colors
 
   std::vector<Pwn> points; // store points with normals
