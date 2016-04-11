@@ -452,12 +452,19 @@ MainWindow::processInput(CGAL::Object o)
   if(CGAL::assign(p, o)){
     QPointF qp(CGAL::to_double(p.x()), CGAL::to_double(p.y()));
     
-    Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
+    // Cheat a little to guarantee insertion of dummy points
+    CGAL::Bounded_side side;
+    if (dummy_mode) {
+      side = CGAL::ON_BOUNDED_SIDE;
+    } else {
+      Side_of_fundamental_octagon check = Side_of_fundamental_octagon();
+      side = check(p);
+    }
 
     // note that if the point is on the boundary then the disk contains the point
     //if(disk->contains(qp)){
 
-    if(check(p) != CGAL::ON_UNBOUNDED_SIDE) {
+    if(side != CGAL::ON_UNBOUNDED_SIDE) {
       //dt.insert(p);
       
       //delete
