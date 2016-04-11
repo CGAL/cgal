@@ -111,13 +111,6 @@ protected:
   void keyPressEvent(QKeyEvent*);
   //!Deal with context menu events
   void contextMenuEvent(QContextMenuEvent*);
-  /*! \brief Encapsulates the pickMatrix.
-  * Source code of gluPickMatrix slightly modified : instead of multiplying the current matrix by this value,
-  * sets the viewer's pickMatrix_ so that the drawing area is only around the cursor. This is because since CGAL 4.7,
-  * the drawing system changed to use shaders, and these need this value. pickMatrix_ is passed to the shaders in
-  * Scene_item::attrib_buffers(CGAL::Three::Viewer_interface* viewer, int program_name).*/
-  void pickMatrix(GLdouble x, GLdouble y, GLdouble width, GLdouble height,
-                  GLint viewport[4]);
   /*!
    * \brief makeArrow creates an arrow and stores it in a struct of vectors.
    * \param R the radius of the arrow.

@@ -55,12 +55,6 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
                              tr("Selects and display context "
                                 "menu of the selected item"));
 #endif // QGLVIEWER_VERSION >= 2.5.0
-  for(int i=0; i<16; i++)
-      pickMatrix_[i]=0;
-  pickMatrix_[0]=1;
-  pickMatrix_[5]=1;
-  pickMatrix_[10]=1;
-  pickMatrix_[15]=1;
   prev_radius = sceneRadius();
   axis_are_displayed = true;
 }
@@ -237,6 +231,7 @@ void Viewer::mousePressEvent(QMouseEvent* event)
   if(event->button() == Qt::RightButton &&
      event->modifiers().testFlag(Qt::ShiftModifier)) 
   {
+
     select(event->pos());
     requestContextMenu(event->globalPos());
     event->accept();
@@ -432,8 +427,7 @@ void Viewer::attrib_buffers(int program_name) const {
     QMatrix4x4 mv_mat;
     // transformation of the manipulated frame
     QMatrix4x4 f_mat;
-    // used for the picking. Is Identity except while selecting an item.
-    QMatrix4x4 pick_mat;
+
     f_mat.setToIdentity();
     //fills the MVP and MV matrices.
     GLdouble d_mat[16];
@@ -445,10 +439,6 @@ void Viewer::attrib_buffers(int program_name) const {
     this->camera()->getModelViewMatrix(d_mat);
     for (int i=0; i<16; ++i)
         mv_mat.data()[i] = GLfloat(d_mat[i]);
-    for (int i=0; i<16; ++i)
-        pick_mat.data()[i] = this->pickMatrix_[i];
-
-    mvp_mat = pick_mat * mvp_mat;
 
     const_cast<Viewer*>(this)->glGetIntegerv(GL_LIGHT_MODEL_TWO_SIDE,
                                              &is_both_sides);
@@ -556,59 +546,19 @@ void Viewer::attrib_buffers(int program_name) const {
     program->release();
 }
 
-
-void Viewer::pickMatrix(GLdouble x, GLdouble y, GLdouble width, GLdouble height,
-GLint viewport[4])
-{
- //GLfloat m[16];
- GLfloat sx, sy;
- GLfloat tx, ty;
-
- sx = viewport[2] / width;
- sy = viewport[3] / height;
- tx = (viewport[2] + 2.0 * (viewport[0] - x)) / width;
- ty = (viewport[3] + 2.0 * (viewport[1] - y)) / height;
-
- #define M(row, col) pickMatrix_[col*4+row]
-  M(0, 0) = sx;
-  M(0, 1) = 0.0;
-  M(0, 2) = 0.0;
-  M(0, 3) = tx;
-  M(1, 0) = 0.0;
-  M(1, 1) = sy;
-  M(1, 2) = 0.0;
-  M(1, 3) = ty;
-  M(2, 0) = 0.0;
-  M(2, 1) = 0.0;
-  M(2, 2) = 1.0;
-  M(2, 3) = 0.0;
-  M(3, 0) = 0.0;
-  M(3, 1) = 0.0;
-  M(3, 2) = 0.0;
-  M(3, 3) = 1.0;
- #undef M
-
- //pickMatrix_[i] = m[i];
-}
 void Viewer::beginSelection(const QPoint &point)
 {
-    QGLViewer::beginSelection(point);
-    //set the picking matrix to allow the picking
-    static GLint viewport[4];
-    camera()->getViewport(viewport);
-    pickMatrix(point.x(), point.y(), selectRegionWidth(), selectRegionHeight(), viewport);
+    makeCurrent();
+    glEnable(GL_SCISSOR_TEST);
+    glScissor(point.x(), camera()->screenHeight()-1-point.y(), 1, 1);
+    d->scene->setPickedPixel(point);
 
 }
-void Viewer::endSelection(const QPoint& point)
+void Viewer::endSelection(const QPoint&)
 {
-  QGLViewer::endSelection(point);
-   //set the pick matrix to Identity
-    for(int i=0; i<16; i++)
-        pickMatrix_[i]=0;
-    pickMatrix_[0]=1;
-    pickMatrix_[5]=1;
-    pickMatrix_[10]=1;
-    pickMatrix_[15]=1;
+    glDisable(GL_SCISSOR_TEST);
+    //redraw thetrue scene for the glReadPixel in postSelection();
+    updateGL();
 }
 
 void Viewer::makeArrow(double R, int prec, qglviewer::Vec from, qglviewer::Vec to, qglviewer::Vec color, AxisData &data)
