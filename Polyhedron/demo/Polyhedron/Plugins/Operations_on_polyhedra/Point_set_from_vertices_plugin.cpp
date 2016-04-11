@@ -7,6 +7,7 @@
 
 #include "Scene_points_with_normal_item.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_polygon_soup_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "Messages_interface.h"
@@ -27,7 +28,8 @@ public:
   bool applicable(QAction*) const {
     const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
-    return qobject_cast<Scene_polyhedron_item*>(scene->item(index));
+    return qobject_cast<Scene_polyhedron_item*>(scene->item(index))
+      || qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
   }
 
   QList<QAction*> actions() const;
@@ -59,20 +61,40 @@ void Polyhedron_demo_point_set_from_vertices_plugin::createPointSet()
 {
   const CGAL::Three::Scene_interface::Item_id index = scene->mainSelectionIndex();
 
-  Scene_polyhedron_item* item =
+  Scene_polyhedron_item* poly_item =
     qobject_cast<Scene_polyhedron_item*>(scene->item(index));
 
-  if (item)
+  if (poly_item)
     {
       Scene_points_with_normal_item* points
-        = new Scene_points_with_normal_item(*(item->polyhedron()));
+        = new Scene_points_with_normal_item(*(poly_item->polyhedron()));
 
       if (points)
         {
           points->setColor(Qt::blue);
-          points->setName(QString("%1 (vertices)").arg(item->name()));
+          points->setName(QString("%1 (vertices)").arg(poly_item->name()));
           scene->addItem (points);
         }
+    }
+
+  Scene_polygon_soup_item* soup_item =
+    qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
+
+  if (soup_item)
+    {
+      Scene_points_with_normal_item* points
+        = new Scene_points_with_normal_item();
+      points->setColor(Qt::blue);
+      points->setName(QString("%1 (vertices)").arg(soup_item->name()));
+
+      // TODO get points from polygon soup
+      const std::vector<Kernel::Point_3>& pts
+        = soup_item->points();
+
+      for (std::size_t i = 0; i < pts.size(); ++ i)
+        points->point_set()->push_back (pts[i]);
+      
+      scene->addItem (points);
     }
 
 }
