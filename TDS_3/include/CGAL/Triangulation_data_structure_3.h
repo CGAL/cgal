@@ -2304,7 +2304,7 @@ void
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> &V ) const
 {
-  std::map<Cell_handle, std::size_t > C;
+  Unique_hash_map<Cell_handle, std::size_t > C;
   std::size_t i = 0;
 
   switch ( dimension() ) {
