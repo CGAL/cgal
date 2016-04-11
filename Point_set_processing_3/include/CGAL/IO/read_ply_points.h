@@ -334,11 +334,7 @@ public:
   template <typename Type>
   bool does_tag_exist (const char* tag)
   {
-    for (std::size_t i = 0; i < m_readers.size (); ++ i)
-      if (m_readers[i]->name () == tag)
-        return dynamic_cast<internal::Ply_read_typed_number<Type>*>(m_readers[i]);
-
-    return false;
+    return does_tag_exist (tag, Type());
   }
 
   /*!
@@ -358,6 +354,49 @@ public:
           return;
         }
   }
+
+  /// \cond SKIP_IN_MANUAL
+  
+  // Convenience functions: a float property in the PLY input can be
+  // directly interpreted as a double without loss of information.
+  template <typename Type>
+  bool does_tag_exist (const char* tag, Type)
+  {
+    for (std::size_t i = 0; i < m_readers.size (); ++ i)
+      if (m_readers[i]->name () == tag)
+        return dynamic_cast<internal::Ply_read_typed_number<Type>*>(m_readers[i]);
+    return false;
+  }
+  bool does_tag_exist (const char* tag, double)
+  {
+    for (std::size_t i = 0; i < m_readers.size (); ++ i)
+      if (m_readers[i]->name () == tag)
+        return (dynamic_cast<internal::Ply_read_typed_number<double>*>(m_readers[i])
+                || dynamic_cast<internal::Ply_read_typed_number<float>*>(m_readers[i]));
+
+    return false;
+  }
+  void assign (double& t, const char* tag)
+  {
+    for (std::size_t i = 0; i < m_readers.size (); ++ i)
+      if (m_readers[i]->name () == tag)
+        {
+          internal::Ply_read_typed_number<double>*
+            reader_double = dynamic_cast<internal::Ply_read_typed_number<double>*>(m_readers[i]);
+          if (reader_double == NULL)
+            {
+              internal::Ply_read_typed_number<float>*
+                reader_float = dynamic_cast<internal::Ply_read_typed_number<float>*>(m_readers[i]);
+              assert (reader_float != NULL);
+              t = reader_float->buffer();
+            }
+          else
+            t = reader_double->buffer();
+          
+          return;
+        }
+  }
+  /// \endcond
   
 };
 
