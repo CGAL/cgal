@@ -2017,7 +2017,7 @@ public:
     }
 
     // tmp P-Q is inplace in P
-    if ( !impossible_operation.test(P_MINUS_Q) )
+    if ( !impossible_operation.test(P_MINUS_Q) && desired_output[P_MINUS_Q] )
     {
       //clean isolated patch no longer needed
       //  OK because we don't use it after...
