@@ -27,7 +27,7 @@ typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
 typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
 
 // Point set structuring type
-typedef CGAL::internal::Point_set_structuring<Traits>        Structuring;
+typedef CGAL::Point_set_with_structure<Traits>               Structure;
 
 // Advancing front types
 typedef CGAL::Advancing_front_surface_reconstruction_vertex_base_3<Kernel> LVb;
@@ -54,15 +54,15 @@ struct On_the_fly_pair{
 };
 
 // Specialized priority functor that favor structure coherence
-template <typename Structuring>
+template <typename Structure>
 struct Priority_with_structure_coherence {
 
-  Structuring& structuring;
+  Structure& structure;
   double bound;
   
-  Priority_with_structure_coherence(Structuring& structuring,
+  Priority_with_structure_coherence(Structure& structure,
                                     double bound)
-    : structuring (structuring), bound (bound)
+    : structure (structure), bound (bound)
   {}
 
   template <typename AdvancingFront, typename Cell_handle>
@@ -91,7 +91,7 @@ struct Priority_with_structure_coherence {
     // facet_coherence takes values between -1 and 3, 3 being the most
     // coherent and -1 being incoherent. Smaller weight means higher
     // priority.
-    double weight = 100. * (5 - structuring.facet_coherence (f));
+    double weight = 100. * (5 - structure.facet_coherence (f));
 
     return weight * adv.smallest_radius_delaunay_sphere (c, index);
   }
@@ -99,9 +99,10 @@ struct Priority_with_structure_coherence {
 };
 
 // Advancing front type
-typedef CGAL::Advancing_front_surface_reconstruction<Triangulation_3,
-                                                     Priority_with_structure_coherence<Structuring> > Reconstruction;
-
+typedef CGAL::Advancing_front_surface_reconstruction
+         <Triangulation_3,
+          Priority_with_structure_coherence<Structure> >
+        Reconstruction;
 
 
 int main (int argc, char* argv[])
@@ -142,9 +143,11 @@ int main (int argc, char* argv[])
   std::cerr << "done\nPoint set structuring... ";
 
   Pwn_vector structured_pts;
-  Structuring pss (points.begin (), points.end (), ransac);
-  pss.run (op.cluster_epsilon); // Same parameter as RANSAC
-  pss.get_output (std::back_inserter (structured_pts));
+  Structure pss (points.begin (), points.end (), ransac,
+                 op.cluster_epsilon);  // Same parameter as RANSAC
+
+  for (std::size_t i = 0; i < pss.size(); ++ i)
+    structured_pts.push_back (pss[i]);
 
   std::cerr << "done\nAdvancing front... ";
 
@@ -155,8 +158,8 @@ int main (int argc, char* argv[])
                       boost::make_transform_iterator(point_indices.end(), On_the_fly_pair(structured_pts)));
 
 
-  Priority_with_structure_coherence<Structuring> priority (pss,
-                                                           1000. * op.cluster_epsilon); // Avoid too large facets
+  Priority_with_structure_coherence<Structure> priority (pss,
+                                                         1000. * op.cluster_epsilon); // Avoid too large facets
   Reconstruction R(dt, priority);
   R.run ();
 

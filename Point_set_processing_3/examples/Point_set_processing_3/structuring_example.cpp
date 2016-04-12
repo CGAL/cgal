@@ -25,8 +25,6 @@ typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits
 typedef CGAL::Shape_detection_3::Efficient_RANSAC<Traits>    Efficient_ransac;
 typedef CGAL::Shape_detection_3::Plane<Traits>               Plane;
 
-typedef std::vector<boost::shared_ptr<Plane> >               Adjacency;
-
 int main (int argc, char** argv)
 {
   // Points with normals.
@@ -54,27 +52,14 @@ int main (int argc, char** argv)
   ransac.detect();
 
   Pwn_vector structured_pts;
-  std::vector<Adjacency> adjacency;
 
   CGAL::structure_point_set (points.begin (), points.end (), // input points
                              std::back_inserter (structured_pts),
-                             std::back_inserter (adjacency),
                              ransac, // shape detection engine
                              0.015); // epsilon for structuring points
 
   std::cerr << structured_pts.size ()
             << " structured point(s) generated." << std::endl;
-
-  CGAL::cpp11::array<std::size_t, 4> nb_pts = {{ 0, 0, 0, 0 }};
-
-  // Check degree of points and display statistics
-  for (std::size_t i = 0; i < adjacency.size(); ++ i)
-    nb_pts[(std::min)((std::size_t)3,adjacency[i].size())] ++;
-
-  std::cerr << " * " << nb_pts[0] << " crease point(s) (unstructured)" << std::endl
-            << " * " << nb_pts[1] << " planar point(s)" << std::endl
-            << " * " << nb_pts[2] << " edge point(s)" << std::endl
-            << " * " << nb_pts[3] << " corner point(s)" << std::endl;
 
   std::ofstream out ("out.pwn");
   CGAL::write_xyz_points_and_normals (out, structured_pts.begin(), structured_pts.end(),
