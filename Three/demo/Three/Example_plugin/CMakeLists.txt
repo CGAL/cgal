@@ -25,9 +25,8 @@ find_package(Qt5
              
 if(Qt5_FOUND AND CGAL_FOUND)  
   find_package(CGAL_polyhedron_demo
-  HINTS "${CGAL_DIR}" "${CGAL_DIR}/Polyhedron/demo/Polyhedron-build"
+  HINTS "${CMAKE_SOURCE_DIR}" "${CMAKE_SOURCE_DIR}/../../../../Polyhedron/demo/Polyhedron-build"
   )
-
 include( ${CGAL_POLYHEDRON_DEMO_USE_FILE} )
 # Let plugins be compiled in the same directory as the executable.
 set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
