@@ -11,4 +11,5 @@
 \example Point_set_processing_3/bilateral_smooth_point_set_example.cpp
 \example Point_set_processing_3/edge_aware_upsample_point_set_example.cpp
 \example Point_set_processing_3/edges_example.cpp
+\example Point_set_processing_3/structuring_example.cpp
 */

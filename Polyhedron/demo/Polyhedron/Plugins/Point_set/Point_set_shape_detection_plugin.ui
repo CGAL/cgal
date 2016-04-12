@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>444</width>
-    <height>269</height>
+    <height>295</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -208,6 +208,13 @@
     <widget class="QCheckBox" name="m_do_not_generate_subset">
      <property name="text">
       <string>Do Not Generate Point Subsets</string>
+     </property>
+    </widget>
+   </item>
+   <item>
+    <widget class="QCheckBox" name="m_generate_structured">
+     <property name="text">
+      <string>Generate structured point cloud</string>
      </property>
     </widget>
    </item>

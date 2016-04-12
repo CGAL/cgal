@@ -54,6 +54,7 @@ if ( CGAL_FOUND )
   create_single_source_cgal_program( "remove_outliers_example.cpp" )
   create_single_source_cgal_program( "wlop_simplify_and_regularize_point_set_example.cpp" )
   create_single_source_cgal_program( "edge_aware_upsample_point_set_example.cpp" )
+  create_single_source_cgal_program( "structuring_example.cpp" )
   
   # Use Eigen or BLAS and LAPACK (optional)
   find_package(Eigen3 3.1.0) #(requires 3.1.0 or greater)
