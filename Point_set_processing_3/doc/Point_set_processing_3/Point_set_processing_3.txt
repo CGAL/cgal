@@ -84,22 +84,45 @@ three normal vector coordinates `x y z nx ny nz` per line), OFF
 (%Object File Format) \cgalCite{cgal:p-gmgv16-96} and PLY (Polygon
 File Format).
 
-- `read_xyz_points()` 
-- `read_off_points()`
-- `read_ply_points()` 
-- `write_off_points()` 
-- `write_xyz_points()`
-- `write_ply_points()`
+- `read_xyz_points()` and `read_xyz_points_and_normals()` 
+- `read_off_points()` and `read_off_points_and_normals()` 
+- `read_ply_points()`, `read_ply_points_and_normals()` and `read_ply_custom_points()`
+- `write_xyz_points()` and `write_xyz_points_and_normals()`
+- `write_off_points()` and `write_off_points_and_normals()`
+- `write_ply_points()` and `write_ply_points_and_normals()` 
 
-Note that `read_ply_points()` also accepts binary PLY format in
-addition of ASCII.
+Note that PLY reading functions accepts binary PLY format in addition
+of ASCII. `read_ply_custom_points()` provides the user with a means to
+read any point property from a PLY file (for example, colors), see
+\ref Point_set_processing_3Example_ply.
 
-\subsection Point_set_processing_3Example Example
+\subsection Point_set_processing_3Example_io Example
 
 The following example reads a point set from an input file and writes
 it to a file, both in the XYZ format. Positions and normals are stored
 in pairs and accessed through property maps.
 \cgalExample{Point_set_processing_3/read_write_xyz_point_set_example.cpp}
+
+\subsection Point_set_processing_3Example_ply Example of custom PLY reader
+
+PLY files are designed to embed an arbitrary number of additional
+attributes. More specifically, point sets may contain normal vectors,
+visibility vectors, RGB colors, intensity, etc. As it is not possible
+to provide dedicated functions to every possible combination of PLY
+properties, \cgal provides a simple way to write custom PLY readers so
+that the user can adapt its programs to its PLY input.
+
+The function `read_ply_custom_points()` uses the concept `PlyInterpreter`
+to read specific properties defined by the user. \cgal provides, for this
+concept, the model `CGAL::Ply_interpreter_points_and_normals_3`: it is
+the standard interpreter that is used internally by `read_ply_points()`
+and `read_ply_points_and_normals()`.
+
+The following example shows how to define a custom interpreter that
+reads a point set with points, normals and RGB colors, and stores
+these attributes in user-defined containers.
+
+\cgalExample{Point_set_processing_3/read_ply_points_with_colors_example.cpp}
 
 \section Point_set_processing_3Analysis Analysis
 
@@ -110,7 +133,7 @@ point set density, this function is used downstream the surface
 reconstruction pipeline to automatically determine some parameters
 such as output mesh sizing for surface reconstruction.
 
-\subsection Point_set_processing_3Example_1 Example
+\subsection Point_set_processing_3Example_average_spacing Example
 
 The following example reads a point set in the `xyz` format and
 computes the average spacing. Index, position and color are stored in
@@ -133,7 +156,7 @@ of outliers from an input point set. More specifically, it sorts the
 input points in increasing order of average squared distances to their
 `k` nearest neighbors and deletes the points with largest value.
 
-\subsection Point_set_processing_3Example_2 Example
+\subsection Point_set_processing_3Example_outlier_removal Example
 
 The following example reads a point set and removes 5% of the
 points. It uses the `Identity_property_map<Point_3>` property
@@ -167,7 +190,7 @@ but also regularizes downsampled points. This is an implementation of
 the Weighted Locally Optimal Projection (WLOP) algorithm \cgalCite{wlop-2009}.
 
 
-\subsection Point_set_processing_3Example_3 Grid Simplification Example
+\subsection Point_set_processing_3Example_grid_simplification Grid Simplification Example
 
 The following example reads a point set and simplifies it by clustering.
 \cgalExample{Point_set_processing_3/grid_simplification_example.cpp}
@@ -176,7 +199,7 @@ The following example reads a point set and simplifies it by clustering.
 Point set simplification through grid-based clustering. Removed points are depicted in red. Notice how low-density areas (in green) are not simplified.
 \cgalFigureEnd
 
-\subsection Point_set_processing_3Example_9 Hierarchy Simplification Example
+\subsection Point_set_processing_3Example_hierarchy_simplication Hierarchy Simplification Example
 The following example reads a point set and produces a set of clusters.
 
 \cgalExample{Point_set_processing_3/hierarchy_simplification_example.cpp}
@@ -210,7 +233,7 @@ parameter: \f$0.00001\f$, \f$0.001\f$ and \f$0.1\f$. In the 3 cases,
 `size`\f$=1000\f$.  \cgalFigureEnd
 
 
-\subsection Point_set_processing_3Example_4 WLOP Simplification Example
+\subsection Point_set_processing_3Example_wlop WLOP Simplification Example
 The following example reads a point set, simplifies and regularizes it by WLOP.
 
 \cgalExample{Point_set_processing_3/wlop_simplify_and_regularize_point_set_example.cpp}
@@ -259,13 +282,13 @@ iteratively projecting each point onto the implicit surface patch fitted over it
 Bilateral projection preserves sharp features according to the normal (gradient) information. 
 Normals are thus required as input. For more details, see section 4 of \cgalCite{ear-2013}.
 
-\subsection Point_set_processing_3Example_5 Jet Smoothing Example
+\subsection Point_set_processing_3Example_jet_smoothing Jet Smoothing Example
 
 The following example generates a set of 9 points close to the `xy` 
 plane and smooths them using 8 nearest neighbors:
 \cgalExample{Point_set_processing_3/jet_smoothing_example.cpp}
 
-\subsection Point_set_processing_3Example_6 Bilateral Smoothing Example
+\subsection Point_set_processing_3Example_bilateral_smoothing Bilateral Smoothing Example
 
 The following example reads a set of points with normals and smooths them via bilateral smoothing:
 \cgalExample{Point_set_processing_3/bilateral_smooth_point_set_example.cpp}
@@ -324,7 +347,7 @@ the normals which cannot be successfully oriented.
 Normal orientation of a sampled cube surface. Left: unoriented normals. Right: orientation of right face normals is propagated to bottom face.
 \cgalFigureEnd
 
-\subsection Point_set_processing_3Example_7 Example
+\subsection Point_set_processing_3Example_normals Example
 
 The following example reads a point set from a file, estimates the
 normals through PCA over the 6 nearest neighbors and orients the
@@ -339,7 +362,7 @@ normals:
 The function `edge_aware_upsample_point_set()` generates a denser point set from an input point set. This has applications in point-based rendering, hole filling, and sparse surface reconstruction.
 The algorithm can progressively upsample the point set while approaching the edge singularities. See \cgalCite{ear-2013} for more details.
 
-\subsection Point_set_processing_3Example_8 Example
+\subsection Point_set_processing_3Example_upsampling Example
 
 The following example reads a point set from a file, upsamples it to get a denser result.
 
@@ -378,7 +401,7 @@ It first computes the VCM of the points set using `compute_vcm()`. Then, it esti
 which points belong to a sharp edge by testing if a ratio of eigenvalues
 is greater than a given threshold.
 
-\subsection Point_set_processing_3Example_10 Example
+\subsection Point_set_processing_3Example_sharp_edges Example
 
 The following example reads a point set from a file, estimates the
 points that are on sharp edges:
