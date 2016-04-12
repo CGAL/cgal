@@ -329,7 +329,9 @@ public:
   /*!
     \tparam Type type of the property (ex: double, float, unsigned char, etc.)
     \param tag name of the property (ex: _nx_ for x normal coordinate)
-    \return true if points inside the PLY input contain the property `tag` with type `Type`
+
+    \return true if points inside the PLY input contain the property
+    `tag` with type `Type`, false otherwise
   */
   template <typename Type>
   bool does_tag_exist (const char* tag)
