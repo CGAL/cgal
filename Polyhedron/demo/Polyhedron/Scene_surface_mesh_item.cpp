@@ -1,5 +1,6 @@
 #include "Scene_surface_mesh_item.h"
 
+#include <queue>
 #include <CGAL/Surface_mesh/Surface_mesh.h>
 
 #include <boost/graph/properties.hpp>
@@ -7,7 +8,30 @@
 #include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
 
+#include <CGAL/Triangulation_vertex_base_with_info_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
+#include <CGAL/Constrained_triangulation_plus_2.h>
+#include <CGAL/Triangulation_2_filtered_projection_traits_3.h>
+
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
+
+typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::face_descriptor face_descriptor;
+typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::halfedge_descriptor Halfedge_descriptor;
+struct Face_info {
+  Halfedge_descriptor e[3];
+  bool is_external;
+};
+typedef CGAL::Triangulation_2_filtered_projection_traits_3<Scene_surface_mesh_item::Kernel>                       P_traits;
+typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_descriptor,P_traits>                                 Vb;
+typedef CGAL::Triangulation_face_base_with_info_2<Face_info, P_traits >                                           Fb1;
+typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>                                                Fb;
+typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                                                               TDS;
+typedef CGAL::Exact_intersections_tag                                                                             Itag;
+typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits, TDS, Itag>                                           CDTbase;
+typedef CGAL::Constrained_triangulation_plus_2<CDTbase>                                                           CDT;
+
+
 
 Scene_surface_mesh_item::Scene_surface_mesh_item(const Scene_surface_mesh_item& other)
   : CGAL::Three::Scene_item(NbOfVbos,NbOfVaos),
@@ -21,8 +45,15 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
   : CGAL::Three::Scene_item(NbOfVbos,NbOfVaos),
     smesh_(sm)
 {
+  floated = true;
+  checkFloat();
   SMesh::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
     smesh_->add_property_map<vertex_descriptor, Kernel::Vector_3 >("v:normal").first;
+
+  SMesh::Property_map<face_descriptor, Kernel::Vector_3 > fnormals =
+      smesh_->add_property_map<face_descriptor, Kernel::Vector_3 >("v:normal").first;
+  CGAL::Polygon_mesh_processing::compute_face_normals(*smesh_,fnormals);
+
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
   CGAL::Polygon_mesh_processing::compute_vertex_normals(*smesh_,vnormals);
 
@@ -62,7 +93,7 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
     }
     else
     {
-      qDebug()<<"not triangle";
+      triangulate_facet(fd, &fnormals, 0, &im, true);
     }
   }
 
@@ -102,8 +133,6 @@ void Scene_surface_mesh_item::addFlatData(Point p, Kernel::Vector_3 n, CGAL::Col
 }
 void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
 {
-  typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-  typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
   SMesh::Property_map<vertex_descriptor, SMesh::Point> positions =
     smesh_->points();
   SMesh::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
@@ -111,7 +140,6 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
 
   SMesh::Property_map<face_descriptor, Kernel::Vector_3 > fnormals =
       smesh_->add_property_map<face_descriptor, Kernel::Vector_3 >("v:normal").first;
-  CGAL::Polygon_mesh_processing::compute_face_normals(*smesh_,fnormals);
 
   SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
     smesh_->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
@@ -190,7 +218,7 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
     }
     else
     {
-
+      triangulate_facet(fd, &fnormals, &fcolors, 0, false);
     }
   }
 
@@ -205,6 +233,16 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
     }
   }
 
+  if(!floated)
+  {
+    BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh_))
+    {
+      Point p = positions[vd];
+      edge_vertices.push_back((gl_data)p.x());
+      edge_vertices.push_back((gl_data)p.y());
+      edge_vertices.push_back((gl_data)p.z());
+    }
+  }
 
 
 
@@ -241,8 +279,13 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
   //vao containing the data for the smooth facets
   vaos[Smooth_facets]->bind();
   buffers[Smooth_vertices].bind();
+  if(floated)
   buffers[Smooth_vertices].allocate(positions.data(),
                              static_cast<int>(num_vertices(*smesh_)*3*sizeof(gl_data)));
+  else
+    buffers[Smooth_vertices].allocate(edge_vertices.data(),
+                               static_cast<int>(num_vertices(*smesh_)*3*sizeof(gl_data)));
+
   program->enableAttributeArray("vertex");
   program->setAttributeBuffer("vertex",GL_DATA,0,3);
   buffers[Smooth_vertices].release();
@@ -387,4 +430,109 @@ QString Scene_surface_mesh_item::toolTip() const
     .arg(this->color().name());
 }
 
+void Scene_surface_mesh_item::checkFloat()const
+{
+#if gl_data == float
+  floated = false;
+#endif
+}
+
+void
+Scene_surface_mesh_item::triangulate_facet(face_descriptor fd,
+                                           SMesh::Property_map<face_descriptor, Kernel::Vector_3> *fnormals,
+                                           SMesh::Property_map<face_descriptor, CGAL::Color> *fcolors,
+                                           boost::property_map< SMesh, boost::vertex_index_t >::type *im,
+                                           bool index) const
+{
+  //Computes the normal of the facet
+  Kernel::Vector_3 normal = get(*fnormals, fd);
+
+  //check if normal contains NaN values
+  if (normal.x() != normal.x() || normal.y() != normal.y() || normal.z() != normal.z())
+  {
+    qDebug()<<"Warning : normal is not valid. Facet not displayed";
+    return;
+  }
+  P_traits cdt_traits(normal);
+  CDT cdt(cdt_traits);
+
+  SMesh::Halfedge_around_face_circulator
+      he_circ(halfedge(fd,*smesh_), *smesh_),
+      he_circ_end(he_circ);
+
+
+  // Iterates on the vector of facet handles
+  boost::container::flat_map<CDT::Vertex_handle, vertex_descriptor> v2v;
+  CDT::Vertex_handle previous, first;
+  do {
+    CDT::Vertex_handle vh = cdt.insert(smesh_->point(source(*he_circ, *smesh_)));
+    if(index)
+      v2v.insert(std::make_pair(vh, source(*he_circ, *smesh_)));
+    if(first == 0) {
+      first = vh;
+    }
+    vh->info() = *he_circ;
+    if(previous != 0 && previous != vh) {
+      cdt.insert_constraint(previous, vh);
+    }
+    previous = vh;
+  } while( ++he_circ != he_circ_end );
+  cdt.insert_constraint(previous, first);
+  // sets mark is_external
+  for( CDT::All_faces_iterator
+       fit2 = cdt.all_faces_begin(),
+       end = cdt.all_faces_end();
+       fit2 != end; ++fit2)
+  {
+    fit2->info().is_external = false;
+  }
+  //check if the facet is external or internal
+  std::queue< CDT::Face_handle> face_queue;
+  face_queue.push(cdt.infinite_vertex()->face());
+  while(! face_queue.empty() ) {
+    CDT::Face_handle fh = face_queue.front();
+    face_queue.pop();
+    if(fh->info().is_external) continue;
+    fh->info().is_external = true;
+    for(int i = 0; i <3; ++i) {
+      if(!cdt.is_constrained(std::make_pair(fh, i)))
+      {
+        face_queue.push(fh->neighbor(i));
+      }
+    }
+  }
+  //iterates on the internal faces
+  for( CDT::Finite_faces_iterator
+       ffit = cdt.finite_faces_begin(),
+       end = cdt.finite_faces_end();
+       ffit != end; ++ffit)
+  {
+    if(ffit->info().is_external)
+      continue;
+    //add the vertices to the positions
+      //adds the vertices, normals and colors to the appropriate vectors
+    if(!index)
+    {
+      addFlatData(ffit->vertex(0)->point(),
+                  (*fnormals)[fd],
+                  (*fcolors)[fd]);
+
+      addFlatData(ffit->vertex(1)->point(),
+                  (*fnormals)[fd],
+                  (*fcolors)[fd]);
+
+      addFlatData(ffit->vertex(2)->point(),
+                  (*fnormals)[fd],
+                  (*fcolors)[fd]);
+    }
+    //adds the indices to the appropriate vector
+    else
+    {
+      idx_data_.push_back((*im)[v2v[ffit->vertex(0)]]);
+      idx_data_.push_back((*im)[v2v[ffit->vertex(1)]]);
+      idx_data_.push_back((*im)[v2v[ffit->vertex(2)]]);
+    }
+
+  }
+}
 #include "Scene_surface_mesh_item.moc"
