@@ -392,14 +392,21 @@ input point set. It requires that a shape detection algorithm is first applied
 to the point set (see \ref Chapter_Point_Set_Shape_Detection). It is based on
 the article \cgalCite{cgal:la-srpss-13}.
 
-Inliers of each detected plane are replaced by sets of noise-free
-points sampled at the vertices of a regular grid: this is achieved by
-filling an occupancy grid aligned on the principal components of the
-inlier sets with a user defined spacing. In addition, adjacencies
-between 2 planes are detected and regularly resample on an occupancy
-array along the edge. Finally, adjacencies between 3 planes are
-sampled using the exact intersection point of the 3 planes (provided
-it exists and remains in the given tolerance).
+- __Planes__: inliers of each detected plane are replaced by sets of
+noise-free points sampled at the vertices of a regular grid: this is
+achieved by filling an occupancy grid aligned on the principal
+components of the inlier sets with a spacing lower than \f$\sqrt{2}\f$
+times the user-defined tolerance.
+
+- __Creases__: adjacencies between 2 planes are detected and regularly
+resampled on an occupancy array along the edge with a spacing equal to
+twice the user-defined tolerance.
+
+- __Corners__: 3-cycles are detected from the primitive adjacency
+graph and sampled using the exact intersection point of the 3 planes
+(provided it exists and remains in the given tolerance). These corners
+are also locally clustered to former corners of degree higher than 3.
+
 
 This algorithm is well suited to point sets sampled on surfaces with
 planar sections and sharp edges.
