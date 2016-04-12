@@ -1416,7 +1416,8 @@ namespace internal {
 /// @tparam Traits A model of `EfficientRANSACTraits`
 ///
 /// @note If no plane is found in the shape detection object, the
-/// output points equal to the unaltered input points.
+/// algorithm does nothing and the output points are the unaltered
+/// input points.
 template <typename OutputIterator,
           typename InputIterator,
           typename Traits
