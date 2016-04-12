@@ -35,13 +35,13 @@ public:
 /*!
 Another name for the point type. 
 */ 
-typedef unspecified_type Bare_point; 
+  typedef unspecified_type Bare_point; 
 
 /*!
 The weighted point type. It has to be 
 a model of the concept `WeightedPoint`. 
 */ 
-typedef unspecified_type Weighted_point_2; 
+  typedef unspecified_type Weighted_point_2; 
 
 /*!
 A function object which must provide operators for the power test applied to two, three, and four points. 
@@ -63,16 +63,16 @@ which is the degenerated power test for weighted points
 \pre the bare points corresponding to `p` and `q` are identical. 
 
 */ 
-typedef unspecified_type Power_test_2; 
+typedef unspecified_type Power_side_of_power_circle_2; 
 
 /// @}
 
 /// \name Optional Types
-/// The following type/predicate is required for a call to `nearest_power_vertex`:
+/// The following type/predicate is required for a call to `nearest_power_vertex()`:
 /// @{
 
 /*!
-A function object for computing two power distances. 
+A function object for comparing two power distances. 
 Must provide the operator: 
 
 `Comparison_result operator()(Bare_point p, Weighted_point_2 q, Weighted_point_2 r)`, 
@@ -93,7 +93,7 @@ Must provide the operator:
 typedef unspecified_type Construct_weighted_circumcenter_2; 
 
 /*!
-A function object constructs 
+A function object that constructs 
 the radical axis of two weighted points. 
 
 Must provide the operator: 
@@ -132,7 +132,7 @@ RegularTriangulationTraits_2& operator=
 /*!
 
 */ 
-Power_test_2 power_test_2_object(); 
+Power_side_of_power_circle_2 power_side_of_power_circle_2_object(); 
 
 /*!
 

@@ -5,27 +5,42 @@ namespace CGAL {
 \ingroup PkgTriangulation2TraitsClasses
 
 `Regular_triangulation_euclidean_traits_2` is a model for the concept `RegularTriangulationTraits_2` 
-This traits class is templated by a kernel class `K` 
-and a weight type `Weight`. 
-This class inherits from `K` 
-and uses a `Weighted_point` type 
-derived from the type `K::Point_2`. 
 
-Note that this template class is specialized for 
-`Exact_predicates_inexact_constructions_kernel`, so that it is as if 
-`Regular_triangulation_filtered_traits_2` was used, i.e.\ you get 
-filtered predicates automatically. 
+\tparam K must be a model of the `Kernel` concept.
+\tparam Weight  This template parameter is ignored, as  `K::Weighted_point_2` uses the type `K::FT`.
+\deprecated The template parameter `Weight` is deprecated.
+ 
+This class inherits from `K` 
+and uses a `K::Weighted_point_2` as point type.
+
 
 \cgalModels `RegularTriangulationTraits_2`
 
 \sa `RegularTriangulationTraits_2` 
-\sa `CGAL::Regular_triangulation_filtered_traits_2` 
 \sa `CGAL::Regular_triangulation_2` 
 
 */
 template< typename K, typename Weight >
 class Regular_triangulation_euclidean_traits_2 : public K {
 public:
+/// \name Types 
+/// @{
+
+/*!
+The type for point \f$ p\f$ of a weighted point \f$ {p}^{(w)}=(p,w_p)\f$. 
+*/ 
+typedef K::Point_2 Bare_point; 
+
+/*!
+The type for weighted points. 
+*/ 
+  typedef K::Weighted_point_2 Weighted_point_2; 
+
+/*!
+The type for points. 
+*/ 
+  typedef K::Weighted_point_2 Point_2; 
+
 
 /// @}
 

@@ -8,9 +8,11 @@ The class `Regular_triangulation_euclidean_traits_3` is designed as a default tr
 class `Regular_triangulation_3<RegularTriangulationTraits_3,TriangulationDataStructure_3>`
 and uses the type `K::Weighted_point_3` for weighted points`. 
 
-\tparam K must be a model of the `Kernel` concept. 
+\tparam K must be a model of the `Kernel` concept.
 
-\tparam Weight is ignored, as  `K::Weighted_point_3` uses the type `K::RT`. 
+\tparam Weight This template parameter is ignored, as  `K::Weighted_point_3` uses the type `K::FT`.
+
+\deprecated The template parameter `Weight` is deprecated.
 
 The class is a model of the concept `RegularTriangulationTraits_3` 
 but it also contains predicates and constructors on weighted points 
