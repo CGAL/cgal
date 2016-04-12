@@ -392,7 +392,7 @@ public:
 
 template < typename Kernel >
 inline bool
-operator==(const Iso_box_d<Kernel>& b1, Iso_box_d<Kernel>& b2)
+operator==(const Iso_box_d<Kernel>& b1, const Iso_box_d<Kernel>& b2)
 {
   CGAL_precondition(b1.dimension() == b2.dimension());
   return (b1.min)() == (b2.min)() && (b1.max)() == (b2.max)();
@@ -400,7 +400,7 @@ operator==(const Iso_box_d<Kernel>& b1, Iso_box_d<Kernel>& b2)
 
 template < typename Kernel >
 inline bool
-operator!=(const Iso_box_d<Kernel>& b1, Iso_box_d<Kernel>& b2)
+operator!=(const Iso_box_d<Kernel>& b1, const Iso_box_d<Kernel>& b2)
 {
   return ! (b1 == b2); 
 }
