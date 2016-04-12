@@ -171,6 +171,9 @@ load_function() const
   scene->itemChanged(index);
     
   CGAL::Three::Scene_interface::Item_id new_item_id = scene->addItem(item);
+  mw->installEventFilter(item);
+  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  viewer->installEventFilter(item);
   scene->setSelectedItem(new_item_id);
 }
 

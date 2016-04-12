@@ -54,6 +54,7 @@ public:
       return !!(os << c3t3());
   }
 
+  bool eventFilter(QObject* /*target*/, QEvent *event);
   void invalidateOpenGLBuffers()
   {
     are_buffers_filled = false;

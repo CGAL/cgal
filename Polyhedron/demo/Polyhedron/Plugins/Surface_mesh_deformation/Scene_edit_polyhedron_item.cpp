@@ -47,10 +47,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
     
   // create an empty group of control vertices for starting
   create_ctrl_vertices_group();
-   
-  // start QObject's timer for continuous effects 
-  // (deforming mesh while mouse not moving)
-  startTimer(0);
+
 
   // Required for drawing functionality
   reset_drawing_data();
@@ -584,11 +581,26 @@ bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
   // key events
   if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease) 
   {
+    static int timer_id = -1;
     QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
     Qt::KeyboardModifiers modifiers = keyEvent->modifiers();
 
     state.ctrl_pressing = modifiers.testFlag(Qt::ControlModifier);
     state.shift_pressing = modifiers.testFlag(Qt::ShiftModifier);
+    if (keyEvent->key() == Qt::Key_Control && state.ctrl_pressing)
+    {
+      // start QObject's timer for continuous effects
+      // (deforming mesh while mouse not moving)
+      if(timer_id != -1)
+        killTimer(timer_id);
+      timer_id = startTimer(0);
+    }
+    else if (keyEvent->key() == Qt::Key_Control && !state.ctrl_pressing)
+    {
+      if(timer_id != -1)
+        killTimer(timer_id);
+      timer_id = -1;
+    }
   }
   // mouse events
   if(event->type() == QEvent::MouseButtonPress || event->type() == QEvent::MouseButtonRelease)

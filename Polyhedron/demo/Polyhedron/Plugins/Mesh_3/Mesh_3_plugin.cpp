@@ -441,6 +441,9 @@ treat_result(Scene_item& source_item,
   scene->itemChanged(index);
 
   Scene_interface::Item_id new_item_id = scene->addItem(&result_item);
+  this->mw->installEventFilter(&result_item);
+  QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+  viewer->installEventFilter(&result_item);
   scene->setSelectedItem(new_item_id);
 }
 
