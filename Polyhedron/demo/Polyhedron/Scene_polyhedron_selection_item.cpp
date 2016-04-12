@@ -1058,13 +1058,12 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
                 res = res->opposite();
               //create and add a point point
 
-              Polyhedron::Point_3 p1t = t->vertex()->point();
-              Polyhedron::Point_3 p1s = t->opposite()->vertex()->point();
-              Polyhedron::Point_3 p2t = hc->vertex()->point();
-              Polyhedron::Point_3 p2s = hc->opposite()->vertex()->point();
-              double x =  p1t.x() + 0.5 * (p1t.x() - p1s.x() + p2t.x() - p2s.x() );
-              double y =  p1t.y() + 0.5 * (p1t.y() - p1s.y() + p2t.y() - p2s.y() );
-              double z =  p1t.z() + 0.5 * (p1t.z() - p1s.z() + p2t.z() - p2s.z() );
+              Polyhedron::Point_3 a = t->vertex()->point();
+              Polyhedron::Point_3 b = t->opposite()->vertex()->point();
+              Polyhedron::Point_3 c = t->opposite()->next()->vertex()->point();
+              double x = b.x()+a.x()-c.x() ;
+              double y = b.y()+a.y()-c.y() ;
+              double z = b.z()+a.z()-c.z() ;
               res->vertex()->point() = Polyhedron::Point_3(x,y,z);
               break;
             }
