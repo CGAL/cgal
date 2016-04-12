@@ -276,43 +276,13 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
 
     if (dialog.generate_structured ())
       {
-        Scene_group_item *group_item = new Scene_group_item(QString("%1 (structured)").arg(item->name()));
         std::cout << "Structuring point set... ";
-        CGAL::internal::Point_set_structuring<Traits> structuring (points->begin (), points->end (),
-                                                                   shape_detection);
         
-        structuring.run (op.cluster_epsilon);
-
         Scene_points_with_normal_item *pts_full = new Scene_points_with_normal_item;
-        Scene_points_with_normal_item *pts_planes = new Scene_points_with_normal_item;
-        Scene_points_with_normal_item *pts_edges = new Scene_points_with_normal_item;
-        Scene_points_with_normal_item *pts_corners = new Scene_points_with_normal_item;
-
-        structuring.get_output (boost::make_function_output_iterator (build_from_pair ((*(pts_full->point_set())))));
-        structuring.get_detailed_output (boost::make_function_output_iterator (build_from_pair ((*(pts_planes->point_set())))),
-                                         boost::make_function_output_iterator (build_from_pair ((*(pts_edges->point_set())))),
-                                         boost::make_function_output_iterator (build_from_pair ((*(pts_corners->point_set())))));
-
-
-        std::vector<CGAL::cpp11::array<std::size_t, 3> > facets;
-        structuring.get_coherent_delaunay_facets (std::back_inserter (facets), op.cluster_epsilon * 2);
-        
-        Scene_polygon_soup_item *soup_item = new Scene_polygon_soup_item;
-  
-        soup_item->init_polygon_soup(pts_full->point_set()->size(), facets.size ());
-        std::cerr << "Size = " << pts_full->point_set()->size () << std::endl;
-        for (std::size_t i = 0; i < pts_full->point_set()->size (); ++ i)
-          {
-            Point p = (*(pts_full->point_set()))[i];
-            soup_item->new_vertex (p.x (), p.y (), p.z ());
-          }
-            
-        for (std::size_t i = 0; i < facets.size (); ++ i)
-          soup_item->new_triangle (facets[i][0], facets[i][1], facets[i][2]);
-        soup_item->setName(tr("%1 (Delaunay coherent facets)").arg(item->name()));
-        scene->addItem (soup_item);
-        scene->changeGroup(soup_item, group_item);
-        
+        CGAL::structure_point_set (points->begin (), points->end (),
+                                   boost::make_function_output_iterator (build_from_pair ((*(pts_full->point_set())))),
+                                   shape_detection,
+                                   op.cluster_epsilon);
         if (pts_full->point_set ()->empty ())
           delete pts_full;
         else
@@ -323,49 +293,8 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
             pts_full->setRenderingMode(PointsPlusNormals);
             pts_full->setColor(Qt::blue);
             scene->addItem (pts_full);
-            scene->changeGroup(pts_full, group_item);
           }
-
-        if (pts_planes->point_set ()->empty ())
-          delete pts_planes;
-        else
-          {
-            pts_planes->point_set ()->unselect_all();
-            pts_planes->setName(tr("%1 (structured planes)").arg(item->name()));
-            pts_planes->set_has_normals(true);
-            pts_planes->setRenderingMode(PointsPlusNormals);
-            pts_planes->setColor(Qt::blue);
-            scene->addItem (pts_planes);
-            scene->changeGroup(pts_planes, group_item);
-          }
-
-        if (pts_edges->point_set ()->empty ())
-          delete pts_edges;
-        else
-          {
-            pts_edges->point_set ()->unselect_all();
-            pts_edges->setName(tr("%1 (structured edges)").arg(item->name()));
-            pts_edges->set_has_normals(true);
-            pts_edges->setRenderingMode(PointsPlusNormals);
-            pts_edges->setColor(Qt::red);
-            scene->addItem (pts_edges);
-            scene->changeGroup(pts_edges, group_item);
-          }
-
-        if (pts_corners->point_set ()->empty ())
-          delete pts_corners;
-        else
-          {
-            pts_corners->point_set ()->unselect_all();
-            pts_corners->setName(tr("%1 (structured corners)").arg(item->name()));
-            pts_corners->set_has_normals(true);
-            pts_corners->setRenderingMode(PointsPlusNormals);
-            pts_corners->setColor(Qt::black);
-            scene->addItem (pts_corners);
-            scene->changeGroup(pts_corners, group_item);
-          }
-        std::cout << "done" << std::endl;
-        scene->add_group (group_item);
+        std::cerr << "done" << std::endl;
       }
     
 

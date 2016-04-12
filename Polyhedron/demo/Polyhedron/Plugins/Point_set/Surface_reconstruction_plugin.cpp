@@ -1019,17 +1019,18 @@ void Polyhedron_demo_surface_reconstruction_plugin::ransac_reconstruction
       local_timer.reset();
       
       std::cout << "Structuring point set... " << std::endl;
-      typedef CGAL::internal::Point_set_structuring<Traits>        Structuring;
+      typedef CGAL::Point_set_with_structure<Traits> Structuring;
 
       local_timer.start();
       Structuring structuring (points->begin (), points->end (),
-                               shape_detection);
-      
-      structuring.run (op.cluster_epsilon);
+                               shape_detection,
+                               op.cluster_epsilon);
 
       Scene_points_with_normal_item *structured = new Scene_points_with_normal_item;
-      structuring.get_output (boost::make_function_output_iterator
-                              (SurfaceReconstruction::build_from_pair ((*(structured->point_set())))));
+      for (std::size_t i = 0; i < structuring.size(); ++ i)
+        structured->point_set()->push_back (Point_set::Point_with_normal (structuring.point(i),
+                                                                          structuring.normal(i)));
+
       local_timer.stop ();
       std::cerr << structured->point_set()->size() << " point(s) generated in "
                 << local_timer.time() << std::endl;
