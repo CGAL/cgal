@@ -23,7 +23,6 @@ required if the  method `nearest_vertex()` is used.
 
 
 \cgalHasModel \cgal kernels 
-\cgalHasModel `CGAL::Triangulation_euclidean_traits_2<Rep>`. 
 \cgalHasModel `CGAL::Projection_traits_xy_3<K>` (not for dual Voronoi functions)
 \cgalHasModel `CGAL::Projection_traits_yz_3<K>` (not for dual Voronoi functions)
 \cgalHasModel `CGAL::Projection_traits_xz_3<K>` (not for dual Voronoi functions)
