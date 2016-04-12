@@ -545,7 +545,7 @@ _image *_createImage(int x, int y, int z, int v,
   im->rx = im->ry = im->rz = 0.0;
 
   /* no data yet */
-  im->data = ImageIO_alloc(x*y*z*v*w);
+  im->data = ImageIO_alloc(std::size_t(x)*std::size_t(y)*std::size_t(z)*std::size_t(v)*std::size_t(w));
 
   /* no file associated to image */
   im->fd = NULL;
