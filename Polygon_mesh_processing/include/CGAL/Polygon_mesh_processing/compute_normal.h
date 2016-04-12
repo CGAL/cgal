@@ -56,9 +56,8 @@ void sum_normals(const PM& pmesh,
 {
   typedef typename boost::graph_traits<PM>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
-  halfedge_descriptor he = halfedge(f, pmesh);
-  halfedge_descriptor end = he;
 
+  halfedge_descriptor he = halfedge(f, pmesh);
   vertex_descriptor v = source(he, pmesh);
   const Point& pv = get(vpmap, v);
   while (v != target(next(he, pmesh), pmesh))
