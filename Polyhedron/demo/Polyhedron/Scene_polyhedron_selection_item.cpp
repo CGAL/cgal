@@ -629,7 +629,7 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
     break;
     //Split face
   case 4:
-    Q_EMIT updateInstructions("Select the facet you want to split. (1/3)");
+    Q_EMIT updateInstructions("Select the facet you want to split (degree >4). (1/3)");
     //set the selection type to Facet
     set_active_handle_type(static_cast<Active_handle::Type>(1));
     break;
