@@ -1002,9 +1002,7 @@ void MainWindow::open(QString filename)
   settings.setValue("OFF open directory",
                     fileinfo.absoluteDir().absolutePath());
 
-  QApplication::setOverrideCursor(Qt::WaitCursor);
   CGAL::Three::Scene_item* scene_item = load_item(fileinfo, find_loader(load_pair.first));
-  QApplication::restoreOverrideCursor();
 
   if(scene_item != 0) {
     this->addToRecentFiles(fileinfo.absoluteFilePath());
@@ -1187,11 +1185,14 @@ void MainWindow::showSceneContextMenu(int selectedItemIndex,
   if(menu) {
     bool menuChanged = menu->property(prop_name).toBool();
     if(!menuChanged) {
-      QAction* actionStatistics =
-      menu->addAction(tr("Statistics..."));
-      actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
-      connect(actionStatistics, SIGNAL(triggered()),
-              this, SLOT(statistics_on_item()));
+      if(item->has_stats())
+      {
+        QAction* actionStatistics =
+            menu->addAction(tr("Statistics..."));
+        actionStatistics->setObjectName("actionStatisticsOnPolyhedron");
+        connect(actionStatistics, SIGNAL(triggered()),
+                this, SLOT(statistics_on_item()));
+      }
       menu->addSeparator();
       if(!item->property("source filename").toString().isEmpty()) {
         QAction* reload = menu->addAction(tr("&Reload Item from File"));

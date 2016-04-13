@@ -81,8 +81,9 @@ Polyhedron_demo_off_plugin::load_off(QFileInfo fileinfo) {
   else
     if( total_nb_of_vertices!= item->polyhedron()->size_of_vertices())
     {
-      QApplication::restoreOverrideCursor();
       item->setNbIsolatedvertices(total_nb_of_vertices - item->polyhedron()->size_of_vertices());
+      //needs two restore, it's not a typo
+      QApplication::restoreOverrideCursor();
       QMessageBox::warning((QWidget*)NULL,
                      tr("Isolated vertices found"),
                      tr("%1 isolated vertices ignored")
