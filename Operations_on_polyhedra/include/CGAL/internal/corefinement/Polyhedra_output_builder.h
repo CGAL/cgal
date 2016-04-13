@@ -1229,26 +1229,17 @@ private:
 
   void compute_difference_inplace(
     Polyhedron* P_ptr,
-    boost::dynamic_bitset<> is_patch_inside_Q,
-    boost::dynamic_bitset<> is_patch_inside_P,
-    const boost::dynamic_bitset<>& coplanar_patches_of_P,
-    const boost::dynamic_bitset<>& coplanar_patches_of_Q,
-    const boost::dynamic_bitset<>& coplanar_patches_of_P_for_union_and_intersection,
+    const boost::dynamic_bitset<>& patches_of_P_to_keep,
+    const boost::dynamic_bitset<>& patches_of_Q_to_import,
     Patch_container& patches_of_P,
     Patch_container& patches_of_Q,
     Edge_map& Qhedge_to_Phedge
   ){
-      if ( coplanar_patches_of_P.any() )
-        is_patch_inside_Q|=(coplanar_patches_of_P & coplanar_patches_of_P_for_union_and_intersection);
-
       //clean up patches inside Q
-      remove_patches_from_polyhedra(P_ptr, is_patch_inside_Q, patches_of_P);
+      remove_patches_from_polyhedra(P_ptr, ~patches_of_P_to_keep, patches_of_P);
 
       //we import patches from Q
-      boost::dynamic_bitset<> is_patch_outside_P=is_patch_inside_P;
-      is_patch_outside_P.flip();
-      is_patch_inside_P-=coplanar_patches_of_Q;
-      append_Q_patches_to_P<true>(P_ptr, is_patch_inside_P, patches_of_Q, Qhedge_to_Phedge);
+      append_Q_patches_to_P<true>(P_ptr, patches_of_Q_to_import, patches_of_Q, Qhedge_to_Phedge);
 
       /// in case the result is empty, there will be no facets in the polyhedron
       /// but maybe marked halfedges
@@ -1258,11 +1249,8 @@ private:
 
   void compute_difference_inplace(
     Polyhedron* P_ptr,
-    boost::dynamic_bitset<> is_patch_inside_Q,
-    boost::dynamic_bitset<> is_patch_inside_P,
-    const boost::dynamic_bitset<>& coplanar_patches_of_P,
-    const boost::dynamic_bitset<>& coplanar_patches_of_Q,
-    const boost::dynamic_bitset<>& coplanar_patches_of_P_for_union_and_intersection,
+    boost::dynamic_bitset<> patches_of_P_to_keep,
+    boost::dynamic_bitset<> patches_of_Q_to_import,
     Patch_container& patches_of_P,
     Patch_container& patches_of_Q,
     const Intersection_polylines& polylines
@@ -1273,9 +1261,7 @@ private:
                               patches_of_Q, Qhedge_to_Phedge);
 
       compute_difference_inplace( P_ptr,
-                                  is_patch_inside_Q, is_patch_inside_P,
-                                  coplanar_patches_of_P, coplanar_patches_of_Q,
-                                  coplanar_patches_of_P_for_union_and_intersection,
+                                  patches_of_P_to_keep, patches_of_Q_to_import,
                                   patches_of_P, patches_of_Q,
                                   Qhedge_to_Phedge);
     }
@@ -1286,11 +1272,8 @@ private:
 #endif
   void compute_difference_inplace_delay_removal(
     Polyhedron* P_ptr,
-    boost::dynamic_bitset<> is_patch_inside_Q,
-    boost::dynamic_bitset<> is_patch_inside_P,
-    const boost::dynamic_bitset<>& coplanar_patches_of_P,
-    const boost::dynamic_bitset<>& coplanar_patches_of_Q,
-    const boost::dynamic_bitset<>& coplanar_patches_of_P_for_union_and_intersection,
+    const boost::dynamic_bitset<>& patches_of_P_to_keep,
+    const boost::dynamic_bitset<>& patches_of_Q_to_import,
     Patch_container& patches_of_P,
     Patch_container& patches_of_Q,
     const Intersection_polylines& polylines,
@@ -1314,21 +1297,15 @@ private:
         }
       }
 
-      if ( coplanar_patches_of_P.any() )
-        is_patch_inside_Q|=(coplanar_patches_of_P & coplanar_patches_of_P_for_union_and_intersection);
-
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
       #warning do not try to disconnect if the patch is isolated? i.e opposite(border_edge_of_patch)->is_border()
 #endif
       //disconnect patches inside Q
-      disconnect_patches_from_polyhedra(P_ptr, is_patch_inside_Q, patches_of_P,
+      disconnect_patches_from_polyhedra(P_ptr, ~patches_of_P_to_keep, patches_of_P,
                                         Phedge_to_Qhedge, disconnected_patches_hedge_to_Qhedge);
 
       //we import patches from Q
-      boost::dynamic_bitset<> is_patch_outside_P=is_patch_inside_P;
-      is_patch_outside_P.flip();
-      is_patch_inside_P-=coplanar_patches_of_Q;
-      append_Q_patches_to_P<true>(P_ptr, is_patch_inside_P, patches_of_Q, Qhedge_to_Phedge);
+      append_Q_patches_to_P<true>(P_ptr, patches_of_Q_to_import, patches_of_Q, Qhedge_to_Phedge);
 
       /// \todo this comment is stupid since nothing was removed from P_ptr.
       ///       either it should be done at the beginning or it's a copy-paste error.
@@ -1918,6 +1895,52 @@ public:
     Patch_container patches_of_P( P_ptr, P_patch_ids, P_facet_id_pmap, border_halfedges, P_nb_patches),
                     patches_of_Q( Q_ptr, Q_patch_ids, Q_facet_id_pmap, border_halfedges, Q_nb_patches);
 
+    // for each boolean operation, define two bitsets of patches contributing
+    // to the result
+    std::vector< boost::dynamic_bitset<> > patches_of_P_used(4);
+    std::vector< boost::dynamic_bitset<> > patches_of_Q_used(4);
+
+    /// handle the bitset for the union
+    if ( !impossible_operation.test(P_UNION_Q) && desired_output[P_UNION_Q] )
+    {
+      //define patches to import from P
+      patches_of_P_used[P_UNION_Q]=is_patch_inside_Q;
+      if ( coplanar_patches_of_P.any() )
+        patches_of_P_used[P_UNION_Q]|=(coplanar_patches_of_P - coplanar_patches_of_P_for_union_and_intersection);
+      patches_of_P_used[P_UNION_Q].flip();
+
+      //define patches to import from Q
+      patches_of_Q_used[P_UNION_Q] = ~is_patch_inside_P - coplanar_patches_of_Q;
+    }
+
+    /// handle the bitset for the intersection
+    if ( !impossible_operation.test(P_INTER_Q) && desired_output[P_INTER_Q] )
+    {
+      patches_of_P_used[P_INTER_Q]=
+        coplanar_patches_of_P.any() ? is_patch_inside_Q
+                                    : is_patch_inside_Q |
+                                      (coplanar_patches_of_P - coplanar_patches_of_P_for_union_and_intersection);
+        patches_of_Q_used[P_INTER_Q]=is_patch_inside_P;
+    }
+
+    /// handle the bitset for P-Q
+    if ( !impossible_operation.test(P_MINUS_Q) && desired_output[P_MINUS_Q] )
+    {
+      patches_of_P_used[P_MINUS_Q]=
+        (is_patch_inside_Q|(coplanar_patches_of_P & coplanar_patches_of_P_for_union_and_intersection)).flip();
+      patches_of_Q_used[P_MINUS_Q]=is_patch_inside_P - coplanar_patches_of_Q;
+    }
+
+    /// handle the bitset for Q-P
+    if ( !impossible_operation.test(Q_MINUS_P) && desired_output[Q_MINUS_P] )
+    {
+      patches_of_P_used[Q_MINUS_P] = is_patch_inside_Q-coplanar_patches_of_P;
+      patches_of_Q_used[Q_MINUS_P] = is_patch_inside_P;
+      if ( coplanar_patches_of_Q.any() )
+        patches_of_Q_used[Q_MINUS_P] |= ~coplanar_patches_of_Q_for_difference & coplanar_patches_of_Q;
+      patches_of_Q_used[Q_MINUS_P].flip();
+    }
+
     /// compute the union
     if ( !impossible_operation.test(P_UNION_Q) && desired_output[P_UNION_Q] )
     {
@@ -1925,21 +1948,10 @@ public:
       Polyhedron* union_ptr = *desired_output[P_UNION_Q];
       CGAL_assertion(P_ptr!=union_ptr && Q_ptr!=union_ptr); //tmp
 
-      //define patches to import from P
-      boost::dynamic_bitset<> is_patch_outside_Q=is_patch_inside_Q;
-      if ( coplanar_patches_of_P.any() )
-        is_patch_outside_Q|=(coplanar_patches_of_P - coplanar_patches_of_P_for_union_and_intersection);
-      is_patch_outside_Q.flip();
-
-      //define patches to import from Q
-      boost::dynamic_bitset<> is_patch_outside_P=is_patch_inside_P;
-      is_patch_outside_P.flip();
-      is_patch_outside_P-=coplanar_patches_of_Q;
-
       std::vector<Halfedge_handle> shared_halfedges;
       fill_new_polyhedron(
         *union_ptr,
-        is_patch_outside_Q, is_patch_outside_P,
+        patches_of_P_used[P_UNION_Q], patches_of_Q_used[P_UNION_Q],
         patches_of_P, patches_of_Q,
         Intersection_polylines( P_polylines,
                                 Q_polylines,
@@ -1963,10 +1975,7 @@ public:
       std::vector<Halfedge_handle> shared_halfedges;
       fill_new_polyhedron(
         *inter_ptr,
-        coplanar_patches_of_P.any() ? is_patch_inside_Q
-                                    : is_patch_inside_Q |
-                                      (coplanar_patches_of_P - coplanar_patches_of_P_for_union_and_intersection),
-        is_patch_inside_P,
+        patches_of_P_used[P_INTER_Q], patches_of_Q_used[P_INTER_Q],
         patches_of_P, patches_of_Q,
         Intersection_polylines( P_polylines,
                                 Q_polylines,
@@ -1990,10 +1999,7 @@ public:
       /// compute_difference_inplace(
       compute_difference_inplace_delay_removal(
         P_ptr,
-        is_patch_inside_Q, is_patch_inside_P,
-        coplanar_patches_of_P,
-        coplanar_patches_of_Q,
-        coplanar_patches_of_P_for_union_and_intersection,
+        patches_of_P_used[P_MINUS_Q], patches_of_Q_used[P_MINUS_Q],
         patches_of_P, patches_of_Q,
         Intersection_polylines(P_polylines, Q_polylines, polyline_lengths)
         , disconnected_patches_hedge_to_Qhedge
@@ -2006,10 +2012,7 @@ public:
       CGAL_assertion( *desired_output[Q_MINUS_P] == Q_ptr ); //tmp
 
       compute_difference_inplace( Q_ptr,
-                                  is_patch_inside_P, is_patch_inside_Q,
-                                  coplanar_patches_of_Q,
-                                  coplanar_patches_of_P,
-                                  ~coplanar_patches_of_Q_for_difference & coplanar_patches_of_Q,
+                                  patches_of_Q_used[Q_MINUS_P], patches_of_P_used[Q_MINUS_P],
                                   patches_of_Q, patches_of_P,
                                   /// Intersection_polylines(Q_polylines, P_polylines, polyline_lengths)
                                   disconnected_patches_hedge_to_Qhedge
