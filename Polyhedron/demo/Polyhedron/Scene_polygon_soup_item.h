@@ -99,6 +99,7 @@ class SCENE_POLYGON_SOUP_ITEM_EXPORT Scene_polygon_soup_item
         : public CGAL::Three::Scene_item
 {
     typedef Kernel::Point_3 Point_3;
+    typedef Polygon_soup::Points Points;
 
     Q_OBJECT
 public:  
@@ -155,6 +156,7 @@ public:
 
     void init_polygon_soup(std::size_t nb_pts, std::size_t nb_polygons);
 
+    const Points& points() const { return soup->points; }
 public Q_SLOTS:
     void shuffle_orientations();
     bool orient();
