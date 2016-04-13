@@ -232,7 +232,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
   target_link_libraries( Mesh_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} ${TBB_LIBRARIES})
 
   # Link with libQGLViewer, OpenGL
-  target_link_libraries( Mesh_3 ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+  target_link_libraries( Mesh_3 ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY})
 
 #  # Link with the scene_item library.
 #  target_link_libraries( Mesh_3 scene_item )
@@ -329,7 +329,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
                         ${SCENE_IMPLICIT_FUNCTION_ITEM_LIB}
                         ${QGLVIEWER_LIBRARIES}
                         ${OPENGL_gl_LIBRARY}
-                        ${OPENGL_glu_LIBRARY}
                         ${TBB_LIBRARIES})
 
   set(MESH_3_OPTIMIZATION_PLUGIN_LIB "${MESH_3_LIB_PREFIX}mesh_3_optimization_plugin")
@@ -349,7 +348,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND AND Boost_F
                         ${SCENE_IMPLICIT_FUNCTION_ITEM_LIB}
                         ${QGLVIEWER_LIBRARIES}
                         ${OPENGL_gl_LIBRARY}
-                        ${OPENGL_glu_LIBRARY}
                         ${TBB_LIBRARIES})
 
 
