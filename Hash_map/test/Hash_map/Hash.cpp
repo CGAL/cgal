@@ -32,18 +32,16 @@ typedef CGAL::Delaunay_triangulation_3<Kernel, Tds> Triangulation_3;
 typedef CGAL::Linear_cell_complex<3, 3> Linear_cell_complex_3;
 
 
-template <typename P>
+template <typename P,typename Descriptor>
 void
 fct(const P& )
 {
-  typedef typename boost::graph_traits<P>::edge_descriptor edge_descriptor;
+  std::map<Descriptor,int> M;
+  Descriptor d;
+  M.find(d);
 
-  std::map<edge_descriptor,int> M;
-  edge_descriptor ed;
-  M.find(ed);
-
-  boost::unordered_map<edge_descriptor, int> U;
-  U[ed] = 12;
+  boost::unordered_map<Descriptor, int> U;
+  U[d] = 12;
 }
 
 void fct2()
@@ -82,19 +80,30 @@ fct3(const P& )
   U[vd] = 12;
 }
 
+template <typename P>
+void
+fct4(const P& p)
+{
+  fct<P, typename boost::graph_traits<P>::vertex_descriptor>(p);
+  fct<P, typename boost::graph_traits<P>::halfedge_descriptor>(p);
+  fct<P, typename boost::graph_traits<P>::edge_descriptor>(p);
+  fct<P, typename boost::graph_traits<P>::face_descriptor>(p);
+}
+
 int main()
 {
   Arrangement_2 A;
-  fct(A);
+  fct<Arrangement_2, boost::graph_traits<Arrangement_2>::vertex_descriptor>(A);
+  fct<Arrangement_2, boost::graph_traits<Arrangement_2>::edge_descriptor>(A);
 
   Polyhedron P;
-  fct(P);
+  fct4(P);
 
   Surface_mesh S;
-  fct(S);
+  fct4(S);
 
   Triangulation_2 T;
-  fct(T);
+  fct4(T);
 
   fct2();
   
