@@ -34,6 +34,7 @@ public:
      Scene_surface_mesh_item::SMesh *surface_mesh = new Scene_surface_mesh_item::SMesh();
      in >> *surface_mesh;
      Scene_surface_mesh_item* item = new Scene_surface_mesh_item(surface_mesh);
+      item->setName(fileinfo.completeBaseName());
      return item;
 
  }
