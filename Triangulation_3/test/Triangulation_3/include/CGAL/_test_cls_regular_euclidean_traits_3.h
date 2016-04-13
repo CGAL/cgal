@@ -18,6 +18,8 @@
 
 // Author(s)     :  Mariette Yvinec
 
+#include <CGAL/use.h>
+
 template <class Traits>
 void
 _test_cls_regular_euclidean_traits_3 (const Traits &)
@@ -46,6 +48,7 @@ _test_cls_regular_euclidean_traits_3 (const Traits &)
                    Compute_power_distance_to_power_sphere_3
                    Compute_power_distance_to_power_sphere_3;        
 
+  CGAL_USE_TYPE(Segment_3);
   Traits traits;
   Power_side_of_power_sphere_3 power_test =  
     traits.power_side_of_power_sphere_3_object();

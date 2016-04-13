@@ -23,14 +23,14 @@
 #include <iostream>
 #include <fstream>
 #include <list>
-
+#include <CGAL/use.h>
 template <class Triangulation>
 void
 _test_cls_regular_3(const Triangulation &)
 {
   typedef Triangulation                      Cls;
   typedef typename Triangulation::Traits Tr;
-
+  CGAL_USE_TYPE(Tr);
 
   typedef typename Triangulation::Bare_point Bare_point;
   // We assume the traits class has been tested already
