@@ -33,6 +33,8 @@
 #include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 
+#include <bitset>
+
 #include <sstream>
 #include <fstream>
 
@@ -1001,7 +1003,7 @@ class Polyhedra_output_builder
 
 public:
 //Boolean operation indices
-  enum {P_UNION_Q = 0, P_INTER_Q, P_MINUS_Q, Q_MINUS_P };
+  enum Boolean_operation {P_UNION_Q = 0, P_INTER_Q, P_MINUS_Q, Q_MINUS_P, NONE };
 private:
 //Data members
   Polyhedron *P_ptr, *Q_ptr;
@@ -1227,19 +1229,32 @@ private:
     }
   }
 
-  void compute_difference_inplace(
+  void compute_inplace_operation(
     Polyhedron* P_ptr,
     const boost::dynamic_bitset<>& patches_of_P_to_keep,
     const boost::dynamic_bitset<>& patches_of_Q_to_import,
     Patch_container& patches_of_P,
     Patch_container& patches_of_Q,
+    bool reverse_patch_orientation_P,
+    bool reverse_patch_orientation_Q,
     Edge_map& Qhedge_to_Phedge
   ){
       //clean up patches inside Q
       remove_patches_from_polyhedra(P_ptr, ~patches_of_P_to_keep, patches_of_P);
 
+      // if (reverse_patch_orientation_P)
+      //   Polygon_mesh_processing::reverse_face_orientations(*P_ptr);
+
       //we import patches from Q
-      append_Q_patches_to_P<true>(P_ptr, patches_of_Q_to_import, patches_of_Q, Qhedge_to_Phedge);
+      // if ( reverse_patch_orientation_Q )
+      if (reverse_patch_orientation_Q || reverse_patch_orientation_P)
+        append_Q_patches_to_P<true>(P_ptr, patches_of_Q_to_import, patches_of_Q, Qhedge_to_Phedge);
+      else
+        append_Q_patches_to_P<false>(P_ptr, patches_of_Q_to_import, patches_of_Q, Qhedge_to_Phedge);
+
+      if (reverse_patch_orientation_P)
+        Polygon_mesh_processing::reverse_face_orientations(*P_ptr);
+
 
       /// in case the result is empty, there will be no facets in the polyhedron
       /// but maybe marked halfedges
@@ -1247,12 +1262,14 @@ private:
         P_ptr->clear();
   }
 
-  void compute_difference_inplace(
+  void compute_inplace_operation(
     Polyhedron* P_ptr,
-    boost::dynamic_bitset<> patches_of_P_to_keep,
-    boost::dynamic_bitset<> patches_of_Q_to_import,
+    const boost::dynamic_bitset<>& patches_of_P_to_keep,
+    const boost::dynamic_bitset<>& patches_of_Q_to_import,
     Patch_container& patches_of_P,
     Patch_container& patches_of_Q,
+    bool reverse_patch_orientation_P,
+    bool reverse_patch_orientation_Q,
     const Intersection_polylines& polylines
   ){
       Edge_map Qhedge_to_Phedge;
@@ -1260,22 +1277,24 @@ private:
       compute_border_edge_map(polylines, patches_of_P,
                               patches_of_Q, Qhedge_to_Phedge);
 
-      compute_difference_inplace( P_ptr,
-                                  patches_of_P_to_keep, patches_of_Q_to_import,
-                                  patches_of_P, patches_of_Q,
-                                  Qhedge_to_Phedge);
+      compute_inplace_operation( P_ptr,
+                                 patches_of_P_to_keep, patches_of_Q_to_import,
+                                 patches_of_P, patches_of_Q,
+                                 reverse_patch_orientation_P, reverse_patch_orientation_Q,
+                                 Qhedge_to_Phedge );
     }
 
 
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
   #warning factorize with the code of compute_difference_inplace
 #endif
-  void compute_difference_inplace_delay_removal(
+  void compute_inplace_operation_delay_removal_and_insideout(
     Polyhedron* P_ptr,
     const boost::dynamic_bitset<>& patches_of_P_to_keep,
     const boost::dynamic_bitset<>& patches_of_Q_to_import,
     Patch_container& patches_of_P,
     Patch_container& patches_of_Q,
+    bool reverse_patch_orientation_Q,
     const Intersection_polylines& polylines,
     Edge_map& disconnected_patches_hedge_to_Qhedge
   ){
@@ -1305,17 +1324,22 @@ private:
                                         Phedge_to_Qhedge, disconnected_patches_hedge_to_Qhedge);
 
       //we import patches from Q
-      append_Q_patches_to_P<true>(P_ptr, patches_of_Q_to_import, patches_of_Q, Qhedge_to_Phedge);
+      if (reverse_patch_orientation_Q)
+        append_Q_patches_to_P<true>(P_ptr, patches_of_Q_to_import, patches_of_Q, Qhedge_to_Phedge);
+      else
+        append_Q_patches_to_P<false>(P_ptr, patches_of_Q_to_import, patches_of_Q, Qhedge_to_Phedge);
 
-      /// \todo this comment is stupid since nothing was removed from P_ptr.
-      ///       either it should be done at the beginning or it's a copy-paste error.
+#ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
+      #warning this comment is stupid since nothing was removed from P_ptr. \
+               either it should be done at the beginning or it's a copy-paste error.
+#endif
       /// in case the result is empty, there will be no facets in the polyhedron
       /// but maybe marked halfedges
       if ( P_ptr->facets_begin()==P_ptr->facets_end() )
         P_ptr->clear();
   }
 
-  void remove_isolated_patches(
+  void remove_disconnected_patches(
     Polyhedron& P,
     Patch_container& patches,
     boost::dynamic_bitset<> patches_to_remove)
@@ -1340,6 +1364,8 @@ private:
     const boost::dynamic_bitset<>& patches_of_Q_to_import,
     Patch_container& patches_of_P,
     Patch_container& patches_of_Q,
+    bool reverse_orientation_of_patches_from_P,
+    bool reverse_orientation_of_patches_from_Q,
     const Intersection_polylines& polylines,
     const std::map< Halfedge_const_handle,
                     std::pair<int,int>,Cmp_unik_ad >& border_halfedges,
@@ -1360,10 +1386,16 @@ private:
                         P_to_O_vertex, border_halfedges, shared_halfedge_output);
 
     //import patches of P
-    append_Q_patches_to_P<false>(&O, patches_of_P_to_import, patches_of_P, P_to_O_hedge);
+    if (reverse_orientation_of_patches_from_P)
+      append_Q_patches_to_P<true>(&O, patches_of_P_to_import, patches_of_P, P_to_O_hedge);
+    else
+      append_Q_patches_to_P<false>(&O, patches_of_P_to_import, patches_of_P, P_to_O_hedge);
 
     //import patches from Q
-    append_Q_patches_to_P<false>(&O, patches_of_Q_to_import, patches_of_Q, Q_to_O_hedge);
+    if (reverse_orientation_of_patches_from_Q)
+      append_Q_patches_to_P<true>(&O, patches_of_Q_to_import, patches_of_Q, Q_to_O_hedge);
+    else
+      append_Q_patches_to_P<false>(&O, patches_of_Q_to_import, patches_of_Q, Q_to_O_hedge);
 
     /// in case the result is empty, there will be no facets in the polyhedron
     /// but maybe marked halfedges
@@ -1941,42 +1973,40 @@ public:
       patches_of_Q_used[Q_MINUS_P].flip();
     }
 
-    /// compute the union
-    if ( !impossible_operation.test(P_UNION_Q) && desired_output[P_UNION_Q] )
+    // Schedule the order in which the different boolean operations should
+    // done. First operations are those filling polyhedra different
+    // from P and Q), then the one modifying P and finally the one
+    // modifying Q.
+    std::vector<Boolean_operation> out_of_place_operations;
+    Boolean_operation inplace_operation_P=NONE, inplace_operation_Q=NONE;
+    for (int i=0;i<4;++i)
     {
-      //tmp: compute the union in a new polyhedra
-      Polyhedron* union_ptr = *desired_output[P_UNION_Q];
-      CGAL_assertion(P_ptr!=union_ptr && Q_ptr!=union_ptr); //tmp
+      Boolean_operation operation=enum_cast<Boolean_operation>(i);
 
-      std::vector<Halfedge_handle> shared_halfedges;
-      fill_new_polyhedron(
-        *union_ptr,
-        patches_of_P_used[P_UNION_Q], patches_of_Q_used[P_UNION_Q],
-        patches_of_P, patches_of_Q,
-        Intersection_polylines( P_polylines,
-                                Q_polylines,
-                                polyline_lengths),
-        border_halfedges,
-        std::back_inserter(shared_halfedges)
-      );
-      BOOST_FOREACH(Halfedge_handle h, shared_halfedges){
-        put(edge_mark_pmap, std::make_pair(h,union_ptr),true);
-        put(edge_mark_pmap, std::make_pair(h->opposite(),union_ptr),true);
-      }
+      if (!desired_output[operation] || impossible_operation.test(operation))
+        continue;
+
+      if (desired_output[operation]==P_ptr)
+        inplace_operation_P=operation;
+      else
+        if (desired_output[operation]==Q_ptr)
+          inplace_operation_Q=operation;
+        else
+          out_of_place_operations.push_back(operation);
     }
 
-    /// compute the intersection
-    if ( !impossible_operation.test(P_INTER_Q) && desired_output[P_INTER_Q] )
+    /// first handle operations in a polyhedron that is neither P nor Q
+    BOOST_FOREACH(Boolean_operation operation, out_of_place_operations)
     {
-      // tmp: compute the intersection in a new polyhedra
-      Polyhedron* inter_ptr = *desired_output[P_INTER_Q];
-      CGAL_assertion(P_ptr!=inter_ptr && Q_ptr!=inter_ptr); //tmp
+      Polyhedron* ouput_ptr = *desired_output[operation];
+      CGAL_assertion(P_ptr!=ouput_ptr && Q_ptr!=ouput_ptr);
 
       std::vector<Halfedge_handle> shared_halfedges;
       fill_new_polyhedron(
-        *inter_ptr,
-        patches_of_P_used[P_INTER_Q], patches_of_Q_used[P_INTER_Q],
+        *ouput_ptr,
+        patches_of_P_used[operation], patches_of_Q_used[operation],
         patches_of_P, patches_of_Q,
+        operation == Q_MINUS_P, operation == P_MINUS_Q,
         Intersection_polylines( P_polylines,
                                 Q_polylines,
                                 polyline_lengths),
@@ -1984,50 +2014,67 @@ public:
         std::back_inserter(shared_halfedges)
       );
       BOOST_FOREACH(Halfedge_handle h, shared_halfedges){
-        put(edge_mark_pmap, std::make_pair(h,inter_ptr),true);
-        put(edge_mark_pmap, std::make_pair(h->opposite(),inter_ptr),true);
+        put(edge_mark_pmap, std::make_pair(h,ouput_ptr),true);
+        put(edge_mark_pmap, std::make_pair(h->opposite(),ouput_ptr),true);
       }
     }
 
     Edge_map disconnected_patches_hedge_to_Qhedge;
 
-    /// tmp: update P to contain P-Q
-    if ( !impossible_operation.test(P_MINUS_Q) && desired_output[P_MINUS_Q] )
+    /// handle the operations updating P and/or Q
+    if ( inplace_operation_P!=NONE )
     {
-      CGAL_assertion( *desired_output[P_MINUS_Q] == P_ptr ); //tmp
+      CGAL_assertion( *desired_output[inplace_operation_P] == P_ptr );
 
-      /// compute_difference_inplace(
-      compute_difference_inplace_delay_removal(
-        P_ptr,
-        patches_of_P_used[P_MINUS_Q], patches_of_Q_used[P_MINUS_Q],
-        patches_of_P, patches_of_Q,
-        Intersection_polylines(P_polylines, Q_polylines, polyline_lengths)
-        , disconnected_patches_hedge_to_Qhedge
-      );
+      if ( inplace_operation_Q!=NONE)
+      {
+        // operation in P with removal (and optinally inside-out) delayed
+        compute_inplace_operation_delay_removal_and_insideout(
+          P_ptr,
+          patches_of_P_used[inplace_operation_P], patches_of_Q_used[inplace_operation_P],
+          patches_of_P, patches_of_Q,
+          inplace_operation_P == P_MINUS_Q || inplace_operation_P == Q_MINUS_P,
+          Intersection_polylines(P_polylines, Q_polylines, polyline_lengths)
+          , disconnected_patches_hedge_to_Qhedge
+        );
+        // operation in Q
+        CGAL_assertion( *desired_output[inplace_operation_Q] == Q_ptr );
+        compute_inplace_operation( Q_ptr,
+                                   patches_of_Q_used[inplace_operation_Q],
+                                   patches_of_P_used[inplace_operation_Q],
+                                   patches_of_Q, patches_of_P,
+                                   inplace_operation_Q==P_MINUS_Q,
+                                   inplace_operation_Q==Q_MINUS_P,
+                                   disconnected_patches_hedge_to_Qhedge);
+        // post-processing in P
+         remove_disconnected_patches(*P_ptr, patches_of_P, ~patches_of_P_used[inplace_operation_P]);
+         if (inplace_operation_P == Q_MINUS_P)
+           CGAL::Polygon_mesh_processing::reverse_face_orientations(*P_ptr);
+      }
+      else
+        compute_inplace_operation(
+          P_ptr,
+          patches_of_P_used[inplace_operation_P],
+          patches_of_Q_used[inplace_operation_P],
+          patches_of_P, patches_of_Q,
+          inplace_operation_P == Q_MINUS_P,
+          inplace_operation_P == P_MINUS_Q,
+          Intersection_polylines(P_polylines, Q_polylines, polyline_lengths)
+        );
     }
-
-    /// tmp: update Q to contain Q-P
-    if (!impossible_operation.test(Q_MINUS_P) && desired_output[Q_MINUS_P] )
-    {
-      CGAL_assertion( *desired_output[Q_MINUS_P] == Q_ptr ); //tmp
-
-      compute_difference_inplace( Q_ptr,
-                                  patches_of_Q_used[Q_MINUS_P], patches_of_P_used[Q_MINUS_P],
-                                  patches_of_Q, patches_of_P,
-                                  /// Intersection_polylines(Q_polylines, P_polylines, polyline_lengths)
-                                  disconnected_patches_hedge_to_Qhedge
-      );
-    }
-
-    // tmp P-Q is inplace in P
-    if ( !impossible_operation.test(P_MINUS_Q) && desired_output[P_MINUS_Q] )
-    {
-      //clean isolated patch no longer needed
-      //  OK because we don't use it after...
-      if ( coplanar_patches_of_P.any() )
-        is_patch_inside_Q|=(coplanar_patches_of_P & coplanar_patches_of_P_for_union_and_intersection);
-      remove_isolated_patches(*P_ptr, patches_of_P, is_patch_inside_Q);
-    }
+    else
+      if ( inplace_operation_Q!=NONE )
+      {
+        /// handle the operation updating Q
+        CGAL_assertion( *desired_output[inplace_operation_Q] == Q_ptr );
+        compute_inplace_operation( Q_ptr,
+                                   patches_of_Q_used[inplace_operation_Q],
+                                   patches_of_P_used[inplace_operation_Q],
+                                   patches_of_Q, patches_of_P,
+                                   inplace_operation_Q==P_MINUS_Q,
+                                   inplace_operation_Q==Q_MINUS_P,
+                                   Intersection_polylines(Q_polylines, P_polylines, polyline_lengths));
+      }
   }
 };
 
