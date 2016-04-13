@@ -247,7 +247,7 @@ public:
     * @tparam Polyline_output_iterator must be an output iterator of std::vector<Kernel::Point_3>.
     * @tparam Polyhedron_ptr_and_type_output_iterator an output iterator of std::pair<Polyhedron*,int>.
     * @param P is the first input triangulated polyhedron. Note that a reference is taken and P will be updated to contain the 1D intersection between the two surfaces P and Q.
-    * @param Q is the first input triangulated polyhedron. Note that a reference is taken and Q will be updated to contain the 1D intersection between the two surfaces P and Q.
+    * @param Q is the second input triangulated polyhedron. Note that a reference is taken and Q will be updated to contain the 1D intersection between the two surfaces P and Q.
     * @param polyline_output is an output iterator that collects intersection polylines between P and Q.
     * @param poly_output is an output iterator that collects output polyhedra. Note that each polyhedron is allocated within this function (thus must be explicitly deleted when no longer used). The integer is a feature tag corresponding to the volume represented by the polyhedron of the pair.
     * @param features is an integer indicating what polyhedra the function must compute. If several kind of polyhedra are expected, feature tags must be combined by |. For example if features = Polyhedron_corefinement<Polyhedron,Kernel>::Join_tag | Polyhedron_corefinement<Polyhedron,Kernel>::Intersection_tag, then poly_output will collect two polyhedra, the union and the intersection of P and Q. 
