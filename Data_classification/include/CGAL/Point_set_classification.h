@@ -245,13 +245,119 @@ RGB_Color hsv_to_rgb (const HSV_Color& c)
 template <typename Kernel>
 class Point_set_classification;
 
-class Abstract_classification_type
+class Abstract_segmentation_attribute
 {
 public:
 
-  virtual double data_term_computation (int pt_index) = 0;
+  virtual ~Abstract_segmentation_attribute() { }
+  
+  virtual double value (int pt_index) = 0;
 
+  virtual double favored (int pt_index) { return (1. - value (pt_index)); }
+  virtual double penalized (int pt_index) { return value (pt_index); }
+  //  virtual double ignored (int pt_index) { return std::min (favored(pt_index), penalized(pt_index)); }
+  virtual double ignored (int) { return 0.5; }
+
+  virtual std::string id() { return "abstract_attribute"; }
 };
+
+class Classification_type
+{
+public:
+  enum Attribute_side { FAVORED_ATT = 0,
+                        PENALIZED_ATT = 2,
+                        NEUTRAL_ATT = 1};
+
+private:
+  std::string m_id;
+  std::map<std::string, Attribute_side> m_attribute_effects;
+
+public:
+  Classification_type (std::string id) : m_id (id) { }
+
+  void change_attribute_effect (Abstract_segmentation_attribute* att, Attribute_side effect)
+  {
+    m_attribute_effects[att->id()] = effect;
+  }
+
+  Attribute_side attribute_effect (Abstract_segmentation_attribute* att) 
+  {
+    typename std::map<std::string, Attribute_side>::iterator
+      search = m_attribute_effects.find (att->id());
+    return (search == m_attribute_effects.end () ? NEUTRAL_ATT : search->second);
+  }
+  
+  const std::string& id() const { return m_id; }
+
+  void info()
+  {
+    std::cerr << "Attribute " << m_id << ": ";
+    for (typename std::map<std::string, Attribute_side>::iterator it = m_attribute_effects.begin();
+         it != m_attribute_effects.end(); ++ it)
+      {
+        if (it->second == NEUTRAL_ATT)
+          continue;
+        
+        std::cerr << it->first;
+        if (it->second == FAVORED_ATT) std::cerr << " (favored), ";
+        else if (it->second == PENALIZED_ATT) std::cerr << " (penalized), ";
+      }
+    std::cerr << std::endl;
+  }
+
+  // Convenience functions
+  void make_vegetation ()
+  {
+    m_attribute_effects.clear();
+    m_attribute_effects["scatter"] = FAVORED_ATT;
+    m_attribute_effects["distance_to_plane"] = FAVORED_ATT;
+    m_attribute_effects["elevation"] = FAVORED_ATT;
+    m_id = "vegetation";
+  }
+  void make_ground ()
+  {
+    m_attribute_effects.clear();
+    m_attribute_effects["scatter"] = PENALIZED_ATT;
+    m_attribute_effects["distance_to_plane"] = PENALIZED_ATT;
+    m_attribute_effects["horizontality"] = PENALIZED_ATT;
+    m_attribute_effects["elevation"] = PENALIZED_ATT;
+    m_id = "ground";
+  }
+  void make_road ()
+  {
+    m_attribute_effects.clear();
+    m_attribute_effects["scatter"] = PENALIZED_ATT;
+    m_attribute_effects["distance_to_plane"] = PENALIZED_ATT;
+    m_attribute_effects["horizontality"] = PENALIZED_ATT;
+    m_attribute_effects["elevation"] = PENALIZED_ATT;
+    m_attribute_effects["color"] = FAVORED_ATT;
+    m_id = "road";
+  }
+  void make_roof ()
+  {
+    m_attribute_effects.clear();
+    m_attribute_effects["scatter"] = PENALIZED_ATT;
+    m_attribute_effects["horizontality"] = PENALIZED_ATT;
+    m_attribute_effects["elevation"] = FAVORED_ATT;
+    m_id = "roof";
+  }
+  void make_facade ()
+  {
+    m_attribute_effects.clear();
+    m_attribute_effects["distance_to_plane"] = PENALIZED_ATT;
+    m_attribute_effects["horizontality"] = FAVORED_ATT;
+    m_attribute_effects["elevation"] = FAVORED_ATT;
+    m_id = "facade";
+  }
+  void make_building ()
+  {
+    m_attribute_effects.clear();
+    m_attribute_effects["scatter"] = PENALIZED_ATT;
+    m_attribute_effects["elevation"] = FAVORED_ATT;
+    m_id = "building";
+  }
+};
+
 
 
 template <typename Kernel>
@@ -291,7 +397,12 @@ public:
     Color color;
   };
 
-  std::vector<Abstract_classification_type*> segmentation_classes;
+
+  std::vector<Classification_type*> segmentation_classes;
+  std::vector<Abstract_segmentation_attribute*> segmentation_attributes;
+
+  typedef Classification_type::Attribute_side Attribute_side;
+  std::vector<std::vector<Attribute_side> > effect_table;
 
   bool has_colors;
   bool is_echo_given;
@@ -312,7 +423,8 @@ public:
 
   double m_grid_resolution;
   double m_radius_neighbors; 
-  double m_radius_dtm; 
+  double m_radius_dtm;
+  bool m_multiplicative;
 
   template <typename InputIterator>
   Point_set_classification (InputIterator begin, InputIterator end,
@@ -338,14 +450,16 @@ public:
         HPS.back().ind_x = -1;
         HPS.back().ind_y = -1;
         HPS.back().group = (std::size_t)(-1);
-        HPS.back().AE_label = -1;
+        HPS.back().AE_label = (unsigned char)(-1);
         HPS.back().confidence = 0;
         Color c = {{ 0, 0, 0 }};
         HPS.back().color = c;
       }
     has_colors = false;
     is_echo_given = false;
+    m_multiplicative = false;
   }
+
 
 
   void change_hue (Color& color, const Color& hue)
@@ -552,6 +666,36 @@ public:
     planes.push_back (plane);
   }
 
+  double classification_value (std::size_t segmentation_class, int pt_index)
+  {
+    double out = 0.;
+    if (m_multiplicative)
+      {
+        out = 1.;
+        for (std::size_t i = 0; i < effect_table[segmentation_class].size(); ++ i)
+          {
+            if (effect_table[segmentation_class][i] == Classification_type::FAVORED_ATT)
+              out *= segmentation_attributes[i]->favored (pt_index);
+            else if (effect_table[segmentation_class][i] == Classification_type::PENALIZED_ATT)
+              out *= segmentation_attributes[i]->penalized (pt_index);
+            else if (effect_table[segmentation_class][i] == Classification_type::NEUTRAL_ATT)
+              out *= segmentation_attributes[i]->ignored (pt_index);
+          }
+      }
+    else
+      {
+        for (std::size_t i = 0; i < effect_table[segmentation_class].size(); ++ i)
+          {
+            if (effect_table[segmentation_class][i] == Classification_type::FAVORED_ATT)
+              out += segmentation_attributes[i]->favored (pt_index);
+            else if (effect_table[segmentation_class][i] == Classification_type::PENALIZED_ATT)
+              out += segmentation_attributes[i]->penalized (pt_index);
+            else if (effect_table[segmentation_class][i] == Classification_type::NEUTRAL_ATT)
+              out += segmentation_attributes[i]->ignored (pt_index);
+          }
+      }
+    return out;
+  }
 
 
   bool quick_labeling_PC()
@@ -569,9 +713,9 @@ public:
       double val_class_best = std::numeric_limits<double>::max();
       std::vector<double> values;
       
-      for(std::size_t k = 0; k < segmentation_classes.size(); ++ k)
+      for(std::size_t k = 0; k < effect_table.size(); ++ k)
         {
-          double value = segmentation_classes[k]->data_term_computation(s);
+          double value = classification_value (k, s);
           values.push_back (value);
           
           if(val_class_best > value)
@@ -584,7 +728,10 @@ public:
       HPS[s].AE_label = nb_class_best;
 
       std::sort (values.begin(), values.end());
-      HPS[s].confidence = values[1] - values[0];
+      if (m_multiplicative)
+        HPS[s].confidence = (values[1] - values[0]) / values[1];
+      else
+        HPS[s].confidence = values[1] - values[0];
 
       if(nb_class_best==0) count1++;
       else if(nb_class_best==1) count2++;
@@ -614,8 +761,8 @@ public:
       {
         map_p2i[HPS[s].position] = s;
         list_points.push_back(HPS[s].position);
-        for(std::size_t k = 0; k < segmentation_classes.size(); ++ k)
-          values[k].push_back(segmentation_classes[k]->data_term_computation(s));
+        for(std::size_t k = 0; k < effect_table.size(); ++ k)
+          values[k].push_back (classification_value (k, s));
       }
 
     Tree tree(list_points.begin(), list_points.end());
@@ -716,9 +863,10 @@ public:
 
         int nb_class_best=0; 
         double val_class_best = std::numeric_limits<double>::max();
-        for(std::size_t k = 0; k < segmentation_classes.size(); ++ k)
+        for(std::size_t k = 0; k < effect_table.size(); ++ k)
           {
-            double v = segmentation_classes[k]->data_term_computation(s);
+            double v = classification_value (k, s);
+
             values[k].push_back(v);
             if (v < val_class_best)
               {
@@ -802,6 +950,8 @@ public:
 
     clock_t t;
     t = clock();
+
+    build_effect_table ();
 	
     CGAL_CLASSIFICATION_CERR<<std::endl<<"Classification of the point cloud: ";
     
@@ -823,6 +973,17 @@ public:
   }
 
 
+  void build_effect_table ()
+  {
+    effect_table = std::vector<std::vector<Attribute_side> >
+      (segmentation_classes.size(), std::vector<Attribute_side> (segmentation_attributes.size(),
+                                                                 Classification_type::NEUTRAL_ATT));
+    
+    for (std::size_t i = 0; i < effect_table.size (); ++ i)
+      for (std::size_t j = 0; j < effect_table[i].size (); ++ j)
+        effect_table[i][j] = segmentation_classes[i]->attribute_effect (segmentation_attributes[j]);
+
+  }
 
 protected: 
 
@@ -832,7 +993,7 @@ protected:
 
 
 template <typename Kernel>
-class Scatter_segmentation_attribute
+class Scatter_segmentation_attribute : public Abstract_segmentation_attribute
 {
   typedef Point_set_classification<Kernel> PSC;
   typedef typename PSC::Image_float Image_float;
@@ -996,21 +1157,58 @@ public:
     //    max *= 2;
   }
 
-  double value (int pt_index)
+  virtual double value (int pt_index)
   {
     return std::max (0., std::min (1., vegetation_attribute[pt_index] / weight));
   }
 
-  double favored (int pt_index) { return (1. - value (pt_index)); }
-  double penalized (int pt_index) { return value (pt_index); }
-  double ignored (int pt_index) { return std::min (value (pt_index), 1. - value (pt_index)); }
+  virtual std::string id() { return "scatter"; }
+};
 
-  const char* id() { return "scatter"; }
+
+
+
+template <typename Kernel>
+class Color_segmentation_attribute : public Abstract_segmentation_attribute
+{
+  typedef Point_set_classification<Kernel> PSC;
+  typedef typename PSC::Image_float Image_float;
+  typedef typename PSC::Color Color;
+  typedef typename PSC::HSV_Color HSV_Color;
+  
+  std::vector<double> color_attribute;
+  
+public:
+  double weight;
+  double mean;
+  double max;
+
+  Color_segmentation_attribute (PSC& M,
+                                double weight) : weight (weight)
+  {
+
+    std::cerr << "Using colors" << std::endl;
+    for(int i=0;i<(int)M.HPS.size();i++)
+      {
+        HSV_Color c = internal::Classification::rgb_to_hsv<HSV_Color> (M.HPS[i].color);
+        color_attribute.push_back (std::exp (-(c[0] - 156.) * (c[0] - 156.) / (2. * 81. * 81.))
+                                   * std::exp (-(c[1] - 5.) * (c[1] - 5.) / (2. * 4. * 4.))
+                                   * std::exp (-(c[2] - 76.) * (c[2] - 76.) / (2. * 6.8 * 6.8)));
+      }
+    internal::Classification::compute_mean_max (color_attribute, mean, max);
+  }
+
+  virtual double value (int pt_index)
+  {
+    return std::max (0., std::min (1., color_attribute[pt_index] / weight));
+  }
+
+  virtual std::string id() { return "color"; }
 };
 
 
 template <typename Kernel>
-class Distance_to_plane_segmentation_attribute
+class Distance_to_plane_segmentation_attribute : public Abstract_segmentation_attribute
 {
   typedef Point_set_classification<Kernel> PSC;
 
@@ -1030,20 +1228,16 @@ public:
     //    max *= 2;
   }
 
-  double value (int pt_index)
+  virtual double value (int pt_index)
   {
     return std::max (0., std::min (1., distance_to_plane_attribute[pt_index] / weight));
   }
 
-  double favored (int pt_index) { return (1. - value (pt_index)); }
-  double penalized (int pt_index) { return value (pt_index); }
-  double ignored (int pt_index) { return std::min (value (pt_index), 1. - value (pt_index)); }
-
-  const char* id() { return "planimetry"; }
+  virtual std::string id() { return "distance_to_plane"; }
 };
 
 template <typename Kernel>
-class Horizontality_segmentation_attribute
+class Horizontality_segmentation_attribute : public Abstract_segmentation_attribute
 {
   typedef Point_set_classification<Kernel> PSC;
 
@@ -1069,20 +1263,16 @@ public:
     //    max *= 2;
   }
 
-  double value (int pt_index)
+  virtual double value (int pt_index)
   {
     return std::max (0., std::min (1., horizontality_attribute[pt_index] / weight));
   }
 
-  double favored (int pt_index) { return (1. - value (pt_index)); }
-  double penalized (int pt_index) { return value (pt_index); }
-  double ignored (int pt_index) { return std::min (value (pt_index), 1. - value (pt_index)); }
-
-  const char* id() { return "planimetry"; }
+  virtual std::string id() { return "horizontality"; }
 };
 
 template <typename Kernel>
-class Elevation_segmentation_attribute
+class Elevation_segmentation_attribute : public Abstract_segmentation_attribute
 {
   typedef Point_set_classification<Kernel> PSC;
   typedef typename PSC::Image_float Image_float;
@@ -1417,191 +1607,15 @@ public:
     //    max *= 5;
   }
 
-  double value (int pt_index)
+  virtual double value (int pt_index)
   {
     return std::max (0., std::min (1., elevation_attribute[pt_index] / weight));
   }
-
-  double favored (int pt_index) { return (1. - value (pt_index)); }
-  double penalized (int pt_index) { return value (pt_index); }
-  double ignored (int pt_index) { return std::min (value (pt_index), 1. - value (pt_index)); }
-
-  const char* id() { return "elevetation"; }
-
-};
-
-#define NORMALIZED_WEIGHTS
-
   
-template <typename Kernel>
-class Vegetation_classification_type : public Abstract_classification_type
-{
-  Scatter_segmentation_attribute<Kernel>& scat_att;
-  Distance_to_plane_segmentation_attribute<Kernel>& d2p_att;
-  Horizontality_segmentation_attribute<Kernel>& hori_att;
-  Elevation_segmentation_attribute<Kernel>& elev_att;
-public:
+  virtual std::string id() { return "elevation"; }
 
-  Vegetation_classification_type (Scatter_segmentation_attribute<Kernel>& scat_att,
-                                  Distance_to_plane_segmentation_attribute<Kernel>& d2p_att,
-                                  Horizontality_segmentation_attribute<Kernel>& hori_att,
-                                  Elevation_segmentation_attribute<Kernel>& elev_att)
-    : scat_att (scat_att)
-    , d2p_att (d2p_att)
-    , hori_att (hori_att)
-    , elev_att (elev_att)
-  { }
+};
   
-  virtual double data_term_computation (int pt_index)
-  {
-#if defined(NORMALIZED_WEIGHTS)
-    return scat_att.favored (pt_index)
-      + d2p_att.favored (pt_index)
-      + hori_att.ignored (pt_index)
-      + elev_att.favored (pt_index);
-#else
-    return (1. - scat_att.value (pt_index))
-      + (1. - d2p_att.value (pt_index))
-      + (1. - elev_att.value (pt_index));
-#endif
-  }
-
-};
-
-template <typename Kernel>
-class Ground_classification_type : public Abstract_classification_type
-{
-  Scatter_segmentation_attribute<Kernel>& scat_att;
-  Distance_to_plane_segmentation_attribute<Kernel>& d2p_att;
-  Horizontality_segmentation_attribute<Kernel>& hori_att;
-  Elevation_segmentation_attribute<Kernel>& elev_att;
-public:
-
-  Ground_classification_type (Scatter_segmentation_attribute<Kernel>& scat_att,
-                              Distance_to_plane_segmentation_attribute<Kernel>& d2p_att,
-                              Horizontality_segmentation_attribute<Kernel>& hori_att,
-                              Elevation_segmentation_attribute<Kernel>& elev_att)
-    : scat_att (scat_att)
-    , d2p_att (d2p_att)
-    , hori_att (hori_att)
-    , elev_att (elev_att)
-  { }
-
-  virtual double data_term_computation (int pt_index)
-  {
-#if defined(NORMALIZED_WEIGHTS)
-    return scat_att.penalized (pt_index)
-      + d2p_att.penalized (pt_index)
-      + hori_att.penalized (pt_index)
-      + elev_att.penalized (pt_index);
-#else
-    return hori_att.value (pt_index)
-      + d2p_att.value (pt_index)
-      + elev_att.value (pt_index);
-#endif
-  }
-};
-
-template <typename Kernel>
-class Roof_classification_type : public Abstract_classification_type
-{
-  Scatter_segmentation_attribute<Kernel>& scat_att;
-  Distance_to_plane_segmentation_attribute<Kernel>& d2p_att;
-  Horizontality_segmentation_attribute<Kernel>& hori_att;
-  Elevation_segmentation_attribute<Kernel>& elev_att;
-public:
-  Roof_classification_type (Scatter_segmentation_attribute<Kernel>& scat_att,
-                           Distance_to_plane_segmentation_attribute<Kernel>& d2p_att,
-                            Horizontality_segmentation_attribute<Kernel>& hori_att,
-                           Elevation_segmentation_attribute<Kernel>& elev_att)
-    : scat_att (scat_att)
-    , d2p_att (d2p_att)
-    , hori_att (hori_att)
-    , elev_att (elev_att)
-  { }
-
-  virtual double data_term_computation (int pt_index)
-  {
-#if defined(NORMALIZED_WEIGHTS)
-    return scat_att.penalized (pt_index)
-      + d2p_att.ignored (pt_index)
-      + hori_att.penalized (pt_index)
-      + elev_att.favored (pt_index);
-#else
-    return
-       hori_att.value (pt_index)
-      + (1. - d2p_att.value (pt_index))
-      + (1. - elev_att.value (pt_index));
-#endif
-  }
-};
-
-template <typename Kernel>
-class Facade_classification_type : public Abstract_classification_type
-{
-  Scatter_segmentation_attribute<Kernel>& scat_att;
-  Distance_to_plane_segmentation_attribute<Kernel>& d2p_att;
-  Horizontality_segmentation_attribute<Kernel>& hori_att;
-  Elevation_segmentation_attribute<Kernel>& elev_att;
-public:
-  Facade_classification_type (Scatter_segmentation_attribute<Kernel>& scat_att,
-                              Distance_to_plane_segmentation_attribute<Kernel>& d2p_att,
-                              Horizontality_segmentation_attribute<Kernel>& hori_att,
-                              Elevation_segmentation_attribute<Kernel>& elev_att)
-    : scat_att (scat_att)
-    , d2p_att (d2p_att)
-    , hori_att (hori_att)
-    , elev_att (elev_att)
-  { }
-
-  virtual double data_term_computation (int pt_index)
-  {
-#if defined(NORMALIZED_WEIGHTS)
-    return scat_att.ignored (pt_index)
-      + d2p_att.penalized (pt_index)
-      + hori_att.favored (pt_index)
-      + elev_att.favored (pt_index);
-#else
-    return (1. - hori_att.value (pt_index))
-      + d2p_att.value (pt_index)
-      + (1. - elev_att.value (pt_index));
-#endif
-  }
-};
-
-
-template <typename Kernel>
-class Building_classification_type : public Abstract_classification_type
-{
-  Scatter_segmentation_attribute<Kernel>& scat_att;
-  Distance_to_plane_segmentation_attribute<Kernel>& d2p_att;
-  Horizontality_segmentation_attribute<Kernel>& hori_att;
-  Elevation_segmentation_attribute<Kernel>& elev_att;
-public:
-  Building_classification_type (Scatter_segmentation_attribute<Kernel>& scat_att,
-                                Distance_to_plane_segmentation_attribute<Kernel>& d2p_att,
-                                Horizontality_segmentation_attribute<Kernel>& hori_att,
-                                Elevation_segmentation_attribute<Kernel>& elev_att)
-    : scat_att (scat_att)
-    , d2p_att (d2p_att)
-    , hori_att (hori_att)
-    , elev_att (elev_att)
-  { }
-
-  virtual double data_term_computation (int pt_index)
-  {
-#if defined(NORMALIZED_WEIGHTS)
-    return scat_att.penalized (pt_index)
-      + d2p_att.ignored (pt_index)
-      + hori_att.ignored (pt_index)
-      + elev_att.favored (pt_index);
-#else
-    return scat_att.value (pt_index)
-      + (1. - elev_att.value (pt_index));
-#endif
-  }
-};
-
 
 
 
