@@ -181,6 +181,35 @@ compare_distance(
     const typename K::Segment_3 &seg1,
     const typename K::Segment_3 &seg2,
     const K& k,
+    const Homogeneous_tag& t)
+{
+  typename K::FT d1 = squared_distance(pt,seg1,k,t);
+  typename K::FT d2 = squared_distance(pt,seg2,k,t);
+  return compare(d1,d2);
+}
+
+template <class K>
+typename K::Comparison_result
+compare_distance(
+    const typename K::Point_3 &pt,
+    const typename K::Point_3 &pt2,
+    const typename K::Segment_3 &seg2,
+    const K& k,
+    const Homogeneous_tag& t)
+{
+  typename K::FT d1 = squared_distance(pt,pt2,k,t);
+  typename K::FT d2 = squared_distance(pt,seg2,k,t);
+  return compare(d1,d2);
+}
+
+
+template <class K>
+typename K::Comparison_result
+compare_distance(
+    const typename K::Point_3 &pt,
+    const typename K::Segment_3 &seg1,
+    const typename K::Segment_3 &seg2,
+    const K& k,
     const Cartesian_tag&)
 {
     typename K::Construct_vector_3 construct_vector;
