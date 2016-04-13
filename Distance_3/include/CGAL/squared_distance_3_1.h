@@ -174,6 +174,125 @@ squared_distance(
     return squared_distance(pt, seg, k);
 }
 
+template <class K>
+typename K::Comparison_result
+compare_distance(
+    const typename K::Point_3 &pt,
+    const typename K::Segment_3 &seg1,
+    const typename K::Segment_3 &seg2,
+    const K& k,
+    const Cartesian_tag&)
+{
+    typename K::Construct_vector_3 construct_vector;
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename K::RT RT;
+    typedef typename K::FT FT;
+    FT d1=FT(0), d2=FT(0);
+    RT e1 = RT(1), e2 = RT(1);
+    // assert that the segment is valid (non zero length).
+    {
+      Vector_3 diff = construct_vector(seg1.source(), pt);
+      Vector_3 segvec = construct_vector(seg1.source(), seg1.target());
+      RT d = wdot(diff,segvec, k);
+      if (d <= (RT)0){
+        d1 = (FT(diff*diff));
+      }else{
+        RT e = wdot(segvec,segvec, k);
+        if (d > e){
+          d1 = squared_distance(pt, seg1.target(), k);
+        } else{
+          Vector_3 wcr = wcross(segvec, diff, k);
+          d1 = FT(wcr*wcr);
+          e1 = e;
+        }
+      }
+    }
+    {
+      Vector_3 diff = construct_vector(seg2.source(), pt);
+      Vector_3 segvec = construct_vector(seg2.source(), seg2.target());
+      RT d = wdot(diff,segvec, k);
+      if (d <= (RT)0){
+        d2 = (FT(diff*diff));
+      }else{
+        RT e = wdot(segvec,segvec, k);
+        if (d > e){
+          d2 = squared_distance(pt, seg2.target(), k);
+        } else{
+          Vector_3 wcr = wcross(segvec, diff, k);
+          d2 = FT(wcr*wcr);
+          e2 = e;
+        }
+      }
+    }
+    return compare(d1*e2, d2*e1);
+}
+
+template <class K>
+typename K::Comparison_result
+compare_distance(
+    const typename K::Point_3 &pt,
+    const typename K::Point_3 &pt2,
+    const typename K::Segment_3 &seg,
+    const K& k,
+    const Cartesian_tag&)
+{
+    typename K::Construct_vector_3 construct_vector;
+    typedef typename K::Vector_3 Vector_3;
+    typedef typename K::RT RT;
+    typedef typename K::FT FT;
+    RT e2 = RT(1);
+    // assert that the segment is valid (non zero length).
+    FT d1 = squared_distance(pt, pt2, k);
+    FT d2 = FT(0);
+    {
+      Vector_3 diff = construct_vector(seg.source(), pt);
+      Vector_3 segvec = construct_vector(seg.source(), seg.target());
+      RT d = wdot(diff,segvec, k);
+      if (d <= (RT)0){
+        d2 = (FT(diff*diff));
+      }else{
+        RT e = wdot(segvec,segvec, k);
+        if (d > e){
+          d2 = squared_distance(pt, seg.target(), k);
+        } else{
+          Vector_3 wcr = wcross(segvec, diff, k);
+          d2 = FT(wcr*wcr);
+          e2 = e;
+        }
+      }
+    }
+    return compare(d1*e2, d2);
+}
+
+template <class K>
+inline
+typename K::Comparison_result
+compare_distance(
+    const typename K::Point_3 & pt,
+    const typename K::Point_3 & pt2,
+    const typename K::Segment_3 & seg2,
+    const K& k)
+{
+  typedef typename K::Kernel_tag Tag;
+  Tag tag;
+  return compare_distance(pt, pt2, seg2, k, tag);
+}
+
+
+template <class K>
+inline
+typename K::Comparison_result
+compare_distance(
+    const typename K::Point_3 & pt,
+    const typename K::Segment_3 & seg1,
+    const typename K::Segment_3 & seg2,
+    const K& k)
+{
+  typedef typename K::Kernel_tag Tag;
+  Tag tag;
+  return compare_distance(pt, seg1, seg2, k, tag);
+}
+
 
 
 
@@ -529,7 +648,7 @@ squared_distance(
 
 
 template <class K>
-inline 
+inline
 typename K::FT
 squared_distance(
     const typename K::Line_3 & line,
@@ -741,7 +860,7 @@ squared_distance(
 
 
 template <class K>
-inline 
+inline
 typename K::FT
 squared_distance(
     const Ray_3<K> & ray,
@@ -763,7 +882,7 @@ squared_distance(
 
 
 template <class K>
-inline 
+inline
 typename K::FT
 squared_distance(
     const Segment_3<K> & seg,
@@ -848,7 +967,7 @@ squared_distance(
 
 
 template <class K>
-inline 
+inline
 typename K::FT
 squared_distance(
     const Line_3<K> & line,
@@ -920,6 +1039,29 @@ squared_distance(
     return internal::squared_distance(line1, line2, K());
 }
 
+
+template <class K>
+inline
+typename K::Comparison_result
+compare_distance(
+    const Point_3<K> &p,
+    const Point_3<K> &p2,
+    const Segment_3<K> &s2)
+{
+  return internal::compare_distance(p, p2, s2, K());
+}
+
+
+template <class K>
+inline
+typename K::Comparison_result
+compare_distance(
+    const Point_3<K> &p,
+    const Segment_3<K> &s1,
+    const Segment_3<K> &s2)
+{
+  return internal::compare_distance(p, s1, s2, K());
+}
 
 
 } //namespace CGAL
