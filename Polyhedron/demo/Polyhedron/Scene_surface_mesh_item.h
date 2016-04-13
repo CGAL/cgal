@@ -3,6 +3,7 @@
 //Defines the precision of the positions (for performance/precision sake)
 #define GL_DATA GL_FLOAT
 #define gl_data float
+#define IS_FLOAT 1
 
 #include "Scene_surface_mesh_item_config.h"
 #include <CGAL/Three/Scene_item.h>

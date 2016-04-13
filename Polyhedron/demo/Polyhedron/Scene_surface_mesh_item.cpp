@@ -45,7 +45,7 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
   : CGAL::Three::Scene_item(NbOfVbos,NbOfVaos),
     smesh_(sm)
 {
-  floated = true;
+  floated = false;
   checkFloat();
   SMesh::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
     smesh_->add_property_map<vertex_descriptor, Kernel::Vector_3 >("v:normal").first;
@@ -233,7 +233,7 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
     }
   }
 
-  if(!floated)
+  if(floated)
   {
     BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh_))
     {
@@ -279,7 +279,7 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
   //vao containing the data for the smooth facets
   vaos[Smooth_facets]->bind();
   buffers[Smooth_vertices].bind();
-  if(floated)
+  if(!floated)
   buffers[Smooth_vertices].allocate(positions.data(),
                              static_cast<int>(num_vertices(*smesh_)*3*sizeof(gl_data)));
   else
@@ -432,8 +432,8 @@ QString Scene_surface_mesh_item::toolTip() const
 
 void Scene_surface_mesh_item::checkFloat()const
 {
-#if gl_data == float
-  floated = false;
+#if IS_FLOAT == 1
+  floated = true;
 #endif
 }
 
