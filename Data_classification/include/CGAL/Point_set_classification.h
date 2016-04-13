@@ -36,6 +36,8 @@
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 
+#include <boost/iterator/counting_iterator.hpp>
+
 #define CGAL_CLASSIFICATION_VERBOSE
 #if defined(CGAL_CLASSIFICATION_VERBOSE)
 #define CGAL_CLASSIFICATION_CERR std::cerr
@@ -363,6 +365,8 @@ public:
 template <typename Kernel>
 class Point_set_classification
 {
+
+  
 public:
   typedef typename Kernel::Point_3 Point;
   typedef typename Kernel::Segment_3 Segment;
@@ -372,11 +376,7 @@ public:
   typedef typename Kernel::Vector_3 Vector;
 
   typedef CGAL::cpp11::array<double, 3> Eigenvalues;
-
-  typedef CGAL::Search_traits_3<Kernel> SearchTraits_3;
-  typedef CGAL::Kd_tree<SearchTraits_3> Tree;
-  typedef CGAL::Fuzzy_sphere<SearchTraits_3> Fuzzy_sphere;
-  typedef CGAL::Orthogonal_k_neighbor_search<SearchTraits_3> Neighbor_search;
+  
   typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
   typedef CGAL::cpp11::array<unsigned char, 3> Color;
@@ -396,6 +396,25 @@ public:
     double confidence;
     Color color;
   };
+
+  class My_point_property_map{
+    const std::vector<HPoint>& points;
+  public:
+    typedef Point value_type;
+    typedef const value_type& reference;
+    typedef std::size_t key_type;
+    typedef boost::lvalue_property_map_tag category;  
+    My_point_property_map (const std::vector<HPoint>& pts) : points (pts) {}
+    reference operator[] (key_type k) const { return points[k].position; }
+    friend inline reference get (const My_point_property_map& ppmap, key_type i) 
+    { return ppmap[i]; }
+  };
+  
+  typedef CGAL::Search_traits_3<Kernel> SearchTraits_3;
+  typedef Search_traits_adapter <std::size_t, My_point_property_map, SearchTraits_3> Search_traits;
+  typedef CGAL::Kd_tree<Search_traits> Tree;
+  typedef CGAL::Fuzzy_sphere<Search_traits> Fuzzy_sphere;
+  typedef CGAL::Orthogonal_k_neighbor_search<Search_traits> Neighbor_search;
 
 
   std::vector<Classification_type*> segmentation_classes;
@@ -504,25 +523,26 @@ public:
       Point pt=HPS[i].position;
       list_points.push_back(pt);
     }
-
-    Tree tree(list_points.begin(), list_points.end());
+    
+    My_point_property_map pmap (HPS);
+    Tree tree (boost::counting_iterator<std::size_t> (0),
+               boost::counting_iterator<std::size_t> (HPS.size()),
+               typename Tree::Splitter(),
+               Search_traits (pmap));
 
     std::size_t nb_neigh = 0;
     for(int i=0;i<(int)HPS.size();i++){
       const Point& query=HPS[i].position;
-      std::vector<Point> neighbors;
+      std::vector<std::size_t> neighbors;
       
-      if (phase == 1 && HPS[i].echo == 0)
-        {
-          compute_principal_curvature (query, neighbors);
-          continue;
-        }
-      
-      Fuzzy_sphere fs(query, m_radius_neighbors, 0);
+      Fuzzy_sphere fs(i, m_radius_neighbors, 0, tree.traits());
       tree.search(std::back_inserter(neighbors), fs);
       nb_neigh += neighbors.size();
-
-      compute_principal_curvature (query, neighbors);
+      std::vector<Point> neighborhood;
+      for (std::size_t j = 0; j < neighbors.size(); ++ j)
+        neighborhood.push_back (HPS[neighbors[j]].position);
+        
+      compute_principal_curvature (query, neighborhood);
     }
 
     CGAL_CLASSIFICATION_CERR<<"ok";
@@ -752,74 +772,57 @@ public:
     // data term initialisation
     CGAL_CLASSIFICATION_CERR << "Labeling... ";
 
-    std::vector<std::vector<double> > values;
-    values.resize (segmentation_classes.size());
-    
-    std::map<Point, std::size_t> map_p2i;
-    std::vector<Point> list_points;    
-    for(int s=0;s<(int)HPS.size();s++)
+    std::vector<std::vector<double> > values
+      (segmentation_classes.size(),
+       std::vector<double> (HPS.size(), -1.));
+
+    My_point_property_map pmap (HPS);
+
+    Tree tree (boost::counting_iterator<std::size_t> (0),
+               boost::counting_iterator<std::size_t> (HPS.size()),
+               typename Tree::Splitter(),
+               Search_traits (pmap));
+
+    for (std::size_t s=0; s < HPS.size(); ++ s)
       {
-        map_p2i[HPS[s].position] = s;
-        list_points.push_back(HPS[s].position);
-        for(std::size_t k = 0; k < effect_table.size(); ++ k)
-          values[k].push_back (classification_value (k, s));
-      }
-
-    Tree tree(list_points.begin(), list_points.end());
-
-    std::vector<std::vector<double> > smoothed_values;
-    smoothed_values.resize (segmentation_classes.size());
-
-    for(int s=0;s<(int)HPS.size();s++)
-      {
-        const Point& query=HPS[s].position;
-        std::vector<Point> neighbors;
+        std::vector<std::size_t> neighbors;
       
-        Fuzzy_sphere fs(query, m_radius_neighbors, 0);
+        Fuzzy_sphere fs(s, m_radius_neighbors, 0, tree.traits());
         tree.search(std::back_inserter(neighbors), fs);
 
         std::vector<double> mean (values.size(), 0.);
         for (std::size_t n = 0; n < neighbors.size(); ++ n)
           {
-            std::size_t index = map_p2i[neighbors[n]];
-            for (std::size_t j = 0; j < values.size(); ++ j)
-              mean[j] += values[j][index];
+            if (values[0][neighbors[n]] < 0.)
+              for(std::size_t k = 0; k < effect_table.size(); ++ k)
+                {
+                  values[k][neighbors[n]] = classification_value (k, neighbors[n]);
+                  mean[k] += values[k][neighbors[n]];
+                }
+            else
+              for (std::size_t j = 0; j < values.size(); ++ j)
+                mean[j] += values[j][neighbors[n]];
           }
-        for (std::size_t j = 0; j < values.size(); ++ j)
-          smoothed_values[j].push_back (mean[j] / neighbors.size());
+
+        int nb_class_best=0; 
+        double val_class_best = std::numeric_limits<double>::max();
+        for(std::size_t k = 0; k < mean.size(); ++ k)
+          {
+            mean[k] /= neighbors.size();
+            if(val_class_best > mean[k])
+              {
+                val_class_best = mean[k];
+                nb_class_best = k;
+              }
+          }
+
+        HPS[s].AE_label = nb_class_best;
+
+        std::sort (mean.begin(), mean.end());
+        HPS[s].confidence = mean[1] - mean[0];      
+
       }
-    
-    int count1 = 0, count2 = 0, count3 = 0, count4 = 0;    
-    for(int s=0;s<(int)HPS.size();s++){
-			
-      int nb_class_best=0; 
 
-      double val_class_best = std::numeric_limits<double>::max();
-      std::vector<double> vvalues;
-      for(std::size_t k = 0; k < smoothed_values.size(); ++ k)
-        {
-
-          vvalues.push_back (smoothed_values[k][s]);
-          if(val_class_best > smoothed_values[k][s])
-            {
-              val_class_best = smoothed_values[k][s];
-              nb_class_best=k;
-            }
-        }
-
-      HPS[s].AE_label = nb_class_best;
-
-      std::sort (vvalues.begin(), vvalues.end());
-      HPS[s].confidence = vvalues[1] - vvalues[0];      
-
-      if(nb_class_best==0) count1++;
-      else if(nb_class_best==1) count2++;
-      else if(nb_class_best==2) count3++;
-      else count4++;
-    }
-
-    CGAL_CLASSIFICATION_CERR<<" "<<(double)100*count1/HPS.size()<<"% vegetation, "<<(double)100*count2/HPS.size()<<"% ground, "<<(double)100*count3/HPS.size()<<"% roof, "<<(double)100*count4/HPS.size()<<"% clutter"<<std::endl;
-    
 	
     return true;
   }
@@ -832,11 +835,9 @@ public:
 
   bool regularized_labeling_PC()
   {
-    std::vector<Point> list_points;
     std::vector<std::vector<std::size_t> > groups;
     for (std::size_t i = 0; i < HPS.size(); ++ i)
       {
-        list_points.push_back(HPS[i].position);
         std::size_t index = HPS[i].group;
         if (index == (std::size_t)(-1))
           continue;
@@ -906,38 +907,44 @@ public:
           }
       }
 
-    Tree tree(list_points.begin(), list_points.end());
+    My_point_property_map pmap (HPS);
 
-    for (std::size_t i = 0; i < HPS.size(); ++ i)
+    Tree tree (boost::counting_iterator<std::size_t> (0),
+               boost::counting_iterator<std::size_t> (HPS.size()),
+               typename Tree::Splitter(),
+               Search_traits (pmap));
+
+    for (std::size_t s=0; s < HPS.size(); ++ s)
       {
-        if (HPS[i].group != (std::size_t)(-1))
+        if (HPS[s].group != (std::size_t)(-1))
           continue;
         
-        const Point& query=HPS[i].position;
-        std::vector<Point> neighbors;
+        std::vector<std::size_t> neighbors;
       
-        Fuzzy_sphere fs(query, m_radius_neighbors, 0);
+        Fuzzy_sphere fs(s, m_radius_neighbors, 0, tree.traits());
         tree.search(std::back_inserter(neighbors), fs);
 
         std::vector<double> mean (values.size(), 0.);
         for (std::size_t n = 0; n < neighbors.size(); ++ n)
-          {
-            std::size_t index = map_p2i[neighbors[n]];
-            for (std::size_t j = 0; j < values.size(); ++ j)
-              mean[j] += values[j][index];
-          }
+          for (std::size_t j = 0; j < values.size(); ++ j)
+            mean[j] += values[j][neighbors[n]];
+
         int nb_class_best=0; 
-
         double val_class_best = std::numeric_limits<double>::max();
+        for(std::size_t k = 0; k < mean.size(); ++ k)
+          {
+            mean[k] /= neighbors.size();
+            if(val_class_best > mean[k])
+              {
+                val_class_best = mean[k];
+                nb_class_best = k;
+              }
+          }
 
-        for (std::size_t j = 0; j < mean.size(); ++ j)
-          if (mean[j] < val_class_best)
-            {
-              nb_class_best = j;
-              val_class_best = mean[j];
-            }
+        HPS[s].AE_label = nb_class_best;
 
-        HPS[i].AE_label = nb_class_best;
+        std::sort (mean.begin(), mean.end());
+        HPS[s].confidence = mean[1] - mean[0];      
 
       }
     
