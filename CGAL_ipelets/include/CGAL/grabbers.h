@@ -93,7 +93,7 @@ segment_grabber(output_iterator it){
 template <class Kernel,class output_iterator>
 class Wpoint_grabber{
   output_iterator out;
-  typedef Kernel::Weighted_point_2 Self;
+  typedef typename Kernel::Weighted_point_2 Self;
 public:  
   Wpoint_grabber(output_iterator it):out(it){}
 
