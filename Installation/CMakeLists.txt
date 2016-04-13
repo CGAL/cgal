@@ -27,6 +27,8 @@ if(POLICY CMP0054)
   cmake_policy(SET CMP0054 NEW)
 endif()
 
+# Use GNUInstallDirst to get canonical paths
+include(GNUInstallDirs)
 
 #--------------------------------------------------------------------------------------------------
 #
@@ -340,10 +342,12 @@ endif()
 #   CGAL-4.5   : 10.0.4 (Nothing different in CGAL compiled libraries¹.)
 #   CGAL-4.6   : 11.0.0 (int->size_t in CGAL_ImageIO)
 #   CGAL-4.7   : 11.0.1 (Nothing different in CGAL compiled libraries.)
+#   CGAL-4.8   : 11.0.2 (Nothing different in CGAL compiled libraries.)
+#   CGAL-4.9   : 11.0.3 (Nothing different in CGAL compiled libraries.)
 # ¹) According to http://upstream-tracker.org/versions/cgal.html
 
 set( CGAL_SONAME_VERSION "11" )
-set( CGAL_SOVERSION      "11.0.1" )
+set( CGAL_SOVERSION      "11.0.3" )
 
 message( STATUS "CGAL_SONAME_VERSION=${CGAL_SONAME_VERSION}" )
 message( STATUS "CGAL_SOVERSION     =${CGAL_SOVERSION}" )
@@ -633,8 +637,6 @@ option( CGAL_ENABLE_PRECONFIG "Select to allow to preconfiguration of external l
 # this; e.g. in MPFI/RS in Algebraic_kernel_d. For these cases CGAL
 # and the example/test must be configured with MPFI (just one is not sufficient)
 
-option( CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT "Select to allow to use all preconfigured external libraries" OFF)
- 
 include(CGAL_SetupDependencies)
 
 message("== Detect external libraries (DONE) ==\n")
@@ -708,28 +710,28 @@ endif()
 #
 #--------------------------------------------------------------------------------------------------
 
-set ( CGAL_INSTALL_INC_DIR "include" CACHE STRING "The folder where CGAL header files will be installed, relative to CMAKE_INSTALL_PREFIX" )
-set ( CGAL_INSTALL_LIB_DIR "lib"     CACHE STRING "The folder where CGAL libraries will be installed, relative to CMAKE_INSTALL_PREFIX" )
+set ( CGAL_INSTALL_INC_DIR "${CMAKE_INSTALL_INCLUDEDIR}" CACHE STRING "The folder where CGAL header files will be installed, relative to CMAKE_INSTALL_PREFIX" )
+set ( CGAL_INSTALL_LIB_DIR "${CMAKE_INSTALL_LIBDIR}"     CACHE STRING "The folder where CGAL libraries will be installed, relative to CMAKE_INSTALL_PREFIX" )
 
 if ( CGAL_WIN32_CMAKE_ON_CYGWIN )
   exec_program(cygpath ARGS -w "${CMAKE_INSTALL_PREFIX}" OUTPUT_VARIABLE CMAKE_INSTALL_PREFIX2 )
   file ( TO_CMAKE_PATH ${CMAKE_INSTALL_PREFIX2} CMAKE_INSTALL_PREFIX )
 endif()
 
-set ( CGAL_INSTALL_BIN_DIR    "bin"                     
-  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
+set ( CGAL_INSTALL_BIN_DIR   "${CMAKE_INSTALL_BINDIR}"
+  CACHE STRING "The folder where CGAL user-side scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
 set ( CGAL_INSTALL_CMAKE_DIR "${CGAL_INSTALL_LIB_DIR}/CGAL"
   CACHE STRING "The folder where CGAL CMake modules will be installed, relative to CMAKE_INSTALL_PREFIX" 
   )
 
-set ( CGAL_INSTALL_DOC_DIR "share/doc/${CGAL_VERSION_DIR}"  
-  CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX" 
+set ( CGAL_INSTALL_DOC_DIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/doc/${CGAL_VERSION_DIR}"
+  CACHE STRING "The folder where CGAL documentation and license files will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
-set ( CGAL_INSTALL_MAN_DIR "share/man/man1"  
-  CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX" 
+set ( CGAL_INSTALL_MAN_DIR "${CMAKE_INSTALL_FULL_DATAROOTDIR}/man/man1"
+  CACHE STRING "The folder where manual pages for CGAL scripts will be installed, relative to CMAKE_INSTALL_PREFIX"
   )
 
 message("== Write compiler_config.h (DONE) ==\n")
@@ -760,9 +762,6 @@ cache_get(CGAL_3RD_PARTY_LIBRARIES     )
 cache_get(CGAL_3RD_PARTY_LIBRARIES_DIRS) 
 
 add_subdirectory(src)
-
-hide_variable(EXECUTABLE_OUTPUT_PATH)
-hide_variable(LIBRARY_OUTPUT_PATH)
 
 #
 # Repeat some problems
@@ -839,8 +838,6 @@ install(PROGRAMS ${scripts} DESTINATION ${CGAL_INSTALL_BIN_DIR})
 
 install(DIRECTORY ${CGAL_MODULES_REL_DIR}/                DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
 install(FILES     ${CGAL_MODULES_REL_DIR}/UseCGAL.cmake   DESTINATION ${CGAL_INSTALL_CMAKE_DIR} )
-install(EXPORT    CGALExports                             DESTINATION ${CGAL_INSTALL_CMAKE_DIR}
-        NAMESPACE CGAL:: )
 
 if ( GMP_IN_AUXILIARY )
   install(DIRECTORY auxiliary/gmp/include/ DESTINATION ${CGAL_INSTALL_INC_DIR} )

@@ -7,7 +7,11 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
   # THEN collect *.cpp
   foreach (package ${CGAL_CONFIGURED_PACKAGES} )
     file(GLOB CGAL_LIBRARY_SOURCE_FILES_TMP ${package}/src/${LIBRARY_NAME}/*.cpp)
-    list(APPEND CGAL_LIBRARY_SOURCE_FILES ${CGAL_LIBRARY_SOURCE_FILES_TMP})
+    foreach(file ${CGAL_LIBRARY_SOURCE_FILES_TMP})
+      if(NOT ${file} MATCHES "/qrc_.*")
+        list(APPEND CGAL_LIBRARY_SOURCE_FILES ${file})
+      endif()
+    endforeach()
   endforeach()
 
   foreach(source ${CGAL_LIBRARY_SOURCE_FILES})
@@ -40,7 +44,6 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp 
     ${rc_file}
     ${ADDITIONAL_FILES})
-#  add_library (${LIBRARY_NAME} ${CGAL_LIBRARY_SOURCE_FILES} ${rc_file} ${ADDITIONAL_FILES}) # builing not creating temporary all_files.cpp
   if(CGAL_SOVERSION AND CGAL_SONAME_VERSION)
     set_target_properties(${LIBRARY_NAME} PROPERTIES 
       VERSION "${CGAL_SOVERSION}" 
@@ -62,10 +65,20 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     endif()
   endif()
 
-  install(TARGETS ${LIBRARY_NAME} EXPORT CGALExports
-          RUNTIME DESTINATION ${CGAL_INSTALL_BIN_DIR}
-          LIBRARY DESTINATION ${CGAL_INSTALL_LIB_DIR}
-          ARCHIVE DESTINATION ${CGAL_INSTALL_LIB_DIR})
+  install(TARGETS ${LIBRARY_NAME} EXPORT ${LIBRARY_NAME}Exports
+    RUNTIME DESTINATION "${CGAL_INSTALL_BIN_DIR}"
+    LIBRARY DESTINATION "${CGAL_INSTALL_LIB_DIR}"
+    ARCHIVE DESTINATION "${CGAL_INSTALL_LIB_DIR}")
+  install(EXPORT ${LIBRARY_NAME}Exports
+    DESTINATION "${CGAL_INSTALL_CMAKE_DIR}"
+    NAMESPACE CGAL::)
+
+  # We have to call configure_file twice to force double expansion of variables.
+  configure_file("${CGAL_MODULES_DIR}/CGALLibConfig.cmake.in"
+    "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
+  configure_file("${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake"
+    "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" @ONLY)
+  install(FILES "${CMAKE_BINARY_DIR}/${LIBRARY_NAME}LibConfig.cmake" DESTINATION ${CGAL_INSTALL_CMAKE_DIR})
 endfunction()
 
 function( configure_component DIR COMPONENT )

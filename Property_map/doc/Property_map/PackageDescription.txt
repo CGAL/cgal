@@ -13,7 +13,7 @@
 \cgalPkgShortInfoBegin
 \cgalPkgSince{3.5}
 \cgalPkgBib{cgal:fs-cbpm}
-\cgalPkgLicense{\ref licensesGPL "GPL"}
+\cgalPkgLicense{\ref licensesGPL "LGPL"}
 \cgalPkgShortInfoEnd
 \cgalPkgDescriptionEnd
 

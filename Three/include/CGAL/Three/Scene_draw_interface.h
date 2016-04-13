@@ -22,6 +22,7 @@
 #define SCENE_DRAW_INTERFACE_H
 
 class QKeyEvent;
+class QPoint;
 namespace CGAL
 {
 namespace Three {
@@ -35,6 +36,8 @@ public:
   virtual void initializeGL() = 0;
   virtual void draw(CGAL::Three::Viewer_interface*) = 0;
   virtual void drawWithNames(CGAL::Three::Viewer_interface*) = 0;
+ /*! Sets the screen coordinates of the currently picked point.*/
+  virtual void setPickedPixel(const QPoint &e) = 0;
   virtual bool keyPressEvent(QKeyEvent* e) = 0;
   virtual float get_bbox_length() const = 0;
 };

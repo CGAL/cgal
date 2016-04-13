@@ -203,9 +203,6 @@ struct Bezier_tag {};
 } } //namespace CGAL::POLYNOMIAL
 */
 
-#ifdef CGAL_POLYNOMIAL_NO_LIMITS
-#include <CGAL/Polynomial/internal/limits.h>
-#else
 #include <limits>
-#endif
-#endif
+
+#endif // CGAL_POLYNOMIAL_BASIC_H

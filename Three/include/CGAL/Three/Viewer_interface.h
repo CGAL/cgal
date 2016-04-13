@@ -111,7 +111,7 @@ public:
   //! Used by the items to avoid SEGFAULT.
   bool extension_is_found;
   //!The matrix used for the picking.
-  GLfloat pickMatrix_[16];
+  mutable GLfloat pickMatrix_[16];
   //!Sets the binding for SHIFT+LEFT CLICK to SELECT (initially used in Scene_polyhedron_selection_item.h)
   void setBindingSelect()
   {

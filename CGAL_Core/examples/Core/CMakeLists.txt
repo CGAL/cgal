@@ -4,8 +4,6 @@ project( Core_examples )
 cmake_minimum_required(VERSION 2.8.11)
 
 
-set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
-
 if ( COMMAND cmake_policy )
 
   cmake_policy( SET CMP0003 NEW )

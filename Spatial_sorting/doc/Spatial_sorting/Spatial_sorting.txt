@@ -83,7 +83,7 @@ Hilbert sort with median policy
 
 The middle policy is easier to analyze, and is interesting in practice
 for well distributed set of points in small dimension (if the number
-of points is really smaller than \f$ 2^d\f$).
+of points is really larger than \f$ 2^d\f$).
 The median policy should be preferred for high dimension or if 
 the point set distribution is not regular (or unknown).
 Since the median policy cannot be much worse than the middle

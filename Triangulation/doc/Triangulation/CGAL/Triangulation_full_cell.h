@@ -11,25 +11,23 @@ is used by default for representing full cells in the class
 A `Triangulation_full_cell` stores handles to the vertices of the cell as well as handles 
 to its adjacent cells.
 
-Parameters 
--------------- 
 
-`TriangulationTraits` must be a model of the concept `TriangulationTraits`. It 
+\tparam TriangulationTraits must be a model of the concept `TriangulationTraits`. It 
 provides geometric types and predicates for use in the 
 `Triangulation<TriangulationTraits, TriangulationDataStructure>` class. 
 
-`Data` is an optional type of data to be stored in the full cell class. The 
+\tparam Data is an optional type of data to be stored in the full cell class. The 
 class template `Triangulation_full_cell` accepts that no second parameter be specified. In 
 this case, `Data` defaults to `CGAL::No_full_cell_data`. 
 `CGAL::No_full_cell_data` can explicitely be specified to access the third parameter. 
 
-Parameter `TriangulationDSFullCell_` must be a model of the concept 
+\tparam TriangulationDSFullCell_ must be a model of the concept 
 `TriangulationDSFullCell`. 
 The class template `Triangulation_full_cell` accepts that no third parameter be specified. 
 It also accepts the tag `CGAL::Default` as third parameter. In both 
 cases, `TriangulationDSFullCell_` defaults to `CGAL::Triangulation_ds_full_cell<>`. 
 
-\cgalModels ::TriangulationFullCell Additionally, the class
+\cgalModels `TriangulationFullCell` Additionally, the class
 `Triangulation_full_cell` provides the following types,
 constructors and methods:
 

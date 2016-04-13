@@ -7,8 +7,6 @@ project( BGL )
 cmake_minimum_required(VERSION 2.8.11)
 
 
-set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
- 
 if ( COMMAND cmake_policy )
 
   cmake_policy( SET CMP0003 NEW )  
@@ -66,6 +64,8 @@ create_single_source_cgal_program( "next.cpp" )
 create_single_source_cgal_program( "test_circulator.cpp" )
 
 create_single_source_cgal_program( "graph_concept_Polyhedron_3.cpp" )
+
+create_single_source_cgal_program( "graph_concept_Dual.cpp" )
 
 create_single_source_cgal_program( "graph_concept_Triangulation_2.cpp" )
 

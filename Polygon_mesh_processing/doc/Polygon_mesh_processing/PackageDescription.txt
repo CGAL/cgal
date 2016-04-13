@@ -25,7 +25,7 @@
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup measure_grp Geometric Measure Functions
-/// Functions to compute lengths of edges and borders, areas of faces and patches, as well as volunes of closed meshes.
+/// Functions to compute lengths of edges and borders, areas of faces and patches, as well as volumes of closed meshes.
 /// \ingroup PkgPolygonMeshProcessing
 
 /// \defgroup PMP_orientation_grp Orientation Functions
@@ -130,8 +130,7 @@ and provides a list of the parameters that are used in this package.
 - `CGAL::Polygon_mesh_processing::bbox_3()`
 - `CGAL::Polygon_mesh_processing::border_halfedges()`
 
-\todo make template parameter names uniform in other packages using BGL. Here we chose PolygonMesh as template parameter.
-It can be made short to PM. And TriangleMesh (or TM) specifies when the parameter should be a triangle mesh.
+
 \todo add in BGL `clear(pmesh)` and use it in `keep_largest_connected_components(pmesh, 0);`
 \todo document BGL/include/CGAL/boost/graph/Dual.h and remove the example from dont_submit
 \todo fix and restore remove_degenerate_faces in the user and the reference manual

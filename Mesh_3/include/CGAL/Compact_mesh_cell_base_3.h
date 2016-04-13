@@ -664,7 +664,7 @@ operator>>(std::istream &is,
     {
       typename Compact_mesh_cell_base_3<GT, MT, Cb>::Surface_patch_index i2;
       if(is_ascii(is))
-        is >> i2;
+        is >> iformat(i2);
       else
       {
         read(is, i2);
@@ -687,7 +687,7 @@ operator<<(std::ostream &os,
   for(int i = 0; i < 4; ++i)
   {
     if(is_ascii(os))
-      os << ' ' << c.surface_patch_index(i);
+      os << ' ' << oformat(c.surface_patch_index(i));
     else
       write(os, c.surface_patch_index(i));
   }

@@ -29,7 +29,7 @@
 
 namespace CGAL {
 
-Random  default_random;
+  Random  default_random;
 
 } //namespace CGAL
 

@@ -70,6 +70,10 @@ namespace CGAL {
     }
     do {
       h2h.insert(std::make_pair(shd, thd));
+
+      if (face(opposite(shd, sm), sm) == boost::graph_traits<SourceMesh>::null_face())
+        h2h.insert(std::make_pair(opposite(shd, sm), opposite(thd, tm)));
+
       shd = next(shd,sm);
       thd = next(thd,tm);
     }while(shd != done);

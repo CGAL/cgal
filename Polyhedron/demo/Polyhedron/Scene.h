@@ -110,6 +110,8 @@ public:
    * of OpenGL code that needs a context.
    */
   void initializeGL();
+  /*! Sets the screen coordinates of the currently picked point.*/
+  void setPickedPixel(const QPoint &p) {picked_pixel = p;}
   /*! Is called by Viewer::draw(Viewer_interface*). Calls draw_aux(false, viewer).
    * @see draw_aux(bool with_names, Viewer_interface).*/
   void draw(CGAL::Three::Viewer_interface*);
@@ -270,6 +272,7 @@ private:
   //!Index of the item_B.
   int item_B;
   bool picked;
+  QPoint picked_pixel;
   bool gl_init;
   static GlSplat::SplatRenderer* ms_splatting;
   static int ms_splattingCounter;

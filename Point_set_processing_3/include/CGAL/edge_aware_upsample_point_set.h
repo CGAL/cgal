@@ -31,12 +31,6 @@
 #include <set>
 #include <utility>
 
-#include <boost/version.hpp>
-#if BOOST_VERSION >= 104000
-  #include <boost/property_map/property_map.hpp>
-#else
-  #include <boost/property_map.hpp>
-#endif
 
 //#define  CGAL_PSP3_VERBOSE
 

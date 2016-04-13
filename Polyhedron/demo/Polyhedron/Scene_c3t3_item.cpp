@@ -461,22 +461,13 @@ void Scene_c3t3_item::compute_bbox() const {
 }
 
 QString Scene_c3t3_item::toolTip() const {
-  int number_of_tets = 0;
-  for (Tr::Finite_cells_iterator
-    cit = c3t3().triangulation().finite_cells_begin(),
-    end = c3t3().triangulation().finite_cells_end();
-    cit != end; ++cit)
-  {
-    if (c3t3().is_in_complex(cit))
-      ++number_of_tets;
-  }
   return tr("<p><b>3D complex in a 3D triangulation</b></p>"
     "<p>Number of vertices: %1<br />"
     "Number of surface facets: %2<br />"
     "Number of volume tetrahedra: %3</p>")
     .arg(c3t3().triangulation().number_of_vertices())
-    .arg(c3t3().number_of_facets())
-    .arg(number_of_tets);
+    .arg(c3t3().number_of_facets_in_complex())
+    .arg(c3t3().number_of_cells_in_complex());
 }
 
 void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
@@ -514,22 +505,23 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   vaos[Facets]->release();
 
 
- if (!are_intersection_buffers_filled)
-  {
-     ncthis->compute_intersections();
-     ncthis->initialize_intersection_buffers(viewer);
+  if(!frame->isManipulated()) {
+    if (!are_intersection_buffers_filled)
+    {
+      ncthis->compute_intersections();
+      ncthis->initialize_intersection_buffers(viewer);
+    }
+    vaos[iFacets]->bind();
+    program = getShaderProgram(PROGRAM_WITH_LIGHT);
+    attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
+    program->bind();
+
+    // positions_poly is also used for the faces in the cut plane
+    // and changes when the cut plane is moved
+    viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size() / 3));
+    program->release();
+    vaos[iFacets]->release();
   }
-  vaos[iFacets]->bind();
-  program = getShaderProgram(PROGRAM_WITH_LIGHT);
-  attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
-  program->bind();
-
-  // positions_poly is also used for the faces in the cut plane
-  // and changes when the cut plane is moved
-  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_poly.size() / 3));
-  program->release();
-  vaos[iFacets]->release();
-
 
   if(spheres_are_shown)
   {
@@ -611,14 +603,21 @@ void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
   program->release();
   vaos[Edges]->release();
 
-  vaos[iEdges]->bind();
-  program = getShaderProgram(PROGRAM_NO_SELECTION);
-  attrib_buffers(viewer, PROGRAM_NO_SELECTION);
-  program->bind();
-  program->setAttributeValue("colors", QColor(Qt::black));
-  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size() / 3));
-  program->release();
-  vaos[iEdges]->release();
+  if(!frame->isManipulated()) {
+    if (!are_intersection_buffers_filled)
+    {
+      ncthis->compute_intersections();
+      ncthis->initialize_intersection_buffers(viewer);
+    }
+    vaos[iEdges]->bind();
+    program = getShaderProgram(PROGRAM_NO_SELECTION);
+    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    program->bind();
+    program->setAttributeValue("colors", QColor(Qt::black));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines.size() / 3));
+    program->release();
+    vaos[iEdges]->release();
+  }
 
   if(spheres_are_shown)
   {

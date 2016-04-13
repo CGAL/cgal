@@ -5,8 +5,6 @@
 # The variables used here are defined in the CGALConfig.cmake generated when CGAL was installed.
 #
 #
-set(CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true)
-
 include(${CGAL_MODULES_DIR}/CGAL_Macros.cmake)
 
 cgal_setup_module_path()

@@ -116,6 +116,7 @@
 - `CGAL::Location_policy<Tag>`
 - `CGAL::Fast_location`
 - `CGAL::Compact_location`
+- `CGAL::value_type_traits<T>`
 
 */
 

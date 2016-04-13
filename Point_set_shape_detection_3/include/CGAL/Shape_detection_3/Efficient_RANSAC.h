@@ -298,12 +298,14 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
           m_direct_octrees[s] = new Direct_octree(
             m_traits, last + 1,
             last + subsetSize + 1,
+            m_point_pmap, m_normal_pmap,
             remainingPoints - subsetSize);
         }
         else
           m_direct_octrees[0] = new Direct_octree(
             m_traits, m_input_iterator_first,
-            m_input_iterator_first + (subsetSize), 
+            m_input_iterator_first + (subsetSize),
+            m_point_pmap, m_normal_pmap,
           0);
 
         m_available_octree_sizes[s] = subsetSize;
@@ -313,7 +315,8 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       }
 
       m_global_octree = new Indexed_octree(
-        m_traits, m_input_iterator_first, m_input_iterator_beyond);
+        m_traits, m_input_iterator_first, m_input_iterator_beyond,
+        m_point_pmap, m_normal_pmap);
       m_global_octree->createTree();
 
       return true;

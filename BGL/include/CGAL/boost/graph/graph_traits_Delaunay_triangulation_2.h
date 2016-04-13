@@ -390,6 +390,5 @@ namespace boost {
   };
 } // namespace boost
 
-//#include <CGAL/graph_traits_Delaunay_delaunay_triangulation_2.h>
 
 #endif // CGAL_GRAPH_TRAITS_DELAUNAY_TRIANGULATION_2_H

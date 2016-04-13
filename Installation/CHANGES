@@ -1,7 +1,7 @@
 
 -------------------------------- Release 4.8 --------------------------------
 
-Release date: March 2016
+Release date: April 2016
 
 
 * General
@@ -17,7 +17,7 @@ Release date: March 2016
   - The same holds for g++ 4.8 or later when the C++11 standard is used.
 
 
-* 2D Reconstruction and Simplification from Point Set (new package)
+* Optimal Transportation Curve Reconstruction (new package)
 
   - This package implements a method to reconstruct and simplify 2D point sets.
     The input is a set of 2D points with mass attributes, possibly hampered by

@@ -10,10 +10,11 @@ set(CGAL_CONFIG_LOADED TRUE)
 
 get_filename_component(CGAL_CONFIG_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
 
-# The else condition of this code is intentionally not present in
-# CGALConfig_install.cmake.in since it cannot happen there.
-# Note also that for CMake<=2.8.11 (detected by the absence of CMP0024),
-# the else() condition is never used.
+# The code for including exported targets is different from
+# CGAL_Config_install.cmake. We do not have separate export files in
+# an installed version and we need to make sure that we are not
+# currently building CGAL. Note that for CMake<=2.8.11 (detected by
+# the absence of CMP0024), the else() condition is never used.
 if(NOT POLICY CMP0024 OR NOT CGAL_BUILDING_LIBS)
   include("${CGAL_CONFIG_DIR}/CGALExports.cmake")
 
@@ -57,6 +58,13 @@ else()
   CGAL_alias_library(CGAL_Qt5)
 endif()
 
+# Check for possible config files of our libraries and include them.
+file(GLOB CGAL_CONFIG_FILES LIST_DIRECTORIES false
+  RELATIVE "${CGAL_CONFIG_DIR}" "${CGAL_CONFIG_DIR}/*LibConfig.cmake")
+foreach(configfile ${CGAL_CONFIG_FILES})
+  include("${CGAL_CONFIG_DIR}/${configfile}")
+endforeach()
+
 set(CGAL_INSTALLATION_PACKAGE_DIR "@CGAL_INSTALLATION_PACKAGE_DIR@")
 set(CGAL_CORE_PACKAGE_DIR "@CGAL_CORE_PACKAGE_DIR@")
 
@@ -84,37 +92,12 @@ set(CGAL_INCLUDE_DIRS      "@CGAL_INCLUDE_DIRS@" )
 set(CGAL_MODULES_DIR       "@CGAL_MODULES_DIR@" )
 set(CGAL_LIBRARIES_DIR     "@CGAL_LIBRARIES_DIR@" )
 
-set(WITH_CGAL         "ON" )
-set(WITH_CGAL_Core    "@WITH_CGAL_Core@" )
-set(WITH_CGAL_ImageIO "@WITH_CGAL_ImageIO@" )
-set(WITH_CGAL_Qt5     "@WITH_CGAL_Qt5@" )
-
-set(CGAL_3RD_PARTY_INCLUDE_DIRS   "@CGAL_3RD_PARTY_INCLUDE_DIRS@" )
-set(CGAL_3RD_PARTY_DEFINITIONS    "@CGAL_3RD_PARTY_DEFINITIONS@" )
-set(CGAL_3RD_PARTY_LIBRARIES_DIRS "@CGAL_3RD_PARTY_LIBRARIES_DIRS@" )
-set(CGAL_3RD_PARTY_LIBRARIES      "@CGAL_3RD_PARTY_LIBRARIES@" )
-
-set(CGAL_Core_3RD_PARTY_INCLUDE_DIRS   "@CGAL_Core_3RD_PARTY_INCLUDE_DIRS@" )
-set(CGAL_Core_3RD_PARTY_DEFINITIONS    "@CGAL_Core_3RD_PARTY_DEFINITIONS@" )
-set(CGAL_Core_3RD_PARTY_LIBRARIES_DIRS "@CGAL_Core_3RD_PARTY_LIBRARIES_DIRS@" )
-set(CGAL_Core_3RD_PARTY_LIBRARIES      "@CGAL_Core_3RD_PARTY_LIBRARIES@" )
-
-set(CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS   "@CGAL_ImageIO_3RD_PARTY_INCLUDE_DIRS@" )
-set(CGAL_ImageIO_3RD_PARTY_DEFINITIONS    "@CGAL_ImageIO_3RD_PARTY_DEFINITIONS@" )
-set(CGAL_ImageIO_3RD_PARTY_LIBRARIES_DIRS "@CGAL_ImageIO_3RD_PARTY_LIBRARIES_DIRS@" )
-set(CGAL_ImageIO_3RD_PARTY_LIBRARIES      "@CGAL_ImageIO_3RD_PARTY_LIBRARIES@" )
+# If CGAL_ImageIO is built, tell if it was linked with Zlib.
 set(CGAL_ImageIO_USE_ZLIB                 "@CGAL_ImageIO_USE_ZLIB@" )
-
-set(CGAL_Qt5_3RD_PARTY_INCLUDE_DIRS   "@CGAL_Qt5_3RD_PARTY_INCLUDE_DIRS@" )
-set(CGAL_Qt5_3RD_PARTY_DEFINITIONS    "@CGAL_Qt5_3RD_PARTY_DEFINITIONS@" )
-set(CGAL_Qt5_3RD_PARTY_LIBRARIES_DIRS "@CGAL_Qt5_3RD_PARTY_LIBRARIES_DIRS@" )
-set(CGAL_Qt5_3RD_PARTY_LIBRARIES      "@CGAL_Qt5_3RD_PARTY_LIBRARIES@" )
 
 set(CGAL_VERSION "${CGAL_MAJOR_VERSION}.${CGAL_MINOR_VERSION}.${CGAL_BUILD_VERSION}")
 
 set(CGAL_USE_FILE "${CGAL_MODULES_DIR}/UseCGAL.cmake" )
-
-set(CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT "@CGAL_ALLOW_ALL_PRECONFIGURED_LIBS_COMPONENT@")
 
 if ( CGAL_FIND_REQUIRED )
   set( CHECK_CGAL_COMPONENT_MSG_ON_ERROR TRUE        )

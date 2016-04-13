@@ -7,8 +7,6 @@ if(POLICY CMP0043)
   cmake_policy(SET CMP0043 OLD)
 endif()
 
-set( CMAKE_ALLOW_LOOSE_LOOP_CONSTRUCTS true )
-
 # Include this package's headers first
 include_directories( BEFORE ./ ./include ../../include )
 

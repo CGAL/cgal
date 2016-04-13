@@ -42,8 +42,6 @@
 #endif
 
 
-// maybe it is better to change to the bbox filtered one
-//#include <CGAL/Lazy_circular_kernel_2.h>
 #include <CGAL/Filtered_bbox_circular_kernel_2.h>
 
 namespace CGAL {

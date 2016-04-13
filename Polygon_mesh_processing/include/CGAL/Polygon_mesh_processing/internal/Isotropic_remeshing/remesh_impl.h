@@ -42,9 +42,10 @@
 #include <boost/bimap.hpp>
 #include <boost/bimap/multiset_of.hpp>
 #include <boost/bimap/set_of.hpp>
-#include <boost/property_map/property_map.hpp>
 #include <boost/range.hpp>
 #include <boost/unordered_map.hpp>
+#include <boost/unordered_set.hpp>
+#include <boost/shared_ptr.hpp>
 
 #include <map>
 #include <list>
@@ -101,7 +102,7 @@ namespace internal {
     typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
     typedef typename boost::graph_traits<PM>::edge_descriptor edge_descriptor;
 
-    std::map<edge_descriptor, bool> border_edges;
+    boost::shared_ptr< std::set<edge_descriptor> > border_edges_ptr;
     const PM* pmesh_ptr_;
 
   public:
@@ -110,30 +111,26 @@ namespace internal {
     typedef value_type&                         reference;
     typedef boost::read_write_property_map_tag  category;
 
-    Border_constraint_pmap():pmesh_ptr_(NULL) {}
+    Border_constraint_pmap()
+      : border_edges_ptr(new std::set<edge_descriptor>() )
+      , pmesh_ptr_(NULL)
+    {}
     Border_constraint_pmap(const PM& pmesh, const FaceRange& faces)
-      : pmesh_ptr_(&pmesh)
+      : border_edges_ptr(new std::set<edge_descriptor>() )
+      , pmesh_ptr_(&pmesh)
     {
       std::vector<halfedge_descriptor> border;
       PMP::border_halfedges(faces, *pmesh_ptr_, std::back_inserter(border));
 
-      BOOST_FOREACH(edge_descriptor e, edges(*pmesh_ptr_))
-        border_edges.insert(std::make_pair(e, false));
-
       BOOST_FOREACH(halfedge_descriptor h, border)
-        border_edges[edge(h, *pmesh_ptr_)] = true;
+        border_edges_ptr->insert(edge(h, *pmesh_ptr_));
     }
 
     friend bool get(const Border_constraint_pmap<PM, FaceRange>& map,
                     const edge_descriptor& e)
     {
       CGAL_assertion(map.pmesh_ptr_!=NULL);
-      CGAL_assertion(!map.border_edges.empty());
-      typename std::map<edge_descriptor, bool>::const_iterator it
-        = map.border_edges.find(e);
-
-      CGAL_assertion(it != map.border_edges.end());
-      return it->second;
+      return map.border_edges_ptr->count(e)!=0;
     }
 
     friend void put(Border_constraint_pmap<PM, FaceRange>& map,
@@ -141,7 +138,10 @@ namespace internal {
                     const bool is)
     {
       CGAL_assertion(map.pmesh_ptr_ != NULL);
-      map.border_edges[e] = is;
+      if (is)
+        map.border_edges_ptr->insert(e);
+      else
+        map.border_edges_ptr->erase(e);
     }
   };
 
@@ -676,8 +676,7 @@ namespace internal {
     void equalize_valences()
     {
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "Equalize valences...";
-      std::cout.flush(); 
+      std::cout << "Equalize valences..." << std::endl;
 #endif
       unsigned int nb_flips = 0;
       BOOST_FOREACH(edge_descriptor e, edges(mesh_))
@@ -699,12 +698,14 @@ namespace internal {
 
         CGAL_assertion_code(Halfedge_status s1 = status(he));
         CGAL_assertion_code(Halfedge_status s1o = status(opposite(he, mesh_)));
-        CGAL_assertion(!incident_to_degenerate(he));
-        CGAL_assertion(!incident_to_degenerate(opposite(he, mesh_)));
 
         CGAL::Euler::flip_edge(he, mesh_);
         ++nb_flips;
-        
+
+#ifdef CGAL_PMP_REMESHING_VERBOSE
+        std::cout << "\r\t(" << nb_flips << " flips)";
+        std::cout.flush();
+#endif
         CGAL_assertion_code(Halfedge_status s2 = status(he));
         CGAL_assertion_code(Halfedge_status s2o = status(opposite(he, mesh_)));
         CGAL_assertion(s1 == s2   && s1 == PATCH);
@@ -745,7 +746,7 @@ namespace internal {
       }
 
 #ifdef CGAL_PMP_REMESHING_VERBOSE
-      std::cout << "done. ("<< nb_flips << " flips)" << std::endl;
+      std::cout << "\r\tdone ("<< nb_flips << " flips)" << std::endl;
 #endif
 
 #ifdef CGAL_PMP_REMESHING_DEBUG
@@ -893,7 +894,7 @@ namespace internal {
 
       BOOST_FOREACH(vertex_descriptor v, vertices(mesh_))
       {
-        if (!is_on_patch(v) && !is_constrained(v))
+        if (!is_on_patch(v) || is_constrained(v))
           continue;
         //note if v is constrained, it has not moved
 
@@ -1280,22 +1281,29 @@ private:
                               const double& sq_low)
     {
       CGAL_assertion_code(std::size_t nb_done = 0);
-      std::vector<halfedge_descriptor> degenerate_faces;
+      boost::unordered_set<halfedge_descriptor> degenerate_faces;
       BOOST_FOREACH(halfedge_descriptor h,
                     halfedges_around_target(halfedge(v, mesh_), mesh_))
       {
         if (is_border(h, mesh_))
           continue;
         if (PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()))
-          degenerate_faces.push_back(h);
+          degenerate_faces.insert(h);
       }
       while(!degenerate_faces.empty())
       {
-        halfedge_descriptor h = degenerate_faces.back();
-        degenerate_faces.pop_back();
+        halfedge_descriptor h = *(degenerate_faces.begin());
+        degenerate_faces.erase(degenerate_faces.begin());
 
-        CGAL_assertion(PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()));
-        if (face(h, mesh_) == boost::graph_traits<PM>::null_face())
+        if (!PMP::is_degenerated(h, mesh_, vpmap_, GeomTraits()))
+          //this can happen when flipping h has consequences further in the mesh
+          continue;
+
+        //check that opposite is not also degenerate
+        if (degenerate_faces.find(opposite(h, mesh_)) != degenerate_faces.end())
+          degenerate_faces.erase(opposite(h, mesh_));
+
+        if(is_border(h, mesh_))
           continue;
 
         BOOST_FOREACH(halfedge_descriptor hf,
@@ -1340,10 +1348,10 @@ private:
 
             if (!is_border(hf, mesh_)
               && PMP::is_degenerated(hf, mesh_, vpmap_, GeomTraits()))
-              degenerate_faces.push_back(hf);
+              degenerate_faces.insert(hf);
             if (!is_border(hfo, mesh_)
               && PMP::is_degenerated(hfo, mesh_, vpmap_, GeomTraits()))
-              degenerate_faces.push_back(hfo);
+              degenerate_faces.insert(hfo);
 
             break;
           }

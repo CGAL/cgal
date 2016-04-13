@@ -1,10 +1,10 @@
 // Copyright (c) 2008-2009 GeometryFactory and INRIA
 // All rights reserved.
 //
-// This file is part of CGAL (www.cgal.org).
-// You can redistribute it and/or modify it under the terms of the GNU
-// General Public License as published by the Free Software Foundation,
-// either version 3 of the License, or (at your option) any later version.
+// This file is part of CGAL (www.cgal.org); you can redistribute it and/or
+// modify it under the terms of the GNU Lesser General Public License as
+// published by the Free Software Foundation; either version 3 of the License,
+// or (at your option) any later version.
 //
 // Licensees holding a valid commercial license may use this file in
 // accordance with the commercial license agreement provided with the software.
@@ -38,6 +38,40 @@ namespace CGAL {
 
 
 /// \cond SKIP_DOXYGEN
+
+
+template <typename PM1, typename PM2>
+class OR_property_map {
+  typedef typename PM1::key_type key_type;
+  typedef typename PM1::value_type value_type;
+  typedef typename PM1::reference reference;
+  typedef boost::read_write_property_map_tag category;
+
+  PM1 pm1;
+  PM2 pm2;
+
+ public:
+  OR_property_map(PM1 pm1, PM2 pm2)
+    : pm1(pm1),pm2(pm2)
+  {}
+
+  inline friend
+    value_type
+    get(const OR_property_map& pm, const key_type& k)
+  {
+    return get(pm.pm1,k) || get(pm.pm2,k);
+  }
+
+  inline friend
+    void
+  put(OR_property_map& pm, const key_type& k, const value_type& v)
+  {
+    put(pm.pm1,k, v);
+    put(pm.pm2,k, v);
+  }
+
+};
+
 /// Property map that accesses a value from an iterator
 ///
 /// \cgalModels `ReadablePropertyMap`
