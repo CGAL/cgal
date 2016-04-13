@@ -2801,8 +2801,9 @@ private: //------------------------------------------------------- private data
       Face_index fi = sm.add_face(vr);
       if(fi == sm.null_face())
       {
-       std::cout<< "Warning: Face cannot be added."<<std::endl;
-       continue;
+       std::cout<< "Warning: Facets don't seem to be oriented. Loading a Soup of polygons instead."<<std::endl;
+       sm.clear();
+       return is;
       }
 
       // the first face will tell us if faces have a color map

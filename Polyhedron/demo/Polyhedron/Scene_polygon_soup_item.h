@@ -21,11 +21,14 @@ struct Polygon_soup
     typedef std::map<std::pair<std::size_t, std::size_t>, std::set<std::size_t> > Edges_map;
     typedef boost::array<std::size_t, 2> Edge;
     typedef std::vector<Polygon_3> Polygons;
+    typedef std::vector<CGAL::Color> Colors;
     typedef std::set<Edge> Edges;
     typedef Polygons::size_type size_type;
     Points points;
     Polygons polygons;
     Edges_map edges;
+    Colors fcolors;
+    Colors vcolors;
     Edges non_manifold_edges;
     bool display_non_manifold_edges;
 
@@ -140,7 +143,7 @@ public:
     QString toolTip() const;
 
     // Indicate if rendering mode is supported
-    virtual bool supportsRenderingMode(RenderingMode m) const { return (m!=Gouraud && m!=PointsPlusNormals && m!=Splatting); } // CHECK THIS!
+    virtual bool supportsRenderingMode(RenderingMode m) const { return ( m!=PointsPlusNormals && m!=Splatting); }
     // OpenGL drawing in a display list
     virtual void draw() const {}
     virtual void draw(CGAL::Three::Viewer_interface*) const;
@@ -172,21 +175,26 @@ private:
     bool oriented;
 
     enum VAOs {
-        Facets=0,
+        Flat_Facets=0,
+        Smooth_Facets,
         Edges,
         NM_Edges,
-        NbOfVaos = NM_Edges+1
+        NbOfVaos
     };
     enum VBOs {
         Facets_vertices = 0,
         Facets_normals,
         Edges_vertices,
         NM_Edges_vertices,
-        NbOfVbos = NM_Edges_vertices+1
+        F_Colors,
+        V_Colors,
+        NbOfVbos
     };
 
     mutable std::vector<float> positions_poly;
     mutable std::vector<float> positions_lines;
+    mutable std::vector<float> f_colors;
+    mutable std::vector<float> v_colors;
     mutable std::vector<float> normals;
     mutable std::vector<float> positions_nm_lines;
     mutable std::size_t nb_nm_edges;
@@ -195,7 +203,7 @@ private:
     using CGAL::Three::Scene_item::initializeBuffers;
     void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
     void compute_normals_and_vertices(void) const;
-    void triangulate_polygon(Polygons_iterator ) const;
+    void triangulate_polygon(Polygons_iterator , int nb) const;
     mutable QOpenGLShaderProgram *program;
 
 }; // end class Scene_polygon_soup_item

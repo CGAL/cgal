@@ -7,6 +7,7 @@
 #include <QMainWindow>
 #include <QDebug>
 #include "Scene_surface_mesh_item.h"
+#include "Scene_polygon_soup_item.h"
 
 
 //This plugin crates an action in Operations that displays "Hello World" in the 'console' dockwidet.
@@ -33,8 +34,21 @@ public:
 
      Scene_surface_mesh_item::SMesh *surface_mesh = new Scene_surface_mesh_item::SMesh();
      in >> *surface_mesh;
+     if(!in || surface_mesh->is_empty())
+     {
+      delete surface_mesh;
+       // Try to read .off in a polygon soup
+       Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item();
+       soup_item->setName(fileinfo.completeBaseName());
+       in.close();
+       std::ifstream in2(fileinfo.filePath().toUtf8());
+       if(!soup_item->load(in2)) {
+         delete soup_item;
+         return 0;
+       }
+       return soup_item;
+     }
      Scene_surface_mesh_item* item = new Scene_surface_mesh_item(surface_mesh);
-      item->setName(fileinfo.completeBaseName());
      return item;
 
  }
