@@ -189,13 +189,13 @@ Scene_polyhedron_item::triangulate_facet(Facet_iterator fit,
         {
           for (int i = 0; i<3; ++i)
           {
-            color_facets.push_back(colors_[this_patch_id].redF());
-            color_facets.push_back(colors_[this_patch_id].greenF());
-            color_facets.push_back(colors_[this_patch_id].blueF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].redF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
 
-            color_facets.push_back(colors_[this_patch_id].redF());
-            color_facets.push_back(colors_[this_patch_id].greenF());
-            color_facets.push_back(colors_[this_patch_id].blueF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].redF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
           }
         }
         if (colors_only)
@@ -413,9 +413,9 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
           {
             if (!is_monochrome)
             {
-              color_facets.push_back(colors_[this_patch_id].redF());
-              color_facets.push_back(colors_[this_patch_id].greenF());
-              color_facets.push_back(colors_[this_patch_id].blueF());
+              color_facets.push_back(colors_[this_patch_id-m_min_patch_id].redF());
+              color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
+              color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
             }
             if (colors_only)
               continue;
@@ -440,9 +440,9 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
           const int this_patch_id = f->patch_id();
           for (unsigned int i = 0; i < 6; ++i)
           { //6 "halfedges" for the quad, because it is 2 triangles
-            color_facets.push_back(colors_[this_patch_id].redF());
-            color_facets.push_back(colors_[this_patch_id].greenF());
-            color_facets.push_back(colors_[this_patch_id].blueF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].redF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].greenF());
+            color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
           }
         }
         if (colors_only)
@@ -569,7 +569,7 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     nb_facets = 0;
     nb_lines = 0;
     nb_f_lines = 0;
-    init();
+    invalidate_stats();
 }
 
 Scene_polyhedron_item::Scene_polyhedron_item(Polyhedron* const p)
@@ -627,15 +627,18 @@ init()
   {
     // Fill indices map and get max subdomain value
     int max = 0;
+    int min = (std::numeric_limits<int>::max)();
     for(Facet_iterator fit = poly->facets_begin(), end = poly->facets_end() ;
         fit != end; ++fit)
     {
       max = (std::max)(max, fit->patch_id());
+      min = (std::min)(min, fit->patch_id());
     }
-
-    colors_.resize(0);
-    compute_color_map(this->color(), max + 1,
+    
+    colors_.clear();
+    compute_color_map(this->color(), max + 1 - min,
                       std::back_inserter(colors_));
+    m_min_patch_id=min;
   }
   invalidate_stats();
 }
