@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>346</width>
-    <height>340</height>
+    <width>444</width>
+    <height>384</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -32,7 +32,7 @@
          </sizepolicy>
         </property>
         <property name="text">
-         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This function allows to clip all the selected polyhedra by an half-space. The blue side of the clipping plane will be clipped out, and the yellow side will be kept.&lt;br/&gt;&lt;br/&gt;If the option &lt;span style=&quot; font-style:italic;&quot;&gt;keep closed&lt;/span&gt; is checked, the clipped part of each polyhedron will be closed. Otherwise, it will be left open.&lt;/p&gt;&lt;p&gt;&lt;br/&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+         <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;This function allows to clip all the selected polyhedra by an half-space. The blue side of the clipping plane will be clipped out, and the yellow side will be kept.&lt;br/&gt;&lt;br/&gt;If the option &lt;span style=&quot; font-style:italic;&quot;&gt;keep closed&lt;/span&gt; is checked, the clipped part of each polyhedron will be closed. Otherwise, it will be left open.&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
         </property>
         <property name="wordWrap">
          <bool>true</bool>
