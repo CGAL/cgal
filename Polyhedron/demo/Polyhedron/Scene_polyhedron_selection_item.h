@@ -220,7 +220,7 @@ public:
    ~Scene_polyhedron_selection_item()
     {
     }
-
+  void inverse_selection();
 protected: 
   void init(Scene_polyhedron_item* poly_item, QMainWindow* mw)
   {

@@ -145,7 +145,7 @@ Scene::erase(Scene::Item_id index)
             group->removeChild(item);
     }
   Q_EMIT itemAboutToBeDestroyed(item);
-    delete item;
+    item->deleteLater();
     m_entries.removeAll(item);
     selected_item = -1;
     Q_FOREACH(Scene_item* item, m_entries)
@@ -190,7 +190,7 @@ Scene::erase(QList<int> indices)
       if(group_item->getChildren().contains(item))
         group_item->removeChild(item);
     Q_EMIT itemAboutToBeDestroyed(item);
-    delete item;
+    item->deleteLater();
     m_entries.removeAll(item);
   }
   clear();
