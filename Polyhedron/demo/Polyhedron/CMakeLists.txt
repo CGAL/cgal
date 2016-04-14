@@ -204,7 +204,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(demo_framework
     ${QGLVIEWER_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
-    ${OPENGL_glu_LIBRARY}
     )
 
   add_library(scene_basic_objects SHARED
@@ -215,7 +214,6 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     ${CGAL_LIBRARIES}
     ${QGLVIEWER_LIBRARIES}
     ${OPENGL_gl_LIBRARY}
-    ${OPENGL_glu_LIBRARY}
     )
   qt5_use_modules(scene_basic_objects OpenGL Gui Xml Script Widgets)
   add_library(point_dialog SHARED Show_point_dialog.cpp Show_point_dialog.ui ${Show_point_dialogUI_FILES})
@@ -313,7 +311,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries( Polyhedron_3 ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
   # Link with libQGLViewer, OpenGL
-  target_link_libraries( Polyhedron_3 ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+  target_link_libraries( Polyhedron_3 ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY})
 
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS Polyhedron_3 )

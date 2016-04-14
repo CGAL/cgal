@@ -57,7 +57,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries( PCA_demo ${CGAL_LIBRARIES} ${CGAL_3RD_PARTY_LIBRARIES} )
 
   # Link with libQGLViewer, OpenGL
-  target_link_libraries( PCA_demo ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} ${OPENGL_glu_LIBRARY} )
+  target_link_libraries( PCA_demo ${QGLVIEWER_LIBRARIES} ${OPENGL_gl_LIBRARY} )
 
   add_to_cached_list( CGAL_EXECUTABLE_TARGETS PCA_demo )
 
