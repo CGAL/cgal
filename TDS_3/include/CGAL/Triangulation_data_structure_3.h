@@ -2307,7 +2307,7 @@ void
 Triangulation_data_structure_3<Vb,Cb,Ct>::
 print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> &V ) const
 {
-  std::map<Cell_handle, std::size_t > C;
+  Unique_hash_map<Cell_handle, std::size_t > C;
   std::size_t i = 0;
 
   switch ( dimension() ) {
@@ -2327,7 +2327,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
           if(is_ascii(os)) {
             os << V[it->vertex(j)];
             if ( j==3 )
-              os << std::endl;
+              os << '\n';
             else
               os << ' ';
           }
@@ -2343,7 +2343,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
           if(is_ascii(os)){
             os << C[it->neighbor(j)];
             if(j==3)
-              os << std::endl;
+              os << '\n';
             else
               os <<  ' ';
           }
@@ -2357,7 +2357,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
     {
       size_type m = number_of_facets();
       if(is_ascii(os))
-        os << m << std::endl;
+        os << m << '\n';
       else
         write(os, m);
 
@@ -2369,7 +2369,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
           if(is_ascii(os)) {
             os << V[(*it).first->vertex(j)];
             if ( j==2 )
-              os << std::endl;
+              os << '\n';
             else
               os <<  ' ';
           }
@@ -2386,7 +2386,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
           if(is_ascii(os)){
             os << C[(*it).first->neighbor(j)];
             if(j==2)
-              os << std::endl;
+              os << '\n';
             else
               os <<  ' ';
           }
@@ -2401,7 +2401,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
     {
       size_type m = number_of_edges();
       if(is_ascii(os))
-        os << m << std::endl;
+        os << m << '\n';
       else
         write(os, m);
       // write the edges
@@ -2412,7 +2412,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
           if(is_ascii(os)) {
             os << V[(*it).first->vertex(j)];
             if ( j==1 )
-              os << std::endl;
+              os << '\n';
             else
               os <<  ' ';
           }
@@ -2429,7 +2429,7 @@ print_cells(std::ostream& os, const Unique_hash_map<Vertex_handle, std::size_t> 
           if(is_ascii(os)){
             os << C[(*it).first->neighbor(j)];
             if(j==1)
-              os << std::endl;
+              os << '\n';
             else
               os <<  ' ';
           }
