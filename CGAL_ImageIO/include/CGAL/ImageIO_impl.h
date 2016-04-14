@@ -141,7 +141,10 @@ size_t ImageIO_write(const _image *im, const void *buf, size_t len) {
   //return 0;
 }
 
-
+size_t ImageIO_limit_read(size_t to_be_read)
+{
+  return (std::min)(to_be_read, size_t(1u<<30));
+}
 
 /* mimics fread() function.
    According to _openReadImage(), openMode will has one 
@@ -162,12 +165,12 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
     return 0;
   case OM_STD :
 #ifdef CGAL_USE_ZLIB
-    while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, to_be_read)) > 0) ) {
+    while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, ImageIO_limit_read(to_be_read))) > 0) ) {
       to_be_read -= l;
       b += l;
     }
 #else 
-    while ( (to_be_read > 0) && ((l = fread( b, 1, to_be_read, im->fd )) > 0) ) {
+    while ( (to_be_read > 0) && ((l = fread( b, 1, ImageIO_limit_read(to_be_read), im->fd )) > 0) ) {
       to_be_read -= l;
       b += l;
     }
@@ -175,7 +178,7 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
     return ( len - to_be_read );
 #ifdef CGAL_USE_ZLIB
   case OM_GZ :
-    while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, to_be_read)) > 0) ) {
+    while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, ImageIO_limit_read(to_be_read))) > 0) ) {
       to_be_read -= l;
       b += l;
     }
@@ -187,7 +190,7 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
     return ( len - to_be_read );
 #else
   case OM_FILE :
-    while ( (to_be_read > 0) && ((l = fread( b, 1, to_be_read, im->fd )) > 0) ) {
+    while ( (to_be_read > 0) && ((l = fread( b, 1, ImageIO_limit_read(to_be_read), im->fd )) > 0) ) {
       to_be_read -= l;
       b += l;
     }
@@ -542,7 +545,7 @@ _image *_createImage(int x, int y, int z, int v,
   im->rx = im->ry = im->rz = 0.0;
 
   /* no data yet */
-  im->data = ImageIO_alloc(x*y*z*v*w);
+  im->data = ImageIO_alloc(std::size_t(x)*std::size_t(y)*std::size_t(z)*std::size_t(v)*std::size_t(w));
 
   /* no file associated to image */
   im->fd = NULL;
