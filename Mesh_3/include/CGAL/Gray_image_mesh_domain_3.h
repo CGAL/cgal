@@ -86,9 +86,10 @@ public:
                            CGAL::Random* p_rng = NULL)
     : Base(Wrapper(image, 
                    Transform(iso_value),
-                   value_outside),
+                   Transform(iso_value)(value_outside)),
            compute_bounding_box(image),
            error_bound,
+           Null_subdomain_index(),
            p_rng)
   {}
 
@@ -97,9 +98,10 @@ public:
                            const Image_word_type value_outside = 0.,
                            const FT& error_bound = FT(1e-3),
                            CGAL::Random* p_rng = NULL)
-    : Base(Wrapper(image, transform, value_outside),
+    : Base(Wrapper(image, transform, transform(value_outside)),
            compute_bounding_box(image),
            error_bound,
+           Null_subdomain_index(),
            p_rng)
   {}
 
