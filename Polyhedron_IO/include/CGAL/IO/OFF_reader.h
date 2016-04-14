@@ -121,7 +121,7 @@ namespace CGAL{
             vcolors[i] = Color_rgb(r,g,b);
         }
         else
-         scanner.skip_to_next_vertex( i);
+         scanner.skip_to_next_vertex(i);
     }
     if(!in)
       return false;

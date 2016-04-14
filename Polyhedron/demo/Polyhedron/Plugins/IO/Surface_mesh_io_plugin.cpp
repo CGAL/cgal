@@ -37,10 +37,10 @@ public:
      if(!in || surface_mesh->is_empty())
      {
       delete surface_mesh;
+       in.close();
        // Try to read .off in a polygon soup
        Scene_polygon_soup_item* soup_item = new Scene_polygon_soup_item();
        soup_item->setName(fileinfo.completeBaseName());
-       in.close();
        std::ifstream in2(fileinfo.filePath().toUtf8());
        if(!soup_item->load(in2)) {
          delete soup_item;
@@ -49,6 +49,7 @@ public:
        return soup_item;
      }
      Scene_surface_mesh_item* item = new Scene_surface_mesh_item(surface_mesh);
+     item->setName(fileinfo.completeBaseName());
      return item;
 
  }

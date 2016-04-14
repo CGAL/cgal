@@ -238,9 +238,15 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
     BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh_))
     {
       Point p = positions[vd];
-      edge_vertices.push_back((gl_data)p.x());
-      edge_vertices.push_back((gl_data)p.y());
-      edge_vertices.push_back((gl_data)p.z());
+      smooth_vertices.push_back((gl_data)p.x());
+      smooth_vertices.push_back((gl_data)p.y());
+      smooth_vertices.push_back((gl_data)p.z());
+
+      Kernel::Vector_3 n = vnormals[vd];
+      smooth_normals.push_back((gl_data)n.x());
+      smooth_normals.push_back((gl_data)n.y());
+      smooth_normals.push_back((gl_data)n.z());
+
     }
   }
 
@@ -283,7 +289,7 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
   buffers[Smooth_vertices].allocate(positions.data(),
                              static_cast<int>(num_vertices(*smesh_)*3*sizeof(gl_data)));
   else
-    buffers[Smooth_vertices].allocate(edge_vertices.data(),
+    buffers[Smooth_vertices].allocate(smooth_vertices.data(),
                                static_cast<int>(num_vertices(*smesh_)*3*sizeof(gl_data)));
 
   program->enableAttributeArray("vertex");
@@ -292,8 +298,12 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
 
 
   buffers[Smooth_normals].bind();
-  buffers[Smooth_normals].allocate(vnormals.data(),
-                            static_cast<int>(num_vertices(*smesh_)*3*sizeof(gl_data)));
+  if(!floated)
+    buffers[Smooth_normals].allocate(vnormals.data(),
+                                     static_cast<int>(num_vertices(*smesh_)*3*sizeof(gl_data)));
+  else
+    buffers[Smooth_normals].allocate(smooth_normals.data(),
+                              static_cast<int>(num_vertices(*smesh_)*3*sizeof(gl_data)));
   program->enableAttributeArray("normals");
   program->setAttributeBuffer("normals",GL_DATA,0,3);
   buffers[Smooth_normals].release();

@@ -82,7 +82,8 @@ private:
   void addFlatData(Point, Kernel::Vector_3, CGAL::Color) const;
   mutable std::vector<unsigned int> idx_data_;
   std::vector<unsigned int> idx_edge_data_;
-  mutable std::vector<gl_data> edge_vertices;
+  mutable std::vector<gl_data> smooth_vertices;
+  mutable std::vector<gl_data> smooth_normals;
   mutable std::vector<gl_data> flat_vertices;
   mutable std::vector<gl_data> flat_normals;
   mutable std::vector<gl_data> f_colors;
