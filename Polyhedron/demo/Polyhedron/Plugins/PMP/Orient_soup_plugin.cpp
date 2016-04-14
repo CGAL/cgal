@@ -39,7 +39,8 @@ public:
   QList<QAction*> actions() const;
 
 public Q_SLOTS:
-  void orient();
+  void orientPoly();
+  void orientSM();
   void shuffle();
   void displayNonManifoldEdges();
 
@@ -47,7 +48,8 @@ private:
   CGAL::Three::Scene_interface* scene;
   Messages_interface* messages;
   QMainWindow* mw;
-  QAction* actionOrient;
+  QAction* actionOrientPoly;
+  QAction* actionOrientSM;
   QAction* actionShuffle;
   QAction* actionDisplayNonManifoldEdges;
 
@@ -60,11 +62,16 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
   scene = scene_interface;
   mw = mainWindow;
   messages = m;
-  actionOrient = new QAction(tr("&Orient Polygon Soup"), mainWindow);
-  actionOrient->setObjectName("actionOrient");
-  actionOrient->setProperty("subMenuName", "Polygon Mesh Processing");
-  connect(actionOrient, SIGNAL(triggered()),
-          this, SLOT(orient()));
+  actionOrientPoly = new QAction(tr("&Orient Polygon Soup (as a polyhedron)"), mainWindow);
+  actionOrientPoly->setObjectName("actionOrient");
+  actionOrientPoly->setProperty("subMenuName", "Polygon Mesh Processing");
+  connect(actionOrientPoly, SIGNAL(triggered()),
+          this, SLOT(orientPoly()));
+  actionOrientSM = new QAction(tr("&Orient Polygon Soup (as a surface_mesh)"), mainWindow);
+  actionOrientSM->setObjectName("actionOrient");
+  actionOrientSM->setProperty("subMenuName", "Polygon Mesh Processing");
+  connect(actionOrientSM, SIGNAL(triggered()),
+          this, SLOT(orientSM()));
 
   actionShuffle = new QAction(tr("&Shuffle Polygon Soup"), mainWindow);
   actionShuffle->setProperty("subMenuName", "Polygon Mesh Processing");
@@ -79,7 +86,8 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
 }
 
 QList<QAction*> Polyhedron_demo_orient_soup_plugin::actions() const {
-  return QList<QAction*>() << actionOrient
+  return QList<QAction*>() << actionOrientPoly
+                           << actionOrientSM
                            << actionShuffle
                            << actionDisplayNonManifoldEdges;
 }
@@ -112,7 +120,7 @@ void set_fcolors(Scene_surface_mesh_item::SMesh* smesh, std::vector<CGAL::Color>
       fcolors[fd] = colors[color_id++];
 }
 
-void Polyhedron_demo_orient_soup_plugin::orient()
+void Polyhedron_demo_orient_soup_plugin::orientPoly()
 {
   Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
   {
@@ -131,8 +139,7 @@ void Polyhedron_demo_orient_soup_plugin::orient()
                                       .arg(item->name()));
       }
 
-      if(!item->isDataColored())
-      {
+
         Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
         if(item->exportAsPolyhedron(poly_item->polyhedron())) {
           poly_item->setName(item->name());
@@ -147,9 +154,32 @@ void Polyhedron_demo_orient_soup_plugin::orient()
           item->invalidateOpenGLBuffers();
           scene->itemChanged(item);
         }
+      QApplication::restoreOverrideCursor();
+    }
+    else{
+      messages->warning(tr("This function is only applicable on polygon soups."));
+    }
+  }
+}
+
+void Polyhedron_demo_orient_soup_plugin::orientSM()
+{
+  Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
+  {
+    Scene_polygon_soup_item* item =
+      qobject_cast<Scene_polygon_soup_item*>(scene->item(index));
+
+    if(item)
+    {
+      //     qDebug()  << tr("I have the item %1\n").arg(item->name());
+      QApplication::setOverrideCursor(Qt::WaitCursor);
+      if(!item->orient()) {
+         QMessageBox::information(mw, tr("Not orientable without self-intersections"),
+                                      tr("The polygon soup \"%1\" is not directly orientable."
+                                         " Some vertices have been duplicated and some self-intersections"
+                                         " have been created.")
+                                      .arg(item->name()));
       }
-      else
-      {
         Scene_surface_mesh_item::SMesh* smesh = new Scene_surface_mesh_item::SMesh();
         if(item->exportAsSurfaceMesh(smesh)) {
           if(!item->getVColors().empty())
@@ -167,8 +197,6 @@ void Polyhedron_demo_orient_soup_plugin::orient()
           item->invalidateOpenGLBuffers();
           scene->itemChanged(item);
         }
-      }
-
       QApplication::restoreOverrideCursor();
     }
     else{
