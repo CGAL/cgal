@@ -100,8 +100,8 @@ public:
   {}
 
   Labeled_image_mesh_domain_3(const Image& image,
-                              const FT& error_bound,
-                              CGAL::Random* p_rng = NULL)
+                              const FT error_bound,
+                              CGAL::Random* p_rng)
     : Base(Wrapper(image),
            compute_bounding_box(image),
            error_bound,
@@ -111,8 +111,8 @@ public:
 
   Labeled_image_mesh_domain_3(const Image& image,
                               const CGAL::Bbox_3& bbox,
-                              const FT& error_bound,
-                              CGAL::Random* p_rng = NULL)
+                              const FT error_bound,
+                              CGAL::Random* p_rng)
     : Base(Wrapper(image),
            bbox,
            error_bound,
