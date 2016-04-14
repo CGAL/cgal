@@ -1,5 +1,5 @@
-
 #include <CGAL/Three/Scene_group_item.h>
+#include <CGAL/Three/Viewer_interface.h>
 #include <QDebug>
 
 using namespace CGAL::Three;
@@ -115,4 +115,56 @@ void Scene_group_item::moveDown(int i)
 void Scene_group_item::moveUp(int i)
 {
     children.move(i, i-1);
+}
+
+void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer) const {
+  if(viewer->inDrawWithNames()) return;
+  Q_FOREACH(Scene_item* child, children) {
+    if(!child->visible()) continue;
+    switch(child->renderingMode()) {
+    case Flat:
+    case FlatPlusEdges:
+    case Gouraud:
+      child->draw(viewer); break;
+    default: break;
+    }
+  }
+}
+
+void Scene_group_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
+{
+  if(viewer->inDrawWithNames()) return;
+  Q_FOREACH(Scene_item* child, children) {
+    if(!child->visible()) continue;
+    switch(child->renderingMode()) {
+    case FlatPlusEdges:
+    case Wireframe:
+    case PointsPlusNormals:
+      child->draw_edges(viewer); break;
+    default: break;
+    }
+  }
+}
+
+void Scene_group_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
+{
+  if(viewer->inDrawWithNames()) return;
+  Q_FOREACH(Scene_item* child, children) {
+    if(!child->visible()) continue;
+    switch(child->renderingMode()) {
+    case Points:
+    case PointsPlusNormals:
+      child->draw_points(viewer); break;
+    default: break;
+    }
+  }
+}
+
+void Scene_group_item::draw_splats(CGAL::Three::Viewer_interface* viewer) const
+{
+  if(viewer->inDrawWithNames()) return;
+  Q_FOREACH(Scene_item* child, children) {
+    if(child->visible() && child->renderingMode() == Splatting)
+      child->draw_splats(viewer);
+  }
 }

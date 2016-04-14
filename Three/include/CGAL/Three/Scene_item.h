@@ -43,6 +43,7 @@ class QKeyEvent;
 namespace CGAL {
 namespace Three {
 
+class Scene_group_item;
 class Viewer_interface;
 //! This class represents an object in the OpenGL scene
 class SCENE_ITEM_EXPORT Scene_item : public QObject {
@@ -78,72 +79,12 @@ public:
   //! The default color of a scene_item.
   static const QColor defaultColor; // defined in Scene_item.cpp
 
-  //!The default Constructor.
-  /*!
-   * Initializes the number of VBOs to 20 and VAOs to 10 and creates them.
-   */
-  Scene_item()
-    : name_("unamed"),
-      color_(defaultColor),
-      visible_(true),
-      are_buffers_filled(false),
-      rendering_mode(FlatPlusEdges),
-      defaultContextMenu(0),
-      buffersSize(20),
-      vaosSize(10),
-      vaos(10)
-  {
-      is_bbox_computed = false;
-      is_monochrome = true;
-      for(int i=0; i<vaosSize; i++)
-      {
-          addVaos(i);
-          vaos[i]->create();
-      }
-
-      buffers.reserve(buffersSize);
-      for(int i=0; i<buffersSize; i++)
-      {
-          QOpenGLBuffer n_buf;
-          buffers.push_back(n_buf);
-          buffers[i].create();
-      }
-      nb_isolated_vertices = 0;
-      has_group = 0;
-  }
   //!The Constructor.
   /*!
    * Initializes the number of VBOs and VAOs and creates them.
    */
-  Scene_item(int buffers_size, int vaos_size)
-    : name_("unamed"),
-      color_(defaultColor),
-      visible_(true),
-      are_buffers_filled(false),
-      rendering_mode(FlatPlusEdges),
-      defaultContextMenu(0),
-      buffersSize(buffers_size),
-      vaosSize(vaos_size),
-      vaos(vaos_size)
-  {
-      is_bbox_computed = false;
-      is_monochrome = true;
-      for(int i=0; i<vaosSize; i++)
-      {
-          addVaos(i);
-          vaos[i]->create();
-      }
+  Scene_item(int buffers_size = 20, int vaos_size = 10);
 
-      buffers.reserve(buffersSize);
-      for(int i=0; i<buffersSize; i++)
-      {
-          QOpenGLBuffer n_buf;
-          buffers.push_back(n_buf);
-          buffers[i].create();
-      }
-      nb_isolated_vertices = 0;
-      has_group = 0;
-  }
   //! Setter for the number of isolated vertices.
   void setNbIsolatedvertices(std::size_t nb) { nb_isolated_vertices = nb;}
   //! Getter for the number of isolated vertices.
@@ -243,6 +184,9 @@ public:
   //!Handles key press events.
   virtual bool keyPressEvent(QKeyEvent*){return false;}
 
+  //!The parent group, or 0 if the item is not in a group.
+  Scene_group_item* parentGroup() const;
+
   //!Contains the header for the table in the statistics dialog
   /*!
    * A header data is composed of 2 columns : the Categories and the titles.
@@ -308,6 +252,10 @@ public Q_SLOTS:
   virtual void setName(QString n) { name_ = n; }
   //!Setter for the visibility of the item.
   virtual void setVisible(bool b);
+  //!Set the parent group. If `group==0`, then the item has no parent.
+  //!This function is called by `Scene::changeGroup` and should not be
+  //!called manually.
+  virtual void moveToGroup(Scene_group_item* group);
   //!Setter for the rendering mode of the item.
   //!@see RenderingMode
   virtual void setRenderingMode(RenderingMode m) { 
@@ -380,6 +328,8 @@ protected:
   QColor color_;
   //!The visibility of the item.
   bool visible_;
+  //!The parent group, or 0 if the item is not in a group.
+  Scene_group_item* parent_group;
   //!Specifies if the item is currently selected.
   bool is_selected;
   //! Specifies if the item is monochrome and uses uniform attribute for its color

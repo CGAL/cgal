@@ -16,6 +16,7 @@ public:
   bool twosides;
   bool macro_mode;
   bool inFastDrawing;
+  bool inDrawWithNames;
   
   void draw_aux(bool with_names, Viewer*);
 
@@ -31,6 +32,7 @@ Viewer::Viewer(QWidget* parent, bool antialiasing)
   d->twosides = false;
   d->macro_mode = false;
   d->inFastDrawing = true;
+  d->inDrawWithNames = false;
   d->shader_programs.resize(NB_OF_PROGRAMS);
   setShortcut(EXIT_VIEWER, 0);
   setShortcut(DRAW_AXIS, 0);
@@ -328,12 +330,17 @@ void Viewer_impl::draw_aux(bool with_names, Viewer* viewer)
     viewer->glHint(GL_LINE_SMOOTH_HINT, GL_FASTEST);
     viewer->glBlendFunc(GL_ONE, GL_ZERO);
   }
+  inDrawWithNames = with_names;
   if(with_names)
     scene->drawWithNames(viewer);
   else
     scene->draw(viewer);
   viewer->glDisable(GL_POLYGON_OFFSET_FILL);
   viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
+}
+
+bool Viewer::inDrawWithNames() const {
+  return d->inDrawWithNames;
 }
 
 void Viewer::drawWithNames()

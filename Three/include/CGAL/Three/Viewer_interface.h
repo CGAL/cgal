@@ -80,6 +80,8 @@ public:
   static QString dumpFrame(const qglviewer::Frame&);
   //! @returns the fastDrawing state.
   virtual bool inFastDrawing() const = 0;
+  //! @returns if the viewer is in `drawWithNames()`
+  virtual bool inDrawWithNames() const = 0;
 
   /*! Passes all the uniform data to the shaders.
    * According to program_name, this data may change.

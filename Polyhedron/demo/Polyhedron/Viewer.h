@@ -60,6 +60,8 @@ public:
   bool antiAliasing() const;
   //! @returns the fastDrawing state.
   bool inFastDrawing() const;
+  //! Implementation of `Viewer_interface::inDrawWithNames()`
+  bool inDrawWithNames() const;
   //! Implementation of `Viewer_interface::attrib_buffers()`
   void attrib_buffers(int program_name) const;
   //! Implementation of `Viewer_interface::getShaderProgram()`

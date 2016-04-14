@@ -312,25 +312,27 @@ Scene::keyPressEvent(QKeyEvent* e){
 }
 
 void
-Scene::draw()
-{
-    draw_aux(false, 0);
-}
-void
 Scene::draw(CGAL::Three::Viewer_interface* viewer)
 {
     draw_aux(false, viewer);
-}
-void
-Scene::drawWithNames()
-{
-    draw_aux(true, 0);
 }
 void
 Scene::drawWithNames(CGAL::Three::Viewer_interface* viewer)
 {
     draw_aux(true, viewer);
 }
+
+bool item_should_be_skipped_in_draw(Scene_item* item) {
+  if(!item->visible()) return true;
+  if(item->has_group == 0) return false;
+  Scene_group_item* group = item->parentGroup();
+  while(group != 0) {
+    if(!group->visible()) return false;
+    group = group->parentGroup();
+  }
+  return true;
+}
+
 void 
 Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 {
@@ -343,6 +345,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     for(int index = 0; index < m_entries.size(); ++index)
     {
         CGAL::Three::Scene_item& item = *m_entries[index];
+        if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
         if(item.visible())
         {
             if(item.renderingMode() == Flat || item.renderingMode() == FlatPlusEdges || item.renderingMode() == Gouraud)
@@ -393,6 +396,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     for(int index = 0; index < m_entries.size(); ++index)
     {
         CGAL::Three::Scene_item& item = *m_entries[index];
+        if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
         if(item.visible())
         {
             if((item.renderingMode() == Wireframe || item.renderingMode() == PointsPlusNormals )
@@ -465,6 +469,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     for(int index = 0; index < m_entries.size(); ++index)
     {
         CGAL::Three::Scene_item& item = *m_entries[index];
+        if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
         if(item.visible())
         {
             if(item.renderingMode() == Points && with_names) {
@@ -502,11 +507,11 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
         // Splatting
         if(!with_names && ms_splatting->isSupported())
         {
-
             ms_splatting->beginVisibilityPass();
             for(int index = 0; index < m_entries.size(); ++index)
             {
                 CGAL::Three::Scene_item& item = *m_entries[index];
+                if(!with_names && item_should_be_skipped_in_draw(&item)) continue;
                 if(item.visible() && item.renderingMode() == Splatting)
                 {
 
@@ -1124,7 +1129,7 @@ void Scene::changeGroup(Scene_item *item, CGAL::Three::Scene_group_item *target_
   }
  //add the item to the target group
  target_group->addChild(item);
- item->has_group = target_group->has_group +1;
+ item->moveToGroup(target_group);
 }
 
 float Scene::get_bbox_length() const

@@ -1,10 +1,42 @@
 #include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_group_item.h>
 #include <CGAL/Three/Scene_interface.h>
 #include <QMenu>
 #include <iostream>
 #include <QDebug>
 #include <CGAL/Three/Viewer_interface.h>
 const QColor CGAL::Three::Scene_item::defaultColor = QColor(100, 100, 255);
+
+CGAL::Three::Scene_item::Scene_item(int buffers_size, int vaos_size)
+  : name_("unamed"),
+    color_(defaultColor),
+    visible_(true),
+    are_buffers_filled(false),
+    rendering_mode(FlatPlusEdges),
+    defaultContextMenu(0),
+    buffersSize(buffers_size),
+    vaosSize(vaos_size),
+    vaos(vaos_size)
+{
+  is_bbox_computed = false;
+  is_monochrome = true;
+  for(int i=0; i<vaosSize; i++)
+  {
+    addVaos(i);
+    vaos[i]->create();
+  }
+
+  buffers.reserve(buffersSize);
+  for(int i=0; i<buffersSize; i++)
+  {
+    QOpenGLBuffer n_buf;
+    buffers.push_back(n_buf);
+    buffers[i].create();
+  }
+  nb_isolated_vertices = 0;
+  has_group = 0;
+  parent_group = 0;
+}
 
 CGAL::Three::Scene_item::~Scene_item() {
   delete defaultContextMenu;
@@ -99,6 +131,19 @@ QMenu* CGAL::Three::Scene_item::contextMenu()
     }
     // defaultContextMenu->addAction(modeMenu->menuAction());
     return defaultContextMenu;
+}
+
+CGAL::Three::Scene_group_item* CGAL::Three::Scene_item::parentGroup() const {
+  return parent_group;
+}
+
+void CGAL::Three::Scene_item::
+moveToGroup(CGAL::Three::Scene_group_item* group) {
+  parent_group = group;
+  if(group)
+    has_group = group->has_group + 1;
+  else
+    has_group = 0;
 }
 
 void CGAL::Three::Scene_item::invalidateOpenGLBuffers() {}
