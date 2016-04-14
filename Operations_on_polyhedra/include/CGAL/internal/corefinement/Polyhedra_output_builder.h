@@ -1165,6 +1165,9 @@ private:
             internal_IOP::Compare_unik_address<Polyhedron>
           >& Qhedge_to_Phedge
   ){
+    #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
+    #warning the size of Qhedge_to_Phedge will increase when adding new patches by the size of internal edges. Maybe the use of a copy would be better?
+    #endif
     for (std::size_t i=patches_to_append.find_first();
                      i < patches_to_append.npos; i = patches_to_append.find_next(i))
     {
@@ -1242,19 +1245,19 @@ private:
       //clean up patches inside Q
       remove_patches_from_polyhedra(P_ptr, ~patches_of_P_to_keep, patches_of_P);
 
-      // if (reverse_patch_orientation_P)
-      //   Polygon_mesh_processing::reverse_face_orientations(*P_ptr);
+      if (reverse_patch_orientation_P){
+       Polygon_mesh_processing::reverse_face_orientations(*P_ptr);
+       // here we need to update the mapping to use the correct border
+       // halfedges while appending the patches from Q
+       BOOST_FOREACH(typename Edge_map::value_type& v, Qhedge_to_Phedge)
+        v.second=v.second->opposite();
+     }
 
       //we import patches from Q
-      // if ( reverse_patch_orientation_Q )
-      if (reverse_patch_orientation_Q || reverse_patch_orientation_P)
+      if ( reverse_patch_orientation_Q )
         append_Q_patches_to_P<true>(P_ptr, patches_of_Q_to_import, patches_of_Q, Qhedge_to_Phedge);
       else
         append_Q_patches_to_P<false>(P_ptr, patches_of_Q_to_import, patches_of_Q, Qhedge_to_Phedge);
-
-      if (reverse_patch_orientation_P)
-        Polygon_mesh_processing::reverse_face_orientations(*P_ptr);
-
 
       /// in case the result is empty, there will be no facets in the polyhedron
       /// but maybe marked halfedges
