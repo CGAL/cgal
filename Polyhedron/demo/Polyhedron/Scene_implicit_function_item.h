@@ -70,6 +70,7 @@ public:
 
   virtual QString toolTip() const;
   virtual void invalidateOpenGLBuffers();
+  bool eventFilter(QObject *target, QEvent *event);
 public Q_SLOTS:
   void plane_was_moved() { need_update_ = true; }
   void compute_function_grid() const;

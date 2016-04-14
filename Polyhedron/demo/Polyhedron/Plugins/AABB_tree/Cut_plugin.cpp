@@ -21,7 +21,7 @@
 #include "Polyhedron_type.h"
 
 #include <QTime>
-
+#include <QKeyEvent>
 #include <QAction>
 #include <QMainWindow>
 #include <QApplication>
@@ -142,17 +142,21 @@ class Q_DECL_EXPORT Scene_edges_item : public CGAL::Three::Scene_item
 {
   Q_OBJECT
 public:
-    Scene_edges_item():CGAL::Three::Scene_item(1,1)
+    Scene_edges_item(QMainWindow *mw):CGAL::Three::Scene_item(1,1)
     {
-        positions_lines.resize(0);
-        top = true;
+      mainwindow = mw;
+      mainwindow->installEventFilter(this);
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      viewer->installEventFilter(this);
+      positions_lines.resize(0);
+      top = true;
     }
   ~Scene_edges_item()
   {
   }
     bool isFinite() const { return true; }
-  bool isEmpty() const { return edges.empty(); }
-  void compute_bbox() const {
+    bool isEmpty() const { return edges.empty(); }
+    void compute_bbox() const {
     if(isEmpty())
       _bbox = Bbox();
     return;
@@ -175,11 +179,33 @@ public:
   }
 
   Scene_edges_item* clone() const {
-    Scene_edges_item* item = new Scene_edges_item();
+    Scene_edges_item* item = new Scene_edges_item(mainwindow);
     item->edges = edges;
     return item;
   }
-
+  bool eventFilter(QObject */*target*/, QEvent *event)
+  {
+    if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
+    {
+      static int timer_id = -1;
+      QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+      if (keyEvent->key() == Qt::Key_Control && event->type() == QEvent::KeyPress)
+      {
+        // start QObject's timer for continuous effects
+        // (deforming mesh while mouse not moving)
+        if(timer_id != -1)
+          killTimer(timer_id);
+        timer_id = startTimer(0);
+      }
+      else if (keyEvent->key() == Qt::Key_Control && event->type() == QEvent::KeyRelease)
+      {
+        if(timer_id != -1)
+          killTimer(timer_id);
+        timer_id = -1;
+      }
+    }
+    return false;
+  }
   QString toolTip() const {
     return
       tr("<p><b>%1</b> (mode: %2, color: %3)<br />"
@@ -212,6 +238,7 @@ public:
   bool top;
 
 private:
+    QMainWindow *mainwindow;
     mutable std::vector<float> positions_lines;
     void timerEvent(QTimerEvent* /*event*/)
     {
@@ -359,7 +386,7 @@ private:
   Scene_plane_item* plane_item;
   Scene_edges_item* edges_item;
   QAction* actionCreateCutPlane;
-
+  QMainWindow* mainwindow;
   typedef std::map<QObject*,  AABB_tree*> Trees;
   Trees trees;
 }; // end Polyhedron_demo_cut_plugin
@@ -375,13 +402,14 @@ Polyhedron_demo_cut_plugin::~Polyhedron_demo_cut_plugin()
 }
 
 
-void Polyhedron_demo_cut_plugin::init(QMainWindow* mainWindow,
+void Polyhedron_demo_cut_plugin::init(QMainWindow* mw,
                                       CGAL::Three::Scene_interface* scene_interface,
                                       Messages_interface* m)
 {
+  mainwindow = mw;
   scene = scene_interface;
   messages = m;
-  actionCreateCutPlane = new QAction(tr("Create Cutting Plane"), mainWindow);
+  actionCreateCutPlane = new QAction(tr("Create Cutting Plane"), mainwindow);
   actionCreateCutPlane->setProperty("subMenuName","3D Fast Intersection and Distance Computation");
   connect(actionCreateCutPlane, SIGNAL(triggered()),
           this, SLOT(createCutPlane()));
@@ -424,10 +452,9 @@ void Polyhedron_demo_cut_plugin::createCutPlane() {
 void Polyhedron_demo_cut_plugin::cut() {
   QApplication::setOverrideCursor(Qt::WaitCursor);
   if(!edges_item) {
-    edges_item = new Scene_edges_item;
+    edges_item = new Scene_edges_item(mainwindow);
     edges_item->setName("Edges of the Cut");
     edges_item->setColor(Qt::red);
-    edges_item->startTimer(0);
     connect(edges_item, SIGNAL(destroyed()),
             this, SLOT(reset_edges()));
     scene->addItem(edges_item);

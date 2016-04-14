@@ -1,5 +1,6 @@
 #include "Scene_implicit_function_item.h"
 #include <QColor>
+#include <QKeyEvent>
 #include <map>
 #include <CGAL/gl.h>
 #include <CGAL/Simple_cartesian.h>
@@ -353,7 +354,6 @@ Scene_implicit_function_item(Implicit_function_interface* f)
     texture = new Texture(grid_size_-1,grid_size_-1);
     blue_color_ramp_.build_blue();
     red_color_ramp_.build_red();
-    startTimer(0);
     //Generates an integer which will be used as ID for each buffer
     compute_min_max();
     compute_function_grid();
@@ -590,4 +590,29 @@ void Scene_implicit_function_item::timerEvent(QTimerEvent* /*event*/)
     compute_vertices_and_texmap();
     need_update_= false;
   }
+}
+
+bool Scene_implicit_function_item::eventFilter(QObject* /*target*/, QEvent *event)
+{
+  // key events
+  if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
+  {
+    static int timer_id = -1;
+    QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+    if (keyEvent->key() == Qt::Key_Control && event->type() == QEvent::KeyPress)
+    {
+      // start QObject's timer for continuous effects
+      // (deforming mesh while mouse not moving)
+      if(timer_id != -1)
+        killTimer(timer_id);
+      timer_id = startTimer(0);
+    }
+    else if (keyEvent->key() == Qt::Key_Control && event->type() == QEvent::KeyRelease)
+    {
+      if(timer_id != -1)
+        killTimer(timer_id);
+      timer_id = -1;
+    }
+  }
+  return false;
 }

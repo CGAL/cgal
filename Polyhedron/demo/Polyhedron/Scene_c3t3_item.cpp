@@ -6,6 +6,7 @@
 #include <QColor>
 #include <QPixmap>
 #include <QPainter>
+#include <QKeyEvent>
 #include <QtCore/qglobal.h>
 
 #include <map>
@@ -74,7 +75,6 @@ Scene_c3t3_item::Scene_c3t3_item()
   s_normals.resize(0);
   ws_vertex.resize(0);
   need_changed = false;
-  startTimer(0);
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
@@ -100,7 +100,6 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   s_normals.resize(0);
   ws_vertex.resize(0);
   need_changed = false;
-  startTimer(0);
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
   reset_cut_plane();
   c3t3_changed();
@@ -167,6 +166,30 @@ void Scene_c3t3_item::timerEvent(QTimerEvent* /*event*/)
   }
 }
 
+bool Scene_c3t3_item::eventFilter(QObject* /*target*/, QEvent *event)
+{
+  // key events
+  if(event->type() == QEvent::KeyPress || event->type() == QEvent::KeyRelease)
+  {
+    static int timer_id = -1;
+    QKeyEvent *keyEvent = static_cast<QKeyEvent*>(event);
+    if (keyEvent->key() == Qt::Key_Control && event->type() == QEvent::KeyPress )
+    {
+      // start QObject's timer for continuous effects
+      // (deforming mesh while mouse not moving)
+      if(timer_id != -1)
+        killTimer(timer_id);
+      timer_id = startTimer(0);
+    }
+    else if (keyEvent->key() == Qt::Key_Control && event->type() == QEvent::KeyRelease )
+    {
+      if(timer_id != -1)
+        killTimer(timer_id);
+      timer_id = -1;
+    }
+  }
+  return false;
+}
 void
 Scene_c3t3_item::c3t3_changed()
 {
@@ -469,7 +492,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   vaos[Facets]->release();
 
 
-  if(!frame->isManipulated()) {
+  if(!frame->isManipulated() && !frame->isSpinning()) {
     if (!are_intersection_buffers_filled)
     {
       ncthis->compute_intersections();
@@ -573,7 +596,7 @@ void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
   program->release();
   vaos[Edges]->release();
 
-  if(!frame->isManipulated()) {
+  if(!frame->isManipulated() && !frame->isSpinning()) {
     if (!are_intersection_buffers_filled)
     {
       ncthis->compute_intersections();
