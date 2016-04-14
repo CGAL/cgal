@@ -19,11 +19,11 @@
 // Author(s)     : Sebastien Loriot, Nicolas Carrez
 
 template<class Kernel>
-double give_weight(const CGAL::Weighted_point<typename Kernel::Point_2,typename Kernel::FT>& P){return CGAL::to_double(P.weight());}
+double give_weight(const typename Kernel::Weighted_point_2& P){return CGAL::to_double(P.weight());}
 template<class Kernel>
-double give_x(const CGAL::Weighted_point<typename Kernel::Point_2,typename Kernel::FT>& P){return CGAL::to_double(P.point().x());}
+double give_x(const typename Kernel::Weighted_point_2& P){return CGAL::to_double(P.point().x());}
 template<class Kernel>
-double give_y(const CGAL::Weighted_point<typename Kernel::Point_2,typename Kernel::FT>& P){return CGAL::to_double(P.point().y());}
+double give_y(const typename Kernel::Weighted_point_2& P){return CGAL::to_double(P.point().y());}
 
 template<class Kernel>
 double give_weight(const typename Kernel::Point_2& ){return 0;}
@@ -36,7 +36,7 @@ double give_y(const typename Kernel::Point_2& P){return CGAL::to_double(P.y());}
 template <class Kernel, class Regular,class input_DS>
 void k_delaunay(Regular& rt,input_DS& input_wpt,int order){
   typedef typename Kernel::Point_2 Point_2;
-  typedef typename CGAL::Weighted_point<typename Kernel::Point_2,typename Kernel::FT>  Weighted_point_2;
+  typedef typename Kernel::Weighted_point_2  Weighted_point_2;
   
   std::vector<typename input_DS::iterator> Current_sel;//DS that will contain all possible combinaisons of k points (iterator), where k is the order
   typename input_DS::iterator it_wpt = input_wpt.begin();
