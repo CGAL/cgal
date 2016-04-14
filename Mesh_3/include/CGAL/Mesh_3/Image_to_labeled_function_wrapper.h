@@ -60,7 +60,7 @@ public:
   /// Constructor
   Image_to_labeled_function_wrapper(const Image_& image, 
                                     const Transform& transform = Transform(),
-                                    const Image_word_type value_outside = 0)
+                                    const Return_type value_outside = 0)
     : r_im_(image)
     , transform(transform)
     , value_outside(value_outside)
@@ -85,7 +85,7 @@ public:
       if ( labeled_image )
       {
         return static_cast<return_type>(transform(
-          r_im_.labellized_trilinear_interpolation(
+          r_im_.template labellized_trilinear_interpolation<Image_word_type>(
               CGAL::to_double(p.x()),
               CGAL::to_double(p.y()),
               CGAL::to_double(p.z()),
@@ -130,7 +130,7 @@ private:
   /// Labeled image to wrap
   const Image_& r_im_;
   const Transform transform;
-  const Image_word_type value_outside;
+  const Return_type value_outside;
 
 };  // end class Image_to_labeled_function_wrapper
 

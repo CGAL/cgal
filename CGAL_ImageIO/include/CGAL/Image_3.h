@@ -47,15 +47,22 @@ namespace CGAL {
 namespace ImageIO {
 
 template <typename T>
-class Indicator : public std::unary_function<T, double>
+struct Indicator_factory
 {
-  const T label;
-public:
-  Indicator(T i) : label(i) {};
-  
-  double operator()(T x) const 
+  class Indicator : public std::unary_function<T, double>
   {
-    return (x == label) ? 1. : 0.;
+    const T label;
+  public:
+    Indicator(T i) : label(i) {};
+
+    double operator()(T x) const
+    {
+      return (x == label) ? 1. : 0.;
+    }
+  }; // end nested class Indicator
+
+  Indicator indicator(T i) const {
+    return Indicator(i);
   }
 };
 
@@ -185,8 +192,8 @@ public:
   trilinear_interpolation(const Coord_type&x, 
 			  const Coord_type&y, 
 			  const Coord_type&z,
-			  const Image_word_type& value_outside = 
-			    Image_word_type(),
+			  const Target_word_type& value_outside =
+			    Target_word_type(),
 			  Image_transform transform = 
 			    Image_transform() ) const;
 
@@ -198,8 +205,8 @@ public:
   trilinear_interpolation(const Coord_type&x, 
 			  const Coord_type&y, 
 			  const Coord_type&z,
-			  const Image_word_type& value_outside = 
-			  Image_word_type()) const 
+			  const Target_word_type& value_outside =
+			  Target_word_type()) const
   {
     return trilinear_interpolation<
       Image_word_type,
@@ -208,13 +215,31 @@ public:
   }
 
   template <typename Image_word_type,
-	    typename Coord_type>
-  Image_word_type 
-  labellized_trilinear_interpolation(const Coord_type&x, 
-				     const Coord_type&y, 
+	    typename Coord_type,
+            typename Target_word_type>
+  Target_word_type
+  labellized_trilinear_interpolation(const Coord_type&x,
+				     const Coord_type&y,
 				     const Coord_type&z,
-				     const Image_word_type& value_outside = 
-  				       Image_word_type()) const;
+				     const Target_word_type& value_outside =
+  				       Target_word_type()) const
+  {
+    CGAL::ImageIO::Indicator_factory<Image_word_type> indicator_factory;
+    return labellized_trilinear_interpolation<Image_word_type>
+      (x, y, z, value_outside, indicator_factory);
+  }
+
+  template <typename Image_word_type,
+	    typename Coord_type,
+            typename Target_word_type,
+            typename Indicator_factory>
+  Target_word_type
+  labellized_trilinear_interpolation
+    (const Coord_type&x,
+     const Coord_type&y,
+     const Coord_type&z,
+     const Target_word_type& value_outside,
+     const Indicator_factory indicator_factory) const;
 
 }; // end Image_3
 
@@ -226,12 +251,12 @@ Target_word_type
 Image_3::trilinear_interpolation(const Coord_type& x, 
 				 const Coord_type& y, 
 				 const Coord_type& z,
-				 const Image_word_type& value_outside,
+				 const Target_word_type& value_outside,
 				 Image_transform transform) const 
 {
   // Check on double/float coordinates, because (int)-0.1 gives 0
   if ( x < 0 || y < 0 || z < 0 )
-    return Target_word_type(value_outside);
+    return value_outside;
   
   const Coord_type lx = x / image()->vx;
   const Coord_type ly = y / image()->vy;
@@ -248,7 +273,7 @@ Image_3::trilinear_interpolation(const Coord_type& x,
      ly >= dimy-1 ||
      lx >= dimx-1)
   {
-    return Target_word_type(transform(value_outside));
+    return value_outside;
   }  
 
   // images are indexed by (z,y,x)
@@ -411,12 +436,16 @@ Image_3::trilinear_interpolation(const Coord_type& x,
 
 
 template <typename Image_word_type,
-	  typename Coord_type>
-Image_word_type 
-Image_3::labellized_trilinear_interpolation(const Coord_type& x, 
-					    const Coord_type& y, 
-					    const Coord_type& z,
-					    const Image_word_type& value_outside) const 
+	  typename Coord_type,
+          typename Target_word_type,
+          typename Indicator_factory>
+Target_word_type
+Image_3::labellized_trilinear_interpolation
+  (const Coord_type& x,
+   const Coord_type& y,
+   const Coord_type& z,
+   const Target_word_type& value_outside,
+   const Indicator_factory indicator_factory) const
 {
   // Check on double/float coordinates, because (int)-0.1 gives 0
   if ( x < 0 || y < 0 || z < 0 ) return value_outside;
@@ -481,15 +510,14 @@ Image_3::labellized_trilinear_interpolation(const Coord_type& x,
     return labels[0];
   }
     
-  typedef ImageIO::Indicator<Image_word_type> Indicator;
   double best_value = 0.;
   Image_word_type best = 0;
   for(int i = 0; i < lc; ++i)
   {
     Image_word_type iwt = labels[i];
     const double r = 
-      trilinear_interpolation<Image_word_type,double,Coord_type, Indicator>(
-        x, y, z, value_outside, Indicator(iwt));
+      trilinear_interpolation<Image_word_type,double,Coord_type>(
+        x, y, z, value_outside, indicator_factory.indicator(iwt));
     CGAL_assertion(r >= 0.);
     CGAL_assertion(r <= 1.);
 
