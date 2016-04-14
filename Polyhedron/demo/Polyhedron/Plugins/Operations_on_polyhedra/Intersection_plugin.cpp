@@ -209,10 +209,14 @@ void Polyhedron_demo_intersection_plugin::intersection()
 #endif
   std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
-  new_item->setColor(Qt::green);
-  new_item->setRenderingMode(Wireframe);
-  scene->addItem(new_item);
-  new_item->invalidateOpenGLBuffers();
+  if (new_item->polylines.empty())
+    delete new_item;
+  else{
+    new_item->setColor(Qt::green);
+    new_item->setRenderingMode(Wireframe);
+    scene->addItem(new_item);
+    new_item->invalidateOpenGLBuffers();
+  }
 
   QApplication::restoreOverrideCursor();
 }
