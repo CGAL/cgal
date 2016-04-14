@@ -54,21 +54,22 @@ void sum_normals(const PM& pmesh,
                  VertexPointMap vpmap,
                  Vector& sum)
 {
+  typedef typename boost::graph_traits<PM>::vertex_descriptor   vertex_descriptor;
   typedef typename boost::graph_traits<PM>::halfedge_descriptor halfedge_descriptor;
+
   halfedge_descriptor he = halfedge(f, pmesh);
-  halfedge_descriptor end = he;
-  bool f_is_triangle = (he == next(next(next(he, pmesh), pmesh), pmesh));
-  /*it is useless to compute the normal 3 times on a triangle*/
-  do
+  vertex_descriptor v = source(he, pmesh);
+  const Point& pv = get(vpmap, v);
+  while (v != target(next(he, pmesh), pmesh))
   {
-    const Point& prv = get(vpmap, target(prev(he, pmesh), pmesh));
-    const Point& curr = get(vpmap, target(he, pmesh));
-    const Point& nxt = get(vpmap, target(next(he, pmesh), pmesh));
-    Vector n = internal::triangle_normal(prv, curr, nxt);
+    const Point& pvn  = get(vpmap, target(he, pmesh));
+    const Point& pvnn = get(vpmap, target(next(he, pmesh), pmesh));
+
+    Vector n = internal::triangle_normal(pv, pvn, pvnn);
     sum = sum + n;
 
     he = next(he, pmesh);
-  } while (he != end && !f_is_triangle);
+  }
 }
 
 
