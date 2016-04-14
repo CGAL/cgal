@@ -7,6 +7,7 @@
 
 #include "Scene_polygon_soup_item.h"
 #include "Scene_polyhedron_item.h"
+#include "Scene_surface_mesh_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include "Messages_interface.h"
@@ -83,6 +84,34 @@ QList<QAction*> Polyhedron_demo_orient_soup_plugin::actions() const {
                            << actionDisplayNonManifoldEdges;
 }
 
+void set_vcolors(Scene_surface_mesh_item::SMesh* smesh, std::vector<CGAL::Color> colors)
+{
+  typedef Scene_surface_mesh_item::SMesh SMesh;
+  typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
+  SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
+    smesh->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
+  bool created;
+  boost::tie(vcolors, created) = smesh->template add_property_map<SMesh::Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
+  assert(colors.size()==smesh->number_of_vertices());
+  int color_id = 0;
+  BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh))
+      vcolors[vd] = colors[color_id++];
+}
+
+void set_fcolors(Scene_surface_mesh_item::SMesh* smesh, std::vector<CGAL::Color> colors)
+{
+  typedef Scene_surface_mesh_item::SMesh SMesh;
+  typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
+  SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
+    smesh->property_map<face_descriptor, CGAL::Color >("f:color").first;
+  bool created;
+   boost::tie(fcolors, created) = smesh->template add_property_map<SMesh::Face_index,CGAL::Color>("f:color",CGAL::Color(0,0,0));
+  assert(colors.size()==smesh->number_of_faces());
+  int color_id = 0;
+  BOOST_FOREACH(face_descriptor fd, faces(*smesh))
+      fcolors[fd] = colors[color_id++];
+}
+
 void Polyhedron_demo_orient_soup_plugin::orient()
 {
   Q_FOREACH(CGAL::Three::Scene_interface::Item_id index, scene->selectionIndices())
@@ -102,19 +131,42 @@ void Polyhedron_demo_orient_soup_plugin::orient()
                                       .arg(item->name()));
       }
 
-      Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
-      if(item->exportAsPolyhedron(poly_item->polyhedron())) {
-        poly_item->setName(item->name());
-        poly_item->setColor(item->color());
-        poly_item->setRenderingMode(item->renderingMode());
-        poly_item->setVisible(item->visible());
-        poly_item->invalidateOpenGLBuffers();
-        poly_item->setProperty("source filename", item->property("source filename"));
-        scene->replaceItem(index, poly_item);
-        delete item;
-      } else {
-        item->invalidateOpenGLBuffers();
-        scene->itemChanged(item);
+      if(!item->isDataColored())
+      {
+        Scene_polyhedron_item* poly_item = new Scene_polyhedron_item();
+        if(item->exportAsPolyhedron(poly_item->polyhedron())) {
+          poly_item->setName(item->name());
+          poly_item->setColor(item->color());
+          poly_item->setRenderingMode(item->renderingMode());
+          poly_item->setVisible(item->visible());
+          poly_item->invalidateOpenGLBuffers();
+          poly_item->setProperty("source filename", item->property("source filename"));
+          scene->replaceItem(index, poly_item);
+          delete item;
+        } else {
+          item->invalidateOpenGLBuffers();
+          scene->itemChanged(item);
+        }
+      }
+      else
+      {
+        Scene_surface_mesh_item::SMesh* smesh = new Scene_surface_mesh_item::SMesh();
+        if(item->exportAsSurfaceMesh(smesh)) {
+          if(!item->getVColors().empty())
+            set_vcolors(smesh,item->getVColors());
+          if(!item->getFColors().empty())
+            set_fcolors(smesh,item->getFColors());
+          Scene_surface_mesh_item* sm_item = new Scene_surface_mesh_item(smesh);
+          sm_item->setName(item->name());
+          sm_item->setRenderingMode(item->renderingMode());
+          sm_item->setVisible(item->visible());
+          sm_item->setProperty("source filename", item->property("source filename"));
+          scene->replaceItem(index, sm_item);
+          delete item;
+        } else {
+          item->invalidateOpenGLBuffers();
+          scene->itemChanged(item);
+        }
       }
 
       QApplication::restoreOverrideCursor();

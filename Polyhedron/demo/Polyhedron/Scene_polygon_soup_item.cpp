@@ -622,6 +622,21 @@ Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
   }
   return false;
 }
+
+bool
+Scene_polygon_soup_item::exportAsSurfaceMesh(CGAL::Surface_mesh<Point_3> *out_surface_mesh)
+{
+  orient();
+  CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh< CGAL::Surface_mesh<Point_3> >(
+    soup->points, soup->polygons, *out_surface_mesh);
+  std::size_t rv = CGAL::Polygon_mesh_processing::remove_isolated_vertices(*out_surface_mesh);
+  if(rv > 0)
+    std::cerr << "Ignore isolated vertices: " << rv << std::endl;
+  if(out_surface_mesh->vertices().size() > 0) {
+    return true;
+  }
+  return false;
+}
 QString 
 Scene_polygon_soup_item::toolTip() const
 {

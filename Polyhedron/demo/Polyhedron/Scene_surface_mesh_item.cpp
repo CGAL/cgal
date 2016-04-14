@@ -106,14 +106,14 @@ Scene_surface_mesh_item::Scene_surface_mesh_item(SMesh* sm)
 
   has_vcolors = false;
   has_fcolors = false;
-
+  compute_elements();
 }
 
 Scene_surface_mesh_item*
 Scene_surface_mesh_item::clone() const
 { return new Scene_surface_mesh_item(*this); }
 
-void Scene_surface_mesh_item::addFlatData(Point p, Kernel::Vector_3 n, CGAL::Color c) const
+void Scene_surface_mesh_item::addFlatData(Point p, Kernel::Vector_3 n, CGAL::Color *c) const
 {
 
   flat_vertices.push_back((gl_data)p.x());
@@ -124,14 +124,15 @@ void Scene_surface_mesh_item::addFlatData(Point p, Kernel::Vector_3 n, CGAL::Col
   flat_normals.push_back((gl_data)n.y());
   flat_normals.push_back((gl_data)n.z());
 
-  if(has_fcolors)
+  if(c != NULL)
   {
-    f_colors.push_back((float)c.red()/255);
-    f_colors.push_back((float)c.green()/255);
-    f_colors.push_back((float)c.blue()/255);
+    f_colors.push_back((float)c->red()/255);
+    f_colors.push_back((float)c->green()/255);
+    f_colors.push_back((float)c->blue()/255);
   }
 }
-void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
+
+void Scene_surface_mesh_item::compute_elements()
 {
   SMesh::Property_map<vertex_descriptor, SMesh::Point> positions =
     smesh_->points();
@@ -158,6 +159,7 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
 //compute the Flat data
   flat_vertices.clear();
   flat_normals.clear();
+
   BOOST_FOREACH(face_descriptor fd, faces(*smesh_))
   {
     if(is_triangle(halfedge(fd,*smesh_),*smesh_))
@@ -188,33 +190,37 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
       halfedge_descriptor hd = halfedge(fd, *smesh_);
       Point p = positions[source(hd, *smesh_)];
       Kernel::Vector_3 n = fnormals[fd];
-      CGAL::Color c = fcolors[fd];
+      CGAL::Color *c;
+      if(has_fcolors)
+       c= &fcolors[fd];
+      else
+        c = 0;
       addFlatData(p,n,c);
 
       hd = halfedge(next(halfedge(fd, *smesh_),*smesh_), *smesh_);
       addFlatData(positions[source(hd, *smesh_)]
           ,fnormals[fd]
-          ,fcolors[fd]);
+          ,c);
 
       hd = halfedge(next(next(halfedge(fd, *smesh_),*smesh_), *smesh_), *smesh_);
       addFlatData(positions[source(hd, *smesh_)]
           ,fnormals[fd]
-          ,fcolors[fd]);
+          ,c);
       //2nd half
       hd = halfedge(fd, *smesh_);
       addFlatData(positions[source(hd, *smesh_)]
           ,fnormals[fd]
-          ,fcolors[fd]);
+          ,c);
 
       hd = halfedge(next(next(halfedge(fd, *smesh_),*smesh_), *smesh_), *smesh_);
       addFlatData(positions[source(hd, *smesh_)]
           ,fnormals[fd]
-          ,fcolors[fd]);
+          ,c);
 
       hd = halfedge(prev(halfedge(fd, *smesh_), *smesh_), *smesh_);
       addFlatData(positions[source(hd, *smesh_)]
           ,fnormals[fd]
-          ,fcolors[fd]);
+          , c);
     }
     else
     {
@@ -249,9 +255,13 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
 
     }
   }
-
-
-
+}
+void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* viewer)const
+{
+  SMesh::Property_map<vertex_descriptor, SMesh::Point> positions =
+    smesh_->points();
+  SMesh::Property_map<vertex_descriptor, Kernel::Vector_3 > vnormals =
+    smesh_->property_map<vertex_descriptor, Kernel::Vector_3 >("v:normal").first;
   //vao containing the data for the flat facets
 
   program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
@@ -291,7 +301,6 @@ void Scene_surface_mesh_item::initializeBuffers(CGAL::Three::Viewer_interface* v
   else
     buffers[Smooth_vertices].allocate(smooth_vertices.data(),
                                static_cast<int>(num_vertices(*smesh_)*3*sizeof(gl_data)));
-
   program->enableAttributeArray("vertex");
   program->setAttributeBuffer("vertex",GL_DATA,0,3);
   buffers[Smooth_vertices].release();
@@ -523,17 +532,22 @@ Scene_surface_mesh_item::triangulate_facet(face_descriptor fd,
       //adds the vertices, normals and colors to the appropriate vectors
     if(!index)
     {
+      CGAL::Color* color;
+      if(has_fcolors)
+        color = &(*fcolors)[fd];
+      else
+        color = 0;
+
       addFlatData(ffit->vertex(0)->point(),
                   (*fnormals)[fd],
-                  (*fcolors)[fd]);
-
+                  color);
       addFlatData(ffit->vertex(1)->point(),
                   (*fnormals)[fd],
-                  (*fcolors)[fd]);
+                  color);
 
       addFlatData(ffit->vertex(2)->point(),
                   (*fnormals)[fd],
-                  (*fcolors)[fd]);
+                  color);
     }
     //adds the indices to the appropriate vector
     else

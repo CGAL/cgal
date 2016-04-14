@@ -3,6 +3,7 @@
 #include "Scene_polygon_soup_item_config.h"
 #include  <CGAL/Three/Scene_item.h>
 #include "Polyhedron_type.h"
+#include "CGAL/Surface_mesh/Surface_mesh.h"
 
 #include <boost/foreach.hpp>
 #include <boost/array.hpp>
@@ -112,7 +113,7 @@ public:
     Scene_polygon_soup_item* clone() const;
     bool load(std::istream& in);
     void load(Scene_polyhedron_item*);
-
+    bool isDataColored() { return soup->fcolors.size()>0 || soup->vcolors.size()>0;}
     template <class Point, class Polygon>
     inline void load(const std::vector<Point>& points, const std::vector<Polygon>& polygons)
     {
@@ -139,7 +140,8 @@ public:
     }
 
     bool save(std::ostream& out) const;
-
+    std::vector<CGAL::Color> getVColors() const{return soup->vcolors;}
+    std::vector<CGAL::Color> getFColors() const{return soup->fcolors;}
     QString toolTip() const;
 
     // Indicate if rendering mode is supported
@@ -164,6 +166,7 @@ public Q_SLOTS:
     void shuffle_orientations();
     bool orient();
     bool exportAsPolyhedron(Polyhedron*);
+    bool exportAsSurfaceMesh(CGAL::Surface_mesh<Point_3>*);
     void inside_out();
 
     void setDisplayNonManifoldEdges(const bool);

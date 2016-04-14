@@ -79,7 +79,7 @@ private:
   mutable bool has_fcolors;
   SMesh* smesh_;
   void initializeBuffers(CGAL::Three::Viewer_interface *) const;
-  void addFlatData(Point, Kernel::Vector_3, CGAL::Color) const;
+  void addFlatData(Point, Kernel::Vector_3, CGAL::Color *) const;
   mutable std::vector<unsigned int> idx_data_;
   std::vector<unsigned int> idx_edge_data_;
   mutable std::vector<gl_data> smooth_vertices;
@@ -110,8 +110,10 @@ private:
                     SMesh::Property_map<face_descriptor, CGAL::Color> *fcolors,
                     boost::property_map< SMesh, boost::vertex_index_t >::type* im,
                     bool index) const;
+  mutable bool is_filled;
   void checkFloat() const;
-
+  void compute_elements();
+  mutable bool isinit;
 };
 
 
