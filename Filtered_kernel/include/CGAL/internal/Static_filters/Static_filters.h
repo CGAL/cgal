@@ -41,6 +41,7 @@
 // for static filters added nov./dec. 2011
 #ifdef CGAL_DISABLE_STATIC_FILTERS_ADDED_2011
 #  define CGAL_NO_EQUAL_3_STATIC_FILTERS 1
+#  define CGAL_NO_COMPARE_X_2_STATIC_FILTERS 1
 #  define CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS 1
 #  define CGAL_NO_ANGLE_3_STATIC_FILTERS 1
 #  define CGAL_NO_DO_INTERSECT_3_STATIC_FILTERS 1
@@ -50,6 +51,11 @@
 #ifndef CGAL_NO_EQUAL_3_STATIC_FILTERS
 #  include <CGAL/internal/Static_filters/Equal_3.h>
 #endif // NOT CGAL_NO_EQUAL_3_STATIC_FILTERS
+
+#ifndef CGAL_NO_COMPARE_X_2_STATIC_FILTERS
+#  include <CGAL/internal/Static_filters/Compare_x_2.h>
+#  include <CGAL/internal/Static_filters/Compare_y_2.h>
+#endif // NOT CGAL_NO_COMPARE_X_2_STATIC_FILTERS
 
 #ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
 #  include <CGAL/internal/Static_filters/Is_degenerate_3.h>
@@ -112,6 +118,11 @@ public:
   typedef Static_filters_predicates::Equal_3<K_base>                        Equal_3;
 #endif // NOT CGAL_NO_EQUAL_3_STATIC_FILTERS
 
+#ifndef CGAL_NO_COMPARE_X_2_STATIC_FILTERS
+  typedef Static_filters_predicates::Compare_x_2<K_base>                    Compare_x_2;
+  typedef Static_filters_predicates::Compare_y_2<K_base>                    Compare_y_2;
+#endif // NOT CGAL_NO_COMPARE_X_2_STATIC_FILTERS
+
 #ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
   typedef Static_filters_predicates::Is_degenerate_3<K_base, Self>          Is_degenerate_3;
 #endif // NOT CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
@@ -140,6 +151,16 @@ public:
   equal_3_object() const
   { return Equal_3(); }
 #endif // NOT CGAL_NO_EQUAL_3_STATIC_FILTERS
+
+#ifndef CGAL_NO_COMPARE_X_2_STATIC_FILTERS
+ Compare_x_2
+  compare_x_2_object() const
+  { return Compare_x_2(); }
+
+Compare_y_2
+  compare_y_2_object() const
+  { return Compare_y_2(); }
+#endif // NOT CGAL_NO_COMPARE_Y_2_STATIC_FILTERS
 
 #ifndef CGAL_NO_IS_DEGENERATE_3_STATIC_FILTERS
  Is_degenerate_3
