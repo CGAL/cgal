@@ -7,12 +7,14 @@
 #include <QPixmap>
 #include <QPainter>
 #include <QtCore/qglobal.h>
+#include <QGuiApplication>
 
 #include <map>
 #include <vector>
 #include <CGAL/gl.h>
 #include <CGAL/Mesh_3/dihedral_angle_3.h>
 #include <CGAL/Three/Scene_interface.h>
+#include <CGAL/Real_timer.h>
 
 #include <QGLViewer/manipulatedFrame.h>
 #include <QGLViewer/qglviewer.h>
@@ -20,12 +22,82 @@
 #include <boost/function_output_iterator.hpp>
 #include <boost/foreach.hpp>
 
-struct Scene_c3t3_item_priv {
-  Scene_c3t3_item_priv() : c3t3() {}
-  Scene_c3t3_item_priv(const C3t3& c3t3_) : c3t3(c3t3_) {}
+#include <CGAL/AABB_tree.h>
+#include <CGAL/AABB_traits.h>
+#include <CGAL/AABB_C3T3_triangle_primitive.h>
 
+typedef CGAL::AABB_C3T3_triangle_primitive<Kernel,C3t3> Primitive;
+typedef CGAL::AABB_traits<Kernel, Primitive> Traits;
+typedef CGAL::AABB_tree<Traits> Tree;
+typedef Tree::Point_and_primitive_id Point_and_primitive_id;
+
+
+struct Scene_c3t3_item_priv {
+  Scene_c3t3_item_priv(Scene_c3t3_item* item)
+    : item(item), c3t3()
+  {
+    init_default_values();
+  }
+  Scene_c3t3_item_priv(const C3t3& c3t3_, Scene_c3t3_item* item)
+    : item(item), c3t3(c3t3_)
+  {
+    init_default_values();
+  }
+
+  void init_default_values() {
+    show_tetrahedra = false;
+    is_aabb_tree_built = false;
+  }
+
+  void compute_intersection(const Primitive& facet);
+
+  void fill_aabb_tree() {
+    if(item->isEmpty()) return;
+    QGuiApplication::setOverrideCursor(Qt::WaitCursor);
+    CGAL::Real_timer timer;
+    timer.start();
+    tree.clear();
+    for (Tr::Finite_facets_iterator
+           fit = c3t3.triangulation().finite_facets_begin(),
+           end = c3t3.triangulation().finite_facets_end();
+         fit != end; ++fit)
+    {
+      Tr::Cell_handle ch = fit->first, nh =ch->neighbor(fit->second);
+
+      if( (!c3t3.is_in_complex(ch)) &&  (!c3t3.is_in_complex(nh)) )
+        continue;
+
+      if(c3t3.is_in_complex(ch)){
+        tree.insert(Primitive(fit));
+      } else{
+        int ni = nh->index(ch);
+        tree.insert(Primitive(Tr::Facet(nh,ni)));
+      }
+    }
+    tree.build();
+    std::cerr << "C3t3 facets AABB tree built in " << timer.time()
+              << " wall-clock seconds\n";
+
+    is_aabb_tree_built = true;
+    QGuiApplication::restoreOverrideCursor();
+  }
+
+  Scene_c3t3_item* item;
   C3t3 c3t3;
+  Tree tree;
   QVector<QColor> colors;
+  bool show_tetrahedra;
+  bool is_aabb_tree_built;
+};
+
+struct Set_show_tetrahedra {
+  Scene_c3t3_item_priv* priv;
+  Set_show_tetrahedra(Scene_c3t3_item_priv* priv) : priv(priv) {}
+  void operator()(bool b) {
+    priv->show_tetrahedra = b;
+    priv->item->changed();
+    priv->item->itemChanged();
+  }
 };
 
 void Scene_c3t3_item::compile_shaders()
@@ -59,7 +131,7 @@ double complex_diag(const Scene_item* item) {
 
 Scene_c3t3_item::Scene_c3t3_item()
   : Scene_item(NumberOfBuffers, NumberOfVaos)
-  , d(new Scene_c3t3_item_priv())
+  , d(new Scene_c3t3_item_priv(this))
   , frame(new ManipulatedFrame())
   , last_known_scene(NULL)
   , data_item_(NULL)
@@ -86,7 +158,7 @@ Scene_c3t3_item::Scene_c3t3_item()
 
 Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   : Scene_item(NumberOfBuffers, NumberOfVaos)
-  , d(new Scene_c3t3_item_priv(c3t3))
+  , d(new Scene_c3t3_item_priv(c3t3, this))
   , frame(new ManipulatedFrame())
   , last_known_scene(NULL)  
   , data_item_(NULL)  
@@ -193,7 +265,9 @@ Scene_c3t3_item::c3t3_changed()
 
   // Rebuild histogram
   build_histogram();
-  
+
+  d->tree.clear();
+  d->is_aabb_tree_built = false;
 }
 
 QPixmap
@@ -469,7 +543,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   vaos[Facets]->release();
 
 
-  if(!frame->isManipulated()) {
+  if(d->show_tetrahedra && !frame->isManipulated()) {
     if (!are_intersection_buffers_filled)
     {
       ncthis->compute_intersections();
@@ -573,7 +647,7 @@ void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
   program->release();
   vaos[Edges]->release();
 
-  if(!frame->isManipulated()) {
+  if(d->show_tetrahedra && !frame->isManipulated()) {
     if (!are_intersection_buffers_filled)
     {
       ncthis->compute_intersections();
@@ -792,6 +866,13 @@ QMenu* Scene_c3t3_item::contextMenu()
     actionShowSpheres->setObjectName("actionShowSpheres");
     connect(actionShowSpheres, SIGNAL(toggled(bool)),
             this, SLOT(show_spheres(bool)));
+
+    QAction* actionShowTets =
+      menu->addAction(tr("Show &tetrahedra"));
+    actionShowTets->setCheckable(true);
+    actionShowTets->setObjectName("actionShowTets");
+    connect(actionShowTets, &QAction::toggled, Set_show_tetrahedra(this->d));
+
     menu->setProperty(prop_name, true);
   }
   return menu;
@@ -1022,62 +1103,81 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)
 
 
 
-void Scene_c3t3_item::compute_intersection(const Primitive& facet)
+void Scene_c3t3_item_priv::compute_intersection(const Primitive& facet)
 {  
   const Kernel::Point_3& pa = facet.id().first->vertex(0)->point();
   const Kernel::Point_3& pb = facet.id().first->vertex(1)->point();
   const Kernel::Point_3& pc = facet.id().first->vertex(2)->point();
   const Kernel::Point_3& pd = facet.id().first->vertex(3)->point();
 
-  QColor color = d->colors[facet.id().first->subdomain_index()].darker(150);
+  QColor color = this->colors[facet.id().first->subdomain_index()].darker(150);
 
   for(int i=0; i < 12;i++){
-    f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+    item->f_colors.push_back(color.redF());
+    item->f_colors.push_back(color.greenF());
+    item->f_colors.push_back(color.blueF());
   }
-  draw_triangle(pb, pa, pc, true);
-  draw_triangle(pa, pb, pd, true);
-  draw_triangle(pa, pd, pc, true);
-  draw_triangle(pb, pc, pd, true);
+  item->draw_triangle(pb, pa, pc, true);
+  item->draw_triangle(pa, pb, pd, true);
+  item->draw_triangle(pa, pd, pc, true);
+  item->draw_triangle(pb, pc, pd, true);
 
-  draw_triangle_edges(pb, pa, pc);
-  draw_triangle_edges(pa, pb, pd);
-  draw_triangle_edges(pa, pd, pc);
-  draw_triangle_edges(pb, pc, pd);
+  item->draw_triangle_edges(pb, pa, pc);
+  item->draw_triangle_edges(pa, pb, pd);
+  item->draw_triangle_edges(pa, pd, pc);
+  item->draw_triangle_edges(pb, pc, pd);
 
   {
     Tr::Cell_handle nh = facet.id().first->neighbor(facet.id().second);
-    if(c3t3().is_in_complex(nh)){
+    if(c3t3.is_in_complex(nh)){
       const Kernel::Point_3& pa = nh->vertex(0)->point();
       const Kernel::Point_3& pb = nh->vertex(1)->point();
       const Kernel::Point_3& pc = nh->vertex(2)->point();
       const Kernel::Point_3& pd = nh->vertex(3)->point();
 
       for(int i=0; i < 12;i++){
-        f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
+        item->f_colors.push_back(color.redF());
+        item->f_colors.push_back(color.greenF());
+        item->f_colors.push_back(color.blueF());
       }
-      draw_triangle(pb, pa, pc, true);
-      draw_triangle(pa, pb, pd, true);
-      draw_triangle(pa, pd, pc, true);
-      draw_triangle(pb, pc, pd, true);
+      item->draw_triangle(pb, pa, pc, true);
+      item->draw_triangle(pa, pb, pd, true);
+      item->draw_triangle(pa, pd, pc, true);
+      item->draw_triangle(pb, pc, pd, true);
 
-      draw_triangle_edges(pb, pa, pc);
-      draw_triangle_edges(pa, pb, pd);
-      draw_triangle_edges(pa, pd, pc);
-      draw_triangle_edges(pb, pc, pd);
+      item->draw_triangle_edges(pb, pa, pc);
+      item->draw_triangle_edges(pa, pb, pd);
+      item->draw_triangle_edges(pa, pd, pc);
+      item->draw_triangle_edges(pb, pc, pd);
     }
   }
 
 }
 
+struct Compute_intersection {
+  Scene_c3t3_item_priv& item_priv;
+
+  Compute_intersection(Scene_c3t3_item_priv& item_priv)
+    : item_priv(item_priv)
+  {}
+
+  void operator()(const Primitive& facet) const
+  {
+    item_priv.compute_intersection(facet);
+  }
+};
 
 void Scene_c3t3_item::compute_intersections()
 {
+  if(!d->is_aabb_tree_built) d->fill_aabb_tree();
+
   positions_poly.clear();
   normals.clear();
   f_colors.clear();
   positions_lines.clear();
   const Kernel::Plane_3& plane = this->plane();
-  tree.all_intersected_primitives(plane, boost::make_function_output_iterator(Compute_intersection(*this)));
+  d->tree.all_intersected_primitives(plane,
+        boost::make_function_output_iterator(Compute_intersection(*this->d)));
 }
 
 
@@ -1124,24 +1224,6 @@ void Scene_c3t3_item::compute_elements()
   if (isEmpty()){
     return;
   }
-  for (Tr::Finite_facets_iterator
-         fit = c3t3().triangulation().finite_facets_begin(),
-         end = c3t3().triangulation().finite_facets_end();
-       fit != end; ++fit)
-    {
-      Tr::Cell_handle ch = fit->first, nh =ch->neighbor(fit->second);
-
-      if( (!c3t3().is_in_complex(ch)) &&  (!c3t3().is_in_complex(nh)) )
-        continue;
-      
-      if(c3t3().is_in_complex(ch)){
-        tree.insert(Primitive(fit));
-      } else{
-        int ni = nh->index(ch);
-        tree.insert(Primitive(Tr::Facet(nh,ni)));
-      }
-    }
-    tree.build();
 
   //The facets
   {  
