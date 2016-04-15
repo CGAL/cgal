@@ -83,6 +83,16 @@ void Polyhedron_demo_self_intersection_plugin::on_actionSelfIntersection_trigger
         fb != facets.end(); ++fb) {
         selection_item->selected_facets.insert(fb->first);
         selection_item->selected_facets.insert(fb->second);
+
+        Polyhedron::Halfedge_around_facet_circulator hc = (fb->first)->facet_begin(), cend = hc;
+        CGAL_For_all(hc,cend) {
+          selection_item->selected_edges.insert(edge(hc, *selection_item->polyhedron()));
+        }
+        hc = (fb->second)->facet_begin();
+        cend = hc;
+        CGAL_For_all(hc,cend) {
+          selection_item->selected_edges.insert(edge(hc, *selection_item->polyhedron()));
+        }
       }
       selection_item->invalidateOpenGLBuffers();
       selection_item->setName(tr("%1 (selection) (intersecting triangles)").arg(item->name()));
