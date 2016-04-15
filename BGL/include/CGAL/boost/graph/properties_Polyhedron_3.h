@@ -150,6 +150,12 @@ struct Polyhedron_property_map {};
 
 namespace CGAL {
 
+  // Add this as VC did find the "generalized put" 
+  // when a bare pointer is used in jet_estimate_normals
+  using ::put;
+  using ::get;
+
+
 // generalized 2-ary get functions
 template<class Gt, class I, CGAL_HDS_PARAM_, class A, class PropertyTag>
 typename boost::property_map< CGAL::Polyhedron_3<Gt,I,HDS,A>, PropertyTag >::const_type

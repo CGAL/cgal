@@ -63,6 +63,7 @@ if ( CGAL_FOUND )
     create_single_source_cgal_program( "smoothing_test.cpp" )
     create_single_source_cgal_program( "vcm_plane_test.cpp" )
     create_single_source_cgal_program( "vcm_all_test.cpp" )
+    create_single_source_cgal_program( "jet_pointer_as_property_map.cpp" )
 
   else(EIGEN3_FOUND OR LAPACK_FOUND)
 
