@@ -474,23 +474,22 @@ namespace CartesianKernelFunctors {
 				 r.x(), r.y(), r.z());
     }
 
-
     result_type
     operator()(const Point_3& p1, const Segment_3& s1, const Segment_3& s2) const
     {
-      return CGAL::compare_distance(p1,s1,s2);
+      return CGAL::internal::compare_distance_pssC3(p1,s1,s2, K());
     }
 
     result_type
     operator()(const Point_3& p1, const Point_3& p2, const Segment_3& s2) const
     {
-      return CGAL::compare_distance(p1,p2,s2);
+      return CGAL::internal::compare_distance_ppsC3(p1,p2,s2, K());
     }
 
     result_type
     operator()(const Point_3& p1, const Segment_3& s2, const Point_3& p2) const
     {
-      return CGAL::compare_distance(p1,p2,s2);
+      return CGAL::internal::compare_distance_ppsC3(p1,p2,s2, K());
     }
 
     template <class T1, class T2, class T3>
