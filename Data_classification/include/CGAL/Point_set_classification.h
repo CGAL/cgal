@@ -36,6 +36,9 @@
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/linear_least_squares_fitting_3.h>
 
+#include <CGAL/Data_classification/Image.h>
+#include <CGAL/Data_classification/Color.h>
+
 #include <boost/iterator/counting_iterator.hpp>
 
 #define CGAL_CLASSIFICATION_VERBOSE
@@ -45,207 +48,8 @@
 #define CGAL_CLASSIFICATION_CERR std::ostream(0)
 #endif
 
-//#define CGAL_CLASSIFICATION_IMAGE_VERBOSE
-#if defined(CGAL_CLASSIFICATION_IMAGE_VERBOSE)
-#define CGAL_CLASSIFICATION_IMAGE_CERR std::cerr
-#else
-#define CGAL_CLASSIFICATION_IMAGE_CERR std::ostream(0)
-#endif
-
-
 namespace CGAL {
 
-namespace internal {
-
-namespace Classification {
-
-
-template <typename Type>
-class Image
-{
-  std::size_t m_width;
-  std::size_t m_height;
-  Type* m_raw;
-
-
-public:
-
-  Image () : m_width(0), m_height(0), m_raw (NULL)
-  {
-    CGAL_CLASSIFICATION_IMAGE_CERR << "++ Empty construction of " << this << std::endl;
-  }
-  
-  Image (std::size_t width, std::size_t height)
-    : m_width (width),
-      m_height (height)
-  {
-    CGAL_CLASSIFICATION_IMAGE_CERR << "++ Construction of " << this << std::endl;
-    if (m_width * m_height > 0)
-      m_raw = new Type[width * height];
-    else
-      m_raw = NULL;
-  }
-  
-  ~Image ()
-  {
-    CGAL_CLASSIFICATION_IMAGE_CERR << "-- Destruction of " << this << std::endl;
-    if (m_raw != NULL)
-      delete[] m_raw;
-  }
-
-  Image (const Image& other)
-    : m_width (other.width()),
-      m_height (other.height())
-
-  {
-    CGAL_CLASSIFICATION_IMAGE_CERR << "++ Copy construction of " << this << " from " << &other << std::endl;
-    if (m_width * m_height > 0)
-      {
-        m_raw = new Type[m_width * m_height];
-        std::copy (other.m_raw, other.m_raw + (m_width * m_height), this->m_raw);
-      }
-    else
-      m_raw = NULL;
-  }
-  Image& operator= (const Image& other)
-  {
-    CGAL_CLASSIFICATION_IMAGE_CERR << "++ Assignement of " << this << " from " << &other << std::endl;
-    if (m_raw != NULL)
-      delete[] m_raw;
-
-    m_raw = NULL;
-    m_width = other.width();
-    m_height = other.height();
-    if (m_width * m_height > 0)
-      {
-        m_raw = new Type[m_width * m_height];
-        std::copy (other.m_raw, other.m_raw + (m_width * m_height), this->m_raw);
-      }
-    
-    return *this;
-  }
-  
-  std::size_t width() const { return m_width; }
-  std::size_t height() const { return m_height; }
-
-  Type& operator() (const std::size_t& x, const std::size_t& y)
-  {
-    return m_raw[y * m_width + x];
-  }
-  const Type& operator() (const std::size_t& x, const std::size_t& y) const
-  {
-    return m_raw[y * m_width + x];
-  }
-  
-
-};
-
-  
-inline void compute_mean_max (std::vector<double>& vect, double& mean, double& max)
-{
-  mean = 0.;
-  max = 0.;
-  
-  for (std::size_t i = 0; i < vect.size(); ++ i)
-    {
-      mean += vect[i];
-      if (vect[i] > max)
-        max = vect[i];
-    }
-  mean /= vect.size();
-
-}
-
-
-template <typename HSV_Color, typename RGB_Color>
-HSV_Color rgb_to_hsv (const RGB_Color& c)
-{
-  double r = (double)(c[0]) / 255.;
-  double g = (double)(c[1]) / 255.;
-  double b = (double)(c[2]) / 255.;
-  double Cmax = std::max (r, std::max (g, b));
-  double Cmin = std::min (r, std::min (g, b));
-  double delta = Cmax - Cmin;
-  double H = 0.;
-  
-  if (delta != 0.)
-    {
-      if (Cmax == r)
-        H = 60. * (((int)((g - b) / delta)) % 6);
-      else if (Cmax == g)
-        H = 60. * (((b - r) / delta) + 2.);
-      else
-        H = 60. * (((r - g) / delta) + 4.);
-    }
-  if (H < 0.) H += 360.;
-  double S = (Cmax == 0. ? 0. : 100. * (delta / Cmax));
-  double V = 100. * Cmax;
-  HSV_Color out = {{ H, S, V }};
-  return out;
-}
-
-template <typename RGB_Color, typename HSV_Color>
-RGB_Color hsv_to_rgb (const HSV_Color& c)
-{
-  double h = c[0];
-  double s = c[1];
-  double v = c[2];
-  
-  s /= 100.;
-  v /= 100.;
-  double C = v*s;
-  std::size_t hh = (std::size_t)(h/60.);
-  double X = C * (1-std::fabs (hh % 2 - 1));
-  double r = 0, g = 0, b = 0;
-  
-  if( hh>=0 && hh<1 )
-    {
-      r = C;
-      g = X;
-    }
-  else if( hh>=1 && hh<2 )
-    {
-      r = X;
-      g = C;
-    }
-  else if( hh>=2 && hh<3 )
-    {
-      g = C;
-      b = X;
-    }
-  else if( hh>=3 && hh<4 )
-    {
-      g = X;
-      b = C;
-    }
-  else if( hh>=4 && hh<5 )
-    {
-      r = X;
-      b = C;
-    }
-  else
-    {
-      r = C;
-      b = X;
-    }
-  double m = v-C;
-  r += m;
-  g += m;
-  b += m;
-  r *= 255.0;
-  g *= 255.0;
-  b *= 255.0;
-
-  RGB_Color out = {{ (unsigned char)r, (unsigned char)g, (unsigned char)b }};
-  return out;
-}
-
-} // namespace internal
-
-} // namespace Classification
-
-template <typename Kernel>
-class Point_set_classification;
 
 class Abstract_segmentation_attribute
 {
@@ -261,6 +65,22 @@ public:
   virtual double ignored (int) { return 0.5; }
 
   virtual std::string id() { return "abstract_attribute"; }
+
+  void compute_mean_max (std::vector<double>& vect, double& mean, double& max)
+  {
+    mean = 0.;
+    max = 0.;
+  
+    for (std::size_t i = 0; i < vect.size(); ++ i)
+      {
+        mean += vect[i];
+        if (vect[i] > max)
+          max = vect[i];
+      }
+    mean /= vect.size();
+
+  }
+
 };
 
 class Classification_type
@@ -379,12 +199,11 @@ public:
   
   typedef typename Kernel::Iso_cuboid_3 Iso_cuboid_3;
 
-  typedef CGAL::cpp11::array<unsigned char, 3> Color;
-  typedef CGAL::cpp11::array<double, 3> HSV_Color;
-
-  typedef internal::Classification::Image<std::vector<int> > Image_indices;
-  typedef internal::Classification::Image<bool> Image_bool;
-  typedef internal::Classification::Image<float> Image_float;
+  typedef Data_classification::Image<std::vector<int> > Image_indices;
+  typedef Data_classification::Image<bool> Image_bool;
+  typedef Data_classification::Image<float> Image_float;
+  typedef Data_classification::RGB_Color RGB_Color;
+  typedef Data_classification::HSV_Color HSV_Color;
   
   struct HPoint {
     Point position;
@@ -394,7 +213,7 @@ public:
     std::size_t group; 
     unsigned char AE_label;
     double confidence;
-    Color color;
+    RGB_Color color;
   };
 
   class My_point_property_map{
@@ -437,6 +256,8 @@ public:
   std::vector<std::vector<int> > spherical_neighborhood;
   std::vector<std::vector<int> > cylindrical_neighborhood;
 
+  std::vector<Plane> groups;
+  
   Image_bool Mask;                     //imagg
   Image_float DTM; //a enregistrer ?   //imagg           
 
@@ -471,7 +292,7 @@ public:
         HPS.back().group = (std::size_t)(-1);
         HPS.back().AE_label = (unsigned char)(-1);
         HPS.back().confidence = 0;
-        Color c = {{ 0, 0, 0 }};
+        RGB_Color c = {{ 0, 0, 0 }};
         HPS.back().color = c;
       }
     has_colors = false;
@@ -481,13 +302,13 @@ public:
 
 
 
-  void change_hue (Color& color, const Color& hue)
+  void change_hue (RGB_Color& color, const RGB_Color& hue)
   {
-    HSV_Color hcolor = internal::Classification::rgb_to_hsv<HSV_Color> (color);
-    HSV_Color hhue = internal::Classification::rgb_to_hsv<HSV_Color> (hue);
+    HSV_Color hcolor = Data_classification::rgb_to_hsv (color);
+    HSV_Color hhue = Data_classification::rgb_to_hsv (hue);
     hcolor[0] = hhue[0];
     //    hcolor[1] = hhue[1];
-    color = internal::Classification::hsv_to_rgb<Color> (hcolor);
+    color = Data_classification::hsv_to_rgb (hcolor);
   }
 
 
@@ -829,6 +650,7 @@ public:
 
   void reset_groups()
   {
+    groups.clear();
     for (std::size_t i = 0; i < HPS.size(); ++ i)
       HPS[i].group = (std::size_t)(-1);
   }
@@ -1004,8 +826,8 @@ class Scatter_segmentation_attribute : public Abstract_segmentation_attribute
 {
   typedef Point_set_classification<Kernel> PSC;
   typedef typename PSC::Image_float Image_float;
-  typedef typename PSC::Color Color;
-  typedef typename PSC::HSV_Color HSV_Color;
+  typedef typename Data_classification::RGB_Color RGB_Color;
+  typedef typename Data_classification::HSV_Color HSV_Color;
   
   std::vector<double> vegetation_attribute;
   
@@ -1160,7 +982,7 @@ public:
     //       }
     //   }
 
-    internal::Classification::compute_mean_max (vegetation_attribute, mean, max);
+    this->compute_mean_max (vegetation_attribute, mean, max);
     //    max *= 2;
   }
 
@@ -1180,8 +1002,8 @@ class Color_segmentation_attribute : public Abstract_segmentation_attribute
 {
   typedef Point_set_classification<Kernel> PSC;
   typedef typename PSC::Image_float Image_float;
-  typedef typename PSC::Color Color;
-  typedef typename PSC::HSV_Color HSV_Color;
+  typedef typename Data_classification::RGB_Color RGB_Color;
+  typedef typename Data_classification::HSV_Color HSV_Color;
   
   std::vector<double> color_attribute;
   
@@ -1197,12 +1019,12 @@ public:
     std::cerr << "Using colors" << std::endl;
     for(int i=0;i<(int)M.HPS.size();i++)
       {
-        HSV_Color c = internal::Classification::rgb_to_hsv<HSV_Color> (M.HPS[i].color);
+        HSV_Color c = Data_classification::rgb_to_hsv (M.HPS[i].color);
         color_attribute.push_back (std::exp (-(c[0] - 156.) * (c[0] - 156.) / (2. * 81. * 81.))
                                    * std::exp (-(c[1] - 5.) * (c[1] - 5.) / (2. * 4. * 4.))
                                    * std::exp (-(c[2] - 76.) * (c[2] - 76.) / (2. * 6.8 * 6.8)));
       }
-    internal::Classification::compute_mean_max (color_attribute, mean, max);
+    this->compute_mean_max (color_attribute, mean, max);
   }
 
   virtual double value (int pt_index)
@@ -1231,7 +1053,7 @@ public:
     for(int i=0; i<(int)M.HPS.size(); i++)
       distance_to_plane_attribute.push_back (std::sqrt (CGAL::squared_distance (M.HPS[i].position, M.planes[i])));
 
-    internal::Classification::compute_mean_max (distance_to_plane_attribute, mean, max);
+    this->compute_mean_max (distance_to_plane_attribute, mean, max);
     //    max *= 2;
   }
 
@@ -1266,7 +1088,7 @@ public:
         horizontality_attribute.push_back (1. - std::fabs(normal * vertical));
       }
     
-    internal::Classification::compute_mean_max (horizontality_attribute, mean, max);
+    this->compute_mean_max (horizontality_attribute, mean, max);
     //    max *= 2;
   }
 
@@ -1610,7 +1432,7 @@ public:
       elevation_attribute.push_back ((double)(M.HPS[i].position.z()-M.DTM(I,J)));
     }
 
-    internal::Classification::compute_mean_max (elevation_attribute, mean, max);
+    this->compute_mean_max (elevation_attribute, mean, max);
     //    max *= 5;
   }
 
