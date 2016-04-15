@@ -152,7 +152,8 @@ Scene_c3t3_item::Scene_c3t3_item()
   setRenderingMode(FlatPlusEdges);
   compile_shaders();
   spheres_are_shown = false;
-  create_flat_and_wire_sphere(1.0f,s_vertex,s_normals, ws_vertex);
+  cnc_are_shown = false;
+    create_flat_and_wire_sphere(1.0f,s_vertex,s_normals, ws_vertex);
 
 }
 
@@ -179,6 +180,7 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   setRenderingMode(FlatPlusEdges);
   compile_shaders();
   spheres_are_shown = false;
+  cnc_are_shown = false;
   create_flat_and_wire_sphere(1.0f,s_vertex,s_normals, ws_vertex);
 }
 
@@ -542,7 +544,6 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
   program->release();
   vaos[Facets]->release();
 
-
   if(d->show_tetrahedra && !frame->isManipulated()) {
     if (!are_intersection_buffers_filled)
     {
@@ -705,6 +706,17 @@ void Scene_c3t3_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const {
       program_sphere->release();
       vaos[Wired_spheres]->release();
   }
+  if(cnc_are_shown)
+  {
+    vaos[CNC]->bind();
+    program = getShaderProgram(PROGRAM_NO_SELECTION);
+    attrib_buffers(viewer, PROGRAM_NO_SELECTION);
+    program->bind();
+    program->setAttributeValue("colors", QColor(Qt::black));
+    viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_lines_not_in_complex_size / 3));
+    program->release();
+    vaos[Edges]->release();
+  }
 }
 
 void Scene_c3t3_item::draw_points(CGAL::Three::Viewer_interface * viewer) const
@@ -801,6 +813,36 @@ void Scene_c3t3_item::draw_triangle_edges(const Kernel::Point_3& pa,
   positions_lines.push_back(pa.z());
 
 }
+void Scene_c3t3_item::draw_triangle_edges_cnc(const Kernel::Point_3& pa,
+                                          const Kernel::Point_3& pb,
+                                          const Kernel::Point_3& pc)const {
+
+#undef darker
+  positions_lines_not_in_complex.push_back(pa.x());
+  positions_lines_not_in_complex.push_back(pa.y());
+  positions_lines_not_in_complex.push_back(pa.z());
+
+  positions_lines_not_in_complex.push_back(pb.x());
+  positions_lines_not_in_complex.push_back(pb.y());
+  positions_lines_not_in_complex.push_back(pb.z());
+
+  positions_lines_not_in_complex.push_back(pb.x());
+  positions_lines_not_in_complex.push_back(pb.y());
+  positions_lines_not_in_complex.push_back(pb.z());
+
+  positions_lines_not_in_complex.push_back(pc.x());
+  positions_lines_not_in_complex.push_back(pc.y());
+  positions_lines_not_in_complex.push_back(pc.z());
+
+  positions_lines_not_in_complex.push_back(pc.x());
+  positions_lines_not_in_complex.push_back(pc.y());
+  positions_lines_not_in_complex.push_back(pc.z());
+
+  positions_lines_not_in_complex.push_back(pa.x());
+  positions_lines_not_in_complex.push_back(pa.y());
+  positions_lines_not_in_complex.push_back(pa.z());
+
+}
 
 double Scene_c3t3_item::complex_diag() const {
   const Bbox& bbox = this->bbox();
@@ -866,6 +908,13 @@ QMenu* Scene_c3t3_item::contextMenu()
     actionShowSpheres->setObjectName("actionShowSpheres");
     connect(actionShowSpheres, SIGNAL(toggled(bool)),
             this, SLOT(show_spheres(bool)));
+
+    QAction* actionShowCNC =
+      menu->addAction(tr("Show cells not in complex"));
+    actionShowCNC->setCheckable(true);
+    actionShowCNC->setObjectName("actionShowCNC");
+    connect(actionShowCNC, SIGNAL(toggled(bool)),
+            this, SLOT(show_cnc(bool)));
 
     QAction* actionShowTets =
       menu->addAction(tr("Show &tetrahedra"));
@@ -993,6 +1042,28 @@ void Scene_c3t3_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)
     positions_lines.clear();
     positions_lines.swap(positions_lines);
     
+  }
+
+  // vao containing the data for the cnc
+  {
+    program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+    program->bind();
+
+    vaos[CNC]->bind();
+    buffers[Edges_CNC].bind();
+    buffers[Edges_CNC].allocate(positions_lines_not_in_complex.data(),
+                                     static_cast<int>(positions_lines_not_in_complex.size()*sizeof(float)));
+    program->enableAttributeArray("vertex");
+    program->setAttributeBuffer("vertex", GL_FLOAT, 0, 3);
+    buffers[Edges_CNC].release();
+
+    vaos[CNC]->release();
+    program->release();
+
+    positions_lines_not_in_complex_size = positions_lines_not_in_complex.size();
+    positions_lines_not_in_complex.clear();
+    positions_lines_not_in_complex.swap(positions_lines_not_in_complex);
+
   }
 
   //vao containing the data for the grid
@@ -1187,6 +1258,7 @@ void Scene_c3t3_item::compute_elements()
   normals.clear();
   f_colors.clear();
   positions_lines.clear();
+  positions_lines_not_in_complex.clear();
   s_colors.resize(0);
   s_center.resize(0);
   s_radius.resize(0);
@@ -1242,11 +1314,30 @@ void Scene_c3t3_item::compute_elements()
       f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
       f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
       f_colors.push_back(color.redF());f_colors.push_back(color.greenF());f_colors.push_back(color.blueF());
-      if ((index % 2 == 1) == c3t3().is_in_complex(cell)) draw_triangle(pb, pa, pc, false);
+      if ((index % 2 == 1) == c3t3().is_in_complex(cell))
+        draw_triangle(pb, pa, pc, false);
       else draw_triangle(pa, pb, pc, false);
       draw_triangle_edges(pa, pb, pc);
     }
 
+    //the cells not in the complex
+    for(C3t3::Triangulation::Cell_iterator
+        cit = c3t3().triangulation().finite_cells_begin(),
+        end = c3t3().triangulation().finite_cells_end();
+        cit != end; ++cit)
+    {
+      if(!c3t3().is_in_complex(cit))
+      {
+        const Kernel::Point_3& p1 = cit->vertex(0)->point();
+        const Kernel::Point_3& p2 = cit->vertex(1)->point();
+        const Kernel::Point_3& p3 = cit->vertex(2)->point();
+        const Kernel::Point_3& p4 = cit->vertex(3)->point();
+        draw_triangle_edges_cnc(p1, p2, p3);
+        draw_triangle_edges_cnc(p1, p2, p4);
+        draw_triangle_edges_cnc(p1, p3, p4);
+        draw_triangle_edges_cnc(p2, p3, p4);
+      }
+    }
 
   }
   //The Spheres
