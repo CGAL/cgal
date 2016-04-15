@@ -149,6 +149,7 @@ void Polyhedron_demo_orient_soup_plugin::orientPoly()
           poly_item->setVisible(item->visible());
           poly_item->invalidateOpenGLBuffers();
           poly_item->setProperty("source filename", item->property("source filename"));
+          poly_item->setProperty("loader_name", item->property("loader_name"));
           scene->replaceItem(index, poly_item);
           item->deleteLater();
         } else {
@@ -192,6 +193,7 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
           sm_item->setRenderingMode(item->renderingMode());
           sm_item->setVisible(item->visible());
           sm_item->setProperty("source filename", item->property("source filename"));
+          sm_item->setProperty("loader_name", item->property("loader_name"));
           scene->replaceItem(index, sm_item);
           item->deleteLater();
         } else {
