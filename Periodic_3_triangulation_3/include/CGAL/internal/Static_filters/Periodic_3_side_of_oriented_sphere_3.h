@@ -172,6 +172,7 @@ public:
     double px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, tx, ty, tz;
     double domxmax, domxmin, domymax, domymin, domzmax, domzmin;
     init_double(px, py, pz, qx, qy, qz, rx, ry, rz, sx, sy, sz, tx, ty, tz, (FT*)(0));
+    init_double(domxmax, domxmin, domymax, domymin, domzmax, domzmin, (FT*)(0));
     int otx = o_t.x();
     int oty = o_t.y();
     int otz = o_t.z();
