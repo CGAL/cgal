@@ -63,12 +63,12 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
   mw = mainWindow;
   messages = m;
   actionOrientPoly = new QAction(tr("&Orient Polygon Soup (as a polyhedron)"), mainWindow);
-  actionOrientPoly->setObjectName("actionOrient");
+  actionOrientPoly->setObjectName("actionOrientPoly");
   actionOrientPoly->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionOrientPoly, SIGNAL(triggered()),
           this, SLOT(orientPoly()));
   actionOrientSM = new QAction(tr("&Orient Polygon Soup (as a surface_mesh)"), mainWindow);
-  actionOrientSM->setObjectName("actionOrient");
+  actionOrientSM->setObjectName("actionOrientSM");
   actionOrientSM->setProperty("subMenuName", "Polygon Mesh Processing");
   connect(actionOrientSM, SIGNAL(triggered()),
           this, SLOT(orientSM()));
@@ -86,10 +86,11 @@ void Polyhedron_demo_orient_soup_plugin::init(QMainWindow* mainWindow,
 }
 
 QList<QAction*> Polyhedron_demo_orient_soup_plugin::actions() const {
-  return QList<QAction*>() << actionOrientPoly
-                           << actionOrientSM
-                           << actionShuffle
-                           << actionDisplayNonManifoldEdges;
+  return QList<QAction*>()
+      << actionOrientPoly
+      << actionOrientSM
+      << actionShuffle
+      << actionDisplayNonManifoldEdges;
 }
 
 void set_vcolors(Scene_surface_mesh_item::SMesh* smesh, std::vector<CGAL::Color> colors)
@@ -149,7 +150,7 @@ void Polyhedron_demo_orient_soup_plugin::orientPoly()
           poly_item->invalidateOpenGLBuffers();
           poly_item->setProperty("source filename", item->property("source filename"));
           scene->replaceItem(index, poly_item);
-          delete item;
+          item->deleteLater();
         } else {
           item->invalidateOpenGLBuffers();
           scene->itemChanged(item);
@@ -192,7 +193,7 @@ void Polyhedron_demo_orient_soup_plugin::orientSM()
           sm_item->setVisible(item->visible());
           sm_item->setProperty("source filename", item->property("source filename"));
           scene->replaceItem(index, sm_item);
-          delete item;
+          item->deleteLater();
         } else {
           item->invalidateOpenGLBuffers();
           scene->itemChanged(item);
