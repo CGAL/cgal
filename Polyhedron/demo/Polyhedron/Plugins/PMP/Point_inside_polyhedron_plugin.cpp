@@ -123,9 +123,15 @@ public Q_SLOTS:
       if(point_item) { point_sets.push_back(point_item->point_set()); }
     }
 
+
     // there should be at least one selected polyhedron and point item
     if(inside_testers.empty()) { print_message("Error: there is no selected polyhedron item(s)."); }
-    if(point_sets.empty()) { print_message("Error: there is no selected point set item(s)."); }
+    if(point_sets.empty()) {
+    if(!generated_points.empty())
+      point_sets.push_back(generated_points.last()->point_set());
+    else
+      print_message("Error: there is no selected point set item(s).");
+    }
     if(inside_testers.empty() || point_sets.empty()) { return; }
 
     // deselect all points
@@ -173,14 +179,19 @@ public Q_SLOTS:
     for (std::size_t i = 0; i < inside_testers.size(); ++i)
       delete inside_testers[i];
 
+    bool found = false;
     // for repaint
     Q_FOREACH(CGAL::Three::Scene_interface::Item_id id, scene->selectionIndices()) {
       Scene_points_with_normal_item* point_item = qobject_cast<Scene_points_with_normal_item*>(scene->item(id));
       if(point_item) { 
+        found = true;
         point_item->invalidateOpenGLBuffers();
         scene->itemChanged(point_item);
       }
     }
+    if(!found && !generated_points.empty())
+      generated_points.last()->invalidateOpenGLBuffers();
+      scene->itemChanged(generated_points.last());
 
   }
 
@@ -244,11 +255,23 @@ public Q_SLOTS:
 
     scene->addItem(point_item);
     scene->itemChanged(point_item);
+    generated_points.append(point_item);
+    connect(point_item, SIGNAL(destroyed(QObject*)),
+            this, SLOT(resetGeneratedPoints(QObject*)));
+  }
+private Q_SLOTS:
+  void resetGeneratedPoints(QObject* o)
+  {
+    Q_FOREACH(Scene_points_with_normal_item* item , generated_points)
+    if(item == o)
+    {
+      generated_points.removeAll(item);
+    }
   }
 private:
   Messages_interface* messages;
   QAction* actionPointInsidePolyhedron;
-
+  QList<Scene_points_with_normal_item*> generated_points;
   QDockWidget* dock_widget;
   Ui::Point_inside_polyhedron ui_widget;
 
