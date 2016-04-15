@@ -226,7 +226,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       double weight = m_scat->weight;
       m_scat->weight = m_scat->max;
-      for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+      for (int i = 0; i < m_psc->HPS.size(); ++ i)
         {
           colors_points.push_back (ramp.r(m_scat->value(i)));
           colors_points.push_back (ramp.g(m_scat->value(i)));
@@ -238,7 +238,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       double weight = m_plan->weight;
       m_plan->weight = m_plan->max;
-      for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+      for (int i = 0; i < m_psc->HPS.size(); ++ i)
         {
           colors_points.push_back (ramp.r(m_plan->value(i)));
           colors_points.push_back (ramp.g(m_plan->value(i)));
@@ -250,7 +250,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       double weight = m_hori->weight;
       m_hori->weight = m_hori->max;
-      for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+      for (int i = 0; i < m_psc->HPS.size(); ++ i)
         {
           colors_points.push_back (ramp.r(m_hori->value(i)));
           colors_points.push_back (ramp.g(m_hori->value(i)));
@@ -262,7 +262,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       double weight = m_elev->weight;
       m_elev->weight = m_elev->max;
-      for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+      for (int i = 0; i < m_psc->HPS.size(); ++ i)
         {
           colors_points.push_back (ramp.r(m_elev->value(i)));
           colors_points.push_back (ramp.g(m_elev->value(i)));
@@ -274,7 +274,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       double weight = m_colo->weight;
       m_colo->weight = m_colo->max;
-      for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+      for (int i = 0; i < m_psc->HPS.size(); ++ i)
         {
           colors_points.push_back (ramp.r(m_colo->value(i)));
           colors_points.push_back (ramp.g(m_colo->value(i)));
@@ -286,7 +286,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       int seed = time(NULL);
         
-      for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+      for (int i = 0; i < m_psc->HPS.size(); ++ i)
         {
           if (m_psc->HPS[i].group == (std::size_t)(-1))
             {
@@ -595,10 +595,11 @@ void Scene_point_set_classification_item::compute_ransac (const double& radius_n
     indices[i] = i;
 
   std::vector<Kernel::Vector_3> normals (m_psc->HPS.size(), CGAL::NULL_VECTOR);
+
   HPS_property_map<PSC::HPoint> hps_pmap (&(m_psc->HPS));
   CGAL::jet_estimate_normals<CGAL::Sequential_tag>(indices.begin(), indices.end(),
                                                    hps_pmap,
-                                                   &(normals[0]),
+                                                   &normals[0],
                                                    12);
 
   typedef CGAL::Shape_detection_3::Efficient_RANSAC_traits<Kernel, std::vector<std::size_t>,
@@ -831,7 +832,7 @@ void Scene_point_set_classification_item::extract_building_map (double,
                            Kernel::Point_2 (lines[i].target().x(), lines[i].target().y()));
 
   std::cerr << " -> " << cdt.number_of_faces () << " face(s) created" << std::endl;
-  for (typename CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end(); ++ it)
+  for (CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end(); ++ it)
     it->info() = -10;
   
   // Project ground + roof points on faces
@@ -854,7 +855,7 @@ void Scene_point_set_classification_item::extract_building_map (double,
 
   
   // Label and extract faces
-  for (typename CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end(); ++ it)
+  for (CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end(); ++ it)
     if (it->info() > 0)
       faces.push_back (Kernel::Triangle_3 (Kernel::Point_3 (it->vertex (0)->point().x(),
                                                             it->vertex (0)->point().y(),

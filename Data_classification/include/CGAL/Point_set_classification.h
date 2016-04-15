@@ -104,7 +104,7 @@ public:
 
   Attribute_side attribute_effect (Abstract_segmentation_attribute* att) 
   {
-    typename std::map<std::string, Attribute_side>::iterator
+    std::map<std::string, Attribute_side>::iterator
       search = m_attribute_effects.find (att->id());
     return (search == m_attribute_effects.end () ? NEUTRAL_ATT : search->second);
   }
@@ -114,7 +114,7 @@ public:
   void info()
   {
     std::cerr << "Attribute " << m_id << ": ";
-    for (typename std::map<std::string, Attribute_side>::iterator it = m_attribute_effects.begin();
+    for (std::map<std::string, Attribute_side>::iterator it = m_attribute_effects.begin();
          it != m_attribute_effects.end(); ++ it)
       {
         if (it->second == NEUTRAL_ATT)
@@ -333,7 +333,7 @@ public:
     planes.clear();
     
     std::map<Point,int> map_indice_point;
-    for(std::size_t i=0;i<HPS.size();i++){
+    for(int i=0;i<HPS.size();i++){
       Point pt=HPS[i].position;
       map_indice_point[pt]=i;
 	
