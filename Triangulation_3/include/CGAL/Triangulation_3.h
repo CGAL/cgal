@@ -59,6 +59,7 @@
 #include <boost/random/uniform_smallint.hpp>
 #include <boost/random/variate_generator.hpp>
 #include <boost/mpl/if.hpp>
+#include <boost/unordered_map.hpp>
 
 #ifndef CGAL_NO_STRUCTURAL_FILTERING
 #include <CGAL/internal/Static_filters/tools.h>
@@ -127,7 +128,7 @@ protected:
   template <typename Vertex_triple, typename Facet>
   struct Vertex_triple_Facet_map_generator
   {
-    typedef std::map<Vertex_triple, Facet> type;
+    typedef boost::unordered_map<Vertex_triple, Facet> type;
   };
 
   template <typename Vertex_handle>
@@ -214,14 +215,17 @@ protected:
   template <typename Vertex_triple, typename Facet>
   struct Vertex_triple_Facet_map_generator
   {
-    typedef std::map
+    typedef boost::unordered_map
     <
       Vertex_triple,
       Facet,
-      std::less<Vertex_triple>,
+      boost::hash<Vertex_triple>,
+      std::equal_to<Vertex_triple>,
       tbb::scalable_allocator<std::pair<const Vertex_triple, Facet> >
     > type;
   };
+
+
 
   template <typename Vertex_handle>
   struct Vertex_handle_unique_hash_map_generator
