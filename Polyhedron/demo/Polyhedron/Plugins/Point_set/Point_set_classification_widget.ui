@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>565</width>
+    <width>622</width>
     <height>559</height>
    </rect>
   </property>
@@ -559,6 +559,13 @@
           <widget class="QPushButton" name="generate_point_set_items">
            <property name="text">
             <string>Generate point set items</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="extract_facades">
+           <property name="text">
+            <string>Extract facades</string>
            </property>
           </widget>
          </item>

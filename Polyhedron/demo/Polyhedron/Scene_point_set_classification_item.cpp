@@ -18,6 +18,8 @@
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
+#include <CGAL/Triangulation_face_base_with_info_2.h>
+#include <CGAL/Constrained_Delaunay_triangulation_2.h>
 
 #include <QObject>
 #include <QMenu>
@@ -155,7 +157,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
         {
-          typename PSC::Color color = m_psc->HPS[i].color;
+          Color color = m_psc->HPS[i].color;
 
           colors_points.push_back ((double)(color[0]) / 255.);
           colors_points.push_back ((double)(color[1]) / 255.);
@@ -615,7 +617,7 @@ void Scene_point_set_classification_item::compute_ransac (const double& radius_n
   
   op.epsilon = radius_neighbors;
   op.cluster_epsilon = radius_neighbors;
-  op.normal_threshold = 0.75;
+  op.normal_threshold = 0.8;
 
   std::cerr << "Computing RANSAC..." << std::endl;
   shape_detection.detect(op);
@@ -625,15 +627,14 @@ void Scene_point_set_classification_item::compute_ransac (const double& radius_n
 
   std::cerr << "Storing groups..." << std::endl;
 
-  std::size_t nb_group = 0;
   BOOST_FOREACH(boost::shared_ptr<Shape_detection::Shape> shape, shape_detection.shapes())
     {
+      m_psc->groups.push_back ((Kernel::Plane_3)(*(dynamic_cast<CGAL::Shape_detection_3::Plane<Traits>*>(shape.get ()))));
       BOOST_FOREACH(std::size_t i, shape->indices_of_assigned_points())
-        m_psc->HPS[indices[i]].group = nb_group;
-      ++ nb_group;
+        m_psc->HPS[indices[i]].group = m_psc->groups.size() - 1;
+      
     }
-  std::cerr << "Found " << nb_group << " group(s)" << std::endl;
-
+  std::cerr << "Found " << m_psc->groups.size() << " group(s)" << std::endl;
 }
 
 
@@ -642,6 +643,7 @@ void Scene_point_set_classification_item::compute_ransac (const double& radius_n
 void Scene_point_set_classification_item::extract_2d_outline (double radius,
                                                               std::vector<Kernel::Point_3>& outline)
 {
+    
   // Projection
   double mean_z = 0.;
   std::size_t nb = 0;
@@ -684,4 +686,234 @@ void Scene_point_set_classification_item::extract_2d_outline (double radius,
 
     }
 
+}
+
+void Scene_point_set_classification_item::extract_building_map (double,
+                                                                std::vector<Kernel::Triangle_3>& faces)
+{
+  std::size_t index_ground = 0;
+  std::size_t index_roof = 0;
+  std::size_t index_facade = 0;
+  for (std::size_t i = 0; i < m_psc->segmentation_classes.size(); ++ i)
+    if (m_psc->segmentation_classes[i]->id() == "ground")
+      index_ground = i;
+    else if (m_psc->segmentation_classes[i]->id() == "roof")
+      index_roof = i;
+    else if (m_psc->segmentation_classes[i]->id() == "facade")
+      index_facade = i;
+
+  // Estimate ground Z
+  std::cerr << "Estimating ground..." << std::endl;
+  std::vector<double> z_ground;
+  for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+    if (m_psc->HPS[i].AE_label == index_ground)
+      z_ground.push_back (m_psc->HPS[i].position.z());
+
+  std::sort (z_ground.begin(), z_ground.end());
+  double z_median = z_ground[z_ground.size() / 2];
+  Kernel::Plane_3 ground (Kernel::Point_3 (0., 0., z_median), Kernel::Vector_3 (0., 0., 1.));
+  
+  // Project facade planes and get lines
+  std::cerr << "Projecting facade planes..." << std::endl;
+  std::vector<bool> is_plane_facade (m_psc->groups.size(), false);
+  std::vector<std::vector<Kernel::Point_3> > facade_pts (m_psc->groups.size());
+  
+  for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+    if (m_psc->HPS[i].AE_label == index_facade && m_psc->HPS[i].group != (std::size_t)(-1))
+      {
+        is_plane_facade[m_psc->HPS[i].group] = true;
+        facade_pts[m_psc->HPS[i].group].push_back (m_psc->HPS[i].position);
+      }
+
+
+  std::vector<Kernel::Segment_3> borders;
+  borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmin, _bbox.ymin, z_median),
+                                        Kernel::Point_3 (_bbox.xmin, _bbox.ymax, z_median)));
+  borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmin, _bbox.ymax, z_median),
+                                        Kernel::Point_3 (_bbox.xmax, _bbox.ymax, z_median)));
+  borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmax, _bbox.ymax, z_median),
+                                        Kernel::Point_3 (_bbox.xmax, _bbox.ymin, z_median)));
+  borders.push_back (Kernel::Segment_3 (Kernel::Point_3 (_bbox.xmax, _bbox.ymin, z_median),
+                                        Kernel::Point_3 (_bbox.xmin, _bbox.ymin, z_median)));
+
+  std::vector<Kernel::Segment_3> lines;
+  for (std::size_t i = 0; i < is_plane_facade.size(); ++ i)
+    if (is_plane_facade[i])
+      {
+        //#define INFINITE_LINES
+#if defined(INFINITE_LINES)
+        const Kernel::Plane_3& plane = m_psc->groups[i];
+        Kernel::Point_3 source, target;
+        bool source_found = false;
+
+        for (std::size_t j = 0; j < borders.size(); ++ j)
+          {
+            CGAL::Object obj = CGAL::intersection (borders[j], plane);
+            Kernel::Point_3 inter;
+            if (CGAL::assign (inter, obj))
+              {
+                if (source_found)
+                  {
+                    target = inter;
+                    lines.push_back (Kernel::Segment_3 (source, target));
+                    break;
+                  }
+                else
+                  {
+                    source = inter;
+                    source_found = true;
+                  }
+              }
+          }
+#else
+        const Kernel::Plane_3& plane = m_psc->groups[i];
+        CGAL::Object obj = CGAL::intersection (ground, plane);
+        Kernel::Line_3 line;
+
+        if (facade_pts[i].size() < 2)
+          continue;
+        
+        if (CGAL::assign (line, obj))
+          {
+            Kernel::Point_3 origin = line.projection (CGAL::ORIGIN);
+            Kernel::Vector_3 v (line);
+            double min = std::numeric_limits<double>::max();
+            double max = -std::numeric_limits<double>::max();
+            Kernel::Point_3 source = CGAL::ORIGIN;
+            Kernel::Point_3 target = CGAL::ORIGIN;
+            for (std::size_t j = 0; j < facade_pts[i].size(); ++ j)
+              {
+                Kernel::Vector_3 dir (origin, facade_pts[i][j]);
+                double prod = v * dir;
+                if (prod > max)
+                  {
+                    max = prod;
+                    target = facade_pts[i][j];
+                  }
+                if (prod < min)
+                  {
+                    min = prod;
+                    source = facade_pts[i][j];
+                  }
+              }
+            source = line.projection (source);
+            target = line.projection (target);
+            Kernel::Point_3 middle (0.5 * (source.x() + target.x()),
+                                    0.5 * (source.y() + target.y()),
+                                    0.5 * (source.z() + target.z()));
+
+            source = middle + 1.2 * (source - middle);
+            target = middle + 1.2 * (target - middle);
+            lines.push_back (Kernel::Segment_3 (source, target));
+          }
+#endif
+      }
+
+  std::cerr << " -> Found " << lines.size() << " line(s)" << std::endl;
+  
+  // Build 2D constrained Delaunay triangulation
+  std::cerr << "Building 2D constrained Delaunay triangulation..." << std::endl;
+    
+  typedef CGAL::Triangulation_vertex_base_2<Kernel>                Vb;
+  typedef CGAL::Triangulation_face_base_with_info_2<int,Kernel>    Fbwi;
+  typedef CGAL::Constrained_triangulation_face_base_2<Kernel,Fbwi> Fb;
+  typedef CGAL::Triangulation_data_structure_2<Vb,Fb>              TDS;
+  typedef CGAL::Exact_predicates_tag                               Itag;
+  typedef CGAL::Constrained_Delaunay_triangulation_2<Kernel, TDS, Itag> CDT;
+
+  CDT cdt;
+  cdt.insert (Kernel::Point_2 (_bbox.xmin, _bbox.ymin));
+  cdt.insert (Kernel::Point_2 (_bbox.xmin, _bbox.ymax));
+  cdt.insert (Kernel::Point_2 (_bbox.xmax, _bbox.ymin));
+  cdt.insert (Kernel::Point_2 (_bbox.xmax, _bbox.ymax));
+  for (std::size_t i = 0; i < lines.size(); ++ i)
+    cdt.insert_constraint (Kernel::Point_2 (lines[i].source().x(), lines[i].source().y()),
+                           Kernel::Point_2 (lines[i].target().x(), lines[i].target().y()));
+
+  std::cerr << " -> " << cdt.number_of_faces () << " face(s) created" << std::endl;
+  for (typename CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end(); ++ it)
+    it->info() = -10;
+  
+  // Project ground + roof points on faces
+  std::cerr << "Projecting ground and roof points on faces..." << std::endl;
+  for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+    {
+      int iter = 0;
+      if (m_psc->HPS[i].AE_label == index_roof)
+        iter = 1;
+      else if (m_psc->HPS[i].AE_label == index_ground)
+        iter = -1;
+      else
+        continue;
+
+      CDT::Face_handle f = cdt.locate (Kernel::Point_2 (m_psc->HPS[i].position.x(),
+                                                         m_psc->HPS[i].position.y()));
+
+      f->info() += iter;
+    }
+
+  
+  // Label and extract faces
+  for (typename CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end(); ++ it)
+    if (it->info() > 0)
+      faces.push_back (Kernel::Triangle_3 (Kernel::Point_3 (it->vertex (0)->point().x(),
+                                                            it->vertex (0)->point().y(),
+                                                            z_median),
+                                           Kernel::Point_3 (it->vertex (1)->point().x(),
+                                                            it->vertex (1)->point().y(),
+                                                            z_median),
+                                           Kernel::Point_3 (it->vertex (2)->point().x(),
+                                                            it->vertex (2)->point().y(),
+                                                            z_median)));
+  std::cerr << " -> Found " << faces.size() << " building face(s)" << std::endl;
+}
+
+
+void Scene_point_set_classification_item::extract_facades (double radius,
+                                                           std::vector<Kernel::Triangle_3>& faces)
+{
+  std::size_t index_facade = 0;
+  for (std::size_t i = 0; i < m_psc->segmentation_classes.size(); ++ i)
+    if (m_psc->segmentation_classes[i]->id() == "facade")
+      {
+        index_facade = i;
+        break;
+      }
+
+  typedef CGAL::Alpha_shape_vertex_base_2<Kernel> Vb;
+  typedef CGAL::Alpha_shape_face_base_2<Kernel>  Fb;
+  typedef CGAL::Triangulation_data_structure_2<Vb,Fb> Tds;
+  typedef CGAL::Delaunay_triangulation_2<Kernel,Tds> Triangulation_2;
+  typedef CGAL::Alpha_shape_2<Triangulation_2>  Alpha_shape_2;
+  
+  std::vector<std::vector<Kernel::Point_3> > facade_pts (m_psc->groups.size());
+    
+  for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+    if (m_psc->HPS[i].AE_label == index_facade && m_psc->HPS[i].group != (std::size_t)(-1))
+      {
+        facade_pts[m_psc->HPS[i].group].push_back (m_psc->HPS[i].position);
+      }
+
+  for (std::size_t i = 0; i < facade_pts.size(); ++ i)
+    {
+      const Kernel::Plane_3& plane = m_psc->groups[i];
+
+      std::vector<Kernel::Point_2> projections;
+      projections.reserve (facade_pts[i].size ());
+
+      for (std::size_t j = 0; j < facade_pts[i].size (); ++ j)
+        projections.push_back (plane.to_2d (facade_pts[i][j]));
+
+      Alpha_shape_2 ashape (projections.begin (), projections.end (), radius);
+  
+      for (Alpha_shape_2::Finite_faces_iterator it = ashape.finite_faces_begin ();
+           it != ashape.finite_faces_end (); ++ it)
+        {
+          if (ashape.classify (it) != Alpha_shape_2::INTERIOR)
+            continue;
+          faces.push_back (Kernel::Triangle_3 (plane.to_3d (it->vertex(0)->point()),
+                                               plane.to_3d (it->vertex(1)->point()),
+                                               plane.to_3d (it->vertex(2)->point())));
+        }
+    }
 }

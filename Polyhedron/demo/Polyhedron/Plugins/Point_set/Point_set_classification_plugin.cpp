@@ -7,6 +7,7 @@
 #include "Scene_points_with_normal_item.h"
 #include "Scene_point_set_classification_item.h"
 #include "Scene_polylines_item.h"
+#include "Scene_polygon_soup_item.h"
 
 #include <CGAL/Three/Scene_interface.h>
 #include <CGAL/Three/Polyhedron_demo_plugin_helper.h>
@@ -93,6 +94,8 @@ public:
             SLOT(on_save_button_clicked()));
     connect(ui_widget.generate_point_set_items,  SIGNAL(clicked()), this,
             SLOT(on_generate_point_set_items_button_clicked()));
+    connect(ui_widget.extract_facades,  SIGNAL(clicked()), this,
+            SLOT(on_extract_facades_button_clicked()));
     connect(ui_widget.extract_2d_outline,  SIGNAL(clicked()), this,
             SLOT(on_extract_2d_outline_button_clicked()));
 
@@ -242,7 +245,7 @@ public Q_SLOTS:
     QApplication::setOverrideCursor(Qt::WaitCursor);
     QTime time;
     time.start();
-    classification_item->compute_ransac (ui_widget.radiusNeighborsDoubleSpinBox->value());
+    classification_item->compute_ransac (ui_widget.gridResolutionDoubleSpinBox->value());
     std::cerr << "RANSAC computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
     QApplication::restoreOverrideCursor();
     scene->itemChanged(classification_item);
@@ -532,23 +535,73 @@ public Q_SLOTS:
     
     QApplication::setOverrideCursor(Qt::WaitCursor);
 
-    std::vector<Kernel::Point_3> outline;
-    classification_item->extract_2d_outline(ui_widget.radiusNeighborsDoubleSpinBox->value(),
-                                            outline);
+    std::vector<Kernel::Triangle_3> faces;
+    classification_item->extract_building_map (ui_widget.radiusNeighborsDoubleSpinBox->value(),
+                                               faces);
 
-    Scene_polylines_item* item = new Scene_polylines_item;
+    Scene_polygon_soup_item* new_item
+      = new Scene_polygon_soup_item ();
+    new_item->setColor(Qt::magenta);
+    new_item->setRenderingMode(FlatPlusEdges);
+    new_item->init_polygon_soup(faces.size() * 3, faces.size());
 
-    for (std::size_t i = 0; i < outline.size(); i += 2)
+    for (std::size_t i = 0; i < faces.size(); ++ i)
       {
-        item->polylines.push_back (std::vector<Kernel::Point_3>());
-        item->polylines.back().push_back (outline[i]);
-        item->polylines.back().push_back (outline[i+1]);
+        for (std::size_t j = 0; j < 3; ++ j)
+          new_item->new_vertex (faces[i][j].x(), faces[i][j].y(), faces[i][j].z());
+        new_item->new_triangle (3 * i, 3 * i + 1, 3 * i + 2);
       }
-    item->setName(QString("%1 (2D outline)")
-                  .arg(classification_item->name()));
-    item->setColor(Qt::black);
-    item->invalidateOpenGLBuffers();
-    scene->addItem (item);
+    scene->addItem (new_item);
+// std::vector<Kernel::Point_3> outline;
+//     classification_item->extract_2d_outline(ui_widget.radiusNeighborsDoubleSpinBox->value(),
+//                                             outline);
+
+    // Scene_polylines_item* item = new Scene_polylines_item;
+
+    // for (std::size_t i = 0; i < outline.size(); i += 2)
+    //   {
+    //     item->polylines.push_back (std::vector<Kernel::Point_3>());
+    //     item->polylines.back().push_back (outline[i]);
+    //     item->polylines.back().push_back (outline[i+1]);
+    //   }
+    // item->setName(QString("%1 (2D outline)")
+    //               .arg(classification_item->name()));
+    // item->setColor(Qt::black);
+    // item->invalidateOpenGLBuffers();
+    // scene->addItem (item);
+
+    QApplication::restoreOverrideCursor();
+  }
+
+  void on_extract_facade_button_clicked()
+  {
+    Scene_point_set_classification_item* classification_item
+      = get_selected_item<Scene_point_set_classification_item>();
+    if(!classification_item)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+    
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+
+    std::vector<Kernel::Triangle_3> faces;
+    classification_item->extract_facades (ui_widget.radiusNeighborsDoubleSpinBox->value(),
+                                          faces);
+
+    Scene_polygon_soup_item* new_item
+      = new Scene_polygon_soup_item ();
+    new_item->setColor(Qt::cyan);
+    new_item->setRenderingMode(FlatPlusEdges);
+    new_item->init_polygon_soup(faces.size() * 3, faces.size());
+
+    for (std::size_t i = 0; i < faces.size(); ++ i)
+      {
+        for (std::size_t j = 0; j < 3; ++ j)
+          new_item->new_vertex (faces[i][j].x(), faces[i][j].y(), faces[i][j].z());
+        new_item->new_triangle (3 * i, 3 * i + 1, 3 * i + 2);
+      }
+    scene->addItem (new_item);
 
     QApplication::restoreOverrideCursor();
   }

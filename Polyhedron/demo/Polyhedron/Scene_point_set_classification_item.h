@@ -21,7 +21,7 @@ typedef CGAL::Horizontality_segmentation_attribute<Kernel> Horizontality;
 typedef CGAL::Distance_to_plane_segmentation_attribute<Kernel> Planarity;
 typedef CGAL::Color_segmentation_attribute<Kernel> ColorSeg;
 
-typedef PSC::Color Color;
+typedef CGAL::Data_classification::RGB_Color Color;
 
 class QMenu;
 class QAction;
@@ -155,6 +155,10 @@ public:
 
   void extract_2d_outline (double radius,
                            std::vector<Kernel::Point_3>& outline);
+  void extract_building_map (double radius,
+                             std::vector<Kernel::Triangle_3>& faces);
+  void extract_facades (double radius,
+                        std::vector<Kernel::Triangle_3>& faces);
 
                                    
 public Q_SLOTS:
