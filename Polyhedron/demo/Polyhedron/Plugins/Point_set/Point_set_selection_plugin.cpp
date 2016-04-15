@@ -76,7 +76,6 @@ public:
   void draw_edges(CGAL::Three::Viewer_interface* viewer) const {
     viewer->glLineWidth(3.f);
     polyline->setRbgColor(0, 255, 0); 
-
     polyline->draw_edges(viewer);
   }
 
@@ -115,7 +114,6 @@ public:
 	for (unsigned int i = 0; i < contour_2d.size (); ++ i)
 	  poly().push_back (scene_point (contour_2d[i]));
       }
-    
     return true;
   }
 
@@ -146,6 +144,7 @@ public:
 
     if (update_polyline ())
       {
+        polyline->invalidateOpenGLBuffers();
 	Q_EMIT itemChanged();
       }
   }
