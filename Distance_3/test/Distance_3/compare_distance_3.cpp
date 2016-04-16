@@ -6,8 +6,11 @@
 template <typename K>
 void cmp(const K& k)
 {
-  typename K::Point_3 p, q;
-  typename K::Segment_3 s1, s2;
+  typedef typename K::Point_3 Point_3;
+
+  Point_3 p(0,0,0), q(1,1,1);
+  typename K::Segment_3 s1(Point_3(1,0,0),Point_3(1,1,0)),
+    s2(Point_3(1,1,1),Point_3(2,2,2));
   
   k.compare_distance_3_object()(p,s1, s2);
   k.compare_distance_3_object()(p,q, s2);
