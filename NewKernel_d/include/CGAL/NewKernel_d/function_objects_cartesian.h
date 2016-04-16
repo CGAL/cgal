@@ -687,7 +687,6 @@ template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
       typedef typename LAd::Vector Vec;
       typename Get_functor<R_, Scalar_product_tag>::type sp(this->kernel());
       int k=static_cast<int>(std::distance(f,e));
-      int d=pd(p0);
       Matrix m(k,k);
       Vec b(k);
       Vec l(k);
