@@ -489,7 +489,7 @@ namespace CartesianKernelFunctors {
     result_type
     operator()(const Point_3& p1, const Segment_3& s2, const Point_3& p2) const
     {
-      return CGAL::internal::compare_distance_ppsC3(p1,p2,s2, K());
+      return opposite(CGAL::internal::compare_distance_ppsC3(p1,p2,s2, K()));
     }
 
     template <class T1, class T2, class T3>
