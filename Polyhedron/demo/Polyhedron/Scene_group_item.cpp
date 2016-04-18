@@ -3,8 +3,8 @@
 #include <QDebug>
 
 using namespace CGAL::Three;
-Scene_group_item::Scene_group_item(QString name)
-    :  Scene_item(0,0)
+Scene_group_item::Scene_group_item(QString name, int nb_vbos, int nb_vaos )
+    :  Scene_item(nb_vbos, nb_vaos)
 {
     this->name_ = name;
     expanded = true;
@@ -53,20 +53,20 @@ void Scene_group_item::addChild(Scene_item* new_item)
     if(!children.contains(new_item))
     {
         children.append(new_item);
-        add_group_number(new_item);
+        update_group_number(new_item, has_group+1);
     }
 
 }
 
-void Scene_group_item::add_group_number(Scene_item * new_item)
+void Scene_group_item::update_group_number(Scene_item * new_item, int n)
 {
 
     Scene_group_item* group =
             qobject_cast<Scene_group_item*>(new_item);
     if(group)
       Q_FOREACH(Scene_item* child, group->getChildren())
-          add_group_number(child);
-    new_item->has_group++;
+          update_group_number(child,n+1);
+    new_item->has_group = n;
 }
 void Scene_group_item::setColor(QColor c)
 {

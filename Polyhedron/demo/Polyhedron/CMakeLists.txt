@@ -225,9 +225,10 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     target_link_libraries(${item_name} demo_framework ${CGAL_LIBRARIES} ${Boost_LIBRARIES})
   endmacro(add_item)
 
+  add_item(scene_spheres_item Scene_spheres_item)
   add_item(scene_c2t3_item Scene_c2t3_item.cpp)
   add_item(scene_c3t3_item Scene_c3t3_item.cpp)
-  target_link_libraries(scene_c3t3_item scene_polyhedron_item scene_polygon_soup_item ${TBB_LIBRARIES})
+  target_link_libraries(scene_c3t3_item scene_polyhedron_item scene_polygon_soup_item scene_spheres_item ${TBB_LIBRARIES})
   add_item(scene_polyhedron_item Scene_polyhedron_item.cpp)
   add_item(scene_polyhedron_transform_item Plugins/PCA/Scene_polyhedron_transform_item.cpp )
 
@@ -272,8 +273,9 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(scene_nef_polyhedron_item scene_polyhedron_item)
   add_item(scene_points_with_normal_item Scene_points_with_normal_item.cpp)
   target_link_libraries( scene_points_with_normal_item gl_splat)
+
   target_link_libraries( demo_framework gl_splat)
-  
+
   
 
 

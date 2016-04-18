@@ -736,13 +736,15 @@ Scene_polyhedron_item::toolTip() const
          QObject::tr("<p>Polyhedron <b>%1</b> (mode: %5, color: %6)</p>"
                        "<p>Number of vertices: %2<br />"
                        "Number of edges: %3<br />"
-                     "Number of facets: %4")
+                     "Number of facets: %4<br />"
+                     "has_group = %7")
             .arg(this->name())
             .arg(poly->size_of_vertices())
             .arg(poly->size_of_halfedges()/2)
             .arg(poly->size_of_facets())
             .arg(this->renderingModeName())
-            .arg(this->color().name());
+            .arg(this->color().name())
+      .arg(this->has_group);
   str += QString("<br />Number of isolated vertices : %1<br />").arg(getNbIsolatedvertices());
   return str;
 }
