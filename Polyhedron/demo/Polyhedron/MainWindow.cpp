@@ -1273,8 +1273,6 @@ void MainWindow::updateInfo() {
             .arg(item->bbox().xmax)
             .arg(item->bbox().ymax)
             .arg(item->bbox().zmax);
-    if(item->getNbIsolatedvertices() > 0)
-    item_text += QString("<br />Number of isolated vertices : %1<br />").arg(item->getNbIsolatedvertices());
     if(!item_filename.isEmpty()) {
       item_text += QString("<br />File:<i> %1").arg(item_filename);
     }
