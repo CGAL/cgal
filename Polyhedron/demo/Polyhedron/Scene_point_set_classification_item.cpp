@@ -318,6 +318,8 @@ Scene_point_set_classification_item::clone() const
 bool Scene_point_set_classification_item::read_ply_point_set(std::istream& stream,
                                                              double grid_resolution)
 {
+  CGAL::Timer timer;
+  timer.start();
   std::vector<Kernel::Point_3> points;
   std::vector<Color> colors;
 
@@ -352,6 +354,9 @@ bool Scene_point_set_classification_item::read_ply_point_set(std::istream& strea
       if (colors[i] != black)
         m_psc->has_colors = true;
     }
+
+  timer.stop();
+  std::cerr << "Reading took "<< timer.time() << "sec."<<std::endl;
   if (m_psc->has_colors)
     std::cerr << "Has colors" << std::endl;
 
