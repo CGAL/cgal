@@ -136,39 +136,6 @@ class Polygon_soup_orienter
   }
 
 /// Functions filling containers
-  void fill_edge_map() {
-    // Fill edges
-    edges.clear();
-    for(P_ID i = 0; i < polygons.size(); ++i)
-    {
-      const P_ID size = polygons[i].size();
-      for(P_ID j = 0; j < size; ++j) {
-        V_ID i0 = polygons[i][j];
-        V_ID i1 = polygons[i][ (j+1)%size];
-        edges[V_ID_pair(i0, i1)].insert(i);
-      }
-    }
-
-    // Fill non-manifold edges
-    marked_edges.clear();
-    for(P_ID i = 0; i < polygons.size(); ++i)
-    {
-      const P_ID size = polygons[i].size();
-      for(P_ID j = 0; j < size; ++j) {
-        V_ID i0 = polygons[i][j];
-        V_ID i1 = polygons[i][ (j+1)%size ];
-
-        std::size_t nb_edges = 0;
-        Edge_map_iterator em_it = edges.find( V_ID_pair(i0, i1) );
-        if ( em_it!=edges.end() ) nb_edges += em_it->second.size();
-        em_it = edges.find( V_ID_pair(i1, i0) );
-        if ( em_it!=edges.end() ) nb_edges += em_it->second.size();
-
-        if( nb_edges > 2 ) set_edge_marked(i0,i1);
-      }
-    }
-  }
-
   void fill_incident_polygons_per_vertex()
   {
     incident_polygons_per_vertex.resize(points.size());
@@ -185,8 +152,40 @@ public:
 
   Polygon_soup_orienter(Points& points, Polygons& polygons)
     : points(points), polygons(polygons)
-  {
-    fill_edge_map();
+  {}
+
+//filling containers
+  void fill_edge_map() {
+    // Fill edges
+    edges.clear();
+    for (P_ID i = 0; i < polygons.size(); ++i)
+    {
+      const P_ID size = polygons[i].size();
+      for (P_ID j = 0; j < size; ++j) {
+        V_ID i0 = polygons[i][j];
+        V_ID i1 = polygons[i][(j + 1) % size];
+        edges[V_ID_pair(i0, i1)].insert(i);
+      }
+    }
+
+    // Fill non-manifold edges
+    marked_edges.clear();
+    for (P_ID i = 0; i < polygons.size(); ++i)
+    {
+      const P_ID size = polygons[i].size();
+      for (P_ID j = 0; j < size; ++j) {
+        V_ID i0 = polygons[i][j];
+        V_ID i1 = polygons[i][(j + 1) % size];
+
+        std::size_t nb_edges = 0;
+        Edge_map_iterator em_it = edges.find(V_ID_pair(i0, i1));
+        if (em_it != edges.end()) nb_edges += em_it->second.size();
+        em_it = edges.find(V_ID_pair(i1, i0));
+        if (em_it != edges.end()) nb_edges += em_it->second.size();
+
+        if (nb_edges > 2) set_edge_marked(i0, i1);
+      }
+    }
   }
 
   /// We try to orient polygon consistently by walking in the dual graph, from
@@ -307,7 +306,7 @@ public:
   /// For each such vertex v, we consider each set of polygons incident to v
   /// and sharing a non-marked edge incident to v. A copy of v is assigned to
   /// each but one set of incident polygons.
-  void duplicate_singular_vertices()
+  bool duplicate_singular_vertices(bool do_duplicate = true)
   {
     fill_incident_polygons_per_vertex();
     std::vector< std::pair<V_ID, std::vector<P_ID> > > vertices_to_duplicate;
@@ -327,6 +326,8 @@ public:
 
         if (!first_pass)
         {
+          if (!do_duplicate)
+            return false; //there will be duplicate vertices
           vertices_to_duplicate.push_back(std::pair<V_ID, std::vector<P_ID> >());
           vertices_to_duplicate.back().first=v_id;
         }
@@ -365,6 +366,9 @@ public:
       }
     }
 
+    if (!do_duplicate)
+      return true;
+
     /// now duplicate the vertices
     typedef std::pair<V_ID, std::vector<P_ID> > V_ID_and_Polygon_ids;
     BOOST_FOREACH(const V_ID_and_Polygon_ids& vid_and_pids, vertices_to_duplicate)
@@ -374,6 +378,7 @@ public:
       BOOST_FOREACH(P_ID polygon_id, vid_and_pids.second)
         replace_vertex_index_in_polygon(polygon_id, vid_and_pids.first, new_index);
     }
+    return true;
   }
 };
 } // namespace internal
@@ -415,6 +420,7 @@ bool orient_polygon_soup(std::vector<Point>& points,
 {
   std::size_t inital_nb_pts = points.size();
   internal::Polygon_soup_orienter<Point, Polygon> orienter(points, polygons);
+  orienter.fill_edge_map();
   orienter.orient();
   orienter.duplicate_singular_vertices();
 
