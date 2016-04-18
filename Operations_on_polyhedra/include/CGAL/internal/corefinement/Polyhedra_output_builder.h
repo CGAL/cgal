@@ -1310,10 +1310,11 @@ private:
         Halfedge_handle qhedge = polylines.Q[i];
         int nb_segments = polylines.lengths[i];
 
-        for (int k=0;k<nb_segments;++k)
+        for (int k=0;;)
         {
           Qhedge_to_Phedge[qhedge]=phedge;
           Phedge_to_Qhedge[phedge]=qhedge;
+          if (++k==nb_segments) break;
           qhedge=next_marked_halfedge_around_target_vertex(qhedge, patches_of_Q.border_halfedges);
           phedge=next_marked_halfedge_around_target_vertex(phedge, patches_of_P.border_halfedges);
         }
@@ -1550,7 +1551,7 @@ public:
     boost::dynamic_bitset<> coplanar_patches_of_P(P_nb_patches,false);
     boost::dynamic_bitset<> coplanar_patches_of_Q(Q_nb_patches,false);
     boost::dynamic_bitset<> coplanar_patches_of_P_for_union_and_intersection(P_nb_patches,false);
-    boost::dynamic_bitset<> coplanar_patches_of_Q_for_difference(Q_nb_patches,false);
+    boost::dynamic_bitset<> coplanar_patches_of_Q_for_union_and_intersection(Q_nb_patches,false);
 
     /// \todo handle the case when an_edge_per_polyline is empty or similarly there is an isolated cc without intersecting edges
     ///       Note that could be the case of a cc that is identical (coplanar patch) in P and Q
@@ -1657,12 +1658,13 @@ public:
             coplanar_patches_of_P.set(patch_id_p1);
             coplanar_patches_of_Q.set(patch_id_q1);
             coplanar_patches_of_P_for_union_and_intersection.set(patch_id_p1);
+            coplanar_patches_of_Q_for_union_and_intersection.set(patch_id_q1);
 
             CGAL_assertion( !are_triangles_coplanar_same_side_filtered(indices.first,indices.second,index_p2,index_q2,P2,Q2,nodes) );
 
-            bool Q2_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
-            if ( Q2_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q2); //case 1
-            else is_patch_inside_Q.set(patch_id_p2); //case 2
+            // bool Q2_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
+            // if ( Q2_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q2); //case 1
+            // else is_patch_inside_Q.set(patch_id_p2); //case 2
             continue;
           }
           else{
@@ -1671,9 +1673,8 @@ public:
               CGAL_assertion( index_p1!=index_p2 || index_p1==-1 );
               coplanar_patches_of_P.set(patch_id_p1);
               coplanar_patches_of_Q.set(patch_id_q2);
-              coplanar_patches_of_Q_for_difference.set(patch_id_q2);
-              bool Q1_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes,ppmap);
-              if ( Q1_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q1); //case 3
+              // bool Q1_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes,ppmap);
+              // if ( Q1_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q1); //case 3
               // else case 4
               continue;
             }
@@ -1683,9 +1684,8 @@ public:
               {
                 coplanar_patches_of_P.set(patch_id_p2);
                 coplanar_patches_of_Q.set(patch_id_q1);
-                coplanar_patches_of_Q_for_difference.set(patch_id_q1);
-                bool Q2_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
-                if ( Q2_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q2); //case 5
+                // bool Q2_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
+                // if ( Q2_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q2); //case 5
                 // else case 6
                 continue;
               }
@@ -1695,9 +1695,10 @@ public:
                   coplanar_patches_of_P.set(patch_id_p2);
                   coplanar_patches_of_Q.set(patch_id_q2);
                   coplanar_patches_of_P_for_union_and_intersection.set(patch_id_p2);
-                  bool Q1_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes,ppmap);
-                  if ( Q1_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q1);  //case 7
-                  else is_patch_inside_Q.set(patch_id_p1); //case 8
+                  coplanar_patches_of_Q_for_union_and_intersection.set(patch_id_q2);
+                  // bool Q1_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes,ppmap);
+                  // if ( Q1_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q1);  //case 7
+                  // else is_patch_inside_Q.set(patch_id_p1); //case 8
                   continue;
                 }
               }
@@ -1889,7 +1890,7 @@ public:
     std::cout << "coplanar_patches_of_P " << coplanar_patches_of_P << "\n";
     std::cout << "coplanar_patches_of_Q " << coplanar_patches_of_Q << "\n";
     std::cout << "coplanar_patches_of_P_for_union_and_intersection " << coplanar_patches_of_P_for_union_and_intersection << "\n";
-    std::cout << "coplanar_patches_of_Q_for_difference " << coplanar_patches_of_Q_for_difference << "\n";
+    std::cout << "coplanar_patches_of_Q_for_union_and_intersection " << coplanar_patches_of_Q_for_union_and_intersection << "\n";
     std::cout << "Size of patches of P: ";
     std::copy(P_patch_sizes.begin(), P_patch_sizes.end(), std::ostream_iterator<std::size_t>(std::cout," ") );
     std::cout << "\n";
@@ -1897,10 +1898,6 @@ public:
     std::copy(Q_patch_sizes.begin(), Q_patch_sizes.end(), std::ostream_iterator<std::size_t>(std::cout," ") );
     std::cout << "\n";
     #endif
-
-    // TMP
-    // For now I compute the union and the intersection in new polyhedra,
-    // P and Q are updated to respectively contain P-Q and Q-P
 
     //backup an halfedge per polyline
     std::vector <Halfedge_handle> P_polylines, Q_polylines;
@@ -1939,46 +1936,83 @@ public:
     if ( !impossible_operation.test(P_UNION_Q) && desired_output[P_UNION_Q] )
     {
       //define patches to import from P
-      patches_of_P_used[P_UNION_Q]=is_patch_inside_Q;
-      if ( coplanar_patches_of_P.any() )
-        patches_of_P_used[P_UNION_Q]|=(coplanar_patches_of_P - coplanar_patches_of_P_for_union_and_intersection);
-      patches_of_P_used[P_UNION_Q].flip();
-
+      patches_of_P_used[P_UNION_Q] = ~is_patch_inside_Q - coplanar_patches_of_P;
       //define patches to import from Q
       patches_of_Q_used[P_UNION_Q] = ~is_patch_inside_P - coplanar_patches_of_Q;
+      //handle coplanar patches
+      if (coplanar_patches_of_P.any())
+      {
+        if (desired_output[P_UNION_Q]==Q_ptr)
+          patches_of_Q_used[P_UNION_Q] |= coplanar_patches_of_Q_for_union_and_intersection;
+        else
+          patches_of_P_used[P_UNION_Q] |= coplanar_patches_of_P_for_union_and_intersection;
+      }
     }
 
     /// handle the bitset for the intersection
     if ( !impossible_operation.test(P_INTER_Q) && desired_output[P_INTER_Q] )
     {
-      patches_of_P_used[P_INTER_Q]=
-        coplanar_patches_of_P.any() ? is_patch_inside_Q
-                                    : is_patch_inside_Q |
-                                      (coplanar_patches_of_P - coplanar_patches_of_P_for_union_and_intersection);
-        patches_of_Q_used[P_INTER_Q]=is_patch_inside_P;
+      //define patches to import from P
+      patches_of_P_used[P_INTER_Q] = is_patch_inside_Q;
+      //define patches to import from Q
+      patches_of_Q_used[P_INTER_Q] = is_patch_inside_P;
+      //handle coplanar patches
+      if (coplanar_patches_of_P.any())
+      {
+        if (desired_output[P_INTER_Q]==Q_ptr)
+          patches_of_Q_used[P_INTER_Q] |= coplanar_patches_of_Q_for_union_and_intersection;
+        else
+          patches_of_P_used[P_INTER_Q] |= coplanar_patches_of_P_for_union_and_intersection;
+      }
     }
 
     /// handle the bitset for P-Q
     if ( !impossible_operation.test(P_MINUS_Q) && desired_output[P_MINUS_Q] )
     {
-      patches_of_P_used[P_MINUS_Q]=
-        (is_patch_inside_Q|(coplanar_patches_of_P & coplanar_patches_of_P_for_union_and_intersection)).flip();
-      patches_of_Q_used[P_MINUS_Q]=is_patch_inside_P - coplanar_patches_of_Q;
+      //define patches to import from P
+      patches_of_P_used[P_MINUS_Q] = (~is_patch_inside_Q - coplanar_patches_of_P);
+      //define patches to import from Q
+      patches_of_Q_used[P_MINUS_Q] = is_patch_inside_P;
+      //handle coplanar patches
+      if (coplanar_patches_of_P.any())
+      {
+        if (desired_output[P_MINUS_Q]==Q_ptr)
+          patches_of_Q_used[P_MINUS_Q] |= ~coplanar_patches_of_Q_for_union_and_intersection & coplanar_patches_of_Q;
+        else
+          patches_of_P_used[P_MINUS_Q] |= ~coplanar_patches_of_P_for_union_and_intersection & coplanar_patches_of_P;
+      }
     }
 
     /// handle the bitset for Q-P
     if ( !impossible_operation.test(Q_MINUS_P) && desired_output[Q_MINUS_P] )
     {
-      patches_of_P_used[Q_MINUS_P] = is_patch_inside_Q-coplanar_patches_of_P;
-      patches_of_Q_used[Q_MINUS_P] = is_patch_inside_P;
-      if ( coplanar_patches_of_Q.any() )
-        patches_of_Q_used[Q_MINUS_P] |= ~coplanar_patches_of_Q_for_difference & coplanar_patches_of_Q;
-      patches_of_Q_used[Q_MINUS_P].flip();
+      //define patches to import from P
+      patches_of_P_used[Q_MINUS_P] = is_patch_inside_Q;
+      //define patches to import from Q
+      patches_of_Q_used[Q_MINUS_P] = ~is_patch_inside_P - coplanar_patches_of_Q;
+      //handle coplanar patches
+      if (coplanar_patches_of_P.any())
+      {
+        if (desired_output[Q_MINUS_P]==Q_ptr)
+          patches_of_Q_used[Q_MINUS_P] |= ~coplanar_patches_of_Q_for_union_and_intersection & coplanar_patches_of_Q;
+        else
+          patches_of_P_used[Q_MINUS_P] |= ~coplanar_patches_of_P_for_union_and_intersection & coplanar_patches_of_P;
+      }
     }
 
+    #ifdef CGAL_COREFINEMENT_DEBUG
+    std::cout << "patches_of_P_used[P_UNION_Q] " << patches_of_P_used[P_UNION_Q] << "\n";
+    std::cout << "patches_of_Q_used[P_UNION_Q] " << patches_of_Q_used[P_UNION_Q] << "\n";
+    std::cout << "patches_of_P_used[P_INTER_Q] " << patches_of_P_used[P_INTER_Q] << "\n";
+    std::cout << "patches_of_Q_used[P_INTER_Q] " << patches_of_Q_used[P_INTER_Q] << "\n";
+    std::cout << "patches_of_P_used[P_MINUS_Q] " << patches_of_P_used[P_MINUS_Q] << "\n";
+    std::cout << "patches_of_Q_used[P_MINUS_Q] " << patches_of_Q_used[P_MINUS_Q] << "\n";
+    std::cout << "patches_of_P_used[Q_MINUS_P] " << patches_of_P_used[Q_MINUS_P] << "\n";
+    std::cout << "patches_of_Q_used[Q_MINUS_P] " << patches_of_Q_used[Q_MINUS_P] << "\n";
+    #endif // CGAL_COREFINEMENT_DEBUG
     // Schedule the order in which the different boolean operations should
     // done. First operations are those filling polyhedra different
-    // from P and Q), then the one modifying P and finally the one
+    // from P and Q, then the one modifying P and finally the one
     // modifying Q.
     std::vector<Boolean_operation> out_of_place_operations;
     Boolean_operation inplace_operation_P=NONE, inplace_operation_Q=NONE;
