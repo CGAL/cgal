@@ -71,14 +71,14 @@ public:
     const typename Base::Bbox_3& bbox,
     const typename Base::FT& error_bound = Base::FT(1e-3),
     CGAL::Random* p_rng = NULL)
-    : Base(f, bbox, error_bound, p_rng)
+    : Base(f, bbox, error_bound, Null_subdomain_index(), p_rng)
   {}
 
   Polyhedron_demo_labeled_mesh_domain_3(
     const Image& img,
     const typename Base::FT& error_bound = Base::FT(1e-3),
     CGAL::Random* p_rng = NULL)
-    : Base(img, error_bound, p_rng)
+    : Base(img, error_bound, Null_subdomain_index(), p_rng)
   {}
 
   /**
