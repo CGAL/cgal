@@ -25,6 +25,7 @@
 #include <CGAL/Polyhedron_incremental_builder_3.h>
 #include <CGAL/boost/graph/Euler_operations.h>
 #include <CGAL/property_map.h>
+#include <CGAL/Polygon_mesh_processing/orient_polygon_soup.h>
 #include <set>
 
 #include <boost/range/size.hpp>
@@ -125,6 +126,7 @@ public:
     typedef typename boost::range_value<
       PolygonRange>::type           Polygon;
 
+    std::vector<V_ID> points;
     std::set< std::pair<V_ID, V_ID> > edge_set;
     BOOST_FOREACH(const Polygon& polygon, polygons)
     {
@@ -132,13 +134,22 @@ public:
       if (nb_edges<3) return false;
       V_ID prev= *--boost::end(polygon);
       BOOST_FOREACH(V_ID id, polygon)
+      {
+        points.push_back(id);
         if (! edge_set.insert(std::pair<V_ID, V_ID>(prev,id)).second )
           return false;
         else
           prev=id;
+      }
     }
 
-    return true;
+    std::sort(points.begin(), points.end());
+    std::unique(points.begin(), points.end());
+
+    std::vector<Polygon> polygons2(polygons.begin(), polygons.end());
+    internal::Polygon_soup_orienter<V_ID, Polygon> orienter(points, polygons2);
+    //returns false if duplication is necessary
+    return orienter.duplicate_singular_vertices(false);
   }
 
   /**
