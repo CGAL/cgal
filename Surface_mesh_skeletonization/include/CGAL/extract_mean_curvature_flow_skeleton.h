@@ -22,7 +22,6 @@
 
 #include <CGAL/Polyhedron_3.h>
 #include <CGAL/Polyhedron_items_with_id_3.h>
-#include <CGAL/FaceGraph_to_Polyhedron_3.h>
 #ifdef CGAL_EIGEN3_ENABLED
 #include <CGAL/Eigen_solver_traits.h>  // for sparse linear system solver
 #endif
