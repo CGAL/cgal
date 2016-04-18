@@ -85,8 +85,7 @@ public:
     bool comments()           const { return ! m_no_comments; }
 
     std::size_t  index_offset()       const { return m_offset; }
-    bool has_colors()          const { return m_colors; } // COFF detected.
-
+    bool has_colors()         const { return m_colors; } // COFF detected.
     bool has_normals()        const { return m_normals;} // NOFF format.
     bool is_homogeneous()     const { return m_tag4; }   // 4OFF detected.
                            // nOFF detected. (will not be supported).

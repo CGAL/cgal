@@ -539,66 +539,66 @@ public:
     inline CGAL::Color get_color_from_line(std::istream &is)
     {
 
-     std::string color_info;
-     bool is_float = false;
+        std::string color_info;
+        bool is_float = false;
 
-     std::string col;
-     //get the line content
-     std::getline(is, col);
-     //split it into strings
-     std::istringstream iss(col);
-     //holds the rgb values
-     int rgb[3];
-     int index =0;
-  //split the string into numbers
-     while(iss>>color_info){
-      //stop if comment is read
-      if(color_info.at(0) == '#')
-       break;
-      //detect if the value is float
-      for(int c = 0; c<static_cast<int>(color_info.length()); c++)
-      {
-       if(color_info.at(c) == '.')
-       {
-        is_float = true;
-        break;
-       }
-      }
-      //if the value is of float type, convert it into an int
-      if(is_float)
-       rgb[index] = (int)(atof(color_info.c_str())*255);
-      //else stores the value
-      else
-       rgb[index] = atoi(color_info.c_str());
+        std::string col;
+        //get the line content
+        std::getline(is, col);
+        //split it into strings
+        std::istringstream iss(col);
+        //holds the rgb values
+        int rgb[3];
+        int index =0;
+        //split the string into numbers
+        while(iss>>color_info){
+            //stop if comment is read
+            if(color_info.at(0) == '#')
+                break;
+            //detect if the value is float
+            for(int c = 0; c<static_cast<int>(color_info.length()); c++)
+            {
+                if(color_info.at(c) == '.')
+                {
+                    is_float = true;
+                    break;
+                }
+            }
+            //if the value is of float type, convert it into an int
+            if(is_float)
+                rgb[index] = (int)(atof(color_info.c_str())*255);
+            //else stores the value
+            else
+                rgb[index] = atoi(color_info.c_str());
 
-      index++;
-     }
-     CGAL::Color color;
-     //if there were only one number, fetch the color in the color map
-     if(index<2)
-      color = getIndexedColor(rgb[0]);
-     //else create the coor with the 3 values;
-     else
-      color = CGAL::Color(rgb[0], rgb[1], rgb[2]);
-     return color;
+            index++;
+        }
+        CGAL::Color color;
+        //if there were only one number, fetch the color in the color map
+        if(index<2)
+            color = getIndexedColor(rgb[0]);
+        //else create the coor with the 3 values;
+        else
+            color = CGAL::Color(rgb[0], rgb[1], rgb[2]);
+        return color;
     }
 
     void scan_color( unsigned char& r, unsigned char& g, unsigned char& b) {
-            if ( binary()) {
-                float fr, fg, fb;
-                I_Binary_read_big_endian_float32( m_in, fr);
-                I_Binary_read_big_endian_float32( m_in, fg);
-                I_Binary_read_big_endian_float32( m_in, fb);
-                r = (unsigned char)(fr);
-                g = (unsigned char)(fg);
-                b = (unsigned char)(fb);
+        if ( binary()) {
+            float fr, fg, fb;
+            I_Binary_read_big_endian_float32( m_in, fr);
+            I_Binary_read_big_endian_float32( m_in, fg);
+            I_Binary_read_big_endian_float32( m_in, fb);
+            r = (unsigned char)(fr);
+            g = (unsigned char)(fg);
+            b = (unsigned char)(fb);
 
-            } else {
-             CGAL::Color color = get_color_from_line(m_in);
-             r = color.red();
-             g = color.green();
-             b = color.blue();
-            }
+        } else {
+            CGAL::Color color = get_color_from_line(m_in);
+            r = color.red();
+            g = color.green();
+            b = color.blue();
+        }
     }
 
   void skip_to_next_vertex( std::size_t current_vertex);

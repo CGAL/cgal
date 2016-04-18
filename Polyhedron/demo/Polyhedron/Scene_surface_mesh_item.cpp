@@ -1,12 +1,14 @@
 #include "Scene_surface_mesh_item.h"
 
 #include <queue>
-#include <CGAL/Surface_mesh/Surface_mesh.h>
-
 #include <boost/graph/properties.hpp>
 #include <boost/graph/graph_traits.hpp>
-#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+#include <QOpenGLShaderProgram>
+#include <QOpenGLBuffer>
+#include <boost/container/flat_map.hpp>
+
 #include <CGAL/boost/graph/properties_Surface_mesh.h>
+#include <CGAL/Surface_mesh/Surface_mesh.h>
 
 #include <CGAL/Triangulation_vertex_base_with_info_2.h>
 #include <CGAL/Triangulation_face_base_with_info_2.h>
@@ -17,13 +19,14 @@
 #include <CGAL/Polygon_mesh_processing/compute_normal.h>
 
 typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::face_descriptor face_descriptor;
-typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::halfedge_descriptor Halfedge_descriptor;
+typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::halfedge_descriptor halfedge_descriptor;
+typedef boost::graph_traits<Scene_surface_mesh_item::SMesh>::vertex_descriptor vertex_descriptor;
 struct Face_info {
-  Halfedge_descriptor e[3];
+  halfedge_descriptor e[3];
   bool is_external;
 };
 typedef CGAL::Triangulation_2_filtered_projection_traits_3<Scene_surface_mesh_item::Kernel>                       P_traits;
-typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_descriptor,P_traits>                                 Vb;
+typedef CGAL::Triangulation_vertex_base_with_info_2<halfedge_descriptor,P_traits>                                 Vb;
 typedef CGAL::Triangulation_face_base_with_info_2<Face_info, P_traits >                                           Fb1;
 typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>                                                Fb;
 typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                                                               TDS;

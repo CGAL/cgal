@@ -117,8 +117,6 @@ private:
             file_scan_vertex( *m_scan, m_current.first);
             if ( m_scan->has_normals())
                 file_scan_normal( *m_scan, m_current.second);
-            if ( m_scan->has_colors())
-             file_scan_color( *m_scan, Color);
             m_scan->skip_to_next_vertex( m_cnt);
             ++m_cnt;
         } else

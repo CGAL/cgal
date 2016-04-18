@@ -13,12 +13,11 @@
 #include <boost/scoped_ptr.hpp>
 #include <boost/array.hpp>
 
-#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
 #include <CGAL/Surface_mesh/Surface_mesh_fwd.h>
-#include <CGAL/Surface_mesh/Surface_mesh.h>
-#include <QOpenGLShaderProgram>
-#include <QOpenGLBuffer>
-#include <boost/container/flat_map.hpp>
+#include <CGAL/boost/graph/graph_traits_Surface_mesh.h>
+
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+
 
 
 
@@ -30,9 +29,7 @@ public:
   typedef CGAL::Exact_predicates_inexact_constructions_kernel Kernel;
   typedef Kernel::Point_3 Point;
   typedef CGAL::Surface_mesh<Point> SMesh;
-  typedef boost::graph_traits<SMesh>::vertex_descriptor vertex_descriptor;
   typedef boost::graph_traits<SMesh>::face_descriptor face_descriptor;
-  typedef boost::graph_traits<SMesh>::halfedge_descriptor halfedge_descriptor;
 
   // Takes ownership of the argument.
   Scene_surface_mesh_item(SMesh*);
