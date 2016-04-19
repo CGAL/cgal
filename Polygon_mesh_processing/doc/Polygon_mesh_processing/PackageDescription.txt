@@ -99,6 +99,7 @@ and provides a list of the parameters that are used in this package.
 
 ## Combinatorial Repairing Functions ##
 - \link PMP_repairing_grp `CGAL::Polygon_mesh_processing::stitch_borders()` \endlink
+- `CGAL::Polygon_mesh_processing::is_polygon_soup_a_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
 - `CGAL::Polygon_mesh_processing::remove_isolated_vertices()`
 
