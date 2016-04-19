@@ -106,7 +106,7 @@ public:
 
   // Indicate if rendering mode is supported
   bool supportsRenderingMode(RenderingMode m) const {
-    return (m != Gouraud && m != PointsPlusNormals && m != Splatting);
+    return (m != Gouraud && m != PointsPlusNormals && m != Splatting && m != Points);
   }
 
   void draw(CGAL::Three::Viewer_interface* viewer) const;

@@ -352,7 +352,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
                 }
                 viewer->glEnable(GL_LIGHTING);
-                viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_FILL);
                 viewer->glPointSize(2.f);
                 viewer->glLineWidth(1.0f);
                 if(index == selected_item || selected_items_list.contains(index))
@@ -406,7 +405,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                     || item.renderingMode() == Wireframe)
             {
                 viewer->glDisable(GL_LIGHTING);
-                viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
                 viewer->glPointSize(2.f);
                 viewer->glLineWidth(1.0f);
                 if(index == selected_item || selected_items_list.contains(index))
@@ -428,7 +426,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
             else{
                 if( item.renderingMode() == PointsPlusNormals ){
                     viewer->glDisable(GL_LIGHTING);
-                    viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_LINE);
                     viewer->glPointSize(2.f);
                     viewer->glLineWidth(1.0f);
                     if(index == selected_item || selected_items_list.contains(index))
@@ -477,7 +474,6 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
                     (!with_names && item.renderingMode() == PointsPlusNormals))
             {
                 viewer->glDisable(GL_LIGHTING);
-                viewer->glPolygonMode(GL_FRONT_AND_BACK,GL_POINT);
                 viewer->glPointSize(2.0f);
                 viewer->glLineWidth(1.0f);
 
@@ -558,7 +554,7 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
     {
         Q_EMIT(itemPicked(index_map.key(mainSelectionIndex())));
     }
-
+    Q_EMIT drawFinished();
 }
 
 // workaround for Qt-4.2 (see above)
@@ -1245,6 +1241,7 @@ void Scene::add_group(Scene_group_item* group)
             changeGroup(item(id),group);
         redraw_model();
     }
+    connect(this, SIGNAL(drawFinished()), group, SLOT(resetDraw()));
 }
 
 namespace scene { namespace details {

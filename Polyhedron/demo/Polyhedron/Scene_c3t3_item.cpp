@@ -647,6 +647,12 @@ void Scene_c3t3_item::draw_points(CGAL::Three::Viewer_interface * viewer) const
   viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_grid.size() / 3));
   program->release();
   vaos[Grid]->release();
+  if(spheres_are_shown)
+  {
+    spheres->setPlane(this->plane());
+  }
+  Scene_group_item::draw_edges(viewer);
+
 }
 
 void Scene_c3t3_item::draw_triangle(const Kernel::Point_3& pa,
@@ -1154,6 +1160,8 @@ void Scene_c3t3_item::show_spheres(bool b)
   if(b && !spheres)
   {
     spheres = new Scene_spheres_item(this, true);
+    spheres->setName("Protecting spheres");
+    spheres->setRenderingMode(Gouraud);
     connect(spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
     last_known_scene->addItem(spheres);
     last_known_scene->changeGroup(spheres, this);

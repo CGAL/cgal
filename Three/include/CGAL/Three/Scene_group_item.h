@@ -130,6 +130,8 @@ public :
     //!Moves a child down in the list.
     void moveDown(int);
 
+public Q_SLOTS:
+    void resetDraw() { already_drawn = false;}
 private:
     //!Contains a reference to all the children of this group.
     QList<Scene_item*> children;
@@ -137,6 +139,7 @@ private:
     void update_group_number(Scene_item*new_item, int n);
 
     bool expanded;
+    mutable bool already_drawn;
 
 }; //end of class Scene_group_item
 

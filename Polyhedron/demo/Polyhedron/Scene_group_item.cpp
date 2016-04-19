@@ -8,6 +8,7 @@ Scene_group_item::Scene_group_item(QString name, int nb_vbos, int nb_vaos )
 {
     this->name_ = name;
     expanded = true;
+    already_drawn = false;
 }
 
 bool Scene_group_item::isFinite() const
@@ -82,7 +83,8 @@ void Scene_group_item::setRenderingMode(RenderingMode m)
   Scene_item::setRenderingMode(m);
   Q_FOREACH(Scene_item* child, children)
   {
-    child->setRenderingMode(m);
+    if(child->supportsRenderingMode(m))
+      child->setRenderingMode(m);
   }
 }
 
@@ -118,7 +120,7 @@ void Scene_group_item::moveUp(int i)
 }
 
 void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer) const {
-  if(viewer->inDrawWithNames()) return;
+  if(viewer->inDrawWithNames() || already_drawn ) return;
   Q_FOREACH(Scene_item* child, children) {
     if(!child->visible()) continue;
     switch(child->renderingMode()) {
@@ -128,12 +130,26 @@ void Scene_group_item::draw(CGAL::Three::Viewer_interface* viewer) const {
       child->draw(viewer); break;
     default: break;
     }
+    switch(child->renderingMode()) {
+    case FlatPlusEdges:
+    case Wireframe:
+    case PointsPlusNormals:
+      child->draw_edges(viewer); break;
+    default: break;
+    }
+    switch(child->renderingMode()) {
+    case Points:
+    case PointsPlusNormals:
+      child->draw_points(viewer); break;
+    default: break;
+    }
   }
+  already_drawn = true;
 }
 
 void Scene_group_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(viewer->inDrawWithNames()) return;
+  if(viewer->inDrawWithNames() || already_drawn ) return;
   Q_FOREACH(Scene_item* child, children) {
     if(!child->visible()) continue;
     switch(child->renderingMode()) {
@@ -143,12 +159,26 @@ void Scene_group_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
       child->draw_edges(viewer); break;
     default: break;
     }
+    switch(child->renderingMode()) {
+    case Flat:
+    case FlatPlusEdges:
+    case Gouraud:
+      child->draw(viewer); break;
+    default: break;
+    }
+    switch(child->renderingMode()) {
+    case Points:
+    case PointsPlusNormals:
+      child->draw_points(viewer); break;
+    default: break;
+    }
   }
+  already_drawn = true;
 }
 
 void Scene_group_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
 {
-  if(viewer->inDrawWithNames()) return;
+  if(viewer->inDrawWithNames() || already_drawn ) return;
   Q_FOREACH(Scene_item* child, children) {
     if(!child->visible()) continue;
     switch(child->renderingMode()) {
@@ -157,7 +187,22 @@ void Scene_group_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
       child->draw_points(viewer); break;
     default: break;
     }
+    switch(child->renderingMode()) {
+    case Flat:
+    case FlatPlusEdges:
+    case Gouraud:
+      child->draw(viewer); break;
+    default: break;
+    }
+    switch(child->renderingMode()) {
+    case FlatPlusEdges:
+    case Wireframe:
+    case PointsPlusNormals:
+      child->draw_edges(viewer); break;
+    default: break;
+    }
   }
+  already_drawn = true;
 }
 
 void Scene_group_item::draw_splats(CGAL::Three::Viewer_interface* viewer) const

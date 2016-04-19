@@ -244,6 +244,7 @@ Q_SIGNALS:
   void selectionRay(double, double, double, double, double, double);
   void selectionChanged(int i);
   void restoreCollapsedState();
+  void drawFinished();
 private Q_SLOTS:
   //! Casts a selection ray and calls the item function select.
   void setSelectionRay(double, double, double, double, double, double);
