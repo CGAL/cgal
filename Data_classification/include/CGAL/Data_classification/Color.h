@@ -35,8 +35,8 @@ inline HSV_Color rgb_to_hsv (const RGB_Color& c)
   double r = (double)(c[0]) / 255.;
   double g = (double)(c[1]) / 255.;
   double b = (double)(c[2]) / 255.;
-  double Cmax = std::max (r, std::max (g, b));
-  double Cmin = std::min (r, std::min (g, b));
+  double Cmax = (std::max) (r, (std::max) (g, b));
+  double Cmin = (std::min) (r, (std::min) (g, b));
   double delta = Cmax - Cmin;
   double H = 0.;
   
@@ -66,7 +66,7 @@ inline RGB_Color hsv_to_rgb (const HSV_Color& c)
   v /= 100.;
   double C = v*s;
   int hh = (int)(h/60.);
-  double X = C * (1-std::fabs (hh % 2 - 1));
+  double X = C * (1-CGAL::abs (hh % 2 - 1));
   double r = 0, g = 0, b = 0;
   
   if( hh>=0 && hh<1 )

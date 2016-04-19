@@ -36,6 +36,8 @@
 
 namespace CGAL {
 
+using ::put;
+using ::get;
 
 /// \cond SKIP_DOXYGEN
 /// Property map that accesses a value from an iterator
