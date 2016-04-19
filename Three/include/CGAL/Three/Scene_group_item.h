@@ -46,6 +46,22 @@ public :
     bool isFinite() const;
     //!Returns true to avoid disturbing the BBox of the scene.
     bool isEmpty() const ;
+    /*!
+     * \brief Locks a child
+     * A locked child cannot be moved out of the group nor can it be deleted.
+     */
+    void lockChild(CGAL::Three::Scene_item*);
+    /*!
+     * \brief Unlocks a child
+     * @see lockChild()
+     */
+    void unlockChild(CGAL::Three::Scene_item*);
+    /*!
+     * \brief Tells if a child is locked.
+     * \return true if the child is locked.
+     * @see lockChild()
+     */
+    bool isChildLocked(CGAL::Three::Scene_item*);
     //!Returns if the group_item is currently expanded or collapsed in the view.
     //! True means expanded, false means collapsed.
     //! @see setExpanded.
@@ -122,6 +138,8 @@ public :
     //!@see getChildren @see addChild
     void removeChild( Scene_item* item)
     {
+     if(isChildLocked(item))
+      return;
       update_group_number(item,0);
       children.removeOne(item);
     }

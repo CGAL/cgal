@@ -127,12 +127,14 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
 Scene::Item_id
 Scene::erase(Scene::Item_id index)
 {
+  CGAL::Three::Scene_item* item = m_entries[index];
+  if(item->parentGroup()
+     && item->parentGroup()->isChildLocked(item))
+    return -1;
     clear();
     index_map.clear();
     if(index < 0 || index >= m_entries.size())
         return -1;
-
-    CGAL::Three::Scene_item* item = m_entries[index];
     CGAL::Three::Scene_group_item* group =
             qobject_cast<CGAL::Three::Scene_group_item*>(item);
   if(group)
@@ -173,6 +175,9 @@ Scene::erase(QList<int> indices)
 
     max_index = (std::max)(max_index, index);
     CGAL::Three::Scene_item* item = m_entries[index];
+    if(item->parentGroup()
+       && item->parentGroup()->isChildLocked(item))
+      continue;
     if(!to_be_removed.contains(item))
       to_be_removed.push_back(item);
   }
@@ -747,7 +752,9 @@ bool Scene::dropMimeData(const QMimeData * /*data*/,
   Q_FOREACH(int i, selected_items_list)
   {
     if(!groups_children.contains(i))
+    {
       items << item(i);
+    }
   }
   //Gets the group at the drop position
   CGAL::Three::Scene_group_item* group =
@@ -1108,7 +1115,11 @@ void Scene::changeGroup(Scene_item *item, CGAL::Three::Scene_group_item *target_
 {
     //remove item from the containing group if any
     if(item->parentGroup())
-        item->parentGroup()->removeChild(item);
+    {
+      if(item->parentGroup()->isChildLocked(item))
+        return;
+      item->parentGroup()->removeChild(item);
+    }
     //add the item to the target group
     target_group->addChild(item);
     item->moveToGroup(target_group);

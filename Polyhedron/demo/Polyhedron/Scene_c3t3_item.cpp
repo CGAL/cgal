@@ -1165,10 +1165,12 @@ void Scene_c3t3_item::show_spheres(bool b)
     connect(spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
     last_known_scene->addItem(spheres);
     last_known_scene->changeGroup(spheres, this);
+    lockChild(spheres);
     compute_spheres();
   }
   else if (!b && spheres!=NULL)
   {
+    unlockChild(spheres);
     last_known_scene->erase(last_known_scene->item_id(spheres));
   }
   Q_EMIT redraw();

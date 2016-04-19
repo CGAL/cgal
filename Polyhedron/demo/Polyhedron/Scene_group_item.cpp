@@ -213,3 +213,23 @@ void Scene_group_item::draw_splats(CGAL::Three::Viewer_interface* viewer) const
       child->draw_splats(viewer);
   }
 }
+
+void Scene_group_item::lockChild(Scene_item *child)
+{
+  if(!children.contains(child))
+    return;
+  child->setProperty("lock", true);
+}
+void Scene_group_item::unlockChild(Scene_item *child)
+{
+  if(!children.contains(child))
+    return;
+  child->setProperty("lock", false);
+}
+bool Scene_group_item::isChildLocked(Scene_item *child)
+{
+  if(!children.contains(child)
+     || (!child->property("lock").toBool()) )
+    return false;
+  return true;
+}
