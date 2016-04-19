@@ -139,11 +139,9 @@ Scene::erase(Scene::Item_id index)
   {
       m_group_entries.removeAll(group);
   }
-    Q_FOREACH(CGAL::Three::Scene_group_item* group, m_group_entries)
-    {
-        if(group->getChildren().contains(item))
-            group->removeChild(item);
-    }
+  if(item->parentGroup())
+    item->parentGroup()->removeChild(item);
+
   Q_EMIT itemAboutToBeDestroyed(item);
     item->deleteLater();
     m_entries.removeAll(item);
@@ -186,9 +184,8 @@ Scene::erase(QList<int> indices)
     {
       m_group_entries.removeAll(group);
     }
-    Q_FOREACH(CGAL::Three::Scene_group_item* group_item, m_group_entries)
-      if(group_item->getChildren().contains(item))
-        group_item->removeChild(item);
+      if(item->parentGroup())
+        item->parentGroup()->removeChild(item);
     Q_EMIT itemAboutToBeDestroyed(item);
     item->deleteLater();
     m_entries.removeAll(item);
