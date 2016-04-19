@@ -101,11 +101,13 @@ public:
    *
    * returns `true` if the soup of polygons defines a valid polygon
    * mesh that can be handled by
-   * `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`
-   * (i.e. each edge has at most two incident faces and such an edge
-   * is visited in opposite direction along the two face boundaries).
+   * `CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh()`.
+   * It checks that each edge has at most two incident faces and such an edge
+   * is visited in opposite direction along the two face boundaries,
+   * no polygon has twice the same vertex,
+   * and the polygon soup describes a manifold surface.
    * This function does not require a range of points as an argument
-   * since the check is purely topological. Each vertex of the mesh
+   * since the check is purely topological. To each vertex of the mesh
    * is associated an index that is used in the description of the
    * boundaries of the polygons provided in `polygons`.
    *
@@ -114,8 +116,9 @@ public:
    * whose value_type is `std::size_t`.
    *
    * @param polygons each element in the range describes a polygon
-   * using the index of the vertices.
+   * using the indices of the vertices.
    *
+   * @sa `orient_polygon_soup()`
    */
   template<class PolygonRange>
   bool is_polygon_soup_a_polygon_mesh(const PolygonRange& polygons)
