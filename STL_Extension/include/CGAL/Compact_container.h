@@ -1172,8 +1172,7 @@ namespace internal {
   std::size_t hash_value(const CC_iterator<DSC, Const>&  i)
   {
     typedef Time_stamper_impl<typename DSC::value_type> Stamper;
-    return reinterpret_cast<std::size_t>(Stamper::key(&*i))
-      / sizeof(typename DSC::value_type);
+    return Stamper::hash_value(&*i);
   }
 
 } // namespace internal

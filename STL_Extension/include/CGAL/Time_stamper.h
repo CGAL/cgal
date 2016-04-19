@@ -36,10 +36,10 @@ struct Time_stamper
     pt->set_time_stamp(time_stamp_++);
   }
 
-  typedef std::size_t Key ;
-  static Key key(const T* p) {
-    if(NULL == 0)
-      return Key(-1);
+
+  static std::size_t hash_value(const T* p) {
+    if(NULL == p)
+      return std::size_t(-1);
     else
       return p->time_stamp();
   }
@@ -65,8 +65,11 @@ public:
   static bool less(const T* p_t1,const T* p_t2) {
     return p_t1 < p_t2;
   }
-  typedef const T* Key ;
-  static Key key(const T* p) { return p; }
+
+  static std::size_t hash_value(const T* p) {
+    return reinterpret_cast<std::size_t>(p)/sizeof(T);
+  }
+
   void reset()                {}
 }; // end class template No_time_stamp<T>
 
