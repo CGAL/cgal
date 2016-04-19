@@ -533,7 +533,9 @@ Scene_polygon_soup_item::save(std::ostream& out) const
 bool 
 Scene_polygon_soup_item::exportAsPolyhedron(Polyhedron* out_polyhedron)
 {
-  orient();
+  if (!orient())
+    return false;
+
   CGAL::Polygon_mesh_processing::polygon_soup_to_polygon_mesh<Polyhedron>(
     soup->points, soup->polygons, *out_polyhedron);
   std::size_t rv = CGAL::Polygon_mesh_processing::remove_isolated_vertices(*out_polyhedron);
