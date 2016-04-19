@@ -126,12 +126,16 @@ public:
     typedef typename boost::range_value<
       PolygonRange>::type           Polygon;
 
+    //check there is no duplicated ordered edge, and
+    //check there is no polygon with twice the same vertex
     std::vector<V_ID> points;
     std::set< std::pair<V_ID, V_ID> > edge_set;
     BOOST_FOREACH(const Polygon& polygon, polygons)
     {
       std::size_t nb_edges = boost::size(polygon);
       if (nb_edges<3) return false;
+
+      std::set<V_ID> polygon_vertices;
       V_ID prev= *--boost::end(polygon);
       BOOST_FOREACH(V_ID id, polygon)
       {
@@ -140,9 +144,13 @@ public:
           return false;
         else
           prev=id;
+
+        if (!polygon_vertices.insert(id).second)
+          return false;//vertex met twice in the same polygon
       }
     }
 
+    //check manifoldness
     std::sort(points.begin(), points.end());
     std::unique(points.begin(), points.end());
 
