@@ -158,6 +158,10 @@ and <code>src/</code> directories).
       copy a source FaceListGraph into another FaceListGraph of
       different type.
     </li>
+      <li>
+      Add a class <code>CGAL::Dual</code> that creates the dual view
+      of a <code>FaceGraph</code> and a creation function <code>CGAL::dual(primal)</code>.
+    </li>
   </ul>
 
 <!-- Visualization -->
@@ -352,10 +356,6 @@ and <code>src/</code> directories).
       <code>CGAL::expand_edge_selection()</code>, <code>CGAL::reduce_edge_selection()</code>
       <code>CGAL::expand_vertex_selection()</code>, <code>CGAL::reduce_vertex_selection()</code>
       and <code>CGAL::select_incident_faces()</code>.
-    <li>
-      Add a class <code>CGAL::Dual</code> that creates the dual view
-      of a <code>FaceGraph</code> and a creation function <code>CGAL::dual(primal)</code>.
-    </li>
     <li>
       Add a helper function <code>CGAL::clear</code> which clears a
       MutableFaceGraph efficiently and generically.
