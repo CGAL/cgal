@@ -183,7 +183,7 @@ void Scene_spheres_item::draw_edges(Viewer_interface *viewer) const
     program->bind();
   }
   viewer->glDrawArraysInstanced(GL_LINES, 0,
-                                static_cast<GLsizei>(vertices.size()/3),
+                                static_cast<GLsizei>(edges.size()/3),
                                 static_cast<GLsizei>(nb_centers));
   program->release();
   vaos[Edges]->release();

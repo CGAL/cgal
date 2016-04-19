@@ -2,6 +2,7 @@
 #include "Scene_c3t3_item.h"
 
 #include <CGAL/Three/Polyhedron_demo_io_plugin_interface.h>
+#include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <CGAL/IO/File_avizo.h>
 #include <iostream>
 #include <fstream>
@@ -9,18 +10,31 @@
 
 class Polyhedron_demo_c3t3_binary_io_plugin :
   public QObject,
-  public CGAL::Three::Polyhedron_demo_io_plugin_interface
+  public CGAL::Three::Polyhedron_demo_io_plugin_interface,
+  public CGAL::Three::Polyhedron_demo_plugin_interface
 {
     Q_OBJECT
     Q_INTERFACES(CGAL::Three::Polyhedron_demo_io_plugin_interface)
+    Q_INTERFACES(CGAL::Three::Polyhedron_demo_plugin_interface)
     Q_PLUGIN_METADATA(IID "com.geometryfactory.PolyhedronDemo.PluginInterface/1.0")
 
 public:
+  void init(QMainWindow*, CGAL::Three::Scene_interface* sc )
+  {
+    this->scene = sc;
+  }
   QString name() const { return "C3t3_io_plugin"; }
   QString nameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma)"; }
   QString saveNameFilters() const { return "binary files (*.cgal);;ascii (*.mesh);;maya (*.ma);;avizo (*.am)"; }
   QString loadNameFilters() const { return "binary files (*.cgal)" ; }
-
+  QList<QAction*> actions() const
+  {
+    return QList<QAction*>();
+  }
+  bool applicable(QAction*) const
+  {
+    return false;
+  }
   bool canLoad() const;
   CGAL::Three::Scene_item* load(QFileInfo fileinfo);
 
@@ -30,6 +44,7 @@ public:
 private:
   bool try_load_other_binary_format(std::istream& in, C3t3& c3t3);
   bool try_load_a_cdt_3(std::istream& in, C3t3& c3t3);
+  CGAL::Three::Scene_interface* scene;
 };
 
 
@@ -55,6 +70,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
 
         Scene_c3t3_item* item = new Scene_c3t3_item();
         item->setName(fileinfo.baseName());
+        item->set_scene(scene);
 
 
         if(item->load_binary(in)) {
