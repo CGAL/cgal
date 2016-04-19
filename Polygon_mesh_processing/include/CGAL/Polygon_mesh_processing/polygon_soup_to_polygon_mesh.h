@@ -148,6 +148,7 @@ public:
 
     std::vector<Polygon> polygons2(polygons.begin(), polygons.end());
     internal::Polygon_soup_orienter<V_ID, Polygon> orienter(points, polygons2);
+    orienter.fill_edge_map();
     //returns false if duplication is necessary
     return orienter.duplicate_singular_vertices(false);
   }
