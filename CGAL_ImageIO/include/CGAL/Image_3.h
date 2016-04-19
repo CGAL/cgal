@@ -517,7 +517,7 @@ Image_3::labellized_trilinear_interpolation
     Image_word_type iwt = labels[i];
     const double r = 
       trilinear_interpolation<Image_word_type,double,Coord_type>(
-        x, y, z, value_outside, indicator_factory.indicator(iwt));
+        x, y, z, 0., indicator_factory.indicator(iwt));
     CGAL_assertion(r >= 0.);
     CGAL_assertion(r <= 1.);
 
