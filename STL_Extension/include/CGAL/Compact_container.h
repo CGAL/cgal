@@ -1171,7 +1171,9 @@ namespace internal {
   template <class DSC, bool Const>
   std::size_t hash_value(const CC_iterator<DSC, Const>&  i)
   {
-    return reinterpret_cast<std::size_t>(&*i) / sizeof(typename DSC::value_type);
+    typedef Time_stamper_impl<typename DSC::value_type> Stamper;
+    return reinterpret_cast<std::size_t>(Stamper::key(&*i))
+      / sizeof(typename DSC::value_type);
   }
 
 } // namespace internal
