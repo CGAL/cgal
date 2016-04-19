@@ -154,12 +154,12 @@ public:
     }
 
     //check manifoldness
-    std::vector<V_ID> points;
-    std::vector<Polygon> polygons2(polygons.begin(), polygons.end());
-    internal::Polygon_soup_orienter<V_ID, Polygon> orienter(points, polygons2);
-    orienter.fill_edge_map();
+    typedef internal::Polygon_soup_orienter<V_ID, Polygon> Orienter;
+    typename Orienter::Edge_map edges;
+    typename Orienter::Marked_edges marked_edges;
+    Orienter::fill_edge_map(edges, marked_edges, polygons);
     //returns false if duplication is necessary
-    return orienter.duplicate_singular_vertices(max_id+1,false);
+    return Orienter::has_singular_vertices(max_id+1,polygons,edges,marked_edges);
   }
 
   /**

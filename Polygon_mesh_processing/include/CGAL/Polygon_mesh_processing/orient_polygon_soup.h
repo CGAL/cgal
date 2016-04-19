@@ -41,7 +41,7 @@ namespace Polygon_mesh_processing {
 namespace internal {
 
 template<class Point_3, class Polygon_3>
-class Polygon_soup_orienter
+struct Polygon_soup_orienter
 {
 /// Index types
   typedef typename std::iterator_traits<
@@ -68,23 +68,23 @@ class Polygon_soup_orienter
 //  std::vector< CC_ID > polygon_cc_id;
 
 /// Utility functions
-  V_ID_pair canonical_edge(V_ID i, V_ID j)
+  static V_ID_pair canonical_edge(V_ID i, V_ID j)
   {
     return i<j ? V_ID_pair(i,j):V_ID_pair(j,i);
   }
 
-  bool is_edge_marked(V_ID i, V_ID j)
+  static bool is_edge_marked(V_ID i, V_ID j, Marked_edges& marked_edges)
   {
     return marked_edges.count(canonical_edge(i,j)) > 0;
   }
 
-  void set_edge_marked(V_ID i, V_ID j)
+  static void set_edge_marked(V_ID i, V_ID j, Marked_edges& marked_edges)
   {
     marked_edges.insert(canonical_edge(i,j));
   }
 
-  cpp11::array<V_ID,3>
-  get_neighbor_vertices(V_ID v_id, P_ID polygon_index)
+  static cpp11::array<V_ID,3>
+  get_neighbor_vertices(V_ID v_id, P_ID polygon_index, const Polygons& polygons)
   {
     std::size_t nbv = polygons[polygon_index].size(), pvid=0;
     for (; pvid!=nbv; ++pvid)
@@ -95,28 +95,28 @@ class Polygon_soup_orienter
     return make_array(prev,v_id,next);
   }
 
-  std::pair<V_ID,P_ID>
-  next_cw_vertex_around_source(V_ID src, V_ID tgt)
+  static std::pair<V_ID,P_ID>
+  next_cw_vertex_around_source(V_ID src, V_ID tgt, const Polygons& polygons, Edge_map& edges, Marked_edges& marked_edges)
   {
     typedef std::pair<V_ID,P_ID> VID_and_PID;
-    if ( is_edge_marked(src,tgt) ) return VID_and_PID(src,300612);
+    if ( is_edge_marked(src,tgt,marked_edges) ) return VID_and_PID(src,300612);
     Edge_map_iterator em_it=edges.find(V_ID_pair(tgt, src));
     if ( em_it==edges.end() ) return VID_and_PID(src,300612);// the vertex is on the border
     CGAL_assertion(em_it->second.size()==1);
     P_ID p_id = *(em_it->second.begin());
-    return VID_and_PID(get_neighbor_vertices(src, p_id)[2], p_id);
+    return VID_and_PID(get_neighbor_vertices(src, p_id, polygons)[2], p_id);
   }
 
-  std::pair<V_ID,P_ID>
-  next_ccw_vertex_around_target(V_ID src, V_ID tgt)
+  static std::pair<V_ID,P_ID>
+  next_ccw_vertex_around_target(V_ID src, V_ID tgt, const Polygons& polygons, Edge_map& edges, Marked_edges& marked_edges)
   {
     typedef std::pair<V_ID,P_ID> VID_and_PID;
-    if ( is_edge_marked(src,tgt) ) return VID_and_PID(tgt,300612);
+    if ( is_edge_marked(src,tgt,marked_edges) ) return VID_and_PID(tgt,300612);
     Edge_map_iterator em_it=edges.find(V_ID_pair(tgt, src));
     if ( em_it==edges.end() ) return VID_and_PID(tgt,300612);// the vertex is on the border
     CGAL_assertion(em_it->second.size()==1);
     P_ID p_id = *(em_it->second.begin());
-    return VID_and_PID(get_neighbor_vertices(tgt, p_id)[0], p_id);
+    return VID_and_PID(get_neighbor_vertices(tgt, p_id, polygons)[0], p_id);
   }
 
   void inverse_orientation(const std::size_t index) {
@@ -134,7 +134,8 @@ class Polygon_soup_orienter
   }
 
 /// Functions filling containers
-  void fill_incident_polygons_per_vertex(
+  static void fill_incident_polygons_per_vertex(
+    const Polygons& polygons,
     std::vector< std::vector<P_ID> >& incident_polygons_per_vertex)
   {
     P_ID nb_polygons=polygons.size();
@@ -145,14 +146,12 @@ class Polygon_soup_orienter
     }
   }
 
-public:
-
   Polygon_soup_orienter(Points& points, Polygons& polygons)
     : points(points), polygons(polygons)
   {}
 
 //filling containers
-  void fill_edge_map() {
+  static void fill_edge_map(Edge_map& edges, Marked_edges& marked_edges, const Polygons& polygons) {
     // Fill edges
     edges.clear();
     for (P_ID i = 0; i < polygons.size(); ++i)
@@ -180,9 +179,14 @@ public:
         em_it = edges.find(V_ID_pair(i1, i0));
         if (em_it != edges.end()) nb_edges += em_it->second.size();
 
-        if (nb_edges > 2) set_edge_marked(i0, i1);
+        if (nb_edges > 2) set_edge_marked(i0, i1, marked_edges);
       }
     }
+  }
+
+  void fill_edge_map()
+  {
+    fill_edge_map(edges, marked_edges, polygons);
   }
 
   /// We try to orient polygon consistently by walking in the dual graph, from
@@ -234,7 +238,7 @@ public:
           const V_ID i1 = polygons[to_be_oriented_index][ih];
           const V_ID i2 = polygons[to_be_oriented_index][ihp1];
 
-          if( is_edge_marked(i1,i2) ) continue;
+          if( is_edge_marked(i1,i2,marked_edges) ) continue;
 
           // edge (i1,i2)
           Edge_map_iterator it_same_orient = edges.find(V_ID_pair(i1, i2));
@@ -255,7 +259,7 @@ public:
             if(oriented[index])
             {
               // polygon already oriented but its orientation is not compatible ---> mark the edge and continue
-              set_edge_marked(i1,i2);
+              set_edge_marked(i1,i2,marked_edges);
               continue; // next edge
             }
 
@@ -303,12 +307,86 @@ public:
   /// For each such vertex v, we consider each set of polygons incident to v
   /// and sharing a non-marked edge incident to v. A copy of v is assigned to
   /// each but one set of incident polygons.
-  bool duplicate_singular_vertices(std::size_t nb_points, bool do_duplicate = true)
+  void duplicate_singular_vertices()
+  {
+    // for each vertex, indicates the list of polygon containing it
+    std::vector< std::vector<P_ID> > incident_polygons_per_vertex(points.size());
+    fill_incident_polygons_per_vertex(polygons, incident_polygons_per_vertex);
+    std::vector< std::pair<V_ID, std::vector<P_ID> > > vertices_to_duplicate;
+
+    V_ID nbv = static_cast<V_ID>( points.size() );
+    for (V_ID v_id = 0; v_id < nbv; ++v_id)
+    {
+      const std::vector< P_ID >& incident_polygons = incident_polygons_per_vertex[v_id];
+
+      if ( incident_polygons.empty() ) continue; //isolated vertex
+      std::set<P_ID> visited_polygons;
+
+      bool first_pass = true;
+      BOOST_FOREACH(P_ID p_id, incident_polygons)
+      {
+        if ( !visited_polygons.insert(p_id).second ) continue; // already visited
+
+        if (!first_pass)
+        {
+          vertices_to_duplicate.push_back(std::pair<V_ID, std::vector<P_ID> >());
+          vertices_to_duplicate.back().first=v_id;
+        }
+
+        const cpp11::array<V_ID,3>& neighbors = get_neighbor_vertices(v_id,p_id,polygons);
+
+        V_ID next = neighbors[2];
+
+        if( !first_pass)
+          vertices_to_duplicate.back().second.push_back(p_id);
+
+        do{
+          P_ID other_p_id;
+          cpp11::tie(next, other_p_id) = next_cw_vertex_around_source(v_id, next, polygons, edges, marked_edges);
+          if (next==v_id) break;
+          visited_polygons.insert(other_p_id);
+          if( !first_pass)
+            vertices_to_duplicate.back().second.push_back(other_p_id);
+        }
+        while(next!=neighbors[0]);
+
+        if (next==v_id){
+          /// turn the otherway round
+          next = neighbors[0];
+          do{
+            P_ID other_p_id;
+            cpp11::tie(next, other_p_id) = next_ccw_vertex_around_target(next, v_id, polygons, edges, marked_edges);
+            if (next==v_id) break;
+            visited_polygons.insert(other_p_id);
+            if( !first_pass)
+              vertices_to_duplicate.back().second.push_back(other_p_id);
+          }
+          while(true);
+        }
+        first_pass=false;
+      }
+    }
+
+    /// now duplicate the vertices
+    typedef std::pair<V_ID, std::vector<P_ID> > V_ID_and_Polygon_ids;
+    BOOST_FOREACH(const V_ID_and_Polygon_ids& vid_and_pids, vertices_to_duplicate)
+    {
+      V_ID new_index = static_cast<V_ID>(points.size());
+      points.push_back( points[vid_and_pids.first] );
+      BOOST_FOREACH(P_ID polygon_id, vid_and_pids.second)
+        replace_vertex_index_in_polygon(polygon_id, vid_and_pids.first, new_index);
+    }
+  }
+
+  static bool has_singular_vertices(
+    std::size_t nb_points,
+    const Polygons& polygons,
+    Edge_map& edges,
+    Marked_edges& marked_edges)
   {
     // for each vertex, indicates the list of polygon containing it
     std::vector< std::vector<P_ID> > incident_polygons_per_vertex(nb_points);
-    fill_incident_polygons_per_vertex(incident_polygons_per_vertex);
-    std::vector< std::pair<V_ID, std::vector<P_ID> > > vertices_to_duplicate;
+    fill_incident_polygons_per_vertex(polygons, incident_polygons_per_vertex);
 
     V_ID nbv = static_cast<V_ID>( nb_points );
     for (V_ID v_id = 0; v_id < nbv; ++v_id)
@@ -324,27 +402,17 @@ public:
         if ( !visited_polygons.insert(p_id).second ) continue; // already visited
 
         if (!first_pass)
-        {
-          if (!do_duplicate)
-            return false; //there will be duplicate vertices
-          vertices_to_duplicate.push_back(std::pair<V_ID, std::vector<P_ID> >());
-          vertices_to_duplicate.back().first=v_id;
-        }
+          return false; //there will be duplicate vertices
 
-        const cpp11::array<V_ID,3>& neighbors = get_neighbor_vertices(v_id,p_id);
+        const cpp11::array<V_ID,3>& neighbors = get_neighbor_vertices(v_id,p_id,polygons);
 
         V_ID next = neighbors[2];
 
-        if( !first_pass)
-          vertices_to_duplicate.back().second.push_back(p_id);
-
         do{
           P_ID other_p_id;
-          cpp11::tie(next, other_p_id) = next_cw_vertex_around_source(v_id, next);
+          cpp11::tie(next, other_p_id) = next_cw_vertex_around_source(v_id, next, polygons, edges, marked_edges);
           if (next==v_id) break;
           visited_polygons.insert(other_p_id);
-          if( !first_pass)
-            vertices_to_duplicate.back().second.push_back(other_p_id);
         }
         while(next!=neighbors[0]);
 
@@ -353,29 +421,14 @@ public:
           next = neighbors[0];
           do{
             P_ID other_p_id;
-            cpp11::tie(next, other_p_id) = next_ccw_vertex_around_target(next, v_id);
+            cpp11::tie(next, other_p_id) = next_ccw_vertex_around_target(next, v_id, polygons, edges, marked_edges);
             if (next==v_id) break;
             visited_polygons.insert(other_p_id);
-            if( !first_pass)
-              vertices_to_duplicate.back().second.push_back(other_p_id);
           }
           while(true);
         }
         first_pass=false;
       }
-    }
-
-    if (!do_duplicate)
-      return true;
-
-    /// now duplicate the vertices
-    typedef std::pair<V_ID, std::vector<P_ID> > V_ID_and_Polygon_ids;
-    BOOST_FOREACH(const V_ID_and_Polygon_ids& vid_and_pids, vertices_to_duplicate)
-    {
-      V_ID new_index = static_cast<V_ID>(nb_points);
-      points.push_back( points[vid_and_pids.first] );
-      BOOST_FOREACH(P_ID polygon_id, vid_and_pids.second)
-        replace_vertex_index_in_polygon(polygon_id, vid_and_pids.first, new_index);
     }
     return true;
   }
@@ -421,7 +474,7 @@ bool orient_polygon_soup(std::vector<Point>& points,
   internal::Polygon_soup_orienter<Point, Polygon> orienter(points, polygons);
   orienter.fill_edge_map();
   orienter.orient();
-  orienter.duplicate_singular_vertices(points.size());
+  orienter.duplicate_singular_vertices();
 
   return inital_nb_pts==points.size();
 }
