@@ -53,7 +53,7 @@ struct Indicator_factory
   {
     const T label;
   public:
-    Indicator(T i) : label(i) {};
+    Indicator(T i) : label(i) {}
 
     double operator()(T x) const
     {
