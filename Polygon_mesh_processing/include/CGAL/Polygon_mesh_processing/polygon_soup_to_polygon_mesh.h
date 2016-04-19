@@ -131,8 +131,8 @@ public:
 
     //check there is no duplicated ordered edge, and
     //check there is no polygon with twice the same vertex
-    std::vector<V_ID> points;
     std::set< std::pair<V_ID, V_ID> > edge_set;
+    std::size_t max_id=0;
     BOOST_FOREACH(const Polygon& polygon, polygons)
     {
       std::size_t nb_edges = boost::size(polygon);
@@ -142,7 +142,7 @@ public:
       V_ID prev= *--boost::end(polygon);
       BOOST_FOREACH(V_ID id, polygon)
       {
-        points.push_back(id);
+        if (max_id<id) max_id=id;
         if (! edge_set.insert(std::pair<V_ID, V_ID>(prev,id)).second )
           return false;
         else
@@ -154,14 +154,12 @@ public:
     }
 
     //check manifoldness
-    std::sort(points.begin(), points.end());
-    std::unique(points.begin(), points.end());
-
+    std::vector<V_ID> points;
     std::vector<Polygon> polygons2(polygons.begin(), polygons.end());
     internal::Polygon_soup_orienter<V_ID, Polygon> orienter(points, polygons2);
     orienter.fill_edge_map();
     //returns false if duplication is necessary
-    return orienter.duplicate_singular_vertices(false);
+    return orienter.duplicate_singular_vertices(max_id+1,false);
   }
 
   /**

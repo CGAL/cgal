@@ -66,8 +66,6 @@ class Polygon_soup_orienter
   /// for each polygon referenced by its position in `polygons`, indicates
   /// the connected component it belongs too after orientation.
 //  std::vector< CC_ID > polygon_cc_id;
-  /// for each vertex, indicates the list of polygon containing it
-  std::vector< std::vector<P_ID> > incident_polygons_per_vertex;
 
 /// Utility functions
   V_ID_pair canonical_edge(V_ID i, V_ID j)
@@ -136,10 +134,9 @@ class Polygon_soup_orienter
   }
 
 /// Functions filling containers
-  void fill_incident_polygons_per_vertex()
+  void fill_incident_polygons_per_vertex(
+    std::vector< std::vector<P_ID> >& incident_polygons_per_vertex)
   {
-    incident_polygons_per_vertex.resize(points.size());
-
     P_ID nb_polygons=polygons.size();
     for(P_ID ip=0; ip<nb_polygons; ++ip)
     {
@@ -306,12 +303,14 @@ public:
   /// For each such vertex v, we consider each set of polygons incident to v
   /// and sharing a non-marked edge incident to v. A copy of v is assigned to
   /// each but one set of incident polygons.
-  bool duplicate_singular_vertices(bool do_duplicate = true)
+  bool duplicate_singular_vertices(std::size_t nb_points, bool do_duplicate = true)
   {
-    fill_incident_polygons_per_vertex();
+    // for each vertex, indicates the list of polygon containing it
+    std::vector< std::vector<P_ID> > incident_polygons_per_vertex(nb_points);
+    fill_incident_polygons_per_vertex(incident_polygons_per_vertex);
     std::vector< std::pair<V_ID, std::vector<P_ID> > > vertices_to_duplicate;
 
-    V_ID nbv = static_cast<V_ID>( points.size() );
+    V_ID nbv = static_cast<V_ID>( nb_points );
     for (V_ID v_id = 0; v_id < nbv; ++v_id)
     {
       const std::vector< P_ID >& incident_polygons = incident_polygons_per_vertex[v_id];
@@ -373,7 +372,7 @@ public:
     typedef std::pair<V_ID, std::vector<P_ID> > V_ID_and_Polygon_ids;
     BOOST_FOREACH(const V_ID_and_Polygon_ids& vid_and_pids, vertices_to_duplicate)
     {
-      V_ID new_index = static_cast<V_ID>(points.size());
+      V_ID new_index = static_cast<V_ID>(nb_points);
       points.push_back( points[vid_and_pids.first] );
       BOOST_FOREACH(P_ID polygon_id, vid_and_pids.second)
         replace_vertex_index_in_polygon(polygon_id, vid_and_pids.first, new_index);
@@ -422,7 +421,7 @@ bool orient_polygon_soup(std::vector<Point>& points,
   internal::Polygon_soup_orienter<Point, Polygon> orienter(points, polygons);
   orienter.fill_edge_map();
   orienter.orient();
-  orienter.duplicate_singular_vertices();
+  orienter.duplicate_singular_vertices(points.size());
 
   return inital_nb_pts==points.size();
 }
