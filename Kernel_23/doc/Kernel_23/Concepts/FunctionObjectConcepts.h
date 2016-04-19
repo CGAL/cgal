@@ -926,6 +926,7 @@ public:
 
 */
 class ComparePowerDistance_2 {
+public:
   /// \name Operations
   /// A model of this concept must provide:
   /// @{

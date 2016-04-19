@@ -473,8 +473,8 @@
 - `Kernel::Orientation_3`
 - `Kernel::OrientedSide_2`
 - `Kernel::OrientedSide_3`
-- `Kernel::Power_side_of_power_circle_2`
-- `Kernel::Power_side_of_power_sphere_3`
+- `Kernel::PowerSideOfPowerCircle_2`
+- `Kernel::PowerSideOfPowerSphere_3`
 - `Kernel::SideOfBoundedCircle_2`
 - `Kernel::SideOfBoundedSphere_3`
 - `Kernel::SideOfOrientedCircle_2`

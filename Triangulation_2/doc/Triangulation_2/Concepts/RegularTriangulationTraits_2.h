@@ -6,7 +6,7 @@
 The concept `RegularTriangulationTraits_2` describe the requirements 
 for the traits class of regular triangulations. It refines the 
 concept `TriangulationTraits_2` requiring the type 
-`CGAL::Weighted_point` and the *power test* predicate on those 
+`CGAL::Weighted_point_2` and the *power test* predicate on those 
 weighted points. 
 A weighted point is basically 
 a point augmented with a scalar weight. It can be seen as a circle 
@@ -19,7 +19,6 @@ of Delaunay triangulations.
 \cgalRefines `TriangulationTraits_2` 
 
 \cgalHasModel `CGAL::Regular_triangulation_euclidean_traits_2<K,Weight>` 
-\cgalHasModel `CGAL::Regular_triangulation_filtered_traits_2<FK>` 
 
 \sa `TriangulationTraits_2` 
 \sa `CGAL::Regular_triangulation_2<Traits,Tds>` 
