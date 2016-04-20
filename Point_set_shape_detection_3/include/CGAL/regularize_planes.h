@@ -627,7 +627,7 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
   std::vector<Point> centroids;
   std::vector<FT> areas;
   internal::PlaneRegularization::compute_centroids_and_areas<EfficientRANSACTraits>
-    (input_begin, planes, Point_map(), centroids, areas);
+    (input_begin, planes, shape_detection.point_map(), centroids, areas);
 
   FT tolerance_cosangle = (FT)1. - std::cos (tolerance_angle);
       

@@ -209,6 +209,17 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       return m_traits;
     }
 
+    /*!
+      Retrieves the point property map.
+    */
+    const Point_map& point_map() const { return m_point_pmap; }
+    
+    /*!
+      Retrieves the normal property map.
+    */
+    const Normal_map& normal() const { return m_normal_pmap; }
+
+
     Input_iterator input_iterator_first() const
     {
       return m_input_iterator_first;
