@@ -105,6 +105,24 @@ which is used by the example  \ref Point_set_shape_detection_3/efficient_RANSAC_
 
 \cgalExample{Point_set_shape_detection_3/efficient_RANSAC_custom_shape.h}
 
+\section Point_set_shape_detection_3Plane_regularization Plane Regularization
+
+Shape detection is very suited for man-made shapes such as urban scenes or scans of mechanical pieces. Such scenes may contain a wide variety of regularities that user may want to favor: parallelism, orthogonality, concentricity, coaxiality, etc., not to mention orbits and composed relationships.
+
+Among all these possibilities, \cgal provides a means to regularize four properties of regularity through a function `CGAL::regularize_planes()`. It only postprocesses planes detected by `CGAL::Shape_detection_3<Traits>` (other primitives are left unchanged):
+
+- Planes that are near __parallel__ are made parallel: normal vectors of planes that form angles smaller than a user-defined threshold are made equal.
+
+- Parallel planes that are near __coplanar__ are made coplanar.
+
+- Planes that are near __orthogonal__ are made exactly orthogonal.
+
+- Planes that are near __symmetrical__ with respect to a user-defined axis are made symmetrical.
+
+The user can choose to only regularize one or several of these 4 properties (see reference manual). The process is greedy and based on a hierarchical decomposition (coplanar clusters are subgroups of parallel clusters which are subgroups of axis-symmetric and orthogonal clusters) as described by Verdie et al. \cgalCite{cgal:vla-lod-15}
+
+\cgalExample{Point_set_shape_detection_3/plane_regularization.cpp}
+
 \section Point_set_shape_detection_3Performance Performance
  
 The running time and detection performance depend on the chosen parameters. A selective error tolerance parameter leads to higher running times and smaller shapes, as many shape candidates are generated to find the largest shape. We plot the detection performance against the epsilon error tolerance parameter for detecting planes in a complex scene with 5M points, see \cgalFigureRef{Point_set_shape_detection_3_performace_epsilon}. The probability parameter controls the endurance when searching for the largest candidate at each iteration. It barely impacts the number of detected shapes, has a moderate impact on the size of the detected shapes and increases the running times. We plot the performance against the probability parameter, see \cgalFigureRef{Point_set_shape_detection_3_performace_probability}.

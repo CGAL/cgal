@@ -209,6 +209,15 @@ shape. The implementation follows \cgalCite{schnabel2007efficient}.
       return m_traits;
     }
 
+    Input_iterator input_iterator_first() const
+    {
+      return m_input_iterator_first;
+    }
+    Input_iterator input_iterator_beyond() const
+    {
+      return m_input_iterator_beyond;
+    }
+
     /*!
       Sets the input data. The range must stay valid
       until the detection has been performed and the access to the
