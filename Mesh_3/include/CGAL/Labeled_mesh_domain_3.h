@@ -327,14 +327,9 @@ public:
       {
         return Intersection();
       }
-
-      // Construct the surface patch index and index from the values at 'a'
-      // and 'b'. Even if the bissection find out a different pair of
-      // values, the reported index will be constructed from the initial
-      // values.
-      const Surface_patch_index sp_index =
-        r_domain_.make_surface_index(value_at_p1, value_at_p2);
-      const Index index = r_domain_.index_from_surface_patch_index(sp_index);
+      if( r_domain_.null(value_at_p1) && r_domain_.null(value_at_p2) ) {
+        return Intersection();
+      }
 
       // Else lets find a point (by bisection)
       // Bisection ends when the point is near than error bound from surface
@@ -344,6 +339,9 @@ public:
         if ( squared_distance(p1, p2) < r_domain_.squared_error_bound_ )
         {
           CGAL_assertion(value_at_p1 != value_at_p2);
+          const Surface_patch_index sp_index =
+            r_domain_.make_surface_index(value_at_p1, value_at_p2);
+          const Index index = r_domain_.index_from_surface_patch_index(sp_index);
           return Intersection(mid, index, 2);
         }
 
