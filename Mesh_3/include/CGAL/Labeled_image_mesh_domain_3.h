@@ -74,13 +74,15 @@ public:
   typedef typename Base::FT FT;
   typedef BGT Geom_traits;
   typedef CGAL::Bbox_3 Bbox_3;
+  typedef CGAL::Identity<Subdomain_index> Identity;
 
   /// Constructor
   Labeled_image_mesh_domain_3(const Image& image,
                               const FT& error_bound = FT(1e-3),
+                              Subdomain_index value_outside = 0,
                               Null null = Null(),
                               CGAL::Random* p_rng = NULL)
-    : Base(Wrapper(image),
+    : Base(Wrapper(image, Identity(), value_outside),
            compute_bounding_box(image),
            error_bound,
            null,
@@ -90,9 +92,10 @@ public:
   Labeled_image_mesh_domain_3(const Image& image,
                               const CGAL::Bbox_3& bbox,
                               const FT& error_bound = FT(1e-3),
+                              Subdomain_index value_outside = 0,
                               Null null = Null(),
                               CGAL::Random* p_rng = NULL)
-    : Base(Wrapper(image),
+    : Base(Wrapper(image, Identity(), value_outside),
            bbox,
            error_bound,
            null,

@@ -122,6 +122,20 @@ public:
                         Null null = Null(),
                         CGAL::Random* p_rng = NULL);
 
+  Labeled_mesh_domain_3(const Function& f,
+                        const Sphere_3& bounding_sphere,
+                        const FT& error_bound,
+                        CGAL::Random* p_rng);
+
+  Labeled_mesh_domain_3(const Function& f,
+                        const Bbox_3& bbox,
+                        const FT& error_bound,
+                        CGAL::Random* p_rng);
+
+  Labeled_mesh_domain_3(const Function& f,
+                        const Iso_cuboid_3& bbox,
+                        const FT& error_bound,
+                        CGAL::Random* p_rng);
   /// Destructor
   virtual ~Labeled_mesh_domain_3()
   {
@@ -528,16 +542,10 @@ Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
 : function_(f)
 , bbox_(iso_cuboid(bounding_sphere.bbox()))
 , null(null)
-, p_rng_(p_rng)
-, delete_rng_(false)
+, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
+, delete_rng_(p_rng == 0)
 , squared_error_bound_(squared_error_bound(bounding_sphere,error_bound))
 {
-  // TODO : CGAL_ASSERT(0 < f(bounding_sphere.get_center()) ) ?
-  if(!p_rng_)
-  {
-    p_rng_ = new CGAL::Random(0);
-    delete_rng_ = true;
-  }
 }
 
 template<class F, class BGT, class Null>
@@ -550,16 +558,10 @@ Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
 : function_(f)
 , bbox_(iso_cuboid(bbox))
 , null(null)
-, p_rng_(p_rng)
-, delete_rng_(false)
+, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
+, delete_rng_(p_rng == 0)
 , squared_error_bound_(squared_error_bound(bbox_,error_bound))
 {
-  // TODO : CGAL_ASSERT(0 < f(bounding_sphere.get_center()) ) ?
-  if(!p_rng_)
-  {
-    p_rng_ = new CGAL::Random(0);
-    delete_rng_ = true;
-  }
 }
 
 template<class F, class BGT, class Null>
@@ -572,18 +574,59 @@ Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
 : function_(f)
 , bbox_(bbox)
 , null(null)
-, p_rng_(p_rng)
-, delete_rng_(false)
+, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
+, delete_rng_(p_rng == 0)
 , squared_error_bound_(squared_error_bound(bbox_,error_bound))
 {
-  // TODO : CGAL_ASSERT(0 < f( bbox.get_center()) ) ?
-  if(!p_rng_)
-  {
-    p_rng_ = new CGAL::Random(0);
-    delete_rng_ = true;
-  }
 }
 
+
+
+
+template<class F, class BGT, class Null>
+Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
+                       const F& f,
+                       const Sphere_3& bounding_sphere,
+                       const FT& error_bound,
+                       CGAL::Random* p_rng)
+: function_(f)
+, bbox_(iso_cuboid(bounding_sphere.bbox()))
+, null(Null())
+, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
+, delete_rng_(p_rng == 0)
+, squared_error_bound_(squared_error_bound(bounding_sphere,error_bound))
+{
+}
+
+template<class F, class BGT, class Null>
+Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
+                       const F& f,
+                       const Bbox_3& bbox,
+                       const FT& error_bound,
+                       CGAL::Random* p_rng)
+: function_(f)
+, bbox_(iso_cuboid(bbox))
+, null(Null())
+, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
+, delete_rng_(p_rng == 0)
+, squared_error_bound_(squared_error_bound(bbox_,error_bound))
+{
+}
+
+template<class F, class BGT, class Null>
+Labeled_mesh_domain_3<F,BGT,Null>::Labeled_mesh_domain_3(
+                       const F& f,
+                       const Iso_cuboid_3& bbox,
+                       const FT& error_bound,
+                       CGAL::Random* p_rng)
+: function_(f)
+, bbox_(bbox)
+, null(Null())
+, p_rng_(p_rng == 0 ? new CGAL::Random(0) : p_rng)
+, delete_rng_(p_rng == 0)
+, squared_error_bound_(squared_error_bound(bbox_,error_bound))
+{
+}
 
 
 template<class F, class BGT, class Null>

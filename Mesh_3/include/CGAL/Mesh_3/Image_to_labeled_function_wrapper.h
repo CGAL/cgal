@@ -46,7 +46,7 @@ template<class Image_,
          class BGT,
          typename Image_word_type = unsigned char,
          typename Return_type = int,
-         typename Transform = Identity<Image_word_type>,
+         typename Transform = Identity<Return_type>,
          bool labeled_image = true,
          bool use_trilinear_interpolation=true>
 class Image_to_labeled_function_wrapper
@@ -65,7 +65,6 @@ public:
     , transform(transform)
     , value_outside(value_outside)
   {
-    CGAL_assertion(transform(value_outside) == return_type());
   }
 
   // Default copy constructor and assignment operator are ok
@@ -92,12 +91,11 @@ public:
               value_outside)));
       } else {
         return static_cast<return_type>(transform(
-          static_cast<typename Transform::argument_type>(
             r_im_.template trilinear_interpolation<Image_word_type, double>(
               CGAL::to_double(p.x()),
               CGAL::to_double(p.y()),
               CGAL::to_double(p.z()),
-              value_outside))));
+              value_outside)));
       }
     }
     else
