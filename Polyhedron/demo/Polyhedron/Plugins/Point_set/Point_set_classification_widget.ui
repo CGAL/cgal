@@ -7,7 +7,7 @@
     <x>0</x>
     <y>0</y>
     <width>622</width>
-    <height>559</height>
+    <height>935</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -280,6 +280,11 @@
              <string>RANSAC</string>
             </property>
            </item>
+           <item>
+            <property name="text">
+             <string>Clusters</string>
+            </property>
+           </item>
           </widget>
          </item>
         </layout>
@@ -487,6 +492,10 @@
            </property>
           </widget>
          </item>
+        </layout>
+       </item>
+       <item>
+        <layout class="QHBoxLayout" name="horizontalLayout_6">
          <item>
           <widget class="QPushButton" name="run_with_smoothing">
            <property name="font">
@@ -510,6 +519,13 @@
            </property>
            <property name="text">
             <string>Run with RANSAC</string>
+           </property>
+          </widget>
+         </item>
+         <item>
+          <widget class="QPushButton" name="compute_clusters">
+           <property name="text">
+            <string>Compute clusters</string>
            </property>
           </widget>
          </item>

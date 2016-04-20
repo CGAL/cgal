@@ -278,7 +278,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       double weight = m_scat->weight;
       m_scat->weight = m_scat->max;
-      for (int i = 0; i < m_psc->HPS.size(); ++ i)
+      for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
         {
           colors_points.push_back (ramp.r(m_scat->value(i)));
           colors_points.push_back (ramp.g(m_scat->value(i)));
@@ -290,7 +290,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       double weight = m_plan->weight;
       m_plan->weight = m_plan->max;
-      for (int i = 0; i < m_psc->HPS.size(); ++ i)
+      for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
         {
           colors_points.push_back (ramp.r(m_plan->value(i)));
           colors_points.push_back (ramp.g(m_plan->value(i)));
@@ -302,7 +302,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       double weight = m_hori->weight;
       m_hori->weight = m_hori->max;
-      for (int i = 0; i < m_psc->HPS.size(); ++ i)
+      for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
         {
           colors_points.push_back (ramp.r(m_hori->value(i)));
           colors_points.push_back (ramp.g(m_hori->value(i)));
@@ -314,7 +314,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       double weight = m_elev->weight;
       m_elev->weight = m_elev->max;
-      for (int i = 0; i < m_psc->HPS.size(); ++ i)
+      for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
         {
           colors_points.push_back (ramp.r(m_elev->value(i)));
           colors_points.push_back (ramp.g(m_elev->value(i)));
@@ -326,7 +326,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       double weight = m_colo->weight;
       m_colo->weight = m_colo->max;
-      for (int i = 0; i < m_psc->HPS.size(); ++ i)
+      for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
         {
           colors_points.push_back (ramp.r(m_colo->value(i)));
           colors_points.push_back (ramp.g(m_colo->value(i)));
@@ -338,7 +338,7 @@ void Scene_point_set_classification_item::compute_normals_and_vertices() const
     {
       int seed = time(NULL);
         
-      for (int i = 0; i < m_psc->HPS.size(); ++ i)
+      for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
         {
           if (m_psc->HPS[i].group == (std::size_t)(-1))
             {
@@ -663,7 +663,7 @@ void Scene_point_set_classification_item::compute_features (const double& grid_r
   m_psc->initialization();
 
   if (m_scat != NULL) delete m_scat;
-  m_scat = new Scatter (*m_psc, 1.);
+  m_scat = new Scatter (*m_psc, 1., on_groups);
   m_psc->segmentation_attributes.push_back (m_scat);
   
   if (m_plan != NULL) delete m_plan;
@@ -716,7 +716,7 @@ void Scene_point_set_classification_item::compute_ransac (const double& radius_n
   shape_detection.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
   Shape_detection::Parameters op;
   op.probability = 0.05;
-  op.min_points = std::max ((std::size_t)10, m_psc->HPS.size() / 30000);
+  op.min_points = std::max ((std::size_t)10, m_psc->HPS.size() / 250000);
   
   op.epsilon = radius_neighbors;
   op.cluster_epsilon = radius_neighbors;
@@ -895,9 +895,9 @@ void Scene_point_set_classification_item::extract_2d_outline (double radius,
 void Scene_point_set_classification_item::extract_building_map (double,
                                                                 std::vector<Kernel::Triangle_3>& faces)
 {
-  std::size_t index_ground = 0;
-  std::size_t index_roof = 0;
-  std::size_t index_facade = 0;
+  std::size_t index_ground = (std::size_t)(-1);
+  std::size_t index_roof = (std::size_t)(-1);
+  std::size_t index_facade = (std::size_t)(-1);
   for (std::size_t i = 0; i < m_psc->segmentation_classes.size(); ++ i)
     if (m_psc->segmentation_classes[i]->id() == "ground")
       index_ground = i;
@@ -905,6 +905,8 @@ void Scene_point_set_classification_item::extract_building_map (double,
       index_roof = i;
     else if (m_psc->segmentation_classes[i]->id() == "facade")
       index_facade = i;
+
+  bool separate_only = (index_roof == (std::size_t)(-1));
 
   // Estimate ground Z
   std::cerr << "Estimating ground..." << std::endl;
@@ -948,7 +950,7 @@ void Scene_point_set_classification_item::extract_building_map (double,
         Kernel::Vector_3 normal = plane.orthogonal_vector();
         normal = normal / std::sqrt (normal * normal);
         double horiz = normal * Kernel::Vector_3 (0., 0., 1.);
-        if (horiz > 0.05 || horiz < -0.05)
+        if (horiz > 0.1 || horiz < -0.1)
           continue;
           
         //#define INFINITE_LINES
@@ -1012,8 +1014,8 @@ void Scene_point_set_classification_item::extract_building_map (double,
                                     0.5 * (source.y() + target.y()),
                                     0.5 * (source.z() + target.z()));
 
-            source = middle + 1.2 * (source - middle);
-            target = middle + 1.2 * (target - middle);
+            source = middle + 1.1 * (source - middle);
+            target = middle + 1.1 * (target - middle);
             lines.push_back (Kernel::Segment_3 (source, target));
           }
 #endif
@@ -1041,41 +1043,110 @@ void Scene_point_set_classification_item::extract_building_map (double,
                            Kernel::Point_2 (lines[i].target().x(), lines[i].target().y()));
 
   std::cerr << " -> " << cdt.number_of_faces () << " face(s) created" << std::endl;
-  for (CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end(); ++ it)
-    it->info() = -10;
-  
-  // Project ground + roof points on faces
-  std::cerr << "Projecting ground and roof points on faces..." << std::endl;
-  for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+  if (separate_only)
     {
-      int iter = 0;
-      if (m_psc->HPS[i].AE_label == index_roof)
-        iter = 1;
-      else if (m_psc->HPS[i].AE_label == index_ground)
-        iter = -1;
-      else
-        continue;
+      std::vector<std::vector<double> > heights;
+      
+      for (CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end(); ++ it)
+        {
+          it->info() = heights.size();
+          heights.push_back (std::vector<double>());
+          
+        }
 
-      CDT::Face_handle f = cdt.locate (Kernel::Point_2 (m_psc->HPS[i].position.x(),
-                                                         m_psc->HPS[i].position.y()));
+      for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+        if (m_psc->HPS[i].AE_label == index_ground)
+          {
+            CDT::Face_handle f = cdt.locate (Kernel::Point_2 (m_psc->HPS[i].position.x(),
+                                                              m_psc->HPS[i].position.y()));
 
-      f->info() += iter;
+            heights[f->info()].push_back (m_psc->HPS[i].position.z());
+          }
+      
+      std::vector<double> h;
+      for (std::size_t i = 0; i < heights.size(); ++ i)
+        {
+          if (heights[i].empty())
+            {
+              h.push_back (0.);
+              continue;
+            }
+          std::sort (heights[i].begin(), heights[i].end());
+          h.push_back (heights[i][heights[i].size() / 10]);
+        }
+      
+      for (CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end(); ++ it)
+        {
+          faces.push_back (Kernel::Triangle_3 (Kernel::Point_3 (it->vertex (0)->point().x(),
+                                                                it->vertex (0)->point().y(),
+                                                                h[it->info()]),
+                                               Kernel::Point_3 (it->vertex (1)->point().x(),
+                                                                it->vertex (1)->point().y(),
+                                                                h[it->info()]),
+                                               Kernel::Point_3 (it->vertex (2)->point().x(),
+                                                                it->vertex (2)->point().y(),
+                                                                h[it->info()])));
+        }
+
+      for (CDT::Finite_edges_iterator it = cdt.finite_edges_begin(); it != cdt.finite_edges_end(); ++ it)
+        {
+          if (cdt.is_infinite (it->first) ||
+              cdt.is_infinite (it->first->neighbor(it->second)))
+            continue;
+          Kernel::Point_3 a (it->first->vertex ((it->second + 1)%3)->point().x(),
+                             it->first->vertex ((it->second + 1)%3)->point().y(),
+                             h[it->first->info()]);
+          Kernel::Point_3 b (it->first->vertex ((it->second + 1)%3)->point().x(),
+                             it->first->vertex ((it->second + 1)%3)->point().y(),
+                             h[it->first->neighbor(it->second)->info()]);
+          Kernel::Point_3 c (it->first->vertex ((it->second + 2)%3)->point().x(),
+                             it->first->vertex ((it->second + 2)%3)->point().y(),
+                             h[it->first->info()]);
+          Kernel::Point_3 d (it->first->vertex ((it->second + 2)%3)->point().x(),
+                             it->first->vertex ((it->second + 2)%3)->point().y(),
+                             h[it->first->neighbor(it->second)->info()]);
+          faces.push_back (Kernel::Triangle_3 (a, b, c));
+          faces.push_back (Kernel::Triangle_3 (b, c, d));
+        }
     }
+  else
+    {
+      for (CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end(); ++ it)
+        it->info() = -10;
+
+      // Project ground + roof points on faces
+      std::cerr << "Projecting ground and roof points on faces..." << std::endl;
+      for (std::size_t i = 0; i < m_psc->HPS.size(); ++ i)
+        {
+          int iter = 0;
+          if (m_psc->HPS[i].AE_label == index_roof)
+            iter = 1;
+          else if (m_psc->HPS[i].AE_label == index_ground)
+            iter = -1;
+          else
+            continue;
+
+          CDT::Face_handle f = cdt.locate (Kernel::Point_2 (m_psc->HPS[i].position.x(),
+                                                            m_psc->HPS[i].position.y()));
+
+          f->info() += iter;
+        }
 
   
-  // Label and extract faces
-  for (CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end(); ++ it)
-    if (it->info() > 0)
-      faces.push_back (Kernel::Triangle_3 (Kernel::Point_3 (it->vertex (0)->point().x(),
-                                                            it->vertex (0)->point().y(),
-                                                            z_median),
-                                           Kernel::Point_3 (it->vertex (1)->point().x(),
-                                                            it->vertex (1)->point().y(),
-                                                            z_median),
-                                           Kernel::Point_3 (it->vertex (2)->point().x(),
-                                                            it->vertex (2)->point().y(),
-                                                            z_median)));
-  std::cerr << " -> Found " << faces.size() << " building face(s)" << std::endl;
+      // Label and extract faces
+      for (CDT::Finite_faces_iterator it = cdt.finite_faces_begin(); it != cdt.finite_faces_end(); ++ it)
+        if (it->info() > 0)
+          faces.push_back (Kernel::Triangle_3 (Kernel::Point_3 (it->vertex (0)->point().x(),
+                                                                it->vertex (0)->point().y(),
+                                                                z_median),
+                                               Kernel::Point_3 (it->vertex (1)->point().x(),
+                                                                it->vertex (1)->point().y(),
+                                                                z_median),
+                                               Kernel::Point_3 (it->vertex (2)->point().x(),
+                                                                it->vertex (2)->point().y(),
+                                                                z_median)));
+      std::cerr << " -> Found " << faces.size() << " building face(s)" << std::endl;
+    }
 }
 
 

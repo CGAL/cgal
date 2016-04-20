@@ -90,6 +90,8 @@ public:
             SLOT(on_run_with_smoothing_button_clicked()));
     connect(ui_widget.run_with_ransac,  SIGNAL(clicked()), this,
             SLOT(on_run_with_ransac_button_clicked()));
+    connect(ui_widget.compute_clusters,  SIGNAL(clicked()), this,
+            SLOT(on_compute_clusters_button_clicked()));
     connect(ui_widget.save,  SIGNAL(clicked()), this,
             SLOT(on_save_button_clicked()));
     connect(ui_widget.generate_point_set_items,  SIGNAL(clicked()), this,
@@ -430,7 +432,26 @@ public Q_SLOTS:
     scene->itemChanged(classification_item);
   }
 
-  void on_save_button_clicked()
+  void on_compute_clusters_button_clicked()
+  {
+    Scene_point_set_classification_item* classification_item
+      = get_selected_item<Scene_point_set_classification_item>();
+    if(!classification_item)
+      {
+        print_message("Error: there is no point set classification item!");
+        return; 
+      }
+
+    QApplication::setOverrideCursor(Qt::WaitCursor);
+    QTime time;
+    time.start();
+    classification_item->compute_clusters (ui_widget.radiusNeighborsDoubleSpinBox->value());
+    std::cerr << "Clusters computed in " << time.elapsed() / 1000 << " second(s)" << std::endl;
+    QApplication::restoreOverrideCursor();
+    scene->itemChanged(classification_item);
+  }
+ 
+ void on_save_button_clicked()
   {
     Scene_point_set_classification_item* classification_item
       = get_selected_item<Scene_point_set_classification_item>();
@@ -573,7 +594,7 @@ public Q_SLOTS:
     QApplication::restoreOverrideCursor();
   }
 
-  void on_extract_facade_button_clicked()
+  void on_extract_facades_button_clicked()
   {
     Scene_point_set_classification_item* classification_item
       = get_selected_item<Scene_point_set_classification_item>();

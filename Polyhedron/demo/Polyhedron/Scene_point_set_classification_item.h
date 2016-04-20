@@ -2,8 +2,14 @@
 #define POINT_SET_CLASSIFICATION_ITEM_H
 
 #include <CGAL/Three/Scene_item.h>
-#include <CGAL/Point_set_classification.h>
 #include <CGAL/IO/read_ply_points.h>
+#include <CGAL/Point_set_classification.h>
+#include <CGAL/Data_classification/Segmentation_attribute_scatter.h>
+#include <CGAL/Data_classification/Segmentation_attribute_elevation.h>
+#include <CGAL/Data_classification/Segmentation_attribute_horizontality.h>
+#include <CGAL/Data_classification/Segmentation_attribute_nonplanarity.h>
+#include <CGAL/Data_classification/Segmentation_attribute_color.h>
+
 
 #include "Scene_point_set_classification_item_config.h"
 #include "Scene_points_with_normal_item.h"
@@ -15,11 +21,11 @@
 
 typedef CGAL::Point_set_classification<Kernel> PSC;
 
-typedef CGAL::Scatter_segmentation_attribute<Kernel> Scatter;
-typedef CGAL::Elevation_segmentation_attribute<Kernel> Elevation;
-typedef CGAL::Horizontality_segmentation_attribute<Kernel> Horizontality;
-typedef CGAL::Distance_to_plane_segmentation_attribute<Kernel> Planarity;
-typedef CGAL::Color_segmentation_attribute<Kernel> ColorSeg;
+typedef CGAL::Segmentation_attribute_scatter<Kernel> Scatter;
+typedef CGAL::Segmentation_attribute_elevation<Kernel> Elevation;
+typedef CGAL::Segmentation_attribute_horizontality<Kernel> Horizontality;
+typedef CGAL::Segmentation_attribute_nonplanarity<Kernel> NonPlanarity;
+typedef CGAL::Segmentation_attribute_color<Kernel> ColorSeg;
 
 typedef CGAL::Data_classification::RGB_Color Color;
 
@@ -77,7 +83,10 @@ public:
                          const double& radius_neighbors,
                          const double& radius_dtm);
   void compute_ransac (const double& radius_neighbors);
+  void compute_clusters (const double& radius_neighbors);
 
+  void save_2d_image ();
+  
   template <typename Classes>
   bool run (double weight_scat, double weight_plan,
             double weight_hori, double weight_elev, double weight_colo,
@@ -124,6 +133,9 @@ public:
   
   m_psc->point_cloud_classification(method);
 
+  if (method != 0)
+    save_2d_image();
+  
   invalidateOpenGLBuffers();
   return false;
 }
@@ -169,26 +181,30 @@ private:
   Scatter* m_scat;
   Elevation* m_elev;
   Horizontality* m_hori;
-  Planarity* m_plan;
+  NonPlanarity* m_plan;
   ColorSeg* m_colo;
   std::vector<Color> m_real_colors;
 
   int m_index_color;
   
   enum VAOs {
-      ThePoints = 0,
+      Edges=0,
+      ThePoints,
       NbOfVaos = ThePoints+1
   };
   enum VBOs {
-    Points_vertices = 0,
+    Edges_vertices = 0,
+    Points_vertices,
     Points_colors,
     NbOfVbos = Points_colors+1
   };
 
+  mutable std::vector<double> positions_lines;
   mutable std::vector<double> positions_points;
   mutable std::vector<double> colors_points;
   mutable std::size_t nb_points;
- 
+  mutable std::size_t nb_lines;
+   
 
   mutable QOpenGLShaderProgram *program;
 
