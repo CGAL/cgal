@@ -209,8 +209,8 @@ void compute_parallel_clusters (PlaneContainer& planes,
           if (i == j)
             continue;
               
-          Vector v2 = planes[i]->plane_normal ();
-              
+          Vector v2 = planes[j]->plane_normal ();
+
           if (std::fabs (v1 * v2) > 1. - tolerance_cosangle)
             parallel_planes[i].push_back (j);
         }
