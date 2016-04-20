@@ -154,8 +154,6 @@ private:
 public:
   QMenu* contextMenu();
 
-  void set_scene(CGAL::Three::Scene_interface* scene){ last_known_scene = scene; }
-
 protected:
   friend struct Scene_c3t3_item_priv;
 
@@ -189,7 +187,6 @@ private:
       NumberOfVaos
   };
   qglviewer::ManipulatedFrame* frame;
-  CGAL::Three::Scene_interface* last_known_scene;
 
   Scene_spheres_item *spheres;
   bool spheres_are_shown;

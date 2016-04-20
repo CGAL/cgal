@@ -512,6 +512,7 @@ void Polyhedron_demo_mean_curvature_flow_skeleton_plugin::on_actionConvert_to_me
                                       CGAL::internal::IsTerminalDefault() );
 
     skeleton_item->setName(QString("Medial skeleton curve of %1").arg(item->name()));
+    scene->setSelectedItem(-1);
     scene->addItem(skeleton_item);
     skeleton_item->invalidateOpenGLBuffers();
 

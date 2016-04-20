@@ -242,6 +242,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
   target_link_libraries(scene_combinatorial_map_item scene_polyhedron_item)
 
   add_item(scene_polylines_item Scene_polylines_item.cpp)
+  target_link_libraries(scene_polylines_item scene_spheres_item)
 
   add_item(scene_polyhedron_item_decorator Scene_polyhedron_item_decorator.cpp )
   target_link_libraries(scene_polyhedron_item_decorator scene_polyhedron_item)
@@ -344,6 +345,7 @@ if(CGAL_Qt5_FOUND AND Qt5_FOUND AND OPENGL_FOUND AND QGLVIEWER_FOUND)
     scene_points_with_normal_item
     scene_implicit_function_item
     scene_polylines_item
+    scene_spheres_item
     NAMESPACE Polyhedron_
     APPEND FILE polyhedron_demo_targets.cmake)
 

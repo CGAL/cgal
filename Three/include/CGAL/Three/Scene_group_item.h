@@ -23,6 +23,7 @@
 #define SCENE_GROUP_ITEM_H
 
 #include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/Scene_interface.h>
 using namespace CGAL::Three;
 
 #include <QtCore/qglobal.h>
@@ -42,6 +43,8 @@ class DEMO_FRAMEWORK_EXPORT Scene_group_item : public Scene_item
 public :
     Scene_group_item(QString name = QString("New group"), int nb_vbos = 0, int nb_vaos = 0);
     ~Scene_group_item() {}
+    //!Sets the scene;
+    void setScene(Scene_interface* s) { scene = s; }
     //!Returns false to avoid disturbing the BBox of the scene.
     bool isFinite() const;
     //!Returns true to avoid disturbing the BBox of the scene.
@@ -151,13 +154,16 @@ public :
 public Q_SLOTS:
     void resetDraw() { already_drawn = false;}
 private:
-    //!Contains a reference to all the children of this group.
-    QList<Scene_item*> children;
     //!Updates the property has_group for each group and sub-groups containing new_item.
     void update_group_number(Scene_item*new_item, int n);
 
     bool expanded;
     mutable bool already_drawn;
+protected:
+    Scene_interface *scene;
+    //!Contains a reference to all the children of this group.
+    QList<Scene_item*> children;
+
 
 }; //end of class Scene_group_item
 

@@ -116,7 +116,6 @@ Scene_c3t3_item::Scene_c3t3_item()
   : Scene_group_item("unnamed", NumberOfBuffers, NumberOfVaos)
   , d(new Scene_c3t3_item_priv(this))
   , frame(new ManipulatedFrame())
-  , last_known_scene(NULL)
   , data_item_(NULL)
   , histogram_()
   , indices_()
@@ -144,7 +143,6 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   : Scene_group_item("unnamed", NumberOfBuffers, NumberOfVaos)
   , d(new Scene_c3t3_item_priv(c3t3, this))
   , frame(new ManipulatedFrame())
-  , last_known_scene(NULL)  
   , data_item_(NULL)  
   , histogram_()
   , indices_()
@@ -749,11 +747,11 @@ void Scene_c3t3_item::export_facets_in_complex()
     }
 
     soup_item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
-    last_known_scene->addItem(soup_item);
+    scene->addItem(soup_item);
   }
   else{
     item->setName(QString("%1_%2").arg(this->name()).arg("facets"));
-    last_known_scene->addItem(item);
+    scene->addItem(item);
   }
 }
 
@@ -1163,15 +1161,15 @@ void Scene_c3t3_item::show_spheres(bool b)
     spheres->setName("Protecting spheres");
     spheres->setRenderingMode(Gouraud);
     connect(spheres, SIGNAL(destroyed()), this, SLOT(reset_spheres()));
-    last_known_scene->addItem(spheres);
-    last_known_scene->changeGroup(spheres, this);
+    scene->addItem(spheres);
+    scene->changeGroup(spheres, this);
     lockChild(spheres);
     compute_spheres();
   }
   else if (!b && spheres!=NULL)
   {
     unlockChild(spheres);
-    last_known_scene->erase(last_known_scene->item_id(spheres));
+    scene->erase(scene->item_id(spheres));
   }
   Q_EMIT redraw();
 

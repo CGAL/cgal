@@ -70,7 +70,7 @@ Polyhedron_demo_c3t3_binary_io_plugin::load(QFileInfo fileinfo) {
 
         Scene_c3t3_item* item = new Scene_c3t3_item();
         item->setName(fileinfo.baseName());
-        item->set_scene(scene);
+        item->setScene(scene);
 
 
         if(item->load_binary(in)) {

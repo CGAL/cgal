@@ -21,6 +21,7 @@ void Scene_spheres_item::computeElements() const
     centers.push_back(sp.first->center().z());
 
     radius.push_back(sp.first->squared_radius());
+
   }
 }
 
@@ -156,7 +157,6 @@ void Scene_spheres_item::draw(Viewer_interface *viewer) const
   viewer->glDrawArraysInstanced(GL_TRIANGLES, 0,
                                 static_cast<GLsizei>(vertices.size()/3),
                                 static_cast<GLsizei>(nb_centers));
-
   program->release();
   vaos[Facets]->release();
 }

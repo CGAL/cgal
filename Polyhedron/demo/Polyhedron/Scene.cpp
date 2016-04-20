@@ -177,7 +177,8 @@ Scene::erase(QList<int> indices)
     CGAL::Three::Scene_item* item = m_entries[index];
     if(item->parentGroup()
        && item->parentGroup()->isChildLocked(item))
-      continue;
+      if(!indices.contains(item_id(item->parentGroup())))
+        continue;
     if(!to_be_removed.contains(item))
       to_be_removed.push_back(item);
   }
@@ -1253,6 +1254,7 @@ void Scene::add_group(Scene_group_item* group)
         redraw_model();
     }
     connect(this, SIGNAL(drawFinished()), group, SLOT(resetDraw()));
+    group->setScene(this);
 }
 
 namespace scene { namespace details {
