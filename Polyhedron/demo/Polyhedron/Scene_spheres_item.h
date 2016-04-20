@@ -47,6 +47,7 @@ public:
   void compute_bbox() const { _bbox = Bbox(); }
   void add_sphere(CGAL::Sphere_3<Kernel>* sphere, CGAL::Color = CGAL::Color(120,120,120));
   void remove_sphere(CGAL::Sphere_3<Kernel>* sphere);
+  void clear_spheres();
   void setPrecision(int prec) { precision = prec; }
 
   void draw(CGAL::Three::Viewer_interface* viewer) const;

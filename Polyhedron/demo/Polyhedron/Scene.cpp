@@ -118,6 +118,12 @@ Scene::replaceItem(Scene::Item_id index, CGAL::Three::Scene_item* item, bool emi
     Q_EMIT updated_bbox();
     }
   Q_EMIT updated();
+    CGAL::Three::Scene_group_item* group =
+            qobject_cast<CGAL::Three::Scene_group_item*>(m_entries[index]);
+    if(group)
+    {
+        add_group(group);
+    }
     itemChanged(index);
     Q_EMIT restoreCollapsedState();
     redraw_model();

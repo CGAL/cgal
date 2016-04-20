@@ -2,6 +2,7 @@
 
 void Scene_spheres_item::computeElements() const
 {
+
   colors.clear();
   edges_colors.clear();
   centers.clear();
@@ -202,4 +203,9 @@ void Scene_spheres_item::remove_sphere(CGAL::Sphere_3<Kernel> *sphere)
       spheres.removeAll(pair_);
       break;
     }
+}
+
+void Scene_spheres_item::clear_spheres()
+{
+  spheres.clear();
 }

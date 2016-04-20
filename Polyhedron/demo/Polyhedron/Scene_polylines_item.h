@@ -80,7 +80,7 @@ public Q_SLOTS:
     void reset_spheres()
     {
       spheres = NULL;
-    }\
+    }
 
     void merge(Scene_polylines_item*);
 
