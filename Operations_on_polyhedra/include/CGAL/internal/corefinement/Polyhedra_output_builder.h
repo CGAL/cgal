@@ -1346,7 +1346,7 @@ private:
   void remove_disconnected_patches(
     Polyhedron& P,
     Patch_container& patches,
-    boost::dynamic_bitset<> patches_to_remove)
+    const boost::dynamic_bitset<>& patches_to_remove)
   {
     for (std::size_t i=patches_to_remove.find_first();
                      i < patches_to_remove.npos;
@@ -1662,9 +1662,9 @@ public:
 
             CGAL_assertion( !are_triangles_coplanar_same_side_filtered(indices.first,indices.second,index_p2,index_q2,P2,Q2,nodes) );
 
-            // bool Q2_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
-            // if ( Q2_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q2); //case 1
-            // else is_patch_inside_Q.set(patch_id_p2); //case 2
+            bool Q2_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
+            if ( Q2_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q2); //case 1
+            else is_patch_inside_Q.set(patch_id_p2); //case 2
             continue;
           }
           else{
@@ -1673,9 +1673,12 @@ public:
               CGAL_assertion( index_p1!=index_p2 || index_p1==-1 );
               coplanar_patches_of_P.set(patch_id_p1);
               coplanar_patches_of_Q.set(patch_id_q2);
-              // bool Q1_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes,ppmap);
-              // if ( Q1_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q1); //case 3
-              // else case 4
+              bool Q1_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes,ppmap);
+              if ( Q1_is_between_P1P2 )
+              { // case 3
+                is_patch_inside_P.set(patch_id_q1);
+                is_patch_inside_Q.set(patch_id_p2);
+              } //else case 4
               continue;
             }
             else
@@ -1684,9 +1687,12 @@ public:
               {
                 coplanar_patches_of_P.set(patch_id_p2);
                 coplanar_patches_of_Q.set(patch_id_q1);
-                // bool Q2_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
-                // if ( Q2_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q2); //case 5
-                // else case 6
+                bool Q2_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q2,P1,P2,Q2,nodes,ppmap);
+                if ( Q2_is_between_P1P2 )
+                {  //case 5
+                  is_patch_inside_P.set(patch_id_q2);
+                  is_patch_inside_Q.set(patch_id_p1);
+                } // else case 6
                 continue;
               }
               else{
@@ -1696,9 +1702,9 @@ public:
                   coplanar_patches_of_Q.set(patch_id_q2);
                   coplanar_patches_of_P_for_union_and_intersection.set(patch_id_p2);
                   coplanar_patches_of_Q_for_union_and_intersection.set(patch_id_q2);
-                  // bool Q1_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes,ppmap);
-                  // if ( Q1_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q1);  //case 7
-                  // else is_patch_inside_Q.set(patch_id_p1); //case 8
+                  bool Q1_is_between_P1P2 = sorted_around_edge_filtered(indices.first,indices.second,index_p1,index_p2,index_q1,P1,P2,Q1,nodes,ppmap);
+                  if ( Q1_is_between_P1P2 ) is_patch_inside_P.set(patch_id_q1);  //case 7
+                  else is_patch_inside_Q.set(patch_id_p1); //case 8
                   continue;
                 }
               }
@@ -1892,10 +1898,10 @@ public:
     std::cout << "coplanar_patches_of_P_for_union_and_intersection " << coplanar_patches_of_P_for_union_and_intersection << "\n";
     std::cout << "coplanar_patches_of_Q_for_union_and_intersection " << coplanar_patches_of_Q_for_union_and_intersection << "\n";
     std::cout << "Size of patches of P: ";
-    std::copy(P_patch_sizes.begin(), P_patch_sizes.end(), std::ostream_iterator<std::size_t>(std::cout," ") );
+    std::copy(P_patch_sizes.rbegin(), P_patch_sizes.rend(), std::ostream_iterator<std::size_t>(std::cout," ") );
     std::cout << "\n";
     std::cout << "Size of patches of Q: ";
-    std::copy(Q_patch_sizes.begin(), Q_patch_sizes.end(), std::ostream_iterator<std::size_t>(std::cout," ") );
+    std::copy(Q_patch_sizes.rbegin(), Q_patch_sizes.rend(), std::ostream_iterator<std::size_t>(std::cout," ") );
     std::cout << "\n";
     #endif
 
