@@ -70,8 +70,8 @@ typename Traits::Vector_3 regularize_normal
   typedef typename Traits::Line_3 Line;
   typedef typename Traits::Plane_3 Plane;
 
-  if (symmetry_direction == CGAL::NULL_VECTOR)
-    return n;
+   // if (symmetry_direction == CGAL::NULL_VECTOR)
+   //   return n;
       
   Point pt_symmetry = CGAL::ORIGIN + cos_symmetry* symmetry_direction;
 
@@ -117,8 +117,8 @@ typename Traits::Vector_3 regularize_normals_from_prior
   typedef typename Traits::Line_3 Line;
   typedef typename Traits::Plane_3 Plane;
 
-  if (symmetry_direction == CGAL::NULL_VECTOR)
-    return n;
+  // if (symmetry_direction == CGAL::NULL_VECTOR)
+  //   return n;
 
   Plane plane_orthogonality (CGAL::ORIGIN, np);
   Point pt_symmetry = CGAL::ORIGIN + cos_symmetry* symmetry_direction;
@@ -391,16 +391,17 @@ void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
 
                   for (std::size_t j = 0; j < clusters[cluster_index].orthogonal_clusters.size(); ++ j)
                     {
-                      if(clusters[j].is_free)
-                        { 	
+                      std::size_t cluster_index_2 = clusters[cluster_index].orthogonal_clusters[j];
+                      if(clusters[cluster_index_2].is_free)
+                        {
                           propagation = true;
-                          index_container_current_ring.push_back(j);
-                          clusters[j].is_free = false;
+                          index_container_current_ring.push_back(cluster_index_2);
+                          clusters[cluster_index_2].is_free = false;
 
-                          if(max_area < clusters[j].area)
+                          if(max_area < clusters[cluster_index_2].area)
                             {
-                              max_area = clusters[j].area;
-                              index_max_area = j;
+                              max_area = clusters[cluster_index_2].area;
+                              index_max_area = cluster_index_2;
                             }
                         }	
                     }
@@ -423,7 +424,6 @@ void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
         }
     }
 
-
   //create subgraphs of mutually orthogonal clusters in which the
   //largest cluster is excluded and store in
   //subgraph_clusters_prop
@@ -439,7 +439,7 @@ void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
       subgraph_clusters_prop.push_back(subgraph_clusters_prop_temp);
     }
 
-
+  std::cerr << "B " << clusters[0].normal << " " << clusters[1].normal << std::endl;
 
   //regularization of cluster normals : in eachsubgraph, we start
   //from the largest area cluster and we propage over the subgraph
@@ -453,6 +453,7 @@ void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
     {
 	
       std::size_t index_current=subgraph_clusters_max_area_index[i];
+
       Vector vec_current=regularize_normal<Traits>
         (clusters[index_current].normal,
          symmetry_direction,
@@ -481,20 +482,20 @@ void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
 
               for (std::size_t j = 0; j < clusters[cluster_index].orthogonal_clusters.size(); ++ j)
                 {
-						
-                  if(clusters[j].is_free)
-                    { 	
-							
+                  std::size_t cluster_index_2 = clusters[cluster_index].orthogonal_clusters[j];						
+                  if(clusters[cluster_index_2].is_free)
+                    {
+                      std::cerr << "Propagation" << std::endl;
                       propagation = true;
-                      index_container_current_ring.push_back(j);
-                      clusters[j].is_free = false;
+                      index_container_current_ring.push_back(cluster_index_2);
+                      clusters[cluster_index_2].is_free = false;
 
                       Vector new_vect=regularize_normals_from_prior<Traits>
                         (clusters[cluster_index].normal,
-                         clusters[j].normal,
+                         clusters[cluster_index_2].normal,
                          symmetry_direction,
-                         clusters[j].cosangle_symmetry);
-                      clusters[j].normal = new_vect;
+                         clusters[cluster_index_2].cosangle_symmetry);
+                      clusters[cluster_index_2].normal = new_vect;
                     }
                 }	
             }
@@ -632,6 +633,7 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
 
   tolerance_angle = tolerance_angle * CGAL_PI / (FT)(180);
   FT tolerance_cosangle = (FT)1. - std::cos (tolerance_angle);
+  FT tolerance_cosangle_ortho = std::cos (0.5 * CGAL_PI - tolerance_angle);
       
   // clustering the parallel primitives and store them in clusters
   // & compute the normal, size and cos angle to the symmetry
@@ -649,9 +651,9 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
         {
           for (std::size_t j = i + 1; j < clusters.size(); ++ j)
             {
-              
-              if (std::fabs (clusters[i].normal * clusters[j].normal) < tolerance_cosangle)
+              if (std::fabs (clusters[i].normal * clusters[j].normal) < tolerance_cosangle_ortho)
                 {
+                  std::cerr << "Clustered " << std::endl;
                   clusters[i].orthogonal_clusters.push_back (j);
                   clusters[j].orthogonal_clusters.push_back (i);
                 }
@@ -726,7 +728,7 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
                           Point pt_reg_next = planes[index_prim_next]->projection(centroids[index_prim_next]);
                           Point pt_proj=plan_reg.projection(pt_reg_next);
                           FT distance = std::sqrt (CGAL::squared_distance(pt_reg_next,pt_proj));
-					
+
                           if (distance < tolerance_coplanarity)
                             clusters[i].coplanar_group[k] = cop_index;
                         }
@@ -734,7 +736,6 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
                   cop_index++; 
                 }
             }
-
           //regularize primitive position by computing barycenter of cplanar planes
           std::vector<Point> pt_bary (cop_index, Point ((FT)0., (FT)0., (FT)0.));
           std::vector<FT> area (cop_index, 0.);
@@ -755,9 +756,8 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
             {
               std::size_t index_prim = clusters[i].planes[j];
               std::size_t group = clusters[i].coplanar_group[j];
-              
               Plane plane_reg (pt_bary[group], vec_reg);
-              
+
               if (planes[index_prim]->plane_normal ()
                   * plane_reg.orthogonal_vector() < 0)
                 planes[index_prim]->update (plane_reg.opposite());
