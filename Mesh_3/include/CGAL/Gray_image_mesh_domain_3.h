@@ -91,7 +91,9 @@ public:
            error_bound,
            Null_subdomain_index(),
            p_rng)
-  {}
+  {
+    CGAL_assertion(Transform(iso_value)(value_outside) == 0);
+  }
 
   Gray_image_mesh_domain_3(const Image& image,
                            const Transform& transform,
@@ -103,7 +105,9 @@ public:
            error_bound,
            Null_subdomain_index(),
            p_rng)
-  {}
+  {
+    CGAL_assertion(transform(value_outside) == 0);
+  }
 
   /// Destructor
   virtual ~Gray_image_mesh_domain_3() {}
