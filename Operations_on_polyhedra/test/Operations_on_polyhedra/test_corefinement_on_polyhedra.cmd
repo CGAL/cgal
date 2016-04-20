@@ -3,6 +3,7 @@ data-coref/cube.off data-coref/coplanar_with_cube.off
 data-coref/cube.off data-coref/coplanar_with_cube1.off
 data-coref/cube.off data-coref/coplanar_with_cube2.off
 data-coref/cube.off data-coref/coplanar_with_cube3.off
+data-coref/cube.off data-coref/coplanar_with_cube4.off
 data-coref/elephant_split_1.off data-coref/elephant_split_2.off
 data-coref/open_large_cube.off data-coref/open_small_cube.off
 data-coref/elephant.off data-coref/elephant_plane/plane_1.off
