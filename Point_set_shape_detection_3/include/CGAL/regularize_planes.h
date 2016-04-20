@@ -597,7 +597,6 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
   typedef typename EfficientRANSACTraits::Point_3 Point;
   typedef typename EfficientRANSACTraits::Vector_3 Vector;
   typedef typename EfficientRANSACTraits::Plane_3 Plane;
-  typedef typename EfficientRANSACTraits::Point_map Point_map;
 
   typedef Shape_detection_3::Shape_base<EfficientRANSACTraits> Shape;
   typedef Shape_detection_3::Plane<EfficientRANSACTraits> Plane_shape;
