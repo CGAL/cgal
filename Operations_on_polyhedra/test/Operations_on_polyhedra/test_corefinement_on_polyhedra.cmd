@@ -1,0 +1,16 @@
+data-coref/elephant.off data-coref/sphere.off
+data-coref/cube.off data-coref/coplanar_with_cube.off
+data-coref/cube.off data-coref/coplanar_with_cube1.off
+data-coref/cube.off data-coref/coplanar_with_cube2.off
+data-coref/cube.off data-coref/coplanar_with_cube3.off
+data-coref/elephant_split_1.off data-coref/elephant_split_2.off
+data-coref/open_large_cube.off data-coref/open_small_cube.off
+data-coref/elephant.off data-coref/elephant_plane/plane_1.off
+data-coref/elephant.off data-coref/elephant_plane/plane_2.off
+data-coref/elephant.off data-coref/elephant_plane/plane_3.off
+data-coref/open_tet_1.off data-coref/open_tet_2.off
+data-coref/small_cube_coplanar_inside.off data-coref/small_cube_coplanar_outside.off
+data-coref/large_cube_coplanar.off data-coref/small_cube_coplanar_inside.off
+data-coref/large_cube_coplanar.off data-coref/small_cube_coplanar_outside.off
+data-coref/P7.off data-coref/Q7.off
+data-coref/cow.off data-coref/cross.off
