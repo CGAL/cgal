@@ -291,8 +291,10 @@ void compute_parallel_clusters (PlaneContainer& planes,
 
           if (symmetry_direction != CGAL::NULL_VECTOR)
             clu.cosangle_symmetry = std::fabs(symmetry_direction * clu.normal);
+
         }
     }
+
   is_available.clear();
 }
 
@@ -669,15 +671,16 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
   //find subgraphs of mutually orthogonal clusters (store index of
   //clusters in subgraph_clusters), and select the cluster of
   //largest area
-  internal::PlaneRegularization::subgraph_mutually_orthogonal_clusters<EfficientRANSACTraits>
-    (clusters, symmetry_direction);
+  if (regularize_orthogonality || regularize_axis_symmetry)
+    internal::PlaneRegularization::subgraph_mutually_orthogonal_clusters<EfficientRANSACTraits>
+      (clusters, (regularize_axis_symmetry ? symmetry_direction : CGAL::NULL_VECTOR));
       
   //recompute optimal plane for each primitive after normal regularization
   for (std::size_t i=0; i < clusters.size(); ++ i)
     {
 
       Vector vec_reg = clusters[i].normal;
-
+      
       for (std::size_t j = 0; j < clusters[i].planes.size(); ++ j)
         {
           std::size_t index_prim = clusters[i].planes[j];
@@ -685,7 +688,7 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
           if( planes[index_prim]->plane_normal () * vec_reg < 0)
             vec_reg=-vec_reg;
           Plane plane_reg(pt_reg,vec_reg);
-              
+
           if( std::fabs(planes[index_prim]->plane_normal () * plane_reg.orthogonal_vector ()) > 1. - tolerance_cosangle)
             planes[index_prim]->update (plane_reg);
         }
