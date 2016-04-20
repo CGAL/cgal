@@ -24,6 +24,7 @@
 #include <CGAL/value_type_traits.h>
 #include <CGAL/point_set_processing_assertions.h>
 #include <CGAL/Kernel_traits.h>
+#include <CGAL/IO/io.h>
 
 #include <boost/version.hpp>
 #include <boost/cstdint.hpp>
