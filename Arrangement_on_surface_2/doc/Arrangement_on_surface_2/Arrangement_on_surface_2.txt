@@ -6,37 +6,176 @@ namespace CGAL {
 \anchor chapterArrangement_on_surface_2
 \cgalAutoToc
 
-\authors Ron Wein, Eric Berberich, Efi Fogel, Dan Halperin, Michael Hemmer, Oren Salzman, and Baruch Zukerman
+\authors Ron Wein, Eric Berberich, Efi Fogel, Dan Halperin,
+Michael Hemmer, Oren Salzman, and Baruch Zukerman
 
-\section arr_secintro Introduction
+\section aos_sec-intro Introduction
 
-Given a set \f$ \cal C\f$ of planar curves, the <I>arrangement</I>
-\f$ \cal A(\cal C)\f$ is the subdivision of the plane into zero-dimensional,
-one-dimensional and two-dimensional cells, called <I>vertices</I>, <I>edges</I> and <I>faces</I>, respectively induced by the curves in \f$ \cal C\f$.
-Arrangements are ubiquitous in the computational-geometry
-literature and have many applications;
-see, e.g., \cgalCite{as-aa-00}, \cgalCite{cgal:h-a-04}.
+Geometric arrangements, or arrangements for short, are subdivisions of
+some space induced by geometric objects. Figure
+\cgalFigureRef{aos_fig-simple_arr} shows an arrangement of two curves
+\f$C_1 \f$ and \f$C_2 \f$ in the plane. It has three faces---two
+bounded faces \f$f_1 \f$ and \f$f_2 \f$ (filled with diagonal-stripe
+patterns) and an unbounded face. The arrangement has seven
+vertices---four represent the endpoints of \f$C_1 \f$ and \f$C_2 \f$
+(drawn as small discs), and three represent the intersection points of
+the two curves (drawn as small rings). The arrangement also has eight
+edges, each of which is a maximal portion of one curve not
+intersecting the other.
+\cgalFigureBegin{aos_fig-simple_arr,simple_arr.png}
+\cgalFigureEnd
 
-The curves in \f$ \cal C\f$ can intersect each other (a single curve may also
-be self-intersecting or may be comprised of several disconnected branches)
-and are not necessarily \f$ x\f$-monotone.\cgalFootnote{A continuous planar curve \f$ C\f$ is <I>\f$ x\f$-monotone</I> if every vertical line intersects it at most once. For example, a non-vertical line segment is always \f$ x\f$-monotone and so is the graph of any continuous function \f$ y = f(x)\f$. For convenience, we treat vertical line segments as <I>weakly \f$ x\f$-monotone</I>, as there exists a single vertical line that overlaps them. A circle of radius \f$ r\f$ centered at \f$ (x_0, y_0)\f$ is not \f$ x\f$-monotone, as the vertical line \f$ x = x_0\f$ intersects it at \f$ (x_0, y_0 - r)\f$ and at \f$ (x_0, y_0 + r)\f$.}
-We construct a collection \f$ \cal C''\f$ of
-\f$ x\f$-monotone subcurves that are pairwise disjoint in their interiors
-in two steps as follows. First, we decompose each curve in \f$ \cal C\f$
-into maximal \f$ x\f$-monotone subcurves (and possibly isolated points),
-obtaining the collection \f$ \cal C'\f$. Note that an \f$ x\f$-monotone curve cannot
-be self-intersecting. Then, we decompose each curve in \f$ \cal C'\f$ into
-maximal connected subcurves not intersecting any other
-curve (or point) in \f$ \cal C'\f$. The collection \f$ \cal C''\f$ may also
-contain isolated points, if the curves of \f$ \cal C\f$ contain such
-points. The arrangement induced by the collection \f$ \cal C''\f$ can be
-conveniently embedded as a planar graph, whose vertices are associated
-with curve endpoints or with isolated points, and whose edges are
-associated with subcurves. It is easy to see that
-\f$ \cal A(\cal C) = \cal A(\cal C'')\f$. This graph can be represented using a
-<I>doubly-connected edge list</I> data-structure (\sc{Dcel} for short),
-which consists of containers of vertices, edges and faces and
-maintains the incidence relations among these objects.
+Arrangements are not restricted to curves in the plane. There are
+useful arrangements in three and higher dimensions (these are not so
+easy to visualize) and they can be induced by geometric objects of any
+type, such as spheres, simplices, polytopes, or B&eacute;zier
+surfaces. In this book we focus on two-dimensional arrangements
+embedded on orientable parametric surfaces in three dimensions, such
+as planes, cylinders, spheres, and tori, and surfaces homeomorphic to
+them of curves. Arrangements are ubiquitous in the
+computational-geometry literature and have many applications; see,
+e.g., \cgalCite{as-aa-00}, \cgalCite{bfhks-apsca-10},
+\cgalCite{bfhmw-apsgf-10}, and \cgalCite{cgal:h-a-04}.
+
+\subsection aos_ssec-intro-sep Separation of Topology and Geometry
+
+The use of the generic programming paradigm enables a convenient
+separation of the topology and the geometry of data
+structures.\cgalFootnote{In this context, we sometimes say
+<I>combinatorics</I> instead of topology, and say <I>algebra</I> or
+<I>numerics</I> instead of geometry. We always mean the same
+thing---the separation of the abstract, graph-like structure (the
+topology) from the actual embedding in the plane (the geometry).}
+This is a key aspect in the design of geometric software, and is put
+into practice, for example, in the design of \cgal polyhedra, \cgal
+triangulations, and our \cgal arrangements. This separation allows the
+convenient abstraction of algorithms and data structures in
+combinatorial and topological terms, regardless of the specific
+geometry of the objects at hand. This abstraction is realized through
+class and function templates that represent specific data structures
+and algorithmic frameworks, respectively. Consider the following
+imaginary class template called `Arrangement`:
+
+<code>
+template <typename Traits, typename Dcel> class Arrangement_2 { ... };
+</code>
+
+It is instantiated with two types. The first, referred to as a
+<I>traits</I> class, defines the set of geometric-object types and the
+operations on objects of these types. The second defines the
+topological-object types and the operations required to maintain the
+incidence relations among objects of these types. A natural choice is
+a doubly-connected edge list (\sc{Dcel}) data structure, on which we
+elaborate in Section \ref aos_ssec-basic-dcel.
+
+An immediate advantage of the separation of the topology and the
+geometry of data structures is that users with limited expertise in
+computational geometry can employ the data structure with their own
+special type of objects. They must, however, supply the relevant
+traits class, which mainly involves algebraic computations. A traits
+class also encapsulates the number types used to represent coordinates
+of geometric objects and to carry out algebraic operations on them. It
+encapsulates the type of coordinate system used (e.g., Cartesian and
+homogeneous), and the geometric or algebraic computation methods
+themselves. Naturally, a prospective user of the package that develops
+a traits class would like to face as few requirements as possible in
+terms of traits development.
+
+\subsection aos_ssec-intro-well_behaved Well-Behaved Curves
+
+What constitutes valid curves that can be handled by the
+\ref PkgArrangement2Summary package is discussed in detail in Section
+\ref aos_sec-traits, where the models of the traits classes are
+described. However, when we cite combinatorial complexity bounds or
+bounds on the resources (running time, storage) required by
+algorithms, we often postulate stricter assumptions on the input
+curves. The prevalent term in use is that the curves are <I>well
+behaved</I>, which may have different interpretations in different
+settings. If we are concerned with combinatorial complexity bounds for
+curves in the plane, then the standard assumptions are that (i) each
+curve is non-self-intersecting (so-called Jordan arc) and (ii) every
+pair of curves intersects in at most some constant number of
+points. For algorithmic purposes we need to require more since we
+assume that any operation on a small constant number of curves takes
+unit time. In this sense arcs of algebraic curves of degree bounded by
+a constant (namely the zero set of bivariate polynomials of constant
+maximum total degree) are well behaved. Naturally, what are typically
+considered well-behaved surfaces in \f$ \mathbb{R}^3\f$ is even more
+complicated to state.
+
+Remarks
+<ol>
+<li> From the complexity-bound perspective, most of the arrangements
+  that we deal with in the book can be regarded as defined by
+  well-behaved curves. Even though the package allows for
+  self-intersecting curves, for most types each curve can be
+  decomposed into a constant number of well-behaved curves, thus
+  having no effect on the asymptotic bounds that we cite.
+</li>
+<li> One type of curves that we deal with is special in this sense:
+  <I>polylines</I>, namely concatenations of an unlimited number of
+  line segments. A is not considered well behaved, as it cannot be
+  decomposed into a constant number of constant-descriptive complexity
+  subcurves. Informative bounds for arrangements of polylines are
+  expressed by other parameters in addition to the number of
+  polylines, for example, the total number of segments in all the
+  polylines together.
+</li>
+</ol>
+
+\section aos_sec-basic Basic Arrangements
+
+We start with a formal definition of two-dimensional planar
+arrangements, and proceed with an introduction to the data structure
+used to represent the incidence relations among features of
+two-dimensional arrangements, namely, the <I>doubly-connected edge
+list</I>, or \sc{dcel} for short. Then we describe the main class of
+the \ref PkgArrangement2Summary package and the functions it supports.
+This chapter contains the basic material you need to know in order to
+use \cgal arrangements.
+
+\subsection aos_ssec-basic-dcel Representation of Arrangements: The Dcel
+
+Given a set \f$ \cal C\f$ of planar curves, the <I>arrangement</I> \f$
+\cal A(\cal C)\f$ is the subdivision of the plane into
+zero-dimensional, one-dimensional and two-dimensional
+cells,\cgalFootnote{We use the term <I>cell</I> to describe the various
+dimensional entities in the induced subdivision. Sometimes, the term
+<I>face</I> is used for this purpose in the literature. However, in
+this book, we use the term <I>face</I> to describe a
+<I>two-dimensional</I> cell.}  called <I>vertices</I>, <I>edges</I>
+and <I>faces</I>, respectively induced by the curves in \f$ \cal C\f$.
+
+The curves in \f$ \cal C\f$ can intersect each other (a single curve
+may also be self-intersecting or may be comprised of several
+disconnected branches) and are not necessarily \f$
+x\f$-monotone.\cgalFootnote{A continuous planar curve \f$ C\f$ is
+<I>\f$ x\f$-monotone</I> if every vertical line intersects it at most
+once. For example, a non-vertical line segment is always \f$
+x\f$-monotone and so is the graph of any continuous function \f$ y =
+f(x)\f$. For convenience, we treat vertical line segments as <I>weakly
+\f$ x\f$-monotone</I>, as there exists a single vertical line that
+overlaps them. A circle of radius \f$ r\f$ centered at \f$ (x_0,
+y_0)\f$ is not \f$ x\f$-monotone, as the vertical line \f$ x = x_0\f$
+intersects it at \f$ (x_0, y_0 - r)\f$ and at \f$ (x_0, y_0 + r)\f$.}
+We construct a collection \f$ \cal C''\f$ of \f$ x\f$-monotone
+subcurves that are pairwise disjoint in their interiors in two steps
+as follows. First, we decompose each curve in \f$ \cal C\f$ into
+maximal \f$ x\f$-monotone subcurves (and possibly isolated points),
+obtaining the collection \f$ \cal C'\f$. Note that an \f$
+x\f$-monotone curve cannot be self-intersecting. Then, we decompose
+each curve in \f$ \cal C'\f$ into maximal connected subcurves not
+intersecting any other curve (or point) in \f$ \cal C'\f$. The
+collection \f$ \cal C''\f$ may also contain isolated points, if the
+curves of \f$ \cal C\f$ contain such points. The arrangement induced
+by the collection \f$ \cal C''\f$ can be conveniently embedded as a
+planar graph, whose vertices are associated with curve endpoints or
+with isolated points, and whose edges are associated with
+subcurves. It is easy to see that \f$ \cal A(\cal C) = \cal A(\cal
+C'')\f$. This graph can be represented using a <I>doubly-connected
+edge list</I> data-structure (\sc{Dcel} for short), which consists of
+containers of vertices, edges and faces and maintains the incidence
+relations among these objects.
 
 The main idea behind the \sc{Dcel} data-structure is to represent
 each edge using a pair of directed <I>halfedges</I>, one going from
@@ -64,74 +203,89 @@ such a chain a <I>connected component of the boundary</I> (or <I>CCB</I> for sho
 
 The unique CCB of halfedges winding in a counterclockwise orientation
 along a face boundary is referred to as the <I>outer CCB</I> of the
-face. For the time being let us consider only arrangements of
-bounded curves, such that exactly one unbounded face exists in every
+face. For the time being let us consider only arrangements of bounded
+curves, such that exactly one unbounded face exists in every
 arrangement. The unbounded face does not have an outer boundary. Any
 other connected component of the boundary of the face is called a
-<I>hole</I> (or <I>inner CCB</I>), and can be represented as a circular
-chain of halfedges winding in a clockwise orientation around it.
-Note that a hole does not necessarily correspond to a single face,
-as it may have no area, or alternatively it may consist of several
-connected faces. Every face can have several holes contained in its
-interior (or no holes at all). In addition, every face may contain
-isolated vertices in its interior. See \cgalFigureRef{arr_figseg_dcel}
-for an illustration of the various \sc{Dcel} features. For more details
-on the \sc{Dcel} data structure see \cgalCite{bkos-cgaa-00} Chapter 2.
+<I>hole</I> (or <I>inner CCB</I>), and can be represented as a
+circular chain of halfedges winding in a clockwise orientation around
+it.  Note that a hole does not necessarily correspond to a single
+face, as it may have no area, or alternatively it may consist of
+several connected faces. Every face can have several holes contained
+in its interior (or no holes at all). In addition, every face may
+contain isolated vertices in its interior. See
+\cgalFigureRef{arr_figseg_dcel} for an illustration of the various
+\sc{Dcel} features. For more details on the \sc{Dcel} data structure
+see \cgalCite{bkos-cgaa-00} Chapter 2.
 
-\cgalFigureBegin{arr_figseg_dcel,arr_segs.png}
-An arrangement of interior-disjoint line segments with some of the \sc{Dcel} records that represent it. The unbounded face \f$ f_0\f$ has a single connected component that forms a hole inside it, and this hole is comprised if several faces. The half-edge \f$ e\f$ is directed from its source vertex \f$ v_1\f$ to its target vertex \f$ v_2\f$. This edge, together with its twin \f$ e'\f$, correspond to a line segment that connects the points associated with \f$ v_1\f$ and \f$ v_2\f$ and separates the face \f$ f_1\f$ from \f$ f_2\f$. The predecessor \f$ e_{\rm prev}\f$ and successor \f$ e_{\rm next}\f$ of \f$ e\f$ are part of the chain that form the outer boundary of the face \f$ f_2\f$. The face \f$ f_1\f$ has a more complicated structure as it contains two holes in its interior: One hole consists of two adjacent faces \f$ f_3\f$ and \f$ f_4\f$, while the other hole is comprised of two edges. \f$ f_1\f$ also contains two isolated vertices \f$ u_1\f$ and \f$ u_2\f$ in its interior.
-\cgalFigureEnd
+\cgalFigureBegin{arr_figseg_dcel,arr_segs.png} An arrangement of
+interior-disjoint line segments with some of the \sc{Dcel} records
+that represent it. The unbounded face \f$ f_0\f$ has a single
+connected component that forms a hole inside it, and this hole is
+comprised if several faces. The half-edge \f$ e\f$ is directed from
+its source vertex \f$ v_1\f$ to its target vertex \f$ v_2\f$. This
+edge, together with its twin \f$ e'\f$, correspond to a line segment
+that connects the points associated with \f$ v_1\f$ and \f$ v_2\f$ and
+separates the face \f$ f_1\f$ from \f$ f_2\f$. The predecessor \f$
+e_{\rm prev}\f$ and successor \f$ e_{\rm next}\f$ of \f$ e\f$ are part
+of the chain that form the outer boundary of the face \f$ f_2\f$. The
+face \f$ f_1\f$ has a more complicated structure as it contains two
+holes in its interior: One hole consists of two adjacent faces \f$
+f_3\f$ and \f$ f_4\f$, while the other hole is comprised of two
+edges. \f$ f_1\f$ also contains two isolated vertices \f$ u_1\f$ and
+\f$ u_2\f$ in its interior.  \cgalFigureEnd
 
 The \f$ x\f$-monotone curves of an arrangement are embedded in an
 rectangular two-dimensional area called the parameter
-space.\cgalFootnote{The term parameter space stems from a major extension the arrangement package is going through to support arrangements embedded on certain two-dimensional parametric surfaces in three-dimensions (or higher).} The parameter space is
-defined as \f$ X \times Y\f$, where \f$ X\f$ and \f$ Y\f$ are open, half-open, or
-closed intervals with endpoints in the compactified real line
-\f$ \mathbb{R} \cup \{-\infty,+\infty\}\f$. Let \f$ b_l\f$, \f$ b_r\f$, \f$ b_b\f$, and
-\f$ b_t\f$ denote the endpoints of \f$ X\f$ and \f$ Y\f$, respectively. We
-typically refer to these values as the left, right, bottom, and top
-sides of the boundary of the parameter space. If the parameter space
-is, for example, the entire compactified plane, which is currently
-the only option supported by the package, \f$ b_l = b_b = -\infty\f$ and
-\f$ b_r = b_t = +\infty\f$.
+space.\cgalFootnote{The term parameter space stems from a major
+extension the arrangement package is going through to support
+arrangements embedded on certain two-dimensional parametric surfaces
+in three-dimensions (or higher).} The parameter space is defined as
+\f$ X \times Y\f$, where \f$ X\f$ and \f$ Y\f$ are open, half-open, or
+closed intervals with endpoints in the compactified real line \f$
+\mathbb{R} \cup \{-\infty,+\infty\}\f$. Let \f$ b_l\f$, \f$ b_r\f$,
+\f$ b_b\f$, and \f$ b_t\f$ denote the endpoints of \f$ X\f$ and \f$
+Y\f$, respectively. We typically refer to these values as the left,
+right, bottom, and top sides of the boundary of the parameter
+space. If the parameter space is, for example, the entire compactified
+plane, which is currently the only option supported by the package,
+\f$ b_l = b_b = -\infty\f$ and \f$ b_r = b_t = +\infty\f$.
 
-The rest of this chapter is organized as follows: In
-Section \ref arr_secarr_class we review in detail the interface
-of the `Arrangement_2` class-template, which is the central
-component in the arrangement package. In
-Section \ref arr_secqueries we show how queries on an arrangement
-can be issued. In Section \ref arr_secgl_funcs we
-review some important free (global) functions that operate on
-arrangements, the most important ones being the free
-insertion-functions. Section \ref arr_sectraits contains detailed
-descriptions of the various geometric traits classes included in
-the arrangement package. Using these traits classes it is possible
-to construct arrangements of different families of curves. In
-Section \ref arr_secnotif we review the notification mechanism
-that allows external classes to keep track of the changes that an
-arrangement instance goes through. Section \ref arr_secex_dcel
-explains how to extend the \sc{Dcel} records, to store extra data
-with them, and to efficiently update this data.
-In Section \ref arr_secoverlay we introduce the fundamental
-operation of overlaying two arrangements.
+The rest of this chapter is organized as follows: In Section \ref
+aos_ssec-basic-arr_class we review in detail the interface of the
+`Arrangement_2`< class-template, which is the central component in the
+arrangement package. In Section \ref arr_secqueries we show how
+queries on an arrangement can be issued. In Section \ref
+arr_secgl_funcs we review some important free (global) functions that
+operate on arrangements, the most important ones being the free
+insertion-functions. Section \ref aos_sec-traits contains detailed
+descriptions of the various geometric traits classes included in the
+arrangement package. Using these traits classes it is possible to
+construct arrangements of different families of curves. In Section
+\ref arr_secnotif we review the notification mechanism that allows
+external classes to keep track of the changes that an arrangement
+instance goes through. Section \ref arr_secex_dcel explains how to
+extend the \sc{Dcel} records, to store extra data with them, and to
+efficiently update this data.  In Section \ref arr_secoverlay we
+introduce the fundamental operation of overlaying two arrangements.
 Section \ref arr_secarr_with_hist describes the
 `Arrangement_with_history_2` class-template that extends the
 arrangement by storing additional history records with its curves.
-Finally, in Section \ref arr_secio we review the arrangement
+Finally, in Section \ref aos_sec-io we review the arrangement
 input/output functions.
 
-\section arr_secarr_class The Main Arrangement Class
+\subsection aos_ssec-basic-arr_class The Main Arrangement Class
 
-The class `Arrangement_2<Traits,Dcel>` is the main class in
-the arrangement package. It is used to represent planar
-arrangements and it provides the interface needed to construct them,
-traverse them, and maintain them. An arrangement is defined by
-a geometric <I>traits</I> class that determines the family of planar
-curves that form the arrangement, and a \sc{Dcel} class, which
-represents the <I>topological structure</I> of the planar subdivision.
-It supplies a minimal set of geometric operations (predicates and
-constructions) required to construct and maintain the arrangement
-and to operate on it.
+The class `Arrangement_2<Traits,Dcel>` is the main class in the
+arrangement package. It is used to represent planar arrangements and
+it provides the interface needed to construct them, traverse them, and
+maintain them. An arrangement is defined by a geometric <I>traits</I>
+class that determines the family of planar curves that form the
+arrangement, and a \sc{Dcel} class, which represents the
+<I>topological structure</I> of the planar subdivision.  It supplies a
+minimal set of geometric operations (predicates and constructions)
+required to construct and maintain the arrangement and to operate on
+it.
 
 The design of the arrangement package is guided by the need to
 separate between the representation of the arrangements and the
@@ -139,8 +293,8 @@ various geometric algorithms that operate on them, and by the need to
 separate between the topological and geometric aspects of the planar
 subdivision. The separation is exhibited by the two template
 parameters of the `Arrangement_2` template:
-<UL>
 
+<UL>
 <LI>The `Traits` template-parameter should be instantiated with a
   model of the `ArrangementBasicTraits_2` concept and optionally
   additional geometry traits concepts. A model of the
@@ -155,7 +309,7 @@ parameters of the `Arrangement_2` template:
   contains several other traits classes that can handle other types of
   curves, such as polylines (continuous piecewise-linear curves),
   conic arcs, and arcs of rational functions. We exemplify the usage
-  of these traits classes in Section \ref arr_sectraits.
+  of these traits classes in Section \ref aos_sec-traits.
 <LI>The `Dcel` template-parameter should be instantiated with a class
   that is a model of the `ArrangementDcel` concept. The value of this
   parameter is `Arr_default_dcel<Traits>` by default.  However, in
@@ -170,13 +324,13 @@ parameters of the `Arrangement_2` template:
 \image latex triangle.png
 
 The simple program listed below constructs a planar map of three line
-segments forming a triangle. The constructed arrangement is instantiated
-with the `Arr_segment_traits_2` traits class to handle segments only.
-The resulting arrangement consists of two faces, a bounded triangular face
-and the unbounded face.
-The program is not very useful as it is, since it ends immediately
-after the arrangement is constructed. We give more enhanced examples
-in the rest of this chapter.
+segments forming a triangle. The constructed arrangement is
+instantiated with the `Arr_segment_traits_2` traits class to handle
+segments only.  The resulting arrangement consists of two faces, a
+bounded triangular face and the unbounded face.  The program is not
+very useful as it is, since it ends immediately after the arrangement
+is constructed. We give more enhanced examples in the rest of this
+chapter.
 
 \code{.cpp}
 #include <CGAL/Cartesian.h>
@@ -209,21 +363,20 @@ int main()
 \subsection arr_ssectraverse Traversing the Arrangement
 
 The simplest and most fundamental arrangement operations are the
-various traversal methods, which allow users to systematically go
-over the relevant features of the arrangement at hand.
+various traversal methods, which allow users to systematically go over
+the relevant features of the arrangement at hand.
 
 As mentioned above, the arrangement is represented as a \sc{Dcel},
 which stores three containers of vertices, halfedges and faces. Thus,
-the `Arrangement_2` class supplies iterators for these
-containers. For example, the methods `vertices_begin()` and
-`vertices_end()` return `Arrangement_2::Vertex_iterator`
-objects that define the valid range of arrangement vertices. The value
-type of this iterator is `Arrangement_2::Vertex`. Moreover, the
-vertex-iterator type is equivalent to
-`Arrangement_2::Vertex_handle`, which serves as a pointer to a
-vertex. As we show next, all functions related to arrangement features
-accept handle types as input parameters and return handle types as
-their output.
+the `Arrangement_2` class supplies iterators for these containers. For
+example, the methods `vertices_begin()` and `vertices_end()` return
+`Arrangement_2::Vertex_iterator` objects that define the valid range
+of arrangement vertices. The value type of this iterator is
+`Arrangement_2::Vertex`. Moreover, the vertex-iterator type is
+equivalent to `Arrangement_2::Vertex_handle`, which serves as a
+pointer to a vertex. As we show next, all functions related to
+arrangement features accept handle types as input parameters and
+return handle types as their output.
 
 In addition to the iterators for arrangement vertices, halfedges
 and faces, the arrangement class also provides `edges_begin()`
@@ -233,23 +386,24 @@ arrangement edges. Note that the value type of this iterator is
 `Arrangement_2::Halfedge`, representing one of the twin
 halfedges that represent the edge.
 
-All iterator, circulator\cgalFootnote{A <I>circulator</I> is used to traverse a circular list, such as the list of halfedges incident to a vertex - see below.} and handle types also have non-mutable
-(<I>const</I>) counterparts. These non-mutable iterators are useful
-to traverse an arrangement without changing it. For example,
-the arrangement has a
-non-constant member function called `vertices_begin()` that
-returns a `Vertex_iterator` object and another const member
-function that returns a `Vertex_const_iterator` object. In fact,
-all methods listed in this section that return an iterator, a
-circulator or a handle have non-mutable counterparts. It should be
-noted that, for example, `Vertex_handle` can be readily converted
-into a `Vertex_const_handle`, but not vice-verse.
+All iterator, circulator\cgalFootnote{A <I>circulator</I> is used to
+traverse a circular list, such as the list of halfedges incident to a
+vertex - see below.} and handle types also have non-mutable
+(<I>const</I>) counterparts. These non-mutable iterators are useful to
+traverse an arrangement without changing it. For example, the
+arrangement has a non-constant member function called
+`vertices_begin()` that returns a `Vertex_iterator` object and another
+const member function that returns a `Vertex_const_iterator`
+object. In fact, all methods listed in this section that return an
+iterator, a circulator or a handle have non-mutable counterparts. It
+should be noted that, for example, `Vertex_handle` can be readily
+converted into a `Vertex_const_handle`, but not vice-verse.
 
-Conversion of a non-mutable handle to a corresponding mutable
-handle are nevertheless possible, and can be performed using the
-static function `Arrangement_2::non_const_handle()` (see, e.g.,
-Section \ref arr_ssecpl). There are
-three variant of this function, one for each type of handle.
+Conversion of a non-mutable handle to a corresponding mutable handle
+are nevertheless possible, and can be performed using the static
+function `Arrangement_2::non_const_handle()` (see, e.g., Section \ref
+arr_ssecpl). There are three variant of this function, one for each
+type of handle.
 
 \subsection arr_sssectr_vertex Traversal Methods for an Arrangement Vertex
 
@@ -414,7 +568,7 @@ void print_face (Arrangement_2::Face_const_handle f)
 }
 \endcode
 
-\subsection arr_sssectr_ex Additional Example
+\subsection aos_ssec-tr_ex Additional Example
 
 The function listed below prints the current setting of a given
 arrangement. This concludes the preview of the various traversal
@@ -559,15 +713,17 @@ The arrangement of the line segments \f$ s_1, \ldots, s_5\f$ constructed in `edg
 
 The following program demonstrates the usage of the four insertion
 functions. It creates an arrangement of five line segments, as
-depicted in \cgalFigureRef{arr_figex_1}.\cgalFootnote{Notice that in all figures in the rest of this chapter the coordinate axes are drawn only for illustrative purposes and are <I>not</I> part of the arrangement.} As the arrangement is very
-simple, we use the simple Cartesian kernel of \cgal with integer
-coordinates for the segment endpoints. We also use the
-`Arr_segment_traits_2` class that enables the efficient
-maintenance of arrangements of line segments; see more details on
-this traits class in Section \ref arr_sectraits. This example, as
-many others in this chapter, uses some print-utility functions from
-the file `print_arr.h`; these functions are also listed in
-Section \ref arr_ssectraverse.
+depicted in \cgalFigureRef{arr_figex_1}.\cgalFootnote{Notice that in
+all figures in the rest of this chapter the coordinate axes are drawn
+only for illustrative purposes and are <I>not</I> part of the
+arrangement.} As the arrangement is very simple, we use the simple
+Cartesian kernel of \cgal with integer coordinates for the segment
+endpoints. We also use the `Arr_segment_traits_2` class that enables
+the efficient maintenance of arrangements of line segments; see more
+details on this traits class in Section \ref aos_sec-traits. This
+example, as many others in this chapter, uses some print-utility
+functions from the file `print_arr.h`; these functions are also listed
+in Section \ref arr_ssectraverse.
 
 \cgalExample{Arrangement_on_surface_2/edge_insertion.cpp}
 
@@ -583,18 +739,18 @@ Isolated points are in general simpler geometric entities than
 curves and indeed the member functions that manipulate them are
 easier to understand.
 
-The function `insert_in_face_interior(p, f)` inserts an
-isolated point \f$ p\f$, located in the interior of a given face \f$ f\f$,
-into the arrangement and returns a handle to the arrangement
-vertex it has created and associated with \f$ p\f$. Naturally, this
-function has a precondition that \f$ p\f$ is really an isolated point,
-namely it does not coincide with any existing arrangement vertex
-and does not lie on any edge. As mentioned in
-Section \ref arr_ssectraverse, it is possible to obtain the face
-containing an isolated vertex handle \f$ v\f$ by calling `v->face()`.
+The function `insert_in_face_interior(p, f)` inserts an isolated point
+\f$ p\f$, located in the interior of a given face \f$ f\f$, into the
+arrangement and returns a handle to the arrangement vertex it has
+created and associated with \f$ p\f$. Naturally, this function has a
+precondition that \f$ p\f$ is really an isolated point, namely it does
+not coincide with any existing arrangement vertex and does not lie on
+any edge. As mentioned in Section \ref arr_ssectraverse, it is
+possible to obtain the face containing an isolated vertex handle \f$
+v\f$ by calling `v->face()`.
 
-The function `remove_isolated_vertex(v)` receives a handle to
-an isolated vertex and removes it from the arrangement.
+The function `remove_isolated_vertex(v)` receives a handle to an
+isolated vertex and removes it from the arrangement.
 
 \cgalFigureBegin{arr_figex_3,ex_2.png}
 An arrangement of line segments containing three isolated vertices, as constructed in `isolated_vertices.cpp`. The vertices \f$ u_2\f$ and \f$ u_3\f$ are eventually removed from the arrangement.
@@ -619,39 +775,40 @@ vertices in the arrangement. But how does one create a vertex that
 lies on an existing arrangement edge (more precisely, on an
 \f$ x\f$-monotone curve that is associated with an arrangement edge)?
 
-It should be noted that such an operation involves the splitting
-of a curve at a given point in its interior, while the traits
-class used by `Arrangement_2` does not necessarily have the
-ability to perform such a split operation. However, if users have
-the ability to split an \f$ x\f$-monotone curve into two at a given point
-\f$ p\f$ (this is usually the case when employing a more sophisticated
-traits class; see Section \ref arr_sectraits for more details)
-they can use the `split_edge(e, c1, c2)` function, were
-\f$ c_1\f$ and \f$ c_2\f$ are the two subcurves resulting from splitting the
-\f$ x\f$-monotone curve associated with the halfedge \f$ e\f$ at some point
-(call it \f$ p\f$) in its interior. The function splits the halfedge pair into two
-pairs, both incident to a new vertex \f$ v\f$ associated with \f$ p\f$, and
+It should be noted that such an operation involves the splitting of a
+curve at a given point in its interior, while the traits class used by
+`Arrangement_2` does not necessarily have the ability to perform such
+a split operation. However, if users have the ability to split an \f$
+x\f$-monotone curve into two at a given point \f$ p\f$ (this is
+usually the case when employing a more sophisticated traits class; see
+Section \ref aos_sec-traits for more details) they can use the
+`split_edge(e, c1, c2)` function, were \f$ c_1\f$ and \f$ c_2\f$ are
+the two subcurves resulting from splitting the \f$ x\f$-monotone curve
+associated with the halfedge \f$ e\f$ at some point (call it \f$ p\f$)
+in its interior. The function splits the halfedge pair into two pairs,
+both incident to a new vertex \f$ v\f$ associated with \f$ p\f$, and
 returns a handle to a halfedge whose source equals \f$ e\f$'s source
 vertex and whose target is the new vertex \f$ v\f$.
 
-The reverse operation is also possible. Suppose that we have a
-vertex \f$ v\f$ of degree \f$ 2\f$, whose two incident halfedges, \f$ e_1\f$ and
-\f$ e_2\f$, are associated with the curves \f$ c_1\f$ and \f$ c_2\f$. Suppose
-further that it is possible to merge these two curves into a single
-continuous \f$ x\f$-monotone curve \f$ c\f$. Calling `merge_edge(e1, e2, c)`
-will merge the two edges into a single edge associated with the curve
-\f$ c\f$, essentially removing the vertex \f$ v\f$ from the arrangement.
+The reverse operation is also possible. Suppose that we have a vertex
+\f$ v\f$ of degree \f$ 2\f$, whose two incident halfedges, \f$ e_1\f$
+and \f$ e_2\f$, are associated with the curves \f$ c_1\f$ and \f$
+c_2\f$. Suppose further that it is possible to merge these two curves
+into a single continuous \f$ x\f$-monotone curve \f$ c\f$. Calling
+`merge_edge(e1, e2, c)` will merge the two edges into a single edge
+associated with the curve \f$ c\f$, essentially removing the vertex
+\f$ v\f$ from the arrangement.
 
-Finally, the function `remove_edge(e)` removes the edge \f$ e\f$
-from the arrangement. Note that this operation is the reverse of
-an insertion operation, so it may cause a connected
-component to split into two, or two faces to merge into one, or a
-hole to disappear. By default, if the removal of `e` causes one
-of its end-vertices to become isolated, we remove this vertex as well.
-However, users can control this behavior and choose to keep the
-isolated vertices by supplying additional Boolean flags to
-`remove_edge()` indicating whether the source and the target vertices
-are to be removed should they become isolated.
+Finally, the function `remove_edge(e)` removes the edge \f$ e\f$ from
+the arrangement. Note that this operation is the reverse of an
+insertion operation, so it may cause a connected component to split
+into two, or two faces to merge into one, or a hole to disappear. By
+default, if the removal of `e` causes one of its end-vertices to
+become isolated, we remove this vertex as well.  However, users can
+control this behavior and choose to keep the isolated vertices by
+supplying additional Boolean flags to `remove_edge()` indicating
+whether the source and the target vertices are to be removed should
+they become isolated.
 
 \cgalFigureBegin{arr_figex_4,ex_3.png}
 An arrangement of line segments as constructed in `edge_manipulation.cpp`. Note that the edges \f$ e_7\f$ and \f$ e_8\f$ and the vertices \f$ w_1\f$ and \f$ w_2\f$, introduced in step (b) are eventually removed in step (c).
@@ -694,7 +851,7 @@ are of little use. However, we should keep in mind that there may be
 extraneous data (probably non-geometric) associated with the point
 objects or with the curve objects, as defined by the traits class. With
 these two functions we can modify this data; see more details in
-Section \ref arr_sectraits.
+Section \ref aos_sec-traits.
 
 In addition, we can use these functions to replace a geometric
 object (a point or a curve) with an equivalent object that has a
@@ -965,15 +1122,16 @@ see \cgalCite{cgal:hh-eplca-05}.
 
 Updating the auxiliary data structures of the trapezoidal map RIC
 algorithm is done very efficiently. On the other hand, updating the
-nearest-neighbor search-structure of the landmark algorithm may consume
-more time when the arrangement changes frequently, especially when
-a <span class="textsc">Kd</span>-tree is used, as it must be rebuilt each time the arrangement
-changes. It is therefore recommended that the
-`Arr_landmarks_point_location` class template be used when the
-application frequently issues point-location queries on an arrangement
-that only seldom changes. If the arrangement is more dynamic and is
-frequently going through changes, the `Arr_trapezoid_ric_point_location`
-class template should be the selected point-location strategy.
+nearest-neighbor search-structure of the landmark algorithm may
+consume more time when the arrangement changes frequently, especially
+when a <span class="textsc">Kd</span>-tree is used, as it must be
+rebuilt each time the arrangement changes. It is therefore recommended
+that the `Arr_landmarks_point_location` class template be used when
+the application frequently issues point-location queries on an
+arrangement that only seldom changes. If the arrangement is more
+dynamic and is frequently going through changes, the
+`Arr_trapezoid_ric_point_location` class template should be the
+selected point-location strategy.
 
 \subsection arr_sssecpl_ex An Example
 
@@ -1096,17 +1254,17 @@ pairs are sorted in increasing $xy$-lexicographical order of the
 query point.
 
 The batched point-location operation is carried out by sweeping the
-arrangement. Thus, it takes \f$ O((m+N)\log{(m+N)}) \f$  time, where \f$ N \f$
-is the number of edges in the arrangement. Issuing separate queries
-exploiting a point-location strategy with logarithmic query time
-per query, such as the trapezoidal map RIC strategy (see
-Section \ref arr_sssecpl_strat), is asymptotically more
-efficient. However, experiments show that when the number \f$ m \f$ of
-point-location queries is of the same order of magnitude as \f$ N\f$,
-the batched point-location operation is more efficient in practice.
-One of the reasons for the inferior performance of the alternative
-(asymptotically faster) procedures is the necessity to construct
-and maintain complex additional data structures.
+arrangement. Thus, it takes \f$ O((m+N)\log{(m+N)}) \f$ time, where
+\f$ N \f$ is the number of edges in the arrangement. Issuing separate
+queries exploiting a point-location strategy with logarithmic query
+time per query, such as the trapezoidal map RIC strategy (see Section
+\ref arr_sssecpl_strat), is asymptotically more efficient. However,
+experiments show that when the number \f$ m \f$ of point-location
+queries is of the same order of magnitude as \f$ N\f$, the batched
+point-location operation is more efficient in practice.  One of the
+reasons for the inferior performance of the alternative
+(asymptotically faster) procedures is the necessity to construct and
+maintain complex additional data structures.
 
 The program below issues a batched point-location query, which
 is essentially equivalent to the six separate queries performed in
@@ -1116,22 +1274,22 @@ is essentially equivalent to the six separate queries performed in
 
 \section arr_secgl_funcs Free Functions in the Arrangement Package
 
-In Section \ref arr_secarr_class we reviewed in details the
-`Arrangement_2` class, which represents two-dimensional
-subdivisions induced by planar curves, and mentioned that its
-interface is minimal in the sense that the member functions hardly
-perform any geometric algorithms and are mainly used for
-maintaining the topological structure of the subdivision. In this
-section we explain how to utilize the free (global) functions that operate
-on arrangements. The implementation of these operations typically require
-non-trivial geometric algorithms or load some extra requirements on
-the traits class.
+In Section \ref aos_ssec-basic-arr_class we reviewed in details the
+`Arrangement_2` class, which represents two-dimensional subdivisions
+induced by planar curves, and mentioned that its interface is minimal
+in the sense that the member functions hardly perform any geometric
+algorithms and are mainly used for maintaining the topological
+structure of the subdivision. In this section we explain how to
+utilize the free (global) functions that operate on arrangements. The
+implementation of these operations typically require non-trivial
+geometric algorithms or load some extra requirements on the traits
+class.
 
 \subsection arr_ssecinc_insert Incremental Insertion Functions
 
 \subsection arr_sssecinsert_non_x Inserting Non-Intersecting Curves
 
-In Section \ref arr_secarr_class we explained how to construct
+In Section \ref aos_ssec-basic-arr_class we explained how to construct
 arrangements of \f$ x\f$-monotone curves that are pairwise disjoint in
 their interior, when the location of the segment endpoints in the
 arrangement is known. Here we relax this constraint, and allow the
@@ -1140,24 +1298,28 @@ as it may be unknown at the time of insertion. We retain, for the moment,
 the requirement that the interior of the inserted curve is disjoint from
 all existing arrangement edges and vertices.
 
-The free function `insert_non_intersecting_curve(arr, c, pl)`
-inserts the \f$ x\f$-monotone curve \f$ c\f$ into the arrangement `arr`,
-with the precondition that the interior of \f$ c\f$ is disjoint from
-all `arr`'s existing edges and vertices. The third argument
-`pl` is a point-location object attached to the arrangement,
-which is used for performing the insertion. It locates both curve
-endpoints in the arrangement, where each endpoint is expected to
-either coincide with an existing vertex or lie inside a face.
-It is possible to invoke one of the specialized insertion functions
-(see Section \ref arr_secarr_class), based on the query results, and
-insert \f$ c\f$ at its proper position.\cgalFootnote{The `insert_non_intersecting_curve()` function, as all other functions reviewed in this section, is a function template, parameterized by an arrangement class and a point-location class (a model of the `ArrangementPointLocation_2` concept).} The insertion operation
-thus hardly requires any geometric operations on top on the ones
-needed to answer the point-location queries. Moreover, it is
-sufficient that the arrangement class is instantiated with a
-traits class that models the `ArrangementBasicTraits_2`
-concept (or the `ArrangementLandmarkTraits_2` concept, if the
-landmark point-location strategy is used), which does not have to
-support the computation of intersection points between curves.
+The free function `insert_non_intersecting_curve(arr, c, pl)` inserts
+the \f$ x\f$-monotone curve \f$ c\f$ into the arrangement `arr`, with
+the precondition that the interior of \f$ c\f$ is disjoint from all
+`arr`'s existing edges and vertices. The third argument `pl` is a
+point-location object attached to the arrangement, which is used for
+performing the insertion. It locates both curve endpoints in the
+arrangement, where each endpoint is expected to either coincide with
+an existing vertex or lie inside a face.  It is possible to invoke one
+of the specialized insertion functions (see Section \ref
+aos_ssec-basic-arr_class), based on the query results, and insert \f$
+c\f$ at its proper position.\cgalFootnote{The
+`insert_non_intersecting_curve()` function, as all other functions
+reviewed in this section, is a function template, parameterized by an
+arrangement class and a point-location class (a model of the
+`ArrangementPointLocation_2` concept).} The insertion operation thus
+hardly requires any geometric operations on top on the ones needed to
+answer the point-location queries. Moreover, it is sufficient that the
+arrangement class is instantiated with a traits class that models the
+`ArrangementBasicTraits_2` concept (or the
+`ArrangementLandmarkTraits_2` concept, if the landmark point-location
+strategy is used), which does not have to support the computation of
+intersection points between curves.
 
 The variant `insert_non_intersecting_curve(arr, c)` is also
 available. Instead of accepting a user-defined point-location
@@ -1171,7 +1333,7 @@ efficient, but its preconditions on the input curves are still
 rather restricting. Let us assume that the arrangement is
 instantiated with a traits class that models the refined
 `ArrangementXMonotoneTraits_2` concept and supports
-intersection computations (see Section \ref arr_sectraits for
+intersection computations (see Section \ref aos_sec-traits for
 the exact details). Given an \f$ x\f$-monotone curve, it is sufficient
 to locate its left endpoint in the arrangement and to trace its
 <I>zone</I>, namely the set of arrangement features crossing the curve,
@@ -1204,7 +1366,7 @@ arrangement - namely it wraps a `Vertex_const_handle`, a
 also Section \ref arr_ssecpl).
 \cgalAdvancedEnd
 
-\subsection arr_sssecinsert_gen Inserting General Curves
+\subsection aos_ssec-insert_gen Inserting General Curves
 
 So far all our examples were of arrangements of line segments,
 where the `Arrangement_2` template was instantiated with the
@@ -1228,7 +1390,7 @@ concept `ArrangementTraits_2`, which refines the
 additional `Curve_2` type (which may differ from the
 `X_monotone_curve_2` type), and support the subdivision of curves
 of this new type into \f$ x\f$-monotone curves (see the exact details in
-Section \ref arr_sectraits). The `insert(arr, c, pl)`
+Section \ref aos_sec-traits). The `insert(arr, c, pl)`
 function performs the insertion of the curve \f$ c\f$, which does not need
 to be \f$ x\f$-monotone, into the arrangement by subdividing it (if needed)
 into \f$ x\f$-monotone subcurves and inserting each one separately. Users
@@ -1419,7 +1581,7 @@ template having the same name is that they allow the merger of two curves
 associated with adjacent edges to form a single edge. Thus, they require
 that the traits class that instantiates the arrangement instance is a model
 of the refined `ArrangementXMonotoneTraits_2` concept (see
-Section \ref arr_sectraits).
+Section \ref aos_sec-traits).
 
 The function `remove_vertex(arr, v)` removes the vertex
 `v` from the given arrangement `arr`, where `v` is
@@ -1447,7 +1609,7 @@ vertical line segments:
 
 \cgalExample{Arrangement_on_surface_2/global_removal.cpp}
 
-\section arr_secunbounded Arrangements of Unbounded Curves
+\section aos_sec-unbounded Arrangements of Unbounded Curves
 
 Previous sections dealt only with arrangements of line segments,
 namely of bounded curves. Such arrangements always have one unbounded
@@ -1556,12 +1718,13 @@ that there are at least three collinear points.
 \cgalExample{Arrangement_on_surface_2/dual_lines.cpp}
 
 Note that there are no three collinear points among the points defined
-in the input file `points.dat`. In the second part of the example
-the existence of collinearity is forced and verified as follows. A line
+in the input file `points.dat`. In the second part of the example the
+existence of collinearity is forced and verified as follows. A line
 dual to the midpoint of two randomly selected points is introduced,
 and inserted into the arrangement. This operation is followed by a
 test that verifies that a vertex of degree greater than \f$ 4\f$
-exists. This implied that collinearity indeed exists as explained above.
+exists. This implied that collinearity indeed exists as explained
+above.
 
 \subsection arr_ssecunb_rep Representation of Unbounded Arrangements
 \cgalAdvancedBegin
@@ -1570,29 +1733,28 @@ exists. This implied that collinearity indeed exists as explained above.
 A \sc{Dcel} representing an arrangement of four lines. Halfedges are drawn as thin arrows. The vertices \f$ v_1, \ldots, v_8\f$ lie at infinity, and are not associated with valid points. The halfedges that connect them are fictitious, and are not associated with concrete curves. The face denoted \f$ f_0\f$ (lightly shaded) is the fictitious "unbounded face" which lies outside the bounding rectangle (dashed) that bounds the actual arrangement. The four fictitious vertices \f$ v_{\rm bl}, v_{\rm tl}, v_{\rm br}\f$ and \f$ v_{\rm tr}\f$ represent the four corners of the bounding rectangle.
 \cgalFigureEnd
 
-
 Given a set \f$ \cal C\f$ of unbounded curves, a simple approach for
-representing the arrangement induced by \f$ \cal C\f$ would be to clip the
-unbounded curves using an axis-parallel rectangle that contains all
-finite curve endpoints and intersection points between curves in
-\f$ \cal C\f$. This process would result in a set \f$ \cal C\f$ of bounded curves
-(line segments if \f$ \cal C\f$ contains lines and rays), and it would be
-straightforward to compute the arrangement induced by this set.
-However, we would like to operate directly on the unbounded curves
-without having to preprocess them. Therefore, we use an implicit
-bounding rectangle embedded in the \sc{Dcel} structure.
-\cgalFigureRef{arr_figunb_dcel} shows the arrangement of four lines
-that subdivide the plane into eight unbounded faces and two bounded
-ones. Notice that in this case the unbounded faces have outer
+representing the arrangement induced by \f$ \cal C\f$ would be to clip
+the unbounded curves using an axis-parallel rectangle that contains
+all finite curve endpoints and intersection points between curves in
+\f$ \cal C\f$. This process would result in a set \f$ \cal C\f$ of
+bounded curves (line segments if \f$ \cal C\f$ contains lines and
+rays), and it would be straightforward to compute the arrangement
+induced by this set.  However, we would like to operate directly on
+the unbounded curves without having to preprocess them. Therefore, we
+use an implicit bounding rectangle embedded in the \sc{Dcel}
+structure.  \cgalFigureRef{arr_figunb_dcel} shows the arrangement of
+four lines that subdivide the plane into eight unbounded faces and two
+bounded ones. Notice that in this case the unbounded faces have outer
 boundaries, and the halfedges along these outer CCBs are drawn as
 arrows. The bounding rectangle is drawn with a dashed line. The
-vertices \f$ v_1,v_2,\ldots,v_8\f$, which represent the unbounded ends of
-the four lines, and lie on the bounding rectangle, actually exist at
-infinity, and the halfedges connecting them are <I>fictitious</I>, and
-represent portions of the bounding rectangle. Note that the outer CCBs
-of the unbounded faces contain fictitious halfedges. The twins of these
-halfedges form together one connected component that corresponds to
-the entire bounding rectangle, which forms a single hole in a face
+vertices \f$ v_1,v_2,\ldots,v_8\f$, which represent the unbounded ends
+of the four lines, and lie on the bounding rectangle, actually exist
+at infinity, and the halfedges connecting them are <I>fictitious</I>,
+and represent portions of the bounding rectangle. Note that the outer
+CCBs of the unbounded faces contain fictitious halfedges. The twins of
+these halfedges form together one connected component that corresponds
+to the entire bounding rectangle, which forms a single hole in a face
 \f$ f_0\f$. We say that \f$ f_0\f$ is <I>fictitious</I>, as it does
 not correspond to a real two-dimensional cell of the arrangement.
 
@@ -1638,15 +1800,15 @@ and \f$ v_5\f$ in \cgalFigureRef{arr_figunb_dcel} are of this type.
 bounding bounding rectangle.
 </OL>
 
-A vertex (at infinity) of Type \ref typeunbounded or
-Type \ref typeunboundedvertical above always has
-three incident edges: one concrete edge that is associated with an
-unbounded portion of an \f$ x\f$-monotone curve, and two fictitious edges
-connecting the vertex to its neighboring vertices at infinity.
-Fictitious vertices (of type 4 above) have exactly two incident edges.
-See Section \ref arr_sectraits on how the traits-class interface
-helps imposing the fact that we never have more than one curve
-incident to any true vertex at infinity.
+A vertex (at infinity) of Type \ref typeunbounded or Type \ref
+typeunboundedvertical above always has three incident edges: one
+concrete edge that is associated with an unbounded portion of an \f$
+x\f$-monotone curve, and two fictitious edges connecting the vertex to
+its neighboring vertices at infinity.  Fictitious vertices (of type 4
+above) have exactly two incident edges.  See Section \ref
+aos_sec-traits on how the traits-class interface helps imposing the
+fact that we never have more than one curve incident to any true
+vertex at infinity.
 
 The nested types defined in the `Arrangement_2` class support the
 following methods, in addition to the ones listed in
@@ -1724,7 +1886,7 @@ using the following procedure:
 \endcode
 \cgalAdvancedEnd
 
-\section arr_sectraits Traits Classes
+\section aos_sec-traits Traits Classes
 
 As mentioned in the introduction of this chapter, the traits class
 encapsulates the definitions of the geometric entities and
@@ -1784,16 +1946,16 @@ may prove to be more efficient, the traits-class
 implementer may choose to provide it.
 
 The basic set of predicates is sufficient for constructing
-arrangements of \f$ x\f$-monotone curves that do not reach or approach the
-boundary of the parameter space. The nature of the input curves, i.e.,
-whether some of them are expected to reach or approach the left, right,
-bottom, or top side of the boundary of the parameter space, must be
-conveyed by the traits class. This is done through the definition of
-four additional nested types, namely `Left_side_category`,
-`Right_side_category`, `Bottom_side_category`, and
-`Top_side_category`. Each of those types must be convertible to
-the type `Arr_oblivious_side_tag` for the class to be a model of
-the concept `ArrangementBasicTraits_2`.
+arrangements of \f$ x\f$-monotone curves that do not reach or approach
+the boundary of the parameter space. The nature of the input curves,
+i.e., whether some of them are expected to reach or approach the left,
+right, bottom, or top side of the boundary of the parameter space,
+must be conveyed by the traits class. This is done through the
+definition of four additional nested types, namely
+`Left_side_category`, `Right_side_category`, `Bottom_side_category`,
+and `Top_side_category`. Each of those types must be convertible to
+the type `Arr_oblivious_side_tag` for the class to be a model of the
+concept `ArrangementBasicTraits_2`.
 
 \subsection arr_sssectr_lanmarks_concept The Landmarks Concept
 
@@ -1801,8 +1963,8 @@ The type of an arrangement associated with the landmark point-location
 strategy (see Section \ref arr_ssecpl) must be an instance of the
 `Arrangement_2<Traits,Dcel>` class template, where the `Traits`
 parameter is substituted with a model of the concept
-`ArrangementLandmarkTraits_2`. (Naturally, it can also model
-either the `ArrangementXMonotoneTraits_2` concept or the
+`ArrangementLandmarkTraits_2`. (Naturally, it can also model either
+the `ArrangementXMonotoneTraits_2` concept or the
 `ArrangementTraits_2` concept.) The `ArrangementLandmarkTraits_2`
 concept refines the two concepts `ArrangementApproximateTraits_2` and
 `ArrangementConstructXMonotoneCurveTraits_2`. Each of these two
@@ -1878,38 +2040,38 @@ in the incremental version, or a range of `Curve_2` objects in the
 aggregated version. In all other cases it is sufficient to use a model
 of the `ArrangementXMonotoneTraits_2` concept.
 
-\subsection Arrangement_on_surface_2SupportingUnbounded Supporting Unbounded Curves
+\subsection aos_ssec-traits-unbounded Supporting Unbounded Curves
 
-An arrangement that supports unbounded \f$ x\f$-monotone curves maintains
-an implicit bounding rectangle in the \sc{Dcel} structure; see
-Section \ref arr_ssecunb_rep. The unbounded ends of vertical rays,
-vertical lines, and curves with vertical asymptotes are represented
-by vertices that lie on the bottom or top sides of this bounding
+An arrangement that supports unbounded \f$ x\f$-monotone curves
+maintains an implicit bounding rectangle in the \sc{Dcel} structure;
+see Section \ref arr_ssecunb_rep. The unbounded ends of vertical rays,
+vertical lines, and curves with vertical asymptotes are represented by
+vertices that lie on the bottom or top sides of this bounding
 rectangle. These vertices are not associated with points, but are
-associated with (finite) \f$ x\f$-coordinates. The unbounded ends of all
-other curves are represented by vertices that lie on the left or
+associated with (finite) \f$ x\f$-coordinates. The unbounded ends of
+all other curves are represented by vertices that lie on the left or
 right sides of this bounding rectangle. These vertices are not
 associated with points either. Edges connect these vertices and the
 four vertices that represents the corners of this bounding rectangle
 to form the rectangle.
 
-Several predicates are required to handle \f$ x\f$-monotone curves that
-approach infinity and thus approach the boundary of the parameter
+Several predicates are required to handle \f$ x\f$-monotone curves
+that approach infinity and thus approach the boundary of the parameter
 space. These predicates are sufficient to handle not only curves
-embedded in an unbounded parameter space, but also curves embedded
-in a bounded parameter space with open boundaries. Let \f$ b_l\f$ and
-\f$ b_r\f$ denote the \f$ x\f$-coordinates of the left and right boundaries of
-the parameter space, respectively. Let \f$ b_b\f$ and \f$ b_t\f$ denote the
-\f$ y\f$-coordinates of the bottom and top boundaries of the parameter
-space, respectively. Recall that currently the general code of the
-arrangement only supports the case where the parameter space is the
-entire compactified plane, thus \f$ b_l = b_b = -\infty\f$ and
-\f$ b_r = b_t = +\infty\f$. Nonetheless, when the parameter space is
-bounded, it is the exact geometric embedding of the implicit bounding
-rectangle. In the following we assume that an \f$ x\f$ monotone
-curve \f$ C\f$ can be considered as a parametric curve \f$ C(t) = (X(t),Y(t))\f$
-defined over a closed, open, or half open interval with endpoints \f$ 0\f$
-and \f$ 1\f$.
+embedded in an unbounded parameter space, but also curves embedded in
+a bounded parameter space with open boundaries. Let \f$ b_l\f$ and \f$
+b_r\f$ denote the \f$ x\f$-coordinates of the left and right
+boundaries of the parameter space, respectively. Let \f$ b_b\f$ and
+\f$ b_t\f$ denote the \f$ y\f$-coordinates of the bottom and top
+boundaries of the parameter space, respectively. Recall that currently
+the general code of the arrangement only supports the case where the
+parameter space is the entire compactified plane, thus \f$ b_l = b_b =
+-\infty\f$ and \f$ b_r = b_t = +\infty\f$. Nonetheless, when the
+parameter space is bounded, it is the exact geometric embedding of the
+implicit bounding rectangle. In the following we assume that an \f$
+x\f$ monotone curve \f$ C\f$ can be considered as a parametric curve
+\f$ C(t) = (X(t),Y(t))\f$ defined over a closed, open, or half open
+interval with endpoints \f$ 0\f$ and \f$ 1\f$.
 
 Models of the concept `ArrangementOpenBoundaryTraits_2` handle
 curves that approach the boundary of the parameter space. This concept
@@ -1924,29 +2086,32 @@ holds for at least one input curve \f$ C(t) = (X(t),Y(t))\f$, the arrangement
 template must be instantiated with a model of the
 `ArrangementOpenBoundaryTraits` concept.\cgalFootnote{We intend to enhance the arrangement template to handle curves confined to a bounded yet open parameter space. A curve that reaches the boundary of the parameter space in this case is bounded and open.}
 
-All the four types `Left_side_category`,
-`Right_side_category`, `Bottom_side_category`, and
-`Top_side_category` nested in a model of the concept
-`ArrangementOpenBoundaryTraits` must be convertible to
-`Arr_open_side_tag`.\cgalFootnote{The tags `Arr_oblivious_side_tag` and `Arr_open_side_tag` are only two out of a larger number of options for the side categories included in major extension the code is going through.}
-For example, the `Arr_rational_function_traits_2` traits-model supports
-unbounded curves; see Section \ref arr_ssectr_ratfunc. Thus, all
-four nested types are defined as `Arr_open_side_tag`.
-Adversely, all four types nested in the `Arr_segment_traits_2`
-traits-model (see Section \ref arr_ssectr_segs) are defined as
-`Arr_oblivious_side_tag`, as segments are always
-bounded.\cgalFootnote{We intend to introduce more concepts that require only a subset of the categories to be convertible to `Arr_open_side_tag`.}
+All the four types `Left_side_category`, `Right_side_category`,
+`Bottom_side_category`, and `Top_side_category` nested in a model of
+the concept `ArrangementOpenBoundaryTraits` must be convertible to
+`Arr_open_side_tag`.\cgalFootnote{The tags `Arr_oblivious_side_tag`
+and `Arr_open_side_tag` are only two out of a larger number of options
+for the side categories included in major extension the code is going
+through.}  For example, the `Arr_rational_function_traits_2`
+traits-model supports unbounded curves; see Section \ref
+arr_ssectr_ratfunc. Thus, all four nested types are defined as
+`Arr_open_side_tag`.  Adversely, all four types nested in the
+`Arr_segment_traits_2` traits-model (see Section \ref arr_ssectr_segs)
+are defined as `Arr_oblivious_side_tag`, as segments are always
+bounded.\cgalFootnote{We intend to introduce more concepts that
+require only a subset of the categories to be convertible to
+`Arr_open_side_tag`.}
 
 A model of the concept `ArrangementOpenBoundaryTraits_2` must provide
-the additional predicates listed below.
-\f$ x\f$-coordinates and \f$ y\f$-coordinates are differently handled. This
-asymmetry is brought on by the various algorithms applied to
-arrangements, the input and output arguments of which are \f$ x\f$-monotone
-curves. Indeed, all curves maintained by any arrangement are
-continuous weakly \f$ x\f$-monotone curves. A non \f$ x\f$-monotone curve is
-divided into \f$ x\f$-monotone sub curves (and perhaps points) before it
-is inserted into an arrangement. This asymmetry is also reflected in
-the additional predicates listed below.
+the additional predicates listed below.  \f$ x\f$-coordinates and \f$
+y\f$-coordinates are differently handled. This asymmetry is brought on
+by the various algorithms applied to arrangements, the input and
+output arguments of which are \f$ x\f$-monotone curves. Indeed, all
+curves maintained by any arrangement are continuous weakly \f$
+x\f$-monotone curves. A non \f$ x\f$-monotone curve is divided into
+\f$ x\f$-monotone sub curves (and perhaps points) before it is
+inserted into an arrangement. This asymmetry is also reflected in the
+additional predicates listed below.
 
 <DL>
 <DT><B>`Parameter_space_in_x_2`:</B><DD>
@@ -2029,30 +2194,28 @@ data with the geometric objects.
 
 \subsection arr_ssectr_segs Traits Classes for Line Segments and Linear Objects
 
-The `Arr_segment_traits_2<Kernel>` class used so far in most
-example programs in this chapter is a model of the concepts
-`ArrangementTraits_2`, `ArrangementLandmarkTraits_2`,
-and `ArrangementDirectionalXMonotoneTraits_2`; the later
-enables Boolean set operations. It is parameterized by a
-geometric kernel and uses the `Kernel::Point_2` type as it
-point type. However, neither the `Curve_2` nor the
-`X_monotone_curve_2` types are identical to the
-`Kernel::Segment_2` type. A kernel segment is typically
-represented by its two endpoints, and these may have a large bit-size
-representation, if the segment is intersected and split several
-times (in comparison with the representation of its original
-endpoints). The large representation may significantly slow down the
-various traits-class operations involving such a segment. In contrast,
-the `Arr_segment_traits_2` represents a segment using
-its supporting line and the two endpoints, such that most computations
-are performed on the supporting line, which never changes as the
-segment is split. It also caches some additional information with
-the segment to speed up various predicates.
-An `X_monotone_curve_2` object can still be constructed from two
-endpoints or from a kernel segment. Moreover, an
+The `Arr_segment_traits_2<Kernel>` class used so far in most example
+programs in this chapter is a model of the concepts
+`ArrangementTraits_2`, `ArrangementLandmarkTraits_2`, and
+`ArrangementDirectionalXMonotoneTraits_2`; the later enables Boolean
+set operations. It is parameterized by a geometric kernel and uses the
+`Kernel::Point_2` type as it point type. However, neither the
+`Curve_2` nor the `X_monotone_curve_2` types are identical to the
+`Kernel::Segment_2` type. A kernel segment is typically represented by
+its two endpoints, and these may have a large bit-size representation,
+if the segment is intersected and split several times (in comparison
+with the representation of its original endpoints). The large
+representation may significantly slow down the various traits-class
+operations involving such a segment. In contrast, the
+`Arr_segment_traits_2` represents a segment using its supporting line
+and the two endpoints, such that most computations are performed on
+the supporting line, which never changes as the segment is split. It
+also caches some additional information with the segment to speed up
+various predicates.  An `X_monotone_curve_2` object can still be
+constructed from two endpoints or from a kernel segment. Moreover, an
 `X_monotone_curve_2` instance can also be casted or assigned to a
-`Kernel::Segment_2` object. The two types are thus fully
-convertible to one another.
+`Kernel::Segment_2` object. The two types are thus fully convertible
+to one another.
 
 The `Arr_segment_traits_2<Kernel>` class is very efficient for
 maintaining arrangements of a large number of intersecting line
@@ -2067,28 +2230,28 @@ defines a type named `Number_type` as either `Gmpq` or
 `Quotient<MP_Float>`, depending on whether <span
 class="textsc">Gmp</span> is installed or not.}
 
-An instance of the `Arr_segment_traits_2<Kernel>` class
-template can be very efficient for constructing arrangements induced
-by line segments with a large number of intersections. Efficiency is
-affected by the substituted geometric kernel. Using
-`Cartesian<Gmpq>` as the kernel type is in general not a
-bad choice; the coordinates of the segment endpoints are represented
-as multi-precision rational-numbers, and this ensures the correctness
-of all computations regardless of the input. Computations on
-multi-precision number types, such as `Gmpq`, typically
-take longer than computations on machine-precision
+An instance of the `Arr_segment_traits_2<Kernel>` class template can
+be very efficient for constructing arrangements induced by line
+segments with a large number of intersections. Efficiency is affected
+by the substituted geometric kernel. Using `Cartesian<Gmpq>` as the
+kernel type is in general not a bad choice; the coordinates of the
+segment endpoints are represented as multi-precision rational-numbers,
+and this ensures the correctness of all computations regardless of the
+input. Computations on multi-precision number types, such as `Gmpq`,
+typically take longer than computations on machine-precision
 floating-point. However, in almost all cases it is possible to
-expedite the computation using numerical filtering; see
-`Kernel_2` and `Kernel_3`. If the input set of line segments do
-not have degeneracies; namely, no two segments in the set share a
-common endpoint, and no three segments intersect at a common point, or
-at least, degeneracies exist but their number is relatively small,
-then filtered computation incurs only negligible overhead compared to
+expedite the computation using numerical filtering; see `Kernel_2` and
+`Kernel_3`. If the input set of line segments do not have
+degeneracies; namely, no two segments in the set share a common
+endpoint, and no three segments intersect at a common point, or at
+least, degeneracies exist but their number is relatively small, then
+filtered computation incurs only negligible overhead compared to
 floating-point arithmetic, which is error-prone. Indeed, in almost all
 examples and applications given in this manual, a predefined filtered
 kernel is used to instantiate the line-segment traits class, namely
-`Exact_predicates_exact_constructions_kernel`. Furthermore, this kernel
-is used as a default kernel in case the user did not provide one.
+`Exact_predicates_exact_constructions_kernel`. Furthermore, this
+kernel is used as a default kernel in case the user did not provide
+one.
 
 \cgalFigureBegin{arr_figpredef_kernels,fan_grids.png,Europe.png}
 (a) An arrangement of \f$ 104\f$ line segments from the input file `fan_grids.dat`. (b) An arrangement of more than \f$ 3000\f$ interior disjoint line segments, defined in the input file `Europe.dat`.
@@ -2096,13 +2259,13 @@ is used as a default kernel in case the user did not provide one.
 
 In the following example we use the predefined
 `Exact_predicates_exact_constructions_kernel` for instantiating our
-segment-traits class. This kernel use interval arithmetic to filter the
-exact computations. The program reads a set of line segments with integer
-coordinates from a file and computes their arrangement. By default it
-opens the `fan_grids.dat` input-file, located in the examples folder,
-which contains \f$ 104\f$ line segments that form four "fan-like" grids and
-induce a dense arrangement, as illustrated in
-\cgalFigureRef{arr_figpredef_kernels} (a):
+segment-traits class. This kernel use interval arithmetic to filter
+the exact computations. The program reads a set of line segments with
+integer coordinates from a file and computes their arrangement. By
+default it opens the `fan_grids.dat` input-file, located in the
+examples folder, which contains \f$ 104\f$ line segments that form
+four "fan-like" grids and induce a dense arrangement, as illustrated
+in \cgalFigureRef{arr_figpredef_kernels} (a):
 
 \cgalExample{Arrangement_on_surface_2/predefined_kernel.cpp}
 
@@ -2177,20 +2340,20 @@ geometry-traits class that models the following concepts:
 - `ArrangementConstructXMonotoneCurveTraits_2`.
 
 We refer to the type that substitutes the template parameter
-`SubcurveTraits_2` as the <em>subcurve traits</em> hereafter.
-If, in addition, the subcurve traits also models the concept
+`SubcurveTraits_2` as the <em>subcurve traits</em> hereafter.  If, in
+addition, the subcurve traits also models the concept
 `ArrangementApproximateTraits_2` then the instantiated
 `Arr_polyline_traits_2<SubcurveTraits>` type models the concept
 `ArrangementApproximateTraits_2` as well. (By definition, modeling the
 concepts `ArrangementApproximateTraits_2` and
 `ArrangementConstructXMonotoneCurveTraits_2` implies modeling the
 concept `ArrangementLandmarkTraits_2`.) The same holds for the
-`ArrangementOpenBoundaryTraits_2` concept as well.
-Modeling the `ArrangementConstructXMonotoneCurveTraits_2` concept
-implies that the subcurve traits must support the construction of a
-unique (\f$x\f$-monotone) segment given two input points. Roughly
-speaking, it means that each operation defined by the subcurve traits
-must handle linear curves.
+`ArrangementOpenBoundaryTraits_2` concept as well.  Modeling the
+`ArrangementConstructXMonotoneCurveTraits_2` concept implies that the
+subcurve traits must support the construction of a unique
+(\f$x\f$-monotone) segment given two input points. Roughly speaking,
+it means that each operation defined by the subcurve traits must
+handle linear curves.
 
 An instance of the polyline traits class-template inherits its nested
 point type, i.e., `Point_2`, from the subcurve traits, and defines the
@@ -2363,26 +2526,29 @@ and the associated vertex has six incident edges:
 
 \cgalExample{Arrangement_on_surface_2/circles.cpp}
 
-The `Curve_2` type nested in `Arr_circle_segment_traits_2` can be
-used to represent circles, circular arcs, or line segments. Curve objects
+The `Curve_2` type nested in `Arr_circle_segment_traits_2` can be used
+to represent circles, circular arcs, or line segments. Curve objects
 can therefore be constructed from a `Kernel::Circle_2` object or from
-a `Kernel::Segment_2` object. A circular arc is typically defined by
-a supporting circle and two endpoints, where the endpoints are instances
+a `Kernel::Segment_2` object. A circular arc is typically defined by a
+supporting circle and two endpoints, where the endpoints are instances
 of the `Point_2` type, with rational or irrational coordinates. The
-orientation of the arc is determined by the orientation of the supporting
-circle. Similarly, we also support the construction of lines segments given
-their supporting line (of type `Kernel::Line_2`) and two endpoints, which
-may have irrational coordinates (unlike the `Kernel::Segment_2` type).
+orientation of the arc is determined by the orientation of the
+supporting circle. Similarly, we also support the construction of
+lines segments given their supporting line (of type `Kernel::Line_2`)
+and two endpoints, which may have irrational coordinates (unlike the
+`Kernel::Segment_2` type).
 
 Note that the `Kernel::Circle_2` type represents a circle whose
-<I>squared radius</I> is rational, where the radius itself may be irrational.
-However, if the radius is known to be rational, it is advisable to use it,
-for efficiency reasons. It is therefore also possible to construct a circle,
-or a circular arc specifying the circle center (a `Kernel::Point_2`), its
-rational radius, and its orientation. Finally, we also support the construction
-of a circular arcs that is defined by two endpoints and an arbitrary midpoint
-that lies on the arc in between its endpoint. In this case, all three points
-are required to have rational coordinates (to be kernel points).
+<I>squared radius</I> is rational, where the radius itself may be
+irrational.  However, if the radius is known to be rational, it is
+advisable to use it, for efficiency reasons. It is therefore also
+possible to construct a circle, or a circular arc specifying the
+circle center (a `Kernel::Point_2`), its rational radius, and its
+orientation. Finally, we also support the construction of a circular
+arcs that is defined by two endpoints and an arbitrary midpoint that
+lies on the arc in between its endpoint. In this case, all three
+points are required to have rational coordinates (to be kernel
+points).
 
 The following example demonstrates the usage of the various construction
 methods for circular arcs and line segments. Note the usage of the constructor
@@ -2434,25 +2600,29 @@ orientation specified by \f$ o\f$, which is typically clockwise or
 counterclockwise orientation (but may also be collinear in case of
 degenerate conic curves).
 
-We always assume that the conic coefficients \f$ \langle r, s,
-t, u, v, w \rangle\f$ are rational. When dealing with linear curves
-(line segments and polylines), similar assumptions guarantee that
-all intersection points also have rational coordinates, such that
-the arrangement of such curves can be constructed and maintained
-using only rational arithmetic. Unfortunately, this does not hold
-for conic curves, as the coordinates of intersection points of two
-conic curves with rational coefficients are in general algebraic
-numbers of degree \f$ 4\f$.\cgalFootnote{Namely, they are roots of polynomials with integer coefficients of degree \f$ 4\f$. However, in some special cases, for example when handling only circles and circular arcs, the coordinates of the intersection points are only of degree \f$ 2\f$, namely they are solutions of quadratic equations.}
-In addition, conic arcs may not necessarily be \f$ x\f$-monotone, and
-must be split at points where the tangent to the arc is vertical.
-In the general case, such points typically have coordinates that
-are algebraic numbers of degree \f$ 2\f$.
-It is therefore clear that we have to use different number types
-to represent the conic coefficients and the point coordinates.
-Note that as arrangement vertices induced by intersection points
-and points with vertical tangents are likely to have algebraic
-coordinates, we also allow the original endpoints of the input arcs
-\f$ p_s\f$ and \f$ p_t\f$ to have algebraic coordinates.
+We always assume that the conic coefficients \f$ \langle r, s, t, u,
+v, w \rangle\f$ are rational. When dealing with linear curves (line
+segments and polylines), similar assumptions guarantee that all
+intersection points also have rational coordinates, such that the
+arrangement of such curves can be constructed and maintained using
+only rational arithmetic. Unfortunately, this does not hold for conic
+curves, as the coordinates of intersection points of two conic curves
+with rational coefficients are in general algebraic numbers of degree
+\f$ 4\f$.\cgalFootnote{Namely, they are roots of polynomials with
+integer coefficients of degree \f$ 4\f$. However, in some special
+cases, for example when handling only circles and circular arcs, the
+coordinates of the intersection points are only of degree \f$ 2\f$,
+namely they are solutions of quadratic equations.}  In addition, conic
+arcs may not necessarily be \f$ x\f$-monotone, and must be split at
+points where the tangent to the arc is vertical.  In the general case,
+such points typically have coordinates that are algebraic numbers of
+degree \f$ 2\f$.  It is therefore clear that we have to use different
+number types to represent the conic coefficients and the point
+coordinates.  Note that as arrangement vertices induced by
+intersection points and points with vertical tangents are likely to
+have algebraic coordinates, we also allow the original endpoints of
+the input arcs \f$ p_s\f$ and \f$ p_t\f$ to have algebraic
+coordinates.
 
 The `Arr_conic_traits_2<RatKernel, AlgKernel, NtTraits>` class
 template is designed for efficient handling of arrangements of
@@ -2527,15 +2697,16 @@ invalid arcs into an arrangement is not allowed.
 \cgalExample{Arrangement_on_surface_2/conics.cpp}
 
 The last example in this section demonstrates how the conic-traits
-class can handle intersection points with multiplicity. The
-supporting curves of the two arcs, a circle centered at
-\f$ (0,\frac{1}{2})\f$ with radius \f$ \frac{1}{2}\f$, and the hyperbola \f$ y
-= \frac{x^2}{1-x}\f$,\cgalFootnote{This curve can also be written as \f$ C: x^2 + xy - y = 0\f$. It is a hyperbola since \f$ \Delta_{C} = -1\f$.}
-intersect at the origin such that the intersection point has
+class can handle intersection points with multiplicity. The supporting
+curves of the two arcs, a circle centered at \f$ (0,\frac{1}{2})\f$
+with radius \f$ \frac{1}{2}\f$, and the hyperbola \f$ y =
+\frac{x^2}{1-x}\f$,\cgalFootnote{This curve can also be written as \f$
+C: x^2 + xy - y = 0\f$. It is a hyperbola since \f$ \Delta_{C} =
+-1\f$.}  intersect at the origin such that the intersection point has
 multiplicity \f$ 3\f$ (note that they both have the same horizontal
-tangent at \f$ (0,0)\f$ and the same curvature \f$ 1\f$). In addition, they
-have another intersection point at \f$ (\frac{1}{2},\frac{1}{2})\f$ of
-multiplicity \f$ 1\f$:
+tangent at \f$ (0,0)\f$ and the same curvature \f$ 1\f$). In addition,
+they have another intersection point at \f$
+(\frac{1}{2},\frac{1}{2})\f$ of multiplicity \f$ 1\f$:
 
 \cgalExample{Arrangement_on_surface_2/conic_multiplicities.cpp}
 
@@ -2836,12 +3007,13 @@ algebraic segments. The computed arrangement is displayed in
 
 \subsection arr_ssecmeta_tr Traits-Class Decorators
 
-Geometric traits-class decorators allow you to attach auxiliary
-data to curves and to points. The data is automatically manipulated
-by the decorators and distributed to the constructed geometric entities.
-Note that additional information can alternatively be maintained by extending
-the vertex, halfedge, or face types provided by the \sc{Dcel} class used
-by the arrangement; see the details in Section \ref arr_secex_dcel.
+Geometric traits-class decorators allow you to attach auxiliary data
+to curves and to points. The data is automatically manipulated by the
+decorators and distributed to the constructed geometric entities.
+Note that additional information can alternatively be maintained by
+extending the vertex, halfedge, or face types provided by the
+\sc{Dcel} class used by the arrangement; see the details in Section
+\ref arr_secex_dcel.
 
 The arrangement package includes a generic traits-class decorator
 template named
@@ -2929,29 +3101,30 @@ corresponds to overlaps between red and blue line segments:
 An arrangement of four polylines, named A-D, as constructed in `generic_curve_data.cpp`.
 \cgalFigureEnd
 
-In the following example, we use `Arr_polyline_traits_2` as
-our base-traits class, attaching an additional <I>name</I> field to
-each polyline using the generic curve-data traits class. In case of
+In the following example, we use `Arr_polyline_traits_2` as our
+base-traits class, attaching an additional <I>name</I> field to each
+polyline using the generic curve-data traits class. In case of
 overlaps, we simply concatenate the names of the overlapping
-polylines. Also notice how we replace the curve associated with
-the edges that correspond to overlapping polylines with
-geometrically equivalent curves, but with a different data fields:
+polylines. Also notice how we replace the curve associated with the
+edges that correspond to overlapping polylines with geometrically
+equivalent curves, but with a different data fields:
 
 \cgalExample{Arrangement_on_surface_2/generic_curve_data.cpp}
 
 The third example we give in this section is based on `dual_lines.cpp`
-given in Section \ref arr_ssecunb_global. It constructs the arrangement
-of the dual lines for a set of point given in an input file (by default we
-use `coll_points.dat`, which contains \f$ 50\f$ points randomly selected
-on the grid \f$ [-100,100]\times[-100,100]\f$; the file contains two distinct
-triplets of collinear points). Here we use the generic curve-data
-decorator to attach the index of the primal point to each of the lines.
-Doing so, we can go over the incident edges of each vertex whose degree is
-greater than \f$ 4\f$ and report the subsets collinear points (if we have a vertex
-of degree \f$ d\f$, we actually need to go over \f$ \frac{d}{2}\f$ edges, as each
-incident line contributes exactly \f$ 2\f$ edges). Note that in this case the
-dual line cannot overlap, so we use a dummy merge functor to instantiate
-the curve-data traits:
+given in Section \ref arr_ssecunb_global. It constructs the
+arrangement of the dual lines for a set of point given in an input
+file (by default we use `coll_points.dat`, which contains \f$ 50\f$
+points randomly selected on the grid \f$
+[-100,100]\times[-100,100]\f$; the file contains two distinct triplets
+of collinear points). Here we use the generic curve-data decorator to
+attach the index of the primal point to each of the lines.  Doing so,
+we can go over the incident edges of each vertex whose degree is
+greater than \f$ 4\f$ and report the subsets collinear points (if we
+have a vertex of degree \f$ d\f$, we actually need to go over \f$
+\frac{d}{2}\f$ edges, as each incident line contributes exactly \f$
+2\f$ edges). Note that in this case the dual line cannot overlap, so
+we use a dummy merge functor to instantiate the curve-data traits:
 
 \cgalExample{Arrangement_on_surface_2/dual_with_data.cpp}
 
@@ -3087,30 +3260,31 @@ of fact, it is possible to conveniently extend all \sc{Dcel} records
 (namely vertices, halfedges and faces), which can also be advantageous
 for some applications.
 
-All examples presented so far use the default `Arr_default_dcel<Traits>`.
-This is done implicitly, as this class serves as a default parameter for
-the `Arrangement_2` template. The default \sc{Dcel} class just associates
-points with vertices and \f$ x\f$-monotone curves with halfedge, but nothing more.
-In this section we show how to use alternative \sc{Dcel} types to extend the
-desired \sc{Dcel} records.
+All examples presented so far use the default
+`Arr_default_dcel<Traits>`.  This is done implicitly, as this class
+serves as a default parameter for the `Arrangement_2` template. The
+default \sc{Dcel} class just associates points with vertices and \f$
+x\f$-monotone curves with halfedge, but nothing more.  In this section
+we show how to use alternative \sc{Dcel} types to extend the desired
+\sc{Dcel} records.
 
 \subsection arr_ssecex_dcel_face Extending the DCEL Faces
 
-The `Arr_face_extended_dcel<Traits, FaceData>` class-template
-is used to associate auxiliary data field of type `FaceData` to
-each face record in the \sc{Dcel}.
+The `Arr_face_extended_dcel<Traits, FaceData>` class-template is used
+to associate auxiliary data field of type `FaceData` to each face
+record in the \sc{Dcel}.
 
-When an `Arrangement_2` object is parameterized by this
-\sc{Dcel} class, its nested `Face` type is extended with the access function
+When an `Arrangement_2` object is parameterized by this \sc{Dcel}
+class, its nested `Face` type is extended with the access function
 `data()` and with the modifier `set_data()`. Using these extra
 functions it is straightforward to access and maintain the auxiliary
 face-data field.
 
 Note that the extra data fields must be maintained by the application
-programmers. They may choose to construct their arrangement, and
-only then go over the faces and attach the appropriate data fields to
-the arrangement faces. However, in some cases the face data can only
-be computed when the face is created (split from another face, or merged
+programmers. They may choose to construct their arrangement, and only
+then go over the faces and attach the appropriate data fields to the
+arrangement faces. However, in some cases the face data can only be
+computed when the face is created (split from another face, or merged
 with another face). In such cases one can use an arrangement observer
 tailored for this task, which receives updates whenever a face is
 modified and sets its data field accordingly.
@@ -3152,11 +3326,11 @@ direction of its associated segment (in this example segments are
 treated as directed objects). Each face is also extended to store the
 size of its outer boundary.
 
-The constructed arrangement, depicted in \cgalFigureRef{arr_figex_20}, is
-similar to the arrangement constructed in the previous example.
-Note that all auxiliary data fields are set during the construction phase.
-Also note that the data fields are properly maintained when the arrangement
-is copied to another arrangement instance:
+The constructed arrangement, depicted in \cgalFigureRef{arr_figex_20},
+is similar to the arrangement constructed in the previous example.
+Note that all auxiliary data fields are set during the construction
+phase.  Also note that the data fields are properly maintained when
+the arrangement is copied to another arrangement instance:
 
 \cgalExample{Arrangement_on_surface_2/dcel_extension.cpp}
 
@@ -3181,24 +3355,23 @@ locate, for example, the regions where there is a pine forest and
 the annual precipitation is between 1000mm and 1500mm.
 
 Computing the overlay of two planar arrangement is also useful for
-supporting Boolean set operations on polygons (or generalized polygons,
-see, e.g., \cgalCite{cgal:behhms-cbcab-02}).
+supporting Boolean set operations on polygons (or generalized
+polygons, see, e.g., \cgalCite{cgal:behhms-cbcab-02}).
 
-The function `overlay (arr_a, arr_b, ovl_arr, ovl_traits)` accepts
-two input arrangement instances `arr_a` and `arr_b`, and constructs
-their overlay instance `ovl_arr`. All three arrangements must use the
-same geometric primitives. More precisely, let `arr_a` be of
-type `Arrangement_2<Traits_A,Dcel_A>`, `arr_b` be of type
-`Arrangement_2<Traits_B,Dcel_B>` and the resulting `ovl_arr` be of type
-`Arrangement_2<Traits_R,Dcel_R>`. All types nested in geometry
-traits `Traits_A`, e.g., `Point_2` and
-`X_monotone_curve_2`, must be convertible to the corresponding
-types nested in geometry traits `Traits_R`. The same holds for all
-types nested in geometry traits `Traits_B`.
-The `ovl_traits` parameter is
-an instance of an <I>overlay traits-class</I>, which enables the creation of
-`Dcel_R` records in the overlaid arrangement from the \sc{Dcel} features
-of `arr_a` and `arr_b` that they correspond to.
+The function `overlay (arr_a, arr_b, ovl_arr, ovl_traits)` accepts two
+input arrangement instances `arr_a` and `arr_b`, and constructs their
+overlay instance `ovl_arr`. All three arrangements must use the same
+geometric primitives. More precisely, let `arr_a` be of type
+`Arrangement_2<Traits_A,Dcel_A>`, `arr_b` be of type
+`Arrangement_2<Traits_B,Dcel_B>` and the resulting `ovl_arr` be of
+type `Arrangement_2<Traits_R,Dcel_R>`. All types nested in geometry
+traits `Traits_A`, e.g., `Point_2` and `X_monotone_curve_2`, must be
+convertible to the corresponding types nested in geometry traits
+`Traits_R`. The same holds for all types nested in geometry traits
+`Traits_B`.  The `ovl_traits` parameter is an instance of an
+<I>overlay traits-class</I>, which enables the creation of `Dcel_R`
+records in the overlaid arrangement from the \sc{Dcel} features of
+`arr_a` and `arr_b` that they correspond to.
 
 In principle, we distinguish between three levels of overlay:
 <DL>
@@ -3215,14 +3388,13 @@ operations, but users may choose to use overlay computation in order to
 achieve better running times.
 
 The `Arr_default_overlay_traits` class should be used as an overlay
-traits-class for such simple overlay operations.
-<DT><B>Face overlay:</B><DD>
-An overlay of two arrangements that store additional data
-fields with their faces (e.g., the geographic-map example
-given in the beginning of this section). The resulting overlaid arrangement
+traits-class for such simple overlay operations.  <DT><B>Face
+overlay:</B><DD> An overlay of two arrangements that store additional
+data fields with their faces (e.g., the geographic-map example given
+in the beginning of this section). The resulting overlaid arrangement
 typically also stores extraneous data fields with its faces, where the
-data field that is attached to an overlaid face can be computed from the
-data fields of the two faces (in `arr_a` and `arr_b`) that induce
+data field that is attached to an overlaid face can be computed from
+the data fields of the two faces (in `arr_a` and `arr_b`) that induce
 the overlaid face.
 
 The `Arr_face_overlay_traits` class should be used as an overlay
@@ -3290,34 +3462,37 @@ face (indexed 1) and a bounded face (indexed 2):
 
 \section arr_secarr_with_hist Storing the Curve History
 
-As stated at the beginning of this chapter (Section \ref arr_secintro),
-when one constructs an arrangement induced by a set \f$ \cal C\f$ of arbitrary
-planar curves, she or he constructs a collection \f$ \cal C''\f$ of \f$ x\f$-monotone
-subcurves of \f$ \cal C\f$ that are pairwise disjoint in their interior, and these
-subcurves are associated with the arrangement edges (more precisely, with the
-\sc{Dcel} halfedges). Doing so, the connection between the originating input
-curves and the arrangement edges is lost. This loss might be acceptable for
-some applications. However, in many practical cases it is important to
-determine the input curves that give rise to the final subcurves.
+As stated at the beginning of this chapter (Section \ref
+aos_sec-intro), when one constructs an arrangement induced by a set
+\f$ \cal C\f$ of arbitrary planar curves, she or he constructs a
+collection \f$ \cal C''\f$ of \f$ x\f$-monotone subcurves of \f$ \cal
+C\f$ that are pairwise disjoint in their interior, and these subcurves
+are associated with the arrangement edges (more precisely, with the
+\sc{Dcel} halfedges). Doing so, the connection between the originating
+input curves and the arrangement edges is lost. This loss might be
+acceptable for some applications. However, in many practical cases it
+is important to determine the input curves that give rise to the final
+subcurves.
 
 The `Arrangement_with_history_2<Traits,Dcel>` class-template extends
 the `Arrangement_2` class by keeping an additional container of input
-curves representing \f$ \cal C\f$, and by maintaining a cross-mapping between these
-curves and the arrangement edges they induce. The traits class that is
-used for instantiating the template should be a model of the
-`ArrangementTraits_2` concept (see Section \ref arr_sssecinsert_gen).
-That is, it should define the `Curve_2` type (and not just the
-`X_monotone_curve_2` type). The `Dcel` parameter should model the
-`ArrangementDcel` concept. Users can use the default \sc{Dcel} class or
-an extended \sc{Dcel} class according to their needs.
+curves representing \f$ \cal C\f$, and by maintaining a cross-mapping
+between these curves and the arrangement edges they induce. The traits
+class that is used for instantiating the template should be a model of
+the `ArrangementTraits_2` concept (see Section \ref
+aos_ssec-insert_gen).  That is, it should define the `Curve_2` type
+(and not just the `X_monotone_curve_2` type). The `Dcel` parameter
+should model the `ArrangementDcel` concept. Users can use the default
+\sc{Dcel} class or an extended \sc{Dcel} class according to their
+needs.
 
 \subsection arr_ssecarrwh_traverse Traversing an Arrangement with History
 
 The `Arrangement_with_history_2` class extends the `Arrangement_2`
-class, thus all the iterator and circulator types that are defined by the
-arrangement class are also available in `Arrangement_with_history_2`.
-The reader is referred to Section \ref arr_ssectraverse for a comprehensive
-review of these functions.
+class, thus all the iterator and circulator types that are defined by
+the arrangement class are also available in
+`Arrangement_with_history_2`.  The reader is referred to Section \ref
+arr_ssectraverse for a comprehensive review of these functions.
 
 As mentioned above, the `Arrangement_with_history_2` class maintains
 a container of input curves, which can be accessed using curve handles.
@@ -3370,54 +3545,51 @@ to maintain any type of auxiliary data stored with the \sc{Dcel} features
 As the `Arrangement_with_history_2` class extends the `Arrangement_2`
 class, it inherits the fundamental modification operations, such as
 `assign()` and `clear()`, from it. The vertex-manipulation functions
-are also inherited and supported (see Sections \ref arr_sssecmf_iso_verts
-and \ref arr_sssecinsert_point for the details). However, there are some
-fundamental differences between the interfaces of the two classes, which we
-highlight in this subsection.
+are also inherited and supported (see Sections \ref
+arr_sssecmf_iso_verts and \ref arr_sssecinsert_point for the
+details). However, there are some fundamental differences between the
+interfaces of the two classes, which we highlight in this subsection.
 
-The most significant difference between the arrangement-with-history class
-and the basic arrangement class is the way they handle their input curves.
-`Arrangement_with_history_2` always stores the `Curve_2` objects
-that induce it, thus it is impossible to insert \f$ x\f$-monotone curves into
-an arrangement with history. The free `insert_non_intersecting_curve()`
-and `insert()` that receives \f$ x\f$-monotone curve (as well as
-their aggregated versions) are therefore not available for
-arrangement-with-history instances and only the free
-`insert()` and `insert()` functions that receive
+The most significant difference between the arrangement-with-history
+class and the basic arrangement class is the way they handle their
+input curves.  `Arrangement_with_history_2` always stores the
+`Curve_2` objects that induce it, thus it is impossible to insert \f$
+x\f$-monotone curves into an arrangement with history. The free
+`insert_non_intersecting_curve()` and `insert()` that receives \f$
+x\f$-monotone curve (as well as their aggregated versions) are
+therefore not available for arrangement-with-history instances and
+only the free `insert()` and `insert()` functions that receive
 `Curve_2` (the incremental insertion function and the aggregated
-insertion function) are supported - see also
-Section \ref arr_sssecinsert_gen. Notice however that while the
-incremental insertion function `insert(arr,c)` for an
-`Arrangement_2` object `arr` does not have a return value, the
-corresponding arrangement-with-history function returns a
-`Curve_handle` to the inserted curve.
+insertion function) are supported - see also Section \ref
+aos_ssec-insert_gen. Notice however that while the incremental
+insertion function `insert(arr,c)` for an `Arrangement_2` object `arr`
+does not have a return value, the corresponding
+arrangement-with-history function returns a `Curve_handle` to the
+inserted curve.
 
-As we are able to keep track of all edges induced by an input curve, we also
-provide a free function that removes a curve from an arrangement. By calling
-`remove(arr,ch)`, where `ch` is a valid curve handle, the given curve
-is deleted from the curve container, and all edges induced solely by
-this curve (i.e., excluding overlapping edges) are removed from the
-arrangement. The function returns the number of edges that have been removed.
+As we are able to keep track of all edges induced by an input curve,
+we also provide a free function that removes a curve from an
+arrangement. By calling `remove(arr,ch)`, where `ch` is a valid curve
+handle, the given curve is deleted from the curve container, and all
+edges induced solely by this curve (i.e., excluding overlapping edges)
+are removed from the arrangement. The function returns the number of
+edges that have been removed.
 
-In some cases, users may need to operate directly on the arrangement edges.
-We first mention that the specialized insertion functions (see
+In some cases, users may need to operate directly on the arrangement
+edges.  We first mention that the specialized insertion functions (see
 Section \ref arr_sssecmf_insert_cv) are not supported, as they accept
 \f$ x\f$-monotone curves. Insertion can only be performed via the free
-insertion-functions. The other edge-manipulation functions
-(see Section \ref arr_sssecmf_halfedges) are however available, but have
-a different interface that does not use \f$ x\f$-monotone curves:
-<UL>
+insertion-functions. The other edge-manipulation functions (see
+Section \ref arr_sssecmf_halfedges) are however available, but have a
+different interface that does not use \f$ x\f$-monotone curves: <UL>
 <LI>Invoking `split_edge(e,p)` splits the edge `e` at a given point
-`p` that lies in its interior.
-<LI>Invoking `merge_edge(e1,e2)` merges the two given edges. There is
-a precondition that `e1` and `e2` shared a common end-vertex of degree
-2, and that the \f$ x\f$-monotone subcurves associated with these edges are
-mergeable.
-<LI>It is possible to remove an edge by simply invoking
-`remove_edge(e)`.
-</UL>
-In all cases, the maintenance of cross-pointers for the appropriate input
-curves will be done automatically.
+`p` that lies in its interior.  <LI>Invoking `merge_edge(e1,e2)`
+merges the two given edges. There is a precondition that `e1` and `e2`
+shared a common end-vertex of degree 2, and that the \f$ x\f$-monotone
+subcurves associated with these edges are mergeable.  <LI>It is
+possible to remove an edge by simply invoking `remove_edge(e)`.  </UL>
+In all cases, the maintenance of cross-pointers for the appropriate
+input curves will be done automatically.
 
 It should be noted that it is possible to attach observers to an
 arrangement-with-history instance in order to get detailed notifications of
@@ -3431,11 +3603,11 @@ An arrangement with history as constructed in `curve_history.cpp`. Note that \f$
 \cgalFigureEnd
 
 In the following example we construct a simple arrangement of six line
-segments, as depicted in \cgalFigureRef{arr_figex_24}, while maintaining
-the curve history. The example demonstrates the usage of the special
-traversal functions. It also shows how to issue point-location queries
-on the resulting arrangement, using the auxiliary function
-`locate_point()` defined in the header file
+segments, as depicted in \cgalFigureRef{arr_figex_24}, while
+maintaining the curve history. The example demonstrates the usage of
+the special traversal functions. It also shows how to issue
+point-location queries on the resulting arrangement, using the
+auxiliary function `locate_point()` defined in the header file
 `point_location_utils.h`; see also Section \ref arr_ssecpl.
 
 \cgalExample{Arrangement_on_surface_2/curve_history.cpp}
@@ -3445,15 +3617,16 @@ An arrangement with history of nine circle as constructed in `edge_manipulation_
 \cgalFigureEnd
 
 The following example demonstrates the usage of the free `remove()`
-function. We construct an arrangement of nine circles, while keeping a handle
-to each inserted circle. We then remove the large circle \f$ C_0\f$, which induces
-\f$ 18\f$ edges, as depicted in \cgalFigureRef{arr_figex_25}. The example also shows
-how to use the `split_edge()` and `merge_edge()` functions when
-operating on an arrangement-with-history instance:
+function. We construct an arrangement of nine circles, while keeping a
+handle to each inserted circle. We then remove the large circle \f$
+C_0\f$, which induces \f$ 18\f$ edges, as depicted in
+\cgalFigureRef{arr_figex_25}. The example also shows how to use the
+`split_edge()` and `merge_edge()` functions when operating on an
+arrangement-with-history instance:
 
 \cgalExample{Arrangement_on_surface_2/edge_manipulation_curve_history.cpp}
 
-\section arr_secio Input/Output Streams
+\section aos_sec-io Input/Output Streams
 
 In some cases, one would like to save an arrangement object
 constructed by some application, so that later on it can be
@@ -3461,7 +3634,7 @@ restored. In other cases one would like to create nice drawings that
 represent arrangements constructed by some application. These
 drawings can be hard printed or displayed on a computer screen.
 
-\subsection arr_ssecio_stream Input/Output Stream
+\subsection aos_ssec-io-stream Input/Output Stream
 
 Consider an arrangement that represents a very complicated geographical
 map, and assume that there are various applications that need to answer
@@ -3474,20 +3647,20 @@ that other applications can read.
 This package provides an <I>inserter</I> (the `<<` operator) and an
 <I>extractor</I> (the `>>` operator) for the
 `Arrangement_2<Traits,Dcel>` class that inserts and an arrangement
-object into an output stream and extracts an arrangement object from an
-input stream respectively. The arrangement is written using a simple
-predefined ASCII format that encodes the arrangement topology, as well
-as all geometric entities associated with vertices and edges.
+object into an output stream and extracts an arrangement object from
+an input stream respectively. The arrangement is written using a
+simple predefined ASCII format that encodes the arrangement topology,
+as well as all geometric entities associated with vertices and edges.
 
 The ability to use the input/output operators, requires that the
-`Point_2` type and the `X_monotone_curve_2` type defined by the
-traits class both support the `<<` and `>>` operators. The
+`Point_2` type and the `X_monotone_curve_2` type defined by the traits
+class both support the `<<` and `>>` operators. The
 `Arr_conic_traits_2` class (see Section \ref arr_ssectr_conic), the
-`Arr_rational_function_traits_2` class (see Section \ref arr_ssectr_ratfunc),
-and the `Arr_linear_traits_2` class (see Section \ref arr_ssectr_segs)
-currently do not provide these operators for the geometric types they define.
-Thus, only arrangements of line segments or of polylines can be written or
-read.
+`Arr_rational_function_traits_2` class (see Section \ref
+arr_ssectr_ratfunc), and the `Arr_linear_traits_2` class (see Section
+\ref arr_ssectr_segs) currently do not provide these operators for the
+geometric types they define.  Thus, only arrangements of line segments
+or of polylines can be written or read.
 
 The following example constructs the arrangement depicted in
 \cgalFigureRef{arr_figex_5} and writes it to an output file. It also
@@ -3534,11 +3707,10 @@ and faces, provided that the `VertexData`, `HalfedgeData` and
 `FaceData` classed all have inserters and extractors.
 </UL>
 
-The following example constructs the same arrangement as the
-example `dcel_extension` does
-(see Section \ref arr_ssecex_dcel_all), depicted in
-\cgalFigureRef{arr_figex_20}, and writes it to an output file. It also
-demonstrates how to re-read the arrangement from a file:
+The following example constructs the same arrangement as the example
+`dcel_extension` does (see Section \ref arr_ssecex_dcel_all), depicted
+in \cgalFigureRef{arr_figex_20}, and writes it to an output file. It
+also demonstrates how to re-read the arrangement from a file:
 
 \cgalExample{Arrangement_on_surface_2/dcel_extension_io.cpp}
 
@@ -3564,8 +3736,8 @@ The arrangement package supplies an inserter and an extractor for the
 represented using a simple predefined ASCII format. An object of the
 `Arrangement_with_history_2<Traits,Dcel>` type can be saved and
 restored, as long as the `Curve_2` type defined by the traits
-class - as well as the `Point_2` type and the `X_monotone_curve_2`
-types - support the `<<` and`>>` operators.
+class---as well as the `Point_2` type and the `X_monotone_curve_2`
+types---support the `<<` and`>>` operators.
 
 The following example constructs the same arrangement as example
 `curve_history` does
@@ -3619,41 +3791,46 @@ natural to extend the underlying data structure with the interface that the
 <span class="textsc">bgl</span> expects, and gain the ability to perform the operations that the <span class="textsc">bgl</span> supports, such as shortest-path computation. This section describes how apply
 the graph algorithms implemented in the <span class="textsc">bgl</span> to `Arrangement_2` instances.
 
-An instance of `Arrangement_2` is adapted to a <span class="textsc">Boost</span> graph through the
-provision of a set of free functions that operate on the arrangement features
-and conform with the relevant BGL concepts. Besides the straightforward
-adaptation, which associates a vertex with each \sc{Dcel} vertex and an edge
-with each \sc{Dcel} halfedge, the package also offer a <I>dual</I> adaptor, which
-associates a graph vertex with each \sc{Dcel} face, such that two vertices are
-connected, iff there is a \sc{Dcel} halfedge that connects the two corresponding
-faces.
+An instance of `Arrangement_2` is adapted to a <span
+class="textsc">Boost</span> graph through the provision of a set of
+free functions that operate on the arrangement features and conform
+with the relevant BGL concepts. Besides the straightforward
+adaptation, which associates a vertex with each \sc{Dcel} vertex and
+an edge with each \sc{Dcel} halfedge, the package also offer a
+<I>dual</I> adaptor, which associates a graph vertex with each
+\sc{Dcel} face, such that two vertices are connected, iff there is a
+\sc{Dcel} halfedge that connects the two corresponding faces.
 
 \subsection arr_ssecbgl_primal The Primal Arrangement Representation
 
-Arrangement instances are adapted to <span class="textsc">Boost</span> graphs by specializing the
-\link BGLArgtGT `boost:graph_traits` \endlink template for `Arrangement_2` instances. The
-graph-traits states the graph concepts that the arrangement class models
-(see below) and defines the types required by these concepts.
+Arrangement instances are adapted to <span class="textsc">Boost</span>
+graphs by specializing the \link BGLArgtGT `boost:graph_traits`
+\endlink template for `Arrangement_2` instances. The graph-traits
+states the graph concepts that the arrangement class models (see
+below) and defines the types required by these concepts.
 
 In this specialization the `Arrangement_2` vertices correspond to the
-graph vertices, where two vertices are adjacent if there is at least one
-halfedge connecting them. More precisely, `Arrangement_2::Vertex_handle`
-is the graph-vertex type, while `Arrangement_2::Halfedge_handle` is the
-graph-edge type. As halfedges are directed, we consider the graph to be
-directed as well. Moreover, as several interior-disjoint \f$ x\f$-monotone curves
-(say circular arcs) may share two common endpoints, inducing an arrangement
-with two vertices that are connected with several edges, we allow parallel
+graph vertices, where two vertices are adjacent if there is at least
+one halfedge connecting them. More precisely,
+`Arrangement_2::Vertex_handle` is the graph-vertex type, while
+`Arrangement_2::Halfedge_handle` is the graph-edge type. As halfedges
+are directed, we consider the graph to be directed as well. Moreover,
+as several interior-disjoint \f$ x\f$-monotone curves (say circular
+arcs) may share two common endpoints, inducing an arrangement with two
+vertices that are connected with several edges, we allow parallel
 edges in our <span class="textsc">Boost</span> graph.
 
 Given an `Arrangement_2` instance, we can efficiently traverse its
-vertices and halfedges. Thus, the arrangement graph is a model of the concepts
-`VertexListGraph` and `EdgeListGraph` introduced by the <span class="textsc">bgl</span>.
-At the same time, we use an iterator adapter of the circulator over the
-halfedges incident to a vertex (`Halfedge_around_vertex_circulator` - see
-Section \ref arr_sssectr_vertex), so it is possible to go over the ingoing
-and outgoing edges of a vertex in linear time. Thus, our arrangement graph
+vertices and halfedges. Thus, the arrangement graph is a model of the
+concepts `VertexListGraph` and `EdgeListGraph` introduced by the <span
+class="textsc">bgl</span>.  At the same time, we use an iterator
+adapter of the circulator over the halfedges incident to a vertex
+(`Halfedge_around_vertex_circulator` - see Section \ref
+arr_sssectr_vertex), so it is possible to go over the ingoing and
+outgoing edges of a vertex in linear time. Thus, our arrangement graph
 is a model of the concept `BidirectionalGraph` (this concept refines
-`IncidenceGraph`, which requires only the traversal of outgoing edges).
+`IncidenceGraph`, which requires only the traversal of outgoing
+edges).
 
 It is important to notice that the vertex descriptors we use are
 `Vertex_handle` objects and <I>not</I> vertex indices. However, in order
@@ -3667,74 +3844,234 @@ Section \ref arr_secnotif) to automatically maintain the mapping of vertices
 to indices, even when new vertices are inserted into the arrangement or
 existing vertices are removed.
 
-In most algorithm provided by the <span class="textsc">bgl</span>, the output is given by
-<I>property maps</I>, such that each map entry corresponds to a vertex.
-For example, when we compute the shortest paths from a given source vertex
-\f$ s\f$ to all other vertices we can obtain a map of distances and a map of
-predecessors - namely for each \f$ v\f$ vertex we have its distance from \f$ s\f$
-and a descriptor of the vertex that precedes \f$ v\f$ in the shortest path from \f$ s\f$.
+In most algorithm provided by the <span class="textsc">bgl</span>, the
+output is given by <I>property maps</I>, such that each map entry
+corresponds to a vertex.  For example, when we compute the shortest
+paths from a given source vertex \f$ s\f$ to all other vertices we can
+obtain a map of distances and a map of predecessors - namely for each
+\f$ v\f$ vertex we have its distance from \f$ s\f$ and a descriptor of
+the vertex that precedes \f$ v\f$ in the shortest path from \f$ s\f$.
 
 If the vertex descriptors are simply indices, boost supplies tools to
 easily represent property maps using vectors.
-`Arr_vertex_index_map<Arrangement>` class allows create such
-indices, and together with `boost::vector_property_map<Type, IndexMap>`
-allows for an efficient mapping of `Vertex_handle` objects to
-properties of type `Type`. Note however that unlike the
-`Arr_vertex_index_map` class, the vertex property-map class is not
-kept synchronized with the number of vertices in the arrangement, so it
-should not be reused in calls to <span class="textsc">bgl</span> functions in case the arrangement
-is modified in between these calls.
+`Arr_vertex_index_map<Arrangement>` class allows create such indices,
+and together with `boost::vector_property_map<Type, IndexMap>` allows
+for an efficient mapping of `Vertex_handle` objects to properties of
+type `Type`. Note however that unlike the `Arr_vertex_index_map`
+class, the vertex property-map class is not kept synchronized with the
+number of vertices in the arrangement, so it should not be reused in
+calls to <span class="textsc">bgl</span> functions in case the
+arrangement is modified in between these calls.
 
 \cgalFigureBegin{arr_figex_bgl,ex_bgl.png}
 An arrangement of 7 line segments, as constructed by `bgl_primal_adapter.cpp` and `bgl_dual_adapter.cpp`. The breadth-first visit times for the arrangement faces, starting from the unbounded face \f$ f_0\f$, are shown is brackets.
 \cgalFigureEnd
 
-In the following example we construct an arrangement of 7 line segments,
-as shown in \cgalFigureRef{arr_figex_bgl},
-then use Dijkstra's shortest-paths algorithm from the <span class="textsc">bgl</span> to compute
-the graph distance of all vertices from the leftmost vertex in the
-arrangement \f$ v_0\f$. Note the usage of the `boost::vector_property_map<Type, IndexMap>` and
-the `Arr_vertex_property_map` classes. The latter one, instantiated by
-the type `double` is used to map vertices to their distances from \f$ v_0\f$.
+In the following example we construct an arrangement of 7 line
+segments, as shown in \cgalFigureRef{arr_figex_bgl}, then use
+Dijkstra's shortest-paths algorithm from the <span
+class="textsc">bgl</span> to compute the graph distance of all
+vertices from the leftmost vertex in the arrangement \f$ v_0\f$. Note
+the usage of the `boost::vector_property_map<Type, IndexMap>` and the
+`Arr_vertex_property_map` classes. The latter one, instantiated by the
+type `double` is used to map vertices to their distances from \f$
+v_0\f$.
 
 \cgalExample{Arrangement_on_surface_2/bgl_primal_adapter.cpp}
 
 \subsection arr_ssecbgl_dual The Dual Arrangement Representation
 
-It is possible to give a dual graph representation for an arrangement instance,
-such that each arrangement face corresponds to a graph vertex and two vertices
-are adjacent iff the corresponding faces share a common edge on their
-boundaries. This is done by specializing the
+It is possible to give a dual graph representation for an arrangement
+instance, such that each arrangement face corresponds to a graph
+vertex and two vertices are adjacent iff the corresponding faces share
+a common edge on their boundaries. This is done by specializing the
 `boost:graph_traits` template for `Dual<Arrangement_2>` instances,
 where `Dual<Arrangement_2>` is a template specialization that gives a
 dual interpretation to an arrangement instance.
 
-In dual representation, `Arrangement_2::Face_handle`
-is the graph-vertex type, while `Arrangement_2::Halfedge_handle` is the
-graph-edge type. We treat the graph edges as directed, such that a halfedge
-`e` is directed from \f$ f_1\f$, which is its incident face, to \f$ f_2\f$, which
-is the incident face of its twin halfedge. As two arrangement faces may
-share more than a single edge on their boundary, we allow parallel
-edges in our <span class="textsc">Boost</span> graph. As is the case in the primal graph, the dual
-arrangement graph is also a model of the concepts `VertexListGraph`,
-`EdgeListGraph` and `BidirectionalGraph` (thus also of
-`IncidenceGraph`).
+In dual representation, `Arrangement_2::Face_handle` is the
+graph-vertex type, while `Arrangement_2::Halfedge_handle` is the
+graph-edge type. We treat the graph edges as directed, such that a
+halfedge `e` is directed from \f$ f_1\f$, which is its incident face,
+to \f$ f_2\f$, which is the incident face of its twin halfedge. As two
+arrangement faces may share more than a single edge on their boundary,
+we allow parallel edges in our <span class="textsc">Boost</span>
+graph. As is the case in the primal graph, the dual arrangement graph
+is also a model of the concepts `VertexListGraph`, `EdgeListGraph` and
+`BidirectionalGraph` (thus also of `IncidenceGraph`).
 
-Since we use `Face_handle` objects as the vertex descriptors, we define
-the `Arr_face_index_map<Arrangement>` class-template, which maintains an
-efficient mapping of face handles to indices.
-Like vertices, `boost::vector_property_map<Type, IndexMap>` can be
-used for associating arbitrary data with the arrangement faces.
+Since we use `Face_handle` objects as the vertex descriptors, we
+define the `Arr_face_index_map<Arrangement>` class-template, which
+maintains an efficient mapping of face handles to indices.  Like
+vertices, `boost::vector_property_map<Type, IndexMap>` can be used for
+associating arbitrary data with the arrangement faces.
 
 In the following example we construct the same arrangement as in
 example `bgl_primal_adapter.cpp` (see \cgalFigureRef{arr_figex_bgl}),
 and perform breadth-first search on the graph faces, starting from the
-unbounded face. We extend the \sc{Dcel} faces
-with an unsigned integer, marking the discover time of the face
-using `boost` visitors and a property-map class that directly accesses
-the extended data of the faces:
+unbounded face. We extend the \sc{Dcel} faces with an unsigned
+integer, marking the discover time of the face using `boost` visitors
+and a property-map class that directly accesses the extended data of
+the faces:
 
 \cgalExample{Arrangement_on_surface_2/bgl_dual_adapter.cpp}
+
+\section aos_sec-on_curved Arrangements on Curved Surfaces
+
+We are given a surface \f$S \f$ in \f$ \mathbb{R}^3\f$ and a set
+\f$\cal C \f$ of curves embedded on this surface. The curves subdivide
+\f$S \f$ into cells of dimension 0 (<I>vertices</I>), 1
+(<I>edges</I>), and 2 (<I>faces</I>). This subdivision is the
+<I>arrangement</I> \f$\cal A(\cal C) \f$ induced by \f$\cal C \f$ on
+\f$S \f$. Arrangements embedded on curved surfaces in \f$
+\mathbb{R}^3\f$ are generalizations of arrangements embedded in the
+plane. While this is easily stated, the mechanism to support such
+generalizations is not trivially implemented. However, the reward for
+having generic software that supports generalized arrangements is
+tremendous. In this section we provide a glimpse into a practical
+framework for the construction, maintenance, and manipulation of
+two-dimensional arrangements embedded on orientable parametric
+surfaces in three dimensions, such as planes, cylinders, spheres, and
+tori, and surfaces homeomorphic to them; see Figure
+\cgalFigureRef{aos_fig-surfaces}. Such arrangements have many
+theoretical and practical applications; see, e.g.,
+\cgalCite{as-aa-00}, \cgalCite{bfhks-apsca-10},
+\cgalCite{bfhmw-apsgf-10}, \cgalCite{fhktww-a-07}, and
+\cgalCite{h-a-04}.
+
+\cgalFigureAnchor{aos_fig-surfaces}
+<center>
+<table border=0>
+<tr>
+<td>\image html sphere.png</td>
+<td>\image html cylinder.png</td>
+<td>\image html cone.png</td>
+<td>\image html ellipsoid.png</td>
+<td>\image html torus.png</td>
+<td>\image html paraboloid.png</td>
+<tr align="center">
+<td>(a) Sphere</td>
+<td>(b) Cylinder</td>
+<td>(c) Cone</td>
+<td>(d) Ellipsoid</td>
+<td>(e) Torus</td>
+<td>(f) Paraboloid</td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{aos_fig-surfaces}
+Various two-dimensional parametric surfaces, arrangements on which
+are supported by the framework.
+\cgalFigureCaptionEnd
+
+The \ref PkgArrangement2Summary package of the latest version of \cgal
+contains an implementation of the framework, albeit only partially
+documented.\cgalFootnote{The manual of the \ref PkgArrangement2Summary
+package in \cgal 's latest version does yet not include material for
+non-planar surfaces.} Concretizations for several types of surfaces
+and several types of curves embedded on the surfaces have already been
+implemented.  Some of them are also included in the \ref
+PkgArrangement2Summary package; others are included in experimental
+packages, which are also expected to be included in future releases of
+\cgal. Examples are arrangements of arcs of great circles on the
+sphere \cgalCite{fsh-eiaga-08},\cgalCite{fsh-agas-08}, of intersection
+curves between quadric surfaces and a fixed quadric
+\cgalCite{bfhmw-scmtd-07}, and of intersection curves between
+arbitrary algebraic surfaces and a fixed Dupin cyclide
+\cgalCite{bk-eatdc-08}. The torus is a Dupin cyclide. This is the
+first implementation of a generic algorithm that can handle
+arrangements on a large class of parametric surfaces. Cazals and
+Loriot \cgalCite{cl-cacsa-09},\cgalCite{cclt-dcska-09} have developed
+a software package that computes exact arrangements of circles on a
+sphere. Their software is specialized for the spherical case though.
+
+The starting point for the new framework (arrangements on surfaces)
+was the \cgal package for constructing and maintaining arrangements of
+bounded curves in the plane \cgalCite{wfzh-aptac-07}. It could not
+handle unbounded curves directly. Rather, unbounded curves had to be
+clipped by the user in a preprocessing phase, so that no essential
+information about the arrangements (e.g., a finite intersection point)
+was lost. This solution was clearly inconvenient.  The initial goal
+was to extend the package so that unbounded curves in the plane could
+be handled within the package, and hence the full functionality of the
+package would also be available for arrangements of such curves.
+Evidently, this goal was achieved; see Chapter \ref
+aos_sec-unbounded. The solution carries further than that; it can also
+deal with arrangements on surfaces in \f$ \mathbb{R}^3\f$.
+
+The framework is implemented as a class template
+`Arrangement_on_surface_2` parameterized by template parameters
+<I>geometry traits</I> and <I>topology traits</I>, that is,
+`Arrangement_on_surface_2<GeoTraits, TopTraits>`.  A concretization is
+obtained by instantiating the class template, where models of the
+geometry-traits and the topology-traits concepts substitute the two
+template parameters, respectively. The topology-traits class deals
+with the topology of the parametric surface. A parametric surface \f$S
+\f$ is given by a continuous function \f$\phi_S: \Phi \rightarrow
+\mathbb{R}^3\f$, where the domain \f$\Phi = U \times V \f$ is a
+rectangular two-dimensional parameter space; \f$S = \phi_S(\Phi)
+\f$. \f$U \f$ and \f$V \f$ are open, half-open, or closed intervals
+with endpoints in \f$\overline{\R} \f$. The (unbounded) plane is
+modeled with \f$\phi_S \f$ being the identity mapping. The
+geometry-traits class introduces the C++ type names of the basic
+geometric objects (i.e., point, curve, and \f$u \f$-monotone curve)
+and a small set of operations on objects of these types, such as
+comparing two points in $uv$-lexicographic order and computing
+intersections of curves. The traits-concept hierarchy described in
+Chapter \ref aos_sec-traits was kept the same (except for the renaming
+of the \f$x \f$ and \f$y \f$ coordinates to \f$u \f$ and \f$v \f$,
+respectively), and a few new refined concepts were introduced; see
+\cgalCite{bfhmw-apsgf-10} for a complete description of the new full
+traits-concept hierarchy.
+
+\cgalFigureAnchor{aos_fig-voronoi}
+<center>
+<table border=0>
+<tr>
+<td>\image html voronoi.jpg</td>
+<td>\image html degenerate_voronoi.jpg</td>
+<td>\image html power_diagram.jpg</td>
+<td>\image html degenerate_power_diagram.jpg</td>
+<tr align="center">
+<td>(a)</td>
+<td>(b)</td>
+<td>(c)</td>
+<td>(d)</td>
+</tr>
+</table>
+</center>
+\cgalFigureCaptionBegin{aos_fig-voronoi}
+Voronoi diagrams on the sphere.
+All diagram edges are geodesic arcs.
+Sites are drawn in red and Voronoi edges are drawn in blue.
+(a) The Voronoi diagram of 32 random points.
+(b) A highly degenerate case of Voronoi diagram of 30 point sites on the sphere.
+(c) The power diagram of 10 random circles.
+(d) A degenerate power diagram of 14 sites on the sphere.
+\cgalFigureCaptionEnd
+
+The effort needed to generalize existing algorithms, such as the plane
+sweep and zone traversal algorithms, originally designed for
+arrangements of bounded curves in the plane, was reduced by extensive
+reuse of code. The implementation of the generalization benefits from
+all software tools described in this book. There is a well-known
+connection between Voronoi diagrams in \f$\mathbb{R}^d \f$ and lower
+envelopes of the corresponding distance functions to the sites in
+\f$\mathbb{R}^{d+1} \f$ \cgalCite{es-vda-86}. This observation also
+holds for the spherical case. For example, given a set \f$P = \{p_1,
+\ldots, p_n\} \f$ of points on the sphere, if we take \f$f_i(x) =
+\rho(x, p_i) \f$ to be the geodesic distance between \f$x\f$ and
+\f$p_i\f$ on the sphere, for \f$1 \leq i \leq n \f$, then the
+minimization diagram of \f$\{f_1, \ldots, f_n\} \f$ over
+\f$\mathbb{S}^2 \f$ corresponds to the Voronoi diagram of \f$P \f$
+over \f$\mathbb{S}^2 \f$. Setter implemented a framework for
+constructing various two-dimensional Voronoi diagrams
+\cgalCite{s-cdvdd-09},\cgalCite{ssh-ctdvd-10}, exploiting the generic
+envelope-code of \cgal; see package \ref PkgEnvelope3Summary. Figure
+\cgalFigureRef{aos_fig-voronoi} shows various Voronoi diagrams the
+bisectors of which are geodesic arcs.  The diagrams are computed using
+the aforementioned new framework. They are represented as arrangements
+induced by geodesic arcs embedded on the sphere.
 
 \section arr_sectips How To Speed Up Your Computation
 
@@ -3760,36 +4097,36 @@ number type `Quotient<MP_float>`.
 
 On rare occasions the traits class `Arr_non_caching_segment_traits_2`
 exhibits slightly better performance than the default one
-(`Arr_segment_traits_2`
-even when the segments intersect each other, due to the small overhead
-of the latter (optimized) traits class. (For example, when the so
-called <span class="textsc">Leda</span> rational kernel is used).
+(`Arr_segment_traits_2` even when the segments intersect each other,
+due to the small overhead of the latter (optimized) traits class. (For
+example, when the so called <span class="textsc">Leda</span> rational
+kernel is used).
 
-<LI>Prior knowledge of the combinatorial structure of the arrangement can
-be used to accelerate operations that insert \f$ x\f$-monotone curves,
-whose interior is disjoint from existing edges and vertices of the
-arrangement. The specialized insertion functions, i.e.,
+<LI>Prior knowledge of the combinatorial structure of the arrangement
+can be used to accelerate operations that insert \f$ x\f$-monotone
+curves, whose interior is disjoint from existing edges and vertices of
+the arrangement. The specialized insertion functions, i.e.,
 `insert_in_face_interior()`, `insert_from_left_vertex()`,
-`insert_from_right_vertex()`, and `insert_at_vertices()`
-can be used according to the available information. These functions
-hardly involve any geometric operations, if at all. They accept
-topologically related parameters, and use them to operate directly on
-the \sc{Dcel} records, thus saving algebraic operations, which are
-especially expensive when high-degree curves are involved.
+`insert_from_right_vertex()`, and `insert_at_vertices()` can be used
+according to the available information. These functions hardly involve
+any geometric operations, if at all. They accept topologically related
+parameters, and use them to operate directly on the \sc{Dcel} records,
+thus saving algebraic operations, which are especially expensive when
+high-degree curves are involved.
 
 A polygon, represented by a list of segments along its boundary, can
 be inserted into an empty arrangement as follows. First, one segment
 is inserted using `insert_in_face_interior()` into the unbounded
 face. Then, a segment with a common end point is inserted using either
-`insert_from_left_vertex()` or `insert_from_right_vertex()`,
-and so on with the rest of the segments except for the last, which is
-inserted using `insert_at_vertices()`, as both endpoints of which
-are the mapping of known vertices.
+`insert_from_left_vertex()` or `insert_from_right_vertex()`, and so on
+with the rest of the segments except for the last, which is inserted
+using `insert_at_vertices()`, as both endpoints of which are the
+mapping of known vertices.
 
-<LI>The main trade-off among point-location strategies, is between time
-and storage. Using the naive or walk strategies, for example, takes
-more query time but does not require preprocessing or maintenance of
-auxiliary structures and saves storage space.
+<LI>The main trade-off among point-location strategies, is between
+time and storage. Using the naive or walk strategies, for example,
+takes more query time but does not require preprocessing or
+maintenance of auxiliary structures and saves storage space.
 
 <LI>If point-location queries are not performed frequently, but other
 modifying functions, such as removing, splitting, or merging edges
@@ -3797,23 +4134,23 @@ are, then using a point-location strategy that does not require the
 maintenance of auxiliary structures, such as the naive or walk
 strategies, is preferable.
 
-<LI>There is a trade-off between two modes of the trapezoidal RIC strategy
-that enables the user to choose whether preprocessing should be
-performed or not. If preprocessing is not used, the creation of the
+<LI>There is a trade-off between two modes of the trapezoidal RIC
+strategy that enables the user to choose whether preprocessing should
+be performed or not. If preprocessing is not used, the creation of the
 structure is faster. However, for some input sequences the structure
 might be unbalanced and therefore queries and updates might take
 longer, especially, if many removal and split operations are
 performed.
 
-<LI>When the curves to be inserted into an arrangement are available in
-advance (as opposed to supplied on-line), it is advised to use the
+<LI>When the curves to be inserted into an arrangement are available
+in advance (as opposed to supplied on-line), it is advised to use the
 more efficient aggregate (sweep-based) insertion over the incremental
 insertion; e.g., `insert()`.
 
-<LI>The various traits classes should be instantiated with an exact number
-type to ensure robustness, when the input of the operations to be
-carried out might be degenerate, although inexact number types could
-be used at the user's own risk.
+<LI>The various traits classes should be instantiated with an exact
+number type to ensure robustness, when the input of the operations to
+be carried out might be degenerate, although inexact number types
+could be used at the user's own risk.
 
 <LI>Maintaining short bit-lengths of coordinate representations may
 drastically decrease the time consumption of arithmetic operations on
@@ -3832,7 +4169,7 @@ be avoided by storing the results obtained by the first call, and
 reusing them when needed.
 </OL>
 
-\section Arrangement_on_surface_2Design Design and Implementation History
+\section aos_sec-design Design and Implementation History
 
 The code of this package is the result of a long development process.
 Initially (and until version 3.1), the code was spread among several
