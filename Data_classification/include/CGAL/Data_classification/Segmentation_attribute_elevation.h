@@ -20,8 +20,37 @@ public:
   double mean;
   double max;
   
-  Segmentation_attribute_elevation (PSC& M, double weight) : weight (weight)
+  Segmentation_attribute_elevation (PSC& M, double weight, bool on_groups = false) : weight (weight)
   {
+    if (on_groups)
+      {
+        std::vector<std::vector<typename Kernel::Point_3> > pts (M.groups.size());
+
+        for (std::size_t i = 0; i < M.HPS.size(); ++ i)
+          {
+            std::size_t g = M.HPS[i].group;
+            if (g == (std::size_t)(-1))
+              continue;
+            pts[g].push_back (M.HPS[i].position);
+          }
+        
+        std::vector<typename Kernel::Point_3> centroids;
+        for (std::size_t i = 0; i < pts.size(); ++ i)
+          centroids.push_back (CGAL::centroid (pts[i].begin(), pts[i].end()));
+
+        for (std::size_t i = 0; i < M.HPS.size(); ++ i)
+          {
+            std::size_t g = M.HPS[i].group;
+            if (g == (std::size_t)(-1))
+              elevation_attribute.push_back (0.);
+            else
+              elevation_attribute.push_back (centroids[g].z());
+          }
+        
+        this->compute_mean_max (elevation_attribute, mean, max);
+        return;
+      }
+    
     //DEM
     Image_float DEM(M.grid_HPS.width(),M.grid_HPS.height());
     Image_float DEMtemp(M.grid_HPS.width(),M.grid_HPS.height());
@@ -343,7 +372,7 @@ public:
     //    max *= 5;
   }
 
-  virtual double value (int pt_index)
+  virtual double value (std::size_t pt_index)
   {
     return std::max (0., std::min (1., elevation_attribute[pt_index] / weight));
   }

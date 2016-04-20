@@ -27,7 +27,7 @@ public:
   {
 
     std::cerr << "Using colors" << std::endl;
-    for(int i=0;i<(int)M.HPS.size();i++)
+    for(std::size_t i=0; i < M.HPS.size();i++)
       {
         HSV_Color c = Data_classification::rgb_to_hsv (M.HPS[i].color);
         color_attribute.push_back (std::exp (-(c[0] - 156.) * (c[0] - 156.) / (2. * 81. * 81.))
@@ -37,7 +37,7 @@ public:
     this->compute_mean_max (color_attribute, mean, max);
   }
 
-  virtual double value (int pt_index)
+  virtual double value (std::size_t pt_index)
   {
     return std::max (0., std::min (1., color_attribute[pt_index] / weight));
   }

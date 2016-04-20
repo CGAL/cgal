@@ -312,13 +312,6 @@ public:
     eigenvalues.clear();
     planes.clear();
     
-    std::map<Point,int> map_indice_point;
-    for(int i=0;i<HPS.size();i++){
-      Point pt=HPS[i].position;
-      map_indice_point[pt]=i;
-	
-    }
-
     std::vector<Point> list_points;
     for(int i=0;i<(int)HPS.size();i++){
       Point pt=HPS[i].position;
