@@ -171,7 +171,7 @@ public:
 
     Subdomain operator()(const Point_3& p) const
     {
-      // f(p)==0 means p is outside the domain
+      // null(f(p)) means p is outside the domain
       Subdomain_index index = (r_domain_.function_)(p);
       if ( r_domain_.null(index) )
         return Subdomain();
