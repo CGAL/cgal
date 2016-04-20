@@ -35,6 +35,7 @@
 #include <CGAL/tags.h>
 #include <CGAL/IO/io_tags.h>
 #include <CGAL/IO/Color.h>
+#include <CGAL/assertions.h>
 
 
 namespace CGAL {
