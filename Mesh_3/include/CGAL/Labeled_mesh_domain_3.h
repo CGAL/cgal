@@ -225,8 +225,12 @@ public:
       const Subdomain_index value_a = r_domain_.function_(a);
       const Subdomain_index value_b = r_domain_.function_(b);
 
-      if ( value_a != value_b )
-        return Surface_patch(r_domain_.make_surface_index(value_a, value_b));
+      if ( value_a != value_b ) {
+        if( r_domain_.null(value_a) && r_domain_.null(value_b) )
+          return Surface_patch();
+        else
+          return Surface_patch(r_domain_.make_surface_index(value_a, value_b));
+      }
       else
         return Surface_patch();
     }
