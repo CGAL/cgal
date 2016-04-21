@@ -107,9 +107,7 @@ which is used by the example  \ref Point_set_shape_detection_3/efficient_RANSAC_
 
 \section Point_set_shape_detection_3Plane_regularization Plane Regularization
 
-Shape detection is very suited for man-made shapes such as urban scenes or scans of mechanical pieces. Such scenes may contain a wide variety of regularities that user may want to favor: parallelism, orthogonality, concentricity, coaxiality, etc., not to mention orbits and composed relationships.
-
-Among all these possibilities, \cgal provides a means to regularize four properties of regularity through a function `CGAL::regularize_planes()`. It only postprocesses planes detected by `CGAL::Shape_detection_3<Traits>` (other primitives are left unchanged):
+Shape detection applies to man-made scenes or objects such as urban scenes or scans of mechanical parts. Such scenes often contain a wide range of geometric regularities such as parallelism, orthogonality, or symmetry. This package offers a function to reinforce four types of regularities for planar shapes: `CGAL::regularize_planes()`. It only postprocesses planes detected by `CGAL::Shape_detection_3<Traits>` (other primitives are left unchanged):
 
 - Planes that are near __parallel__ are made parallel: normal vectors of planes that form angles smaller than a user-defined threshold are made equal.
 

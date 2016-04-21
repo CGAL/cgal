@@ -547,8 +547,9 @@ void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
     \tparam Traits a model of `EfficientRANSACTraits`
 
     \param shape_detection Shape detection object used to detect
-    shapes from the input data. This engine may handle any types of
-    primitive shapes but only planes will be regularized. 
+    shapes from the input data. While the shape detection algorithm
+    deals with several types of primitive shapes only planes can be
+    regularized.
 
     \warning The `shape_detection` parameter must have already
     detected shapes. If no plane exists in it, the regularization
