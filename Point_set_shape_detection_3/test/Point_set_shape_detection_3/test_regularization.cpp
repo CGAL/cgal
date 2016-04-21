@@ -174,34 +174,34 @@ int main()
   }
 
   // Test orthogonality
-  // std::cerr << "Testing orthogonality..." << std::endl;
-  // {
-  //   Pwn_vector points;
+  std::cerr << "Testing orthogonality..." << std::endl;
+  {
+    Pwn_vector points;
 
-  //   generate_random_points (Point (0., 0., 0.), vy, vz,
-  //                           5000, std::back_inserter (points));
+    generate_random_points (Point (0., 0., 0.), vy, vz,
+                            5000, std::back_inserter (points));
       
-  //   generate_random_points (Point (0.5, 0., 0.), dvx, vy,
-  //                           5000, std::back_inserter (points));
+    generate_random_points (Point (0.5, 0., 0.), dvx, vy,
+                            5000, std::back_inserter (points));
 
-  //   ransac.set_input(points);
-  //   ransac.detect(op);
-  //   check_ransac_size (ransac, 2);
+    ransac.set_input(points);
+    ransac.detect(op);
+    check_ransac_size (ransac, 2);
 
-  //   std::vector<Plane> before = get_ransac_planes(ransac);
-  //   CGAL::regularize_planes (ransac, false, true, false, true, 5., 0.01, Vector(1.,0.,0.));
-  //   std::vector<Plane> after = get_ransac_planes(ransac);
+    std::vector<Plane> before = get_ransac_planes(ransac);
+    CGAL::regularize_planes (ransac, false, true, false, true, 5.);
+    std::vector<Plane> after = get_ransac_planes(ransac);
 
-  //   std::cerr << " * Nothing should change now..." << std::endl;
-  //   check_planes_unchanged (before, after);
+    std::cerr << " * Nothing should change now..." << std::endl;
+    check_planes_unchanged (before, after);
     
-  //   CGAL::regularize_planes (ransac, false, true, false, true, 15.);
-  //   after = get_ransac_planes(ransac);
+    CGAL::regularize_planes (ransac, false, true, false, true, 15.);
+    after = get_ransac_planes(ransac);
 
-  //   std::cerr << " * Something should change now..." << std::endl;
-  //   check_planes_changed (before, after);
-  //   ransac.clear ();
-  // }
+    std::cerr << " * Something should change now..." << std::endl;
+    check_planes_changed (before, after);
+    ransac.clear ();
+  }
 
   std::cerr << "Testing coplanarity..." << std::endl;
   {

@@ -70,9 +70,6 @@ typename Traits::Vector_3 regularize_normal
   typedef typename Traits::Line_3 Line;
   typedef typename Traits::Plane_3 Plane;
 
-   // if (symmetry_direction == CGAL::NULL_VECTOR)
-   //   return n;
-      
   Point pt_symmetry = CGAL::ORIGIN + cos_symmetry* symmetry_direction;
 
   Plane plane_symmetry (pt_symmetry, symmetry_direction);
@@ -116,9 +113,6 @@ typename Traits::Vector_3 regularize_normals_from_prior
   typedef typename Traits::Vector_3 Vector;
   typedef typename Traits::Line_3 Line;
   typedef typename Traits::Plane_3 Plane;
-
-  // if (symmetry_direction == CGAL::NULL_VECTOR)
-  //   return n;
 
   Plane plane_orthogonality (CGAL::ORIGIN, np);
   Point pt_symmetry = CGAL::ORIGIN + cos_symmetry* symmetry_direction;
@@ -439,8 +433,6 @@ void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
       subgraph_clusters_prop.push_back(subgraph_clusters_prop_temp);
     }
 
-  std::cerr << "B " << clusters[0].normal << " " << clusters[1].normal << std::endl;
-
   //regularization of cluster normals : in eachsubgraph, we start
   //from the largest area cluster and we propage over the subgraph
   //by regularizing the normals of the clusters accorting to
@@ -485,7 +477,6 @@ void subgraph_mutually_orthogonal_clusters (PlaneClusterContainer& clusters,
                   std::size_t cluster_index_2 = clusters[cluster_index].orthogonal_clusters[j];						
                   if(clusters[cluster_index_2].is_free)
                     {
-                      std::cerr << "Propagation" << std::endl;
                       propagation = true;
                       index_container_current_ring.push_back(cluster_index_2);
                       clusters[cluster_index_2].is_free = false;
@@ -653,7 +644,6 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
             {
               if (std::fabs (clusters[i].normal * clusters[j].normal) < tolerance_cosangle_ortho)
                 {
-                  std::cerr << "Clustered " << std::endl;
                   clusters[i].orthogonal_clusters.push_back (j);
                   clusters[j].orthogonal_clusters.push_back (i);
                 }
