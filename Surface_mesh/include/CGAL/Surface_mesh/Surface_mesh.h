@@ -29,7 +29,7 @@
 #include <typeinfo>
 #include <functional>
 
-#include <boost/fusion/container/map.hpp>
+//#include <boost/fusion/container/map.hpp>
 #include <boost/cstdint.hpp>
 #include <boost/array.hpp>
 #include <boost/iterator/iterator_facade.hpp>
@@ -2515,58 +2515,11 @@ private: //------------------------------------------------------- private data
 /// @endcond
 
 
-  inline CGAL::Color get_color_from_line(std::istream &is)
-  {
-
-   std::string color_info;
-   bool is_float = false;
-
-   std::string col;
-   //get the line content
-   std::getline(is, col);
-   //split it into strings
-   std::istringstream iss(col);
-   //holds the rgb values
-   int rgb[3];
-   int index =0;
-//split the string into numbers
-   while(iss>>color_info){
-    //stop if comment is read
-    if(color_info.at(0) == '#')
-     break;
-    //detect if the value is float
-    for(int c = 0; c<static_cast<int>(color_info.length()); c++)
-    {
-     if(color_info.at(c) == '.')
-     {
-      is_float = true;
-      break;
-     }
-    }
-    //if the value is of float type, convert it into an int
-    if(is_float)
-     rgb[index] = (int)(atof(color_info.c_str())*255);
-    //else stores the value
-    else
-     rgb[index] = atoi(color_info.c_str());
-
-    index++;
-   }
-   CGAL::Color color;
-   //if there were only one number, fetch the color in the color map
-   if(index<2)
-    color = getIndexedColor(rgb[0]);
-   //else create the coor with the 3 values;
-   else
-    color = CGAL::Color(rgb[0], rgb[1], rgb[2]);
-   return color;
-  }
   /// \relates Surface_mesh
 
   /// \relates Surface_mesh
   /// Extracts the surface mesh from an input stream in Ascii OFF, COFF, NOFF, CNOFF format.
   /// The operator reads the point property as well as "v:normal", "v:color", and "f:color".
-  /// For the colors only the color map version is supported, that is an integer index.
   /// Vertex texture coordinates are ignored.
   /// \pre `operator>>(std::istream&,const P&)` must be defined.
   template <typename P>
@@ -2626,7 +2579,7 @@ private: //------------------------------------------------------- private data
 
       if(vcolored){
        //stores the RGB value
-       vcolor[vi] = get_color_from_line(is);
+       vcolor[vi] = File_scanner_OFF::get_color_from_line(is);
       }
     }
     std::vector<size_type> vr;
@@ -2666,7 +2619,7 @@ private: //------------------------------------------------------- private data
       }
 
       if(fcolored){
-       fcolor[fi] = get_color_from_line(is);
+       fcolor[fi] = File_scanner_OFF::get_color_from_line(is);
       }
 
     }

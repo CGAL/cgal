@@ -206,7 +206,7 @@ private:
     using CGAL::Three::Scene_item::initializeBuffers;
     void initializeBuffers(CGAL::Three::Viewer_interface *viewer) const;
     void compute_normals_and_vertices(void) const;
-    void triangulate_polygon(Polygons_iterator , int nb) const;
+    void triangulate_polygon(Polygons_iterator , int polygon_id) const;
     mutable QOpenGLShaderProgram *program;
 
 }; // end class Scene_polygon_soup_item

@@ -210,7 +210,7 @@ TDS,
 Itag>             CDTbase;
 typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 void
-Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit, int nb) const
+Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit, int polygon_id) const
 {
     //Computes the normal of the facet
     const Point_3& pa = soup->points[pit->at(0)];
@@ -222,6 +222,8 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit, int nb) cons
     P_traits cdt_traits(normal);
 
     CDT cdt(cdt_traits);
+    //A map used to associate the vertices in the triangulation to the points
+    //in the soup. This is needed to retrieve the colors of the points.
     QMap<CDT::Vertex_handle, int> p2p;
 
     std::size_t it = 0;
@@ -306,7 +308,7 @@ Scene_polygon_soup_item::triangulate_polygon(Polygons_iterator pit, int nb) cons
         n = n / std::sqrt(n * n);
         CGAL::Color color;
         if(!soup->fcolors.empty())
-          color = soup->fcolors[nb];
+          color = soup->fcolors[polygon_id];
         for(int i=0; i<3; i++)
         {
           normals.push_back(n.x());

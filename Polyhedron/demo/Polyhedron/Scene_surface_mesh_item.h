@@ -1,9 +1,9 @@
 #ifndef CGAL_SCENE_SURFACE_MESH_ITEM_H
 #define CGAL_SCENE_SURFACE_MESH_ITEM_H
 //Defines the precision of the positions (for performance/precision sake)
-#define GL_DATA GL_FLOAT
-#define gl_data float
-#define IS_FLOAT 1
+#define CGAL_GL_DATA GL_FLOAT
+#define cgal_gl_data float
+#define CGAL_IS_FLOAT 1
 
 #include "Scene_surface_mesh_item_config.h"
 #include <CGAL/Three/Scene_item.h>
@@ -79,12 +79,12 @@ private:
   void addFlatData(Point, Kernel::Vector_3, CGAL::Color *) const;
   mutable std::vector<unsigned int> idx_data_;
   std::vector<unsigned int> idx_edge_data_;
-  mutable std::vector<gl_data> smooth_vertices;
-  mutable std::vector<gl_data> smooth_normals;
-  mutable std::vector<gl_data> flat_vertices;
-  mutable std::vector<gl_data> flat_normals;
-  mutable std::vector<gl_data> f_colors;
-  mutable std::vector<gl_data> v_colors;
+  mutable std::vector<cgal_gl_data> smooth_vertices;
+  mutable std::vector<cgal_gl_data> smooth_normals;
+  mutable std::vector<cgal_gl_data> flat_vertices;
+  mutable std::vector<cgal_gl_data> flat_normals;
+  mutable std::vector<cgal_gl_data> f_colors;
+  mutable std::vector<cgal_gl_data> v_colors;
   mutable QOpenGLShaderProgram *program;
 
   //! \param fd a face_descriptor of the facet that needs to be triangulated.

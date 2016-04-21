@@ -2,7 +2,6 @@
 #include <CGAL/Three/Polyhedron_demo_plugin_interface.h>
 #include <fstream>
 
-#include <QApplication>
 #include <QObject>
 #include <QAction>
 #include <QMainWindow>
@@ -25,7 +24,6 @@ class SurfaceMeshIoPlugin :
 public:
   void init(QMainWindow*, CGAL::Three::Scene_interface*, Messages_interface* m)
   {
-    qDebug()<<"coucou";
     this->message = m;
   }
    bool applicable(QAction*) const
