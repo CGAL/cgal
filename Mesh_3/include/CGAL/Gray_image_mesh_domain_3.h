@@ -53,7 +53,7 @@ namespace internal {
 template<class Image,
          class BGT,
          typename Image_word_type = float,
-         typename Transform = internal::Greater_than<Image_word_type>,
+         typename Transform = internal::Greater_than<double>,
          typename Subdomain_index = int>
 class Gray_image_mesh_domain_3
   : public Labeled_mesh_domain_3<
