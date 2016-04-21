@@ -321,25 +321,6 @@ public Q_SLOTS:
   void addVP(Volume_plane_thread* thread) {
     Volume_plane_interface* plane = thread->getItem();
     plane->init();
-    QWidget* control;
-    if(thread->type() == 'x')
-    {
-      control = x_control;
-    }
-    else if(thread->type() == 'y')
-    {
-      control = y_control;
-    }
-    else if(thread->type() == 'z')
-    {
-      control = z_control;
-    }
-    else
-    {
-      qDebug()<<"Error : thread type undetected.";
-      return;
-    }
-
     // add the interface for this Volume_plane
     int id = scene->addItem(plane);
     scene->changeGroup(plane, group);
