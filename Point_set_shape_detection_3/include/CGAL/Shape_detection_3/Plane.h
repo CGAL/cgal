@@ -110,9 +110,7 @@ namespace CGAL {
       m_base2 = p.base2 () / std::sqrt (p.base2() * p.base2 ());
       m_normal = p.orthogonal_vector () / std::sqrt (p.orthogonal_vector () * p.orthogonal_vector ());
       
-      m_d = -(this->get_x(m_point_on_primitive) * this->get_x(m_normal) 
-        + this->get_y(m_point_on_primitive) * this->get_y(m_normal) 
-        + this->get_z(m_point_on_primitive) * this->get_z(m_normal));
+      m_d = p.d();
 
     }
 
