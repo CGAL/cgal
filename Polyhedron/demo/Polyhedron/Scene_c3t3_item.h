@@ -3,7 +3,6 @@
 
 #include "Scene_c3t3_item_config.h"
 #include "C3t3_type.h"
-#include "Scene_spheres_item.h"
 
 #include <QVector>
 #include <QColor>
@@ -26,7 +25,8 @@
 #include <CGAL/IO/File_binary_mesh_3.h>
 
 struct Scene_c3t3_item_priv;
-
+class Scene_spheres_item;
+class Scene_intersection_item;
 using namespace CGAL::Three;
   class SCENE_C3T3_ITEM_EXPORT Scene_c3t3_item
   : public Scene_group_item
@@ -118,7 +118,7 @@ private:
   void reset_cut_plane();
   void draw_triangle(const Kernel::Point_3& pa,
     const Kernel::Point_3& pb,
-    const Kernel::Point_3& pc, bool /* is_cut */) const;
+    const Kernel::Point_3& pc) const;
 
   void draw_triangle_edges(const Kernel::Point_3& pa,
     const Kernel::Point_3& pb,
@@ -137,7 +137,13 @@ private:
   {
     spheres = NULL;
   }
+
+  void reset_intersection_item()
+  {
+    intersection = NULL;
+  }
   void show_spheres(bool b);
+  void show_intersection(bool b);
   virtual QPixmap graphicalToolTip() const;
 
   void update_histogram();
@@ -189,6 +195,7 @@ private:
   qglviewer::ManipulatedFrame* frame;
 
   Scene_spheres_item *spheres;
+  Scene_intersection_item *intersection;
   bool spheres_are_shown;
   const Scene_item* data_item_;
   QPixmap histogram_;
@@ -219,7 +226,6 @@ private:
   mutable std::vector<float> s_radius;
   mutable std::vector<float> s_center;
   mutable QOpenGLShaderProgram *program;
-
 
   using Scene_item::initialize_buffers;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer);

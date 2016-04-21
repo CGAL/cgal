@@ -3,7 +3,7 @@
 //#define CGAL_PROFILE 
 #include "Scene_edit_polyhedron_item_config.h"
 #include "Scene_polyhedron_item.h"
-#include "Scene_spheres_item.h"
+
 
 #include <CGAL/Three/Scene_group_item.h>
 
@@ -39,7 +39,7 @@ typedef boost::graph_traits<Polyhedron>::vertex_iterator		  vertex_iterator;
 typedef boost::graph_traits<Polyhedron>::face_descriptor      face_descriptor;
 typedef boost::graph_traits<Polyhedron>::halfedge_descriptor  halfedge_descriptor;
 typedef boost::graph_traits<Polyhedron>::edge_descriptor      edge_descriptor;
-
+class Scene_spheres_item;
 struct Array_based_vertex_point_map
 {
 public:
