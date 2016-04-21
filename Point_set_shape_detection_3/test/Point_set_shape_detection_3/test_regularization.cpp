@@ -130,6 +130,7 @@ int main()
   Vector dvx = vx;
   rotate_vector (dvx, 1, to_rad(10.));
 
+
   Efficient_ransac ransac;
   ransac.add_shape_factory<CGAL::Shape_detection_3::Plane<Traits> >();
   
@@ -184,6 +185,7 @@ int main()
     generate_random_points (Point (0.5, 0., 0.), dvx, vy,
                             5000, std::back_inserter (points));
 
+    
     ransac.set_input(points);
     ransac.detect(op);
     check_ransac_size (ransac, 2);
@@ -203,6 +205,7 @@ int main()
     ransac.clear ();
   }
 
+  // Test coplanarity
   std::cerr << "Testing coplanarity..." << std::endl;
   {
     Pwn_vector points;
@@ -229,6 +232,42 @@ int main()
 
     std::cerr << " * Something should change now..." << std::endl;
     check_planes_changed (before, after);
+    ransac.clear ();
+  }
+
+  // Test symmetry
+  std::cerr << "Testing symmetry..." << std::endl;
+  {
+    Pwn_vector points;
+    
+    Vector dvx1 = vx;
+    Vector dvx2 = vx;
+    rotate_vector (dvx1, 1, to_rad(40.));
+    rotate_vector (dvx2, 1, to_rad(-50.));
+
+    generate_random_points (Point (0., 0., -0.5), dvx1, vy,
+                            5000, std::back_inserter (points));
+      
+    generate_random_points (Point (0., 0., 0.5), dvx2, vy,
+                            5000, std::back_inserter (points));
+
+    ransac.set_input(points);
+    ransac.detect(op);
+    check_ransac_size (ransac, 2);
+
+    std::vector<Plane> before = get_ransac_planes(ransac);
+    CGAL::regularize_planes (ransac, false, false, false, true, 5., 0.01, Vector(1., 0., 0.));
+    std::vector<Plane> after = get_ransac_planes(ransac);
+
+    std::cerr << " * Nothing should change now..." << std::endl;
+    check_planes_unchanged (before, after);
+    
+    CGAL::regularize_planes (ransac, false, false, false, true, 15., 0.01, Vector(1., 0., 0.));
+    after = get_ransac_planes(ransac);
+
+    std::cerr << " * Something should change now..." << std::endl;
+    check_planes_changed (before, after);
+
     ransac.clear ();
   }
 
