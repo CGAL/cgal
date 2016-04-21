@@ -133,7 +133,9 @@ private:
   Bbox_3 compute_bounding_box(const Image& im) const
   {
     return Bbox_3(-1,-1,-1,
-                  im.xdim()*im.vx()+1, im.ydim()*im.vy()+1, im.zdim()*im.vz()+1);
+                  double(im.xdim())*im.vx()+1,
+                  double(im.ydim())*im.vy()+1,
+                  double(im.zdim())*im.vz()+1);
   }
 
 private:
