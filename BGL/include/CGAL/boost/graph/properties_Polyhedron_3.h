@@ -24,6 +24,7 @@
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/squared_distance_2_1.h>
+#include <CGAL/number_utils.h>
 #include <boost/shared_ptr.hpp>
 
 #define CGAL_HDS_PARAM_ template < class Traits, class Items, class Alloc> class HDS
@@ -84,23 +85,19 @@ private:
   boost::shared_ptr<Map> map_;
 };
 
-template<typename Handle>
+  template<typename Handle, typename FT>
 struct Wrap_squared
-  : boost::put_get_helper< double, Wrap_squared<Handle> >
+    : boost::put_get_helper< double, Wrap_squared<Handle,FT> >
 {
-  typedef double value_type;
-  typedef double reference;
+  typedef FT value_type;
+  typedef FT reference;
   typedef Handle key_type;
   typedef boost::readable_property_map_tag category;
 
   template<typename E>
-  double
-  // TODO Kernel::FT, this is as bad as the old code, we need to
-  // forward the halfedge type in HDS_edge to extract the kernel here.
-  // Technically, there is also a general implementation for
-  // HalfedgeGraph to prevent duplication in Surface_mesh.
+  FT
   operator[](const E& e) const {
-    return CGAL::squared_distance(e.halfedge()->vertex()->point(), e.halfedge()->opposite()->vertex()->point());
+    return approximate_sqrt(CGAL::squared_distance(e.halfedge()->vertex()->point(), e.halfedge()->opposite()->vertex()->point()));
   }
 };
 
@@ -229,10 +226,9 @@ struct Polyhedron_property_map<boost::edge_weight_t>
   template<class Gt, class I, CGAL_HDS_PARAM_, class A>
   struct bind_
   {
-    typedef internal::Wrap_squared<
-      typename boost::graph_traits<
-        CGAL::Polyhedron_3<Gt, I, HDS, A>
-        >::edge_descriptor > type;
+    typedef typename CGAL::Polyhedron_3<Gt, I, HDS, A>::Traits::FT FT;
+    typedef typename boost::graph_traits<CGAL::Polyhedron_3<Gt, I, HDS, A> >::edge_descriptor edge_descriptor;
+    typedef internal::Wrap_squared<edge_descriptor,FT> type;
     typedef type const_type;
   };
 };

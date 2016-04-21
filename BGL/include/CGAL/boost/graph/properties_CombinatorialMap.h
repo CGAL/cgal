@@ -22,6 +22,7 @@
 #include <CGAL/boost/graph/properties.h>
 #include <CGAL/Unique_hash_map.h>
 #include <CGAL/Linear_cell_complex.h>
+#include <CGAL/number_utils.h>
 
 #define CGAL_LCC_ARGS unsigned int d_, unsigned int ambient_dim, \
              class Traits_, \
@@ -37,18 +38,20 @@ namespace CGAL {
 template<class LCC>
 class LCC_edge_weight_map : public boost::put_get_helper<double, LCC>
 { 
+  typedef typename LCC::Point Point;
+  typedef typename Kernel_traits<Point>::Kernel::FT FT;
 public:
 
-  typedef boost::readable_property_map_tag                                category;
-  typedef double                                                          value_type;
-  typedef double                                                          reference;
+  typedef boost::readable_property_map_tag                         category;
+  typedef FT                                                       value_type;
+  typedef FT                                                       reference;
   typedef typename boost::graph_traits<LCC const>::edge_descriptor key_type;
 
   LCC_edge_weight_map(LCC const& ) {}
 
   reference operator[](key_type const& e) const
   {
-    return CGAL::squared_distance(LCC::point(e), LCC::point(e->opposite()));
+    return approximate_sqrt(CGAL::squared_distance(LCC::point(e), LCC::point(e->opposite())));
   }
 };
 

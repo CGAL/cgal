@@ -695,7 +695,7 @@ namespace CGAL {
     { }
 
     value_type operator[](key_type e) const {
-      return tr.segment(e).squared_length();
+      return approximate_sqrt(tr.segment(e).squared_length());
     }
   };
 
