@@ -38,7 +38,7 @@ Another name for the point type.
 
 /*!
 The weighted point type. It has to be 
-a model of the concept `WeightedPoint`. 
+a model of the concept `Kernel::WeightedPoint_2`. 
 */ 
   typedef unspecified_type Weighted_point_2; 
 
