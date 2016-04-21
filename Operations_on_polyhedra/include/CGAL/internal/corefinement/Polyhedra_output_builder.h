@@ -530,6 +530,7 @@ struct Intersection_polylines{
   const std::vector<Halfedge_handle>& P;
   const std::vector<Halfedge_handle>& Q;
   const std::vector<int>& lengths;
+  boost::dynamic_bitset<> to_skip;
   Intersection_polylines(
     const std::vector<Halfedge_handle>& P_polylines,
     const std::vector<Halfedge_handle>& Q_polylines,
@@ -537,6 +538,7 @@ struct Intersection_polylines{
   ) : P( P_polylines )
     , Q( Q_polylines )
     , lengths( lengths_ )
+    , to_skip(P.size(),false)
   {}
 };
 
@@ -655,6 +657,11 @@ public:
     //remove the simplices
     BOOST_FOREACH(Halfedge_handle h, interior_halfedges)
       hds.edges_erase(h);
+    // There is no shared halfedge between duplicated patches even
+    // if they were before the duplication. Thus the erase that follows is safe.
+    // However remember that vertices were not duplicated which is why their
+    // removal is not handled here (still in use or to be removed in
+    // remove_unused_polylines())
     BOOST_FOREACH(Halfedge_handle h, border_halfedges)
       hds.edges_erase(h);
     BOOST_FOREACH(Face_handle f, facets)
@@ -1099,10 +1106,56 @@ private:
                   patch.interior_halfedges,
                   patch.patch_border_halfedges);
       P_ptr->delegate(modifier);
-      // P_ptr->is_valid() might not be true at this point. For example if two
-      // incident patches are removed, there is a cycle of edges with not facets
-      // on both side (one of the two patches is a coplanar patch).
     }
+  }
+
+  // function used to remove polylines imported or kept that are incident to
+  // a coplanar patch not used for the operation P_ptr is used for storing
+  // the result. We look for edges with halfedges both on the border of
+  // the mesh. The vertices incident only to such edges should be removed.
+  // Here to detect vertices that should be kept, we abuse the fact that
+  // the halfedge to be removed and incident to a vertex that should not be
+  // removed will still have its next pointer set to a halfedge part of
+  // the result.
+  void remove_unused_polylines(
+    Polyhedron* P_ptr,
+    const boost::dynamic_bitset<>& coplanar_patches_to_remove,
+    Patch_container& patches_of_P)
+  {
+    std::set<Vertex_handle> vertices_to_remove;
+    std::set<Halfedge_handle> edges_to_remove;
+    for (std::size_t i=coplanar_patches_to_remove.find_first();
+                     i < coplanar_patches_to_remove.npos;
+                     i = coplanar_patches_to_remove.find_next(i))
+    {
+      Patch_description& patch=patches_of_P[i];
+      BOOST_FOREACH(Halfedge_handle h, patch.patch_border_halfedges)
+      {
+        if (h->is_border() && h->opposite()->is_border()){
+          vertices_to_remove.insert(h->vertex());
+          vertices_to_remove.insert(h->opposite()->vertex());
+          edges_to_remove.insert( h<h->opposite()?h:h->opposite());
+        }
+      }
+    }
+
+    BOOST_FOREACH(Vertex_handle vh, vertices_to_remove)
+    {
+      bool to_remove=true;
+      BOOST_FOREACH(Halfedge_handle h, halfedges_around_target(vh,*P_ptr))
+        if (!h->is_border() || !h->opposite()->is_border())
+        {
+          to_remove=false;
+          // in case the vertex halfedge was one that is going to remove,
+          // update it
+          set_halfedge(vh, h, *P_ptr);
+          break;
+        }
+      if (to_remove)
+        remove_vertex(vh,*P_ptr);
+    }
+    BOOST_FOREACH(Halfedge_handle hh, edges_to_remove)
+      remove_edge(edge(hh,*P_ptr),*P_ptr);
   }
 
   void disconnect_patches_from_polyhedra(
@@ -1219,6 +1272,7 @@ private:
     std::size_t nb_polylines = polylines.lengths.size();
     for( std::size_t i=0; i<nb_polylines; ++i)
     {
+      if (polylines.to_skip.test(i)) continue;
       Halfedge_handle phedge = polylines.P[i];
       Halfedge_handle qhedge = polylines.Q[i];
       int nb_segments = polylines.lengths[i];
@@ -1242,7 +1296,7 @@ private:
     bool reverse_patch_orientation_Q,
     Edge_map& Qhedge_to_Phedge
   ){
-      //clean up patches inside Q
+      //clean up patches not kept
       remove_patches_from_polyhedra(P_ptr, ~patches_of_P_to_keep, patches_of_P);
 
       if (reverse_patch_orientation_P){
@@ -1258,11 +1312,6 @@ private:
         append_Q_patches_to_P<true>(P_ptr, patches_of_Q_to_import, patches_of_Q, Qhedge_to_Phedge);
       else
         append_Q_patches_to_P<false>(P_ptr, patches_of_Q_to_import, patches_of_Q, Qhedge_to_Phedge);
-
-      /// in case the result is empty, there will be no facets in the polyhedron
-      /// but maybe marked halfedges
-      if ( P_ptr->facets_begin()==P_ptr->facets_end() )
-        P_ptr->clear();
   }
 
   void compute_inplace_operation(
@@ -1323,7 +1372,11 @@ private:
 #ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
       #warning do not try to disconnect if the patch is isolated? i.e opposite(border_edge_of_patch)->is_border()
 #endif
-      //disconnect patches inside Q
+      // disconnect patches inside Q
+      // For the patches scheduled to be removed, their patch descriptions
+      // in patches_of_P will be updated so that patch_border_halfedges are
+      // the newly created halfedges within disconnect_patches_from_polyhedra.
+      // Note that disconnected_patches_hedge_to_Qhedge also refers to those halfedges
       disconnect_patches_from_polyhedra(P_ptr, ~patches_of_P_to_keep, patches_of_P,
                                         Phedge_to_Qhedge, disconnected_patches_hedge_to_Qhedge);
 
@@ -1332,15 +1385,6 @@ private:
         append_Q_patches_to_P<true>(P_ptr, patches_of_Q_to_import, patches_of_Q, Qhedge_to_Phedge);
       else
         append_Q_patches_to_P<false>(P_ptr, patches_of_Q_to_import, patches_of_Q, Qhedge_to_Phedge);
-
-#ifdef CGAL_COREFINEMENT_POLYHEDRA_DEBUG
-      #warning this comment is stupid since nothing was removed from P_ptr. \
-               either it should be done at the beginning or it's a copy-paste error.
-#endif
-      /// in case the result is empty, there will be no facets in the polyhedron
-      /// but maybe marked halfedges
-      if ( P_ptr->facets_begin()==P_ptr->facets_end() )
-        P_ptr->clear();
   }
 
   void remove_disconnected_patches(
@@ -1384,6 +1428,7 @@ private:
         internal_IOP::Compare_unik_address<Polyhedron>
       > P_to_O_hedge, Q_to_O_hedge;
     for (std::size_t i=0; i < nb_polylines; ++i)
+      if (!polylines.to_skip.test(i))
         import_polyline(O, polylines.P[i], polylines.Q[i],
                         polylines.lengths[i],
                         P_to_O_hedge, Q_to_O_hedge,
@@ -1400,11 +1445,45 @@ private:
       append_Q_patches_to_P<true>(&O, patches_of_Q_to_import, patches_of_Q, Q_to_O_hedge);
     else
       append_Q_patches_to_P<false>(&O, patches_of_Q_to_import, patches_of_Q, Q_to_O_hedge);
+  }
 
-    /// in case the result is empty, there will be no facets in the polyhedron
-    /// but maybe marked halfedges
-    if ( O.facets_begin()==O.facets_end() )
-      O.clear();
+  // detect if a polyline is incident to two patches that won't be imported
+  // for the current operation (polylines skipt are always incident to a
+  // coplanar patch)
+  void fill_polylines_to_skip(
+    Intersection_polylines& polylines,
+    const std::vector<std::size_t>& P_patch_ids,
+    const std::vector<std::size_t>& Q_patch_ids,
+    const boost::dynamic_bitset<>& patches_of_P_used,
+    const boost::dynamic_bitset<>& patches_of_Q_used )
+  {
+    for (std::size_t i=0;i<polylines.P.size();++i)
+    {
+      Halfedge_handle h_P = polylines.P[i];
+      Halfedge_handle h_Q = polylines.Q[i];
+      bool skip_polyline=true;
+      if (!h_P->is_border()){
+        std::size_t patch_id = P_patch_ids[ get( P_facet_id_pmap, h_P->facet() ) ];
+        if (patches_of_P_used.test(patch_id))
+          skip_polyline=false;
+      }
+      if (skip_polyline && !h_P->opposite()->is_border()){
+        std::size_t patch_id = P_patch_ids[ get( P_facet_id_pmap, h_P->opposite()->facet() ) ];
+        if (patches_of_P_used.test(patch_id))
+          skip_polyline=false;
+      }
+      if (skip_polyline && !h_Q->is_border()){
+        std::size_t patch_id = Q_patch_ids[ get( Q_facet_id_pmap, h_Q->facet() ) ];
+        if (patches_of_Q_used.test(patch_id))
+          skip_polyline=false;
+      }
+      if (skip_polyline && !h_Q->opposite()->is_border()){
+        std::size_t patch_id = Q_patch_ids[ get( Q_facet_id_pmap, h_Q->opposite()->facet() ) ];
+        if (patches_of_Q_used.test(patch_id))
+          skip_polyline=false;
+      }
+      if (skip_polyline) polylines.to_skip.set(i);
+    }
   }
 
 public:
@@ -2016,7 +2095,7 @@ public:
     std::cout << "patches_of_P_used[Q_MINUS_P] " << patches_of_P_used[Q_MINUS_P] << "\n";
     std::cout << "patches_of_Q_used[Q_MINUS_P] " << patches_of_Q_used[Q_MINUS_P] << "\n";
     #endif // CGAL_COREFINEMENT_DEBUG
-    // Schedule the order in which the different boolean operations should
+    // Schedule the order in which the different boolean operations should be
     // done. First operations are those filling polyhedra different
     // from P and Q, then the one modifying P and finally the one
     // modifying Q.
@@ -2044,15 +2123,22 @@ public:
       Polyhedron* ouput_ptr = *desired_output[operation];
       CGAL_assertion(P_ptr!=ouput_ptr && Q_ptr!=ouput_ptr);
 
+      Intersection_polylines polylines(P_polylines, Q_polylines, polyline_lengths);
+      // skip the import of polylines from the border of coplanar patches
+      // not used by the current operation
+      if (coplanar_patches_of_P.any())
+        fill_polylines_to_skip(
+          polylines, P_patch_ids, Q_patch_ids,
+          patches_of_P_used[operation], patches_of_Q_used[operation]
+        );
+
       std::vector<Halfedge_handle> shared_halfedges;
       fill_new_polyhedron(
         *ouput_ptr,
         patches_of_P_used[operation], patches_of_Q_used[operation],
         patches_of_P, patches_of_Q,
         operation == Q_MINUS_P, operation == P_MINUS_Q,
-        Intersection_polylines( P_polylines,
-                                Q_polylines,
-                                polyline_lengths),
+        polylines,
         border_halfedges,
         std::back_inserter(shared_halfedges)
       );
@@ -2072,6 +2158,24 @@ public:
       if ( inplace_operation_Q!=NONE)
       {
         // operation in P with removal (and optinally inside-out) delayed
+        // First backup the border edges of patches to be used
+        Patch_container tmp_patches_of_P(P_ptr,
+          patches_of_P.patch_ids,
+          patches_of_P.facet_id_pmap,
+          patches_of_P.border_halfedges,
+          patches_of_P.patches.size());
+        if (coplanar_patches_of_P.any())
+          for (std::size_t i=coplanar_patches_of_P.find_first();
+                           i < coplanar_patches_of_P.npos;
+                           i = coplanar_patches_of_P.find_next(i))
+         {
+           // we are only interested by patch border halfedges so
+           // squeeze the auto-filling mechanism
+           tmp_patches_of_P.patches[i].is_initialized=true;
+           tmp_patches_of_P.patches[i].patch_border_halfedges=
+             patches_of_P[i].patch_border_halfedges;
+         }
+
         compute_inplace_operation_delay_removal_and_insideout(
           P_ptr,
           patches_of_P_used[inplace_operation_P], patches_of_Q_used[inplace_operation_P],
@@ -2093,8 +2197,17 @@ public:
          remove_disconnected_patches(*P_ptr, patches_of_P, ~patches_of_P_used[inplace_operation_P]);
          if (inplace_operation_P == Q_MINUS_P)
            CGAL::Polygon_mesh_processing::reverse_face_orientations(*P_ptr);
+        // remove unused polylines on the border of coplanar patches not kept
+        if (coplanar_patches_of_Q.any()){
+          remove_unused_polylines(P_ptr,
+                                  ~patches_of_P_used[inplace_operation_P] & coplanar_patches_of_P,
+                                  tmp_patches_of_P);
+          remove_unused_polylines(Q_ptr,
+                                  ~patches_of_Q_used[inplace_operation_Q] & coplanar_patches_of_Q,
+                                  patches_of_Q);
+        }
       }
-      else
+      else{
         compute_inplace_operation(
           P_ptr,
           patches_of_P_used[inplace_operation_P],
@@ -2104,6 +2217,12 @@ public:
           inplace_operation_P == P_MINUS_Q,
           Intersection_polylines(P_polylines, Q_polylines, polyline_lengths)
         );
+        // remove unused polylines on the border of coplanar patches not kept
+        if (coplanar_patches_of_P.any())
+          remove_unused_polylines(P_ptr,
+                                    ~patches_of_P_used[inplace_operation_P] & coplanar_patches_of_P,
+                                    patches_of_P);
+      }
     }
     else
       if ( inplace_operation_Q!=NONE )
@@ -2117,6 +2236,11 @@ public:
                                    inplace_operation_Q==P_MINUS_Q,
                                    inplace_operation_Q==Q_MINUS_P,
                                    Intersection_polylines(Q_polylines, P_polylines, polyline_lengths));
+        // remove unused polylines on the border of coplanar patches not kept
+        if (coplanar_patches_of_Q.any())
+          remove_unused_polylines(Q_ptr,
+                                    ~patches_of_Q_used[inplace_operation_Q] & coplanar_patches_of_Q,
+                                    patches_of_Q);
       }
   }
 };
