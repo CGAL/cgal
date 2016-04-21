@@ -85,6 +85,9 @@ namespace Polygon_mesh_processing {
 *     good quality results. It can even fail to terminate because of cascading vertex
 *     insertions.
 *  \cgalParamEnd
+*  \cgalParamBegin{face_patch_map} a property map with the patch id's associated to the
+     faces of `pmesh`. Instance of a class model of `ReadWritePropertyMap`. It gets
+     updated during the remeshing process while new faces are created.
 * \cgalNamedParamsEnd
 *
 * @sa `split_long_edges()`
