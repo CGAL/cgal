@@ -23,10 +23,10 @@ bool test()
   for ( int i=0; i<20; ++i )
   {
     CMap::Dart_handle d1=map.darts().begin();
-    while ( !map.template is_free<3>(d1) ) ++d1;
+    while ( !map.is_free<3>(d1) ) ++d1;
     CMap::Dart_handle d2=map.darts().begin();
-    while ( !map.template is_sewable<3>(d1, d2) ) ++d2;
-    map.template sew<3>(d1,d2);
+    while ( !map.is_sewable<3>(d1, d2) ) ++d2;
+    map.sew<3>(d1,d2);
 
     if (CGAL::is_face_combinatorial_polygon(map, d1, 6))
     {}
