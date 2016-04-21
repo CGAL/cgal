@@ -284,8 +284,14 @@ void compute_parallel_clusters (PlaneContainer& planes,
           while(propagation);
 
           if (symmetry_direction != CGAL::NULL_VECTOR)
-            clu.cosangle_symmetry = std::fabs(symmetry_direction * clu.normal);
-
+            {
+              clu.cosangle_symmetry = symmetry_direction * clu.normal;
+              if (clu.cosangle_symmetry < 0.)
+                {
+                  clu.normal = -clu.normal;
+                  clu.cosangle_symmetry = -clu.cosangle_symmetry;
+                }
+            }
         }
     }
 
@@ -295,7 +301,8 @@ void compute_parallel_clusters (PlaneContainer& planes,
 template <typename Traits,
           typename PlaneClusterContainer>
 void cluster_symmetric_cosangles (PlaneClusterContainer& clusters,
-                                  typename Traits::FT tolerance_cosangle)
+                                  typename Traits::FT tolerance_cosangle,
+                                  typename Traits::FT tolerance_cosangle_ortho)
 {
   typedef typename Traits::FT FT;
   
@@ -317,7 +324,7 @@ void cluster_symmetric_cosangles (PlaneClusterContainer& clusters,
             {
               if (list_cluster_index[j] == static_cast<std::size_t>(-1)
                   && std::fabs (clusters[j].cosangle_symmetry -
-                                mean / mean_area) < tolerance_cosangle)
+                                mean / mean_area) < tolerance_cosangle_ortho)
                 {
                   list_cluster_index[j] = mean_index;
                   mean_area += clusters[j].area;
@@ -332,7 +339,7 @@ void cluster_symmetric_cosangles (PlaneClusterContainer& clusters,
 
   for (std::size_t i = 0; i < cosangle_centroids.size(); ++ i)
     {
-      if (cosangle_centroids[i] < tolerance_cosangle)
+      if (cosangle_centroids[i] < tolerance_cosangle_ortho)
         cosangle_centroids[i] = 0;
       else if (cosangle_centroids[i] > 1. - tolerance_cosangle)
         cosangle_centroids[i] = 1;
@@ -657,7 +664,7 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
       //cosangle_centroids and the centroid index of each cluster in
       //list_cluster_index
       internal::PlaneRegularization::cluster_symmetric_cosangles<EfficientRANSACTraits>
-        (clusters, tolerance_cosangle);
+        (clusters, tolerance_cosangle, tolerance_cosangle_ortho);
     }
   
   //find subgraphs of mutually orthogonal clusters (store index of
@@ -672,7 +679,6 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
     {
 
       Vector vec_reg = clusters[i].normal;
-      
       for (std::size_t j = 0; j < clusters[i].planes.size(); ++ j)
         {
           std::size_t index_prim = clusters[i].planes[j];
@@ -681,7 +687,7 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
             vec_reg=-vec_reg;
           Plane plane_reg(pt_reg,vec_reg);
 
-          if( std::fabs(planes[index_prim]->plane_normal () * plane_reg.orthogonal_vector ()) > 1. - tolerance_cosangle)
+          if( std::fabs(planes[index_prim]->plane_normal () * vec_reg) > 1. - tolerance_cosangle)
             planes[index_prim]->update (plane_reg);
         }
     }
