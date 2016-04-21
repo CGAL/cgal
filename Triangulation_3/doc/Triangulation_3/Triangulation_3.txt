@@ -143,8 +143,7 @@ and displacements of points.
 The class `Regular_triangulation_3` implements incremental regular
 triangulations, also known as weighted Delaunay triangulations.
 
-Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^3\f$. Let
-\f$ {p}^{(w)}=(p,w_p), p\in\mathbb{R}^3, w_p\in\mathbb{R}\f$ and 
+Let\f$ {p}^{(w)}=(p,w_p), p\in\mathbb{R}^3, w_p\in\mathbb{R}\f$ and 
 \f$ {z}^{(w)}=(z,w_z), z\in\mathbb{R}^3, w_z\in\mathbb{R}\f$ be two weighted points. 
 A weighted point
 \f$ {p}^{(w)}=(p,w_p)\f$ can also be seen as a sphere of center \f$ p\f$ and
@@ -152,8 +151,9 @@ radius \f$ \sqrt{w_p}\f$.
 The <I>power product</I> between \f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$ is
 defined as 
 \f[ \Pi({p}^{(w)},{z}^{(w)}) = {\|{p-z}\|^2-w_p-w_z} \f]
-where \f$ \|{p-z}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ z\f$. 
-\f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$
+where \f$ \|{p-z}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ z\f$.
+
+The weighted points \f$ {p}^{(w)}\f$ and \f$ {z}^{(w)}\f$
 are said to be <I>orthogonal</I> iff \f$ \Pi{({p}^{(w)},{z}^{(w)})}
 = 0\f$ (see \cgalFigureRef{Triangulation3figortho)}.
 
@@ -168,6 +168,8 @@ called the <I>power circle</I>. The
 <I>power segment</I> will denote the weighted point orthogonal to
 two weighted points on the line defined by these two points.
 
+
+Let \f$ {S}^{(w)}\f$ be a set of weighted points in \f$ \mathbb{R}^3\f$. 
 A sphere \f$ {z}^{(w)}\f$ is said to be
 <I>regular</I> if \f$ \forall {p}^{(w)}\in{S}^{(w)},
 \Pi{({p}^{(w)},{z}^{(w)})}\geq 0\f$.

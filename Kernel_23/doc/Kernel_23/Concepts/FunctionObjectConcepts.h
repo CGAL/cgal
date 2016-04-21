@@ -923,6 +923,7 @@ public:
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
   \sa `CGAL::Weighted_point_2<Kernel>`
+  \sa `ComputePowerProduct_3` for the definition of power distance.
 
 */
 class ComparePowerDistance_2 {
@@ -933,7 +934,10 @@ public:
 
   /*!
     compares the power distance between `p` and `q` to the power distance between `p` and `r`.
+
   */ 
+
+
   Comparison_result operator()(const Kernel::Point_2& p, 
                                const Kernel::Weighted_point_2& q, 
                                const Kernel::Weighted_point_2& r); 
@@ -950,7 +954,7 @@ public:
   \cgalRefines `AdaptableFunctor` (with three arguments) 
 
   \sa `CGAL::Weighted_point_3<Kernel>` 
-
+  \sa `ComputePowerProduct_3` for the definition of power distance.
 */
 class ComparePowerDistance_3 {
 public:
@@ -961,6 +965,7 @@ public:
 
   /*!
     compares the power distance between `p` and `q` to the power distance between `p` and `r`.
+
   */ 
   Comparison_result operator()(const Kernel::Point_3& p, 
                                const Kernel::Weighted_point_3& q, 
@@ -2337,19 +2342,20 @@ public:
   \cgalConcept
 
   \sa `CGAL::Weighted_point_3<Kernel>` 
+  \sa `ComputePowerProduct_3` for the definitions of power distance and orthogonal.
 
   \cgalRefines `AdaptableFunctor` (with five arguments)
 
 */
 class ComputePowerDistanceToPowerSphere_3 {
-
+public:
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
 
   /*!
     returns the squared radius of the sphere centered in `t`
-// and orthogonal to the sphere orthogonal to `p`, `q`, `r` ,and `s`. 
+    and orthogonal to the sphere orthogonal to `p`, `q`, `r` ,and `s`. 
   */ 
   Kernel::FT operator()(const Kernel::Weighted_point_3& p, 
                         const Kernel::Weighted_point_3& q, 
@@ -2371,16 +2377,35 @@ class ComputePowerDistanceToPowerSphere_3 {
 
 */
 class ComputePowerProduct_3 {
-
+public:
   /// \name Operations
   /// A model of this concept must provide:
   /// @{
 
   /*!
-    returns the .... of `p` and `q`. 
+    returns the power product of `pw` and `qw`. 
+    Let\f$ {p}^{(w)}=(p,w_p), p\in\mathbb{R}^3, w_p\in\mathbb{R}\f$ and 
+    \f$ {q}^{(w)}=(q,w_q), q\in\mathbb{R}^3, w_q\in\mathbb{R}\f$ be two weighted points. 
+    
+    The <I>power product</I>, also called <i>power distance</i> 
+    between \f$ {p}^{(w)}\f$ and \f$ {q}^{(w)}\f$ is defined as 
+    \f[ \Pi({p}^{(w)},{q}^{(w)}) = {\|{p-q}\|^2-w_p-w_q} \f]
+    where \f$ \|{p-q}\|\f$ is the Euclidean distance between \f$ p\f$ and \f$ q\f$.
+
+
+    The weighted points \f$ {p}^{(w)}\f$ and \f$ {q}^{(w)}\f$
+    are said to be <I>orthogonal</I> iff \f$ \Pi{({p}^{(w)},{q}^{(w)})}
+    = 0\f$.
+    
+    Four weighted points have a unique common orthogonal weighted point
+    called the <I>power sphere</I>. The weighted point orthogonal to
+    three weighted points in the plane defined by these three points is
+    called the <I>power circle</I>. The
+    <I>power segment</I> will denote the weighted point orthogonal to
+    two weighted points on the line defined by these two points.
   */ 
-  Kernel::FT operator()(const Kernel::Weighted_point_3& p, 
-                        const Kernel::Weighted_point_3& q) const; 
+  Kernel::FT operator()(const Kernel::Weighted_point_3& pw, 
+                        const Kernel::Weighted_point_3& qw) const; 
 
   /// @}
 };
@@ -7907,7 +7932,7 @@ public:
   \cgalRefines `AdaptableFunctor` (with five arguments) 
 
   \sa `CGAL::Weighted_point_3<Kernel>`
-
+  \sa `ComputePowerProduct_3` for the definition of orthogonal.
 */
 class InSmallestOrthogonalSphere_3 {
 public:
@@ -7917,7 +7942,7 @@ public:
   /// @{
 
   /*!
-    return the sign of the power test of  last weighted point
+    return the sign of the power test of the last weighted point
     with respect to the smallest sphere orthogonal to the others.
   */ 
   CGAL::Sign
@@ -8648,14 +8673,21 @@ public:
   \ingroup PkgKernel23ConceptsFunctionObjects
   \cgalConcept
 
+  \sa `CGAL::Weighted_point_2<Kernel>`
+  \sa `ComputePowerProduct_3` for the definition of power distance.
+  
 */
   class PowerSideOfPowerCircle_2 {
   public:
 
-/*!
-power test for points `p`, `q`, `r` and `s`. 
-\pre the bare points corresponding to `p`, `q`, `r` are not collinear. 
-*/
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
+    /*!
+      power test for points `p`, `q`, `r` and `s`. 
+      \pre the bare points corresponding to `p`, `q`, `r` are not collinear. 
+    */
 
     Oriented_side operator() ( const Kernel::Weighted_point_2& p,
                                const Kernel::Weighted_point_2& q,
@@ -8664,19 +8696,20 @@ power test for points `p`, `q`, `r` and `s`.
 
 /*!
   degenerated power test for collinear points  `p`, `q`, `r`. 
-  \pre the bare points corresponding to `p`, `q`, `r` are collinear and `p != q`. 
+  \pre  `p` and `q` have different bare points.
 */
     Oriented_side operator() (  const Kernel::Weighted_point_2& p,
                                 const Kernel::Weighted_point_2& q,
                                 const Kernel::Weighted_point_2& r);
 /*!
 degenerated power test for weighted points 
-`p` and `q` whose corresponding bare-points are identical. 
-\pre the bare points corresponding to `p` and `q` are identical. 
+`p` and `q` whose corresponding bare points are identical. 
+\pre `p` and `q` have equal bare points. 
 */
 Oriented_side operator() ( Wconst Kernel::eighted_point_2& p,
                            const Kernel::Weighted_point_2& q); 
 
+  /// @}
 
   };
 
@@ -8687,6 +8720,10 @@ Oriented_side operator() ( Wconst Kernel::eighted_point_2& p,
 */
   class PowerSideOfPowerSphere_3 {
   public:
+  /// \name Operations
+  /// A model of this concept must provide:
+  /// @{
+
      /*!
 Let \f$ {z(p,q,r,s)}^{(w)}\f$ be the power sphere of the weighted points 
 \f$ (p,q,r,s)\f$. Returns 
@@ -8700,9 +8737,9 @@ Let \f$ {z(p,q,r,s)}^{(w)}\f$ be the power sphere of the weighted points
 
 - `ON_POSITIVE_SIDE` if `t` lies inside this oriented sphere. 
 
-\pre `p, q, r, s` are not coplanar. 
-Note that with this definition, if all the points have a weight equal 
-to 0, then 
+\pre `p, q, r, s` are not coplanar.
+ 
+If all the points have a weight equal to 0, then 
 `power_side_of_power_sphere_3(p,q,r,s,t)` = `side_of_oriented_sphere(p,q,r,s,t)`. 
  
       */ 
@@ -8716,7 +8753,8 @@ to 0, then
   /*!
     Analogous to the previous method, for coplanar points, 
     with the power circle \f$ {z(p,q,r)}^{(w)}\f$. 
-    \pre `p, q, r` are not collinear and `p, q, r, t` are coplanar. 
+    \pre `p, q, r` are not collinear.
+ 
     If all the points have a weight equal to 0, then 
     `power_test_3(p,q,r,t)` = `side_of_oriented_circle(p,q,r,t)`. 
   */
@@ -8728,7 +8766,8 @@ to 0, then
   /*!
     which is the same for collinear points, where \f$ {z(p,q)}^{(w)}\f$ is the 
     power segment of `p` and `q`. 
-    \pre `p` and `q` have different bare points, and `p, q, t` are collinear. 
+    \pre `p` and `q` have different bare points.
+ 
     If all points have a weight equal to 0, then 
     `power_side_of_power_sphere_3(p,q,t)` gives the same answer as the kernel predicate 
     `s(p,q).has_on(t)` would give, where `s(p,q)` denotes the 
@@ -8750,6 +8789,7 @@ to 0, then
                             const Kernel::Weighted_point_3& q) const;
 
 
+  /// @}
   };
 
 
