@@ -111,7 +111,7 @@ public:
   Implicit_vector_to_labeled_function_wrapper(const std::vector<Function_*>& v)
     : function_vector_(v)
   {
-    if ( v.size() < 8 )
+    if ( v.size() > 8 )
     {
       CGAL_error_msg("We support at most 8 functions !");
     }
