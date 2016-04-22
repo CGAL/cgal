@@ -36,6 +36,11 @@
 
 namespace CGAL {
 
+// VC++ does not consider put and get for plain pointers
+// when identifying the best match for overloads
+
+using ::put;
+using ::get;
 
 /// \cond SKIP_DOXYGEN
 
