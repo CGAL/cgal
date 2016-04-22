@@ -31,7 +31,7 @@ to compute the intersection of two segments.
 and has then to be also a model of the concept 
 `ConstrainedTriangulationTraits_2`. 
 
-\tparam Tds must be a model of `TriangulationDataStructure_2`. 
+\tparam Tds must be a model of `TriangulationDataStructure_2`or `Default`.
 
 \tparam Itag allows to select if intersecting constraints are supported and how they are handled.
 - `No_intersection_tag` if intersections of 

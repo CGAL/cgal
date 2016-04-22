@@ -90,7 +90,7 @@ It has then to be a model of the concept
 
 
 \tparam Tds must be a model 
-of the concept `TriangulationDataStructure_2`. 
+of the concept `TriangulationDataStructure_2` or `Default`.
 
 \tparam Itag is the intersection tag 
 which serves to choose between the different 
@@ -127,7 +127,7 @@ the default for
 and the default for the 
 triangulation data structure parameter is the class 
 `Triangulation_data_structure_2 < Triangulation_vertex_base_2<Gt>, Constrained_triangulation_face_base_2<Gt> >`. 
-The default intersection tag is `No_intersection_tag`. 
+The default intersection tag is `No_intersection_tag`.
 
 \sa `CGAL::Triangulation_2<Traits,Tds>`
 \sa `TriangulationDataStructure_2`

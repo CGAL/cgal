@@ -28,7 +28,7 @@
 #include <CGAL/Triangulation_2.h> 
 #include <CGAL/Constrained_triangulation_face_base_2.h>
 #include <CGAL/iterator.h>
-
+#include <CGAL/Default.h>
 #include <CGAL/intersections.h>
 #include <CGAL/squared_distance_2.h>
 
@@ -40,16 +40,24 @@ struct Exact_predicates_tag{}; // to be used with filtered exact number
 
 
 template < class Gt, 
-           class Tds = Triangulation_data_structure_2 <
-                       Triangulation_vertex_base_2<Gt>,
-		       Constrained_triangulation_face_base_2<Gt> >, 
-           class Itag = No_intersection_tag >
-class Constrained_triangulation_2  : public Triangulation_2<Gt,Tds>
+           class Tds_ = Default ,
+           class Itag_ = Default >
+class Constrained_triangulation_2  
+  : public Triangulation_2<Gt,typename Default::Get< Tds_,
+                                                     Triangulation_data_structure_2 <
+                                                       Triangulation_vertex_base_2<Gt>,
+                                                       Constrained_triangulation_face_base_2<Gt> > >::type >
 {
 
 public:
+  typedef typename Default::Get<Tds_, Triangulation_data_structure_2 <
+                                        Triangulation_vertex_base_2<Gt>,
+                                        Constrained_triangulation_face_base_2<Gt> > >::type Tds;
+
+  typedef typename Default::Get<Itag_, No_intersection_tag>::type Itag;
+
   typedef Triangulation_2<Gt,Tds> Triangulation;
-  typedef Constrained_triangulation_2<Gt,Tds,Itag>  Constrained_triangulation;
+  typedef Constrained_triangulation_2<Gt,Tds_,Itag_>  Constrained_triangulation;
   
   typedef typename Triangulation::Edge Edge;
   typedef typename Triangulation::Vertex Vertex;
