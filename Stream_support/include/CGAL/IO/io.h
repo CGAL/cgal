@@ -371,7 +371,7 @@ void eat_white_space(std::istream &is)
     if (c== std::istream::traits_type::eof())
       return;
     else {
-      std::istream::char_type cc= c;
+      std::istream::char_type cc= static_cast<std::istream::char_type>(c);
       if ( std::isspace(cc, std::locale::classic()) ) {
         is.get();
         // since peek succeeded, this should too
@@ -387,9 +387,9 @@ void eat_white_space(std::istream &is)
   inline
   bool is_space (const std::istream& /*is*/, std::istream::int_type c)
   {
-    std::istream::char_type cc= c;
     return (c == std::istream::traits_type::eof()) ||
-           std::isspace(cc, std::locale::classic() );
+      std::isspace(static_cast<std::istream::char_type>(c),
+                   std::locale::classic() );
   }
 
   inline
@@ -401,8 +401,9 @@ void eat_white_space(std::istream &is)
   inline
   bool is_digit (const std::istream& /*is*/, std::istream::int_type c)
   {
-    std::istream::char_type cc= c;
-    return std::isdigit(cc, std::locale::classic() );
+    CGAL_assertion(c != std::istream::traits_type::eof());
+    return std::isdigit(static_cast<std::istream::char_type>(c),
+                        std::locale::classic() );
   }
 
   inline std::istream::int_type peek(std::istream& is)
