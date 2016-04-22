@@ -159,14 +159,26 @@ namespace Polygon_mesh_processing {
     typedef typename boost::property_map<typename internal::Dummy_PM,
                                               CGAL::face_index_t>::type   Unset_FIMap;
 
-    if (boost::is_same<FIMap, Unset_FIMap>::value)
+    if (boost::is_same<FIMap, Unset_FIMap>::value || boost::size(faces) == 1)
     {
       //face index map is not given in named parameters, nor as an internal property map
       return internal::border_halfedges_impl(faces, out, pmesh);
     }
+
     //face index map given as a named parameter, or as an internal property map
     FIMap fim = choose_param(get_param(np, face_index),
                              get(CGAL::face_index, pmesh));
+
+    //make a minimal check that it's properly initialized :
+    //if the 2 first faces have the same id, we know the property map is not initialized
+    typename boost::range_iterator<const FaceRange>::type it = boost::const_begin(faces);
+    if (get(fim, *it++) == get(fim, *it))
+    {
+      std::cerr << "WARNING : the internal property map for CGAL::face_index_t" << std::endl
+                << "          is not properly initialized." << std::endl
+                << "          Initialize it before calling border_halfedges()" << std::endl;
+    }
+
     return internal::border_halfedges_impl(faces, fim, out, pmesh);
   }
 
