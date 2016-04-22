@@ -111,6 +111,11 @@ void ImageIO_free(void *m) {
 
 
 
+unsigned int ImageIO_limit_len(size_t to_be_read)
+{
+  return (unsigned int)(std::min)(to_be_read, size_t(1u<<30));
+}
+
 /* mimics fwrite() function.
    According to _openWriteImage(), openMode will has one 
    of the following value:
@@ -120,6 +125,9 @@ void ImageIO_free(void *m) {
 */
 CGAL_INLINE_FUNCTION
 size_t ImageIO_write(const _image *im, const void *buf, size_t len) {
+  size_t to_be_written = len;
+  int l = -1;
+  char *b = (char*)buf;
 
   switch(im->openMode) {
   default :
@@ -127,23 +135,40 @@ size_t ImageIO_write(const _image *im, const void *buf, size_t len) {
     return 0;
   case OM_STD :
 #ifdef CGAL_USE_ZLIB
-    return gzwrite(im->fd, (void *) buf, len);
+    while ( (to_be_written > 0) && ((l = gzwrite(im->fd, (void *) b, ImageIO_limit_len(to_be_written))) > 0) ) {
+      to_be_written -= l;
+      b += l;
+    }
 #else 
-    return fwrite(buf, 1, len, im->fd);
+    while ( (to_be_written > 0) && ((l = fwrite( b, 1, ImageIO_limit_len(to_be_written), im->fd )) > 0) ) {
+      to_be_written -= l;
+      b += l;
+    }
 #endif
+    return ( len - to_be_written );
 #ifdef CGAL_USE_ZLIB
   case OM_GZ :
-    return gzwrite(im->fd, (void *) buf, len);
+    while ( (to_be_written > 0) && ((l = gzwrite(im->fd, (void *) b, ImageIO_limit_len(to_be_written))) > 0) ) {
+      to_be_written -= l;
+      b += l;
+    }
+    if(l<0)
+    {
+      int errnum;
+      fprintf(stderr, "zlib error: %s\n", gzerror(im->fd, &errnum));
+    }
+    return ( len - to_be_written );
+#else
+  case OM_FILE :
+    while ( (to_be_written > 0) && ((l = fwrite( b, 1, ImageIO_limit_len(to_be_written), im->fd )) > 0) ) {
+      to_be_written -= l;
+      b += l;
+    }
+    return ( len - to_be_written );
 #endif
-  case OM_FILE:
-    return fwrite(buf, 1, len, (FILE*)im->fd);
   }
-  //return 0;
-}
 
-size_t ImageIO_limit_read(size_t to_be_read)
-{
-  return (std::min)(to_be_read, size_t(1u<<30));
+  //return 0;
 }
 
 /* mimics fread() function.
@@ -165,12 +190,12 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
     return 0;
   case OM_STD :
 #ifdef CGAL_USE_ZLIB
-    while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, ImageIO_limit_read(to_be_read))) > 0) ) {
+    while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, ImageIO_limit_len(to_be_read))) > 0) ) {
       to_be_read -= l;
       b += l;
     }
 #else 
-    while ( (to_be_read > 0) && ((l = fread( b, 1, ImageIO_limit_read(to_be_read), im->fd )) > 0) ) {
+    while ( (to_be_read > 0) && ((l = fread( b, 1, ImageIO_limit_len(to_be_read), im->fd )) > 0) ) {
       to_be_read -= l;
       b += l;
     }
@@ -178,7 +203,7 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
     return ( len - to_be_read );
 #ifdef CGAL_USE_ZLIB
   case OM_GZ :
-    while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, ImageIO_limit_read(to_be_read))) > 0) ) {
+    while ( (to_be_read > 0) && ((l = gzread(im->fd, (void *) b, ImageIO_limit_len(to_be_read))) > 0) ) {
       to_be_read -= l;
       b += l;
     }
@@ -190,7 +215,7 @@ size_t ImageIO_read(const _image *im, void *buf, size_t len)
     return ( len - to_be_read );
 #else
   case OM_FILE :
-    while ( (to_be_read > 0) && ((l = fread( b, 1, ImageIO_limit_read(to_be_read), im->fd )) > 0) ) {
+    while ( (to_be_read > 0) && ((l = fread( b, 1, ImageIO_limit_len(to_be_read), im->fd )) > 0) ) {
       to_be_read -= l;
       b += l;
     }
@@ -240,7 +265,7 @@ char *ImageIO_gets( const _image *im, char *str, int size )
 
 
 CGAL_INLINE_FUNCTION
-int ImageIO_seek( const _image *im, long offset, int whence ) {
+long ImageIO_seek( const _image *im, long offset, int whence ) {
   switch(im->openMode) {
   case OM_CLOSE :
   default :
@@ -790,7 +815,7 @@ CGAL_INLINE_FUNCTION
 int _writeImage(_image *im, const char *name_to_be_written ) {
 
   int r = ImageIO_NO_ERROR;
-  int length = 0;
+  std::size_t length = 0;
   char *name = NULL;
   char *baseName = NULL;
 
@@ -814,7 +839,7 @@ int _writeImage(_image *im, const char *name_to_be_written ) {
   if ( name == NULL ) {
     im->imageFormat = InrimageFormat;
   } else {
-    int i,extLength;
+    std::size_t i,extLength;
     PTRIMAGE_FORMAT f;
     char ext[IMAGE_FORMAT_NAME_LENGTH];
     char *ptr;
@@ -1054,11 +1079,11 @@ static void _swapImageData( _image *im )
   unsigned char *ptr1, *ptr2, b[8];
   unsigned short int si, *ptr3, *ptr4;
   unsigned int        i, *ptr5, *ptr6;
-  int size, length;
+  std::size_t size, length;
   
   if( _getEndianness() != im->endianness) {
 
-    size = im->xdim * im->ydim * im->zdim * im->vdim * im->wdim;
+    size = std::size_t(im->xdim) * im->ydim * im->zdim * im->vdim * im->wdim;
     if ( size <= 0 ) return;
 
     length = size / im->wdim;

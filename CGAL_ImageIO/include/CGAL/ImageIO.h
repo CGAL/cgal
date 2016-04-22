@@ -516,7 +516,7 @@ CGAL_IMAGEIO_EXPORT char *ImageIO_gets( const _image *im, char *str, int size );
 
 /** replaces fseek function
  */
-CGAL_IMAGEIO_EXPORT int ImageIO_seek( const _image *im, long offset, int whence );
+CGAL_IMAGEIO_EXPORT long ImageIO_seek( const _image *im, long offset, int whence );
 
 /** replaces ferror function
  */

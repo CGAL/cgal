@@ -61,7 +61,7 @@ void Image_3::gl_draw(const float point_size,
   glColor3ub(r,g,b);
   glBegin(GL_POINTS);
   unsigned char *pData = (unsigned char*)image_ptr->data;
-  unsigned int xy = image_ptr->xdim * image_ptr->ydim;
+  std::size_t xy = image_ptr->xdim * image_ptr->ydim;
   for(unsigned int i=0;i<image_ptr->xdim;i+=5)
     for(unsigned int j=0;j<image_ptr->ydim;j+=5)
       for(unsigned int k=0;k<image_ptr->zdim;k+=5)

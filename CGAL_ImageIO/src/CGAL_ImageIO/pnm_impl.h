@@ -565,9 +565,9 @@ int writePgmImage(char *name,_image *im  )
   ImageIO_write( im, string, strlen( string ) );
 
   if ( im->dataMode == DM_ASCII ) {
-    int i, j, n, size;
+    std::size_t i, j, n, size;
     char *str = (char*)ImageIO_alloc( _LGTH_STRING_+1 );
-    size = im->xdim * im->ydim * im->zdim * im->vdim;
+    size = std::size_t(im->xdim) * im->ydim * im->zdim * im->vdim;
     n = ( im->xdim < 16 ) ? im->xdim : 16;
     i = 0;
     switch( im->wdim ) {

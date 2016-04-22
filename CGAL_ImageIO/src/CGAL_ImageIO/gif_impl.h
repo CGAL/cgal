@@ -134,7 +134,7 @@ int   gif89 = 0;
   byte ch, ch1;
   byte *ptr, *ptr1;
   int i, block;
-  int npixels, maxpixels, aspect, filesize;
+  int npixels, maxpixels, aspect;
   float normaspect;
   int OutCount = 0,		/* Decompressor output 'stack count' */
     RWidth, RHeight,		/* screen dimensions */
@@ -186,7 +186,7 @@ int   gif89 = 0;
   }
   /* find the size of the file */
   fseek(fp, 0L, 2);
-  filesize = ftell(fp);
+  long filesize = ftell(fp);
   fseek(fp, 0L, 0);
 
  /* the +256's are so we can read truncated GIF files without fear of 

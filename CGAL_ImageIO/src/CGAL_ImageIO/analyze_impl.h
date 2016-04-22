@@ -790,9 +790,9 @@ writeAnalyzeHeader( const _image* im )
 /* Writes the given image body in an already opened file.*/
 CGAL_INLINE_FUNCTION
 int writeAnalyzeData(const _image *im) {
-  unsigned int lineSize = im->wdim * im->xdim * im->vdim ;
-  unsigned long size = lineSize * im->ydim * im->zdim;
-  unsigned int nwrt ;
+  std::size_t lineSize = std::size_t(im->wdim) * im->xdim * im->vdim ;
+  std::size_t size = lineSize * im->ydim * im->zdim;
+  std::size_t nwrt ;
 
   if(im->openMode != OM_CLOSE) {
 
