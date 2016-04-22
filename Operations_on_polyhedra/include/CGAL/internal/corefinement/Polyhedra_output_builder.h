@@ -367,7 +367,7 @@ struct Surface_extension_helper<Polyhedron, false>
 
   Halfedge_handle get_hedge(Halfedge_handle qhedge)
   {
-    CGAL_assertion( Qhedge_to_Phedge.find(qhedge)!=Qhedge_to_Phedge.end() );
+    CGAL_assertion( Qhedge_to_Phedge.count(qhedge) );
     std::pair<Halfedge_handle, Halfedge_handle> key_and_value =
       *Qhedge_to_Phedge.find(qhedge);
     return key_and_value.first == qhedge
@@ -1377,6 +1377,8 @@ private:
       // in patches_of_P will be updated so that patch_border_halfedges are
       // the newly created halfedges within disconnect_patches_from_polyhedra.
       // Note that disconnected_patches_hedge_to_Qhedge also refers to those halfedges
+      //init the map with the previously filled one (needed when reusing patches in two operations)
+      disconnected_patches_hedge_to_Qhedge=Phedge_to_Qhedge;
       disconnect_patches_from_polyhedra(P_ptr, ~patches_of_P_to_keep, patches_of_P,
                                         Phedge_to_Qhedge, disconnected_patches_hedge_to_Qhedge);
 
@@ -2176,6 +2178,15 @@ public:
              patches_of_P[i].patch_border_halfedges;
          }
 
+        // force the initialization of the patches of P used
+        // for the operation in Q before P is modified
+        for (std::size_t i=patches_of_P_used[inplace_operation_Q].find_first();
+                         i < patches_of_P_used[inplace_operation_Q].npos;
+                         i = patches_of_P_used[inplace_operation_Q].find_next(i))
+        {
+          patches_of_P[i];
+        }
+        // Operation in P: disconnect patches not use and append the one from Q
         compute_inplace_operation_delay_removal_and_insideout(
           P_ptr,
           patches_of_P_used[inplace_operation_P], patches_of_Q_used[inplace_operation_P],
@@ -2184,7 +2195,7 @@ public:
           Intersection_polylines(P_polylines, Q_polylines, polyline_lengths)
           , disconnected_patches_hedge_to_Qhedge
         );
-        // operation in Q
+        // Operation in Q: discard patches and append the one from Q
         CGAL_assertion( *desired_output[inplace_operation_Q] == Q_ptr );
         compute_inplace_operation( Q_ptr,
                                    patches_of_Q_used[inplace_operation_Q],
