@@ -418,8 +418,7 @@ Scene_polyhedron_item::compute_normals_and_vertices(const bool colors_only) cons
               color_facets.push_back(colors_[this_patch_id-m_min_patch_id].blueF());
             }
             if (colors_only)
-              if (colors_only)
-                continue;
+              continue;
 
             // If Flat shading:1 normal per polygon added once per vertex
             push_back_xyz(n, normals_flat);
