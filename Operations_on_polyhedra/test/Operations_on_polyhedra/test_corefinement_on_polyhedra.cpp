@@ -121,51 +121,51 @@ void run(char* P_fname, char* Q_fname, int k=-1)
 
   // no P nor Q
   scenarios.push_back( CGAL::make_array(&W, &X, &Y, &Z) );
-  scenarios_str.push_back( "NNNN" );
+  scenarios_str.push_back( "NNNN" ); // #0
   // P for union
   scenarios.push_back( CGAL::make_array(&P, &Q, &X, &Y) );
   scenarios.push_back( CGAL::make_array(&P, &X, &Q, &Y) );
   scenarios.push_back( CGAL::make_array(&P, &X, &Y, &Q) );
   scenarios.push_back( CGAL::make_array(&P, &X, &Y, &Z) );
   scenarios.push_back( CGAL::make_array(&Q, &X, &Y, &Z) );
-  scenarios_str.push_back( "PQNN" );
-  scenarios_str.push_back( "PNQN" );
-  scenarios_str.push_back( "PNNQ" );
-  scenarios_str.push_back( "PNNN" );
-  scenarios_str.push_back( "QNNN" );
+  scenarios_str.push_back( "PQNN" ); // #1
+  scenarios_str.push_back( "PNQN" ); // #2
+  scenarios_str.push_back( "PNNQ" ); // #3
+  scenarios_str.push_back( "PNNN" ); // #4
+  scenarios_str.push_back( "QNNN" ); // #5
   // P for intersection
   scenarios.push_back( CGAL::make_array(&Q, &P, &X, &Y) );
   scenarios.push_back( CGAL::make_array(&X, &P, &Q, &Y) );
   scenarios.push_back( CGAL::make_array(&X, &P, &Y, &Q) );
   scenarios.push_back( CGAL::make_array(&X, &P, &Y, &Z) );
   scenarios.push_back( CGAL::make_array(&X, &Q, &Y, &Z) );
-  scenarios_str.push_back( "QPNN" );
-  scenarios_str.push_back( "NPQN" );
-  scenarios_str.push_back( "NPNQ" );
-  scenarios_str.push_back( "NPNN" );
-  scenarios_str.push_back( "NQNN" );
+  scenarios_str.push_back( "QPNN" ); // #6
+  scenarios_str.push_back( "NPQN" ); // #7
+  scenarios_str.push_back( "NPNQ" ); // #8
+  scenarios_str.push_back( "NPNN" ); // #9
+  scenarios_str.push_back( "NQNN" ); // #10
   // P for P-Q
   scenarios.push_back( CGAL::make_array(&Q, &X, &P, &Y) );
   scenarios.push_back( CGAL::make_array(&X, &Q, &P, &Y) );
   scenarios.push_back( CGAL::make_array(&X, &Y, &P, &Q) );
   scenarios.push_back( CGAL::make_array(&X, &Y, &P, &Z) );
   scenarios.push_back( CGAL::make_array(&X, &Y, &Q, &Z) );
-  scenarios_str.push_back( "QNPN" );
-  scenarios_str.push_back( "NQPN" );
-  scenarios_str.push_back( "NNPQ" );
-  scenarios_str.push_back( "NNPN" );
-  scenarios_str.push_back( "NNQN" );
+  scenarios_str.push_back( "QNPN" ); // #11
+  scenarios_str.push_back( "NQPN" ); // #12
+  scenarios_str.push_back( "NNPQ" ); // #13
+  scenarios_str.push_back( "NNPN" ); // #14
+  scenarios_str.push_back( "NNQN" ); // #15
   // P for Q-P
   scenarios.push_back( CGAL::make_array(&Q, &X, &Y, &P) );
   scenarios.push_back( CGAL::make_array(&X, &Q, &Y, &P) );
   scenarios.push_back( CGAL::make_array(&X, &Y, &Q, &P) );
   scenarios.push_back( CGAL::make_array(&X, &Y, &Z, &P) );
   scenarios.push_back( CGAL::make_array(&X, &Y, &Z, &Q) );
-  scenarios_str.push_back( "QNNP" );
-  scenarios_str.push_back( "NQNP" );
-  scenarios_str.push_back( "NNQP" );
-  scenarios_str.push_back( "NNNP" );
-  scenarios_str.push_back( "NNNQ" );
+  scenarios_str.push_back( "QNNP" ); // #16
+  scenarios_str.push_back( "NQNP" ); // #17
+  scenarios_str.push_back( "NNQP" ); // #18
+  scenarios_str.push_back( "NNNP" ); // #19
+  scenarios_str.push_back( "NNNQ" ); // #20
 
   if (k!=-1)
   {
