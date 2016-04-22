@@ -46,7 +46,7 @@ inline
 int my_nearbyint(const T& d)
 {
   int z = int(d);
-  T frac = d - z;
+  T frac = d - T(z);
 
   CGAL_assertion(CGAL::abs(frac) < T(1.0));
 
@@ -95,9 +95,9 @@ void MP_Float::construct_from_builtin_fp_type(T d)
     T orig = d, sum = 0;
     while (true) {
       int r = my_nearbyint(d);
-      if (d-r >= T( INTERN_MP_FLOAT::base/2-1)/( INTERN_MP_FLOAT::base-1))
+      if (d-double(r) >= T( INTERN_MP_FLOAT::base/2-1)/( INTERN_MP_FLOAT::base-1))
         ++r;
-      v.push_back(r);
+      v.push_back(limb(r));
       // We used to do simply "d -= v.back();", but when the most significant
       // limb is 1 and the second is -32768, then it can happen that
       // |d - v.back()| > |d|, hence a bit of precision can be lost.

@@ -401,7 +401,7 @@ double Gmpzf::to_double() const
 {
   Exponent k;                                 // exponent
   double l = mpz_get_d_2exp (&k, man());      // mantissa in [0.5,1)
-  return std::ldexp(l, k+exp());
+  return std::ldexp(l, static_cast<int>(k+exp()));
 }
 
 
@@ -447,7 +447,7 @@ std::pair<double, double> Gmpzf::to_interval() const
   std::pair<std::pair<double, double>, long> lue = to_interval_exp();
   double l = lue.first.first;
   double u = lue.first.second;
-  long k = lue.second;
+  int k = static_cast<int>(lue.second);
   return std::pair<double,double> (std::ldexp (l, k), std::ldexp (u, k));
 }
 

@@ -274,6 +274,8 @@ struct Mpzf {
 #endif
   int size; /* Number of relevant limbs in data_. */
   int exp; /* The number is data_ (an integer) * 2 ^ (64 * exp). */
+  typedef int Exponent_type;
+  typedef int Size_type;
 
   struct allocate{};
   struct noalloc{};
@@ -471,8 +473,8 @@ struct Mpzf {
     init_from_mpz_t(z.mpz());
   }
   void init_from_mpz_t(mpz_t const z){
-    exp=mpz_scan1(z,0)/GMP_NUMB_BITS;
-    size=mpz_size(z)-exp;
+    exp=Exponent_type(mpz_scan1(z,0)/GMP_NUMB_BITS);
+    size=Size_type(mpz_size(z)-exp);
     init(size);
     mpn_copyi(data(),z->_mp_d+exp,size);
   }
@@ -800,9 +802,9 @@ struct Mpzf {
     else { mpn_copyi(res.data(), b.data(), bsize); }
     res.exp = 0; // Pick b.exp? or the average? 0 helps return 1 more often.
     if (asize < bsize)
-      res.size = mpn_gcd(res.data(), res.data(), bsize, tmp.data(), asize);
+      res.size = Size_type(mpn_gcd(res.data(), res.data(), bsize, tmp.data(), asize));
     else
-      res.size = mpn_gcd(res.data(), tmp.data(), asize, res.data(), bsize);
+      res.size = Size_type(mpn_gcd(res.data(), tmp.data(), asize, res.data(), bsize));
     if(rtz!=0) {
       mp_limb_t c = mpn_lshift(res.data(), res.data(), res.size, rtz);
       if(c) { res.data()[res.size]=c; ++res.size; }
@@ -884,7 +886,7 @@ struct Mpzf {
     if(size==0) return 0;
     int asize = std::abs(size);
     mp_limb_t top = data()[asize-1];
-    double dtop = top;
+    double dtop = (double)top;
     if(top >= (1LL<<53) || asize == 1) /* ok */ ;
     else { dtop += (double)data()[asize-2] * ldexp(1.,-GMP_NUMB_BITS); }
     return ldexp( (size<0) ? -dtop : dtop, (asize-1+exp) * GMP_NUMB_BITS);
@@ -903,13 +905,13 @@ struct Mpzf {
 	e += (11 - lz);
 	x >>= (11 - lz);
       }
-      dl = x;
-      dh = x + 1;
+      dl = double(x);
+      dh = double(x + 1);
       // Check for the few cases where dh=x works (asize==1 and the evicted
       // bits from x were 0s)
     }
     else if (asize == 1) {
-      dl = dh = x; // conversion is exact
+      dl = dh = double(x); // conversion is exact
     }
     else {
       mp_limb_t y = data()[asize-2];
@@ -917,8 +919,8 @@ struct Mpzf {
       x <<= (lz - 11);
       y >>= (75 - lz);
       x |= y;
-      dl = x;
-      dh = x + 1;
+      dl = double(x);
+      dh = double(x + 1);
       // Check for the few cases where dh=x works (asize==2 and the evicted
       // bits from y were 0s)
     }

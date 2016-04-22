@@ -141,7 +141,7 @@ private:
     iterator i = v.begin();
     for (++i; *i == 0; ++i)
       ;
-    exp += i-v.begin();
+    exp += static_cast<exponent_type>(i-v.begin());
     v.erase(v.begin(), i);
   }
 
@@ -164,8 +164,8 @@ public:
    
     //Note: For Integer type, if the destination type is signed, the value is unchanged 
     //if it can be represented in the destination type)
-    low=static_cast<limb>(l & mask); //extract low bits from l 
-    high = (l - low) >> sizeof_limb; //extract high bits from l
+    low = static_cast<limb>(l & mask); //extract low bits from l
+    high= static_cast<limb>((l - low) >> sizeof_limb); //extract high bits from l
     
     CGAL_postcondition ( l == low + ( static_cast<limb2>(high) << sizeof_limb ) );
   }
@@ -232,7 +232,7 @@ public:
 
   exponent_type max_exp() const
   {
-    return v.size() + exp;
+    return exponent_type(v.size()) + exp;
   }
 
   exponent_type min_exp() const
@@ -305,7 +305,7 @@ public:
   // a value with an exponent close to 0.
   exponent_type find_scale() const
   {
-    return exp + v.size();
+    return exp + exponent_type(v.size());
   }
 
   // Rescale the value by some factor (in limbs).  (substract the exponent)
@@ -320,7 +320,7 @@ public:
   lsb(limb l)
   {
     unsigned short nb = 0;
-    for (; (l&1)==0; ++nb, l>>=1)
+    for (; (l&1)==0; ++nb, l=(limb)(l>>1) )
       ;
     return nb;
   }
@@ -350,7 +350,7 @@ public:
     CGAL_assertion(r.v.begin() != r.v.end());
     unsigned short nb = lsb(r.v[0]);
     r.v.clear();
-    r.v.push_back(1<<nb);
+    r.v.push_back((limb)(1<<nb));
     return (sign() > 0) ? r : -r;
   }
 
