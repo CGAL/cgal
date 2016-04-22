@@ -402,10 +402,15 @@ public:
 
 	  };
 
-    // Returns the input primitive id closest to the source point of the ray
-    // query. Type `Ray` must be the same as `AABBTraits::Ray_3` and
+    // Returns the intersection and  primitive id closest to the source point of the ray
+    // query. 
+		// \tparam Ray must be the same as `AABBTraits::Ray_3` and
     // `do_intersect` predicates and intersections for it must be
     // defined.
+		// \tparam Skip a functor with an operator 
+		// `bool operator()(const Primitive_id& id) const`
+		// that returns `true` in order to skip the primitive.
+		// Defaults to a functor that always returns `false`.
     //
     // `AABBTraits` must be a model of `AABBRayIntersectionTraits` to
     // call this member function.
@@ -413,6 +418,21 @@ public:
     boost::optional< typename Intersection_and_primitive_id<Ray>::Type >
     first_intersection_and_primitive(const Ray& query, SkipFunctor skip = SkipFunctor()) const;
 
+		// Returns the primitive id closest to the source point of the ray
+    // query. 
+    // \tparam Ray must be the same as `AABBTraits::Ray_3` and
+    // `do_intersect` predicates and intersections for it must be
+    // defined.
+		// \tparam Skip a functor with an operator 
+		// `bool operator()(const Primitive_id& id) const`
+		// that returns `true` in order to skip the primitive.
+		// Defaults to a functor that always returns `false`.
+    //
+    // `AABBTraits` must be a model of `AABBRayIntersectionTraits` to
+    // call this member function.
+    template<typename Ray, typename SkipFunctor = False_functor>
+    boost::optional<Primitive_id>
+		first_intersected_primitive(const Ray& query, SkipFunctor skip = SkipFunctor()) const;
     ///@}
 
     /// \name Distance Queries
