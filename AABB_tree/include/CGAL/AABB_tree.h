@@ -416,7 +416,7 @@ public:
     // call this member function.
     template<typename Ray, typename SkipFunctor = False_functor>
     boost::optional< typename Intersection_and_primitive_id<Ray>::Type >
-    first_intersection_and_primitive(const Ray& query, SkipFunctor skip = SkipFunctor()) const;
+    first_intersection_and_primitive(const Ray& query, const SkipFunctor& skip = SkipFunctor()) const;
 
 		// Returns the primitive id closest to the source point of the ray
     // query. 
@@ -432,7 +432,7 @@ public:
     // call this member function.
     template<typename Ray, typename SkipFunctor = False_functor>
     boost::optional<Primitive_id>
-		first_intersected_primitive(const Ray& query, SkipFunctor skip = SkipFunctor()) const;
+		first_intersected_primitive(const Ray& query, const SkipFunctor& skip = SkipFunctor()) const;
     ///@}
 
     /// \name Distance Queries
