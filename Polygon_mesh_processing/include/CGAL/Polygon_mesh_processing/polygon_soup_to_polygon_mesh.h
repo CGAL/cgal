@@ -111,7 +111,7 @@ public:
    * is associated an index that is used in the description of the
    * boundaries of the polygons provided in `polygons`.
    *
-   * @tparam PolygonRange a model of the concept `SinglePassRange`
+   * @tparam PolygonRange a model of the concept `RandomAccessContainer`
    * whose value_type is a model of the concept `BidirectionalRange`
    * whose value_type is `std::size_t`.
    *
