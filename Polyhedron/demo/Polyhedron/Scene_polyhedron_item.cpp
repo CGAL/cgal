@@ -636,7 +636,7 @@ init()
     }
     
     colors_.clear();
-    compute_color_map(this->color(), max + 1 - min,
+    compute_color_map(this->color(), (std::max)(0, max + 1 - min),
                       std::back_inserter(colors_));
     m_min_patch_id=min;
   }
