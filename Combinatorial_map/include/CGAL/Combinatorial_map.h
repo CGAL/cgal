@@ -41,7 +41,8 @@
 #include <CGAL/config.h>
 
 #if defined( __INTEL_COMPILER )
-// Workarounf for warning in function basic_link_beta_0
+// Workaround for warning in function basic_link_beta_0
+#pragma warning(push)
 #pragma warning disable 1017
 #endif
 
@@ -3809,6 +3810,9 @@ namespace CGAL {
 
 } // namespace CGAL
 
+#if defined( __INTEL_COMPILER )
+#pragma warning(pop)
+#endif
 
 #endif // CGAL_COMBINATORIAL_MAP_H //
 // EOF //
