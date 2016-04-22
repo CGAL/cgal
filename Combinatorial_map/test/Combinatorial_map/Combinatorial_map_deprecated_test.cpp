@@ -1,3 +1,5 @@
+#include <cstdlib>
+
 #ifndef CGAL_NO_DEPRECATED_CODE
 
 #define CGAL_NO_DEPRECATION_WARNINGS 1
