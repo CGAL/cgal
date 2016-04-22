@@ -150,8 +150,8 @@ FindPolynomialRoots(
   int number_of_ITERATE=0;
   int number_of_INIT=0;
   CGAL_precondition(static_cast<unsigned int>(fig) < MAXN);
-  int i;
-  int j;
+  long i;
+  long j;
   FLOAT h[MAXN + 3], b[MAXN + 3], c[MAXN + 3], d[MAXN + 3], e[MAXN + 3];
   /* [-2 : n] */
   FLOAT K, ps, qs, pt, qt, s, rev, r= std::numeric_limits<double>::infinity();
@@ -200,7 +200,7 @@ FindPolynomialRoots(
   for (j = n; j >= 0; j--)                      /* Find geometric mean of coeff's */
     if (h[2 + j] != 0.0)
       s += std::log( ::CGAL::abs(h[2 + j]));
-  s = std::exp(s / (n + 1));
+  s = std::exp(s / double(n + 1));
 
   for (j = n; j >= 0; j--)                      /* Normalize coeff's by mean */
     h[2 + j] /= s;
@@ -413,8 +413,8 @@ void Turkowski_polynomial_compute_roots(const double *begin, const double *end,
   case 3:
     {
       double rd[3];
-      int numr= FindCubicRoots(begin, rd);
-      for (int i=numr-1; i>=0; --i) {
+      long numr= FindCubicRoots(begin, rd);
+      for (long i=numr-1; i>=0; --i) {
 	if (rd[i] >= lb && rd[i] < ub) roots.push_back(rd[i]);
       }
       std::sort(roots.begin(), roots.end(), std::greater<double>());
@@ -446,9 +446,9 @@ void Turkowski_polynomial_compute_cleaned_roots(const double *begin, const doubl
   case 3:
     {
       double rd[3];
-      int numr= FindCubicRoots(begin, rd);
+      long numr= FindCubicRoots(begin, rd);
       double last=-std::numeric_limits<double>::infinity();
-      for (int i=numr-1; i>=0; --i) {
+      for (long i=numr-1; i>=0; --i) {
 	if (rd[i]< ub && rd[i] >= lb) roots.push_back(rd[i]);
 	if (rd[i] < lb && rd[i] > last){
 	  last=rd[i];
