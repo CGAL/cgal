@@ -116,8 +116,8 @@ CGAL_Kernel_pred(Compare_dihedral_angle_3,
 		 compare_dihedral_angle_3_object)
 CGAL_Kernel_pred(Compare_distance_2,
 		 compare_distance_2_object)
-CGAL_Kernel_pred(Compare_distance_3,
-		 compare_distance_3_object)
+CGAL_Kernel_pred_RT(Compare_distance_3,
+		    compare_distance_3_object)
 CGAL_Kernel_pred(Compare_slope_2,
 		 compare_slope_2_object)
 CGAL_Kernel_pred(Compare_squared_distance_2,
