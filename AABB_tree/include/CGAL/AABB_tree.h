@@ -353,7 +353,8 @@ public:
 		OutputIterator all_intersected_primitives(const Query& query, OutputIterator out) const;
 
 
-    /// Returns the first encountered intersected primitive id, iff
+    /// Returns the intersected primitive id that is encountered first 
+		/// in the tree traversal, iff
     /// the query intersects at least one of the input primitives. No
     /// particular order is guaranteed over the tree traversal, such
     /// that, e.g, the primitive returned is not necessarily the
@@ -378,7 +379,8 @@ public:
 		OutputIterator all_intersections(const Query& query, OutputIterator out) const;
 
 
-    /// Returns the first encountered intersection. No particular
+    /// Returns the intersection that is encountered first 
+		/// in the tree traversal. No particular
     /// order is guaranteed over the tree traversal, e.g, the
     /// primitive returned is not necessarily the closest from the
     /// source point of a ray query. Type `Query` must be a type
@@ -392,16 +394,24 @@ public:
     #endif
     any_intersection(const Query& query) const;
 
-    // Return the intersection closest to the source point of the ray
+
+		struct False_functor {
+		template <typename T>
+		bool operator()(const T&) const
+		{ return false;}
+
+	  };
+
+    // Returns the input primitive id closest to the source point of the ray
     // query. Type `Ray` must be the same as `AABBTraits::Ray_3` and
     // `do_intersect` predicates and intersections for it must be
     // defined.
     //
     // `AABBTraits` must be a model of `AABBRayIntersectionTraits` to
     // call this member function.
-    template<typename Ray, typename SkipFunctor>
+    template<typename Ray, typename SkipFunctor = False_functor>
     boost::optional< typename Intersection_and_primitive_id<Ray>::Type >
-    ray_intersection(const Ray& query, SkipFunctor skip) const;
+    first_intersection_and_primitive(const Ray& query, SkipFunctor skip = SkipFunctor()) const;
 
     ///@}
 
