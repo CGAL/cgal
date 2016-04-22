@@ -6,19 +6,19 @@ namespace CGAL {
 The class `Mesh_triangulation_3` is a metafunctor which provides the triangulation type to be used
 for the 3D triangulation embedding the mesh.
 
-\tparam MD stands for a model of `MeshDomain_3`.
+\tparam MD must be a model of `MeshDomain_3`.
 
-\tparam Gt stands for a model of `RegularTriangulationTraits_3`
+\tparam Gt must be a model of `RegularTriangulationTraits_3` or `Default`
 and defaults to `Kernel_traits<MD>::%Kernel`.
 
 \tparam Concurrency_tag enables sequential versus parallel meshing and optimization algorithms.
                         Possible values are `Sequential_tag` (the default) and
                         `Parallel_tag`.
 
-\tparam Vertex_base stands for a model of `MeshVertexBase_3`
+\tparam Vertex_base must be a model of `MeshVertexBase_3` or `Default`
 and defaults to `Mesh_vertex_base_3<Gt, MD>`.
 
-\tparam Cell_base stands for a model of `MeshCellBase_3`
+\tparam Cell_base must be a model of `MeshCellBase_3` or `Default`
 and defaults to `Compact_mesh_cell_base_3<Gt, MD>`.
 
 \sa `make_mesh_3()`

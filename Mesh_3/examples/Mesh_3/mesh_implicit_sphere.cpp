@@ -14,16 +14,15 @@ typedef K::Point_3 Point;
 typedef FT (Function)(const Point&);
 typedef CGAL::Implicit_mesh_domain_3<Function,K> Mesh_domain;
 
-// Triangulation
 #ifdef CGAL_CONCURRENT_MESH_3
-  typedef CGAL::Mesh_triangulation_3<
-    Mesh_domain,
-    CGAL::Kernel_traits<Mesh_domain>::Kernel, // Same as sequential
-    CGAL::Parallel_tag                        // Tag to activate parallelism
-  >::type Tr;
+typedef CGAL::Parallel_tag Concurrency_tag;
 #else
-  typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
+
+// Triangulation
+typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,Concurrency_tag>::type Tr;
+
 typedef CGAL::Mesh_complex_3_in_triangulation_3<Tr> C3t3;
 
 // Criteria

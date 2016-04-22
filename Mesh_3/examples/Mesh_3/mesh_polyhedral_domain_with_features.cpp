@@ -11,16 +11,15 @@
 typedef CGAL::Exact_predicates_inexact_constructions_kernel K;
 typedef CGAL::Polyhedral_mesh_domain_with_features_3<K> Mesh_domain;
 
-// Triangulation
 #ifdef CGAL_CONCURRENT_MESH_3
-  typedef CGAL::Mesh_triangulation_3<
-    Mesh_domain,
-    CGAL::Kernel_traits<Mesh_domain>::Kernel, // Same as sequential
-    CGAL::Parallel_tag                        // Tag to activate parallelism
-  >::type Tr;
+typedef CGAL::Parallel_tag Concurrency_tag;
 #else
-  typedef CGAL::Mesh_triangulation_3<Mesh_domain>::type Tr;
+typedef CGAL::Sequential_tag Concurrency_tag;
 #endif
+
+// Triangulation
+typedef CGAL::Mesh_triangulation_3<Mesh_domain,CGAL::Default,Concurrency_tag>::type Tr;
+
 typedef CGAL::Mesh_complex_3_in_triangulation_3<
   Tr,Mesh_domain::Corner_index,Mesh_domain::Curve_segment_index> C3t3;
 
