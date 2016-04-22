@@ -154,7 +154,8 @@ public:
     }
 
     //check manifoldness
-    typedef internal::Polygon_soup_orienter<V_ID, Polygon> Orienter;
+    typedef std::vector<V_ID> PointRange;
+    typedef internal::Polygon_soup_orienter<PointRange, PolygonRange> Orienter;
     typename Orienter::Edge_map edges;
     typename Orienter::Marked_edges marked_edges;
     Orienter::fill_edge_map(edges, marked_edges, polygons);

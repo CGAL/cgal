@@ -40,9 +40,11 @@ namespace Polygon_mesh_processing {
 
 namespace internal {
 
-template<class Point_3, class Polygon_3>
+template<class PointRange, class PolygonRange>
 struct Polygon_soup_orienter
 {
+  typedef typename PointRange::value_type                               Point_3;
+  typedef typename PolygonRange::value_type                           Polygon_3;
 /// Index types
   typedef typename std::iterator_traits<
             typename Polygon_3::iterator >::value_type                     V_ID;
@@ -50,8 +52,8 @@ struct Polygon_soup_orienter
 //  typedef int                                                             CC_ID;
   typedef std::pair<V_ID, V_ID>                                       V_ID_pair;
 /// Container types
-  typedef std::vector<Point_3>                                           Points;
-  typedef std::vector<Polygon_3>                                       Polygons;
+  typedef PointRange                                                     Points;
+  typedef PolygonRange                                                 Polygons;
   typedef std::map<V_ID_pair, std::set<P_ID> >                         Edge_map;
   typedef typename Edge_map::iterator                         Edge_map_iterator;
   typedef std::set<V_ID_pair>                                      Marked_edges;
@@ -454,9 +456,11 @@ struct Polygon_soup_orienter
  *
  * The algorithm is described in \cgalCite{gueziec2001cutting}.
  *
- * @tparam Point the point type
- * @tparam Polygon a `std::vector<std::size_t>` containing the indices
- *         of the points of the face
+ * @tparam PointRange a model of the concepts `RandomAccessContainer`
+ * and `BackInsertionSequence` whose value type is the point type
+ * @tparam PolygonRange a model of the concept `RandomAccessContainer`
+ * whose value_type is a model of the concept `BidirectionalRange`
+ * whose value_type is `std::size_t`.
  *
  * @param points points of the soup of polygons. Some points might be pushed back to resolve
  *               non-manifold or non-orientability issues.
@@ -466,12 +470,12 @@ struct Polygon_soup_orienter
  * @return `false` if some points were duplicated, thus producing a self-intersecting polyhedron.
  *
  */
-template <class Point, class Polygon>
-bool orient_polygon_soup(std::vector<Point>& points,
-                         std::vector<Polygon>& polygons)
+template <class PointRange, class PolygonRange>
+bool orient_polygon_soup(PointRange& points,
+                         PolygonRange& polygons)
 {
   std::size_t inital_nb_pts = points.size();
-  internal::Polygon_soup_orienter<Point, Polygon> orienter(points, polygons);
+  internal::Polygon_soup_orienter<PointRange, PolygonRange> orienter(points, polygons);
   orienter.fill_edge_map();
   orienter.orient();
   orienter.duplicate_singular_vertices();
