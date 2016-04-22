@@ -109,10 +109,6 @@ struct halfedge2edge
   std::set<edge_descriptor>& m_edges;
 };
 
-struct Constrained_edges_pmap
-{
-  std::set<edge_descriptor>* edge_set_ptr;
-
 struct Constraints_pmap
 {
   std::set<edge_descriptor>* set_ptr_;
@@ -126,12 +122,18 @@ public:
   Constraints_pmap(std::set<edge_descriptor>* set_ptr)
     : set_ptr_(set_ptr)
   {}
-  friend bool get(const Constraints_pmap& map, const edge_descriptor& e)
+  Constraints_pmap()
+    : set_ptr_(NULL)
+  {}
+
+  friend value_type get(const Constraints_pmap& map, const key_type& e)
   {
     CGAL_assertion(map.set_ptr_ != NULL);
-    return map.set_ptr_->count(e) != 0;
+    return !map.set_ptr_->empty()
+         && map.set_ptr_->count(e);
   }
-  friend void put(Constraints_pmap& map, const edge_descriptor& e, const bool is)
+  friend void put(Constraints_pmap& map
+                , const key_type& e, const value_type is)
   {
     CGAL_assertion(map.set_ptr_ != NULL);
     if (is)                map.set_ptr_->insert(e);
@@ -184,10 +186,6 @@ int main(int argc, char* argv[])
       boost::make_function_output_iterator(halfedge2edge(m, border)));
     PMP::split_long_edges(border, target_edge_length, m
       , PMP::parameters::edge_is_constrained_map(ecmap));
-    Constrained_edges_pmap ecmap(border);
-    PMP::split_long_edges(border, target_edge_length, m
-      , PMP::parameters::edge_is_constrained_map(ecmap));
-
   std::cout << "done." << std::endl;
 
   std::cout << "Collect patch...";

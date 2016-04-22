@@ -434,7 +434,7 @@ public Q_SLOTS:
             BOOST_FOREACH(face_descriptor f, faces(pmesh))
               put(fim, f, id++);
           }
-          Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> ecm(edges_to_protect);
+          Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> ecm(&edges_to_protect);
 
           CGAL::Polygon_mesh_processing::isotropic_remeshing(
            faces(*poly_item->polyhedron())
@@ -442,7 +442,6 @@ public Q_SLOTS:
          , *poly_item->polyhedron()
          , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter)
          .protect_constraints(protect)
-         .smooth_along_features(smooth_features));
          .face_patch_map(Patch_id_pmap<face_descriptor>())
          .edge_is_constrained_map(ecm)
          .smooth_along_features(smooth_features));
@@ -609,7 +608,7 @@ private:
       {
         std::cout << "Isotropic remeshing of "
           << poly_item->name().toStdString() << " started..." << std::endl;
-        Scene_polyhedron_selection_item::Is_constrained_map<Edge_set > ecm(edges_to_protect);
+        Scene_polyhedron_selection_item::Is_constrained_map<Edge_set> ecm(&edges_to_protect);
         CGAL::Polygon_mesh_processing::isotropic_remeshing(
             faces(*poly_item->polyhedron())
           , target_length_
