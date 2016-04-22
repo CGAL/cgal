@@ -31,6 +31,8 @@
 #include <string>
 #include <CGAL/utility.h>
 
+#include <boost/unordered_map.hpp>
+
 namespace CGAL {
 
 namespace Mesh_3 {
@@ -787,7 +789,7 @@ output_to_medit(std::ostream& os,
   //-------------------------------------------------------
   os << "Vertices\n" << tr.number_of_vertices() << '\n';
 
-  std::map<Vertex_handle, int> V;
+  boost::unordered_map<Vertex_handle, int> V;
   int inum = 1;
   for( Finite_vertices_iterator vit = tr.finite_vertices_begin();
        vit != tr.finite_vertices_end();

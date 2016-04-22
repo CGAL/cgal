@@ -36,6 +36,14 @@ struct Time_stamper
     pt->set_time_stamp(time_stamp_++);
   }
 
+
+  static std::size_t hash_value(const T* p) {
+    if(NULL == p)
+      return std::size_t(-1);
+    else
+      return p->time_stamp();
+  }
+
   static bool less(const T* p_t1, const T* p_t2) {
     if(p_t1 == NULL)      return (p_t2 != NULL);
     else if(p_t2 == NULL) return false;
@@ -57,6 +65,11 @@ public:
   static bool less(const T* p_t1,const T* p_t2) {
     return p_t1 < p_t2;
   }
+
+  static std::size_t hash_value(const T* p) {
+    return reinterpret_cast<std::size_t>(p)/sizeof(T);
+  }
+
   void reset()                {}
 }; // end class template No_time_stamp<T>
 
