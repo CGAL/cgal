@@ -50,12 +50,27 @@
 
 namespace CGAL {
 
+/*!
+\ingroup PkgPointSetProcessing
 
+\brief A 3D point set with structure information based on a set of
+detected planes.
+
+Given a point set in 3D space along with a set of fitted planes, this
+class stores a simplified and structured version of the point
+set. Each output point is assigned to one, two or more primitives
+(depending wether it belongs to a planar section, an edge or a if it
+is a vertex). The implementation follow \cgalCite{cgal:la-srpss-13}.
+
+\tparam Traits a model of `EfficientRANSACTraits`
+
+*/
 template <typename Traits>
 class Point_set_with_structure
 {
 public:
 
+  /// \cond SKIP_IN_MANUAL
   typedef Point_set_with_structure<Traits> Self;
 
   typedef typename Traits::FT FT;
@@ -77,15 +92,21 @@ public:
   typedef Shape_detection_3::Plane<Traits> Plane_shape;
 
   enum Point_status { POINT, RESIDUS, PLANE, EDGE, CORNER, SKIPPED };
+
+  /// \endcond
+
+  /// Tag classifying the coherence of a triplet of points with
+  /// respect to an inferred surface
   enum Coherence_type
     {
-      INCOHERENT = -1, // Incoherent
-      FREEFORM = 0,    // FF-coherent
-      VERTEX = 1,      // S-coherent
-      CREASE = 2,      // S-coherent
-      PLANAR = 3       // S-coherent
+      INCOHERENT = -1, ///< Incoherent (facet violates the underlying structure)
+      FREEFORM = 0,    ///< Free-form coherent (facet is between 3 free-form points)
+      VERTEX = 1,      ///< Structure coherent, facet adjacent to a vertex
+      CREASE = 2,      ///< Structure coherent, facet adjacent to an edge
+      PLANAR = 3       ///< Structure coherent, facet inside a planar section
     };
-
+  
+  /// \cond SKIP_IN_MANUAL
 private:
 
   class My_point_property_map{
@@ -156,10 +177,18 @@ private:
   std::vector<Corner> m_corners;
     
 public:
+  /// \endcond
 
-  Point_set_with_structure (Input_iterator begin, Input_iterator end,
-                            const Shape_detection_3::Efficient_RANSAC<Traits>& shape_detection,
-                            double epsilon, double attraction_factor = 3.)
+  /*!
+    Construct a structured point set based on the input points and the
+    associated shape detection object.
+  */
+  Point_set_with_structure (Input_iterator begin, ///< iterator over the first input point.
+                            Input_iterator end, ///< past-the-end iterator over the input points.
+                            const Shape_detection_3::Efficient_RANSAC<Traits>&
+                            shape_detection, ///< shape detection object
+                            double epsilon, ///< size parameter
+                            double attraction_factor = 3.) ///< attraction factory
     : m_traits (shape_detection.traits())
   {
     for (Input_iterator it = begin; it != end; ++ it)
@@ -192,17 +221,30 @@ public:
     clean ();
   }
 
-    
+  /// \cond SKIP_IN_MANUAL    
   virtual ~Point_set_with_structure ()
   {
   }
+  /// \endcond
 
+  
   std::size_t size () const { return m_points.size (); }
   std::pair<Point, Vector> operator[] (std::size_t i) const
   { return std::make_pair (m_points[i], m_normals[i]); }
   const Point& point (std::size_t i) const { return m_points[i]; }
   const Vector& normal (std::size_t i) const { return m_normals[i]; }
 
+  /*!
+
+    Returns all `Plane_shape` objects that are adjacent to the point
+    with index `i`.
+
+    \note Points not adjacent to any plane are free-form points,
+    points adjacent to 1 plane are planar points, points adjacent to 2
+    planes are edge points and points adjacent to 3 or more planes are
+    vertices.
+
+   */
   std::vector<boost::shared_ptr<Plane_shape> > adjacency (std::size_t i) const
   {
     std::vector<boost::shared_ptr<Plane_shape> > out;
@@ -222,6 +264,12 @@ public:
     return out;
   }
 
+  /*!
+
+    Computes the coherence of a facet between the 3 points indexed by
+    `f` with respect to the underlying structure.
+
+   */
   Coherence_type facet_coherence (CGAL::cpp11::array<std::size_t, 3>& f) const
   {
     // O- FREEFORM CASE
@@ -375,6 +423,7 @@ public:
   }
 
 
+  /// \cond SKIP_IN_MANUAL  
 private:
 
 
@@ -1312,7 +1361,7 @@ private:
       }
 
   }
-    
+  /// \endcond    
 };
 
 
@@ -1356,10 +1405,11 @@ structure_point_set (InputIterator first,  ///< iterator over the first input po
                      InputIterator beyond, ///< past-the-end iterator over the input points.
                      OutputIterator output, ///< output iterator where output points are written
                      Shape_detection_3::Efficient_RANSAC<Traits>&
-                     shape_detection, ///< shape detection engine
-                     double epsilon) ///< size parameter
+                     shape_detection, ///< shape detection object
+                     double epsilon, ///< size parameter
+                     double attraction_factor = 3.) ///< attraction factory
 {
-  Point_set_with_structure<Traits> pss (first, beyond, shape_detection, epsilon);
+  Point_set_with_structure<Traits> pss (first, beyond, shape_detection, epsilon, attraction_factor);
 
   for (std::size_t i = 0; i < pss.size(); ++ i)
     *(output ++) = pss[i];
