@@ -1025,51 +1025,53 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
       }
       else
       {
-
         bool found(false), is_equal(true), is_border(false);
           Halfedge_handle hc = halfedge(ed, *polyhedron());
-          //if the selected halfedge is not a border, stop and signal it.
-          if(hc->is_border())
-            is_border = true;
-          else if(hc->opposite()->is_border())
+          //seems strange but allows to use break efficiently
+          for(int i=0; i< 2; i++)
           {
-            hc = halfedge(ed, *polyhedron())->opposite();
-            is_border = true;
-          }
-          if(!is_border)
-            break;
-          //if the halfedges are the same, stop and signal it.
-          if(hc == t)
-          {
-            is_equal = true;
-            break;
-          }
-          is_equal = false;
-          //if the halfedges are not on the same border, stop and signal it.
-          boost::graph_traits<Polyhedron>::halfedge_descriptor iterator = next(t, *polyhedron());
-          while(iterator != t)
-          {
-            if(iterator == hc)
+            //if the selected halfedge is not a border, stop and signal it.
+            if(hc->is_border())
+              is_border = true;
+            else if(hc->opposite()->is_border())
             {
-              found = true;
-              Halfedge_handle res = CGAL::Euler::add_vertex_and_face_to_border(t,hc, *polyhedron());
-              //res seems to be the opposite of what it is said to be in the doc.
-              if(res->vertex() == hc->vertex())
-                res = res->opposite();
-              //create and add a point point
-
-              Polyhedron::Point_3 a = t->vertex()->point();
-              Polyhedron::Point_3 b = t->opposite()->vertex()->point();
-              Polyhedron::Point_3 c = t->opposite()->next()->vertex()->point();
-              double x = b.x()+a.x()-c.x() ;
-              double y = b.y()+a.y()-c.y() ;
-              double z = b.z()+a.z()-c.z() ;
-              res->vertex()->point() = Polyhedron::Point_3(x,y,z);
+              hc = halfedge(ed, *polyhedron())->opposite();
+              is_border = true;
+            }
+            if(!is_border)
+              break;
+            //if the halfedges are the same, stop and signal it.
+            if(hc == t)
+            {
+              is_equal = true;
               break;
             }
-            iterator = next(iterator, *polyhedron());
-          }
+            is_equal = false;
+            //if the halfedges are not on the same border, stop and signal it.
+            boost::graph_traits<Polyhedron>::halfedge_descriptor iterator = next(t, *polyhedron());
+            while(iterator != t)
+            {
+              if(iterator == hc)
+              {
+                found = true;
+                Halfedge_handle res = CGAL::Euler::add_vertex_and_face_to_border(t,hc, *polyhedron());
+                //res seems to be the opposite of what it is said to be in the doc.
+                if(res->vertex() == hc->vertex())
+                  res = res->opposite();
+                //create and add a point point
 
+                Polyhedron::Point_3 a = t->vertex()->point();
+                Polyhedron::Point_3 b = t->opposite()->vertex()->point();
+                Polyhedron::Point_3 c = t->opposite()->next()->vertex()->point();
+                double x = b.x()+a.x()-c.x() ;
+                double y = b.y()+a.y()-c.y() ;
+                double z = b.z()+a.z()-c.z() ;
+                res->vertex()->point() = Polyhedron::Point_3(x,y,z);
+                break;
+              }
+              iterator = next(iterator, *polyhedron());
+            }
+          }
         if(is_equal)
         {
           tempInstructions("Edge not selected : halfedges must be different.",
@@ -1119,6 +1121,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
             temp_selected_edges.insert(edge(t, *polyhedron()));
             invalidateOpenGLBuffers();
             Q_EMIT updateInstructions("Select second edge. (2/2)");
+            set_active_handle_type(static_cast<Active_handle::Type>(2));
           }
           else
           {
@@ -1128,46 +1131,48 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
       }
       else
       {
-
         bool found(false), is_equal(true), is_next(true), is_border(false);
           Halfedge_handle hc = halfedge(ed, *polyhedron());
-          //if the selected halfedge is not a border, stop and signal it.
-          if(hc->is_border())
-            is_border = true;
-          else if(hc->opposite()->is_border())
+          //seems strange but allows to use break efficiently
+          for(int i= 0; i<2; i++)
           {
-            hc = hc->opposite();
-            is_border = true;
-          }
-          if(!is_border)
-            break;
-          //if the halfedges are the same, stop and signal it.
-          if(hc == t)
-          {
-            is_equal = true;
-            break;
-          }
-          is_equal = false;
-          //if the halfedges are adjacent, stop and signal it.
-          if(next(t, *polyhedron()) == hc || next(hc, *polyhedron()) == t)
-          {
-            is_next = true;
-            break;
-          }
-          is_next = false;
-          //if the halfedges are not on the same border, stop and signal it.
-          boost::graph_traits<Polyhedron>::halfedge_descriptor iterator = next(t, *polyhedron());
-          while(iterator != t)
-          {
-            if(iterator == hc)
+            //if the selected halfedge is not a border, stop and signal it.
+            if(hc->is_border())
+              is_border = true;
+            else if(hc->opposite()->is_border())
             {
-              found = true;
-              CGAL::Euler::add_face_to_border(t,hc, *polyhedron());
+              hc = hc->opposite();
+              is_border = true;
+            }
+            if(!is_border)
+              break;
+            //if the halfedges are the same, stop and signal it.
+            if(hc == t)
+            {
+              is_equal = true;
               break;
             }
-            iterator = next(iterator, *polyhedron());
+            is_equal = false;
+            //if the halfedges are adjacent, stop and signal it.
+            if(next(t, *polyhedron()) == hc || next(hc, *polyhedron()) == t)
+            {
+              is_next = true;
+              break;
+            }
+            is_next = false;
+            //if the halfedges are not on the same border, stop and signal it.
+            boost::graph_traits<Polyhedron>::halfedge_descriptor iterator = next(t, *polyhedron());
+            while(iterator != t)
+            {
+              if(iterator == hc)
+              {
+                found = true;
+                CGAL::Euler::add_face_to_border(t,hc, *polyhedron());
+                break;
+              }
+              iterator = next(iterator, *polyhedron());
+            }
           }
-
         if(is_equal)
         {
           tempInstructions("Edge not selected : halfedges must be different.",
@@ -1179,7 +1184,7 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           tempInstructions("Edge not selected : halfedges must not be adjacent.",
                            "Select the second edge. (2/2)");
         }
-        else if(!is_border or !found)
+        else if(!is_border || !found)
         {
           tempInstructions("Edge not selected : no shared border found.",
                            "Select the second edge. (2/2)");
