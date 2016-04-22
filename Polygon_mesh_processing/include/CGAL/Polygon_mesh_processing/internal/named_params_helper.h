@@ -86,6 +86,7 @@ public:
     NamedParameters,
     DefaultMap
   > ::type  type;
+  typedef typename boost::is_same<type, DefaultMap>::type Is_internal_map;
 };
 
 template<typename PolygonMesh, typename NamedParameters>
