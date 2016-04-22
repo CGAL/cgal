@@ -206,8 +206,14 @@ void Polyhedron_demo_xyz_plugin::addPointSetButton_clicked()
     {
         add_pointsetdiagui->textEdit->clear();
         item->point_set()->unselect_all();
-        nb_of_point_set++;
-        QString name = QString("%1 #%2").arg(add_pointsetdiagui->name_lineEdit->text()).arg(QString::number(nb_of_point_set));
+        QString name;
+        if(add_pointsetdiagui->name_lineEdit->text()!="")
+          name = add_pointsetdiagui->name_lineEdit->text();
+        else
+        {
+          nb_of_point_set++;
+          name = QString("Point_set #%1").arg(QString::number(nb_of_point_set));
+        }
         item->setName(name);
         item->setColor(Qt::black);
         item->invalidateOpenGLBuffers();

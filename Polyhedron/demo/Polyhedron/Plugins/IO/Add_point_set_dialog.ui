@@ -54,7 +54,7 @@ p, li { white-space: pre-wrap; }
        <item>
         <widget class="QLineEdit" name="name_lineEdit">
          <property name="text">
-          <string>Point_set</string>
+          <string/>
          </property>
         </widget>
        </item>

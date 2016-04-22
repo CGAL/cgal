@@ -254,8 +254,15 @@ void Polyhedron_demo_polylines_io_plugin::addPolylineButton_clicked()
         add_polydiagui->textEdit->clear();
         Scene_polylines_item* item = new Scene_polylines_item;
         item->polylines = polylines;
-        nb_of_polylines++;
-        QString name = QString("%1 #%2").arg(add_polydiagui->name_lineEdit->text()).arg(QString::number(nb_of_polylines));
+        QString name;
+        if(add_polydiagui->name_lineEdit->text() != "")
+          name = add_polydiagui->name_lineEdit->text();
+        else
+        {
+          nb_of_polylines++;
+          name = QString("Polyline #%1").arg(QString::number(nb_of_polylines));
+        }
+        add_polydiagui->name_lineEdit->clear();
         item->setName(name);
         item->setColor(Qt::black);
         item->setProperty("polylines metadata", polylines_metadata);
