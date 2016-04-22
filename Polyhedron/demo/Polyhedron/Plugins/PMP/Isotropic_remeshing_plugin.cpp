@@ -616,6 +616,7 @@ private:
           , CGAL::Polygon_mesh_processing::parameters::number_of_iterations(nb_iter_)
           .protect_constraints(protect_)
           .edge_is_constrained_map(ecm)
+          .face_patch_map(Patch_id_pmap<face_descriptor>())
           .smooth_along_features(smooth_features_));
         std::cout << "Isotropic remeshing of "
           << poly_item->name().toStdString() << " done." << std::endl;
