@@ -425,7 +425,11 @@ template<class R_> struct Contained_in_simplex : private Store_kernel<R_> {
 		  }
 		  m(d,i)=1;
 		}
-		if (!LA::solve(a,CGAL_MOVE(m),CGAL_MOVE(b))) return false;
+		// If the simplex has full dimension, there must be a solution, only the signs need to be checked.
+		if (n == d+1)
+		  LA::solve(a,CGAL_MOVE(m),CGAL_MOVE(b));
+		else if (!LA::solve_and_check(a,CGAL_MOVE(m),CGAL_MOVE(b)))
+		  return false;
 		for(int i=0;i<n;++i){
 		  if (a[i]<0) return false;
 		}
@@ -683,7 +687,6 @@ template <class R_> struct Construct_circumcenter : Store_kernel<R_> {
       typedef typename LAd::Vector Vec;
       typename Get_functor<R_, Scalar_product_tag>::type sp(this->kernel());
       int k=static_cast<int>(std::distance(f,e));
-      int d=pd(p0);
       Matrix m(k,k);
       Vec b(k);
       Vec l(k);
