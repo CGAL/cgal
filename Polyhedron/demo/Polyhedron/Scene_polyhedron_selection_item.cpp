@@ -1278,10 +1278,10 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
             temp_selected_facets.erase(h1->facet());
             Polyhedron::Point_3 p1t = h1->vertex()->point();
             Polyhedron::Point_3 p1s = h1->opposite()->vertex()->point();
-            double x =  p1t.x() + 0.01 * (p1t.x() - p1s.x());
-            double y =  p1t.y() + 0.01 * (p1t.y() - p1s.y());
-            double z =  p1t.z() + 0.01 * (p1t.z() - p1s.z());
-            hhandle->vertex()->point() = Polyhedron::Point_3(x,y,z);;
+            double x =  p1t.x() + 0.01 * (p1s.x() - p1t.x());
+            double y =  p1t.y() + 0.01 * (p1s.y() - p1t.y());
+            double z =  p1t.z() + 0.01 * (p1s.z() - p1t.z());
+            hhandle->opposite()->vertex()->point() = Polyhedron::Point_3(x,y,z);;
             first_selected = false;
             temp_selected_vertices.erase(to_split_vh);
             invalidateOpenGLBuffers();
