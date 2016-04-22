@@ -255,9 +255,9 @@ int   gif89 = 0;
     get_static_b() = (byte *) ImageIO_alloc(256 * sizeof(byte));
    
     for (i = 0; i < 256; i++) {
-      get_static_r()[i] = EGApalette[i&15][0];
-      get_static_g()[i] = EGApalette[i&15][1];
-      get_static_b()[i] = EGApalette[i&15][2];
+      get_static_r()[i] = byte(EGApalette[i&15][0]);
+      get_static_g()[i] = byte(EGApalette[i&15][1]);
+      get_static_b()[i] = byte(EGApalette[i&15][2]);
     }
   }
 

@@ -608,9 +608,9 @@ void _get_image_bounding_box(_image* im,
   *x_min = im->tx;
   *y_min = im->ty;
   *z_min = im->tz;
-  *x_max = (im->xdim - 1.0f)*(im->vx) + *x_min ;
-  *y_max = (im->ydim - 1.0f)*(im->vy) + *y_min ;
-  *z_max = (im->zdim - 1.0f)*(im->vz) + *z_min ;
+  *x_max = (double(im->xdim) - 1.0)*(im->vx) + *x_min ;
+  *y_max = (double(im->ydim) - 1.0)*(im->vy) + *y_min ;
+  *z_max = (double(im->zdim) - 1.0)*(im->vz) + *z_min ;
 }
 
 /* Free an image descriptor */
@@ -1102,7 +1102,7 @@ static void _swapImageData( _image *im )
       ptr3 = ptr4 = (unsigned short int *) im->data;
       while( length-- ) {
 	si = *ptr3++;
-	*ptr4++ = ((si >> 8) & 0xff) | (si << 8);
+	*ptr4++ = (unsigned short int)(((si >> 8) & 0xff) | (si << 8));
       }
     }
     
@@ -1570,10 +1570,10 @@ float triLinInterp(const _image* image,
                    float posz,
                    float value_outside /*= 0.f */)
 {
-  const int dimx = image->xdim;
-  const int dimy = image->ydim;
-  const int dimz = image->zdim;
-  const int dimxy = dimx*dimy;
+  const std::size_t dimx = image->xdim;
+  const std::size_t dimy = image->ydim;
+  const std::size_t dimz = image->zdim;
+  const std::size_t dimxy = dimx*dimy;
   
   if(posx < 0.f || posy < 0.f || posz < 0.f )
     return value_outside;
@@ -1594,10 +1594,10 @@ float triLinInterp(const _image* image,
   const int j2 = j1 + 1;
   const int k2 = k1 + 1;
 
-  const float KI2 = i2-posz;
-  const float KI1 = posz-i1;
-  const float KJ2 = j2-posy;
-  const float KJ1 = posy-j1;
+  const float KI2 = float(i2)-posz;
+  const float KI1 = posz-float(i1);
+  const float KJ2 = float(j2)-posy;
+  const float KJ1 = posy-float(j1);
 
   CGAL_IMAGE_IO_CASE
     (image,
@@ -1605,11 +1605,11 @@ float triLinInterp(const _image* image,
      return (((float)array[i1 * dimxy + j1 * dimx + k1] * KI2 +
               (float)array[i2 * dimxy + j1 * dimx + k1] * KI1) * KJ2 +
              ((float)array[i1 * dimxy + j2 * dimx + k1] * KI2 +
-              (float)array[i2 * dimxy + j2 * dimx + k1] * KI1) * KJ1) * (k2-posx)+
+              (float)array[i2 * dimxy + j2 * dimx + k1] * KI1) * KJ1) * (float(k2)-posx)+
      (((float)array[i1 * dimxy + j1 * dimx + k2] * KI2 +
        (float)array[i2 * dimxy + j1 * dimx + k2] * KI1) * KJ2 +
       ((float)array[i1 * dimxy + j2 * dimx + k2] * KI2 +
-       (float)array[i2 * dimxy + j2 * dimx + k2] * KI1) * KJ1) * (posx-k1);
+       (float)array[i2 * dimxy + j2 * dimx + k2] * KI1) * KJ1) * (posx-float(k1));
      );
   return 0.f;
 }
@@ -1635,9 +1635,9 @@ void convertImageTypeToFloat(_image* image){
   if(image->wordKind == WK_FLOAT && image->wdim == 4)
     return;
 
-  const unsigned int dimx = image->xdim;
-  const unsigned int dimy = image->ydim;
-  const unsigned int dimz = image->zdim;
+  const std::size_t dimx = image->xdim;
+  const std::size_t dimy = image->ydim;
+  const std::size_t dimz = image->zdim;
   
   float * array = (float*)ImageIO_alloc (dimx * dimy * dimz *sizeof(float));
   if (array == NULL ) {

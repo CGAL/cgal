@@ -103,9 +103,9 @@ void Image_3::gl_draw_bbox(const float line_width,
     double z() const { return z_; }
   };
 
-  const double xmax = (image_ptr->xdim - 1.0)*(image_ptr->vx);
-  const double ymax = (image_ptr->ydim - 1.0)*(image_ptr->vy);
-  const double zmax = (image_ptr->zdim - 1.0)*(image_ptr->vz);
+  const double xmax = (double(image_ptr->xdim) - 1.0)*(image_ptr->vx);
+  const double ymax = (double(image_ptr->ydim) - 1.0)*(image_ptr->vy);
+  const double zmax = (double(image_ptr->zdim) - 1.0)*(image_ptr->vz);
 
   Point a(0.0, 0.0,    0.0);
   Point b(0.0, ymax, 0.0);

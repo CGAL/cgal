@@ -220,7 +220,7 @@ int testAnalyzeHeader(char *magic,const char *) {
 CGAL_INLINE_FUNCTION
 int writeAnalyze( char *name, _image* im) {
   char *outputName;
-  int length, extLength=0, res;
+  std::size_t length, extLength=0;
 
 
   length=strlen(name);
@@ -252,7 +252,7 @@ int writeAnalyze( char *name, _image* im) {
     return ImageIO_OPENING;
   }
 
-  res = writeAnalyzeHeader(im);
+  int res = writeAnalyzeHeader(im);
   if ( res < 0 ) {
     fprintf(stderr, "writeAnalyze: error: unable to write header of \'%s\'\n",
 	    outputName);
@@ -530,7 +530,7 @@ int _readAnalyzeHeader( _image* im, const char* name,
       /* header is read. close header file and open data file. */
       if( name != NULL ) {
 
-	int length = strlen(name) ;
+        std::size_t length = strlen(name) ;
 	char* data_filename = (char *) ImageIO_alloc(length+4) ;
 	
 	if( strcmp( name+length-4, ".hdr" ) )
@@ -612,9 +612,9 @@ writeAnalyzeHeader( const _image* im )
    hdr.dime.cal_min     = 0.0;
 
    hdr.dime.dim[0] = 4;
-   hdr.dime.dim[1] = im->xdim;
-   hdr.dime.dim[2] = im->ydim;
-   hdr.dime.dim[3] = im->zdim;
+   hdr.dime.dim[1] = short(im->xdim);
+   hdr.dime.dim[2] = short(im->ydim);
+   hdr.dime.dim[3] = short(im->zdim);
    hdr.dime.dim[4] = 1 ;
 
    if ( im->wordKind == WK_FIXED && im->sign == SGN_UNSIGNED ) {
@@ -633,9 +633,9 @@ writeAnalyzeHeader( const _image* im )
 	
 	{
 	  unsigned char *buf = (unsigned char *)im->data;
-	  int size = im->xdim * im->ydim * im->zdim * im->vdim;
+          std::size_t size = std::size_t(im->xdim) * im->ydim * im->zdim * im->vdim;
 	  imin = imax = *buf;
-	  for (i=0; i<size; i++, buf++) {
+	  for (std::size_t i=0; i<size; i++, buf++) {
 	    if ( imax < *buf ) imax = *buf;
 	    if ( imin > *buf ) imin = *buf;
 	  }
@@ -645,10 +645,9 @@ writeAnalyzeHeader( const _image* im )
       else if ( im->wdim == 2 ) {
 	if ( im->vdim == 1 ) {
 	  unsigned short int *buf = (unsigned short int*)im->data;
-	  int size = im->xdim * im->ydim *im->zdim;
-	  int i;
+          std::size_t size = std::size_t(im->xdim) * im->ydim *im->zdim;
 	  imin = imax = *buf;
-	  for (i=0; i<size; i++, buf++) {
+	  for (std::size_t i=0; i<size; i++, buf++) {
 	    if ( imax < *buf ) imax = *buf;
 	    if ( imin > *buf ) imin = *buf;
 	  }
@@ -680,10 +679,9 @@ writeAnalyzeHeader( const _image* im )
      }
      if( im->wdim == 2 ) {
        short int *buf = (short int*)im->data;
-       int size = im->xdim * im->ydim *im->zdim;
-       int i;
+       std::size_t size = std::size_t(im->xdim) * im->ydim *im->zdim;
        imin = imax = *buf;
-       for (i=0; i<size; i++, buf++) {
+       for (std::size_t i=0; i<size; i++, buf++) {
 	 if ( imax < *buf ) imax = *buf;
 	 if ( imin > *buf ) imin = *buf;
        }
@@ -691,10 +689,9 @@ writeAnalyzeHeader( const _image* im )
      }
      else if( im->wdim == 4 ) {
        int *buf = (int*)im->data;
-       int size = im->xdim * im->ydim *im->zdim;
-       int i;
+       std::size_t size = std::size_t(im->xdim) * im->ydim *im->zdim;
        imin = imax = *buf;
-       for (i=0; i<size; i++, buf++) {
+       for (std::size_t i=0; i<size; i++, buf++) {
 	 if ( imax < *buf ) imax = *buf;
 	 if ( imin > *buf ) imin = *buf;
        }
@@ -727,7 +724,7 @@ writeAnalyzeHeader( const _image* im )
       return -1;
    }
 	 
-   hdr.dime.bitpix = 8*im->wdim*im->vdim ;
+   hdr.dime.bitpix = short(8*im->wdim*im->vdim) ;
 
    hdr.hk.regular = 'r';
    hdr.hk.sizeof_hdr = sizeof(struct dsr);
