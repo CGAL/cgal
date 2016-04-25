@@ -687,6 +687,8 @@ namespace CGAL {
 
     typedef typename Base::Dart_handle Dart_handle;
     typedef typename Base::Map Map;
+    typedef typename Map::size_type size_type;
+    
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
 
   public:
@@ -712,6 +714,8 @@ namespace CGAL {
     Base;
 
     typedef typename Map::Dart_handle Dart_handle;
+    typedef typename Map::size_type size_type;
+    
     typedef Tag_true Basic_iterator; ///< True iff this iterator is basic
 
     /// Main constructor.
