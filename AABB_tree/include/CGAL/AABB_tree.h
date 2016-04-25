@@ -395,12 +395,11 @@ public:
     any_intersection(const Query& query) const;
 
 
-		struct False_functor {
-		template <typename T>
-		bool operator()(const T&) const
-		{ return false;}
-
-	  };
+    struct False_functor {
+      template <typename T>
+      bool operator()(const T&) const
+      { return false;}
+    };
 
     /// Returns the intersection and  primitive id closest to the source point of the ray
     /// query.
@@ -582,8 +581,8 @@ public:
     ///@}
 
 	private:
-		template<typename AABBTree, typename SkipFunctor>
-		friend class AABB_ray_intersection;
+    template<typename AABBTree, typename SkipFunctor>
+    friend class AABB_ray_intersection;
 
     // clear nodes
     void clear_nodes()
