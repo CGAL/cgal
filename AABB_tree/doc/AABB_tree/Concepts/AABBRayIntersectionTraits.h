@@ -24,8 +24,8 @@ public:
 
 
   /*!
-    A functor object to calculate the compute the distance between the closest
-    intersection point of a primitive or bounding box with a ray and the source of a ray.
+    A functor object to compute the distance between the source of a ray and its
+    closest intersection point between the ray and a primitive or a bounding box.
     An empty `boost::optional` is returned, if there is no intersection.
     When there is an intersection, an object of type `FT` is returned such that
     if `i1` and `i2` are two intersection points, then `i1` is closer to the source
@@ -37,7 +37,7 @@ public:
     `boost::optional<std::pair<FT, Intersection_and_primitive_id<Ray_3>::Type > >
      operator()(const Ray_3& r, const Primitive& primitive)`.
 
-    A common algorithm to compute the intersection between a Bounding_box and a Ray is is <A
+    A common algorithm to compute the intersection between a bounding box and a ray is <A
     HREF="http://www.siggraph.org/education/materials/HyperGraph/raytrace/rtinter3.htm">the
     slab method</A>.
   */
