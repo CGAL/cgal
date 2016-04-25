@@ -16,7 +16,7 @@
 // $Id$
 //
 //
-// Author(s)     : 
+// Author(s)     : Florent Lafarge, Simon Giraudot
 //
 
 #ifndef CGAL_STRUCTURE_POINT_SET_3_H
@@ -180,7 +180,7 @@ public:
   /// \endcond
 
   /*!
-    Construct a structured point set based on the input points and the
+    Constructs a structured point set based on the input points and the
     associated shape detection object.
   */
   Point_set_with_structure (Input_iterator begin, ///< iterator over the first input point.
@@ -188,7 +188,7 @@ public:
                             const Shape_detection_3::Efficient_RANSAC<Traits>&
                             shape_detection, ///< shape detection object
                             double epsilon, ///< size parameter
-                            double attraction_factor = 3.) ///< attraction factory
+                            double attraction_factor = 3.) ///< attraction factor
     : m_traits (shape_detection.traits())
   {
     for (Input_iterator it = begin; it != end; ++ it)
@@ -1407,7 +1407,7 @@ structure_point_set (InputIterator first,  ///< iterator over the first input po
                      Shape_detection_3::Efficient_RANSAC<Traits>&
                      shape_detection, ///< shape detection object
                      double epsilon, ///< size parameter
-                     double attraction_factor = 3.) ///< attraction factory
+                     double attraction_factor = 3.) ///< attraction factor
 {
   Point_set_with_structure<Traits> pss (first, beyond, shape_detection, epsilon, attraction_factor);
 
