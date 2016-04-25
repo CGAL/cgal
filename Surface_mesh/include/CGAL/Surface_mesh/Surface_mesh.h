@@ -2566,21 +2566,20 @@ private: //------------------------------------------------------- private data
 
       if(i == 0 && ((off == "COFF") || (off == "CNOFF"))){
         std::string col;
-        std::streampos pos = is.tellg();
         std::getline(is, col);
         std::istringstream iss(col);
         if(iss >> ci){
          bool created;
          boost::tie(vcolor, created) = sm.template add_property_map<Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
-         vcolored = true;
+         std::istringstream iss2(col);
+         vcolor[vi] = File_scanner_OFF::get_color_from_line(iss2);
         }
-        is.seekg(pos);
-      }
-
-      if(vcolored){
-       //stores the RGB value
-       vcolor[vi] = File_scanner_OFF::get_color_from_line(is);
-      }
+      }else{
+         if(vcolored){
+           //stores the RGB value
+           vcolor[vi] = File_scanner_OFF::get_color_from_line(is);
+         }
+       }
     }
     std::vector<size_type> vr;
     std::size_t d;
@@ -2607,21 +2606,20 @@ private: //------------------------------------------------------- private data
       // TODO: extend this to RGBA
       if(i == 0 ){
         std::string col;
-        std::streampos pos = is.tellg();
         std::getline(is, col);
         std::istringstream iss(col);
         if(iss >> ci){
           bool created;
           boost::tie(fcolor, created) = sm.template add_property_map<Face_index,CGAL::Color>("f:color",CGAL::Color(0,0,0));
           fcolored = true;
+          std::istringstream iss2(col);
+          fcolor[fi] = File_scanner_OFF::get_color_from_line(iss2);
         }
-        is.seekg(pos);
-      }
-
-      if(fcolored){
-       fcolor[fi] = File_scanner_OFF::get_color_from_line(is);
-      }
-
+      } else {
+          if(fcolored){
+            fcolor[fi] = File_scanner_OFF::get_color_from_line(is);
+          }
+        }
     }
     return is;
   }

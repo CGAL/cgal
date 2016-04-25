@@ -147,17 +147,20 @@ namespace CGAL{
       if(i==0)
       {
         std::string col;
-        std::streampos pos = in.tellg();
         std::getline(in, col);
         std::istringstream iss(col);
         char ci =' ';
         if(iss >> ci){
           has_fcolors = true;
           fcolors.resize(scanner.size_of_facets());
+          std::istringstream iss2(col);
+          CGAL::File_scanner_OFF scanner2(iss2);
+          unsigned char r=0, g=0, b=0;
+          scanner2.scan_color(r,g,b);
+          fcolors[i] = Color_rgb(r,g,b);
         }
-        in.seekg(pos);
       }
-      if(has_fcolors)
+      else if(has_fcolors)
       {
         unsigned char r=0, g=0, b=0;
         scanner.scan_color(r,g,b);
