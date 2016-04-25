@@ -201,6 +201,8 @@ public:
   const Point& operator[] (Item index) const { return m_points[m_indices[index]]; }
   Point& point (Item index) { return m_points[m_indices[index]]; }
   const Point& point (Item index) const { return m_points[m_indices[index]]; }
+  std::size_t& item (Item index) { return m_indices[index]; }
+  const std::size_t& item (Item index) const { return m_indices[index]; }
 
   void erase (iterator first, iterator beyond)
   {
