@@ -143,7 +143,8 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
       // Computes points to remove by random simplification
       first_point_to_remove =
         CGAL::random_simplify_point_set(points->begin(), points->end(),
-                                        dialog.randomSimplificationPercentage());
+                                        points->points(),
+                                        dialog.randomSimplificationPercentage(), Kernel());
     }
     else if (method == 1)
     {
@@ -152,12 +153,16 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
       // Computes average spacing
       double average_spacing = CGAL::compute_average_spacing<Concurrency_tag>(
                                       points->begin(), points->end(),
-                                      6 /* knn = 1 ring */);
+                                      points->points(),
+                                      6 /* knn = 1 ring */,
+                                      Kernel());
 
       // Computes points to remove by Grid Clustering
       first_point_to_remove =
         CGAL::grid_simplify_point_set(points->begin(), points->end(),
-                                      dialog.gridCellSize()*average_spacing);
+                                      points->points(),
+                                      dialog.gridCellSize()*average_spacing,
+                                      Kernel());
     }
     else
     {
@@ -167,8 +172,11 @@ void Polyhedron_demo_point_set_simplification_plugin::on_actionSimplify_triggere
       // Computes points to remove by Grid Clustering
       first_point_to_remove =
         CGAL::hierarchy_simplify_point_set(points->begin(), points->end(),
+                                           points->points(),
 					   dialog.maximumClusterSize(),
-					   dialog.maximumSurfaceVariation());
+					   dialog.maximumSurfaceVariation(),
+                                           CGAL::Default_diagonalize_traits<double, 3>(),
+                                           Kernel());
     }
 
     std::size_t nb_points_to_remove = std::distance(first_point_to_remove, points->end());

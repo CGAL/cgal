@@ -172,6 +172,7 @@ void Polyhedron_demo_xyz_plugin::addPointSetButton_clicked()
     msgBox->exec();
     return;
   }
+
   Q_FOREACH(QString s, list)
   {
       if(!s.isEmpty())
@@ -194,11 +195,7 @@ void Polyhedron_demo_xyz_plugin::addPointSetButton_clicked()
       if(counter == 3)
       {
           const Kernel::Point_3 p(coord[0], coord[1], coord[2]);
-          Kernel::Vector_3 n(0,0,0);
-          UI_point point(p,n);
-          item->point_set()->push_back(point);
-
-
+          item->point_set()->push_back(p);
           counter =0;
       }
   }

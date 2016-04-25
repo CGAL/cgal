@@ -1,4 +1,22 @@
-// Author: Laurent Saboret, Nader Salman, Gael Guennebaud
+// Copyright (c) 2007-2016  INRIA (France).
+// All rights reserved.
+//
+// This file is part of CGAL (www.cgal.org).
+// You can redistribute it and/or modify it under the terms of the GNU
+// General Public License as published by the Free Software Foundation,
+// either version 3 of the License, or (at your option) any later version.
+//
+// Licensees holding a valid commercial license may use this file in
+// accordance with the commercial license agreement provided with the software.
+//
+// This file is provided AS IS with NO WARRANTY OF ANY KIND, INCLUDING THE
+// WARRANTY OF DESIGN, MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE.
+//
+// $URL$
+// $Id$
+//
+//
+// Author(s)     : Laurent Saboret, Nader Salman, Gael Guennebaud
 
 #ifndef POINT_SET_3_H
 #define POINT_SET_3_H
@@ -7,7 +25,8 @@
 #include <CGAL/Min_sphere_of_spheres_d.h>
 #include <CGAL/Min_sphere_of_points_d_traits_3.h>
 #include <CGAL/Min_sphere_of_spheres_d_traits_3.h>
-#include <UI_point_3.h>
+#include <CGAL/Point_set_3.h>
+
 #include <algorithm>
 #include <vector>
 # include <CGAL/gl.h>
@@ -31,26 +50,18 @@
 /// @param Gt       Geometric traits class.
 
 template <class Gt>
-class Point_set_3 : public std::vector<UI_point_3<Gt> >
+class Point_set_3 : public CGAL::Point_set_3<Gt>
 {
-// Private types
 private:
 
   // Base class
-  typedef std::vector<UI_point_3<Gt> > Base;
-
-// Public types
+  typedef CGAL::Point_set_3<Gt> Base;
+  
 public:
 
-  // Repeat base class' types
-  /// @cond SKIP_IN_MANUAL
   typedef typename Base::iterator iterator;
   typedef typename Base::const_iterator const_iterator;
-
-  using Base::erase;
-
-  /// @endcond
-
+  
   // Classic CGAL geometric types
   typedef Gt  Geom_traits; ///< Geometric traits class.
   typedef typename Geom_traits::FT FT;
@@ -59,18 +70,20 @@ public:
   typedef typename Geom_traits::Iso_cuboid_3 Iso_cuboid;
   typedef typename Geom_traits::Sphere_3 Sphere;
 
-  /// Type of points in Point_set_3
-  typedef UI_point_3<Gt> UI_point; ///< Position + normal + selection flag
-  // Its superclass:
-  typedef typename UI_point::Point_with_normal Point_with_normal; ///< Position + normal
 
-// Data members
+  using Base::m_points;
+  using Base::begin;
+  using Base::end;
+  using Base::empty;
+  using Base::size;
+  using Base::clear;
+  using Base::erase;
+  
 private:
-
+  
   // Indicate if m_barycenter, m_bounding_box, m_bounding_sphere and
   // m_diameter_standard_deviation below are valid.
   mutable bool m_bounding_box_is_valid;
-
   mutable Iso_cuboid m_bounding_box; // point set's bounding box
   mutable Sphere m_bounding_sphere; // point set's bounding sphere
   mutable Point m_barycenter; // point set's barycenter
@@ -88,44 +101,33 @@ private:
   }
 
   
-// Public methods
 public:
-
-  /// Default constructor.
-  Point_set_3()
+  Point_set_3 ()
   {
-    m_nb_selected = 0;
     m_bounding_box_is_valid = false;
     m_radii_are_uptodate = false;
+    m_nb_selected = 0;
   }
 
   // copy constructor 
-  Point_set_3 (const Point_set_3& p) : Base (p)
+  Point_set_3 (const Point_set_3& p) : Base ()
   {
     m_bounding_box_is_valid = p.m_bounding_box_is_valid;
     m_bounding_box = p.m_bounding_box;
     m_barycenter = p.m_barycenter;
     m_diameter_standard_deviation = p.m_diameter_standard_deviation;
-
-    m_nb_selected = p.nb_selected_points ();
-    
     m_radii_are_uptodate = p.m_radii_are_uptodate;
+    m_nb_selected = 0;
   }
 
-  // Repeat base class' public methods used below
-  /// @cond SKIP_IN_MANUAL
-  using Base::begin;
-  using Base::end;
-  using Base::size;
-  /// @endcond
 
   iterator first_selected() { return end() - m_nb_selected; }
-  const_iterator first_selected() const { return end () - m_nb_selected; }
+  const_iterator first_selected() const { return end() - m_nb_selected; }
   void set_first_selected(iterator it)
   {
     m_nb_selected = static_cast<std::size_t>(std::distance (it, end()));
   }
-
+  
   // Test if point is selected
   bool is_selected(const_iterator it) const
   {
@@ -164,7 +166,6 @@ public:
     m_nb_selected = 0;
   }
 
-
   // Invert selection
   void invert_selection()
   {
@@ -182,16 +183,12 @@ public:
   /// Deletes selected points.
   void delete_selection()
   {
-    // Deletes selected points using erase-remove idiom
-    erase (first_selected(), end ());
-
-    // after erase(), use Scott Meyer's "swap trick" to trim excess capacity
-    Point_set_3(*this).swap(*this);
+    erase (first_selected(), end());
     m_nb_selected = 0;
     invalidate_bounds();
   }
 
-  /// Gets the bounding box.
+    /// Gets the bounding box.
   Iso_cuboid bounding_box() const
   {
     if (!m_bounding_box_is_valid)
@@ -247,15 +244,11 @@ public:
   {
     m_bounding_box_is_valid = false;
   }
-
-
-
-
   
   bool are_radii_uptodate() const { return m_radii_are_uptodate; }
   void set_radii_uptodate(bool /*on*/) { m_radii_are_uptodate = false; }
+  
 
-// Private methods:
 private:
 
   /// Recompute barycenter, bounding box, bounding sphere and standard deviation.
@@ -273,7 +266,8 @@ private:
     FT norm = 0;
     for (const_iterator it = begin(); it != end(); it++)
     {
-      const Point& p = *it;
+      const Point& p = (*this)[*it];
+      
 
       // update bbox
       xmin = (std::min)(p.x(),xmin);
@@ -298,7 +292,7 @@ private:
     typedef CGAL::Min_sphere_of_points_d_traits_3<Gt,FT> Traits;
     typedef CGAL::Min_sphere_of_spheres_d<Traits> Min_sphere;
 
-    Min_sphere ms(begin(),end());
+    Min_sphere ms(m_points.array().begin(), m_points.array().end());
 
     typename Min_sphere::Cartesian_const_iterator coord = ms.center_cartesian_begin();
     FT cx = *coord++;
@@ -307,16 +301,16 @@ private:
     m_bounding_sphere = Sphere(Point(cx,cy,cz), ms.radius()*ms.radius());
 
     // Computes standard deviation of the distance to barycenter
-    typename Geom_traits::Compute_squared_distance_3 sqd;
+    typename Gt::Compute_squared_distance_3 sqd;
     FT sq_radius = 0;
     for (const_iterator it = begin(); it != end(); it++)
-        sq_radius += sqd(*it, m_barycenter);
+      sq_radius += sqd((*this)[*it], m_barycenter);
     sq_radius /= FT(size());
     m_diameter_standard_deviation = CGAL::sqrt(sq_radius);
 
     m_bounding_box_is_valid = true;
   }
-
+  
 }; // end of class Point_set_3
 
 
