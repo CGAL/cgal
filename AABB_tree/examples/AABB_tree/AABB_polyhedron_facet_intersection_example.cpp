@@ -58,8 +58,10 @@ int main()
     if(intersection)
     {
         // gets intersection object
-      if(boost::get<Point>(&(intersection->first)))
-        std::cout << "intersection object is a point" << std::endl;
+      const Point* p = boost::get<Point>(&(intersection->first))
+      if(p)
+        std::cout << "intersection object is a point " << *p << std::endl;
+
     }
 
     // computes all intersections with segment query (as pairs object - primitive_id)
@@ -83,10 +85,6 @@ int main()
       if(boost::get<Segment>(&(plane_intersection->first)))
             std::cout << "intersection object is a segment" << std::endl;
     }
-
-    Point inside(0.1, 0.1, 0.1);
-    Ray ray(inside,r);
-    tree.first_intersection(ray);
     
     return EXIT_SUCCESS;
 }

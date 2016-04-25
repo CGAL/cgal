@@ -137,6 +137,19 @@ a segment.  We finally compute the first intersection along a ray.
 
 \cgalExample{AABB_tree/AABB_polyhedron_facet_intersection_example.cpp}
 
+
+\subsection aabb_tree_examples_2 Ray Shooting
+
+In the following example we load a closed polyhedral surface and perform a
+ray shooting query from the centroid of each face, orthogonally to the face
+towards the interior.  As the centroid is computed with floating point
+arithmetic the first face hit by the ray may be the face of the centroid.
+The skip functor takes care of ignoring the face.
+
+\cgalExample{AABB_tree/AABB_ray_shooting_example.cpp}
+
+
+
 \subsection aabb_tree_examples_3 Tree of Polyhedron Triangle Facets for Distance Queries
 
 In the following example the AABB primitive wraps a facet handle of a
