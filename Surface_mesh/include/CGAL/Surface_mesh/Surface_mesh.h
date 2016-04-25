@@ -2573,6 +2573,7 @@ private: //------------------------------------------------------- private data
          boost::tie(vcolor, created) = sm.template add_property_map<Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
          std::istringstream iss2(col);
          vcolor[vi] = File_scanner_OFF::get_color_from_line(iss2);
+         vcolored = true;
         }
       }else{
          if(vcolored){
