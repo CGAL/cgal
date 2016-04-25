@@ -21,7 +21,7 @@
 #ifndef CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
 #define CGAL_TRIANGULATION_EUCLIDEAN_TRAITS_2_H
 
-#define CGAL_DEPRECATED_HEADER "<CGAL/triangulation_euclidean_traits_2.h>"
+#define CGAL_DEPRECATED_HEADER "<CGAL/Triangulation_euclidean_traits_2.h>"
 #include <CGAL/internal/deprecation_warning.h>
 
 #include <CGAL/Point_2.h>
