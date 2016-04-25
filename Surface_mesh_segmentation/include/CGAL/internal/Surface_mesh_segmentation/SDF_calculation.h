@@ -508,7 +508,7 @@ private:
     const Ray& query, SkipFunctor s, bool accept_if_acute) const {
 
     const boost::optional< typename Tree::template Intersection_and_primitive_id<Ray>::Type >
-      min_intersection = tree.ray_intersection(query, s);
+      min_intersection = tree.first_intersection(query, s);
     if(!min_intersection)
       return boost::make_tuple(false, false, 0.0, Primitive_id());
 
