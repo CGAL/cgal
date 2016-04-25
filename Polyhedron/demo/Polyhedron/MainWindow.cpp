@@ -121,6 +121,7 @@ MainWindow::MainWindow(QWidget* parent)
 {
   ui = new Ui::MainWindow;
   ui->setupUi(this);
+  menu_map[ui->menuOperations->title()] = ui->menuOperations;
   // remove the Load Script menu entry, when the demo has not been compiled with QT_SCRIPT_LIB
 #if !defined(QT_SCRIPT_LIB)
   ui->menuBar->removeAction(ui->actionLoad_Script);
@@ -400,7 +401,8 @@ MainWindow::MainWindow(QWidget* parent)
 void filterMenuOperations(QMenu* menu)
 {
     Q_FOREACH(QAction* action, menu->actions()) {
-        if(QMenu* menu = action->menu()) {
+        if(QMenu* menu = action->menu())
+        {
             filterMenuOperations(menu);
             action->setVisible(!(menu->isEmpty()));
         }
@@ -415,7 +417,6 @@ void MainWindow::filterOperations()
         action->setVisible( p.first->applicable(action) );
     }
   }
-
   // do a pass over all menus in Operations and their sub-menus(etc.) and hide them when they are empty
   filterMenuOperations(ui->menuOperations);
 }
@@ -475,71 +476,106 @@ bool actionsByName(QAction* x, QAction* y) {
 //Recursively creates all subMenus containing an action.
 void MainWindow::setMenus(QString name, QString parentName, QAction* a )
 {
-
-        bool hasSub = false;
-        QString menuName, subMenuName;
-        if (!name.isNull())
-        {
-            //Get the menu and submenu names
-            for(int i=0; i<name.size(); i++)
-            {
-                if(name.at(i)=='/')
-                    hasSub = true;
-            }
-
-            if(!hasSub)
-                menuName= name;
-            else
-            {
-                int i;
-                for(i = 0; name.at(i)!='/'; i++)
-                    menuName.append(name.at(i));
-                i++;
-                for(int j = i; j<name.size(); j++)
-                    subMenuName.append(name.at(j));
-                setMenus(subMenuName, menuName, a);
-            }
-
-            //Create the menu and sub menu
-            QMenu* menu = 0;
-            QMenu* parentMenu = 0;
-            //If the menu already exists, don't create a new one.
-            Q_FOREACH(QAction* action, findChildren<QAction*>()) {
-                if(!action->menu()) continue;
-                QString menuText = action->menu()->title();
-                //If the menu title does not correspond to the name of the menu or submenu we want,
-                //go to the next one.
-                if(menuText != menuName) continue;
-                menu = action->menu();
-            }
-
-            bool hasAction = false;
-            if(menu == 0)
-                menu = new QMenu(menuName, this);
-            else //checks the action is not already in the menu
-                if(a->property("added").toBool())
-                    hasAction = true;
-            if(!hasAction)
-                menu->addAction(a);
-            a->setProperty("added", true);
-            //If the parent menu already exists, don't create a new one.
-            Q_FOREACH(QAction* action, findChildren<QAction*>()) {
-                if(!action->menu()) continue;
-                QString menuText = action->menu()->title();
-                //If the menu title does not correspond to the name of the menu or submenu we want,
-                //go to the next one.
-                if(menuText != parentName) continue;
-                parentMenu = action->menu();
-            }
-
-            if(parentMenu == 0)
-                parentMenu = new QMenu(parentName, this);
-            parentMenu->addMenu(menu);
-            ui->menuOperations->removeAction(a);
+  bool hasSub = false;
+  QString menuName, subMenuName;
+  if (name.isNull())
+    return;
+  //Get the menu and submenu names
+  for(int i=0; i<name.size(); i++)
+  {
+    if(name.at(i)=='/')
+    {
+      hasSub = true;
+      break;
     }
+  }
+
+  if(!hasSub)
+    menuName= name;
+  else
+  {
+    int i;
+    for(i = 0; name.at(i)!='/'; i++)
+      menuName.append(name.at(i));
+    i++;
+    for(int j = i; j<name.size(); j++)
+      subMenuName.append(name.at(j));
+    setMenus(subMenuName, name, a);
+  }
+
+  //Create the menu and sub menu
+  QMenu* menu = 0;
+  QMenu* parentMenu = 0;
+  //If the menu already exists, don't create a new one.
+  if(menu_map.contains(name))
+  {
+    menu = menu_map[name];
+  }
+
+  bool hasAction = false;
+  if(menu == 0){
+    menu = new QMenu(menuName, this);
+    menu_map[name] = menu;
+  }
+  else //checks the action is not already in the menu
+    if(a->property("added").toBool())
+      hasAction = true;
+  if(!hasAction)
+    menu->addAction(a);
+  a->setProperty("added", true);
+  //If the parent menu already exists, don't create a new one.
+  if(menu_map.contains(parentName))
+  {
+    parentMenu = menu_map[parentName];
+  }
+  if(parentMenu == 0)
+  {//get the parentMenu title :
+    QString parentTitle;
+    for(int i=0; parentName.at(i)!='/'; i++)
+      parentTitle.append(parentName.at(i));
+    parentMenu = new QMenu(parentTitle, this);
+    menu_map[parentName] = parentMenu;
+  }
+  parentMenu->addMenu(menu);
+  ui->menuOperations->removeAction(a);
 }
 
-
+void MainWindow::load_plugin(QString fileName, bool blacklisted)
+{
+    if(fileName.contains("plugin") && QLibrary::isLibrary(fileName)) {
+      //set plugin name
+      QFileInfo fileinfo(fileName);
+      //set plugin name
+      QString name = fileinfo.fileName();
+      name.remove(QRegExp("^lib"));
+      name.remove(QRegExp("\\..*"));
+      //do not load it if it is in the blacklist
+      if(blacklisted)
+      {
+        if ( plugin_blacklist.contains(name) ){
+          qDebug("### Ignoring plugin \"%s\".", qPrintable(fileName));
+          return;
+        }
+      }
+      QDebug qdebug = qDebug();
+      qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
+      QPluginLoader loader;
+      loader.setFileName(fileinfo.absoluteFilePath());
+      QObject *obj = loader.instance();
+      if(obj) {
+        obj->setObjectName(name);
+        bool init1 = initPlugin(obj);
+        bool init2 = initIOPlugin(obj);
+        if (!init1 && !init2)
+          qdebug << "not for this program";
+        else
+          qdebug << "success";
+      }
+      else {
+        qdebug << "error: " << qPrintable(loader.errorString());
+      }
+    }
+}
 
 void MainWindow::loadPlugins()
 {
@@ -595,55 +631,26 @@ void MainWindow::loadPlugins()
   Q_FOREACH (QDir pluginsDir, plugins_directories) {
     qDebug("# Looking for plugins in directory \"%s\"...",
            qPrintable(pluginsDir.absolutePath()));
-    Q_FOREACH (QString fileName, pluginsDir.entryList(QDir::Files)) {
-      if(fileName.contains("plugin") && QLibrary::isLibrary(fileName)) {
-        //set plugin name
-        QString name = fileName;
-        name.remove(QRegExp("^lib"));
-        name.remove(QRegExp("\\..*"));
-        //do not load it if it is in the blacklist
-        if ( plugin_blacklist.contains(name) ){
-          qDebug("### Ignoring plugin \"%s\".", qPrintable(fileName));
-          continue;
-        }
-        QDebug qdebug = qDebug();
-        qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
-        QPluginLoader loader;
-        loader.setFileName(pluginsDir.absoluteFilePath(fileName));
-        QObject *obj = loader.instance();
-        if(obj) {
-          obj->setObjectName(name);
-          bool init1 = initPlugin(obj);
-          bool init2 = initIOPlugin(obj);
-          if (!init1 && !init2)
-            qdebug << "not for this program";
-          else
-            qdebug << "success";
-        }
-        else {
-          qdebug << "error: " << qPrintable(loader.errorString());
-        }
-      }
-    }
+    Q_FOREACH(QString fileName, pluginsDir.entryList(QDir::Files))
+      load_plugin(pluginsDir.absoluteFilePath(fileName), true);
   }
-
-
-//Creates sub-Menus for operations.
-  //!TODO : Make it recursive to allow sub-menus of sub-menus.
-  //!The argument should be the menuPath and it should recurse until hasSub stays false.
-   QList<QAction*> as = ui->menuOperations->actions();
-  Q_FOREACH(QAction* a, as)
+  updateMenus();
+}
+  //Creates sub-Menus for operations.
+void MainWindow::updateMenus()
 {
-              QString menuPath = a->property("subMenuName").toString();
-              setMenus(menuPath, ui->menuOperations->title(), a);
-              // sort the operations menu by name
-              as = ui->menuOperations->actions();
-              qSort(as.begin(), as.end(), actionsByName);
-              ui->menuOperations->clear();
-              ui->menuOperations->addActions(as);
-          }
-      }
-
+  QList<QAction*> as = ui->menuOperations->actions();
+  Q_FOREACH(QAction* a, as)
+  {
+    QString menuPath = a->property("subMenuName").toString();
+    setMenus(menuPath, ui->menuOperations->title(), a);
+  }
+  // sort the operations menu by name
+  as = ui->menuOperations->actions();
+  qSort(as.begin(), as.end(), actionsByName);
+  ui->menuOperations->clear();
+  ui->menuOperations->addActions(as);
+}
 bool MainWindow::hasPlugin(const QString& pluginName) const
 {
   Q_FOREACH(const PluginNamePair& p, plugins) {
@@ -1667,49 +1674,10 @@ void MainWindow::on_actionLoad_plugin_triggered()
                 this,
                 tr("Select the directory containing your plugins:"),
                 ".",filters);
-    Q_FOREACH(QString fileName, paths)
-    {
-      if(fileName.contains("plugin") && QLibrary::isLibrary(fileName)) {
-          QFileInfo fileinfo(fileName);
-        //set plugin name
-        QString name = fileinfo.fileName();
-        name.remove(QRegExp("^lib"));
-        name.remove(QRegExp("\\..*"));
-        QDebug qdebug = qDebug();
-        qdebug << "### Loading \"" << fileName.toUtf8().data() << "\"... ";
-        QPluginLoader loader;
-        loader.setFileName(fileName);
-        QObject *obj = loader.instance();
-        if(obj) {
-          obj->setObjectName(name);
-          bool init1 = initPlugin(obj);
-          bool init2 = initIOPlugin(obj);
-          if (!init1 && !init2)
-              qdebug << "not for this program";
-          else
-              qdebug << "success";
-        }
-        else {
-          qdebug << "error: " << qPrintable(loader.errorString());
-        }
-      }
-    }
+    Q_FOREACH(QString name, paths)
+      load_plugin(name, false);
 
-//Creates sub-Menus for operations.
-//!TODO : Make it recursive to allow sub-menus of sub-menus.
-//!The argument should be the menuPath and it should recurse until hasSub stays false.
- QList<QAction*> as = ui->menuOperations->actions();
-
-Q_FOREACH(QAction* a, as)
-{
-            QString menuPath = a->property("subMenuName").toString();
-            setMenus(menuPath, ui->menuOperations->title(), a);
-            // sort the operations menu by name
-            as = ui->menuOperations->actions();
-            qSort(as.begin(), as.end(), actionsByName);
-            ui->menuOperations->clear();
-            ui->menuOperations->addActions(as);
-        }
+    updateMenus();
 }
 
 void MainWindow::recurseExpand(QModelIndex index)

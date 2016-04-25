@@ -344,7 +344,10 @@ protected:
   //! Returns a list of the selected items in the sceneView.
   QList<int> getSelectedSceneItemIndices() const;
 private:
+  void updateMenus();
+  void load_plugin(QString names, bool blacklisted);
   void recurseExpand(QModelIndex index);
+  QMap<QString, QMenu*> menu_map;
   QString get_item_stats();
   QString strippedName(const QString &fullFileName);
   void setMenus(QString, QString, QAction *a);
