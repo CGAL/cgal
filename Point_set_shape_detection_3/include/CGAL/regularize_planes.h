@@ -630,9 +630,9 @@ void regularize_planes (const Shape_detection_3::Efficient_RANSAC<EfficientRANSA
   internal::PlaneRegularization::compute_centroids_and_areas<EfficientRANSACTraits>
     (input_begin, planes, shape_detection.point_map(), centroids, areas);
 
-  tolerance_angle = tolerance_angle * CGAL_PI / (FT)(180);
+  tolerance_angle = tolerance_angle * (FT)CGAL_PI / (FT)(180);
   FT tolerance_cosangle = (FT)1. - std::cos (tolerance_angle);
-  FT tolerance_cosangle_ortho = std::cos (0.5 * CGAL_PI - tolerance_angle);
+  FT tolerance_cosangle_ortho = std::cos ((FT)0.5 * (FT)CGAL_PI - tolerance_angle);
       
   // clustering the parallel primitives and store them in clusters
   // & compute the normal, size and cos angle to the symmetry
