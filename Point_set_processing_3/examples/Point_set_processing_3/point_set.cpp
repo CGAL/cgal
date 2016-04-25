@@ -18,22 +18,42 @@ typedef CGAL::cpp11::array<unsigned char, 3> Color;
 
 int main (int argc, char** argv)
 {
-  Point_set point_set;
+
 
   if (point_set.has_normals())
     std::cerr << "Point set has normals" << std::endl;
   else
     std::cerr << "Point set doesn't have normals" << std::endl;
 
-  point_set.add_normal_property();
-
   std::vector<Point_set::Item> indices;
   std::ifstream f (argc > 1 ? argv[1] : "data/data.pwn");
+
+  
+  Point_set point_set;
+  point_set.add_normal_property();
   CGAL::read_xyz_points_and_normals(f,
                                     point_set.index_back_inserter(),
                                     point_set.point_push_pmap(),
                                     point_set.normal_push_pmap(),
                                     Kernel());
+  
+  CGAL::grid_simplify_point_set (point_set.begin (), point_set.end (),
+                                 point_set.point_pmap(),
+                                 0.1);
+
+  typedef CGAL::cpp11::array<unsigned char, 3> Color;
+  point_set.add_property<Color> ("color");
+
+  for (std::size_t i = 0; i < (std::min)(std::size_t(5), point_set.size()); ++ i)
+    std::cerr << "Item " << i << " = " << std::endl
+              << "  * Point = " << point_set.point(i) << std::endl
+              << "  * Point = " << point_set.normal(i) << std::endl
+              << "  * Color = "
+              << point_set.property<Color>("color", i)[0]
+              << point_set.property<Color>("color", i)[1]
+              << point_set.property<Color>("color", i)[2] << std::endl;
+
+  
   f.close ();
 
   for (std::size_t i = 0; i < (std::min)(std::size_t(5), point_set.size()); ++ i)
