@@ -24,7 +24,6 @@
 #include <boost/graph/graph_traits.hpp>
 #include <boost/foreach.hpp>
 #include <boost/type_traits/is_same.hpp>
-#include <boost/range/size.hpp>
 
 #include <CGAL/Polygon_mesh_processing/internal/named_function_params.h>
 #include <CGAL/Polygon_mesh_processing/internal/named_params_helper.h>
@@ -160,7 +159,7 @@ namespace Polygon_mesh_processing {
     typedef typename boost::property_map<typename internal::Dummy_PM,
                                               CGAL::face_index_t>::type   Unset_FIMap;
 
-    if (boost::is_same<FIMap, Unset_FIMap>::value || boost::size(faces) == 1)
+    if (boost::is_same<FIMap, Unset_FIMap>::value || faces.size() == 1)
     {
       //face index map is not given in named parameters, nor as an internal property map
       return internal::border_halfedges_impl(faces, out, pmesh);
