@@ -86,7 +86,7 @@ int main()
 
     Point inside(0.1, 0.1, 0.1);
     Ray ray(inside,r);
-    tree.first_intersection_and_primitive(ray);
+    tree.first_intersection(ray);
     
     return EXIT_SUCCESS;
 }

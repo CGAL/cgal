@@ -75,7 +75,7 @@ the corresponding intersection object, and stops after the first
 encountered intersection. Note that the traversal order of the tree is
 such that first herein does not refer to any particular ordering of
 the intersections with respect to the query.
-- Function `AABB_tree::first_intersected_primitive(Ray_3)` returns
+- Function `AABB_tree::first_intersected_primitive()` returns
 the intersecting primitive id (if any) of the corresponding
 intersection object that is closest to the source of the ray.
 
@@ -86,8 +86,8 @@ intersection objects with the input primitives.
 - Function  `AABB_tree::any_intersection()` detects and constructs the first
 encountered intersection and constructs the corresponding object. This
 function is fast as it stops after the first encountered intersection.
-- Function `AABB_tree::first_intersection(Ray_3)` detects and constructs
-the intersectin object that is closest to the source of the ray.
+- Function `AABB_tree::first_intersection()` detects and constructs
+the intersection object that is closest to the source of the ray.
 
 
 \b Distance. An AABB tree computes the closest point from a

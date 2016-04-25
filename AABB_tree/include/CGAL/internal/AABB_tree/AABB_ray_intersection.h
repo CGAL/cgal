@@ -187,8 +187,8 @@ private:
 template<typename AABBTraits>
 template<typename Ray, typename SkipFunctor>
 boost::optional< typename AABB_tree<AABBTraits>::template Intersection_and_primitive_id<Ray>::Type >
-AABB_tree<AABBTraits>::first_intersection_and_primitive(const Ray& query,
-                                                        const SkipFunctor& skip) const {
+AABB_tree<AABBTraits>::first_intersection(const Ray& query,
+                                          const SkipFunctor& skip) const {
   CGAL_static_assertion_msg((boost::is_same<Ray, typename AABBTraits::Ray_3>::value), 
                             "Ray and Ray_3 must be the same type");
 
@@ -213,10 +213,16 @@ AABB_tree<AABBTraits>::first_intersection_and_primitive(const Ray& query,
 template<typename AABBTraits>
 template<typename Ray, typename SkipFunctor>
 boost::optional<typename AABB_tree<AABBTraits>::Primitive_id>
-first_intersected_primitive(const Ray& query, 
-                            const SkipFunctor& skip = SkipFunctor()) const
+AABB_tree<AABBTraits>::first_intersected_primitive(const Ray& query,
+                            const SkipFunctor& skip) const
 {
-  
+  boost::optional<
+    typename AABB_tree<AABBTraits>::
+      template Intersection_and_primitive_id<Ray>::Type > res =
+        first_intersection(query, skip);
+  if ( (bool) res )
+    return boost::make_optional( res->second );
+  return boost::none;
 }
 
 }

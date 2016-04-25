@@ -77,11 +77,13 @@ int main()
     // polyhedron.make_tetrahedron(p, q, r, s);
   }
 
-  std::ifstream in("../bunny00.off");
+  std::ifstream in("data/bunny00.off");
   if(in)
     in >> polyhedron;
-  else
+  else{
     std::cout << "error reading bunny" << std::endl;
+    return 1;
+  }
 
   Tree tree(faces(polyhedron).first, faces(polyhedron).second, polyhedron);
   Tree::Bounding_box bbox = tree.bbox();
@@ -132,7 +134,7 @@ int main()
   }
 
   for(std::vector<Ray>::iterator it = rays.begin(); it != rays.end(); ++it) {
-    primitives2.push_back(tree.ray_intersection(*it));
+    primitives2.push_back(tree.first_intersection(*it));
   }
   CGAL_assertion_msg(primitives1.size() == primitives2.size(), "Different amount of primitives intersected.");
   CGAL_assertion_msg(std::equal(primitives1.begin(), primitives1.end(), primitives2.begin()),
