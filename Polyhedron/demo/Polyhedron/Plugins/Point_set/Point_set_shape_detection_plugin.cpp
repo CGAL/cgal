@@ -169,7 +169,7 @@ void Polyhedron_demo_point_set_shape_detection_plugin::on_actionDetect_triggered
       {
         std::cerr << "Regularization of planes... " << std::endl;
         CGAL::regularize_planes (shape_detection, true, true, true, true,
-                                 180 * std::acos (op.normal_threshold) / M_PI, op.epsilon);
+                                 180 * std::acos (op.normal_threshold) / CGAL_PI, op.epsilon);
     
         std::cerr << "done" << std::endl;
       }
