@@ -34,7 +34,7 @@ public:
 
     Provides the operators:
     `boost::optional<FT> operator()(const Ray_3& r, const Bounding_box& bbox)`.
-    `boost::optional<std::pair<FT, Intersection_and_primitive_id<Ray_3>::Type > >
+    `boost::optional<std::pair<FT, Intersection_and_primitive_id<Ray_3>::%Type > >
      operator()(const Ray_3& r, const Primitive& primitive)`.
 
     A common algorithm to compute the intersection between a bounding box and a ray is <A
