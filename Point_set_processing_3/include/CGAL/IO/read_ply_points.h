@@ -366,15 +366,15 @@ public:
   {
     for (std::size_t i = 0; i < m_readers.size (); ++ i)
       if (m_readers[i]->name () == tag)
-        return dynamic_cast<internal::Ply_read_typed_number<Type>*>(m_readers[i]);
+        return (dynamic_cast<internal::Ply_read_typed_number<Type>*>(m_readers[i]) != NULL);
     return false;
   }
   bool does_tag_exist (const char* tag, double)
   {
     for (std::size_t i = 0; i < m_readers.size (); ++ i)
       if (m_readers[i]->name () == tag)
-        return (dynamic_cast<internal::Ply_read_typed_number<double>*>(m_readers[i])
-                || dynamic_cast<internal::Ply_read_typed_number<float>*>(m_readers[i]));
+        return (dynamic_cast<internal::Ply_read_typed_number<double>*>(m_readers[i]) != NULL
+                || dynamic_cast<internal::Ply_read_typed_number<float>*>(m_readers[i]) != NULL);
 
     return false;
   }
