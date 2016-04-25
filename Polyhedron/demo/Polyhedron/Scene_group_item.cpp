@@ -140,7 +140,7 @@ void Scene_group_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
     case FlatPlusEdges:
     case Wireframe:
     case PointsPlusNormals:
-      child->draw_edges(viewer); break;
+      child->drawEdges(viewer); break;
     default: break;
     }
   }
@@ -154,7 +154,7 @@ void Scene_group_item::draw_points(CGAL::Three::Viewer_interface* viewer) const
     switch(child->renderingMode()) {
     case Points:
     case PointsPlusNormals:
-      child->draw_points(viewer); break;
+      child->drawPoints(viewer); break;
     default: break;
     }
   }
@@ -165,6 +165,6 @@ void Scene_group_item::draw_splats(CGAL::Three::Viewer_interface* viewer) const
   if(viewer->inDrawWithNames()) return;
   Q_FOREACH(Scene_item* child, children) {
     if(child->visible() && child->renderingMode() == Splatting)
-      child->draw_splats(viewer);
+      child->drawSplats(viewer);
   }
 }

@@ -386,14 +386,6 @@ protected:
 
   /*! Fills the VBOs with data. Must be called after each call to #compute_elements().
    * @see compute_elements()
-  //! Used pass data to the shader.
-  int vertexLoc;
-  //! Used pass data to the shader.
-  int normalLoc;
-  //! Used pass data to the shader.
-  int colorLoc;
-  /*! Fills the VBOs with data. Must be called after each call to #computeElements().
-   * @see computeElements()
    */
   void initializeBuffers(){}
 
