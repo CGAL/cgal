@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
     Vector v = CGAL::Polygon_mesh_processing::compute_face_normal(fd,mesh);	
     
     Ray ray(p,d * v);
-    Ray_intersection intersection = tree.first_intersection(ray, Skip(fd));
+    Ray_intersection intersection = tree.first_intersection(ray);
     if(intersection){
       if(boost::get<Point>(&(intersection->first))){
         const Point* p =  boost::get<Point>(&(intersection->first) );
