@@ -535,10 +535,10 @@ Scene::draw_aux(bool with_names, CGAL::Three::Viewer_interface* viewer)
 
                     if(viewer)
                     {
-                        item.draw_splats(viewer);
+                        item.drawSplats(viewer);
                     }
                     else
-                        item.draw_splats();
+                        item.drawSplats();
                 }
 
             }
