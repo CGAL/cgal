@@ -415,6 +415,21 @@ planar sections and sharp edges.
 Point set structuring. Left: input raw point set. Right: structured point set.
 \cgalFigureEnd
 
+Structure information of points can be used to perform feature
+preserving reconstruction (see
+\ref AFSR_Example_sharp_features "Advancing Front Surface Reconstruction"
+for example). More specifically, the class storing a point set with
+structure provides the user with a method
+`Point_set_with_structure::facet_coherence()` that estimates if a
+triplet of points form a coherent facet.
+
+\cgalFigureBegin{Point_set_processing_3figstructuring, structuring_coherence.png}
+(a) Input point set (and structured output); (b) output with many
+incoherent facets; (c) output with all facets coherent. i, j and k
+each corresponds to a primitive index.
+\cgalFigureEnd
+
+
 
 \subsection Point_set_processing_3Example_9 Example
 
