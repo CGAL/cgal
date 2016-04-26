@@ -30,6 +30,7 @@
 #include <CGAL/IO/binary_file_io.h>
 #include <CGAL/IO/File_header_OFF.h>
 #include <iostream>
+#include <sstream>
 #include <boost/cstdint.hpp>
 
 #include <CGAL/Point_3.h>
@@ -378,163 +379,162 @@ public:
         }
     }
 
-    static CGAL::Color get_indexed_color(int id)
+    static const Color& get_indexed_color(int id)
     {
-      switch(id)
-      {
-      case 0:   return CGAL::Color(static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(.75*255));
-      case 1:   return CGAL::Color(static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(.75*255));
-      case 2:   return CGAL::Color(static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(.75*255));
-      case 3:   return CGAL::Color(static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(.75*255));
-      case 4:   return CGAL::Color(static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(.75*255));
-      case 5:   return CGAL::Color(static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(.75*255));
-      case 6:   return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.15*255), static_cast<unsigned char>(.1*255),  static_cast<unsigned char>(.75*255));
-      case 7:   return CGAL::Color(static_cast<unsigned char>(.2*255), static_cast<unsigned char>(.2*255 ), static_cast<unsigned char>(.8*255),  static_cast<unsigned char>(.75*255));
-      case 8:   return CGAL::Color(static_cast<unsigned char>(.9*255), static_cast<unsigned char>(.6*255 ), static_cast<unsigned char>(.02*255), static_cast<unsigned char>(.75*255)  );
-      case 9:   return CGAL::Color(static_cast<unsigned char>(.1*255), static_cast<unsigned char>(.3*255 ), static_cast<unsigned char>(.8*255 ), static_cast<unsigned char>(.75*255)   );
-      case 10:  return CGAL::Color(static_cast<unsigned char>(.1*255), static_cast<unsigned char>(.7*255 ), static_cast<unsigned char>(.2*255 ), static_cast<unsigned char>(.75*255)   );
-      case 11:  return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.8*255 ), static_cast<unsigned char>(.4*255 ), static_cast<unsigned char>(.75*255)   );
-      case 12:  return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255 ), static_cast<unsigned char>( 0*255 ), static_cast<unsigned char>(.75*255)   );
-      case 13:  return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255 ), static_cast<unsigned char>(.7*255 ), static_cast<unsigned char>(.75*255)   );
-      case 14:  return CGAL::Color(static_cast<unsigned char>( 0*255) ,static_cast<unsigned char>(.7*255 ), static_cast<unsigned char>(.7*255 ), static_cast<unsigned char>(.75*255)   );
-      case 15:  return CGAL::Color(static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255 ), static_cast<unsigned char>(.2*255 ), static_cast<unsigned char>(.75*255)   );
-      case 16:  return CGAL::Color(static_cast<unsigned char>(.2*255), static_cast<unsigned char>(.9*255 ), static_cast<unsigned char>( 0*255 ), static_cast<unsigned char>(.75*255)   );
-      case 17:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.2*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>(.75*255)   );
-      case 18:  return CGAL::Color(static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255));
-      case 19:  return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)   );
-      case 20:  return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255) );
-      case 21:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255) );
-      case 22:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255) );
-      case 23:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255) );
-      case 24:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255) );
-      case 25:  return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255) );
-      case 26:  return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255) );
-      case 27:  return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255) );
-      case 28:  return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255) );
-      case 29:  return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.5*255), static_cast<unsigned char>(.2*255), static_cast<unsigned char>(.75*255) );
-      case 30:  return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.5*255), static_cast<unsigned char>(.2*255), static_cast<unsigned char>(.75*255) );
-      case 31:  return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255) );
-      case 32:  return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.75*255) );
-      case 33:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.75*255) );
-      case 34:  return CGAL::Color(static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255) );
-      case 35:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255) );
-      case 36:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>(.75*255) );
-      case 37:  return CGAL::Color(static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255));
-      case 38:  return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255) );
-      case 39:  return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255) );
-      case 40:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255) );
-      case 41:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255) );
-      case 42:  return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255) );
-      case 43:  return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255) );
-      case 44:  return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255) );
-      case 45:  return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.75*255) );
-      case 46:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.75*255) );
-      case 47:  return CGAL::Color(static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255) );
-      case 48:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255) );
-      case 49:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>(.75*255) );
-      case 50:  return CGAL::Color(static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255));
-      case 51:  return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)  );
-      case 52:  return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)  );
-      case 53:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255)  );
-      case 54:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255)  );
-      case 55:  return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255)  );
-      case 56:  return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255)  );
-      case 57:  return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)  );
-      case 58:  return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.75*255)  );
-      case 59:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.75*255)  );
-      case 60:  return CGAL::Color(static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)  );
-      case 61:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)  );
-      case 62:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>(.75*255)  );
-      case 63:  return CGAL::Color(static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255));
-      case 64:  return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255 ), static_cast<unsigned char>( 0*255 ), static_cast<unsigned char>(.75*255)   );
-      case 65:  return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.8*255 ), static_cast<unsigned char>( 0*255 ), static_cast<unsigned char>(.75*255)   );
-      case 66:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255 ), static_cast<unsigned char>(.8*255 ), static_cast<unsigned char>(.75*255)   );
-      case 67:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255 ), static_cast<unsigned char>(.4*255 ), static_cast<unsigned char>(.75*255)   );
-      case 68:  return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255 ), static_cast<unsigned char>(.8*255 ), static_cast<unsigned char>(.75*255)   );
-      case 69:  return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>( 0*255 ), static_cast<unsigned char>(.4*255 ), static_cast<unsigned char>(.75*255)   );
-      case 70:  return CGAL::Color(static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(.75*255));
-      case 71:  return CGAL::Color(static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(.75*255));
-      case 72:  return CGAL::Color(static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(.75*255));
-      case 73:  return CGAL::Color(static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(.75*255));
-      case 74:  return CGAL::Color(static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(.75*255));
-      case 75:  return CGAL::Color(static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(1.0*255), static_cast<unsigned char>(.75*255));
-      case 76:  return CGAL::Color(static_cast<unsigned char>(.05*255), static_cast<unsigned char>(.3*255 ), static_cast<unsigned char>(.1*255 ), static_cast<unsigned char>(.75*255  ));
-      case 77:  return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.01*255),static_cast<unsigned char>(.1*255 ), static_cast<unsigned char>(.75*255)  );
-      case 78:  return CGAL::Color(static_cast<unsigned char>(.2*255), static_cast<unsigned char>(.05*255),static_cast<unsigned char>(.6*255 ), static_cast<unsigned char>(.75*255)  );
-      case 79:  return CGAL::Color(static_cast<unsigned char>(.9*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>(.02*255), static_cast<unsigned char>(.75*255)  );
-      case 80:  return CGAL::Color(static_cast<unsigned char>(.0*255), static_cast<unsigned char>(.2*255), static_cast<unsigned char>(.4*255 ), static_cast<unsigned char>(.75*255)   );
-      case 81:  return CGAL::Color(static_cast<unsigned char>(.1*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.4*255 ), static_cast<unsigned char>(.75*255)   );
-      case 82:  return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.8*255 ), static_cast<unsigned char>(.75*255)   );
-      case 83:  return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255 ), static_cast<unsigned char>(.75*255)   );
-      case 84:  return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255 ), static_cast<unsigned char>(.75*255)   );
-      case 85:  return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255 ), static_cast<unsigned char>(.75*255)   );
-      case 86:  return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255 ), static_cast<unsigned char>(.75*255)   );
-      case 87:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255 ), static_cast<unsigned char>(.75*255)   );
-      case 88:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255 ), static_cast<unsigned char>(.75*255)   );
-      case 89:  return CGAL::Color(static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255 ), static_cast<unsigned char>(.75*255)   );
-      case 90:  return CGAL::Color(static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255 ), static_cast<unsigned char>(.75*255)   );
-      case 91:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255 ), static_cast<unsigned char>(.75*255)   );
-      case 92:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255 ), static_cast<unsigned char>(.75*255)   );
-      case 93:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255 ), static_cast<unsigned char>(.75*255)   );
-      case 94:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255 ), static_cast<unsigned char>(.75*255)   );
-      case 95:  return CGAL::Color(static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255));
-      case 96:  return CGAL::Color(static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255));
-      case 97:  return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)   );
-      case 98:  return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)   );
-      case 99:  return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255)   );
-      case 100: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255)   );
-      case 101: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255)   );
-      case 102: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255)   );
-      case 103: return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255)   );
-      case 104: return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255)   );
-      case 105: return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255)   );
-      case 106: return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255)   );
-      case 107: return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.5*255), static_cast<unsigned char>(.2*255), static_cast<unsigned char>(.75*255)   );
-      case 108: return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.5*255), static_cast<unsigned char>(.2*255), static_cast<unsigned char>(.75*255)   );
-      case 109: return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)   );
-      case 110: return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.75*255)   );
-      case 111: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.75*255)   );
-      case 112: return CGAL::Color(static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)   );
-      case 113: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)   );
-      case 114: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>(.75*255)   );
-      case 115: return CGAL::Color(static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255));
-      case 116: return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255) );
-      case 117: return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255) );
-      case 118: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255) );
-      case 119: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255) );
-      case 120: return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255) );
-      case 121: return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255) );
-      case 122: return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255) );
-      case 123: return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.75*255) );
-      case 124: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.75*255) );
-      case 125: return CGAL::Color(static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255) );
-      case 126: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255) );
-      case 127: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>(.75*255) );
-      case 128: return CGAL::Color(static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255));
-      case 129: return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)   );
-      case 130: return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)   );
-      case 131: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255)   );
-      case 132: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255)   );
-      case 133: return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255)   );
-      case 134: return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255)   );
-      case 135: return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)   );
-      case 136: return CGAL::Color(static_cast<unsigned char>(.7*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.75*255)   );
-      case 137: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.7*255), static_cast<unsigned char>(.75*255)   );
-      case 138: return CGAL::Color(static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)   );
-      case 139: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)   );
-      case 140: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.9*255), static_cast<unsigned char>(.75*255)   );
-      case 141: return CGAL::Color(static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255), static_cast<unsigned char>(.75*255));
-      case 142: return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)   );
-      case 143: return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.75*255)   );
-      case 144: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255)   );
-      case 145: return CGAL::Color(static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255)   );
-      case 146: return CGAL::Color(static_cast<unsigned char>(.4*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.8*255), static_cast<unsigned char>(.75*255)   );
-      case 147: return CGAL::Color(static_cast<unsigned char>(.8*255), static_cast<unsigned char>( 0*255), static_cast<unsigned char>(.4*255), static_cast<unsigned char>(.75*255)   );
-      default : return CGAL::Color(120,120,120);
-
-
-      }
+      static const Color color[149] = {
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(178, 38, 25, 191),
+        Color(51, 51, 204, 191),
+        Color(229, 153, 5, 191),
+        Color(25, 76, 204, 191),
+        Color(25, 178, 51, 191),
+        Color(204, 204, 102, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 51, 191),
+        Color(51, 229, 0, 191),
+        Color(0, 51, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(204, 102, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(204, 0, 102, 191),
+        Color(178, 127, 51, 191),
+        Color(178, 127, 51, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 0, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(102, 204, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 0, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(102, 204, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 0, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(102, 204, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(255, 255, 255, 191),
+        Color(12, 76, 25, 191),
+        Color(178, 2, 25, 191),
+        Color(51, 12, 153, 191),
+        Color(229, 229, 5, 191),
+        Color(0, 51, 102, 191),
+        Color(25, 102, 102, 191),
+        Color(204, 204, 204, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 0, 191),
+        Color(229, 0, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 0, 229, 191),
+        Color(0, 0, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(204, 102, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(204, 0, 102, 191),
+        Color(178, 127, 51, 191),
+        Color(178, 127, 51, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 0, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(102, 204, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 0, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(102, 204, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(178, 178, 0, 191),
+        Color(178, 0, 178, 191),
+        Color(0, 178, 178, 191),
+        Color(229, 0, 0, 191),
+        Color(0, 229, 0, 191),
+        Color(0, 0, 229, 191),
+        Color(191, 191, 191, 191),
+        Color(204, 102, 0, 191),
+        Color(102, 204, 0, 191),
+        Color(0, 102, 204, 191),
+        Color(0, 204, 102, 191),
+        Color(102, 0, 204, 191),
+        Color(204, 0, 102, 191),
+        Color(120, 120, 120, 120) };
+      if(id > 148) id =148;
+      return color[id];
     }
+
     static CGAL::Color get_color_from_line(std::istream &is)
     {
 
