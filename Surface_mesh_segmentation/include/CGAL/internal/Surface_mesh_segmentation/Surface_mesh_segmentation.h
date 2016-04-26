@@ -248,7 +248,7 @@ public:
     // calculate sdf values
     SDF_calculation_class sdf_calculator(mesh, vertex_point_pmap,
                                          false, /* build_kd_ree */
-                                         false, /* use_diagonal */
+                                         true, /* use_diagonal --> set to false to use `AABB_tree::first_intersection()` */
                                          traits);
     sdf_calculator.calculate_sdf_values(faces(mesh).first, faces(mesh).second,
                                         cone_angle, number_of_rays, sdf_pmap);
