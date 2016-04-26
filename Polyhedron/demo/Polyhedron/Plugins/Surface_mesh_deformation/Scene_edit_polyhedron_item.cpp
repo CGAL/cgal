@@ -26,6 +26,7 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
   nb_control = 0;
   nb_axis = 0;
   nb_bbox = 0;
+  need_change = false;
   mw->installEventFilter(this);
   // bind vertex picking
   connect(&k_ring_selector, SIGNAL(selected(const std::set<Polyhedron::Vertex_handle>&)), this,
@@ -47,10 +48,6 @@ Scene_edit_polyhedron_item::Scene_edit_polyhedron_item
     
   // create an empty group of control vertices for starting
   create_ctrl_vertices_group();
-   
-  // start QObject's timer for continuous effects 
-  // (deforming mesh while mouse not moving)
-  startTimer(0);
 
   // Required for drawing functionality
   reset_drawing_data();
@@ -563,19 +560,29 @@ void Scene_edit_polyhedron_item::remesh()
   Q_EMIT itemChanged();
 }
 
-void Scene_edit_polyhedron_item::timerEvent(QTimerEvent* /*event*/)
-{ // just handle deformation - paint like selection is handled in eventFilter()
-  if(state.ctrl_pressing && (state.left_button_pressing || state.right_button_pressing)) {
-      invalidateOpenGLBuffers();
+void Scene_edit_polyhedron_item::updateDeform()
+{
+  if(need_change)
+  {
+    // just handle deformation - paint like selection is handled in eventFilter()
+    invalidateOpenGLBuffers();
     if(!ui_widget->ActivatePivotingCheckBox->isChecked()) {
-        deform();
+      deform();
     }
     else {
-      Q_EMIT itemChanged(); // for redraw while Pivoting (since we close signals of manipulatedFrames while pivoting, 
-                          // for now redraw with timer)
+      Q_EMIT itemChanged(); // for redraw while Pivoting (since we close signals of manipulatedFrames while pivoting,
+      // for now redraw with timer)
     }
+    need_change = 0;
   }
 }
+
+void Scene_edit_polyhedron_item::change()
+{
+  need_change = true;
+  QTimer::singleShot(0, this, SLOT(updateDeform()));
+}
+
 bool Scene_edit_polyhedron_item::eventFilter(QObject* /*target*/, QEvent *event)
 {
   // This filter is both filtering events from 'viewer' and 'main window'
