@@ -371,7 +371,7 @@ public:
       msgBox.setIcon(QMessageBox::Warning);
       msgBox.exec();
     }
-    if (errorObserver->GetError())
+    if (obs->GetError())
     {
       QMessageBox msgBox;
       msgBox.setText("This type of data can't be opened");
