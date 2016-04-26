@@ -115,7 +115,7 @@ Q_SIGNALS:
 public Q_SLOTS:
   void setInstructions(QString s)
   {
-    ui_widget.instruct_label->setText(s);
+    ui_widget.instructionsLabel->setText(s);
   }
   void selection_action() { 
     dock_widget->show();
@@ -378,14 +378,14 @@ public Q_SLOTS:
     {
     //Selection mode
     case 0:
-      ui_widget.selection_groupBox->setEnabled(true);
-      ui_widget.edition_groupBox->setEnabled(false);
+      ui_widget.selection_groupBox->setVisible(true);
+      ui_widget.edition_groupBox->setVisible(false);
       Q_EMIT set_operation_mode(-1);
       break;
       //Edition mode
     case 1:
-      ui_widget.selection_groupBox->setEnabled(false);
-      ui_widget.edition_groupBox->setEnabled(true);
+      ui_widget.selection_groupBox->setVisible(false);
+      ui_widget.edition_groupBox->setVisible(true);
       Q_EMIT save_handleType();
       Q_EMIT set_operation_mode(ui_widget.editionBox->currentIndex());
       break;

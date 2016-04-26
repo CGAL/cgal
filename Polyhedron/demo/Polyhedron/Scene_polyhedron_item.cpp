@@ -698,7 +698,6 @@ Scene_polyhedron_item::Scene_polyhedron_item()
     nb_lines = 0;
     nb_f_lines = 0;
     invalidate_stats();
-    skip_emits = false;
     init();
 }
 
