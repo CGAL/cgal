@@ -459,48 +459,6 @@ private:
     { CGAL_warning(false && "Visitor Case not handled"); return NULL_VECTOR; }
   };
 
-
-  template<typename Skip>
-  boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum(
-    const Ray& ray, Skip s, bool accept_if_acute) const {
-
-    boost::tuple<bool, bool, double, Primitive_id> one = cast_and_return_minimum_1(ray, s, accept_if_acute);
-    boost::tuple<bool, bool, double, Primitive_id> two = cast_and_return_minimum_2(ray, s, accept_if_acute);
-    if(s(boost::get<3>(two))) {
-      std::cout.precision(15);
-      std::cout << "ERROR still returning a skip" << std::endl;
-    }
-
-    if(boost::get<0>(one) != boost::get<0>(two)) {
-      std::cout.precision(15);
-      std::cout << "First bool mismatch" << std::endl;
-      std::cout << "bool1 1: " << std::boolalpha << boost::get<0>(one) << std::endl;
-      std::cout << "bool1 2: " << std::boolalpha << boost::get<0>(two) << std::endl;
-      std::cout << "bool2 1: " << std::boolalpha << boost::get<1>(one) << std::endl;
-      std::cout << "bool2 2: " << std::boolalpha << boost::get<1>(two) << std::endl;
-      std::cout << "dist 1: " << boost::get<2>(one) << std::endl;
-      std::cout << "dist 2: " << boost::get<2>(two) << std::endl;
-
-    }
-    if(boost::get<1>(one) != boost::get<1>(two)) {
-      std::cout.precision(15);
-      std::cout << "Second bool mismatch" << std::endl;
-    }
-
-    if(boost::get<3>(one) != boost::get<3>(two)) {
-      std::cout.precision(15);
-      std::cout << "Primitive mismatch" << std::endl;
-    }
-
-    CGAL_assertion(boost::get<0>(one) == boost::get<0>(two));
-    CGAL_assertion(boost::get<3>(one) == boost::get<3>(two));
-    CGAL_assertion(boost::get<1>(one) == boost::get<1>(two));
-
-    // assert(boost::get<2>(one) == boost::get<2>(two));
-
-    return two;
-  }
-
   template<typename SkipFunctor>
   boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum_2(
     const Ray& query, SkipFunctor s, bool accept_if_acute) const {
