@@ -1319,7 +1319,8 @@ void Scene_c3t3_item::compute_elements()
       else draw_triangle(pa, pb, pc, false);
       draw_triangle_edges(pa, pb, pc);
     }
-
+    //Kernel::Point_3 p0(10, 10, 10);
+    //c3t3().add_far_point(p0);
     //the cells not in the complex
     for(C3t3::Triangulation::Cell_iterator
         cit = c3t3().triangulation().finite_cells_begin(),
@@ -1328,14 +1329,26 @@ void Scene_c3t3_item::compute_elements()
     {
       if(!c3t3().is_in_complex(cit))
       {
-        const Kernel::Point_3& p1 = cit->vertex(0)->point();
-        const Kernel::Point_3& p2 = cit->vertex(1)->point();
-        const Kernel::Point_3& p3 = cit->vertex(2)->point();
-        const Kernel::Point_3& p4 = cit->vertex(3)->point();
-        draw_triangle_edges_cnc(p1, p2, p3);
-        draw_triangle_edges_cnc(p1, p2, p4);
-        draw_triangle_edges_cnc(p1, p3, p4);
-        draw_triangle_edges_cnc(p2, p3, p4);
+
+        bool has_far_point = false;
+        for(int i=0; i<4; i++)
+          if(c3t3().in_dimension(cit->vertex(i)) == -1)
+          {
+            has_far_point = true;
+            qDebug()<<"far_point detected";
+            break;
+          }
+        if(!has_far_point)
+        {
+          const Kernel::Point_3& p1 = cit->vertex(0)->point();
+          const Kernel::Point_3& p2 = cit->vertex(1)->point();
+          const Kernel::Point_3& p3 = cit->vertex(2)->point();
+          const Kernel::Point_3& p4 = cit->vertex(3)->point();
+          draw_triangle_edges_cnc(p1, p2, p4);
+          draw_triangle_edges_cnc(p1, p3, p4);
+          draw_triangle_edges_cnc(p2, p3, p4);
+          draw_triangle_edges_cnc(p1, p2, p3);
+        }
       }
     }
 
