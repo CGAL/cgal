@@ -84,13 +84,14 @@ Polyhedron_scan_OFF<HDS>:: operator()( HDS& target) {
     for ( i = 0; i < scanner.size_of_vertices(); i++) {
         Point p;
         file_scan_vertex( scanner, p);
+        B.add_vertex( p);
         if(scanner.has_colors())
         {
          Color c;
          file_scan_color(scanner, c);
         }
-        B.add_vertex( p);
-        scanner.skip_to_next_vertex( i);
+        else
+         scanner.skip_to_next_vertex( i);
     }
     if ( ! m_in  || B.error()) {
         B.rollback();
