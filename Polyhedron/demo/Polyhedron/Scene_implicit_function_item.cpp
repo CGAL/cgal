@@ -353,7 +353,6 @@ Scene_implicit_function_item(Implicit_function_interface* f)
     texture = new Texture(grid_size_-1,grid_size_-1);
     blue_color_ramp_.build_blue();
     red_color_ramp_.build_red();
-    startTimer(0);
     //Generates an integer which will be used as ID for each buffer
     compute_min_max();
     compute_function_grid();
@@ -583,7 +582,7 @@ Scene_implicit_function_item::invalidateOpenGLBuffers()
 }
 
 
-void Scene_implicit_function_item::timerEvent(QTimerEvent* /*event*/)
+void Scene_implicit_function_item::updateCutPlane()
 { // just handle deformation - paint like selection is handled in eventFilter()
   if(need_update_) {
     compute_function_grid();

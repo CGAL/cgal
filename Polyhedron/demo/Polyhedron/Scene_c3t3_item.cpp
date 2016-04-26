@@ -1324,7 +1324,5 @@ Scene_c3t3_item::setColor(QColor c)
   color_ = c;
   compute_color_map(c);
   invalidateOpenGLBuffers();
-// changed() doesn't work because the timerEvent delays it out of the draw
-// function and the intersection is not drawn before the next draw call
   are_intersection_buffers_filled = false;
 }
