@@ -447,19 +447,6 @@ private:
     return min_distance;
   }
 
-  struct min_i_ray_visitor {
-    typedef Vector result_type;
-    min_i_ray_visitor(const Ray* ray) : ray(ray) {}
-    const Ray* ray;
-
-    Vector operator()(const Point& p) const
-    { return Vector(p, ray->source()); }
-
-    template<typename T>
-    Vector operator()(const T&) const
-    { CGAL_warning(false && "Visitor Case not handled"); return NULL_VECTOR; }
-  };
-
   // function similar to `cast_and_return_minimum()` but using the function
   // first_intersection with a Ray to get the closest intersected primitive
   template<typename SkipFunctor>
@@ -471,8 +458,11 @@ private:
     if(!min_intersection)
       return boost::make_tuple(false, false, 0.0, Primitive_id());
 
-    min_i_ray_visitor v(&query);
-    Vector min_i_ray = boost::apply_visitor(v, min_intersection->first);
+    const Point* i_point = boost::get<Point>( &min_intersection->first );
+    if (!i_point) //segment case ignored
+      return boost::make_tuple(false, false, 0.0, Primitive_id());
+
+    Vector min_i_ray(*i_point, query.source());
 
     boost::tuple<bool, bool, double, Primitive_id>
     min_distance(true, false, to_double(min_i_ray.squared_length()), min_intersection->second);
