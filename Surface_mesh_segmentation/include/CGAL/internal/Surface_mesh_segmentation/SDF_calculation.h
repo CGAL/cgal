@@ -86,11 +86,7 @@ private:
   typedef AABB_traits_SDF<GeomTraits, Primitive, fast_bbox_intersection>
   AABB_traits_internal;
   typedef typename CGAL::AABB_tree<AABB_traits_internal>                 Tree;
-
-  typedef typename Tree::Object_and_primitive_id
-  Object_and_primitive_id;
-  typedef typename Tree::Primitive_id
-  Primitive_id;
+  typedef typename Tree::Primitive_id Primitive_id;
 
   // Sampled points from disk, t1 = coordinate-x, t2 = coordinate-y, t3 = weight.
   typedef boost::tuple<double, double, double> Disk_sample;
@@ -389,10 +385,12 @@ private:
     const Query& query, SkipPrimitiveFunctor skip, bool accept_if_acute) const {
     boost::tuple<bool, bool, double, Primitive_id>
     min_distance(false, false, 0.0, Primitive_id());
-    std::list<Object_and_primitive_id> intersections;
+
+    typedef typename Tree:: template Intersection_and_primitive_id<Query>::Type Intersection_and_primitive_id;
+    std::list<Intersection_and_primitive_id> intersections;
 
     //SL: the difference with all_intersections is that in the traversal traits, we do do_intersect before calling intersection.
-    typedef  std::back_insert_iterator< std::list<Object_and_primitive_id> >
+    typedef  std::back_insert_iterator< std::list<Intersection_and_primitive_id> >
     Output_iterator;
     Listing_intersection_traits_ray_or_segment_triangle<typename Tree::AABB_traits,Query,Output_iterator>
     traversal_traits(std::back_inserter(intersections), tree.traits());
@@ -400,17 +398,17 @@ private:
 
     Vector min_i_ray(NULL_VECTOR);
     Primitive_id min_id;
-    for(typename std::list<Object_and_primitive_id>::iterator op_it =
+    for(typename std::list<Intersection_and_primitive_id>::iterator op_it =
           intersections.begin();
         op_it != intersections.end() ; ++op_it) {
-      Object object = op_it->first;
+      const typename Intersection_and_primitive_id::first_type& object = op_it->first;
       Primitive_id id = op_it->second;
       if( skip(id) ) {
         continue;
       }
 
       const Point* i_point;
-      if(!(i_point = object_cast<Point>(&object))) {
+      if(!(i_point = boost::get<Point>(&object))) {
         continue;  // continue in case of segment.
       }
 
