@@ -551,7 +551,7 @@ void Scene_c3t3_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     }
     vaos[iFacets]->bind();
     program = getShaderProgram(PROGRAM_WITH_LIGHT);
-    attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
+    attribBuffers(viewer, PROGRAM_WITH_LIGHT);
     program->bind();
     // positions_poly is also used for the faces in the cut plane
     // and changes when the cut plane is moved

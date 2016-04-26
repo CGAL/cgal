@@ -341,7 +341,7 @@ public:
 
 
 
-  void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface){}
+  void init(QMainWindow*, CGAL::Three::Scene_interface*){}
   void init(QMainWindow* mainWindow, CGAL::Three::Scene_interface* scene_interface,
             Messages_interface* m);
   QList<QAction*> actions() const;

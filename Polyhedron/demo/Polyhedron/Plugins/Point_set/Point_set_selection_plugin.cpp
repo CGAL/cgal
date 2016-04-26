@@ -76,7 +76,7 @@ public:
   void drawEdges(CGAL::Three::Viewer_interface* viewer) const {
     viewer->glLineWidth(3.f);
     polyline->setRbgColor(0, 255, 0); 
-    polyline->draw_edges(viewer);
+    polyline->drawEdges(viewer);
   }
 
   Scene_polylines_item::Polyline& poly() const
