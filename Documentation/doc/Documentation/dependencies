@@ -12,6 +12,7 @@ Matrix_search
 Box_intersection_d
 CGAL_ipelets
 Circulator
+Cone_spanners_2
 Convex_decomposition_3
 Convex_hull_2
 Convex_hull_3

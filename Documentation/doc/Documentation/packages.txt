@@ -153,6 +153,7 @@ h1 {
 \package_listing{BGL}
 \package_listing{Solver_interface}
 \package_listing{Property_map}
+\package_listing{Cone_spanners_2}
 \package_listing{Circulator}
 \package_listing{Generator}
 \package_listing{Miscellany}
