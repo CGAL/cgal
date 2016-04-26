@@ -141,7 +141,7 @@ private:
 
   void changed();
 
-  void timerEvent(QTimerEvent*);
+  void updateCutPlane();
 
 private:
   void build_histogram();

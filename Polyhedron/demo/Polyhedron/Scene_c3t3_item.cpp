@@ -146,7 +146,6 @@ Scene_c3t3_item::Scene_c3t3_item()
   s_normals.resize(0);
   ws_vertex.resize(0);
   need_changed = false;
-  startTimer(0);
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
   c3t3_changed();
   setRenderingMode(FlatPlusEdges);
@@ -172,7 +171,6 @@ Scene_c3t3_item::Scene_c3t3_item(const C3t3& c3t3)
   s_normals.resize(0);
   ws_vertex.resize(0);
   need_changed = false;
-  startTimer(0);
   connect(frame, SIGNAL(modified()), this, SLOT(changed()));
   reset_cut_plane();
   c3t3_changed();
@@ -229,9 +227,10 @@ void
 Scene_c3t3_item::changed()
 {
   need_changed = true;
+  QTimer::singleShot(0,this, SLOT(updateCutPlane()));
 }
 
-void Scene_c3t3_item::timerEvent(QTimerEvent* /*event*/)
+void Scene_c3t3_item::updateCutPlane()
 { // just handle deformation - paint like selection is handled in eventFilter()
   if(need_changed) {
     are_intersection_buffers_filled = false;
