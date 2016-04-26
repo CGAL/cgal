@@ -494,9 +494,9 @@ private:
       std::cout << "Primitive mismatch" << std::endl;
     }
 
-    assert(boost::get<0>(one) == boost::get<0>(two));
-    assert(boost::get<3>(one) == boost::get<3>(two));
-    assert(boost::get<1>(one) == boost::get<1>(two));
+    CGAL_assertion(boost::get<0>(one) == boost::get<0>(two));
+    CGAL_assertion(boost::get<3>(one) == boost::get<3>(two));
+    CGAL_assertion(boost::get<1>(one) == boost::get<1>(two));
 
     // assert(boost::get<2>(one) == boost::get<2>(two));
 
