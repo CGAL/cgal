@@ -20,7 +20,7 @@ A contour is topologically equivalent to a <I>disk</I> and if it is simple, is s
 
 Contours partition the plane in two open regions: one bounded and one unbounded. If the bounded region of a contour is only one <I>singly-connected set</I>, the contour is said to be <I>strictly-simple</I>.
 
-The `Orientation` of a contour is given by the order of the vertices around the region they bound. It can be `CLOCKWISE` (CCW) or `COUNTERCLOCKWISE` (CW).
+The `Orientation` of a contour is given by the order of the vertices around the region they bound. It can be `CLOCKWISE` (CW) or `COUNTERCLOCKWISE` (CCW).
 
 The <I>bounded side</I> of a contour edge is the side facing the bounded region of the contour. If the contour is oriented CCW, the bounded side of an edge is its left side.
 
