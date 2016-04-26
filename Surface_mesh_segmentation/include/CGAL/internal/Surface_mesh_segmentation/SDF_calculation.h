@@ -299,7 +299,7 @@ public:
         }
 
         boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
-          = cast_and_return_minimum_1(segment, skip, accept_if_acute);
+          = cast_and_return_minimum(segment, skip, accept_if_acute);
       } else {
         Ray ray(center, ray_direction);
 
@@ -309,7 +309,7 @@ public:
         }
 
         boost::tie(is_intersected, intersection_is_acute, min_distance, closest_id)
-          = cast_and_return_minimum_2(ray, skip, accept_if_acute);
+          = ray_casting(ray, skip, accept_if_acute);
       }
 
       if(!intersection_is_acute) {
@@ -370,7 +370,8 @@ private:
 
   /**
    * Finds closest intersection for parameter @a query.
-   * @param query `Segment` or `Ray` type query
+   * @param query `Segment` or `Ray` type query.
+   * It is now only used with `Segment` as the function `first_intersection()` is faster if rays are used
    * @param tree AABB tree which includes polyhedron
    * @param facet parent facet of @a query
    * (since numerical limitations on both center calculation and intersection test, query might intersect with related facet, should be skipped in such case)
@@ -380,8 +381,8 @@ private:
    *   - get<2> double : distance between ray/segment origin and intersection point (0.0 if get<0> is false)
    *   - get<3> Primitive_id : closest intersected primitive if get<0> is true, else Primitive_id()
    */
-  template <class Query, class SkipPrimitiveFunctor> // Query can be templated for just Ray and Segment types.
-  boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum_1(
+  template <class Query, class SkipPrimitiveFunctor>
+  boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum(
     const Query& query, SkipPrimitiveFunctor skip, bool accept_if_acute) const {
     boost::tuple<bool, bool, double, Primitive_id>
     min_distance(false, false, 0.0, Primitive_id());
@@ -459,8 +460,10 @@ private:
     { CGAL_warning(false && "Visitor Case not handled"); return NULL_VECTOR; }
   };
 
+  // function similar to `cast_and_return_minimum()` but using the function
+  // first_intersection with a Ray to get the closest intersected primitive
   template<typename SkipFunctor>
-  boost::tuple<bool, bool, double, Primitive_id> cast_and_return_minimum_2(
+  boost::tuple<bool, bool, double, Primitive_id> ray_casting(
     const Ray& query, SkipFunctor s, bool accept_if_acute) const {
 
     const boost::optional< typename Tree::template Intersection_and_primitive_id<Ray>::Type >
