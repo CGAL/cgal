@@ -148,7 +148,7 @@ public Q_SLOTS:
     selection_item->clear();
   }
   void on_Clear_all_button_clicked(){
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return;
@@ -158,7 +158,7 @@ public Q_SLOTS:
   }
   void on_Inverse_selection_button_clicked()
   {
-    Scene_polyhedron_selection_item* selection_item = get_selected_item<Scene_polyhedron_selection_item>();
+    Scene_polyhedron_selection_item* selection_item = getSelectedItem<Scene_polyhedron_selection_item>();
     if(!selection_item) {
       print_message("Error: there is no selected polyhedron selection item!");
       return;
