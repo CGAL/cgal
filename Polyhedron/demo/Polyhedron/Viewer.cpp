@@ -858,19 +858,17 @@ void Viewer::drawVisualHints()
     glDisable(GL_DEPTH_TEST);
     d->painter->endNativePainting();
     //prints FPS
-    TextItem *fps_text;
+    TextItem *fps_text = new TextItem(20, int(1.5*((QApplication::font().pixelSize()>0)?QApplication::font().pixelSize():QApplication::font().pointSize())),0,fpsString,false, QFont(), Qt::gray);
     if(FPSIsDisplayed())
     {
-      fps_text = new TextItem(20, int(1.5*((QApplication::font().pixelSize()>0)?QApplication::font().pixelSize():QApplication::font().pointSize())),0,fpsString,false, QFont(), Qt::gray);
       textRenderer->addText(fps_text);
     }
     //Prints the displayMessage
     QFont font = QFont();
     QFontMetrics fm(font);
-    TextItem *message_text;
+    TextItem *message_text = new TextItem(10 + fm.width(message)/2, height()-20, 0, message, false, QFont(), Qt::gray );
     if (_displayMessage)
     {
-      message_text = new TextItem(10 + fm.width(message)/2, height()-20, 0, message, false, QFont(), Qt::gray );
       textRenderer->addText(message_text);
     }
     textRenderer->draw(this);
