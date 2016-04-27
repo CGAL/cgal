@@ -570,6 +570,8 @@ public:
             else
                 rgb[index] = static_cast<unsigned char>(atoi(color_info.c_str()));
             index++;
+            if(index == 3)
+             break;
         }
         CGAL::Color color;
         //if there were only one number, fetch the color in the color map
