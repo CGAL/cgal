@@ -15,6 +15,7 @@
 #include <CGAL/jet_estimate_normals.h>
 #include <CGAL/Search_traits_3.h>
 #include <CGAL/Shape_detection_3.h>
+#include <CGAL/regularize_planes.h>
 #include <CGAL/compute_average_spacing.h>
 #include <CGAL/Delaunay_triangulation_2.h>
 #include <CGAL/Alpha_shape_2.h>
@@ -726,10 +727,13 @@ void Scene_point_set_classification_item::compute_ransac (const double& radius_n
   shape_detection.detect(op);
 
   
+  CGAL::regularize_planes (shape_detection, true, true, true, false,
+                           10., radius_neighbors);
+  
   m_psc->reset_groups();
 
   std::cerr << "Storing groups..." << std::endl;
-
+  
   BOOST_FOREACH(boost::shared_ptr<Shape_detection::Shape> shape, shape_detection.shapes())
     {
       m_psc->groups.push_back ((Kernel::Plane_3)(*(dynamic_cast<CGAL::Shape_detection_3::Plane<Traits>*>(shape.get ()))));
@@ -950,7 +954,7 @@ void Scene_point_set_classification_item::extract_building_map (double,
         Kernel::Vector_3 normal = plane.orthogonal_vector();
         normal = normal / std::sqrt (normal * normal);
         double horiz = normal * Kernel::Vector_3 (0., 0., 1.);
-        if (horiz > 0.1 || horiz < -0.1)
+        if (horiz > 0.17 || horiz < -0.17)
           continue;
           
         //#define INFINITE_LINES
@@ -982,7 +986,7 @@ void Scene_point_set_classification_item::extract_building_map (double,
         CGAL::Object obj = CGAL::intersection (ground, plane);
         Kernel::Line_3 line;
 
-        if (facade_pts[i].size() < 2)
+        if (facade_pts[i].size() < 100)
           continue;
         
         if (CGAL::assign (line, obj))
