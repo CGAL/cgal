@@ -121,7 +121,7 @@ namespace CGAL{
             vcolors[i] = Color_rgb(r,g,b);
         }
         else
-         scanner.skip_to_next_vertex(i);
+            scanner.skip_to_next_vertex(i);
     }
     if(!in)
       return false;
@@ -154,10 +154,7 @@ namespace CGAL{
           has_fcolors = true;
           fcolors.resize(scanner.size_of_facets());
           std::istringstream iss2(col);
-          CGAL::File_scanner_OFF scanner2(iss2);
-          unsigned char r=0, g=0, b=0;
-          scanner2.scan_color(r,g,b);
-          fcolors[i] = Color_rgb(r,g,b);
+          fcolors[i] = scanner.get_color_from_line(iss2);
         }
       }
       else if(has_fcolors)

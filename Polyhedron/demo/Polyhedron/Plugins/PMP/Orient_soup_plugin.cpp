@@ -100,7 +100,7 @@ void set_vcolors(Scene_surface_mesh_item::SMesh* smesh, std::vector<CGAL::Color>
   SMesh::Property_map<vertex_descriptor, CGAL::Color> vcolors =
     smesh->property_map<vertex_descriptor, CGAL::Color >("v:color").first;
   bool created;
-  boost::tie(vcolors, created) = smesh->template add_property_map<SMesh::Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
+  boost::tie(vcolors, created) = smesh->add_property_map<SMesh::Vertex_index,CGAL::Color>("v:color",CGAL::Color(0,0,0));
   assert(colors.size()==smesh->number_of_vertices());
   int color_id = 0;
   BOOST_FOREACH(vertex_descriptor vd, vertices(*smesh))
@@ -114,7 +114,7 @@ void set_fcolors(Scene_surface_mesh_item::SMesh* smesh, std::vector<CGAL::Color>
   SMesh::Property_map<face_descriptor, CGAL::Color> fcolors =
     smesh->property_map<face_descriptor, CGAL::Color >("f:color").first;
   bool created;
-   boost::tie(fcolors, created) = smesh->template add_property_map<SMesh::Face_index,CGAL::Color>("f:color",CGAL::Color(0,0,0));
+   boost::tie(fcolors, created) = smesh->add_property_map<SMesh::Face_index,CGAL::Color>("f:color",CGAL::Color(0,0,0));
   assert(colors.size()==smesh->number_of_faces());
   int color_id = 0;
   BOOST_FOREACH(face_descriptor fd, faces(*smesh))

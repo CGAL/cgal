@@ -569,7 +569,6 @@ public:
             //else stores the value
             else
                 rgb[index] = static_cast<unsigned char>(atoi(color_info.c_str()));
-
             index++;
         }
         CGAL::Color color;
