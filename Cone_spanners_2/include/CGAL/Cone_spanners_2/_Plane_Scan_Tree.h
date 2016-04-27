@@ -226,7 +226,7 @@ class _Leaf : public _Node<Key, T, Comp, VComp> {
     }
 
     virtual const mapped_type* minV() const {
-      return (NULL == values[1]) ? &values[0]->second : &std::min(values[0]->second, values[1]->second, this->vless);
+      return (NULL == values[1]) ? &values[0]->second : &(std::min)(values[0]->second, values[1]->second, this->vless);
     }
 
   protected:
@@ -447,9 +447,9 @@ class _Internal : public _Node<Key, T, Comp, VComp> {
         const mapped_type* res =
             (NULL == minFromCh) ?
               vMin[1] :
-              &std::min (*children[0]->minAbove(x), *vMin[1], this->vless);
+          &(std::min) (*children[0]->minAbove(x), *vMin[1], this->vless);
         if (vMin[2] != NULL)
-          res = &std::min (*res, *vMin[2], this->vless);
+          res = &(std::min) (*res, *vMin[2], this->vless);
         return res;
       } else if (NULL == keys[1] || this->less(x, *keys[1])) {
         // x in middle
@@ -457,7 +457,7 @@ class _Internal : public _Node<Key, T, Comp, VComp> {
         if (NULL == res) return vMin[2];
 
         if (vMin[2] != NULL)
-          res = &std::min (*res, *vMin[2], this->vless);
+          res = &(std::min) (*res, *vMin[2], this->vless);
         return res;
       } else {
         return children[2]->minAbove(x);
@@ -465,9 +465,9 @@ class _Internal : public _Node<Key, T, Comp, VComp> {
     }
 
     virtual const mapped_type* minV() const {
-      const mapped_type* res = &std::min(*vMin[0], *vMin[1], this->vless);
+      const mapped_type* res = &(std::min)(*vMin[0], *vMin[1], this->vless);
       if (NULL != children[2])
-        res = &std::min(*res, *vMin[2], this->vless);
+        res = &(std::min)(*res, *vMin[2], this->vless);
       return res;
     }
 
