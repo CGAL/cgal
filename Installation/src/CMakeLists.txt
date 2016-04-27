@@ -20,9 +20,11 @@ function (collect_cgal_library LIBRARY_NAME ADDITIONAL_FILES)
     # file in the new all_files.cpp because .cpp files would be included
     # twice, and that breaks the one-definition rule (ODR).
     if(NOT source MATCHES ".*/all_files.cpp")
-      file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp "\#include \"${source}\"\n")
+      get_filename_component(SOURCE_BASENAME ${source} NAME)
+      file(APPEND ${CMAKE_CURRENT_BINARY_DIR}/all_files.cpp "\#include \"${SOURCE_BASENAME}\"\n")
     endif()
   endforeach()
+  include_directories(${CMAKE_SOURCE_DIR}/src/${LIBRARY_NAME})
 
   if(CGAL_BUILD_SHARED_LIBS)
     set(CGAL_LIB_PREFIX "")
