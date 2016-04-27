@@ -32,6 +32,7 @@ class QMouseEvent;
 class QKeyEvent;
 class QOpenGLShaderProgram;
 class TextRenderer;
+class TextListItem;
 
 //! \file Viewer_interface.h
 #include <CGAL/Three/Viewer_config.h> // for VIEWER_EXPORT

@@ -2,6 +2,7 @@
 #include "MainWindow.h"
 #include "Scene.h"
 #include <CGAL/Three/Scene_item.h>
+#include <CGAL/Three/TextRenderer.h>
 #include <CGAL/Qt/debug.h>
 
 #include <QtDebug>

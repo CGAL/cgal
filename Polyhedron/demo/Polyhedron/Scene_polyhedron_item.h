@@ -2,7 +2,8 @@
 #define SCENE_POLYHEDRON_ITEM_H
 
 #include "Scene_polyhedron_item_config.h"
-#include  <CGAL/Three/Scene_item.h> //<- modif ?
+#include  <CGAL/Three/Scene_item.h>
+#include  <CGAL/Three/TextRenderer.h>
 #include "Polyhedron_type_fwd.h"
 #include "Polyhedron_type.h"
 #include <iostream>
@@ -10,7 +11,6 @@
 #include <QOpenGLBuffer>
 #include <QOpenGLShaderProgram>
 #include <QOpenGLTexture>
-
 #include <set>
 #include <vector>
 

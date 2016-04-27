@@ -3,7 +3,6 @@
 #include <CGAL/AABB_intersections.h>
 #include "Kernel_type.h"
 #include <CGAL/IO/Polyhedron_iostream.h>
-
 #include <CGAL/AABB_tree.h>
 #include <CGAL/AABB_traits.h>
 #include <CGAL/AABB_face_graph_triangle_primitive.h>
@@ -116,26 +115,6 @@ void push_back_xyz(const TypeWithXYZ& t,
   vector.push_back(t.y());
   vector.push_back(t.z());
 }
-
-typedef Polyhedron::Traits Traits;
-typedef Polyhedron::Facet Facet;
-typedef CGAL::Triangulation_2_filtered_projection_traits_3<Traits>   P_traits;
-typedef Polyhedron::Halfedge_handle Halfedge_handle;
-struct Face_info {
-    Polyhedron::Halfedge_handle e[3];
-    bool is_external;
-};
-typedef CGAL::Triangulation_vertex_base_with_info_2<Halfedge_handle,
-P_traits>        Vb;
-typedef CGAL::Triangulation_face_base_with_info_2<Face_info,
-P_traits>          Fb1;
-typedef CGAL::Constrained_triangulation_face_base_2<P_traits, Fb1>   Fb;
-typedef CGAL::Triangulation_data_structure_2<Vb,Fb>                  TDS;
-typedef CGAL::No_intersection_tag                                    Itag;
-typedef CGAL::Constrained_Delaunay_triangulation_2<P_traits,
-TDS,
-Itag>             CDTbase;
-typedef CGAL::Constrained_triangulation_plus_2<CDTbase>              CDT;
 
 //Make sure all the facets are triangles
 

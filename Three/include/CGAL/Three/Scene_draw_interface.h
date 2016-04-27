@@ -50,7 +50,10 @@ public:
    * \param viewer the viewer used to display the Scene.
    * \return true if the ID is visible. */
   virtual bool  testDisplayId(double x, double y, double z, CGAL::Three::Viewer_interface* viewer) = 0;
-
+ /*!
+   * \brief printPrimitiveIds displays all the Ids if there are less than max_textItems.
+   */
+  virtual void printPrimitiveIds(CGAL::Three::Viewer_interface*) = 0;
 };
 }
 }
