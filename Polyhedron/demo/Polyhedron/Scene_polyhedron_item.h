@@ -89,10 +89,11 @@ public:
     int getNumberOfDegeneratedFaces();
     bool triangulated();
     bool self_intersected();
-    bool isItemMulticolor()
-    {
-     return !is_monochrome;
-    }
+    //! If b is true, the item will use buffers to render the color.
+    //! If b is false, it will use a uniform value. For example, when
+    //! using the mesh segmentation plugin, the item must be multicolor.
+    void setItemIsMulticolor(bool b);
+    bool isItemMulticolor();
 
 public Q_SLOTS:
     virtual void invalidateOpenGLBuffers();

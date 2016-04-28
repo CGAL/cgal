@@ -243,8 +243,8 @@ public Q_SLOTS:
   //! or the displayed item will not be updated.
   //!Must be overloaded.
   virtual void invalidateOpenGLBuffers();
-  //!Setter for the color of the item. Calls invalidateOpenGLBuffers() so the new color is applied.
-  virtual void setColor(QColor c) { color_ = c; if(!is_monochrome)invalidateOpenGLBuffers(); }
+  //!Setter for the color of the item.
+  virtual void setColor(QColor c) { color_ = c;}
   //!Setter for the RGB color of the item. Calls setColor(QColor).
   //!@see setColor(QColor c)
   void setRbgColor(int r, int g, int b) { setColor(QColor(r, g, b)); }
@@ -292,13 +292,6 @@ public Q_SLOTS:
   void setSplattingMode(){
     setRenderingMode(Splatting);
   }
-
-  //! If b is true, the item will use buffers to render the color.
-  //! If b is false, it will use a uniform value. For example, when
-  //! using the mesh segmentation plugin, the item must be multicolor.
-  void setItemIsMulticolor(bool b){
-    is_monochrome = !b;
-  }
   
   //!Emits an aboutToBeDestroyed() signal.
   virtual void itemAboutToBeDestroyed(Scene_item*);
@@ -332,9 +325,6 @@ protected:
   Scene_group_item* parent_group;
   //!Specifies if the item is currently selected.
   bool is_selected;
-  //! Specifies if the item is monochrome and uses uniform attribute for its color
-  //! or is multicolor and uses buffers.
-  bool is_monochrome;
   //! Holds the number of vertices that are not linked to the polyhedron from the OFF
   //! file.
   std::size_t nb_isolated_vertices;

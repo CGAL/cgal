@@ -71,6 +71,7 @@ struct Scene_polyhedron_item_priv{
     nb_facets = 0;
     nb_lines = 0;
     nb_f_lines = 0;
+    is_multicolor = false;
     invalidate_stats();
   }
 
@@ -93,6 +94,7 @@ struct Scene_polyhedron_item_priv{
   bool erase_next_picked_facet_m;
   //the following variable is used to indicate if the color vector must not be automatically updated.
   bool plugin_has_set_color_vector_m;
+  bool is_multicolor;
 
   Scene_polyhedron_item* item;
   Polyhedron *poly;
@@ -331,7 +333,7 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
         d->program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[Facets_normals_flat].release();
 
-        if(!is_monochrome)
+        if(d->is_multicolor)
         {
             buffers[Facets_color].bind();
             buffers[Facets_color].allocate(d->color_facets.data(),
@@ -358,7 +360,7 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
         d->program->enableAttributeArray("normals");
         d->program->setAttributeBuffer("normals",GL_FLOAT,0,3);
         buffers[Facets_normals_gouraud].release();
-        if(!is_monochrome)
+        if(d->is_multicolor)
         {
             buffers[Facets_color].bind();
             d->program->enableAttributeArray("colors");
@@ -390,7 +392,7 @@ Scene_polyhedron_item::initialize_buffers(CGAL::Three::Viewer_interface* viewer)
         buffers[Edges_color].bind();
         buffers[Edges_color].allocate(d->color_lines.data(),
                             static_cast<int>(d->color_lines.size()*sizeof(float)));
-       if(!is_monochrome)
+       if(d->is_multicolor)
        {
            d->program->enableAttributeArray("colors");
            d->program->setAttributeBuffer("colors",GL_FLOAT,0,3);
@@ -895,7 +897,7 @@ void Scene_polyhedron_item::draw(CGAL::Three::Viewer_interface* viewer) const {
     attrib_buffers(viewer, PROGRAM_WITH_LIGHT);
     d->program = getShaderProgram(PROGRAM_WITH_LIGHT);
     d->program->bind();
-    if(is_monochrome)
+    if(!d->is_multicolor)
     {
             d->program->setAttributeValue("colors", this->color());
     }
@@ -929,7 +931,7 @@ void Scene_polyhedron_item::draw_edges(CGAL::Three::Viewer_interface* viewer) co
         d->program = getShaderProgram(PROGRAM_WITHOUT_LIGHT);
         d->program->bind();
         //draw the edges
-        if(is_monochrome)
+        if(!d->is_multicolor)
         {
             d->program->setAttributeValue("colors", this->color().lighter(50));
             if(is_selected)
@@ -1033,10 +1035,12 @@ Scene_polyhedron_item::setColor(QColor c)
   // reset patch ids
   if (d->colors_.size()>2 || d->plugin_has_set_color_vector_m)
   {
-   d->colors_.clear();
-   is_monochrome = true;
+    d->colors_.clear();
+    d->is_multicolor = false;
   }
   Scene_item::setColor(c);
+  if(d->is_multicolor)
+    invalidateOpenGLBuffers();
 }
 
 void
@@ -1337,3 +1341,5 @@ int Scene_polyhedron_item::getNumberOfNullLengthEdges(){return d->number_of_null
 int Scene_polyhedron_item::getNumberOfDegeneratedFaces(){return d->number_of_degenerated_faces;}
 bool Scene_polyhedron_item::triangulated(){return d->poly->is_pure_triangle();}
 bool Scene_polyhedron_item::self_intersected(){return !(d->self_intersect);}
+void Scene_polyhedron_item::setItemIsMulticolor(bool b){ d->is_multicolor = b;}
+bool Scene_polyhedron_item::isItemMulticolor(){ return d->is_multicolor;}
