@@ -64,6 +64,7 @@ public:
     mainwindow = mw;
     is_highlighting = false;
     is_ready_to_highlight = true;
+    is_ready_to_paint_select = true;
     poly_item->enable_facets_picking(true);
     poly_item->set_color_vector_read_only(true);
 
@@ -105,6 +106,26 @@ public Q_SLOTS:
     updateIsTreated();
   }
 
+  void paint_selection()
+  {
+    if(is_ready_to_paint_select)
+    {
+      // paint with mouse move event
+      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(paint_event);
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      qglviewer::Camera* camera = viewer->camera();
+
+      bool found = false;
+      const qglviewer::Vec& point = camera->pointUnderPixel(mouse_event->pos(), found);
+      if(found)
+      {
+        const qglviewer::Vec& orig = camera->position();
+        const qglviewer::Vec& dir = point - orig;
+        poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
+      }
+      is_ready_to_paint_select = false;
+    }
+  }
   void highlight()
   {
     if(is_ready_to_highlight)
@@ -292,19 +313,9 @@ protected:
         viewer->setFocus();
         return false;
       }
-      // paint with mouse move event
-      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
-      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
-      qglviewer::Camera* camera = viewer->camera();
-
-      bool found = false;
-      const qglviewer::Vec& point = camera->pointUnderPixel(mouse_event->pos(), found);
-      if(found)
-      {
-        const qglviewer::Vec& orig = camera->position();
-        const qglviewer::Vec& dir = point - orig;
-        poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
-      }
+      is_ready_to_paint_select = true;
+      paint_event = event;
+      QTimer::singleShot(0,this,SLOT(paint_selection()));
     }
     //if in edit_mode and the mouse is moving without any button pushed :
     // highlight the primitive under cursor
@@ -326,7 +337,9 @@ protected:
 
   bool is_edit_mode;
   bool is_ready_to_highlight;
+  bool is_ready_to_paint_select;
   QEvent *hl_event;
+  QEvent *paint_event;
   QMainWindow *mainwindow;
 };
 
