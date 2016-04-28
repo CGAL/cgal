@@ -38,6 +38,7 @@ public:
   int                    k_ring;
   Scene_polyhedron_item* poly_item;
   bool is_active;
+  bool is_highlighting;
 
   Scene_polyhedron_item_k_ring_selection() {}
 
@@ -48,13 +49,21 @@ public:
     init(poly_item, mw, aht, k_ring);
   }
 
-  void setEditMode(bool b) { is_edit_mode = b; }
+  void setEditMode(bool b)
+  {
+    is_edit_mode = b;
+    QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+    //for highlighting
+    viewer->setMouseTracking(b);
+  }
 
   void init(Scene_polyhedron_item* poly_item, QMainWindow* mw, Active_handle::Type aht, int k_ring) {
     this->poly_item = poly_item;
     this->active_handle_type = aht;
     this->k_ring = k_ring;
-      mainwindow = mw;
+    mainwindow = mw;
+    is_highlighting = false;
+    is_ready_to_highlight = true;
     poly_item->enable_facets_picking(true);
     poly_item->set_color_vector_read_only(true);
 
@@ -96,14 +105,44 @@ public Q_SLOTS:
     updateIsTreated();
   }
 
+  void highlight()
+  {
+    if(is_ready_to_highlight)
+    {
+      // highlight with mouse move event
+      QMouseEvent* mouse_event = static_cast<QMouseEvent*>(hl_event);
+      QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+      qglviewer::Camera* camera = viewer->camera();
+
+      bool found = false;
+      const qglviewer::Vec& point = camera->pointUnderPixel(mouse_event->pos(), found);
+      if(found)
+      {
+        const qglviewer::Vec& orig = camera->position();
+        const qglviewer::Vec& dir = point - orig;
+        is_highlighting = true;
+        poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
+        is_highlighting = false;
+      }
+      else
+      {
+        Q_EMIT clearHL();
+      }
+      is_ready_to_highlight = false;
+    }
+  }
 
 Q_SIGNALS:
   void selected(const std::set<Polyhedron::Vertex_handle>&);
   void selected(const std::set<Polyhedron::Facet_handle>&);
   void selected(const std::set<edge_descriptor>&);
+  void selectedHL(const std::set<Polyhedron::Vertex_handle>&);
+  void selectedHL(const std::set<Polyhedron::Facet_handle>&);
+  void selectedHL(const std::set<edge_descriptor>&);
   void toogle_insert(const bool);
   void endSelection();
   void resetIsTreated();
+  void clearHL();
 
 protected:
 
@@ -120,7 +159,12 @@ protected:
   template<class HandleType>
   void process_selection(HandleType clicked) {
     const std::set<HandleType>& selection = extract_k_ring(clicked, k_ring);
-    Q_EMIT selected(selection);
+    if(is_highlighting)
+    {
+      Q_EMIT selectedHL(selection);
+    }
+    else
+      Q_EMIT selected(selection);
   }
 
   template <class Handle>
@@ -221,6 +265,8 @@ protected:
       QMouseEvent* mouse_event = static_cast<QMouseEvent*>(event);
       if(mouse_event->button() == Qt::LeftButton) {
         state.left_button_pressing = event->type() == QEvent::MouseButtonPress;
+        if(is_edit_mode)
+          Q_EMIT clearHL();
         if (!state.left_button_pressing)
           if (is_active)
           {
@@ -259,11 +305,28 @@ protected:
         const qglviewer::Vec& dir = point - orig;
         poly_item->select(orig.x, orig.y, orig.z, dir.x, dir.y, dir.z);
       }
+    }
+    //if in edit_mode and the mouse is moving without any button pushed :
+    // highlight the primitive under cursor
+    else if(is_edit_mode && event->type() == QEvent::MouseMove && !state.shift_pressing && !state.left_button_pressing)
+    {
+      if(target == mainwindow)
+      {
+        QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
+        viewer->setFocus();
+        return false;
+      }
+
+      is_ready_to_highlight = true;
+      hl_event = event;
+      QTimer::singleShot(0, this, SLOT(highlight()));
     }//end MouseMove
     return false;
   }
 
   bool is_edit_mode;
+  bool is_ready_to_highlight;
+  QEvent *hl_event;
   QMainWindow *mainwindow;
 };
 

@@ -7,7 +7,6 @@
 #include <CGAL/Constrained_triangulation_plus_2.h>
 #include <CGAL/Triangulation_2_projection_traits_3.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
-#include <boost/container/flat_map.hpp>
 
 
 void Scene_polyhedron_selection_item::initialize_buffers(CGAL::Three::Viewer_interface *viewer)const
@@ -173,7 +172,71 @@ void Scene_polyhedron_selection_item::initialize_temp_buffers(CGAL::Three::Viewe
 
   are_temp_buffers_filled = true;
 }
+void Scene_polyhedron_selection_item::initialize_HL_buffers(CGAL::Three::Viewer_interface *viewer)const
+{
+  //vao containing the data for the temp facets
+  {
+    program = getShaderProgram(PROGRAM_WITH_LIGHT, viewer);
+    program->bind();
 
+    vaos[6]->bind();
+    buffers[8].bind();
+    buffers[8].allocate(positions_HL_facets.data(),
+                        static_cast<int>(positions_HL_facets.size()*sizeof(float)));
+    program->enableAttributeArray("vertex");
+    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+    buffers[8].release();
+
+
+
+    buffers[9].bind();
+    buffers[9].allocate(HL_normals.data(),
+                        static_cast<int>(HL_normals.size()*sizeof(float)));
+    program->enableAttributeArray("normals");
+    program->setAttributeBuffer("normals",GL_FLOAT,0,3);
+    buffers[9].release();
+
+    vaos[6]->release();
+    program->release();
+
+  }
+  //vao containing the data for the temp lines
+  {
+    program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+    program->bind();
+    vaos[7]->bind();
+
+    buffers[10].bind();
+    buffers[10].allocate(positions_HL_lines.data(),
+                        static_cast<int>(positions_HL_lines.size()*sizeof(float)));
+    program->enableAttributeArray("vertex");
+    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+    buffers[10].release();
+
+    program->release();
+
+    vaos[7]->release();
+
+  }
+  //vao containing the data for the temp points
+  {
+    program = getShaderProgram(PROGRAM_NO_SELECTION, viewer);
+    program->bind();
+    vaos[8]->bind();
+
+    buffers[11].bind();
+    buffers[11].allocate(positions_HL_points.data(),
+                        static_cast<int>(positions_HL_points.size()*sizeof(float)));
+    program->enableAttributeArray("vertex");
+    program->setAttributeBuffer("vertex",GL_FLOAT,0,3);
+    buffers[11].release();
+
+    program->release();
+
+    vaos[8]->release();
+  }
+  are_HL_buffers_filled = true;
+}
 template<typename TypeWithXYZ, typename ContainerWithPushBack>
 void push_back_xyz(const TypeWithXYZ& t,
                    ContainerWithPushBack& vector)
@@ -303,15 +366,9 @@ void Scene_polyhedron_selection_item::compute_any_elements(std::vector<float>& p
     p_points.clear();
     p_normals.clear();
     //The facet
-    boost::container::flat_map<face_descriptor, Vector> face_normals_map;
-    boost::associative_property_map< boost::container::flat_map<face_descriptor, Vector> >
-      nf_pmap(face_normals_map);
-    boost::container::flat_map<vertex_descriptor, Vector> vertex_normals_map;
-    boost::associative_property_map< boost::container::flat_map<vertex_descriptor, Vector> >
-      nv_pmap(vertex_normals_map);
+
 if(!poly)
   return;
-    PMP::compute_normals(*poly, nv_pmap, nf_pmap);
     for(Selection_set_facet::iterator
         it = p_sel_facets.begin(),
         end = p_sel_facets.end();
@@ -325,7 +382,6 @@ if(!poly)
       {
         const Kernel::Vector_3 n =
             CGAL::Polygon_mesh_processing::compute_face_normal(f, *this->poly_item->polyhedron());
-
         p_normals.push_back(n.x());
         p_normals.push_back(n.y());
         p_normals.push_back(n.z());
@@ -354,7 +410,6 @@ if(!poly)
       else if (is_quad(f->halfedge(), *poly))
       {
         Vector nf = get(nf_pmap, f);
-
         //1st half-quad
         Point p0 = f->halfedge()->vertex()->point();
         Point p1 = f->halfedge()->next()->vertex()->point();
@@ -428,10 +483,35 @@ void Scene_polyhedron_selection_item::compute_temp_elements()const
                        temp_selected_vertices, temp_selected_facets, temp_selected_edges);
 }
 
+void Scene_polyhedron_selection_item::compute_HL_elements()const
+{
+  compute_any_elements(positions_HL_facets, positions_HL_lines, positions_HL_points, HL_normals,
+                       HL_selected_vertices, HL_selected_facets, HL_selected_edges);
+}
+
 void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer) const
 {
   GLfloat offset_factor;
   GLfloat offset_units;
+
+  if(!are_HL_buffers_filled)
+  {
+    compute_HL_elements();
+    initialize_HL_buffers(viewer);
+  }
+
+  viewer->glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
+  viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
+  glPolygonOffset(-1.f, 1.f);
+  vaos[6]->bind();
+  program = getShaderProgram(PROGRAM_WITH_LIGHT);
+  attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
+  program->bind();
+  program->setAttributeValue("colors",QColor(255,153,51));
+  viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(positions_HL_facets.size())/3);
+  program->release();
+  vaos[6]->release();
+
 
   if(!are_temp_buffers_filled)
   {
@@ -450,6 +530,7 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
   viewer->glDrawArrays(GL_TRIANGLES, 0, static_cast<GLsizei>(nb_temp_facets/3));
   program->release();
   vaos[3]->release();
+
   glPolygonOffset(offset_factor, offset_units);
     if(!are_buffers_filled)
     {
@@ -478,7 +559,25 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
 void Scene_polyhedron_selection_item::draw_edges(CGAL::Three::Viewer_interface* viewer) const
 {
 
-  viewer->glLineWidth(2.0f);
+  viewer->glLineWidth(3.f);
+
+  if(!are_HL_buffers_filled)
+  {
+    compute_HL_elements();
+    initialize_HL_buffers(viewer);
+  }
+
+  vaos[7]->bind();
+  program = getShaderProgram(PROGRAM_NO_SELECTION);
+  attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+  program->bind();
+
+  program->setAttributeValue("colors",QColor(255,153,51));
+  viewer->glDrawArrays(GL_LINES, 0, static_cast<GLsizei>(positions_HL_lines.size()/3));
+  program->release();
+  vaos[7]->release();
+
+
   if(!are_temp_buffers_filled)
   {
     compute_temp_elements();
@@ -519,6 +618,21 @@ void Scene_polyhedron_selection_item::draw_points(CGAL::Three::Viewer_interface*
 {
 
   viewer->glPointSize(5.5f);
+
+  if(!are_HL_buffers_filled)
+  {
+    compute_HL_elements();
+    initialize_HL_buffers(viewer);
+  }
+  vaos[8]->bind();
+  program = getShaderProgram(PROGRAM_NO_SELECTION);
+  attrib_buffers(viewer,PROGRAM_NO_SELECTION);
+  program->bind();
+  program->setAttributeValue("colors",QColor(255,153,51));
+  viewer->glDrawArrays(GL_POINTS, 0, static_cast<GLsizei>(positions_HL_points.size()/3));
+  program->release();
+  vaos[8]->release();
+
 
   if(!are_temp_buffers_filled)
   {
@@ -598,6 +712,7 @@ void Scene_polyhedron_selection_item::set_operation_mode(int mode)
   case -1:
     //restore original selection_type
     set_active_handle_type(original_sel_mode);
+    clearHL();
     k_ring_selector.setEditMode(false);
     break;
     //Join vertex
@@ -1376,4 +1491,14 @@ void Scene_polyhedron_selection_item::on_Ctrlz_pressed()
   are_temp_buffers_filled = false;
   set_operation_mode(operation_mode);
   Q_EMIT itemChanged();
+}
+
+void Scene_polyhedron_selection_item::compute_normal_maps()
+{
+
+  face_normals_map.clear();
+  vertex_normals_map.clear();
+  nf_pmap = boost::associative_property_map< boost::container::flat_map<boost::graph_traits<Polyhedron>::face_descriptor, Kernel::Vector_3> >(face_normals_map);
+  nv_pmap = boost::associative_property_map< boost::container::flat_map<boost::graph_traits<Polyhedron>::vertex_descriptor, Kernel::Vector_3> >(vertex_normals_map);
+  PMP::compute_normals(*poly, nv_pmap, nf_pmap);
 }

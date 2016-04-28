@@ -23,6 +23,7 @@
 #include <boost/foreach.hpp>
 #include <boost/unordered_set.hpp>
 #include <boost/property_map/vector_property_map.hpp>
+#include <boost/container/flat_map.hpp>
 
 #include <CGAL/boost/graph/selection.h>
 #include <CGAL/boost/graph/graph_traits_Polyhedron_3.h>
@@ -187,13 +188,13 @@ public:
     {
         original_sel_mode = static_cast<Active_handle::Type>(0);
         this ->operation_mode = -1;
-        for(int i=0; i<6; i++)
+        for(int i=0; i<9; i++)
         {
             addVaos(i);
             vaos[i]->create();
         }
 
-        for(int i=0; i<10; i++)
+        for(int i=0; i<12; i++)
         {
             buffers[i].create();
         }
@@ -215,19 +216,20 @@ public:
         nb_points = 0;
         nb_lines = 0;
 
-        for(int i=0; i<6; i++)
+        for(int i=0; i<9; i++)
         {
             addVaos(i);
             vaos[i]->create();
         }
 
-        for(int i=0; i<8; i++)
+        for(int i=0; i<12; i++)
         {
             buffers[i].create();
         }
         init(poly_item, mw);
         this->setColor(facet_color);
         invalidateOpenGLBuffers();
+        compute_normal_maps();
         first_selected = false;
         is_treated = false;
         poly_need_update = false;
@@ -248,8 +250,16 @@ protected:
       SLOT(selected(const std::set<Polyhedron::Facet_handle>&)));
     connect(&k_ring_selector, SIGNAL(selected(const std::set<edge_descriptor>&)), this,
       SLOT(selected(const std::set<edge_descriptor>&)));
-    connect(poly_item, SIGNAL(selection_done()), this, SLOT(update_poly()));
+    connect(&k_ring_selector, SIGNAL(selectedHL(const std::set<Polyhedron::Vertex_handle>&)), this,
+            SLOT(selectedHL(const std::set<Polyhedron::Vertex_handle>&)));
+    connect(&k_ring_selector, SIGNAL(selectedHL(const std::set<Polyhedron::Facet_handle>&)), this,
+            SLOT(selectedHL(const std::set<Polyhedron::Facet_handle>&)));
+    connect(&k_ring_selector, SIGNAL(selectedHL(const std::set<edge_descriptor>&)), this,
+            SLOT(selectedHL(const std::set<edge_descriptor>&)));
+    connect(&k_ring_selector, SIGNAL(clearHL()), this,
+            SLOT(clearHL()));
 
+    connect(poly_item, SIGNAL(selection_done()), this, SLOT(update_poly()));
     connect(&k_ring_selector, SIGNAL(endSelection()), this,SLOT(endSelection()));
     connect(&k_ring_selector, SIGNAL(toogle_insert(bool)), this,SLOT(toggle_insert(bool)));
     k_ring_selector.init(poly_item, mw, Active_handle::VERTEX, -1);
@@ -258,7 +268,6 @@ protected:
     QGLViewer* viewer = *QGLViewer::QGLViewerPool().begin();
     viewer->installEventFilter(this);
     mw->installEventFilter(this);
-
     facet_color = QColor(87,87,87);
     edge_color = QColor(173,35,35);
     vertex_color = QColor(255,205,243);
@@ -724,18 +733,10 @@ public:
     Selection_traits<Polyhedron::Vertex_handle, Scene_polyhedron_selection_item> trv(this);
     trv.update_indices();
 
-    //Selection_traits<edge_descriptor, Scene_polyhedron_selection_item> tre(this);
-    //tre.update_indices();
-    //std::vector<bool> mark(polyhedron()->size_of_halfedges() / 2, false);
-    //BOOST_FOREACH(edge_descriptor e, selected_edges)
-    //  mark[tre.id(e)] = true;
-
     PMP::keep_connected_components(*polyhedron()
       , trf.container()
       , PMP::parameters::face_index_map(Index_map<Polyhedron::Face_handle>())
       .vertex_index_map(Index_map<Polyhedron::Vertex_handle>()));
-//      .edge_is_constrained_map(Is_selected_property_map<edge_descriptor>(mark)));
-
     changed_with_poly_item();
   }
 
@@ -805,6 +806,7 @@ Q_SIGNALS:
   void simplicesSelected(CGAL::Three::Scene_item*);
 
 public Q_SLOTS:
+  void compute_normal_maps();
   void update_poly()
   {
     if(poly_need_update)
@@ -817,7 +819,14 @@ public Q_SLOTS:
   {
     original_sel_mode = get_active_handle_type();
   }
-
+  void clearHL()
+  {
+    HL_selected_edges.clear();
+    HL_selected_facets.clear();
+    HL_selected_vertices.clear();
+    are_HL_buffers_filled = false;
+    Q_EMIT itemChanged();
+  }
   void set_operation_mode(int mode);
 
   void invalidateOpenGLBuffers() {
@@ -828,6 +837,7 @@ public Q_SLOTS:
         are_temp_buffers_filled = false;
         poly = polyhedron();
         compute_bbox();
+        Q_EMIT itemChanged();
   }
   // slots are called by signals of polyhedron_k_ring_selector
   void selected(const std::set<Polyhedron::Vertex_handle>& m)
@@ -836,6 +846,33 @@ public Q_SLOTS:
   { has_been_selected(m); }
   void selected(const std::set<edge_descriptor>& m)
   { has_been_selected(m); }
+  void selectedHL(const std::set<Polyhedron::Vertex_handle>& m)
+  {
+    HL_selected_edges.clear();
+    HL_selected_facets.clear();
+    HL_selected_vertices.clear();
+    HL_selected_vertices.insert(*m.begin());
+    are_HL_buffers_filled = false;
+    Q_EMIT itemChanged();
+  }
+  void selectedHL(const std::set<Polyhedron::Facet_handle>& m)
+  {
+    HL_selected_edges.clear();
+    HL_selected_facets.clear();
+    HL_selected_vertices.clear();
+    HL_selected_facets.insert(*m.begin());
+    are_HL_buffers_filled = false;
+    Q_EMIT itemChanged();
+  }
+  void selectedHL(const std::set<edge_descriptor>& m)
+  {
+    HL_selected_edges.clear();
+    HL_selected_facets.clear();
+    HL_selected_vertices.clear();
+    HL_selected_edges.insert(*m.begin());
+    are_HL_buffers_filled = false;
+    Q_EMIT itemChanged();
+  }
   void poly_item_changed() {
     remove_erased_handles<Vertex_handle>();
     remove_erased_handles<edge_descriptor>();
@@ -987,13 +1024,17 @@ public:
   Selection_set_vertex temp_selected_vertices;
   Selection_set_facet  temp_selected_facets;
   Selection_set_edge   temp_selected_edges; // stores one halfedge for each pair (halfedge with minimum address)
+
+  Selection_set_vertex HL_selected_vertices;
+  Selection_set_facet  HL_selected_facets;
+  Selection_set_edge   HL_selected_edges; // stores one halfedge for each pair (halfedge with minimum address)
 // 
   QColor vertex_color, facet_color, edge_color;
 
 private:
   bool poly_need_update;
   mutable bool are_temp_buffers_filled;
-  //Specifies Selection/edition mode
+  mutable bool are_HL_buffers_filled;
   bool first_selected;
   int operation_mode;
   QString m_temp_instructs;
@@ -1020,14 +1061,28 @@ private:
   mutable std::size_t nb_temp_points;
   mutable std::size_t nb_temp_lines;
 
+  mutable std::vector<float> positions_HL_facets;
+  mutable std::vector<float> HL_normals;
+  mutable std::vector<float> positions_HL_lines;
+  mutable std::vector<float> positions_HL_points;
+
+  boost::container::flat_map<boost::graph_traits<Polyhedron>::face_descriptor, Kernel::Vector_3>  face_normals_map;
+  boost::container::flat_map<boost::graph_traits<Polyhedron>::vertex_descriptor, Kernel::Vector_3>  vertex_normals_map;
+  boost::associative_property_map< boost::container::flat_map<boost::graph_traits<Polyhedron>::face_descriptor, Kernel::Vector_3> >
+    nf_pmap;
+  boost::associative_property_map< boost::container::flat_map<boost::graph_traits<Polyhedron>::vertex_descriptor, Kernel::Vector_3> >
+    nv_pmap;
+
   mutable QOpenGLShaderProgram *program;
   using CGAL::Three::Scene_item::initialize_buffers;
   void initialize_buffers(CGAL::Three::Viewer_interface *viewer) const;
   void initialize_temp_buffers(CGAL::Three::Viewer_interface *viewer) const;
+  void initialize_HL_buffers(CGAL::Three::Viewer_interface *viewer) const;
   void compute_elements() const;
   void compute_any_elements(std::vector<float> &p_facets, std::vector<float> &p_lines, std::vector<float> &p_points, std::vector<float> &p_normals,
                             const Selection_set_vertex& p_sel_vertex, const Selection_set_facet &p_sel_facet, const Selection_set_edge &p_sel_edges) const;
   void compute_temp_elements() const;
+  void compute_HL_elements() const;
 
   template<typename FaceNormalPmap>
   void triangulate_facet(Facet_handle, const FaceNormalPmap&,
