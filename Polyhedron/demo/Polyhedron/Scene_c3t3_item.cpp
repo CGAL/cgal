@@ -1335,7 +1335,6 @@ void Scene_c3t3_item::compute_elements()
           if(c3t3().in_dimension(cit->vertex(i)) == -1)
           {
             has_far_point = true;
-            qDebug()<<"far_point detected";
             break;
           }
         if(!has_far_point)
