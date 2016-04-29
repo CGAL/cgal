@@ -132,14 +132,14 @@ public:
     //check there is no duplicated ordered edge, and
     //check there is no polygon with twice the same vertex
     std::set< std::pair<V_ID, V_ID> > edge_set;
-    std::size_t max_id=0;
+    V_ID max_id=0;
     BOOST_FOREACH(const Polygon& polygon, polygons)
     {
       std::size_t nb_edges = boost::size(polygon);
       if (nb_edges<3) return false;
 
       std::set<V_ID> polygon_vertices;
-      V_ID prev= *--boost::end(polygon);
+      V_ID prev= *cpp11::prev(boost::end(polygon));
       BOOST_FOREACH(V_ID id, polygon)
       {
         if (max_id<id) max_id=id;
@@ -160,7 +160,7 @@ public:
     typename Orienter::Marked_edges marked_edges;
     Orienter::fill_edge_map(edges, marked_edges, polygons);
     //returns false if duplication is necessary
-    return Orienter::has_singular_vertices(max_id+1,polygons,edges,marked_edges);
+    return Orienter::has_singular_vertices(static_cast<std::size_t>(max_id+1),polygons,edges,marked_edges);
   }
 
   /**
