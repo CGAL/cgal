@@ -193,7 +193,6 @@ void Polyhedron_demo_join_and_split_polyhedra_plugin::on_actionColorConnectedCom
       {
         namespace PMP = CGAL::Polygon_mesh_processing;
         typedef boost::graph_traits<Polyhedron>::face_descriptor   face_descriptor;
-        typedef boost::graph_traits<Polyhedron>::vertex_descriptor vertex_descriptor;
 
         selection_item->polyhedron_item()->setItemIsMulticolor(true);
         selection_item->polyhedron_item()->set_color_vector_read_only(false);
