@@ -220,6 +220,9 @@ public Q_SLOTS:
     scene->setSelectedItem(item_id);
     on_ModeBox_changed(ui_widget.modeBox->currentIndex());
     on_Selection_type_combo_box_changed(ui_widget.Selection_type_combo_box->currentIndex());
+    ui_widget.modeBox->setCurrentIndex(0);
+    on_ModeBox_changed(0);
+
   }
   void on_Selection_type_combo_box_changed(int index) {
     typedef Scene_polyhedron_selection_item::Active_handle Active_handle;

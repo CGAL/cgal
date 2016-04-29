@@ -728,7 +728,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
 
         polyhedron()->join_vertex(target);
 
-        temp_selected_edges.erase(to_join_ed);
+        temp_selected_edges.clear();
         //set to select edge
         set_active_handle_type(static_cast<Active_handle::Type>(2));
         tempInstructions("Vertices joined.",
@@ -831,8 +831,8 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
         {
           CGAL::Euler::split_face(h1,h2, *polyhedron());
           first_selected = false;
-          temp_selected_vertices.erase(s);
-          temp_selected_facets.erase(to_split_fh);
+          temp_selected_vertices.clear();
+          temp_selected_facets.clear();
           invalidateOpenGLBuffers();
           //reset selection type to Facet
           set_active_handle_type(static_cast<Active_handle::Type>(1));
@@ -1087,8 +1087,8 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
           first_selected = false;
 
 
-          temp_selected_edges.erase(edge(t,*polyhedron()));
-          temp_selected_vertices.erase(t->vertex());
+          temp_selected_edges.clear();
+          temp_selected_vertices.clear();
           invalidateOpenGLBuffers();
           polyhedron_item()->invalidateOpenGLBuffers();
           tempInstructions("Face and vertex added.",
@@ -1192,8 +1192,8 @@ bool Scene_polyhedron_selection_item:: treat_selection(const std::set<edge_descr
         else
         {
           first_selected = false;
-          temp_selected_vertices.erase(t->vertex());
-          temp_selected_edges.erase(edge(t,*polyhedron()));
+          temp_selected_vertices.clear();
+          temp_selected_edges.clear();
           invalidateOpenGLBuffers();
           polyhedron_item()->invalidateOpenGLBuffers();
           tempInstructions("Face added.",
@@ -1280,7 +1280,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
           {
             Polyhedron::Halfedge_handle hhandle = CGAL::Euler::split_vertex(h1,h2,*polyhedron());
 
-            temp_selected_facets.erase(h1->facet());
+            temp_selected_facets.clear();
             Polyhedron::Point_3 p1t = h1->vertex()->point();
             Polyhedron::Point_3 p1s = h1->opposite()->vertex()->point();
             double x =  p1t.x() + 0.01 * (p1s.x() - p1t.x());
@@ -1288,7 +1288,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
             double z =  p1t.z() + 0.01 * (p1s.z() - p1t.z());
             hhandle->opposite()->vertex()->point() = Polyhedron::Point_3(x,y,z);;
             first_selected = false;
-            temp_selected_vertices.erase(to_split_vh);
+            temp_selected_vertices.clear();
             invalidateOpenGLBuffers();
             //reset selection mode
             set_active_handle_type(static_cast<Active_handle::Type>(0));
