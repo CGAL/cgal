@@ -126,6 +126,7 @@ public Q_SLOTS:
       is_ready_to_paint_select = false;
     }
   }
+
   void highlight()
   {
     if(is_ready_to_highlight)
@@ -315,11 +316,12 @@ protected:
       }
       is_ready_to_paint_select = true;
       paint_event = event;
-      QTimer::singleShot(0,this,SLOT(paint_selection()));
+      //QTimer::singleShot(0,this,SLOT(paint_selection()));
+      paint_selection();
     }
-    //if in edit_mode and the mouse is moving without any button pushed :
+    //if in edit_mode and the mouse is moving without left button pressed :
     // highlight the primitive under cursor
-    else if(is_edit_mode && event->type() == QEvent::MouseMove && !state.shift_pressing && !state.left_button_pressing)
+    else if(is_edit_mode && event->type() == QEvent::MouseMove && !state.left_button_pressing)
     {
       if(target == mainwindow)
       {

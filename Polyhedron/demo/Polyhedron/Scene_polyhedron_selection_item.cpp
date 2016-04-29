@@ -500,7 +500,7 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
     initialize_HL_buffers(viewer);
   }
 
-  viewer->glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
+  viewer->glGetFloatv(GL_POLYGON_OFFSET_FACTOR, &offset_factor);
   viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
   glPolygonOffset(-1.f, 1.f);
   vaos[6]->bind();
@@ -518,10 +518,6 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
       compute_temp_elements();
       initialize_temp_buffers(viewer);
   }
-
-  viewer->glGetFloatv( GL_POLYGON_OFFSET_FACTOR, &offset_factor);
-  viewer->glGetFloatv(GL_POLYGON_OFFSET_UNITS, &offset_units);
-  glPolygonOffset(-1.f, 1.f);
   vaos[3]->bind();
   program = getShaderProgram(PROGRAM_WITH_LIGHT);
   attrib_buffers(viewer,PROGRAM_WITH_LIGHT);
@@ -531,7 +527,6 @@ void Scene_polyhedron_selection_item::draw(CGAL::Three::Viewer_interface* viewer
   program->release();
   vaos[3]->release();
 
-  glPolygonOffset(offset_factor, offset_units);
     if(!are_buffers_filled)
     {
         compute_elements();
@@ -1443,7 +1438,7 @@ bool Scene_polyhedron_selection_item::treat_selection(const std::set<Polyhedron:
         if(fh->halfedge()->is_border())
         {
           tempInstructions("Facet not selected : Facet must not be null.",
-                           "Select a Facet. (1/3)");
+                           "Select a Facet.");
         }
         else
         {
