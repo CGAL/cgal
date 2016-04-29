@@ -197,11 +197,12 @@ namespace CGAL {
     }
 */
     
-    template < class GT, class TDS >
-    void Periodic_4_hyperbolic_Delaunay_triangulation_2<GT, TDS>::insert_dummy_points(std::vector<typename GT::Point_2>& all_points) {
+    template < class Gt, class Tds >
+    void Periodic_4_hyperbolic_Delaunay_triangulation_2<Gt, Tds>::
+    insert_dummy_points(std::vector<typename Gt::Point_2>& all_points) {
         
-        std::vector<typename GT::Point_2> inner_points, points_on_boundary, points_on_vertex;
-        compute_dummy_points<GT>(inner_points, points_on_boundary, points_on_vertex);
+        std::vector<typename Gt::Point_2> inner_points, points_on_boundary, points_on_vertex;
+        compute_dummy_points<Gt>(inner_points, points_on_boundary, points_on_vertex);
         all_points = inner_points;
         
         
