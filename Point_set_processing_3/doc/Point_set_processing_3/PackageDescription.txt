@@ -22,10 +22,18 @@
 
 \cgalClassifedRefPages
 
+## Concept ##
+- `PlyInterpreter`
+
+## Classes ##
+- `CGAL::Ply_reader`
+- `CGAL::Ply_interpreter_points_and_normals_3`
+
 ## Functions ##
 
 - `CGAL::read_off_points()`
 - `CGAL::read_ply_points()`
+- `CGAL::read_ply_custom_points()`
 - `CGAL::read_xyz_points()`
 - `CGAL::compute_average_spacing()`
 - `CGAL::remove_outliers()`
