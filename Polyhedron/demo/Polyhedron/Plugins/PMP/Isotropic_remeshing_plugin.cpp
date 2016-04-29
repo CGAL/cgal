@@ -454,11 +454,6 @@ public Q_SLOTS:
       }
       std::cout << "ok (" << time.elapsed() << " ms)" << std::endl;
 
-      //restore vertex ids
-      std::size_t id = 0;
-      BOOST_FOREACH(vertex_descriptor v, vertices(*poly_item->polyhedron()))
-        v->id() = id++;
-
       // default cursor
       QApplication::restoreOverrideCursor();
     }
