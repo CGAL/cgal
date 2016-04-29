@@ -73,7 +73,7 @@ public:
         CGAL_triangulation_postcondition( this->is_valid() );
     }
 
-    void insert_dummy_points(std::vector<Point>&);
+    void insert_dummy_points(std::vector<typename Gt::Point_2>&);
 
 };
 
